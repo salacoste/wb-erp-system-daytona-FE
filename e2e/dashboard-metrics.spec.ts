@@ -42,6 +42,11 @@ async function waitForMetricsLoad(page: Page): Promise<void> {
   })
 }
 
+async function waitForMetricsTerminalState(page: Page): Promise<void> {
+  await expect(page.locator(S.loadingSkeleton)).toHaveCount(0, { timeout: TIMEOUTS.api })
+  await expect(page.locator(S.metricCard).first()).toBeVisible({ timeout: TIMEOUTS.api })
+}
+
 async function switchToTableView(page: Page): Promise<void> {
   const tableButton = page.locator(S.viewTableButton)
   if (await tableButton.isVisible()) {
@@ -98,50 +103,46 @@ test.describe('Dashboard Metric Cards (Story 62.1-62.5)', () => {
   })
 
   test('metric cards show comparison indicators when data available', async ({ page }) => {
-    // Story 88.3-FE: wait for metrics grid readiness (covers comparison-indicator data path)
-    await expect(page.locator(S.metricsGrid)).toBeVisible({ timeout: TIMEOUTS.api })
+    await waitForMetricsTerminalState(page)
 
-    // Look for comparison badges (percentage with + or -)
-    const comparisonBadges = page.locator('text=/[+\\-]\\d+[,.]?\\d*\\s*%/')
-    const hasBadges = (await comparisonBadges.count()) > 0
+    const comparisonBadges = page.locator(S.comparisonBadge)
+    test.skip(
+      (await comparisonBadges.count()) === 0,
+      'Prepared dashboard data has no previous-period values for comparison badges'
+    )
 
-    // Also check for trend arrows
-    const trendArrows = page.locator('text=/[↑↓]/')
-    const hasArrows = (await trendArrows.count()) > 0
-
-    // At least one indicator type should be present (or data might not have comparison)
-    expect(hasBadges || hasArrows || true).toBeTruthy()
+    await expect(comparisonBadges.first()).toBeVisible()
+    await expect(comparisonBadges.first()).toHaveText(/^[+\-−]?\d[\d\s]*(?:[,.]\d+)?\s*%$/)
   })
 
   test('positive comparison shows green styling', async ({ page }) => {
-    // Story 88.3-FE: metrics grid visibility covers data-ready state
-    await expect(page.locator(S.metricsGrid)).toBeVisible({ timeout: TIMEOUTS.api })
+    await waitForMetricsTerminalState(page)
 
-    const positiveBadge = page.locator('text=/\\+\\d+[,.]?\\d*\\s*%/').first()
+    const positiveTrend = page.locator('[data-testid="trend-indicator"][aria-label="Рост"]').first()
+    test.skip(
+      (await positiveTrend.count()) === 0,
+      'Prepared dashboard data has no semantically positive comparison fixture'
+    )
 
-    if (await positiveBadge.isVisible({ timeout: 3000 }).catch(() => false)) {
-      // Should have green class or be in a green-colored parent
-      const hasGreenClass = await positiveBadge.evaluate(el => {
-        const classList = el.className + ' ' + (el.parentElement?.className || '')
-        return classList.includes('green') || classList.includes('success')
-      })
-      expect(hasGreenClass || true).toBeTruthy()
-    }
+    const positiveBadge = positiveTrend.locator('..').locator(S.comparisonBadge)
+    await expect(positiveBadge).toHaveClass(/\bbg-green-100\b/)
+    await expect(positiveBadge).toHaveClass(/\btext-green-700\b/)
   })
 
   test('negative comparison shows red styling', async ({ page }) => {
-    // Story 88.3-FE: metrics grid visibility covers data-ready state
-    await expect(page.locator(S.metricsGrid)).toBeVisible({ timeout: TIMEOUTS.api })
+    await waitForMetricsTerminalState(page)
 
-    const negativeBadge = page.locator('text=/-\\d+[,.]?\\d*\\s*%/').first()
+    const negativeTrend = page
+      .locator('[data-testid="trend-indicator"][aria-label="Снижение"]')
+      .first()
+    test.skip(
+      (await negativeTrend.count()) === 0,
+      'Prepared dashboard data has no semantically negative comparison fixture'
+    )
 
-    if (await negativeBadge.isVisible({ timeout: 3000 }).catch(() => false)) {
-      const hasRedClass = await negativeBadge.evaluate(el => {
-        const classList = el.className + ' ' + (el.parentElement?.className || '')
-        return classList.includes('red') || classList.includes('destructive')
-      })
-      expect(hasRedClass || true).toBeTruthy()
-    }
+    const negativeBadge = negativeTrend.locator('..').locator(S.comparisonBadge)
+    await expect(negativeBadge).toHaveClass(/\bbg-red-100\b/)
+    await expect(negativeBadge).toHaveClass(/\btext-red-700\b/)
   })
 
   test('shows loading skeletons during initial load', async ({ page }) => {
@@ -188,14 +189,13 @@ test.describe('Daily Breakdown Chart (Story 62.6)', () => {
     await switchToChartView(page)
     await page.waitForTimeout(500) // intentional: allow recharts SVG to render after view-switch (no DOM signal for SVG mount)
 
-    // Look for chart or placeholder
-    const chartArea = page
+    const dailySection = page.locator(S.dailyBreakdownSection)
+    const chartState = page
       .locator(S.chartContainer)
-      .or(page.locator('[class*="chart"]'))
-      .or(page.locator('svg[class*="recharts"]'))
+      .or(dailySection.getByText('Нет данных для отображения', { exact: true }))
+      .or(dailySection.getByText(/^Ошибка загрузки данных:/))
 
-    const hasChart = (await chartArea.count()) > 0
-    expect(hasChart || true).toBeTruthy() // May be placeholder if not implemented
+    await expect(chartState.first()).toBeVisible({ timeout: TIMEOUTS.api })
   })
 
   test('chart has accessible description', async ({ page }) => {
@@ -212,25 +212,21 @@ test.describe('Daily Breakdown Chart (Story 62.6)', () => {
   test('chart tooltip functionality', async ({ page }) => {
     await switchToChartView(page)
 
-    // If recharts chart exists, try hovering
-    const chartArea = page.locator('.recharts-wrapper')
-    if (await chartArea.isVisible({ timeout: 3000 }).catch(() => false)) {
-      const box = await chartArea.boundingBox()
-      if (box) {
-        // Hover over chart area
-        await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2)
-        await page.waitForTimeout(500) // intentional: recharts tooltip hover debounce, no DOM-mount event
+    const dailySection = page.locator(S.dailyBreakdownSection)
+    const chart = page.locator(S.chartContainer)
+    const emptyOrErrorState = dailySection
+      .getByText('Нет данных для отображения', { exact: true })
+      .or(dailySection.getByText(/^Ошибка загрузки данных:/))
+    await expect(chart.or(emptyOrErrorState).first()).toBeVisible({ timeout: TIMEOUTS.api })
+    test.skip(
+      !(await chart.isVisible()),
+      'Prepared dashboard data resolved to an empty or error chart state with no hover points'
+    )
 
-        // Check if tooltip appears on hover
-        const tooltipVisible = await page
-          .locator('.recharts-tooltip-wrapper')
-          .isVisible()
-          .catch(() => false)
-
-        // Just verify no errors occurred (tooltip is optional)
-        expect(tooltipVisible || true).toBeTruthy()
-      }
-    }
+    const chartPoint = chart.locator('.recharts-line-dots circle.recharts-dot').first()
+    await expect(chartPoint).toBeVisible()
+    await chartPoint.hover()
+    await expect(chart.locator('.recharts-tooltip-wrapper')).toBeVisible()
   })
 })
 
@@ -419,15 +415,18 @@ test.describe('Daily Metrics Table (Story 62.8)', () => {
   })
 
   test('table has data rows', async ({ page }) => {
-    // Story 88.3-FE: wait for the table (data row presence is optional, same as before)
-    await expect(page.locator('table').first()).toBeVisible({ timeout: TIMEOUTS.api })
+    const dailySection = page.locator(S.dailyBreakdownSection)
+    const table = page.locator(S.dailyMetricsTable)
+    const emptyOrErrorState = dailySection
+      .getByText('Нет данных за выбранный период', { exact: true })
+      .or(dailySection.getByText(/^Ошибка загрузки данных:/))
+    await expect(table.or(emptyOrErrorState).first()).toBeVisible({ timeout: TIMEOUTS.api })
+    test.skip(
+      !(await table.isVisible()),
+      'Prepared dashboard data resolved to an empty or error table state with no daily rows'
+    )
 
-    const tableRows = page.locator('table tbody tr')
-    const rowCount = await tableRows.count()
-
-    // Should have data rows (7 for week, up to 31 for month)
-    // Or may show empty/loading state
-    expect(rowCount >= 0).toBeTruthy()
+    await expect(page.locator(S.tableRow).first()).toBeVisible()
   })
 
   test('table has totals row', async ({ page }) => {
@@ -461,14 +460,18 @@ test.describe('Daily Metrics Table (Story 62.8)', () => {
   })
 
   test('table displays currency formatted values', async ({ page }) => {
-    // Story 88.3-FE: wait for table (currency presence is data-dependent, same lenient assertion as before)
-    await expect(page.locator('table').first()).toBeVisible({ timeout: TIMEOUTS.api })
+    const dailySection = page.locator(S.dailyBreakdownSection)
+    const table = page.locator(S.dailyMetricsTable)
+    const emptyOrErrorState = dailySection
+      .getByText('Нет данных за выбранный период', { exact: true })
+      .or(dailySection.getByText(/^Ошибка загрузки данных:/))
+    await expect(table.or(emptyOrErrorState).first()).toBeVisible({ timeout: TIMEOUTS.api })
+    test.skip(
+      !(await table.isVisible()),
+      'Prepared dashboard data resolved to an empty or error table state with no currency cells'
+    )
 
-    const currencyValues = page.locator('table td').filter({ hasText: /₽/ })
-    const count = await currencyValues.count()
-
-    // Should have currency values if data exists
-    expect(count >= 0).toBeTruthy()
+    await expect(table.locator('tbody td').filter({ hasText: /₽/ }).first()).toBeVisible()
   })
 
   test('table scrolls horizontally on mobile', async ({ page }) => {
@@ -640,29 +643,17 @@ test.describe('Accessibility', () => {
   })
 
   test('focus indicators are visible', async ({ page }) => {
-    // Find interactive element
-    const interactiveElement = page.locator('button, a, [tabindex="0"]').first()
+    const chartViewButton = page.locator(S.viewChartButton)
+    await expect(chartViewButton).toBeVisible({ timeout: TIMEOUTS.api })
+    await chartViewButton.focus()
+    await expect(chartViewButton).toBeFocused()
 
-    if (await interactiveElement.isVisible()) {
-      await interactiveElement.focus()
+    const hasFocusIndicator = await chartViewButton.evaluate(el => {
+      const styles = window.getComputedStyle(el)
+      return Number.parseFloat(styles.outlineWidth) > 0 || styles.boxShadow !== 'none'
+    })
 
-      // Check for visible focus indicator
-      const focusStyles = await interactiveElement.evaluate(el => {
-        const styles = window.getComputedStyle(el)
-        return {
-          outline: styles.outline,
-          boxShadow: styles.boxShadow,
-          outlineWidth: styles.outlineWidth,
-        }
-      })
-
-      const hasFocusIndicator =
-        focusStyles.outline !== 'none' ||
-        focusStyles.boxShadow !== 'none' ||
-        focusStyles.outlineWidth !== '0px'
-
-      expect(hasFocusIndicator || true).toBeTruthy()
-    }
+    expect(hasFocusIndicator).toBe(true)
   })
 
   test('charts have accessible descriptions', async ({ page }) => {

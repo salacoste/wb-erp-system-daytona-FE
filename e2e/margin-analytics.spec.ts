@@ -27,43 +27,38 @@ test.describe('Margin Analytics', () => {
     })
 
     test('has week selector or week display', async ({ page }) => {
-      // Week selector or static week display
-      const weekSelector = page.locator(
-        '#week-selector, [id$="-selector"], button[role="combobox"], select'
-      )
-      const skeleton = page.locator('[class*="skeleton"]')
-      const weekText = page.locator('text=/W\\d{1,2}|неделя|week/i')
-
-      // Either selector, loading, or week text visible
-      const hasSelector = (await weekSelector.count()) > 0
-      const hasSkeleton = (await skeleton.count()) > 0
-      const hasWeekText = (await weekText.count()) > 0
-
-      // Page should have some week indication or be loading
-      expect(hasSelector || hasSkeleton || hasWeekText || true).toBeTruthy()
+      await expect(page.getByText('Выберите неделю для анализа', { exact: true })).toBeVisible({
+        timeout: TIMEOUTS.api,
+      })
+      await expect(page.locator('button[role="combobox"]').first()).toBeVisible()
     })
 
     test('displays data table or content', async ({ page }) => {
       await page.waitForTimeout(2000) // Wait for data
 
-      // Page should be functional with some content
-      await expect(page.locator('body')).toBeVisible()
-
-      // Any of: table, cards, list, empty state, loading
-      const hasContent =
-        (await page.locator('table, [class*="card"], [class*="skeleton"]').count()) > 0
-
-      expect(hasContent || true).toBeTruthy()
+      await expect(
+        page.getByRole('heading', { name: 'Маржинальность по товарам', level: 1 })
+      ).toBeVisible({ timeout: TIMEOUTS.api })
+      const contentState = page
+        .getByRole('table')
+        .or(page.getByText('Нет данных за выбранную неделю', { exact: true }))
+        .or(page.getByRole('button', { name: 'Повторить' }))
+        .first()
+      await expect(contentState).toBeVisible({ timeout: TIMEOUTS.api })
     })
 
     test('shows margin data or empty state', async ({ page }) => {
       await page.waitForTimeout(2000) // Wait for data
 
-      // Page should be functional
-      await expect(page.locator('body')).toBeVisible()
-
-      // May show percentages, empty state, or loading
-      expect(true).toBeTruthy()
+      await expect(
+        page.getByRole('heading', { name: 'Маржинальность по товарам', level: 1 })
+      ).toBeVisible({ timeout: TIMEOUTS.api })
+      const marginState = page
+        .getByRole('columnheader', { name: /Опер\. прибыль/ })
+        .or(page.getByText('Нет данных за выбранную неделю', { exact: true }))
+        .or(page.getByRole('button', { name: 'Повторить' }))
+        .first()
+      await expect(marginState).toBeVisible({ timeout: TIMEOUTS.api })
     })
 
     test('page is functional with URL filter', async ({ page }) => {
@@ -76,15 +71,15 @@ test.describe('Margin Analytics', () => {
     })
 
     test('shows summary statistics', async ({ page }) => {
-      // Summary section
-      const summary = page.locator('[class*="summary"], [class*="stats"]')
-      const hasSummary = (await summary.count()) > 0
-
-      // Or inline stats
-      const stats = page.locator('text=/итого|total|средн|avg/i')
-      const hasStats = (await stats.count()) > 0
-
-      expect(hasSummary || hasStats || true).toBeTruthy()
+      await expect(
+        page.getByRole('heading', { name: 'Маржинальность по товарам', level: 1 })
+      ).toBeVisible({ timeout: TIMEOUTS.api })
+      const summaryState = page
+        .getByText('Средняя маржа', { exact: true })
+        .or(page.getByText('Нет данных за выбранную неделю', { exact: true }))
+        .or(page.getByRole('button', { name: 'Повторить' }))
+        .first()
+      await expect(summaryState).toBeVisible({ timeout: TIMEOUTS.api })
     })
   })
 
@@ -105,15 +100,15 @@ test.describe('Margin Analytics', () => {
     test('shows aggregated brand data', async ({ page }) => {
       await page.waitForTimeout(2000)
 
-      // Table with brand data
-      const table = page.locator('table')
-      const hasTable = (await table.count()) > 0
-
-      // Or cards/list view
-      const brandCards = page.locator('[class*="brand"], [class*="card"]')
-      const hasCards = (await brandCards.count()) > 0
-
-      expect(hasTable || hasCards || true).toBeTruthy()
+      await expect(
+        page.getByRole('heading', { name: 'Маржинальность по брендам', level: 1 })
+      ).toBeVisible({ timeout: TIMEOUTS.api })
+      const brandState = page
+        .getByRole('table')
+        .or(page.getByText('Нет данных за выбранную неделю', { exact: true }))
+        .or(page.getByRole('button', { name: 'Повторить' }))
+        .first()
+      await expect(brandState).toBeVisible({ timeout: TIMEOUTS.api })
     })
 
     test('brand rows are sortable', async ({ page }) => {
@@ -147,15 +142,15 @@ test.describe('Margin Analytics', () => {
     test('shows aggregated category data', async ({ page }) => {
       await page.waitForTimeout(2000)
 
-      // Table with category data
-      const table = page.locator('table')
-      const hasTable = (await table.count()) > 0
-
-      // Or tree/hierarchical view
-      const categoryTree = page.locator('[class*="tree"], [class*="category"]')
-      const hasTree = (await categoryTree.count()) > 0
-
-      expect(hasTable || hasTree || true).toBeTruthy()
+      await expect(
+        page.getByRole('heading', { name: 'Маржинальность по категориям', level: 1 })
+      ).toBeVisible({ timeout: TIMEOUTS.api })
+      const categoryState = page
+        .getByRole('table')
+        .or(page.getByText('Нет данных за выбранную неделю', { exact: true }))
+        .or(page.getByRole('button', { name: 'Повторить' }))
+        .first()
+      await expect(categoryState).toBeVisible({ timeout: TIMEOUTS.api })
     })
   })
 
@@ -193,37 +188,51 @@ test.describe('Margin Analytics', () => {
     test('chart shows multiple weeks', async ({ page }) => {
       await page.waitForTimeout(2000)
 
-      // Week labels on chart
-      const weekLabels = page.locator('text=/W\\d{1,2}/')
-      const hasWeekLabels = (await weekLabels.count()) > 0
+      await expect(page.getByText('Динамика маржинальности', { exact: true })).toBeVisible({
+        timeout: TIMEOUTS.api,
+      })
+      const chart = page.locator('.recharts-line').first()
+      const emptyState = page.getByText(/Данные о трендах маржи пока недоступны/)
+      const errorState = page.getByText(/Не удалось загрузить данные трендов маржи/)
+      await expect(chart.or(emptyState).or(errorState).first()).toBeVisible({
+        timeout: TIMEOUTS.api,
+      })
 
-      // Or date labels
-      const dateLabels = page.locator('text=/\\d{2}\\.\\d{2}/')
-      const hasDateLabels = (await dateLabels.count()) > 0
-
-      expect(hasWeekLabels || hasDateLabels || true).toBeTruthy()
+      test.skip(
+        !(await chart.isVisible()),
+        'Margin-trend fixture has no chart data for a multiple-week assertion'
+      )
+      const weekLabels = page.locator('.recharts-xAxis .recharts-cartesian-axis-tick-value')
+      test.skip(
+        (await weekLabels.count()) < 2,
+        'Margin-trend fixture contains fewer than two weekly points'
+      )
+      expect(await weekLabels.count()).toBeGreaterThan(1)
     })
 
     test('can select time period', async ({ page }) => {
-      // Period selector
-      const periodSelector = page.locator('select, [class*="period"], button:has-text("недел")')
-      const hasSelector = (await periodSelector.count()) > 0
-
-      expect(hasSelector || true).toBeTruthy()
+      await expect(page.getByText('Период анализа', { exact: true })).toBeVisible()
+      await expect(page.getByRole('combobox', { name: 'Показать данные за:' })).toBeVisible()
     })
 
     test('shows margin trend line', async ({ page }) => {
       await page.waitForTimeout(2000)
 
-      // Line chart elements
-      const trendLine = page.locator('path[class*="line"], [class*="recharts-line"]')
-      const hasLine = (await trendLine.count()) > 0
+      await expect(page.getByText('Динамика маржинальности', { exact: true })).toBeVisible({
+        timeout: TIMEOUTS.api,
+      })
+      const trendLine = page.locator('.recharts-line').first()
+      const emptyState = page.getByText(/Данные о трендах маржи пока недоступны/)
+      const errorState = page.getByText(/Не удалось загрузить данные трендов маржи/)
+      await expect(trendLine.or(emptyState).or(errorState).first()).toBeVisible({
+        timeout: TIMEOUTS.api,
+      })
 
-      // Or bar chart
-      const bars = page.locator('rect[class*="bar"], [class*="recharts-bar"]')
-      const hasBars = (await bars.count()) > 0
-
-      expect(hasLine || hasBars || true).toBeTruthy()
+      test.skip(
+        !(await trendLine.isVisible()),
+        'Margin-trend fixture has no plotted line for the selected period'
+      )
+      await expect(trendLine).toBeVisible()
     })
   })
 

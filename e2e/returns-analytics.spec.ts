@@ -64,14 +64,17 @@ test.describe('Returns Analytics', () => {
 
   test('comparison period selector is available', async ({ page }) => {
     // ComparisonPeriodSelector toggle — Story 127.5-FE
-    const comparisonToggle = page
-      .getByRole('switch', { name: /сравнен/i })
-      .or(page.locator('button').filter({ hasText: /сравнен/i }))
-    const hasToggle = (await comparisonToggle.count()) > 0
+    const comparisonToggle = page.getByRole('switch', { name: 'Сравнение периодов' })
+    await expect(comparisonToggle).toBeVisible()
+    await comparisonToggle.click()
+    await expect(comparisonToggle).toBeChecked()
 
-    // Or the label text is present even if not yet toggled
-    const hasLabel = (await page.getByText(/сравнен/i).count()) > 0
+    const comparisonSummary = comparisonToggle.locator('xpath=../../div[2]')
+    await expect(comparisonSummary).toBeVisible()
+    await comparisonSummary.click()
 
-    expect(hasToggle || hasLabel || true).toBeTruthy()
+    const comparisonControls = page.getByText('Сравнить с:', { exact: true }).locator('..')
+    await expect(comparisonControls).toBeVisible()
+    await expect(comparisonControls.getByRole('combobox')).toBeVisible()
   })
 })

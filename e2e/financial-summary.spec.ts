@@ -19,6 +19,9 @@ test.describe('Financial Summary', () => {
     // settles → beforeEach times out at 60s and fails EVERY test (anti-pattern #9; validation
     // F-53, same class F-4/F-52 fixed in the setup files). Wait for the page shell instead.
     await expect(page.locator('main').first()).toBeVisible({ timeout: 15_000 })
+    await expect(page).toHaveURL(/\/analytics$/)
+    await expect(page.getByRole('heading', { name: 'Аналитика', level: 1 })).toBeVisible()
+    await expect(page.getByText('Финансовая сводка за период', { exact: true })).toBeVisible()
   })
 
   test.describe('Story 3.5: Financial Summary View', () => {
@@ -54,101 +57,95 @@ test.describe('Financial Summary', () => {
     })
 
     test('displays period comparison', async ({ page }) => {
-      // Comparison section (side-by-side weeks)
-      const comparisonSection = page.locator('[class*="comparison"], [class*="period"]')
-      const hasComparison = (await comparisonSection.count()) > 0
-
-      // Or two week columns
-      const weekColumns = page.locator('[class*="week-column"], [class*="col"]')
-      const hasColumns = (await weekColumns.count()) >= 2
-
-      expect(hasComparison || hasColumns || true).toBeTruthy()
+      await page.getByRole('button', { name: 'Сравнить периоды' }).click()
+      await expect(page.getByRole('button', { name: 'Один период' })).toBeVisible()
+      await expect(page.getByRole('combobox', { name: 'Период 1' })).toBeVisible()
+      await expect(page.getByRole('combobox', { name: 'Период 2' })).toBeVisible()
     })
 
     test('shows financial data or loading state', async ({ page }) => {
       await page.waitForTimeout(2000) // Wait for API data
 
-      // Page should be functional
-      await expect(page.locator('body')).toBeVisible()
-
-      // Should have some content (table, cards, loading, or empty state)
-      const hasContent =
-        (await page
-          .locator('table, [class*="card"], [class*="skeleton"], [class*="alert"]')
-          .count()) > 0
-
-      expect(hasContent || true).toBeTruthy()
+      const terminalState = page
+        .getByText('Доходы', { exact: true })
+        .or(page.getByText(/Нет данных для отображения|Не удалось загрузить финансовые данные/i))
+        .or(page.locator('.animate-pulse'))
+        .first()
+      await expect(terminalState).toBeVisible({ timeout: TIMEOUTS.api })
     })
 
     test('shows expense metrics group', async ({ page }) => {
       await page.waitForTimeout(2000)
 
-      // Expense section
-      const expenseSection = page.locator('text=/расход|expense|логистик|storage/i')
-      const hasExpense = (await expenseSection.count()) > 0
-
-      expect(hasExpense || true).toBeTruthy()
+      const expenseState = page
+        .getByText(/Расходы WB/)
+        .or(page.getByText(/Нет данных для отображения|Не удалось загрузить финансовые данные/i))
+        .or(page.locator('.animate-pulse'))
+        .first()
+      await expect(expenseState).toBeVisible({ timeout: TIMEOUTS.api })
     })
 
     test('shows adjustments metrics group', async ({ page }) => {
       await page.waitForTimeout(2000)
 
-      // Adjustments section
-      const adjustmentsSection = page.locator('text=/корректир|adjust|штраф|penalty/i')
-      const hasAdjustments = (await adjustmentsSection.count()) > 0
+      const financialData = page.getByText('Доходы', { exact: true })
+      const adjustments = page.getByText('Компенсации', { exact: true })
+      const adjustmentsState = financialData
+        .or(page.getByText(/Нет данных для отображения|Не удалось загрузить финансовые данные/i))
+        .or(page.locator('.animate-pulse'))
+        .first()
+      await expect(adjustmentsState).toBeVisible({ timeout: TIMEOUTS.api })
 
-      expect(hasAdjustments || true).toBeTruthy()
+      test.skip(
+        !(await financialData.isVisible()),
+        'Financial-summary fixture has no loaded data for compensation assertions'
+      )
+      test.skip(
+        !(await adjustments.isVisible()),
+        'Financial-summary fixture has no positive loyalty compensation'
+      )
+      await expect(adjustments).toBeVisible()
     })
 
     test('shows payout total', async ({ page }) => {
       await page.waitForTimeout(2000)
 
-      // Payout section
-      const payoutSection = page.locator('text=/итого|payout|к оплате|перечисл/i')
-      const hasPayout = (await payoutSection.count()) > 0
-
-      expect(hasPayout || true).toBeTruthy()
+      const payoutState = page
+        .getByText('Итого к оплате', { exact: true })
+        .or(page.getByText(/Нет данных для отображения|Не удалось загрузить финансовые данные/i))
+        .or(page.locator('.animate-pulse'))
+        .first()
+      await expect(payoutState).toBeVisible({ timeout: TIMEOUTS.api })
     })
 
     test('displays page content', async ({ page }) => {
       await page.waitForTimeout(2000) // Wait for data
 
-      // Page should be functional
-      await expect(page.locator('body')).toBeVisible()
-
-      // Has some content
-      expect(true).toBeTruthy()
+      await expect(page.getByRole('heading', { name: 'Аналитика', level: 1 })).toBeVisible()
+      await expect(page.getByText('Финансовая сводка за период', { exact: true })).toBeVisible()
     })
 
     test('metrics show formatted currency values', async ({ page }) => {
       await page.waitForTimeout(2000)
 
-      // Currency-formatted values
-      const currencyValues = page.locator('text=/[\\d\\s]+₽/')
-      const hasCurrency = (await currencyValues.count()) > 0
-
-      expect(hasCurrency || true).toBeTruthy()
+      const currencyState = page
+        .getByText(/[\d\s]+₽/)
+        .or(page.getByText(/Нет данных для отображения|Не удалось загрузить финансовые данные/i))
+        .or(page.locator('.animate-pulse'))
+        .first()
+      await expect(currencyState).toBeVisible({ timeout: TIMEOUTS.api })
     })
 
     test('has navigation cards to detailed analytics', async ({ page }) => {
-      // Navigation cards/links
-      const navCards = page.locator('[class*="card"] a, a[class*="card"], [class*="nav-card"]')
-      const hasCards = (await navCards.count()) > 0
-
-      // Or links to analytics pages
-      const analyticsLinks = page.locator('a[href*="analytics"], a[href*="sku"], a[href*="brand"]')
-      const hasLinks = (await analyticsLinks.count()) > 0
-
-      expect(hasCards || hasLinks || true).toBeTruthy()
+      await expect(page.getByRole('link', { name: /По товарам/ })).toBeVisible()
+      await expect(page.getByRole('link', { name: /По брендам/ })).toBeVisible()
     })
 
     test('can navigate to SKU analytics', async ({ page }) => {
-      const skuLink = page.locator('a[href*="sku"], button:has-text("SKU"), a:has-text("товар")')
-
-      if ((await skuLink.count()) > 0) {
-        await skuLink.first().click()
-        await expect(page).toHaveURL(/sku|analytics/, { timeout: TIMEOUTS.navigation })
-      }
+      const skuLink = page.getByRole('link', { name: /По товарам/ })
+      await expect(skuLink).toBeVisible()
+      await skuLink.click()
+      await expect(page).toHaveURL(/\/analytics\/sku$/, { timeout: TIMEOUTS.navigation })
     })
   })
 

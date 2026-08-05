@@ -13,6 +13,7 @@
  */
 
 import { test, expect } from '../fixtures/network-test'
+import { TIMEOUTS } from '../fixtures/test-data'
 
 // Routes
 const ORDERS_ANALYTICS_ROUTE = '/analytics/orders'
@@ -59,6 +60,10 @@ test.describe('Epic 51-FE: FBS Orders Analytics Page', () => {
   test.beforeEach(async ({ page }) => {
     await page.goto(ORDERS_ANALYTICS_ROUTE, { waitUntil: 'domcontentloaded' })
     await page.locator('main').waitFor({ state: 'visible' })
+    await expect(
+      page.getByRole('heading', { name: 'Аналитика заказов FBS', level: 1 })
+    ).toBeVisible()
+    await expect(page.locator('#orders-date-range')).toBeVisible()
     await page.waitForTimeout(2000) // Allow data to load
   })
 
@@ -206,28 +211,22 @@ test.describe('Epic 51-FE: FBS Orders Analytics Page', () => {
       await overviewTab.click()
       await page.locator('main').waitFor({ state: 'visible' })
 
-      // Look for summary metrics (cards with numbers/currency)
-      const summarySection = page.locator('[data-testid="overview-tab"]').or(page.locator('main'))
-
-      // Should contain numeric metrics (orders count, revenue, etc.)
-      const hasMetrics =
-        (await summarySection.locator('text=/\\d+\\s*(₽|шт\\.?|заказ)/').count()) > 0 ||
-        (await summarySection.locator('[class*="card"]').count()) > 0
-
-      expect(hasMetrics || true).toBeTruthy() // May have empty state if no data
+      const summaryGrid = page
+        .locator('[role="tabpanel"]:visible .grid')
+        .filter({ has: page.getByText('Всего заказов', { exact: true }) })
+        .first()
+      await expect(summaryGrid.getByText('Всего заказов', { exact: true })).toBeVisible()
+      await expect(summaryGrid.getByText('Выручка', { exact: true })).toBeVisible()
     })
 
     test('should display trends chart', async ({ page }) => {
-      // Chart may be rendered as canvas, svg, or recharts container
-      const chartContainer = page
-        .locator('[data-testid="trends-chart"]')
-        .or(page.locator('[class*="recharts"]'))
-        .or(page.locator('canvas'))
-        .or(page.locator('svg[class*="chart"]'))
-
-      // Chart should be visible (if data exists)
-      const chartExists = (await chartContainer.count()) > 0
-      expect(chartExists || true).toBeTruthy() // May have empty state if no data
+      await expect(page.getByText('Динамика заказов', { exact: true })).toBeVisible()
+      const chartState = page
+        .locator('.recharts-responsive-container')
+        .or(page.getByText(/нет данных|не удалось загрузить данные|выберите период/i))
+        .or(page.locator('.animate-pulse'))
+        .first()
+      await expect(chartState).toBeVisible()
     })
   })
 
@@ -239,41 +238,27 @@ test.describe('Epic 51-FE: FBS Orders Analytics Page', () => {
     })
 
     test('should display extended trends chart', async ({ page }) => {
-      // Chart container should exist
-      const chartContainer = page
-        .locator('[data-testid="extended-chart"]')
-        .or(page.locator('[data-testid="trends-chart"]'))
-        .or(page.locator('[class*="recharts"]'))
-
-      const chartExists = (await chartContainer.count()) > 0
-      expect(chartExists || true).toBeTruthy()
+      await expect(page.getByRole('heading', { name: 'Тренды заказов', level: 2 })).toBeVisible()
+      const chartState = page
+        .locator('.recharts-responsive-container')
+        .or(page.getByText(/нет данных|не удалось загрузить данные|выберите период/i))
+        .or(page.locator('.animate-pulse'))
+        .first()
+      await expect(chartState).toBeVisible()
     })
 
     test('should display aggregation toggle', async ({ page }) => {
-      // Look for aggregation controls (daily/weekly/monthly)
-      const aggregationControl = page
-        .locator('[data-testid="aggregation-toggle"]')
-        .or(page.locator('button:has-text("День")'))
-        .or(page.locator('button:has-text("Неделя")'))
-        .or(page.locator('[role="radiogroup"]'))
-
-      const hasAggregation = (await aggregationControl.count()) > 0
-      expect(hasAggregation || true).toBeTruthy()
+      await expect(page.getByText('Настройки отображения', { exact: true })).toBeVisible()
+      await expect(page.getByRole('button', { name: 'По дням' })).toBeVisible()
+      await expect(page.getByRole('button', { name: 'По неделям' })).toBeVisible()
+      await expect(page.getByRole('button', { name: 'По месяцам' })).toBeVisible()
     })
 
     test('should update chart when aggregation changes', async ({ page }) => {
-      const weeklyButton = page.locator('button:has-text("Неделя")')
-
-      if (await weeklyButton.isVisible()) {
-        await weeklyButton.click()
-        await page.locator('main').waitFor({ state: 'visible' })
-
-        // Verify selection changed
-        const isSelected =
-          (await weeklyButton.getAttribute('aria-pressed')) === 'true' ||
-          (await weeklyButton.getAttribute('data-state')) === 'on'
-        expect(isSelected || true).toBeTruthy()
-      }
+      const weeklyButton = page.getByRole('button', { name: 'По неделям' })
+      await expect(weeklyButton).toBeVisible()
+      await weeklyButton.click()
+      await expect(weeklyButton).toHaveClass(/bg-background/)
     })
   })
 
@@ -285,26 +270,33 @@ test.describe('Epic 51-FE: FBS Orders Analytics Page', () => {
     })
 
     test('should display seasonal patterns section', async ({ page }) => {
-      // Look for patterns container or list
-      const patternsSection = page
-        .locator('[data-testid="seasonal-patterns"]')
-        .or(page.locator('[data-testid="seasonality-tab"]'))
-        .or(page.locator('text=/сезон|месяц|квартал/i'))
+      const errorState = page.getByRole('alert').filter({
+        hasText: 'Не удалось загрузить сезонные паттерны. Попробуйте обновить страницу.',
+      })
+      const heading = page.getByText('Сезонные паттерны', { exact: true })
+      await expect(heading.or(errorState).first()).toBeVisible({ timeout: TIMEOUTS.api })
+      if (await errorState.isVisible()) {
+        await expect(errorState).toContainText(
+          'Не удалось загрузить сезонные паттерны. Попробуйте обновить страницу.'
+        )
+        return
+      }
 
-      const hasPatterns = (await patternsSection.count()) > 0
-      expect(hasPatterns || true).toBeTruthy()
+      await expect(heading).toBeVisible()
+      const patternsState = page
+        .getByText(
+          /Пиковый месяц|Нет данных для выбранного представления|Нет данных для отображения/i
+        )
+        .or(page.locator('.animate-pulse'))
+        .first()
+      await expect(patternsState).toBeVisible()
     })
 
     test('should display pattern type selector', async ({ page }) => {
-      // Look for pattern type buttons (monthly/weekly/quarterly)
-      const patternTypeSelector = page
-        .locator('[data-testid="pattern-type-selector"]')
-        .or(page.locator('button:has-text("Месяц")'))
-        .or(page.locator('button:has-text("Квартал")'))
-        .or(page.locator('button:has-text("Неделя")'))
-
-      const hasSelector = (await patternTypeSelector.count()) > 0
-      expect(hasSelector || true).toBeTruthy()
+      await expect(page.getByRole('button', { name: 'По месяцам' })).toBeVisible()
+      await expect(page.getByRole('button', { name: 'По дням недели' })).toBeVisible()
+      await expect(page.getByRole('button', { name: 'По кварталам' })).toBeVisible()
+      await expect(page.getByLabel('Период анализа')).toBeVisible()
     })
   })
 
@@ -316,58 +308,45 @@ test.describe('Epic 51-FE: FBS Orders Analytics Page', () => {
     })
 
     test('should display period comparison table', async ({ page }) => {
-      // Look for comparison table
-      const comparisonTable = page
-        .locator('[data-testid="comparison-table"]')
-        .or(page.locator('table'))
-        .or(page.locator('[data-testid="comparison-tab"]'))
+      const errorState = page.getByRole('alert').filter({
+        hasText: 'Не удалось загрузить данные сравнения. Попробуйте обновить страницу.',
+      })
+      const heading = page.getByText('Сравнение периодов', { exact: true })
+      await expect(heading.or(errorState).first()).toBeVisible({ timeout: TIMEOUTS.api })
+      if (await errorState.isVisible()) {
+        await expect(errorState).toContainText(
+          'Не удалось загрузить данные сравнения. Попробуйте обновить страницу.'
+        )
+        return
+      }
 
-      const hasTable = (await comparisonTable.count()) > 0
-      expect(hasTable || true).toBeTruthy()
+      await expect(heading).toBeVisible()
+      const comparisonState = page
+        .getByRole('table')
+        .or(page.getByText('Нет данных для сравнения', { exact: true }))
+        .or(page.locator('.animate-pulse'))
+        .first()
+      await expect(comparisonState).toBeVisible()
     })
 
     test('should display period selectors', async ({ page }) => {
-      // Look for period selection controls
-      const periodSelector = page
-        .locator('[data-testid="period-selector"]')
-        .or(page.locator('button:has-text("Период")'))
-        .or(page.locator('[data-testid="date-range"]'))
-
-      const hasPeriodSelector = (await periodSelector.count()) > 0
-      expect(hasPeriodSelector || true).toBeTruthy()
+      await expect(page.getByRole('button', { name: 'Месяц к месяцу' })).toBeVisible()
+      await expect(page.getByRole('button', { name: 'Квартал к кварталу' })).toBeVisible()
+      await expect(page.getByRole('button', { name: 'Год к году' })).toBeVisible()
     })
   })
 
   test.describe('Date Range Picker', () => {
     test('should open date picker on click', async ({ page }) => {
-      const datePickerTrigger = page
-        .locator('[id="orders-date-range"]')
-        .or(page.locator('button:has-text("Выберите период")'))
-        .or(page.locator('[data-testid="date-range-picker"]'))
-        .first()
-
-      if (await datePickerTrigger.isVisible()) {
-        await datePickerTrigger.click()
-        await page.waitForTimeout(500)
-
-        // Calendar popover should be visible
-        const calendar = page
-          .locator('[role="dialog"]')
-          .or(page.locator('[data-testid="calendar"]'))
-          .or(page.locator('[class*="calendar"]'))
-
-        const calendarVisible = (await calendar.count()) > 0
-        expect(calendarVisible || true).toBeTruthy()
-      }
+      const datePickerTrigger = page.locator('#orders-date-range')
+      await expect(datePickerTrigger).toBeVisible()
+      await datePickerTrigger.click()
+      await expect(page.getByRole('dialog')).toBeVisible()
     })
 
     test('should update URL with date range params', async ({ page }) => {
-      // Check if URL contains date params after page load
-      const url = page.url()
-      const hasDateParams = url.includes('from=') || url.includes('to=')
-
-      // Date params should be in URL (default 30 days)
-      expect(hasDateParams || true).toBeTruthy()
+      await expect(page).toHaveURL(/[?&]from=\d{4}-\d{2}-\d{2}/)
+      await expect(page).toHaveURL(/[?&]to=\d{4}-\d{2}-\d{2}/)
     })
   })
 
@@ -376,13 +355,17 @@ test.describe('Epic 51-FE: FBS Orders Analytics Page', () => {
       // Reload page and check for loading state
       await page.reload()
 
-      // Loading state should appear briefly (skeleton, spinner, or aria-busy)
-      const loadingSelector = '[class*="skeleton"], [data-testid="loading"], [aria-busy="true"]'
-      const hasLoading = (await page.locator(loadingSelector).count()) >= 0
-
-      // Loading state may be too fast to catch, so we just verify page loads
-      expect(hasLoading).toBeTruthy()
-      await page.locator('main').waitFor({ state: 'visible' })
+      const loadingState = page.locator(
+        '.animate-pulse, [data-testid="loading"], [aria-busy="true"]'
+      )
+      await expect(
+        page.getByRole('heading', { name: 'Аналитика заказов FBS', level: 1 })
+      ).toBeVisible()
+      test.skip(
+        (await loadingState.count()) === 0,
+        'Orders fixture loaded before the transient loading state could be observed'
+      )
+      await expect(loadingState.first()).toBeVisible()
     })
 
     test('should handle API errors gracefully', async ({ page }) => {

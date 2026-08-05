@@ -57,36 +57,19 @@ test.describe('Epic 51-FE: Analytics Hub Navigation', () => {
 
   test.describe('FBS Orders Card Navigation', () => {
     test('should display "Заказы FBS" card in navigation', async ({ page }) => {
-      // Look for FBS Orders card
-      const fbsOrdersCard = page
-        .locator('a[href="/analytics/orders"]')
-        .or(page.locator('a:has-text("Заказы FBS")'))
-        .or(page.locator('a:has-text("Заказы")').filter({ hasText: /FBS/ }))
-
-      // If the card exists, verify it's visible
-      if ((await fbsOrdersCard.count()) > 0) {
-        await expect(fbsOrdersCard.first()).toBeVisible()
-      } else {
-        // Card may be named differently - look for Orders link
-        const ordersLink = page.locator('a[href*="orders"]')
-        const hasOrdersLink = (await ordersLink.count()) > 0
-        expect(hasOrdersLink || true).toBeTruthy()
-      }
+      const fbsOrdersCard = page.locator('main').getByRole('link', { name: /Заказы FBS/ })
+      await expect(fbsOrdersCard).toBeVisible()
+      await expect(fbsOrdersCard).toHaveAttribute('href', ORDERS_ANALYTICS_ROUTE)
     })
 
     test('should navigate to /analytics/orders when FBS card is clicked', async ({ page }) => {
-      // Find and click the FBS Orders card
-      const fbsOrdersCard = page.locator('a[href="/analytics/orders"]').first()
+      const fbsOrdersCard = page.locator('main').getByRole('link', { name: /Заказы FBS/ })
 
-      if (await fbsOrdersCard.isVisible()) {
-        await fbsOrdersCard.click()
-        // Story 88.3-FE: assert URL directly (click triggers client-side nav; networkidle not needed)
-        await expect(page).toHaveURL(/\/analytics\/orders/, { timeout: 10000 })
-      } else {
-        // If card not found, try direct navigation
-        await page.goto(ORDERS_ANALYTICS_ROUTE, { waitUntil: 'domcontentloaded' })
-        await expect(page).toHaveURL(/\/analytics\/orders/)
-      }
+      await expect(fbsOrdersCard).toBeVisible()
+      await expect(fbsOrdersCard).toHaveAttribute('href', ORDERS_ANALYTICS_ROUTE)
+      await fbsOrdersCard.click()
+      // Story 88.3-FE: assert URL directly (click triggers client-side nav; networkidle not needed)
+      await expect(page).toHaveURL(/\/analytics\/orders$/, { timeout: 10000 })
     })
 
     test('should display card description text', async ({ page }) => {
@@ -104,30 +87,26 @@ test.describe('Epic 51-FE: Analytics Hub Navigation', () => {
     })
 
     test('should have proper visual feedback on hover', async ({ page }) => {
-      const fbsOrdersCard = page
-        .locator('a[href="/analytics/orders"]')
-        .or(page.locator('a:has-text("Заказы FBS")'))
-        .first()
+      const fbsOrdersCard = page.locator('main').getByRole('link', { name: /Заказы FBS/ })
 
-      if (await fbsOrdersCard.isVisible()) {
-        // Get initial styles
-        const initialTransform = await fbsOrdersCard.evaluate(
-          el => window.getComputedStyle(el).transform
-        )
+      await expect(fbsOrdersCard).toBeVisible()
+      await expect(fbsOrdersCard).toHaveAttribute('href', ORDERS_ANALYTICS_ROUTE)
+      const initialStyles = await fbsOrdersCard.evaluate(el => ({
+        transform: window.getComputedStyle(el).transform,
+        boxShadow: window.getComputedStyle(el).boxShadow,
+      }))
 
-        // Hover over card
-        await fbsOrdersCard.hover()
-        await page.waitForTimeout(300) // Wait for transition
+      await fbsOrdersCard.hover()
+      await page.waitForTimeout(300) // Wait for transition
 
-        // Card should have hover effect (shadow, scale, or background change)
-        const hoverShadow = await fbsOrdersCard.evaluate(
-          el => window.getComputedStyle(el).boxShadow
-        )
-
-        // Either shadow or transform should change on hover
-        const hasHoverEffect = hoverShadow !== 'none' || initialTransform !== 'none'
-        expect(hasHoverEffect || true).toBeTruthy()
-      }
+      const hoverStyles = await fbsOrdersCard.evaluate(el => ({
+        transform: window.getComputedStyle(el).transform,
+        boxShadow: window.getComputedStyle(el).boxShadow,
+      }))
+      expect(
+        hoverStyles.transform !== initialStyles.transform ||
+          hoverStyles.boxShadow !== initialStyles.boxShadow
+      ).toBe(true)
     })
   })
 
@@ -177,15 +156,15 @@ test.describe('Epic 51-FE: Analytics Hub Navigation', () => {
     })
 
     test('should activate card link on Enter key', async ({ page }) => {
-      const fbsOrdersCard = page.locator('a[href="/analytics/orders"]').first()
+      const fbsOrdersCard = page.locator('main').getByRole('link', { name: /Заказы FBS/ })
 
-      if (await fbsOrdersCard.isVisible()) {
-        // Focus and press Enter
-        await fbsOrdersCard.focus()
-        await page.keyboard.press('Enter')
-        // Story 88.3-FE: assert URL directly (not networkidle)
-        await expect(page).toHaveURL(/\/analytics\/orders/, { timeout: 10000 })
-      }
+      await expect(fbsOrdersCard).toBeVisible()
+      await expect(fbsOrdersCard).toHaveAttribute('href', ORDERS_ANALYTICS_ROUTE)
+      await fbsOrdersCard.focus()
+      await expect(fbsOrdersCard).toBeFocused()
+      await page.keyboard.press('Enter')
+      // Story 88.3-FE: assert URL directly (not networkidle)
+      await expect(page).toHaveURL(/\/analytics\/orders$/, { timeout: 10000 })
     })
   })
 
