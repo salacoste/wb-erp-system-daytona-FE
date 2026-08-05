@@ -11,6 +11,7 @@ on:
 
 permissions:
   contents: write
+  pull-requests: write
 
 concurrency:
   group: openwiki-frontend
@@ -34,17 +35,14 @@ jobs:
         with:
           node-version: '24'
 
-      - name: Generate frontend OpenWiki (latest version)
+      - name: Generate frontend OpenWiki
         run: |
-          # openwiki 0.2.0+ requires YAML front matter in openwiki/*.md — added 2026-07-22 to all
-          # 6 frontend openwiki files (type/title/description), unblocking the latest version.
-          OPENWIKI_VERSION="$(npm view openwiki version)"
-          echo "Using openwiki@$OPENWIKI_VERSION"
-          # Clear the npx cache so openwiki's native dep (better-sqlite3) is rebuilt for the
-          # current Node (24) via prebuild-install. Without this, npx reuses a stale Node-20
-          # binary from the cache → "NODE_MODULE_VERSION 127 vs 137" load error → exit 1.
-          rm -rf ~/.npm/_npx
-          npx --yes "openwiki@$OPENWIKI_VERSION" code --update --print
+          set -euo pipefail
+          # Keep npx and native dependencies isolated from persistent self-hosted runner state.
+          npm_config_cache="${RUNNER_TEMP}/openwiki-npm-${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}"
+          export npm_config_cache
+          mkdir -p "$npm_config_cache"
+          npx --yes "openwiki@0.3.0" code --update --print
         env:
           # z.ai GLM 5.2 via Anthropic-compatible endpoint.
           # NOTE: the openai/coding-paas endpoint does NOT work with openwiki — @langchain/openai
@@ -56,18 +54,24 @@ jobs:
           OPENWIKI_MODEL_ID: glm-5.2
 
       - name: Preserve scheduled self-hosted workflow
-        run: git restore --source=HEAD -- .github/workflows/openwiki-update.yml
+        run: |
+          set -euo pipefail
+          git restore --source=HEAD -- .github/workflows/openwiki-update.yml
 
       - name: Preserve BMad framework AGENTS.md files
         # AGENTS.md is a BMad framework file. OpenWiki appends agent guidance to it —
         # revert so BMad routing stays authoritative and the unstaged-changes guard below passes.
-        run: git restore --source=HEAD -- ':(glob)**/AGENTS.md'
+        run: |
+          set -euo pipefail
+          git restore --source=HEAD -- ':(glob)**/AGENTS.md'
 
       - name: Show generated changes
-        run: git status --short
+        run: |
+          set -euo pipefail
+          git status --short
 
       - name: Commit OpenWiki updates
-        if: github.ref == 'refs/heads/main'
+        id: commit
         run: |
           set -euo pipefail
           git config user.name "OpenWiki Bot"
@@ -75,11 +79,63 @@ jobs:
           # AGENTS.md is intentionally EXCLUDED — it is a BMad framework file, preserved above.
           git add openwiki/ CLAUDE.md
 
+          if ! git diff --cached --quiet -- . \
+            ':(top,exclude)openwiki' \
+            ':(top,exclude)CLAUDE.md'; then
+            echo "Refusing to commit staged changes outside openwiki/ and CLAUDE.md." >&2
+            git diff --cached --name-status >&2
+            exit 1
+          fi
+
+          if ! git diff --quiet; then
+            echo "Refusing to ignore unexpected unstaged tracked changes." >&2
+            git status --short >&2
+            exit 1
+          fi
+
+          if IFS= read -r -d '' untracked_file \
+            < <(git ls-files --others --exclude-standard -z); then
+            echo "Refusing to ignore unexpected untracked files." >&2
+            printf 'First unexpected path: %q\n' "$untracked_file" >&2
+            git status --short --untracked-files=all >&2
+            exit 1
+          fi
+
           if git diff --cached --quiet; then
             echo "No OpenWiki changes to commit."
+            echo "has_changes=false" >> "$GITHUB_OUTPUT"
             exit 0
           fi
 
           git commit -m "docs: update frontend OpenWiki [skip ci]"
-          git pull --rebase origin main
-          git push origin HEAD:main
+          echo "has_changes=true" >> "$GITHUB_OUTPUT"
+
+      - name: Open pull request for main
+        if: steps.commit.outputs.has_changes == 'true' && github.ref == 'refs/heads/main'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          command -v gh >/dev/null 2>&1
+          branch_name="automation/openwiki-${GITHUB_RUN_ID}"
+          git check-ref-format --branch "$branch_name"
+          git switch -c "$branch_name"
+          git push --set-upstream origin "$branch_name"
+          gh pr create \
+            --base "main" \
+            --head "$branch_name" \
+            --title "docs: update frontend OpenWiki" \
+            --body "Automated OpenWiki refresh from workflow run ${GITHUB_RUN_ID}."
+
+      - name: Push updates back to dispatched branch
+        if: steps.commit.outputs.has_changes == 'true' && github.event_name == 'workflow_dispatch' && github.ref != 'refs/heads/main'
+        run: |
+          set -euo pipefail
+          target_branch="${GITHUB_REF_NAME}"
+          if [[ "$target_branch" == "main" ]]; then
+            echo "Refusing to publish story output directly to main." >&2
+            exit 1
+          fi
+          git check-ref-format --branch "$target_branch"
+          target_refspec="HEAD:refs/heads/${target_branch}"
+          git push origin "$target_refspec"
