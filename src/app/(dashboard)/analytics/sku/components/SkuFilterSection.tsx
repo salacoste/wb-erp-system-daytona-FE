@@ -6,6 +6,8 @@
 
 import { DateRangePicker } from '@/components/custom/DateRangePicker'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Label } from '@/components/ui/label'
+import { Switch } from '@/components/ui/switch'
 import { TrendingUp } from 'lucide-react'
 import { formatPercentage } from '@/lib/utils'
 import type { SkuPageStats } from './sku-page-stats'
@@ -14,6 +16,8 @@ interface SkuFilterSectionProps {
   weekStart: string
   weekEnd: string
   onRangeChange: (start: string, end: string) => void
+  historicalSppEnabled: boolean
+  onHistoricalSppChange: (enabled: boolean) => void
   stats: SkuPageStats | null
 }
 
@@ -21,6 +25,8 @@ export function SkuFilterSection({
   weekStart,
   weekEnd,
   onRangeChange,
+  historicalSppEnabled,
+  onHistoricalSppChange,
   stats,
 }: SkuFilterSectionProps) {
   return (
@@ -38,6 +44,22 @@ export function SkuFilterSection({
             onRangeChange={onRangeChange}
             maxWeeks={52}
           />
+          <div className="mt-4 border-t pt-4">
+            <div className="flex items-center justify-between gap-3">
+              <Label htmlFor="historical-spp-toggle" className="cursor-pointer text-sm font-medium">
+                Историческое СПП из отчётов WB
+              </Label>
+              <Switch
+                id="historical-spp-toggle"
+                checked={historicalSppEnabled}
+                onCheckedChange={onHistoricalSppChange}
+                aria-label="Показывать фактическое историческое СПП из финансовых отчётов WB"
+              />
+            </div>
+            <p className="mt-1 text-xs text-gray-500">
+              Фактические значения по транзакциям финансовых отчётов WB.
+            </p>
+          </div>
         </CardContent>
       </Card>
 

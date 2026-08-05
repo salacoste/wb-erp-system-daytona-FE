@@ -165,6 +165,8 @@ function MarginAnalysisBySkuPageContent() {
           weekStart={state.weekStart}
           weekEnd={state.weekEnd}
           onRangeChange={state.handleRangeChange}
+          historicalSppEnabled={state.historicalSppEnabled}
+          onHistoricalSppChange={state.handleHistoricalSppChange}
           stats={stats}
         />
 
@@ -181,7 +183,7 @@ function MarginAnalysisBySkuPageContent() {
             />
 
             {/* SKU Financials Table + Help */}
-            <SkuTableSection skuData={skuData} />
+            <SkuTableSection skuData={skuData} showHistoricalSpp={state.historicalSppEnabled} />
           </>
         )}
       </div>

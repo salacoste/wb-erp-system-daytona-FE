@@ -13,6 +13,11 @@ import { useCabinetLevelExpenses, useMarginAnalyticsBySku } from '@/hooks/useMar
 import { useSkuFinancials } from '@/hooks/useSkuFinancials'
 import type { MarginAnalyticsSku } from '@/types/api'
 import type { SkuFinancialParity } from '@/types/sku-financials'
+import {
+  readHistoricalSppEnabled,
+  selectHistoricalSppValues,
+  setHistoricalSppSearchParam,
+} from './historical-spp-state'
 
 export function useSkuPageState() {
   const router = useRouter()
@@ -33,6 +38,7 @@ export function useSkuPageState() {
 
   // Story 4.9: Read nm_id filter from URL query params
   const nmIdFilter = searchParams.get('nm_id')
+  const historicalSppEnabled = readHistoricalSppEnabled(searchParams)
 
   // Story 6.5-FE: Export dialog state
   const [showExportDialog, setShowExportDialog] = useState(false)
@@ -97,7 +103,7 @@ export function useSkuPageState() {
   } = useMarginAnalyticsBySku(
     {
       ...parityPeriodParams,
-      includeCogs: true,
+      includeCogs: historicalSppEnabled,
       includeAds: true,
       includeStock: true,
       limit: 500,
@@ -110,7 +116,10 @@ export function useSkuPageState() {
     if (!baseSkuFinancialsData) return baseSkuFinancialsData
 
     const parityByNmId = new Map(
-      (skuParityData?.data ?? []).map(item => [String(item.nm_id), toSkuParity(item)])
+      (skuParityData?.data ?? []).map(item => [
+        String(item.nm_id),
+        toSkuParity(item, historicalSppEnabled),
+      ])
     )
 
     return {
@@ -120,7 +129,7 @@ export function useSkuPageState() {
         parity: parityByNmId.get(String(item.nmId)) ?? item.parity,
       })),
     }
-  }, [baseSkuFinancialsData, skuParityData])
+  }, [baseSkuFinancialsData, historicalSppEnabled, skuParityData])
 
   // Handle week change — preserve existing params (e.g. group_by) so FR-7 variant
   // mode survives a week change; only weekStart/weekEnd/nm_id are re-scoped.
@@ -145,6 +154,11 @@ export function useSkuPageState() {
     router.push(`/analytics/sku?${params.toString()}`)
   }
 
+  const handleHistoricalSppChange = (enabled: boolean) => {
+    const params = setHistoricalSppSearchParam(searchParams, enabled)
+    router.replace(`/analytics/sku?${params.toString()}`, { scroll: false })
+  }
+
   // Check if using date range (multiple weeks)
   const isRangeMode = weekStart !== weekEnd
 
@@ -157,6 +171,7 @@ export function useSkuPageState() {
     weekEnd,
     isInitialized,
     nmIdFilter,
+    historicalSppEnabled,
     isRangeMode,
     filteredProductName,
     // Export dialog
@@ -176,6 +191,7 @@ export function useSkuPageState() {
     // Handlers
     handleRangeChange,
     handleClearFilter,
+    handleHistoricalSppChange,
     refetch: () => {
       void refetch()
       void refetchSkuParity()
@@ -187,7 +203,8 @@ export function useSkuPageState() {
 /** Return type helper for consumers */
 export type SkuPageState = ReturnType<typeof useSkuPageState>
 
-function toSkuParity(item: MarginAnalyticsSku): SkuFinancialParity {
+function toSkuParity(item: MarginAnalyticsSku, historicalSppEnabled: boolean): SkuFinancialParity {
+  const historicalSpp = selectHistoricalSppValues(item, historicalSppEnabled)
   return {
     advertisingCost: item.advertising_cost ?? null,
     drrPct: item.drr_pct ?? null,
@@ -195,8 +212,10 @@ function toSkuParity(item: MarginAnalyticsSku): SkuFinancialParity {
     taxAllocated: item.tax_allocated ?? null,
     netProfitAfterTax: item.net_profit_after_tax ?? null,
     netMarginAfterTaxPct: item.net_margin_after_tax_pct ?? null,
-    sppRub: item.spp_rub ?? null,
-    sppPct: item.spp_pct ?? null,
+    // Do not carry enabled-cache values into the disabled view, even if a caller
+    // accidentally supplies a stale object while the false-key query is loading.
+    sppRub: historicalSpp.sppRub,
+    sppPct: historicalSpp.sppPct,
     cancellationsQty: item.cancellations_qty ?? null,
     stockFbs: item.stock_fbs ?? null,
     stockFbo: item.stock_fbo ?? null,

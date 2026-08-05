@@ -9,9 +9,10 @@ import type { SkuFinancialItem } from '@/types/sku-financials'
 
 interface SkuTableSectionProps {
   skuData: SkuFinancialItem[]
+  showHistoricalSpp: boolean
 }
 
-export function SkuTableSection({ skuData }: SkuTableSectionProps) {
+export function SkuTableSection({ skuData, showHistoricalSpp }: SkuTableSectionProps) {
   return (
     <>
       {/* SKU Financials Table - Epic 31 */}
@@ -23,7 +24,12 @@ export function SkuTableSection({ skuData }: SkuTableSectionProps) {
         </CardHeader>
         <CardContent>
           {skuData.length > 0 ? (
-            <SkuFinancialsTable data={skuData} showVisibility={true} showExpenseBreakdown={true} />
+            <SkuFinancialsTable
+              data={skuData}
+              showVisibility={true}
+              showExpenseBreakdown={true}
+              showHistoricalSpp={showHistoricalSpp}
+            />
           ) : (
             <div className="rounded-lg border border-gray-200 bg-gray-50 p-12 text-center">
               <p className="text-gray-600">Нет данных за выбранную неделю</p>

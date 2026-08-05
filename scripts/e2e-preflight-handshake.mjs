@@ -7,11 +7,15 @@ import path from 'node:path'
 export const HANDSHAKE_FILE_VARIABLE = 'E2E_PREFLIGHT_HANDSHAKE_FILE'
 export const HANDSHAKE_TOKEN_VARIABLE = 'E2E_PREFLIGHT_HANDSHAKE_TOKEN'
 export const HANDSHAKE_VERIFIED_VARIABLE = 'E2E_PREFLIGHT_HANDSHAKE_VERIFIED'
+export const HISTORICAL_SPP_COMMAND_VARIABLE = 'HISTORICAL_SPP_EXACT_COMMAND_VERIFIED'
 
 const HANDSHAKE_VERSION = 1
 const HANDSHAKE_MAX_AGE_MS = 60_000
 const TOKEN_PATTERN = /^[a-f0-9]{64}$/
 const CI_TRUE_VALUES = new Set(['1', 'true'])
+const HISTORICAL_SPP_SPEC = 'e2e/historical-spp-analytics.spec.ts'
+const HISTORICAL_SPP_OUTPUT_PATTERN =
+  /^--output=(?:\.\.\/|\.\/)?\.omx\/ultragoal\/evidence\/story-128-27\/frontend\/test-results$/
 
 function handshakeError() {
   return new Error(
@@ -32,6 +36,35 @@ export function isCIEnvironment(environment = process.env) {
       .trim()
       .toLowerCase()
   )
+}
+
+export function isHistoricalSppExactCommand(args = process.argv) {
+  const testIndex = args.lastIndexOf('test')
+  if (testIndex === -1) return false
+
+  const commandArgs = args.slice(testIndex + 1)
+  return (
+    commandArgs.length === 3 &&
+    commandArgs[0] === HISTORICAL_SPP_SPEC &&
+    commandArgs[1] === '--reporter=html' &&
+    HISTORICAL_SPP_OUTPUT_PATTERN.test(commandArgs[2])
+  )
+}
+
+export function establishHistoricalSppExecution(args = process.argv, environment = process.env) {
+  if (isHistoricalSppExactCommand(args)) {
+    environment[HISTORICAL_SPP_COMMAND_VARIABLE] = '1'
+    return true
+  }
+
+  return (
+    environment[HISTORICAL_SPP_COMMAND_VARIABLE] === '1' &&
+    environment.TEST_WORKER_INDEX !== undefined
+  )
+}
+
+export function requiresLocalE2EPreflight(args = process.argv, environment = process.env) {
+  return !isCIEnvironment(environment) && !establishHistoricalSppExecution(args, environment)
 }
 
 export function assertPlaywrightDependenciesEnabled(args = process.argv) {
