@@ -9,7 +9,7 @@
 
 'use client'
 
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, type RefObject } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
@@ -42,6 +42,8 @@ export interface CreateSupplyModalProps {
   open: boolean
   /** Callback when modal open state changes */
   onOpenChange: (open: boolean) => void
+  /** Focus target for the externally controlled dialog trigger */
+  returnFocusRef?: RefObject<HTMLElement | null>
 }
 
 /**
@@ -57,7 +59,7 @@ export interface CreateSupplyModalProps {
  * const [isOpen, setIsOpen] = useState(false)
  * <CreateSupplyModal open={isOpen} onOpenChange={setIsOpen} />
  */
-export function CreateSupplyModal({ open, onOpenChange }: CreateSupplyModalProps) {
+export function CreateSupplyModal({ open, onOpenChange, returnFocusRef }: CreateSupplyModalProps) {
   const { mutate, isPending } = useCreateSupply()
   const inputRef = useRef<HTMLInputElement>(null)
 
@@ -106,7 +108,15 @@ export function CreateSupplyModal({ open, onOpenChange }: CreateSupplyModalProps
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-[400px]" aria-describedby="create-supply-description">
+      <DialogContent
+        className="max-w-[400px]"
+        aria-describedby="create-supply-description"
+        onCloseAutoFocus={event => {
+          if (!returnFocusRef?.current) return
+          event.preventDefault()
+          returnFocusRef.current.focus()
+        }}
+      >
         <DialogHeader>
           <DialogTitle>Новая поставка</DialogTitle>
           <DialogDescription id="create-supply-description">

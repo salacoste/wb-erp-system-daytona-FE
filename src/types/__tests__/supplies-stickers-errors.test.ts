@@ -75,57 +75,32 @@ describe('GenerateStickersRequest Interface', () => {
 
 describe('GenerateStickersResponse Interface', () => {
   describe('required fields', () => {
-    it('should require document as SupplyDocument', () => {
+    it('matches the flat backend document metadata contract', () => {
       const res = mockGenerateStickersResponsePng
-      expect(res.document).toBeDefined()
-      expect(typeof res.document.type).toBe('string')
-      expect(typeof res.document.format).toBe('string')
-      expect(typeof res.document.generatedAt).toBe('string')
-      expect(typeof res.document.downloadUrl).toBe('string')
-    })
-
-    it('should require message as string', () => {
-      const res = mockGenerateStickersResponsePng
-      expect(typeof res.message).toBe('string')
-      expect(res.message.length).toBeGreaterThan(0)
-    })
-  })
-
-  describe('optional data field', () => {
-    it('should allow data as optional string (base64)', () => {
-      const res: { data?: string } = mockGenerateStickersResponsePng
-      expect(res.data === undefined || typeof res.data === 'string').toBe(true)
-    })
-
-    it('should have data for PNG format', () => {
-      expect(mockGenerateStickersResponsePng.data).toBeDefined()
-      expect(typeof mockGenerateStickersResponsePng.data).toBe('string')
-    })
-
-    it('should have data for SVG format', () => {
-      expect(mockGenerateStickersResponseSvg.data).toBeDefined()
-      expect(typeof mockGenerateStickersResponseSvg.data).toBe('string')
-    })
-
-    it('should not have data for ZPL format', () => {
-      expect(mockGenerateStickersResponseZpl.data).toBeUndefined()
+      expect(res).toEqual({
+        id: 'sticker-doc-png',
+        docType: 'STICKER',
+        format: 'png',
+        fileSize: 245760,
+        generatedAt: '2026-01-15T16:05:00.000Z',
+      })
     })
   })
 
   describe('fixture validation', () => {
-    it('should validate mockGenerateStickersResponsePng has data', () => {
-      expect(mockGenerateStickersResponsePng.data).toBeTruthy()
-      expect(mockGenerateStickersResponsePng.document.format).toBe('png')
+    it('uses PNG backend metadata', () => {
+      expect(mockGenerateStickersResponsePng.docType).toBe('STICKER')
+      expect(mockGenerateStickersResponsePng.format).toBe('png')
     })
 
-    it('should validate mockGenerateStickersResponseSvg has data', () => {
-      expect(mockGenerateStickersResponseSvg.data).toBeTruthy()
-      expect(mockGenerateStickersResponseSvg.document.format).toBe('svg')
+    it('uses SVG backend metadata', () => {
+      expect(mockGenerateStickersResponseSvg.docType).toBe('STICKER')
+      expect(mockGenerateStickersResponseSvg.format).toBe('svg')
     })
 
-    it('should validate mockGenerateStickersResponseZpl has no data', () => {
-      expect(mockGenerateStickersResponseZpl.data).toBeUndefined()
-      expect(mockGenerateStickersResponseZpl.document.format).toBe('zpl')
+    it('reflects the backend zpl to zplv mapping', () => {
+      expect(mockGenerateStickersResponseZpl.docType).toBe('STICKER')
+      expect(mockGenerateStickersResponseZpl.format).toBe('zplv')
     })
   })
 })

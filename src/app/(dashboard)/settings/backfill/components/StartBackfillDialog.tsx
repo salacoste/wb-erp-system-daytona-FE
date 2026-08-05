@@ -8,7 +8,7 @@
 
 'use client'
 
-import { useState } from 'react'
+import { useState, type RefObject } from 'react'
 import { Play, Loader2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import {
@@ -36,6 +36,7 @@ interface StartBackfillDialogProps {
   onOpenChange: (open: boolean) => void
   onStart: (request: StartBackfillRequest) => void
   isStarting?: boolean
+  returnFocusRef?: RefObject<HTMLElement | null>
 }
 
 /**
@@ -47,6 +48,7 @@ export function StartBackfillDialog({
   onOpenChange,
   onStart,
   isStarting = false,
+  returnFocusRef,
 }: StartBackfillDialogProps) {
   const [selectedCabinetId, setSelectedCabinetId] = useState<string>('')
 
@@ -70,7 +72,14 @@ export function StartBackfillDialog({
 
   return (
     <Dialog open={isOpen} onOpenChange={handleOpenChange}>
-      <DialogContent className="sm:max-w-md">
+      <DialogContent
+        className="sm:max-w-md"
+        onCloseAutoFocus={event => {
+          if (!returnFocusRef?.current) return
+          event.preventDefault()
+          returnFocusRef.current.focus()
+        }}
+      >
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <Play className="h-5 w-5 text-primary" />

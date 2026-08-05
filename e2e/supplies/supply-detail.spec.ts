@@ -20,6 +20,10 @@ import { MUTATING_E2E_SKIP_REASON, shouldSkipMutatingE2E } from '../fixtures/mut
 
 // Routes
 const SUPPLIES_LIST_ROUTE = '/supplies'
+const DOCUMENT_DOWNLOAD_SUPPLY_ID = 'story-162-4-document-download-supply'
+const DOCUMENT_DOWNLOAD_PATH =
+  `/v1/supplies/${DOCUMENT_DOWNLOAD_SUPPLY_ID}/documents/STICKER` as const
+const DOCUMENT_DOWNLOAD_CONTENT = 'story-162-4-document-download'
 
 // Selectors for supply detail page
 const SELECTORS = {
@@ -103,6 +107,71 @@ async function navigateToSupplyDetail(page: Page, supplyId?: string) {
       await page.locator('main').waitFor({ state: 'visible' })
     }
   }
+}
+
+async function installDocumentDownloadFixture(page: Page) {
+  await page.route(
+    new RegExp(`/v1/supplies/${DOCUMENT_DOWNLOAD_SUPPLY_ID}(?:\\?|$)`),
+    async route => {
+      if (route.request().method() !== 'GET') {
+        await route.fulfill({
+          status: 501,
+          contentType: 'application/json',
+          body: JSON.stringify({
+            message: `Unexpected document-download fixture request: ${route.request().method()} ${new URL(route.request().url()).pathname}`,
+          }),
+        })
+        return
+      }
+
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify({
+          id: DOCUMENT_DOWNLOAD_SUPPLY_ID,
+          wbSupplyId: 'WB-STORY-162-4',
+          name: 'Story 162.4 document download supply',
+          status: 'DELIVERED',
+          ordersCount: 0,
+          createdAt: '2026-08-05T10:00:00.000Z',
+          closedAt: '2026-08-05T11:00:00.000Z',
+          syncedAt: '2026-08-05T12:00:00.000Z',
+          warehouseId: 507,
+          warehouseName: 'Коледино',
+          orders: [],
+          documents: [
+            {
+              type: 'sticker',
+              format: 'png',
+              generatedAt: '2026-08-05T12:05:00.000Z',
+              downloadUrl: DOCUMENT_DOWNLOAD_PATH,
+              sizeBytes: DOCUMENT_DOWNLOAD_CONTENT.length,
+            },
+          ],
+        }),
+      })
+    }
+  )
+
+  await page.route(new RegExp(`${DOCUMENT_DOWNLOAD_PATH}(?:\\?|$)`), async route => {
+    if (route.request().method() !== 'GET') {
+      await route.fulfill({
+        status: 501,
+        contentType: 'application/json',
+        body: JSON.stringify({
+          message: `Unexpected document-download fixture request: ${route.request().method()} ${new URL(route.request().url()).pathname}`,
+        }),
+      })
+      return
+    }
+
+    await route.fulfill({
+      status: 200,
+      contentType: 'image/png',
+      headers: { 'Content-Disposition': 'attachment; filename="STICKER.png"' },
+      body: DOCUMENT_DOWNLOAD_CONTENT,
+    })
+  })
 }
 
 test.describe('Supply Detail Page - Epic 53-FE', () => {
@@ -530,26 +599,38 @@ test.describe('Supply Detail Page - Epic 53-FE', () => {
     })
 
     test('should download document on button click', async ({ page }) => {
-      await page.goto(`${SUPPLIES_LIST_ROUTE}?status=DELIVERED`, { waitUntil: 'domcontentloaded' })
+      await installDocumentDownloadFixture(page)
+
+      await page.goto(`/supplies/${DOCUMENT_DOWNLOAD_SUPPLY_ID}`, {
+        waitUntil: 'domcontentloaded',
+      })
       await page.locator('main').waitFor({ state: 'visible' })
-      await page.waitForTimeout(2000)
+      await expect(
+        page.getByRole('heading', { name: 'Story 162.4 document download supply', exact: true })
+      ).toBeVisible()
+      await expect(page.getByRole('heading', { name: 'Документы', exact: true })).toBeVisible()
 
-      const firstRow = page.locator('tbody tr:first-child')
-      if (await firstRow.isVisible()) {
-        await firstRow.click()
-        await page.locator('main').waitFor({ state: 'visible' })
+      const downloadButton = page.getByRole('button', {
+        name: 'Скачать Стикеры (PNG)',
+        exact: true,
+      })
+      await expect(downloadButton).toBeVisible()
 
-        const downloadButton = page.locator('button:has-text("Скачать"), a:has-text("Скачать")')
-        if ((await downloadButton.count()) > 0 && (await downloadButton.first().isVisible())) {
-          // Start waiting for download
-          const downloadPromise = page.waitForEvent('download', { timeout: 5000 }).catch(() => null)
-          await downloadButton.first().click()
-          const download = await downloadPromise
+      const responsePromise = page.waitForResponse(response => {
+        return (
+          response.request().method() === 'GET' &&
+          new URL(response.url()).pathname === DOCUMENT_DOWNLOAD_PATH
+        )
+      })
+      const downloadPromise = page.waitForEvent('download')
 
-          // Either download started or operation completed
-          expect(download !== null || true).toBeTruthy()
-        }
-      }
+      await downloadButton.click()
+      const [response, download] = await Promise.all([responsePromise, downloadPromise])
+
+      expect(response.status()).toBe(200)
+      expect(new URL(response.url()).pathname).toBe(DOCUMENT_DOWNLOAD_PATH)
+      expect(download.suggestedFilename()).toBe('sticker-png.png')
+      await expect(page.getByText('Документ скачан', { exact: true })).toBeVisible()
     })
   })
 

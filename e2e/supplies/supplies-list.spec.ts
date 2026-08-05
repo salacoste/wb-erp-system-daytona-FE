@@ -174,15 +174,15 @@ test.describe('Supplies List Page - Epic 53-FE', () => {
         await selectStatus(page, 'Открыта')
 
         // Clear filter
-        const clearButton = page
-          .locator(SELECTORS.clearFiltersButton)
-          .or(page.locator('button:has-text("Сбросить"), button:has-text("Очистить")'))
+        const clearButton = page.getByRole('button', {
+          name: 'Очистить все фильтры',
+          exact: true,
+        })
 
-        if (await clearButton.isVisible()) {
-          await clearButton.click()
-          await page.locator('main').waitFor({ state: 'visible' })
-          await expect(page).not.toHaveURL(/status=/)
-        }
+        await expect(clearButton).toBeVisible()
+        await clearButton.click()
+        await page.locator('main').waitFor({ state: 'visible' })
+        await expect(page).not.toHaveURL(/status=/)
       }
     })
   })
@@ -370,13 +370,33 @@ test.describe('Supplies List Page - Epic 53-FE', () => {
     test('should display pagination when many supplies', async ({ page }) => {
       await page.waitForTimeout(2000)
 
-      const pagination = page
-        .locator(SELECTORS.pagination)
-        .or(page.locator('[class*="pagination"], nav[aria-label*="pagination"]'))
+      await expect(page.getByRole('heading', { name: 'Поставки FBS', exact: true })).toBeVisible()
+      const previousButton = page.getByRole('button', {
+        name: 'Предыдущая страница',
+        exact: true,
+      })
+      const nextButton = page.getByRole('button', { name: 'Следующая страница', exact: true })
 
-      // Pagination may not be visible if few supplies
-      const hasPagination = (await pagination.count()) > 0
-      expect(hasPagination || true).toBeTruthy()
+      if (!(await previousButton.isVisible()) || !(await nextButton.isVisible())) {
+        await expect(page.getByRole('heading', { name: /^Нет поставок/ })).toBeVisible()
+        test.skip(
+          true,
+          'Configured supplies fixture is empty, so pagination controls are not rendered'
+        )
+        return
+      }
+
+      await expect(previousButton).toBeVisible()
+      await expect(previousButton).toBeDisabled()
+      await expect(nextButton).toBeVisible()
+      await expect(page.getByText(/^Стр\. 1 из \d+$/)).toBeVisible()
+
+      if (await nextButton.isDisabled()) {
+        test.skip(true, 'Configured supplies fixture contains only one page of records')
+        return
+      }
+
+      await expect(nextButton).toBeEnabled()
     })
 
     test('should navigate to next page', async ({ page }) => {

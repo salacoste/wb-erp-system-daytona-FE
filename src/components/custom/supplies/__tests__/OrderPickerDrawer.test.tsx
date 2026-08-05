@@ -248,7 +248,7 @@ describe('OrderPickerDrawer - Story 53.5-FE', () => {
 
     it('renders virtualized order list section', () => {
       renderDrawer()
-      expect(screen.getByRole('listbox')).toBeInTheDocument()
+      expect(screen.getByRole('list', { name: 'Список заказов' })).toBeInTheDocument()
     })
 
     it('renders footer with action button', () => {
@@ -354,7 +354,7 @@ describe('OrderPickerDrawer - Story 53.5-FE', () => {
 
     it('hides order list when in error state', () => {
       renderDrawer()
-      expect(screen.queryByRole('listbox')).not.toBeInTheDocument()
+      expect(screen.queryByRole('list', { name: 'Список заказов' })).not.toBeInTheDocument()
     })
 
     it('shows appropriate error for network failure', () => {
@@ -424,10 +424,10 @@ describe('OrderPickerDrawer - Story 53.5-FE', () => {
   describe('Component Integration', () => {
     it('passes orders to OrderPickerTable', () => {
       renderDrawer()
-      const listbox = screen.getByRole('listbox')
-      expect(listbox).toBeInTheDocument()
-      const options = within(listbox).getAllByRole('option')
-      expect(options.length).toBeGreaterThan(0)
+      const orderList = screen.getByRole('list', { name: 'Список заказов' })
+      expect(orderList).toBeInTheDocument()
+      const orderItems = within(orderList).getAllByRole('listitem')
+      expect(orderItems.length).toBeGreaterThan(0)
     })
 
     it('passes filters to OrderPickerFilters', () => {

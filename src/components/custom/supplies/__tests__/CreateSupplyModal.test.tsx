@@ -7,6 +7,7 @@
  */
 
 import { describe, it, expect, vi, beforeEach } from 'vitest'
+import { useRef, useState } from 'react'
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
@@ -166,6 +167,34 @@ describe('CreateSupplyModal', () => {
       await user.click(cancelButton)
 
       expect(onOpenChange).toHaveBeenCalledWith(false)
+    })
+
+    it('returns focus to the external trigger when the controlled modal closes', async () => {
+      const user = userEvent.setup()
+
+      function ControlledModal() {
+        const [open, setOpen] = useState(false)
+        const triggerRef = useRef<HTMLButtonElement>(null)
+
+        return (
+          <>
+            <button ref={triggerRef} type="button" onClick={() => setOpen(true)}>
+              Создать поставку
+            </button>
+            <CreateSupplyModal open={open} onOpenChange={setOpen} returnFocusRef={triggerRef} />
+          </>
+        )
+      }
+
+      renderWithProviders(<ControlledModal />)
+      const trigger = screen.getByRole('button', { name: 'Создать поставку' })
+
+      await user.click(trigger)
+      expect(screen.getByRole('dialog')).toBeInTheDocument()
+      await user.keyboard('{Escape}')
+
+      expect(screen.queryByRole('dialog')).not.toBeInTheDocument()
+      expect(trigger).toHaveFocus()
     })
   })
 

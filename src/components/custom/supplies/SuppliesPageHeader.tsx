@@ -9,6 +9,7 @@
 
 'use client'
 
+import type { RefObject } from 'react'
 import { Package, RefreshCw, Plus } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { SyncStatusIndicator } from './SyncStatusIndicator'
@@ -24,6 +25,8 @@ export interface SuppliesPageHeaderProps {
   onSync: () => void
   /** Callback to open create modal */
   onCreateClick: () => void
+  /** Create button used as the controlled dialog's focus-return target */
+  createButtonRef?: RefObject<HTMLButtonElement | null>
   /** Whether mutation controls should be visible for the current role */
   canManage?: boolean
 }
@@ -37,6 +40,7 @@ export function SuppliesPageHeader({
   isSyncing,
   onSync,
   onCreateClick,
+  createButtonRef,
   canManage = true,
 }: SuppliesPageHeaderProps) {
   return (
@@ -72,7 +76,7 @@ export function SuppliesPageHeader({
             </Button>
 
             {/* Create button */}
-            <Button size="sm" onClick={onCreateClick}>
+            <Button ref={createButtonRef} size="sm" onClick={onCreateClick}>
               <Plus className="h-4 w-4 mr-2" />
               Создать поставку
             </Button>

@@ -19,13 +19,6 @@ interface ApiError extends Error {
   code?: string
 }
 
-/** MIME types for different formats */
-const FORMAT_MIME_TYPES: Record<StickerFormat, string> = {
-  png: 'image/png',
-  svg: 'image/svg+xml',
-  zpl: 'application/octet-stream',
-}
-
 /** File extensions for different formats */
 const FORMAT_EXTENSIONS: Record<StickerFormat, string> = {
   png: 'png',
@@ -139,27 +132,4 @@ export function useDownloadDocument(options: UseDownloadDocumentOptions = {}) {
       options.onError?.(error)
     },
   })
-}
-
-/**
- * Helper to download stickers from base64 data (from generate response)
- */
-export function downloadStickersFromBase64(
-  data: string,
-  format: StickerFormat,
-  supplyId: string
-): void {
-  const mimeType = FORMAT_MIME_TYPES[format]
-  const ext = FORMAT_EXTENSIONS[format]
-  const filename = `stickers-${supplyId}.${ext}`
-
-  // Convert base64 to blob
-  const binaryString = atob(data)
-  const bytes = new Uint8Array(binaryString.length)
-  for (let i = 0; i < binaryString.length; i++) {
-    bytes[i] = binaryString.charCodeAt(i)
-  }
-  const blob = new Blob([bytes], { type: mimeType })
-
-  triggerDownload(blob, filename)
 }

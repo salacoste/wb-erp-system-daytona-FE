@@ -108,14 +108,11 @@ test.describe('COGS Pages', () => {
       timeout: TIMEOUTS.api,
     })
 
-    // Page uses breadcrumbs instead of h1; CardTitle headings may be present
-    const hasCardTitle =
-      (await page.getByRole('heading', { name: 'История изменений' }).count()) > 0
-    const hasEmptyTitle =
-      (await page.getByRole('heading', { name: 'История изменений COGS пуста' }).count()) > 0
-    const hasSkeleton = (await page.locator('.animate-pulse').count()) > 0
-    const hasError = (await page.getByText('Ошибка загрузки истории COGS').count()) > 0
-    expect(hasCardTitle || hasEmptyTitle || hasSkeleton || hasError).toBeTruthy()
+    const pageHeading = page.getByRole('heading', { level: 1 })
+
+    await expect(pageHeading).toHaveCount(1, { timeout: TIMEOUTS.api })
+    await expect(pageHeading).toBeVisible()
+    await expect(pageHeading).not.toHaveText('')
   })
 
   // --- Navigation ---

@@ -12,10 +12,10 @@ import { render, screen, waitFor, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 
-const { mockToast, mockGenerateStickersFn, mockDownloadFromBase64 } = vi.hoisted(() => ({
+const { mockToast, mockGenerateStickersFn, mockDownloadDocumentFn } = vi.hoisted(() => ({
   mockToast: { success: vi.fn(), error: vi.fn() },
   mockGenerateStickersFn: vi.fn(),
-  mockDownloadFromBase64: vi.fn(),
+  mockDownloadDocumentFn: vi.fn(),
 }))
 
 vi.mock('sonner', () => ({ toast: mockToast }))
@@ -28,7 +28,7 @@ vi.mock('@/lib/api/supplies', () => ({
   },
 }))
 vi.mock('@/hooks/useDownloadDocument', () => ({
-  downloadStickersFromBase64: (...args: unknown[]) => mockDownloadFromBase64(...args),
+  useDownloadDocument: () => ({ mutateAsync: mockDownloadDocumentFn, isPending: false }),
 }))
 
 import { GenerateStickersModal } from '../GenerateStickersModal'
@@ -36,7 +36,6 @@ import {
   mockGenerateResponsePng,
   mockGenerateResponseSvg,
   mockGenerateResponseZpl,
-  MOCK_PNG_BASE64,
 } from '@/test/fixtures/stickers'
 
 function createTestQC(): QueryClient {
@@ -57,12 +56,27 @@ function pendingPromise(): Promise<unknown> {
   return new Promise(() => {})
 }
 
+function deferred<T>(): { promise: Promise<T>; resolve: (value: T) => void } {
+  let resolve!: (value: T) => void
+  const promise = new Promise<T>(resolvePromise => {
+    resolve = resolvePromise
+  })
+  return { promise, resolve }
+}
+
 describe('GenerateStickersModal', () => {
   const defaultProps = { open: true, onOpenChange: vi.fn(), supplyId: 'sup_123abc' }
 
   beforeEach(() => {
     vi.clearAllMocks()
     mockGenerateStickersFn.mockResolvedValue(mockGenerateResponsePng)
+    mockDownloadDocumentFn.mockImplementation(async () => {
+      mockToast.success('Стикеры скачаны')
+      return {
+        blob: new Blob(['story-162-4-sticker'], { type: 'image/png' }),
+        filename: 'stickers-sup_123abc.png',
+      }
+    })
   })
 
   // ==========================================================================
@@ -109,9 +123,7 @@ describe('GenerateStickersModal', () => {
       const user = userEvent.setup()
       renderWithQC(<GenerateStickersModal {...defaultProps} onOpenChange={onOpenChange} />)
       await user.click(screen.getByRole('button', { name: /скачать/i }))
-      await waitFor(() =>
-        expect(mockDownloadFromBase64).toHaveBeenCalledWith(MOCK_PNG_BASE64, 'png', 'sup_123abc')
-      )
+      await waitFor(() => expect(mockDownloadDocumentFn).toHaveBeenCalledOnce())
       expect(onOpenChange).toHaveBeenCalledWith(false)
     })
 
@@ -194,31 +206,6 @@ describe('GenerateStickersModal', () => {
       renderWithQC(<GenerateStickersModal {...defaultProps} />)
       await user.click(screen.getByRole('button', { name: /скачать/i }))
       await waitFor(() => expect(screen.queryByLabelText('Загрузка превью')).toBeInTheDocument())
-    })
-
-    it('displays PNG image with proper sizing after generation', async () => {
-      const user = userEvent.setup()
-      renderWithQC(<GenerateStickersModal {...defaultProps} />)
-      await user.click(screen.getByRole('button', { name: /скачать/i }))
-      await waitFor(() => {
-        const img = screen.getByRole('img', { name: 'Превью стикера' })
-        expect(img).toBeInTheDocument()
-        expect(img.className).toContain('max-h-[300px]')
-        expect(img.className).toContain('max-w-full')
-      })
-    })
-
-    it('displays SVG image after generation with SVG data URL', async () => {
-      mockGenerateStickersFn.mockResolvedValue(mockGenerateResponseSvg)
-      const user = userEvent.setup()
-      renderWithQC(<GenerateStickersModal {...defaultProps} />)
-      await user.click(screen.getByRole('radio', { name: /SVG/i }))
-      await user.click(screen.getByRole('button', { name: /скачать/i }))
-      await waitFor(() => {
-        const img = screen.getByRole('img', { name: 'Превью стикера' })
-        expect(img.getAttribute('src')).toContain('data:image/svg+xml')
-        expect(img.className).toContain('object-contain')
-      })
     })
 
     it('shows info message for ZPL without preview or skeleton', async () => {
@@ -344,13 +331,61 @@ describe('GenerateStickersModal', () => {
   // ==========================================================================
 
   describe('Download Flow', () => {
-    it('downloads PNG with correct data, shows toast, closes modal', async () => {
+    it('downloads the generated sticker through the document endpoint before closing', async () => {
+      const onOpenChange = vi.fn()
+      mockGenerateStickersFn.mockResolvedValue({
+        id: 'story-162-4-sticker-document',
+        docType: 'STICKER',
+        format: 'png',
+        fileSize: 19,
+        generatedAt: '2026-08-05T13:05:00.000Z',
+      })
+      const user = userEvent.setup()
+      renderWithQC(<GenerateStickersModal {...defaultProps} onOpenChange={onOpenChange} />)
+
+      await user.click(screen.getByRole('button', { name: /скачать/i }))
+
+      await waitFor(() => {
+        expect(mockDownloadDocumentFn).toHaveBeenCalledWith({
+          supplyId: 'sup_123abc',
+          docType: 'sticker',
+          format: 'png',
+          filename: 'stickers-sup_123abc.png',
+        })
+      })
+      expect(onOpenChange).toHaveBeenCalledWith(false)
+    })
+
+    it('does not close until the binary download has completed', async () => {
+      const onOpenChange = vi.fn()
+      const pendingDownload = deferred<{ blob: Blob; filename: string }>()
+      mockDownloadDocumentFn.mockReturnValueOnce(pendingDownload.promise)
+      const user = userEvent.setup()
+      renderWithQC(<GenerateStickersModal {...defaultProps} onOpenChange={onOpenChange} />)
+
+      await user.click(screen.getByRole('button', { name: /скачать/i }))
+      await waitFor(() => expect(mockDownloadDocumentFn).toHaveBeenCalledOnce())
+      expect(onOpenChange).not.toHaveBeenCalledWith(false)
+
+      pendingDownload.resolve({
+        blob: new Blob(['story-162-4-sticker'], { type: 'image/png' }),
+        filename: 'stickers-sup_123abc.png',
+      })
+      await waitFor(() => expect(onOpenChange).toHaveBeenCalledWith(false))
+    })
+
+    it('downloads PNG as a blob, shows toast, and closes modal', async () => {
       const onOpenChange = vi.fn()
       const user = userEvent.setup()
       renderWithQC(<GenerateStickersModal {...defaultProps} onOpenChange={onOpenChange} />)
       await user.click(screen.getByRole('button', { name: /скачать/i }))
       await waitFor(() => {
-        expect(mockDownloadFromBase64).toHaveBeenCalledWith(MOCK_PNG_BASE64, 'png', 'sup_123abc')
+        expect(mockDownloadDocumentFn).toHaveBeenCalledWith({
+          supplyId: 'sup_123abc',
+          docType: 'sticker',
+          format: 'png',
+          filename: 'stickers-sup_123abc.png',
+        })
         expect(mockToast.success).toHaveBeenCalledWith('Стикеры скачаны')
         expect(onOpenChange).toHaveBeenCalledWith(false)
       })
@@ -363,24 +398,46 @@ describe('GenerateStickersModal', () => {
       await user.click(screen.getByRole('radio', { name: /SVG/i }))
       await user.click(screen.getByRole('button', { name: /скачать/i }))
       await waitFor(() =>
-        expect(mockDownloadFromBase64).toHaveBeenCalledWith(
-          mockGenerateResponseSvg.data,
-          'svg',
-          'sup_123abc'
-        )
+        expect(mockDownloadDocumentFn).toHaveBeenCalledWith({
+          supplyId: 'sup_123abc',
+          docType: 'sticker',
+          format: 'svg',
+          filename: 'stickers-sup_123abc.svg',
+        })
       )
     })
 
-    it('shows "Стикеры сгенерированы" toast for ZPL (no file download)', async () => {
+    it('downloads the backend zplv result with a frontend .zpl filename', async () => {
       mockGenerateStickersFn.mockResolvedValue(mockGenerateResponseZpl)
       const user = userEvent.setup()
       renderWithQC(<GenerateStickersModal {...defaultProps} />)
       await user.click(screen.getByRole('radio', { name: /ZPL/i }))
       await user.click(screen.getByRole('button', { name: /скачать/i }))
       await waitFor(() => {
-        expect(mockDownloadFromBase64).not.toHaveBeenCalled()
-        expect(mockToast.success).toHaveBeenCalledWith('Стикеры сгенерированы')
+        expect(mockDownloadDocumentFn).toHaveBeenCalledWith({
+          supplyId: 'sup_123abc',
+          docType: 'sticker',
+          format: 'zpl',
+          filename: 'stickers-sup_123abc.zpl',
+        })
+        expect(mockToast.success).toHaveBeenCalledWith('Стикеры скачаны')
       })
+    })
+
+    it('keeps the modal open when the binary download fails', async () => {
+      const onOpenChange = vi.fn()
+      mockDownloadDocumentFn.mockImplementationOnce(async () => {
+        mockToast.error('Документ не найден')
+        throw new Error('Document not found')
+      })
+      const user = userEvent.setup()
+      renderWithQC(<GenerateStickersModal {...defaultProps} onOpenChange={onOpenChange} />)
+
+      await user.click(screen.getByRole('button', { name: /скачать/i }))
+
+      await waitFor(() => expect(mockToast.error).toHaveBeenCalledWith('Документ не найден'))
+      expect(onOpenChange).not.toHaveBeenCalledWith(false)
+      expect(screen.getByRole('dialog')).toBeVisible()
     })
   })
 

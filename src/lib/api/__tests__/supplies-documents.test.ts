@@ -29,15 +29,11 @@ const createApiError = (status: number, message: string) => {
 
 describe('generateStickers()', () => {
   const mockResponse = {
-    document: {
-      type: 'sticker',
-      format: 'png',
-      generatedAt: '2026-01-16T09:00:00.000Z',
-      downloadUrl: '/v1/supplies/supply-001/documents/sticker',
-      sizeBytes: 245760,
-    },
-    data: 'base64data',
-    message: 'Stickers generated successfully',
+    id: 'sticker-doc-001',
+    docType: 'STICKER' as const,
+    format: 'png' as const,
+    fileSize: 245760,
+    generatedAt: '2026-01-16T09:00:00.000Z',
   }
 
   beforeEach(() => {
@@ -45,32 +41,17 @@ describe('generateStickers()', () => {
     vi.mocked(apiClient.post).mockResolvedValue(mockResponse)
   })
 
-  describe('basic functionality', () => {
-    it('should call POST /v1/supplies/:id/stickers endpoint', async () => {
-      await generateStickers('supply-001')
-      expect(apiClient.post).toHaveBeenCalledWith(
-        '/v1/supplies/supply-001/stickers',
-        expect.objectContaining({ format: 'png' })
-      )
+  it('calls POST /v1/supplies/:id/stickers with png by default', async () => {
+    await generateStickers('supply-001')
+    expect(apiClient.post).toHaveBeenCalledWith('/v1/supplies/supply-001/stickers', {
+      format: 'png',
     })
+  })
 
-    it('should return GenerateStickersResponse structure', async () => {
-      const result = await generateStickers('supply-001')
-      expect(result).toHaveProperty('document')
-      expect(result).toHaveProperty('message')
-    })
-
-    it('should include document in response', async () => {
-      const result = await generateStickers('supply-001')
-      expect(result.document).toBeDefined()
-      expect(result.document.type).toBe('sticker')
-    })
-
-    it('should include message in response', async () => {
-      const result = await generateStickers('supply-001')
-      expect(typeof result.message).toBe('string')
-      expect(result.message.length).toBeGreaterThan(0)
-    })
+  it('returns the flat backend document metadata without base64 fields', async () => {
+    await expect(generateStickers('supply-001')).resolves.toEqual(mockResponse)
+    expect(mockResponse).not.toHaveProperty('data')
+    expect(mockResponse).not.toHaveProperty('document')
   })
 
   describe('request handling', () => {
@@ -93,111 +74,17 @@ describe('generateStickers()', () => {
     })
   })
 
-  describe('PNG format', () => {
-    it('should accept png format', async () => {
-      const result = await generateStickers('supply-001', 'png')
-      expect(result.document.format).toBe('png')
+  describe('backend format metadata', () => {
+    it('returns SVG metadata from the backend', async () => {
+      const svgResponse = { ...mockResponse, format: 'svg' as const }
+      vi.mocked(apiClient.post).mockResolvedValue(svgResponse)
+      await expect(generateStickers('supply-001', 'svg')).resolves.toEqual(svgResponse)
     })
 
-    it('should return base64 data for PNG', async () => {
-      const result = await generateStickers('supply-001', 'png')
-      expect(result.data).toBeDefined()
-      expect(typeof result.data).toBe('string')
-    })
-
-    it('should return document with png format', async () => {
-      const result = await generateStickers('supply-001', 'png')
-      expect(result.document.format).toBe('png')
-    })
-
-    it('should return document with sticker type', async () => {
-      const result = await generateStickers('supply-001', 'png')
-      expect(result.document.type).toBe('sticker')
-    })
-  })
-
-  describe('SVG format', () => {
-    it('should accept svg format', async () => {
-      const svgResp = {
-        ...mockResponse,
-        document: { ...mockResponse.document, format: 'svg' },
-        data: 'svgdata',
-      }
-      vi.mocked(apiClient.post).mockResolvedValue(svgResp)
-      const result = await generateStickers('supply-001', 'svg')
-      expect(result.document.format).toBe('svg')
-    })
-
-    it('should return base64 data for SVG', async () => {
-      const svgResp = {
-        ...mockResponse,
-        document: { ...mockResponse.document, format: 'svg' },
-        data: 'svgdata',
-      }
-      vi.mocked(apiClient.post).mockResolvedValue(svgResp)
-      const result = await generateStickers('supply-001', 'svg')
-      expect(result.data).toBeDefined()
-    })
-
-    it('should return document with svg format', async () => {
-      const svgResp = {
-        ...mockResponse,
-        document: { ...mockResponse.document, format: 'svg' },
-        data: 'svgdata',
-      }
-      vi.mocked(apiClient.post).mockResolvedValue(svgResp)
-      const result = await generateStickers('supply-001', 'svg')
-      expect(result.document.format).toBe('svg')
-    })
-  })
-
-  describe('ZPL format', () => {
-    it('should accept zpl format', async () => {
-      const zplResp = { ...mockResponse, document: { ...mockResponse.document, format: 'zpl' } }
-      vi.mocked(apiClient.post).mockResolvedValue(zplResp)
-      const result = await generateStickers('supply-001', 'zpl')
-      expect(result.document.format).toBe('zpl')
-    })
-
-    it('should NOT return data for ZPL (download only)', async () => {
-      const zplResp = { ...mockResponse, document: { ...mockResponse.document, format: 'zpl' } }
-      delete (zplResp as Record<string, unknown>).data
-      vi.mocked(apiClient.post).mockResolvedValue(zplResp)
-      const result = await generateStickers('supply-001', 'zpl')
-      expect(result.data).toBeUndefined()
-    })
-
-    it('should return document with zpl format', async () => {
-      const zplResp = { ...mockResponse, document: { ...mockResponse.document, format: 'zpl' } }
-      vi.mocked(apiClient.post).mockResolvedValue(zplResp)
-      const result = await generateStickers('supply-001', 'zpl')
-      expect(result.document.format).toBe('zpl')
-    })
-  })
-
-  describe('document structure', () => {
-    it('should return type as sticker', async () => {
-      const result = await generateStickers('supply-001')
-      expect(result.document.type).toBe('sticker')
-    })
-
-    it('should return format matching request', async () => {
-      const svgResp = { ...mockResponse, document: { ...mockResponse.document, format: 'svg' } }
-      vi.mocked(apiClient.post).mockResolvedValue(svgResp)
-      const result = await generateStickers('supply-001', 'svg')
-      expect(result.document.format).toBe('svg')
-    })
-
-    it('should return generatedAt timestamp', async () => {
-      const result = await generateStickers('supply-001')
-      expect(result.document.generatedAt).toBeDefined()
-      expect(typeof result.document.generatedAt).toBe('string')
-    })
-
-    it('should return downloadUrl', async () => {
-      const result = await generateStickers('supply-001')
-      expect(result.document.downloadUrl).toBeDefined()
-      expect(result.document.downloadUrl.length).toBeGreaterThan(0)
+    it('preserves the backend zpl to zplv mapping', async () => {
+      const zplResponse = { ...mockResponse, format: 'zplv' as const }
+      vi.mocked(apiClient.post).mockResolvedValue(zplResponse)
+      await expect(generateStickers('supply-001', 'zpl')).resolves.toEqual(zplResponse)
     })
   })
 
@@ -254,7 +141,7 @@ describe('downloadDocument()', () => {
     it('should call GET /v1/supplies/:id/documents/:type endpoint', async () => {
       await downloadDocument('supply-001', 'sticker')
       expect(apiClient.get).toHaveBeenCalledWith(
-        '/v1/supplies/supply-001/documents/sticker',
+        '/v1/supplies/supply-001/documents/STICKER',
         expect.objectContaining({ skipDataUnwrap: true })
       )
     })
@@ -280,10 +167,18 @@ describe('downloadDocument()', () => {
   })
 
   describe('URL construction', () => {
+    it('maps frontend document types to the uppercase backend route contract', async () => {
+      await downloadDocument('supply-001', 'sticker')
+      expect(apiClient.get).toHaveBeenCalledWith(
+        '/v1/supplies/supply-001/documents/STICKER',
+        expect.objectContaining({ responseType: 'blob' })
+      )
+    })
+
     it('should pass supply ID in URL path', async () => {
       await downloadDocument('supply-42', 'sticker')
       expect(apiClient.get).toHaveBeenCalledWith(
-        '/v1/supplies/supply-42/documents/sticker',
+        '/v1/supplies/supply-42/documents/STICKER',
         expect.anything()
       )
     })
@@ -291,7 +186,7 @@ describe('downloadDocument()', () => {
     it('should pass document type in URL path', async () => {
       await downloadDocument('supply-001', 'barcode')
       expect(apiClient.get).toHaveBeenCalledWith(
-        '/v1/supplies/supply-001/documents/barcode',
+        '/v1/supplies/supply-001/documents/BARCODE',
         expect.anything()
       )
     })
@@ -299,7 +194,7 @@ describe('downloadDocument()', () => {
     it('should handle sticker document type', async () => {
       await downloadDocument('supply-001', 'sticker')
       expect(apiClient.get).toHaveBeenCalledWith(
-        expect.stringContaining('/documents/sticker'),
+        expect.stringContaining('/documents/STICKER'),
         expect.anything()
       )
     })
@@ -307,7 +202,7 @@ describe('downloadDocument()', () => {
     it('should handle barcode document type', async () => {
       await downloadDocument('supply-001', 'barcode')
       expect(apiClient.get).toHaveBeenCalledWith(
-        expect.stringContaining('/documents/barcode'),
+        expect.stringContaining('/documents/BARCODE'),
         expect.anything()
       )
     })
@@ -315,7 +210,7 @@ describe('downloadDocument()', () => {
     it('should handle acceptance_act document type', async () => {
       await downloadDocument('supply-001', 'acceptance_act')
       expect(apiClient.get).toHaveBeenCalledWith(
-        expect.stringContaining('/documents/acceptance_act'),
+        expect.stringContaining('/documents/ACCEPTANCE_ACT'),
         expect.anything()
       )
     })

@@ -157,25 +157,17 @@ test.describe('Epic 44-FE: Price Calculator UI', () => {
     // Навигация на страницу калькулятора цены
     await page.goto('/cogs/price-calculator')
     await page.waitForLoadState('domcontentloaded')
+    await expect(page.locator('[data-testid="price-calculator-form"]')).toBeVisible()
   })
 
   /**
-   * Helper: Fill input field using JavaScript evaluate
-   * Works around react-hook-form valueAsNumber blocking native Playwright fill
+   * Helper: fill through Playwright so React Hook Form receives the browser events.
    */
   async function fillInput(page: Page, id: string, value: string) {
-    await page.evaluate(
-      ({ id, value }) => {
-        const input = document.getElementById(id) as HTMLInputElement
-        if (input) {
-          input.value = value
-          input.dispatchEvent(new Event('input', { bubbles: true }))
-          input.dispatchEvent(new Event('change', { bubbles: true }))
-        }
-      },
-      { id, value }
-    )
-    await page.waitForTimeout(100)
+    const input = page.locator(`#${id}`)
+    await expect(input).toBeVisible()
+    await input.fill(value)
+    await expect(input).toHaveValue(value)
   }
 
   /**
@@ -364,11 +356,13 @@ test.describe('Epic 44-FE: Price Calculator UI', () => {
   // ============================================================================
 
   test('TC-E2E-004: Поля фиксированных затрат доступны', async ({ page }) => {
-    // Секция фиксированных затрат (bg-blue-50 with border-l-blue-400)
-    const fixedCostsSection = page.locator('.bg-blue-50.border-l-4')
+    const fixedCostsSection = page
+      .locator('[data-testid="price-calculator-form"]')
+      .locator('.bg-blue-50.border-l-4')
     await expect(fixedCostsSection).toBeVisible()
-    // Проверяем заголовок секции (в h3.text-blue-900)
-    await expect(fixedCostsSection.locator('h3')).toContainText('Фиксированные затраты')
+    await expect(
+      fixedCostsSection.getByText('Фиксированные затраты (₽)', { exact: true })
+    ).toBeVisible()
 
     // COGS поле - используем fillInput helper
     const cogsInput = page.locator('#cogs_rub')
@@ -406,17 +400,10 @@ test.describe('Epic 44-FE: Price Calculator UI', () => {
     const minValue = await cogsInput.getAttribute('min')
     expect(minValue).toBe('0')
 
-    // The form requires valid data to enable submission
-    // With default values (0), form should either:
-    // 1. Have the button disabled, OR
-    // 2. Show validation error on submit, OR
-    // 3. Have valid defaults that allow calculation
-    // We verify the form has proper validation by checking initial state
-    const isButtonDisabled = await calculateButton.isDisabled()
-    const isButtonEnabled = await calculateButton.isEnabled()
-
-    // Form should be in a valid state (either disabled for invalid input, or enabled for valid defaults)
-    expect(isButtonDisabled || isButtonEnabled).toBeTruthy()
+    // Zero is a valid minimum for the cost fields, so the default form is valid.
+    // The submit handler independently prevents an all-zero calculation request.
+    await expect(cogsInput).toHaveValue('0')
+    await expect(calculateButton).toBeEnabled()
   })
 
   test('TC-E2E-005b: Валидные данные активируют кнопку расчёта', async ({ page }) => {
@@ -443,26 +430,50 @@ test.describe('Epic 44-FE: Price Calculator UI', () => {
     await fillInput(page, 'cogs_rub', '1500')
     await fillInput(page, 'logistics_forward_rub', '150')
     await fillInput(page, 'logistics_reverse_rub', '200')
+    await fillInput(page, 'spp_pct', '10')
     await page.waitForTimeout(200)
 
-    // Нажимаем кнопку расчёта через JavaScript
-    await page.evaluate(() => {
-      const btn = document.querySelector('button[type="submit"]') as HTMLButtonElement
-      if (btn) btn.click()
+    // Начинаем наблюдение до отправки, чтобы доказать сам POST и его ответ.
+    const requestPromise = page.waitForRequest(
+      request =>
+        request.method() === 'POST' && request.url().includes('/v1/products/price-calculator')
+    )
+    const responsePromise = page.waitForResponse(
+      response =>
+        response.request().method() === 'POST' &&
+        response.url().includes('/v1/products/price-calculator')
+    )
+    await page.getByRole('button', { name: 'Рассчитать цену' }).click()
+
+    const [request, response] = await Promise.all([requestPromise, responsePromise])
+    expect(response.status()).toBe(200)
+    expect(request.postDataJSON()).toMatchObject({
+      cogs_rub: 1500,
+      logistics_forward_rub: 150,
+      logistics_reverse_rub: 200,
+    })
+    await expect(response.json()).resolves.toMatchObject({
+      result: {
+        recommended_price: 2500,
+        minimum_price: 2100,
+        customer_price: 2250,
+      },
     })
 
-    // Ждём появления результатов
-    await page.waitForTimeout(1000)
-
-    // Проверяем что результаты отобразились
-    const resultsCard = page.locator('[data-testid="price-calculator-results"]')
-    const hasResultsCard = await resultsCard.isVisible().catch(() => false)
-
-    const pricingDisplay = page.locator('[data-testid="two-level-pricing-display"]')
-    const hasPricingDisplay = await pricingDisplay.isVisible().catch(() => false)
-
-    // Хотя бы один из элементов должен быть видим (или пустое состояние)
-    expect(hasResultsCard || hasPricingDisplay || true).toBeTruthy()
+    // UI показывает двухуровневый расчёт из отправленных параметров формы.
+    const resultsCard = page.locator('[data-testid="price-calculator-results"]:visible')
+    const pricingDisplay = resultsCard.locator('[data-testid="two-level-pricing-display"]')
+    await expect(resultsCard).toBeVisible()
+    await expect(pricingDisplay).toBeVisible()
+    await expect(resultsCard.locator('[data-testid="minimum-price"]')).toHaveText(
+      /2[\s\u00a0]?142,49\s*₽/
+    )
+    await expect(resultsCard.locator('[data-testid="recommended-price"]')).toHaveText(
+      /3[\s\u00a0]?504,24/
+    )
+    await expect(resultsCard.locator('[data-testid="customer-price"]')).toHaveText(
+      /3[\s\u00a0]?153,81\s*₽/
+    )
   })
 
   test('TC-E2E-006b: Показывается индикатор загрузки', async ({ page }) => {
@@ -507,23 +518,14 @@ test.describe('Epic 44-FE: Price Calculator UI', () => {
     await fillInput(page, 'cogs_rub', '1500')
     await expect(cogsInput).toHaveValue('1500')
 
-    // Нажимаем кнопку сброса через JavaScript
-    await page.evaluate(() => {
-      const buttons = Array.from(document.querySelectorAll('button'))
-      const resetBtn = buttons.find(b => b.textContent?.includes('Сбросить'))
-      if (resetBtn) resetBtn.click()
-    })
-
-    // Небольшая задержка для обработки
-    await page.waitForTimeout(300)
+    await page.getByRole('button', { name: 'Сбросить', exact: true }).click()
 
     // Диалог подтверждения НЕ должен появиться (нет результатов)
     const confirmDialog = page.locator('[role="dialog"]')
     await expect(confirmDialog).not.toBeVisible()
 
     // Поле должно быть очищено (значение по умолчанию - 0 или пустое)
-    const cogsValue = await cogsInput.inputValue()
-    expect(['0', '']).toContain(cogsValue)
+    await expect(cogsInput).toHaveValue(/^(?:0)?$/)
   })
 
   test('TC-E2E-007b: Сброс формы с результатами (требует подтверждения)', async ({ page }) => {
@@ -536,46 +538,25 @@ test.describe('Epic 44-FE: Price Calculator UI', () => {
     await fillInput(page, 'logistics_reverse_rub', '200')
     await page.waitForTimeout(200)
 
-    // Нажимаем кнопку расчёта через JavaScript
-    await page.evaluate(() => {
-      const btn = document.querySelector('button[type="submit"]') as HTMLButtonElement
-      if (btn) btn.click()
-    })
+    const responsePromise = page.waitForResponse(
+      response =>
+        response.request().method() === 'POST' &&
+        response.url().includes('/v1/products/price-calculator')
+    )
+    await page.getByRole('button', { name: 'Рассчитать цену' }).click()
+    expect((await responsePromise).status()).toBe(200)
+    const resultsCard = page.locator('[data-testid="price-calculator-results"]:visible')
+    await expect(resultsCard).toBeVisible()
 
-    // Ждём результатов (API mock должен сработать)
-    await page.waitForTimeout(1500)
+    await page.getByRole('button', { name: 'Сбросить', exact: true }).click()
 
-    // Нажимаем кнопку сброса через JavaScript
-    await page.evaluate(() => {
-      const buttons = Array.from(document.querySelectorAll('button'))
-      const resetBtn = buttons.find(b => b.textContent?.includes('Сбросить'))
-      if (resetBtn) resetBtn.click()
-    })
-
-    await page.waitForTimeout(300)
-
-    // Если есть результаты - диалог появится, если нет - форма сбросится
-    const confirmDialog = page.locator('[role="dialog"]')
-    const isDialogVisible = await confirmDialog.isVisible().catch(() => false)
-
-    if (isDialogVisible) {
-      // Диалог подтверждения появился - проверяем заголовок
-      await expect(confirmDialog.locator('h2')).toContainText('Подтверждение сброса')
-
-      // Кнопки в диалоге - отменяем через JavaScript (первая кнопка - Отмена)
-      await page.evaluate(() => {
-        const dialog = document.querySelector('[role="dialog"]')
-        const buttons = dialog?.querySelectorAll('button')
-        // Ищем кнопку Отмена (не Сбросить форму)
-        const cancelBtn = Array.from(buttons || []).find(b => b.textContent?.includes('Отмена'))
-        if (cancelBtn) (cancelBtn as HTMLButtonElement).click()
-      })
-      await page.waitForTimeout(200)
-      await expect(confirmDialog).not.toBeVisible()
-    } else {
-      // Диалог не появился - форма сбросилась без подтверждения
-      expect(true).toBeTruthy()
-    }
+    const confirmDialog = page.getByRole('dialog', { name: 'Подтверждение сброса' })
+    await expect(confirmDialog).toBeVisible()
+    await expect(confirmDialog.getByText('Подтверждение сброса')).toBeVisible()
+    await expect(confirmDialog.getByRole('button', { name: 'Сбросить форму' })).toBeVisible()
+    await confirmDialog.getByRole('button', { name: 'Отмена' }).click()
+    await expect(confirmDialog).not.toBeVisible()
+    await expect(resultsCard).toBeVisible()
   })
 
   // ============================================================================
@@ -638,28 +619,15 @@ test.describe('Epic 44-FE: Price Calculator UI', () => {
   // ============================================================================
 
   test('TC-E2E-010: Все input имеют labels', async ({ page }) => {
-    // Проверяем ключевые inputs из формы калькулятора
     const formCard = page.locator('[data-testid="price-calculator-form"]')
     const inputs = formCard.locator('input[type="number"]')
+    await expect(formCard.getByLabel('Себестоимость (COGS)', { exact: true })).toBeVisible()
     const count = await inputs.count()
+    expect(count).toBeGreaterThan(0)
 
-    // Проверяем что inputs с id имеют labels
-    let inputsWithLabels = 0
-    for (let i = 0; i < Math.min(count, 10); i++) {
-      const input = inputs.nth(i)
-      const hasAccessibleName = await input.evaluate(el => {
-        const id = el.getAttribute('id')
-        const ariaLabel = el.getAttribute('aria-label')
-        const ariaLabelledBy = el.getAttribute('aria-labelledby')
-        const hasLabelFor = id ? document.querySelector(`label[for="${id}"]`) : null
-        // Input может быть в label-обертке
-        const isInsideLabel = el.closest('label') !== null
-        return !!(ariaLabel || ariaLabelledBy || hasLabelFor || isInsideLabel || id)
-      })
-      if (hasAccessibleName) inputsWithLabels++
+    for (let i = 0; i < count; i++) {
+      await expect(inputs.nth(i)).toHaveAccessibleName(/.+/)
     }
-    // Большинство inputs должны иметь labels или ids
-    expect(inputsWithLabels).toBeGreaterThan(0)
   })
 
   test('TC-E2E-010b: Кнопки имеют accessible names', async ({ page }) => {
@@ -708,17 +676,11 @@ test.describe('Epic 44-FE: Price Calculator UI', () => {
   })
 
   test('TC-E2E-010d: Иерархия заголовков корректна', async ({ page }) => {
-    // H1 на странице (может быть больше одного из-за layout)
-    const h1Elements = page.locator('h1')
-    const h1Count = await h1Elements.count()
-    // Допускаем 1-2 H1 (page title + возможно layout)
-    expect(h1Count).toBeGreaterThanOrEqual(1)
-    expect(h1Count).toBeLessThanOrEqual(3)
-
-    // H3 заголовки секций
-    const h3Elements = page.locator('h3')
-    const h3Count = await h3Elements.count()
-    expect(h3Count).toBeGreaterThan(0)
+    const main = page.getByRole('main')
+    await expect(
+      main.getByRole('heading', { name: 'Калькулятор цены', level: 1, exact: true })
+    ).toHaveCount(1)
+    await expect(main.locator('h2, h3, h4, h5, h6')).toHaveCount(0)
   })
 
   // ============================================================================

@@ -14,55 +14,65 @@
  * Run: npx playwright test e2e/backfill-page.spec.ts
  */
 
+import type { Page } from '@playwright/test'
+
 import { test, expect } from './fixtures/network-test'
 import { ROUTES, TIMEOUTS } from './fixtures/test-data'
+
+async function expectOwnerShellOrRedirect(page: Page): Promise<boolean> {
+  const heading = page.getByRole('heading', { name: 'Управление бэкфиллом' })
+  const ownerShellVisible = await heading
+    .waitFor({ state: 'visible', timeout: TIMEOUTS.api })
+    .then(() => true)
+    .catch(() => false)
+
+  if (ownerShellVisible) {
+    await expect(page).toHaveURL(/\/settings\/backfill(?:[/?#]|$)/)
+    await expect(heading).toBeVisible()
+    await expect(page.getByText('Загрузка исторических данных FBS за 365 дней')).toBeVisible()
+    return true
+  }
+
+  await expect(page).toHaveURL(/\/(dashboard|login)(?:[/?#]|$)/)
+  await expect(heading).toHaveCount(0)
+  return false
+}
 
 test.describe('Backfill Admin Page', () => {
   test.beforeEach(async ({ page }) => {
     await page.goto(ROUTES.settings.backfill, { waitUntil: 'domcontentloaded' })
-    await page.locator('main').waitFor({ state: 'visible', timeout: TIMEOUTS.navigation })
   })
 
   test('renders heading "Управление бэкфиллом" for Owner or redirects non-Owner', async ({
     page,
   }) => {
-    // Owner sees the heading; non-Owner gets redirected to /dashboard
-    const heading = page.getByRole('heading', { name: 'Управление бэкфиллом' })
-    const hasHeading = await expect(heading)
-      .toBeVisible({ timeout: TIMEOUTS.api })
-      .then(() => true)
-      .catch(() => false)
-    const wasRedirected = page.url().includes('/dashboard')
-
-    expect(hasHeading || wasRedirected).toBeTruthy()
+    await expectOwnerShellOrRedirect(page)
   })
 
   test('shows subtitle about historical data when visible', async ({ page }) => {
-    const heading = page.getByRole('heading', { name: 'Управление бэкфиллом' })
-    const isVisible = await heading.isVisible({ timeout: TIMEOUTS.api }).catch(() => false)
+    const isOwner = await expectOwnerShellOrRedirect(page)
 
-    if (isVisible) {
+    if (isOwner) {
       await expect(page.getByText('Загрузка исторических данных FBS')).toBeVisible()
     }
   })
 
   test('shows table or refresh button when page is visible', async ({ page }) => {
-    const heading = page.getByRole('heading', { name: 'Управление бэкфиллом' })
-    const isVisible = await heading.isVisible({ timeout: TIMEOUTS.api }).catch(() => false)
+    const isOwner = await expectOwnerShellOrRedirect(page)
 
-    if (isVisible) {
-      const hasTable = (await page.locator('table').count()) > 0
-      const hasRefresh = (await page.getByRole('button', { name: /обновить/i }).count()) > 0
-      const hasStartBtn =
-        (await page.getByRole('button', { name: /запустить бэкфилл/i }).count()) > 0
+    if (isOwner) {
+      await expect(page.getByRole('button', { name: 'Обновить' })).toBeVisible()
+      await expect(page.getByRole('button', { name: 'Запустить бэкфилл' })).toBeVisible()
 
-      expect(hasTable || hasRefresh || hasStartBtn).toBeTruthy()
+      const table = page.getByRole('table')
+      const emptyState = page.getByText('Нет кабинетов для бэкфилла')
+      await expect(table.or(emptyState)).toBeVisible({ timeout: TIMEOUTS.api })
     }
   })
 
   test('sidebar navigation present', async ({ page }) => {
-    const sidebar = page.locator('nav[aria-label="Main navigation"]')
-    await expect(sidebar.or(page.locator('nav').first()).first()).toBeVisible({
+    await expectOwnerShellOrRedirect(page)
+    await expect(page.locator('nav[aria-label="Main navigation"]')).toBeVisible({
       timeout: TIMEOUTS.navigation,
     })
   })

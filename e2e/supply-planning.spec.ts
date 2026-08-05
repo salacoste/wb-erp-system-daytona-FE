@@ -39,27 +39,19 @@ test.describe('Supply Planning Analytics', () => {
     })
 
     test('AC-7: has safety stock days selector', async ({ page }) => {
-      // Safety stock control (input or select)
-      const safetyControl = page.locator('input[type="number"], select, button[role="combobox"]')
-      const hasControl = (await safetyControl.count()) > 0
+      await expect(page.getByText('Запас:', { exact: true })).toBeVisible()
 
-      // Or label text about safety stock
-      const safetyText = page.locator('text=/страхов|safety|дней|days/i')
-      const hasSafetyText = (await safetyText.count()) > 0
-
-      expect(hasControl || hasSafetyText).toBeTruthy()
+      const safetyControl = page.getByRole('combobox').first()
+      await expect(safetyControl).toBeVisible()
+      await expect(safetyControl).toContainText('14 дней')
     })
 
     test('AC-7: has velocity weeks selector', async ({ page }) => {
-      // Velocity weeks control
-      const velocityControl = page.locator('input[type="number"], select, button[role="combobox"]')
-      const hasControl = (await velocityControl.count()) > 0
+      await expect(page.getByText('Скорость:', { exact: true })).toBeVisible()
 
-      // Or label text about velocity
-      const velocityText = page.locator('text=/недел|week|период|velocity/i')
-      const hasVelocityText = (await velocityText.count()) > 0
-
-      expect(hasControl || hasVelocityText || true).toBeTruthy()
+      const velocityControl = page.getByRole('combobox').nth(1)
+      await expect(velocityControl).toBeVisible()
+      await expect(velocityControl).toContainText('4 недели')
     })
 
     test('AC-9: displays data table with sortable columns', async ({ page }) => {
@@ -113,15 +105,15 @@ test.describe('Supply Planning Analytics', () => {
     test('shows stockout risk status badges', async ({ page }) => {
       await page.waitForTimeout(2000)
 
-      // Status badges in cards or table
-      const badges = page.locator('[class*="badge"]')
-      const hasBadges = (await badges.count()) > 0
-
-      // Or status text
-      const statusText = page.locator('text=/критич|critical|внимание|warning|норма|healthy/i')
-      const hasStatusText = (await statusText.count()) > 0
-
-      expect(hasBadges || hasStatusText || true).toBeTruthy()
+      for (const riskLabel of [
+        'Нет в наличии',
+        'Критично',
+        'Внимание',
+        'Низкий запас',
+        'В норме',
+      ]) {
+        await expect(page.getByText(riskLabel, { exact: true })).toBeVisible()
+      }
     })
 
     test('has refresh button', async ({ page }) => {
@@ -137,15 +129,14 @@ test.describe('Supply Planning Analytics', () => {
     test('shows metrics bar with totals', async ({ page }) => {
       await page.waitForTimeout(2000)
 
-      // Metrics bar or summary section
-      const metricsSection = page.locator('[class*="metric"], [class*="stat"], [class*="summary"]')
-      const hasMetrics = (await metricsSection.count()) > 0
-
-      // Or text with numbers
-      const numbersText = page.locator('text=/\\d+\\s*(шт|SKU|товар)/i')
-      const hasNumbers = (await numbersText.count()) > 0
-
-      expect(hasMetrics || hasNumbers || true).toBeTruthy()
+      await expect(page.getByText('Требуют внимания', { exact: true })).toBeVisible()
+      await expect(page.getByText('Требуется капитал', { exact: true })).toBeVisible()
+      const inTransitMetric = page
+        .getByText('В пути', { exact: true })
+        .locator('..')
+        .filter({ has: page.getByText(/^\d[\d\s\u00a0]* шт$/) })
+      await expect(inTransitMetric.getByText('В пути', { exact: true })).toBeVisible()
+      await expect(inTransitMetric.getByText(/^\d[\d\s\u00a0]* шт$/)).toBeVisible()
     })
   })
 

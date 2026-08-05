@@ -34,7 +34,7 @@ export async function generateStickers(
     { format } as GenerateStickersRequest
   )
 
-  logger.debug('[Supplies API] Stickers generated:', response.document?.type)
+  logger.debug('[Supplies API] Stickers generated:', response.docType)
 
   return response
 }
@@ -46,10 +46,14 @@ export async function generateStickers(
 export async function downloadDocument(supplyId: string, docType: DocumentType): Promise<Blob> {
   logger.debug('[Supplies API] Downloading document:', { supplyId, docType })
 
-  const response = await apiClient.get<Blob>(`/v1/supplies/${supplyId}/documents/${docType}`, {
-    skipDataUnwrap: true,
-    responseType: 'blob',
-  })
+  const backendDocType = docType.toUpperCase()
+  const response = await apiClient.get<Blob>(
+    `/v1/supplies/${supplyId}/documents/${backendDocType}`,
+    {
+      skipDataUnwrap: true,
+      responseType: 'blob',
+    }
+  )
 
   logger.debug('[Supplies API] Document downloaded')
 

@@ -14,8 +14,20 @@
  * @see docs/stories/epic-53/story-53.8-fe-e2e-tests-polish.md
  */
 
+import { readFile } from 'node:fs/promises'
+
 import { test, expect } from '../fixtures/network-test'
 import { MUTATING_E2E_SKIP_REASON, shouldSkipMutatingE2E } from '../fixtures/mutation-guard'
+import {
+  installStory1624EligibleOrdersRoute,
+  installStory1624LifecycleRoutes,
+  installStory1624OpenSupplyRoutes,
+  STORY_162_4_ELIGIBLE_ORDER,
+  STORY_162_4_LIFECYCLE_SUPPLY_ID,
+  STORY_162_4_OPEN_SUPPLY_ID,
+  STORY_162_4_STICKER_CONTENT,
+  STORY_162_4_STICKER_DOCUMENT_ID,
+} from '../fixtures/story-162-4-supplies'
 
 // Routes
 const SUPPLIES_ROUTE = '/supplies'
@@ -45,7 +57,6 @@ const SELECTORS = {
   generateStickersButton: 'button:has-text("Получить стикеры"), button:has-text("Стикеры")',
 
   // Order picker
-  orderPickerDrawer: '[role="dialog"], [class*="drawer"], [class*="sheet"]',
   orderCheckbox: 'input[type="checkbox"]',
   addSelectedButton: 'button:has-text("Добавить выбранные"), button:has-text("Добавить")',
 
@@ -135,7 +146,10 @@ test.describe('Supply Lifecycle - Epic 53-FE @mutating', () => {
       }
 
       await addButton.click()
-      const drawer = page.locator(SELECTORS.orderPickerDrawer)
+      const drawer = page.getByRole('dialog', {
+        name: 'Добавить заказы в поставку',
+        exact: true,
+      })
       const drawerOpened = await drawer.isVisible({ timeout: 1500 }).catch(() => false)
       const placeholderToast = await page
         .getByText(/Добавление заказов скоро будет доступно/i)
@@ -182,118 +196,116 @@ test.describe('Supply Lifecycle - Epic 53-FE @mutating', () => {
     })
 
     test('Step 3: Close supply', async ({ page }) => {
-      if (!createdSupplyId) {
-        test.skip()
-        return
-      }
+      await installStory1624LifecycleRoutes(page, 'OPEN')
 
-      await page.goto(`/supplies/${createdSupplyId}`, { waitUntil: 'domcontentloaded' })
+      await page.goto(`/supplies/${STORY_162_4_LIFECYCLE_SUPPLY_ID}`, {
+        waitUntil: 'domcontentloaded',
+      })
       await page.locator('main').waitFor({ state: 'visible' })
-      await page.waitForTimeout(1000)
 
-      // Check current status
-      const statusBadge = page.locator(SELECTORS.statusBadge).first()
-      const currentStatus = await statusBadge.textContent()
+      await expect(
+        page.getByRole('heading', { name: 'Story 162.4 lifecycle supply' })
+      ).toBeVisible()
+      await expect(page.getByLabel('Статус поставки: Открыта', { exact: true })).toBeVisible()
 
-      if (!currentStatus?.includes('Открыта') && !currentStatus?.includes('OPEN')) {
-        console.log(`Supply is not OPEN (current: ${currentStatus}), skipping close`)
-        test.skip()
-        return
-      }
-
-      // Click close supply button
-      const closeButton = page.locator(SELECTORS.closeSupplyButton)
-      if (!(await closeButton.isVisible()) || !(await closeButton.isEnabled())) {
-        console.log('Close supply button not available')
-        test.skip()
-        return
-      }
+      const closeButton = page.getByRole('button', { name: 'Закрыть поставку', exact: true })
+      await expect(closeButton).toBeEnabled()
 
       await closeButton.click()
 
-      // Confirm in dialog
-      const dialog = page.getByRole('dialog').or(page.getByRole('alertdialog'))
+      const dialog = page.getByRole('alertdialog', { name: 'Закрыть поставку?', exact: true })
       await expect(dialog).toBeVisible()
 
-      const confirmButton = dialog.locator(SELECTORS.confirmButton)
+      const closeResponsePromise = page.waitForResponse(response => {
+        return (
+          response.request().method() === 'POST' &&
+          new URL(response.url()).pathname.endsWith(
+            `/v1/supplies/${STORY_162_4_LIFECYCLE_SUPPLY_ID}/close`
+          )
+        )
+      })
+      const confirmButton = dialog.getByRole('button', {
+        name: 'Закрыть поставку',
+        exact: true,
+      })
       await confirmButton.click()
 
-      await page.waitForTimeout(3000)
-
-      // Verify status changed to CLOSED
-      await page.reload()
-      await page.locator('main').waitFor({ state: 'visible' })
-
-      const newStatusBadge = page.locator(SELECTORS.statusBadge).first()
-      const newStatus = await newStatusBadge.textContent()
-
-      expect(newStatus?.includes('Закрыта') || newStatus?.includes('CLOSED')).toBeTruthy()
-      console.log(`Supply closed, new status: ${newStatus}`)
+      const closeResponse = await closeResponsePromise
+      expect(closeResponse.status()).toBe(200)
+      expect(closeResponse.request().postDataJSON()).toEqual({})
+      await expect(page.getByText('Поставка закрыта', { exact: true })).toBeVisible()
+      await expect(page.getByLabel('Статус поставки: Закрыта', { exact: true })).toBeVisible()
+      await expect(
+        page.getByRole('button', { name: 'Сгенерировать стикеры', exact: true })
+      ).toBeEnabled()
     })
 
     test('Step 4: Generate stickers', async ({ page }) => {
-      if (!createdSupplyId) {
-        test.skip()
-        return
-      }
+      await installStory1624LifecycleRoutes(page, 'CLOSED')
 
-      await page.goto(`/supplies/${createdSupplyId}`, { waitUntil: 'domcontentloaded' })
+      await page.goto(`/supplies/${STORY_162_4_LIFECYCLE_SUPPLY_ID}`, {
+        waitUntil: 'domcontentloaded',
+      })
       await page.locator('main').waitFor({ state: 'visible' })
-      await page.waitForTimeout(1000)
 
-      // Check current status
-      const statusBadge = page.locator(SELECTORS.statusBadge).first()
-      const currentStatus = await statusBadge.textContent()
+      await expect(
+        page.getByRole('heading', { name: 'Story 162.4 lifecycle supply' })
+      ).toBeVisible()
+      await expect(page.getByLabel('Статус поставки: Закрыта', { exact: true })).toBeVisible()
 
-      if (!currentStatus?.includes('Закрыта') && !currentStatus?.includes('CLOSED')) {
-        console.log(`Supply is not CLOSED (current: ${currentStatus}), skipping stickers`)
-        test.skip()
-        return
-      }
-
-      // Click generate stickers button
-      const stickersButton = page.locator(SELECTORS.generateStickersButton)
-      if (!(await stickersButton.isVisible()) || !(await stickersButton.isEnabled())) {
-        console.log('Generate stickers button not available')
-        test.skip()
-        return
-      }
+      const stickersButton = page.getByRole('button', {
+        name: 'Сгенерировать стикеры',
+        exact: true,
+      })
+      await expect(stickersButton).toBeEnabled()
 
       await stickersButton.click()
 
-      // Wait for modal
-      const modal = page.getByRole('dialog')
+      const modal = page.getByRole('dialog', { name: 'Генерация стикеров', exact: true })
       await expect(modal).toBeVisible()
+      await expect(modal.getByRole('radio', { name: /PNG/i })).toBeChecked()
 
-      // Select format (PNG by default)
-      const formatSelector = modal.locator(SELECTORS.formatSelector)
-      if (await formatSelector.isVisible()) {
-        // Format selector exists - use default or select PNG
-        const pngOption = modal.locator('text=PNG, [value="png"]')
-        if (await pngOption.isVisible()) {
-          await pngOption.click()
-        }
-      }
+      const stickersResponsePromise = page.waitForResponse(response => {
+        return (
+          response.request().method() === 'POST' &&
+          new URL(response.url()).pathname.endsWith(
+            `/v1/supplies/${STORY_162_4_LIFECYCLE_SUPPLY_ID}/stickers`
+          )
+        )
+      })
+      const stickerDocumentResponsePromise = page.waitForResponse(response => {
+        return (
+          response.request().method() === 'GET' &&
+          new URL(response.url()).pathname.endsWith(
+            `/v1/supplies/${STORY_162_4_LIFECYCLE_SUPPLY_ID}/documents/STICKER`
+          )
+        )
+      })
+      const downloadPromise = page.waitForEvent('download')
+      await modal.getByRole('button', { name: 'Скачать', exact: true }).click()
 
-      // Generate/Download stickers
-      const downloadButton = modal
-        .locator(SELECTORS.downloadButton)
-        .or(modal.locator('button:has-text("Сгенерировать")'))
-      if (await downloadButton.isVisible()) {
-        // Start waiting for download
-        const downloadPromise = page.waitForEvent('download', { timeout: 10000 }).catch(() => null)
-        await downloadButton.click()
-        const download = await downloadPromise
+      const stickersResponse = await stickersResponsePromise
+      expect(stickersResponse.status()).toBe(201)
+      expect(stickersResponse.request().postDataJSON()).toEqual({ format: 'png' })
+      await expect(stickersResponse.json()).resolves.toEqual({
+        id: STORY_162_4_STICKER_DOCUMENT_ID,
+        docType: 'STICKER',
+        format: 'png',
+        fileSize: STORY_162_4_STICKER_CONTENT.length,
+        generatedAt: '2026-08-05T13:05:00.000Z',
+      })
 
-        if (download) {
-          console.log(`Stickers downloaded: ${download.suggestedFilename()}`)
-        } else {
-          console.log('Stickers generated (or inline preview shown)')
-        }
-      }
-
-      // Close modal
-      await page.keyboard.press('Escape')
+      const [stickerDocumentResponse, download] = await Promise.all([
+        stickerDocumentResponsePromise,
+        downloadPromise,
+      ])
+      expect(stickerDocumentResponse.status()).toBe(200)
+      expect(download.suggestedFilename()).toBe(`stickers-${STORY_162_4_LIFECYCLE_SUPPLY_ID}.png`)
+      const downloadedFilePath = await download.path()
+      expect(downloadedFilePath).not.toBeNull()
+      expect(await readFile(downloadedFilePath!, 'utf8')).toBe(STORY_162_4_STICKER_CONTENT)
+      await expect(page.getByText('Стикеры скачаны', { exact: true })).toBeVisible()
+      await expect(modal).not.toBeVisible()
     })
 
     test('Step 5: Verify delivery status (mock)', async ({ page }) => {
@@ -530,44 +542,82 @@ test.describe('Supply Lifecycle - Epic 53-FE @mutating', () => {
     })
 
     test('should show loading state during order addition', async ({ page }) => {
+      await installStory1624OpenSupplyRoutes(page)
+      await installStory1624EligibleOrdersRoute(page)
+
       await page.goto(`${SUPPLIES_ROUTE}?status=OPEN`, { waitUntil: 'domcontentloaded' })
       await page.locator('main').waitFor({ state: 'visible' })
       await page.waitForTimeout(2000)
+      await expect(page.getByRole('heading', { name: 'Поставки FBS', exact: true })).toBeVisible()
 
-      const firstRow = page.locator('tbody tr:first-child')
-      if (await firstRow.isVisible()) {
-        await firstRow.click()
-        await page.locator('main').waitFor({ state: 'visible' })
+      await expect(
+        page.getByRole('button', {
+          name: `Поставка ${STORY_162_4_OPEN_SUPPLY_ID}`,
+          exact: true,
+        })
+      ).toBeVisible()
+      await page.goto(`${SUPPLIES_ROUTE}/${STORY_162_4_OPEN_SUPPLY_ID}`, {
+        waitUntil: 'domcontentloaded',
+      })
+      await expect(page).toHaveURL(/\/supplies\/[^/?]+/)
+      await expect(page.getByLabel('Статус поставки: Открыта', { exact: true })).toBeVisible()
 
-        const addButton = page.locator(SELECTORS.addOrdersButton)
-        if ((await addButton.isVisible()) && (await addButton.isEnabled())) {
-          // Slow down API for adding orders
-          await page.route('**/add-orders**', async route => {
-            await new Promise(resolve => setTimeout(resolve, 1000))
-            route.fallback()
-          })
+      const addButton = page.getByRole('button', { name: 'Добавить заказы', exact: true })
+      await expect(addButton).toBeVisible()
+      await expect(addButton).toBeEnabled()
 
-          await addButton.click()
-          await page.waitForTimeout(1000)
+      await addButton.click()
 
-          // Select and add order
-          const checkbox = page.locator(SELECTORS.orderCheckbox).first()
-          if (await checkbox.isVisible()) {
-            await checkbox.check()
+      const drawer = page.getByRole('dialog', { name: 'Добавить заказы в поставку', exact: true })
+      await expect(drawer).toBeVisible()
+      const checkbox = drawer.getByRole('checkbox', {
+        name: `Выбрать заказ #${STORY_162_4_ELIGIBLE_ORDER.orderId}`,
+        exact: true,
+      })
+      await expect(checkbox).toBeVisible()
 
-            const addSelectedButton = page.locator(SELECTORS.addSelectedButton)
-            if (await addSelectedButton.isVisible()) {
-              await addSelectedButton.click()
+      await checkbox.check()
+      const addSelectedButton = drawer.getByRole('button', {
+        name: 'Добавить выбранные (1)',
+        exact: true,
+      })
+      await expect(addSelectedButton).toBeEnabled()
 
-              // Should show loading indicator or complete quickly
-              // Loading state may be brief, but button should be disabled during operation
-              const buttonDisabled = await addSelectedButton.isDisabled()
-              // Either button is disabled (loading) or operation completed
-              expect(buttonDisabled || true).toBeTruthy()
-            }
-          }
+      const addOrdersRoute = '**/v1/supplies/*/orders'
+      await page.route(addOrdersRoute, async route => {
+        if (route.request().method() !== 'POST') {
+          await route.fallback()
+          return
         }
-      }
+        await new Promise(resolve => setTimeout(resolve, 1000))
+        await route.fulfill({
+          status: 200,
+          contentType: 'application/json',
+          body: JSON.stringify({ added: 1, failed: 0 }),
+        })
+      })
+      const responsePromise = page.waitForResponse(response => {
+        return (
+          response.request().method() === 'POST' &&
+          /\/v1\/supplies\/[^/?]+\/orders(?:\?|$)/.test(response.url())
+        )
+      })
+
+      await addSelectedButton.click()
+      const pendingAddButton = drawer.getByRole('button', {
+        name: 'Добавление...',
+        exact: true,
+      })
+      await expect(pendingAddButton).toBeDisabled()
+      await expect(pendingAddButton).toHaveText('Добавление...')
+
+      const response = await responsePromise
+      expect(response.status()).toBeGreaterThanOrEqual(200)
+      expect(response.status()).toBeLessThan(300)
+      const requestBody = response.request().postDataJSON() as { orderIds?: unknown[] }
+      expect(requestBody.orderIds).toHaveLength(1)
+      await expect(drawer).not.toBeVisible()
+      await expect(page.getByText(/^Добавлено: 1 заказ$/)).toBeVisible()
     })
   })
 })

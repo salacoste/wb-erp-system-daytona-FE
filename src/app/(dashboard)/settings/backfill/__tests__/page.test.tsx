@@ -207,12 +207,17 @@ describe('BackfillAdminPage - Actions Bar', () => {
     expect(screen.getByText('Запустить бэкфилл')).toBeDisabled()
   })
 
-  it('should open start dialog on button click', async () => {
+  it('should return focus to the start button after the controlled dialog closes', async () => {
     const user = userEvent.setup()
     renderPage()
-    await user.click(screen.getByText('Запустить бэкфилл'))
-    // Dialog should open (it renders via StartBackfillDialog)
-    // Just verify the button click doesn't throw
+    const startButton = screen.getByRole('button', { name: 'Запустить бэкфилл' })
+
+    await user.click(startButton)
+    expect(screen.getByRole('dialog', { name: 'Запуск бэкфилла' })).toBeInTheDocument()
+    await user.keyboard('{Escape}')
+
+    expect(screen.queryByRole('dialog', { name: 'Запуск бэкфилла' })).not.toBeInTheDocument()
+    expect(startButton).toHaveFocus()
   })
 })
 
