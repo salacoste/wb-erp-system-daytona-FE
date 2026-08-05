@@ -4,14 +4,14 @@
 
 **Создан**: 2026-01-30 (Backend Integration Analysis)
 **Последнее обновление**: 2026-08-05
-**Статус реализации**: 89 эпиков завершены; Epics 162-165 формируют текущую localhost-программу качества и продуктового завершения
+**Статус реализации**: 90 эпиков завершены; Epics 162-165 формируют текущую localhost-программу качества и продуктового завершения
 **Локальный контур**: frontend `localhost:3100`; backend задаётся через `NEXT_PUBLIC_API_URL` (локальное значение по умолчанию — `http://localhost:3000`)
 **Текущая проверка**: Vitest, Playwright, coverage, privacy scan, lint, type-check, format и local build smoke
 
 ## Executive Summary
 
 Исторически отслеживаемая frontend-работа отмечена завершённой. Канонический
-текущий подсчёт — 93 уникальных эпика (89 done, 2 in-progress, 2 backlog) и
+текущий подсчёт — 93 уникальных эпика (90 done, 1 in-progress, 2 backlog) и
 5 untracked operational features в `docs/EPICS-AND-STORIES-TRACKER.md`.
 Stories 127.1/127.2 реализованы; единственные явно backend-gated истории текущей
 программы — 165.4 (persisted liquidity daily snapshots) и 165.5 (раздельные
@@ -19,9 +19,10 @@ report/analytics retry endpoints). Source reconciliation для Story 165.1
 влита PR #87 (`bc071fdf`), а отдельный closeout зафиксирован в PR #89;
 Story 165.2 влита PR #90: active localhost guidance синхронизирован, а
 doc-citation gate сделан детерминированным для Git-tracked документов. Story
-165.3 активна; Stories 165.4/165.5 остаются deferred до появления backend
-capabilities. Epic 127 завершён, Epic 162 выполняется, Epics 163/164 находятся
-в backlog, Epic 165 выполняется.
+165.3 завершается с merge текущей delivery; Stories 165.4/165.5 остаются
+deferred до появления backend capabilities. Epic 127 завершён, Epic 162
+выполняется, Epics 163/164 находятся в backlog, Epic 165 завершён текущей
+delivery.
 <!-- CURRENT-STATUS:END -->
 
 ---
@@ -39,7 +40,7 @@ capabilities. Epic 127 завершён, Epic 162 выполняется, Epics 
 ### OpenWiki generation status
 
 `openwiki/**` остаётся generated-only поверхностью и вручную не редактируется.
-Story 165.3 активна. Workflow запускается ежедневно по cron `47 8 * * *` UTC на
+Story 165.3 завершает Epic 165 с merge текущей delivery. Workflow запускается ежедневно по cron `47 8 * * *` UTC на
 self-hosted runner `wb-ci-fe` с Node.js 24 и выполняет
 `npx --yes openwiki@0.3.0 code --update --print` через provider `anthropic`,
 model `glm-5.2` и `https://api.z.ai/api/anthropic`. Scheduled run на `main`
@@ -194,7 +195,7 @@ charts/page integration и тесты присутствуют в source.
 | **P1**    | Local E2E reliability (Epic 162)  | epic   | 📋 1 done + 9 backlog             |
 | **P1**    | Operator workflows (Epic 163)     | epic   | 📋 6 backlog                      |
 | **P2**    | Boundary/maintenance debt (164)   | epic   | 📋 4 backlog                      |
-| **P2**    | OpenWiki regeneration (165.3)     | story  | 🚧 Active                         |
+| **P2**    | OpenWiki regeneration (165.3)     | story  | ✅ Completes on merge             |
 | **P2**    | Liquidity daily trends (165.4)    | gated  | ⏸ Deferred: backend snapshots     |
 | **P2**    | Per-status backfill retry (165.5) | gated  | ⏸ Deferred: backend endpoints     |
 | **P4**    | Cache Timestamps Display          | 1h     | ℹ️ Optional                       |

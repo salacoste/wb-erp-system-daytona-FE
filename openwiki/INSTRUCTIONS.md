@@ -36,13 +36,13 @@
 - Epic 127: done.
 - Epic 162: in progress.
 - Epics 163 and 164: backlog.
-- Epic 165: in progress.
-- Story 165.3: active.
+- Epic 165: done through the current Story 165.3 delivery.
+- Story 165.3: completes when the current delivery is merged.
 - Stories 165.4 and 165.5: deferred.
 
 ## Required Repairs on the Next Update
 
-- `openwiki/quickstart.md` and/or `openwiki/index.md` MUST contain a visible **Current Delivery Status** section with bullets for these exact truths: Epic 127 is done; Epic 162 is in progress; Epics 163 and 164 are backlog; Epic 165 is in progress; Story 165.3 is active; Stories 165.4 and 165.5 are deferred.
+- `openwiki/quickstart.md` and/or `openwiki/index.md` MUST contain a visible **Current Delivery Status** section with bullets for these exact truths: Epic 127 is done; Epic 162 is in progress; Epics 163 and 164 are backlog; Epic 165 is done through the current Story 165.3 delivery; Story 165.3 completes when the current delivery is merged; Stories 165.4 and 165.5 are deferred.
 - `openwiki/quickstart.md` and/or `openwiki/index.md` MUST state that development and validation are local-only and that there is no deployment target or production platform.
 - In `openwiki/quickstart.md`, the Architecture navigation description MUST NOT advertise deployment. Describe an actually documented topic such as configuration instead.
 - Repair obsolete workflow and validator guidance in both `openwiki/testing-and-ops.md` and `openwiki/conventions-and-quality.md`. They MUST identify `scripts/story-128-10/` as immutable historical, branch-bound Story 128.10 evidence tied to the former `feat/epic-128-10-frontend-verification-foundation` branch, and MUST point to `README.md` Local validation plus the active story plan for current commands.

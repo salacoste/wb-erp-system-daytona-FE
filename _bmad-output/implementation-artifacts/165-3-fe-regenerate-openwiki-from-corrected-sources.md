@@ -63,19 +63,19 @@ so that recurring project documentation reflects the same current architecture a
   - [x] Map `ANTHROPIC_API_KEY` from the configured z.ai repository secret (`ZAI_API_KEY`) only inside the runner environment; never print, persist, download, or commit its value.
   - [x] After the credentialed runner fast-forward-pushes its generator-owned commit to the Story 165.3 branch, fetch that ref and fast-forward the local worktree with `--ff-only`; do not copy, download, reconstruct, or hand-edit generated output.
 
-- [ ] Task 4: Enforce generated and protected-file boundaries (AC: #1, #3)
-  - [ ] Accept generator output only under `openwiki/**` and the explicitly reviewed OpenWiki-generated region of `CLAUDE.md`.
-  - [ ] Treat `README.md` or another source document as editable only when a verified source correction is required; make that source correction explicitly and rerun the generator rather than patching generated pages.
-  - [ ] Reject or restore generator mutations to `**/AGENTS.md`, `.agents/**`, `.codex/**`, `.omx/**`, `_bmad/**`, `_bmad-output/**`, unrelated source files, lockfiles, and workflows.
-  - [ ] Review `.github/workflows/openwiki-update.yml` separately as intentional workflow code: preserve its valid schedule/provider semantics, remove the direct-`main` delivery path, and retain only a PR-safe update flow.
-  - [ ] If a generated statement is wrong, correct its authoritative source and regenerate; never manually repair `openwiki/*.md` or `openwiki/.last-update.json`.
+- [x] Task 4: Enforce generated and protected-file boundaries (AC: #1, #3)
+  - [x] Accept generator output only under `openwiki/**` and the explicitly reviewed OpenWiki-generated region of `CLAUDE.md`.
+  - [x] Treat `README.md` or another source document as editable only when a verified source correction is required; make that source correction explicitly and rerun the generator rather than patching generated pages.
+  - [x] Reject or restore generator mutations to `**/AGENTS.md`, `.agents/**`, `.codex/**`, `.omx/**`, `_bmad/**`, `_bmad-output/**`, unrelated source files, lockfiles, and workflows.
+  - [x] Review `.github/workflows/openwiki-update.yml` separately as intentional workflow code: preserve its valid schedule/provider semantics, remove the direct-`main` delivery path, and retain only a PR-safe update flow.
+  - [x] If a generated statement is wrong, correct its authoritative source and regenerate; never manually repair `openwiki/*.md` or `openwiki/.last-update.json`.
 
-- [ ] Task 5: Validate content, navigation, and stale-guidance removal (AC: #3, #4, #5)
-  - [ ] Verify YAML frontmatter and required metadata for every generated Markdown page, plus JSON validity for `openwiki/.last-update.json`.
-  - [ ] Verify `openwiki/index.md` and all links needed to reach quickstart, architecture, workflows, integrations/API guidance, testing/operations, domain concepts, and source maps.
-  - [ ] Confirm generated guidance reports Next.js 16, frontend `localhost:3100`, backend `localhost:3000`, current Epic 127/162-165 state, and local-only validation semantics.
-  - [ ] Confirm obsolete Next.js 14, backend `localhost:3001`, PM2, Tier-0, production-certification, mandatory-CI, and stale warning-baseline guidance is absent or explicitly historical/non-authoritative.
-  - [ ] Run `npm run check:docs`, `npm run format:check`, and `git diff --check`; record exact results and any expected citation baseline rather than relying on prose claims.
+- [x] Task 5: Validate content, navigation, and stale-guidance removal (AC: #3, #4, #5)
+  - [x] Verify YAML frontmatter and required metadata for every generated Markdown page, plus JSON validity for `openwiki/.last-update.json`.
+  - [x] Verify `openwiki/index.md` and all links needed to reach quickstart, architecture, workflows, integrations/API guidance, testing/operations, domain concepts, and source maps.
+  - [x] Confirm generated guidance reports Next.js 16, frontend `localhost:3100`, backend `localhost:3000`, current Epic 127/162-165 state, and local-only validation semantics.
+  - [x] Confirm obsolete Next.js 14, backend `localhost:3001`, PM2, Tier-0, production-certification, mandatory-CI, and stale warning-baseline guidance is absent or explicitly historical/non-authoritative.
+  - [x] Run `npm run check:docs`, `npm run format:check`, and `git diff --check`; record exact results and any expected citation baseline rather than relying on prose claims.
 
 - [ ] Task 6: Record provenance and complete independent delivery review (AC: #2, #3, #5)
   - [x] Record base SHA, feature ref, generator `0.3.0`, exact command, Node/npm versions, provider/base URL/model identifiers, UTC start/end, command exit status, workflow run ID/URL, and generator-owned commit SHA.
@@ -218,6 +218,9 @@ Also validate all generated Markdown frontmatter, `openwiki/.last-update.json`, 
 - 2026-08-05: Run 6 workflow run [30971010131](https://github.com/salacoste/wb-erp-system-daytona-FE/actions/runs/30971010131) completed successfully from source `0112d53ece9812d395296948040294c522ec4e51` and created generator commit `b59d11d97a1a64e57301dbbe4002f8158ea960e8` with that exact parent. The run changed only `openwiki/.last-update.json`, `openwiki/api-and-normalizers.md`, `openwiki/domain-logic.md`, and `openwiki/testing-and-ops.md`; `openwiki/INSTRUCTIONS.md` remained unchanged with SHA-256 `00868a992c9e4af8547d011c789b700c4dcf4aa35d80b49a2d1e95054927e318`, and the local worktree fast-forwarded cleanly to the remote feature ref.
 - 2026-08-05: Run 6 targeted validation passed under Node `24.18.0` and npm `11.11.0`: documentation citations matched the `75`/`18` baseline, project-scoped Prettier `3.9.5` passed, frontmatter was `7/7`, `25` relative links resolved, provenance JSON was valid, Story 128 self-test passed `4/4`, workflow YAML and all `7` embedded Bash blocks passed, `actionlint 1.7.11` passed with only the custom runner-label warning excluded, and diff checks passed.
 - 2026-08-05: Independent Run 6 review returned `REQUEST_CHANGES` for two generated-content findings: `openwiki/testing-and-ops.md` incompletely describes the protected `openwiki/INSTRUCTIONS.md` boundary, and `openwiki/quickstart.md` still advertises deployment navigation despite the local-only/no-platform contract. The workflow security design, provenance, generated boundary, current product facts, anchors, and Story 128 framing were approved. The authoritative `openwiki/INSTRUCTIONS.md` control source was strengthened for a fresh Run 7 generation; generated pages remain untouched by hand.
+- 2026-08-05: Run 7 workflow run [30972049311](https://github.com/salacoste/wb-erp-system-daytona-FE/actions/runs/30972049311) completed successfully from source `53cccb0b9a1e7123487adc579aacb0efb9beebd6`, creating generator commit `3a2f4a26cc3f0d5c56bafcab42c81f555c77c869` with that exact parent. It changed only `openwiki/.last-update.json`, `openwiki/quickstart.md`, and `openwiki/testing-and-ops.md`; `openwiki/INSTRUCTIONS.md` remained unchanged with SHA-256 `92077a5b67801ec9777065e2bcc8ddb18772972567fd44655d66e8b6eddc6517`.
+- 2026-08-05: Independent Run 7 review returned `APPROVE`. Both Run 6 blockers are resolved exactly, provenance and the three-path generated boundary agree, protected files remained unchanged, relative links/frontmatter/anchors pass, and the PR-safe workflow retained its ref guards, token isolation, normal pushes, and no direct-main/force/auto-merge behavior.
+- 2026-08-05: Lifecycle sources now record Epic 165 completion through the current Story 165.3 delivery, keep Stories 165.4/165.5 deferred, and remove the temporary stale-OpenWiki redirect. One final complete regeneration is required so generated documentation reflects this closeout state before full validation and delivery.
 - 2026-08-05: No PR or merge is claimed. Story status remains `in-progress`; AC4, AC5, final independent approval, merge, and cleanup remain open.
 
 ### Completion Notes List
@@ -238,6 +241,8 @@ Also validate all generated Markdown frontmatter, `openwiki/.last-update.json`, 
 - Run 5 publish failed because the self-hosted runner did not provide the `gh` command (`command not found`, exit `127`). The remote feature ref stayed at `0b27cd9a`; provisional output was neither published nor accepted and cannot be recovered through the approved fast-forward integration path.
 - Run 6 completed and published generator commit `b59d11d9` through the token-scoped, `gh`-free feature-branch path; provenance, boundaries, workflow safety, and targeted validation passed.
 - Run 6 remains unaccepted because independent review found two MEDIUM generated-content defects in protected-boundary wording and stale deployment navigation. The author-controlled `openwiki/INSTRUCTIONS.md` source now requires both repairs; Run 7 regeneration is pending.
+- Run 7 generated `3a2f4a26` from source `53cccb0b` and received independent `APPROVE`; both Run 6 findings are resolved without manual generated-page edits.
+- Epic/story lifecycle sources are prepared for completion through the current PR merge. A final regeneration remains pending because those authoritative sources changed after Run 7.
 - No PR or merge has occurred for Story 165.3.
 
 ### File List
@@ -252,14 +257,14 @@ Also validate all generated Markdown frontmatter, `openwiki/.last-update.json`, 
 - `openwiki/INSTRUCTIONS.md` (user-authored OpenWiki control metadata; Run 7 source repair prepared after Run 6 review)
 - `scripts/story-128-10/README.md` (expected authoritative historical-evidence warning for the next generation)
 - `scripts/story-128-10/frontend-command-manifest.json` (expected authoritative historical lifecycle and current-entrypoint metadata for the next generation)
-- `openwiki/.last-update.json` (Run 6 provenance from source `0112d53e` in generator commit `b59d11d9`; Run 7 pending)
+- `openwiki/.last-update.json` (Run 7 provenance from source `53cccb0b` in generator commit `3a2f4a26`; final lifecycle regeneration pending)
 - `openwiki/api-and-normalizers.md` (Run 6 generated page; anchor repair remains accepted)
 - `openwiki/architecture.md` (Run 4 retry generated page; targeted validation passed, final review rejected the output)
 - `openwiki/conventions-and-quality.md` (third-run generated page; prior workflow/validator findings resolved)
 - `openwiki/domain-logic.md` (Run 6 generated page; corrected Anti-Pattern 8 links remain accepted)
 - `openwiki/index.md` (third-run generated page; current local-only delivery guidance resolved)
-- `openwiki/quickstart.md` (third-run generated page; Run 6 review found stale deployment navigation, Run 7 pending)
-- `openwiki/testing-and-ops.md` (Run 6 generated page; historical-validator guidance resolved, protected-boundary wording requires Run 7)
+- `openwiki/quickstart.md` (Run 7 generated page; deployment navigation corrected and independently approved)
+- `openwiki/testing-and-ops.md` (Run 7 generated page; exact protected/control-file boundary independently approved)
 
 ## Change Log
 
@@ -279,3 +284,4 @@ Also validate all generated Markdown frontmatter, `openwiki/.last-update.json`, 
 | 2026-08-05 | Run 4 targeted validation passed, but independent review returned `REQUEST_CHANGES` and verification remained `NOT_VERIFIED` for false generated stamps, HIGH credential persistence, and MEDIUM tag-dispatch handling; Run 5 source/workflow repair and regeneration are pending, with AC4/AC5/final review/merge still open. |
 | 2026-08-05 | Run 5 workflow run `30970119251` generated from source `0b27cd9a`, preserved protected guidance, and created provisional four-path commit `1cee5de9`, but publish failed because `gh` was unavailable (exit `127`). The remote ref remained unchanged, output was not accepted or recoverable, and Run 6 workflow repair plus fresh generation are pending; status stays `in-progress`, with AC4/AC5/final review/merge open. |
 | 2026-08-05 | Run 6 workflow run `30971010131` completed from source `0112d53e` and published generator commit `b59d11d9`; targeted validation and workflow security checks passed, but independent review rejected two generated-content defects. The control source was repaired for Run 7; status stays `in-progress`. |
+| 2026-08-05 | Run 7 workflow run `30972049311` completed from source `53cccb0b`, published generator commit `3a2f4a26`, and received independent `APPROVE`; lifecycle sources now close Epic 165 through the current Story 165.3 delivery, requiring one final regeneration before full validation and merge. |
