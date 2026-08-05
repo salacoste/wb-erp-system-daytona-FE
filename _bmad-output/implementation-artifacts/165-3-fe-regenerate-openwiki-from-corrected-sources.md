@@ -215,7 +215,9 @@ Also validate all generated Markdown frontmatter, `openwiki/.last-update.json`, 
 - 2026-08-05: Fresh independent code review returned `REQUEST_CHANGES`, and verification remained `NOT_VERIFIED`. The blocking findings are false generated source/citation stamps, a HIGH workflow credential-persistence risk, and a MEDIUM manual tag-dispatch safety mismatch. Source/workflow repairs followed by a complete Run 5 generation are pending; generated pages remain untouched by hand.
 - 2026-08-05: Run 5 workflow run [30970119251](https://github.com/salacoste/wb-erp-system-daytona-FE/actions/runs/30970119251) started from source SHA `0b27cd9ac7db1e1103acbd1359467b3625cb0e01`. The generator, protected-guidance restore, generated-change inspection, and commit steps succeeded. The runner created provisional commit `1cee5de9`, changing only four generated paths: `openwiki/.last-update.json`, `openwiki/api-and-normalizers.md`, `openwiki/domain-logic.md`, and `openwiki/testing-and-ops.md`.
 - 2026-08-05: Run 5 failed while publishing the provisional commit because `gh auth setup-git` could not run on the self-hosted runner (`gh: command not found`, exit `127`). The remote feature ref remained unchanged at `0b27cd9a`; provisional commit `1cee5de9` was not pushed and is not accepted or recoverable through the required feature-ref fast-forward path. No merge occurred.
-- 2026-08-05: Run 6 requires a workflow publish fix followed by a fresh complete generation. Story status remains `in-progress`; AC4, AC5, final independent approval, merge, and cleanup remain open.
+- 2026-08-05: Run 6 workflow run [30971010131](https://github.com/salacoste/wb-erp-system-daytona-FE/actions/runs/30971010131) completed successfully from source `0112d53ece9812d395296948040294c522ec4e51` and created generator commit `b59d11d97a1a64e57301dbbe4002f8158ea960e8` with that exact parent. The run changed only `openwiki/.last-update.json`, `openwiki/api-and-normalizers.md`, `openwiki/domain-logic.md`, and `openwiki/testing-and-ops.md`; `openwiki/INSTRUCTIONS.md` remained unchanged with SHA-256 `00868a992c9e4af8547d011c789b700c4dcf4aa35d80b49a2d1e95054927e318`, and the local worktree fast-forwarded cleanly to the remote feature ref.
+- 2026-08-05: Run 6 targeted validation passed under Node `24.18.0` and npm `11.11.0`: documentation citations matched the `75`/`18` baseline, project-scoped Prettier `3.9.5` passed, frontmatter was `7/7`, `25` relative links resolved, provenance JSON was valid, Story 128 self-test passed `4/4`, workflow YAML and all `7` embedded Bash blocks passed, `actionlint 1.7.11` passed with only the custom runner-label warning excluded, and diff checks passed.
+- 2026-08-05: Independent Run 6 review returned `REQUEST_CHANGES` for two generated-content findings: `openwiki/testing-and-ops.md` incompletely describes the protected `openwiki/INSTRUCTIONS.md` boundary, and `openwiki/quickstart.md` still advertises deployment navigation despite the local-only/no-platform contract. The workflow security design, provenance, generated boundary, current product facts, anchors, and Story 128 framing were approved. The authoritative `openwiki/INSTRUCTIONS.md` control source was strengthened for a fresh Run 7 generation; generated pages remain untouched by hand.
 - 2026-08-05: No PR or merge is claimed. Story status remains `in-progress`; AC4, AC5, final independent approval, merge, and cleanup remain open.
 
 ### Completion Notes List
@@ -234,7 +236,8 @@ Also validate all generated Markdown frontmatter, `openwiki/.last-update.json`, 
 - Run 4 targeted validation passed, but the output is not accepted: independent review returned `REQUEST_CHANGES` and verification remained `NOT_VERIFIED` for false generated stamps, HIGH credential persistence, and MEDIUM tag-dispatch handling.
 - Run 5 workflow run `30970119251` completed generation and protected-guidance restoration from source `0b27cd9a`, then created provisional commit `1cee5de9` with four generated-path changes.
 - Run 5 publish failed because the self-hosted runner did not provide the `gh` command (`command not found`, exit `127`). The remote feature ref stayed at `0b27cd9a`; provisional output was neither published nor accepted and cannot be recovered through the approved fast-forward integration path.
-- Run 6 workflow publish repair and a fresh complete generation are pending. Story 165.3 remains in progress until new output passes content, boundary, independent review, verification, and final delivery gates.
+- Run 6 completed and published generator commit `b59d11d9` through the token-scoped, `gh`-free feature-branch path; provenance, boundaries, workflow safety, and targeted validation passed.
+- Run 6 remains unaccepted because independent review found two MEDIUM generated-content defects in protected-boundary wording and stale deployment navigation. The author-controlled `openwiki/INSTRUCTIONS.md` source now requires both repairs; Run 7 regeneration is pending.
 - No PR or merge has occurred for Story 165.3.
 
 ### File List
@@ -246,16 +249,17 @@ Also validate all generated Markdown frontmatter, `openwiki/.last-update.json`, 
 - `README.md` (authoritative OpenWiki source guidance)
 - `docs/EPICS-AND-STORIES-TRACKER.md` (authoritative current Epic/story state)
 - `docs/FRONTEND-WORK-SUMMARY.md` (authoritative frontend delivery summary)
-- `openwiki/INSTRUCTIONS.md` (user-authored OpenWiki control metadata; Run 5 source repair present at `0b27cd9a` and preserved by the generator)
+- `openwiki/INSTRUCTIONS.md` (user-authored OpenWiki control metadata; Run 7 source repair prepared after Run 6 review)
 - `scripts/story-128-10/README.md` (expected authoritative historical-evidence warning for the next generation)
 - `scripts/story-128-10/frontend-command-manifest.json` (expected authoritative historical lifecycle and current-entrypoint metadata for the next generation)
-- `openwiki/.last-update.json` (Run 4 retry provenance from source `1cdd721a` in generator commit `ed94e3c5`; Run 5 provisional replacement was not published, Run 6 pending)
+- `openwiki/.last-update.json` (Run 6 provenance from source `0112d53e` in generator commit `b59d11d9`; Run 7 pending)
+- `openwiki/api-and-normalizers.md` (Run 6 generated page; anchor repair remains accepted)
 - `openwiki/architecture.md` (Run 4 retry generated page; targeted validation passed, final review rejected the output)
 - `openwiki/conventions-and-quality.md` (third-run generated page; prior workflow/validator findings resolved)
-- `openwiki/domain-logic.md` (Run 4 retry generated page; targeted validation passed, final review rejected the output)
+- `openwiki/domain-logic.md` (Run 6 generated page; corrected Anti-Pattern 8 links remain accepted)
 - `openwiki/index.md` (third-run generated page; current local-only delivery guidance resolved)
-- `openwiki/quickstart.md` (third-run generated page; current local-only delivery guidance resolved)
-- `openwiki/testing-and-ops.md` (third-run generated page; historical-validator guidance resolved)
+- `openwiki/quickstart.md` (third-run generated page; Run 6 review found stale deployment navigation, Run 7 pending)
+- `openwiki/testing-and-ops.md` (Run 6 generated page; historical-validator guidance resolved, protected-boundary wording requires Run 7)
 
 ## Change Log
 
@@ -274,3 +278,4 @@ Also validate all generated Markdown frontmatter, `openwiki/.last-update.json`, 
 | 2026-08-05 | Run 4 retry workflow run `30968987777` completed successfully from source `1cdd721a`, producing generator commit `ed94e3c5` with exactly three generated-file changes while preserving `openwiki/INSTRUCTIONS.md`; fresh validation/review remain pending and AC4/AC5/final review/merge stay open. |
 | 2026-08-05 | Run 4 targeted validation passed, but independent review returned `REQUEST_CHANGES` and verification remained `NOT_VERIFIED` for false generated stamps, HIGH credential persistence, and MEDIUM tag-dispatch handling; Run 5 source/workflow repair and regeneration are pending, with AC4/AC5/final review/merge still open. |
 | 2026-08-05 | Run 5 workflow run `30970119251` generated from source `0b27cd9a`, preserved protected guidance, and created provisional four-path commit `1cee5de9`, but publish failed because `gh` was unavailable (exit `127`). The remote ref remained unchanged, output was not accepted or recoverable, and Run 6 workflow repair plus fresh generation are pending; status stays `in-progress`, with AC4/AC5/final review/merge open. |
+| 2026-08-05 | Run 6 workflow run `30971010131` completed from source `0112d53e` and published generator commit `b59d11d9`; targeted validation and workflow security checks passed, but independent review rejected two generated-content defects. The control source was repaired for Run 7; status stays `in-progress`. |

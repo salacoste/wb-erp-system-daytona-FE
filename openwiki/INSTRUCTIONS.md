@@ -29,7 +29,7 @@
 - Manual runs on a non-`main` ref push the generated commit back to that same branch.
 - Manual runs on `main` must be rejected.
 - Never push directly or force-push to `main`; never auto-merge generated documentation.
-- Protect the workflow file and all `AGENTS.md` and `CLAUDE.md` control files. Stage only generated OpenWiki output.
+- Protect the workflow file, every `AGENTS.md`, `CLAUDE.md`, and the user-authored `openwiki/INSTRUCTIONS.md` control file. Stage only generated `openwiki/**` output and explicitly exclude `openwiki/INSTRUCTIONS.md` from staging.
 
 ## Delivery Status
 
@@ -44,7 +44,9 @@
 
 - `openwiki/quickstart.md` and/or `openwiki/index.md` MUST contain a visible **Current Delivery Status** section with bullets for these exact truths: Epic 127 is done; Epic 162 is in progress; Epics 163 and 164 are backlog; Epic 165 is in progress; Story 165.3 is active; Stories 165.4 and 165.5 are deferred.
 - `openwiki/quickstart.md` and/or `openwiki/index.md` MUST state that development and validation are local-only and that there is no deployment target or production platform.
+- In `openwiki/quickstart.md`, the Architecture navigation description MUST NOT advertise deployment. Describe an actually documented topic such as configuration instead.
 - Repair obsolete workflow and validator guidance in both `openwiki/testing-and-ops.md` and `openwiki/conventions-and-quality.md`. They MUST identify `scripts/story-128-10/` as immutable historical, branch-bound Story 128.10 evidence tied to the former `feat/epic-128-10-frontend-verification-foundation` branch, and MUST point to `README.md` Local validation plus the active story plan for current commands.
+- In `openwiki/testing-and-ops.md`, describe the protected/generated boundary exactly: the workflow restores `.github/workflows/openwiki-update.yml`, every `AGENTS.md`, `CLAUDE.md`, and `openwiki/INSTRUCTIONS.md`; it stages generated `openwiki/**` output while explicitly excluding `openwiki/INSTRUCTIONS.md`.
 - Repair `openwiki/architecture.md` so it states that Next.js server page/layout wrappers coexist with client components and that interactive data fetching is client-side. It MUST NOT claim that every page uses `use client`.
 - In the Configuration section of generated `openwiki/architecture.md`, write exactly one Markdown table. Remove the orphan `syntax` fragment associated with `AP#8 |`, remove duplicate Tailwind and `.env` rows, and inspect the final page to confirm that no duplicate configuration block remains.
 - Remove orphaned or duplicated fragments from `openwiki/conventions-and-quality.md`.
