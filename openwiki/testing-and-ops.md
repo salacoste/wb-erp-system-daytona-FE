@@ -241,10 +241,24 @@ The orchestrator's command list is the integration point for the [Outbound Netwo
 The self-hosted `frontend-quality.yml` workflow (ESLint, type-check, governed coverage certification, privacy guard) was removed when the project replaced hosted certification with local validation gates. Its quality checks now run locally via the commands in [Conventions & Quality Gates](conventions-and-quality.md). There is currently no required GitHub Actions status check enforcing them.
 
 ### `openwiki-update.yml` — OpenWiki Documentation Update
-- **Triggers**: Schedule (daily `0 8 * * *` UTC) + manual `workflow_dispatch`
-- **Runner**: `ubuntu-latest`, Node 22
-- **Provider**: GLM 5.2 via OpenRouter (`OPENWIKI_PROVIDER: openrouter`, `OPENWIKI_MODEL_ID: z-ai/glm-5.2`); LangSmith tracing enabled
-- **Process**: `npm install --global openwiki` → `openwiki code --update --print` → creates a pull request via `peter-evans/create-pull-request` (branch `openwiki/update`). PR includes `openwiki/`, `AGENTS.md`, `CLAUDE.md`, and `.github/workflows/openwiki-update.yml`.
+Refreshes the generated `openwiki/**` pages. Authoritative contract in `.github/workflows/openwiki-update.yml`.
+
+| Aspect | Detail |
+|--------|--------|
+| **Triggers** | Schedule (daily `47 8 * * *` UTC) + manual `workflow_dispatch`. A manual dispatch from `main` is **rejected** at the first step. |
+| **Runner** | Self-hosted `wb-ci-fe` (`runs-on: [self-hosted, Linux, X64, wb-ci-fe]`), Node.js 24, 60 min timeout |
+| **Concurrency** | `openwiki-frontend` group, `cancel-in-progress: false` |
+| **Provider** | Anthropic protocol through `https://api.z.ai/api/anthropic`, model `glm-5.2` (`OPENWIKI_PROVIDER: anthropic`, `ANTHROPIC_API_KEY` from the `ZAI_API_KEY` secret) |
+| **Generator** | `npx --yes openwiki@0.3.0 code --update --print` in an isolated per-run `npm_config_cache` under `RUNNER_TEMP` |
+
+**Commit and publish rules** (enforced by the `Commit OpenWiki updates` step):
+- After generation, the workflow restores `.github/workflows/openwiki-update.yml`, every `AGENTS.md`, and `CLAUDE.md` to their committed `HEAD` versions so only generated pages are committed.
+- `git add -A -- openwiki/` is the only staging command. The step refuses to commit if any change is staged outside `openwiki/`, if unexpected unstaged tracked changes remain, or if any untracked or ignored file is present.
+- **Scheduled run on `main`** → commits, pushes a unique `automation/openwiki-${GITHUB_RUN_ID}` branch, and opens a PR against `main` via `gh pr create` (no auto-merge).
+- **Manual dispatch on a non-`main` branch** → commits and pushes the generated commit back to that same branch.
+- **Manual dispatch on `main`** → rejected before checkout.
+
+> Never edit generated `openwiki/**` pages by hand; update source/docs and let the workflow regenerate. The workflow never force-pushes and never pushes directly to `main`.
 
 ## Running Locally
 

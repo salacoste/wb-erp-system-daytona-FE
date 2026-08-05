@@ -18,8 +18,7 @@ The core profitability formula:
 Key design decisions:
 - Uses **sales (выкупы)**, not orders, as the revenue base — orders include items that may be returned.
 - Returns a `TheoreticalProfitResult` with a breakdown of each cost component and tracking of missing fields.
-<!-- openwiki: broken internal link [api-and-normalizers.md#anti-pattern-8-null--0-collapse-on-moneyratio-fields] heading anchor "anti-pattern-8-null--0-collapse-on-moneyratio-fields" does not exist in "api-and-normalizers.md". Fix the href or restore the target, then delete this comment. -->
-- Missing COGS or tariff data results in `null` profit, not a fabricated zero — consistent with [Anti-Pattern #8](api-and-normalizers.md#anti-pattern-8-null--0-collapse-on-moneyratio-fields).
+- Missing COGS or tariff data results in `null` profit, not a fabricated zero — consistent with [Anti-Pattern #8](api-and-normalizers.md#anti-pattern-8-null-0-collapse-on-moneyratio-fields).
 
 ## Margin & COGS
 
@@ -55,8 +54,7 @@ Each cabinet carries an explicit **target margin** (`targetMarginPct`, Epic 121 
 | **Type** | `Cabinet.targetMarginPct: number \| null` (`src/types/cabinet/core.ts`). `null` means "not configured" — the UI falls back to a proposed **20%**. |
 | **Persistence** | Stored per-cabinet on the backend alongside tax/VAT settings; updated via `PUT /v1/cabinets/:id` with body field `target_margin_pct` (snake_case). |
 | **API boundary** | `updateCabinetTaxSettings()` in `src/lib/api/cabinet.ts` translates the camelCase `targetMarginPct` to the backend `target_margin_pct` field and omits it entirely when `undefined` (so unrelated tax updates don't clear the value). The response is re-normalized so consumers read the same canonical shape as the GET path. |
-<!-- openwiki: broken internal link [api-and-normalizers.md#anti-pattern-8-null--0-collapse-on-moneyratio-fields] heading anchor "anti-pattern-8-null--0-collapse-on-moneyratio-fields" does not exist in "api-and-normalizers.md". Fix the href or restore the target, then delete this comment. -->
-| **Normalization** | `normalizeCabinetResponse()` (`src/lib/api/cabinet-normalizer.ts`) accepts either `targetMarginPct` or `target_margin_pct` from the raw payload and coerces to `number | null` (consistent with [Anti-Pattern #8](api-and-normalizers.md#anti-pattern-8-null--0-collapse-on-moneyratio-fields) — a missing target stays `null`, never `0`). |
+| **Normalization** | `normalizeCabinetResponse()` (`src/lib/api/cabinet-normalizer.ts`) accepts either `targetMarginPct` or `target_margin_pct` from the raw payload and coerces to `number | null` (consistent with [Anti-Pattern #8](api-and-normalizers.md#anti-pattern-8-null-0-collapse-on-moneyratio-fields) — a missing target stays `null`, never `0`). |
 | **Validation** | zod schema: trimmed string, finite number, range `0–100%` (0.01 step). Applied identically in both surfaces below. |
 
 **Two entry points for editing target margin**:

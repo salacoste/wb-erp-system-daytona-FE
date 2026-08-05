@@ -134,5 +134,3 @@ This complements the [Two-Pass Review Discipline](#two-pass-review-discipline): 
 - **Pure functions over hook mocking** — Export testable logic as pure functions from hooks
 - **Error test pattern** — Always use `mockRejectedValueOnce` (not `mockRejectedValue`)
 - **Regex for locale assertions** — Use `/₽/`, `/\d+/` patterns in tests, not exact formatted strings
-alue`)
-- **Regex for locale assertions** — Use `/₽/`, `/\d+/` patterns in tests, not exact formatted strings
