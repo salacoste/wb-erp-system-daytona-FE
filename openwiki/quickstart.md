@@ -7,12 +7,23 @@ description: "Financial analytics dashboard for Wildberries (WB) marketplace sel
 
 Financial analytics dashboard for Wildberries marketplace sellers. Built with Next.js 16 App Router, TypeScript, and a Russian-locale UI.
 
+## Current Delivery Status
+
+- Epic 127 is done.
+- Epic 162 is in progress.
+- Epics 163 and 164 are backlog.
+- Epic 165 is in progress.
+- Story 165.3 is active.
+- Stories 165.4 and 165.5 are deferred.
+
+Development and validation are **local-only**: there is no deployment target or production platform. These statuses mirror the **Current Delivery Status** section in `README.md`.
+
 ## Overview
 
 | Aspect | Detail |
 |--------|--------|
 | **Stack** | Next.js 16 + TypeScript 5 + Tailwind CSS + shadcn/ui (Radix) |
-| **Server State** | TanStack Query v5 (all pages are client components) |
+| **Server State** | TanStack Query v5 (Next.js server page/layout wrappers coexist with client components; interactive data fetching is client-side) |
 | **Client State** | Zustand (auth, dashboard widgets, rate-limit, polling) |
 | **Testing** | Vitest (~1050 unit test files, MSW) + Playwright E2E (~83 specs) + outbound network guards + privacy/diagnostic-capture checks |
 | **Backend** | REST API via `NEXT_PUBLIC_API_URL` (default `http://localhost:3000`) |
@@ -56,7 +67,7 @@ npm run check:anti-pattern-8-normalizer  # AP#8 normalizer ratchet
 | Auth store | `src/stores/authStore.ts` |
 | Outbound network guard (Vitest) | `src/test/outbound-network-guard.ts`, `src/test/network-guard-bootstrap.ts`, `test-utils/outbound-network-policy.ts` |
 | Playwright network guard + static boundary | `e2e/fixtures/playwright-network-guard.ts`, `src/test/playwright-static-boundary.ts` |
-| Frontend verification orchestrator | `scripts/story-128-10/verify-frontend.mjs`, `scripts/story-128-10/frontend-command-manifest.json` |
+| Frontend verification orchestrator (historical, Story 128.10) | `scripts/story-128-10/verify-frontend.mjs`, `scripts/story-128-10/frontend-command-manifest.json`, `scripts/story-128-10/README.md` |
 | Agent guidelines | `CLAUDE.md`, `CLAUDE-PATTERNS.md`, `CLAUDE-ANTI-PATTERNS.md` |
 | Epics & stories tracker | `docs/EPICS-AND-STORIES-TRACKER.md` |
 | API integration guide | `docs/api-integration-guide.md` |

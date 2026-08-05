@@ -195,26 +195,31 @@ The allowed fields are exclusively non-sensitive shape/class indicators: `captur
 
 This guard is a privacy sibling to the [Privacy Console Check](#privacy-console-check) and runs under the same `npm run test:privacy` command. It is the frontend half of a shared Epic 128 privacy contract. As part of the same Story 128.10 privacy tightening, `src/lib/api-client-debug.ts` was reduced to no-op compatibility seams — the previous raw COGS payload `console.group` logging (which echoed raw API response bodies to the browser console) is now intentionally disabled and emits nothing, while keeping the exported `logCogsRawResponse` / `logCogsProcessedResponse` names for existing callers.
 
-## Frontend Verification Orchestrator
+## Frontend Verification Orchestrator (Historical, Story 128.10)
 
-**Script**: `scripts/story-128-10/verify-frontend.mjs` · **Manifest**: `scripts/story-128-10/frontend-command-manifest.json` · **Test**: `scripts/story-128-10/verify-frontend.test.mjs`
+**Script**: `scripts/story-128-10/verify-frontend.mjs` · **Manifest**: `scripts/story-128-10/frontend-command-manifest.json` · **Test**: `scripts/story-128-10/verify-frontend.test.mjs` · **Evidence notice**: `scripts/story-128-10/README.md`
 
-A pinned, self-validating orchestrator that runs the complete local frontend verification suite (Story 128.10) and emits a tamper-evident receipt. It exists because the project has **no mandatory CI merge gate** (see [Conventions & Quality Gates — Local Validation and Merge Authority](conventions-and-quality.md#local-validation-and-merge-authority)); the orchestrator codifies the exact command set and artifact set that constitute a valid local validation.
+> **Historical, branch-bound evidence.** This directory is immutable historical evidence for Story 128.10. Its command manifest is branch-bound: `requiredBranch` names the former `feat/epic-128-10-frontend-verification-foundation` feature branch on which the evidence was captured. **Do not use these scripts or their recorded results as the current project-wide validation entry point.** For current commands, use the `README.md` **Local validation** section together with the active story plan. This status is recorded directly in the manifest (see below).
+
+A pinned, self-validating orchestrator that ran the complete local frontend verification suite (Story 128.10) and emitted a tamper-evident receipt. It is retained as historical evidence of how the story was validated on its feature branch; it exists because the project has **no mandatory CI merge gate** (see [Conventions & Quality Gates — Local Validation and Merge Authority](conventions-and-quality.md#local-validation-and-merge-authority)). The current authoritative command set for local validation is the `README.md` **Local validation** section plus the active story plan.
 
 ### Manifest invariants (`frontend-command-manifest.json`)
-`validateFrontendManifest(manifest)` enforces, and the manifest pins:
+The manifest now explicitly records its historical lifecycle at the top level:
 - `schemaVersion: epic128-frontend-command-manifest/v1`, `storyId: 128.10`, `repository: frontend`
+- `lifecycle: "historical"`, `status: "immutable-evidence"` — declares the artifact is frozen Story 128.10 evidence, not a live entrypoint
+- `currentValidationEntrypoint: "README.md#local-validation and the active story plan"` — points readers to the current validation source
+- `usageWarning` — restates that this is historical, branch-bound evidence only
 - `runtime`: Node `v24.18.0`, npm `11.11.0` (matches `package.json` `engines`)
-- `requiredBranch: feat/epic-128-10-frontend-verification-foundation`
+- `requiredBranch: feat/epic-128-10-frontend-verification-foundation` — the branch the evidence was captured on
 - `backendContractCommit`: binds the independently reviewed backend remediation commit
 - `networkPolicyNote`: documents the frontend-only Unix-socket tightening
 - `commands`: exact ordered list (`REQUIRED_COMMANDS`) — version checks, `npm ci`, the orchestrator's own self-test, `npm test -- --run`, the focused network-guard vitest run, the E2E guard spec, `test:privacy`, `check:privacy`, `type-check`, `lint`, `format:check`, `build`, `git diff --check`
 - `expectedArtifacts`: exact list (`REQUIRED_ARTIFACTS`) of every E2E spec, fixture, guard module, and config file the story owns
 
-`compareStoryOwnedFiles(actual, expected)` asserts the committed artifact set matches the manifest exactly (no missing, no unexpected files). `invalidCommand` rejects placeholders (`<...>`, `${...}`, `TODO`/`TBD`), globs, and shell chaining (`&&`, `||`, `;`, newlines) so the command list stays literal and safe.
+`validateFrontendManifest(manifest)` enforces these invariants, and `compareStoryOwnedFiles(actual, expected)` asserts the committed artifact set matches the manifest exactly (no missing, no unexpected files). `invalidCommand` rejects placeholders (`<...>`, `${...}`, `TODO`/`TBD`), globs, and shell chaining (`&&`, `||`, `;`, newlines) so the command list stays literal and safe.
 
 ### Receipt
-On a full run the orchestrator executes each command via `run()` (capturing stdout/stderr/exitCode/duration), hashes every expected artifact (`sha256`), counts test results via `extractTestCounts` (TAP, Vitest, and Playwright output formats), and writes an atomic (`*.tmp` → rename, mode `0o600`) JSON receipt under the manifest's `evidencePath` with `RECEIPT_SCHEMA_VERSION: epic128-frontend-verification-receipt/v1`. Run it directly when reproducing a story validation: `node --test scripts/story-128-10/verify-frontend.test.mjs` (self-test) or execute the script itself for a full receipt.
+On a full run the orchestrator executes each command via `run()` (capturing stdout/stderr/exitCode/duration), hashes every expected artifact (`sha256`), counts test results via `extractTestCounts` (TAP, Vitest, and Playwright output formats), and writes an atomic (`*.tmp` → rename, mode `0o600`) JSON receipt under the manifest's `evidencePath` with `RECEIPT_SCHEMA_VERSION: epic128-frontend-verification-receipt/v1`. To reproduce the story's historical self-test only: `node --test scripts/story-128-10/verify-frontend.test.mjs`.
 
 ```mermaid
 flowchart TD
@@ -233,7 +238,7 @@ flowchart TD
 Figure: the orchestrator self-validates its pinned manifest and artifact set, then runs the ordered command list and emits a tamper-evident receipt.
 
 ### Relationship to the guards
-The orchestrator's command list is the integration point for the [Outbound Network Guards](#outbound-network-guards), [Diagnostic Capture Policy](#diagnostic-capture-policy), and [Privacy Console Check](#privacy-console-check): it runs the focused guard vitest files, the E2E guard spec, and both `test:privacy` / `check:privacy` as distinct ordered steps. Changing any guard module in `src/test/` or `e2e/fixtures/` also requires updating `REQUIRED_ARTIFACTS` in both `verify-frontend.mjs` and `frontend-command-manifest.json`, or the manifest self-test fails.
+The orchestrator's command list was the integration point for the [Outbound Network Guards](#outbound-network-guards), [Diagnostic Capture Policy](#diagnostic-capture-policy), and [Privacy Console Check](#privacy-console-check): it ran the focused guard vitest files, the E2E guard spec, and both `test:privacy` / `check:privacy` as distinct ordered steps. The guards themselves remain the current testing infrastructure; only the Story 128.10 receipt-generating orchestrator is historical. When changing any guard module in `src/test/` or `e2e/fixtures/`, the historical `REQUIRED_ARTIFACTS` in `verify-frontend.mjs` and `frontend-command-manifest.json` should not be edited to match — that manifest is frozen evidence on its branch, not a live manifest.
 
 ## CI/CD Workflows
 
