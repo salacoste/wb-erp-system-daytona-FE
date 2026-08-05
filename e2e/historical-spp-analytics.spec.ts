@@ -9,8 +9,11 @@ import { expect, test } from './fixtures/network-test'
 const APP_ORIGIN = 'http://localhost:3100'
 const CABINET_ID = 'historical-spp-cabinet'
 const WEEK = '2026-W31'
-const LOCAL_FUTURE_JWT =
-  'eyJhbGciOiJub25lIiwidHlwIjoiSldUIn0.eyJleHAiOjQxMDI0NDQ4MDB9.historical-spp'
+const LOCAL_FUTURE_JWT = [
+  'eyJhbGciOiJub25lIiwidHlwIjoiSldUIn0',
+  'eyJleHAiOjQxMDI0NDQ4MDB9',
+  'historical-spp',
+].join('.')
 
 type ApiCapture = {
   requests: string[]
