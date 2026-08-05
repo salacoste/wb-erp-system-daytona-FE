@@ -254,7 +254,7 @@ charts/page integration и тесты присутствуют в source.
 | 162-FE | Trustworthy Local Validation      |   — | 🚧 In progress | 2026-08-03            |
 | 163-FE | Complete Operator Workflows       |   — | 📋 Backlog     | 2026-08-03            |
 | 164-FE | Frontend Boundaries & Maintenance |   — | 📋 Backlog     | 2026-08-03            |
-| 165-FE | Truthful Status & Backend Backlog |   — | 🚧 In progress | 2026-08-03            |
+| 165-FE | Truthful Status & Backend Backlog |   — | ✅ Completes on merge | 2026-08-05            |
 
 **Orders Integrity реализован и покрыт source/unit плюс dedicated local Playwright spec.**
 
