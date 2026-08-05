@@ -48,7 +48,7 @@ npm run check:anti-pattern-8-normalizer  # AP#8 normalizer ratchet
 
 ## Documentation Sections
 
-- **[Architecture](architecture.md)** — Route groups, layout/provider hierarchy, client-side data fetching, auth proxy, deployment.
+- **[Architecture](architecture.md)** — Route groups, layout/provider hierarchy, client-side data fetching, auth proxy, configuration.
 - **[API Layer & Normalizers](api-and-normalizers.md)** — API client singleton, Boundary Normalizer Pattern, Anti-Pattern #8 null semantics, CSV export.
 - **[Domain Logic](domain-logic.md)** — Financial formulas (theoretical profit, margin, liquidity, unit economics), ISO week / Moscow timezone, profitability thresholds.
 - **[Conventions & Quality Gates](conventions-and-quality.md)** — File size limits, ESLint enforcement, Defensive Frontend Principle, ratchet scripts, toolchain pinning, two-pass review discipline.

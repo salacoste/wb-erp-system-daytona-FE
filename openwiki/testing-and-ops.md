@@ -258,8 +258,8 @@ Refreshes the generated `openwiki/**` pages. Authoritative contract in `.github/
 
 **Commit and publish rules** (enforced by the `Commit OpenWiki updates`, `Open pull request for scheduled main refresh`, and `Push updates back to dispatched branch` steps):
 - `actions/checkout` runs with `persist-credentials: false`, so no token is stored in `.git/config` after checkout.
-- After generation, the workflow restores `.github/workflows/openwiki-update.yml`, every `AGENTS.md`, and `CLAUDE.md` to their committed `HEAD` versions so only generated pages are committed.
-- `git add -A -- openwiki/` is the only staging command. The step refuses to commit if any change is staged outside `openwiki/`, if unexpected unstaged tracked changes remain, or if any untracked or ignored file is present.
+- After generation, the workflow restores `.github/workflows/openwiki-update.yml`, every `AGENTS.md`, `CLAUDE.md`, and `openwiki/INSTRUCTIONS.md` to their committed `HEAD` versions so only generated pages are committed.
+- `git add -A -- openwiki/ ':(top,exclude)openwiki/INSTRUCTIONS.md'` is the only staging command: it stages generated `openwiki/**` output while explicitly excluding `openwiki/INSTRUCTIONS.md`. The step refuses to commit if any change is staged outside `openwiki/`, if unexpected unstaged tracked changes remain, or if any untracked or ignored file is present.
 - **Scheduled run on `main`** → commits, creates a unique `automation/openwiki-${GITHUB_RUN_ID}` branch, pushes it with a temporary `x-access-token:${GH_TOKEN}` remote URL that is restored to a credential-free origin via an `EXIT` trap, and opens a PR against `main` through the GitHub REST API (`POST /repos/{owner}/{repo}/pulls` with `curl`); the PR title/body are built with `node`. There is no `gh` CLI dependency and no auto-merge.
 - **Manual dispatch on a non-`main` branch** → commits and pushes the generated commit back to that same branch using the same credential-isolated remote-url pattern.
 - **Manual dispatch on `main`** → rejected before checkout.
