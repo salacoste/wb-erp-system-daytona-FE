@@ -113,6 +113,9 @@ export function CannedRulesGallery({ templates }: CannedRulesGalleryProps) {
   const [installedId, setInstalledId] = useState<string | null>(null)
 
   const handleInstall = (key: string, name?: string) => {
+    // Clear any stale post-install banner before a new install attempt, so a
+    // deep-link to a previously-installed rule doesn't persist across installs.
+    setInstalledId(null)
     installMutation.mutate(
       { key, body: name ? { name } : undefined },
       {

@@ -9,7 +9,7 @@
  * A list-query failure is isolated to this query and never blanks the templates
  * gallery (separate queryKey, not caught into global state).
  *
- * Reference: docs/request-backend/225-automation-installed-rules-backend-contract.md
+ * Reference: docs/request-backend/224-automation-canned-rules-backend-contract.md
  */
 import { InstalledRulesPageContent } from './InstalledRulesPageContent'
 
