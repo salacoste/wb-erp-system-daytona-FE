@@ -1,123 +1,48 @@
-/**
- * E2E Tests: Forecast Accuracy Dashboard
- *
- * Covers navigation, heading verification, data display states,
- * and heading-hierarchy accessibility for the /analytics/forecast-accuracy route.
- *
- * Uses domcontentloaded + landmark waits (CLAUDE.md anti-pattern #9).
- * No waitForTimeout, no waitForLoadState('networkidle').
- *
- * Requires: running frontend (port 3100), authenticated session (auth.setup.ts).
- * Run with: npm run test:e2e -- e2e/forecast-accuracy.spec.ts
- */
+import { expect, test } from './fixtures/network-test'
+import { installStory1626AnalyticsRoutes } from './fixtures/story-162-6-analytics'
 
-import { test, expect } from './fixtures/network-test'
-import { ROUTES, TIMEOUTS } from './fixtures/test-data'
+const FORECAST_ROUTE = '/analytics/forecast-accuracy'
 
-test.describe('Forecast Accuracy Dashboard', () => {
-  test.beforeEach(async ({ page }) => {
-    // Auth storage state is injected by Playwright config (auth.setup.ts).
-    // Navigate to dashboard first to ensure app shell is mounted.
-    await page.goto(ROUTES.dashboard, { waitUntil: 'domcontentloaded' })
-    await expect(page.locator('nav[aria-label="Main navigation"]')).toBeVisible({
-      timeout: TIMEOUTS.navigation,
+test.describe('Forecast accuracy exact route synchronization', () => {
+  test('renders fixture-backed metrics from the exact endpoint', async ({ page }) => {
+    await page.emulateMedia({ reducedMotion: 'reduce' })
+    const routes = await installStory1626AnalyticsRoutes(page, {
+      forecastAccuracy: { mode: 'data' },
     })
+    const request = routes.waitForAttempt('analytics.forecastAccuracy')
+
+    await page.goto(FORECAST_ROUTE, { waitUntil: 'domcontentloaded' })
+    const accepted = await request
+    expect(new URL(accepted.url).pathname).toBe('/v1/ai/forecast-accuracy')
+    expect(new URL(accepted.url).search).toBe('')
+
+    await expect(page.getByRole('heading', { name: 'Точность прогнозов', level: 1 })).toBeVisible()
+    await expect(page.getByText('По горизонту прогноза', { exact: true })).toBeVisible()
+    await expect(page.getByText('По SKU (топ-20)', { exact: true })).toBeVisible()
+    await expect(page.getByText(/1.?626/).first()).toBeVisible()
+    routes.assertNoUnexpectedRequests()
   })
 
-  // --- Page render & heading ---
-
-  test('page renders heading and content area', async ({ page }) => {
-    await page.goto(ROUTES.analytics.forecastAccuracy, {
-      waitUntil: 'domcontentloaded',
+  test('keeps forecast loading visible until its deferred response is released', async ({
+    page,
+  }) => {
+    await page.emulateMedia({ reducedMotion: 'reduce' })
+    const routes = await installStory1626AnalyticsRoutes(page, {
+      forecastAccuracy: { mode: 'deferred' },
     })
+    const request = routes.waitForAttempt('analytics.forecastAccuracy')
 
-    // Page heading — "Точность прогнозов" from ForecastAccuracyPageContent
-    await expect(page.getByRole('heading', { name: 'Точность прогнозов', level: 1 })).toBeVisible({
-      timeout: TIMEOUTS.api,
-    })
-
-    // Valid mounted states: metric cards, tables, error alert, or loading skeleton
-    const hasCards = (await page.locator('[class*="card"]').count()) > 0
-    const hasTable = (await page.getByRole('table').count()) > 0
-    const hasError = (await page.getByText('Ошибка загрузки').count()) > 0
-    const hasSkeleton = (await page.locator('.animate-pulse').count()) > 0
-    expect(hasCards || hasTable || hasError || hasSkeleton).toBeTruthy()
-  })
-
-  test('page has correct heading hierarchy', async ({ page }) => {
-    await page.goto(ROUTES.analytics.forecastAccuracy, {
-      waitUntil: 'domcontentloaded',
-    })
-    await expect(page.getByRole('heading', { name: 'Точность прогнозов' })).toBeVisible({
-      timeout: TIMEOUTS.api,
-    })
-
-    // h1 is the only top-level heading on the page
-    const h1Count = await page.getByRole('heading', { level: 1 }).count()
-    expect(h1Count).toBeGreaterThanOrEqual(1)
-  })
-
-  // --- Section headings ---
-
-  test('section headings render when data is present', async ({ page }) => {
-    await page.goto(ROUTES.analytics.forecastAccuracy, {
-      waitUntil: 'domcontentloaded',
-    })
-
-    // If data loaded, section headings should be visible; otherwise error is valid.
-    await expect
-      .poll(
-        async () => {
-          const hasHorizonHeading =
-            (await page.getByText('По горизонту прогноза', { exact: true }).count()) > 0
-          const hasSkuHeading =
-            (await page.getByText('По SKU (топ-20)', { exact: true }).count()) > 0
-          const hasError = (await page.getByText('Ошибка загрузки').count()) > 0
-          return hasHorizonHeading || hasSkuHeading || hasError
-        },
-        { timeout: TIMEOUTS.api }
-      )
-      .toBe(true)
-  })
-
-  // --- Metric cards ---
-
-  test('metric cards render with data or loading state', async ({ page }) => {
-    await page.goto(ROUTES.analytics.forecastAccuracy, {
-      waitUntil: 'domcontentloaded',
-    })
-
-    // Wait for content to load
-    await page.waitForTimeout(2000)
-
-    // Cards should either show metric data or loading skeletons
-    const hasCardElements = (await page.locator('[class*="card"]').count()) > 0
-    const hasSkeleton = (await page.locator('.animate-pulse').count()) > 0
-    const hasError = (await page.getByText('Ошибка загрузки').count()) > 0
-
-    expect(hasCardElements || hasSkeleton || hasError).toBeTruthy()
-  })
-
-  // --- Navigation ---
-
-  test('navigating from dashboard sidebar works', async ({ page }) => {
-    // Already on dashboard from beforeEach
-    const forecastAccuracyLink = page.getByRole('link', {
-      name: /точность прогнозов/i,
-    })
-
-    // If sidebar link exists, click it; otherwise navigate directly
-    if (await forecastAccuracyLink.isVisible().catch(() => false)) {
-      await forecastAccuracyLink.click()
-    } else {
-      await page.goto(ROUTES.analytics.forecastAccuracy, {
-        waitUntil: 'domcontentloaded',
-      })
+    try {
+      await page.goto(FORECAST_ROUTE, { waitUntil: 'domcontentloaded' })
+      await request
+      await expect(page.locator('main .animate-pulse').first()).toBeVisible()
+      await expect(page.getByRole('heading', { name: 'Точность прогнозов' })).toHaveCount(0)
+    } finally {
+      routes.release('analytics.forecastAccuracy')
     }
 
-    // Verify page loaded
-    await expect(page.getByRole('heading', { name: 'Точность прогнозов' })).toBeVisible({
-      timeout: TIMEOUTS.api,
-    })
+    await expect(page.getByRole('heading', { name: 'Точность прогнозов', level: 1 })).toBeVisible()
+    await expect(page.getByText(/1.?626/).first()).toBeVisible()
+    routes.assertNoUnexpectedRequests()
   })
 })

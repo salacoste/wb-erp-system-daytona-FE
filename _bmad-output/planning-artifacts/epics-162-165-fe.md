@@ -421,30 +421,36 @@ So that period changes, charts, metrics, and navigation are validated without ti
 
 **Acceptance Criteria:**
 
-**Given** the owned dashboard and analytics specs contain 67 fixed waits
-**When** synchronization is remediated
-**Then** their `page.waitForTimeout()` count becomes zero
-**And** no arbitrary replacement sleep is introduced.
+**Given** the immutable Story 162.6 planning baseline contains 67 fixed waits
+**When** the current branch is inventoried after Story 162.3
+**Then** the historical-to-current drift is recorded (`67` canonical, `65` current `page.waitForTimeout()` calls plus four timer-backed route fixtures)
+**And** all 69 current fixed-wait findings become zero without introducing an arbitrary replacement sleep.
 
 **Given** a period, filter, grouping, or route selection triggers data loading
 **When** the test changes that selection
-**Then** it waits for the expected request and visible state transition
-**And** verifies the rendered period or result belongs to the new selection.
+**Then** request-driven interactions wait for the exact method, path, query, status, and visible result
+**And** client-only interactions prove their visible or browser-state transition without inventing a request
+**And** dashboard order volume uses `GET /v1/analytics/orders/volume` with required `from`/`to` and applicable `aggregation`/`include_cogs` parameters rather than the obsolete `/analytics/orders-volume` fixture route
+**And** period changes prove URL/local-storage selection plus query-specific rendered data.
 
 **Given** dashboard cards and analytics charts load independently
 **When** one request is delayed or fails
 **Then** tests assert the intended independent loading, success, empty, or error state
-**And** do not wait for unrelated network idleness.
+**And** loading/error coverage proves the intercepted request plus a named terminal UI state
+**And** timer-free deferred fixtures release in `finally`, fail every retry until explicitly allowed, and never wait for unrelated network idleness.
 
 **Given** merged-group, FBS, margin, financial-summary, storage, category, brand, forecast, and analytics-hub coverage runs
 **When** each interaction completes
 **Then** assertions use stable roles, labels, test IDs, or response predicates
+**And** obsolete FBS selectors and false-green optional/body-only fallbacks are deleted or replaced with source-backed observable behavior
 **And** failures identify the missing state rather than timing out after a sleep.
 
 **Given** the remediation is complete
-**When** the targeted dashboard/analytics set runs repeatedly against prepared localhost fixtures
+**When** the exact 20-spec dashboard/analytics set runs twice with one worker and retries disabled against prepared localhost fixtures
 **Then** it passes without retry-only success
-**And** the owned-scope before/after wait count and runtime are recorded.
+**And** the union scanner preserves Story 162.5 coverage while reporting zero findings across both stories
+**And** two fresh code-reviewer passes approve before the architect and verifier gates run
+**And** historical/current/final counts plus runtime are recorded.
 
 ### Story 162.7: Remove Fixed Waits from Supplies and Supply Planning E2E
 

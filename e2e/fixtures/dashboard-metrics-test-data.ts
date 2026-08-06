@@ -121,7 +121,7 @@ export const TABLE_COLUMNS = [
  * LocalStorage keys for preferences
  */
 export const STORAGE_KEYS = {
-  viewPreference: 'dashboard-view-preference',
+  viewPreference: 'dashboard-daily-view',
   legendVisibility: 'dashboard-legend-visibility',
 }
 
@@ -129,8 +129,15 @@ export const STORAGE_KEYS = {
  * API routes for mocking
  */
 export const DASHBOARD_API_ROUTES = {
-  ordersVolume: '**/api/v1/analytics/orders-volume**',
-  financeSummary: '**/api/v1/analytics/weekly/finance-summary**',
-  dailyMetrics: '**/api/v1/analytics/daily**',
-  advertisingSpend: '**/api/v1/analytics/advertising**',
+  ordersVolume: '/v1/analytics/orders/volume',
+  financeSummary: '/v1/analytics/weekly/finance-summary',
+  availableWeeks: '/v1/analytics/weekly/available-weeks',
+  ordersTrends: '/v1/analytics/orders/trends',
+  dailyFinance: '/v1/analytics/daily/finance',
+  dailyAdvertising: '/v1/analytics/daily/advertising',
+  fulfillmentSummary: '/v1/analytics/fulfillment/summary',
+  processingStatus: '/v1/imports/historical',
+  products: '/v1/products',
+  storageTopConsumers: '/v1/analytics/storage/top-consumers',
+  storageTrends: '/v1/analytics/storage/trends',
 }

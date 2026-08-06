@@ -93,9 +93,8 @@ export const URL_PATTERNS = {
  * API route patterns for intercepting requests
  */
 export const API_ROUTES = {
-  weeklyAnalytics: '**/api/v1/analytics/weekly/**',
-  financeSummary: '**/api/v1/analytics/weekly/finance-summary**',
-  availableWeeks: '**/api/v1/analytics/weeks**',
+  financeSummary: '/v1/analytics/weekly/finance-summary',
+  availableWeeks: '/v1/analytics/weekly/available-weeks',
 }
 
 /**

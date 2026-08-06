@@ -1,56 +1,37 @@
-import { test, expect } from './fixtures/network-test'
-import { ROUTES, TIMEOUTS } from './fixtures/test-data'
+import { expect, test } from './fixtures/network-test'
+import { installStory1626AnalyticsRoutes } from './fixtures/story-162-6-analytics'
 
-/**
- * E2E Tests: Category Analytics
- * Story: 4.6 (Margin Analysis by Category)
- *
- * Smoke tests for the category margin analytics page:
- * - Page heading renders
- * - Filter / date-range controls visible
- * - Data table or empty state present
- * - Category breakdown displayed
- */
-test.describe('Category Analytics', () => {
-  test.beforeEach(async ({ page }) => {
-    await page.goto(ROUTES.analytics.category, { waitUntil: 'domcontentloaded' })
-    await expect(page.locator('main').first()).toBeVisible({ timeout: 15_000 })
+test('category analytics binds the exact weekly response to a visible category row', async ({
+  page,
+}) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' })
+  const routes = await installStory1626AnalyticsRoutes(page, {
+    weeklyByCategory: { mode: 'data' },
+    weeklyCabinetExpenses: { mode: 'data' },
   })
+  const categoryRequest = routes.waitForAttempt('analytics.weeklyByCategory')
+  const expensesRequest = routes.waitForAttempt('analytics.weeklyCabinetExpenses')
 
-  test('renders page heading', async ({ page }) => {
-    const heading = page.locator('h1, h2').filter({ hasText: /категори|category/i })
-    await expect(heading.first()).toBeVisible({ timeout: TIMEOUTS.navigation })
+  await page.goto('/analytics/category?weekStart=2026-W05&weekEnd=2026-W05', {
+    waitUntil: 'domcontentloaded',
   })
+  const [category, expenses] = await Promise.all([categoryRequest, expensesRequest])
+  const categoryUrl = new URL(category.url)
+  expect(categoryUrl.pathname).toBe('/v1/analytics/weekly/by-category')
+  const selectedWeek = categoryUrl.searchParams.get('week')
+  expect(selectedWeek).toMatch(/^\d{4}-W\d{2}$/)
+  expect(categoryUrl.searchParams.get('include_cogs')).toBe('true')
+  expect(categoryUrl.searchParams.get('include_ads')).toBe('true')
+  expect(categoryUrl.searchParams.get('include_stock')).toBe('true')
+  expect(new URL(expenses.url).searchParams.get('weekStart')).toBe(selectedWeek)
+  expect(new URL(expenses.url).searchParams.get('weekEnd')).toBe(selectedWeek)
 
-  test('has date range or week selector', async ({ page }) => {
-    const control = page.locator('button[role="combobox"], select').first()
-    await expect(control).toBeVisible({ timeout: TIMEOUTS.navigation })
-  })
-
-  test('data table or empty state visible', async ({ page }) => {
-    await page.waitForTimeout(2000)
-
-    const table = page.locator('table')
-    const emptyState = page.locator('text=/нет данных|no data/i')
-    const skeleton = page.locator('[class*="skeleton"]')
-
-    const hasTable = (await table.count()) > 0
-    const hasEmpty = (await emptyState.count()) > 0
-    const hasSkeleton = (await skeleton.count()) > 0
-
-    expect(hasTable || hasEmpty || hasSkeleton).toBeTruthy()
-  })
-
-  test('category breakdown rows render', async ({ page }) => {
-    await page.waitForTimeout(2000)
-
-    // Table rows with category names (each row is a category breakdown)
-    const rows = page.locator('tbody tr')
-    const emptyState = page.locator('text=/нет данных|no data/i')
-
-    const hasRows = (await rows.count()) > 0
-    const hasEmpty = (await emptyState.count()) > 0
-
-    expect(hasRows || hasEmpty).toBeTruthy()
-  })
+  await expect(
+    page.getByRole('heading', { name: 'Маржинальность по категориям', level: 1 })
+  ).toBeVisible()
+  await expect(
+    page.getByRole('cell', { name: 'Категория Story 162.6', exact: true }).first()
+  ).toBeVisible()
+  await expect(page.getByRole('table')).toBeVisible()
+  routes.assertNoUnexpectedRequests()
 })
