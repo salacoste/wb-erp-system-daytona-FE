@@ -171,8 +171,19 @@ test.describe('COGS Assignment', () => {
     })
 
     test('displays loading state during margin calculation', async ({ page }) => {
+      // Story 162.8: gate the route fulfillment on an external Promise so the
+      // products request stays genuinely in-flight (real loading skeleton)
+      // without a timer helper. The test observes the loading terminal, then
+      // releases the gate in `finally` so the request can never strand the
+      // worker (Playwright routes persist per worker → a held route would hang
+      // every subsequent test in this worker). Mirrors the 162.7 supply-
+      // planning loading-state recipe.
+      let releaseResponse: () => void = () => {}
+      const gatedResponse = new Promise<void>(resolve => {
+        releaseResponse = resolve
+      })
       await page.route('**/v1/products?**', async route => {
-        await new Promise(resolve => setTimeout(resolve, 750))
+        await gatedResponse
         await route.fulfill({
           status: 200,
           contentType: 'application/json',
@@ -183,7 +194,16 @@ test.describe('COGS Assignment', () => {
         })
       })
       await page.reload({ waitUntil: 'domcontentloaded' })
-      await expect(page.locator('[data-testid="product-loading-skeleton"]')).toBeVisible()
+      try {
+        await expect(page.locator('[data-testid="product-loading-skeleton"]')).toBeVisible({
+          timeout: TIMEOUTS.api,
+        })
+      } finally {
+        releaseResponse()
+      }
+      // After release the products query settles; assert it leaves the loading
+      // terminal (skeleton gone) — bounded on the skeleton, not elapsed time.
+      await expect(page.locator('[data-testid="product-loading-skeleton"]')).toHaveCount(0)
     })
 
     test('shows margin calculation status', async ({ page }) => {
@@ -233,18 +253,26 @@ test.describe('COGS Assignment', () => {
 
       await page.reload()
 
-      // Should show error state or empty state
-      await page.waitForTimeout(2000)
-
+      // Story 162.8: the bounded `expect(Повторить).toBeVisible({timeout})`
+      // below IS the terminal settle — the products query retries through
+      // react-query then surfaces the retry button on failure. No elapsed
+      // wait needed; the bounded assertion observes the error terminal.
       await expect(page.getByRole('button', { name: 'Повторить' })).toBeVisible({
         timeout: TIMEOUTS.api,
       })
     })
 
     test('handles network timeout', async ({ page }) => {
-      // Simulate slow network
+      // Story 162.8: simulate a slow network via a gated Promise (not a timer)
+      // so the products request stays genuinely in-flight while the loading
+      // skeleton is observed. Mirrors the 162.7 gated-Promise loading recipe;
+      // `finally` releases the gate so the route can never strand the worker.
+      let releaseResponse: () => void = () => {}
+      const gatedResponse = new Promise<void>(resolve => {
+        releaseResponse = resolve
+      })
       await page.route('**/products**', async route => {
-        await new Promise(resolve => setTimeout(resolve, 750))
+        await gatedResponse
         await route.fulfill({
           status: 200,
           contentType: 'application/json',
@@ -256,7 +284,13 @@ test.describe('COGS Assignment', () => {
       })
 
       await page.reload({ waitUntil: 'domcontentloaded' })
-      await expect(page.locator('[data-testid="product-loading-skeleton"]')).toBeVisible()
+      try {
+        await expect(page.locator('[data-testid="product-loading-skeleton"]')).toBeVisible({
+          timeout: TIMEOUTS.api,
+        })
+      } finally {
+        releaseResponse()
+      }
     })
   })
 })

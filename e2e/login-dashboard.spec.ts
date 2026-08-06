@@ -56,13 +56,16 @@ test.describe('Login → Dashboard Flow', () => {
 
   test.describe('Metric Cards (Story 3.2)', () => {
     test('displays key metric cards', async ({ page }) => {
-      // Wait for metrics to load
-      await page.waitForTimeout(2000) // Allow API data to load
-
       // Should have multiple metric cards
       const metricCards = page
         .locator(SELECTORS.metricCard)
         .or(page.locator('[class*="metric"], [class*="card"]').filter({ hasText: /₽|%/ }))
+
+      // Story 162.8: observe the metrics terminal render via a bounded wait on
+      // the first card (data, or a skeleton/loading surrogate) instead of an
+      // elapsed "allow API to load" wait. Loading OR rendered cards are both
+      // valid settles; the count assertion then runs against a settled DOM.
+      await expect(metricCards.first()).toBeVisible({ timeout: TIMEOUTS.api })
 
       // At least one metric should be visible
       const count = await metricCards.count()
@@ -100,14 +103,21 @@ test.describe('Login → Dashboard Flow', () => {
     })
 
     test('chart has accessible label', async ({ page }) => {
-      // Check for aria-label on chart container
-      const chartWithLabel = page.locator('[aria-label*="расход"], [aria-label*="chart"]')
-      const hasLabel = (await chartWithLabel.count()) > 0
-
-      // Or check for legend/labels
-      const hasLegend = (await page.locator('[class*="legend"], [class*="label"]').count()) > 0
-
-      expect(hasLabel || hasLegend).toBeTruthy()
+      // Story 162.8: bound the accessible-label/legend check with expect.poll so it
+      // waits for the chart's a11y to render instead of racing on an instant count()
+      // (which flaked between repeat-each iterations).
+      await expect
+        .poll(
+          async () => {
+            const hasLabel =
+              (await page.locator('[aria-label*="расход"], [aria-label*="chart"]').count()) > 0
+            const hasLegend =
+              (await page.locator('[class*="legend"], [class*="label"]').count()) > 0
+            return hasLabel || hasLegend
+          },
+          { timeout: TIMEOUTS.api, message: 'Expense chart accessible label or legend' }
+        )
+        .toBeTruthy()
     })
   })
 
@@ -122,9 +132,15 @@ test.describe('Login → Dashboard Flow', () => {
     })
 
     test('trend graph is functional', async ({ page }) => {
-      // Chart should be visible or page should show empty state
-      await page.waitForTimeout(1000)
-      await expect(page.locator('body')).toBeVisible()
+      // Story 162.8: replace the elapsed wait + tautological `body visible`
+      // with a bounded terminal settle. The trend section resolves to a
+      // rendered chart (recharts svg), an empty state, or an error state —
+      // all three are valid functional settles; body-only visibility is not.
+      const trendTerminal = page
+        .locator('svg.recharts-surface, svg[class*="recharts"]')
+        .or(page.getByText(/Нет данных|Ошибка загрузки/i))
+
+      await expect(trendTerminal.first()).toBeVisible({ timeout: TIMEOUTS.api })
     })
   })
 

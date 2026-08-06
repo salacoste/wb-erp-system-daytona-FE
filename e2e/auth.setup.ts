@@ -8,9 +8,9 @@ const authFile = 'e2e/.auth/user.json'
  * Runs before all tests to establish authenticated session
  */
 setup('authenticate', async ({ page }) => {
-  // Increase timeout for this setup
-  setup.setTimeout(60000)
-
+  // Story 162.8: no `setup.setTimeout` — the login flow is fully bounded by
+  // the explicit `waitForURL({timeout})` + `expect(main).toBeVisible({timeout})`
+  // below, which are the operative synchronization points (anti-pattern #7).
   // Navigate to login
   await page.goto(ROUTES.login)
 

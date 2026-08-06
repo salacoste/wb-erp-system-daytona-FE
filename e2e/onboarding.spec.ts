@@ -88,10 +88,21 @@ test.describe('Onboarding Flow', () => {
       // Enter invalid credentials
       await page.locator('input[type="email"]').fill('invalid@example.com')
       await page.locator('input[type="password"]').fill('wrongpassword')
-      await page.locator('button[type="submit"]').click()
 
-      // Should show error or stay on login page
-      await page.waitForTimeout(2000)
+      // Story 162.8: observe the login attempt via its network settle instead
+      // of an elapsed wait. Register the response BEFORE the click so the
+      // rejection (401) or slow network is the synchronization signal.
+      const loginResponse = page.waitForResponse(
+        response =>
+          response.request().method() === 'POST' && response.url().includes('/v1/auth/login'),
+        { timeout: 15000 }
+      )
+      await page.locator('button[type="submit"]').click()
+      // The login request resolves the wait; an invalid credential yields a
+      // 401 (error rendered) and the form remains on /login. Swallowing the
+      // rejection keeps the downstream `hasError || stillOnLogin` assertion
+      // honest — the network settled, which is the observable event.
+      await loginResponse.catch(() => null)
 
       // Check for error message or that we're still on login
       const hasError = (await page.locator('text=/ошибка|error|неверн|invalid/i').count()) > 0
