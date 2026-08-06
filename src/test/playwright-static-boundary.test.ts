@@ -1,6 +1,7 @@
 import { readFile } from 'node:fs/promises'
 import path from 'node:path'
 
+import { devices } from '@playwright/test'
 import { describe, expect, it } from 'vitest'
 
 import {
@@ -325,4 +326,15 @@ describe('Playwright static transport boundary', () => {
     ).flat()
     expect(violations).toEqual([])
   }, 30_000)
+
+  it('mobile-critical-routes IPHONE_14_VIEWPORT matches the installed devices descriptor', () => {
+    // e2e/mobile-critical-routes.spec.ts hardcodes {390,664} instead of importing
+    // `devices` (the static boundary forbids runtime Playwright imports in e2e
+    // specs). This turns descriptor drift — a future @playwright/test bump
+    // changing devices['iPhone 14'].viewport — into a named failure here rather
+    // than a mysterious mobile-E2E red. If this fails, update IPHONE_14_VIEWPORT
+    // in e2e/mobile-critical-routes.spec.ts AND the mobile project in
+    // playwright.config.ts (which spreads ...devices['iPhone 14']).
+    expect({ width: 390, height: 664 }).toEqual(devices['iPhone 14'].viewport)
+  })
 })
