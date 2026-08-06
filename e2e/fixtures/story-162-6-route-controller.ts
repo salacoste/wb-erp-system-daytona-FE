@@ -24,13 +24,16 @@ export interface Story1626AcceptedRequest {
   url: string
 }
 
+/** Outcome a deferred route resolves with once its gate is released. */
+export type Story1626ReleaseOutcome = 'data' | 'empty' | 'error'
+
 export interface Story1626RouteController {
   register: (contract: Story1626RouteContract) => Promise<void>
   waitForAttempt: (name: string, attempt?: number) => Promise<Story1626AcceptedRequest>
   attemptCount: (name: string) => number
   acceptedRequests: () => readonly Story1626AcceptedRequest[]
   rejectedRequests: () => readonly string[]
-  release: (name: string) => void
+  release: (name: string, outcome?: Story1626ReleaseOutcome) => void
   allowRetrySuccess: (name: string) => void
   assertNoUnexpectedRequests: () => void
 }
@@ -43,6 +46,7 @@ interface DeferredGate {
 interface RouteState {
   attempts: number
   retrySuccessAllowed: boolean
+  releaseOutcome: Story1626ReleaseOutcome
   gate: DeferredGate
   waiters: Array<{
     attempt: number
@@ -148,6 +152,7 @@ export function createStory1626RouteController(page: Page): Story1626RouteContro
       const state: RouteState = {
         attempts: 0,
         retrySuccessAllowed: false,
+        releaseOutcome: 'data',
         gate: createDeferredGate(),
         waiters: [],
       }
@@ -178,7 +183,8 @@ export function createStory1626RouteController(page: Page): Story1626RouteContro
 
         const mode = contract.mode ?? 'data'
         if (mode === 'deferred') await state.gate.promise
-        if (mode === 'error' || (mode === 'retry' && !state.retrySuccessAllowed)) {
+        const outcome: Story1626RouteMode = mode === 'deferred' ? state.releaseOutcome : mode
+        if (outcome === 'error' || (outcome === 'retry' && !state.retrySuccessAllowed)) {
           await fulfillJson(
             route,
             responseBody(
@@ -194,7 +200,7 @@ export function createStory1626RouteController(page: Page): Story1626RouteContro
         }
 
         const body =
-          mode === 'empty' && contract.empty !== undefined ? contract.empty : contract.data
+          outcome === 'empty' && contract.empty !== undefined ? contract.empty : contract.data
         await fulfillJson(route, responseBody(body, url, state.attempts))
       })
     },
@@ -209,8 +215,10 @@ export function createStory1626RouteController(page: Page): Story1626RouteContro
     },
     acceptedRequests: () => accepted.map(request => ({ ...request })),
     rejectedRequests: () => [...rejected],
-    release(name) {
-      requireState(name).gate.release()
+    release(name, outcome = 'data') {
+      const state = requireState(name)
+      state.releaseOutcome = outcome
+      state.gate.release()
     },
     allowRetrySuccess(name) {
       requireState(name).retrySuccessAllowed = true
