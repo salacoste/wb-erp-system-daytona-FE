@@ -178,3 +178,105 @@ export function actionLabel(a: string): string {
 export function isWritebackRule(rule: AutomationRule): boolean {
   return rule.action === 'WRITEBACK_PRICE' || rule.category === 'price'
 }
+
+/**
+ * Comparison operators supported by AutomationTriggerParams.operator (Story 163.3).
+ * The backend accepts exactly this set; the editor validates client-side and
+ * surfaces a RU message for any other value.
+ */
+export type AutomationThresholdOperator = 'lt' | 'lte' | 'gt' | 'gte' | 'eq'
+
+/** All known threshold operators (drives the editor <select> options). */
+export const AUTOMATION_OPERATORS: readonly AutomationThresholdOperator[] = [
+  'lt',
+  'lte',
+  'gt',
+  'gte',
+  'eq',
+]
+
+/** RU labels for the threshold operators (editor <select> + validation messages). */
+export const AUTOMATION_OPERATOR_LABELS: Record<AutomationThresholdOperator, string> = {
+  lt: 'меньше (<)',
+  lte: 'меньше или равно (≤)',
+  gt: 'больше (>)',
+  gte: 'больше или равно (≥)',
+  eq: 'равно (=)',
+}
+
+/**
+ * Rule scope (Story 163.3). The editable PATCH scope narrows which SKUs /
+ * categories a rule applies to. Both arrays optional — an empty/undefined scope
+ * means "the whole cabinet".
+ */
+export interface AutomationRuleScope {
+  nmIds?: number[]
+  categoryIds?: string[]
+}
+
+/**
+ * Typed trigger params for an installed rule (Story 163.3). The canned-rules
+ * AutomationTriggerParams is intentionally permissive; this is the typed detail
+ * view used by the editor after the boundary normalizer coerces each field.
+ */
+export interface AutomationRuleTriggerParams {
+  threshold?: number
+  operator?: AutomationThresholdOperator
+  nmIds?: number[]
+  scope?: string
+}
+
+/**
+ * Typed action params for an installed rule (Story 163.3). priceAdjustPct is the
+ * WRITEBACK_PRICE adjustment; taskType/message drive CREATE_TASK/NOTIFY.
+ */
+export interface AutomationRuleActionParams {
+  priceAdjustPct?: number
+  taskType?: string
+  message?: string
+}
+
+/**
+ * Installed-rule detail (Story 163.3-FE). AutomationRule + the typed
+ * trigger/action/scope params surfaced by GET /v1/automation/rules/:id. The
+ * boundary normalizer (mapInstalledRuleDetail) coerces every param field; raw
+ * backend shapes never reach the editor.
+ *
+ * Read-only fields (id, cabinetId, createdAt, updatedAt, category derived) are
+ * present for display but NEVER sent back on PATCH (see UpdateAutomationRuleInput).
+ */
+export interface AutomationRuleDetail extends AutomationRule {
+  triggerParams?: AutomationRuleTriggerParams
+  actionParams?: AutomationRuleActionParams
+  scope?: AutomationRuleScope
+}
+
+/**
+ * Editable PATCH body for /v1/automation/rules/:id (Story 163.3-FE). Mirrors
+ * the backend PartialType(CreateAutomationRuleDto). EVERY field is optional —
+ * only changed values are serialized. Read-only fields (id, cabinetId,
+ * createdAt, updatedAt, category) are intentionally ABSENT so they cannot be
+ * sent back. The editor's toUpdateBody serializer produces this shape.
+ *
+ * Reference: docs/request-backend/224-automation-canned-rules-backend-contract.md
+ */
+export interface UpdateAutomationRuleInput {
+  name?: string
+  enabled?: boolean
+  priority?: number
+  cooldownMin?: number
+  trigger?: AutomationTrigger
+  triggerParams?: {
+    threshold?: number
+    operator?: AutomationThresholdOperator
+    nmIds?: number[]
+    scope?: string
+  }
+  action?: AutomationAction
+  actionParams?: {
+    priceAdjustPct?: number
+    taskType?: string
+    message?: string
+  }
+  scope?: AutomationRuleScope
+}

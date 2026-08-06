@@ -93,10 +93,13 @@ export const ROUTES = {
   },
 
   // Automation — AT1 canned-rules gallery (contract #224) + installed list (#225)
+  // + Story 163.3-FE installed-rule editor (GET/PATCH /v1/automation/rules/:id).
   AUTOMATION: {
     ROOT: '/automation',
     CANNED_RULES: '/automation/canned-rules',
     INSTALLED_RULES: '/automation/installed-rules',
+    /** Deep-link to the installed-rule editor for one rule. Story 163.3-FE. */
+    installedRuleEditor: (id: string) => `/automation/installed-rules/${encodeURIComponent(id)}`,
   },
 
   SETTINGS: {

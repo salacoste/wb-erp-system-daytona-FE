@@ -18,9 +18,11 @@
  * Reference: docs/request-backend/224-automation-canned-rules-backend-contract.md
  */
 import { useEffect, useRef } from 'react'
+import Link from 'next/link'
 import { Badge } from '@/components/ui/badge'
 import { AlertTriangle } from 'lucide-react'
 import { type AutomationRule, isWritebackRule, triggerLabel, actionLabel } from '@/types/automation'
+import { ROUTES } from '@/lib/routes'
 
 interface InstalledRuleRowProps {
   rule: AutomationRule
@@ -51,7 +53,14 @@ export function InstalledRuleRow({ rule, highlighted }: InstalledRuleRowProps) {
     >
       <div className="flex flex-wrap items-start justify-between gap-2">
         <h3 className="text-base font-medium" data-testid={`installed-rule-name-${rule.id}`}>
-          {rule.name}
+          {/* Story 163.3-FE: name deep-links into the installed-rule editor. */}
+          <Link
+            href={ROUTES.AUTOMATION.installedRuleEditor(rule.id)}
+            className="underline-offset-4 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 rounded"
+            data-testid={`open-editor-${rule.id}`}
+          >
+            {rule.name}
+          </Link>
         </h3>
         {rule.enabled ? (
           <Badge className="bg-green-100 text-green-800" data-testid={`enabled-badge-${rule.id}`}>

@@ -18,11 +18,14 @@ import {
   installCannedRule,
   automationQueryKeys,
 } from '@/lib/api/automation'
+import { getInstalledRule, updateInstalledRule } from '@/lib/api/installed-rule-detail'
 import type {
   CannedRuleTemplate,
   AutomationRule,
+  AutomationRuleDetail,
   InstallCannedRuleBody,
   InstalledRulesQuery,
+  UpdateAutomationRuleInput,
 } from '@/types/automation'
 import { ApiError } from '@/types/api'
 import { logger } from '@/lib/logger'
@@ -49,6 +52,25 @@ export function useInstalledRules(params?: InstalledRulesQuery) {
     queryFn: () => getInstalledRules(params),
     staleTime: 5 * 60 * 1000,
     gcTime: 30 * 60 * 1000,
+    retry: 1,
+  })
+}
+
+/**
+ * Fetch a single installed rule by id (GET /v1/automation/rules/:id). Story 163.3.
+ * `enabled: !!id` gates the query so an empty id (e.g. during route resolve)
+ * never fires the request. Same cache/retry policy as useInstalledRules.
+ *
+ * Errors carry ApiError.status so the editor can branch independent states
+ * (404 not-found, 401/403 authorization, 5xx retryable, malformed-response).
+ */
+export function useInstalledRule(id?: string) {
+  return useQuery<AutomationRuleDetail, Error>({
+    queryKey: automationQueryKeys.ruleDetail(id ?? ''),
+    queryFn: () => getInstalledRule(id as string),
+    enabled: !!id,
+    staleTime: 60 * 1000,
+    gcTime: 5 * 60 * 1000,
     retry: 1,
   })
 }
@@ -89,6 +111,49 @@ export function useInstallCannedRule() {
         toast.error('Шаблон не найден')
       } else {
         toast.error(error.message || 'Не удалось установить шаблон')
+      }
+    },
+  })
+}
+
+/** Input for useUpdateInstalledRule. The id is the path param; patch is the body. */
+export interface UpdateInstalledRuleInput {
+  id: string
+  patch: UpdateAutomationRuleInput
+}
+
+/**
+ * Update an installed rule (PATCH /v1/automation/rules/:id). Story 163.3-FE.
+ * On success: write the updated detail into the ruleDetail cache + invalidate
+ * the rules list (so the installed-rules page re-fetches), then toast RU.
+ * On error: status-based RU toasts (never claims the rule was updated). The
+ * editor preserves the operator's unsaved input on error (mutation leaves the
+ * form state intact — only the cache is untouched).
+ */
+export function useUpdateInstalledRule() {
+  const queryClient = useQueryClient()
+
+  return useMutation<AutomationRuleDetail, Error, UpdateInstalledRuleInput>({
+    mutationFn: ({ id, patch }) => updateInstalledRule(id, patch),
+    onSuccess: data => {
+      logger.debug('[useUpdateInstalledRule] Updated:', data.id)
+      queryClient.setQueryData(automationQueryKeys.ruleDetail(data.id), data)
+      queryClient.invalidateQueries({ queryKey: automationQueryKeys.rules })
+      toast.success('Правило обновлено')
+    },
+    onError: error => {
+      logger.error('[useUpdateInstalledRule] Update failed:', error)
+      const status = error instanceof ApiError ? error.status : 0
+      if (status === 400) {
+        toast.error('Некорректные данные. Проверьте значения полей.')
+      } else if (status === 403) {
+        toast.error('Недостаточно прав для изменения правила.')
+      } else if (status === 404) {
+        toast.error('Правило не найдено.')
+      } else if (status === 409) {
+        toast.error('Конфликт: правило было изменено другим сеансом.')
+      } else {
+        toast.error(error.message || 'Не удалось обновить правило')
       }
     },
   })
