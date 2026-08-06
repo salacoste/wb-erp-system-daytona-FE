@@ -129,7 +129,10 @@ test.describe('Supply Lifecycle - Epic 53-FE @mutating', () => {
       // Click create button
       const createButton = page.locator(SELECTORS.createSupplyButton)
       if (!(await createButton.isVisible())) {
-        test.skip()
+        test.skip(
+          true,
+          'Create-supply button not visible — mutation UI unavailable in read-only mode'
+        )
         return
       }
 
@@ -171,7 +174,10 @@ test.describe('Supply Lifecycle - Epic 53-FE @mutating', () => {
     test('Step 2: Add orders to supply', async ({ page }) => {
       // Skip if no supply was created
       if (!createdSupplyId) {
-        test.skip()
+        test.skip(
+          true,
+          'No supply created — prior create step did not produce a supply; enable mutating E2E to exercise'
+        )
         return
       }
 
@@ -185,7 +191,7 @@ test.describe('Supply Lifecycle - Epic 53-FE @mutating', () => {
       const addButton = page.locator(SELECTORS.addOrdersButton)
       if (!(await addButton.isVisible()) || !(await addButton.isEnabled())) {
         console.log('Add orders button not available - supply may not be OPEN')
-        test.skip()
+        test.skip(true, 'Add-orders button unavailable — supply not in OPEN status')
         return
       }
 
@@ -368,7 +374,10 @@ test.describe('Supply Lifecycle - Epic 53-FE @mutating', () => {
 
     test('Step 5: Verify delivery status (mock)', async ({ page }) => {
       if (!createdSupplyId) {
-        test.skip()
+        test.skip(
+          true,
+          'No supply created — prior create step did not produce a supply; enable mutating E2E to exercise'
+        )
         return
       }
 
