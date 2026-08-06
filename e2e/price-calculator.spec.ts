@@ -606,12 +606,11 @@ test.describe('Epic 44-FE: Price Calculator UI', () => {
   // ============================================================================
 
   test('TC-E2E-009: Collapsible sections работают (TaxConfiguration)', async ({ page }) => {
-    // Скроллим вниз чтобы найти налоговую секцию. Story 162.8: observe the
-    // scroll settle via a bounded poll on scrollY (replaces the elapsed 200ms).
+    // Скроллим вниз чтобы найти налоговую секцию (best-effort: the page may not
+    // overflow, so scrollY may stay 0 — do NOT assert it). Story 162.8: the prior
+    // elapsed 200ms wait is removed; the tax-section isVisible() check below is
+    // the bounded observable signal.
     await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight))
-    await expect
-      .poll(async () => page.evaluate(() => window.scrollY), { timeout: 5000 })
-      .toBeGreaterThan(0)
 
     // Проверяем что есть collapsible секция (TaxPresetGrid или TaxConfiguration)
     const taxSection = page.locator('[data-testid="tax-configuration-section"]')
