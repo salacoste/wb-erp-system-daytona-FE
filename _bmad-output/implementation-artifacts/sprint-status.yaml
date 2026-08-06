@@ -37,7 +37,7 @@
 #   they are excluded from story and retrospective counts and must be documented with a no-story-ID note.
 
 generated: 2026-08-03 # refreshed after Epic 127 truth reconciliation and Epics 162-165 registration
-last_updated: 2026-08-06 # Story 163.1-FE (advertising sort headers keyboard a11y) delivered + 2-pass code-reviewed (APPROVE/APPROVE, fresh-context opus); epic-163-fe → in-progress. PRE-EXISTING (not 163.1): src/test/playwright-static-boundary.test.ts is RED on origin/main from parallel-session e2e PRs #102/#106/#107.
+last_updated: 2026-08-06 # Story 163.2-FE (installed automation rules nav+list) merged via PR #115 (base WIP, parallel-session-preserved) + PR #116 (review fixups: 225->224 citations, highlight scroll/focus a11y, banner dismiss). epic-163-fe in-progress (163.3-163.6 backlog). NOTE: the earlier playwright-static-boundary RED was fixed in PR #112 + #113 (the prior note here was stale).
 project: frontend
 project_key: NOKEY
 tracking_system: file-system
@@ -708,7 +708,7 @@ development_status:
   # Spec: _bmad-output/planning-artifacts/epics-162-165-fe.md
   epic-163-fe: in-progress  # Story 163.1 done; 163.2-163.6 remain (backlog).
   163.1-fe-advertising-sort-headers-keyboard-accessible: done  # 2-pass code-reviewed (APPROVE/APPROVE, fresh-context opus). Sort activation moved from click-only <th> to a semantic <button> (Enter/Space native) with Russian state-aware accessible names + visible focus ring; aria-sort moved to the owning <th> (none/ascending/descending, only the active column asc/desc); obsolete jsx-a11y/control-has-associated-label suppression removed; docs/polish/keyboard-sort-headers.md (Story 110.1-FE F-2) closed. Tests verify accessible names, Enter/Space activation, aria-sort transitions, focus.
-  163.2-fe-installed-automation-rules-navigation-list: backlog
+  163.2-fe-installed-automation-rules-navigation-list: done  # Merged via PR #115 (base WIP preserved by parallel session) + PR #116 (review fixups: 225->224 citation repoint, InstalledRuleRow scrollIntoView+tabIndex a11y, CannedRulesGallery banner-dismiss). Installed-rules nav split + list (4 states) + writeback safety badge + defensive mapInstalledRule normalizer. Pass-1 APPROVE w/ comments; fixups verified. Review fixups were lost twice to /tmp-worktree deletion under concurrent-session churn before being committed on a durable branch.
   163.3-fe-installed-automation-rule-editor: backlog
   163.4-fe-unit-economics-zero-vs-missing: backlog
   163.5-fe-sku-accuracy-units-naive-baseline: backlog
