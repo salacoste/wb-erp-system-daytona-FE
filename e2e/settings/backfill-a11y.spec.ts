@@ -207,7 +207,10 @@ test.describe('Epic 51-FE: Accessibility - Backfill Admin Page', () => {
       await page.locator('main').waitFor({ state: 'visible' })
 
       if (!page.url().includes('/settings/backfill')) {
-        test.skip()
+        test.skip(
+          true,
+          'Backfill admin route did not load — redirected away from /settings/backfill'
+        )
       }
     })
 
@@ -446,7 +449,10 @@ test.describe('Epic 51-FE: Accessibility - Backfill Admin Page', () => {
       await page.locator('main').waitFor({ state: 'visible' })
 
       if (!page.url().includes('/settings/backfill')) {
-        test.skip()
+        test.skip(
+          true,
+          'Backfill admin route did not load — redirected away from /settings/backfill'
+        )
       }
 
       await expect(page.getByRole('heading', { name: 'Управление бэкфиллом' })).toBeVisible()

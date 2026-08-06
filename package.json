@@ -48,6 +48,7 @@
     "check:locale-percent": "bash scripts/check-locale-percent.sh",
     "check:anti-pattern-8-normalizer": "bash scripts/check-anti-pattern-8-normalizer.sh",
     "check:e2e-assertions": "node scripts/check-e2e-vacuous-assertions.mjs",
+    "check:e2e-skips": "node scripts/check-e2e-skips.mjs",
     "check:e2e-waits": "node scripts/check-e2e-fixed-waits.mjs"
   },
   "lint-staged": {
