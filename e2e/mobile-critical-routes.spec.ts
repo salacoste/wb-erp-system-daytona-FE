@@ -1,4 +1,3 @@
-import { devices } from '@playwright/test'
 import { expect, test } from './fixtures/network-test'
 import { ROUTES, TIMEOUTS } from './fixtures/test-data'
 
@@ -23,12 +22,14 @@ import { ROUTES, TIMEOUTS } from './fixtures/test-data'
  * `waitForTimeout`/`setTimeout`/`networkidle`/`page.clock`.
  */
 
-// iPhone 14 profile (project-level device emulation). Documented here so the
-// run record is self-describing even when the report is read without the
-// config. Derived from @playwright/test `devices['iPhone 14']` so it tracks
-// the actual project device descriptor (Playwright's iPhone 14 viewport is
-// 390×664 in the installed version, not the hardware 390×844).
-const IPHONE_14_VIEWPORT = devices['iPhone 14'].viewport
+// iPhone 14 viewport expected from the `mobile` project's device emulation
+// (playwright.config.ts spreads `...devices['iPhone 14']`). Hardcoded here
+// rather than imported from @playwright/test because the static-transport
+// boundary (src/test/playwright-static-boundary) forbids runtime Playwright
+// imports in e2e specs. Value is Playwright's iPhone 14 CSS viewport
+// (390x664 in the installed version, not the hardware 390x844); if
+// @playwright/test bumps the descriptor, update this AND playwright.config.ts.
+const IPHONE_14_VIEWPORT = { width: 390, height: 664 }
 const IPHONE_14_USER_AGENT =
   'iPhone AppleWebKit (device emulation, iPhone 14 profile — Story 162.10)'
 
