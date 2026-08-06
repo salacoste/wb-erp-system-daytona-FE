@@ -18,6 +18,13 @@ import {
   STORY_162_6_E2E_FILES,
   STORY_162_6_FIXTURE_FILES,
   STORY_162_6_SCAN_FILES,
+  STORY_162_7_BASE_REVISION,
+  STORY_162_7_CANONICAL_WAIT_COUNT,
+  STORY_162_7_CURRENT_BASE_TIMER_COUNT,
+  STORY_162_7_CURRENT_BASE_WAIT_COUNT,
+  STORY_162_7_E2E_FILES,
+  STORY_162_7_FIXTURE_FILES,
+  STORY_162_7_SCAN_FILES,
   STORY_FIXED_WAIT_SCAN_FILES,
   resolveScanTargets,
   scanFiles,
@@ -502,14 +509,53 @@ describe('Story 162.6 dashboard and analytics fixed-wait scanner', () => {
     )
   })
 
-  it('uses the exact Story 162.5 and 162.6 target union by default', () => {
+  it('uses the exact Story 162.5, 162.6, and 162.7 target union by default', () => {
     expect(STORY_FIXED_WAIT_SCAN_FILES).toEqual([
       ...STORY_162_5_E2E_FILES,
       ...STORY_162_6_SCAN_FILES,
+      ...STORY_162_7_SCAN_FILES,
     ])
     expect(resolveScanTargets([])).toEqual(STORY_FIXED_WAIT_SCAN_FILES)
     expect(resolveScanTargets(['e2e/dashboard-period.spec.ts'])).toEqual([
       'e2e/dashboard-period.spec.ts',
     ])
+  })
+})
+
+describe('Story 162.7 supplies fixed-wait scanner', () => {
+  it('records the immutable canonical count and exact current base drift', async () => {
+    expect(STORY_162_7_BASE_REVISION).toBe('3bcbf72c947a56a3ac7961a36a950707c648524e')
+    expect(STORY_162_7_CANONICAL_WAIT_COUNT).toBe(76)
+
+    const baseline = await scanGitRevision(STORY_162_7_E2E_FILES, STORY_162_7_BASE_REVISION)
+    const findings = baseline.flat()
+
+    expect(findings.filter(finding => finding.kind === 'browser-wait')).toHaveLength(
+      STORY_162_7_CURRENT_BASE_WAIT_COUNT
+    )
+    expect(findings.filter(finding => finding.kind === 'timer')).toHaveLength(
+      STORY_162_7_CURRENT_BASE_TIMER_COUNT
+    )
+    expect(findings).toHaveLength(73)
+  })
+
+  it('keeps the Story 162.7 owned spec list exact', () => {
+    expect(STORY_162_7_E2E_FILES).toEqual([
+      'e2e/supply-planning.spec.ts',
+      'e2e/supplies/supplies-list.spec.ts',
+      'e2e/supplies/supply-detail.spec.ts',
+      'e2e/supplies/supply-lifecycle.spec.ts',
+      'e2e/supplies/supplies-a11y.spec.ts',
+    ])
+  })
+
+  it('keeps the planned fixture targets exact and fails closed when one is missing', async () => {
+    expect(STORY_162_7_FIXTURE_FILES).toEqual(['e2e/fixtures/mutation-guard.ts'])
+    expect(STORY_162_7_SCAN_FILES).toEqual([...STORY_162_7_E2E_FILES, ...STORY_162_7_FIXTURE_FILES])
+
+    const root = await mkdtemp(join(tmpdir(), 'story-162-7-fixed-wait-scan-'))
+    await expect(scanFiles([STORY_162_7_FIXTURE_FILES[0]], root)).rejects.toThrow(
+      STORY_162_7_FIXTURE_FILES[0]
+    )
   })
 })

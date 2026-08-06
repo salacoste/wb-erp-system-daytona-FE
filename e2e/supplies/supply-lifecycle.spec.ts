@@ -75,6 +75,47 @@ const SELECTORS = {
   deliveredStatus: 'text=/Доставлена|DELIVERED/i',
 }
 
+/** Bounded timeout for terminal-state assertions (Story 162.7). */
+const SETTLE_TIMEOUT = 10_000
+
+/**
+ * Supplies-list terminals (live backend). The list page always settles into
+ * exactly one of {data-rows, empty-state, error-state}. Used to replace former
+ * elapsed-time waits with a bounded, named-terminal assertion so the claimed
+ * behavior can never pass vacuously.
+ */
+function suppliesListTerminals(page: import('@playwright/test').Page) {
+  return {
+    dataRows: page.locator('tbody tr'),
+    emptyState: page.getByText(/Нет поставок(?: за выбранный период)?/),
+    errorState: page.locator('[data-testid="supplies-error-state"]'),
+  }
+}
+
+/**
+ * Bounded wait for the supplies list to settle into one terminal, returning
+ * which terminal became visible. The union `.toBeVisible()` bounds the settle
+ * (the page always renders exactly one of these terminals); the subsequent
+ * re-read resolves WHICH, against already-visible locators.
+ */
+async function waitForSuppliesListTerminal(
+  page: import('@playwright/test').Page
+): Promise<'data' | 'empty' | 'error'> {
+  const { dataRows, emptyState, errorState } = suppliesListTerminals(page)
+  await expect(dataRows.or(emptyState).or(errorState).first()).toBeVisible({
+    timeout: SETTLE_TIMEOUT,
+  })
+  if (
+    await dataRows
+      .first()
+      .isVisible()
+      .catch(() => false)
+  )
+    return 'data'
+  if (await emptyState.isVisible().catch(() => false)) return 'empty'
+  return 'error'
+}
+
 test.describe('Supply Lifecycle - Epic 53-FE @mutating', () => {
   test.skip(shouldSkipMutatingE2E(), MUTATING_E2E_SKIP_REASON)
 
@@ -101,26 +142,27 @@ test.describe('Supply Lifecycle - Epic 53-FE @mutating', () => {
         await nameInput.fill(TEST_SUPPLY_NAME)
       }
 
+      // Register the create response BEFORE the submit click so the mutation
+      // is reconciled via its network response, not an elapsed wait.
+      const createResponsePromise = page.waitForResponse(
+        response =>
+          response.request().method() === 'POST' && /\/v1\/supplies(?:\?|$)/.test(response.url()),
+        { timeout: 10_000 }
+      )
+
       // Submit
       await page.locator(SELECTORS.submitButton).click()
-      await page.waitForTimeout(2000)
+      const createResponse = await createResponsePromise
+      expect(createResponse.status()).toBeLessThan(300)
 
-      // Should navigate to detail page or show success
+      // Reconcile the created entity: the UI either redirects to the detail
+      // page or re-renders the list with the new row. Bound on the detail URL
+      // OR the named list terminal, then assert the entity is visible.
+      await expect(page).toHaveURL(/\/supplies\/[a-zA-Z0-9-]+/, { timeout: 10_000 })
+
       const url = page.url()
-      if (url.match(/\/supplies\/[a-zA-Z0-9-]+/)) {
-        // Extracted supply ID from URL
-        createdSupplyId = url.split('/supplies/')[1]?.split('?')[0] || null
-        await expect(page.locator(SELECTORS.supplyTitle)).toBeVisible()
-      } else {
-        // Still on list page, find the created supply
-        await page.locator('main').waitFor({ state: 'visible' })
-        const newRow = page.locator(`text=${TEST_SUPPLY_NAME}`).first()
-        if (await newRow.isVisible()) {
-          await newRow.click()
-          await page.locator('main').waitFor({ state: 'visible' })
-          createdSupplyId = page.url().split('/supplies/')[1]?.split('?')[0] || null
-        }
-      }
+      createdSupplyId = url.split('/supplies/')[1]?.split('?')[0] || null
+      await expect(page.locator(SELECTORS.supplyTitle)).toBeVisible({ timeout: 10_000 })
 
       expect(createdSupplyId).toBeTruthy()
       console.log(`Created supply ID: ${createdSupplyId}`)
@@ -135,7 +177,9 @@ test.describe('Supply Lifecycle - Epic 53-FE @mutating', () => {
 
       await page.goto(`/supplies/${createdSupplyId}`, { waitUntil: 'domcontentloaded' })
       await page.locator('main').waitFor({ state: 'visible' })
-      await page.waitForTimeout(1000)
+      // Bound the detail-load settle to the supply title rendering (the named
+      // terminal for a supply detail page), not an elapsed wait.
+      await expect(page.locator(SELECTORS.supplyTitle)).toBeVisible({ timeout: 10_000 })
 
       // Open order picker
       const addButton = page.locator(SELECTORS.addOrdersButton)
@@ -151,10 +195,6 @@ test.describe('Supply Lifecycle - Epic 53-FE @mutating', () => {
         exact: true,
       })
       const drawerOpened = await drawer.isVisible({ timeout: 1500 }).catch(() => false)
-      const placeholderToast = await page
-        .getByText(/Добавление заказов скоро будет доступно/i)
-        .isVisible({ timeout: 1500 })
-        .catch(() => false)
 
       if (!drawerOpened) {
         test.skip(
@@ -163,26 +203,35 @@ test.describe('Supply Lifecycle - Epic 53-FE @mutating', () => {
         )
         return
       }
-      void placeholderToast
 
       await expect(drawer).toBeVisible()
 
-      // Wait for orders to load
-      await page.waitForTimeout(2000)
-
-      // Select first available order
+      // Bound the orders-load settle to the first eligible-order checkbox
+      // rendering inside the drawer (the named terminal for "orders loaded"),
+      // not an elapsed wait.
       const checkbox = page.locator(SELECTORS.orderCheckbox).first()
-      if (await checkbox.isVisible()) {
+      const ordersLoaded = await checkbox.isVisible({ timeout: 10_000 }).catch(() => false)
+
+      if (ordersLoaded) {
         await checkbox.check()
 
-        // Add selected orders
+        // Add selected orders. Register the add-orders response BEFORE the
+        // click so the mutation is reconciled via its network response.
         const addSelectedButton = page.locator(SELECTORS.addSelectedButton)
         if (await addSelectedButton.isVisible()) {
+          const addOrdersResponsePromise = page.waitForResponse(
+            response =>
+              response.request().method() === 'POST' &&
+              /\/v1\/supplies\/[^/]+\/orders(?:\?|$)/.test(response.url()),
+            { timeout: 10_000 }
+          )
           await addSelectedButton.click()
-          await page.waitForTimeout(2000)
+          const addOrdersResponse = await addOrdersResponsePromise
+          expect(addOrdersResponse.status()).toBeLessThan(300)
 
-          // Verify orders were added
+          // Verify orders were added — bound on the orders table repopulating.
           const ordersTable = page.locator('table tbody tr')
+          await expect(ordersTable.first()).toBeVisible({ timeout: 10_000 })
           const orderCount = await ordersTable.count()
           expect(orderCount).toBeGreaterThan(0)
 
@@ -216,14 +265,17 @@ test.describe('Supply Lifecycle - Epic 53-FE @mutating', () => {
       const dialog = page.getByRole('alertdialog', { name: 'Закрыть поставку?', exact: true })
       await expect(dialog).toBeVisible()
 
-      const closeResponsePromise = page.waitForResponse(response => {
-        return (
-          response.request().method() === 'POST' &&
-          new URL(response.url()).pathname.endsWith(
-            `/v1/supplies/${STORY_162_4_LIFECYCLE_SUPPLY_ID}/close`
+      const closeResponsePromise = page.waitForResponse(
+        response => {
+          return (
+            response.request().method() === 'POST' &&
+            new URL(response.url()).pathname.endsWith(
+              `/v1/supplies/${STORY_162_4_LIFECYCLE_SUPPLY_ID}/close`
+            )
           )
-        )
-      })
+        },
+        { timeout: SETTLE_TIMEOUT }
+      )
       const confirmButton = dialog.getByRole('button', {
         name: 'Закрыть поставку',
         exact: true,
@@ -265,22 +317,28 @@ test.describe('Supply Lifecycle - Epic 53-FE @mutating', () => {
       await expect(modal).toBeVisible()
       await expect(modal.getByRole('radio', { name: /PNG/i })).toBeChecked()
 
-      const stickersResponsePromise = page.waitForResponse(response => {
-        return (
-          response.request().method() === 'POST' &&
-          new URL(response.url()).pathname.endsWith(
-            `/v1/supplies/${STORY_162_4_LIFECYCLE_SUPPLY_ID}/stickers`
+      const stickersResponsePromise = page.waitForResponse(
+        response => {
+          return (
+            response.request().method() === 'POST' &&
+            new URL(response.url()).pathname.endsWith(
+              `/v1/supplies/${STORY_162_4_LIFECYCLE_SUPPLY_ID}/stickers`
+            )
           )
-        )
-      })
-      const stickerDocumentResponsePromise = page.waitForResponse(response => {
-        return (
-          response.request().method() === 'GET' &&
-          new URL(response.url()).pathname.endsWith(
-            `/v1/supplies/${STORY_162_4_LIFECYCLE_SUPPLY_ID}/documents/STICKER`
+        },
+        { timeout: SETTLE_TIMEOUT }
+      )
+      const stickerDocumentResponsePromise = page.waitForResponse(
+        response => {
+          return (
+            response.request().method() === 'GET' &&
+            new URL(response.url()).pathname.endsWith(
+              `/v1/supplies/${STORY_162_4_LIFECYCLE_SUPPLY_ID}/documents/STICKER`
+            )
           )
-        )
-      })
+        },
+        { timeout: SETTLE_TIMEOUT }
+      )
       const downloadPromise = page.waitForEvent('download')
       await modal.getByRole('button', { name: 'Скачать', exact: true }).click()
 
@@ -356,14 +414,30 @@ test.describe('Supply Lifecycle - Epic 53-FE @mutating', () => {
         await createButton.click()
         await expect(page.locator(SELECTORS.createModal)).toBeVisible()
 
+        // Register the create response BEFORE the submit click so the mutation
+        // is reconciled via its network response, not an elapsed wait.
+        const createResponsePromise = page.waitForResponse(
+          response =>
+            response.request().method() === 'POST' && /\/v1\/supplies(?:\?|$)/.test(response.url()),
+          { timeout: SETTLE_TIMEOUT }
+        )
         await page.locator(SELECTORS.submitButton).click()
-        await page.waitForTimeout(2000)
+        const createResponse = await createResponsePromise
+        expect(createResponse.status()).toBeLessThan(300)
 
-        // Navigate to detail if not already there
-        if (!page.url().includes('/supplies/')) {
+        // Navigate to detail if not already there. The create flow redirects
+        // to the new supply's detail page; bound the redirect to the URL
+        // change, then to the detail title rendering.
+        await expect(page).toHaveURL(/\/supplies\/[a-zA-Z0-9-]+/, { timeout: SETTLE_TIMEOUT })
+        if (!page.url().includes('/supplies/') || page.url() === SUPPLIES_ROUTE) {
+          // Defensive: if no redirect occurred, reconcile via the list and the
+          // first row. Bound the list settle to a named terminal first.
+          await waitForSuppliesListTerminal(page)
           const firstRow = page.locator('tbody tr:first-child')
-          await firstRow.click()
-          await page.locator('main').waitFor({ state: 'visible' })
+          if (await firstRow.isVisible()) {
+            await firstRow.click()
+            await page.locator('main').waitFor({ state: 'visible' })
+          }
         }
 
         // Try to close empty supply
@@ -388,7 +462,9 @@ test.describe('Supply Lifecycle - Epic 53-FE @mutating', () => {
       // Navigate to a CLOSED supply
       await page.goto(`${SUPPLIES_ROUTE}?status=CLOSED`, { waitUntil: 'domcontentloaded' })
       await page.locator('main').waitFor({ state: 'visible' })
-      await page.waitForTimeout(2000)
+      // Bound the list-filter settle to a named terminal (rows / empty / error)
+      // instead of an elapsed wait.
+      await waitForSuppliesListTerminal(page)
 
       const firstRow = page.locator('tbody tr:first-child')
       if (await firstRow.isVisible()) {
@@ -409,7 +485,7 @@ test.describe('Supply Lifecycle - Epic 53-FE @mutating', () => {
       // Navigate to a CLOSED supply
       await page.goto(`${SUPPLIES_ROUTE}?status=CLOSED`, { waitUntil: 'domcontentloaded' })
       await page.locator('main').waitFor({ state: 'visible' })
-      await page.waitForTimeout(2000)
+      await waitForSuppliesListTerminal(page)
 
       const firstRow = page.locator('tbody tr:first-child')
       if (await firstRow.isVisible()) {
@@ -429,7 +505,7 @@ test.describe('Supply Lifecycle - Epic 53-FE @mutating', () => {
       // Navigate to OPEN supply
       await page.goto(`${SUPPLIES_ROUTE}?status=OPEN`, { waitUntil: 'domcontentloaded' })
       await page.locator('main').waitFor({ state: 'visible' })
-      await page.waitForTimeout(2000)
+      await waitForSuppliesListTerminal(page)
 
       const firstRow = page.locator('tbody tr:first-child')
       if (await firstRow.isVisible()) {
@@ -442,8 +518,9 @@ test.describe('Supply Lifecycle - Epic 53-FE @mutating', () => {
           // Double click should not cause issues
           await closeButton.dblclick()
 
-          // Should show only one dialog
+          // Should show only one dialog — bound on the dialog rendering.
           const dialogs = page.locator('[role="dialog"]')
+          await expect(dialogs.first()).toBeVisible({ timeout: SETTLE_TIMEOUT })
           const dialogCount = await dialogs.count()
           expect(dialogCount).toBeLessThanOrEqual(1)
 
@@ -460,7 +537,7 @@ test.describe('Supply Lifecycle - Epic 53-FE @mutating', () => {
       // Navigate to a supply
       await page.goto(`${SUPPLIES_ROUTE}?status=CLOSED`, { waitUntil: 'domcontentloaded' })
       await page.locator('main').waitFor({ state: 'visible' })
-      await page.waitForTimeout(2000)
+      await waitForSuppliesListTerminal(page)
 
       const firstRow = page.locator('tbody tr:first-child')
       if (await firstRow.isVisible()) {
@@ -475,7 +552,8 @@ test.describe('Supply Lifecycle - Epic 53-FE @mutating', () => {
         await page.reload()
         await page.locator('main').waitFor({ state: 'visible' })
 
-        // Verify info is the same
+        // Verify info is the same — bound on the detail title re-rendering.
+        await expect(page.locator(SELECTORS.supplyTitle)).toBeVisible({ timeout: SETTLE_TIMEOUT })
         const titleAfter = await page.locator(SELECTORS.supplyTitle).textContent()
         const statusAfter = await page.locator(SELECTORS.statusBadge).first().textContent()
 
@@ -487,7 +565,9 @@ test.describe('Supply Lifecycle - Epic 53-FE @mutating', () => {
     test('should handle browser back/forward navigation', async ({ page }) => {
       await page.goto(SUPPLIES_ROUTE, { waitUntil: 'domcontentloaded' })
       await page.locator('main').waitFor({ state: 'visible' })
-      await page.waitForTimeout(1000)
+      // Bound the list settle to a named terminal so the subsequent firstRow
+      // probe runs against a loaded list, not an arbitrary elapsed window.
+      await waitForSuppliesListTerminal(page)
 
       // Navigate to supply detail
       const firstRow = page.locator('tbody tr:first-child')
@@ -516,29 +596,38 @@ test.describe('Supply Lifecycle - Epic 53-FE @mutating', () => {
 
   test.describe('Performance & Loading States', () => {
     test('should show loading state during data fetch', async ({ page }) => {
-      // Slow down API response
+      // Hold the supplies response on an external Promise so the request stays
+      // genuinely in-flight (real loading state) without a timer helper. The
+      // test releases the gate after observing the loading terminal.
+      let releaseResponse: () => void = () => {}
+      const gatedResponse = new Promise<void>(resolve => {
+        releaseResponse = resolve
+      })
       await page.route('**/v1/supplies**', async route => {
-        await new Promise(resolve => setTimeout(resolve, 1000))
-        route.fallback()
+        await gatedResponse
+        await route.fallback()
       })
 
       await page.goto(SUPPLIES_ROUTE, { waitUntil: 'domcontentloaded' })
 
-      // Should show loading skeleton or spinner
       const loadingIndicator = page.locator(
         '[class*="skeleton"], [class*="spinner"], [data-testid*="loading"]'
       )
-      const sawLoading = await loadingIndicator
-        .first()
-        .isVisible({ timeout: 1500 })
-        .catch(() => false)
-
-      // Wait for content
-      await page.locator('main').waitFor({ state: 'visible' })
-      await expect(page.locator('table, [data-testid*="empty"]').first()).toBeVisible()
-      expect(
-        sawLoading || (await page.locator('table, [data-testid*="empty"]').first().isVisible())
-      ).toBeTruthy()
+      // Wrap the gated-Promise body in try/finally so the release ALWAYS runs.
+      // A failed assertion while the route is held would otherwise strand the
+      // request; Playwright routes persist per worker, so it would cascade into
+      // a hang in every subsequent test in this worker. `releaseResponse()` is
+      // idempotent (2nd call is a no-op), so finally-release is safe.
+      try {
+        // Should show loading skeleton or spinner while the response is held.
+        await expect(loadingIndicator.first()).toBeVisible({ timeout: SETTLE_TIMEOUT })
+      } finally {
+        // Release the response so the in-flight request can settle.
+        releaseResponse()
+      }
+      // Assert the page settles to a real terminal after the release.
+      await waitForSuppliesListTerminal(page)
+      await expect(page.locator('main')).toBeVisible()
     })
 
     test('should show loading state during order addition', async ({ page }) => {
@@ -547,8 +636,11 @@ test.describe('Supply Lifecycle - Epic 53-FE @mutating', () => {
 
       await page.goto(`${SUPPLIES_ROUTE}?status=OPEN`, { waitUntil: 'domcontentloaded' })
       await page.locator('main').waitFor({ state: 'visible' })
-      await page.waitForTimeout(2000)
-      await expect(page.getByRole('heading', { name: 'Поставки FBS', exact: true })).toBeVisible()
+      // Bound the list-filter settle to the page heading (the named terminal
+      // for a loaded supplies list) instead of an elapsed wait.
+      await expect(page.getByRole('heading', { name: 'Поставки FBS', exact: true })).toBeVisible({
+        timeout: SETTLE_TIMEOUT,
+      })
 
       await expect(
         page.getByRole('button', {
@@ -583,33 +675,54 @@ test.describe('Supply Lifecycle - Epic 53-FE @mutating', () => {
       })
       await expect(addSelectedButton).toBeEnabled()
 
+      // Hold the POST orders response on an external Promise so the request
+      // stays genuinely in-flight (real "Добавление..." pending state) without
+      // a timer helper. The test releases the gate after observing the pending
+      // state, then reconciles the success response.
+      let releaseAddResponse: () => void = () => {}
+      const gatedAddResponse = new Promise<void>(resolve => {
+        releaseAddResponse = resolve
+      })
       const addOrdersRoute = '**/v1/supplies/*/orders'
       await page.route(addOrdersRoute, async route => {
         if (route.request().method() !== 'POST') {
           await route.fallback()
           return
         }
-        await new Promise(resolve => setTimeout(resolve, 1000))
+        await gatedAddResponse
         await route.fulfill({
           status: 200,
           contentType: 'application/json',
           body: JSON.stringify({ added: 1, failed: 0 }),
         })
       })
-      const responsePromise = page.waitForResponse(response => {
-        return (
-          response.request().method() === 'POST' &&
-          /\/v1\/supplies\/[^/?]+\/orders(?:\?|$)/.test(response.url())
-        )
-      })
+      const responsePromise = page.waitForResponse(
+        response => {
+          return (
+            response.request().method() === 'POST' &&
+            /\/v1\/supplies\/[^/?]+\/orders(?:\?|$)/.test(response.url())
+          )
+        },
+        { timeout: SETTLE_TIMEOUT }
+      )
 
       await addSelectedButton.click()
       const pendingAddButton = drawer.getByRole('button', {
         name: 'Добавление...',
         exact: true,
       })
-      await expect(pendingAddButton).toBeDisabled()
-      await expect(pendingAddButton).toHaveText('Добавление...')
+      // Wrap the gated-Promise body in try/finally so the release ALWAYS runs.
+      // A failed assertion while the POST is held would otherwise strand the
+      // request; Playwright routes persist per worker, so it would cascade into
+      // a hang in every subsequent test in this worker. `releaseAddResponse()`
+      // is idempotent (2nd call is a no-op), so finally-release is safe.
+      try {
+        await expect(pendingAddButton).toBeDisabled()
+        await expect(pendingAddButton).toHaveText('Добавление...')
+      } finally {
+        // Release the held response so the mutation reconciles.
+        releaseAddResponse()
+      }
 
       const response = await responsePromise
       expect(response.status()).toBeGreaterThanOrEqual(200)

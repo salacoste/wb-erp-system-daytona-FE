@@ -30,12 +30,22 @@ import {
 // Routes
 const SUPPLIES_ROUTE = '/supplies'
 
+// Bounded terminal-state reconciliation (live backend): the list settles into exactly
+// one of {table-with-rows | empty-state | error-state}. Assert one is visible with a
+// timeout instead of an elapsed sleep.
+async function waitForSuppliesTerminal(page: import('@playwright/test').Page) {
+  const table = page.locator('tbody tr:first-child')
+  const emptyState = page.locator('text=/Поставки не найдены|Нет поставок/i')
+  const errorState = page.locator('text=/Ошибка|не удалось/i')
+  await expect(table.or(emptyState).or(errorState).first()).toBeVisible({ timeout: 10_000 })
+}
+
 test.describe('Epic 53-FE: Accessibility - Supplies Module', () => {
   test.describe('Supplies List Page', () => {
     test.beforeEach(async ({ page }) => {
       await page.goto(SUPPLIES_ROUTE, { waitUntil: 'domcontentloaded' })
       await page.locator('main').waitFor({ state: 'visible' })
-      await page.waitForTimeout(2000)
+      await waitForSuppliesTerminal(page)
     })
 
     /**
@@ -179,7 +189,8 @@ test.describe('Epic 53-FE: Accessibility - Supplies Module', () => {
       const createButton = page.locator('button:has-text("Создать"), button:has-text("Новая")')
       if (await createButton.isVisible()) {
         await createButton.click()
-        await page.waitForTimeout(500)
+        // Bounded wait for the dialog to render before scanning (no elapsed sleep).
+        await expect(page.getByRole('dialog')).toBeVisible({ timeout: 5000 })
 
         const accessibilityScanResults = await new AxeBuilder({ page })
           .withTags(['wcag2a', 'wcag2aa'])
@@ -262,12 +273,12 @@ test.describe('Epic 53-FE: Accessibility - Supplies Module', () => {
       // Navigate to a supply detail
       await page.goto(SUPPLIES_ROUTE, { waitUntil: 'domcontentloaded' })
       await page.locator('main').waitFor({ state: 'visible' })
-      await page.waitForTimeout(2000)
+      await waitForSuppliesTerminal(page)
 
       const firstRow = page.locator('tbody tr:first-child')
       if (await firstRow.isVisible()) {
         await firstRow.click()
-        await page.locator('main').waitFor({ state: 'visible' })
+        await expect(page).toHaveURL(/\/supplies\/[a-zA-Z0-9-]+/, { timeout: 10_000 })
       }
     })
 
@@ -347,13 +358,11 @@ test.describe('Epic 53-FE: Accessibility - Supplies Module', () => {
       // Navigate to OPEN supply
       await page.goto(`${SUPPLIES_ROUTE}?status=OPEN`, { waitUntil: 'domcontentloaded' })
       await page.locator('main').waitFor({ state: 'visible' })
-      await page.waitForTimeout(2000)
+      await waitForSuppliesTerminal(page)
 
       const firstRow = page.locator('tbody tr:first-child')
-      if (await firstRow.isVisible()) {
-        await firstRow.click()
-        await page.locator('main').waitFor({ state: 'visible' })
-      }
+      await expect(firstRow).toBeVisible()
+      await firstRow.click()
 
       await expect(page).toHaveURL(/\/supplies\/[^/?]+/)
       await expect(page.getByLabel('Статус поставки: Открыта', { exact: true })).toBeVisible()
@@ -363,7 +372,10 @@ test.describe('Epic 53-FE: Accessibility - Supplies Module', () => {
       const addButton = page.getByRole('button', { name: 'Добавить заказы', exact: true })
       await expect(addButton).toBeEnabled()
       await addButton.click()
-      await page.waitForTimeout(1000)
+      // Bounded wait for the drawer to render before scanning (no elapsed sleep).
+      await expect(
+        page.locator('[role="dialog"], [class*="drawer"], [class*="sheet"]').first()
+      ).toBeVisible({ timeout: 5000 })
 
       const accessibilityScanResults = await new AxeBuilder({ page })
         .withTags(['wcag2a', 'wcag2aa'])
@@ -433,7 +445,7 @@ test.describe('Epic 53-FE: Accessibility - Supplies Module', () => {
       await page.setViewportSize({ width: 390, height: 844 })
       await page.goto(SUPPLIES_ROUTE, { waitUntil: 'domcontentloaded' })
       await page.locator('main').waitFor({ state: 'visible' })
-      await page.waitForTimeout(2000)
+      await waitForSuppliesTerminal(page)
     })
 
     test('should have no WCAG violations on mobile viewport', async ({ page }) => {
@@ -500,7 +512,7 @@ test.describe('Epic 53-FE: Accessibility - Supplies Module', () => {
     test.beforeEach(async ({ page }) => {
       await page.goto(SUPPLIES_ROUTE, { waitUntil: 'domcontentloaded' })
       await page.locator('main').waitFor({ state: 'visible' })
-      await page.waitForTimeout(2000)
+      await waitForSuppliesTerminal(page)
     })
 
     test('should have sufficient color contrast for status badges', async ({ page }) => {
