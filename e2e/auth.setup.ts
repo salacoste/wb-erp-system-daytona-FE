@@ -1,4 +1,5 @@
 import { test as setup, expect } from './fixtures/network-test'
+import { atomicWriteStorageState } from './fixtures/atomic-storage-state'
 import { TEST_USER, ROUTES } from './fixtures/test-data'
 
 const authFile = 'e2e/.auth/user.json'
@@ -36,8 +37,11 @@ setup('authenticate', async ({ page }) => {
   // to the setup file itself; found during funnel E2E work, validation F-4).
   await expect(page.locator('main').first()).toBeVisible({ timeout: 15000 })
 
-  // Save authentication state
-  await page.context().storageState({ path: authFile })
+  // Save authentication state atomically (temp + rename). The default
+  // `storageState({ path })` writes in-place, which races concurrent readers
+  // under --repeat-each and can surface as ENOENT / partial JSON. See
+  // e2e/fixtures/atomic-storage-state.ts.
+  await atomicWriteStorageState(page.context(), authFile)
 })
 
 /**

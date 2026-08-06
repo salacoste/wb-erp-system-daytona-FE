@@ -15,6 +15,7 @@
  */
 
 import { test as setup, expect } from './fixtures/network-test'
+import { atomicWriteStorageState } from './fixtures/atomic-storage-state'
 import { TEST_MANAGER, HAS_MANAGER_CREDS, ROUTES } from './fixtures/test-data'
 
 const managerAuthFile = 'e2e/.auth/manager.json'
@@ -55,6 +56,9 @@ setup('authenticate as manager (non-Owner)', async ({ page }) => {
   // failed every run and BLOCKED the whole chromium project via the setup dependency).
   await expect(page.locator('main').first()).toBeVisible({ timeout: 15_000 })
 
-  // Save authentication state for downstream tests
-  await page.context().storageState({ path: managerAuthFile })
+  // Save authentication state atomically (temp + rename). The default
+  // `storageState({ path })` writes in-place, which races concurrent readers
+  // under --repeat-each and can surface as ENOENT / partial JSON. See
+  // e2e/fixtures/atomic-storage-state.ts.
+  await atomicWriteStorageState(page.context(), managerAuthFile)
 })
