@@ -10,7 +10,12 @@ vi.mock('../../api-client', () => ({
 }))
 
 import { apiClient } from '../../api-client'
-import { getCannedRules, installCannedRule, automationQueryKeys } from '../automation'
+import {
+  getCannedRules,
+  installCannedRule,
+  getInstalledRules,
+  automationQueryKeys,
+} from '../automation'
 
 vi.spyOn(console, 'debug').mockImplementation(() => {})
 
@@ -140,5 +145,119 @@ describe('automationQueryKeys', () => {
     expect(automationQueryKeys.cannedRules).toEqual(['automation', 'canned-rules'])
     expect(automationQueryKeys.rules).toEqual(['automation', 'rules'])
     expect(automationQueryKeys.ruleDetail('abc')).toEqual(['automation', 'rules', 'abc'])
+  })
+
+  it('installedRules is a descendant of rules (covered by rules invalidation)', () => {
+    expect(automationQueryKeys.installedRules()).toEqual(['automation', 'rules', 'installed', null])
+    expect(automationQueryKeys.installedRules({ enabled: true })).toEqual([
+      'automation',
+      'rules',
+      'installed',
+      { enabled: true },
+    ])
+  })
+})
+
+describe('getInstalledRules (163.2)', () => {
+  beforeEach(() => {
+    vi.clearAllMocks()
+  })
+
+  it('GETs /v1/automation/rules (no params) and normalizes the array', async () => {
+    vi.mocked(apiClient.get).mockResolvedValue([
+      {
+        id: 'rule-1',
+        name: 'Низкий остаток',
+        trigger: 'STOCK_LEVEL',
+        action: 'NOTIFY',
+        category: 'notify',
+        enabled: true,
+        priority: 5,
+        cooldownMin: 60,
+        createdAt: '2026-01-01T00:00:00Z',
+      },
+    ])
+
+    const [rule] = await getInstalledRules()
+
+    expect(apiClient.get).toHaveBeenCalledWith('/v1/automation/rules')
+    expect(rule).toEqual({
+      id: 'rule-1',
+      cabinetId: undefined,
+      name: 'Низкий остаток',
+      trigger: 'STOCK_LEVEL',
+      action: 'NOTIFY',
+      enabled: true,
+      category: 'notify',
+      priority: 5,
+      cooldownMin: 60,
+      createdAt: '2026-01-01T00:00:00Z',
+    })
+  })
+
+  it('coerces a non-boolean enabled to false (safest default, never claims live)', async () => {
+    vi.mocked(apiClient.get).mockResolvedValue([
+      { id: 'r', name: 'n', trigger: 'STOCK_LEVEL', action: 'WRITEBACK_PRICE', enabled: null },
+      { id: 'r2', name: 'n', trigger: 'X', action: 'Y' }, // enabled missing
+    ])
+    const [a, b] = await getInstalledRules()
+    expect(a.enabled).toBe(false) // null → false
+    expect(b.enabled).toBe(false) // missing → false
+  })
+
+  it('coerces an unknown category to "audit" and preserves unknown trigger/action', async () => {
+    vi.mocked(apiClient.get).mockResolvedValue([
+      {
+        id: 'r',
+        name: 'n',
+        trigger: 'NEW_TRIGGER',
+        action: 'NEW_ACTION',
+        category: 'mystery',
+        enabled: true,
+      },
+    ])
+    const [rule] = await getInstalledRules()
+    expect(rule.category).toBe('audit')
+    expect(rule.trigger).toBe('NEW_TRIGGER') // preserved raw (open-ended enum)
+    expect(rule.action).toBe('NEW_ACTION')
+  })
+
+  it('omits optional fields when absent and stringifies non-string id/name', async () => {
+    vi.mocked(apiClient.get).mockResolvedValue([
+      {
+        id: 42, // number → stringified
+        name: 7, // non-string → stringified
+        trigger: 'STOCK_LEVEL',
+        action: 'LOG_ONLY',
+        enabled: true,
+        priority: 'oops', // non-number → dropped
+      },
+    ])
+    const [rule] = await getInstalledRules()
+    expect(rule.id).toBe('42')
+    expect(rule.name).toBe('7')
+    expect(rule.priority).toBeUndefined()
+    expect(rule.category).toBeUndefined()
+  })
+
+  it('returns [] when the response is not an array (defensive)', async () => {
+    vi.mocked(apiClient.get).mockResolvedValue({ unexpected: true })
+    expect(await getInstalledRules()).toEqual([])
+  })
+
+  it('builds the query string only from defined params', async () => {
+    vi.mocked(apiClient.get).mockResolvedValue([])
+    await getInstalledRules({ enabled: true, trigger: 'STOCK_LEVEL', limit: 10 })
+    const url = vi.mocked(apiClient.get).mock.calls[0][0] as string
+    expect(url).toContain('/v1/automation/rules?')
+    expect(url).toContain('enabled=true')
+    expect(url).toContain('trigger=STOCK_LEVEL')
+    expect(url).toContain('limit=10')
+  })
+
+  it('omits the query string entirely when no params are defined', async () => {
+    vi.mocked(apiClient.get).mockResolvedValue([])
+    await getInstalledRules({ enabled: undefined })
+    expect(vi.mocked(apiClient.get)).toHaveBeenCalledWith('/v1/automation/rules')
   })
 })

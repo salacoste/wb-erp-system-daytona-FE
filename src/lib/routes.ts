@@ -92,10 +92,11 @@ export const ROUTES = {
     ROOT: '/moysklad',
   },
 
-  // Automation — AT1 canned-rules gallery (contract #224)
+  // Automation — AT1 canned-rules gallery (contract #224) + installed list (#225)
   AUTOMATION: {
     ROOT: '/automation',
     CANNED_RULES: '/automation/canned-rules',
+    INSTALLED_RULES: '/automation/installed-rules',
   },
 
   SETTINGS: {

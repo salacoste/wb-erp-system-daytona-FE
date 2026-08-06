@@ -44,6 +44,7 @@ import {
   CalendarSearch,
   Zap,
   TrendingUp,
+  ListChecks,
 } from 'lucide-react'
 import { ROUTES } from '@/lib/routes'
 
@@ -86,7 +87,9 @@ export const NAVIGATION_ITEMS: NavigationItem[] = [
   // МойСклад integration (read-only FE, Phase 1 MVP — contract #221)
   { label: 'МойСклад', href: ROUTES.MOYSKLAD.ROOT, icon: Store },
   // AT1: Canned automation rules gallery (contract #224)
-  { label: 'Автоматизация', href: ROUTES.AUTOMATION.CANNED_RULES, icon: Zap },
+  { label: 'Шаблоны', href: ROUTES.AUTOMATION.CANNED_RULES, icon: Zap },
+  // Story 163.2: installed automation rules list (contract #225)
+  { label: 'Установленные правила', href: ROUTES.AUTOMATION.INSTALLED_RULES, icon: ListChecks },
   // Epic 5: Unit Economics Analytics
   { label: 'Юнит-экономика', href: ROUTES.ANALYTICS.UNIT_ECONOMICS, icon: Calculator },
   // Epic 7: Liquidity Analysis
