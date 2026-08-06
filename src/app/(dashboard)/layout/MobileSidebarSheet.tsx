@@ -93,7 +93,7 @@ export function MobileSidebarSheet({ open, onOpenChange }: MobileSidebarSheetPro
                   href={item.href}
                   onClick={() => onOpenChange(false)}
                   className={cn(
-                    'flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors',
+                    'flex items-center gap-3 rounded-lg px-3 py-2 min-h-[44px] text-sm font-medium transition-colors',
                     'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2',
                     active
                       ? 'bg-[#C62828] text-white' /* WCAG AA: 5.48:1 contrast */

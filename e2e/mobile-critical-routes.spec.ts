@@ -284,21 +284,8 @@ test.describe('Mobile critical routes (iPhone 14) — Story 162.10', () => {
     // assert each visible link's bounding box (the rendered touch target)
     // meets the floor in both dimensions.
     //
-    // PRODUCT GAP (measured, deterministic — both repeats): the MobileSidebarSheet
-    // nav links render at 36px tall (link 0 height = 36 across runs), below the
-    // WCAG 2.5.5 / AC 44px floor. Root cause is MobileSidebarSheet.tsx:96 — the
-    // link classes `flex items-center gap-3 px-3 py-2 text-sm` yield
-    // py-2 (16px) + text-sm line-height (20px) = 36px. Meeting the floor needs
-    // `py-3`/`min-h-[44px]`. This is a component geometry gap, not a test
-    // contract error (locators + bounding-box read are correct), so the
-    // assertion is preserved as-is and the case is skipped until the link
-    // height is raised. Skipping with an explicit reason (not a bare skip) so
-    // the gate stays honest — see scripts/check-e2e-bare-skips.mjs.
-    test.skip(
-      true,
-      'product gap: MobileSidebarSheet nav links render at 36px tall (py-2 text-sm), below the 44px WCAG 2.5.5 touch-target floor — raise link height to ≥44px (e.g. py-3 / min-h-[44px]) to re-enable'
-    )
-
+    // (The MobileSidebarSheet link classes include `min-h-[44px]` to meet the
+    // WCAG 2.5.5 / AC floor — the earlier 36px gap was fixed.)
     await page.goto(ROUTES.dashboard, { waitUntil: 'domcontentloaded' })
     await expect(page.locator('main')).toBeVisible({ timeout: TIMEOUTS.navigation })
 
