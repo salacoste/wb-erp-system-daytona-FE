@@ -15,7 +15,39 @@
 import { randomUUID } from 'node:crypto'
 import { rename, unlink, writeFile } from 'node:fs/promises'
 import { dirname, join } from 'node:path'
-import type { BrowserContext } from '@playwright/test'
+
+/**
+ * Minimal Playwright storageState shape (Story 128.10 cleanup). Tightens
+ * `atomicWriteStorageStateFile`'s `state` parameter so callers can't pass
+ * arbitrary objects — the state is always Playwright's trusted storageState
+ * output (`{ cookies, origins }`, plus optional IndexedDB/WebAuthn fields we
+ * don't persist but round-trip faithfully). Mirrors the protocol-level
+ * OriginStorage/SetOriginStorage shape; intentionally permissive on the
+ * optional newer fields so it stays forward-compatible without depending on
+ * a `StorageState` re-export that isn't exposed from `@playwright/test`.
+ */
+export interface StorageState {
+  cookies: StorageStateCookie[]
+  origins: StorageStateOrigin[]
+  indexedDB?: unknown
+  credentials?: unknown
+}
+
+export interface StorageStateCookie {
+  name: string
+  value: string
+  domain: string
+  path: string
+  expires: number
+  httpOnly: boolean
+  secure: boolean
+  sameSite: 'Strict' | 'Lax' | 'None'
+}
+
+export interface StorageStateOrigin {
+  origin: string
+  localStorage: { name: string; value: string }[]
+}
 
 /**
  * Persist an already-captured storage state to `filePath` atomically.
@@ -34,7 +66,10 @@ import type { BrowserContext } from '@playwright/test'
  * @param state The captured storage state (cookies/origins) to persist.
  * @param filePath Destination auth-state file (e.g. `e2e/.auth/user.json`).
  */
-export async function atomicWriteStorageStateFile(filePath: string, state: unknown): Promise<void> {
+export async function atomicWriteStorageStateFile(
+  filePath: string,
+  state: StorageState
+): Promise<void> {
   // randomUUID (not process.pid) so the file stays compliant with the
   // static-transport boundary (src/test/playwright-static-boundary), which
   // forbids `process.*` (except .env) in e2e sources. UUID + ts stays unique
@@ -48,24 +83,4 @@ export async function atomicWriteStorageStateFile(filePath: string, state: unkno
     await unlink(tmp).catch(() => {})
     throw error
   }
-}
-
-/**
- * Back-compat wrapper: capture `context.storageState()` then atomically write
- * it. NOTE: callers must NOT be inside the network guard's proxied surface —
- * `context.storageState()` here is a zero-arg read, which the guard denies.
- * The guard itself calls `atomicWriteStorageStateFile` directly with the
- * privileged in-place read; auth setups now use the standard
- * `context.storageState({ path })` API which the guard routes to the atomic
- * write. Kept for any future unguarded caller.
- *
- * @param context Playwright BrowserContext whose cookies/origins to capture.
- * @param filePath Destination auth-state file (e.g. `e2e/.auth/user.json`).
- */
-export async function atomicWriteStorageState(
-  context: BrowserContext,
-  filePath: string
-): Promise<void> {
-  const state = await context.storageState()
-  await atomicWriteStorageStateFile(filePath, state)
 }

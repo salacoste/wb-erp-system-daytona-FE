@@ -106,14 +106,23 @@ test.describe('Login → Dashboard Flow', () => {
       // Story 162.8: bound the accessible-label/legend check with expect.poll so it
       // waits for the chart's a11y to render instead of racing on an instant count()
       // (which flaked between repeat-each iterations).
+      // Story 162.8 cleanup: the previous `[class*="label"]` surrogate was
+      // page-wide (matched any element with "label" in its class — buttons,
+      // form labels, etc.). The real ExpenseChart is a recharts BarChart with
+      // no dedicated chart-container testid/role, so scope the label/legend
+      // surrogate UNDER the recharts surface (the chart's own svg) instead of
+      // searching the whole page. This still matches the chart's real
+      // recharts-label/recharts-legend nodes without matching unrelated page
+      // chrome.
+      const chartSurface = page.locator('svg.recharts-surface, svg[class*="recharts"]').first()
       await expect
         .poll(
           async () => {
             const hasLabel =
               (await page.locator('[aria-label*="расход"], [aria-label*="chart"]').count()) > 0
-            const hasLegend =
-              (await page.locator('[class*="legend"], [class*="label"]').count()) > 0
-            return hasLabel || hasLegend
+            const hasChartLabeling =
+              (await chartSurface.locator('[class*="label"], [class*="legend"]').count()) > 0
+            return hasLabel || hasChartLabeling
           },
           { timeout: TIMEOUTS.api, message: 'Expense chart accessible label or legend' }
         )

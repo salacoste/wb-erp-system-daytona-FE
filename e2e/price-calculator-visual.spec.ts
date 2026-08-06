@@ -269,8 +269,11 @@ test.describe('Epic 44-FE: Visual Enhancement Tests', () => {
       await mockCalculation(page, 20)
       await fillAndCalculate(page)
 
-      // At tablet, the responsive variant is the visible instance (the first is
-      // CSS-hidden at this breakpoint), so scope to the last/visible one.
+      // TwoLevelPricingDisplay renders a single instance; the duplicate node
+      // observed at this breakpoint is a Next.js dev mount, not a responsive
+      // pair. Empirically, at the 768px viewport the first
+      // two-level-pricing-display resolves hidden while the last is visible,
+      // so `.last()` targets the visible one.
       const resultsCard = page.locator('[data-testid="two-level-pricing-display"]').last()
       await expect(resultsCard).toBeVisible({ timeout: 5000 })
       await expect(resultsCard).toHaveClass(/shadow-md/)

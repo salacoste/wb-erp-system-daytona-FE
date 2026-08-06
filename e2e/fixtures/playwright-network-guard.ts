@@ -11,7 +11,7 @@ import type {
   Route,
   WebSocketRoute,
 } from '@playwright/test'
-import { atomicWriteStorageStateFile } from './atomic-storage-state'
+import { atomicWriteStorageStateFile, type StorageState } from './atomic-storage-state'
 
 import {
   assertAllowedTestUrl,
@@ -1213,7 +1213,7 @@ export async function createGuardedBrowserContext(
                 // stub below. The atomic replace fixes the in-place
                 // `writeFileSync` race that surfaced as ENOENT / partial JSON
                 // under `--workers=1 --repeat-each=2`.
-                const state = await Reflect.apply(value, target, [])
+                const state = (await Reflect.apply(value, target, [])) as StorageState
                 await atomicWriteStorageStateFile(path, state)
                 return { cookies: [], origins: [] }
               }

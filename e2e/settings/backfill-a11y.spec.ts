@@ -537,15 +537,19 @@ test.describe('Epic 51-FE: Accessibility - FBS Orders Analytics Page', () => {
 
     await firstTab.focus()
 
-    // Press Right arrow to move to next tab. Story 162.8: observe the focus
-    // move via a bounded poll on the active tab's text (replaces the elapsed
-    // 200ms wait + unbounded evaluate read).
+    // Capture the focused element's text BEFORE the keypress so the post-press
+    // poll can prove focus actually MOVED (a no-op ArrowRight would leave the
+    // same element focused, and any-focused-element-with-text would otherwise
+    // pass). Story 162.8: bounded poll replaces the elapsed 200ms wait.
+    const firstTabText = await page.evaluate(() => document.activeElement?.textContent ?? '')
+
+    // Press Right arrow to move to next tab.
     await page.keyboard.press('ArrowRight')
     await expect
       .poll(async () => page.evaluate(() => document.activeElement?.textContent ?? ''), {
         timeout: 5000,
       })
-      .toBeTruthy()
+      .not.toBe(firstTabText)
 
     // Second tab should be focused
     const focusedTab = await page.evaluate(() => document.activeElement?.textContent)

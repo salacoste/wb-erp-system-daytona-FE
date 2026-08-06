@@ -575,7 +575,12 @@ export function scanSource(source, file = '<source>') {
 
 export async function scanFiles(files = STORY_FIXED_WAIT_SCAN_FILES, root = process.cwd()) {
   const findings = []
-  for (const file of files) {
+  // Dedupe: `dashboard-session-fixes.spec.ts` is owned by both Story 162.6
+  // and Story 162.8 (kept in both unions so each story guards it against
+  // regression). Without dedupe the scanner re-scans the overlap and the
+  // success message over-counts. The scan itself is idempotent, so this is a
+  // count-accuracy fix only.
+  for (const file of new Set(files)) {
     const absolutePath = isAbsolute(file) ? file : resolve(root, file)
     let source
     try {
@@ -606,11 +611,13 @@ export function resolveScanTargets(args) {
 }
 
 async function main() {
-  const findings = await scanFiles(resolveScanTargets(process.argv.slice(2)))
+  const targets = resolveScanTargets(process.argv.slice(2))
+  const findings = await scanFiles(targets)
+  // Report the UNIQUE target count (deduped), not the raw union length, so
+  // the message matches the actual scan surface.
+  const uniqueCount = new Set(targets).size
   if (findings.length === 0) {
-    console.log(
-      `E2E fixed-wait scan passed: ${STORY_FIXED_WAIT_SCAN_FILES.length} owned targets are timer-free`
-    )
+    console.log(`E2E fixed-wait scan passed: ${uniqueCount} owned targets are timer-free`)
     return
   }
 
