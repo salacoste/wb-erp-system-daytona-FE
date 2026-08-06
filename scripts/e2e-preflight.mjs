@@ -1,5 +1,5 @@
 import { spawn } from 'node:child_process'
-import { lstat, readFile, rm } from 'node:fs/promises'
+import { readFile, rm } from 'node:fs/promises'
 import { createRequire } from 'node:module'
 import os from 'node:os'
 import path from 'node:path'
@@ -24,7 +24,6 @@ export const REQUIRED_E2E_VARIABLES = [
   'E2E_TEST_PASSWORD',
 ]
 
-const AUTH_STATE_FILES = ['e2e/.auth/user.json', 'e2e/.auth/manager.json']
 const LOOPBACK_HOSTS = new Set(['localhost', '127.0.0.1', '::1'])
 const ALLOWED_PROTOCOLS = new Set(
   networkPolicy.allowedProtocols.filter(protocol => protocol === 'http:' || protocol === 'https:')
@@ -156,24 +155,6 @@ function missingVariablesMessage(location, variables) {
   return `Missing or blank variables in ${location}: ${variables.join(', ')}. Copy values from .env.e2e.example and follow e2e/README.md.`
 }
 
-async function validateAuthDirectory(cwd) {
-  const authDirectory = path.join(cwd, 'e2e', '.auth')
-  try {
-    const stats = await lstat(authDirectory)
-    if (stats.isSymbolicLink()) {
-      return 'Refusing auth cleanup because e2e/.auth is a symlink.'
-    }
-    if (!stats.isDirectory()) {
-      return 'Refusing auth cleanup because e2e/.auth is not a directory.'
-    }
-  } catch (error) {
-    if (error?.code !== 'ENOENT') {
-      return 'Unable to inspect e2e/.auth before allowlisted auth cleanup.'
-    }
-  }
-  return null
-}
-
 export async function runE2EPreflight({
   cwd = process.cwd(),
   args = [],
@@ -276,20 +257,15 @@ export async function runE2EPreflight({
     return baseResult({ exitCode: 0, mutationsEnabled, command })
   }
 
-  const authDirectoryError = await validateAuthDirectory(cwd)
-  if (authDirectoryError) {
-    writeStderr(authDirectoryError)
-    return baseResult({ errors: [authDirectoryError], mutationsEnabled })
-  }
-
-  try {
-    for (const authFile of AUTH_STATE_FILES) await removeFile(path.join(cwd, authFile))
-  } catch {
-    const message = 'Unable to remove an allowlisted E2E auth-state file before Playwright.'
-    writeStderr(message)
-    return baseResult({ errors: [message], mutationsEnabled })
-  }
-
+  // Auth-state files (e2e/.auth/{user,manager}.json) are NOT removed here.
+  // The auth setup (e2e/auth.setup.ts, e2e/auth-manager.setup.ts) overwrites
+  // them atomically every run (temp + rename), so freshness is preserved
+  // without a preflight rm. The rm previously opened a storageState ENOENT
+  // race under concurrent invocations + --repeat-each: Playwright reads
+  // `storageState: '<path>'` lazily per newContext(), so one run's preflight
+  // rm could delete the file mid-read during another run's chromium phase.
+  // Leave any stale auth files in place; the setup supersedes them atomically.
+  // removeFile is retained as a dependency-injection seam for the test harness.
   writeStdout(`Preflight passed. Launching: ${printableCommand(command)}`)
   let handshake
   let child

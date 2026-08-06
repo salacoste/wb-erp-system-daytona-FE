@@ -455,28 +455,32 @@ test('an incomplete optional Manager pair warns without blocking Owner smoke', a
   })
 })
 
-test('fresh auth cleanup is allowlisted, ordered after probes, and before launch', async () => {
+test('preflight leaves auth-state files in place; setup atomically supersedes them', async () => {
   await withTemporaryRoot(async root => {
     await writeEnvironment(root)
+    // Seed stale auth files so we can prove they survive a preflight run.
+    const userAuth = path.join(root, 'e2e', '.auth', 'user.json')
+    const managerAuth = path.join(root, 'e2e', '.auth', 'manager.json')
+    await writeFile(userAuth, '{"stale":"user"}', 'utf8')
+    await writeFile(managerAuth, '{"stale":"manager"}', 'utf8')
+
     const harness = createHarness(root)
     const result = await harness.run()
 
     assert.equal(result.exitCode, 0)
-    assert.deepEqual(
-      harness.removals.map(file => path.relative(root, file)),
-      ['e2e/.auth/user.json', 'e2e/.auth/manager.json']
-    )
-    assert.deepEqual(harness.events, [
-      'probe:3100',
-      'probe:3000',
-      'remove:user.json',
-      'remove:manager.json',
-      'launch',
-    ])
+    // The preflight no longer removes auth-state files — the auth setup
+    // (e2e/auth.setup.ts, e2e/auth-manager.setup.ts) overwrites them
+    // atomically every run (temp + rename), which removes the storageState
+    // ENOENT race that the preflight rm caused under --repeat-each.
+    assert.deepEqual(harness.removals, [])
+    assert.deepEqual(harness.events, ['probe:3100', 'probe:3000', 'launch'])
+    // Stale files are left untouched on disk for the setup to supersede.
+    assert.equal(await readFile(userAuth, 'utf8'), '{"stale":"user"}')
+    assert.equal(await readFile(managerAuth, 'utf8'), '{"stale":"manager"}')
   })
 })
 
-test('symlinked auth directory fails closed without touching its target', async () => {
+test('preflight no longer touches auth files, so a symlinked .auth dir is harmless', async () => {
   await withTemporaryRoot(async root => {
     await writeEnvironment(root)
     const outsideAuth = path.join(root, 'outside-auth')
@@ -490,10 +494,17 @@ test('symlinked auth directory fails closed without touching its target', async 
     const harness = createHarness(root)
     const result = await harness.run()
 
-    assert.equal(result.exitCode, 1)
-    assert.match(combinedOutput(harness, result), /auth.*symlink/i)
+    // With the preflight auth-rm removed, a symlinked .auth directory is no
+    // longer inspected or rejected — preflight never touches auth files, so
+    // it cannot follow or clobber the symlink target. It launches normally.
+    assert.equal(result.exitCode, 0)
     assert.deepEqual(harness.removals, [])
-    assert.deepEqual(harness.launches, [])
+    assert.deepEqual(harness.launches, [
+      {
+        command: 'npx',
+        args: ['playwright', 'test', 'e2e/orders.spec.ts', '--project=chromium'],
+      },
+    ])
     assert.equal(await readFile(path.join(outsideAuth, 'user.json'), 'utf8'), 'owner-state')
     assert.equal(await readFile(path.join(outsideAuth, 'manager.json'), 'utf8'), 'manager-state')
   })
