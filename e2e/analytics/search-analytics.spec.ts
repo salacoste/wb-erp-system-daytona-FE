@@ -46,8 +46,6 @@ test.describe('Epic 71-FE: Search Analytics Page', () => {
     const hasTabs = await expectJamGateOrTabs(page)
     if (!hasTabs) return
 
-    const tabList = page.locator('[role="tablist"]')
-
     await expect(page.getByRole('tab', { name: /Заказы/i })).toBeVisible()
     await expect(page.getByRole('tab', { name: /По товарам/i })).toBeVisible()
     await expect(page.getByRole('tab', { name: /По запросам/i })).toBeVisible()

@@ -698,7 +698,7 @@ development_status:
   162.3-fe-analytics-finance-meaningful-e2e-assertions: done  # Code review APPROVE, architecture CLEAR, verifier VERIFIED; final post-rebase live AC5 passed 191/5/0.
   162.4-fe-operations-settings-meaningful-e2e-assertions: done  # PR #95 merged at 3f43b5e3; APPROVE/CLEAR/VERIFIED and cleanup proven.
   162.5-fe-liquidity-unit-economics-state-waits: done  # APPROVE/CLEAR/VERIFIED; normal PR delivery evidence remains external and orchestrator-owned.
-  162.6-fe-dashboard-analytics-state-waits: backlog
+  162.6-fe-dashboard-analytics-state-waits: done  # APPROVE/attestation-fixed/APPROVE/PASS; fresh final gates green (Vitest 17458, build 67/67, E2E 181/1/0 exit 0); normal PR delivery evidence orchestrator-owned.
   162.7-fe-supplies-state-waits: backlog
   162.8-fe-pricing-backfill-cogs-auth-state-waits: backlog
   162.9-fe-explicit-fixture-aware-e2e-skips: backlog

@@ -26,6 +26,44 @@ export const STORY_162_5_CANONICAL_WAIT_COUNT = 58
 export const STORY_162_5_CURRENT_BASE_WAIT_COUNT = 55
 export const STORY_162_5_CURRENT_BASE_TIMER_COUNT = 2
 
+export const STORY_162_6_E2E_FILES = [
+  'e2e/accessibility-merged-groups-epic-37.spec.ts',
+  'e2e/analytics/ai-models.spec.ts',
+  'e2e/analytics/analytics-hub.spec.ts',
+  'e2e/analytics/analytics-pages-smoke.spec.ts',
+  'e2e/analytics/fbs-orders-analytics.spec.ts',
+  'e2e/analytics/forecast.spec.ts',
+  'e2e/analytics/product-analytics.spec.ts',
+  'e2e/analytics/search-analytics.spec.ts',
+  'e2e/brand-analytics.spec.ts',
+  'e2e/category-analytics.spec.ts',
+  'e2e/dashboard-metrics.spec.ts',
+  'e2e/dashboard-period.spec.ts',
+  'e2e/dashboard-session-fixes.spec.ts',
+  'e2e/financial-summary.spec.ts',
+  'e2e/forecast-accuracy.spec.ts',
+  'e2e/forecast-page.spec.ts',
+  'e2e/margin-analytics.spec.ts',
+  'e2e/merged-group-table-epic-37.spec.ts',
+  'e2e/period-selection-month-test.spec.ts',
+  'e2e/storage-analytics.spec.ts',
+]
+
+export const STORY_162_6_FIXTURE_FILES = [
+  'e2e/fixtures/story-162-6-route-controller.ts',
+  'e2e/fixtures/story-162-6-dashboard.ts',
+  'e2e/fixtures/story-162-6-analytics.ts',
+]
+
+export const STORY_162_6_SCAN_FILES = [...STORY_162_6_E2E_FILES, ...STORY_162_6_FIXTURE_FILES]
+
+export const STORY_162_6_BASE_REVISION = 'aee43c154e0b3ff494a6dc6ee3cacb34043765d9'
+export const STORY_162_6_CANONICAL_WAIT_COUNT = 67
+export const STORY_162_6_CURRENT_BASE_WAIT_COUNT = 65
+export const STORY_162_6_CURRENT_BASE_TIMER_COUNT = 4
+
+export const STORY_FIXED_WAIT_SCAN_FILES = [...STORY_162_5_E2E_FILES, ...STORY_162_6_SCAN_FILES]
+
 const PROHIBITED_CALLS = new Map([
   [
     'waitForTimeout',
@@ -470,7 +508,7 @@ export function scanSource(source, file = '<source>') {
   )
 }
 
-export async function scanFiles(files = STORY_162_5_E2E_FILES, root = process.cwd()) {
+export async function scanFiles(files = STORY_FIXED_WAIT_SCAN_FILES, root = process.cwd()) {
   const findings = []
   for (const file of files) {
     const absolutePath = isAbsolute(file) ? file : resolve(root, file)
@@ -499,14 +537,14 @@ export async function scanGitRevision(files, revision, root = process.cwd()) {
 }
 
 export function resolveScanTargets(args) {
-  return args.length > 0 ? args : STORY_162_5_E2E_FILES
+  return args.length > 0 ? args : STORY_FIXED_WAIT_SCAN_FILES
 }
 
 async function main() {
   const findings = await scanFiles(resolveScanTargets(process.argv.slice(2)))
   if (findings.length === 0) {
     console.log(
-      `E2E fixed-wait scan passed: ${STORY_162_5_E2E_FILES.length} owned targets are timer-free`
+      `E2E fixed-wait scan passed: ${STORY_FIXED_WAIT_SCAN_FILES.length} owned targets are timer-free`
     )
     return
   }

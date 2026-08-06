@@ -1,67 +1,84 @@
-import { test, expect } from './fixtures/network-test'
-import { ROUTES, TIMEOUTS } from './fixtures/test-data'
+import { expect, test, type Page } from './fixtures/network-test'
+import { installStory1626AnalyticsRoutes } from './fixtures/story-162-6-analytics'
 
-/**
- * E2E Tests: Brand Analytics
- * Story: 4.6 (Margin Analysis by Brand)
- *
- * Smoke tests for the brand margin analytics page:
- * - Page heading renders
- * - Filter / date-range controls visible
- * - Data table or empty state present
- * - Sortable column headers
- * - Sidebar navigation works
- */
-test.describe('Brand Analytics', () => {
-  test.beforeEach(async ({ page }) => {
-    await page.goto(ROUTES.analytics.brand, { waitUntil: 'domcontentloaded' })
-    await expect(page.locator('main').first()).toBeVisible({ timeout: 15_000 })
+const BRAND_ROUTE = '/analytics/brand?weekStart=2026-W05&weekEnd=2026-W05'
+const BRAND_MARKER = 'Бренд Story 162.6'
+
+async function prepare(page: Page): Promise<void> {
+  await page.emulateMedia({ reducedMotion: 'reduce' })
+}
+
+test.describe('Brand analytics exact route synchronization', () => {
+  test('renders source-backed brand data for the exact week range', async ({ page }) => {
+    await prepare(page)
+    const routes = await installStory1626AnalyticsRoutes(page, {
+      weeklyByBrand: { mode: 'data' },
+      weeklyCabinetExpenses: { mode: 'data' },
+    })
+    const brandRequest = routes.waitForAttempt('analytics.weeklyByBrand')
+    const expensesRequest = routes.waitForAttempt('analytics.weeklyCabinetExpenses')
+
+    await page.goto(BRAND_ROUTE, { waitUntil: 'domcontentloaded' })
+    const [brand, expenses] = await Promise.all([brandRequest, expensesRequest])
+    const brandUrl = new URL(brand.url)
+    const selectedWeek = brandUrl.searchParams.get('week')
+    expect(selectedWeek).toMatch(/^\d{4}-W\d{2}$/)
+    expect(brandUrl.searchParams.get('include_cogs')).toBe('true')
+    expect(brandUrl.searchParams.get('include_ads')).toBe('true')
+    expect(brandUrl.searchParams.get('include_stock')).toBe('true')
+    expect(new URL(expenses.url).searchParams.get('weekStart')).toBe(selectedWeek)
+    expect(new URL(expenses.url).searchParams.get('weekEnd')).toBe(selectedWeek)
+
+    await expect(
+      page.getByRole('heading', { name: 'Маржинальность по брендам', level: 1 })
+    ).toBeVisible()
+    await expect(page.getByRole('cell', { name: BRAND_MARKER, exact: true }).first()).toBeVisible()
+    routes.assertNoUnexpectedRequests()
   })
 
-  test('renders page heading', async ({ page }) => {
-    const heading = page.locator('h1, h2').filter({ hasText: /бренд|brand/i })
-    await expect(heading.first()).toBeVisible({ timeout: TIMEOUTS.navigation })
-  })
+  test('holds loading until the deferred brand response is released', async ({ page }) => {
+    await prepare(page)
+    const routes = await installStory1626AnalyticsRoutes(page, {
+      weeklyByBrand: { mode: 'deferred' },
+      weeklyCabinetExpenses: { mode: 'data' },
+    })
+    const request = routes.waitForAttempt('analytics.weeklyByBrand')
 
-  test('has date range or week selector', async ({ page }) => {
-    // MarginFilterSection renders a Radix combobox or native select for weeks
-    const control = page.locator('button[role="combobox"], select').first()
-    await expect(control).toBeVisible({ timeout: TIMEOUTS.navigation })
-  })
-
-  test('data table or empty state visible', async ({ page }) => {
-    await page.waitForTimeout(2000)
-
-    const table = page.locator('table')
-    const emptyState = page.locator('text=/нет данных|no data/i')
-    const skeleton = page.locator('[class*="skeleton"]')
-
-    const hasTable = (await table.count()) > 0
-    const hasEmpty = (await emptyState.count()) > 0
-    const hasSkeleton = (await skeleton.count()) > 0
-
-    expect(hasTable || hasEmpty || hasSkeleton).toBeTruthy()
-  })
-
-  test('table headers are clickable for sorting', async ({ page }) => {
-    await page.waitForTimeout(2000)
-
-    const header = page.locator('th').first()
-    if (await header.isVisible()) {
-      await header.click()
-      await expect(page.locator('body')).toBeVisible()
+    try {
+      await page.goto(BRAND_ROUTE, { waitUntil: 'domcontentloaded' })
+      await request
+      await expect(page.locator('main .animate-pulse')).toHaveCount(2)
+      await expect(page.getByRole('cell', { name: BRAND_MARKER, exact: true })).toHaveCount(0)
+    } finally {
+      routes.release('analytics.weeklyByBrand')
     }
+
+    await expect(page.getByRole('cell', { name: BRAND_MARKER, exact: true }).first()).toBeVisible()
+    routes.assertNoUnexpectedRequests()
   })
 
-  test('sidebar link navigates to brand page', async ({ page }) => {
-    // Navigate away first, then click sidebar link back
-    await page.goto(ROUTES.analytics.main, { waitUntil: 'domcontentloaded' })
-    await expect(page.locator('main').first()).toBeVisible({ timeout: 15_000 })
+  test('keeps brand failures failing until Retry is explicitly allowed', async ({ page }) => {
+    await prepare(page)
+    const routes = await installStory1626AnalyticsRoutes(page, {
+      weeklyByBrand: { mode: 'retry' },
+      weeklyCabinetExpenses: { mode: 'data' },
+    })
+    const secondAttempt = routes.waitForAttempt('analytics.weeklyByBrand', 2)
 
-    const sidebarLink = page.locator('a[href*="analytics/brand"]')
-    if ((await sidebarLink.count()) > 0) {
-      await sidebarLink.first().click()
-      await expect(page).toHaveURL(/analytics\/brand/, { timeout: TIMEOUTS.navigation })
-    }
+    await page.goto(BRAND_ROUTE, { waitUntil: 'domcontentloaded' })
+    await secondAttempt
+    const retry = page.getByRole('button', { name: 'Повторить' })
+    await expect(retry).toBeVisible()
+    expect(routes.attemptCount('analytics.weeklyByBrand')).toBeGreaterThanOrEqual(2)
+
+    routes.allowRetrySuccess('analytics.weeklyByBrand')
+    const success = routes.waitForAttempt(
+      'analytics.weeklyByBrand',
+      routes.attemptCount('analytics.weeklyByBrand') + 1
+    )
+    await retry.click()
+    await success
+    await expect(page.getByRole('cell', { name: BRAND_MARKER, exact: true }).first()).toBeVisible()
+    routes.assertNoUnexpectedRequests()
   })
 })

@@ -11,6 +11,14 @@ import {
   STORY_162_5_CURRENT_BASE_WAIT_COUNT,
   STORY_162_5_CURRENT_BASE_TIMER_COUNT,
   STORY_162_5_E2E_FILES,
+  STORY_162_6_BASE_REVISION,
+  STORY_162_6_CANONICAL_WAIT_COUNT,
+  STORY_162_6_CURRENT_BASE_TIMER_COUNT,
+  STORY_162_6_CURRENT_BASE_WAIT_COUNT,
+  STORY_162_6_E2E_FILES,
+  STORY_162_6_FIXTURE_FILES,
+  STORY_162_6_SCAN_FILES,
+  STORY_FIXED_WAIT_SCAN_FILES,
   resolveScanTargets,
   scanFiles,
   scanGitRevision,
@@ -429,11 +437,79 @@ describe('Story 162.5 E2E fixed-wait scanner', () => {
       ...STORY_162_5_BASELINE_FILES,
       'e2e/fixtures/story-162-5-analytics.ts',
     ])
-    expect(resolveScanTargets([])).toEqual(STORY_162_5_E2E_FILES)
+    expect(resolveScanTargets([])).toEqual(STORY_FIXED_WAIT_SCAN_FILES)
     expect(resolveScanTargets(['e2e/liquidity.spec.ts'])).toEqual(['e2e/liquidity.spec.ts'])
   })
 
   it('keeps every real owned target free of fixed waits', async () => {
-    expect(await scanFiles()).toEqual([])
+    expect(await scanFiles(STORY_162_5_E2E_FILES)).toEqual([])
+  })
+})
+
+describe('Story 162.6 dashboard and analytics fixed-wait scanner', () => {
+  it('records the immutable canonical count and exact current base drift', async () => {
+    expect(STORY_162_6_BASE_REVISION).toBe('aee43c154e0b3ff494a6dc6ee3cacb34043765d9')
+    expect(STORY_162_6_CANONICAL_WAIT_COUNT).toBe(67)
+
+    const baseline = await scanGitRevision(STORY_162_6_E2E_FILES, STORY_162_6_BASE_REVISION)
+    const findings = baseline.flat()
+
+    expect(findings.filter(finding => finding.kind === 'browser-wait')).toHaveLength(
+      STORY_162_6_CURRENT_BASE_WAIT_COUNT
+    )
+    expect(findings.filter(finding => finding.kind === 'timer')).toHaveLength(
+      STORY_162_6_CURRENT_BASE_TIMER_COUNT
+    )
+    expect(findings).toHaveLength(69)
+  })
+
+  it('keeps the Story 162.6 owned spec list exact', () => {
+    expect(STORY_162_6_E2E_FILES).toEqual([
+      'e2e/accessibility-merged-groups-epic-37.spec.ts',
+      'e2e/analytics/ai-models.spec.ts',
+      'e2e/analytics/analytics-hub.spec.ts',
+      'e2e/analytics/analytics-pages-smoke.spec.ts',
+      'e2e/analytics/fbs-orders-analytics.spec.ts',
+      'e2e/analytics/forecast.spec.ts',
+      'e2e/analytics/product-analytics.spec.ts',
+      'e2e/analytics/search-analytics.spec.ts',
+      'e2e/brand-analytics.spec.ts',
+      'e2e/category-analytics.spec.ts',
+      'e2e/dashboard-metrics.spec.ts',
+      'e2e/dashboard-period.spec.ts',
+      'e2e/dashboard-session-fixes.spec.ts',
+      'e2e/financial-summary.spec.ts',
+      'e2e/forecast-accuracy.spec.ts',
+      'e2e/forecast-page.spec.ts',
+      'e2e/margin-analytics.spec.ts',
+      'e2e/merged-group-table-epic-37.spec.ts',
+      'e2e/period-selection-month-test.spec.ts',
+      'e2e/storage-analytics.spec.ts',
+    ])
+  })
+
+  it('keeps the planned fixture targets exact and fails closed when one is missing', async () => {
+    expect(STORY_162_6_FIXTURE_FILES).toEqual([
+      'e2e/fixtures/story-162-6-route-controller.ts',
+      'e2e/fixtures/story-162-6-dashboard.ts',
+      'e2e/fixtures/story-162-6-analytics.ts',
+    ])
+    expect(STORY_162_6_SCAN_FILES).toEqual([...STORY_162_6_E2E_FILES, ...STORY_162_6_FIXTURE_FILES])
+
+    const root = await mkdtemp(join(tmpdir(), 'story-162-6-fixed-wait-scan-'))
+    await expect(scanFiles([STORY_162_6_FIXTURE_FILES[0]], root)).rejects.toThrow(
+      STORY_162_6_FIXTURE_FILES[0]
+    )
+  })
+
+  it('uses the exact Story 162.5 and 162.6 target union by default', () => {
+    expect(STORY_FIXED_WAIT_SCAN_FILES).toEqual([
+      ...STORY_162_5_E2E_FILES,
+      ...STORY_162_6_SCAN_FILES,
+    ])
+    expect(resolveScanTargets([])).toEqual(STORY_FIXED_WAIT_SCAN_FILES)
+    expect(resolveScanTargets(['e2e/dashboard-period.spec.ts'])).toEqual([
+      'e2e/dashboard-period.spec.ts',
+    ])
   })
 })

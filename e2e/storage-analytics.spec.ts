@@ -1,65 +1,45 @@
-import { test, expect } from './fixtures/network-test'
-import { ROUTES, TIMEOUTS } from './fixtures/test-data'
+import { expect, test } from './fixtures/network-test'
+import { installStory1626AnalyticsRoutes } from './fixtures/story-162-6-analytics'
 
-/**
- * E2E Tests: Storage Analytics
- * Epic 24: Paid Storage Analytics
- *
- * Smoke tests for the storage analytics page:
- * - Page heading renders (Аналитика расходов на хранение)
- * - Summary / KPI cards visible
- * - Date/period controls present
- * - Chart or table present
- */
-test.describe('Storage Analytics', () => {
-  test.beforeEach(async ({ page }) => {
-    await page.goto(ROUTES.analytics.storage, { waitUntil: 'domcontentloaded' })
-    await expect(page.locator('main').first()).toBeVisible({ timeout: 15_000 })
+test('storage analytics proves all three exact API families and visible fixture data', async ({
+  page,
+}) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' })
+  const routes = await installStory1626AnalyticsRoutes(page, {
+    storageBySku: { mode: 'data' },
+    storageTopConsumers: { mode: 'data' },
+    storageTrends: { mode: 'data' },
   })
+  const unfiltered = routes.waitForAttempt('analytics.storageBySku', 1)
+  const filtered = routes.waitForAttempt('analytics.storageBySku', 2)
+  const topConsumers = routes.waitForAttempt('analytics.storageTopConsumers')
+  const trends = routes.waitForAttempt('analytics.storageTrends')
 
-  test('renders page heading', async ({ page }) => {
-    const heading = page.locator('h1, h2').filter({ hasText: /хранени|storage/i })
-    await expect(heading.first()).toBeVisible({ timeout: TIMEOUTS.navigation })
+  await page.goto('/analytics/storage?weekStart=2026-W02&weekEnd=2026-W05', {
+    waitUntil: 'domcontentloaded',
   })
+  const accepted = await Promise.all([unfiltered, filtered, topConsumers, trends])
+  const urls = accepted.map(request => new URL(request.url))
+  expect(urls.map(url => url.pathname)).toEqual([
+    '/v1/analytics/storage/by-sku',
+    '/v1/analytics/storage/by-sku',
+    '/v1/analytics/storage/top-consumers',
+    '/v1/analytics/storage/trends',
+  ])
+  for (const url of urls) {
+    expect(url.searchParams.get('weekStart')).toBe('2026-W02')
+    expect(url.searchParams.get('weekEnd')).toBe('2026-W05')
+  }
+  expect(urls[0].searchParams.get('limit')).toBe('200')
+  expect(urls[1].searchParams.get('limit')).toBe('20')
+  expect(urls[2].searchParams.get('include_revenue')).toBe('true')
+  expect(urls[3].searchParams.get('metrics')).toBe('storage_cost')
 
-  test('KPI summary cards or empty state visible', async ({ page }) => {
-    await page.waitForTimeout(2000)
-
-    // StorageSummaryCards render as card elements with metric values
-    const cards = page.locator('[class*="card"]')
-    const emptyState = page.locator('text=/нет данных|no data/i')
-    const skeleton = page.locator('[class*="skeleton"]')
-
-    const hasCards = (await cards.count()) > 0
-    const hasEmpty = (await emptyState.count()) > 0
-    const hasSkeleton = (await skeleton.count()) > 0
-
-    expect(hasCards || hasEmpty || hasSkeleton).toBeTruthy()
-  })
-
-  test('date/period filter controls present', async ({ page }) => {
-    // StorageFilters renders week-range inputs and brand/warehouse comboboxes
-    const input = page.locator('input[type="text"], input[type="date"], input[type="week"]').first()
-    const combobox = page.locator('button[role="combobox"]').first()
-
-    const hasInput = await input.isVisible().catch(() => false)
-    const hasCombobox = await combobox.isVisible().catch(() => false)
-
-    expect(hasInput || hasCombobox).toBeTruthy()
-  })
-
-  test('trends chart or data table present', async ({ page }) => {
-    await page.waitForTimeout(2000)
-
-    // StorageTrendsChart renders a recharts SVG; StorageBySkuTable renders a table
-    const chart = page.locator('svg[class*="recharts"], [class*="chart"]')
-    const table = page.locator('table')
-    const emptyState = page.locator('text=/нет данных|no data/i')
-
-    const hasChart = (await chart.count()) > 0
-    const hasTable = (await table.count()) > 0
-    const hasEmpty = (await emptyState.count()) > 0
-
-    expect(hasChart || hasTable || hasEmpty).toBeTruthy()
-  })
+  await expect(
+    page.getByRole('heading', { name: /Аналитика расходов на хранение/i, level: 1 })
+  ).toBeVisible()
+  await expect(page.getByText('Товар хранения Story 162.6', { exact: true }).first()).toBeVisible()
+  await expect(page.getByText('Динамика расходов на хранение', { exact: true })).toBeVisible()
+  await expect(page.locator('.recharts-wrapper')).toBeVisible()
+  routes.assertNoUnexpectedRequests()
 })
