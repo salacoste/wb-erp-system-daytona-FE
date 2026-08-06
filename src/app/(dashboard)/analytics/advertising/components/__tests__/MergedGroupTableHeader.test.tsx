@@ -93,3 +93,55 @@ describe('MergedGroupTableHeader', () => {
     expect(cells?.length).toBe(7)
   })
 })
+
+describe('MergedGroupTableHeader — Story 163.1 keyboard a11y', () => {
+  it('sortable columns render a semantic <button> with a Russian accessible name', () => {
+    render(<MergedGroupTableHeader onSort={vi.fn()} />)
+    const spend = screen.getByRole('button', { name: /Расход/ })
+    expect(spend.tagName).toBe('BUTTON')
+    expect(spend.getAttribute('aria-label')).toContain('Сортировать по')
+    expect(screen.getByRole('button', { name: /Всего продаж/ })).toBeInTheDocument()
+  })
+
+  it('Enter on a focused sort button activates sort with the field', async () => {
+    const onSort = vi.fn()
+    const user = userEvent.setup()
+    render(<MergedGroupTableHeader onSort={onSort} />)
+    screen.getByRole('button', { name: /ROAS/ }).focus()
+    await user.keyboard('{Enter}')
+    expect(onSort).toHaveBeenCalledWith('roas')
+  })
+
+  it('Space on a focused sort button activates sort with the field', async () => {
+    const onSort = vi.fn()
+    const user = userEvent.setup()
+    render(<MergedGroupTableHeader onSort={onSort} />)
+    screen.getByRole('button', { name: /Органика/ }).focus()
+    await user.keyboard(' ')
+    expect(onSort).toHaveBeenCalledWith('organicSales')
+  })
+
+  it('exposes aria-sort on the active <th> and "none" on inactive sortable columns', () => {
+    const { container } = render(
+      <MergedGroupTableHeader
+        sortConfig={{ field: 'totalSpend', direction: 'desc' }}
+        onSort={vi.fn()}
+      />
+    )
+    const ths = Array.from(container.querySelectorAll('th'))
+    const spendTh = ths.find(th => th.textContent?.includes('Расход'))
+    const revenueTh = ths.find(th => th.textContent?.includes('Из рекламы'))
+    expect(spendTh?.getAttribute('aria-sort')).toBe('descending')
+    expect(revenueTh?.getAttribute('aria-sort')).toBe('none')
+  })
+
+  it('sort buttons have a visible focus ring class', () => {
+    render(<MergedGroupTableHeader onSort={vi.fn()} />)
+    expect(screen.getByRole('button', { name: /Расход/ }).className).toContain('focus-visible:ring')
+  })
+
+  it('does not render a sort button when onSort is undefined (non-sortable context)', () => {
+    render(<MergedGroupTableHeader />)
+    expect(screen.queryByRole('button')).not.toBeInTheDocument()
+  })
+})
