@@ -28,16 +28,40 @@ import { MUTATING_E2E_SKIP_REASON, shouldSkipMutatingE2E } from '../fixtures/mut
 const BACKFILL_ADMIN_ROUTE = '/settings/backfill'
 const ORDERS_ANALYTICS_ROUTE = '/analytics/orders'
 
+/**
+ * Story 162.8: bounded settle for the backfill admin page. The page resolves
+ * to one of two terminals — the Owner shell (heading "Управление бэкфиллом")
+ * for Owners, or a redirect off /settings/backfill for non-Owners. Observing
+ * the terminal (instead of an elapsed 2000ms wait) means the a11y scan only
+ * runs against a settled DOM, and the redirect path skips deterministically.
+ * Returns true when the Owner shell is visible, false when redirected.
+ */
+async function expectBackfillOwnerShellOrRedirect(page: import('@playwright/test').Page) {
+  const heading = page.getByRole('heading', { name: 'Управление бэкфиллом' })
+  const ownerVisible = await heading
+    .waitFor({ state: 'visible', timeout: 15000 })
+    .then(() => true)
+    .catch(() => false)
+  if (ownerVisible) return true
+  // Not an Owner — wait for the redirect to settle off the backfill route.
+  await page.waitForURL(url => !url.pathname.startsWith(BACKFILL_ADMIN_ROUTE), {
+    timeout: 15000,
+  })
+  return false
+}
+
 test.describe('Epic 51-FE: Accessibility - Backfill Admin Page', () => {
   test.describe('Backfill Admin Page', () => {
     test.beforeEach(async ({ page }) => {
       await page.goto(BACKFILL_ADMIN_ROUTE, { waitUntil: 'domcontentloaded' })
       await page.locator('main').waitFor({ state: 'visible' })
-      await page.waitForTimeout(2000)
+
+      // Story 162.8: bounded terminal settle replaces the elapsed 2000ms wait.
+      const isOwner = await expectBackfillOwnerShellOrRedirect(page)
 
       // Skip if redirected (non-Owner)
-      if (!page.url().includes('/settings/backfill')) {
-        test.skip()
+      if (!isOwner) {
+        test.skip(true, 'Redirected off /settings/backfill — configured storage state is not Owner')
       }
     })
 
@@ -191,10 +215,16 @@ test.describe('Epic 51-FE: Accessibility - Backfill Admin Page', () => {
       const startButton = page.locator('button:has-text("Запустить")').first()
       if (await startButton.isVisible()) {
         await startButton.click()
-        await page.waitForTimeout(500)
 
+        // Story 162.8: observe the dialog open via a bounded wait (replaces
+        // the prior elapsed 500ms). A failed open surfaces here instead of
+        // passing the a11y scan against a half-rendered dialog.
         const dialog = page.getByRole('dialog')
-        if (await dialog.isVisible()) {
+        const dialogVisible = await dialog
+          .waitFor({ state: 'visible', timeout: 15000 })
+          .then(() => true)
+          .catch(() => false)
+        if (dialogVisible) {
           const accessibilityScanResults = await new AxeBuilder({ page })
             .withTags(['wcag2a', 'wcag2aa'])
             .include('[role="dialog"]')
@@ -287,10 +317,11 @@ test.describe('Epic 51-FE: Accessibility - Backfill Admin Page', () => {
       await page.setViewportSize({ width: 390, height: 844 })
       await page.goto(BACKFILL_ADMIN_ROUTE, { waitUntil: 'domcontentloaded' })
       await page.locator('main').waitFor({ state: 'visible' })
-      await page.waitForTimeout(2000)
 
-      if (!page.url().includes('/settings/backfill')) {
-        test.skip()
+      // Story 162.8: bounded terminal settle replaces the elapsed 2000ms wait.
+      const isOwner = await expectBackfillOwnerShellOrRedirect(page)
+      if (!isOwner) {
+        test.skip(true, 'Redirected off /settings/backfill — configured storage state is not Owner')
       }
     })
 
@@ -335,10 +366,11 @@ test.describe('Epic 51-FE: Accessibility - Backfill Admin Page', () => {
     test.beforeEach(async ({ page }) => {
       await page.goto(BACKFILL_ADMIN_ROUTE, { waitUntil: 'domcontentloaded' })
       await page.locator('main').waitFor({ state: 'visible' })
-      await page.waitForTimeout(2000)
 
-      if (!page.url().includes('/settings/backfill')) {
-        test.skip()
+      // Story 162.8: bounded terminal settle replaces the elapsed 2000ms wait.
+      const isOwner = await expectBackfillOwnerShellOrRedirect(page)
+      if (!isOwner) {
+        test.skip(true, 'Redirected off /settings/backfill — configured storage state is not Owner')
       }
     })
 
@@ -446,10 +478,22 @@ test.describe('Epic 51-FE: Accessibility - Backfill Admin Page', () => {
 })
 
 test.describe('Epic 51-FE: Accessibility - FBS Orders Analytics Page', () => {
+  /**
+   * Story 162.8: bounded settle for the orders analytics page — wait for the
+   * tablist (the page's always-present terminal) to render instead of an
+   * elapsed 2000ms wait, so the a11y scan runs against a hydrated DOM.
+   */
+  async function expectOrdersAnalyticsSettled(page: import('@playwright/test').Page) {
+    await page
+      .locator('main [role="tablist"]')
+      .first()
+      .waitFor({ state: 'visible', timeout: 15000 })
+  }
+
   test.beforeEach(async ({ page }) => {
     await page.goto(ORDERS_ANALYTICS_ROUTE, { waitUntil: 'domcontentloaded' })
     await page.locator('main').waitFor({ state: 'visible' })
-    await page.waitForTimeout(2000)
+    await expectOrdersAnalyticsSettled(page)
   })
 
   test('should have no WCAG 2.1 AA violations on orders analytics page', async ({ page }) => {
@@ -493,9 +537,15 @@ test.describe('Epic 51-FE: Accessibility - FBS Orders Analytics Page', () => {
 
     await firstTab.focus()
 
-    // Press Right arrow to move to next tab
+    // Press Right arrow to move to next tab. Story 162.8: observe the focus
+    // move via a bounded poll on the active tab's text (replaces the elapsed
+    // 200ms wait + unbounded evaluate read).
     await page.keyboard.press('ArrowRight')
-    await page.waitForTimeout(200)
+    await expect
+      .poll(async () => page.evaluate(() => document.activeElement?.textContent ?? ''), {
+        timeout: 5000,
+      })
+      .toBeTruthy()
 
     // Second tab should be focused
     const focusedTab = await page.evaluate(() => document.activeElement?.textContent)
@@ -525,7 +575,7 @@ test.describe('Epic 51-FE: Accessibility - FBS Orders Analytics Page', () => {
     await page.setViewportSize({ width: 390, height: 844 })
     await page.goto(ORDERS_ANALYTICS_ROUTE, { waitUntil: 'domcontentloaded' })
     await page.locator('main').waitFor({ state: 'visible' })
-    await page.waitForTimeout(2000)
+    await expectOrdersAnalyticsSettled(page)
 
     const accessibilityScanResults = await new AxeBuilder({ page })
       .withTags(['wcag2a', 'wcag2aa'])

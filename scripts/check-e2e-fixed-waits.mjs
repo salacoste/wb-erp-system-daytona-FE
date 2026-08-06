@@ -79,10 +79,44 @@ export const STORY_162_7_CANONICAL_WAIT_COUNT = 76
 export const STORY_162_7_CURRENT_BASE_WAIT_COUNT = 70
 export const STORY_162_7_CURRENT_BASE_TIMER_COUNT = 3
 
+// Story 162.8 — pricing, backfill, COGS, and authentication business-flow specs.
+// The capstone: the owned specs cover the last real fixed waits in the E2E
+// tree, so once they are timer-free the repo-wide E2E fixed-wait count is 0.
+// Includes specs that were already timer-free at base (cogs-pages,
+// orders-client-info, backfill-page, settings/backfill-admin,
+// dashboard-session-fixes) so the scanner keeps guarding them against
+// regression — the same way Story 162.6 kept already-clean specs in its union.
+export const STORY_162_8_E2E_FILES = [
+  'e2e/price-calculator.spec.ts',
+  'e2e/price-calculator-visual.spec.ts',
+  'e2e/pricing-page.spec.ts',
+  'e2e/cogs-assignment.spec.ts',
+  'e2e/cogs-pages.spec.ts',
+  'e2e/settings/backfill-a11y.spec.ts',
+  'e2e/backfill-page.spec.ts',
+  'e2e/settings/backfill-admin.spec.ts',
+  'e2e/login-dashboard.spec.ts',
+  'e2e/onboarding.spec.ts',
+  'e2e/orders-client-info.spec.ts',
+  'e2e/dashboard-session-fixes.spec.ts',
+  'e2e/auth.setup.ts',
+  'e2e/auth-manager.setup.ts',
+]
+
+export const STORY_162_8_FIXTURE_FILES = []
+
+export const STORY_162_8_SCAN_FILES = [...STORY_162_8_E2E_FILES, ...STORY_162_8_FIXTURE_FILES]
+
+export const STORY_162_8_BASE_REVISION = 'd70cfd1f81b0a02a564a6b99c51f9fc0ca8117a4'
+export const STORY_162_8_CANONICAL_WAIT_COUNT = 40
+export const STORY_162_8_CURRENT_BASE_WAIT_COUNT = 26
+export const STORY_162_8_CURRENT_BASE_TIMER_COUNT = 14
+
 export const STORY_FIXED_WAIT_SCAN_FILES = [
   ...STORY_162_5_E2E_FILES,
   ...STORY_162_6_SCAN_FILES,
   ...STORY_162_7_SCAN_FILES,
+  ...STORY_162_8_SCAN_FILES,
 ]
 
 const PROHIBITED_CALLS = new Map([

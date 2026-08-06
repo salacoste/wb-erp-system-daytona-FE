@@ -313,7 +313,11 @@ test.describe('Epic 44-FE: Price Calculator UI', () => {
     // Устанавливаем высокую маржу (> 25%) - используем слайдер через aria
     const slider = marginSection.locator('[role="slider"]')
     await slider.focus()
-    // Устанавливаем значение через aria-valuenow и React state
+    // Story 162.8: after the native-value-setter + input event, observe React
+    // Hook Form's reflection of the new value via a bounded `toHaveValue`
+    // (replaces the prior elapsed 400ms wait). The badge text assertion that
+    // follows is itself bounded, so the value settle is the only missing link.
+    const marginInput = marginSection.locator('input[type="number"]')
     await page.evaluate(() => {
       const section = document.querySelector('.bg-primary\\/5')
       const input = section?.querySelector('input[type="number"]') as HTMLInputElement
@@ -329,7 +333,7 @@ test.describe('Epic 44-FE: Price Calculator UI', () => {
         }
       }
     })
-    await page.waitForTimeout(400)
+    await expect(marginInput).toHaveValue('30', { timeout: 5000 })
     await expect(badge).toContainText('Высокая')
 
     // Устанавливаем низкую маржу (< 10%)
@@ -347,7 +351,7 @@ test.describe('Epic 44-FE: Price Calculator UI', () => {
         }
       }
     })
-    await page.waitForTimeout(400)
+    await expect(marginInput).toHaveValue('5', { timeout: 5000 })
     await expect(badge).toContainText('Низкая')
   })
 
@@ -411,9 +415,10 @@ test.describe('Epic 44-FE: Price Calculator UI', () => {
     await fillInput(page, 'cogs_rub', '1500')
     await fillInput(page, 'logistics_forward_rub', '150')
     await fillInput(page, 'logistics_reverse_rub', '200')
-    await page.waitForTimeout(200)
 
-    // Кнопка расчёта должна стать активной
+    // Кнопка расчёта должна стать активной. Story 162.8: `fillInput` already
+    // proves each value reached React Hook Form via toHaveValue, and
+    // `toBeEnabled` is itself a bounded assertion — no elapsed wait needed.
     const calculateButton = page.getByRole('button', { name: /Рассчитать цену/i })
     await expect(calculateButton).toBeEnabled()
   })
@@ -431,7 +436,6 @@ test.describe('Epic 44-FE: Price Calculator UI', () => {
     await fillInput(page, 'logistics_forward_rub', '150')
     await fillInput(page, 'logistics_reverse_rub', '200')
     await fillInput(page, 'spp_pct', '10')
-    await page.waitForTimeout(200)
 
     // Начинаем наблюдение до отправки, чтобы доказать сам POST и его ответ.
     const requestPromise = page.waitForRequest(
@@ -477,9 +481,17 @@ test.describe('Epic 44-FE: Price Calculator UI', () => {
   })
 
   test('TC-E2E-006b: Показывается индикатор загрузки', async ({ page }) => {
-    // Добавляем задержку на API чтобы увидеть loading state
+    // Story 162.8: gate the calculator response on an external Promise so the
+    // POST stays genuinely in-flight while the loading indicator is observed
+    // (no timer helper). `finally` releases the gate after the assertion so
+    // the route can never strand the worker (Playwright routes persist per
+    // worker). Mirrors the 162.7 supply-planning loading-state recipe.
+    let releaseResponse: () => void = () => {}
+    const gatedResponse = new Promise<void>(resolve => {
+      releaseResponse = resolve
+    })
     await page.route('**/v1/products/price-calculator', async route => {
-      await new Promise(resolve => setTimeout(resolve, 1000))
+      await gatedResponse
       route.fulfill({
         status: 200,
         contentType: 'application/json',
@@ -495,7 +507,6 @@ test.describe('Epic 44-FE: Price Calculator UI', () => {
     await fillInput(page, 'cogs_rub', '1500')
     await fillInput(page, 'logistics_forward_rub', '150')
     await fillInput(page, 'logistics_reverse_rub', '200')
-    await page.waitForTimeout(200)
 
     // Нажимаем кнопку расчёта через JavaScript
     await page.evaluate(() => {
@@ -504,8 +515,12 @@ test.describe('Epic 44-FE: Price Calculator UI', () => {
     })
 
     // Проверяем индикатор загрузки (текст "Расчёт..." в секции кнопок)
-    const loadingText = page.locator('button[type="submit"]').getByText('Расчёт...')
-    await expect(loadingText).toBeVisible({ timeout: 3000 })
+    try {
+      const loadingText = page.locator('button[type="submit"]').getByText('Расчёт...')
+      await expect(loadingText).toBeVisible({ timeout: 5000 })
+    } finally {
+      releaseResponse()
+    }
   })
 
   // ============================================================================
@@ -536,7 +551,6 @@ test.describe('Epic 44-FE: Price Calculator UI', () => {
     await fillInput(page, 'cogs_rub', '1500')
     await fillInput(page, 'logistics_forward_rub', '150')
     await fillInput(page, 'logistics_reverse_rub', '200')
-    await page.waitForTimeout(200)
 
     const responsePromise = page.waitForResponse(
       response =>
@@ -564,10 +578,10 @@ test.describe('Epic 44-FE: Price Calculator UI', () => {
   // ============================================================================
 
   test('TC-E2E-008: Escape сбрасывает форму', async ({ page }) => {
-    // Заполняем поле используя fillInput helper
+    // Заполняем поле используя fillInput helper (asserts toHaveValue, so no
+    // post-fill elapsed wait is needed).
     const cogsInput = page.locator('#cogs_rub')
     await fillInput(page, 'cogs_rub', '1500')
-    await page.waitForTimeout(100)
 
     // Симулируем Escape через JavaScript KeyboardEvent
     await page.evaluate(() => {
@@ -579,11 +593,12 @@ test.describe('Epic 44-FE: Price Calculator UI', () => {
       })
       window.dispatchEvent(event)
     })
-    await page.waitForTimeout(300)
 
-    // Форма должна сброситься (без подтверждения, т.к. нет результатов)
-    const cogsValue = await cogsInput.inputValue()
-    expect(['0', '']).toContain(cogsValue)
+    // Story 162.8: observe the reset via a bounded `toHaveValue` on the COGS
+    // input (replaces the prior elapsed 300ms wait + unbounded inputValue()).
+    // The reset settles the field to its default ('0' or '') once the Escape
+    // handler runs; a bounded wait surfaces a missed reset instead of racing.
+    await expect(cogsInput).toHaveValue(/^(?:0)?$/, { timeout: 5000 })
   })
 
   // ============================================================================
@@ -591,9 +606,12 @@ test.describe('Epic 44-FE: Price Calculator UI', () => {
   // ============================================================================
 
   test('TC-E2E-009: Collapsible sections работают (TaxConfiguration)', async ({ page }) => {
-    // Скроллим вниз чтобы найти налоговую секцию
+    // Скроллим вниз чтобы найти налоговую секцию. Story 162.8: observe the
+    // scroll settle via a bounded poll on scrollY (replaces the elapsed 200ms).
     await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight))
-    await page.waitForTimeout(200)
+    await expect
+      .poll(async () => page.evaluate(() => window.scrollY), { timeout: 5000 })
+      .toBeGreaterThan(0)
 
     // Проверяем что есть collapsible секция (TaxPresetGrid или TaxConfiguration)
     const taxSection = page.locator('[data-testid="tax-configuration-section"]')
@@ -648,11 +666,12 @@ test.describe('Epic 44-FE: Price Calculator UI', () => {
     // Кликаем на первый input чтобы установить начальный фокус
     const cogsInput = page.locator('#cogs_rub')
     await cogsInput.focus()
-    await page.waitForTimeout(100)
 
-    // Проверяем что фокус установлен
-    const initialActiveId = await page.evaluate(() => document.activeElement?.id)
-    expect(initialActiveId).toBe('cogs_rub')
+    // Story 162.8: observe focus via a bounded poll on document.activeElement
+    // (replaces the prior elapsed 100ms wait + unbounded evaluate read).
+    await expect
+      .poll(async () => page.evaluate(() => document.activeElement?.id), { timeout: 5000 })
+      .toBe('cogs_rub')
 
     // Tab к следующему элементу используя JavaScript
     await page.evaluate(() => {
@@ -667,12 +686,14 @@ test.describe('Epic 44-FE: Price Calculator UI', () => {
         focusable[currentIndex + 1].focus()
       }
     })
-    await page.waitForTimeout(100)
 
-    // Проверяем что фокус переместился на интерактивный элемент
-    const activeTag = await page.evaluate(() => document.activeElement?.tagName)
-    // Разрешаем все типы focusable элементов
-    expect(['INPUT', 'BUTTON', 'SELECT', 'A', 'DIV', 'SPAN', 'TEXTAREA']).toContain(activeTag)
+    // Проверяем что фокус переместился на интерактивный элемент. Bounded poll
+    // on the active-element tag (replaces the prior elapsed 100ms wait).
+    await expect
+      .poll(async () => page.evaluate(() => document.activeElement?.tagName ?? ''), {
+        timeout: 5000,
+      })
+      .toMatch(/^(INPUT|BUTTON|SELECT|A|DIV|SPAN|TEXTAREA)$/)
   })
 
   test('TC-E2E-010d: Иерархия заголовков корректна', async ({ page }) => {

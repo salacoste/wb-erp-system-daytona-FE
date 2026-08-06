@@ -20,7 +20,10 @@ import { TIMEOUTS } from './fixtures/test-data'
 const PRICING_URL = '/analytics/pricing'
 const PRICING_API_GLOB = '**/v1/products/price-recommendations**'
 
-const TEST_TIMEOUT = 60_000
+// Story 162.8: no per-test `test.setTimeout` — every wait is bounded by an
+// explicit `expect(...).toBeVisible({timeout: TIMEOUTS.api})` or a registered
+// `waitForResponse({timeout})`, which are the operative synchronization points
+// (anti-pattern #7). The Playwright project default covers total test time.
 
 // ---------------------------------------------------------------------------
 // Mock data
@@ -74,8 +77,6 @@ test.describe('Price Recommendations page', () => {
   // 1. Page renders with heading and filter controls
   // -------------------------------------------------------------------------
   test('page loads with Рекомендации по ценам heading and filter controls', async ({ page }) => {
-    test.setTimeout(TEST_TIMEOUT)
-
     await page.route(PRICING_API_GLOB, route =>
       route.fulfill({
         status: 200,
@@ -98,8 +99,6 @@ test.describe('Price Recommendations page', () => {
   // 2. Filter controls use backend enum values
   // -------------------------------------------------------------------------
   test('filter controls send backend-compatible enum query params', async ({ page }) => {
-    test.setTimeout(TEST_TIMEOUT)
-
     const requestedUrls: string[] = []
     await page.route(PRICING_API_GLOB, route => {
       requestedUrls.push(route.request().url())
@@ -136,8 +135,6 @@ test.describe('Price Recommendations page', () => {
   // 2. Summary cards render with metric labels
   // -------------------------------------------------------------------------
   test('summary cards display 4 metric labels', async ({ page }) => {
-    test.setTimeout(TEST_TIMEOUT)
-
     const mockItem = makeMockItem({ gap: -150, gapPct: -10.0 })
     await page.route(PRICING_API_GLOB, route =>
       route.fulfill({
@@ -159,8 +156,6 @@ test.describe('Price Recommendations page', () => {
   // 3. Recommendations table renders with column headers
   // -------------------------------------------------------------------------
   test('table renders column headers when backend has data', async ({ page }) => {
-    test.setTimeout(TEST_TIMEOUT)
-
     await page.route(PRICING_API_GLOB, route =>
       route.fulfill({
         status: 200,
@@ -183,8 +178,6 @@ test.describe('Price Recommendations page', () => {
   // 4. Table rows with data: gap indicators color-coded (red for negative)
   // -------------------------------------------------------------------------
   test('table shows red-colored gap when price is below target', async ({ page }) => {
-    test.setTimeout(TEST_TIMEOUT)
-
     const belowItem = makeMockItem({
       id: 'pr-below',
       vendorCode: 'SKU-BELOW',
@@ -213,8 +206,6 @@ test.describe('Price Recommendations page', () => {
   // 5. Table rows: green gap indicator for above-target prices
   // -------------------------------------------------------------------------
   test('table shows green-colored gap when price is above target', async ({ page }) => {
-    test.setTimeout(TEST_TIMEOUT)
-
     const aboveItem = makeMockItem({
       id: 'pr-above',
       vendorCode: 'SKU-ABOVE',
@@ -242,8 +233,6 @@ test.describe('Price Recommendations page', () => {
   // 6. Refresh button triggers POST to /refresh
   // -------------------------------------------------------------------------
   test('refresh button triggers price refresh request', async ({ page }) => {
-    test.setTimeout(TEST_TIMEOUT)
-
     await page.route(PRICING_API_GLOB, route =>
       route.fulfill({
         status: 200,
@@ -268,10 +257,20 @@ test.describe('Price Recommendations page', () => {
     // Click the refresh button (has text "Обновить" when not refreshing)
     const refreshBtn = page.getByRole('button', { name: /Обновить/ })
     await expect(refreshBtn).toBeVisible()
-    await refreshBtn.click()
 
-    // Verify the refresh endpoint was called
-    await page.waitForTimeout(1000)
+    // Story 162.8: register the refresh POST response BEFORE the click so the
+    // refresh is observed via its network settle (bounded), not an elapsed
+    // wait + flag check. The route mock above fulfills the POST with 200, so
+    // waitForResponse resolves on the actual request/response pair.
+    const refreshResponse = page.waitForResponse(
+      response =>
+        response.request().method() === 'POST' &&
+        response.url().includes('/v1/products/price-recommendations/refresh'),
+      { timeout: TIMEOUTS.api }
+    )
+    await refreshBtn.click()
+    const response = await refreshResponse
+    expect(response.ok()).toBe(true)
     expect(refreshCalled).toBe(true)
   })
 
@@ -279,8 +278,6 @@ test.describe('Price Recommendations page', () => {
   // 7. Empty state: no recommendations shows informational message
   // -------------------------------------------------------------------------
   test('empty response renders informational message', async ({ page }) => {
-    test.setTimeout(TEST_TIMEOUT)
-
     await page.route(PRICING_API_GLOB, route =>
       route.fulfill({
         status: 200,
@@ -298,8 +295,6 @@ test.describe('Price Recommendations page', () => {
   // 8. Error state: 500 renders error alert without crashing the page
   // -------------------------------------------------------------------------
   test('500 error renders error alert without crashing the page', async ({ page }) => {
-    test.setTimeout(TEST_TIMEOUT)
-
     await page.route(PRICING_API_GLOB, route =>
       route.fulfill({ status: 500, contentType: 'application/json', body: '{}' })
     )

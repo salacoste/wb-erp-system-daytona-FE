@@ -25,7 +25,11 @@ test.describe('Epic 44-FE: Visual Enhancement Tests', () => {
   })
 
   /**
-   * Helper: Fill input field using JavaScript evaluate
+   * Helper: Fill input field using JavaScript evaluate.
+   *
+   * Story 162.8: after the native-value-setter + input/change events, observe
+   * React Hook Form's reflection of the value via a bounded `toHaveValue`
+   * (replaces the prior elapsed 100ms wait).
    */
   async function fillInput(page: Page, id: string, value: string) {
     await page.evaluate(
@@ -39,7 +43,7 @@ test.describe('Epic 44-FE: Visual Enhancement Tests', () => {
       },
       { id, value }
     )
-    await page.waitForTimeout(100)
+    await expect(page.locator(`#${id}`)).toHaveValue(value, { timeout: 5000 })
   }
 
   /**
@@ -71,19 +75,29 @@ test.describe('Epic 44-FE: Visual Enhancement Tests', () => {
   }
 
   /**
-   * Helper: Fill form and submit calculation
+   * Helper: Fill form and submit calculation.
+   *
+   * Story 162.8: register the calculator POST response BEFORE the submit
+   * click and await it as the synchronization signal (replaces the prior
+   * post-submit elapsed 1000ms wait). The fill-step 200ms wait is gone too —
+   * `fillInput` now proves each value reached React Hook Form via toHaveValue.
    */
   async function fillAndCalculate(page: Page) {
     await fillInput(page, 'cogs_rub', '1500')
     await fillInput(page, 'logistics_forward_rub', '150')
     await fillInput(page, 'logistics_reverse_rub', '200')
-    await page.waitForTimeout(200)
 
+    const responsePromise = page.waitForResponse(
+      response =>
+        response.request().method() === 'POST' &&
+        response.url().includes('/v1/products/price-calculator'),
+      { timeout: 10000 }
+    )
     await page.evaluate(() => {
       const btn = document.querySelector('button[type="submit"]') as HTMLButtonElement
       if (btn) btn.click()
     })
-    await page.waitForTimeout(1000)
+    await responsePromise
   }
 
   // ============================================================================

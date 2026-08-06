@@ -56,13 +56,16 @@ test.describe('Login → Dashboard Flow', () => {
 
   test.describe('Metric Cards (Story 3.2)', () => {
     test('displays key metric cards', async ({ page }) => {
-      // Wait for metrics to load
-      await page.waitForTimeout(2000) // Allow API data to load
-
       // Should have multiple metric cards
       const metricCards = page
         .locator(SELECTORS.metricCard)
         .or(page.locator('[class*="metric"], [class*="card"]').filter({ hasText: /₽|%/ }))
+
+      // Story 162.8: observe the metrics terminal render via a bounded wait on
+      // the first card (data, or a skeleton/loading surrogate) instead of an
+      // elapsed "allow API to load" wait. Loading OR rendered cards are both
+      // valid settles; the count assertion then runs against a settled DOM.
+      await expect(metricCards.first()).toBeVisible({ timeout: TIMEOUTS.api })
 
       // At least one metric should be visible
       const count = await metricCards.count()
@@ -122,9 +125,15 @@ test.describe('Login → Dashboard Flow', () => {
     })
 
     test('trend graph is functional', async ({ page }) => {
-      // Chart should be visible or page should show empty state
-      await page.waitForTimeout(1000)
-      await expect(page.locator('body')).toBeVisible()
+      // Story 162.8: replace the elapsed wait + tautological `body visible`
+      // with a bounded terminal settle. The trend section resolves to a
+      // rendered chart (recharts svg), an empty state, or an error state —
+      // all three are valid functional settles; body-only visibility is not.
+      const trendTerminal = page
+        .locator('svg.recharts-surface, svg[class*="recharts"]')
+        .or(page.getByText(/Нет данных|Ошибка загрузки/i))
+
+      await expect(trendTerminal.first()).toBeVisible({ timeout: TIMEOUTS.api })
     })
   })
 

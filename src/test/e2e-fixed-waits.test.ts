@@ -25,6 +25,13 @@ import {
   STORY_162_7_E2E_FILES,
   STORY_162_7_FIXTURE_FILES,
   STORY_162_7_SCAN_FILES,
+  STORY_162_8_BASE_REVISION,
+  STORY_162_8_CANONICAL_WAIT_COUNT,
+  STORY_162_8_CURRENT_BASE_TIMER_COUNT,
+  STORY_162_8_CURRENT_BASE_WAIT_COUNT,
+  STORY_162_8_E2E_FILES,
+  STORY_162_8_FIXTURE_FILES,
+  STORY_162_8_SCAN_FILES,
   STORY_FIXED_WAIT_SCAN_FILES,
   resolveScanTargets,
   scanFiles,
@@ -509,11 +516,12 @@ describe('Story 162.6 dashboard and analytics fixed-wait scanner', () => {
     )
   })
 
-  it('uses the exact Story 162.5, 162.6, and 162.7 target union by default', () => {
+  it('uses the exact Story 162.5, 162.6, 162.7, and 162.8 target union by default', () => {
     expect(STORY_FIXED_WAIT_SCAN_FILES).toEqual([
       ...STORY_162_5_E2E_FILES,
       ...STORY_162_6_SCAN_FILES,
       ...STORY_162_7_SCAN_FILES,
+      ...STORY_162_8_SCAN_FILES,
     ])
     expect(resolveScanTargets([])).toEqual(STORY_FIXED_WAIT_SCAN_FILES)
     expect(resolveScanTargets(['e2e/dashboard-period.spec.ts'])).toEqual([
@@ -557,5 +565,56 @@ describe('Story 162.7 supplies fixed-wait scanner', () => {
     await expect(scanFiles([STORY_162_7_FIXTURE_FILES[0]], root)).rejects.toThrow(
       STORY_162_7_FIXTURE_FILES[0]
     )
+  })
+})
+
+describe('Story 162.8 pricing, backfill, COGS, and auth fixed-wait scanner', () => {
+  it('records the immutable canonical count and exact current base drift', async () => {
+    expect(STORY_162_8_BASE_REVISION).toBe('d70cfd1f81b0a02a564a6b99c51f9fc0ca8117a4')
+    expect(STORY_162_8_CANONICAL_WAIT_COUNT).toBe(40)
+
+    const baseline = await scanGitRevision(STORY_162_8_E2E_FILES, STORY_162_8_BASE_REVISION)
+    const findings = baseline.flat()
+
+    expect(findings.filter(finding => finding.kind === 'browser-wait')).toHaveLength(
+      STORY_162_8_CURRENT_BASE_WAIT_COUNT
+    )
+    expect(findings.filter(finding => finding.kind === 'timer')).toHaveLength(
+      STORY_162_8_CURRENT_BASE_TIMER_COUNT
+    )
+    expect(findings).toHaveLength(40)
+  })
+
+  it('keeps the Story 162.8 owned spec list exact', () => {
+    expect(STORY_162_8_E2E_FILES).toEqual([
+      'e2e/price-calculator.spec.ts',
+      'e2e/price-calculator-visual.spec.ts',
+      'e2e/pricing-page.spec.ts',
+      'e2e/cogs-assignment.spec.ts',
+      'e2e/cogs-pages.spec.ts',
+      'e2e/settings/backfill-a11y.spec.ts',
+      'e2e/backfill-page.spec.ts',
+      'e2e/settings/backfill-admin.spec.ts',
+      'e2e/login-dashboard.spec.ts',
+      'e2e/onboarding.spec.ts',
+      'e2e/orders-client-info.spec.ts',
+      'e2e/dashboard-session-fixes.spec.ts',
+      'e2e/auth.setup.ts',
+      'e2e/auth-manager.setup.ts',
+    ])
+  })
+
+  it('keeps the planned fixture list empty and fails closed when a target is missing', async () => {
+    expect(STORY_162_8_FIXTURE_FILES).toEqual([])
+    expect(STORY_162_8_SCAN_FILES).toEqual([...STORY_162_8_E2E_FILES, ...STORY_162_8_FIXTURE_FILES])
+
+    const root = await mkdtemp(join(tmpdir(), 'story-162-8-fixed-wait-scan-'))
+    await expect(scanFiles([STORY_162_8_E2E_FILES[0]], root)).rejects.toThrow(
+      STORY_162_8_E2E_FILES[0]
+    )
+  })
+
+  it('keeps every owned target free of fixed waits at HEAD', async () => {
+    expect(await scanFiles(STORY_162_8_SCAN_FILES)).toEqual([])
   })
 })

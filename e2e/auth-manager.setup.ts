@@ -35,8 +35,9 @@ setup('authenticate as manager (non-Owner)', async ({ page }) => {
     throw new Error('Manager credentials disappeared after HAS_MANAGER_CREDS check')
   }
 
-  setup.setTimeout(60_000)
-
+  // Story 162.8: no `setup.setTimeout` — the manager login flow is fully
+  // bounded by `waitForURL({timeout})` + `expect(main).toBeVisible({timeout})`
+  // below (anti-pattern #7).
   await page.goto(ROUTES.login)
   await expect(page.locator('form')).toBeVisible({ timeout: 10_000 })
 
