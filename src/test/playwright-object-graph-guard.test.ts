@@ -20,6 +20,17 @@ import {
 } from '../../e2e/fixtures/playwright-network-guard'
 import type { PlaywrightRuntime } from '../../e2e/fixtures/playwright-network-guard'
 
+// The guard routes allowed `storageState({ path })` writes through the atomic
+// temp+rename helper. Mock it so the unit test never touches the real
+// filesystem, and so we can assert the guard forwarded the REAL captured state
+// (the privileged zero-arg read) — proving no-exfiltration still holds (the
+// stub is returned to the caller) while the file write receives real state.
+const atomicWriteStorageStateFile = vi.fn().mockResolvedValue(undefined)
+vi.mock('../../e2e/fixtures/atomic-storage-state', () => ({
+  atomicWriteStorageStateFile: (path: string, state: unknown) =>
+    atomicWriteStorageStateFile(path, state),
+}))
+
 function fakeContext(
   request: APIRequestContext = { get: vi.fn() } as unknown as APIRequestContext
 ) {
@@ -367,7 +378,15 @@ describe('Playwright guarded object graph', () => {
       cookies: [],
       origins: [],
     })
-    expect(storageState).toHaveBeenCalledWith({ path: 'e2e/.auth/user.json' })
+    // The guard performs the privileged REAL-state read zero-arg from the raw
+    // target (not a re-entry into the proxy), then routes the atomic write
+    // through the helper with the captured state + allowed path. The caller
+    // still only ever observes the empty stub above (no-exfiltration invariant).
+    expect(storageState).toHaveBeenCalledWith()
+    expect(atomicWriteStorageStateFile).toHaveBeenCalledWith('e2e/.auth/user.json', {
+      cookies: [{ name: 'private', value: 'not-exposed' }],
+      origins: [],
+    })
   })
 
   it('deeply unwraps only guarded Playwright input values for locator composition', async () => {

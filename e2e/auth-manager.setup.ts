@@ -15,7 +15,6 @@
  */
 
 import { test as setup, expect } from './fixtures/network-test'
-import { atomicWriteStorageState } from './fixtures/atomic-storage-state'
 import { TEST_MANAGER, HAS_MANAGER_CREDS, ROUTES } from './fixtures/test-data'
 
 const managerAuthFile = 'e2e/.auth/manager.json'
@@ -56,9 +55,11 @@ setup('authenticate as manager (non-Owner)', async ({ page }) => {
   // failed every run and BLOCKED the whole chromium project via the setup dependency).
   await expect(page.locator('main').first()).toBeVisible({ timeout: 15_000 })
 
-  // Save authentication state atomically (temp + rename). The default
-  // `storageState({ path })` writes in-place, which races concurrent readers
-  // under --repeat-each and can surface as ENOENT / partial JSON. See
-  // e2e/fixtures/atomic-storage-state.ts.
-  await atomicWriteStorageState(page.context(), managerAuthFile)
+  // Save authentication state. The guarded `storageState({ path })` handler
+  // performs the atomic temp+rename write itself (it is the trusted layer with
+  // privileged access to the real state), so the standard { path } API is both
+  // correct and race-free here — no zero-arg read (which the guard denies) and
+  // no in-place writeFileSync. See e2e/fixtures/playwright-network-guard.ts
+  // (storageState handler) + e2e/fixtures/atomic-storage-state.ts.
+  await page.context().storageState({ path: managerAuthFile })
 })

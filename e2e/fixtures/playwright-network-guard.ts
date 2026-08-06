@@ -11,6 +11,7 @@ import type {
   Route,
   WebSocketRoute,
 } from '@playwright/test'
+import { atomicWriteStorageStateFile } from './atomic-storage-state'
 
 import {
   assertAllowedTestUrl,
@@ -1204,7 +1205,16 @@ export async function createGuardedBrowserContext(
             if (property === 'storageState') {
               return async (options: unknown) => {
                 const path = authStorageStatePath(options, callbacks.onDenied ?? (() => {}))
-                await Reflect.apply(value, target, [{ path }])
+                // The guard is the trusted layer with privileged access to the
+                // REAL storage state — read it zero-arg from the raw target
+                // (NOT a re-entry into this proxy, so no self-denial), then
+                // atomically write the allowed file via temp+rename. Test code
+                // never observes the real state: we still return the empty
+                // stub below. The atomic replace fixes the in-place
+                // `writeFileSync` race that surfaced as ENOENT / partial JSON
+                // under `--workers=1 --repeat-each=2`.
+                const state = await Reflect.apply(value, target, [])
+                await atomicWriteStorageStateFile(path, state)
                 return { cookies: [], origins: [] }
               }
             }

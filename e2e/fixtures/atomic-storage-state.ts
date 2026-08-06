@@ -17,16 +17,23 @@ import { dirname, join } from 'node:path'
 import type { BrowserContext } from '@playwright/test'
 
 /**
- * Persist the given context's storage state to `filePath` atomically.
+ * Persist an already-captured storage state to `filePath` atomically.
  *
- * @param context Playwright BrowserContext whose cookies/origins to capture.
+ * Writes `JSON.stringify(state)` to a temp file (`.${pid}.${ts}.auth.tmp` in
+ * the same directory, so the `rename` is same-volume → atomic replace), then
+ * renames it over the destination. Readers either see the previous complete
+ * file or the new one — never a missing or half-written file. The temp name
+ * embeds pid + timestamp so concurrent runs don't collide on the temp itself.
+ *
+ * This is the low-level primitive used by the network guard's privileged
+ * storageState handler, which is the only layer trusted to read the REAL
+ * context state (test code never receives it — the guard returns an empty
+ * stub and atomically writes the allowed file internally).
+ *
+ * @param state The captured storage state (cookies/origins) to persist.
  * @param filePath Destination auth-state file (e.g. `e2e/.auth/user.json`).
  */
-export async function atomicWriteStorageState(
-  context: BrowserContext,
-  filePath: string
-): Promise<void> {
-  const state = await context.storageState()
+export async function atomicWriteStorageStateFile(filePath: string, state: unknown): Promise<void> {
   const tmp = join(dirname(filePath), `.${process.pid}.${Date.now()}.auth.tmp`)
   await writeFile(tmp, JSON.stringify(state), 'utf8')
   try {
@@ -36,4 +43,24 @@ export async function atomicWriteStorageState(
     await unlink(tmp).catch(() => {})
     throw error
   }
+}
+
+/**
+ * Back-compat wrapper: capture `context.storageState()` then atomically write
+ * it. NOTE: callers must NOT be inside the network guard's proxied surface —
+ * `context.storageState()` here is a zero-arg read, which the guard denies.
+ * The guard itself calls `atomicWriteStorageStateFile` directly with the
+ * privileged in-place read; auth setups now use the standard
+ * `context.storageState({ path })` API which the guard routes to the atomic
+ * write. Kept for any future unguarded caller.
+ *
+ * @param context Playwright BrowserContext whose cookies/origins to capture.
+ * @param filePath Destination auth-state file (e.g. `e2e/.auth/user.json`).
+ */
+export async function atomicWriteStorageState(
+  context: BrowserContext,
+  filePath: string
+): Promise<void> {
+  const state = await context.storageState()
+  await atomicWriteStorageStateFile(filePath, state)
 }
