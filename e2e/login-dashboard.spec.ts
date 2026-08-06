@@ -103,14 +103,21 @@ test.describe('Login → Dashboard Flow', () => {
     })
 
     test('chart has accessible label', async ({ page }) => {
-      // Check for aria-label on chart container
-      const chartWithLabel = page.locator('[aria-label*="расход"], [aria-label*="chart"]')
-      const hasLabel = (await chartWithLabel.count()) > 0
-
-      // Or check for legend/labels
-      const hasLegend = (await page.locator('[class*="legend"], [class*="label"]').count()) > 0
-
-      expect(hasLabel || hasLegend).toBeTruthy()
+      // Story 162.8: bound the accessible-label/legend check with expect.poll so it
+      // waits for the chart's a11y to render instead of racing on an instant count()
+      // (which flaked between repeat-each iterations).
+      await expect
+        .poll(
+          async () => {
+            const hasLabel =
+              (await page.locator('[aria-label*="расход"], [aria-label*="chart"]').count()) > 0
+            const hasLegend =
+              (await page.locator('[class*="legend"], [class*="label"]').count()) > 0
+            return hasLabel || hasLegend
+          },
+          { timeout: TIMEOUTS.api, message: 'Expense chart accessible label or legend' }
+        )
+        .toBeTruthy()
     })
   })
 
