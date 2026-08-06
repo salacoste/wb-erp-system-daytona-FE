@@ -124,7 +124,7 @@ export async function installCannedRule(
  * Raw installed-rule row shape (GET /v1/automation/rules). The backend
  * contract object; every field is `unknown` until the boundary normalizer
  * coerces it — raw backend shapes never reach components/hooks.
- * Reference: docs/request-backend/225-automation-installed-rules-backend-contract.md
+ * Reference: docs/request-backend/224-automation-canned-rules-backend-contract.md
  */
 interface RawInstalledRule {
   id: unknown

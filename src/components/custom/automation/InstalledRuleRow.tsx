@@ -1,3 +1,5 @@
+'use client'
+
 /**
  * InstalledRuleRow — one installed automation rule (Story 163.2-FE).
  *
@@ -13,8 +15,9 @@
  *    currently inactive (so a disabled price rule is doubly inert).
  *
  * Unknown trigger/action enums render via the fallback helpers (no crash).
- * Reference: docs/request-backend/225-automation-installed-rules-backend-contract.md
+ * Reference: docs/request-backend/224-automation-canned-rules-backend-contract.md
  */
+import { useEffect, useRef } from 'react'
 import { Badge } from '@/components/ui/badge'
 import { AlertTriangle } from 'lucide-react'
 import { type AutomationRule, isWritebackRule, triggerLabel, actionLabel } from '@/types/automation'
@@ -28,8 +31,17 @@ interface InstalledRuleRowProps {
 /** InstalledRuleRow — presentational; keyboard-accessible via semantic elements. */
 export function InstalledRuleRow({ rule, highlighted }: InstalledRuleRowProps) {
   const requiresArm = isWritebackRule(rule)
+  // Story 163.2: when this row is the post-install deep-link target (?highlight=id),
+  // scroll it into view + make it focusable so the new rule is identifiable (AC5)
+  // without the operator hunting for it below the fold.
+  const rowRef = useRef<HTMLLIElement>(null)
+  useEffect(() => {
+    if (highlighted) rowRef.current?.scrollIntoView({ block: 'nearest' })
+  }, [highlighted])
   return (
     <li
+      ref={rowRef}
+      tabIndex={highlighted ? -1 : undefined}
       className={
         'flex flex-col gap-2 rounded-md border p-4 ' +
         (highlighted ? 'border-primary bg-primary/5 ring-1 ring-primary' : 'border-border')

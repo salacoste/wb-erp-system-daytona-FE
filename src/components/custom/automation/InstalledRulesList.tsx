@@ -11,7 +11,7 @@
  * `highlightId` (from the ?highlight= search param) marks the row that was
  * just installed via the templates gallery deep-link.
  *
- * Reference: docs/request-backend/225-automation-installed-rules-backend-contract.md
+ * Reference: docs/request-backend/224-automation-canned-rules-backend-contract.md
  */
 import { InstalledRuleRow } from './InstalledRuleRow'
 import type { AutomationRule } from '@/types/automation'

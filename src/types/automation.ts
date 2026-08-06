@@ -121,7 +121,7 @@ export interface AutomationRule {
 /**
  * Query params for GET /v1/automation/rules (Story 163.2-FE). All optional —
  * the backend accepts an empty query (returns the cabinet's full list).
- * Reference: docs/request-backend/225-automation-installed-rules-backend-contract.md
+ * Reference: docs/request-backend/224-automation-canned-rules-backend-contract.md
  */
 export interface InstalledRulesQuery {
   /** Filter by enabled state (true → only active rules). */
