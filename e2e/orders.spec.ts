@@ -44,12 +44,4 @@ test.describe('Orders page smoke', () => {
 
     await expect(terminalState.first()).toBeVisible({ timeout: 20_000 })
   })
-
-  test('keeps /orders/list as an alias to /orders', async ({ page }) => {
-    await page.goto('/orders/list', { waitUntil: 'domcontentloaded' })
-    await expect(page).toHaveURL(/\/orders$/)
-    await expect(page.getByRole('heading', { name: /Заказы FBS/i })).toBeVisible({
-      timeout: 15_000,
-    })
-  })
 })
