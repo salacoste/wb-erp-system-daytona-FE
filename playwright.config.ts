@@ -75,7 +75,10 @@ export default defineConfig({
     // Desktop Chrome (primary)
     {
       name: 'chromium',
-      testIgnore: /historical-spp-analytics\.spec\.ts/,
+      // Story 162.10: also exclude the mobile-only spec so a bare `test:e2e:full`
+      // (no project filter) doesn't dispatch it under Desktop Chrome (its
+      // viewport/engine/responsive assertions are mobile-locked and would red).
+      testIgnore: /(historical-spp-analytics|mobile-critical-routes)\.spec\.ts/,
       use: {
         ...devices['Desktop Chrome'],
         storageState: 'e2e/.auth/user.json',
