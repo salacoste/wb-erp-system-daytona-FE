@@ -8,13 +8,16 @@ import { createTestQueryClient, createQueryWrapper } from '@/test/utils/test-uti
 
 const mockGetCannedRules = vi.fn()
 const mockInstallCannedRule = vi.fn()
+const mockGetInstalledRules = vi.fn()
 
 vi.mock('@/lib/api/automation', () => ({
   getCannedRules: () => mockGetCannedRules(),
   installCannedRule: (...args: unknown[]) => mockInstallCannedRule(...args),
+  getInstalledRules: (...args: unknown[]) => mockGetInstalledRules(...args),
   automationQueryKeys: {
     cannedRules: ['automation', 'canned-rules'],
     rules: ['automation', 'rules'],
+    installedRules: (params?: unknown) => ['automation', 'rules', 'installed', params ?? null],
     ruleDetail: (id: string) => ['automation', 'rules', id],
   },
 }))
@@ -28,7 +31,7 @@ vi.mock('sonner', () => ({
 
 import { toast } from 'sonner'
 import { ApiError } from '@/types/api'
-import { useCannedRules, useInstallCannedRule } from '../useAutomation'
+import { useCannedRules, useInstallCannedRule, useInstalledRules } from '../useAutomation'
 
 describe('useCannedRules (AT1)', () => {
   beforeEach(() => {
@@ -54,6 +57,36 @@ describe('useCannedRules (AT1)', () => {
     expect(mockGetCannedRules).toHaveBeenCalled()
     expect(result.current.data).toHaveLength(1)
     expect(result.current.data?.[0].key).toBe('low-stock-notify')
+  })
+})
+
+describe('useInstalledRules (163.2)', () => {
+  beforeEach(() => {
+    vi.clearAllMocks()
+  })
+
+  it('fetches installed rules and forwards params to getInstalledRules', async () => {
+    mockGetInstalledRules.mockResolvedValue([
+      { id: 'rule-1', name: 'X', trigger: 'STOCK_LEVEL', action: 'NOTIFY', enabled: true },
+    ])
+    const params = { enabled: true, limit: 10 }
+    const { result } = renderHook(() => useInstalledRules(params), {
+      wrapper: createQueryWrapper(createTestQueryClient()),
+    })
+
+    await waitFor(() => expect(result.current.isSuccess).toBe(true))
+    expect(mockGetInstalledRules).toHaveBeenCalledWith(params)
+    expect(result.current.data).toHaveLength(1)
+    expect(result.current.data?.[0].id).toBe('rule-1')
+  })
+
+  it('calls getInstalledRules with undefined when no params given', async () => {
+    mockGetInstalledRules.mockResolvedValue([])
+    const { result } = renderHook(() => useInstalledRules(), {
+      wrapper: createQueryWrapper(createTestQueryClient()),
+    })
+    await waitFor(() => expect(result.current.isSuccess).toBe(true))
+    expect(mockGetInstalledRules).toHaveBeenCalledWith(undefined)
   })
 })
 

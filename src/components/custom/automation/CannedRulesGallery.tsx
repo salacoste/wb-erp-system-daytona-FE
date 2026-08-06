@@ -43,6 +43,7 @@ import {
 } from '@/types/automation'
 import { useInstallCannedRule } from '@/hooks/useAutomation'
 import { ApiError } from '@/types/api'
+import { PostInstallBanner } from './PostInstallBanner'
 
 interface CannedRulesGalleryProps {
   /** The full gallery (already fetched by the page). */
@@ -108,11 +109,17 @@ export function CannedRulesGallery({ templates }: CannedRulesGalleryProps) {
   const installMutation = useInstallCannedRule()
   const [renameFor, setRenameFor] = useState<string | null>(null)
   const [customName, setCustomName] = useState('')
+  // Story 163.2: id of the most-recently-installed rule (for the deep-link).
+  const [installedId, setInstalledId] = useState<string | null>(null)
 
   const handleInstall = (key: string, name?: string) => {
     installMutation.mutate(
       { key, body: name ? { name } : undefined },
       {
+        onSuccess: data => {
+          // Capture the created rule id for the post-install deep-link.
+          if (data && typeof data.id === 'string') setInstalledId(data.id)
+        },
         onError: error => {
           // 409 → open the rename dialog so the operator can resolve the dup.
           if (error instanceof ApiError && error.status === 409) {
@@ -138,6 +145,7 @@ export function CannedRulesGallery({ templates }: CannedRulesGalleryProps) {
 
   return (
     <div className="space-y-8">
+      {installedId && <PostInstallBanner ruleId={installedId} />}
       {CANNED_RULE_CATEGORIES.map(cat => {
         const group = byCategory(cat)
         if (group.length === 0) return null

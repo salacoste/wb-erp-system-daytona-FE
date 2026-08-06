@@ -117,3 +117,64 @@ export interface AutomationRule {
   updatedAt?: string
   [key: string]: unknown
 }
+
+/**
+ * Query params for GET /v1/automation/rules (Story 163.2-FE). All optional —
+ * the backend accepts an empty query (returns the cabinet's full list).
+ * Reference: docs/request-backend/225-automation-installed-rules-backend-contract.md
+ */
+export interface InstalledRulesQuery {
+  /** Filter by enabled state (true → only active rules). */
+  enabled?: boolean
+  /** Filter by trigger enum (e.g. "STOCK_LEVEL"). */
+  trigger?: string
+  /** Filter by action enum (e.g. "WRITEBACK_PRICE"). */
+  action?: string
+  /** Cap the page size. */
+  limit?: number
+  /** Pagination offset. */
+  offset?: number
+}
+
+/** Russian display labels for the known trigger enums (open-ended — unknown
+ * values fall back to the raw string via triggerLabel). Story 163.2-FE. */
+export const AUTOMATION_TRIGGER_LABELS: Record<string, string> = {
+  STOCK_LEVEL: 'Уровень остатка',
+  MARGIN_BELOW: 'Маржа ниже порога',
+  PRICE_GAP: 'Разрыв в цене',
+  ML_FORECAST: 'ML-прогноз',
+  SLOW_MOVER: 'Неликвид',
+}
+
+/** Russian display labels for the known action enums (open-ended — unknown
+ * values fall back to the raw string via actionLabel). Story 163.2-FE. */
+export const AUTOMATION_ACTION_LABELS: Record<string, string> = {
+  NOTIFY: 'Уведомление',
+  LOG_ONLY: 'Только лог (сухой прогон)',
+  WRITEBACK_PRICE: 'Изменение цены',
+  CREATE_TASK: 'Создать задачу',
+}
+
+/**
+ * Resolve a trigger enum to its RU label. Unknown enums (the backend registry
+ * grows over time) fall back to the raw value — defensive, never throws.
+ */
+export function triggerLabel(t: string): string {
+  return AUTOMATION_TRIGGER_LABELS[t] ?? t
+}
+
+/** Resolve an action enum to its RU label. Unknown enums fall back to the
+ * raw value (defensive, never throws). */
+export function actionLabel(a: string): string {
+  return AUTOMATION_ACTION_LABELS[a] ?? a
+}
+
+/**
+ * Safety classifier (Story 163.2-FE). A rule "requires the cabinet writeback
+ * arm" when it would write prices: action WRITEBACK_PRICE, or category 'price'.
+ * Installing/enabling is always safe — a disarmed rule never immediately
+ * changes prices (the cabinet-level PRICE_WRITEBACK_ENABLED kill-switch gates it).
+ */
+export function isWritebackRule(rule: AutomationRule): boolean {
+  return rule.action === 'WRITEBACK_PRICE' || rule.category === 'price'
+}

@@ -21,6 +21,19 @@ vi.mock('@/hooks/useAutomation', () => ({
   }),
 }))
 
+vi.mock('next/link', () => ({
+  __esModule: true,
+  default: ({
+    href,
+    children,
+    ...rest
+  }: { href: string; children: React.ReactNode } & Record<string, unknown>) => (
+    <a href={href} {...rest}>
+      {children}
+    </a>
+  ),
+}))
+
 const createTestQueryClient = (): QueryClient =>
   new QueryClient({
     defaultOptions: {
@@ -141,5 +154,30 @@ describe('CannedRulesGallery (AT1)', () => {
     const { container } = renderWith(<CannedRulesGallery templates={[]} />)
     // No category sections.
     expect(container.querySelectorAll('section')).toHaveLength(0)
+  })
+
+  it('shows the post-install deep-link after a successful install (163.2)', async () => {
+    // Real mutate shape: invoke onSuccess with the created rule.
+    mockInstall.mockImplementation(
+      (
+        _input: unknown,
+        opts?: { onSuccess?: (data: { id: string; [key: string]: unknown }) => void }
+      ) => {
+        opts?.onSuccess?.({ id: 'new-rule-42', name: 'X', enabled: true })
+      }
+    )
+
+    renderWith(<CannedRulesGallery templates={[NOTIFY]} />)
+    // Initially no banner.
+    expect(screen.queryByTestId('post-install-deeplink')).not.toBeInTheDocument()
+
+    fireEvent.click(screen.getByTestId('install-btn-low-stock-notify'))
+
+    await waitFor(() => {
+      expect(screen.getByTestId('post-install-deeplink')).toBeInTheDocument()
+    })
+    const link = screen.getByTestId('open-installed-rules-link')
+    expect(link.getAttribute('href')).toBe('/automation/installed-rules?highlight=new-rule-42')
+    expect(link).toHaveTextContent('Открыть установленные правила')
   })
 })

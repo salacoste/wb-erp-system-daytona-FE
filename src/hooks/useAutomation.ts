@@ -12,8 +12,18 @@
  */
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { toast } from 'sonner'
-import { getCannedRules, installCannedRule, automationQueryKeys } from '@/lib/api/automation'
-import type { CannedRuleTemplate, AutomationRule, InstallCannedRuleBody } from '@/types/automation'
+import {
+  getCannedRules,
+  getInstalledRules,
+  installCannedRule,
+  automationQueryKeys,
+} from '@/lib/api/automation'
+import type {
+  CannedRuleTemplate,
+  AutomationRule,
+  InstallCannedRuleBody,
+  InstalledRulesQuery,
+} from '@/types/automation'
 import { ApiError } from '@/types/api'
 import { logger } from '@/lib/logger'
 
@@ -22,6 +32,21 @@ export function useCannedRules() {
   return useQuery<CannedRuleTemplate[], Error>({
     queryKey: automationQueryKeys.cannedRules,
     queryFn: getCannedRules,
+    staleTime: 5 * 60 * 1000,
+    gcTime: 30 * 60 * 1000,
+    retry: 1,
+  })
+}
+
+/**
+ * Fetch the cabinet's installed rules (GET /v1/automation/rules). Story 163.2-FE.
+ * Same cache/retry policy as useCannedRules. Pass optional filters via `params`.
+ * A failure here is isolated to this query — it never blanks the templates gallery.
+ */
+export function useInstalledRules(params?: InstalledRulesQuery) {
+  return useQuery<AutomationRule[], Error>({
+    queryKey: automationQueryKeys.installedRules(params),
+    queryFn: () => getInstalledRules(params),
     staleTime: 5 * 60 * 1000,
     gcTime: 30 * 60 * 1000,
     retry: 1,
