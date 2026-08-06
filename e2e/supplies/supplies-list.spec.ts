@@ -64,6 +64,22 @@ async function selectStatus(page: import('@playwright/test').Page, statusLabel: 
   await page.locator('main').waitFor({ state: 'visible' })
 }
 
+// Bounded terminal-state reconciliation (live backend): the list settles into exactly
+// one of {table-with-rows | empty-state | error-state}. Assert that one is visible with
+// a timeout instead of an elapsed sleep. Returns the settled terminal locators.
+async function waitForSuppliesTerminal(page: import('@playwright/test').Page) {
+  const table = page.locator('table tbody tr').or(page.locator(SELECTORS.supplyRow))
+  const emptyState = page
+    .locator(SELECTORS.emptyState)
+    .or(page.locator('text=/Поставки не найдены|Нет поставок/i'))
+  const errorState = page
+    .locator(SELECTORS.errorState)
+    .or(page.locator('text=/Ошибка|не удалось/i'))
+
+  await expect(table.or(emptyState).or(errorState).first()).toBeVisible({ timeout: 10_000 })
+  return { table, emptyState, errorState }
+}
+
 test.describe('Supplies List Page - Epic 53-FE', () => {
   test.beforeEach(async ({ page }) => {
     await page.goto(SUPPLIES_ROUTE, { waitUntil: 'domcontentloaded' })
@@ -101,11 +117,12 @@ test.describe('Supplies List Page - Epic 53-FE', () => {
     })
 
     test('should display supplies table with key columns', async ({ page }) => {
-      await page.waitForTimeout(2000)
+      // Bounded terminal-state wait: the list settles into table-with-rows, empty, or error.
+      const { table } = await waitForSuppliesTerminal(page)
 
-      const table = page.locator('table').or(page.locator(SELECTORS.suppliesTable))
-      if (await table.isVisible()) {
-        const headers = table.locator('thead th, [role="columnheader"]')
+      if ((await table.count()) > 0) {
+        const fullTable = page.locator('table').or(page.locator(SELECTORS.suppliesTable))
+        const headers = fullTable.locator('thead th, [role="columnheader"]')
         await expect(headers).not.toHaveCount(0)
 
         // Key columns: ID, Name, Status, Orders, Value, Date
@@ -120,13 +137,12 @@ test.describe('Supplies List Page - Epic 53-FE', () => {
     })
 
     test('should display supply rows with status badges', async ({ page }) => {
-      await page.waitForTimeout(2000)
+      const { table } = await waitForSuppliesTerminal(page)
 
-      const supplyRows = page.locator('tbody tr').or(page.locator(SELECTORS.supplyRow))
-      const rowCount = await supplyRows.count()
+      const rowCount = await table.count()
 
       if (rowCount > 0) {
-        const firstRow = supplyRows.first()
+        const firstRow = table.first()
         await expect(firstRow).toBeVisible()
 
         // Row should contain status badge
@@ -215,13 +231,13 @@ test.describe('Supplies List Page - Epic 53-FE', () => {
       const dateFromInput = page.getByLabel('Дата начала')
       if (await dateFromInput.isVisible()) {
         await dateFromInput.fill('2025-01-01')
-        await page.waitForTimeout(500)
+        await expect(page).toHaveURL(/from=2025-01-01/, { timeout: 10_000 })
 
         // Apply status filter
         const statusFilter = page.getByLabel('Фильтр по статусу')
         if (await statusFilter.isVisible()) {
           await selectStatus(page, 'Открыта')
-          await expect(page).toHaveURL(/status=OPEN/)
+          await expect(page).toHaveURL(/status=OPEN/, { timeout: 10_000 })
 
           // Both filters should be in URL
           const url = page.url()
@@ -234,62 +250,69 @@ test.describe('Supplies List Page - Epic 53-FE', () => {
 
   test.describe('Column Sorting - Story 53.2', () => {
     test('should sort by created_at column', async ({ page }) => {
-      await page.waitForTimeout(2000)
+      const { table } = await waitForSuppliesTerminal(page)
+      if ((await table.count()) === 0) {
+        test.skip(true, 'sandbox has no supplies rows for created_at sort coverage')
+        return
+      }
 
       const dateHeader = page.locator('th:has-text("Создана"), th:has-text("Дата")').first()
-      if (await dateHeader.isVisible()) {
-        await expect(dateHeader).toHaveAttribute('aria-sort', 'descending')
+      await expect(dateHeader).toBeVisible()
+      await expect(dateHeader).toHaveAttribute('aria-sort', 'descending')
 
-        await dateHeader.click()
-        await expect(dateHeader).toHaveAttribute('aria-sort', 'ascending')
-        await expect(page).toHaveURL(/sort_order=asc/)
-      }
+      await dateHeader.click()
+      await expect(dateHeader).toHaveAttribute('aria-sort', 'ascending')
+      await expect(page).toHaveURL(/sort_order=asc/)
     })
 
     test('should sort by orders_count column', async ({ page }) => {
-      await page.waitForTimeout(2000)
+      const { table } = await waitForSuppliesTerminal(page)
+      if ((await table.count()) === 0) {
+        test.skip(true, 'sandbox has no supplies rows for orders_count sort coverage')
+        return
+      }
 
       const ordersHeader = page.locator('th:has-text("Заказ"), th:has-text("Кол-во")')
-      if (await ordersHeader.isVisible()) {
-        await ordersHeader.click()
-        await page.locator('main').waitFor({ state: 'visible' })
-
-        await expect(page).toHaveURL(/sort_by=orders_count/)
-      }
+      await expect(ordersHeader).toBeVisible()
+      await ordersHeader.click()
+      await expect(page).toHaveURL(/sort_by=orders_count/, { timeout: 10_000 })
     })
 
     test('should toggle sort direction on second click', async ({ page }) => {
-      await page.waitForTimeout(2000)
+      const { table } = await waitForSuppliesTerminal(page)
+      if ((await table.count()) === 0) {
+        test.skip(true, 'sandbox has no supplies rows for sort-toggle coverage')
+        return
+      }
 
       const dateHeader = page.locator('th:has-text("Создана"), th:has-text("Дата")').first()
-      if (await dateHeader.isVisible()) {
-        await expect(dateHeader).toHaveAttribute('aria-sort', 'descending')
+      await expect(dateHeader).toBeVisible()
+      await expect(dateHeader).toHaveAttribute('aria-sort', 'descending')
 
-        await dateHeader.click()
-        await expect(dateHeader).toHaveAttribute('aria-sort', 'ascending')
-        await expect(page).toHaveURL(/sort_order=asc/)
+      await dateHeader.click()
+      await expect(dateHeader).toHaveAttribute('aria-sort', 'ascending')
+      await expect(page).toHaveURL(/sort_order=asc/)
 
-        await dateHeader.click()
-        await expect(dateHeader).toHaveAttribute('aria-sort', 'descending')
-        await expect(page).not.toHaveURL(/sort_order=asc/)
-      }
+      await dateHeader.click()
+      await expect(dateHeader).toHaveAttribute('aria-sort', 'descending')
+      await expect(page).not.toHaveURL(/sort_order=asc/)
     })
   })
 
   test.describe('Navigation to Detail Page', () => {
     test('should navigate to detail page on row click', async ({ page }) => {
-      await page.waitForTimeout(2000)
+      const { table } = await waitForSuppliesTerminal(page)
+      if ((await table.count()) === 0) {
+        test.skip(true, 'sandbox has no supplies rows for navigation coverage')
+        return
+      }
 
       const firstRow = page
         .locator('tbody tr:first-child')
         .or(page.locator(SELECTORS.supplyRow).first())
-      if (await firstRow.isVisible()) {
-        await firstRow.click()
-        await page.locator('main').waitFor({ state: 'visible' })
-
-        // Should navigate to /supplies/{id}
-        await expect(page).toHaveURL(/\/supplies\/[a-zA-Z0-9-]+/)
-      }
+      await expect(firstRow).toBeVisible()
+      await firstRow.click()
+      await expect(page).toHaveURL(/\/supplies\/[a-zA-Z0-9-]+/, { timeout: 10_000 })
     })
   })
 
@@ -348,27 +371,36 @@ test.describe('Supplies List Page - Epic 53-FE', () => {
           await nameInput.fill('E2E Test Supply')
         }
 
-        // Submit
+        // Submit: register the response waiter BEFORE the action, then reconcile.
         const submitButton = page.getByRole('dialog').getByRole('button', { name: /^Создать$/ })
+        const createResponse = page.waitForResponse(
+          response =>
+            response.request().method() === 'POST' &&
+            new URL(response.url()).pathname === '/v1/supplies',
+          { timeout: 10_000 }
+        )
         await submitButton.click()
+        await createResponse
 
-        // Wait for response
-        await page.waitForTimeout(2000)
-
-        // Should show success or navigate to detail
-        const successOrRedirect =
-          page.url().includes('/supplies/') ||
-          (await page.locator('text=Поставка создана').isVisible()) ||
-          (await page.locator('[class*="toast"]').isVisible())
-
-        expect(successOrRedirect).toBeTruthy()
+        // Should navigate to the detail page (bounded regex asserting a real
+        // supply id, mirroring supply-lifecycle Step 1) OR show the success
+        // toast — bounded reconciliation, no permissive substring match.
+        const successToast = page.locator('text=Поставка создана')
+        await expect
+          .poll(
+            async () =>
+              /\/supplies\/[a-zA-Z0-9-]+/.test(page.url()) ||
+              (await successToast.isVisible().catch(() => false)),
+            { timeout: 10_000, intervals: [250, 500, 1000] }
+          )
+          .toBeTruthy()
       }
     })
   })
 
   test.describe('Pagination', () => {
     test('should display pagination when many supplies', async ({ page }) => {
-      await page.waitForTimeout(2000)
+      await waitForSuppliesTerminal(page)
 
       await expect(page.getByRole('heading', { name: 'Поставки FBS', exact: true })).toBeVisible()
       const previousButton = page.getByRole('button', {
@@ -378,10 +410,19 @@ test.describe('Supplies List Page - Epic 53-FE', () => {
       const nextButton = page.getByRole('button', { name: 'Следующая страница', exact: true })
 
       if (!(await previousButton.isVisible()) || !(await nextButton.isVisible())) {
-        await expect(page.getByRole('heading', { name: /^Нет поставок/ })).toBeVisible()
+        // Pagination controls are not rendered when the sandbox has too few
+        // supplies to span a page. That is a valid settle for both the empty
+        // state (<h3>"Нет поставок") and a single page of rows — either way the
+        // pagination assertions below cannot apply. Surface as skipped-with-reason
+        // rather than asserting the empty heading, which would false-fail when
+        // the table holds a single page of real rows without pagination.
+        const emptyHeading = page.getByRole('heading', { name: /^Нет поставок/ })
+        const hasEmpty = await emptyHeading.isVisible().catch(() => false)
         test.skip(
           true,
-          'Configured supplies fixture is empty, so pagination controls are not rendered'
+          hasEmpty
+            ? 'Configured supplies fixture is empty, so pagination controls are not rendered'
+            : 'Configured supplies fixture has fewer rows than one page, so pagination controls are not rendered'
         )
         return
       }
@@ -400,14 +441,13 @@ test.describe('Supplies List Page - Epic 53-FE', () => {
     })
 
     test('should navigate to next page', async ({ page }) => {
-      await page.waitForTimeout(2000)
+      await waitForSuppliesTerminal(page)
 
       const nextButton = page.getByRole('button', { name: 'Следующая страница' })
 
       if (await nextButton.isEnabled()) {
         await nextButton.click()
-        await page.locator('main').waitFor({ state: 'visible' })
-        await expect(page.getByText(/Стр\.\s*2/)).toBeVisible()
+        await expect(page.getByText(/Стр\.\s*2/)).toBeVisible({ timeout: 10_000 })
       }
     })
 
@@ -422,8 +462,7 @@ test.describe('Supplies List Page - Epic 53-FE', () => {
 
       if (await prevButton.isEnabled()) {
         await prevButton.click()
-        await page.locator('main').waitFor({ state: 'visible' })
-        await expect(page).not.toHaveURL(/page=2/)
+        await expect(page).not.toHaveURL(/page=2/, { timeout: 10_000 })
       }
     })
   })
@@ -435,15 +474,12 @@ test.describe('Supplies List Page - Epic 53-FE', () => {
         waitUntil: 'domcontentloaded',
       })
       await page.locator('main').waitFor({ state: 'visible' })
-      await page.waitForTimeout(2000)
 
-      const emptyState = page
-        .locator(SELECTORS.emptyState)
-        .or(page.locator('text=/Поставки не найдены|Нет поставок/i'))
-
-      if (await emptyState.isVisible()) {
-        await expect(emptyState).toBeVisible()
-      }
+      // Bounded terminal: the filtered list must settle into empty-state (the named terminal
+      // this test asserts), table-with-rows, or error-state. Vacuous `if (isVisible)` guard
+      // removed — the terminal is asserted, not optional.
+      const { emptyState } = await waitForSuppliesTerminal(page)
+      await expect(emptyState.first()).toBeVisible()
     })
   })
 
@@ -452,18 +488,12 @@ test.describe('Supplies List Page - Epic 53-FE', () => {
       // Block API to simulate error
       await page.route('**/v1/supplies**', route => route.abort())
       await page.reload()
-      await page.waitForTimeout(2000)
 
+      // Bounded terminal: with the route aborted the list must settle into error-state.
+      const { errorState } = await waitForSuppliesTerminal(page)
       // Page should not crash
       await expect(page.locator('body')).toBeVisible()
-
-      const errorState = page
-        .locator(SELECTORS.errorState)
-        .or(page.locator('text=/Ошибка|не удалось/i'))
-
-      if ((await errorState.count()) > 0) {
-        await expect(errorState.first()).toBeVisible()
-      }
+      await expect(errorState.first()).toBeVisible()
     })
 
     test('should display retry button on error', async ({ page }) => {
@@ -475,14 +505,15 @@ test.describe('Supplies List Page - Epic 53-FE', () => {
       })
 
       await page.reload()
-      await page.waitForTimeout(2000)
 
+      // Bounded terminal: 500 response settles the list into error-state, which renders the
+      // retry button. Assert the named terminal then the button (no vacuous guard).
+      const { errorState } = await waitForSuppliesTerminal(page)
+      await expect(errorState.first()).toBeVisible()
       const retryButton = page.locator(
         'button:has-text("Повторить"), button:has-text("Попробовать")'
       )
-      if (await retryButton.isVisible()) {
-        await expect(retryButton).toBeEnabled()
-      }
+      await expect(retryButton).toBeEnabled()
     })
   })
 
@@ -505,15 +536,18 @@ test.describe('Supplies List Page - Epic 53-FE', () => {
       )
 
       if (await syncButton.isVisible()) {
+        // Register the sync response waiter BEFORE the click, then reconcile the toast.
+        const syncResponse = page.waitForResponse(
+          response =>
+            response.request().method() === 'POST' &&
+            new URL(response.url()).pathname === '/v1/supplies',
+          { timeout: 10_000 }
+        )
         await syncButton.click()
-
-        // Should show loading state or success message
-        await page.waitForTimeout(2000)
+        await syncResponse
 
         const successOrLoading = page.locator('text=/Синхронизация|обновлен/i')
-        if ((await successOrLoading.count()) > 0) {
-          await expect(successOrLoading.first()).toBeVisible()
-        }
+        await expect(successOrLoading.first()).toBeVisible({ timeout: 10_000 })
       }
     })
   })

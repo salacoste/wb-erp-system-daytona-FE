@@ -62,7 +62,28 @@ export const STORY_162_6_CANONICAL_WAIT_COUNT = 67
 export const STORY_162_6_CURRENT_BASE_WAIT_COUNT = 65
 export const STORY_162_6_CURRENT_BASE_TIMER_COUNT = 4
 
-export const STORY_FIXED_WAIT_SCAN_FILES = [...STORY_162_5_E2E_FILES, ...STORY_162_6_SCAN_FILES]
+export const STORY_162_7_E2E_FILES = [
+  'e2e/supply-planning.spec.ts',
+  'e2e/supplies/supplies-list.spec.ts',
+  'e2e/supplies/supply-detail.spec.ts',
+  'e2e/supplies/supply-lifecycle.spec.ts',
+  'e2e/supplies/supplies-a11y.spec.ts',
+]
+
+export const STORY_162_7_FIXTURE_FILES = ['e2e/fixtures/mutation-guard.ts']
+
+export const STORY_162_7_SCAN_FILES = [...STORY_162_7_E2E_FILES, ...STORY_162_7_FIXTURE_FILES]
+
+export const STORY_162_7_BASE_REVISION = '3bcbf72c947a56a3ac7961a36a950707c648524e'
+export const STORY_162_7_CANONICAL_WAIT_COUNT = 76
+export const STORY_162_7_CURRENT_BASE_WAIT_COUNT = 70
+export const STORY_162_7_CURRENT_BASE_TIMER_COUNT = 3
+
+export const STORY_FIXED_WAIT_SCAN_FILES = [
+  ...STORY_162_5_E2E_FILES,
+  ...STORY_162_6_SCAN_FILES,
+  ...STORY_162_7_SCAN_FILES,
+]
 
 const PROHIBITED_CALLS = new Map([
   [
