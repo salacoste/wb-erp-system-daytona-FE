@@ -12,7 +12,7 @@
  *
  * See `scripts/e2e-preflight.mjs` (auth-rm removal) for the companion fix.
  */
-import { rename, writeFile } from 'node:fs/promises'
+import { rename, unlink, writeFile } from 'node:fs/promises'
 import { dirname, join } from 'node:path'
 import type { BrowserContext } from '@playwright/test'
 
@@ -29,5 +29,11 @@ export async function atomicWriteStorageState(
   const state = await context.storageState()
   const tmp = join(dirname(filePath), `.${process.pid}.${Date.now()}.auth.tmp`)
   await writeFile(tmp, JSON.stringify(state), 'utf8')
-  await rename(tmp, filePath)
+  try {
+    await rename(tmp, filePath)
+  } catch (error) {
+    // Never strand an orphan temp in e2e/.auth/ if the atomic rename fails.
+    await unlink(tmp).catch(() => {})
+    throw error
+  }
 }
