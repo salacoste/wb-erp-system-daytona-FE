@@ -37,7 +37,7 @@
 #   they are excluded from story and retrospective counts and must be documented with a no-story-ID note.
 
 generated: 2026-08-03 # refreshed after Epic 127 truth reconciliation and Epics 162-165 registration
-last_updated: 2026-08-06 # Story 162.5 approval lifecycle completed after two code reviews, architecture CLEAR, and verifier VERIFIED; delivery evidence remains orchestrator-owned.
+last_updated: 2026-08-06 # Orchestrator reconciliation: Epic 162 closed — Stories 162.7-162.10 confirmed merged on origin/main (PRs #100/#101/#103/#106) and tracker flipped to done; per-story review-lifecycle (APPROVE/CLEAR/VERIFIED) evidence is owned by the parallel sessions that delivered each PR.
 project: frontend
 project_key: NOKEY
 tracking_system: file-system
@@ -692,17 +692,17 @@ development_status:
 
   # Epic 162-FE: Trustworthy Local Frontend Validation
   # Spec: _bmad-output/planning-artifacts/epics-162-165-fe.md
-  epic-162-fe: in-progress
+  epic-162-fe: done  # All 10 stories merged on origin/main. 162.1-162.6 shipped directly; 162.7-162.10 via PRs #100/#101/#103/#106. Closed by orchestrator reconciliation 2026-08-06; per-story review-lifecycle (APPROVE/CLEAR/VERIFIED) evidence is owned by the parallel sessions that delivered each PR.
   162.1-fe-stabilize-approved-localhost-cleanup-baseline: done  # PR #86 merged at 4a24544d; clean localhost baseline established.
   162.2-fe-reproducible-local-e2e-preflight: done  # Independently approved and verified; live AC3/live AC5 gap recorded. Completion is effective through the current normal PR merge.
   162.3-fe-analytics-finance-meaningful-e2e-assertions: done  # Code review APPROVE, architecture CLEAR, verifier VERIFIED; final post-rebase live AC5 passed 191/5/0.
   162.4-fe-operations-settings-meaningful-e2e-assertions: done  # PR #95 merged at 3f43b5e3; APPROVE/CLEAR/VERIFIED and cleanup proven.
   162.5-fe-liquidity-unit-economics-state-waits: done  # APPROVE/CLEAR/VERIFIED; normal PR delivery evidence remains external and orchestrator-owned.
   162.6-fe-dashboard-analytics-state-waits: done  # APPROVE/attestation-fixed/APPROVE/PASS; fresh final gates green (Vitest 17458, build 67/67, E2E 181/1/0 exit 0); normal PR delivery evidence orchestrator-owned.
-  162.7-fe-supplies-state-waits: backlog
-  162.8-fe-pricing-backfill-cogs-auth-state-waits: backlog
-  162.9-fe-explicit-fixture-aware-e2e-skips: backlog
-  162.10-fe-mobile-critical-route-e2e: backlog
+  162.7-fe-supplies-state-waits: done  # PR #100 merged at d70cfd1f (on origin/main); delivered by parallel claude/ session, orchestrator-reconciled 2026-08-06.
+  162.8-fe-pricing-backfill-cogs-auth-state-waits: done  # PR #101 merged at a7017d54 (on origin/main); delivered by parallel claude/ session, orchestrator-reconciled 2026-08-06.
+  162.9-fe-explicit-fixture-aware-e2e-skips: done  # PR #103 merged at b2a11519 (on origin/main); delivered by parallel codex/ session, orchestrator-reconciled 2026-08-06.
+  162.10-fe-mobile-critical-route-e2e: done  # PR #106 merged at ca60af06 (on origin/main); bounded mobile critical-route smoke (iPhone 14). AC note: 44x44 touch-target assertion ships as a documented test.skip(true, reason) — measured product gap (MobileSidebarSheet nav links render 36px, py-2 text-sm); not a contract defect. Delivered by parallel claude/ session, orchestrator-reconciled 2026-08-06.
 
   # Epic 163-FE: Accessible and Complete Operator Workflows
   # Spec: _bmad-output/planning-artifacts/epics-162-165-fe.md
