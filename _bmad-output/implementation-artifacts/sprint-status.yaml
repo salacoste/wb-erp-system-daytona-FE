@@ -702,7 +702,7 @@ development_status:
   162.7-fe-supplies-state-waits: done  # PR #100 merged at d70cfd1f (on origin/main); delivered by parallel claude/ session, orchestrator-reconciled 2026-08-06.
   162.8-fe-pricing-backfill-cogs-auth-state-waits: done  # PR #101 merged at a7017d54 (on origin/main); delivered by parallel claude/ session, orchestrator-reconciled 2026-08-06.
   162.9-fe-explicit-fixture-aware-e2e-skips: done  # PR #103 merged at b2a11519 (on origin/main); delivered by parallel codex/ session, orchestrator-reconciled 2026-08-06.
-  162.10-fe-mobile-critical-route-e2e: done  # PR #106 merged at ca60af06 (on origin/main); bounded mobile critical-route smoke (iPhone 14). AC note: 44x44 touch-target assertion ships as a documented test.skip(true, reason) — measured product gap (MobileSidebarSheet nav links render 36px, py-2 text-sm); not a contract defect. Delivered by parallel claude/ session, orchestrator-reconciled 2026-08-06.
+  162.10-fe-mobile-critical-route-e2e: done  # PR #106 merged at ca60af06 (on origin/main); bounded mobile critical-route smoke (iPhone 14). Touch-target AC: shipped in #106 as a documented test.skip(true, reason) (measured gap: nav links rendered 36px), then CLOSED by PR #107 (166c9ccb, merged 2026-08-06) — added min-h-[44px] to MobileSidebarSheet nav links and un-skipped the assertion; the 44x44 AC is now a live-green assertion, not a skip. Orchestrator-reconciled 2026-08-06; per-story review evidence owned by the delivering sessions.
 
   # Epic 163-FE: Accessible and Complete Operator Workflows
   # Spec: _bmad-output/planning-artifacts/epics-162-165-fe.md
