@@ -312,8 +312,12 @@ test.describe('Epic 53-FE: Accessibility - Supplies Module', () => {
       const h1 = page.locator('h1')
       await expect(h1).toBeVisible()
 
-      // Check h2 elements
-      const h2Elements = page.locator('h2')
+      // Check h2 elements. Scope to main content: the global sidebar/notifications
+      // chrome also renders h2s (e.g. "WB Repricer") ABOVE the page h1, so an
+      // unscoped `page.locator('h2').first()` matches the sidebar h2 and breaks
+      // the "h2 below h1" ordering check. The main region holds the supply page
+      // h2s ("Заказы в поставке", "Акт приёмки") which are always below the h1.
+      const h2Elements = page.locator('main h2')
       const h2Count = await h2Elements.count()
 
       // h2 should come after h1 in DOM

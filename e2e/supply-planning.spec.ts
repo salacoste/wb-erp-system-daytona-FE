@@ -25,9 +25,33 @@ import { ROUTES, TIMEOUTS } from './fixtures/test-data'
 const SETTLE_TIMEOUT = 10_000
 
 /**
- * Page object for the Supply Planning page. Exposes the three named terminals
- * the live page settles into, plus the always-present header controls. Using a
+ * Quantity regex for the metrics bar "В пути" units. The live component formats
+ * counts via `n.toLocaleString('ru-RU')`, which emits U+00A0 (NBSP) as the
+ * thousands separator for values ≥1000 (e.g. "1 234 шт"). `\s` matches
+ * NBSP; the explicit U+00A0 below documents the contract so a future regex
+ * tighten cannot silently drop 4-digit quantities.
+ */
+const QTY_RE = /^\d[\d\s ]*\sшт$/
+
+/**
+ * Page object for the Supply Planning page. Exposes the named terminals the
+ * live page settles into, plus the always-present header controls. Using a
  * single object keeps the bounded union assertion DRY across every test.
+ *
+ * Terminal contract (src/app/.../supply-planning/page.tsx):
+ * - loading → <SupplyPlanningLoading/> renders <Skeleton class="animate-pulse">.
+ *   Transient: only while `isLoading && !data`.
+ * - error   → <Alert variant="destructive"> (role="alert") with the exact text
+ *   "Не удалось загрузить данные о поставках. Попробуйте ещё раз." + "Повторить".
+ * - empty   → <SupplyPlanningEmpty/> renders an <h2>"Нет данных об остатках".
+ * - data    → populated <table tbody> with non-placeholder rows.
+ *
+ * `loading` is a transient that ALWAYS precedes data/empty/error on first
+ * mount (the page renders the skeleton until the first fetch resolves), so
+ * `waitForTerminal` must wait for a STABLE terminal (data/empty/error) — never
+ * resolve 'loading' from the union because the skeleton is visible the instant
+ * the page mounts, before data has had a chance to arrive. The dedicated
+ * loading-state test observes the loading terminal directly via `loadingState`.
  */
 function supplyPlanningPage(page: Page) {
   // Error terminal: destructive Alert rendered by page.tsx on API failure.
@@ -42,9 +66,10 @@ function supplyPlanningPage(page: Page) {
   // "no data" placeholder row). Used only AFTER a terminal settles to data.
   const dataRows = page.locator('table tbody tr').filter({ hasText: /\S/ })
 
-  // The union of all settle terminals. `.first()` + `toBeVisible` bounds the
-  // wait to whichever terminal renders first; the caller then asserts which.
-  const anyTerminal = errorState.or(emptyState).or(loadingState).or(dataRows)
+  // The union of STABLE settle terminals (loading is intentionally excluded —
+  // see waitForTerminal). `.first()` + `toBeVisible` bounds the wait to
+  // whichever stable terminal renders once the initial fetch resolves.
+  const stableTerminal = errorState.or(emptyState).or(dataRows)
 
   return {
     page,
@@ -62,24 +87,23 @@ function supplyPlanningPage(page: Page) {
     emptyState,
     loadingState,
     dataRows,
-    anyTerminal,
+    stableTerminal,
   }
 }
 
 /**
- * Bounded wait for the page to settle into one terminal, then return which.
- * Surfaces the last observed terminal on failure via `expect.poll` (AC4).
+ * Bounded wait for the page to settle into one STABLE terminal (data | empty |
+ * error), then return which. The loading skeleton is a transient that always
+ * precedes the stable settle on first mount; waiting on the stable union
+ * (loading excluded) guarantees the fetch has resolved before we label the
+ * terminal — so the returned label is always evidence-backed, never a guess.
  */
 async function waitForTerminal(
   loc: ReturnType<typeof supplyPlanningPage>
-): Promise<'data' | 'empty' | 'error' | 'loading'> {
-  await expect(loc.anyTerminal.first()).toBeVisible({ timeout: SETTLE_TIMEOUT })
-  // The union `.toBeVisible()` above bounds the settle (the page always renders
-  // exactly one terminal); resolve WHICH by re-reading already-visible locators.
-  // The `'loading'` label is evidence-backed: it is returned only when the
-  // loadingState terminal is actually visible (one of the named terminals MUST
-  // be visible per the union assertion above, so the fallback is never reached
-  // with no terminal present).
+): Promise<'data' | 'empty' | 'error'> {
+  await expect(loc.stableTerminal.first()).toBeVisible({ timeout: SETTLE_TIMEOUT })
+  // The union `.toBeVisible()` above bounds the settle on the STABLE terminals;
+  // resolve WHICH by re-reading the already-visible locator (no polling sleep).
   if (
     await loc.dataRows
       .first()
@@ -88,19 +112,7 @@ async function waitForTerminal(
   )
     return 'data'
   if (await loc.emptyState.isVisible().catch(() => false)) return 'empty'
-  if (await loc.errorState.isVisible().catch(() => false)) return 'error'
-  if (
-    await loc.loadingState
-      .first()
-      .isVisible()
-      .catch(() => false)
-  )
-    return 'loading'
-  // Defensive: the union assertion above guarantees exactly one terminal is
-  // visible, so this branch is unreachable in practice. Fall back to 'loading'
-  // rather than throwing so a reconcile never strands a test, but the prior
-  // isVisible check makes the label evidence-backed.
-  return 'loading'
+  return 'error'
 }
 
 test.describe('Supply Planning Analytics', () => {
@@ -234,9 +246,9 @@ test.describe('Supply Planning Analytics', () => {
       const inTransitMetric = page
         .getByText('В пути', { exact: true })
         .locator('..')
-        .filter({ has: page.getByText(/^\d[\d\s ]* шт$/) })
+        .filter({ has: page.getByText(QTY_RE) })
       await expect(inTransitMetric.getByText('В пути', { exact: true })).toBeVisible()
-      await expect(inTransitMetric.getByText(/^\d[\d\s ]* шт$/)).toBeVisible()
+      await expect(inTransitMetric.getByText(QTY_RE)).toBeVisible()
     })
   })
 
@@ -251,17 +263,16 @@ test.describe('Supply Planning Analytics', () => {
       // Cards only exist in the data terminal.
       await expect(loc.dataRows.first()).toBeVisible({ timeout: SETTLE_TIMEOUT })
 
-      // Find clickable risk card
-      const riskCard = page
-        .locator('[class*="card"]')
-        .filter({
-          has: page.locator('text=/критич|warning|внимание/i'),
-        })
-        .first()
+      // Risk cards are the clickable <Card> divs (cursor-pointer + hover:scale)
+      // rendered by SupplyRiskCards; the table wrapper Card is NOT clickable, so
+      // scope to the cursor-pointer cards to avoid clicking a non-filter element.
+      const riskCard = page.locator('[class*="cursor-pointer"]').filter({ hasText: /\S/ }).first()
       await expect(riskCard).toBeVisible({ timeout: SETTLE_TIMEOUT })
 
       // Register the refetch response before the click so the filter change is
-      // observed via its network settle, not an elapsed wait.
+      // observed via its network settle, not an elapsed wait. The card click
+      // toggles show_only (all↔stockout_risk) → react-query fires a fresh
+      // /v1/analytics/supply-planning request (new queryKey).
       const filterResponse = page.waitForResponse(
         response =>
           response.url().includes('/supply-planning') || response.url().includes('supply_planning'),
@@ -278,10 +289,15 @@ test.describe('Supply Planning Analytics', () => {
       const loc = supplyPlanningPage(page)
       await expect(loc.dataRows.first()).toBeVisible({ timeout: SETTLE_TIMEOUT })
 
-      const riskCard = page.locator('[class*="card"]').first()
+      // Risk cards are the clickable <Card> divs (cursor-pointer); the bare
+      // `[class*="card"]` selector also matches the non-clickable table wrapper
+      // Card, so scope to cursor-pointer to target an actual filter card.
+      const riskCard = page.locator('[class*="cursor-pointer"]').filter({ hasText: /\S/ }).first()
       await expect(riskCard).toBeVisible({ timeout: SETTLE_TIMEOUT })
 
-      // First click - apply filter (observe via response settle)
+      // First click - apply filter (observe via the refetch the queryKey change
+      // triggers: show_only all→stockout_risk is a fresh react-query key, so a
+      // real /v1/analytics/supply-planning request fires).
       const firstResponse = page.waitForResponse(
         response =>
           response.url().includes('/supply-planning') || response.url().includes('supply_planning'),
@@ -289,15 +305,17 @@ test.describe('Supply Planning Analytics', () => {
       )
       await riskCard.click()
       await firstResponse
+      // The active card gets an accessibility ring (SupplyRiskCards adds
+      // `ring-2 ring-offset-2` when isActive). Observe the applied filter via
+      // that class on the clicked card's DOM.
+      await expect(riskCard).toHaveClass(/ring-2/, { timeout: SETTLE_TIMEOUT })
 
-      // Second click - clear filter (observe via response settle)
-      const secondResponse = page.waitForResponse(
-        response =>
-          response.url().includes('/supply-planning') || response.url().includes('supply_planning'),
-        { timeout: SETTLE_TIMEOUT }
-      )
+      // Second click - clear filter. The queryKey returns to show_only=all,
+      // which react-query served <60s ago (staleTime: 60000), so this toggle is
+      // a CACHE HIT and fires NO network request. Observe the clear via the DOM
+      // instead: the active ring class is removed from the card.
       await riskCard.click()
-      await secondResponse
+      await expect(riskCard).not.toHaveClass(/ring-2/, { timeout: SETTLE_TIMEOUT })
 
       // Page should show all data again
       await expect(page.locator('body')).toBeVisible()
@@ -374,8 +392,11 @@ test.describe('Supply Planning Analytics', () => {
       const loc = supplyPlanningPage(page)
       await expect(loc.dataRows.first()).toBeVisible({ timeout: SETTLE_TIMEOUT })
 
-      // Scroll the table
-      const tableContainer = page.locator('[class*="overflow-auto"]').first()
+      // The live table scroll container is the `overflow-x-auto` div wrapping
+      // <table> in SupplyPlanningTable (the old `[class*="overflow-auto"]` glob
+      // never matched — `overflow-x-auto` does not contain the substring
+      // "overflow-auto").
+      const tableContainer = page.locator('.overflow-x-auto').first()
       await expect(tableContainer).toBeVisible({ timeout: SETTLE_TIMEOUT })
 
       // Scroll down
@@ -416,7 +437,7 @@ test.describe('Supply Planning Analytics', () => {
       const gatedResponse = new Promise<void>(resolve => {
         releaseResponse = resolve
       })
-      await page.route('**/supply-planning**', async route => {
+      await page.route('**/v1/analytics/supply-planning**', async route => {
         await gatedResponse
         await route.fallback()
       })
@@ -443,7 +464,7 @@ test.describe('Supply Planning Analytics', () => {
 
     test('AC-5: handles API error gracefully', async ({ page }) => {
       // Mock 500 error
-      await page.route('**/supply-planning**', route => {
+      await page.route('**/v1/analytics/supply-planning**', route => {
         route.fulfill({
           status: 500,
           body: JSON.stringify({ error: { code: 'INTERNAL', message: 'Server error' } }),
@@ -460,36 +481,36 @@ test.describe('Supply Planning Analytics', () => {
     })
 
     test('AC-5: shows empty state for no data', async ({ page }) => {
-      // Mock empty response
-      await page.route('**/supply-planning**', route => {
+      // Mock empty response. Shape matches the real backend contract (top-level
+      // meta/summary/data — the normalizer reads these at the root, and the live
+      // /v1/analytics/supply-planning response returns them unwrapped).
+      await page.route('**/v1/analytics/supply-planning**', route => {
         route.fulfill({
           status: 200,
           contentType: 'application/json',
           body: JSON.stringify({
-            data: {
-              meta: {
-                generated_at: new Date().toISOString(),
-                cabinet_id: 'test',
-                velocity_weeks: 4,
-                safety_stock_days: 14,
-              },
-              summary: {
-                total_skus: 0,
-                stockout_critical: 0,
-                stockout_warning: 0,
-                stockout_low: 0,
-                stockout_healthy: 0,
-                out_of_stock: 0,
-                reorder_needed_count: 0,
-                avg_days_until_stockout: 0,
-                total_reorder_value: 0,
-                stockout_risk_count: 0,
-                velocity_growing: 0,
-                velocity_stable: 0,
-                velocity_declining: 0,
-              },
-              data: [],
+            meta: {
+              generated_at: new Date().toISOString(),
+              cabinet_id: 'test',
+              velocity_weeks: 4,
+              safety_stock_days: 14,
             },
+            summary: {
+              total_skus: 0,
+              stockout_critical: 0,
+              stockout_warning: 0,
+              stockout_low: 0,
+              healthy_stock: 0,
+              out_of_stock_count: 0,
+              reorder_needed_count: 0,
+              avg_days_until_stockout: 0,
+              total_reorder_value: 0,
+              stockout_risk_count: 0,
+              velocity_growing: 0,
+              velocity_stable: 0,
+              velocity_declining: 0,
+            },
+            data: [],
           }),
         })
       })
@@ -506,16 +527,22 @@ test.describe('Supply Planning Analytics', () => {
     test('retry button works after error', async ({ page }) => {
       let callCount = 0
 
-      await page.route('**/supply-planning**', route => {
+      // useSupplyPlanning configures react-query with `retry: 2` (1 initial +
+      // 2 retries = 3 attempts per mount). Next dev mode can double-mount the
+      // page (effects run twice), so fail an generous window of attempts to
+      // guarantee the page reaches the error terminal before the manual retry.
+      // The "Повторить" click happens only AFTER the error terminal is reached,
+      // so subsequent calls fall through to the real backend and recover.
+      await page.route('**/v1/analytics/supply-planning**', route => {
         callCount++
-        if (callCount === 1) {
-          // First call fails
+        if (callCount <= 8) {
+          // Initial fetches + react-query retries all fail.
           route.fulfill({
             status: 500,
             body: JSON.stringify({ error: 'Server error' }),
           })
         } else {
-          // Subsequent calls succeed
+          // The manual retry click succeeds via the real backend.
           route.fallback()
         }
       })
@@ -580,15 +607,20 @@ test.describe('Supply Planning Analytics', () => {
       await page.goto(ROUTES.dashboard)
       await page.waitForLoadState('domcontentloaded')
 
-      // Find sidebar link
-      const sidebarLink = page.locator(
-        'a[href*="supply-planning"], nav a:has-text("Поставки"), nav a:has-text("Планирование")'
-      )
-      await expect(sidebarLink.first()).toBeVisible({ timeout: SETTLE_TIMEOUT })
+      // Let the dashboard settle its own URL state first: it syncs a week/type
+      // query string into the URL on mount, and that history push can race with
+      // a too-early sidebar click (the push clobbers the in-flight navigation,
+      // leaving the URL on /dashboard). Wait for the sidebar link to be stable
+      // AND enabled before clicking.
+      const sidebarLink = page.locator('a[href*="supply-planning"]').first()
+      await expect(sidebarLink).toBeVisible({ timeout: SETTLE_TIMEOUT })
 
-      // Observe the navigation via the URL change (bounded), not an elapsed wait.
-      await sidebarLink.first().click()
-      await expect(page).toHaveURL(/supply-planning/, { timeout: SETTLE_TIMEOUT })
+      // Race the click with the navigation's URL settle so the assertion is
+      // observed the instant the route changes (bounded, not elapsed-time).
+      await Promise.all([
+        expect(page).toHaveURL(/supply-planning/, { timeout: SETTLE_TIMEOUT }),
+        sidebarLink.click(),
+      ])
     })
 
     test('page is accessible directly via URL', async ({ page }) => {

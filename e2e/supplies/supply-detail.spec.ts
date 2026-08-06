@@ -78,11 +78,18 @@ const SELECTORS = {
   documentItem: '[data-testid="document-item"]',
   downloadDocumentButton: '[data-testid="download-document-button"]',
 
-  // States
+  // States — match the real terminals rendered by SupplyDetailError:
+  // - 404 → <h1>"Поставка не найдена"</h1>; 403 → <h1>"Нет доступа"</h1>;
+  // - generic API error → <Alert variant="destructive"> (role="alert") with
+  //   AlertTitle "Ошибка загрузки" + "Не удалось загрузить данные поставки".
+  // The component exposes no data-testid on these states, so the unions target
+  // the rendered text. Each selector is a SINGLE Playwright engine (text or
+  // css) — comma-combining css `:has-text(...)` with `text=...` in one string
+  // makes Playwright's CSS parser choke on the `=` in `text=`.
   loadingState: '[data-testid="supply-loading"]',
-  errorState: '[data-testid="supply-error"]',
-  notFoundState: 'text=/не найдена|not found/i',
-  forbiddenState: 'text=/нет доступа|forbidden/i',
+  errorState: '[role="alert"]:has-text("Не удалось загрузить данные поставки")',
+  notFoundState: 'text=Поставка не найдена',
+  forbiddenState: 'text=Нет доступа к этой поставке',
 
   // Remove Order Dialog
   removeOrderDialog: '[data-testid="remove-order-dialog"]',
@@ -714,30 +721,48 @@ test.describe('Supply Detail Page - Epic 53-FE', () => {
 
   test.describe('Error States - Story 53.8', () => {
     test('should display 404 error for non-existent supply', async ({ page }) => {
-      await page.goto('/supplies/non-existent-supply-id-12345', { waitUntil: 'domcontentloaded' })
+      // Use a valid-format UUID that does not exist. The backend's UUID
+      // validation rejects free-form ids with 400 (→ generic error terminal);
+      // a well-formed but absent UUID returns a real 404 whose message contains
+      // "not found", which SupplyDetailError maps to the not-found terminal
+      // (<h1>"Поставка не найдена</h1>). This exercises the intended 404 path.
+      await page.goto('/supplies/00000000-0000-0000-0000-000000000000', {
+        waitUntil: 'domcontentloaded',
+      })
       await page.locator('main').waitFor({ state: 'visible' })
 
       // Bounded terminal: a non-existent supply settles into the not-found terminal.
       const { notFound } = await waitForSupplyDetailTerminal(page)
       await expect(notFound.first()).toBeVisible()
 
-      // Should have back to list link
-      const backLink = page.locator('a[href*="supplies"], button:has-text("Вернуться")')
+      // Should have back to list link. Scope to the main content (the global
+      // sidebar also has supplies links) and use .first() so the visibility
+      // guard does not trip strict-mode on the multi-match locator.
+      const backLink = page
+        .locator('main')
+        .locator('a[href="/supplies"], button:has-text("Вернуться")')
+        .first()
       if (await backLink.isVisible()) {
         await expect(backLink).toBeVisible()
       }
     })
 
     test('should display 403 error for forbidden supply', async ({ page }) => {
-      // Mock 403 response
-      await page.route('**/supplies/*', route => {
+      // Mock the API 403 (NOT the document navigation). Scope the route to
+      // /v1/supplies/<id> so the page route loads normally and the data fetch's
+      // 403 drives SupplyDetailError. The message includes lowercase
+      // "forbidden" so the component's is403 guard renders the forbidden
+      // terminal (<h1>"Нет доступа</h1>).
+      await page.route('**/v1/supplies/**', route => {
         route.fulfill({
           status: 403,
-          body: JSON.stringify({ error: 'Forbidden' }),
+          body: JSON.stringify({ error: { code: 'FORBIDDEN', message: 'forbidden' } }),
         })
       })
 
-      await page.goto('/supplies/some-supply-id', { waitUntil: 'domcontentloaded' })
+      await page.goto('/supplies/00000000-0000-0000-0000-000000000000', {
+        waitUntil: 'domcontentloaded',
+      })
 
       // Bounded terminal: the mocked 403 settles the detail into the forbidden terminal.
       const { forbidden } = await waitForSupplyDetailTerminal(page)
@@ -745,14 +770,20 @@ test.describe('Supply Detail Page - Epic 53-FE', () => {
     })
 
     test('should display retry button on API error', async ({ page }) => {
-      await page.route('**/supplies/*', route => {
+      // Mock the API 500 (NOT the document navigation). Scope the route to
+      // /v1/supplies/<id> so the page loads and the data fetch's 500 drives
+      // SupplyDetailError into its generic-error branch: a destructive Alert
+      // (role="alert") with "Не удалось загрузить данные поставки" + "Повторить".
+      await page.route('**/v1/supplies/**', route => {
         route.fulfill({
           status: 500,
-          body: JSON.stringify({ error: 'Internal Server Error' }),
+          body: JSON.stringify({ error: { code: 'INTERNAL', message: 'Internal Server Error' } }),
         })
       })
 
-      await page.goto('/supplies/some-supply-id', { waitUntil: 'domcontentloaded' })
+      await page.goto('/supplies/00000000-0000-0000-0000-000000000000', {
+        waitUntil: 'domcontentloaded',
+      })
 
       // Bounded terminal: the mocked 500 settles the detail into the error terminal, which
       // renders the retry button. Assert the named terminal then the button (no vacuous guard).

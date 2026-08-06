@@ -251,7 +251,10 @@ test.describe('Supplies List Page - Epic 53-FE', () => {
   test.describe('Column Sorting - Story 53.2', () => {
     test('should sort by created_at column', async ({ page }) => {
       const { table } = await waitForSuppliesTerminal(page)
-      if ((await table.count()) === 0) return
+      if ((await table.count()) === 0) {
+        test.skip(true, 'sandbox has no supplies rows for created_at sort coverage')
+        return
+      }
 
       const dateHeader = page.locator('th:has-text("Создана"), th:has-text("Дата")').first()
       await expect(dateHeader).toBeVisible()
@@ -264,7 +267,10 @@ test.describe('Supplies List Page - Epic 53-FE', () => {
 
     test('should sort by orders_count column', async ({ page }) => {
       const { table } = await waitForSuppliesTerminal(page)
-      if ((await table.count()) === 0) return
+      if ((await table.count()) === 0) {
+        test.skip(true, 'sandbox has no supplies rows for orders_count sort coverage')
+        return
+      }
 
       const ordersHeader = page.locator('th:has-text("Заказ"), th:has-text("Кол-во")')
       await expect(ordersHeader).toBeVisible()
@@ -274,7 +280,10 @@ test.describe('Supplies List Page - Epic 53-FE', () => {
 
     test('should toggle sort direction on second click', async ({ page }) => {
       const { table } = await waitForSuppliesTerminal(page)
-      if ((await table.count()) === 0) return
+      if ((await table.count()) === 0) {
+        test.skip(true, 'sandbox has no supplies rows for sort-toggle coverage')
+        return
+      }
 
       const dateHeader = page.locator('th:has-text("Создана"), th:has-text("Дата")').first()
       await expect(dateHeader).toBeVisible()
@@ -293,7 +302,10 @@ test.describe('Supplies List Page - Epic 53-FE', () => {
   test.describe('Navigation to Detail Page', () => {
     test('should navigate to detail page on row click', async ({ page }) => {
       const { table } = await waitForSuppliesTerminal(page)
-      if ((await table.count()) === 0) return
+      if ((await table.count()) === 0) {
+        test.skip(true, 'sandbox has no supplies rows for navigation coverage')
+        return
+      }
 
       const firstRow = page
         .locator('tbody tr:first-child')
@@ -398,10 +410,19 @@ test.describe('Supplies List Page - Epic 53-FE', () => {
       const nextButton = page.getByRole('button', { name: 'Следующая страница', exact: true })
 
       if (!(await previousButton.isVisible()) || !(await nextButton.isVisible())) {
-        await expect(page.getByRole('heading', { name: /^Нет поставок/ })).toBeVisible()
+        // Pagination controls are not rendered when the sandbox has too few
+        // supplies to span a page. That is a valid settle for both the empty
+        // state (<h3>"Нет поставок") and a single page of rows — either way the
+        // pagination assertions below cannot apply. Surface as skipped-with-reason
+        // rather than asserting the empty heading, which would false-fail when
+        // the table holds a single page of real rows without pagination.
+        const emptyHeading = page.getByRole('heading', { name: /^Нет поставок/ })
+        const hasEmpty = await emptyHeading.isVisible().catch(() => false)
         test.skip(
           true,
-          'Configured supplies fixture is empty, so pagination controls are not rendered'
+          hasEmpty
+            ? 'Configured supplies fixture is empty, so pagination controls are not rendered'
+            : 'Configured supplies fixture has fewer rows than one page, so pagination controls are not rendered'
         )
         return
       }
