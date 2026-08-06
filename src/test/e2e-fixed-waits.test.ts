@@ -32,6 +32,7 @@ import {
   STORY_162_8_E2E_FILES,
   STORY_162_8_FIXTURE_FILES,
   STORY_162_8_SCAN_FILES,
+  STORY_162_10_E2E_FILES,
   STORY_FIXED_WAIT_SCAN_FILES,
   resolveScanTargets,
   scanFiles,
@@ -516,13 +517,15 @@ describe('Story 162.6 dashboard and analytics fixed-wait scanner', () => {
     )
   })
 
-  it('uses the exact Story 162.5, 162.6, 162.7, and 162.8 target union by default', () => {
+  it('uses the exact Story 162.5, 162.6, 162.7, 162.8, and 162.10 target union by default', () => {
     expect(STORY_FIXED_WAIT_SCAN_FILES).toEqual([
       ...STORY_162_5_E2E_FILES,
       ...STORY_162_6_SCAN_FILES,
       ...STORY_162_7_SCAN_FILES,
       ...STORY_162_8_SCAN_FILES,
+      ...STORY_162_10_E2E_FILES,
     ])
+    expect(STORY_162_10_E2E_FILES).toEqual(['e2e/mobile-critical-routes.spec.ts'])
     expect(resolveScanTargets([])).toEqual(STORY_FIXED_WAIT_SCAN_FILES)
     expect(resolveScanTargets(['e2e/dashboard-period.spec.ts'])).toEqual([
       'e2e/dashboard-period.spec.ts',

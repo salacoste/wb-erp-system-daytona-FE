@@ -82,17 +82,23 @@ export default defineConfig({
       },
       dependencies: ['setup'],
     },
-    // Mobile viewport - disabled due to responsive design differences
-    // Sidebar is hidden on mobile, navigation tests fail expectedly
-    // Uncomment when mobile-specific test logic is added
-    // {
-    //   name: 'mobile',
-    //   use: {
-    //     ...devices['iPhone 14'],
-    //     storageState: 'e2e/.auth/user.json',
-    //   },
-    //   dependencies: ['setup'],
-    // },
+    // Mobile (iPhone 14) — Story 162.10. Restored with mobile-specific locators
+    // and a bounded critical-route smoke (e2e/mobile-critical-routes.spec.ts).
+    // The desktop Sidebar is hidden below `lg`; mobile navigation is owned by
+    // MobileSidebarSheet (hamburger trigger `button[aria-label="Open menu"]`),
+    // so the mobile project does NOT reuse desktop sidebar selectors. It shares
+    // the same reproducible localhost preflight + auth setup as the desktop
+    // projects (the per-run preflight in scripts/e2e-preflight.mjs is
+    // project-agnostic; this project depends on the same `setup` project).
+    {
+      name: 'mobile',
+      testMatch: /mobile-critical-routes\.spec\.ts/,
+      use: {
+        ...devices['iPhone 14'],
+        storageState: 'e2e/.auth/user.json',
+      },
+      dependencies: ['setup'],
+    },
   ],
 
   // The historical-SPP spec owns a guarded local server lifecycle in globalSetup;

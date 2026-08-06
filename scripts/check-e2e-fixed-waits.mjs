@@ -112,11 +112,21 @@ export const STORY_162_8_CANONICAL_WAIT_COUNT = 40
 export const STORY_162_8_CURRENT_BASE_WAIT_COUNT = 26
 export const STORY_162_8_CURRENT_BASE_TIMER_COUNT = 14
 
+// Story 162.10 — bounded mobile critical-route smoke (iPhone 14). The mobile
+// project restores mobile E2E coverage with mobile-specific locators (hamburger
+// trigger, MobileSidebarSheet) and a bounded subset (login, mobile nav open/use
+// /dismiss, one analytics table horizontal-scroll, one dashboard dialog, and a
+// touch-target floor). No desktop-suite duplication: the project `testMatch` is
+// restricted to this single spec. The file is timer-free from inception, so the
+// scanner guards it against regression exactly as it does the 162.5-162.8 specs.
+export const STORY_162_10_E2E_FILES = ['e2e/mobile-critical-routes.spec.ts']
+
 export const STORY_FIXED_WAIT_SCAN_FILES = [
   ...STORY_162_5_E2E_FILES,
   ...STORY_162_6_SCAN_FILES,
   ...STORY_162_7_SCAN_FILES,
   ...STORY_162_8_SCAN_FILES,
+  ...STORY_162_10_E2E_FILES,
 ]
 
 const PROHIBITED_CALLS = new Map([
