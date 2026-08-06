@@ -41,8 +41,8 @@ Referenced as "AP#N" throughout the codebase:
 | 3 | Faking `ApiError` with `Object.assign` | Convention |
 | 4 | `as any` in mock helpers | Convention |
 | 5 | Variable shadowing in Zustand selectors | Convention |
-| 6 | Silent E2E test skips that pass green | Convention |
-| 7 | Hard `waitForTimeout` in E2E specs | Convention |
+| 6 | Silent E2E test skips that pass green | AST scanner (`check:e2e-assertions`) + Vitest self-test |
+| 7 | Hard `waitForTimeout` in E2E specs | AST scanner (`check:e2e-waits`) + Vitest self-test |
 | **8** | **`?? 0` on nullable money/ratio fields** | **ESLint `no-restricted-syntax` + ratchet guard** |
 | 9 | `waitForLoadState('networkidle')` on polling pages | Convention |
 | 10 | `formatNumber(opaqueId)` mangles search-key copy-paste | Convention |
@@ -83,6 +83,8 @@ Each gate has an accepted baseline. Stories close only when all gates match thei
 | Privacy + diagnostic-capture unit tests | `npm run test:privacy` | Console guard + diagnostic-capture-policy tests pass (see [Testing & Operations](testing-and-ops.md#diagnostic-capture-policy)) |
 | Outbound network guards | focused vitest run + `e2e/outbound-network-guard.spec.ts` | All non-local test network attempts denied (see [Testing & Operations](testing-and-ops.md#outbound-network-guards)) |
 | Playwright static boundary | `npx vitest run src/test/playwright-static-boundary.test.ts` | No raw `@playwright/test` imports / dynamic code outside approved modules |
+| E2E vacuous assertions (AP#6) | `npm run check:e2e-assertions` + `src/test/e2e-vacuous-assertions.test.ts` | AST scanner finds tautological assertions (`>= 0`, `|| true`, always-true) in owned E2E specs; self-test under `npm test` |
+| E2E fixed waits (AP#7) | `npm run check:e2e-waits` + `src/test/e2e-fixed-waits.test.ts` | AST scanner finds `waitForTimeout`, raw `setTimeout`, and arbitrary wait helpers (`sleep`/`delay`/`pause`) in owned E2E specs; self-test under `npm test` |
 
 ### Ratchet gate behavior
 

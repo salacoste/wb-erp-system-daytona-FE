@@ -66,6 +66,15 @@ Dashboard, orders, supplies, margin analytics, FBS, COGS, pricing calculator, li
 
 > **Note**: A hosted Tier 0 runtime certification harness and governed coverage certification system previously lived here. Both were removed when the project replaced hosted certification with local validation gates. The remaining quality gates are documented in [Conventions & Quality Gates](conventions-and-quality.md).
 
+### E2E assertion and wait quality gates (Stories 162.3–162.7)
+
+Two AST-based scanners enforce AP#6 (vacuous E2E assertions) and AP#7 (hard `waitForTimeout` waits) across the E2E specs touched by Epic 162. They mask comments/strings and regex literals before scanning so prohibited patterns cannot hide in prose, and each owns an explicit per-story file list:
+
+- **Vacuous assertions** — `scripts/check-e2e-vacuous-assertions.mjs` (`npm run check:e2e-assertions`) flags tautological matchers such as `expect(x >= 0).toBeTruthy()`, `expect(true).toBeTruthy()`, and `toBeGreaterThanOrEqual(0)` that cannot prove content exists. Owned files: `STORY_162_3_E2E_FILES` (analytics/finance specs) and `STORY_162_4_E2E_FILES` (operations/settings/supplies/COGS/price specs). Self-test: `src/test/e2e-vacuous-assertions.test.ts` (runs under `npm test`).
+- **Fixed waits** — `scripts/check-e2e-fixed-waits.mjs` (`npm run check:e2e-waits`) flags `waitForTimeout`, raw `setTimeout`/`new Promise(setTimeout)` timers, and arbitrary wait helpers (`sleep`, `delay`, `pause`). Each story baseline (`STORY_162_5`/`162_6`/`162_7`) pins its owned E2E + fixture file set and the canonical wait/timer counts reduced from the story's base revision. Self-test: `src/test/e2e-fixed-waits.test.ts` (runs under `npm test`).
+
+These are not in the `README.md` **Local validation** command list; they are enforced as quality gates via their Vitest self-tests and the dedicated npm scripts. See [Conventions & Quality Gates — Quality Gates](conventions-and-quality.md#quality-gates-ratchet-scripts) for how they sit alongside the other gates.
+
 ## Local E2E Preflight
 
 Story 162.2 introduced a reproducible localhost preflight that gates every local Playwright run. Raw `npx playwright test` invocations are rejected so they cannot silently reuse stale ignored auth state.
