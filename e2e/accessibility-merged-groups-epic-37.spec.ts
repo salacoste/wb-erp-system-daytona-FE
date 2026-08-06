@@ -1,5 +1,21 @@
+import AxeBuilder from '@axe-core/playwright'
 import { expect, test } from './fixtures/network-test'
 import { installStory1626AnalyticsRoutes } from './fixtures/story-162-6-analytics'
+
+// Pre-existing product defects (out of scope for Story 162.6 wait-removal):
+// 1. the merged-group scroll wrapper (overflow-x-auto, MergedGroupTable.tsx) is not
+//    keyboard-focusable, so axe flags it as scrollable-region-focusable.
+// 2. the GroupByToggle wrapper uses role="tablist" around toggle buttons (aria-pressed),
+//    so axe flags aria-required-children (tablist expects role=tab children).
+// Both are tracked as product a11y fixes; excluded here with an explicit comment,
+// mirroring the project's aria-valid-attr-value exclusion pattern in e2e/acquiring.spec.ts.
+const KNOWN_PRODUCT_A11Y_EXCLUSIONS = ['scrollable-region-focusable', 'aria-required-children']
+
+function filterKnownProductViolations(
+  violations: Awaited<ReturnType<AxeBuilder['analyze']>>['violations']
+) {
+  return violations.filter(v => !KNOWN_PRODUCT_A11Y_EXCLUSIONS.includes(v.id))
+}
 
 test.describe('Merged-group accessibility source-backed checks', () => {
   test.beforeEach(async ({ page }) => {
@@ -55,5 +71,84 @@ test.describe('Merged-group accessibility source-backed checks', () => {
     await expect
       .poll(() => container.evaluate(node => getComputedStyle(node).overflowX))
       .toMatch(/^(auto|scroll)$/)
+  })
+
+  test('page has no WCAG 2.1 AA violations on the merged-groups view', async ({ page }) => {
+    // Full-page scan with wcag2a/wcag2aa; assert zero violations outside the known
+    // pre-existing product exclusions documented above.
+    const results = await new AxeBuilder({ page }).withTags(['wcag2a', 'wcag2aa']).analyze()
+    expect(filterKnownProductViolations(results.violations)).toEqual([])
+  })
+
+  test('merged-group table passes WCAG color-contrast rules', async ({ page }) => {
+    const table = page.getByRole('table', {
+      name: 'Таблица рекламной аналитики по склейкам товаров',
+    })
+    await expect(table).toBeVisible()
+    // On group_by=imtId the merged-group table is the only <table> rendered.
+    const results = await new AxeBuilder({ page })
+      .include('table')
+      .withTags(['wcag2a', 'wcag2aa'])
+      .analyze()
+    const contrast = results.violations.filter(v => v.id === 'color-contrast')
+    expect(contrast).toEqual([])
+  })
+
+  test('keyboard Tab chain reaches the sync-status control from the group toggle', async ({
+    page,
+  }) => {
+    const groupToggle = page.getByRole('button', { name: /Группировка по склейкам/ })
+    const syncStatus = page.getByRole('button', { name: /Статус синхронизации:/ })
+    await expect(groupToggle).toBeVisible()
+    await expect(syncStatus).toBeVisible()
+
+    await groupToggle.focus()
+    await expect(groupToggle).toBeFocused()
+
+    // The sync-status control lives in the page header (above the toggle in DOM/tab
+    // order), so it is reached by reverse Tabbing. Observable focus movement
+    // (toBeFocused on the target), not an elapsed-time wait.
+    let reached = false
+    for (let i = 0; i < 20 && !reached; i++) {
+      await page.keyboard.press('Shift+Tab')
+      reached = await syncStatus.evaluate(el => el === document.activeElement)
+    }
+    expect(reached).toBe(true)
+    await expect(syncStatus).toBeFocused()
+  })
+
+  test('table controls show a visible focus indicator (non-zero outline)', async ({ page }) => {
+    const groupToggle = page.getByRole('button', { name: /Группировка по склейкам/ })
+    await groupToggle.focus()
+    await expect(groupToggle).toBeFocused()
+
+    // Computed outline distinguishes a real focus ring from mere focusability.
+    // Accept outline (width>0 + non-none style) OR a focus-box-shadow.
+    const indicator = await groupToggle.evaluate(el => {
+      const styles = window.getComputedStyle(el)
+      return {
+        width: parseFloat(styles.outlineWidth),
+        style: styles.outlineStyle,
+        boxShadow: styles.boxShadow,
+      }
+    })
+    const hasVisibleFocus =
+      (indicator.width > 0 && indicator.style !== 'none') || indicator.boxShadow !== 'none'
+    expect(hasVisibleFocus).toBe(true)
+  })
+
+  test('page exposes main and navigation landmarks for assistive navigation', async ({ page }) => {
+    // Dashboard layout renders <main> (role=main); Sidebar renders
+    // <nav aria-label="Main navigation"> (role=navigation) at the desktop default viewport.
+    await expect(page.getByRole('main')).toBeVisible()
+    await expect(page.getByRole('navigation', { name: 'Main navigation' })).toBeVisible()
+  })
+
+  test('mobile viewport has no WCAG 2.1 AA violations on the merged-groups view', async ({
+    page,
+  }) => {
+    await page.setViewportSize({ width: 390, height: 844 })
+    const results = await new AxeBuilder({ page }).withTags(['wcag2a', 'wcag2aa']).analyze()
+    expect(filterKnownProductViolations(results.violations)).toEqual([])
   })
 })
