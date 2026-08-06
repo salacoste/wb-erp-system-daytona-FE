@@ -296,9 +296,11 @@ describe('MergedGroupTable', () => {
         />
       )
 
-      // ROAS column should have descending arrow
+      // ROAS column should have descending arrow. Story 163.1 moved the sort control into a
+      // <button> and the ROAS arrow renders as a sibling of the tooltip <span>, so read the
+      // owning <th>'s text content (which includes the arrow).
       const roasHeader = screen.getByText(/ROAS/i)
-      expect(roasHeader.textContent).toContain('↓')
+      expect(roasHeader.closest('th')?.textContent).toContain('↓')
     })
 
     it('calls onSort when column header clicked', () => {

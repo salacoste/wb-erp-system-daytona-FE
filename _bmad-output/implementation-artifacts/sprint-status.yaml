@@ -37,7 +37,7 @@
 #   they are excluded from story and retrospective counts and must be documented with a no-story-ID note.
 
 generated: 2026-08-03 # refreshed after Epic 127 truth reconciliation and Epics 162-165 registration
-last_updated: 2026-08-06 # Orchestrator reconciliation: Epic 162 closed — Stories 162.7-162.10 confirmed merged on origin/main (PRs #100/#101/#103/#106) and tracker flipped to done; per-story review-lifecycle (APPROVE/CLEAR/VERIFIED) evidence is owned by the parallel sessions that delivered each PR.
+last_updated: 2026-08-06 # Story 163.1-FE (advertising sort headers keyboard a11y) delivered + 2-pass code-reviewed (APPROVE/APPROVE, fresh-context opus); epic-163-fe → in-progress. PRE-EXISTING (not 163.1): src/test/playwright-static-boundary.test.ts is RED on origin/main from parallel-session e2e PRs #102/#106/#107.
 project: frontend
 project_key: NOKEY
 tracking_system: file-system
@@ -706,8 +706,8 @@ development_status:
 
   # Epic 163-FE: Accessible and Complete Operator Workflows
   # Spec: _bmad-output/planning-artifacts/epics-162-165-fe.md
-  epic-163-fe: backlog
-  163.1-fe-advertising-sort-headers-keyboard-accessible: backlog
+  epic-163-fe: in-progress  # Story 163.1 done; 163.2-163.6 remain (backlog).
+  163.1-fe-advertising-sort-headers-keyboard-accessible: done  # 2-pass code-reviewed (APPROVE/APPROVE, fresh-context opus). Sort activation moved from click-only <th> to a semantic <button> (Enter/Space native) with Russian state-aware accessible names + visible focus ring; aria-sort moved to the owning <th> (none/ascending/descending, only the active column asc/desc); obsolete jsx-a11y/control-has-associated-label suppression removed; docs/polish/keyboard-sort-headers.md (Story 110.1-FE F-2) closed. Tests verify accessible names, Enter/Space activation, aria-sort transitions, focus.
   163.2-fe-installed-automation-rules-navigation-list: backlog
   163.3-fe-installed-automation-rule-editor: backlog
   163.4-fe-unit-economics-zero-vs-missing: backlog

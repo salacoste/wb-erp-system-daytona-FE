@@ -15,6 +15,18 @@ interface PerformanceTableHeaderProps {
   onSortChange: (field: SortField) => void
 }
 
+// Story 163.1: aria-sort belongs on the column header (<th>), not the button inside it.
+// Only the actively sorted column reports ascending/descending; other sortable columns
+// report "none"; non-sortable columns omit aria-sort entirely.
+function ariaSortFor(
+  field: SortField,
+  activeField: SortField,
+  order: SortOrder
+): 'ascending' | 'descending' | 'none' {
+  if (activeField !== field) return 'none'
+  return order === 'asc' ? 'ascending' : 'descending'
+}
+
 export function PerformanceTableHeader({
   identifierLabel,
   nameColumn,
@@ -33,7 +45,11 @@ export function PerformanceTableHeader({
             {nameColumn.label}
           </TableHead>
         )}
-        <TableHead scope="col" className="min-w-[100px] text-right">
+        <TableHead
+          scope="col"
+          aria-sort={ariaSortFor('spend', sortBy, sortOrder)}
+          className="min-w-[100px] text-right"
+        >
           <SortableHeader
             label="Затраты"
             field="spend"
@@ -68,7 +84,11 @@ export function PerformanceTableHeader({
         <TableHead scope="col" className="min-w-[100px] text-right">
           Прибыль
         </TableHead>
-        <TableHead scope="col" className="min-w-[80px] text-right">
+        <TableHead
+          scope="col"
+          aria-sort={ariaSortFor('roas', sortBy, sortOrder)}
+          className="min-w-[80px] text-right"
+        >
           <SortableHeader
             label="ROAS"
             field="roas"
@@ -77,7 +97,11 @@ export function PerformanceTableHeader({
             onSort={onSortChange}
           />
         </TableHead>
-        <TableHead scope="col" className="min-w-[80px] hidden lg:table-cell text-right">
+        <TableHead
+          scope="col"
+          aria-sort={ariaSortFor('roi', sortBy, sortOrder)}
+          className="min-w-[80px] hidden lg:table-cell text-right"
+        >
           <SortableHeader
             label="ROI"
             field="roi"
