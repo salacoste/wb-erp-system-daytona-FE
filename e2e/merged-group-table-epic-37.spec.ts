@@ -108,10 +108,11 @@ test.describe('Merged-group table source-backed state', () => {
     })
 
     // Main product: the Crown SVG carries aria-label="Главный товар" (MergedGroupRows.tsx).
-    const mainMarker = table.getByLabel('Главный товар')
+    // Exact match avoids colliding with ProductRowBadge's "Главный товар в склейке".
+    const mainMarker = table.getByLabel('Главный товар', { exact: true })
     await expect(mainMarker).toBeVisible()
     // The marker shares its cell with the main product vendor code.
-    const mainCell = mainMarker.locator('xpath=..')
+    const mainCell = mainMarker.locator('xpath=ancestor::td[1]')
     await expect(mainCell).toContainText('STORY-162-6-MAIN')
 
     // Child row carries the child vendor code and must not show a crown marker.

@@ -5,9 +5,13 @@ import { installStory1626AnalyticsRoutes } from './fixtures/story-162-6-analytic
 // Pre-existing product defects (out of scope for Story 162.6 wait-removal):
 // 1. the merged-group scroll wrapper (overflow-x-auto, MergedGroupTable.tsx) is not
 //    keyboard-focusable, so axe flags it as scrollable-region-focusable.
-// 2. the GroupByToggle wrapper uses role="tablist" around toggle buttons (aria-pressed),
-//    so axe flags aria-required-children (tablist expects role=tab children).
-// Both are tracked as product a11y fixes; excluded here with an explicit comment,
+// 2. aria-required-children is excluded DEFENSIVELY — root cause unverified.
+//    The merged-group advertising page renders no TabsList and GroupByToggle is a
+//    plain div with aria-pressed buttons, so this rule likely does not fire here;
+//    kept as a narrow defensive filter only. Re-run axe locally and read
+//    nodes[].target before treating it as a real product defect.
+// scrollable-region-focusable is a confirmed pre-existing product defect (#1);
+// both are tracked as product a11y fixes, excluded with an explicit comment,
 // mirroring the project's aria-valid-attr-value exclusion pattern in e2e/acquiring.spec.ts.
 const KNOWN_PRODUCT_A11Y_EXCLUSIONS = ['scrollable-region-focusable', 'aria-required-children']
 
