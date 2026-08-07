@@ -111,6 +111,25 @@ test.describe('Story 163.3 — Installed rule editor @automation', () => {
     expect(body).toEqual({ name: 'Переименовано' })
     expect(body).not.toHaveProperty('id')
     expect(body).not.toHaveProperty('cabinetId')
+
+    // Pass-1 FIX 5 (AC #5 cache correctness): after PATCH-200 the editor's
+    // detail cache is refreshed, so the renamed value is reflected on re-read.
+    // The fixture reflects the PATCH body onto its in-memory rule, so a
+    // subsequent GET returns the renamed rule. Observable wait on the GET
+    // response, then assert the renamed title is visible (no hard wait).
+    const refetchResponse = page.waitForResponse(
+      r =>
+        r.request().method() === 'GET' &&
+        r.url().includes(`/v1/automation/rules/${STORY_163_3_RULE_ID}`),
+      { timeout: SETTLE_TIMEOUT }
+    )
+    // Trigger a re-read by reloading the editor (exercises the GET path + cache).
+    await page.reload({ waitUntil: 'domcontentloaded' })
+    await refetchResponse
+    await expect(page.getByTestId('editor-title')).toHaveText('Переименовано', {
+      timeout: SETTLE_TIMEOUT,
+    })
+    await expect(page.getByTestId('field-name')).toHaveValue('Переименовано')
   })
 
   test('AC6: a 400 failure preserves unsaved input + shows an actionable error', async ({

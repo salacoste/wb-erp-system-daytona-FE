@@ -146,12 +146,16 @@ export function useUpdateInstalledRule() {
       const status = error instanceof ApiError ? error.status : 0
       if (status === 400) {
         toast.error('Некорректные данные. Проверьте значения полей.')
+      } else if (status === 401) {
+        toast.error('Требуется авторизация. Войдите снова.')
       } else if (status === 403) {
         toast.error('Недостаточно прав для изменения правила.')
       } else if (status === 404) {
         toast.error('Правило не найдено.')
       } else if (status === 409) {
         toast.error('Конфликт: правило было изменено другим сеансом.')
+      } else if (status >= 500) {
+        toast.error('Ошибка сервера. Попробуйте ещё раз.')
       } else {
         toast.error(error.message || 'Не удалось обновить правило')
       }

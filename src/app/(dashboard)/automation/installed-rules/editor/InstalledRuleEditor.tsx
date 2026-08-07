@@ -75,6 +75,22 @@ export function InstalledRuleEditor({ ruleId }: InstalledRuleEditorProps) {
     [rule, values]
   )
   const dirty = patch !== undefined
+
+  // AC #7 (Pass-1 FIX 2): intercept BROWSER-level leave (tab close / reload /
+  // external nav) while there are unsaved edits. jsdom does not actually prompt,
+  // but registering the listener is observable and standard. The handler must
+  // call preventDefault to make Chrome/Firefox surface the native confirmation.
+  useEffect(() => {
+    if (!dirty) return
+    const onBeforeUnload = (event: BeforeUnloadEvent) => {
+      event.preventDefault()
+      // Legacy cross-browser signal (Chrome ignores the string; FF still reads it).
+      event.returnValue = ''
+    }
+    window.addEventListener('beforeunload', onBeforeUnload)
+    return () => window.removeEventListener('beforeunload', onBeforeUnload)
+  }, [dirty])
+
   const activating = useMemo(
     () => (rule && values ? isActivatingWriteback(rule, values) : false),
     [rule, values]

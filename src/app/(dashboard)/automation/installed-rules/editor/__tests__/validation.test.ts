@@ -130,6 +130,50 @@ describe('diffEditorForm (163.3) — editable-only + change detection', () => {
     const v = { ...toEditorFormValues(rule), message: 'new' }
     expect(diffEditorForm(rule, v)?.actionParams).toEqual({ message: 'new' })
   })
+
+  // AC #2 / Pass-1 FIX 1: backend applies triggerParams/actionParams/scope via
+  // Prisma COLUMN REPLACEMENT (not deep-merge), so the editor MUST overlay its
+  // edits on the original's full object and preserve every non-edited key
+  // (e.g. nmIds, scope, categoryIds, future unknown params).
+  it('deep-merges triggerParams: preserves original nmIds when only threshold edits', () => {
+    const rule = makeRule({
+      triggerParams: { threshold: 10, operator: 'lt', nmIds: [123, 456], scope: 'ALL' },
+    })
+    const v = { ...toEditorFormValues(rule), threshold: '5' }
+    expect(diffEditorForm(rule, v)?.triggerParams).toEqual({
+      threshold: 5,
+      operator: 'lt',
+      nmIds: [123, 456],
+      scope: 'ALL',
+    })
+  })
+
+  it('deep-merges actionParams: preserves an unknown extra key when priceAdjustPct edits', () => {
+    // The boundary normalizer preserves unknown action-param keys at runtime
+    // (the typed AutomationRuleActionParams surfaces only the known fields); the
+    // deep-merge MUST carry such keys through the PATCH. Construct the fixture
+    // with the raw shape to exercise the merge against an unknown key.
+    const rule = makeRule({
+      action: 'WRITEBACK_PRICE',
+      actionParams: {
+        priceAdjustPct: -3,
+        someFutureKey: 'keep-me',
+      } as unknown as AutomationRuleDetail['actionParams'],
+    })
+    const v = { ...toEditorFormValues(rule), priceAdjustPct: '-5' }
+    expect(diffEditorForm(rule, v)?.actionParams).toEqual({
+      priceAdjustPct: -5,
+      someFutureKey: 'keep-me',
+    })
+  })
+
+  it('does not emit triggerParams when nothing edited (no spurious overlay)', () => {
+    const rule = makeRule({
+      triggerParams: { threshold: 10, operator: 'lt', nmIds: [123, 456] },
+    })
+    const v = toEditorFormValues(rule)
+    expect(diffEditorForm(rule, v)?.triggerParams).toBeUndefined()
+  })
 })
 
 describe('isActivatingWriteback (163.3, AC #4)', () => {
@@ -155,5 +199,36 @@ describe('isActivatingWriteback (163.3, AC #4)', () => {
     const rule = makeRule({ action: 'NOTIFY', enabled: true })
     const v = toEditorFormValues(rule)
     expect(isActivatingWriteback(rule, v)).toBe(false)
+  })
+
+  // Pass-1 FIX 6 (product decision, locked): a param-only edit (e.g. ONLY
+  // priceAdjustPct) on an ALREADY-ENABLED WRITEBACK_PRICE rule is NOT an
+  // activation — the rule was already writing prices. No ack required.
+  it('false when only priceAdjustPct edits on an already-enabled writeback rule', () => {
+    const rule = makeRule({
+      action: 'WRITEBACK_PRICE',
+      enabled: true,
+      category: 'price',
+      actionParams: { priceAdjustPct: -3 },
+    })
+    const v = { ...toEditorFormValues(rule), priceAdjustPct: '-5' }
+    expect(isActivatingWriteback(rule, v)).toBe(false)
+  })
+
+  it('true when a disabled writeback rule is being enabled (param-only or not)', () => {
+    const rule = makeRule({
+      action: 'WRITEBACK_PRICE',
+      enabled: false,
+      category: 'price',
+      actionParams: { priceAdjustPct: -3 },
+    })
+    const v = { ...toEditorFormValues(rule), enabled: true, priceAdjustPct: '-5' }
+    expect(isActivatingWriteback(rule, v)).toBe(true)
+  })
+
+  it('true when action is switched to WRITEBACK_PRICE while enabled (param-only or not)', () => {
+    const rule = makeRule({ action: 'NOTIFY', enabled: true })
+    const v = { ...toEditorFormValues(rule), action: 'WRITEBACK_PRICE', priceAdjustPct: '-5' }
+    expect(isActivatingWriteback(rule, v)).toBe(true)
   })
 })

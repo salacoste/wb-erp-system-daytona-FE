@@ -253,6 +253,35 @@ describe('useUpdateInstalledRule (163.3)', () => {
     expect(toast.success).toHaveBeenCalledWith('Правило обновлено')
   })
 
+  // Pass-1 FIX 5 (AC #5, highest-risk per brief): lock the cache contract —
+  // onSuccess MUST write the updated detail into the ruleDetail(id) cache AND
+  // invalidate the rules-list cache. Asserts BOTH calls with the exact keys.
+  it('on success writes ruleDetail(id) cache AND invalidates the rules list', async () => {
+    const updated = {
+      id: 'r9',
+      name: 'Cache check',
+      trigger: 'STOCK_LEVEL',
+      action: 'NOTIFY',
+      enabled: true,
+    }
+    mockUpdateInstalledRule.mockResolvedValue(updated)
+    const queryClient = createTestQueryClient()
+    const invalidateSpy = vi.spyOn(queryClient, 'invalidateQueries')
+    const setSpy = vi.spyOn(queryClient, 'setQueryData')
+
+    const { result } = renderHook(() => useUpdateInstalledRule(), {
+      wrapper: createQueryWrapper(queryClient),
+    })
+
+    result.current.mutate({ id: 'r9', patch: { name: 'Cache check' } })
+
+    await waitFor(() => expect(result.current.isSuccess).toBe(true))
+    // 1) Detail cache is updated with the server response under ruleDetail(id).
+    expect(setSpy).toHaveBeenCalledWith(['automation', 'rules', 'r9'], updated)
+    // 2) The rules LIST cache is invalidated (so the installed-rules page refetches).
+    expect(invalidateSpy).toHaveBeenCalledWith({ queryKey: ['automation', 'rules'] })
+  })
+
   it('toasts a RU message on 400 (validation)', async () => {
     mockUpdateInstalledRule.mockRejectedValueOnce(new ApiError('Bad', 400, {}))
     const { result } = renderHook(() => useUpdateInstalledRule(), {
@@ -271,6 +300,29 @@ describe('useUpdateInstalledRule (163.3)', () => {
     result.current.mutate({ id: 'r1', patch: { enabled: false } })
     await waitFor(() => expect(result.current.isError).toBe(true))
     expect(toast.error).toHaveBeenCalledWith('Недостаточно прав для изменения правила.')
+  })
+
+  // Pass-1 FIX 4 (AC #6): 401 must surface a RU auth message, never the
+  // English error.message.
+  it('toasts a RU auth message on 401 (never the English error.message)', async () => {
+    mockUpdateInstalledRule.mockRejectedValueOnce(new ApiError('Unauthorized', 401, {}))
+    const { result } = renderHook(() => useUpdateInstalledRule(), {
+      wrapper: createQueryWrapper(createTestQueryClient()),
+    })
+    result.current.mutate({ id: 'r1', patch: { name: 'X' } })
+    await waitFor(() => expect(result.current.isError).toBe(true))
+    expect(toast.error).toHaveBeenCalledWith('Требуется авторизация. Войдите снова.')
+    expect(toast.error).not.toHaveBeenCalledWith('Unauthorized')
+  })
+
+  it('toasts a RU server message on 5xx', async () => {
+    mockUpdateInstalledRule.mockRejectedValueOnce(new ApiError('Internal', 500, {}))
+    const { result } = renderHook(() => useUpdateInstalledRule(), {
+      wrapper: createQueryWrapper(createTestQueryClient()),
+    })
+    result.current.mutate({ id: 'r1', patch: { name: 'X' } })
+    await waitFor(() => expect(result.current.isError).toBe(true))
+    expect(toast.error).toHaveBeenCalledWith('Ошибка сервера. Попробуйте ещё раз.')
   })
 
   it('toasts a RU message on 404 (not found)', async () => {

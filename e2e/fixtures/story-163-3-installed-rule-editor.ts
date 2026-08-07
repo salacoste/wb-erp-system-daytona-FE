@@ -86,7 +86,10 @@ export async function installStory1633Routes(
   }
 
   // Exact API paths — no `**` globs (per the observable-wait policy).
-  const detailRe = new RegExp(`/v1/automation/rules/${STORY_163_3_RULE_ID}$`)
+  // Escape the rule id against regex-special chars so a future id containing
+  // `.()+*?[]{}|^$\\` can't break the path matcher (Pass-1 FIX 7, defensive).
+  const escapedRuleId = STORY_163_3_RULE_ID.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+  const detailRe = new RegExp(`/v1/automation/rules/${escapedRuleId}$`)
   const listRe = /\/v1\/automation\/rules(\?.*)?$/
 
   await page.route(detailRe, async route => {

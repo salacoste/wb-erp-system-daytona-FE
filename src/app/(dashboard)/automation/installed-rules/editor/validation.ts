@@ -12,6 +12,7 @@ import type {
   AutomationAction,
   AutomationRuleDetail,
   AutomationThresholdOperator,
+  AutomationTrigger,
   UpdateAutomationRuleInput,
 } from '@/types/automation'
 import { AUTOMATION_OPERATORS } from '@/types/automation'
@@ -131,6 +132,15 @@ export function validateEditorForm(values: EditorFormValues): EditorFormErrors {
  * Diff form values against the original rule and serialize ONLY changed editable
  * fields (AC #5). Read-only fields are never emitted. Returns undefined when
  * nothing changed (caller treats undefined as "no PATCH").
+ *
+ * AC #2 (unknown/unsupported parameters are not silently overwritten): the
+ * backend `AutomationRuleService.update` applies triggerParams/actionParams/
+ * scope via Prisma `update` — COLUMN REPLACEMENT, not deep-merge. So when the
+ * editor emits one of these nested objects it MUST start from the original's
+ * full object and OVERLAY only the edited editable fields, preserving every
+ * other key the editor does not surface (e.g. triggerParams.nmIds /
+ * triggerParams.scope / actionParams.<future> / scope.categoryIds). See
+ * src/automation/services/automation-rule.service.ts:100-107 for the contract.
  */
 export function diffEditorForm(
   original: AutomationRuleDetail,
@@ -148,22 +158,25 @@ export function diffEditorForm(
   const origCooldown = original.cooldownMin
   if (!sameNum(cooldown, origCooldown)) patch.cooldownMin = cooldown
 
-  if (values.trigger !== original.trigger) patch.trigger = values.trigger as AutomationAction
+  if (values.trigger !== original.trigger) patch.trigger = values.trigger as AutomationTrigger
   if (values.action !== original.action) patch.action = values.action as AutomationAction
 
-  // triggerParams — only include when threshold/operator changed.
+  // triggerParams — overlay only the edited threshold/operator onto the
+  // original's full object (preserves nmIds/scope/unknown keys). Emit only on diff.
   const threshold = values.threshold === '' ? undefined : Number(values.threshold)
   const origThreshold = original.triggerParams?.threshold
   const operator =
     values.operator === '' ? undefined : (values.operator as AutomationThresholdOperator)
   const origOperator = original.triggerParams?.operator
   if (!sameNum(threshold, origThreshold) || operator !== origOperator) {
-    patch.triggerParams = {}
-    if (threshold !== undefined) patch.triggerParams.threshold = threshold
-    if (operator !== undefined) patch.triggerParams.operator = operator
+    const merged: Record<string, unknown> = { ...(original.triggerParams ?? {}) }
+    if (threshold !== undefined) merged.threshold = threshold
+    if (operator !== undefined) merged.operator = operator
+    patch.triggerParams = merged
   }
 
-  // actionParams — include when any action-specific field changed.
+  // actionParams — overlay edited priceAdjustPct/taskType/message onto the
+  // original's full object (preserves unknown action params). Emit only on diff.
   const pricePct = values.priceAdjustPct === '' ? undefined : Number(values.priceAdjustPct)
   const origPricePct = original.actionParams?.priceAdjustPct
   const taskType = values.taskType.trim() === '' ? undefined : values.taskType.trim()
@@ -171,10 +184,11 @@ export function diffEditorForm(
   const message = values.message.trim() === '' ? undefined : values.message.trim()
   const origMessage = original.actionParams?.message
   if (!sameNum(pricePct, origPricePct) || taskType !== origTaskType || message !== origMessage) {
-    patch.actionParams = {}
-    if (pricePct !== undefined) patch.actionParams.priceAdjustPct = pricePct
-    if (taskType !== undefined) patch.actionParams.taskType = taskType
-    if (message !== undefined) patch.actionParams.message = message
+    const merged: Record<string, unknown> = { ...(original.actionParams ?? {}) }
+    if (pricePct !== undefined) merged.priceAdjustPct = pricePct
+    if (taskType !== undefined) merged.taskType = taskType
+    if (message !== undefined) merged.message = message
+    patch.actionParams = merged
   }
 
   return Object.keys(patch).length > 0 ? patch : undefined
@@ -192,6 +206,17 @@ function sameNum(a: number | undefined, b: number | undefined): boolean {
  * True when the rule will be a WRITEBACK_PRICE rule AND enabled after the save.
  * Covers both (a) enabling an already-writeback rule and (b) switching action →
  * WRITEBACK_PRICE while enabled. The editor gates Save behind an ack checkbox.
+ *
+ * PRODUCT DECISION (Pass-1 review, locked here so it isn't silently reversed):
+ * Editing ONLY `priceAdjustPct` (or any other param) on an ALREADY-ENABLED
+ * WRITEBACK_PRICE rule is NOT an activation — the rule was already writing
+ * prices; changing its adjustment magnitude does not arm a new price-writing
+ * surface. Concretely `isActivatingWriteback` returns false for a param-only
+ * edit on a live writeback rule because BOTH `enablingNow` (needs a disabled →
+ * enabled transition) AND `switchingToWriteback` (needs a non-writeback →
+ * WRITEBACK_PRICE action transition) are false. Acknowledgement IS still
+ * required when (a) a disabled writeback rule is being enabled, and (b) the
+ * action is being switched to WRITEBACK_PRICE while the rule is enabled.
  */
 export function isActivatingWriteback(
   original: AutomationRuleDetail,

@@ -151,6 +151,41 @@ describe('InstalledRuleEditor (163.3)', () => {
     expect(mockPush).toHaveBeenCalledWith('/automation/installed-rules')
   })
 
+  // Pass-1 FIX 2 (AC #7): browser-level leave (tab close / reload) must be
+  // intercepted while dirty, and cleaned up when the form is clean again.
+  it('registers a beforeunload listener when dirty and removes it when clean', () => {
+    const addSpy = vi.spyOn(window, 'addEventListener')
+    const removeSpy = vi.spyOn(window, 'removeEventListener')
+    mockUseInstalledRule.mockReturnValue(detailResult({ data: makeRule() }))
+
+    const { unmount } = renderWithProviders(<InstalledRuleEditor ruleId="r1" />)
+    // Clean on first render — no beforeunload listener registered.
+    expect(addSpy).not.toHaveBeenCalledWith('beforeunload', expect.any(Function))
+
+    // Dirty the form → listener registered.
+    fireEvent.change(screen.getByTestId('field-name'), { target: { value: 'Changed' } })
+    expect(addSpy).toHaveBeenCalledWith('beforeunload', expect.any(Function))
+
+    // Revert the edit → form clean again → effect cleanup removed the listener.
+    fireEvent.change(screen.getByTestId('field-name'), { target: { value: 'Низкий остаток' } })
+    expect(removeSpy).toHaveBeenCalledWith('beforeunload', expect.any(Function))
+
+    addSpy.mockRestore()
+    removeSpy.mockRestore()
+    unmount()
+  })
+
+  it('intercepts the back-link leave path while dirty (AC #7 second leave path)', () => {
+    mockUseInstalledRule.mockReturnValue(detailResult({ data: makeRule() }))
+    renderWithProviders(<InstalledRuleEditor ruleId="r1" />)
+    // Dirty the form, then click the "Назад к списку" link in the shell header.
+    fireEvent.change(screen.getByTestId('field-name'), { target: { value: 'Changed' } })
+    fireEvent.click(screen.getByTestId('editor-back'))
+    // The unsaved-changes guard fires (not an immediate navigate).
+    expect(screen.getByTestId('unsaved-changes-guard')).toBeInTheDocument()
+    expect(mockPush).not.toHaveBeenCalled()
+  })
+
   it('renders the not-found (404) error state without a retry button', () => {
     mockUseInstalledRule.mockReturnValue(
       detailResult({ isError: true, error: new ApiError('Not found', 404, {}) })
@@ -158,6 +193,20 @@ describe('InstalledRuleEditor (163.3)', () => {
     renderWithProviders(<InstalledRuleEditor ruleId="r1" />)
     expect(screen.getByTestId('editor-error-state')).toBeInTheDocument()
     expect(screen.getByText(/Правило не найдено/)).toBeInTheDocument()
+    expect(screen.queryByTestId('editor-retry')).not.toBeInTheDocument()
+  })
+
+  // Pass-1 FIX 4 (AC #1): load-path 401 must show an explanatory body
+  // (consistent with 403/404), not an empty body.
+  it('renders the authorization (401) error state with an explanatory body', () => {
+    mockUseInstalledRule.mockReturnValue(
+      detailResult({ isError: true, error: new ApiError('Unauthorized', 401, {}) })
+    )
+    renderWithProviders(<InstalledRuleEditor ruleId="r1" />)
+    expect(screen.getByTestId('editor-error-state')).toBeInTheDocument()
+    expect(screen.getByText(/Требуется авторизация/)).toBeInTheDocument()
+    // The explanatory body is present (not empty), consistent with 403/404.
+    expect(screen.getByText(/Войдите снова и откройте правило/)).toBeInTheDocument()
     expect(screen.queryByTestId('editor-retry')).not.toBeInTheDocument()
   })
 

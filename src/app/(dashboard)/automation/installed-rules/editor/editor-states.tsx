@@ -15,6 +15,7 @@ export function mutationErrorMessage(error: Error | null): string {
   if (!error) return 'Не удалось обновить правило.'
   const status = error instanceof ApiError ? error.status : 0
   if (status === 400) return 'Некорректные данные. Проверьте значения полей.'
+  if (status === 401) return 'Требуется авторизация. Войдите снова.'
   if (status === 403) return 'Недостаточно прав для изменения правила.'
   if (status === 404) return 'Правило не найдено.'
   if (status === 409) return 'Конфликт: правило было изменено другим сеансом.'
