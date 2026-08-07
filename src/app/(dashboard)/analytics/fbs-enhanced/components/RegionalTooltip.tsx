@@ -8,8 +8,10 @@
  *
  * Two layers:
  *   1. `RegionalTooltip`        — pure presentational component (kept
- *      byte-identical to the pre-extraction implementation; pinned by direct
- *      unit tests in FbsRegionalDataSection.test.tsx).
+ *      byte-identical for name-bearing series entries; entries with an
+ *      empty/missing `name` are deliberately dropped — see `toEntry` — since
+ *      this chart's single series always has a name. Pinned by direct unit
+ *      tests in FbsRegionalDataSection.test.tsx).
  *   2. `regionalTooltipContent` — typed adapter assignable to recharts
  *      `content`. Owns payload normalization: extracts ONLY `label`,
  *      `name`, `color`, `value` from the recharts payload; unsupported
@@ -120,9 +122,12 @@ function toTooltipValue(entryValue: unknown, entryPayload: unknown): number | nu
 
 function toEntry(rawEntry: unknown): RegionalTooltipEntry | null {
   if (!isRawTooltipEntry(rawEntry)) return null
-  // A real series entry carries a string `name` (the Bar `name` prop). Entries
-  // without one are not usable series — drop them so malformed/junk entries
-  // do not surface as empty-labeled rows.
+  // Deliberately DROP entries with an empty/missing `name` (a real series
+  // entry carries the Bar `name` prop as a non-empty string). This is an
+  // intentional narrowing vs. the pre-extraction pass-through, NOT a bug to
+  // "restore": this chart's single series always has a name, and dropping
+  // malformed/junk entries prevents empty-labeled rows from rendering. See
+  // the header doc above.
   if (typeof rawEntry.name !== 'string' || rawEntry.name === '') return null
   const color = typeof rawEntry.color === 'string' ? rawEntry.color : '#000'
   const value = toTooltipValue(rawEntry.value, rawEntry.payload)

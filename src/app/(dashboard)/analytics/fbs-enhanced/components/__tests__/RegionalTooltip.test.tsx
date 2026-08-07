@@ -22,6 +22,7 @@
 import { describe, it, expect } from 'vitest'
 import { screen } from '@testing-library/react'
 import { renderWithProviders } from '@/test/utils/test-utils'
+import { formatPercentage } from '@/lib/utils'
 import { regionalTooltipContent, type RegionalTooltipEntry } from '../RegionalTooltip'
 
 /**
@@ -103,7 +104,10 @@ describe('regionalTooltipContent adapter (Story 164.2)', () => {
 
   it('renders genuine zero (0) distinctly from missing (null) — anti-pattern #8 / AC #3', () => {
     // Both rows plot as value: 0 (chart requires a number), but the preserved
-    // _percentageRaw distinguishes genuine 0 from missing.
+    // _percentageRaw distinguishes genuine 0 from missing. Assert EXACT rendered
+    // textContent on each row (computed via the same formatter the component
+    // uses) so the test fails if the adapter ever regresses — e.g. masks a
+    // genuine 0 as '—', or surfaces null as the formatted '0,0 %'.
     renderAdapter({
       active: true,
       payload: [
@@ -112,11 +116,25 @@ describe('regionalTooltipContent adapter (Story 164.2)', () => {
       ],
       label: 'Два региона',
     })
-    // Genuine 0 → formatted percent (contains the digit 0), NOT an em-dash.
-    const zeroRows = screen.getAllByText(/Доля/).filter(el => /0/.test(el.textContent ?? ''))
-    expect(zeroRows.length).toBe(1)
-    // Missing (null) → em-dash.
-    expect(screen.getAllByText(/—/).length).toBe(1)
+
+    // Both rendered metric rows start with the series label. The full rendered
+    // text is split across React text nodes (`{name}: {value}`), so we query by
+    // the stable label fragment and then assert on the concatenated textContent
+    // — the load-bearing, byte-exact contract.
+    const rows = screen.getAllByText(/^Доля \(%\)/)
+    expect(rows).toHaveLength(2)
+
+    const expectedZero = formatPercentage(0) // '0,0 %' in ru-RU
+    const rowTexts = rows.map(el => el.textContent ?? '')
+
+    // Exactly one row renders the genuine 0 via the formatter (NOT an em-dash).
+    expect(rowTexts).toContain(`Доля (%): ${expectedZero}`)
+    // Exactly one row renders missing (null) as an em-dash (NOT the formatted 0).
+    expect(rowTexts).toContain('Доля (%): —')
+    // The two renderings are genuinely distinct (no null masked as 0, no 0 masked as null).
+    expect(rowTexts[0]).not.toBe(rowTexts[1])
+    expect(rowTexts.filter(t => t === `Доля (%): ${expectedZero}`)).toHaveLength(1)
+    expect(rowTexts.filter(t => t === 'Доля (%): —')).toHaveLength(1)
   })
 
   it('falls back to the plotted entry value when _percentageRaw is absent', () => {
