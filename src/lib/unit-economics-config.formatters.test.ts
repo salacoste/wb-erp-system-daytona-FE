@@ -8,7 +8,7 @@
  * exact NBSP byte.
  */
 import { describe, it, expect } from 'vitest'
-import { formatPercentage, formatMargin } from './unit-economics-formatters'
+import { formatPercentage, formatMargin, formatCurrency } from './unit-economics-formatters'
 
 describe('unit-economics formatPercentage — Russian locale', () => {
   it('uses a comma decimal separator, not a dot', () => {
@@ -51,5 +51,59 @@ describe('unit-economics formatMargin — Russian locale + sign', () => {
 
   it('zero margin: no sign prefix', () => {
     expect(formatMargin(0).text).toMatch(/^0,0\s%$/)
+  })
+})
+
+// Story 163.4-FE / FR8 (resolves iter-58): the canonical zero-vs-missing contract for the
+// unit-economics whole-ruble formatter. Numeric 0 is a GENUINE measurement → "0 ₽";
+// null/undefined/non-finite is MISSING → "—". Per the "regex for locale assertions" convention,
+// match the ₽/digit/dash shape, not exact NBSP bytes.
+describe('unit-economics formatCurrency — zero vs missing (Story 163.4-FE / FR8)', () => {
+  it('renders a genuine numeric zero as "0 ₽", NOT "—" (iter-58 decision)', () => {
+    const out = formatCurrency(0)
+    expect(out).toMatch(/0/)
+    expect(out).toMatch(/₽/)
+    expect(out).not.toBe('—')
+  })
+
+  it('renders null as "—"', () => {
+    expect(formatCurrency(null)).toBe('—')
+  })
+
+  it('renders undefined as "—"', () => {
+    expect(formatCurrency(undefined)).toBe('—')
+  })
+
+  it('renders NaN as "—"', () => {
+    expect(formatCurrency(Number.NaN)).toBe('—')
+  })
+
+  it('renders +Infinity as "—"', () => {
+    expect(formatCurrency(Number.POSITIVE_INFINITY)).toBe('—')
+  })
+
+  it('renders -Infinity as "—"', () => {
+    expect(formatCurrency(Number.NEGATIVE_INFINITY)).toBe('—')
+  })
+
+  it('renders a positive finite value with whole-ruble grouping + ₽', () => {
+    // 1234567 → "1 234 567 ₽" (ru-RU grouping, whole rubles, no fraction digits)
+    const out = formatCurrency(1_234_567)
+    expect(out).toMatch(/1.*234.*567/)
+    expect(out).toMatch(/₽/)
+    expect(out).not.toMatch(/\d[.,]\d/) // no fraction digits (whole-ruble design)
+  })
+
+  it('renders a negative finite value with a leading minus + ₽', () => {
+    const out = formatCurrency(-500)
+    expect(out).toMatch(/^-|−/)
+    expect(out).toMatch(/500/)
+    expect(out).toMatch(/₽/)
+  })
+
+  it('never returns "—" for a finite value, including a fractional one', () => {
+    // fractional input is rounded to whole rubles (maximumFractionDigits:0), not masked
+    expect(formatCurrency(0.49)).not.toBe('—')
+    expect(formatCurrency(0.49)).toMatch(/₽/)
   })
 })
