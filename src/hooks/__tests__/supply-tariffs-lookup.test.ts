@@ -77,14 +77,47 @@ describe('extractSupplyWarehouses fallback warning policy', () => {
   })
 
   it('normalizes box-type storage tariffs with the same fallback policy', () => {
-    // getTariffsByBoxTypeFromCoefficients is a DIRECT caller (not the aggregate
-    // supply lookup), so it keeps per-call warn-suppression and does NOT route
-    // through the diagnostics accumulator (AC#4).
+    // getTariffsByBoxTypeFromCoefficients (box-type view) EXPLICITLY SUPPRESSES
+    // the per-call fallback warn via `{ warn: false }` (an opt-out of the
+    // default per-call warn). It also does NOT route through the aggregate
+    // diagnostics accumulator, so it emits NO fallback diagnostic at all —
+    // neither per-row nor aggregate. AC#4's "retain by default" applies to
+    // callers that do NOT opt out (`{ warn: false }` omitted); this caller
+    // opted out (pre-existing, out of scope for the warning-dedup story).
     const boxTypes = getTariffsByBoxTypeFromCoefficients([coeff(1, 0)], 1)
 
     expect(boxTypes[0]?.storage.baseLiterRub).toBe(0.11)
     expect(boxTypes[0]?.storage.additionalLiterRub).toBe(0.11)
     expect(boxTypes[0]?.storage.usingStorageFallback).toBe(true)
+  })
+
+  it('box-type path does NOT emit logger.warn on fallback (explicit { warn: false } suppression, AC#4)', () => {
+    // LOCK the actual behavior: getTariffsByBoxTypeFromCoefficients passes
+    // `{ warn: false }` to extractStorageTariffs, so a baseLiterRub=0 fallback
+    // triggers the fallback VALUES (0.11/0.11) but emits NO logger.warn. This
+    // proves the explicit suppression — it would FAIL if someone removed the
+    // `{ warn: false }` from the box-type call (the per-row warn would fire).
+    // Reset the aggregate singleton first to ensure no stale diagnostic leaks.
+    resetStorageFallbackLogDedupForTests()
+    ;(logger.warn as ReturnType<typeof vi.fn>).mockClear()
+
+    // Two DISTINCT box types for warehouse 1, both with baseLiterRub=0 so both
+    // trigger the storage fallback. (Same warehouseId so the box-type grouping
+    // keeps both rows; distinct boxTypeId so they are not deduped into one.)
+    const boxTypes = getTariffsByBoxTypeFromCoefficients(
+      [
+        { ...coeff(1, 0), boxTypeId: 2 },
+        { ...coeff(1, 0), boxTypeId: 5 },
+      ],
+      1
+    )
+
+    // Fallback VALUES are applied (both rows hit baseLiterRub=0 fallback)...
+    expect(boxTypes).toHaveLength(2)
+    expect(boxTypes.every(bt => bt.storage.usingStorageFallback === true)).toBe(true)
+    expect(boxTypes.every(bt => bt.storage.baseLiterRub === 0.11)).toBe(true)
+    // ...but NO logger.warn fires — explicit suppression, no aggregate emit.
+    expect(logger.warn).not.toHaveBeenCalled()
   })
 
   it('prefers usable tariff rows over all-zero backend missing-rate rows', () => {

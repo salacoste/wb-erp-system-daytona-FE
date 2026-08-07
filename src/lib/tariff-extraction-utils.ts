@@ -17,8 +17,12 @@
  * - On fallback: baseLiterRub/additionalLiterRub revert to DEFAULT_STORAGE_TARIFFS,
  *   but the real `coefficient` from the response is PRESERVED (incl. -1 = unavailable).
  * - Warning emission: a direct per-call `logger.warn` fires by default. Callers
- *   that aggregate many rows (e.g. supply-tariffs-lookup) pass `{ warn: false }`
- *   and emit one summary diagnostic via TariffFallbackDiagnostics instead (AC#4).
+ *   can opt out of the per-call warn by passing `{ warn: false }` (AC#4: warn
+ *   is retained by default; suppression is opt-in). Two known opt-out callers:
+ *   (1) `extractSupplyWarehouses` (aggregate supply lookup) suppresses per-row
+ *   warns AND emits one summary diagnostic via TariffFallbackDiagnostics; (2)
+ *   `getTariffsByBoxTypeFromCoefficients` (box-type view) suppresses per-row
+ *   warns and emits NO diagnostic at all (neither per-row nor aggregate).
  *
  * @see docs/stories/epic-44/story-44.41-fe-storage-tariff-fix.md
  */

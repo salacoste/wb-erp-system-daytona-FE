@@ -126,6 +126,16 @@ export class TariffFallbackDiagnostics {
     this.emittedSignatures.clear()
     this.insertionOrder.length = 0
   }
+
+  /**
+   * Test-only: number of snapshot signatures currently retained in the
+   * cross-call store. Exposed so the MAX_SNAPSHOTS bound can be asserted
+   * directly (the store must never exceed MAX_SNAPSHOTS). Not intended for
+   * production callers.
+   */
+  size(): number {
+    return this.emittedSignatures.size
+  }
 }
 
 /** Module-level singleton used by the aggregate supply-tariff lookup path. */

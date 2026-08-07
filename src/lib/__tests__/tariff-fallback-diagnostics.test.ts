@@ -173,22 +173,46 @@ describe('TariffFallbackDiagnostics', () => {
       expect(emittedArgs.reasons).toHaveLength(MAX_SAMPLE)
     })
 
-    it('caps the cross-call snapshot store at MAX_SNAPSHOTS (FIFO eviction, no unbounded growth)', () => {
+    it('caps the cross-call snapshot store at MAX_SNAPSHOTS (FIFO eviction of the oldest; middle stays deduped)', () => {
       const diag = new TariffFallbackDiagnostics()
-      let emitCount = 0
+      // Each iteration i produces a materially distinct snapshot signature:
+      //   i+1 events with reasons reason-0..reason-i  ->  signature `${i+1}|reason-0,...,reason-i`
+      // So iter-0 = "1|reason-0" (OLDEST), iter-1 = "2|reason-0,reason-1", ...
       for (let i = 0; i < MAX_SNAPSHOTS + 5; i++) {
-        // Each iteration produces a materially different snapshot (distinct count).
         for (let j = 0; j <= i; j++) {
           diag.record({ reason: `reason-${j}` })
         }
-        if (diag.flush().emitted) emitCount++
+        const result = diag.flush()
+        // Every snapshot was distinct -> every flush emitted.
+        expect(result.emitted).toBe(true)
       }
-      // Every snapshot was distinct -> every flush emitted.
-      expect(emitCount).toBe(MAX_SNAPSHOTS + 5)
-      // Replaying the OLDEST signature now re-emits (it was FIFO-evicted),
-      // proving the store is bounded rather than growing forever.
-      const oldestResult = diag.flush()
-      expect(oldestResult.emitted).toBe(false) // nothing new in-flight
+
+      // Bound: store never exceeds MAX_SNAPSHOTS despite MAX_SNAPSHOTS+5 distinct
+      // signatures being recorded. (Falsifiable: would fail with > if the
+      // eviction block were removed.)
+      expect(diag.size()).toBe(MAX_SNAPSHOTS)
+
+      // OLDEST signature (iter-0: a single `reason-0` event) was FIFO-evicted
+      // when the store filled, so re-recording it now is EMITTABLE again.
+      // (Falsifiable: if the eviction block at flush() were removed, this
+      // signature would still be in the store -> emitted:false.)
+      diag.record({ reason: 'reason-0' })
+      const oldestReplay = diag.flush()
+      expect(oldestReplay.emitted).toBe(true)
+      expect(oldestReplay.signature).toBe('1|reason-0')
+
+      // A signature from the MIDDLE of the still-retained window (the LAST
+      // iter, MAX_SNAPSHOTS+4: MAX_SNAPSHOTS+5 events) is still deduped -> NOT
+      // re-emittable. (Falsifiable: if dedup were broken this would emit:true.)
+      // Note: the sample is capped at MAX_SAMPLE reasons, so the signature's
+      // reason list is only the first MAX_SAMPLE reasons even though count
+      // reflects all MAX_SNAPSHOTS+5 events.
+      for (let j = 0; j <= MAX_SNAPSHOTS + 4; j++) {
+        diag.record({ reason: `reason-${j}` })
+      }
+      const middleReplay = diag.flush()
+      expect(middleReplay.emitted).toBe(false)
+      expect(middleReplay.count).toBe(MAX_SNAPSHOTS + 5)
     })
   })
 })

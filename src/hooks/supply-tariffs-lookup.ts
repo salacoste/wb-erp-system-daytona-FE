@@ -168,7 +168,19 @@ export function findTariffsByNameFromCoefficients(
   return match ? toSupplyDateTariffs(match) : null
 }
 
-/** Get tariffs for all available box types for a warehouse (first available date). */
+/**
+ * Get tariffs for all available box types for a warehouse (first available date).
+ *
+ * Story 164.3-FE / AC#4: this path EXPLICITLY SUPPRESSES per-row fallback
+ * warnings via `{ warn: false }` below (an opt-out of `extractStorageTariffs`'s
+ * default per-call warn). It does NOT route through the aggregate
+ * TariffFallbackDiagnostics accumulator and therefore emits NO fallback
+ * diagnostic at all — neither per-row nor aggregate. This is the intentional,
+ * pre-existing behavior for the box-type view and is out of scope for the
+ * warning-dedup story; only the aggregate supply lookup
+ * (`extractSupplyWarehouses`) emits aggregate diagnostics. Callers that do not
+ * opt out (`{ warn: false }` omitted) retain the direct per-call warn.
+ */
 export function getTariffsByBoxTypeFromCoefficients(
   coefficients: AcceptanceCoefficient[],
   warehouseId: number
@@ -189,6 +201,8 @@ export function getTariffsByBoxTypeFromCoefficients(
   // Convert to BoxTypeTariffs array
   return Array.from(boxTypeMap.values())
     .map(c => {
+      // AC#4: explicit opt-out — suppresses the default per-call fallback warn.
+      // Emits NO aggregate diagnostic either (only extractSupplyWarehouses does).
       const storageExtraction = extractStorageTariffs(c.storage, 'supply', { warn: false })
 
       return {
