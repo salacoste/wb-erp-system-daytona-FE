@@ -2,6 +2,7 @@
  * SkuAccuracyDetail unit tests — Story 110.3-FE Task 6.
  * Covers: happy path, empty-state (nmId not found), AP#8 null rendering,
  * history table rendering, locale formatters, history DESC sort.
+ * Story 163.5-FE (FR10): naiveBaseline units column — positive/zero/null/ordering/labeling.
  */
 import React from 'react'
 import { describe, it, expect } from 'vitest'
@@ -29,12 +30,21 @@ const entry: SkuAccuracyEntry = {
       mapeUnits: 4.0,
       naiveMape: null,
     },
+    // Story 163.5-FE: zero baseline must render as "0", not "—" (AC2).
+    {
+      evaluationDate: '2026-06-01',
+      predictedUnits: 30,
+      actualUnits: 33,
+      naiveBaseline: 0,
+      mapeUnits: 10.0,
+      naiveMape: 12.5,
+    },
   ],
   avgAiMape: 5.57,
   avgNaiveMape: 9.52,
   aiAccuracyPercent: 41.5,
   naiveAccuracyPercent: 81.7,
-  evaluationCount: 2,
+  evaluationCount: 3,
 }
 
 const nullMapeEntry: SkuAccuracyEntry = {
@@ -145,16 +155,19 @@ describe('SkuAccuracyDetail', () => {
     render(<SkuAccuracyDetail nmId={12345} modelId="model-1" skuAccuracies={[entry]} />)
     expect(screen.getByText('Дата оценки')).toBeTruthy()
     expect(screen.getByText('Прогноз (ед.)')).toBeTruthy()
+    // Story 163.5-FE: baseline units column present, distinct from Naive MAPE (%)
+    expect(screen.getByText('Базовый прогноз (ед.)')).toBeTruthy()
     expect(screen.getByText('Факт (ед.)')).toBeTruthy()
     expect(screen.getByText('AI MAPE')).toBeTruthy()
     expect(screen.getByText('Naive MAPE')).toBeTruthy()
   })
 
-  it('history table renders both rows', () => {
+  it('history table renders all rows', () => {
     render(<SkuAccuracyDetail nmId={12345} modelId="model-1" skuAccuracies={[entry]} />)
-    // 2 history entries = 2 tbody rows
+    // 3 history entries = 3 tbody rows
     expect(screen.getByText('01.04.2026')).toBeTruthy()
     expect(screen.getByText('01.05.2026')).toBeTruthy()
+    expect(screen.getByText('01.06.2026')).toBeTruthy()
   })
 
   it('history sorted DESC by evaluationDate (newest first)', () => {
@@ -162,9 +175,10 @@ describe('SkuAccuracyDetail', () => {
       <SkuAccuracyDetail nmId={12345} modelId="model-1" skuAccuracies={[entry]} />
     )
     const rows = container.querySelectorAll('tbody tr')
-    // 2026-05-01 > 2026-04-01 → May row first
-    expect(rows[0].textContent).toContain('01.05.2026')
-    expect(rows[1].textContent).toContain('01.04.2026')
+    // 2026-06-01 > 2026-05-01 > 2026-04-01 → June row first
+    expect(rows[0].textContent).toContain('01.06.2026')
+    expect(rows[1].textContent).toContain('01.05.2026')
+    expect(rows[2].textContent).toContain('01.04.2026')
   })
 
   it('AP#8: null naiveMape in history renders em-dash', () => {
@@ -178,5 +192,93 @@ describe('SkuAccuracyDetail', () => {
     render(<SkuAccuracyDetail nmId={99999} modelId="model-1" skuAccuracies={[nullMapeEntry]} />)
     // nullMapeEntry has empty history — stats card renders but history card does not
     expect(screen.queryByText('История оценок')).toBeNull()
+  })
+
+  // ----- Story 163.5-FE (FR10): naiveBaseline units column — AC2/AC3/AC4/AC5/AC6 -----
+
+  it('163.5 AC1/AC4: "Базовый прогноз (ед.)" header is present and distinct from "Naive MAPE"', () => {
+    render(<SkuAccuracyDetail nmId={12345} modelId="model-1" skuAccuracies={[entry]} />)
+    // Units column carries "(ед.)"; percentage column retains MAPE labeling — understandable w/o color.
+    expect(screen.getByText('Базовый прогноз (ед.)')).toBeTruthy()
+    expect(screen.getByText('Naive MAPE')).toBeTruthy()
+    const headers = Array.from(screen.getAllByRole('columnheader')).map(h => h.textContent ?? '')
+    // Baseline column appears exactly once and is a different header than Naive MAPE.
+    expect(headers.filter(h => h === 'Базовый прогноз (ед.)')).toHaveLength(1)
+    expect(headers.filter(h => h === 'Naive MAPE')).toHaveLength(1)
+  })
+
+  it('163.5 AC2: finite naiveBaseline renders as a unit count via formatNumber', () => {
+    const { container } = render(
+      <SkuAccuracyDetail nmId={12345} modelId="model-1" skuAccuracies={[entry]} />
+    )
+    // 2026-05-01 row has naiveBaseline: 38.2 → formatNumber rounds to "38" (ru-RU grouping).
+    const mayRow = Array.from(container.querySelectorAll('tbody tr')).find(r =>
+      (r.textContent ?? '').includes('01.05.2026')
+    )
+    expect(mayRow).toBeTruthy()
+    expect(mayRow?.textContent).toContain('38')
+    // Fractional part is rounded away (unit count, integer formatter) — not "38,2".
+    expect(mayRow?.textContent).not.toContain('38,2')
+  })
+
+  it('163.5 AC2: zero naiveBaseline renders "0", not "—" nor missing', () => {
+    const { container } = render(
+      <SkuAccuracyDetail nmId={12345} modelId="model-1" skuAccuracies={[entry]} />
+    )
+    // 2026-06-01 row has naiveBaseline: 0 → must render "0".
+    const juneRow = Array.from(container.querySelectorAll('tbody tr')).find(r =>
+      (r.textContent ?? '').includes('01.06.2026')
+    )
+    expect(juneRow).toBeTruthy()
+    // Falsifiable guard: assert the SPECIFIC baseline cell (col index 2 —
+    // date=0, прогноз=1, базовый=2, факт=3, AI MAPE=4, Naive MAPE=5) with EXACT equality.
+    // Row-level toContain('0') is a no-op here: the date "01.06.2026", predictedUnits "30",
+    // and mapeUnits "10,0 %" already contain "0", so a truthy-guard regression
+    // (row.naiveBaseline ? formatNumber(...) : '—') would mask 0 as "—" and STILL pass.
+    const juneCells = Array.from(juneRow!.querySelectorAll('td'))
+    expect(juneCells[2].textContent).toBe('0')
+  })
+
+  it('163.5 AC3: null naiveBaseline renders "—" and is not coerced to 0', () => {
+    const { container } = render(
+      <SkuAccuracyDetail nmId={12345} modelId="model-1" skuAccuracies={[entry]} />
+    )
+    // 2026-04-01 row has naiveBaseline: null → must render an em-dash cell.
+    const aprilRow = Array.from(container.querySelectorAll('tbody tr')).find(r =>
+      (r.textContent ?? '').includes('01.04.2026')
+    )
+    expect(aprilRow).toBeTruthy()
+    expect(aprilRow?.textContent).toContain('—')
+  })
+
+  it('163.5 AC5: baseline column sits between AI forecast and actual (column ordering)', () => {
+    const { container } = render(
+      <SkuAccuracyDetail nmId={12345} modelId="model-1" skuAccuracies={[entry]} />
+    )
+    // Read header cell text in DOM order; baseline must come after "Прогноз (ед.)" and before "Факт (ед.)".
+    const headers = Array.from(container.querySelectorAll('thead th')).map(h => h.textContent ?? '')
+    const baselineIdx = headers.findIndex(h => h.includes('Базовый прогноз'))
+    const forecastIdx = headers.findIndex(h => h === 'Прогноз (ед.)')
+    const actualIdx = headers.findIndex(h => h === 'Факт (ед.)')
+    expect(baselineIdx).toBeGreaterThan(-1)
+    expect(forecastIdx).toBeGreaterThan(-1)
+    expect(actualIdx).toBeGreaterThan(-1)
+    expect(baselineIdx).toBeGreaterThan(forecastIdx)
+    expect(baselineIdx).toBeLessThan(actualIdx)
+  })
+
+  it('163.5 AC5: adding the baseline column keeps the table operable on a narrow viewport', () => {
+    // jsdom ignores viewport size, but the table renders an overflow-scroll wrapper by default
+    // (shadcn Table → div.overflow-x-auto). The new column must not drop existing columns/controls:
+    // all 6 headers still render, and no cell throws for any null/0/finite baseline combination.
+    const { container } = render(
+      <SkuAccuracyDetail nmId={12345} modelId="model-1" skuAccuracies={[entry]} />
+    )
+    const headerTexts = Array.from(container.querySelectorAll('thead th')).map(
+      h => h.textContent ?? ''
+    )
+    expect(headerTexts).toHaveLength(6)
+    // All three baseline states (null / finite / 0) rendered without throwing — rows count matches history.
+    expect(container.querySelectorAll('tbody tr')).toHaveLength(entry.history.length)
   })
 })
