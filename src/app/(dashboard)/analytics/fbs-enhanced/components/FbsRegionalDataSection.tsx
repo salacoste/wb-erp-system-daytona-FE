@@ -8,52 +8,24 @@
  * Pattern 2: recharts BarChart — single-bar region comparison.
  * Pattern 1: independent null/empty-state.
  *
- * M-3 fix: RegionalTooltip exported as named export for direct unit testing.
+ * Story 164.2: the tooltip boundary is now a typed adapter (see RegionalTooltip.tsx);
+ * `RegionalTooltip` is re-exported here to keep the historical direct-unit-test import
+ * path (`{ RegionalTooltip } from '../FbsRegionalDataSection'`) stable.
  */
 
 'use client'
 
 import { useMemo } from 'react'
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts'
-import { formatPercentage } from '@/lib/utils'
 import { CHART_COLORS } from '@/lib/chart-colors'
 import type { FbsRegionalDataItem } from '@/types/fbs-enhanced'
+// Typed recharts tooltip adapter — replaces the prior `RegionalTooltip as any` cast
+// (CLAUDE.md anti-pattern #4). Adapter narrows the opaque payload to {name,color,value}.
+export { RegionalTooltip, regionalTooltipContent } from './RegionalTooltip'
+import { regionalTooltipContent } from './RegionalTooltip'
 
 interface FbsRegionalDataSectionProps {
   regionalData: FbsRegionalDataItem[] | null | undefined
-}
-
-interface TooltipPayloadEntry {
-  name: string
-  value: number | null
-  color: string
-}
-
-interface CustomTooltipProps {
-  active?: boolean
-  payload?: TooltipPayloadEntry[]
-  label?: string
-}
-
-/**
- * Custom recharts tooltip for the regional bar chart.
- * Exported for unit-testing only — not consumed externally.
- *
- * Renders null-safe metric rows: null value → '—' per CLAUDE.md anti-pattern #8
- * and Defensive Frontend Principle.
- */
-export function RegionalTooltip({ active, payload, label }: CustomTooltipProps) {
-  if (!active || !payload || payload.length === 0) return null
-  return (
-    <div className="rounded-md border bg-white p-3 shadow-sm text-sm">
-      <p className="font-medium mb-1">{label}</p>
-      {payload.map(entry => (
-        <p key={entry.name} style={{ color: entry.color }}>
-          {entry.name}: {entry.value == null ? '—' : formatPercentage(entry.value)}
-        </p>
-      ))}
-    </div>
-  )
 }
 
 export function FbsRegionalDataSection({ regionalData }: FbsRegionalDataSectionProps) {
@@ -103,9 +75,8 @@ export function FbsRegionalDataSection({ regionalData }: FbsRegionalDataSectionP
               axisLine={false}
               tickLine={false}
             />
-            {/* Recharts ContentType is opaque — third-party type constraint requires cast */}
-            {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
-            <Tooltip content={RegionalTooltip as any} />
+            {/* Typed adapter (RegionalTooltip.tsx) — no `as any` cast; payload narrowed to {name,color,value}. */}
+            <Tooltip content={regionalTooltipContent} />
             <Bar
               dataKey="percentage"
               name="Доля (%)"
