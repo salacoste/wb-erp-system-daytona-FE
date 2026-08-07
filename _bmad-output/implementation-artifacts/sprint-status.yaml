@@ -729,4 +729,4 @@ development_status:
   165.2-fe-align-local-development-validation-guidance: done  # Deterministic tracked-doc validation and active localhost guidance close through PR #90 on merge.
   165.3-fe-regenerate-openwiki: done  # Final Run 9 30974657031 produced approved e3d9e137; full application and affected workflow/documentation validation passed. Completion is effective through the current normal PR merge.
   165.4-fe-activate-liquidity-trends-after-daily-snapshots: deferred  # Backend must provide non-empty persisted daily snapshots.
-  165.5-fe-per-status-backfill-retry-after-separate-contracts: deferred  # Backend must expose separate report/analytics retry endpoints.
+  165.5-fe-per-status-backfill-retry-after-separate-contracts: done  # DONE 2026-08-07: BE per-source retry (failure-detection hooks in both backfill processors + retryFailedBackfill + POST /v1/admin/backfill/{report|analytics}/retry) merged PR #120; FE retry controls (retryBackfill api+normalizer, useRetryBackfill, BackfillRetryControls, failed-state disambiguation) merged PR #133. 68 BE tests + 17751 FE tests + 51 E2E green; 2 adversarial review cycles each side.
