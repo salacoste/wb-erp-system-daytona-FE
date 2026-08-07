@@ -245,17 +245,16 @@
 
 | Epic   | Title                                           | Stories                                    | Status      | Key Routes / Scope                          |
 | ------ | ----------------------------------------------- | ------------------------------------------ | ----------- | ------------------------------------------- |
-| 162-FE | Trustworthy Local Frontend Validation           | 1 done + 9 backlog                         | IN-PROGRESS | localhost Playwright and validation gates   |
-| 163-FE | Accessible and Complete Operator Workflows      | 6 backlog                                  | BACKLOG     | advertising, automation, analytics          |
-| 164-FE | Resilient Frontend Boundaries & Maintainability | 4 backlog                                  | BACKLOG     | API errors, charts, tariffs, package policy |
+| 162-FE | Trustworthy Local Frontend Validation           | 10 done                                    | DONE        | localhost Playwright and validation gates   |
+| 163-FE | Accessible and Complete Operator Workflows      | 6 done                                     | DONE        | advertising, automation, analytics          |
+| 164-FE | Resilient Frontend Boundaries & Maintainability | 4 done                                     | DONE        | API errors, charts, tariffs, package policy |
 | 165-FE | Truthful Status & Backend-Ready Backlog         | 3 done + 2 deferred                        | DONE        | 165.3 completes on merge; 165.4/165.5 deferred |
 
 Canonical story definitions, dependencies, and acceptance criteria: `_bmad-output/planning-artifacts/epics-162-165-fe.md`. Each story has exactly one correlated execution plan under `.omx/plans/`.
 
-Current program status: Epic 127 is done; Epic 162 is in progress; Epics 163
-and 164 are backlog; Epic 165 is done through the current Story 165.3 delivery,
-which completes on merge. Stories 165.4/165.5 remain deferred on backend
-capabilities.
+Current program status: Epic 127 is done; Epics 162, 163, and 164 are done;
+Epic 165 is done through Story 165.3 (165.4/165.5 remain deferred on backend
+capabilities).
 
 ---
 

@@ -11,11 +11,9 @@ platform.
 ## Current Delivery Status
 
 - Epic 127 is done.
-- Epic 162 is in progress.
-- Epics 163 and 164 are backlog.
-- Epic 165 is done through the current Story 165.3 delivery.
-- Story 165.3 completes when this delivery is merged.
-- Stories 165.4 and 165.5 are deferred.
+- Epic 162 is done.
+- Epics 163 and 164 are done.
+- Epic 165: stories 165.1-165.3 are done; 165.4 and 165.5 are deferred (backend-gated).
 
 ## Requirements
 
