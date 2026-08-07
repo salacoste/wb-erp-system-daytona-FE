@@ -121,3 +121,43 @@ describe('UnitEconomicsSummaryCards — margin value health colour', () => {
     expect(el?.className).not.toContain('text-red-600')
   })
 })
+
+// Story 163.4-FE / FR8 (resolves iter-58): the "Ваша цена" card visibility gate was
+// `total_your_price > 0`, hiding a genuine 0 ₽ price indistinguishably from an absent field.
+// Now gated on `!== undefined` — present-but-zero renders "0 ₽"; absent hides the card.
+describe('UnitEconomicsSummaryCards — zero vs missing monetary (Story 163.4-FE / FR8)', () => {
+  it('shows the "Ваша цена" card with "0 ₽" when total_your_price is a genuine 0', () => {
+    render(<UnitEconomicsSummaryCards summary={{ ...baseSummary, total_your_price: 0 }} />)
+    const label = screen.getByText('Ваша цена')
+    const card = label.closest('.min-h-\\[120px\\]')
+    expect(card).toHaveTextContent(/0/)
+    expect(card).toHaveTextContent(/₽/)
+    expect(card).not.toHaveTextContent('—')
+  })
+
+  it('hides the "Ваша цена" card when total_your_price is undefined (field absent)', () => {
+    render(<UnitEconomicsSummaryCards summary={{ ...baseSummary }} />)
+    expect(screen.queryByText('Ваша цена')).not.toBeInTheDocument()
+  })
+
+  it('renders total_revenue 0 as "0 ₽", NOT "—" (iter-58 regression on Выручка)', () => {
+    render(<UnitEconomicsSummaryCards summary={{ ...baseSummary, total_revenue: 0 }} />)
+    const label = screen.getByText('Выручка')
+    const card = label.closest('.min-h-\\[120px\\]')
+    const value = card?.querySelector('.text-2xl')
+    expect(value?.textContent).toMatch(/0/)
+    expect(value?.textContent).toMatch(/₽/)
+    expect(value?.textContent).not.toBe('—')
+  })
+
+  it('renders avgDeliveryCost 0 as "0 ₽" (formatter handles null → "—" internally)', () => {
+    render(
+      <UnitEconomicsSummaryCards summary={baseSummary} avgDeliveryCost={0} deliverySkuCount={4} />
+    )
+    const label = screen.getByText('Ср. доставка')
+    const card = label.closest('.min-h-\\[120px\\]')
+    expect(card).toHaveTextContent(/0/)
+    expect(card).toHaveTextContent(/₽/)
+    expect(card).not.toHaveTextContent('—')
+  })
+})

@@ -4,7 +4,8 @@
  *
  * NOTE: These are LOCAL copies of the canonical `@/lib/utils` formatters, kept ON PURPOSE:
  * - formatPercentage: pins min=max=decimals (default 1) for table alignment + null/non-finite guard
- * - formatCurrency: whole-ruble output (maxFractionDigits:0) + '—' for zero (FUTURE: revisit)
+ * - formatCurrency: whole-ruble output (maxFractionDigits:0) + nullable → '—' (Story 163.4-FE:
+ *   numeric 0 → '0 ₽', only null/undefined/non-finite → '—')
  * Do NOT "harmonize" with the canonical without reading the inline FUTURE/NOTE comments above each.
  */
 
@@ -35,14 +36,19 @@ export function formatPercentage(value: number | null | undefined, decimals = 1)
  * Format currency value in RUB (whole rubles — maxFractionDigits:0 is a deliberate
  * declutter choice for this page, distinct from the canonical `@/lib/utils` formatCurrency).
  *
- * FUTURE (iter-58 deferred — needs a product decision): `value === 0 → '—'` masks a GENUINE
- * 0₽ as "no data" (anti-pattern #8-adjacent). `item.revenue` (UnitEconomicsTableRow.tsx) and
- * `summary.total_revenue`/`total_your_price` (UnitEconomicsSummaryCards.tsx) flow here UNGUARDED,
- * so a real zero-sales SKU renders "—" indistinguishable from missing. Resolve the UX question
- * (show "0 ₽" vs "—" vs row-suppress) before changing — entangled with the whole-ruble design.
+ * Canonical zero-vs-missing semantics (Story 163.4-FE / FR8 — resolves iter-58):
+ * - numeric `0` → `0 ₽` (a GENUINE zero is a real measurement, not "no data").
+ * - `null` / `undefined` / `NaN` / `±Infinity` → `—` (missing data is never coerced to a
+ *   fabricated zero — anti-pattern #8).
+ * The guard is `value == null || !Number.isFinite(value)` (0 is finite → passes → `0 ₽`).
+ * Mirrors the nullability contract of `liquidity-formatters.ts` `formatCurrency` (nullable →
+ * "—"): backend money fields crossing the unit-economics boundary may be nullable
+ * (`latestDcu` / `latestFcu` / `avgDeliveryCost`), so this formatter accepts the nullable
+ * union rather than forcing every call site to pre-check. Intl.format(null) would coerce
+ * null→0 ("0 ₽"), hence the explicit guard.
  */
-export function formatCurrency(value: number): string {
-  if (value === 0) return '—'
+export function formatCurrency(value: number | null | undefined): string {
+  if (value == null || !Number.isFinite(value)) return '—'
   return new Intl.NumberFormat('ru-RU', {
     style: 'currency',
     currency: 'RUB',

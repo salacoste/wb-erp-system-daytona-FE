@@ -48,8 +48,11 @@ export function UnitEconomicsSummaryCards({
 
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-      {/* Request #58: YOUR Price Before Discounts - only show if available */}
-      {summary.total_your_price !== undefined && summary.total_your_price > 0 && (
+      {/* Request #58: YOUR Price Before Discounts - shown when the backend provides the field.
+          Story 163.4-FE: gate on presence (!== undefined), NOT value — a genuine 0 ₽ price
+          renders as `0 ₽` via formatCurrency; only an absent field hides the card. The old
+          `> 0` mask made a real zero indistinguishable from missing (anti-pattern #8). */}
+      {summary.total_your_price !== undefined && (
         <MetricCard
           icon={DollarSign}
           iconColor="bg-indigo-500"
@@ -110,7 +113,7 @@ export function UnitEconomicsSummaryCards({
         icon={Truck}
         iconColor="bg-cyan-500"
         label="Ср. доставка"
-        value={avgDeliveryCost != null ? formatCurrency(avgDeliveryCost) : '—'}
+        value={formatCurrency(avgDeliveryCost)}
         subtext={
           deliverySkuCount != null ? `${deliverySkuCount} SKU с подтв. отправкой` : undefined
         }
