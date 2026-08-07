@@ -410,6 +410,11 @@ export const liquidityQueryHandlers = [
   }),
 
   // GET /v1/analytics/liquidity/trends
+  // Story 165.4-FE: default trends handler. State-machine edges (empty /
+  // malformed) are no longer driven from MSW `?mode=` arms — no FE code sends
+  // `mode`. Empty coverage comes from fixtures/unit tests; malformed coverage
+  // comes from the E2E `{unexpected:true}` fixture (-> getLiquidityTrends
+  // throws -> section isError) + the section error-branch unit test.
   http.get(`${API_BASE_URL}/v1/analytics/liquidity/trends`, async ({ request }) => {
     await delay(100)
 

@@ -83,5 +83,16 @@ export async function getLiquidityTrends(
 
   // skipDataUnwrap: true — preserve full response structure
   const raw = await apiClient.get<unknown>(endpoint, { skipDataUnwrap: true })
+
+  // Story 165.4-FE: malformed-response boundary. A genuinely malformed body
+  // (missing `meta` or non-array `trends`) THROWS so TanStack Query surfaces
+  // `isError` and the section renders its retry branch. The normalizer would
+  // otherwise coerce any body to a well-formed (empty) response, hiding the
+  // failure. A well-formed empty response (`{meta, trends: []}`) still passes.
+  const obj = raw as Record<string, unknown> | null
+  if (!obj || typeof obj !== 'object' || !obj.meta || !Array.isArray(obj.trends)) {
+    throw new Error('Malformed liquidity trends response')
+  }
+
   return normalizeLiquidityTrendsResponse(raw)
 }

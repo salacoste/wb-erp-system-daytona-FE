@@ -16,6 +16,7 @@ import { LiquidityBenchmarks } from './components/LiquidityBenchmarks'
 import { LiquidityEmpty } from './components/LiquidityEmpty'
 import { LiquidityLoading } from './components/LiquidityLoading'
 import { LiquidityTable } from './components/LiquidityTable'
+import { LiquidityTrendsSection } from './components/LiquidityTrendsSection'
 import { logger } from '@/lib/logger'
 
 /**
@@ -135,6 +136,11 @@ export default function LiquidityPage() {
 
       {/* Benchmarks Comparison */}
       <LiquidityBenchmarks benchmarks={data.summary.benchmarks} />
+
+      {/* Trends — Story 165.4-FE. Independent state machine (AC4): a trends
+          failure never blanks the surrounding sections. Renders only BE-provided
+          points (AC2). */}
+      <LiquidityTrendsSection />
 
       {/* Table Section - Story 7.3 */}
       <LiquidityTable

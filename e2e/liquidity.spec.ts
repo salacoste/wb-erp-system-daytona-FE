@@ -4,6 +4,7 @@ import { installStory1625AnalyticsRoutes } from './fixtures/story-162-5-analytic
 import { ROUTES, TIMEOUTS } from './fixtures/test-data'
 
 const LIQUIDITY_PATH = '/v1/analytics/liquidity'
+const TRENDS_PATH = '/v1/analytics/liquidity/trends'
 const INITIAL_QUERY = { sort_by: 'turnover_days', sort_order: 'desc', limit: '200' }
 
 function matchesLiquidityResponse(
@@ -174,6 +175,9 @@ test.describe('Liquidity Analysis — Story 162.5 deterministic synchronization'
     const controller = await openLiquidity(page)
     const results = await fetchRejectedRequests(page, [
       {
+        // Story 165.4-FE: /trends is now a first-class endpoint (accepts
+        // period only). Sending the list endpoint's sort_by/limit query is a
+        // contract violation and must be rejected.
         path: '/v1/analytics/liquidity/trends?sort_by=turnover_days&sort_order=desc&limit=200',
       },
       {
@@ -191,7 +195,7 @@ test.describe('Liquidity Analysis — Story 162.5 deterministic synchronization'
       { status: 400, code: 'STORY_162_5_REJECTED' },
     ])
     expect(controller.rejectedRequests()).toEqual([
-      'Story 162.5 fixture rejected pathname /v1/analytics/liquidity/trends',
+      'Story 162.5 fixture rejected query key sort_by',
       'Story 162.5 fixture rejected POST /v1/analytics/liquidity',
       'Story 162.5 fixture rejected query key unexpected',
     ])
@@ -288,6 +292,80 @@ test.describe('Liquidity Analysis — Story 162.5 deterministic synchronization'
     await page.getByRole('button', { name: 'Повторить' }).click()
     await recovered
     await expectLiquidityData(page, /LQ all turnover_days desc/)
+    controller.assertNoUnexpectedRequests()
+  })
+})
+
+test.describe('Liquidity Trends — Story 165.4-FE (independent section states)', () => {
+  test('renders the trends section populated without blocking the surrounding page', async ({
+    page,
+  }) => {
+    await openLiquidity(page)
+    // Section heading present (period selector group).
+    await expect(page.getByRole('group', { name: 'Период динамики' })).toBeVisible({
+      timeout: TIMEOUTS.api,
+    })
+    // The composed (main) chart rendered as SVG.
+    await expect(page.locator('svg.recharts-surface').first()).toBeVisible()
+    // Surrounding sections still usable.
+    await expect(page.getByText('Сравнение с целями', { exact: true })).toBeVisible()
+    await expect(page.getByRole('table')).toBeVisible()
+  })
+
+  test('period selector issues an exact trends request', async ({ page }) => {
+    await openLiquidity(page)
+    const trendsResponse = page.waitForResponse(
+      response =>
+        response.request().method() === 'GET' &&
+        new URL(response.url()).pathname === TRENDS_PATH &&
+        new URL(response.url()).searchParams.get('period') === '30'
+    )
+    await page.getByRole('button', { name: '30 дн.' }).click()
+    await trendsResponse
+    await expect(page.getByRole('button', { name: '30 дн.' })).toHaveAttribute(
+      'aria-pressed',
+      'true'
+    )
+  })
+
+  test('renders the deferred empty message when trends:[] and keeps the page usable', async ({
+    page,
+  }) => {
+    const controller = await installStory1625AnalyticsRoutes(page, { liquidityTrends: 'empty' })
+    await page.emulateMedia({ reducedMotion: 'reduce' })
+    await page.goto(ROUTES.analytics.liquidity)
+    await expectLiquidityShell(page)
+    await expectLiquidityData(page, /LQ all turnover_days desc/)
+
+    // Trends section shows the deferred empty message (AC2: no synthesized points).
+    await expect(page.getByText('Исторические снимки ликвидности пока не собраны')).toBeVisible({
+      timeout: TIMEOUTS.api,
+    })
+    controller.assertNoUnexpectedRequests()
+  })
+
+  test('renders trends error + retry on malformed/unavailable response without blanking the page', async ({
+    page,
+  }) => {
+    const controller = await installStory1625AnalyticsRoutes(page, {
+      liquidityTrends: 'malformed',
+    })
+    await page.emulateMedia({ reducedMotion: 'reduce' })
+    await page.goto(ROUTES.analytics.liquidity)
+    await expectLiquidityShell(page)
+    await expectLiquidityData(page, /LQ all turnover_days desc/)
+
+    // B2/M4: malformed body ({unexpected:true}) -> getLiquidityTrends THROWS ->
+    // TanStack isError -> canonical RU error string + retry control.
+    await expect(
+      page.getByText('Не удалось загрузить динамику ликвидности. Попробуйте ещё раз.')
+    ).toBeVisible({ timeout: TIMEOUTS.api })
+    await expect(page.getByRole('button', { name: 'Повторить' })).toBeVisible()
+
+    // AC4 independence: a sibling section + table stay visible despite the
+    // trends failure (the surrounding page is NOT blanked).
+    await expect(page.getByText('Сравнение с целями', { exact: true })).toBeVisible()
+    await expect(page.getByRole('table')).toBeVisible()
     controller.assertNoUnexpectedRequests()
   })
 })

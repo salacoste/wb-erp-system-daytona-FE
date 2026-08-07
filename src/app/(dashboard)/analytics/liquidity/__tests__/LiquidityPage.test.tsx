@@ -36,6 +36,18 @@ vi.mock('@/hooks/useLiquidity', () => ({
     refetch: vi.fn(),
     dataUpdatedAt: Date.now(),
   }),
+  // Story 165.4-FE: the page now mounts LiquidityTrendsSection which calls this hook.
+  useLiquidityTrends: () => ({
+    data: {
+      meta: { cabinet_id: 'test', period_days: 90, generated_at: '2026-08-07T00:00:00Z' },
+      trends: [],
+      insights: [],
+    },
+    isLoading: false,
+    isError: false,
+    error: null,
+    refetch: vi.fn(),
+  }),
 }))
 
 vi.mock('@/lib/liquidity-utils', () => ({
