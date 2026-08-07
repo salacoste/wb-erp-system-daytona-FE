@@ -230,7 +230,13 @@ describe('SkuAccuracyDetail', () => {
       (r.textContent ?? '').includes('01.06.2026')
     )
     expect(juneRow).toBeTruthy()
-    expect(juneRow?.textContent).toContain('0')
+    // Falsifiable guard: assert the SPECIFIC baseline cell (col index 2 —
+    // date=0, прогноз=1, базовый=2, факт=3, AI MAPE=4, Naive MAPE=5) with EXACT equality.
+    // Row-level toContain('0') is a no-op here: the date "01.06.2026", predictedUnits "30",
+    // and mapeUnits "10,0 %" already contain "0", so a truthy-guard regression
+    // (row.naiveBaseline ? formatNumber(...) : '—') would mask 0 as "—" and STILL pass.
+    const juneCells = Array.from(juneRow!.querySelectorAll('td'))
+    expect(juneCells[2].textContent).toBe('0')
   })
 
   it('163.5 AC3: null naiveBaseline renders "—" and is not coerced to 0', () => {
