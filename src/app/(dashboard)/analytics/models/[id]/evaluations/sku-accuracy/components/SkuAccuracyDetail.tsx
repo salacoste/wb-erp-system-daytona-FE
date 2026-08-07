@@ -4,6 +4,8 @@
  * SkuAccuracyDetail — per-SKU drill-down view.
  * Story 110.3-FE Task 6: header card + aggregate stats + history table (DESC by evaluationDate).
  * AP#8: avgAiMape, avgNaiveMape, aiAccuracyPercent render '—' when null.
+ * Story 163.5-FE (FR10): naiveBaseline units column "Базовый прогноз (ед.)" — distinct from
+ * "Naive MAPE" (%). Finite → formatNumber (0 → "0"); null → "—" (no ?? 0 coercion, AP#8).
  * Empty-state: "SKU не найден" + back-link when nmId not in response.
  */
 
@@ -142,6 +144,7 @@ export function SkuAccuracyDetail({
                 <TableRow>
                   <TableHead>Дата оценки</TableHead>
                   <TableHead>Прогноз (ед.)</TableHead>
+                  <TableHead>Базовый прогноз (ед.)</TableHead>
                   <TableHead>Факт (ед.)</TableHead>
                   <TableHead>AI MAPE</TableHead>
                   <TableHead>Naive MAPE</TableHead>
@@ -153,6 +156,10 @@ export function SkuAccuracyDetail({
                     <TableCell>{formatDate(row.evaluationDate)}</TableCell>
                     {/* eslint-disable-next-line no-restricted-syntax -- SEMANTIC-ZERO: count field */}
                     <TableCell>{formatNumber(row.predictedUnits ?? 0)}</TableCell>
+                    {/* Story 163.5-FE: naiveBaseline is nullable units — null → '—' (no ?? 0, AP#8) */}
+                    <TableCell>
+                      {row.naiveBaseline !== null ? formatNumber(row.naiveBaseline) : '—'}
+                    </TableCell>
                     {/* eslint-disable-next-line no-restricted-syntax -- SEMANTIC-ZERO: count field */}
                     <TableCell>{formatNumber(row.actualUnits ?? 0)}</TableCell>
                     <TableCell>{formatSkuMapeDisplay(row.mapeUnits)}</TableCell>
