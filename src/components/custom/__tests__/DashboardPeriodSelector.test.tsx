@@ -105,7 +105,10 @@ describe('Story 163.6-FE: Period type RadioGroup toggle', () => {
     render(<DashboardPeriodSelector />)
     const user = userEvent.setup()
     await user.click(screen.getByRole('radio', { name: /неделя/i }))
-    // Radix radio keeps value week; controlled value never becomes undefined.
+    // Radix radio does not fire onValueChange when the already-checked item is
+    // re-activated, so setPeriodType is NOT called — the value stays 'week' and
+    // never becomes undefined (single-choice no-op, AC4).
+    expect(setPeriodType).not.toHaveBeenCalled()
     expect(screen.getByRole('radio', { name: /неделя/i })).toBeChecked()
     expect(screen.getByRole('radio', { name: /месяц/i })).not.toBeChecked()
   })

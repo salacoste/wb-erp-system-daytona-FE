@@ -75,8 +75,8 @@ export function DashboardPeriodSelector({
   const [isRefreshing, setIsRefreshing] = useState(false)
   const [relativeTime, setRelativeTime] = useState('')
 
-  // Stable per-instance IDs so label/htmlFor association survives multiple renders
-  // of this selector on one page (analytics dashboard uses it in two branches).
+  // Stable per-instance IDs keep the label ↔ input association robust if this
+  // selector is ever mounted more than once (global uniqueness across the React tree).
   const weekRadioId = useId()
   const monthRadioId = useId()
 

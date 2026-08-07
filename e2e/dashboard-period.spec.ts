@@ -122,12 +122,14 @@ test.describe('Dashboard period observable state', () => {
     const month = page.locator(P.monthOption)
     await month.focus()
     await expect(month).toBeFocused()
-    await page.keyboard.press('Enter')
+    // Space is the ARIA radio activation key (Enter is not guaranteed for role=radio);
+    // matches the unit suite and the WAI-ARIA radio keyboard contract.
+    await page.keyboard.press('Space')
     await expect(month).toHaveAttribute('data-state', 'checked')
 
     const week = page.locator(P.weekOption)
     await week.focus()
-    await page.keyboard.press('Enter')
+    await page.keyboard.press('Space')
     await expect(week).toHaveAttribute('data-state', 'checked')
   })
 
