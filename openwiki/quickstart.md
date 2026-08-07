@@ -36,7 +36,7 @@ Development and validation are **local-only**: there is no deployment target or 
 ```bash
 npm run dev                    # Dev server on :3100
 npm run build                  # Production build
-npm run lint                   # ESLint (max-warnings: 112)
+npm run lint                   # ESLint (0 errors, 0 warnings — zero-warning policy, Story 164.4)
 npm run type-check             # tsc --noEmit
 npm test                       # Vitest unit tests
 npm run test:e2e               # Playwright E2E (bounded read-only smoke, preflight-gated)

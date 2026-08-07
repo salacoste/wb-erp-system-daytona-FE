@@ -107,6 +107,7 @@ The SKU analytics page (`/analytics/sku`, Story 128.27) exposes **historical SPP
 | `storage-cost-utils.ts` / `storage-cost-helpers.ts` | Storage cost per box type |
 | `logistics-tariff.ts` / `logistics-tariff-helpers.ts` / `logistics-calculation-utils.ts` | Logistics tariff calculations |
 | `tariff-system-utils.ts` / `tariff-extraction-utils.ts` | Tariff system parsing and validation |
+| `tariff-fallback-diagnostics.ts` | Bounded fallback-warning dedup for storage-tariff fallbacks (Story 164.3) — collapses N per-row fallback events within one calculation into a single aggregate diagnostic, and dedupes identical snapshots across renders via a bounded FIFO store; calculation results are unaffected |
 | `coefficient-utils.ts` / `coefficient-date-helpers.ts` | WB coefficient calculations (dimensional, etc.) |
 
 ## ISO Week & Moscow Timezone
