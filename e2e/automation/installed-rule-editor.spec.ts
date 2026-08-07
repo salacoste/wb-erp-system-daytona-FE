@@ -20,6 +20,7 @@
 import { test, expect } from '../fixtures/network-test'
 import {
   installStory1633Routes,
+  STORY_163_3_DEEPMERGE_RULE,
   STORY_163_3_NOTIFY_RULE,
   STORY_163_3_RULE_ID,
   STORY_163_3_WRITEBACK_RULE,
@@ -172,5 +173,40 @@ test.describe('Story 163.3 — Installed rule editor @automation', () => {
     await page.getByTestId('unsaved-stay').click()
     await expect(page.getByTestId('unsaved-changes-guard')).toHaveCount(0)
     await expect(page.getByTestId('field-name')).toHaveValue('Грязное изменение')
+  })
+
+  // Pass-2 hardening: observable E2E proof of the deep-merge (data-loss fix).
+  // AC5 edits only `name`, so it cannot catch a deep-merge regression. This case
+  // seeds a rule whose triggerParams carries a sibling key (nmIds) the editor
+  // does NOT surface, edits ONLY threshold, then asserts the captured PATCH body
+  // preserves nmIds. Without the deep-merge (FIX1) a single-field edit would
+  // wipe the SKU scope — backend applies triggerParams via column-replacement.
+  test('AC5 (deep-merge): editing only threshold preserves sibling triggerParams (nmIds)', async ({
+    page,
+  }) => {
+    const controller = await installStory1633Routes(page, STORY_163_3_DEEPMERGE_RULE, 'load')
+    await page.goto(EDITOR_ROUTE, { waitUntil: 'domcontentloaded' })
+    await expect(page.getByTestId('editor-title')).toBeVisible({ timeout: SETTLE_TIMEOUT })
+
+    // Edit ONLY threshold (leave operator/name/etc untouched).
+    await page.getByTestId('field-threshold').fill('5')
+    // Pre-register the PATCH response BEFORE the save click (observable wait).
+    const patchResponse = page.waitForResponse(
+      r =>
+        r.request().method() === 'PATCH' &&
+        r.url().includes(`/v1/automation/rules/${STORY_163_3_RULE_ID}`),
+      { timeout: SETTLE_TIMEOUT }
+    )
+    await page.getByTestId('editor-save').click()
+    const response = await patchResponse
+    expect(response.status()).toBe(200)
+
+    // The sibling nmIds MUST survive — only threshold changed. operator is also
+    // preserved (unchanged from the seed). No name key (name was not edited).
+    const body = controller.getLastPatchBody()
+    expect(body).toBeDefined()
+    const triggerParams = body?.triggerParams
+    expect(triggerParams).toEqual({ threshold: 5, operator: 'lt', nmIds: [123, 456] })
+    expect(body).not.toHaveProperty('name')
   })
 })

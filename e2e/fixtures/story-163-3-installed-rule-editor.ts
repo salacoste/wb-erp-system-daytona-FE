@@ -27,7 +27,12 @@ export interface Story1633RuleDetail {
   category?: string
   priority?: number
   cooldownMin?: number
-  triggerParams?: { threshold?: number; operator?: string }
+  /**
+   * triggerParams seed. The editor surfaces only threshold/operator; nmIds (and
+   * any future sibling) MUST be preserved across a single-field edit, so the
+   * deep-merge E2E (Pass-2 hardening) seeds nmIds here to assert it survives.
+   */
+  triggerParams?: { threshold?: number; operator?: string; nmIds?: number[] }
   actionParams?: { message?: string; priceAdjustPct?: number }
 }
 
@@ -52,6 +57,23 @@ export const STORY_163_3_NOTIFY_RULE: Story1633RuleDetail = {
   enabled: true,
   category: 'notify',
   triggerParams: { threshold: 10, operator: 'lt' },
+  actionParams: { message: 'Заканчивается остаток' },
+}
+
+/**
+ * A NOTIFY rule whose triggerParams carries a SIBLING key (nmIds) the editor
+ * does NOT surface. Used by the Pass-2 deep-merge E2E: editing ONLY threshold
+ * must preserve nmIds in the PATCH body (backend does column-replacement, so a
+ * shallow emit would silently wipe the SKU scope).
+ */
+export const STORY_163_3_DEEPMERGE_RULE: Story1633RuleDetail = {
+  id: STORY_163_3_RULE_ID,
+  name: 'Низкий остаток → уведомление (deep-merge)',
+  trigger: 'STOCK_LEVEL',
+  action: 'NOTIFY',
+  enabled: true,
+  category: 'notify',
+  triggerParams: { threshold: 10, operator: 'lt', nmIds: [123, 456] },
   actionParams: { message: 'Заканчивается остаток' },
 }
 

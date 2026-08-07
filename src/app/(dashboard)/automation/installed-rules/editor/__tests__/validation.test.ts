@@ -174,6 +174,27 @@ describe('diffEditorForm (163.3) — editable-only + change detection', () => {
     const v = toEditorFormValues(rule)
     expect(diffEditorForm(rule, v)?.triggerParams).toBeUndefined()
   })
+
+  // Pass-2 hardening: pin the "blanked editable param field = unchanged" semantic.
+  // A cleared threshold (form value '' → undefined) MUST NOT nullify the param —
+  // blank means "leave as-is" (thresholds can't be blank), so the original value
+  // is preserved inside the overlay. A future refactor that flipped this to
+  // "blank = delete the key" (data loss via the backend's column-replacement
+  // update) would trip this test. Observed behavior: the diff branch DOES fire
+  // (threshold !== original), the overlay starts from the original object, and
+  // because the new value is undefined the `if (threshold !== undefined)` guard
+  // skips the overwrite — so merged.threshold stays at the original 10.
+  it('clearing threshold preserves the original threshold (blank ≠ nullify)', () => {
+    const rule = makeRule({
+      triggerParams: { threshold: 10, operator: 'lt', nmIds: [1, 2] },
+    })
+    const v = { ...toEditorFormValues(rule), threshold: '' }
+    expect(diffEditorForm(rule, v)?.triggerParams).toEqual({
+      threshold: 10,
+      operator: 'lt',
+      nmIds: [1, 2],
+    })
+  })
 })
 
 describe('isActivatingWriteback (163.3, AC #4)', () => {

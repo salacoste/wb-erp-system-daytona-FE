@@ -152,6 +152,22 @@ describe('toUpdateBody (163.3) — editable-only contract', () => {
     expect(body.actionParams).toBeUndefined() // empty after trim
   })
 
+  // Pass-2 hardening: pin that undefined TOP-LEVEL scalars are also dropped
+  // before the wire. toUpdateBody only emits priority/cooldownMin when they are
+  // `typeof === 'number'`, so an undefined value (simulating a cleared scalar
+  // field that survived diffEditorForm) is NEVER serialized — guarding against
+  // a regression that flipped the guard to a truthiness/`!== undefined` check.
+  it('drops undefined top-level scalars (priority/cooldownMin) from the body', () => {
+    const body = toUpdateBody({
+      name: 'New',
+      priority: undefined,
+      cooldownMin: undefined,
+    })
+    expect(body).toEqual({ name: 'New' })
+    expect(body).not.toHaveProperty('priority')
+    expect(body).not.toHaveProperty('cooldownMin')
+  })
+
   it('returns an empty object when nothing editable is set', () => {
     expect(toUpdateBody({})).toEqual({})
   })
