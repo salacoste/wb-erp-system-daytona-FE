@@ -66,7 +66,10 @@ export function UnitEconomicsTableRow({ item, isSelected, onSelect }: UnitEconom
         </div>
         <div className="text-xs text-muted-foreground">{item.brand}</div>
       </TableCell>
-      <TableCell className="text-right font-medium">{formatCurrency(item.revenue)}</TableCell>
+      {/* Story 163.4-FE: data-testid pins the revenue cell as the 0 ₽ vs — regression sentinel. */}
+      <TableCell className="text-right font-medium" data-testid="revenue-cell">
+        {formatCurrency(item.revenue)}
+      </TableCell>
       <CostCell
         value={item.costs_pct.cogs}
         highThreshold={50}
