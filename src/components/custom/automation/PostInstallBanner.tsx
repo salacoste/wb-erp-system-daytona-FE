@@ -19,13 +19,23 @@ export function PostInstallBanner({ ruleId }: PostInstallBannerProps) {
       data-testid="post-install-deeplink"
     >
       <p className="text-sm text-green-800">Шаблон установлен.</p>
-      <Link
-        href={`${ROUTES.AUTOMATION.INSTALLED_RULES}?highlight=${encodeURIComponent(ruleId)}`}
-        className="text-sm font-medium text-primary underline-offset-4 hover:underline"
-        data-testid="open-installed-rules-link"
-      >
-        Открыть установленные правила
-      </Link>
+      <div className="flex flex-wrap items-center gap-3">
+        {/* Story 163.3-FE: primary CTA deep-links into the editor for the new rule. */}
+        <Link
+          href={ROUTES.AUTOMATION.installedRuleEditor(ruleId)}
+          className="text-sm font-medium text-primary underline-offset-4 hover:underline"
+          data-testid="open-editor-link"
+        >
+          Открыть в редакторе
+        </Link>
+        <Link
+          href={`${ROUTES.AUTOMATION.INSTALLED_RULES}?highlight=${encodeURIComponent(ruleId)}`}
+          className="text-sm text-green-700 underline-offset-4 hover:underline"
+          data-testid="open-installed-rules-link"
+        >
+          Открыть установленные правила
+        </Link>
+      </div>
     </div>
   )
 }

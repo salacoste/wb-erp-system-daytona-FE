@@ -9,6 +9,8 @@ import { createTestQueryClient, createQueryWrapper } from '@/test/utils/test-uti
 const mockGetCannedRules = vi.fn()
 const mockInstallCannedRule = vi.fn()
 const mockGetInstalledRules = vi.fn()
+const mockGetInstalledRule = vi.fn()
+const mockUpdateInstalledRule = vi.fn()
 
 vi.mock('@/lib/api/automation', () => ({
   getCannedRules: () => mockGetCannedRules(),
@@ -22,6 +24,11 @@ vi.mock('@/lib/api/automation', () => ({
   },
 }))
 
+vi.mock('@/lib/api/installed-rule-detail', () => ({
+  getInstalledRule: (...args: unknown[]) => mockGetInstalledRule(...args),
+  updateInstalledRule: (...args: unknown[]) => mockUpdateInstalledRule(...args),
+}))
+
 vi.mock('sonner', () => ({
   toast: {
     success: vi.fn(),
@@ -31,7 +38,13 @@ vi.mock('sonner', () => ({
 
 import { toast } from 'sonner'
 import { ApiError } from '@/types/api'
-import { useCannedRules, useInstallCannedRule, useInstalledRules } from '../useAutomation'
+import {
+  useCannedRules,
+  useInstallCannedRule,
+  useInstalledRule,
+  useInstalledRules,
+  useUpdateInstalledRule,
+} from '../useAutomation'
 
 describe('useCannedRules (AT1)', () => {
   beforeEach(() => {
@@ -147,5 +160,188 @@ describe('useInstallCannedRule (AT1)', () => {
 
     await waitFor(() => expect(result.current.isError).toBe(true))
     expect(toast.error).toHaveBeenCalledWith('Шаблон не найден')
+  })
+})
+
+describe('useInstalledRule (163.3)', () => {
+  beforeEach(() => {
+    vi.clearAllMocks()
+  })
+
+  it('fetches the rule detail for an id', async () => {
+    mockGetInstalledRule.mockResolvedValue({
+      id: 'r1',
+      name: 'N',
+      trigger: 'STOCK_LEVEL',
+      action: 'NOTIFY',
+      enabled: true,
+    })
+    const { result } = renderHook(() => useInstalledRule('r1'), {
+      wrapper: createQueryWrapper(createTestQueryClient()),
+    })
+    await waitFor(() => expect(result.current.isSuccess).toBe(true))
+    expect(mockGetInstalledRule).toHaveBeenCalledWith('r1')
+    expect(result.current.data?.id).toBe('r1')
+  })
+
+  it('does not fetch when id is empty (enabled gate)', () => {
+    mockGetInstalledRule.mockResolvedValue({ id: 'r1' })
+    renderHook(() => useInstalledRule(''), {
+      wrapper: createQueryWrapper(createTestQueryClient()),
+    })
+    expect(mockGetInstalledRule).not.toHaveBeenCalled()
+  })
+
+  it('surfaces a 404 as an error (isError)', async () => {
+    // Persistent rejection survives the hook's retry: 1 (query error-path pattern).
+    // retry=1 uses TanStack exponential backoff (~1s) → extend waitFor timeout.
+    mockGetInstalledRule.mockRejectedValue(new ApiError('Not found', 404, {}))
+    const { result } = renderHook(() => useInstalledRule('missing'), {
+      wrapper: createQueryWrapper(createTestQueryClient()),
+    })
+    await waitFor(() => expect(result.current.isError).toBe(true), { timeout: 4000 })
+    expect((result.current.error as ApiError).status).toBe(404)
+  })
+
+  it('surfaces a 403 as an error', async () => {
+    mockGetInstalledRule.mockRejectedValue(new ApiError('Forbidden', 403, {}))
+    const { result } = renderHook(() => useInstalledRule('r1'), {
+      wrapper: createQueryWrapper(createTestQueryClient()),
+    })
+    await waitFor(() => expect(result.current.isError).toBe(true), { timeout: 4000 })
+    expect((result.current.error as ApiError).status).toBe(403)
+  })
+
+  it('surfaces a malformed-response (thrown Error) as an error', async () => {
+    mockGetInstalledRule.mockRejectedValue(new Error('Некорректный ответ сервера'))
+    const { result } = renderHook(() => useInstalledRule('r1'), {
+      wrapper: createQueryWrapper(createTestQueryClient()),
+    })
+    await waitFor(() => expect(result.current.isError).toBe(true), { timeout: 4000 })
+    expect(result.current.error?.message).toMatch(/Некорректный ответ сервера/)
+  })
+})
+
+describe('useUpdateInstalledRule (163.3)', () => {
+  beforeEach(() => {
+    vi.clearAllMocks()
+  })
+
+  it('patches, setQueryData(detail) + invalidates rules, toasts success', async () => {
+    const updated = {
+      id: 'r1',
+      name: 'New',
+      trigger: 'STOCK_LEVEL',
+      action: 'NOTIFY',
+      enabled: true,
+    }
+    mockUpdateInstalledRule.mockResolvedValue(updated)
+    const queryClient = createTestQueryClient()
+    const invalidateSpy = vi.spyOn(queryClient, 'invalidateQueries')
+    const setSpy = vi.spyOn(queryClient, 'setQueryData')
+
+    const { result } = renderHook(() => useUpdateInstalledRule(), {
+      wrapper: createQueryWrapper(queryClient),
+    })
+
+    result.current.mutate({ id: 'r1', patch: { name: 'New' } })
+
+    await waitFor(() => expect(result.current.isSuccess).toBe(true))
+    expect(mockUpdateInstalledRule).toHaveBeenCalledWith('r1', { name: 'New' })
+    expect(setSpy).toHaveBeenCalledWith(['automation', 'rules', 'r1'], updated)
+    expect(invalidateSpy).toHaveBeenCalledWith({ queryKey: ['automation', 'rules'] })
+    expect(toast.success).toHaveBeenCalledWith('Правило обновлено')
+  })
+
+  // Pass-1 FIX 5 (AC #5, highest-risk per brief): lock the cache contract —
+  // onSuccess MUST write the updated detail into the ruleDetail(id) cache AND
+  // invalidate the rules-list cache. Asserts BOTH calls with the exact keys.
+  it('on success writes ruleDetail(id) cache AND invalidates the rules list', async () => {
+    const updated = {
+      id: 'r9',
+      name: 'Cache check',
+      trigger: 'STOCK_LEVEL',
+      action: 'NOTIFY',
+      enabled: true,
+    }
+    mockUpdateInstalledRule.mockResolvedValue(updated)
+    const queryClient = createTestQueryClient()
+    const invalidateSpy = vi.spyOn(queryClient, 'invalidateQueries')
+    const setSpy = vi.spyOn(queryClient, 'setQueryData')
+
+    const { result } = renderHook(() => useUpdateInstalledRule(), {
+      wrapper: createQueryWrapper(queryClient),
+    })
+
+    result.current.mutate({ id: 'r9', patch: { name: 'Cache check' } })
+
+    await waitFor(() => expect(result.current.isSuccess).toBe(true))
+    // 1) Detail cache is updated with the server response under ruleDetail(id).
+    expect(setSpy).toHaveBeenCalledWith(['automation', 'rules', 'r9'], updated)
+    // 2) The rules LIST cache is invalidated (so the installed-rules page refetches).
+    expect(invalidateSpy).toHaveBeenCalledWith({ queryKey: ['automation', 'rules'] })
+  })
+
+  it('toasts a RU message on 400 (validation)', async () => {
+    mockUpdateInstalledRule.mockRejectedValueOnce(new ApiError('Bad', 400, {}))
+    const { result } = renderHook(() => useUpdateInstalledRule(), {
+      wrapper: createQueryWrapper(createTestQueryClient()),
+    })
+    result.current.mutate({ id: 'r1', patch: { priority: -1 } })
+    await waitFor(() => expect(result.current.isError).toBe(true))
+    expect(toast.error).toHaveBeenCalledWith('Некорректные данные. Проверьте значения полей.')
+  })
+
+  it('toasts a RU message on 403 (authorization)', async () => {
+    mockUpdateInstalledRule.mockRejectedValueOnce(new ApiError('Forbidden', 403, {}))
+    const { result } = renderHook(() => useUpdateInstalledRule(), {
+      wrapper: createQueryWrapper(createTestQueryClient()),
+    })
+    result.current.mutate({ id: 'r1', patch: { enabled: false } })
+    await waitFor(() => expect(result.current.isError).toBe(true))
+    expect(toast.error).toHaveBeenCalledWith('Недостаточно прав для изменения правила.')
+  })
+
+  // Pass-1 FIX 4 (AC #6): 401 must surface a RU auth message, never the
+  // English error.message.
+  it('toasts a RU auth message on 401 (never the English error.message)', async () => {
+    mockUpdateInstalledRule.mockRejectedValueOnce(new ApiError('Unauthorized', 401, {}))
+    const { result } = renderHook(() => useUpdateInstalledRule(), {
+      wrapper: createQueryWrapper(createTestQueryClient()),
+    })
+    result.current.mutate({ id: 'r1', patch: { name: 'X' } })
+    await waitFor(() => expect(result.current.isError).toBe(true))
+    expect(toast.error).toHaveBeenCalledWith('Требуется авторизация. Войдите снова.')
+    expect(toast.error).not.toHaveBeenCalledWith('Unauthorized')
+  })
+
+  it('toasts a RU server message on 5xx', async () => {
+    mockUpdateInstalledRule.mockRejectedValueOnce(new ApiError('Internal', 500, {}))
+    const { result } = renderHook(() => useUpdateInstalledRule(), {
+      wrapper: createQueryWrapper(createTestQueryClient()),
+    })
+    result.current.mutate({ id: 'r1', patch: { name: 'X' } })
+    await waitFor(() => expect(result.current.isError).toBe(true))
+    expect(toast.error).toHaveBeenCalledWith('Ошибка сервера. Попробуйте ещё раз.')
+  })
+
+  it('toasts a RU message on 404 (not found)', async () => {
+    mockUpdateInstalledRule.mockRejectedValueOnce(new ApiError('Not found', 404, {}))
+    const { result } = renderHook(() => useUpdateInstalledRule(), {
+      wrapper: createQueryWrapper(createTestQueryClient()),
+    })
+    result.current.mutate({ id: 'r1', patch: { name: 'X' } })
+    await waitFor(() => expect(result.current.isError).toBe(true))
+    expect(toast.error).toHaveBeenCalledWith('Правило не найдено.')
+  })
+
+  it('toasts a RU message on 409 (conflict)', async () => {
+    mockUpdateInstalledRule.mockRejectedValueOnce(new ApiError('Conflict', 409, {}))
+    const { result } = renderHook(() => useUpdateInstalledRule(), {
+      wrapper: createQueryWrapper(createTestQueryClient()),
+    })
+    result.current.mutate({ id: 'r1', patch: { name: 'X' } })
+    await waitFor(() => expect(result.current.isError).toBe(true))
+    expect(toast.error).toHaveBeenCalledWith('Конфликт: правило было изменено другим сеансом.')
   })
 })
