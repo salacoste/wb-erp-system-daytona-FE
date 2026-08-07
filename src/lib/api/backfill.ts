@@ -16,6 +16,8 @@ import type {
   StartBackfillResponse,
   BackfillActionResponse,
   DataSource,
+  BackfillRetrySource,
+  RetryBackfillResponse,
 } from '@/types/backfill'
 
 const BASE_URL = '/v1/admin/backfill'
@@ -127,6 +129,56 @@ export async function resumeBackfill(cabinetId: string): Promise<BackfillActionR
   return apiClient.post<BackfillActionResponse>(`${BASE_URL}/resume`, {
     cabinet_id: cabinetId,
   })
+}
+
+/**
+ * Story 165.5: Per-status backfill retry endpoint path per pipeline.
+ * TWO separate endpoints — never a combined/cabinet-wide call (AC2).
+ * `reports` targets the FBS orders 90-day pipeline; `analytics` the 365-day pipeline.
+ */
+const RETRY_PATH: Record<BackfillRetrySource, string> = {
+  reports: `${BASE_URL}/report/retry`,
+  analytics: `${BASE_URL}/analytics/retry`,
+}
+
+/**
+ * Story 165.5: Boundary Normalizer for the retry response.
+ * Backend returns `{ success: true, message: "... (attempt N)" }` at the top level
+ * (no `data` wrapper, so apiClient's auto-unwrap returns it verbatim). Coerce with
+ * runtime guards — never trust a bare truthy read on backend data. `success` defaults
+ * to false when absent/invalid so a malformed body cannot masquerade as success.
+ */
+export function normalizeRetryBackfillResponse(raw: unknown): RetryBackfillResponse {
+  // Narrow `raw` to an object before key access. The `as Record<string, unknown>`
+  // below is post-guard narrowing (TS can't express "object record of unknown"),
+  // NOT a backend-shape cast — safe per the Boundary Normalizer convention.
+  if (typeof raw !== 'object' || raw === null) {
+    return { success: false, message: '' }
+  }
+  const obj = raw as Record<string, unknown>
+  return {
+    success: obj.success === true,
+    message: typeof obj.message === 'string' ? obj.message : '',
+  }
+}
+
+/**
+ * Story 165.5: Retry ONLY the failed source's backfill pipeline.
+ * POST /v1/admin/backfill/{report|analytics}/retry with body `{ cabinetId }`.
+ * 403 (role/cabinet), 404 `BACKFILL_NOT_FAILED`, 409 `BACKFILL_IN_PROGRESS` propagate as ApiError.
+ *
+ * @param cabinetId - Cabinet to retry (opaque UUID; String()-coerced by callers)
+ * @param dataSource - Which pipeline to retry (`'reports'` | `'analytics'`)
+ * @returns Normalized `{ success, message }`
+ */
+export async function retryBackfill(
+  cabinetId: string,
+  dataSource: BackfillRetrySource
+): Promise<RetryBackfillResponse> {
+  const raw = await apiClient.post<unknown>(RETRY_PATH[dataSource], {
+    cabinetId: String(cabinetId),
+  })
+  return normalizeRetryBackfillResponse(raw)
 }
 
 // ============================================================================

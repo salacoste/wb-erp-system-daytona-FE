@@ -21,6 +21,13 @@ export type DataSource = 'api' | 'report' | 'none'
 /** Backfill action discriminated union */
 export type BackfillActionType = 'start' | 'pause' | 'resume'
 
+/**
+ * Story 165.5: which independently-retryable backfill pipeline a retry targets.
+ * The backend exposes TWO separate endpoints (`report/retry`, `analytics/retry`),
+ * never a combined call. Mirrors the per-source status (`reportsStatus`/`analyticsStatus`).
+ */
+export type BackfillRetrySource = 'reports' | 'analytics'
+
 // ============================================================================
 // Progress & Error Types (AC1)
 // ============================================================================
@@ -96,6 +103,17 @@ export interface BackfillActionRequest {
 export interface BackfillActionResponse {
   cabinet_id: string
   status: BackfillStatus
+  message: string
+}
+
+/**
+ * Story 165.5: response from POST /v1/admin/backfill/{report|analytics}/retry.
+ * The backend returns `{ success: true, message: "... retry started (attempt N)" }`.
+ * `success` defaults to false if the backend omits it (defensive — never trust
+ * a bare truthy read on backend data per the Boundary Normalizer Pattern).
+ */
+export interface RetryBackfillResponse {
+  success: boolean
   message: string
 }
 

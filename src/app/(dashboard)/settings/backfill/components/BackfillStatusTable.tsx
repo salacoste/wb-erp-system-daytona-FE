@@ -18,11 +18,12 @@ import {
 } from '@/components/ui/table'
 import { Badge } from '@/components/ui/badge'
 import { Skeleton } from '@/components/ui/skeleton'
-import type { BackfillCabinetStatus } from '@/types/backfill'
+import type { BackfillCabinetStatus, BackfillRetrySource } from '@/types/backfill'
 import { getStatusConfig, formatEstimatedTime } from '@/lib/backfill-utils'
 import { BackfillProgressBar } from './BackfillProgressBar'
 import { BackfillControlButtons } from './BackfillControlButtons'
 import { BackfillErrorLog } from './BackfillErrorLog'
+import { BackfillRetryControls } from './BackfillRetryControls'
 
 interface BackfillStatusTableProps {
   cabinets: BackfillCabinetStatus[]
@@ -30,9 +31,13 @@ interface BackfillStatusTableProps {
   onPause: (cabinetId: string) => void
   onResume: (cabinetId: string) => void
   onRetry: (cabinetId: string) => void
+  /** Story 165.5: per-source retry callback (separate report/analytics endpoints). */
+  onRetrySource?: (cabinetId: string, dataSource: BackfillRetrySource) => void
   pausingCabinetId?: string | null
   resumingCabinetId?: string | null
   retryingCabinetId?: string | null
+  /** Story 165.5: `"${cabinetId}:${dataSource}"` keys currently in-flight. */
+  retryingSourceKeys?: Set<string>
 }
 
 /**
@@ -85,9 +90,11 @@ export function BackfillStatusTable({
   onPause,
   onResume,
   onRetry,
+  onRetrySource,
   pausingCabinetId,
   resumingCabinetId,
   retryingCabinetId,
+  retryingSourceKeys,
 }: BackfillStatusTableProps) {
   if (isLoading) {
     return <TableSkeleton />
@@ -115,8 +122,9 @@ export function BackfillStatusTable({
             <TableRow
               key={cabinet.cabinet_id}
               // F-29: highlight on EITHER backfill failing so an analytics-only
-              // failure isn't visually swallowed. PENDING BACKEND: per-status retry
-              // endpoint needed (current retry is all-or-nothing per cabinet).
+              // failure isn't visually swallowed. Per-source retry is now live
+              // (Story 165.5: BackfillRetryControls → /report/retry | /analytics/retry);
+              // the failed-state retry path is per-source, never cabinet-wide.
               className={
                 cabinet.status === 'failed' || cabinet.analytics_status === 'failed'
                   ? 'bg-red-50'
@@ -148,18 +156,27 @@ export function BackfillStatusTable({
                 {formatEstimatedTime(cabinet.progress?.estimated_remaining_seconds ?? null)}
               </TableCell>
               <TableCell>
-                <BackfillErrorLog cabinet={cabinet} onRetry={onRetry} />
+                <BackfillErrorLog cabinet={cabinet} />
               </TableCell>
               <TableCell>
-                <BackfillControlButtons
-                  cabinet={cabinet}
-                  onPause={onPause}
-                  onResume={onResume}
-                  onRetry={onRetry}
-                  isPausing={pausingCabinetId === cabinet.cabinet_id}
-                  isResuming={resumingCabinetId === cabinet.cabinet_id}
-                  isRetrying={retryingCabinetId === cabinet.cabinet_id}
-                />
+                <div className="flex flex-col gap-1.5">
+                  <BackfillControlButtons
+                    cabinet={cabinet}
+                    onPause={onPause}
+                    onResume={onResume}
+                    onRetry={onRetry}
+                    isPausing={pausingCabinetId === cabinet.cabinet_id}
+                    isResuming={resumingCabinetId === cabinet.cabinet_id}
+                    isRetrying={retryingCabinetId === cabinet.cabinet_id}
+                  />
+                  {onRetrySource && (
+                    <BackfillRetryControls
+                      cabinet={cabinet}
+                      retryingKeys={retryingSourceKeys ?? new Set()}
+                      onRetry={onRetrySource}
+                    />
+                  )}
+                </div>
               </TableCell>
             </TableRow>
           ))}

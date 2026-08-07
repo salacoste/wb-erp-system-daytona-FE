@@ -16,11 +16,13 @@ import {
   useStartBackfill,
   usePauseBackfill,
   useResumeBackfill,
+  useRetryBackfill,
   hasActiveBackfillJobs,
   isAllBackfillCompleted,
 } from '../useBackfillAdmin'
 import type { BackfillCabinetStatus } from '@/types/backfill'
 import { backfillQueryKeys } from '@/lib/api/backfill'
+import { ApiError } from '@/types/api'
 import {
   mockBackfillStatusResponse,
   mockBackfillStatusCompleted,
@@ -836,4 +838,92 @@ describe('isAllBackfillCompleted', () => {
     expect(isAllBackfillCompleted(allNormalized() as BackfillCabinetStatus[])).toBe(false)
   })
   it('returns true for empty array', () => expect(isAllBackfillCompleted([])).toBe(true))
+})
+
+// ============================================================================
+// useRetryBackfill — Story 165.5 per-status retry
+// ============================================================================
+
+describe('useRetryBackfill - Story 165.5', () => {
+  it('POSTs report/retry when dataSource="reports" and returns the normalized response', async () => {
+    vi.mocked(apiClient.post).mockResolvedValueOnce({
+      success: true,
+      message: 'Reports backfill retry started (attempt 2)',
+    })
+    const { result } = renderHook(() => useRetryBackfill(), { wrapper: createWrapper() })
+    result.current.mutate({ cabinetId: 'cab-1', dataSource: 'reports' })
+    await waitFor(() => expect(result.current.isSuccess).toBe(true))
+    expect(apiClient.post).toHaveBeenCalledWith('/v1/admin/backfill/report/retry', {
+      cabinetId: 'cab-1',
+    })
+    expect(result.current.data).toEqual({
+      success: true,
+      message: 'Reports backfill retry started (attempt 2)',
+    })
+  })
+
+  it('POSTs analytics/retry when dataSource="analytics"', async () => {
+    vi.mocked(apiClient.post).mockResolvedValueOnce({ success: true, message: 'ok' })
+    const { result } = renderHook(() => useRetryBackfill(), { wrapper: createWrapper() })
+    result.current.mutate({ cabinetId: 'cab-1', dataSource: 'analytics' })
+    await waitFor(() => expect(result.current.isSuccess).toBe(true))
+    expect(apiClient.post).toHaveBeenCalledWith('/v1/admin/backfill/analytics/retry', {
+      cabinetId: 'cab-1',
+    })
+  })
+
+  it('invalidates backfill status on success (AC5 refresh)', async () => {
+    vi.mocked(apiClient.post).mockResolvedValueOnce({ success: true, message: 'ok' })
+    const { client, wrapper } = createWrapperWithClient()
+    const spy = vi.spyOn(client, 'invalidateQueries')
+    const { result } = renderHook(() => useRetryBackfill(), { wrapper })
+    result.current.mutate({ cabinetId: 'cab-1', dataSource: 'reports' })
+    await waitFor(() => expect(result.current.isSuccess).toBe(true))
+    expect(spy).toHaveBeenCalledWith({ queryKey: backfillQueryKeys.all })
+  })
+
+  it('ALSO invalidates backfill status on error so a 409/404 race resolves in the table', async () => {
+    vi.mocked(apiClient.post).mockRejectedValueOnce(new ApiError('BACKFILL_IN_PROGRESS', 409, {}))
+    const { client, wrapper } = createWrapperWithClient()
+    const spy = vi.spyOn(client, 'invalidateQueries')
+    const { result } = renderHook(() => useRetryBackfill(), { wrapper })
+    result.current.mutate({ cabinetId: 'cab-1', dataSource: 'reports' })
+    await waitFor(() => expect(result.current.isError).toBe(true))
+    expect(spy).toHaveBeenCalledWith({ queryKey: backfillQueryKeys.all })
+  })
+
+  it('propagates 404 BACKFILL_NOT_FAILED as ApiError', async () => {
+    vi.mocked(apiClient.post).mockRejectedValueOnce(new ApiError('BACKFILL_NOT_FAILED', 404, {}))
+    const { result } = renderHook(() => useRetryBackfill(), { wrapper: createWrapper() })
+    result.current.mutate({ cabinetId: 'cab-1', dataSource: 'reports' })
+    await waitFor(() => expect(result.current.isError).toBe(true))
+    expect(result.current.error).toBeInstanceOf(ApiError)
+    expect((result.current.error as ApiError).status).toBe(404)
+  })
+
+  it('propagates 409 BACKFILL_IN_PROGRESS as ApiError', async () => {
+    vi.mocked(apiClient.post).mockRejectedValueOnce(new ApiError('BACKFILL_IN_PROGRESS', 409, {}))
+    const { result } = renderHook(() => useRetryBackfill(), { wrapper: createWrapper() })
+    result.current.mutate({ cabinetId: 'cab-1', dataSource: 'analytics' })
+    await waitFor(() => expect(result.current.isError).toBe(true))
+    expect((result.current.error as ApiError).status).toBe(409)
+  })
+
+  it('is independent per dataSource — reports retry does not consume the analytics call', async () => {
+    vi.mocked(apiClient.post).mockResolvedValueOnce({ success: true, message: 'reports ok' })
+    const { result } = renderHook(() => useRetryBackfill(), { wrapper: createWrapper() })
+    result.current.mutate({ cabinetId: 'cab-1', dataSource: 'reports' })
+    await waitFor(() => expect(result.current.isSuccess).toBe(true))
+    // Only one call (reports); analytics endpoint was never touched.
+    expect(apiClient.post).toHaveBeenCalledTimes(1)
+    const urls = vi.mocked(apiClient.post).mock.calls.map(c => c[0])
+    expect(urls).not.toContain('/v1/admin/backfill/analytics/retry')
+  })
+
+  it('exposes isPending during the in-flight request', async () => {
+    vi.mocked(apiClient.post).mockReturnValue(new Promise(() => {}))
+    const { result } = renderHook(() => useRetryBackfill(), { wrapper: createWrapper() })
+    result.current.mutate({ cabinetId: 'cab-1', dataSource: 'reports' })
+    await waitFor(() => expect(result.current.isPending).toBe(true))
+  })
 })

@@ -24,8 +24,12 @@ interface BackfillControlButtonsProps {
 }
 
 /**
- * Control buttons for backfill actions
- * Shows appropriate button based on cabinet status
+ * Control buttons for backfill actions.
+ *
+ * Story 165.5: the cabinet-wide `onRetry` action here is a FULL RESTART
+ * (`useStartBackfill` → `/start`, NOT resume-from-checkpoint). It is labeled
+ * "Перезапустить с нуля" so it cannot be read as the per-source retry path,
+ * which lives in `BackfillRetryControls` (`/report/retry` | `/analytics/retry`).
  */
 export function BackfillControlButtons({
   cabinet,
@@ -87,14 +91,14 @@ export function BackfillControlButtons({
           size="sm"
           onClick={() => onRetry(cabinet.cabinet_id)}
           disabled={isLoading}
-          aria-label={`Повторить бэкфилл для ${cabinet.cabinet_name}`}
+          aria-label={`Перезапустить бэкфилл с нуля для ${cabinet.cabinet_name}`}
         >
           {isRetrying ? (
             <Loader2 className="h-4 w-4 animate-spin" />
           ) : (
             <RotateCcw className="mr-1 h-4 w-4" />
           )}
-          Повторить
+          Перезапустить с нуля
         </Button>
       )}
     </div>
