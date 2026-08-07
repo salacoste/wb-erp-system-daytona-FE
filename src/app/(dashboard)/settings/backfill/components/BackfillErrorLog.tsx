@@ -23,13 +23,18 @@ import type { BackfillCabinetStatus } from '@/types/backfill'
 
 interface BackfillErrorLogProps {
   cabinet: BackfillCabinetStatus
-  onRetry?: (cabinetId: string) => void
 }
 
 /**
- * Error badge with expandable error details modal
+ * Error badge with expandable error details modal.
+ *
+ * Story 165.5: this modal is purely informational — it shows WHY a source failed.
+ * The retry affordance for a failed source lives in `BackfillRetryControls`
+ * (per-source `/report/retry` | `/analytics/retry`), rendered in the same row,
+ * NOT a cabinet-wide `/start` masquerading as retry here. AC2/AC4: a failed
+ * source's retry is per-source, never cabinet-wide.
  */
-export function BackfillErrorLog({ cabinet, onRetry }: BackfillErrorLogProps) {
+export function BackfillErrorLog({ cabinet }: BackfillErrorLogProps) {
   const [isOpen, setIsOpen] = useState(false)
 
   // Use last_error from cabinet status
@@ -73,17 +78,6 @@ export function BackfillErrorLog({ cabinet, onRetry }: BackfillErrorLogProps) {
             <Button variant="outline" onClick={() => setIsOpen(false)}>
               Закрыть
             </Button>
-            {onRetry && (
-              <Button
-                variant="default"
-                onClick={() => {
-                  onRetry(cabinet.cabinet_id)
-                  setIsOpen(false)
-                }}
-              >
-                Повторить бэкфилл
-              </Button>
-            )}
           </div>
         </DialogContent>
       </Dialog>

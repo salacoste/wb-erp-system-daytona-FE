@@ -30,6 +30,7 @@ vi.mock('@/hooks/useBackfillAdmin', () => ({
   useStartBackfill: vi.fn(),
   usePauseBackfill: vi.fn(),
   useResumeBackfill: vi.fn(),
+  useRetryBackfill: vi.fn(),
 }))
 
 vi.mock('sonner', () => ({
@@ -42,6 +43,7 @@ import {
   useStartBackfill,
   usePauseBackfill,
   useResumeBackfill,
+  useRetryBackfill,
 } from '@/hooks/useBackfillAdmin'
 
 // Dynamic import to apply mocks before module evaluation
@@ -52,10 +54,12 @@ const mockUseBackfillStatus = vi.mocked(useBackfillStatus)
 const mockUseStartBackfill = vi.fn()
 const mockUsePauseBackfill = vi.fn()
 const mockUseResumeBackfill = vi.fn()
+const mockUseRetryBackfill = vi.fn()
 
 vi.mocked(useStartBackfill).mockImplementation(mockUseStartBackfill as never)
 vi.mocked(usePauseBackfill).mockImplementation(mockUsePauseBackfill as never)
 vi.mocked(useResumeBackfill).mockImplementation(mockUseResumeBackfill as never)
+vi.mocked(useRetryBackfill).mockImplementation(mockUseRetryBackfill as never)
 
 function setOwnerUser() {
   mockUseAuth.mockReturnValue({
@@ -103,6 +107,11 @@ function setLoadedStatus(cabinets: unknown[] = []) {
     mutateAsync: vi.fn(),
     isPending: false,
   } as unknown as ReturnType<typeof useResumeBackfill>)
+
+  mockUseRetryBackfill.mockReturnValue({
+    mutateAsync: vi.fn(),
+    isPending: false,
+  } as unknown as ReturnType<typeof useRetryBackfill>)
 }
 
 function renderPage() {

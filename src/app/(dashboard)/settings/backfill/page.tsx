@@ -52,11 +52,13 @@ export default function BackfillAdminPage() {
     pausingId,
     resumingId,
     retryingId,
+    retryingSourceKeys,
     startMutation,
     handleStart,
     handlePause,
     handleResume,
     handleRetry,
+    handleRetrySource,
   } = useBackfillHandlers()
 
   // Fetch backfill status with polling only for owners; managers must not call owner-only API.
@@ -146,9 +148,11 @@ export default function BackfillAdminPage() {
           onPause={handlePause}
           onResume={handleResume}
           onRetry={handleRetry}
+          onRetrySource={handleRetrySource}
           pausingCabinetId={pausingId}
           resumingCabinetId={resumingId}
           retryingCabinetId={retryingId}
+          retryingSourceKeys={retryingSourceKeys}
         />
 
         {/* Start Dialog */}
