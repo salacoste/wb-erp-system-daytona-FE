@@ -503,3 +503,47 @@ describe('extractStorageTariffs warning options', () => {
     expect(logger.warn).not.toHaveBeenCalled()
   })
 })
+
+// Story 164.3-FE: fallbackReason discriminator consumed by the aggregate
+// TariffFallbackDiagnostics path. Direct callers still warn directly (AC#4);
+// these assertions pin the reason code so the aggregate sample is stable.
+describe('extractStorageTariffs fallbackReason discriminator', () => {
+  beforeEach(() => {
+    vi.spyOn(logger, 'warn').mockImplementation(() => {})
+  })
+
+  it('reports fallbackReason="empty-response" for null/invalid input', () => {
+    const result = extractStorageTariffs(null, 'supply')
+
+    expect(result.usingFallback).toBe(true)
+    expect(result.fallbackReason).toBe('empty-response')
+  })
+
+  it('reports fallbackReason="base-zero" when baseLiterRub is 0', () => {
+    const result = extractStorageTariffs(
+      { coefficient: 1.5, baseLiterRub: 0, additionalLiterRub: 0 },
+      'supply'
+    )
+
+    expect(result.usingFallback).toBe(true)
+    expect(result.fallbackReason).toBe('base-zero')
+    // Coefficient preservation unchanged (AC#4: numeric values byte-identical).
+    expect(result.tariffs.coefficient).toBe(1.5)
+  })
+
+  it('omits fallbackReason for non-fallback extractions', () => {
+    const result = extractStorageTariffs(
+      { coefficient: 1.65, baseLiterRub: 41.25, additionalLiterRub: 0 },
+      'supply'
+    )
+
+    expect(result.usingFallback).toBe(false)
+    expect(result.fallbackReason).toBeUndefined()
+  })
+
+  it('still emits the direct per-call warn by default (AC#4: direct path unchanged)', () => {
+    extractStorageTariffs({ coefficient: 1.0, baseLiterRub: 0, additionalLiterRub: 0 }, 'supply')
+
+    expect(logger.warn).toHaveBeenCalledWith('[StorageTariffs] baseLiterRub=0, applying fallback')
+  })
+})

@@ -32,6 +32,11 @@ const coeffWithStatus = (
     tariffDataStatus: hasTariffRates ? 'complete' : 'missing_rates',
   }) as AcceptanceCoefficient
 
+// Story 164.3-FE: per-row fallback warns are suppressed on the aggregate path
+// and collapsed into ONE logger.warn diagnostic via TariffFallbackDiagnostics.
+// The sample carries non-sensitive reason codes (NOT warehouse ids/names), and
+// identical snapshots are deduped across renders. Calculation RESULTS are
+// byte-identical to before; only the warning emit pattern changed (AC#5).
 describe('extractSupplyWarehouses fallback warning policy', () => {
   beforeEach(() => {
     resetStorageFallbackLogDedupForTests()
@@ -39,33 +44,42 @@ describe('extractSupplyWarehouses fallback warning policy', () => {
     vi.spyOn(logger, 'debug').mockImplementation(() => {})
   })
 
-  it('emits one summarized debug message per extraction when many warehouses use fallback', () => {
+  it('emits exactly ONE aggregate warn when many warehouses use the same fallback', () => {
     const warehouses = extractSupplyWarehouses([coeff(1, 0), coeff(2, 0), coeff(3, 0.08)])
 
+    // Calculation results unchanged.
     expect(warehouses).toHaveLength(3)
     expect(warehouses.filter(w => w.tariffs.usingStorageFallback)).toHaveLength(2)
-    expect(logger.warn).not.toHaveBeenCalled()
-    expect(logger.debug).toHaveBeenCalledTimes(1)
-    expect(logger.debug).toHaveBeenCalledWith(
+    // AC#2: ONE aggregate diagnostic, not N per-row warns.
+    expect(logger.warn).toHaveBeenCalledTimes(1)
+    expect(logger.warn).toHaveBeenCalledWith(
       '[StorageTariffs] 2 warehouse(s) using fallback storage tariffs for this calculation',
-      {
-        sample: [
-          { warehouseId: 1, warehouseName: 'Warehouse 1' },
-          { warehouseId: 2, warehouseName: 'Warehouse 2' },
-        ],
-      }
+      { reasons: ['base-zero', 'base-zero'] }
     )
+    // The aggregate moved off logger.debug (was debug-level noise; now warn-level diagnostic).
+    expect(logger.debug).not.toHaveBeenCalled()
   })
 
-  it('dedupes fallback summaries and keeps them out of warn-level console noise', () => {
+  it('dedupes identical fallback snapshots across repeated renders (no re-emit)', () => {
     extractSupplyWarehouses([coeff(1, 0)])
     extractSupplyWarehouses([coeff(1, 0)])
 
-    expect(logger.warn).not.toHaveBeenCalled()
-    expect(logger.debug).toHaveBeenCalledTimes(1)
+    // AC#3: identical snapshot signature -> only the first emit fires.
+    expect(logger.warn).toHaveBeenCalledTimes(1)
+  })
+
+  it('re-emits when the fallback snapshot materially changes', () => {
+    extractSupplyWarehouses([coeff(1, 0)])
+    // Now TWO warehouses fall back -> count differs -> materially new snapshot.
+    extractSupplyWarehouses([coeff(1, 0), coeff(2, 0)])
+
+    expect(logger.warn).toHaveBeenCalledTimes(2)
   })
 
   it('normalizes box-type storage tariffs with the same fallback policy', () => {
+    // getTariffsByBoxTypeFromCoefficients is a DIRECT caller (not the aggregate
+    // supply lookup), so it keeps per-call warn-suppression and does NOT route
+    // through the diagnostics accumulator (AC#4).
     const boxTypes = getTariffsByBoxTypeFromCoefficients([coeff(1, 0)], 1)
 
     expect(boxTypes[0]?.storage.baseLiterRub).toBe(0.11)
