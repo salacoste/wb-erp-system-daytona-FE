@@ -11,11 +11,19 @@ import { extractStorageTariffs } from '@/lib/tariff-extraction-utils'
 import type { SupplyWarehouse, BoxTypeTariffs } from './supply-tariffs-types'
 import { logger } from '@/lib/logger'
 import { toSupplyDateTariffs } from './supply-tariffs-helpers'
+import {
+  storageFallbackDiagnostics,
+  resetStorageFallbackDiagnosticsForTests,
+} from '@/lib/tariff-fallback-diagnostics'
 
-const loggedStorageFallbackSummaries = new Set<string>()
-
+/**
+ * Back-compat alias for the pre-164.3 test reset hook. Delegates to the
+ * TariffFallbackDiagnostics singleton reset. Kept so older test imports compile
+ * while the canonical reset lives in tariff-fallback-diagnostics.ts.
+ * @deprecated prefer `resetStorageFallbackDiagnosticsForTests` (Story 164.3-FE).
+ */
 export function resetStorageFallbackLogDedupForTests() {
-  loggedStorageFallbackSummaries.clear()
+  resetStorageFallbackDiagnosticsForTests()
 }
 
 function warehousePreferenceScore(coefficient: AcceptanceCoefficient): number {
@@ -40,24 +48,18 @@ export function extractSupplyWarehouses(coefficients: AcceptanceCoefficient[]): 
     }
   })
 
-  let storageFallbackCount = 0
-  const storageFallbackSamples: Array<{ warehouseId: number; warehouseName: string }> = []
-
   const warehouses = Array.from(warehouseMap.values())
     .filter(c => c.hasTariffRates !== false)
     .map(c => {
       // Use extractStorageTariffs utility for proper fallback logic. Suppress per-row
-      // warnings here and emit one invocation-scoped summary after aggregation.
+      // warnings here and emit one invocation-scoped summary via the bounded
+      // TariffFallbackDiagnostics accumulator after aggregation (Story 164.3-FE).
       // Only triggers fallback when baseLiterRub=0, NOT when additionalLiterRub=0 (Pallets).
       const storageExtraction = extractStorageTariffs(c.storage, 'supply', { warn: false })
       if (storageExtraction.usingFallback) {
-        storageFallbackCount++
-        if (storageFallbackSamples.length < 3) {
-          storageFallbackSamples.push({
-            warehouseId: c.warehouseId,
-            warehouseName: c.warehouseName,
-          })
-        }
+        storageFallbackDiagnostics.record({
+          reason: storageExtraction.fallbackReason ?? 'unknown',
+        })
       }
 
       // CRITICAL: SUPPLY API returns rates ALREADY multiplied by coefficient!
@@ -84,16 +86,10 @@ export function extractSupplyWarehouses(coefficients: AcceptanceCoefficient[]): 
     })
     .sort((a, b) => a.name.localeCompare(b.name, 'ru'))
 
-  if (storageFallbackCount > 0) {
-    const fallbackSignature = JSON.stringify({ storageFallbackCount, storageFallbackSamples })
-    if (!loggedStorageFallbackSummaries.has(fallbackSignature)) {
-      loggedStorageFallbackSummaries.add(fallbackSignature)
-      logger.debug(
-        `[StorageTariffs] ${storageFallbackCount} warehouse(s) using fallback storage tariffs for this calculation`,
-        { sample: storageFallbackSamples }
-      )
-    }
-  }
+  // Emit ONE aggregate diagnostic for this calculation (count + bounded
+  // non-sensitive reason sample). Identical snapshot across renders is
+  // deduped; a materially changed snapshot re-emits. (Story 164.3-FE / FR14)
+  storageFallbackDiagnostics.flush()
 
   return warehouses
 }
@@ -172,7 +168,19 @@ export function findTariffsByNameFromCoefficients(
   return match ? toSupplyDateTariffs(match) : null
 }
 
-/** Get tariffs for all available box types for a warehouse (first available date). */
+/**
+ * Get tariffs for all available box types for a warehouse (first available date).
+ *
+ * Story 164.3-FE / AC#4: this path EXPLICITLY SUPPRESSES per-row fallback
+ * warnings via `{ warn: false }` below (an opt-out of `extractStorageTariffs`'s
+ * default per-call warn). It does NOT route through the aggregate
+ * TariffFallbackDiagnostics accumulator and therefore emits NO fallback
+ * diagnostic at all — neither per-row nor aggregate. This is the intentional,
+ * pre-existing behavior for the box-type view and is out of scope for the
+ * warning-dedup story; only the aggregate supply lookup
+ * (`extractSupplyWarehouses`) emits aggregate diagnostics. Callers that do not
+ * opt out (`{ warn: false }` omitted) retain the direct per-call warn.
+ */
 export function getTariffsByBoxTypeFromCoefficients(
   coefficients: AcceptanceCoefficient[],
   warehouseId: number
@@ -193,6 +201,8 @@ export function getTariffsByBoxTypeFromCoefficients(
   // Convert to BoxTypeTariffs array
   return Array.from(boxTypeMap.values())
     .map(c => {
+      // AC#4: explicit opt-out — suppresses the default per-call fallback warn.
+      // Emits NO aggregate diagnostic either (only extractSupplyWarehouses does).
       const storageExtraction = extractStorageTariffs(c.storage, 'supply', { warn: false })
 
       return {

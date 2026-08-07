@@ -3,9 +3,26 @@
  * Story 44.41-FE: Storage Tariff Zero Bug Fix
  * Epic 44: Price Calculator UI (Frontend)
  *
- * STUB FILE - TDD Red Phase
- * This file contains minimal type definitions and placeholder functions.
- * Implementation will be added to make tests pass (Green Phase).
+ * Extracts normalized storage tariffs from a raw API response, applying a
+ * deterministic fallback when the base rate is missing/zero. Implemented and
+ * shipped (see tests in src/lib/__tests__/tariff-extraction-utils.test.ts).
+ *
+ * Fallback rules (current behavior, not aspirational):
+ * - SUPPLY shape:   baseLiterRub / additionalLiterRub / coefficient
+ * - INVENTORY shape: base_per_day_rub / liter_per_day_rub / coefficient
+ * - SUPPLY field names take precedence when both are present.
+ * - Fallback triggers ONLY on baseLiterRub === 0 (or non-numeric / null /
+ *   non-object response). additionalLiterRub === 0 is VALID for Pallets and
+ *   is NOT a fallback trigger.
+ * - On fallback: baseLiterRub/additionalLiterRub revert to DEFAULT_STORAGE_TARIFFS,
+ *   but the real `coefficient` from the response is PRESERVED (incl. -1 = unavailable).
+ * - Warning emission: a direct per-call `logger.warn` fires by default. Callers
+ *   can opt out of the per-call warn by passing `{ warn: false }` (AC#4: warn
+ *   is retained by default; suppression is opt-in). Two known opt-out callers:
+ *   (1) `extractSupplyWarehouses` (aggregate supply lookup) suppresses per-row
+ *   warns AND emits one summary diagnostic via TariffFallbackDiagnostics; (2)
+ *   `getTariffsByBoxTypeFromCoefficients` (box-type view) suppresses per-row
+ *   warns and emits NO diagnostic at all (neither per-row nor aggregate).
  *
  * @see docs/stories/epic-44/story-44.41-fe-storage-tariff-fix.md
  */
@@ -25,10 +42,16 @@ export interface NormalizedStorageTariffs {
   source: TariffSource
 }
 
-/** Storage tariff extraction result */
+/**
+ * Storage tariff extraction result.
+ * `fallbackReason` is a stable, non-sensitive code describing which fallback
+ * branch fired ('empty-response' | 'base-zero'); present only when
+ * `usingFallback === true`. Aggregate callers use it to dedup diagnostics.
+ */
 export interface StorageTariffExtraction {
   tariffs: NormalizedStorageTariffs
   usingFallback: boolean
+  fallbackReason?: 'empty-response' | 'base-zero'
   rawResponse: unknown
 }
 
@@ -51,7 +74,7 @@ export const DEFAULT_STORAGE_TARIFFS: NormalizedStorageTariffs = {
 import { logger } from '@/lib/logger'
 
 // ============================================================================
-// Functions (STUB - to be implemented)
+// Functions
 // ============================================================================
 
 /**
@@ -81,6 +104,7 @@ export function extractStorageTariffs(
     return {
       tariffs: { ...DEFAULT_STORAGE_TARIFFS },
       usingFallback: true,
+      fallbackReason: 'empty-response',
       rawResponse: storageResponse,
     }
   }
@@ -123,6 +147,7 @@ export function extractStorageTariffs(
         source: 'fallback',
       },
       usingFallback: true,
+      fallbackReason: 'base-zero',
       rawResponse: storageResponse,
     }
   }
