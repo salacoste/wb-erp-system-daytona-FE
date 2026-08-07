@@ -22,10 +22,10 @@ export const TEST_PERIODS = {
  * Used for locating elements in Playwright tests
  */
 export const PERIOD_SELECTORS = {
-  // Period type toggle (Tabs component)
+  // Period type toggle (RadioGroup, Story 163.6-FE)
   periodToggle: '[data-testid="period-type-toggle"]',
-  weekTab: '[data-testid="period-tab-week"]',
-  monthTab: '[data-testid="period-tab-month"]',
+  weekOption: '[data-testid="period-toggle-week"]',
+  monthOption: '[data-testid="period-toggle-month"]',
 
   // Period dropdowns (Select components)
   weekDropdown: '[data-testid="week-selector"]',

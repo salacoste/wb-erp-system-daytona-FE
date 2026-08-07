@@ -1,8 +1,7 @@
 /**
- * TDD Tests for Story 60.2-FE: Dashboard Period Selector Component
- * Epic 60-FE: Dashboard & Analytics UX Improvements
- *
- * GREEN Phase: Tests implemented after component creation
+ * Tests for Dashboard Period Selector Component
+ * Story 60.2-FE: Period Selector Component
+ * Story 163.6-FE: Period type toggle migrated from Tabs to RadioGroup (FR13/UX-DR5).
  *
  * @see docs/stories/epic-60/story-60.2-fe-period-selector-component.md
  */
@@ -43,10 +42,10 @@ const createMockContextValue = (overrides = {}) => ({
 })
 
 // =============================================================================
-// Story 60.2-FE: AC1 - Period Type Toggle (Tabs)
+// Story 163.6-FE: Period type RadioGroup toggle (replacing Tabs)
 // =============================================================================
 
-describe('Story 60.2-FE: AC1 - Period Type Toggle', () => {
+describe('Story 163.6-FE: Period type RadioGroup toggle', () => {
   beforeEach(() => {
     vi.clearAllMocks()
     mockUseDashboardPeriod.mockReturnValue(createMockContextValue())
@@ -54,44 +53,124 @@ describe('Story 60.2-FE: AC1 - Period Type Toggle', () => {
 
   afterEach(() => cleanup())
 
-  it('renders week/month tabs', () => {
+  it('renders a radiogroup with week/month options (no tablist/tabpanel)', () => {
     render(<DashboardPeriodSelector />)
-    expect(screen.getByRole('tablist')).toBeInTheDocument()
-    expect(screen.getByRole('tab', { name: /неделя/i })).toBeInTheDocument()
-    expect(screen.getByRole('tab', { name: /месяц/i })).toBeInTheDocument()
+    expect(screen.getByRole('radiogroup')).toBeInTheDocument()
+    expect(screen.getByRole('radio', { name: /неделя/i })).toBeInTheDocument()
+    expect(screen.getByRole('radio', { name: /месяц/i })).toBeInTheDocument()
+    // AC1/AC5: no tab-panel semantics remain after the migration.
+    expect(screen.queryByRole('tablist')).not.toBeInTheDocument()
+    expect(screen.queryByRole('tab')).not.toBeInTheDocument()
+    expect(screen.queryByRole('tabpanel')).not.toBeInTheDocument()
   })
 
-  it('week tab is active by default when periodType is week', () => {
+  it('week option is checked when periodType is week', () => {
     render(<DashboardPeriodSelector />)
-    const weekTab = screen.getByRole('tab', { name: /неделя/i })
-    expect(weekTab).toHaveAttribute('data-state', 'active')
+    expect(screen.getByRole('radio', { name: /неделя/i })).toBeChecked()
+    expect(screen.getByRole('radio', { name: /месяц/i })).not.toBeChecked()
   })
 
-  it('month tab is active when periodType is month', () => {
+  it('month option is checked when periodType is month', () => {
     mockUseDashboardPeriod.mockReturnValue(createMockContextValue({ periodType: 'month' }))
     render(<DashboardPeriodSelector />)
-    const monthTab = screen.getByRole('tab', { name: /месяц/i })
-    expect(monthTab).toHaveAttribute('data-state', 'active')
+    expect(screen.getByRole('radio', { name: /месяц/i })).toBeChecked()
+    expect(screen.getByRole('radio', { name: /неделя/i })).not.toBeChecked()
   })
 
-  it('clicking month tab calls setPeriodType with "month"', async () => {
+  it('clicking "Месяц" calls setPeriodType exactly once with "month" (AC2)', async () => {
     const setPeriodType = vi.fn()
     mockUseDashboardPeriod.mockReturnValue(createMockContextValue({ setPeriodType }))
     render(<DashboardPeriodSelector />)
     const user = userEvent.setup()
-    await user.click(screen.getByRole('tab', { name: /месяц/i }))
+    await user.click(screen.getByRole('radio', { name: /месяц/i }))
+    expect(setPeriodType).toHaveBeenCalledTimes(1)
     expect(setPeriodType).toHaveBeenCalledWith('month')
   })
 
-  it('clicking week tab calls setPeriodType with "week"', async () => {
+  it('clicking "Неделя" calls setPeriodType exactly once with "week" (AC3)', async () => {
     const setPeriodType = vi.fn()
     mockUseDashboardPeriod.mockReturnValue(
       createMockContextValue({ periodType: 'month', setPeriodType })
     )
     render(<DashboardPeriodSelector />)
     const user = userEvent.setup()
-    await user.click(screen.getByRole('tab', { name: /неделя/i }))
+    await user.click(screen.getByRole('radio', { name: /неделя/i }))
+    expect(setPeriodType).toHaveBeenCalledTimes(1)
     expect(setPeriodType).toHaveBeenCalledWith('week')
+  })
+
+  it('re-activating the already-selected option keeps value week (single-choice, AC4)', async () => {
+    const setPeriodType = vi.fn()
+    mockUseDashboardPeriod.mockReturnValue(createMockContextValue({ setPeriodType }))
+    render(<DashboardPeriodSelector />)
+    const user = userEvent.setup()
+    await user.click(screen.getByRole('radio', { name: /неделя/i }))
+    // Radix radio does not fire onValueChange when the already-checked item is
+    // re-activated, so setPeriodType is NOT called — the value stays 'week' and
+    // never becomes undefined (single-choice no-op, AC4).
+    expect(setPeriodType).not.toHaveBeenCalled()
+    expect(screen.getByRole('radio', { name: /неделя/i })).toBeChecked()
+    expect(screen.getByRole('radio', { name: /месяц/i })).not.toBeChecked()
+  })
+
+  it('selected week is preserved when switching month -> week (AC3, context behavior)', async () => {
+    // setPeriodType only changes periodType; selectedWeek lives in independent context state
+    // (src/contexts/dashboard-period-state.ts), so it is preserved across the switch.
+    const setPeriodType = vi.fn()
+    mockUseDashboardPeriod.mockReturnValue(
+      createMockContextValue({
+        periodType: 'month',
+        selectedWeek: '2026-W03',
+        setPeriodType,
+      })
+    )
+    render(<DashboardPeriodSelector />)
+    const user = userEvent.setup()
+    await user.click(screen.getByRole('radio', { name: /неделя/i }))
+    // The component only asks the context to switch type; it never touches the week.
+    // The fully-mocked context preserves selectedWeek='2026-W03' across the switch
+    // (real context behavior: src/contexts/dashboard-period-state.ts keeps them independent).
+    expect(setPeriodType).toHaveBeenCalledTimes(1)
+    expect(setPeriodType).toHaveBeenCalledWith('week')
+    expect(setPeriodType).not.toHaveBeenCalledWith('month')
+    // setWeek is never invoked by a type switch -> the previously-selected week survives.
+    const setWeek = mockUseDashboardPeriod.mock.results[0].value.setWeek
+    expect(setWeek).not.toHaveBeenCalled()
+  })
+
+  it('keyboard: arrow keys move focus between options (AC5 visible focus)', async () => {
+    mockUseDashboardPeriod.mockReturnValue(createMockContextValue())
+    render(<DashboardPeriodSelector />)
+    const user = userEvent.setup()
+    const weekRadio = screen.getByRole('radio', { name: /неделя/i })
+    const monthRadio = screen.getByRole('radio', { name: /месяц/i })
+    await user.tab()
+    expect(weekRadio).toHaveFocus()
+    // Radix radiogroup supports arrow-key roving between options.
+    await user.keyboard('{ArrowRight}')
+    expect(monthRadio).toHaveFocus()
+  })
+
+  it('keyboard: Space/Enter on the unselected option selects it (AC5)', async () => {
+    const setPeriodType = vi.fn()
+    mockUseDashboardPeriod.mockReturnValue(createMockContextValue({ setPeriodType }))
+    render(<DashboardPeriodSelector />)
+    const user = userEvent.setup()
+    const monthRadio = screen.getByRole('radio', { name: /месяц/i })
+    monthRadio.focus()
+    await user.keyboard('{ }')
+    expect(setPeriodType).toHaveBeenCalledWith('month')
+  })
+
+  it('radiogroup exposes a group label via aria-label (AC5)', () => {
+    render(<DashboardPeriodSelector />)
+    expect(screen.getByRole('radiogroup')).toHaveAttribute('aria-label', 'Тип периода')
+  })
+
+  it('disabled prop disables both radio options (AC6)', () => {
+    render(<DashboardPeriodSelector disabled />)
+    expect(screen.getByRole('radio', { name: /неделя/i })).toBeDisabled()
+    expect(screen.getByRole('radio', { name: /месяц/i })).toBeDisabled()
   })
 })
 
@@ -175,7 +254,7 @@ describe('Story 60.2-FE: AC4 - Refresh Button', () => {
     expect(screen.getByText(/Обновлено:/)).toBeInTheDocument()
   })
 
-  it('hides refresh button when compact prop is true', () => {
+  it('hides refresh button when compact prop is true (AC6)', () => {
     render(<DashboardPeriodSelector compact />)
     expect(screen.queryByRole('button', { name: /обновить/i })).not.toBeInTheDocument()
   })
@@ -191,7 +270,7 @@ describe('Story 60.2-FE: AC5 - Loading State', () => {
   })
   afterEach(() => cleanup())
 
-  it('shows skeleton when isLoading is true', () => {
+  it('shows skeleton when isLoading is true (AC6)', () => {
     mockUseDashboardPeriod.mockReturnValue(createMockContextValue({ isLoading: true }))
     render(<DashboardPeriodSelector />)
     expect(screen.getByTestId('period-selector-skeleton')).toBeInTheDocument()
