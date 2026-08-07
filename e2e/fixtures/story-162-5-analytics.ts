@@ -1,5 +1,11 @@
 import type { Page, Route } from '@playwright/test'
-import type { LiquidityCategory, LiquidityItem, LiquidityResponse } from '../../src/types/liquidity'
+import type {
+  LiquidityCategory,
+  LiquidityItem,
+  LiquidityResponse,
+  LiquidityTrendsResponse,
+  TrendDataPoint,
+} from '../../src/types/liquidity'
 import type {
   UnitEconomicsItem,
   UnitEconomicsResponse,
@@ -20,11 +26,13 @@ const COST_CATEGORY_ORDER = [
   'advertising',
 ]
 
-type AnalyticsMode = 'data' | 'empty' | 'error' | 'retry' | 'deferred'
+type AnalyticsMode = 'data' | 'empty' | 'error' | 'retry' | 'deferred' | 'malformed'
 
 interface Story1625RouteOptions {
   liquidity?: AnalyticsMode
   unitEconomics?: AnalyticsMode
+  /** Story 165.4-FE: trends section mode (default 'data'). */
+  liquidityTrends?: AnalyticsMode
 }
 
 interface DeferredRelease {
@@ -207,6 +215,57 @@ function buildLiquidityResponse(url: URL, empty: boolean): Readonly<LiquidityRes
   })
 }
 
+/**
+ * Story 165.4-FE: build a deterministic liquidity trends response.
+ * Returns `period` daily points ending today. The first 4 days are zero days
+ * (frozen_capital=0) to exercise the gaps rendering (AC2 — zeros preserved).
+ */
+function buildLiquidityTrendsResponse(
+  url: URL,
+  mode: AnalyticsMode
+): Readonly<LiquidityTrendsResponse> | Readonly<{ unexpected: true }> {
+  const period = parseInt(url.searchParams.get('period') || '90', 10)
+
+  if (mode === 'malformed') {
+    // Missing required meta/trends fields. With the Story 165.4-FE B2 boundary
+    // guard, getLiquidityTrends THROWS on this body (no `meta` / non-array
+    // `trends`) -> TanStack isError -> the section's canonical error/retry
+    // branch. (The normalizer no longer masks this into an empty response.)
+    return deepFreeze({ unexpected: true } as const)
+  }
+
+  if (mode === 'empty') {
+    return deepFreeze<LiquidityTrendsResponse>({
+      meta: { cabinet_id: 'story-165-4-empty', period_days: period, generated_at: FIXED_TIMESTAMP },
+      trends: [],
+      insights: [{ type: 'info', message: 'Недостаточно данных для анализа динамики' }],
+    })
+  }
+
+  const today = new Date(FIXED_TIMESTAMP)
+  const points: TrendDataPoint[] = []
+  for (let i = period - 1; i >= 0; i--) {
+    const date = new Date(today)
+    date.setDate(date.getDate() - i)
+    // First 4 days (i = period-1..period-4) are zero days.
+    const isZeroDay = i >= period - 4
+    points.push({
+      date: date.toISOString().split('T')[0],
+      distribution: isZeroDay
+        ? { highly_liquid_pct: 0, medium_pct: 0, low_pct: 0, illiquid_pct: 0 }
+        : { highly_liquid_pct: 60, medium_pct: 25, low_pct: 10, illiquid_pct: 5 },
+      frozen_capital: isZeroDay ? 0 : 500_000,
+      avg_turnover_days: isZeroDay ? 0 : 40,
+    })
+  }
+
+  return deepFreeze<LiquidityTrendsResponse>({
+    meta: { cabinet_id: 'story-165-4-trends', period_days: period, generated_at: FIXED_TIMESTAMP },
+    trends: points,
+    insights: [{ type: 'improvement', message: 'Динамика стабильна' }],
+  })
+}
+
 function unitEconomicsItem(index: number, marker: string): UnitEconomicsItem {
   const revenue = 10_000 + index * 1_000
   const cogsPct = index === 0 ? 125 : 28 + (index % 9)
@@ -386,6 +445,7 @@ export async function installStory1625AnalyticsRoutes(
 ): Promise<Story1625AnalyticsController> {
   const liquidityMode = options.liquidity ?? 'data'
   const unitEconomicsMode = options.unitEconomics ?? 'data'
+  const liquidityTrendsMode = options.liquidityTrends ?? 'data'
   const liquidityDeferred = createDeferredRelease()
   const unitEconomicsDeferred = createDeferredRelease()
   let liquidityRetrySuccess = false
@@ -403,6 +463,33 @@ export async function installStory1625AnalyticsRoutes(
       )
     }
   }
+
+  // Story 165.4-FE: liquidity TRENDS route. Registered BEFORE the main liquidity
+  // route (Playwright first-match-wins) so /v1/analytics/liquidity/trends is
+  // fulfilled here instead of falling through to the main guard (which would
+  // reject the period query). Validates the trends contract: GET + period only.
+  await page.route(
+    /\/v1\/analytics\/liquidity\/trends(?:\?.*)?$/,
+    guarded(async route => {
+      const url = validateExactQuery(
+        route,
+        '/v1/analytics/liquidity/trends',
+        {},
+        {
+          period: /^(30|60|90)$/,
+        }
+      )
+      if (liquidityTrendsMode === 'error') {
+        await fulfillJson(
+          route,
+          { error: { code: 'STORY_165_4', message: 'Liquidity trends fixture error' } },
+          500
+        )
+        return
+      }
+      await fulfillJson(route, buildLiquidityTrendsResponse(url, liquidityTrendsMode))
+    })
+  )
 
   await page.route(
     /\/v1\/analytics\/liquidity(?:\/[^?]*)?(?:\?.*)?$/,
