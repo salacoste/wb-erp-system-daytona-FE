@@ -3,19 +3,21 @@
 /**
  * Dashboard Period Selector Component
  * Story 60.2-FE: Period Selector Component
+ * Story 163.6-FE: Period type toggle migrated from Tabs to RadioGroup (FR13/UX-DR5).
  *
- * Unified period selector for dashboard with week/month toggle,
- * dropdowns, and refresh button.
+ * Unified period selector for dashboard with a single-choice week/month
+ * RadioGroup toggle, dropdowns, and refresh button.
  * Sub-components: PeriodSelectorRefreshButton
  *
  * @see docs/stories/epic-60/story-60.2-fe-period-selector-component.md
  */
 
-import React, { useEffect, useState, useCallback } from 'react'
+import React, { useEffect, useId, useState, useCallback } from 'react'
 import { formatDistanceToNow } from 'date-fns'
 import { ru } from 'date-fns/locale'
 
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { Label } from '@/components/ui/label'
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
 import {
   Select,
   SelectContent,
@@ -73,6 +75,11 @@ export function DashboardPeriodSelector({
   const [isRefreshing, setIsRefreshing] = useState(false)
   const [relativeTime, setRelativeTime] = useState('')
 
+  // Stable per-instance IDs so label/htmlFor association survives multiple renders
+  // of this selector on one page (analytics dashboard uses it in two branches).
+  const weekRadioId = useId()
+  const monthRadioId = useId()
+
   useEffect(() => {
     const updateTime = (): void => {
       setRelativeTime(formatDistanceToNow(lastRefresh, { addSuffix: false, locale: ru }))
@@ -90,6 +97,15 @@ export function DashboardPeriodSelector({
       setTimeout(() => setIsRefreshing(false), 500)
     }
   }, [refresh])
+
+  // Narrow the Radix RadioGroup onValueChange string to PeriodType without an `as` cast
+  // (project no-`as` rule). RadioGroup fires this exactly once per activation.
+  const handlePeriodTypeChange = useCallback(
+    (value: string): void => {
+      setPeriodType(value === 'month' ? 'month' : 'week')
+    },
+    [setPeriodType]
+  )
 
   const handleWeekChange = useCallback(
     (week: string): void => {
@@ -118,27 +134,37 @@ export function DashboardPeriodSelector({
       data-testid="period-selector-container"
       className={cn('flex flex-col gap-3 md:flex-row md:items-center md:gap-4', className)}
     >
-      <Tabs
+      <RadioGroup
         value={periodType}
-        onValueChange={value => setPeriodType(value as PeriodType)}
+        onValueChange={handlePeriodTypeChange}
         aria-label="Тип периода"
         data-testid="period-type-toggle"
+        disabled={disabled}
+        className="flex flex-row items-center gap-4"
       >
-        <TabsList className="transition-colors">
-          <TabsTrigger value="week" disabled={disabled} data-testid="period-tab-week">
+        <div className="flex items-center gap-2">
+          <RadioGroupItem
+            value="week"
+            id={weekRadioId}
+            disabled={disabled}
+            data-testid="period-toggle-week"
+          />
+          <Label htmlFor={weekRadioId} data-testid="period-toggle-week-label">
             Неделя
-          </TabsTrigger>
-          <TabsTrigger value="month" disabled={disabled} data-testid="period-tab-month">
+          </Label>
+        </div>
+        <div className="flex items-center gap-2">
+          <RadioGroupItem
+            value="month"
+            id={monthRadioId}
+            disabled={disabled}
+            data-testid="period-toggle-month"
+          />
+          <Label htmlFor={monthRadioId} data-testid="period-toggle-month-label">
             Месяц
-          </TabsTrigger>
-        </TabsList>
-        {/* TZ-7: the Tabs are used as a week/month toggle (no real panel content). These
-            forceMount hidden panels exist so each trigger's aria-controls resolves to a real
-            id (axe aria-valid-attr-value), with no visual or behavior change.
-            FUTURE tech-debt: migrate to ToggleGroup (proper toggle semantics, no panel contract). */}
-        <TabsContent value="week" forceMount className="hidden" />
-        <TabsContent value="month" forceMount className="hidden" />
-      </Tabs>
+          </Label>
+        </div>
+      </RadioGroup>
 
       <Select
         value={periodType === 'week' ? selectedWeek : selectedMonth}

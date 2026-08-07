@@ -7,7 +7,7 @@ test.describe('Dashboard period selection - month', () => {
     await page.emulateMedia({ reducedMotion: 'reduce' })
     await page.goto('/dashboard', { waitUntil: 'domcontentloaded' })
 
-    const monthButton = page.getByTestId('period-tab-month')
+    const monthButton = page.getByTestId('period-toggle-month')
     await expect(monthButton).toBeVisible({ timeout: 10000 })
     const financeResponse = page.waitForResponse(response => {
       const url = new URL(response.url())
@@ -25,7 +25,8 @@ test.describe('Dashboard period selection - month', () => {
     const selectedMonth = new URL(response.url()).searchParams.get('month')
     expect(selectedMonth).toMatch(/^\d{4}-\d{2}$/)
 
-    await expect(monthButton).toHaveAttribute('data-state', 'active')
+    // Story 163.6-FE: RadioGroup radio exposes data-state="checked" when selected.
+    await expect(monthButton).toHaveAttribute('data-state', 'checked')
     await expect(page).toHaveURL(new RegExp(`[?&]month=${selectedMonth}(?:&|$)`))
     await expect(page).toHaveURL(/[?&]type=month(?:&|$)/)
     await expect

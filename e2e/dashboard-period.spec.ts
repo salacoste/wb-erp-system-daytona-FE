@@ -28,13 +28,13 @@ test.describe('Dashboard period observable state', () => {
   })
 
   test('switches month/week through data-state, URL and localStorage', async ({ page }) => {
-    const week = page.locator(P.weekTab)
-    const month = page.locator(P.monthTab)
-    await expect(week).toHaveAttribute('data-state', 'active')
+    const week = page.locator(P.weekOption)
+    const month = page.locator(P.monthOption)
+    await expect(week).toHaveAttribute('data-state', 'checked')
 
     await month.click()
-    await expect(month).toHaveAttribute('data-state', 'active')
-    await expect(week).toHaveAttribute('data-state', 'inactive')
+    await expect(month).toHaveAttribute('data-state', 'checked')
+    await expect(week).toHaveAttribute('data-state', 'unchecked')
     await expect(page).toHaveURL(/[?&]type=month(?:&|$)/)
     await expect(page).toHaveURL(/[?&]month=\d{4}-\d{2}(?:&|$)/)
     await expect(page.locator(P.monthDropdown)).toBeVisible()
@@ -43,7 +43,7 @@ test.describe('Dashboard period observable state', () => {
       .toBe('month')
 
     await week.click()
-    await expect(week).toHaveAttribute('data-state', 'active')
+    await expect(week).toHaveAttribute('data-state', 'checked')
     await expect(page).toHaveURL(/[?&]type=week(?:&|$)/)
     await expect(page).toHaveURL(/[?&]week=\d{4}-W\d{2}(?:&|$)/)
     await expect
@@ -87,7 +87,7 @@ test.describe('Dashboard period observable state', () => {
     await openDashboard(page, `${ROUTES.dashboard}?week=2026-W03&type=week`)
     expect((await firstResponse).status()).toBe(200)
     await expect(page).toHaveURL(/[?&]week=2026-W03(?:&|$)/)
-    await expect(page.locator(P.weekTab)).toHaveAttribute('data-state', 'active')
+    await expect(page.locator(P.weekOption)).toHaveAttribute('data-state', 'checked')
     await expect(page.locator(P.periodContextLabel)).toContainText(/Неделя 3, 2026/)
     await expect(
       page
@@ -118,29 +118,29 @@ test.describe('Dashboard period observable state', () => {
     await expect(page.locator(P.lastUpdated)).toContainText(/^Обновлено:/)
   })
 
-  test('period tabs are operable from the keyboard', async ({ page }) => {
-    const month = page.locator(P.monthTab)
+  test('period radio options are operable from the keyboard', async ({ page }) => {
+    const month = page.locator(P.monthOption)
     await month.focus()
     await expect(month).toBeFocused()
     await page.keyboard.press('Enter')
-    await expect(month).toHaveAttribute('data-state', 'active')
+    await expect(month).toHaveAttribute('data-state', 'checked')
 
-    const week = page.locator(P.weekTab)
+    const week = page.locator(P.weekOption)
     await week.focus()
     await page.keyboard.press('Enter')
-    await expect(week).toHaveAttribute('data-state', 'active')
+    await expect(week).toHaveAttribute('data-state', 'checked')
   })
 
   test('rapid client-only switches settle on the asserted control and URL state', async ({
     page,
   }) => {
-    const month = page.locator(P.monthTab)
-    const week = page.locator(P.weekTab)
+    const month = page.locator(P.monthOption)
+    const week = page.locator(P.weekOption)
     for (let index = 0; index < 3; index += 1) {
       await month.click()
-      await expect(month).toHaveAttribute('data-state', 'active')
+      await expect(month).toHaveAttribute('data-state', 'checked')
       await week.click()
-      await expect(week).toHaveAttribute('data-state', 'active')
+      await expect(week).toHaveAttribute('data-state', 'checked')
     }
     await expect(page).toHaveURL(/[?&]type=week(?:&|$)/)
   })
