@@ -13,6 +13,7 @@ import { liquidityHandlers } from './liquidity'
 import { advertisingHandlers } from './advertising'
 import { financesHandlers } from './finances'
 import { communicationsHandlers } from './communications'
+import { communicationsWritebackHandlers } from './communications-writeback'
 
 /**
  * Default handlers for all API endpoints
@@ -25,6 +26,7 @@ export const handlers = [
   ...advertisingHandlers,
   ...financesHandlers,
   ...communicationsHandlers,
+  ...communicationsWritebackHandlers,
 ]
 
 // Re-export individual handlers for selective use
@@ -34,3 +36,4 @@ export * from './liquidity'
 export * from './advertising'
 export * from './finances'
 export * from './communications'
+export * from './communications-writeback'
