@@ -21,12 +21,21 @@
  * surfaced as a distinct `pollError` indication — Defensive Frontend: indicate,
  * never fabricate a 'failed' job that BullMQ never reported.
  *
+ * Fast-follow (retry-rearm): chat sends use a DETERMINISTIC BullMQ jobId
+ * (dedup), so retrying a timed-out send with byte-identical text reuses the
+ * same id → the poll's `[id]` reset effect would NOT re-run → the poll stays
+ * terminal (timedOut=true) → the retry silently does nothing. `setJobId` bumps
+ * an internal ATTEMPT NONCE on every call (even when the id is unchanged) and
+ * threads it into `usePollWritebackJob`; a re-submit of the same id produces a
+ * fresh query (re-arms the poll, resets startedAtRef/timedOut). One-shot paths
+ * (new id per gesture) are unaffected — the nonce bump is harmless there.
+ *
  * The component owns the UX (toast + invalidation); this hook owns the wiring.
  */
 
 'use client'
 
-import { useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { usePollWritebackJob } from './useCommunicationsWriteback'
 
 /** Context passed to onTerminal so the component can label/branch the toast. */
@@ -69,23 +78,35 @@ export function useWritebackJob(
   /** Record the action kind AT FIRE TIME (call immediately before the mutation). */
   setActionKind: (actionKind: string | null) => void
 } {
-  const [jobId, setJobId] = useState<string | null>(null)
-  const poll = usePollWritebackJob(jobId)
+  const [jobId, setJobIdState] = useState<string | null>(null)
+  // Attempt nonce: bumped by setJobId on EVERY call (even when the id is
+  // unchanged) so a re-submit of a deterministic jobId re-arms the poll. Threaded
+  // into usePollWritebackJob (query key + reset-effect deps) so the same id
+  // produces a fresh query + a reset of startedAtRef/timedOut on retry.
+  const [attempt, setAttempt] = useState(0)
+  const setJobId = useCallback((id: string | null) => {
+    setJobIdState(id)
+    setAttempt(a => a + 1)
+  }, [])
+  const poll = usePollWritebackJob(jobId, attempt)
 
   // Latest-callback ref: refreshed every render, read only inside the fire
-  // effect (keyed on [jobId, poll.isTerminal]). Prevents stale-closure and
-  // stops the callback identity from re-triggering the fire effect.
+  // effect (keyed on [jobId, attempt, poll.isTerminal]). Prevents stale-closure
+  // and stops the callback identity from re-triggering the fire effect.
   const onTerminalRef = useRef(onTerminal)
   useEffect(() => {
     onTerminalRef.current = onTerminal
   })
 
-  // firedRef holds the jobId we've ALREADY fired onTerminal for; reset ONLY on a
-  // jobId change (not on non-terminal snapshots — that race-cleared the guard).
+  // firedRef holds the job ATTEMPT we've ALREADY fired onTerminal for; reset on a
+  // jobId OR attempt change (the nonce bumps on every setJobId, so a re-submit
+  // of the same id re-arms terminal firing). Not reset on non-terminal snapshots
+  // — that race-cleared the guard mid-transition.
   const firedRef = useRef<string | null>(null)
+  const attemptKey = jobId ? `${jobId}#${attempt}` : null
   useEffect(() => {
-    if (jobId !== firedRef.current) firedRef.current = null
-  }, [jobId])
+    if (attemptKey !== firedRef.current) firedRef.current = null
+  }, [attemptKey])
 
   // actionKindRef: captured at fire time so the toast labels the action that
   // actually fired, not the current dialog/mode state when terminal arrives.
@@ -94,13 +115,15 @@ export function useWritebackJob(
     actionKindRef.current = actionKind
   }).current
 
-  // Fire onTerminal ONCE per jobId on the terminal transition. Keyed ONLY on
-  // [jobId, poll.isTerminal] — not on the callback or data (avoids re-fire on
-  // cached-terminal re-renders and StrictMode double-invoke).
+  // Fire onTerminal ONCE per ATTEMPT on the terminal transition. Keyed ONLY on
+  // [attemptKey, poll.isTerminal] — not on the callback or data (avoids re-fire
+  // on cached-terminal re-renders and StrictMode double-invoke). attemptKey
+  // (jobId#attempt) lets a re-submit of the SAME deterministic id re-arm
+  // terminal firing (the nonce bumped in setJobId).
   useEffect(() => {
-    if (!jobId || !poll.isTerminal) return
-    if (firedRef.current === jobId) return
-    firedRef.current = jobId
+    if (!attemptKey || !poll.isTerminal) return
+    if (firedRef.current === attemptKey) return
+    firedRef.current = attemptKey
     const jobFailed = poll.data?.status === 'failed'
     const effectiveStatus = jobFailed ? 'failed' : (poll.effectiveStatus ?? 'completed')
     // Finding 11: a poll error (no job data) is NOT a fabricated 'failed' job —
@@ -110,7 +133,7 @@ export function useWritebackJob(
       actionKind: actionKindRef.current,
       pollError,
     })
-  }, [jobId, poll.isTerminal, poll.data, poll.effectiveStatus, poll.isError])
+  }, [attemptKey, poll.isTerminal, poll.data, poll.effectiveStatus, poll.isError])
 
   return {
     jobId,

@@ -186,7 +186,7 @@ describe('usePollWritebackJob', () => {
     })
     // Finding 9: interval=30 so a keep-polling regression would actually refetch
     // within the 60ms settle window (the default 1500ms would hide the bug).
-    const { result } = renderHook(() => usePollWritebackJob('job-1', { interval: 30 }), {
+    const { result } = renderHook(() => usePollWritebackJob('job-1', 0, { interval: 30 }), {
       wrapper: createWrapper(),
     })
     await waitFor(() => expect(result.current.isTerminal).toBe(true))
@@ -199,12 +199,14 @@ describe('usePollWritebackJob', () => {
 
   it('keeps polling while the job is active', async () => {
     statusMock.mockResolvedValue({ jobId: 'job-1', status: 'active', result: null, error: null })
-    renderHook(() => usePollWritebackJob('job-1', { interval: 30 }), { wrapper: createWrapper() })
+    renderHook(() => usePollWritebackJob('job-1', 0, { interval: 30 }), {
+      wrapper: createWrapper(),
+    })
     await waitFor(() => expect(statusMock.mock.calls.length).toBeGreaterThanOrEqual(2))
   })
 
   it('is disabled when jobId is null (no fetch)', () => {
-    const { result } = renderHook(() => usePollWritebackJob(null), { wrapper: createWrapper() })
+    const { result } = renderHook(() => usePollWritebackJob(null, 0), { wrapper: createWrapper() })
     expect(result.current.isLoading).toBe(false)
     expect(statusMock).not.toHaveBeenCalled()
   })
@@ -221,7 +223,7 @@ describe('usePollWritebackJob', () => {
         result: null,
         error: null,
       })
-      const { result } = renderHook(() => usePollWritebackJob('job-1', { interval: 30 }), {
+      const { result } = renderHook(() => usePollWritebackJob('job-1', 0, { interval: 30 }), {
         wrapper: createWrapper(),
       })
       // Advance fake time + flush microtasks past MAX_POLL_MS. refetchInterval
@@ -241,6 +243,76 @@ describe('usePollWritebackJob', () => {
         await vi.advanceTimersByTimeAsync(10_000)
       })
       expect(statusMock.mock.calls.length).toBe(after)
+    } finally {
+      vi.useRealTimers()
+    }
+  })
+
+  it('re-arms the poll when the SAME deterministic jobId is re-submitted after a timeout', async () => {
+    // Fast-follow (retry-rearm): chat sends use a DETERMINISTIC BullMQ jobId
+    // (dedup), so retrying a timed-out send reuses the same id. The coordinator
+    // bumps an attempt nonce on every setJobId and threads it here; a re-submit
+    // of the SAME id must (a) reset startedAtRef + timedOut, (b) produce a fresh
+    // query (new key), and (c) resume polling toward a fresh terminal. This is
+    // the load-bearing regression test for the bug.
+    vi.useFakeTimers()
+    try {
+      // Phase 1 — drive the SAME jobId to a timeout (status 'active' forever).
+      statusMock.mockResolvedValue({
+        jobId: 'chat-dedup-1',
+        status: 'active',
+        result: null,
+        error: null,
+      })
+      let attempt = 0
+      const { result, rerender } = renderHook(props => usePollWritebackJob('chat-dedup-1', props), {
+        initialProps: attempt,
+        wrapper: createWrapper(),
+      })
+      // Advance fake time in STEPS past MAX_POLL_MS so each poll cycle settles
+      // (refetchInterval reads Date.now() against the captured startedAt ref
+      // after each fetch resolves). A single big advance can skip the cycle in
+      // which the deadline check flips timedOut.
+      for (let elapsed = 0; elapsed <= MAX_POLL_MS + 5000; elapsed += 5000) {
+        await act(async () => {
+          await vi.advanceTimersByTimeAsync(5000)
+        })
+        if (result.current.timedOut) break
+      }
+      // Assert terminal + stopped (the original bug's terminal state).
+      expect(result.current.timedOut).toBe(true)
+      expect(result.current.isTerminal).toBe(true)
+      expect(result.current.effectiveStatus).toBe('timeout')
+      const stoppedAt = statusMock.mock.calls.length
+      await act(async () => {
+        await vi.advanceTimersByTimeAsync(10_000)
+      })
+      expect(statusMock.mock.calls.length).toBe(stoppedAt)
+
+      // Phase 2 — flip the status to completed so the re-armed poll CAN reach a
+      // fresh terminal, then re-submit the SAME id via a bumped nonce.
+      statusMock.mockResolvedValue({
+        jobId: 'chat-dedup-1',
+        status: 'completed',
+        result: null,
+        error: null,
+      })
+      // Capture the count BEFORE the re-submit, then assert a FRESH fetch fires
+      // after the nonce bump (rerender swaps the query key → a new fetch).
+      const beforeRearm = statusMock.mock.calls.length
+      attempt = 1
+      rerender(attempt)
+
+      // The poll RE-ARMED: timedOut reset, not terminal, fresh startedAt.
+      expect(result.current.timedOut).toBe(false)
+      expect(result.current.isTerminal).toBe(false)
+      // A FRESH fetch fired on the re-subscribe (the new query key hit).
+      expect(statusMock.mock.calls.length).toBeGreaterThan(beforeRearm)
+      // Drive the re-armed poll to its fresh terminal (completed).
+      await waitFor(() => expect(result.current.isTerminal).toBe(true))
+      expect(result.current.timedOut).toBe(false)
+      expect(result.current.effectiveStatus).toBe('completed')
+      expect(result.current.data?.status).toBe('completed')
     } finally {
       vi.useRealTimers()
     }
