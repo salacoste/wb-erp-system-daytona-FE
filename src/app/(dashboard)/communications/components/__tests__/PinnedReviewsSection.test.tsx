@@ -19,6 +19,30 @@ vi.mock('@/hooks/useCommunications', () => ({
   usePinnedFeedbacks: vi.fn(),
 }))
 
+// PR2: each row now renders a gated pin/unpin surface (PinnedWriteControls).
+// Pass-2: WRITEBACK_TIMEOUT_* re-exported so WritebackStatus's import resolves.
+vi.mock('@/hooks/useCommunicationsWriteback', () => ({
+  usePinFeedback: () => ({ mutate: vi.fn(), isPending: false, isError: false, error: null }),
+  useUnpinFeedback: () => ({ mutate: vi.fn(), isPending: false, isError: false, error: null }),
+  WRITEBACK_TIMEOUT_MESSAGE: 'Не удалось проверить статус отправки. Попробуйте ещё раз',
+  WRITEBACK_TIMEOUT_STATUS: 'timeout',
+}))
+vi.mock('@/hooks/useWritebackJob', () => ({
+  useWritebackJob: () => ({
+    jobId: null,
+    status: undefined,
+    effectiveStatus: undefined,
+    error: null,
+    isTerminal: false,
+    pollError: false,
+    setJobId: vi.fn(),
+    setActionKind: vi.fn(),
+  }),
+}))
+vi.mock('@tanstack/react-query', () => ({
+  useQueryClient: () => ({ invalidateQueries: vi.fn() }),
+}))
+
 const usePinnedMock = usePinnedFeedbacks as unknown as ReturnType<typeof vi.fn>
 
 function mockResult(

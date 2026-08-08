@@ -16,6 +16,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { usePinnedFeedbacks } from '@/hooks/useCommunications'
 import { formatDate } from '@/lib/utils'
 import { SectionState } from './SectionState'
+import { PinnedWriteControls } from './PinnedWriteControls'
 import type { PinnedReviewItem } from '@/types/communications'
 
 const PINNED_ERROR_MESSAGE = 'Не удалось загрузить закреплённые отзывы. Попробуйте ещё раз.'
@@ -94,6 +95,8 @@ function PinnedRow({ item }: { item: PinnedReviewItem }) {
           Причина открепления: {labelForCause(item.unpinnedCause)}
         </div>
       )}
+      {/* PR2: gated pin/unpin surface (confirm dialog + 202→poll→terminal). */}
+      <PinnedWriteControls feedbackId={item.feedbackId} />
     </li>
   )
 }

@@ -1,12 +1,12 @@
 'use client'
 
 /**
- * ChatsSection — NEW-2 WB seller chats (read-only PR1).
+ * ChatsSection — NEW-2 WB seller chats (read + gated send, PR2).
  *
  * Two-mode view: a thread list (no chatId selected) and a selected thread's
- * messages (chatId set). Owns its OWN loading/error/empty state machine (AC4).
- * unreadCount is a count (legit ?? 0); message text/preview are nullable (AP#8).
- * No send/reply UI (PR2 write-side).
+ * messages (chatId set) + ChatComposer. Owns its OWN loading/error/empty state
+ * machine (AC4). unreadCount is a count (legit ?? 0); message text/preview are
+ * nullable (AP#8). The send surface uses the thread's stored replySign.
  */
 
 import { useState, useCallback } from 'react'
@@ -17,6 +17,7 @@ import { useChats } from '@/hooks/useCommunications'
 import { formatDate } from '@/lib/utils'
 import { SectionState } from './SectionState'
 import { ChatMessages } from './ChatMessages'
+import { ChatComposer } from './ChatComposer'
 import type { ChatsListResult, ChatThreadResult, WbChatThread } from '@/types/communications'
 
 const CHATS_ERROR_MESSAGE = 'Не удалось загрузить чаты. Попробуйте ещё раз.'
@@ -135,6 +136,8 @@ function ThreadBody({
       onRetry={onRetry}
     >
       <ChatMessages messages={messages} />
+      {/* PR2: send surface — uses the thread's stored replySign (WB handshake). */}
+      <ChatComposer replySign={thread?.replySign ?? null} />
     </SectionState>
   )
 }

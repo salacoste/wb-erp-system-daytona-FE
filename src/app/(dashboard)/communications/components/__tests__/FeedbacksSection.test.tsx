@@ -15,6 +15,36 @@ vi.mock('@/hooks/useCommunications', () => ({
   useFeedbacks: vi.fn(),
 }))
 
+// PR2: the row now renders a gated write surface (FeedbackWriteControls). Mock
+// its write hooks + the coordinator so the read-only assertions stay focused.
+// Pass-2: WRITEBACK_TIMEOUT_* re-exported so WritebackStatus's import resolves.
+vi.mock('@/hooks/useCommunicationsWriteback', () => ({
+  useReplyFeedback: () => ({ mutate: vi.fn(), isPending: false, isError: false, error: null }),
+  useUpdateFeedbackReply: () => ({
+    mutate: vi.fn(),
+    isPending: false,
+    isError: false,
+    error: null,
+  }),
+  WRITEBACK_TIMEOUT_MESSAGE: 'Не удалось проверить статус отправки. Попробуйте ещё раз',
+  WRITEBACK_TIMEOUT_STATUS: 'timeout',
+}))
+vi.mock('@/hooks/useWritebackJob', () => ({
+  useWritebackJob: () => ({
+    jobId: null,
+    status: undefined,
+    effectiveStatus: undefined,
+    error: null,
+    isTerminal: false,
+    pollError: false,
+    setJobId: vi.fn(),
+    setActionKind: vi.fn(),
+  }),
+}))
+vi.mock('@tanstack/react-query', () => ({
+  useQueryClient: () => ({ invalidateQueries: vi.fn() }),
+}))
+
 const useFeedbacksMock = useFeedbacks as unknown as ReturnType<typeof vi.fn>
 
 function mockResult(

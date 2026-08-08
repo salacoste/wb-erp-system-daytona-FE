@@ -1,19 +1,19 @@
 'use client'
 
 /**
- * QuestionsSection — NEW-2 WB product questions (read-only PR1).
+ * QuestionsSection — NEW-2 WB product questions (read + gated answer, PR2).
  *
  * Owns its OWN loading/error/empty state machine (AC4). Lists questions with
- * text, nmId (String, AP#10), and answer status. No answer UI (PR2 write-side).
+ * text, nmId (String, AP#10), and answer status. Each row renders its answer
+ * surface via QuestionRow → QuestionWriteControls (extracted for size cap).
  */
 
 import { useCallback } from 'react'
 import { HelpCircle } from 'lucide-react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { useQuestions } from '@/hooks/useCommunications'
-import { formatDate } from '@/lib/utils'
 import { SectionState } from './SectionState'
-import type { WbQuestion } from '@/types/communications'
+import { QuestionRow } from './QuestionRow'
 
 const QUESTIONS_ERROR_MESSAGE = 'Не удалось загрузить вопросы. Попробуйте ещё раз.'
 const QUESTIONS_EMPTY_MESSAGE = 'Нет вопросов'
@@ -59,42 +59,4 @@ export function QuestionsSection({ enabled = true }: QuestionsSectionProps) {
       </CardContent>
     </Card>
   )
-}
-
-/** Render a single question: text + nmId + date + answer status (read-only). */
-function QuestionRow({ question }: { question: WbQuestion }) {
-  const { text, nmId, answer, isAnswered, createdAt } = question
-  return (
-    <li className="py-3">
-      {text ? (
-        <p className="text-sm">{text}</p>
-      ) : (
-        <p className="text-sm italic">Вопрос без текста</p>
-      )}
-      {answer && isAnswered !== false ? (
-        <p className="mt-1 text-xs italic text-muted-foreground">{answer}</p>
-      ) : null}
-      <div className="mt-1 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-muted-foreground">
-        <span>
-          Артикул:{' '}
-          <span className="font-mono tabular-nums text-foreground">
-            {nmId == null ? '—' : String(nmId)}
-          </span>
-        </span>
-        <span className="tabular-nums">{createdAt ? formatDate(createdAt) : '—'}</span>
-        <QuestionAnswerStatus isAnswered={isAnswered} />
-      </div>
-    </li>
-  )
-}
-
-/**
- * Read-only answer-status chip. Three-state: isAnswered===true → "Отвечено",
- * ===false → "Без ответа", ==null → neutral "Статус неизвестен" (Defensive
- * Frontend: never fabricate "answered" from the answer text).
- */
-function QuestionAnswerStatus({ isAnswered }: { isAnswered: boolean | null }) {
-  if (isAnswered === true) return <span className="text-green-600">Отвечено</span>
-  if (isAnswered === false) return <span className="text-red-600">Без ответа</span>
-  return <span>Статус неизвестен</span>
 }
