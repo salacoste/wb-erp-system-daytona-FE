@@ -161,6 +161,7 @@ export const ROUTES = {
   shipmentsBoxTypes: '/shipments/box-types', // Box Types Management
   shipmentsSkuPackaging: '/shipments/sku-packaging', // SKU Packaging
   supplies: '/supplies', // Epic 53-FE: FBS Supplies
+  finances: '/finances', // NEW-7: Account Balance + Financial Documents
 }
 
 // Timeouts
