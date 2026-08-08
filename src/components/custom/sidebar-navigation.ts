@@ -46,6 +46,7 @@ import {
   TrendingUp,
   ListChecks,
   Wallet,
+  Mail,
 } from 'lucide-react'
 import { ROUTES } from '@/lib/routes'
 
@@ -74,6 +75,8 @@ export const NAVIGATION_ITEMS: NavigationItem[] = [
   { label: 'Себестоимость', href: ROUTES.COGS.ROOT, icon: Package },
   // NEW-7: Account Balance + Financial Documents (account-level, top-level page)
   { label: 'Финансы', href: ROUTES.FINANCES, icon: Wallet },
+  // NEW-2: Communications (feedbacks/questions/chats/claims) — read-only PR1
+  { label: 'Сообщения', href: ROUTES.COMMUNICATIONS, icon: Mail },
   // Assortment management — discontinued lifecycle («Снят с продажи»)
   { label: 'Ассортимент', href: ROUTES.PRODUCTS, icon: Layers },
   // Epic 44: Price Calculator UI

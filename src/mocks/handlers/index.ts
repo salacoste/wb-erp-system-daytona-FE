@@ -12,6 +12,7 @@ import { supplyPlanningHandlers } from './supply-planning'
 import { liquidityHandlers } from './liquidity'
 import { advertisingHandlers } from './advertising'
 import { financesHandlers } from './finances'
+import { communicationsHandlers } from './communications'
 
 /**
  * Default handlers for all API endpoints
@@ -23,6 +24,7 @@ export const handlers = [
   ...liquidityHandlers,
   ...advertisingHandlers,
   ...financesHandlers,
+  ...communicationsHandlers,
 ]
 
 // Re-export individual handlers for selective use
@@ -31,3 +33,4 @@ export * from './supply-planning'
 export * from './liquidity'
 export * from './advertising'
 export * from './finances'
+export * from './communications'
