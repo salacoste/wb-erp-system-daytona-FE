@@ -23,11 +23,11 @@ Development and validation are **local-only**: there is no deployment target or 
 | **Stack** | Next.js 16 + TypeScript 5 + Tailwind CSS + shadcn/ui (Radix) |
 | **Server State** | TanStack Query v5 (Next.js server page/layout wrappers coexist with client components; interactive data fetching is client-side) |
 | **Client State** | Zustand (auth, dashboard widgets, rate-limit, polling) |
-| **Testing** | Vitest (~1060 unit test files, MSW) + Playwright E2E (~84 specs) + outbound network guards + privacy/diagnostic-capture checks |
+| **Testing** | Vitest (~1096 unit test files, MSW) + Playwright E2E (~87 specs) + outbound network guards + privacy/diagnostic-capture checks |
 | **Backend** | REST API via `NEXT_PUBLIC_API_URL` (default `http://localhost:3000`) |
 | **Port** | 3100 (dev and prod) |
 
-**Core Features**: Weekly financial analytics, COGS management with versioning, margin analysis, storage/advertising metrics, price calculator, buyout/return analytics, liquidity analysis, unit economics, FBS/FBO order analytics with WB shelf-life (expiration) management, AI forecasting, Telegram notifications, multi-cabinet (tenant) support.
+**Core Features**: Weekly financial analytics, COGS management with versioning, margin analysis, storage/advertising metrics, price calculator, buyout/return analytics, liquidity analysis with trends, unit economics, FBS/FBO order analytics with WB shelf-life (expiration) management, account balance + financial documents (NEW-7), seller communications — feedbacks, questions, chats, claims, pinned reviews with gated write-back (NEW-2), AI forecasting, Telegram notifications, multi-cabinet (tenant) support.
 
 ## Quick Commands
 
@@ -49,8 +49,8 @@ npm run check:anti-pattern-8-normalizer  # AP#8 normalizer ratchet
 ## Documentation Sections
 
 - **[Architecture](architecture.md)** — Route groups, layout/provider hierarchy, client-side data fetching, auth proxy, configuration.
-- **[API Layer & Normalizers](api-and-normalizers.md)** — API client singleton, Boundary Normalizer Pattern, Anti-Pattern #8 null semantics, CSV export.
-- **[Domain Logic](domain-logic.md)** — Financial formulas (theoretical profit, margin, liquidity, unit economics), historical SPP (Story 128.27), ISO week / Moscow timezone, profitability thresholds.
+- **[API Layer & Normalizers](api-and-normalizers.md)** — API client singleton, Boundary Normalizer Pattern, Anti-Pattern #8 null semantics, CSV export, communications write-back (async 202 job polling).
+- **[Domain Logic](domain-logic.md)** — Financial formulas (theoretical profit, margin, liquidity with trends, unit economics), account finances + document download (NEW-7), seller communications with gated write-back (NEW-2), historical SPP (Story 128.27), ISO week / Moscow timezone, profitability thresholds.
 - **[Conventions & Quality Gates](conventions-and-quality.md)** — File size limits, ESLint enforcement, Defensive Frontend Principle, ratchet scripts, toolchain pinning, two-pass review discipline.
 - **[Testing & Operations](testing-and-ops.md)** — Vitest + MSW, Playwright E2E, local E2E preflight + handshake (Story 162.2), outbound network guards (Vitest + Playwright + static boundary), privacy console and diagnostic-capture guards, frontend verification orchestrator, local validation, environment variables.
 
@@ -65,6 +65,10 @@ npm run check:anti-pattern-8-normalizer  # AP#8 normalizer ratchet
 | Normalizer helpers | `src/lib/api/normalizer-helpers.ts` |
 | Route constants | `src/lib/routes.ts` |
 | Auth store | `src/stores/authStore.ts` |
+| Communications (NEW-2) — read + write-back | `src/lib/api/communications.ts`, `src/lib/api/communications-writeback.ts`, `src/hooks/useCommunications.ts`, `src/hooks/useCommunicationsWriteback.ts`, `src/hooks/useWritebackJob.ts`, `src/lib/communications-writeback-utils.ts` |
+| Finances (NEW-7) — balance + documents | `src/lib/api/finances.ts`, `src/hooks/useFinances.ts`, `src/lib/finances/download-blob.ts`, `src/lib/finances/finances-formatters.ts` |
+| Liquidity trends (Story 165.4) | `src/lib/api/liquidity.ts` (`getLiquidityTrends`), `src/app/(dashboard)/analytics/liquidity/components/liquidity-trend-config.ts`, `src/types/liquidity/distribution.ts` |
+| Backfill retry (Story 165.5) | `src/lib/api/backfill.ts` (`retryBackfill`), `src/types/backfill.ts` (`BackfillRetrySource`) |
 | Outbound network guard (Vitest) | `src/test/outbound-network-guard.ts`, `src/test/network-guard-bootstrap.ts`, `test-utils/outbound-network-policy.ts` |
 | Playwright network guard + static boundary | `e2e/fixtures/playwright-network-guard.ts`, `src/test/playwright-static-boundary.ts` |
 | Local E2E preflight + handshake (Story 162.2) | `scripts/e2e-preflight.mjs`, `scripts/e2e-preflight-handshake.mjs`, `scripts/e2e-preflight.test.mjs` |

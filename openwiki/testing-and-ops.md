@@ -15,7 +15,7 @@ description: "Testing strategy (Vitest unit with MSW, Playwright E2E, local E2E 
 | Plugin | `@vitejs/plugin-react` |
 | Coverage | V8 provider (text/json/json-summary/html reporters), output `coverage/local` |
 | Fake timers | `shouldAdvanceTime: true` (waitFor/MSW compatibility) |
-| Test count | ~1060 test files across `src/` |
+| Test count | ~1096 test files across `src/` |
 
 ### Test setup (`src/test/`)
 Setup files run in explicit list order (`sequence.setupFiles: 'list'`) defined by `VITEST_SETUP_FILES` in `vitest.config.ts`. Order is load-bearing: the outbound network guard must install **before** any general setup or MSW import, or module-evaluation-time network attempts would escape the guard.
@@ -44,7 +44,7 @@ Tests are co-located with source in `__tests__/` directories:
 
 | Aspect | Detail |
 |--------|--------|
-| Test directory | `./e2e/` (~84 `.spec.ts` files) |
+| Test directory | `./e2e/` (~87 `.spec.ts` files) |
 | Base URL | `http://localhost:3100` (overridable via `E2E_BASE_URL`, validated against the network policy allowlist via `assertAllowedTestUrl`) |
 | Projects | `setup` (auth, uses storage state) → `chromium` (desktop, depends on setup); `historical-spp` (self-contained, empty storage state, skips `setup`) for the Story 128.27 exact-command spec |
 | CI behavior | 2 retries, 1 worker, `forbidOnly: true`, auto-starts dev server |
@@ -62,7 +62,7 @@ Tests are co-located with source in `__tests__/` directories:
 - `e2e/fixtures/playwright-network-guard.ts` — Guarded Playwright object graph (see [Outbound Network Guards](#outbound-network-guards))
 
 ### E2E test areas
-Dashboard, orders, supplies, margin analytics, FBS, COGS, pricing calculator, liquidity, unit economics, advertising, funnel, search analytics, forecasts, Moysklad integration, accessibility, settings, monitoring, historical SPP analytics (Story 128.27), plus `e2e/outbound-network-guard.spec.ts` which exercises the guard itself end-to-end.
+Dashboard, orders, supplies, margin analytics, FBS, COGS, pricing calculator, liquidity (with trends, Story 165.4), unit economics, advertising, funnel, search analytics, forecasts, Moysklad integration, finances (NEW-7), backfill admin (per-source retry, Story 165.5), accessibility, settings, monitoring, historical SPP analytics (Story 128.27), plus `e2e/outbound-network-guard.spec.ts` which exercises the guard itself end-to-end.
 
 > **Note**: A hosted Tier 0 runtime certification harness and governed coverage certification system previously lived here. Both were removed when the project replaced hosted certification with local validation gates. The remaining quality gates are documented in [Conventions & Quality Gates](conventions-and-quality.md).
 

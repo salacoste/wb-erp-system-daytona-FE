@@ -13,7 +13,7 @@ The app uses three parenthesized route groups (directories that organize code wi
 |-------|---------|------------|
 | `(auth)` | Login / registration | `/login`, `/register` |
 | `(onboarding)` | New user setup | `/cabinet`, `/processing`, `/wb-token` |
-| `(dashboard)` | All authenticated app pages | `/dashboard`, `/analytics/*` (30+ sub-routes), `/orders/*`, `/shipments/*`, `/supplies/*`, `/products`, `/cogs/*`, `/settings/*`, `/monitor`, `/monitoring`, `/moysklad`, `/automation/*` |
+| `(dashboard)` | All authenticated app pages | `/dashboard`, `/analytics/*` (30+ sub-routes), `/orders/*`, `/shipments/*`, `/supplies/*`, `/products`, `/cogs/*`, `/finances`, `/communications`, `/settings/*`, `/monitor`, `/monitoring`, `/moysklad`, `/automation/*` |
 
 Root `/` redirects to `/dashboard` (authenticated) or `/login` (unauthenticated).
 
