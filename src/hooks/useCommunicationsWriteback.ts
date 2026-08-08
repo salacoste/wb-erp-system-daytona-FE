@@ -42,8 +42,9 @@ import type {
   WritebackJobStatus,
 } from '@/types/communications/writeback'
 
-/** Query key for the write-back job-poll (per jobId). */
-const writebackJobKey = (jobId: string) => ['communications', 'writeback-job', jobId] as const
+/** Query key for the write-back job-poll (per jobId + attempt nonce). */
+const writebackJobKey = (jobId: string, attempt: number) =>
+  ['communications', 'writeback-job', jobId, attempt] as const
 
 /** Poll interval for a write-back job (1.5s — WB write latency is ~seconds). */
 const WRITEBACK_POLL_INTERVAL = 1500
@@ -128,10 +129,18 @@ export interface UsePollWritebackJobOptions {
  * false) on a terminal state, on a timeout, or before the 202 (jobId null).
  * Keeps polling on active/waiting/delayed/waiting-children only (allowlist).
  *
- * The deadline start is captured in a ref whenever jobId transitions (null→set
- * or set→a different id) via an effect; refetchInterval reads it synchronously
- * and returns false once elapsed, flipping a `timedOut` state that is surfaced
- * as terminal so the submit button re-enables + a RU timeout shows.
+ * The deadline start is captured in a ref whenever jobId OR the attempt nonce
+ * changes (null→set, set→new id, OR a re-submit of the same deterministic id)
+ * via an effect; refetchInterval reads it synchronously and returns false once
+ * elapsed, flipping a `timedOut` state that is surfaced as terminal so the
+ * submit button re-enables + a RU timeout shows.
+ *
+ * Fast-follow (retry-rearm): `attempt` is a per-submit nonce the coordinator
+ * bumps on EVERY setJobId (even when the id is unchanged). It is part of the
+ * query key AND the reset-effect deps so re-submitting a deterministic jobId
+ * (chat sends — BullMQ dedup) produces a FRESH query and re-arms the poll
+ * (resets startedAtRef/timedOut). One-shot callers pass a new id each gesture;
+ * the nonce bump is harmless there.
  *
  * Pure query (no side-effects): the component reads `data.status` / `timedOut`
  * and reacts to the terminal transition (Defensive Frontend). No `as`/`!` — the
@@ -139,6 +148,7 @@ export interface UsePollWritebackJobOptions {
  */
 export function usePollWritebackJob(
   jobId: string | null,
+  attempt: number,
   options: UsePollWritebackJobOptions = {}
 ) {
   const { interval = WRITEBACK_POLL_INTERVAL } = options
@@ -146,14 +156,15 @@ export function usePollWritebackJob(
   const startedAtRef = useRef<number | null>(null)
   const [timedOut, setTimedOut] = useState(false)
 
-  // Capture the poll start when jobId transitions (null→set OR set→new id).
+  // Capture the poll start when jobId OR the attempt nonce transitions. The
+  // nonce bumps on every setJobId, so a re-submit of the same id re-arms here.
   useEffect(() => {
     startedAtRef.current = id ? Date.now() : null
     setTimedOut(false)
-  }, [id])
+  }, [id, attempt])
 
   const query = useQuery<WritebackJobStatus | null>({
-    queryKey: writebackJobKey(id ?? ''),
+    queryKey: writebackJobKey(id ?? '', attempt),
     queryFn: () => (id ? getWritebackJobStatus(id) : Promise.resolve(null)),
     enabled: !!id,
     staleTime: 0,
