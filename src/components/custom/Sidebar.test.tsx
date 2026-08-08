@@ -193,6 +193,19 @@ describe('Sidebar', () => {
   })
 
   // 1st-pass review F-9: Analyst-vs-Управление-моделями cross-coverage
+  // NEW-2: Communications nav item renders + links to /communications.
+  it(
+    'renders "Сообщения" navigation item linking to /communications (NEW-2)',
+    { timeout: 5000 },
+    () => {
+      renderWithQueryClient(<Sidebar />)
+
+      const link = screen.getByRole('link', { name: /Сообщения/ })
+      expect(link).toBeInTheDocument()
+      expect(link).toHaveAttribute('href', '/communications')
+    }
+  )
+
   it('Analyst does NOT see "Управление моделями" sub-item', { timeout: 5000 }, () => {
     vi.mocked(useAuth).mockReturnValue({
       user: { id: '1', email: 'analyst@example.com', role: 'Analyst' },

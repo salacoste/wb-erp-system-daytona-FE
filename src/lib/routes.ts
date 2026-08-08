@@ -80,6 +80,8 @@ export const ROUTES = {
 
   // NEW-7: Account Balance + Financial Documents (account-level, top-level page).
   FINANCES: '/finances',
+  // NEW-2: Communications (feedbacks/questions/chats/claims/pinned) — read-only PR1.
+  COMMUNICATIONS: '/communications',
   SHIPMENTS: {
     ROOT: '/shipments',
     DETAIL: '/shipments/[id]',
