@@ -45,6 +45,7 @@ import {
   Zap,
   TrendingUp,
   ListChecks,
+  Wallet,
 } from 'lucide-react'
 import { ROUTES } from '@/lib/routes'
 
@@ -71,6 +72,8 @@ export const NAVIGATION_ITEMS: NavigationItem[] = [
   // FBO Orders & Sales
   { label: 'Заказы FBO', href: ROUTES.ORDERS.FBO, icon: PackageSearch },
   { label: 'Себестоимость', href: ROUTES.COGS.ROOT, icon: Package },
+  // NEW-7: Account Balance + Financial Documents (account-level, top-level page)
+  { label: 'Финансы', href: ROUTES.FINANCES, icon: Wallet },
   // Assortment management — discontinued lifecycle («Снят с продажи»)
   { label: 'Ассортимент', href: ROUTES.PRODUCTS, icon: Layers },
   // Epic 44: Price Calculator UI

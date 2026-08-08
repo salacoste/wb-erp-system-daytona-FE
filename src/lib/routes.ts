@@ -77,6 +77,9 @@ export const ROUTES = {
     ROOT: '/supplies',
     DETAIL: '/supplies/[id]',
   },
+
+  // NEW-7: Account Balance + Financial Documents (account-level, top-level page).
+  FINANCES: '/finances',
   SHIPMENTS: {
     ROOT: '/shipments',
     DETAIL: '/shipments/[id]',
