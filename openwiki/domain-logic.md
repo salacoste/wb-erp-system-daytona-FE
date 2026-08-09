@@ -223,10 +223,10 @@ The write-side (reply to feedback, answer question, send chat message, pin/unpin
 | Aspect | Detail |
 |--------|--------|
 | **Status predicates** | `src/lib/communications-writeback-utils.ts` — single source of truth for `isWritebackPolling` / `isWritebackCompleted` / `isWritebackDisabledError` / `writebackErrorMessage`. Re-exported by `src/types/communications/writeback.ts`. |
-| **Coordinator** | `useWritebackJob` (`src/hooks/useWritebackJob.ts`) wraps mutation → 202 → poll → terminal; fires `onTerminal` once per jobId; captures action kind at fire time; distinguishes poll-error from job-failed. |
+| **Coordinator** | `useWritebackJob` (`src/hooks/useWritebackJob.ts`) wraps mutation → 202 → poll → terminal; fires `onTerminal` once per **attempt** (`attemptKey = jobId#attempt`); captures action kind at fire time; distinguishes poll-error from job-failed. The `setJobId` attempt nonce re-arms the poll for a deterministic chat jobId (dedup) so retrying a timed-out send works — see [API Layer & Normalizers — Retry-rearm](api-and-normalizers.md#retry-rearm-for-deterministic-chat-jobids-new-2-fast-follow). |
 | **UX copy** | RU-only messages: `WRITEBACK_DISABLED_MESSAGE` (403 kill-switch), `WRITEBACK_INFLIGHT_MESSAGE` (Отправляется…), `WRITEBACK_TIMEOUT_MESSAGE` (poll deadline). Raw BE/English error.message is NEVER shown to the user. |
 
-**Components**: `FeedbackWriteControls` / `QuestionWriteControls` / `PinnedWriteControls` (per-section write controls), `ChatComposer` + `ReplyForm`, `ConfirmAction`, `WritebackStatus` (`src/app/(dashboard)/communications/components/`). **Focused tests**: `communications-writeback.test.ts`, `communications-writeback-msw.test.ts`, `useCommunicationsWriteback.test.ts`, `useWritebackJob.test.ts`, `communications-writeback-utils.test.ts`.
+**Components**: `FeedbackWriteControls` / `QuestionWriteControls` / `PinnedWriteControls` (per-section write controls), `ChatComposer` + `ReplyForm`, `ConfirmAction`, `WritebackStatus` (`src/app/(dashboard)/communications/components/`). **Focused tests**: `communications-writeback.test.ts`, `communications-writeback-msw.test.ts`, `useCommunicationsWriteback.test.ts` (incl. retry-rearm regression), `useWritebackJob.test.ts`, `communications-writeback-utils.test.ts`, `QuestionWriteControls.test.tsx` (incl. timeout-toast).
 
 ## Backfill Retry (Story 165.5)
 
