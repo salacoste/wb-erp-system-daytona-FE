@@ -97,59 +97,59 @@ These are prior, independent frontend programs rather than sharded copies of Epi
 
 ### Functional Requirements
 
-- **FR1:** The system shall provide user registration and login functionality with JWT token-based authentication.
-- **FR2:** The system shall manage user sessions, including secure token storage and automatic session expiration.
-- **FR3:** The system shall provide a complete onboarding flow that guides users through cabinet creation, WB token input, and initial data processing setup.
-- **FR4:** The system shall validate WB tokens during onboarding and provide clear feedback on validation status.
-- **FR5:** The system shall display progress indicators during automatic data processing (product parsing and financial report loading).
-- **FR6:** The system shall provide a main dashboard view for business owners displaying large metric cards for Total Payable and Revenue.
-- **FR7:** The system shall visualize expense breakdowns on the dashboard with appropriate charts and graphs.
-- **FR8:** The system shall display trend graphs for key financial metrics over time.
-- **FR9:** The system shall provide quick access links from the dashboard to detailed analytics views.
-- **FR10:** The system shall allow users to assign COGS to individual products through a single product interface.
-- **FR11:** The system shall support bulk COGS assignment operations for multiple products simultaneously.
-- **FR12:** The system shall validate COGS input values and provide clear error messages for invalid entries.
-- **FR13:** The system shall provide visual confirmation when COGS assignments are successfully saved.
-- **FR14:** The system shall automatically trigger margin calculations when COGS is assigned to products.
-- **FR15:** The system shall display margin analysis results across SKU, brand, category, and time-period dimensions.
-- **FR16:** The system shall provide a basic financial summary view with an overview of financial data and key metrics.
-- **FR17:** The system shall support basic filtering capabilities in financial summary views.
-- **FR18:** The system shall integrate with all documented backend API endpoints.
-- **FR19:** The system shall include proper JWT and Cabinet ID authentication-header handling for all API requests.
-- **FR20:** The system shall provide comprehensive error handling with user-friendly messages for API failures.
-- **FR21:** The system shall display loading states and progress indicators during API operations.
-- **FR22:** The system shall format RUB currency values using `Intl.NumberFormat` with locale `ru-RU`.
-- **FR23:** The system shall format percentage values using `Intl.NumberFormat` with style `percent`.
-- **FR24:** The system shall display dates in ISO week format (`YYYY-Www`) and standard date format (`DD.MM.YYYY`).
-- **FR25:** The system shall use established semantic color coding for positive, negative, and primary metrics.
+- **FR1:** The system shall provide user registration and login functionality with JWT token-based authentication
+- **FR2:** The system shall manage user sessions, including secure token storage and automatic session expiration
+- **FR3:** The system shall provide a complete onboarding flow that guides users through cabinet creation, WB token input, and initial data processing setup
+- **FR4:** The system shall validate WB tokens during onboarding and provide clear feedback on validation status
+- **FR5:** The system shall display progress indicators during automatic data processing (product parsing and financial report loading)
+- **FR6:** The system shall provide a main dashboard view for business owners displaying large metric cards for Total Payable and Revenue
+- **FR7:** The system shall visualize expense breakdowns on the dashboard with appropriate charts and graphs
+- **FR8:** The system shall display trend graphs for key financial metrics over time
+- **FR9:** The system shall provide quick access links from the dashboard to detailed analytics views
+- **FR10:** The system shall allow users to assign COGS (Cost of Goods Sold) to individual products through a single product interface
+- **FR11:** The system shall support bulk COGS assignment operations for multiple products simultaneously
+- **FR12:** The system shall validate COGS input values and provide clear error messages for invalid entries
+- **FR13:** The system shall provide visual confirmation when COGS assignments are successfully saved
+- **FR14:** The system shall automatically trigger margin calculations when COGS is assigned to products
+- **FR15:** The system shall display margin analysis results across multiple dimensions: SKU, brand, category, and time periods
+- **FR16:** The system shall provide a basic financial summary view with overview of financial data and key metrics
+- **FR17:** The system shall support basic filtering capabilities in financial summary views
+- **FR18:** The system shall integrate with all 33+ backend API endpoints as documented in the backend API specification
+- **FR19:** The system shall include proper authentication header handling (JWT token + Cabinet ID) for all API requests
+- **FR20:** The system shall provide comprehensive error handling with user-friendly error messages for API failures
+- **FR21:** The system shall display loading states and progress indicators during API operations
+- **FR22:** The system shall format currency values using Intl.NumberFormat with locale 'ru-RU' and currency 'RUB'
+- **FR23:** The system shall format percentage values using Intl.NumberFormat with style 'percent'
+- **FR24:** The system shall display dates in ISO week format (YYYY-Www) and standard date format (DD.MM.YYYY)
+- **FR25:** The system shall use color coding: Green for positive values, Red for negative values, Blue for primary metrics
 
 **Total product FRs:** 25.
 
 ### Non-Functional Requirements
 
-- **NFR1:** Support Chrome, Firefox, Safari, and Edge, latest two versions.
-- **NFR2:** Remain responsive and functional on supported desktop, tablet, and mobile platforms.
-- **NFR3:** Initial page load shall be under three seconds.
-- **NFR4:** Time to interactive shall be under five seconds.
-- **NFR5:** Dashboard data shall load within two seconds.
-- **NFR6:** API responses shall meet a 95th-percentile target below 500 ms.
-- **NFR7:** User-action error rate shall remain below one percent.
-- **NFR8:** Secure token storage shall follow the established SPA JWT plus Cabinet ID pattern.
-- **NFR9:** Implement XSS protection measures.
-- **NFR10:** Implement CSRF protection appropriate to JWT Bearer authentication and CORS.
-- **NFR11:** Validate and sanitize all user inputs.
-- **NFR12:** Production API communication shall use HTTPS; this migration itself remains localhost-only and does not authorize deployment work.
-- **NFR13:** Source files shall remain within the project’s 200-line policy.
-- **NFR14:** Code shall pass ESLint including the max-lines rule.
-- **NFR15:** Application code shall use TypeScript and modern ECMAScript syntax.
-- **NFR16:** Code comments, logs, and API-response handling shall be in English.
-- **NFR17:** Continue using Next.js for rendering, routing, and optimization.
-- **NFR18:** Preserve modular, feature-oriented component architecture.
-- **NFR19:** Preserve separation among API client, service, and UI layers.
-- **NFR20:** Handle authentication refresh and expiration gracefully.
-- **NFR21:** Meet at least WCAG 2.1 AA; the migration UX specification raises the target to WCAG 2.2 AA.
-- **NFR22:** Treat desktop and tablet as primary targets and mobile as a supported secondary target.
-- **NFR23:** Maintain a testing pyramid with unit, integration, and critical-path E2E coverage.
+- **NFR1:** The application shall support modern web browsers: Chrome, Firefox, Safari, Edge (latest 2 versions)
+- **NFR2:** The application shall be responsive and functional on desktop (Windows 10+, macOS 10.15+, Linux Ubuntu 20.04+), tablet (iPadOS 14+, Android 10+), and mobile (iOS 14+, Android 10+) devices
+- **NFR3:** The application shall achieve initial page load time of less than 3 seconds
+- **NFR4:** The application shall achieve time to interactive of less than 5 seconds
+- **NFR5:** The application shall load dashboard data within 2 seconds
+- **NFR6:** The application shall handle API responses with 95th percentile response time of less than 500ms
+- **NFR7:** The application shall maintain error rate of less than 1% for user actions
+- **NFR8:** The application shall implement secure token storage using localStorage with Zustand persistence (Decision: localStorage chosen over httpOnly cookies for SPA compatibility with JWT + Cabinet ID header pattern)
+- **NFR9:** The application shall implement XSS protection measures
+- **NFR10:** The application shall implement CSRF protection (Note: SPA architecture with JWT Bearer tokens in Authorization header + CORS policy mitigates CSRF risk — no cookie-based session to exploit)
+- **NFR11:** The application shall validate and sanitize all user inputs
+- **NFR12:** The application shall communicate with backend API exclusively over HTTPS
+- **NFR13:** All source code files shall be limited to a maximum of 200 lines to optimize AI context and prevent errors
+- **NFR14:** All code shall pass ESLint validation with max-lines-per-file rule set to 200
+- **NFR15:** The application shall use TypeScript with ES+ syntax for all code
+- **NFR16:** All code comments, logs, and API response handling shall be in English language
+- **NFR17:** The application shall use Next.js framework for server-side rendering, routing, and performance optimization
+- **NFR18:** The application shall follow modular component architecture with feature-based folder organization
+- **NFR19:** The application shall implement proper separation between API client layer, service layer, and UI components
+- **NFR20:** The application shall handle authentication token refresh and expiration gracefully
+- **NFR21:** The application shall meet WCAG 2.1 AA accessibility standards
+- **NFR22:** Desktop and tablet shall be primary targets, mobile secondary
+- **NFR23:** The application shall implement a full testing pyramid — unit tests (60%+ coverage), integration tests (30%+), E2E tests (10%+ critical paths)
 
 **Total product NFRs:** 23.
 
@@ -158,6 +158,8 @@ These are prior, independent frontend programs rather than sharded copies of Epi
 - Preserve the current backend/public contract and consume the existing backend service at `localhost:3000` during local development.
 - Run the frontend at `localhost:3100` for local validation.
 - Preserve Russian UI localization, `ru-RU` financial formatting, query keys, URLs/search state, calculations, authentication, and cabinet context.
+- Treat the PRD's WCAG 2.1 AA requirement as the minimum; the approved migration UX raises migrated surfaces to WCAG 2.2 AA.
+- Keep NFR12 as the production transport requirement while this migration's implementation and validation remain localhost-only and do not authorize deployment.
 - Do not introduce deployment, production, direct-to-main, force-push, or required-CI scope.
 - Preserve the project’s pinned Node.js/npm toolchain and existing dependency policy.
 - Use the new migration Epic package as the authoritative delta for semantic tokens, shadcn primitives, shared compositions, route ownership, visual evidence, accessibility, and mandatory branch/worktree cleanup.
@@ -170,37 +172,44 @@ The product PRD provides a complete brownfield baseline of 25 FRs and 23 NFRs. I
 
 ### Coverage Matrix
 
-| FR | Product requirement summary | Migration Epic coverage | Status |
+The canonical migration artifact intentionally refines the product PRD numbering. `P-FR` below means the numbered product requirement from `docs/prd.md`; `M-FR` means the canonical migration requirement from the Epic package.
+
+| Product FR | Product requirement summary | Canonical migration mapping and Epic coverage | Status |
 | --- | --- | --- | --- |
-| FR1 | Registration and login | 167-FE | Covered |
-| FR2 | Session management and expiration | 167-FE | Covered |
-| FR3 | Complete onboarding flow | 167-FE | Covered |
-| FR4 | WB token validation | 167-FE | Covered |
-| FR5 | Processing progress and recovery | 167-FE | Covered |
-| FR6 | Dashboard metrics | 168-FE | Covered |
-| FR7 | Expense and analytical visualizations | 168-FE | Covered |
-| FR8 | Trend visualizations | 168-FE | Covered |
-| FR9 | Summary-to-detail navigation | 167-FE | Covered |
-| FR10 | Single-product COGS | 172-FE | Covered |
-| FR11 | Bulk COGS | 172-FE | Covered |
-| FR12 | Numeric/business validation | 172-FE | Covered |
-| FR13 | Mutation confirmation and refresh | 172-FE | Covered |
-| FR14 | Margin calculation lifecycle | 172-FE | Covered |
-| FR15 | Multi-dimensional margin analysis | 168-FE | Covered |
-| FR16 | Financial summary and implemented analytical workflows | 169-FE | Covered |
-| FR17 | Filtering and data-control behavior | 166-FE | Covered |
-| FR18 | Backend endpoint compatibility | 174-FE | Covered |
-| FR19 | Authentication/cabinet headers and request lifecycle | 174-FE | Covered |
-| FR20 | Loading, empty, error, stale, partial, permission, and success states | 166-FE | Covered |
-| FR21 | Russian localization | 174-FE | Covered |
-| FR22 | RUB formatting and zero-versus-missing semantics | 166-FE | Covered |
-| FR23 | Percentage and comparison meaning | 166-FE | Covered |
-| FR24 | Date, range, ISO-week, and period labels | 166-FE | Covered |
-| FR25 | Semantic operational, financial, availability, and analytical colors | 166-FE | Covered |
+| P-FR1 | Registration and login | M-FR1 / 167-FE | Covered |
+| P-FR2 | Session management and expiration | M-FR2 / 167-FE | Covered |
+| P-FR3 | Complete onboarding flow | M-FR3 / 167-FE | Covered |
+| P-FR4 | WB token validation | M-FR4 / 167-FE | Covered |
+| P-FR5 | Processing progress and recovery | M-FR5 / 167-FE | Covered |
+| P-FR6 | Dashboard metrics | M-FR6 / 168-FE | Covered |
+| P-FR7 | Expense and analytical visualizations | M-FR7 / 168-FE | Covered |
+| P-FR8 | Trend visualizations | M-FR8 / 168-FE | Covered |
+| P-FR9 | Summary-to-detail navigation | M-FR9 / 167-FE | Covered |
+| P-FR10 | Single-product COGS | M-FR10 / 172-FE | Covered |
+| P-FR11 | Bulk COGS | M-FR11 / 172-FE | Covered |
+| P-FR12 | Numeric/business validation | M-FR12 / 172-FE | Covered |
+| P-FR13 | Mutation confirmation and refresh | M-FR13 / 172-FE | Covered |
+| P-FR14 | Margin calculation lifecycle | M-FR14 / 172-FE | Covered |
+| P-FR15 | Multi-dimensional margin analysis | M-FR15 / 168-FE | Covered |
+| P-FR16 | Financial summary and implemented analytical workflows | M-FR16 / 169-FE | Covered |
+| P-FR17 | Filtering and data-control behavior | M-FR17 / 166-FE | Covered |
+| P-FR18 | Backend endpoint compatibility | M-FR18 / 174-FE | Covered |
+| P-FR19 | Authentication/cabinet headers and request lifecycle | M-FR19 / 174-FE | Covered |
+| P-FR20 | User-friendly API error handling | M-FR20 / 166-FE | Covered |
+| P-FR21 | Loading states and progress indicators | M-FR20 / 166-FE | Covered |
+| P-FR22 | RUB formatting | M-FR22 / 166-FE | Covered |
+| P-FR23 | Percentage formatting | M-FR23 / 166-FE | Covered |
+| P-FR24 | ISO-week and standard date formatting | M-FR24 / 166-FE | Covered |
+| P-FR25 | Positive, negative, and primary metric color meaning | M-FR25 / 166-FE | Covered |
 
 ### Migration-Specific Delta Requirements
 
-The canonical Epic package adds `FR26–FR35`. These are not untracked PRD conflicts; they are the approved modernization delta covering partial-shadcn consolidation, all 76 routes, shared ownership, specialized-component preservation, legacy removal, route-ledger parity, unified AppShell, product compositions, semantic themes, and local Git/worktree completion evidence.
+The canonical migration requirements make two deliberate changes relative to the numbered product PRD:
+
+- M-FR20 consolidates product P-FR20 error handling and P-FR21 loading/progress into the complete route/section state contract owned by Epic 166-FE.
+- M-FR21 promotes the existing Russian user-interface/localization constraint from product Additional Requirements into an explicit migration FR owned by Epic 174-FE.
+
+M-FR26–M-FR35 are the ten modernization-only requirements covering partial-shadcn consolidation, all 76 routes, shared ownership, specialized-component preservation, legacy removal, route-ledger parity, unified AppShell, product compositions, semantic themes, and local Git/worktree completion evidence. These refinements are approved migration deltas, not product-requirement gaps.
 
 ### Missing Requirements
 
@@ -211,8 +220,9 @@ None. Every product FR has a named primary Epic, and every migration-specific de
 - Total product PRD FRs: 25.
 - Product FRs covered by the migration program: 25.
 - Product FR coverage: 100%.
-- Additional migration FRs: 10.
-- Total canonical migration FRs: 35.
+- Canonical migration refinements beyond one-to-one product FR mapping: M-FR20 consolidation plus M-FR21 promotion.
+- Modernization-only migration FRs: 10 (M-FR26–M-FR35).
+- Total canonical migration FR identifiers: 35.
 - Canonical migration FRs with an Epic owner: 35 of 35.
 
 ## UX Alignment Assessment
