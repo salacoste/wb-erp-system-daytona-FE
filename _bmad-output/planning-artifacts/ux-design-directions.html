@@ -1,0 +1,247 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>WB Repricer — Shadcn Design Directions</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --brand: #e53935;
+      --primary: #c62828;
+      --primary-hover: #a31515;
+      --primary-soft: #FFCDD2;
+      --bg: #f7f7f8;
+      --surface: #ffffff;
+      --surface-2: #f5f5f5;
+      --fg: #212121;
+      --muted: #757575;
+      --border: #e5e7eb;
+      --success: #15803d;
+      --success-soft: #f0fdf4;
+      --warning: #b45309;
+      --warning-soft: #fffbeb;
+      --info: #1d4ed8;
+      --info-soft: #eff6ff;
+      --danger: #b91c1c;
+      --danger-soft: #fef2f2;
+      --purple: #6d28d9;
+      --shadow: 0 1px 2px rgb(0 0 0 / 5%), 0 8px 24px rgb(0 0 0 / 4%);
+      --radius: 10px;
+    }
+    * { box-sizing: border-box; }
+    body { margin: 0; font: 14px/1.45 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: var(--bg); color: var(--fg); }
+    button { font: inherit; }
+    .toolbar { position: sticky; top: 0; z-index: 20; display: flex; flex-wrap: wrap; gap: 8px; align-items: center; padding: 12px 16px; color: white; background: #1f1f22; box-shadow: var(--shadow); }
+    .toolbar strong { margin-right: 8px; }
+    .toolbar button { border: 1px solid #4b4b50; border-radius: 8px; padding: 8px 11px; color: #f5f5f5; background: #2d2d31; cursor: pointer; }
+    .toolbar button:hover, .toolbar button[aria-pressed="true"] { border-color: #fca5a5; background: var(--primary); }
+    .toolbar .spacer { flex: 1; }
+    .viewport { width: 100%; min-height: calc(100vh - 58px); margin: auto; transition: width .2s ease; }
+    .viewport[data-size="tablet"] { width: min(860px, 100%); }
+    .viewport[data-size="mobile"] { width: min(430px, 100%); }
+    .direction { display: none; min-height: calc(100vh - 58px); }
+    .direction.active { display: block; }
+    .shell { display: grid; grid-template-columns: 228px 1fr; min-height: calc(100vh - 58px); }
+    .sidebar { position: sticky; top: 58px; height: calc(100vh - 58px); padding: 18px 12px; background: var(--surface); border-right: 1px solid var(--border); }
+    .logo { display: flex; align-items: center; gap: 9px; padding: 4px 8px 18px; font-weight: 750; font-size: 17px; }
+    .logo-mark { width: 28px; height: 28px; display: grid; place-items: center; border-radius: 8px; color: white; background: var(--brand); }
+    .nav-label { margin: 14px 10px 5px; color: var(--muted); font-size: 11px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; }
+    .nav { display: grid; gap: 4px; }
+    .nav a { display: flex; align-items: center; justify-content: space-between; padding: 9px 10px; border-radius: 8px; color: var(--fg); text-decoration: none; }
+    .nav a:hover { background: var(--primary-soft); }
+    .nav a.active { color: white; background: var(--primary); }
+    .badge { display: inline-flex; align-items: center; gap: 5px; min-height: 22px; padding: 2px 8px; border-radius: 999px; font-size: 12px; font-weight: 650; background: var(--surface-2); }
+    .badge.danger { color: var(--danger); background: var(--danger-soft); }
+    .badge.success { color: var(--success); background: var(--success-soft); }
+    .badge.warning { color: var(--warning); background: var(--warning-soft); }
+    .main { min-width: 0; }
+    .topbar { height: 60px; display: flex; align-items: center; gap: 12px; padding: 0 24px; background: var(--surface); border-bottom: 1px solid var(--border); }
+    .topbar .crumb { color: var(--muted); }
+    .topbar .context { margin-left: auto; display: flex; gap: 8px; }
+    .control { min-height: 36px; padding: 7px 10px; border: 1px solid var(--border); border-radius: 8px; background: var(--surface); color: var(--fg); }
+    .primary { border-color: var(--primary); color: white; background: var(--primary); }
+    .primary:hover { background: var(--primary-hover); }
+    .content { padding: 24px; }
+    .page-head { display: flex; align-items: flex-start; gap: 16px; margin-bottom: 20px; }
+    .page-head h1 { margin: 0 0 4px; font-size: 28px; line-height: 1.2; }
+    .page-head p { margin: 0; color: var(--muted); }
+    .page-head .actions { margin-left: auto; display: flex; gap: 8px; }
+    .status-strip { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px; }
+    .status-item { flex: 1 1 180px; display: flex; gap: 10px; align-items: center; padding: 10px 12px; border: 1px solid var(--border); border-radius: var(--radius); background: var(--surface); }
+    .dot { width: 9px; height: 9px; border-radius: 50%; background: var(--success); }
+    .dot.warning { background: var(--warning); }
+    .dot.danger { background: var(--danger); }
+    .grid { display: grid; gap: 14px; }
+    .grid.kpi { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+    .grid.two { grid-template-columns: minmax(0, 1.5fr) minmax(280px, .75fr); }
+    .card { min-width: 0; padding: 16px; border: 1px solid var(--border); border-radius: var(--radius); background: var(--surface); box-shadow: 0 1px 1px rgb(0 0 0 / 2%); }
+    .card h2, .card h3 { margin: 0 0 6px; font-size: 15px; }
+    .metric { margin-top: 9px; font-size: 27px; font-weight: 740; font-variant-numeric: tabular-nums; }
+    .sub { color: var(--muted); font-size: 12px; }
+    .delta { margin-left: 6px; color: var(--success); font-size: 12px; font-weight: 650; }
+    .delta.down { color: var(--danger); }
+    .chart { height: 210px; margin-top: 14px; position: relative; overflow: hidden; border-radius: 8px; background: linear-gradient(to bottom, transparent 24%, var(--border) 25%, transparent 26%, transparent 49%, var(--border) 50%, transparent 51%, transparent 74%, var(--border) 75%, transparent 76%); }
+    .chart::after { content: ""; position: absolute; inset: 30px 4% 25px; border-bottom: 4px solid var(--primary); border-radius: 50%; transform: skewY(-8deg); box-shadow: 70px -18px 0 -1px var(--info), 150px 7px 0 -1px var(--success); }
+    table { width: 100%; border-collapse: collapse; font-variant-numeric: tabular-nums; }
+    th, td { padding: 10px 12px; border-bottom: 1px solid var(--border); text-align: left; white-space: nowrap; }
+    th { color: var(--muted); font-size: 12px; background: var(--surface-2); }
+    td.num, th.num { text-align: right; }
+    .positive { color: var(--success); font-weight: 650; }
+    .negative { color: var(--danger); font-weight: 650; }
+    .queue { display: grid; gap: 9px; }
+    .queue-item { display: grid; grid-template-columns: 8px 1fr auto; gap: 10px; align-items: center; padding: 12px; border: 1px solid var(--border); border-radius: 8px; background: var(--surface); }
+    .queue-item .bar { align-self: stretch; border-radius: 6px; background: var(--warning); }
+    .queue-item.critical .bar { background: var(--danger); }
+    .hero { padding: 28px; color: white; border-radius: 14px; background: linear-gradient(135deg, var(--primary), var(--primary-hover)); }
+    .hero .metric { font-size: 40px; }
+    .split { display: grid; grid-template-columns: minmax(0, 1fr) 370px; gap: 14px; }
+    .detail { border-left: 3px solid var(--primary); }
+    .note { margin: 12px 0; padding: 11px 12px; color: #78350f; border: 1px solid #fde68a; border-radius: 8px; background: var(--warning-soft); }
+    .direction-note { margin: 0; padding: 10px 16px; color: #3f3f46; background: #fff7ed; border-bottom: 1px solid #fed7aa; }
+    .direction-note strong { color: var(--primary); }
+    .compact .content { padding: 16px; }
+    .compact .card { padding: 12px; border-radius: 7px; }
+    .compact th, .compact td { padding: 7px 9px; }
+    .executive .sidebar { width: 84px; }
+    .executive .shell { grid-template-columns: 84px 1fr; }
+    .executive .nav a { justify-content: center; font-size: 0; min-height: 44px; }
+    .executive .nav a::before { content: "◼"; font-size: 15px; }
+    .executive .logo span:last-child, .executive .nav-label { display: none; }
+    @media (max-width: 900px) {
+      .shell { grid-template-columns: 72px 1fr; }
+      .sidebar { padding-inline: 8px; }
+      .logo span:last-child, .nav-label { display: none; }
+      .nav a { justify-content: center; font-size: 0; min-height: 44px; }
+      .nav a::before { content: "◼"; font-size: 14px; }
+      .grid.kpi { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .grid.two, .split { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 520px) {
+      .shell, .executive .shell { display: block; }
+      .sidebar { display: none; }
+      .topbar { padding: 0 12px; }
+      .topbar .crumb { display: none; }
+      .content { padding: 14px; }
+      .page-head { display: block; }
+      .page-head h1 { font-size: 24px; }
+      .page-head .actions { margin-top: 12px; }
+      .grid.kpi { grid-template-columns: 1fr; }
+      th.optional, td.optional { display: none; }
+      .hero { padding: 20px; }
+      .hero .metric { font-size: 32px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="toolbar" aria-label="Переключатель дизайн-направлений">
+    <strong>WB Repricer · Design Directions</strong>
+    <button data-dir="1" aria-pressed="true">1 Calm Command</button>
+    <button data-dir="2">2 Finance Dense</button>
+    <button data-dir="3">3 Ops Triage</button>
+    <button data-dir="4">4 Executive</button>
+    <button data-dir="5">5 Modular Analytics</button>
+    <button data-dir="6">6 Context Split</button>
+    <span class="spacer"></span>
+    <button data-size="desktop" aria-pressed="true">Desktop</button>
+    <button data-size="tablet">Tablet</button>
+    <button data-size="mobile">Mobile</button>
+  </div>
+  <div class="viewport" data-size="desktop">
+    <section class="direction active" data-direction="1">
+      <p class="direction-note"><strong>Direction 1 · Calm Command Center:</strong> рекомендуемая общая основа — спокойная иерархия, один статус-слой, hero KPI и progressive disclosure.</p>
+      <div class="shell"><aside class="sidebar"></aside><main class="main"></main></div>
+    </section>
+    <section class="direction compact" data-direction="2">
+      <p class="direction-note"><strong>Direction 2 · Financial Dense Workspace:</strong> компактные фильтры, tabular values и максимум доказательств для CFO.</p>
+      <div class="shell"><aside class="sidebar"></aside><main class="main"></main></div>
+    </section>
+    <section class="direction" data-direction="3">
+      <p class="direction-note"><strong>Direction 3 · Operations Triage:</strong> exception-first layout для складов, заказов, поставок и fulfillment.</p>
+      <div class="shell"><aside class="sidebar"></aside><main class="main"></main></div>
+    </section>
+    <section class="direction executive" data-direction="4">
+      <p class="direction-note"><strong>Direction 4 · Executive Minimal:</strong> сильный hero и минимум первого экрана; подходит для Owner overview, но недостаточен для большинства рабочих маршрутов.</p>
+      <div class="shell"><aside class="sidebar"></aside><main class="main"></main></div>
+    </section>
+    <section class="direction" data-direction="5">
+      <p class="direction-note"><strong>Direction 5 · Modular Analytics:</strong> перестраиваемые metric families и независимые аналитические панели.</p>
+      <div class="shell"><aside class="sidebar"></aside><main class="main"></main></div>
+    </section>
+    <section class="direction" data-direction="6">
+      <p class="direction-note"><strong>Direction 6 · Contextual Split View:</strong> список и detail рядом для campaign, model, shipment и supply workflows.</p>
+      <div class="shell"><aside class="sidebar"></aside><main class="main"></main></div>
+    </section>
+  </div>
+  <template id="sidebar">
+    <div class="logo"><span class="logo-mark">W</span><span>WB Repricer</span></div>
+    <div class="nav-label">Рабочее пространство</div>
+    <nav class="nav">
+      <a class="active" href="#">Обзор <span>⌂</span></a>
+      <a href="#">Аналитика <span class="badge danger">3</span></a>
+      <a href="#">Товары <span>›</span></a>
+      <a href="#">Заказы <span>›</span></a>
+      <a href="#">Поставки <span class="badge warning">2</span></a>
+      <a href="#">COGS <span>›</span></a>
+      <a href="#">Настройки <span>›</span></a>
+    </nav>
+  </template>
+  <template id="base-main">
+    <header class="topbar"><span class="crumb">Главная / Обзор</span><div class="context"><button class="control">Кабинет: Основной</button><button class="control">4 недели</button></div></header>
+    <div class="content">
+      <div class="page-head"><div><h1>Бизнес-обзор</h1><p>Период 15.07–11.08 · обновлено 3 мин назад</p></div><div class="actions"><button class="control">Экспорт</button><button class="control primary">Назначить COGS</button></div></div>
+      <div class="status-strip"><div class="status-item"><span class="dot"></span><div><strong>Данные актуальны</strong><div class="sub">Все отчёты загружены</div></div></div><div class="status-item"><span class="dot warning"></span><div><strong>COGS 92%</strong><div class="sub">18 товаров без себестоимости</div></div></div><div class="status-item"><span class="dot danger"></span><div><strong>3 риска</strong><div class="sub">Требуют внимания</div></div></div></div>
+      <div class="grid kpi"><article class="card"><h2>Чистая прибыль</h2><div class="metric">1,24 млн ₽</div><span class="delta">↑ +8,4%</span><div class="sub">полностью: 1 241 384,20 ₽</div></article><article class="card"><h2>Выручка</h2><div class="metric">8,91 млн ₽</div><span class="delta">↑ +4,1%</span></article><article class="card"><h2>Маржа</h2><div class="metric">13,9%</div><span class="delta down">↓ −1,2 п.п.</span></article><article class="card"><h2>Заказы</h2><div class="metric">4 286</div><span class="delta">↑ +6,7%</span></article></div>
+      <div class="grid two" style="margin-top:14px"><article class="card"><h2>Динамика прибыли и выручки</h2><div class="sub">Сравнение с предыдущими 4 неделями</div><div class="chart" role="img" aria-label="График динамики"></div></article><article class="card"><h2>Что требует внимания</h2><div class="queue"><div class="queue-item critical"><span class="bar"></span><div><strong>Отрицательная маржа</strong><div class="sub">7 товаров · влияние −86 400 ₽</div></div><button class="control">Открыть</button></div><div class="queue-item"><span class="bar"></span><div><strong>Запас закончится</strong><div class="sub">12 SKU в ближайшие 7 дней</div></div><button class="control">Открыть</button></div></div></article></div>
+    </div>
+  </template>
+  <script>
+    const sidebar = document.querySelector('#sidebar').content;
+    const baseMain = document.querySelector('#base-main').content;
+    document.querySelectorAll('.sidebar').forEach(el => el.append(sidebar.cloneNode(true)));
+    document.querySelectorAll('.main').forEach(el => el.append(baseMain.cloneNode(true)));
+
+    const directions = document.querySelectorAll('.direction');
+    document.querySelectorAll('[data-dir]').forEach(button => button.addEventListener('click', () => {
+      directions.forEach(section => section.classList.toggle('active', section.dataset.direction === button.dataset.dir));
+      document.querySelectorAll('[data-dir]').forEach(b => b.setAttribute('aria-pressed', String(b === button)));
+      customize(Number(button.dataset.dir));
+    }));
+    document.querySelectorAll('[data-size]').forEach(button => button.addEventListener('click', () => {
+      document.querySelector('.viewport').dataset.size = button.dataset.size;
+      document.querySelectorAll('[data-size]').forEach(b => b.setAttribute('aria-pressed', String(b === button)));
+    }));
+
+    function customize(id) {
+      const active = document.querySelector('.direction.active');
+      const title = active.querySelector('h1');
+      const description = active.querySelector('.page-head p');
+      const grid = active.querySelector('.grid.kpi');
+      const second = active.querySelector('.grid.two');
+      active.querySelectorAll('.hero,.split,.note').forEach(el => el.remove());
+      if (id === 2) {
+        title.textContent = 'Финансовая аналитика';
+        description.textContent = 'Кабинет Основной · W29–W32 против W25–W28 · данные полные';
+        second.innerHTML = `<article class="card" style="grid-column:1/-1"><h2>Экономика по товарам</h2><table><thead><tr><th>Товар</th><th class="num">Выручка</th><th class="num">COGS</th><th class="num optional">Расходы</th><th class="num">Прибыль</th><th class="num">Маржа</th></tr></thead><tbody><tr><td>WB-10482 · Футболка</td><td class="num">824 300 ₽</td><td class="num">312 400 ₽</td><td class="num optional">279 100 ₽</td><td class="num positive">+232 800 ₽</td><td class="num">28,2%</td></tr><tr><td>WB-10517 · Худи</td><td class="num">541 200 ₽</td><td class="num">238 900 ₽</td><td class="num optional">321 600 ₽</td><td class="num negative">−19 300 ₽</td><td class="num negative">−3,6%</td></tr></tbody></table></article>`;
+      } else if (id === 3) {
+        title.textContent = 'Операционный контроль';
+        description.textContent = 'Исключения по запасам, заказам и поставкам · обновлено 2 мин назад';
+        grid.innerHTML = `<article class="card"><h2>Критические</h2><div class="metric negative">3</div><div class="sub">требуют действия сегодня</div></article><article class="card"><h2>Риск out-of-stock</h2><div class="metric">12 SKU</div><div class="sub">горизонт 7 дней</div></article><article class="card"><h2>Поставки задержаны</h2><div class="metric">2</div><div class="sub">на 1–3 дня</div></article><article class="card"><h2>Возвраты</h2><div class="metric">8,4%</div><span class="delta down">↑ +1,7 п.п.</span></article>`;
+        second.innerHTML = `<article class="card" style="grid-column:1/-1"><h2>Очередь исключений</h2><div class="queue"><div class="queue-item critical"><span class="bar"></span><div><strong>SKU 10482 — запас на 2 дня</strong><div class="sub">Продажи 18 шт/день · остаток 36 · поставка не создана</div></div><button class="control primary">Создать поставку</button></div><div class="queue-item"><span class="bar"></span><div><strong>Поставка SUP-384 задержана</strong><div class="sub">Статус не менялся 26 часов</div></div><button class="control">Проверить</button></div></div></article>`;
+      } else if (id === 4) {
+        const content = active.querySelector('.content');
+        content.insertBefore(Object.assign(document.createElement('section'), {className:'hero', innerHTML:'<div class="sub" style="color:#fee2e2">Главный результат периода</div><h1 style="margin:4px 0">Чистая прибыль</h1><div class="metric">1,24 млн ₽</div><div>↑ 8,4% к предыдущему периоду · маржа 13,9%</div>'}), content.querySelector('.page-head').nextSibling);
+      } else if (id === 5) {
+        title.textContent = 'Аналитическое пространство';
+        description.textContent = 'Модули сгруппированы по решениям, а не по источникам API';
+        grid.innerHTML = `<article class="card"><h2>Продажи</h2><div class="metric">8,91 млн ₽</div><div class="sub">выручка · заказы · выкупы</div></article><article class="card"><h2>Прибыльность</h2><div class="metric">13,9%</div><div class="sub">прибыль · маржа · COGS</div></article><article class="card"><h2>Маркетинг</h2><div class="metric">4,8 ROAS</div><div class="sub">реклама · органика · каннибализация</div></article><article class="card"><h2>Запасы</h2><div class="metric">23 дня</div><div class="sub">ликвидность · дефицит · хранение</div></article>`;
+      } else if (id === 6) {
+        title.textContent = 'Рекламные кампании';
+        description.textContent = 'Список и доказательства выбранной кампании в одном контексте';
+        second.className = 'split';
+        second.innerHTML = `<article class="card"><h2>Кампании</h2><table><thead><tr><th>Название</th><th class="num">Затраты</th><th class="num">ROAS</th></tr></thead><tbody><tr><td><strong>Бренд · Поиск</strong></td><td class="num">184 300 ₽</td><td class="num positive">5,2</td></tr><tr><td>Каталог · Авто</td><td class="num">96 800 ₽</td><td class="num">3,7</td></tr></tbody></table></article><aside class="card detail"><h2>Бренд · Поиск</h2><div class="metric">+214 800 ₽</div><div class="sub">инкрементальная прибыль</div><div class="note">CTR снизился на 12%. Продажи остаются выше контрольной группы.</div><button class="control primary">Открыть кампанию</button></aside>`;
+      }
+    }
+  </script>
+</body>
+</html>
