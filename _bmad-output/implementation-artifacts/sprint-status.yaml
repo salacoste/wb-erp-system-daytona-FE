@@ -1,5 +1,5 @@
 # generated: 2026-08-03
-# last_updated: 2026-08-05
+# last_updated: 2026-08-11
 # project: frontend
 # project_key: NOKEY
 # tracking_system: file-system
@@ -37,7 +37,7 @@
 #   they are excluded from story and retrospective counts and must be documented with a no-story-ID note.
 
 generated: 2026-08-03 # refreshed after Epic 127 truth reconciliation and Epics 162-165 registration
-last_updated: 2026-08-07 # Epic 163-FE COMPLETE (all 6 stories merged). Story 163.6-FE (FR13/UX-DR5) merged via PR #122 (c4b9db46): DashboardPeriodSelector Tabs→RadioGroup single-choice toggle (removed forceMount hidden panels + TZ-7 workaround comment); per-instance useId label↔input; no-`as` PeriodType narrowing. 2-pass fresh-context review (P1 REQUEST-CHANGES: stale merge-base + Enter≠Space ARIA key + single-choice no-op → fixed; merged origin/main so PR diff = 5 files only, no 163.5 reversion → P2 APPROVE). Static tsc0/eslint0/locale4/docs18/vitest 17607/fmt clean; e2e selectors migrated (period-toggle-* + checked/unchecked). Prior: 163.5 merged (PR #121, FR10 naive-baseline units column); 163.4 merged (PR #120, FR8 0 ₽ vs —); 163.3 merged (PR #118, installed rule editor).
+last_updated: 2026-08-11 # Registered the active shadcn/ui migration program (Epics 166-174, 90 Stories). Historical completed statuses are preserved; Story 166.1 is the first sequential candidate and remains backlog until its dedicated Story artifact is created.
 project: frontend
 project_key: NOKEY
 tracking_system: file-system
@@ -730,5 +730,132 @@ development_status:
   165.3-fe-regenerate-openwiki: done  # Final Run 9 30974657031 produced approved e3d9e137; full application and affected workflow/documentation validation passed. Completion is effective through the current normal PR merge.
   165.4-fe-activate-liquidity-trends-after-daily-snapshots: done  # DONE 2026-08-08: BE LiquidityDaily model + as-of computeLiquiditySummaryAsOf (daily velocity from daily_sales_raw, mirrors live ÷(weeks*7)) + LIQUIDITY_DAILY_SYNC queue/processor (daily + 90d backfill, 165.5 per-attempt guard) + @Cron scheduler + trends stub replacement (pinned shape, cache+invalidation) + full monitoring registration merged PR #122; FE LiquidityTrendChart (ComposedChart dual-axis + distribution AreaChart) + LiquidityTrendsSection (independent states AC4, period selector) + getLiquidityTrends malformed-guard merged PR #135. BE full suite green-for-purpose (3 pre-existing reds unrelated); FE vitest 17768 green. 2-pass adversarial review each side (BE APPROVE-WITH-FINDINGS→fixed; FE pass1 REQUEST-CHANGES B1 tooltip/B2 dead-branch→fixed, pass2 APPROVE). AC met: BE returns 90 dated snapshots (86 non-zero 2026-05-14→08-07).
   165.5-fe-per-status-backfill-retry-after-separate-contracts: done  # DONE 2026-08-07: BE per-source retry (failure-detection hooks in both backfill processors + retryFailedBackfill + POST /v1/admin/backfill/{report|analytics}/retry) merged PR #120; FE retry controls (retryBackfill api+normalizer, useRetryBackfill, BackfillRetryControls, failed-state disambiguation) merged PR #133. 68 BE tests + 17751 FE tests + 51 E2E green; 2 adversarial review cycles each side.
+
+  # Epic 166-FE: Trustworthy Shadcn Design-System Foundation
+  # Active migration program source: epics-166-174-fe-shadcn-migration.md
+  epic-166-fe: in-progress
+  166-1-fe-establish-the-tailwind-v4-semantic-token-and-compiler-contract: ready-for-dev
+  166-2-fe-harden-the-existing-shadcn-primitive-layer: backlog
+  166-3-fe-deliver-pageheader-and-contextbar-compositions: backlog
+  166-4-fe-standardize-metrics-financial-values-availability-and-status: backlog
+  166-5-fe-standardize-filters-and-period-controls: backlog
+  166-6-fe-deliver-responsivetable-and-data-table-contracts: backlog
+  166-7-fe-deliver-chartframe-and-accessible-analytical-evidence: backlog
+  166-8-fe-standardize-page-states-async-results-contextual-detail-and-global-not-found: backlog
+  epic-166-fe-retrospective: optional
+
+  # Epic 167-FE: Consistent AppShell, Authentication, and First-Time Value
+  epic-167-fe: backlog
+  167-1-fe-unify-protected-appshell-and-desktop-mobile-navigation: backlog
+  167-2-fe-migrate-root-entry: backlog
+  167-3-fe-migrate-login-login: backlog
+  167-4-fe-migrate-registration-register: backlog
+  167-5-fe-migrate-cabinet-onboarding-cabinet: backlog
+  167-6-fe-migrate-processing-processing: backlog
+  167-7-fe-migrate-wb-token-wb-token: backlog
+  epic-167-fe-retrospective: optional
+
+  # Epic 168-FE: Trustworthy Analytics Core and Financial Decisions
+  epic-168-fe: backlog
+  168-1-fe-migrate-analytics-hub-analytics-and-own-analytics-shared-ui: backlog
+  168-2-fe-migrate-analytics-alerts-analytics-alerts: backlog
+  168-3-fe-migrate-analytical-dashboard-analytics-dashboard: backlog
+  168-4-fe-migrate-finance-history-analytics-finance-history: backlog
+  168-5-fe-migrate-orders-analytics-analytics-orders: backlog
+  168-6-fe-migrate-pricing-analytics-analytics-pricing: backlog
+  168-7-fe-migrate-product-analytics-analytics-product-nmid: backlog
+  168-8-fe-migrate-reorder-analytics-analytics-reorder: backlog
+  168-9-fe-migrate-sku-analytics-analytics-sku: backlog
+  168-10-fe-migrate-time-period-analytics-analytics-time-period: backlog
+  168-11-fe-migrate-unit-economics-analytics-unit-economics: backlog
+  epic-168-fe-retrospective: optional
+
+  # Epic 169-FE: Accessible Operational Analytics and Exception Triage
+  epic-169-fe: backlog
+  169-1-fe-migrate-acquiring-report-index: backlog
+  169-2-fe-migrate-acquiring-period-detail: backlog
+  169-3-fe-migrate-acquiring-report-transaction-detail: backlog
+  169-4-fe-migrate-buyout-analytics: backlog
+  169-5-fe-migrate-buyout-reconciliation: backlog
+  169-6-fe-migrate-enhanced-fbs-analytics: backlog
+  169-7-fe-migrate-fbs-stock-analytics: backlog
+  169-8-fe-migrate-funnel-analytics: backlog
+  169-9-fe-migrate-analytics-gaps-triage: backlog
+  169-10-fe-migrate-liquidity-analytics-and-liquidation-planning: backlog
+  169-11-fe-migrate-returns-analytics: backlog
+  169-12-fe-migrate-storage-analytics-and-paid-storage-import: backlog
+  169-13-fe-migrate-supply-planning: backlog
+  epic-169-fe-retrospective: optional
+
+  # Epic 170-FE: Coherent Marketing and Marketplace Analytics
+  epic-170-fe: backlog
+  170-1-fe-migrate-advertising-analytics-workspace: backlog
+  170-2-fe-migrate-advertising-campaign-bid-recommendation-detail: backlog
+  170-3-fe-migrate-brand-margin-analytics: backlog
+  170-4-fe-migrate-brand-share-analytics: backlog
+  170-5-fe-migrate-category-margin-analytics: backlog
+  170-6-fe-migrate-advertising-organic-cross-reference-analytics: backlog
+  170-7-fe-migrate-search-analytics-workspace: backlog
+  epic-170-fe-retrospective: optional
+
+  # Epic 171-FE: Clear AI, Forecast, and Model Governance
+  epic-171-fe: backlog
+  171-1-fe-migrate-ai-anomaly-triage: backlog
+  171-2-fe-migrate-ai-admin-model-governance: backlog
+  171-3-fe-migrate-ai-preferences: backlog
+  171-4-fe-migrate-forecast-workspace: backlog
+  171-5-fe-migrate-forecast-accuracy-analytics: backlog
+  171-6-fe-migrate-model-registry-and-training-entry: backlog
+  171-7-fe-migrate-model-evaluations-list: backlog
+  171-8-fe-migrate-evaluation-sku-accuracy-detail: backlog
+  171-9-fe-migrate-model-performance-detail: backlog
+  epic-171-fe-retrospective: optional
+
+  # Epic 172-FE: Consistent Core Business Operations
+  epic-172-fe: backlog
+  172-1-fe-migrate-the-business-dashboard: backlog
+  172-2-fe-migrate-the-canned-automation-rules-gallery: backlog
+  172-3-fe-migrate-the-installed-automation-rules-list: backlog
+  172-4-fe-migrate-the-installed-rule-detail-and-editor: backlog
+  172-5-fe-migrate-single-product-cogs-management: backlog
+  172-6-fe-migrate-bulk-cogs-assignment: backlog
+  172-7-fe-migrate-cogs-history: backlog
+  172-8-fe-migrate-the-cogs-price-calculator: backlog
+  172-9-fe-migrate-communications-workspace: backlog
+  172-10-fe-migrate-finances-and-documents: backlog
+  172-11-fe-migrate-the-monitor-route: backlog
+  172-12-fe-migrate-the-monitoring-operations-console: backlog
+  172-13-fe-migrate-the-moysklad-integration-workspace: backlog
+  172-14-fe-migrate-the-orders-overview: backlog
+  172-15-fe-migrate-fbo-orders: backlog
+  172-16-fe-migrate-order-integrity-analysis: backlog
+  172-17-fe-migrate-product-management: backlog
+  epic-172-fe-retrospective: optional
+
+  # Epic 173-FE: Predictable Settings, Shipments, and Supplies
+  epic-173-fe: backlog
+  173-1-fe-migrate-settings-shell-and-overview: backlog
+  173-2-fe-migrate-backfill-settings: backlog
+  173-3-fe-migrate-cabinet-settings: backlog
+  173-4-fe-migrate-expense-settings: backlog
+  173-5-fe-migrate-notification-settings: backlog
+  173-6-fe-migrate-tariff-settings: backlog
+  173-7-fe-migrate-tax-settings: backlog
+  173-8-fe-migrate-the-shipments-list: backlog
+  173-9-fe-migrate-shipment-detail: backlog
+  173-10-fe-migrate-shipment-box-types: backlog
+  173-11-fe-migrate-sku-packaging: backlog
+  173-12-fe-migrate-supplies-list: backlog
+  173-13-fe-migrate-supply-detail: backlog
+  epic-173-fe-retrospective: optional
+
+  # Epic 174-FE: Complete Migration Assurance and Legacy Removal
+  epic-174-fe: backlog
+  174-1-fe-prove-bmad-route-ledger-and-omx-plan-parity: backlog
+  174-2-fe-remove-legacy-ui-and-enforce-the-design-system-boundary: backlog
+  174-3-fe-complete-accessibility-responsive-theme-and-visual-verification: backlog
+  174-4-fe-complete-full-local-functional-and-backend-contract-regression: backlog
+  174-5-fe-finalize-documentation-and-repository-cleanup: backlog
+  epic-174-fe-retrospective: optional
   new2-fe-communications-read: done  # DONE 2026-08-08: NEW-2 Communications read-only FE (PR1). BE already shipped (commit 265ffcf7b + 3 fixes; 118 BE tests green; 13 /v1/communications endpoints). FE: types + lib/api/communications(.ts + -normalizer.ts; skipDataUnwrap on the pinned live-SDK {data,next} passthrough) + hooks/useCommunications(+utils; query-key factory + rate-limit-aware staleTime) + (dashboard)/communications page (Radix Tabs: feedbacks/questions/chats+messages/claims/pinned) + UnreadBadge (role=status) + shared SectionState tri-state + MSW handlers + Sidebar nav + ROUTES.COMMUNICATIONS. AP#8 null→'—', no as/any, RU locale, AC4 independent states, nmId via String(). 17908 FE vitest green + build green. 3-pass adversarial review (Trigger 1 novel normalizer category): pass1 9 findings (CRITICAL pinned double-unwrap) → pass2 9 (HIGH pinned SDK-shape drift — pinOn=location not date, isErrors dropped; ChatsSection not-found flash guard) → pass3 2 advisory → converged PASS. Write-side shipped in PR #139.
   new2-fe-communications-write: done  # DONE 2026-08-08: NEW-2 FE gated write-side (PR2, FE#139) — reply/edit-reply/answer/send-chat/pin/unpin as 202→job-poll; 4-factor gate (confirmationToken per-gesture crypto.randomUUID + COMMUNICATIONS_WRITEBACK_ENABLED default-OFF → RU 403 msg); MAX_POLL_MS=60s deadline + polling allowlist; separate pin/unpin coordinators; MSW handlers registered + real-apiClient DELETE-with-body test. 17961 vitest + build green; 3-pass adversarial review converged PASS (14→7→3).
