@@ -102,6 +102,22 @@ function renderDrawer(overrides: Record<string, unknown> = {}) {
   return renderWithProviders(<OrderPickerDrawer {...props} />)
 }
 
+function getCloseButton(position: 'overlay' | 'footer') {
+  const footerCloseButton = screen.getByText('Закрыть', { selector: 'button' })
+  const closeButton =
+    position === 'footer'
+      ? footerCloseButton
+      : screen
+          .getAllByRole('button', { name: 'Закрыть' })
+          .find(button => button !== footerCloseButton)
+
+  if (!closeButton) {
+    throw new Error(`Order picker ${position} close button was not found`)
+  }
+
+  return closeButton
+}
+
 describe('OrderPickerDrawer - Story 53.5-FE', () => {
   const defaultProps = {
     supplyId: 'supply-001',
@@ -148,7 +164,7 @@ describe('OrderPickerDrawer - Story 53.5-FE', () => {
 
     it('shows close button (X) in top-right corner', () => {
       renderDrawer()
-      const closeBtn = screen.getByRole('button', { name: /close/i })
+      const closeBtn = getCloseButton('overlay')
       expect(closeBtn).toBeInTheDocument()
     })
 
@@ -156,7 +172,7 @@ describe('OrderPickerDrawer - Story 53.5-FE', () => {
       const user = userEvent.setup()
       const onClose = vi.fn()
       renderDrawer({ onClose })
-      const closeBtn = screen.getByRole('button', { name: /close/i })
+      const closeBtn = getCloseButton('overlay')
       await user.click(closeBtn)
       expect(onClose).toHaveBeenCalled()
     })
@@ -203,9 +219,10 @@ describe('OrderPickerDrawer - Story 53.5-FE', () => {
   describe('AC1: Focus Management', () => {
     it('focuses close button when drawer opens', async () => {
       renderDrawer()
+      const closeButton = getCloseButton('overlay')
+
       await waitFor(() => {
-        screen.getByRole('button', { name: /close/i })
-        expect(document.activeElement).toBeTruthy()
+        expect(closeButton).toHaveFocus()
       })
     })
 
@@ -253,13 +270,13 @@ describe('OrderPickerDrawer - Story 53.5-FE', () => {
 
     it('renders footer with action button', () => {
       renderDrawer()
-      expect(screen.getByRole('button', { name: /Закрыть/ })).toBeInTheDocument()
+      expect(getCloseButton('footer')).toBeInTheDocument()
       expect(screen.getByRole('button', { name: /Добавить выбранные/ })).toBeInTheDocument()
     })
 
     it('footer is sticky at bottom', () => {
       renderDrawer()
-      const closeBtn = screen.getByRole('button', { name: /Закрыть/ })
+      const closeBtn = getCloseButton('footer')
       const footer = closeBtn.closest('.border-t')
       expect(footer).toBeTruthy()
     })
@@ -500,8 +517,8 @@ describe('OrderPickerDrawer - Story 53.5-FE', () => {
 
     it('close button has accessible name', () => {
       renderDrawer()
-      const closeBtn = screen.getByRole('button', { name: /close/i })
-      expect(closeBtn).toHaveAttribute('aria-label')
+      const closeBtn = getCloseButton('overlay')
+      expect(closeBtn).toHaveAccessibleName('Закрыть')
     })
 
     it('all form controls have labels', () => {
@@ -545,7 +562,7 @@ describe('OrderPickerDrawer - Story 53.5-FE', () => {
       const user = userEvent.setup()
       const onClose = vi.fn()
       renderDrawer({ onClose })
-      const closeFooterBtn = screen.getByRole('button', { name: /Закрыть/ })
+      const closeFooterBtn = getCloseButton('footer')
       await user.click(closeFooterBtn)
       expect(onClose).toHaveBeenCalledTimes(1)
     })

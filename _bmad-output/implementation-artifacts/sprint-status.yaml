@@ -735,7 +735,7 @@ development_status:
   # Active migration program source: epics-166-174-fe-shadcn-migration.md
   epic-166-fe: in-progress
   166-1-fe-establish-the-tailwind-v4-semantic-token-and-compiler-contract: review
-  166-2-fe-harden-the-existing-shadcn-primitive-layer: backlog
+  166-2-fe-harden-the-existing-shadcn-primitive-layer: review
   166-3-fe-deliver-pageheader-and-contextbar-compositions: backlog
   166-4-fe-standardize-metrics-financial-values-availability-and-status: backlog
   166-5-fe-standardize-filters-and-period-controls: backlog

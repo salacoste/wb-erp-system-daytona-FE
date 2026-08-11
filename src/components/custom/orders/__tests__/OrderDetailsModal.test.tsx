@@ -155,8 +155,7 @@ describe('OrderDetailsModal', () => {
         expect(screen.getByRole('dialog')).toBeInTheDocument()
       })
 
-      // Find and click close button (has sr-only "Close" text)
-      const closeButton = screen.getByRole('button', { name: /close/i })
+      const closeButton = screen.getByRole('button', { name: 'Закрыть' })
       await user.click(closeButton)
 
       expect(onClose).toHaveBeenCalledTimes(1)
@@ -301,7 +300,7 @@ describe('OrderDetailsModal', () => {
         expect(screen.getByRole('dialog')).toBeInTheDocument()
       })
 
-      const closeButton = screen.getByRole('button', { name: /close/i })
+      const closeButton = screen.getByRole('button', { name: 'Закрыть' })
       expect(closeButton).toBeInTheDocument()
     })
   })
