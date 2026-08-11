@@ -166,14 +166,30 @@ Token names may be normalized for clarity, but each role above must remain machi
 
 - The compiler test must invoke the installed PostCSS/Tailwind pipeline against the real source and a representative class fixture.
 - Contrast tests must calculate WCAG relative luminance from resolved colors; class-string assertions or fixed `const contrastRatio = 4.5` tests are insufficient.
-- Record resolved `node --version` and `npm --version`; expected values are `v24.18.0` and `11.11.0`. The interactive shell may expose another Node, so invoke the repository's pinned toolchain explicitly.
-- Universal gates: `npm run format:check`, `npm run lint`, `npm run type-check`, `npm run check:max-lines`, `npm run build`, and `git diff --check`.
+- Record resolved `node --version` and `npm --version`; expected values are `v24.18.0` and `11.11.0`. The interactive shell currently exposes Node `v25.8.1`, so run Story commands through the repository's established package-scoped invocation: `npx --yes -p node@24.18.0 -p npm@11.11.0 -- sh -c '<commands>'`. Use an isolated temporary npm cache if the package-scoped runtime must be resolved again, and treat inability to resolve the exact versions after the allowed retry as a validation blocker rather than silently using Node 25.
+- Universal gates: `npm run format:check`, an explicit Prettier check for every surviving owned root file, `npm run lint`, `npm run type-check`, `npm run check:max-lines`, `npm run build`, and `git diff --check`.
+- `npm run format:check` covers `src/**` only. Build the root-file argument list from the owned files that still exist after implementation, then run Prettier directly; a legitimately deleted `tailwind.config.ts` must not be passed as a missing path:
+
+  ```bash
+  STORY_ROOT_FORMAT_FILES=""
+  for file in components.json tailwind.config.ts postcss.config.js; do
+    if [ -e "$file" ]; then
+      STORY_ROOT_FORMAT_FILES="$STORY_ROOT_FORMAT_FILES $file"
+    fi
+  done
+  if [ -n "$STORY_ROOT_FORMAT_FILES" ]; then
+    npx prettier --check $STORY_ROOT_FORMAT_FILES
+  fi
+  ```
 - Scope gates:
 
   ```bash
-  git diff --name-only "$STORY_BASE_SHA"..HEAD
-  git diff --exit-code "$STORY_BASE_SHA"..HEAD -- package.json package-lock.json
+  git diff --name-only "$STORY_BASE_SHA"
+  git ls-files --others --exclude-standard
+  git diff --exit-code "$STORY_BASE_SHA" -- package.json package-lock.json
   ```
+
+  These pre-commit commands intentionally compare the base against the index and working tree and list untracked files. Do not use `"$STORY_BASE_SHA"..HEAD` before the Story commit; while `HEAD` still equals the base, that range would vacuously hide staged, unstaged, and untracked changes.
 
 - A permanent Playwright route is not required for this foundation Story. The real compiler probe plus production build is the authoritative automated evidence; later route Stories own full visual matrices.
 
@@ -197,8 +213,9 @@ Token names may be normalized for clarity, but each role above must remain machi
 - [Source: `components.json`]
 - [Source: `postcss.config.js`]
 - [Source: `package.json`]
-- [Official Tailwind CSS v4: CSS-first `@theme inline`, `@config`, and `@plugin` documentation]
-- [Official shadcn/ui 3.5: Tailwind v4 `components.json` documentation]
+- [Official Tailwind CSS v4 theme variables: `@theme inline`; Context7 `/tailwindlabs/tailwindcss.com`, retrieved 2026-08-11; canonical page `https://tailwindcss.com/docs/theme#referencing-other-variables`; source `https://github.com/tailwindlabs/tailwindcss.com/blob/main/src/docs/theme.mdx`]
+- [Official Tailwind CSS v4 compatibility directives: `@config` and `@plugin`; Context7 `/tailwindlabs/tailwindcss.com`, retrieved 2026-08-11; canonical page `https://tailwindcss.com/docs/functions-and-directives#compatibility`; source `https://github.com/tailwindlabs/tailwindcss.com/blob/main/src/docs/functions-and-directives.mdx`]
+- [Official shadcn/ui 3.5 `components.json`: Tailwind v4 leaves `tailwind.config` blank and retains `tailwind.css` plus `tailwind.cssVariables`; Context7 `/shadcn-ui/ui/shadcn_3.5.0`, retrieved 2026-08-11; canonical page `https://ui.shadcn.com/docs/components-json`; versioned source `https://github.com/shadcn-ui/ui/blob/shadcn@3.5.0/apps/v4/content/docs/(root)/components-json.mdx`]
 
 ## Dev Agent Record
 

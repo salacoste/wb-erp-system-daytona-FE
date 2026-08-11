@@ -197,6 +197,8 @@ This plan authorizes local frontend implementation and local validation only. It
 
 This index is generated from the exact canonical BMAD Story headings and the matching per-Story OMX frontmatter. Prerequisites reproduce each Story's canonical `Shared Dependencies` field; the per-Story plan remains authoritative for the executable DAG and ownership gate.
 
+Story identity is the numeric `Epic.Story` ID, not the descriptive sprint-status slug. The orchestrator MUST parse that canonical ID from a sprint key and resolve the OMX path through this Story Plan Index or the matching plan's `storyId` frontmatter. It MUST NOT derive an OMX filename by removing or transforming the sprint slug: route-bearing Stories such as `167.3–167.7` and `168.1–168.11` intentionally have sanitized route fragments in sprint keys that are absent from their human-readable OMX filenames.
+
 | Story | Exact title | Plan | Branch | Prerequisites |
 | --- | --- | --- | --- | --- |
 | 166.1 | Establish the Tailwind v4 Semantic Token and Compiler Contract | [166.1-establish-the-tailwind-v4-semantic-token-and-compiler-contract.md](./166.1-establish-the-tailwind-v4-semantic-token-and-compiler-contract.md) | cdx/epic-166-story-1-token-compiler | none. |
