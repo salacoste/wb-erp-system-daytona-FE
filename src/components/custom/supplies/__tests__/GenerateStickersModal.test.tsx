@@ -106,7 +106,7 @@ describe('GenerateStickersModal', () => {
       const onOpenChange = vi.fn()
       const user = userEvent.setup()
       renderWithQC(<GenerateStickersModal {...defaultProps} onOpenChange={onOpenChange} />)
-      await user.click(screen.getByRole('button', { name: /close/i }))
+      await user.click(screen.getByRole('button', { name: 'Закрыть' }))
       expect(onOpenChange).toHaveBeenCalledWith(false)
     })
 
@@ -144,7 +144,7 @@ describe('GenerateStickersModal', () => {
     it('displays title, close button, format selector, preview, and footer', () => {
       renderWithQC(<GenerateStickersModal {...defaultProps} />)
       expect(screen.getByText('Генерация стикеров')).toBeInTheDocument()
-      expect(screen.getByRole('button', { name: /close/i })).toBeInTheDocument()
+      expect(screen.getByRole('button', { name: 'Закрыть' })).toBeInTheDocument()
       expect(screen.getByText('Выберите формат:')).toBeInTheDocument()
       expect(screen.getByText('Превью будет доступно после генерации')).toBeInTheDocument()
       expect(screen.getByRole('button', { name: 'Отмена' })).toBeInTheDocument()

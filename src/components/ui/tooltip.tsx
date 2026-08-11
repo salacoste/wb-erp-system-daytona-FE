@@ -39,24 +39,16 @@ const TooltipContent = React.forwardRef<
         ref={ref}
         sideOffset={sideOffset}
         style={{
-          zIndex: 9999,
-          backgroundColor: '#1e293b',
-          color: '#f1f5f9',
-          fontSize: '12px',
-          lineHeight: 1.4,
-          padding: '8px 12px',
-          borderRadius: '6px',
           maxWidth: maxWidthMap[size],
-          boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)',
         }}
         className={cn(
-          'animate-in fade-in-0 zoom-in-95 data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95',
+          'z-[9999] animate-in rounded-md bg-popover px-3 py-2 text-xs leading-[1.4] text-popover-foreground shadow-md fade-in-0 zoom-in-95 data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95 motion-reduce:animate-none',
           className
         )}
         {...props}
       >
         {children}
-        <TooltipPrimitive.Arrow style={{ fill: '#1e293b' }} />
+        <TooltipPrimitive.Arrow className="fill-popover" />
       </TooltipPrimitive.Content>
     </TooltipPrimitive.Portal>
   )

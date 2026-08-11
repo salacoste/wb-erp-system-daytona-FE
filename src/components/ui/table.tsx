@@ -13,6 +13,7 @@ const Table = React.forwardRef<HTMLTableElement, TableProps>(
       className="relative w-full overflow-auto"
       tabIndex={scrollContainerTabIndex}
       aria-label={scrollContainerAriaLabel}
+      role={scrollContainerAriaLabel ? 'region' : undefined}
     >
       <table ref={ref} className={cn('w-full caption-bottom text-sm', className)} {...props} />
     </div>

@@ -115,7 +115,7 @@ describe('ScheduleVersionModal', () => {
         expect(screen.getByText(/запланировать новую версию тарифов/i)).toBeInTheDocument()
       })
 
-      const closeButton = screen.getByRole('button', { name: /закрыть/i })
+      const closeButton = screen.getByLabelText('Закрыть', { selector: 'button' })
       await user.click(closeButton)
 
       expect(onClose).toHaveBeenCalled()

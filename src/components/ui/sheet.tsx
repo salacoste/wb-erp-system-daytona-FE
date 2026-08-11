@@ -21,7 +21,7 @@ const SheetOverlay = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <SheetPrimitive.Overlay
     className={cn(
-      'fixed inset-0 z-50 bg-black/50 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=open]:duration-200 data-[state=closed]:duration-200',
+      'fixed inset-0 z-50 bg-black/50 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=open]:duration-200 data-[state=closed]:duration-200 motion-reduce:animate-none',
       className
     )}
     {...props}
@@ -30,28 +30,29 @@ const SheetOverlay = React.forwardRef<
 ))
 SheetOverlay.displayName = SheetPrimitive.Overlay.displayName
 
-// Story 4.10: Added size variant for COGS slide-out panel
-// See: docs/stories/4.10.slide-out-cogs-panel.md
-const sheetVariants = cva('fixed z-50 gap-4 bg-white p-6 shadow-lg overflow-y-auto', {
-  variants: {
-    side: {
-      top: 'inset-x-0 top-0 border-b data-[state=closed]:slide-out-to-top data-[state=open]:slide-in-from-top',
-      bottom:
-        'inset-x-0 bottom-0 border-t data-[state=closed]:slide-out-to-bottom data-[state=open]:slide-in-from-bottom',
-      left: 'inset-y-0 left-0 h-full w-3/4 border-r data-[state=closed]:slide-out-to-left data-[state=open]:slide-in-from-left',
-      right:
-        'inset-y-0 right-0 h-full w-3/4 border-l data-[state=closed]:slide-out-to-right data-[state=open]:slide-in-from-right',
+const sheetVariants = cva(
+  'fixed z-50 gap-4 overflow-y-auto border-border bg-background p-6 text-foreground shadow-lg motion-reduce:animate-none motion-reduce:transition-none',
+  {
+    variants: {
+      side: {
+        top: 'inset-x-0 top-0 border-b data-[state=closed]:slide-out-to-top data-[state=open]:slide-in-from-top',
+        bottom:
+          'inset-x-0 bottom-0 border-t data-[state=closed]:slide-out-to-bottom data-[state=open]:slide-in-from-bottom',
+        left: 'inset-y-0 left-0 h-full w-3/4 border-r data-[state=closed]:slide-out-to-left data-[state=open]:slide-in-from-left',
+        right:
+          'inset-y-0 right-0 h-full w-3/4 border-l data-[state=closed]:slide-out-to-right data-[state=open]:slide-in-from-right',
+      },
+      size: {
+        default: 'sm:max-w-sm',
+        wide: 'sm:max-w-md lg:max-w-lg',
+      },
     },
-    size: {
-      default: 'sm:max-w-sm',
-      wide: 'sm:max-w-md lg:max-w-lg', // 448-512px width for COGS form
+    defaultVariants: {
+      side: 'right',
+      size: 'default',
     },
-  },
-  defaultVariants: {
-    side: 'right',
-    size: 'default',
-  },
-})
+  }
+)
 
 interface SheetContentProps
   extends
@@ -70,16 +71,9 @@ const SheetContent = React.forwardRef<
       data-side={side}
       {...props}
     >
-      <SheetPrimitive.Close asChild>
-        <span
-          className="absolute right-4 top-4 inline-flex items-center justify-center rounded-sm p-2 opacity-70 ring-offset-background transition-opacity hover:opacity-100 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 cursor-pointer"
-          aria-label="Close"
-          role="button"
-          tabIndex={0}
-        >
-          <X className="h-4 w-4" />
-          <span className="sr-only">Close</span>
-        </span>
+      <SheetPrimitive.Close className="absolute right-2 top-2 inline-flex size-11 items-center justify-center rounded-sm opacity-70 ring-offset-background transition-opacity hover:bg-accent hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none motion-reduce:transition-none">
+        <X className="h-4 w-4" />
+        <span className="sr-only">Закрыть</span>
       </SheetPrimitive.Close>
       {children}
     </SheetPrimitive.Content>
@@ -106,7 +100,10 @@ const SheetTitle = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <SheetPrimitive.Title
     ref={ref}
-    className={cn('text-lg font-semibold text-foreground', className)}
+    className={cn(
+      'mt-10 max-w-none break-words text-lg font-semibold text-foreground min-[20rem]:mt-0 min-[20rem]:max-w-[calc(100%-3.5rem)]',
+      className
+    )}
     {...props}
   />
 ))
