@@ -734,7 +734,7 @@ development_status:
   # Epic 166-FE: Trustworthy Shadcn Design-System Foundation
   # Active migration program source: epics-166-174-fe-shadcn-migration.md
   epic-166-fe: in-progress
-  166-1-fe-establish-the-tailwind-v4-semantic-token-and-compiler-contract: ready-for-dev
+  166-1-fe-establish-the-tailwind-v4-semantic-token-and-compiler-contract: review
   166-2-fe-harden-the-existing-shadcn-primitive-layer: backlog
   166-3-fe-deliver-pageheader-and-contextbar-compositions: backlog
   166-4-fe-standardize-metrics-financial-values-availability-and-status: backlog

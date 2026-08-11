@@ -1,4 +1,116 @@
 @import 'tailwindcss';
+@plugin 'tailwindcss-animate';
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme inline {
+  --color-background: hsl(var(--background));
+  --color-foreground: hsl(var(--foreground));
+  --color-card: hsl(var(--card));
+  --color-card-foreground: hsl(var(--card-foreground));
+  --color-popover: hsl(var(--popover));
+  --color-popover-foreground: hsl(var(--popover-foreground));
+  --color-muted: hsl(var(--muted));
+  --color-muted-foreground: hsl(var(--muted-foreground));
+  --color-secondary: hsl(var(--secondary));
+  --color-secondary-foreground: hsl(var(--secondary-foreground));
+  --color-accent: hsl(var(--accent));
+  --color-accent-foreground: hsl(var(--accent-foreground));
+  --color-border: hsl(var(--border));
+  --color-input: hsl(var(--input));
+  --color-disabled: hsl(var(--disabled));
+  --color-disabled-foreground: hsl(var(--disabled-foreground));
+  --color-ring: hsl(var(--ring));
+  --color-ring-offset: hsl(var(--ring-offset-background));
+  --color-ring-offset-background: hsl(var(--ring-offset-background));
+  --color-brand: hsl(var(--brand));
+  --color-brand-foreground: hsl(var(--brand-foreground));
+  --color-primary: hsl(var(--primary));
+  --color-primary-foreground: hsl(var(--primary-foreground));
+  --color-primary-dark: hsl(var(--primary-pressed));
+  --color-primary-pressed: hsl(var(--primary-pressed));
+  --color-primary-light: hsl(var(--primary-subtle));
+  --color-primary-subtle: hsl(var(--primary-subtle));
+  --color-primary-subtle-foreground: hsl(var(--primary-subtle-foreground));
+  --color-destructive: hsl(var(--destructive));
+  --color-destructive-foreground: hsl(var(--destructive-foreground));
+  --color-financial-positive: hsl(var(--financial-positive));
+  --color-financial-negative: hsl(var(--financial-negative));
+  --color-financial-neutral: hsl(var(--financial-neutral));
+  --color-status-success: hsl(var(--status-success));
+  --color-status-success-foreground: hsl(var(--status-success-foreground));
+  --color-status-warning: hsl(var(--status-warning));
+  --color-status-warning-foreground: hsl(var(--status-warning-foreground));
+  --color-status-error: hsl(var(--status-error));
+  --color-status-error-foreground: hsl(var(--status-error-foreground));
+  --color-status-information: hsl(var(--status-information));
+  --color-status-information-foreground: hsl(var(--status-information-foreground));
+  --color-status-pending: hsl(var(--status-pending));
+  --color-status-pending-foreground: hsl(var(--status-pending-foreground));
+  --color-success: hsl(var(--status-success));
+  --color-error: hsl(var(--status-error));
+  --color-info: hsl(var(--status-information));
+  --color-availability-available: hsl(var(--availability-available));
+  --color-availability-unavailable: hsl(var(--availability-unavailable));
+  --color-availability-stale: hsl(var(--availability-stale));
+  --color-availability-partial: hsl(var(--availability-partial));
+  --color-availability-restricted: hsl(var(--availability-restricted));
+  --color-availability-unknown: hsl(var(--availability-unknown));
+  --color-telegram: hsl(var(--telegram));
+  --color-telegram-blue: hsl(var(--telegram));
+  --color-chart-1: hsl(var(--chart-1));
+  --color-chart-2: hsl(var(--chart-2));
+  --color-chart-3: hsl(var(--chart-3));
+  --color-chart-4: hsl(var(--chart-4));
+  --color-chart-5: hsl(var(--chart-5));
+  --color-chart-6: hsl(var(--chart-6));
+  --color-chart-positive: hsl(var(--chart-positive));
+  --color-chart-negative: hsl(var(--chart-negative));
+  --color-chart-reference: hsl(var(--chart-reference));
+  --color-chart-target: hsl(var(--chart-target));
+  --color-chart-forecast: hsl(var(--chart-forecast));
+  --color-chart-confidence-band: hsl(var(--chart-confidence-band));
+  --color-chart-grid: hsl(var(--chart-grid));
+  --color-chart-axis: hsl(var(--chart-axis));
+  --color-chart-tooltip: hsl(var(--chart-tooltip));
+  --color-chart-tooltip-foreground: hsl(var(--chart-tooltip-foreground));
+  --color-chart-selection: hsl(var(--chart-selection));
+  --font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --text-h1: 2rem;
+  --text-h1--line-height: 1.2;
+  --text-h1--font-weight: 700;
+  --text-h2: 1.5rem;
+  --text-h2--line-height: 1.3;
+  --text-h2--font-weight: 600;
+  --text-body: 0.875rem;
+  --text-body--line-height: 1.5;
+  --text-body--font-weight: 400;
+  --text-metric: 2rem;
+  --text-metric--line-height: 1.2;
+  --text-metric--font-weight: 700;
+  --text-metric-lg: 3rem;
+  --text-metric-lg--line-height: 1.2;
+  --text-metric-lg--font-weight: 700;
+  --spacing-18: 4.5rem;
+  --spacing-22: 5.5rem;
+  --radius: 0.5rem;
+  --radius-sm: 0.25rem;
+  --radius-md: 0.375rem;
+  --radius-lg: 0.75rem;
+  --shadow-card: 0 1px 3px rgb(0 0 0 / 0.1);
+  --shadow-card-hover: 0 4px 6px rgb(0 0 0 / 0.1);
+  --animate-slide-down: slide-down 200ms ease-out;
+
+  @keyframes slide-down {
+    from {
+      opacity: 0;
+      transform: translateY(-10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+}
 
 @layer base {
   /* Prevent body-level scrolling - app uses fixed positioning */
@@ -11,96 +123,138 @@
   }
 
   :root {
-    /* Primary red colors - WCAG 2.1 AA compliant (5.48:1 with white) */
-    --primary: 0 65% 47%; /* #C62828 - accessible with white text */
-    --primary-dark: 0 65% 40%; /* #A31515 */
-    --primary-light: 0 100% 90%; /* #FFCDD2 */
-    --primary-foreground: 0 0% 100%; /* White text */
-
-    /* Background colors */
-    --background: 0 0% 100%; /* White */
-    --foreground: 0 0% 20%; /* Dark gray text */
-
-    /* Card colors */
-    --card: 0 0% 100%; /* White */
-    --card-foreground: 0 0% 20%;
-
-    /* Popover colors (dropdowns, tooltips) */
-    --popover: 0 0% 100%; /* White */
-    --popover-foreground: 0 0% 20%;
-
-    /* Muted colors (disabled states, placeholders) */
-    --muted: 0 0% 96%; /* #F5F5F5 */
-    --muted-foreground: 0 0% 46%; /* #757575 */
-
-    /* Secondary colors (slider tracks, secondary buttons) */
-    --secondary: 0 0% 85%; /* #D9D9D9 - visible on white */
-    --secondary-foreground: 0 0% 20%;
-
-    /* Accent colors (hover states in selects/menus) */
-    --accent: 0 0% 96%; /* #F5F5F5 */
-    --accent-foreground: 0 0% 20%;
-
-    /* Border and input */
-    --border: 0 0% 93%; /* #EEEEEE */
-    --input: 0 0% 93%;
-    --ring: 0 65% 55%; /* Primary red for focus rings */
-    --ring-offset-background: 0 0% 100%; /* White */
-
-    /* Semantic colors */
-    --success: 142 76% 36%; /* #4CAF50 */
-    --error: 0 65% 47%; /* #C62828 - WCAG AA compliant */
-    --info: 217 91% 60%; /* #2196F3 */
-    --destructive: 0 65% 47%; /* #C62828 - WCAG AA compliant */
-    --destructive-foreground: 0 0% 100%; /* White */
-
-    /* Border radius */
-    --radius: 0.5rem; /* 8px */
+    --background: 0 0% 100%;
+    --foreground: 0 0% 12.941176%;
+    --card: 0 0% 100%;
+    --card-foreground: 0 0% 12.941176%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 0 0% 12.941176%;
+    --muted: 0 0% 96.078431%;
+    --muted-foreground: 0 0% 32.156863%;
+    --secondary: 0 0% 92.156863%;
+    --secondary-foreground: 0 0% 12.941176%;
+    --accent: 0 0% 96.078431%;
+    --accent-foreground: 0 0% 12.941176%;
+    --border: 0 0% 80%;
+    --input: 0 0% 74.117647%;
+    --disabled: 0 0% 92.156863%;
+    --disabled-foreground: 0 0% 40%;
+    --ring: 0 66.386555% 46.666667%;
+    --ring-offset-background: 0 0% 100%;
+    --brand: 1.363636 77.192982% 55.294118%;
+    --brand-foreground: 0 0% 0%;
+    --primary: 0 66.386555% 46.666667%;
+    --primary-foreground: 0 0% 100%;
+    --primary-pressed: 0 77.173913% 36.078431%;
+    --primary-subtle: 354 100% 90.196078%;
+    --primary-subtle-foreground: 0 77.173913% 36.078431%;
+    --destructive: 3.221477 71.291866% 40.980392%;
+    --destructive-foreground: 0 0% 100%;
+    --financial-positive: 123.037975 46.19883% 33.529412%;
+    --financial-negative: 0 66.386555% 46.666667%;
+    --financial-neutral: 0 0% 38.039216%;
+    --status-success: 123.037975 46.19883% 33.529412%;
+    --status-success-foreground: 0 0% 100%;
+    --status-warning: 46.808511 100% 27.647059%;
+    --status-warning-foreground: 0 0% 100%;
+    --status-error: 3.221477 71.291866% 40.980392%;
+    --status-error-foreground: 0 0% 100%;
+    --status-information: 211.929825 80.28169% 41.764706%;
+    --status-information-foreground: 0 0% 100%;
+    --status-pending: 277.322835 70.165746% 35.490196%;
+    --status-pending-foreground: 0 0% 100%;
+    --availability-available: 123.037975 46.19883% 33.529412%;
+    --availability-unavailable: 0 66.386555% 46.666667%;
+    --availability-stale: 46.808511 100% 27.647059%;
+    --availability-partial: 277.322835 70.165746% 35.490196%;
+    --availability-restricted: 199.354839 18.343195% 33.137255%;
+    --availability-unknown: 0 0% 38.039216%;
+    --telegram: 200 100% 40%;
+    --chart-1: 211.929825 80.28169% 41.764706%;
+    --chart-2: 277.322835 70.165746% 35.490196%;
+    --chart-3: 185.034965 100% 28.039216%;
+    --chart-4: 123.037975 46.19883% 33.529412%;
+    --chart-5: 27.112971 100% 46.862745%;
+    --chart-6: 333.72549 79.274611% 37.843137%;
+    --chart-positive: 123.037975 46.19883% 33.529412%;
+    --chart-negative: 0 66.386555% 46.666667%;
+    --chart-reference: 199.354839 18.343195% 33.137255%;
+    --chart-target: 277.322835 70.165746% 35.490196%;
+    --chart-forecast: 211.929825 80.28169% 41.764706%;
+    --chart-confidence-band: 206.712329 89.02439% 67.843137%;
+    --chart-grid: 0 0% 80%;
+    --chart-axis: 0 0% 38.039216%;
+    --chart-tooltip: 0 0% 12.941176%;
+    --chart-tooltip-foreground: 0 0% 100%;
+    --chart-selection: 37.075472 94.642857% 56.078431%;
+    --radius: 0.5rem;
   }
 
   .dark {
-    /* Primary red colors - adjusted for dark backgrounds */
-    --primary: 0 65% 55%; /* Brighter red for dark bg */
-    --primary-dark: 0 65% 47%;
-    --primary-light: 0 50% 25%; /* Darker for dark bg */
-    --primary-foreground: 0 0% 100%;
-
-    /* Background colors */
-    --background: 0 0% 4%; /* #0A0A0A */
-    --foreground: 0 0% 98%; /* #FAFAFA */
-
-    /* Card colors */
-    --card: 0 0% 7%; /* #111111 */
-    --card-foreground: 0 0% 98%;
-
-    /* Popover colors */
-    --popover: 0 0% 9%;
-    --popover-foreground: 0 0% 98%;
-
-    /* Muted colors */
-    --muted: 0 0% 15%;
-    --muted-foreground: 0 0% 64%;
-
-    /* Secondary colors */
-    --secondary: 0 0% 18%;
-    --secondary-foreground: 0 0% 98%;
-
-    /* Accent colors */
-    --accent: 0 0% 15%;
-    --accent-foreground: 0 0% 98%;
-
-    /* Border and input */
-    --border: 0 0% 18%;
-    --input: 0 0% 18%;
-    --ring: 0 65% 55%;
-    --ring-offset-background: 0 0% 4%;
-
-    /* Semantic colors */
-    --success: 142 76% 46%;
-    --error: 0 65% 55%;
-    --info: 217 91% 65%;
-    --destructive: 0 65% 55%;
-    --destructive-foreground: 0 0% 100%;
+    --background: 0 0% 3.921569%;
+    --foreground: 0 0% 98.039216%;
+    --card: 0 0% 6.666667%;
+    --card-foreground: 0 0% 98.039216%;
+    --popover: 0 0% 9.019608%;
+    --popover-foreground: 0 0% 98.039216%;
+    --muted: 0 0% 14.901961%;
+    --muted-foreground: 0 0% 74.117647%;
+    --secondary: 0 0% 18.039216%;
+    --secondary-foreground: 0 0% 98.039216%;
+    --accent: 0 0% 14.901961%;
+    --accent-foreground: 0 0% 98.039216%;
+    --border: 0 0% 28%;
+    --input: 0 0% 35%;
+    --disabled: 0 0% 20%;
+    --disabled-foreground: 0 0% 74.117647%;
+    --ring: 4.724409 100% 75.098039%;
+    --ring-offset-background: 0 0% 3.921569%;
+    --brand: 1.363636 77.192982% 55.294118%;
+    --brand-foreground: 0 0% 0%;
+    --primary: 4.724409 100% 75.098039%;
+    --primary-foreground: 0 0% 12.941176%;
+    --primary-pressed: 0 100% 66.078431%;
+    --primary-subtle: 0 48% 20%;
+    --primary-subtle-foreground: 354 100% 90.196078%;
+    --destructive: 6.428571 100% 83.529412%;
+    --destructive-foreground: 0 0% 12.941176%;
+    --financial-positive: 122.571429 38.461538% 64.313725%;
+    --financial-negative: 0 72.649573% 77.058824%;
+    --financial-neutral: 0 0% 74.117647%;
+    --status-success: 122.571429 38.461538% 64.313725%;
+    --status-success-foreground: 0 0% 12.941176%;
+    --status-warning: 45.681818 100% 65.490196%;
+    --status-warning-foreground: 0 0% 12.941176%;
+    --status-error: 6.428571 100% 83.529412%;
+    --status-error-foreground: 0 0% 12.941176%;
+    --status-information: 206.712329 89.02439% 67.843137%;
+    --status-information-foreground: 0 0% 12.941176%;
+    --status-pending: 291.304348 46.938776% 71.176471%;
+    --status-pending-foreground: 0 0% 12.941176%;
+    --availability-available: 122.571429 38.461538% 64.313725%;
+    --availability-unavailable: 0 72.649573% 77.058824%;
+    --availability-stale: 42.815534 96.261682% 58.039216%;
+    --availability-partial: 291.25 46.601942% 59.607843%;
+    --availability-restricted: 200 15.625% 62.352941%;
+    --availability-unknown: 0 0% 74.117647%;
+    --telegram: 200 100% 40%;
+    --chart-1: 206.712329 89.02439% 67.843137%;
+    --chart-2: 291.25 46.601942% 59.607843%;
+    --chart-3: 186.891892 71.153846% 59.215686%;
+    --chart-4: 122.571429 38.461538% 64.313725%;
+    --chart-5: 35.730337 100% 65.098039%;
+    --chart-6: 339.71831 82.55814% 66.27451%;
+    --chart-positive: 122.571429 38.461538% 64.313725%;
+    --chart-negative: 0 72.649573% 77.058824%;
+    --chart-reference: 200 15.625% 62.352941%;
+    --chart-target: 291.25 46.601942% 59.607843%;
+    --chart-forecast: 206.712329 89.02439% 67.843137%;
+    --chart-confidence-band: 211.929825 80.28169% 41.764706%;
+    --chart-grid: 0 0% 28%;
+    --chart-axis: 0 0% 74.117647%;
+    --chart-tooltip: 0 0% 98.039216%;
+    --chart-tooltip-foreground: 0 0% 12.941176%;
+    --chart-selection: 42.815534 96.261682% 58.039216%;
   }
 
   * {

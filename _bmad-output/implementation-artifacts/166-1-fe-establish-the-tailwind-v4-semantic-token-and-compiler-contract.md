@@ -1,6 +1,6 @@
 # Story 166.1: Establish the Tailwind v4 Semantic Token and Compiler Contract
 
-Status: ready-for-dev
+Status: review
 
 ## Story
 
@@ -60,51 +60,51 @@ so that the same visual role always has the same meaning.
 
 ## Tasks / Subtasks
 
-- [ ] Task 1: Record the behavior lock and exact Story boundary (AC: 1, 4, 7)
-  - [ ] Record base SHA, clean status, branch/worktree identity, and pinned Node/npm versions.
-  - [ ] Capture the failing baseline: the current production compiler emits no representative semantic selectors even though the source contains many semantic-class consumers.
-  - [ ] Inventory all consumed custom values in `tailwind.config.ts`; explicitly cover color roles, `text-h1`/`text-body`, custom spacing/radius, `shadow-card`, `animate-slide-down`, and the `tailwindcss-animate` plugin before removing or neutralizing the legacy config.
-  - [ ] Confirm the final changed-file manifest excludes primitives, routes, product components, data layers, packages, and lockfiles.
+ Task 1: Record the behavior lock and exact Story boundary (AC: 1, 4, 7)
+ Record base SHA, clean status, branch/worktree identity, and pinned Node/npm versions.
+ Capture the failing baseline: the current production compiler emits no representative semantic selectors even though the source contains many semantic-class consumers.
+ Inventory all consumed custom values in `tailwind.config.ts`; explicitly cover color roles, `text-h1`/`text-body`, custom spacing/radius, `shadow-card`, `animate-slide-down`, and the `tailwindcss-animate` plugin before removing or neutralizing the legacy config.
+ Confirm the final changed-file manifest excludes primitives, routes, product components, data layers, packages, and lockfiles.
 
-- [ ] Task 2: Add direct Story-owned contract tests first (AC: 1–8)
-  - [ ] Add `src/styles/__tests__/globals-token-contract.test.ts` or an equivalently direct Story-owned test.
-  - [ ] Assert exactly one application `@theme inline` block and require every application `--color-*` mapping to reference a semantic runtime variable rather than restating a raw palette.
-  - [ ] Parse `components.json`, `postcss.config.js`, and `tailwind.config.ts` presence/content as applicable; assert the Tailwind v4/shadcn contract and absence of a parallel application palette.
-  - [ ] Define a test-owned required-role manifest for both themes.
-  - [ ] Add `src/styles/__tests__/globals-compiled-contrast.test.ts` or equivalent and compile the real stylesheet/representative source through installed PostCSS/Tailwind packages.
-  - [ ] Calculate contrast from actual resolved token values; do not use fixed placeholder ratios or class-string-only assertions.
-  - [ ] Run the focused suite in RED and retain the expected failure reasons before implementation.
+ Task 2: Add direct Story-owned contract tests first (AC: 1–8)
+ Add `src/styles/__tests__/globals-token-contract.test.ts` or an equivalently direct Story-owned test.
+ Assert exactly one application `@theme inline` block and require every application `--color-*` mapping to reference a semantic runtime variable rather than restating a raw palette.
+ Parse `components.json`, `postcss.config.js`, and `tailwind.config.ts` presence/content as applicable; assert the Tailwind v4/shadcn contract and absence of a parallel application palette.
+ Define a test-owned required-role manifest for both themes.
+ Add `src/styles/__tests__/globals-compiled-contrast.test.ts` or equivalent and compile the real stylesheet/representative source through installed PostCSS/Tailwind packages.
+ Calculate contrast from actual resolved token values; do not use fixed placeholder ratios or class-string-only assertions.
+ Run the focused suite in RED and retain the expected failure reasons before implementation.
 
-- [ ] Task 3: Establish the CSS-first semantic token manifest (AC: 1–3, 5)
-  - [ ] Preserve the current HSL-triplet compatibility required by existing `hsl(var(--...))` consumers while exposing Tailwind utilities through `@theme inline` values such as `hsl(var(--semantic-role))`.
-  - [ ] Define light and dark neutral roles: background, foreground, card, popover, muted, secondary, accent, border, input, disabled, focus/ring, and their required foregrounds/surfaces.
-  - [ ] Define approved red identity roles: brand, primary, primary-pressed, primary-subtle, and corresponding foregrounds.
-  - [ ] Define separate destructive, financial-positive/negative/neutral, status-success/warning/error/information/pending, and availability-available/unavailable/stale/partial/restricted/unknown roles.
-  - [ ] Define external Telegram brand and chart categorical, positive/negative divergence, reference, target, forecast, confidence-band, grid, axis/tick, tooltip, and selection roles.
-  - [ ] Give every theme-dependent role a deliberate `.dark` value; document any intentionally stable identity token.
+ Task 3: Establish the CSS-first semantic token manifest (AC: 1–3, 5)
+ Preserve the current HSL-triplet compatibility required by existing `hsl(var(--...))` consumers while exposing Tailwind utilities through `@theme inline` values such as `hsl(var(--semantic-role))`.
+ Define light and dark neutral roles: background, foreground, card, popover, muted, secondary, accent, border, input, disabled, focus/ring, and their required foregrounds/surfaces.
+ Define approved red identity roles: brand, primary, primary-pressed, primary-subtle, and corresponding foregrounds.
+ Define separate destructive, financial-positive/negative/neutral, status-success/warning/error/information/pending, and availability-available/unavailable/stale/partial/restricted/unknown roles.
+ Define external Telegram brand and chart categorical, positive/negative divergence, reference, target, forecast, confidence-band, grid, axis/tick, tooltip, and selection roles.
+ Give every theme-dependent role a deliberate `.dark` value; document any intentionally stable identity token.
 
-- [ ] Task 4: Consolidate compiler/configuration ownership (AC: 1, 4, 6, 7)
-  - [ ] Add the single `@theme inline` mapping in `src/styles/globals.css`.
-  - [ ] Migrate consumed non-color theme values and required legacy plugin behavior into CSS-first Tailwind v4 directives/tokens, proving representative utilities compile.
-  - [ ] Remove `tailwind.config.ts` if all consumed behavior is represented by the CSS-first path; otherwise retain only a narrowly justified, explicitly loaded, palette-free compatibility surface and prove it is not a competing compiler source.
-  - [ ] Set `components.json` Tailwind config to the Tailwind v4 blank value while preserving its canonical stylesheet, CSS-variable mode, aliases, style, RSC, icon library, and prefix.
-  - [ ] Keep `postcss.config.js` on `@tailwindcss/postcss`; change it only when compiler evidence requires a bounded correction.
-  - [ ] Preserve existing body/scroll ownership, sidebar animation, reduced-motion, and sticky-first-column rules.
+ Task 4: Consolidate compiler/configuration ownership (AC: 1, 4, 6, 7)
+ Add the single `@theme inline` mapping in `src/styles/globals.css`.
+ Migrate consumed non-color theme values and required legacy plugin behavior into CSS-first Tailwind v4 directives/tokens, proving representative utilities compile.
+ Remove `tailwind.config.ts` if all consumed behavior is represented by the CSS-first path; otherwise retain only a narrowly justified, explicitly loaded, palette-free compatibility surface and prove it is not a competing compiler source.
+ Set `components.json` Tailwind config to the Tailwind v4 blank value while preserving its canonical stylesheet, CSS-variable mode, aliases, style, RSC, icon library, and prefix.
+ Keep `postcss.config.js` on `@tailwindcss/postcss`; change it only when compiler evidence requires a bounded correction.
+ Preserve existing body/scroll ownership, sidebar animation, reduced-motion, and sticky-first-column rules.
 
-- [ ] Task 5: Prove the semantic compiler and accessibility contract (AC: 2–6)
-  - [ ] Compile the real CSS and an in-memory representative class source; assert emitted selectors/declarations for every semantic family.
-  - [ ] Verify `#C62828` and `#A31515` with white meet normal-text contrast, and explicitly verify `#E53935` with white does not become the filled-control mapping.
-  - [ ] Verify normal-text semantic pairs in light/dark themes and focus-ring contrast against adjacent surfaces.
-  - [ ] Verify chart categorical tokens do not collapse to duplicate resolved colors in either theme.
-  - [ ] Record the limitation that automated color tests do not replace later visual review for chart comprehension, color-vision distinction, or alarm fatigue.
+ Task 5: Prove the semantic compiler and accessibility contract (AC: 2–6)
+ Compile the real CSS and an in-memory representative class source; assert emitted selectors/declarations for every semantic family.
+ Verify `#C62828` and `#A31515` with white meet normal-text contrast, and explicitly verify `#E53935` with white does not become the filled-control mapping.
+ Verify normal-text semantic pairs in light/dark themes and focus-ring contrast against adjacent surfaces.
+ Verify chart categorical tokens do not collapse to duplicate resolved colors in either theme.
+ Record the limitation that automated color tests do not replace later visual review for chart comprehension, color-vision distinction, or alarm fatigue.
 
-- [ ] Task 6: Run local gates and independent review (AC: 7, 8)
-  - [ ] Run the focused token/compiler/contrast suite and `npm run format:check`.
-  - [ ] Run `npm run lint`, `npm run type-check`, `npm run check:max-lines`, and `npm run build` with the pinned toolchain.
-  - [ ] Run `git diff --check`, changed-file scope validation, and a zero-diff check for `package.json` and `package-lock.json` against the Story base SHA.
-  - [ ] Inspect fresh compiled output for representative semantic utilities; do not rely on stale `.next` files.
-  - [ ] Obtain an independent adversarial review and resolve every accepted finding, rerunning affected checks.
-  - [ ] Update this Story record to `review`, record files/commands/results, and complete the approved commit/push/PR/merge/cleanup lifecycle.
+ Task 6: Run local gates and independent review (AC: 7, 8)
+ Run the focused token/compiler/contrast suite and `npm run format:check`.
+ Run `npm run lint`, `npm run type-check`, `npm run check:max-lines`, and `npm run build` with the pinned toolchain.
+ Run `git diff --check`, changed-file scope validation, and a zero-diff check for `package.json` and `package-lock.json` against the Story base SHA.
+ Inspect fresh compiled output for representative semantic utilities; do not rely on stale `.next` files.
+ Obtain an independent adversarial review and resolve every accepted finding, rerunning affected checks.
+ Update this Story record to `review`, record files/commands/results, and complete the approved commit/push/PR/merge/cleanup lifecycle.
 
 ## Dev Notes
 
@@ -221,26 +221,68 @@ Token names may be normalized for clarity, but each role above must remain machi
 
 ### Agent Model Used
 
-TBD by implementation agent.
+gpt-5.6-sol (orchestrator with independent test, implementation, and review lanes).
+
+### Implementation Plan
+
+1. Lock the current compiler/configuration behavior with direct contract and contrast tests, then record the expected RED failures.
+2. Establish the complete light/dark HSL-triplet semantic manifest and one `@theme inline` mapping in `globals.css`.
+3. Move consumed typography, spacing, radius, shadow, animation, dark variant, and plugin behavior to Tailwind v4 CSS-first directives; remove the legacy JavaScript config only after compiled probes pass.
+4. Align `components.json`, keep the PostCSS compiler unchanged unless evidence requires otherwise, and make the focused suite green.
+5. Run exact-version local gates, two fresh adversarial review passes, scope/dependency checks, and the approved PR/merge/cleanup lifecycle.
 
 ### Debug Log References
 
 - Baseline readiness review: existing production build passes, but semantic application utilities are absent from compiled CSS.
 - Story scope ambiguity was corrected before implementation: the complete Owned Surface is explicitly editable and package/lockfile changes are forbidden.
+- Story base: `d8eb62945f2d83fbc082cb27048ae8825cbde57d`; branch `cdx/epic-166-story-1-token-compiler`; worktree `/private/tmp/wb-fe-166-1-establish-the-tailwind-v4-semantic-token-a`; initial status clean.
+- Exact toolchain resolved on 2026-08-11: Node `v24.18.0`, npm `11.11.0`.
+- Pre-flight source trace: AC1/4/5/8 unimplemented; AC2/3/6 partial; AC7 is defined by the Story boundary but requires final-diff proof. `globals.css` has runtime variables but no `@theme inline`; `components.json` still names the legacy config; PostCSS already uses `@tailwindcss/postcss`.
+- RED compiler baseline: `.bg-primary`, `.text-muted-foreground`, `.bg-card`, `.border-border`, `.text-destructive`, `.text-primary-dark`, `.text-telegram-blue`, `.shadow-card`, `.animate-slide-down`, `.text-h1`, and `.text-body` all emitted `false` through the actual PostCSS/Tailwind pipeline.
+- Legacy-config inventory: application colors and shadcn mappings; sans font; `text-h1`/`h2`/`body`/`metric`/`metric-lg`; spacing `18`/`22`; radius default/lg/sm; `shadow-card`/`shadow-card-hover`; `slide-down` keyframes/animation; class dark mode; and `tailwindcss-animate` plugin behavior.
+
+### Post-1st-pass-review fixes (2026-08-11)
+
+- Accepted and corrected inaccessible dark-theme primary, pressed, destructive, and operational-status text roles by using light dark-theme surfaces with dark paired foregrounds while retaining the exact approved light-theme identity values.
+- Changed `brand-foreground` to black and added the brand pair to computed contrast coverage; the separate guard still proves that brand red is not a white-text filled-control token.
+- Restored the deleted legacy radius contract exactly: `rounded` 8px, `rounded-sm` 4px, `rounded-md` 6px, and `rounded-lg` 12px.
+- Strengthened compiled-output tests to assert exact typography, spacing, radius, shadow, custom animation, and `tailwindcss-animate` declarations.
+- Resolved chart uniqueness through RGB/hex values and locked the remaining shadcn style/RSC/TSX/icon metadata.
+
+### Post-2nd-pass-review fixes (2026-08-11)
+
+- Independent pass 2 returned `APPROVE` with no unresolved High or Medium findings.
+- Confirmed the corrected radius behavior, plugin-owned animation output, complete semantic families, zero package/lockfile diff, and Story-bounded changed-file manifest.
+- Reran every affected focused and universal gate against the final stable snapshot.
 
 ### Completion Notes List
 
-- Ultimate context engine analysis completed - comprehensive developer guide created.
-- Story is ready for implementation after preparation artifacts merge into current `main`.
+- Established one CSS-first Tailwind v4 `@theme inline` application contract backed by explicit light/dark runtime semantic variables.
+- Preserved exact light identity values (`#E53935`, `#C62828`, `#A31515`, `#FFCDD2`) while making registered normal-text, status, availability, financial, focus, and foreground/background pairs meet their WCAG thresholds.
+- Migrated consumed legacy typography, spacing, radius, shadow, animation, dark-variant, and `tailwindcss-animate` behavior into `globals.css`; removed `tailwind.config.ts` only after compiled declaration-level proof passed.
+- Aligned `components.json` with shadcn Tailwind v4 (`tailwind.config` blank) and retained `@tailwindcss/postcss`; no dependency, lockfile, primitive, product, route, data-layer, backend, or deployment change was made.
+- Added direct source-contract, actual PostCSS/Tailwind compilation, resolved-color uniqueness, and numerical contrast tests. Focused result: 2 files / 15 tests passed.
+- Final pinned validation passed with Node `v24.18.0` and npm `11.11.0`: formatting, root Prettier, lint, type-check, max-lines, production build (70 pages), `git diff --check`, scope/dependency gates, and full Vitest (1099 files / 17984 tests).
+- Two independent adversarial passes completed; every accepted pass-1 finding was fixed and pass 2 approved with no unresolved High or Medium finding.
+- Automated color checks do not replace later route-owned visual validation for chart comprehension, color-vision distinction, or alarm fatigue.
 
 ### File List
 
-- `_bmad-output/implementation-artifacts/166-1-fe-establish-the-tailwind-v4-semantic-token-and-compiler-contract.md` (Story context)
+- `_bmad-output/implementation-artifacts/166-1-fe-establish-the-tailwind-v4-semantic-token-and-compiler-contract.md` (Story execution and validation evidence)
+- `_bmad-output/implementation-artifacts/sprint-status.yaml` (Story status tracking)
+- `components.json` (Tailwind v4 shadcn compiler metadata)
+- `postcss.config.js` (format-only normalization; compiler remains `@tailwindcss/postcss`)
+- `src/styles/globals.css` (CSS-first semantic tokens, mappings, compatibility values, and plugin directives)
+- `tailwind.config.ts` (deleted after CSS-first behavior migration)
+- `src/styles/__tests__/token-test-utils.ts` (source parsing and numerical color/contrast helpers)
+- `src/styles/__tests__/globals-token-contract.test.ts` (semantic/config contract tests)
+- `src/styles/__tests__/globals-compiled-contrast.test.ts` (real compiler, compatibility, and accessibility tests)
 
 ### Change Log
 
 | Date | Change |
 |---|---|
 | 2026-08-11 | Story created. Defined the single Tailwind v4 compiler path, exact semantic-role/contrast tests, bounded editable surface, pinned toolchain, and local Git lifecycle. |
+| 2026-08-11 | Implemented and validated the CSS-first semantic token/compiler foundation; moved Story to `review` after two adversarial passes. **Lessons:** compiler-selector existence is weaker than declaration-level compatibility; semantic fill tokens must also be tested in real text contexts; worktree-local dependencies are required for Turbopack because an external `node_modules` symlink is rejected. |
 
 <!-- Lessons-line convention (Story 94.4-FE): the final Story-close row that changes Status to `done` must include 1–3 Story-specific lessons for retrospective aggregation. -->
