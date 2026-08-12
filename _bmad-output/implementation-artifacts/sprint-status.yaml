@@ -37,7 +37,7 @@
 #   they are excluded from story and retrospective counts and must be documented with a no-story-ID note.
 
 generated: 2026-08-03 # refreshed after Epic 127 truth reconciliation and Epics 162-165 registration
-last_updated: 2026-08-11 # Registered the active shadcn/ui migration program (Epics 166-174, 90 Stories). Historical completed statuses are preserved; the dedicated Story 166.1 artifact is created and the first sequential candidate is ready-for-dev.
+last_updated: 2026-08-12 # Story 166.4 implementation, exact local gates, browser evidence, and two fresh reviews completed; lifecycle moved to review pending Git integration and cleanup.
 project: frontend
 project_key: NOKEY
 tracking_system: file-system
@@ -737,7 +737,7 @@ development_status:
   166-1-fe-establish-the-tailwind-v4-semantic-token-and-compiler-contract: review
   166-2-fe-harden-the-existing-shadcn-primitive-layer: review
   166-3-fe-deliver-pageheader-and-contextbar-compositions: review
-  166-4-fe-standardize-metrics-financial-values-availability-and-status: backlog
+  166-4-fe-standardize-metrics-financial-values-availability-and-status: review
   166-5-fe-standardize-filters-and-period-controls: backlog
   166-6-fe-deliver-responsivetable-and-data-table-contracts: backlog
   166-7-fe-deliver-chartframe-and-accessible-analytical-evidence: backlog
