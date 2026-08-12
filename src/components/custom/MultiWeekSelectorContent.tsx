@@ -30,19 +30,29 @@ export function QuickActions({
   onClearAll,
 }: QuickActionsProps) {
   return (
-    <div className="p-3 border-b bg-gray-50">
-      <div className="flex flex-wrap gap-2 mb-2">
-        <Button variant="outline" size="sm" onClick={() => onPreset(4)} className="text-xs">
+    <div className="border-b border-border bg-muted/40 p-3">
+      <div className="mb-2 flex flex-wrap gap-2">
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() => onPreset(4)}
+          className="min-h-11 text-xs"
+        >
           Последние 4 недели
         </Button>
-        <Button variant="outline" size="sm" onClick={() => onPreset(8)} className="text-xs">
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() => onPreset(8)}
+          className="min-h-11 text-xs"
+        >
           2 месяца
         </Button>
-        <Button variant="outline" size="sm" onClick={onSelectAll} className="text-xs">
+        <Button variant="outline" size="sm" onClick={onSelectAll} className="min-h-11 text-xs">
           Все ({Math.min(weeks.length, maxSelection)})
         </Button>
       </div>
-      <div className="flex justify-between items-center text-xs text-gray-500">
+      <div className="flex items-center justify-between text-xs text-muted-foreground">
         <span>
           Выбрано: {selectedCount} / {maxSelection}
         </span>
@@ -51,7 +61,7 @@ export function QuickActions({
             variant="ghost"
             size="sm"
             onClick={onClearAll}
-            className="h-6 px-2 text-xs text-red-600 hover:text-red-700"
+            className="min-h-11 px-2 text-xs text-destructive hover:text-destructive"
           >
             <X className="h-3 w-3 mr-1" />
             Очистить
@@ -63,16 +73,18 @@ export function QuickActions({
 }
 
 interface WeeksListProps {
+  idPrefix: string
   weeks: WeekData[]
   selected: string[]
   maxSelection: number
   onToggle: (week: string) => void
 }
 
-export function WeeksList({ weeks, selected, maxSelection, onToggle }: WeeksListProps) {
+export function WeeksList({ idPrefix, weeks, selected, maxSelection, onToggle }: WeeksListProps) {
   return (
     <div className="max-h-[300px] overflow-y-auto p-2">
       {weeks.map(week => {
+        const checkboxId = `${idPrefix}-${week.week}`
         const isSelected = selected.includes(week.week)
         const isDisabled = !isSelected && selected.length >= maxSelection
 
@@ -80,25 +92,27 @@ export function WeeksList({ weeks, selected, maxSelection, onToggle }: WeeksList
           <div
             key={week.week}
             className={cn(
-              'flex items-center space-x-3 p-2 rounded-md cursor-pointer transition-colors',
-              isSelected ? 'bg-blue-50' : 'hover:bg-gray-50',
-              isDisabled && 'opacity-50 cursor-not-allowed'
+              'flex min-h-11 items-center space-x-3 rounded-md p-2 transition-colors',
+              isSelected ? 'bg-accent' : 'hover:bg-muted/50',
+              isDisabled && 'cursor-not-allowed opacity-50'
             )}
-            onClick={() => !isDisabled && onToggle(week.week)}
           >
             <Checkbox
-              id={week.week}
+              id={checkboxId}
               checked={isSelected}
               disabled={isDisabled}
               onCheckedChange={() => onToggle(week.week)}
             />
             <label
-              htmlFor={week.week}
-              className={cn('flex-1 text-sm cursor-pointer ml-1', isSelected && 'font-medium')}
+              htmlFor={checkboxId}
+              className={cn(
+                'ml-1 flex min-h-11 flex-1 cursor-pointer items-center text-sm',
+                isSelected && 'font-medium'
+              )}
             >
               {formatWeekWithDateRange(week.week)}
             </label>
-            {isSelected && <Check className="h-4 w-4 text-blue-600" />}
+            {isSelected && <Check aria-hidden="true" className="h-4 w-4 text-primary" />}
           </div>
         )
       })}
@@ -116,20 +130,25 @@ export function SelectedTags({ sortedWeeks, totalCount, onToggle }: SelectedTags
   if (totalCount <= 1) return null
 
   return (
-    <div className="flex flex-wrap gap-1 mt-2">
+    <div className="mt-2 flex flex-wrap gap-1">
       {sortedWeeks.slice(0, 6).map(week => (
         <span
           key={week}
-          className="inline-flex items-center gap-1 px-2 py-0.5 text-xs bg-blue-100 text-blue-800 rounded-full"
+          className="inline-flex items-center gap-1 rounded-full bg-accent px-2 py-0.5 text-xs text-accent-foreground"
         >
           {week.replace('20', '').replace('-W', '/W')}
-          <button onClick={() => onToggle(week)} className="hover:text-blue-900">
-            <X className="h-3 w-3" />
+          <button
+            type="button"
+            onClick={() => onToggle(week)}
+            aria-label={`Удалить ${week}`}
+            className="inline-flex min-h-11 min-w-11 items-center justify-center rounded-full hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+          >
+            <X aria-hidden="true" className="h-3 w-3" />
           </button>
         </span>
       ))}
       {totalCount > 6 && (
-        <span className="px-2 py-0.5 text-xs text-gray-500">+{totalCount - 6} ещё</span>
+        <span className="px-2 py-0.5 text-xs text-muted-foreground">+{totalCount - 6} ещё</span>
       )}
     </div>
   )

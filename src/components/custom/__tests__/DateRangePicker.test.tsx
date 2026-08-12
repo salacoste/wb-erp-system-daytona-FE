@@ -11,8 +11,116 @@
  * - formatPeriodLabel helper function
  */
 
-import { describe, it, expect } from 'vitest'
-import { calculateWeeksDiff, formatPeriodLabel } from '../DateRangePicker'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
+import { render, screen } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
+
+import { useAvailableWeeks } from '@/hooks/useFinancialSummary'
+
+import { calculateWeeksDiff, DateRangePicker, formatPeriodLabel } from '../DateRangePicker'
+
+vi.mock('@/hooks/useFinancialSummary', () => ({
+  useAvailableWeeks: vi.fn(),
+  formatWeekWithDateRange: vi.fn((week: string) => week),
+}))
+
+const pickerWeeks = ['2025-W47', '2025-W46', '2025-W45', '2025-W44', '2025-W43'].map(week => ({
+  week,
+  start_date: '2025-01-01',
+  end_date: '2025-01-07',
+}))
+
+function mockAvailableWeeks({
+  data = pickerWeeks,
+  isLoading = false,
+  isError = false,
+}: {
+  data?: typeof pickerWeeks
+  isLoading?: boolean
+  isError?: boolean
+} = {}) {
+  vi.mocked(useAvailableWeeks).mockReturnValue({
+    data,
+    isLoading,
+    isError,
+  } as unknown as ReturnType<typeof useAvailableWeeks>)
+}
+
+async function chooseOption(name: 'От' | 'До' | 'Быстрый выбор периода', option: string) {
+  const user = userEvent.setup()
+  await user.click(screen.getByRole('combobox', { name }))
+  await user.click(screen.getByRole('option', { name: option }))
+}
+
+describe('DateRangePicker behavior lock', () => {
+  beforeEach(() => {
+    vi.clearAllMocks()
+    mockAvailableWeeks()
+  })
+
+  it.each([
+    ['start without swap', 'От' as const, '2025-W44', '2025-W44', '2025-W46'],
+    ['start with swap', 'От' as const, '2025-W47', '2025-W46', '2025-W47'],
+    ['end without swap', 'До' as const, '2025-W47', '2025-W45', '2025-W47'],
+    ['end with swap', 'До' as const, '2025-W44', '2025-W44', '2025-W45'],
+  ])('emits %s exactly once', async (_case, control, option, expectedStart, expectedEnd) => {
+    const onRangeChange = vi.fn()
+    render(
+      <DateRangePicker
+        weekStart="2025-W45"
+        weekEnd="2025-W46"
+        onRangeChange={onRangeChange}
+        showQuickSelect={false}
+      />
+    )
+
+    await chooseOption(control, option)
+
+    expect(onRangeChange).toHaveBeenCalledTimes(1)
+    expect(onRangeChange).toHaveBeenCalledWith(expectedStart, expectedEnd)
+  })
+
+  it('emits a quick selection exactly once with the available latest week', async () => {
+    const onRangeChange = vi.fn()
+    render(
+      <DateRangePicker weekStart="2025-W45" weekEnd="2025-W47" onRangeChange={onRangeChange} />
+    )
+
+    await chooseOption('Быстрый выбор периода', 'Последние 4 недели')
+
+    expect(onRangeChange).toHaveBeenCalledTimes(1)
+    expect(onRangeChange).toHaveBeenCalledWith('2025-W44', '2025-W47')
+  })
+
+  it('preserves the current range while available weeks are loading', () => {
+    mockAvailableWeeks({ isLoading: true })
+
+    render(<DateRangePicker weekStart="2025-W44" weekEnd="2025-W47" onRangeChange={vi.fn()} />)
+
+    const status = screen.getByRole('status')
+    expect(status).toHaveTextContent('Загрузка доступных недель')
+    expect(status.closest('[aria-busy="true"]')).not.toBeNull()
+    expect(screen.getByText('Текущий период: W44 — W47 (4 недели)')).toBeInTheDocument()
+  })
+
+  it('preserves the current range when available weeks fail to load', () => {
+    mockAvailableWeeks({ data: [], isError: true })
+
+    render(<DateRangePicker weekStart="2025-W44" weekEnd="2025-W47" onRangeChange={vi.fn()} />)
+
+    expect(screen.getByRole('alert')).toHaveTextContent('Не удалось загрузить список недель')
+    expect(screen.getByText('Текущий период: W44 — W47 (4 недели)')).toBeInTheDocument()
+  })
+
+  it('preserves the current range when no available weeks exist', () => {
+    mockAvailableWeeks({ data: [] })
+
+    render(<DateRangePicker weekStart="2025-W44" weekEnd="2025-W47" onRangeChange={vi.fn()} />)
+
+    expect(screen.getByRole('alert')).toHaveTextContent('Нет доступных недель для отображения')
+    expect(screen.getByText('Текущий период: W44 — W47 (4 недели)')).toBeInTheDocument()
+  })
+})
 
 describe('DateRangePicker helpers', () => {
   describe('calculateWeeksDiff', () => {

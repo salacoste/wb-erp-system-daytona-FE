@@ -6,7 +6,7 @@
  * Supports preset options (previous period, same period last year) and custom ranges.
  */
 
-import { useState } from 'react'
+import { useId, useState } from 'react'
 import { Switch } from '@/components/ui/switch'
 import { Label } from '@/components/ui/label'
 import {
@@ -17,6 +17,7 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 import { Card, CardContent } from '@/components/ui/card'
+import { Button } from '@/components/ui/button'
 import { DateRangePicker } from './DateRangePicker'
 import { GitCompare, Calendar, ChevronDown, ChevronUp } from 'lucide-react'
 import { cn } from '@/lib/utils'
@@ -47,6 +48,9 @@ export function ComparisonPeriodSelector({
   className,
 }: ComparisonPeriodSelectorProps) {
   const [isExpanded, setIsExpanded] = useState(false)
+  const switchId = useId()
+  const contentId = useId()
+  const presetId = useId()
 
   const {
     previousPeriod,
@@ -71,55 +75,65 @@ export function ComparisonPeriodSelector({
   }
 
   return (
-    <Card className={cn('border-dashed', enabled && 'border-blue-300 bg-blue-50/50', className)}>
+    <Card className={cn('border-dashed', enabled && 'border-primary/40 bg-accent/30', className)}>
       <CardContent className="py-3 px-4">
         {/* Toggle Row */}
-        <div
-          className="flex items-center justify-between cursor-pointer"
-          onClick={() => enabled && setIsExpanded(!isExpanded)}
-        >
-          <div className="flex items-center gap-3">
+        <div className="flex items-center justify-between gap-3">
+          <div className="flex min-h-11 items-center gap-3">
             <Switch
-              id="comparison-mode"
+              id={switchId}
               checked={enabled}
               onCheckedChange={onEnabledToggle}
               onClick={e => e.stopPropagation()}
-              aria-label="Сравнение периодов"
+              className="min-h-11 min-w-11"
             />
             <Label
-              htmlFor="comparison-mode"
-              className="flex items-center gap-2 cursor-pointer text-sm font-medium"
+              htmlFor={switchId}
+              className="flex min-h-11 cursor-pointer items-center gap-2 text-sm font-medium"
               onClick={e => e.stopPropagation()}
             >
-              <GitCompare className="h-4 w-4 text-blue-600" />
+              <GitCompare aria-hidden="true" className="h-4 w-4 text-primary" />
               Сравнить с периодом
             </Label>
           </div>
 
           {enabled && (
-            <div className="flex items-center gap-2 text-sm text-gray-600">
-              <Calendar className="h-4 w-4" />
-              <span>{comparisonPeriodLabel}</span>
-              {isExpanded ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
-            </div>
+            <Button
+              type="button"
+              variant="ghost"
+              onClick={() => setIsExpanded(!isExpanded)}
+              aria-expanded={isExpanded}
+              aria-controls={contentId}
+              className="min-h-11 max-w-full whitespace-normal text-muted-foreground"
+            >
+              <Calendar aria-hidden="true" className="h-4 w-4" />
+              <span className="break-words">{comparisonPeriodLabel}</span>
+              {isExpanded ? (
+                <ChevronUp aria-hidden="true" className="h-4 w-4" />
+              ) : (
+                <ChevronDown aria-hidden="true" className="h-4 w-4" />
+              )}
+            </Button>
           )}
         </div>
 
         {/* Expanded Options */}
         {enabled && isExpanded && (
-          <div className="mt-4 pt-4 border-t border-blue-200 space-y-4">
+          <div id={contentId} className="mt-4 space-y-4 border-t border-border pt-4">
             {/* Preset Selector */}
-            <div className="flex items-center gap-3">
-              <Label className="text-sm text-gray-600 min-w-[100px]">Сравнить с:</Label>
+            <div className="flex min-w-0 flex-col gap-2 sm:flex-row sm:items-center">
+              <Label htmlFor={presetId} className="text-sm text-muted-foreground sm:min-w-25">
+                Сравнить с:
+              </Label>
               <Select value={preset} onValueChange={v => handlePresetChange(v as ComparisonPreset)}>
-                <SelectTrigger className="w-[240px]">
+                <SelectTrigger id={presetId} className="w-full sm:w-60">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="previous">
                     <div className="flex flex-col items-start">
                       <span>Предыдущий период</span>
-                      <span className="text-xs text-gray-500">
+                      <span className="text-xs text-muted-foreground">
                         {formatPeriodDisplay(previousPeriod.start, previousPeriod.end)}
                       </span>
                     </div>
@@ -127,7 +141,7 @@ export function ComparisonPeriodSelector({
                   <SelectItem value="same_last_year">
                     <div className="flex flex-col items-start">
                       <span>Тот же период прошлого года</span>
-                      <span className="text-xs text-gray-500">
+                      <span className="text-xs text-muted-foreground">
                         {formatPeriodDisplay(samePeriodLastYear.start, samePeriodLastYear.end)}
                       </span>
                     </div>
@@ -139,7 +153,7 @@ export function ComparisonPeriodSelector({
 
             {/* Custom Range Picker */}
             {preset === 'custom' && (
-              <div className="pl-[112px]">
+              <div className="sm:pl-28">
                 <DateRangePicker
                   weekStart={compareStart}
                   weekEnd={compareEnd}

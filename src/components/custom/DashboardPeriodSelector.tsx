@@ -79,6 +79,7 @@ export function DashboardPeriodSelector({
   // selector is ever mounted more than once (global uniqueness across the React tree).
   const weekRadioId = useId()
   const monthRadioId = useId()
+  const periodSelectId = useId()
 
   useEffect(() => {
     const updateTime = (): void => {
@@ -123,7 +124,13 @@ export function DashboardPeriodSelector({
     [setMonth, onPeriodChange]
   )
 
-  if (isLoading) return <DashboardPeriodSelectorSkeleton />
+  if (isLoading) {
+    const selectedPeriod =
+      periodType === 'week' ? formatWeekLabel(selectedWeek) : formatMonthLabel(selectedMonth)
+    return (
+      <DashboardPeriodSelectorSkeleton periodType={periodType} selectedPeriod={selectedPeriod} />
+    )
+  }
 
   const uniqueMonths = getUniqueMonths(availableWeeks)
   const displayedWeeks = availableWeeks.slice(0, MAX_WEEKS)
@@ -166,32 +173,37 @@ export function DashboardPeriodSelector({
         </div>
       </RadioGroup>
 
-      <Select
-        value={periodType === 'week' ? selectedWeek : selectedMonth}
-        onValueChange={periodType === 'week' ? handleWeekChange : handleMonthChange}
-        disabled={disabled}
-      >
-        <SelectTrigger
-          className="w-full md:w-[320px]"
-          aria-label={periodType === 'week' ? 'Выбор недели' : 'Выбор месяца'}
-          data-testid={periodType === 'week' ? 'week-selector' : 'month-selector'}
+      <div className="min-w-0 flex-1 md:flex-none">
+        <Label htmlFor={periodSelectId} className="mb-1 block text-xs text-muted-foreground">
+          {periodType === 'week' ? 'Выбор недели' : 'Выбор месяца'}
+        </Label>
+        <Select
+          value={periodType === 'week' ? selectedWeek : selectedMonth}
+          onValueChange={periodType === 'week' ? handleWeekChange : handleMonthChange}
+          disabled={disabled}
         >
-          <SelectValue placeholder="Выберите период" />
-        </SelectTrigger>
-        <SelectContent className="max-h-[300px]">
-          {periodType === 'week'
-            ? displayedWeeks.map(week => (
-                <SelectItem key={week} value={week}>
-                  {formatWeekLabel(week)}
-                </SelectItem>
-              ))
-            : displayedMonths.map(month => (
-                <SelectItem key={month} value={month}>
-                  {formatMonthLabel(month)}
-                </SelectItem>
-              ))}
-        </SelectContent>
-      </Select>
+          <SelectTrigger
+            id={periodSelectId}
+            className="w-full md:w-80"
+            data-testid={periodType === 'week' ? 'week-selector' : 'month-selector'}
+          >
+            <SelectValue placeholder="Выберите период" />
+          </SelectTrigger>
+          <SelectContent className="max-h-[300px]">
+            {periodType === 'week'
+              ? displayedWeeks.map(week => (
+                  <SelectItem key={week} value={week}>
+                    {formatWeekLabel(week)}
+                  </SelectItem>
+                ))
+              : displayedMonths.map(month => (
+                  <SelectItem key={month} value={month}>
+                    {formatMonthLabel(month)}
+                  </SelectItem>
+                ))}
+          </SelectContent>
+        </Select>
+      </div>
 
       {!compact && (
         <PeriodRefreshButton

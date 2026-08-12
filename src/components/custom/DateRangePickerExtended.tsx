@@ -45,6 +45,9 @@ export function DateRangePickerExtended({
   id,
 }: DateRangePickerExtendedProps): React.ReactElement {
   const [isOpen, setIsOpen] = React.useState(false)
+  const generatedId = React.useId()
+  const triggerId = id ?? generatedId
+  const dialogTitleId = `${triggerId}-dialog-title`
 
   const daysInRange = value ? calculateDaysDiff(value.from, value.to) : 0
   const isRangeExceeded = daysInRange > maxDays
@@ -53,11 +56,6 @@ export function DateRangePickerExtended({
 
   const handlePresetClick = (days: number): void => {
     onChange(getPresetRange(days))
-  }
-
-  const handleClear = (e: React.MouseEvent): void => {
-    e.stopPropagation()
-    onChange(undefined)
   }
 
   const handleCalendarSelect = (range: { from?: Date; to?: Date } | undefined): void => {
@@ -69,34 +67,55 @@ export function DateRangePickerExtended({
 
   return (
     <div className={cn('relative', className)}>
+      <label htmlFor={triggerId} className="mb-1 block text-sm font-medium">
+        Период дат
+      </label>
       <Popover open={isOpen} onOpenChange={setIsOpen}>
-        <PopoverTrigger asChild>
-          <Button
-            id={id}
-            variant="outline"
-            disabled={disabled}
-            aria-haspopup="dialog"
-            aria-expanded={isOpen}
-            aria-label={
-              value ? `Выбран период: ${formatDateRangeRu(value.from, value.to)}` : placeholder
-            }
-            className={cn(
-              'w-full justify-start text-left font-normal',
-              !value && 'text-muted-foreground'
-            )}
-          >
-            <CalendarIcon className="mr-2 h-4 w-4" />
-            {value ? formatDateRangeRu(value.from, value.to) : placeholder}
-            {value && (
-              <X
-                className="ml-auto h-4 w-4 opacity-70 hover:opacity-100"
-                onClick={handleClear}
-                aria-label="Очистить период"
-              />
-            )}
-          </Button>
-        </PopoverTrigger>
-        <PopoverContent className="w-auto min-w-[580px] p-4" align="start" role="dialog">
+        <div className="flex min-w-0 gap-2">
+          <PopoverTrigger asChild>
+            <Button
+              id={triggerId}
+              variant="outline"
+              disabled={disabled}
+              aria-haspopup="dialog"
+              aria-expanded={isOpen}
+              aria-label={
+                value
+                  ? `Период дат — выбран период: ${formatDateRangeRu(value.from, value.to)}`
+                  : `Период дат — ${placeholder}`
+              }
+              className={cn(
+                'min-w-0 flex-1 justify-start text-left font-normal whitespace-normal',
+                !value && 'text-muted-foreground'
+              )}
+            >
+              <CalendarIcon aria-hidden="true" className="mr-2 h-4 w-4" />
+              {value ? formatDateRangeRu(value.from, value.to) : placeholder}
+            </Button>
+          </PopoverTrigger>
+          {value && (
+            <Button
+              type="button"
+              variant="outline"
+              size="icon"
+              disabled={disabled}
+              onClick={() => onChange(undefined)}
+              aria-label="Очистить период"
+              className="min-h-11 min-w-11"
+            >
+              <X aria-hidden="true" className="h-4 w-4" />
+            </Button>
+          )}
+        </div>
+        <PopoverContent
+          className="w-[min(36.25rem,var(--radix-popover-content-available-width))] max-w-[calc(100vw-2rem)] p-4"
+          align="start"
+          role="dialog"
+          aria-labelledby={dialogTitleId}
+        >
+          <h2 id={dialogTitleId} className="mb-3 text-sm font-semibold">
+            Выбор диапазона дат
+          </h2>
           <PopoverBody
             value={value}
             presets={presets}

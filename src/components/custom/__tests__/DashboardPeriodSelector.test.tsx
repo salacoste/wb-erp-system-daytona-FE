@@ -21,6 +21,11 @@ vi.mock('@/hooks/useDashboardPeriod', () => ({
   useDashboardPeriod: () => mockUseDashboardPeriod(),
 }))
 
+const mockUseAvailableWeeks = vi.fn()
+vi.mock('@/hooks/useFinancialSummary', () => ({
+  useAvailableWeeks: () => mockUseAvailableWeeks(),
+}))
+
 // =============================================================================
 // Test Fixtures
 // =============================================================================
@@ -39,6 +44,20 @@ const createMockContextValue = (overrides = {}) => ({
   refresh: vi.fn(),
   getDateRange: vi.fn(() => ({ startDate: '2026-01-27', endDate: '2026-02-02' })),
   ...overrides,
+})
+
+const availableWeeks = ['2026-W05', '2026-W04'].map(week => ({
+  week,
+  start_date: '2026-01-01',
+  end_date: '2026-01-07',
+}))
+
+beforeEach(() => {
+  mockUseAvailableWeeks.mockReturnValue({
+    data: availableWeeks,
+    isLoading: false,
+    isError: false,
+  })
 })
 
 // =============================================================================
@@ -276,6 +295,35 @@ describe('Story 60.2-FE: AC5 - Loading State', () => {
     expect(screen.getByTestId('period-selector-skeleton')).toBeInTheDocument()
   })
 
+  it('preserves the formatted current week and exposes loading status', () => {
+    mockUseDashboardPeriod.mockReturnValue(
+      createMockContextValue({ isLoading: true, selectedWeek: '2026-W05' })
+    )
+
+    render(<DashboardPeriodSelector />)
+
+    const loadingState = screen.getByTestId('period-selector-skeleton')
+    expect(loadingState).toHaveAttribute('aria-busy', 'true')
+    expect(screen.getByText(/Неделя 5, 2026/)).toBeInTheDocument()
+    expect(screen.getByRole('status')).toHaveTextContent('Загрузка доступных периодов')
+  })
+
+  it('preserves the formatted current month and exposes loading status', () => {
+    mockUseDashboardPeriod.mockReturnValue(
+      createMockContextValue({
+        isLoading: true,
+        periodType: 'month',
+        selectedMonth: '2026-01',
+      })
+    )
+
+    render(<DashboardPeriodSelector />)
+
+    expect(screen.getByText('Месяц')).toBeInTheDocument()
+    expect(screen.getByText('Январь 2026')).toBeInTheDocument()
+    expect(screen.getByRole('status')).toHaveTextContent('Загрузка доступных периодов')
+  })
+
   it('hides skeleton when isLoading is false', () => {
     mockUseDashboardPeriod.mockReturnValue(createMockContextValue({ isLoading: false }))
     render(<DashboardPeriodSelector />)
@@ -321,9 +369,19 @@ describe('Story 60.2-FE: AC10 - ARIA Labels', () => {
 
   afterEach(() => cleanup())
 
-  it('select has aria-label for period selection', () => {
+  it('week select is named by its persistent visible label', () => {
     render(<DashboardPeriodSelector />)
-    expect(screen.getByRole('combobox')).toHaveAttribute('aria-label', 'Выбор недели')
+    expect(screen.getByText('Выбор недели')).toBeVisible()
+    expect(screen.getByRole('combobox', { name: 'Выбор недели' })).toBeInTheDocument()
+  })
+
+  it('month select is named by its persistent visible label', () => {
+    mockUseDashboardPeriod.mockReturnValue(createMockContextValue({ periodType: 'month' }))
+
+    render(<DashboardPeriodSelector />)
+
+    expect(screen.getByText('Выбор месяца')).toBeVisible()
+    expect(screen.getByRole('combobox', { name: 'Выбор месяца' })).toBeInTheDocument()
   })
 
   it('refresh button has aria-label', () => {

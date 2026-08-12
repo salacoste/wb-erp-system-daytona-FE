@@ -13,3 +13,4 @@ export {
   type ContextValue,
 } from './ContextBar'
 export * from './metrics'
+export * from './filters'

@@ -5,7 +5,7 @@
 
 'use client'
 
-import { useState, useMemo } from 'react'
+import { useId, useState, useMemo } from 'react'
 import { useAvailableWeeks, formatWeekWithDateRange } from '@/hooks/useFinancialSummary'
 import { Button } from '@/components/ui/button'
 import { Label } from '@/components/ui/label'
@@ -33,6 +33,7 @@ export function MultiWeekSelector({
 }: MultiWeekSelectorProps) {
   const { data: weeks, isLoading, isError } = useAvailableWeeks()
   const [open, setOpen] = useState(false)
+  const triggerId = useId()
 
   const sortedSelectedWeeks = useMemo(() => {
     return [...value].sort().reverse()
@@ -68,9 +69,13 @@ export function MultiWeekSelector({
 
   if (isLoading) {
     return (
-      <div className={className}>
+      <div aria-busy="true" className={className}>
         {label && <Label className="mb-2 block">{label}</Label>}
-        <Skeleton className="h-10 w-full" />
+        <div className="mb-2 break-words text-sm text-foreground">Текущий выбор: {displayText}</div>
+        <Skeleton aria-hidden="true" className="h-10 w-full" />
+        <span role="status" className="mt-1 block text-sm text-muted-foreground">
+          Загрузка доступных недель
+        </span>
       </div>
     )
   }
@@ -79,6 +84,7 @@ export function MultiWeekSelector({
     return (
       <div className={className}>
         {label && <Label className="mb-2 block">{label}</Label>}
+        <div className="mb-2 break-words text-sm text-foreground">Текущий выбор: {displayText}</div>
         <Alert variant="destructive">
           <AlertCircle className="h-4 w-4" />
           <AlertDescription>
@@ -91,10 +97,15 @@ export function MultiWeekSelector({
 
   return (
     <div className={className}>
-      {label && <Label className="mb-2 block">{label}</Label>}
+      {label && (
+        <Label htmlFor={triggerId} className="mb-2 block">
+          {label}
+        </Label>
+      )}
       <Popover open={open} onOpenChange={setOpen}>
         <PopoverTrigger asChild>
           <Button
+            id={triggerId}
             variant="outline"
             role="combobox"
             aria-expanded={open}
@@ -104,7 +115,10 @@ export function MultiWeekSelector({
             <ChevronDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
           </Button>
         </PopoverTrigger>
-        <PopoverContent className="w-[400px] p-0" align="start">
+        <PopoverContent
+          className="w-[min(25rem,var(--radix-popover-content-available-width))] max-w-[calc(100vw-2rem)] p-0"
+          align="start"
+        >
           <QuickActions
             weeks={weeks}
             maxSelection={maxSelection}
@@ -114,13 +128,18 @@ export function MultiWeekSelector({
             onClearAll={handleClearAll}
           />
           <WeeksList
+            idPrefix={triggerId}
             weeks={weeks}
             selected={value}
             maxSelection={maxSelection}
             onToggle={handleToggleWeek}
           />
-          <div className="p-3 border-t bg-gray-50">
-            <Button className="w-full" onClick={() => setOpen(false)} disabled={value.length === 0}>
+          <div className="border-t border-border bg-muted/40 p-3">
+            <Button
+              className="min-h-11 w-full"
+              onClick={() => setOpen(false)}
+              disabled={value.length === 0}
+            >
               Применить ({value.length})
             </Button>
           </div>
