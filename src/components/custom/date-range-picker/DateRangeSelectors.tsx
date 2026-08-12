@@ -5,6 +5,8 @@
  * Contains: QuickSelectDropdown, WeekRangeSelectors, PeriodSummary, ValidationAlerts
  * Loading/error states: see DateRangeStates.tsx
  */
+import { useId } from 'react'
+
 import {
   Select,
   SelectContent,
@@ -34,10 +36,15 @@ export function QuickSelectDropdown({
   onQuickSelect,
   disabled,
 }: QuickSelectProps) {
+  const triggerId = useId()
+
   return (
     <div className="mb-3">
+      <Label htmlFor={triggerId} className="mb-1 block text-xs text-muted-foreground">
+        Быстрый выбор периода
+      </Label>
       <Select value={matchedQuickOption} onValueChange={onQuickSelect} disabled={disabled}>
-        <SelectTrigger className="w-full">
+        <SelectTrigger id={triggerId} className="w-full">
           <SelectValue placeholder="Быстрый выбор периода..." />
         </SelectTrigger>
         <SelectContent>
@@ -71,13 +78,18 @@ export function WeekRangeSelectors({
   onEndChange,
   disabled,
 }: WeekRangeSelectorsProps) {
+  const startId = useId()
+  const endId = useId()
+
   return (
     <div className="grid grid-cols-2 gap-3">
       {/* Start Week */}
       <div>
-        <Label className="text-xs text-gray-500 mb-1 block">От</Label>
+        <Label htmlFor={startId} className="mb-1 block text-xs text-muted-foreground">
+          От
+        </Label>
         <Select value={weekStart} onValueChange={onStartChange} disabled={disabled}>
-          <SelectTrigger>
+          <SelectTrigger id={startId}>
             <SelectValue placeholder="Начало" />
           </SelectTrigger>
           <SelectContent>
@@ -92,9 +104,11 @@ export function WeekRangeSelectors({
 
       {/* End Week */}
       <div>
-        <Label className="text-xs text-gray-500 mb-1 block">До</Label>
+        <Label htmlFor={endId} className="mb-1 block text-xs text-muted-foreground">
+          До
+        </Label>
         <Select value={weekEnd} onValueChange={onEndChange} disabled={disabled}>
-          <SelectTrigger>
+          <SelectTrigger id={endId}>
             <SelectValue placeholder="Конец" />
           </SelectTrigger>
           <SelectContent>
@@ -126,7 +140,7 @@ export function PeriodSummary({
   if (isStartAfterEnd || isRangeTooLarge) return null
 
   return (
-    <div className="mt-2 text-xs text-gray-500">
+    <div className="mt-2 text-xs text-muted-foreground">
       <span>
         Выбрано: {weeksInRange}{' '}
         {weeksInRange === 1 ? 'неделя' : weeksInRange < 5 ? 'недели' : 'недель'}

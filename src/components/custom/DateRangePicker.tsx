@@ -128,17 +128,24 @@ export function DateRangePicker({
   )
 
   if (isLoading) {
-    return <DateRangeLoadingState className={className} />
+    return <DateRangeLoadingState className={className} weekStart={weekStart} weekEnd={weekEnd} />
   }
 
   if (isError || !weeks || weeks.length === 0) {
-    return <DateRangeErrorState className={className} isError={!!isError} />
+    return (
+      <DateRangeErrorState
+        className={className}
+        isError={!!isError}
+        weekStart={weekStart}
+        weekEnd={weekEnd}
+      />
+    )
   }
 
   return (
     <div className={className}>
       <div className="flex items-center gap-2 mb-2">
-        <Calendar className="h-4 w-4 text-gray-500" />
+        <Calendar aria-hidden="true" className="h-4 w-4 text-muted-foreground" />
         <Label>Период анализа</Label>
       </div>
 

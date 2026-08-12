@@ -17,6 +17,7 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
 import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
+import { axe, toHaveNoViolations } from 'jest-axe'
 import { DateRangePickerExtended } from '../DateRangePickerExtended'
 import {
   mockRange30Days,
@@ -30,6 +31,8 @@ import {
 // ============================================================================
 
 const mockOnChange = vi.fn()
+
+expect.extend(toHaveNoViolations)
 
 const defaultProps = {
   value: undefined,
@@ -68,13 +71,30 @@ describe('DateRangePickerExtended - Basic Rendering', () => {
 
   it('should render calendar icon in trigger button', () => {
     render(<DateRangePickerExtended {...defaultProps} />)
-    const trigger = screen.getByRole('button')
+    const trigger = screen.getByRole('button', {
+      name: /Период дат — (?:Выберите период|выбран период:)/i,
+    })
     expect(trigger.querySelector('svg')).toBeInTheDocument()
   })
 
   it('should render clear button when range is selected', () => {
     render(<DateRangePickerExtended {...defaultProps} value={mockRange30Days} />)
-    expect(screen.getByLabelText(/очистить/i)).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Очистить период' })).toBeInTheDocument()
+  })
+
+  it('should expose clear as a separate button and keep the popover closed', async () => {
+    const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime })
+    render(<DateRangePickerExtended {...defaultProps} value={mockRange30Days} />)
+
+    const trigger = screen.getByRole('button', { name: /Период дат — выбран период:/i })
+    const clear = screen.getByRole('button', { name: 'Очистить период' })
+    expect(trigger).not.toContainElement(clear)
+
+    await user.click(clear)
+
+    expect(mockOnChange).toHaveBeenCalledTimes(1)
+    expect(mockOnChange).toHaveBeenCalledWith(undefined)
+    expect(trigger).toHaveAttribute('aria-expanded', 'false')
   })
 
   it('should not render clear button when no range selected', () => {
@@ -86,7 +106,9 @@ describe('DateRangePickerExtended - Basic Rendering', () => {
     const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime })
     render(<DateRangePickerExtended {...defaultProps} />)
 
-    await user.click(screen.getByRole('button'))
+    await user.click(
+      screen.getByRole('button', { name: /Период дат — (?:Выберите период|выбран период:)/i })
+    )
 
     await waitFor(() => {
       const calendars = screen.getAllByRole('grid')
@@ -94,9 +116,25 @@ describe('DateRangePickerExtended - Basic Rendering', () => {
     })
   })
 
+  it('keeps the popover within the available viewport width', async () => {
+    const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime })
+    render(<DateRangePickerExtended {...defaultProps} />)
+
+    await user.click(
+      screen.getByRole('button', { name: /Период дат — (?:Выберите период|выбран период:)/i })
+    )
+
+    expect(await screen.findByRole('dialog')).toHaveClass(
+      'max-w-[calc(100vw-2rem)]',
+      'w-[min(36.25rem,var(--radix-popover-content-available-width))]'
+    )
+  })
+
   it('should render in disabled state when disabled prop is true', () => {
     render(<DateRangePickerExtended {...defaultProps} disabled />)
-    expect(screen.getByRole('button')).toBeDisabled()
+    expect(
+      screen.getByRole('button', { name: /Период дат — (?:Выберите период|выбран период:)/i })
+    ).toBeDisabled()
   })
 
   it('should apply custom className to root element', () => {
@@ -108,7 +146,9 @@ describe('DateRangePickerExtended - Basic Rendering', () => {
 
   it('should render with id for accessibility', () => {
     render(<DateRangePickerExtended {...defaultProps} id="date-picker-test" />)
-    expect(screen.getByRole('button')).toHaveAttribute('id', 'date-picker-test')
+    expect(
+      screen.getByRole('button', { name: /Период дат — (?:Выберите период|выбран период:)/i })
+    ).toHaveAttribute('id', 'date-picker-test')
   })
 })
 
@@ -121,7 +161,9 @@ describe('DateRangePickerExtended - Preset Buttons', () => {
     const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime })
     render(<DateRangePickerExtended {...defaultProps} />)
 
-    await user.click(screen.getByRole('button'))
+    await user.click(
+      screen.getByRole('button', { name: /Период дат — (?:Выберите период|выбран период:)/i })
+    )
 
     await waitFor(() => {
       expect(screen.getByText('30 дней')).toBeInTheDocument()
@@ -135,7 +177,9 @@ describe('DateRangePickerExtended - Preset Buttons', () => {
     const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime })
     render(<DateRangePickerExtended {...defaultProps} />)
 
-    await user.click(screen.getByRole('button'))
+    await user.click(
+      screen.getByRole('button', { name: /Период дат — (?:Выберите период|выбран период:)/i })
+    )
     await user.click(screen.getByText('30 дней'))
 
     expect(mockOnChange).toHaveBeenCalledWith(
@@ -150,7 +194,9 @@ describe('DateRangePickerExtended - Preset Buttons', () => {
     const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime })
     render(<DateRangePickerExtended {...defaultProps} />)
 
-    await user.click(screen.getByRole('button'))
+    await user.click(
+      screen.getByRole('button', { name: /Период дат — (?:Выберите период|выбран период:)/i })
+    )
     await user.click(screen.getByText('90 дней'))
 
     expect(mockOnChange).toHaveBeenCalled()
@@ -163,7 +209,9 @@ describe('DateRangePickerExtended - Preset Buttons', () => {
     const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime })
     render(<DateRangePickerExtended {...defaultProps} />)
 
-    await user.click(screen.getByRole('button'))
+    await user.click(
+      screen.getByRole('button', { name: /Период дат — (?:Выберите период|выбран период:)/i })
+    )
     await user.click(screen.getByText('180 дней'))
 
     expect(mockOnChange).toHaveBeenCalled()
@@ -173,7 +221,9 @@ describe('DateRangePickerExtended - Preset Buttons', () => {
     const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime })
     render(<DateRangePickerExtended {...defaultProps} />)
 
-    await user.click(screen.getByRole('button'))
+    await user.click(
+      screen.getByRole('button', { name: /Период дат — (?:Выберите период|выбран период:)/i })
+    )
     await user.click(screen.getByText('365 дней'))
 
     expect(mockOnChange).toHaveBeenCalled()
@@ -183,7 +233,9 @@ describe('DateRangePickerExtended - Preset Buttons', () => {
     const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime })
     render(<DateRangePickerExtended {...defaultProps} value={mockRange30Days} />)
 
-    await user.click(screen.getByRole('button'))
+    await user.click(
+      screen.getByRole('button', { name: /Период дат — (?:Выберите период|выбран период:)/i })
+    )
 
     await waitFor(() => {
       const preset30 = screen.getByText('30 дней')
@@ -199,7 +251,9 @@ describe('DateRangePickerExtended - Preset Buttons', () => {
     }
     render(<DateRangePickerExtended {...defaultProps} value={customRange} />)
 
-    await user.click(screen.getByRole('button'))
+    await user.click(
+      screen.getByRole('button', { name: /Период дат — (?:Выберите период|выбран период:)/i })
+    )
 
     await waitFor(() => {
       const presetButtons = screen.getAllByRole('button', { name: /дней/i })
@@ -213,7 +267,9 @@ describe('DateRangePickerExtended - Preset Buttons', () => {
     const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime })
     render(<DateRangePickerExtended {...defaultProps} presets={customPresets} />)
 
-    await user.click(screen.getByRole('button'))
+    await user.click(
+      screen.getByRole('button', { name: /Период дат — (?:Выберите период|выбран период:)/i })
+    )
 
     await waitFor(() => {
       expect(screen.getByText('7 дней')).toBeInTheDocument()
@@ -226,7 +282,9 @@ describe('DateRangePickerExtended - Preset Buttons', () => {
     const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime })
     render(<DateRangePickerExtended {...defaultProps} maxDays={90} />)
 
-    await user.click(screen.getByRole('button'))
+    await user.click(
+      screen.getByRole('button', { name: /Период дат — (?:Выберите период|выбран период:)/i })
+    )
 
     await waitFor(() => {
       const preset365 = screen.getByText('365 дней')
@@ -238,7 +296,9 @@ describe('DateRangePickerExtended - Preset Buttons', () => {
     const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime })
     render(<DateRangePickerExtended {...defaultProps} />)
 
-    await user.click(screen.getByRole('button'))
+    await user.click(
+      screen.getByRole('button', { name: /Период дат — (?:Выберите период|выбран период:)/i })
+    )
     await user.click(screen.getByText('30 дней'))
 
     const callArg = mockOnChange.mock.calls[0][0]
@@ -251,7 +311,9 @@ describe('DateRangePickerExtended - Preset Buttons', () => {
     const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime })
     render(<DateRangePickerExtended {...defaultProps} />)
 
-    await user.click(screen.getByRole('button'))
+    await user.click(
+      screen.getByRole('button', { name: /Период дат — (?:Выберите период|выбран период:)/i })
+    )
     await user.click(screen.getByText('30 дней'))
 
     const callArg = mockOnChange.mock.calls[0][0]
@@ -262,7 +324,9 @@ describe('DateRangePickerExtended - Preset Buttons', () => {
     const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime })
     render(<DateRangePickerExtended {...defaultProps} value={mockRange30Days} />)
 
-    await user.click(screen.getByRole('button'))
+    await user.click(
+      screen.getByRole('button', { name: /Период дат — (?:Выберите период|выбран период:)/i })
+    )
 
     // Verify preset is initially highlighted
     await waitFor(() => {
@@ -278,7 +342,9 @@ describe('DateRangePickerExtended - Preset Buttons', () => {
     const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime })
     render(<DateRangePickerExtended {...defaultProps} />)
 
-    await user.click(screen.getByRole('button'))
+    await user.click(
+      screen.getByRole('button', { name: /Период дат — (?:Выберите период|выбран период:)/i })
+    )
 
     await waitFor(() => {
       DEFAULT_PRESETS.forEach(preset => {
@@ -291,7 +357,9 @@ describe('DateRangePickerExtended - Preset Buttons', () => {
     const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime })
     render(<DateRangePickerExtended {...defaultProps} />)
 
-    await user.click(screen.getByRole('button'))
+    await user.click(
+      screen.getByRole('button', { name: /Период дат — (?:Выберите период|выбран период:)/i })
+    )
 
     await waitFor(() => {
       expect(screen.getByText('Быстрый выбор:')).toBeInTheDocument()
@@ -308,7 +376,9 @@ describe('DateRangePickerExtended - Range Selection', () => {
     const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime })
     render(<DateRangePickerExtended {...defaultProps} />)
 
-    await user.click(screen.getByRole('button'))
+    await user.click(
+      screen.getByRole('button', { name: /Период дат — (?:Выберите период|выбран период:)/i })
+    )
 
     await waitFor(() => {
       const day15 = screen.getAllByText('15')[0]
@@ -320,7 +390,9 @@ describe('DateRangePickerExtended - Range Selection', () => {
     const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime })
     render(<DateRangePickerExtended {...defaultProps} />)
 
-    await user.click(screen.getByRole('button'))
+    await user.click(
+      screen.getByRole('button', { name: /Период дат — (?:Выберите период|выбран период:)/i })
+    )
 
     // First click sets start, second click sets end
     await waitFor(() => {
@@ -333,7 +405,9 @@ describe('DateRangePickerExtended - Range Selection', () => {
     const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime })
     render(<DateRangePickerExtended {...defaultProps} value={mockRange30Days} />)
 
-    await user.click(screen.getByRole('button'))
+    await user.click(
+      screen.getByRole('button', { name: /Период дат — (?:Выберите период|выбран период:)/i })
+    )
 
     await waitFor(() => {
       // Range cells should have range styling
@@ -346,7 +420,9 @@ describe('DateRangePickerExtended - Range Selection', () => {
     const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime })
     render(<DateRangePickerExtended {...defaultProps} />)
 
-    await user.click(screen.getByRole('button'))
+    await user.click(
+      screen.getByRole('button', { name: /Период дат — (?:Выберите период|выбран период:)/i })
+    )
 
     await waitFor(() => {
       // Check that calendar grids are rendered
@@ -407,7 +483,9 @@ describe('DateRangePickerExtended - Range Selection', () => {
     const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime })
     render(<DateRangePickerExtended {...defaultProps} />)
 
-    await user.click(screen.getByRole('button'))
+    await user.click(
+      screen.getByRole('button', { name: /Период дат — (?:Выберите период|выбран период:)/i })
+    )
 
     // Simulate date selection
     await waitFor(() => {
@@ -462,7 +540,9 @@ describe('DateRangePickerExtended - Range Selection', () => {
     const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime })
     render(<DateRangePickerExtended {...defaultProps} />)
 
-    await user.click(screen.getByRole('button'))
+    await user.click(
+      screen.getByRole('button', { name: /Период дат — (?:Выберите период|выбран период:)/i })
+    )
 
     await waitFor(() => {
       const prevButton = screen.getAllByRole('button', { name: /previous/i })[0]
@@ -474,7 +554,9 @@ describe('DateRangePickerExtended - Range Selection', () => {
     const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime })
     render(<DateRangePickerExtended {...defaultProps} />)
 
-    await user.click(screen.getByRole('button'))
+    await user.click(
+      screen.getByRole('button', { name: /Период дат — (?:Выберите период|выбран период:)/i })
+    )
 
     await waitFor(() => {
       const grids = screen.getAllByRole('grid')
@@ -486,7 +568,9 @@ describe('DateRangePickerExtended - Range Selection', () => {
     const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime })
     render(<DateRangePickerExtended {...defaultProps} />)
 
-    await user.click(screen.getByRole('button'))
+    await user.click(
+      screen.getByRole('button', { name: /Период дат — (?:Выберите период|выбран период:)/i })
+    )
 
     // Navigate far back and check for disabled dates
     await waitFor(() => {
@@ -499,7 +583,9 @@ describe('DateRangePickerExtended - Range Selection', () => {
     const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime })
     render(<DateRangePickerExtended {...defaultProps} />)
 
-    await user.click(screen.getByRole('button'))
+    await user.click(
+      screen.getByRole('button', { name: /Период дат — (?:Выберите период|выбран период:)/i })
+    )
 
     await waitFor(() => {
       const grids = screen.getAllByRole('grid')
@@ -514,7 +600,9 @@ describe('DateRangePickerExtended - Range Selection', () => {
     const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime })
     render(<DateRangePickerExtended {...defaultProps} />)
 
-    await user.click(screen.getByRole('button'))
+    await user.click(
+      screen.getByRole('button', { name: /Период дат — (?:Выберите период|выбран период:)/i })
+    )
 
     await waitFor(() => {
       expect(screen.getByText('Применить')).toBeInTheDocument()
@@ -525,7 +613,9 @@ describe('DateRangePickerExtended - Range Selection', () => {
     const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime })
     render(<DateRangePickerExtended {...defaultProps} value={mockRange30Days} />)
 
-    await user.click(screen.getByRole('button'))
+    await user.click(
+      screen.getByRole('button', { name: /Период дат — (?:Выберите период|выбран период:)/i })
+    )
 
     await waitFor(() => {
       expect(screen.getByText('Очистить')).toBeInTheDocument()
@@ -639,7 +729,9 @@ describe('DateRangePickerExtended - Russian Locale', () => {
     const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime })
     render(<DateRangePickerExtended {...defaultProps} />)
 
-    await user.click(screen.getByRole('button'))
+    await user.click(
+      screen.getByRole('button', { name: /Период дат — (?:Выберите период|выбран период:)/i })
+    )
 
     await waitFor(() => {
       // January in Russian
@@ -651,7 +743,9 @@ describe('DateRangePickerExtended - Russian Locale', () => {
     const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime })
     render(<DateRangePickerExtended {...defaultProps} />)
 
-    await user.click(screen.getByRole('button'))
+    await user.click(
+      screen.getByRole('button', { name: /Период дат — (?:Выберите период|выбран период:)/i })
+    )
 
     await waitFor(() => {
       // Check that calendars are rendered (which includes Russian day names)
@@ -716,7 +810,9 @@ describe('DateRangePickerExtended - Russian Locale', () => {
     const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime })
     render(<DateRangePickerExtended {...defaultProps} value={mockRange30Days} />)
 
-    await user.click(screen.getByRole('button'))
+    await user.click(
+      screen.getByRole('button', { name: /Период дат — (?:Выберите период|выбран период:)/i })
+    )
 
     await waitFor(() => {
       expect(screen.getByText('Быстрый выбор:')).toBeInTheDocument()
@@ -735,7 +831,9 @@ describe('DateRangePickerExtended - Keyboard & Accessibility', () => {
     const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime })
     render(<DateRangePickerExtended {...defaultProps} />)
 
-    const trigger = screen.getByRole('button')
+    const trigger = screen.getByRole('button', {
+      name: /Период дат — (?:Выберите период|выбран период:)/i,
+    })
     trigger.focus()
     await user.keyboard('{Enter}')
 
@@ -749,7 +847,9 @@ describe('DateRangePickerExtended - Keyboard & Accessibility', () => {
     const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime })
     render(<DateRangePickerExtended {...defaultProps} />)
 
-    const trigger = screen.getByRole('button')
+    const trigger = screen.getByRole('button', {
+      name: /Период дат — (?:Выберите период|выбран период:)/i,
+    })
     trigger.focus()
     await user.keyboard(' ')
 
@@ -763,7 +863,9 @@ describe('DateRangePickerExtended - Keyboard & Accessibility', () => {
     const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime })
     render(<DateRangePickerExtended {...defaultProps} />)
 
-    await user.click(screen.getByRole('button'))
+    await user.click(
+      screen.getByRole('button', { name: /Период дат — (?:Выберите период|выбран период:)/i })
+    )
 
     await waitFor(() => {
       const grids = screen.getAllByRole('grid')
@@ -781,7 +883,9 @@ describe('DateRangePickerExtended - Keyboard & Accessibility', () => {
     const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime })
     render(<DateRangePickerExtended {...defaultProps} />)
 
-    await user.click(screen.getByRole('button'))
+    await user.click(
+      screen.getByRole('button', { name: /Период дат — (?:Выберите период|выбран период:)/i })
+    )
 
     await waitFor(() => {
       const grids = screen.getAllByRole('grid')
@@ -797,7 +901,9 @@ describe('DateRangePickerExtended - Keyboard & Accessibility', () => {
     const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime })
     render(<DateRangePickerExtended {...defaultProps} />)
 
-    await user.click(screen.getByRole('button'))
+    await user.click(
+      screen.getByRole('button', { name: /Период дат — (?:Выберите период|выбран период:)/i })
+    )
 
     await waitFor(() => {
       const grids = screen.getAllByRole('grid')
@@ -813,7 +919,9 @@ describe('DateRangePickerExtended - Keyboard & Accessibility', () => {
     const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime })
     render(<DateRangePickerExtended {...defaultProps} />)
 
-    await user.click(screen.getByRole('button'))
+    await user.click(
+      screen.getByRole('button', { name: /Период дат — (?:Выберите период|выбран период:)/i })
+    )
 
     await waitFor(() => {
       const grids = screen.getAllByRole('grid')
@@ -826,7 +934,9 @@ describe('DateRangePickerExtended - Keyboard & Accessibility', () => {
   it('should have accessible trigger button', () => {
     render(<DateRangePickerExtended {...defaultProps} />)
 
-    const trigger = screen.getByRole('button')
+    const trigger = screen.getByRole('button', {
+      name: /Период дат — (?:Выберите период|выбран период:)/i,
+    })
     expect(trigger).toHaveAttribute('aria-haspopup')
   })
 
@@ -834,7 +944,9 @@ describe('DateRangePickerExtended - Keyboard & Accessibility', () => {
     const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime })
     render(<DateRangePickerExtended {...defaultProps} />)
 
-    const trigger = screen.getByRole('button')
+    const trigger = screen.getByRole('button', {
+      name: /Период дат — (?:Выберите период|выбран период:)/i,
+    })
     await user.click(trigger)
 
     await waitFor(() => {
@@ -853,7 +965,9 @@ describe('DateRangePickerExtended - Keyboard & Accessibility', () => {
     const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime })
     render(<DateRangePickerExtended {...defaultProps} />)
 
-    await user.click(screen.getByRole('button'))
+    await user.click(
+      screen.getByRole('button', { name: /Период дат — (?:Выберите период|выбран период:)/i })
+    )
 
     await waitFor(() => {
       expect(screen.getByText('30 дней')).toBeInTheDocument()
@@ -869,25 +983,49 @@ describe('DateRangePickerExtended - Keyboard & Accessibility', () => {
     const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime })
     render(<DateRangePickerExtended {...defaultProps} />)
 
-    await user.click(screen.getByRole('button'))
+    await user.click(
+      screen.getByRole('button', { name: /Период дат — (?:Выберите период|выбран период:)/i })
+    )
 
     await waitFor(() => {
-      expect(screen.getByRole('dialog')).toBeInTheDocument()
+      expect(screen.getByRole('dialog', { name: 'Выбор диапазона дат' })).toBeInTheDocument()
     })
+  })
+
+  it('has no automated accessibility violations with the named dialog open', async () => {
+    const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime })
+    const { container } = render(
+      <main>
+        <DateRangePickerExtended {...defaultProps} />
+      </main>
+    )
+
+    await user.click(
+      screen.getByRole('button', {
+        name: /Период дат — (?:Выберите период|выбран период:)/i,
+      })
+    )
+
+    expect(await screen.findByRole('dialog', { name: 'Выбор диапазона дат' })).toBeInTheDocument()
+    expect(await axe(container.ownerDocument.body)).toHaveNoViolations()
   })
 
   it('should announce selected range to screen readers', () => {
     render(<DateRangePickerExtended {...defaultProps} value={mockRange30Days} />)
 
-    const trigger = screen.getByRole('button')
-    expect(trigger).toHaveAttribute('aria-label')
+    expect(screen.getByText('Период дат')).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: /Период дат — выбран период:/i })).toHaveAttribute(
+      'aria-label'
+    )
   })
 
   it('should have visible focus indicator on interactive elements', async () => {
     const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime })
     render(<DateRangePickerExtended {...defaultProps} />)
 
-    await user.click(screen.getByRole('button'))
+    await user.click(
+      screen.getByRole('button', { name: /Период дат — (?:Выберите период|выбран период:)/i })
+    )
 
     await waitFor(() => {
       const grids = screen.getAllByRole('grid')
@@ -903,7 +1041,9 @@ describe('DateRangePickerExtended - Keyboard & Accessibility', () => {
     const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime })
     render(<DateRangePickerExtended {...defaultProps} />)
 
-    await user.click(screen.getByRole('button'))
+    await user.click(
+      screen.getByRole('button', { name: /Период дат — (?:Выберите период|выбран период:)/i })
+    )
 
     await waitFor(() => {
       const grids = screen.getAllByRole('grid')
@@ -918,7 +1058,9 @@ describe('DateRangePickerExtended - Keyboard & Accessibility', () => {
     const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime })
     render(<DateRangePickerExtended {...defaultProps} />)
 
-    const trigger = screen.getByRole('button')
+    const trigger = screen.getByRole('button', {
+      name: /Период дат — (?:Выберите период|выбран период:)/i,
+    })
     expect(trigger).toHaveAttribute('aria-expanded', 'false')
 
     await user.click(trigger)
@@ -931,7 +1073,9 @@ describe('DateRangePickerExtended - Keyboard & Accessibility', () => {
   it('should have aria-disabled on disabled trigger', () => {
     render(<DateRangePickerExtended {...defaultProps} disabled />)
 
-    const trigger = screen.getByRole('button')
+    const trigger = screen.getByRole('button', {
+      name: /Период дат — (?:Выберите период|выбран период:)/i,
+    })
     expect(trigger).toBeDisabled()
   })
 })

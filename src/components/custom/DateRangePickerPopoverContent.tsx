@@ -76,7 +76,7 @@ export function PopoverBody({
           onSelect={onCalendarSelect}
           numberOfMonths={2}
           locale={ru}
-          className="[--cell-size:2.5rem]"
+          className="[--cell-size:2rem] sm:[--cell-size:2.5rem]"
           disabled={{
             after: today,
             before: minDate,
@@ -115,11 +115,11 @@ export function PopoverBody({
       {/* Action buttons */}
       <div className="mt-4 flex justify-end gap-2">
         {value && (
-          <Button variant="outline" size="sm" onClick={onClear}>
+          <Button variant="outline" size="sm" onClick={onClear} className="min-h-11 min-w-11">
             Очистить
           </Button>
         )}
-        <Button size="sm" onClick={onClose}>
+        <Button size="sm" onClick={onClose} className="min-h-11 min-w-11">
           Применить
         </Button>
       </div>
