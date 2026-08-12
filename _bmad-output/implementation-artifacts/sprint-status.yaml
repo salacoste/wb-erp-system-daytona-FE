@@ -739,7 +739,7 @@ development_status:
   166-3-fe-deliver-pageheader-and-contextbar-compositions: review
   166-4-fe-standardize-metrics-financial-values-availability-and-status: review
   166-5-fe-standardize-filters-and-period-controls: review
-  166-6-fe-deliver-responsivetable-and-data-table-contracts: backlog
+  166-6-fe-deliver-responsivetable-and-data-table-contracts: review
   166-7-fe-deliver-chartframe-and-accessible-analytical-evidence: backlog
   166-8-fe-standardize-page-states-async-results-contextual-detail-and-global-not-found: backlog
   epic-166-fe-retrospective: optional
