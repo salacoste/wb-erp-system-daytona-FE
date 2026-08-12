@@ -49,6 +49,7 @@ npm run check:anti-pattern-8-normalizer  # AP#8 normalizer ratchet
 ## Documentation Sections
 
 - **[Architecture](architecture.md)** — Route groups, layout/provider hierarchy, client-side data fetching, auth proxy, configuration.
+- **[Design System](design-system.md)** — Tailwind v4 semantic token contract, hardened shadcn primitives, product compositions (`PageHeader`, `Breadcrumbs`, `ContextBar`), and the Epics 166–174 full UI migration program.
 - **[API Layer & Normalizers](api-and-normalizers.md)** — API client singleton, Boundary Normalizer Pattern, Anti-Pattern #8 null semantics, CSV export, communications write-back (async 202 job polling).
 - **[Domain Logic](domain-logic.md)** — Financial formulas (theoretical profit, margin, liquidity with trends, unit economics), account finances + document download (NEW-7), seller communications with gated write-back (NEW-2), historical SPP (Story 128.27), ISO week / Moscow timezone, profitability thresholds.
 - **[Conventions & Quality Gates](conventions-and-quality.md)** — File size limits, ESLint enforcement, Defensive Frontend Principle, ratchet scripts, toolchain pinning, two-pass review discipline.
@@ -65,6 +66,10 @@ npm run check:anti-pattern-8-normalizer  # AP#8 normalizer ratchet
 | Normalizer helpers | `src/lib/api/normalizer-helpers.ts` |
 | Route constants | `src/lib/routes.ts` |
 | Auth store | `src/stores/authStore.ts` |
+| Design system — semantic tokens | `src/styles/globals.css`, `src/styles/__tests__/globals-token-contract.test.ts`, `src/styles/__tests__/globals-compiled-contrast.test.ts` |
+| Design system — shadcn primitives | `src/components/ui/**`, `src/components/ui/__tests__/primitive-behavior-contracts.test.tsx`, `src/components/ui/__tests__/primitive-semantic-surfaces.test.tsx` |
+| Design system — product compositions | `src/components/product/PageHeader.tsx`, `src/components/product/ContextBar.tsx`, `src/components/product/index.ts` |
+| shadcn/UI migration program (Epics 166–174) | `.omx/plans/shadcn-full-ui-migration-master.md`, `_bmad-output/planning-artifacts/epics-166-174-fe-shadcn-migration.md`, `_bmad-output/planning-artifacts/shadcn-route-ledger.md` |
 | Communications (NEW-2) — read + write-back | `src/lib/api/communications.ts`, `src/lib/api/communications-writeback.ts`, `src/hooks/useCommunications.ts`, `src/hooks/useCommunicationsWriteback.ts`, `src/hooks/useWritebackJob.ts`, `src/lib/communications-writeback-utils.ts` |
 | Finances (NEW-7) — balance + documents | `src/lib/api/finances.ts`, `src/hooks/useFinances.ts`, `src/lib/finances/download-blob.ts`, `src/lib/finances/finances-formatters.ts` |
 | Liquidity trends (Story 165.4) | `src/lib/api/liquidity.ts` (`getLiquidityTrends`), `src/app/(dashboard)/analytics/liquidity/components/liquidity-trend-config.ts`, `src/types/liquidity/distribution.ts` |
@@ -83,8 +88,9 @@ npm run check:anti-pattern-8-normalizer  # AP#8 normalizer ratchet
 | Area | Source Anchor | Reason Deferred |
 |------|---------------|-----------------|
 | Analytics module deep-dives (30+ sub-routes) | `src/app/(dashboard)/analytics/*/` | Too many independent modules; each follows the same normalizer→hook→component pattern documented in [API Layer & Normalizers](api-and-normalizers.md) |
-| Component library inventory | `src/components/` | Large surface; shadcn/ui base + custom feature components; not architecturally load-bearing for wiki navigation |
+| Component library inventory | `src/components/` | Large surface; shadcn/ui base + custom feature components; the design-system foundation is documented in [Design System](design-system.md) |
 | docs/ directory structure | `docs/epics/`, `docs/stories/`, `docs/request-backend/` | 211 resolved backend requests; primarily project-management artifacts, not code documentation |
 | Backlog task tracking | `backlog/tasks/` | 55 tracked tasks via Backlog.md CLI; process artifacts, not source code |
 | Zustand store details | `src/stores/` | 5 stores; architecture covered in [Architecture](architecture.md); individual store APIs are self-documenting |
+| Route migrations (Epics 167–174) | `.omx/plans/shadcn-full-ui-migration-master.md`, `src/app/(dashboard)/**/page.tsx` | Foundation (Epic 166) merged; 76 route slices migrate one Story at a time under the master plan. See [Design System](design-system.md). |
 | OMX story-plan orchestration | `scripts/manage-omx-story-plans.mjs`, `.omx/plans/`, `docs/process/omx-story-worktree-orchestrator-prompt.md` | Process/planning tooling for epic 162–165 story plans; not runtime source |

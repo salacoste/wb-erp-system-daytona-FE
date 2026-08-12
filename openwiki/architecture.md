@@ -91,6 +91,17 @@ Separate from the JWT — a per-cabinet Wildberries API token configured during 
 
 Source: `src/stores/`
 
+## Design System
+
+The presentation layer is migrating to a layered, semantic design system built on Tailwind v4 and shadcn/ui (Radix). The layers are built in order and consumed strictly downward — later route migrations reuse these foundations rather than restyling:
+
+1. **Semantic tokens** — `src/styles/globals.css` defines the CSS-first Tailwind v4 `@theme` palette (background/foreground, card/popover, brand/primary, destructive, financial-positive/negative/neutral, status-success/warning/error/information/pending, availability, chart series, focus/ring, disabled) plus typography, spacing, radius, shadow, and animation scales for light and dark themes. The `ThemeProvider` (`next-themes`, class-based) toggles these.
+2. **Generic shadcn primitives** — `src/components/ui/**` are domain-agnostic wrappers around Radix. They consume semantic tokens only (no hardcoded or light-only palette values) and own accessibility contracts: focus return, `motion-reduce`, ≥44×44 localized close controls, semantic invalid states, and named table scroller regions.
+3. **Product compositions** — `src/components/product/` are presentational, route-supplied layouts that own no URL/search/state: `PageHeader` (single `h1` identity + breadcrumbs + actions + status), `Breadcrumbs`, and `ContextBar` (decision-scope metadata and semantic state text never conveyed by color alone).
+4. **Domain-shared / route-owned UI** — future Epics 167–173 migrate the 76 `page.tsx` routes onto these layers one BMAD Story at a time.
+
+See [Design System](design-system.md) for the token contract, primitive hardening, product-composition APIs, and the Epics 166–174 migration program.
+
 ## Configuration
 
 | File | Purpose |
@@ -98,5 +109,7 @@ Source: `src/stores/`
 | `next.config.ts` | Next.js config |
 | `tsconfig.json` | TypeScript strict mode, `@/` path alias |
 | `eslint.config.js` | Flat ESLint config with custom `no-restricted-syntax` for AP#8 |
-| `tailwind.config.ts` | Tailwind theme (red primary `#E53935`, Russian locale) |
+| `src/styles/globals.css` | Tailwind v4 CSS-first theme — semantic token palette (background, card, brand/primary, financial, status, availability, chart roles), typography/spacing/radius/shadow scales, light + dark themes. The JavaScript `tailwind.config.ts` was removed; see [Design System](design-system.md). |
+| `postcss.config.js` | `@tailwindcss/postcss` + autoprefixer (Tailwind v4 compiler contract) |
+| `components.json` | shadcn/ui CLI metadata aligned to Tailwind v4 (`config: ""`, CSS variables, new-york style) |
 | `.env.example` | Environment variable names (see [Testing & Operations](testing-and-ops.md)) |

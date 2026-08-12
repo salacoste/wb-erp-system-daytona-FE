@@ -30,6 +30,9 @@ Setup files run in explicit list order (`sequence.setupFiles: 'list'`) defined b
 Tests are co-located with source in `__tests__/` directories:
 - `src/hooks/__tests__/` — ~140+ files (custom hooks, data fetching, mutations, polling)
 - `src/lib/__tests__/` — ~100+ files (utilities, formatters, calculators, API client)
+- `src/styles/__tests__/` — Tailwind v4 semantic token contract and PostCSS-compiled WCAG contrast regression (see [Design System](design-system.md#token-regression-tests))
+- `src/components/ui/__tests__/` — shadcn primitive behavior, semantic-surface, palette, portal, focus, reduced-motion, and compatibility contracts (see [Design System](design-system.md#primitive-regression-tests))
+- `src/components/product/__tests__/` — `PageHeader`/`Breadcrumbs`/`ContextBar` composition rendering and source contracts (see [Design System](design-system.md#product-composition-regression-tests))
 - `src/stores/__tests__/` — 7 files (Zustand stores)
 - `src/types/__tests__/` — 13 files (type guards, runtime validators)
 
