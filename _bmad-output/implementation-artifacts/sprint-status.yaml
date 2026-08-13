@@ -37,7 +37,7 @@
 #   they are excluded from story and retrospective counts and must be documented with a no-story-ID note.
 
 generated: 2026-08-03 # refreshed after Epic 127 truth reconciliation and Epics 162-165 registration
-last_updated: 2026-08-13 # Story 167.1 implementation, browser matrix, universal validation, exact-scope audit, and independent convergence review completed; ready for Git integration and cleanup.
+last_updated: 2026-08-13 # Story 167.2 completed two fresh final reviews with PASS/CLEAR and is ready for exact five-file Git integration; commit, PR, merge, and mandatory lane cleanup remain pending.
 project: frontend
 project_key: NOKEY
 tracking_system: file-system
@@ -747,7 +747,7 @@ development_status:
   # Epic 167-FE: Consistent AppShell, Authentication, and First-Time Value
   epic-167-fe: in-progress
   167-1-fe-unify-protected-appshell-and-desktop-mobile-navigation: review
-  167-2-fe-migrate-root-entry: backlog
+  167-2-fe-migrate-root-entry: review
   167-3-fe-migrate-login-login: backlog
   167-4-fe-migrate-registration-register: backlog
   167-5-fe-migrate-cabinet-onboarding-cabinet: backlog
