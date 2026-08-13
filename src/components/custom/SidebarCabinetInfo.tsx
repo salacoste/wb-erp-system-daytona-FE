@@ -23,7 +23,11 @@ const JAM_TIER_COLORS: Record<JamTier, string> = {
  * Shows seller trademark + Jam subscription badge.
  * Story 84.1: handles `available` field from backend graceful responses.
  */
-export function SidebarCabinetInfo() {
+interface SidebarCabinetInfoProps {
+  onNavigate?: () => void
+}
+
+export function SidebarCabinetInfo({ onNavigate }: SidebarCabinetInfoProps = {}) {
   const cabinetId = useAuthStore(state => state.cabinetId)
   const { data: seller } = useSellerInfo(cabinetId ?? '')
   const { data: jam } = useJamStatus(cabinetId ?? '')
@@ -41,10 +45,11 @@ export function SidebarCabinetInfo() {
   return (
     <Link
       href={ROUTES.SETTINGS.CABINET}
+      onClick={onNavigate}
       aria-label={
         displayName ? `Открыть настройки кабинета ${displayName}` : 'Открыть настройки кабинета'
       }
-      className="block border-b px-4 py-3 transition-colors hover:bg-accent/30"
+      className="block min-h-11 border-b px-4 py-3 transition-colors hover:bg-accent/30"
     >
       {displayName ? (
         <div className="flex items-center gap-2 text-sm font-medium text-foreground">

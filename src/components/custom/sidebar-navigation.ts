@@ -58,6 +58,11 @@ export interface NavigationItem {
   adminOnly?: boolean
 }
 
+interface ResolveNavigationItemsOptions {
+  role: string | null | undefined
+  urgentCount: number
+}
+
 /**
  * Static navigation items (no runtime dependencies).
  * Items with `adminOnly: true` are filtered at render time.
@@ -178,3 +183,46 @@ export const NAVIGATION_ITEMS: NavigationItem[] = [
   { label: 'Расходы', href: ROUTES.SETTINGS.EXPENSES, icon: DollarSign },
   { label: 'Настройки', href: ROUTES.SETTINGS.ROOT, icon: Settings },
 ]
+
+export function resolveNavigationItems({
+  role,
+  urgentCount,
+}: ResolveNavigationItemsOptions): NavigationItem[] {
+  const isOwner = role === 'Owner'
+
+  return NAVIGATION_ITEMS.filter(item => !item.adminOnly || isOwner).map(item => {
+    if (item.href === ROUTES.ANALYTICS.SUPPLY_PLANNING) {
+      if (urgentCount > 0) return { ...item, badge: urgentCount }
+
+      return {
+        label: item.label,
+        href: item.href,
+        icon: item.icon,
+        adminOnly: item.adminOnly,
+      }
+    }
+
+    return { ...item }
+  })
+}
+
+function isRouteSegmentMatch(pathname: string, href: string): boolean {
+  return pathname === href || pathname.startsWith(`${href}/`)
+}
+
+export function isNavigationItemActive(
+  pathname: string,
+  href: string,
+  items: readonly NavigationItem[]
+): boolean {
+  if (!isRouteSegmentMatch(pathname, href)) return false
+
+  const deepestMatch = items
+    .filter(item => isRouteSegmentMatch(pathname, item.href))
+    .reduce<NavigationItem | undefined>((deepest, item) => {
+      if (!deepest || item.href.length > deepest.href.length) return item
+      return deepest
+    }, undefined)
+
+  return deepestMatch?.href === href
+}
