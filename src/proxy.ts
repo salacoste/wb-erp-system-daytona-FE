@@ -44,7 +44,9 @@ export async function proxy(request: NextRequest) {
     // Check if there's a redirect parameter in the URL
     const redirectParam = request.nextUrl.searchParams.get('redirect')
     const redirectTo =
-      redirectParam && redirectParam.startsWith('/') ? redirectParam : ROUTES.DASHBOARD
+      redirectParam?.startsWith('/') && !redirectParam.startsWith('//')
+        ? redirectParam
+        : ROUTES.DASHBOARD
 
     // Only redirect if not already on the target page
     if (pathname !== redirectTo) {
