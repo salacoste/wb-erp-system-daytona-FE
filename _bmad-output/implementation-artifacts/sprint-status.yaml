@@ -37,7 +37,7 @@
 #   they are excluded from story and retrospective counts and must be documented with a no-story-ID note.
 
 generated: 2026-08-03 # refreshed after Epic 127 truth reconciliation and Epics 162-165 registration
-last_updated: 2026-08-13 # Story 166.7 passed two adversarial review passes, final full validation, and exact-scope audit; lifecycle moved to review pending Git integration and cleanup.
+last_updated: 2026-08-13 # Story 166.8 implementation, browser matrix, universal validation, exact-scope audit, and independent convergence review completed; ready for Git integration and cleanup.
 project: frontend
 project_key: NOKEY
 tracking_system: file-system
@@ -741,7 +741,7 @@ development_status:
   166-5-fe-standardize-filters-and-period-controls: review
   166-6-fe-deliver-responsivetable-and-data-table-contracts: review
   166-7-fe-deliver-chartframe-and-accessible-analytical-evidence: review
-  166-8-fe-standardize-page-states-async-results-contextual-detail-and-global-not-found: backlog
+  166-8-fe-standardize-page-states-async-results-contextual-detail-and-global-not-found: review
   epic-166-fe-retrospective: optional
 
   # Epic 167-FE: Consistent AppShell, Authentication, and First-Time Value
