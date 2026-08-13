@@ -73,6 +73,39 @@ describe('Navbar', () => {
 
     render(<Navbar />)
 
-    expect(screen.getByText('Logout')).toBeInTheDocument()
+    const logout = screen.getByRole('button', { name: 'Logout' })
+
+    expect(logout).toBeInTheDocument()
+    expect(logout.parentElement).toHaveClass('[&_button]:min-h-11', '[&_button]:min-w-11')
+  })
+
+  it('uses semantic theme colors for the shell title and user identity', () => {
+    mockAuthStore({ user: { email: 'user@example.com', role: 'Owner' } })
+
+    render(<Navbar />)
+
+    expect(screen.getByText('Dashboard')).toHaveClass('text-foreground')
+    expect(screen.getByText('user@example.com')).toHaveClass('text-muted-foreground')
+  })
+
+  it('protects the narrow mobile header from a long user identity', () => {
+    mockAuthStore({
+      user: {
+        name: 'Очень длинное имя пользователя для узкого мобильного заголовка',
+        email: 'long@example.com',
+        role: 'Owner',
+      },
+    })
+
+    render(<Navbar />)
+
+    expect(screen.getByText('Dashboard')).toHaveClass('hidden', 'min-[20rem]:block')
+    expect(screen.getByText(/Очень длинное имя/)).toHaveClass(
+      'hidden',
+      'max-w-full',
+      'truncate',
+      'sm:block'
+    )
+    expect(screen.getByText('Logout')).toBeVisible()
   })
 })

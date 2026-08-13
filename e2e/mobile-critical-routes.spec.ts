@@ -1,3 +1,4 @@
+import AxeBuilder from '@axe-core/playwright'
 import { expect, test } from './fixtures/network-test'
 import { ROUTES, TIMEOUTS } from './fixtures/test-data'
 
@@ -35,22 +36,24 @@ const IPHONE_14_USER_AGENT =
 
 // WCAG 2.1 AA / 2.5.5 target-size effective minimum (the AC's 44×44 floor).
 const MIN_TOUCH_TARGET_PX = 44
+const REQUIRED_MOBILE_WIDTHS = [195, 320, 390, 768] as const
+const REFLOW_200_PERCENT_WIDTHS = [512, 640, 720, 800] as const
 
 // MobileSidebarSheet trigger (lg:hidden). Desktop sidebar is hidden below `lg`.
 const MOBILE_MENU_TRIGGER = 'button[aria-label="Open menu"]'
 // Radix Sheet content (dialog). The mobile nav renders inside this portal.
 const MOBILE_SHEET_DIALOG = '[role="dialog"][data-state="open"]'
 const MOBILE_SHEET_TITLE = 'Navigation Menu'
-// Sheet close affordance name. NB: components/ui/sheet.tsx renders the close X
-// as a `<span aria-label="Close" role="button">` (NOT a <button>), so a CSS
+// Sheet close affordance name. NB: components/ui/sheet.tsx renders the localized close X
+// as a `<span aria-label="Закрыть" role="button">` (NOT a <button>), so a CSS
 // `button[aria-label="Close"]` selector misses it. Tests use getByRole('button',
 // { name: SHEET_CLOSE_NAME }) — the role engine matches [role="button"].
-const SHEET_CLOSE_NAME = 'Close'
+const SHEET_CLOSE_NAME = 'Закрыть'
 
 // A safe mobile-nav destination that is reachable from the MobileSidebarSheet
 // links and renders independently of optional backend series. Cabinet Summary
-// (`/analytics/dashboard`) is a documented mobile-sheet nav entry.
-const MOBILE_NAV_DESTINATION_LABEL = 'Cabinet Summary'
+// (`/analytics/dashboard`) is a documented canonical mobile-sheet nav entry.
+const MOBILE_NAV_DESTINATION_LABEL = 'Сводка по кабинету'
 const MOBILE_NAV_DESTINATION_URL = /\/analytics\/dashboard/
 
 // Unit-economics table — `aria-label` is set in UnitEconomicsTable.tsx and the
@@ -142,6 +145,16 @@ test.describe('Mobile critical routes (iPhone 14) — Story 162.10', () => {
     await expect(sheet).toBeVisible({ timeout: TIMEOUTS.navigation })
     await expect(page.getByRole('heading', { name: MOBILE_SHEET_TITLE, exact: true })).toBeVisible()
 
+    // Story 167.1: one canonical model and one deepest current route.
+    const currentLinks = sheet.locator('[aria-current="page"]')
+    await expect(currentLinks).toHaveCount(1)
+    await expect(currentLinks).toHaveAttribute('href', ROUTES.dashboard)
+
+    // Cabinet, theme, and logout continuity remain present inside the mobile shell.
+    await expect(sheet.getByLabel(/Открыть настройки кабинета/)).toBeVisible()
+    await expect(sheet.getByRole('button', { name: 'Переключить тему' })).toBeVisible()
+    await expect(sheet.getByRole('button', { name: 'Выйти из аккаунта' })).toBeVisible()
+
     // USE: a nav link inside the sheet navigates to a critical page. The link
     // click also dismisses the sheet (MobileSidebarSheet onOpenChange(false)).
     const navLink = sheet.getByRole('link', { name: MOBILE_NAV_DESTINATION_LABEL })
@@ -154,6 +167,65 @@ test.describe('Mobile critical routes (iPhone 14) — Story 162.10', () => {
 
     // DISMISSED: the sheet closed after the link navigation.
     await expect(page.locator(MOBILE_SHEET_DIALOG)).toHaveCount(0)
+  })
+
+  test('cabinet navigation dismisses the mobile sheet', async ({ page }) => {
+    await page.goto(ROUTES.dashboard, { waitUntil: 'domcontentloaded' })
+    await page.locator(MOBILE_MENU_TRIGGER).click()
+    const sheet = page.locator(MOBILE_SHEET_DIALOG)
+    await expect(sheet).toBeVisible({ timeout: TIMEOUTS.navigation })
+
+    await sheet.getByLabel(/Открыть настройки кабинета/).click()
+
+    await expect(page).toHaveURL(/\/settings\/cabinet/, { timeout: TIMEOUTS.api })
+    await expect(sheet).toHaveCount(0)
+  })
+
+  test('crossing into the desktop breakpoint closes the mobile sheet', async ({ page }) => {
+    await page.setViewportSize({ width: 768, height: 900 })
+    await page.goto(ROUTES.dashboard, { waitUntil: 'domcontentloaded' })
+    await page.locator(MOBILE_MENU_TRIGGER).click()
+    const sheet = page.locator(MOBILE_SHEET_DIALOG)
+    await expect(sheet).toBeVisible({ timeout: TIMEOUTS.navigation })
+
+    await page.setViewportSize({ width: 1024, height: 900 })
+
+    await expect(sheet).toHaveCount(0)
+    await expect(page.getByRole('complementary', { name: 'Основная навигация' })).toBeVisible()
+  })
+
+  test('200% desktop-equivalent reflow keeps the mobile shell bounded', async ({ page }) => {
+    await page.goto(ROUTES.dashboard, { waitUntil: 'domcontentloaded' })
+
+    for (const width of REFLOW_200_PERCENT_WIDTHS) {
+      await page.setViewportSize({ width, height: 900 })
+      const trigger = page.locator(MOBILE_MENU_TRIGGER)
+      await expect(trigger, `mobile trigger at ${width}px reflow width`).toBeVisible()
+      await expect(page.getByRole('complementary', { name: 'Основная навигация' })).toBeHidden()
+
+      const documentGeometry = await page.evaluate(() => ({
+        scrollWidth: document.documentElement.scrollWidth,
+        clientWidth: document.documentElement.clientWidth,
+      }))
+      expect(
+        documentGeometry.scrollWidth,
+        `no document overflow at ${width}px 200% reflow equivalent`
+      ).toBeLessThanOrEqual(documentGeometry.clientWidth)
+
+      await trigger.click()
+      const sheet = page.locator(MOBILE_SHEET_DIALOG)
+      await expect(sheet).toBeVisible({ timeout: TIMEOUTS.navigation })
+      await expect
+        .poll(async () => (await sheet.boundingBox())?.x ?? Number.NEGATIVE_INFINITY, {
+          message: `sheet settles inside ${width}px reflow width`,
+        })
+        .toBeGreaterThanOrEqual(0)
+      const sheetBox = await sheet.boundingBox()
+      expect(sheetBox, `sheet geometry at ${width}px reflow width`).not.toBeNull()
+      expect((sheetBox?.x ?? 0) + (sheetBox?.width ?? 0)).toBeLessThanOrEqual(width)
+      await page.keyboard.press('Escape')
+      await expect(sheet).toHaveCount(0)
+    }
   })
 
   test('mobile sidebar can be dismissed without navigating', async ({ page }) => {
@@ -172,6 +244,20 @@ test.describe('Mobile critical routes (iPhone 14) — Story 162.10', () => {
     await closeButton.click()
 
     await expect(page.locator(MOBILE_SHEET_DIALOG)).toHaveCount(0)
+  })
+
+  test('mobile sidebar closes on Escape and restores focus to the trigger', async ({ page }) => {
+    await page.goto(ROUTES.dashboard, { waitUntil: 'domcontentloaded' })
+    await expect(page.locator('main')).toBeVisible({ timeout: TIMEOUTS.navigation })
+
+    const trigger = page.locator(MOBILE_MENU_TRIGGER)
+    await trigger.click()
+    await expect(page.locator(MOBILE_SHEET_DIALOG)).toBeVisible({ timeout: TIMEOUTS.navigation })
+
+    await page.keyboard.press('Escape')
+
+    await expect(page.locator(MOBILE_SHEET_DIALOG)).toHaveCount(0)
+    await expect(trigger).toBeFocused()
   })
 
   test('analytics table scrolls horizontally without trapped overflow', async ({ page }) => {
@@ -314,5 +400,168 @@ test.describe('Mobile critical routes (iPhone 14) — Story 162.10', () => {
         `mobile nav link ${index} meets 44px min width (got ${box!.width})`
       ).toBeGreaterThanOrEqual(MIN_TOUCH_TARGET_PX)
     }
+  })
+
+  test('mobile shell remains bounded across required widths, themes, and reduced motion', async ({
+    page,
+  }) => {
+    const consoleErrors: string[] = []
+    const pageErrors: string[] = []
+    page.on('console', message => {
+      if (message.type() === 'error') consoleErrors.push(message.text())
+    })
+    page.on('pageerror', error => pageErrors.push(error.message))
+    await page.emulateMedia({ reducedMotion: 'reduce' })
+    await page.goto(ROUTES.dashboard, { waitUntil: 'domcontentloaded' })
+    await expect(page.locator('main#main-content')).toBeVisible({ timeout: TIMEOUTS.navigation })
+
+    for (const width of REQUIRED_MOBILE_WIDTHS) {
+      await page.setViewportSize({ width, height: 844 })
+
+      const trigger = page.locator(MOBILE_MENU_TRIGGER)
+      await expect(trigger).toBeVisible()
+      const headerLogout = page
+        .getByRole('banner')
+        .getByRole('button', { name: 'Выйти из аккаунта' })
+      await expect(headerLogout).toBeVisible()
+      const headerLogoutBox = await headerLogout.boundingBox()
+      expect(headerLogoutBox, `header logout has geometry at ${width}px`).not.toBeNull()
+      expect(
+        (headerLogoutBox?.x ?? 0) + (headerLogoutBox?.width ?? 0),
+        `header logout remains inside ${width}px viewport`
+      ).toBeLessThanOrEqual(width)
+      expect(headerLogoutBox?.width, `header logout width at ${width}px`).toBeGreaterThanOrEqual(
+        MIN_TOUCH_TARGET_PX
+      )
+      expect(headerLogoutBox?.height, `header logout height at ${width}px`).toBeGreaterThanOrEqual(
+        MIN_TOUCH_TARGET_PX
+      )
+      await trigger.click()
+
+      const sheet = page.locator(MOBILE_SHEET_DIALOG)
+      await expect(sheet).toBeVisible({ timeout: TIMEOUTS.navigation })
+      await expect(sheet.getByText('Расширенная аналитика FBS', { exact: true })).toBeVisible()
+      await expect(sheet.locator('[aria-current="page"]')).toHaveCount(1)
+      await expect(sheet.locator('nav[aria-label="Main navigation"]')).toHaveCSS(
+        'overflow-y',
+        'auto'
+      )
+
+      const geometry = await page.evaluate(() => {
+        const dialog = document.querySelector<HTMLElement>('[role="dialog"][data-state="open"]')
+        const rect = dialog?.getBoundingClientRect()
+        return {
+          dialogLeft: rect?.left ?? -1,
+          dialogRight: rect?.right ?? Number.POSITIVE_INFINITY,
+          documentWidth: document.documentElement.scrollWidth,
+          viewportWidth: document.documentElement.clientWidth,
+        }
+      })
+      expect(geometry.dialogLeft, `sheet starts inside ${width}px viewport`).toBeGreaterThanOrEqual(
+        0
+      )
+      expect(geometry.dialogRight, `sheet ends inside ${width}px viewport`).toBeLessThanOrEqual(
+        width
+      )
+      expect(geometry.documentWidth, `no page overflow at ${width}px`).toBeLessThanOrEqual(
+        geometry.viewportWidth
+      )
+
+      const results = await new AxeBuilder({ page })
+        .include(MOBILE_SHEET_DIALOG)
+        .withTags(['wcag2a', 'wcag2aa'])
+        .analyze()
+      expect(results.violations).toEqual([])
+
+      const animationName = await sheet.evaluate(node => getComputedStyle(node).animationName)
+      expect(animationName).toBe('none')
+
+      const themeButton = sheet.getByRole('button', { name: 'Переключить тему' })
+      const logoutButton = sheet.getByRole('button', { name: 'Выйти из аккаунта' })
+      const cabinetLink = sheet.getByRole('link', { name: /Открыть настройки кабинета/ })
+      for (const [name, button] of [
+        ['cabinet link', cabinetLink],
+        ['theme toggle', themeButton],
+        ['logout', logoutButton],
+      ] as const) {
+        const box = await button.boundingBox()
+        expect(box, `${name} has geometry at ${width}px`).not.toBeNull()
+        expect(box?.width, `${name} width at ${width}px`).toBeGreaterThanOrEqual(44)
+        expect(box?.height, `${name} height at ${width}px`).toBeGreaterThanOrEqual(44)
+      }
+      const root = page.locator('html')
+      const initialDarkTheme = await root.evaluate(node => node.classList.contains('dark'))
+      expect(consoleErrors, `console remains clean before theme toggle at ${width}px`).toEqual([])
+      expect(pageErrors, `page remains clean before theme toggle at ${width}px`).toEqual([])
+      const clickGeometry = await page.evaluate(() => {
+        const button = document.querySelector<HTMLElement>(
+          '[role="dialog"][data-state="open"] button[aria-label="Переключить тему"]'
+        )
+        const portal = document.querySelector<HTMLElement>('nextjs-portal')
+        const buttonRect = button?.getBoundingClientRect()
+        const portalRect = portal?.getBoundingClientRect()
+        const centerX = buttonRect ? buttonRect.left + buttonRect.width / 2 : -1
+        const centerY = buttonRect ? buttonRect.top + buttonRect.height / 2 : -1
+        return {
+          button: buttonRect
+            ? {
+                left: buttonRect.left,
+                top: buttonRect.top,
+                right: buttonRect.right,
+                bottom: buttonRect.bottom,
+              }
+            : null,
+          portal: portalRect
+            ? {
+                left: portalRect.left,
+                top: portalRect.top,
+                right: portalRect.right,
+                bottom: portalRect.bottom,
+              }
+            : null,
+          hitTag: document.elementFromPoint(centerX, centerY)?.tagName ?? null,
+        }
+      })
+      expect(clickGeometry.hitTag, JSON.stringify(clickGeometry)).not.toBe('NEXTJS-PORTAL')
+      await themeButton.click()
+      await expect
+        .poll(() => root.evaluate(node => node.classList.contains('dark')), {
+          message: `dark theme token changes at ${width}px`,
+        })
+        .toBe(!initialDarkTheme)
+
+      await page.keyboard.press('Escape')
+      await expect(sheet).toHaveCount(0)
+      await expect(trigger).toBeFocused()
+    }
+
+    expect(consoleErrors).toEqual([])
+    expect(pageErrors).toEqual([])
+  })
+
+  test('mobile sheet traps keyboard focus while open', async ({ page }) => {
+    await page.goto(ROUTES.dashboard, { waitUntil: 'domcontentloaded' })
+    await page.locator(MOBILE_MENU_TRIGGER).click()
+    const sheet = page.locator(MOBILE_SHEET_DIALOG)
+    await expect(sheet).toBeVisible({ timeout: TIMEOUTS.navigation })
+
+    const focusable = sheet.locator('a[href], button:not([disabled]), [tabindex="0"]')
+    const focusableCount = await focusable.count()
+    expect(focusableCount).toBeGreaterThan(1)
+
+    for (let index = 0; index <= focusableCount; index += 1) {
+      await page.keyboard.press('Tab')
+      await expect
+        .poll(() => sheet.evaluate(node => node.contains(document.activeElement)))
+        .toBe(true)
+    }
+
+    const firstFocusable = focusable.first()
+    const lastFocusable = focusable.last()
+    await firstFocusable.focus()
+    await page.keyboard.press('Shift+Tab')
+    await expect(lastFocusable).toBeFocused()
+    await page.keyboard.press('Tab')
+    await expect(firstFocusable).toBeFocused()
   })
 })

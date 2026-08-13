@@ -6,10 +6,7 @@ import { cn } from '@/lib/utils'
 import { LogoutButton } from './LogoutButton'
 import { SidebarCabinetInfo } from './SidebarCabinetInfo'
 import { ThemeToggle } from './theme-toggle'
-import { useSupplyPlanning } from '@/hooks/useSupplyPlanning'
-import { getUrgentSkuCount } from '@/lib/supply-planning-utils'
-import { useAuth } from '@/hooks/useAuth'
-import { NAVIGATION_ITEMS } from './sidebar-navigation'
+import { isNavigationItemActive } from './sidebar-navigation'
 import type { NavigationItem } from './sidebar-navigation'
 
 /**
@@ -18,29 +15,18 @@ import type { NavigationItem } from './sidebar-navigation'
  * Story 6.2: Supply Planning navigation with badge (Epic 6)
  * Story 44.4: Price Calculator navigation (Epic 44)
  */
-export function Sidebar() {
+interface SidebarProps {
+  items: NavigationItem[]
+}
+
+export function Sidebar({ items }: SidebarProps) {
   const pathname = usePathname()
-  const { user } = useAuth()
-
-  // Fetch supply planning summary for urgent badge count (Story 6.2)
-  const { data: supplyData } = useSupplyPlanning({})
-  const urgentCount = supplyData?.summary ? getUrgentSkuCount(supplyData.summary) : 0
-
-  // Check if user is admin (Owner role) for admin-only menu items (Epic 52-FE)
-  const isAdmin = user?.role === 'Owner'
-
-  // Build runtime navigation: filter admin items, patch dynamic badges
-  const items: NavigationItem[] = NAVIGATION_ITEMS.filter(item => !item.adminOnly || isAdmin).map(
-    item => {
-      if (item.href === '/analytics/supply-planning' && urgentCount > 0) {
-        return { ...item, badge: urgentCount }
-      }
-      return item
-    }
-  )
 
   return (
-    <aside className="flex h-screen w-64 flex-shrink-0 flex-col border-r bg-card">
+    <aside
+      className="flex h-screen w-64 flex-shrink-0 flex-col border-r bg-card"
+      aria-label="Основная навигация"
+    >
       <div className="flex h-full min-h-0 flex-col">
         {/* Logo/Title */}
         <div className="flex h-16 items-center justify-between border-b px-6">
@@ -49,25 +35,29 @@ export function Sidebar() {
         </div>
 
         {/* Cabinet Info: seller name + Jam badge */}
-        <SidebarCabinetInfo />
+        <aside aria-label="Контекст кабинета">
+          <SidebarCabinetInfo />
+        </aside>
 
         {/* Navigation Items */}
         <nav className="flex-1 overflow-y-auto space-y-1 px-3 py-4" aria-label="Main navigation">
           {items.map(item => {
             const Icon = item.icon
+            const active = isNavigationItemActive(pathname, item.href, items)
             return (
               <Link
                 key={item.href}
                 href={item.href}
                 className={cn(
                   'flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium transition-colors hover:bg-accent/50',
-                  pathname === item.href ? 'bg-accent' : 'transparent',
-                  pathname === item.href ? 'text-accent-foreground' : 'text-muted-foreground'
+                  active ? 'bg-accent' : 'transparent',
+                  active ? 'text-accent-foreground' : 'text-muted-foreground'
                 )}
+                aria-current={active ? 'page' : undefined}
               >
                 <Icon className="h-4 w-4" />
                 <span>{item.label}</span>
-                {item.badge && (
+                {item.badge !== undefined && (
                   <span className="ml-auto">
                     <span className="bg-destructive text-white text-xs font-bold px-2 py-0.5 rounded-full">
                       {item.badge}
