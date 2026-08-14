@@ -37,7 +37,7 @@
 #   they are excluded from story and retrospective counts and must be documented with a no-story-ID note.
 
 generated: 2026-08-03 # refreshed after Epic 127 truth reconciliation and Epics 162-165 registration
-last_updated: 2026-08-13 # Story 167.2 completed two fresh final reviews with PASS/CLEAR and is ready for exact five-file Git integration; commit, PR, merge, and mandatory lane cleanup remain pending.
+last_updated: 2026-08-14 # Story 167.3 final frozen snapshot 7b50199d received fresh sequential APPROVE then CLEAR with no unresolved accepted findings; Task 7 complete and Story moved to review; Task 8 Git integration/PR/merge/cleanup remains pending.
 project: frontend
 project_key: NOKEY
 tracking_system: file-system
@@ -748,7 +748,7 @@ development_status:
   epic-167-fe: in-progress
   167-1-fe-unify-protected-appshell-and-desktop-mobile-navigation: review
   167-2-fe-migrate-root-entry: review
-  167-3-fe-migrate-login-login: backlog
+  167-3-fe-migrate-login-login: review
   167-4-fe-migrate-registration-register: backlog
   167-5-fe-migrate-cabinet-onboarding-cabinet: backlog
   167-6-fe-migrate-processing-processing: backlog
