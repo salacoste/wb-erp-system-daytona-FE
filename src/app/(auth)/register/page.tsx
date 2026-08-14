@@ -7,8 +7,8 @@ import Link from 'next/link'
  */
 export default function RegisterPage() {
   return (
-    <div className="flex min-h-screen items-center justify-center bg-muted/50 px-4">
-      <div className="w-full max-w-md space-y-8 rounded-lg bg-card p-8 shadow-card">
+    <main className="flex min-h-screen items-center justify-center bg-muted/50 px-4 py-8 sm:px-6">
+      <div className="w-full max-w-md space-y-8 rounded-lg bg-card p-6 shadow-card sm:p-8">
         <div className="text-center">
           <h1 className="text-h1 text-foreground">Регистрация</h1>
           <p className="mt-2 text-body text-muted-foreground">
@@ -25,6 +25,6 @@ export default function RegisterPage() {
           </Link>
         </div>
       </div>
-    </div>
+    </main>
   )
 }
