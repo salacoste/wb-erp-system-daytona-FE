@@ -1,55 +1,43 @@
 /**
- * Register Page Tests
- * Tests for src/app/(auth)/register/page.tsx
+ * Story 167.4 direct route tests for src/app/(auth)/register/page.tsx.
  */
 
-import { describe, it, expect, vi } from 'vitest'
-import { render, screen } from '@/test/utils/test-utils'
+import { describe, expect, it, vi } from 'vitest'
+import { render, screen, within } from '@/test/utils/test-utils'
 
-// Mock RegistrationForm component
 vi.mock('@/components/custom/RegistrationForm', () => ({
-  RegistrationForm: () => <div data-testid="registration-form">RegistrationForm</div>,
+  RegistrationForm: () => <form aria-label="Форма регистрации" data-testid="registration-form" />,
 }))
 
-// Import after mocks
 import RegisterPage from '../page'
 
 describe('RegisterPage', () => {
-  it('should render without crash', () => {
+  it('[REG-ROUTE-01] preserves one registration heading and one semantic login link', () => {
     render(<RegisterPage />)
 
-    expect(screen.getByTestId('registration-form')).toBeInTheDocument()
+    expect(screen.getAllByRole('heading', { level: 1 })).toHaveLength(1)
+    expect(screen.getByRole('heading', { name: 'Регистрация', level: 1 })).toBeInTheDocument()
+
+    const loginLinks = screen.getAllByRole('link', { name: 'Войти' })
+    expect(loginLinks).toHaveLength(1)
+    expect(loginLinks[0]).toHaveAttribute('href', '/login')
   })
 
-  it('should render heading "Регистрация"', () => {
+  it('[REG-ROUTE-01] preserves the registration purpose and form composition', () => {
     render(<RegisterPage />)
 
-    expect(screen.getByRole('heading', { name: /регистрация/i, level: 1 })).toBeInTheDocument()
-  })
-
-  it('should render registration subtitle', () => {
-    render(<RegisterPage />)
-
-    expect(screen.getByText(/создайте аккаунт для доступа к системе/i)).toBeInTheDocument()
-  })
-
-  it('should render link to login page', () => {
-    render(<RegisterPage />)
-
-    const loginLink = screen.getByRole('link', { name: /войти/i })
-    expect(loginLink).toBeInTheDocument()
-    expect(loginLink).toHaveAttribute('href', '/login')
-  })
-
-  it('should render "Уже есть аккаунт?" text', () => {
-    render(<RegisterPage />)
-
+    expect(screen.getByText('Создайте аккаунт для доступа к системе')).toBeInTheDocument()
     expect(screen.getByText(/уже есть аккаунт/i)).toBeInTheDocument()
+    expect(screen.getByRole('form', { name: 'Форма регистрации' })).toBeInTheDocument()
   })
 
-  it('should render RegistrationForm component', () => {
+  it('[REG-ROUTE-02] contains the complete route content in exactly one semantic main', () => {
     render(<RegisterPage />)
 
-    expect(screen.getByTestId('registration-form')).toBeInTheDocument()
+    const main = screen.getByRole('main')
+    expect(screen.getAllByRole('main')).toHaveLength(1)
+    expect(within(main).getByRole('heading', { name: 'Регистрация', level: 1 })).toBeInTheDocument()
+    expect(within(main).getByRole('form', { name: 'Форма регистрации' })).toBeInTheDocument()
+    expect(within(main).getByRole('link', { name: 'Войти' })).toHaveAttribute('href', '/login')
   })
 })

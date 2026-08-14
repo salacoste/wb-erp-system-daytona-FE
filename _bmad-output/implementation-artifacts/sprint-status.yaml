@@ -749,7 +749,7 @@ development_status:
   167-1-fe-unify-protected-appshell-and-desktop-mobile-navigation: review
   167-2-fe-migrate-root-entry: review
   167-3-fe-migrate-login-login: review
-  167-4-fe-migrate-registration-register: backlog
+  167-4-fe-migrate-registration-register: review
   167-5-fe-migrate-cabinet-onboarding-cabinet: backlog
   167-6-fe-migrate-processing-processing: backlog
   167-7-fe-migrate-wb-token-wb-token: backlog
