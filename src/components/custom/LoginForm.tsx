@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { useMutation } from '@tanstack/react-query'
 import { useSearchParams } from 'next/navigation'
@@ -15,9 +15,34 @@ import {
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
+import { Alert, AlertDescription } from '@/components/ui/alert'
 import { loginUser } from '@/lib/api'
 import { useAuthStore } from '@/stores/authStore'
 import type { LoginRequest } from '@/types/auth'
+import { ApiError } from '@/types/api'
+
+const DEFAULT_DESTINATION = '/dashboard'
+const REQUEST_FEEDBACK_ID = 'login-request-feedback'
+
+function isSafeRedirect(redirect: string | null): redirect is string {
+  if (!redirect?.startsWith('/') || redirect.startsWith('//')) return false
+
+  try {
+    const isUnsafePath =
+      !redirect.startsWith('/') ||
+      redirect.startsWith('//') ||
+      redirect.includes('\\') ||
+      /%(?![0-9a-f]{2}|$)/i.test(redirect) ||
+      /[\u0000-\u001f\u007f\uFFFD]/.test(redirect)
+
+    if (isUnsafePath) return false
+
+    const parsedRedirect = new URL(redirect, 'https://local.invalid')
+    return parsedRedirect.origin === 'https://local.invalid'
+  } catch {
+    return false
+  }
+}
 
 interface LoginFormData {
   email: string
@@ -28,10 +53,6 @@ interface LoginFormProps {
   navigate?: (href: string) => void
 }
 
-/**
- * Login form component
- * Handles user authentication with email and password validation
- */
 export function LoginForm({
   navigate = href => {
     window.location.href = href
@@ -40,6 +61,10 @@ export function LoginForm({
   const searchParams = useSearchParams()
   const { login } = useAuthStore()
   const [isHydrated, setIsHydrated] = useState(false)
+  const [isSuccessPendingNavigation, setIsSuccessPendingNavigation] = useState(false)
+  const [requestFeedback, setRequestFeedback] = useState<string | null>(null)
+  const isSubmissionLocked = useRef(false)
+  const passwordFocusFrame = useRef<number | null>(null)
   const form = useForm<LoginFormData>({
     defaultValues: {
       email: '',
@@ -48,50 +73,88 @@ export function LoginForm({
     mode: 'onBlur',
   })
 
+  useEffect(() => setIsHydrated(true), [])
   useEffect(() => {
-    setIsHydrated(true)
-  }, [])
+    if (isHydrated) form.setFocus('email')
+  }, [form, isHydrated])
+
+  useEffect(
+    () => () => {
+      if (passwordFocusFrame.current !== null)
+        window.cancelAnimationFrame(passwordFocusFrame.current)
+    },
+    []
+  )
+
+  const redirect = searchParams.get('redirect')
+  const isReauthentication = isSafeRedirect(redirect)
+  const safeRedirect = isReauthentication ? redirect : DEFAULT_DESTINATION
 
   const mutation = useMutation({
     // Auth attempts must never retry automatically: retries duplicate credential submissions,
     // accelerate backend throttling, and can make E2E setup flaky after a single failed attempt.
     retry: false,
-    mutationFn: async (data: LoginRequest) => {
-      return await loginUser(data)
-    },
+    mutationFn: (data: LoginRequest) => loginUser(data),
     onSuccess: response => {
-      // Store user and token in auth store (localStorage)
-      // login() also sets cookie automatically for middleware
+      setIsSuccessPendingNavigation(true)
       login(response.user, response.token, response.user.cabinet_ids?.[0] || null)
-
       toast.success('Вход выполнен успешно!')
-
-      // Redirect to specified page or default to dashboard
-      const redirectTo = searchParams.get('redirect') || '/dashboard'
-      // Ensure redirect is a safe path (prevent open redirects)
-      const safeRedirect = redirectTo.startsWith('/') ? redirectTo : '/dashboard'
-
       // Use window.location for full page reload to ensure middleware can check auth state
       // Small delay to ensure token is saved to localStorage and cookie before navigation
       setTimeout(() => {
         navigate(safeRedirect)
       }, 100)
     },
-    onError: (_error: Error) => {
-      // Generic error message for security
-      toast.error('Неверный email или пароль')
+    onError: (error: Error) => {
+      const feedback =
+        error instanceof ApiError && error.status === 401
+          ? 'Неверный email или пароль'
+          : 'Не удалось подключиться. Сервис временно недоступен, попробуйте ещё раз.'
+
+      setRequestFeedback(feedback)
+      form.resetField('password')
+      // Restore focus after the Alert mounts and the password is re-enabled.
+      passwordFocusFrame.current = window.requestAnimationFrame(() => {
+        passwordFocusFrame.current = null
+        form.setFocus('password')
+      })
+      isSubmissionLocked.current = false
     },
   })
 
   const onSubmit = (data: LoginFormData) => {
+    if (isSubmissionLocked.current) return
+
+    isSubmissionLocked.current = true
+    if (passwordFocusFrame.current !== null) window.cancelAnimationFrame(passwordFocusFrame.current)
+    passwordFocusFrame.current = null
+    setRequestFeedback(null)
     mutation.mutate(data)
   }
 
-  const isSubmitting = !isHydrated || mutation.isPending
+  const controlsDisabled = !isHydrated || mutation.isPending || isSuccessPendingNavigation
+  const isBusy = mutation.isPending || isSuccessPendingNavigation
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+      <form
+        aria-label="Форма входа"
+        aria-describedby={requestFeedback ? REQUEST_FEEDBACK_ID : undefined}
+        onSubmit={form.handleSubmit(onSubmit)}
+        className="space-y-4"
+      >
+        {isReauthentication && (
+          <p className="text-sm text-muted-foreground">
+            Сессия истекла. Войдите повторно, чтобы вернуться к работе.
+          </p>
+        )}
+
+        {requestFeedback && (
+          <Alert id={REQUEST_FEEDBACK_ID} variant="destructive">
+            <AlertDescription>{requestFeedback}</AlertDescription>
+          </Alert>
+        )}
+
         <FormField
           control={form.control}
           name="email"
@@ -110,10 +173,11 @@ export function LoginForm({
               <FormControl>
                 <Input
                   {...field}
+                  className="min-h-11"
                   type="email"
                   placeholder="example@email.com"
                   autoComplete="email"
-                  disabled={isSubmitting}
+                  disabled={controlsDisabled}
                   aria-required="true"
                   aria-invalid={!!form.formState.errors.email}
                 />
@@ -126,9 +190,7 @@ export function LoginForm({
         <FormField
           control={form.control}
           name="password"
-          rules={{
-            required: 'Пароль обязателен',
-          }}
+          rules={{ required: 'Пароль обязателен' }}
           render={({ field }) => (
             <FormItem>
               <FormLabel>
@@ -137,10 +199,11 @@ export function LoginForm({
               <FormControl>
                 <Input
                   {...field}
+                  className="min-h-11"
                   type="password"
                   placeholder="Введите пароль"
                   autoComplete="current-password"
-                  disabled={isSubmitting}
+                  disabled={controlsDisabled}
                   aria-required="true"
                   aria-invalid={!!form.formState.errors.password}
                 />
@@ -150,8 +213,13 @@ export function LoginForm({
           )}
         />
 
-        <Button type="submit" className="w-full" disabled={isSubmitting} aria-busy={isSubmitting}>
-          {isSubmitting ? 'Вход...' : 'Войти'}
+        <Button
+          type="submit"
+          className="min-h-11 w-full"
+          disabled={controlsDisabled}
+          aria-busy={isBusy}
+        >
+          {isBusy ? 'Вход...' : 'Войти'}
         </Button>
       </form>
     </Form>

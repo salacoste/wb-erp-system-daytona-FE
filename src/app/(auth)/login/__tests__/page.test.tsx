@@ -4,11 +4,11 @@
  */
 
 import { describe, it, expect, vi } from 'vitest'
-import { render, screen } from '@/test/utils/test-utils'
+import { render, screen, within } from '@/test/utils/test-utils'
 
 // Mock LoginForm component
 vi.mock('@/components/custom/LoginForm', () => ({
-  LoginForm: () => <div data-testid="login-form">LoginForm</div>,
+  LoginForm: () => <form aria-label="Форма входа" data-testid="login-form" />,
 }))
 
 // Import after mocks
@@ -21,10 +21,11 @@ describe('LoginPage', () => {
     expect(screen.getByTestId('login-form')).toBeInTheDocument()
   })
 
-  it('should render heading "Войти в аккаунт"', () => {
+  it('renders exactly one level-one heading with the login purpose', () => {
     render(<LoginPage />)
 
-    expect(screen.getByRole('heading', { name: /войти в аккаунт/i, level: 2 })).toBeInTheDocument()
+    expect(screen.getAllByRole('heading', { level: 1 })).toHaveLength(1)
+    expect(screen.getByRole('heading', { name: 'Войти в аккаунт', level: 1 })).toBeInTheDocument()
   })
 
   it('should render LoginForm component', () => {
@@ -33,11 +34,25 @@ describe('LoginPage', () => {
     expect(screen.getByTestId('login-form')).toBeInTheDocument()
   })
 
-  it('should render inside a centered layout container', () => {
-    const { container } = render(<LoginPage />)
+  it('renders the login form inside one semantic main landmark', () => {
+    render(<LoginPage />)
 
-    // The page uses min-h-screen and items-center for centering
-    const outerDiv = container.firstElementChild
-    expect(outerDiv?.className).toContain('min-h-screen')
+    const main = screen.getByRole('main')
+    expect(screen.getAllByRole('main')).toHaveLength(1)
+    expect(within(main).getByRole('form', { name: 'Форма входа' })).toBeInTheDocument()
+  })
+
+  it('renders the login surface in a centered constrained layout', () => {
+    render(<LoginPage />)
+
+    const form = screen.getByRole('form', { name: 'Форма входа' })
+    expect(form.parentElement).toHaveClass('max-w-md')
+  })
+
+  it('does not render protected navigation or AppShell content', () => {
+    render(<LoginPage />)
+
+    expect(screen.queryByRole('navigation', { name: /main navigation/i })).not.toBeInTheDocument()
+    expect(screen.queryByTestId('app-shell')).not.toBeInTheDocument()
   })
 })
