@@ -1,6 +1,6 @@
 # Story 167.3: Migrate Login `/login`
 
-Status: review
+Status: done
 
 ## Story
 
@@ -140,10 +140,10 @@ The implementation must preserve the current auth boundary: `loginUser` remains 
   - [x] Compare the complete diff with Owned/Allowed/Forbidden surfaces and prove only the prospective manifest changed.
   - [x] Complete two independent fresh-context reviews, resolve every accepted finding test-first, and rerun every affected gate.
 
-- [ ] Task 8: Integrate and clean the exact Story lane (AC: 8)
-  - [ ] Force-stage ignored Story/ATDD evidence and stage only the approved explicit manifest.
-  - [ ] Create the detailed conventional commit, push only the feature branch, open a ready PR targeting `main`, and merge through GitHub after local gates and reviews pass.
-  - [ ] Synchronize primary `main`, prove merge ancestry and artifact presence, delete the remote/local Story branches, remove the exact worktree without force, prune, and prove absence before Story 167.4.
+- [x] Task 8: Integrate and clean the exact Story lane (AC: 8)
+  - [x] Force-stage ignored Story/ATDD evidence and stage only the approved explicit manifest.
+  - [x] Create the detailed conventional commit, push only the feature branch, open a ready PR targeting `main`, and merge through GitHub after local gates and reviews pass.
+  - [x] Synchronize primary `main`, prove merge ancestry and artifact presence, delete the remote/local Story branches, remove the exact worktree without force, prune, and prove absence before Story 167.4.
 
 ## Dev Notes
 
@@ -312,7 +312,7 @@ GPT-5.6 Test Engineer (active RED slice); GPT-5.6 Executor (production GREEN/REF
 ### Completion Notes List
 
 - Story context and ATDD planning completed on `2026-08-13`.
-- Status is `review`; Tasks 1–7 are complete after the fresh sequential `APPROVE` then `CLEAR` review pair, while Task 8 remains open because Git integration has not started.
+- At the final pre-integration snapshot, status was `review`; Tasks 1–7 were complete after the fresh sequential `APPROVE` then `CLEAR` review pair, while Task 8 remained open because Git integration had not started.
 - The exact RED is stable and Story-owned: seven failures and 27 preserved regression passes with no production changes.
 - Accepted review findings remain part of the record; both superseded frozen `APPROVE`/`BLOCK` pairs and their hashes are historical only. The final exact snapshot hash is `7b50199d31402fd66c270afece57af0da353f225dcb317869bd9512db22009b2`, its fresh terminal verdicts were sequentially `APPROVE` then `CLEAR`, and no accepted finding remains unresolved.
 - GREEN provides one semantic `main`/`h1` card surface, honest Suspense status, accessible named form, hydration focus, associated classified recovery feedback, retained email plus cleared/focused password, safe re-authentication context, and local same-origin redirect validation.
@@ -320,6 +320,7 @@ GPT-5.6 Test Engineer (active RED slice); GPT-5.6 Executor (production GREEN/REF
 - Final current-snapshot browser evidence is 9 passed plus one optional Manager setup skip in `18.9s`; the 84-combination matrix completed in `16.7s`, and all six Story scenarios passed with the second deliberate retry plus empty strict unexpected-console and page-error maps.
 - Final current-snapshot universal evidence is focused redirect 3/3, direct 45/45 in `5.64s`, proxy 7/7 in `457ms`, full Vitest 1,135/1,135 files and 18,437/18,437 tests in `149.64s`, official Next.js 16.2.12 Turbopack build with 70/70 pages, and format, zero-warning lint, type, max-lines, privacy, E2E-policy, YAML/status, package/lock, forbidden-surface, exact-manifest, zero-untracked/staged, and diff gates GREEN.
 - Browser cleanup completed with frontend `3100` stopped and backend `3000` untouched. `e2e/.auth/user.json`, `playwright-report/`, and `test-results/` are absent; trace, screenshot, and video capture remained disabled; only synthetic credentials were used; and the password never entered a URL or retained artifact.
+- **Post-merge lifecycle reconciliation (`2026-08-14`):** Story commit `41d06681f7849f44feb5d093180e203cfe78896a` was merged by ready PR [#157](https://github.com/salacoste/wb-erp-system-daytona-FE/pull/157), whose state is `MERGED`, as merge commit `c2a96943ff65a6ce60467608b01c17ad3a901716`. Both commits are ancestors of current `main`; after the later Story 167.4 merge, the primary checkout, local `main`, and `origin/main` all resolve to `d1401ca83a3b594ec3e27755f615befe21e5b7a3`. The original `cdx/epic-167-story-3-login` branch is absent locally and remotely, `/private/tmp/wb-fe-167-3-migrate-login` and its worktree-list entry are absent, prune/cleanup is complete, and the primary `main` checkout is clean. Story 167.3 is therefore reconciled to `done`; all earlier RED, GREEN, browser, validation, and review evidence above remains the historical delivery record.
 
 ### File List
 
@@ -349,3 +350,4 @@ GPT-5.6 Test Engineer (active RED slice); GPT-5.6 Executor (production GREEN/REF
 | 2026-08-14 | Recorded frozen hash `2a02b384c5d650389ef908c92e918ab25874c3754bbe1217c465753b35af530f` with code-review `APPROVE` and architecture `BLOCK`, then superseded both verdicts/hash after accepting the material path-shaped malformed-outer-query finding. Test-only RED was 37/39 with production untouched and `/orders?q=50%` still GREEN; the minimal local validator repair reached focused redirect 3/3 and direct 45/45. |
 | 2026-08-14 | Reconciled fresh authoritative evidence: proxy 7/7, Chromium 9 passed plus one optional skip in 18.9s with the 84-combination matrix in 16.7s, full Vitest 18,437/18,437 in 149.64s, official Turbopack 70/70 pages, and all format/lint/type/max-lines/privacy/E2E-policy/YAML/scope/manifest/worktree gates GREEN. Status remains in-progress because a new fresh final review pair and all Git integration/cleanup are pending; no new frozen hash or final verdict is claimed. |
 | 2026-08-14 | Completed the fresh sequential independent final reviews on frozen snapshot `7b50199d31402fd66c270afece57af0da353f225dcb317869bd9512db22009b2`: code/spec/security returned terminal `APPROVE`, then architecture/scope/contract returned terminal `CLEAR`; no accepted finding remains unresolved. Task 7 is complete and status moved to `review`; Task 8, commit, PR, merge, branch/worktree cleanup, and all Git integration evidence remain pending. |
+| 2026-08-14 | Reconciled the completed lifecycle: Story commit `41d06681f7849f44feb5d093180e203cfe78896a` merged through ready PR #157 as `c2a96943ff65a6ce60467608b01c17ad3a901716`; merge ancestry, later Story 167.4 `main` at `d1401ca83a3b594ec3e27755f615befe21e5b7a3`, branch/worktree absence, prune completion, and clean primary checkout were verified, and Story 167.3 moved from `review` to `done`. |
