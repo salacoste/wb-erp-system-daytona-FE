@@ -4,6 +4,30 @@ import { ROUTES } from '@/lib/routes'
 import { isProtectedRoute, isPublicRoute } from '@/lib/routes-protected'
 import { isValidToken } from '@/lib/auth'
 
+function getSafeAuthRedirect(request: NextRequest): URL {
+  const dashboardUrl = new URL(ROUTES.DASHBOARD, request.url)
+  const redirectParam = request.nextUrl.searchParams.get('redirect')
+
+  if (!redirectParam?.startsWith('/') || redirectParam.startsWith('//')) {
+    return dashboardUrl
+  }
+
+  try {
+    const redirectUrl = new URL(redirectParam, request.url)
+    const targetsAuthPage =
+      redirectUrl.pathname === ROUTES.LOGIN || redirectUrl.pathname === ROUTES.REGISTER
+
+    return redirectUrl.origin === request.nextUrl.origin && !targetsAuthPage
+      ? redirectUrl
+      : dashboardUrl
+  } catch (error) {
+    if (error instanceof TypeError) {
+      return dashboardUrl
+    }
+    throw error
+  }
+}
+
 /**
  * Next.js proxy for authentication (Next 16: middleware → proxy convention)
  * Protects routes and handles redirects based on authentication state
@@ -41,16 +65,11 @@ export async function proxy(request: NextRequest) {
     isValidToken(token) &&
     (pathname === ROUTES.LOGIN || pathname === ROUTES.REGISTER)
   ) {
-    // Check if there's a redirect parameter in the URL
-    const redirectParam = request.nextUrl.searchParams.get('redirect')
-    const redirectTo =
-      redirectParam?.startsWith('/') && !redirectParam.startsWith('//')
-        ? redirectParam
-        : ROUTES.DASHBOARD
+    const redirectUrl = getSafeAuthRedirect(request)
 
     // Only redirect if not already on the target page
-    if (pathname !== redirectTo) {
-      return NextResponse.redirect(new URL(redirectTo, request.url))
+    if (pathname !== redirectUrl.pathname) {
+      return NextResponse.redirect(redirectUrl)
     }
   }
 
