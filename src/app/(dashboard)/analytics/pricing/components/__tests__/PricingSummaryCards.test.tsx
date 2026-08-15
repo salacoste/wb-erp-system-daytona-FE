@@ -18,6 +18,9 @@ const mockItems: PriceRecommendation[] = [
     gapPct: -2.5,
     targetMarginPct: 30,
     computedAt: '2026-06-01T00:00:00Z',
+    priceBasis: 'SELLER',
+    validationFlags: [],
+    alternativeBasisPrice: null,
   },
   {
     id: '2',
@@ -33,6 +36,9 @@ const mockItems: PriceRecommendation[] = [
     gapPct: 1.2,
     targetMarginPct: 30,
     computedAt: '2026-06-01T00:00:00Z',
+    priceBasis: 'SELLER',
+    validationFlags: [],
+    alternativeBasisPrice: null,
   },
   {
     id: '3',
@@ -48,6 +54,9 @@ const mockItems: PriceRecommendation[] = [
     gapPct: -3.0,
     targetMarginPct: 30,
     computedAt: '2026-06-01T00:00:00Z',
+    priceBasis: 'SELLER',
+    validationFlags: [],
+    alternativeBasisPrice: null,
   },
 ]
 

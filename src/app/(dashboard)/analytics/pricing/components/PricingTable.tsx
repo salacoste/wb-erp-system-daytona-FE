@@ -14,6 +14,7 @@ import {
   TableRow,
 } from '@/components/ui/table'
 import { Skeleton } from '@/components/ui/skeleton'
+import { PriceBasisBadge } from '@/components/custom/PriceBasisBadge'
 import { formatCurrency, formatPercentage } from '@/lib/utils'
 import type { PriceRecommendation } from '@/types/price-recommendations'
 
@@ -21,6 +22,28 @@ interface PricingTableProps {
   items: PriceRecommendation[]
   isLoading: boolean
   onRowClick?: (nmId: number) => void
+}
+
+/** SPP-1.7-FE: current price + basis chip + optional seller companion price. */
+function CurrentPriceCell({ item }: { item: PriceRecommendation }) {
+  return (
+    <span className="inline-flex flex-col items-end">
+      <span className="inline-flex items-center justify-end">
+        {item.lastPrice !== null ? formatCurrency(item.lastPrice) : '—'}
+        <span className="ml-1">
+          <PriceBasisBadge basis={item.priceBasis} flags={item.validationFlags} />
+        </span>
+      </span>
+      {item.alternativeBasisPrice !== null && (
+        <span
+          className="text-xs text-muted-foreground"
+          title="Цена продавца (альтернативный базис)"
+        >
+          продав: {formatCurrency(item.alternativeBasisPrice)}
+        </span>
+      )}
+    </span>
+  )
 }
 
 /** Color-coded gap cell: green=above target, red=below, neutral=exact */
@@ -98,7 +121,7 @@ export function PricingTable({ items, isLoading, onRowClick }: PricingTableProps
             </TableCell>
             <TableCell className="max-w-[200px] truncate">{item.productName ?? '—'}</TableCell>
             <TableCell className="text-right">
-              {item.lastPrice !== null ? formatCurrency(item.lastPrice) : '—'}
+              <CurrentPriceCell item={item} />
             </TableCell>
             <TableCell className="text-right">
               {item.breakEvenPrice == null ? '—' : formatCurrency(item.breakEvenPrice)}

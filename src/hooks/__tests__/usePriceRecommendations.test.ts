@@ -51,6 +51,9 @@ const mockItem: PriceRecommendation = {
   gapPct: -5,
   targetMarginPct: 15,
   computedAt: '2025-01-15T00:00:00Z',
+  priceBasis: 'SELLER',
+  validationFlags: [],
+  alternativeBasisPrice: null,
 }
 
 const mockListResponse: PriceRecommendationsResponse = {

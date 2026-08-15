@@ -11,9 +11,11 @@ import { Button } from '@/components/ui/button'
 interface PricingPageHeaderProps {
   isRefreshing: boolean
   onRefresh: () => void
+  /** Optional controls rendered before the Refresh button (SPP-1.7-FE basis toggle). */
+  actions?: React.ReactNode
 }
 
-export function PricingPageHeader({ isRefreshing, onRefresh }: PricingPageHeaderProps) {
+export function PricingPageHeader({ isRefreshing, onRefresh, actions }: PricingPageHeaderProps) {
   return (
     <div className="flex items-center justify-between">
       <div>
@@ -30,10 +32,13 @@ export function PricingPageHeader({ isRefreshing, onRefresh }: PricingPageHeader
           Рекомендованные цены для достижения целевой маржинальности по каждому SKU
         </p>
       </div>
-      <Button variant="outline" size="sm" onClick={onRefresh} disabled={isRefreshing}>
-        <RefreshCw className={`h-4 w-4 mr-2 ${isRefreshing ? 'animate-spin' : ''}`} />
-        {isRefreshing ? 'Обновление...' : 'Обновить'}
-      </Button>
+      <div className="flex items-center gap-2">
+        {actions}
+        <Button variant="outline" size="sm" onClick={onRefresh} disabled={isRefreshing}>
+          <RefreshCw className={`h-4 w-4 mr-2 ${isRefreshing ? 'animate-spin' : ''}`} />
+          {isRefreshing ? 'Обновление...' : 'Обновить'}
+        </Button>
+      </div>
     </div>
   )
 }

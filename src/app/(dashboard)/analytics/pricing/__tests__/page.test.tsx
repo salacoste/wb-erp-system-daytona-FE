@@ -27,6 +27,15 @@ vi.mock('next/navigation', () => ({
   usePathname: () => '/analytics/pricing',
 }))
 
+vi.mock('@/stores/authStore', () => ({
+  useAuthStore: (selector: (state: { cabinetId: string | null }) => string | null) =>
+    selector({ cabinetId: 'cab-test-1' }),
+}))
+
+vi.mock('../components/PricingBasisToggle', () => ({
+  PricingBasisToggle: () => <div data-testid="pricing-basis-toggle">Базис</div>,
+}))
+
 const sampleItem: PriceRecommendation = {
   id: 'price-1',
   nmId: 12345678,
@@ -41,6 +50,9 @@ const sampleItem: PriceRecommendation = {
   gapPct: -20,
   targetMarginPct: 15,
   computedAt: '2026-06-07T10:00:00Z',
+  priceBasis: 'SELLER',
+  validationFlags: [],
+  alternativeBasisPrice: null,
 }
 
 const sampleItemAbove: PriceRecommendation = {
@@ -57,6 +69,9 @@ const sampleItemAbove: PriceRecommendation = {
   gapPct: 10,
   targetMarginPct: 15,
   computedAt: '2026-06-07T10:00:00Z',
+  priceBasis: 'SELLER',
+  validationFlags: [],
+  alternativeBasisPrice: null,
 }
 
 function okResponse(items: PriceRecommendation[] = [sampleItem, sampleItemAbove]) {
@@ -105,6 +120,11 @@ describe('PricingPage - Page Header', () => {
   it('renders refresh button', () => {
     renderPage()
     expect(screen.getByRole('button', { name: /Обновить/ })).toBeInTheDocument()
+  })
+
+  it('renders the basis toggle in the header (SPP-1.7-FE)', () => {
+    renderPage()
+    expect(screen.getByTestId('pricing-basis-toggle')).toBeInTheDocument()
   })
 })
 
