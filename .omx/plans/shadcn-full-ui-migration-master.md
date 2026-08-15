@@ -5,7 +5,7 @@ date: 2026-08-11
 bmadArtifact: _bmad-output/planning-artifacts/epics-166-174-fe-shadcn-migration.md
 uxArtifact: _bmad-output/planning-artifacts/ux-design-specification.md
 routeLedger: _bmad-output/planning-artifacts/shadcn-route-ledger.md
-expectedStories: 90
+expectedStories: 92
 expectedRoutes: 76
 branchPrefix: cdx/
 frontendUrl: http://localhost:3100
@@ -17,9 +17,9 @@ productionScope: forbidden
 
 ## Outcome
 
-Migrate the complete frontend presentation layer to the approved shadcn/ui-based semantic design system, one BMAD Story at a time, while preserving current backend contracts, calculations, query keys, mutation behavior, URLs/search parameters, authentication, cabinet context, Russian localization, and formatting semantics.
+Migrate the complete frontend presentation layer to the approved shadcn/ui-based semantic design system, one BMAD Story at a time, while preserving current backend contracts, calculations, query keys, mutation behavior, URLs/search parameters, authentication, cabinet context, Russian localization, and formatting semantics except for Story 167.8's narrowly approved cabinet reconciliation/idempotency contract.
 
-The migration is complete only when all 90 BMAD Stories have matching OMX plans and completion evidence, all 76 route slices are verified exactly once, legacy presentation paths are removed only after their last consumer migrates, and every temporary feature worktree and feature branch has been removed after merge.
+The migration is complete only when all 92 BMAD Stories have matching OMX plans and completion evidence, all 76 route slices are verified exactly once, legacy presentation paths are removed only after their last consumer migrates, and every temporary feature worktree and feature branch has been removed after merge.
 
 ## Authoritative Inputs
 
@@ -42,6 +42,7 @@ If documents and source disagree about existing behavior, source and passing beh
 - One Story equals one feature branch and one temporary worktree.
 - Local validation is the merge gate; production/deployment work and required CI gates are outside scope.
 - Worktree removal and local/remote feature-branch deletion are mandatory completion conditions, not optional housekeeping.
+- Story 167.8 is the sole cross-repository exception and has no route-ledger row. Verify its implementation, PR, merge, and cleanup only in the backend repository; frontend coordination artifacts may not claim `review`, `done`, backend completion, or cleanup without the exact backend merge SHA, ancestry on current backend `main`, and backend branch/worktree absence evidence. No other Story inherits this exception.
 
 ## Delivery DAG
 
@@ -50,6 +51,10 @@ flowchart TD
   E166["Epic 166: tokens, primitives, product compositions"] --> S1671["167.1 AppShell"]
   E166 --> S1681["168.1 analytics shared owner"]
   S1671 --> ROUTES["Route Stories 167.2–173.13"]
+  S1678["167.8 backend cabinet reconciliation/idempotency"] --> S1679["167.9 frontend conditional settlement"]
+  S1679 --> S1675["167.5 cabinet onboarding"]
+  S1675 --> S1676["167.6 processing"]
+  S1675 --> S1677["167.7 WB token"]
   S1681 --> ANALYTICS["Analytics Stories 168.2–171.9"]
   R1691["169.1 acquiring shared owner"] --> R16923["169.2–169.3"]
   R1716["171.6 model registry"] --> R1717["171.7 evaluations"]
@@ -67,10 +72,12 @@ flowchart TD
 Execution details:
 
 1. Execute Epic 166 in Story order because later foundation layers consume earlier ones.
-2. Merge Story 167.1 before protected route migration. Auth/onboarding route Stories may proceed only when their declared foundation prerequisites are merged.
+2. Merge Story 167.1 before protected route migration. For the corrected onboarding lane, merge 167.8, then 167.9, then resume and merge 167.5; only then may 167.6 and 167.7 start.
 3. Merge Story 168.1 before any analytics Story that consumes analytics-shared UI.
 4. Within a domain, merge named upstream-owner Stories before their consumer Stories. Independent route Stories may run in parallel only when their Allowed Change Surfaces do not overlap.
 5. Start Epic 174 only after Epics 166–173 are merged and the route ledger has completion evidence for all 76 routes.
+6. Story numbers are canonical identities, not a universal execution order. Higher-numbered owner-approved correct-course prerequisites may precede lower-numbered route Stories when this DAG says so.
+7. Story 167.8 is the sole approved cross-repository exception. Create and execute it in `/Users/r2d2/Documents/Code_Projects/wb-repricer-system-new`; all other Stories use the frontend repository and do not inherit backend authority.
 
 ## Standard Story Execution Protocol
 
@@ -83,6 +90,7 @@ Every per-Story plan inherits this protocol. Story-specific scope and acceptance
 - Resolve the exact Allowed Change Surface and Forbidden Shared Files before creating the worktree.
 - Inventory all consumers of any component proposed for modification. Stop shared edits that lack the declared owner.
 - Record base SHA and planned branch/worktree names.
+- For Story 167.8, re-run the backend worktree/path/hunk collision scan immediately before creation. Hard-stop on a true overlap; a non-overlapping hunk reservation is valid only when both owners, exact files/hunks, integration order, conflict owner, and fresh diff evidence are documented.
 
 ### 2. Branch and temporary worktree
 
@@ -144,11 +152,11 @@ Run the Story's targeted test commands first. Use frontend `localhost:3100` and 
 
 ## Acceptance Criteria
 
-1. Exactly 90 per-Story OMX plans exist and match the 90 BMAD Story IDs and titles without duplicates or orphans.
+1. Exactly 92 per-Story OMX plans exist and match the 92 BMAD Story IDs and titles without duplicates or orphans.
 2. Exactly 76 route-ledger entries map to 76 current `src/app/**/page.tsx` routes and to existing route Story IDs.
 3. Every per-Story plan declares prerequisites, branch, temporary worktree, Allowed Change Surface, Forbidden Shared Files, implementation steps, targeted tests, universal validation, visual/accessibility checks, review, commit/push/PR/merge, branch deletion, mandatory worktree removal, and cleanup evidence.
-4. No plan authorizes backend contract changes, production/deployment operations, direct/force pushes to `main`, or required CI gates.
-5. Foundation/shared owners merge before dependent route Stories; no Story depends on a future Story.
+4. No plan except the narrowly approved Story 167.8 authorizes backend contract changes; Story 167.8 has no route-ledger row, and its backend completion state requires exact backend merge-SHA ancestry and cleanup evidence. No plan authorizes production/deployment operations, direct/force pushes to `main`, or required CI gates.
+5. Foundation/shared owners merge before dependent route Stories; numeric order does not override an explicit correct-course prerequisite DAG.
 6. A route is accepted only when its complete owned render tree and applicable states, dialogs, forms, tables, charts, responsive behavior, themes, accessibility, tests, and evidence satisfy its BMAD Story.
 7. Epic 174 proves parity, source cleanup, inclusive visual/accessibility coverage, complete local regression, and repository cleanup after all route Stories merge.
 
@@ -169,14 +177,14 @@ Run the Story's targeted test commands first. Use frontend `localhost:3100` and 
 
 The initiative stops successfully only when:
 
-- BMAD Story count = 90 and per-Story OMX plan count = 90 with exact ID/title parity;
+- BMAD Story count = 92 and per-Story OMX plan count = 92 with exact ID/title parity;
 - source-route count = route-ledger count = 76 with no missing, extra, or duplicate routes;
 - every Story is merged with local validation and independent review evidence;
 - all Story-owned feature branches and temporary worktrees are removed;
 - Epic 174 final audits pass; and
 - no production/deployment action has been taken.
 
-If a Story needs a forbidden shared file, a new dependency, a backend/public contract change, production authority, or a destructive action outside its cleanup contract, stop that Story and escalate to the orchestrator for a corrected prerequisite or explicit owner decision.
+If a Story other than 167.8 needs a forbidden shared file, a new dependency, a backend/public contract change, production authority, or a destructive action outside its cleanup contract, stop that Story and escalate to the orchestrator for a corrected prerequisite or explicit owner decision.
 
 ## Execution Staffing Guidance
 
@@ -191,7 +199,7 @@ The orchestrator owns the DAG, assigns one Story per branch/worktree, prevents o
 
 ## Scope Boundary
 
-This plan authorizes local frontend implementation and local validation only. It does not authorize deployment, production infrastructure or configuration, production data operations, backend contract changes, required CI gates, direct pushes to `main`, or force pushes.
+This plan authorizes local frontend implementation and local validation plus Story 167.8's narrowly declared local backend contract implementation and validation. Story 167.8 uses its backend repository-specific branch/worktree/PR lifecycle. It does not authorize deployment, production infrastructure or configuration, production data operations, backend changes outside Story 167.8, required CI gates, direct pushes to `main`, or force pushes.
 
 ## Story Plan Index
 
@@ -213,9 +221,11 @@ Story identity is the numeric `Epic.Story` ID, not the descriptive sprint-status
 | 167.2 | Migrate Root Entry `/` | [167.2-migrate-root-entry.md](./167.2-migrate-root-entry.md) | cdx/epic-167-story-2-root-entry | 166-FE, 167.1, auth store/routes. |
 | 167.3 | Migrate Login `/login` | [167.3-migrate-login.md](./167.3-migrate-login.md) | cdx/epic-167-story-3-login | 166-FE and auth contracts. |
 | 167.4 | Migrate Registration `/register` | [167.4-migrate-registration.md](./167.4-migrate-registration.md) | cdx/epic-167-story-4-register | 166-FE and registration contracts. |
-| 167.5 | Migrate Cabinet Onboarding `/cabinet` | [167.5-migrate-cabinet-onboarding.md](./167.5-migrate-cabinet-onboarding.md) | cdx/epic-167-story-5-cabinet | 166-FE and cabinet/onboarding behavior. |
-| 167.6 | Migrate Processing `/processing` | [167.6-migrate-processing.md](./167.6-migrate-processing.md) | cdx/epic-167-story-6-processing | 166-FE and existing polling hook/API. |
-| 167.7 | Migrate WB Token `/wb-token` | [167.7-migrate-wb-token.md](./167.7-migrate-wb-token.md) | cdx/epic-167-story-7-wb-token | 166-FE and guard owner 167.5. |
+| 167.5 | Migrate Cabinet Onboarding `/cabinet` | [167.5-migrate-cabinet-onboarding.md](./167.5-migrate-cabinet-onboarding.md) | cdx/epic-167-story-5-cabinet | 166-FE; merged 167.8 and 167.9. |
+| 167.6 | Migrate Processing `/processing` | [167.6-migrate-processing.md](./167.6-migrate-processing.md) | cdx/epic-167-story-6-processing | merged 167.5 (transitively 167.8 and 167.9). |
+| 167.7 | Migrate WB Token `/wb-token` | [167.7-migrate-wb-token.md](./167.7-migrate-wb-token.md) | cdx/epic-167-story-7-wb-token | merged guard owner 167.5 (transitively 167.8 and 167.9). |
+| 167.8 | Establish Authoritative Cabinet Session Reconciliation and Create-Idempotency Contracts | [167.8-establish-authoritative-cabinet-session-reconciliation-and-create-idempotency-contracts.md](./167.8-establish-authoritative-cabinet-session-reconciliation-and-create-idempotency-contracts.md) | cdx/epic-167-story-8-cabinet-reconciliation-contract | backend main `75a080c6b857f8e7998e2ac0736b2b4d9ae3bfa4`; historical overlap merged in PR #212 and removed; mandatory immediate recheck or documented non-overlapping hunk reservation. |
+| 167.9 | Enforce Account-Scoped Conditional Cabinet Settlement | [167.9-enforce-account-scoped-conditional-cabinet-settlement.md](./167.9-enforce-account-scoped-conditional-cabinet-settlement.md) | cdx/epic-167-story-9-account-scoped-cabinet-settlement | merged 167.8 real backend contract. |
 | 168.1 | Migrate Analytics Hub `/analytics` and Own Analytics-Shared UI | [168.1-migrate-analytics-hub-and-own-analytics-shared-ui.md](./168.1-migrate-analytics-hub-and-own-analytics-shared-ui.md) | cdx/epic-168-story-1-analytics-hub | 166-FE/167.1. |
 | 168.2 | Migrate Analytics Alerts `/analytics/alerts` | [168.2-migrate-analytics-alerts.md](./168.2-migrate-analytics-alerts.md) | cdx/epic-168-story-2-alerts | 166-FE/167.1/168.1. |
 | 168.3 | Migrate Analytical Dashboard `/analytics/dashboard` | [168.3-migrate-analytical-dashboard.md](./168.3-migrate-analytical-dashboard.md) | cdx/epic-168-story-3-analytics-dashboard | foundation/AppShell/hub and shared periods/states. |
@@ -294,9 +304,9 @@ Story identity is the numeric `Epic.Story` ID, not the descriptive sprint-status
 
 ## Parity Validation Evidence
 
-- Validation date: `2026-08-11`.
-- BMAD Stories: `90`; per-Story OMX plans: `90`; exact Story ID/title mismatches: `0`.
-- Per-Epic counts in both sources: `166=8`, `167=7`, `168=11`, `169=13`, `170=7`, `171=9`, `172=17`, `173=13`, `174=5`.
+- Planning parity validation date: `2026-08-15`; this records planning parity, not implementation completion.
+- BMAD Stories: `92`; per-Story OMX plans: `92`; exact Story ID/title mismatches: `0`.
+- Per-Epic counts in both sources: `166=8`, `167=9`, `168=11`, `169=13`, `170=7`, `171=9`, `172=17`, `173=13`, `174=5`.
 - Source `src/app/**/page.tsx` routes: `76`; route-ledger rows: `76`; missing, extra, duplicate, or nonexistent route entries: `0`.
 - Duplicate Story IDs, plan IDs, branches, or temporary worktrees: `0`; missing or orphan plans: `0`.
 - Lifecycle safety scan: no unresolved angle-bracket placeholders and no unanchored post-merge/cleanup Git commands.
