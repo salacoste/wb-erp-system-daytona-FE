@@ -1,7 +1,7 @@
 ---
 type: "Design System"
 title: "Design System — Tailwind v4, shadcn primitives, product compositions"
-description: "The layered semantic design system: CSS-first Tailwind v4 token contract in src/styles/globals.css, hardened domain-agnostic shadcn/ui primitives in src/components/ui, presentational product compositions (PageHeader, Breadcrumbs, ContextBar) in src/components/product, and the Epics 166-174 full UI migration program."
+description: "The layered semantic design system: CSS-first Tailwind v4 token contract in src/styles/globals.css, hardened domain-agnostic shadcn/ui primitives in src/components/ui, six presentational product-composition families (page context, metrics, filters, tables, charts, states) in src/components/product, and the Epics 166-174 full UI migration program."
 tags: [design-system, tailwind, shadcn, accessibility, tokens]
 openwiki:
   roles: [architecture, domain, testing]
@@ -14,6 +14,11 @@ openwiki:
     - src/components/product/PageHeader.tsx
     - src/components/product/ContextBar.tsx
     - src/components/product/index.ts
+    - src/components/product/metrics/presentation.ts
+    - src/components/product/filters/FilterToolbar.tsx
+    - src/components/product/tables/contracts.ts
+    - src/components/product/charts/contracts.ts
+    - src/components/product/states/contracts.ts
   symbols:
     - PageHeader
     - Breadcrumbs
@@ -21,6 +26,22 @@ openwiki:
     - ContextBarState
     - ContextItem
     - PageHeaderProps
+    - FinancialValue
+    - FinancialValueModel
+    - MetricCard
+    - availabilityPresentation
+    - FilterToolbar
+    - FilterToolbarState
+    - ResponsiveTable
+    - TableNarrowStrategy
+    - TableConsumerContract
+    - ChartFrame
+    - ChartSeriesEvidence
+    - PageState
+    - PageStateProps
+    - AsyncOperationStatus
+    - BulkResultSummary
+    - ContextualSplitView
   test_paths:
     - src/styles/__tests__/globals-token-contract.test.ts
     - src/styles/__tests__/globals-compiled-contrast.test.ts
@@ -28,28 +49,36 @@ openwiki:
     - src/components/ui/__tests__/primitive-semantic-surfaces.test.tsx
     - src/components/product/__tests__/PageContextCompositions.test.tsx
     - src/components/product/__tests__/product-composition-source-contracts.test.ts
+    - src/components/product/metrics/__tests__/metric-composition-source-contracts.test.ts
+    - src/components/product/filters/__tests__/filter-toolbar-source-contracts.test.ts
+    - src/components/product/tables/__tests__/table-composition-source-contracts.test.ts
+    - src/components/product/charts/__tests__/chart-composition-source-contracts.test.ts
+    - src/components/product/states/__tests__/state-composition-source-contracts.test.ts
   invariants:
     - Primitives in src/components/ui are domain-agnostic and consume semantic tokens only — no hardcoded or light-only palette values.
-    - Product compositions in src/components/product are presentational; breadcrumbs, actions, context, and state are route-supplied and own no URL/search/debounce/persistence.
-    - Semantic state in ContextBar is shown as text and never conveyed by color alone.
+    - Product compositions in src/components/product are presentational; breadcrumbs, actions, context, controls, and state are route-supplied and own no URL/search/debounce/persistence/query/API/store logic.
+    - Each product-composition family owns a source-contract test with an explicit Story-owned manifest; product-composition-source-contracts.test.ts stays scoped to the Story 166.3 files and must not be expanded or bypassed.
+    - Semantic state (ContextBar, availability, status) is shown as localized text and never conveyed by color alone.
     - PageHeader renders exactly one logical h1 regardless of visual size.
+    - Zero and missing stay distinct everywhere: nullish or non-finite metric input never becomes a fabricated zero; terminal states never fabricate retained content or a zero.
     - tailwind.config.ts is removed; Tailwind v4 config is CSS-first in src/styles/globals.css.
   validation_commands:
-    - npx vitest run src/styles/__tests__ src/components/ui/__tests__ src/components/product/__tests__
+    - npx vitest run src/styles/__tests__ src/components/ui/__tests__ src/components/product
 ---
 
 # Design System
 
-The frontend presentation layer is migrating to a layered, semantic design system built on **Tailwind v4** and **shadcn/ui (Radix)**. The layers are built in order and consumed strictly downward. This page documents the foundation delivered by Epic 166 (stories 166.1–166.3) and the Epics 166–174 migration program that consumes it.
+The frontend presentation layer is migrating to a layered, semantic design system built on **Tailwind v4** and **shadcn/ui (Radix)**. The layers are built in order and consumed strictly downward. This page documents the foundation delivered by Epic 166 (stories 166.1–166.8: tokens, primitives, and six product-composition families) and the Epics 166–174 migration program that consumes it.
 
-<!-- openwiki: mermaid parse failed and this diagram was converted to a text fence so it does not break rendering. Fix the diagram source and restore the mermaid fence. Parser error: Heuristic: an unescaped angle bracket inside a label breaks rendering; rephrase the label. -->
-```text
+```mermaid
 flowchart TD
-  TOKENS["1. Semantic tokens<br/>src/styles/globals.css"] --> PRIM["2. Generic shadcn primitives<br/>src/components/ui/**"]
-  PRIM --> COMP["3. Product compositions<br/>src/components/product/**"]
-  COMP --> DOMAIN["4. Domain-shared / route-owned UI<br/>Epics 167-173 (76 routes)"]
-  DOMAIN --> AUDIT["5. Parity, a11y, regression, cleanup<br/>Epic 174"]
+  TOKENS["1. Semantic tokens in src/styles/globals.css"] --> PRIM["2. Generic shadcn primitives in src/components/ui"]
+  PRIM --> COMP["3. Product composition families in src/components/product"]
+  COMP --> DOMAIN["4. Domain-shared and route-owned UI, Epics 167-173, 76 routes"]
+  DOMAIN --> AUDIT["5. Parity, a11y, regression and cleanup, Epic 174"]
 ```
+
+*Build order of the design-system layers; each layer consumes only the layers above it.*
 
 ## Why this exists
 
@@ -91,11 +120,24 @@ Four consumer test files (`OrderDetailsModal`, `GenerateStickersModal`, `OrderPi
 | `src/components/ui/__tests__/primitive-behavior-contracts.test.tsx` | Direct behavior, palette, portal, focus, reduced-motion, and compatibility contracts for the hardened primitives (uses `react-hook-form`, Testing Library, `userEvent`). |
 | `src/components/ui/__tests__/primitive-semantic-surfaces.test.tsx` | Primitives render semantic-token surface/border/focus classes, not hardcoded or light-only values. |
 
-## Layer 3 — Product compositions
+## Layer 3 — Product composition families
 
-`src/components/product/` are presentational, route-supplied layouts. They intentionally own **no** URL/search/debounce/persistence semantics — those stay with their route owners. Barrel: `src/components/product/index.ts`.
+`src/components/product/` are presentational, route-supplied compositions. They intentionally own **no** URL/search/debounce/persistence/query/API/store semantics — those stay with their route owners. The families are:
 
-### `PageHeader` — `src/components/product/PageHeader.tsx`
+| Family (Story) | Subtree | Key exports |
+|----------------|---------|-------------|
+| Page context (166.3) | `src/components/product/` root | `PageHeader`, `Breadcrumbs`, `ContextBar` |
+| Metrics & status (166.4) | `src/components/product/metrics/` | `FinancialValue`, `MetricCard`, `MetricGroup`, `DataAvailability`, `StatusBadge`, `StatusStrip` |
+| Filters & period controls (166.5) | `src/components/product/filters/` | `FilterToolbar` |
+| Data tables (166.6) | `src/components/product/tables/` | `ResponsiveTable`, `ResponsiveTableHeader`, `TablePagination`, `TableState`, `VirtualizedTableFrame` |
+| Charts & evidence (166.7) | `src/components/product/charts/` | `ChartFrame`, `ChartEvidence`, `ChartLegend`, `ChartState`, `ChartTooltipContent` |
+| Page states & async results (166.8) | `src/components/product/states/` | `PageState`, `AsyncOperationStatus`, `BulkResultSummary`, `ContextualSplitView` |
+
+Barrel discipline: `src/components/product/index.ts` re-exports only page-context, metrics, and filters (`export * from './metrics'` / `'./filters'`). The tables, charts, and states families are consumed through their own subtree barrels (`@/components/product/tables`, `.../charts`, `.../states`) — the product root deliberately does not re-export them. Each family ships its own source-contract test with an explicit Story-owned manifest that also rejects route/API/hook/query/store/navigation/raw-palette ownership in the subtree; `product-composition-source-contracts.test.ts` stays scoped to the Story 166.3 files and must not be expanded, bypassed, or made directory-wide.
+
+### Page context (Story 166.3)
+
+#### `PageHeader` — `src/components/product/PageHeader.tsx`
 
 Shared route identity. Renders **exactly one** logical `h1` regardless of visual size.
 
@@ -112,20 +154,66 @@ Shared route identity. Renders **exactly one** logical `h1` regardless of visual
 | `busy?` | Indicates metadata refresh without replacing the title (`aria-busy`). |
 | `breadcrumbLabel?` | Accessible label for the breadcrumb landmark (default `Навигация по странице`). |
 
-### `Breadcrumbs` (exported from `PageHeader.tsx`)
+#### `Breadcrumbs` (exported from `PageHeader.tsx`)
 
 Standalone breadcrumb composition for routes that do not need the full header. `BreadcrumbItem` carries already-localized `label` and optional `href`; the current/terminal item renders `aria-current="page"`, link items render visible focus rings.
 
-### `ContextBar` — `src/components/product/ContextBar.tsx`
+#### `ContextBar` — `src/components/product/ContextBar.tsx`
 
 Decision-scope metadata bar. Semantic `state` (`fresh` | `refreshing` | `stale` | `partial` | `unavailable` | `restricted` | `overridden` | `default`) is rendered as localized text and **never conveyed by color alone**. `onRefresh`/`onReset` are route-owned callbacks — the composition changes no context implicitly. Common fields (`cabinet`, `period`, `comparison`, `freshness`, `completeness`, `scope`) plus generic `items: ContextItem[]` and `actions`/`children` slots.
 
+### Metrics and status (Story 166.4) — `src/components/product/metrics/`
+
+Standardizes how numeric business meaning is presented. `src/components/product/metrics/presentation.ts` is the single semantic map layer: `availabilityPresentation` (11 `AvailabilityState` values — loading, available, missing, unavailable, not-calculated, filtered-out, stale, partial, estimated, restricted, unknown — each with a localized label and `availability-*` token classes), `financialDirectionClass` / `comparisonSentimentClass` (`financial-positive/negative/neutral`, plus `unknown`), and `statusPresentation` (`OperationalStatus` success/warning/error/information/pending/neutral/unknown with icons and `status-*` classes).
+
+- **`FinancialValue`** renders a discriminated `FinancialValueModel` (`value` | `temporal` | empty kinds) with a matching `FinancialFormat` (currency, percent, percentage-points, quantity+unit, duration, decimal, count, or date/date-time/iso-week). Russian locale, sign, tabular numerals, and caller-provided precision are preserved; `display: 'compact'` is only legal for currency/duration and **requires a caller-supplied `fullValue` string**, so the full value is always accessible without a tooltip. Zero, missing, and unavailable stay distinct; nullish/non-finite input never becomes a fabricated zero.
+- **`MetricCard`** wraps a value in metric identity: `MetricCardState` is a discriminated union (`loading` / `error` with recovery / `ready`), `MetricComparison` carries caller-controlled meaning (direction ≠ sentiment — an increase can be financially negative), and variants scale density (`hero` | `standard` | `compact` | `dense`).
+- **`MetricGroup`** frames related cards (`aria-label`d section, shared variant).
+- **`DataAvailability` / `StatusBadge` / `StatusStrip`** render availability and operational status as **localized text with semantic token classes, never color alone** (`data-availability` attribute for testability).
+
+Story 166.4 migrated no routes, formatters, or domain consumers — it only added the composition layer plus its source contract.
+
+### Filters and period controls (Story 166.5) — `src/components/product/filters/`
+
+**`FilterToolbar`** (`FilterToolbar.tsx` + `FilterToolbar.types.ts`) frames caller-owned filter controls. Its `FilterToolbarState` is a discriminated prop union: passive states (`default`, `dependency-loading`, `updating`, `invalid`, `disabled`) take an optional reset, while `state: 'applied'` requires `appliedSummary` + `onReset` + `resetScope`, and `state: 'empty'` additionally pins `resultCount: 0` — an empty *filtered* result is rendered differently from globally absent data. Reset is explicit, caller-owned, and focus-deterministic (`resetFocusRef` names the element that receives focus after reset). Secondary controls are progressive (`expanded`/`defaultExpanded`/`onExpandedChange`), and applied scope, result count, and state labels stay visible in every state.
+
+The existing multi-route period controls were presentation-hardened in place (`src/components/custom/DateRangePicker.tsx`, `DateRangePickerExtended`, `MultiWeekSelector`, `ComparisonPeriodSelector`, `DashboardPeriodSelector`): visible labels, state handling, and wrapping — their URL/search-param/debounce/persistence behavior is unchanged and still owned by each route.
+
+### Data tables (Story 166.6) — `src/components/product/tables/`
+
+A route-free table foundation for static and server-controlled lists (deliberately **not** a client-side data engine — no TanStack Table dependency).
+
+- **`ResponsiveTable`** frames a native semantic table. The name is a required union (`caption` node or `accessibleLabel`), and `TableNarrowStrategy` must be explicit — `horizontal-scroll` (one named, keyboard-reachable scroll region with a declared `minimumWidth`), `priority-columns`, `expanded-detail`, or `stacked-detail` — never inferred from column index. `TableConsumerContract` (in `contracts.ts`) declares numeric columns (`TableNumericColumnContract`: end alignment, precision, `TableNumericUnit`, `tabularNumerals: true`, full-value access), sorting (`TableSortContract`, caller-controlled), selection (`TableSelectionContract` + `TableSelectionSummaryModel`), and row actions; `ResponsiveTableRow` supports `selected`/`disabled`/`expanded`.
+- **`ResponsiveTableHeader`** (+ `ResponsiveTableSortButton`, `ResponsiveTableNumericCell`), controlled **`TablePagination`**, **`TableState`** (terminal vs retained table states — retained states keep usable data visible), and **`VirtualizedTableFrame`** (the virtualization-preservation boundary for specialized collections).
+
+### Charts and analytical evidence (Story 166.7) — `src/components/product/charts/`
+
+Standardizes chart identity and non-color evidence. The subtree itself imports **no Recharts** (rejected by the source contract) — domain consumers keep owning series construction, formatting, visibility, selection, and queries, and compose them inside `ChartFrame`.
+
+- **`ChartFrame`** exposes title, period, units, description, freshness, comparison, annotation, and actions as visible, programmatically-associated text. `ChartDataState` splits terminal states (`loading`/`empty`/`unavailable`; `error` requires a `recovery` node — they never fabricate a plot or a zero) from retained states (`rendered`/`partial`/`stale`, which keep evidence visible); `ChartActivityStatus` covers updating.
+- **`ChartEvidence`** renders series evidence without relying on color: `ChartSeriesRole` (categorical, positive, negative, reference, target, forecast, confidence, selection) × `ChartSeriesMarker` (solid, dashed, dotted, point, bar, area, band), each with a localized label from `contracts.ts`, plus the equivalent-data alternative for screen readers.
+- **`ChartLegend`**, **`ChartState`**, and **`ChartTooltipContent`** (caller-formatted tooltip entries) complete the frame.
+
+### Page states and async results (Story 166.8) — `src/components/product/states/`
+
+Honest state and recovery compositions, plus the single global not-found owner.
+
+- **`PageState`** is built on a discriminated prop union (`PageStateProps` in `contracts.ts`): every state requires `title`, `explanation`, and a **`trust` statement** (what is and is not trustworthy). Passive kinds (loading, empty, offline, processing, success) forbid retained-evidence props; `restricted`/`not-found` require an `action`; `filtered-empty` requires `scope` + `resetAction`; `error` requires `recovery`; retained kinds (refreshing, stale, partial) require a `limitation` explanation plus retained `children`. Terminal states cannot fabricate retained content or a zero.
+- **`AsyncOperationStatus`** exposes a caller-resolved lifecycle (`operation`, `scope`, phase union from idle/validating/queued/running/cancellable/non-cancellable/retrying to partial/complete/failed/expired, `safeLeave` guidance, truthful optional progress) without owning the mutation, polling, or retry rules.
+- **`BulkResultSummary`** (+ `createBulkResultCounts`) reports exact result counts and failed-item evidence for bulk operations.
+- **`ContextualSplitView`** renders list/detail presentation with an explicit narrow-screen detail transition and a deterministic focus contract.
+- **`src/app/not-found.tsx`** is the global not-found owner — it renders `PageState state="not-found"` for every unmatched URL (test: `src/app/__tests__/not-found.test.tsx`).
+
 ### Product-composition regression tests
 
-| File | Asserts |
-|------|---------|
-| `src/components/product/__tests__/PageContextCompositions.test.tsx` | `PageHeader`/`Breadcrumbs`/`ContextBar` rendering, single-`h1`, current-page marking, state text, busy/compact behavior. |
-| `src/components/product/__tests__/product-composition-source-contracts.test.ts` | Structural source contracts: barrel exports, prop types, presentational invariants. |
+| Family | Files | Assert |
+|--------|-------|--------|
+| Page context | `src/components/product/__tests__/PageContextCompositions.test.tsx`, `product-composition-source-contracts.test.ts` | `PageHeader`/`Breadcrumbs`/`ContextBar` rendering, single-`h1`, current-page marking, state text, busy/compact; Story 166.3 manifest and presentational source contracts. |
+| Metrics | `src/components/product/metrics/__tests__/` — `FinancialValue.test.tsx`, `MetricCompositions.test.tsx`, `StatusCompositions.test.tsx`, `metric-composition-source-contracts.test.ts` | Zero vs missing vs unavailable distinctions, compact full-value disclosure, comparison semantics, availability/status text; Story 166.4 manifest. |
+| Filters | `src/components/product/filters/__tests__/` — `FilterToolbar.test.tsx`, `filter-toolbar-source-contracts.test.ts` | State-union rendering, applied/empty scope visibility, reset focus determinism; Story 166.5 manifest. |
+| Tables | `src/components/product/tables/__tests__/` — `ResponsiveTable.test.tsx`, `ResponsiveTableHeader.test.tsx`, `TablePagination.test.tsx`, `TableState.test.tsx`, `VirtualizedTableFrame.test.tsx`, `TableContracts.test.ts`, `table-composition-source-contracts.test.ts` | Semantic framing, narrow strategies, numeric/sort/selection contracts, controlled pagination; Story 166.6 manifest. |
+| Charts | `src/components/product/charts/__tests__/` — `ChartFrame.test.tsx`, `ChartEvidence.test.tsx`, `ChartLegend.test.tsx`, `ChartState.test.tsx`, `ChartTooltipContent.test.tsx`, `ChartContracts.test.ts`, `chart-composition-source-contracts.test.ts` | Identity/trust-state rendering, non-color series evidence, retained-data behavior; Story 166.7 manifest. |
+| States | `src/components/product/states/__tests__/` — `PageState.test.tsx`, `AsyncOperationStatus.test.tsx`, `BulkResultSummary.test.tsx`, `ContextualSplitView.test.tsx`, `StateContracts.test.ts`, `state-composition-source-contracts.test.ts` | Discriminated-union prop contracts, trust statements, focus/reset determinism; Story 166.8 manifest. |
 
 ## Migration program (Epics 166–174)
 
@@ -138,21 +226,21 @@ The foundation above is the first phase of a 90-story, 76-route migration define
 
 **Non-negotiable principles**: preserve behavior before changing presentation; keep `src/components/ui/**` generic and domain-agnostic; build in layers; one shared file = one upstream owner Story; never run `shadcn init --force`; do not hide financial/operational/chart/table/availability/error meaning behind color, hover, truncation, or viewport width; local validation is the merge gate; production/deployment work is forbidden (see [Architecture — Configuration](architecture.md#configuration) and [Testing & Operations](testing-and-ops.md)).
 
-Story 166.1 (tokens) → 166.2 (primitives) → 166.3 (compositions) must land in order; later epics (167 protected AppShell, 168 analytics-shared, 169–173 routes) depend on merged prerequisites.
+The full foundation (Stories 166.1–166.8) has landed in order: 166.1 tokens → 166.2 primitives → 166.3 page-context, 166.4 metrics, 166.5 filters, 166.6 tables, 166.7 charts, 166.8 states. Epic 167 (AppShell, authentication, first-time value) is in progress: **167.1** (unified protected AppShell — one `resolveNavigationItems` model consumed by both desktop `Sidebar` and mobile `MobileSidebarSheet`, skip-link, cross-tab logout detection in `src/app/(dashboard)/layout.tsx`), **167.2** (root entry `/` hydration-aware redirect, `src/app/page.tsx`), **167.3** (`/login`), and **167.4** (`/register`) are merged; 167.5–167.7 (cabinet onboarding, processing, wb-token) are still backlog. Later epics (168 analytics-shared, 169–173 routes, 174 audit) depend on these merged prerequisites.
 
 ## When to consult this page
 
 - Changing any color, spacing, radius, shadow, or typography value → edit `src/styles/globals.css` and re-run the token + contrast tests.
 - Adding or modifying a `src/components/ui/**` primitive → keep it semantic-token-only and domain-agnostic; extend the primitive-behavior/semantic-surface tests.
-- Adding a new shared presentational layout → place it in `src/components/product/`; keep it presentational and route-supplied; extend the composition tests.
-- Migrating a route → confirm prerequisite Stories are merged, then follow the master plan's per-story protocol.
+- Adding a new shared presentational composition → place it in the owning `src/components/product/<family>/` subtree; keep it presentational and route-supplied; extend that family's tests and add its files to that family's source-contract manifest (do not widen an existing manifest).
+- Migrating a route → confirm prerequisite Stories are merged, then follow the master plan's per-story protocol; consume compositions through the documented barrels (`src/components/product` for page-context/metrics/filters; subtree barrels for tables/charts/states).
 
 ## Change safety and validation
 
-Design-system changes are guarded by focused regression suites; do not run the full suite to confirm a token or primitive change:
+Design-system changes are guarded by focused regression suites; do not run the full suite to confirm a token, primitive, or composition change:
 
 ```bash
-npx vitest run src/styles/__tests__ src/components/ui/__tests__ src/components/product/__tests__
+npx vitest run src/styles/__tests__ src/components/ui/__tests__ src/components/product
 ```
 
-Token edits additionally require `npm run build` because the compiled CSS is what the contrast test parses. Primitive hardening must preserve every existing export, variant, portal, and compatibility prop — check the four updated consumer modal tests when changing close-control or focus behavior.
+Token edits additionally require `npm run build` because the compiled CSS is what the contrast test parses. Primitive hardening must preserve every existing export, variant, portal, and compatibility prop — check the four updated consumer modal tests when changing close-control or focus behavior. Composition-family changes must keep the family's discriminated-union props exhaustive (a new state kind has to extend the union and the tests together) and keep the family's source-contract manifest in sync with its file list.
