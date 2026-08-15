@@ -1,5 +1,5 @@
 # generated: 2026-08-03
-# last_updated: 2026-08-11
+# last_updated: 2026-08-15
 # project: frontend
 # project_key: NOKEY
 # tracking_system: file-system
@@ -37,7 +37,7 @@
 #   they are excluded from story and retrospective counts and must be documented with a no-story-ID note.
 
 generated: 2026-08-03 # refreshed after Epic 127 truth reconciliation and Epics 162-165 registration
-last_updated: 2026-08-14 # Story 167.3 final frozen snapshot 7b50199d received fresh sequential APPROVE then CLEAR with no unresolved accepted findings; Task 7 complete and Story moved to review; Task 8 Git integration/PR/merge/cleanup remains pending.
+last_updated: 2026-08-15 # Correct-course: add 167.8/167.9 prerequisites, preserve active 167.5, and update the 92-Story DAG.
 project: frontend
 project_key: NOKEY
 tracking_system: file-system
@@ -750,9 +750,11 @@ development_status:
   167-2-fe-migrate-root-entry: review
   167-3-fe-migrate-login-login: done
   167-4-fe-migrate-registration-register: review
-  167-5-fe-migrate-cabinet-onboarding-cabinet: backlog
+  167-5-fe-migrate-cabinet-onboarding-cabinet: in-progress  # Correct-course 2026-08-15: preserve active dirty Story lane; integration waits for merged 167.8 and 167.9.
   167-6-fe-migrate-processing-processing: backlog
   167-7-fe-migrate-wb-token-wb-token: backlog
+  167-8-fe-establish-authoritative-cabinet-session-reconciliation-and-create-idempotency-contracts: ready-for-dev  # Non-route backend prerequisite; plan, Story artifact, and RED ATDD skeleton created. No backend completion claim.
+  167-9-fe-enforce-account-scoped-conditional-cabinet-settlement: backlog  # Non-route frontend prerequisite; blocked on merged Story 167.8.
   epic-167-fe-retrospective: optional
 
   # Epic 168-FE: Trustworthy Analytics Core and Financial Decisions

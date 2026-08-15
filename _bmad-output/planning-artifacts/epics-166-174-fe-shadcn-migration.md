@@ -33,7 +33,7 @@ lastStep: 4
 
 This document defines the complete BMAD Epic and Story breakdown for consolidating the existing partial shadcn/ui adoption into one semantic, accessible, responsive design system and migrating every frontend route and its complete owned UI surface.
 
-The initiative is a brownfield presentation and interaction migration. Existing backend contracts, queries, mutations, calculations, route behavior, Russian localization, formatting semantics, authentication behavior, cabinet context, and valid domain workflows remain unchanged unless a Story explicitly states otherwise.
+The initiative is a brownfield presentation and interaction migration. Existing backend contracts, queries, mutations, calculations, route behavior, Russian localization, formatting semantics, authentication behavior, cabinet context, and valid domain workflows remain unchanged unless a Story explicitly states otherwise. Story 167.8 is the sole approved cross-repository exception: it owns the backend reconciliation/idempotency contract required by the corrected onboarding DAG. Ordinary frontend migration Stories continue to forbid backend changes.
 
 Development and validation are local-only. The standard environment is the frontend on `localhost:3100` and the backend on `localhost:3000`. Production deployment, production infrastructure, force pushes, and direct pushes to `main` are outside scope.
 
@@ -347,7 +347,7 @@ Users can enter the product, authenticate, complete onboarding, understand proce
 
 **Route scope:** `/`, `/login`, `/register`, `/cabinet`, `/processing`, `/wb-token`
 
-**Dependencies:** Epic 166-FE
+**Dependencies:** Epic 166-FE. Corrected onboarding execution order: 167.8 → 167.9 → 167.5 → 167.6 and 167.7.
 
 **Standalone outcome:** A new user can reach first useful data and the existing next-value workflow; a returning user can navigate the protected application shell safely.
 
@@ -489,6 +489,8 @@ The state may be implemented at a Next.js route boundary or inside the owning co
 - Changes are limited to the Story's Allowed Change Surface plus tests and Story documentation directly proving the change.
 - Token/compiler files, `src/components/ui`, AppShell/navigation, shared product compositions, unrelated domain components, API clients, hooks, types, query keys, and backend contracts are forbidden unless explicitly included in the Story's Allowed Change Surface.
 - A newly discovered shared requirement is escalated to the orchestrator and resolved through the named owner or a prerequisite Story; it is not absorbed silently.
+- Numeric Story order identifies canonical records; it is not a universal execution order. An approved higher-numbered correct-course prerequisite may execute before a lower-numbered route Story when the explicit canonical DAG requires it.
+- Story 167.8 alone may change the backend repository within its declared contract surface. Its implementation, PR, merge, and cleanup evidence is verified against backend `main`; a frontend coordination artifact may not claim Story 167.8 `review`, `done`, backend completion, or cleanup without the exact backend merge SHA, proof that SHA is an ancestor of current backend `main`, and backend branch/worktree cleanup evidence. Story 167.8 has no route-ledger row, and no other Story inherits this exception.
 - No production, deployment, force-push, direct-`main` push, or required CI-gate work is authorized.
 
 #### Local Validation Contract
@@ -661,7 +663,7 @@ As a new seller, I want understandable account creation, so that I can begin onb
 
 As a new seller, I want clear first-cabinet creation, so that I can proceed to WB token setup confidently.
 
-**Delivery Record:** **Route/User Value:** `/cabinet`. **Owned Surface:** route, `CabinetCreationForm`, shared onboarding-guard presentation/tests. **Shared Dependencies:** 166-FE and cabinet/onboarding behavior. **Allowed Change Surface:** route/form and behavior-locked guard integration. **Forbidden Shared Files:** cabinet APIs/stores/schema/primitives/other onboarding routes. **State Coverage:** guard/default/invalid/submitting/server/network/success. **Responsive/Table/Chart Contract:** focused form/visible step. **Accessibility Contract:** labels/errors/redirect status/focus. **Test and Visual Evidence:** cabinet/guard/onboarding tests/themes. **Local Validation:** targeted tests plus universal. **Branch/Worktree Lifecycle:** `cdx/epic-167-story-5-cabinet`, onboarding-guard owner. **Cleanup Evidence:** guard consumer inventory and transition proof.
+**Delivery Record:** **Route/User Value:** `/cabinet`. **Owned Surface:** route, `CabinetCreationForm` presentation/validation/recovery outside 167.9's exact typed-result consumer hunk, shared onboarding-guard presentation/tests. **Shared Dependencies:** 166-FE; merged Stories 167.8 and 167.9. **Allowed Change Surface:** route/form and behavior-locked guard integration while preserving 167.9's `applied | stale | indeterminate` consumer seam from `main`. **Forbidden Shared Files:** cabinet APIs/stores/schema/primitives/other onboarding routes; shared conditional settlement and its exact form consumer hunk remain owned by 167.9. **State Coverage:** guard/default/invalid/submitting/server/network/success. **Responsive/Table/Chart Contract:** focused form/visible step. **Accessibility Contract:** labels/errors/redirect status/focus. **Test and Visual Evidence:** cabinet/guard/onboarding tests/themes, including integrated A/B late-settlement proof. **Local Validation:** targeted tests plus universal. **Branch/Worktree Lifecycle:** `cdx/epic-167-story-5-cabinet`, preserved active worktree aligned safely after 167.8/167.9 merge; no destructive reset/rebase. **Cleanup Evidence:** guard consumer inventory and transition proof.
 
 **Acceptance Criteria:** **Given** valid, invalid, existing, or failed cabinet states **when** migrated **then** creation contract, safe input retention, current-step recovery, and next transition remain unchanged **and** `/wb-token` consumes the guard without editing it.
 
@@ -671,7 +673,7 @@ As a new seller, I want clear first-cabinet creation, so that I can proceed to W
 
 As a seller waiting for data, I want truthful progress and safe-leave recovery, so that I know when useful data is ready.
 
-**Delivery Record:** **Route/User Value:** `/processing`. **Owned Surface:** route, `ProcessingStatus` tree/tests. **Shared Dependencies:** 166-FE and existing polling hook/API. **Allowed Change Surface:** presentation/tests. **Forbidden Shared Files:** polling/API/store/primitives/other onboarding. **State Coverage:** queued/running/progress/refresh/stale/safe-leave/failure/network/retry/complete. **Responsive/Table/Chart Contract:** readable motion-independent progress. **Accessibility Contract:** progress values, restrained live regions, reduced motion. **Test and Visual Evidence:** polling/exactly-once transition and onboarding e2e/screenshots. **Local Validation:** targeted tests plus universal. **Branch/Worktree Lifecycle:** `cdx/epic-167-story-6-processing`. **Cleanup Evidence:** no duplicate requests and transition proof.
+**Delivery Record:** **Route/User Value:** `/processing`. **Owned Surface:** route, `ProcessingStatus` tree/tests. **Shared Dependencies:** merged Story 167.5, which transitively requires 167.8 and 167.9. **Allowed Change Surface:** presentation/tests. **Forbidden Shared Files:** polling/API/store/primitives/other onboarding. **State Coverage:** queued/running/progress/refresh/stale/safe-leave/failure/network/retry/complete. **Responsive/Table/Chart Contract:** readable motion-independent progress. **Accessibility Contract:** progress values, restrained live regions, reduced motion. **Test and Visual Evidence:** polling/exactly-once transition and onboarding e2e/screenshots. **Local Validation:** targeted tests plus universal. **Branch/Worktree Lifecycle:** `cdx/epic-167-story-6-processing`. **Cleanup Evidence:** no duplicate requests and transition proof.
 
 **Acceptance Criteria:** **Given** running, failed, uncertain, or complete processing **when** the route is migrated **then** polling cadence, stage/progress, safe-leave, recovery, and next navigation remain correct without misleading zeros or duplicate requests **and** completed onboarding state is retained.
 
@@ -681,9 +683,29 @@ As a seller waiting for data, I want truthful progress and safe-leave recovery, 
 
 As a seller, I want precise token validation and recovery, so that I connect my cabinet without exposing credentials.
 
-**Delivery Record:** **Route/User Value:** `/wb-token`. **Owned Surface:** route, `WbTokenForm`/helpers/tests. **Shared Dependencies:** 166-FE and guard owner 167.5. **Allowed Change Surface:** route/form presentation/tests. **Forbidden Shared Files:** token API/store/security/guard/primitives/other onboarding. **State Coverage:** guard/default/malformed/rejected/permission/network/submitting/success. **Responsive/Table/Chart Contract:** safe readable mobile form. **Accessibility Contract:** labels/instructions/error/focus/secret semantics. **Test and Visual Evidence:** synthetic token tests/onboarding e2e/privacy scan/themes. **Local Validation:** targeted tests plus universal. **Branch/Worktree Lifecycle:** `cdx/epic-167-story-7-wb-token`. **Cleanup Evidence:** privacy and transition proof.
+**Delivery Record:** **Route/User Value:** `/wb-token`. **Owned Surface:** route, `WbTokenForm`/helpers/tests. **Shared Dependencies:** merged guard owner Story 167.5, which transitively requires 167.8 and 167.9. **Allowed Change Surface:** route/form presentation/tests. **Forbidden Shared Files:** token API/store/security/guard/primitives/other onboarding. **State Coverage:** guard/default/malformed/rejected/permission/network/submitting/success. **Responsive/Table/Chart Contract:** safe readable mobile form. **Accessibility Contract:** labels/instructions/error/focus/secret semantics. **Test and Visual Evidence:** synthetic token tests/onboarding e2e/privacy scan/themes. **Local Validation:** targeted tests plus universal. **Branch/Worktree Lifecycle:** `cdx/epic-167-story-7-wb-token`. **Cleanup Evidence:** privacy and transition proof.
 
 **Acceptance Criteria:** **Given** valid, malformed, rejected, permission, network, or expired-session cases **when** migrated **then** validation/storage/transition semantics remain unchanged, input is handled safely, duplicates are prevented, no token leaks **and** the shared guard is consumed without modification.
+
+### Story 167.8: Establish Authoritative Cabinet Session Reconciliation and Create-Idempotency Contracts
+
+**Requirements:** FR1, FR2, FR3, FR18, FR19
+
+As a seller creating a cabinet, I want repeated or uncertain submissions to reconcile to one account-bound operation, so that transport ambiguity cannot create duplicate cabinets or expose another account's state.
+
+**Delivery Record:** **Route/User Value:** non-route prerequisite for safe cabinet onboarding. **Owned Surface:** backend cabinet/auth domain contract, DTOs, controller/service/module wiring, Prisma schema and migration, OpenAPI/API-path documentation, and direct unit/integration/e2e contract tests. **Shared Dependencies:** current backend `main`; no frontend Story prerequisite. **Allowed Change Surface:** backend cabinet/auth/domain files required to freeze and implement durable account-scoped idempotent create and authoritative operation lookup, plus database constraints, tests, and API documentation. **Forbidden Shared Files:** frontend repository, unrelated pricing/reporting domains, production/deploy configuration, unrelated package changes. **State Coverage:** unknown/in-progress/succeeded/failed, repeat-same-payload, same-key-different-payload, late/repeated transport outcome, unauthorized and cross-account lookup. **Responsive/Table/Chart Contract:** not applicable; non-route contract Story with no route-ledger row. **Accessibility Contract:** not applicable to backend UI; error/state semantics must remain explicit for consumers. **Test and Visual Evidence:** RED-first unit/integration/e2e/OpenAPI assertions; database uniqueness/account-binding/audit proof. **Local Validation:** backend format-check, lint-check, type-check, unit/e2e, build, endpoint-drift, and docs validation. **Branch/Worktree Lifecycle:** backend repository branch `cdx/epic-167-story-8-cabinet-reconciliation-contract`, worktree `/private/tmp/wb-be-167-8-cabinet-reconciliation-contract`; hard-stop on true overlap or record a freshly rechecked non-overlapping hunk reservation. **Cleanup Evidence:** exact backend merge SHA, ancestry on current backend `main`, local/remote branch absence, worktree removal/prune proof; frontend coordination artifacts may not infer these states.
+
+**Acceptance Criteria:** **Given** an authenticated account starts or repeats cabinet creation with an operation/idempotency key **when** requests are retried, delayed, or reconciled **then** authentication and account binding come only from the JWT; the same account, key, and payload resolve to one canonical operation/cabinet; a different payload for the same key fails deterministically; unknown, in-progress, succeeded, and failed states are explicit; another account cannot discover the operation **and** repeated or late transport outcomes cannot create another cabinet. The executable API path and schema are frozen in RED tests and OpenAPI before production code rather than guessed in planning prose.
+
+### Story 167.9: Enforce Account-Scoped Conditional Cabinet Settlement
+
+**Requirements:** FR1, FR2, FR3, FR19, NFR5, NFR6
+
+As a user who may switch accounts while cabinet creation is pending, I want late results settled only into their initiating session, so that stale work from account A cannot alter live account B or drive B's UI.
+
+**Delivery Record:** **Route/User Value:** non-route shared frontend prerequisite for safe `/cabinet` onboarding. **Owned Surface:** shared cabinet service, API helper/client immutable request-context plumbing, auth/session conditional-settlement helpers, login/session/guard coordination, typed `applied | stale | indeterminate` result, and the smallest reviewed `CabinetCreationForm` consumer seam/direct test. **Shared Dependencies:** merged Story 167.8 real backend contract. **Allowed Change Surface:** inventoried shared cabinet/auth/API/session files, direct contract/privacy tests, and only the exact consumer seam that permits existing success effects for `applied` while suppressing stale/indeterminate effects. **Forbidden Shared Files:** Story 167.5 route, form presentation/validation, recovery-marker implementation, unrelated form behavior, other route UI, tokens/primitives/AppShell, backend repository, unrelated stores/services. **State Coverage:** A pending, A→B, A→B→A, logout/login, stale success/failure, authoritative unknown/in-progress/succeeded/failed reconciliation, same/different operation, missing live session. **Responsive/Table/Chart Contract:** not applicable; non-route shared behavior Story. **Accessibility Contract:** stale/indeterminate results produce no toast, navigation, reset, marker clear, or error UI for another live account. **Test and Visual Evidence:** honest RED-first shared service/API/auth/consumer tests, real merged 167.8 contract integration proof, and recovery-marker privacy scans. **Local Validation:** targeted Vitest, format-check, lint, type-check, max-lines, build, and `git diff --check`. **Branch/Worktree Lifecycle:** frontend branch `cdx/epic-167-story-9-account-scoped-cabinet-settlement`, worktree `/private/tmp/wb-fe-167-9-account-scoped-cabinet-settlement`; this seam is a known overlap with the preserved Story 167.5 refactor, so 167.9 merges first and Story 167.5 alignment must port/preserve the behavior into `useCabinetCreateMutation`, rerun targeted stale/indeterminate tests, and obtain fresh independent review. **Cleanup Evidence:** merge SHA plus local/remote branch and worktree absence.
+
+**Acceptance Criteria:** **Given** account A initiates cabinet creation and the live account/session changes before settlement **when** success, failure, or reconciliation arrives **then** the immutable initiating request context reaches transport; auth/cabinet state changes only if the expected live account/session/operation still matches; the shared boundary returns `applied | stale | indeterminate`; only `applied` may continue existing success effects in the minimal form consumer hunk; stale/indeterminate cannot mutate B or produce toast/navigation/reset/marker-clear/error effects; recovery markers contain no password, token, cabinet payload, or email; route/presentation/validation/recovery implementation remains Story 167.5-owned **and** GREEN evidence consumes the real merged Story 167.8 contract rather than a mock-only reconciliation endpoint.
 
 ## Epic 168-FE: Trustworthy Analytics Core and Financial Decisions
 
@@ -2838,7 +2860,7 @@ So that no surface is skipped, duplicated, or executed without clear ownership.
 
 **Delivery Record:**
 
-- **Route/User Value:** all 76 routes and 90 Stories; complete accountable migration scope.
+- **Route/User Value:** all 76 routes and 92 Stories; complete accountable migration scope.
 - **Owned Surface:** route ledger, BMAD migration artifact, OMX master/per-Story plans, parity validators and planning documentation.
 - **Shared Dependencies:** Epics 166–173-FE planning/implementation records available.
 - **Allowed Change Surface:** planning, tracking, and non-product validation scripts only.
@@ -2846,7 +2868,7 @@ So that no surface is skipped, duplicated, or executed without clear ownership.
 - **State Coverage:** every route has applicable-state ownership and evidence fields; no implementation state is changed here.
 - **Responsive/Table/Chart Contract:** verify each route Story declares its specific contract.
 - **Accessibility Contract:** verify each Story declares automated and manual evidence.
-- **Test and Visual Evidence:** machine check: 76 source routes = 76 ledger routes = 76 route Stories; 90 BMAD Stories = 90 OMX plans; no duplicates.
+- **Test and Visual Evidence:** machine check: 76 source routes = 76 ledger routes = 76 route Stories; 92 BMAD Stories = 92 OMX plans; no duplicates.
 - **Local Validation:** parity validator plus documentation checks and `git diff --check`.
 - **Branch/Worktree Lifecycle:** `cdx/epic-174-story-1-plan-parity`, dedicated worktree.
 - **Cleanup Evidence:** merged tracking artifacts, deleted branch, removed worktree.
