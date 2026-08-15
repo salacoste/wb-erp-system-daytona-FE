@@ -280,6 +280,60 @@ describe('normalizePriceRecommendation', () => {
     expect(result.id).toBe('')
     expect(result.nmId).toBe(0)
   })
+
+  // --- SPP-1.4/1.6: basis + validation flags + alternative basis price ---
+
+  it('maps priceBasis and validationFlags when present', () => {
+    const result = normalizePriceRecommendation(
+      rawItem({ priceBasis: 'STOREFRONT_ANON', validationFlags: ['STOREFRONT_STALE'] })
+    )
+
+    expect(result.priceBasis).toBe('STOREFRONT_ANON')
+    expect(result.validationFlags).toEqual(['STOREFRONT_STALE'])
+  })
+
+  it('indicates UNKNOWN priceBasis and [] validationFlags when absent (never fabricated SELLER)', () => {
+    const result = normalizePriceRecommendation(rawItem())
+
+    expect(result.priceBasis).toBe('UNKNOWN')
+    expect(result.validationFlags).toEqual([])
+  })
+
+  it('indicates a foreign enum value as UNKNOWN (Defensive Frontend: indicate, never guess)', () => {
+    const result = normalizePriceRecommendation(rawItem({ priceBasis: 'STOREFRONT_SESSION' }))
+
+    expect(result.priceBasis).toBe('UNKNOWN')
+  })
+
+  it('coerces non-string validationFlags entries via String()', () => {
+    const result = normalizePriceRecommendation(rawItem({ validationFlags: [1, null, 'X'] }))
+
+    expect(result.validationFlags).toEqual(['1', 'null', 'X'])
+  })
+
+  it('defaults validationFlags to [] when not an array', () => {
+    const result = normalizePriceRecommendation(rawItem({ validationFlags: 'STOREFRONT_STALE' }))
+
+    expect(result.validationFlags).toEqual([])
+  })
+
+  it('maps alternativeBasisPrice when present (AP#8: nullable money)', () => {
+    const result = normalizePriceRecommendation(rawItem({ alternativeBasisPrice: 1487.5 }))
+
+    expect(result.alternativeBasisPrice).toBe(1487.5)
+  })
+
+  it('preserves null alternativeBasisPrice (absent on batch rows)', () => {
+    const result = normalizePriceRecommendation(rawItem({ alternativeBasisPrice: null }))
+
+    expect(result.alternativeBasisPrice).toBeNull()
+  })
+
+  it('defaults alternativeBasisPrice to null when missing', () => {
+    const result = normalizePriceRecommendation(rawItem())
+
+    expect(result.alternativeBasisPrice).toBeNull()
+  })
 })
 
 // ---------------------------------------------------------------------------

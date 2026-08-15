@@ -26,6 +26,9 @@ export function emptyPriceRecommendation(
     gapPct: null,
     targetMarginPct: 0,
     computedAt: '',
+    priceBasis: 'SELLER',
+    validationFlags: [],
+    alternativeBasisPrice: null,
     ...overrides,
   }
 }

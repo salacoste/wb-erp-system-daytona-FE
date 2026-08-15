@@ -10,8 +10,10 @@ import { useState, useCallback } from 'react'
 import { List } from 'lucide-react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Alert, AlertDescription } from '@/components/ui/alert'
+import { useAuthStore } from '@/stores/authStore'
 import { usePricingPageState } from './components/usePricingPageState'
 import { PricingPageHeader } from './components/PricingPageHeader'
+import { PricingBasisToggle } from './components/PricingBasisToggle'
 import { PricingFilters } from './components/PricingFilters'
 import { PricingSummaryCards } from './components/PricingSummaryCards'
 import { PricingTable } from './components/PricingTable'
@@ -20,9 +22,12 @@ import { ElasticitySection } from './components/ElasticitySection'
 
 export default function PricingPage() {
   const state = usePricingPageState()
+  const cabinetId = useAuthStore(auth => auth.cabinetId)
   const [historyNmId, setHistoryNmId] = useState<number | null>(null)
   const [historyVendorCode, setHistoryVendorCode] = useState<string | null>(null)
   const [historyOpen, setHistoryOpen] = useState(false)
+
+  const headerActions = <PricingBasisToggle cabinetId={cabinetId} />
 
   const handleRowClick = useCallback(
     (nmId: number) => {
@@ -37,7 +42,11 @@ export default function PricingPage() {
   if (state.isError) {
     return (
       <div className="space-y-6">
-        <PricingPageHeader isRefreshing={state.isRefreshing} onRefresh={state.handleRefresh} />
+        <PricingPageHeader
+          isRefreshing={state.isRefreshing}
+          onRefresh={state.handleRefresh}
+          actions={headerActions}
+        />
         <Alert variant="destructive">
           <AlertDescription>
             Не удалось загрузить рекомендации по ценам. Попробуйте обновить данные.
@@ -49,7 +58,11 @@ export default function PricingPage() {
 
   return (
     <div className="space-y-6">
-      <PricingPageHeader isRefreshing={state.isRefreshing} onRefresh={state.handleRefresh} />
+      <PricingPageHeader
+        isRefreshing={state.isRefreshing}
+        onRefresh={state.handleRefresh}
+        actions={headerActions}
+      />
 
       <PricingFilters
         targetMargin={state.targetMargin}

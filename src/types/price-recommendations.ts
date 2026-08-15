@@ -4,6 +4,16 @@
  * Story 122.2-FE: price history types
  */
 
+/** SPP-1: repricing price basis (BE enum PriceBasis; STOREFRONT_SESSION reserved — backend 400s). */
+export type PriceBasis = 'SELLER' | 'STOREFRONT_ANON'
+
+/**
+ * SPP-1: basis value as the boundary may receive it — unknown/future enum
+ * members (e.g. STOREFRONT_SESSION) map to 'UNKNOWN' (Defensive Frontend:
+ * indicate, never silently relabel). UI renders a distinct neutral chip.
+ */
+export type PriceBasisOrUnknown = PriceBasis | 'UNKNOWN'
+
 export interface PriceRecommendation {
   id: string
   nmId: number
@@ -19,6 +29,12 @@ export interface PriceRecommendation {
   gapPct: number | null
   targetMarginPct: number
   computedAt: string
+  /** SPP-1.4: price basis this row was computed under ('UNKNOWN' on unrecognized backend values). */
+  priceBasis: PriceBasisOrUnknown
+  /** SPP-1.4: validation flags — 'STOREFRONT_STALE' = storefront stale, seller fallback price used. */
+  validationFlags: string[]
+  /** SPP-1.6: seller-equivalent companion price under a storefront primary (null on batch rows). */
+  alternativeBasisPrice: number | null
 }
 
 export interface PriceRecommendationsResponse {

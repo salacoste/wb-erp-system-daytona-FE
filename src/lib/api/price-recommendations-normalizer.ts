@@ -5,6 +5,7 @@
  */
 
 import { toCount, toNullableNumber, toStringOrNull, toStr, asRecord } from './normalizer-helpers'
+import { normalizePriceBasis } from './pricing-basis'
 import type {
   PriceRecommendation,
   PriceRecommendationsResponse,
@@ -28,6 +29,11 @@ function toItem(raw: unknown): PriceRecommendation {
     gapPct: toNullableNumber(r.gapPct),
     targetMarginPct: toNullableNumber(r.targetMarginPct) ?? 0,
     computedAt: toStr(r.computedAt),
+    // SPP-1.4/1.6: basis + validation flags. Unknown enum values → 'UNKNOWN'
+    // (rendered as a distinct badge — never silently folded to SELLER).
+    priceBasis: normalizePriceBasis(r.priceBasis),
+    validationFlags: Array.isArray(r.validationFlags) ? r.validationFlags.map(String) : [],
+    alternativeBasisPrice: toNullableNumber(r.alternativeBasisPrice),
   }
 }
 

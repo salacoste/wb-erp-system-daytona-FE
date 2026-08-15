@@ -46,4 +46,38 @@ describe('PricingPageHeader', () => {
     await user.click(screen.getByRole('button'))
     expect(onRefresh).toHaveBeenCalledOnce()
   })
+
+  // --- actions slot (SPP-1.7-FE basis toggle) ---
+
+  it('renders nothing extra when actions is omitted', () => {
+    render(<PricingPageHeader isRefreshing={false} onRefresh={vi.fn()} />)
+    expect(screen.getByRole('button')).toBeInTheDocument()
+    expect(screen.queryByLabelText('Базис:')).not.toBeInTheDocument()
+  })
+
+  it('renders actions content before the refresh button', () => {
+    render(
+      <PricingPageHeader
+        isRefreshing={false}
+        onRefresh={vi.fn()}
+        actions={<div data-testid="basis-toggle-stub">Базис</div>}
+      />
+    )
+    expect(screen.getByTestId('basis-toggle-stub')).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: /Обновить/ })).toBeInTheDocument()
+  })
+
+  it('keeps refresh button functional alongside actions', async () => {
+    const user = userEvent.setup()
+    const onRefresh = vi.fn()
+    render(
+      <PricingPageHeader
+        isRefreshing={false}
+        onRefresh={onRefresh}
+        actions={<div data-testid="basis-toggle-stub">Базис</div>}
+      />
+    )
+    await user.click(screen.getByRole('button', { name: /Обновить/ }))
+    expect(onRefresh).toHaveBeenCalledOnce()
+  })
 })
