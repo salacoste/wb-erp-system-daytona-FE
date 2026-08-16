@@ -50,12 +50,17 @@ export function AutoFillWarning({ type, message, dismissible = true }: AutoFillW
           {displayMessage}
         </AlertDescription>
         {dismissible && (
+          // TD-E (issue #13): min-h/min-w raise the button's hit-area to the
+          // 44px touch floor. The X ICON stays 16px (h-4) — it is the button
+          // BOX that grows from 24px (h-6/w-6) to 44px, making the alert row
+          // ~20px taller. In-flow growth (unlike the absolute-positioned
+          // MissingCogsAlert dismiss, which overlays without shifting layout).
           <Button
             type="button"
             variant="ghost"
             size="sm"
             onClick={() => setDismissed(true)}
-            className="h-6 w-6 p-0 text-yellow-600 hover:text-yellow-800 hover:bg-yellow-100 shrink-0"
+            className="h-6 w-6 min-h-11 min-w-11 p-0 text-yellow-600 hover:text-yellow-800 hover:bg-yellow-100 shrink-0"
             aria-label="Закрыть предупреждение"
           >
             <X className="h-4 w-4" />

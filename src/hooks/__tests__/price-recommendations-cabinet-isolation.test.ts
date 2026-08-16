@@ -52,6 +52,53 @@ describe('priceRecommendationQueryKeys — multi-tenant cabinet isolation (W3-FE
     expect(keys.length).toBe(cabinets.length * 3)
   })
 
+  it('same cabinet + different args produce distinct keys (no within-cabinet collision)', () => {
+    // TD-E Part-1a: the isolation suite must also insure the intra-cabinet
+    // axis — filter changes (list) and SKU switches (detail) must never reuse
+    // a stale cached entry while cabinetId stays constant.
+    const paramsB: PriceRecommendationsParams = { limit: 50, gap_filter: 'below', sort: 'gap_rub' }
+    const nmIdB = 67890
+    for (const cabinetId of cabinets) {
+      expect(JSON.stringify(priceRecommendationQueryKeys.list(cabinetId, params))).not.toEqual(
+        JSON.stringify(priceRecommendationQueryKeys.list(cabinetId, paramsB))
+      )
+      expect(JSON.stringify(priceRecommendationQueryKeys.detail(cabinetId, nmId))).not.toEqual(
+        JSON.stringify(priceRecommendationQueryKeys.detail(cabinetId, nmIdB))
+      )
+    }
+  })
+
+  it('same cabinet — each single-field param axis and each history axis yields a distinct key', () => {
+    // TD-E FIX-L4: the paramsB test above changes ALL list fields at once, so a
+    // key factory that collapsed just ONE axis could still pass it. Pin each
+    // list axis separately (limit / gap_filter / sort — one-field diffs vs the
+    // same base params), plus the history axes (limit at same nmId, nmId at
+    // same limit) that no same-cabinet test covered before.
+    const limitOnly: PriceRecommendationsParams = { ...params, limit: 50 }
+    const gapFilterOnly: PriceRecommendationsParams = { ...params, gap_filter: 'below' }
+    const sortOnly: PriceRecommendationsParams = { ...params, sort: 'gap_rub' }
+    const nmIdB = 67890
+    for (const cabinetId of cabinets) {
+      expect(JSON.stringify(priceRecommendationQueryKeys.list(cabinetId, limitOnly))).not.toEqual(
+        JSON.stringify(priceRecommendationQueryKeys.list(cabinetId, params))
+      )
+      expect(
+        JSON.stringify(priceRecommendationQueryKeys.list(cabinetId, gapFilterOnly))
+      ).not.toEqual(JSON.stringify(priceRecommendationQueryKeys.list(cabinetId, params)))
+      expect(JSON.stringify(priceRecommendationQueryKeys.list(cabinetId, sortOnly))).not.toEqual(
+        JSON.stringify(priceRecommendationQueryKeys.list(cabinetId, params))
+      )
+      // history: limit axis (same SKU) — 12 vs 24 weeks must not share a cache slot
+      expect(JSON.stringify(priceRecommendationQueryKeys.history(cabinetId, nmId, 12))).not.toEqual(
+        JSON.stringify(priceRecommendationQueryKeys.history(cabinetId, nmId, 24))
+      )
+      // history: nmId axis (same limit) — SKU switch must not reuse the old SKU's entry
+      expect(JSON.stringify(priceRecommendationQueryKeys.history(cabinetId, nmId, 12))).not.toEqual(
+        JSON.stringify(priceRecommendationQueryKeys.history(cabinetId, nmIdB, 12))
+      )
+    }
+  })
+
   it('same cabinet + same args reproduce the identical key (determinism / cache hit)', () => {
     for (const cabinetId of cabinets) {
       expect(JSON.stringify(priceRecommendationQueryKeys.list(cabinetId, params))).toEqual(
@@ -66,6 +113,20 @@ describe('priceRecommendationQueryKeys — multi-tenant cabinet isolation (W3-FE
     }
   })
 
+  // Two no-cabinet key conventions coexist in this codebase (TD-E Part-1b,
+  // documented here rather than rewriting the hook):
+  //   - fbs precedent (src/lib/api/fbs-stock.ts): key factory accepts
+  //     `string | null` and embeds null directly in the key (null-param
+  //     convention — see fbs-stock-cabinet-isolation.test.ts "null cabinetId").
+  //   - price recommendations (src/hooks/usePriceRecommendations.ts): key
+  //     factory takes `string`; hooks pass `cabinetId ?? ''`, so the no-cabinet
+  //     state renders as an '' placeholder key segment (''-placeholder
+  //     convention).
+  // FUTURE: align the two conventions in a pass unifying null-cabinet key
+  // handling across hooks; until then the test below pins the safety property
+  // of the '' convention — the placeholder never equals any real cabinet's
+  // key, and the hooks' `enabled: cabinetId != null` guard keeps placeholder
+  // keys from ever being fetched.
   it('null-cabinet placeholder key ("") differs from any real cabinet key', () => {
     const placeholderList = JSON.stringify(priceRecommendationQueryKeys.list('', params))
     const placeholderDetail = JSON.stringify(priceRecommendationQueryKeys.detail('', nmId))

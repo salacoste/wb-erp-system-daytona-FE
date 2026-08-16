@@ -140,12 +140,14 @@ export function CategorySelector({
         </p>
       )}
       {value && !effectiveDisabled && (
+        // TD-E (issue #13): 44px effective touch floor on mobile (min-h-11);
+        // width is text-driven and already exceeds the floor
         <Button
           type="button"
           variant="ghost"
           size="sm"
           onClick={handleClear}
-          className="h-6 px-2 text-xs text-muted-foreground hover:text-foreground"
+          className="h-6 min-h-11 px-2 text-xs text-muted-foreground hover:text-foreground"
         >
           <X className="h-3 w-3 mr-1" />
           Очистить выбор

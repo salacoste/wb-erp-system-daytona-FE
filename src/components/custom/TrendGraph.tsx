@@ -39,7 +39,9 @@ export function TrendGraph() {
   if (!data || data.trends.length === 0) return <TrendGraphEmpty />
 
   return (
-    <Card>
+    // TD-E FIX-H1: stable testid for E2E — the AnalyticalDisclosure wrapper is
+    // collapsed+lazy by default, so specs must expand it before this Card mounts.
+    <Card data-testid="trend-graph">
       <CardHeader>
         <div className="flex items-center justify-between">
           <div>
