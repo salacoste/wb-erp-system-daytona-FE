@@ -129,7 +129,12 @@ export function ErrorMessage({ error, onRetry }: ErrorMessageProps) {
         {config.action && (
           <div className="flex items-center gap-2 mt-2">
             {'onClick' in config.action ? (
-              <Button variant="outline" size="sm" onClick={onRetry} className="h-7">
+              // TD-E (issue #13): min-h-11 raises the hit-area to the 44px touch
+              // floor. The button BOX grows from 28px (h-7) to 44px — it does NOT
+              // stay visually compact: the button is the only child of this flex
+              // row, so the alert container just gets ~16px taller; siblings are
+              // not shifted.
+              <Button variant="outline" size="sm" onClick={onRetry} className="h-7 min-h-11">
                 {config.action.label}
               </Button>
             ) : (

@@ -822,12 +822,17 @@ test.describe('Login → Dashboard Flow', () => {
 
   test.describe('Trend Graph (Story 3.4)', () => {
     test('displays trend graph with weekly data', async ({ page }) => {
-      // Trend graph container
-      const trendGraph = page
-        .locator(SELECTORS.trendGraph)
-        .or(page.locator('[class*="trend"], [class*="line-chart"]'))
+      // TD-E FIX-H1: TrendGraph renders ONLY when AnalyticalDisclosure (TZ-6)
+      // is expanded — collapsed state unmounts its children ({open && ...}), so
+      // the testid does not exist in the DOM until the toggle is clicked.
+      // Expand first, then assert the testid that TrendGraph's Card wrapper
+      // really renders. No .or() recharts fallback: it matched the
+      // always-mounted DailyBreakdownChart svg outside the disclosure, which
+      // made this test vacuous (green without TrendGraph ever rendering).
+      await page.getByRole('button', { name: /аналитик/i }).click()
 
-      await expect(trendGraph.first()).toBeVisible({ timeout: TIMEOUTS.api })
+      const trendGraph = page.locator(SELECTORS.trendGraph)
+      await expect(trendGraph).toBeVisible({ timeout: TIMEOUTS.api })
     })
 
     test('trend graph is functional', async ({ page }) => {
