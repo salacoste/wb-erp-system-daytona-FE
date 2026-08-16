@@ -66,6 +66,7 @@ Each domain follows the same pattern:
 - `liquidity-normalizer.ts` — Liquidity trends and distribution
 - `communications-normalizer.ts` — WB seller communications (feedbacks, questions, chats, claims, pinned reviews); value fields (rating, nmId) preserve null (AP#8), chat message `direction` coerced to a `'client' | 'seller' | 'wb'` union, and the pinned-reviews normalizer receives the raw `{ data, next }` SDK passthrough (see `skipDataUnwrap` below)
 - `finances-normalizer.ts` — Account balance (money fields preserve null, AP#8) and financial documents; the BE already maps snake_case → camelCase and unwraps the WB SDK envelope server-side, so the FE consumes bare camelCase shapes
+- `price-recommendations-normalizer.ts` — Per-SKU repricing recommendations; unknown `priceBasis` enum values are **indicated** as `'UNKNOWN'` (a distinct badge) rather than silently relabeled, `validationFlags` coerced to a string array, `alternativeBasisPrice` kept nullable (AP#8). See [Domain Logic — Pricing Basis](domain-logic.md#pricing-basis-repricing-spp-1-lane)
 
 ### Naming conventions
 - `normalize<Name>Response` — endpoint response normalizer
@@ -165,5 +166,6 @@ The pinned-reviews read endpoint (`GET /v1/communications/feedbacks/pinned`) is 
 | `communications.ts` + `communications-normalizer.ts` | NEW-2 — WB seller communications (feedbacks, questions, chats, claims, pinned reviews); read-only list endpoints returning bare objects/arrays |
 | `communications-writeback.ts` | NEW-2 (PR2) — gated write-side (reply/answer/send-chat/pin/unpin); all writes return HTTP 202 `{ jobId, status }` (BullMQ enqueued state), polled via `GET /writeback/jobs/:jobId` |
 | `finances.ts` + `finances-normalizer.ts` | NEW-7 — account balance (`GET /v1/finances/balance`) + financial documents (`GET /v1/finances/documents`, `…/categories`, `…/:serviceName/download`); bare camelCase shapes from the BE |
+| `pricing-basis.ts` | SPP-1 lane — cabinet repricing price basis (`GET`/`PUT /v1/pricing/basis`); `normalizePriceBasis()` folds unrecognized enum values to `'UNKNOWN'` (indicate, never relabel), `isSettablePriceBasis()` narrows the settable union, and `updatePricingBasis()` runtime-guards the PUT body. See [Domain Logic — Pricing Basis](domain-logic.md#pricing-basis-repricing-spp-1-lane) |
 
 Source: `src/lib/api/`

@@ -217,7 +217,7 @@ Honest state and recovery compositions, plus the single global not-found owner.
 
 ## Migration program (Epics 166–174)
 
-The foundation above is the first phase of a 90-story, 76-route migration defined in:
+The foundation above is the first phase of a 92-story, 76-route migration defined in:
 
 - `.omx/plans/shadcn-full-ui-migration-master.md` — approved master plan, delivery DAG, standard per-story protocol, non-negotiable principles.
 - `_bmad-output/planning-artifacts/epics-166-174-fe-shadcn-migration.md` — story scope, acceptance criteria, ownership, forbidden shared files.
@@ -226,7 +226,7 @@ The foundation above is the first phase of a 90-story, 76-route migration define
 
 **Non-negotiable principles**: preserve behavior before changing presentation; keep `src/components/ui/**` generic and domain-agnostic; build in layers; one shared file = one upstream owner Story; never run `shadcn init --force`; do not hide financial/operational/chart/table/availability/error meaning behind color, hover, truncation, or viewport width; local validation is the merge gate; production/deployment work is forbidden (see [Architecture — Configuration](architecture.md#configuration) and [Testing & Operations](testing-and-ops.md)).
 
-The full foundation (Stories 166.1–166.8) has landed in order: 166.1 tokens → 166.2 primitives → 166.3 page-context, 166.4 metrics, 166.5 filters, 166.6 tables, 166.7 charts, 166.8 states. Epic 167 (AppShell, authentication, first-time value) is in progress: **167.1** (unified protected AppShell — one `resolveNavigationItems` model consumed by both desktop `Sidebar` and mobile `MobileSidebarSheet`, skip-link, cross-tab logout detection in `src/app/(dashboard)/layout.tsx`), **167.2** (root entry `/` hydration-aware redirect, `src/app/page.tsx`), **167.3** (`/login`), and **167.4** (`/register`) are merged; 167.5–167.7 (cabinet onboarding, processing, wb-token) are still backlog. Later epics (168 analytics-shared, 169–173 routes, 174 audit) depend on these merged prerequisites.
+The full foundation (Stories 166.1–166.8) has landed in order: 166.1 tokens → 166.2 primitives → 166.3 page-context, 166.4 metrics, 166.5 filters, 166.6 tables, 166.7 charts, 166.8 states. Epic 167 (AppShell, authentication, first-time value) is in progress: **167.1** (unified protected AppShell — one `resolveNavigationItems` model consumed by both desktop `Sidebar` and mobile `MobileSidebarSheet`, skip-link, cross-tab logout detection in `src/app/(dashboard)/layout.tsx`), **167.2** (root entry `/` hydration-aware redirect, `src/app/page.tsx`), **167.3** (`/login`), and **167.4** (`/register`) are merged. The onboarding lane was re-planned (correct-course, 2026-08-15): two new non-route prerequisites — **167.8** (backend cabinet-session reconciliation + create-idempotency contracts; the sole cross-repository exception, executed in the backend repo, no route-ledger row) and **167.9** (frontend account-scoped conditional cabinet settlement) — now gate the lane, so the merge order is 167.8 → 167.9 → 167.5 (cabinet onboarding, in progress) → only then 167.6 (processing) and 167.7 (wb-token). Story numbers are identities, not a universal execution order. Later epics (168 analytics-shared, 169–173 routes, 174 audit) depend on these merged prerequisites.
 
 ## When to consult this page
 

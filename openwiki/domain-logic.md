@@ -1,7 +1,7 @@
 ---
 type: "Domain Reference"
 title: "Domain Logic"
-description: "Financial and business-logic helpers as pure functions in src/lib/ — theoretical profit, margin/COGS temporal logic, unit economics, liquidity with trends, account finances + document download (NEW-7), seller communications with gated write-back (NEW-2), cost/tariff calculations, ISO-week/Moscow-timezone handling, and Russian-locale formatters."
+description: "Financial and business-logic helpers as pure functions in src/lib/ — theoretical profit, margin/COGS temporal logic, unit economics, liquidity with trends, repricing price basis (SPP-1 lane), account finances + document download (NEW-7), seller communications with gated write-back (NEW-2), cost/tariff calculations, ISO-week/Moscow-timezone handling, and Russian-locale formatters."
 ---
 # Domain Logic
 
@@ -65,6 +65,74 @@ Each cabinet carries an explicit **target margin** (`targetMarginPct`, Epic 121 
 | Onboarding (cabinet creation) | `CabinetCreationForm` (`src/components/custom/CabinetCreationForm.tsx`) | Collects target margin alongside the cabinet name; if a cabinet already exists for the session, submitting updates that cabinet's margin via `useUpdateTaxSettings` instead of creating a new one. Includes a retry path: if cabinet creation succeeds but the margin save fails ("target margin" error), the form re-binds to the existing cabinet so the operator can retry just the margin. |
 
 The mutation hook `useUpdateTaxSettings` (`src/hooks/useCabinetTaxSettings.ts`) invalidates both the `cabinet-tax` and `financial` query families on success, so dashboards pick up the new target alongside the canonical tax config.
+
+## Pricing Basis (Repricing, SPP-1 Lane)
+
+The **pricing basis** is a cabinet-level setting that decides which WB price the per-SKU price recommendations (`/analytics/pricing`) are computed from. Two settable values: `SELLER` (цена продавца, from the seller API) and `STOREFRONT_ANON` (цена витрины — the price an anonymous buyer sees, promos included). Delivered by the SPP-1 frontend lane (SPP-1.3 API/hooks, SPP-1.4/1.6 row fields, SPP-1.7-FE badge/toggle).
+
+> Not to be confused with [Historical SPP](#historical-spp-report-derived-sales-participation) — that is the WB sales-participation metric in rubles/percent. "SPP" in story IDs of this lane refers to the backend repricing track; "basis" is the price source, not a discount.
+
+| Aspect | Detail |
+|--------|--------|
+| **Endpoint** | `GET`/`PUT /v1/pricing/basis` (`src/lib/api/pricing-basis.ts`), cabinet-scoped by the auto-injected `X-Cabinet-Id` header (see [API Layer & Normalizers](api-and-normalizers.md#financial-api-modules)). GET reads with `skipDataUnwrap: true`; PUT body is `{ priceBasis }` and echoes the persisted basis. |
+| **Types** | `PriceBasis` (settable union) and `PriceBasisOrUnknown` (adds `'UNKNOWN'`) in `src/types/price-recommendations.ts`. `STOREFRONT_SESSION` is reserved on the backend (PUT → 400) and deliberately absent from the FE union. |
+| **Boundary rule** | `normalizePriceBasis()` passes only the two settable values through; null/missing/future enum members → `'UNKNOWN'` — **indicate, never silently relabel** a financial surface. The badge renders a distinct «Неизвестный базис» chip instead of guessing `SELLER`. `isSettablePriceBasis()` narrows for the toggle; `updatePricingBasis()` runtime-guards the PUT so only the two supported values leave the client. |
+| **Row fields** | `toItem()` in `src/lib/api/price-recommendations-normalizer.ts` maps `priceBasis` (via `normalizePriceBasis`), `validationFlags` (non-array → `[]`; entries coerced with `String()`), and `alternativeBasisPrice` — the seller-equivalent companion price under a storefront primary, `null` on batch rows (AP#8 nullable money, see [Anti-Pattern #8](api-and-normalizers.md#anti-pattern-8-preserve-null-money-and-ratio-values)). |
+| **Query** | `pricingBasisKeys.cabinet(cabinetId)` (`src/hooks/usePricingBasis.ts`) — cabinet-scoped key (multi-tenant isolation); `usePricingBasis(cabinetId)` is disabled without a cabinet, 60s staleTime. |
+| **Mutation contract** | `useUpdatePricingBasis` seeds the cabinet cache with the persisted basis (`setQueryData`) and invalidates **both** the `pricing-basis` and `price-recommendations` key families — a basis change makes every cached recommendation row stale. |
+| **Recompute pending** | After a basis switch the BE list still serves cached rows computed under the OLD basis until `/refresh` or the scheduler recomputes. `isRecomputePending(cabinetBasis, rowBasis)` (exported pure helper) detects the mixed state so the UI can surface it instead of silently showing toggle=Витрина / badges=Продавец. |
+
+```mermaid
+sequenceDiagram
+    participant U as User
+    participant T as PricingBasisToggle
+    participant M as useUpdatePricingBasis
+    participant BE as Backend /v1/pricing/basis
+    participant Q as TanStack cache
+    U->>T: select new basis
+    T->>T: optimistic setSelected(next)
+    T->>M: mutate(next)
+    M->>BE: PUT { priceBasis }
+    alt PUT fails
+        T->>T: revert to previous selection
+        T-->>U: error toast «Не удалось изменить базис расчёта»
+    else PUT succeeds
+        M->>Q: setQueryData(cabinet key, basis)
+        M->>Q: invalidate pricing-basis + price-recommendations
+        T-->>U: info toast «нажмите Обновить для пересчёта»
+        U->>T: press Обновить
+        T->>BE: POST /v1/products/price-recommendations/refresh
+        BE-->>Q: rows recomputed under the new basis
+    end
+```
+
+*Basis switch: the toggle optimistically updates, the mutation seeds the basis cache and invalidates both key families, and rows are only recomputed after the explicit refresh.*
+
+### Badge semantics (`src/components/custom/PriceBasisBadge.tsx`)
+
+`resolveBasisBadgeVariant(basis, flags)` is a pure function; the badge is a static chip with `aria-label` + `title` (deliberately **not** `role="status"` — N badges in a table would create N aria-live regions). Styling mirrors `MarginBadge` (`rounded-full` border + `text-xs`).
+
+| Variant | Trigger | Label | Meaning |
+|---------|---------|-------|---------|
+| `seller` | `SELLER` | Продавец | Seller API price |
+| `storefront` | `STOREFRONT_ANON`, no stale flag | Витрина | Anonymous storefront price with promos |
+| `stale` | `STOREFRONT_ANON` + `STOREFRONT_STALE` flag | Витрина · устарела | No fresh storefront observation ≤24h — seller fallback price was used |
+| `unknown` | `UNKNOWN` | Неизвестный базис | Unrecognized backend value — never folded to SELLER |
+
+A `SELLER` row ignores the stale flag (stale is a storefront-basis concern); unrecognized flags do not trigger the stale variant.
+
+### UI wiring
+
+- `PricingBasisToggle` (`src/app/(dashboard)/analytics/pricing/components/PricingBasisToggle.tsx`) renders in the header's `actions` slot (`PricingPageHeader` gained an optional `actions` prop rendered before the Refresh button). Loading, error, and `UNKNOWN` states render a **disabled placeholder** («—» / «Ошибка загрузки») — never a fabricated basis. Server data wins once loaded (effect resets `selected` after success/refetch). Renders nothing when `cabinetId` is null; the page passes `useAuthStore(s => s.cabinetId)`.
+- `CurrentPriceCell` in `PricingTable` renders the price + badge inline, plus a muted `продав: …` companion line when `alternativeBasisPrice` is present.
+
+**Focused tests**: `src/lib/api/__tests__/pricing-basis.test.ts` (normalizer folding + GET/PUT), `src/hooks/__tests__/usePricingBasis.test.ts` (key isolation, dual invalidation, cache seeding), `src/components/custom/__tests__/PriceBasisBadge.test.tsx` (variant resolution, labels, a11y), `src/app/(dashboard)/analytics/pricing/components/__tests__/PricingBasisToggle.test.tsx` (placeholder/revert/hint), `PricingTable.test.tsx` (badge + companion price in the cell), `PricingPageHeader.test.tsx` (actions slot), `price-recommendations-normalizer.test.ts` (row-field mapping).
+
+```bash
+npx vitest run src/lib/api/__tests__/pricing-basis.test.ts src/hooks/__tests__/usePricingBasis.test.ts src/components/custom/__tests__/PriceBasisBadge.test.tsx src/app/\(dashboard\)/analytics/pricing
+```
+
+**Change recipe — adding a new basis value** (e.g. a future `STOREFRONT_SESSION` enablement): extend `PriceBasis` in `src/types/price-recommendations.ts` → pass it through in `normalizePriceBasis` + `isSettablePriceBasis` (`src/lib/api/pricing-basis.ts`) → add the option in `BASIS_OPTIONS` (`PricingBasisToggle.tsx`) → add a badge variant in `PriceBasisBadge.tsx` → update `emptyPriceRecommendation` (`src/test/fixtures/price-recommendations-empty.ts`) and every `PriceRecommendation` test literal → extend the five focused test files above. Non-goals: the PUT runtime guard, dual key-family invalidation, and the disabled-placeholder rule stay untouched.
 
 ## Historical SPP (Report-Derived Sales Participation)
 

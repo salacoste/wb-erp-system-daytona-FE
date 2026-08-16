@@ -75,6 +75,7 @@ npm run check:anti-pattern-8-normalizer  # AP#8 normalizer ratchet
 | Finances (NEW-7) — balance + documents | `src/lib/api/finances.ts`, `src/hooks/useFinances.ts`, `src/lib/finances/download-blob.ts`, `src/lib/finances/finances-formatters.ts` |
 | Liquidity trends (Story 165.4) | `src/lib/api/liquidity.ts` (`getLiquidityTrends`), `src/app/(dashboard)/analytics/liquidity/components/liquidity-trend-config.ts`, `src/types/liquidity/distribution.ts` |
 | Backfill retry (Story 165.5) | `src/lib/api/backfill.ts` (`retryBackfill`), `src/types/backfill.ts` (`BackfillRetrySource`) |
+| Pricing basis / repricing (SPP-1 lane) | `src/lib/api/pricing-basis.ts`, `src/hooks/usePricingBasis.ts`, `src/components/custom/PriceBasisBadge.tsx`, `src/app/(dashboard)/analytics/pricing/components/PricingBasisToggle.tsx` — see [Domain Logic — Pricing Basis](domain-logic.md#pricing-basis-repricing-spp-1-lane) |
 | Outbound network guard (Vitest) | `src/test/outbound-network-guard.ts`, `src/test/network-guard-bootstrap.ts`, `test-utils/outbound-network-policy.ts` |
 | Playwright network guard + static boundary | `e2e/fixtures/playwright-network-guard.ts`, `src/test/playwright-static-boundary.ts` |
 | Local E2E preflight + handshake (Story 162.2) | `scripts/e2e-preflight.mjs`, `scripts/e2e-preflight-handshake.mjs`, `scripts/e2e-preflight.test.mjs` |
@@ -88,10 +89,10 @@ npm run check:anti-pattern-8-normalizer  # AP#8 normalizer ratchet
 
 | Area | Source Anchor | Reason Deferred |
 |------|---------------|-----------------|
-| Analytics module deep-dives (30+ sub-routes) | `src/app/(dashboard)/analytics/*/` | Too many independent modules; each follows the same normalizer→hook→component pattern documented in [API Layer & Normalizers](api-and-normalizers.md) |
+| Analytics module deep-dives (30+ sub-routes) | `src/app/(dashboard)/analytics/*/` | Too many independent modules; each follows the same normalizer→hook→component pattern documented in [API Layer & Normalizers](api-and-normalizers.md). Exception: the pricing module's repricing basis lane is documented in [Domain Logic — Pricing Basis](domain-logic.md#pricing-basis-repricing-spp-1-lane) |
 | Component library inventory | `src/components/` | Large surface; shadcn/ui base + custom feature components; the design-system foundation is documented in [Design System](design-system.md) |
 | docs/ directory structure | `docs/epics/`, `docs/stories/`, `docs/request-backend/` | 211 resolved backend requests; primarily project-management artifacts, not code documentation |
 | Backlog task tracking | `backlog/tasks/` | 55 tracked tasks via Backlog.md CLI; process artifacts, not source code |
 | Zustand store details | `src/stores/` | 5 stores; architecture covered in [Architecture](architecture.md); individual store APIs are self-documenting |
-| Route migrations (Epics 167–174) | `.omx/plans/shadcn-full-ui-migration-master.md`, `src/app/(dashboard)/**/page.tsx` | Foundation (Epic 166) and Stories 167.1–167.4 (AppShell, root entry, login, register) merged; the onboarding routes (167.5–167.7) and the remaining ~73 of 76 ledger routes migrate one Story at a time under the master plan. See [Design System](design-system.md). |
+| Route migrations (Epics 167–174) | `.omx/plans/shadcn-full-ui-migration-master.md`, `src/app/(dashboard)/**/page.tsx` | Foundation (Epic 166) and Stories 167.1–167.4 (AppShell, root entry, login, register) merged; the 92-story plan re-ordered the onboarding lane (merge 167.8 → 167.9 → 167.5, then 167.6/167.7) and the remaining ledger routes migrate one Story at a time under the master plan. See [Design System](design-system.md). |
 | OMX story-plan orchestration | `scripts/manage-omx-story-plans.mjs`, `.omx/plans/`, `docs/process/omx-story-worktree-orchestrator-prompt.md` | Process/planning tooling for epic 162–165 story plans; not runtime source |
