@@ -2,6 +2,8 @@
  * Unit tests for usePriceRecommendations hooks
  * Tests: usePriceRecommendations, usePriceRecommendation, usePriceRefresh,
  *        usePriceRecommendationHistory
+ * Story W3-FE: queryKeys are cabinet-scoped — authStore is mocked with a
+ * concrete cabinetId; keys embed it; cabinetId=null disables every query.
  */
 
 import { describe, it, expect, vi, beforeEach } from 'vitest'
@@ -16,6 +18,7 @@ import {
   priceRecommendationQueryKeys,
 } from '../usePriceRecommendations'
 import * as api from '@/lib/api/price-recommendations'
+import * as authStore from '@/stores/authStore'
 import type {
   PriceRecommendation,
   PriceRecommendationsResponse,
@@ -23,11 +26,20 @@ import type {
 } from '@/types/price-recommendations'
 
 vi.mock('@/lib/api/price-recommendations')
+vi.mock('@/stores/authStore')
 
 const mockGetList = vi.mocked(api.getPriceRecommendations)
 const mockGetDetail = vi.mocked(api.getPriceRecommendation)
 const mockRefresh = vi.mocked(api.refreshPriceRecommendations)
 const mockGetHistory = vi.mocked(api.getPriceRecommendationHistory)
+const mockUseAuthStore = vi.mocked(authStore.useAuthStore)
+
+const TEST_CABINET = 'cab-recs-test'
+
+function stubCabinetId(cabinetId: string | null) {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  mockUseAuthStore.mockImplementation((selector: any) => selector({ cabinetId }))
+}
 
 function createWrapper() {
   const queryClient = new QueryClient({
@@ -78,32 +90,53 @@ const mockHistoryPoint: PriceRecommendationHistoryPoint = {
 // ── queryKeys ──────────────────────────────────────────────────────────────────
 
 describe('priceRecommendationQueryKeys', () => {
-  it('list key includes params', () => {
+  it('list key includes cabinetId and params', () => {
     const params = { limit: 10, gap_filter: 'above' }
-    const key = priceRecommendationQueryKeys.list(params)
-    expect(key).toEqual(['price-recommendations', 'list', params])
+    const key = priceRecommendationQueryKeys.list(TEST_CABINET, params)
+    expect(key).toEqual(['price-recommendations', 'list', TEST_CABINET, params])
   })
 
-  it('detail key includes nmId', () => {
-    expect(priceRecommendationQueryKeys.detail(123)).toEqual([
+  it('lists group key is a prefix-safe bucket', () => {
+    expect(priceRecommendationQueryKeys.lists()).toEqual(['price-recommendations', 'list'])
+  })
+
+  it('detail key includes cabinetId and nmId', () => {
+    expect(priceRecommendationQueryKeys.detail(TEST_CABINET, 123)).toEqual([
       'price-recommendations',
       'detail',
+      TEST_CABINET,
       123,
     ])
   })
 
-  it('history key includes nmId and limit', () => {
-    expect(priceRecommendationQueryKeys.history(123, 10)).toEqual([
+  it('details group key is a prefix-safe bucket', () => {
+    expect(priceRecommendationQueryKeys.details()).toEqual(['price-recommendations', 'detail'])
+  })
+
+  it('history key includes cabinetId, nmId and limit', () => {
+    expect(priceRecommendationQueryKeys.history(TEST_CABINET, 123, 10)).toEqual([
       'price-recommendations',
       'history',
+      TEST_CABINET,
       123,
       10,
     ])
   })
 
+  it('histories group key is a prefix-safe bucket', () => {
+    expect(priceRecommendationQueryKeys.histories()).toEqual(['price-recommendations', 'history'])
+  })
+
   it('different nmIds produce different keys', () => {
-    expect(priceRecommendationQueryKeys.detail(1)).not.toEqual(
-      priceRecommendationQueryKeys.detail(2)
+    expect(priceRecommendationQueryKeys.detail(TEST_CABINET, 1)).not.toEqual(
+      priceRecommendationQueryKeys.detail(TEST_CABINET, 2)
+    )
+  })
+
+  it('different cabinetIds produce different keys', () => {
+    const params = { limit: 10 }
+    expect(priceRecommendationQueryKeys.list('cab-A', params)).not.toEqual(
+      priceRecommendationQueryKeys.list('cab-B', params)
     )
   })
 })
@@ -113,6 +146,7 @@ describe('priceRecommendationQueryKeys', () => {
 describe('usePriceRecommendations', () => {
   beforeEach(() => {
     vi.clearAllMocks()
+    stubCabinetId(TEST_CABINET)
   })
 
   it('fetches recommendations list with default params', async () => {
@@ -140,6 +174,13 @@ describe('usePriceRecommendations', () => {
     expect(mockGetList).not.toHaveBeenCalled()
   })
 
+  it('is disabled (no fetch) when cabinetId is null', () => {
+    stubCabinetId(null)
+    const { result } = renderHook(() => usePriceRecommendations(), { wrapper: createWrapper() })
+    expect(result.current.fetchStatus).toBe('idle')
+    expect(mockGetList).not.toHaveBeenCalled()
+  })
+
   it('returns error on failure', async () => {
     mockGetList.mockRejectedValueOnce(new Error('Server error'))
     mockGetList.mockRejectedValueOnce(new Error('Server error'))
@@ -153,6 +194,7 @@ describe('usePriceRecommendations', () => {
 describe('usePriceRecommendation', () => {
   beforeEach(() => {
     vi.clearAllMocks()
+    stubCabinetId(TEST_CABINET)
   })
 
   it('fetches single recommendation when nmId provided', async () => {
@@ -167,6 +209,15 @@ describe('usePriceRecommendation', () => {
 
   it('is disabled when nmId is null', () => {
     const { result } = renderHook(() => usePriceRecommendation(null), {
+      wrapper: createWrapper(),
+    })
+    expect(result.current.fetchStatus).toBe('idle')
+    expect(mockGetDetail).not.toHaveBeenCalled()
+  })
+
+  it('is disabled (no fetch) when cabinetId is null', () => {
+    stubCabinetId(null)
+    const { result } = renderHook(() => usePriceRecommendation(12345), {
       wrapper: createWrapper(),
     })
     expect(result.current.fetchStatus).toBe('idle')
@@ -188,6 +239,7 @@ describe('usePriceRecommendation', () => {
 describe('usePriceRefresh', () => {
   beforeEach(() => {
     vi.clearAllMocks()
+    stubCabinetId(TEST_CABINET)
   })
 
   it('calls refreshPriceRecommendations and invalidates cache', async () => {
@@ -215,6 +267,7 @@ describe('usePriceRefresh', () => {
 describe('usePriceRecommendationHistory', () => {
   beforeEach(() => {
     vi.clearAllMocks()
+    stubCabinetId(TEST_CABINET)
   })
 
   it('fetches history when nmId provided', async () => {
@@ -229,6 +282,15 @@ describe('usePriceRecommendationHistory', () => {
 
   it('is disabled when nmId is null', () => {
     const { result } = renderHook(() => usePriceRecommendationHistory(null), {
+      wrapper: createWrapper(),
+    })
+    expect(result.current.fetchStatus).toBe('idle')
+    expect(mockGetHistory).not.toHaveBeenCalled()
+  })
+
+  it('is disabled (no fetch) when cabinetId is null', () => {
+    stubCabinetId(null)
+    const { result } = renderHook(() => usePriceRecommendationHistory(12345, 10), {
       wrapper: createWrapper(),
     })
     expect(result.current.fetchStatus).toBe('idle')
