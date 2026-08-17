@@ -92,13 +92,13 @@ export function OrdersCogsSummary({ from, to }: OrdersCogsSummaryProps) {
       <CogsMetricCard
         title="Выручка"
         value={data ? formatCurrency(data.totalAmount) : '—'}
-        icon={<CircleDollarSign className="h-5 w-5 text-green-600" />}
+        icon={<CircleDollarSign className="h-5 w-5 text-financial-positive" />}
         isLoading={isLoading}
       />
       <CogsMetricCard
         title="Себестоимость"
         value={data?.cogsTotal != null ? formatCurrency(data.cogsTotal) : '—'}
-        icon={<Package className="h-5 w-5 text-blue-600" />}
+        icon={<Package className="h-5 w-5 text-status-information" />}
         isLoading={isLoading}
       />
       <CogsMetricCard
@@ -110,7 +110,7 @@ export function OrdersCogsSummary({ from, to }: OrdersCogsSummaryProps) {
       <CogsMetricCard
         title="Маржинальность"
         value={data?.marginPct != null ? formatPercentage(data.marginPct) : '—'}
-        icon={<Percent className="h-5 w-5 text-purple-600" />}
+        icon={<Percent className="h-5 w-5 text-primary" />}
         isLoading={isLoading}
       />
     </div>

@@ -38,7 +38,12 @@ function DeltaIndicator({ value, suffix = '' }: { value: number; suffix?: string
   // Infinity to formatDecimal (sign is the literal +/− below; magnitude is the abs value).
   const magnitude = Number.isFinite(value) ? formatDecimal(Math.abs(value)) : '∞'
   return (
-    <span className={cn('flex items-center', isPositive ? 'text-green-600' : 'text-red-500')}>
+    <span
+      className={cn(
+        'flex items-center',
+        isPositive ? 'text-financial-positive' : 'text-financial-negative'
+      )}
+    >
       {isPositive ? (
         <TrendingUp className="h-4 w-4 mr-1" />
       ) : (

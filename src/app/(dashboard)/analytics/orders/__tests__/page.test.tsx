@@ -778,3 +778,40 @@ describe('OrdersAnalyticsPage - E2E Integration (Story 51.8-FE)', () => {
     ids.forEach(id => expect(screen.getByTestId(`tab-content-${id}`)).toBeInTheDocument())
   })
 })
+
+// Story 168.5: icon + delta colors must use semantic tokens, not the legacy palette.
+// The mocked Tabs render ALL tab contents, so one page render covers OverviewTab
+// (DollarSign/TrendingUp/XCircle icons) and SeasonalityTab insight icons.
+describe('OrdersAnalyticsPage — semantic token pins (Story 168.5)', () => {
+  beforeEach(() => {
+    vi.clearAllMocks()
+    setupMocks()
+  })
+
+  it('OverviewTab icons render with exact financial/status token classes', () => {
+    renderPage()
+    const overview = getOverview()
+    // Выручка (DollarSign), Средний заказ/день (TrendingUp), Отмены (XCircle).
+    expect(overview.querySelectorAll('.text-financial-positive').length).toBeGreaterThan(0)
+    expect(overview.querySelectorAll('.text-status-information').length).toBeGreaterThan(0)
+    expect(overview.querySelectorAll('.text-financial-negative').length).toBeGreaterThan(0)
+  })
+
+  it('SeasonalityTab insight icons render with exact semantic token classes', () => {
+    renderPage()
+    // TrendingUp → financial-positive, TrendingDown → financial-negative, Calendar → status-information.
+    const seasonality = screen.getByTestId('tab-content-seasonality')
+    expect(seasonality.querySelectorAll('.text-financial-positive').length).toBeGreaterThan(0)
+    expect(seasonality.querySelectorAll('.text-financial-negative').length).toBeGreaterThan(0)
+    expect(seasonality.querySelectorAll('.text-status-information').length).toBeGreaterThan(0)
+  })
+
+  it('renders no legacy palette classes anywhere on the page (DOM guard)', () => {
+    const { container } = renderPage()
+    expect(
+      container.innerHTML.match(
+        /(bg|text|border|ring|divide|fill|stroke|outline)-(red|yellow|blue|green|gray|rose|amber|emerald|sky|orange|slate|zinc|neutral|stone|lime|teal|cyan|indigo|violet|purple|fuchsia|pink)(-\d+)?/
+      )
+    ).toBeNull()
+  })
+})

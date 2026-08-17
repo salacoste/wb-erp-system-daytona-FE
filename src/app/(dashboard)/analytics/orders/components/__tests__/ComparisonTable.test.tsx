@@ -56,3 +56,44 @@ describe('ComparisonTable — Infinity delta (zero-baseline period)', () => {
     expect(screen.getByText(/−12,4\s+%/)).toBeInTheDocument() // U+2212 minus, comma decimal
   })
 })
+
+// Story 168.5: delta sign must use semantic financial tokens, not the legacy palette
+// (matches 168.4 deltaColorClass precedent).
+describe('ComparisonTable — semantic token pins (Story 168.5)', () => {
+  it('positive delta renders the exact text-financial-positive class', () => {
+    const { container } = render(<ComparisonTable data={makeData({ revenueChangePercent: 25 })} />)
+    const positive = container.querySelectorAll('.text-financial-positive')
+    expect(positive.length).toBeGreaterThan(0)
+    expect(container.querySelector('.text-financial-negative')).toBeNull()
+  })
+
+  it('negative delta renders the exact text-financial-negative class', () => {
+    // Make ALL deltas negative — other rows default to Infinity (positive) which
+    // would legitimately render the positive token.
+    const { container } = render(
+      <ComparisonTable
+        data={makeData({
+          ordersChangePercent: -5,
+          revenueChangePercent: -12.4,
+          avgOrderValueChangePercent: -3,
+          cancellationRateChange: -0.7,
+        })}
+      />
+    )
+    const negative = container.querySelectorAll('.text-financial-negative')
+    expect(negative.length).toBeGreaterThan(0)
+    expect(container.querySelector('.text-financial-positive')).toBeNull()
+  })
+
+  it('renders no legacy palette classes (DOM guard)', () => {
+    const { container } = render(
+      <ComparisonTable data={makeData({ revenueChangePercent: -12.4 })} />
+    )
+    // Widened legacy-palette regex — must stay zero after the 168.5 token migration.
+    expect(
+      container.innerHTML.match(
+        /(bg|text|border|ring|divide|fill|stroke|outline)-(red|yellow|blue|green|gray|rose|amber|emerald|sky|orange|slate|zinc|neutral|stone|lime|teal|cyan|indigo|violet|purple|fuchsia|pink)(-\d+)?/
+      )
+    ).toBeNull()
+  })
+})
