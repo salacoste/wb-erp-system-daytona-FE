@@ -288,4 +288,178 @@ describe('WbTokenForm', () => {
     const tokenInput = screen.getByLabelText(/wb api токен/i)
     expect(tokenInput).toHaveAttribute('type', 'password')
   })
+
+  // --- Story 167.7 behavior-lock additions ---
+
+  it(
+    'never leaks the token value into rendered output on error (masked input, no echo)',
+    { timeout: 10000 },
+    async () => {
+      const user = userEvent.setup()
+      const mockUpdateWbToken = vi.mocked(updateWbToken)
+      mockUpdateWbToken.mockRejectedValue(new Error('Invalid token'))
+
+      renderForm()
+
+      const tokenInput = screen.getByLabelText(/wb api токен/i)
+      await user.clear(tokenInput)
+      await user.type(tokenInput, validToken)
+      await user.click(screen.getByRole('button', { name: /сохранить токен/i }))
+
+      await waitFor(
+        () => {
+          expect(screen.getByText('Токен недействителен')).toBeInTheDocument()
+        },
+        { timeout: 5000 }
+      )
+
+      // Privacy scan: the token must not appear in any rendered text or toast payload
+      expect(document.body.textContent).not.toContain(validToken)
+      for (const call of vi.mocked(toast.error).mock.calls) {
+        expect(call.join(' ')).not.toContain(validToken)
+      }
+      expect(vi.mocked(toast.error).mock.calls[0]?.[0]).toBe('Токен недействителен')
+    }
+  )
+
+  it(
+    'never leaks the token value after success: form resets before navigation',
+    { timeout: 10000 },
+    async () => {
+      const user = userEvent.setup()
+      const mockUpdateWbToken = vi.mocked(updateWbToken)
+      mockUpdateWbToken.mockResolvedValue({
+        id: 'key-id',
+        keyName: 'wb_api_token',
+        updatedAt: '2026-08-17T10:00:00Z',
+      })
+
+      renderForm()
+
+      const tokenInput = screen.getByLabelText(/wb api токен/i)
+      await user.clear(tokenInput)
+      await user.type(tokenInput, validToken)
+      await user.click(screen.getByRole('button', { name: /сохранить токен/i }))
+
+      await waitFor(
+        () => {
+          expect(mockPush).toHaveBeenCalledWith('/processing')
+        },
+        { timeout: 5000 }
+      )
+      expect((tokenInput as HTMLInputElement).value).toBe('')
+      expect(document.body.textContent).not.toContain(validToken)
+    }
+  )
+
+  it(
+    'prevents duplicate submissions while pending (single storage call)',
+    { timeout: 10000 },
+    async () => {
+      const user = userEvent.setup()
+      const mockUpdateWbToken = vi.mocked(updateWbToken)
+      let resolvePromise: (value: Record<string, unknown>) => void
+      mockUpdateWbToken.mockReturnValue(
+        new Promise<Record<string, unknown>>(resolve => {
+          resolvePromise = resolve
+        }) as unknown as ReturnType<typeof updateWbToken>
+      )
+
+      renderForm()
+
+      const tokenInput = screen.getByLabelText(/wb api токен/i)
+      await user.clear(tokenInput)
+      await user.type(tokenInput, validToken)
+      const submitButton = screen.getByRole('button', { name: /сохранить токен/i })
+      await user.click(submitButton)
+
+      // Pending state disables the CTA and input: repeated Enter/clicks cannot re-submit
+      await waitFor(
+        () => {
+          expect(screen.getByRole('button', { name: /проверка токена/i })).toBeDisabled()
+          expect(tokenInput).toBeDisabled()
+        },
+        { timeout: 3000 }
+      )
+      await user.click(screen.getByRole('button', { name: /проверка токена/i }))
+      await user.keyboard('{Enter}')
+
+      expect(mockUpdateWbToken).toHaveBeenCalledTimes(1)
+
+      resolvePromise!({
+        id: 'key-id',
+        keyName: 'wb_api_token',
+        updatedAt: '2026-08-17T10:00:00Z',
+      })
+      await waitFor(() => expect(mockUpdateWbToken).toHaveBeenCalledTimes(1), { timeout: 3000 })
+    }
+  )
+
+  it.each([
+    ['permission', new Error('Forbidden: permission denied'), 'Нет доступа'],
+    ['network', new Error('Network connection refused'), 'Ошибка сети'],
+    ['cabinet-missing-at-submit', new Error('Cabinet not found'), 'Кабинет не найден'],
+    ['expired-session', new Error('User not authenticated'), 'Ошибка сохранения токена'],
+  ])(
+    'surfaces the locked copy for the %s state',
+    { timeout: 10000 },
+    async (_case, rejection, expectedTitle) => {
+      const user = userEvent.setup()
+      const mockUpdateWbToken = vi.mocked(updateWbToken)
+      mockUpdateWbToken.mockRejectedValue(rejection as Error)
+
+      renderForm()
+
+      const tokenInput = screen.getByLabelText(/wb api токен/i)
+      await user.clear(tokenInput)
+      await user.type(tokenInput, validToken)
+      await user.click(screen.getByRole('button', { name: /сохранить токен/i }))
+
+      await waitFor(
+        () => {
+          expect(screen.getByText(expectedTitle)).toBeInTheDocument()
+        },
+        { timeout: 5000 }
+      )
+      // No navigation away on any error state
+      expect(mockPush).not.toHaveBeenCalled()
+    }
+  )
+
+  it(
+    'clears the server error state when the user edits the token again',
+    { timeout: 10000 },
+    async () => {
+      const user = userEvent.setup()
+      const mockUpdateWbToken = vi.mocked(updateWbToken)
+      mockUpdateWbToken.mockRejectedValueOnce(new Error('Invalid token')).mockResolvedValueOnce({
+        id: 'key-id',
+        keyName: 'wb_api_token',
+        updatedAt: '2026-08-17T10:00:00Z',
+      })
+
+      renderForm()
+
+      const tokenInput = screen.getByLabelText(/wb api токен/i)
+      await user.clear(tokenInput)
+      await user.type(tokenInput, validToken)
+      await user.click(screen.getByRole('button', { name: /сохранить токен/i }))
+
+      await waitFor(() => {
+        expect(screen.getByText('Токен недействителен')).toBeInTheDocument()
+      })
+
+      // Editing clears the alert (handleTokenChange) and a retry succeeds + navigates
+      await user.type(tokenInput, 'X')
+      await waitFor(() => {
+        expect(screen.queryByText('Токен недействителен')).not.toBeInTheDocument()
+      })
+      await user.clear(tokenInput)
+      await user.type(tokenInput, validToken)
+      await user.click(screen.getByRole('button', { name: /сохранить токен/i }))
+      await waitFor(() => {
+        expect(mockPush).toHaveBeenCalledWith('/processing')
+      })
+    }
+  )
 })

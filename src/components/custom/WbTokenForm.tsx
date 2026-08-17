@@ -100,7 +100,7 @@ export function WbTokenForm() {
                   href="https://seller.wildberries.ru/supplier-settings/access-to-api"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center gap-1 mt-2 text-sm underline hover:no-underline"
+                  className="inline-flex mt-2 items-center gap-1 rounded-sm text-sm underline hover:no-underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
                 >
                   Получить новый токен
                   <ExternalLink className="h-3 w-3" />
@@ -137,7 +137,7 @@ export function WbTokenForm() {
                   href="https://seller.wildberries.ru/supplier-settings/access-to-api"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-primary underline"
+                  className="rounded-sm text-primary underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
                 >
                   Wildberries Seller Portal
                 </a>
@@ -149,7 +149,7 @@ export function WbTokenForm() {
 
         <Button
           type="submit"
-          className="w-full"
+          className="min-h-11 w-full"
           disabled={isSubmitting || !canSaveToken}
           aria-busy={isSubmitting}
         >

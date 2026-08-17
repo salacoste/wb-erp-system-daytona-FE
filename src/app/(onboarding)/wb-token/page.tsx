@@ -1,28 +1,36 @@
 'use client'
 
 import { WbTokenForm } from '@/components/custom/WbTokenForm'
+import { PageHeader } from '@/components/product'
+import { Card, CardContent } from '@/components/ui/card'
 import { useOnboardingGuard } from '@/hooks/useOnboardingGuard'
 
 /**
  * WB Token input page for onboarding flow
  * Story 2.2: WB Token Input & Validation
+ * Story 167.7: shadcn migration — PageHeader composition + main landmark + Card primitive
  */
 export default function WbTokenPage() {
   useOnboardingGuard()
   return (
-    <div className="container mx-auto px-4 py-8 max-w-md">
+    <main className="container mx-auto w-full max-w-md px-4 py-8 sm:py-12">
       <div className="space-y-6">
-        <div className="text-center space-y-2">
-          <h1 className="text-3xl font-bold">Ввод WB API токена</h1>
-          <p className="text-muted-foreground">
-            Шаг 2 из 3: Введите ваш Wildberries API токен для доступа к данным
-          </p>
-        </div>
+        <PageHeader
+          title="Ввод WB API токена"
+          className="text-center [&_[data-slot=page-header-identity]]:items-center [&_[data-slot=page-header-context]]:justify-center"
+          context={
+            <p className="text-muted-foreground">
+              Шаг 2 из 3: Введите ваш Wildberries API токен для доступа к данным
+            </p>
+          }
+        />
 
-        <div className="bg-card rounded-lg border p-6 shadow-sm">
-          <WbTokenForm />
-        </div>
+        <Card className="shadow-sm">
+          <CardContent className="pt-6">
+            <WbTokenForm />
+          </CardContent>
+        </Card>
       </div>
-    </div>
+    </main>
   )
 }
