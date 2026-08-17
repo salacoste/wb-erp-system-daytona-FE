@@ -10,9 +10,15 @@
 #   1 = NEW citations introduced OR RESOLVED citations not yet baselined
 #       (output enumerates what changed)
 src/analytics/weekly-analytics.service.ts:357-399 | file not found
+src/app/(dashboard)/analytics/advertising/components/performance-table/performance-table-columns.tsx:152-158 | line 158 > file has 67 lines
+src/app/(dashboard)/analytics/advertising/components/performance-table/performance-table-columns.tsx:152-158 | line 158 > file has 67 lines
 src/app/(dashboard)/analytics/fbs-stock/components/FbsExportButton.tsx:142 | line 142 > file has 35 lines
+src/app/(dashboard)/settings/notifications/page.tsx:160 | line 160 > file has 148 lines
+src/app/(dashboard)/settings/notifications/page.tsx:160 | line 160 > file has 148 lines
 src/components/custom/dashboard/table-columns.ts:188-191 | line 191 > file has 150 lines
 src/components/notifications/TelegramBindingModal.tsx:216 | line 216 > file has 95 lines
+src/hooks-v1/use-search-analytics.ts:44-54 | file not found
+src/hooks-v1/use-search-analytics.ts:44-54 | file not found
 src/hooks-v1/useMarginTrends.ts:70 | file not found
 src/hooks/useDashboardMetricsWithPeriod.ts:32-49 | file not found
 src/hooks/useDashboardMetricsWithPeriod.ts:32-49 | file not found
@@ -21,9 +27,82 @@ src/hooks/useDashboardMetricsWithPeriod.ts:59 | file not found
 src/hooks/useDashboardMetricsWithPeriod.ts:64-76 | file not found
 src/hooks/useDashboardMetricsWithPeriod.ts:64-76 | file not found
 src/hooks/useFinancialSummary.ts:72 | line 72 > file has 30 lines
+src/lib/api/advertising-analytics-api.ts:104 | line 104 > file has 87 lines
+src/lib/api/advertising-analytics-api.ts:104 | line 104 > file has 87 lines
+src/lib/api/advertising-analytics-api.ts:140-147 | line 147 > file has 87 lines
+src/lib/api/advertising-analytics-api.ts:88-168 | line 168 > file has 87 lines
+src/lib/api/advertising-analytics-api.ts:88-168 | line 168 > file has 87 lines
+src/lib/api/advertising-analytics.ts:117 | line 117 > file has 99 lines
+src/lib/api/advertising-analytics.ts:117 | line 117 > file has 99 lines
+src/lib/api/advertising-analytics.ts:117 | line 117 > file has 99 lines
+src/lib/api/advertising-analytics.ts:117 | line 117 > file has 99 lines
+src/lib/api/ai/admin.ts:1-50 | line 50 > file has 31 lines
+src/lib/api/ai/admin.ts:1-50 | line 50 > file has 31 lines
+src/lib/api/ai/admin.ts:1-50 | line 50 > file has 31 lines
+src/lib/api/ai/evaluations.ts:89-153 | line 153 > file has 58 lines
+src/lib/api/ai/evaluations.ts:89-153 | line 153 > file has 58 lines
+src/lib/api/ai/forecast.ts:43-57 | line 57 > file has 23 lines
+src/lib/api/ai/models.ts:129 | line 129 > file has 42 lines
+src/lib/api/ai/models.ts:129 | line 129 > file has 42 lines
+src/lib/api/ai/models.ts:69 | line 69 > file has 42 lines
+src/lib/api/ai/models.ts:69 | line 69 > file has 42 lines
+src/lib/api/ai/models.ts:69 | line 69 > file has 42 lines
+src/lib/api/ai/models.ts:76 | line 76 > file has 42 lines
+src/lib/api/ai/models.ts:76 | line 76 > file has 42 lines
 src/lib/api/ai/status.ts:27 | line 27 > file has 16 lines
+src/lib/api/daily-analytics/api.ts:159 | line 159 > file has 123 lines
+src/lib/api/daily-analytics/api.ts:159 | line 159 > file has 123 lines
+src/lib/daily/aggregation.ts:130-134 | line 134 > file has 116 lines
+src/lib/daily/aggregation.ts:130-134 | line 134 > file has 116 lines
+src/lib/daily/aggregation.ts:153-169 | line 169 > file has 116 lines
+src/lib/daily/aggregation.ts:153-169 | line 169 > file has 116 lines
+src/lib/daily/aggregation.ts:155 | line 155 > file has 116 lines
+src/lib/margin-helpers.ts:128-129 | line 129 > file has 109 lines
+src/lib/routes.ts:206 | line 206 > file has 149 lines
+src/lib/routes.ts:206 | line 206 > file has 149 lines
+src/lib/routes.ts:213-215 | line 215 > file has 149 lines
+src/lib/routes.ts:213-215 | line 215 > file has 149 lines
+src/lib/routes.ts:215 | line 215 > file has 149 lines
+src/mocks/handlers/unit-economics.ts:224 | line 224 > file has 28 lines
+src/mocks/handlers/unit-economics.ts:37-48 | line 48 > file has 28 lines
+src/mocks/handlers/unit-economics.ts:54-66 | line 66 > file has 28 lines
 src/products/marketplace.types.ts:156-161 | file not found
 src/products/products.service.ts:210-259 | file not found
 src/products/products.service.ts:83-182 | file not found
 src/sync/sync.service.ts:108-122 | file not found
+src/types/cabinet.ts:10-11 | file not found
+src/types/cabinet.ts:112 | file not found
+src/types/cabinet.ts:112 | file not found
+src/types/cabinet.ts:112 | file not found
+src/types/cabinet.ts:112-127 | file not found
+src/types/cabinet.ts:115-119 | file not found
+src/types/cabinet.ts:117-118 | file not found
+src/types/cabinet.ts:172-178 | file not found
 src/types/cabinet.ts:35 | file not found
+src/types/cabinet.ts:7 | file not found
+src/types/daily-metrics.ts:125 | file not found
+src/types/daily-metrics.ts:125 | file not found
+src/types/daily-metrics.ts:190-192 | file not found
+src/types/daily-metrics.ts:190-192 | file not found
+src/types/daily-metrics.ts:61 | file not found
+src/types/daily-metrics.ts:61 | file not found
+src/types/daily-metrics.ts:86 | file not found
+src/types/daily-metrics.ts:86 | file not found
+src/types/finance-summary.ts:121-126 | line 126 > file has 111 lines
+src/types/finance-summary.ts:123-124 | line 124 > file has 111 lines
+src/types/finance-summary.ts:123-124 | line 124 > file has 111 lines
+src/types/sku-financials.ts:143-150 | file not found
+src/types/sku-financials.ts:86-93 | file not found
+src/types/sku-financials.ts:86-93 | file not found
+src/types/unit-economics.ts:111 | file not found
+src/types/unit-economics.ts:181-190 | file not found
+src/types/unit-economics.ts:181-190 | file not found
+src/types/unit-economics.ts:187 | file not found
+src/types/unit-economics.ts:223-232 | file not found
+src/types/unit-economics.ts:40-51 | file not found
+src/types/unit-economics.ts:44 | file not found
+src/types/unit-economics.ts:44 | file not found
+src/types/unit-economics.ts:44 | file not found
+src/types/unit-economics.ts:44 | file not found
+src/types/unit-economics.ts:85 | file not found
+src/types/unit-economics.ts:85 | file not found
