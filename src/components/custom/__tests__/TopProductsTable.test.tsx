@@ -41,6 +41,14 @@ const mockProducts: TopProductItem[] = [
     margin_pct: -7.1,
     contribution_pct: 14.3,
   },
+  {
+    nm_id: '555001',
+    sa_name: 'Шапка зимняя',
+    revenue_net: 12000,
+    profit: 600,
+    margin_pct: 5,
+    contribution_pct: 6.1,
+  },
 ]
 
 describe('TopProductsTable', () => {
@@ -152,20 +160,20 @@ describe('TopProductsTable', () => {
   })
 
   describe('Color coding', () => {
-    it('should show positive profit in green', () => {
+    it('should show positive profit in financial-positive tone', () => {
       render(<TopProductsTable products={mockProducts} />)
 
       // Find profit cells with positive values
       const profitCells = screen.getAllByText(/15.*000.*₽/)
-      expect(profitCells[0]).toHaveClass('text-green-600')
+      expect(profitCells[0]).toHaveClass('text-financial-positive')
     })
 
-    it('should show negative profit in red', () => {
+    it('should show negative profit in financial-negative tone', () => {
       render(<TopProductsTable products={mockProducts} />)
 
       // Find profit cell with negative value
       const negativeProfit = screen.getByText(/-2.*000.*₽/)
-      expect(negativeProfit).toHaveClass('text-red-600')
+      expect(negativeProfit).toHaveClass('text-financial-negative')
     })
 
     it('should apply margin color based on value', () => {
@@ -173,11 +181,40 @@ describe('TopProductsTable', () => {
 
       // High margin (30%) should be green
       const highMargin = screen.getByText('30,0 %')
-      expect(highMargin).toHaveClass('text-green-600')
+      expect(highMargin).toHaveClass('text-financial-positive')
 
       // Negative margin should be red
       const negativeMargin = screen.getByText('-7,1 %')
-      expect(negativeMargin).toHaveClass('text-red-600')
+      expect(negativeMargin).toHaveClass('text-financial-negative')
+
+      // Mid-tier margin (20%) should be warning tone (15-30% band)
+      const midMargin = screen.getByText('20,0 %')
+      expect(midMargin).toHaveClass('text-status-warning')
+
+      // Low positive margin (5%) should be weaker warning intensity (0-15% band)
+      const lowMargin = screen.getByText('5,0 %')
+      expect(lowMargin).toHaveClass('text-status-warning/80')
+    })
+
+    it('should show muted tone for null margin', () => {
+      // 168.3 pass-1: pin the null tier of the 4-tier margin mapping
+      render(
+        <TopProductsTable
+          products={[
+            {
+              nm_id: '777777',
+              sa_name: 'Носки',
+              revenue_net: 5000,
+              profit: 500,
+              margin_pct: null,
+              contribution_pct: 3.2,
+            },
+          ]}
+        />
+      )
+
+      const nullMargin = screen.getByText('—')
+      expect(nullMargin).toHaveClass('text-muted-foreground')
     })
   })
 
@@ -266,5 +303,14 @@ describe('TopProductsTable', () => {
       expect(screen.queryByText('Product 11')).not.toBeInTheDocument()
       expect(screen.queryByText('Product 15')).not.toBeInTheDocument()
     })
+  })
+})
+
+describe('TopProductsTable — semantic tokens guard (168.3)', () => {
+  it('renders no legacy palette classes in the DOM', () => {
+    const { container } = render(<TopProductsTable products={mockProducts} />)
+    const LEGACY_PALETTE_RE =
+      /((bg|text|border|ring|divide|fill|stroke|outline)-(red|yellow|blue|green|gray|rose|amber|emerald|sky|orange|slate|zinc|neutral|stone|lime|teal|cyan|indigo|violet|purple|fuchsia|pink)(-\d+)?)/
+    expect(container.innerHTML).not.toMatch(LEGACY_PALETTE_RE)
   })
 })

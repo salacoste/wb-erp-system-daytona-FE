@@ -38,13 +38,13 @@ export function PayoutSection({ sellerPayout, totalDeductionsPct, payoutPct }: P
         />
 
         {/* Info about payout percentage */}
-        <div className="flex items-center gap-2 px-3 py-2 text-sm text-muted-foreground bg-blue-50 rounded-lg mt-2">
-          <Info className="h-4 w-4 text-blue-500" />
+        <div className="flex items-center gap-2 px-3 py-2 text-sm text-muted-foreground bg-status-information/10 rounded-lg mt-2">
+          <Info className="h-4 w-4 text-status-information" />
           <span>
             WB удерживает{' '}
-            <strong className="text-slate-700">{formatPercent(totalDeductionsPct)}</strong> от
+            <strong className="text-foreground">{formatPercent(totalDeductionsPct)}</strong> от
             продаж. Вам остаётся{' '}
-            <strong className="text-green-700">{formatPercent(payoutPct)}</strong>.
+            <strong className="text-financial-positive">{formatPercent(payoutPct)}</strong>.
           </span>
         </div>
       </div>
