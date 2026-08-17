@@ -1,6 +1,6 @@
 # Story 167.2: Migrate Root Entry `/`
 
-Status: review
+Status: done
 
 ## Story
 
@@ -226,3 +226,4 @@ GPT-5.6
 - 2026-08-13: Corrected the uncommitted route recovery contract after real-Zustand review evidence showed route-owned `rehydrate()` repeated auth/session side effects; preserved the canonical 90-Story DAG and auth-store ownership.
 - 2026-08-13: Recorded completed pinned-toolchain local, full-regression, production-build, exact-scope, responsive browser, reduced-motion, and accessibility evidence for the corrected `15/15` reload-only contract; two fresh final reviews and the Git integration lifecycle remain pending.
 - 2026-08-13: Completed two fresh final reviews with `PASS/CLEAR`, corrected Story/ATDD evidence from stale Zustand `5.0.12` wording to the locked `5.0.14` lifecycle, and reconfirmed the exact five-file manifest with zero shared/forbidden diff. **Lessons:** dependency-version claims must be checked against both the lockfile and installed package before review closure; historical superseded test/browser evidence must remain visibly separated from the current delivery contract. Story moved to `review`; Task 7 remains open for Git integration and mandatory cleanup.
+- 2026-08-17: Story closed. Deliverable verified merged on FE main: PR #154 (branch tip 09427d44, merge 8eee14bb, ancestry on main verified by `merge-base --is-ancestor`). Two-pass discipline complete per this record (Pass 1 `PASS/CLEAR` 0/0/0/0; Pass 2 `PASS/CLEAR` 0/0/0/0; HIGH shared-runtime `rehydrate()` defect repaired test-first). Git-lifecycle (Task 7) satisfied retroactively by the 2026-08-17 verifier audit: merge ancestry proven; later stories (167.3+) built on these bytes. **Lessons:** (1) review rows can be fully-reviewed-but-unflipped — audit before re-reviewing (2) close the Change Log with a merge row in the merge session itself (3) emergency-reconstruction from transcript evidence is auditable when git proof is preserved.

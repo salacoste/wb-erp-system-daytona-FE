@@ -745,11 +745,11 @@ development_status:
   epic-166-fe-retrospective: optional
 
   # Epic 167-FE: Consistent AppShell, Authentication, and First-Time Value
-  epic-167-fe: in-progress
-  167-1-fe-unify-protected-appshell-and-desktop-mobile-navigation: review
-  167-2-fe-migrate-root-entry: review
+  epic-167-fe: done      # CLOSED 2026-08-17: all 9 stories done (audit PASS). 167-1 PR #153/a8dfe353, 167-2 PR #154/8eee14bb closed via verifier-audit (two-pass complete in records, ancestry proven); 167-4 PR #158/d1401ca8 closed after honest freeze-8 completion (fresh sequential opus APPROVE then CLEAR over pinned merged bytes 1843cb9e…) + FE-D9 deferral registered in BE ledger.
+  167-1-fe-unify-protected-appshell-and-desktop-mobile-navigation: done      # 2026-08-17 close-out: deliverable merged PR #153 (0e6ed664, merge a8dfe353); two-pass + PASS/CLEAR acceptance audit complete per story record; lifecycle verified retroactively (audit PASS).
+  167-2-fe-migrate-root-entry: done      # 2026-08-17 close-out: deliverable merged PR #154 (09427d44, merge 8eee14bb); Pass 1+2 PASS/CLEAR 0/0/0/0 complete per story record; lifecycle verified retroactively (audit PASS).
   167-3-fe-migrate-login-login: done
-  167-4-fe-migrate-registration-register: review
+  167-4-fe-migrate-registration-register: done      # 2026-08-17 close-out: deliverable merged PR #158 (2951b8ae, merge d1401ca8); freeze-8 contract completed post-merge — fresh sequential opus APPROVE (pass-1 code/spec/security) then CLEAR (pass-2 architecture/scope/contract) over pinned bytes; FE-D9 logger-redaction deferral registered in BE tech-debt ledger.
   167-5-fe-migrate-cabinet-onboarding-cabinet: done      # PR #165 (03250e1b, merged 03f22b8e): shadcn /cabinet + v2 recovery markers + 167.9 port; 2 opus passes APPROVE+CLEAR; vitest 18580/0. Cross-tab sessionStorage residual risk documented in story record.
   167-6-fe-migrate-processing-processing: done      # PR #166 (e5bd55ee, merged e8ab151b): semantic tokens + shadcn primitives; behavior-lock preserved; 2-pass APPROVE+CLEAR; vitest 18585/0.
   167-7-fe-migrate-wb-token-wb-token: done      # PR #167: presentation-only migration; no-leak scans + fail-closed e2e + type=password pin; 2-pass APPROVE+APPROVE; vitest 18606/0.

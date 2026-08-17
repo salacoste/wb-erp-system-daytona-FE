@@ -1,6 +1,6 @@
 # Story 167.1: Unify Protected AppShell and Desktop/Mobile Navigation
 
-Status: review
+Status: done
 
 ## Story
 
@@ -253,3 +253,4 @@ GPT-5.6
 - 2026-08-13: Completed unified AppShell/navigation implementation, targeted and full GREEN, browser/accessibility matrices, universal local validation, and accepted first-pass review repairs; integration remains gated on the second fresh review and exact Git lifecycle.
 - 2026-08-13: Completed final review remediation, canonical cross-tab logout handling, `55/55` focused and `18384/18384` full Vitest, `32`-pass browser matrix, exact-scope audit, and independent review convergence; Story is ready for Git integration and cleanup.
 - 2026-08-13: Final AC1–AC8 acceptance audit returned `PASS/CLEAR` with zero unresolved Critical, High, or Medium findings; Story status moved from `in-progress` to `review` while Task 8 remains open for commit, PR merge, and mandatory lane cleanup evidence.
+- 2026-08-17: Story closed. Deliverable verified merged on FE main: PR #153 (branch tip 0e6ed664, merge a8dfe353, ancestry on main verified by `merge-base --is-ancestor`). Two-pass discipline complete per this record (two independent fresh-context adversarial reviews + independent acceptance audit `PASS/CLEAR`, zero unresolved High/Medium). Git-lifecycle (Task 8) satisfied retroactively by the 2026-08-17 verifier audit: merge ancestry proven; later stories (167.2+) built on these bytes. **Lessons:** (1) review rows can be fully-reviewed-but-unflipped — audit before re-reviewing (2) acceptance-audit PASS/CLEAR plus merge ancestry is sufficient close evidence (3) flip the sprint row in the same session as the merge, not weeks later.
