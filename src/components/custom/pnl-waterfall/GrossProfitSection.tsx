@@ -65,11 +65,11 @@ export function GrossProfitSection({
           />
 
           {/* Margin indicator */}
-          <div className="flex items-center gap-4 px-4 py-3 mt-3 bg-slate-50 rounded-lg border">
+          <div className="flex items-center gap-4 px-4 py-3 mt-3 bg-muted/50 rounded-lg border">
             {grossProfit && grossProfit > 0 ? (
-              <TrendingUp className="h-6 w-6 text-green-600" />
+              <TrendingUp className="h-6 w-6 text-financial-positive" />
             ) : (
-              <TrendingDown className="h-6 w-6 text-red-600" />
+              <TrendingDown className="h-6 w-6 text-financial-negative" />
             )}
             <div className="flex-1">
               <div className="text-sm text-muted-foreground">Валовая маржа от Payout:</div>
@@ -77,10 +77,10 @@ export function GrossProfitSection({
                 className={cn(
                   'text-xl font-bold',
                   grossMarginPct && grossMarginPct >= 25
-                    ? 'text-green-600'
+                    ? 'text-financial-positive'
                     : grossMarginPct && grossMarginPct >= 15
-                      ? 'text-amber-600'
-                      : 'text-red-600'
+                      ? 'text-status-warning'
+                      : 'text-financial-negative'
                 )}
               >
                 {formatPercent(grossMarginPct)}
@@ -91,10 +91,10 @@ export function GrossProfitSection({
                 className={cn(
                   'text-sm px-3 py-1.5 rounded-full font-medium',
                   grossMarginPct && grossMarginPct >= 25
-                    ? 'bg-green-100 text-green-800'
+                    ? 'bg-financial-positive/15 text-financial-positive'
                     : grossMarginPct && grossMarginPct >= 15
-                      ? 'bg-amber-100 text-amber-800'
-                      : 'bg-red-100 text-red-800'
+                      ? 'bg-status-warning/15 text-status-warning'
+                      : 'bg-financial-negative/15 text-financial-negative'
                 )}
               >
                 {grossMarginPct && grossMarginPct >= 25
@@ -107,23 +107,25 @@ export function GrossProfitSection({
           </div>
         </div>
       ) : (
-        <div className="bg-amber-50 border border-amber-200 rounded-lg p-4">
+        <div className="bg-status-warning/10 border border-status-warning/20 rounded-lg p-4">
           <div className="flex items-start gap-3">
-            <AlertTriangle className="h-5 w-5 text-amber-600 mt-0.5 flex-shrink-0" />
+            <AlertTriangle className="h-5 w-5 text-status-warning mt-0.5 flex-shrink-0" />
             <div>
-              <p className="font-semibold text-amber-800">Требуется 100% покрытие себестоимости</p>
-              <p className="text-sm text-amber-700 mt-1">
+              <p className="font-semibold text-status-warning">
+                Требуется 100% покрытие себестоимости
+              </p>
+              <p className="text-sm text-foreground mt-1">
                 Для расчёта валовой прибыли добавьте себестоимость для всех{' '}
                 <strong>{products.without_cogs}</strong> товаров без COGS.
               </p>
               <div className="mt-3 flex items-center gap-2">
-                <div className="flex-1 h-2 bg-amber-200 rounded-full overflow-hidden">
+                <div className="flex-1 h-2 bg-status-warning/20 rounded-full overflow-hidden">
                   <div
-                    className="h-full bg-amber-500 rounded-full transition-all"
+                    className="h-full bg-status-warning rounded-full transition-all"
                     style={{ width: `${products.coverage_pct}%` }}
                   />
                 </div>
-                <span className="text-sm font-medium text-amber-700">
+                <span className="text-sm font-medium text-status-warning">
                   {formatPercentageInt(products.coverage_pct)} ({products.with_cogs}/
                   {products.total})
                 </span>

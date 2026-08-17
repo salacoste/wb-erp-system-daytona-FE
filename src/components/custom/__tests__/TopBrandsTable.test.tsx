@@ -35,6 +35,12 @@ const mockBrands: TopBrandItem[] = [
     profit: -4000,
     margin_pct: -5,
   },
+  {
+    brand: 'Reebok',
+    revenue_net: 40000,
+    profit: 2000,
+    margin_pct: 5,
+  },
 ]
 
 describe('TopBrandsTable', () => {
@@ -127,20 +133,20 @@ describe('TopBrandsTable', () => {
   })
 
   describe('Color coding', () => {
-    it('should show positive profit in green', () => {
+    it('should show positive profit in financial-positive tone', () => {
       render(<TopBrandsTable brands={mockBrands} />)
 
       // Find profit cells with positive values
       const profitCells = screen.getAllByText(/45.*000.*₽/)
-      expect(profitCells[0]).toHaveClass('text-green-600')
+      expect(profitCells[0]).toHaveClass('text-financial-positive')
     })
 
-    it('should show negative profit in red', () => {
+    it('should show negative profit in financial-negative tone', () => {
       render(<TopBrandsTable brands={mockBrands} />)
 
       // Find profit cell with negative value
       const negativeProfit = screen.getByText(/-4.*000.*₽/)
-      expect(negativeProfit).toHaveClass('text-red-600')
+      expect(negativeProfit).toHaveClass('text-financial-negative')
     })
 
     it('should apply margin color based on value', () => {
@@ -148,11 +154,38 @@ describe('TopBrandsTable', () => {
 
       // High margin (30%) should be green
       const highMargin = screen.getByText('30,0 %')
-      expect(highMargin).toHaveClass('text-green-600')
+      expect(highMargin).toHaveClass('text-financial-positive')
 
       // Negative margin should be red
       const negativeMargin = screen.getByText('-5,0 %')
-      expect(negativeMargin).toHaveClass('text-red-600')
+      expect(negativeMargin).toHaveClass('text-financial-negative')
+
+      // Mid-tier margin (20%) should be warning tone (15-30% band)
+      const midMargin = screen.getByText('20,0 %')
+      expect(midMargin).toHaveClass('text-status-warning')
+
+      // Low positive margin (5%) should be weaker warning intensity (0-15% band)
+      const lowMargin = screen.getByText('5,0 %')
+      expect(lowMargin).toHaveClass('text-status-warning/80')
+    })
+
+    it('should show muted tone for null margin', () => {
+      // 168.3 pass-1: pin the null tier of the 4-tier margin mapping
+      render(
+        <TopBrandsTable
+          brands={[
+            {
+              brand: 'Asics',
+              revenue_net: 60000,
+              profit: 6000,
+              margin_pct: null,
+            },
+          ]}
+        />
+      )
+
+      const nullMargin = screen.getByText('—')
+      expect(nullMargin).toHaveClass('text-muted-foreground')
     })
   })
 
@@ -257,5 +290,14 @@ describe('TopBrandsTable', () => {
       expect(screen.queryByText('Brand 6')).not.toBeInTheDocument()
       expect(screen.queryByText('Brand 10')).not.toBeInTheDocument()
     })
+  })
+})
+
+describe('TopBrandsTable — semantic tokens guard (168.3)', () => {
+  it('renders no legacy palette classes in the DOM', () => {
+    const { container } = render(<TopBrandsTable brands={mockBrands} />)
+    const LEGACY_PALETTE_RE =
+      /((bg|text|border|ring|divide|fill|stroke|outline)-(red|yellow|blue|green|gray|rose|amber|emerald|sky|orange|slate|zinc|neutral|stone|lime|teal|cyan|indigo|violet|purple|fuchsia|pink)(-\d+)?)/
+    expect(container.innerHTML).not.toMatch(LEGACY_PALETTE_RE)
   })
 })

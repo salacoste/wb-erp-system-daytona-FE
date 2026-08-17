@@ -50,19 +50,19 @@ export const PnLRow = ({
 
   const rowClasses = cn(
     'flex items-center justify-between py-2.5 px-3 rounded-md transition-colors',
-    isTotal && 'bg-slate-100 font-bold text-lg border-2 border-slate-300',
-    isSubtotal && 'bg-slate-50 font-semibold border-t border-slate-200',
-    highlight === 'positive' && 'bg-green-50',
-    highlight === 'negative' && 'bg-red-50',
-    highlight === 'warning' && 'bg-amber-50'
+    isTotal && 'bg-muted font-bold text-lg border-2 border-border',
+    isSubtotal && 'bg-accent/50 font-semibold border-t border-border',
+    highlight === 'positive' && 'bg-financial-positive/10',
+    highlight === 'negative' && 'bg-financial-negative/10',
+    highlight === 'warning' && 'bg-status-warning/10'
   )
 
   const valueClasses = cn(
     'font-mono tabular-nums text-base',
-    isNegative && 'text-red-600',
-    isPositive && 'text-green-600',
-    highlight === 'positive' && 'text-green-700 font-bold',
-    highlight === 'negative' && 'text-red-700 font-bold'
+    isNegative && 'text-financial-negative',
+    isPositive && 'text-financial-positive',
+    highlight === 'positive' && 'text-financial-positive font-bold',
+    highlight === 'negative' && 'text-financial-negative font-bold'
   )
 
   return (
@@ -70,9 +70,9 @@ export const PnLRow = ({
       <div className="flex items-center gap-2 flex-1">
         <span
           className={cn(
-            isTotal && 'text-slate-900',
-            isSubtotal && 'text-slate-700',
-            indent > 0 && !isSubtotal && !isTotal && 'text-slate-600'
+            isTotal && 'text-foreground',
+            isSubtotal && 'text-foreground',
+            indent > 0 && !isSubtotal && !isTotal && 'text-muted-foreground'
           )}
         >
           {label}
@@ -88,7 +88,7 @@ export const PnLRow = ({
               <p className="text-sm font-medium mb-1">{label}</p>
               <p className="text-xs text-muted-foreground">{tooltip}</p>
               {formula && (
-                <p className="text-xs mt-2 font-mono bg-slate-100 px-2 py-1 rounded">{formula}</p>
+                <p className="text-xs mt-2 font-mono bg-muted px-2 py-1 rounded">{formula}</p>
               )}
             </TooltipContent>
           </Tooltip>
@@ -101,7 +101,7 @@ export const PnLRow = ({
             'text-xs w-14 text-right font-mono tabular-nums',
             percentOfRevenue !== null && percentOfRevenue !== undefined
               ? isPositive
-                ? 'text-green-600'
+                ? 'text-financial-positive'
                 : 'text-muted-foreground'
               : 'invisible'
           )}

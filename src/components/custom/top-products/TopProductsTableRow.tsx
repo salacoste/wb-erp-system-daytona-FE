@@ -10,7 +10,22 @@
 import { TableCell, TableRow } from '@/components/ui/table'
 import { cn } from '@/lib/utils'
 import type { TopProductItem } from '@/types/analytics'
-import { formatCurrency, formatPercent, getMarginColor } from '../top-table-utils'
+import { formatCurrency, formatPercent } from '../top-table-utils'
+
+// 168.3: semantic margin tone — 4-tier mapping preserved from the original
+// shared top-table-utils.getMarginColor (thresholds unchanged):
+//   null → muted; >=30 → positive; >=15 → warning; >=0 → warning/80 (weaker
+//   intensity, same hue family); <0 → negative. 4 distinct visual states, zero
+// new tokens. The shared fn is legacy-palette AND shared with the dashboard
+// cards (172.1 surface) — local semantic mapping here instead.
+// TODO(172.1): shared top-table-utils.getMarginColor still legacy — migrate + dedupe these local copies when 172.1 owns them.
+function getMarginColor(margin: number | null): string {
+  if (margin === null) return 'text-muted-foreground'
+  if (margin >= 30) return 'text-financial-positive'
+  if (margin >= 15) return 'text-status-warning'
+  if (margin >= 0) return 'text-status-warning/80'
+  return 'text-financial-negative'
+}
 
 interface TopProductsTableRowProps {
   product: TopProductItem
@@ -25,7 +40,7 @@ export function TopProductsTableRow({ product, index, onProductClick }: TopProdu
   return (
     <TableRow
       key={product.nm_id}
-      className="cursor-pointer hover:bg-gray-50 transition-colors"
+      className="cursor-pointer hover:bg-muted/50 transition-colors"
       onClick={() => onProductClick(product.nm_id)}
       role="button"
       tabIndex={0}
@@ -51,7 +66,9 @@ export function TopProductsTableRow({ product, index, onProductClick }: TopProdu
       <TableCell
         className={cn(
           'text-right font-medium',
-          product.profit !== null && product.profit >= 0 ? 'text-green-600' : 'text-red-600'
+          product.profit !== null && product.profit >= 0
+            ? 'text-financial-positive'
+            : 'text-financial-negative'
         )}
       >
         {product.profit !== null ? formatCurrency(product.profit) : '\u2014'}

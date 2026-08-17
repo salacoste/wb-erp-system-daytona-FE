@@ -1954,7 +1954,7 @@ So that I can understand the most material business signal and drill into trustw
 
 - **Route/User Value:** `/dashboard`; prioritized owner orientation, period context, metrics, trends, cost/profit evidence, and next actions.
 - **Owned Surface:** `src/app/(dashboard)/dashboard/**`, exclusive `src/components/custom/dashboard/**`, and directly corresponding tests.
-- **Shared Dependencies:** Epics 166-FE and Story 167.1 merged; this Story owns dashboard-exclusive compositions only.
+- **Shared Dependencies:** Epics 166-FE and Story 167.1 merged; this Story owns dashboard-exclusive compositions only. **Carry-in from 168.3 (2026-08-18):** this Story owns the migration of shared `src/components/custom/top-table-utils.ts` `getMarginColor` (still legacy-palette; consumed by `dashboard/MarginCard`/`GrossMarginCard`) AND the dedupe of the two local semantic 4-tier copies introduced by 168.3 in `top-products/TopProductsTableRow.tsx` / `top-brands/TopBrandsTableRow.tsx` (see `TODO(172.1)` cross-refs; pin style: ≥30→`text-financial-positive`, ≥15→`text-status-warning`, ≥0→`text-status-warning/80`, <0→`text-financial-negative`, null→`text-muted-foreground`).
 - **Allowed Change Surface:** Owned Surface plus dashboard-specific visual fixtures and E2E coverage.
 - **Forbidden Shared Files:** token/compiler files, `src/components/ui/**`, AppShell/navigation, generic compositions, API clients/hooks/types.
 - **State Coverage:** loading, refresh, empty, partial, stale, error, missing COGS, incomplete period, success.
