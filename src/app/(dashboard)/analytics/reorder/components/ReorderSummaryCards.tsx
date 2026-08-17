@@ -63,7 +63,8 @@ export function ReorderSummaryCards({ metrics, isLoading }: ReorderSummaryCardsP
     <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
       {/* eslint-disable-next-line no-restricted-syntax -- SEMANTIC-ZERO: metric counts default to 0 when absent */}
       <MetricCard
-        icon={<Clock className="h-5 w-5 text-amber-600" />}
+        // 168.8: semantic status token (pending stage indicator)
+        icon={<Clock className="h-5 w-5 text-status-warning" />}
         label="Ожидают"
         value={metrics?.totalPending ?? 0}
         sublabel={
@@ -72,7 +73,8 @@ export function ReorderSummaryCards({ metrics, isLoading }: ReorderSummaryCardsP
       />
       {/* eslint-disable-next-line no-restricted-syntax -- SEMANTIC-ZERO: metric counts default to 0 when absent */}
       <MetricCard
-        icon={<ShoppingCart className="h-5 w-5 text-blue-600" />}
+        // 168.8: semantic status token (ordered stage indicator)
+        icon={<ShoppingCart className="h-5 w-5 text-status-information" />}
         label="Заказано"
         value={metrics?.totalOrdered ?? 0}
         sublabel={
@@ -81,12 +83,14 @@ export function ReorderSummaryCards({ metrics, isLoading }: ReorderSummaryCardsP
       />
       {/* eslint-disable-next-line no-restricted-syntax -- SEMANTIC-ZERO: metric counts default to 0 when absent */}
       <MetricCard
-        icon={<CheckCircle className="h-5 w-5 text-green-600" />}
+        // 168.8: semantic status token (process completeness, not financial)
+        icon={<CheckCircle className="h-5 w-5 text-status-success" />}
         label="Получено"
         value={metrics?.totalReceived ?? 0}
       />
       <MetricCard
-        icon={<ShieldAlert className="h-5 w-5 text-red-600" />}
+        // 168.8: semantic status token (risk metric, not financial loss)
+        icon={<ShieldAlert className="h-5 w-5 text-status-error" />}
         label="Покрытие"
         value={
           metrics?.reorderCoveragePct != null
