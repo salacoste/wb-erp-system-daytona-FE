@@ -35,4 +35,14 @@ describe('ProcessingPage', () => {
 
     expect(screen.getByTestId('processing-status')).toBeInTheDocument()
   })
+
+  // Story 167.6: semantic landmark migration must keep the route accessible
+  it('should expose a main landmark with the single h1', () => {
+    render(<ProcessingPage />)
+
+    expect(screen.getByRole('main')).toBeInTheDocument()
+    const headings = screen.getAllByRole('heading', { level: 1 })
+    expect(headings).toHaveLength(1)
+    expect(headings[0]).toHaveTextContent('Обработка данных')
+  })
 })

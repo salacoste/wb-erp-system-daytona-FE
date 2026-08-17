@@ -26,7 +26,11 @@ export function ProcessingNoData() {
         Импорт не начался за отведённое время. Возможно, данные уже актуальны — вы можете перейти к
         дашборду.
       </AlertDescription>
-      <Button variant="outline" className="mt-4" onClick={() => router.push(ROUTES.DASHBOARD)}>
+      <Button
+        variant="outline"
+        className="mt-4 min-h-11"
+        onClick={() => router.push(ROUTES.DASHBOARD)}
+      >
         Перейти к дашборду
       </Button>
     </Alert>

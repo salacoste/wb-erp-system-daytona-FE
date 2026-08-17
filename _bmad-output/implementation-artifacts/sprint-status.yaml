@@ -751,7 +751,7 @@ development_status:
   167-3-fe-migrate-login-login: done
   167-4-fe-migrate-registration-register: review
   167-5-fe-migrate-cabinet-onboarding-cabinet: done      # PR #165 (03250e1b, merged 03f22b8e): shadcn /cabinet + v2 recovery markers + 167.9 port; 2 opus passes APPROVE+CLEAR; vitest 18580/0. Cross-tab sessionStorage residual risk documented in story record.
-  167-6-fe-migrate-processing-processing: backlog
+  167-6-fe-migrate-processing-processing: review    # 2026-08-17: presentation-only shadcn migration (PageHeader+main, status-success tokens, Skeleton, progressbar a11y); copy/data-flow identical; targeted vitest 17/17, e2e PROCESSING-BROWSER 2/2 (serial polling, reconcile-once, no misleading zeros); full gates green; awaiting orchestrator commit/PR.
   167-7-fe-migrate-wb-token-wb-token: backlog
   167-8-fe-establish-authoritative-cabinet-session-reconciliation-and-create-idempotency-contracts: done  # 2026-08-17: backend merged PR #227 (c96a2fae8, ancestry on main verified); local/remote branch + worktree removed. Dev Agent Record completed in the story artifact with merge-SHA evidence (AC7).
   167-9-fe-enforce-account-scoped-conditional-cabinet-settlement: done     # PR (branch cdx/epic-167-story-9…): typed applied|stale|indeterminate settlement, sessionNonce, pinned margin transport; 2 opus passes; vitest 18557/0. Carry-over: 167.5 must consume getCabinetCreationOperation in seam alignment.
