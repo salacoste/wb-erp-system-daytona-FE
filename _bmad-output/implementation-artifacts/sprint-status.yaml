@@ -758,9 +758,9 @@ development_status:
   epic-167-fe-retrospective: optional
 
   # Epic 168-FE: Trustworthy Analytics Core and Financial Decisions
-  epic-168-fe: backlog
+  epic-168-fe: in-progress
   168-1-fe-migrate-analytics-hub-analytics-and-own-analytics-shared-ui: done     # PR #168 (merged b21aa04d): NavigationTone map (JIT-invisible hue-interp killed) + shared-UI tokens; 24-href nav lock; 2-pass COMMENT+COMMENT; vitest 18616/0. ESCALATION: ResponsiveChartFrame no-owner → epic-168 close-gate.
-  168-2-fe-migrate-analytics-alerts-analytics-alerts: backlog
+  168-2-fe-migrate-analytics-alerts-analytics-alerts: done     # PR #170 (083b3f32, merge 36fdcb83): semantic tone maps (severity/status + muted fallback), paired *-foreground chips (pass-1 HIGH dark-AA fix), h1 to 168.1 scale; 2-pass opus REQUEST-CHANGES→APPROVE; +15 pins; vitest 18631/0.
   168-3-fe-migrate-analytical-dashboard-analytics-dashboard: backlog
   168-4-fe-migrate-finance-history-analytics-finance-history: backlog
   168-5-fe-migrate-orders-analytics-analytics-orders: backlog
