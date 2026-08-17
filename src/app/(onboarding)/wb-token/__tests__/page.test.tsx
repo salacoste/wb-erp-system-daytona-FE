@@ -40,4 +40,12 @@ describe('WbTokenPage', () => {
 
     expect(screen.getByTestId('wb-token-form')).toBeInTheDocument()
   })
+
+  // Story 167.7: landmark semantics after PageHeader/Card migration
+  it('renders exactly one main landmark with a single h1', () => {
+    const { container } = render(<WbTokenPage />)
+
+    expect(container.querySelectorAll('main')).toHaveLength(1)
+    expect(screen.getAllByRole('heading', { level: 1 })).toHaveLength(1)
+  })
 })

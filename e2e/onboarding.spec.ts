@@ -1439,3 +1439,197 @@ test.describe('Story 167.6 browser-owned evidence', () => {
     expect(reconcileAttempts).toBe(1)
   })
 })
+
+test.describe('Story 167.7 browser-owned evidence', () => {
+  // Fail-closed interceptors: every cabinet-keys request is fulfilled
+  // synthetically; no real API surface is touched. No request-body inspection.
+  const CABINET_KEYS_ENDPOINT = /\/v1\/cabinets\/[^/]+\/keys\/[^/]+$/
+  const SYNTHETIC_JWT = [
+    'eyJhbGciOiJub25lIiwidHlwIjoiSldUIn0',
+    'eyJleHAiOjQxMDI0NDQ4ODAsInN1YiI6InN0b3J5LTE2Ny03LW93bmVyLmludmFsaWQifQ',
+    'story-167-7',
+  ].join('.')
+  const SYNTHETIC_APP_ORIGIN = process.env.E2E_BASE_URL ?? 'http://localhost:3100'
+
+  test.use({ storageState: { cookies: [], origins: [] } })
+
+  test.beforeEach(async ({ page }) => {
+    await page
+      .context()
+      .addCookies([{ name: 'auth-token', value: SYNTHETIC_JWT, url: SYNTHETIC_APP_ORIGIN }])
+    await page.addInitScript(jwt => {
+      window.localStorage.setItem(
+        'auth-storage',
+        JSON.stringify({
+          state: {
+            user: {
+              id: 'story-167-7-owner.invalid',
+              email: 'story-167-7-owner@example.invalid',
+              role: 'Owner',
+              // Guard must NOT redirect: onboarding still in flight
+              cabinet_ids: [],
+            },
+            token: jwt,
+            // WbTokenForm requires a selected cabinet
+            cabinetId: 'story-167-7-cabinet.invalid',
+          },
+          version: 0,
+        })
+      )
+    }, SYNTHETIC_JWT)
+  })
+
+  test('[P1] [WB-TOKEN-BROWSER-01] valid token saves once and transitions to /processing without leaks', async ({
+    page,
+  }) => {
+    test.slow()
+    let putAttempts = 0
+
+    await page.route(CABINET_KEYS_ENDPOINT, async route => {
+      const method = route.request().method()
+      if (method !== 'PUT') {
+        await route.fulfill({ status: 405, body: 'unexpected synthetic method' })
+        return
+      }
+      putAttempts += 1
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify({ id: 'key-id', keyName: 'wb_api_token', updatedAt: '2026-08-17T10:00:00Z' }),
+      })
+    })
+
+    await page.emulateMedia({ reducedMotion: 'reduce' })
+    await page.goto(ROUTES.onboarding.token, { waitUntil: 'domcontentloaded' })
+
+    const input = page.getByLabel(/wb api токен/i)
+    await expect(input).toBeVisible()
+    await input.fill(SYNTHETIC_JWT)
+    await page.getByRole('button', { name: /сохранить токен/i }).click()
+
+    // Exactly one storage request — no duplicates
+    await expect
+      .poll(() => putAttempts, { timeout: 15000 })
+      .toBe(1)
+
+    // Transition to the processing step (masked input resets on success)
+    let observedProcessing = false
+    await expect
+      .poll(
+        async () => {
+          observedProcessing =
+            observedProcessing || new URL(page.url()).pathname.startsWith('/processing')
+          return observedProcessing
+        },
+        { timeout: 15000 }
+      )
+      .toBe(true)
+
+    // Privacy scan: token value never rendered in page text (masked input, no echo).
+    // Review LOW-3: textContent alone misses a type="password"→"text" regression
+    // (input values are not in textContent), so also pin the masked input type.
+    const tokenInput = page.getByRole('textbox')
+    await expect(tokenInput).toHaveAttribute('type', 'password')
+    expect((await page.textContent('body')) ?? '').not.toContain(SYNTHETIC_JWT)
+  })
+
+  test('[P1] [WB-TOKEN-BROWSER-02] WB-rejected token surfaces locked copy with recovery link and no navigation', async ({
+    page,
+  }) => {
+    test.slow()
+    let putAttempts = 0
+
+    await page.route(CABINET_KEYS_ENDPOINT, async route => {
+      const method = route.request().method()
+      if (method !== 'PUT') {
+        await route.fulfill({ status: 405, body: 'unexpected synthetic method' })
+        return
+      }
+      putAttempts += 1
+      await route.fulfill({
+        status: 400,
+        contentType: 'application/json',
+        body: JSON.stringify({ message: 'Invalid token' }),
+      })
+    })
+
+    await page.goto(ROUTES.onboarding.token, { waitUntil: 'domcontentloaded' })
+
+    await page.getByLabel(/wb api токен/i).fill(SYNTHETIC_JWT)
+    await page.getByRole('button', { name: /сохранить токен/i }).click()
+
+    // Rejected state: locked destructive copy + recovery link, stays on route.
+    // The app-wide mutations retry:1 (providers.tsx) re-issues the failed PUT
+    // exactly once — pre-existing semantics, observed and preserved.
+    const rejectedAlertTitle = page.getByRole('main').getByText('Токен недействителен', {
+      exact: true,
+    })
+    await expect(rejectedAlertTitle).toBeVisible({ timeout: 15000 })
+    await expect(page.getByRole('link', { name: /получить новый токен/i })).toBeVisible()
+    await expect
+      .poll(() => putAttempts, { timeout: 15000 })
+      .toBe(2)
+
+    // A genuine value edit clears the server error; one more submit retries
+    const rejectedInput = page.getByLabel(/wb api токен/i)
+    await rejectedInput.fill('')
+    await expect(rejectedAlertTitle).toBeHidden()
+    await rejectedInput.fill(SYNTHETIC_JWT)
+    await page.getByRole('button', { name: /сохранить токен/i }).click()
+    await expect
+      .poll(() => putAttempts, { timeout: 15000 })
+      .toBe(4)
+    expect(new URL(page.url()).pathname.startsWith('/processing')).toBe(false)
+
+    // Privacy scan: token value never rendered
+    expect((await page.textContent('body')) ?? '').not.toContain(SYNTHETIC_JWT)
+  })
+
+  test('[P2] [WB-TOKEN-BROWSER-03] permission and expired-session failures keep locked fallback semantics', async ({
+    page,
+  }) => {
+    test.slow()
+    let putAttempts = 0
+    // App-wide mutations retry:1 (providers.tsx): each failed submit fires the
+    // PUT twice, so the queue serves each failure status twice.
+    const responses: Array<{ status: number; body: string }> = [
+      { status: 403, body: JSON.stringify({ message: 'Forbidden: permission denied' }) },
+      { status: 403, body: JSON.stringify({ message: 'Forbidden: permission denied' }) },
+      { status: 401, body: JSON.stringify({ message: 'Unauthorized. Please log in again.' }) },
+      { status: 401, body: JSON.stringify({ message: 'Unauthorized. Please log in again.' }) },
+    ]
+
+    await page.route(CABINET_KEYS_ENDPOINT, async route => {
+      const method = route.request().method()
+      if (method !== 'PUT') {
+        await route.fulfill({ status: 405, body: 'unexpected synthetic method' })
+        return
+      }
+      const response = responses[Math.min(putAttempts, responses.length - 1)]
+      putAttempts += 1
+      await route.fulfill({ status: response.status, contentType: 'application/json', body: response.body })
+    })
+
+    await page.goto(ROUTES.onboarding.token, { waitUntil: 'domcontentloaded' })
+
+    // Permission failure: locked copy, no recovery link, no navigation
+    await page.getByLabel(/wb api токен/i).fill(SYNTHETIC_JWT)
+    await page.getByRole('button', { name: /сохранить токен/i }).click()
+    await expect(page.getByRole('main').getByText('Нет доступа', { exact: true })).toBeVisible({
+      timeout: 15000,
+    })
+    expect(await page.getByRole('link', { name: /получить новый токен/i }).count()).toBe(0)
+    expect(new URL(page.url()).pathname.startsWith('/processing')).toBe(false)
+
+    // Expired session (401 mid-submit): fallback copy echoed, stays on route
+    const permissionInput = page.getByLabel(/wb api токен/i)
+    await permissionInput.fill('')
+    await permissionInput.fill(SYNTHETIC_JWT)
+    await page.getByRole('button', { name: /сохранить токен/i }).click()
+    await expect(
+      page.getByRole('main').getByText('Ошибка сохранения токена', { exact: true })
+    ).toBeVisible({ timeout: 15000 })
+    expect(new URL(page.url()).pathname.startsWith('/processing')).toBe(false)
+    expect((await page.textContent('body')) ?? '').not.toContain(SYNTHETIC_JWT)
+  })
+})
