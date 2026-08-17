@@ -130,3 +130,31 @@ describe('AlertSummaryCards', () => {
     expect(screen.getByText('Информационные')).toBeInTheDocument()
   })
 })
+
+// ---------------------------------------------------------------------------
+// Story 168.2: semantic tone tokens (shadcn migration)
+// ---------------------------------------------------------------------------
+
+describe('AlertSummaryCards — semantic tone tokens (168.2)', () => {
+  const LEGACY_PALETTE_RE =
+    /((bg|text|border|ring|divide|fill|stroke|outline)-(red|yellow|blue|green|gray|rose|amber|emerald|sky|orange|slate|zinc|neutral|stone|lime|teal|cyan|indigo|violet|purple|fuchsia|pink)(-\d+)?)/
+
+  it.each([
+    ['Критические', 'bg-status-error'],
+    ['Предупреждения', 'bg-status-warning'],
+    ['Информационные', 'bg-status-information'],
+  ] as const)('renders %s chip with semantic class %s', (label, token) => {
+    const { container } = render(<AlertSummaryCards summary={makeSummary()} isLoading={false} />)
+    // Exact full-class-token match (classList.contains) — no substring false-pass
+    const chip = Array.from(container.querySelectorAll<HTMLElement>('*')).find(el =>
+      el.classList.contains(token)
+    )
+    expect(chip).toBeDefined()
+    expect(container.textContent).toContain(label)
+  })
+
+  it('renders no legacy palette classes in the DOM', () => {
+    const { container } = render(<AlertSummaryCards summary={makeSummary()} isLoading={false} />)
+    expect(container.innerHTML).not.toMatch(LEGACY_PALETTE_RE)
+  })
+})

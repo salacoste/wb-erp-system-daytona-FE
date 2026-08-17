@@ -271,3 +271,37 @@ describe('AlertRulesList', () => {
     })
   })
 })
+
+// ---------------------------------------------------------------------------
+// Story 168.2: semantic tone tokens (shadcn migration)
+// ---------------------------------------------------------------------------
+
+describe('AlertRulesList — semantic severity tone tokens (168.2)', () => {
+  const LEGACY_PALETTE_RE =
+    /((bg|text|border|ring|divide|fill|stroke|outline)-(red|yellow|blue|green|gray|rose|amber|emerald|sky|orange|slate|zinc|neutral|stone|lime|teal|cyan|indigo|violet|purple|fuchsia|pink)(-\d+)?)/
+
+  it.each([
+    ['critical', 'text-status-error', 'Критический'],
+    ['warning', 'text-status-warning', 'Внимание'],
+    ['info', 'text-status-information', 'Информация'],
+  ] as const)('renders %s severity badge with semantic class %s', (severity, token, label) => {
+    const rules = [createRule({ severity })]
+    const { container } = renderWithProviders(<AlertRulesList rules={rules} isLoading={false} />)
+    // Exact full-class-token match (classList.contains) — no substring false-pass
+    const badge = Array.from(container.querySelectorAll<HTMLElement>('*')).find(el =>
+      el.classList.contains(token)
+    )
+    expect(badge).toBeDefined()
+    expect(badge?.textContent).toBe(label)
+  })
+
+  it('renders no legacy palette classes in the DOM', () => {
+    const rules = [
+      createRule({ severity: 'critical' }),
+      createRule({ id: 'rule-2', severity: 'warning' }),
+      createRule({ id: 'rule-3', severity: 'info' }),
+    ]
+    const { container } = renderWithProviders(<AlertRulesList rules={rules} isLoading={false} />)
+    expect(container.innerHTML).not.toMatch(LEGACY_PALETTE_RE)
+  })
+})
