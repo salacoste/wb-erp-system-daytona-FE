@@ -759,7 +759,7 @@ development_status:
 
   # Epic 168-FE: Trustworthy Analytics Core and Financial Decisions
   epic-168-fe: backlog
-  168-1-fe-migrate-analytics-hub-analytics-and-own-analytics-shared-ui: review   # Story 168.1: hub + analytics-shared token migration; 24-href nav lock (unit+e2e); ownership map recorded, ResponsiveChartFrame ESCALATED; check:docs baseline red pre-exists on main.
+  168-1-fe-migrate-analytics-hub-analytics-and-own-analytics-shared-ui: done     # PR #168 (merged b21aa04d): NavigationTone map (JIT-invisible hue-interp killed) + shared-UI tokens; 24-href nav lock; 2-pass COMMENT+COMMENT; vitest 18616/0. ESCALATION: ResponsiveChartFrame no-owner → epic-168 close-gate.
   168-2-fe-migrate-analytics-alerts-analytics-alerts: backlog
   168-3-fe-migrate-analytical-dashboard-analytics-dashboard: backlog
   168-4-fe-migrate-finance-history-analytics-finance-history: backlog
