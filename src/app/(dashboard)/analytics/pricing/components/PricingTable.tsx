@@ -52,7 +52,8 @@ function GapCell({ gap, gapPct }: { gap: number | null; gapPct: number | null })
     return <span className="text-muted-foreground">—</span>
   }
   const isAbove = gap >= 0
-  const cls = isAbove ? 'text-green-600' : 'text-red-600'
+  // 168.6: semantic financial tokens instead of legacy green/red-600
+  const cls = isAbove ? 'text-financial-positive' : 'text-financial-negative'
   const sign = isAbove ? '+' : ''
   return (
     <span className={`font-medium ${cls}`}>
@@ -70,7 +71,13 @@ function GapCell({ gap, gapPct }: { gap: number | null; gapPct: number | null })
 
 function MarginCell({ value }: { value: number | null }) {
   if (value === null) return <span className="text-muted-foreground">—</span>
-  const cls = value >= 15 ? 'text-green-600' : value >= 0 ? 'text-amber-600' : 'text-red-600'
+  // 168.6: 3-tier semantic tokens (thresholds 15/0 unchanged); amber → status-warning/80
+  const cls =
+    value >= 15
+      ? 'text-financial-positive'
+      : value >= 0
+        ? 'text-status-warning/80'
+        : 'text-financial-negative'
   return <span className={cls}>{formatPercentage(value)}</span>
 }
 
