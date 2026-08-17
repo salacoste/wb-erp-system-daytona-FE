@@ -74,17 +74,17 @@ export function CabinetCreationForm() {
   }, [existingCabinet.data, form, pendingMarginRetry])
 
   const createMutation = useMutation({
-    mutationFn: async (data: CabinetFormData) => {
-      try {
-        return await handleCreateCabinet(data.name, Number(data.targetMarginPct))
-      } catch (error) {
+    mutationFn: (data: CabinetFormData) =>
+      handleCreateCabinet(data.name, Number(data.targetMarginPct)).catch((error: unknown) => {
         if (error instanceof Error && error.message.toLowerCase().includes('target margin')) {
           setPendingMarginRetry(true)
         }
         throw error
-      }
-    },
+      }),
     onSuccess: result => {
+      // Story 167.9: only an `applied` settlement belongs to the live session;
+      // stale/indeterminate must not toast/navigate/reset (no error UI either).
+      if (result.status !== 'applied' || !result.cabinet) return
       setPendingMarginRetry(false)
       toast.success(`Кабинет "${result.cabinet.name}" успешно создан!`)
       // Navigate to next onboarding step (WB token input)

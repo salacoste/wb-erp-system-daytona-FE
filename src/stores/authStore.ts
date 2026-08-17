@@ -18,6 +18,14 @@ interface AuthState {
   token: string | null
   cabinetId: string | null
   isAuthenticated: boolean
+  /**
+   * Story 167.9: unique identity of the current login session. Regenerated on
+   * every login() call so a re-login by the same account is a NEW session;
+   * persisted with auth state so reloads keep the same session identity.
+   * Null for sessions persisted before this field existed (settlement then
+   * resolves to `indeterminate`).
+   */
+  sessionNonce: string | null
 
   // Actions
   setUser: (user: User) => void
@@ -28,6 +36,10 @@ interface AuthState {
   logout: () => void
 }
 
+function createSessionNonce(): string {
+  return crypto.randomUUID()
+}
+
 export const useAuthStore = create<AuthState>()(
   persist(
     set => ({
@@ -36,6 +48,7 @@ export const useAuthStore = create<AuthState>()(
       token: null,
       cabinetId: null,
       isAuthenticated: false,
+      sessionNonce: null,
 
       // Actions — normalize role case at the boundary
       setUser: user => set({ user: normalizeUser(user), isAuthenticated: true }),
@@ -51,6 +64,7 @@ export const useAuthStore = create<AuthState>()(
           token,
           cabinetId: cabinetId || normalized.cabinet_ids?.[0] || null,
           isAuthenticated: true,
+          sessionNonce: createSessionNonce(),
         })
         setAuthCookie(token, 24)
       },
@@ -72,6 +86,7 @@ export const useAuthStore = create<AuthState>()(
           token: null,
           cabinetId: null,
           isAuthenticated: false,
+          sessionNonce: null,
         })
         removeAuthCookie()
         if (typeof window !== 'undefined') {
@@ -87,12 +102,24 @@ export const useAuthStore = create<AuthState>()(
         user: state.user,
         token: state.token,
         cabinetId: state.cabinetId,
+        sessionNonce: state.sessionNonce,
       }),
       onRehydrateStorage: () => state => {
         if (typeof window !== 'undefined' && state) {
           if (state.token && state.user) {
             state.isAuthenticated = true
             state.user = normalizeUser(state.user)
+
+            // Story 167.9 (review fix HIGH-2): sessions persisted before
+            // sessionNonce existed rehydrate without a nonce — the first cabinet
+            // create post-deploy would then settle `indeterminate` (server-side
+            // success, no commits, no UI). Mint a nonce here so every SUBSEQUENT
+            // initiation carries one. A create that was already in flight at
+            // deploy time stays indeterminate: the initiating capture is
+            // immutable — acceptable, documented fail-safe.
+            if (!state.sessionNonce) {
+              useAuthStore.setState({ sessionNonce: createSessionNonce() })
+            }
           }
 
           if (state.token) {

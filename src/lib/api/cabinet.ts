@@ -15,6 +15,7 @@ import type {
   SellerRatingResponse,
   TokenHealthResponse,
 } from '@/types/cabinet'
+import type { ApiRequestOptions } from '@/types/api'
 // Story 89.1-FE: Boundary normalizers — Jam tier falls back to 'unknown' for new tiers
 import {
   normalizeCabinetResponse,
@@ -41,14 +42,17 @@ export async function getCabinetTaxSettings(cabinetId: string): Promise<Cabinet>
  */
 export async function updateCabinetTaxSettings(
   cabinetId: string,
-  data: UpdateCabinetTaxRequest
+  data: UpdateCabinetTaxRequest,
+  // Story 167.9: optional immutable initiating-session transport context so the
+  // onboarding margin PUT authenticates/cabinets as the session that created the cabinet.
+  options?: ApiRequestOptions
 ): Promise<Cabinet> {
   const { targetMarginPct, ...existingSettings } = data
   const requestBody =
     targetMarginPct === undefined
       ? existingSettings
       : { ...existingSettings, target_margin_pct: targetMarginPct }
-  const raw = await apiClient.put<unknown>(`/v1/cabinets/${cabinetId}`, requestBody)
+  const raw = await apiClient.put<unknown>(`/v1/cabinets/${cabinetId}`, requestBody, options)
   return normalizeCabinetResponse(raw)
 }
 

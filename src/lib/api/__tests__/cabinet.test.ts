@@ -14,9 +14,13 @@ describe('updateCabinetTaxSettings target margin boundary', () => {
 
     const result = await updateCabinetTaxSettings('cab-1', { targetMarginPct: value })
 
-    expect(apiClient.put).toHaveBeenCalledWith('/v1/cabinets/cab-1', {
-      target_margin_pct: value,
-    })
+    expect(apiClient.put).toHaveBeenCalledWith(
+      '/v1/cabinets/cab-1',
+      {
+        target_margin_pct: value,
+      },
+      undefined
+    )
     expect(result.targetMarginPct).toBe(value)
   })
 
@@ -25,9 +29,13 @@ describe('updateCabinetTaxSettings target margin boundary', () => {
 
     await updateCabinetTaxSettings('cab-1', { taxSystem: 'usn6' })
 
-    expect(apiClient.put).toHaveBeenCalledWith('/v1/cabinets/cab-1', {
-      taxSystem: 'usn6',
-    })
+    expect(apiClient.put).toHaveBeenCalledWith(
+      '/v1/cabinets/cab-1',
+      {
+        taxSystem: 'usn6',
+      },
+      undefined
+    )
   })
 
   it('returns a complete normalized cabinet suitable for cache seeding', async () => {

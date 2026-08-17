@@ -15,6 +15,7 @@ export type {
   CreateCabinetRequest,
   ProductSyncTask,
   CreateCabinetResponse,
+  CabinetCreationOperationState,
   UpdateWbTokenRequest,
   UpdateWbTokenResponse,
   ApiError,

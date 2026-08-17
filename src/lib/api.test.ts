@@ -66,16 +66,19 @@ describe('createCabinet', () => {
     mockAuthStore.token = 'jwt-token'
     mockAuthStore.cabinetId = null
 
-    const result = await createCabinet({ name: 'Test Cabinet' }, 'jwt-token')
+    const result = await createCabinet(
+      { name: 'Test Cabinet' },
+      { token: 'jwt-token', idempotencyKey: '9ca8c2ba-0b3f-4a2a-b20c-27db4d60a7b0' }
+    )
 
-    expect(fetch).toHaveBeenCalledWith('http://localhost:3000/api/v1/cabinets', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: 'Bearer jwt-token',
-      },
-      body: JSON.stringify({ name: 'Test Cabinet' }),
-    })
+    const init = fetchMock.mock.calls[0][1]
+    expect(fetchMock.mock.calls[0][0]).toBe('http://localhost:3000/api/v1/cabinets')
+    expect(init.method).toBe('POST')
+    expect(init.headers['Authorization']).toBe('Bearer jwt-token')
+    // Story 167.8: account-scoped create never sends X-Cabinet-Id — assert on the
+    // WIRE header, not on internal options leaking into fetch init.
+    expect(init.headers['X-Cabinet-Id']).toBeUndefined()
+    expect(init.headers['Idempotency-Key']).toBe('9ca8c2ba-0b3f-4a2a-b20c-27db4d60a7b0')
 
     expect(result).toEqual(mockResponse)
     expect(result.newToken).toBe('new-jwt-token-with-updated-cabinet-ids')
@@ -89,7 +92,9 @@ describe('createCabinet', () => {
       json: async () => ({ message: 'Validation error' }),
     })
 
-    await expect(createCabinet({ name: '' }, 'jwt-token')).rejects.toThrow('Validation error')
+    await expect(
+      createCabinet({ name: '' }, { token: 'jwt-token', idempotencyKey: 'key' })
+    ).rejects.toThrow('Validation error')
   })
 })
 
