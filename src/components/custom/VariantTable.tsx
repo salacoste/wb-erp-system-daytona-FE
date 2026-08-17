@@ -58,7 +58,7 @@ export function VariantTable({ data, isLoading }: VariantTableProps) {
 
   if (isLoading) {
     return (
-      <div className="rounded-md border p-8 text-center text-gray-400" aria-busy="true">
+      <div className="rounded-md border p-8 text-center text-muted-foreground/70" aria-busy="true">
         Загрузка вариантов…
       </div>
     )
@@ -66,15 +66,15 @@ export function VariantTable({ data, isLoading }: VariantTableProps) {
 
   if (!data || data.length === 0) {
     return (
-      <div className="rounded-lg border border-gray-200 bg-gray-50 p-12 text-center">
-        <p className="text-gray-600">Нет вариантов FBS за эту неделю</p>
+      <div className="rounded-lg border border-border bg-muted/50 p-12 text-center">
+        <p className="text-muted-foreground">Нет вариантов FBS за эту неделю</p>
       </div>
     )
   }
 
   const SortIcon = (field: VariantSortField) => {
-    if (sortField !== field) return <span className="ml-1 text-gray-400">↕</span>
-    return <span className="ml-1 text-blue-600">{sortOrder === 'asc' ? '↑' : '↓'}</span>
+    if (sortField !== field) return <span className="ml-1 text-muted-foreground/70">↕</span>
+    return <span className="ml-1 text-primary">{sortOrder === 'asc' ? '↑' : '↓'}</span>
   }
 
   return (
@@ -88,7 +88,7 @@ export function VariantTable({ data, isLoading }: VariantTableProps) {
               <TableHead>
                 <button
                   onClick={() => handleSort('revenue_net')}
-                  className="flex items-center font-medium hover:text-blue-600"
+                  className="flex items-center font-medium hover:text-primary"
                 >
                   Выручка{SortIcon('revenue_net')}
                 </button>
@@ -97,7 +97,7 @@ export function VariantTable({ data, isLoading }: VariantTableProps) {
               <TableHead>
                 <button
                   onClick={() => handleSort('profit_allocated_rub')}
-                  className="flex items-center font-medium hover:text-blue-600"
+                  className="flex items-center font-medium hover:text-primary"
                 >
                   Прибыль{SortIcon('profit_allocated_rub')}
                 </button>
@@ -108,7 +108,7 @@ export function VariantTable({ data, isLoading }: VariantTableProps) {
               <TableHead>
                 <button
                   onClick={() => handleSort('margin_allocated_pct')}
-                  className="flex items-center font-medium hover:text-blue-600"
+                  className="flex items-center font-medium hover:text-primary"
                 >
                   Маржа{SortIcon('margin_allocated_pct')}
                 </button>
@@ -125,7 +125,7 @@ export function VariantTable({ data, isLoading }: VariantTableProps) {
           </TableBody>
         </Table>
       </div>
-      <p className="text-xs text-gray-500">
+      <p className="text-xs text-muted-foreground">
         Выручка по вариантам — из FBS (FBO-only товары не участвуют). Прибыль и маржа —
         приблизительные, распределены по доле выручки варианта (см. ⚠️).
       </p>

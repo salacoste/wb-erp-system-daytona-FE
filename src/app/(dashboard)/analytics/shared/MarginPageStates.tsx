@@ -59,8 +59,8 @@ export function MarginPeriodIndicator({
 }) {
   if (!isRangeMode) return null
   return (
-    <div className="flex items-center gap-2 text-sm text-muted-foreground bg-blue-50 px-4 py-2 rounded-lg">
-      <CalendarRange className="h-4 w-4 text-blue-600" />
+    <div className="flex items-center gap-2 text-sm text-muted-foreground bg-status-information/10 px-4 py-2 rounded-lg">
+      <CalendarRange className="h-4 w-4 text-status-information" />
       <span>
         Период: <strong>{formatPeriodLabel(weekStart, weekEnd)}</strong>
       </span>
@@ -82,7 +82,7 @@ export function MarginComparisonIndicator({
 }) {
   if (!compareStart || !compareEnd) return null
   return (
-    <div className="flex items-center gap-2 text-sm text-blue-700 bg-blue-100 px-4 py-2 rounded-lg">
+    <div className="flex items-center gap-2 text-sm text-status-information-foreground bg-status-information px-4 py-2 rounded-lg">
       <GitCompare className="h-4 w-4" />
       <span>
         Сравнение: <strong>{formatPeriodLabel(weekStart, weekEnd)}</strong>

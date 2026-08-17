@@ -1,0 +1,74 @@
+# Story 168.1 — Migrate Analytics Hub `/analytics` and Own Analytics-Shared UI
+
+- **Status:** review (awaiting orchestrator commit/PR)
+- **Branch / worktree:** `cdx/epic-168-story-1-analytics-hub` @ `/private/tmp/wb-fe-168-1-migrate-analytics-hub`
+- **Base SHA:** `a581765c` (FE main; epics 166 + 167 fully merged)
+- **Acceptance criterion:** Given hub, financial, marketing, period, availability, and error states when migrated then data/query/formatting/navigation behavior remains unchanged AND every ≥2-route analytics component has this or another already-merged explicit owner.
+
+## Behavior-Lock Inventory (pre-flight)
+
+Read-only sources (untouched): `useAnalyticsPageState.ts`, `use-search-analytics.ts`, `useFinancialSummary` hooks, `useExportAnalytics`, `calculate-margin-stats.ts`, `useMarginPageState.ts`, `MissingCogsAlert`, `WeekSelector`/`MultiWeekSelector`, `FinancialSummaryTable`, `ExpenseChart`.
+
+1. Hub states: loading (2 skeletons), error (destructive alert + Повторить refetch), empty («Нет данных для отображения…»), data (FinancialSummaryTable + ExpenseChart in single mode).
+2. Query contract: `useAvailableWeeks` → `/v1/analytics/weekly/available-weeks`; `useFinancialSummary` / multi / comparison per viewMode; gated on week-availability (no 404s).
+3. View-mode cycle single→multi→comparison with week-state seeding; toggle labels «Несколько периоды/Сравнить периоды/Один период».
+4. Navigation: 4 groups × 6 cards = 24 links (exact ROUTES.ANALYTICS hrefs), h1 «Аналитика» + 4 h2 groups, badges «Важно»/«Новое»/«ML».
+5. Marketing widgets: self-fetch (`groupBy: query`/`day`), skeleton loading, render-null on error (Pattern-1 graceful degradation), null→«—», raw vs dedup share tooltip.
+6. analytics/shared (brand+category consumers): period/comparison banners, summary cards (avg margin «—» when null, BD-13 sign colouring, missing-COGS count), StorageComparisonCard (3% tolerance, «—» not fabricated 0 ₽), MissingCogsBanner (priority-order count).
+7. VariantTable: sort on Выручка/Прибыль/Маржа (nulls last), ⚠️ AllocatedMarker on cells+headers, «один размер» humanization, raw nmId, empty/loading states.
+8. ExportDialog: type/date/format/COGS form, create-error display, auto-download on completed.
+
+## Analytics-Shared Ownership Map (machine-readable)
+
+| Component | Routes (≥2?) | Owner |
+|---|---|---|
+| `analytics/components/*` (hub: Navigation, PageHeader, WeekSelector wrapper, SummaryContent, MarketingWidgets, SearchPerformanceWidget, nav config) | /analytics (1) | **168.1 (this story)** |
+| `analytics/components/MarketingKpiCard` | /analytics + /dashboard (2) | **168.1** (component); /dashboard consumer route owner 172.1 |
+| `analytics/shared/*` (MarginFilterSection, MarginMissingCogsBanner, MarginPageStates, MarginSummaryCards, StorageComparisonCard, useMarginPageState, calculate-margin-stats) | /analytics/brand + /analytics/category (2) | **168.1** (migrated here); consumer routes owned by 170.3 (brand) / 170.5 (category) |
+| `src/components/custom/VariantTable` + `VariantTableRow` + `AllocatedMarker` | /analytics/category, /analytics/brand, /analytics/product/[nmId], /analytics/sku (4) | **168.1** (per plan "hub-owned VariantTable"; 168.7/168.9 list it as shared dependency) |
+| `src/components/custom/ExportDialog` + `export-dialog/*` | same 4 routes | **168.1** (same basis) |
+| `src/components/custom/analytics/ResponsiveChartFrame` | advertising, buyout, liquidity, returns, unit-economics, brand-share (≥5) | **ESCALATED — NO EXPLICIT OWNER.** 166.7 owns the NEW ChartFrame/ChartEvidence primitive, not this legacy frame; consumer stories (168.11, 169.4, 169.10, 169.11, 170.1, 170.4) each migrate their own charts but none lists the file in Owned Surface; final removal presumably under 174.2. NOT edited here. |
+| `src/components/custom/analytics/FbsTrendsChart` family | /analytics/orders (2 tabs, 1 route) | 168.5 (single-route, not ≥2-route) |
+| `src/components/custom/analytics/BrandShareView`/`BrandShareChart` family | /analytics/brand-share (1) | 170.4 |
+| `src/components/custom/analytics/PeriodComparisonTable`/`ComparisonPeriodPicker` family | external consumers: 0 (internal-only within `custom/analytics`) | dead/legacy — record only; removal under 174.2 |
+| `src/components/custom/analytics/Seasonal*`, `TrendsSummaryCards`/`SummaryCard`, `DataSourceIndicator` | external consumers: 0 (internal-only) | record only; 174.2 |
+| `src/components/analytics/MergedProductBadge` | /analytics/advertising (1) | 170.1 |
+
+**Escalation: ResponsiveChartFrame (5 routes) has no explicit owner story.** Recommended: assign to 174.2 (legacy removal) or to the first consumer story (168.11) as an explicit "migrate off ResponsiveChartFrame" step.
+
+## Changes
+
+| File | Change |
+|---|---|
+| `analytics/components/AnalyticsPageHeader.tsx` | `text-gray-900` → `text-foreground` on h1. |
+| `analytics/components/analytics-navigation-config.ts` | Removed runtime-interpolated `text-${hue}-600` classes (never generated by Tailwind v4 JIT) → static semantic `NavigationTone` map (primary/info/success/warning/danger/neutral → `text-status-*`/`text-primary`/`text-muted-foreground` + `/10`,`/20`,`/30` surface tints). hrefs/titles/descriptions/badges byte-identical. |
+| `analytics/components/AnalyticsNavigation.tsx` | grays → `text-foreground`/`text-muted-foreground(/70)`; badge `bg-red-500 text-white` → `bg-destructive text-destructive-foreground`. |
+| `analytics/components/SearchPerformanceWidget.tsx` | hardcoded sparkline `#3B82F6` → `var(--color-chart-1)`. Review MEDIUM-2: KNOWN intentional delta — theme `--chart-1` (light ≈ #1579C4) is darker than the old #3B82F6; accepted for theme-consistency (dark-mode adapts); the unit-pin suite locks the var name, not the RGB. |
+| `analytics/shared/MarginPageStates.tsx` | blue-50/600/700/100 → `status-information` tokens. |
+| `analytics/shared/MarginSummaryCards.tsx` | `text-green-600` → `text-status-success`; `text-yellow-600` → `text-status-warning`. |
+| `analytics/shared/StorageComparisonCard.tsx` | yellow divergence card → `status-warning` tokens; diff colours → `financial-positive`/`financial-negative`/`status-warning` (sign + text value carry the meaning, non-color-safe by design preserved). |
+| `src/components/custom/VariantTable.tsx` | gray/blue sort+state classes → `muted-foreground(/70)`, `border-border`, `bg-muted/50`, `text-primary` (active sort + hover). |
+| `src/components/custom/VariantTableRow.tsx` | grays → muted tokens; `text-green-600`/`text-red-600` → `text-financial-positive`/`text-financial-negative`. |
+| `src/components/custom/export-dialog/ExportDialogForm.tsx`, `ExportConfigForm.tsx` | `bg-red-50 text-red-700` → `bg-destructive/10 text-destructive`. |
+| `src/components/custom/__tests__/VariantTable.test.tsx` | color-class pin updated `.text-red-600` → `.text-financial-negative` (sign semantics unchanged). |
+| `analytics/components/__tests__/AnalyticsNavigation.test.tsx` | NEW — 4 tests: h2 groups, 24 exact hrefs, badge copies, no-legacy-hue-classes + semantic-token presence. |
+| `analytics/components/__tests__/AnalyticsPageHeader.test.tsx` | NEW — 5 tests: h1 copy+token, subtitles (multi/недели plural), toggle labels per mode. |
+| `e2e/financial-summary.spec.ts` | + Story 168.1 browser block: heading structure, 24 exact hrefs (count 1 each), badges, zero legacy hue classes in DOM, `assertNoUnexpectedRequests` fail-closed via Story-162-6 synthetic routes. |
+
+**Forbidden files untouched:** `useAnalyticsPageState.ts`, all hooks/APIs/formatters, child analytics routes, AppShell/foundation, `custom/analytics/*` (non-owned), backend.
+
+## Validation
+
+- Targeted vitest: `src/app/(dashboard)/analytics` + `VariantTable.test.tsx` → **228 files / 2361 tests passed**; `export-dialog` → 9/9.
+- E2E: `npm run test:e2e -- e2e/financial-summary.spec.ts` → **8 passed, 1 skipped** (incl. new `[Story 168.1]` block) against a worktree dev server on :3100 (pm2 FE stopped/restored, post-restore serving).
+- Full gates: lint 0/0, type-check 0, max-lines OK, `git diff --check` OK, format (prettier via hooks) OK. Full vitest + build: see orchestrator-run tails appended below.
+
+## Gaps
+
+- `npm run check:docs` FAILS on clean main `a581765c` identically (stale `109-*` artifact line-citations) — pre-existing baseline red, NOT caused by this story; baseline not updated (shared file, out of scope).
+- ResponsiveChartFrame ownership escalated (see map).
+- Real screen-reader audit not performed (consistent with 167.4/167.6 gap).
+
+## Lessons
+
+_(placeholder — filled at review)_

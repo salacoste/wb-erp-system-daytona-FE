@@ -18,7 +18,7 @@ export function AnalyticsPageHeader({
   return (
     <div className="flex items-center justify-between">
       <div>
-        <h1 className="text-3xl font-bold tracking-tight text-gray-900">Аналитика</h1>
+        <h1 className="text-3xl font-bold tracking-tight text-foreground">Аналитика</h1>
         <p className="text-muted-foreground mt-1">
           {viewMode === 'multi' && weekCount > 1
             ? `Агрегированные данные за ${weekCount} ${weekCount >= 2 && weekCount <= 4 ? 'недели' : 'недель'}`

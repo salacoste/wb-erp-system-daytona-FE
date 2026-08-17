@@ -125,7 +125,7 @@ export function ExportConfigForm({
 
       {/* Error from creation */}
       {createError && (
-        <div className="rounded-md bg-red-50 p-3 text-sm text-red-700">
+        <div className="rounded-md bg-destructive/10 p-3 text-sm text-destructive">
           {createError.message || 'Ошибка при создании экспорта'}
         </div>
       )}

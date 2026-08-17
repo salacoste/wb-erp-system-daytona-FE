@@ -46,8 +46,9 @@ describe('VariantTable', () => {
 
   it('renders the negative allocated profit in red (not as «—»)', () => {
     const { container } = renderWithProviders(<VariantTable data={[variantSampleItem]} />)
-    // variantSampleItem.profit_allocated_rub = -82.78 → red text class on the profit cell
-    const redProfit = container.querySelector('.text-red-600')
+    // variantSampleItem.profit_allocated_rub = -82.78 → negative-financial token class on the profit cell
+    // (Story 168.1: text-red-600 → semantic text-financial-negative, sign semantics unchanged)
+    const redProfit = container.querySelector('.text-financial-negative')
     expect(redProfit).not.toBeNull()
     expect(redProfit?.textContent).toContain('82,78')
   })

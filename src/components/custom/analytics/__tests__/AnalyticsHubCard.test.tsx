@@ -81,11 +81,12 @@ describe('AnalyticsHubCard - Базовый рендеринг', () => {
     expect(item!.icon).toBeDefined()
   })
 
-  it('should render with correct color scheme (orange/amber theme)', () => {
+  it('should render with correct color scheme (warning tone)', () => {
+    // Story 168.1: legacy orange hue classes → semantic status-warning tokens
     const item = getFbsNavItem()
     expect(item).toBeDefined()
-    expect(item!.color).toContain('orange')
-    expect(item!.bgColor).toContain('orange')
+    expect(item!.color).toBe('text-status-warning')
+    expect(item!.bgColor).toBe('bg-status-warning/10')
   })
 
   it('should have accessible link to /analytics/orders', () => {
@@ -261,11 +262,11 @@ describe('AnalyticsHubCard - Доступность (a11y)', () => {
     expect(getByRole('link', { name: /заказы fbs/i })).toBeInTheDocument()
   })
 
-  it('should meet WCAG 2.1 AA color contrast requirements — orange on white', () => {
+  it('should keep AA-safe semantic token pair (was orange-600/orange-50)', () => {
     const item = getFbsNavItem()!
-    // Orange-600 on white has sufficient contrast for large text (WCAG AA)
-    expect(item!.color).toBe('text-orange-600')
-    expect(item!.bgColor).toBe('bg-orange-50')
+    // Story 168.1: theme-owned status-warning tokens (AA-checked in globals contrast tests)
+    expect(item!.color).toBe('text-status-warning')
+    expect(item!.bgColor).toBe('bg-status-warning/10')
   })
 
   it('should announce card purpose to assistive technology', () => {
@@ -331,8 +332,10 @@ describe('AnalyticsHubCard - Интеграция в Hub', () => {
 
   it('should use same border-color pattern as other cards', () => {
     const fbsItem = getFbsNavItem()!
-    // Pattern: border-{hue}-200
-    expect(fbsItem.borderColor).toMatch(/^border-\w+-200$/)
+    // Story 168.1 pattern: semantic token surface tint border (border-status-{tone}/30)
+    expect(fbsItem.borderColor).toMatch(
+      /^border-(status-(information|success|warning|error)|primary|border)(\/\d+)?$/
+    )
   })
 })
 
@@ -367,24 +370,24 @@ describe('AnalyticsHub - FBS Card Configuration', () => {
     expect(fbsItem!.description).toContain('365')
   })
 
-  it('should have color: "text-orange-600"', () => {
+  it('should have color: text-status-warning', () => {
     const fbsItem = getFbsNavItem()
-    expect(fbsItem!.color).toBe('text-orange-600')
+    expect(fbsItem!.color).toBe('text-status-warning')
   })
 
-  it('should have bgColor: "bg-orange-50"', () => {
+  it('should have bgColor: bg-status-warning/10', () => {
     const fbsItem = getFbsNavItem()
-    expect(fbsItem!.bgColor).toBe('bg-orange-50')
+    expect(fbsItem!.bgColor).toBe('bg-status-warning/10')
   })
 
-  it('should have hoverBg: "hover:bg-orange-100"', () => {
+  it('should have hoverBg: hover:bg-status-warning/20', () => {
     const fbsItem = getFbsNavItem()
-    expect(fbsItem!.hoverBg).toBe('hover:bg-orange-100')
+    expect(fbsItem!.hoverBg).toBe('hover:bg-status-warning/20')
   })
 
-  it('should have borderColor: "border-orange-200"', () => {
+  it('should have borderColor: border-status-warning/30', () => {
     const fbsItem = getFbsNavItem()
-    expect(fbsItem!.borderColor).toBe('border-orange-200')
+    expect(fbsItem!.borderColor).toBe('border-status-warning/30')
   })
 
   it('should have badge: "Новое"', () => {

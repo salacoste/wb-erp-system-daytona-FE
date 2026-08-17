@@ -116,7 +116,7 @@ export function ExportDialogForm({
 
       {/* Error from creation */}
       {createError && (
-        <div className="p-3 rounded-md bg-red-50 text-red-700 text-sm">
+        <div className="p-3 rounded-md bg-destructive/10 text-destructive text-sm">
           {createError.message || 'Ошибка при создании экспорта'}
         </div>
       )}
