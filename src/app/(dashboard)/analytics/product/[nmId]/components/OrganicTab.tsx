@@ -20,11 +20,14 @@ interface OrganicTabProps {
 /** iROAS interpretation → Russian label + color class. */
 function iroasLabel(interp: string | null): { text: string; cls: string } {
   if (!interp) return { text: 'Нет данных', cls: 'text-muted-foreground' }
+  // 168.7: raw green/red/yellow → semantic tokens. Tier-collapse guard: the 4
+  // interpretation tiers keep distinct intensity — highly_effective = full
+  // positive, effective = /80 (idiom from 168.3/168.6), NOT collapsed.
   const map: Record<string, { text: string; cls: string }> = {
-    highly_effective: { text: 'Очень эффективно', cls: 'text-green-600' },
-    effective: { text: 'Эффективно', cls: 'text-green-500' },
-    marginal: { text: 'На грани', cls: 'text-yellow-600' },
-    ineffective: { text: 'Неэффективно', cls: 'text-red-500' },
+    highly_effective: { text: 'Очень эффективно', cls: 'text-financial-positive' },
+    effective: { text: 'Эффективно', cls: 'text-financial-positive/80' },
+    marginal: { text: 'На грани', cls: 'text-status-warning' },
+    ineffective: { text: 'Неэффективно', cls: 'text-financial-negative' },
   }
   return map[interp] ?? { text: interp, cls: 'text-muted-foreground' }
 }
@@ -136,12 +139,15 @@ export function OrganicTab({ correlation, iroas }: OrganicTabProps) {
                       {day.estimatedAdCart != null ? formatNumber(day.estimatedAdCart) : '—'}
                     </td>
                     <td className="py-2 text-right">
+                      {/* 168.7: confidence = data-quality indicator, NOT financial —
+                          high → status-information (info-blue precedent 168.5),
+                          medium → status-warning, low → muted (untouched). */}
                       <span
                         className={
                           day.confidence === 'high'
-                            ? 'text-green-600'
+                            ? 'text-status-information'
                             : day.confidence === 'medium'
-                              ? 'text-yellow-600'
+                              ? 'text-status-warning'
                               : 'text-muted-foreground'
                         }
                       >
