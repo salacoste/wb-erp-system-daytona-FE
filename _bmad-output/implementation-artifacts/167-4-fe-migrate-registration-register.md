@@ -1,6 +1,6 @@
 # Story 167.4: Migrate Registration `/register`
 
-Status: review
+Status: done
 
 ## Story
 
@@ -770,3 +770,16 @@ This append-only checkpoint records the final current-byte validation before a n
 Lifecycle truth is unchanged: Story and sprint remain `review`; Task 7 is complete; Task 8 is open; and the ATDD front matter remains `tddPhase: green`. The shared logger remains **`OUT_OF_SCOPE_BASELINE_GAP`**. Screen-reader and non-Chromium execution remain unavailable gaps. No Story completion, staging, commit, push, PR, merge, cleanup, or deployment is claimed.
 
 These document bytes require a new deterministic freeze over the exact eight established paths. Fresh independent terminal reviews must then run sequentially over that identical freeze: **`APPROVE` first, then `CLEAR`**. The owned-document Prettier and trailing-whitespace checks, repository `git diff --check`, empty-index check, and outside-owned tracked/status stability check passed for this synchronization.
+
+### Post-Merge Integration Checkpoint (2026-08-17, append-only)
+
+Freeze-8 contract satisfied — a fresh sequential terminal pair ran over the exact merged bytes of this record:
+
+- Pinned freeze: SHA-256 `1843cb9e26832da0aaca07e02b872d63569bf8a5466d94d628b7d03c4f485587`, 772 lines, byte-identical to merged branch tip `2951b8ae` and merge commit `d1401ca8` (PR #158, merged 2026-08-14T16:52:17Z; `git diff d1401ca8..main -- <this file>` = 0).
+- **Pass 1 (code/spec/security, fresh opus context): VERDICT: APPROVE.** Source spot-checks corroborated every record claim (single `main`/`h1`, `min-h-11` targets, `retry:false`, `skipAuth` registerUser at `api.ts:47-48`, Russian-only feedback, pre-hydration disable); test-count chronology internally consistent; no fabricated evidence. 7 findings, none blocking: 2 MEDIUM (this integration gap; logger deferral — both resolved by this checkpoint), 1 MEDIUM→LOW (4xx message-text classifier), 4 LOW.
+- **Pass 2 (architecture/scope/contract, fresh opus context): VERDICT: CLEAR.** Delivered diff confined to the declared eight-path manifest; no public-contract drift on the unauthenticated surface; epic-pattern conformance confirmed. 5 findings: 2 MEDIUM (the same integration + registration conditions — both satisfied here), 1 MEDIUM follow-up (classifier into API owner layer), 2 LOW.
+- Integration facts: PR #158 merged; merge `d1401ca8` verified ancestor of origin/main `5fdd8553`; branch `cdx/epic-167-story-4-register` deleted on GitHub (PR merge auto-delete); Sprint row flipped `review → done` 2026-08-17.
+- Deferral registration: the shared-logger `OUT_OF_SCOPE_BASELINE_GAP` is now tracked as **FE-D9** in the BE tech-debt ledger (`docs/tech-debt/TECH-DEBT-2026-08-SESSION.md`, Addendum-4 continuation-5) — redaction in `logApiError` before serialization, trigger = nearest FE story touching the apiClient/error path.
+- Standing accepted gaps unchanged and disclosed: screen-reader/non-Chromium execution coverage; FE-D9 redaction.
+
+**Lessons:** (1) do not merge before the record's own freeze contract completes — retrofit reviews cost a dedicated session (2) accepted out-of-scope findings need a tracker ID at acceptance time, not later (3) seven invalidation cycles held the append-only trail — keep per-freeze SHA chains.
