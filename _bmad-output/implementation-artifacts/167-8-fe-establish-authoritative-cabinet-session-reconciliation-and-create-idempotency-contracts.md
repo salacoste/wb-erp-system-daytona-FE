@@ -1,6 +1,6 @@
 # Story 167.8: Establish Authoritative Cabinet Session Reconciliation and Create-Idempotency Contracts
 
-Status: ready-for-dev
+Status: done (backend merged 2026-08-17, PR #227 c96a2fae8; AC7 evidence in Dev Agent Record)
 
 ## Story
 
@@ -82,20 +82,60 @@ This Story is the sole approved backend exception in the frontend migration prog
 
 ### Agent Model Used
 
-Not started.
+claude-orchestrator (Claude Code, glm-5.2) + executor(sonnet)/code-reviewer(opus) lanes; original
+implementation authored by the codex lane (gpt-5.6-sol) in
+`/private/tmp/wb-be-167-8-cabinet-reconciliation-contract`.
 
 ### Debug Log References
 
-Not started.
+- Gates: `npx tsc --noEmit -p tsconfig.build.json` exit 0; jest src/cabinets+src/docs-generator
+  **450 passed / 0 failed** (+21 skipped env-gated); lint/format clean; endpoint-drift baseline 75;
+  docs:validate 438 endpoints.
+- PG-disposable integration (MAIN-session, per DB hard rules): disposable DB `story1678`
+  (created+dropped explicitly), `CABINET_CREATION_PG_DISPOSABLE=1` → **21/21 passed** (concurrency,
+  lease takeover, fencing, cross-account 404-equality, lifecycle CHECKs). Note: the two migration
+  CHECK constraints had to be applied via psql — `prisma db push` does not materialize TABLE-level
+  CHECKs (documented in the PR).
+- Live verification (post-deploy, cabinet cleaned after): create 201 → replay 201 with the SAME
+  operationId/cabinet; different payload → 409 CABINET_CREATION_CONFLICT; lookup 200 succeeded;
+  non-UUID key → 400.
 
 ### Completion Notes List
 
-Not started. Do not add completion, review, merge, or cleanup claims without exact evidence.
+- **Salvage context**: the codex lane left ~4628 lines uncommitted in the volatile `/private/tmp`
+  worktree (0 commits on the branch, mission `story1678-final-scope-review` stale-running for 2
+  days). Owner approved "довести до merge". The worktree was moved to
+  `.claude/worktrees/epic167-8-reconciliation`, audited (AC1-AC6 verified against the spec), fixed,
+  reviewed, merged.
+- Orchestrator fixes on top of the salvaged work: ModuleRef mock (pre-existing red
+  cabinet-keys suite on main), migration renamed 20260815150000→20260816120000 (backdated
+  timestamp — spec forbids), `REQUEST_HASH_VERSION` (forward-compat hash versioning), DB-clock
+  `completedAt`, lease-derived `Retry-After`, 4xx observability warns, SQL-text pins
+  (ON CONFLICT/FOR UPDATE), retention + rate-limit values in API-PATHS, flaky retryAfter test
+  bounded. `@Roles(Owner)` waived with evidence: DB-role-primary contract is pinned by e2e
+  (stale-JWT-role test).
+- Two independent adversarial review passes (opus, per the story's two-pass rule): pass-1
+  races/security, pass-2 ops/maintainability — 0 CRITICAL/HIGH in both; all MEDIUM/LOW fixed or
+  waived with evidence.
+- docs-generator changes (~2.3k lines) blessed by both passes: capability fixes required by the
+  frozen contract (Idempotency-Key header rendering, Retry-After/Cache-Control response headers,
+  oneOf variants, firstDeclaredSuccessStatus invariant).
 
 ### File List
 
-Not started; executor must record the exact reviewed manifest.
+36 files in BE PR #227 (`c96a2fae8`): `src/cabinets/**` (service/controller/DTO/spec incl. 4 new
+contract suites + e2e), `prisma/schema.prisma` + migration `20260816120000_cabinet_creation_operations`,
+`src/docs-generator/**` (capability fixes + specs), `docs/API-PATHS-REFERENCE.md`,
+`test-api/02-cabinets.http` + API-INDEX (generated artifacts), `test/cabinets.e2e-spec.ts`.
+Merge-conflict resolution note: test-api generated artifacts taken from the story branch (deep-equal
+regeneration tests require exact artifacts); the FE-mirror delta re-syncs on the next post-deploy
+`npm run docs:generate`.
 
 ## Change Log
 
 - 2026-08-15: Story created from the owner-approved Batch correct-course proposal; status `ready-for-dev`. No implementation claimed.
+- 2026-08-17: Backend implementation merged — **PR #227, merge SHA `c96a2fae8`, ancestry on backend
+  `main` verified** (ff-only pull to `8279d647a` docs-tip); local/remote branch
+  `cdx/epic-167-story-8-cabinet-reconciliation-contract` deleted; worktree
+  `.claude/worktrees/epic167-8-reconciliation` removed. AC7 evidence complete. Status → `done`
+  (sprint-status.yaml updated). 167.9 unblocked.
