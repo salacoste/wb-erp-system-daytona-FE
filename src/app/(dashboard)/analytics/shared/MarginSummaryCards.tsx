@@ -40,7 +40,7 @@ export function MarginSummaryCards({
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <TrendingUp className="h-5 w-5 text-green-600" />
+            <TrendingUp className="h-5 w-5 text-status-success" />
             Средняя маржа
           </CardTitle>
           <CardDescription>За выбранный период</CardDescription>
@@ -86,7 +86,7 @@ export function MarginSummaryCards({
             <div className="mt-2 pt-2 border-t">
               <div className="flex justify-between text-sm">
                 <span className="text-muted-foreground">Товаров без COGS:</span>
-                <span className="font-semibold text-yellow-600">{stats.totalMissingCogs}</span>
+                <span className="font-semibold text-status-warning">{stats.totalMissingCogs}</span>
               </div>
             </div>
           </div>

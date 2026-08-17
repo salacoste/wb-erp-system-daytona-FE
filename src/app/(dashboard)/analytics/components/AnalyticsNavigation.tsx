@@ -46,7 +46,7 @@ function NavigationCard({
     >
       {/* Badge */}
       {badge && (
-        <span className="absolute -top-2 -right-2 px-2 py-0.5 text-xs font-semibold rounded-full bg-red-500 text-white">
+        <span className="absolute -top-2 -right-2 px-2 py-0.5 text-xs font-semibold rounded-full bg-destructive text-destructive-foreground">
           {badge}
         </span>
       )}
@@ -57,11 +57,11 @@ function NavigationCard({
       </div>
 
       {/* Content */}
-      <h3 className="font-semibold text-gray-900 mb-1 flex items-center gap-2">
+      <h3 className="font-semibold text-foreground mb-1 flex items-center gap-2">
         {title}
-        <ArrowRight className="h-4 w-4 opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-200 text-gray-400" />
+        <ArrowRight className="h-4 w-4 opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-200 text-muted-foreground/70" />
       </h3>
-      <p className="text-sm text-gray-600 line-clamp-2">{description}</p>
+      <p className="text-sm text-muted-foreground line-clamp-2">{description}</p>
     </Link>
   )
 }
@@ -82,8 +82,10 @@ export function NavigationSection({
     <div className="flex flex-col h-full">
       <div className="mb-3">
         {/* h2 — analytics hub renders h1 in AnalyticsPageHeader; section title groups navigation cards */}
-        <h2 className="text-sm font-semibold text-gray-500 uppercase tracking-wider">{title}</h2>
-        <p className="text-xs text-gray-400">{description}</p>
+        <h2 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider">
+          {title}
+        </h2>
+        <p className="text-xs text-muted-foreground/70">{description}</p>
       </div>
       <div
         className={cn('grid gap-3 flex-1', items.length === 1 ? 'grid-cols-1' : 'sm:grid-cols-2')}

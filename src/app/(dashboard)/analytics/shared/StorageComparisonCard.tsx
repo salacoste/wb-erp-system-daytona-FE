@@ -27,12 +27,14 @@ export function StorageComparisonCard({ data }: StorageComparisonCardProps) {
   const hasDivergence = isStorageDivergent(data.storage, weekly)
 
   return (
-    <Card className={`${hasDivergence ? 'border-yellow-400 bg-yellow-50' : 'border-border'}`}>
+    <Card
+      className={`${hasDivergence ? 'border-status-warning/60 bg-status-warning/10' : 'border-border'}`}
+    >
       <CardHeader className="pb-2">
         <CardTitle className="text-sm font-medium flex items-center gap-2">
           📦 Сравнение источников хранения
           {hasDivergence && (
-            <span className="px-2 py-0.5 text-xs bg-yellow-200 text-yellow-800 rounded">
+            <span className="px-2 py-0.5 text-xs bg-status-warning text-status-warning-foreground rounded">
               Расхождение
             </span>
           )}
@@ -61,10 +63,10 @@ export function StorageComparisonCard({ data }: StorageComparisonCardProps) {
                 diff == null
                   ? 'text-muted-foreground'
                   : !hasDivergence
-                    ? 'text-green-600'
+                    ? 'text-financial-positive'
                     : diff > 0
-                      ? 'text-red-600'
-                      : 'text-orange-600'
+                      ? 'text-financial-negative'
+                      : 'text-status-warning'
               }`}
             >
               {diff == null

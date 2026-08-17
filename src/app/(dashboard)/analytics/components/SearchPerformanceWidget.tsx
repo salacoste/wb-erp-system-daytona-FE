@@ -99,7 +99,7 @@ export function SearchPerformanceWidget({ from, to }: { from: string; to: string
               preserveAspectRatio="none"
               aria-hidden="true"
             >
-              <path d={path} stroke="#3B82F6" fill="none" strokeWidth="1.5" />
+              <path d={path} stroke="var(--color-chart-1)" fill="none" strokeWidth="1.5" />
             </svg>
           ) : (
             <div className="h-8" />
