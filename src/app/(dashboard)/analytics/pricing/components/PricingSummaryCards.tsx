@@ -64,14 +64,16 @@ export function PricingSummaryCards({ items, isLoading }: PricingSummaryCardsPro
       value: String(stats.belowTarget),
       icon: TrendingDown,
       description: 'рекомендуется повышение',
-      valueClass: 'text-red-600',
+      // 168.6: semantic financial token instead of legacy red-600
+      valueClass: 'text-financial-negative',
     },
     {
       title: 'Выше цели',
       value: String(stats.aboveTarget),
       icon: TrendingUp,
       description: 'цель достигнута',
-      valueClass: 'text-green-600',
+      // 168.6: semantic financial token instead of legacy green-600
+      valueClass: 'text-financial-positive',
     },
   ]
 

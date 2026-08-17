@@ -108,3 +108,37 @@ describe('PricingSummaryCards', () => {
     expect(screen.getByText('—')).toBeInTheDocument()
   })
 })
+
+describe('PricingSummaryCards — 168.6 semantic tokens', () => {
+  const legacyPaletteRegex =
+    /(bg|text|border|ring|divide|fill|stroke|outline)-(red|yellow|blue|green|gray|rose|amber|emerald|sky|orange|slate|zinc|neutral|stone|lime|teal|cyan|indigo|violet|purple|fuchsia|pink)(-\d+)?/
+
+  /** Value element of the card whose title matches: title span → title div → next sibling (bold value div). */
+  function cardValueElement(title: string): HTMLElement {
+    const titleDiv = screen.getByText(title).parentElement
+    expect(titleDiv).not.toBeNull()
+    const valueEl = titleDiv!.nextElementSibling as HTMLElement | null
+    expect(valueEl).not.toBeNull()
+    expect(valueEl!.className).toContain('font-bold')
+    return valueEl!
+  }
+
+  it('pins exact financial-negative on the "Ниже цели" card value (168.6)', () => {
+    render(<PricingSummaryCards items={mockItems} isLoading={false} />)
+    const valueEl = cardValueElement('Ниже цели')
+    expect(valueEl.classList.contains('text-financial-negative')).toBe(true)
+    expect(valueEl.classList.contains('text-red-600')).toBe(false)
+  })
+
+  it('pins exact financial-positive on the "Выше цели" card value (168.6)', () => {
+    render(<PricingSummaryCards items={mockItems} isLoading={false} />)
+    const valueEl = cardValueElement('Выше цели')
+    expect(valueEl.classList.contains('text-financial-positive')).toBe(true)
+    expect(valueEl.classList.contains('text-green-600')).toBe(false)
+  })
+
+  it('renders no legacy palette classes anywhere in the cards DOM (168.6 sweep guard)', () => {
+    const { container } = render(<PricingSummaryCards items={mockItems} isLoading={false} />)
+    expect(container.innerHTML).not.toMatch(legacyPaletteRegex)
+  })
+})

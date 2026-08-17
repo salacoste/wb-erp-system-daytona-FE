@@ -78,3 +78,88 @@ describe('PricingTable — SPP-1.7 basis badge', () => {
     expect(cell?.textContent).toContain('—')
   })
 })
+
+describe('PricingTable — 168.6 semantic tokens', () => {
+  // Exact classList pins (never [class*=] — defect-pattern #19 false-pass).
+  const legacyPaletteRegex =
+    /(bg|text|border|ring|divide|fill|stroke|outline)-(red|yellow|blue|green|gray|rose|amber|emerald|sky|orange|slate|zinc|neutral|stone|lime|teal|cyan|indigo|violet|purple|fuchsia|pink)(-\d+)?/
+
+  function marginCellFor(pct: number) {
+    // Single margin source: recommendedPct is null → only one MarginCell has a value span.
+    renderWithProviders(
+      <PricingTable
+        items={[item({ marginAtCurrentPct: pct, marginAtRecommendedPct: null })]}
+        isLoading={false}
+      />
+    )
+    const spans = Array.from(document.querySelectorAll('span')).filter(s =>
+      new RegExp(`${pct}([.,]\\d)?[\\s\\u00A0]?%`).test(s.textContent ?? '')
+    )
+    expect(spans.length).toBe(1)
+    return spans[0]
+  }
+
+  it('MarginCell pins financial-positive for value >= 15 (exact class)', () => {
+    const span = marginCellFor(20)
+    expect(span.classList.contains('text-financial-positive')).toBe(true)
+    expect(span.classList.contains('text-status-warning/80')).toBe(false)
+    expect(span.classList.contains('text-financial-negative')).toBe(false)
+  })
+
+  it('MarginCell pins status-warning/80 for 0 <= value < 15 (exact class, 3-tier preserved)', () => {
+    const span = marginCellFor(10)
+    expect(span.classList.contains('text-status-warning/80')).toBe(true)
+    expect(span.classList.contains('text-financial-positive')).toBe(false)
+    expect(span.classList.contains('text-financial-negative')).toBe(false)
+  })
+
+  it('MarginCell pins financial-negative for value < 0 (exact class)', () => {
+    const span = marginCellFor(-5)
+    expect(span.classList.contains('text-financial-negative')).toBe(true)
+    expect(span.classList.contains('text-status-warning/80')).toBe(false)
+    expect(span.classList.contains('text-financial-positive')).toBe(false)
+  })
+
+  it('GapCell pins financial-positive for gap >= 0 (exact class)', () => {
+    renderWithProviders(<PricingTable items={[item({ gap: 50, gapPct: 5 })]} isLoading={false} />)
+    const span = Array.from(document.querySelectorAll('span')).find(s =>
+      s.classList.contains('text-financial-positive')
+    )
+    expect(span).toBeDefined()
+    expect(span!.classList.contains('font-medium')).toBe(true)
+    expect(span!.classList.contains('text-financial-negative')).toBe(false)
+  })
+
+  it('GapCell pins financial-negative for gap < 0 (exact class)', () => {
+    renderWithProviders(<PricingTable items={[item({ gap: -30, gapPct: -4 })]} isLoading={false} />)
+    const span = Array.from(document.querySelectorAll('span')).find(s =>
+      s.classList.contains('text-financial-negative')
+    )
+    expect(span).toBeDefined()
+    expect(span!.classList.contains('font-medium')).toBe(true)
+    expect(span!.classList.contains('text-financial-positive')).toBe(false)
+  })
+
+  it('renders no legacy palette classes in table rows (168.6 sweep guard)', () => {
+    const { container } = renderWithProviders(
+      <PricingTable
+        items={[
+          item({ gap: -10, gapPct: -2, marginAtCurrentPct: 20, marginAtRecommendedPct: -5 }),
+          item({ gap: 5, gapPct: 1, marginAtCurrentPct: 3, marginAtRecommendedPct: 25 }),
+        ]}
+        isLoading={false}
+      />
+    )
+    // Guard covers this story's surface (gap/margin cells + row markup).
+    // Shared PriceBasisBadge legitimately keeps legacy grays — out of 168.6 scope.
+    const rows = container.querySelectorAll('tbody tr')
+    rows.forEach(row => {
+      const owned = Array.from(row.querySelectorAll('span')).filter(s => !s.closest('[aria-label]'))
+      owned.forEach(s => expect(s.className).not.toMatch(legacyPaletteRegex))
+      Array.from(row.querySelectorAll('td')).forEach(td =>
+        expect(td.className).not.toMatch(legacyPaletteRegex)
+      )
+    })
+    expect(rows.length).toBe(2)
+  })
+})
