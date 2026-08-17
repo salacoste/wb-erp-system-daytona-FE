@@ -64,7 +64,9 @@ export default function FinanceHistoryPage(): React.ReactElement {
           <ArrowLeft className="h-4 w-4" aria-hidden="true" />
           Аналитика
         </Link>
-        <h1 className="text-3xl font-bold tracking-tight">Финансовый отчёт: история</h1>
+        <h1 className="text-3xl font-bold tracking-tight text-foreground">
+          Финансовый отчёт: история
+        </h1>
         <p className="text-sm text-muted-foreground">
           Динамика прибыли, маржинальности и структуры расходов по неделям
         </p>

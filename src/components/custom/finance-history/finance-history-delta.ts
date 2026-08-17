@@ -54,5 +54,5 @@ export function deltaColorClass(tone: DeltaTone, isNegativeMetric: boolean): str
   if (tone === 'same') return 'text-muted-foreground'
   const good = tone === 'up'
   const positive = isNegativeMetric ? !good : good
-  return positive ? 'text-green-600' : 'text-red-600'
+  return positive ? 'text-financial-positive' : 'text-financial-negative'
 }

@@ -46,17 +46,17 @@ describe('computeWowDelta — percent (п.п.)', () => {
 })
 
 describe('deltaColorClass', () => {
-  it('up + normal metric → green', () => {
-    expect(deltaColorClass('up', false)).toBe('text-green-600')
+  it('up + normal metric → financial-positive', () => {
+    expect(deltaColorClass('up', false)).toBe('text-financial-positive')
   })
-  it('up + negative metric (e.g. expense) → red', () => {
-    expect(deltaColorClass('up', true)).toBe('text-red-600')
+  it('up + negative metric (e.g. expense) → financial-negative (inversion)', () => {
+    expect(deltaColorClass('up', true)).toBe('text-financial-negative')
   })
-  it('down + normal metric → red', () => {
-    expect(deltaColorClass('down', false)).toBe('text-red-600')
+  it('down + normal metric → financial-negative', () => {
+    expect(deltaColorClass('down', false)).toBe('text-financial-negative')
   })
-  it('down + negative metric → green', () => {
-    expect(deltaColorClass('down', true)).toBe('text-green-600')
+  it('down + negative metric → financial-positive (inversion)', () => {
+    expect(deltaColorClass('down', true)).toBe('text-financial-positive')
   })
   it('same → muted regardless', () => {
     expect(deltaColorClass('same', false)).toBe('text-muted-foreground')
