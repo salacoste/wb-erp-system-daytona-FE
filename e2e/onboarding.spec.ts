@@ -618,3 +618,654 @@ test.describe('Authenticated User - Onboarding Routes', () => {
     expect(isExpectedRoute).toBeTruthy()
   })
 })
+
+test.describe('Story 167.5 browser-owned evidence', () => {
+  const CABINET_FAMILY_ENDPOINT = '**/v1/cabinets**'
+  const CABINET_COLLECTION_PATH = '/v1/cabinets'
+  const SYNTHETIC_CABINET_ID = 'story-167-5-cabinet.invalid'
+  const CABINET_RESOURCE_PATH = `/v1/cabinets/${SYNTHETIC_CABINET_ID}`
+  const SYNTHETIC_CABINET_NAME = 'Story 167.5 synthetic cabinet'
+  const SYNTHETIC_CREATE_FAILURE = 'story-167-5-synthetic-create-failure.invalid'
+  const SYNTHETIC_ORIGINAL_TOKEN = [
+    'eyJhbGciOiJub25lIiwidHlwIjoiSldUIn0',
+    'eyJleHAiOjQxMDI0NDQ4MDAsInN1YiI6InN0b3J5LTE2Ny01LW93bmVyLmludmFsaWQifQ',
+    'story-167-5',
+  ].join('.')
+  const SYNTHETIC_REFRESHED_TOKEN = [
+    'eyJhbGciOiJub25lIiwidHlwIjoiSldUIn0',
+    'eyJleHAiOjQxMDI0NDQ4MDAsInN1YiI6InN0b3J5LTE2Ny01LXJlZnJlc2hlZC5pbnZhbGlkIn0',
+    'story-167-5-refreshed',
+  ].join('.')
+  const SYNTHETIC_APP_ORIGIN = 'http://localhost:3100'
+  const VIEWPORT_WIDTHS = [320, 390, 768, 1024, 1280, 1440] as const
+  const THEMES = ['light', 'dark'] as const
+
+  test.use({ storageState: { cookies: [], origins: [] } })
+
+  test.beforeEach(async ({ page }) => {
+    await page
+      .context()
+      .addCookies([
+        { name: 'auth-token', value: SYNTHETIC_ORIGINAL_TOKEN, url: SYNTHETIC_APP_ORIGIN },
+      ])
+    await page.addInitScript(originalToken => {
+      window.localStorage.setItem(
+        'auth-storage',
+        JSON.stringify({
+          state: {
+            user: {
+              id: 'story-167-5-owner.invalid',
+              email: 'story-167-5-owner@example.invalid',
+              role: 'Owner',
+              cabinet_ids: [],
+            },
+            token: originalToken,
+            cabinetId: null,
+          },
+          version: 0,
+        })
+      )
+    }, SYNTHETIC_ORIGINAL_TOKEN)
+  })
+
+  test('[P1] [CABINET-BROWSER-01] exposes semantic, responsive, themed, and accessible first-use composition', async ({
+    page,
+  }) => {
+    test.slow()
+    const { default: AxeBuilder } = await import('@axe-core/playwright')
+    const unexpectedCabinetRequests: string[] = []
+
+    await page.route(CABINET_FAMILY_ENDPOINT, async route => {
+      const request = route.request()
+      unexpectedCabinetRequests.push(`${request.method()} ${new URL(request.url()).pathname}`)
+      await route.fulfill({
+        status: 405,
+        contentType: 'application/json',
+        body: JSON.stringify({ message: 'unexpected synthetic cabinet-family request' }),
+      })
+    })
+    await page.emulateMedia({ reducedMotion: 'reduce' })
+    await page.goto(ROUTES.onboarding.cabinet, { waitUntil: 'domcontentloaded' })
+
+    for (const theme of THEMES) {
+      await page.evaluate(selectedTheme => {
+        window.localStorage.setItem('theme', selectedTheme)
+      }, theme)
+
+      for (const width of VIEWPORT_WIDTHS) {
+        await page.setViewportSize({ width, height: 900 })
+        await page.goto(ROUTES.onboarding.cabinet, { waitUntil: 'domcontentloaded' })
+
+        await expect(page.locator('html')).toHaveClass(
+          theme === 'dark' ? /(^|\s)dark(\s|$)/ : /^(?!.*(^|\s)dark(\s|$)).*$/
+        )
+        await expect(page.getByRole('main')).toHaveCount(1)
+        await expect(page.getByRole('heading', { level: 1 })).toHaveCount(1)
+        await expect(
+          page.getByRole('heading', { name: 'Создание кабинета', level: 1 })
+        ).toBeVisible()
+        await expect(
+          page.getByText('Шаг 1 из 3: Создайте кабинет для организации ваших данных', {
+            exact: true,
+          })
+        ).toBeVisible()
+
+        const form = page.getByRole('form', { name: 'Форма создания кабинета' })
+        const controls = [
+          { name: 'cabinet name', locator: page.getByLabel(/^Название кабинета/) },
+          { name: 'target margin', locator: page.getByLabel(/^Целевая маржа/) },
+          {
+            name: 'primary action',
+            locator: page.getByRole('button', { name: 'Создать кабинет', exact: true }),
+          },
+        ]
+        await expect(form).toBeVisible()
+
+        for (const { name, locator } of controls) {
+          await expect(locator, `${name} at ${width}px in ${theme}`).toBeVisible()
+          const heights = await locator.evaluate(element => ({
+            bounding: element.getBoundingClientRect().height,
+            computed: Number.parseFloat(window.getComputedStyle(element).height),
+          }))
+          expect(
+            heights.bounding,
+            `${name} bounding-box height at ${width}px in ${theme}`
+          ).toBeGreaterThanOrEqual(44)
+          expect(
+            heights.computed,
+            `${name} computed height at ${width}px in ${theme}`
+          ).toBeGreaterThanOrEqual(44)
+        }
+
+        const pageGeometry = await page.evaluate(() => ({
+          documentWidth: document.documentElement.scrollWidth,
+          viewportWidth: document.documentElement.clientWidth,
+        }))
+        expect(
+          pageGeometry.documentWidth,
+          `no horizontal page overflow at ${width}px in ${theme}`
+        ).toBeLessThanOrEqual(pageGeometry.viewportWidth + 1)
+
+        if (width === VIEWPORT_WIDTHS[0]) {
+          const results = await new AxeBuilder({ page })
+            .include('main')
+            .withTags(['wcag2a', 'wcag2aa'])
+            .analyze()
+          expect(results.violations, `cabinet axe at ${width}px in ${theme}`).toEqual([])
+        }
+      }
+
+      await page.setViewportSize({ width: 720, height: 900 })
+      await page.goto(ROUTES.onboarding.cabinet, { waitUntil: 'domcontentloaded' })
+      const reflowGeometry = await page.evaluate(() => ({
+        documentWidth: document.documentElement.scrollWidth,
+        viewportWidth: document.documentElement.clientWidth,
+      }))
+      expect(
+        reflowGeometry.documentWidth,
+        `200% reflow has no page overflow in ${theme}`
+      ).toBeLessThanOrEqual(reflowGeometry.viewportWidth + 1)
+
+      await page.setViewportSize({ width: 320, height: 900 })
+      await page.goto(ROUTES.onboarding.cabinet, { waitUntil: 'domcontentloaded' })
+      expect(
+        await page.evaluate(() => window.matchMedia('(prefers-reduced-motion: reduce)').matches)
+      ).toBe(true)
+      const nameInput = page.getByLabel(/^Название кабинета/)
+      const marginInput = page.getByLabel(/^Целевая маржа/)
+      const submit = page.getByRole('button', { name: 'Создать кабинет', exact: true })
+      await expect(submit).toBeEnabled()
+      await page.keyboard.press('Tab')
+      await expect(nameInput).toBeFocused()
+      await page.keyboard.press('Tab')
+      await expect(marginInput).toBeFocused()
+      await page.keyboard.press('Tab')
+      await expect(submit).toBeFocused()
+    }
+
+    expect(unexpectedCabinetRequests).toEqual([])
+  })
+
+  test('[P0] [CABINET-BROWSER-02] recovers deliberately from one failed create and one failed margin update', async ({
+    page,
+  }) => {
+    const postMethods: string[] = []
+    const putMethods: string[] = []
+    const postBodies: unknown[] = []
+    const putBodies: unknown[] = []
+    const postAuthorizationHeaders: Array<string | undefined> = []
+    const putAuthorizationHeaders: Array<string | undefined> = []
+    const putCabinetHeaders: Array<string | undefined> = []
+    const unexpectedCabinetRequests: string[] = []
+    const expectedSyntheticFailureConsoleMessages: string[] = []
+    const unexpectedConsoleMessages: string[] = []
+    const pageErrors: string[] = []
+    let postAttempts = 0
+    let failedPostAttempts = 0
+    let successfulPostAttempts = 0
+    let getAttempts = 0
+    let putAttempts = 0
+    let failedPutAttempts = 0
+    let successfulPutAttempts = 0
+    let releaseSuccessfulPost: () => void = () => {
+      throw new Error('Successful POST gate was released before initialization')
+    }
+    const successfulPostGate = new Promise<void>(resolve => {
+      releaseSuccessfulPost = resolve
+    })
+    let releaseFailedPut: () => void = () => {
+      throw new Error('Failed PUT gate was released before initialization')
+    }
+    const failedPutGate = new Promise<void>(resolve => {
+      releaseFailedPut = resolve
+    })
+    let releaseSuccessfulPut: () => void = () => {
+      throw new Error('Successful PUT gate was released before initialization')
+    }
+    const successfulPutGate = new Promise<void>(resolve => {
+      releaseSuccessfulPut = resolve
+    })
+
+    page.on('console', message => {
+      if (message.type() !== 'error' && message.type() !== 'warning') return
+      const text = message.text()
+      if (
+        /Failed to load resource.*503|API Error \[503\]|story-167-5-synthetic-create-failure\.invalid|target margin/i.test(
+          text
+        )
+      ) {
+        expectedSyntheticFailureConsoleMessages.push(text)
+      } else {
+        unexpectedConsoleMessages.push(text)
+      }
+    })
+    page.on('pageerror', error => pageErrors.push(error.message))
+    await page.addInitScript(() => {
+      const historyStorageKey = 'story-167-5-observed-history-urls'
+      if (window.sessionStorage.getItem(historyStorageKey) === null) {
+        window.sessionStorage.setItem(historyStorageKey, '[]')
+      }
+      const recordHistoryUrl = (url: string | URL | null | undefined) => {
+        if (url === null || url === undefined) return
+        const urls = JSON.parse(
+          window.sessionStorage.getItem(historyStorageKey) ?? '[]'
+        ) as string[]
+        urls.push(String(url))
+        window.sessionStorage.setItem(historyStorageKey, JSON.stringify(urls))
+      }
+      const originalPushState = window.history.pushState
+      const originalReplaceState = window.history.replaceState
+      window.history.pushState = function (...args) {
+        recordHistoryUrl(args[2])
+        return originalPushState.apply(this, args)
+      }
+      window.history.replaceState = function (...args) {
+        recordHistoryUrl(args[2])
+        return originalReplaceState.apply(this, args)
+      }
+    })
+
+    await page.route(CABINET_FAMILY_ENDPOINT, async route => {
+      const request = route.request()
+      const method = request.method()
+      const pathname = new URL(request.url()).pathname
+
+      if (pathname === CABINET_COLLECTION_PATH && method === 'POST') {
+        postAttempts += 1
+        postMethods.push(method)
+        postBodies.push(request.postDataJSON())
+        postAuthorizationHeaders.push(request.headers()['authorization'])
+
+        if (postAttempts === 1) {
+          failedPostAttempts += 1
+          await route.fulfill({
+            status: 503,
+            contentType: 'application/json',
+            body: JSON.stringify({ message: SYNTHETIC_CREATE_FAILURE }),
+          })
+          return
+        }
+
+        if (postAttempts === 2) {
+          await successfulPostGate
+          successfulPostAttempts += 1
+          await route.fulfill({
+            status: 200,
+            contentType: 'application/json',
+            body: JSON.stringify({
+              id: SYNTHETIC_CABINET_ID,
+              name: SYNTHETIC_CABINET_NAME,
+              isActive: true,
+              createdAt: '2026-08-14T00:00:00.000Z',
+              updatedAt: '2026-08-14T00:00:00.000Z',
+              newToken: SYNTHETIC_REFRESHED_TOKEN,
+            }),
+          })
+          return
+        }
+      }
+
+      if (pathname === CABINET_RESOURCE_PATH && method === 'GET') {
+        getAttempts += 1
+        await route.fulfill({
+          status: 200,
+          contentType: 'application/json',
+          body: JSON.stringify({
+            id: SYNTHETIC_CABINET_ID,
+            name: SYNTHETIC_CABINET_NAME,
+            isActive: true,
+            createdAt: '2026-08-14T00:00:00.000Z',
+            updatedAt: '2026-08-14T00:00:00.000Z',
+            taxSystem: null,
+            taxRate: null,
+            vatPayer: false,
+            vatRate: null,
+            targetMarginPct: null,
+          }),
+        })
+        return
+      }
+
+      if (pathname === CABINET_RESOURCE_PATH && method === 'PUT') {
+        putAttempts += 1
+        putMethods.push(method)
+        putBodies.push(request.postDataJSON())
+        putAuthorizationHeaders.push(request.headers()['authorization'])
+        putCabinetHeaders.push(request.headers()['x-cabinet-id'])
+
+        if (putAttempts === 1) {
+          failedPutAttempts += 1
+          await failedPutGate
+          await route.fulfill({
+            status: 503,
+            contentType: 'application/json',
+            body: JSON.stringify({ message: 'synthetic target margin failure' }),
+          })
+          return
+        }
+
+        if (putAttempts === 2) {
+          await successfulPutGate
+          successfulPutAttempts += 1
+          await route.fulfill({
+            status: 200,
+            contentType: 'application/json',
+            body: JSON.stringify({
+              id: SYNTHETIC_CABINET_ID,
+              name: SYNTHETIC_CABINET_NAME,
+              isActive: true,
+              createdAt: '2026-08-14T00:00:00.000Z',
+              updatedAt: '2026-08-14T00:00:00.000Z',
+              taxSystem: null,
+              taxRate: null,
+              vatPayer: false,
+              vatRate: null,
+              targetMarginPct: 37,
+            }),
+          })
+          return
+        }
+      }
+
+      unexpectedCabinetRequests.push(`${method} ${pathname}`)
+      await route.fulfill({
+        status: 405,
+        contentType: 'application/json',
+        body: JSON.stringify({ message: 'unexpected synthetic cabinet-family request' }),
+      })
+    })
+
+    await page.goto(ROUTES.onboarding.cabinet, { waitUntil: 'domcontentloaded' })
+    const form = page.getByRole('form', { name: 'Форма создания кабинета' })
+    const nameInput = page.getByLabel(/^Название кабинета/)
+    const marginInput = page.getByLabel(/^Целевая маржа/)
+    const submit = page.getByRole('button', { name: 'Создать кабинет', exact: true })
+    await expect(submit).toBeEnabled()
+    await nameInput.fill(SYNTHETIC_CABINET_NAME)
+    await marginInput.fill('37')
+    await submit.click()
+
+    const recoveryAlert = page.locator('#cabinet-creation-recovery-error')
+    await expect(recoveryAlert).toHaveAttribute('role', 'alert')
+    await expect(recoveryAlert).toHaveText(SYNTHETIC_CREATE_FAILURE)
+    await expect(recoveryAlert).toBeFocused()
+    const recoveryAlertId = await recoveryAlert.getAttribute('id')
+    expect(recoveryAlertId).toBeTruthy()
+    await expect(form).toHaveAttribute('aria-describedby', recoveryAlertId!)
+    await expect(nameInput).toHaveValue(SYNTHETIC_CABINET_NAME)
+    await expect(marginInput).toHaveValue('37')
+    expect(new URL(page.url()).pathname).toBe('/cabinet')
+    expect(postAttempts).toBe(1)
+    expect(failedPostAttempts).toBe(1)
+    expect(putAttempts).toBe(0)
+
+    await nameInput.focus()
+    await expect(nameInput).toBeFocused()
+    await expect(recoveryAlert).toBeVisible()
+    expect(new URL(page.url()).pathname).toBe('/cabinet')
+
+    await submit.click()
+    await expect(recoveryAlert).toHaveCount(0)
+    const pendingCreate = page.getByRole('button', { name: 'Создание...', exact: true })
+    await expect(pendingCreate).toBeVisible()
+    await expect(pendingCreate).toBeDisabled()
+    await expect(pendingCreate).toHaveAttribute('aria-busy', 'true')
+    await expect.poll(() => postAttempts).toBe(2)
+    expect(putAttempts).toBe(0)
+    expect(new URL(page.url()).pathname).toBe('/cabinet')
+
+    releaseSuccessfulPost()
+    await expect.poll(() => getAttempts).toBe(1)
+    await expect.poll(() => putAttempts).toBe(1)
+    await expect(marginInput).toHaveValue('37')
+    releaseFailedPut()
+    await expect(recoveryAlert).toHaveText(
+      'Кабинет создан, но целевая маржа не сохранилась. Исправьте ошибку и повторите попытку.'
+    )
+    await expect(recoveryAlert).toBeFocused()
+    await expect(form).toHaveAttribute('aria-describedby', recoveryAlertId!)
+    await expect(nameInput).toHaveValue(SYNTHETIC_CABINET_NAME)
+    await expect(nameInput).toBeDisabled()
+    await expect(marginInput).toHaveValue('37')
+    expect(postAttempts).toBe(2)
+    expect(failedPostAttempts).toBe(1)
+    expect(successfulPostAttempts).toBe(1)
+    expect(putAttempts).toBe(1)
+    expect(failedPutAttempts).toBe(1)
+    expect(new URL(page.url()).pathname).toBe('/cabinet')
+
+    await marginInput.focus()
+    await expect(marginInput).toBeFocused()
+    await expect(recoveryAlert).toBeVisible()
+
+    const wbTokenNavigation = page.waitForURL(/\/wb-token(?:\?|$)/)
+    const updateRetry = page.getByRole('button', { name: 'Сохранить и продолжить', exact: true })
+    await updateRetry.click()
+    await expect(recoveryAlert).toHaveCount(0)
+    const pendingUpdate = page.getByRole('button', { name: 'Сохранение...', exact: true })
+    await expect(pendingUpdate).toBeVisible()
+    await expect(pendingUpdate).toBeDisabled()
+    await expect(pendingUpdate).toHaveAttribute('aria-busy', 'true')
+    await expect.poll(() => putAttempts).toBe(2)
+    expect(postAttempts).toBe(2)
+    expect(new URL(page.url()).pathname).toBe('/cabinet')
+
+    releaseSuccessfulPut()
+    await wbTokenNavigation
+
+    expect(postMethods).toEqual(['POST', 'POST'])
+    expect(putMethods).toEqual(['PUT', 'PUT'])
+    expect(postBodies).toEqual([{ name: SYNTHETIC_CABINET_NAME }, { name: SYNTHETIC_CABINET_NAME }])
+    expect(putBodies).toEqual([{ target_margin_pct: 37 }, { target_margin_pct: 37 }])
+    expect(postAuthorizationHeaders).toEqual([
+      `Bearer ${SYNTHETIC_ORIGINAL_TOKEN}`,
+      `Bearer ${SYNTHETIC_ORIGINAL_TOKEN}`,
+    ])
+    expect(putAuthorizationHeaders).toEqual([
+      `Bearer ${SYNTHETIC_REFRESHED_TOKEN}`,
+      `Bearer ${SYNTHETIC_REFRESHED_TOKEN}`,
+    ])
+    expect(putCabinetHeaders).toEqual([SYNTHETIC_CABINET_ID, SYNTHETIC_CABINET_ID])
+    expect(unexpectedCabinetRequests).toEqual([])
+    expect(postAttempts).toBe(2)
+    expect(failedPostAttempts).toBe(1)
+    expect(successfulPostAttempts).toBe(1)
+    expect(putAttempts).toBe(2)
+    expect(failedPutAttempts).toBe(1)
+    expect(successfulPutAttempts).toBe(1)
+    expect(new URL(page.url()).pathname).toBe('/wb-token')
+
+    const observedHistoryUrls = await page.evaluate(() => {
+      return JSON.parse(
+        window.sessionStorage.getItem('story-167-5-observed-history-urls') ?? '[]'
+      ) as string[]
+    })
+    expect(observedHistoryUrls.filter(url => /\/wb-token(?:\?|$)/.test(url))).toHaveLength(1)
+    expect(expectedSyntheticFailureConsoleMessages.length).toBeGreaterThan(0)
+    expect(unexpectedConsoleMessages).toEqual([])
+    expect(pageErrors).toEqual([])
+  })
+
+  test('[P0] [CABINET-BROWSER-03] exposes recoverable transport failure without contacting a cabinet service', async ({
+    page,
+  }) => {
+    let abortedPostAttempts = 0
+    let unexpectedPutAttempts = 0
+    const unexpectedCabinetRequests: string[] = []
+
+    await page.route(CABINET_FAMILY_ENDPOINT, async route => {
+      const request = route.request()
+      const method = request.method()
+      const pathname = new URL(request.url()).pathname
+
+      if (pathname === CABINET_COLLECTION_PATH && method === 'POST') {
+        abortedPostAttempts += 1
+        await route.abort('connectionrefused')
+        return
+      }
+
+      if (method === 'PUT') unexpectedPutAttempts += 1
+      unexpectedCabinetRequests.push(`${method} ${pathname}`)
+      await route.fulfill({
+        status: 405,
+        contentType: 'application/json',
+        body: JSON.stringify({ message: 'unexpected synthetic cabinet-family request' }),
+      })
+    })
+
+    await page.goto(ROUTES.onboarding.cabinet, { waitUntil: 'domcontentloaded' })
+    const form = page.getByRole('form', { name: 'Форма создания кабинета' })
+    const nameInput = page.getByLabel(/^Название кабинета/)
+    const marginInput = page.getByLabel(/^Целевая маржа/)
+    const submit = page.getByRole('button', { name: 'Создать кабинет', exact: true })
+    await expect(submit).toBeEnabled()
+    await nameInput.fill(SYNTHETIC_CABINET_NAME)
+    await marginInput.fill('37')
+    await submit.click()
+
+    const recoveryAlert = page.locator('#cabinet-creation-recovery-error')
+    await expect(recoveryAlert).toHaveAttribute('role', 'alert')
+    await expect(recoveryAlert).toContainText(/failed to fetch|network error/i)
+    await expect(recoveryAlert).toBeFocused()
+    const recoveryAlertId = await recoveryAlert.getAttribute('id')
+    expect(recoveryAlertId).toBeTruthy()
+    await expect(form).toHaveAttribute('aria-describedby', recoveryAlertId!)
+    await expect(nameInput).toHaveValue(SYNTHETIC_CABINET_NAME)
+    await expect(marginInput).toHaveValue('37')
+    expect(new URL(page.url()).pathname).toBe('/cabinet')
+    expect(abortedPostAttempts).toBe(1)
+    expect(unexpectedPutAttempts).toBe(0)
+    expect(unexpectedCabinetRequests).toEqual([])
+  })
+
+  test('[P0] [CABINET-BROWSER-04] blocks duplicate create after the cabinet-id auth write fails', async ({
+    page,
+  }) => {
+    let postAttempts = 0
+    let getAttempts = 0
+    let putAttempts = 0
+    let releaseCreateResponse!: () => void
+    const createResponseGate = new Promise<void>(resolve => {
+      releaseCreateResponse = resolve
+    })
+    const unexpectedCabinetRequests: string[] = []
+
+    await page.route(CABINET_FAMILY_ENDPOINT, async route => {
+      const request = route.request()
+      const method = request.method()
+      const pathname = new URL(request.url()).pathname
+
+      if (pathname === CABINET_COLLECTION_PATH && method === 'POST') {
+        postAttempts += 1
+        await createResponseGate
+        await route.fulfill({
+          status: 200,
+          contentType: 'application/json',
+          body: JSON.stringify({
+            id: SYNTHETIC_CABINET_ID,
+            name: SYNTHETIC_CABINET_NAME,
+            isActive: true,
+            createdAt: '2026-08-15T00:00:00.000Z',
+            updatedAt: '2026-08-15T00:00:00.000Z',
+            newToken: SYNTHETIC_REFRESHED_TOKEN,
+          }),
+        })
+        return
+      }
+
+      if (pathname === CABINET_RESOURCE_PATH && method === 'GET') {
+        getAttempts += 1
+        await route.fulfill({
+          status: 200,
+          contentType: 'application/json',
+          body: JSON.stringify({
+            id: SYNTHETIC_CABINET_ID,
+            name: SYNTHETIC_CABINET_NAME,
+            isActive: true,
+            createdAt: '2026-08-15T00:00:00.000Z',
+            updatedAt: '2026-08-15T00:00:00.000Z',
+            targetMarginPct: null,
+          }),
+        })
+        return
+      }
+
+      if (method === 'PUT') putAttempts += 1
+      unexpectedCabinetRequests.push(`${method} ${pathname}`)
+      await route.fulfill({
+        status: 405,
+        contentType: 'application/json',
+        body: JSON.stringify({ message: 'unexpected synthetic cabinet-family request' }),
+      })
+    })
+
+    await page.goto(ROUTES.onboarding.cabinet, { waitUntil: 'domcontentloaded' })
+    await page.evaluate(cabinetId => {
+      const originalSetItem = Storage.prototype.setItem
+      Storage.prototype.setItem = function (key, value) {
+        if (key === 'auth-storage' && value.includes(`\"cabinetId\":\"${cabinetId}\"`)) {
+          throw new DOMException('Synthetic auth persistence failure', 'QuotaExceededError')
+        }
+        return originalSetItem.call(this, key, value)
+      }
+    }, SYNTHETIC_CABINET_ID)
+
+    const submit = page.getByRole('button', { name: 'Создать кабинет', exact: true })
+    await expect(submit).toBeEnabled()
+    await page.getByLabel(/^Название кабинета/).fill(SYNTHETIC_CABINET_NAME)
+    await page.getByLabel(/^Целевая маржа/).fill('37')
+    await submit.click()
+
+    const pendingForm = page.getByRole('form', { name: 'Форма создания кабинета' })
+    const pendingSubmit = page.getByRole('button', { name: 'Создание...', exact: true })
+    await expect(pendingSubmit).toBeVisible()
+    await expect(pendingSubmit).toBeDisabled()
+    await expect.poll(() => postAttempts).toBe(1)
+    await pendingForm.evaluate(async form => {
+      form.dispatchEvent(new Event('submit', { bubbles: true, cancelable: true }))
+      await new Promise<void>(resolve => requestAnimationFrame(() => resolve()))
+      await new Promise<void>(resolve => requestAnimationFrame(() => resolve()))
+    })
+    expect(postAttempts).toBe(1)
+    releaseCreateResponse()
+
+    const recoveryAlert = page.locator('#cabinet-creation-recovery-error')
+    await expect(recoveryAlert).toContainText('Кабинет уже создан')
+    await expect(recoveryAlert).toBeFocused()
+    await expect(
+      page.getByRole('button', { name: 'Сохранить и продолжить', exact: true })
+    ).toBeDisabled()
+    expect(postAttempts).toBe(1)
+    expect(putAttempts).toBe(0)
+
+    const persistedBoundary = await page.evaluate(() => ({
+      auth: JSON.parse(window.localStorage.getItem('auth-storage') ?? 'null'),
+      recovery: JSON.parse(
+        window.sessionStorage.getItem('cabinet-creation:token-recovery:v1') ?? 'null'
+      ),
+    }))
+    expect(persistedBoundary.auth.state.token).toBe(SYNTHETIC_REFRESHED_TOKEN)
+    expect(persistedBoundary.auth.state.cabinetId).toBeNull()
+    expect(persistedBoundary.recovery).toEqual({
+      version: 1,
+      phase: 'token-recovery-blocked',
+      userId: 'story-167-5-owner.invalid',
+    })
+
+    await page.reload({ waitUntil: 'domcontentloaded' })
+
+    const restoredForm = page.getByRole('form', { name: 'Форма создания кабинета' })
+    const restoredSubmit = page.getByRole('button', { name: 'Создать кабинет', exact: true })
+    await expect(recoveryAlert).toContainText('Кабинет уже создан')
+    await expect(recoveryAlert).toBeFocused()
+    await expect(restoredSubmit).toBeDisabled()
+    await page.getByLabel(/^Название кабинета/).fill('Duplicate Cabinet')
+    await restoredForm.evaluate(form => {
+      form.dispatchEvent(new Event('submit', { bubbles: true, cancelable: true }))
+    })
+    await expect.poll(() => postAttempts).toBe(1)
+    expect(putAttempts).toBe(0)
+    expect(unexpectedCabinetRequests).toEqual([])
+    expect(getAttempts).toBeGreaterThanOrEqual(1)
+  })
+})

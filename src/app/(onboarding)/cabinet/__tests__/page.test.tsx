@@ -3,22 +3,31 @@
  * Tests for src/app/(onboarding)/cabinet/page.tsx
  */
 
-import { describe, it, expect, vi } from 'vitest'
-import { render, screen } from '@/test/utils/test-utils'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
+import { render, screen, within } from '@/test/utils/test-utils'
+
+const guardMocks = vi.hoisted(() => ({
+  useOnboardingGuard: vi.fn(),
+}))
 
 // Mock CabinetCreationForm component
 vi.mock('@/components/custom/CabinetCreationForm', () => ({
-  CabinetCreationForm: () => <div data-testid="cabinet-creation-form">CabinetCreationForm</div>,
+  CabinetCreationForm: () => (
+    <form aria-label="Форма создания кабинета" data-testid="cabinet-creation-form" />
+  ),
 }))
 
-// useOnboardingGuard (FE-14) calls useRouter; provide a no-op router so the page renders in tests
-vi.mock('next/navigation', () => ({
-  useRouter: () => ({ replace: vi.fn(), push: vi.fn() }),
+vi.mock('@/hooks/useOnboardingGuard', () => ({
+  useOnboardingGuard: guardMocks.useOnboardingGuard,
 }))
 
 import CabinetCreationPage from '../page'
 
 describe('CabinetCreationPage', () => {
+  beforeEach(() => {
+    vi.clearAllMocks()
+  })
+
   it('should render without crash', () => {
     render(<CabinetCreationPage />)
   })
@@ -39,5 +48,23 @@ describe('CabinetCreationPage', () => {
     render(<CabinetCreationPage />)
 
     expect(screen.getByTestId('cabinet-creation-form')).toBeInTheDocument()
+  })
+
+  it('[CABINET-ROUTE-LOCK-01] consumes the shared onboarding guard once per render', () => {
+    render(<CabinetCreationPage />)
+
+    expect(guardMocks.useOnboardingGuard).toHaveBeenCalledTimes(1)
+  })
+
+  it('[CABINET-ROUTE-RED-01] presents the visible current step and form inside one semantic main', () => {
+    render(<CabinetCreationPage />)
+
+    const main = screen.getByRole('main')
+    expect(screen.getAllByRole('main')).toHaveLength(1)
+    expect(
+      within(main).getByRole('heading', { name: 'Создание кабинета', level: 1 })
+    ).toBeInTheDocument()
+    expect(within(main).getByText(/шаг 1 из 3/i)).toBeInTheDocument()
+    expect(within(main).getByRole('form', { name: 'Форма создания кабинета' })).toBeInTheDocument()
   })
 })

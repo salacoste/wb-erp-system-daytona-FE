@@ -141,9 +141,8 @@ export async function createCabinet(
   return apiClient.post<CreateCabinetResponse>('/v1/cabinets', data, options)
 }
 
-// PENDING BACKEND (Story 167.5 alignment): this reconciliation accessor has no
-// consumer yet — the 167.5 alignment story wires it into the operation-recovery
-// UI. Intentionally kept (not dead code to delete).
+// Story 167.5 consumer: `useCabinetCreateMutation.reconcileSettledOperation`
+// (superseded-settlement evidence). Supersedes the 167.9-era PENDING-BACKEND note.
 /**
  * Story 167.8 contract: account-scoped authoritative reconciliation of a cabinet
  * creation operation. Returns in_progress / failed evidence; a succeeded

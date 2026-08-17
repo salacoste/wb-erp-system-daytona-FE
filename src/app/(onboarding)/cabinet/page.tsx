@@ -1,6 +1,8 @@
 'use client'
 
 import { CabinetCreationForm } from '@/components/custom/CabinetCreationForm'
+import { PageHeader } from '@/components/product'
+import { Card, CardContent } from '@/components/ui/card'
 import { useOnboardingGuard } from '@/hooks/useOnboardingGuard'
 
 /**
@@ -10,19 +12,24 @@ import { useOnboardingGuard } from '@/hooks/useOnboardingGuard'
 export default function CabinetCreationPage() {
   useOnboardingGuard()
   return (
-    <div className="container mx-auto px-4 py-8 max-w-md">
+    <main className="container mx-auto w-full max-w-md px-4 py-8 sm:py-12">
       <div className="space-y-6">
-        <div className="text-center space-y-2">
-          <h1 className="text-3xl font-bold">Создание кабинета</h1>
-          <p className="text-muted-foreground">
-            Шаг 1 из 3: Создайте кабинет для организации ваших данных
-          </p>
-        </div>
+        <PageHeader
+          title="Создание кабинета"
+          className="text-center [&_[data-slot=page-header-context]]:justify-center"
+          context={
+            <p className="text-muted-foreground">
+              Шаг 1 из 3: Создайте кабинет для организации ваших данных
+            </p>
+          }
+        />
 
-        <div className="bg-card rounded-lg border p-6 shadow-sm">
-          <CabinetCreationForm />
-        </div>
+        <Card className="shadow-sm">
+          <CardContent className="p-6">
+            <CabinetCreationForm />
+          </CardContent>
+        </Card>
       </div>
-    </div>
+    </main>
   )
 }
