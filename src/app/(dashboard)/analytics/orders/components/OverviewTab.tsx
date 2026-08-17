@@ -104,21 +104,21 @@ export function OverviewTab({ from, to }: OverviewTabProps) {
           title="Выручка"
           value={summary ? `${formatNumber(summary.totalRevenue)} ₽` : '—'}
           subtitle="за период"
-          icon={<DollarSign className="h-5 w-5 text-green-600" />}
+          icon={<DollarSign className="h-5 w-5 text-financial-positive" />}
           isLoading={isLoading}
         />
         <SummaryCard
           title="Средний заказ/день"
           value={summary ? formatNumber(summary.avgDailyOrders) : '—'}
           subtitle="в среднем"
-          icon={<TrendingUp className="h-5 w-5 text-blue-600" />}
+          icon={<TrendingUp className="h-5 w-5 text-status-information" />}
           isLoading={isLoading}
         />
         <SummaryCard
           title="Отмены"
           value={summary ? formatPercentValue(summary.cancellationRate) : '—'}
           subtitle="процент отмен"
-          icon={<XCircle className="h-5 w-5 text-red-500" />}
+          icon={<XCircle className="h-5 w-5 text-financial-negative" />}
           isLoading={isLoading}
         />
       </div>

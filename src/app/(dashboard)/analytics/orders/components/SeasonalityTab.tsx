@@ -99,17 +99,17 @@ export function SeasonalityTab() {
           <CardContent>
             <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
               <InsightItem
-                icon={<TrendingUp className="h-5 w-5 text-green-600" />}
+                icon={<TrendingUp className="h-5 w-5 text-financial-positive" />}
                 label="Пиковый месяц"
                 value={MONTHS_RU[data.insights.peakMonth] || data.insights.peakMonth}
               />
               <InsightItem
-                icon={<TrendingDown className="h-5 w-5 text-red-500" />}
+                icon={<TrendingDown className="h-5 w-5 text-financial-negative" />}
                 label="Низкий месяц"
                 value={MONTHS_RU[data.insights.lowMonth] || data.insights.lowMonth}
               />
               <InsightItem
-                icon={<Calendar className="h-5 w-5 text-blue-600" />}
+                icon={<Calendar className="h-5 w-5 text-status-information" />}
                 label="Пиковый день"
                 value={DAYS_RU[data.insights.peakDayOfWeek] || data.insights.peakDayOfWeek}
               />
