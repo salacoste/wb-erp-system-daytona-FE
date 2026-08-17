@@ -762,7 +762,7 @@ development_status:
   168-1-fe-migrate-analytics-hub-analytics-and-own-analytics-shared-ui: done     # PR #168 (merged b21aa04d): NavigationTone map (JIT-invisible hue-interp killed) + shared-UI tokens; 24-href nav lock; 2-pass COMMENT+COMMENT; vitest 18616/0. ESCALATION: ResponsiveChartFrame no-owner → epic-168 close-gate.
   168-2-fe-migrate-analytics-alerts-analytics-alerts: done     # PR #170 (083b3f32, merge 36fdcb83): semantic tone maps (severity/status + muted fallback), paired *-foreground chips (pass-1 HIGH dark-AA fix), h1 to 168.1 scale; 2-pass opus REQUEST-CHANGES→APPROVE; +15 pins; vitest 18631/0.
   168-3-fe-migrate-analytical-dashboard-analytics-dashboard: done     # PR #172 (cf8428e8, merge 2e76b615): PnL/top-tables semantic sweep; local 4-tier getMarginColor (≥0→status-warning/80 tier preserved; shared util → 172.1 carry-in registered in epic artifact); 2-pass APPROVE+APPROVE (pass-1 MEDIUM tier-collapse fixed); +76 pins; vitest 18640/0.
-  168-4-fe-migrate-finance-history-analytics-finance-history: backlog
+  168-4-fe-migrate-finance-history-analytics-finance-history: done     # PR #174 (a01b2de5, merge cd4d95b3): micro-migration — deltaColorClass → financial-positive/negative (inversion preserved), 4 pins flipped, h1 +text-foreground; 2-pass APPROVE·APPROVE; vitest 18642/0.
   168-5-fe-migrate-orders-analytics-analytics-orders: backlog
   168-6-fe-migrate-pricing-analytics-analytics-pricing: backlog
   168-7-fe-migrate-product-analytics-analytics-product-nmid: backlog
