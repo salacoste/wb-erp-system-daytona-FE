@@ -74,6 +74,8 @@ The authenticated redirect is sanitized by `getSafeAuthRedirect` (`src/proxy.ts`
 ### Multi-tenant isolation
 Cabinet ID (tenant) is injected as `X-Cabinet-Id` header on every API call via the API client. Some endpoints also accept `cabinet_id` in request body.
 
+Isolation also extends into the TanStack Query **cache** (Story 97.5-FE discipline, applied to price recommendations in W3-FE): concrete query keys embed `cabinetId` read from `useAuthStore(auth => auth.cabinetId)`, so switching cabinets can never serve another cabinet's cached rows even though the header would scope the network request. The canonical example is the `queryKeys` factory in `src/hooks/usePriceRecommendations.ts`: `all` stays an unscoped prefix (so `invalidateQueries({ queryKey: queryKeys.all })` in `usePriceRefresh` / `usePricingBasis` keeps prefix-invalidating everything), while `list(cabinetId, params)`, `detail(cabinetId, nmId)`, and `history(cabinetId, nmId, limit)` concretes plus their `lists()`/`details()`/`histories()` group prefixes are cabinet-scoped. The hooks are `enabled` only when `cabinetId` is non-null (idle queryFn, no fetch). Focused isolation suite: `src/hooks/__tests__/price-recommendations-cabinet-isolation.test.ts` (4 cabinets × list/detail/history, 12 keys pairwise distinct, plus single-field param-diff and history-limit axes); unit behavior incl. disabled-null-cabinet cases in `src/hooks/__tests__/usePriceRecommendations.test.ts`.
+
 ### WB API token
 Separate from the JWT — a per-cabinet Wildberries API token configured during onboarding (`/wb-token`). Missing-token 401 errors are treated as expected soft errors, not logged as failures. `<RequireWbToken>` components guard routes that need it.
 

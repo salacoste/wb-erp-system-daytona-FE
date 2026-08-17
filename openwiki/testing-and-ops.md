@@ -78,6 +78,8 @@ Two AST-based scanners enforce AP#6 (vacuous E2E assertions) and AP#7 (hard `wai
 
 These are not in the `README.md` **Local validation** command list; they are enforced as quality gates via their Vitest self-tests and the dedicated npm scripts. See [Conventions & Quality Gates — Quality Gates](conventions-and-quality.md#quality-gates-ratchet-scripts) for how they sit alongside the other gates.
 
+A concrete repaired example of AP#6 (vacuous assertion): the `e2e/login-dashboard.spec.ts` "displays trend graph" check used a `[data-testid="trend-graph"]` selector that only matched unit-test mocks — the real `TrendGraph` never rendered it — and its `.or()` recharts fallback matched the always-mounted `DailyBreakdownChart`, so the test stayed green even if `TrendGraph` were deleted. The contract now puts `data-testid` on the real `TrendGraph` Card (`src/components/custom/TrendGraph.tsx`), and the test expands the «Аналитика» disclosure first (lazy unmount) with no `.or()` fallback. When adding data-testid contracts, bind them to the real component, not to mocks, and prefer expanding collapsed containers over broad `or()` fallbacks.
+
 ## Local E2E Preflight
 
 Story 162.2 introduced a reproducible localhost preflight that gates every local Playwright run. Raw `npx playwright test` invocations are rejected so they cannot silently reuse stale ignored auth state.
