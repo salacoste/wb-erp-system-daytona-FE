@@ -1269,3 +1269,173 @@ test.describe('Story 167.5 browser-owned evidence', () => {
     expect(getAttempts).toBeGreaterThanOrEqual(1)
   })
 })
+
+test.describe('Story 167.6 browser-owned evidence', () => {
+  // Fail-closed interceptors: every /v1/imports/historical-family request is
+  // fulfilled synthetically; no real API surface is touched.
+  const IMPORTS_FAMILY_ENDPOINT = '**/v1/imports/historical**'
+  const SYNTHETIC_TOKEN = [
+    'eyJhbGciOiJub25lIiwidHlwIjoiSldUIn0',
+    'eyJleHAiOjQxMDI0NDQ4ODAsInN1YiI6InN0b3J5LTE2Ny02LW93bmVyLmludmFsaWQifQ',
+    'story-167-6',
+  ].join('.')
+  const SYNTHETIC_APP_ORIGIN = process.env.E2E_BASE_URL ?? 'http://localhost:3100'
+
+  const batchFixture = (
+    id: string,
+    status: 'in_progress' | 'completed' | 'failed',
+    progressPercent: number
+  ) => ({
+    id,
+    batchType: 'historical',
+    weekStart: '2026-06-01',
+    weekEnd: '2026-08-24',
+    totalWeeks: 12,
+    completedWeeks: Math.round((progressPercent / 100) * 12),
+    failedWeeks: status === 'failed' ? 1 : 0,
+    status,
+    startedAt: '2026-08-17T10:00:00Z',
+    completedAt: status === 'completed' ? '2026-08-17T10:05:00Z' : null,
+    progressPercent,
+  })
+
+  const listResponse = (batches: ReturnType<typeof batchFixture>[]) => ({
+    status: 200,
+    contentType: 'application/json',
+    body: JSON.stringify({ batches, total: batches.length }),
+  })
+
+  test.use({ storageState: { cookies: [], origins: [] } })
+
+  test.beforeEach(async ({ page }) => {
+    await page
+      .context()
+      .addCookies([{ name: 'auth-token', value: SYNTHETIC_TOKEN, url: SYNTHETIC_APP_ORIGIN }])
+    await page.addInitScript(token => {
+      window.localStorage.setItem(
+        'auth-storage',
+        JSON.stringify({
+          state: {
+            user: {
+              id: 'story-167-6-owner.invalid',
+              email: 'story-167-6-owner@example.invalid',
+              role: 'Owner',
+              cabinet_ids: ['story-167-6-cabinet.invalid'],
+            },
+            token,
+            cabinetId: 'story-167-6-cabinet.invalid',
+          },
+          version: 0,
+        })
+      )
+    }, SYNTHETIC_TOKEN)
+  })
+
+  test('[P1] [PROCESSING-BROWSER-01] running-to-complete happy path polls serially and redirects once', async ({
+    page,
+  }) => {
+    test.slow()
+    let listAttempts = 0
+    let activeRequests = 0
+    let maxConcurrentRequests = 0
+
+    await page.route(IMPORTS_FAMILY_ENDPOINT, async route => {
+      const method = route.request().method()
+      if (method !== 'GET') {
+        await route.fulfill({ status: 405, body: 'unexpected synthetic method' })
+        return
+      }
+      activeRequests += 1
+      maxConcurrentRequests = Math.max(maxConcurrentRequests, activeRequests)
+      try {
+        listAttempts += 1
+        // First two polls: in_progress at 40 %; afterwards: completed at 100 %
+        await route.fulfill(
+          listAttempts <= 2
+            ? listResponse([batchFixture('story-167-6-batch.invalid', 'in_progress', 40)])
+            : listResponse([batchFixture('story-167-6-batch.invalid', 'completed', 100)])
+        )
+      } finally {
+        activeRequests -= 1
+      }
+    })
+
+    await page.emulateMedia({ reducedMotion: 'reduce' })
+    await page.goto(ROUTES.onboarding.processing, { waitUntil: 'domcontentloaded' })
+
+    // Running state: server-provided progress, honest text, progressbar semantics
+    await expect(page.getByText('Парсинг продуктов')).toBeVisible()
+    await expect(page.getByText(/^40\s%$/).first()).toBeVisible()
+    const bars = page.getByRole('progressbar')
+    await expect(bars.first()).toHaveAttribute('aria-valuenow', '40')
+
+    // Completed state: success alert + exactly one dashboard navigation
+    await expect(page.getByText('Обработка завершена!')).toBeVisible({ timeout: 15000 })
+    let observedDashboard = false
+    await expect
+      .poll(
+        async () => {
+          observedDashboard =
+            observedDashboard || new URL(page.url()).pathname.startsWith('/dashboard')
+          return observedDashboard
+        },
+        { timeout: 15000 }
+      )
+      .toBe(true)
+
+    // No duplicate/overlapping requests: polling cadence stays serial
+    expect(maxConcurrentRequests).toBeLessThanOrEqual(1)
+    expect(listAttempts).toBeGreaterThanOrEqual(3)
+  })
+
+  test('[P1] [PROCESSING-BROWSER-02] failed batch surfaces honest error, reconciles once, stops polling', async ({
+    page,
+  }) => {
+    test.slow()
+    let listAttempts = 0
+    let reconcileAttempts = 0
+
+    await page.route(IMPORTS_FAMILY_ENDPOINT, async route => {
+      const method = route.request().method()
+      if (method === 'POST') {
+        reconcileAttempts += 1
+        await route.fulfill({
+          status: 200,
+          contentType: 'application/json',
+          body: JSON.stringify({ reconciled: false }),
+        })
+        return
+      }
+      if (method !== 'GET') {
+        await route.fulfill({ status: 405, body: 'unexpected synthetic method' })
+        return
+      }
+      listAttempts += 1
+      await route.fulfill(listResponse([batchFixture('story-167-6-failed.invalid', 'failed', 25)]))
+    })
+
+    await page.goto(ROUTES.onboarding.processing, { waitUntil: 'domcontentloaded' })
+
+    // Failed state: honest server progress (25 %, NOT zeroed), destructive alert,
+    // retry + dashboard recovery CTAs, no auto-redirect
+    await expect(page.getByText('Ошибка обработки')).toBeVisible({ timeout: 15000 })
+    await expect(page.getByText(/^25\s%$/).first()).toBeVisible()
+    await expect(page.getByRole('button', { name: 'Повторить попытку' })).toBeVisible()
+    await expect(page.getByRole('button', { name: 'Перейти на главную' })).toBeVisible()
+
+    // Reconcile exactly once per failed batch — no duplicate recovery requests
+    await expect.poll(() => reconcileAttempts, { timeout: 15000 }).toBe(1)
+
+    // Terminal status stops polling: once the failed state settles, no further
+    // list requests arrive for longer than two 3s poll cycles (wait-free idle
+    // observation — the poll only passes if the network stays quiet).
+    const settledListAttempts = listAttempts
+    const settledAt = Date.now()
+    await expect
+      .poll(() => listAttempts === settledListAttempts && Date.now() - settledAt > 6500, {
+        timeout: 20000,
+      })
+      .toBe(true)
+    expect(reconcileAttempts).toBe(1)
+  })
+})

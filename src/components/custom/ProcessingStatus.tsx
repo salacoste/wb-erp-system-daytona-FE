@@ -7,6 +7,7 @@ import { Progress } from '@/components/ui/progress'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { Button } from '@/components/ui/button'
+import { Skeleton } from '@/components/ui/skeleton'
 import { ROUTES } from '@/lib/routes'
 import { formatPercentageInt } from '@/lib/utils'
 import { AlertCircle, CheckCircle2 } from 'lucide-react'
@@ -16,6 +17,8 @@ import { getStatusIcon, getStatusText } from './processing-status/StatusHelpers'
 /**
  * Processing status component for onboarding flow
  * Story 2.3: Data Processing Status Indicators
+ * Story 167.6: shadcn migration — semantic success tokens, shared Skeleton,
+ * progressbar semantics, restrained live regions; behavior/copy unchanged.
  */
 export function ProcessingStatus() {
   const router = useRouter()
@@ -39,9 +42,14 @@ export function ProcessingStatus() {
             <CardTitle>Проверка статуса обработки...</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="space-y-4">
-              <div className="h-2 w-full bg-muted rounded animate-pulse" />
-              <div className="h-2 w-full bg-muted rounded animate-pulse" />
+            <div
+              aria-busy="true"
+              aria-label="Загрузка статуса обработки"
+              role="status"
+              className="space-y-4"
+            >
+              <Skeleton className="h-2 w-full motion-reduce:animate-none" />
+              <Skeleton className="h-2 w-full motion-reduce:animate-none" />
             </div>
           </CardContent>
         </Card>
@@ -85,8 +93,8 @@ export function ProcessingStatus() {
   return (
     <div className="space-y-6">
       {status.status === 'completed' && (
-        <Alert className="border-green-500 bg-green-50">
-          <CheckCircle2 className="h-4 w-4 text-green-600" />
+        <Alert className="border-status-success/50 bg-status-success/10">
+          <CheckCircle2 className="h-4 w-4 text-status-success" />
           <AlertTitle>Обработка завершена!</AlertTitle>
           <AlertDescription>
             Все данные успешно обработаны. Перенаправление на главную страницу...
@@ -102,11 +110,15 @@ export function ProcessingStatus() {
             {status.error ||
               'Произошла ошибка при обработке данных. Пожалуйста, попробуйте позже или обратитесь в поддержку.'}
           </AlertDescription>
-          <div className="mt-4 flex gap-2">
-            <Button variant="outline" onClick={() => window.location.reload()}>
+          <div className="mt-4 flex flex-wrap gap-2">
+            <Button variant="outline" className="min-h-11" onClick={() => window.location.reload()}>
               Повторить попытку
             </Button>
-            <Button variant="outline" onClick={() => router.push(ROUTES.DASHBOARD)}>
+            <Button
+              variant="outline"
+              className="min-h-11"
+              onClick={() => router.push(ROUTES.DASHBOARD)}
+            >
               Перейти на главную
             </Button>
           </div>
@@ -132,7 +144,11 @@ export function ProcessingStatus() {
                 {formatPercentageInt(status.productParsing.progress)}
               </span>
             </div>
-            <Progress value={status.productParsing.progress} className="h-2" />
+            <Progress
+              value={status.productParsing.progress}
+              className="h-2"
+              aria-label="Прогресс парсинга продуктов"
+            />
             <p className="text-sm text-muted-foreground">
               {getStatusText(
                 status.productParsing.status,
@@ -152,7 +168,11 @@ export function ProcessingStatus() {
                 {formatPercentageInt(status.reportLoading.progress)}
               </span>
             </div>
-            <Progress value={status.reportLoading.progress} className="h-2" />
+            <Progress
+              value={status.reportLoading.progress}
+              className="h-2"
+              aria-label="Прогресс загрузки финансовых отчетов"
+            />
             <p className="text-sm text-muted-foreground">
               {getStatusText(
                 status.reportLoading.status,

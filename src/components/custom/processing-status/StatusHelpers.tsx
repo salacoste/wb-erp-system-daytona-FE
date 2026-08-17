@@ -8,7 +8,8 @@ import { CheckCircle2, AlertCircle, Loader2 } from 'lucide-react'
  */
 export function getStatusIcon(taskStatus: string): React.ReactNode {
   if (taskStatus === 'completed') {
-    return <CheckCircle2 className="h-5 w-5 text-green-600" />
+    // Story 167.6: semantic status-success token instead of hardcoded green
+    return <CheckCircle2 className="h-5 w-5 text-status-success" />
   }
   if (taskStatus === 'failed') {
     return <AlertCircle className="h-5 w-5 text-destructive" />
