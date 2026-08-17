@@ -123,7 +123,7 @@ npx playwright install
 
 # 2. Set required env vars in .env.e2e
 echo "E2E_TEST_EMAIL=test@test.com" >> .env.e2e
-echo "E2E_TEST_PASSWORD=Russia23!" >> .env.e2e
+echo "E2E_TEST_PASSWORD=[REDACTED-TEST-PASSWORD]" >> .env.e2e
 echo "E2E_BASE_URL=http://localhost:3100" >> .env.e2e
 echo "E2E_API_URL=http://localhost:3000" >> .env.e2e
 

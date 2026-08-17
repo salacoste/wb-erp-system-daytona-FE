@@ -244,7 +244,7 @@ claude-opus-4-7 (1M context, in-context execution).
 **Live verification status: PARTIALLY BLOCKED — backend up, but auth-dependent calls blocked by an UNRELATED backend DB-credentials defect.**
 
 **Login attempt (4 retries 2026-05-30 11:21-11:22 UTC):**
-- `POST /v1/auth/login` with `{"email":"test@test.com","password":"Russia23!"}` returned `HTTP/1.1 500 Internal Server Error` on every attempt.
+- `POST /v1/auth/login` with `{"email":"test@test.com","password":"[REDACTED-TEST-PASSWORD]"}` returned `HTTP/1.1 500 Internal Server Error` on every attempt.
 - Response body: `{"error":{"code":"INTERNAL_SERVER_ERROR","message":"Internal server error","details":[],"trace_id":"<...>","timestamp":"2026-05-30T11:2X:XX.XXXZ","path":"/v1/auth/login"}}`
 - Trace IDs: `e046b919-7a28-42b3-90ef-780ee670722f`, `31f00394-be79-408c-b438-4f0ef76ffd83`, `180a3c3f-2700-4868-9be0-6377642f6f76`, `1ff48345-1eea-4112-afd0-5b6977abba71`.
 - PM2 backend error log root-cause line: `Authentication failed against database server at localhost, the provided database credentials for wb_user are not valid.` (from `/Users/r2d2/Documents/Code_Projects/wb-repricer-system-new/logs/pm2-api-error.log`).

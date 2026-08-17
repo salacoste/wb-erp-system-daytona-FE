@@ -51,7 +51,7 @@ Source for the reframe rationale: `_bmad-output/planning-artifacts/epics-96-fe.m
    ```bash
    TOKEN=$(curl -s -X POST http://localhost:3000/v1/auth/login \
      -H "Content-Type: application/json" \
-     -d '{"email":"test@test.com","password":"Russia23!"}' \
+     -d '{"email":"test@test.com","password":"[REDACTED-TEST-PASSWORD]"}' \
      | python3 -c "import sys,json; print(json.load(sys.stdin)['access_token'])")
    CABINET="f75836f7-c0bc-4b2c-823c-a1f3508cce8e"
    curl -s -H "Authorization: Bearer $TOKEN" -H "X-Cabinet-Id: $CABINET" \
