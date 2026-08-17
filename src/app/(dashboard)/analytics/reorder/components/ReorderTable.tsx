@@ -31,9 +31,10 @@ const STATUS_BADGE_MAP: Record<
   ReorderRecommendation['status'],
   { label: string; className: string }
 > = {
-  pending: { label: 'Ожидает', className: 'bg-amber-100 text-amber-800' },
-  ordered: { label: 'Заказано', className: 'bg-blue-100 text-blue-800' },
-  received: { label: 'Получено', className: 'bg-green-100 text-green-800' },
+  // 168.8: semantic status chips — /15 bg + full text (alerts chip idiom); expired stays muted
+  pending: { label: 'Ожидает', className: 'bg-status-warning/15 text-status-warning' },
+  ordered: { label: 'Заказано', className: 'bg-status-information/15 text-status-information' },
+  received: { label: 'Получено', className: 'bg-status-success/15 text-status-success' },
   expired: { label: 'Просрочено', className: 'bg-muted text-muted-foreground' },
 }
 

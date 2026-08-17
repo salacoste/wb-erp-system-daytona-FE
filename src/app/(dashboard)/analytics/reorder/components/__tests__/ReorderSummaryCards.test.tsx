@@ -103,3 +103,47 @@ describe('ReorderSummaryCards', () => {
     expect(screen.getByText(/Ср\. 48 ч до получения/)).toBeInTheDocument()
   })
 })
+
+// ---------------------------------------------------------------------------
+// Story 168.8: semantic status icon tokens (shadcn migration)
+// ---------------------------------------------------------------------------
+
+describe('ReorderSummaryCards — semantic status icons (168.8)', () => {
+  const LEGACY_PALETTE_RE =
+    /((bg|text|border|ring|divide|fill|stroke|outline)-(red|yellow|blue|green|gray|rose|amber|emerald|sky|orange|slate|zinc|neutral|stone|lime|teal|cyan|indigo|violet|purple|fuchsia|pink)(-\d+)?)/
+
+  const metrics = {
+    totalPending: 5,
+    totalOrdered: 3,
+    totalReceived: 10,
+    totalExpired: 1,
+    reorderCoveragePct: 75,
+    avgHoursToOrder: 12,
+    avgHoursToReceive: 48,
+  }
+
+  it.each([
+    ['Ожидают', 'text-status-warning'],
+    ['Заказано', 'text-status-information'],
+    ['Получено', 'text-status-success'],
+    ['Покрытие', 'text-status-error'],
+  ] as const)('renders %s card icon with semantic class %s', (label, token) => {
+    const { container } = renderWithProviders(
+      <ReorderSummaryCards metrics={metrics} isLoading={false} />
+    )
+    // 168.8: exact full-class-token pin on the svg icon inside the labeled card
+    const card = screen.getByText(label).closest('div.flex')
+    expect(card).not.toBeNull()
+    const icon = card?.querySelector('svg')
+    expect(icon).not.toBeNull()
+    expect(icon?.classList.contains(token)).toBe(true)
+    expect(container.textContent).toContain(label)
+  })
+
+  it('renders no legacy palette classes in the cards DOM', () => {
+    const { container } = renderWithProviders(
+      <ReorderSummaryCards metrics={metrics} isLoading={false} />
+    )
+    expect(container.innerHTML).not.toMatch(LEGACY_PALETTE_RE)
+  })
+})

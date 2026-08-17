@@ -52,6 +52,13 @@ const mockData: ReorderRecommendation[] = [
   },
 ]
 
+// 168.8: helper — single-row item with status override (behavior-lock for badge chips)
+const makeItem = (status: ReorderRecommendation['status']): ReorderRecommendation => ({
+  ...mockData[0],
+  id: `rec-${status}`,
+  status,
+})
+
 describe('ReorderTable', () => {
   it('renders loading state', () => {
     const { container } = renderWithProviders(
@@ -165,5 +172,52 @@ describe('ReorderTable', () => {
     // null dates should show dash — multiple dashes in the row
     const dashes = screen.getAllByText('—')
     expect(dashes.length).toBeGreaterThanOrEqual(1)
+  })
+})
+
+// ---------------------------------------------------------------------------
+// Story 168.8: semantic status chips (shadcn migration)
+// ---------------------------------------------------------------------------
+
+describe('ReorderTable — semantic status chips (168.8)', () => {
+  const LEGACY_PALETTE_RE =
+    /((bg|text|border|ring|divide|fill|stroke|outline)-(red|yellow|blue|green|gray|rose|amber|emerald|sky|orange|slate|zinc|neutral|stone|lime|teal|cyan|indigo|violet|purple|fuchsia|pink)(-\d+)?)/
+
+  const renderRow = (status: ReorderRecommendation['status']) =>
+    renderWithProviders(
+      <ReorderTable
+        data={[makeItem(status)]}
+        isLoading={false}
+        onMarkOrdered={vi.fn()}
+        onMarkReceived={vi.fn()}
+        isUpdating={false}
+      />
+    )
+
+  it.each([
+    // 168.8: exact full-class-token pins (classList.contains) — no substring false-pass
+    ['pending', 'Ожидает', 'bg-status-warning/15', 'text-status-warning'],
+    ['ordered', 'Заказано', 'bg-status-information/15', 'text-status-information'],
+    ['received', 'Получено', 'bg-status-success/15', 'text-status-success'],
+  ] as const)('renders %s badge with semantic classes %s/%s', (status, label, bg, text) => {
+    renderRow(status)
+    // Badge renders label as direct text child → getByText returns the Badge element
+    const badge = screen.getByText(label)
+    expect(badge.classList.contains(bg)).toBe(true)
+    expect(badge.classList.contains(text)).toBe(true)
+  })
+
+  it('keeps expired badge on muted semantic classes (untouched by 168.8)', () => {
+    renderRow('expired')
+    const badge = screen.getByText('Просрочено')
+    expect(badge.classList.contains('bg-muted')).toBe(true)
+    expect(badge.classList.contains('text-muted-foreground')).toBe(true)
+    // expired must NOT get a status-tinted chip
+    expect(badge.classList.contains('bg-status-warning/15')).toBe(false)
+  })
+
+  it('renders no legacy palette classes in the table DOM', () => {
+    const { container } = renderRow('pending')
+    expect(container.innerHTML).not.toMatch(LEGACY_PALETTE_RE)
   })
 })
