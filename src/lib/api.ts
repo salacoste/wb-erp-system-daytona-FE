@@ -15,11 +15,13 @@ import type {
 import type {
   CreateCabinetRequest,
   CreateCabinetResponse,
+  CabinetCreationOperationState,
   UpdateWbTokenRequest,
   UpdateWbTokenResponse,
 } from '@/types/cabinet'
 import { handleWbTokenUpdateError } from './api-wb-token-errors'
 import type { MarginCalculationStatusResponse } from '@/types/cogs'
+import type { ApiRequestOptions } from '@/types/api'
 
 /**
  * Refresh token response interface
@@ -112,12 +114,53 @@ export async function logoutUser(): Promise<{ message: string }> {
  * @returns Cabinet creation response with newToken
  * @throws Error on creation failure
  */
+/**
+ * Story 167.9: immutable initiating request context for cabinet creation.
+ * `token` is the JWT of the session that initiated the create (never re-read
+ * from mutable global state); `idempotencyKey` is the Story 167.8 UUID v4
+ * Idempotency-Key that scopes the durable account-scoped operation.
+ */
+export interface CabinetCreateRequestContext {
+  token: string
+  idempotencyKey: string
+}
+
 export async function createCabinet(
   data: CreateCabinetRequest,
-  _token?: string
+  context: CabinetCreateRequestContext
 ): Promise<CreateCabinetResponse> {
-  // apiClient automatically includes token from store, but we accept token param for compatibility
-  return apiClient.post<CreateCabinetResponse>('/v1/cabinets', data)
+  // Story 167.9: the immutable initiating token authenticates the request and the
+  // Story 167.8 Idempotency-Key (UUID v4) scopes the durable creation operation.
+  // `context` is required — every real caller captures its initiating session.
+  const options: ApiRequestOptions = {
+    // Story 167.8: create is account-scoped — no X-Cabinet-Id participates.
+    skipCabinetId: true,
+    authToken: context.token,
+    headers: { 'Idempotency-Key': context.idempotencyKey },
+  }
+  return apiClient.post<CreateCabinetResponse>('/v1/cabinets', data, options)
+}
+
+// PENDING BACKEND (Story 167.5 alignment): this reconciliation accessor has no
+// consumer yet — the 167.5 alignment story wires it into the operation-recovery
+// UI. Intentionally kept (not dead code to delete).
+/**
+ * Story 167.8 contract: account-scoped authoritative reconciliation of a cabinet
+ * creation operation. Returns in_progress / failed evidence; a succeeded
+ * operation replays the full CreateCabinetResponseDto (including newToken).
+ * Unknown and cross-account operation ids are indistinguishable 404s.
+ *
+ * @param operationId - UUID operation id from the initiating create context/response
+ * @param token - Immutable initiating-session JWT
+ */
+export async function getCabinetCreationOperation(
+  operationId: string,
+  token: string
+): Promise<CreateCabinetResponse | CabinetCreationOperationState> {
+  return apiClient.get<CreateCabinetResponse | CabinetCreationOperationState>(
+    `/v1/cabinets/creation-operations/${operationId}`,
+    { authToken: token }
+  )
 }
 
 /**

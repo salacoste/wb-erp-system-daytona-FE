@@ -45,12 +45,19 @@ class ApiClient {
       ...(options.headers as Record<string, string>),
     }
 
-    if (!options.skipAuth && token) {
-      headers['Authorization'] = `Bearer ${token}`
+    // Story 167.9: an immutable initiating token wins over the mutable store
+    // token so a request authenticates as the session that initiated it.
+    const effectiveToken = options.authToken ?? token
+
+    if (!options.skipAuth && effectiveToken) {
+      headers['Authorization'] = `Bearer ${effectiveToken}`
     }
 
-    if (!options.skipCabinetId && cabinetId) {
-      headers['X-Cabinet-Id'] = cabinetId
+    // Story 167.9: an immutable initiating cabinet id wins over the store value.
+    const effectiveCabinetId = options.cabinetIdOverride ?? cabinetId
+
+    if (!options.skipCabinetId && effectiveCabinetId) {
+      headers['X-Cabinet-Id'] = effectiveCabinetId
     }
 
     const url = `${this.baseUrl}${endpoint}`

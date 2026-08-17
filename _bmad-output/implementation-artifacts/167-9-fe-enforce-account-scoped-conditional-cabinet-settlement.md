@@ -1,6 +1,6 @@
 # Story 167.9: Enforce Account-Scoped Conditional Cabinet Settlement
 
-Status: backlog
+Status: review
 
 ## Story
 
@@ -81,20 +81,24 @@ This non-route Story owns the shared settlement boundary and only its minimal ty
 
 ### Agent Model Used
 
-Not started.
+glm-5.2[1m] orchestrator → opus executor (impl + fix-round), opus code-reviewer ×2 passes (2026-08-17).
 
 ### Debug Log References
 
-Not started.
+- Pass-1 (structural): 2 HIGH (unguarded margin follow-up; legacy-session silent dead-end), 3 MEDIUM, 3 LOW — all HIGH/MEDIUM/selected-LOW fixed same session.
+- Pass-2 (narrative): 0 CRITICAL/HIGH; 3 MEDIUM (202-vs-200 fixture drift → fixed to live-swagger 200; live-evidence attestation → strengthened with GET-op status-code citation in contract-test header; dead reconciliation accessor → recorded below as carry-over), 3 LOW (options-spread leak — pre-existing pattern, skipped; vacuous enum assertion → pinned exact literal; setToken/setUser nonce-null constructibility → unreachable today, noted).
 
 ### Completion Notes List
 
-Not started. Do not add completion, review, merge, or cleanup claims without exact evidence.
+- **Explicit carry-over (Story 167.5 alignment, NOT satisfied here):** `getCabinetCreationOperation` (src/lib/api.ts) is plumbed and contract-tested but has ZERO production consumers — the "reconciliation arrives" clause of AC1 is wired only up to the accessor. Story 167.5 must consume it in the `useCabinetCreateMutation` seam alignment, rerun stale/indeterminate settlement tests, and obtain fresh independent review (per this story's Dev Notes overlap protocol).
+- AC6 evidence: live-backend in-vitest is infeasible by design (MSW `onUnhandledRequest:'error'` + epic128 outbound network guard denies localhost egress from vitest). Out-of-band read-only evidence captured 2026-08-17 against live :3000 (PR #227 code): unauth → 401 UNAUTHORIZED envelope; random-UUID → 404 CABINET_CREATION_OPERATION_NOT_FOUND; non-UUID → 400 CABINET_CREATION_OPERATION_ID_INVALID; GET op endpoint serves ALL states (in_progress/succeeded/failed) as HTTP 200 (swagger responses 200/400/401/403/404/410; no 202). Fixtures byte-cite these shapes.
+- Deployment note: a cabinet create in flight exactly at deploy time from a pre-nonce persisted session settles `indeterminate` (fail-safe: no commits, no UI effects) — documented in authStore rehydrate comment; all post-deploy sessions mint a nonce on rehydrate.
 
 ### File List
 
-Not started; executor must record the exact reviewed manifest.
+src/services/cabinets.service.ts · src/services/cabinets.service.settlement.test.ts · src/services/cabinets.service.test.ts · src/lib/api.ts · src/lib/api.test.ts · src/lib/api.cabinet-creation-contract.test.ts · src/lib/api.cabinet-creation-transport.test.ts · src/lib/api-client.ts · src/lib/api/cabinet.ts · src/lib/api/__tests__/cabinet.test.ts · src/stores/authStore.ts · src/types/api.ts · src/types/cabinet/core.ts · src/types/cabinet/index.ts · src/components/custom/CabinetCreationForm.tsx · src/components/custom/CabinetCreationForm.test.tsx · _bmad-output/implementation-artifacts/167-9-fe-enforce-account-scoped-conditional-cabinet-settlement.md (this record)
 
 ## Change Log
 
 - 2026-08-15: Story created from the owner-approved Batch correct-course proposal; status `backlog` pending Story 167.8 merge. No implementation claimed.
+- 2026-08-17: Implemented (opus executor) → pass-1 fixes (margin-follow-up settlement guard + pinned transport; legacy rehydrate nonce mint; nonce-primary predicate; ordering assertion reinstated; createCabinet context required) → pass-2 fixes (operation-state fixtures 202→200 per live swagger; exact enum literal pinned; live-evidence citation strengthened). Full vitest 1144 files / 18557 passed / 0 failed; lint 0/0; type-check 0; format OK; max-lines OK; build OK (`next build --webpack`; turbopack cross-FS symlink limitation documented). Status: review → done pending PR merge by orchestrator. **Lessons:** (1) settlement guards must cover FOLLOW-UP calls, not just the primary commit — the second await reopens the window pass-1 closes (2) persisted-session migrations need lazy rehydrate minting or first-touch UX silently dead-ends (3) contract fixtures must re-check status CODES against live swagger, not just body shapes — 202-vs-200 drifted past body-faithful review.

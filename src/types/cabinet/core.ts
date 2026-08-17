@@ -86,6 +86,11 @@ export interface ProductSyncTask {
   recommendation?: string | null
 }
 
+/**
+ * Story 167.8 contract: POST /v1/cabinets response (CreateCabinetResponseDto).
+ * Durable operation fields (operationId/status/replayed) are authoritative;
+ * status is always "succeeded" on a 201/202 create response.
+ */
 export interface CreateCabinetResponse {
   id: string
   name: string
@@ -93,8 +98,42 @@ export interface CreateCabinetResponse {
   createdAt: string
   updatedAt: string
   newToken: string // ⚠️ КРИТИЧНО: Новый JWT токен - обязательно обновить!
+  operationId?: string // Account-scoped creation operation id (UUID)
+  status?: 'succeeded' // Authoritative durable operation status
+  replayed?: boolean // True when this response replays a committed create
+  // Story 167.8 swagger fields present on CreateCabinetResponseDto
+  taxSystem?: TaxSystem | null
+  taxRate?: number | null
+  vatPayer?: boolean
+  vatRate?: VatRate | null
+  targetMarginPct?: number | null
+  keys?: CabinetKeyMetadata[]
   productsSyncTasks?: ProductSyncTask[]
 }
+
+/** Story 167.8 swagger: CabinetKeyMetadataDto */
+export interface CabinetKeyMetadata {
+  keyName: string
+  updatedAt: string
+}
+
+/**
+ * Story 167.8 contract: GET /v1/cabinets/creation-operations/{operationId}
+ * (CabinetCreationInProgressDto / CabinetCreationFailedDto shapes).
+ * 404-neutral cross-account; 410 when the cabinet was hard-deleted after success.
+ */
+export type CabinetCreationOperationState =
+  | { operationId: string; status: 'in_progress'; retryable: boolean; retryAfterSeconds?: number }
+  | {
+      operationId: string
+      status: 'failed'
+      failure: {
+        /** CabinetCreationFailureDto: enum code + retryable flag only (swagger) */
+        code: 'CABINET_CREATION_FAILED' | 'CABINET_CREATION_ACCOUNT_INELIGIBLE'
+        retryable: boolean
+      }
+      completedAt?: string
+    }
 
 export interface UpdateWbTokenRequest {
   token: string // Новый WB API токен

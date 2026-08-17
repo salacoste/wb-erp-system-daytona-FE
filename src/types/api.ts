@@ -48,6 +48,20 @@ export interface ApiRequestOptions extends RequestInit {
   skipAuth?: boolean
   skipCabinetId?: boolean
   /**
+   * Story 167.9: immutable initiating-session token override. When present,
+   * this token authenticates the request instead of the mutable global
+   * auth-store token, so a request always runs as the account/session that
+   * initiated it.
+   */
+  authToken?: string
+  /**
+   * Story 167.9: immutable initiating-session cabinet id override. When present,
+   * this value is sent as X-Cabinet-Id instead of the mutable global auth-store
+   * cabinetId, so a follow-up request targets the cabinet of the session that
+   * initiated it (mirrors the authToken pattern above).
+   */
+  cabinetIdOverride?: string
+  /**
    * Skip auto-unwrapping of response.data field.
    * Use this when the API returns a complex response object that has a 'data' field
    * but you need the full response (e.g., storage analytics with period, summary, pagination).

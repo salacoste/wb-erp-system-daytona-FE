@@ -156,6 +156,7 @@ describe('CabinetCreationForm', () => {
     const user = userEvent.setup()
     const mockHandleCreateCabinet = vi.mocked(handleCreateCabinet)
     mockHandleCreateCabinet.mockResolvedValue({
+      status: 'applied',
       cabinet: {
         id: 'cabinet-1',
         name: 'Test Cabinet',
@@ -219,6 +220,7 @@ describe('CabinetCreationForm', () => {
 
     // Resolve to complete test
     resolvePromise!({
+      status: 'applied',
       cabinet: {
         id: 'cabinet-1',
         name: 'Test Cabinet',
@@ -266,6 +268,7 @@ describe('CabinetCreationForm', () => {
     const user = userEvent.setup()
     const mockHandleCreateCabinet = vi.mocked(handleCreateCabinet)
     mockHandleCreateCabinet.mockResolvedValue({
+      status: 'applied',
       cabinet: {
         id: 'cabinet-1',
         name: 'Test Cabinet',
@@ -307,6 +310,7 @@ describe('CabinetCreationForm', () => {
   it('accepts and persists an explicit 0% target margin', { timeout: 10000 }, async () => {
     const user = userEvent.setup()
     vi.mocked(handleCreateCabinet).mockResolvedValue({
+      status: 'applied',
       cabinet: {
         id: 'cabinet-1',
         name: 'Zero Margin',
@@ -418,4 +422,77 @@ describe('CabinetCreationForm', () => {
     expect(handleCreateCabinet).not.toHaveBeenCalled()
     expect(updateCabinetTaxSettings).not.toHaveBeenCalled()
   })
+})
+
+describe('CabinetCreationForm stale/indeterminate settlement (Story 167.9)', () => {
+  let queryClient: QueryClient
+  const mockPush = vi.fn()
+  const existingCabinet = {
+    id: 'cabinet-1',
+    name: 'Existing Cabinet',
+    isActive: true,
+    createdAt: '2025-01-12T10:00:00Z',
+    updatedAt: '2025-01-12T10:00:00Z',
+    taxSystem: null,
+    taxRate: null,
+    vatPayer: false,
+    vatRate: null,
+    targetMarginPct: null as number | null,
+  }
+
+  beforeEach(() => {
+    queryClient = new QueryClient({
+      defaultOptions: { queries: { retry: false }, mutations: { retry: false } },
+    })
+    vi.clearAllMocks()
+    useAuthStore.setState({
+      user: { id: 'user-b', email: 'b@test.local', role: 'Owner' },
+      token: 'jwt-live-session',
+      cabinetId: null,
+      isAuthenticated: true,
+    })
+    ;(useRouter as ReturnType<typeof vi.fn>).mockReturnValue({ push: mockPush })
+    vi.mocked(getCabinetTaxSettings).mockResolvedValue(existingCabinet)
+    vi.mocked(updateCabinetTaxSettings).mockResolvedValue(existingCabinet)
+  })
+
+  afterEach(() => {
+    cleanup()
+    queryClient.clear()
+  })
+
+  it.each(['stale', 'indeterminate'] as const)(
+    '%s settlement: no toast, no navigation, no error UI',
+    { timeout: 10000 },
+    async status => {
+      const user = userEvent.setup()
+      vi.mocked(handleCreateCabinet).mockResolvedValue({
+        status,
+        operationId: '9ca8c2ba-0b3f-4a2a-b20c-27db4d60a7b0',
+      })
+
+      render(
+        <QueryClientProvider client={queryClient}>
+          <CabinetCreationForm />
+        </QueryClientProvider>
+      )
+
+      const nameInput = screen.getByLabelText(/название кабинета/i)
+      await user.clear(nameInput)
+      await user.type(nameInput, 'Test Cabinet')
+      await new Promise(resolve => setTimeout(resolve, 100))
+
+      await user.click(screen.getByRole('button', { name: /создать кабинет/i }))
+
+      await waitFor(() => expect(handleCreateCabinet).toHaveBeenCalled(), { timeout: 5000 })
+      // Let any (forbidden) success effects flush before asserting suppression.
+      await new Promise(resolve => setTimeout(resolve, 300))
+
+      expect(toast.success).not.toHaveBeenCalled()
+      expect(toast.error).not.toHaveBeenCalled()
+      expect(mockPush).not.toHaveBeenCalled()
+      // Form is NOT reset — the live session's input must survive.
+      expect(screen.getByLabelText(/название кабинета/i)).toHaveValue('Test Cabinet')
+    }
+  )
 })
