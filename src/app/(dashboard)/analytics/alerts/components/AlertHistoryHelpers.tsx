@@ -7,10 +7,14 @@
 
 import { Badge } from '@/components/ui/badge'
 
+/**
+ * Static status tone map (shadcn semantic tokens) — no runtime
+ * class interpolation (JIT-invisible defect #14).
+ */
 export const statusStyles: Record<string, string> = {
-  sent: 'bg-green-100 text-green-800',
-  pending: 'bg-yellow-100 text-yellow-800',
-  failed: 'bg-red-100 text-red-800',
+  sent: 'bg-status-success/15 text-status-success',
+  pending: 'bg-status-warning/15 text-status-warning',
+  failed: 'bg-status-error/15 text-status-error',
 }
 
 export const statusLabels: Record<string, string> = {
@@ -43,7 +47,7 @@ export function parseMessage(raw: string): { title: string; message: string } {
 }
 
 export function StatusBadge({ status }: { status: string }) {
-  const style = statusStyles[status] ?? 'bg-gray-100 text-gray-800'
+  const style = statusStyles[status] ?? 'bg-muted text-muted-foreground'
   const label = statusLabels[status] ?? status
   return (
     <Badge className={style} variant="outline">

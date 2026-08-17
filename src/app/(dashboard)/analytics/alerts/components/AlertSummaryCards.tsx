@@ -20,13 +20,14 @@ interface MetricCardProps {
   label: string
   value: number | undefined
   color: string
+  iconClassName: string
 }
 
-function MetricCard({ icon, label, value, color }: MetricCardProps) {
+function MetricCard({ icon, label, value, color, iconClassName }: MetricCardProps) {
   return (
     <Card>
       <CardContent className="flex items-center gap-4 p-6">
-        <div className={`rounded-lg p-3 ${color}`}>{icon}</div>
+        <div className={`rounded-lg p-3 ${color} ${iconClassName}`}>{icon}</div>
         <div>
           <p className="text-sm text-muted-foreground">{label}</p>
           <p className="text-2xl font-bold">{value != null ? formatNumber(value) : '—'}</p>
@@ -52,31 +53,35 @@ export function AlertSummaryCards({ summary, isLoading }: AlertSummaryCardsProps
   return (
     <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
       <MetricCard
-        icon={<Bell className="h-5 w-5 text-white" />}
+        icon={<Bell className="h-5 w-5" />}
         label="Всего за 7 дней"
         value={summary?.totalAlerts}
         color="bg-primary"
+        iconClassName="text-primary-foreground"
       />
       {/* eslint-disable-next-line no-restricted-syntax -- SEMANTIC-ZERO: severity counts default to 0 when absent */}
       <MetricCard
-        icon={<AlertTriangle className="h-5 w-5 text-white" />}
+        icon={<AlertTriangle className="h-5 w-5" />}
         label="Критические"
         value={bySeverity.critical ?? 0}
-        color="bg-red-500"
+        color="bg-status-error"
+        iconClassName="text-status-error-foreground"
       />
       {/* eslint-disable-next-line no-restricted-syntax -- SEMANTIC-ZERO: severity counts default to 0 when absent */}
       <MetricCard
-        icon={<AlertCircle className="h-5 w-5 text-white" />}
+        icon={<AlertCircle className="h-5 w-5" />}
         label="Предупреждения"
         value={bySeverity.warning ?? 0}
-        color="bg-yellow-500"
+        color="bg-status-warning"
+        iconClassName="text-status-warning-foreground"
       />
       {/* eslint-disable-next-line no-restricted-syntax -- SEMANTIC-ZERO: severity counts default to 0 when absent */}
       <MetricCard
-        icon={<Info className="h-5 w-5 text-white" />}
+        icon={<Info className="h-5 w-5" />}
         label="Информационные"
         value={bySeverity.info ?? 0}
-        color="bg-blue-500"
+        color="bg-status-information"
+        iconClassName="text-status-information-foreground"
       />
     </div>
   )
