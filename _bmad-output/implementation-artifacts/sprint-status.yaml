@@ -765,7 +765,7 @@ development_status:
   168-4-fe-migrate-finance-history-analytics-finance-history: done     # PR #174 (a01b2de5, merge cd4d95b3): micro-migration — deltaColorClass → financial-positive/negative (inversion preserved), 4 pins flipped, h1 +text-foreground; 2-pass APPROVE·APPROVE; vitest 18642/0.
   168-5-fe-migrate-orders-analytics-analytics-orders: done     # PR #176 (6ddc5d95, merge 817dcb79): delta signs + icons → semantic tokens (purple→primary); +6 pins incl. SeasonalityTab-scoped (post-pass-1); 2-pass PASS·CONDITIONAL(nits resolved); vitest 18647/0.
   168-6-fe-migrate-pricing-analytics-analytics-pricing: done     # PR #178 (98487e04, merge 42f24d53): pricing — SummaryCards valueClass + GapCell sign + MarginCell 3-tier (15/0 kept) → financial ±/status-warning/80; +9 exact pins; 2-pass APPROVE·APPROVE; vitest 18657/0.
-  168-7-fe-migrate-product-analytics-analytics-product-nmid: backlog
+  168-7-fe-migrate-product-analytics-analytics-product-nmid: done     # PR #180 (67759f7c, merge 6e2bdf1a): OrganicTab — iroasLabel 4-tier (effective→financial-positive/80, no tier-collapse) + confidence→status-information/warning; +8 pins NEW test file; 2-pass APPROVE·APPROVE; vitest 18665/0.
   168-8-fe-migrate-reorder-analytics-analytics-reorder: backlog
   168-9-fe-migrate-sku-analytics-analytics-sku: backlog
   168-10-fe-migrate-time-period-analytics-analytics-time-period: backlog
