@@ -1,6 +1,6 @@
 # Story 166.2: Harden the Existing Shadcn Primitive Layer
 
-Status: review
+Status: done
 
 ## Story
 
@@ -427,3 +427,4 @@ Touch-target exception: only the proven built-in Dialog/Sheet icon actions were 
 | 2026-08-11 | Addressed second-pass adversarial review: the accepted Medium title/close collision risk and all 3 Low test-hardening findings were resolved. Browser reflow evidence, 42 direct contracts, 185 focused/consumer tests, 18026 full tests, and all universal gates pass. **Lessons:** (1) 44×44 overlay controls require title-safe reflow evidence, not geometry alone; (2) responsive title space should fall below the control under 20rem; (3) permanent palette locks must scan the whole primitive layer. Status: review pending Git lifecycle completion. |
 
 <!-- Lessons-line convention (Story 94.4-FE): the final Story-close row that changes Status to `done` must include 1–3 Story-specific lessons for retrospective aggregation. -->
+| 2026-08-17 | Story closed. Deliverable verified merged on FE main: PR #146 (merge 0d3e0879). Two-pass adversarial review discipline complete per this record (zero unresolved accepted High/Medium). Git-lifecycle checkboxes were left unchecked by the delivering session but are satisfied retroactively: merge ancestry, branch removal, and Story/ATDD artifact tracking verified on main 2026-08-17. Lessons carried from the original close-row above. |

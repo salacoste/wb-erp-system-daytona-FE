@@ -1,6 +1,6 @@
 # Story 166.6: Deliver ResponsiveTable and Data-Table Contracts
 
-Status: review
+Status: done
 
 ## Story
 
@@ -272,3 +272,4 @@ GPT-5.6
 | 2026-08-12 | Two adversarial review passes completed. Pass 1 and Pass 2 accepted findings were repaired test-first; the final confirmation review approved with zero unresolved findings. Browser/accessibility and universal local gates passed, temporary evidence surfaces were removed, and status moved to `review` pending Git integration and cleanup. |
 
 <!-- Lessons-line convention: the final Story-close row changing Status to `done` must include 1–3 Story-specific lessons for retrospective aggregation. -->
+| 2026-08-17 | Story closed. Deliverable verified merged on FE main: PR #150 (merge 1cfd3daa (deliverable 5178db6e)). Two-pass adversarial review discipline complete per this record (zero unresolved accepted High/Medium). Git-lifecycle checkboxes were left unchecked by the delivering session but are satisfied retroactively: merge ancestry, branch removal, and Story/ATDD artifact tracking verified on main 2026-08-17. **Lessons:** (1) narrow/wide projections must be mutually exclusive or columns leak unnamed overflow (2) terminal virtualized states must suppress position/end feedback (3) runtime barrel exports need explicit export-order tests. |

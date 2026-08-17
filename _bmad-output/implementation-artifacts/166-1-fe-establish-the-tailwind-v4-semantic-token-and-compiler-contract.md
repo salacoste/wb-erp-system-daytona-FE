@@ -1,6 +1,6 @@
 # Story 166.1: Establish the Tailwind v4 Semantic Token and Compiler Contract
 
-Status: review
+Status: done
 
 ## Story
 
@@ -286,3 +286,4 @@ gpt-5.6-sol (orchestrator with independent test, implementation, and review lane
 | 2026-08-11 | Implemented and validated the CSS-first semantic token/compiler foundation; moved Story to `review` after two adversarial passes. **Lessons:** compiler-selector existence is weaker than declaration-level compatibility; semantic fill tokens must also be tested in real text contexts; worktree-local dependencies are required for Turbopack because an external `node_modules` symlink is rejected. |
 
 <!-- Lessons-line convention (Story 94.4-FE): the final Story-close row that changes Status to `done` must include 1–3 Story-specific lessons for retrospective aggregation. -->
+| 2026-08-17 | Story closed. Deliverable verified merged on FE main: PR #145 (merge 5425914b). Two-pass adversarial review discipline complete per this record (zero unresolved accepted High/Medium). Git-lifecycle checkboxes were left unchecked by the delivering session but are satisfied retroactively: merge ancestry, branch removal, and Story/ATDD artifact tracking verified on main 2026-08-17. Lessons carried from the original close-row above. |

@@ -1,6 +1,6 @@
 # Story 166.5: Standardize Filters and Period Controls
 
-Status: review
+Status: done
 
 ## Story
 
@@ -499,3 +499,4 @@ GPT-5.6
 | 2026-08-12 | Completed the fresh post-review local gate: focused 317/317, consumer smoke 273/273, production build 70/70, full Vitest 18196/18196, and all static/YAML/scope checks passed on Node 24.18.0/npm 11.11.0. |
 
 <!-- Lessons-line convention (Story 94.4-FE): the final Story-close row changing Status to `done` must include 1–3 Story-specific lessons for retrospective aggregation. -->
+| 2026-08-17 | Story closed. Deliverable verified merged on FE main: PR #149 (merge 95681d018). Two-pass adversarial review discipline complete per this record (zero unresolved accepted High/Medium). Git-lifecycle checkboxes were left unchecked by the delivering session but are satisfied retroactively: merge ancestry, branch removal, and Story/ATDD artifact tracking verified on main 2026-08-17. **Lessons:** (1) untracked-file audits must enumerate ignored artifacts, not just `git status` (2) behavior-preserving restyles need before/after interaction evidence, not visual diff alone (3) snapshot reviews must pin the complete file set (SHA-256) to catch incomplete-snapshot evidence. |

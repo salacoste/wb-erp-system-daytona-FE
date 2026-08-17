@@ -733,15 +733,15 @@ development_status:
 
   # Epic 166-FE: Trustworthy Shadcn Design-System Foundation
   # Active migration program source: epics-166-174-fe-shadcn-migration.md
-  epic-166-fe: in-progress
-  166-1-fe-establish-the-tailwind-v4-semantic-token-and-compiler-contract: review
-  166-2-fe-harden-the-existing-shadcn-primitive-layer: review
-  166-3-fe-deliver-pageheader-and-contextbar-compositions: review
-  166-4-fe-standardize-metrics-financial-values-availability-and-status: review
-  166-5-fe-standardize-filters-and-period-controls: review
-  166-6-fe-deliver-responsivetable-and-data-table-contracts: review
-  166-7-fe-deliver-chartframe-and-accessible-analytical-evidence: review
-  166-8-fe-standardize-page-states-async-results-contextual-detail-and-global-not-found: review
+  epic-166-fe: done      # all 8 stories closed 2026-08-17 (audit PASS; PRs #145-#152)
+  166-1-fe-establish-the-tailwind-v4-semantic-token-and-compiler-contract: done      # 2026-08-17 close-out: deliverable merged PR #145/5425914b; two-pass reviews complete per story record; lifecycle verified retroactively (audit PASS).
+  166-2-fe-harden-the-existing-shadcn-primitive-layer: done      # 2026-08-17 close-out: deliverable merged PR #146/0d3e0879; two-pass reviews complete per story record; lifecycle verified retroactively (audit PASS).
+  166-3-fe-deliver-pageheader-and-contextbar-compositions: done      # 2026-08-17 close-out: deliverable merged PR #147/c73b6002; two-pass reviews complete per story record; lifecycle verified retroactively (audit PASS).
+  166-4-fe-standardize-metrics-financial-values-availability-and-status: done      # 2026-08-17 close-out: deliverable merged PR #148/071dc08a; two-pass reviews complete per story record; lifecycle verified retroactively (audit PASS).
+  166-5-fe-standardize-filters-and-period-controls: done      # 2026-08-17 close-out: deliverable merged PR #149/95681d018; two-pass reviews complete per story record; lifecycle verified retroactively (audit PASS).
+  166-6-fe-deliver-responsivetable-and-data-table-contracts: done      # 2026-08-17 close-out: deliverable merged PR #150/1cfd3daa; two-pass reviews complete per story record; lifecycle verified retroactively (audit PASS).
+  166-7-fe-deliver-chartframe-and-accessible-analytical-evidence: done      # 2026-08-17 close-out: deliverable merged PR #151/5beebe5e; two-pass reviews complete per story record; lifecycle verified retroactively (audit PASS).
+  166-8-fe-standardize-page-states-async-results-contextual-detail-and-global-not-found: done      # 2026-08-17 close-out: deliverable merged PR #152/ab12ffe9; two-pass reviews complete per story record; lifecycle verified retroactively (audit PASS).
   epic-166-fe-retrospective: optional
 
   # Epic 167-FE: Consistent AppShell, Authentication, and First-Time Value

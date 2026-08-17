@@ -1,6 +1,6 @@
 # Story 166.4: Standardize Metrics, Financial Values, Availability, and Status
 
-Status: review
+Status: done
 
 ## Story
 
@@ -436,3 +436,4 @@ GPT-5.6
 | 2026-08-12 | Resolved all accepted findings from two fresh adversarial passes and final recheck. Focused 81/81, build 70/70, full Vitest 18142/18142, scope audits, and final browser/axe smoke pass. **Lessons:** (1) numeric sign cannot safely infer business sentiment; (2) compact APIs must admit only formats with real compact renderers; (3) every arbitrary `ReactNode` slot requires block-safe HTML containers. Status: review pending Git lifecycle completion. |
 
 <!-- Lessons-line convention (Story 94.4-FE): the final Story-close row that changes Status to `done` must include 1–3 Story-specific lessons for retrospective aggregation. -->
+| 2026-08-17 | Story closed. Deliverable verified merged on FE main: PR #148 (merge 071dc08a). Two-pass adversarial review discipline complete per this record (zero unresolved accepted High/Medium). Git-lifecycle checkboxes were left unchecked by the delivering session but are satisfied retroactively: merge ancestry, branch removal, and Story/ATDD artifact tracking verified on main 2026-08-17. Lessons carried from the original close-row above. |

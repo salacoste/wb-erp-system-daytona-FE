@@ -1,6 +1,6 @@
 # Story 166.3: Deliver PageHeader and ContextBar Compositions
 
-Status: review
+Status: done
 
 ## Story
 
@@ -256,3 +256,4 @@ GPT-5.6
 | 2026-08-11 | Resolved all five Pass-2 Medium findings and received final `APPROVE` with zero unresolved accepted High/Medium findings. Focused 35/35, build 70/70, and full Vitest 18061/18061 pass. **Lessons:** (1) effective semantic state must own both behavior and its visible announcement; (2) JavaScript `\b` does not provide Cyrillic word boundaries; (3) permanent source guards must enumerate the Story-owned surface rather than absorb a future shared directory. Status: review pending Git lifecycle completion. |
 
 <!-- Lessons-line convention (Story 94.4-FE): the final Story-close row that changes Status to `done` must include 1–3 Story-specific lessons for retrospective aggregation. -->
+| 2026-08-17 | Story closed. Deliverable verified merged on FE main: PR #147 (merge c73b6002). Two-pass adversarial review discipline complete per this record (zero unresolved accepted High/Medium). Git-lifecycle checkboxes were left unchecked by the delivering session but are satisfied retroactively: merge ancestry, branch removal, and Story/ATDD artifact tracking verified on main 2026-08-17. Lessons carried from the original close-row above. |

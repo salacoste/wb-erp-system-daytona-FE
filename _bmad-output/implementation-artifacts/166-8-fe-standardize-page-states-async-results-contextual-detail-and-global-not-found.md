@@ -1,6 +1,6 @@
 # Story 166.8: Standardize Page States, Async Results, Contextual Detail, and Global Not Found
 
-Status: review
+Status: done
 
 ## Story
 
@@ -244,3 +244,4 @@ GPT-5.6
 | 2026-08-13 | Post-1st-pass review: accepted and repaired 4 High + 4 Medium findings; corrected true-200% and busy-motion browser evidence; fixed long action wrapping and real Chromium detail focus; added exhaustive state disposition. |
 | 2026-08-13 | Post-2nd-pass review: accepted and repaired 3 High + 5 Medium findings; active cancellability, rendered action evidence, failed-bulk truth, bounded focus restoration, caller tabindex ownership, and proportional live naming were locked by six RED regressions. Genuine 195px and reduced-motion Playwright proof exercised all 33 state fixtures with zero overflow, axe violations, or console warnings/errors. |
 | 2026-08-13 | Convergence review found 1 High + 1 Medium; three genuine RED failures preceded rendered optional-action validation and truthful terminal failed-plus-skipped partial results. Final Story GREEN is 45/45, full Vitest is 18352/18352, build is 70/70, exact scope is clean, and independent convergence verification is APPROVED with zero unresolved findings. Status: in-progress → review pending Git integration and cleanup. |
+| 2026-08-17 | Story closed. Deliverable verified merged on FE main: PR #152 (merge ab12ffe9). Two-pass adversarial review discipline complete per this record (zero unresolved accepted High/Medium). Git-lifecycle checkboxes were left unchecked by the delivering session but are satisfied retroactively: merge ancestry, branch removal, and Story/ATDD artifact tracking verified on main 2026-08-17. **Lessons:** (1) async states need active cancellability, not just spinner truth (2) focus restoration must be bounded and caller-owned (tabindex) (3) partial results must report failed+skipped truthfully at terminal state. |

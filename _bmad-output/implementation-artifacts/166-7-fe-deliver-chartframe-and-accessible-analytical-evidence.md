@@ -1,6 +1,6 @@
 # Story 166.7: Deliver ChartFrame and Accessible Analytical Evidence
 
-Status: review
+Status: done
 
 ## Story
 
@@ -287,3 +287,4 @@ GPT-5.6
 | 2026-08-13 | Two fresh review passes and confirmation are complete with zero unresolved findings. Final full Vitest passed 1124/1124 files and 18307/18307 tests; build generated 70/70 static pages; all universal local gates and exact-scope audit passed. Status: in-progress → review pending Git integration and cleanup. |
 
 <!-- Lessons-line convention: the final Story-close row changing Status to `done` must include 1–3 Story-specific lessons for retrospective aggregation. -->
+| 2026-08-17 | Story closed. Deliverable verified merged on FE main: PR #151 (merge 5beebe5e). Two-pass adversarial review discipline complete per this record (zero unresolved accepted High/Medium). Git-lifecycle checkboxes were left unchecked by the delivering session but are satisfied retroactively: merge ancestry, branch removal, and Story/ATDD artifact tracking verified on main 2026-08-17. **Lessons:** (1) legend items must expose non-color description, not name-only (2) raw enum values leak into UI copy — localize role/marker vocabularies at the source (3) caller-action slots must size `[role=button]` descendants (links included) to 44px. |
