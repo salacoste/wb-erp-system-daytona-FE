@@ -96,5 +96,3 @@ npm run check:anti-pattern-8-normalizer  # AP#8 normalizer ratchet
 | Zustand store details | `src/stores/` | 5 stores; architecture covered in [Architecture](architecture.md); individual store APIs are self-documenting |
 | Route migrations (Epics 167–174) | `.omx/plans/shadcn-full-ui-migration-master.md`, `src/app/(dashboard)/**/page.tsx` | Foundation (Epic 166), the full onboarding lane (Epic 167, closed), and Epic 168 stories 168.1–168.10 (analytics hub, alerts, dashboard, finance-history, orders, pricing, product detail, reorder, SKU, time-period) are merged; 168.11 (unit-economics) and the remaining ledger routes migrate one Story at a time under the master plan. See [Design System](design-system.md). |
 | OMX story-plan orchestration | `scripts/manage-omx-story-plans.mjs`, `.omx/plans/`, `docs/process/omx-story-worktree-orchestrator-prompt.md` | Process/planning tooling for epic 162–165 story plans; not runtime source |
- source |
-x-story-plans.mjs`, `.omx/plans/`, `docs/process/omx-story-worktree-orchestrator-prompt.md` | Process/planning tooling for epic 162–165 story plans; not runtime source |
