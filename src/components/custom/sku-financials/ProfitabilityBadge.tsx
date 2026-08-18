@@ -32,7 +32,7 @@ export function ProfitabilityBadge({ status, marginPct }: ProfitabilityBadgeProp
         <TooltipContent>
           <p className="font-medium">{label}</p>
           {marginPct !== null && (
-            <p className="text-xs text-gray-400">
+            <p className="text-xs text-muted-foreground">
               Операционная маржа: {formatPercentage(marginPct, 2)}
             </p>
           )}

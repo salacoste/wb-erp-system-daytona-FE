@@ -31,8 +31,8 @@ export function SkuTableSection({ skuData, showHistoricalSpp }: SkuTableSectionP
               showHistoricalSpp={showHistoricalSpp}
             />
           ) : (
-            <div className="rounded-lg border border-gray-200 bg-gray-50 p-12 text-center">
-              <p className="text-gray-600">Нет данных за выбранную неделю</p>
+            <div className="rounded-lg border border-border bg-muted/50 p-12 text-center">
+              <p className="text-muted-foreground">Нет данных за выбранную неделю</p>
             </div>
           )}
         </CardContent>
@@ -47,35 +47,36 @@ export function SkuTableSection({ skuData, showHistoricalSpp }: SkuTableSectionP
 /** Usage help card */
 function HelpCard() {
   return (
-    <Card className="border-blue-200 bg-blue-50">
+    // 168.9: help card blue → status-information tints; body text muted for readability.
+    <Card className="border-status-information/30 bg-status-information/10">
       <CardHeader>
-        <CardTitle className="text-blue-900">Как использовать анализ</CardTitle>
+        <CardTitle className="text-foreground">Как использовать анализ</CardTitle>
       </CardHeader>
-      <CardContent className="space-y-3 text-sm text-blue-900">
+      <CardContent className="space-y-3 text-sm text-foreground">
         <div>
           <strong>1. Выбор недели</strong>
-          <p className="mt-1 text-blue-800">
+          <p className="mt-1 text-muted-foreground">
             Используйте селектор недели для просмотра данных за разные периоды. По умолчанию
             показана текущая неделя.
           </p>
         </div>
         <div>
           <strong>2. Сортировка</strong>
-          <p className="mt-1 text-blue-800">
+          <p className="mt-1 text-muted-foreground">
             Кликните на заголовок столбца для сортировки. Повторный клик меняет порядок сортировки
             (возрастание/убывание). По умолчанию данные отсортированы по марже.
           </p>
         </div>
         <div>
           <strong>3. Цветовая индикация</strong>
-          <p className="mt-1 text-blue-800">
+          <p className="mt-1 text-muted-foreground">
             Зелёный цвет — прибыльные товары (положительная маржа). Красный цвет — убыточные товары
             (отрицательная маржа). Жёлтый фон — нет данных о себестоимости.
           </p>
         </div>
         <div>
           <strong>4. Назначение себестоимости</strong>
-          <p className="mt-1 text-blue-800">
+          <p className="mt-1 text-muted-foreground">
             Если у товара нет себестоимости, кликните на строку для перехода к назначению COGS.
             После назначения маржа будет рассчитана автоматически.
           </p>

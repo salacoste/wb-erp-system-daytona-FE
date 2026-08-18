@@ -24,7 +24,7 @@ export function PctBadge({
 }) {
   return (
     <span
-      className={`ml-2 px-1.5 py-0.5 text-xs font-medium rounded ${colorClass || (isRemaining ? 'bg-gray-200 text-gray-600' : 'bg-red-200 text-red-700')}`}
+      className={`ml-2 px-1.5 py-0.5 text-xs font-medium rounded ${colorClass || (isRemaining ? 'bg-muted text-muted-foreground' : 'bg-financial-negative/15 text-financial-negative')}`}
     >
       {isRemaining ? '' : '−'}
       {pct(value)}%
@@ -32,24 +32,26 @@ export function PctBadge({
   )
 }
 
+// 168.9: waterfall rows → semantic financial tokens; /10 bg + /30 border preserves
+// the pale-tinted row look of green-100/red-50/gray-100 in both themes.
 const ROW_STYLES = {
   positive: {
-    bg: 'bg-green-100 border-green-300',
-    symbol: 'text-green-600',
-    label: 'text-green-800',
-    value: 'text-green-700',
+    bg: 'bg-financial-positive/10 border-financial-positive/30',
+    symbol: 'text-financial-positive',
+    label: 'text-foreground',
+    value: 'text-financial-positive',
   },
   negative: {
-    bg: 'bg-red-50 border-red-200',
-    symbol: 'text-red-500',
-    label: 'text-red-700',
-    value: 'text-red-600',
+    bg: 'bg-financial-negative/10 border-financial-negative/30',
+    symbol: 'text-financial-negative',
+    label: 'text-foreground',
+    value: 'text-financial-negative',
   },
   neutral: {
-    bg: 'bg-gray-100 border-gray-300',
-    symbol: 'text-gray-600',
-    label: 'text-gray-800',
-    value: 'text-gray-700',
+    bg: 'bg-muted border-border',
+    symbol: 'text-muted-foreground',
+    label: 'text-foreground',
+    value: 'text-foreground',
   },
 } as const
 
@@ -77,7 +79,7 @@ export function CashflowRow({
         <span className={`font-bold text-lg ${styles.symbol}`}>{symbol}</span>
         <span className={`text-sm font-medium ${styles.label}`}>{label}</span>
         {badge && (
-          <span className="ml-1 px-1.5 py-0.5 text-xs font-medium rounded bg-green-200 text-green-700">
+          <span className="ml-1 px-1.5 py-0.5 text-xs font-medium rounded bg-financial-positive/15 text-financial-positive">
             {badge}
           </span>
         )}
@@ -98,17 +100,20 @@ export function GrossProfitRow({
 }) {
   const isPositive = grossProfitSku >= 0
   return (
-    <div className="flex items-center justify-between p-3 bg-blue-100 rounded-lg border-2 border-blue-400">
+    // 168.9: blue = informational SUBTOTAL accent (not a money sign); negative branch = financial.
+    <div className="flex items-center justify-between p-3 bg-status-information/10 rounded-lg border-2 border-status-information/30">
       <div className="flex items-center gap-2">
-        <span className="text-blue-600 font-bold text-lg">=</span>
-        <span className="text-sm font-medium text-blue-800">Валовая прибыль по SKU</span>
+        <span className="text-status-information font-bold text-lg">=</span>
+        <span className="text-sm font-medium text-foreground">Валовая прибыль по SKU</span>
         <span
-          className={`ml-1 px-1.5 py-0.5 text-xs font-medium rounded ${isPositive ? 'bg-blue-200 text-blue-700' : 'bg-red-200 text-red-700'}`}
+          className={`ml-1 px-1.5 py-0.5 text-xs font-medium rounded ${isPositive ? 'bg-status-information/15 text-status-information' : 'bg-financial-negative/15 text-financial-negative'}`}
         >
           {pct(grossProfitSku)}%
         </span>
       </div>
-      <span className={`text-xl font-bold ${isPositive ? 'text-blue-700' : 'text-red-600'}`}>
+      <span
+        className={`text-xl font-bold ${isPositive ? 'text-status-information' : 'text-financial-negative'}`}
+      >
         {fmtRub(grossProfitSku)}
       </span>
     </div>
@@ -129,27 +134,29 @@ export function NetProfitRow({
   note?: string
 }) {
   const isPositive = netProfit >= 0
+  // 168.9: final profit row = financial sign semantics; /10 bg + /40 border keeps emphasis.
   return (
     <div
-      className={`flex items-center justify-between p-4 rounded-lg border-2 ${isPositive ? 'bg-green-100 border-green-500' : 'bg-red-100 border-red-500'}`}
+      className={`flex items-center justify-between p-4 rounded-lg border-2 ${isPositive ? 'bg-financial-positive/10 border-financial-positive/40' : 'bg-financial-negative/10 border-financial-negative/40'}`}
     >
       <div className="flex items-center gap-2">
-        <span className={`font-bold text-xl ${isPositive ? 'text-green-600' : 'text-red-600'}`}>
+        <span
+          className={`font-bold text-xl ${isPositive ? 'text-financial-positive' : 'text-financial-negative'}`}
+        >
           =
         </span>
-        <span
-          className={`text-base font-semibold ${isPositive ? 'text-green-800' : 'text-red-800'}`}
-          title={note}
-        >
+        <span className="text-base font-semibold text-foreground" title={note}>
           {label}
         </span>
         <span
-          className={`ml-1 px-2 py-0.5 text-sm font-bold rounded ${isPositive ? 'bg-green-200 text-green-700' : 'bg-red-200 text-red-700'}`}
+          className={`ml-1 px-2 py-0.5 text-sm font-bold rounded ${isPositive ? 'bg-financial-positive/15 text-financial-positive' : 'bg-financial-negative/15 text-financial-negative'}`}
         >
           {pct(netProfit)}%
         </span>
       </div>
-      <span className={`text-2xl font-bold ${isPositive ? 'text-green-700' : 'text-red-600'}`}>
+      <span
+        className={`text-2xl font-bold ${isPositive ? 'text-financial-positive' : 'text-financial-negative'}`}
+      >
         {fmtRub(netProfit)}
       </span>
     </div>

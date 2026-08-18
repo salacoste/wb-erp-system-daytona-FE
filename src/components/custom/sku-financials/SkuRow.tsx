@@ -44,15 +44,20 @@ export function SkuRow({
   totalGrossProfit,
 }: SkuRowProps) {
   return (
-    <TableRow className={cn('hover:bg-gray-50', item.missingCogs && 'bg-yellow-50/30')}>
-      <TableCell className="font-mono text-sm text-gray-500">{item.nmId}</TableCell>
+    <TableRow
+      className={
+        // 168.9: missingCogs row tint = semantic warning (yellow = no COGS), differentiated from muted hover
+        cn('hover:bg-muted/50', item.missingCogs && 'bg-status-warning/10')
+      }
+    >
+      <TableCell className="font-mono text-sm text-muted-foreground">{item.nmId}</TableCell>
       <TableCell>
         <Link
           href={`${ROUTES.ANALYTICS.PRODUCT}/${item.nmId}`}
           className="group block max-w-[200px]"
         >
           <div className="truncate font-medium group-hover:underline">{item.productName}</div>
-          {item.brand && <div className="truncate text-xs text-gray-400">{item.brand}</div>}
+          {item.brand && <div className="truncate text-xs text-muted-foreground">{item.brand}</div>}
         </Link>
       </TableCell>
       <TableCell className="hidden lg:table-cell text-right">
@@ -71,15 +76,15 @@ export function SkuRow({
             <TooltipContent>
               <div className="space-y-1 text-sm">
                 <div className="flex justify-between gap-4">
-                  <span className="text-gray-400">Продано:</span>
+                  <span className="text-muted-foreground">Продано:</span>
                   <span className="font-medium">{item.quantity.salesQty} шт.</span>
                 </div>
                 <div className="flex justify-between gap-4">
-                  <span className="text-gray-400">Возвраты:</span>
-                  <span className="text-red-400">{item.quantity.returnsQty} шт.</span>
+                  <span className="text-muted-foreground">Возвраты:</span>
+                  <span className="text-financial-negative">{item.quantity.returnsQty} шт.</span>
                 </div>
                 <div className="border-t pt-1 mt-1 flex justify-between gap-4">
-                  <span className="text-gray-400">Чистые продажи:</span>
+                  <span className="text-muted-foreground">Чистые продажи:</span>
                   <span className="font-medium">
                     {item.quantity.salesQty - item.quantity.returnsQty} шт.
                   </span>
@@ -92,9 +97,9 @@ export function SkuRow({
       <TableCell className="text-right font-medium">{formatCurrency(item.revenue.net)}</TableCell>
       <TableCell className="hidden lg:table-cell text-right">
         {item.missingCogs ? (
-          <span className="text-xs text-gray-400">Не назначена</span>
+          <span className="text-xs text-status-warning">Не назначена</span>
         ) : (
-          <span className="text-gray-700">{formatCurrency(item.costs.cogs)}</span>
+          <span className="text-foreground">{formatCurrency(item.costs.cogs)}</span>
         )}
       </TableCell>
       <TableCell className="hidden lg:table-cell text-right">
@@ -110,7 +115,7 @@ export function SkuRow({
             <Tooltip>
               <TooltipTrigger asChild>
                 <span
-                  className="text-gray-400 cursor-help"
+                  className="text-muted-foreground cursor-help"
                   role="button"
                   tabIndex={0}
                   aria-label="Информация о прибыли: нет COGS, прибыль не рассчитана"
@@ -136,19 +141,19 @@ export function SkuRow({
         />
       </TableCell>
       <TableCell
-        className="hidden lg:table-cell text-right text-gray-600"
+        className="hidden lg:table-cell text-right text-muted-foreground"
         title="Вклад в общую выручку"
       >
         {formatPercent(sharePercentage(item.revenue.net, totalRevenue ?? null))}
       </TableCell>
       <TableCell
-        className="hidden lg:table-cell text-right text-gray-600"
+        className="hidden lg:table-cell text-right text-muted-foreground"
         title="Вклад в валовую прибыль"
       >
         {formatPercent(sharePercentage(item.profit.gross, totalGrossProfit ?? null))}
       </TableCell>
       <TableCell
-        className="hidden lg:table-cell text-right text-gray-600"
+        className="hidden lg:table-cell text-right text-muted-foreground"
         title="Логистика / выручка"
       >
         {formatPercent(sharePercentage(item.costs.logistics, item.revenue.net))}

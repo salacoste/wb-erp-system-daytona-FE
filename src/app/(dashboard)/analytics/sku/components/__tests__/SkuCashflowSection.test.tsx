@@ -82,4 +82,50 @@ describe('SkuCashflowSection', () => {
     expect(screen.getByText('Полный Cashflow')).toBeInTheDocument()
     expect(container.querySelectorAll('.animate-pulse').length).toBeGreaterThan(0)
   })
+
+  // 168.9 token migration pins — exact classList.contains, no [class*=].
+  it('168.9: gradient card uses tokenized two-tone (info→warning /10 stops)', () => {
+    const { container } = renderWithProviders(
+      <SkuCashflowSection cabinetExpenses={makeExpenses()} isLoading={false} />
+    )
+    const card = container.querySelector('[data-slot="card"]') ?? container.firstElementChild!
+    expect(card.classList.contains('bg-gradient-to-br')).toBe(true)
+    expect(card.classList.contains('from-status-information/10')).toBe(true)
+    expect(card.classList.contains('to-status-warning/10')).toBe(true)
+    expect(card.classList.contains('border-status-information/30')).toBe(true)
+  })
+
+  it('168.9: ИТОГО row = status-warning /15 bg with nested /20 badge (visibility on tinted row)', () => {
+    renderWithProviders(<SkuCashflowSection cabinetExpenses={makeExpenses()} isLoading={false} />)
+    const row = screen
+      .getByText('ИТОГО общекабинетные расходы')
+      .closest('div.flex.items-center.justify-between')
+    expect(row!.classList.contains('bg-status-warning/15')).toBe(true)
+    expect(row!.classList.contains('border-status-warning/40')).toBe(true)
+    const badge = screen.getByText(/−9\.0%/)
+    expect(badge.classList.contains('bg-status-warning/20')).toBe(true)
+    expect(badge.classList.contains('text-status-warning')).toBe(true)
+  })
+
+  it('168.9: empty-state text uses muted-foreground', () => {
+    renderWithProviders(
+      <SkuCashflowSection
+        cabinetExpenses={makeExpenses({ sales_gross: 0, total: 0 })}
+        isLoading={false}
+      />
+    )
+    expect(
+      screen.getByText(/Нет продаж за период/).classList.contains('text-muted-foreground')
+    ).toBe(true)
+  })
+
+  it('168.9 DOM-guard: no raw blue/amber/gray palette classes leak into the cashflow card', () => {
+    const { container } = renderWithProviders(
+      <SkuCashflowSection cabinetExpenses={makeExpenses()} isLoading={false} />
+    )
+    const raw = container.innerHTML.match(
+      /(?:bg|text|border|from|to)-(?:blue|amber|red|green|gray|yellow)-[0-9]{2,3}/g
+    )
+    expect(raw).toBeNull()
+  })
 })

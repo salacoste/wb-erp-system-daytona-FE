@@ -8,6 +8,7 @@ import { describe, it, expect } from 'vitest'
 import { render, screen } from '@testing-library/react'
 import { Table, TableBody } from '@/components/ui/table'
 import { SkuRow } from '../SkuRow'
+import { SkuFinancialsTable } from '../SkuFinancialsTable'
 import { SummaryFooter } from '../SummaryFooter'
 import type { SkuFinancialItem } from '@/types/sku-financials'
 
@@ -167,5 +168,82 @@ describe('SkuRow — competitor parity FR-2..FR-5 display (#219)', () => {
 
     expect(screen.getAllByText('—').length).toBeGreaterThanOrEqual(7)
     expect(screen.queryByText('0,0 %')).not.toBeInTheDocument()
+  })
+})
+
+// 168.9 pass-2: semantic-token DOM pins over the migrated tree (exact classList)
+describe('SkuFinancialsTable tree — 168.9 semantic tokens', () => {
+  it('missingCogs row gets bg-status-warning/10 tint (exact classList)', () => {
+    const { container } = render(
+      <SkuFinancialsTable
+        data={[
+          makeItem({
+            missingCogs: true,
+            costs: { ...makeItem().costs, cogs: null },
+            profit: { gross: null, operating: null, operatingMarginPct: null },
+          }),
+        ]}
+        showExpenseBreakdown={false}
+        showVisibility={false}
+      />
+    )
+    const row = container.querySelector('tbody tr')
+    expect(row).not.toBeNull()
+    expect(row?.classList.contains('bg-status-warning/10')).toBe(true)
+    expect(row?.classList.contains('hover:bg-muted/50')).toBe(true)
+    // no legacy tint leaks
+    expect(row?.className).not.toMatch(/gray-|yellow-50/)
+  })
+
+  it('"Не назначена" COGS cell uses text-status-warning (exact classList)', () => {
+    render(
+      <SkuFinancialsTable
+        data={[
+          makeItem({
+            missingCogs: true,
+            costs: { ...makeItem().costs, cogs: null },
+            profit: { gross: null, operating: null, operatingMarginPct: null },
+          }),
+        ]}
+        showExpenseBreakdown={false}
+        showVisibility={false}
+      />
+    )
+    const el = screen.getByText('Не назначена')
+    expect(el.classList.contains('text-status-warning')).toBe(true)
+    expect(el.className).not.toMatch(/gray-/)
+  })
+
+  it('active sort icon (default operatingProfit desc) uses text-status-information', () => {
+    const { container } = render(
+      <SkuFinancialsTable data={[makeItem()]} showExpenseBreakdown={false} showVisibility={false} />
+    )
+    const down = container.querySelector('svg.lucide-arrow-down')
+    expect(down).not.toBeNull()
+    expect(down?.classList.contains('text-status-information')).toBe(true)
+    expect(down?.getAttribute('class') ?? '').not.toMatch(/blue-/)
+  })
+
+  it('COGS footnote uses text-status-warning; summary footer uses bg-muted/50', () => {
+    render(
+      <SkuFinancialsTable
+        data={[
+          makeItem(),
+          makeItem({
+            nmId: 124,
+            missingCogs: true,
+            costs: { ...makeItem().costs, cogs: null },
+            profit: { gross: null, operating: null, operatingMarginPct: null },
+          }),
+        ]}
+        showExpenseBreakdown={false}
+        showVisibility={false}
+      />
+    )
+    const footnote = screen.getByText(/COGS назначен для 1 из 2 товаров/i)
+    expect(footnote.classList.contains('text-status-warning')).toBe(true)
+    expect(footnote.className).not.toMatch(/amber-/)
+    const footer = footnote.closest('div.border-t')
+    expect(footer?.classList.contains('bg-muted/50')).toBe(true)
   })
 })
