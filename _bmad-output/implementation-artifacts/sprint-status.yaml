@@ -774,7 +774,7 @@ development_status:
 
   # Epic 169-FE: Accessible Operational Analytics and Exception Triage
   epic-169-fe: backlog
-  169-1-fe-migrate-acquiring-report-index: backlog
+  169-1-fe-migrate-acquiring-report-index: done     # PR #190 (c3f3478d, merge 3b3c6432): route + shared banner/anomaly (owner для 169.2-169.3) — amber→status-warning /15-chip matched-pair ×4 (chip, banner, footnotes, anomaly icon); h1→text-2xl (168.11); TableCaption (RTC) + aria-sort + keyboard Enter/Space (AX) + tabular-nums money cells/totals; detail links aria-label per reportId (AX); +10 tests targeted 67→77; contrast 3.97:1 light = Ledger baseline (no NEW violations), dark 10.3:1; 3-pass APPROVE/RC-fixed/APPROVE; vitest 18764/0.
   169-2-fe-migrate-acquiring-period-detail: backlog
   169-3-fe-migrate-acquiring-report-transaction-detail: backlog
   169-4-fe-migrate-buyout-analytics: backlog
