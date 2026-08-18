@@ -128,3 +128,62 @@ describe('sortTransactions (pure function)', () => {
     expect(desc[desc.length - 1].srid).toBe('SR-NULL')
   })
 })
+
+describe('AcquiringTransactionsTable (169.3 token migration)', () => {
+  it('renders TableCaption with report identity when caption prop is passed', () => {
+    renderWithProviders(
+      <AcquiringTransactionsTable transactions={[tx1]} caption="Транзакции отчёта #100" />
+    )
+    expect(screen.getByText('Транзакции отчёта #100')).toBeInTheDocument()
+  })
+
+  it('does NOT render a caption when prop is omitted (additive-only for period consumer)', () => {
+    renderWithProviders(<AcquiringTransactionsTable transactions={[tx1]} />)
+    expect(screen.queryByText('Транзакции отчёта #100')).not.toBeInTheDocument()
+  })
+
+  it('nmId link has entity-naming aria-label and uses text-status-information (not blue-600)', () => {
+    renderWithProviders(<AcquiringTransactionsTable transactions={[tx1]} />)
+    const link = screen.getByRole('link', {
+      name: 'Товар 12345678 на Wildberries (внешняя ссылка)',
+    })
+    expect(link).toHaveAttribute('href', 'https://www.wildberries.ru/catalog/12345678/detail.aspx')
+    const cls = link.getAttribute('class') ?? ''
+    expect(cls).toContain('text-status-information')
+    expect(cls).toContain('hover:underline')
+    expect(cls).toContain('font-mono')
+    expect(cls).not.toContain('text-blue-600')
+  })
+
+  it('money cells (Сумма/Комиссия/НДС) use tabular-nums', () => {
+    renderWithProviders(<AcquiringTransactionsTable transactions={[tx1]} />)
+    const cells = screen.getAllByRole('cell')
+    // Column order: ...retailAmount(6), acquiringFee(7), acquiringFeeVat(8)
+    for (const idx of [6, 7, 8]) {
+      expect(cells[idx].getAttribute('class')).toContain('tabular-nums')
+    }
+    // Non-money cell without pin (e.g. bank, idx 2)
+    expect(cells[2].getAttribute('class') ?? '').not.toContain('tabular-nums')
+  })
+
+  it('sortable th has aria-sort reflecting current state', () => {
+    renderWithProviders(<AcquiringTransactionsTable transactions={[tx1, tx2, tx3]} />)
+    const feeHeader = screen.getByText('Комиссия').closest('th')
+    expect(feeHeader).not.toBeNull()
+    // Default sort is acqDate desc → its th is aria-sort=descending
+    const dateHeader = screen.getByText('Дата комиссии').closest('th')
+    expect(dateHeader!.getAttribute('aria-sort')).toBe('descending')
+    expect(feeHeader!.getAttribute('aria-sort')).toBeNull()
+  })
+
+  it('sortable th is keyboard-activatable (Enter/Space) and updates aria-sort', async () => {
+    const user = userEvent.setup()
+    renderWithProviders(<AcquiringTransactionsTable transactions={[tx1, tx2, tx3]} />)
+    const feeHeader = screen.getByText('Комиссия').closest('th')
+    feeHeader!.focus()
+    await user.keyboard('{Enter}')
+    expect(feeHeader!.getAttribute('aria-sort')).toBe('ascending')
+    await user.keyboard(' ')
+    expect(feeHeader!.getAttribute('aria-sort')).toBe('descending')
+  })
+})

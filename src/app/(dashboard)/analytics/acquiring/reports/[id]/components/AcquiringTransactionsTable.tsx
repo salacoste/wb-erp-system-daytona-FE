@@ -16,6 +16,7 @@ import { ChevronsUpDown, ChevronUp, ChevronDown, ExternalLink } from 'lucide-rea
 import {
   Table,
   TableBody,
+  TableCaption,
   TableCell,
   TableHead,
   TableHeader,
@@ -29,6 +30,12 @@ type SortField = 'acqDate' | 'saleDate' | 'retailAmount' | 'acquiringFee' | 'acq
 
 interface AcquiringTransactionsTableProps {
   transactions: AcquiringReportDetailItem[]
+  /**
+   * Optional table caption (report identity for screen readers).
+   * Additive-only: sibling consumers (acquiring/period, Story 169.2) don't pass it,
+   * so their render is unchanged.
+   */
+  caption?: string
 }
 
 function SortIcon({
@@ -74,7 +81,10 @@ export function transactionRowKey(item: AcquiringReportDetailItem): string {
   return `${item.reportId}-${item.rrdId}-${item.srid || 'no-srid'}`
 }
 
-export function AcquiringTransactionsTable({ transactions }: AcquiringTransactionsTableProps) {
+export function AcquiringTransactionsTable({
+  transactions,
+  caption,
+}: AcquiringTransactionsTableProps) {
   const [sort, setSort] = useState<SortField>('acqDate')
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc')
 
@@ -92,7 +102,16 @@ export function AcquiringTransactionsTable({ transactions }: AcquiringTransactio
   const th = (field: SortField, label: string) => (
     <TableHead
       className="cursor-pointer select-none whitespace-nowrap"
+      aria-sort={sort === field ? (sortOrder === 'asc' ? 'ascending' : 'descending') : undefined}
+      tabIndex={0}
       onClick={() => handleSort(field)}
+      onKeyDown={e => {
+        // Keyboard activation for sortable th (a11y — aria-sort must be reachable + actionable)
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault()
+          handleSort(field)
+        }
+      }}
     >
       {label}
       <SortIcon field={field} sort={sort} order={sortOrder} />
@@ -102,6 +121,7 @@ export function AcquiringTransactionsTable({ transactions }: AcquiringTransactio
   return (
     <div className="rounded-md border overflow-x-auto">
       <Table>
+        {caption ? <TableCaption>{caption}</TableCaption> : null}
         <TableHeader>
           <TableRow>
             {th('acqDate', 'Дата комиссии')}
@@ -134,19 +154,20 @@ export function AcquiringTransactionsTable({ transactions }: AcquiringTransactio
                     href={`https://www.wildberries.ru/catalog/${item.nmId}/detail.aspx`}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-flex items-center gap-1 text-blue-600 hover:underline font-mono"
+                    aria-label={`Товар ${item.nmId} на Wildberries (внешняя ссылка)`}
+                    className="inline-flex items-center gap-1 text-status-information hover:underline font-mono"
                   >
                     {item.nmId}
                     <ExternalLink className="h-3 w-3" />
                   </a>
                 </TableCell>
-                <TableCell className="text-sm">
+                <TableCell className="text-sm tabular-nums">
                   {item.retailAmount == null ? '—' : formatCurrency(item.retailAmount)}
                 </TableCell>
-                <TableCell className="text-sm">
+                <TableCell className="text-sm tabular-nums">
                   {item.acquiringFee == null ? '—' : formatCurrency(item.acquiringFee)}
                 </TableCell>
-                <TableCell className="text-sm">
+                <TableCell className="text-sm tabular-nums">
                   {item.acquiringFeeVat == null ? '—' : formatCurrency(item.acquiringFeeVat)}
                   <AnomalyVatIndicator fee={item.acquiringFee} vat={item.acquiringFeeVat} />
                 </TableCell>

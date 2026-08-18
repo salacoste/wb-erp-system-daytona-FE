@@ -75,7 +75,7 @@ export function AcquiringReportDetailPage({ reportId }: AcquiringReportDetailPag
 
       {/* Page header */}
       <div>
-        <h1 className="text-3xl font-bold tracking-tight">Отчёт #{reportId}</h1>
+        <h1 className="text-2xl font-bold tracking-tight">Отчёт #{reportId}</h1>
         <p className="text-muted-foreground mt-1">{periodLabel ?? 'Период транзакций'}</p>
       </div>
 
@@ -120,7 +120,7 @@ export function AcquiringReportDetailPage({ reportId }: AcquiringReportDetailPag
         <>
           {/* Inline refetch-error chip when we have cached data but the refetch failed */}
           {isError && hasData && (
-            <div className="rounded-md border border-amber-200 bg-amber-50 px-4 py-2 text-sm text-amber-800 flex items-center justify-between">
+            <div className="rounded-md border border-status-warning/30 bg-status-warning/15 px-4 py-2 text-sm text-status-warning flex items-center justify-between">
               <span>
                 {rateLimit.isRateLimited
                   ? `WB временно недоступна — показаны кэшированные данные. Повтор через ~${rateLimit.retryAfterSeconds} сек`
@@ -132,7 +132,10 @@ export function AcquiringReportDetailPage({ reportId }: AcquiringReportDetailPag
             </div>
           )}
           <AcquiringReportDetailSummary transactions={transactions} />
-          <AcquiringTransactionsTable transactions={transactions} />
+          <AcquiringTransactionsTable
+            transactions={transactions}
+            caption={`Транзакции отчёта #${reportId}`}
+          />
         </>
       )}
     </div>

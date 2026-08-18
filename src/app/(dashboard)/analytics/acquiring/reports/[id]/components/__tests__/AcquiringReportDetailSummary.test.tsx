@@ -99,3 +99,37 @@ describe('AcquiringReportDetailSummary', () => {
     expect(screen.getByText('2')).toBeInTheDocument()
   })
 })
+
+describe('AcquiringReportDetailSummary (169.3 token migration)', () => {
+  it('money headlines use tabular-nums; transaction counter does NOT', () => {
+    const transactions = [
+      makeTransaction({ rrdId: 1, acquiringFee: 200, acquiringFeeVat: 40 }),
+      makeTransaction({ rrdId: 2, acquiringFee: 300, acquiringFeeVat: 50, srid: 'SR-002' }),
+    ]
+    render(<AcquiringReportDetailSummary transactions={transactions} />)
+
+    const headlines = screen.getAllByText(/₽/)
+    expect(headlines.length).toBe(2)
+    for (const h of headlines) {
+      expect(h.getAttribute('class')).toContain('tabular-nums')
+    }
+    // Counter card shows bare number without tabular-nums
+    const counter = screen.getByText('2')
+    expect(counter.getAttribute('class') ?? '').not.toContain('tabular-nums')
+  })
+
+  it('data-quality footnotes use text-status-warning token (no amber)', () => {
+    const transactions = [
+      makeTransaction({ rrdId: 1, acquiringFee: null, acquiringFeeVat: null }),
+      makeTransaction({ rrdId: 2, acquiringFee: null, acquiringFeeVat: null, srid: 'SR-002' }),
+    ]
+    render(<AcquiringReportDetailSummary transactions={transactions} />)
+    const footnotes = screen.getAllByText(/не включает/)
+    expect(footnotes.length).toBe(2)
+    for (const f of footnotes) {
+      const cls = f.getAttribute('class') ?? ''
+      expect(cls).toContain('text-status-warning')
+      expect(cls).not.toContain('amber')
+    }
+  })
+})
