@@ -16,6 +16,7 @@ import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { render, screen } from '@testing-library/react'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { MarginTrendChart } from './MarginTrendChart'
+import { MarginTrendTooltip } from './margin-trend-chart/MarginTrendTooltip'
 import type { MarginTrendPoint } from '@/types/api'
 
 // Mock useMarginTrends hook
@@ -250,6 +251,8 @@ describe('MarginTrendChart', () => {
       // Max: 35.5%
       const maxMargin = screen.getByText(/35/)
       expect(maxMargin).toBeInTheDocument()
+      // 168.10 exact pin: semantic financial token
+      expect(maxMargin.closest('p')?.classList.contains('text-financial-positive')).toBe(true)
     })
 
     it('should display minimum margin in red', () => {
@@ -261,6 +264,8 @@ describe('MarginTrendChart', () => {
       // Min: -5.5%
       const minMargin = screen.getByText(/-5/)
       expect(minMargin).toBeInTheDocument()
+      // 168.10 exact pin: semantic financial token
+      expect(minMargin.closest('p')?.classList.contains('text-financial-negative')).toBe(true)
     })
 
     it('should not show statistics when no margin data', () => {
@@ -300,6 +305,67 @@ describe('MarginTrendChart', () => {
 
       // Component should render with custom title/description
       expect(screen.getByText('Анализ маржинальности по времени')).toBeInTheDocument()
+    })
+  })
+
+  // 168.10: direct render (recharts does not render Tooltip content in jsdom)
+  describe('MarginTrendTooltip semantic classes', () => {
+    const makePayload = (overrides: Partial<MarginTrendPoint>): MarginTrendPoint => ({
+      week: '2025-W45',
+      week_start_date: '2025-11-03',
+      week_end_date: '2025-11-09',
+      margin_pct: 10,
+      revenue_net: 1000,
+      cogs: 800,
+      profit: 200,
+      qty: 10,
+      sku_count: 5,
+      missing_cogs_count: 0,
+      ...overrides,
+    })
+
+    const renderTooltip = (dataPoint: MarginTrendPoint) =>
+      render(
+        <MarginTrendTooltip
+          active
+          payload={[{ dataKey: 'margin_pct', value: 10, color: '', payload: dataPoint }]}
+        />
+      )
+
+    /** The colored margin-value span next to the "Маржа:" label */
+    const getMarginValueSpan = (container: HTMLElement): HTMLElement => {
+      const label = Array.from(container.querySelectorAll('span')).find(s =>
+        s.textContent?.startsWith('Маржа:')
+      )
+      const parent = label?.parentElement as HTMLElement
+      return parent.querySelector('span.font-medium') as HTMLElement
+    }
+
+    it('uses popover background (dark-mode fix)', () => {
+      const { container } = renderTooltip(makePayload({}))
+      const tooltipBox = container.firstElementChild as HTMLElement
+      expect(tooltipBox.classList.contains('bg-popover')).toBe(true)
+    })
+
+    it('positive margin value uses financial-positive', () => {
+      const { container } = renderTooltip(makePayload({ margin_pct: 35.5 }))
+      expect(getMarginValueSpan(container).classList.contains('text-financial-positive')).toBe(true)
+    })
+
+    it('negative margin value uses financial-negative', () => {
+      const { container } = renderTooltip(makePayload({ margin_pct: -5.5 }))
+      expect(getMarginValueSpan(container).classList.contains('text-financial-negative')).toBe(true)
+    })
+
+    it('zero margin value uses muted-foreground', () => {
+      const { container } = renderTooltip(makePayload({ margin_pct: 0 }))
+      expect(getMarginValueSpan(container).classList.contains('text-muted-foreground')).toBe(true)
+    })
+
+    it('missing COGS warning uses status-warning', () => {
+      renderTooltip(makePayload({ missing_cogs_count: 2, sku_count: 5 }))
+      const warning = screen.getByText(/Нет COGS/)
+      expect(warning.classList.contains('text-status-warning')).toBe(true)
     })
   })
 })

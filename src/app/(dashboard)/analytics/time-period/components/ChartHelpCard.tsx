@@ -25,12 +25,12 @@ export function ChartHelpCard() {
           <p className="font-semibold text-foreground mb-1">Цветовые обозначения:</p>
           <ul className="list-disc list-inside space-y-1">
             <li>
-              <span className="text-green-600 font-semibold">Зелёные точки</span> — положительная
-              маржа (прибыль)
+              <span className="text-financial-positive font-semibold">Зелёные точки</span> —
+              положительная маржа (прибыль)
             </li>
             <li>
-              <span className="text-red-600 font-semibold">Красные точки</span> — отрицательная
-              маржа (убыток)
+              <span className="text-financial-negative font-semibold">Красные точки</span> —
+              отрицательная маржа (убыток)
             </li>
             <li>
               <span className="text-muted-foreground font-semibold">Серые точки</span> — нулевая

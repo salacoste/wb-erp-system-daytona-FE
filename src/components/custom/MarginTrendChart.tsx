@@ -88,7 +88,7 @@ export function MarginTrendChart({
       <CardContent>
         <ResponsiveContainer width="100%" height={height}>
           <LineChart data={data} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
-            <CartesianGrid strokeDasharray="3 3" stroke="#eee" />
+            <CartesianGrid strokeDasharray="3 3" stroke="var(--color-border)" />
             <XAxis
               dataKey="week"
               tickFormatter={formatWeekLabel}
@@ -105,11 +105,16 @@ export function MarginTrendChart({
             />
             <Tooltip content={<MarginTrendTooltip />} />
             <Legend formatter={() => 'Маржа (%)'} />
-            <ReferenceLine y={0} stroke="#9ca3af" strokeDasharray="3 3" strokeWidth={1} />
+            <ReferenceLine
+              y={0}
+              stroke="var(--color-chart-reference)"
+              strokeDasharray="3 3"
+              strokeWidth={1}
+            />
             <Line
               type="monotone"
               dataKey="margin_pct"
-              stroke="#2563EB"
+              stroke="var(--color-chart-1)"
               strokeWidth={2}
               name="Маржа (%)"
               dot={(props: { cx?: number; cy?: number; payload?: MarginTrendPoint }) => {

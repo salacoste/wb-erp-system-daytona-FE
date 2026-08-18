@@ -24,24 +24,28 @@ export function MarginTrendSummary({
   return (
     <div className="mt-4 grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
       <div>
-        <p className="text-gray-500">Недель</p>
+        <p className="text-muted-foreground">Недель</p>
         <p className="font-semibold">{weeksCount}</p>
       </div>
       {hasMarginData && (
         <>
           <div>
-            <p className="text-gray-500">Средняя маржа</p>
+            <p className="text-muted-foreground">Средняя маржа</p>
             <p className="font-semibold">
               {formatMarginPercent(marginValues.reduce((a, b) => a + b, 0) / marginValues.length)}
             </p>
           </div>
           <div>
-            <p className="text-gray-500">Макс. маржа</p>
-            <p className="font-semibold text-green-600">{formatMarginPercent(maxMargin)}</p>
+            <p className="text-muted-foreground">Макс. маржа</p>
+            <p className="font-semibold text-financial-positive">
+              {formatMarginPercent(maxMargin)}
+            </p>
           </div>
           <div>
-            <p className="text-gray-500">Мин. маржа</p>
-            <p className="font-semibold text-red-600">{formatMarginPercent(minMargin)}</p>
+            <p className="text-muted-foreground">Мин. маржа</p>
+            <p className="font-semibold text-financial-negative">
+              {formatMarginPercent(minMargin)}
+            </p>
           </div>
         </>
       )}
