@@ -768,7 +768,7 @@ development_status:
   168-7-fe-migrate-product-analytics-analytics-product-nmid: done     # PR #180 (67759f7c, merge 6e2bdf1a): OrganicTab — iroasLabel 4-tier (effective→financial-positive/80, no tier-collapse) + confidence→status-information/warning; +8 pins NEW test file; 2-pass APPROVE·APPROVE; vitest 18665/0.
   168-8-fe-migrate-reorder-analytics-analytics-reorder: done     # PR #182 (f1367f42, merge fccb1404): reorder — 4 icon → status-* (operational, not financial) + 3 chips /15-idiom (alerts precedent), expired untouched; +10 pins; 2-pass APPROVE·APPROVE; vitest 18675/0.
   168-9-fe-migrate-sku-analytics-analytics-sku: done     # PR #184 (ea9eaf9e, merge 1e1c5f04): route 86 + sku-financials TREE 81 sites (pass-2 blocker→fixed): waterfall financial /10-/30, amber→foreground>warning>/80, dark code-blocks→muted, legend semantic; +33 pins; 2-pass APPROVE·APPROVE; vitest 18708/0. CARRY-IN: PROFITABILITY_COLORS/HEX → 168.11.
-  168-10-fe-migrate-time-period-analytics-analytics-time-period: backlog
+  168-10-fe-migrate-time-period-analytics-analytics-time-period: done     # PR #186 (da70792c, merge 16810aab): route + MarginTrendChart TREE — 20 legacy + 6 chart-hex sites: dots→var(--color-chart-positive/negative/reference), grid→border, line #2563EB→chart-1 (168.1 precedent), tooltip bg-white→bg-popover (dark-FIX), COGS-warn→status-warning; +7 pins (5 tooltip direct-render + legend); pass-2 contrast ALL pairs ≥4.5 AA both themes, 0 regressions; 2-pass APPROVE·APPROVE; vitest 18715/0. CARRY-OUT: dashboard tooltips bg-white ×4 + MarginDisplay legacy → ledger.
   168-11-fe-migrate-unit-economics-analytics-unit-economics: backlog
   epic-168-fe-retrospective: optional
 
