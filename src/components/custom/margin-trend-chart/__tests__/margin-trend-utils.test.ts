@@ -125,17 +125,18 @@ describe('calculateYDomain', () => {
 })
 
 describe('getMarginDotColor', () => {
-  it('returns green for positive margin', () => {
-    expect(getMarginDotColor(5)).toBe('#4CAF50')
-    expect(getMarginDotColor(0.01)).toBe('#4CAF50')
+  // 168.10: semantic chart tokens — pin exact var() names (not RGB), precedent 168.1
+  it('returns chart-positive token for positive margin', () => {
+    expect(getMarginDotColor(5)).toBe('var(--color-chart-positive)')
+    expect(getMarginDotColor(0.01)).toBe('var(--color-chart-positive)')
   })
 
-  it('returns red for negative margin', () => {
-    expect(getMarginDotColor(-1)).toBe('#EF4444')
-    expect(getMarginDotColor(-99.9)).toBe('#EF4444')
+  it('returns chart-negative token for negative margin', () => {
+    expect(getMarginDotColor(-1)).toBe('var(--color-chart-negative)')
+    expect(getMarginDotColor(-99.9)).toBe('var(--color-chart-negative)')
   })
 
-  it('returns gray for exactly zero', () => {
-    expect(getMarginDotColor(0)).toBe('#9CA3AF')
+  it('returns chart-reference token for exactly zero', () => {
+    expect(getMarginDotColor(0)).toBe('var(--color-chart-reference)')
   })
 })

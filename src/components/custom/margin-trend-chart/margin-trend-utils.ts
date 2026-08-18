@@ -67,7 +67,8 @@ export function calculateYDomain(data: Array<{ margin_pct: number | null }>): {
  * Green for positive, red for negative, gray for zero
  */
 export function getMarginDotColor(marginPct: number): string {
-  if (marginPct > 0) return '#4CAF50'
-  if (marginPct < 0) return '#EF4444'
-  return '#9CA3AF'
+  // 168.10: semantic chart tokens (var() is valid in SVG fill/stroke attrs)
+  if (marginPct > 0) return 'var(--color-chart-positive)'
+  if (marginPct < 0) return 'var(--color-chart-negative)'
+  return 'var(--color-chart-reference)'
 }

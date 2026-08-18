@@ -200,6 +200,21 @@ describe('MarginAnalysisByTimePeriodPage - Help Card', () => {
     expect(screen.getByText(/Серые точки/)).toBeInTheDocument()
   })
 
+  // 168.10 exact pins: semantic financial tokens on legend (word + color redundancy kept)
+  it('green legend item uses financial-positive token', () => {
+    renderPage()
+    expect(screen.getByText(/Зелёные точки/).classList.contains('text-financial-positive')).toBe(
+      true
+    )
+  })
+
+  it('red legend item uses financial-negative token', () => {
+    renderPage()
+    expect(screen.getByText(/Красные точки/).classList.contains('text-financial-negative')).toBe(
+      true
+    )
+  })
+
   it('renders interactivity description', () => {
     renderPage()
     expect(screen.getByText('Интерактивность:')).toBeInTheDocument()
