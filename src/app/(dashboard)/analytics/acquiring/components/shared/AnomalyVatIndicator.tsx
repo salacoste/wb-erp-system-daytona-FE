@@ -6,7 +6,7 @@ import { formatCurrency } from '@/lib/utils'
 
 /**
  * Defensive Frontend Principle indicator (Story 89.4-FE).
- * Shows an amber AlertTriangle + tooltip when VAT > fee anomaly detected.
+ * Shows a status-warning AlertTriangle + tooltip when VAT > fee anomaly detected.
  * Rule-of-two extraction: used in both AcquiringReportsTable (Story 90.2) and
  * AcquiringTransactionsTable (Story 90.3).
  *
@@ -26,7 +26,7 @@ export function AnomalyVatIndicator({ fee, vat }: AnomalyVatIndicatorProps) {
     <Tooltip>
       <TooltipTrigger asChild>
         <AlertTriangle
-          className="h-4 w-4 text-amber-500 inline-block ml-2"
+          className="h-4 w-4 text-status-warning inline-block ml-2"
           aria-label="Аномалия: НДС выше суммы комиссии"
         />
       </TooltipTrigger>

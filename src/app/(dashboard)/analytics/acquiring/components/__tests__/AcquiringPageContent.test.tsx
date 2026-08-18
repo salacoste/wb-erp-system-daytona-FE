@@ -100,4 +100,47 @@ describe('AcquiringPageContent (Story 96.9-FE)', () => {
     expect(screen.getByText(/Не удалось загрузить отчёты/)).toBeInTheDocument()
     expect(screen.queryByText(/WB временно недоступна/)).not.toBeInTheDocument()
   })
+
+  it('page h1 uses the wave-canonical heading scale', () => {
+    mockHook({ data: emptyAcquiringListResponse(), isLoading: false, isError: false })
+    renderWithProviders(<AcquiringPageContent />)
+    const h1 = screen.getByRole('heading', { level: 1, name: 'Аналитика эквайринга' })
+    expect(h1.className).toContain('text-2xl')
+    expect(h1.className).toContain('font-bold')
+    expect(h1.className).toContain('tracking-tight')
+    expect(h1.className).not.toContain('text-3xl')
+  })
+
+  it('inline refetch-error chip uses matched-pair status-warning /15-chip tokens', () => {
+    // Cached data + failed refetch → inline chip (NOT the full-page states)
+    mockHook({
+      data: {
+        ...emptyAcquiringListResponse(),
+        data: [
+          {
+            reportId: 1,
+            sellerFinanceName: 'S',
+            dateFrom: '2026-04-01',
+            dateTo: '2026-04-07',
+            createDate: '2026-04-08',
+            currency: 'RUB',
+            acquiringFeeSum: 100,
+            acquiringFeeVatSum: 20,
+          },
+        ],
+      },
+      isLoading: false,
+      isError: true,
+      error: new ApiError('Failed refetch', 500),
+    })
+    renderWithProviders(<AcquiringPageContent />)
+    expect(screen.getByText(/Показаны кэшированные данные/)).toBeInTheDocument()
+    // Scoped to the chip paragraph
+    const chip = screen.getByText(/Показаны кэшированные данные/).closest('div')
+    expect(chip).not.toBeNull()
+    expect(chip!.className).toContain('bg-status-warning/15')
+    expect(chip!.className).toContain('text-status-warning')
+    expect(chip!.className).toContain('border-status-warning/30')
+    expect(chip!.className).not.toContain('amber')
+  })
 })

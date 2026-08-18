@@ -37,10 +37,15 @@ describe('AcquiringRateLimitBanner', () => {
     expect(banner).toHaveAttribute('role', 'status')
   })
 
-  it('renders amber styling classes', () => {
+  it('renders warning styling with matched-pair semantic tokens (/15-chip)', () => {
     render(<AcquiringRateLimitBanner retryAfterSeconds={30} onRefetch={vi.fn()} />)
 
     const banner = screen.getByTestId('acquiring-rate-limit-banner')
-    expect(banner.className).toContain('amber')
+    // matched-pair: same status-warning family for bg + text, border at /30
+    expect(banner.className).toContain('bg-status-warning/15')
+    expect(banner.className).toContain('text-status-warning')
+    expect(banner.className).toContain('border-status-warning/30')
+    // no legacy raw amber classes remain
+    expect(banner.className).not.toContain('amber')
   })
 })

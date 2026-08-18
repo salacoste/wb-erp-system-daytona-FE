@@ -145,6 +145,79 @@ describe('AcquiringReportsTable', () => {
     expect(rows[1]).toHaveTextContent('1') // createDate 2026-01-10
     expect(rows[2]).toHaveTextContent('2') // createDate 2026-01-05 — oldest
   })
+
+  it('table has a caption naming the acquiring reports table', () => {
+    renderWithProviders(<AcquiringReportsTable items={[baseItem]} />)
+    // RTC: reports table caption names acquiring reports
+    const caption = screen.getByText('Отчёты эквайринга')
+    expect(caption.tagName).toBe('CAPTION')
+  })
+
+  it('sortable headers expose aria-sort direction (a11y)', async () => {
+    const user = userEvent.setup()
+    renderWithProviders(<AcquiringReportsTable items={[item2, baseItem]} />)
+    const feeHeader = screen.getByText('Комиссия').closest('th')
+    expect(feeHeader).not.toBeNull()
+    // Inactive column: no aria-sort. Default-sorted column (Создан = createDate, default desc) does.
+    expect(feeHeader).not.toHaveAttribute('aria-sort')
+    expect(screen.getByText('Создан').closest('th')).toHaveAttribute('aria-sort', 'descending')
+
+    // Activate → ascending
+    await user.click(screen.getByText('Комиссия'))
+    expect(screen.getByText('Комиссия').closest('th')).toHaveAttribute('aria-sort', 'ascending')
+
+    // Click again → descending
+    await user.click(screen.getByText('Комиссия'))
+    expect(screen.getByText('Комиссия').closest('th')).toHaveAttribute('aria-sort', 'descending')
+    // Создан is now inactive → no aria-sort
+    expect(screen.getByText('Создан').closest('th')).not.toHaveAttribute('aria-sort')
+  })
+
+  it('keyboard Enter and Space trigger sorting on a sortable header', async () => {
+    const user = userEvent.setup()
+    renderWithProviders(<AcquiringReportsTable items={[item2, item3, baseItem]} />)
+    const feeHeader = screen.getByText('Комиссия').closest('th')
+    expect(feeHeader).not.toBeNull()
+    // Keyboard-focusable
+    expect(feeHeader).toHaveAttribute('tabindex', '0')
+
+    feeHeader!.focus()
+    // Enter → ascending by fee (500, 1000, 2000)
+    await user.keyboard('{Enter}')
+    let rows = screen.getAllByRole('row')
+    expect(rows[1]).toHaveTextContent('200')
+    expect(rows[3]).toHaveTextContent('300')
+
+    // Space → descending (2000, 1000, 500)
+    await user.keyboard(' ')
+    rows = screen.getAllByRole('row')
+    expect(rows[1]).toHaveTextContent('300')
+    expect(rows[3]).toHaveTextContent('200')
+  })
+
+  it('money cells (Комиссия/НДС) use tabular-nums for financial precision', () => {
+    renderWithProviders(<AcquiringReportsTable items={[baseItem]} />)
+    const cells = screen.getAllByRole('cell')
+    // 0=ID, 1=Период, 2=Создан, 3=Комиссия, 4=НДС, 5=Подробнее
+    expect(cells[3].className).toContain('tabular-nums')
+    expect(cells[4].className).toContain('tabular-nums')
+    expect(cells[0].className).not.toContain('tabular-nums')
+  })
+
+  it('Детали links have unique per-row aria-labels naming their target report (AX contract)', () => {
+    renderWithProviders(
+      <AcquiringReportsTable
+        items={[
+          { ...baseItem, reportId: 1 },
+          { ...baseItem, reportId: 2 },
+        ]}
+      />
+    )
+    const link1 = screen.getByLabelText('Детали отчёта 1')
+    expect(link1).toHaveAttribute('href', '/analytics/acquiring/reports/1')
+    const link2 = screen.getByLabelText('Детали отчёта 2')
+    expect(link2).toHaveAttribute('href', '/analytics/acquiring/reports/2')
+  })
 })
 
 describe('sortItems (pure function)', () => {

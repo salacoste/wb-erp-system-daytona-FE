@@ -171,4 +171,38 @@ describe('AcquiringSummaryCards', () => {
       screen.getAllByText(/не включает 2 отчёта с неизвестными/).length
     ).toBeGreaterThanOrEqual(1)
   })
+
+  it('money totals use tabular-nums; report counter and period do not (RTC contract)', () => {
+    const items = [
+      makeItem({ reportId: 1, acquiringFeeSum: 1000, acquiringFeeVatSum: 200 }),
+      makeItem({ reportId: 2, acquiringFeeSum: 500, acquiringFeeVatSum: 100 }),
+    ]
+    render(<AcquiringSummaryCards items={items} />)
+
+    // Money headlines (Всего комиссий 1 500 + Всего НДС 300) → tabular-nums
+    const feeTotal = screen.getByText(/1[\s ]?500/).closest('p')
+    expect(feeTotal?.className).toContain('tabular-nums')
+    const vatTotal = screen.getByText(/\b300\b/).closest('p')
+    expect(vatTotal?.className).toContain('tabular-nums')
+
+    // Counter (Отчётов) and Period (dates) stay non-tabular
+    const counter = screen.getByText('2').closest('p')
+    expect(counter?.className).not.toContain('tabular-nums')
+    const period = screen.getByText(/01\.04\.2026.*—.*07\.04\.2026/).closest('p')
+    expect(period?.className).not.toContain('tabular-nums')
+  })
+
+  it('data-quality footnotes use status-warning semantic token', () => {
+    const items = [
+      makeItem({ reportId: 1, acquiringFeeSum: null, acquiringFeeVatSum: null }),
+      makeItem({ reportId: 2, acquiringFeeSum: null, acquiringFeeVatSum: null }),
+    ]
+    render(<AcquiringSummaryCards items={items} />)
+    const footnotes = screen.getAllByText(/не включает/)
+    expect(footnotes.length).toBe(2)
+    for (const fn of footnotes) {
+      expect(fn.className).toContain('text-status-warning')
+      expect(fn.className).not.toContain('amber')
+    }
+  })
 })

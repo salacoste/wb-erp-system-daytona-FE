@@ -14,6 +14,7 @@ import { ChevronsUpDown, ChevronUp, ChevronDown } from 'lucide-react'
 import {
   Table,
   TableBody,
+  TableCaption,
   TableCell,
   TableHead,
   TableHeader,
@@ -89,7 +90,16 @@ export function AcquiringReportsTable({ items }: AcquiringReportsTableProps) {
   const th = (field: SortField, label: string) => (
     <TableHead
       className="cursor-pointer select-none whitespace-nowrap"
+      aria-sort={sort === field ? (sortOrder === 'asc' ? 'ascending' : 'descending') : undefined}
+      tabIndex={0}
       onClick={() => handleSort(field)}
+      onKeyDown={e => {
+        // Keyboard activation for sortable th (a11y — aria-sort must be reachable + actionable)
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault()
+          handleSort(field)
+        }
+      }}
     >
       {label}
       <SortIcon field={field} sort={sort} order={sortOrder} />
@@ -99,6 +109,7 @@ export function AcquiringReportsTable({ items }: AcquiringReportsTableProps) {
   return (
     <div className="rounded-md border overflow-x-auto">
       <Table>
+        <TableCaption>Отчёты эквайринга</TableCaption>
         <TableHeader>
           <TableRow>
             {th('reportId', 'ID отчёта')}
@@ -120,16 +131,21 @@ export function AcquiringReportsTable({ items }: AcquiringReportsTableProps) {
                 <TableCell className="whitespace-nowrap text-sm">
                   {formatDate(item.createDate)}
                 </TableCell>
-                <TableCell className="text-sm">
+                <TableCell className="text-sm tabular-nums">
                   {item.acquiringFeeSum == null ? '—' : formatCurrency(item.acquiringFeeSum)}
                 </TableCell>
-                <TableCell className="text-sm">
+                <TableCell className="text-sm tabular-nums">
                   {item.acquiringFeeVatSum == null ? '—' : formatCurrency(item.acquiringFeeVatSum)}
                   <AnomalyVatIndicator fee={item.acquiringFeeSum} vat={item.acquiringFeeVatSum} />
                 </TableCell>
                 <TableCell>
                   <Button variant="ghost" size="sm" asChild>
-                    <Link href={`/analytics/acquiring/reports/${item.reportId}`}>Детали</Link>
+                    <Link
+                      href={`/analytics/acquiring/reports/${item.reportId}`}
+                      aria-label={`Детали отчёта ${item.reportId}`}
+                    >
+                      Детали
+                    </Link>
                   </Button>
                 </TableCell>
               </TableRow>

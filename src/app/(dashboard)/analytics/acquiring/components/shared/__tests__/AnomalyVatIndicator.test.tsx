@@ -41,4 +41,14 @@ describe('AnomalyVatIndicator', () => {
     const labeledEl = container.querySelector('[aria-label]')
     expect(labeledEl?.getAttribute('aria-label')).toBe('Аномалия: НДС выше суммы комиссии')
   })
+
+  it('anomaly icon uses the status-warning semantic token (SVG class via attribute)', () => {
+    const { container } = renderWithProviders(<AnomalyVatIndicator fee={50} vat={100} />)
+    const svg = container.querySelector('svg')
+    expect(svg).not.toBeNull()
+    // SVG className is SVGAnimatedString in the DOM — assert via attribute (168.11 lesson)
+    const cls = svg!.getAttribute('class') ?? ''
+    expect(cls).toContain('text-status-warning')
+    expect(cls).not.toContain('amber')
+  })
 })
