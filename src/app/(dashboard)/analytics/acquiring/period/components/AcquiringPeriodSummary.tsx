@@ -57,9 +57,11 @@ export function AcquiringPeriodSummary({ transactions }: AcquiringPeriodSummaryP
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <p className="text-2xl font-bold">{allFeesNull ? '—' : formatCurrency(totalFees)}</p>
+          <p className="text-2xl font-bold tabular-nums">
+            {allFeesNull ? '—' : formatCurrency(totalFees)}
+          </p>
           {nullCountFees > 0 && (
-            <p className="text-xs text-amber-700 mt-2">
+            <p className="text-xs text-status-warning mt-2">
               * Сумма не включает {nullCountFees} {pluralize(TRANSACTION_FORMS, nullCountFees)} с
               неизвестными данными.
             </p>
@@ -73,9 +75,11 @@ export function AcquiringPeriodSummary({ transactions }: AcquiringPeriodSummaryP
           <CardTitle className="text-sm font-medium text-muted-foreground">Всего НДС</CardTitle>
         </CardHeader>
         <CardContent>
-          <p className="text-2xl font-bold">{allVatNull ? '—' : formatCurrency(totalVat)}</p>
+          <p className="text-2xl font-bold tabular-nums">
+            {allVatNull ? '—' : formatCurrency(totalVat)}
+          </p>
           {nullCountVat > 0 && (
-            <p className="text-xs text-amber-700 mt-2">
+            <p className="text-xs text-status-warning mt-2">
               * Сумма не включает {nullCountVat} {pluralize(TRANSACTION_FORMS, nullCountVat)} с
               неизвестными данными.
             </p>

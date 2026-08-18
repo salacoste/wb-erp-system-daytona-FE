@@ -113,4 +113,32 @@ describe('AcquiringPeriodSummary', () => {
     // Count still shows the total.
     expect(screen.getByText('2')).toBeInTheDocument()
   })
+
+  it('money headlines use tabular-nums; transaction counter does NOT (169.2 token migration)', () => {
+    const transactions: AcquiringReportDetailItem[] = [
+      makeTransaction({ rrdId: 1, acquiringFee: 200, acquiringFeeVat: 40 }),
+      makeTransaction({ rrdId: 2, acquiringFee: 300, acquiringFeeVat: 50, srid: 'SR-002' }),
+    ]
+    render(<AcquiringPeriodSummary transactions={transactions} />)
+
+    // Money headlines (Всего комиссий / Всего НДС)
+    const feeHeadline = screen.getByText(/500\s*₽/)
+    const vatHeadline = screen.getByText(/90\s*₽/)
+    expect(feeHeadline.getAttribute('class')).toContain('tabular-nums')
+    expect(vatHeadline.getAttribute('class')).toContain('tabular-nums')
+
+    // Counter card ("Транзакций") — NOT money, no tabular-nums
+    const countCard = screen.getByText('2')
+    expect(countCard.getAttribute('class')).not.toContain('tabular-nums')
+  })
+
+  it('data-quality footnotes use text-status-warning token (no amber)', () => {
+    const transactions = [makeTransaction({ rrdId: 1, acquiringFee: 500, acquiringFeeVat: null })]
+    render(<AcquiringPeriodSummary transactions={transactions} />)
+
+    const footnote = screen.getByText(/не включает 1 транзакция с неизвестными/)
+    const cls = footnote.getAttribute('class') ?? ''
+    expect(cls).toContain('text-status-warning')
+    expect(cls).not.toContain('amber')
+  })
 })
