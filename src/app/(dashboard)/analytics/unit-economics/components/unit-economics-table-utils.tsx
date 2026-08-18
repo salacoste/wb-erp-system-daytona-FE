@@ -18,10 +18,10 @@ export const PAGE_SIZE_OPTIONS = [25, 50, 100] as const
 export function MarginIndicator({ value }: { value: number | null }) {
   // null (unknown margin: no COGS / zero revenue) → neutral, never green/red (anti-pattern #8 / rule 2).
   if (value != null && value >= 20) {
-    return <TrendingUp className="h-4 w-4 text-green-500" />
+    return <TrendingUp className="h-4 w-4 text-financial-positive" />
   }
   if (value != null && value < 10) {
-    return <TrendingDown className="h-4 w-4 text-red-500" />
+    return <TrendingDown className="h-4 w-4 text-financial-negative" />
   }
   return <Minus className="h-4 w-4 text-muted-foreground" />
 }
@@ -32,7 +32,7 @@ export function getSortIcon(field: string, sortBy: string, sortOrder: 'asc' | 'd
     return <ArrowUpDown className="ml-2 h-4 w-4 text-muted-foreground" />
   }
   const Icon = sortOrder === 'asc' ? ArrowUp : ArrowDown
-  return <Icon className={cn('ml-2 h-4 w-4', 'text-blue-500')} />
+  return <Icon className={cn('ml-2 h-4 w-4', 'text-status-information')} />
 }
 
 /** Cost percentage cell with threshold-based coloring. */
@@ -54,8 +54,8 @@ export function CostCell({
     <TableCell className={cn('text-right', className)}>
       <span
         className={cn(
-          value != null && value > highThreshold && 'text-red-600 font-medium',
-          value != null && value > med && value <= highThreshold && 'text-orange-600',
+          value != null && value > highThreshold && 'text-status-error font-medium',
+          value != null && value > med && value <= highThreshold && 'text-status-warning',
           (value == null || value <= med) && 'text-muted-foreground'
         )}
       >

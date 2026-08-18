@@ -62,6 +62,55 @@ describe('UnitEconomicsSummaryCards — delivery card (Story 77.5)', () => {
   })
 })
 
+// 168.11: icon chips pair their semantic bg token with a paired *-foreground token —
+// pass-2 fix: hardcoded text-white icons failed the 3.0 graphical threshold in dark
+// (white on light dark-theme status bgs ≈ 1.7–2.6).
+describe('UnitEconomicsSummaryCards — icon chip tokens (168.11)', () => {
+  function chipEl(label: string) {
+    render(
+      <UnitEconomicsSummaryCards summary={baseSummary} avgDeliveryCost={100} deliverySkuCount={5} />
+    )
+    return screen.getByText(label).closest('.min-h-\\[120px\\]')?.querySelector('.rounded-lg')
+  }
+
+  it.each([
+    ['Выручка', 'bg-primary'],
+    ['COGS %', 'bg-status-warning'],
+    ['Комиссии WB %', 'bg-status-information'],
+    ['Ср. доставка', 'bg-status-information'],
+    ['Маржа %', 'bg-financial-positive'],
+    ['Прибыльные', 'bg-status-success'],
+    ['Убыточные', 'bg-status-error'],
+  ])('icon chip for "%s" uses its semantic token', (label, token) => {
+    expect(chipEl(label)?.className).toContain(token)
+  })
+
+  it.each([
+    ['Выручка', 'text-primary-foreground'],
+    ['COGS %', 'text-status-warning-foreground'],
+    ['Комиссии WB %', 'text-status-information-foreground'],
+    ['Ср. доставка', 'text-status-information-foreground'],
+    ['Маржа %', 'text-primary-foreground'],
+    ['Прибыльные', 'text-status-success-foreground'],
+    ['Убыточные', 'text-status-error-foreground'],
+  ])('icon for "%s" pairs its chip bg with a foreground token (dark-safe)', (label, fg) => {
+    const chip = chipEl(label)
+    const svgClass = chip?.querySelector('svg')?.getAttribute('class') ?? ''
+    // SVG className is SVGAnimatedString in jsdom — assert on the attribute string
+    expect(svgClass).toContain(fg)
+    expect(svgClass).not.toContain('text-white')
+  })
+
+  it('icon chip for "Ваша цена" uses bg-status-information when present', () => {
+    render(<UnitEconomicsSummaryCards summary={{ ...baseSummary, total_your_price: 500 }} />)
+    const chip = screen
+      .getByText('Ваша цена')
+      .closest('.min-h-\\[120px\\]')
+      ?.querySelector('.rounded-lg')
+    expect(chip?.className).toContain('bg-status-information')
+  })
+})
+
 describe('UnitEconomicsSummaryCards — core cards', () => {
   it('renders all 7 standard cards', () => {
     render(
@@ -97,28 +146,28 @@ describe('UnitEconomicsSummaryCards — margin value health colour', () => {
   }
 
   it('colours a loss-making margin (−31,2 %) red', () => {
-    expect(marginValueEl(-31.18)?.className).toContain('text-red-600')
+    expect(marginValueEl(-31.18)?.className).toContain('text-financial-negative')
   })
 
   it('colours a healthy margin (>=20 %) green', () => {
-    expect(marginValueEl(25)?.className).toContain('text-green-600')
+    expect(marginValueEl(25)?.className).toContain('text-financial-positive')
   })
 
   it('keeps a mid-range margin (10–20 %) neutral gray, not red', () => {
     const el = marginValueEl(15)
-    expect(el?.className).toContain('text-gray-900')
-    expect(el?.className).not.toContain('text-red-600')
+    expect(el?.className).toContain('text-foreground')
+    expect(el?.className).not.toContain('text-financial-negative')
   })
 
   // Boundary guards: >=20 is green, <10 is red, so 20 is the green edge and 10 is neutral.
   it('treats the 20 % boundary as green (>=20)', () => {
-    expect(marginValueEl(20)?.className).toContain('text-green-600')
+    expect(marginValueEl(20)?.className).toContain('text-financial-positive')
   })
 
   it('treats the 10 % boundary as neutral gray, not red (<10 is the red edge)', () => {
     const el = marginValueEl(10)
-    expect(el?.className).toContain('text-gray-900')
-    expect(el?.className).not.toContain('text-red-600')
+    expect(el?.className).toContain('text-foreground')
+    expect(el?.className).not.toContain('text-financial-negative')
   })
 })
 

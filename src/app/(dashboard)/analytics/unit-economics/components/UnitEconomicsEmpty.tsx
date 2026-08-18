@@ -42,11 +42,11 @@ export function UnitEconomicsEmpty({ onSelectWeek }: UnitEconomicsEmptyProps) {
         </div>
 
         {/* Additional hints */}
-        <div className="mt-8 p-4 bg-blue-50 rounded-lg max-w-md">
-          <h3 className="text-sm font-medium text-blue-900 mb-2">
+        <div className="mt-8 p-4 bg-status-information/10 rounded-lg max-w-md">
+          <h3 className="text-sm font-medium text-status-information mb-2">
             Как получить данные юнит-экономики?
           </h3>
-          <ul className="text-sm text-blue-700 space-y-1">
+          <ul className="text-sm text-muted-foreground space-y-1">
             <li>1. Загрузите недельный отчёт WB</li>
             <li>2. Укажите себестоимость (COGS) для товаров</li>
             <li>3. Данные будут доступны после обработки</li>

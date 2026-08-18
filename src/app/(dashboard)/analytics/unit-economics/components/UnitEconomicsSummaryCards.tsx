@@ -41,10 +41,10 @@ export function UnitEconomicsSummaryCards({
   // null margin → neutral, never green/red (rule 2 / anti-pattern #8).
   const marginValueColor =
     summary.avg_net_margin_pct != null && summary.avg_net_margin_pct >= 20
-      ? 'text-green-600'
+      ? 'text-financial-positive'
       : summary.avg_net_margin_pct != null && summary.avg_net_margin_pct < 10
-        ? 'text-red-600'
-        : 'text-gray-900'
+        ? 'text-financial-negative'
+        : 'text-foreground'
 
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -55,7 +55,8 @@ export function UnitEconomicsSummaryCards({
       {summary.total_your_price !== undefined && (
         <MetricCard
           icon={DollarSign}
-          iconColor="bg-indigo-500"
+          iconColor="bg-status-information"
+          iconTextColor="text-status-information-foreground"
           label="Ваша цена"
           value={formatCurrency(summary.total_your_price)}
           subtext="до скидок WB"
@@ -64,7 +65,8 @@ export function UnitEconomicsSummaryCards({
 
       <MetricCard
         icon={DollarSign}
-        iconColor="bg-red-500"
+        iconColor="bg-primary"
+        iconTextColor="text-primary-foreground"
         label="Выручка"
         value={formatCurrency(summary.total_revenue)}
         subtext={`${summary.sku_count} SKU`}
@@ -72,7 +74,8 @@ export function UnitEconomicsSummaryCards({
 
       <MetricCard
         icon={Package}
-        iconColor="bg-orange-500"
+        iconColor="bg-status-warning"
+        iconTextColor="text-status-warning-foreground"
         label="COGS %"
         value={formatPercentage(summary.avg_cogs_pct)}
         trend={
@@ -93,7 +96,8 @@ export function UnitEconomicsSummaryCards({
 
       <MetricCard
         icon={Tag}
-        iconColor="bg-purple-500"
+        iconColor="bg-status-information"
+        iconTextColor="text-status-information-foreground"
         label="Комиссии WB %"
         value={formatPercentage(summary.avg_wb_fees_pct)}
         trend={
@@ -111,7 +115,8 @@ export function UnitEconomicsSummaryCards({
       {/* Average delivery cost per unit — Story 77.5 */}
       <MetricCard
         icon={Truck}
-        iconColor="bg-cyan-500"
+        iconColor="bg-status-information"
+        iconTextColor="text-status-information-foreground"
         label="Ср. доставка"
         value={formatCurrency(avgDeliveryCost)}
         subtext={
@@ -121,7 +126,8 @@ export function UnitEconomicsSummaryCards({
 
       <MetricCard
         icon={TrendingUp}
-        iconColor="bg-green-500"
+        iconColor="bg-financial-positive"
+        iconTextColor="text-primary-foreground"
         label="Маржа %"
         value={formatPercentage(summary.avg_net_margin_pct)}
         valueClassName={marginValueColor}
@@ -143,7 +149,8 @@ export function UnitEconomicsSummaryCards({
 
       <MetricCard
         icon={CheckCircle}
-        iconColor="bg-emerald-500"
+        iconColor="bg-status-success"
+        iconTextColor="text-status-success-foreground"
         label="Прибыльные"
         value={`${summary.profitable_sku_count} SKU`}
         subtext={`(${profitablePercent})`}
@@ -151,7 +158,8 @@ export function UnitEconomicsSummaryCards({
 
       <MetricCard
         icon={XCircle}
-        iconColor="bg-red-500"
+        iconColor="bg-status-error"
+        iconTextColor="text-status-error-foreground"
         label="Убыточные"
         value={`${summary.loss_making_sku_count} SKU`}
         subtext={`(${lossPercent})`}

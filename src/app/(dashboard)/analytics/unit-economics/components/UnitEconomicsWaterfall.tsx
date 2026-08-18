@@ -138,7 +138,7 @@ export function UnitEconomicsWaterfall({
                 dataKey="name"
                 tick={{ fontSize: 11 }}
                 tickLine={false}
-                axisLine={{ stroke: '#E5E7EB' }}
+                axisLine={{ stroke: 'var(--color-border)' }}
                 angle={-45}
                 textAnchor="end"
                 height={60}
@@ -148,11 +148,11 @@ export function UnitEconomicsWaterfall({
                 tickFormatter={value => `${value}%`}
                 tick={{ fontSize: 11 }}
                 tickLine={false}
-                axisLine={{ stroke: '#E5E7EB' }}
+                axisLine={{ stroke: 'var(--color-border)' }}
                 width={50}
               />
               <Tooltip content={<CustomTooltip />} />
-              <ReferenceLine y={0} stroke="#E5E7EB" />
+              <ReferenceLine y={0} stroke="var(--color-chart-reference)" />
 
               {/* Invisible bar for stacking (creates waterfall effect) */}
               <Bar dataKey="start" stackId="a" fill="transparent" isAnimationActive={false} />

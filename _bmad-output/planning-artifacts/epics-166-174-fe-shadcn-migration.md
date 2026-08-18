@@ -2895,6 +2895,7 @@ So that the interface remains consistent and future work does not recreate the p
 - **Shared Dependencies:** all route migrations merged and Story 174.1 parity passing.
 - **Allowed Change Surface:** proven-unused legacy files/classes/dependencies and bounded enforcement scripts/config/docs.
 - **Forbidden Shared Files:** business logic, APIs/hooks/types, active components without verified consumer migration; no broad mechanical deletion.
+- **Wave additions (168.11):** the `ResponsiveChartFrame` shared component is owned by Story 174.2 (legacy-enforcement wave) — route stories consume it read-only.
 - **State Coverage:** enforcement checks semantic tokens, raw controls, primitive boundaries, hardcoded colors, both theme surfaces.
 - **Responsive/Table/Chart Contract:** no specialized table/chart/virtualization deletion without equivalent verified consumers.
 - **Accessibility Contract:** exceptions require semantic/native justification; removal cannot regress accessible behavior.
@@ -2999,3 +3000,16 @@ So that future agents inherit an accurate design-system contract and a clean rep
 **When** documentation and repository cleanup complete
 **Then** canonical docs describe tokens, primitives, compositions, ownership, responsive/accessibility patterns, and Story delivery workflow accurately
 **And** no completed migration branch or temporary worktree remains.
+
+---
+
+## Wave Contrast Ledger — 168.x migration wave (added by 168.11)
+
+Known-accepted contrast decisions of the 168 wave (summary of ledger addendum cont.9-10):
+
+- **/80-policy**: where a semantic tier needs reduced emphasis on a same-hue surface, the wave idiom is the Tailwind opacity modifier on the SEMANTIC token (e.g. `text-status-warning/80`, `bg-status-information/10`), never a raw palette shade. Pinned in 168.3 (`top-table-utils` 4-tier: ≥30 `text-financial-positive`, ≥15 `text-status-warning`, ≥0 `text-status-warning/80`, <0 `text-financial-negative`, null `text-muted-foreground`).
+- **/15-chip idiom**: status chips/badges use `bg-<token>/15 text-<token>` (168.8 alerts/ReorderTable; 168.11 profitability badges + summary-chip set). Accepted: token-on-/15-of-itself contrast is the standard chip surface; dark-mode trust is in the token pair, not per-site math.
+- **/15-chip warnings**: `/15` must be applied ONLY to a matched bg+text token pair; mixing a `/15` bg with an unrelated text token or a raw palette text fails the idiom (the cont.9-10 escalations were exactly such mismatches). `/10` informational info-boxes follow the same matched-pair rule (168.11 Empty-state precedent).
+- Sign-tokens (`financial-positive|negative`) keep 3 visual states (pos/neg/zero→muted or `chart-reference` in SVG) — reducing to 2 is a forbidden tier-collapse (168.10/168.11 guards).
+
+Owner of this ledger: the Epic 174-FE legacy-enforcement wave (174.2) consolidates it into the final exceptions register.

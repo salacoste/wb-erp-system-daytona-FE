@@ -45,26 +45,28 @@ export type ProfitabilityStatus = 'excellent' | 'good' | 'warning' | 'critical' 
 
 /**
  * Color mapping for profitability status (Tailwind classes)
+ * Story 168.11: /15-chip idiom (168.8 alerts/ReorderTable precedent) — one token
+ * set shared with the 168.9 legend (SkuTableHeaders) and lib profitability config.
  */
 export const PROFITABILITY_COLORS: Record<ProfitabilityStatus, string> = {
-  excellent: 'bg-green-500 text-white',
-  good: 'bg-lime-500 text-white',
-  warning: 'bg-yellow-500 text-black',
-  critical: 'bg-orange-500 text-white',
-  loss: 'bg-red-500 text-white',
-  unknown: 'bg-gray-400 text-white',
+  excellent: 'bg-financial-positive/15 text-financial-positive',
+  good: 'bg-status-information/15 text-status-information',
+  warning: 'bg-status-warning/15 text-status-warning',
+  critical: 'bg-status-error/15 text-status-error',
+  loss: 'bg-financial-negative/15 text-financial-negative',
+  unknown: 'bg-muted text-muted-foreground',
 }
 
 /**
- * Hex colors for charts/badges
+ * Chart-safe color vars for profitability status (charts/badges)
  */
 export const PROFITABILITY_HEX: Record<ProfitabilityStatus, string> = {
-  excellent: '#22C55E',
-  good: '#84CC16',
-  warning: '#EAB308',
-  critical: '#F97316',
-  loss: '#EF4444',
-  unknown: '#9CA3AF',
+  excellent: 'var(--color-financial-positive)',
+  good: 'var(--color-status-information)',
+  warning: 'var(--color-status-warning)',
+  critical: 'var(--color-status-error)',
+  loss: 'var(--color-financial-negative)',
+  unknown: 'var(--color-muted-foreground)',
 }
 
 /**

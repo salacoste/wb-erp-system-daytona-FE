@@ -276,7 +276,8 @@ test.describe('Unit Economics — Story 162.5 deterministic synchronization', ()
       .textContent())!
 
     await firstRow.click()
-    await expect(firstRow).toHaveClass(/bg-blue-50/)
+    // 168.11: selected-row migrated bg-blue-50 -> status-information/10 (token pin updated)
+    await expect(firstRow).toHaveClass(/bg-status-information\/10/)
     await expect(page.getByText(productName, { exact: true }).first()).toBeVisible()
     await expect(page.getByRole('button', { name: 'Сбросить' })).toBeVisible()
     await page.getByRole('button', { name: 'Сбросить' }).click()

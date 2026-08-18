@@ -55,7 +55,7 @@ describe('transformToWaterfallData', () => {
     expect(result[0]).toBeDefined()
     expect(result[0]!.name).toBe('Выручка')
     expect(result[0]!.value).toBe(1000)
-    expect(result[0]!.color).toBe('#22C55E')
+    expect(result[0]!.color).toBe('var(--color-chart-positive)')
   })
 
   it('ends with profit data point', () => {
@@ -68,14 +68,14 @@ describe('transformToWaterfallData', () => {
   it('shows green profit when positive', () => {
     const result = transformToWaterfallData(1000, makeCostsPct(), makeCostsRub())
     const profit = result[result.length - 1]!
-    expect(profit.color).toBe('#22C55E')
+    expect(profit.color).toBe('var(--color-chart-positive)')
   })
 
   it('shows red profit when negative', () => {
     const hugeCosts = makeCostsRub({ cogs: 900, commission: 200 })
     const result = transformToWaterfallData(1000, makeCostsPct(), hugeCosts)
     const profit = result[result.length - 1]!
-    expect(profit.color).toBe('#EF4444')
+    expect(profit.color).toBe('var(--color-chart-negative)')
   })
 
   it('costs are negative values in waterfall', () => {

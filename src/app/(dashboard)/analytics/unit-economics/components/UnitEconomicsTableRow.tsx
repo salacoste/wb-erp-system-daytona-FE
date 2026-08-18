@@ -8,9 +8,8 @@ import type { UnitEconomicsItem } from '@/types/unit-economics'
 import {
   formatCurrency,
   formatPercentage,
-  getProfitabilityColor,
   getProfitabilityLabel,
-  getProfitabilityBgClass,
+  getProfitabilityBadgeClasses,
 } from '@/lib/unit-economics-utils'
 import { MarginIndicator, CostCell } from './unit-economics-table-utils'
 
@@ -55,7 +54,9 @@ export function UnitEconomicsTableRow({ item, isSelected, onSelect }: UnitEconom
     <TableRow
       className={cn(
         'cursor-pointer transition-colors',
-        isSelected ? 'bg-blue-50 border-l-4 border-l-blue-500' : 'hover:bg-muted'
+        isSelected
+          ? 'bg-status-information/10 border-l-4 border-l-status-information'
+          : 'hover:bg-muted'
       )}
       onClick={onSelect}
     >
@@ -91,7 +92,7 @@ export function UnitEconomicsTableRow({ item, isSelected, onSelect }: UnitEconom
               // Radix TooltipTrigger asChild handles role wiring; virtual-cursor screen readers
               // still read aria-label on non-focusable spans).
               <span
-                className="text-cyan-600 cursor-help underline decoration-dotted decoration-cyan-300 underline-offset-4"
+                className="text-status-information cursor-help underline decoration-dotted decoration-status-information/60 underline-offset-4"
                 aria-label={ariaLabel}
                 data-testid="delivery-tooltip-trigger"
               >
@@ -138,11 +139,11 @@ export function UnitEconomicsTableRow({ item, isSelected, onSelect }: UnitEconom
             className={cn(
               'font-medium',
               // null (unknown margin) → neutral, never green/red (rule 2 / anti-pattern #8).
-              item.net_margin_pct != null && item.net_margin_pct >= 20 && 'text-green-600',
+              item.net_margin_pct != null && item.net_margin_pct >= 20 && 'text-financial-positive',
               (item.net_margin_pct == null ||
                 (item.net_margin_pct >= 10 && item.net_margin_pct < 20)) &&
                 'text-muted-foreground',
-              item.net_margin_pct != null && item.net_margin_pct < 10 && 'text-red-600'
+              item.net_margin_pct != null && item.net_margin_pct < 10 && 'text-financial-negative'
             )}
           >
             {formatPercentage(item.net_margin_pct)}
@@ -150,10 +151,11 @@ export function UnitEconomicsTableRow({ item, isSelected, onSelect }: UnitEconom
         </div>
       </TableCell>
       <TableCell className="text-center">
+        {/* 168.11: single token set — /15-chip classes via getProfitabilityBadgeClasses
+            (bgClass + textClass); inline style-color removed as redundant. */}
         <Badge
           variant="secondary"
-          className={cn('text-xs', getProfitabilityBgClass(item.profitability_status))}
-          style={{ color: getProfitabilityColor(item.profitability_status) }}
+          className={cn('text-xs', getProfitabilityBadgeClasses(item.profitability_status))}
         >
           {getProfitabilityLabel(item.profitability_status)}
         </Badge>
