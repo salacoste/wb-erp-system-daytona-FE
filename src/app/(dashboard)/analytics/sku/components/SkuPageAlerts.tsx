@@ -12,17 +12,18 @@ import { formatPeriodLabel } from '@/components/custom/DateRangePicker'
 /** Operating profit formula explanation banner */
 export function OperatingProfitInfoBanner() {
   return (
-    <Alert className="border-blue-200 bg-blue-50">
-      <Info className="h-4 w-4 text-blue-600" />
+    // 168.9: info banners blue → status-information; hint text → muted-foreground (tertiary).
+    <Alert className="border-status-information/30 bg-status-information/10">
+      <Info className="h-4 w-4 text-status-information" />
       <AlertDescription className="space-y-2">
         <div>
-          <strong className="text-blue-800">ℹ️ Расчёт операционной прибыли</strong>
+          <strong className="text-foreground">ℹ️ Расчёт операционной прибыли</strong>
         </div>
-        <div className="text-blue-700 text-sm">
+        <div className="text-foreground text-sm">
           <strong>Прибыль</strong> = Выручка − COGS − Все расходы (логистика, хранение, комиссия WB,
           эквайринг, штрафы и др.)
         </div>
-        <div className="text-blue-600 text-xs">
+        <div className="text-muted-foreground text-xs">
           💡 Наведите на колонку «Прибыль» для деталей. См.
           docs/request-backend/63-operating-profit-formula-clarification.md
         </div>
@@ -42,10 +43,10 @@ export function NmIdFilterAlert({
   onClear: () => void
 }) {
   return (
-    <Alert className="border-blue-200 bg-blue-50" role="alert">
-      <Info className="h-4 w-4 text-blue-600" />
+    <Alert className="border-status-information/30 bg-status-information/10" role="alert">
+      <Info className="h-4 w-4 text-status-information" />
       <AlertDescription className="flex items-center justify-between">
-        <span className="text-sm text-blue-800">
+        <span className="text-sm text-foreground">
           <strong>Фильтр по товару:</strong> {nmIdFilter}
           {filteredProductName && ` (${filteredProductName})`}
         </span>
@@ -53,7 +54,7 @@ export function NmIdFilterAlert({
           variant="ghost"
           size="sm"
           onClick={onClear}
-          className="text-blue-600 hover:text-blue-800 hover:bg-blue-100"
+          className="text-status-information hover:text-status-information hover:bg-status-information/10"
         >
           <X className="h-4 w-4 mr-1" />
           Показать все
@@ -66,8 +67,8 @@ export function NmIdFilterAlert({
 /** Period label shown in multi-week mode */
 export function PeriodLabel({ weekStart, weekEnd }: { weekStart: string; weekEnd: string }) {
   return (
-    <div className="flex items-center gap-2 text-sm text-gray-600 bg-blue-50 px-4 py-2 rounded-lg">
-      <CalendarRange className="h-4 w-4 text-blue-600" />
+    <div className="flex items-center gap-2 text-sm text-muted-foreground bg-status-information/10 px-4 py-2 rounded-lg">
+      <CalendarRange className="h-4 w-4 text-status-information" />
       <span>
         Период: <strong>{formatPeriodLabel(weekStart, weekEnd)}</strong>
       </span>

@@ -35,23 +35,23 @@ export function ExpenseBreakdown({ item }: ExpenseBreakdownProps) {
           <p className="font-medium mb-2">Операционные расходы</p>
           <div className="space-y-1 text-sm">
             <div className="flex justify-between">
-              <span className="text-gray-400">Логистика:</span>
+              <span className="text-muted-foreground">Логистика:</span>
               <span>{formatCurrency(item.costs.logistics)}</span>
             </div>
             <div className="flex justify-between">
-              <span className="text-gray-400">Хранение (Storage API):</span>
+              <span className="text-muted-foreground">Хранение (Storage API):</span>
               <span>{formatCurrency(item.costs.storage)}</span>
             </div>
             <div className="flex justify-between">
-              <span className="text-gray-400">Штрафы:</span>
+              <span className="text-muted-foreground">Штрафы:</span>
               <span>{formatCurrency(item.costs.penalties)}</span>
             </div>
             <div className="flex justify-between">
-              <span className="text-gray-400">Платная приёмка:</span>
+              <span className="text-muted-foreground">Платная приёмка:</span>
               <span>{formatCurrency(item.costs.paidAcceptance)}</span>
             </div>
             <div className="flex justify-between">
-              <span className="text-gray-400">Прочие удержания:</span>
+              <span className="text-muted-foreground">Прочие удержания:</span>
               <span>{formatCurrency(item.costs.otherAdjustments)}</span>
             </div>
             <div className="border-t pt-1 mt-1 flex justify-between font-medium">

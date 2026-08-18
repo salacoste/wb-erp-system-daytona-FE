@@ -32,16 +32,19 @@ export function ParityMetricCells({ parity, showHistoricalSpp = true }: ParityMe
   return (
     <>
       <TableCell
-        className="hidden lg:table-cell text-right text-gray-600"
+        className="hidden lg:table-cell text-right text-muted-foreground"
         title="FR-2: расходы на рекламу"
       >
         {formatCurrency(parity?.advertisingCost ?? null)}
       </TableCell>
-      <TableCell className="hidden lg:table-cell text-right text-gray-600" title="FR-2: ДРР">
+      <TableCell
+        className="hidden lg:table-cell text-right text-muted-foreground"
+        title="FR-2: ДРР"
+      >
         {formatPercent(parity?.drrPct ?? null)}
       </TableCell>
       <TableCell
-        className="hidden lg:table-cell text-right text-gray-600"
+        className="hidden lg:table-cell text-right text-muted-foreground"
         title="FR-3: операционная прибыль после распределённого налога"
       >
         {formatCurrency(parity?.netProfitAfterTax ?? null)}
@@ -49,30 +52,33 @@ export function ParityMetricCells({ parity, showHistoricalSpp = true }: ParityMe
       {showHistoricalSpp && (
         <>
           <TableCell
-            className="hidden lg:table-cell text-right text-gray-600"
+            className="hidden lg:table-cell text-right text-muted-foreground"
             title="Фактическое историческое СПП по транзакциям финансового отчёта WB, ₽"
           >
             {formatHistoricalSppRub(parity?.sppRub)}
           </TableCell>
           <TableCell
-            className="hidden lg:table-cell text-right text-gray-600"
+            className="hidden lg:table-cell text-right text-muted-foreground"
             title="Фактическое историческое СПП по транзакциям финансового отчёта WB, %"
           >
             {formatHistoricalSppPct(parity?.sppPct)}
           </TableCell>
         </>
       )}
-      <TableCell className="hidden lg:table-cell text-right text-gray-600" title="FR-5: отмены, шт">
+      <TableCell
+        className="hidden lg:table-cell text-right text-muted-foreground"
+        title="FR-5: отмены, шт"
+      >
         {formatNullableInteger(parity?.cancellationsQty)}
       </TableCell>
       <TableCell
-        className="hidden lg:table-cell text-right text-gray-600"
+        className="hidden lg:table-cell text-right text-muted-foreground"
         title="FR-4: остаток в закупочных ценах; для исторических недель может быть недоступен"
       >
         {formatCurrency(parity?.stockValueRub ?? null)}
       </TableCell>
       <TableCell
-        className="hidden lg:table-cell text-right text-gray-600"
+        className="hidden lg:table-cell text-right text-muted-foreground"
         title="FR-4: доля стоимости остатков в кабинете"
       >
         {formatPercent(parity?.stockValueSharePct ?? null)}

@@ -41,12 +41,13 @@ function ExpenseItem({
   pct: (v: number) => string
 }) {
   return (
-    <div className="text-center p-2 bg-amber-50 rounded border border-amber-200">
-      <div className="text-xs text-amber-600">{label}</div>
-      <div className="text-sm font-bold text-amber-800">
+    // 168.9: amber 800>600>500 hierarchy → foreground > warning > warning/80.
+    <div className="text-center p-2 bg-status-warning/10 rounded border border-status-warning/30">
+      <div className="text-xs text-status-warning">{label}</div>
+      <div className="text-sm font-bold text-foreground">
         {value.toLocaleString('ru-RU', { maximumFractionDigits: 0 })} ₽
       </div>
-      <div className="text-xs text-amber-500">{pct(value)}%</div>
+      <div className="text-xs text-status-warning/80">{pct(value)}%</div>
     </div>
   )
 }
@@ -68,18 +69,21 @@ function StorageExpenseItem({
   )
 
   return (
+    // 168.9: divergence state (/20 bg + /50 border) stays visually STRONGER than the normal /10-/30 cell.
     <div
       className={`text-center p-2 rounded border ${
-        hasDifference ? 'bg-yellow-100 border-yellow-400' : 'bg-amber-50 border-amber-200'
+        hasDifference
+          ? 'bg-status-warning/20 border-status-warning/50'
+          : 'bg-status-warning/10 border-status-warning/30'
       }`}
     >
-      <div className="text-xs text-amber-600">Хранение (API)</div>
-      <div className="text-sm font-bold text-amber-800">
+      <div className="text-xs text-status-warning">Хранение (API)</div>
+      <div className="text-sm font-bold text-foreground">
         {cabinetExpenses.storage.toLocaleString('ru-RU', { maximumFractionDigits: 0 })} ₽
       </div>
-      <div className="text-xs text-amber-500">{pct(cabinetExpenses.storage)}%</div>
+      <div className="text-xs text-status-warning/80">{pct(cabinetExpenses.storage)}%</div>
       {/* Request #67: Show weekly report storage for comparison */}
-      <div className="text-xs text-gray-500 mt-1 border-t border-gray-200 pt-1">
+      <div className="text-xs text-muted-foreground mt-1 border-t border-border pt-1">
         Отчёт:{' '}
         {(cabinetExpenses.storage_weekly_report ?? 0).toLocaleString('ru-RU', {
           maximumFractionDigits: 0,
@@ -88,7 +92,9 @@ function StorageExpenseItem({
         {hasDifference && (
           <span
             className={`ml-1 font-medium ${
-              (cabinetExpenses.storage_difference ?? 0) > 0 ? 'text-red-600' : 'text-green-600'
+              (cabinetExpenses.storage_difference ?? 0) > 0
+                ? 'text-financial-negative'
+                : 'text-financial-positive'
             }`}
           >
             ({(cabinetExpenses.storage_difference ?? 0) > 0 ? '+' : ''}

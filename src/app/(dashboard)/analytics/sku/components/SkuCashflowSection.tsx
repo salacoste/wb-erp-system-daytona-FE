@@ -26,13 +26,14 @@ export function SkuCashflowSection({ cabinetExpenses, isLoading }: SkuCashflowSe
   if (!cabinetExpenses && !isLoading) return null
 
   return (
-    <Card className="border-blue-200 bg-gradient-to-br from-blue-50 to-amber-50">
+    // 168.9: gradient tokenized (info→warning two-tone preserved via /10 stops).
+    <Card className="border-status-information/30 bg-gradient-to-br from-status-information/10 to-status-warning/10">
       <CardHeader>
-        <CardTitle className="flex items-center gap-2 text-blue-900">
+        <CardTitle className="flex items-center gap-2 text-foreground">
           <Building2 className="h-5 w-5" />
           Полный Cashflow
         </CardTitle>
-        <CardDescription className="text-blue-700">
+        <CardDescription className="text-muted-foreground">
           Движение денежных средств за период
         </CardDescription>
       </CardHeader>
@@ -57,7 +58,7 @@ function CashflowContent({ cabinetExpenses }: { cabinetExpenses: CabinetLevelExp
   // absurd badges like "Логистика 50000 %" over a 0 ₽ baseline). Show an honest empty-state instead.
   if (cabinetExpenses.sales_gross <= 0) {
     return (
-      <div className="py-6 text-center text-sm text-gray-500">
+      <div className="py-6 text-center text-sm text-muted-foreground">
         Нет продаж за период — структура cashflow в процентах недоступна.
       </div>
     )
@@ -100,7 +101,7 @@ function CashflowContent({ cabinetExpenses }: { cabinetExpenses: CabinetLevelExp
         label="Чистые продажи (gross)"
         value={fmtRub(netSales)}
       >
-        <span className="ml-1 px-1.5 py-0.5 text-xs font-medium rounded bg-gray-200 text-gray-600">
+        <span className="ml-1 px-1.5 py-0.5 text-xs font-medium rounded bg-muted text-muted-foreground">
           {pct(netSales)}%
         </span>
       </CashflowRow>
@@ -133,23 +134,29 @@ function CashflowContent({ cabinetExpenses }: { cabinetExpenses: CabinetLevelExp
       {/* Gross Profit by SKU */}
       <GrossProfitRow grossProfitSku={cabinetExpenses.gross_profit_sku} pct={pct} />
 
-      <div className="border-t-2 border-amber-300 my-2" />
-      <div className="text-sm font-medium text-amber-800 px-2">
+      {/* 168.9: amber deductions block → status-warning hierarchy; ИТОГО row /15 with nested badge /20. */}
+      <div className="border-t-2 border-status-warning/40 my-2" />
+      <div className="text-sm font-medium text-status-warning px-2">
         Удержания из выплаты (общекабинетные расходы):
       </div>
 
       <CashflowExpenseGrid cabinetExpenses={cabinetExpenses} pct={pct} />
 
       {/* Total Cabinet Expenses */}
-      <div className="flex items-center justify-between p-3 bg-amber-100 rounded-lg border border-amber-300">
+      <div className="flex items-center justify-between p-3 bg-status-warning/15 rounded-lg border border-status-warning/40">
         <div className="flex items-center gap-2">
-          <span className="text-amber-600 font-bold text-lg">−</span>
-          <span className="text-sm font-medium text-amber-800">ИТОГО общекабинетные расходы</span>
-          <span className="ml-1 px-1.5 py-0.5 text-xs font-medium rounded bg-amber-200 text-amber-700">
+          <span className="text-status-warning font-bold text-lg">−</span>
+          <span className="text-sm font-medium text-status-warning">
+            ИТОГО общекабинетные расходы
+          </span>
+          {/* nested badge /20 on /15 row (168.9) — must stay visible on tinted row */}
+          <span className="ml-1 px-1.5 py-0.5 text-xs font-medium rounded bg-status-warning/20 text-status-warning">
             −{pct(cabinetExpenses.total)}%
           </span>
         </div>
-        <span className="text-lg font-bold text-amber-700">{fmtRub(cabinetExpenses.total)}</span>
+        <span className="text-lg font-bold text-status-warning">
+          {fmtRub(cabinetExpenses.total)}
+        </span>
       </div>
 
       {/* Net Profit */}

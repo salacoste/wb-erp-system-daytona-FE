@@ -62,12 +62,12 @@ export function SkuFinancialsTable({
 
   const renderSortIcon = (field: SortField) => {
     if (sortField !== field) {
-      return <ArrowUpDown className="ml-1 h-4 w-4 text-gray-400" />
+      return <ArrowUpDown className="ml-1 h-4 w-4 text-muted-foreground" />
     }
     return sortOrder === 'asc' ? (
-      <ArrowUp className="ml-1 h-4 w-4 text-blue-600" />
+      <ArrowUp className="ml-1 h-4 w-4 text-status-information" />
     ) : (
-      <ArrowDown className="ml-1 h-4 w-4 text-blue-600" />
+      <ArrowDown className="ml-1 h-4 w-4 text-status-information" />
     )
   }
 
@@ -105,8 +105,8 @@ export function SkuFinancialsTable({
   // `totals` load-bearing (BD/BE share columns read totals.revenue/grossProfit).
   if (!data || data.length === 0) {
     return (
-      <div className="rounded-lg border border-gray-200 bg-gray-50 p-12 text-center">
-        <p className="text-gray-600">Нет данных за выбранную неделю</p>
+      <div className="rounded-lg border border-border bg-muted/50 p-12 text-center">
+        <p className="text-muted-foreground">Нет данных за выбранную неделю</p>
       </div>
     )
   }
@@ -120,7 +120,7 @@ export function SkuFinancialsTable({
             <TableHead>
               <button
                 onClick={() => handleSort('productName')}
-                className="flex items-center font-medium hover:text-blue-600"
+                className="flex items-center font-medium hover:text-status-information"
               >
                 Артикул
                 {renderSortIcon('productName')}
@@ -145,7 +145,7 @@ export function SkuFinancialsTable({
             <TableHead className="text-right">
               <button
                 onClick={() => handleSort('operatingProfit')}
-                className="ml-auto flex items-center font-medium hover:text-blue-600"
+                className="ml-auto flex items-center font-medium hover:text-status-information"
               >
                 Опер. прибыль
                 {renderSortIcon('operatingProfit')}

@@ -32,7 +32,8 @@ export function SkuPageWeeksError({
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-3xl font-bold tracking-tight text-gray-900">{PAGE_TITLE}</h1>
+        {/* 168.9: h1 scale standardized to 168.1 hub (3xl→2xl) across ALL page states. */}
+        <h1 className="text-2xl font-bold tracking-tight text-foreground">{PAGE_TITLE}</h1>
       </div>
 
       <Alert variant="destructive">
@@ -59,7 +60,7 @@ export function SkuPageDataError({ error, onRetry }: { error: Error | null; onRe
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-3xl font-bold tracking-tight text-gray-900">{PAGE_TITLE}</h1>
+        <h1 className="text-2xl font-bold tracking-tight text-foreground">{PAGE_TITLE}</h1>
       </div>
 
       <Alert variant="destructive">

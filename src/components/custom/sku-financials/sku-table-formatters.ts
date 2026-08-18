@@ -51,9 +51,10 @@ export function formatSignedCurrency(value: number | null): string {
 /**
  * Get color class based on value (positive = green, negative = red)
  */
+// 168.9: value-sign → semantic financial tokens (wave idiom); zero/null stay muted.
 export function getValueColorClass(value: number | null): string {
-  if (value === null) return 'text-gray-400'
-  if (value > 0) return 'text-green-600'
-  if (value < 0) return 'text-red-600'
-  return 'text-gray-600'
+  if (value === null) return 'text-muted-foreground'
+  if (value > 0) return 'text-financial-positive'
+  if (value < 0) return 'text-financial-negative'
+  return 'text-muted-foreground'
 }

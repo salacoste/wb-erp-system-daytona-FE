@@ -4,7 +4,7 @@
  */
 
 import { describe, it, expect } from 'vitest'
-import { sharePercentage, formatPercent } from '../sku-table-formatters'
+import { sharePercentage, formatPercent, getValueColorClass } from '../sku-table-formatters'
 
 describe('sharePercentage', () => {
   it('computes part / total × 100', () => {
@@ -40,5 +40,33 @@ describe('formatPercent (share rendering)', () => {
 
   it('renders a numeric share with the % sign', () => {
     expect(formatPercent(25)).toContain('%')
+  })
+})
+
+// 168.9: value-sign → semantic financial tokens contract (exact class pins)
+describe('getValueColorClass (168.9 semantic tokens)', () => {
+  it('null → muted (unknown, not zero)', () => {
+    expect(getValueColorClass(null)).toBe('text-muted-foreground')
+  })
+
+  it('positive → financial-positive', () => {
+    expect(getValueColorClass(0.01)).toBe('text-financial-positive')
+    expect(getValueColorClass(4400)).toBe('text-financial-positive')
+  })
+
+  it('negative → financial-negative', () => {
+    expect(getValueColorClass(-0.01)).toBe('text-financial-negative')
+    expect(getValueColorClass(-500)).toBe('text-financial-negative')
+  })
+
+  it('zero → muted (no sign)', () => {
+    expect(getValueColorClass(0)).toBe('text-muted-foreground')
+  })
+
+  it('tree-wide: no legacy gray/green/red sign classes leak', () => {
+    for (const v of [null, 5, -5, 0] as const) {
+      const cls = getValueColorClass(v)
+      expect(cls).not.toMatch(/gray-|green-6|red-6/)
+    }
   })
 })
