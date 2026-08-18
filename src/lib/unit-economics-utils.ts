@@ -50,7 +50,7 @@ export function transformToWaterfallData(
     name: 'Выручка',
     value: revenue,
     runningTotal: revenue,
-    color: '#22C55E', // green
+    color: 'var(--color-chart-positive)', // money-in bar (168.11 token)
     isProfit: false,
   })
 
@@ -75,7 +75,7 @@ export function transformToWaterfallData(
     name: 'Прибыль',
     value: profit,
     runningTotal: profit,
-    color: profit >= 0 ? '#22C55E' : '#EF4444',
+    color: profit >= 0 ? 'var(--color-chart-positive)' : 'var(--color-chart-negative)',
     isProfit: true,
   })
 

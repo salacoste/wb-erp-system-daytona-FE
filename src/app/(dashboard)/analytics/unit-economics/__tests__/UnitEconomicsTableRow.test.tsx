@@ -58,11 +58,11 @@ describe('UnitEconomicsTableRow delivery column (H2)', () => {
     expect(dashes.length).toBeGreaterThanOrEqual(1)
   })
 
-  it('applies cyan color for delivery values', () => {
+  it('applies the information token color for delivery values (168.11)', () => {
     const item = makeItem({ costs_pct: { ...baseCosts, delivery_to_warehouse: 3.2 } })
     renderRow(item)
     const el = screen.getByText(/3[.,]2/)
-    expect(el.className).toContain('text-cyan-600')
+    expect(el.className).toContain('text-status-information')
   })
 
   it('applies gray color for missing delivery', () => {
@@ -119,5 +119,54 @@ describe('UnitEconomicsTableRow revenue — zero vs missing (Story 163.4-FE / FR
     expect(disclosure).not.toMatch(/FCU.*—/)
     // DCU label is omitted entirely when latestDcu===null (dcuLabel undefined → filter(Boolean)).
     expect(disclosure).not.toMatch(/DCU/)
+  })
+})
+
+// 168.11 token migration: margin thresholds (>=20 positive, <10 negative, mid neutral)
+// and the profitability Badge /15-chip classes (single token set shared with sku-financials).
+describe('UnitEconomicsTableRow — token colors (168.11)', () => {
+  function marginValueEl(margin: number | null) {
+    const { container } = renderRow(makeItem({ net_margin_pct: margin }))
+    // Column-index navigation (pass-1 MEDIUM fix): independent of the badge status,
+    // which is fixture-driven and orthogonal to the margin cell. The costs cell renders
+    // nested <td>s (5 cost categories), so the row has 10 td elements: margin value is
+    // td[8] (0 sku, 1 name, 2 revenue, 3-7 costs, 8 margin, 9 badge) — content-pinned
+    // by the percentage text below, so a column reshuffle fails loudly here too.
+    const tds = container.querySelectorAll('tbody tr td')
+    expect(tds[8]?.textContent).toContain('%')
+    const cell = tds[8]
+    return cell?.querySelector('span.font-medium') ?? undefined
+  }
+
+  it('margin >= 20 uses text-financial-positive', () => {
+    expect(marginValueEl(25)?.className).toContain('text-financial-positive')
+  })
+
+  it('margin < 10 uses text-financial-negative', () => {
+    expect(marginValueEl(5)?.className).toContain('text-financial-negative')
+  })
+
+  it('margin 10-20 stays neutral (muted, never positive/negative)', () => {
+    const el = marginValueEl(15)
+    expect(el?.className).toContain('text-muted-foreground')
+    expect(el?.className).not.toContain('text-financial-positive')
+    expect(el?.className).not.toContain('text-financial-negative')
+  })
+
+  it.each([
+    ['good', 'bg-status-information/15 text-status-information'],
+    ['loss', 'bg-financial-negative/15 text-financial-negative'],
+    ['excellent', 'bg-financial-positive/15 text-financial-positive'],
+  ] as const)('profitability badge for %s uses the /15-chip token set', (status, expected) => {
+    renderRow(makeItem({ profitability_status: status }))
+    const label = status === 'good' ? 'Хорошо' : status === 'loss' ? 'Убыток' : 'Отлично'
+    const badge = screen.getByText(label)
+    expect(badge.className).toContain(expected)
+  })
+
+  it('badge carries no inline style color (token classes only, 168.11)', () => {
+    renderRow(makeItem({ profitability_status: 'good' }))
+    const badge = screen.getByText('Хорошо')
+    expect(badge.getAttribute('style')).toBeNull()
   })
 })

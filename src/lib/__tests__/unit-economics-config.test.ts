@@ -35,7 +35,7 @@ describe('unit-economics-config — getProfitabilityConfig (F-49 guard)', () => 
       // drifted value is indicated, not mislabelled (Defensive Frontend Principle, F-49).
       expect(result).not.toBe(PROFITABILITY_STATUS_CONFIG.warning)
       // Verify sentinel properties (neutral grey, not a real margin band)
-      expect(result.color).toBe('#6B7280')
+      expect(result.color).toBe('var(--color-muted-foreground)')
       expect(result.label).toBe('Неизвестно')
     })
 
@@ -47,15 +47,17 @@ describe('unit-economics-config — getProfitabilityConfig (F-49 guard)', () => 
     })
 
     it('satellite getters return the neutral sentinel values', () => {
-      expect(getProfitabilityColor(drift)).toBe('#6B7280')
+      expect(getProfitabilityColor(drift)).toBe('var(--color-muted-foreground)')
       expect(getProfitabilityLabel(drift)).toBe('Неизвестно')
-      expect(getProfitabilityBgClass(drift)).toBe('bg-gray-400')
-      expect(getProfitabilityBadgeClasses(drift)).toBe('bg-gray-400 text-white')
+      expect(getProfitabilityBgClass(drift)).toBe('bg-muted')
+      expect(getProfitabilityBadgeClasses(drift)).toBe('bg-muted text-muted-foreground')
     })
 
     it('handles empty string without throwing', () => {
       expect(() => getProfitabilityConfig('' as unknown as ProfitabilityStatus)).not.toThrow()
-      expect(getProfitabilityConfig('' as unknown as ProfitabilityStatus).color).toBe('#6B7280')
+      expect(getProfitabilityConfig('' as unknown as ProfitabilityStatus).color).toBe(
+        'var(--color-muted-foreground)'
+      )
     })
   })
 })

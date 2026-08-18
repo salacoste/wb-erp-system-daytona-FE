@@ -20,10 +20,8 @@ export interface ProfitabilityStatusConfig {
   label: string
   /** Short label for badges */
   labelShort: string
-  /** Primary color hex */
+  /** Primary color (CSS var since 168.11 token migration) */
   color: string
-  /** Background color for badges */
-  bgColor: string
   /** Tailwind bg class */
   bgClass: string
   /** Tailwind text class */

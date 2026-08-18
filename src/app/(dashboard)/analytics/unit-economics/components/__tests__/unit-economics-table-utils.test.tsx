@@ -7,12 +7,12 @@ describe('getSortIcon', () => {
   it('shows gray ArrowUpDown for inactive field', () => {
     const { container } = render(<span>{getSortIcon('revenue', 'net_margin_pct', 'desc')}</span>)
     expect(container.querySelector('.text-muted-foreground')).toBeTruthy()
-    expect(container.querySelector('.text-blue-500')).toBeFalsy()
+    expect(container.querySelector('.text-status-information')).toBeFalsy()
   })
 
   it('shows blue ArrowUp for active field asc', () => {
     const { container } = render(<span>{getSortIcon('revenue', 'revenue', 'asc')}</span>)
-    const svg = container.querySelector('.text-blue-500')
+    const svg = container.querySelector('.text-status-information')
     expect(svg).toBeTruthy()
     expect(container.querySelector('.text-muted-foreground')).toBeFalsy()
     // Store asc SVG markup for comparison
@@ -22,25 +22,25 @@ describe('getSortIcon', () => {
     const { container: descContainer } = render(
       <span>{getSortIcon('revenue', 'revenue', 'desc')}</span>
     )
-    const descSvg = descContainer.querySelector('.text-blue-500')
+    const descSvg = descContainer.querySelector('.text-status-information')
     expect(descSvg!.innerHTML).not.toBe(ascMarkup)
   })
 
   it('shows blue ArrowDown for active field desc', () => {
     const { container } = render(<span>{getSortIcon('revenue', 'revenue', 'desc')}</span>)
-    expect(container.querySelector('.text-blue-500')).toBeTruthy()
+    expect(container.querySelector('.text-status-information')).toBeTruthy()
   })
 })
 
 describe('MarginIndicator', () => {
   it('shows green TrendingUp for margin >= 20%', () => {
     const { container } = render(<MarginIndicator value={25} />)
-    expect(container.querySelector('.text-green-500')).toBeTruthy()
+    expect(container.querySelector('.text-financial-positive')).toBeTruthy()
   })
 
   it('shows red TrendingDown for margin < 10%', () => {
     const { container } = render(<MarginIndicator value={5} />)
-    expect(container.querySelector('.text-red-500')).toBeTruthy()
+    expect(container.querySelector('.text-financial-negative')).toBeTruthy()
   })
 
   it('shows gray Minus for margin between 10-20%', () => {
@@ -51,8 +51,8 @@ describe('MarginIndicator', () => {
   it('shows neutral Minus for null margin (unknown), never green/red (anti-pattern #8)', () => {
     const { container } = render(<MarginIndicator value={null} />)
     expect(container.querySelector('.text-muted-foreground')).toBeTruthy()
-    expect(container.querySelector('.text-green-500')).toBeNull()
-    expect(container.querySelector('.text-red-500')).toBeNull()
+    expect(container.querySelector('.text-financial-positive')).toBeNull()
+    expect(container.querySelector('.text-financial-negative')).toBeNull()
   })
 })
 
@@ -71,12 +71,12 @@ describe('CostCell', () => {
 
   it('shows red for value above high threshold', () => {
     const { container } = renderCell(50, 40)
-    expect(container.querySelector('.text-red-600')).toBeTruthy()
+    expect(container.querySelector('.text-status-error')).toBeTruthy()
   })
 
   it('shows orange for value between med and high', () => {
     const { container } = renderCell(35, 40, 30)
-    expect(container.querySelector('.text-orange-600')).toBeTruthy()
+    expect(container.querySelector('.text-status-warning')).toBeTruthy()
   })
 
   it('shows gray for value below thresholds', () => {
@@ -89,6 +89,6 @@ describe('CostCell', () => {
     expect(container.textContent).toContain('—')
     expect(container.textContent).not.toMatch(/0,0\s*%/)
     expect(container.querySelector('.text-muted-foreground')).toBeTruthy()
-    expect(container.querySelector('.text-red-600')).toBeNull()
+    expect(container.querySelector('.text-status-error')).toBeNull()
   })
 })

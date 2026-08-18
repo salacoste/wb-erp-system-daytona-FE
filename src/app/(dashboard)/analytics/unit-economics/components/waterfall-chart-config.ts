@@ -5,7 +5,12 @@
  * Extracted from waterfall-chart-utils.ts (file size compliance).
  */
 
-/** Color scheme from UX specs */
+/**
+ * Color scheme from UX specs
+ * Story 168.11: profit/loss migrated to chart sign tokens. The 10 categorical cost
+ * colors intentionally remain hex — collapsing 13 series onto 11 tokens would force
+ * profit↔advertising / loss↔penalties collisions (tier-collapse guard, see record).
+ */
 export const WATERFALL_COLORS = {
   revenue: '#2196F3', // Blue - starting point
   cogs: '#FF9800', // Orange - significant cost
@@ -18,8 +23,8 @@ export const WATERFALL_COLORS = {
   other_deductions: '#9E9E9E', // Gray - misc
   advertising: '#14B8A6', // Teal - marketing
   delivery_to_warehouse: '#06B6D4', // Cyan - seller delivery cost
-  profit: '#4CAF50', // Green - positive outcome
-  loss: '#F44336', // Red - negative outcome
+  profit: 'var(--color-chart-positive)', // Positive outcome (168.11 token)
+  loss: 'var(--color-chart-negative)', // Negative outcome (168.11 token)
 }
 
 /**

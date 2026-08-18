@@ -10,15 +10,19 @@ import type {
   CostsPct,
 } from '@/types/unit-economics'
 
-/** Profitability status display configuration (net margin % thresholds) */
+/**
+ * Profitability status display configuration (net margin % thresholds)
+ * Story 168.11: token migration — one token set shared with the 168.9 legend and
+ * sku-financials PROFITABILITY_COLORS/HEX (/15-chip idiom, 168.8 precedent).
+ * bgColor hex field removed: no consumers outside tests (verified by grep, 168.11).
+ */
 export const PROFITABILITY_STATUS_CONFIG: Record<ProfitabilityStatus, ProfitabilityStatusConfig> = {
   excellent: {
     label: 'Отлично',
     labelShort: 'Отл.',
-    color: '#22C55E', // green-500
-    bgColor: '#DCFCE7', // green-100
-    bgClass: 'bg-green-500',
-    textClass: 'text-white',
+    color: 'var(--color-financial-positive)',
+    bgClass: 'bg-financial-positive/15',
+    textClass: 'text-financial-positive',
     icon: '🟢',
     minMargin: 25,
     maxMargin: Infinity,
@@ -26,10 +30,9 @@ export const PROFITABILITY_STATUS_CONFIG: Record<ProfitabilityStatus, Profitabil
   good: {
     label: 'Хорошо',
     labelShort: 'Хор.',
-    color: '#84CC16', // lime-500
-    bgColor: '#ECFCCB', // lime-100
-    bgClass: 'bg-lime-500',
-    textClass: 'text-white',
+    color: 'var(--color-status-information)',
+    bgClass: 'bg-status-information/15',
+    textClass: 'text-status-information',
     icon: '🟡',
     minMargin: 15,
     maxMargin: 25,
@@ -37,10 +40,9 @@ export const PROFITABILITY_STATUS_CONFIG: Record<ProfitabilityStatus, Profitabil
   warning: {
     label: 'Внимание',
     labelShort: 'Вним.',
-    color: '#EAB308', // yellow-500
-    bgColor: '#FEF9C3', // yellow-100
-    bgClass: 'bg-yellow-500',
-    textClass: 'text-white',
+    color: 'var(--color-status-warning)',
+    bgClass: 'bg-status-warning/15',
+    textClass: 'text-status-warning',
     icon: '🟠',
     minMargin: 5,
     maxMargin: 15,
@@ -48,10 +50,9 @@ export const PROFITABILITY_STATUS_CONFIG: Record<ProfitabilityStatus, Profitabil
   critical: {
     label: 'Критично',
     labelShort: 'Крит.',
-    color: '#F97316', // orange-500
-    bgColor: '#FFEDD5', // orange-100
-    bgClass: 'bg-orange-500',
-    textClass: 'text-white',
+    color: 'var(--color-status-error)',
+    bgClass: 'bg-status-error/15',
+    textClass: 'text-status-error',
     icon: '🔴',
     minMargin: 0,
     maxMargin: 5,
@@ -59,10 +60,9 @@ export const PROFITABILITY_STATUS_CONFIG: Record<ProfitabilityStatus, Profitabil
   loss: {
     label: 'Убыток',
     labelShort: 'Убыт.',
-    color: '#EF4444', // red-500
-    bgColor: '#FEE2E2', // red-100
-    bgClass: 'bg-red-500',
-    textClass: 'text-white',
+    color: 'var(--color-financial-negative)',
+    bgClass: 'bg-financial-negative/15',
+    textClass: 'text-financial-negative',
     icon: '⚫',
     minMargin: -Infinity,
     maxMargin: 0,
@@ -76,10 +76,9 @@ export const PROFITABILITY_STATUS_CONFIG: Record<ProfitabilityStatus, Profitabil
 const UNKNOWN_PROFITABILITY_CONFIG: ProfitabilityStatusConfig = {
   label: 'Неизвестно',
   labelShort: 'Неизв.',
-  color: '#6B7280', // gray-500
-  bgColor: '#F3F4F6', // gray-100
-  bgClass: 'bg-gray-400',
-  textClass: 'text-white',
+  color: 'var(--color-muted-foreground)',
+  bgClass: 'bg-muted',
+  textClass: 'text-muted-foreground',
   icon: '⚪',
   minMargin: 0,
   maxMargin: 0,

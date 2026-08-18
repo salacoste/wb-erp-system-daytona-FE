@@ -9,6 +9,8 @@ import { cn } from '@/lib/utils'
 export interface MetricCardProps {
   icon: React.ComponentType<{ className?: string }>
   iconColor: string
+  /** Icon color on the chip — pass the paired *-foreground token for dark-safe contrast. */
+  iconTextColor?: string
   label: string
   value: string
   subtext?: string
@@ -26,6 +28,7 @@ export interface MetricCardProps {
 export function MetricCard({
   icon: Icon,
   iconColor,
+  iconTextColor = 'text-white',
   label,
   value,
   subtext,
@@ -38,7 +41,7 @@ export function MetricCard({
       <CardContent className="p-4">
         <div className="flex items-start gap-3">
           <div className={cn('p-2 rounded-lg', iconColor)}>
-            <Icon className="h-5 w-5 text-white" />
+            <Icon className={cn('h-5 w-5', iconTextColor)} />
           </div>
           <div className="flex-1 min-w-0">
             <div className="text-sm text-muted-foreground mb-1">{label}</div>
@@ -50,8 +53,8 @@ export function MetricCard({
               <div
                 className={cn(
                   'text-xs mt-1 flex items-center gap-1',
-                  trend === 'up' && 'text-green-600',
-                  trend === 'down' && 'text-red-600',
+                  trend === 'up' && 'text-financial-positive',
+                  trend === 'down' && 'text-financial-negative',
                   trend === 'neutral' && 'text-muted-foreground'
                 )}
               >
