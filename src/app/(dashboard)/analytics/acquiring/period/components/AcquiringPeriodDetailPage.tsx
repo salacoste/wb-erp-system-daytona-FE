@@ -81,7 +81,7 @@ export function AcquiringPeriodDetailPage() {
       {/* Page header */}
       <div>
         <div className="flex items-center gap-2">
-          <h1 className="text-3xl font-bold tracking-tight">Эквайринг за период</h1>
+          <h1 className="text-2xl font-bold tracking-tight">Эквайринг за период</h1>
           <TooltipProvider>
             <Tooltip>
               <TooltipTrigger asChild>
@@ -176,7 +176,7 @@ export function AcquiringPeriodDetailPage() {
         <>
           {/* Inline refetch-error chip when we have cached data but the refetch failed */}
           {isError && hasData && (
-            <div className="rounded-md border border-amber-200 bg-amber-50 px-4 py-2 text-sm text-amber-800 flex items-center justify-between">
+            <div className="rounded-md border border-status-warning/30 bg-status-warning/15 px-4 py-2 text-sm text-status-warning flex items-center justify-between">
               <span>
                 {rateLimit.isRateLimited
                   ? `WB временно недоступна — показаны кэшированные данные. Повтор через ~${rateLimit.retryAfterSeconds} сек`

@@ -10,6 +10,7 @@ import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
 import { act, screen } from '@testing-library/react'
 import { renderWithProviders } from '@/test/utils/test-utils'
 import type { AcquiringDetailResponse } from '@/types/acquiring-analytics'
+import { ApiError } from '@/types/api'
 
 // Mock the hook before importing the component
 const mockUseAcquiringPeriodDetail = vi.fn()
@@ -133,5 +134,56 @@ describe('AcquiringPeriodDetailPage', () => {
       screen.getByText(/Транзакции эквайринга загружаются дольше обычного/)
     ).toBeInTheDocument()
     expect(screen.getByRole('button', { name: /Повторить/ })).toBeInTheDocument()
+  })
+
+  it('h1 uses wave-canonical text-2xl size (169.2 token migration)', () => {
+    mockSuccess({ data: [makeTransaction(1)], cachedAt: '' })
+
+    renderWithProviders(<AcquiringPeriodDetailPage />)
+
+    const h1 = screen.getByRole('heading', { name: 'Эквайринг за период' })
+    expect(h1).toBeInTheDocument()
+    expect(h1.getAttribute('class')).toContain('text-2xl')
+  })
+
+  it('inline refetch-error chip uses status-warning matched-pair tokens (no amber)', () => {
+    // isError && hasData → stale-data chip rendered alongside cached content
+    mockUseAcquiringPeriodDetail.mockReturnValue({
+      data: { data: [makeTransaction(1)], cachedAt: '2026-04-10T12:00:00Z' },
+      isLoading: false,
+      isError: true,
+      error: new Error('refetch failed'),
+      refetch: vi.fn(),
+    })
+
+    renderWithProviders(<AcquiringPeriodDetailPage />)
+
+    const chip = screen
+      .getByText(/Не удалось обновить.*Показаны кэшированные данные/)
+      .closest('div')
+    expect(chip).not.toBeNull()
+    const cls = chip!.getAttribute('class') ?? ''
+    expect(cls).toContain('bg-status-warning/15')
+    expect(cls).toContain('text-status-warning')
+    expect(cls).toContain('border-status-warning/30')
+    expect(cls).not.toContain('amber')
+  })
+
+  it('shows rate-limit banner instead of generic full-error when 503 and no cached data', () => {
+    mockUseAcquiringPeriodDetail.mockReturnValue({
+      data: undefined,
+      isLoading: false,
+      isError: true,
+      error: new ApiError('Rate limited', 503),
+      refetch: vi.fn(),
+    })
+
+    renderWithProviders(<AcquiringPeriodDetailPage />)
+
+    // Rate-limit banner wins over the destructive generic error alert
+    expect(screen.getByTestId('acquiring-rate-limit-banner')).toBeInTheDocument()
+    expect(
+      screen.queryByText('Не удалось загрузить транзакции. Попробуйте ещё раз.')
+    ).not.toBeInTheDocument()
   })
 })
