@@ -11,7 +11,7 @@ interface Props {
 /**
  * Acquiring rate-limit banner — Story 96.9-FE, request-backend/169 § 1.1
  *
- * Amber banner shown when a 503 response surfaces from any of the 3 acquiring
+ * Amber (status-warning token) banner shown when a 503 response surfaces from any of the 3 acquiring
  * endpoints. Used by AcquiringPageContent, AcquiringReportDetailPage, and
  * AcquiringPeriodDetailPage.
  *
@@ -34,7 +34,7 @@ export function AcquiringRateLimitBanner({ retryAfterSeconds, onRefetch }: Props
   return (
     <div
       role="status"
-      className="rounded-md border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800 flex items-center justify-between"
+      className="rounded-md border border-status-warning/30 bg-status-warning/15 px-4 py-3 text-sm text-status-warning flex items-center justify-between"
       data-testid="acquiring-rate-limit-banner"
     >
       <div className="flex items-center gap-2">
