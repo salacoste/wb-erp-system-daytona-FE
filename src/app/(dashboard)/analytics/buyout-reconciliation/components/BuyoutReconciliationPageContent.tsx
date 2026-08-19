@@ -19,6 +19,7 @@ import { useState, useMemo, useEffect } from 'react'
 import { format, subDays } from 'date-fns'
 import { useAuthStore } from '@/stores/authStore'
 import { useBuyoutReconciliation } from '@/hooks/use-buyout-reconciliation'
+import { formatDate } from '@/lib/formatters'
 import { ReconciliationControls } from './ReconciliationControls'
 import { ReconciliationStateMachine } from './ReconciliationStateMachine'
 import type { DateRange } from '@/types/date-range'
@@ -80,13 +81,21 @@ export function BuyoutReconciliationPageContent() {
   const showNoAnomalies = hasData && totalAnomalies === 0
   const showTable = hasData && totalAnomalies > 0
 
+  // Epic 169.5 RTC: caption period identity (ru-RU DD.MM.YYYY); dateRange can be cleared
+  // by the picker (onChange accepts undefined) → "за всё время" fallback so the caption
+  // always names the period (169.4 BuyoutTable precedent).
+  // MAIN-verify fix: PageContent builds the FULL phrase fragment ("за период … — …"
+  // or "за всё время") — single source; Table renders the prop as-is.
+  const periodLabel = dateRange
+    ? `за период ${formatDate(dateRange.from)} — ${formatDate(dateRange.to)}`
+    : 'за всё время'
+
   return (
     <div className="space-y-6" data-testid="buyout-reconciliation-page">
       {/* Page header */}
       <div>
-        <h1 className="text-3xl font-bold tracking-tight text-gray-900">
-          Сверка выкупов и возвратов
-        </h1>
+        {/* Epic 169.5: 169.x h1 canon (was 3xl + legacy gray text token; foreground inherited) */}
+        <h1 className="text-2xl font-bold tracking-tight">Сверка выкупов и возвратов</h1>
         <p className="text-muted-foreground mt-1">
           Сверка данных выкупов и возвратов по источникам с индикаторами аномалий
         </p>
@@ -115,6 +124,7 @@ export function BuyoutReconciliationPageContent() {
         isError={isError}
         hasData={hasData}
         onRetry={() => void refetch()}
+        periodLabel={periodLabel}
       />
     </div>
   )

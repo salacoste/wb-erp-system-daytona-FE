@@ -3,7 +3,7 @@
  *
  * Verifies Defensive Frontend indicator component:
  *   - count <= 0: renders plain number, no AlertTriangle
- *   - count > 0: renders amber count + AlertTriangle + correct aria-label per type
+ *   - count > 0: renders warning count + AlertTriangle + correct aria-label per type
  *   - Keyboard a11y: tabIndex present (Story 96.13 L2-2 lesson)
  */
 
@@ -59,5 +59,26 @@ describe('AnomalyIndicator', () => {
     renderWithTooltip(<AnomalyIndicator count={-1} type="return_without_buyout" />)
     expect(screen.getByText('-1')).toBeInTheDocument()
     expect(screen.queryByLabelText(/Аномалия/)).toBeNull()
+  })
+
+  // Epic 169.5: status-token pins (exact class assertions, no [class*=])
+  it('Epic 169.5: count and icon use text-status-warning; no legacy amber count class', () => {
+    const { container } = renderWithTooltip(<AnomalyIndicator count={3} type="orphan_buyout" />)
+    const count = screen.getByText('3')
+    expect(count).toHaveClass('text-status-warning')
+    // Negative pin: legacy amber literal must be gone (Epic 169.5)
+    expect(count).not.toHaveClass('text-amber-700')
+    const icon = container.querySelector('svg')
+    expect(icon).not.toBeNull()
+    expect(icon).toHaveClass('text-status-warning')
+  })
+
+  it('Epic 169.5: tooltip trigger uses focus-visible:ring-ring token', () => {
+    const { container } = renderWithTooltip(<AnomalyIndicator count={5} type="orphan_buyout" />)
+    const trigger = container.querySelector('[tabindex="0"]')
+    expect(trigger).not.toBeNull()
+    expect(trigger).toHaveClass('focus-visible:ring-ring')
+    // Ring weight preserved (Epic 169.5: token swap only, no weight change)
+    expect(trigger).toHaveClass('focus-visible:ring-2')
   })
 })

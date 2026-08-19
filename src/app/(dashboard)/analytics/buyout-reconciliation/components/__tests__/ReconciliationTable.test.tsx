@@ -103,4 +103,34 @@ describe('ReconciliationTable', () => {
     expect(badge).toHaveTextContent('Неизвестен')
     expect(badge.querySelector('svg')).not.toBeNull()
   })
+
+  // Epic 169.5 RTC additions: TableCaption + tabular-nums (exact class assertions)
+  it('Epic 169.5: renders caption with period label when periodLabel provided', () => {
+    renderWithProviders(
+      <ReconciliationTable
+        items={[withAnomalyItem()]}
+        periodLabel="за период 01.04.2026 — 30.04.2026"
+      />
+    )
+    // MAIN-verify fix: phrase ("за период …") arrives complete from PageContent
+    const caption = screen.getByText(/Реконсиляция выкупов за период 01\.04\.2026 — 30\.04\.2026/)
+    // Locale-formatted period (ru-RU DD.MM.YYYY)
+    expect(caption.textContent).toMatch(/\d{2}\.\d{2}\.\d{4} — \d{2}\.\d{2}\.\d{4}/)
+  })
+
+  it('Epic 169.5: caption falls back to "за всё время" when no periodLabel', () => {
+    renderWithProviders(<ReconciliationTable items={[withAnomalyItem()]} />)
+    // MAIN-verify fix: no double "за" — fallback renders exactly one phrase
+    const caption = screen.getByText(/Реконсиляция выкупов за всё время/)
+    expect(caption.textContent).not.toMatch(/за всё время.*за всё время/)
+    expect(caption.textContent).not.toContain('за период за всё время')
+  })
+
+  it('Epic 169.5: exactly 5 tabular-nums cells per row (numeric value columns)', () => {
+    renderWithProviders(<ReconciliationTable items={[withAnomalyItem()]} />)
+    // buyoutQuantity, returnQuantity + 3 anomaly columns = 5 td per row.
+    // AnomalyIndicator spans inside anomaly td carry no tabular-nums; td counts.
+    const cells = document.querySelectorAll('td.tabular-nums')
+    expect(cells).toHaveLength(5)
+  })
 })

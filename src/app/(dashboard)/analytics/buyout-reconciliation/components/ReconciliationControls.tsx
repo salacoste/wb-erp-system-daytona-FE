@@ -40,8 +40,9 @@ export function ReconciliationControls({
           className="w-56"
           aria-label="Фильтр по артикулу WB"
         />
+        {/* Epic 169.5: warning semantics via status token (was amber-700 literal) */}
         {showNmIdError && (
-          <p className="text-xs text-amber-700">Должно быть положительное целое число</p>
+          <p className="text-xs text-status-warning">Должно быть положительное целое число</p>
         )}
       </div>
     </div>
