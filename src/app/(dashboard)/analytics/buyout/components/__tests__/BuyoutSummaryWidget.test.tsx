@@ -131,8 +131,17 @@ describe('BuyoutSummaryWidget', () => {
   it('renders progress bar with correct width', () => {
     mockUseBuyoutSummary.mockReturnValue(hookReturn({ data: mockSummary }))
     const { container } = renderWithProviders(<BuyoutSummaryWidget {...defaultProps} />)
-    const bar = container.querySelector('.bg-green-500')
+    const bar = container.querySelector('.bg-status-success')
     expect(bar).toHaveStyle({ width: '78.5%' })
+  })
+
+  // Epic 169.4: process metric uses status tokens — fill=status-success, track=error/15 tint
+  it('uses status-token bar (fill bg-status-success, track bg-status-error/15)', () => {
+    mockUseBuyoutSummary.mockReturnValue(hookReturn({ data: mockSummary }))
+    const { container } = renderWithProviders(<BuyoutSummaryWidget {...defaultProps} />)
+    const track = container.querySelector('.bg-status-error\\/15')
+    expect(track).toBeInTheDocument()
+    expect(track).toContainElement(container.querySelector('.bg-status-success'))
   })
 
   it('shows total returns count and sales count', () => {

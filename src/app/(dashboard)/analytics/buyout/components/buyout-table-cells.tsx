@@ -29,7 +29,7 @@ export function ReasonCell({
       </TableCell>
     )
   if (count == null) return <TableCell className="text-muted-foreground">—</TableCell>
-  return <TableCell className={`font-medium ${color}`}>{count}</TableCell>
+  return <TableCell className={`font-medium tabular-nums ${color}`}>{count}</TableCell>
 }
 
 export function TrendIndicator({ trend, delta }: { trend?: TrendDirection; delta?: number }) {
@@ -39,11 +39,12 @@ export function TrendIndicator({ trend, delta }: { trend?: TrendDirection; delta
 
   const isDown = trend === 'down'
   const Icon = isDown ? TrendingDown : TrendingUp
-  const color = isDown ? 'text-red-500' : 'text-green-500'
+  // Epic 169.4: financial valence tokens (direction of the buyout trend = good/bad)
+  const color = isDown ? 'text-financial-negative' : 'text-financial-positive'
   const sign = isDown ? '' : '+'
 
   return (
-    <span className={`flex items-center gap-1 text-sm ${color}`}>
+    <span className={`flex items-center gap-1 text-sm tabular-nums ${color}`}>
       <Icon className="h-4 w-4" />
       {delta != null && (
         <span>
@@ -65,14 +66,15 @@ export function ConfidenceBadge({ confidence }: { confidence?: BuyoutConfidence 
 
   if (confidence === 'medium') {
     return (
-      <span className="inline-flex items-center px-2 py-0.5 rounded text-xs bg-gray-100 text-gray-600">
+      <span className="inline-flex items-center px-2 py-0.5 rounded text-xs bg-muted text-muted-foreground">
         Мало данных
       </span>
     )
   }
 
+  // Epic 169.4: low-confidence warning chip via /15-chip idiom (no border — source had none)
   return (
-    <span className="inline-flex items-center px-2 py-0.5 rounded text-xs bg-yellow-50 text-yellow-700">
+    <span className="inline-flex items-center px-2 py-0.5 rounded text-xs bg-status-warning/15 text-status-warning">
       Недостаточно данных
     </span>
   )

@@ -112,9 +112,11 @@ export function BuyoutSummaryWidget({
                   )}
                 </span>
               </div>
-              <div className="h-3 rounded-full bg-red-100 overflow-hidden">
+              {/* Epic 169.4: progress metric — status tokens (process, not financial);
+                  track = error-tinted remainder, fill = success. */}
+              <div className="h-3 rounded-full bg-status-error/15 overflow-hidden">
                 <div
-                  className="h-full rounded-full bg-green-500 transition-all"
+                  className="h-full rounded-full bg-status-success transition-all"
                   style={{ width: `${Math.min(buyoutPct, 100)}%` }}
                 />
               </div>
@@ -125,7 +127,7 @@ export function BuyoutSummaryWidget({
                 Нет данных о выкупах за выбранный период
               </p>
               {returnPct != null && (
-                <p className="mt-1 text-xs text-amber-700">
+                <p className="mt-1 text-xs text-status-warning">
                   Возвраты: {formatPercentage(returnPct)} (процент выкупа недоступен)
                 </p>
               )}
@@ -147,7 +149,7 @@ export function BuyoutSummaryWidget({
             <SourceBadge source={data.source} />
           </div>
           {data.source === 'unknown' && (
-            <p className="text-xs text-amber-700 mt-1">
+            <p className="text-xs text-status-warning mt-1">
               * Источник данных не распознан backend&apos;ом. Возможна ошибка нормализации на
               стороне WB API.
             </p>

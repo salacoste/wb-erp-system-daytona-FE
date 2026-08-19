@@ -45,11 +45,8 @@ export function BuyoutDailyTrendTooltip({
   const dataPoint = payload[0].payload
 
   return (
-    <div
-      className="rounded-lg border border-gray-200 bg-white p-3 shadow-lg"
-      style={{ maxWidth: 260 }}
-    >
-      <p className="mb-2 border-b border-gray-200 pb-2 text-sm font-semibold text-gray-900">
+    <div className="rounded-lg border bg-popover p-3 shadow-lg" style={{ maxWidth: 260 }}>
+      <p className="mb-2 border-b pb-2 text-sm font-semibold text-foreground">
         {formatDailyTooltipDate(dataPoint.date)}
       </p>
       <div className="space-y-1.5">
@@ -65,7 +62,7 @@ export function BuyoutDailyTrendTooltip({
                     backgroundColor: BUYOUT_TREND_COLORS[series.key as BuyoutTrendMetricKey],
                   }}
                 />
-                <span className="text-gray-600">
+                <span className="text-muted-foreground">
                   {BUYOUT_TREND_LABELS[series.key as BuyoutTrendMetricKey]}
                 </span>
               </span>

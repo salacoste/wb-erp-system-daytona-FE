@@ -123,19 +123,20 @@ export function BuyoutTrendChart({ from, to, className }: BuyoutTrendChartProps)
             initialDimension={{ width: 1, height: 1 }}
           >
             <LineChart data={daily} margin={{ top: 12, right: 10, bottom: 40, left: 40 }}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#EEEEEE" />
+              {/* Epic 169.4: grid/axis stroke via semantic border token (168.11 waterfall precedent) */}
+              <CartesianGrid strokeDasharray="3 3" stroke="var(--color-border)" />
               <XAxis
                 dataKey="date"
                 tickFormatter={formatDailyDate}
-                tick={{ fontSize: 12, fill: '#757575' }}
-                axisLine={{ stroke: '#EEEEEE' }}
-                tickLine={{ stroke: '#EEEEEE' }}
+                tick={{ fontSize: 12, fill: 'var(--color-chart-axis)' }}
+                axisLine={{ stroke: 'var(--color-border)' }}
+                tickLine={{ stroke: 'var(--color-border)' }}
               />
               <YAxis
                 yAxisId="left"
                 tickFormatter={(v: number) => formatPercentage(v)}
-                tick={{ fontSize: 12, fill: '#757575' }}
-                axisLine={{ stroke: '#EEEEEE' }}
+                tick={{ fontSize: 12, fill: 'var(--color-chart-axis)' }}
+                axisLine={{ stroke: 'var(--color-border)' }}
                 tickLine={false}
                 width={55}
                 domain={['auto', 'auto']}
@@ -143,15 +144,15 @@ export function BuyoutTrendChart({ from, to, className }: BuyoutTrendChartProps)
                   value: '%',
                   angle: -90,
                   position: 'insideLeft',
-                  style: { fontSize: 11, fill: '#757575' },
+                  style: { fontSize: 11, fill: 'var(--color-chart-axis)' },
                 }}
               />
               <YAxis
                 yAxisId="right"
                 orientation="right"
                 tickFormatter={formatCompactCount}
-                tick={{ fontSize: 12, fill: '#757575' }}
-                axisLine={{ stroke: '#EEEEEE' }}
+                tick={{ fontSize: 12, fill: 'var(--color-chart-axis)' }}
+                axisLine={{ stroke: 'var(--color-border)' }}
                 tickLine={false}
                 width={55}
               />

@@ -205,4 +205,38 @@ describe('BuyoutTable', () => {
       expect(screen.getByText('Стр2')).toBeInTheDocument()
     })
   })
+
+  // Epic 169.4 RTC: table is named for AT via TableCaption (169.1 precedent)
+  it('renders a caption naming the table with the period identity', () => {
+    mockUseBuyoutBySku.mockReturnValue(hookReturn({ data: mockBySkuData }))
+    renderWithProviders(<BuyoutTable {...defaultProps} />)
+    const caption = document.querySelector('caption')
+    expect(caption).toBeInTheDocument()
+    expect(caption?.textContent).toContain('Выкупы по SKU за период')
+    // Epic 169.4 P1-M1: human-readable ru-RU dates via formatDate (DD.MM.YYYY), not raw ISO
+    expect(caption?.textContent).toMatch(/\d{2}\.\d{2}\.\d{4}/)
+  })
+
+  // Epic 169.4: return-reason header triplet uses status tokens (information/warning/error)
+  it('renders status-token triplet on return-reason headers', () => {
+    mockUseBuyoutBySku.mockReturnValue(hookReturn({ data: mockBySkuData }))
+    renderWithProviders(<BuyoutTable {...defaultProps} />)
+    expect(screen.getByText('До отправки').closest('th')).toHaveClass('text-status-information')
+    expect(screen.getByText('Отказ ПВЗ').closest('th')).toHaveClass('text-status-warning')
+    expect(screen.getByText('После получ.').closest('th')).toHaveClass('text-status-error')
+  })
+
+  // Epic 169.4 RTC: numeric value cells use tabular figures
+  it('applies tabular-nums to numeric cells (counts, rate, reasons)', () => {
+    mockUseBuyoutBySku.mockReturnValue(hookReturn({ data: mockBySkuData }))
+    const { container } = renderWithProviders(<BuyoutTable {...defaultProps} />)
+    const tabularCells = Array.from(container.querySelectorAll('td.tabular-nums'))
+    // Exact count per fixture (2 items):
+    // - per row: sales + returns + rate + search-position td (class always present) = 4 × 2 = 8
+    // - row 1 returnBreakdown non-null (counts 5/8/5, not estimated) → 3 ReasonCell tabular tds
+    // - row 2 returnBreakdown null → ReasonCell renders muted "—" td WITHOUT tabular-nums
+    // - TrendIndicator tabular-nums is on a span, not td → not counted
+    // 8 + 3 = 11
+    expect(tabularCells.length).toBe(11)
+  })
 })

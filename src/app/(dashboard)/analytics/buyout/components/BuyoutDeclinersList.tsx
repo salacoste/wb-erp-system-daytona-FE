@@ -20,7 +20,7 @@ export function BuyoutDeclinersList({ decliners }: BuyoutDeclinersListProps) {
 
   return (
     <div className="space-y-2">
-      <div className="flex items-center gap-1 text-sm font-medium text-red-600">
+      <div className="flex items-center gap-1 text-sm font-medium text-financial-negative">
         <TrendingDown className="h-4 w-4" />
         Снижение выкупа
       </div>
@@ -34,7 +34,7 @@ export function BuyoutDeclinersList({ decliners }: BuyoutDeclinersListProps) {
             <span>
               {d.buyoutRatePct != null ? formatPercentageInt(d.buyoutRatePct) : '—'}
               {/* AP#8: null trend delta renders '—', never a fabricated "0 п.п." */}
-              <span className="text-red-500 ml-1">
+              <span className="text-financial-negative ml-1">
                 {d.trendDelta == null
                   ? '(— п.п.)'
                   : `(${d.trendDelta < 0 ? '' : '+'}${d.trendDelta.toFixed(0)} п.п.)`}

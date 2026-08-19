@@ -49,7 +49,7 @@ describe('ReasonCell', () => {
   it('shows dash when count is undefined', () => {
     render(
       <TableWrapper>
-        <ReasonCell count={undefined} color="text-red-500" />
+        <ReasonCell count={undefined} color="text-status-error" />
       </TableWrapper>
     )
     expect(screen.getByText('—')).toBeInTheDocument()
@@ -58,7 +58,7 @@ describe('ReasonCell', () => {
   it('shows zero when count is 0 (valid data, not missing)', () => {
     render(
       <TableWrapper>
-        <ReasonCell count={0} color="text-red-500" />
+        <ReasonCell count={0} color="text-status-error" />
       </TableWrapper>
     )
     expect(screen.getByText('0')).toBeInTheDocument()
@@ -67,7 +67,7 @@ describe('ReasonCell', () => {
   it('shows tilde with title when estimated (FBO)', () => {
     render(
       <TableWrapper>
-        <ReasonCell count={0} color="text-blue-500" estimated />
+        <ReasonCell count={0} color="text-status-information" estimated />
       </TableWrapper>
     )
     expect(screen.getByText('~')).toBeInTheDocument()
@@ -80,18 +80,18 @@ describe('ReasonCell', () => {
   it('shows count with color class when count is present', () => {
     render(
       <TableWrapper>
-        <ReasonCell count={42} color="text-orange-500" />
+        <ReasonCell count={42} color="text-status-warning" />
       </TableWrapper>
     )
     const cell = screen.getByText('42')
     expect(cell).toBeInTheDocument()
-    expect(cell).toHaveClass('font-medium', 'text-orange-500')
+    expect(cell).toHaveClass('font-medium', 'text-status-warning')
   })
 
   it('applies muted styling for dash variant', () => {
     render(
       <TableWrapper>
-        <ReasonCell count={undefined} color="text-green-500" />
+        <ReasonCell count={undefined} color="text-status-success" />
       </TableWrapper>
     )
     const cell = screen.getByText('—').closest('td')
@@ -114,16 +114,16 @@ describe('TrendIndicator', () => {
     expect(svg).toHaveClass('text-muted-foreground')
   })
 
-  it('shows green color for up trend', () => {
+  it('shows financial-positive token for up trend (Epic 169.4 valence idiom)', () => {
     const { container } = render(<TrendIndicator trend="up" />)
     const span = container.querySelector('span')
-    expect(span).toHaveClass('text-green-500')
+    expect(span).toHaveClass('text-financial-positive')
   })
 
-  it('shows red color for down trend', () => {
+  it('shows financial-negative token for down trend (Epic 169.4 valence idiom)', () => {
     const { container } = render(<TrendIndicator trend="down" />)
     const span = container.querySelector('span')
-    expect(span).toHaveClass('text-red-500')
+    expect(span).toHaveClass('text-financial-negative')
   })
 
   it('shows delta with + sign for up trend', () => {
@@ -175,16 +175,16 @@ describe('ConfidenceBadge', () => {
     expect(screen.getByText('Недостаточно данных')).toBeInTheDocument()
   })
 
-  it('applies gray styling for medium confidence', () => {
+  it('applies muted token styling for medium confidence (Epic 169.4)', () => {
     render(<ConfidenceBadge confidence="medium" />)
     const badge = screen.getByText('Мало данных')
-    expect(badge).toHaveClass('bg-gray-100', 'text-gray-600')
+    expect(badge).toHaveClass('bg-muted', 'text-muted-foreground')
   })
 
-  it('applies yellow styling for low confidence', () => {
+  it('applies status-warning /15-chip idiom for low confidence (Epic 169.4)', () => {
     render(<ConfidenceBadge confidence="low" />)
     const badge = screen.getByText('Недостаточно данных')
-    expect(badge).toHaveClass('bg-yellow-50', 'text-yellow-700')
+    expect(badge).toHaveClass('bg-status-warning/15', 'text-status-warning')
   })
 })
 
