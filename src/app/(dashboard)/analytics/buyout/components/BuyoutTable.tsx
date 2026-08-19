@@ -5,11 +5,12 @@ import { useState } from 'react'
 import { useBuyoutBySku } from '@/hooks/use-buyout-analytics'
 import { useAllProductsMap } from '@/hooks/use-all-products-map'
 import { useSearchPositionsMap } from '@/hooks/use-search-positions-map'
-import { Table, TableBody } from '@/components/ui/table'
+import { Table, TableBody, TableCaption } from '@/components/ui/table'
 import { Button } from '@/components/ui/button'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import { AlertCircle } from 'lucide-react'
+import { formatDate } from '@/lib/formatters'
 import type { BuyoutSource } from '@/types/analytics-buyout'
 import type { SortField } from './buyout-table-cells'
 import { BuyoutTableHeader, BuyoutTableRow } from './buyout-table-columns'
@@ -82,6 +83,10 @@ export function BuyoutTable({ from, to, source }: BuyoutTableProps) {
     <div className="space-y-4">
       <div className="rounded-md border overflow-x-auto">
         <Table aria-label="Таблица выкупов">
+          {/* Epic 169.4: TableCaption names the table for AT (RTC contract, 169.1 precedent) */}
+          <TableCaption>
+            Выкупы по SKU за период {formatDate(from)} — {formatDate(to)}
+          </TableCaption>
           <BuyoutTableHeader sort={sort} sortOrder={sortOrder} onSort={handleSort} />
           <TableBody>
             {items.map(item => (

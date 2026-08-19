@@ -33,10 +33,27 @@ export function DeltaTag({
   )
 }
 
+// Epic 169.4: categorical status triplet (information/warning/error) — mirrors table headers
+// and ReasonCell (buyout-table-columns) to keep the 3 return-reason states visually distinct.
 const REASON_COLORS = [
-  { key: 'cancelBeforeShipment', label: 'До отправки', bg: 'bg-blue-500', text: 'text-blue-600' },
-  { key: 'refusalAtPvz', label: 'Отказ на ПВЗ', bg: 'bg-orange-500', text: 'text-orange-600' },
-  { key: 'returnAfterReceipt', label: 'После получения', bg: 'bg-red-500', text: 'text-red-600' },
+  {
+    key: 'cancelBeforeShipment',
+    label: 'До отправки',
+    bg: 'bg-status-information',
+    text: 'text-status-information',
+  },
+  {
+    key: 'refusalAtPvz',
+    label: 'Отказ на ПВЗ',
+    bg: 'bg-status-warning',
+    text: 'text-status-warning',
+  },
+  {
+    key: 'returnAfterReceipt',
+    label: 'После получения',
+    bg: 'bg-status-error',
+    text: 'text-status-error',
+  },
 ] as const
 
 export function ReturnBreakdownBar({ breakdown }: { breakdown: ReturnBreakdown }) {
@@ -50,7 +67,7 @@ export function ReturnBreakdownBar({ breakdown }: { breakdown: ReturnBreakdown }
   return (
     <div className="space-y-2">
       <p className="text-sm font-medium">Причины возвратов (FBS)</p>
-      <div className="h-2.5 rounded-full bg-gray-100 overflow-hidden flex">
+      <div className="h-2.5 rounded-full bg-muted overflow-hidden flex">
         {segments.map(s =>
           s.pct > 0 ? (
             <div key={s.key} className={`h-full ${s.bg}`} style={{ width: `${s.pct}%` }} />

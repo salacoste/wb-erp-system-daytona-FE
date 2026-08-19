@@ -55,11 +55,13 @@ export function formatDelta(delta: BuyoutDelta): string {
   return `${arrow} ${fmt(Math.abs(delta.percent))}%`
 }
 
-/** Get Tailwind color class for delta direction (flips for inverted metrics) */
+/** Get token color class for delta direction (flips for inverted metrics).
+ *  Epic 169.4: financial valence idiom (orders/pricing precedent) — green/red literal
+ *  classes replaced with financial-positive/negative tokens. */
 export function getDeltaColor(direction: 'up' | 'down' | 'neutral', inverted: boolean): string {
   if (direction === 'neutral') return 'text-muted-foreground'
   const isPositive = inverted ? direction === 'down' : direction === 'up'
-  return isPositive ? 'text-green-600' : 'text-red-600'
+  return isPositive ? 'text-financial-positive' : 'text-financial-negative'
 }
 
 /** Key buyout metrics to compare */

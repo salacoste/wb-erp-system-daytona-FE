@@ -47,13 +47,15 @@ export function BuyoutTableHeader({ sort, sortOrder, onSort }: BuyoutTableHeader
             Выкуп %
           </SortBtn>
         </TableHead>
-        <TableHead className="text-blue-600" title="По статусам FBS-заказов">
+        {/* Epic 169.4: return-reason status triplet (information/warning/error), consistent
+            with REASON_COLORS in BuyoutSummarySubComponents and ReasonCell props below. */}
+        <TableHead className="text-status-information" title="По статусам FBS-заказов">
           До отправки
         </TableHead>
-        <TableHead className="text-orange-600" title="По статусам FBS-заказов">
+        <TableHead className="text-status-warning" title="По статусам FBS-заказов">
           Отказ ПВЗ
         </TableHead>
-        <TableHead className="text-red-600" title="По статусам FBS-заказов">
+        <TableHead className="text-status-error" title="По статусам FBS-заказов">
           После получ.
         </TableHead>
         <TableHead aria-sort={ariaSort('trend', sort, sortOrder)}>
@@ -99,14 +101,22 @@ export function BuyoutTableRow({ item, product, searchPosition }: BuyoutTableRow
         {product?.saName || item.productName || '—'}
       </TableCell>
       <TableCell className="text-sm">{item.brand || product?.brand || '—'}</TableCell>
-      <TableCell>{item.salesCount.toLocaleString('ru-RU')}</TableCell>
-      <TableCell>{item.returnsCount.toLocaleString('ru-RU')}</TableCell>
-      <TableCell className="font-medium">
+      <TableCell className="tabular-nums">{item.salesCount.toLocaleString('ru-RU')}</TableCell>
+      <TableCell className="tabular-nums">{item.returnsCount.toLocaleString('ru-RU')}</TableCell>
+      <TableCell className="font-medium tabular-nums">
         {item.buyoutRatePct != null ? formatPercentage(item.buyoutRatePct) : '—'}
       </TableCell>
-      <ReasonCell count={rb?.cancelBeforeShipment} color="text-blue-600" estimated={isEstimated} />
-      <ReasonCell count={rb?.refusalAtPvz} color="text-orange-600" estimated={isEstimated} />
-      <ReasonCell count={rb?.returnAfterReceipt} color="text-red-600" estimated={isEstimated} />
+      <ReasonCell
+        count={rb?.cancelBeforeShipment}
+        color="text-status-information"
+        estimated={isEstimated}
+      />
+      <ReasonCell count={rb?.refusalAtPvz} color="text-status-warning" estimated={isEstimated} />
+      <ReasonCell
+        count={rb?.returnAfterReceipt}
+        color="text-status-error"
+        estimated={isEstimated}
+      />
       <TableCell>
         <TrendIndicator trend={item.trend} delta={item.trendDelta} />
       </TableCell>
@@ -114,16 +124,16 @@ export function BuyoutTableRow({ item, product, searchPosition }: BuyoutTableRow
         <ConfidenceBadge confidence={item.confidence} />
       </TableCell>
       <TableCell
-        className="text-sm"
+        className="text-sm tabular-nums"
         title={searchPosition != null ? `Позиция ${searchPosition} в поиске` : undefined}
       >
         {searchPosition != null ? (
           <span
             className={
               searchPosition <= 10
-                ? 'text-green-600 font-medium'
+                ? 'text-status-success font-medium'
                 : searchPosition <= 30
-                  ? 'text-yellow-600'
+                  ? 'text-status-warning'
                   : 'text-muted-foreground'
             }
           >

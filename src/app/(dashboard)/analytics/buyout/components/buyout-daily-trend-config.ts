@@ -8,10 +8,12 @@
 // Chart Colors
 // ============================================================================
 
+// Epic 169.4: valence chart tokens (buyout = positive, returns = negative), not categorical.
+// Legend (BuyoutTrendLegend) and tooltip markers read these values — single source of truth.
 export const BUYOUT_TREND_COLORS = {
-  buyoutRate: '#22C55E', // Green
-  returnRate: '#EF4444', // Red
-  ordersCount: '#3B82F6', // Blue
+  buyoutRate: 'var(--color-chart-positive)',
+  returnRate: 'var(--color-chart-negative)',
+  ordersCount: 'var(--color-chart-1)',
 } as const
 
 export type BuyoutTrendMetricKey = keyof typeof BUYOUT_TREND_COLORS

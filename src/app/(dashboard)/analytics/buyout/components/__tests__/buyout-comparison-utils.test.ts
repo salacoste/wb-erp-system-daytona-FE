@@ -82,17 +82,17 @@ describe('getDeltaColor', () => {
     expect(getDeltaColor('neutral', false)).toBe('text-muted-foreground')
   })
 
-  it('returns green for up on normal metric', () => {
-    expect(getDeltaColor('up', false)).toBe('text-green-600')
+  it('returns financial-positive for up on normal metric', () => {
+    expect(getDeltaColor('up', false)).toBe('text-financial-positive')
   })
 
-  it('returns red for down on normal metric', () => {
-    expect(getDeltaColor('down', false)).toBe('text-red-600')
+  it('returns financial-negative for down on normal metric', () => {
+    expect(getDeltaColor('down', false)).toBe('text-financial-negative')
   })
 
   it('flips color for inverted metric (return rate)', () => {
-    expect(getDeltaColor('up', true)).toBe('text-red-600')
-    expect(getDeltaColor('down', true)).toBe('text-green-600')
+    expect(getDeltaColor('up', true)).toBe('text-financial-negative')
+    expect(getDeltaColor('down', true)).toBe('text-financial-positive')
   })
 })
 
