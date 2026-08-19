@@ -153,7 +153,7 @@ The SKU analytics page (`/analytics/sku`, Story 128.27) exposes **historical SPP
 | File | Purpose |
 |------|---------|
 | `unit-economics-utils.ts` | Barrel re-export + waterfall chart transformation (`transformToWaterfallData`) |
-| `unit-economics-config.ts` | Cost categories, profitability status configs |
+| `unit-economics-config.ts` | Cost categories, profitability status configs (`PROFITABILITY_STATUS_CONFIG` is the single token-based tier set — `/15` chip classes + `var(--color-*)`, Story 168.11 — shared with the sku-financials legend; the legacy `bgColor` hex field was removed) |
 | `unit-economics-analysis.ts` | `getTopMarginKillers`, `calculateHealthScore`, `sortByProfitability`, `filterLossMaking`, `filterMissingCogs` |
 | `unit-economics-formatters.ts` | Domain-specific formatting |
 

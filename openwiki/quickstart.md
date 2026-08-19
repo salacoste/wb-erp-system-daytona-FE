@@ -23,7 +23,7 @@ Development and validation are **local-only**: there is no deployment target or 
 | **Stack** | Next.js 16 + TypeScript 5 + Tailwind CSS + shadcn/ui (Radix) |
 | **Server State** | TanStack Query v5 (Next.js server page/layout wrappers coexist with client components; interactive data fetching is client-side) |
 | **Client State** | Zustand (auth, dashboard widgets, rate-limit, polling) |
-| **Testing** | Vitest (~1135 unit test files, MSW) + Playwright E2E (~87 specs) + outbound network guards + privacy/diagnostic-capture checks |
+| **Testing** | Vitest (~1165 unit test files, MSW) + Playwright E2E (~87 specs) + outbound network guards + privacy/diagnostic-capture checks |
 | **Backend** | REST API via `NEXT_PUBLIC_API_URL` (default `http://localhost:3000`) |
 | **Port** | 3100 (dev and prod) |
 
@@ -49,7 +49,7 @@ npm run check:anti-pattern-8-normalizer  # AP#8 normalizer ratchet
 ## Documentation Sections
 
 - **[Architecture](architecture.md)** — Route groups, layout/provider hierarchy, client-side data fetching, auth proxy, configuration.
-- **[Design System](design-system.md)** — Tailwind v4 semantic token contract, hardened shadcn primitives, the six product-composition families (page context, metrics/status, filters, tables, charts, page states), and the Epics 166–174 full UI migration program (foundation 166.1–166.8 and AppShell/auth migrations 167.1–167.4 merged).
+- **[Design System](design-system.md)** — Tailwind v4 semantic token contract, hardened shadcn primitives, the six product-composition families (page context, metrics/status, filters, tables, charts, page states), and the Epics 166–174 full UI migration program (foundation 166.1–166.8, AppShell/auth Epic 167 closed, analytics-core Epic 168 closed, and Epic 169 operational-analytics routes in progress 169.1–169.5).
 - **[API Layer & Normalizers](api-and-normalizers.md)** — API client singleton, Boundary Normalizer Pattern, Anti-Pattern #8 null semantics, CSV export, communications write-back (async 202 job polling).
 - **[Domain Logic](domain-logic.md)** — Financial formulas (theoretical profit, margin, liquidity with trends, unit economics), account finances + document download (NEW-7), seller communications with gated write-back (NEW-2), historical SPP (Story 128.27), ISO week / Moscow timezone, profitability thresholds.
 - **[Conventions & Quality Gates](conventions-and-quality.md)** — File size limits, ESLint enforcement, Defensive Frontend Principle, ratchet scripts, toolchain pinning, two-pass review discipline.
@@ -94,7 +94,5 @@ npm run check:anti-pattern-8-normalizer  # AP#8 normalizer ratchet
 | docs/ directory structure | `docs/epics/`, `docs/stories/`, `docs/request-backend/` | 211 resolved backend requests; primarily project-management artifacts, not code documentation |
 | Backlog task tracking | `backlog/tasks/` | 55 tracked tasks via Backlog.md CLI; process artifacts, not source code |
 | Zustand store details | `src/stores/` | 5 stores; architecture covered in [Architecture](architecture.md); individual store APIs are self-documenting |
-| Route migrations (Epics 167–174) | `.omx/plans/shadcn-full-ui-migration-master.md`, `src/app/(dashboard)/**/page.tsx` | Foundation (Epic 166), the full onboarding lane (Epic 167, closed), and Epic 168 stories 168.1–168.10 (analytics hub, alerts, dashboard, finance-history, orders, pricing, product detail, reorder, SKU, time-period) are merged; 168.11 (unit-economics) and the remaining ledger routes migrate one Story at a time under the master plan. See [Design System](design-system.md). |
+| Route migrations (Epics 167–174) | `.omx/plans/shadcn-full-ui-migration-master.md`, `src/app/(dashboard)/**/page.tsx` | Foundation (Epic 166), the full onboarding lane (Epic 167, closed), Epic 168 analytics core (168.1–168.11, closed incl. unit-economics and shared profitability consolidation), and Epic 169 stories 169.1–169.5 (acquiring index/period/transaction detail, buyout, buyout reconciliation) are merged; 169.6–169.13 and the remaining ledger routes migrate one Story at a time under the master plan. See [Design System](design-system.md). |
 | OMX story-plan orchestration | `scripts/manage-omx-story-plans.mjs`, `.omx/plans/`, `docs/process/omx-story-worktree-orchestrator-prompt.md` | Process/planning tooling for epic 162–165 story plans; not runtime source |
- source |
-x-story-plans.mjs`, `.omx/plans/`, `docs/process/omx-story-worktree-orchestrator-prompt.md` | Process/planning tooling for epic 162–165 story plans; not runtime source |
