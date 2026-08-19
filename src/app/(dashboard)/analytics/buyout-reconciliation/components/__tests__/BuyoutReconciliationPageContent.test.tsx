@@ -163,5 +163,41 @@ describe('BuyoutReconciliationPageContent', () => {
 
     // "0" passes the /^\d+$/ regex but fails the > 0 guard — should show error
     expect(screen.getByText(/Должно быть положительное целое число/)).toBeInTheDocument()
+    // Epic 169.5: validation hint uses status token (exact pin)
+    expect(screen.getByText(/Должно быть положительное целое число/)).toHaveClass(
+      'text-status-warning'
+    )
+  })
+
+  // Epic 169.5: token pins for stale banner + no-anomalies success state (exact classes)
+  it('Epic 169.5: stale-data banner uses status-warning /15+30 idiom, testid preserved', () => {
+    mockUseBuyoutReconciliation.mockReturnValue(
+      createMockQueryResult(noAnomalyResponse(), { isError: true })
+    )
+    renderWithProviders(<BuyoutReconciliationPageContent />)
+    const banner = screen.getByTestId('stale-data-banner')
+    expect(banner).toHaveClass('border-status-warning/30')
+    expect(banner).toHaveClass('bg-status-warning/15')
+    expect(banner).toHaveClass('text-status-warning')
+  })
+
+  it('Epic 169.5: no-anomalies alert uses status-success /15+30 idiom', () => {
+    mockUseBuyoutReconciliation.mockReturnValue(
+      createMockQueryResult(noAnomalyResponse(), { isError: true })
+    )
+    renderWithProviders(<BuyoutReconciliationPageContent />)
+    // Alert root carries the border+bg pair; icon and description carry the text token
+    const alert = screen
+      .getByText(/Аномалий не найдено за выбранный период/)
+      .closest('[role="alert"]')
+    expect(alert).not.toBeNull()
+    expect(alert).toHaveClass('border-status-success/30')
+    expect(alert).toHaveClass('bg-status-success/15')
+    const icon = alert?.querySelector('svg')
+    expect(icon).not.toBeNull()
+    expect(icon).toHaveClass('text-status-success')
+    expect(screen.getByText(/Аномалий не найдено за выбранный период/)).toHaveClass(
+      'text-status-success'
+    )
   })
 })

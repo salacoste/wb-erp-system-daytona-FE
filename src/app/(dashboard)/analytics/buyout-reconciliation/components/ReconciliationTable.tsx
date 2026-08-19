@@ -15,6 +15,7 @@
 import {
   Table,
   TableBody,
+  TableCaption,
   TableCell,
   TableHead,
   TableHeader,
@@ -27,6 +28,11 @@ import type { BuyoutSource } from '@/types/analytics-buyout'
 
 interface ReconciliationTableProps {
   items: ReconciliationItem[]
+  /**
+   * Epic 169.5 RTC: pre-formatted period label for the caption (ru-RU "DD.MM.YYYY — DD.MM.YYYY"
+   * or "за всё время" when no range). Caption must always name the period — never blank.
+   */
+  periodLabel?: string
 }
 
 /**
@@ -41,10 +47,13 @@ function ReconciliationSourceCell({ source }: { source: BuyoutSource }) {
   return <SourceBadge source={source} />
 }
 
-export function ReconciliationTable({ items }: ReconciliationTableProps) {
+export function ReconciliationTable({ items, periodLabel }: ReconciliationTableProps) {
   return (
     <div className="rounded-md border overflow-x-auto" data-testid="reconciliation-table">
       <Table>
+        {/* Epic 169.5 RTC: caption names the table + period (169.1/169.4 TableCaption precedent) */}
+        {/* MAIN-verify fix: phrase arrives complete from PageContent; fallback is direct-render safety only */}
+        <TableCaption>Реконсиляция выкупов {periodLabel ?? 'за всё время'}</TableCaption>
         <TableHeader>
           <TableRow>
             <TableHead className="text-right">Артикул WB</TableHead>
@@ -70,16 +79,22 @@ export function ReconciliationTable({ items }: ReconciliationTableProps) {
                   )}
                 </div>
               </TableCell>
-              <TableCell className="text-right text-sm">{item.buyoutQuantity}</TableCell>
-              <TableCell className="text-right text-sm">{item.returnQuantity}</TableCell>
+              {/* Epic 169.5 RTC: tabular-nums on numeric value cells (counts = compared values).
+                  nmId stays font-mono only — it is an ID, not a compared number. */}
+              <TableCell className="text-right text-sm tabular-nums">
+                {item.buyoutQuantity}
+              </TableCell>
+              <TableCell className="text-right text-sm tabular-nums">
+                {item.returnQuantity}
+              </TableCell>
               {/* Anomaly columns — AnomalyIndicator shows AlertTriangle when count > 0 */}
-              <TableCell className="text-right text-sm">
+              <TableCell className="text-right text-sm tabular-nums">
                 <AnomalyIndicator count={item.returnWithoutBuyout} type="return_without_buyout" />
               </TableCell>
-              <TableCell className="text-right text-sm">
+              <TableCell className="text-right text-sm tabular-nums">
                 <AnomalyIndicator count={item.orphanBuyout} type="orphan_buyout" />
               </TableCell>
-              <TableCell className="text-right text-sm">
+              <TableCell className="text-right text-sm tabular-nums">
                 <AnomalyIndicator
                   count={item.returnQuantityMismatch}
                   type="return_quantity_mismatch"

@@ -46,7 +46,8 @@ export const AnomalyIndicator = memo(function AnomalyIndicator({
 
   return (
     <span className="inline-flex items-center gap-1.5">
-      <span className="text-amber-700 font-medium">{count}</span>
+      {/* Epic 169.5: warning semantics via status token (was amber-700 literal) */}
+      <span className="text-status-warning font-medium">{count}</span>
       <Tooltip>
         <TooltipTrigger asChild>
           {/* M2-2 fix: drop role="button" — Radix Tooltip surfaces on focus/hover, NOT click.
@@ -57,9 +58,10 @@ export const AnomalyIndicator = memo(function AnomalyIndicator({
           <span
             tabIndex={0}
             aria-label={tooltipText}
-            className="cursor-help focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-400 rounded"
+            className="cursor-help focus:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded"
           >
-            <AlertTriangle className="h-4 w-4 text-amber-500" aria-hidden="true" />
+            {/* Epic 169.5: matched warning pair + ring token (advertising/ai-admin precedent) */}
+            <AlertTriangle className="h-4 w-4 text-status-warning" aria-hidden="true" />
           </span>
         </TooltipTrigger>
         <TooltipContent className="max-w-xs">
