@@ -11,6 +11,7 @@ import { Skeleton } from '@/components/ui/skeleton'
 import {
   Table,
   TableBody,
+  TableCaption,
   TableCell,
   TableHead,
   TableHeader,
@@ -57,8 +58,12 @@ export function GapsTable({ missingDates, isLoading, analyzingDate, onAnalyze }:
   }
 
   return (
-    <div className="rounded-md border overflow-x-auto">
-      <Table>
+    <div className="rounded-md border">
+      <Table
+        scrollContainerTabIndex={0}
+        scrollContainerAriaLabel="Таблица пропущенных дней финансовых данных"
+      >
+        <TableCaption>Пропущенные дни в финансовых данных</TableCaption>
         <TableHeader>
           <TableRow>
             <TableHead>Дата</TableHead>
@@ -81,7 +86,9 @@ export function GapsTable({ missingDates, isLoading, analyzingDate, onAnalyze }:
                   <Button
                     size="sm"
                     variant="outline"
+                    className="min-h-11"
                     disabled={isAnalyzing}
+                    aria-label={`Анализ за ${formatDate(new Date(item.missing_date + 'T00:00:00'))}`}
                     onClick={() => onAnalyze(item.missing_date)}
                   >
                     {isAnalyzing ? (

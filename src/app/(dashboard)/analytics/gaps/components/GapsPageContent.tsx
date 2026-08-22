@@ -5,9 +5,9 @@
  * Date range picker + summary cards + gaps table + analysis dialog
  */
 
-import { CalendarSearch } from 'lucide-react'
 import { toast } from 'sonner'
 import { Input } from '@/components/ui/input'
+import { PageHeader } from '@/components/product'
 import { GapsSummaryCards } from './GapsSummaryCards'
 import { GapsTable } from './GapsTable'
 import { GapAnalysisDialog } from './GapAnalysisDialog'
@@ -47,35 +47,36 @@ export function GapsPageContent() {
 
   return (
     <div className="space-y-6">
-      {/* Header */}
-      <div className="flex items-center gap-3">
-        <CalendarSearch className="h-6 w-6 text-primary" />
-        <div>
-          <h1 className="text-2xl font-bold tracking-tight">Пропуски в данных</h1>
-          <p className="text-sm text-muted-foreground">
-            Анализ и исправление пропущенных дней в финансовых данных
-          </p>
-        </div>
-      </div>
+      {/* Header — PageHeader has no icon slot; the decorative CalendarSearch icon was dropped */}
+      <PageHeader
+        title="Пропуски в данных"
+        description="Анализ и исправление пропущенных дней в финансовых данных"
+      />
 
       {/* Date range */}
       <div className="flex items-end gap-3">
         <div>
-          <label className="mb-1 block text-sm text-muted-foreground">С</label>
+          <label htmlFor="gaps-date-from" className="mb-1 block text-sm text-muted-foreground">
+            С
+          </label>
           <Input
+            id="gaps-date-from"
             type="date"
             value={dateFrom}
             onChange={e => updateDateRange(e.target.value, dateTo)}
-            className="w-44"
+            className="w-44 min-h-11"
           />
         </div>
         <div>
-          <label className="mb-1 block text-sm text-muted-foreground">По</label>
+          <label htmlFor="gaps-date-to" className="mb-1 block text-sm text-muted-foreground">
+            По
+          </label>
           <Input
+            id="gaps-date-to"
             type="date"
             value={dateTo}
             onChange={e => updateDateRange(dateFrom, e.target.value)}
-            className="w-44"
+            className="w-44 min-h-11"
           />
         </div>
       </div>

@@ -54,19 +54,52 @@ describe('GapsSummaryCards', () => {
   it('coverage card is neutral (not red) when there is no data — BD-31', () => {
     const { container } = render(<GapsSummaryCards data={undefined} isLoading={false} />)
     // No red-flash: coverage defaults to muted, and no card should be red.
-    expect(container.querySelector('.bg-red-500')).toBeNull()
-    expect(container.querySelector('.bg-muted-foreground')).toBeInTheDocument()
+    expect(container.querySelector('.bg-status-error')).toBeNull()
+    expect(container.querySelector('.bg-muted')).toBeInTheDocument()
   })
 
-  it('uses red color for missing days > 0', () => {
+  it('uses error color for missing days > 0', () => {
     const { container } = render(<GapsSummaryCards data={mockData} isLoading={false} />)
-    // The "Пропущено" card should have bg-red-500
-    expect(container.querySelector('.bg-red-500')).toBeInTheDocument()
+    // The "Пропущено" card chip uses the error status pair
+    expect(
+      container.querySelector('.bg-status-error.text-status-error-foreground')
+    ).toBeInTheDocument()
   })
 
-  it('uses gray color when missing days is 0', () => {
+  it('uses muted color when missing days is 0 (neutral-zero)', () => {
     const noGaps = { ...mockData, missing_days: 0 }
     const { container } = render(<GapsSummaryCards data={noGaps} isLoading={false} />)
-    expect(container.querySelector('.bg-muted-foreground')).toBeInTheDocument()
+    expect(container.querySelector('.bg-muted.text-foreground')).toBeInTheDocument()
+  })
+
+  it('coverage chip collapses to 4 distinct token pairs across tiers (tier-collapse guard)', () => {
+    const chipClassesOf = (data: FinancialGapsResponse | undefined): string[] => {
+      const { container } = render(<GapsSummaryCards data={data} isLoading={false} />)
+      return Array.from(container.querySelectorAll('div.rounded-lg.p-3')).map(
+        chip => chip.className
+      )
+    }
+
+    const noData = chipClassesOf(undefined)
+    const success = chipClassesOf({ ...mockData, coverage_percent: 90 })
+    const warning = chipClassesOf({ ...mockData, coverage_percent: 75 })
+    const error = chipClassesOf({ ...mockData, coverage_percent: 50 })
+
+    // Each variant renders a coverage chip as the first card
+    expect(noData[0]).toContain('bg-muted text-foreground')
+    expect(success[0]).toContain('bg-status-success text-status-success-foreground')
+    expect(warning[0]).toContain('bg-status-warning text-status-warning-foreground')
+    expect(error[0]).toContain('bg-status-error text-status-error-foreground')
+
+    // All 4 coverage chips are pairwise distinct (no tier collapse)
+    const coverageChips = [noData[0], success[0], warning[0], error[0]]
+    expect(new Set(coverageChips).size).toBe(4)
+
+    // No legacy palette leaks anywhere in the card set
+    for (const chips of [noData, success, warning, error]) {
+      for (const chip of chips) {
+        expect(chip).not.toMatch(/\b(?:bg|text)-(?:red|green|yellow|blue|gray)-\d{2,3}\b/)
+      }
+    }
   })
 })
