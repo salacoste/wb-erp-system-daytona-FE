@@ -8,6 +8,7 @@ import {
   formatTurnoverDays,
 } from '@/lib/liquidity-utils'
 import { cn, formatPercentage } from '@/lib/utils'
+import { LIQUIDITY_CATEGORY_TOKENS } from './liquidity-category-tokens'
 
 interface LiquidityDistributionCardsProps {
   distribution: LiquidityDistribution
@@ -16,6 +17,10 @@ interface LiquidityDistributionCardsProps {
 }
 
 const CATEGORY_ORDER: LiquidityCategory[] = ['highly_liquid', 'medium', 'low', 'illiquid']
+
+// Story 169.10: category → token map lives in ./liquidity-category-tokens
+// (single source shared with the distribution chart + table badges).
+// lib config.color/bgColor (legacy hex) are intentionally NOT used.
 
 /**
  * 4-card distribution dashboard
@@ -32,6 +37,8 @@ export function LiquidityDistributionCards({
       {CATEGORY_ORDER.map(category => {
         const item = distribution[category]
         const config = getLiquidityCategoryConfig(category)
+        // 169.10: token color from route config (chart roles), not lib legacy hex
+        const color = LIQUIDITY_CATEGORY_TOKENS[category]
         const isActive = activeFilter === category
         const isFiltered = activeFilter !== null && !isActive
 
@@ -45,8 +52,8 @@ export function LiquidityDistributionCards({
             )}
             style={
               {
-                borderColor: isActive ? config.color : undefined,
-                '--tw-ring-color': config.color,
+                borderColor: isActive ? color : undefined,
+                '--tw-ring-color': color,
               } as React.CSSProperties
             }
             onClick={() => onCardClick(category)}
@@ -56,15 +63,19 @@ export function LiquidityDistributionCards({
               <div className="flex items-center justify-between mb-3">
                 <div className="flex items-center gap-2">
                   <span className="text-xl">{config.icon}</span>
-                  <span className="text-sm font-medium" style={{ color: config.color }}>
+                  <span className="text-sm font-medium" style={{ color }}>
                     {config.label}
                   </span>
                 </div>
                 <span
                   className="text-xs px-2 py-0.5 rounded-full font-medium"
                   style={{
-                    backgroundColor: config.bgColor,
-                    color: config.color,
+                    // 169.10: token-tinted badge bg (replaces legacy hex bgColor).
+                    // Text = var(--color-foreground): chart-N as chip text on a
+                    // 15% tint measures 3.71–4.19:1 (AA fail in light) — see review.
+                    backgroundColor: `color-mix(in srgb, ${color} 15%, transparent)`,
+                    borderColor: `color-mix(in srgb, ${color} 30%, transparent)`,
+                    color: 'var(--color-foreground)',
                   }}
                 >
                   {config.targetShare}
@@ -81,7 +92,7 @@ export function LiquidityDistributionCards({
                   </span>
                 ) : (
                   <>
-                    <span className="text-3xl font-bold" style={{ color: config.color }}>
+                    <span className="text-3xl font-bold" style={{ color }}>
                       {formatPercentage(item.pct)}
                     </span>
                     <span className="text-xs text-muted-foreground">от стоимости запасов</span>

@@ -40,11 +40,8 @@ export function LiquidityTrendTooltip({ active, payload }: LiquidityTrendTooltip
   const point = payload[0].payload
 
   return (
-    <div
-      className="rounded-lg border border-gray-200 bg-white p-3 shadow-lg"
-      style={{ maxWidth: 280 }}
-    >
-      <p className="mb-2 border-b border-gray-200 pb-2 text-sm font-semibold capitalize text-gray-900">
+    <div className="rounded-lg border bg-popover p-3 shadow-lg" style={{ maxWidth: 280 }}>
+      <p className="text-popover-foreground mb-2 border-b border pb-2 text-sm font-semibold capitalize">
         {formatTrendTooltipDate(point.date)}
       </p>
       <div className="space-y-1.5">
@@ -55,16 +52,16 @@ export function LiquidityTrendTooltip({ active, payload }: LiquidityTrendTooltip
                 className="h-3 w-3 rounded-full"
                 style={{ backgroundColor: LIQUIDITY_TREND_COLORS[key] }}
               />
-              <span className="text-gray-600">{LIQUIDITY_TREND_LABELS[key]}</span>
+              <span className="text-muted-foreground">{LIQUIDITY_TREND_LABELS[key]}</span>
             </span>
-            <span className="font-medium tabular-nums">
+            <span className="text-popover-foreground font-medium tabular-nums">
               {key === 'frozen_capital'
                 ? formatCurrency(point.frozen_capital)
                 : `${Math.round(point.avg_turnover_days)} дн.`}
             </span>
           </div>
         ))}
-        <div className="my-1 border-t border-gray-100" />
+        <div className="text-popover-foreground my-1 border-t border" />
         {DISTRIBUTION_KEYS.map(key => (
           <div key={key} className="flex items-center justify-between text-xs">
             <span className="flex items-center gap-2">
@@ -72,9 +69,9 @@ export function LiquidityTrendTooltip({ active, payload }: LiquidityTrendTooltip
                 className="h-3 w-3 rounded-full"
                 style={{ backgroundColor: LIQUIDITY_TREND_COLORS[key] }}
               />
-              <span className="text-gray-600">{LIQUIDITY_DISTRIBUTION_LABELS[key]}</span>
+              <span className="text-muted-foreground">{LIQUIDITY_DISTRIBUTION_LABELS[key]}</span>
             </span>
-            <span className="font-medium tabular-nums">
+            <span className="text-popover-foreground font-medium tabular-nums">
               {formatPercentage(point.distribution[key])}
             </span>
           </div>

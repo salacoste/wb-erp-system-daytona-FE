@@ -5,9 +5,25 @@ import { Progress } from '@/components/ui/progress'
 import type { LiquidityBenchmarks as LiquidityBenchmarksType } from '@/types/liquidity'
 import { getBenchmarkStatusConfig, formatTurnoverDays } from '@/lib/liquidity-utils'
 import { cn, formatPercentage } from '@/lib/utils'
+import type { BenchmarkStatus } from '@/types/liquidity'
 
 interface LiquidityBenchmarksProps {
   benchmarks: LiquidityBenchmarksType
+}
+
+/**
+ * Story 169.10: overall_status → semantic token map. lib (getBenchmarkStatusConfig)
+ * remains the source of classification/labels/icons, but its legacy light-only
+ * hex (statusConfig.color) and text-*-600 utilities (statusConfig.textClass)
+ * are intentionally NOT consumed here — the route maps the status key to
+ * theme-aware var(--color-status-*) tokens.
+ * Statuses (lib BenchmarkStatus): excellent | good | warning | critical.
+ */
+const BENCHMARK_STATUS_TOKENS: Record<BenchmarkStatus, string> = {
+  excellent: 'var(--color-status-success)',
+  good: 'var(--color-status-success)',
+  warning: 'var(--color-status-warning)',
+  critical: 'var(--color-status-error)',
 }
 
 /**
@@ -17,6 +33,9 @@ interface LiquidityBenchmarksProps {
  */
 export function LiquidityBenchmarks({ benchmarks }: LiquidityBenchmarksProps) {
   const statusConfig = getBenchmarkStatusConfig(benchmarks.overall_status)
+  // 169.10: chip pattern — token-tinted bg/border + text-foreground
+  // (chart/status hex as chip text on a tint fails AA in light).
+  const statusToken = BENCHMARK_STATUS_TOKENS[benchmarks.overall_status]
 
   // Calculate progress percentages for visualization
   const turnoverProgress =
@@ -38,11 +57,12 @@ export function LiquidityBenchmarks({ benchmarks }: LiquidityBenchmarksProps) {
         <div className="flex items-center justify-between">
           <CardTitle className="text-lg">Сравнение с целями</CardTitle>
           <div
-            className={cn(
-              'flex items-center gap-1 px-2 py-1 rounded-full text-sm font-medium',
-              statusConfig.textClass
-            )}
-            style={{ backgroundColor: `${statusConfig.color}15` }}
+            className="flex items-center gap-1 px-2 py-1 rounded-full text-sm font-medium"
+            style={{
+              backgroundColor: `color-mix(in srgb, ${statusToken} 15%, transparent)`,
+              borderColor: `color-mix(in srgb, ${statusToken} 30%, transparent)`,
+              color: 'var(--color-foreground)',
+            }}
           >
             <span>{statusConfig.icon}</span>
             <span>{statusConfig.label}</span>
@@ -81,10 +101,10 @@ export function LiquidityBenchmarks({ benchmarks }: LiquidityBenchmarksProps) {
               <span>
                 <span
                   className={cn(
-                    'font-medium',
+                    'font-medium tabular-nums',
                     benchmarks.highly_liquid_pct >= benchmarks.target_highly_liquid_pct
-                      ? 'text-green-600'
-                      : 'text-orange-600'
+                      ? 'text-financial-positive'
+                      : 'text-status-warning'
                   )}
                 >
                   {formatPercentage(benchmarks.highly_liquid_pct)}
@@ -101,8 +121,8 @@ export function LiquidityBenchmarks({ benchmarks }: LiquidityBenchmarksProps) {
             className={cn(
               'h-2',
               benchmarks.highly_liquid_pct >= benchmarks.target_highly_liquid_pct
-                ? '[&>div]:bg-green-500'
-                : '[&>div]:bg-orange-500'
+                ? '[&>div]:bg-status-success'
+                : '[&>div]:bg-status-warning'
             )}
           />
           <div className="text-xs text-muted-foreground">
@@ -118,10 +138,10 @@ export function LiquidityBenchmarks({ benchmarks }: LiquidityBenchmarksProps) {
               <span>
                 <span
                   className={cn(
-                    'font-medium',
+                    'font-medium tabular-nums',
                     benchmarks.illiquid_pct <= benchmarks.target_illiquid_pct
-                      ? 'text-green-600'
-                      : 'text-red-600'
+                      ? 'text-financial-positive'
+                      : 'text-financial-negative'
                   )}
                 >
                   {formatPercentage(benchmarks.illiquid_pct)}
@@ -138,8 +158,8 @@ export function LiquidityBenchmarks({ benchmarks }: LiquidityBenchmarksProps) {
             className={cn(
               'h-2',
               benchmarks.illiquid_pct <= benchmarks.target_illiquid_pct
-                ? '[&>div]:bg-green-500'
-                : '[&>div]:bg-red-500'
+                ? '[&>div]:bg-status-success'
+                : '[&>div]:bg-status-error'
             )}
           />
           <div className="text-xs text-muted-foreground">

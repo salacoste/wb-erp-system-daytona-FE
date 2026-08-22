@@ -92,4 +92,69 @@ describe('LiquidityDistributionCards — avg turnover', () => {
     // highly_liquid (pct=9, avg_turnover_days=15 → selling) shows its percentage, not "Нет продаж".
     expect(screen.getByText(/9,0\s*%/)).toBeInTheDocument()
   })
+
+  it('set-size tier-collapse guard: an EMPTY category never claims "Нет продаж за период"', () => {
+    // count=0 (the set is empty) must collapse the no-sales tier even when the
+    // backend sentinel avg_turnover_days=999 leaks through for empty buckets —
+    // "Нет продаж" is a statement about actual SKUs, and there are none.
+    const distribution: LiquidityDistribution = {
+      ...makeDistribution(),
+      medium: { count: 0, value: 0, pct: 0, avg_turnover_days: 999, no_sales_count: 0 },
+    }
+    render(
+      <LiquidityDistributionCards
+        distribution={distribution}
+        activeFilter={null}
+        onCardClick={() => {}}
+      />
+    )
+    // Only the illiquid card (41 SKUs, avg=999) shows the no-sales headline.
+    expect(screen.getAllByText('Нет продаж за период')).toHaveLength(1)
+  })
+})
+
+describe('LiquidityDistributionCards — 169.10 theme-aware color tokens', () => {
+  // Card category key → chart-role token (same roles as the trend chart stack)
+  const EXPECTED_TOKENS: Record<string, string> = {
+    Высоколиквидный: 'var(--color-chart-1)',
+    'Средняя ликвидность': 'var(--color-chart-2)',
+    'Низкая ликвидность': 'var(--color-chart-3)',
+    Неликвид: 'var(--color-chart-4)',
+  }
+
+  it('colors each card via its chart-role token (chart-1..4), not lib legacy hex', () => {
+    render(
+      <LiquidityDistributionCards
+        distribution={makeDistribution()}
+        activeFilter={null}
+        onCardClick={() => {}}
+      />
+    )
+    for (const [label, token] of Object.entries(EXPECTED_TOKENS)) {
+      // Label span carries the category color inline
+      expect(screen.getByText(label).style.color).toBe(token)
+    }
+    // Headline % of the selling category (highly_liquid, pct=9) uses chart-1 too
+    expect(screen.getByText(/9,0\s*%/).style.color).toBe('var(--color-chart-1)')
+  })
+
+  it('negative: no inline color anywhere on the cards matches a raw hex value', () => {
+    const { container } = render(
+      <LiquidityDistributionCards
+        distribution={makeDistribution()}
+        activeFilter={null}
+        onCardClick={() => {}}
+      />
+    )
+    const hexRe = /#[0-9A-Fa-f]{3,8}/
+    const all = container.querySelectorAll<HTMLElement>('*')
+    const offenders: string[] = []
+    all.forEach(el => {
+      const { color, borderColor, backgroundColor } = el.style
+      for (const v of [color, borderColor, backgroundColor]) {
+        if (v && hexRe.test(v)) offenders.push(`${el.tagName}:${v}`)
+      }
+    })
+    expect(offenders).toEqual([])
+  })
 })

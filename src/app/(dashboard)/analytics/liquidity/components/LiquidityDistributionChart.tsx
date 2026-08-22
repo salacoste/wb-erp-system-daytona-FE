@@ -11,6 +11,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import type { LiquidityDistribution } from '@/types/liquidity'
 import { transformDistributionForChart, formatCurrency } from '@/lib/liquidity-utils'
 import { formatPercentage } from '@/lib/utils'
+import { LIQUIDITY_CATEGORY_TOKENS } from './liquidity-category-tokens'
 
 interface ChartRow {
   category: string
@@ -38,10 +39,9 @@ function DistributionTooltip({
   const d = payload[0].payload
 
   return (
-    <div className="rounded-lg border bg-background p-3 shadow-md text-sm">
-      <p className="font-medium" style={{ color: d.color }}>
-        {d.name}
-      </p>
+    <div className="rounded-lg border bg-popover p-3 text-sm shadow-lg">
+      {/* 169.10: header uses popover foreground — a category tint would fail AA on popover bg */}
+      <p className="text-popover-foreground font-medium">{d.name}</p>
       <p className="text-muted-foreground">Доля: {formatPercentage(d.value)}</p>
       <p className="text-muted-foreground">SKU: {d.count}</p>
       <p className="text-muted-foreground">Стоимость: {formatCurrency(d.stockValue)}</p>
@@ -74,7 +74,12 @@ function DistributionLegend({ payload }: { payload?: Array<{ value: string; colo
  */
 export function LiquidityDistributionChart({ distribution }: LiquidityDistributionChartProps) {
   const rawData = transformDistributionForChart(distribution)
-  const chartData: ChartRow[] = rawData.map(d => ({ ...d }))
+  // 169.10: override lib legacy hex (config.color) with route chart-role tokens,
+  // keyed by category. Unknown category → keep neutral (don't paint lib hex).
+  const chartData: ChartRow[] = rawData.map(d => ({
+    ...d,
+    color: LIQUIDITY_CATEGORY_TOKENS[d.category] ?? 'var(--color-muted)',
+  }))
   const totalSku = chartData.reduce((sum, d) => sum + d.count, 0)
 
   return (

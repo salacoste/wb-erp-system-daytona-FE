@@ -12,6 +12,7 @@ import { render, screen, fireEvent } from '@testing-library/react'
 import { LiquidityTrendChart } from '../LiquidityTrendChart'
 import { LiquidityTrendTooltip } from '../LiquidityTrendTooltip'
 import { LiquidityTrendsSection } from '../LiquidityTrendsSection'
+import { LIQUIDITY_TREND_COLORS } from '../liquidity-trend-config'
 import { normalizeLiquidityTrendsResponse } from '@/lib/api/liquidity-normalizer'
 import { useLiquidityTrends } from '@/hooks/useLiquidity'
 import type { TrendDataPoint, LiquidityTrendsResponse } from '@/types/liquidity'
@@ -92,6 +93,23 @@ function make90DaySeries(): TrendDataPoint[] {
 // ============================================================================
 
 describe('LiquidityTrendChart', () => {
+  it('169.10: all six series colors are chart-role var() tokens with zero collisions', () => {
+    const values = Object.values(LIQUIDITY_TREND_COLORS)
+    // 6 series / 6 distinct tokens.
+    expect(values).toHaveLength(6)
+    expect(new Set(values).size).toBe(6)
+    for (const value of values) {
+      expect(value).toMatch(/^var\(--color-chart-[1-6]\)$/)
+    }
+    // Distribution stack takes roles 1–4 in stack order; metrics take 5–6.
+    expect(LIQUIDITY_TREND_COLORS.highly_liquid_pct).toBe('var(--color-chart-1)')
+    expect(LIQUIDITY_TREND_COLORS.medium_pct).toBe('var(--color-chart-2)')
+    expect(LIQUIDITY_TREND_COLORS.low_pct).toBe('var(--color-chart-3)')
+    expect(LIQUIDITY_TREND_COLORS.illiquid_pct).toBe('var(--color-chart-4)')
+    expect(LIQUIDITY_TREND_COLORS.frozen_capital).toBe('var(--color-chart-5)')
+    expect(LIQUIDITY_TREND_COLORS.avg_turnover_days).toBe('var(--color-chart-6)')
+  })
+
   it('renders the chart shell and both axis series when populated', () => {
     render(<LiquidityTrendChart data={make90DaySeries()} />)
     expect(screen.getByText('Динамика ликвидности')).toBeInTheDocument()

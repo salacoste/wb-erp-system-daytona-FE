@@ -38,7 +38,7 @@ export function LiquidationPlannerModal({ item, open, onClose }: LiquidationPlan
       <DialogContent className="max-w-2xl">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
-            <TrendingDown className="h-5 w-5 text-red-500" />
+            <TrendingDown className="h-5 w-5 text-status-error" />
             Планировщик ликвидации
           </DialogTitle>
           <DialogDescription>
@@ -50,11 +50,11 @@ export function LiquidationPlannerModal({ item, open, onClose }: LiquidationPlan
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 py-4 border-y">
           <div className="text-center">
             <p className="text-xs text-muted-foreground">Остаток</p>
-            <p className="font-medium">{item.current_stock_qty} шт.</p>
+            <p className="font-medium tabular-nums">{item.current_stock_qty} шт.</p>
           </div>
           <div className="text-center">
             <p className="text-xs text-muted-foreground">Стоимость</p>
-            <p className="font-medium">{formatCurrency(item.stock_value)}</p>
+            <p className="font-medium tabular-nums">{formatCurrency(item.stock_value)}</p>
           </div>
           <div className="text-center">
             <p className="text-xs text-muted-foreground">Текущая цена</p>
@@ -67,7 +67,9 @@ export function LiquidationPlannerModal({ item, open, onClose }: LiquidationPlan
           </div>
           <div className="text-center">
             <p className="text-xs text-muted-foreground">Оборот сейчас</p>
-            <p className="font-medium text-red-600">{formatTurnoverDays(item.turnover_days)}</p>
+            <p className="font-medium tabular-nums text-status-error">
+              {formatTurnoverDays(item.turnover_days)}
+            </p>
           </div>
         </div>
 

@@ -18,6 +18,7 @@ import {
   formatTurnoverDays,
   formatVelocity,
 } from '@/lib/liquidity-utils'
+import { LIQUIDITY_CATEGORY_TOKENS } from './liquidity-category-tokens'
 
 interface LiquidityTableRowCellsProps {
   item: LiquidityItem
@@ -51,24 +52,37 @@ export function LiquidityTableRowCells({
         </div>
       </TableCell>
       <TableCell className="text-center">
+        {/* 169.10: chip pattern — token-tinted bg/border + text-foreground.
+            Text = var(--color-foreground): chart-N as text on a 15% tint
+            measures 3.71–4.19:1 (AA fail in light). lib config.color/bgColor
+            (legacy hex) intentionally NOT used — tokens come from the route map. */}
         <Badge
           variant="secondary"
           className="font-medium"
-          style={{ backgroundColor: config.bgColor, color: config.color }}
+          style={{
+            backgroundColor: `color-mix(in srgb, ${LIQUIDITY_CATEGORY_TOKENS[item.liquidity_category]} 15%, transparent)`,
+            borderColor: `color-mix(in srgb, ${LIQUIDITY_CATEGORY_TOKENS[item.liquidity_category]} 30%, transparent)`,
+            color: 'var(--color-foreground)',
+          }}
         >
           {config.icon} {config.labelShort}
         </Badge>
       </TableCell>
-      <TableCell className="text-right font-medium">
+      <TableCell className="text-right font-medium tabular-nums">
         {formatTurnoverDays(item.turnover_days)}
       </TableCell>
-      <TableCell className="text-right">{formatVelocity(item.velocity_per_day)}</TableCell>
-      <TableCell className="text-right">{item.current_stock_qty} шт.</TableCell>
-      <TableCell className="text-right font-medium">{formatCurrency(item.stock_value)}</TableCell>
+      <TableCell className="text-right tabular-nums">
+        {formatVelocity(item.velocity_per_day)}
+      </TableCell>
+      <TableCell className="text-right tabular-nums">{item.current_stock_qty} шт.</TableCell>
+      <TableCell className="text-right font-medium tabular-nums">
+        {formatCurrency(item.stock_value)}
+      </TableCell>
       <TableCell className="text-center">
         <Button
           variant={getLiquidityActionVariant(item.action_type)}
           size="sm"
+          className="min-h-11"
           onClick={e => {
             e.stopPropagation()
             if (hasLiquidation) {
