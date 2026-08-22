@@ -25,6 +25,7 @@ import { Input } from '@/components/ui/input'
 import {
   Table,
   TableBody,
+  TableCaption,
   TableCell,
   TableHead,
   TableHeader,
@@ -88,7 +89,7 @@ export function FbsStockSizesSection() {
             aria-label="Фильтр по артикулу WB"
           />
           {showNmIdError && (
-            <p className="text-xs text-amber-700">Должно быть положительное целое число</p>
+            <p className="text-xs text-status-warning">Должно быть положительное целое число</p>
           )}
         </div>
       </div>
@@ -124,7 +125,7 @@ export function FbsStockSizesSection() {
       ) : (
         <>
           {isError && hasData && (
-            <div className="rounded-md border border-amber-200 bg-amber-50 px-4 py-2 text-sm text-amber-800 flex items-center justify-between">
+            <div className="rounded-md border border-status-warning/30 bg-status-warning/15 px-4 py-2 text-sm text-status-warning flex items-center justify-between">
               <span>Не удалось обновить. Показаны кэшированные данные.</span>
               <Button variant="ghost" size="sm" onClick={() => void refetch()}>
                 Повторить
@@ -133,6 +134,7 @@ export function FbsStockSizesSection() {
           )}
           <div className="rounded-md border overflow-x-auto">
             <Table>
+              <TableCaption>Остатки FBS по размерам</TableCaption>
               <TableHeader>
                 <TableRow>
                   <TableHead>Размер</TableHead>
@@ -148,12 +150,16 @@ export function FbsStockSizesSection() {
                   <TableRow key={`${item.nmId}-${item.size}`}>
                     <TableCell className="font-medium">{item.size || '—'}</TableCell>
                     <TableCell className="text-right text-sm font-mono">{item.nmId}</TableCell>
-                    <TableCell className="text-right text-sm">{item.skuCount}</TableCell>
-                    <TableCell className="text-right text-sm">{item.stockUnits}</TableCell>
-                    <TableCell className="text-right text-sm">
+                    <TableCell className="text-right text-sm tabular-nums">
+                      {item.skuCount}
+                    </TableCell>
+                    <TableCell className="text-right text-sm tabular-nums">
+                      {item.stockUnits}
+                    </TableCell>
+                    <TableCell className="text-right text-sm tabular-nums">
                       {item.averageDailyOutgoing}
                     </TableCell>
-                    <TableCell className="text-right text-sm">
+                    <TableCell className="text-right text-sm tabular-nums">
                       {/* Russian locale comma decimal via canonical formatDecimal (≥1000 also gets
                           NBSP grouping, which the old toFixed().replace did not). */}
                       {item.daysOfCover == null ? '—' : formatDecimal(item.daysOfCover)}
