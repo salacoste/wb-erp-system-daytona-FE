@@ -1,6 +1,6 @@
 # Story 169.8-FE: Migrate Funnel Analytics
 
-Status: ready-for-dev
+Status: done
 
 ## Story
 
@@ -153,23 +153,39 @@ so that I can locate conversion losses and supporting product evidence without l
 
 ### Agent Model Used
 
-To be recorded by the implementing agent.
+- Author (parallel session, staged WIP in the Story worktree): unattributed codex/claude session (branch prefix `cdx/`; staged 38 files 19:46-21:17 2026-08-22, never committed). Adoption MAIN (this record): Claude Code orchestrator on glm-5.2[1m]; verification/review agents: 2×executor(sonnet) micro-fix rounds, 2×code-reviewer(opus) FRESH-parallel.
 
 ### Debug Log References
 
 - Story preparation base: `96103a61b02d445ef80a08bd34c084e2e67649e9`.
 - Prerequisite ancestry: `ab12ffe9`, `a8dfe353`, and `b21aa04d` are ancestors of the preparation base.
-- Live preflight on 2026-08-22 found no open PR and no remote Story 169.8 branch; repeat immediately before implementation worktree creation.
+- Live preflight on 2026-08-22 found no open PR and no remote Story 169.8 branch.
+- Adoption timeline 2026-08-22: owner decision ~20:35 (adopt staged WIP; parallel author session stopped by owner ~21:20 after continued writes 20:41/21:15); MAIN snapshots: backup-patch 20:12 (32 files/157 tests), v2 21:07 (36/174), final (38/184). All universal gates re-run on FINAL state only.
 
 ### Completion Notes List
 
 - Ultimate context engine analysis completed — comprehensive developer guide created.
-- Implementation, review, PR, merge, documentation closeout, and cleanup are not yet performed.
+- Implementation delivered via adoption: parallel-session staged WIP (+2647/−708 across 38 route-owned files) + 2 MAIN micro-fix rounds (tooltip bg-popover/shadow-lg + honest-null «Недоступно» + pin; min-h-11 on 3 retry buttons; hex-guard regex `{3,8}` with letter-lookahead so ticket refs `#197` stay exempt).
+- Orphan resolution per contracts: `FunnelChart.tsx` and `FunnelOverlayAlerts.tsx` deleted; 0 production consumers proven by grep + source-contract regression test (`funnel-presentation-source-contracts.test.ts`).
+- Owner canon decision 22.08: KPI icons SEMANTIC (chart-N per metric, financial-positive/negative for money/cancels) — deliberate evolution of the 169.6/169.7 muted canon; reconcile across routes at Story 174.2.
+- Sync copy changed «Данные актуальны на» → «Последняя синхронизация:» — ruled in-scope under the artifact's truthfulness mandate (line 48); tension with line 102 «sync copy» lock noted here as the sanctioned resolution (new copy cannot be false; tests pin it).
+- Gates (final state): targeted 16 files/184/184 (baseline 110, growth-only); full vitest 18901/0 (floor 18827); lint 0/0; tsc 0; max-lines OK; format clean (story tree); doc-citations exit 0; locale-percent 4=baseline; `git diff --check` clean; `next build --webpack` exit 0.
+- Reviews: 2×opus FRESH-parallel APPROVE·APPROVE-with-notes, 0 CRITICAL/HIGH. MEDIUMs fixed pre-merge (tooltip honest-null+pin; 2 untracked production files staged into the verified list; staging flattened post-reviewer-stash by explicit `git add`). LOWs folded: cold-run vitest flake (1×12-fail on cold cache, 3× warm stable — transform/import race, documented, CI is local-only); `as number | undefined` casts ruled controlled-widening (immediately guarded by `isAvailableMetric`); chart-5 icon 3.08:1 on bg-card light = decorative ≥3.0 pass (number recorded; text-safe alternative is 174.2 scope).
+- E2E: no Story-169.8-specific spec exists (route E2E outside allowed surface per this artifact); static sweep of `e2e/funnel.spec.ts` found 0 pins on changed copy/removed elements. Environment gap recorded truthfully — no live browser run in this cycle.
+- PR #207 (impl `4427df85`, merge `ad34dc4c`) — branch/remote/worktree cleaned with absence proofs.
+
+### Gaps
+
+- Cold-cache vitest flake in the Story suite (12 failed once across 5 files; warm runs 183/183 and full-suite runs stable) — root cause unconfirmed (suspect polling/delayed-loading tests racing slow first import); revisit if it reproduces.
+- `FunnelPageContent.tsx` sits at exactly the 200-line cap — extract sync/toolbar block at first touch.
+- Live visual/browser matrix (light/dark × widths × zoom, axe-live, keyboard walkthrough) not executed this cycle — jest-axe covers the rendered overlay state; full matrix deferred to a consolidated 174.x pass.
+- KPI-icon canon divergence vs 169.6/169.7 (muted) — intentional per owner 22.08; reconciliation owed at 174.2.
 
 ### File List
 
-- `_bmad-output/implementation-artifacts/169-8-fe-migrate-funnel-analytics.md` (Story context only)
-- `_bmad-output/implementation-artifacts/sprint-status.yaml` (lifecycle status only)
+- `_bmad-output/implementation-artifacts/169-8-fe-migrate-funnel-analytics.md` (Story context + closeout)
+- `_bmad-output/implementation-artifacts/sprint-status.yaml` (lifecycle status)
+- `src/app/(dashboard)/analytics/funnel/**` — 38 files (14 M src, 9 A src, 2 D src, 13 test files) per PR #207
 
 ### Change Log
 
@@ -177,5 +193,6 @@ To be recorded by the implementing agent.
 |---|---|
 | 2026-08-22 | Story created from the canonical Epic/OMX/UX contracts and current Funnel route source. Status: backlog → ready-for-dev. |
 | 2026-08-22 | Story context hardened with exact comparison-query, anomaly, delta-inversion, orphan-chart, preparation-ancestry, and predecessor lifecycle contracts. |
+| 2026-08-22 | Implemented via adoption of parallel-session staged WIP (owner-sanctioned), MAIN-verified + 2×opus reviewed + micro-fixed; merged PR #207 (`4427df85`, merge `ad34dc4c`); cleanup with absence proofs. Status: ready-for-dev → done. **Lessons:** (1) Живой чужой worktree = moving target — сверяй staged-патч с backup-снапшотом перед каждым гейтом. (2) Adoption-цикл валиден только как re-verify ВСЕГО на финальном состоянии, не на снапшоте. (3) Hex-guard {3,8} ловит тикет-ссылки #197 — letter-lookahead обязателен. |
 
 <!-- Lessons-line convention (Story 94.4-FE): the FINAL story-close row (the one flipping Status to `done`) MUST include a `**Lessons:**` sub-line with 1-3 single-sentence pattern observations specific to this story. Earlier rows do not require Lessons. -->
