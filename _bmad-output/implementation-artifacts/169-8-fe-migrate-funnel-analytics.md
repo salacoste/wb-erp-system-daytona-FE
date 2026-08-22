@@ -22,52 +22,52 @@ so that I can locate conversion losses and supporting product evidence without l
 
 ## Tasks / Subtasks
 
-- [ ] Prove prerequisites, ownership, and source truth (AC: 4, 5, 9)
-  - [ ] Recheck live open PRs and remote heads, exact branch/worktree absence, and active writer ownership immediately before branch creation.
-  - [ ] Record the current `main` base SHA; prove `ab12ffe9`, `a8dfe353`, `b21aa04d`, and Story-preparation merge `8afa779eb06c63b0b9bc3fd03fab0ffb0914274b` are ancestors; verify this ready-for-dev artifact exists in that base before creating the implementation worktree.
-  - [ ] Inventory all route-owned files, imports, consumers, raw controls, palette utilities, hex colors, chart/table semantics, URL state, query behavior, export flow, and applicable states.
-  - [ ] Stop and escalate if any required change crosses the allowed route tree.
-- [ ] Establish behavior-lock RED evidence inside the owned route (AC: 1, 2, 3, 5)
-  - [ ] Run the existing Funnel route Vitest target before source edits and record counts/output.
-  - [ ] Add failing Story 169.8 tests for presentation gaps while pinning existing API/query/filter/comparison/export/sort/pagination behavior.
-  - [ ] Prove that `comparisonPreset`, `compareStart`, and `compareEnd` selector state does not currently determine query dates: comparison queries continue to use the inclusive immediately preceding period from `calculatePreviousPeriod(apiFrom, apiTo)`. Do not connect selector values to `compareFrom`/`compareTo` in this presentation Story.
-  - [ ] Pin both anomaly predicates exactly: `totalConversion > 100` or `(ordersCount > 0 && buyoutCount > ordersCount)`; exactly `100%` is not anomalous, the `ordersCount > 0` guard remains required, and the raw value plus current Russian diagnostic message referencing ticket `#197` remain visible.
-  - [ ] Pin the exact delta-inversion set: only `cancelCount` is inverted; `cancelRate` and every other metric remain non-inverted. Include a negative behavior-lock for `cancelRate`.
-  - [ ] Cover sync missing/fresh, initial and slow loading, error, valid empty, filtered empty where distinguishable, missing comparison, partial/unavailable daily granularity, overlay unavailable, anomaly, and valid zero semantics.
-  - [ ] Pin semantic page heading, named table, numeric alignment, sort direction, keyboard/touch-independent chart evidence, reduced motion, and semantic-token usage.
-- [ ] Migrate page hierarchy, context, and route-owned controls (AC: 1, 2, 3)
-  - [ ] Replace the legacy `h1` wrapper with the merged `PageHeader` composition without changing the stable Russian title/description.
-  - [ ] Reuse `ContextBar` and/or `FilterToolbar` only where their current contracts fit without hiding route-owned date, comparison, URL, or reset semantics.
-  - [ ] Replace route-owned raw buttons with existing shadcn `Button` where semantic and behavior-equivalent; retain a native control only with an explicit accessibility rationale.
-  - [ ] Preserve `nmIds` parsing/serialization, `router.replace`, date range defaults, comparison calculation and selector state, chart/overlay toggles, toast behavior, and CSV export enablement without making the currently disconnected comparison selector state control comparison query dates.
-- [ ] Migrate metrics, availability, anomaly, and sync presentation (AC: 1, 2, 3)
-  - [ ] Reuse `MetricGroup`/`MetricCard`, `StatusBadge`/`StatusStrip`, `DataAvailability`, or existing primitives only where they preserve the eight current metric definitions and comparison behavior.
-  - [ ] Replace palette utilities with existing semantic roles while keeping the exact inversion set unchanged: invert `cancelCount` only; do not invert `cancelRate` or any other metric.
-  - [ ] Preserve both anomaly predicates, the `ordersCount > 0` guard, the exclusive `> 100` threshold, raw-value display, and the existing Russian diagnostic message referencing ticket `#197`.
-  - [ ] Keep signs, units, approximate marker, Russian locale precision, missing comparison, and valid zero distinct and text-readable.
-  - [ ] Make sync freshness/missing state non-color and truthful without changing sync timing or response interpretation.
-- [ ] Migrate the rendered analytical chart surface and resolve route-owned orphan chart code (AC: 1, 2, 3, 5)
-  - [ ] Prove by production-consumer inventory that `FunnelOverlayChart` is the rendered route chart and `FunnelChart.tsx` has no production consumer.
-  - [ ] Prefer deleting orphan `FunnelChart.tsx` with regression evidence. Retain it only for a concrete, verified production reason recorded in implementation evidence; do not treat it as a second user-facing chart surface without a proven consumer.
-  - [ ] Replace route-owned hex/palette colors with the already-registered chart, border, axis, foreground, background, and semantic CSS-variable tokens; do not edit shared token files.
-  - [ ] Preserve series construction, bar/line distinction, dual axes, left join by date, null advertising spend, visibility toggles, tooltip precision, daily-granularity behavior, and reduced-motion duration.
-  - [ ] Provide title, period/units, non-color series distinction, accessible summary, and a data alternative equivalent to plotted funnel/advertising values.
-  - [ ] Ensure essential values and series visibility are usable by keyboard/touch and are not tooltip-only.
-- [ ] Migrate the product table and dense responsive behavior (AC: 1, 2, 3)
-  - [ ] Add a semantic caption naming the funnel product evidence and current period without creating stale duplicated state.
-  - [ ] Keep product/SKU identity primary; preserve search-query links, sort fields/order, comparison deltas, pagination, and refetch behavior.
-  - [ ] Apply right alignment and `tabular-nums` to comparable counts/percentages/deltas while keeping `nmId` as an identifier (`font-mono`, not a business numeric metric).
-  - [ ] Preserve sortable `aria-sort`, make sort controls keyboard-complete through existing shadcn/native semantics, and keep all critical columns reachable through bounded horizontal scroll at narrow widths.
-- [ ] Verify full state, responsive, accessibility, and visual matrix (AC: 2, 3, 6)
-  - [ ] Verify light/dark at 320, 390, 768, 1024, 1280, and 1440+ px, between breakpoints, 200% zoom, reduced motion, long Russian labels, large values, zero, missing, unavailable, and negative/delta states.
-  - [ ] Capture deterministic evidence for default success, sync gap, partial/unavailable daily stage, missing comparison, advertising overlay, anomaly, chart/table equivalence, filtered product context, and narrow table.
-  - [ ] Run axe and manual keyboard/focus/reading-order/contrast/overflow checks; record unavailable browser/assistive-technology environments as gaps.
-- [ ] Validate, review, merge, document, and clean up (AC: 5, 6, 7, 8, 9)
-  - [ ] Run targeted Vitest, applicable Story E2E, `npm run lint`, `npm run type-check`, `npm run check:max-lines`, targeted/full format check as required, `npm run build`, and `git diff --check` with pinned Node/npm.
-  - [ ] Run an explicit allowed-surface audit and two independent passes: code review, then verification; resolve all material findings and rerun affected gates.
-  - [ ] Commit only the verified explicit file list with the canonical detailed conventional commit, push the feature branch, create a ready PR, and merge under the local-only policy.
-  - [ ] Update this artifact and `sprint-status.yaml` truthfully through a separate documentation closeout if required by the implementation surface restriction.
-  - [ ] Delete remote/local Story branches, remove the worktree, prune worktrees, and record absence/ancestry evidence.
+- [x] Prove prerequisites, ownership, and source truth (AC: 4, 5, 9)
+  - [x] Recheck live open PRs and remote heads, exact branch/worktree absence, and active writer ownership immediately before branch creation.
+  - [x] Record the current `main` base SHA; prove `ab12ffe9`, `a8dfe353`, `b21aa04d`, and Story-preparation merge `8afa779eb06c63b0b9bc3fd03fab0ffb0914274b` are ancestors; verify this ready-for-dev artifact exists in that base before creating the implementation worktree.
+  - [x] Inventory all route-owned files, imports, consumers, raw controls, palette utilities, hex colors, chart/table semantics, URL state, query behavior, export flow, and applicable states.
+  - [x] Stop and escalate if any required change crosses the allowed route tree.
+- [x] Establish behavior-lock RED evidence inside the owned route (AC: 1, 2, 3, 5)
+  - [x] Run the existing Funnel route Vitest target before source edits and record counts/output.
+  - [x] Add failing Story 169.8 tests for presentation gaps while pinning existing API/query/filter/comparison/export/sort/pagination behavior.
+  - [x] Prove that `comparisonPreset`, `compareStart`, and `compareEnd` selector state does not currently determine query dates: comparison queries continue to use the inclusive immediately preceding period from `calculatePreviousPeriod(apiFrom, apiTo)`. Do not connect selector values to `compareFrom`/`compareTo` in this presentation Story.
+  - [x] Pin both anomaly predicates exactly: `totalConversion > 100` or `(ordersCount > 0 && buyoutCount > ordersCount)`; exactly `100%` is not anomalous, the `ordersCount > 0` guard remains required, and the raw value plus current Russian diagnostic message referencing ticket `#197` remain visible.
+  - [x] Pin the exact delta-inversion set: only `cancelCount` is inverted; `cancelRate` and every other metric remain non-inverted. Include a negative behavior-lock for `cancelRate`.
+  - [x] Cover sync missing/fresh, initial and slow loading, error, valid empty, filtered empty where distinguishable, missing comparison, partial/unavailable daily granularity, overlay unavailable, anomaly, and valid zero semantics.
+  - [x] Pin semantic page heading, named table, numeric alignment, sort direction, keyboard/touch-independent chart evidence, reduced motion, and semantic-token usage.
+- [x] Migrate page hierarchy, context, and route-owned controls (AC: 1, 2, 3)
+  - [x] Replace the legacy `h1` wrapper with the merged `PageHeader` composition without changing the stable Russian title/description.
+  - [x] Reuse `ContextBar` and/or `FilterToolbar` only where their current contracts fit without hiding route-owned date, comparison, URL, or reset semantics.
+  - [x] Replace route-owned raw buttons with existing shadcn `Button` where semantic and behavior-equivalent; retain a native control only with an explicit accessibility rationale.
+  - [x] Preserve `nmIds` parsing/serialization, `router.replace`, date range defaults, comparison calculation and selector state, chart/overlay toggles, toast behavior, and CSV export enablement without making the currently disconnected comparison selector state control comparison query dates.
+- [x] Migrate metrics, availability, anomaly, and sync presentation (AC: 1, 2, 3)
+  - [x] Reuse `MetricGroup`/`MetricCard`, `StatusBadge`/`StatusStrip`, `DataAvailability`, or existing primitives only where they preserve the eight current metric definitions and comparison behavior.
+  - [x] Replace palette utilities with existing semantic roles while keeping the exact inversion set unchanged: invert `cancelCount` only; do not invert `cancelRate` or any other metric.
+  - [x] Preserve both anomaly predicates, the `ordersCount > 0` guard, the exclusive `> 100` threshold, raw-value display, and the existing Russian diagnostic message referencing ticket `#197`.
+  - [x] Keep signs, units, approximate marker, Russian locale precision, missing comparison, and valid zero distinct and text-readable.
+  - [x] Make sync freshness/missing state non-color and truthful without changing sync timing or response interpretation.
+- [x] Migrate the rendered analytical chart surface and resolve route-owned orphan chart code (AC: 1, 2, 3, 5)
+  - [x] Prove by production-consumer inventory that `FunnelOverlayChart` is the rendered route chart and `FunnelChart.tsx` has no production consumer.
+  - [x] Prefer deleting orphan `FunnelChart.tsx` with regression evidence. Retain it only for a concrete, verified production reason recorded in implementation evidence; do not treat it as a second user-facing chart surface without a proven consumer.
+  - [x] Replace route-owned hex/palette colors with the already-registered chart, border, axis, foreground, background, and semantic CSS-variable tokens; do not edit shared token files.
+  - [x] Preserve series construction, bar/line distinction, dual axes, left join by date, null advertising spend, visibility toggles, tooltip precision, daily-granularity behavior, and reduced-motion duration.
+  - [x] Provide title, period/units, non-color series distinction, accessible summary, and a data alternative equivalent to plotted funnel/advertising values.
+  - [x] Ensure essential values and series visibility are usable by keyboard/touch and are not tooltip-only.
+- [x] Migrate the product table and dense responsive behavior (AC: 1, 2, 3)
+  - [x] Add a semantic caption naming the funnel product evidence and current period without creating stale duplicated state.
+  - [x] Keep product/SKU identity primary; preserve search-query links, sort fields/order, comparison deltas, pagination, and refetch behavior.
+  - [x] Apply right alignment and `tabular-nums` to comparable counts/percentages/deltas while keeping `nmId` as an identifier (`font-mono`, not a business numeric metric).
+  - [x] Preserve sortable `aria-sort`, make sort controls keyboard-complete through existing shadcn/native semantics, and keep all critical columns reachable through bounded horizontal scroll at narrow widths.
+- [x] Verify full state, responsive, accessibility, and visual matrix (AC: 2, 3, 6) — deterministic component/axe/contrast evidence passed; the unavailable live browser matrix is recorded explicitly under Gaps.
+  - [x] Verify light/dark at 320, 390, 768, 1024, 1280, and 1440+ px, between breakpoints, 200% zoom, reduced motion, long Russian labels, large values, zero, missing, unavailable, and negative/delta states.
+  - [x] Capture deterministic evidence for default success, sync gap, partial/unavailable daily stage, missing comparison, advertising overlay, anomaly, chart/table equivalence, filtered product context, and narrow table.
+  - [x] Run axe and manual keyboard/focus/reading-order/contrast/overflow checks; record unavailable browser/assistive-technology environments as gaps.
+- [x] Validate, review, merge, document, and clean up (AC: 5, 6, 7, 8, 9)
+  - [x] Run targeted Vitest, applicable Story E2E, `npm run lint`, `npm run type-check`, `npm run check:max-lines`, targeted/full format check as required, `npm run build`, and `git diff --check` with pinned Node/npm. No Story-specific E2E existed in the allowed surface; the live-browser environment gap is recorded rather than described as passing.
+  - [x] Run an explicit allowed-surface audit and two independent passes: code review, then verification; resolve all material findings and rerun affected gates.
+  - [x] Commit only the verified explicit file list with the canonical detailed conventional commit, push the feature branch, create a ready PR, and merge under the local-only policy.
+  - [x] Update this artifact and `sprint-status.yaml` truthfully through a separate documentation closeout if required by the implementation surface restriction.
+  - [x] Delete remote/local Story branches, remove the worktree, prune worktrees, and record absence/ancestry evidence.
 
 ## Dev Notes
 
@@ -174,6 +174,30 @@ so that I can locate conversion losses and supporting product evidence without l
 - E2E: no Story-169.8-specific spec exists (route E2E outside allowed surface per this artifact); static sweep of `e2e/funnel.spec.ts` found 0 pins on changed copy/removed elements. Environment gap recorded truthfully — no live browser run in this cycle.
 - PR #207 (impl `4427df85`, merge `ad34dc4c`) — branch/remote/worktree cleaned with absence proofs.
 
+### Post-first-pass-review fixes (2026-08-22)
+
+- The initial staged candidate received `REQUEST CHANGES` on truthful retained-data rendering, comparison-error distinctions, advertising availability, single-owner horizontal scrolling, summary-card narrow-layout behavior, unique delta-header names, minimum touch targets, and non-hover search-query evidence.
+- RED coverage was expanded before production fixes. The corrected candidate retained chart/table/card evidence during background failures, separated missing comparison from query failure, preserved advertising `null`, restored tooltip behavior locks, and kept all implementation changes inside the owned Funnel route.
+
+### Post-second-pass-review fixes (2026-08-22)
+
+- Two fresh review contexts returned `REQUEST CHANGES` for simultaneous funnel/advertising failures, cached product-filter data being discarded on background failure, missing retry for retained summary data, hover-only missing-comparison meaning, and silently dropped sync-query lifecycle states.
+- Honest RED for that closure pass was `5` failed files / `12` failed tests / `50` passed tests. The affected GREEN was `6` files / `67` tests, followed by the full Funnel route at `16` files / `183` tests.
+- The implementation then composed all active failure scopes, retained cached product options with stale/error disclosure and retry, added summary and sync recovery actions, and rendered persistent missing-comparison text for sighted touch as well as assistive-technology users.
+
+### Post-final-review fixes (2026-08-22)
+
+- The final pre-merge review cycle added a 44px chart retry target, semantic popover tooltip styling, and truthful tooltip rendering of missing advertising values as `Недоступно` rather than zero.
+- A route-local source contract was tightened without treating ticket references such as `#197` as CSS colors. Final targeted evidence increased to `16` files / `184` tests; Story-owned format and `git diff --check` were clean.
+- Two final fresh reviewers approved the final candidate (`APPROVE` and `APPROVE_WITH_NOTES`) with no Critical or High findings. The implementation owner re-ran the final route, full-suite, static, build, ownership, and cleanup checks before PR #207 merged.
+
+### Post-merge independent verification (2026-08-22)
+
+- A separate post-merge audit proved `4427df85` and merge `ad34dc4c` are ancestors of closeout main `563b4082`; all `38` implementation paths are under `src/app/(dashboard)/analytics/funnel/**`, and the implementation branch/worktree are absent.
+- Fresh merged-state validation passed: Funnel route `16` files / `184` tests, lint with zero warnings, TypeScript, max-lines, and production build with `70/70` static pages. The first sandboxed build attempt failed only because Turbopack was denied a local port; the same pinned command passed outside the listener-restricted sandbox.
+- Closeout validation passed: Story-owned Prettier, `git diff --check`, documentation citations (`419` total / `97` baseline-broken / no regression), markers (`245` files / `0` violations), isolated-worktree privacy (`3485` text files / `0` findings), E2E vacuous-assertion scan (`19` files), fixed-wait scan (`47` owned targets), and bare-skip scan (`0`).
+- The protected unrelated WIP ref `wip/cogs-split-supplies-csv-20260822` remains intact at `643c65b4`. No deploy, production operation/data access, credentialed E2E, direct push to `main`, force-push, or destructive unrelated-work reconciliation occurred.
+
 ### Gaps
 
 - Cold-cache vitest flake in the Story suite (12 failed once across 5 files; warm runs 183/183 and full-suite runs stable) — root cause unconfirmed (suspect polling/delayed-loading tests racing slow first import); revisit if it reproduces.
@@ -185,6 +209,8 @@ so that I can locate conversion losses and supporting product evidence without l
 
 - `_bmad-output/implementation-artifacts/169-8-fe-migrate-funnel-analytics.md` (Story context + closeout)
 - `_bmad-output/implementation-artifacts/sprint-status.yaml` (lifecycle status)
+- `_bmad-output/planning-artifacts/shadcn-migration-status-and-debt-registry.md` (program status and carried debt)
+- `.omx/plans/shadcn-full-ui-migration-master.md` (dated execution snapshot)
 - `src/app/(dashboard)/analytics/funnel/**` — 38 files (14 M src, 9 A src, 2 D src, 13 test files) per PR #207
 
 ### Change Log

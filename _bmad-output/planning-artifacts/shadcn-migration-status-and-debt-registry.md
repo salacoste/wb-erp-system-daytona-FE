@@ -13,31 +13,32 @@
 | 166-FE foundation | 8 | 8 | — | **CLOSED** (токены, примитивы, композиции, контракты) |
 | 167-FE AppShell/auth | 9 (с merge'ами) | 9 | — | **CLOSED** (freeze-8, W1) |
 | 168-FE analytics core | 11 | 11 | — | **CLOSED** (hub + 10 маршрутов; 168.2-168.11 orchestrator-волной) |
-| 169-FE operational analytics | 13 | **7** | 169.8-169.13 | **IN PROGRESS** (acquiring ×3 + buyout ×2 + fbs ×2) |
+| 169-FE operational analytics | 13 | **8** | 169.9-169.13 | **IN PROGRESS** (acquiring ×3 + buyout ×2 + fbs ×2 + funnel) |
 | 170-FE | 7 | 0 | 170.1-7 | backlog |
 | 171-FE | 9 | 0 | 171.1-9 | backlog |
 | 172-FE | 17 | 0 | 172.1-17 | backlog (см. owner-заметки §4) |
 | 173-FE | 13 | 0 | 173.1-13 | backlog |
 | 174-FE консолидация | 5 | 0 | 174.1-5 | финал (СТРОГО после 166-173; 174.2 = legacy-enforcement + все долги §3) |
 
-**Готовность маршрутов**: 35 of ~79 story-строк закрыто; активная волна = 168.2-169.7
-(16 маршрутов orchestrator-циклом v4-v7, PRs #170-#203).
+**Готовность маршрутов**: 36 of ~79 story-строк закрыто; активная волна теперь включает
+169.8 Funnel Analytics (implementation PR #207, merge `ad34dc4c`; closeout PR #208,
+merge `563b4082`).
 
-**NEXT = 169.8 funnel-analytics** (`ready-for-dev`): pre-flight ПОЛНОСТЬЮ готов (11-пунктовая
-карта миграции + baseline 11 файлов/110 тестов в docs/HANDOFF-2026-08-22-W6-169-6-7-SHIPPED.md
-§2 BE-репо). Branch cdx/epic-169-story-8-funnel-shadcn. **Обновление 22.08 (post-W6)**:
-параллельная сессия залила docs-only PR #204+#205 (`747cedf2`/`963b1cf8`) — создан
-implementation-artifact 169-8-fe-migrate-funnel-analytics.md (+181 строка, behavior-contracts
-prep) + sprint-flip ready-for-dev; ИСХОДНИКИ и .omx-план НЕ тронуты → карта миграции W6
-остаётся валидной; executor-промпт следующей сессии должен СВЕРИТЬСЯ с этим prep-артефактом.
+**NEXT = 169.9 analytics gaps triage** (`backlog`): обязательный predecessor 169.8 завершён.
+Перед созданием следующего implementation worktree нужно полностью перечитать canonical DAG,
+Story 169.9 plan и обновлённый `origin/main`, затем создать Story context/ready-for-dev lifecycle
+в отдельной preparation lane. Story 169.8 закрыта с route-owned implementation scope,
+16 файлами / 184 targeted tests и полным floor `18 901/0`; live browser matrix остаётся
+явным carry-out в 174.3, а не скрытым pass.
 
 ## 2. Верификационные факты (2026-08-22, конец W6-сессии)
 
 - BE main `efe9a3be2` synced; 0 src-мержей после деплоя `31402ce34` (rebuild не нужен).
-- FE origin/main `96103a61` (flip #203); FE local main позади — НОРМА (контент в BE-mirror).
-- Полы: FE vitest **18 827/0** · BE jest 13 170/0.
+- FE origin/main `563b4082` (Story 169.8 closeout PR #208); implementation merge `ad34dc4c`.
+- Полы: FE vitest **18 901/0** · BE jest 13 170/0.
 - PM2: wb-repricer + worker + frontend(:3100) online; Docker up (postgres/redis/mindsdb/prophet).
-- Worktrees/branches чисты в обоих репо (FE non-main = openwiki-бот только).
+- Story 169.8 implementation branch/worktree удалены с absence proof; отдельный Story 169.9
+  worktree уже активен и не относится к cleanup 169.8.
 - Чужой WIP в FE-дереве (НЕ трогать): cogs/csv/rateLimit/supplies/SkuFinancialsTable + .env.bak ×2.
 
 ## 3. Полный долг-реестр
@@ -65,6 +66,10 @@ prep) + sprint-flip ready-for-dev; ИСХОДНИКИ и .omx-план НЕ тр
 | C5 | waterfall double-color-source (utils green vs config blue) | unit-economics-utils vs waterfall-chart-config | debt-ID при касании waterfall; решить канон-источник |
 | C6 | date-cells tabular-nums отсутствует во всех 3 acquiring-таблицах | acquiring/** | 174.x tree-wide sweep (НЕ пер-роутный фикс) |
 | C7 | e2e-комментарий «amber rate-limit banner» устарел | e2e/acquiring.spec.ts:130 | при следующем касании спеки |
+| C8 | FunnelPageContent находится ровно на source cap 200 строк | analytics/funnel/FunnelPageContent.tsx | вынести sync/toolbar block при первом следующем касании |
+| C9 | Live visual/browser matrix Story 169.8 не выполнена | analytics/funnel | обязательный consolidated browser/axe/keyboard pass в 174.3 |
+| C10 | KPI-icon canon Funnel semantic, а 169.6/169.7 muted | analytics/funnel + fbs routes | свести к одному owner-canon в 174.2 |
+| C11 | Cold-cache Funnel Vitest один раз дал 12 failures, warm/full runs стабильны | analytics/funnel tests | расследовать только при повторном воспроизведении; не считать текущим functional failure |
 
 ### 3.3 BE-debt
 

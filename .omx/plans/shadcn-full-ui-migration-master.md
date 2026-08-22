@@ -319,12 +319,14 @@ Story identity is the numeric `Epic.Story` ID, not the descriptive sprint-status
 > Живые по-сторийные статусы: `_bmad-output/implementation-artifacts/sprint-status.yaml`.
 
 - **Epics CLOSED**: 166-FE (foundation), 167-FE (AppShell/auth, freeze-8), 168-FE (analytics core, 11/11).
-- **169-FE IN PROGRESS: 7/13** (169.1-169.7 shipped: acquiring ×3, buyout ×2, fbs-enhanced, fbs-stock).
-- **NEXT = 169.8 funnel** (`ready-for-dev`): W6 pre-flight map готов (BE handoff 2026-08-22 §2);
-  docs-only prep PR #204/#205 добавил behavior-contracts артефакт — свериться перед executor-запуском.
+- **169-FE IN PROGRESS: 8/13** (169.1-169.8 shipped: acquiring ×3, buyout ×2, fbs-enhanced, fbs-stock, funnel).
+- **NEXT = 169.9 analytics gaps triage** (`backlog`): Story 169.8 implementation PR #207
+  (`4427df85`, merge `ad34dc4c`) and closeout PR #208 (`563b4082`) are complete; reread the
+  169.9 plan/DAG and create its ready-for-dev Story context before implementation worktree creation.
 - **Backlog**: 169.9-169.13 → 170.1-7 → 171.1-9 → 172.1-17 (172.1 carry-in getMarginColor dedupe;
   172.5/172.6/172.14 owner/WIP-зависимые) → 173.1-13 (173.8/173.12 owner) → 174.1-5 (консолидация;
   174.2 собирает ВСЕ долги: FE-D2/D6, C3-C7, contrast-эскалации /15-light).
-- Полы: FE vitest 18 827/0 · BE jest 13 170/0 (2026-08-22).
+- Полы: FE vitest 18 901/0 · BE jest 13 170/0 (2026-08-22). Story 169.8 targeted:
+  16 files / 184 tests; live browser matrix remains an explicit 174.3 carry-out.
 - Полный долг-реестр + параллельные треки (W4 Epic-121 P3 ready-to-implement, W5 Epic-128 owner-акты,
   W7 финанс W34 авто-пулл Пн 24.08) — в registry-файле выше и BE handoff-цепочке.
