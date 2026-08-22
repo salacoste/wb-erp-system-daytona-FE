@@ -10,10 +10,10 @@ so that I can locate conversion losses and supporting product evidence without l
 
 ## Acceptance Criteria
 
-1. **Given** current funnel and comparison data, **when** the route is migrated, **then** stage definitions/order, conversions, anomaly thresholds, product filtering, advertising overlays, sync status, table values, sorting, pagination, CSV export, search drill-down, and URL/search-parameter semantics remain unchanged.
+1. **Given** current funnel and comparison data, **when** the route is migrated, **then** stage definitions/order, conversions, comparison-query dates, anomaly predicates, delta-inversion mapping, product filtering, advertising overlays, sync status, table values, sorting, pagination, CSV export, search drill-down, and URL/search-parameter semantics remain unchanged.
 2. **Given** missing comparison, sync gaps, zero conversions, filtered-empty, partial stages, stale data, unavailable daily granularity, overlay-unavailable, slow loading, or recoverable error, **when** displayed, **then** trustworthy evidence remains visible and missing/partial values are not presented as trustworthy zeroes.
 3. **Given** keyboard, touch, narrow layouts, reduced motion, or 200% zoom, **when** a stage, anomaly, overlay series, filter, sort control, export action, or product row is examined, **then** period, units, current selection, action effect, and equivalent textual/tabular evidence are available without hover or color-only meaning.
-4. **Given** the implementation branch is created, **when** its base is inspected, **then** it is `cdx/epic-169-story-8-funnel-shadcn`, uses `/private/tmp/wb-repricer-fe-169-8-funnel-shadcn`, and starts from the then-current `main` containing Epic 166 final foundation merge `ab12ffe9`, Story 167.1 merge `a8dfe353`, Story 168.1 merge `b21aa04d`, and this ready-for-dev Story artifact.
+4. **Given** the implementation branch is created, **when** its base is inspected, **then** it is `cdx/epic-169-story-8-funnel-shadcn`, uses `/private/tmp/wb-repricer-fe-169-8-funnel-shadcn`, and starts from the then-current `main` containing Epic 166 final foundation merge `ab12ffe9`, Story 167.1 merge `a8dfe353`, Story 168.1 merge `b21aa04d`, Story-preparation merge `8afa779e`, and this ready-for-dev Story artifact.
 5. **Given** the final diff, **when** paths are audited, **then** every implementation change is below `src/app/(dashboard)/analytics/funnel/**`; no shared primitive, product composition, hook, API client, type, store, route registry, sibling route, package file, canonical planning artifact, or route ledger is changed.
 6. **Given** implementation is ready for review, **when** targeted Vitest and applicable route E2E, lint, type-check, max-lines, format, build, diff-check, visual/theme/responsive, axe, and manual keyboard/focus checks run, **then** each passes or has an explicit environment gap; no unavailable check is described as passed.
 7. **Given** independent review finds an accepted issue, **when** it is fixed, **then** the affected targeted checks and all universal gates are rerun before merge.
@@ -24,25 +24,31 @@ so that I can locate conversion losses and supporting product evidence without l
 
 - [ ] Prove prerequisites, ownership, and source truth (AC: 4, 5, 9)
   - [ ] Recheck live open PRs and remote heads, exact branch/worktree absence, and active writer ownership immediately before branch creation.
-  - [ ] Record the current `main` base SHA and prove `ab12ffe9`, `a8dfe353`, and `b21aa04d` are ancestors.
+  - [ ] Record the current `main` base SHA; prove `ab12ffe9`, `a8dfe353`, `b21aa04d`, and Story-preparation merge `8afa779eb06c63b0b9bc3fd03fab0ffb0914274b` are ancestors; verify this ready-for-dev artifact exists in that base before creating the implementation worktree.
   - [ ] Inventory all route-owned files, imports, consumers, raw controls, palette utilities, hex colors, chart/table semantics, URL state, query behavior, export flow, and applicable states.
   - [ ] Stop and escalate if any required change crosses the allowed route tree.
 - [ ] Establish behavior-lock RED evidence inside the owned route (AC: 1, 2, 3, 5)
   - [ ] Run the existing Funnel route Vitest target before source edits and record counts/output.
   - [ ] Add failing Story 169.8 tests for presentation gaps while pinning existing API/query/filter/comparison/export/sort/pagination behavior.
+  - [ ] Prove that `comparisonPreset`, `compareStart`, and `compareEnd` selector state does not currently determine query dates: comparison queries continue to use the inclusive immediately preceding period from `calculatePreviousPeriod(apiFrom, apiTo)`. Do not connect selector values to `compareFrom`/`compareTo` in this presentation Story.
+  - [ ] Pin both anomaly predicates exactly: `totalConversion > 100` or `(ordersCount > 0 && buyoutCount > ordersCount)`; exactly `100%` is not anomalous, the `ordersCount > 0` guard remains required, and the raw value plus current Russian diagnostic message referencing ticket `#197` remain visible.
+  - [ ] Pin the exact delta-inversion set: only `cancelCount` is inverted; `cancelRate` and every other metric remain non-inverted. Include a negative behavior-lock for `cancelRate`.
   - [ ] Cover sync missing/fresh, initial and slow loading, error, valid empty, filtered empty where distinguishable, missing comparison, partial/unavailable daily granularity, overlay unavailable, anomaly, and valid zero semantics.
   - [ ] Pin semantic page heading, named table, numeric alignment, sort direction, keyboard/touch-independent chart evidence, reduced motion, and semantic-token usage.
 - [ ] Migrate page hierarchy, context, and route-owned controls (AC: 1, 2, 3)
   - [ ] Replace the legacy `h1` wrapper with the merged `PageHeader` composition without changing the stable Russian title/description.
   - [ ] Reuse `ContextBar` and/or `FilterToolbar` only where their current contracts fit without hiding route-owned date, comparison, URL, or reset semantics.
   - [ ] Replace route-owned raw buttons with existing shadcn `Button` where semantic and behavior-equivalent; retain a native control only with an explicit accessibility rationale.
-  - [ ] Preserve `nmIds` parsing/serialization, `router.replace`, date range defaults, comparison calculation/preset state, chart/overlay toggles, toast behavior, and CSV export enablement.
+  - [ ] Preserve `nmIds` parsing/serialization, `router.replace`, date range defaults, comparison calculation and selector state, chart/overlay toggles, toast behavior, and CSV export enablement without making the currently disconnected comparison selector state control comparison query dates.
 - [ ] Migrate metrics, availability, anomaly, and sync presentation (AC: 1, 2, 3)
   - [ ] Reuse `MetricGroup`/`MetricCard`, `StatusBadge`/`StatusStrip`, `DataAvailability`, or existing primitives only where they preserve the eight current metric definitions and comparison behavior.
-  - [ ] Replace palette utilities with existing semantic roles while keeping positive/negative inversion rules and the >100% anomaly threshold unchanged.
+  - [ ] Replace palette utilities with existing semantic roles while keeping the exact inversion set unchanged: invert `cancelCount` only; do not invert `cancelRate` or any other metric.
+  - [ ] Preserve both anomaly predicates, the `ordersCount > 0` guard, the exclusive `> 100` threshold, raw-value display, and the existing Russian diagnostic message referencing ticket `#197`.
   - [ ] Keep signs, units, approximate marker, Russian locale precision, missing comparison, and valid zero distinct and text-readable.
   - [ ] Make sync freshness/missing state non-color and truthful without changing sync timing or response interpretation.
-- [ ] Migrate both chart surfaces to the analytical evidence contract (AC: 1, 2, 3)
+- [ ] Migrate the rendered analytical chart surface and resolve route-owned orphan chart code (AC: 1, 2, 3, 5)
+  - [ ] Prove by production-consumer inventory that `FunnelOverlayChart` is the rendered route chart and `FunnelChart.tsx` has no production consumer.
+  - [ ] Prefer deleting orphan `FunnelChart.tsx` with regression evidence. Retain it only for a concrete, verified production reason recorded in implementation evidence; do not treat it as a second user-facing chart surface without a proven consumer.
   - [ ] Replace route-owned hex/palette colors with the already-registered chart, border, axis, foreground, background, and semantic CSS-variable tokens; do not edit shared token files.
   - [ ] Preserve series construction, bar/line distinction, dual axes, left join by date, null advertising spend, visibility toggles, tooltip precision, daily-granularity behavior, and reduced-motion duration.
   - [ ] Provide title, period/units, non-color series distinction, accessible summary, and a data alternative equivalent to plotted funnel/advertising values.
@@ -72,7 +78,8 @@ so that I can locate conversion losses and supporting product evidence without l
 - Final Epic 166 foundation merge: `ab12ffe98f1b78cae49a66eea8bed7e16e7ed0f2` (PR #152).
 - Story 167.1 AppShell merge: `a8dfe3532b2a05eaa8b979aae3522de39de2fcfa` (PR #153).
 - Story 168.1 analytics hub/shared-UI merge: `b21aa04d0a71be6d4026372cc3f7734b3a1082ea` (PR #168).
-- The preparation base was `96103a61b02d445ef80a08bd34c084e2e67649e9` and already contains merged Stories 169.6 and 169.7. The implementation branch must start from the newer `main` that also contains this Story-preparation merge.
+- Story 169.8 preparation merge: `8afa779eb06c63b0b9bc3fd03fab0ffb0914274b` (PR #204).
+- The preparation base was `96103a61b02d445ef80a08bd34c084e2e67649e9` and already contains merged Stories 169.6 and 169.7. The implementation branch must start from a newer `main` where `8afa779e` is proven ancestral and this artifact is present.
 - The primary checkout is stale and contains separately attributed concurrent bytes matching merged 169.6/169.7 work. Do not switch, reset, stash, clean, or use it as the implementation base.
 - Preserve `wip/cogs-split-supplies-csv-20260822` at `643c65b4` and all historical stashes; they are unrelated and overlap future Stories.
 
@@ -86,10 +93,11 @@ so that I can locate conversion losses and supporting product evidence without l
 
 - `FunnelPageContent` owns hydration-safe date initialization, chart/overlay toggles, comparison state, search-param-preserved `nmIds`, and `router.replace` URL updates.
 - Query behavior remains in `useFunnelData`, `useFunnelTimeSeries`, `useFunnelSyncStatus`, `useAdvertisingAnalytics`, and `useFunnelExportData`; do not change enablement, keys, payloads, pagination, cache, response interpretation, or refetch behavior.
-- Comparison period calculation is inclusive and immediately precedes the active range. Zero previous values currently yield a neutral `0.0%` delta; preserve unless source/tests prove a defect outside migration scope.
+- Comparison query dates are calculated exclusively through `calculatePreviousPeriod(apiFrom, apiTo)`: the inclusive comparison range immediately precedes the active range. `comparisonPreset`, `compareStart`, and `compareEnd` are stored and rendered selector state but do not currently influence `compareFrom`/`compareTo`; preserve that boundary. Connecting them is a separate product/analytics correction requiring an approved Story. Zero previous values currently yield a neutral `0.0%` delta; preserve unless source/tests prove a defect outside migration scope.
+- Delta desirability inversion is deliberately exact: `INVERTED_METRICS` contains only `cancelCount`. `cancelRate` and every other metric are non-inverted; do not generalize cancellation behavior during migration.
 - Overlay data is a left join keyed by date. Missing advertising spend stays `null`; it must not become a trustworthy zero.
 - `dailyGranularityAvailable=false` is an explicit unavailable state whose fallback points users to cards/table evidence.
-- The anomaly indicator flags impossible `totalConversion` values while always leaving the raw value visible.
+- The anomaly indicator is true when `totalConversion > 100` or when `(ordersCount > 0 && buyoutCount > ordersCount)`. Exactly `100%` is not anomalous, and `ordersCount > 0` prevents a zero-order false positive. Always leave the raw value and the current Russian diagnostic message referencing ticket `#197` visible.
 - Table sort defaults to `openCardCount desc`, uses a 50-row page, resets offset on filter/sort changes, and links top search queries to the existing search analytics route.
 - Russian date, count, percentage, and RUB formatting, approximate-conversion marker, sync copy, export filename/content, toast copy, and all query/URL/navigation semantics are behavior locks.
 
@@ -98,7 +106,7 @@ so that I can locate conversion losses and supporting product evidence without l
 - The route title uses `text-3xl` plus `text-gray-900` instead of the merged page composition and semantic foreground.
 - Route-owned raw buttons exist in the page toolbar, chart legend, table sort headers, and filter reset action.
 - Summary/delta/anomaly/table cells use generic palette utilities such as `text-blue-*`, `text-green-*`, `text-red-*`, `text-amber-*`, `text-orange-*`, `text-indigo-*`, `text-teal-*`, and `text-emerald-*`.
-- The simple funnel chart uses `bg-blue-400`, `bg-orange-400`, and `bg-green-400`; the overlay config and Recharts axes/grid use hardcoded hex values.
+- Production rendering uses `FunnelOverlayChart`. `FunnelChart.tsx` is currently orphaned, has no production consumer, issues its own query, and contains `bg-blue-400`, `bg-orange-400`, `bg-green-400`, plus hover-only `title` values. Delete it with regression evidence unless a concrete production retention reason is proven. The rendered overlay config and Recharts axes/grid use hardcoded hex values.
 - Chart meaning is still substantially hover/color dependent. `role=img` with one generic label is not an equivalent data alternative.
 - The table has no caption, numeric cells are not consistently aligned/tabular, and some essential header actions are raw controls.
 - `FunnelSummaryCards` currently defaults absent summary fields to zero. Tests must distinguish a valid zero response from unavailable/partial data before presentation is changed.
@@ -107,6 +115,7 @@ so that I can locate conversion losses and supporting product evidence without l
 
 - Use the merged PageHeader/ContextBar, metrics/status, filter, ResponsiveTable/TableState, ChartFrame/ChartEvidence, and PageState compositions as read-only dependencies where their current APIs fit.
 - Stories 169.4–169.7 establish local precedents: route title scale, semantic status pairs, `TableCaption`, `tabular-nums`, chart token variables (`var(--color-chart-*)`, `var(--color-border)`, `var(--color-chart-axis)`), dark-theme popover tooltips, non-hover chart summaries, and owned no-hex regression guards.
+- The Story 169.7 artifact is useful for implementation lessons only: its lifecycle header is stale. Sprint status plus Git ancestry (`700bf77c` merged via PR #202) are the lifecycle source of truth and must not reopen Story 169.7.
 - Do not copy Story 166.3 source-contract manifests or expand them for this route. Story 169.8 owns only route-local tests.
 - Official shadcn/ui chart guidance supports CSS-variable chart colors with separate light/dark definitions. This repository already owns those tokens; consume them rather than editing global CSS or introducing raw color values.
 
@@ -167,5 +176,6 @@ To be recorded by the implementing agent.
 | Date | Change |
 |---|---|
 | 2026-08-22 | Story created from the canonical Epic/OMX/UX contracts and current Funnel route source. Status: backlog → ready-for-dev. |
+| 2026-08-22 | Story context hardened with exact comparison-query, anomaly, delta-inversion, orphan-chart, preparation-ancestry, and predecessor lifecycle contracts. |
 
 <!-- Lessons-line convention (Story 94.4-FE): the FINAL story-close row (the one flipping Status to `done`) MUST include a `**Lessons:**` sub-line with 1-3 single-sentence pattern observations specific to this story. Earlier rows do not require Lessons. -->
