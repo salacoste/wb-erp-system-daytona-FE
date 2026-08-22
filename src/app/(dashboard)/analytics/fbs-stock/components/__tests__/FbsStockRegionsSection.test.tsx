@@ -123,4 +123,123 @@ describe('FbsStockRegionsSection (Story 96.11-FE)', () => {
     // Stale warning chip must NOT appear for future-dated snapshots (clock skew treated as fresh)
     expect(screen.queryByText(/Данные обновлены/)).not.toBeInTheDocument()
   })
+
+  // ─── Epic 169.7 shadcn migration pins ───────────────────────────────────────
+
+  it('169.7: cached-data banner uses status-warning token classes (exact pins)', () => {
+    const populatedResponse = {
+      data: {
+        regions: [
+          {
+            regionName: 'Центральный',
+            warehouseCount: 3,
+            stockUnits: 200,
+            stockValue: 1000,
+            shareOfTotalPct: 55.0,
+          },
+        ],
+      },
+      generatedAt: '2026-05-08T12:00:00Z', // fresh — isolate the cached-data banner from the stale chip
+    }
+    mockHook({ data: populatedResponse, isLoading: false, isError: true })
+    renderWithProviders(<FbsStockRegionsSection />)
+    const banner = screen
+      .getByText('Не удалось обновить. Показаны кэшированные данные.')
+      .closest('div')
+    expect(banner).not.toBeNull()
+    expect(banner?.classList.contains('border-status-warning/30')).toBe(true)
+    expect(banner?.classList.contains('bg-status-warning/15')).toBe(true)
+    expect(banner?.classList.contains('text-status-warning')).toBe(true)
+  })
+
+  it('169.7: stale-warning chip (>24h old snapshot) uses status-warning token classes (exact pins)', () => {
+    // Pinned system time = 2026-05-08T12:00:00Z; generatedAt 25h in the past → stale
+    const staleResponse = {
+      data: {
+        regions: [
+          {
+            regionName: 'Центральный',
+            warehouseCount: 3,
+            stockUnits: 200,
+            stockValue: 1000,
+            shareOfTotalPct: 55.0,
+          },
+        ],
+      },
+      generatedAt: '2026-05-07T11:00:00Z',
+    }
+    mockHook({ data: staleResponse, isLoading: false, isError: false })
+    renderWithProviders(<FbsStockRegionsSection />)
+    const chip = screen.getByText(/Данные обновлены/).closest('div')
+    expect(chip).not.toBeNull()
+    expect(chip?.classList.contains('border-status-warning/30')).toBe(true)
+    expect(chip?.classList.contains('bg-status-warning/15')).toBe(true)
+    expect(chip?.classList.contains('text-status-warning')).toBe(true)
+  })
+
+  it('169.7: renders static TableCaption naming the table', () => {
+    const populatedResponse = {
+      data: {
+        regions: [
+          {
+            regionName: 'Центральный',
+            warehouseCount: 3,
+            stockUnits: 200,
+            stockValue: 1000,
+            shareOfTotalPct: 55.0,
+          },
+        ],
+      },
+      generatedAt: '2026-05-08T12:00:00Z',
+    }
+    mockHook({ data: populatedResponse, isLoading: false, isError: false })
+    renderWithProviders(<FbsStockRegionsSection />)
+    const caption = screen.getByText('Остатки FBS по регионам')
+    expect(caption.tagName).toBe('CAPTION')
+  })
+
+  it('169.7: numeric cells carry tabular-nums («Складов» column representative)', () => {
+    const populatedResponse = {
+      data: {
+        regions: [
+          {
+            regionName: 'Центральный',
+            warehouseCount: 3,
+            stockUnits: 200,
+            stockValue: 1000,
+            shareOfTotalPct: 55.0,
+          },
+        ],
+      },
+      generatedAt: '2026-05-08T12:00:00Z',
+    }
+    mockHook({ data: populatedResponse, isLoading: false, isError: false })
+    renderWithProviders(<FbsStockRegionsSection />)
+    const warehousesCell = screen.getByText('3').closest('td')
+    expect(warehousesCell?.classList.contains('tabular-nums')).toBe(true)
+    // 4 numeric columns: Складов, Остатки, Стоимость, Доля от всех (%)
+    expect(document.querySelectorAll('td.tabular-nums')).toHaveLength(4)
+  })
+
+  it('169.7: null shareOfTotalPct renders muted em-dash (text-muted-foreground pin)', () => {
+    const populatedResponse = {
+      data: {
+        regions: [
+          {
+            regionName: 'Центральный',
+            warehouseCount: 3,
+            stockUnits: 200,
+            stockValue: 1000,
+            shareOfTotalPct: null,
+          },
+        ],
+      },
+      generatedAt: '2026-05-08T12:00:00Z',
+    }
+    mockHook({ data: populatedResponse, isLoading: false, isError: false })
+    renderWithProviders(<FbsStockRegionsSection />)
+    const dash = screen.getByText('—')
+    expect(dash.textContent).toBe('—')
+    expect(dash.classList.contains('text-muted-foreground')).toBe(true)
+  })
 })

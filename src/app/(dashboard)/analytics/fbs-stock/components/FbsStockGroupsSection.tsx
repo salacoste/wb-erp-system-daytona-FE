@@ -21,6 +21,7 @@ import { Button } from '@/components/ui/button'
 import {
   Table,
   TableBody,
+  TableCaption,
   TableCell,
   TableHead,
   TableHeader,
@@ -97,7 +98,7 @@ export function FbsStockGroupsSection() {
       ) : (
         <>
           {isError && hasData && (
-            <div className="rounded-md border border-amber-200 bg-amber-50 px-4 py-2 text-sm text-amber-800 flex items-center justify-between">
+            <div className="rounded-md border border-status-warning/30 bg-status-warning/15 px-4 py-2 text-sm text-status-warning flex items-center justify-between">
               <span>Не удалось обновить. Показаны кэшированные данные.</span>
               <Button variant="ghost" size="sm" onClick={() => void refetch()}>
                 Повторить
@@ -106,6 +107,7 @@ export function FbsStockGroupsSection() {
           )}
           <div className="rounded-md border overflow-x-auto">
             <Table>
+              <TableCaption>Остатки FBS по товарным группам</TableCaption>
               <TableHeader>
                 <TableRow>
                   <TableHead>Группа</TableHead>
@@ -120,15 +122,19 @@ export function FbsStockGroupsSection() {
                 {groups.map(item => (
                   <TableRow key={item.groupName}>
                     <TableCell className="font-medium">{item.groupName || '—'}</TableCell>
-                    <TableCell className="text-right text-sm">{item.skuCount}</TableCell>
-                    <TableCell className="text-right text-sm">{item.stockUnits}</TableCell>
-                    <TableCell className="text-right text-sm">
+                    <TableCell className="text-right text-sm tabular-nums">
+                      {item.skuCount}
+                    </TableCell>
+                    <TableCell className="text-right text-sm tabular-nums">
+                      {item.stockUnits}
+                    </TableCell>
+                    <TableCell className="text-right text-sm tabular-nums">
                       {item.stockValue == null ? '—' : formatCurrency(item.stockValue)}
                     </TableCell>
-                    <TableCell className="text-right text-sm">
+                    <TableCell className="text-right text-sm tabular-nums">
                       {item.averageDailyOutgoing}
                     </TableCell>
-                    <TableCell className="text-right text-sm">
+                    <TableCell className="text-right text-sm tabular-nums">
                       {/* Russian locale: comma decimal ("12,5"), not "12.5" */}
                       {item.daysOfCover == null ? '—' : formatDecimal(item.daysOfCover)}
                     </TableCell>

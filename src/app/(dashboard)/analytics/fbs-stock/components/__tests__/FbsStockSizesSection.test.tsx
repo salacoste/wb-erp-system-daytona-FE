@@ -11,7 +11,7 @@
  */
 
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
-import { screen } from '@testing-library/react'
+import { fireEvent, screen } from '@testing-library/react'
 import { renderWithProviders } from '@/test/utils/test-utils'
 import { emptyFbsStockSizesResponse } from '@/test/fixtures/fbs-stock-empty'
 
@@ -120,5 +120,108 @@ describe('FbsStockSizesSection (Story 96.11-FE)', () => {
     renderWithProviders(<FbsStockSizesSection />)
     expect(screen.getByText('12,5')).toBeInTheDocument()
     expect(screen.queryByText('12.5')).not.toBeInTheDocument()
+  })
+
+  // ─── Epic 169.7 shadcn migration pins ───────────────────────────────────────
+
+  it('169.7: cached-data banner uses status-warning token classes (exact pins)', () => {
+    const populatedResponse = {
+      ...emptyFbsStockSizesResponse(),
+      data: {
+        sizes: [
+          {
+            size: 'XL',
+            nmId: 123456,
+            skuCount: 2,
+            stockUnits: 15,
+            averageDailyOutgoing: 1,
+            daysOfCover: 12.5,
+          },
+        ],
+      },
+    }
+    mockHook({ data: populatedResponse, isLoading: false, isError: true })
+    renderWithProviders(<FbsStockSizesSection />)
+    const banner = screen
+      .getByText('Не удалось обновить. Показаны кэшированные данные.')
+      .closest('div')
+    expect(banner).not.toBeNull()
+    expect(banner?.classList.contains('border-status-warning/30')).toBe(true)
+    expect(banner?.classList.contains('bg-status-warning/15')).toBe(true)
+    expect(banner?.classList.contains('text-status-warning')).toBe(true)
+  })
+
+  it('169.7: renders static TableCaption naming the table', () => {
+    const populatedResponse = {
+      ...emptyFbsStockSizesResponse(),
+      data: {
+        sizes: [
+          {
+            size: 'XL',
+            nmId: 123456,
+            skuCount: 2,
+            stockUnits: 15,
+            averageDailyOutgoing: 1,
+            daysOfCover: 12.5,
+          },
+        ],
+      },
+    }
+    mockHook({ data: populatedResponse, isLoading: false, isError: false })
+    renderWithProviders(<FbsStockSizesSection />)
+    const caption = screen.getByText('Остатки FBS по размерам')
+    expect(caption.tagName).toBe('CAPTION')
+  })
+
+  it('169.7: numeric cells carry tabular-nums; nmId ID column stays mono WITHOUT tabular-nums', () => {
+    const populatedResponse = {
+      ...emptyFbsStockSizesResponse(),
+      data: {
+        sizes: [
+          {
+            size: 'XL',
+            nmId: 123456,
+            skuCount: 2,
+            stockUnits: 15,
+            averageDailyOutgoing: 1,
+            daysOfCover: 12.5,
+          },
+        ],
+      },
+    }
+    mockHook({ data: populatedResponse, isLoading: false, isError: false })
+    renderWithProviders(<FbsStockSizesSection />)
+    // non-nmId numeric column representative (SKU)
+    const skuCell = screen.getByText('2').closest('td')
+    expect(skuCell?.classList.contains('tabular-nums')).toBe(true)
+    // 4 numeric columns: SKU, Остатки, Расход/день, Дней покрытия (nmId excluded — ID=mono idiom)
+    expect(document.querySelectorAll('td.tabular-nums')).toHaveLength(4)
+    const nmIdCell = screen.getByText('123456').closest('td')
+    expect(nmIdCell?.classList.contains('font-mono')).toBe(true)
+    expect(nmIdCell?.classList.contains('tabular-nums')).toBe(false)
+  })
+
+  it('169.7: nmId validation hint uses text-status-warning (exact pin)', () => {
+    const populatedResponse = {
+      ...emptyFbsStockSizesResponse(),
+      data: {
+        sizes: [
+          {
+            size: 'XL',
+            nmId: 123456,
+            skuCount: 2,
+            stockUnits: 15,
+            averageDailyOutgoing: 1,
+            daysOfCover: 12.5,
+          },
+        ],
+      },
+    }
+    mockHook({ data: populatedResponse, isLoading: false, isError: false })
+    renderWithProviders(<FbsStockSizesSection />)
+    const input = screen.getByLabelText('Фильтр по артикулу WB')
+    fireEvent.change(input, { target: { value: '12.5abc' } })
+    const hint = screen.getByText('Должно быть положительное целое число')
+    expect(hint.classList.contains('text-status-warning')).toBe(true)
   })
 })

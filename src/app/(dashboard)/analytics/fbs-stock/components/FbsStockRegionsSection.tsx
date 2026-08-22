@@ -22,6 +22,7 @@ import { Button } from '@/components/ui/button'
 import {
   Table,
   TableBody,
+  TableCaption,
   TableCell,
   TableHead,
   TableHeader,
@@ -112,7 +113,7 @@ export function FbsStockRegionsSection() {
 
           {/* Stale-data warning chip — shown when snapshot is >24h old (M-1) */}
           {isStale && staleHours != null && (
-            <div className="flex items-center gap-2 rounded-md border border-amber-200 bg-amber-50 px-3 py-2 text-xs text-amber-700">
+            <div className="flex items-center gap-2 rounded-md border border-status-warning/30 bg-status-warning/15 px-3 py-2 text-xs text-status-warning">
               <Clock className="h-3.5 w-3.5 shrink-0" />
               <span>
                 Данные обновлены {formatStaleHours(staleHours)}. Возможно, остатки изменились.
@@ -121,7 +122,7 @@ export function FbsStockRegionsSection() {
           )}
 
           {isError && hasData && (
-            <div className="rounded-md border border-amber-200 bg-amber-50 px-4 py-2 text-sm text-amber-800 flex items-center justify-between">
+            <div className="rounded-md border border-status-warning/30 bg-status-warning/15 px-4 py-2 text-sm text-status-warning flex items-center justify-between">
               <span>Не удалось обновить. Показаны кэшированные данные.</span>
               <Button variant="ghost" size="sm" onClick={() => void refetch()}>
                 Повторить
@@ -131,6 +132,7 @@ export function FbsStockRegionsSection() {
 
           <div className="rounded-md border overflow-x-auto">
             <Table>
+              <TableCaption>Остатки FBS по регионам</TableCaption>
               <TableHeader>
                 <TableRow>
                   <TableHead>Регион</TableHead>
@@ -144,14 +146,18 @@ export function FbsStockRegionsSection() {
                 {regions.map(item => (
                   <TableRow key={item.regionName}>
                     <TableCell className="font-medium">{item.regionName || '—'}</TableCell>
-                    <TableCell className="text-right text-sm">{item.warehouseCount}</TableCell>
-                    <TableCell className="text-right text-sm">{item.stockUnits}</TableCell>
-                    <TableCell className="text-right text-sm">
+                    <TableCell className="text-right text-sm tabular-nums">
+                      {item.warehouseCount}
+                    </TableCell>
+                    <TableCell className="text-right text-sm tabular-nums">
+                      {item.stockUnits}
+                    </TableCell>
+                    <TableCell className="text-right text-sm tabular-nums">
                       {item.stockValue == null ? '—' : formatCurrency(item.stockValue)}
                     </TableCell>
-                    <TableCell className="text-right text-sm">
+                    <TableCell className="text-right text-sm tabular-nums">
                       {item.shareOfTotalPct == null ? (
-                        <span className="text-gray-400">—</span>
+                        <span className="text-muted-foreground">—</span>
                       ) : (
                         formatPercentage(item.shareOfTotalPct)
                       )}
