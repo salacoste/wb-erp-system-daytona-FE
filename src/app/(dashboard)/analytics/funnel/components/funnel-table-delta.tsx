@@ -12,16 +12,18 @@ export function DeltaCell({
   previous,
   field,
   loading,
+  error,
 }: {
   current: number
   previous: number | undefined
   field: string
   loading: boolean
+  error?: boolean
 }) {
   const delta = previous !== undefined ? calculateFunnelDelta(current, previous) : null
   return (
-    <TableCell className="text-xs">
-      <DeltaIndicator delta={delta} field={field} loading={loading} />
+    <TableCell className="text-right text-xs tabular-nums">
+      <DeltaIndicator delta={delta} field={field} loading={loading} error={error} />
     </TableCell>
   )
 }

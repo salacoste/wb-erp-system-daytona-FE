@@ -49,5 +49,5 @@ export function formatDelta(delta: FunnelDelta): string {
 export function getDeltaColor(direction: 'up' | 'down' | 'neutral', inverted: boolean): string {
   if (direction === 'neutral') return 'text-muted-foreground'
   const isPositive = inverted ? direction === 'down' : direction === 'up'
-  return isPositive ? 'text-green-600' : 'text-red-600'
+  return isPositive ? 'text-financial-positive' : 'text-financial-negative'
 }

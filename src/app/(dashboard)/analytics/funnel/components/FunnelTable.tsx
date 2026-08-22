@@ -1,24 +1,22 @@
-/**
- * Funnel Per-SKU Table
- * Epic 68: Sortable table with pagination for per-SKU funnel data
- * Refactored in Story 73.1-FE: columns extracted to funnel-table-columns.tsx
- * Story 73.4-FE: Added nmIds product filter prop
- * WoW delta columns when compare=true
- */
-
 'use client'
 
 import { useState, useEffect, useMemo } from 'react'
 import { useFunnelData } from '@/hooks/use-funnel-analytics'
-import { Table, TableBody } from '@/components/ui/table'
+import { Table, TableBody, TableCaption } from '@/components/ui/table'
 import { Button } from '@/components/ui/button'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Alert, AlertDescription } from '@/components/ui/alert'
-import { AlertCircle, RefreshCw } from 'lucide-react'
+import { AlertCircle } from 'lucide-react'
 import type { FunnelProductItem } from '@/types/analytics-funnel'
 import type { FunnelSortField } from './funnel-table-cells'
 import { FunnelTableHeader, FunnelTableRow } from './funnel-table-columns'
 import { useDelayedLoadingState } from '@/hooks/useDelayedLoadingState'
+import {
+  FunnelTableComparisonAlert,
+  FunnelTableError,
+  FunnelTableRefreshAlert,
+  FunnelTableSlowLoading,
+} from './funnel-table-feedback'
 
 interface FunnelTableProps {
   from: string
@@ -58,11 +56,18 @@ export function FunnelTable({
   const showSlowLoading = useDelayedLoadingState(isLoading && !data)
 
   const hasCompare = compareEnabled && !!compareFrom && !!compareTo
-  const { data: prevData, isLoading: prevLoading } = useFunnelData(
-    compareFrom ?? '',
-    compareTo ?? '',
-    { sort, order, limit, offset, nmIds: filterParam }
-  )
+  const {
+    data: prevData,
+    isLoading: prevLoading,
+    isError: prevError,
+    refetch: refetchPrevious,
+  } = useFunnelData(compareFrom ?? '', compareTo ?? '', {
+    sort,
+    order,
+    limit,
+    offset,
+    nmIds: filterParam,
+  })
 
   const prevItemsMap = useMemo(() => {
     if (!prevData?.items) return new Map<number, FunnelProductItem>()
@@ -83,13 +88,8 @@ export function FunnelTable({
     setOffset(0)
   }
 
-  if (isError) {
-    return (
-      <Alert variant="destructive">
-        <AlertCircle className="h-4 w-4" />
-        <AlertDescription>Не удалось загрузить данные воронки</AlertDescription>
-      </Alert>
-    )
+  if (isError && !data) {
+    return <FunnelTableError onRetry={() => void refetch()} />
   }
 
   if (isLoading && !showSlowLoading) {
@@ -97,36 +97,50 @@ export function FunnelTable({
   }
 
   if (isLoading && showSlowLoading) {
-    return (
-      <Alert>
-        <AlertCircle className="h-4 w-4" />
-        <AlertDescription className="flex items-center justify-between gap-4">
-          <span>Таблица воронки загружается дольше обычного. Можно повторить запрос.</span>
-          <Button variant="outline" size="sm" className="shrink-0" onClick={() => void refetch()}>
-            <RefreshCw className="h-4 w-4 mr-1" />
-            Повторить
-          </Button>
-        </AlertDescription>
-      </Alert>
-    )
+    return <FunnelTableSlowLoading onRetry={() => void refetch()} />
   }
 
   const items = (data?.items ?? []) as FunnelProductItem[]
   const pagination = data?.pagination
 
+  const feedback = (
+    <>
+      {isError ? <FunnelTableRefreshAlert onRetry={() => void refetch()} /> : null}
+      {hasCompare && prevError ? (
+        <FunnelTableComparisonAlert onRetry={() => void refetchPrevious()} />
+      ) : null}
+    </>
+  )
+
   if (items.length === 0) {
     return (
-      <Alert>
-        <AlertCircle className="h-4 w-4" />
-        <AlertDescription>Нет данных за выбранный период</AlertDescription>
-      </Alert>
+      <div className="space-y-4">
+        {feedback}
+        <Alert>
+          <AlertCircle className="h-4 w-4" />
+          <AlertDescription>
+            {filterParam
+              ? 'Нет данных по выбранным товарам за выбранный период'
+              : 'Нет данных за выбранный период'}
+          </AlertDescription>
+        </Alert>
+      </div>
     )
   }
 
   return (
     <div className="space-y-4">
-      <div className="rounded-md border overflow-x-auto">
-        <Table>
+      {feedback}
+      <div className="rounded-md border">
+        <Table
+          scrollContainerTabIndex={0}
+          scrollContainerAriaLabel="Таблица воронки продаж по товарам"
+        >
+          <TableCaption>
+            Воронка продаж по товарам за период{' '}
+            {new Date(`${from}T00:00:00`).toLocaleDateString('ru-RU')} —{' '}
+            {new Date(`${to}T00:00:00`).toLocaleDateString('ru-RU')}
+          </TableCaption>
           <FunnelTableHeader
             sort={sort}
             sortOrder={order}
@@ -141,6 +155,7 @@ export function FunnelTable({
                 compare={hasCompare}
                 prevItem={prevItemsMap.get(item.nmId)}
                 prevLoading={prevLoading}
+                prevError={hasCompare && prevError}
               />
             ))}
           </TableBody>
@@ -156,6 +171,7 @@ export function FunnelTable({
             <Button
               variant="outline"
               size="sm"
+              className="min-h-11"
               disabled={offset === 0}
               onClick={() => setOffset(Math.max(0, offset - limit))}
             >
@@ -164,6 +180,7 @@ export function FunnelTable({
             <Button
               variant="outline"
               size="sm"
+              className="min-h-11"
               disabled={!pagination.hasMore}
               onClick={() => setOffset(offset + limit)}
             >

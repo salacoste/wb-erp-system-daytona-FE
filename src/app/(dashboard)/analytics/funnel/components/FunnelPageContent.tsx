@@ -9,9 +9,11 @@ import { ComparisonPeriodSelector } from '@/components/custom/ComparisonPeriodSe
 import type { ComparisonPreset } from '@/components/custom/comparison-period/comparison-period-types'
 import type { DateRange } from '@/types/date-range'
 import type { FunnelDayItem } from '@/types/analytics-funnel'
-import { useFunnelTimeSeries, useFunnelSyncStatus } from '@/hooks/use-funnel-analytics'
+import { useFunnelTimeSeries } from '@/hooks/use-funnel-analytics'
 import { useAdvertisingAnalytics } from '@/hooks/advertising/hooks'
 import { ExportCsvButton } from '@/components/custom/ai/ExportCsvButton'
+import { PageHeader } from '@/components/product'
+import { Button } from '@/components/ui/button'
 import { TrendingUp } from 'lucide-react'
 import { FunnelSummaryCards } from './FunnelSummaryCards'
 import { FunnelTable } from './FunnelTable'
@@ -19,7 +21,7 @@ import { FunnelOverlayChart } from './FunnelOverlayChart'
 import { FunnelProductFilter } from './FunnelProductFilter'
 import { mergeFunnelAndAdDaily } from './funnel-overlay-config'
 import { useFunnelExportData } from './useFunnelExportData'
-import { SyncStatusBanner } from './SyncStatusBanner'
+import { FunnelSyncStatus } from './FunnelSyncStatus'
 import { calculatePreviousPeriod } from './funnel-comparison-utils'
 import { getDefaultRange, formatApi, toIsoWeek, parseNmIds } from './funnel-page-helpers'
 
@@ -53,7 +55,6 @@ export function FunnelPageContent() {
     return calculatePreviousPeriod(apiFrom, apiTo)
   }, [comparisonEnabled, apiFrom, apiTo])
 
-  const { data: syncStatus } = useFunnelSyncStatus()
   const { exportItems, csvContent, csvFileName } = useFunnelExportData(apiFrom, apiTo, nmIds)
   const funnelTs = useFunnelTimeSeries(apiFrom, apiTo, showChart)
   const adQuery = useAdvertisingAnalytics(
@@ -93,12 +94,12 @@ export function FunnelPageContent() {
 
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-3xl font-bold tracking-tight text-gray-900">Воронка продаж</h1>
-        <p className="text-muted-foreground mt-1">Просмотры → корзина → заказы → выкупы → отмены</p>
-      </div>
+      <PageHeader
+        title="Воронка продаж"
+        description="Просмотры → корзина → заказы → выкупы → отмены"
+      />
 
-      <SyncStatusBanner syncStatus={syncStatus} />
+      <FunnelSyncStatus />
 
       <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
         <DateRangePickerExtended
@@ -115,23 +116,31 @@ export function FunnelPageContent() {
             label="Скачать CSV"
             disabled={exportItems.length === 0}
           />
-          <button
+          <Button
             type="button"
+            variant="ghost"
+            size="sm"
             onClick={() => setShowChart(v => !v)}
-            className="text-sm text-muted-foreground hover:text-foreground transition-colors"
+            className="min-h-11 text-muted-foreground"
           >
             {showChart ? 'Скрыть график' : 'Показать график'}
-          </button>
+          </Button>
           {showChart && (
-            <button
+            <Button
               type="button"
+              variant="ghost"
+              size="sm"
               onClick={() => setShowAdOverlay(v => !v)}
-              className={`flex items-center gap-1 text-sm transition-colors ${showAdOverlay ? 'text-foreground font-medium' : 'text-muted-foreground hover:text-foreground'}`}
+              className={
+                showAdOverlay
+                  ? 'min-h-11 font-medium text-foreground'
+                  : 'min-h-11 text-muted-foreground'
+              }
               aria-pressed={showAdOverlay}
             >
               <TrendingUp className="h-3.5 w-3.5" />
               {showAdOverlay ? 'Скрыть рекламу' : 'Показать рекламу'}
-            </button>
+            </Button>
           )}
         </div>
       </div>
@@ -168,7 +177,13 @@ export function FunnelPageContent() {
           isError={funnelTs.isError}
           showAdOverlay={showAdOverlay}
           isAdLoading={adQuery.isLoading && showAdOverlay}
+          isAdError={adQuery.isError && showAdOverlay}
           dailyGranularityAvailable={funnelTs.data?.meta?.dailyGranularityAvailable ?? true}
+          periodFrom={apiFrom}
+          periodTo={apiTo}
+          selectedProductCount={nmIds.length}
+          onRetry={() => void funnelTs.refetch()}
+          onRetryAdvertising={() => void adQuery.refetch()}
         />
       )}
 

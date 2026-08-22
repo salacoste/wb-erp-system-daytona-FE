@@ -74,20 +74,20 @@ describe('formatDelta', () => {
 })
 
 describe('getDeltaColor', () => {
-  it('returns green for up (normal metric)', () => {
-    expect(getDeltaColor('up', false)).toBe('text-green-600')
+  it('returns the positive financial token for up (normal metric)', () => {
+    expect(getDeltaColor('up', false)).toBe('text-financial-positive')
   })
 
-  it('returns red for down (normal metric)', () => {
-    expect(getDeltaColor('down', false)).toBe('text-red-600')
+  it('returns the negative financial token for down (normal metric)', () => {
+    expect(getDeltaColor('down', false)).toBe('text-financial-negative')
   })
 
-  it('returns red for up (inverted metric like cancelCount)', () => {
-    expect(getDeltaColor('up', true)).toBe('text-red-600')
+  it('returns the negative financial token for up (inverted metric like cancelCount)', () => {
+    expect(getDeltaColor('up', true)).toBe('text-financial-negative')
   })
 
-  it('returns green for down (inverted metric like cancelCount)', () => {
-    expect(getDeltaColor('down', true)).toBe('text-green-600')
+  it('returns the positive financial token for down (inverted metric like cancelCount)', () => {
+    expect(getDeltaColor('down', true)).toBe('text-financial-positive')
   })
 
   it('returns muted for neutral regardless of inversion', () => {
@@ -101,7 +101,8 @@ describe('isInvertedMetric', () => {
     expect(isInvertedMetric('cancelCount')).toBe(true)
   })
 
-  it('returns false for normal metrics', () => {
+  it('keeps cancelRate and all normal metrics non-inverted', () => {
+    expect(isInvertedMetric('cancelRate')).toBe(false)
     expect(isInvertedMetric('openCardCount')).toBe(false)
     expect(isInvertedMetric('buyoutCount')).toBe(false)
     expect(isInvertedMetric('ordersCount')).toBe(false)

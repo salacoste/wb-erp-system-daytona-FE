@@ -156,10 +156,19 @@ describe('OVERLAY_SERIES', () => {
 })
 
 describe('OVERLAY_COLORS', () => {
-  it('has expected color values', () => {
-    expect(OVERLAY_COLORS.adSpend).toBe('#7C3AED')
-    expect(OVERLAY_COLORS.openCardCount).toBe('#60A5FA')
-    expect(OVERLAY_COLORS.ordersCount).toBe('#FB923C')
-    expect(OVERLAY_COLORS.buyoutCount).toBe('#4ADE80')
+  it('uses the registered theme-owned chart color roles', () => {
+    expect(OVERLAY_COLORS).toEqual({
+      openCardCount: 'var(--color-chart-1)',
+      ordersCount: 'var(--color-chart-5)',
+      buyoutCount: 'var(--color-chart-4)',
+      adSpend: 'var(--color-chart-2)',
+    })
+  })
+
+  it('contains no raw hex series colors', () => {
+    for (const color of Object.values(OVERLAY_COLORS)) {
+      expect(color).toMatch(/^var\(--color-chart-/)
+      expect(color).not.toMatch(/^#/)
+    }
   })
 })
