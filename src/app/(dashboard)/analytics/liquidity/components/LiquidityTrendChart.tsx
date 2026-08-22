@@ -80,6 +80,10 @@ function TrendSrSummary({ data }: { data: TrendDataPoint[] }) {
 export function LiquidityTrendChart({ data, className, hideHeader }: LiquidityTrendChartProps) {
   const prefersReducedMotion = usePrefersReducedMotion()
 
+  // Design-system axis/grid tokens (Story 169.10; funnel FunnelOverlayPlot canon).
+  const axisTick = { fontSize: 12, fill: 'var(--color-chart-axis)' }
+  const axisLine = { stroke: 'var(--color-border)' }
+
   return (
     <Card className={className}>
       {hideHeader ? null : (
@@ -112,42 +116,42 @@ export function LiquidityTrendChart({ data, className, hideHeader }: LiquidityTr
         >
           <ResponsiveContainer width="100%" height="100%" minWidth={1} minHeight={1}>
             <ComposedChart data={data} margin={{ top: 12, right: 10, bottom: 40, left: 40 }}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#EEEEEE" />
+              <CartesianGrid strokeDasharray="3 3" stroke="var(--color-border)" />
               <XAxis
                 dataKey="date"
                 tickFormatter={formatTrendDate}
-                tick={{ fontSize: 12, fill: '#757575' }}
-                axisLine={{ stroke: '#EEEEEE' }}
-                tickLine={{ stroke: '#EEEEEE' }}
+                tick={axisTick}
+                axisLine={axisLine}
+                tickLine={axisLine}
                 minTickGap={24}
               />
               <YAxis
                 yAxisId="left"
                 tickFormatter={formatTrendAxisRub}
-                tick={{ fontSize: 12, fill: '#757575' }}
-                axisLine={{ stroke: '#EEEEEE' }}
+                tick={axisTick}
+                axisLine={axisLine}
                 tickLine={false}
                 width={55}
                 label={{
                   value: '₽',
                   angle: -90,
                   position: 'insideLeft',
-                  style: { fontSize: 11, fill: '#757575' },
+                  style: { fontSize: 11, fill: 'var(--color-chart-axis)' },
                 }}
               />
               <YAxis
                 yAxisId="right"
                 orientation="right"
                 tickFormatter={formatTrendAxisDays}
-                tick={{ fontSize: 12, fill: '#757575' }}
-                axisLine={{ stroke: '#EEEEEE' }}
+                tick={axisTick}
+                axisLine={axisLine}
                 tickLine={false}
                 width={44}
                 label={{
                   value: 'дн.',
                   angle: 90,
                   position: 'insideRight',
-                  style: { fontSize: 11, fill: '#757575' },
+                  style: { fontSize: 11, fill: 'var(--color-chart-axis)' },
                 }}
               />
               <Tooltip content={<LiquidityTrendTooltip />} />

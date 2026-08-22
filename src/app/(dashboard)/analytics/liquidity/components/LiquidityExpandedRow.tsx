@@ -44,9 +44,13 @@ export function LiquidityExpandedRow({ item }: LiquidityExpandedRowProps) {
           <div>
             <h3 className="text-sm font-medium mb-2">Продажи (30 дней)</h3>
             <div className="space-y-1 text-sm">
-              <p>Продано: {item.units_sold_30d} шт.</p>
-              <p>Ср. остаток: {Math.round(item.avg_stock_qty_30d)} шт.</p>
-              <p className="text-muted-foreground">SKU: {item.sku_id}</p>
+              <p className="tabular-nums">Продано: {item.units_sold_30d} шт.</p>
+              <p className="tabular-nums">Ср. остаток: {Math.round(item.avg_stock_qty_30d)} шт.</p>
+              {/* SKU id: mono for digit scanning; deliberately NOT tabular-nums
+                  (an id is not a quantity — 169.10 negative pin). */}
+              <p className="text-muted-foreground">
+                SKU: <span className="font-mono">{item.sku_id}</span>
+              </p>
             </div>
           </div>
         </div>

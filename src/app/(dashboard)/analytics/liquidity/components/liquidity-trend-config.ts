@@ -19,16 +19,21 @@ export type LiquidityTrendDistributionKey =
   'highly_liquid_pct' | 'medium_pct' | 'low_pct' | 'illiquid_pct'
 
 // ============================================================================
-// Colors (align with dashboard semantic palette)
+// Colors (design-system chart roles — Story 169.10)
 // ============================================================================
+// Series → chart-role map: the 4 stacked distribution tiers take roles 1–4 in
+// stack order (liquid → illiquid); the 2 numeric metrics take roles 5–6.
+// 6 series / 6 distinct tokens / 0 collisions.
 
 export const LIQUIDITY_TREND_COLORS = {
-  frozen_capital: '#7C3AED', // Purple — frozen capital (₽, left axis)
-  avg_turnover_days: '#E53935', // Primary red — turnover days (right axis)
-  highly_liquid_pct: '#22C55E', // Green
-  medium_pct: '#3B82F6', // Blue
-  low_pct: '#F59E0B', // Amber
-  illiquid_pct: '#9CA3AF', // Gray
+  // Metrics (ComposedChart dual axis)
+  frozen_capital: 'var(--color-chart-5)', // frozen capital (₽, left axis)
+  avg_turnover_days: 'var(--color-chart-6)', // turnover days (right axis)
+  // Distribution stack (stack order 1–4, liquid → illiquid)
+  highly_liquid_pct: 'var(--color-chart-1)',
+  medium_pct: 'var(--color-chart-2)',
+  low_pct: 'var(--color-chart-3)',
+  illiquid_pct: 'var(--color-chart-4)',
 } as const
 
 // ============================================================================

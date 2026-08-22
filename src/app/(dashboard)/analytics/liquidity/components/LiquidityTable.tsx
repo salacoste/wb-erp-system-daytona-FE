@@ -4,7 +4,7 @@ import { useState, Fragment } from 'react'
 import { X } from 'lucide-react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
-import { Table, TableBody, TableCell, TableRow } from '@/components/ui/table'
+import { Table, TableBody, TableCell, TableCaption, TableRow } from '@/components/ui/table'
 import type { LiquidityItem, LiquidityCategory } from '@/types/liquidity'
 import { getLiquidityCategoryConfig } from '@/lib/liquidity-utils'
 import { cn } from '@/lib/utils'
@@ -72,7 +72,13 @@ export function LiquidityTable({
         </CardHeader>
         <CardContent className="p-0">
           <div className="overflow-x-auto">
-            <Table>
+            {/* Static caption: the period is visible in the trends preset controls
+                (30/60/90 дн.) — 169.7 picker precedent; no duplicated period text. */}
+            <Table
+              scrollContainerTabIndex={0}
+              scrollContainerAriaLabel="Таблица ликвидности товаров по SKU"
+            >
+              <TableCaption>Ликвидность товаров по SKU</TableCaption>
               <LiquidityTableHeader sortBy={sortBy} sortOrder={sortOrder} onSort={handleSort} />
               <TableBody>
                 {data.length === 0 ? (

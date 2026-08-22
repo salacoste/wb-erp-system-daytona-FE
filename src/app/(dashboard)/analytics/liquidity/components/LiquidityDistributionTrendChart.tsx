@@ -42,6 +42,10 @@ export function LiquidityDistributionTrendChart({
   data,
   prefersReducedMotion,
 }: LiquidityDistributionTrendChartProps) {
+  // Design-system axis/grid tokens (Story 169.10; funnel FunnelOverlayPlot canon).
+  const axisTick = { fontSize: 11, fill: 'var(--color-chart-axis)' }
+  const axisLine = { stroke: 'var(--color-border)' }
+
   return (
     <ResponsiveChartFrame
       label="График динамики распределения ликвидности по категориям"
@@ -49,19 +53,19 @@ export function LiquidityDistributionTrendChart({
     >
       <ResponsiveContainer width="100%" height="100%" minWidth={1} minHeight={1}>
         <AreaChart data={data} margin={{ top: 8, right: 10, bottom: 0, left: 0 }}>
-          <CartesianGrid strokeDasharray="3 3" stroke="#EEEEEE" />
+          <CartesianGrid strokeDasharray="3 3" stroke="var(--color-border)" />
           <XAxis
             dataKey="date"
             tickFormatter={formatTrendDate}
-            tick={{ fontSize: 11, fill: '#757575' }}
-            axisLine={{ stroke: '#EEEEEE' }}
-            tickLine={{ stroke: '#EEEEEE' }}
+            tick={axisTick}
+            axisLine={axisLine}
+            tickLine={axisLine}
             minTickGap={24}
           />
           <YAxis
             // locale-percent-allow: recharts axis tick
             tickFormatter={(v: number) => `${Math.round(v)}%`}
-            tick={{ fontSize: 11, fill: '#757575' }}
+            tick={axisTick}
             axisLine={false}
             tickLine={false}
             width={36}
