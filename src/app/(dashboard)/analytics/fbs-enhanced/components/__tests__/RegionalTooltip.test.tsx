@@ -175,6 +175,19 @@ describe('regionalTooltipContent adapter (Story 164.2)', () => {
     expect(screen.getByText('Урал')).toBeInTheDocument()
   })
 
+  it('non-string entry color falls back to the foreground token (Epic 169.6 exact pin)', () => {
+    // Epic 169.6 hex-sweep: the adapter fallback color must be a theme token,
+    // not a raw hex. Exact style pin (no [class*=]).
+    const { container } = renderAdapter({
+      active: true,
+      payload: [{ name: 'Доля (%)', value: 5, color: 123 }],
+      label: 'Урал',
+    })
+    const row = screen.getByText(/^Доля \(%\)/)
+    expect(row.getAttribute('style')).toContain('color: var(--color-foreground)')
+    expect(container.firstChild).not.toBeNull()
+  })
+
   it('type-checks without `any` — RegionalTooltipEntry is the forwarded shape', () => {
     // Static contract assertion: the adapter narrows to RegionalTooltipEntry,
     // which exposes exactly {name, color, value} and nothing else.

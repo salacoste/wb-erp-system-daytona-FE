@@ -77,4 +77,24 @@ describe('FbsEnhancedPageContent', () => {
     await screen.getByRole('button', { name: /Повторить/ }).click()
     expect(refetch).toHaveBeenCalledTimes(1)
   })
+
+  it('renders the stale-data banner with warning status tokens when cached data exists (Epic 169.6)', () => {
+    // isError + non-null data → stale-data banner (fetch error with cached data).
+    // Exact class pins (169.5 matched-pair /15+30 warning idiom) — no [class*=].
+    mockUseFbsEnhanced.mockReturnValue({
+      data: { orderStats: null },
+      isLoading: false,
+      isError: true,
+      refetch: vi.fn(),
+    })
+
+    renderWithProviders(<FbsEnhancedPageContent />)
+
+    const banner = screen.getByText(/Не удалось обновить/).parentElement
+    expect(banner).not.toBeNull()
+    expect(banner?.classList.contains('border-status-warning/30')).toBe(true)
+    expect(banner?.classList.contains('bg-status-warning/15')).toBe(true)
+    expect(banner?.classList.contains('text-status-warning')).toBe(true)
+    expect(screen.getByRole('button', { name: /Повторить/ })).toBeInTheDocument()
+  })
 })

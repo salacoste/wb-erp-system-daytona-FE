@@ -69,8 +69,8 @@ interface RegionalTooltipProps {
 export function RegionalTooltip({ active, payload, label }: RegionalTooltipProps): ReactNode {
   if (!active || !payload || payload.length === 0) return null
   return (
-    <div className="rounded-md border bg-white p-3 shadow-sm text-sm">
-      <p className="font-medium mb-1">{label}</p>
+    <div className="rounded-lg border bg-popover p-3 shadow-lg text-sm">
+      <p className="mb-1 text-sm font-semibold text-foreground">{label}</p>
       {payload.map(entry => (
         <p key={entry.name} style={{ color: entry.color }}>
           {entry.name}: {entry.value == null ? '—' : formatPercentage(entry.value)}
@@ -129,7 +129,7 @@ function toEntry(rawEntry: unknown): RegionalTooltipEntry | null {
   // malformed/junk entries prevents empty-labeled rows from rendering. See
   // the header doc above.
   if (typeof rawEntry.name !== 'string' || rawEntry.name === '') return null
-  const color = typeof rawEntry.color === 'string' ? rawEntry.color : '#000'
+  const color = typeof rawEntry.color === 'string' ? rawEntry.color : 'var(--color-foreground)'
   const value = toTooltipValue(rawEntry.value, rawEntry.payload)
   return { name: rawEntry.name, color, value }
 }
