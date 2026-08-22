@@ -93,4 +93,10 @@ describe('GapsPageContent', () => {
     renderWithProviders(<GapsPageContent />)
     expect(screen.getByTestId('gap-analysis-dialog')).toBeInTheDocument()
   })
+
+  it('links date labels to their inputs (htmlFor ↔ id)', () => {
+    renderWithProviders(<GapsPageContent />)
+    expect(screen.getByLabelText('С')).toHaveAttribute('id', 'gaps-date-from')
+    expect(screen.getByLabelText('По')).toHaveAttribute('id', 'gaps-date-to')
+  })
 })

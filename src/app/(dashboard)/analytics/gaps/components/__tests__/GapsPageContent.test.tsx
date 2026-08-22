@@ -94,4 +94,10 @@ describe('GapsPageContent', () => {
     const inputs = document.querySelectorAll('input[type="date"]')
     expect(inputs.length).toBeGreaterThanOrEqual(2)
   })
+
+  it('links date labels to their inputs (htmlFor ↔ id)', () => {
+    render(<GapsPageContent />)
+    expect(screen.getByLabelText('С')).toHaveAttribute('id', 'gaps-date-from')
+    expect(screen.getByLabelText('По')).toHaveAttribute('id', 'gaps-date-to')
+  })
 })

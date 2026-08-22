@@ -100,4 +100,47 @@ describe('GapsTable', () => {
     await user.click(buttons[0].closest('button')!)
     expect(onAnalyze).toHaveBeenCalledWith('2026-05-10')
   })
+
+  it('names each repeated analyze button with its date (AX contract)', () => {
+    render(
+      <GapsTable
+        missingDates={mockMissingDates}
+        isLoading={false}
+        analyzingDate={null}
+        onAnalyze={vi.fn()}
+      />
+    )
+    expect(screen.getByRole('button', { name: 'Анализ за 10.05.2026' })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Анализ за 15.05.2026' })).toBeInTheDocument()
+  })
+
+  it('renders a static table caption identifying the table', () => {
+    render(
+      <GapsTable
+        missingDates={mockMissingDates}
+        isLoading={false}
+        analyzingDate={null}
+        onAnalyze={vi.fn()}
+      />
+    )
+    const caption = document.querySelector('caption')
+    expect(caption).not.toBeNull()
+    expect(caption).toHaveTextContent('Пропущенные дни в финансовых данных')
+  })
+
+  it('exposes the scroll region with a name and no outer overflow container', () => {
+    const { container } = render(
+      <GapsTable
+        missingDates={mockMissingDates}
+        isLoading={false}
+        analyzingDate={null}
+        onAnalyze={vi.fn()}
+      />
+    )
+    const region = screen.getByRole('region', {
+      name: 'Таблица пропущенных дней финансовых данных',
+    })
+    expect(region).toHaveAttribute('tabindex', '0')
+    expect(container.firstElementChild).not.toHaveClass('overflow-x-auto')
+  })
 })

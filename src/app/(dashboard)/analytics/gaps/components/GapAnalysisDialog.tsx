@@ -27,11 +27,11 @@ interface GapAnalysisDialogProps {
   onRemediate: (missingDate: string, rootCause?: string) => void
 }
 
-/** Badge color by severity */
+/** Badge chip by severity (169.5 /15-chip idiom) */
 const SEVERITY_COLORS: Record<string, string> = {
-  critical: 'bg-red-100 text-red-800',
-  warning: 'bg-yellow-100 text-yellow-800',
-  info: 'bg-blue-100 text-blue-800',
+  critical: 'bg-status-error/15 text-status-error border-status-error/30',
+  warning: 'bg-status-warning/15 text-status-warning border-status-warning/30',
+  info: 'bg-status-information/15 text-status-information border-status-information/30',
 }
 
 export function GapAnalysisDialog({
