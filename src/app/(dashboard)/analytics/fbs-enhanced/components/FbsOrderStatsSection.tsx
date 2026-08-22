@@ -35,7 +35,7 @@ function KpiCard({ title, value, icon }: KpiCardProps) {
         <span className="text-muted-foreground">{icon}</span>
       </CardHeader>
       <CardContent>
-        <div className="text-2xl font-bold">{value}</div>
+        <div className="text-2xl font-bold tabular-nums">{value}</div>
       </CardContent>
     </Card>
   )
@@ -94,7 +94,7 @@ export function FbsOrderStatsSection({ orderStats }: FbsOrderStatsSectionProps) 
       {/* Average order value footer — null → '—' per Defensive Frontend Principle */}
       <p className="text-xs text-muted-foreground mt-2">
         Средний чек:{' '}
-        <span>
+        <span className="tabular-nums">
           {orderStats.avgOrderValue == null ? '—' : formatCurrency(orderStats.avgOrderValue)}
         </span>
       </p>

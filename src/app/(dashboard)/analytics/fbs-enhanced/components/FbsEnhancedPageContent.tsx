@@ -63,9 +63,7 @@ export function FbsEnhancedPageContent() {
     <div className="space-y-6" data-testid="fbs-enhanced-page">
       {/* Page header */}
       <div>
-        <h1 className="text-3xl font-bold tracking-tight text-gray-900">
-          Расширенная аналитика FBS
-        </h1>
+        <h1 className="text-2xl font-bold tracking-tight">Расширенная аналитика FBS</h1>
         <p className="text-muted-foreground mt-1">Сводный обзор метрик FBS склада</p>
       </div>
 
@@ -125,7 +123,7 @@ export function FbsEnhancedPageContent() {
         <div className="space-y-6">
           {/* Stale-data banner — fetch error with cached data */}
           {isError && (
-            <div className="rounded-md border border-amber-200 bg-amber-50 px-4 py-2 text-sm text-amber-800 flex items-center justify-between">
+            <div className="rounded-md border border-status-warning/30 bg-status-warning/15 px-4 py-2 text-sm text-status-warning flex items-center justify-between">
               <span>Не удалось обновить. Показаны кэшированные данные.</span>
               <Button variant="ghost" size="sm" onClick={() => void refetch()}>
                 Повторить

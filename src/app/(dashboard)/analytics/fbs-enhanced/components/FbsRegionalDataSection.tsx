@@ -17,8 +17,11 @@
 
 import { useMemo } from 'react'
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts'
-import { CHART_COLORS } from '@/lib/chart-colors'
+import { formatPercentage } from '@/lib/utils'
 import type { FbsRegionalDataItem } from '@/types/fbs-enhanced'
+
+// Epic 169.6: single-series regional bar color via chart token (169.4 single-source precedent)
+const REGIONAL_BAR_COLOR = 'var(--color-chart-1)'
 // Typed recharts tooltip adapter — replaces the prior `RegionalTooltip as any` cast
 // (CLAUDE.md anti-pattern #4). Adapter narrows the opaque payload to {name,color,value}.
 export { RegionalTooltip, regionalTooltipContent } from './RegionalTooltip'
@@ -57,12 +60,21 @@ export function FbsRegionalDataSection({ regionalData }: FbsRegionalDataSectionP
     <section aria-label="Региональное распределение" data-testid="fbs-regional-data-section">
       <h2 className="text-lg font-semibold mb-3">Региональное распределение</h2>
       <div className="rounded-md border bg-background p-4">
+        {/* Epic 169.6: a11y data-alternative — non-hover access to tooltip data (sr-only, 169.4 precedent) */}
+        <p className="sr-only">
+          {`Данные по регионам: ${chartData
+            .map(
+              r =>
+                `${r.region} — ${r._percentageRaw == null ? 'нет данных' : formatPercentage(r._percentageRaw)}`
+            )
+            .join(', ')}`}
+        </p>
         <ResponsiveContainer width="100%" height={300}>
           <BarChart data={chartData} margin={{ top: 10, right: 20, left: 0, bottom: 40 }}>
-            <CartesianGrid strokeDasharray="3 3" stroke="#E5E7EB" />
+            <CartesianGrid strokeDasharray="3 3" stroke="var(--color-border)" />
             <XAxis
               dataKey="region"
-              tick={{ fontSize: 11 }}
+              tick={{ fontSize: 11, fill: 'var(--color-chart-axis)' }}
               angle={-30}
               textAnchor="end"
               interval={0}
@@ -70,7 +82,7 @@ export function FbsRegionalDataSection({ regionalData }: FbsRegionalDataSectionP
               tickLine={false}
             />
             <YAxis
-              tick={{ fontSize: 11 }}
+              tick={{ fontSize: 11, fill: 'var(--color-chart-axis)' }}
               tickFormatter={v => `${v}%`}
               axisLine={false}
               tickLine={false}
@@ -80,7 +92,7 @@ export function FbsRegionalDataSection({ regionalData }: FbsRegionalDataSectionP
             <Bar
               dataKey="percentage"
               name="Доля (%)"
-              fill={CHART_COLORS.primaryRed}
+              fill={REGIONAL_BAR_COLOR}
               radius={[3, 3, 0, 0]}
             />
           </BarChart>
