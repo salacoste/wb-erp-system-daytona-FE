@@ -1,4 +1,5 @@
 import type { SupplyPlanningItem } from '@/types/supply-planning'
+import { escapeCsvCellAlwaysQuoted } from '@/lib/csv/csv-helpers'
 
 const CSV_HEADERS = [
   'Статус',
@@ -14,25 +15,12 @@ const CSV_HEADERS = [
 ]
 
 /**
- * Build the supply-planning CSV content (pure, testable).
- * The "Дней до стокаута" column stays NUMERIC for spreadsheet sorting (the 999 "never
- * stocks out" sentinel exports as-is). A null exports as an EMPTY cell — not English "N/A",
- * which leaked into this Russian-locale export.
- */
-/**
  * Encode one CSV cell:
  *  - null/undefined → empty cell.
- *  - OWASP CSV-injection: neutralize a leading formula trigger (= + - @ tab CR) by prefixing
- *    `'` so a hostile product name like `=HYPERLINK(...)` can't execute when opened in Excel.
- *    No legitimate column here starts with those chars (numbers are non-negative, the enum/
- *    ids don't), so this is safe.
- *  - RFC 4180: escape embedded double-quotes by doubling, then wrap in quotes (an unescaped `"`
- *    in a product name previously shifted every following column).
+ *  - Delegates to escapeCsvCell for OWASP defanging + RFC 4180 quoting.
  */
 function encodeCsvCell(value: unknown): string {
-  let s = value == null ? '' : String(value)
-  if (/^[=+\-@\t\r\n]/.test(s)) s = `'${s}`
-  return `"${s.replace(/"/g, '""')}"`
+  return escapeCsvCellAlwaysQuoted(value == null ? '' : String(value))
 }
 
 export function buildSupplyTableCsv(data: SupplyPlanningItem[]): string {

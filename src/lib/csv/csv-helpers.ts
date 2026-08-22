@@ -19,19 +19,29 @@
  *    numeric-aggregatable anyway. Do NOT "fix" by numeric exemption.
  * 2. RFC 4180 § 2.6: if the value contains a comma, double-quote, newline,
  *    or carriage return, wraps it in double-quotes and doubles any embedded
- *    double-quotes. \r detection catches legacy Mac line endings and
- *    accidental backend artifacts.
+ *    double-quotes. Callers whose established export contract quotes every
+ *    cell can use `escapeCsvCellAlwaysQuoted` without duplicating the security logic.
+ *    \r detection catches legacy Mac line endings and accidental backend artifacts.
  * Anchor scope: defanging checks the CELL-VALUE START only — Excel formulas
  * trigger at cell start, so an embedded "safe\n=CMD()" needs no second-line
  * prefix (pinned by test to prevent well-meaning double-prefix "fixes").
  */
-export function escapeCsvCell(value: string): string {
+function escapeCsvCellWithQuotePolicy(value: string, alwaysQuote: boolean): string {
   let s = value
   if (/^[=+\-@\t\r\n]/.test(s)) s = `'${s}`
-  if (s.includes(',') || s.includes('"') || s.includes('\n') || s.includes('\r')) {
+  if (alwaysQuote || s.includes(',') || s.includes('"') || s.includes('\n') || s.includes('\r')) {
     return `"${s.replace(/"/g, '""')}"`
   }
   return s
+}
+
+export function escapeCsvCell(value: string): string {
+  return escapeCsvCellWithQuotePolicy(value, false)
+}
+
+/** Preserve legacy exporters whose stable file format quotes every cell. */
+export function escapeCsvCellAlwaysQuoted(value: string): string {
+  return escapeCsvCellWithQuotePolicy(value, true)
 }
 
 /**

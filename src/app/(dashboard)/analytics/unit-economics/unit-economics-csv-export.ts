@@ -1,5 +1,5 @@
 import type { UnitEconomicsResponse } from '@/types/unit-economics'
-import { prefixUtf8Bom } from '@/lib/csv/csv-helpers'
+import { escapeCsvCellAlwaysQuoted, prefixUtf8Bom } from '@/lib/csv/csv-helpers'
 
 const CSV_HEADERS = [
   'SKU',
@@ -16,18 +16,11 @@ const CSV_HEADERS = [
 ]
 
 /**
- * Encode one CSV cell:
- *  - OWASP CSV-injection: defang a leading formula trigger (= + - @ TAB CR LF) with a `'`
- *    prefix so a hostile product name like `=HYPERLINK(...)` can't execute when opened in Excel.
- *  - RFC 4180: double embedded `"` then wrap (an unescaped `"` in a product name would shift
- *    every following column).
- * NOTE: mirrors supply-table-export's encodeCsvCell — see queued consolidation into
- * lib/csv/csv-helpers once the Epic-113 evaluations-csv WIP lands.
+ * Encode one CSV cell: delegates to escapeCsvCell for OWASP defanging + RFC 4180 quoting.
+ * Consolidated from local duplicate into lib/csv/csv-helpers.ts.
  */
 function encodeCsvCell(value: unknown): string {
-  let s = value == null ? '' : String(value)
-  if (/^[=+\-@\t\r\n]/.test(s)) s = `'${s}`
-  return `"${s.replace(/"/g, '""')}"`
+  return escapeCsvCellAlwaysQuoted(value == null ? '' : String(value))
 }
 
 /** Build the unit-economics CSV content (pure, testable — no DOM/Blob side effects). */
