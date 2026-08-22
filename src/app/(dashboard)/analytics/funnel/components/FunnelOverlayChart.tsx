@@ -1,34 +1,17 @@
 'use client'
 
-/**
- * Funnel Overlay Chart — Story 73.8-FE
- * Recharts ComposedChart with dual Y-axes: funnel counts (left) + ad spend (right).
- */
+import { useEffect, useState } from 'react'
 
-import { useState, useEffect, useMemo } from 'react'
-import {
-  ComposedChart,
-  Bar,
-  Line,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  ResponsiveContainer,
-} from 'recharts'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Loader2 } from 'lucide-react'
-import {
-  OVERLAY_COLORS,
-  formatOverlayDate,
-  formatCompactRub,
-  formatCompactCount,
-  type OverlayMetricKey,
-  type MergedChartDay,
-} from './funnel-overlay-config'
-import { OverlayTooltip, ChartLegend } from './FunnelOverlayTooltip'
-import { FunnelChartAlert } from './FunnelOverlayAlerts'
-import { OVERLAY_SERIES } from './funnel-overlay-config'
+import { ChartFrame } from '@/components/product/charts'
+import { Button } from '@/components/ui/button'
+import { Card, CardContent } from '@/components/ui/card'
+
+import { ChartLegend } from './FunnelOverlayTooltip'
+import { FunnelOverlayEvidence } from './FunnelOverlayEvidence'
+import { FunnelOverlayPlot } from './FunnelOverlayPlot'
+import { getFunnelOverlayRetainedState } from './funnel-overlay-retained-state'
+import { renderFunnelOverlayTerminalFrame } from './funnel-overlay-terminal-frame'
+import { OVERLAY_SERIES, type MergedChartDay, type OverlayMetricKey } from './funnel-overlay-config'
 
 interface FunnelOverlayChartProps {
   data: MergedChartDay[]
@@ -36,16 +19,21 @@ interface FunnelOverlayChartProps {
   isError?: boolean
   showAdOverlay: boolean
   isAdLoading?: boolean
+  isAdError?: boolean
   dailyGranularityAvailable?: boolean
+  periodFrom?: string
+  periodTo?: string
+  selectedProductCount?: number
+  onRetry?: () => void
+  onRetryAdvertising?: () => void
 }
 
-const BAR_CONFIG = { radius: [2, 2, 0, 0] as [number, number, number, number], maxBarSize: 24 }
-const LINE_CONFIG = {
-  type: 'monotone' as const,
-  strokeWidth: 2,
-  dot: { r: 3, strokeWidth: 2, fill: 'white' },
-  activeDot: { r: 5, strokeWidth: 2 },
-  animationDuration: 300,
+function formatPeriod(data: MergedChartDay[], from?: string, to?: string): string {
+  const first = from || data[0]?.date
+  const last = to || data[data.length - 1]?.date
+  if (!first || !last) return 'Не выбран'
+  const format = (value: string) => new Date(`${value}T00:00:00`).toLocaleDateString('ru-RU')
+  return `${format(first)} — ${format(last)}`
 }
 
 export function FunnelOverlayChart({
@@ -54,117 +42,138 @@ export function FunnelOverlayChart({
   isError,
   showAdOverlay,
   isAdLoading,
+  isAdError,
   dailyGranularityAvailable = true,
+  periodFrom,
+  periodTo,
+  selectedProductCount = 0,
+  onRetry,
+  onRetryAdvertising,
 }: FunnelOverlayChartProps) {
   const funnelKeys: OverlayMetricKey[] = ['openCardCount', 'ordersCount', 'buyoutCount']
-  const [visibleSeries, setVisibleSeries] = useState<string[]>([...funnelKeys])
+  const [visibleSeries, setVisibleSeries] = useState<string[]>(funnelKeys)
 
   useEffect(() => {
-    setVisibleSeries(prev => {
-      const hasAd = prev.includes('adSpend')
-      if (showAdOverlay && !hasAd) return [...prev, 'adSpend']
-      if (!showAdOverlay && hasAd) return prev.filter(k => k !== 'adSpend')
-      return prev
+    setVisibleSeries(previous => {
+      const hasAdvertising = previous.includes('adSpend')
+      if (showAdOverlay && !hasAdvertising) return [...previous, 'adSpend']
+      if (!showAdOverlay && hasAdvertising) return previous.filter(key => key !== 'adSpend')
+      return previous
     })
   }, [showAdOverlay])
 
-  const prefersReducedMotion = useMemo(() => {
-    if (typeof window === 'undefined') return false
-    return window.matchMedia('(prefers-reduced-motion: reduce)').matches
-  }, [])
+  const activeSeries = OVERLAY_SERIES.filter(series => series.key !== 'adSpend' || showAdOverlay)
+  const hiddenLabels = activeSeries
+    .filter(series => !visibleSeries.includes(series.key))
+    .map(series => series.label)
 
   const toggleSeries = (key: string) => {
-    setVisibleSeries(prev => (prev.includes(key) ? prev.filter(k => k !== key) : [...prev, key]))
+    setVisibleSeries(previous =>
+      previous.includes(key) ? previous.filter(item => item !== key) : [...previous, key]
+    )
   }
 
-  const activeSeries = OVERLAY_SERIES.filter(s => s.key !== 'adSpend' || showAdOverlay)
-
-  // Alert/loading states (extracted for max-lines compliance)
-  const alertContent = FunnelChartAlert({
+  const period = formatPeriod(data, periodFrom, periodTo)
+  const description = showAdOverlay
+    ? 'Посуточное сопоставление просмотров, заказов, выкупов и рекламных расходов.'
+    : 'Посуточное сопоставление просмотров, заказов и выкупов.'
+  const units = showAdOverlay ? 'штуки, проценты и рубли' : 'штуки и проценты'
+  const annotation =
+    selectedProductCount > 0
+      ? `Выбрано товаров: ${selectedProductCount}; график показывает общую воронку по кабинету, а фильтр применяется к карточкам и таблице.`
+      : undefined
+  const identity = {
+    title: 'Динамика воронки по дням',
+    description,
+    period,
+    units,
+    annotation,
+  }
+  const terminalFrame = renderFunnelOverlayTerminalFrame({
+    identity,
     isLoading,
-    isError,
+    isError: isError && data.length === 0,
     dailyGranularityAvailable,
     dataLength: data.length,
+    onRetry,
   })
-  if (alertContent) return alertContent
+  if (terminalFrame) {
+    return (
+      <Card>
+        <CardContent className="p-4 sm:p-6">{terminalFrame}</CardContent>
+      </Card>
+    )
+  }
+
+  const availableAdDays = showAdOverlay ? data.filter(day => day.adSpend !== null).length : 0
+  const unavailableAdDays = showAdOverlay ? data.length - availableAdDays : 0
+  const retainedState = getFunnelOverlayRetainedState({
+    isError: Boolean(isError),
+    showAdOverlay,
+    isAdLoading: Boolean(isAdLoading),
+    isAdError: Boolean(isAdError),
+    availableAdDays,
+    unavailableAdDays,
+    totalDays: data.length,
+  })
 
   return (
     <Card>
-      <CardHeader className="pb-2">
-        <div className="flex items-center gap-2">
-          <CardTitle className="text-base">Динамика воронки по дням</CardTitle>
-          {isAdLoading && <Loader2 className="h-3.5 w-3.5 animate-spin text-muted-foreground" />}
-        </div>
-      </CardHeader>
-      <CardContent>
-        <ChartLegend series={activeSeries} visible={visibleSeries} onToggle={toggleSeries} />
-        <div
-          role="img"
-          aria-label="График воронки с наложением рекламных расходов"
-          className="h-64 w-full"
-        >
-          <ResponsiveContainer width="100%" height="100%">
-            <ComposedChart data={data} margin={{ top: 8, right: 10, bottom: 24, left: 10 }}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#EEEEEE" />
-              <XAxis
-                dataKey="date"
-                tickFormatter={formatOverlayDate}
-                tick={{ fontSize: 12, fill: '#757575' }}
-                axisLine={{ stroke: '#EEEEEE' }}
-                tickLine={{ stroke: '#EEEEEE' }}
-              />
-              <YAxis
-                yAxisId="left"
-                tickFormatter={formatCompactCount}
-                tick={{ fontSize: 12, fill: '#757575' }}
-                axisLine={{ stroke: '#EEEEEE' }}
-                tickLine={false}
-                width={50}
-              />
-              {showAdOverlay && (
-                <YAxis
-                  yAxisId="right"
-                  orientation="right"
-                  tickFormatter={formatCompactRub}
-                  tick={{ fontSize: 12, fill: '#757575' }}
-                  axisLine={{ stroke: '#EEEEEE' }}
-                  tickLine={false}
-                  width={60}
-                />
-              )}
-              <Tooltip
-                content={<OverlayTooltip visible={visibleSeries} showAdOverlay={showAdOverlay} />}
-              />
-              {funnelKeys
-                .filter(k => visibleSeries.includes(k))
-                .map(key => (
-                  <Bar
-                    key={key}
-                    yAxisId="left"
-                    dataKey={key}
-                    fill={OVERLAY_COLORS[key]}
-                    radius={BAR_CONFIG.radius}
-                    maxBarSize={BAR_CONFIG.maxBarSize}
-                    animationDuration={prefersReducedMotion ? 0 : 300}
-                  />
-                ))}
-              {showAdOverlay && visibleSeries.includes('adSpend') && (
-                <Line
-                  yAxisId="right"
-                  type={LINE_CONFIG.type}
-                  dataKey="adSpend"
-                  stroke={OVERLAY_COLORS.adSpend}
-                  strokeWidth={LINE_CONFIG.strokeWidth}
-                  strokeDasharray="6 3"
-                  dot={LINE_CONFIG.dot}
-                  activeDot={LINE_CONFIG.activeDot}
-                  connectNulls={false}
-                  animationDuration={prefersReducedMotion ? 0 : LINE_CONFIG.animationDuration}
-                />
-              )}
-            </ComposedChart>
-          </ResponsiveContainer>
-        </div>
+      <CardContent className="p-4 sm:p-6">
+        <ChartFrame
+          {...identity}
+          state={retainedState}
+          activity={
+            isAdLoading
+              ? { kind: 'updating', message: 'Загружаются расходы на рекламу' }
+              : undefined
+          }
+          actions={
+            <div className="flex flex-wrap items-center gap-2">
+              <ChartLegend series={activeSeries} visible={visibleSeries} onToggle={toggleSeries} />
+              {isError ? (
+                <Button type="button" variant="outline" onClick={onRetry} className="min-h-11">
+                  Повторить загрузку графика
+                </Button>
+              ) : null}
+              {showAdOverlay && isAdError ? (
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={onRetryAdvertising}
+                  className="min-h-11"
+                >
+                  Повторить загрузку рекламы
+                </Button>
+              ) : null}
+            </div>
+          }
+          plotLabel={
+            showAdOverlay ? 'График этапов воронки с рекламными расходами' : 'График этапов воронки'
+          }
+          plot={
+            <FunnelOverlayPlot
+              data={data}
+              visibleSeries={visibleSeries}
+              showAdOverlay={showAdOverlay}
+            />
+          }
+          evidence={{
+            summary: `${data.length} ${data.length === 1 ? 'день' : 'дней'} с точными значениями по этапам воронки.`,
+            selection: {
+              label:
+                hiddenLabels.length > 0
+                  ? `Скрытые серии: ${hiddenLabels.join(', ')}`
+                  : 'Все выбранные серии видимы',
+              effect:
+                hiddenLabels.length > 0
+                  ? 'Скрытые серии исключены из графика; точные данные остаются в таблице.'
+                  : 'Все доступные серии показаны на графике и в таблице.',
+            },
+            alternativeLabel: 'Точные данные графика воронки',
+            dataAlternative: <FunnelOverlayEvidence data={data} showAdOverlay={showAdOverlay} />,
+          }}
+        />
       </CardContent>
     </Card>
   )

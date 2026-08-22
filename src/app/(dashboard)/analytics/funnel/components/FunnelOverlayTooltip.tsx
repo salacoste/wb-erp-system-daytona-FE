@@ -4,11 +4,12 @@
  */
 
 import { cn } from '@/lib/utils'
+import { Button } from '@/components/ui/button'
 import { OVERLAY_SERIES, fmtCurrency, type OverlaySeries } from './funnel-overlay-config'
 
 interface OverlayTooltipProps {
   active?: boolean
-  payload?: Array<{ dataKey: string; value: number; color: string }>
+  payload?: Array<{ dataKey: string; value?: number | null; color: string }>
   label?: string
   visible: string[]
   showAdOverlay: boolean
@@ -28,21 +29,28 @@ export function OverlayTooltip({
     ? label
     : d.toLocaleDateString('ru-RU', { day: 'numeric', month: 'long' })
   return (
-    <div className="rounded-lg border bg-background p-2 shadow-sm text-xs">
+    <div className="rounded-lg border bg-popover p-2 shadow-lg text-xs">
       <p className="font-medium mb-1">{dateStr}</p>
       {payload
         .filter(p => visible.includes(p.dataKey))
         .map(p => {
           const series = OVERLAY_SERIES.find(s => s.key === p.dataKey)
           const value =
-            p.dataKey === 'adSpend' && showAdOverlay
-              ? fmtCurrency(p.value ?? 0)
-              : (p.value ?? 0).toLocaleString('ru-RU')
+            p.value == null
+              ? 'Недоступно'
+              : p.dataKey === 'adSpend' && showAdOverlay
+                ? fmtCurrency(p.value)
+                : p.value.toLocaleString('ru-RU')
           return (
             <div key={p.dataKey} className="flex items-center gap-1.5">
-              <span className="h-2 w-2 rounded-full" style={{ backgroundColor: p.color }} />
+              <span
+                aria-hidden="true"
+                className={cn('inline-block h-2.5 w-3.5 shrink-0', series?.markerClassName)}
+                style={{ color: p.color }}
+              />
               <span className="text-muted-foreground">{series?.label}:</span>
               <span className="font-medium">{value}</span>
+              <span className="sr-only">{series?.markerLabel}</span>
             </div>
           )
         })}
@@ -64,18 +72,30 @@ export function ChartLegend({
       {series.map(s => {
         const isVisible = visible.includes(s.key)
         return (
-          <button
+          <Button
             key={s.key}
+            type="button"
+            variant="ghost"
+            size="sm"
             onClick={() => onToggle(s.key)}
             className={cn(
-              'flex items-center gap-1.5 rounded-md px-2 py-1 text-xs transition-opacity',
+              'min-h-11 gap-1.5 px-3 py-1 text-xs transition-opacity',
               isVisible ? 'opacity-100' : 'opacity-40'
             )}
             aria-pressed={isVisible}
+            aria-label={s.label}
+            aria-describedby={`funnel-series-${s.key}-marker`}
           >
-            <span className="h-2.5 w-2.5 rounded-full" style={{ backgroundColor: s.color }} />
+            <span
+              aria-hidden="true"
+              className={cn('inline-block h-2.5 w-3.5 shrink-0', s.markerClassName)}
+              style={{ color: s.color }}
+            />
             <span>{s.label}</span>
-          </button>
+            <span id={`funnel-series-${s.key}-marker`} className="sr-only">
+              {s.markerLabel}
+            </span>
+          </Button>
         )
       })}
     </div>

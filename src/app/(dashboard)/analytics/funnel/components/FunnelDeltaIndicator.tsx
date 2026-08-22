@@ -15,19 +15,19 @@ export function DeltaIndicator({
   delta,
   field,
   loading,
+  error = false,
 }: {
   delta: ReturnType<typeof calculateFunnelDelta> | null
   field: string
   loading: boolean
+  error?: boolean
 }) {
   if (loading) return <Skeleton className="h-4 w-16 mt-0.5" />
 
+  if (error) return <p className="text-xs text-muted-foreground">Сравнение недоступно</p>
+
   if (!delta) {
-    return (
-      <p className="text-xs text-muted-foreground" title="Нет данных за предыдущий период">
-        —
-      </p>
-    )
+    return <p className="text-xs text-muted-foreground">Нет данных</p>
   }
 
   if (delta.direction === 'neutral') {

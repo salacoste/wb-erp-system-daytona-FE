@@ -14,10 +14,10 @@ import type { AdvertisingDailyItem } from '@/types/advertising-analytics'
 // ============================================================================
 
 export const OVERLAY_COLORS = {
-  openCardCount: '#60A5FA', // blue-400 — Просмотры
-  ordersCount: '#FB923C', // orange-400 — Заказы
-  buyoutCount: '#4ADE80', // green-400 — Выкупы
-  adSpend: '#7C3AED', // purple — Advertising convention
+  openCardCount: 'var(--color-chart-1)',
+  ordersCount: 'var(--color-chart-5)',
+  buyoutCount: 'var(--color-chart-4)',
+  adSpend: 'var(--color-chart-2)',
 } as const
 
 export type OverlayMetricKey = keyof typeof OVERLAY_COLORS
@@ -31,18 +31,48 @@ export interface OverlaySeries {
   label: string
   color: string
   axis: 'left' | 'right'
+  markerLabel: string
+  markerClassName: string
+  fillOpacity?: number
   strokeDasharray?: string
 }
 
 export const OVERLAY_SERIES: OverlaySeries[] = [
-  { key: 'openCardCount', label: 'Просмотры', color: OVERLAY_COLORS.openCardCount, axis: 'left' },
-  { key: 'ordersCount', label: 'Заказы', color: OVERLAY_COLORS.ordersCount, axis: 'left' },
-  { key: 'buyoutCount', label: 'Выкупы', color: OVERLAY_COLORS.buyoutCount, axis: 'left' },
+  {
+    key: 'openCardCount',
+    label: 'Просмотры',
+    color: OVERLAY_COLORS.openCardCount,
+    axis: 'left',
+    markerLabel: 'сплошной столбец',
+    markerClassName: 'rounded-none bg-current',
+    fillOpacity: 0.9,
+  },
+  {
+    key: 'ordersCount',
+    label: 'Заказы',
+    color: OVERLAY_COLORS.ordersCount,
+    axis: 'left',
+    markerLabel: 'контурный столбец',
+    markerClassName: 'rounded-sm border-2 border-current bg-transparent',
+    fillOpacity: 0.35,
+  },
+  {
+    key: 'buyoutCount',
+    label: 'Выкупы',
+    color: OVERLAY_COLORS.buyoutCount,
+    axis: 'left',
+    markerLabel: 'пунктирный столбец',
+    markerClassName: 'rounded-full border-2 border-dashed border-current bg-transparent',
+    fillOpacity: 0.15,
+    strokeDasharray: '4 2',
+  },
   {
     key: 'adSpend',
     label: 'Расходы на рекламу',
     color: OVERLAY_COLORS.adSpend,
     axis: 'right',
+    markerLabel: 'пунктирная линия',
+    markerClassName: 'h-0 border-t-2 border-dashed border-current',
     strokeDasharray: '6 3',
   },
 ]
@@ -109,6 +139,6 @@ export function fmtCurrency(value: number): string {
   return new Intl.NumberFormat('ru-RU', {
     style: 'currency',
     currency: 'RUB',
-    maximumFractionDigits: 0,
+    maximumFractionDigits: 2,
   }).format(value)
 }

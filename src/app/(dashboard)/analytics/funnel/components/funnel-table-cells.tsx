@@ -3,6 +3,7 @@
 'use client'
 
 import { ArrowUpDown } from 'lucide-react'
+import { Button } from '@/components/ui/button'
 import type { FunnelParams } from '@/types/analytics-funnel'
 
 export type FunnelSortField = NonNullable<FunnelParams['sort']>
@@ -25,15 +26,17 @@ export function SortBtn({
   children: React.ReactNode
 }) {
   return (
-    <button
+    <Button
       type="button"
+      variant="ghost"
+      size="sm"
       onClick={onClick}
-      className="flex items-center gap-1 hover:text-foreground transition-colors"
+      className="ml-auto min-h-11 min-w-11 px-2 text-inherit hover:bg-transparent hover:text-foreground"
     >
       {children}
       <ArrowUpDown
         className={`h-3.5 w-3.5 ${active ? 'text-foreground' : 'text-muted-foreground/50'}`}
       />
-    </button>
+    </Button>
   )
 }

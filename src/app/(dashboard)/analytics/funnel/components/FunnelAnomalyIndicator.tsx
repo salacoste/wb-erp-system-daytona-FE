@@ -7,21 +7,29 @@
  */
 'use client'
 
+import { useState } from 'react'
 import { AlertTriangle } from 'lucide-react'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
+import { Button } from '@/components/ui/button'
 import { FUNNEL_CONVERSION_ANOMALY_MESSAGE } from './funnel-anomaly'
 
 export function FunnelAnomalyIndicator() {
+  const [open, setOpen] = useState(false)
+
   return (
     <TooltipProvider>
-      <Tooltip>
+      <Tooltip open={open} onOpenChange={setOpen}>
         <TooltipTrigger asChild>
-          <span
-            className="inline-flex cursor-help text-amber-600"
+          <Button
+            type="button"
+            variant="ghost"
+            size="icon"
+            className="inline-flex h-11 w-11 shrink-0 cursor-help text-status-warning hover:text-status-warning"
             aria-label={FUNNEL_CONVERSION_ANOMALY_MESSAGE}
+            onClick={() => setOpen(current => !current)}
           >
             <AlertTriangle className="h-4 w-4" />
-          </span>
+          </Button>
         </TooltipTrigger>
         <TooltipContent className="max-w-xs">{FUNNEL_CONVERSION_ANOMALY_MESSAGE}</TooltipContent>
       </Tooltip>

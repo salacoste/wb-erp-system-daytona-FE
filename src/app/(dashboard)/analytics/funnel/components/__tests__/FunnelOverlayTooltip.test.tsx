@@ -1,17 +1,18 @@
-import { describe, it, expect, vi } from 'vitest'
-import { render, screen, fireEvent } from '@testing-library/react'
-import { OverlayTooltip, ChartLegend } from '../FunnelOverlayTooltip'
-import { OVERLAY_SERIES } from '../funnel-overlay-config'
+import { fireEvent, render, screen } from '@testing-library/react'
+import { describe, expect, it, vi } from 'vitest'
 
-describe('OverlayTooltip', () => {
+import { ChartLegend, OverlayTooltip } from '../FunnelOverlayTooltip'
+import { fmtCurrency, OVERLAY_SERIES } from '../funnel-overlay-config'
+
+describe('FunnelOverlayTooltip', () => {
   const basePayload = [
-    { dataKey: 'openCardCount', value: 1500, color: '#60A5FA' },
-    { dataKey: 'ordersCount', value: 200, color: '#FB923C' },
-    { dataKey: 'buyoutCount', value: 150, color: '#4ADE80' },
+    { dataKey: 'openCardCount', value: 1500, color: 'var(--color-chart-1)' },
+    { dataKey: 'ordersCount', value: 200, color: 'var(--color-chart-2)' },
+    { dataKey: 'buyoutCount', value: 150, color: 'var(--color-chart-3)' },
   ]
 
-  it('returns null when not active', () => {
-    const { container } = render(
+  it('returns null while inactive or without a date label', () => {
+    const { container, rerender } = render(
       <OverlayTooltip
         active={false}
         payload={basePayload}
@@ -21,12 +22,10 @@ describe('OverlayTooltip', () => {
       />
     )
     expect(container.firstChild).toBeNull()
-  })
 
-  it('returns null when no label', () => {
-    const { container } = render(
+    rerender(
       <OverlayTooltip
-        active={true}
+        active
         payload={basePayload}
         visible={['openCardCount']}
         showAdOverlay={false}
@@ -35,103 +34,95 @@ describe('OverlayTooltip', () => {
     expect(container.firstChild).toBeNull()
   })
 
-  it('renders date in Russian locale', () => {
+  it('formats the date in Russian and renders only visible funnel series', () => {
     render(
       <OverlayTooltip
-        active={true}
+        active
         payload={basePayload}
         label="2026-03-01"
         visible={['openCardCount']}
         showAdOverlay={false}
       />
     )
-    expect(screen.getByText(/1 марта/)).toBeInTheDocument()
-  })
 
-  it('only shows visible series', () => {
-    render(
-      <OverlayTooltip
-        active={true}
-        payload={basePayload}
-        label="2026-03-01"
-        visible={['openCardCount']}
-        showAdOverlay={false}
-      />
-    )
-    expect(screen.getByText('Просмотры:')).toBeInTheDocument()
+    expect(screen.getByText(/1 марта/)).toBeVisible()
+    expect(screen.getByText('Просмотры:')).toBeVisible()
+    expect(screen.getByText(/1.*500/)).toBeVisible()
     expect(screen.queryByText('Заказы:')).not.toBeInTheDocument()
-    expect(screen.queryByText('Выкупы:')).not.toBeInTheDocument()
   })
-
-  it('formats ad spend as currency when overlay active', () => {
-    const payload = [...basePayload, { dataKey: 'adSpend', value: 12500, color: '#7C3AED' }]
+  it('uses the same full advertising precision formatter as chart evidence', () => {
     render(
       <OverlayTooltip
-        active={true}
-        payload={payload}
+        active
         label="2026-03-01"
         visible={['adSpend']}
-        showAdOverlay={true}
+        showAdOverlay
+        payload={[
+          {
+            dataKey: 'adSpend',
+            value: 4567.89,
+            color: 'var(--color-chart-2)',
+          },
+        ]}
       />
     )
-    const text = screen.getByText(/12.*500.*₽/)
-    expect(text).toBeInTheDocument()
+
+    const formatted = fmtCurrency(4567.89)
+    expect(screen.getByText((_, element) => element?.textContent === formatted)).toBeVisible()
   })
 
-  it('formats funnel metrics as locale numbers', () => {
+  it('renders Недоступно instead of a zero for a missing series value', () => {
     render(
       <OverlayTooltip
-        active={true}
-        payload={basePayload}
+        active
         label="2026-03-01"
+        visible={['adSpend']}
+        showAdOverlay
+        payload={[
+          {
+            dataKey: 'adSpend',
+            value: undefined,
+            color: 'var(--color-chart-2)',
+          },
+        ]}
+      />
+    )
+
+    expect(screen.getByText('Недоступно')).toBeVisible()
+    expect(screen.queryByText(/0,00 ₽/)).not.toBeInTheDocument()
+  })
+
+  it('renders the tooltip container with the popover surface token', () => {
+    const { container } = render(
+      <OverlayTooltip
+        active
+        label="2026-03-01"
+        payload={[{ dataKey: 'openCardCount', value: 1500, color: 'var(--color-chart-1)' }]}
         visible={['openCardCount']}
-        showAdOverlay={false}
+        showAdOverlay
       />
     )
-    expect(screen.getByText(/1.*500/)).toBeInTheDocument()
-  })
-})
 
-describe('ChartLegend', () => {
-  const funnelSeries = OVERLAY_SERIES.filter(s => s.key !== 'adSpend')
-
-  it('renders all series labels', () => {
-    render(
-      <ChartLegend
-        series={funnelSeries}
-        visible={['openCardCount', 'ordersCount', 'buyoutCount']}
-        onToggle={() => {}}
-      />
-    )
-    expect(screen.getByText('Просмотры')).toBeInTheDocument()
-    expect(screen.getByText('Заказы')).toBeInTheDocument()
-    expect(screen.getByText('Выкупы')).toBeInTheDocument()
+    const tooltipContainer = container.querySelector('div.rounded-lg.border')
+    expect(tooltipContainer).not.toBeNull()
+    expect(tooltipContainer).toHaveClass('bg-popover')
+    expect(tooltipContainer).toHaveClass('shadow-lg')
+    expect(tooltipContainer).not.toHaveClass('bg-background')
+    expect(tooltipContainer).not.toHaveClass('shadow-sm')
   })
 
-  it('sets aria-pressed based on visibility', () => {
-    render(<ChartLegend series={funnelSeries} visible={['openCardCount']} onToggle={() => {}} />)
-    const buttons = screen.getAllByRole('button')
-    expect(buttons[0]).toHaveAttribute('aria-pressed', 'true')
-    expect(buttons[1]).toHaveAttribute('aria-pressed', 'false')
-    expect(buttons[2]).toHaveAttribute('aria-pressed', 'false')
-  })
-
-  it('applies opacity-40 class for hidden series', () => {
-    render(<ChartLegend series={funnelSeries} visible={['openCardCount']} onToggle={() => {}} />)
-    const buttons = screen.getAllByRole('button')
-    expect(buttons[0].className).toContain('opacity-100')
-    expect(buttons[1].className).toContain('opacity-40')
-  })
-
-  it('calls onToggle with correct key when clicked', () => {
+  it('preserves direct legend visibility and toggle behavior', () => {
     const onToggle = vi.fn()
-    render(<ChartLegend series={funnelSeries} visible={['openCardCount']} onToggle={onToggle} />)
-    fireEvent.click(screen.getByText('Заказы'))
-    expect(onToggle).toHaveBeenCalledWith('ordersCount')
-  })
+    const series = OVERLAY_SERIES.filter(item => item.key !== 'adSpend')
+    render(<ChartLegend series={series} visible={['openCardCount']} onToggle={onToggle} />)
 
-  it('has group role with accessible label', () => {
-    render(<ChartLegend series={funnelSeries} visible={[]} onToggle={() => {}} />)
-    expect(screen.getByRole('group')).toHaveAttribute('aria-label', 'Переключатели метрик')
+    expect(screen.getByRole('group', { name: 'Переключатели метрик' })).toBeVisible()
+    expect(screen.getByRole('button', { name: 'Просмотры' })).toHaveAttribute(
+      'aria-pressed',
+      'true'
+    )
+    expect(screen.getByRole('button', { name: 'Заказы' })).toHaveAttribute('aria-pressed', 'false')
+    fireEvent.click(screen.getByRole('button', { name: 'Заказы' }))
+    expect(onToggle).toHaveBeenCalledWith('ordersCount')
   })
 })

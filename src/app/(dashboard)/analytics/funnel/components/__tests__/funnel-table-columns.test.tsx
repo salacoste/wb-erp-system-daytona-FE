@@ -150,9 +150,99 @@ describe('FunnelTableHeader — column position', () => {
     const lastHeader = headers[headers.length - 1]
     expect(lastHeader).toHaveTextContent('Топ поисковых запросов')
   })
+
+  it('right-aligns every sortable numeric metric header', () => {
+    render(
+      <Table>
+        <FunnelTableHeader sort="openCardCount" sortOrder="desc" onSort={() => {}} />
+      </Table>
+    )
+
+    for (const name of ['Просмотры', 'Заказы', 'Выкупы', 'Конверсия', 'Отмены']) {
+      expect(screen.getByRole('columnheader', { name: new RegExp(name) })).toHaveClass('text-right')
+    }
+  })
+
+  it('gives every compact comparison delta header a unique accessible name', () => {
+    render(
+      <Table>
+        <FunnelTableHeader sort="openCardCount" sortOrder="desc" onSort={() => {}} compare />
+      </Table>
+    )
+
+    for (const name of [
+      'Изменение просмотров',
+      'Изменение корзины',
+      'Изменение заказов',
+      'Изменение выкупов',
+      'Изменение конверсии',
+      'Изменение отмен',
+    ]) {
+      expect(screen.getByRole('columnheader', { name })).toBeVisible()
+    }
+  })
 })
 
 describe('FunnelTableRow — top search queries cell', () => {
+  it('right-aligns metric values and uses tabular figures', () => {
+    renderRow(
+      makeFunnelProductItem({
+        openCardCount: 120,
+        addToCartCount: 24,
+        ordersCount: 12,
+        buyoutCount: 8,
+        totalConversion: 6.7,
+        cancelRate: 3.2,
+      })
+    )
+
+    const cells = within(screen.getByRole('row')).getAllByRole('cell')
+    for (const metricIndex of [3, 4, 5, 6, 7, 8]) {
+      expect(cells[metricIndex]).toHaveClass('text-right', 'tabular-nums')
+    }
+  })
+
+  it('keeps nmId as a monospaced identifier instead of a business numeric value', () => {
+    renderRow(makeFunnelProductItem({ nmId: 887604577 }))
+
+    const nmIdCell = within(screen.getByRole('row')).getAllByRole('cell')[0]
+    expect(nmIdCell).toHaveClass('font-mono')
+    expect(nmIdCell).not.toHaveClass('text-right')
+    expect(nmIdCell).not.toHaveClass('tabular-nums')
+  })
+
+  it('right-aligns comparison delta cells and uses tabular figures', () => {
+    const item = makeFunnelProductItem({
+      openCardCount: 120,
+      addToCartCount: 24,
+      ordersCount: 12,
+      buyoutCount: 8,
+      totalConversion: 6.7,
+      cancelRate: 3.2,
+    })
+    const previous = makeFunnelProductItem({
+      openCardCount: 100,
+      addToCartCount: 20,
+      ordersCount: 10,
+      buyoutCount: 5,
+      totalConversion: 5,
+      cancelRate: 2,
+    })
+
+    render(
+      <Table>
+        <TableBody>
+          <FunnelTableRow item={item} compare prevItem={previous} prevLoading={false} />
+        </TableBody>
+      </Table>
+    )
+
+    const cells = within(screen.getByRole('row')).getAllByRole('cell')
+    for (const deltaIndex of [4, 6, 8, 10, 12, 14]) {
+      expect(cells[deltaIndex]).toHaveClass('text-right', 'tabular-nums')
+    }
+  })
+
   it('renders top 3 query links when 5 queries are present', () => {
     const item = makeFunnelProductItem({
       topSearchQueries: [
@@ -242,16 +332,16 @@ describe('FunnelTableRow — top search queries cell', () => {
     expect(link).toHaveAttribute('href', expectedHref)
   })
 
-  it('truncates long queries with ellipsis and exposes full text in title', () => {
+  it('keeps the full search query visible and accessible without a hover-only title', () => {
     const long = 'жидкая изолента для проводов с кисточкой черная'
     const item = makeFunnelProductItem({
       topSearchQueries: [makeTopSearchQuery({ query: long })],
     })
     renderRow(item)
     const link = screen.getByRole('link')
-    expect(link.textContent ?? '').not.toBe(long) // truncated
-    expect(link.textContent ?? '').toMatch(/…$/) // ends with ellipsis
-    expect(link).toHaveAttribute('title', long) // full text in tooltip
+    expect(link).toHaveTextContent(long)
+    expect(link).toHaveAccessibleName(long)
+    expect(link).not.toHaveAttribute('title')
   })
 
   it('renders queries in a row cell that is the LAST cell in the row', () => {

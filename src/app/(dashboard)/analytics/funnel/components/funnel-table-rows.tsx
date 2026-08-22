@@ -11,7 +11,6 @@ import type { FunnelProductItem, TopSearchQuery } from '@/types/analytics-funnel
 import { isFunnelConversionAnomalous } from './funnel-anomaly'
 import { FunnelAnomalyIndicator } from './FunnelAnomalyIndicator'
 import { ROUTES } from '@/lib/routes'
-import { truncateQuery } from '@/lib/string-utils'
 import { DeltaCell } from './funnel-table-delta'
 
 export type PrevItemsMap = Map<number, FunnelProductItem>
@@ -41,10 +40,9 @@ function TopSearchQueriesCell({ raw }: { raw: TopSearchQuery[] | null | undefine
           <Link
             key={`${idx}-${q.query}`}
             href={`${ROUTES.ANALYTICS.SEARCH}?query=${encodeURIComponent(q.query)}`}
-            title={q.query}
-            className="text-primary hover:underline"
+            className="break-words text-primary hover:underline"
           >
-            {truncateQuery(q.query)}
+            {q.query}
           </Link>
         ))}
       </div>
@@ -57,9 +55,16 @@ interface FunnelTableRowProps {
   compare?: boolean
   prevItem?: FunnelProductItem
   prevLoading?: boolean
+  prevError?: boolean
 }
 
-export function FunnelTableRow({ item, compare, prevItem, prevLoading }: FunnelTableRowProps) {
+export function FunnelTableRow({
+  item,
+  compare,
+  prevItem,
+  prevLoading,
+  prevError,
+}: FunnelTableRowProps) {
   return (
     <TableRow>
       <TableCell className="font-mono text-xs">{item.nmId}</TableCell>
@@ -67,43 +72,55 @@ export function FunnelTableRow({ item, compare, prevItem, prevLoading }: FunnelT
       <TableCell className="text-sm max-w-40 truncate" title={item.brandName || undefined}>
         {item.brandName || '—'}
       </TableCell>
-      <TableCell>{item.openCardCount.toLocaleString('ru-RU')}</TableCell>
+      <TableCell className="text-right tabular-nums">
+        {item.openCardCount.toLocaleString('ru-RU')}
+      </TableCell>
       {compare && (
         <DeltaCell
           current={item.openCardCount}
           previous={prevItem?.openCardCount}
           field="openCardCount"
           loading={!!prevLoading}
+          error={prevError}
         />
       )}
-      <TableCell>{item.addToCartCount.toLocaleString('ru-RU')}</TableCell>
+      <TableCell className="text-right tabular-nums">
+        {item.addToCartCount.toLocaleString('ru-RU')}
+      </TableCell>
       {compare && (
         <DeltaCell
           current={item.addToCartCount}
           previous={prevItem?.addToCartCount}
           field="addToCartCount"
           loading={!!prevLoading}
+          error={prevError}
         />
       )}
-      <TableCell>{item.ordersCount.toLocaleString('ru-RU')}</TableCell>
+      <TableCell className="text-right tabular-nums">
+        {item.ordersCount.toLocaleString('ru-RU')}
+      </TableCell>
       {compare && (
         <DeltaCell
           current={item.ordersCount}
           previous={prevItem?.ordersCount}
           field="ordersCount"
           loading={!!prevLoading}
+          error={prevError}
         />
       )}
-      <TableCell>{item.buyoutCount.toLocaleString('ru-RU')}</TableCell>
+      <TableCell className="text-right tabular-nums">
+        {item.buyoutCount.toLocaleString('ru-RU')}
+      </TableCell>
       {compare && (
         <DeltaCell
           current={item.buyoutCount}
           previous={prevItem?.buyoutCount}
           field="buyoutCount"
           loading={!!prevLoading}
+          error={prevError}
         />
       )}
-      <TableCell className="font-medium">
+      <TableCell className="text-right font-medium tabular-nums">
         <span className="inline-flex items-center gap-1.5">
           {item.totalConversion.toLocaleString('ru-RU', {
             minimumFractionDigits: 1,
@@ -118,9 +135,10 @@ export function FunnelTableRow({ item, compare, prevItem, prevLoading }: FunnelT
           previous={prevItem?.totalConversion}
           field="totalConversion"
           loading={!!prevLoading}
+          error={prevError}
         />
       )}
-      <TableCell className="text-red-600">
+      <TableCell className="text-right tabular-nums text-financial-negative">
         {item.cancelRate.toLocaleString('ru-RU', {
           minimumFractionDigits: 1,
           maximumFractionDigits: 1,
@@ -133,6 +151,7 @@ export function FunnelTableRow({ item, compare, prevItem, prevLoading }: FunnelT
           previous={prevItem?.cancelRate}
           field="cancelRate"
           loading={!!prevLoading}
+          error={prevError}
         />
       )}
       <TopSearchQueriesCell raw={item.topSearchQueries} />
