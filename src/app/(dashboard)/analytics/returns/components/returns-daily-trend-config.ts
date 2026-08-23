@@ -9,11 +9,15 @@
 // Chart Colors
 // ============================================================================
 
+// Story 169.11: categorical bar stack → chart-1..3 tokens in stack order
+// cancel→refusal→defect; returnRate line is valence (higher = worse) →
+// var(--color-chart-negative) (169.4 BuyoutTrend precedent). Single source of
+// truth: legend, tooltip markers, and <Bar>/<Line> all read these values.
 export const RETURNS_DAILY_COLORS = {
-  cancellations: '#F59E0B', // Orange
-  refusals: '#3B82F6', // Blue
-  defects: '#7C4DFF', // Purple
-  returnRate: '#EF4444', // Red (line)
+  cancellations: 'var(--color-chart-1)',
+  refusals: 'var(--color-chart-2)',
+  defects: 'var(--color-chart-3)',
+  returnRate: 'var(--color-chart-negative)',
 } as const
 
 export type ReturnsBarKey = 'cancellations' | 'refusals' | 'defects'

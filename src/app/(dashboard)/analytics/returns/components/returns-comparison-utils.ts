@@ -55,11 +55,14 @@ export function formatDelta(delta: ReturnsDelta): string {
   return `${arrow} ${fmt(Math.abs(delta.percent))}%`
 }
 
-/** Get Tailwind color class for delta direction (flips for inverted metrics) */
+/**
+ * Get token color class for delta direction (flips for inverted metrics).
+ * Story 169.11: financial tokens; inversion logic untouched (169.4 precedent).
+ */
 export function getDeltaColor(direction: 'up' | 'down' | 'neutral', inverted: boolean): string {
   if (direction === 'neutral') return 'text-muted-foreground'
   const isPositive = inverted ? direction === 'down' : direction === 'up'
-  return isPositive ? 'text-green-600' : 'text-red-600'
+  return isPositive ? 'text-financial-positive' : 'text-financial-negative'
 }
 
 /** Key summary fields available for comparison */

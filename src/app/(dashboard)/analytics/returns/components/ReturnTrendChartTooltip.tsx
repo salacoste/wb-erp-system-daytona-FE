@@ -37,7 +37,7 @@ export function ReturnTrendTooltip({
   const rate = payload.find(p => p.dataKey === 'returnRate')
 
   return (
-    <div className="rounded-lg border bg-background p-3 shadow-md">
+    <div className="rounded-lg border bg-popover p-3 text-popover-foreground shadow-lg">
       <p className="mb-2 text-sm font-medium">{label}</p>
       {bars.map(item => (
         <p key={item.dataKey} className="flex items-center gap-2 text-sm">
@@ -99,3 +99,6 @@ export function ReturnTrendLegend() {
     </div>
   )
 }
+
+// ReturnTrendSrTable extracted to its own file (ReturnTrendSrTable.tsx)
+// in 169.11 round-1 review (F5) — isolates the sr-table from the tooltip.

@@ -89,17 +89,18 @@ describe('returns-comparison-utils', () => {
       expect(getDeltaColor('neutral', false)).toBe('text-muted-foreground')
     })
 
-    it('returns green for up (non-inverted)', () => {
-      expect(getDeltaColor('up', false)).toBe('text-green-600')
+    it('returns positive token for up (non-inverted)', () => {
+      // Story 169.11: financial tokens replace palette classes
+      expect(getDeltaColor('up', false)).toBe('text-financial-positive')
     })
 
-    it('returns red for down (non-inverted)', () => {
-      expect(getDeltaColor('down', false)).toBe('text-red-600')
+    it('returns negative token for down (non-inverted)', () => {
+      expect(getDeltaColor('down', false)).toBe('text-financial-negative')
     })
 
-    it('flips colors for inverted metrics', () => {
-      expect(getDeltaColor('up', true)).toBe('text-red-600')
-      expect(getDeltaColor('down', true)).toBe('text-green-600')
+    it('flips tokens for inverted metrics', () => {
+      expect(getDeltaColor('up', true)).toBe('text-financial-negative')
+      expect(getDeltaColor('down', true)).toBe('text-financial-positive')
     })
   })
 

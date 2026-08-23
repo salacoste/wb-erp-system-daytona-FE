@@ -11,6 +11,7 @@ import { format, subDays } from 'date-fns'
 import { DateRangePickerExtended } from '@/components/custom/DateRangePickerExtended'
 import { ComparisonPeriodSelector } from '@/components/custom/ComparisonPeriodSelector'
 import { ExportCsvButton } from '@/components/custom/ai/ExportCsvButton'
+import { PageHeader } from '@/components/product/PageHeader'
 import { exportReturnsToCsv } from '@/lib/csv/returns-csv-export'
 import { useReturnsBySku } from '@/hooks/use-return-analytics'
 import type { DateRange } from '@/types/date-range'
@@ -73,11 +74,9 @@ export function ReturnsPageContent() {
 
   return (
     <div className="space-y-6">
-      {/* Header */}
-      <div>
-        <h1 className="text-3xl font-bold tracking-tight text-gray-900">Аналитика возвратов</h1>
-        <p className="text-muted-foreground mt-1">Причины возвратов и аномалии по SKU</p>
-      </div>
+      {/* Header — Story 169.11: PageHeader (h1 text-2xl, 169.9/169.10 precedent);
+          no icon slot, route keeps a single text h1 */}
+      <PageHeader title="Аналитика возвратов" description="Причины возвратов и аномалии по SKU" />
 
       {/* Controls */}
       <div className="flex flex-col gap-4 sm:flex-row sm:flex-wrap sm:items-center">
@@ -93,7 +92,7 @@ export function ReturnsPageContent() {
             type="checkbox"
             checked={anomalyOnly}
             onChange={e => setAnomalyOnly(e.target.checked)}
-            className="rounded border-gray-300"
+            className="rounded border-input"
             aria-labelledby="returns-anomaly-label"
           />
           <span id="returns-anomaly-label">Только проблемные</span>

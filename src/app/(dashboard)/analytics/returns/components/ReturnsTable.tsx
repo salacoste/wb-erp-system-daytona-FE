@@ -8,7 +8,14 @@
 import { useState } from 'react'
 import { useReturnsBySku } from '@/hooks/use-return-analytics'
 import { useProducts } from '@/hooks/useProducts'
-import { Table, TableBody, TableHead, TableHeader, TableRow } from '@/components/ui/table'
+import {
+  Table,
+  TableBody,
+  TableCaption,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table'
 import { Button } from '@/components/ui/button'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Alert, AlertDescription } from '@/components/ui/alert'
@@ -70,15 +77,22 @@ export function ReturnsTable({ from, to, anomalyOnly }: ReturnsTableProps) {
         <div className="text-sm text-muted-foreground">
           Всего SKU: {summary.totalSkus}
           {summary.anomalyCount > 0 && (
-            <span className="text-red-500 ml-2">
+            <span className="text-status-error ml-2">
               ({summary.anomalyCount} с аномальным возвратом)
             </span>
           )}
         </div>
       )}
 
-      <div className="rounded-md border overflow-x-auto">
+      {/* Story 169.11: keyboard-scrollable region (tabIndex + aria-label) + static caption.
+          No aria-sort — the table has NO sortable headers (cursor pagination); N/A recorded. */}
+      <div
+        className="rounded-md border overflow-x-auto"
+        tabIndex={0}
+        aria-label="Таблица возвратов по SKU, прокручиваемая область"
+      >
         <Table>
+          <TableCaption>Возвраты по SKU</TableCaption>
           <TableHeader>
             <TableRow>
               <TableHead className="w-8" />
