@@ -90,8 +90,35 @@ describe('normalizeReturnReasonsResponse', () => {
     expect(result.byCategory).toEqual([])
   })
 
-  it('coerces unknown category to "return_after_receipt"', () => {
+  // Story 169.11 Task 0: unknown category stays distinguishable (no silent coercion).
+  it('marks unrecognized category as "unknown"', () => {
     const raw = { byCategory: [{ category: 'unknown_type' }] }
+    const result = normalizeReturnReasonsResponse(raw)
+    expect(result.byCategory[0].category).toBe('unknown')
+  })
+
+  it('preserves backend displayName verbatim for unknown category', () => {
+    const raw = { byCategory: [{ category: 'mystery', displayName: 'Особая причина' }] }
+    const result = normalizeReturnReasonsResponse(raw)
+    expect(result.byCategory[0].category).toBe('unknown')
+    expect(result.byCategory[0].displayName).toBe('Особая причина')
+  })
+
+  it('falls back to neutral label when valid category has empty displayName', () => {
+    const raw = { byCategory: [{ category: 'refusal_at_pvz', displayName: '' }] }
+    const result = normalizeReturnReasonsResponse(raw)
+    expect(result.byCategory[0].displayName).toBe('Неклассифицированный возврат')
+  })
+
+  it('unknown category with empty displayName → unknown + neutral label', () => {
+    const raw = { byCategory: [{ category: 'weird', display_name: '' }] }
+    const result = normalizeReturnReasonsResponse(raw)
+    expect(result.byCategory[0].category).toBe('unknown')
+    expect(result.byCategory[0].displayName).toBe('Неклассифицированный возврат')
+  })
+
+  it('keeps valid category unchanged (regression pin)', () => {
+    const raw = { byCategory: [{ category: 'return_after_receipt' }] }
     const result = normalizeReturnReasonsResponse(raw)
     expect(result.byCategory[0].category).toBe('return_after_receipt')
   })

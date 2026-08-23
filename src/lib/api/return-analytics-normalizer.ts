@@ -35,7 +35,8 @@ const VALID_TRENDS: ReadonlySet<string> = new Set(['up', 'down', 'stable'])
 
 function toReturnCategory(raw: unknown): ReturnCategory {
   const s = String(raw ?? '')
-  return VALID_CATEGORIES.has(s) ? (s as ReturnCategory) : 'return_after_receipt'
+  // Story 169.11 Task 0: unknown stays distinguishable — no silent coercion to a real category.
+  return VALID_CATEGORIES.has(s) ? (s as ReturnCategory) : 'unknown'
 }
 
 function toTrendDirection(raw: unknown): TrendDirection {
@@ -51,7 +52,9 @@ function normalizeReturnCategoryItem(raw: unknown): ReturnCategoryItem {
   const d = asRecord(raw)
   return {
     category: toReturnCategory(d.category),
-    displayName: toStr(d.displayName ?? d.display_name),
+    // Neutral Russian label fallback when displayName is empty (Story 169.11 Task 0, AC-2:
+    // unknown reasons get a neutral labeled fallback; do NOT fabricate a category).
+    displayName: toStr(d.displayName ?? d.display_name) || 'Неклассифицированный возврат',
     count: toCount(d.count),
     percentage: toNullableNumber(d.percentage) ?? 0,
     trend: toTrendDirection(d.trend),
