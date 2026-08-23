@@ -1,12 +1,12 @@
 # Story 169.11-FE: Migrate Returns Analytics
 
-Status: review — implementation merged on branch; review round 1 fixes applied; PR/merge/cleanup pending
+Status: done — PR #219 merged (`129e99ed`); 2-pass fresh-context review (APPROVE_WITH_NOTES ×2, all findings resolved); branch/worktree cleanup with 0/0/0 absence proofs
 
 ## Story
 
 As an operations/finance user, I want `/analytics/returns` to show return totals, reasons, trends, comparison, and product rows consistently, so that I can identify material return drivers and affected products.
 
-Plan: `.omx/plans/169.11-migrate-returns-analytics.md` (authoritative — blocker, branch/worktree, protocol, validation, review, PR/cleanup). This context draft must merge before implementation. The future implementation branch remains route-only; after implementation merge and cleanup, this artifact and sprint status are updated in a separate documentation-only closeout branch/PR.
+Plan: `.omx/plans/169.11-migrate-returns-analytics.md` (authoritative — blocker, branch/worktree, protocol, validation, review, PR/cleanup). Context draft merged via PR #217 (`67a5ba90`); prerequisite via PR #218 (`d6ed2c65`); implementation branch was route-only; this artifact and sprint status are updated by this documentation-only closeout branch/PR.
 
 ## Acceptance Criteria
 
@@ -43,8 +43,8 @@ Plan: `.omx/plans/169.11-migrate-returns-analytics.md` (authoritative — blocke
   - [x] accessible chart-alternative tests assert exact period, units, all daily series/full values, tooltip-equivalent precision, and availability without hover or pointer input
   - [x] state tests cover the Task 1 matrix and explicitly distinguish trend error from valid empty
   - [x] E2E pins intact via `npm run test:e2e -- e2e/returns-analytics.spec.ts` (run-only — file is OUTSIDE the owned surface; do not edit it, record selected/executed count and gaps): h1 «Аналитика возвратов» level 1, `#returns-date-range`, table/card presence, comparison switch — NOT RUN: environment down (see Gaps); file untouched
-- [ ] Task 5: Validation + review + PR + cleanup (AC: #4-9) — per plan §Story-targeted tests / §Conventional commit / §cleanup
-  - [x] validation gates run (route suite, full vitest, lint, type-check, max-lines, build) — PR/merge/cleanup pending
+- [x] Task 5: Validation + review + PR + cleanup (AC: #4-9) — targeted 73/8 (baseline 50/5); full vitest 18 979/0 (floor 18 956); lint 0/0; tsc 0; max-lines OK; build 0; diff-check clean. Round-1 opus fresh APPROVE_WITH_NOTES (4 MEDIUM + 3 LOW) → fixed in `7b276436`; round-2 opus fresh APPROVE_WITH_NOTES (1 MEDIUM File-List drift + 3 LOW) → fixed in this closeout. PR #219 merged `129e99ed`; remote/local branch + worktree deleted (0/0/0 absence proofs). E2E = named environment gap (stack down; pins statically verified by review).
+  - [x] validation gates run (route suite, full vitest, lint, type-check, max-lines, build) — all green, evidence above
 
 ## Dev Notes
 
@@ -94,8 +94,8 @@ Plan: `.omx/plans/169.11-migrate-returns-analytics.md` (authoritative — blocke
 
 ### Agent Model Used
 
-- Implementation: executor (sonnet) ×2 rounds via orchestrator.
-- Review: adversarial reviewer (opus, fresh-context) ×1 — round 1 verdict APPROVE_WITH_NOTES (4 MEDIUM + 3 LOW); 3 MEDIUMs fixed pre-PR in this round.
+- Implementation: executor (sonnet) ×2 rounds via orchestrator (migration `83a76676` + round-1 fixes `7b276436`); shared-boundary preface via executor (sonnet) + reviewer (opus) — PR #218 `d9befb08`.
+- Review: adversarial reviewer (opus, fresh-context) ×2 — round 1 APPROVE_WITH_NOTES (4 MEDIUM + 3 LOW; 3 MEDIUMs fixed pre-PR); round 2 APPROVE_WITH_NOTES (1 MEDIUM File-List drift + 3 LOW; fixed in closeout).
 
 ### Debug Log References
 
@@ -114,10 +114,12 @@ Plan: `.omx/plans/169.11-migrate-returns-analytics.md` (authoritative — blocke
 
 ### File List
 
-- `src/app/(dashboard)/analytics/returns/page.tsx`
-- `src/app/(dashboard)/analytics/returns/components/DeltaIndicator.tsx`
+Edited in PR #219 (17 source files + this artifact; verified against `git diff --name-only main...7b276436`):
+
 - `src/app/(dashboard)/analytics/returns/components/ReturnReasonsChartParts.tsx`
-- `src/app/(dashboard)/analytics/returns/components/ReturnReasonsPieChart.tsx`
+- `src/app/(dashboard)/analytics/returns/components/ReturnTrendChart.tsx`
+- `src/app/(dashboard)/analytics/returns/components/ReturnTrendChartTooltip.tsx`
+- `src/app/(dashboard)/analytics/returns/components/ReturnTrendSrTable.tsx` (NEW — round-1 F5 extraction)
 - `src/app/(dashboard)/analytics/returns/components/returns-comparison-utils.ts`
 - `src/app/(dashboard)/analytics/returns/components/returns-daily-trend-config.ts`
 - `src/app/(dashboard)/analytics/returns/components/ReturnsPageContent.tsx`
@@ -125,17 +127,20 @@ Plan: `.omx/plans/169.11-migrate-returns-analytics.md` (authoritative — blocke
 - `src/app/(dashboard)/analytics/returns/components/ReturnsTable.tsx`
 - `src/app/(dashboard)/analytics/returns/components/ReturnsTableHelpers.tsx`
 - `src/app/(dashboard)/analytics/returns/components/ReturnsTableRow.tsx`
-- `src/app/(dashboard)/analytics/returns/components/ReturnTrendChart.tsx`
-- `src/app/(dashboard)/analytics/returns/components/ReturnTrendChartTooltip.tsx`
-- `src/app/(dashboard)/analytics/returns/components/ReturnTrendSrTable.tsx` (NEW — round-1 F5 extraction)
 - `src/app/(dashboard)/analytics/returns/components/__tests__/ReturnRateCell.test.tsx`
 - `src/app/(dashboard)/analytics/returns/components/__tests__/ReturnReasonsPieChart.test.tsx`
 - `src/app/(dashboard)/analytics/returns/components/__tests__/returns-comparison-utils.test.ts`
-- `src/app/(dashboard)/analytics/returns/components/__tests__/returns-presentation-source-contracts.test.tsx`
-- `src/app/(dashboard)/analytics/returns/components/__tests__/ReturnsPageContent.test.tsx`
+- `src/app/(dashboard)/analytics/returns/components/__tests__/returns-presentation-source-contracts.test.tsx` (NEW)
+- `src/app/(dashboard)/analytics/returns/components/__tests__/ReturnsPageContent.test.tsx` (NEW)
+- `src/app/(dashboard)/analytics/returns/components/__tests__/ReturnTrendChart.test.tsx` (NEW)
+
+Verified unchanged (NOT in the diff; token-clean via the recursive guard — round-2 finding 1 reconciliation):
+
+- `src/app/(dashboard)/analytics/returns/page.tsx`
+- `src/app/(dashboard)/analytics/returns/components/DeltaIndicator.tsx`
+- `src/app/(dashboard)/analytics/returns/components/ReturnReasonsPieChart.tsx`
 - `src/app/(dashboard)/analytics/returns/components/__tests__/ReturnsSummaryCards.test.tsx`
 - `src/app/(dashboard)/analytics/returns/components/__tests__/ReturnsTable.test.tsx`
-- `src/app/(dashboard)/analytics/returns/components/__tests__/ReturnTrendChart.test.tsx`
 
 ### Change Log
 
@@ -145,3 +150,4 @@ Plan: `.omx/plans/169.11-migrate-returns-analytics.md` (authoritative — blocke
 | 2026-08-23 | Context revalidated after Story 169.9 corrective closeout on `origin/main` @ `60532250`; full-suite floor reconciled to 18 952/0 with the Story-owned 50/5 baseline unchanged. |
 | 2026-08-23 | Fresh-context review found a shared unknown-reason boundary blocker plus state/E2E/guard/accessibility/lifecycle defects. Context corrected and returned to backlog pending an owner-approved prerequisite Story. |
 | 2026-08-23 | Round-1 review fixes applied (guard recursion, sr-table extraction, C4 rewording, story reconciliation). Status: ready-for-dev → review. |
+| 2026-08-23 | Implemented + merged: PR #219 (impl `83a76676`, round-1 fixes `7b276436`, merge `129e99ed`); route 73/8, full 18 979/0, lint 0/0, tsc 0, build 0; round-2 APPROVE_WITH_NOTES → File-List drift + stale wording + guard-comment fixed in closeout; branch/worktree cleanup 0/0/0; E2E named environment gap (stack down, pins statically verified). Status: review → done. **Lessons:** (1) Нормализатор-коэрсинг делал route-фоллбеки недостижимыми — контекст-ревью обязано грепать boundary-слой, не только route. (2) E2E при лежащем стеке = named gap + статическая верификация пинов ревьюером; merge не блокирован. (3) Pinned file-count в guard-каталоге превращает будущие сплиты в осознанное решение, а не тихий дрейф покрытия. |
