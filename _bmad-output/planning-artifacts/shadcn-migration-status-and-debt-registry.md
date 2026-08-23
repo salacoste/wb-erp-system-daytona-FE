@@ -25,7 +25,11 @@
 169.10 liquidity (полный цикл + REQUEST-CHANGES-фиксы; PRs #212/#214; между ними параллельная
 сессия влила corrective PR #213 gaps-followup). Параллельная сессия также закрыла docs-реконсиляцию #209.
 
-**NEXT = 169.11 returns analytics** (`backlog`; план `.omx/plans/169.11-migrate-returns-analytics.md`).
+**NEXT = 169.12 storage analytics** (`backlog`; план `.omx/plans/169.12-migrate-storage-analytics-and-paid-storage-import.md`).
+169.11 SHIPPED 2026-08-23 (11/13 эпика): preface PR #218 (`d6ed2c65` — unknown-категория на boundary,
+нейтральный лейбл, коэрсинг выпилен) + PR #219 (`129e99ed`; impl `83a76676` + round-1 `7b276436`);
+owned 50→73, full vitest **18 979/0** (новый пол); 2×opus FRESH APPROVE_WITH_NOTES→fixed; E2E = named gap
+(стек лежал, пины верифицированы статически — прогон при поднятом окружении до 174.3); cleanup 0/0/0.
 Его канонические prerequisites: Epic 166, Story 167.1 и Story 168.1 / C2; Story 169.10 не является
 prerequisite для 169.11. Пол vitest **18 952/0**; Story 169.9 corrective: **7 files / 55 tests**;
 production build: **70/70** static pages. Browser/theme/responsive/axe/keyboard/visual evidence

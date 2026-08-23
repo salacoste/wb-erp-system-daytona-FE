@@ -59,8 +59,8 @@ function withoutComments(source: string): string {
 
 /**
  * Recursive catalog (round-1 review F4): every production .ts/.tsx under the
- * route except __tests__ and .test./.spec. files — non-recursive, so a nested
- * directory would silently escape the guard.
+ * route except __tests__ and .test./.spec. files. Made recursive — the original
+ * flat readdirSync let a nested directory silently escape the guard.
  */
 function productionFiles(): string[] {
   const all = readdirSync(routeDirectory, {
