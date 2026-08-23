@@ -63,15 +63,24 @@ test.describe('Returns Analytics', () => {
   })
 
   test('comparison period selector is available', async ({ page }) => {
-    // ComparisonPeriodSelector toggle — Story 127.5-FE
-    const comparisonToggle = page.getByRole('switch', { name: 'Сравнение периодов' })
+    // ComparisonPeriodSelector toggle — Story 127.5-FE.
+    // Accessible name follows the shared component label standardized 2026-08-12 (1804aa8f);
+    // the pre-standardization pin «Сравнение периодов» rotted silently until the 169.11 gap-closure run.
+    const comparisonToggle = page.getByRole('switch', { name: 'Сравнить с периодом' })
     await expect(comparisonToggle).toBeVisible()
     await comparisonToggle.click()
     await expect(comparisonToggle).toBeChecked()
 
-    const comparisonSummary = comparisonToggle.locator('xpath=../../div[2]')
-    await expect(comparisonSummary).toBeVisible()
-    await comparisonSummary.click()
+    // Expand control shows the comparison range in the page's ISO-week format («2026-W25 — …»);
+    // the main date picker renders dd.mm.yyyy, so the week pattern disambiguates without
+    // relying on aria-label text. Replaces the brittle pre-standardization xpath ../../div[2] walk.
+    const expandButton = page
+      .getByRole('button')
+      .filter({ hasText: /\d{4}-W\d{2}/ })
+      .first()
+    await expect(expandButton).toBeVisible()
+    await expandButton.click()
+    await expect(expandButton).toHaveAttribute('aria-expanded', 'true')
 
     const comparisonControls = page.getByText('Сравнить с:', { exact: true }).locator('..')
     await expect(comparisonControls).toBeVisible()
