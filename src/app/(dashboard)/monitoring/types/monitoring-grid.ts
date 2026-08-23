@@ -51,6 +51,8 @@ export interface GridPipeline {
   lastFailureAt: string | null
   nextExpectedAt: string | null
   dataLagMinutes: number | null
+  /** Backend-authored, schedule-aware lag label; null when the pipeline never synced. */
+  dataLagDisplay: string | null
   successRate: number
   totalExecutions: number
   totalFailures: number

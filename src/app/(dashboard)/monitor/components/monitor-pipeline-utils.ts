@@ -40,14 +40,18 @@ export function getBuyoutColor(rate: number | null): {
  */
 export function getMostRecentRecalc(
   pipelines: GridPipeline[]
-): { displayName: string; lastSuccessAt: string } | null {
+): { displayName: string; lastSuccessAt: string; dataLagDisplay: string | null } | null {
   const withSuccess = pipelines
     .filter((p): p is GridPipeline & { lastSuccessAt: string } => p.lastSuccessAt != null)
     .sort((a, b) => new Date(b.lastSuccessAt).getTime() - new Date(a.lastSuccessAt).getTime())
 
   if (withSuccess.length === 0) return null
   const first = withSuccess[0]
-  return { displayName: first.displayName, lastSuccessAt: first.lastSuccessAt }
+  return {
+    displayName: first.displayName,
+    lastSuccessAt: first.lastSuccessAt,
+    dataLagDisplay: first.dataLagDisplay,
+  }
 }
 
 /**

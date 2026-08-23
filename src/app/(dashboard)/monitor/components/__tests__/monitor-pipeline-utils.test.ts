@@ -79,6 +79,7 @@ function makePipeline(overrides: Partial<GridPipeline>): GridPipeline {
     lastFailureAt: null,
     nextExpectedAt: null,
     dataLagMinutes: null,
+    dataLagDisplay: null,
     successRate: 1,
     totalExecutions: 10,
     totalFailures: 0,
@@ -103,12 +104,14 @@ describe('getMostRecentRecalc', () => {
       pipelineId: 'new',
       displayName: 'Новый',
       lastSuccessAt: '2026-04-24T09:45:00Z',
+      dataLagDisplay: 'сегодня 12:45 МСК',
     })
 
     const result = getMostRecentRecalc([older, newer])
     expect(result).not.toBeNull()
     expect(result!.displayName).toBe('Новый')
     expect(result!.lastSuccessAt).toBe('2026-04-24T09:45:00Z')
+    expect(result!.dataLagDisplay).toBe('сегодня 12:45 МСК')
   })
 
   it('returns null when all pipelines have lastSuccessAt: null', () => {

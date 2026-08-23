@@ -9,7 +9,7 @@
  * M-6 review fix: added tooltip payload hover test.
  */
 
-import { describe, it, expect } from 'vitest'
+import { afterEach, describe, it, expect, vi } from 'vitest'
 import { screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { renderWithProviders } from '@/test/utils/test-utils'
@@ -33,6 +33,7 @@ const healthy: GridPipeline = {
   lastFailureAt: null,
   nextExpectedAt: '2026-04-24T09:50:00Z',
   dataLagMinutes: 2,
+  dataLagDisplay: null,
   successRate: 0.99,
   totalExecutions: 288,
   totalFailures: 3,
@@ -61,6 +62,10 @@ const critical: GridPipeline = {
 // ---------------------------------------------------------------------------
 
 describe('MonitorPipelineHealth', () => {
+  afterEach(() => {
+    vi.useRealTimers()
+  })
+
   it('mixed-status fixture: renders "Последний пересчёт" row and unhealthy pipeline in list', () => {
     renderWithProviders(<MonitorPipelineHealth pipelines={[healthy, critical]} />)
 
@@ -100,10 +105,35 @@ describe('MonitorPipelineHealth', () => {
   })
 
   it('no pipelines with lastSuccessAt renders "Нет данных о пересчётах"', () => {
-    const neverRan: GridPipeline = { ...healthy, lastSuccessAt: null }
+    const neverRan: GridPipeline = { ...healthy, lastSuccessAt: null, dataLagDisplay: null }
     renderWithProviders(<MonitorPipelineHealth pipelines={[neverRan]} />)
 
     expect(screen.getByText('Нет данных о пересчётах')).toBeInTheDocument()
+  })
+
+  it('prefers the selected pipeline backend lag display', () => {
+    renderWithProviders(
+      <MonitorPipelineHealth
+        pipelines={[
+          {
+            ...healthy,
+            category: 'daily',
+            dataLagDisplay: 'сегодня 12:45 МСК',
+          },
+        ]}
+      />
+    )
+
+    expect(screen.getByText('Синхронизация товаров — сегодня 12:45 МСК')).toBeInTheDocument()
+  })
+
+  it('falls back to relative time when the selected pipeline display is null', () => {
+    vi.useFakeTimers()
+    vi.setSystemTime(new Date('2026-04-24T10:00:00Z'))
+
+    renderWithProviders(<MonitorPipelineHealth pipelines={[healthy]} />)
+
+    expect(screen.getByText('Синхронизация товаров — 15 мин назад')).toBeInTheDocument()
   })
 
   // M-6 review fix: tooltip payload test — hover AlertTriangle badge to see task/error counts
