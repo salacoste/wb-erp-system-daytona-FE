@@ -53,6 +53,13 @@ describe('escapeCsvCell', () => {
     // =HYPERLINK + comma → prefix quote + RFC 4180 wrapping
     expect(escapeCsvCell('=HYPERLINK("url","label")')).toBe(`"'=HYPERLINK(""url"",""label"")"`)
   })
+
+  it('does NOT defang a formula on a NON-first line (cell-start anchor is the Excel model)', () => {
+    // Round-1 review F-2 pin: Excel formulas trigger only at cell-value start;
+    // an embedded "safe\n=CMD()" is inert inside a quoted cell. Pinned so a future
+    // editor does not "fix" this into double-prefixing.
+    expect(escapeCsvCell('safe\n=CMD()')).toBe('"safe\n=CMD()"')
+  })
 })
 
 describe('prefixUtf8Bom', () => {
