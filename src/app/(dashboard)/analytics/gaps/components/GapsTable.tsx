@@ -24,7 +24,7 @@ interface GapsTableProps {
   missingDates: MissingDate[] | undefined
   isLoading: boolean
   analyzingDate: string | null
-  onAnalyze: (missingDate: string) => void
+  onAnalyze: (missingDate: string, trigger: HTMLButtonElement) => void
 }
 
 /** Russian day name mapping */
@@ -41,7 +41,8 @@ const DAY_NAMES: Record<string, string> = {
 export function GapsTable({ missingDates, isLoading, analyzingDate, onAnalyze }: GapsTableProps) {
   if (isLoading) {
     return (
-      <div className="space-y-3">
+      <div role="status" aria-live="polite" className="space-y-3">
+        <span className="sr-only">Таблица пропусков загружается</span>
         {Array.from({ length: 3 }).map((_, i) => (
           <Skeleton key={i} className="h-12 w-full" />
         ))}
@@ -87,9 +88,9 @@ export function GapsTable({ missingDates, isLoading, analyzingDate, onAnalyze }:
                     size="sm"
                     variant="outline"
                     className="min-h-11"
-                    disabled={isAnalyzing}
+                    disabled={analyzingDate !== null}
                     aria-label={`Анализ за ${formatDate(new Date(item.missing_date + 'T00:00:00'))}`}
-                    onClick={() => onAnalyze(item.missing_date)}
+                    onClick={event => onAnalyze(item.missing_date, event.currentTarget)}
                   >
                     {isAnalyzing ? (
                       <Loader2 className="mr-1 h-3 w-3 animate-spin" />

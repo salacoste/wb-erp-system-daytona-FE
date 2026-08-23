@@ -20,6 +20,7 @@ describe('GapsTable', () => {
       />
     )
     expect(container.querySelectorAll('.animate-pulse').length).toBeGreaterThan(0)
+    expect(screen.getByRole('status')).toHaveTextContent('Таблица пропусков загружается')
   })
 
   it('shows "no gaps" message when no missing dates', () => {
@@ -69,20 +70,23 @@ describe('GapsTable', () => {
     expect(analyzeButtons).toHaveLength(2)
   })
 
-  it('disables analyze button for currently analyzing date', () => {
+  it('serializes analysis by disabling every row while one request is pending', async () => {
+    const user = userEvent.setup()
+    const onAnalyze = vi.fn()
     render(
       <GapsTable
         missingDates={mockMissingDates}
         isLoading={false}
         analyzingDate="2026-05-10"
-        onAnalyze={vi.fn()}
+        onAnalyze={onAnalyze}
       />
     )
     const buttons = screen.getAllByText('Анализ')
-    // First button (2026-05-10) should be disabled
     expect(buttons[0].closest('button')).toBeDisabled()
-    // Second button (2026-05-15) should not be disabled
-    expect(buttons[1].closest('button')).not.toBeDisabled()
+    expect(buttons[1].closest('button')).toBeDisabled()
+
+    await user.click(buttons[1].closest('button')!)
+    expect(onAnalyze).not.toHaveBeenCalled()
   })
 
   it('calls onAnalyze with correct date when clicked', async () => {
@@ -97,8 +101,9 @@ describe('GapsTable', () => {
       />
     )
     const buttons = screen.getAllByText('Анализ')
-    await user.click(buttons[0].closest('button')!)
-    expect(onAnalyze).toHaveBeenCalledWith('2026-05-10')
+    const analyzeAction = buttons[0].closest('button')!
+    await user.click(analyzeAction)
+    expect(onAnalyze).toHaveBeenCalledWith('2026-05-10', analyzeAction)
   })
 
   it('names each repeated analyze button with its date (AX contract)', () => {

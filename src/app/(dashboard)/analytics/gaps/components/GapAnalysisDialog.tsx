@@ -5,6 +5,7 @@
  */
 
 import { Loader2, AlertTriangle } from 'lucide-react'
+import type { RefObject } from 'react'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import {
@@ -25,6 +26,8 @@ interface GapAnalysisDialogProps {
   analysis: GapAnalysisResponse | null
   isRemediating: boolean
   onRemediate: (missingDate: string, rootCause?: string) => void
+  returnFocusRef: RefObject<HTMLElement | null>
+  fallbackFocusRef: RefObject<HTMLElement | null>
 }
 
 /** Badge chip by severity (169.5 /15-chip idiom) */
@@ -40,6 +43,8 @@ export function GapAnalysisDialog({
   analysis,
   isRemediating,
   onRemediate,
+  returnFocusRef,
+  fallbackFocusRef,
 }: GapAnalysisDialogProps) {
   if (!analysis) return null
 
@@ -47,7 +52,20 @@ export function GapAnalysisDialog({
 
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-lg">
+      <DialogContent
+        className="max-h-[calc(100dvh-2rem)] min-w-0 overflow-x-hidden overflow-y-auto sm:max-w-lg"
+        onCloseAutoFocus={event => {
+          const returnFocusTarget = returnFocusRef.current?.isConnected
+            ? returnFocusRef.current
+            : fallbackFocusRef.current?.isConnected
+              ? fallbackFocusRef.current
+              : null
+          if (!returnFocusTarget) return
+
+          event.preventDefault()
+          returnFocusTarget.focus()
+        }}
+      >
         <DialogHeader>
           <DialogTitle>Анализ пропуска</DialogTitle>
           <DialogDescription>
@@ -57,18 +75,23 @@ export function GapAnalysisDialog({
 
         <div className="space-y-4">
           {/* Root cause */}
-          <div className="flex items-center gap-2">
+          <div className="flex flex-wrap items-center gap-2">
             <AlertTriangle className="h-4 w-4 text-muted-foreground" />
             <span className="text-sm text-muted-foreground">Причина:</span>
-            <Badge className={SEVERITY_COLORS[severity]}>
+            <Badge
+              className={`${SEVERITY_COLORS[severity]} max-w-full whitespace-normal [overflow-wrap:anywhere]`}
+            >
               {ROOT_CAUSE_LABELS[analysis.root_cause] ?? analysis.root_cause}
             </Badge>
           </div>
 
           {/* Remediation action */}
-          <div className="flex items-center gap-2">
+          <div className="flex flex-wrap items-center gap-2">
             <span className="text-sm text-muted-foreground">Рекомендация:</span>
-            <Badge variant="outline">
+            <Badge
+              variant="outline"
+              className="max-w-full whitespace-normal [overflow-wrap:anywhere]"
+            >
               {REMEDIATION_LABELS[analysis.remediation] ?? analysis.remediation}
             </Badge>
           </div>
@@ -77,12 +100,14 @@ export function GapAnalysisDialog({
           {analysis.evidence.imports.length > 0 && (
             <div>
               <p className="mb-1 text-sm font-medium">Импорты:</p>
-              <div className="space-y-1">
+              <div className="min-w-0 space-y-1">
                 {analysis.evidence.imports.map((imp, i) => (
-                  <div key={i} className="rounded bg-muted p-2 text-sm">
-                    <span className="font-medium">{imp.status}</span>
+                  <div key={i} className="min-w-0 rounded bg-muted p-2 text-sm">
+                    <span className="font-medium [overflow-wrap:anywhere]">{imp.status}</span>
                     {imp.error_message && (
-                      <p className="text-muted-foreground">{imp.error_message}</p>
+                      <p className="text-muted-foreground [overflow-wrap:anywhere]">
+                        {imp.error_message}
+                      </p>
                     )}
                   </div>
                 ))}
@@ -94,9 +119,11 @@ export function GapAnalysisDialog({
           {analysis.evidence.queue_errors.length > 0 && (
             <div>
               <p className="mb-1 text-sm font-medium">Ошибки очереди:</p>
-              <ul className="list-inside list-disc text-sm text-muted-foreground">
+              <ul className="min-w-0 list-inside list-disc text-sm text-muted-foreground">
                 {analysis.evidence.queue_errors.map((err, i) => (
-                  <li key={i}>{err}</li>
+                  <li key={i} className="[overflow-wrap:anywhere]">
+                    {err}
+                  </li>
                 ))}
               </ul>
             </div>
@@ -105,15 +132,18 @@ export function GapAnalysisDialog({
           {/* WB API status */}
           <div className="text-sm">
             <span className="text-muted-foreground">Статус WB API: </span>
-            <span className="font-medium">{analysis.evidence.wb_api_status}</span>
+            <span className="font-medium [overflow-wrap:anywhere]">
+              {analysis.evidence.wb_api_status}
+            </span>
           </div>
         </div>
 
         <DialogFooter>
-          <Button variant="outline" onClick={() => onOpenChange(false)}>
+          <Button className="min-h-11" variant="outline" onClick={() => onOpenChange(false)}>
             Закрыть
           </Button>
           <Button
+            className="min-h-11"
             disabled={isRemediating}
             onClick={() => onRemediate(analysis.missing_date, analysis.root_cause)}
           >
