@@ -312,21 +312,25 @@ Story identity is the numeric `Epic.Story` ID, not the descriptive sprint-status
 - Lifecycle safety scan: no unresolved angle-bracket placeholders and no unanchored post-merge/cleanup Git commands.
 - Validation method: parse canonical `### Story N.M: Title` headings, parse every numeric plan's `storyId`, `storyTitle`, `branch`, and `temporaryWorktree` frontmatter, compare set/count/title parity, walk `src/app/**/page.tsx`, and compare normalized routes and route-entry paths with the ledger.
 
-## Execution Status & Debt Snapshot (2026-08-22)
+## Execution Status & Debt Snapshot (2026-08-23)
 
 > Датированный срез прогресса; НЕ генерируемая секция (parity-валидатор выше не затронут).
 > Канонический реестр долгов/статуса: `_bmad-output/planning-artifacts/shadcn-migration-status-and-debt-registry.md`.
 > Живые по-сторийные статусы: `_bmad-output/implementation-artifacts/sprint-status.yaml`.
 
 - **Epics CLOSED**: 166-FE (foundation), 167-FE (AppShell/auth, freeze-8), 168-FE (analytics core, 11/11).
-- **169-FE IN PROGRESS: 8/13** (169.1-169.8 shipped: acquiring ×3, buyout ×2, fbs-enhanced, fbs-stock, funnel).
-- **NEXT = 169.9 analytics gaps triage** (`backlog`): Story 169.8 implementation PR #207
-  (`4427df85`, merge `ad34dc4c`) and closeout PR #208 (`563b4082`) are complete; reread the
-  169.9 plan/DAG and create its ready-for-dev Story context before implementation worktree creation.
-- **Backlog**: 169.9-169.13 → 170.1-7 → 171.1-9 → 172.1-17 (172.1 carry-in getMarginColor dedupe;
+- **Canonical Story readiness: 38/92**; **169-FE IN PROGRESS: 10/13** (169.1-169.10 shipped).
+- **NEXT = 169.11 returns analytics** (`backlog`): Story 169.10 implementation PR #212
+  (`84250483`, merge `0245f52b`) and closeout PR #214 (`f4db991a`) are complete. Story 169.9
+  corrective PR #213 (`e738dd80`, merge `5c6950f3`) is also merged and its implementation
+  branch/worktree cleanup is proven.
+- **Backlog**: 169.11-169.13 → 170.1-7 → 171.1-9 → 172.1-17 (172.1 carry-in getMarginColor dedupe;
   172.5/172.6/172.14 owner/WIP-зависимые) → 173.1-13 (173.8/173.12 owner) → 174.1-5 (консолидация;
-  174.2 собирает ВСЕ долги: FE-D2/D6, C3-C7, contrast-эскалации /15-light).
-- Полы: FE vitest 18 901/0 · BE jest 13 170/0 (2026-08-22). Story 169.8 targeted:
-  16 files / 184 tests; live browser matrix remains an explicit 174.3 carry-out.
+  174.2 — применимые design-system/source-boundary/contrast долги; 174.3 — browser/theme/axe/keyboard/visual;
+  174.4 — functional/local-backend regression; trigger-specific behavior/API debts сохраняют registry-owner).
+- Пол: FE vitest **18 952/0**. Story 169.9 corrective: **7 files / 55 tests**; production build:
+  **70/70** static pages. Browser/theme/responsive/axe/keyboard/visual evidence remains an explicit
+  174.3 carry-out; credentialed functional E2E, auth/session/error-recovery, and local-backend critical
+  journeys remain explicit 174.4 carry-outs.
 - Полный долг-реестр + параллельные треки (W4 Epic-121 P3 ready-to-implement, W5 Epic-128 owner-акты,
   W7 финанс W34 авто-пулл Пн 24.08) — в registry-файле выше и BE handoff-цепочке.
