@@ -35,11 +35,9 @@ import {
   formatReturnDate,
   formatReturnCount,
 } from './returns-daily-trend-config'
-import {
-  ReturnTrendTooltip,
-  ReturnTrendLegend,
-  ReturnTrendSrTable,
-} from './ReturnTrendChartTooltip'
+import { ReturnTrendTooltip, ReturnTrendLegend } from './ReturnTrendChartTooltip'
+// Round-1 review (F5): sr-table extracted to its own owned file.
+import { ReturnTrendSrTable } from './ReturnTrendSrTable'
 import type { DailyReturnItem } from '@/types/returns-daily'
 import { ResponsiveChartFrame } from '@/components/custom/analytics/ResponsiveChartFrame'
 
@@ -139,7 +137,7 @@ export function ReturnTrendChart({ from, to, className }: ReturnTrendChartProps)
             initialDimension={{ width: 1, height: 1 }}
           >
             <ComposedChart data={chartData} margin={{ top: 12, right: 10, bottom: 40, left: 40 }}>
-              {/* Story 169.11: grid/axis via semantic tokens (169.4 axis canon) */}
+              {/* Story 169.11: grid/axis via semantic tokens — BuyoutTrendChart.tsx (169.4) precedent */}
               <CartesianGrid strokeDasharray="3 3" stroke="var(--color-border)" />
               <XAxis
                 dataKey="date"
@@ -176,6 +174,7 @@ export function ReturnTrendChart({ from, to, className }: ReturnTrendChartProps)
                   animationDuration={prefersReducedMotion ? 0 : 300}
                 />
               ))}
+              {/* Round-1 review F6: dot-fill var shape per funnel FunnelOverlayPlot.tsx:105 (169.8) */}
               <Line
                 yAxisId="right"
                 type="monotone"

@@ -118,13 +118,65 @@ describe('ReturnTrendChart (Story 169.11 state locks)', () => {
 
   it('background refresh (isFetching with data) retains the prior content', () => {
     mockUseReturnsDailyTrends.mockReturnValue(hookReturn({ data: responseData, isFetching: true }))
-    render(<ReturnTrendChart from="2026-05-01" to="2026-05-02" />)
+    const { container } = render(<ReturnTrendChart from="2026-05-01" to="2026-05-02" />)
     // Prior data stays rendered: chart shell + sr-only rows are still present.
     expect(screen.getByTestId('composed-chart')).toBeInTheDocument()
     const rows = screen
       .getAllByRole('row')
       .filter(r => r.closest('table')?.className.includes('sr-only'))
     expect(rows.length).toBe(2 + 1) // header row + 2 data rows
+    // No skeleton flash while usable content is retained (round-1 review F2).
+    expect(container.querySelector('[class*="animate-pulse"]')).not.toBeInTheDocument()
+  })
+
+  it('background refresh swaps to refetched v2 content without skeleton flash (round-1 review F2)', () => {
+    const { rerender, container } = render(<ReturnTrendChart from="2026-05-01" to="2026-05-02" />)
+    mockUseReturnsDailyTrends.mockReturnValue(hookReturn({ data: responseData }))
+    rerender(<ReturnTrendChart from="2026-05-01" to="2026-05-02" />)
+
+    // v2: one changed day value (05-02 rate 2.0→2.5) + one extra day (05-03).
+    const responseDataV2: ReturnsDailyResponse = {
+      daily: [
+        daily[0],
+        {
+          date: '2026-05-02',
+          totalReturns: 5,
+          returnRate: 2.5,
+          cancellations: 2,
+          refusals: 2,
+          defects: 1,
+        },
+        {
+          date: '2026-05-03',
+          totalReturns: 7,
+          returnRate: 3.75,
+          cancellations: 3,
+          refusals: 3,
+          defects: 1,
+        },
+      ],
+      period: { from: '2026-05-01', to: '2026-05-03' },
+      summary: {
+        totalReturns: 12,
+        avgReturnRate: 3.2,
+        totalCancellations: 5,
+        totalRefusals: 5,
+        totalDefects: 2,
+      },
+    }
+    mockUseReturnsDailyTrends.mockReturnValue(
+      hookReturn({ data: responseDataV2, isLoading: false, isFetching: true })
+    )
+    rerender(<ReturnTrendChart from="2026-05-01" to="2026-05-02" />)
+
+    // v2 content rendered via the sr-only table…
+    const table = container.querySelector('table.sr-only')
+    expect(table).toBeInTheDocument()
+    expect(table?.textContent).toContain('2026-05-03')
+    expect(table?.textContent).toMatch(/2,5\s%/) // changed 05-02 rate
+    // …with no skeleton appearing during the background refetch.
+    expect(container.querySelector('[class*="animate-pulse"]')).not.toBeInTheDocument()
+    expect(screen.queryByTestId('composed-chart')).toBeInTheDocument()
   })
 
   describe('sr-only data alternative (AC3 — no hover required)', () => {

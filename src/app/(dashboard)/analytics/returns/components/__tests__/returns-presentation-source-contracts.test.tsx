@@ -6,8 +6,13 @@
  *   happy path, ReturnsSummaryCards values, ReturnTrendChart populated.
  * - initial structural loading — TESTED: pie/cards/table skeleton tests +
  *   ReturnTrendChart skeleton lock (ReturnTrendChart.test.tsx).
- * - background refresh with retained usable content — TESTED:
- *   ReturnTrendChart "isFetching with data retains prior content".
+ * - background refresh with retained usable content — TESTED: data-present
+ *   branch renders while isLoading=false; content swaps to v2 on refetch
+ *   without skeleton flash (structural retention via TanStack).
+ * - recoverable error vs retained stale content — DISPOSITION: error Alert
+ *   supersedes stale chart by route canon (destructive Alert per section,
+ *   matches ReturnsSummaryCards/ReturnsTable/ReturnReasonsPieChart); recovery
+ *   via shared hook retry=1; deliberate, not a regression.
  * - global empty (no returns) — TESTED: pie «Нет данных о причинах возвратов»,
  *   cards «Нет данных о возвратах…», table «Нет данных за выбранный период»,
  *   trend «Нет данных о возвратах за выбранный период».
@@ -52,13 +57,24 @@ function withoutComments(source: string): string {
   return source.replace(/\/\*[\s\S]*?\*\//g, '').replace(/^\s*\/\/.*$/gm, '')
 }
 
-/** Flat catalog: every production .ts/.tsx directly under components/ + page.tsx. */
+/**
+ * Recursive catalog (round-1 review F4): every production .ts/.tsx under the
+ * route except __tests__ and .test./.spec. files — non-recursive, so a nested
+ * directory would silently escape the guard.
+ */
 function productionFiles(): string[] {
-  const componentFiles = readdirSync(componentsDirectory)
+  const all = readdirSync(routeDirectory, {
+    recursive: true,
+  }).map(file => join(routeDirectory, file as string))
+  return all
     .filter(file => /\.(?:ts|tsx)$/.test(file))
-    .map(file => join(componentsDirectory, file))
-  return [join(routeDirectory, 'page.tsx'), ...componentFiles]
+    .filter(file => !file.includes('__tests__'))
+    .filter(file => !/\.(?:test|spec)\./.test(file))
+    .sort()
 }
+
+/** Pinned post-extraction count — update consciously when files are added/extracted (F4). */
+const PINNED_PRODUCTION_FILE_COUNT = 14
 
 // Story 169.11 contextual hex guard: a hex literal must be quoted or in a
 // Tailwind arbitrary-value bracket — catches '#333', '#000', '#000000', and
@@ -68,6 +84,16 @@ const CONTEXTUAL_HEX =
   /(?:['"\x60]\s*|-\[)#(?:[0-9A-Fa-f]{3}|[0-9A-Fa-f]{4}|[0-9A-Fa-f]{6}|[0-9A-Fa-f]{8})(?=['"\x60\]])/
 
 describe('Story 169.11 route presentation source contracts', () => {
+  it('productionFiles() recursively enumerates exactly the pinned owned file set (round-1 review F4)', () => {
+    const files = productionFiles()
+    // Pinned count — update consciously when files are added/extracted.
+    expect(files.length).toBe(PINNED_PRODUCTION_FILE_COUNT)
+    // page.tsx + the extracted sr-table are both present; no test files leak in.
+    expect(files).toContain(join(routeDirectory, 'page.tsx'))
+    expect(files).toContain(join(componentsDirectory, 'ReturnTrendSrTable.tsx'))
+    expect(files.some(f => f.includes('__tests__') || /\.(?:test|spec)\./.test(f))).toBe(false)
+  })
+
   it('owned production sources contain no legacy Tailwind palette utilities', () => {
     const legacyPalette =
       /\b(?:text|bg|border|ring|fill|stroke)-(?:gray|blue|green|red|amber|orange|indigo|teal|emerald|purple|yellow|lime|rose|sky|slate|zinc|neutral|stone)-\d{2,3}\b/

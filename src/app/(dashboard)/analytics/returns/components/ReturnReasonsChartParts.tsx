@@ -3,7 +3,8 @@
  * Extracted from ReturnReasonsPieChart.tsx for file size compliance
  *
  * Story 169.11: reason triplet → status tokens (169.4 REASON_COLORS precedent);
- * donut strokes read the same status vars (SVG accepts vars — 169.10 proof);
+ * donut strokes read the same status vars — raw-SVG stroke vars per
+ * SearchPerformanceWidget.tsx:102; grid/axis vars per BuyoutTrendChart.tsx (169.4);
  * unknown-category fallbacks → muted/neutral (real state after Task 0 merge,
  * 169.9 BD-31 no-data neutral canon).
  */

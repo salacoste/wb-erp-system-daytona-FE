@@ -1,6 +1,6 @@
 # Story 169.11-FE: Migrate Returns Analytics
 
-Status: backlog — context draft committed, blocked by an unassigned shared boundary prerequisite
+Status: review — implementation merged on branch; review round 1 fixes applied; PR/merge/cleanup pending
 
 ## Story
 
@@ -17,33 +17,34 @@ Plan: `.omx/plans/169.11-migrate-returns-analytics.md` (authoritative — blocke
 
 ## Tasks / Subtasks
 
-- [ ] Task 0: Resolve the shared unknown-reason prerequisite before creating the implementation branch (AC: #2)
-  - [ ] Assign and merge an explicit owner Story for `src/lib/api/return-analytics-normalizer.ts` and `src/types/analytics-returns.ts` so an unknown category remains distinguishable and receives a neutral Russian label; do not mask the current `unknown -> return_after_receipt` coercion with an unreachable route-only color fallback
-- [ ] Task 1: Behavior lock and C4 disposition matrix (AC: #1-2)
-  - [ ] Run `npx vitest run "src/app/(dashboard)/analytics/returns"` — baseline **50 tests / 5 files** (all green pre-edit)
-  - [ ] Disposition every C4 state as tested, intentionally N/A with source-backed evidence, or blocked: default success, initial structural loading, background refresh with retained usable content, global empty, filtered-empty with visible reset, recoverable error with retry, stale, partial, permission-restricted, and route-appropriate processing/success
-  - [ ] Add route-owned locks for filtered-empty with deterministic reset, recoverable error with retry, trend error distinct from valid empty, background refresh with retained usable content, and stale/partial indication where the shared query exposes sufficient evidence; permission and processing/success may be N/A only with source-backed applicability evidence
-  - [ ] Preserve distinct valid zero-returns, missing comparison (DeltaIndicator muted «—»), partial-series, and—after Task 0 merges—unknown-reason states
-- [ ] Task 2: Chart token migration (AC: #1, #3)
-  - [ ] `returns-daily-trend-config.ts` — 4 hex → tokens, single-source retained, var-name pins (see Dev Notes mapping)
-  - [ ] `ReturnTrendChart.tsx` — grid `#EEEEEE`→`var(--color-border)`, ticks `#757575`→`var(--color-chart-axis)` (169.4 canon; axis structure preserved), line dot `fill: 'white'`→background var
-  - [ ] `ReturnTrendChartTooltip.tsx` — `bg-background`→`bg-popover` + shadow-lg canon (168.10/169.6)
-  - [ ] `ReturnReasonsChartParts.tsx` — reason triplet → status tokens (169.4 REASON_COLORS precedent); donut hex → same status vars (SVG stroke accepts vars — 169.10 donut proof); unknown fallbacks → muted/neutral
-  - [ ] `ReturnTrendChart.tsx` — add a non-hover accessible summary/data alternative with exact selected period, count/percentage units, every day and every series value at tooltip precision, and non-color series labels/markers
-- [ ] Task 3: Table + cards migration (AC: #1-3)
-  - [ ] `ReturnsTable.tsx` — scroll-region (tabIndex+aria-label), static TableCaption (169.7 picker-semantic precedent), tabular-nums numeric cells; **no aria-sort — table has NO sortable headers** (cursor pagination; record N/A)
-  - [ ] `ReturnsTableRow.tsx` — anomaly row `bg-red-50 hover:bg-red-100` (light-only dark bug) → `bg-status-error/15` + hover `/30` matched pair (169.5 idiom); `text-red-500` icon → status-error foreground pair
-  - [ ] `ReturnsTableHelpers.tsx` — ReturnRateCell 3 tiers → status-success/warning/error text + tier-collapse guard (169.4 search-tiers precedent; thresholds 20/50 preserved)
-  - [ ] `ReturnsSummaryCards.tsx` — icon `text-red-600/orange-600/green-600` → semantic pairs per 169.9 icon-chip canon (status-error/warning/success + paired foreground; dev may re-map total-returns count icon per 169.8 muted/chart-N canon if valence wrong — document choice)
-  - [ ] `returns-comparison-utils.ts` `getDeltaColor` — `text-green-600/red-600` → `text-financial-positive/negative`; **inversion preserved** (169.4: INVERTED_METRICS up=red for totalReturns/overallReturnRate — negative pin)
-  - [ ] `ReturnsPageContent.tsx` — h1 `text-3xl text-gray-900` → PageHeader + text-2xl (169.9/169.10 precedent); checkbox `border-gray-300` → `border-input`; aria-labelledby linkage preserved
-- [ ] Task 4: Guards + tests (AC: #1-3)
-  - [ ] no-palette source-contract plus the corrected contextual hex guard `/(?:['"\x60]\s*|-\[)#(?:[0-9A-Fa-f]{3}|[0-9A-Fa-f]{4}|[0-9A-Fa-f]{6}|[0-9A-Fa-f]{8})(?=['"\x60\]])/`; prove `#333`, `#000`, and `#000000` are rejected while ticket prose such as `#197` is ignored
-  - [ ] tier-collapse guard (3 distinct ReturnRateCell tiers + neutral); inversion negative pins; stack-order pin (bars cancel→refusal→defect — assert across StackedBar, donut, tooltip/legend single-source)
-  - [ ] accessible chart-alternative tests assert exact period, units, all daily series/full values, tooltip-equivalent precision, and availability without hover or pointer input
-  - [ ] state tests cover the Task 1 matrix and explicitly distinguish trend error from valid empty
-  - [ ] E2E pins intact via `npm run test:e2e -- e2e/returns-analytics.spec.ts` (run-only — file is OUTSIDE the owned surface; do not edit it, record selected/executed count and gaps): h1 «Аналитика возвратов» level 1, `#returns-date-range`, table/card presence, comparison switch
+- [x] Task 0: Resolve the shared unknown-reason prerequisite before creating the implementation branch (AC: #2)
+  - [x] Assign and merge an explicit owner Story for `src/lib/api/return-analytics-normalizer.ts` and `src/types/analytics-returns.ts` so an unknown category remains distinguishable and receives a neutral Russian label; do not mask the current `unknown -> return_after_receipt` coercion with an unreachable route-only color fallback — resolved via PR #218, merge d6ed2c65
+- [x] Task 1: Behavior lock and C4 disposition matrix (AC: #1-2)
+  - [x] Run `npx vitest run "src/app/(dashboard)/analytics/returns"` — baseline **50 tests / 5 files** (all green pre-edit)
+  - [x] Disposition every C4 state as tested, intentionally N/A with source-backed evidence, or blocked: default success, initial structural loading, background refresh with retained usable content, global empty, filtered-empty with visible reset, recoverable error with retry, stale, partial, permission-restricted, and route-appropriate processing/success — full matrix in returns-presentation-source-contracts.test.tsx header
+  - [x] Add route-owned locks for filtered-empty with deterministic reset, recoverable error with retry, trend error distinct from valid empty, background refresh with retained usable content, and stale/partial indication where the shared query exposes sufficient evidence; permission and processing/success may be N/A only with source-backed applicability evidence
+  - [x] Preserve distinct valid zero-returns, missing comparison (DeltaIndicator muted «—»), partial-series, and—after Task 0 merges—unknown-reason states — preface unknown fixture pinned (ReturnReasonsPieChart.test.tsx)
+- [x] Task 2: Chart token migration (AC: #1, #3)
+  - [x] `returns-daily-trend-config.ts` — 4 hex → tokens, single-source retained, var-name pins (see Dev Notes mapping)
+  - [x] `ReturnTrendChart.tsx` — grid `#EEEEEE`→`var(--color-border)`, ticks `#757575`→`var(--color-chart-axis)` (169.4 canon; axis structure preserved), line dot `fill: 'white'`→background var
+  - [x] `ReturnTrendChartTooltip.tsx` — `bg-background`→`bg-popover` + shadow-lg canon (168.10/169.6)
+  - [x] `ReturnReasonsChartParts.tsx` — reason triplet → status tokens (169.4 REASON_COLORS precedent); donut hex → same status vars (SVG stroke accepts vars — 169.10 donut proof); unknown fallbacks → muted/neutral
+  - [x] `ReturnTrendChart.tsx` — add a non-hover accessible summary/data alternative with exact selected period, count/percentage units, every day and every series value at tooltip precision, and non-color series labels/markers — sr-table later extracted to ReturnTrendSrTable.tsx (round-1 F5)
+- [x] Task 3: Table + cards migration (AC: #1-3)
+  - [x] `ReturnsTable.tsx` — scroll-region (tabIndex+aria-label), static TableCaption (169.7 picker-semantic precedent), tabular-nums numeric cells; **no aria-sort — table has NO sortable headers** (cursor pagination; record N/A) — aria-sort N/A recorded in contracts test
+  - [x] `ReturnsTableRow.tsx` — anomaly row `bg-red-50 hover:bg-red-100` (light-only dark bug) → `bg-status-error/15` + hover `/30` matched pair (169.5 idiom); `text-red-500` icon → status-error foreground pair
+  - [x] `ReturnsTableHelpers.tsx` — ReturnRateCell 3 tiers → status-success/warning/error text + tier-collapse guard (169.4 search-tiers precedent; thresholds 20/50 preserved)
+  - [x] `ReturnsSummaryCards.tsx` — icon `text-red-600/orange-600/green-600` → semantic pairs per 169.9 icon-chip canon (status-error/warning/success + paired foreground; dev may re-map total-returns count icon per 169.8 muted/chart-N canon if valence wrong — document choice) — total-returns icon mapped to status-error (valence: more returns = worse)
+  - [x] `returns-comparison-utils.ts` `getDeltaColor` — `text-green-600/red-600` → `text-financial-positive/negative`; **inversion preserved** (169.4: INVERTED_METRICS up=red for totalReturns/overallReturnRate — negative pin)
+  - [x] `ReturnsPageContent.tsx` — h1 `text-3xl text-gray-900` → PageHeader + text-2xl (169.9/169.10 precedent); checkbox `border-gray-300` → `border-input`; aria-labelledby linkage preserved
+- [x] Task 4: Guards + tests (AC: #1-3)
+  - [x] no-palette source-contract plus the corrected contextual hex guard `/(?:['"\x60]\s*|-\[)#(?:[0-9A-Fa-f]{3}|[0-9A-Fa-f]{4}|[0-9A-Fa-f]{6}|[0-9A-Fa-f]{8})(?=['"\x60\]])/`; prove `#333`, `#000`, and `#000000` are rejected while ticket prose such as `#197` is ignored
+  - [x] tier-collapse guard (3 distinct ReturnRateCell tiers + neutral); inversion negative pins; stack-order pin (bars cancel→refusal→defect — assert across StackedBar, donut, tooltip/legend single-source)
+  - [x] accessible chart-alternative tests assert exact period, units, all daily series/full values, tooltip-equivalent precision, and availability without hover or pointer input
+  - [x] state tests cover the Task 1 matrix and explicitly distinguish trend error from valid empty
+  - [x] E2E pins intact via `npm run test:e2e -- e2e/returns-analytics.spec.ts` (run-only — file is OUTSIDE the owned surface; do not edit it, record selected/executed count and gaps): h1 «Аналитика возвратов» level 1, `#returns-date-range`, table/card presence, comparison switch — NOT RUN: environment down (see Gaps); file untouched
 - [ ] Task 5: Validation + review + PR + cleanup (AC: #4-9) — per plan §Story-targeted tests / §Conventional commit / §cleanup
+  - [x] validation gates run (route suite, full vitest, lint, type-check, max-lines, build) — PR/merge/cleanup pending
 
 ## Dev Notes
 
@@ -93,15 +94,48 @@ Plan: `.omx/plans/169.11-migrate-returns-analytics.md` (authoritative — blocke
 
 ### Agent Model Used
 
+- Implementation: executor (sonnet) ×2 rounds via orchestrator.
+- Review: adversarial reviewer (opus, fresh-context) ×1 — round 1 verdict APPROVE_WITH_NOTES (4 MEDIUM + 3 LOW); 3 MEDIUMs fixed pre-PR in this round.
+
 ### Debug Log References
 
 ### Completion Notes List
 
+- Token mapping decisions: `returnRate` line → `var(--color-chart-negative)` (higher rate = worse valence, registered chart-series role; textual deltas keep `text-financial-*`); total-returns summary icon → status-error pair (more returns = worse valence — documented re-map per 169.8 icon canon option).
+- C4 matrix: every state dispositioned in the contracts-test header; round-1 additions — background-refresh row reworded to TESTED with v2 swap/no-skeleton evidence, recoverable-error-vs-stale row DISPOSITIONED (error Alert supersedes by route canon).
+- Preface dependency: unknown-reason neutral fallback depends on the merged shared-boundary fix (PR #218, d6ed2c65); pinned by a neutral «unknown» fixture test.
+- Round-1 fixes: productionFiles() guard made recursive with pinned count 14; ReturnTrendSrTable extracted (file under cap); precedent citations corrected (FunnelOverlayPlot.tsx:105, SearchPerformanceWidget.tsx:102, BuyoutTrendChart.tsx).
+
 ### Gaps
 
-- **BLOCKER — unassigned shared boundary prerequisite:** current `toReturnCategory` coerces every unknown backend category to `return_after_receipt`, and `ReturnCategory` has no unknown discriminator. Canonical AC2 therefore cannot be satisfied within `src/app/(dashboard)/analytics/returns/**`. Story 169.11 stays backlog; do not create `cdx/epic-169-story-11-returns-shadcn` or `/private/tmp/wb-repricer-fe-169-11-returns-shadcn` until an explicitly owned shared correction merges and this context is revalidated.
+- **E2E not run — environment down:** Docker daemon unreachable; no PG/Redis/BE/FE running. `e2e/returns-analytics.spec.ts` selected 0, executed 0. The run-only spec file is untouched; E2E owed when the environment is up.
+- **sr-table DOM cost:** no cap for ≤365-day ranges this story (documented decision in ReturnTrendSrTable.tsx); typical use is 30-90d; revisit if perf evidence demands. >180d ranges folded as documented decision.
+- **/15 light escalations** (3.96-4.19 AA) folded to 174.2 per story canon mapping — not fixed here.
 
 ### File List
+
+- `src/app/(dashboard)/analytics/returns/page.tsx`
+- `src/app/(dashboard)/analytics/returns/components/DeltaIndicator.tsx`
+- `src/app/(dashboard)/analytics/returns/components/ReturnReasonsChartParts.tsx`
+- `src/app/(dashboard)/analytics/returns/components/ReturnReasonsPieChart.tsx`
+- `src/app/(dashboard)/analytics/returns/components/returns-comparison-utils.ts`
+- `src/app/(dashboard)/analytics/returns/components/returns-daily-trend-config.ts`
+- `src/app/(dashboard)/analytics/returns/components/ReturnsPageContent.tsx`
+- `src/app/(dashboard)/analytics/returns/components/ReturnsSummaryCards.tsx`
+- `src/app/(dashboard)/analytics/returns/components/ReturnsTable.tsx`
+- `src/app/(dashboard)/analytics/returns/components/ReturnsTableHelpers.tsx`
+- `src/app/(dashboard)/analytics/returns/components/ReturnsTableRow.tsx`
+- `src/app/(dashboard)/analytics/returns/components/ReturnTrendChart.tsx`
+- `src/app/(dashboard)/analytics/returns/components/ReturnTrendChartTooltip.tsx`
+- `src/app/(dashboard)/analytics/returns/components/ReturnTrendSrTable.tsx` (NEW — round-1 F5 extraction)
+- `src/app/(dashboard)/analytics/returns/components/__tests__/ReturnRateCell.test.tsx`
+- `src/app/(dashboard)/analytics/returns/components/__tests__/ReturnReasonsPieChart.test.tsx`
+- `src/app/(dashboard)/analytics/returns/components/__tests__/returns-comparison-utils.test.ts`
+- `src/app/(dashboard)/analytics/returns/components/__tests__/returns-presentation-source-contracts.test.tsx`
+- `src/app/(dashboard)/analytics/returns/components/__tests__/ReturnsPageContent.test.tsx`
+- `src/app/(dashboard)/analytics/returns/components/__tests__/ReturnsSummaryCards.test.tsx`
+- `src/app/(dashboard)/analytics/returns/components/__tests__/ReturnsTable.test.tsx`
+- `src/app/(dashboard)/analytics/returns/components/__tests__/ReturnTrendChart.test.tsx`
 
 ### Change Log
 
@@ -110,3 +144,4 @@ Plan: `.omx/plans/169.11-migrate-returns-analytics.md` (authoritative — blocke
 | 2026-08-23 | Story created via create-story context engine; plan `.omx/plans/169.11-…` referenced as authoritative. Site inventory + canon mapping from the initial live source scan (main @ `40fbc9d9`). |
 | 2026-08-23 | Context revalidated after Story 169.9 corrective closeout on `origin/main` @ `60532250`; full-suite floor reconciled to 18 952/0 with the Story-owned 50/5 baseline unchanged. |
 | 2026-08-23 | Fresh-context review found a shared unknown-reason boundary blocker plus state/E2E/guard/accessibility/lifecycle defects. Context corrected and returned to backlog pending an owner-approved prerequisite Story. |
+| 2026-08-23 | Round-1 review fixes applied (guard recursion, sr-table extraction, C4 rewording, story reconciliation). Status: ready-for-dev → review. |
