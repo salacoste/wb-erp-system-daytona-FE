@@ -1,6 +1,7 @@
 /**
  * Rate Limit Store
  * Story 44.34-FE: Debounce Warehouse Selection & Rate Limit Handling
+ * Epic 44: Price Calculator UI (Frontend)
  *
  * Zustand store for managing API rate limit state across the application
  * Features: Per-endpoint tracking, cross-tab sync, automatic expiry cleanup
@@ -9,7 +10,7 @@
 import { create } from 'zustand'
 import { persist, createJSONStorage } from 'zustand/middleware'
 import { logger } from '@/lib/logger'
-import { normalizeEndpoint, purgeExpired } from './rateLimitHelpers'
+import { normalizeEndpoint, filterExpired, initCrossTabSync } from './rate-limit-helpers'
 
 function getBrowserLocalStorage(): Storage {
   if (typeof window === 'undefined') {
@@ -78,6 +79,7 @@ export const useRateLimitStore = create<RateLimitStore>()(
           },
         }))
 
+        // Log for monitoring (AC8: Analytics & Logging)
         logger.debug('[RateLimit] Rate limit detected for', normalizedEndpoint, {
           retryAfter,
           context,
@@ -114,7 +116,8 @@ export const useRateLimitStore = create<RateLimitStore>()(
       },
 
       clearExpired: () => {
-        set(state => ({ rateLimits: purgeExpired(state.rateLimits) }))
+        const now = Date.now()
+        set(state => ({ rateLimits: filterExpired(state.rateLimits, now) }))
       },
 
       clearRateLimit: endpoint => {
@@ -145,21 +148,5 @@ export const useRateLimitStore = create<RateLimitStore>()(
   )
 )
 
-/**
- * Cross-tab sync for rate limit state
- * When one tab hits a rate limit, all tabs respect the cooldown
- */
-if (typeof window !== 'undefined') {
-  window.addEventListener('storage', e => {
-    if (e.key === 'rate-limit-storage' && e.newValue) {
-      try {
-        const newState = JSON.parse(e.newValue)
-        if (newState.state?.rateLimits) {
-          useRateLimitStore.setState({ rateLimits: newState.state.rateLimits })
-        }
-      } catch {
-        // Ignore parse errors
-      }
-    }
-  })
-}
+// Cross-tab sync: when one tab hits a rate limit, all tabs respect the cooldown
+initCrossTabSync(useRateLimitStore.setState.bind(useRateLimitStore))

@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { escapeCsvCell, prefixUtf8Bom } from '../csv-helpers'
+import { escapeCsvCell, escapeCsvCellAlwaysQuoted, prefixUtf8Bom } from '../csv-helpers'
 
 describe('escapeCsvCell', () => {
   it('plain string — returned unchanged', () => {
@@ -20,6 +20,12 @@ describe('escapeCsvCell', () => {
 
   it('empty string — returned unchanged (no wrapping)', () => {
     expect(escapeCsvCell('')).toBe('')
+  })
+
+  it('can preserve exporters that intentionally quote every cell', () => {
+    expect(escapeCsvCellAlwaysQuoted('')).toBe('""')
+    expect(escapeCsvCellAlwaysQuoted('42')).toBe('"42"')
+    expect(escapeCsvCellAlwaysQuoted('-1+1|cmd')).toBe('"\'-1+1|cmd"')
   })
 
   it('string with comma AND quote — both handled correctly', () => {
