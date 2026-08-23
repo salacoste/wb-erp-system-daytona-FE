@@ -31,9 +31,10 @@ export function useProductsMap(productsData: { products: ProductListItem[] } | u
 export function ReturnRateCell({ rate }: { rate: number | null }) {
   if (rate == null) return <span className="font-medium text-muted-foreground">—</span>
 
-  let color = 'text-green-600'
-  if (rate > 50) color = 'text-red-600'
-  else if (rate >= 20) color = 'text-yellow-600'
+  // Story 169.11: status tokens (169.4 search-tiers precedent); thresholds 20/50 preserved.
+  let color = 'text-status-success'
+  if (rate > 50) color = 'text-status-error'
+  else if (rate >= 20) color = 'text-status-warning'
 
   return <span className={`font-medium ${color}`}>{formatPercentage(rate, 1)}</span>
 }

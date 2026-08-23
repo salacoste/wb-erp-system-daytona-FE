@@ -1,6 +1,11 @@
 /**
  * Return Reasons Chart - Sub-components (StackedBar, CategoryRow, TrendBadge, DonutChart)
  * Extracted from ReturnReasonsPieChart.tsx for file size compliance
+ *
+ * Story 169.11: reason triplet → status tokens (169.4 REASON_COLORS precedent);
+ * donut strokes read the same status vars (SVG accepts vars — 169.10 proof);
+ * unknown-category fallbacks → muted/neutral (real state after Task 0 merge,
+ * 169.9 BD-31 no-data neutral canon).
  */
 
 'use client'
@@ -9,15 +14,15 @@ import { formatPercentage } from '@/lib/utils'
 import type { ReturnCategoryItem } from '@/types/analytics-returns'
 
 const CATEGORY_COLORS: Record<string, string> = {
-  cancel_before_shipment: 'bg-blue-500',
-  refusal_at_pvz: 'bg-orange-500',
-  return_after_receipt: 'bg-red-500',
+  cancel_before_shipment: 'bg-status-information',
+  refusal_at_pvz: 'bg-status-warning',
+  return_after_receipt: 'bg-status-error',
 }
 
 const CATEGORY_TEXT_COLORS: Record<string, string> = {
-  cancel_before_shipment: 'text-blue-600',
-  refusal_at_pvz: 'text-orange-600',
-  return_after_receipt: 'text-red-600',
+  cancel_before_shipment: 'text-status-information',
+  refusal_at_pvz: 'text-status-warning',
+  return_after_receipt: 'text-status-error',
 }
 
 export function StackedBar({ categories }: { categories: ReturnCategoryItem[] }) {
@@ -26,7 +31,7 @@ export function StackedBar({ categories }: { categories: ReturnCategoryItem[] })
       {categories.map(cat => (
         <div
           key={cat.category}
-          className={`${CATEGORY_COLORS[cat.category] ?? 'bg-gray-400'} transition-all`}
+          className={`${CATEGORY_COLORS[cat.category] ?? 'bg-muted'} transition-all`}
           style={{ width: `${Math.max(cat.percentage, 1)}%` }}
           title={`${cat.displayName}: ${formatPercentage(cat.percentage, 1)}`}
         />
@@ -36,8 +41,8 @@ export function StackedBar({ categories }: { categories: ReturnCategoryItem[] })
 }
 
 export function CategoryRow({ item }: { item: ReturnCategoryItem }) {
-  const color = CATEGORY_COLORS[item.category] ?? 'bg-gray-400'
-  const textColor = CATEGORY_TEXT_COLORS[item.category] ?? 'text-gray-600'
+  const color = CATEGORY_COLORS[item.category] ?? 'bg-muted'
+  const textColor = CATEGORY_TEXT_COLORS[item.category] ?? 'text-muted-foreground'
 
   return (
     <div className="flex items-center justify-between text-sm">
@@ -57,8 +62,9 @@ export function CategoryRow({ item }: { item: ReturnCategoryItem }) {
 function TrendBadge({ trend, delta }: { trend: string; delta: number }) {
   if (trend === 'stable') return null
 
+  // Inversion semantics (returns): trend 'up' = worse = negative-valence red.
   const isUp = trend === 'up'
-  const color = isUp ? 'text-red-500' : 'text-green-500'
+  const color = isUp ? 'text-financial-negative' : 'text-financial-positive'
   const arrow = isUp ? '↑' : '↓'
 
   return (
@@ -74,9 +80,9 @@ function TrendBadge({ trend, delta }: { trend: string; delta: number }) {
 }
 
 const DONUT_COLOR_MAP: Record<string, string> = {
-  cancel_before_shipment: '#3B82F6',
-  refusal_at_pvz: '#F97316',
-  return_after_receipt: '#EF4444',
+  cancel_before_shipment: 'var(--color-status-information)',
+  refusal_at_pvz: 'var(--color-status-warning)',
+  return_after_receipt: 'var(--color-status-error)',
 }
 
 export function DonutChart({
@@ -109,7 +115,7 @@ export function DonutChart({
               cy={size / 2}
               r={radius}
               fill="none"
-              stroke={DONUT_COLOR_MAP[cat.category] ?? '#9CA3AF'}
+              stroke={DONUT_COLOR_MAP[cat.category] ?? 'var(--color-muted-foreground)'}
               strokeWidth={strokeWidth}
               strokeDasharray={`${dashLength} ${circumference - dashLength}`}
               strokeDashoffset={-offset}

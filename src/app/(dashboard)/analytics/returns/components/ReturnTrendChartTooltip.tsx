@@ -11,6 +11,7 @@ import {
   formatReturnCount,
 } from './returns-daily-trend-config'
 import { formatPercentage } from '@/lib/utils'
+import type { DailyReturnItem } from '@/types/returns-daily'
 
 // ============================================================================
 // Custom Tooltip
@@ -37,7 +38,7 @@ export function ReturnTrendTooltip({
   const rate = payload.find(p => p.dataKey === 'returnRate')
 
   return (
-    <div className="rounded-lg border bg-background p-3 shadow-md">
+    <div className="rounded-lg border bg-popover p-3 text-popover-foreground shadow-lg">
       <p className="mb-2 text-sm font-medium">{label}</p>
       {bars.map(item => (
         <p key={item.dataKey} className="flex items-center gap-2 text-sm">
@@ -97,5 +98,58 @@ export function ReturnTrendLegend() {
         </span>
       ))}
     </div>
+  )
+}
+
+// ============================================================================
+// sr-only Data Alternative (Story 169.11; 169.6/169.8 sr-only canon)
+// ============================================================================
+
+/**
+ * Screen-reader table exposing every day and every series value at tooltip
+ * precision (formatReturnCount for counts, formatPercentage for the rate),
+ * with the exact period, units (шт / %), and non-color series labels.
+ * Heading text intentionally does not duplicate the visible card title.
+ */
+export function ReturnTrendSrTable({
+  daily,
+  period,
+}: {
+  daily: DailyReturnItem[]
+  period: { from: string; to: string } | undefined
+}) {
+  if (daily.length === 0) return null
+  const periodText = period ? `с ${period.from} по ${period.to}` : ''
+  return (
+    <table className="sr-only">
+      <caption>
+        Данные о возвратах по дням{periodText ? ` (${periodText})` : ''}. Отмены, отказы, брак и
+        итого — штуки; доля возвратов — проценты.
+      </caption>
+      <thead>
+        <tr>
+          <th scope="col">Дата</th>
+          {RETURNS_BAR_SERIES.map(s => (
+            <th key={s.key} scope="col">
+              {s.label}, шт
+            </th>
+          ))}
+          <th scope="col">{RETURNS_DAILY_LABELS.totalReturns}, шт</th>
+          <th scope="col">{RETURNS_DAILY_LABELS.returnRate}, %</th>
+        </tr>
+      </thead>
+      <tbody>
+        {daily.map(item => (
+          <tr key={item.date}>
+            <th scope="row">{item.date}</th>
+            {RETURNS_BAR_SERIES.map(s => (
+              <td key={s.key}>{formatReturnCount(item[s.key])}</td>
+            ))}
+            <td>{formatReturnCount(item.totalReturns)}</td>
+            <td>{formatPercentage(item.returnRate)}</td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
   )
 }

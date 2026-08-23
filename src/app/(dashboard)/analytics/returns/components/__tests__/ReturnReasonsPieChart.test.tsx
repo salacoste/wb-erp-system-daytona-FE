@@ -158,5 +158,58 @@ describe('ReturnReasonsPieChart', () => {
       // "После получения" trend=down → ▼ (unicode 2193)
       expect(screen.getByText(/↓/)).toBeInTheDocument()
     })
+
+    it('Story 169.11 inversion pin: trend up renders negative-valence financial token', () => {
+      renderWithProviders(<ReturnReasonsPieChart />)
+      // For returns, up = worse → text-financial-negative (red preserved)
+      const upBadge = screen.getByText(/↑/).closest('span')
+      expect(upBadge?.className).toContain('text-financial-negative')
+      const downBadge = screen.getByText(/↓/).closest('span')
+      expect(downBadge?.className).toContain('text-financial-positive')
+    })
+  })
+
+  // Story 169.11: real unknown-category state (Task 0 merged — 'unknown' is a
+  // genuine ReturnCategory with neutral Russian label). Must render neutral
+  // (muted), not alarming status colors and not a fabricated known category.
+  describe('unknown category (Story 169.11)', () => {
+    it('renders the neutral label with muted fallbacks, not status tokens', () => {
+      mockUseReturnReasons.mockReturnValue(
+        hookReturn({
+          data: {
+            summary: {
+              totalReturns: 10,
+              cancelBeforeShipment: 0,
+              refusalAtPvz: 0,
+              returnAfterReceipt: 0,
+              overallReturnRate: 1,
+              classificationCoverage: 50,
+            },
+            byCategory: [
+              {
+                category: 'unknown',
+                displayName: 'Неклассифицированный возврат',
+                count: 10,
+                percentage: 100,
+                trend: 'stable',
+                trendDelta: 0,
+              },
+            ],
+            period: { from: '2026-05-01', to: '2026-05-31' },
+          },
+        })
+      )
+      const { container } = renderWithProviders(<ReturnReasonsPieChart />)
+      expect(screen.getByText('Неклассифицированный возврат')).toBeInTheDocument()
+      // Swatch + percentage use muted fallbacks (bg-muted / text-muted-foreground)
+      const swatch = screen.getByText('Неклассифицированный возврат').previousElementSibling
+      expect(swatch?.className).toContain('bg-muted')
+      const pct = screen.getByText(/100,0\s%/)
+      expect(pct.className).toContain('text-muted-foreground')
+      expect(pct.className).not.toMatch(/text-status-(error|warning|information)/)
+      // Donut stroke falls back to the muted var (SVG stroke accepts vars)
+      const circle = container.querySelector('circle')
+      expect(circle?.getAttribute('stroke')).toBe('var(--color-muted-foreground)')
+    })
   })
 })

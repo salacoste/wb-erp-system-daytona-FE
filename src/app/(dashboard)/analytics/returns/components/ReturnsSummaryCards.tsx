@@ -91,7 +91,10 @@ export function ReturnsSummaryCards({
       value: summary.totalReturns,
       field: 'totalReturns',
       icon: RotateCcw,
-      color: 'text-red-600',
+      // totalReturns is a count, not inherently an error — but its «Всего возвратов»
+      // valence is negative (more returns = worse, cf. INVERTED_METRICS), so the
+      // Story 169.11 mapping keeps status-error for consistency (documented choice).
+      color: 'text-status-error',
       format: (n: number) => n.toLocaleString('ru-RU'),
     },
     {
@@ -99,7 +102,7 @@ export function ReturnsSummaryCards({
       value: summary.overallReturnRate,
       field: 'overallReturnRate',
       icon: Percent,
-      color: 'text-orange-600',
+      color: 'text-status-warning',
       format: (n: number) => formatPercentage(n, 1),
     },
     {
@@ -107,7 +110,7 @@ export function ReturnsSummaryCards({
       value: summary.classificationCoverage,
       field: 'classificationCoverage',
       icon: ShieldCheck,
-      color: 'text-green-600',
+      color: 'text-status-success',
       format: (n: number) => formatPercentageInt(n),
     },
   ]

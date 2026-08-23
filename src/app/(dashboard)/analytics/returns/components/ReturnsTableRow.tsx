@@ -40,9 +40,10 @@ export function ReturnsTableRow({
   product: ProductInfo | undefined
 }) {
   return (
-    <TableRow className={cn(item.anomalyFlag && 'bg-red-50 hover:bg-red-100')}>
+    // Story 169.11: /15 + /30 matched pair fixes light-only dark bug (169.5); icon paired foreground
+    <TableRow className={cn(item.anomalyFlag && 'bg-status-error/15 hover:bg-status-error/30')}>
       <TableCell>
-        {item.anomalyFlag && <AlertTriangle className="h-4 w-4 text-red-500" />}
+        {item.anomalyFlag && <AlertTriangle className="h-4 w-4 text-status-error" />}
       </TableCell>
       <TableCell className="font-mono text-xs">
         <Link
@@ -56,13 +57,18 @@ export function ReturnsTableRow({
         {product?.saName || item.productName || '—'}
       </TableCell>
       <TableCell className="text-sm">{product?.brand || item.brand || '—'}</TableCell>
-      <TableCell>{item.totalReturns}</TableCell>
+      {/* Story 169.11: tabular-nums on numeric cells; nmId stays mono WITHOUT tabular (169.7 pin) */}
+      <TableCell className="tabular-nums">{item.totalReturns}</TableCell>
       <TableCell>
         <ReturnRateCell rate={item.returnRate} />
       </TableCell>
-      <TableCell className="text-muted-foreground">{item.cancelBeforeShipment}</TableCell>
-      <TableCell className="text-muted-foreground">{item.refusalAtPvz}</TableCell>
-      <TableCell className="text-muted-foreground">{item.returnAfterReceipt}</TableCell>
+      <TableCell className="text-muted-foreground tabular-nums">
+        {item.cancelBeforeShipment}
+      </TableCell>
+      <TableCell className="text-muted-foreground tabular-nums">{item.refusalAtPvz}</TableCell>
+      <TableCell className="text-muted-foreground tabular-nums">
+        {item.returnAfterReceipt}
+      </TableCell>
       <TableCell>
         <TooltipProvider>
           <Tooltip>
