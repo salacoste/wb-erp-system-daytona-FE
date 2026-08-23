@@ -30,8 +30,8 @@ describe('Story 169.9 route presentation source contracts', () => {
   })
 
   it('owned production sources contain no raw CSS hex color literals', () => {
-    // Letter-lookahead excludes ticket references like #197 (169.8 lesson).
-    const rawHex = /#(?=[0-9A-Fa-f]*[A-Fa-f])[0-9A-Fa-f]{3,8}\b/
+    const rawHex =
+      /(?:['"`]\s*|-\[)#(?:[0-9A-Fa-f]{3}|[0-9A-Fa-f]{4}|[0-9A-Fa-f]{6}|[0-9A-Fa-f]{8})(?=['"`\]])/
 
     for (const file of productionFiles()) {
       expect(withoutComments(readFileSync(file, 'utf8')), file).not.toMatch(rawHex)

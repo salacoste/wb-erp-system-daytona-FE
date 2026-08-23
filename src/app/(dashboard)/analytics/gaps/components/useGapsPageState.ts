@@ -39,7 +39,6 @@ export function useGapsPageState() {
         force: false,
       })
       setAnalysisDialogOpen(false)
-      setAnalysisResult(null)
     },
     [remediate]
   )
