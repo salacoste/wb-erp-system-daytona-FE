@@ -142,12 +142,14 @@ describe('normalizePipelineHealthGridResponse', () => {
         { dataLagDisplay: null },
         { dataLagDisplay: { text: '5 мин назад' } },
         { dataLagDisplay: '' },
+        { dataLagDisplay: '   ' },
       ],
     }
 
     const result = normalizePipelineHealthGridResponse(raw)
 
     expect(result.pipelines.map(pipeline => pipeline.dataLagDisplay)).toEqual([
+      null,
       null,
       null,
       null,

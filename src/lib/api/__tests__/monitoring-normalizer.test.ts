@@ -73,13 +73,20 @@ describe('normalizeMonitoringDashboardResponse', () => {
 
   it('normalizes missing, null, and non-string lag displays to null', () => {
     const result = normalizeMonitoringDashboardResponse({
-      pipelines: [{}, { dataLagDisplay: null }, { dataLagDisplay: 15 }, { dataLagDisplay: '' }],
+      pipelines: [
+        {},
+        { dataLagDisplay: null },
+        { dataLagDisplay: 15 },
+        { dataLagDisplay: '' },
+        { dataLagDisplay: '   ' },
+      ],
     })
 
     expect(result.pipelines[0].dataLagDisplay).toBeNull()
     expect(result.pipelines[1].dataLagDisplay).toBeNull()
     expect(result.pipelines[2].dataLagDisplay).toBeNull()
     expect(result.pipelines[3].dataLagDisplay).toBeNull()
+    expect(result.pipelines[4].dataLagDisplay).toBeNull()
   })
 })
 

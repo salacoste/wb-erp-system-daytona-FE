@@ -39,7 +39,7 @@ function normalizeDashboardPipeline(raw: unknown): DashboardPipeline {
     status: (toStr(r.status) || 'no_data') as DashboardPipeline['status'],
     lastSuccessAt: toOptionalString(r.lastSuccessAt) ?? null,
     dataLagMinutes: toNullableNumber(r.dataLagMinutes),
-    dataLagDisplay: toOptionalString(r.dataLagDisplay) || null,
+    dataLagDisplay: toOptionalString(r.dataLagDisplay)?.trim() || null,
     successRate24h: toNullableNumber(r.successRate24h) ?? 0,
     // REQ-201: backend dashboard now returns these (was pipeline-health-grid only)
     errorRate: toNullableNumber(r.errorRate) ?? 0,

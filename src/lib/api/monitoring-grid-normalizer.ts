@@ -57,7 +57,7 @@ function normalizeGridPipeline(raw: unknown): GridPipeline {
     lastFailureAt: toOptionalString(r.lastFailureAt) ?? null,
     nextExpectedAt: toOptionalString(r.nextExpectedAt) ?? null,
     dataLagMinutes: toNullableNumber(r.dataLagMinutes),
-    dataLagDisplay: toOptionalString(r.dataLagDisplay) || null,
+    dataLagDisplay: toOptionalString(r.dataLagDisplay)?.trim() || null,
     successRate: toNullableNumber(r.successRate) ?? 0,
     totalExecutions: toCount(r.totalExecutions),
     totalFailures: toCount(r.totalFailures),
