@@ -37,6 +37,7 @@ describe('normalizePipelineHealthGridResponse', () => {
           lastFailureAt: null,
           nextExpectedAt: '2026-01-16T06:00:00Z',
           dataLagMinutes: 5,
+          dataLagDisplay: 'сегодня 09:00 МСК',
           successRate: 100,
           totalExecutions: 15,
           totalFailures: 0,
@@ -77,6 +78,7 @@ describe('normalizePipelineHealthGridResponse', () => {
     expect(result.pipelines).toHaveLength(1)
     expect(result.pipelines[0].pipelineId).toBe('pipe-1')
     expect(result.pipelines[0].healthScore).toBe(100)
+    expect(result.pipelines[0].dataLagDisplay).toBe('сегодня 09:00 МСК')
     expect(result.pipelines[0].cells).toHaveLength(1)
     expect(result.pipelines[0].cells[0].status).toBe('success')
     expect(result.pipelines[0].cells[0].avgDurationMs).toBe(28000)
@@ -130,6 +132,29 @@ describe('normalizePipelineHealthGridResponse', () => {
     expect(result.pipelines[0].dataLagMinutes).toBeNull()
     expect(result.pipelines[0].avgDurationMs).toBeNull()
     expect(result.pipelines[0].cells[0].avgDurationMs).toBeNull()
+  })
+
+  it('normalizes missing, null, and non-string lag displays to null', () => {
+    const raw = {
+      period: {},
+      pipelines: [
+        {},
+        { dataLagDisplay: null },
+        { dataLagDisplay: { text: '5 мин назад' } },
+        { dataLagDisplay: '' },
+        { dataLagDisplay: '   ' },
+      ],
+    }
+
+    const result = normalizePipelineHealthGridResponse(raw)
+
+    expect(result.pipelines.map(pipeline => pipeline.dataLagDisplay)).toEqual([
+      null,
+      null,
+      null,
+      null,
+      null,
+    ])
   })
 
   it('defaults successRate and errorRate to 0 when null', () => {

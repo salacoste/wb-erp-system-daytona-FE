@@ -33,6 +33,8 @@ export interface DashboardPipeline {
   status: PipelineStatus
   lastSuccessAt: string | null
   dataLagMinutes: number | null
+  /** Backend-authored, schedule-aware lag label; null when the pipeline never synced. */
+  dataLagDisplay: string | null
   successRate24h: number
   // REQ-201: backend dashboard endpoint may omit these fields for some pipelines.
   // Normalizer passes them through; MonitorPipelineHealth uses ?? 0 for display.

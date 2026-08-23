@@ -83,6 +83,7 @@ function PipelineCard({ pipeline }: { pipeline: DashboardPipeline }) {
     displayName,
     status,
     lastSuccessAt,
+    dataLagDisplay,
     successRate24h,
     errorRate,
     tasksWithErrors,
@@ -134,7 +135,7 @@ function PipelineCard({ pipeline }: { pipeline: DashboardPipeline }) {
       </div>
 
       <div className="mt-2 flex items-center justify-between text-xs text-muted-foreground">
-        <span>{formatRelativeTime(lastSuccessAt)}</span>
+        <span>{dataLagDisplay ?? formatRelativeTime(lastSuccessAt)}</span>
         <span aria-label={`Успешность за 24ч: ${ratePct}`}>{ratePct}</span>
       </div>
 

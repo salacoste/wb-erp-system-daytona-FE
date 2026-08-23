@@ -52,7 +52,8 @@ export function MonitorPipelineHealth({ pipelines }: MonitorPipelineHealthProps)
           <span className="text-xs text-muted-foreground shrink-0 pt-0.5">Последний пересчёт:</span>
           {mostRecent ? (
             <span className="text-xs font-medium">
-              {mostRecent.displayName} — {formatRelativeTime(mostRecent.lastSuccessAt)}
+              {mostRecent.displayName} —{' '}
+              {mostRecent.dataLagDisplay ?? formatRelativeTime(mostRecent.lastSuccessAt)}
             </span>
           ) : (
             <span className="text-xs text-muted-foreground italic">Нет данных о пересчётах</span>

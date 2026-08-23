@@ -1,4 +1,4 @@
-import { describe, it, expect } from 'vitest'
+import { afterEach, describe, it, expect, vi } from 'vitest'
 import { screen } from '@testing-library/react'
 import { renderWithProviders } from '@/test/utils/test-utils'
 import { PipelineStatusGrid } from '../PipelineStatusGrid'
@@ -12,6 +12,7 @@ function pipeline(overrides: Partial<DashboardPipeline> = {}): DashboardPipeline
     status: 'healthy',
     lastSuccessAt: '2026-06-03T02:00:00.000Z',
     dataLagMinutes: 11,
+    dataLagDisplay: null,
     successRate24h: 1,
     ...overrides,
   }
@@ -45,5 +46,38 @@ describe('PipelineStatusGrid — error badge degrades when backend omits errorRa
     ])
     expect(container.querySelector('.border-amber-500')).not.toBeNull()
     expect(screen.getByText('10%')).toBeInTheDocument()
+  })
+})
+
+describe('PipelineStatusGrid — schedule-aware lag display', () => {
+  afterEach(() => {
+    vi.useRealTimers()
+  })
+
+  it('prefers the exact backend display over timestamp-derived relative time', () => {
+    renderGrid([
+      pipeline({
+        category: 'daily',
+        lastSuccessAt: '2026-06-03T03:00:00.000Z',
+        dataLagDisplay: 'сегодня 06:00 МСК',
+      }),
+    ])
+
+    expect(screen.getByText('сегодня 06:00 МСК')).toBeInTheDocument()
+  })
+
+  it('falls back to relative time when the backend display is null', () => {
+    vi.useFakeTimers()
+    vi.setSystemTime(new Date('2026-06-03T03:05:00.000Z'))
+
+    renderGrid([pipeline({ lastSuccessAt: '2026-06-03T03:00:00.000Z' })])
+
+    expect(screen.getByText('5 мин назад')).toBeInTheDocument()
+  })
+
+  it('renders an em dash when the pipeline has never synced', () => {
+    renderGrid([pipeline({ lastSuccessAt: null, dataLagMinutes: null })])
+
+    expect(screen.getByText('—')).toBeInTheDocument()
   })
 })

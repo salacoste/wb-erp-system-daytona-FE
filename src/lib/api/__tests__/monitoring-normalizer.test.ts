@@ -32,6 +32,7 @@ describe('normalizeMonitoringDashboardResponse', () => {
           status: 'healthy',
           lastSuccessAt: '2025-01-01',
           dataLagMinutes: 5,
+          dataLagDisplay: 'сегодня 06:00 МСК',
           successRate24h: 99.5,
         },
       ],
@@ -52,6 +53,7 @@ describe('normalizeMonitoringDashboardResponse', () => {
     expect(result.cabinetId).toBe('cab-1')
     expect(result.system.healthScore).toBe(95)
     expect(result.pipelines).toHaveLength(1)
+    expect(result.pipelines[0].dataLagDisplay).toBe('сегодня 06:00 МСК')
     expect(result.telegram.status).toBe('active')
     expect(result.dataCompleteness.tables).toHaveLength(1)
   })
@@ -67,6 +69,24 @@ describe('normalizeMonitoringDashboardResponse', () => {
     const result = normalizeMonitoringDashboardResponse({})
     expect(result.system.overallStatus).toBe('healthy')
     expect(result.telegram.status).toBe('not_configured')
+  })
+
+  it('normalizes missing, null, and non-string lag displays to null', () => {
+    const result = normalizeMonitoringDashboardResponse({
+      pipelines: [
+        {},
+        { dataLagDisplay: null },
+        { dataLagDisplay: 15 },
+        { dataLagDisplay: '' },
+        { dataLagDisplay: '   ' },
+      ],
+    })
+
+    expect(result.pipelines[0].dataLagDisplay).toBeNull()
+    expect(result.pipelines[1].dataLagDisplay).toBeNull()
+    expect(result.pipelines[2].dataLagDisplay).toBeNull()
+    expect(result.pipelines[3].dataLagDisplay).toBeNull()
+    expect(result.pipelines[4].dataLagDisplay).toBeNull()
   })
 })
 
@@ -91,6 +111,7 @@ describe('normalizePipelineHealthGridResponse', () => {
           lastFailureAt: null,
           nextExpectedAt: '2025-01-02',
           dataLagMinutes: 5,
+          dataLagDisplay: 'вчера 06:00 МСК',
           successRate: 0.98,
           totalExecutions: 100,
           totalFailures: 2,
@@ -132,6 +153,7 @@ describe('normalizePipelineHealthGridResponse', () => {
     const result = normalizePipelineHealthGridResponse(raw)
     expect(result.cabinetId).toBe('cab-1')
     expect(result.pipelines).toHaveLength(1)
+    expect(result.pipelines[0].dataLagDisplay).toBe('вчера 06:00 МСК')
     expect(result.pipelines[0].cells).toHaveLength(1)
     expect(result.summary.totalPipelines).toBe(1)
   })
