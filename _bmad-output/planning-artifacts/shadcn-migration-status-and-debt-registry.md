@@ -1,8 +1,8 @@
 # Shadcn Full-UI Migration — Status & Debt Registry
 
-> **Snapshot date: 2026-08-23** (W9-сессия). Канонический статус-реестр программы миграции
+> **Snapshot date: 2026-08-23** (W9 + Story 169.9 corrective closeout). Канонический статус-реестр программы миграции
 > для BMAD-артефактов. Живая история — sprint-status.yaml (по-сторийно) и ledger
-> BE-репо (docs/tech-debt/TECH-DEBT-2026-08-SESSION.md, Addendum-4 cont.1-21);
+> BE-репо (docs/tech-debt/TECH-DEBT-2026-08-SESSION.md, Addendum-4 cont.1-25);
 > этот файл = консолидированный срез «что сделано / что осталось / все долги».
 > Обновлять в конце каждой orchestrator-сессии.
 
@@ -18,29 +18,35 @@
 | 171-FE | 9 | 0 | 171.1-9 | backlog |
 | 172-FE | 17 | 0 | 172.1-17 | backlog (см. owner-заметки §5) |
 | 173-FE | 13 | 0 | 173.1-13 | backlog |
-| 174-FE консолидация | 5 | 0 | 174.1-5 | финал (СТРОГО после 166-173; 174.2 = legacy-enforcement + все долги §3) |
+| 174-FE консолидация | 5 | 0 | 174.1-5 | финал (СТРОГО после 166-173; 174.2 design-system/source-boundary/contrast; 174.3 visual/a11y; 174.4 functional/backend) |
 
-**Готовность маршрутов**: 41 of ~79 story-строк закрыто. Волна 22-23.08: 169.8 funnel
+**Story readiness: 38 of 92 canonical Stories complete.** Волна 22-23.08: 169.8 funnel
 (ADOPTION параллельного staged-WIP; PRs #207/#208), 169.9 gaps (полный цикл; PRs #210/#211),
 169.10 liquidity (полный цикл + REQUEST-CHANGES-фиксы; PRs #212/#214; между ними параллельная
-сессия влила #213 gaps-followup). Параллельная сессия также закрыла docs-реконсиляцию #209.
+сессия влила corrective PR #213 gaps-followup). Параллельная сессия также закрыла docs-реконсиляцию #209.
 
 **NEXT = 169.11 returns analytics** (`backlog`; план `.omx/plans/169.11-migrate-returns-analytics.md`).
-Пол vitest **18 936/0** (пол +74+12+23 за волну). Живой browser-matrix остаётся carry-out 174.3.
+Его канонические prerequisites: Epic 166, Story 167.1 и Story 168.1 / C2; Story 169.10 не является
+prerequisite для 169.11. Пол vitest **18 952/0**; Story 169.9 corrective: **7 files / 55 tests**;
+production build: **70/70** static pages. Browser/theme/responsive/axe/keyboard/visual evidence
+остаётся carry-out 174.3; credentialed functional E2E, auth/session/error-recovery и local-backend
+critical journeys остаются carry-out 174.4.
 
-## 2. Верификационные факты (2026-08-23 ~01:00, конец W9-сессии)
+## 2. Верификационные факты (2026-08-23, W9 + frontend corrective closeout)
 
-- BE main `58e1a0a77` synced (mirror 169.10 + ledger cont.25 + handoff W9); 0 src-мержей после деплоя `31402ce34` (rebuild не нужен).
-- FE origin/main `f4db991a` (169.10: impl `84250483` #212, merge `0245f52b`; flip #214 поверх параллельного #213).
-- Полы: FE vitest **18 936/0** · BE jest 13 170/0.
-- PM2: wb-repricer + worker + frontend(:3100) online; Docker up (postgres/redis/mindsdb/prophet).
-- Story 169.8 implementation branch/worktree удалены с absence proof; отдельный Story 169.9
-  worktree уже активен и не относится к cleanup 169.8.
-- Чужой WIP в FE-дереве (НЕ трогать): cogs/csv/rateLimit/supplies/SkuFinancialsTable + .env.bak ×2.
+- Fresh frontend evidence: PR #213 implementation `e738dd80`, merge `5c6950f3`; merge parents
+  `0245f52b e738dd80`; route 55/55, full Vitest 18 952/18 952, build 70/70, final two reviews
+  `APPROVE`, implementation branch/remote/worktree cleanup proven.
+- FE base observed by this docs reconciliation: origin/main `94e059b6` (OpenWiki refresh over PR #215);
+  the docs PR must be rebased/reconciled again if origin/main advances before commit.
+- Protected WIP ref (НЕ трогать): `wip/cogs-split-supplies-csv-20260822` remains
+  `643c65b41a183549fd299e782d36b41c1159d226`.
+- Carried W9 evidence, **not revalidated by this frontend documentation follow-up**: BE main
+  `58e1a0a77`, BE jest 13 170/0, PM2 services online, and Docker postgres/redis/mindsdb/prophet up.
 
 ## 3. Полный долг-реестр
 
-### 3.1 FE-debt (по триггерам; консолидация в 174.2 если не сработает триггер раньше)
+### 3.1 FE-debt (по триггерам; 174.2 принимает только применимые design-system/source-boundary долги)
 
 | ID | Суть | Триггер/фикс |
 | --- | --- | --- |
@@ -52,7 +58,7 @@
 | FE-D8 | getCabinetCreationOperation middle-path (юзер висит в SAFE_RECONCILIATION) | по UX-жалобе; НЕ менять без fresh-ревью |
 | FE-D9 | logApiError логирует non-2xx тела (вкл. plaintext password /register) | БЛИЖАЙШАЯ FE-story трогающая apiClient; redact + isPasswordPolicyError → API-owner |
 
-### 3.2 Волновые carry-outs (от маршрутных миграций 168.10-169.7)
+### 3.2 Волновые carry-outs (от маршрутных миграций 168.10-169.10)
 
 | ID | Суть | Файл | Фикс |
 | --- | --- | --- | --- |
@@ -64,14 +70,15 @@
 | C6 | date-cells tabular-nums отсутствует во всех 3 acquiring-таблицах | acquiring/** | 174.x tree-wide sweep (НЕ пер-роутный фикс) |
 | C7 | e2e-комментарий «amber rate-limit banner» устарел | e2e/acquiring.spec.ts:130 | при следующем касании спеки |
 | C8 | FunnelPageContent находится ровно на source cap 200 строк | analytics/funnel/FunnelPageContent.tsx | вынести sync/toolbar block при первом следующем касании |
-| C9 | Live visual/browser matrix 169.8-169.10 не выполнена (jest-уровень только) | analytics/funnel + gaps + liquidity | обязательный consolidated browser/axe/keyboard pass в 174.3 |
+| C9 | Browser/theme/responsive/axe/keyboard/visual matrix 169.8-169.10 не выполнена | analytics/funnel + gaps + liquidity | обязательный consolidated evidence pass в 174.3 |
 | C10 | KPI-icon canon Funnel semantic (owner 22.08), а 169.6/169.7 muted | analytics/funnel + fbs routes | свести к одному owner-canon в 174.2 (semantика = целевой) |
 | C11 | Cold-cache Funnel Vitest один раз дал 12 failures, warm/full runs стабильны | analytics/funnel tests | расследовать только при повторном воспроизведении; не считать текущим functional failure |
-| C12 | Дубль-сьюты GapsPageContent.test (route-level + components-level, 96/97 строк) | analytics/gaps | консолидация в debt-pass (LOW; обновляются когерентно) |
+| C12 | GapsPageContent suites частично дублируются: route-level содержит 6 базовых composition checks, components-level дополнительно владеет corrective state/lifecycle regressions | analytics/gaps | консолидировать без потери corrective coverage в отдельном debt-pass |
 | C13 | GapsTable: caption + scroll-aria-label дублируют смысл таблицы | analytics/gaps/GapsTable.tsx | опциональная дедупликация (P1-LOW) |
-| C14 | Hex-guard не ловит pure-digit hex (#333) — letter-lookahead trade-off | все presentation-source-contracts тесты | осознанный trade-off (тикет-refs #197 важнее); задокументирован |
+| C14 | Gaps pure-digit hex guard исправлен в PR #213; остальные route guards ещё требуют owner-sweep | presentation-source-contracts tests outside analytics/gaps | при касании route-owner или применимый 174.2 source-boundary sweep; не переписывать ticket refs |
 | C15 | URGENCY_CLASS кириллическими label-ключами (rename в lib = тихий fallback) | analytics/liquidity/LiquidationScenarioCard.tsx | при касании: типизировать ключи через lib-тир или days-tier map |
 | C16 | Pie `as unknown as` double-cast (pre-existing) + chart-3-as-text запас 0.02 (4.52) | analytics/liquidity/LiquidityDistributionChart.tsx | при касании waterfall-подобных графов; 174.2 контраст-ревью |
+| C17 | Credentialed functional E2E для Story 169.9 corrective не выполнен | analytics/gaps auth/session/error-recovery + local-backend critical journeys | Story 174.4; требуется отдельное явное credential-разрешение. Если оно выдано, передавать credential только in-memory, никогда не выводить и не сохранять |
 
 ### 3.3 BE-debt
 
@@ -122,4 +129,4 @@
 - Хэндофф-цепочка: …→ W7-entry → W8 (169.8-9) → **W9** `docs/HANDOFF-2026-08-23-W9-169-10-SHIPPED.md` (актуальный вход) + ПОЛНЫЙ реестр: `docs/HANDOFF-2026-08-23-W9-FULL-DEBTS-AND-ROADMAP.md`.
 - Ledger: docs/tech-debt/TECH-DEBT-2026-08-SESSION.md (Addendum-4 cont.1-25; каждая cont = закрытый item с уроками).
 - Дефект-паттерны 1-44 + идиомы волны: v8-промпт + W8 §4 + W9 §3 (lib-hex-каналы, chart-не-текст, PR-reopen).
-- ⚠️ Параллельная сессия ЖИВА (влила #209/#213 между нашими PR): fetch-детект в boot; merge-гонка → reopen-recovery (W9 §2).
+- W9 зафиксировала параллельную сессию, которая влила #209/#213 между нашими PR; boot-процесс должен сохранять fetch-детект и reopen-recovery после merge-гонки (W9 §2).
