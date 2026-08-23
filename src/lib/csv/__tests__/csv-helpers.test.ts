@@ -30,6 +30,29 @@ describe('escapeCsvCell', () => {
   it('escapes cells containing bare \\r (legacy Mac line ending, RFC 4180 § 2.6)', () => {
     expect(escapeCsvCell('a\rb')).toBe('"a\rb"')
   })
+
+  // OWASP CSV-injection defanging (ported from WIP snapshot 643c65b4)
+  it.each([
+    ['=SUM(A1:A10)', "'=SUM(A1:A10)"],
+    ['+cmd|/C calc', "'+cmd|/C calc"],
+    ['-1+1|cmd', "'-1+1|cmd"],
+    ['@SUM(A1)', "'@SUM(A1)"],
+    ['\tmalicious', "'\tmalicious"],
+    // \r and \n trigger defang AND RFC 4180 wrapping (they are wrapping triggers too)
+    ['\rinjection', '"\'\rinjection"'],
+    ['\ninjection', '"\'\ninjection"'],
+  ])('defangs formula trigger %p → %p', (input, expected) => {
+    expect(escapeCsvCell(input)).toBe(expected)
+  })
+
+  it('does NOT defang a plain number (no formula trigger)', () => {
+    expect(escapeCsvCell('42')).toBe('42')
+  })
+
+  it('defangs formula trigger AND wraps when comma present', () => {
+    // =HYPERLINK + comma → prefix quote + RFC 4180 wrapping
+    expect(escapeCsvCell('=HYPERLINK("url","label")')).toBe(`"'=HYPERLINK(""url"",""label"")"`)
+  })
 })
 
 describe('prefixUtf8Bom', () => {
