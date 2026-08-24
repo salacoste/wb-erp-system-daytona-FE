@@ -50,6 +50,27 @@ describe('useSupplyTableFilters — reorder_value sort with undefined (no COGS)'
   })
 })
 
+describe('useSupplyTableFilters — avg_daily_sales sort with null velocity (169.13 fix F2)', () => {
+  const data = [
+    makeItem({ sku_id: 'A', avg_daily_sales: 5 }),
+    makeItem({ sku_id: 'B', avg_daily_sales: null }),
+    makeItem({ sku_id: 'C', avg_daily_sales: 1 }),
+  ]
+
+  it('null velocity sorts LAST in asc (?? Infinity — mirrors days_until_stockout ?? 9999)', () => {
+    const { result } = renderHook(() => useSupplyTableFilters(data))
+    act(() => result.current.handleSort('avg_daily_sales', () => {}))
+    expect(result.current.processedData.map(i => i.sku_id)).toEqual(['C', 'A', 'B'])
+  })
+
+  it('null velocity sorts FIRST in desc — the comparator is direction-aware and flips nulls, exactly like days_until_stockout', () => {
+    const { result } = renderHook(() => useSupplyTableFilters(data))
+    act(() => result.current.handleSort('avg_daily_sales', () => {}))
+    act(() => result.current.handleSort('avg_daily_sales', () => {})) // asc → desc
+    expect(result.current.processedData.map(i => i.sku_id)).toEqual(['B', 'A', 'C'])
+  })
+})
+
 describe('formatReorderValue', () => {
   it('renders "—" for undefined/null (no COGS), never a fabricated "0 ₽"', () => {
     expect(formatReorderValue(undefined)).toBe('—')

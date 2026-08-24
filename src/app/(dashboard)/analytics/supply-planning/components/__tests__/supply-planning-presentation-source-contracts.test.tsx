@@ -12,8 +12,8 @@ import { describe, expect, it } from 'vitest'
 import { render, screen } from '@testing-library/react'
 import { SupplyDetailRightColumn } from '../SupplyDetailRightColumn'
 import { SupplyDetailTrendSection } from '../SupplyDetailTrendSection'
-import { SUPPLY_RISK_TOKENS } from '../supply-risk-tokens'
-import type { ForecastDay, } from '../supply-detail-calculations'
+import { SUPPLY_RISK_TOKENS, TREND_TEXT_TOKENS } from '../supply-risk-tokens'
+import type { ForecastDay } from '../supply-detail-calculations'
 import type { SupplyPlanningItem } from '@/types/supply-planning'
 
 const testDirectory = dirname(fileURLToPath(import.meta.url))
@@ -55,8 +55,7 @@ describe('Story 169.13 supply-planning presentation source contracts', () => {
   })
 
   it('owned production sources contain no raw hex / rgb(a) / hsl color literals', () => {
-    const rawColor =
-      /(?:['"`]\s*|-\[)#(?:[0-9A-Fa-f]{3,8})(?=['"`\]])|\b(?:rgba?|hsla?)\(/
+    const rawColor = /(?:['"`]\s*|-\[)#(?:[0-9A-Fa-f]{3,8})(?=['"`\]])|\b(?:rgba?|hsla?)\(/
     for (const file of sources) {
       expect(withoutComments(readFileSync(file, 'utf8')), file).not.toMatch(rawColor)
     }
@@ -85,8 +84,17 @@ describe('Story 169.13 supply-planning presentation source contracts', () => {
     const tiers = Object.keys(SUPPLY_RISK_TOKENS)
     expect(tiers).toHaveLength(6)
     expect(tiers).toContain('unknown')
-    const distinctChips = new Set(tiers.map(t => SUPPLY_RISK_TOKENS[t as keyof typeof SUPPLY_RISK_TOKENS].chip))
-    const distinctRows = new Set(tiers.map(t => SUPPLY_RISK_TOKENS[t as keyof typeof SUPPLY_RISK_TOKENS].rowBg + '|' + SUPPLY_RISK_TOKENS[t as keyof typeof SUPPLY_RISK_TOKENS].rowBorder))
+    const distinctChips = new Set(
+      tiers.map(t => SUPPLY_RISK_TOKENS[t as keyof typeof SUPPLY_RISK_TOKENS].chip)
+    )
+    const distinctRows = new Set(
+      tiers.map(
+        t =>
+          SUPPLY_RISK_TOKENS[t as keyof typeof SUPPLY_RISK_TOKENS].rowBg +
+          '|' +
+          SUPPLY_RISK_TOKENS[t as keyof typeof SUPPLY_RISK_TOKENS].rowBorder
+      )
+    )
     expect(distinctChips.size).toBe(6)
     expect(distinctRows.size).toBe(6)
   })
@@ -98,10 +106,32 @@ describe('Story 169.13 supply-planning presentation source contracts', () => {
     expect(unknown.chip).not.toBe(SUPPLY_RISK_TOKENS.healthy.chip)
   })
 
-  it('sortable header exposes aria-sort (3-state canon, 169.12)', () => {
+  it('REAL-token pins (169.13 fix F4): every tier cardActive carries ring-2 incl. unknown muted ring', () => {
+    for (const tokens of Object.values(SUPPLY_RISK_TOKENS)) {
+      expect(tokens.cardActive.length).toBeGreaterThan(0)
+      expect(tokens.cardActive).toContain('ring-2')
+    }
+    // unknown stays a muted ring (visible-unknown), never bare/unringed
+    expect(SUPPLY_RISK_TOKENS.unknown.cardActive).toContain('ring-')
+    expect(SUPPLY_RISK_TOKENS.unknown.cardActive).not.toContain('status-success')
+    // 3 distinct trend text tokens — growing/stable/declining never collapse to one class
+    const trendValues = Object.values(TREND_TEXT_TOKENS)
+    expect(trendValues).toHaveLength(3)
+    expect(new Set(trendValues).size).toBe(3)
+  })
+
+  it('sortable header exposes aria-sort; non-sortable action th carries NONE (WAI-ARIA, 169.12 canon)', () => {
     const source = readFileSync(join(componentsDirectory, 'SupplyTableHeader.tsx'), 'utf8')
-    expect(source).toMatch(/aria-sort=/)
-    expect(source).toMatch(/'none'/)
+    // SortHead is the ONLY aria-sort carrier: one usage renders all 10 sortable columns.
+    // ×10-sortable pin: every COLUMNS entry goes through SortHead; the action th does not.
+    const ariaSortCount = (source.match(/aria-sort=\{/g) ?? []).length
+    expect(ariaSortCount).toBe(1) // the single SortHead <th aria-sort={...}>
+    expect((source.match(/<SortHead/g) ?? []).length).toBe(1) // one component def used via map
+    expect((source.match(/field: '/g) ?? []).length).toBe(10) // 10 sortable columns
+    // Negative: the non-sortable «Действие» th must NOT carry aria-sort (aria-sort belongs
+    // only on sortable columns; non-sortable heads have NO attribute — StorageSkuTableHeader canon).
+    expect(source).not.toMatch(/aria-sort="none"/)
+    expect(source).not.toMatch(/aria-sort='none'/)
   })
 
   it('CSV export uses full filtered processedData, NOT the page slice (behavior pin)', () => {
@@ -146,9 +176,7 @@ describe('Story 169.13 forecast honesty (preface-review F-2)', () => {
   })
 
   it('forecast figures are UNITS (шт), not ₽ — the primary loss line is units', () => {
-    render(
-      <SupplyDetailRightColumn item={baseItem} forecast={forecastDays} totalLostUnits={5} />
-    )
+    render(<SupplyDetailRightColumn item={baseItem} forecast={forecastDays} totalLostUnits={5} />)
     expect(screen.getByText(/шт упущенных продаж/)).toBeTruthy()
   })
 })

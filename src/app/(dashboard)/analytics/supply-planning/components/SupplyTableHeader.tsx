@@ -8,9 +8,9 @@ import type { SortField, SortOrder } from './useSupplyTableFilters'
  * Extracted from SupplyPlanningTable.tsx — Story 6.3.
  *
  * Story 169.13: aria-sort 3-state canon (none/ascending/descending, 169.12) on
- * every sortable head + explicit "none" on the non-sortable action head (×11);
- * sticky header moved to muted/border tokens (z-index preserved); sort control
- * is a real button (keyboard access, 169.10 canon).
+ * the 10 sortable heads only — the non-sortable action head carries NO aria-sort
+ * (WAI-ARIA: aria-sort belongs only on sortable columns); sticky header moved to
+ * muted/border tokens (z-index preserved); sort control is a real button (169.10 canon).
  */
 
 interface SupplyTableHeaderProps {
@@ -173,8 +173,9 @@ export function SupplyTableHeader({ sortField, sortOrder, onSort }: SupplyTableH
             onSort={onSort}
           />
         ))}
-        {/* Action — non-sortable; explicit aria-sort="none" completes the 3-state contract */}
-        <th scope="col" aria-sort="none" className="w-[140px] px-4 py-3 text-center">
+        {/* Action — non-sortable; carries NO aria-sort at all (WAI-ARIA: aria-sort belongs
+            only on sortable columns; matches 169.12 canon, e.g. StorageSkuTableHeader). */}
+        <th scope="col" className="w-[140px] px-4 py-3 text-center">
           <span className={LABEL_BASE + ' justify-center'}>Действие</span>
         </th>
       </tr>

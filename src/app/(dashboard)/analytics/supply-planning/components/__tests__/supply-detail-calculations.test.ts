@@ -15,7 +15,13 @@ import {
   calculateTotalLostUnits,
 } from '../supply-detail-calculations'
 
-function makeItem(overrides: Partial<SupplyPlanningItem> = {}): SupplyPlanningItem {
+/** calculateForecast's caller-guard contract (169.13 F3): avg_daily_sales is non-null here
+ *  — every fixture passes a number; buildCopyInfo still accepts the full nullable shape. */
+function makeItem(
+  overrides: Partial<Omit<SupplyPlanningItem, 'avg_daily_sales'>> & {
+    avg_daily_sales?: number
+  } = {}
+): SupplyPlanningItem & { avg_daily_sales: number } {
   return {
     sku_id: '721654518',
     product_name: 'sp60pro',
@@ -26,7 +32,7 @@ function makeItem(overrides: Partial<SupplyPlanningItem> = {}): SupplyPlanningIt
     reorder_quantity: 0,
     reorder_value: 0,
     ...overrides,
-  } as unknown as SupplyPlanningItem
+  } as unknown as SupplyPlanningItem & { avg_daily_sales: number }
 }
 
 describe('buildCopyInfo — days until stockout', () => {

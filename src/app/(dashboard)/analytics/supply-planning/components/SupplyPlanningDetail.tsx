@@ -63,10 +63,13 @@ export function SupplyPlanningDetail({ item }: SupplyPlanningDetailProps) {
   // The old `?? 0` in calculateForecast fabricated a flat-stock optimistic
   // projection; we suppress the visual and let the right column indicate
   // "нет данных о скорости" instead (Defensive Frontend — indicate, don't fabricate).
-  const hasVelocity = item.avg_daily_sales != null
+  // Caller-guard for calculateForecast's non-null avg_daily_sales contract: capture the
+  // nullable value into a const BEFORE the closure (property narrowing doesn't survive
+  // into callbacks), then rebuild the item with the narrowed number.
+  const velocity = item.avg_daily_sales
   const forecast = useMemo(
-    () => (hasVelocity ? calculateForecast(item) : null),
-    [item, hasVelocity]
+    () => (velocity != null ? calculateForecast({ ...item, avg_daily_sales: velocity }) : null),
+    [item, velocity]
   )
 
   // Total lost sales units over the forecast horizon (honest, backend-derived — not a ₽ figure)

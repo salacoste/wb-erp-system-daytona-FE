@@ -36,6 +36,8 @@ export function VelocityCell({ item }: CellProps) {
       <span className="text-sm tabular-nums text-foreground flex items-center justify-end gap-1">
         {formatVelocity(item.avg_daily_sales)}
         <span className="text-muted-foreground text-xs">шт/д</span>
+        {/* isKnownTrend conjunct is load-bearing: aliased narrowing makes `trend` a valid
+            index for TREND_TEXT_TOKENS (TrendIcon truthiness alone doesn't narrow). */}
         {TrendIcon && isKnownTrend ? (
           <TrendIcon className={cn('h-3 w-3', TREND_TEXT_TOKENS[trend])} />
         ) : (

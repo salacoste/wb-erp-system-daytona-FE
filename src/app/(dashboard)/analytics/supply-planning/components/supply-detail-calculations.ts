@@ -36,14 +36,20 @@ export interface ForecastDay {
 /**
  * Generate 7-day stock forecast based on current stock and daily sales velocity.
  * Each day consumes avg_daily_sales units; a stockout day accrues lost sales units (unmet demand).
+ *
+ * CALLER-GUARD CONTRACT (Story 169.13, preface-review F-2): `avg_daily_sales` is a
+ * NON-NULL parameter at the type level — callers MUST guard for null velocity before
+ * calling. SupplyPlanningDetail guards via `hasVelocity` and renders "нет данных о
+ * скорости" instead of invoking this function. This type-level guarantee replaces the
+ * old dishonest `?? 0` fallback that fabricated a flat-stock (0 burn-down) projection.
  */
-export function calculateForecast(item: SupplyPlanningItem): ForecastDay[] {
+export function calculateForecast(
+  item: SupplyPlanningItem & { avg_daily_sales: number }
+): ForecastDay[] {
   const days: ForecastDay[] = []
 
   let currentStock = item.current_stock
-  // Forecast arithmetic needs a number; null velocity (backend omitted) → assume 0 burn-down
-  // for the projection while the velocity column renders "—" (Story 169.13).
-  const dailySales = item.avg_daily_sales ?? 0
+  const dailySales = item.avg_daily_sales
 
   for (let i = 1; i <= 7; i++) {
     const date = new Date()

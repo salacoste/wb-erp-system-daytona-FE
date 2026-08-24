@@ -84,8 +84,11 @@ export function useSupplyTableFilters(data: SupplyPlanningItem[]) {
           comparison = a.in_transit - b.in_transit
           break
         case 'avg_daily_sales':
-          // avg_daily_sales is null when backend omits velocity — nulls sort first (Story 169.13).
-          comparison = (a.avg_daily_sales ?? -Infinity) - (b.avg_daily_sales ?? -Infinity)
+          // avg_daily_sales is null when backend omits velocity — unknowns sort last in asc
+          // (?? Infinity mirrors days_until_stockout's ?? 9999 below; one consistent semantic
+          // for data gaps). The comparator is direction-aware: desc flips nulls to first,
+          // exactly like days_until_stockout nulls behave (Story 169.13).
+          comparison = (a.avg_daily_sales ?? Infinity) - (b.avg_daily_sales ?? Infinity)
           break
         case 'days_until_stockout': {
           const daysA = a.days_until_stockout ?? 9999
