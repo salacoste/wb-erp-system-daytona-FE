@@ -44,6 +44,7 @@ export function PaidStorageImportDialog({ open, onOpenChange }: PaidStorageImpor
     setDateFrom,
     setDateTo,
     importState,
+    statusData,
     showCloseConfirm,
     setShowCloseConfirm,
     validationError,
@@ -86,7 +87,9 @@ export function PaidStorageImportDialog({ open, onOpenChange }: PaidStorageImpor
             </div>
           )}
 
-          {importState.status === 'processing' && <ImportProcessing />}
+          {importState.status === 'processing' && (
+            <ImportProcessing statusUnknown={statusData?.status === 'unknown'} />
+          )}
 
           {importState.status === 'success' && (
             <ImportSuccess

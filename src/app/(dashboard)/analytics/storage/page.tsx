@@ -46,9 +46,11 @@ export default function StorageAnalyticsPage() {
     bySkuError,
     topConsumersData,
     isLoadingTopConsumers,
+    topConsumersError,
     filledTrendsData,
     trendsData,
     isLoadingTrends,
+    trendsError,
     isLoadingUnfiltered,
     availableBrands,
     availableWarehouses,
@@ -145,13 +147,24 @@ export default function StorageAnalyticsPage() {
           </div>
         </CardHeader>
         <CardContent>
-          <StorageTrendsChart
-            data={filledTrendsData}
-            summary={trendsData?.summary?.storage_cost}
-            isLoading={isLoadingTrends}
-            selectedWeek={selectedWeek}
-            onWeekClick={handleWeekClick}
-          />
+          {/* Story 169.12 (AC-2): recoverable per-section error — the trends
+              section shows an Alert while all other sections retain their data. */}
+          {trendsError ? (
+            <Alert variant="destructive">
+              <AlertDescription>
+                Не удалось загрузить динамику расходов на хранение. Другие разделы страницы
+                отображаются с актуальными данными.
+              </AlertDescription>
+            </Alert>
+          ) : (
+            <StorageTrendsChart
+              data={filledTrendsData}
+              summary={trendsData?.summary?.storage_cost}
+              isLoading={isLoadingTrends}
+              selectedWeek={selectedWeek}
+              onWeekClick={handleWeekClick}
+            />
+          )}
         </CardContent>
       </Card>
 
@@ -161,6 +174,7 @@ export default function StorageAnalyticsPage() {
         topConsumers={topConsumersData?.top_consumers}
         isLoadingBySku={isLoadingBySku}
         isLoadingTopConsumers={isLoadingTopConsumers}
+        topConsumersError={topConsumersError}
       />
     </div>
   )

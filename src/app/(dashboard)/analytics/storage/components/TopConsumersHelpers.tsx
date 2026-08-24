@@ -1,43 +1,40 @@
 import { Trophy, Medal } from 'lucide-react'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
 import { cn, formatPercentage } from '@/lib/utils'
+// Story 169.12 parked dedupe: identical >20/>10 thresholds — absorb the shared
+// classifier instead of the local getCostSeverity copy (read-only shared import).
+import {
+  getStorageRatioSeverity,
+  type RatioSeverity,
+} from '@/components/custom/dashboard/StorageRatioIndicator'
 
 /**
  * Helper components for TopConsumersWidget.
  * Story 24.4-FE: Top Consumers Widget — extracted for file-size compliance.
  */
 
-// Cost severity thresholds per UX Decision Q10
-type CostSeverity = 'high' | 'medium' | 'low' | 'unknown'
-
-export function getCostSeverity(ratio: number | null): CostSeverity {
-  if (ratio === null) return 'unknown'
-  if (ratio > 20) return 'high'
-  if (ratio > 10) return 'medium'
-  return 'low'
-}
-
-// Rank Indicator Component (UX Decision Q9)
+// Rank Indicator Component (UX Decision Q9); Story 169.12: rank medal colors →
+// status/warning tokens + muted (aria-labels preserved verbatim).
 export function RankIndicator({ rank }: { rank: number }) {
   switch (rank) {
     case 1:
       return (
         <div className="flex items-center gap-1">
-          <Trophy className="h-4 w-4 text-yellow-500" aria-label="1 место" />
+          <Trophy className="h-4 w-4 text-status-warning" aria-label="1 место" />
           <span className="text-sm font-medium">1</span>
         </div>
       )
     case 2:
       return (
         <div className="flex items-center gap-1">
-          <Medal className="h-4 w-4 text-gray-400" aria-label="2 место" />
+          <Medal className="h-4 w-4 text-muted-foreground" aria-label="2 место" />
           <span className="text-sm font-medium">2</span>
         </div>
       )
     case 3:
       return (
         <div className="flex items-center gap-1">
-          <Medal className="h-4 w-4 text-amber-600" aria-label="3 место" />
+          <Medal className="h-4 w-4 text-status-warning" aria-label="3 место" />
           <span className="text-sm font-medium">3</span>
         </div>
       )
@@ -46,18 +43,19 @@ export function RankIndicator({ rank }: { rank: number }) {
   }
 }
 
-// Cost Severity Dot Component (UX Decision Q10)
+// Cost Severity Dot Component (UX Decision Q10); Story 169.12: severity dots →
+// status-success/warning/error solid pairs + muted neutral (169.9 canon).
 export function CostSeverityDot({ ratio }: { ratio: number | null }) {
-  const severity = getCostSeverity(ratio)
+  const severity: RatioSeverity = getStorageRatioSeverity(ratio)
 
-  const colors: Record<CostSeverity, string> = {
-    high: 'bg-red-500',
-    medium: 'bg-yellow-500',
-    low: 'bg-green-500',
-    unknown: 'bg-gray-300',
+  const colors: Record<RatioSeverity, string> = {
+    high: 'bg-status-error',
+    medium: 'bg-status-warning',
+    low: 'bg-status-success',
+    unknown: 'bg-muted',
   }
 
-  const labels: Record<CostSeverity, string> = {
+  const labels: Record<RatioSeverity, string> = {
     high: 'Высокие затраты',
     medium: 'Средние затраты',
     low: 'Низкие затраты',
@@ -70,7 +68,9 @@ export function CostSeverityDot({ ratio }: { ratio: number | null }) {
         <TooltipTrigger asChild>
           <div className="flex items-center gap-2 cursor-help">
             {ratio !== null && (
-              <span className={cn('text-sm', severity === 'high' && 'text-red-600 font-medium')}>
+              <span
+                className={cn('text-sm', severity === 'high' && 'text-status-error font-medium')}
+              >
                 {formatPercentage(ratio, 1)}
               </span>
             )}

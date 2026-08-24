@@ -2,6 +2,7 @@
 
 import { X } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import { formatWeekShort } from './storage-format'
 
 /**
  * Week Filter Badge
@@ -17,13 +18,6 @@ interface WeekFilterBadgeProps {
   week: string
   /** Callback when clear button is clicked */
   onClear: () => void
-}
-
-/**
- * Format week for display: "2025-W47" → "W47"
- */
-function formatWeekShort(week: string): string {
-  return week.split('-')[1] || week
 }
 
 export function WeekFilterBadge({ week, onClear }: WeekFilterBadgeProps) {

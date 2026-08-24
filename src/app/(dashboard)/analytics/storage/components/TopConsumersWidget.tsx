@@ -16,6 +16,7 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/comp
 import type { TopConsumerItem } from '@/types/storage-analytics'
 import { RankIndicator, CostSeverityDot } from './TopConsumersHelpers'
 import { formatPercentage } from '@/lib/utils'
+import { formatCurrency } from './storage-format'
 
 /**
  * Top Consumers Widget
@@ -39,16 +40,6 @@ export function TopConsumersWidget({
   onProductClick,
 }: TopConsumersWidgetProps) {
   const router = useRouter()
-
-  // Format currency. Null = unknown cost (AP#8: money, never collapse to 0 ₽) → render "—".
-  const formatCurrency = (value: number | null): string => {
-    if (value === null) return '—'
-    return new Intl.NumberFormat('ru-RU', {
-      style: 'currency',
-      currency: 'RUB',
-      maximumFractionDigits: 0,
-    }).format(value)
-  }
 
   // Handle row click
   const handleRowClick = (nmId: string | number) => {
@@ -142,12 +133,16 @@ export function TopConsumersWidget({
                       {new Date(item.last_charge_date).toLocaleDateString('ru-RU')}
                     </span>
                   )}
-                  {/* Show "No stock" indicator when has_warehouse_stock is false */}
+                  {/* Tri-state (Story 169.12 Task 0): false → explicit warning,
+                      null → unknown renders «—» (never a false "no stock"), true → nothing. */}
                   {item.has_warehouse_stock === false && (
-                    <span className="text-xs text-amber-600 flex items-center gap-0.5">
+                    <span className="text-xs text-status-warning flex items-center gap-0.5">
                       <PackageX className="h-2.5 w-2.5" />
                       Нет на складе
                     </span>
+                  )}
+                  {item.has_warehouse_stock == null && (
+                    <span className="text-xs text-muted-foreground">—</span>
                   )}
                 </div>
               </TableCell>

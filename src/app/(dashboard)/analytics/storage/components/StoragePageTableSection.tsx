@@ -7,6 +7,7 @@
 
 import { Trophy, List } from 'lucide-react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Alert, AlertDescription } from '@/components/ui/alert'
 import { StorageBySkuTable } from './StorageBySkuTable'
 import { TopConsumersWidget } from './TopConsumersWidget'
 import type { StorageBySkuResponse } from '@/types/storage-analytics/by-sku'
@@ -17,6 +18,8 @@ interface StoragePageTableSectionProps {
   topConsumers: TopConsumersResponse['top_consumers'] | undefined
   isLoadingBySku: boolean
   isLoadingTopConsumers: boolean
+  /** Story 169.12 (AC-2): per-section recoverable error */
+  topConsumersError?: unknown
 }
 
 export function StoragePageTableSection({
@@ -24,6 +27,7 @@ export function StoragePageTableSection({
   topConsumers,
   isLoadingBySku,
   isLoadingTopConsumers,
+  topConsumersError,
 }: StoragePageTableSectionProps) {
   return (
     <>
@@ -36,9 +40,20 @@ export function StoragePageTableSection({
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="overflow-x-auto">
-            <TopConsumersWidget data={topConsumers ?? []} isLoading={isLoadingTopConsumers} />
-          </div>
+          {/* Story 169.12 (AC-2): recoverable per-section error; the SKU table
+              below and every other section retain their data. */}
+          {topConsumersError ? (
+            <Alert variant="destructive">
+              <AlertDescription>
+                Не удалось загрузить топ товаров по расходам на хранение. Таблица всех товаров
+                отображается с актуальными данными.
+              </AlertDescription>
+            </Alert>
+          ) : (
+            <div className="overflow-x-auto">
+              <TopConsumersWidget data={topConsumers ?? []} isLoading={isLoadingTopConsumers} />
+            </div>
+          )}
         </CardContent>
       </Card>
 

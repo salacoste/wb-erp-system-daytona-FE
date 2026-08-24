@@ -85,7 +85,7 @@ export function StorageFilters({
             value={weekStart}
             onChange={e => handleWeekStartChange(e.target.value)}
             max={weekEnd}
-            className="w-36"
+            className="w-36 min-h-11"
           />
         </div>
         <span className="text-muted-foreground pb-2">—</span>
@@ -100,7 +100,7 @@ export function StorageFilters({
             onChange={e => handleWeekEndChange(e.target.value)}
             min={weekStart}
             max={lastCompletedWeek}
-            className="w-36"
+            className="w-36 min-h-11"
           />
         </div>
       </div>

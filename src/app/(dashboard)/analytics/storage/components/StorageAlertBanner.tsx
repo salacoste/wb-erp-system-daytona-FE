@@ -47,9 +47,13 @@ export function StorageAlertBanner({
     <TooltipProvider>
       <Tooltip>
         <TooltipTrigger asChild>
-          <Alert className="bg-red-50 border-red-200 cursor-help">
-            <AlertTriangle className="h-4 w-4 text-red-600" />
-            <AlertDescription className="text-red-800">
+          {/* Story 169.12: light-only red-50/200/600/800 pair → status-error /15
+              tint + /30 border (169.5 matched-pair canon); description keeps the
+              default foreground on tint (169.10 AA lesson). Threshold-20
+              semantics untouched. */}
+          <Alert className="bg-status-error/15 border-status-error/30 cursor-help">
+            <AlertTriangle className="h-4 w-4 text-status-error" />
+            <AlertDescription>
               {highRatioCount} {pluralize(highRatioCount, 'товар', 'товара', 'товаров')} с
               соотношением хранение/выручка &gt; {formatPercentageInt(threshold)}
             </AlertDescription>
@@ -63,15 +67,15 @@ export function StorageAlertBanner({
             </p>
             <div className="space-y-1">
               <p className="flex items-center gap-2">
-                <span className="w-2 h-2 rounded-full bg-green-500" />
+                <span className="w-2 h-2 rounded-full bg-status-success" />
                 &lt; 10% — отлично
               </p>
               <p className="flex items-center gap-2">
-                <span className="w-2 h-2 rounded-full bg-yellow-500" />
+                <span className="w-2 h-2 rounded-full bg-status-warning" />
                 10-20% — обратите внимание
               </p>
               <p className="flex items-center gap-2">
-                <span className="w-2 h-2 rounded-full bg-red-500" />
+                <span className="w-2 h-2 rounded-full bg-status-error" />
                 &gt; 20% — требует оптимизации
               </p>
             </div>

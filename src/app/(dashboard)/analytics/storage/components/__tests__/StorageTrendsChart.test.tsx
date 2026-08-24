@@ -108,3 +108,38 @@ describe('StorageTrendsChart', () => {
     expect(screen.getByTestId('area-chart')).toBeInTheDocument()
   })
 })
+
+// ============================================================================
+// Story 169.12: sr-only every-week data alternative (169.11 precedent)
+// ============================================================================
+
+describe('StorageTrendsChart - sr-only data table', () => {
+  const withGap: StorageTrendPoint[] = [
+    ...mockData,
+    { week: '2026-W12', storage_cost: null },
+  ]
+
+  it('renders an sr-only table with every week and its value at tooltip precision', () => {
+    render(<StorageTrendsChart data={withGap} isLoading={false} />)
+    const table = screen.getByRole('table', { hidden: true })
+    expect(table).toBeInTheDocument()
+    const rowTexts = Array.from(table.querySelectorAll('tbody tr')).map(
+      tr => tr.textContent ?? ''
+    )
+    expect(rowTexts).toHaveLength(4)
+    for (const week of ['2026-W09', '2026-W10', '2026-W11', '2026-W12']) {
+      expect(rowTexts.some(t => t.startsWith(week))).toBe(true)
+    }
+    // Tooltip precision (whole rubles, ru-RU NBSP grouping)
+    expect(rowTexts.some(t => /15[\s\u00A0]000[\s\u00A0]₽/.test(t))).toBe(true)
+    // Gap week is preserved verbatim (UX Q12)
+    expect(screen.getByText('нет данных')).toBeInTheDocument()
+  })
+
+  it('sr-only caption is name-distinct from the sr-only h2 «Детализация по хранению»', () => {
+    render(<StorageTrendsChart data={mockData} isLoading={false} />)
+    expect(
+      screen.getByText(/Данные о расходах на платное хранение по неделям/)
+    ).toBeInTheDocument()
+  })
+})
