@@ -61,12 +61,15 @@ Each domain follows the same pattern:
 
 40+ normalizer files exist under `src/lib/api/`, one per API domain. Representative examples:
 - `fulfillment-normalizer.ts` — FBO/FBS fulfillment metrics
-- `storage-queries-normalizer.ts` — Storage cost by SKU, top consumers
+- `storage-queries-normalizer.ts` — Storage cost by SKU, top consumers. Story 169.12 Task 0 hardened the boundary values: `has_warehouse_stock` is tri-state (`boolean | null` — absent/null stays `null`/unknown instead of being coerced to a false «Нет на складе» claim) and `percent_of_total` is nullable (unknown ratio stays `null`, never `0%`, per AP#8).
+- `storage-import-normalizer.ts` — Storage import job status; an unrecognized backend status maps to a distinct `'unknown'` state (Story 169.12 Task 0) instead of being coerced to `'failed'`, which had rendered a false import error — consumers keep polling as with `'pending'`.
+- `return-analytics-normalizer.ts` — Buyout/return analytics; an unrecognized return `category` stays a distinguishable `'unknown'` (Story 169.11 preface) with the neutral label «Неклассифицированный возврат» instead of silent coercion to a real category.
 - `buyout-analytics-normalizer.ts` — Buyout/return rate (enum validation for source, confidence, trend)
 - `liquidity-normalizer.ts` — Liquidity trends and distribution
 - `communications-normalizer.ts` — WB seller communications (feedbacks, questions, chats, claims, pinned reviews); value fields (rating, nmId) preserve null (AP#8), chat message `direction` coerced to a `'client' | 'seller' | 'wb'` union, and the pinned-reviews normalizer receives the raw `{ data, next }` SDK passthrough (see `skipDataUnwrap` below)
 - `finances-normalizer.ts` — Account balance (money fields preserve null, AP#8) and financial documents; the BE already maps snake_case → camelCase and unwraps the WB SDK envelope server-side, so the FE consumes bare camelCase shapes
 - `price-recommendations-normalizer.ts` — Per-SKU repricing recommendations; unknown `priceBasis` enum values are **indicated** as `'UNKNOWN'` (a distinct badge) rather than silently relabeled, `validationFlags` coerced to a string array, `alternativeBasisPrice` kept nullable (AP#8). See [Domain Logic — Pricing Basis](domain-logic.md#pricing-basis-repricing-spp-1-lane)
+- `monitoring-normalizer.ts` / `monitoring-grid-normalizer.ts` — Pipeline health for the `/monitor` and `/monitoring` routes; both pass through the backend-authored, schedule-aware lag label `dataLagDisplay` (trimmed; `null` when the pipeline never synced). `MonitorPipelineHealth` and `PipelineStatusGrid` render `dataLagDisplay` as authoritative and fall back to client-side `formatRelativeTime(lastSuccessAt)` only when it is absent — the raw `dataLagMinutes` no longer drives the displayed lag, because a naive minutes count misrepresents pipelines that run on infrequent schedules. Focused tests: `src/lib/api/__tests__/monitoring-normalizer.test.ts`, `src/lib/api/__tests__/monitoring-grid-normalizer.test.ts`, `src/app/(dashboard)/monitor/components/__tests__/monitor-pipeline-utils.test.ts`.
 
 ### Naming conventions
 - `normalize<Name>Response` — endpoint response normalizer
@@ -90,9 +93,9 @@ This rule governs the report-derived **historical SPP** values (`spp_rub`, `spp_
 
 `src/lib/csv/` — Pure functions that convert typed arrays to RFC 4180-compliant CSV strings with UTF-8 BOM. Domain-specific export modules exist for buyout, funnel, advertising, pricing, returns, search, evaluations, SKU accuracy, and cross-reference data. The `<ExportCsvButton>` component handles Blob creation and download.
 
-Core helper: `csv-helpers.ts` — `escapeCsvCell()` (RFC 4180 §2.6 quoting), `prefixUtf8Bom()` (UTF-8 BOM for Excel Cyrillic rendering). Null values render as "—" (em-dash).
+Core helper: `csv-helpers.ts` — `escapeCsvCell()` applies **OWASP CSV-injection defanging** (cells starting with `=`, `+`, `-`, `@`, TAB, CR, or LF are prefixed with a single quote so hostile product names like `=HYPERLINK(...)` cannot execute in Excel) and then RFC 4180 §2.6 quoting; `escapeCsvCellAlwaysQuoted()` preserves the legacy exporters whose stable file format quotes every cell without duplicating the security logic. Two deliberate, pinned trade-offs (do not "fix"): formatted negative values such as `"-1 234,56 ₽"` also match the leading `-` and gain a literal `'` (exempting `/^-\d/` would reopen the `-1+1|cmd` payload, and these cells are pre-formatted ru-RU strings Excel never treated as numeric); defanging checks the **cell-value start only**, so an embedded `safe\n=CMD()` gets no second-line prefix. `prefixUtf8Bom()` adds the UTF-8 BOM for Excel Cyrillic rendering. Null values render as "—" (em-dash).
 
-Source: `src/lib/csv/`
+Source: `src/lib/csv/`, tests in `src/lib/csv/__tests__/csv-helpers.test.ts`
 
 ## Communications Write-Back (NEW-2, Async 202 Job Polling)
 
