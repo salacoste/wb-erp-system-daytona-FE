@@ -73,6 +73,26 @@ describe('normalizeStorageBySkuResponse', () => {
     expect(item.storage_cost_avg_daily).toBeNull()
     expect(item.volume_avg).toBeNull()
     expect(item.warehouses).toEqual([])
+    // Story 169.12 Task 0: tri-state stock — absent → null (unknown), not false.
+    expect(item.has_warehouse_stock).toBeNull()
+  })
+
+  // Story 169.12 Task 0 (Defensive Frontend): has_warehouse_stock is tri-state.
+  // Absent/null → null (unknown — UI renders '—'), never a false «Нет на складе».
+  it('has_warehouse_stock tri-state: absent/null → null, false → false, true → true (by-sku)', () => {
+    const raw = {
+      data: [
+        { nm_id: '1' },
+        { nm_id: '2', has_warehouse_stock: null },
+        { nm_id: '3', has_warehouse_stock: false },
+        { nm_id: '4', has_warehouse_stock: true },
+      ],
+    }
+    const result = normalizeStorageBySkuResponse(raw, 'W1', 'W2')
+    expect(result.data[0].has_warehouse_stock).toBeNull()
+    expect(result.data[1].has_warehouse_stock).toBeNull()
+    expect(result.data[2].has_warehouse_stock).toBe(false)
+    expect(result.data[3].has_warehouse_stock).toBe(true)
   })
 
   it('null volume_avg is preserved as null', () => {
@@ -141,6 +161,35 @@ describe('normalizeTopConsumersResponse', () => {
     expect(item.storage_cost).toBeNull()
     expect(item.volume).toBeNull()
     expect(item.revenue_net).toBeUndefined()
+    // Story 169.12 Task 0: tri-state stock — absent → null (unknown), not false.
+    expect(item.has_warehouse_stock).toBeNull()
+  })
+
+  // Story 169.12 Task 0 (Defensive Frontend): has_warehouse_stock is tri-state.
+  it('has_warehouse_stock tri-state: absent/null → null, false → false, true → true (top-consumers)', () => {
+    const raw = {
+      top_consumers: [
+        { rank: 1 },
+        { rank: 2, has_warehouse_stock: null },
+        { rank: 3, has_warehouse_stock: false },
+        { rank: 4, has_warehouse_stock: true },
+      ],
+    }
+    const result = normalizeTopConsumersResponse(raw)
+    expect(result.top_consumers[0].has_warehouse_stock).toBeNull()
+    expect(result.top_consumers[1].has_warehouse_stock).toBeNull()
+    expect(result.top_consumers[2].has_warehouse_stock).toBe(false)
+    expect(result.top_consumers[3].has_warehouse_stock).toBe(true)
+  })
+
+  // Story 169.12 Task 0 (AP#8): unknown ratio is null — never coerced to 0%.
+  it('percent_of_total absent or null is preserved as null (AP#8), not 0', () => {
+    const raw = {
+      top_consumers: [{ rank: 1 }, { rank: 2, percent_of_total: null }],
+    }
+    const result = normalizeTopConsumersResponse(raw)
+    expect(result.top_consumers[0].percent_of_total).toBeNull()
+    expect(result.top_consumers[1].percent_of_total).toBeNull()
   })
 
   it('null volume preserved as null, revenue_net as undefined (optional field)', () => {

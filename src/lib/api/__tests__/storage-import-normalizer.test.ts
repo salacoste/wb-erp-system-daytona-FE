@@ -33,24 +33,33 @@ describe('normalizeImportStatusResponse', () => {
     expect(result.error_message).toBe('Connection timeout')
   })
 
-  it('null input defaults to failed status with empty id', () => {
+  // Story 169.12 Task 0 (Defensive Frontend): pins flipped from 'failed' to
+  // 'unknown' — an absent/unrecognized status is UNKNOWN, not a failure; the old
+  // coercion rendered a false import error.
+  it('null input preserves unknown status with empty id', () => {
     const result = normalizeImportStatusResponse(null)
     expect(result.import_id).toBe('')
-    expect(result.status).toBe('failed')
+    expect(result.status).toBe('unknown')
     expect(result.rows_imported).toBeUndefined()
     expect(result.error_message).toBeUndefined()
     expect(result.completed_at).toBeUndefined()
   })
 
-  it('missing fields default safely', () => {
+  it('missing fields default safely to unknown status', () => {
     const result = normalizeImportStatusResponse({})
     expect(result.import_id).toBe('')
-    expect(result.status).toBe('failed')
+    expect(result.status).toBe('unknown')
   })
 
-  it('invalid status string defaults to failed', () => {
-    const result = normalizeImportStatusResponse({ import_id: 'x', status: 'unknown' })
-    expect(result.status).toBe('failed')
+  it('unrecognized status string is preserved distinguishably as unknown (not failed)', () => {
+    const result = normalizeImportStatusResponse({ import_id: 'x', status: 'partially_stuck' })
+    expect(result.status).toBe('unknown')
+  })
+
+  it('valid statuses pass through unchanged (regression pins)', () => {
+    for (const status of ['pending', 'processing', 'completed', 'failed']) {
+      expect(normalizeImportStatusResponse({ import_id: 'x', status }).status).toBe(status)
+    }
   })
 
   it('camelCase dual-lookup: importId → import_id', () => {

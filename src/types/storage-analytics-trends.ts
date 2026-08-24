@@ -88,7 +88,12 @@ export interface PaidStorageImportRequest {
 /**
  * Import job status
  */
-export type ImportStatus = 'pending' | 'processing' | 'completed' | 'failed'
+/**
+ * 'unknown' = backend returned a status string outside the known set.
+ * Story 169.12 Task 0 (Defensive Frontend): preserve unrecognized statuses
+ * distinguishably instead of coercing to 'failed' (which rendered an error).
+ */
+export type ImportStatus = 'pending' | 'processing' | 'completed' | 'failed' | 'unknown'
 
 /**
  * Response from POST /v1/imports/paid-storage

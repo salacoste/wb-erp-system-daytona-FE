@@ -273,6 +273,6 @@ export const mockNullCostTopConsumerItem: TopConsumerItem = {
   product_name: 'Товар без данных о стоимости хранения',
   brand: 'NoCostData',
   storage_cost: null,
-  percent_of_total: 0,
+  percent_of_total: null, // AP#8: unknown share renders «—», not 0% (169.12 Task 0 consistency)
   volume: 0.4,
 }

@@ -30,8 +30,9 @@ export interface TopConsumerItem {
   /** Storage cost for the period (₽) - HISTORICAL, not current stock indicator.
    *  AP#8: money field is number|null — null renders '—', not "0 ₽". */
   storage_cost: number | null
-  /** Percentage of total storage cost */
-  percent_of_total: number
+  /** Percentage of total storage cost (null = unknown; AP#8 — never coerce to 0%).
+   *  Story 169.12 Task 0: widened to nullable. */
+  percent_of_total: number | null
   /** Volume (liters, null if no data) */
   volume: number | null
   /** Net revenue (optional, if include_revenue=true) */
@@ -42,8 +43,10 @@ export interface TopConsumerItem {
   total_stock?: number | null
   /** Date of last storage charge (YYYY-MM-DD, null if no charges) */
   last_charge_date?: string | null
-  /** True if product currently has stock in WB warehouses */
-  has_warehouse_stock?: boolean
+  /** True if product currently has stock in WB warehouses; null = unknown.
+   *  Story 169.12 Task 0 (AP#8/Defensive Frontend): tri-state — absent/null from
+   *  backend stays null so UI renders '—', not a false «Нет на складе» claim. */
+  has_warehouse_stock?: boolean | null
 }
 
 /**
