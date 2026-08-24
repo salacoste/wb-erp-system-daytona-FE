@@ -6,11 +6,12 @@ import type { SupplyPlanningSummary } from '@/types/supply-planning'
 // Mock supply-planning-config
 vi.mock('@/lib/supply-planning-config', () => ({
   STOCKOUT_RISK_CONFIG: {
-    out_of_stock: { label: 'Нет в наличии', color: '#EF4444', lucideIcon: 'PackageOpen' },
-    critical: { label: 'Критично', color: '#F97316', lucideIcon: 'AlertTriangle' },
-    warning: { label: 'Внимание', color: '#EAB308', lucideIcon: 'AlertCircle' },
-    low: { label: 'Низкий', color: '#3B82F6', lucideIcon: 'Info' },
-    healthy: { label: 'Достаточно', color: '#22C55E', lucideIcon: 'CheckCircle' },
+    // Story 169.13: lib hex channel dropped from the mock — route consumes labels/icons only.
+    out_of_stock: { label: 'Нет в наличии', lucideIcon: 'PackageOpen' },
+    critical: { label: 'Критично', lucideIcon: 'AlertTriangle' },
+    warning: { label: 'Внимание', lucideIcon: 'AlertCircle' },
+    low: { label: 'Низкий', lucideIcon: 'Info' },
+    healthy: { label: 'Достаточно', lucideIcon: 'CheckCircle' },
   },
 }))
 
@@ -23,11 +24,12 @@ vi.mock('../supply-risk-card-styles', () => ({
     Info: () => <span data-testid="icon-info">inf</span>,
     CheckCircle: () => <span data-testid="icon-check">chk</span>,
   },
-  getCardStyles: () => ({
-    card: 'bg-white',
-    icon: 'text-gray-600',
-    label: 'text-gray-700',
-    count: 'text-gray-900',
+  // Story 169.13: mock returns token classes (active card carries the ring).
+  getCardStyles: (_status: string, isActive: boolean) => ({
+    card: isActive ? 'bg-muted border-border ring-2 ring-muted-foreground' : 'bg-muted/50 border-border',
+    icon: 'text-muted-foreground',
+    label: 'text-foreground',
+    count: 'text-foreground',
   }),
 }))
 

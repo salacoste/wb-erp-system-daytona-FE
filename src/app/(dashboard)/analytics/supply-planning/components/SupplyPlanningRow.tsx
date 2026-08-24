@@ -37,18 +37,19 @@ export function SupplyPlanningRow({ item, isExpanded, onToggleExpand }: SupplyPl
       {/* Main Row */}
       <tr
         className={cn(
-          'border-b border-gray-200 transition-colors',
+          'border-b border-border transition-colors',
           ROW_BG_COLORS[item.stockout_risk],
           ROW_BORDER_COLORS[item.stockout_risk],
-          'hover:bg-gray-50'
+          'hover:bg-muted/50'
         )}
       >
-        {/* Expand chevron */}
+        {/* Expand chevron — aria-expanded exposes the current state (169.13 AX) */}
         <td className="px-2 py-3">
           <button
             onClick={onToggleExpand}
-            className="p-1 rounded hover:bg-gray-200 text-gray-400 hover:text-gray-600 transition-colors"
+            aria-expanded={isExpanded}
             aria-label={isExpanded ? 'Свернуть детали' : 'Показать детали'}
+            className="p-1 rounded hover:bg-muted text-muted-foreground hover:text-foreground transition-colors"
           >
             {isExpanded ? (
               <ChevronDown className="h-4 w-4" />
@@ -60,15 +61,20 @@ export function SupplyPlanningRow({ item, isExpanded, onToggleExpand }: SupplyPl
 
         <StatusCell item={item} />
 
-        {/* SKU ID */}
-        <td className="px-4 py-3 text-sm font-medium text-gray-900">{item.sku_id}</td>
+        {/* SKU ID — opaque identifier: font-mono, never formatNumber (anti-pattern #10) */}
+        <td className="px-4 py-3 text-sm font-medium font-mono text-foreground">{item.sku_id}</td>
 
         <ProductNameCell item={item} />
         <StockCell item={item} />
 
-        {/* In Transit (hidden on tablet) */}
+        {/* In Transit (hidden on tablet) — informational when > 0 (169.13) */}
         <td className="px-4 py-3 text-right hidden lg:table-cell">
-          <span className={cn('text-sm', item.in_transit > 0 ? 'text-blue-600' : 'text-gray-400')}>
+          <span
+            className={cn(
+              'text-sm tabular-nums',
+              item.in_transit > 0 ? 'text-status-information' : 'text-muted-foreground'
+            )}
+          >
             {item.in_transit > 0 ? formatStockQty(item.in_transit) : '—'}
           </span>
         </td>
@@ -78,14 +84,14 @@ export function SupplyPlanningRow({ item, isExpanded, onToggleExpand }: SupplyPl
 
         {/* Reorder Qty (hidden on smaller screens) */}
         <td className="px-4 py-3 text-right hidden xl:table-cell">
-          <span className="text-sm font-medium text-gray-900">
+          <span className="text-sm font-medium tabular-nums text-foreground">
             {item.reorder_quantity > 0 ? `${formatStockQty(item.reorder_quantity)} шт` : '—'}
           </span>
         </td>
 
         {/* Reorder Value (hidden on smaller screens) */}
         <td className="px-4 py-3 text-right hidden xl:table-cell">
-          <span className="text-sm font-medium text-gray-900">
+          <span className="text-sm font-medium tabular-nums text-foreground">
             {formatReorderValue(item.reorder_value)}
           </span>
         </td>

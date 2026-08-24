@@ -1,9 +1,13 @@
-import { PackageX, AlertTriangle, AlertCircle, Clock, CheckCircle } from 'lucide-react'
+import { PackageX, AlertTriangle, AlertCircle, Clock, CheckCircle, HelpCircle } from 'lucide-react'
 import type { StockoutRisk } from '@/types/supply-planning'
+import { SUPPLY_RISK_TOKENS } from './supply-risk-tokens'
 
 /**
  * Supply Risk Card Styles & Icon Mappings
  * Extracted from SupplyRiskCards.tsx for file size compliance.
+ *
+ * Story 169.13: card surfaces derive from the route-local single-source
+ * token map (supply-risk-tokens.ts) — lib hex channels no longer consumed.
  */
 
 // Lucide icon mapping
@@ -13,6 +17,7 @@ export const LUCIDE_ICONS = {
   AlertCircle,
   Clock,
   CheckCircle,
+  HelpCircle,
 } as const
 
 export interface CardStyleSet {
@@ -24,48 +29,14 @@ export interface CardStyleSet {
 
 /**
  * Get Tailwind classes for card styling based on status
- * UX Specs: Different background colors per status
+ * UX Specs: Different background colors per status (now semantic tokens)
  */
 export function getCardStyles(status: StockoutRisk, isActive: boolean): CardStyleSet {
-  const styles: Record<StockoutRisk, CardStyleSet> = {
-    out_of_stock: {
-      card: isActive ? 'bg-gray-800 border-gray-900' : 'bg-gray-100 border-gray-200',
-      icon: isActive ? 'text-white' : 'text-gray-700',
-      label: isActive ? 'text-white' : 'text-gray-700',
-      count: isActive ? 'text-white' : 'text-gray-900',
-    },
-    critical: {
-      card: isActive ? 'bg-red-100 border-red-300' : 'bg-red-50 border-red-200',
-      icon: 'text-red-600',
-      label: 'text-red-700',
-      count: 'text-red-900',
-    },
-    warning: {
-      card: isActive ? 'bg-orange-100 border-orange-300' : 'bg-orange-50 border-orange-200',
-      icon: 'text-orange-600',
-      label: 'text-orange-700',
-      count: 'text-orange-900',
-    },
-    low: {
-      card: isActive ? 'bg-yellow-100 border-yellow-300' : 'bg-yellow-50 border-yellow-200',
-      icon: 'text-yellow-600',
-      label: 'text-yellow-700',
-      count: 'text-yellow-900',
-    },
-    healthy: {
-      card: isActive ? 'bg-green-100 border-green-300' : 'bg-green-50 border-green-200',
-      icon: 'text-green-600',
-      label: 'text-green-700',
-      count: 'text-green-900',
-    },
-    unknown: {
-      // Story 169.13: muted visible-unknown — never styled as healthy green.
-      card: isActive ? 'bg-gray-100 border-gray-300' : 'bg-gray-50 border-gray-200',
-      icon: 'text-gray-500',
-      label: 'text-gray-600',
-      count: 'text-gray-800',
-    },
+  const tokens = SUPPLY_RISK_TOKENS[status]
+  return {
+    card: isActive ? tokens.cardActive : tokens.card,
+    icon: tokens.icon,
+    label: tokens.accentText,
+    count: 'text-foreground',
   }
-
-  return styles[status]
 }

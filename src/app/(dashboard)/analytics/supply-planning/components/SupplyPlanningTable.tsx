@@ -82,22 +82,27 @@ export function SupplyPlanningTable({
       <CardHeader className="pb-4">
         {/* Toolbar: Search, Filter info, Export */}
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-          {/* Search */}
+          {/* Search — min-h-11 touch target + aria-label linkage (169.13) */}
           <div className="relative flex-1 max-w-sm">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+            <Search
+              className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground"
+              aria-hidden="true"
+            />
             <Input
               placeholder="Поиск по артикулу или названию..."
+              aria-label="Поиск по артикулу или названию"
               value={searchQuery}
               onChange={e => {
                 setSearchQuery(e.target.value)
                 resetPage()
               }}
-              className="pl-9 pr-9"
+              className="pl-9 pr-9 min-h-11"
             />
             {searchQuery && (
               <button
                 onClick={() => handleClearSearch(resetPage)}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                aria-label="Очистить поиск"
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
               >
                 <X className="h-4 w-4" />
               </button>
@@ -113,6 +118,8 @@ export function SupplyPlanningTable({
               </Button>
             )}
 
+            {/* BEHAVIOR PIN (Story 169.13): export uses the FULL filtered processedData,
+                NOT the current page slice — preserved as-is, do not "fix". */}
             <Button variant="outline" size="sm" onClick={() => exportSupplyTableCSV(processedData)}>
               <Download className="h-4 w-4 mr-2" />
               CSV
@@ -122,9 +129,16 @@ export function SupplyPlanningTable({
       </CardHeader>
 
       <CardContent className="p-0">
-        {/* Table */}
-        <div className="overflow-x-auto">
+        {/* Table — scroll region is keyboard-reachable (169.13 a11y) */}
+        <div
+          className="overflow-x-auto"
+          tabIndex={0}
+          role="region"
+          aria-label="Таблица планирования поставок по артикулам"
+        >
           <table className="w-full">
+            {/* Static caption — period/filters are visible in the toolbar; no dynamic text (169.13) */}
+            <caption className="sr-only">Планирование поставок по артикулам</caption>
             <SupplyTableHeader
               sortField={sortField}
               sortOrder={sortOrder}
@@ -135,7 +149,7 @@ export function SupplyPlanningTable({
             <tbody>
               {paginatedData.length === 0 ? (
                 <tr>
-                  <td colSpan={11} className="px-4 py-12 text-center text-gray-500">
+                  <td colSpan={11} className="px-4 py-12 text-center text-muted-foreground">
                     {searchQuery
                       ? `Товары по запросу "${searchQuery}" не найдены`
                       : 'Нет данных для отображения'}

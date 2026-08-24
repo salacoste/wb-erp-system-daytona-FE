@@ -4,6 +4,7 @@ import { cn } from '@/lib/utils'
 import type { SupplyPlanningItem } from '@/types/supply-planning'
 import { formatStockQty, STOCKOUT_RISK_CONFIG } from '@/lib/supply-planning-utils'
 import { STATUS_ICONS } from './supply-planning-row-constants'
+import { SUPPLY_RISK_TOKENS } from './supply-risk-tokens'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
 
 /**
@@ -15,23 +16,24 @@ interface CellProps {
   item: SupplyPlanningItem
 }
 
-/** Status icon cell with tooltip */
+/** Status icon cell with tooltip — chip classes from the token map + sr-only
+ *  label (non-color risk marker, Story 169.13; lib bgClass/textClass unused). */
 export function StatusCell({ item }: CellProps) {
   const stockoutRisk =
-    item.stockout_risk && item.stockout_risk in STATUS_ICONS ? item.stockout_risk : 'healthy'
+    item.stockout_risk && item.stockout_risk in STATUS_ICONS ? item.stockout_risk : 'unknown'
   const StatusIcon = STATUS_ICONS[stockoutRisk]
   const statusConfig = STOCKOUT_RISK_CONFIG[stockoutRisk]
 
   return (
     <td className="px-4 py-3 text-center" aria-label={statusConfig?.label ?? 'Неизвестно'}>
+      <span className="sr-only">{statusConfig?.label ?? 'Неизвестно'}</span>
       <TooltipProvider>
         <Tooltip>
           <TooltipTrigger asChild>
             <span
               className={cn(
                 'inline-flex items-center justify-center w-8 h-8 rounded-full',
-                statusConfig?.bgClass ?? 'bg-gray-100',
-                statusConfig?.textClass ?? 'text-gray-600'
+                SUPPLY_RISK_TOKENS[stockoutRisk].chip
               )}
             >
               <StatusIcon className="h-4 w-4" />
@@ -53,7 +55,10 @@ export function ProductNameCell({ item }: CellProps) {
       <TooltipProvider>
         <Tooltip>
           <TooltipTrigger asChild>
-            <span className="text-sm text-gray-900 truncate block max-w-[200px]" aria-hidden="true">
+            <span
+              className="text-sm text-foreground truncate block max-w-[200px]"
+              aria-hidden="true"
+            >
               {item.product_name}
             </span>
           </TooltipTrigger>
@@ -90,13 +95,16 @@ export function StockCell({ item }: CellProps) {
           <TooltipTrigger asChild>
             <span
               className={cn(
-                'text-sm font-medium cursor-default',
-                item.current_stock === 0 ? 'text-red-600' : 'text-gray-900'
+                'text-sm font-medium tabular-nums cursor-default',
+                // Zero stock = explicit error state (distinct from unavailable, AP#8)
+                item.current_stock === 0 ? 'text-status-error' : 'text-foreground'
               )}
             >
               {formatStockQty(item.current_stock)}
               {item.warehouses.length > 1 && (
-                <span className="ml-1 text-xs text-gray-400">+{item.warehouses.length - 1}</span>
+                <span className="ml-1 text-xs text-muted-foreground">
+                  +{item.warehouses.length - 1}
+                </span>
               )}
             </span>
           </TooltipTrigger>
