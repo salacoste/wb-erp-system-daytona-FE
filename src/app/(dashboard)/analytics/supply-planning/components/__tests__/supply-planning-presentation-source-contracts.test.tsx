@@ -132,6 +132,9 @@ describe('Story 169.13 supply-planning presentation source contracts', () => {
     // only on sortable columns; non-sortable heads have NO attribute — StorageSkuTableHeader canon).
     expect(source).not.toMatch(/aria-sort="none"/)
     expect(source).not.toMatch(/aria-sort='none'/)
+    // Round-2 LOW: total-occurrence pin subsumes expression AND string forms —
+    // any future aria-sort="ascending" on the action th breaks this, not just count=1.
+    expect((source.match(/aria-sort=/g) ?? []).length).toBe(1)
   })
 
   it('CSV export uses full filtered processedData, NOT the page slice (behavior pin)', () => {

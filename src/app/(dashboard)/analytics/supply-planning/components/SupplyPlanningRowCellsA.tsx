@@ -26,7 +26,10 @@ export function StatusCell({ item }: CellProps) {
 
   return (
     <td className="px-4 py-3 text-center" aria-label={statusConfig?.label ?? 'Неизвестно'}>
-      <span className="sr-only">{statusConfig?.label ?? 'Неизвестно'}</span>
+      {/* «Риск: » prefix disambiguates the tier label from the zero-stock text
+          («Нет в наличии») rendered in the stock column — same lib wording,
+          different meaning; prevents duplicate exact-text lookups (e2e 169.13). */}
+      <span className="sr-only">{`Риск: ${statusConfig?.label ?? 'Неизвестно'}`}</span>
       <TooltipProvider>
         <Tooltip>
           <TooltipTrigger asChild>
