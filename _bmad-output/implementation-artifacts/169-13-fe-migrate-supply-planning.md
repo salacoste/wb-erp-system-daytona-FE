@@ -110,6 +110,7 @@ Plan: `.omx/plans/169.13-migrate-supply-planning.md` (authoritative — branch `
 - velocity_trend normalizer still uses `(toStr || 'no_data') as VelocityTrend` — unsanitized cast (phantom tier on unrecognized strings); map-based narrowing needs another shared-boundary pass or request-backend cycle.
 - Summary contract has NO unknown-risk bucket → cards cannot surface unknowns (Σ-known < total_skus possible); request-backend candidate (unknown_count field).
 - Desc risk-sort places unknown above healthy (cosmetic; mirrors healthy-inversion pre-existing behavior).
+- **E2E flake (post-close finding, PRE-EXISTING — not a 169.13 regression):** «can navigate to Supply Planning from sidebar» fails under full-suite parallel load (dashboard mount-time history push clobbers in-flight nav — race documented IN the test's own comments; passes isolated 1.2s and in branch warm runs 33/33). Hardening debt: dashboard URL-settle (Epic 172.1 territory) or test-side wait-for-settle; not fixable here (e2e spec = run-only outside owned surface).
 
 ### File List
 
