@@ -29,7 +29,9 @@ then may Story 169.12 perform its bounded contract closeout. Story 169.13 remain
 
 169.13 SHIPPED 2026-08-25 (последний backlog-роут эпика; 13/15): preface #231 (`95522187` — unknown enums
 + nullables, opus APPROVE) + #232 (`2778d43e`; 26 файлов, owned 58→73, **e2e на ветке 33/1↓/0**, 2×opus);
-полный пол **19 055/0**. Эпик 169: осталось 169.14 (BE) → 169.15 (shared FE) → 169.12-closeout.
+полный пол **19 055/0**. Эпик 169: осталось 169.14 (BE) → 169.15 (shared FE) → 169.12-closeout. Carry-out: e2e-flake
+«sidebar→supply-planning» (dashboard URL-race, load-зависимый, задокументирован в самом тесте) —
+кандидат на e2e-hardening до 172.1.
 
 **NEXT = 169.14 → 169.15 → 169.12 contract closeout** (169.14/169.15 `backlog`; 169.12 `review`; plans `.omx/plans/169.14-establish-authoritative-paid-storage-import-lifecycle-and-result-contract.md`, `.omx/plans/169.15-align-shared-frontend-paid-storage-import-boundary.md`, and `.omx/plans/169.12-migrate-storage-analytics-and-paid-storage-import.md`). Story 169.13 remains an independent backlog route.
 **Волна 23-24.08** (два полных цикла + инфраструктура): 169.11 returns — preface #218 (`d6ed2c65`,
