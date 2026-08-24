@@ -267,13 +267,15 @@ describe('StorageBySkuTable - Story 169.12 migration contracts', () => {
     expect(storageHeader).toHaveAttribute('aria-sort', 'ascending')
   })
 
-  it('exposes aria-sort on all four sortable headers when active', () => {
+  it('exposes aria-sort on all four sortable headers when active; inactive sortable headers are "none" (review F3)', () => {
     render(<StorageBySkuTable data={mockStorageBySkuItems} />)
     for (const label of ['₽/день', 'Объём', 'Дней']) {
       const header = screen.getByText(label).closest('th')
-      expect(header).not.toHaveAttribute('aria-sort')
+      expect(header).toHaveAttribute('aria-sort', 'none')
       fireEvent.click(screen.getByText(label))
       expect(screen.getByText(label).closest('th')).toHaveAttribute('aria-sort', 'descending')
+      // after activating this column, the default column goes back to 'none'
+      expect(screen.getByText('Хранение').closest('th')).toHaveAttribute('aria-sort', 'none')
     }
   })
 
@@ -299,15 +301,29 @@ describe('StorageBySkuTable - Story 169.12 migration contracts', () => {
 
   it('tri-state: has_warehouse_stock=false renders «Нет на складе», null/absent renders «—»', () => {
     const items = [
-      { ...mockStorageBySkuItems[0], nm_id: '1', vendor_code: 'NO-STOCK', has_warehouse_stock: false },
-      { ...mockStorageBySkuItems[1], nm_id: '2', vendor_code: 'NULL-STOCK', has_warehouse_stock: null },
-      { ...mockStorageBySkuItems[2], nm_id: '3', vendor_code: 'TRUE-STOCK', has_warehouse_stock: true },
+      {
+        ...mockStorageBySkuItems[0],
+        nm_id: '1',
+        vendor_code: 'NO-STOCK',
+        has_warehouse_stock: false,
+      },
+      {
+        ...mockStorageBySkuItems[1],
+        nm_id: '2',
+        vendor_code: 'NULL-STOCK',
+        has_warehouse_stock: null,
+      },
+      {
+        ...mockStorageBySkuItems[2],
+        nm_id: '3',
+        vendor_code: 'TRUE-STOCK',
+        has_warehouse_stock: true,
+      },
     ]
     render(<StorageBySkuTable data={items} />)
 
     const rows = screen.getAllByRole('row')
-    const rowByCode = (code: string) =>
-      rows.find(r => r.textContent?.includes(code)) as HTMLElement
+    const rowByCode = (code: string) => rows.find(r => r.textContent?.includes(code)) as HTMLElement
 
     const noStockRow = rowByCode('NO-STOCK')
     expect(noStockRow.textContent).toContain('Нет на складе')

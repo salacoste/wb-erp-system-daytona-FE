@@ -195,7 +195,6 @@ describe('StorageAnalyticsPage - no data state', () => {
   })
 })
 
-
 // ============================================================================
 // Story 169.12 (AC-2): per-section recoverable errors — trends/topConsumers
 // hooks previously dropped their errors silently; other sections retain data.
@@ -259,12 +258,12 @@ describe('StorageAnalyticsPage - per-section error states (Story 169.12)', () =>
     }))
   }
 
-  it('trends error renders a recoverable Alert while other sections keep data', async () => {
-    mockState({ trendsError: new Error('trends failed') })
+  it('trends error with no retained data renders the Alert only', async () => {
+    mockState({ trendsError: new Error('trends failed'), filledTrendsData: [] })
     const { default: Page } = await import('../page')
     renderWithProviders(<Page />)
     expect(
-      screen.getByText(/Не удалось загрузить динамику расходов на хранение/)
+      screen.getByText(/Не удалось обновить динамику расходов на хранение/)
     ).toBeInTheDocument()
     // Retention: the other sections still render their data
     expect(screen.getByTestId('storage-summary-cards')).toBeInTheDocument()
@@ -273,15 +272,65 @@ describe('StorageAnalyticsPage - per-section error states (Story 169.12)', () =>
     expect(screen.queryByTestId('storage-trends-chart')).not.toBeInTheDocument()
   })
 
-  it('topConsumers error renders a recoverable Alert while the SKU table keeps data', async () => {
-    mockState({ topConsumersError: new Error('consumers failed') })
+  it('trends background-refresh failure with retained data: chart AND Alert coexist (review F1)', async () => {
+    mockState({
+      trendsError: new Error('refresh failed'),
+      filledTrendsData: [
+        {
+          week_start: '2026-05-25',
+          week_end: '2026-05-31',
+          storage_cost: 150000,
+          avg_cost_per_sku: 5000,
+        },
+      ],
+    })
     const { default: Page } = await import('../page')
     renderWithProviders(<Page />)
     expect(
-      screen.getByText(/Не удалось загрузить топ товаров по расходам на хранение/)
+      screen.getByText(/Не удалось обновить динамику расходов на хранение/)
+    ).toBeInTheDocument()
+    expect(screen.getByTestId('storage-trends-chart')).toBeInTheDocument()
+  })
+
+  it('topConsumers error with no retained data renders the Alert only', async () => {
+    mockState({
+      topConsumersError: new Error('consumers failed'),
+      topConsumersData: { top_consumers: [] },
+    })
+    const { default: Page } = await import('../page')
+    renderWithProviders(<Page />)
+    expect(
+      screen.getByText(/Не удалось обновить топ товаров по расходам на хранение/)
     ).toBeInTheDocument()
     expect(screen.getByTestId('storage-sku-table')).toBeInTheDocument()
     expect(screen.getByTestId('storage-trends-chart')).toBeInTheDocument()
     expect(screen.queryByTestId('storage-top-consumers')).not.toBeInTheDocument()
+  })
+
+  it('topConsumers background-refresh failure with retained data: widget AND Alert coexist (review F1)', async () => {
+    mockState({
+      topConsumersError: new Error('refresh failed'),
+      topConsumersData: {
+        top_consumers: [
+          {
+            nm_id: '101',
+            vendor_code: 'SKU-101',
+            name: 'Retained item',
+            storage_cost_total: 9000,
+            storage_cost_avg_daily: 100,
+            volume_avg: null,
+            days_stored: 5,
+            has_warehouse_stock: true,
+            warehouses: [],
+          },
+        ],
+      },
+    })
+    const { default: Page } = await import('../page')
+    renderWithProviders(<Page />)
+    expect(
+      screen.getByText(/Не удалось обновить топ товаров по расходам на хранение/)
+    ).toBeInTheDocument()
+    expect(screen.getByTestId('storage-top-consumers')).toBeInTheDocument()
   })
 })

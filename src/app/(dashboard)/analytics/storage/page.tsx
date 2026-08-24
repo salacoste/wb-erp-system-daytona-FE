@@ -147,16 +147,18 @@ export default function StorageAnalyticsPage() {
           </div>
         </CardHeader>
         <CardContent>
-          {/* Story 169.12 (AC-2): recoverable per-section error — the trends
-              section shows an Alert while all other sections retain their data. */}
-          {trendsError ? (
-            <Alert variant="destructive">
+          {/* Story 169.12 (AC-2, review F1): background-refresh failure with
+              retained data → Alert + chart coexist; Alert-only when no data.
+              No retry Button — recovery rides the existing refetch paths. */}
+          {trendsError && (
+            <Alert variant="destructive" className="mb-4">
               <AlertDescription>
-                Не удалось загрузить динамику расходов на хранение. Другие разделы страницы
-                отображаются с актуальными данными.
+                Не удалось обновить динамику расходов на хранение. Отображены последние загруженные
+                данные.
               </AlertDescription>
             </Alert>
-          ) : (
+          )}
+          {(!trendsError || filledTrendsData.length > 0) && (
             <StorageTrendsChart
               data={filledTrendsData}
               summary={trendsData?.summary?.storage_cost}

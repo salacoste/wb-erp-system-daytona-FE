@@ -7,8 +7,8 @@
  * - page error (bySku) — TESTED: StoragePage.test.tsx error-state describe.
  * - per-section trends/topConsumers error — TESTED (Story 169.12 ADD; these
  *   hooks silently dropped errors pre-migration): StoragePage.test.tsx
- *   per-section describe — recoverable Alert per section, other sections retain
- *   their data (AC-2).
+ *   per-section describe — with retained data the section content AND the
+ *   error banner coexist (AC-2, review F1); Alert-only when no data.
  * - global empty (has_data=false) — TESTED: StoragePage no-data describe +
  *   StorageNoDataContent filters-retained view.
  * - filtered-empty — TESTED: StorageBySkuTable «Ничего не найдено» vs global
@@ -83,6 +83,10 @@ const CONTEXTUAL_HEX =
 const LEGACY_PALETTE =
   /\b(?:text|bg|border|ring|fill|stroke)-(?:gray|grey|blue|green|red|amber|orange|indigo|teal|emerald|purple|yellow|lime|rose|sky|slate|zinc|neutral|stone)-\d{2,3}\b/
 
+// Review F4: quoted rgba()/hsl() function literals are raw color values just
+// like hex — same letter-lookahead shape as CONTEXTUAL_HEX.
+const CONTEXTUAL_FUNC_COLOR = /['"\x60]\s*(?:rgba?|hsla?)\(/
+
 describe('Story 169.12 route presentation source contracts', () => {
   it('productionFiles() recursively enumerates exactly the pinned owned file set', () => {
     const files = productionFiles()
@@ -116,6 +120,25 @@ describe('Story 169.12 route presentation source contracts', () => {
     expect(CONTEXTUAL_HEX.test('запрос #197 закрыт')).toBe(false)
   })
 
+  it('func-color guard rejects quoted rgba()/hsl() literals, ignores prose mentions', () => {
+    expect(CONTEXTUAL_FUNC_COLOR.test("fill: 'rgba(124,77,255,0.1)'")).toBe(true)
+    expect(CONTEXTUAL_FUNC_COLOR.test("color: 'hsl(217, 91%, 60%)'")).toBe(true)
+    expect(CONTEXTUAL_FUNC_COLOR.test('the rgba( function family')).toBe(false)
+    expect(CONTEXTUAL_FUNC_COLOR.test('документация hsla( упоминается')).toBe(false)
+  })
+
+  it('owned production sources contain no raw rgba()/hsl() color literals (contextual guard)', () => {
+    for (const file of productionFiles()) {
+      expect(withoutComments(readFileSync(file, 'utf8')), file).not.toMatch(CONTEXTUAL_FUNC_COLOR)
+    }
+  })
+
+  it('owned production sources contain no hsl(var(--…)) shadcn-legacy references (route-wide)', () => {
+    for (const file of productionFiles()) {
+      expect(withoutComments(readFileSync(file, 'utf8')), file).not.toMatch(/hsl\(var\(/)
+    }
+  })
+
   it('chart series colors are registered var() tokens; selected emphasis is negative valence', () => {
     expect(CHART_COLORS.storage).toBe('var(--color-chart-1)')
     expect(CHART_COLORS.selected).toBe('var(--color-chart-negative)')
@@ -129,6 +152,7 @@ describe('Story 169.12 route presentation source contracts', () => {
       readFileSync(join(componentsDirectory, 'StorageTrendsChart.tsx'), 'utf8')
     )
     expect(chart).toMatch(/var\(--color-border\)/)
+    // hsl(var( ban hoisted route-wide (review F4); kept here as a chart pin
     expect(chart).not.toMatch(/hsl\(var\(--border\)\)/)
     const parts = withoutComments(
       readFileSync(join(componentsDirectory, 'StorageTrendsChartParts.tsx'), 'utf8')

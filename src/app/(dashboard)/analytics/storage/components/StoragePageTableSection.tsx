@@ -40,16 +40,18 @@ export function StoragePageTableSection({
           </CardTitle>
         </CardHeader>
         <CardContent>
-          {/* Story 169.12 (AC-2): recoverable per-section error; the SKU table
-              below and every other section retain their data. */}
+          {/* Story 169.12 (AC-2, review F1): background-refresh failure with
+              retained data → Alert + widget coexist; Alert-only when no data.
+              No retry Button — recovery rides the existing refetch paths. */}
           {topConsumersError ? (
-            <Alert variant="destructive">
+            <Alert variant="destructive" className="mb-4">
               <AlertDescription>
-                Не удалось загрузить топ товаров по расходам на хранение. Таблица всех товаров
-                отображается с актуальными данными.
+                Не удалось обновить топ товаров по расходам на хранение. Отображены последние
+                загруженные данные.
               </AlertDescription>
             </Alert>
-          ) : (
+          ) : null}
+          {(!topConsumersError || (topConsumers ?? []).length > 0) && (
             <div className="overflow-x-auto">
               <TopConsumersWidget data={topConsumers ?? []} isLoading={isLoadingTopConsumers} />
             </div>

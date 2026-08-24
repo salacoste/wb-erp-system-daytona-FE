@@ -25,7 +25,8 @@ interface StorageSkuTableHeaderProps {
  * useStorageBySkuTable and unchanged).
  */
 function ariaSortValue(field: SortField, sortField: SortField, sortOrder: SortOrder) {
-  if (sortField !== field) return undefined
+  // Review F3: 'none' (not undefined) on sortable-but-inactive headers
+  if (sortField !== field) return 'none'
   return sortOrder === 'asc' ? 'ascending' : 'descending'
 }
 
