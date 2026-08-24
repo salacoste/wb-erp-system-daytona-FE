@@ -18,10 +18,17 @@ import type { ImportStatusResponse } from '@/types/storage-analytics'
 export function normalizeImportStatusResponse(raw: unknown): ImportStatusResponse {
   const r = asRecord(raw)
   const status = toStr(r.status)
-  const validStatuses = ['pending', 'processing', 'completed', 'failed'] as const
-  const typedStatus = validStatuses.includes(status as ImportStatusResponse['status'])
-    ? (status as ImportStatusResponse['status'])
-    : 'failed'
+  // Story 169.12 Task 0 (Defensive Frontend): an unrecognized backend status is
+  // preserved distinguishably as 'unknown' instead of being coerced to 'failed'
+  // (which rendered a false import error). 'unknown' is not a failure — consumers
+  // keep polling, same as 'pending'.
+  const statusMap: Record<string, ImportStatusResponse['status']> = {
+    pending: 'pending',
+    processing: 'processing',
+    completed: 'completed',
+    failed: 'failed',
+  }
+  const typedStatus: ImportStatusResponse['status'] = statusMap[status] ?? 'unknown'
 
   return {
     import_id: toStr(r.import_id ?? r.importId),

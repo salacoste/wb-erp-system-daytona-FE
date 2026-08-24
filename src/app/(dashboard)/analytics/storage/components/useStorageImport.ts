@@ -68,6 +68,12 @@ export function useStorageImport(onOpenChange: (open: boolean) => void): UseStor
         message: statusData.error_message || 'Ошибка импорта',
       })
     }
+    // Story 169.12 Task 0: 'unknown' (unrecognized backend status) and 'pending'
+    // intentionally fall through — the poll keeps running, mirroring 'pending'
+    // handling. The dialog's close-confirmation is the natural terminal guard;
+    // only an explicit 'failed' is an error (Defensive Frontend: indicate, never
+    // coerce — previously unknown was coerced to 'failed' at the normalizer,
+    // rendering a false import error).
   }
 
   const validationError = validateDates(dateFrom, dateTo)

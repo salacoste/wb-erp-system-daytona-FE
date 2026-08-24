@@ -49,7 +49,9 @@ function normalizeSkuItem(raw: unknown): StorageBySkuItem {
     days_stored: toCount(d.days_stored ?? d.daysStored),
     total_stock: toNullableNumber(d.total_stock ?? d.totalStock),
     last_charge_date: toStringOrNull(d.last_charge_date ?? d.lastChargeDate),
-    has_warehouse_stock: !!d.has_warehouse_stock,
+    // Story 169.12 Task 0: tri-state — absent/null stays null (unknown), never
+    // coerced to false which would render a false «Нет на складе» claim.
+    has_warehouse_stock: d.has_warehouse_stock == null ? null : !!d.has_warehouse_stock,
   }
 }
 
@@ -63,14 +65,17 @@ function normalizeTopConsumerItem(raw: unknown): TopConsumerItem {
     brand: toStringOrNull(d.brand),
     // AP#8: money field preserves null — null renders '—', not "0 ₽".
     storage_cost: toNullableNumber(d.storage_cost ?? d.storageCost),
-    percent_of_total: toNullableNumber(d.percent_of_total ?? d.percentOfTotal) ?? 0,
+    // Story 169.12 Task 0 (AP#8): unknown ratio stays null — never coerce to 0%.
+    percent_of_total: toNullableNumber(d.percent_of_total ?? d.percentOfTotal),
     volume: toNullableNumber(d.volume),
     revenue_net: toNullableNumber(d.revenue_net ?? d.revenueNet) ?? undefined,
     storage_to_revenue_ratio:
       toNullableNumber(d.storage_to_revenue_ratio ?? d.storageToRevenueRatio) ?? undefined,
     total_stock: toNullableNumber(d.total_stock ?? d.totalStock),
     last_charge_date: toStringOrNull(d.last_charge_date ?? d.lastChargeDate),
-    has_warehouse_stock: !!d.has_warehouse_stock,
+    // Story 169.12 Task 0: tri-state — absent/null stays null (unknown), never
+    // coerced to false which would render a false «Нет на складе» claim.
+    has_warehouse_stock: d.has_warehouse_stock == null ? null : !!d.has_warehouse_stock,
   }
 }
 

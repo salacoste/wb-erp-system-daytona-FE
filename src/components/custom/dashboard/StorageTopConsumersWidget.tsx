@@ -195,7 +195,8 @@ function ConsumerRow({
       <div className="text-right flex-shrink-0">
         <p className="text-sm font-medium text-[#7C4DFF]">{storageCostLabel}</p>
         <p className="text-xs text-muted-foreground">
-          {formatPercentage(item.percent_of_total, 1)}
+          {/* Story 169.12 Task 0 (AP#8): unknown percent renders '—', not "0,0 %". */}
+          {item.percent_of_total === null ? '—' : formatPercentage(item.percent_of_total, 1)}
         </p>
       </div>
       <div className="w-20 flex-shrink-0 flex justify-end">

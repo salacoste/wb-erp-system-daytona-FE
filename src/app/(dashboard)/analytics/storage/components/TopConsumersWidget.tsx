@@ -152,7 +152,8 @@ export function TopConsumersWidget({
                 </div>
               </TableCell>
               <TableCell className="text-right text-sm text-muted-foreground">
-                {formatPercentage(item.percent_of_total, 1)}
+                {/* Story 169.12 Task 0 (AP#8): unknown percent renders '—', not "0,0 %". */}
+                {item.percent_of_total === null ? '—' : formatPercentage(item.percent_of_total, 1)}
               </TableCell>
               <TableCell className="text-right">
                 {/* storage_to_revenue_ratio is optional (undefined when revenue data is absent);
