@@ -66,19 +66,25 @@ export function useStoragePageState() {
   })
 
   // Story 24.9/24.10: Top consumers with brand/warehouse filters + effective week range
-  const { data: topConsumersData, isLoading: isLoadingTopConsumers } = useStorageTopConsumers(
-    effectiveWeekStart,
-    effectiveWeekEnd,
-    {
-      limit: 5,
-      include_revenue: true,
-      brand: selectedBrands.length > 0 ? selectedBrands.join(',') : undefined,
-      warehouse: selectedWarehouses.length > 0 ? selectedWarehouses.join(',') : undefined,
-    }
-  )
+  // Story 169.12 (AC-2): surface the per-section error (previously silently dropped)
+  const {
+    data: topConsumersData,
+    isLoading: isLoadingTopConsumers,
+    error: topConsumersError,
+  } = useStorageTopConsumers(effectiveWeekStart, effectiveWeekEnd, {
+    limit: 5,
+    include_revenue: true,
+    brand: selectedBrands.length > 0 ? selectedBrands.join(',') : undefined,
+    warehouse: selectedWarehouses.length > 0 ? selectedWarehouses.join(',') : undefined,
+  })
 
   // Story 24.9: Pass brand/warehouse filters to trends API
-  const { data: trendsData, isLoading: isLoadingTrends } = useStorageTrends(weekStart, weekEnd, {
+  // Story 169.12 (AC-2): surface the per-section error (previously silently dropped)
+  const {
+    data: trendsData,
+    isLoading: isLoadingTrends,
+    error: trendsError,
+  } = useStorageTrends(weekStart, weekEnd, {
     metrics: ['storage_cost'],
     brand: selectedBrands.length > 0 ? selectedBrands.join(',') : undefined,
     warehouse: selectedWarehouses.length > 0 ? selectedWarehouses.join(',') : undefined,
@@ -135,9 +141,11 @@ export function useStoragePageState() {
     bySkuError,
     topConsumersData,
     isLoadingTopConsumers,
+    topConsumersError,
     filledTrendsData,
     trendsData,
     isLoadingTrends,
+    trendsError,
     unfilteredData,
     isLoadingUnfiltered,
     availableBrands,

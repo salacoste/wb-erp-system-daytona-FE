@@ -74,13 +74,17 @@ export function ImportIdleForm({
   )
 }
 
-export function ImportProcessing() {
+export function ImportProcessing({ statusUnknown = false }: { statusUnknown?: boolean }) {
   return (
     <div className="py-8 text-center space-y-4">
       <Loader2 className="h-12 w-12 mx-auto animate-spin text-primary" />
       <p className="font-medium">Импорт выполняется...</p>
       <Progress value={undefined} className="w-full animate-pulse" />
       <p className="text-xs text-muted-foreground">Ожидаемое время: ~60 секунд</p>
+      {/* Story 169.12 (Task 0 follow-up): unrecognized backend poll status —
+          neutral muted hint, NOT an error-red state (Defensive Frontend:
+          indicate, never coerce; poll keeps running). */}
+      {statusUnknown && <p className="text-xs text-muted-foreground">Статус импорта неизвестен</p>}
     </div>
   )
 }
@@ -94,8 +98,15 @@ interface ImportSuccessProps {
 
 export function ImportSuccess({ rowsImported, dateFrom, dateTo, onClose }: ImportSuccessProps) {
   return (
-    <div className="py-8 text-center space-y-4">
-      <CheckCircle className="h-12 w-12 mx-auto text-green-500" />
+    <div
+      className="py-8 text-center space-y-4"
+      role="status"
+      tabIndex={0}
+      aria-label="Результат импорта: завершён"
+    >
+      {/* Story 169.12: focusable result summary + bounded live announcement (AX);
+          green-500 → status-success foreground pair. */}
+      <CheckCircle className="h-12 w-12 mx-auto text-status-success" />
       <p className="font-medium text-lg">Импорт завершён!</p>
       <p className="text-sm text-muted-foreground">
         Импортировано строк: {rowsImported.toLocaleString('ru-RU')}
@@ -116,8 +127,15 @@ interface ImportErrorProps {
 
 export function ImportError({ message, onClose, onRetry }: ImportErrorProps) {
   return (
-    <div className="py-8 text-center space-y-4">
-      <AlertCircle className="h-12 w-12 mx-auto text-red-500" />
+    <div
+      className="py-8 text-center space-y-4"
+      role="alert"
+      tabIndex={0}
+      aria-label="Результат импорта: ошибка"
+    >
+      {/* Story 169.12: focusable result summary + bounded live announcement (AX);
+          red-500 → status-error foreground pair. */}
+      <AlertCircle className="h-12 w-12 mx-auto text-status-error" />
       <p className="font-medium text-lg">Ошибка импорта</p>
       <p className="text-sm text-muted-foreground">{message}</p>
       <div className="flex justify-center gap-2">

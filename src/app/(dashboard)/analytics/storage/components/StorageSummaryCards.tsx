@@ -5,6 +5,7 @@ import { Card, CardContent } from '@/components/ui/card'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
 import type { StorageSummary, StoragePeriod } from '@/types/storage-analytics'
+import { formatCurrency } from './storage-format'
 
 /**
  * Storage Summary Cards
@@ -27,15 +28,8 @@ export function StorageSummaryCards({
   period,
   isLoading = false,
 }: StorageSummaryCardsProps) {
-  // Format currency. Null = unknown cost (AP#8: money, never collapse to 0 ₽) → render "—".
-  const formatCurrency = (value: number | null): string => {
-    if (value === null) return '—'
-    return new Intl.NumberFormat('ru-RU', {
-      style: 'currency',
-      currency: 'RUB',
-      maximumFractionDigits: 0,
-    }).format(value)
-  }
+  // Format currency single-sourced in storage-format (Story 169.12 dedupe;
+  // null = unknown cost, AP#8 → "—").
 
   // Format number with thousand separators
   const formatNumber = (value: number): string => {

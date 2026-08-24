@@ -1,28 +1,18 @@
 /**
- * Storage Trends Chart - Configuration & Formatters
+ * Storage Trends Chart - Configuration
  * Pure data/config extracted from StorageTrendsChart.tsx
  * Epic 24: Paid Storage Analytics (Frontend)
+ *
+ * Story 169.12: legacy local hex palette (#7C4DFF storage / #C62828 selected,
+ * plus never-consumed rgba gradient stops — deleted) → registered chart var()
+ * tokens, single source of truth for stroke/fill/dot (169.10/169.11 chart-token
+ * canon). Selected-week emphasis is negative-valence → chart-negative
+ * (169.4 BuyoutTrend dot-emphasis precedent).
+ *
+ * Formatters moved to storage-format.ts (route dedupe, Story 169.12).
  */
 
-// Chart color scheme - purple for storage to differentiate from other charts
-// Story 24.10: Added selected color for click-to-filter highlight
 export const CHART_COLORS = {
-  storage: '#7C4DFF',
-  selected: '#C62828', // Red-800 for selected week (matches sidebar active color)
-  gradientStart: 'rgba(124, 77, 255, 0.3)',
-  gradientEnd: 'rgba(124, 77, 255, 0)',
-}
-
-// Format currency for display
-export const formatCurrency = (value: number): string => {
-  return new Intl.NumberFormat('ru-RU', {
-    style: 'currency',
-    currency: 'RUB',
-    maximumFractionDigits: 0,
-  }).format(value)
-}
-
-// Format week label: "2025-W44" -> "W44"
-export const formatWeekShort = (week: string): string => {
-  return week.split('-')[1] || week
-}
+  storage: 'var(--color-chart-1)',
+  selected: 'var(--color-chart-negative)',
+} as const

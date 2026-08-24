@@ -46,9 +46,11 @@ export default function StorageAnalyticsPage() {
     bySkuError,
     topConsumersData,
     isLoadingTopConsumers,
+    topConsumersError,
     filledTrendsData,
     trendsData,
     isLoadingTrends,
+    trendsError,
     isLoadingUnfiltered,
     availableBrands,
     availableWarehouses,
@@ -145,13 +147,26 @@ export default function StorageAnalyticsPage() {
           </div>
         </CardHeader>
         <CardContent>
-          <StorageTrendsChart
-            data={filledTrendsData}
-            summary={trendsData?.summary?.storage_cost}
-            isLoading={isLoadingTrends}
-            selectedWeek={selectedWeek}
-            onWeekClick={handleWeekClick}
-          />
+          {/* Story 169.12 (AC-2, review F1): background-refresh failure with
+              retained data → Alert + chart coexist; Alert-only when no data.
+              No retry Button — recovery rides the existing refetch paths. */}
+          {trendsError && (
+            <Alert variant="destructive" className="mb-4">
+              <AlertDescription>
+                Не удалось обновить динамику расходов на хранение. Отображены последние загруженные
+                данные.
+              </AlertDescription>
+            </Alert>
+          )}
+          {(!trendsError || filledTrendsData.length > 0) && (
+            <StorageTrendsChart
+              data={filledTrendsData}
+              summary={trendsData?.summary?.storage_cost}
+              isLoading={isLoadingTrends}
+              selectedWeek={selectedWeek}
+              onWeekClick={handleWeekClick}
+            />
+          )}
         </CardContent>
       </Card>
 
@@ -161,6 +176,7 @@ export default function StorageAnalyticsPage() {
         topConsumers={topConsumersData?.top_consumers}
         isLoadingBySku={isLoadingBySku}
         isLoadingTopConsumers={isLoadingTopConsumers}
+        topConsumersError={topConsumersError}
       />
     </div>
   )

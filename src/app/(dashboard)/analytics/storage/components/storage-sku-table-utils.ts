@@ -5,6 +5,8 @@
  */
 
 import type { StorageBySkuItem } from '@/types/storage-analytics'
+// Story 169.12 dedupe: formatCurrency single-sourced in storage-format.
+export { formatCurrency } from './storage-format'
 
 // ============================================================================
 // Types
@@ -39,15 +41,8 @@ export const SKELETON_ROWS = 5
 // Formatters
 // ============================================================================
 
-/** Format number as Russian Ruble currency (no decimals). Null = unknown cost → "—" (AP#8: money, never 0). */
-export function formatCurrency(value: number | null): string {
-  if (value === null) return '—'
-  return new Intl.NumberFormat('ru-RU', {
-    style: 'currency',
-    currency: 'RUB',
-    maximumFractionDigits: 0,
-  }).format(value)
-}
+// formatCurrency: see the re-export from ./storage-format above (Story 169.12
+// dedupe — null = unknown cost → "—", AP#8: money, never 0).
 
 /** Format volume in liters with 1 decimal, or dash for null */
 export function formatVolume(value: number | null): string {

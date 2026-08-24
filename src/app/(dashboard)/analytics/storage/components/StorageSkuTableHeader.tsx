@@ -18,6 +18,18 @@ interface StorageSkuTableHeaderProps {
   onSort: (field: SortField) => void
 }
 
+/**
+ * Story 169.12: aria-sort on every sortable header (169.1 Button+aria-sort
+ * canon — the four sortable columns finally expose their sort semantics;
+ * default storage_cost_total desc, same-field toggle desc→asc is owned by
+ * useStorageBySkuTable and unchanged).
+ */
+function ariaSortValue(field: SortField, sortField: SortField, sortOrder: SortOrder) {
+  // Review F3: 'none' (not undefined) on sortable-but-inactive headers
+  if (sortField !== field) return 'none'
+  return sortOrder === 'asc' ? 'ascending' : 'descending'
+}
+
 /** Sort icon based on current sort state */
 function SortIcon({
   field,
@@ -49,7 +61,10 @@ export function StorageSkuTableHeader({
         <TableHead className="w-[120px]">Артикул</TableHead>
         <TableHead className="w-[150px]">Название</TableHead>
         <TableHead className="w-[120px]">Бренд</TableHead>
-        <TableHead className="w-[120px]">
+        <TableHead
+          className="w-[120px]"
+          aria-sort={ariaSortValue('storage_cost_total', sortField, sortOrder)}
+        >
           <div className="flex items-center gap-1">
             <Button
               variant="ghost"
@@ -75,7 +90,10 @@ export function StorageSkuTableHeader({
             </TooltipProvider>
           </div>
         </TableHead>
-        <TableHead className="w-[100px]">
+        <TableHead
+          className="w-[100px]"
+          aria-sort={ariaSortValue('storage_cost_avg_daily', sortField, sortOrder)}
+        >
           <div className="flex items-center gap-1">
             <Button
               variant="ghost"
@@ -102,7 +120,10 @@ export function StorageSkuTableHeader({
             </TooltipProvider>
           </div>
         </TableHead>
-        <TableHead className="w-[70px]">
+        <TableHead
+          className="w-[70px]"
+          aria-sort={ariaSortValue('volume_avg', sortField, sortOrder)}
+        >
           <Button
             variant="ghost"
             size="sm"
@@ -114,7 +135,10 @@ export function StorageSkuTableHeader({
           </Button>
         </TableHead>
         <TableHead className="w-[150px]">Склады</TableHead>
-        <TableHead className="w-[60px]">
+        <TableHead
+          className="w-[60px]"
+          aria-sort={ariaSortValue('days_stored', sortField, sortOrder)}
+        >
           <Button
             variant="ghost"
             size="sm"

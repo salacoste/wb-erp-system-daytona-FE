@@ -29,11 +29,16 @@ import {
   TooltipTrigger,
 } from '@/components/ui/tooltip'
 import type { StorageTrendPoint, MoneyMetricSummary } from '@/types/storage-analytics'
-import { CHART_COLORS, formatWeekShort } from './storage-trends-config'
+import { CHART_COLORS } from './storage-trends-config'
+import { formatWeekShort } from './storage-format'
 import { TrendBadge, SummaryStats, CustomTooltip, CustomDot } from './StorageTrendsChartParts'
+// Story 169.12: sr-only data alternative (169.11 ReturnTrendSrTable precedent)
+import { StorageTrendSrTable } from './StorageTrendSrTable'
 
-// Barrel re-exports for consumers
-export { CHART_COLORS, formatCurrency, formatWeekShort } from './storage-trends-config'
+// Barrel re-exports for consumers (formatters single-sourced in storage-format,
+// Story 169.12 dedupe)
+export { CHART_COLORS } from './storage-trends-config'
+export { formatCurrency, formatWeekShort } from './storage-format'
 export { TrendBadge, SummaryStats, CustomTooltip, CustomDot } from './StorageTrendsChartParts'
 export type { TooltipPayload, CustomDotProps } from './StorageTrendsChartParts'
 
@@ -120,14 +125,14 @@ export function StorageTrendsChart({
             dataKey="week"
             tickFormatter={formatWeekShort}
             tick={{ fontSize: 12 }}
-            axisLine={{ stroke: 'hsl(var(--border))' }}
-            tickLine={{ stroke: 'hsl(var(--border))' }}
+            axisLine={{ stroke: 'var(--color-border)' }}
+            tickLine={{ stroke: 'var(--color-border)' }}
           />
           <YAxis
             tickFormatter={(v: number) => `${(v / 1000).toFixed(0)}k`}
             tick={{ fontSize: 12 }}
-            axisLine={{ stroke: 'hsl(var(--border))' }}
-            tickLine={{ stroke: 'hsl(var(--border))' }}
+            axisLine={{ stroke: 'var(--color-border)' }}
+            tickLine={{ stroke: 'var(--color-border)' }}
             width={50}
           />
           <Tooltip content={<CustomTooltip />} />
@@ -151,6 +156,9 @@ export function StorageTrendsChart({
           />
         </AreaChart>
       </ResponsiveContainer>
+
+      {/* Story 169.12: sr-only every-week data alternative at tooltip precision */}
+      <StorageTrendSrTable data={data} />
     </div>
   )
 }

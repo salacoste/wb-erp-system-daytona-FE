@@ -7,6 +7,7 @@
 
 import { Trophy, List } from 'lucide-react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Alert, AlertDescription } from '@/components/ui/alert'
 import { StorageBySkuTable } from './StorageBySkuTable'
 import { TopConsumersWidget } from './TopConsumersWidget'
 import type { StorageBySkuResponse } from '@/types/storage-analytics/by-sku'
@@ -17,6 +18,8 @@ interface StoragePageTableSectionProps {
   topConsumers: TopConsumersResponse['top_consumers'] | undefined
   isLoadingBySku: boolean
   isLoadingTopConsumers: boolean
+  /** Story 169.12 (AC-2): per-section recoverable error */
+  topConsumersError?: unknown
 }
 
 export function StoragePageTableSection({
@@ -24,6 +27,7 @@ export function StoragePageTableSection({
   topConsumers,
   isLoadingBySku,
   isLoadingTopConsumers,
+  topConsumersError,
 }: StoragePageTableSectionProps) {
   return (
     <>
@@ -36,9 +40,22 @@ export function StoragePageTableSection({
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="overflow-x-auto">
-            <TopConsumersWidget data={topConsumers ?? []} isLoading={isLoadingTopConsumers} />
-          </div>
+          {/* Story 169.12 (AC-2, review F1): background-refresh failure with
+              retained data → Alert + widget coexist; Alert-only when no data.
+              No retry Button — recovery rides the existing refetch paths. */}
+          {topConsumersError ? (
+            <Alert variant="destructive" className="mb-4">
+              <AlertDescription>
+                Не удалось обновить топ товаров по расходам на хранение. Отображены последние
+                загруженные данные.
+              </AlertDescription>
+            </Alert>
+          ) : null}
+          {(!topConsumersError || (topConsumers ?? []).length > 0) && (
+            <div className="overflow-x-auto">
+              <TopConsumersWidget data={topConsumers ?? []} isLoading={isLoadingTopConsumers} />
+            </div>
+          )}
         </CardContent>
       </Card>
 

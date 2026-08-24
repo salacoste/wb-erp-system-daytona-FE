@@ -11,19 +11,22 @@
 import { TrendingUp, TrendingDown, Minus } from 'lucide-react'
 import { cn, formatPercentage } from '@/lib/utils'
 import type { StorageTrendPoint, MoneyMetricSummary } from '@/types/storage-analytics'
-import { CHART_COLORS, formatCurrency, formatWeekShort } from './storage-trends-config'
+import { CHART_COLORS } from './storage-trends-config'
+import { formatCurrency, formatWeekShort } from './storage-format'
 
 // Trend Badge Component
 export function TrendBadge({ trend }: { trend: number }) {
   const isPositive = trend > 0
   const isNegative = trend < 0
 
-  // For storage costs: increase is bad (red), decrease is good (green)
+  // For storage costs increase is bad → financial-negative, decrease is good →
+  // financial-positive; matched /15 tint pairs, both-theme safe (Story 169.12,
+  // replacing light-only red/green/gray-50 pairs; 169.10 AA foreground lesson).
   const colorClass = isPositive
-    ? 'text-red-600 bg-red-50'
+    ? 'text-financial-negative bg-financial-negative/15'
     : isNegative
-      ? 'text-green-600 bg-green-50'
-      : 'text-gray-600 bg-gray-50'
+      ? 'text-financial-positive bg-financial-positive/15'
+      : 'text-muted-foreground bg-muted'
 
   const Icon = isPositive ? TrendingUp : isNegative ? TrendingDown : Minus
 
@@ -90,12 +93,10 @@ export function CustomTooltip({
   const hasData = data.storage_cost !== null && data.storage_cost !== undefined
 
   return (
-    <div className="bg-background border rounded-lg shadow-lg p-3">
+    <div className="bg-popover text-popover-foreground border rounded-lg shadow-lg p-3">
       <p className="font-medium text-sm">Неделя {formatWeekShort(label || data.week)}</p>
       {hasData ? (
-        <p className="text-lg font-bold" style={{ color: CHART_COLORS.storage }}>
-          {formatCurrency(data.storage_cost!)}
-        </p>
+        <p className="text-lg font-bold text-chart-1">{formatCurrency(data.storage_cost!)}</p>
       ) : (
         <p className="text-sm text-muted-foreground">Нет данных за эту неделю</p>
       )}
@@ -129,7 +130,7 @@ export function CustomDot({ cx, cy, payload, selectedWeek, onClick }: CustomDotP
       cy={cy}
       r={radius}
       fill={fillColor}
-      stroke="white"
+      stroke="var(--color-background)"
       strokeWidth={2}
       style={{ cursor: 'pointer' }}
       onClick={() => onClick?.(payload.week)}

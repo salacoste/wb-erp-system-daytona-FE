@@ -247,3 +247,100 @@ describe('StorageBySkuTable', () => {
     })
   })
 })
+
+// ============================================================================
+// Story 169.12: aria-sort semantics, caption/scroll-region, tabular-nums,
+// tri-state has_warehouse_stock rendering (Task 0 preface follow-up)
+// ============================================================================
+
+describe('StorageBySkuTable - Story 169.12 migration contracts', () => {
+  it('exposes aria-sort descending on the default sorted column (storage_cost_total)', () => {
+    render(<StorageBySkuTable data={mockStorageBySkuItems} />)
+    const storageHeader = screen.getByText('Хранение').closest('th')
+    expect(storageHeader).toHaveAttribute('aria-sort', 'descending')
+  })
+
+  it('toggles aria-sort descending → ascending on a same-field re-click', () => {
+    render(<StorageBySkuTable data={mockStorageBySkuItems} />)
+    fireEvent.click(screen.getByText('Хранение'))
+    const storageHeader = screen.getByText('Хранение').closest('th')
+    expect(storageHeader).toHaveAttribute('aria-sort', 'ascending')
+  })
+
+  it('exposes aria-sort on all four sortable headers when active; inactive sortable headers are "none" (review F3)', () => {
+    render(<StorageBySkuTable data={mockStorageBySkuItems} />)
+    for (const label of ['₽/день', 'Объём', 'Дней']) {
+      const header = screen.getByText(label).closest('th')
+      expect(header).toHaveAttribute('aria-sort', 'none')
+      fireEvent.click(screen.getByText(label))
+      expect(screen.getByText(label).closest('th')).toHaveAttribute('aria-sort', 'descending')
+      // after activating this column, the default column goes back to 'none'
+      expect(screen.getByText('Хранение').closest('th')).toHaveAttribute('aria-sort', 'none')
+    }
+  })
+
+  it('renders a static TableCaption and a labelled scroll region', () => {
+    render(<StorageBySkuTable data={mockStorageBySkuItems} />)
+    expect(
+      screen.getByText('Расходы на платное хранение по товарам за выбранный период')
+    ).toBeInTheDocument()
+    expect(
+      screen.getByRole('region', { name: 'Таблица расходов на хранение по товарам' })
+    ).toBeInTheDocument()
+  })
+
+  it('uses tabular-nums on numeric cells but NOT on the font-mono nmId cell', () => {
+    render(<StorageBySkuTable data={mockStorageBySkuItems} />)
+    const vendorCodeCell = screen.getByText('SKU-001')
+    expect(vendorCodeCell).toHaveClass('font-mono')
+    expect(vendorCodeCell).not.toHaveClass('tabular-nums')
+    const daysCells = screen.getAllByText('7').filter(el => el.tagName === 'TD')
+    expect(daysCells.length).toBeGreaterThan(0)
+    expect(daysCells.every(el => el.className.includes('tabular-nums'))).toBe(true)
+  })
+
+  it('tri-state: has_warehouse_stock=false renders «Нет на складе», null/absent renders «—»', () => {
+    const items = [
+      {
+        ...mockStorageBySkuItems[0],
+        nm_id: '1',
+        vendor_code: 'NO-STOCK',
+        has_warehouse_stock: false,
+      },
+      {
+        ...mockStorageBySkuItems[1],
+        nm_id: '2',
+        vendor_code: 'NULL-STOCK',
+        has_warehouse_stock: null,
+      },
+      {
+        ...mockStorageBySkuItems[2],
+        nm_id: '3',
+        vendor_code: 'TRUE-STOCK',
+        has_warehouse_stock: true,
+      },
+    ]
+    render(<StorageBySkuTable data={items} />)
+
+    const rows = screen.getAllByRole('row')
+    const rowByCode = (code: string) => rows.find(r => r.textContent?.includes(code)) as HTMLElement
+
+    const noStockRow = rowByCode('NO-STOCK')
+    expect(noStockRow.textContent).toContain('Нет на складе')
+    expect(noStockRow.querySelector('.text-status-warning')).toBeTruthy()
+
+    // null row: unknown renders «—» and must NOT claim «Нет на складе»
+    const nullStockRow = rowByCode('NULL-STOCK')
+    expect(nullStockRow.textContent).not.toContain('Нет на складе')
+
+    // true renders neither the warning nor the unknown dash
+    const trueStockRow = rowByCode('TRUE-STOCK')
+    expect(trueStockRow.textContent).not.toContain('Нет на складе')
+  })
+
+  it('search input is labelled and min-h-11', () => {
+    render(<StorageBySkuTable data={mockStorageBySkuItems} />)
+    const input = screen.getByLabelText('Поиск по товарам хранения')
+    expect(input).toHaveClass('min-h-11')
+  })
+})

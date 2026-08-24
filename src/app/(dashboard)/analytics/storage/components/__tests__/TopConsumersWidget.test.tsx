@@ -95,7 +95,7 @@ describe('TopConsumersWidget', () => {
 
       // Should have a red severity dot
       const highSeverityDot = screen.getByLabelText('Высокие затраты')
-      expect(highSeverityDot).toHaveClass('bg-red-500')
+      expect(highSeverityDot).toHaveClass('bg-status-error')
     })
 
     it('colors ratio 10-20% yellow (medium)', () => {
@@ -103,7 +103,7 @@ describe('TopConsumersWidget', () => {
       render(<TopConsumersWidget data={mockTopConsumerItems} />)
 
       const mediumSeverityDot = screen.getByLabelText('Средние затраты')
-      expect(mediumSeverityDot).toHaveClass('bg-yellow-500')
+      expect(mediumSeverityDot).toHaveClass('bg-status-warning')
     })
 
     it('colors ratio <10% green (low)', () => {
@@ -112,7 +112,7 @@ describe('TopConsumersWidget', () => {
 
       const lowSeverityDots = screen.getAllByLabelText('Низкие затраты')
       expect(lowSeverityDots.length).toBeGreaterThan(0)
-      expect(lowSeverityDots[0]).toHaveClass('bg-green-500')
+      expect(lowSeverityDots[0]).toHaveClass('bg-status-success')
     })
 
     it('handles null ratio gracefully (unknown)', () => {
@@ -120,7 +120,7 @@ describe('TopConsumersWidget', () => {
       render(<TopConsumersWidget data={mockTopConsumerItems} />)
 
       const unknownSeverityDot = screen.getByLabelText('Нет данных')
-      expect(unknownSeverityDot).toHaveClass('bg-gray-300')
+      expect(unknownSeverityDot).toHaveClass('bg-muted')
     })
   })
 
@@ -193,5 +193,53 @@ describe('TopConsumersWidget', () => {
       render(<TopConsumersWidget data={mockTopConsumerItems} />)
       expect(screen.queryByText('Показать все')).not.toBeInTheDocument()
     })
+  })
+})
+
+// ============================================================================
+// Story 169.12: tri-state has_warehouse_stock + severity tier-collapse guard
+// ============================================================================
+
+describe('TopConsumersWidget - Story 169.12 migration contracts', () => {
+  it('tri-state: false → «Нет на складе» (warning), null → «—», true → neither', () => {
+    const data = [
+      { ...mockTopConsumerItems[0], nm_id: '1', vendor_code: 'NO-STOCK', rank: 1, has_warehouse_stock: false },
+      { ...mockTopConsumerItems[1], nm_id: '2', vendor_code: 'NULL-STOCK', rank: 2, has_warehouse_stock: null },
+      { ...mockTopConsumerItems[2], nm_id: '3', vendor_code: 'TRUE-STOCK', rank: 3, has_warehouse_stock: true },
+    ]
+    render(<TopConsumersWidget data={data} />)
+
+    const rows = screen.getAllByRole('row')
+    const rowByCode = (code: string) =>
+      rows.find(r => r.textContent?.includes(code)) as HTMLElement
+
+    const noStockRow = rowByCode('NO-STOCK')
+    expect(noStockRow.textContent).toContain('Нет на складе')
+    expect(noStockRow.querySelector('.text-status-warning')).toBeTruthy()
+
+    // null row: unknown renders «—» and must NOT claim «Нет на складе»
+    const nullRow = rowByCode('NULL-STOCK')
+    expect(nullRow.textContent).not.toContain('Нет на складе')
+    expect(nullRow.textContent).toContain('—')
+
+    // true renders neither the warning nor the unknown dash
+    const trueRow = rowByCode('TRUE-STOCK')
+    expect(trueRow.textContent).not.toContain('Нет на складе')
+  })
+
+  it('severity tier-collapse guard: 3 distinct status dots + muted neutral (Set size)', () => {
+    render(<TopConsumersWidget data={mockTopConsumerItems} />)
+    const dots = [
+      screen.getByLabelText('Высокие затраты'),
+      screen.getByLabelText('Средние затраты'),
+      screen.getAllByLabelText('Низкие затраты')[0],
+      screen.getByLabelText('Нет данных'),
+    ]
+    const tokenClasses = dots.map(d => d.className.split(' ').find(c => c.startsWith('bg-')))
+    expect(new Set(tokenClasses).size).toBe(4) // error + warning + success + muted
+    expect(tokenClasses).toContain('bg-status-error')
+    expect(tokenClasses).toContain('bg-status-warning')
+    expect(tokenClasses).toContain('bg-status-success')
+    expect(tokenClasses).toContain('bg-muted')
   })
 })

@@ -8,7 +8,14 @@
  */
 
 import { Calendar, PackageX, Search } from 'lucide-react'
-import { Table, TableBody, TableCell, TableHeader, TableRow } from '@/components/ui/table'
+import {
+  Table,
+  TableBody,
+  TableCaption,
+  TableCell,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table'
 import { Input } from '@/components/ui/input'
 import { Skeleton } from '@/components/ui/skeleton'
 import { WarehouseBadges } from './WarehouseBadges'
@@ -74,15 +81,17 @@ export function StorageBySkuTable({
 
   return (
     <div className="space-y-4">
-      {/* Search Input with result count */}
+      {/* Search Input with result count; Story 169.12: min-h-11 + label linkage */}
       <div className="flex items-center gap-3">
         <div className="relative w-64">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
           <Input
+            id="storage-sku-search"
+            aria-label="Поиск по товарам хранения"
             placeholder="Поиск по артикулу, бренду..."
             value={searchQuery}
             onChange={handleSearchChange}
-            className="pl-9"
+            className="pl-9 min-h-11"
           />
         </div>
         {debouncedQuery && (
@@ -92,9 +101,16 @@ export function StorageBySkuTable({
         )}
       </div>
 
-      {/* Table with horizontal scroll for mobile (UX Decision Q7) */}
-      <div className="overflow-x-auto border rounded-lg">
+      {/* Table with horizontal scroll region for mobile (UX Decision Q7);
+          Story 169.12: keyboard-reachable scroll region + static caption (169.11 canon) */}
+      <div
+        className="overflow-x-auto border rounded-lg"
+        tabIndex={0}
+        role="region"
+        aria-label="Таблица расходов на хранение по товарам"
+      >
         <Table className="min-w-[900px]">
+          <TableCaption>Расходы на платное хранение по товарам за выбранный период</TableCaption>
           <StorageSkuTableHeader sortField={sortField} sortOrder={sortOrder} onSort={handleSort} />
           <TableBody>
             {filteredAndSortedData.length === 0 ? (
@@ -117,7 +133,9 @@ export function StorageBySkuTable({
                     {item.product_name || '—'}
                   </TableCell>
                   <TableCell className="text-sm">{item.brand || '—'}</TableCell>
-                  <TableCell className="font-medium">
+                  {/* Story 169.12: tabular-nums on numeric cells (169.7 canon);
+                      nmId font-mono stays WITHOUT tabular-nums (negative pin) */}
+                  <TableCell className="font-medium tabular-nums">
                     <div className="flex flex-col gap-0.5">
                       <span>
                         {item.storage_cost_total == null
@@ -131,23 +149,31 @@ export function StorageBySkuTable({
                         </span>
                       )}
                       {item.has_warehouse_stock === false && (
-                        <span className="text-xs text-amber-600 flex items-center gap-0.5">
+                        <span className="text-xs text-status-warning flex items-center gap-0.5">
                           <PackageX className="h-2.5 w-2.5" />
                           Нет на складе
                         </span>
                       )}
+                      {/* Tri-state (Story 169.12 Task 0): null = backend did not
+                          report stock — unknown renders «—», never a false
+                          «Нет на складе». */}
+                      {item.has_warehouse_stock == null && (
+                        <span className="text-xs text-muted-foreground">—</span>
+                      )}
                     </div>
                   </TableCell>
-                  <TableCell className="text-sm">
+                  <TableCell className="text-sm tabular-nums">
                     {item.storage_cost_avg_daily == null
                       ? '—'
                       : formatCurrency(item.storage_cost_avg_daily)}
                   </TableCell>
-                  <TableCell className="text-sm">{formatVolume(item.volume_avg)}</TableCell>
+                  <TableCell className="text-sm tabular-nums">
+                    {formatVolume(item.volume_avg)}
+                  </TableCell>
                   <TableCell>
                     <WarehouseBadges warehouses={item.warehouses} maxVisible={2} />
                   </TableCell>
-                  <TableCell className="text-sm">{item.days_stored}</TableCell>
+                  <TableCell className="text-sm tabular-nums">{item.days_stored}</TableCell>
                 </TableRow>
               ))
             )}
