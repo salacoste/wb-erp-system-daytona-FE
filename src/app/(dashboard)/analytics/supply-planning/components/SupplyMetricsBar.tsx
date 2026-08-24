@@ -32,8 +32,9 @@ export function SupplyMetricsBar({ summary }: SupplyMetricsBarProps) {
     return 'text-green-600'
   }
 
-  // Determine capital color based on amount
-  const getCapitalColor = (value: number) => {
+  // Determine capital color based on amount (null = backend omitted the sum → muted, Story 169.13)
+  const getCapitalColor = (value: number | null) => {
+    if (value == null) return 'text-gray-500'
     if (value > 500000) return 'text-red-600'
     if (value > 100000) return 'text-orange-600'
     return 'text-blue-600'

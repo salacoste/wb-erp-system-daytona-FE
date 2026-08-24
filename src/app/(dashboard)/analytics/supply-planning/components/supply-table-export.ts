@@ -30,7 +30,8 @@ export function buildSupplyTableCsv(data: SupplyPlanningItem[]): string {
     item.product_name,
     item.current_stock,
     item.in_transit,
-    item.avg_daily_sales.toFixed(1),
+    // null velocity exports empty cell, not "0.0" (anti-pattern #8, Story 169.13)
+    item.avg_daily_sales != null ? item.avg_daily_sales.toFixed(1) : '',
     item.days_until_stockout ?? '',
     item.reorder_quantity,
     item.reorder_value,

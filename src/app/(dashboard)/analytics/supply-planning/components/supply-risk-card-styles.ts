@@ -58,6 +58,13 @@ export function getCardStyles(status: StockoutRisk, isActive: boolean): CardStyl
       label: 'text-green-700',
       count: 'text-green-900',
     },
+    unknown: {
+      // Story 169.13: muted visible-unknown — never styled as healthy green.
+      card: isActive ? 'bg-gray-100 border-gray-300' : 'bg-gray-50 border-gray-200',
+      icon: 'text-gray-500',
+      label: 'text-gray-600',
+      count: 'text-gray-800',
+    },
   }
 
   return styles[status]

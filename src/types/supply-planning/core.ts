@@ -17,6 +17,7 @@ export type StockoutRisk =
   | 'warning' // 7-14 days
   | 'low' // 14-30 days
   | 'healthy' // > 30 days
+  | 'unknown' // absent/unrecognized backend value — Defensive Frontend (Story 169.13): never coerce to 'healthy'
 
 /**
  * Reorder status - recommended action
@@ -25,6 +26,7 @@ export type ReorderStatus =
   | 'urgent' // days_until_stockout < 7
   | 'soon' // days_until_stockout < safety_stock_days
   | 'ok' // days_until_stockout >= safety_stock_days
+  | 'unknown' // absent/unrecognized backend value — Defensive Frontend (Story 169.13): never coerce to 'ok'
 
 /**
  * Velocity trend - sales acceleration/deceleration

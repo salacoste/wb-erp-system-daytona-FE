@@ -41,7 +41,9 @@ export function calculateForecast(item: SupplyPlanningItem): ForecastDay[] {
   const days: ForecastDay[] = []
 
   let currentStock = item.current_stock
-  const dailySales = item.avg_daily_sales
+  // Forecast arithmetic needs a number; null velocity (backend omitted) → assume 0 burn-down
+  // for the projection while the velocity column renders "—" (Story 169.13).
+  const dailySales = item.avg_daily_sales ?? 0
 
   for (let i = 1; i <= 7; i++) {
     const date = new Date()

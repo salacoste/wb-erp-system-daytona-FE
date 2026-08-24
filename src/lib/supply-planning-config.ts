@@ -79,6 +79,20 @@ export const STOCKOUT_RISK_CONFIG: Record<StockoutRisk, RiskStatusConfig> = {
     textClass: 'text-white',
     priority: 4,
   },
+  // Story 169.13 (pattern #218/#226): visible-unknown tier for absent/unrecognized
+  // backend enum values. Neutral muted styling; distinguishable from 'healthy' so an
+  // optimistic lie never renders as a green "all good" badge. Token migration = impl story.
+  unknown: {
+    label: 'Статус риска неизвестен',
+    labelShort: 'Неизв.',
+    color: '#6B7280',
+    bgColor: '#F3F4F6',
+    icon: '❔',
+    lucideIcon: 'HelpCircle',
+    bgClass: 'bg-gray-100',
+    textClass: 'text-gray-500',
+    priority: 5,
+  },
 } as const
 
 // -- Stockout Risk Helpers --
