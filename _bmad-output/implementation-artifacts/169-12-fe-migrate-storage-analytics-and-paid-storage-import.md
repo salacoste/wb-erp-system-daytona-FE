@@ -1,6 +1,6 @@
 # Story 169.12-FE: Migrate Storage Analytics and Paid-Storage Import
 
-Status: review — implementation + round-1 fixes on branch; PR/merge/cleanup pending
+Status: done — PR #227 merged (`52f7f506`); 2-pass fresh review APPROVE_WITH_NOTES ×2 with findings resolved; branch/worktree cleanup 0/0/0
 
 ## Story
 
@@ -47,7 +47,7 @@ Plan: `.omx/plans/169.12-migrate-storage-analytics-and-paid-storage-import.md` (
   - [ ] FLIP hard palette pins `TopConsumersWidget.test.tsx:98,106,115,123` (bg-red/yellow/green-500) → token pins; Tier/severity collapse guard (3 distinct + neutral)
   - [ ] aria-sort semantics tests; import 4-state distinct tests (incl. unknown-status from Task 0 — neutral, not error-red); per-section error tests; sr-only alternative tests; tri-state has_warehouse_stock rendering (null→«—», false→«Нет на складе», true→nothing/badge)
   - [ ] e2e run-only: storage-analytics.spec.ts pins h1/«Товар хранения Story 162.6»/«Динамика…»/recharts-wrapper + exact API params — verify intact, run when stack up
-- [ ] Task 5: Validation + review + PR + cleanup (AC: #4-9) — gates green (route 147/13, full 19 033/0, lint 0/0, tsc 0, max-lines OK, build 0, e2e-on-branch 6/1↓/0); round-1 APPROVE_WITH_NOTES → fixed `71b1105b`; round-2 pending; PR/merge/cleanup pending
+- [x] Task 5: Validation + review + PR + cleanup (AC: #4-9) — route 147/13 (baseline 119/12); full 19 033/0 (floor 19 005); lint 0/0; tsc 0; max-lines OK; build 0; e2e ON BRANCH 6 passed/1 by-design skip/0 failed. Round-1 opus APPROVE_WITH_NOTES (2 MEDIUM + 5 LOW → fixed `71b1105b` + dispositioned); round-2 opus APPROVE_WITH_NOTES (1 MEDIUM doc → fixed `ebfcf015`). PR #227 merged `52f7f506`; remote/local branch + worktree deleted, 0/0/0 absence proofs.
 
 ## Dev Notes
 
@@ -128,3 +128,4 @@ Edited/deleted/new in PR (27 route files; preface files were PR #226): see `git 
 |---|---|
 | 2026-08-24 | Story created via create-story context engine from deep recon (38-file route, 119-test baseline, boundary red flags → Task 0 preface scope). Plan referenced as authoritative. Fresh-context validation caught 3 context blockers (line numbers, type-safety scope, consumer enumeration) — fixed pre-preface. |
 | 2026-08-24 | Round-1 review fixes applied (error retention coexistence, aria-sort none, rgba/hsl guard blindspots, story reconciliation). Status: ready-for-dev → review. |
+| 2026-08-24 | Implemented + merged: preface PR #226 (`2c7a3c59`) + PR #227 (impl `4377cd99`, fixes `71b1105b`, story `ebfcf015`, merge `52f7f506`); route 147/13, full 19 033/0, e2e-on-branch 6/1↓/0; 2×opus FRESH APPROVE_WITH_NOTES→resolved; cleanup 0/0/0. Status: review → done. **Lessons:** (1) Stale origin/main после чужого merge — worktree создался без preface; fetch+merge-base проверка перед BLC обязательна. (2) Round-2 File-List дрейфует в КАТЕГОРИЯХ (M/A/D) при верном тотале — сверяй name-status, не name-only. (3) Preface-паттерн #218 масштабируется: tri-state + nullable + unknown одним PR закрывают три boundary-лжи. |

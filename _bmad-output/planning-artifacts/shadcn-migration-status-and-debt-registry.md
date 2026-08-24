@@ -25,7 +25,11 @@
 169.10 liquidity (полный цикл + REQUEST-CHANGES-фиксы; PRs #212/#214; между ними параллельная
 сессия влила corrective PR #213 gaps-followup). Параллельная сессия также закрыла docs-реконсиляцию #209.
 
-**NEXT = 169.12 storage analytics** (`backlog`; план `.omx/plans/169.12-migrate-storage-analytics-and-paid-storage-import.md`).
+**NEXT = 169.13 supply planning** (`backlog`; план `.omx/plans/169.13-migrate-supply-planning.md`).
+169.12 SHIPPED 2026-08-24 (12/13 эпика): preface #226 (`2c7a3c59` — tri-state has_warehouse_stock, nullable
+percent_of_total, import-статус unknown; 2 LOW закрыты) + #227 (`52f7f506`; impl `4377cd99` + fixes `71b1105b`);
+owned 119→147, полный пол **19 033/0**; e2e на ветке 6/1↓/0; 2×opus FRESH; cleanup 0/0/0. Carry-outs: near-cap
+файлы, has_data/pagination фоллбеки → request-backend.
 169.11 SHIPPED 2026-08-23 (11/13 эпика): preface PR #218 (`d6ed2c65` — unknown-категория на boundary,
 нейтральный лейбл, коэрсинг выпилен) + PR #219 (`129e99ed`; impl `83a76676` + round-1 `7b276436`);
 owned 50→73, full vitest **18 979/0** (новый пол); 2×opus FRESH APPROVE_WITH_NOTES→fixed; E2E = named gap
