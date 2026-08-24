@@ -28,15 +28,16 @@ paid-storage request/status/result/error contract, Story 169.15 owns the shared 
 then may Story 169.12 perform its bounded contract closeout. Story 169.13 remains independent.
 
 **NEXT = 169.14 → 169.15 → 169.12 contract closeout** (169.14/169.15 `backlog`; 169.12 `review`; plans `.omx/plans/169.14-establish-authoritative-paid-storage-import-lifecycle-and-result-contract.md`, `.omx/plans/169.15-align-shared-frontend-paid-storage-import-boundary.md`, and `.omx/plans/169.12-migrate-storage-analytics-and-paid-storage-import.md`). Story 169.13 remains an independent backlog route.
-169.11 SHIPPED 2026-08-23 (11/15 эпика): preface PR #218 (`d6ed2c65` — unknown-категория на boundary,
-нейтральный лейбл, коэрсинг выпилен) + PR #219 (`129e99ed`; impl `83a76676` + round-1 `7b276436`);
-owned 50→73, full vitest **18 979/0** (новый пол); 2×opus FRESH APPROVE_WITH_NOTES→fixed; E2E = named gap
-(стек лежал, пины верифицированы статически — прогон при поднятом окружении до 174.3); cleanup 0/0/0.
-Его канонические prerequisites: Epic 166, Story 167.1 и Story 168.1 / C2; Story 169.10 не является
-prerequisite для 169.11. Пол vitest **18 952/0**; Story 169.9 corrective: **7 files / 55 tests**;
-production build: **70/70** static pages. Browser/theme/responsive/axe/keyboard/visual evidence
-остаётся carry-out 174.3; credentialed functional E2E, auth/session/error-recovery и local-backend
-critical journeys остаются carry-out 174.4.
+**Волна 23-24.08** (два полных цикла + инфраструктура): 169.11 returns — preface #218 (`d6ed2c65`,
+unknown-категория на boundary + нейтральный лейбл) + #219 (`129e99ed`; owned 50→73) + e2e-gap закрыт
+post-close #222 (гнилой пин от стандартизации 1804aa8f; финал 12/1↓/0); 169.12 storage — preface #226
+(`2c7a3c59`, tri-state `has_warehouse_stock` / nullable `percent_of_total` / импорт-статус unknown) +
+маршрутная миграция #227 (`52f7f506`; 27 файлов, owned 119→147, **e2e на ветке 6/1↓/0**, 2×opus FRESH);
+CSV-security #223 (OWASP defang + trade-off documented); чужой WIP реконсилирован #225 (cogs-split +
+rateLimit + csv-dedupe); Correct Course #228 (`4d0ff685`) ввёл 169.14/169.15 + bounded 169.12-closeout.
+**Пол vitest 19 033/0** (актуальный пол); lint 0/0; tsc 0. Browser/theme/visual evidence — carry-out 174.3;
+credentialed functional E2E — carry-out 174.4. Plan-status аудит 2026-08-24: 167.5/167.8/167.9 → executed
+(были review/ready-for-dev/backlog при done-строках).
 
 ## 2. Верификационные факты (2026-08-24, W9 + frontend Correct Course checkpoint)
 
