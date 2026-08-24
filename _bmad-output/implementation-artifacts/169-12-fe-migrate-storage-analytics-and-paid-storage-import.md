@@ -1,12 +1,12 @@
 # Story 169.12-FE: Migrate Storage Analytics and Paid-Storage Import
 
-Status: review — implementation + round-1 fixes on branch; PR/merge/cleanup pending
+Status: review — route presentation merged in PR #227; authoritative paid-storage contract closeout blocked on Stories 169.14 and 169.15
 
 ## Story
 
 As a finance/operations user, I want `/analytics/storage` to connect storage cost summaries, alerts, trends, SKU consumers, filters, and paid-storage import status, so that I can trace storage cost and recover safely from import issues.
 
-Plan: `.omx/plans/169.12-migrate-storage-analytics-and-paid-storage-import.md` (authoritative — branch/worktree, protocol, validation, review, PR/cleanup; status ready-for-execution). Shared-boundary prerequisite (Task 0) must merge before the implementation branch.
+Plan: `.omx/plans/169.12-migrate-storage-analytics-and-paid-storage-import.md` (authoritative remaining contract-closeout branch/worktree, validation, review, PR, and cleanup; status `blocked-on-prerequisites`). PR #227 merged the route presentation before the approved 169.14 → 169.15 prerequisite chain integrated; preserve that work, but do not mark this Story `done` until the merged contract is validated and final closeout evidence is recorded.
 
 ## Acceptance Criteria
 
@@ -16,6 +16,8 @@ Plan: `.omx/plans/169.12-migrate-storage-analytics-and-paid-storage-import.md` (
 4. Plan/delivery ACs (surface purity, validation evidence, review, cleanup, no-production): see plan §Testable acceptance criteria.
 
 ## Tasks / Subtasks
+
+The nested checkboxes below are the original implementation ledger and are retained as historical detail. Top-level Tasks 0–4 and the PR #227 route-delivery portion of Task 5 were completed by preface PR #226 plus implementation PR #227. They are not evidence that the newly approved backend/shared-boundary prerequisites are complete.
 
 - [x] Task 0: Shared-boundary prerequisite (AC: #2) — separate owner PR before implementation branch. EXACT file scope (validated fresh-context; line numbers verified 2026-08-24):
   - [ ] `src/lib/api/storage-queries-normalizer.ts` — TWO coercion sites `has_warehouse_stock: !!d.has_warehouse_stock` at **:52** (StorageBySkuItem) and **:73** (TopConsumerItem): absent/null → false renders «Нет на складе» for UNKNOWN. Fix: preserve tri-state (`d.has_warehouse_stock === undefined ? null : !!d.has_warehouse_stock`)
@@ -47,7 +49,8 @@ Plan: `.omx/plans/169.12-migrate-storage-analytics-and-paid-storage-import.md` (
   - [ ] FLIP hard palette pins `TopConsumersWidget.test.tsx:98,106,115,123` (bg-red/yellow/green-500) → token pins; Tier/severity collapse guard (3 distinct + neutral)
   - [ ] aria-sort semantics tests; import 4-state distinct tests (incl. unknown-status from Task 0 — neutral, not error-red); per-section error tests; sr-only alternative tests; tri-state has_warehouse_stock rendering (null→«—», false→«Нет на складе», true→nothing/badge)
   - [ ] e2e run-only: storage-analytics.spec.ts pins h1/«Товар хранения Story 162.6»/«Динамика…»/recharts-wrapper + exact API params — verify intact, run when stack up
-- [ ] Task 5: Validation + review + PR + cleanup (AC: #4-9) — gates green (route 147/13, full 19 033/0, lint 0/0, tsc 0, max-lines OK, build 0, e2e-on-branch 6/1↓/0); round-1 APPROVE_WITH_NOTES → fixed `71b1105b`; round-2 pending; PR/merge/cleanup pending
+- [x] Task 5: Route-delivery validation + review + PR #227 merge (AC: #4-9) — gates green (route 147/13, full 19 033/0, lint 0/0, tsc 0, max-lines OK, build 0, e2e-on-branch 6/1↓/0); round-1 findings fixed in `71b1105b`; round-2 record reconciliation committed as `ebfcf015`; merge `52f7f506`; local route branch/worktree absent.
+- [ ] Task 6: Correct Course contract closeout — merge/clean backend Story 169.14; merge/clean frontend Story 169.15; create only `cdx/epic-169-story-12-contract-closeout` from refreshed `main`; validate PR #227 route behavior against the authoritative request/start/status/result/error contract; apply only proven route-owned corrections; rerun targeted/full/E2E evidence; reconcile this artifact and sprint lifecycle to `done`; merge and clean the closeout branch/worktree.
 
 ## Dev Notes
 
@@ -58,16 +61,16 @@ Plan: `.omx/plans/169.12-migrate-storage-analytics-and-paid-storage-import.md` (
 
 ### Legacy site inventory (pre-migration truth)
 
-| File | Legacy sites |
-|---|---|
-| `storage-trends-config.ts:10-13` | `#7C4DFF` storage, `#C62828` selected, rgba gradients (unused — delete) |
-| `StorageTrendsChartParts.tsx` | `:23/25/26` TrendBadge light-only `bg-red-50`/`bg-green-50`/`bg-gray-50` + `text-*-600`; `:96` inline hex color; `:93` tooltip bg-background |
-| `TopConsumersHelpers.tsx` | `:26 text-yellow-500`, `:33 text-gray-400`, `:40 text-amber-600`, `:54-57 bg-red/yellow/green-500 + bg-gray-300`, `:73 text-red-600`; `:13-18` dup getCostSeverity |
-| `TopConsumersWidget.tsx:147` | `text-amber-600` |
-| `StorageAlertBanner.tsx` | `:50-52 bg-red-50 border-red-200 text-red-600/800`, `:66/70/74 bg-green/yellow/red-500` legend dots |
-| `StorageBySkuTable.tsx:134` | `text-amber-600` |
-| `PaidStorageImportStatus.tsx:98,120` | `text-green-500`, `text-red-500` |
-| `StorageTrendsChart.tsx:123-130` | axis/grid `hsl(var(--border))` — var-based, verify/canonicalize |
+| File                                 | Legacy sites                                                                                                                                                       |
+| ------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `storage-trends-config.ts:10-13`     | `#7C4DFF` storage, `#C62828` selected, rgba gradients (unused — delete)                                                                                            |
+| `StorageTrendsChartParts.tsx`        | `:23/25/26` TrendBadge light-only `bg-red-50`/`bg-green-50`/`bg-gray-50` + `text-*-600`; `:96` inline hex color; `:93` tooltip bg-background                       |
+| `TopConsumersHelpers.tsx`            | `:26 text-yellow-500`, `:33 text-gray-400`, `:40 text-amber-600`, `:54-57 bg-red/yellow/green-500 + bg-gray-300`, `:73 text-red-600`; `:13-18` dup getCostSeverity |
+| `TopConsumersWidget.tsx:147`         | `text-amber-600`                                                                                                                                                   |
+| `StorageAlertBanner.tsx`             | `:50-52 bg-red-50 border-red-200 text-red-600/800`, `:66/70/74 bg-green/yellow/red-500` legend dots                                                                |
+| `StorageBySkuTable.tsx:134`          | `text-amber-600`                                                                                                                                                   |
+| `PaidStorageImportStatus.tsx:98,120` | `text-green-500`, `text-red-500`                                                                                                                                   |
+| `StorageTrendsChart.tsx:123-130`     | axis/grid `hsl(var(--border))` — var-based, verify/canonicalize                                                                                                    |
 
 ### Canon mapping (precedents)
 
@@ -91,7 +94,7 @@ Tested: route loading, per-section loading, page error (bySku), global empty, fi
 ### Agent Model Used
 
 - Preface (Task 0): executor (sonnet) + reviewer (opus fresh) — PR #226, merge `2c7a3c59`.
-- Implementation: executor (sonnet) ×2 rounds via orchestrator (migration `4377cd99` + round-1 fixes `71b1105b`); review round 1: code-reviewer (opus fresh) APPROVE_WITH_NOTES.
+- Implementation: executor (sonnet) ×2 rounds via orchestrator (migration `4377cd99` + round-1 fixes `71b1105b`); review round 1: code-reviewer (opus fresh) APPROVE_WITH_NOTES; round-2 record reconciliation `ebfcf015`; PR #227 merge `52f7f506`.
 
 ### Debug Log References
 
@@ -110,6 +113,8 @@ Tested: route loading, per-section loading, page error (bySku), global empty, fi
 
 ### Gaps
 
+- **Correct Course blocker:** PR #227 shipped the shadcn route presentation before Stories 169.14 and 169.15 existed on canonical `main`. The route must be revalidated after those contracts merge; Story lifecycle remains `review`, not `done`.
+
 - **AC-2 wording deviation (reviewer sign-off requested):** epic lists uploading/partial import states — backend import contract has no such lifecycle (verified test-api); dispositioned N/A-backend-absent; unknown-status handling added instead.
 - **e2e evidence:** run ON THE BRANCH (worktree dev :3100 swap): 6 passed / 1 skipped (role-gated setup, by-design) / 0 failed — pins h1/«Товар хранения Story 162.6»/«Динамика…»/recharts-wrapper/exact API params.
 - **Stale:** N/A — hooks expose no staleness signal (read-only disposition).
@@ -124,7 +129,8 @@ Edited/deleted/new in PR (27 route files; preface files were PR #226): see `git 
 
 ### Change Log
 
-| Date | Change |
-|---|---|
+| Date       | Change                                                                                                                                                                                                                                                                                                         |
+| ---------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | 2026-08-24 | Story created via create-story context engine from deep recon (38-file route, 119-test baseline, boundary red flags → Task 0 preface scope). Plan referenced as authoritative. Fresh-context validation caught 3 context blockers (line numbers, type-safety scope, consumer enumeration) — fixed pre-preface. |
-| 2026-08-24 | Round-1 review fixes applied (error retention coexistence, aria-sort none, rgba/hsl guard blindspots, story reconciliation). Status: ready-for-dev → review. |
+| 2026-08-24 | Round-1 review fixes applied (error retention coexistence, aria-sort none, rgba/hsl guard blindspots, story reconciliation). Status: ready-for-dev → review.                                                                                                                                                   |
+| 2026-08-24 | PR #227 merged route presentation (`4377cd99`, `71b1105b`, `ebfcf015`; merge `52f7f506`). Correct Course reconciliation keeps Status at review and adds Task 6 for post-169.14/169.15 contract closeout.                                                                                                       |

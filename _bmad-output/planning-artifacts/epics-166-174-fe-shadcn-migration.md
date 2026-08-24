@@ -33,7 +33,7 @@ lastStep: 4
 
 This document defines the complete BMAD Epic and Story breakdown for consolidating the existing partial shadcn/ui adoption into one semantic, accessible, responsive design system and migrating every frontend route and its complete owned UI surface.
 
-The initiative is a brownfield presentation and interaction migration. Existing backend contracts, queries, mutations, calculations, route behavior, Russian localization, formatting semantics, authentication behavior, cabinet context, and valid domain workflows remain unchanged unless a Story explicitly states otherwise. Story 167.8 is the sole approved cross-repository exception: it owns the backend reconciliation/idempotency contract required by the corrected onboarding DAG. Ordinary frontend migration Stories continue to forbid backend changes.
+The initiative is a brownfield presentation and interaction migration. Existing backend contracts, queries, mutations, calculations, route behavior, Russian localization, formatting semantics, authentication behavior, cabinet context, and valid domain workflows remain unchanged unless a Story explicitly states otherwise. Stories 167.8 and 169.14 are the only approved cross-repository exceptions: Story 167.8 owns the backend reconciliation/idempotency contract required by the corrected onboarding DAG, and Story 169.14 owns the paid-storage import lifecycle/result reconciliation required before Story 169.12. Ordinary frontend migration Stories continue to forbid backend changes.
 
 Development and validation are local-only. The standard environment is the frontend on `localhost:3100` and the backend on `localhost:3000`. Production deployment, production infrastructure, force pushes, and direct pushes to `main` are outside scope.
 
@@ -287,43 +287,43 @@ UX-DR40: Require automated accessibility checks plus manual keyboard, focus, rea
 
 ### FR Coverage Map
 
-| Requirement | Primary Epic | Coverage intent |
-| --- | --- | --- |
-| FR1 | 167-FE | Preserve registration and login during auth migration. |
-| FR2 | 167-FE | Preserve session, redirect, and restoration behavior. |
-| FR3 | 167-FE | Preserve first-time onboarding-to-margin journey. |
-| FR4 | 167-FE | Preserve WB token validation. |
-| FR5 | 167-FE | Preserve processing progress and recovery. |
-| FR6 | 168-FE | Preserve dashboard and analytical metric meaning. |
-| FR7 | 168-FE | Preserve expense and analytical visualization behavior. |
-| FR8 | 168-FE | Preserve trend visualization semantics. |
-| FR9 | 167-FE | Preserve AppShell and summary-to-detail navigation. |
-| FR10 | 172-FE | Preserve single-product COGS behavior. |
-| FR11 | 172-FE | Preserve bulk COGS behavior and partial recovery. |
-| FR12 | 172-FE | Preserve COGS and domain validation semantics. |
-| FR13 | 172-FE | Preserve mutation confirmation and refresh. |
-| FR14 | 172-FE | Preserve COGS-triggered margin calculation states. |
-| FR15 | 168-FE | Preserve multi-dimensional margin analysis. |
-| FR16 | 169-FE | Preserve operational and reconciliation analytics. |
-| FR17 | 166-FE | Establish shared interaction contracts used by every route owner. |
-| FR18 | 174-FE | Verify backend endpoint compatibility across the completed migration. |
-| FR19 | 174-FE | Verify headers, query keys, cache, polling, and request lifecycle preservation. |
-| FR20 | 166-FE | Establish reusable and semantically distinct route/section states. |
-| FR21 | 174-FE | Verify Russian localization across all routes. |
-| FR22 | 166-FE | Establish shared financial-value and availability presentation. |
-| FR23 | 166-FE | Establish shared percentage and comparison presentation. |
-| FR24 | 166-FE | Establish shared date/week/period presentation contracts. |
-| FR25 | 166-FE | Establish semantic financial, operational, availability, and chart color roles. |
-| FR26 | 166-FE | Consolidate the partial shadcn/ui foundation. |
-| FR27 | 167–173-FE | Migrate all 76 complete route slices by domain. |
-| FR28 | 166-FE | Assign and migrate upstream shared dependencies before routes. |
-| FR29 | 166-FE | Define preservation contract for specialized components. |
-| FR30 | 174-FE | Remove obsolete legacy UI only after consumer migration. |
-| FR31 | 174-FE | Maintain and validate the one-owner route ledger. |
-| FR32 | 167-FE | Deliver consistent AppShell and unified navigation. |
-| FR33 | 166-FE | Deliver reusable product compositions. |
-| FR34 | 166-FE | Deliver semantic light/dark theme behavior. |
-| FR35 | 174-FE | Enforce local validation and branch/worktree completion evidence. |
+| Requirement | Primary Epic | Coverage intent                                                                 |
+| ----------- | ------------ | ------------------------------------------------------------------------------- |
+| FR1         | 167-FE       | Preserve registration and login during auth migration.                          |
+| FR2         | 167-FE       | Preserve session, redirect, and restoration behavior.                           |
+| FR3         | 167-FE       | Preserve first-time onboarding-to-margin journey.                               |
+| FR4         | 167-FE       | Preserve WB token validation.                                                   |
+| FR5         | 167-FE       | Preserve processing progress and recovery.                                      |
+| FR6         | 168-FE       | Preserve dashboard and analytical metric meaning.                               |
+| FR7         | 168-FE       | Preserve expense and analytical visualization behavior.                         |
+| FR8         | 168-FE       | Preserve trend visualization semantics.                                         |
+| FR9         | 167-FE       | Preserve AppShell and summary-to-detail navigation.                             |
+| FR10        | 172-FE       | Preserve single-product COGS behavior.                                          |
+| FR11        | 172-FE       | Preserve bulk COGS behavior and partial recovery.                               |
+| FR12        | 172-FE       | Preserve COGS and domain validation semantics.                                  |
+| FR13        | 172-FE       | Preserve mutation confirmation and refresh.                                     |
+| FR14        | 172-FE       | Preserve COGS-triggered margin calculation states.                              |
+| FR15        | 168-FE       | Preserve multi-dimensional margin analysis.                                     |
+| FR16        | 169-FE       | Preserve operational and reconciliation analytics.                              |
+| FR17        | 166-FE       | Establish shared interaction contracts used by every route owner.               |
+| FR18        | 174-FE       | Verify backend endpoint compatibility across the completed migration.           |
+| FR19        | 174-FE       | Verify headers, query keys, cache, polling, and request lifecycle preservation. |
+| FR20        | 166-FE       | Establish reusable and semantically distinct route/section states.              |
+| FR21        | 174-FE       | Verify Russian localization across all routes.                                  |
+| FR22        | 166-FE       | Establish shared financial-value and availability presentation.                 |
+| FR23        | 166-FE       | Establish shared percentage and comparison presentation.                        |
+| FR24        | 166-FE       | Establish shared date/week/period presentation contracts.                       |
+| FR25        | 166-FE       | Establish semantic financial, operational, availability, and chart color roles. |
+| FR26        | 166-FE       | Consolidate the partial shadcn/ui foundation.                                   |
+| FR27        | 167–173-FE   | Migrate all 76 complete route slices by domain.                                 |
+| FR28        | 166-FE       | Assign and migrate upstream shared dependencies before routes.                  |
+| FR29        | 166-FE       | Define preservation contract for specialized components.                        |
+| FR30        | 174-FE       | Remove obsolete legacy UI only after consumer migration.                        |
+| FR31        | 174-FE       | Maintain and validate the one-owner route ledger.                               |
+| FR32        | 167-FE       | Deliver consistent AppShell and unified navigation.                             |
+| FR33        | 166-FE       | Deliver reusable product compositions.                                          |
+| FR34        | 166-FE       | Deliver semantic light/dark theme behavior.                                     |
+| FR35        | 174-FE       | Enforce local validation and branch/worktree completion evidence.               |
 
 ## Epic List
 
@@ -371,7 +371,7 @@ Operations and finance users can review acquiring reports, buyout and reconcilia
 
 **Route scope:** `/analytics/acquiring`, `/analytics/acquiring/period`, `/analytics/acquiring/reports/[id]`, `/analytics/buyout`, `/analytics/buyout-reconciliation`, `/analytics/fbs-enhanced`, `/analytics/fbs-stock`, `/analytics/funnel`, `/analytics/gaps`, `/analytics/liquidity`, `/analytics/returns`, `/analytics/storage`, `/analytics/supply-planning`
 
-**Dependencies:** Epic 166-FE and Epic 167-FE AppShell
+**Dependencies:** Epic 166-FE and Epic 167-FE AppShell. PR #227 delivered the Story 169.12 route presentation early without completing the authoritative paid-storage contract. Remaining paid-storage execution order: 169.14 → 169.15 → 169.12 contract closeout; Story 169.13 remains independent.
 
 **Standalone outcome:** Operational exception detection, investigation, action handoff, and verification work consistently across all operational analytics routes.
 
@@ -490,7 +490,8 @@ The state may be implemented at a Next.js route boundary or inside the owning co
 - Token/compiler files, `src/components/ui`, AppShell/navigation, shared product compositions, unrelated domain components, API clients, hooks, types, query keys, and backend contracts are forbidden unless explicitly included in the Story's Allowed Change Surface.
 - A newly discovered shared requirement is escalated to the orchestrator and resolved through the named owner or a prerequisite Story; it is not absorbed silently.
 - Numeric Story order identifies canonical records; it is not a universal execution order. An approved higher-numbered correct-course prerequisite may execute before a lower-numbered route Story when the explicit canonical DAG requires it.
-- Story 167.8 alone may change the backend repository within its declared contract surface. Its implementation, PR, merge, and cleanup evidence is verified against backend `main`; a frontend coordination artifact may not claim Story 167.8 `review`, `done`, backend completion, or cleanup without the exact backend merge SHA, proof that SHA is an ancestor of current backend `main`, and backend branch/worktree cleanup evidence. Story 167.8 has no route-ledger row, and no other Story inherits this exception.
+- Exactly Stories 167.8 and 169.14 may change the backend repository, each only within its separately declared bounded backend surface. Story 167.8 owns only the authoritative cabinet session reconciliation/create-idempotency contract; Story 169.14 owns only the authoritative paid-storage import request/lifecycle/result/error contract. Neither Story has a route-ledger row, and no other Story inherits either exception.
+- Backend completion evidence is repository-specific for each exception. A frontend coordination artifact may not claim Story 167.8 or Story 169.14 `review`, `done`, backend completion, or cleanup without the exact backend merge SHA, proof that SHA is an ancestor of current backend `main`, proof that the Story's local and remote backend branches are absent, and backend worktree removal/prune evidence.
 - No production, deployment, force-push, direct-`main` push, or required CI-gate work is authorized.
 
 #### Local Validation Contract
@@ -1288,19 +1289,21 @@ No deployment, production infrastructure/configuration, production data operatio
 
 **Owned Surface:** `/analytics/storage`; `page.tsx`, `loading.tsx`, full `components/**` tree (header/filters/badges, summary/alerts, trend chart/parts/config, SKU table/header/cells/hooks, top consumers, paid-storage import dialog/status/hooks/utils, URL sync), and colocated tests.
 
-**Shared Dependencies:** C2; existing storage hooks/contracts, import endpoint/lifecycle, URL filters, and financial formatting.
+**Shared Dependencies:** C2; merged Story 169.14 authoritative backend paid-storage import contract; merged Story 169.15 shared frontend paid-storage import boundary; existing storage analytics hooks/contracts, URL filters, and financial formatting.
 
-**Allowed Change Surface:** Only `src/app/(dashboard)/analytics/storage/**`.
+**Current Delivery State:** PR #227 merged the 27-file route presentation at `52f7f5061d73f5633fbc0fe575ff35f2055be194` before the approved prerequisite documentation integrated. Preserve that delivery, keep the Story in `review`, and close it only after Stories 169.14 and 169.15 merge and the route passes bounded contract-closeout validation.
+
+**Allowed Change Surface:** Only `src/app/(dashboard)/analytics/storage/**` plus the exact existing Story implementation artifact for contract-closeout evidence and lifecycle reconciliation.
 
 **Forbidden Shared Files:** FS.
 
 **Acceptance criteria:**
 
 1. **Given** storage data and applied week/warehouse/SKU filters, **when** migrated, **then** cost definitions, alert thresholds, trend/table/top-consumer values, URL sync, sorting/pagination, import validation/submission/status, and refresh behavior remain unchanged.
-2. **Given** no data, filtered-empty, stale/partial sections, import idle/uploading/processing/partial/success/failure, or background refresh, **when** rendered, **then** current trustworthy data remains visible and import outcome/safe retry scope is explicit.
+2. **Given** no data, filtered-empty, stale/partial analytical sections, import idle, validation/submission, pending, processing, success, or failure, or background refresh, **when** rendered, **then** current trustworthy data remains visible and the authoritative import outcome plus safe whole-range retry guidance is explicit. Paid-storage import partial success is not applicable unless a future approved backend contract exposes partial counts and a safe retry subset; the route must not synthesize it.
 3. **Given** keyboard, zoom, or narrow-width use, **when** filters/table/import dialog are operated, **then** focus lifecycle, retained safe input, primary SKU/cost/status/action, and long Russian/large RUB values remain usable.
 
-**State Coverage:** SC plus week-filter mismatch, alert, import validation/uploading/processing/partial/success/failure, and per-section error states.
+**State Coverage:** SC plus week-filter mismatch, alert, import idle, validation/submission, pending, processing, success, failure, and per-section error states. Paid-storage import partial success is N/A under the merged 169.14 contract; route-level partial analytical sections remain required.
 
 **Responsive/Table/Chart Contract:** RTC; SKU table primary column is product/SKU, storage cost/volume/days align with full precision, warehouse badges/actions stay reachable; trend chart exposes week/units/series and data alternative; import dialog uses focusable error/result summary.
 
@@ -1308,11 +1311,11 @@ No deployment, production infrastructure/configuration, production data operatio
 
 **Local Validation:** VC with `STORY_TEST_TARGET=src/app/(dashboard)/analytics/storage` and `STORY_ID=169.12`.
 
-**Test and Visual Evidence:** VE plus alert, filtered-empty, partial section, and full import lifecycle evidence.
+**Test and Visual Evidence:** VE plus alert, filtered-empty, partial analytical section, and the complete authoritative import lifecycle from idle through success/failure, including request/status/result contract evidence. No import partial-success screenshot is required while that state is contractually N/A.
 
-**Branch/Worktree Lifecycle:** BLC on `cdx/epic-169-story-12-storage-shadcn`.
+**Branch/Worktree Lifecycle:** route presentation merged through PR #227 from `cdx/epic-169-story-12-storage-shadcn`; remaining BLC uses `cdx/epic-169-story-12-contract-closeout` only after Stories 169.14 and 169.15 clean up.
 
-**Cleanup Evidence:** CE.
+**Cleanup Evidence:** PR #227 local route branch/worktree absence plus final contract-closeout CE; remote absence and final Story completion remain mandatory.
 
 **Out of Scope:** NP.
 
@@ -1351,6 +1354,26 @@ No deployment, production infrastructure/configuration, production data operatio
 **Cleanup Evidence:** CE.
 
 **Out of Scope:** NP.
+
+### Story 169.14: Establish the Authoritative Paid-Storage Import Lifecycle and Result Contract
+
+**Requirements:** FR16, FR18, FR19, FR20, FR35
+
+As a user importing paid-storage data, I want the trigger and status endpoints to expose one authoritative lifecycle and result contract, so that the frontend can report progress, imported rows, failure details, and safe whole-range recovery truthfully.
+
+**Delivery Record:** **Route/User Value:** non-route backend prerequisite for the `/analytics/storage` paid-storage import workflow. **Owned Surface:** backend paid-storage request/response DTO, the shared import-status DTO's optional paid-storage result field, controller start/status boundary, paid-storage status-result projection, direct unit/integration/e2e contract tests, and authoritative API documentation. **Shared Dependencies:** current backend `main`; no overlapping backend writer; shared-consumer inventory for `ImportStatusDto`. **Allowed Change Surface:** `src/imports/controllers/paid-storage-import.controller.ts`, `src/imports/dto/paid-storage-import.dto.ts`, `src/imports/dto/import-status.dto.ts` only for an optional paid-storage result field, the paid-storage-specific path in `src/imports/services/import-status-builder.service.ts`, their direct tests, `test/imports/paid-storage.e2e-spec.ts`, and `docs/API-PATHS-REFERENCE.md`. **Forbidden Shared Files:** frontend repository, processor/orchestration/storage semantics except read-only contract evidence, unrelated import queues/domains, unrelated `ImportStatusDto` fields or consumer response shapes, Prisma schema/migrations, package/dependency files, deployment/production configuration. **State Coverage:** accepted start, pending, processing, completed with authoritative imported-row result, failed with actionable error detail, invalid request, unknown import, unauthorized/cross-cabinet access, and defensive unknown queue state. **Responsive/Table/Chart Contract:** not applicable; non-route contract Story with no route-ledger row. **Accessibility Contract:** not applicable to backend UI; lifecycle and error semantics must be explicit for consumers. **Test and Visual Evidence:** RED-first DTO/OpenAPI/controller/status-builder/unit/integration/e2e/API-doc assertions proving request keys, lifecycle values, optional paid-storage result projection, error detail, cabinet isolation, and unchanged unrelated import-status consumers. **Local Validation:** targeted backend tests followed by format-check, lint-check, type-check, unit/e2e, build, endpoint-drift, docs validation, and `git diff --check`. **Branch/Worktree Lifecycle:** backend branch `cdx/epic-169-story-14-paid-storage-import-contract`, worktree `/private/tmp/wb-repricer-be-169-14-paid-storage-import-contract`; two independent review passes before PR/merge. **Cleanup Evidence:** exact backend merge SHA, ancestry on current backend `main`, local/remote branch absence, and worktree removal/prune proof before Story 169.15 starts.
+
+**Acceptance Criteria:** **Given** an authenticated cabinet submits a valid paid-storage date range **when** the import is accepted and polled **then** the request keys match the documented DTO; the start response uses a documented lifecycle value; polling exposes only `pending | processing | completed | failed`; completed status exposes the authoritative imported-row result through an optional paid-storage result field on `ImportStatusDto`; failed status exposes actionable error detail; cabinet isolation, queue behavior, retry behavior, current all-or-failure processing semantics, and unrelated import-status consumers remain unchanged; no cast, unrelated response-shape broadening, or partial-success status is introduced **and** the exact DTO/OpenAPI contract is frozen in RED tests and authoritative API documentation before GREEN implementation.
+
+### Story 169.15: Align the Shared Frontend Paid-Storage Import Boundary
+
+**Requirements:** FR16, FR18, FR19, FR20, FR35
+
+As a user importing paid-storage data, I want the shared frontend boundary to consume the merged backend contract exactly, so that route presentation receives truthful lifecycle, result, and failure evidence without duplicating contract logic.
+
+**Delivery Record:** **Route/User Value:** non-route shared frontend prerequisite for `/analytics/storage`. **Owned Surface:** paid-storage request serialization, shared import types/exports, import-status normalizer, polling boundary, and direct API/normalizer/hook contract tests. **Shared Dependencies:** merged Story 169.14 backend contract and recorded backend merge SHA. **Allowed Change Surface:** `src/lib/api/storage-analytics.ts`, `src/lib/api/storage-import-normalizer.ts`, `src/types/storage-analytics-trends.ts`, `src/types/storage-analytics/index.ts` only if its export surface must change, `src/hooks/useImportStatus.ts`, and direct tests in `src/lib/api/__tests__/**` and `src/hooks/__tests__/useStorageAnalytics.test.ts`. **Forbidden Shared Files:** `src/app/(dashboard)/analytics/storage/**`, every route presentation tree, generic UI/product primitives, unrelated APIs/hooks/types/stores, backend repository, package/dependency files, and E2E route specs. **State Coverage:** request serialization, pending/processing continuation, completed/failed termination, imported-row preservation, actionable error preservation, invalid/unknown response values, missing import ID, disabled polling, and network failure. **Responsive/Table/Chart Contract:** not applicable; non-route shared behavior Story with no route-ledger row. **Accessibility Contract:** route presentation remains Story 169.12-owned; this boundary must preserve explicit status/error data for accessible consumers. **Test and Visual Evidence:** honest RED-first request, response, normalizer, polling, terminal result, and failure contract tests against the merged Story 169.14 schema. **Local Validation:** targeted Vitest, format-check, lint, type-check, max-lines, build, and `git diff --check`. **Branch/Worktree Lifecycle:** frontend branch `cdx/epic-169-story-15-storage-import-boundary`, worktree `/private/tmp/wb-repricer-fe-169-15-storage-import-boundary`; two independent review passes before PR/merge. **Cleanup Evidence:** frontend merge SHA plus local/remote branch and worktree absence before the Story 169.12 contract closeout starts.
+
+**Acceptance Criteria:** **Given** the merged Story 169.14 request/status/result/error contract **when** the shared frontend triggers and polls a paid-storage import **then** request serialization matches the backend DTO; shared types and normalizers accept exactly the authoritative lifecycle; polling continues through pending/processing and stops at completed/failed; imported rows and actionable failure details are preserved; unknown values fail defensively with diagnostics; direct contract tests lock the boundary; no route presentation changes occur **and** no paid-storage partial-success state is synthesized.
 
 ---
 
@@ -2860,7 +2883,7 @@ So that no surface is skipped, duplicated, or executed without clear ownership.
 
 **Delivery Record:**
 
-- **Route/User Value:** all 76 routes and 92 Stories; complete accountable migration scope.
+- **Route/User Value:** all 76 routes and 94 Stories; complete accountable migration scope.
 - **Owned Surface:** route ledger, BMAD migration artifact, OMX master/per-Story plans, parity validators and planning documentation.
 - **Shared Dependencies:** Epics 166–173-FE planning/implementation records available.
 - **Allowed Change Surface:** planning, tracking, and non-product validation scripts only.
@@ -2868,7 +2891,7 @@ So that no surface is skipped, duplicated, or executed without clear ownership.
 - **State Coverage:** every route has applicable-state ownership and evidence fields; no implementation state is changed here.
 - **Responsive/Table/Chart Contract:** verify each route Story declares its specific contract.
 - **Accessibility Contract:** verify each Story declares automated and manual evidence.
-- **Test and Visual Evidence:** machine check: 76 source routes = 76 ledger routes = 76 route Stories; 92 BMAD Stories = 92 OMX plans; no duplicates.
+- **Test and Visual Evidence:** machine check: 76 source routes = 76 ledger routes = 76 route Stories; 94 BMAD Stories = 94 OMX plans; no duplicates.
 - **Local Validation:** parity validator plus documentation checks and `git diff --check`.
 - **Branch/Worktree Lifecycle:** `cdx/epic-174-story-1-plan-parity`, dedicated worktree.
 - **Cleanup Evidence:** merged tracking artifacts, deleted branch, removed worktree.
