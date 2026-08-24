@@ -26,9 +26,17 @@ import type { StockoutRisk } from '@/types/supply-planning'
 // =============================================================================
 
 describe('STOCKOUT_RISK_CONFIG', () => {
-  const expectedRisks: StockoutRisk[] = ['out_of_stock', 'critical', 'warning', 'low', 'healthy']
+  // Story 169.13: 'unknown' is the visible-unknown tier for absent/unrecognized backend enums.
+  const expectedRisks: StockoutRisk[] = [
+    'out_of_stock',
+    'critical',
+    'warning',
+    'low',
+    'healthy',
+    'unknown',
+  ]
 
-  it('has config for all 5 risk levels', () => {
+  it('has config for all 6 risk levels (incl. unknown)', () => {
     expectedRisks.forEach(risk => {
       expect(STOCKOUT_RISK_CONFIG[risk]).toBeDefined()
     })
@@ -58,6 +66,10 @@ describe('STOCKOUT_RISK_CONFIG', () => {
     )
     expect(STOCKOUT_RISK_CONFIG.warning.priority).toBeLessThan(STOCKOUT_RISK_CONFIG.low.priority)
     expect(STOCKOUT_RISK_CONFIG.low.priority).toBeLessThan(STOCKOUT_RISK_CONFIG.healthy.priority)
+    // Story 169.13: unknown sorts last-but-visible, after healthy.
+    expect(STOCKOUT_RISK_CONFIG.healthy.priority).toBeLessThan(
+      STOCKOUT_RISK_CONFIG.unknown.priority
+    )
   })
 })
 
@@ -67,7 +79,14 @@ describe('STOCKOUT_RISK_CONFIG', () => {
 
 describe('getStockoutRiskConfig', () => {
   it('returns correct config for each risk level', () => {
-    const risks: StockoutRisk[] = ['out_of_stock', 'critical', 'warning', 'low', 'healthy']
+    const risks: StockoutRisk[] = [
+      'out_of_stock',
+      'critical',
+      'warning',
+      'low',
+      'healthy',
+      'unknown',
+    ]
     risks.forEach(risk => {
       const config = getStockoutRiskConfig(risk)
       expect(config).toBe(STOCKOUT_RISK_CONFIG[risk])

@@ -65,8 +65,13 @@ export function formatDaysUntilStockout(days: number | null): string {
  * inputs (NaN/Infinity — not expected from the `number` backend contract) → "—" (no data),
  * mirroring formatReorderValue's `Number.isFinite` guard.
  */
-export function formatSafetyStockCoverage(safetyStockUnits: number, avgDailySales: number): string {
-  if (!Number.isFinite(safetyStockUnits) || safetyStockUnits <= 0) return '—'
+export function formatSafetyStockCoverage(
+  safetyStockUnits: number,
+  avgDailySales: number | null
+): string {
+  // avg_daily_sales is null when the backend omits velocity → "—", never fabricated (Story 169.13).
+  if (!Number.isFinite(safetyStockUnits) || safetyStockUnits <= 0 || avgDailySales == null)
+    return '—'
   if (!Number.isFinite(avgDailySales)) return '—'
   if (avgDailySales <= 0) return '∞'
   return `${Math.round(safetyStockUnits / avgDailySales)} дней`
@@ -97,7 +102,9 @@ export function formatReorderValue(value: number | null | undefined): string {
 /**
  * Format velocity (units per day)
  */
-export function formatVelocity(velocity: number): string {
+export function formatVelocity(velocity: number | null): string {
+  // null = backend omitted velocity → "—" (anti-pattern #8, Story 169.13)
+  if (velocity == null) return '—'
   if (velocity === 0) return '0'
   if (velocity < 1) return velocity.toFixed(2)
   if (velocity < 10) return velocity.toFixed(1)

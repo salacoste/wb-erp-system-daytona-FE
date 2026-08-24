@@ -11,6 +11,7 @@ import {
   AlertCircle,
   Clock,
   CheckCircle,
+  HelpCircle,
   ShoppingCart,
   Calendar,
   TrendingUp,
@@ -26,6 +27,7 @@ export const STATUS_ICONS: Record<StockoutRisk, React.ComponentType<{ className?
   warning: AlertCircle,
   low: Clock,
   healthy: CheckCircle,
+  unknown: HelpCircle, // Story 169.13: visible-unknown tier
 }
 
 // Velocity trend icon mapping
@@ -46,6 +48,7 @@ export const ROW_BG_COLORS: Record<StockoutRisk, string> = {
   warning: 'bg-orange-50',
   low: 'bg-yellow-50',
   healthy: 'bg-white',
+  unknown: 'bg-gray-50', // Story 169.13: muted — distinct from healthy's white
 }
 
 // Row left border colors by status (UX spec)
@@ -55,6 +58,7 @@ export const ROW_BORDER_COLORS: Record<StockoutRisk, string> = {
   warning: 'border-l-4 border-orange-500',
   low: 'border-l-4 border-yellow-500',
   healthy: '',
+  unknown: 'border-l-4 border-gray-300', // Story 169.13: muted visible-unknown
 }
 
 // Action button configuration per stockout risk level
@@ -96,6 +100,9 @@ export function getActionButton(stockoutRisk: StockoutRisk): ActionButtonConfig 
         className: '',
       }
     case 'healthy':
+      return null
+    case 'unknown':
+      // No recommended action for an unknown risk level (Story 169.13).
       return null
   }
 }

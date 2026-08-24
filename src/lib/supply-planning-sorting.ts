@@ -9,12 +9,16 @@ import type { StockoutRisk } from '@/types/supply-planning'
  * Risk severity order for sorting (higher = more urgent)
  */
 export function getStockoutRiskSeverity(risk: StockoutRisk): number {
+  // unknown = 0 (Story 169.13): sorts LAST in risk-desc (least urgent) yet stays
+  // distinguishable from healthy — it must never be silently treated as healthiest for
+  // filterByMinRisk purposes. Known tiers keep their exact previous values/ordering.
   const severity: Record<StockoutRisk, number> = {
     out_of_stock: 5,
     critical: 4,
     warning: 3,
     low: 2,
     healthy: 1,
+    unknown: 0,
   }
   return severity[risk]
 }

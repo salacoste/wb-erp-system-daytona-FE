@@ -66,6 +66,7 @@ export function useSupplyTableFilters(data: SupplyPlanningItem[]) {
             warning: 2,
             low: 3,
             healthy: 4,
+            unknown: 5, // Story 169.13: sorts last in asc risk order — never disguised as healthy
           }
           comparison = riskOrder[a.stockout_risk] - riskOrder[b.stockout_risk]
           break
@@ -83,7 +84,8 @@ export function useSupplyTableFilters(data: SupplyPlanningItem[]) {
           comparison = a.in_transit - b.in_transit
           break
         case 'avg_daily_sales':
-          comparison = a.avg_daily_sales - b.avg_daily_sales
+          // avg_daily_sales is null when backend omits velocity — nulls sort first (Story 169.13).
+          comparison = (a.avg_daily_sales ?? -Infinity) - (b.avg_daily_sales ?? -Infinity)
           break
         case 'days_until_stockout': {
           const daysA = a.days_until_stockout ?? 9999

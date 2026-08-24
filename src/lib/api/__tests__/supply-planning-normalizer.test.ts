@@ -98,4 +98,66 @@ describe('normalizeSupplyPlanningResponse', () => {
     })
     expect(result.data[0].reorder_value).toBeUndefined()
   })
+
+  // Story 169.13 (pattern #218/#226): absent/unrecognized enum values must map to
+  // 'unknown' — never an optimistic known tier.
+
+  it('missing stockout_risk falls to unknown (NOT healthy)', () => {
+    const result = normalizeSupplyPlanningResponse({
+      meta: {},
+      summary: {},
+      data: [{ sku_id: '123' }],
+    })
+    expect(result.data[0].stockout_risk).toBe('unknown')
+  })
+
+  it('unrecognized stockout_risk falls to unknown', () => {
+    const result = normalizeSupplyPlanningResponse({
+      meta: {},
+      summary: {},
+      data: [{ sku_id: '123', stockout_risk: 'on-fire' }],
+    })
+    expect(result.data[0].stockout_risk).toBe('unknown')
+  })
+
+  it('missing reorder_status falls to unknown (NOT ok)', () => {
+    const result = normalizeSupplyPlanningResponse({
+      meta: {},
+      summary: {},
+      data: [{ sku_id: '123' }],
+    })
+    expect(result.data[0].reorder_status).toBe('unknown')
+  })
+
+  it('unrecognized reorder_status falls to unknown', () => {
+    const result = normalizeSupplyPlanningResponse({
+      meta: {},
+      summary: {},
+      data: [{ sku_id: '123', reorder_status: 42 }],
+    })
+    expect(result.data[0].reorder_status).toBe('unknown')
+  })
+
+  it('missing avg_daily_sales stays null (AP#8, no ?? 0)', () => {
+    const result = normalizeSupplyPlanningResponse({
+      meta: {},
+      summary: {},
+      data: [{ sku_id: '123' }],
+    })
+    expect(result.data[0].avg_daily_sales).toBeNull()
+  })
+
+  it('missing summary total_reorder_value stays null (AP#8, no ?? 0)', () => {
+    const result = normalizeSupplyPlanningResponse({ meta: {}, summary: {} })
+    expect(result.summary.total_reorder_value).toBeNull()
+  })
+
+  it('valid enum and numeric values pass through unchanged (regression pins)', () => {
+    const result = normalizeSupplyPlanningResponse(fullRaw)
+    expect(result.data[0].stockout_risk).toBe('warning')
+    expect(result.data[0].reorder_status).toBe('soon')
+    expect(result.data[0].avg_daily_sales).toBe(5.2)
+    expect(result.summary.total_reorder_value).toBe(150000)
+    expect(result.data[0].has_cogs).toBe(true)
+  })
 })

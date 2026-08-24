@@ -30,7 +30,8 @@ export interface SupplyPlanningItem {
   current_stock: number
   in_transit: number
   effective_stock: number
-  avg_daily_sales: number
+  /** Null when backend omits velocity (anti-pattern #8 — render "—", never ?? 0) */
+  avg_daily_sales: number | null
   /** Sales trend (null for new products without history) */
   velocity_trend: VelocityTrend | null
   days_until_stockout: number | null
@@ -62,7 +63,8 @@ export interface SupplyPlanningSummary {
   reorder_urgent: number
   reorder_soon: number
   total_in_transit_units: number
-  total_reorder_value: number
+  /** Null when backend omits capital sum (anti-pattern #8 — render "—", never ?? 0) */
+  total_reorder_value: number | null
 }
 
 /** Response metadata */

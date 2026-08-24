@@ -13,6 +13,9 @@ export function getReorderStatusConfig(status: ReorderStatus): ReorderStatusConf
     urgent: { label: 'Срочно заказать', color: '#EF4444', bgColor: '#FEE2E2' },
     soon: { label: 'Заказать скоро', color: '#F97316', bgColor: '#FED7AA' },
     ok: { label: 'Запас достаточен', color: '#22C55E', bgColor: '#D1FAE5' },
+    // Story 169.13 (pattern #218/#226): muted visible-unknown tier — never rendered as
+    // the optimistic green "Запас достаточен".
+    unknown: { label: 'Статус неизвестен', color: '#6B7280', bgColor: '#F3F4F6' },
   }
   return configs[status]
 }
