@@ -8,9 +8,9 @@ import {
   formatDaysUntilStockout,
   formatReorderValue,
   formatVelocity,
-  VELOCITY_TREND_CONFIG,
 } from '@/lib/supply-planning-utils'
 import { TREND_ICONS, getActionButton } from './supply-planning-row-constants'
+import { TREND_TEXT_TOKENS } from './supply-risk-tokens'
 import { StatusCell, ProductNameCell, StockCell } from './SupplyPlanningRowCellsA'
 
 /**
@@ -25,26 +25,27 @@ interface CellProps {
   item: SupplyPlanningItem
 }
 
-/** Velocity cell with trend icon */
+/** Velocity cell with trend icon — trend color via route token map (169.13) */
 export function VelocityCell({ item }: CellProps) {
   const trend = item.velocity_trend
   const isKnownTrend = trend != null && trend !== 'no_data' && trend in TREND_ICONS
   const TrendIcon = isKnownTrend ? TREND_ICONS[trend] : null
-  const trendConfig = isKnownTrend ? VELOCITY_TREND_CONFIG[trend] : null
 
   return (
     <td className="px-4 py-3 text-right hidden lg:table-cell">
-      <span className="text-sm text-gray-900 flex items-center justify-end gap-1">
+      <span className="text-sm tabular-nums text-foreground flex items-center justify-end gap-1">
         {formatVelocity(item.avg_daily_sales)}
-        <span className="text-gray-400 text-xs">шт/д</span>
-        {TrendIcon ? (
-          <TrendIcon className={cn('h-3 w-3', trendConfig?.textClass ?? 'text-gray-500')} />
+        <span className="text-muted-foreground text-xs">шт/д</span>
+        {/* isKnownTrend conjunct is load-bearing: aliased narrowing makes `trend` a valid
+            index for TREND_TEXT_TOKENS (TrendIcon truthiness alone doesn't narrow). */}
+        {TrendIcon && isKnownTrend ? (
+          <TrendIcon className={cn('h-3 w-3', TREND_TEXT_TOKENS[trend])} />
         ) : (
           <TooltipProvider>
             <Tooltip>
               <TooltipTrigger asChild>
                 <span
-                  className="cursor-help text-gray-300 text-xs"
+                  className="cursor-help text-muted-foreground/60 text-xs"
                   aria-label="Нет данных о тренде продаж"
                 >
                   —
@@ -61,18 +62,18 @@ export function VelocityCell({ item }: CellProps) {
   )
 }
 
-/** Days until stockout cell with color coding */
+/** Days until stockout cell — thresholds → status tokens (169.13) */
 export function DaysUntilStockoutCell({ item }: CellProps) {
   return (
     <td className="px-4 py-3 text-right">
       <span
         className={cn(
-          'text-sm font-medium',
+          'text-sm font-medium tabular-nums',
           item.days_until_stockout !== null && item.days_until_stockout <= 7
-            ? 'text-red-600'
+            ? 'text-status-error'
             : item.days_until_stockout !== null && item.days_until_stockout <= 14
-              ? 'text-orange-600'
-              : 'text-gray-900'
+              ? 'text-status-warning'
+              : 'text-foreground'
         )}
       >
         {formatDaysUntilStockout(item.days_until_stockout)}
@@ -85,7 +86,7 @@ export function DaysUntilStockoutCell({ item }: CellProps) {
 export function SellingPriceCell({ item }: CellProps) {
   return (
     <td className="px-4 py-3 text-right hidden xl:table-cell">
-      <span className="text-sm text-gray-900">
+      <span className="text-sm tabular-nums text-foreground">
         {item.selling_price != null ? formatReorderValue(item.selling_price) : '—'}
       </span>
     </td>
@@ -108,7 +109,7 @@ export function ActionCell({ item }: CellProps) {
           <span className="hidden sm:inline">{actionConfig.label}</span>
         </Button>
       ) : (
-        <span className="text-gray-400">—</span>
+        <span className="text-muted-foreground">—</span>
       )}
     </td>
   )

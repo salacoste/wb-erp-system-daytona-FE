@@ -19,15 +19,15 @@ interface CostAnalysisProps {
 
 export function SupplyDetailCostAnalysis({ item }: CostAnalysisProps) {
   return (
-    <section className="bg-white rounded-lg border p-4">
-      <h4 className="flex items-center gap-2 text-sm font-semibold text-gray-700 mb-3">
+    <section className="bg-card rounded-lg border p-4">
+      <h4 className="flex items-center gap-2 text-sm font-semibold text-foreground mb-3">
         &#x1F4B0; Анализ затрат
       </h4>
       {item.has_cogs && item.cogs_per_unit ? (
         <dl className="space-y-2 text-sm">
           <div className="flex justify-between">
-            <dt className="text-gray-600">Себестоимость:</dt>
-            <dd className="font-medium text-gray-900">
+            <dt className="text-muted-foreground">Себестоимость:</dt>
+            <dd className="font-medium tabular-nums text-foreground">
               {formatReorderValue(item.cogs_per_unit)}/шт × {formatStockQty(item.reorder_quantity)}{' '}
               = {formatReorderValue(item.reorder_value)}
             </dd>
@@ -41,15 +41,19 @@ export function SupplyDetailCostAnalysis({ item }: CostAnalysisProps) {
               return (
                 <>
                   <div className="flex justify-between pt-2 border-t">
-                    <dt className="text-gray-600">Ожид. выручка</dt>
-                    <dd className="font-medium">
+                    <dt className="text-muted-foreground">Ожид. выручка</dt>
+                    <dd className="font-medium tabular-nums">
                       {formatReorderValue(item.reorder_quantity * item.selling_price)}
                     </dd>
                   </div>
                   <div className="flex justify-between">
-                    <dt className="text-gray-600">Ожид. прибыль</dt>
+                    <dt className="text-muted-foreground">Ожид. прибыль</dt>
+                    {/* 169.4 canon: financial ± via financial-positive/negative tokens */}
                     <dd
-                      className={cn('font-medium', profit >= 0 ? 'text-green-600' : 'text-red-600')}
+                      className={cn(
+                        'font-medium tabular-nums',
+                        profit >= 0 ? 'text-financial-positive' : 'text-financial-negative'
+                      )}
                     >
                       {formatReorderValue(profit)}
                     </dd>
@@ -59,7 +63,7 @@ export function SupplyDetailCostAnalysis({ item }: CostAnalysisProps) {
             })()}
         </dl>
       ) : (
-        <div className="flex items-center gap-2 text-gray-400">
+        <div className="flex items-center gap-2 text-muted-foreground">
           <TooltipProvider>
             <Tooltip>
               <TooltipTrigger asChild>
@@ -73,9 +77,10 @@ export function SupplyDetailCostAnalysis({ item }: CostAnalysisProps) {
               </TooltipContent>
             </Tooltip>
           </TooltipProvider>
+          {/* 169.3 precedent: inline links → status-information token */}
           <Link
             href={`${ROUTES.COGS.ROOT}?sku=${item.sku_id}`}
-            className="text-blue-600 hover:underline text-sm ml-2"
+            className="text-status-information hover:underline text-sm ml-2"
           >
             Указать COGS
           </Link>

@@ -19,12 +19,12 @@ export function SupplyPlanningEmpty() {
     <Card>
       <CardContent className="flex flex-col items-center justify-center py-16 text-center">
         {/* Icon */}
-        <div className="mb-6 rounded-full bg-gray-100 p-4">
-          <Package className="h-16 w-16 text-gray-400" />
+        <div className="mb-6 rounded-full bg-muted p-4">
+          <Package className="h-16 w-16 text-muted-foreground" />
         </div>
 
         {/* Title — h2 (page renders h1 in SupplyPlanningHeader; no h2 precedes this empty-state section) */}
-        <h2 className="text-lg font-semibold text-gray-900 mb-2">Нет данных об остатках</h2>
+        <h2 className="text-lg font-semibold text-foreground mb-2">Нет данных об остатках</h2>
 
         {/* Message */}
         <p className="text-sm text-muted-foreground mb-6 max-w-md">

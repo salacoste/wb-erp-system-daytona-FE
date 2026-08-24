@@ -85,21 +85,15 @@ function RiskCard({ status, count, isActive, onClick }: RiskCardProps) {
   const cardStyles = getCardStyles(status, isActive)
 
   return (
+    // Story 169.13: active ring/border come from the token map (cardActive
+    // includes ring-2 + ring token) — lib config.color hex channel no longer consumed.
     <Card
       className={cn(
         'cursor-pointer transition-all duration-150',
         'hover:shadow-md hover:scale-[1.02]',
         'min-h-[140px]',
-        cardStyles.card,
-        isActive && 'ring-2 ring-offset-2'
+        cardStyles.card
       )}
-      style={
-        {
-          borderColor: isActive ? config.color : undefined,
-          // Tailwind ring color via CSS custom property
-          '--tw-ring-color': isActive ? config.color : undefined,
-        } as React.CSSProperties
-      }
       onClick={onClick}
     >
       <CardContent className="p-5">

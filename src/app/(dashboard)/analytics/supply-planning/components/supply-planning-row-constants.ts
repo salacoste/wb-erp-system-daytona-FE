@@ -19,6 +19,7 @@ import {
   Minus,
 } from 'lucide-react'
 import type { StockoutRisk, VelocityTrend } from '@/types/supply-planning'
+import { SUPPLY_RISK_TOKENS } from './supply-risk-tokens'
 
 // Status icon mapping
 export const STATUS_ICONS: Record<StockoutRisk, React.ComponentType<{ className?: string }>> = {
@@ -41,24 +42,26 @@ export const TREND_ICONS: Record<
   declining: TrendingDown,
 }
 
-// Row background colors by status (UX spec)
+// Row background colors by status — derived from the single-source token map
+// (Story 169.13): status/15 tint matched with /30 border (169.5 canon).
 export const ROW_BG_COLORS: Record<StockoutRisk, string> = {
-  out_of_stock: 'bg-gray-100',
-  critical: 'bg-red-50',
-  warning: 'bg-orange-50',
-  low: 'bg-yellow-50',
-  healthy: 'bg-white',
-  unknown: 'bg-gray-50', // Story 169.13: muted — distinct from healthy's white
+  out_of_stock: SUPPLY_RISK_TOKENS.out_of_stock.rowBg,
+  critical: SUPPLY_RISK_TOKENS.critical.rowBg,
+  warning: SUPPLY_RISK_TOKENS.warning.rowBg,
+  low: SUPPLY_RISK_TOKENS.low.rowBg,
+  healthy: SUPPLY_RISK_TOKENS.healthy.rowBg,
+  unknown: SUPPLY_RISK_TOKENS.unknown.rowBg,
 }
 
-// Row left border colors by status (UX spec)
+// Row left border colors by status — non-color risk marker paired with the
+// status icon + sr-only label (Story 169.13).
 export const ROW_BORDER_COLORS: Record<StockoutRisk, string> = {
-  out_of_stock: 'border-l-4 border-gray-800',
-  critical: 'border-l-4 border-red-500',
-  warning: 'border-l-4 border-orange-500',
-  low: 'border-l-4 border-yellow-500',
-  healthy: '',
-  unknown: 'border-l-4 border-gray-300', // Story 169.13: muted visible-unknown
+  out_of_stock: SUPPLY_RISK_TOKENS.out_of_stock.rowBorder,
+  critical: SUPPLY_RISK_TOKENS.critical.rowBorder,
+  warning: SUPPLY_RISK_TOKENS.warning.rowBorder,
+  low: SUPPLY_RISK_TOKENS.low.rowBorder,
+  healthy: SUPPLY_RISK_TOKENS.healthy.rowBorder,
+  unknown: SUPPLY_RISK_TOKENS.unknown.rowBorder,
 }
 
 // Action button configuration per stockout risk level
@@ -72,11 +75,12 @@ interface ActionButtonConfig {
 export function getActionButton(stockoutRisk: StockoutRisk): ActionButtonConfig | null {
   switch (stockoutRisk) {
     case 'out_of_stock':
+      // Story 169.13: custom palette className dropped — destructive variant owns the color.
       return {
         variant: 'destructive',
         label: 'Заказать',
         icon: PackageX,
-        className: 'bg-gray-800 hover:bg-gray-900',
+        className: '',
       }
     case 'critical':
       return {
@@ -90,7 +94,8 @@ export function getActionButton(stockoutRisk: StockoutRisk): ActionButtonConfig 
         variant: 'default',
         label: 'Заказать',
         icon: ShoppingCart,
-        className: 'bg-orange-500 hover:bg-orange-600',
+        // Story 169.13: orange palette override dropped — default variant token.
+        className: '',
       }
     case 'low':
       return {

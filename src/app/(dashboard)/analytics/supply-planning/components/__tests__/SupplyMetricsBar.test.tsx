@@ -43,7 +43,7 @@ describe('SupplyMetricsBar', () => {
     expect(screen.getByText(/150/)).toBeInTheDocument()
   })
 
-  it('shows green color when urgent count is low', () => {
+  it('shows success token when urgent count is low', () => {
     const lowSummary: SupplyPlanningSummary = {
       ...mockSummary,
       out_of_stock_count: 1,
@@ -52,10 +52,10 @@ describe('SupplyMetricsBar', () => {
     render(<SupplyMetricsBar summary={lowSummary} />)
     // urgentCount = 3 → green
     const urgentEl = screen.getByText('15 SKU') // 1+2+12 = 15
-    expect(urgentEl.className).toContain('text-green-600')
+    expect(urgentEl.className).toContain('text-status-success')
   })
 
-  it('shows orange color when urgent count is 6-10', () => {
+  it('shows warning token when urgent count is 6-10', () => {
     const medSummary: SupplyPlanningSummary = {
       ...mockSummary,
       out_of_stock_count: 3,
@@ -64,10 +64,10 @@ describe('SupplyMetricsBar', () => {
     render(<SupplyMetricsBar summary={medSummary} />)
     // urgentCount = 7 → orange
     const urgentEl = screen.getByText('19 SKU') // 3+4+12 = 19
-    expect(urgentEl.className).toContain('text-orange-600')
+    expect(urgentEl.className).toContain('text-status-warning')
   })
 
-  it('shows red color when urgent count > 10', () => {
+  it('shows error token when urgent count > 10', () => {
     const highSummary: SupplyPlanningSummary = {
       ...mockSummary,
       out_of_stock_count: 6,
@@ -76,7 +76,7 @@ describe('SupplyMetricsBar', () => {
     render(<SupplyMetricsBar summary={highSummary} />)
     // urgentCount = 13 > 10 → red
     const urgentEl = screen.getByText('25 SKU') // 6+7+12 = 25
-    expect(urgentEl.className).toContain('text-red-600')
+    expect(urgentEl.className).toContain('text-status-error')
   })
 
   it('renders all three metric sections', () => {

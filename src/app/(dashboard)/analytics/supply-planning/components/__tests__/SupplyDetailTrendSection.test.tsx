@@ -11,7 +11,7 @@ import { VELOCITY_TREND_CONFIG } from '@/lib/supply-planning-utils'
 
 describe('SupplyDetailTrendSection — unknown trend (no_data/null)', () => {
   it('renders "Нет данных" + "—" indicator and NO Minus icon / NO fabricated sparkline', () => {
-    const { container } = render(<SupplyDetailTrendSection trendConfig={null} TrendIcon={null} />)
+    const { container } = render(<SupplyDetailTrendSection trend={null} TrendIcon={null} />)
 
     // honest label — NOT the fabricated "Стабильно"
     expect(screen.getByText('Нет данных')).toBeTruthy()
@@ -28,10 +28,7 @@ describe('SupplyDetailTrendSection — unknown trend (no_data/null)', () => {
 describe('SupplyDetailTrendSection — known trend', () => {
   it('renders the trend icon + its label for a real trend (growing)', () => {
     const { container } = render(
-      <SupplyDetailTrendSection
-        trendConfig={VELOCITY_TREND_CONFIG.growing}
-        TrendIcon={TrendingUp}
-      />
+      <SupplyDetailTrendSection trend="growing" TrendIcon={TrendingUp} />
     )
     expect(container.querySelector('.lucide-trending-up')).toBeTruthy()
     expect(screen.getByText(VELOCITY_TREND_CONFIG.growing.label)).toBeTruthy()
@@ -41,14 +38,14 @@ describe('SupplyDetailTrendSection — known trend', () => {
 
 describe('TrendIndicator', () => {
   it('null TrendIcon → "—" with aria-label, no svg', () => {
-    const { container } = render(<TrendIndicator trendConfig={null} TrendIcon={null} />)
+    const { container } = render(<TrendIndicator trend={null} TrendIcon={null} />)
     expect(screen.getByLabelText('Нет данных о тренде продаж')).toBeTruthy()
     expect(container.querySelector('svg')).toBeNull()
   })
 
   it('known TrendIcon → renders the icon svg', () => {
     const { container } = render(
-      <TrendIndicator trendConfig={VELOCITY_TREND_CONFIG.growing} TrendIcon={TrendingUp} />
+      <TrendIndicator trend="growing" TrendIcon={TrendingUp} />
     )
     expect(container.querySelector('.lucide-trending-up')).toBeTruthy()
   })

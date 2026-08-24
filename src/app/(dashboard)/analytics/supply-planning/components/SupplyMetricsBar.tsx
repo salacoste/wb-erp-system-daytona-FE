@@ -10,8 +10,8 @@ import { formatReorderValue } from '@/lib/supply-planning-utils'
  * Story 6.2: Page Structure & Risk Dashboard
  * UX Specs by Sally (2025-12-12)
  *
- * Shows total potential losses and required reorder capital.
- * Color-coded based on severity levels.
+ * Shows urgent SKU counts and required reorder capital.
+ * Story 169.13: severity thresholds map to semantic status tokens (was palette ternaries).
  */
 
 interface SupplyMetricsBarProps {
@@ -25,58 +25,63 @@ export function SupplyMetricsBar({ summary }: SupplyMetricsBarProps) {
   const urgentCount = summary.out_of_stock_count + summary.stockout_critical
   const totalAtRisk = urgentCount + summary.stockout_warning
 
-  // Determine loss color based on severity (UX Spec)
+  // Determine loss color based on severity (UX Spec → status tokens, Story 169.13)
   const getLossColor = (urgentCount: number) => {
-    if (urgentCount > 10) return 'text-red-600'
-    if (urgentCount > 5) return 'text-orange-600'
-    return 'text-green-600'
+    if (urgentCount > 10) return 'text-status-error'
+    if (urgentCount > 5) return 'text-status-warning'
+    return 'text-status-success'
   }
 
   // Determine capital color based on amount (null = backend omitted the sum → muted, Story 169.13)
   const getCapitalColor = (value: number | null) => {
-    if (value == null) return 'text-gray-500'
-    if (value > 500000) return 'text-red-600'
-    if (value > 100000) return 'text-orange-600'
-    return 'text-blue-600'
+    if (value == null) return 'text-muted-foreground'
+    if (value > 500000) return 'text-status-error'
+    if (value > 100000) return 'text-status-warning'
+    return 'text-status-information'
   }
 
   return (
-    <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between rounded-lg border bg-gray-50 p-4">
+    <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between rounded-lg border bg-muted/50 p-4">
       {/* Urgent SKUs */}
       <div className="flex items-center gap-3">
-        <AlertTriangle className="h-5 w-5 text-orange-500 flex-shrink-0" />
+        <AlertTriangle className="h-5 w-5 text-status-warning flex-shrink-0" />
         <div>
-          <div className="text-sm text-gray-600">Требуют внимания</div>
-          <div className={cn('text-lg font-bold', getLossColor(urgentCount))}>
+          <div className="text-sm text-muted-foreground">Требуют внимания</div>
+          <div className={cn('text-lg font-bold tabular-nums', getLossColor(urgentCount))}>
             {totalAtRisk} SKU
-            <span className="text-sm font-normal text-gray-500 ml-2">({urgentCount} срочно)</span>
+            <span className="text-sm font-normal text-muted-foreground ml-2">
+              ({urgentCount} срочно)
+            </span>
           </div>
         </div>
       </div>
 
       {/* Separator */}
-      <div className="hidden sm:block h-10 w-px bg-gray-300" />
+      <div className="hidden sm:block h-10 w-px bg-border" />
 
       {/* Required Capital */}
       <div className="flex items-center gap-3">
-        <Wallet className="h-5 w-5 text-blue-500 flex-shrink-0" />
+        <Wallet className="h-5 w-5 text-status-information flex-shrink-0" />
         <div>
-          <div className="text-sm text-gray-600">Требуется капитал</div>
-          <div className={cn('text-lg font-bold', getCapitalColor(total_reorder_value))}>
+          <div className="text-sm text-muted-foreground">Требуется капитал</div>
+          {/* null capital renders «—» via formatReorderValue (anti-pattern #8, Task 0) */}
+          <div
+            className={cn('text-lg font-bold tabular-nums', getCapitalColor(total_reorder_value))}
+          >
             {formatReorderValue(total_reorder_value)}
           </div>
         </div>
       </div>
 
       {/* Separator */}
-      <div className="hidden sm:block h-10 w-px bg-gray-300" />
+      <div className="hidden sm:block h-10 w-px bg-border" />
 
-      {/* In Transit */}
+      {/* In Transit — informational metric (status-information, Story 169.13) */}
       <div className="flex items-center gap-3">
-        <TrendingDown className="h-5 w-5 text-purple-500 flex-shrink-0" />
+        <TrendingDown className="h-5 w-5 text-status-information flex-shrink-0" />
         <div>
-          <div className="text-sm text-gray-600">В пути</div>
-          <div className="text-lg font-bold text-purple-600">
+          <div className="text-sm text-muted-foreground">В пути</div>
+          <div className="text-lg font-bold tabular-nums text-status-information">
             {total_in_transit_units.toLocaleString('ru-RU')} шт
           </div>
         </div>
