@@ -1,6 +1,6 @@
 # Story 170.1-FE: Migrate Advertising Analytics Workspace
 
-Status: review — implementation + round-1 fixes on branch; PR/merge/cleanup pending
+Status: done — PR #237 merged (`44a6eb7d`); 2-pass fresh review (COMMENT→5 applied, AWN→merge-gate-clear); e2e on branch 10/1↓/0; cleanup 0/0/0
 
 ## Story
 
@@ -43,7 +43,7 @@ Plan: `.omx/plans/170.1-migrate-advertising-analytics-workspace.md` (authoritati
   - [ ] e2e pins are URL-param based (`group_by=sku|imtId` exact spelling, spec lines 37-189) — migration preserves exact param spellings; `campaigns=` param is Vitest-only contract
   - [ ] Flip legacy pins (MergedGroupTable ×4 hex, MergedGroupRows ×2, CampaignBadges/CampaignList/CampaignStatusBadge/CannibalizationSection palette) → token pins; tier-collapse (6+unknown distinct); ROAS-separation negative pin (ad-attributed revenue ≠ total_sales — compute check); discrepancy-threshold pins (5/10); invertComparison pin; last_sync null → stale-honest render (post-Task-0)
   - [ ] sr-only alternative tests; e2e run-only: advertising-analytics-epic-36.spec.ts (URL/text pins — palette-safe) — run on branch (orchestrator dev-swap)
-- [ ] Task 5: Validation + 2-pass fresh review + PR + cleanup (AC: #4-9) — route 447/40 (owned baseline 417); full 19 076/0 (floor 19 056); lint 0/0; tsc 0; build 0; e2e ON BRANCH 10 passed/1 by-design skip/0 failed (clean first run). Round-1 opus COMMENT (2 MEDIUM + 3 LOW → all applied `ac81d106`: ROI ≥0 band honest warning + collapse disclosed; REAL metrics-calculator ROAS-separation pin; 3-branch hex-guard regex; doc dispositions). Round-2 pending; PR/merge/cleanup pending
+- [x] Task 5: Validation + 2-pass fresh review + PR + cleanup (AC: #4-9) — route 447/40 (owned baseline 417); full 19 076/0 (floor 19 056); lint 0/0; tsc 0; build 0; e2e ON BRANCH 10 passed/1 by-design skip/0 failed (clean first run). Round-1 opus COMMENT (2 MEDIUM + 3 LOW → all applied `ac81d106`: ROI ≥0 band honest warning + collapse disclosed; REAL metrics-calculator ROAS-separation pin; 3-branch hex-guard regex; doc dispositions). Round-2 opus APPROVE_WITH_NOTES — merge gate clear (1 wording LOW applied `5daad90a`). PR #237 merged `44a6eb7d`; branch remote/local + worktree deleted, 0/0/0 absence proofs
 
 ## Dev Notes
 
@@ -108,3 +108,4 @@ Diff 3eda5d66..HEAD = **41 files** (2 A-prod: advertising-tokens.ts, DailyTrendS
 | 2026-08-25 | Story created from deep recon (100-file route, legacy concentrated top-3/top-9; aria-sort pre-existing 163.1; lib 3-way-lockstep channels → route-local tokens; last_sync fabrication + 3 casts → Task 0). Plan referenced as authoritative. |
 | 2026-08-25 | Fresh-context validation VERDICT FAIL → 4 criticals corrected: last_sync has NO UI consumers (authorized scope now includes types+lib-tests; stale-logic attribution fixed); BidRecommendationsCard EXCLUSIVE not dual-consumer; lib-channel pin list corrected (getEfficiencyConfig + getCampaignStatusDotColor are the real channels — old list was vacuous); view_by cast downgraded (URL validation moots it). +guard-glob stray-tests, e2e spelling, EfficiencyBadge blue line. |
 | 2026-08-25 | Round-1 fixes applied (ROI-band honesty, real ROAS pin, hex regex; F1/F5 disclosed). UI-change disclosure: sr-only captions → visible TableCaption ×2 (169.7 canon, test-pinned). Status: ready-for-dev → review. |
+| 2026-08-25 | Implemented + merged: preface PR #236 (`3eda5d66`) + PR #237 (impl `dac5d8a6` + r1 `ac81d106` + story `5daad90a`, merge `44a6eb7d`); route 447/40, full 19 076/0, e2e-on-branch 10/1↓/0; cleanup 0/0/0. Status: review → done. **Lessons:** (1) muted-токен = unknown-семантика; полоса «слабо-положительный» не может быть muted — это ложь «нет данных». (2) Вакуумный пин (арифметика на литералах) — ревью обязан требовать compute-path, не trust-the-narrative. (3) Валидатор FAIL — нормальный исход: 4 факт-ошибки разведки пойманы до кода. |
