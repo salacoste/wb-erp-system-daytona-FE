@@ -50,13 +50,18 @@ export function BrandShareChart({ data, brand, categoryName, periodLabel }: Bran
     return window.matchMedia('(prefers-reduced-motion: reduce)').matches
   }, [])
 
-  const subtitle = `${brand ?? '—'} · ${categoryName ?? '—'} · ${periodLabel ?? 'последние 7 дней'}`
-
   if (!data || data.length === 0) {
+    // Round-1 LOW-1: filter context is rendered on the empty card too (epic RTC —
+    // the user must see their selection scope when the report comes back empty).
+    // LOW-2: subtitle computation moved below this guard (was dead on the empty path).
+    const subtitle = `${brand ?? '—'} · ${categoryName ?? '—'} · ${periodLabel ?? 'последние 7 дней'}`
     return (
       <Card>
         <CardHeader className="pb-2">
           <CardTitle className="text-lg font-semibold">Доля бренда в категории</CardTitle>
+          <p className="text-xs text-muted-foreground" data-testid="brand-share-filter-context">
+            {subtitle}
+          </p>
         </CardHeader>
         <CardContent className="flex items-center justify-center py-12">
           <p className="text-muted-foreground">Нет данных о доле бренда за выбранный период</p>
@@ -64,6 +69,8 @@ export function BrandShareChart({ data, brand, categoryName, periodLabel }: Bran
       </Card>
     )
   }
+
+  const subtitle = `${brand ?? '—'} · ${categoryName ?? '—'} · ${periodLabel ?? 'последние 7 дней'}`
 
   const animationDuration = prefersReducedMotion ? 0 : 300
 

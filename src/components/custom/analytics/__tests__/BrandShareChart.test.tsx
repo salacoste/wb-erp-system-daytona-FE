@@ -130,4 +130,9 @@ describe('BrandShareChart', () => {
     expect(screen.getByText(/Нет данных о доле бренда/i)).toBeInTheDocument()
     expect(screen.queryByTestId('brand-share-sr-table')).not.toBeInTheDocument()
   })
+
+  it('renders half-open period subtitle (round-1 L5: "с …" ordering at chart level)', () => {
+    renderChart({ periodLabel: 'с 01.07.2026' })
+    expect(screen.getByTestId('brand-share-filter-context')).toHaveTextContent(/с 01\.07\.2026/)
+  })
 })
