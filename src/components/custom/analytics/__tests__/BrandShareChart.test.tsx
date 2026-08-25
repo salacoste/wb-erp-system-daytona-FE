@@ -135,4 +135,10 @@ describe('BrandShareChart', () => {
     renderChart({ periodLabel: 'с 01.07.2026' })
     expect(screen.getByTestId('brand-share-filter-context')).toHaveTextContent(/с 01\.07\.2026/)
   })
+
+  it('empty-report card also shows filter context (round-1 LOW-1 pin)', () => {
+    renderChart({ data: [] })
+    expect(screen.getByTestId('brand-share-filter-context')).toBeInTheDocument()
+    expect(screen.getByTestId('brand-share-filter-context')).toHaveTextContent(/DURABOND/)
+  })
 })

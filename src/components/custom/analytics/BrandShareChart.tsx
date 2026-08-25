@@ -50,11 +50,11 @@ export function BrandShareChart({ data, brand, categoryName, periodLabel }: Bran
     return window.matchMedia('(prefers-reduced-motion: reduce)').matches
   }, [])
 
+  // Round-1 LOW-1: filter context renders on the empty card too (epic RTC).
+  // Round-2 L1: single shared literal (was duplicated across the two branches).
+  const subtitle = `${brand ?? '—'} · ${categoryName ?? '—'} · ${periodLabel ?? 'последние 7 дней'}`
+
   if (!data || data.length === 0) {
-    // Round-1 LOW-1: filter context is rendered on the empty card too (epic RTC —
-    // the user must see their selection scope when the report comes back empty).
-    // LOW-2: subtitle computation moved below this guard (was dead on the empty path).
-    const subtitle = `${brand ?? '—'} · ${categoryName ?? '—'} · ${periodLabel ?? 'последние 7 дней'}`
     return (
       <Card>
         <CardHeader className="pb-2">
@@ -69,8 +69,6 @@ export function BrandShareChart({ data, brand, categoryName, periodLabel }: Bran
       </Card>
     )
   }
-
-  const subtitle = `${brand ?? '—'} · ${categoryName ?? '—'} · ${periodLabel ?? 'последние 7 дней'}`
 
   const animationDuration = prefersReducedMotion ? 0 : 300
 
