@@ -1,6 +1,6 @@
 # Story 170.4-FE: Migrate Brand Share Analytics
 
-Status: review — implementation + r1/r2 fixes on branch; PR/merge/cleanup pending
+Status: done — PR #243 merged (`34f89495`); 2-pass fresh review APPROVE/APPROVE_WITH_NOTES; e2e N/A (no spec); cleanup 0/0/0
 
 ## Story
 
@@ -27,7 +27,7 @@ Plan: `.omx/plans/170.4-migrate-brand-share-analytics.md` (authoritative — bra
   - [ ] **Invalid date range state** (AC-2): View validates dateFrom > dateTo → inline destructive hint (error text near date inputs; selections RETAINED — no auto-reset); date-range validity does not disable retry/report branches
   - [ ] Verify 44×44: Select triggers + retry Button default sizes ok (pin height ≥ 44 via class presence — h-11/min-h-11 where house canon)
 - [x] Task 4: Guards + tests (AC: #1-3) — no-palette/no-hex over 4 owned files (170.1 3-branch canon; self-tests); token pins (3 series var-values, tooltip popover pair, amber→warning); sr-only alternative tests (null→«—», units, all-metrics coverage); filter-context subtitle test; label-linkage test (getByLabelText for «Бренд»/«Категория…»); invalid-range test (dateFrom>dateTo → hint shown, values retained); 503/non-503 pins (extend existing 5-test suite); cascading-reset pin (validator: DOES NOT EXIST — write new: brand change resets parentId); NEW chart/config test files MUST reuse the `vi.mock('recharts', …)` pattern from View test :22-42 (jsdom cannot render recharts); growth-only.
-- [x] Task 5: Validation + 2-pass fresh review + PR + cleanup (AC: #4-9) — owned suite **48/5-files** (View 12 + Chart 9 + config + helpers + contracts); full **19 139/0** (floor 19 098, +41); lint 0/0; tsc 0; max-lines OK; build 0. Round-1 opus APPROVE (5 LOW → L1/L2/L5 applied `15b40c29`, L3/L4 notes); round-2 opus **APPROVE_WITH_NOTES — merge may proceed** (L1 dedupe-const + L2 empty-card pin applied `bf067437`; L3 = this reconciliation). e2e N/A (no spec — grep-verified). CE: 14-file diff all in Allowed Surface; hooks/types/api + unrelated custom/analytics zero-diff.
+- [x] Task 5: Validation + 2-pass fresh review + PR + cleanup (AC: #4-9) — owned suite **48/5-files** (View 12 + Chart 9 + config + helpers + contracts); full **19 139/0** (floor 19 098, +41); lint 0/0; tsc 0; max-lines OK; build 0. Round-1 opus APPROVE (5 LOW → L1/L2/L5 applied `15b40c29`, L3/L4 notes); round-2 opus **APPROVE_WITH_NOTES — merge may proceed** (L1 dedupe-const + L2 empty-card pin applied `bf067437`; L3 = this reconciliation). e2e N/A (no spec — grep-verified). CE: 14-file diff all in Allowed Surface; hooks/types/api + unrelated custom/analytics zero-diff. PR #243 merged `34f89495`; branch remote/local + worktree deleted, 0/0/0 absence proofs.
 
 ## Dev Notes
 
@@ -79,3 +79,4 @@ Diff df6eb0f8..HEAD = **14 files** (5 M: page.tsx, BrandShareChart, BrandShareVi
 |---|---|
 | 2026-08-25 | Story created from direct read (4 files ~500 lines; 3 missing AC-objects found: sr-alternative, chart filter-context props, invalid-range state; span-labels→linked; token map categorical). Validation PASS-WITH-FINDINGS (0 criticals; Task-0 disposition-OK — 0-share→null contract-sanctioned #225:55; hex-count 5; stale config docstring → task; Select h-9 → min-h-11 precedent; cascading-reset pin missing → write new; recharts-mock requirement noted). Plan referenced as authoritative. |
 | 2026-08-25 | Round-1 fixes (empty-card subtitle, dead computation, half-open pin) + round-2 polish (shared subtitle const, empty-card pin). Status: ready-for-dev → review. |
+| 2026-08-25 | Implemented + merged: PR #243 (impl `8ab039cd` + r1 `15b40c29` + r2 `bf067437` + story `45230b82`, merge `34f89495`); owned 48, full 19 139/0 (+41), e2e N/A; 2×opus APPROVE×2; cleanup 0/0/0. Status: review → done. **Lessons:** (1) 0-шер→null может быть контрактным сентинелом — валидатор читает договор до вердикта «ложь». (2) Тонкая страница-обёртка ≠ тонкая история: AC-объекты — настоящая работа. (3) Line-cap экстракции — нормальный рост: 5 файлов byte-identical лучше одного 300-строчного. |
