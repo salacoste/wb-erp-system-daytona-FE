@@ -13,6 +13,7 @@ import { asRecord, toStr, toCount, toStringOrNull } from '@/lib/api/normalizer-h
 import { logger } from '@/lib/logger'
 import type { Campaign, CampaignsResponse, CampaignPlacements } from '@/types/advertising-analytics'
 import type { SyncStatusResponse } from '@/types/advertising-analytics/sync-groups'
+import type { SyncTaskStatus } from '@/types/advertising-analytics/analytics'
 
 function normalizePlacements(raw: unknown): CampaignPlacements | null {
   if (raw == null || typeof raw !== 'object') return null
@@ -64,10 +65,19 @@ export function normalizeCampaignsResponse(raw: unknown): CampaignsResponse {
 // SyncTaskStatus union has NO 'unknown' member, so an invalid backend value maps to
 // 'idle' (the neutral member; the badge's getSyncStatusConfig has its own fallback)
 // and is surfaced via logger.warn (Defensive Frontend Principle).
-const VALID_SYNC_STATUSES: ReadonlySet<string> = new Set(['syncing', 'completed', 'failed', 'idle'])
+// Record<SyncTaskStatus, true> — adding a union member without updating this map is a
+// compile error (round-1 review F-4 hardening; no silent Set drift).
+const SYNC_STATUS_MEMBERS: Record<SyncTaskStatus, true> = {
+  syncing: true,
+  completed: true,
+  failed: true,
+  idle: true,
+}
+const VALID_SYNC_STATUSES: ReadonlySet<string> = new Set(Object.keys(SYNC_STATUS_MEMBERS))
 
 function toSyncTaskStatus(raw: unknown): SyncStatusResponse['status'] {
   const s = toStr(raw)
+  // Empty = legitimate no-data (no warn); non-empty invalid = contract drift (warn).
   if (s !== '' && !VALID_SYNC_STATUSES.has(s)) {
     logger.warn(
       `[AdvertisingCampaignsNormalizer] unknown sync status "${s}" from backend → 'idle' (file a backend ticket if it persists)`
