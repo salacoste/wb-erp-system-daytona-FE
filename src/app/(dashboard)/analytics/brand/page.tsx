@@ -71,9 +71,8 @@ export default function MarginAnalysisByBrandPage() {
       {/* Page Header */}
       <div className="flex items-start justify-between">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight text-foreground">
-            Маржинальность по брендам
-          </h1>
+          {/* Story 170.3: h1 token canon (169.9/169.10) — text-2xl font-semibold */}
+          <h1 className="text-2xl font-semibold text-foreground">Маржинальность по брендам</h1>
           <p className="mt-2 text-sm text-muted-foreground">
             Агрегированная аналитика прибыли и маржинальности по брендам
           </p>
