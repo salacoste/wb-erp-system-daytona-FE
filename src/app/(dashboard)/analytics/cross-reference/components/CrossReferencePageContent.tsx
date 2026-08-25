@@ -117,7 +117,9 @@ function CrossReferenceDataContent({ apiFrom, apiTo }: CrossReferenceDataContent
           onRetry={handleRetry}
         />
       )}
-      {!isLoading && !bothFailed && mergedData.length === 0 && <EmptyState />}
+      {/* Round-1 F1: empty check excludes oneFailed — banner + honest EmptyState composite
+          (banner's «отображены ниже» only claims data when the working source HAS rows). */}
+      {!isLoading && !bothFailed && !oneFailed && mergedData.length === 0 && <EmptyState />}
       {!isLoading && !bothFailed && mergedData.length > 0 && (
         <div className="space-y-6">
           <OverlapSummaryCards summary={overlapSummary} />

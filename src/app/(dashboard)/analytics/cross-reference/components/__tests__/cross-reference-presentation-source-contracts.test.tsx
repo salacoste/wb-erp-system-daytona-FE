@@ -119,6 +119,10 @@ describe('Story 170.6 cross-reference presentation source contracts', () => {
     }
     // The route-owned copy exists and is the import used by the table
     expect(withoutComments(OWNED_SOURCES[2][1])).toMatch(/from '\.\/SortButton'/)
+    // Round-1 F3: also block relative-path bypass into the forbidden search tree
+    for (const [name, source] of OWNED_SOURCES) {
+      expect(withoutComments(source), name).not.toMatch(/from '\\.\\..*search\/components\//)
+    }
     expect(withoutComments(OWNED_SOURCES[3][1])).toMatch(/ArrowUpDown/)
   })
 
