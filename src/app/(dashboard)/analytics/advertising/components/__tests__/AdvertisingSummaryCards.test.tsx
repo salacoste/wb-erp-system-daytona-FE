@@ -15,8 +15,11 @@ describe('getRoiColor — percent-domain thresholds', () => {
     // Story 170.1: pins flipped to route-local token classes (thresholds unchanged)
     expect(getRoiColor(75)).toBe('text-status-success') // ≥50%
     expect(getRoiColor(30)).toBe('text-status-warning') // 20-50% (was green under 0.5 fraction)
-    expect(getRoiColor(10)).toBe('text-muted-foreground') // 0-20% (was green under 0.5 fraction)
-    expect(getRoiColor(0)).toBe('text-muted-foreground')
+    // 0-20%: warning text — old palette was orange (weak-but-positive attention);
+    // muted is reserved for unknown-semantics. 0-20 vs 20-50 sharing warning text
+    // is DELIBERATE under the 3-status-token canon (170.1 round-1 F2).
+    expect(getRoiColor(10)).toBe('text-status-warning')
+    expect(getRoiColor(0)).toBe('text-status-warning')
     expect(getRoiColor(-5)).toBe('text-status-error')
   })
 })

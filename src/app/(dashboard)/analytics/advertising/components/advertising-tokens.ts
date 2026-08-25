@@ -53,12 +53,20 @@ export function getRoasTierTextClass(roas: number | null | undefined): string {
 
 /**
  * ROI inline text color — percent-domain thresholds (iter-84) preserved.
- * Bands: ≥50 success, ≥20 warning, ≥0 muted (weak but not negative), <0 error.
+ * Bands: ≥50 success, ≥20 warning, ≥0 warning (weak-but-positive gets
+ * attention — old palette was text-orange-600), <0 error.
+ *
+ * DELIBERATE 5→3 inline-text collapse (3-status-token canon, round-1 F1/F2):
+ * old green/emerald (excellent/good) collapse to one success text, old
+ * yellow/orange (moderate/poor) collapse to one warning text. The 6-tier
+ * distinction lives in the CHIP domain (EFFICIENCY_TIER_TOKENS solid/soft
+ * pairs); inline text carries only 3 statuses + error, so the 0-20 vs 20-50
+ * bands sharing text-status-warning is intentional, not a regression.
  */
 export function getRoiTextClass(roi: number): string {
   if (roi >= 50) return 'text-status-success'
   if (roi >= 20) return 'text-status-warning'
-  if (roi >= 0) return 'text-muted-foreground'
+  if (roi >= 0) return 'text-status-warning'
   return 'text-status-error'
 }
 

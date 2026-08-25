@@ -39,6 +39,12 @@ import {
 } from '../advertising-tokens'
 import { EfficiencyBadge } from '../EfficiencyBadge'
 import { DailyTrendSrTable } from '../DailyTrendSrTable'
+import {
+  calculateROAS,
+  calculateRevenue,
+  calculateSpend,
+  calculateTotalSales,
+} from '../../utils/metrics-calculator'
 import type { AdvertisingDailyItem } from '@/types/advertising-analytics'
 
 const testDirectory = dirname(fileURLToPath(import.meta.url))
@@ -80,8 +86,17 @@ const STRAY_COLOCATED_TESTS = [
   'components/performance-table/SortableHeader.test.tsx',
 ]
 
-const CONTEXTUAL_HEX =
-  /(?:['"\x60]\s*|-\[)#(?:[0-9A-Fa-f]{3}|[0-9A-Fa-f]{4}|[0-9A-Fa-f]{6}|[0-9A-Fa-f]{8})(?=['"\x60\]])/
+// Hex guard (round-1 F4): quoted/arbitrary values (bg-[#fff], '#fff') and
+// unquoted inline styles (stroke: #EEEEEE). Exemptions kept green:
+// - ticket prose (#161/#197 — 3-digit refs after bare whitespace, never after ':')
+// - URL fragments (href="#abc" — quote preceded by '=')
+const CONTEXTUAL_HEX = new RegExp(
+  [
+    String.raw`(?<!=\s*)(?:['"\x60]\s*|-\[)#(?:[0-9A-Fa-f]{3}|[0-9A-Fa-f]{4}|[0-9A-Fa-f]{6}|[0-9A-Fa-f]{8})(?=['"\x60\]])`,
+    String.raw`(?<=:)\s*#(?:[0-9A-Fa-f]{3}|[0-9A-Fa-f]{4}|[0-9A-Fa-f]{6}|[0-9A-Fa-f]{8})(?![\w-])`,
+    String.raw`(?<=\s)#(?:[0-9A-Fa-f]{6}|[0-9A-Fa-f]{8})(?![\w-])`,
+  ].join('|')
+)
 
 const RGBA_HSL = /(?:rgba?\(|hsla?\()\s*\d/
 
@@ -118,10 +133,20 @@ describe('Story 170.1 route presentation source contracts', () => {
     }
   })
 
-  it('hex guard self-test: rejects quoted/arbitrary hex, ignores ticket prose', () => {
+  it('hex guard self-test: rejects quoted/arbitrary/unquoted hex, ignores ticket prose + URL fragments', () => {
     expect(CONTEXTUAL_HEX.test("stroke: '#EEEEEE'")).toBe(true)
     expect(CONTEXTUAL_HEX.test('className="bg-[#1A2B3C]"')).toBe(true)
+    // Round-1 F4: unquoted hex after ':' now caught (previously escaped)
+    expect(CONTEXTUAL_HEX.test('stroke: #EEEEEE')).toBe(true)
+    expect(CONTEXTUAL_HEX.test('stroke: #abc')).toBe(true)
+    // 6/8-digit unquoted after whitespace (inline style objects) also caught
+    expect(CONTEXTUAL_HEX.test('fill #AABBCC')).toBe(true)
+    // Ticket prose (#NNN after bare whitespace) stays exempt
     expect(CONTEXTUAL_HEX.test('// see request #161 for the FCU feature')).toBe(false)
+    expect(CONTEXTUAL_HEX.test('#197 covers this')).toBe(false)
+    // URL fragment guards: anchor hex-lookalikes preceded by '=' are NOT colors
+    expect(CONTEXTUAL_HEX.test('href="#section"')).toBe(false)
+    expect(CONTEXTUAL_HEX.test('href="#abc"')).toBe(false)
   })
 
   it('lib-channel runtime negatives: the 3 corrected color channels are NOT consumed (169.10 lockstep intact)', () => {
@@ -227,15 +252,24 @@ describe('Story 170.1 route presentation source contracts', () => {
     expect(getCampaignStatusDotToken(999)).toBe('bg-muted-foreground')
   })
 
-  it('ROAS two-metric separation negative pin: ad-attributed revenue ≠ total_sales (compute check)', () => {
-    // A SKU with organic sales: total (organic + ad) strictly exceeds ad-attributed.
-    // The two summary channels must never be conflated (memory validated 2026-02-23).
-    const totalSales = 150_000
-    const adRevenue = 90_000
-    const organic = totalSales - adRevenue
-    expect(organic).toBeGreaterThan(0)
-    expect(adRevenue).not.toBe(totalSales)
-    // Per-day ROAS = revenueAttributed / spend — ad-only numerator (behavior lock)
+  it('ROAS two-metric separation: compute path uses ad-attributed revenue, NOT total_sales', () => {
+    // Round-1 F3: real compute-path pin against utils/metrics-calculator —
+    // the exported group aggregation the route uses for merged-product ROAS.
+    // A SKU with organic sales: total (organic + ad) strictly exceeds ad-attributed
+    // (memory validated 2026-02-23). The two channels must never be conflated.
+    const group = [{ totalSales: 150_000, totalRevenue: 90_000, totalSpend: 30_000 }]
+    const revenue = calculateRevenue(group)
+    const spend = calculateSpend(group)
+    const totalSales = calculateTotalSales(group)
+    expect(spend).toBe(30_000)
+    expect(revenue).toBe(90_000)
+    expect(totalSales).toBe(150_000)
+    expect(revenue).not.toBe(totalSales)
+    const roas = calculateROAS(revenue, spend)
+    expect(roas).toBe(3.0) // 90000/30000 — ad-attributed numerator
+    expect(roas).not.toBe(5.0) // 150000/30000 — total_sales conflation would yield 5
+    // Null-ROAS-on-zero-spend (Story 88.2-FE): undefined ROAS renders muted, not 0
+    expect(calculateROAS(90_000, 0)).toBeNull()
     expect(getRoasTierTextClass(null)).toBe('text-muted-foreground')
   })
 
