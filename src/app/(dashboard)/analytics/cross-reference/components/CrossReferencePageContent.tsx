@@ -115,11 +115,12 @@ function CrossReferenceDataContent({ apiFrom, apiTo }: CrossReferenceDataContent
           failedSource={adFailed ? 'реклама' : 'органический поиск'}
           okSource={adFailed ? 'органический поиск' : 'реклама'}
           onRetry={handleRetry}
+          hasRows={mergedData.length > 0}
         />
       )}
-      {/* Round-1 F1: empty check excludes oneFailed — banner + honest EmptyState composite
-          (banner's «отображены ниже» only claims data when the working source HAS rows). */}
-      {!isLoading && !bothFailed && !oneFailed && mergedData.length === 0 && <EmptyState />}
+      {/* Round-2 F1: oneFailed + empty renders banner AND EmptyState — the honest composite
+          (round-1's !oneFailed exclusion left the banner alone, falsely promising data below). */}
+      {!isLoading && !bothFailed && mergedData.length === 0 && <EmptyState />}
       {!isLoading && !bothFailed && mergedData.length > 0 && (
         <div className="space-y-6">
           <OverlapSummaryCards summary={overlapSummary} />

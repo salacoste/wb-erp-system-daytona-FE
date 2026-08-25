@@ -51,6 +51,8 @@ const okSearchProduct = {
     ],
   },
 }
+const emptySearchProduct = { ...okSearchProduct, data: { items: [] } }
+
 const okQuery = {
   isLoading: false,
   isError: false,
@@ -149,5 +151,22 @@ describe('CrossReferencePageContent — one-source partial (AC-2)', () => {
     expect(screen.getByRole('button', { name: /Повторить/ })).toBeInTheDocument()
     expect(screen.queryByTestId('source-error-banner')).not.toBeInTheDocument()
     expect(screen.queryByRole('table')).not.toBeInTheDocument()
+  })
+
+  it('round-2 F1 composite: ad fails + search ok-but-EMPTY → honest banner wording AND EmptyState (no false «отображены ниже»)', () => {
+    productQuery = emptySearchProduct
+    queryQuery = okQuery
+    adQuery = failedAd
+    render(<CrossReferencePageContent />)
+    const banner = screen.getByTestId('source-error-banner')
+    // Honest wording: loaded but no data — NOT «отображены ниже»
+    expect(banner.textContent).toContain('но данных за выбранный период нет')
+    expect(banner.textContent).not.toContain('отображены ниже')
+    // EmptyState composite renders beneath the banner
+    expect(screen.getByText('Нет данных за выбранный период')).toBeInTheDocument()
+    // Still NOT the both-failed full ErrorState
+    expect(
+      screen.queryByText('Не удалось загрузить данные. Попробуйте снова.')
+    ).not.toBeInTheDocument()
   })
 })

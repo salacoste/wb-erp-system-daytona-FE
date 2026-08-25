@@ -119,9 +119,17 @@ describe('Story 170.6 cross-reference presentation source contracts', () => {
     }
     // The route-owned copy exists and is the import used by the table
     expect(withoutComments(OWNED_SOURCES[2][1])).toMatch(/from '\.\/SortButton'/)
-    // Round-1 F3: also block relative-path bypass into the forbidden search tree
+    // Round-2 F1(r2)/F3: block relative-path bypass into the forbidden search tree.
+    // Round-1's version double-escaped the dots (\\. = literal backslash in a regex
+    // literal) — a vacuous guard that never matched ANY import; verified by round-2.
+    const RELATIVE_BYPASS = /from '\.\..*search\/components\//
+    // Positive self-test (hex-guard pattern): the guard MUST catch a real bypass.
+    expect(
+      RELATIVE_BYPASS.test("import X from '../../search/components/SortButton'")
+    ).toBe(true)
+    expect(RELATIVE_BYPASS.test("import X from '@/(dashboard)/analytics/search/x'")).toBe(false)
     for (const [name, source] of OWNED_SOURCES) {
-      expect(withoutComments(source), name).not.toMatch(/from '\\.\\..*search\/components\//)
+      expect(withoutComments(source), name).not.toMatch(RELATIVE_BYPASS)
     }
     expect(withoutComments(OWNED_SOURCES[3][1])).toMatch(/ArrowUpDown/)
   })

@@ -57,19 +57,22 @@ export function SourceErrorBanner({
   failedSource,
   okSource,
   onRetry,
+  hasRows,
 }: {
   failedSource: string
   okSource: string
   onRetry: () => void
+  /** Round-2 F1: honest wording — «отображены ниже» only when rows actually render. */
+  hasRows: boolean
 }) {
   return (
     <Alert variant="destructive" role="alert">
       <AlertCircle className="h-4 w-4" />
       <AlertDescription className="flex items-center justify-between">
         <span data-testid="source-error-banner">
-          Не удалось загрузить данные: {failedSource}. Данные источника «{okSource}» загружены и
-          отображены ниже. Пересечение каналов и выводы о связи органики и рекламы недоступны, пока
-          не загрузятся оба источника.
+          Не удалось загрузить данные: {failedSource}. Данные источника «{okSource}» загружены
+          {hasRows ? 'и отображены ниже' : ', но данных за выбранный период нет'}. Пересечение
+          каналов и выводы о связи органики и рекламы недоступны, пока не загрузятся оба источника.
         </span>
         <Button variant="outline" size="sm" onClick={onRetry} className="ml-4 shrink-0">
           <RefreshCw className="h-3.5 w-3.5 mr-1" /> Повторить
