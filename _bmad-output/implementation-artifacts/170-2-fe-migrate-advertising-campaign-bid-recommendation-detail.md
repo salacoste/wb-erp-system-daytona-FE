@@ -1,6 +1,6 @@
 # Story 170.2-FE: Migrate Advertising Campaign Bid-Recommendation Detail
 
-Status: review — implementation + round-1 fixes on branch; PR/merge/cleanup pending
+Status: done — PR #239 merged (`5bb0dcc3`); 2-pass fresh review APPROVE×2; cleanup 0/0/0
 
 ## Story
 
@@ -22,7 +22,7 @@ Plan: `.omx/plans/170.2-migrate-advertising-campaign-bid-recommendation-detail.m
 - [x] Task 2: Token migration (AC: #1) — `BidRecommendationsCard.tsx:18-22` BID_LEVEL_COLORS light-only pairs → semantic matched pairs: Конкурентная(default)=muted tint `bg-muted/50 border-border`; Лидеры(blue)=`bg-status-information/15 border-status-information/30`; Топ-2(green)=`bg-status-success/15 border-status-success/30`. `KeywordRow:163` `bg-gray-50` → `bg-muted/50`. Both themes. page.tsx already token-clean (verify + pin).
 - [x] Task 3: AX fixes (AC: #3) — **BackLink nested-interactive FIX** (page.tsx:57-65: Link>Button violates epic AX "semantic link without nested interactive semantics") → CANON: supplies/[id]/page.tsx:107-113 pattern — plain `<Link className="inline-flex items-center text-sm text-muted-foreground hover:text-foreground">` + ArrowLeft, NO button classes/span; semantics test via getByRole('link') (supplies __tests__:264 precedent). Keywords section accessible name: h4 «Диапазоны ставок…» gets id + container `aria-labelledby` (tabular-list contract). Repeated-actions naming N/A (no actions).
 - [x] Task 4: Guards + tests (AC: #1-3) — no-palette/no-hex source-contract over the 2 production files (170.1 3-branch regex canon; NB: «Кампания #12345» in tests is 5 digits — length-branches exempt, verify self-test); token pins for 3 bid levels + tier-distinctness (3 distinct + neutral); BackLink semantics test (link role, no nested button); state-distinct suite (5 branches); accessible-name test. Flip any legacy pins (card tests currently have NO palette pins — verify, add token pins).
-- [x] Task 5: Validation + 2-pass fresh review + PR + cleanup (AC: #4-9) — route 11 (baseline 10) + card/guard 26 (17+2+7); full 19 086/0 (floor 19 076, +10 exact growth); lint 0/0; tsc 0; max-lines OK; build 0. Round-1 opus APPROVE (1 MEDIUM brittle-pin + 3 LOW → F1/F2 fixed `580022a1`, F3/F4 house-convention notes); round-2 opus **APPROVE** — merge gate clear. e2e N/A (no spec exists — dispositioned). PR/merge/cleanup: this PR. — gates incl. BOTH vitest targets (route + card tests); e2e — NO dedicated spec exists (disposition N/A, record); CE untouched-proof: advertising root + hooks/API/types zero-diff.
+- [x] Task 5: Validation + 2-pass fresh review + PR + cleanup (AC: #4-9) — route 11 (baseline 10) + card/guard 26 (17+2+7); full 19 086/0 (floor 19 076, +10 exact growth); lint 0/0; tsc 0; max-lines OK; build 0. Round-1 opus APPROVE (1 MEDIUM brittle-pin + 3 LOW → F1/F2 fixed `580022a1`, F3/F4 house-convention notes); round-2 opus **APPROVE** — merge gate clear. e2e N/A (no spec exists — dispositioned). PR #239 merged `5bb0dcc3`; branch remote/local + worktree deleted, 0/0/0 absence proofs. — gates incl. BOTH vitest targets (route + card tests); e2e — NO dedicated spec exists (disposition N/A, record); CE untouched-proof: advertising root + hooks/API/types zero-diff.
 
 ## Dev Notes
 
@@ -74,3 +74,4 @@ Diff 376ecadf..HEAD = **5 files** (2 M route page+test; 2 M card+card-test; 1 A 
 |---|---|
 | 2026-08-25 | Story created from direct source read (smallest epic story: 2 source files; BackLink nested-interactive AX defect found; boundary coercion dispositioned — no preface). Validation PASS-WITH-FINDINGS (0 criticals; supplies/[id] canon cited; cacheAge mock-only note). Plan referenced as authoritative. |
 | 2026-08-25 | Round-1 fixes applied (wolf-proof contract pin, order-independent selector). Status: ready-for-dev → review. |
+| 2026-08-25 | Implemented + merged: PR #239 (impl `482d200a` + r1 `580022a1` + story `9fdf1dc2`, merge `5bb0dcc3`); route 11 + card/guard 26, full 19 086/0 (+10 exact); 2×opus APPROVE×2; cleanup 0/0/0. Status: review → done. **Lessons:** (1) Verbatim-className пин — «волчий»: рвётся от форматтера, потом ослабляется; пинь контракт, не строку. (2) Самая маленькая стори отдала AX-дефект и 2 тест-фикса — размер не отменяет дисциплину. (3) «1 hex» в разведке = «#12345» в тексте — проверяй контекст греп-хитов. |
