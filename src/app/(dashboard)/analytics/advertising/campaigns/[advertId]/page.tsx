@@ -8,7 +8,6 @@
 import { useParams, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import { ArrowLeft } from 'lucide-react'
-import { Button } from '@/components/ui/button'
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import { Skeleton } from '@/components/ui/skeleton'
 import { useAuthStore } from '@/stores/authStore'
@@ -54,13 +53,15 @@ export default function CampaignDetailPage() {
   )
 }
 
+/** Story 170.2: plain semantic Link (supplies/[id] canon) — no nested Button. */
 function BackLink() {
   return (
-    <Link href={ROUTES.ANALYTICS.ADVERTISING}>
-      <Button variant="ghost" size="sm">
-        <ArrowLeft className="mr-2 h-4 w-4" />
-        Назад к рекламной аналитике
-      </Button>
+    <Link
+      href={ROUTES.ANALYTICS.ADVERTISING}
+      className="inline-flex items-center text-sm text-muted-foreground hover:text-foreground"
+    >
+      <ArrowLeft className="mr-1.5 h-4 w-4" aria-hidden="true" />
+      Назад к рекламной аналитике
     </Link>
   )
 }

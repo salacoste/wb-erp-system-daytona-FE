@@ -14,11 +14,13 @@ import { useBidRecommendations } from '@/hooks/useBidRecommendations'
 import { formatCurrency } from '@/lib/utils'
 import type { KeywordBidRange } from '@/types/bid-recommendations'
 
-/** Module-level color map (avoids per-render allocation) */
-const BID_LEVEL_COLORS = {
-  default: 'bg-gray-50 border-gray-200',
-  blue: 'bg-blue-50 border-blue-200',
-  green: 'bg-green-50 border-green-200',
+/** Module-level color map (avoids per-render allocation).
+ *  Story 170.2: semantic matched pairs (tint /15 + border /30, canon 169.5/170.1);
+ *  default tier stays neutral muted (never read as "healthy green"). */
+export const BID_LEVEL_COLORS = {
+  default: 'bg-muted/50 border-border',
+  blue: 'bg-status-information/15 border-status-information/30',
+  green: 'bg-status-success/15 border-status-success/30',
 } as const
 
 type BidLevelVariant = keyof typeof BID_LEVEL_COLORS
@@ -122,8 +124,11 @@ export function BidRecommendationsCard({ cabinetId, advertId, nmId }: BidRecomme
         </div>
 
         {keywords && keywords.length > 0 && (
-          <div>
-            <h4 className="mb-3 text-sm font-medium text-muted-foreground">
+          <div aria-labelledby="bid-keywords-heading">
+            <h4
+              id="bid-keywords-heading"
+              className="mb-3 text-sm font-medium text-muted-foreground"
+            >
               Диапазоны ставок по ключевым словам
             </h4>
             <div className="space-y-2">
@@ -160,7 +165,7 @@ function BidLevel({
 
 function KeywordRow({ data }: { data: KeywordBidRange }) {
   return (
-    <div className="flex items-center justify-between rounded-md bg-gray-50 px-3 py-2 text-sm">
+    <div className="flex items-center justify-between rounded-md bg-muted/50 px-3 py-2 text-sm">
       <span className="truncate font-medium">{data.keyword}</span>
       <div className="flex items-center gap-2">
         {/* iter-70: guard ≤0 → "—" (consistent with BidLevel) so an absent reach tier (normalized
