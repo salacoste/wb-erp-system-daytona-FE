@@ -22,24 +22,18 @@
  */
 
 import { readFileSync } from 'node:fs'
-import { join } from 'node:path'
+import { fileURLToPath } from 'node:url'
 import { describe, expect, it } from 'vitest'
 import { render, screen } from '@testing-library/react'
 import { MarginByBrandTable } from './MarginByBrandTable'
 import type { MarginAnalyticsAggregated } from '@/types/api'
 
-const pageSource = readFileSync(
-  join(process.cwd(), 'src/app/(dashboard)/analytics/brand/page.tsx'),
-  'utf8'
-)
-const helpSource = readFileSync(
-  join(process.cwd(), 'src/app/(dashboard)/analytics/brand/components/BrandHelpSection.tsx'),
-  'utf8'
-)
-const tableSource = readFileSync(
-  join(process.cwd(), 'src/components/custom/MarginByBrandTable.tsx'),
-  'utf8'
-)
+// Round-1 LOW-2: import.meta.url-anchored — cwd-safe (invocations from the parent
+// monorepo dir previously threw ENOENT on process.cwd()-relative paths).
+const here = (rel: string) => readFileSync(fileURLToPath(new URL(rel, import.meta.url)), 'utf8')
+const pageSource = here('../../app/(dashboard)/analytics/brand/page.tsx')
+const helpSource = here('../../app/(dashboard)/analytics/brand/components/BrandHelpSection.tsx')
+const tableSource = here('./MarginByBrandTable.tsx') // same dir as this guard
 
 /** Owned production surface (exactly 3 files — Story 170.3 scope). */
 const OWNED_SOURCES: [string, string][] = [
@@ -49,7 +43,9 @@ const OWNED_SOURCES: [string, string][] = [
 ]
 
 function withoutComments(source: string): string {
-  return source.replace(/\/\*[\s\S]*?\*\//g, '').replace(/^\s*\/\/.*$/gm, '')
+  // Round-1 LOW-1: strip BOTH line-start and trailing inline // comments (owned files
+  // contain no http:// URLs — verified; conservative direction either way).
+  return source.replace(/\/\*[\s\S]*?\*\//g, '').replace(/^\s*\/\/.*$/gm, '').replace(/\s\/\/.*$/gm, '')
 }
 
 const LEGACY_PALETTE =
@@ -117,7 +113,8 @@ describe('Story 170.3 brand-margin presentation source contracts', () => {
     const src = withoutComments(helpSource)
     expect(src).toMatch(/border-status-information\/30 bg-status-information\/15/)
     expect(src).toMatch(/text-foreground/)
-    expect(src).not.toMatch(/blue-\d00/)
+    // Round-1 LOW-3: dropped redundant blue-\d00 pin — LEGACY_PALETTE above already covers
+      // every blue shade incl. 950 on the same source; the weaker duplicate invited drift.
     // 169.10 foreground-on-tint: heading strength via font, NOT darker tint text
     expect(src).not.toMatch(/text-blue-900/)
   })
