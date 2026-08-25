@@ -43,7 +43,10 @@ e2e на ветке 12/1↓/0, 2×opus APPROVE×2, без preface — mapBrandIt
 2×opus, без preface — 0-share→null контракт-санкционирован #225:55; 3 AC-объекта доставлены:
 sr-alternative + filter-context subtitle + invalid-range). 170.5 SHIPPED 2026-08-26 (5/7): #245 (`19009e3d`; 5 файлов, owned 52→65, полный пол **19 154/0** (+15),
 e2e на ветке 6/1↓/0, 2×opus; прямое зеркало 170.3 + Caption/tabular/scroll-дельта + entityFallback AX-пин).
-**NEXT = 170.6 advertising/organic cross-reference analytics** (backlog; план `.omx/plans/170.6-...md`);
+170.6 SHIPPED 2026-08-26 (6/7): #247 (`d1bb947e`; 17 файлов, owned 51→78, полный пол **19 180/0** (+26),
+e2e на ветке 7/5↓/0; 3-pass trail — r1-фиксы дефектны (косметика+вакуум-regex), r2 REQUEST_CHANGES
+поймал оба, r3 verify; AC-2 закрыт). **NEXT = 170.7 search analytics workspace** (backlog;
+план `.omx/plans/170.7-...md`) — финал Эпика 170;
 параллельно независимо: 169.14 → 169.15 → 169.12 contract closeout (169.14/169.15 `backlog`; 169.12 `review`; plans `.omx/plans/169.14-establish-authoritative-paid-storage-import-lifecycle-and-result-contract.md`, `.omx/plans/169.15-align-shared-frontend-paid-storage-import-boundary.md`, and `.omx/plans/169.12-migrate-storage-analytics-and-paid-storage-import.md`). Story 169.13 remains an independent backlog route.
 **Волна 23-24.08** (два полных цикла + инфраструктура): 169.11 returns — preface #218 (`d6ed2c65`,
 unknown-категория на boundary + нейтральный лейбл) + #219 (`129e99ed`; owned 50→73) + e2e-gap закрыт
