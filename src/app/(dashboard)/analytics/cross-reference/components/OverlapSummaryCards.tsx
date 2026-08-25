@@ -8,6 +8,8 @@
 import { Card, CardContent } from '@/components/ui/card'
 import { Search, Megaphone, Layers } from 'lucide-react'
 import type { OverlapSummary } from '../utils/cross-reference-utils'
+// Story 170.6-FE: icon tiles migrate to the route single-source channel map.
+import { CHANNEL_STYLES } from './channel-styling'
 
 interface OverlapSummaryCardsProps {
   summary: OverlapSummary
@@ -31,22 +33,19 @@ export function OverlapSummaryCards({ summary }: OverlapSummaryCardsProps) {
       label: 'Только органика',
       count: summary.organicOnly,
       icon: Search,
-      color: 'text-green-600',
-      bg: 'bg-green-50',
+      tile: CHANNEL_STYLES.organic.tileClassName,
     },
     {
       label: 'Только реклама',
       count: summary.adOnly,
       icon: Megaphone,
-      color: 'text-blue-600',
-      bg: 'bg-blue-50',
+      tile: CHANNEL_STYLES.ad.tileClassName,
     },
     {
       label: 'Оба канала',
       count: summary.both,
       icon: Layers,
-      color: 'text-purple-600',
-      bg: 'bg-purple-50',
+      tile: CHANNEL_STYLES.both.tileClassName,
     },
   ]
 
@@ -57,8 +56,8 @@ export function OverlapSummaryCards({ summary }: OverlapSummaryCardsProps) {
         return (
           <Card key={card.label}>
             <CardContent className="flex items-center gap-4 p-4">
-              <div className={`rounded-lg p-2 ${card.bg}`} aria-hidden="true">
-                <Icon className={`h-6 w-6 ${card.color}`} />
+              <div className={`rounded-lg p-2 ${card.tile}`} aria-hidden="true">
+                <Icon className="h-6 w-6" />
               </div>
               <div>
                 <p className="text-sm text-muted-foreground">{card.label}</p>

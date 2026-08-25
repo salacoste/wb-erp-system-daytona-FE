@@ -130,23 +130,33 @@ export function AdOrganicOverlapTable({ searchQueryItems, adItems }: AdOrganicOv
   )
 }
 
+// Story 170.6-FE: overlap chips (thresholds 75/40 frozen) → status /15+/30 triplets.
 function OverlapBadge({ pct }: { pct: number }) {
   if (pct >= 75) {
     return (
-      <Badge variant="default" className="bg-red-100 text-red-800 border-red-300">
+      <Badge
+        variant="outline"
+        className="bg-status-error/15 text-status-error border-status-error/30"
+      >
         {formatPercentage(pct)}
       </Badge>
     )
   }
   if (pct >= 40) {
     return (
-      <Badge variant="secondary" className="bg-amber-100 text-amber-800 border-amber-300">
+      <Badge
+        variant="outline"
+        className="bg-status-warning/15 text-status-warning border-status-warning/30"
+      >
         {formatPercentage(pct)}
       </Badge>
     )
   }
   return (
-    <Badge variant="outline" className="bg-green-100 text-green-800 border-green-300">
+    <Badge
+      variant="outline"
+      className="bg-status-success/15 text-status-success border-status-success/30"
+    >
       {formatPercentage(pct)}
     </Badge>
   )

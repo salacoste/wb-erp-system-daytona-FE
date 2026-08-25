@@ -21,7 +21,7 @@ export function InsightsCards({ items }: InsightsCardsProps) {
     <Card>
       <CardHeader className="pb-3">
         <CardTitle className="text-base flex items-center gap-2">
-          <TrendingDown className="h-4 w-4 text-amber-600" />
+          <TrendingDown className="h-4 w-4 text-status-warning" />
           Возможная переплата
         </CardTitle>
         <p className="text-sm text-muted-foreground">

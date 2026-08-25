@@ -3,6 +3,7 @@ import {
   computeKeywordOverlap,
   computePositionSpendCorrelation,
   classifyCannibalization,
+  interpretCorrelation,
 } from '../ad-search-correlation-utils'
 import type { CrossReferenceItem } from '../cross-reference-utils'
 
@@ -203,5 +204,39 @@ describe('classifyCannibalization', () => {
     const result = classifyCannibalization(items)
     const nullItem = result.find(r => r.nmId === 1)
     expect(nullItem?.organicContribution).toBeNull()
+  })
+})
+
+// ---------------------------------------------------------------------------
+// Story 170.6-FE: unified correlation taxonomy (source-contract — the chart's
+// CorrelationBadge consumes interpretCorrelation for BOTH label and tint).
+// ---------------------------------------------------------------------------
+
+describe('interpretCorrelation — unified taxonomy (170.6)', () => {
+  it('label bands: 0.2/0.4/0.6/0.8 thresholds with util wording (no «Заметная»)', () => {
+    expect(interpretCorrelation(0.1).label).toBe('Очень слабая корреляция')
+    expect(interpretCorrelation(0.3).label).toBe('Слабая корреляция')
+    expect(interpretCorrelation(0.5).label).toBe('Умеренная корреляция')
+    expect(interpretCorrelation(0.7).label).toBe('Сильная корреляция')
+    expect(interpretCorrelation(0.9).label).toBe('Очень сильная корреляция')
+    expect(interpretCorrelation(-0.5).label).toBe('Умеренная корреляция') // |r|
+  })
+
+  it('tint bands: |r|<0.4 muted, 0.4–<0.8 status-warning /15+/30, ≥0.8 status-error /15+/30', () => {
+    expect(interpretCorrelation(0.1).badgeClassName).toBe(
+      'bg-muted text-muted-foreground border-border'
+    )
+    expect(interpretCorrelation(0.3).badgeClassName).toBe(
+      'bg-muted text-muted-foreground border-border'
+    )
+    expect(interpretCorrelation(0.5).badgeClassName).toBe(
+      'bg-status-warning/15 text-status-warning border-status-warning/30'
+    )
+    expect(interpretCorrelation(0.7).badgeClassName).toBe(
+      'bg-status-warning/15 text-status-warning border-status-warning/30'
+    )
+    expect(interpretCorrelation(0.85).badgeClassName).toBe(
+      'bg-status-error/15 text-status-error border-status-error/30'
+    )
   })
 })
