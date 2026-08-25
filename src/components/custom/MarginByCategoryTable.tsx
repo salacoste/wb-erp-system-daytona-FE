@@ -6,7 +6,7 @@
  * Refactored: Epic 74, Story 74.6 — uses shared aggregated components
  */
 import { useState, useMemo } from 'react'
-import { Table, TableBody } from '@/components/ui/table'
+import { Table, TableBody, TableCaption } from '@/components/ui/table'
 import type { MarginAnalyticsAggregated } from '@/types/api'
 import type { ColumnVisibility } from '@/hooks/useColumnVisibility'
 import { ComparisonSummary, PeriodTotals } from './SummaryComparison'
@@ -72,15 +72,25 @@ export function MarginByCategoryTable({
 
   if (!data || data.length === 0) {
     return (
-      <div className="rounded-lg border border-gray-200 bg-gray-50 p-12 text-center">
-        <p className="text-gray-600">Нет данных за выбранную неделю</p>
+      /* Story 170.5: empty-state tokens — mirrors page.tsx page-level empty branch. */
+      <div className="rounded-lg border border-border bg-muted p-12 text-center">
+        <p className="text-muted-foreground">Нет данных за выбранную неделю</p>
       </div>
     )
   }
 
   return (
     <div className="rounded-md border overflow-x-auto">
-      <Table className="sticky-first-column">
+      {/* Story 170.5: tabular-nums inherits into shared Header/Row cells (no shared
+          font-variant override — verified); scroll region via Table wrapper props. */}
+      <Table
+        className="sticky-first-column tabular-nums"
+        scrollContainerTabIndex={0}
+        scrollContainerAriaLabel="Таблица маржинальности по категориям"
+      >
+        {/* Story 170.5: picker-semantic caption (169.7) — names the analysis without
+            verbatim-duplicating the adjacent CardTitle. */}
+        <TableCaption>Таблица маржинальности по категориям</TableCaption>
         <MarginAggregatedTableHeader
           entityLabel="Категория"
           sortField={sortField}
