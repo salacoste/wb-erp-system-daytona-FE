@@ -100,9 +100,10 @@ describe('Story 170.2 campaign-detail source contracts', () => {
   it('BackLink is a plain semantic Link (supplies/[id] canon) — no nested Button', () => {
     const page = withoutComments(readFileSync(PAGE_PATH, 'utf8'))
     expect(page).not.toMatch(/<Button/) // no nested interactive
-    expect(page).toMatch(
-      /<Link\s*\n?\s*href=\{ROUTES\.ANALYTICS\.ADVERTISING\}\s*\n?\s*className="inline-flex items-center text-sm text-muted-foreground hover:text-foreground"/
-    )
+    // Round-1 F1: pin the CONTRACT (href + text-link classes present), not the exact
+    // className ordering — verbatim-string pins cry wolf on formatter tweaks and get weakened.
+    expect(page).toMatch(/href=\{ROUTES\.ANALYTICS\.ADVERTISING\}/)
+    expect(page).toMatch(/text-muted-foreground hover:text-foreground/)
   })
 
   it('keywords section accessible name: h4 id + container aria-labelledby', () => {

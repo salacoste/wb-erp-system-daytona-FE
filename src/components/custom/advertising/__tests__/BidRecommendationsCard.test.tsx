@@ -155,10 +155,12 @@ describe('BidRecommendationsCard', () => {
 
     it('keyword rows use muted token background (Story 170.2 token migration)', () => {
       mockHook({ data: successData })
-      const { container } = renderCard({ nmId: 456 })
+      renderCard({ nmId: 456 })
 
-      const row = container.querySelector('.bg-muted\\/50.rounded-md')
-      expect(row).toBeInTheDocument()
+      // Round-1 F2: locate by text, assert the token via classList — order-independent.
+      const keyword = screen.getByText(successData.keywords[0].keyword)
+      const row = keyword.closest('div')
+      expect(row?.classList.contains('bg-muted/50')).toBe(true)
     })
 
     it('hides keyword section when keywords array is empty', () => {
