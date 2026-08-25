@@ -1,7 +1,7 @@
 /**
  * Story 170.5-FE category-margin presentation source contracts.
  *
- * DIRECT MIRROR of the 170.3 brand guard (MarginByBrandTable.source-contracts.test.tsx).
+ * DIRECT MIRROR of the 170.3 brand guard (+ entityFallback AX pin — the one story-mandated delta) (MarginByBrandTable.source-contracts.test.tsx).
  * Guard location choice: colocated with MarginByCategoryTable.test.tsx (NOT in the
  * category route __tests__/) — the table is the largest owned surface and lives in
  * src/components/custom, outside the route directory; colocation keeps the guard
