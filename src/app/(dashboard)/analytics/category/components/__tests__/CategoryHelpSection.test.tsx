@@ -4,7 +4,7 @@
  * Verifies help section content:
  * - Renders card with title
  * - Renders all 5 help sections
- * - Uses blue color scheme
+ * - Uses status-information token panel (Story 170.5)
  */
 
 import { describe, it, expect } from 'vitest'
