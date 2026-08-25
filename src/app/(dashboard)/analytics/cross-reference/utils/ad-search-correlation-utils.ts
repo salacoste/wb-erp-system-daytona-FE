@@ -85,17 +85,30 @@ export function computePositionSpendCorrelation(items: CrossReferenceItem[]): Co
   return {
     pearsonR: Math.max(-1, Math.min(1, r)),
     sampleSize: n,
-    label: interpretCorrelation(r),
+    label: interpretCorrelation(r).label,
   }
 }
 
-function interpretCorrelation(r: number): string {
+/** Unified correlation taxonomy (Story 170.6-FE): label AND badge tint bands both
+ *  live HERE — PositionSpendChart's former local label ladder («Заметная»…) and its
+ *  divergent 30/60 color bands are deleted; the chart consumes this function only. */
+export interface CorrelationInterpretation {
+  label: string
+  /** Badge tint by |r| valence: <0.4 muted, 0.4–<0.8 warning, ≥0.8 error (status tokens). */
+  badgeClassName: string
+}
+
+const BAND_MUTED = 'bg-muted text-muted-foreground border-border'
+const BAND_WARNING = 'bg-status-warning/15 text-status-warning border-status-warning/30'
+const BAND_ERROR = 'bg-status-error/15 text-status-error border-status-error/30'
+
+export function interpretCorrelation(r: number): CorrelationInterpretation {
   const abs = Math.abs(r)
-  if (abs < 0.2) return 'Очень слабая корреляция'
-  if (abs < 0.4) return 'Слабая корреляция'
-  if (abs < 0.6) return 'Умеренная корреляция'
-  if (abs < 0.8) return 'Сильная корреляция'
-  return 'Очень сильная корреляция'
+  if (abs < 0.2) return { label: 'Очень слабая корреляция', badgeClassName: BAND_MUTED }
+  if (abs < 0.4) return { label: 'Слабая корреляция', badgeClassName: BAND_MUTED }
+  if (abs < 0.6) return { label: 'Умеренная корреляция', badgeClassName: BAND_WARNING }
+  if (abs < 0.8) return { label: 'Сильная корреляция', badgeClassName: BAND_WARNING }
+  return { label: 'Очень сильная корреляция', badgeClassName: BAND_ERROR }
 }
 
 // ---------------------------------------------------------------------------

@@ -17,7 +17,8 @@ import {
 } from '@/components/ui/table'
 import { Badge } from '@/components/ui/badge'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { ShieldAlert } from 'lucide-react'
+import { ShieldAlert, AlertTriangle, AlertCircle, CheckCircle } from 'lucide-react'
+import type { LucideIcon } from 'lucide-react'
 import type { CrossReferenceItem } from '../utils/cross-reference-utils'
 import { fmtCurrency } from '../utils/cross-reference-utils'
 import { classifyCannibalization } from '../utils/ad-search-correlation-utils'
@@ -28,24 +29,28 @@ interface CannibalizationAnalysisProps {
   items: CrossReferenceItem[]
 }
 
-const RISK_STYLES: Record<CannibalizationRisk, { label: string; className: string; icon: string }> =
-  {
-    high: {
-      label: 'Высокий',
-      className: 'bg-red-100 text-red-800 border-red-300',
-      icon: '🔴',
-    },
-    medium: {
-      label: 'Средний',
-      className: 'bg-amber-100 text-amber-800 border-amber-300',
-      icon: '🟡',
-    },
-    low: {
-      label: 'Низкий',
-      className: 'bg-green-100 text-green-800 border-green-300',
-      icon: '🟢',
-    },
-  }
+// Story 170.6-FE: risk chips → status /15+/30 triplets; emoji risk icons replaced
+// with lucide icons (text labels unchanged).
+const RISK_STYLES: Record<
+  CannibalizationRisk,
+  { label: string; className: string; icon: LucideIcon }
+> = {
+  high: {
+    label: 'Высокий',
+    className: 'bg-status-error/15 text-status-error border-status-error/30',
+    icon: AlertTriangle,
+  },
+  medium: {
+    label: 'Средний',
+    className: 'bg-status-warning/15 text-status-warning border-status-warning/30',
+    icon: AlertCircle,
+  },
+  low: {
+    label: 'Низкий',
+    className: 'bg-status-success/15 text-status-success border-status-success/30',
+    icon: CheckCircle,
+  },
+}
 
 export function CannibalizationAnalysis({ items }: CannibalizationAnalysisProps) {
   const classified = useMemo(() => classifyCannibalization(items), [items])
@@ -58,7 +63,7 @@ export function CannibalizationAnalysis({ items }: CannibalizationAnalysisProps)
   return (
     <div>
       <div className="flex items-center gap-2 mb-3">
-        <ShieldAlert className="h-5 w-5 text-amber-600" aria-hidden="true" />
+        <ShieldAlert className="h-5 w-5 text-status-warning" aria-hidden="true" />
         <h2 className="text-lg font-semibold">Анализ каннибализации</h2>
       </div>
       <p className="text-sm text-muted-foreground mb-4">
@@ -69,12 +74,12 @@ export function CannibalizationAnalysis({ items }: CannibalizationAnalysisProps)
         <RiskSummaryCard
           label="Высокий риск"
           count={highRiskCount}
-          className="border-red-200 bg-red-50"
+          className="border-status-error/30 bg-status-error/15"
         />
         <RiskSummaryCard
           label="Средний риск"
           count={mediumRiskCount}
-          className="border-amber-200 bg-amber-50"
+          className="border-status-warning/30 bg-status-warning/15"
         />
       </div>
 
@@ -124,6 +129,7 @@ function RiskSummaryCard({
 
 function CannibalizationRow({ item }: { item: CannibalizationItem }) {
   const style = RISK_STYLES[item.risk]
+  const RiskIcon = style.icon
   return (
     <TableRow>
       <TableCell className="font-mono text-sm">{item.vendorCode || item.nmId}</TableCell>
@@ -133,7 +139,8 @@ function CannibalizationRow({ item }: { item: CannibalizationItem }) {
       <TableCell className="text-right">{fmtCurrency(item.adSpend)}</TableCell>
       <TableCell className="text-right">{item.totalOrders}</TableCell>
       <TableCell>
-        <Badge variant="outline" className={style.className}>
+        <Badge variant="outline" className={`gap-1 ${style.className}`}>
+          <RiskIcon className="h-3 w-3" aria-hidden="true" />
           {style.label}
         </Badge>
       </TableCell>

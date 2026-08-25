@@ -5,6 +5,9 @@
  * Merges search orders (groupBy=product) + advertising (view_by=sku) client-side.
  * Feature 3.6 adds ad/search correlation: keyword overlap, position-spend scatter,
  * and cannibalization analysis.
+ * Story 170.6-FE (AC-2): per-source error split — one failed source keeps the other
+ * source's data rendered (SourceErrorBanner); BOTH failed keeps the full ErrorState
+ * (e2e-pinned texts). The THIRD query (groupBy=query) gets a section banner.
  */
 
 import { useState, useMemo, useEffect } from 'react'
@@ -27,7 +30,13 @@ import { OrganicVsAdScatter } from './OrganicVsAdScatter'
 import { AdOrganicOverlapTable } from './AdOrganicOverlapTable'
 import { PositionSpendChart } from './PositionSpendChart'
 import { CannibalizationAnalysis } from './CannibalizationAnalysis'
-import { LoadingSkeleton, ErrorState, EmptyState } from './CrossReferenceStates'
+import {
+  LoadingSkeleton,
+  ErrorState,
+  EmptyState,
+  SourceErrorBanner,
+  SectionWarningBanner,
+} from './CrossReferenceStates'
 import type { DateRange } from '@/types/date-range'
 
 function getDefaultRange(): DateRange {
@@ -61,15 +70,21 @@ function CrossReferenceDataContent({ apiFrom, apiTo }: CrossReferenceDataContent
   })
 
   const isLoading = searchQuery.isLoading || adQuery.isLoading
-  const isError = searchQuery.isError || adQuery.isError
-  const error = searchQuery.error || adQuery.error
+  const searchFailed = searchQuery.isError
+  const adFailed = adQuery.isError
+  const bothFailed = searchFailed && adFailed
+  const oneFailed = searchFailed !== adFailed
+  const error = searchQuery.error ?? adQuery.error
 
   const searchItems = searchQuery.data?.items
   const searchQueryItems = searchByQueryQuery.data?.items
   const adItems = adQuery.data?.data
+  // 170.6 AC-2: merge is no longer all-or-nothing — when exactly one source failed,
+  // the loaded source merges alone (its rows show their true channel scope; the
+  // SourceErrorBanner above forbids cross-channel conclusions from the partial view).
   const mergedData = useMemo(() => {
-    if (!searchItems || !adItems) return []
-    return mergeSearchAndAdData(searchItems, adItems)
+    if (!searchItems && !adItems) return []
+    return mergeSearchAndAdData(searchItems ?? [], adItems ?? [])
   }, [searchItems, adItems])
 
   const overlapSummary = useMemo(() => computeOverlapSummary(mergedData), [mergedData])
@@ -94,18 +109,34 @@ function CrossReferenceDataContent({ apiFrom, apiTo }: CrossReferenceDataContent
       />
 
       {isLoading && <LoadingSkeleton />}
-      {isError && <ErrorState error={error} onRetry={handleRetry} />}
-      {!isLoading && !isError && mergedData.length === 0 && <EmptyState />}
-      {!isLoading && !isError && mergedData.length > 0 && (
+      {!isLoading && bothFailed && <ErrorState error={error} onRetry={handleRetry} />}
+      {!isLoading && oneFailed && (
+        <SourceErrorBanner
+          failedSource={adFailed ? 'реклама' : 'органический поиск'}
+          okSource={adFailed ? 'органический поиск' : 'реклама'}
+          onRetry={handleRetry}
+          hasRows={mergedData.length > 0}
+        />
+      )}
+      {/* Round-2 F1: oneFailed + empty renders banner AND EmptyState — the honest composite
+          (round-1's !oneFailed exclusion left the banner alone, falsely promising data below). */}
+      {!isLoading && !bothFailed && mergedData.length === 0 && <EmptyState />}
+      {!isLoading && !bothFailed && mergedData.length > 0 && (
         <div className="space-y-6">
           <OverlapSummaryCards summary={overlapSummary} />
           <InsightsCards items={topWastedSpend} />
           <OrganicVsAdScatter items={mergedData} />
           <CrossReferenceTable items={mergedData} />
 
-          {/* Feature 3.6: Ad ↔ Search correlation analyses */}
-          {searchQueryItems && adItems && (
-            <AdOrganicOverlapTable searchQueryItems={searchQueryItems} adItems={adItems} />
+          {/* Feature 3.6: Ad ↔ Search correlation analyses. The query-level (third)
+              query gets its own section banner when it fails (170.6 validator C2). */}
+          {searchByQueryQuery.isError ? (
+            <SectionWarningBanner onRetry={() => searchByQueryQuery.refetch()} />
+          ) : (
+            searchQueryItems &&
+            adItems && (
+              <AdOrganicOverlapTable searchQueryItems={searchQueryItems} adItems={adItems} />
+            )
           )}
           <PositionSpendChart items={mergedData} />
           <CannibalizationAnalysis items={mergedData} />
@@ -128,7 +159,7 @@ export function CrossReferencePageContent() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-3xl font-bold tracking-tight text-gray-900">Кросс-анализ</h1>
+        <h1 className="text-2xl font-semibold tracking-tight text-foreground">Кросс-анализ</h1>
         <p className="text-muted-foreground mt-1">Сравнение органики и рекламы по товарам</p>
       </div>
 

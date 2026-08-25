@@ -15,30 +15,18 @@ import {
   TableRow,
 } from '@/components/ui/table'
 import { Badge } from '@/components/ui/badge'
-import { SortButton } from '@/app/(dashboard)/analytics/search/components/SortButton'
-import type { CrossReferenceItem, Channel } from '../utils/cross-reference-utils'
+// Story 170.6-FE: route-owned copy — the search-tree SortButton import is forbidden (read-only tree).
+import { SortButton } from './SortButton'
+import type { CrossReferenceItem } from '../utils/cross-reference-utils'
 import { fmtCurrency, fmtNumber } from '../utils/cross-reference-utils'
+// Story 170.6-FE: channel chips migrate to the route single-source channel map.
+import { CHANNEL_STYLES } from './channel-styling'
 
 interface CrossReferenceTableProps {
   items: CrossReferenceItem[]
 }
 
 type SortField = 'nmId' | 'totalOrders' | 'uniqueQueries' | 'adSpend' | 'adClicks' | 'adRevenue'
-
-const CHANNEL_LABELS: Record<
-  Channel,
-  { label: string; variant: 'default' | 'secondary' | 'outline' }
-> = {
-  organic: { label: 'Органика', variant: 'secondary' },
-  ad: { label: 'Реклама', variant: 'default' },
-  both: { label: 'Оба', variant: 'outline' },
-}
-
-const CHANNEL_COLORS: Record<Channel, string> = {
-  organic: 'bg-green-100 text-green-800 border-green-300',
-  ad: 'bg-blue-100 text-blue-800 border-blue-300',
-  both: 'bg-purple-100 text-purple-800 border-purple-300',
-}
 
 export function CrossReferenceTable({ items }: CrossReferenceTableProps) {
   const [sortField, setSortField] = useState<SortField>('adSpend')
@@ -127,11 +115,8 @@ export function CrossReferenceTable({ items }: CrossReferenceTableProps) {
               <TableCell>{fmtNumber(item.adClicks)}</TableCell>
               <TableCell>{fmtCurrency(item.adRevenue)}</TableCell>
               <TableCell>
-                <Badge
-                  variant={CHANNEL_LABELS[item.channel].variant}
-                  className={CHANNEL_COLORS[item.channel]}
-                >
-                  {CHANNEL_LABELS[item.channel].label}
+                <Badge variant="outline" className={CHANNEL_STYLES[item.channel].badgeClassName}>
+                  {CHANNEL_STYLES[item.channel].label}
                 </Badge>
               </TableCell>
             </TableRow>
