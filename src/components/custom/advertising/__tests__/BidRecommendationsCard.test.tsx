@@ -146,6 +146,21 @@ describe('BidRecommendationsCard', () => {
       expect(screen.getByText(/Диапазоны ставок по ключевым словам/i)).toBeInTheDocument()
     })
 
+    it('keywords section has an accessible name via aria-labelledby (Story 170.2)', () => {
+      mockHook({ data: successData })
+      renderCard({ nmId: 456 })
+
+      expect(screen.getByLabelText('Диапазоны ставок по ключевым словам')).toBeInTheDocument()
+    })
+
+    it('keyword rows use muted token background (Story 170.2 token migration)', () => {
+      mockHook({ data: successData })
+      const { container } = renderCard({ nmId: 456 })
+
+      const row = container.querySelector('.bg-muted\\/50.rounded-md')
+      expect(row).toBeInTheDocument()
+    })
+
     it('hides keyword section when keywords array is empty', () => {
       mockHook({ data: { ...successData, keywords: [] } })
       renderCard({ nmId: 456 })

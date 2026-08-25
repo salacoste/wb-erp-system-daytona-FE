@@ -70,6 +70,14 @@ describe('CampaignDetailPage', () => {
     expect(screen.getByText('Назад к рекламной аналитике')).toBeInTheDocument()
   })
 
+  it('back link is a semantic link (no nested button) pointing at advertising root', () => {
+    // Story 170.2: supplies/[id] canon — plain Link, no Button child
+    renderPage()
+    const link = screen.getByRole('link', { name: /Назад к рекламной аналитике/ })
+    expect(link).toHaveAttribute('href', '/analytics/advertising')
+    expect(screen.queryByRole('button', { name: /Назад/i })).not.toBeInTheDocument()
+  })
+
   it('renders BidRecommendationsCard with correct props', () => {
     renderPage()
     const card = screen.getByTestId('bid-recommendations-card')
