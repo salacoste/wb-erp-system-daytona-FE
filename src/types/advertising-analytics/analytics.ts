@@ -32,7 +32,8 @@ export interface AdvertisingMeta {
     to: string
   }
   view_by: ViewByMode
-  last_sync: string
+  // Story 170.1 Task 0: fabricated-NOW removed — absent cachedAt honestly → null
+  last_sync: string | null
 }
 
 export interface AdvertisingSummary {

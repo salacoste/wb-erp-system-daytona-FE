@@ -10,6 +10,7 @@
  */
 
 import { asRecord, toStr, toCount, toStringOrNull } from '@/lib/api/normalizer-helpers'
+import { logger } from '@/lib/logger'
 import type { Campaign, CampaignsResponse, CampaignPlacements } from '@/types/advertising-analytics'
 import type { SyncStatusResponse } from '@/types/advertising-analytics/sync-groups'
 
@@ -59,6 +60,22 @@ export function normalizeCampaignsResponse(raw: unknown): CampaignsResponse {
   }
 }
 
+// Story 170.1 Task 0: VALID-set lookup — unvalidated `as` cast removed. The
+// SyncTaskStatus union has NO 'unknown' member, so an invalid backend value maps to
+// 'idle' (the neutral member; the badge's getSyncStatusConfig has its own fallback)
+// and is surfaced via logger.warn (Defensive Frontend Principle).
+const VALID_SYNC_STATUSES: ReadonlySet<string> = new Set(['syncing', 'completed', 'failed', 'idle'])
+
+function toSyncTaskStatus(raw: unknown): SyncStatusResponse['status'] {
+  const s = toStr(raw)
+  if (s !== '' && !VALID_SYNC_STATUSES.has(s)) {
+    logger.warn(
+      `[AdvertisingCampaignsNormalizer] unknown sync status "${s}" from backend → 'idle' (file a backend ticket if it persists)`
+    )
+  }
+  return VALID_SYNC_STATUSES.has(s) ? (s as SyncStatusResponse['status']) : 'idle'
+}
+
 /** Normalize sync status response */
 export function normalizeSyncStatusResponse(raw: unknown): SyncStatusResponse {
   const d = asRecord(raw)
@@ -79,7 +96,7 @@ export function normalizeSyncStatusResponse(raw: unknown): SyncStatusResponse {
   return {
     lastSyncAt: toStringOrNull(d.lastSyncAt),
     nextScheduledSync: toStr(d.nextScheduledSync),
-    status: toStr(d.status) as SyncStatusResponse['status'],
+    status: toSyncTaskStatus(d.status),
     lastTask,
     campaignsSynced: toCount(d.campaignsSynced),
     dataAvailableFrom: toStringOrNull(d.dataAvailableFrom),

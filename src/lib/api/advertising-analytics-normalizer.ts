@@ -60,6 +60,14 @@ function toNumArr(raw: unknown): number[] {
   return Array.isArray(raw) ? raw.map(Number) : []
 }
 
+// Story 170.1 Task 0: VALID-set lookup over ViewByMode — unvalidated `as` cast removed;
+// invalid/absent falls through to 'sku' (the pre-existing default semantics)
+const VALID_VIEW_BY_MODES: ReadonlySet<string> = new Set(['sku', 'campaign', 'brand', 'category'])
+
+function toViewByMode(raw: string | undefined): ViewByMode {
+  return raw != null && VALID_VIEW_BY_MODES.has(raw) ? (raw as ViewByMode) : 'sku'
+}
+
 // ---------------------------------------------------------------------------
 // Private normalizers
 // ---------------------------------------------------------------------------
@@ -137,7 +145,8 @@ function normalizeItem(item: unknown, index: number): AdvertisingGroupedItem {
   const eff = (d.efficiency ?? {}) as Record<string, unknown>
   return {
     key: toStr(d.key) || `item-${index}`,
-    type: (d.type as 'merged_group' | 'individual') ?? undefined,
+    // Story 170.1 Task 0: VALID-set lookup instead of `as` cast — invalid/absent → undefined
+    type: d.type === 'merged_group' || d.type === 'individual' ? d.type : undefined,
     imtId: d.imtId != null ? Number(d.imtId) : null,
     mergedProducts: Array.isArray(d.mergedProducts)
       ? d.mergedProducts.map((p: unknown) => {
@@ -233,8 +242,11 @@ export function normalizeAdvertisingResponse(
         from: toStr(query.from) || paramsFrom,
         to: toStr(query.to) || paramsTo,
       },
-      view_by: (toStr(query.viewBy) || paramsViewBy || 'sku') as ViewByMode,
-      last_sync: toStr(r.cachedAt) || new Date().toISOString(),
+      // Story 170.1 Task 0: VALID-set lookup over ViewByMode instead of `as` cast;
+      // 'sku' fallthrough preserved (nothing reads meta.view_by at runtime, tests only)
+      view_by: toViewByMode(toStr(query.viewBy) || paramsViewBy),
+      // Story 170.1 Task 0: fabricated-NOW removed — absent cachedAt honestly → null
+      last_sync: toStr(r.cachedAt) || null,
     },
     summary: normalizeSummary(r.summary),
     data: (Array.isArray(r.items) ? r.items : []).map(normalizeItem),
