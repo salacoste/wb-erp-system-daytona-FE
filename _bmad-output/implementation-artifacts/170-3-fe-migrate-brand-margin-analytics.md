@@ -1,6 +1,6 @@
 # Story 170.3-FE: Migrate Brand Margin Analytics
 
-Status: review — implementation + round-1 hardening on branch; PR/merge/cleanup pending
+Status: done — PR #241 merged (`03a4b3b8`); 2-pass fresh review APPROVE/APPROVE; e2e on branch 12/1↓/0; cleanup 0/0/0
 
 ## Story
 
@@ -73,3 +73,4 @@ Diff e8220456..HEAD = **4 files** (M page.tsx +5/−3; M BrandHelpSection +16/�
 |---|---|
 | 2026-08-25 | Story created from direct source read (3 owned files; exclusivity verified — Aggregated* are shared-with-category via comments only; thin owned C4 matrix documented honestly). Validation PASS-WITH-FINDINGS (0 criticals; Task-0 disposition-OK — no preface; counts 20+6+24; zero legacy pins). Plan referenced as authoritative. |
 | 2026-08-25 | Round-1 guard hardening applied (cwd-safe paths, trailing comments, weak-pin drop). Status: ready-for-dev → review. |
+| 2026-08-25 | Implemented + merged: PR #241 (impl `5891b462` + hardening `11e4a618` + story `fad03037`, merge `03a4b3b8`); owned 62/0, full 19 098/0 (+12 exact), e2e-on-branch 12/1↓/0; 2×opus APPROVE×2; cleanup 0/0/0. Status: review → done. **Lessons:** (1) Тонкая C4-матрица — честная запись «всё в shared» лучше выдуманных owned-состояний. (2) ui/table scroll-props — реальны, но ревью обязан проверять существование props до пина. (3) import.meta.url-относительный путь:.same-dir = './', не '../' — мой первый вариант упал ENOENT прямо в гейте. |
