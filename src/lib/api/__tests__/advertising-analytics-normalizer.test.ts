@@ -353,7 +353,14 @@ describe('normalizeAdvertisingResponse', () => {
     expect(result.meta.date_range.from).toBe('2025-12-01')
     expect(result.meta.date_range.to).toBe('2025-12-31')
     expect(result.meta.view_by).toBe('campaign')
-    expect(result.meta.last_sync).toBeTruthy()
+    // Story 170.1 Task 0: absent cachedAt honestly → null (no fabricated NOW)
+    expect(result.meta.last_sync).toBeNull()
+  })
+
+  it('meta last_sync passes through cachedAt when present (Story 170.1 Task 0)', () => {
+    const raw = { items: [], summary: {}, cachedAt: '2026-01-15T10:00:00Z' }
+    const result = normalizeAdvertisingResponse(raw, '2026-01-01', '2026-01-21')
+    expect(result.meta.last_sync).toBe('2026-01-15T10:00:00Z')
   })
 
   it('meta falls back to "sku" view_by when neither query nor param provided', () => {
