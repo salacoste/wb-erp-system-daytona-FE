@@ -126,7 +126,7 @@ describe('Story 170.5 category-margin presentation source contracts', () => {
     const src = withoutComments(tableSource)
     expect(src).toMatch(/border-border bg-muted/)
     expect(src).toMatch(/text-muted-foreground/)
-    // Wording is double-pinned (page + table) — do NOT change
+    // Wording is source-pinned in this guard only (page + table literals); NO e2e empty-text assertion exists (category-analytics.spec has none; e2e files are outside Story 170.5 owned surface) — e2e empty-pin is a carry-out (dedicated test PR, #222 precedent) — do NOT change
     expect(src).toContain('Нет данных за выбранную неделю')
   })
 
