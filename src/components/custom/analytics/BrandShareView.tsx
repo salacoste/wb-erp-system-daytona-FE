@@ -7,6 +7,10 @@
  * Cascading flow: brand Select → category (parent-subject) Select → date range →
  * `<BrandShareChart>`. Loading skeletons, empty state, and a friendly RU 503
  * error state (upstream WB failure). Null percents render «—» (AP#8) via the chart.
+ *
+ * Story 170.4: span-pseudo-labels → id + aria-labelledby (visible and
+ * programmatic name unified); filter context (brand/category/period) threaded
+ * into the chart card subtitle; SelectTrigger/retry Button ≥44px (min-h-11).
  */
 import { useMemo } from 'react'
 import {
@@ -26,6 +30,11 @@ import {
   useBrandShareReport,
 } from '@/hooks/useBrandShare'
 import { BrandShareChart } from './BrandShareChart'
+import { BrandShareDateRangeFilter } from './BrandShareDateRangeFilter'
+import {
+  formatBrandSharePeriodLabel,
+  resolveBrandShareCategoryName,
+} from './brand-share-view-helpers'
 import type { BrandShareDateRange } from '@/types/brand-share'
 
 interface BrandShareViewProps {
@@ -74,19 +83,26 @@ export function BrandShareView({
 
   const subjects = subjectsQuery.data ?? []
   const report = reportQuery.data?.report ?? []
+  const categoryName = resolveBrandShareCategoryName(subjects, parentId)
+  const periodLabel = formatBrandSharePeriodLabel(dateRange)
 
   const reportErrorEl = useMemo(() => {
     if (!reportQuery.error) return null
     return (
       <Card>
         <CardContent className="flex flex-col items-center justify-center gap-3 py-12 text-center">
-          <AlertTriangle className="h-8 w-8 text-amber-500" data-testid="brand-share-error-icon" />
+          <AlertTriangle
+            className="h-8 w-8 text-status-warning"
+            data-testid="brand-share-error-icon"
+          />
           <p className="text-sm text-muted-foreground" data-testid="brand-share-error">
             {errorMessageFor(reportQuery.error)}
           </p>
+          {/* min-h-11: 44×44 epic-AX target; first custom/analytics precedent (Story 170.4). */}
           <Button
             variant="outline"
             size="sm"
+            className="min-h-11"
             onClick={() => reportQuery.refetch()}
             data-testid="brand-share-retry"
           >
@@ -104,13 +120,19 @@ export function BrandShareView({
       <Card>
         <CardContent className="grid gap-4 py-4 md:grid-cols-3">
           <div className="flex flex-col gap-1">
-            <span className="text-xs text-muted-foreground">Бренд</span>
+            <span id="brand-share-brand-label" className="text-xs text-muted-foreground">
+              Бренд
+            </span>
             <Select
               value={brand ?? NONE}
               onValueChange={handleBrandChange}
               disabled={brandsQuery.isLoading}
             >
-              <SelectTrigger aria-label="Выбор бренда" data-testid="brand-share-brand-select">
+              <SelectTrigger
+                aria-labelledby="brand-share-brand-label"
+                className="min-h-11"
+                data-testid="brand-share-brand-select"
+              >
                 <SelectValue placeholder="Выберите бренд" />
               </SelectTrigger>
               <SelectContent>
@@ -128,13 +150,19 @@ export function BrandShareView({
           </div>
 
           <div className="flex flex-col gap-1">
-            <span className="text-xs text-muted-foreground">Категория (родительский предмет)</span>
+            <span id="brand-share-parent-label" className="text-xs text-muted-foreground">
+              Категория (родительский предмет)
+            </span>
             <Select
               value={parentId != null ? String(parentId) : NONE}
               onValueChange={handleParentChange}
               disabled={!brand || subjectsQuery.isLoading}
             >
-              <SelectTrigger aria-label="Выбор категории" data-testid="brand-share-parent-select">
+              <SelectTrigger
+                aria-labelledby="brand-share-parent-label"
+                className="min-h-11"
+                data-testid="brand-share-parent-select"
+              >
                 <SelectValue placeholder="Выберите категорию" />
               </SelectTrigger>
               <SelectContent>
@@ -151,33 +179,7 @@ export function BrandShareView({
             )}
           </div>
 
-          <div className="flex flex-col gap-1">
-            <span className="text-xs text-muted-foreground">Период (с / по, ГГГГ-ММ-ДД)</span>
-            <div className="flex items-center gap-2">
-              <input
-                type="date"
-                className="rounded-md border border-input bg-background px-2 py-1.5 text-sm"
-                value={dateRange.dateFrom ?? ''}
-                onChange={e =>
-                  onDateRangeChange({ ...dateRange, dateFrom: e.target.value || undefined })
-                }
-                aria-label="Дата начала периода"
-                data-testid="brand-share-date-from"
-              />
-              <span className="text-muted-foreground">—</span>
-              <input
-                type="date"
-                className="rounded-md border border-input bg-background px-2 py-1.5 text-sm"
-                value={dateRange.dateTo ?? ''}
-                onChange={e =>
-                  onDateRangeChange({ ...dateRange, dateTo: e.target.value || undefined })
-                }
-                aria-label="Дата окончания периода"
-                data-testid="brand-share-date-to"
-              />
-            </div>
-            <span className="text-xs text-muted-foreground">Без выбора — последние 7 дней</span>
-          </div>
+          <BrandShareDateRangeFilter dateRange={dateRange} onDateRangeChange={onDateRangeChange} />
         </CardContent>
       </Card>
 
@@ -191,7 +193,12 @@ export function BrandShareView({
       ) : reportErrorEl ? (
         reportErrorEl
       ) : (
-        <BrandShareChart data={report} />
+        <BrandShareChart
+          data={report}
+          brand={brand}
+          categoryName={categoryName}
+          periodLabel={periodLabel}
+        />
       )}
     </div>
   )
