@@ -5,6 +5,7 @@ import { Badge } from '@/components/ui/badge'
 import { cn } from '@/lib/utils'
 import type { EfficiencyStatus } from '@/types/advertising-analytics'
 import { getEfficiencyConfig } from '@/lib/efficiency-utils'
+import { EFFICIENCY_TIER_TOKENS } from './advertising-tokens'
 
 /**
  * Props for EfficiencyBadge component
@@ -41,6 +42,7 @@ export function EfficiencyBadge({
   // F-47: guarded lookup — an out-of-union backend efficiency_status falls back to 'unknown'
   // instead of crashing on config.icon (the F-39 enum-crash class).
   const config = getEfficiencyConfig(status)
+  const tokens = EFFICIENCY_TIER_TOKENS[status]
   const Icon = config.icon
 
   return (
@@ -51,13 +53,12 @@ export function EfficiencyBadge({
             variant="outline"
             className={cn(
               'font-medium border-0 cursor-default inline-flex items-center gap-1',
-              config.bgColor,
-              config.textColor,
+              tokens.chip,
               className
             )}
             aria-label={`Статус эффективности: ${config.label}`}
           >
-            {showIcon && <Icon className={cn('h-3 w-3', config.iconColor)} aria-hidden="true" />}
+            {showIcon && <Icon className={cn('h-3 w-3', tokens.icon)} aria-hidden="true" />}
             {config.label}
           </Badge>
         </TooltipTrigger>
@@ -66,7 +67,7 @@ export function EfficiencyBadge({
             <p className="font-medium">{config.label}</p>
             <p className="text-xs text-muted-foreground">{config.description}</p>
             {showRecommendation && (
-              <p className="text-xs text-blue-600 mt-1">💡 {config.recommendation}</p>
+              <p className="text-xs text-status-information mt-1">💡 {config.recommendation}</p>
             )}
           </div>
         </TooltipContent>

@@ -9,12 +9,17 @@
 // Chart Colors
 // ============================================================================
 
+// Story 170.1: chart tokens instead of hardcoded hex (169.4/169.11 canon).
+// Valence: spend is a cost (higher = worse) → chart-negative; roas is an
+// efficiency ratio (higher = better) → chart-positive. Categorical volume
+// metrics (views/clicks/orders) → chart-1..3 in series order. Legend swatches,
+// tooltip markers, and <Line> all read these values — single source of truth.
 export const DAILY_TREND_COLORS = {
-  spend: '#7C3AED', // Purple (matches dashboard advertising convention)
-  views: '#3B82F6', // Blue
-  clicks: '#22C55E', // Green
-  orders: '#E53935', // Primary Red
-  roas: '#F59E0B', // Amber
+  spend: 'var(--color-chart-negative)',
+  views: 'var(--color-chart-1)',
+  clicks: 'var(--color-chart-2)',
+  orders: 'var(--color-chart-3)',
+  roas: 'var(--color-chart-positive)',
 } as const
 
 export type DailyTrendMetricKey = keyof typeof DAILY_TREND_COLORS

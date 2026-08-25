@@ -15,10 +15,11 @@ interface SyncGapsTimelineProps {
   syncStatus?: SyncStatusResponse
 }
 
+// Story 170.1: day-cell colors → status tokens (was green/red/gray palette)
 const STATUS_CONFIG: Record<DayStatusType, { bg: string; label: string }> = {
-  complete: { bg: 'bg-green-500', label: 'Данные есть' },
-  missing: { bg: 'bg-red-500', label: 'Нет данных' },
-  unavailable: { bg: 'bg-gray-300', label: 'За пределами синхронизации' },
+  complete: { bg: 'bg-status-success', label: 'Данные есть' },
+  missing: { bg: 'bg-status-error', label: 'Нет данных' },
+  unavailable: { bg: 'bg-muted-foreground/40', label: 'За пределами синхронизации' },
 }
 
 export function SyncGapsTimeline({ from, to, syncStatus }: SyncGapsTimelineProps) {
@@ -38,12 +39,13 @@ export function SyncGapsTimeline({ from, to, syncStatus }: SyncGapsTimelineProps
   const coverage = useMemo(() => calculateCoverage(statuses), [statuses])
   const hasCoverage = statuses.length > 0
 
+  // Story 170.1: coverage text → status tokens
   const coverageColor =
     coverage.percent === 100
-      ? 'text-green-600'
+      ? 'text-status-success'
       : coverage.percent >= 80
-        ? 'text-yellow-600'
-        : 'text-red-600'
+        ? 'text-status-warning'
+        : 'text-status-error'
 
   return (
     <div>

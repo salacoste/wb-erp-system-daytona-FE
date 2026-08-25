@@ -213,7 +213,7 @@ describe('MergedGroupTable', () => {
       const aggregateCell = screen.getByText(/ГРУППА #12345/i).closest('td')
       const aggregateRow = aggregateCell?.closest('tr')
 
-      expect(aggregateRow).toHaveClass('bg-gray-100')
+      expect(aggregateRow).toHaveClass('bg-muted') // Story 170.1 token pin
 
       // Check aggregate metrics are displayed
       const cells = aggregateRow?.querySelectorAll('td')
@@ -321,7 +321,7 @@ describe('MergedGroupTable', () => {
 
       const totalSalesHeader = screen.getByText('Всего продаж').closest('th')
       expect(totalSalesHeader).toHaveClass('cursor-pointer')
-      expect(totalSalesHeader).toHaveClass('hover:bg-gray-100')
+      expect(totalSalesHeader).toHaveClass('hover:bg-muted') // Story 170.1 token pin
     })
   })
 
@@ -348,7 +348,8 @@ describe('MergedGroupTable', () => {
 
       const caption = container.querySelector('caption')
       expect(caption).toBeInTheDocument()
-      expect(caption).toHaveClass('sr-only')
+      // Story 170.1: sr-only caption → visible TableCaption (169.7 picker-semantic canon)
+      expect(caption).not.toHaveClass('sr-only')
       expect(caption).toHaveTextContent('Таблица рекламной аналитики по склейкам товаров')
     })
 
@@ -379,7 +380,7 @@ describe('MergedGroupTable', () => {
 
       const wrapper = container.querySelector('.overflow-x-auto')
       expect(wrapper).toBeInTheDocument()
-      expect(wrapper).toHaveClass('scrollbar-thin', 'scrollbar-thumb-gray-300')
+      expect(wrapper).toHaveClass('scrollbar-thin', 'scrollbar-thumb-border') // Story 170.1 token pin
     })
   })
 })

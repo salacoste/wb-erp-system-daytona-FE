@@ -23,16 +23,19 @@ export function getDiscrepancySeverity(absPercentage: number): DiscrepancySeveri
   return 'normal'
 }
 
+// Story 170.1: severity → status tokens with /15 matched pair (169.5 canon);
+// replaces light-only yellow-50/red-50 for dark-mode safety. Thresholds 5%/10%
+// are behavior-locked (Task 1) and unchanged.
 export const SEVERITY_COLORS = {
   normal: 'text-muted-foreground',
-  warning: 'text-yellow-500',
-  danger: 'text-red-500',
+  warning: 'text-status-warning',
+  danger: 'text-status-error',
 } as const
 
 export const SEVERITY_BG = {
   normal: 'bg-muted/50',
-  warning: 'bg-yellow-50',
-  danger: 'bg-red-50',
+  warning: 'bg-status-warning/15',
+  danger: 'bg-status-error/15',
 } as const
 
 // ============================================================================
@@ -47,26 +50,28 @@ export interface AdCostLayer {
   available: boolean
 }
 
+// Story 170.1: layer colors → categorical chart-1..3 tokens in layer order
+// (169.4/169.11 canon). Chart bar Cells and card swatches both read these.
 export const AD_COST_LAYERS: AdCostLayer[] = [
   {
     key: 'platform',
     label: 'Платформа',
     description: 'Рекламный кабинет (PromotionAPI)',
-    color: '#7C3AED',
+    color: 'var(--color-chart-1)',
     available: true,
   },
   {
     key: 'corrected',
     label: 'Скорректированная',
     description: 'Корректировка бэкенда (скоро)',
-    color: '#8B5CF6',
+    color: 'var(--color-chart-2)',
     available: false,
   },
   {
     key: 'actual',
     label: 'Факт (отчёт WB)',
     description: 'Еженедельный отчёт Wildberries',
-    color: '#3B82F6',
+    color: 'var(--color-chart-3)',
     available: true,
   },
 ]

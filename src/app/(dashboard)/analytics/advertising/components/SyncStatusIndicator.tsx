@@ -112,7 +112,7 @@ export function SyncStatusIndicator() {
 
             {/* Last task error (if any) */}
             {data.lastTask?.error && (
-              <div className="border-t pt-2 text-sm text-red-600">
+              <div className="border-t pt-2 text-sm text-status-error">
                 Ошибка: {data.lastTask.error}
               </div>
             )}

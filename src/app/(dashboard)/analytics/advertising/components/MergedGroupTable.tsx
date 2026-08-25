@@ -16,6 +16,7 @@
  */
 
 import { AdvertisingGroup } from '@/types/advertising-analytics'
+import { TableCaption } from '@/components/ui/table'
 import { MergedGroupTableHeader } from './MergedGroupTableHeader'
 import { MergedGroupRows } from './MergedGroupRows'
 
@@ -76,10 +77,17 @@ export function MergedGroupTable({
   onProductClick,
 }: MergedGroupTableProps) {
   return (
-    // Story 37.4 AC 18-20, 25: Responsive wrapper with sticky columns on tablet/mobile
-    <div className="overflow-x-auto md:overflow-x-visible scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100">
-      <table className="min-w-full border-collapse bg-white shadow-sm rounded-lg text-sm md:text-base">
-        <caption className="sr-only">Таблица рекламной аналитики по склейкам товаров</caption>
+    // Story 37.4 AC 18-20, 25: Responsive wrapper with sticky columns on tablet/mobile.
+    // Story 170.1: scrollbar/bg palette → tokens; scroll-region + visible TableCaption
+    // (169.7 picker-semantic canon — period comes from the URL-synced filter above).
+    <div
+      className="overflow-x-auto md:overflow-x-visible scrollbar-thin scrollbar-thumb-border scrollbar-track-muted"
+      role="region"
+      aria-label="Таблица склеек — горизонтальная прокрутка"
+      tabIndex={0}
+    >
+      <table className="min-w-full border-collapse bg-background shadow-sm rounded-lg text-sm md:text-base">
+        <TableCaption>Таблица рекламной аналитики по склейкам товаров</TableCaption>
         <MergedGroupTableHeader sortConfig={sortConfig} onSort={onSort} />
         <tbody>
           {groups.map(group => (

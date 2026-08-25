@@ -25,24 +25,26 @@ export interface HealthStatusConfig {
  * Rationale: 24h daily sync schedule + 2h buffer for network delays and retry attempts.
  */
 export const healthStatusConfig: Record<HealthStatus, HealthStatusConfig> = {
+  // Story 170.1: dots → status tokens (was green/yellow/red/orange-500 palette).
+  // stale uses status-pending to stay visually distinct from degraded (warning).
   healthy: {
     label: 'Синхронизировано',
-    dotColor: 'bg-green-500',
+    dotColor: 'bg-status-success',
     description: 'Данные актуальны',
   },
   degraded: {
     label: 'Частичная синхронизация',
-    dotColor: 'bg-yellow-500',
+    dotColor: 'bg-status-warning',
     description: 'Есть ошибки, но синхронизация работает',
   },
   unhealthy: {
     label: 'Ошибка синхронизации',
-    dotColor: 'bg-red-500',
+    dotColor: 'bg-status-error',
     description: 'Синхронизация не работает',
   },
   stale: {
     label: 'Данные устарели',
-    dotColor: 'bg-orange-500',
+    dotColor: 'bg-status-pending',
     // 26h = 24h daily sync + 2h buffer for delays
     description: 'Нет синхронизации более 26 часов',
   },

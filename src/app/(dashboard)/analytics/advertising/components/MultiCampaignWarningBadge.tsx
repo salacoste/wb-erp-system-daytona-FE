@@ -24,9 +24,10 @@ export function MultiCampaignWarningBadge({ campaigns, message }: MultiCampaignW
     <TooltipProvider>
       <Tooltip>
         <TooltipTrigger asChild>
+          {/* Story 170.1: yellow palette → status-warning /15+/30 matched pair (169.5) */}
           <button
             type="button"
-            className="ml-1 inline-flex cursor-help items-center rounded border border-yellow-400 bg-yellow-50 px-1 py-0.5 text-xs text-yellow-700 hover:bg-yellow-100 focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:ring-offset-1"
+            className="ml-1 inline-flex cursor-help items-center rounded border border-status-warning/30 bg-status-warning/15 px-1 py-0.5 text-xs text-status-warning hover:bg-status-warning/25 focus:outline-none focus:ring-2 focus:ring-status-warning focus:ring-offset-1"
             aria-label={`Товар участвует в ${campaignCount} кампаниях — прибыль может быть завышена`}
           >
             ⚠️

@@ -79,16 +79,17 @@ describe('constants', () => {
     expect(DANGER_THRESHOLD).toBe(10)
   })
 
+  // Story 170.1: severity pins flipped to status tokens (was yellow-*/red-* palette)
   it('has severity colors for all levels', () => {
     expect(SEVERITY_COLORS.normal).toBeDefined()
-    expect(SEVERITY_COLORS.warning).toContain('yellow')
-    expect(SEVERITY_COLORS.danger).toContain('red')
+    expect(SEVERITY_COLORS.warning).toBe('text-status-warning')
+    expect(SEVERITY_COLORS.danger).toBe('text-status-error')
   })
 
   it('has severity backgrounds for all levels', () => {
     expect(SEVERITY_BG.normal).toBeDefined()
-    expect(SEVERITY_BG.warning).toContain('yellow')
-    expect(SEVERITY_BG.danger).toContain('red')
+    expect(SEVERITY_BG.warning).toBe('bg-status-warning/15')
+    expect(SEVERITY_BG.danger).toBe('bg-status-error/15')
   })
 })
 

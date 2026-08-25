@@ -36,13 +36,15 @@ const STATUS_LABELS: Record<EfficiencyStatus, string> = {
 }
 
 // Expected color patterns
+// Story 170.1: pins flipped to token chips (route-local EFFICIENCY_TIER_TOKENS).
+// Trailing-space / /15 suffix keeps the 6+unknown tiers DISTINCT (tier-collapse guard).
 const STATUS_COLORS: Record<EfficiencyStatus, string> = {
-  excellent: 'green',
-  good: 'emerald',
-  moderate: 'yellow',
-  poor: 'orange',
-  loss: 'red',
-  unknown: 'gray',
+  excellent: 'bg-status-success ',
+  good: 'bg-status-success/15',
+  moderate: 'bg-status-warning/15',
+  poor: 'bg-status-warning ',
+  loss: 'bg-status-error ',
+  unknown: 'bg-muted ',
 }
 
 describe('EfficiencyBadge', () => {
@@ -107,7 +109,7 @@ describe('EfficiencyBadge', () => {
       const { container } = render(<EfficiencyBadge status="excellent" />)
 
       expect(screen.getByText('Отлично')).toBeInTheDocument()
-      const badge = container.querySelector('[class*="bg-green"]')
+      const badge = container.querySelector('[class*="bg-status-success"]')
       expect(badge).toBeInTheDocument()
     })
 
@@ -115,7 +117,7 @@ describe('EfficiencyBadge', () => {
       const { container } = render(<EfficiencyBadge status="loss" />)
 
       expect(screen.getByText('Убыток')).toBeInTheDocument()
-      const badge = container.querySelector('[class*="bg-red"]')
+      const badge = container.querySelector('[class*="bg-status-error"]')
       expect(badge).toBeInTheDocument()
     })
 
@@ -123,7 +125,7 @@ describe('EfficiencyBadge', () => {
       const { container } = render(<EfficiencyBadge status="unknown" />)
 
       expect(screen.getByText('Нет данных')).toBeInTheDocument()
-      const badge = container.querySelector('[class*="bg-gray"]')
+      const badge = container.querySelector('[class*="bg-muted"]')
       expect(badge).toBeInTheDocument()
     })
   })

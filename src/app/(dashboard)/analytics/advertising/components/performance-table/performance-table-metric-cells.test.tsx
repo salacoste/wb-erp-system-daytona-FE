@@ -36,14 +36,14 @@ describe('renderOrganicContribution', () => {
   it('renders a negative contribution in red (not masked as "—")', () => {
     render(renderOrganicContribution(item({ organic_contribution: -40, total_sales: 250 })))
     const el = screen.getByText(/[-−]40,00\s*%/)
-    expect(el.classList.contains('text-red-600')).toBe(true)
+    expect(el.classList.contains('text-destructive')).toBe(true) // Story 170.1 token pin
     expect(screen.queryByText('—')).not.toBeInTheDocument()
   })
 
   it('renders a positive contribution without red styling', () => {
     render(renderOrganicContribution(item({ organic_contribution: 91.35, total_sales: 1000 })))
     const el = screen.getByText(/91,35\s*%/)
-    expect(el.classList.contains('text-red-600')).toBe(false)
+    expect(el.classList.contains('text-destructive')).toBe(false)
   })
 
   it('renders zero as "0,00 %" (real value, not masked)', () => {

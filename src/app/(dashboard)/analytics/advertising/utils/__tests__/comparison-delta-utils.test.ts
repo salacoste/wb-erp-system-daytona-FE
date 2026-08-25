@@ -147,19 +147,19 @@ describe('isInvertedAdMetric', () => {
 
 describe('getAdDeltaColor', () => {
   it('returns green for up on non-inverted metric', () => {
-    expect(getAdDeltaColor('up', false)).toBe('text-green-600')
+    expect(getAdDeltaColor('up', false)).toBe('text-status-success') // Story 170.1 token pin
   })
 
   it('returns red for down on non-inverted metric', () => {
-    expect(getAdDeltaColor('down', false)).toBe('text-red-600')
+    expect(getAdDeltaColor('down', false)).toBe('text-status-error') // Story 170.1 token pin
   })
 
   it('returns red for up on inverted metric (spend up = bad)', () => {
-    expect(getAdDeltaColor('up', true)).toBe('text-red-600')
+    expect(getAdDeltaColor('up', true)).toBe('text-status-error') // Story 170.1 token pin
   })
 
   it('returns green for down on inverted metric (spend down = good)', () => {
-    expect(getAdDeltaColor('down', true)).toBe('text-green-600')
+    expect(getAdDeltaColor('down', true)).toBe('text-status-success') // Story 170.1 token pin
   })
 
   it('returns muted for neutral', () => {

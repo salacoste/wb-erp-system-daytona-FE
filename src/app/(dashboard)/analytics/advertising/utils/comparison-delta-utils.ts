@@ -97,9 +97,9 @@ export function isInvertedAdMetric(key: string): boolean {
   return INVERTED_METRICS.has(key)
 }
 
-/** Get Tailwind color class for delta direction */
+/** Get Tailwind color class for delta direction. Story 170.1: → status tokens. */
 export function getAdDeltaColor(direction: 'up' | 'down' | 'neutral', inverted: boolean): string {
   if (direction === 'neutral') return 'text-muted-foreground'
   const isPositive = inverted ? direction === 'down' : direction === 'up'
-  return isPositive ? 'text-green-600' : 'text-red-600'
+  return isPositive ? 'text-status-success' : 'text-status-error'
 }

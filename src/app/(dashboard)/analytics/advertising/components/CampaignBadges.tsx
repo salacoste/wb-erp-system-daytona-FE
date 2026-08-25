@@ -3,11 +3,10 @@
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
 import { Badge } from '@/components/ui/badge'
 import { cn } from '@/lib/utils'
-import {
-  getCampaignStatusDotColor,
-  getCampaignStatusLabel,
-  getCampaignTypeLabel,
-} from '@/lib/campaign-utils'
+import { getCampaignStatusLabel, getCampaignTypeLabel } from '@/lib/campaign-utils'
+// Story 170.1: dot color from route-local token map — lib getCampaignStatusDotColor
+// stays read-only for the dashboard/widget lockstep consumers.
+import { getCampaignStatusDotToken } from './advertising-tokens'
 
 // Re-export PlacementBadges from its own file
 export { PlacementBadges } from './PlacementBadges'
@@ -45,7 +44,7 @@ export function CampaignStatusDot({
   size = 'md',
   className,
 }: CampaignStatusDotProps) {
-  const dotColor = getCampaignStatusDotColor(status)
+  const dotColor = getCampaignStatusDotToken(status)
   const label = getCampaignStatusLabel(status, statusName)
   const sizeClass = size === 'sm' ? 'w-2 h-2' : 'w-2.5 h-2.5'
 

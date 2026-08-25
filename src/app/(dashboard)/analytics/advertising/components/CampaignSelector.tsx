@@ -104,7 +104,7 @@ export function CampaignSelector({
           <div className="flex items-center justify-between border-b px-3 py-2">
             <button
               onClick={selectAll}
-              className="text-xs text-blue-600 hover:underline"
+              className="text-xs text-primary hover:underline"
               disabled={filteredCampaigns.length === 0}
             >
               Выбрать все

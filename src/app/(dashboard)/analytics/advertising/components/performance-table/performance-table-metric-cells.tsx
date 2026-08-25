@@ -30,7 +30,7 @@ export function renderROI(item: AdvertisingItem) {
           <span
             className={cn(
               'cursor-help underline decoration-dotted underline-offset-4',
-              isNegative && 'text-red-600 font-medium'
+              isNegative && 'text-destructive font-medium'
             )}
           >
             {formatPercent(item.roi)}
@@ -74,7 +74,7 @@ export function renderOrganicContribution(item: AdvertisingItem) {
           <span
             className={cn(
               'cursor-help underline decoration-dotted underline-offset-4',
-              isNegative && 'text-red-600 font-medium'
+              isNegative && 'text-destructive font-medium'
             )}
           >
             {formatPercentRaw(item.organic_contribution)}

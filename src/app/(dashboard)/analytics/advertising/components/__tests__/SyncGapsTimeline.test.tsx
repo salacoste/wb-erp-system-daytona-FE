@@ -77,6 +77,6 @@ describe('SyncGapsTimeline', () => {
     fireEvent.click(screen.getByRole('button'))
 
     const coverageText = screen.getByText(/Синхронизировано 3 из 3 дней/)
-    expect(coverageText).toHaveClass('text-green-600')
+    expect(coverageText).toHaveClass('text-status-success') // Story 170.1 token pin
   })
 })

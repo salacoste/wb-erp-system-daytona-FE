@@ -29,10 +29,15 @@ export function OverAttributionBanner({
   if (count === 0) return null
 
   return (
-    <Alert variant="default" className="border-amber-300 bg-amber-50" aria-live="polite">
-      <AlertTriangle className="h-4 w-4 text-amber-600" />
+    // Story 170.1: amber palette → status-warning /15+/30 matched pair (169.5 canon)
+    <Alert
+      variant="default"
+      className="border-status-warning/30 bg-status-warning/15"
+      aria-live="polite"
+    >
+      <AlertTriangle className="h-4 w-4 text-status-warning" />
       <AlertDescription className="flex items-center justify-between gap-4">
-        <span className="text-sm text-amber-800">
+        <span className="text-sm text-status-warning">
           ⚠️ {count} {pluralizeTovar(count)} с over-attribution (переатрибуция рекламы)
         </span>
         <div className="flex items-center gap-2 shrink-0">
@@ -40,11 +45,11 @@ export function OverAttributionBanner({
             id="hide-over-attribution"
             checked={filterActive}
             onCheckedChange={onFilterChange}
-            className="data-[state=checked]:bg-amber-600"
+            className="data-[state=checked]:bg-status-warning"
           />
           <Label
             htmlFor="hide-over-attribution"
-            className="text-xs text-amber-700 cursor-pointer whitespace-nowrap"
+            className="text-xs text-status-warning cursor-pointer whitespace-nowrap"
           >
             Скрыть
           </Label>

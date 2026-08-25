@@ -27,9 +27,10 @@ interface CannibalizedProduct {
   risk: 'high' | 'medium'
 }
 
+// Story 170.1: risk colors → status tokens (was red-600/yellow-600 palette)
 const RISK_CONFIG = {
-  high: { label: 'Высокий', variant: 'destructive' as const, color: 'text-red-600' },
-  medium: { label: 'Средний', variant: 'secondary' as const, color: 'text-yellow-600' },
+  high: { label: 'Высокий', variant: 'destructive' as const, color: 'text-status-error' },
+  medium: { label: 'Средний', variant: 'secondary' as const, color: 'text-status-warning' },
 }
 
 function parseNmId(key: string): string {
@@ -62,7 +63,7 @@ export function CannibalizationSection({ items, isLoading }: CannibalizationSect
       <Card>
         <CardHeader className="pb-3">
           <CardTitle className="text-base font-semibold flex items-center gap-2">
-            <AlertTriangle className="h-4 w-4 text-yellow-500" />
+            <AlertTriangle className="h-4 w-4 text-status-warning" />
             Каннибализация рекламы
           </CardTitle>
         </CardHeader>
@@ -84,7 +85,7 @@ export function CannibalizationSection({ items, isLoading }: CannibalizationSect
     <Card>
       <CardHeader className="pb-3">
         <CardTitle className="text-base font-semibold flex items-center gap-2">
-          <AlertTriangle className="h-4 w-4 text-yellow-500" />
+          <AlertTriangle className="h-4 w-4 text-status-warning" />
           Каннибализация рекламы
           <Badge variant="secondary" className="ml-auto">
             {cannibalized.length} товар(ов)
@@ -96,7 +97,7 @@ export function CannibalizationSection({ items, isLoading }: CannibalizationSect
       </CardHeader>
       <CardContent>
         {highRiskCount > 0 && (
-          <div className="mb-4 flex items-center gap-2 rounded-md bg-red-50 p-3 text-sm text-red-800">
+          <div className="mb-4 flex items-center gap-2 rounded-md bg-status-error/15 p-3 text-sm text-status-error">
             <TrendingDown className="h-4 w-4 shrink-0" />
             <span>
               <strong>{highRiskCount}</strong> товаров с высоким риском каннибализации.

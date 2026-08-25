@@ -38,7 +38,7 @@ export function renderValue(
   const numValue = Number(value)
   const isNegative = numValue < 0
 
-  return <span className={cn(isNegative && 'text-red-600 font-medium')}>{formatter(numValue)}</span>
+  return <span className={cn(isNegative && 'text-destructive font-medium')}>{formatter(numValue)}</span>
 }
 
 // ============================================================================

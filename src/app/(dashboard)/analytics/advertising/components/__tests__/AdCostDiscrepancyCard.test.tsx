@@ -53,7 +53,8 @@ describe('AdCostDiscrepancyCard', () => {
       <AdCostDiscrepancyCard platformSpend={100_000} actualDeduction={92_000} isLoading={false} />
     )
     const status = screen.getByRole('status')
-    expect(status.className).toContain('yellow')
+    // Story 170.1: severity pin flipped to status token (was 'yellow')
+    expect(status.className).toContain('bg-status-warning/15')
   })
 
   it('renders delta with danger severity (>10%)', () => {
@@ -61,7 +62,8 @@ describe('AdCostDiscrepancyCard', () => {
       <AdCostDiscrepancyCard platformSpend={100_000} actualDeduction={85_000} isLoading={false} />
     )
     const status = screen.getByRole('status')
-    expect(status.className).toContain('red')
+    // Story 170.1: severity pin flipped to status token (was 'red')
+    expect(status.className).toContain('bg-status-error/15')
   })
 
   it('shows info section on click', () => {

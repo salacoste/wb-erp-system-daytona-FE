@@ -74,17 +74,18 @@ export function MergedGroupRows({ group, onProductClick }: MergedGroupRowsProps)
   )
 
   // Rowspan cell classes (Tier 1) - Story 37.4 AC 1-5, 19-20, 25 (sticky on tablet/mobile)
+  // Story 170.1: gray palette → muted/border tokens (dark-safe sticky surfaces)
   const rowspanClasses =
-    'px-4 py-4 text-center align-middle bg-gray-50 border-r-2 border-gray-200 text-sm font-medium text-gray-600 md:sticky md:left-0 md:z-10'
+    'px-4 py-4 text-center align-middle bg-muted/50 border-r-2 border-border text-sm font-medium text-muted-foreground md:sticky md:left-0 md:z-10'
 
   // Aggregate row classes (Tier 2) - Story 37.4 AC 6-9, 21
-  const aggregateRowClasses = 'bg-gray-100 border-b border-gray-200'
-  const aggregateCellClasses = 'px-4 py-3 text-[0.95rem] font-semibold text-gray-900 text-right'
+  const aggregateRowClasses = 'bg-muted border-b border-border'
+  const aggregateCellClasses = 'px-4 py-3 text-[0.95rem] font-semibold text-foreground text-right'
 
   // Detail row classes (Tier 3) - Story 37.4 AC 10-13, 22
   const detailRowClasses =
-    'bg-white hover:bg-gray-50 cursor-pointer transition-colors border-b border-gray-100'
-  const detailCellClasses = 'px-4 py-2.5 text-sm font-normal text-gray-700 text-right'
+    'bg-background hover:bg-muted/50 cursor-pointer transition-colors border-b border-border'
+  const detailCellClasses = 'px-4 py-2.5 text-sm font-normal text-foreground text-right'
 
   return (
     <>
@@ -93,15 +94,17 @@ export function MergedGroupRows({ group, onProductClick }: MergedGroupRowsProps)
         {/* Tier 1: Rowspan Cell (склейка indicator) - Skip for single product */}
         {!hasSingleProduct && (
           <td rowSpan={totalRows} className={rowspanClasses}>
-            <div className="font-medium text-gray-700">{group.mainProduct.vendorCode}</div>
-            <div className="text-xs text-gray-500 mt-1">+ {group.productCount - 1} товаров</div>
+            <div className="font-medium text-foreground">{group.mainProduct.vendorCode}</div>
+            <div className="text-xs text-muted-foreground mt-1">
+              + {group.productCount - 1} товаров
+            </div>
           </td>
         )}
 
         {/* Артикул column: ГРУППА #imtId - Story 37.3 AC 20: With tooltip */}
         {/* Story 37.4 AC 19-20, 25: Sticky on tablet/mobile */}
         <td
-          className={`${aggregateCellClasses} text-left ${!hasSingleProduct ? 'md:sticky md:left-[150px] md:z-10 md:bg-gray-100' : 'md:sticky md:left-0 md:z-10 md:bg-gray-100'}`}
+          className={`${aggregateCellClasses} text-left ${!hasSingleProduct ? 'md:sticky md:left-[150px] md:z-10 md:bg-muted' : 'md:sticky md:left-0 md:z-10 md:bg-muted'}`}
           aria-label={`Группа склейки ${group.imtId}`}
         >
           <TooltipProvider>
@@ -136,10 +139,13 @@ export function MergedGroupRows({ group, onProductClick }: MergedGroupRowsProps)
           {/* Артикул column: nmId with crown for main product */}
           {/* Story 37.4 AC 19-20, 25: Sticky on tablet/mobile */}
           <td
-            className={`${detailCellClasses} text-left ${!hasSingleProduct ? 'md:sticky md:left-[150px] md:z-10 md:bg-white' : 'md:sticky md:left-0 md:z-10 md:bg-white'}`}
+            className={`${detailCellClasses} text-left ${!hasSingleProduct ? 'md:sticky md:left-[150px] md:z-10 md:bg-background' : 'md:sticky md:left-0 md:z-10 md:bg-background'}`}
           >
             {product.isMainProduct && (
-              <Crown className="inline h-4 w-4 text-yellow-600 mr-1" aria-label="Главный товар" />
+              <Crown
+                className="inline h-4 w-4 text-status-warning mr-1"
+                aria-label="Главный товар"
+              />
             )}
             {product.vendorCode}
           </td>

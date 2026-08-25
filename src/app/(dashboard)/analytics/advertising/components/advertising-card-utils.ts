@@ -3,7 +3,7 @@
  * Extracted from AdvertisingSummaryCards.tsx for file-size compliance.
  */
 
-import { getRoasColorClass } from '@/lib/efficiency-utils'
+import { getRoasTierTextClass, getRoiTextClass } from './advertising-tokens'
 
 /** Currency formatter for advertising metric cards */
 export function formatAdCurrency(value: number): string {
@@ -24,15 +24,16 @@ export function formatAdPercent(value: number): string {
   }).format(value / 100)
 }
 
-/** iter-119: delegates to canonical 5-band getRoasColorClass */
+/**
+ * iter-119: canonical 5-band ROAS color. Story 170.1: routes through the
+ * route-local token map (same thresholds) instead of lib getRoasColorClass —
+ * lib color channels stay read-only for the dashboard/widget lockstep.
+ */
 export function getRoasColor(roas: number): string {
-  return getRoasColorClass(roas)
+  return getRoasTierTextClass(roas)
 }
 
-/** ROI color — percent-domain thresholds (iter-84) */
+/** ROI color — percent-domain thresholds (iter-84); Story 170.1 tokens */
 export function getRoiColor(roi: number): string {
-  if (roi >= 50) return 'text-green-600'
-  if (roi >= 20) return 'text-yellow-600'
-  if (roi >= 0) return 'text-orange-600'
-  return 'text-red-600'
+  return getRoiTextClass(roi)
 }
