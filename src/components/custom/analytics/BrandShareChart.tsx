@@ -11,6 +11,8 @@
  *
  * Null percents → line gap (`connectNulls={false}`) — never «0 %» (AP#8).
  * Uses `formatPercentage` (no inline `%`) per the dot-locale-percent gate.
+ * Story 170.4: design tokens (chart-1/2/3, border, chart-axis, background)
+ * + filter-context subtitle + sr-only data alternative (BrandShareSrTable).
  */
 import { useMemo } from 'react'
 import {
@@ -25,84 +27,30 @@ import {
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { ResponsiveChartFrame } from '@/components/custom/analytics/ResponsiveChartFrame'
 import { formatPercentage } from '@/lib/utils'
-import {
-  BRAND_SHARE_COLORS,
-  formatBrandShareAxisDate,
-  formatBrandShareTooltipDate,
-} from './brand-share-chart-config'
+import { BRAND_SHARE_COLORS, formatBrandShareAxisDate } from './brand-share-chart-config'
+import { BrandShareTooltip } from './BrandShareTooltip'
+import { BrandShareSrTable } from './brand-share-sr-table'
 import type { BrandShareReportPoint } from '@/types/brand-share'
 
 interface BrandShareChartProps {
   /** Daily data points (already sorted by applyDate). */
   data: BrandShareReportPoint[]
+  /** Filter context for the card subtitle (epic RTC: chart retains selections). */
+  brand: string | null
+  categoryName: string | null
+  /** Human period label; null → «последние 7 дней» fallback. */
+  periodLabel: string | null
 }
 
-interface TooltipEntryLike {
-  dataKey?: string | number
-  value?: number | null
-}
-
-/** Render a metric value; percents → formatPercentage, rating → plain number, null → «—». */
-function formatMetricValue(dataKey: string | number | undefined, value: number | null): string {
-  if (value == null || !Number.isFinite(value)) return '—'
-  if (dataKey === 'brandRating') return value.toLocaleString('ru-RU')
-  // pricePercent / qtyPercent already in 0–100 units → formatPercentage divides by 100.
-  return formatPercentage(value)
-}
-
-function BrandShareTooltip({
-  active,
-  payload,
-}: {
-  active?: boolean
-  payload?: TooltipEntryLike[]
-}) {
-  if (!active || !payload || payload.length === 0) return null
-  const first = payload[0] as { payload?: BrandShareReportPoint } | undefined
-  const point = first?.payload ?? null
-  return (
-    <div
-      className="rounded-lg border border-gray-200 bg-white p-3 shadow-lg"
-      style={{ maxWidth: 260 }}
-    >
-      <p className="mb-2 border-b border-gray-200 pb-2 text-sm font-semibold text-gray-900">
-        {point ? formatBrandShareTooltipDate(point.applyDate) : ''}
-      </p>
-      <div className="space-y-1.5">
-        {payload.map(entry => {
-          const key = String(entry.dataKey ?? '')
-          const color = BRAND_SHARE_COLORS[key as keyof typeof BRAND_SHARE_COLORS]
-          if (!color) return null
-          return (
-            <div key={key} className="flex items-center justify-between text-sm">
-              <span className="flex items-center gap-2">
-                <span className="h-3 w-3 rounded-full" style={{ backgroundColor: color }} />
-                <span className="text-gray-600">
-                  {key === 'brandRating'
-                    ? 'Рейтинг бренда'
-                    : key === 'pricePercent'
-                      ? 'Доля по цене'
-                      : 'Доля по количеству'}
-                </span>
-              </span>
-              <span className="font-medium tabular-nums">
-                {formatMetricValue(key, entry.value ?? null)}
-              </span>
-            </div>
-          )
-        })}
-      </div>
-    </div>
-  )
-}
-
-export function BrandShareChart({ data }: BrandShareChartProps) {
+export function BrandShareChart({ data, brand, categoryName, periodLabel }: BrandShareChartProps) {
   const prefersReducedMotion = useMemo(() => {
     if (typeof window === 'undefined') return false
     // jsdom (unit tests) doesn't implement matchMedia — guard so it doesn't throw.
     if (typeof window.matchMedia !== 'function') return false
     return window.matchMedia('(prefers-reduced-motion: reduce)').matches
   }, [])
+
+  const subtitle = `${brand ?? '—'} · ${categoryName ?? '—'} · ${periodLabel ?? 'последние 7 дней'}`
 
   if (!data || data.length === 0) {
     return (
@@ -123,6 +71,9 @@ export function BrandShareChart({ data }: BrandShareChartProps) {
     <Card>
       <CardHeader className="pb-2">
         <CardTitle className="text-lg font-semibold">Доля бренда в категории</CardTitle>
+        <p className="text-xs text-muted-foreground" data-testid="brand-share-filter-context">
+          {subtitle}
+        </p>
         <p className="text-xs text-muted-foreground">
           Рейтинг бренда: чем ниже — тем лучше позиция. Доли по цене/количеству — % от категории.
         </p>
@@ -134,20 +85,20 @@ export function BrandShareChart({ data }: BrandShareChartProps) {
         >
           <ResponsiveContainer width="100%" height="100%" minWidth={1} minHeight={1}>
             <LineChart data={data} margin={{ top: 12, right: 12, bottom: 40, left: 12 }}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#EEEEEE" />
+              <CartesianGrid strokeDasharray="3 3" stroke="var(--color-border)" />
               <XAxis
                 dataKey="applyDate"
                 tickFormatter={formatBrandShareAxisDate}
-                tick={{ fontSize: 12, fill: '#757575' }}
-                axisLine={{ stroke: '#EEEEEE' }}
-                tickLine={{ stroke: '#EEEEEE' }}
+                tick={{ fontSize: 12, fill: 'var(--color-chart-axis)' }}
+                axisLine={{ stroke: 'var(--color-border)' }}
+                tickLine={{ stroke: 'var(--color-border)' }}
               />
               <YAxis
                 yAxisId="share"
                 domain={[0, 100]}
                 tickFormatter={(v: number) => formatPercentage(v)}
-                tick={{ fontSize: 12, fill: '#757575' }}
-                axisLine={{ stroke: '#EEEEEE' }}
+                tick={{ fontSize: 12, fill: 'var(--color-chart-axis)' }}
+                axisLine={{ stroke: 'var(--color-border)' }}
                 tickLine={false}
                 width={64}
               />
@@ -156,8 +107,8 @@ export function BrandShareChart({ data }: BrandShareChartProps) {
                 orientation="right"
                 reversed
                 allowDecimals={false}
-                tick={{ fontSize: 12, fill: '#757575' }}
-                axisLine={{ stroke: '#EEEEEE' }}
+                tick={{ fontSize: 12, fill: 'var(--color-chart-axis)' }}
+                axisLine={{ stroke: 'var(--color-border)' }}
                 tickLine={false}
                 width={48}
               />
@@ -169,7 +120,7 @@ export function BrandShareChart({ data }: BrandShareChartProps) {
                 name="Доля по цене"
                 stroke={BRAND_SHARE_COLORS.pricePercent}
                 strokeWidth={2}
-                dot={{ r: 3, strokeWidth: 2, fill: 'white' }}
+                dot={{ r: 3, strokeWidth: 2, fill: 'var(--color-background)' }}
                 connectNulls={false}
                 animationDuration={animationDuration}
               />
@@ -180,7 +131,7 @@ export function BrandShareChart({ data }: BrandShareChartProps) {
                 name="Доля по количеству"
                 stroke={BRAND_SHARE_COLORS.qtyPercent}
                 strokeWidth={2}
-                dot={{ r: 3, strokeWidth: 2, fill: 'white' }}
+                dot={{ r: 3, strokeWidth: 2, fill: 'var(--color-background)' }}
                 connectNulls={false}
                 animationDuration={animationDuration}
               />
@@ -192,13 +143,14 @@ export function BrandShareChart({ data }: BrandShareChartProps) {
                 stroke={BRAND_SHARE_COLORS.brandRating}
                 strokeWidth={2}
                 strokeDasharray="5 4"
-                dot={{ r: 3, strokeWidth: 2, fill: 'white' }}
+                dot={{ r: 3, strokeWidth: 2, fill: 'var(--color-background)' }}
                 connectNulls
                 animationDuration={animationDuration}
               />
             </LineChart>
           </ResponsiveContainer>
         </ResponsiveChartFrame>
+        <BrandShareSrTable data={data} />
       </CardContent>
     </Card>
   )

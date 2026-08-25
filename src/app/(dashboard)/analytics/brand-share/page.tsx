@@ -20,7 +20,7 @@ export default function BrandSharePage() {
   return (
     <div className="container py-6">
       <div className="mb-6">
-        <h1 className="text-2xl font-bold">Доля бренда в категории</h1>
+        <h1 className="text-2xl font-semibold">Доля бренда в категории</h1>
         <p className="mt-1 text-sm text-muted-foreground">
           Конкурентная позиция бренда: рейтинг и доли по цене/количеству внутри категории WB.
         </p>

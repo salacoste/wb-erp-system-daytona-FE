@@ -1,17 +1,22 @@
 /**
- * Brand-Share chart configuration — PR4b.
+ * Brand-Share chart configuration — PR4b (Story 170.4 token migration).
  * Colors, labels and formatting helpers for the brand-share line chart.
  *
  * brandRating lives on the RIGHT axis (reversed: lower is better); the two
- * share percents live on the LEFT axis (0–100 %). All series use
+ * share percents live on the LEFT axis (0–100 %). The share percents use
  * `connectNulls={false}` so low-volume days (null percent) produce visible
- * gaps rather than misleading interpolations.
+ * gaps rather than misleading interpolations; brandRating keeps
+ * `connectNulls` (true) since a single missed day does not break the
+ * position reading.
  */
 
+// Story 170.1 canon: categorical series → chart-1/2/3 tokens (position-rank,
+// not money-valence). The dashed stroke (Chart) additionally non-color
+// distinguishes the rating series.
 export const BRAND_SHARE_COLORS = {
-  brandRating: '#7C3AED', // Purple — position/rating (lower is better)
-  pricePercent: '#3B82F6', // Blue — share by price
-  qtyPercent: '#22C55E', // Green — share by quantity
+  pricePercent: 'var(--color-chart-1)',
+  qtyPercent: 'var(--color-chart-2)',
+  brandRating: 'var(--color-chart-3)',
 } as const
 
 export type BrandShareMetricKey = keyof typeof BRAND_SHARE_COLORS

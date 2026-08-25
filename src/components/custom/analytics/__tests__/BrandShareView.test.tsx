@@ -6,6 +6,7 @@
  */
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { screen } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
 import { renderWithProviders } from '@/test/utils/test-utils'
 import { BrandShareView } from '../BrandShareView'
 import type { BrandShareDateRange } from '@/types/brand-share'
@@ -143,5 +144,80 @@ describe('BrandShareView', () => {
     expect(screen.getByTestId('brand-share-error')).toHaveTextContent(
       /Не удалось загрузить данные о доле бренда/i
     )
+  })
+
+  it('cascading reset: choosing a brand resets the downstream category (Story 170.4 pin)', async () => {
+    const user = userEvent.setup()
+    const onParentIdChange = vi.fn()
+    const onBrandChange = vi.fn()
+    renderView({ brand: 'Acme', parentId: 8555, onBrandChange, onParentIdChange })
+    await user.click(screen.getByTestId('brand-share-brand-select'))
+    await user.click(await screen.findByText('DURABOND'))
+    expect(onBrandChange).toHaveBeenCalledWith('DURABOND')
+    expect(onParentIdChange).toHaveBeenCalledWith(null)
+  })
+
+  it('links the visible span labels to the Select triggers (aria-labelledby, Story 170.4)', () => {
+    renderView()
+    expect(screen.getByLabelText('Бренд')).toBeInTheDocument()
+    expect(screen.getByLabelText('Категория (родительский предмет)')).toBeInTheDocument()
+    expect(screen.getByLabelText('Дата начала периода')).toBeInTheDocument()
+    expect(screen.getByLabelText('Дата окончания периода')).toBeInTheDocument()
+  })
+
+  it('min-h-11 (44px epic-AX) on both Select triggers and the retry button', () => {
+    renderView()
+    expect(screen.getByTestId('brand-share-brand-select').className).toContain('min-h-11')
+    expect(screen.getByTestId('brand-share-parent-select').className).toContain('min-h-11')
+    mockReport.mockReturnValue({
+      data: undefined,
+      isLoading: false,
+      error: new ApiError('boom', 500, {}),
+      refetch: vi.fn(),
+    })
+    renderView({ brand: 'DURABOND', parentId: 8555 })
+    expect(screen.getByTestId('brand-share-retry').className).toContain('min-h-11')
+  })
+
+  it('error icon uses the status-warning token (was text-amber-500)', () => {
+    mockReport.mockReturnValue({
+      data: undefined,
+      isLoading: false,
+      error: new ApiError('boom', 500, {}),
+      refetch: vi.fn(),
+    })
+    renderView({ brand: 'DURABOND', parentId: 8555 })
+    // SVG className is SVGAnimatedString in jsdom — read the raw attribute.
+    expect(screen.getByTestId('brand-share-error-icon').getAttribute('class')).toContain(
+      'text-status-warning'
+    )
+  })
+
+  it('invalid date range: destructive hint shown, values RETAINED, no other branch disabled', () => {
+    renderView({
+      brand: 'DURABOND',
+      parentId: 8555,
+      dateRange: { dateFrom: '2026-07-10', dateTo: '2026-07-01' },
+    })
+    expect(screen.getByTestId('brand-share-invalid-range')).toHaveTextContent(
+      /Дата начала позже даты окончания/i
+    )
+    // Selections retained — inputs keep the invalid values (AC-2: no auto-reset).
+    expect(screen.getByTestId('brand-share-date-from')).toHaveValue('2026-07-10')
+    expect(screen.getByTestId('brand-share-date-to')).toHaveValue('2026-07-01')
+    // The default-period hint is replaced by the error, not shown alongside.
+    expect(screen.queryByText(/Без выбора — последние 7 дней/i)).not.toBeInTheDocument()
+    // The selects stay enabled — range validity does not disable other branches.
+    expect(screen.getByTestId('brand-share-brand-select')).toBeEnabled()
+  })
+
+  it('valid range keeps the default-period hint and no destructive hint', () => {
+    renderView({
+      brand: 'DURABOND',
+      parentId: 8555,
+      dateRange: { dateFrom: '2026-07-01', dateTo: '2026-07-10' },
+    })
+    expect(screen.queryByTestId('brand-share-invalid-range')).not.toBeInTheDocument()
+    expect(screen.getByText(/Без выбора — последние 7 дней/i)).toBeInTheDocument()
   })
 })
