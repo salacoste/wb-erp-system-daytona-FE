@@ -33,7 +33,12 @@ then may Story 169.12 perform its bounded contract closeout. Story 169.13 remain
 «sidebar→supply-planning» (dashboard URL-race, load-зависимый, задокументирован в самом тесте) —
 кандидат на e2e-hardening до 172.1.
 
-**NEXT = 169.14 → 169.15 → 169.12 contract closeout** (169.14/169.15 `backlog`; 169.12 `review`; plans `.omx/plans/169.14-establish-authoritative-paid-storage-import-lifecycle-and-result-contract.md`, `.omx/plans/169.15-align-shared-frontend-paid-storage-import-boundary.md`, and `.omx/plans/169.12-migrate-storage-analytics-and-paid-storage-import.md`). Story 169.13 remains an independent backlog route.
+170.1 SHIPPED 2026-08-25 (открытие Эпика 170; 1/7): preface #236 (`3eda5d66`) + #237 (`44a6eb7d`; 41 файл,
+owned 417→447, **e2e на ветке 10/1↓/0 чистый**, 2×opus FRESH); полный пол **19 076/0**; 3 lib-канала
+остановлены (lockstep цел); VALIDATOR-FAIL поймал 4 факт-ошибки разведки до кода.
+
+**NEXT = 170.2 advertising campaign bid-recommendation detail** (backlog; план `.omx/plans/170.2-...md`);
+параллельно независимо: 169.14 → 169.15 → 169.12 contract closeout (169.14/169.15 `backlog`; 169.12 `review`; plans `.omx/plans/169.14-establish-authoritative-paid-storage-import-lifecycle-and-result-contract.md`, `.omx/plans/169.15-align-shared-frontend-paid-storage-import-boundary.md`, and `.omx/plans/169.12-migrate-storage-analytics-and-paid-storage-import.md`). Story 169.13 remains an independent backlog route.
 **Волна 23-24.08** (два полных цикла + инфраструктура): 169.11 returns — preface #218 (`d6ed2c65`,
 unknown-категория на boundary + нейтральный лейбл) + #219 (`129e99ed`; owned 50→73) + e2e-gap закрыт
 post-close #222 (гнилой пин от стандартизации 1804aa8f; финал 12/1↓/0); 169.12 storage — preface #226
