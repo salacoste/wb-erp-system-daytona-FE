@@ -15,7 +15,7 @@
 
 import { useMemo } from 'react'
 import Link from 'next/link'
-import { Table, TableBody, TableCell, TableRow } from '@/components/ui/table'
+import { Table, TableBody, TableCaption, TableCell, TableRow } from '@/components/ui/table'
 import { Button } from '@/components/ui/button'
 import { ExternalLink } from 'lucide-react'
 import type { AdvertisingItem, MultiCampaignSkuWarning } from '@/types/advertising-analytics'
@@ -77,7 +77,7 @@ export function PerformanceMetricsTable({
       return (
         <Link
           href={`/products/${item.sku_id}`}
-          className="text-blue-600 hover:underline flex items-center gap-1"
+          className="text-primary hover:underline flex items-center gap-1"
         >
           {item.sku_id}
           <ExternalLink className="h-3 w-3" aria-hidden="true" />
@@ -90,7 +90,7 @@ export function PerformanceMetricsTable({
         return (
           <Link
             href={buildCampaignDetailRoute(item.campaign_id)}
-            className="text-blue-600 hover:underline flex items-center gap-1"
+            className="text-primary hover:underline flex items-center gap-1"
           >
             {item.campaign_id}
             <ExternalLink className="h-3 w-3" aria-hidden="true" />
@@ -106,8 +106,16 @@ export function PerformanceMetricsTable({
 
   return (
     <div className="space-y-4">
-      <div className="rounded-md border overflow-x-auto">
-        <Table aria-label="Таблица рекламных метрик" className="sticky-first-column">
+      {/* Story 170.1: scroll-region + visible TableCaption (169.7 picker-semantic
+          canon — period comes from the URL-synced filter above) + tabular-nums */}
+      <div
+        className="rounded-md border overflow-x-auto"
+        role="region"
+        aria-label="Таблица рекламных метрик — горизонтальная прокрутка"
+        tabIndex={0}
+      >
+        <Table aria-label="Таблица рекламных метрик" className="sticky-first-column tabular-nums">
+          <TableCaption>Рекламные метрики за выбранный период</TableCaption>
           <PerformanceTableHeader
             identifierLabel={identifierColumn.label}
             nameColumn={nameColumn}

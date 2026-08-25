@@ -156,10 +156,10 @@ describe('CannibalizationSection', () => {
     const banner = screen.getByText(/товаров с высоким риском каннибализации/)
     expect(banner).toBeInTheDocument()
     // The <strong>2</strong> sits inside the same span
-    expect(banner.closest('[class*="bg-red-50"]')).toHaveTextContent('2')
+    expect(banner.closest('[class*="bg-status-error/15"]')).toHaveTextContent('2')
 
     // Total wasted = 2000 + 1500 = 3500 — formatted as currency (Russian locale)
-    expect(banner.closest('[class*="bg-red-50"]')).toHaveTextContent(/3\s?500/)
+    expect(banner.closest('[class*="bg-status-error/15"]')).toHaveTextContent(/3\s?500/)
   })
 
   it('hides high-risk banner when only medium-risk products exist', () => {

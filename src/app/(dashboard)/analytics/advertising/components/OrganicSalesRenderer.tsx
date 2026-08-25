@@ -19,8 +19,8 @@ export function renderOrganicValue(value: number): React.ReactNode {
       <Tooltip>
         <TooltipTrigger asChild>
           <span className="inline-flex items-center gap-1 cursor-help">
-            <AlertTriangle className="h-3.5 w-3.5 text-amber-500" />
-            <Badge variant="outline" className="text-[0.7rem] border-amber-500 text-amber-700">
+            <AlertTriangle className="h-3.5 w-3.5 text-status-warning" />
+            <Badge variant="outline" className="text-[0.7rem] border-status-warning/50 text-status-warning">
               Переатрибуция
             </Badge>
           </span>

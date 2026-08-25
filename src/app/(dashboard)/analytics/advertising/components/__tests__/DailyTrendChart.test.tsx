@@ -61,12 +61,13 @@ describe('DailyTrendChart', () => {
   it('renders chart title and legend toggles with data', () => {
     render(<DailyTrendChart data={mockData} isLoading={false} />)
     expect(screen.getByText('Динамика по дням')).toBeInTheDocument()
-    // Legend toggles for each series
-    expect(screen.getByText('Расходы')).toBeInTheDocument()
-    expect(screen.getByText('Показы')).toBeInTheDocument()
-    expect(screen.getByText('Клики')).toBeInTheDocument()
-    expect(screen.getByText('Заказы')).toBeInTheDocument()
-    expect(screen.getByText('ROAS')).toBeInTheDocument()
+    // Legend toggles for each series. Story 170.1: sr-only table (DailyTrendSrTable)
+    // repeats series labels — use getAllByText, presence is what matters.
+    expect(screen.getAllByText('Расходы').length).toBeGreaterThan(0)
+    expect(screen.getAllByText('Показы').length).toBeGreaterThan(0)
+    expect(screen.getAllByText('Клики').length).toBeGreaterThan(0)
+    expect(screen.getAllByText('Заказы').length).toBeGreaterThan(0)
+    expect(screen.getAllByText('ROAS').length).toBeGreaterThan(0)
   })
 
   it('renders chart container with data', () => {

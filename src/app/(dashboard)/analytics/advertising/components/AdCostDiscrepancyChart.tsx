@@ -20,7 +20,7 @@ import {
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Skeleton } from '@/components/ui/skeleton'
 import { formatCurrency } from '@/lib/utils'
-import { AD_COST_LAYERS } from './ad-cost-discrepancy-config'
+import { AD_COST_LAYERS, calculateDiscrepancy } from './ad-cost-discrepancy-config'
 import { ResponsiveChartFrame } from '@/components/custom/analytics/ResponsiveChartFrame'
 
 interface AdCostDiscrepancyChartProps {
@@ -100,17 +100,22 @@ export function AdCostDiscrepancyChart({
               layout="vertical"
               margin={{ top: 8, right: 30, bottom: 8, left: 10 }}
             >
-              <CartesianGrid strokeDasharray="3 3" stroke="#EEEEEE" horizontal={false} />
+              {/* Story 170.1: grid/axis hex → border/chart-axis/foreground tokens */}
+              <CartesianGrid
+                strokeDasharray="3 3"
+                stroke="var(--color-border)"
+                horizontal={false}
+              />
               <XAxis
                 type="number"
                 tickFormatter={formatCompactRub}
-                tick={{ fontSize: 12, fill: '#757575' }}
-                axisLine={{ stroke: '#EEEEEE' }}
+                tick={{ fontSize: 12, fill: 'var(--color-chart-axis)' }}
+                axisLine={{ stroke: 'var(--color-border)' }}
               />
               <YAxis
                 type="category"
                 dataKey="name"
-                tick={{ fontSize: 13, fill: '#333' }}
+                tick={{ fontSize: 13, fill: 'var(--color-foreground)' }}
                 axisLine={false}
                 tickLine={false}
                 width={120}
@@ -127,6 +132,37 @@ export function AdCostDiscrepancyChart({
             </BarChart>
           </ResponsiveContainer>
         </ResponsiveChartFrame>
+        {/* Story 170.1: non-hover data alternative (169.11 sr-only canon).
+            Third layer (Скорректированная) is unavailable by config — the card
+            renders its "Скоро" text; here only the two charted layers appear. */}
+        <table className="sr-only">
+          <caption>Сравнение рекламных расходов по слоям, рубли</caption>
+          <thead>
+            <tr>
+              <th scope="col">Слой</th>
+              <th scope="col">Расход, ₽</th>
+            </tr>
+          </thead>
+          <tbody>
+            {chartData.map(entry => (
+              <tr key={entry.name}>
+                <th scope="row">{entry.name}</th>
+                <td>{formatCurrency(entry.value)}</td>
+              </tr>
+            ))}
+            {(() => {
+              const delta = calculateDiscrepancy(actualDeduction, platformSpend)
+              return (
+                delta && (
+                  <tr>
+                    <th scope="row">Изменение платформа → факт</th>
+                    <td>{delta.comparison.formattedPercentage}</td>
+                  </tr>
+                )
+              )
+            })()}
+          </tbody>
+        </table>
       </CardContent>
     </Card>
   )

@@ -46,11 +46,15 @@ export function MultiCampaignWarningBanner({ warningCount }: MultiCampaignWarnin
     setIsDismissed(true)
   }
 
+  // Story 170.1: yellow palette → status-warning /15+/30 matched pair (169.5)
   return (
-    <Alert className="relative border-yellow-400 bg-yellow-50 pr-12 text-yellow-800" role="alert">
-      <AlertTriangle className="h-4 w-4 text-yellow-600" aria-hidden="true" />
-      <AlertTitle className="text-yellow-800">Мультипликация расходов</AlertTitle>
-      <AlertDescription className="text-yellow-700">
+    <Alert
+      className="relative border-status-warning/30 bg-status-warning/15 pr-12 text-status-warning"
+      role="alert"
+    >
+      <AlertTriangle className="h-4 w-4 text-status-warning" aria-hidden="true" />
+      <AlertTitle className="text-status-warning">Мультипликация расходов</AlertTitle>
+      <AlertDescription className="text-status-warning">
         {warningCount} {pluralize(warningCount, 'товар', 'товара', 'товаров')}{' '}
         {pluralize(warningCount, 'участвует', 'участвуют', 'участвуют')} в нескольких кампаниях.
         Показатели прибыли могут быть завышены.
@@ -58,7 +62,7 @@ export function MultiCampaignWarningBanner({ warningCount }: MultiCampaignWarnin
       <Button
         variant="ghost"
         size="icon"
-        className="absolute right-2 top-2 h-6 w-6 text-yellow-600 hover:bg-yellow-200 hover:text-yellow-800"
+        className="absolute right-2 top-2 h-6 w-6 text-status-warning hover:bg-status-warning/20"
         onClick={handleDismiss}
         aria-label="Скрыть предупреждение"
       >

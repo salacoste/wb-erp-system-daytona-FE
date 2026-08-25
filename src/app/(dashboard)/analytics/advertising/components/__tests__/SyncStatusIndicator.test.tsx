@@ -115,7 +115,7 @@ describe('SyncStatusIndicator', () => {
       })
 
       // Should have green dot for healthy status
-      const dot = container.querySelector('[class*="bg-green"]')
+      const dot = container.querySelector('[class*="bg-status-success"]')
       expect(dot).toBeInTheDocument()
     })
 
@@ -147,7 +147,7 @@ describe('SyncStatusIndicator', () => {
       const { container } = renderWithProviders(<SyncStatusIndicator />)
 
       await waitFor(() => {
-        const dot = container.querySelector('[class*="bg-orange"]')
+        const dot = container.querySelector('[class*="bg-status-pending"]')
         expect(dot).toBeInTheDocument()
       })
     })
@@ -177,7 +177,7 @@ describe('SyncStatusIndicator', () => {
       const { container } = renderWithProviders(<SyncStatusIndicator />)
 
       await waitFor(() => {
-        const dot = container.querySelector('[class*="bg-red"]')
+        const dot = container.querySelector('[class*="bg-status-error"]') // Story 170.1 token pin
         expect(dot).toBeInTheDocument()
       })
     })
@@ -200,7 +200,7 @@ describe('SyncStatusIndicator', () => {
 
       await waitFor(() => {
         // Should show orange dot for stale (never synced)
-        const dot = container.querySelector('[class*="bg-orange"]')
+        const dot = container.querySelector('[class*="bg-status-pending"]')
         expect(dot).toBeInTheDocument()
       })
 

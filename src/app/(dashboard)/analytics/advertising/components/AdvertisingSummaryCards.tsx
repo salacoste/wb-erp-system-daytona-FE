@@ -65,7 +65,8 @@ export function AdvertisingSummaryCards({
       label: 'Всего продаж',
       value: formatAdCurrency(summary.total_sales),
       icon: ShoppingCart,
-      colorClass: 'text-indigo-600',
+      // Story 170.1: indigo palette → status-information token
+      colorClass: 'text-status-information',
       tooltip: 'Органические + рекламные продажи. Данные из рекламного кабинета WB.',
       subtext:
         summary.total_organic_sales > 0
@@ -78,7 +79,7 @@ export function AdvertisingSummaryCards({
       label: 'Из рекламы',
       value: formatAdCurrency(summary.total_revenue),
       icon: Wallet,
-      colorClass: 'text-blue-600',
+      colorClass: 'text-primary',
       tooltip:
         'Выручка от заказов, атрибутированных рекламе. WB определяет атрибуцию: клик → заказ.',
     },
@@ -89,7 +90,7 @@ export function AdvertisingSummaryCards({
       value: summary.overall_roas != null ? formatRoas(summary.overall_roas) : '—',
       icon: TrendingUp,
       colorClass:
-        summary.overall_roas != null ? getRoasColor(summary.overall_roas) : 'text-gray-400',
+        summary.overall_roas != null ? getRoasColor(summary.overall_roas) : 'text-muted-foreground',
       tooltip: 'Выручка от рекламы ÷ расход на кампании. Данные из рекламного кабинета WB.',
     },
     {
@@ -97,7 +98,8 @@ export function AdvertisingSummaryCards({
       label: 'Общий ROI',
       value: summary.overall_roi != null ? formatAdPercent(summary.overall_roi) : '—',
       icon: Percent,
-      colorClass: summary.overall_roi != null ? getRoiColor(summary.overall_roi) : 'text-gray-400',
+      colorClass:
+        summary.overall_roi != null ? getRoiColor(summary.overall_roi) : 'text-muted-foreground',
       tooltip: '(Прибыль − расход на рекламу) ÷ расход × 100%. Прибыль из маржинальной аналитики.',
     },
     {

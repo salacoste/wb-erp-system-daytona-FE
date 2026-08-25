@@ -30,9 +30,10 @@ interface MergedGroupTableHeaderProps {
   onSort?: (field: SortField) => void
 }
 
+// Story 170.1: gray palette → muted/border tokens
 const headerClass =
-  'px-4 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider bg-gray-50 border-b border-gray-200'
-const sortableClass = 'cursor-pointer hover:bg-gray-100'
+  'px-4 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider bg-muted/50 border-b border-border'
+const sortableClass = 'cursor-pointer hover:bg-muted'
 const sortButtonClass =
   'inline-flex w-full items-center justify-end gap-1 rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1'
 

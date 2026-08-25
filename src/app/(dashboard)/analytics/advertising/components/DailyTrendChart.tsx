@@ -22,6 +22,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Skeleton } from '@/components/ui/skeleton'
 import { DailyTrendTooltip } from './DailyTrendTooltip'
 import { DailyTrendLegend } from './DailyTrendLegend'
+import { DailyTrendSrTable } from './DailyTrendSrTable'
 import { ResponsiveChartFrame } from '@/components/custom/analytics/ResponsiveChartFrame'
 import {
   DAILY_TREND_COLORS,
@@ -108,34 +109,35 @@ export function DailyTrendChart({ data, isLoading, className }: DailyTrendChartP
             initialDimension={{ width: 1, height: 1 }}
           >
             <LineChart data={data} margin={{ top: 12, right: 10, bottom: 40, left: 40 }}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#EEEEEE" />
+              {/* Story 170.1: grid/axis hex → border/chart-axis tokens (169.4 canon) */}
+              <CartesianGrid strokeDasharray="3 3" stroke="var(--color-border)" />
               <XAxis
                 dataKey="date"
                 tickFormatter={formatDailyDate}
-                tick={{ fontSize: 12, fill: '#757575' }}
-                axisLine={{ stroke: '#EEEEEE' }}
-                tickLine={{ stroke: '#EEEEEE' }}
+                tick={{ fontSize: 12, fill: 'var(--color-chart-axis)' }}
+                axisLine={{ stroke: 'var(--color-border)' }}
+                tickLine={{ stroke: 'var(--color-border)' }}
               />
               <YAxis
                 yAxisId="left"
                 tickFormatter={formatCompactRub}
-                tick={{ fontSize: 12, fill: '#757575' }}
-                axisLine={{ stroke: '#EEEEEE' }}
+                tick={{ fontSize: 12, fill: 'var(--color-chart-axis)' }}
+                axisLine={{ stroke: 'var(--color-border)' }}
                 tickLine={false}
                 width={55}
                 label={{
                   value: '₽',
                   angle: -90,
                   position: 'insideLeft',
-                  style: { fontSize: 11, fill: '#757575' },
+                  style: { fontSize: 11, fill: 'var(--color-chart-axis)' },
                 }}
               />
               <YAxis
                 yAxisId="right"
                 orientation="right"
                 tickFormatter={formatCompactCount}
-                tick={{ fontSize: 12, fill: '#757575' }}
-                axisLine={{ stroke: '#EEEEEE' }}
+                tick={{ fontSize: 12, fill: 'var(--color-chart-axis)' }}
+                axisLine={{ stroke: 'var(--color-border)' }}
                 tickLine={false}
                 width={55}
               />
@@ -157,6 +159,8 @@ export function DailyTrendChart({ data, isLoading, className }: DailyTrendChartP
             </LineChart>
           </ResponsiveContainer>
         </ResponsiveChartFrame>
+        {/* Story 170.1: non-hover data alternative (169.11 sr-only canon) */}
+        <DailyTrendSrTable data={data} visibleSeries={visibleSeries} />
       </CardContent>
     </Card>
   )

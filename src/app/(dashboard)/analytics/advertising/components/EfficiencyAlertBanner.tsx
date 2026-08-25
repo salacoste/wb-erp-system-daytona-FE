@@ -116,7 +116,7 @@ export function EfficiencyAlertBanner({ lossCount, currentParams }: EfficiencyAl
       <Button
         variant="ghost"
         size="icon"
-        className="absolute top-2 right-2 h-6 w-6 hover:bg-red-200"
+        className="absolute top-2 right-2 h-6 w-6 hover:bg-destructive/20"
         onClick={handleDismiss}
         aria-label="Скрыть предупреждение"
       >

@@ -12,11 +12,15 @@ import type { AdvertisingSummary } from '@/types/advertising-analytics'
 // ROI ≥0.5% green — a 30% ROI green, a 1% ROI green. These cases FAIL on the old thresholds.
 describe('getRoiColor — percent-domain thresholds', () => {
   it('colours by percent magnitude, not fraction', () => {
-    expect(getRoiColor(75)).toBe('text-green-600') // ≥50%
-    expect(getRoiColor(30)).toBe('text-yellow-600') // 20-50% (was green under 0.5 fraction)
-    expect(getRoiColor(10)).toBe('text-orange-600') // 0-20% (was green under 0.5 fraction)
-    expect(getRoiColor(0)).toBe('text-orange-600')
-    expect(getRoiColor(-5)).toBe('text-red-600')
+    // Story 170.1: pins flipped to route-local token classes (thresholds unchanged)
+    expect(getRoiColor(75)).toBe('text-status-success') // ≥50%
+    expect(getRoiColor(30)).toBe('text-status-warning') // 20-50% (was green under 0.5 fraction)
+    // 0-20%: warning text — old palette was orange (weak-but-positive attention);
+    // muted is reserved for unknown-semantics. 0-20 vs 20-50 sharing warning text
+    // is DELIBERATE under the 3-status-token canon (170.1 round-1 F2).
+    expect(getRoiColor(10)).toBe('text-status-warning')
+    expect(getRoiColor(0)).toBe('text-status-warning')
+    expect(getRoiColor(-5)).toBe('text-status-error')
   })
 })
 
@@ -26,11 +30,12 @@ describe('getRoiColor — percent-domain thresholds', () => {
 // exact-boundary inclusivity (5.0/3.0/2.0/1.0/0.0) is pinned in efficiency-utils.test.ts.
 describe('getRoasColor — canonical 5-band multiplier thresholds', () => {
   it('colours by ROAS multiplier', () => {
-    expect(getRoasColor(5.5)).toBe('text-green-600') // ≥5× excellent
-    expect(getRoasColor(3.5)).toBe('text-emerald-600') // 3-5× good
-    expect(getRoasColor(2.5)).toBe('text-yellow-600') // 2-3× moderate
-    expect(getRoasColor(1.5)).toBe('text-orange-600') // 1-2× poor
-    expect(getRoasColor(0.5)).toBe('text-red-600') // <1× loss-making
+    // Story 170.1: pins flipped to tier token colors (thresholds unchanged)
+    expect(getRoasColor(5.5)).toBe('text-status-success') // ≥5× excellent
+    expect(getRoasColor(3.5)).toBe('text-status-success') // 3-5× good
+    expect(getRoasColor(2.5)).toBe('text-status-warning') // 2-3× moderate
+    expect(getRoasColor(1.5)).toBe('text-status-warning') // 1-2× poor
+    expect(getRoasColor(0.5)).toBe('text-status-error') // <1× loss-making
   })
 })
 
