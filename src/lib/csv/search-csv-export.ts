@@ -12,7 +12,9 @@ function fmt(n: number): string {
 
 /** Format percent value (0-100 scale) with 1 decimal, Russian locale. */
 function fmtPct(n: number | null): string {
-  if (n == null) return '—'
+  // Preface-review F2: unknown NUMERIC -> empty cell (uniform sentinel across this
+// module — spreadsheet filters for blanks catch all unknowns; '—' mixed with '' hid them).
+  if (n == null) return ''
   return n.toLocaleString('ru-RU', { minimumFractionDigits: 1, maximumFractionDigits: 1 }) + ' %'
 }
 
@@ -29,7 +31,7 @@ const BY_PRODUCT_HEADERS = [
 function queryItemToRow(item: SearchQueryItem): string[] {
   return [
     item.searchQuery,
-    fmt(item.avgPosition),
+    item.avgPosition == null ? '' : fmt(item.avgPosition), // 170.7: unknown position -> empty cell
     fmt(item.totalImpressions),
     fmt(item.totalClicks),
     fmtPct(item.avgCtr),
@@ -63,7 +65,7 @@ function productItemToRow(item: SearchProductItem): string[] {
   return [
     String(item.nmId),
     item.vendorCode ?? '—',
-    fmt(item.avgPosition),
+    item.avgPosition == null ? '' : fmt(item.avgPosition), // 170.7: unknown position -> empty cell
     fmt(item.totalImpressions),
     fmt(item.totalClicks),
     fmtPct(item.avgCtr),

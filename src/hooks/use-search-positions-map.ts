@@ -51,7 +51,7 @@ export function useSearchPositionsMap(nmIds: number[], from: string, to: string,
       // Best position = lowest avgPosition (position 1 is top)
       let best: number | null = null
       for (const q of result.queries) {
-        if (q.avgPosition > 0 && (best === null || q.avgPosition < best)) {
+        if (q.avgPosition != null && q.avgPosition > 0 && (best === null || q.avgPosition < best)) {
           best = q.avgPosition
         }
       }

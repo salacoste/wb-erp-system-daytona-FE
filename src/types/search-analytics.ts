@@ -36,7 +36,8 @@ export interface SearchByProductParams {
 
 export interface SearchQueryItem {
   searchQuery: string
-  avgPosition: number
+  /** 1-based position; 0 meaningless — null renders "—" (170.7). */
+  avgPosition: number | null
   totalImpressions: number
   totalClicks: number
   /** CTR % (0-100). null when not measured/available — rendered "—", NOT 0 (anti-pattern #8:
@@ -68,7 +69,8 @@ export interface SearchByQueryParams {
 export interface SearchProductItem {
   nmId: number
   vendorCode: string | null
-  avgPosition: number
+  /** 1-based position; 0 meaningless — null renders "—" (170.7). */
+  avgPosition: number | null
   totalImpressions: number
   totalClicks: number
   /** CTR % (0-100). null when not measured/available — rendered "—", NOT 0 (anti-pattern #8:

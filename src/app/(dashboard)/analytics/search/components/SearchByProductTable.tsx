@@ -78,21 +78,25 @@ export function SearchByProductTable({ queries }: SearchByProductTableProps) {
     }
   }
 
-  const getSortValue = (item: SearchQueryItem, field: SortField): number => {
-    if (field === 'cartConversionRate') return getCartConversionRate(item) ?? 0
-    return Number(item[field] ?? 0)
+  const getSortValue = (item: SearchQueryItem, field: SortField): number | null => {
+    if (field === 'cartConversionRate') return getCartConversionRate(item)
+    return item[field] ?? null
   }
 
+  // 170.7 (169.13 pattern): nulls sort LAST in BOTH directions.
   const sorted = [...queries].sort((a, b) => {
     const aVal = getSortValue(a, sort)
     const bVal = getSortValue(b, sort)
+    if (aVal == null && bVal == null) return 0
+    if (aVal == null) return 1
+    if (bVal == null) return -1
     return order === 'desc' ? bVal - aVal : aVal - bVal
   })
 
   const formatCell = (field: SortField, value: number | null): string => {
     switch (field) {
       case 'avgPosition':
-        return formatDecimal(value ?? 0)
+        return value == null ? '—' : formatDecimal(value) // 170.7: null position is unknown, not 0
       case 'avgCtr':
         return formatPercent(value)
       case 'cartConversionRate':

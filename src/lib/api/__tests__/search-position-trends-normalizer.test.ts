@@ -65,16 +65,37 @@ describe('normalizePositionTrendsResponse', () => {
     expect(result.summary.improvingCount).toBe(0)
   })
 
-  it('coerces invalid trend to stable', () => {
+  // 170.7 (pattern #218): unrecognized/missing trend → 'unknown' (never fabricated 'stable')
+  it('maps unrecognized trend to unknown', () => {
     const raw = {
       movers: [{ nmId: 1, trend: 'invalid_value' }],
       summary: {},
     }
     const result = normalizePositionTrendsResponse(raw)
-    expect(result.movers[0].trend).toBe('stable')
+    expect(result.movers[0].trend).toBe('unknown')
   })
 
-  it('defaults null position fields to 0', () => {
+  it('maps missing trend to unknown', () => {
+    const raw = { movers: [{ nmId: 1 }], summary: {} }
+    const result = normalizePositionTrendsResponse(raw)
+    expect(result.movers[0].trend).toBe('unknown')
+  })
+
+  it('passes valid trend directions through', () => {
+    const raw = {
+      movers: [
+        { nmId: 1, trend: 'improving' },
+        { nmId: 2, trend: 'declining' },
+        { nmId: 3, trend: 'stable' },
+      ],
+      summary: {},
+    }
+    const result = normalizePositionTrendsResponse(raw)
+    expect(result.movers.map(m => m.trend)).toEqual(['improving', 'declining', 'stable'])
+  })
+
+  // 170.7 (pattern #236): positions are 1-based — 0 meaningless; null preserves unknown
+  it('preserves null position fields as null (NOT 0)', () => {
     const raw = {
       movers: [
         { nmId: 1, currentAvgPosition: null, previousAvgPosition: null, positionChange: null },
@@ -83,10 +104,10 @@ describe('normalizePositionTrendsResponse', () => {
       summary: {},
     }
     const result = normalizePositionTrendsResponse(raw)
-    expect(result.movers[0].currentAvgPosition).toBe(0)
-    expect(result.movers[0].previousAvgPosition).toBe(0)
-    expect(result.movers[0].positionChange).toBe(0)
-    expect(result.closeToPageOne[0].currentAvgPosition).toBe(0)
+    expect(result.movers[0].currentAvgPosition).toBeNull()
+    expect(result.movers[0].previousAvgPosition).toBeNull()
+    expect(result.movers[0].positionChange).toBeNull()
+    expect(result.closeToPageOne[0].currentAvgPosition).toBeNull()
   })
 
   it('returns undefined topQuery for non-string values', () => {

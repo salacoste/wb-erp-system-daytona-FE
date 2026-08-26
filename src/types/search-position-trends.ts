@@ -11,7 +11,8 @@
 
 // --- Union Types ---
 
-export type TrendDirection = 'improving' | 'declining' | 'stable'
+// 'unknown' (170.7): backend sent a missing/unrecognized direction — render neutral, never fabricate 'stable'.
+export type TrendDirection = 'improving' | 'declining' | 'stable' | 'unknown'
 export type PositionMoverPeriod = '7d' | '14d' | '30d'
 export type TrendsFilterDirection = 'improving' | 'declining' | 'all'
 
@@ -25,9 +26,9 @@ export interface PositionTrendsParams {
 
 export interface PositionTrendMover {
   nmId: number
-  currentAvgPosition: number
-  previousAvgPosition: number
-  positionChange: number
+  currentAvgPosition: number | null
+  previousAvgPosition: number | null
+  positionChange: number | null
   trend: TrendDirection
   totalQueries: number
   totalImpressions: number
@@ -36,7 +37,7 @@ export interface PositionTrendMover {
 
 export interface CloseToPageOneItem {
   nmId: number
-  currentAvgPosition: number
+  currentAvgPosition: number | null
   positionsAway: number
   totalImpressions: number
   totalQueries: number
@@ -69,9 +70,9 @@ export interface PositionMoverItem {
   nmId: number
   vendorCode: string | null
   productName: string | null
-  currentPosition: number
-  previousPosition: number
-  positionDelta: number
+  currentPosition: number | null
+  previousPosition: number | null
+  positionDelta: number | null
   query: string | null
 }
 
@@ -85,7 +86,7 @@ export interface PositionMoversResponse {
 export interface PageOneOpportunityItem {
   nmId: number
   vendorCode: string | null
-  currentPosition: number
+  currentPosition: number | null
   query: string | null
   avgImpressions: number
   avgClicks: number
