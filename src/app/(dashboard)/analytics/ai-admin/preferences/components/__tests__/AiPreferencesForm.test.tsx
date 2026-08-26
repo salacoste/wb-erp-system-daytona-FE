@@ -352,4 +352,44 @@ describe('AiPreferencesForm', () => {
     expect(screen.getByText(/Не удалось загрузить настройки/)).toBeInTheDocument()
     expect(screen.queryByRole('switch')).not.toBeInTheDocument()
   })
+
+  it('Story 171.3 AC-3: mutation error is ASSOCIATED to the Switch (describedby chain)', async () => {
+    // happy render first: describedby = desc only
+    const { rerender } = renderComponent()
+    const sw = screen.getByRole('switch')
+    expect(sw.getAttribute('aria-describedby')).toBe('ai-enabled-desc')
+    // fail the mutation (mock-state pattern — same as the 403 test): describedby chains
+    mockUseUpdateAiPreferences.mockReturnValue({
+      ...defaultMutation,
+      isError: true,
+      error: new Error('Network down'),
+    } as unknown as ReturnType<typeof useUpdateAiPreferencesModule.useUpdateAiPreferences>)
+    rerender(
+      <QueryClientProvider client={new QueryClient({ defaultOptions: { queries: { retry: false } } })}>
+        <AiPreferencesForm />
+      </QueryClientProvider>
+    )
+    expect(sw.getAttribute('aria-describedby')).toContain('ai-enabled-mutation-error')
+    expect(document.getElementById('ai-enabled-mutation-error')).toBeInTheDocument()
+    // review-MEDIUM: chain REVERTS to desc-only when the error clears.
+    mockUseUpdateAiPreferences.mockReturnValue(
+      defaultMutation as unknown as ReturnType<
+        typeof useUpdateAiPreferencesModule.useUpdateAiPreferences
+      >
+    )
+    rerender(
+      <QueryClientProvider
+        client={new QueryClient({ defaultOptions: { queries: { retry: false } } })}
+      >
+        <AiPreferencesForm />
+      </QueryClientProvider>
+    )
+    expect(sw.getAttribute('aria-describedby')).toBe('ai-enabled-desc')
+  })
+
+  it('Story 171.3 RTC: form wrapper has max-w-2xl readable width', () => {
+    render(<AiPreferencesForm />)
+    const h1 = screen.getByRole('heading', { level: 1 })
+    expect(h1.closest('.max-w-2xl')).not.toBeNull()
+  })
 })

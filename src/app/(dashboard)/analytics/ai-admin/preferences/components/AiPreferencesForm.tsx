@@ -22,6 +22,9 @@ import { ApiError } from '@/types/api'
 
 const SWITCH_ID = 'ai-enabled-toggle'
 const SWITCH_DESC_ID = 'ai-enabled-desc'
+// Story 171.3 (AC-3 «errors are associated»): the mutation-error Alert id joins
+// the Switch describedby chain when present — SR users reach the error FROM the control.
+const MUTATION_ERROR_ID = 'ai-enabled-mutation-error'
 
 export function AiPreferencesForm() {
   const user = useAuthStore(s => s.user)
@@ -119,7 +122,7 @@ export function AiPreferencesForm() {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="max-w-2xl space-y-6"> {/* Story 171.3 RTC-form: constrained readable width */}
       {/* Header card */}
       <div className="rounded-lg border bg-card p-6">
         <h1 className="text-lg font-semibold">Настройки AI</h1>
@@ -145,7 +148,7 @@ export function AiPreferencesForm() {
             checked={data?.aiEnabled ?? false}
             onCheckedChange={handleCheckedChange}
             disabled={mutation.isPending}
-            aria-describedby={SWITCH_DESC_ID}
+            aria-describedby={mutationErrorMessage ? `${SWITCH_DESC_ID} ${MUTATION_ERROR_ID}` : SWITCH_DESC_ID}
             className="focus-visible:ring-2 focus-visible:ring-offset-2"
           />
         </div>
@@ -153,6 +156,7 @@ export function AiPreferencesForm() {
         {/* Inline mutation error — aria-live="polite" per Story 112.1 F-12 */}
         {mutationErrorMessage && (
           <Alert
+            id={MUTATION_ERROR_ID}
             variant="destructive"
             role="status"
             aria-live="polite"
