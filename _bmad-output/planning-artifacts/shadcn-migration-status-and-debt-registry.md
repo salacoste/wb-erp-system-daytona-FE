@@ -60,8 +60,13 @@ max-w; owned 26→28, полный пол **19 228/0**, 1×opus, e2e 10/1↓/0).
 полный пол **19 246/0**, 1×opus, e2e 7/1↓/0). 171.6 SHIPPED 2026-08-26 (6/9): #262 (`b867551f`;
 MINOR-GAP-plus — 7 palette classNames→status tokens (hue-preserving, dark-fix), pulse dot, p-6
 double-pad, caption, tabular-nums; STATUS_BADGE_CONFIG shape frozen для [id]-саброутов 171.7/171.9;
-owned 51→58, полный пол **19 253/0**, 1×opus APPROVE-WITH-NOTES, e2e 13/1↓/0). **NEXT = 171.7
-model evaluations list** (backlog; план `.omx/plans/171.7-...md`);
+owned 51→58, полный пол **19 253/0**, 1×opus APPROVE-WITH-NOTES, e2e 13/1↓/0). 171.7 SHIPPED
+2026-08-26 (7/9): #266 (`37ae5b4c`; MINOR-GAP — born-clean, 4 сайта: STATUS_BADGE_CONFIG.className
+DETACH → route-local Record<ModelStatus,string> (hue-preserving 1:1, все 7 статусов; label из
+shared-конфига; удаление поля — 171.9), TableCaption naming model, tabular-nums ×7 (nmId exempt),
+p-6 double-pad; guard-8 (sku-accuracy exclusion load-bearing) + caption-тесты; owned 55→65,
+полный пол **19 263/0**, 1×opus APPROVE-WITH-NOTES (0 дефектов), e2e 13/1↓/0, light+dark visual).
+**NEXT = 171.8 sku-accuracy detail** (backlog; план `.omx/plans/171.8-...md`);
 параллельно независимо: 169.14 → 169.15 → 169.12 contract closeout (169.14/169.15 `backlog`; 169.12 `review`; plans `.omx/plans/169.14-establish-authoritative-paid-storage-import-lifecycle-and-result-contract.md`, `.omx/plans/169.15-align-shared-frontend-paid-storage-import-boundary.md`, and `.omx/plans/169.12-migrate-storage-analytics-and-paid-storage-import.md`). Story 169.13 remains an independent backlog route.
 **Волна 23-24.08** (два полных цикла + инфраструктура): 169.11 returns — preface #218 (`d6ed2c65`,
 unknown-категория на boundary + нейтральный лейбл) + #219 (`129e99ed`; owned 50→73) + e2e-gap закрыт
