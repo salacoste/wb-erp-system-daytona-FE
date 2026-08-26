@@ -2,8 +2,10 @@
 
 /**
  * MapeTrendChart — MAPE history line chart for a single AI model.
- * Story 109.5-FE: recharts LineChart with brand red, Russian tooltip, empty-state Alert.
+ * Story 109.5-FE: recharts LineChart with Russian tooltip, empty-state Alert.
  * Pattern: single-series line → recharts (not raw SVG) per Epic 92-FE § Pattern 2.
+ * Migrated Story 171.9-FE: hex literals → theme-aware CSS variables (171.4 chart canon —
+ * grid/axis borders, categorical data series; brand-red line became the chart categorical).
  */
 
 import {
@@ -61,20 +63,20 @@ export function MapeTrendChart({ entries }: MapeTrendChartProps) {
     >
       <ResponsiveContainer width="100%" height="100%">
         <LineChart data={entries} margin={{ top: 8, right: 10, bottom: 24, left: 10 }}>
-          <CartesianGrid strokeDasharray="3 3" stroke="#EEEEEE" />
+          <CartesianGrid strokeDasharray="3 3" stroke="var(--color-border)" />
           <XAxis
             dataKey="evaluationDate"
             tickFormatter={(v: string) => formatDate(v).slice(0, 5)}
-            tick={{ fontSize: 12, fill: '#757575' }}
-            axisLine={{ stroke: '#EEEEEE' }}
-            tickLine={{ stroke: '#EEEEEE' }}
+            tick={{ fontSize: 12, fill: 'var(--color-chart-axis)' }}
+            axisLine={{ stroke: 'var(--color-border)' }}
+            tickLine={{ stroke: 'var(--color-border)' }}
           />
           <YAxis
             domain={['auto', 'auto']}
             padding={{ top: 10, bottom: 10 }}
             tickFormatter={formatMapeTick}
-            tick={{ fontSize: 12, fill: '#757575' }}
-            axisLine={{ stroke: '#EEEEEE' }}
+            tick={{ fontSize: 12, fill: 'var(--color-chart-axis)' }}
+            axisLine={{ stroke: 'var(--color-border)' }}
             tickLine={false}
             width={50}
           />
@@ -82,11 +84,11 @@ export function MapeTrendChart({ entries }: MapeTrendChartProps) {
           <Line
             type="monotone"
             dataKey="cabinetMape"
-            stroke="#E53935"
+            stroke="var(--color-chart-1)"
             strokeWidth={2.5}
             dot={false}
             connectNulls={false}
-            activeDot={{ r: 4, fill: '#E53935' }}
+            activeDot={{ r: 4, fill: 'var(--color-chart-1)' }}
           />
         </LineChart>
       </ResponsiveContainer>

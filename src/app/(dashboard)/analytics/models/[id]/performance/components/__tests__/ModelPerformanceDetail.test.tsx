@@ -127,34 +127,38 @@ function setup(
 // ═══════════════════════════════════════════════════════════════════════════
 
 describe('DRIFT_BADGE_CONFIG', () => {
-  it('improving → green class + Russian label Улучшается', () => {
+  // Story 171.9-FE: palette classNames migrated to semantic status tokens (hue preserved
+  // semantically: green→success, blue→information, red→error, gray→muted)
+  it('improving → status-success class + Russian label Улучшается', () => {
     expect(DRIFT_BADGE_CONFIG.improving.label).toBe('Улучшается')
-    expect(DRIFT_BADGE_CONFIG.improving.className).toContain('green')
+    expect(DRIFT_BADGE_CONFIG.improving.className).toContain('status-success')
   })
 
-  it('stable → blue class + Russian label Стабильно', () => {
+  it('stable → status-information class + Russian label Стабильно', () => {
     expect(DRIFT_BADGE_CONFIG.stable.label).toBe('Стабильно')
-    expect(DRIFT_BADGE_CONFIG.stable.className).toContain('blue')
+    expect(DRIFT_BADGE_CONFIG.stable.className).toContain('status-information')
   })
 
-  it('degrading → red class + Russian label Деградирует', () => {
+  it('degrading → status-error class + Russian label Деградирует', () => {
     expect(DRIFT_BADGE_CONFIG.degrading.label).toBe('Деградирует')
-    expect(DRIFT_BADGE_CONFIG.degrading.className).toContain('red')
+    expect(DRIFT_BADGE_CONFIG.degrading.className).toContain('status-error')
   })
 
-  it('null case → DRIFT_NULL_CONFIG is gray + Недостаточно данных', () => {
+  it('null case → DRIFT_NULL_CONFIG is muted + Недостаточно данных', () => {
     expect(DRIFT_NULL_CONFIG.label).toBe('Недостаточно данных')
-    expect(DRIFT_NULL_CONFIG.className).toContain('gray')
+    expect(DRIFT_NULL_CONFIG.className).toContain('muted')
   })
 })
 
 describe('getMapeDeltaColor', () => {
-  it('negative delta → text-green-600 (MAPE improved)', () => {
-    expect(getMapeDeltaColor(-3.5)).toBe('text-green-600')
+  // Story 171.9-FE: palette classes migrated to semantic status tokens (valence preserved:
+  // negative→success-family, positive→error-family)
+  it('negative delta → text-status-success (MAPE improved)', () => {
+    expect(getMapeDeltaColor(-3.5)).toBe('text-status-success')
   })
 
-  it('positive delta → text-red-600 (MAPE regressed)', () => {
-    expect(getMapeDeltaColor(5.0)).toBe('text-red-600')
+  it('positive delta → text-status-error (MAPE regressed)', () => {
+    expect(getMapeDeltaColor(5.0)).toBe('text-status-error')
   })
 
   it('zero delta → text-muted-foreground', () => {
@@ -418,6 +422,17 @@ describe('ModelPerformanceDetail', () => {
     const comparisonPara = screen.getByText(/Сравнение с v1/)
     expect(comparisonPara.textContent).toContain('—')
     expect(comparisonPara.textContent).not.toContain('0%')
+  })
+
+  it('Story 171.9: history table caption names the model (RTC contract)', () => {
+    setup({
+      data: makePerformanceResponse({
+        mapeTrend: [{ evaluationDate: '2026-05-17', cabinetMape: 12.5, skuCount: 52 }],
+      }),
+    })
+    render(<ModelPerformanceDetail modelId="model-1" />)
+    // role-pin (semantic caption element): type label + version from the identity row
+    expect(screen.getByRole('caption')).toHaveTextContent('История оценок — Прогноз продаж v2')
   })
 
   it('F-3: prev present, current null → delta renders em-dash, color is neutral', () => {
