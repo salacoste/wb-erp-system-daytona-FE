@@ -162,6 +162,12 @@ describe('SkuAccuracyDetail', () => {
     expect(screen.getByText('Naive MAPE')).toBeTruthy()
   })
 
+  it('Story 171.8: history table caption names the SKU (RTC contract)', () => {
+    render(<SkuAccuracyDetail nmId={12345} modelId="model-1" skuAccuracies={[entry]} />)
+    // role-pin (semantic caption element, not just text)
+    expect(screen.getByRole('caption')).toHaveTextContent('История оценок — артикул 12345')
+  })
+
   it('history table renders all rows', () => {
     render(<SkuAccuracyDetail nmId={12345} modelId="model-1" skuAccuracies={[entry]} />)
     // 3 history entries = 3 tbody rows

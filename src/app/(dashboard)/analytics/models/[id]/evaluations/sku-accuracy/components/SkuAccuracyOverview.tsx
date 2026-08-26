@@ -4,6 +4,7 @@
  * SkuAccuracyOverview — container for the SKU accuracy overview table.
  * Story 110.3-FE Task 5: state-precedence chain loading → error → empty → happy.
  * Extracted from page.tsx to respect file-size discipline.
+ * Migrated Story 171.8-FE: route-level paddings removed (dashboard layout provides its own).
  */
 
 import { useState, useMemo } from 'react'
@@ -49,7 +50,7 @@ export function SkuAccuracyOverview({ modelId }: SkuAccuracyOverviewProps) {
   // State-precedence chain (Story 109.5-FE F-17): loading → error → empty → happy
   if (isLoading) {
     return (
-      <div className="space-y-4 p-6" data-testid="sku-accuracy-skeleton">
+      <div className="space-y-4" data-testid="sku-accuracy-skeleton">
         <Skeleton className="h-8 w-48" />
         <Skeleton className="h-64 w-full" />
       </div>
@@ -58,7 +59,7 @@ export function SkuAccuracyOverview({ modelId }: SkuAccuracyOverviewProps) {
 
   if (isError) {
     return (
-      <div className="p-6">
+      <div>
         <Alert variant="destructive">
           <AlertDescription>
             Ошибка загрузки данных по SKU
@@ -71,7 +72,7 @@ export function SkuAccuracyOverview({ modelId }: SkuAccuracyOverviewProps) {
 
   if (entries.length === 0) {
     return (
-      <div className="p-6">
+      <div>
         <Alert>
           <AlertDescription>
             Нет данных по точности SKU для этой модели. Данные появятся после первой оценки.

@@ -5,12 +5,15 @@
  * Story 110.3-FE Task 4: mirrors EvaluationsTable aria-sort pattern (Story 110.2-FE F-6).
  * Pure helpers extracted to sku-accuracy-helpers.ts per pure-function discipline.
  * AP#8: null MAPE/percentage fields render '—'; evaluationCount is semantic-zero OK.
+ * Migrated Story 171.8-FE: caption naming the model (RTC — modelId is the opaque route
+ * identity here, AP#10 String form), tabular-nums on numeric cells (nmId exempt).
  */
 
 import { useRouter } from 'next/navigation'
 import {
   Table,
   TableBody,
+  TableCaption,
   TableCell,
   TableHead,
   TableHeader,
@@ -76,6 +79,9 @@ export function SkuAccuracyTable({
 
   return (
     <Table>
+      {/* Story 171.8: caption names the model (RTC; modelId is the route identity);
+          spec-order above header (169.7 canon), visually bottom via ui caption-bottom. */}
+      <TableCaption>Точность по SKU — модель {String(modelId)}</TableCaption>
       <TableHeader>
         <TableRow>
           <TableHead>Артикул (nmId)</TableHead>
@@ -126,10 +132,16 @@ export function SkuAccuracyTable({
             >
               <TableCell>{String(nmId)}</TableCell>
               <TableCell>{entry.vendorCode ?? '—'}</TableCell>
-              <TableCell>{formatSkuMapeDisplay(entry.avgAiMape)}</TableCell>
-              <TableCell>{formatSkuMapeDisplay(entry.avgNaiveMape)}</TableCell>
-              <TableCell>{formatSkuMapeDisplay(entry.aiAccuracyPercent)}</TableCell>
-              <TableCell>{formatNumber(entry.evaluationCount)}</TableCell>
+              <TableCell className="tabular-nums">
+                {formatSkuMapeDisplay(entry.avgAiMape)}
+              </TableCell>
+              <TableCell className="tabular-nums">
+                {formatSkuMapeDisplay(entry.avgNaiveMape)}
+              </TableCell>
+              <TableCell className="tabular-nums">
+                {formatSkuMapeDisplay(entry.aiAccuracyPercent)}
+              </TableCell>
+              <TableCell className="tabular-nums">{formatNumber(entry.evaluationCount)}</TableCell>
             </TableRow>
           )
         })}

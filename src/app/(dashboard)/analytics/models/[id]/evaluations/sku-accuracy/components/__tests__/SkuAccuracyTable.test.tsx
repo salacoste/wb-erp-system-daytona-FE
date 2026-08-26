@@ -78,6 +78,12 @@ describe('SkuAccuracyTable', () => {
     expect(screen.getByText('Кол-во оценок')).toBeTruthy()
   })
 
+  it('Story 171.8: table caption names the model (RTC contract)', () => {
+    render(<SkuAccuracyTable {...defaultProps} />)
+    // role-pin (semantic caption element, not just text)
+    expect(screen.getByRole('caption')).toHaveTextContent('Точность по SKU — модель model-1')
+  })
+
   it('F-8: renders nmId as raw string (not formatNumber) for copy-paste semantics', () => {
     render(<SkuAccuracyTable {...defaultProps} />)
     // String(11111) → '11111' — no non-breaking-space separator

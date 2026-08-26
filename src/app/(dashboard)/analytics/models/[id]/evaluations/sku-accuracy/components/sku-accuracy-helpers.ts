@@ -1,7 +1,7 @@
 /**
  * Pure helpers for SKU Accuracy components.
  * Extracted per pure-function discipline (CLAUDE.md feedback memory).
- * Story 110.3-FE Task 4.
+ * Story 110.3-FE Task 4. Migrated Story 171.8-FE (verified token-clean, provenance only).
  */
 
 import { formatPercentage } from '@/lib/utils'
