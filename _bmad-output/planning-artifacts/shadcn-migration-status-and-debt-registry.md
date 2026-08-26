@@ -49,8 +49,9 @@ e2e на ветке 7/5↓/0; 3-pass trail — r1-фиксы дефектны (�
 owned 174→195, полный пол **19 204/0**, e2e 8/8 оживлены, 3-pass Trigger-1). Волна Эпика 170:
 7 историй за 25-26.08 (PRs #237-#250), 3 preface-грани, все маршруты с e2e на ветке.
 
-**NEXT = 171.1 ai-anomaly-triage** (backlog; план `.omx/plans/171.1-...md`) — Эпик 171 (9 историй,
-AI/forecast/model-governance);
+171.1 SHIPPED 2026-08-26 (Эпик 171 открыт, 1/9): #252 (`1c0bb385`; MINOR-GAP цикл — роут рождён
+токен-чистым, 7 контракт-гэпов закрыты; owned 23→37, полный пол **19 217/0**, 2×opus APPROVE×2).
+**NEXT = 171.2 ai-admin model governance** (backlog; план `.omx/plans/171.2-...md`);
 параллельно независимо: 169.14 → 169.15 → 169.12 contract closeout (169.14/169.15 `backlog`; 169.12 `review`; plans `.omx/plans/169.14-establish-authoritative-paid-storage-import-lifecycle-and-result-contract.md`, `.omx/plans/169.15-align-shared-frontend-paid-storage-import-boundary.md`, and `.omx/plans/169.12-migrate-storage-analytics-and-paid-storage-import.md`). Story 169.13 remains an independent backlog route.
 **Волна 23-24.08** (два полных цикла + инфраструктура): 169.11 returns — preface #218 (`d6ed2c65`,
 unknown-категория на boundary + нейтральный лейбл) + #219 (`129e99ed`; owned 50→73) + e2e-gap закрыт

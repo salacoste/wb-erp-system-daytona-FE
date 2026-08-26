@@ -1,6 +1,6 @@
 # Story 171.1-FE: Migrate AI Anomaly Triage
 
-Status: review — implementation + r1/r2 fixes on branch; PR/merge/cleanup pending
+Status: done — PR #252 merged (`1c0bb385`); 2-pass fresh review APPROVE×2; e2e N/A; cleanup 0/0/0
 
 ## Story
 
@@ -29,7 +29,7 @@ Plan: `.omx/plans/171.1-migrate-ai-anomaly-triage.md` (authoritative — branch 
   7. pending-state announcement: aria-live="polite" на dialog submitting state OR aria-busy on form (progress announced once — F-12 polite precedent)
   - DISPOSITION-NOT-FIX: severity unrendered (preserve-migration — field plumbed but not displayed today; adding = feature, out of scope; document); pagination single-page v1 (data.page/limit unused — N-A).
 - [x] Task 3: Guards — light: no-palette/no-hex over 4 production files (route was born clean — pin stays); caption/aria-label/tabular pins; unknown-type + 409 + filtered-empty tests (new); pin NOT-severity-rendered? (no — absence pins are brittle; document in Gaps).
-- [x] Task 4: Validation + 2-pass fresh review + PR + cleanup — route **37/4** (baseline 23/3; +14 growth incl. guard); full **19 217/0** (floor 19 204); lint 0/0; tsc 0; max-lines OK; build 0. e2e N/A (no anomalies spec; orders-price-anomaly = different route). Reviews: r1 opus APPROVE (1 MEDIUM static-mock server-param + 3 LOW → F1 apply-time pins + F2 min-h-11 + F4 cause-pin applied `9945ebd2`; F1-reset over-strict pin → cached-entry rationale `8d9867ea` — hook-level gcTime/staleTime override test-client defaults, r2-VERIFIED accurate not laundering); r2 opus **APPROVE — merge gate passes** (2 LOW: L1 min-h-11 source-pin applied `23a8be93`; L2 196-lines extraction → Gaps). CE: 5-file diff, siblings/hooks/api zero-diff.
+- [x] Task 4: Validation + 2-pass fresh review + PR + cleanup — route **37/4** (baseline 23/3; +14 growth incl. guard); full **19 217/0** (floor 19 204); lint 0/0; tsc 0; max-lines OK; build 0. e2e N/A (no anomalies spec; orders-price-anomaly = different route). Reviews: r1 opus APPROVE (1 MEDIUM static-mock server-param + 3 LOW → F1 apply-time pins + F2 min-h-11 + F4 cause-pin applied `9945ebd2`; F1-reset over-strict pin → cached-entry rationale `8d9867ea` — hook-level gcTime/staleTime override test-client defaults, r2-VERIFIED accurate not laundering); r2 opus **APPROVE — merge gate passes** (2 LOW: L1 min-h-11 source-pin applied `23a8be93`; L2 196-lines extraction → Gaps). CE: 5-file diff, siblings/hooks/api zero-diff. PR #252 merged `1c0bb385`; branch remote/local + worktree deleted, 0/0/0 absence proofs.
 
 ## Dev Notes
 
@@ -81,3 +81,4 @@ Diff a133e7dd..HEAD = **5 files** (M AnomaliesList, M ResolveAnomalyDialog, M 2 
 |---|---|
 | 2026-08-26 | Story created from compliance-check recon (0 legacy — token-clean from birth; MINOR-GAP: 7 contract items; severity-render + pagination dispositioned N-A preserve). Plan referenced as authoritative. |
 | 2026-08-26 | r1 fixes (param pins, 44px, cause pin; over-strict reset pin → rationale) + r2 fixes (min-h-11 source pin). Status: ready-for-dev → review. |
+| 2026-08-26 | Implemented + merged: PR #252 (impl `707434fa` + r1 `9945ebd2`/`8d9867ea` + r2 `23a8be93` + story `91c28095`, merge `1c0bb385`); route 37/4, full 19 217/0, e2e N/A; 2×opus APPROVE×2; cleanup 0/0/0. **EPIC 171 OPENED (1/9).** Status: review → done. **Lessons:** (1) Over-strict тест-пин на кэш-гит reset-ключа = провокация флэка; пинь контракт на apply-time, rationale на reset. (2) Родись-чистый роут ≠ no-op: 105.2-префлайт обязан проверять НЕ-палитровые контракты (caption/AX/состояния). (3) grep-пайп маскирует exit-код vitest — проверяй EXIT=$?, не наличие строк вывода. |
