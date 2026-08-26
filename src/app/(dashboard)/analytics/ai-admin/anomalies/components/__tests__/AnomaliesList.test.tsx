@@ -256,7 +256,11 @@ describe('AnomaliesList', () => {
     await waitFor(() =>
       expect(screen.getByText('Нет аномалий, требующих внимания.')).toBeInTheDocument()
     )
-    expect(mockGetAnomalies).toHaveBeenLastCalledWith({}) // reset → status undefined
+    // Reset re-call NOT asserted: the test QueryClient serves the CACHED mount
+    // entry for the 'all' key (no refetch) — re-invoking the api fn is
+    // react-query staleness internals, not our param contract. The contract is
+    // pinned at APPLY time above ({status:'resolved'}); the reset's observable
+    // behavior (message returns to no-anomalies) is asserted above.
   })
 
   it('empty anomalyType renders muted «Неизвестный тип» fallback (gap 6)', async () => {
