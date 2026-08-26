@@ -1,0 +1,116 @@
+{
+  "schemaVersion": 1,
+  "pageVersion": "sha256:e9a1526b85a3662d7e2623daedf0f682cd9c18a2b52bc478bb80b654369a61ea",
+  "claims": [
+    {
+      "id": "claim_07e85bb249e745f69c550323b16664e1",
+      "statement": "Current delivery status: Epic 127 is done; Epic 162 is done; Epics 163 and 164 are done; Epic 165 stories 165.1-165.3 are done while 165.4 and 165.5 are deferred (backend-gated).",
+      "evidence": [
+        {
+          "resource": "repo://README.md",
+          "version": "repo-file-v1:sha256:4e3f44bf5b86e1c45307f91b5de80ee587959c736145a7c5384e1b37dbed3b9f"
+        }
+      ]
+    },
+    {
+      "id": "claim_61682839290d40cf8b0bb2d34e55d52b",
+      "statement": "Development and validation of the frontend are local-only: there is no deployment target or production platform; the frontend runs locally on port 3100 and the backend on port 3000.",
+      "evidence": [
+        {
+          "resource": "repo://README.md",
+          "version": "repo-file-v1:sha256:4e3f44bf5b86e1c45307f91b5de80ee587959c736145a7c5384e1b37dbed3b9f"
+        }
+      ]
+    },
+    {
+      "id": "claim_684846fed0874ca4aae174bf334d1754",
+      "statement": "The app is a Wildberries seller financial analytics dashboard built on Next.js 16 App Router + TypeScript + Tailwind CSS + shadcn/ui (Radix), with TanStack Query v5 for server state, Zustand for client state, Vitest/MSW and Playwright E2E for testing, and a REST backend via NEXT_PUBLIC_API_URL.",
+      "evidence": [
+        {
+          "resource": "repo://README.md",
+          "version": "repo-file-v1:sha256:4e3f44bf5b86e1c45307f91b5de80ee587959c736145a7c5384e1b37dbed3b9f"
+        }
+      ]
+    },
+    {
+      "id": "claim_9682dbb9da65496e8cb391069b72c365",
+      "statement": "Local validation commands include npm run dev (port 3100), build, lint (zero-warning policy, Story 164.4), type-check, test (Vitest), test:e2e / test:e2e:full / test:e2e:preflight (Playwright with preflight gate), check:privacy, test:privacy, check:docs, and check:anti-pattern-8-normalizer.",
+      "evidence": [
+        {
+          "resource": "repo://README.md",
+          "version": "repo-file-v1:sha256:4e3f44bf5b86e1c45307f91b5de80ee587959c736145a7c5384e1b37dbed3b9f"
+        }
+      ]
+    },
+    {
+      "id": "claim_72df5eaf202143038b58f48061b0b78a",
+      "statement": "The Epics 166–174 shadcn full-UI migration program has Epic 166 (foundation 166.1-166.8), Epic 167 (AppShell/auth), and Epic 168 (analytics core) closed; Epic 169 has route work 169.1-169.13 merged with the Correct Course sequence 169.14 (backend paid-storage contract) → 169.15 (shared FE boundary) → 169.12 bounded closeout outstanding.",
+      "evidence": [
+        {
+          "resource": "repo://_bmad-output/implementation-artifacts/sprint-status.yaml",
+          "version": "repo-file-v1:sha256:8e07967a8ac086235377500edf21fdffccad3f36613cacd1c1253fb8a9608851"
+        },
+        {
+          "resource": "repo://_bmad-output/planning-artifacts/shadcn-migration-status-and-debt-registry.md#L11-L34",
+          "version": "repo-lines-v1:sha256:4315e25a96e1dc22c4a7a67bbd1de26d391917a11abb98050a4f38f55b954c10:eyJzZWxlY3RlZExpbmVDb3VudCI6MjQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImM2Y2MxZDU3MTQ2ZGY1ZTEyNzEwOWExYmYwMTk5MTVkMTIxMzFlZWJlZmQ4M2M5YmI3NjY4ZTIwN2VkM2Q1Y2EiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjcxZmE3MDBhZTc2N2JkMGRiMzU1ZGM2NTI1YWU0MjRiODg2NTJjODk0ZTc0NzVjMDY4MTdkMDNiNTQ0YzUxYmYiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImM1YWQ0NGY2M2FkZTMxMDg3NzA0NWRiZjM4MjllMzdlYmFkZmU5ZmU3NmY5ODNkMmI4ZjJiOWJlNWI0Y2NhYzYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6Ijc2M2RlMDQ5M2U4OTBiMDI2MDQ2NDAwYTYxM2NkOTliMDAxNDU4ZGU0MDBmNTU5NGVkYzc3Y2U5YjA0OTQ0N2QifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_98a84272332b47e6bbc42371df92c426",
+      "statement": "Epic 170 (marketing/marketplace analytics) is complete 7/7: 170.1 advertising workspace, 170.2 campaign bid-recommendation detail, 170.3 brand margin, 170.4 brand share, 170.5 category margin, 170.6 advertising–organic cross-reference, and 170.7 search analytics were all merged 2026-08-25/26.",
+      "evidence": [
+        {
+          "resource": "repo://_bmad-output/implementation-artifacts/sprint-status.yaml#L795-L804",
+          "version": "repo-lines-v1:sha256:c72ba334854d5ec95a57b8bc908848c3957c48aab493bcdb948b6dec4b5d975a:eyJzZWxlY3RlZExpbmVDb3VudCI6MTAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjA3ZjJmMWMwYjFiODRmZDc2ZDg2YThiN2UyNzkwMmE1Yjk0YTdmYzQ0Yzc0OTQwZjUwMzhiNzNmZGFlMDIyYmYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjFkYTBmZWZlNDRjMzU2MjVkYjc1ZGE4ZmU3YWQ5M2U1Y2QxMWY2M2E3MmQzODViMDJiZjVmYTk4MzVkYjM3OTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjQzY2M5ZGQyZjQ3NTVjMjAyMjI1Njk4MGVmNmM2ZTQ4ZDFlNDBhMTE5NmY4OTM3N2ZmNjE2YTU1M2ZiYzAyNDUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjA2Njc5MTNjZGEzODk2YzliZDFjNzFiOGFmNmNjMTE1MjQwMjZmNGFhMDIzYTJlMDcwN2Y5MGQ5NTE3ODI5MzkifQ"
+        },
+        {
+          "resource": "repo://_bmad-output/planning-artifacts/shadcn-migration-status-and-debt-registry.md#L36-L50",
+          "version": "repo-lines-v1:sha256:d6b857f1ac788c1071a27695418b21c657865dc92f537eae224bf49332a70c2e:eyJzZWxlY3RlZExpbmVDb3VudCI6MTUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQyMzNkMTkyMTlmZTAzZjVlMWEwNjQyOWI1ZTdlN2IwOGEyYzJlNWUwNDIzMzk4YjIyNzFiNzE3NGJkMDhjODYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImY1OGQ5ODlkYjZkMjkwOWNjMWJhMDA3MGJmNDY5MmVhZWZjZTVmZGViOTFmOGYwMmFmODc1OTUwYzFiODExNjciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjFjY2ZhZGRiZGY5YjA1NzcwZDBjOWUxMDM1ZWNjZjZhMjRlZGE5NGY5NzBhZDU3MjdmNGEyMmRlMjQ0MTc4MDciLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImI1MWFmODQ4MTEwZGNhYjQxYmY5Zjg1NjU2NTVjNGJhOGI4ZDM1MGY4ZTlkNTVlYTM1MDdjMDU3YTMwMzAzZjQifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_92633316fb044ba9ad9942c0bf9cc2af",
+      "statement": "Epic 171 (AI/forecast analytics) is in progress at 6/9: 171.1 AI anomaly triage, 171.2 AI admin model governance, 171.3 AI preferences, 171.4 forecast workspace, 171.5 forecast accuracy, and 171.6 model registry/training entry are done; 171.7 model evaluations list, 171.8 evaluation SKU-accuracy detail, and 171.9 model performance detail remain to close the /analytics/models tree.",
+      "evidence": [
+        {
+          "resource": "repo://_bmad-output/implementation-artifacts/sprint-status.yaml#L806-L817",
+          "version": "repo-lines-v1:sha256:101f88326a00d67a212509b9f163d60ffdca08e245d48c33292db77fb5387205:eyJzZWxlY3RlZExpbmVDb3VudCI6MTIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImYyYjNiODEyMmQ5M2ZjMzJkYjgyMGVhYzE5NDhhZDAxY2M2ZjlhMzU0NzMzNTg5NmMzYzMwY2IwODMyZDE4MzYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjIyY2Y0NmNmOWYxNWE0NGUxM2FkZWJlY2E1MGRjZTAxMzY5YTkzMTQ2MjFhYWFiN2MwMmI3ZWYwYWFkOGZlMzAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImFhNTQ2MjJhNDIxZjA4Mjc3Y2I5ODZlOWNmMjI1MzU2Nzg2YzRlYjY4Njg5MzU0ZTZjNjg5NmU1YTZjYTc1ZDQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6Ijk5NzQ3YjNhZmQ0ZDc1ZGNlNjBmYWRiMTEwZTU0MGM4OTllMGYzNzVlZGU0YTJhMmU5NTY3ODIwMTlmMmM3YTcifQ"
+        },
+        {
+          "resource": "repo://docs/HANDOFF-2026-08-26-epic-171-models-tree-and-full-debt-registry.md#L107-L115",
+          "version": "repo-lines-v1:sha256:891a6aa6070a5dfbac30a24b55d5aa766fb33226d80319e7343831d59a51629c:eyJzZWxlY3RlZExpbmVDb3VudCI6OSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZGZmYjFiYjRiYzdhZmMxMmNiMjkyNGU1MGFlYmE2NTRlNjZmM2VlMDUwZjM2MjE3ZTc3MGNjYmFkMzI1NjhiMSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiYzkyN2E5OTFkODhhYTNjOGIwZmI1OTM0ZjFkMGMzOWY4ZWUwOWIxNDJhMWQyMzg4N2E4YjEyZmYwNWEyYzU2OCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZWFlYzk0OTRmYWViMmRmYjJiMTMwYzg0YzNkZGFmMGRkZDE4N2RmOTA2ZTY2ZTk4NWY0NzZlYTFhMWQyNmUzNiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMWJjYzg5NGNhYTM5MWEzYmQyNTgxODY2NTkxYWEyMTMyZTM4ZTNjYzQ5NjkxYTYyMWE5MjQ0NjAxZmNiYzA2MiJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_dd79ea97bda64354be2e99e3694ff328",
+      "statement": "As of the 2026-08-26 handoff (after Story 171.6, main = c7492829), the Epics 166–174 migration stands at 51/94 canonical Stories with the full Vitest floor at 19 253/0, lint 0/0, and tsc 0; the consolidated status/debt registry is updated at the end of each orchestrator session.",
+      "evidence": [
+        {
+          "resource": "repo://_bmad-output/planning-artifacts/shadcn-migration-status-and-debt-registry.md#L1-L7",
+          "version": "repo-lines-v1:sha256:55b6868c7172f7f9e2f2d36095e9dda6d1a59b6cc9ec02fd257b4a6ca803691c:eyJzZWxlY3RlZExpbmVDb3VudCI6NywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZTgyZDUxODRlN2I0OWM4ZDIzZDNmZGYzZDg0OTA5MTBkMGJkNzQwZTAyMWE2MzA4NTJkOTFjMjZiYWVlZGQzYSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNjZlNjRmYmJkYmFhMzRhNWQ0NjE3NTgyOWEwMjVhNjA2MWJiZWU3YmFlMGE3YWM3ZTczODY5MmQ3MTFjMWZiYSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjAsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZTNiMGM0NDI5OGZjMWMxNDlhZmJmNGM4OTk2ZmI5MjQyN2FlNDFlNDY0OWI5MzRjYTQ5NTk5MWI3ODUyYjg1NSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiYzVhZDQ0ZjYzYWRlMzEwODc3MDQ1ZGJmMzgyOWUzN2ViYWRmZTlmZTc2Zjk4M2QyYjhmMmI5YmU1YjRjY2FjNiJ9"
+        },
+        {
+          "resource": "repo://docs/HANDOFF-2026-08-26-epic-171-models-tree-and-full-debt-registry.md#L9-L19",
+          "version": "repo-lines-v1:sha256:ecef5b1449ac1cac8f1f771bcf7071fc72a4a48706d6751eb740bb3b7a3209fb:eyJzZWxlY3RlZExpbmVDb3VudCI6MTEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjMzMzhjZDg5NGZlZjM3MDZhM2E2ODM3MWEyMTBiMTdjODZkZGQ1MmZkYjZmOGNiMGVjMGRhMzk3MjlhNzRiOWYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjAwMWYyZWMxNzU5M2MxMDU0ZWI0NjM2N2Q4NDUzZWYyNGExNzNjZTk2YjcxMTdkOTFmOWE2OGQ0NGZlZjhiMDEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6Ijk1OWRhYjAyYjBhNTU4OTA1ODc4MjExZjBlODdhMTFkYjUzMGRkYjg2Nzk0MTlkOTI4Yzk5ZWQzYjZlZjdhNTgifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_96d258cda9124aaf8ed68b675a35061b",
+      "statement": "OpenWiki navigation maps the system into Architecture (configuration, route groups, auth proxy), Design System (Tailwind v4 semantic tokens, shadcn primitives, product composition families, migration program), API Layer & Normalizers (Boundary Normalizer Pattern, AP#8, CSV export, communications write-back), Domain Logic, Conventions & Quality Gates, and Testing & Operations.",
+      "evidence": [
+        {
+          "resource": "repo://README.md",
+          "version": "repo-file-v1:sha256:4e3f44bf5b86e1c45307f91b5de80ee587959c736145a7c5384e1b37dbed3b9f"
+        }
+      ]
+    }
+  ],
+  "verification": {
+    "by": "openwiki/0.4.0",
+    "at": "2026-08-26T08:47:51.873Z"
+  }
+}

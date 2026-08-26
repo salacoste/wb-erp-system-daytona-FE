@@ -1,7 +1,30 @@
 ---
 type: "Architecture Overview"
 title: "API Layer & Normalizers"
-description: "API client singleton with auto-injected auth and cabinet headers, the Boundary Normalizer Pattern that transforms backend responses into frontend-canonical shapes, Anti-Pattern #8 null semantics, CSV export infrastructure, and the communications gated write-back with async 202 job polling."
+description: "API client singleton with auto-injected auth and cabinet headers, the Boundary Normalizer Pattern that transforms backend responses into frontend-canonical shapes, the Epic 170/171 advertising and search normalizers with AP#8 null semantics, CSV export infrastructure, and the communications gated write-back with async 202 job polling."
+verified:
+  - by: openwiki/0.4.0
+    at: 2026-08-26T08:47:51.873Z
+sources:
+  - id: openwiki-source-799369765e8510490f4c8afb
+    resource: repo://src/lib/api/__tests__/advertising-analytics-normalizer.test.ts
+  - id: openwiki-source-3136b8e4d07052b039480489
+    resource: repo://src/lib/api/advertising-analytics-normalizer.ts
+  - id: openwiki-source-ef4632aa4600675d7d7f4061
+    resource: repo://src/lib/api/advertising-campaigns-normalizer.ts
+  - id: openwiki-source-1a6492e0029647deb3afad70
+    resource: repo://src/lib/api/search-analytics-item-normalizer.ts
+  - id: openwiki-source-56ba59b2a1b792b5b080168f
+    resource: repo://src/lib/api/search-position-trends-normalizer.ts
+  - id: openwiki-source-0a8f3c97ee393f0b1753cfb2
+    resource: repo://src/lib/csv/search-csv-export.ts
+  - id: openwiki-source-2a7d3923430c2d4ebc362db4
+    resource: repo://src/types/advertising-analytics/analytics.ts
+  - id: openwiki-source-7a5a7c57c8f80800c8bbafa3
+    resource: repo://src/types/search-analytics.ts
+  - id: openwiki-source-ad938ca2eb935c98c4827d9c
+    resource: repo://src/types/search-position-trends.ts
+generated: {by: "openwiki/0.4.0", at: "2026-08-26T08:47:51.873Z"}
 ---
 # API Layer & Normalizers
 
@@ -71,6 +94,43 @@ Each domain follows the same pattern:
 - `finances-normalizer.ts` — Account balance (money fields preserve null, AP#8) and financial documents; the BE already maps snake_case → camelCase and unwraps the WB SDK envelope server-side, so the FE consumes bare camelCase shapes
 - `price-recommendations-normalizer.ts` — Per-SKU repricing recommendations; unknown `priceBasis` enum values are **indicated** as `'UNKNOWN'` (a distinct badge) rather than silently relabeled, `validationFlags` coerced to a string array, `alternativeBasisPrice` kept nullable (AP#8). See [Domain Logic — Pricing Basis](domain-logic.md#pricing-basis-repricing-spp-1-lane)
 - `monitoring-normalizer.ts` / `monitoring-grid-normalizer.ts` — Pipeline health for the `/monitor` and `/monitoring` routes; both pass through the backend-authored, schedule-aware lag label `dataLagDisplay` (trimmed; `null` when the pipeline never synced). `MonitorPipelineHealth` and `PipelineStatusGrid` render `dataLagDisplay` as authoritative and fall back to client-side `formatRelativeTime(lastSuccessAt)` only when it is absent — the raw `dataLagMinutes` no longer drives the displayed lag, because a naive minutes count misrepresents pipelines that run on infrequent schedules. Focused tests: `src/lib/api/__tests__/monitoring-normalizer.test.ts`, `src/lib/api/__tests__/monitoring-grid-normalizer.test.ts`, `src/app/(dashboard)/monitor/components/__tests__/monitor-pipeline-utils.test.ts`.
+- `advertising-analytics-normalizer.ts`, `advertising-campaigns-normalizer.ts`, `search-analytics-item-normalizer.ts`, `search-position-trends-normalizer.ts` — the Epic 170/171 advertising & search normalizers, detailed in the next section.
+
+### Advertising & Search normalizers (Epic 170/171)
+
+The advertising and search domains consolidate their normalizers in `src/lib/api/` and their canonical frontend shapes in `src/types/`. Backend returns camelCase; these normalizers convert to frontend-canonical shapes (advertising item rows use snake_case fields like `total_sales`, `campaign_id`; search items use camelCase).
+
+**`advertising-analytics-normalizer.ts`** — `normalizeAdvertisingResponse(raw, paramsFrom, paramsTo, paramsViewBy?)` maps the backend `{ items, summary, query, pagination, cachedAt?, daily?, multiCampaignSkuWarnings? }` envelope to `AdvertisingAnalyticsResponse` (`src/types/advertising-analytics/analytics.ts`): `{ meta, summary, data, daily?, multiCampaignSkuWarnings? }`. Key behaviors:
+
+- **`efficiency_status` is authoritatively guarded here** (F-50): out-of-union backend values are sanitized to `'unknown'` with a `logger.warn` (empty/missing is a legitimate no-data case — no warn), so `EfficiencyBadge` (F-47) and the typed helpers `isAttentionRequired`/`isLossStatus` are only defense-in-depth.
+- **AP#8 split per iter-130**: `revenue`, `profit`, `roas`, `roi`, `ctr`, `cpc`, `conversion_rate`, `profit_after_ads` use `toNullableNumber` (null renders "—", never a false "0 ₽"/"0 %"), while counts (`views`, `clicks`, `orders`, `spend`, `total_sales`, …) use `toCount`.
+- **Cast-free enum lookups (Story 170.1 Task 0)**: `ViewByMode` is validated against a `ReadonlySet` (`sku`/`campaign`/`brand`/`category`) with `'sku'` fallthrough; item `type` must be `'merged_group' | 'individual'` or becomes `undefined`; absent `cachedAt` honestly maps to `meta.last_sync = null` (fabricated NOW removed).
+- **Drill-through key precedence (FE-16)**: campaign-grouped items expose the id as `advertId`; the normalizer reads `advertId` first and falls back to `campaignId`, otherwise the drill-through Link for campaign view never renders.
+- **Daily ROAS is computed at the boundary**: `roas = revenue_attributed / spend`, `null` when `spend` is 0 or revenue is missing.
+
+**`advertising-campaigns-normalizer.ts`** — `normalizeCampaignsResponse` rebuilds `{ meta: { total_count, active_count }, data }` from the backend `{ campaigns, total, … }` array; `active_count` is derived client-side by counting campaigns with backend `status === 9`. `normalizeCampaign` maps camelCase campaign fields to the FE `Campaign` shape (`campaign_id`, `type_name` defaulting to «Неизвестно», `nm_ids` coerced to strings, `placements` with tri-state `carousel`). `normalizeSyncStatusResponse` sanitizes `SyncTaskStatus` via an exhaustive `Record<SyncTaskStatus, true>` map (`SYNC_STATUS_MEMBERS` — adding a union member without updating the map is a compile error); invalid values map to the neutral `'idle'` with `logger.warn`, since the union has no `'unknown'` member and the badge has its own fallback.
+
+**`search-analytics-item-normalizer.ts`** — per-item normalizers extracted from `search-analytics-normalizer.ts` for the three search endpoints (`/v1/analytics/search/by-product`, `/by-query`, `/orders`; types in `src/types/search-analytics.ts`):
+
+- `avgPosition` is a 1-based position — `null` stays `null`, never `?? 0` (170.7).
+- `avgCtr` is a rate → `toNullableNumber` (AP#8 split); impressions/clicks/orders are counts → `toCount`.
+- `normalizeSearchOrderItem` **absorbs key drift**: returns `null` for un-renderable items (key missing or a non-string/number type), coerces numeric keys to string, and the consumer filters `null`s from the array. Optional fields (`vendorCode`, `uniqueProducts`, `uniqueQueries`) are set only when present — `undefined` is canonicalized to omission, not `null`, preserving optional-property semantics.
+- `searchCartAdds` is an additive semantic alias for `totalClicks` (Request #178): WB's openCard→impressions / addToCart→clicks column mislabeling.
+
+**`search-position-trends-normalizer.ts`** — four endpoint normalizers (types in `src/types/search-position-trends.ts`): `normalizePositionTrendsResponse` (week-over-week movers + page-one candidates + summary), `normalizePositionMoversResponse` (rolling `7d | 14d | 30d` period), `normalizePageOneOpportunitiesResponse`, and `normalizePositionHistoryResponse` (per-SKU daily history). Notable semantics:
+
+- `TrendDirection` includes `'unknown'` (170.7): missing/unrecognized direction → `'unknown'`, never a fabricated `'stable'`. Unrecognized values warn **once per distinct value** (`warnedTrendValues` set) so a 500-row garbage payload does not spam 500 warns; an absent trend is legitimate no-data and is silently `'unknown'`.
+- Position fields (`currentAvgPosition`, `previousAvgPosition`, `positionChange`, deltas) and `ctr` are nullable ratios (AP#8); counts, `positionsAway`, and summary counts use `toCount`.
+
+Focused tests: `src/lib/api/__tests__/advertising-analytics-normalizer.test.ts` (happy-path full response, nullability, type coercion, empty shapes).
+
+### Search CSV export
+
+`src/lib/csv/search-csv-export.ts` — pure, side-effect-free CSV builders for the search domain; Blob/DOM/download are handled by `<ExportCsvButton>`:
+
+- `exportSearchByProductToCsv(queries)`, `exportSearchByQueryToCsv(products)`, `exportSearchOrdersToCsv(items)` — each produces UTF-8-BOM-prefixed, `\r\n`-joined CSV where every cell passes through `escapeCsvCell`; an empty array yields BOM + headers only.
+- **Unknown numeric → empty cell, uniformly** (preface-review F2): `avgPosition == null` and `fmtPct(null)` render `''`, not `'—'`, so spreadsheet blank filters catch all unknowns — a deliberate divergence from the on-screen "—" rendering.
+- Numbers are formatted with the Russian locale (`toLocaleString('ru-RU')`); percentages use one decimal and a ` %` suffix; `searchCartAdds`/`uniqueProducts` fall back to `0` (counts, AP#8-legal).
 
 ### Naming conventions
 - `normalize<Name>Response` — endpoint response normalizer

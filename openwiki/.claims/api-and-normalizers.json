@@ -1,0 +1,174 @@
+{
+  "schemaVersion": 1,
+  "pageVersion": "sha256:fd5b91e3133a5231d17c0d132accc156a0d92436a650aba5e689cab405d79311",
+  "claims": [
+    {
+      "id": "claim_3c95e61d2ae84921b460d8cba8de0595",
+      "statement": "normalizeAdvertisingResponse maps the backend camelCase envelope { items, summary, query, cachedAt?, daily?, multiCampaignSkuWarnings? } from GET /v1/analytics/advertising to the frontend-canonical AdvertisingAnalyticsResponse { meta, summary, data, daily?, multiCampaignSkuWarnings? } defined in src/types/advertising-analytics/analytics.ts, using request params as fallbacks for meta.date_range and meta.view_by.",
+      "evidence": [
+        {
+          "resource": "repo://src/lib/api/advertising-analytics-normalizer.ts#L229-L258",
+          "version": "repo-lines-v1:sha256:89cd4e90426859ef16fe4f51b067e668d0112603193331770a5189f6dbee0922:eyJzZWxlY3RlZExpbmVDb3VudCI6MzAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjJhYjIyNmVhZWE4YjEzOTE3OTRiNmNmZDMzMWU4OTdiN2IwMGViYTkwMjM4OGE0ZWU3Y2U4ODg4MWViMDU1YjYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjEwOGIyNjg1MmUxMDY2Njc5MDhmOWNiZmVkOWZiNDFjNTQ0YmRjMjNlNDIzZDE2ZDA0MmM1MmRmNjgzODUxMTkiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        },
+        {
+          "resource": "repo://src/types/advertising-analytics/analytics.ts#L105-L111",
+          "version": "repo-lines-v1:sha256:e069f4002746a76f0b5c59749067a810efeb3d5171c39559c97045d7abf92956:eyJzZWxlY3RlZExpbmVDb3VudCI6NywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMTRhZmI4NTM5YzA3OTc1ZWU0ZDRiZTJkZWUzMmRiODYzYTU2OWVhMzU3YzBjYzE3ZWQ1MGE5MTE5N2NlNWE5OSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNDEyY2EzNDVjY2Y3NWJmOWMwODA2YmNlNjk1YmU4ZGU4MDhiNzk5ODQyNTFhN2E1NGQyMDJjZjYxMDFkZDQ1MSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZWI0YmU3YWEyNmNhNzUzMzUyMzcwOWRlMjEyMjQyMWYxNjRlZjM2NGJiNzE1N2MwZmRkNzZlYzRkYjcxNTdhMSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNzRiMDdkYmE3MWI2ZGMwZjY4Y2EzYTkxMDFjNzhkMzQyNWE4YjM5MmZjZjc5ODMzMDM4NTg4ZGMxYWI5NDg5MCJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_aa86b2804f744d84893f1aca2cdd180f",
+      "statement": "The advertising normalizer is the authoritative guard for efficiency_status (F-50): any out-of-union backend value is sanitized to 'unknown' with a logger.warn (empty/missing is silent), so EfficiencyBadge and the typed helpers isAttentionRequired/isLossStatus are defense-in-depth only.",
+      "evidence": [
+        {
+          "resource": "repo://src/lib/api/advertising-analytics-normalizer.ts#L32-L57",
+          "version": "repo-lines-v1:sha256:68aee76d10835379984d6ab385e7ce96044990573ce5dd67137189973498931e:eyJzZWxlY3RlZExpbmVDb3VudCI6MjYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImExOGMwMDYzMTM4ZGM0NzdiMWZkMzU0MWJiYTAyZjQ1N2Q2NTExNzBhZGUzMDVkMGMyMDExYjIyY2I0OGQwODIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjQxYzU2OTViNmYyM2IxNTJiNWNjMmZhOTFiNzQ0MjYxNzE1ODkxZjIzMTAwNTJkNzYwY2Y0MTNmMzE3MjhiY2EiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjJhOTA1MTQzYjcyNzcyMDhiY2U4YTYxMWIxMGQ3YmU1ZjVjMWI1MTQwODRmZTQwOWVlNGY4NDk5NWE0ZWViZWIifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_bc28036465614999a4ff5bd88cf50c21",
+      "statement": "In the advertising item/summary normalizers, money and rate fields (revenue, profit, roas, roi, ctr, cpc, conversion_rate, profit_after_ads, avgRoas, avgRoi) preserve null via toNullableNumber (rendering '—'), while counts (views, clicks, orders, spend, total_sales, organic_sales) default to 0 via toCount — the AP#8 split.",
+      "evidence": [
+        {
+          "resource": "repo://src/lib/api/advertising-analytics-normalizer.ts#L171-L188",
+          "version": "repo-lines-v1:sha256:5035439db9491fb6b2d8d1a70aa8833925fc105e629e21e909f2f9c6f086aef1:eyJzZWxlY3RlZExpbmVDb3VudCI6MTgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImUyMDBhNGNhYjczOTVjN2NkMGQxMzc3N2NiOWExNzEwYjc1YzljOTA5NmI0ODM5NjRhZjNlYTdkOWQ5YzY4ZDgiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjgwZGNmZDRkMzI4MDIxZGQwZWZmYjYwMjg0MWRhZGU1OTdmM2QwMjM2ZTlmOWVmODhjOGQzMjkyNzkzODQ4YWIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImYyNDI0NjMzZjY1YWZkOWRlZDc1Y2MzNDFiZmJkOGYyMDg2NjgyMjg1OGQ5YzkzNGM4Mjg5MWU0ZjNkZjZmNTAiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjE0ZjA5ZWUzYzEyNDEwZWUzNWU0NDliZTU1YzE1ZWU0ZTMyZWM3ZDE3OGFmYzhlYzE4MTNlZmEyNjVjYzRlY2EifQ"
+        },
+        {
+          "resource": "repo://src/types/advertising-analytics/analytics.ts#L67-L80",
+          "version": "repo-lines-v1:sha256:143492cccf7833b24699ef8f52ab9a50d82c08c0dcbc767f77bfd9df621564c5:eyJzZWxlY3RlZExpbmVDb3VudCI6MTQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImY2YzkyOTJjN2RkNWE3YTk0YTAwM2NmNGQ0ZjRhNWYyYmFkMDA0MDEyZWVmNTVmZmQ1NjU5ZTEwMjJhNGNiZWEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImI1NTBjZDIzNTY2ODdiMGY4OGY3YTI1YzgxN2U5MGIxYzQ0MThhY2RiZWRjMjhmNjFmOWRmY2FlZGVlYmNjYzIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjZkMWJmZDkwNmNkNTg0NjBjYjlmYzMwOWE4OWM3NWJmMGFkNzNhMjQ0YWQ5ODE4YTIxOWNmZTdkZjViMWFlOTgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImNkMGFlZjU2OWQ2MGQ2YzcxNGY2YzMxMjMxOGFhYzNjNTdhNDAzMmExYmYxNjQ4YzIxN2U3OTUwNDFlMWFiNWMifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_98e16970cf6f49bb9a7d8717bb6545d3",
+      "statement": "Story 170.1 Task 0 removed unvalidated `as` casts: ViewByMode is validated against a ReadonlySet with 'sku' fallthrough, item type must be 'merged_group'|'individual' or becomes undefined, and an absent cachedAt honestly maps to meta.last_sync = null (fabricated NOW removed).",
+      "evidence": [
+        {
+          "resource": "repo://src/lib/api/advertising-analytics-normalizer.ts#L245-L249",
+          "version": "repo-lines-v1:sha256:8fbad8bd8bc13dd6d757fc357f6f452d5c439b3ee31b5713f5057bf952a8761b:eyJzZWxlY3RlZExpbmVDb3VudCI6NSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMzJmYTVjMThmZGIzZDBmZjdkNjFiYzE3Njk1OWRjZTAwMDA2MjlmMjlkYWU0NTllMGJiOGUzYzMwYjliMGFiZiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiOTQ1NTIxZTg4NzAxNjRkYTBmYmVhZGNjYmI4YTZhZWFkMDRmMDUxZWM2NzM5MDY2NWIzYTFjMjY2ZjEyMDE5MCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiY2M5Nzg2N2VjY2ZiMmQyMDk4ZjExMjdiMTgyMDQ0MjgzZDJjYzViZGRjNzY0Yjk4OWJjYzI3ZDVmYTFjMmYxYyIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMjQ5MWQyNzE4NmIwMTBjMTY0MjNiNDYxMmExYjk2OGJmYzk4ZTBjODlmMDUzMzYxMTM4OTI4OGM5YzhhMWJkNCJ9"
+        },
+        {
+          "resource": "repo://src/lib/api/advertising-analytics-normalizer.ts#L63-L69",
+          "version": "repo-lines-v1:sha256:a43c0979e40257c04f06808331265b07a285732ed01d5cf08b63c7ca16f7faaa:eyJzZWxlY3RlZExpbmVDb3VudCI6NywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZmNiMzU3NGVlMmQ1OWMxOTI5ZDJiOGZiNTNhYTBmODk2Y2UzNjA4ODA4MGNjMWI2MTRkMjA4ZTVhZDY2MWQwZSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNDEyY2EzNDVjY2Y3NWJmOWMwODA2YmNlNjk1YmU4ZGU4MDhiNzk5ODQyNTFhN2E1NGQyMDJjZjYxMDFkZDQ1MSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMTk2MWE0MjY4ZDhkNjQ3ZTAyMmEzNTcyMGNmODg0N2E1OGFkOThlMTkwNTMyN2U1YTYzYzFjYjg3OWMzNjE5ZCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMGIxMjIxNTdhMDg0NWFkYzEwZmVlYWMyNWFjODg1YWYzOTk3NmFjNDM0MWNlOGI5ZDIyMjI1MjQ2ZjJmOWM5YiJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_a1627572faec41b5907d17da1e544236",
+      "statement": "campaign_id is read with advertId-first precedence and campaignId fallback (FE-16): campaign-grouped items expose the id as advertId, and reading only campaignId left campaign_id undefined for campaign view so the drill-through Link never rendered.",
+      "evidence": [
+        {
+          "resource": "repo://src/lib/api/advertising-analytics-normalizer.ts#L158-L167",
+          "version": "repo-lines-v1:sha256:8a4d5b9c208b00f2c98e04f12b3be45e68731354cc3342743bf53a9caf7591c5:eyJzZWxlY3RlZExpbmVDb3VudCI6MTAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjliOGU1MmU5NGY0MjRjODY4YmYxZmUwYmU4MDliZDQ1YmRjZWRjNDMzZTRjMTQwYWRlNWU3Nzg0ODAwY2QyYTAiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImVhNmJjM2U1YjQ4OWU2YTIwYjMwNmZiOTMyZDZiZGM5NTc0MmM3OTBhNGVjYjc3YThjODE3NjIzZTY0OGYyYWQiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImNmODlmNjFjNTU3OTRjZTRkMjYwMDQzMTAyNmY3ZjNlODViNGFjNmE1YmEyNzJlNjAyMTNkYTc3YTFjMzVmNjYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImYyNDI0NjMzZjY1YWZkOWRlZDc1Y2MzNDFiZmJkOGYyMDg2NjgyMjg1OGQ5YzkzNGM4Mjg5MWU0ZjNkZjZmNTAifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_abc0498fe5184c838c17aac2a50c458d",
+      "statement": "Daily advertising items compute roas at the boundary as revenue_attributed / spend, returning null when spend is 0 or revenue is missing; ctr/cpc/revenue_attributed are optional and null-coerced to undefined.",
+      "evidence": [
+        {
+          "resource": "repo://src/lib/api/advertising-analytics-normalizer.ts#L197-L214",
+          "version": "repo-lines-v1:sha256:1947972e1ae49709ccf0ac54f7cf0ced319afbc69a8c1bb8c9351461149207a8:eyJzZWxlY3RlZExpbmVDb3VudCI6MTgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImM1MjQwOGIwZGYyZTZmMzlmYmEzN2NhOTA3NmFkMDM0MTgyZGMyODc2M2Q1OTA2YTJkYWM2YWQ0MDFmYzU2MDgiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImZiNTgwZTk2NGY4M2E0NzNmNDNkNDQzODQ2Mjk0OWQ2OGI1NjAwZmRhNzg3ZjE2Mzc0NWQwMGRlODljYmYzNmEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjNlMDIxYWQ5NWFlOWRlMjVhYWQzMzFhNTYwMDlkMTFkOWVlZjA5N2ZhM2JmMmZlMjlmYTFiYTk0YzhmYjBiOGYifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_f4cf5fdacfaf4378839e2ee563115b80",
+      "statement": "normalizeCampaignsResponse rebuilds the FE CampaignsResponse { meta: { total_count, active_count }, data } from the backend { campaigns, total } array, deriving active_count client-side by counting campaigns with backend status === 9; normalizeCampaign maps camelCase to FE snake_case fields with 'Неизвестно' defaults and placements normalized to a tri-state carousel.",
+      "evidence": [
+        {
+          "resource": "repo://src/lib/api/advertising-campaigns-normalizer.ts#L29-L62",
+          "version": "repo-lines-v1:sha256:81303161bfe9c2e8064bafd554b8fa97303ac9463831ae0d5f8cbf6ab6e63e0e:eyJzZWxlY3RlZExpbmVDb3VudCI6MzQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijk5Zjc4Nzc3ODYwOGI2YTA1MDA3MDc0Njg2ZDYyNjBhMGFjMmRjNTFhNDVmZTc3YjJlZWE4OTc1ZTY1YjMyY2EiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjMyYjg3ZGMyNGJhM2QzOTRmOTU1NWU5ZTM1YTc4MTJiOGE0M2FiODQ5YzQzZTdiNWZlOGNmMDkwMzM5NTc4ZjAiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjBhZGFkMDhhMjZkYmMzOWFkNWFkMDBkNjU1ODVjODc3MDRjNzQ0YTk4MGFjMGY5MzhkNzg0OTFmZGNmYjU4ZjAifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_7d01a4c808204d8580e46376081269e9",
+      "statement": "Sync task status is validated via an exhaustive Record<SyncTaskStatus, true> map (SYNC_STATUS_MEMBERS) so adding a union member without updating it is a compile error; invalid non-empty values map to the neutral 'idle' with logger.warn because the SyncTaskStatus union has no 'unknown' member.",
+      "evidence": [
+        {
+          "resource": "repo://src/lib/api/advertising-campaigns-normalizer.ts#L64-L87",
+          "version": "repo-lines-v1:sha256:58b8deef8e35228462c95fbd7fa93f50b00260543c334bbfde34799b9c8cf6a9:eyJzZWxlY3RlZExpbmVDb3VudCI6MjQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijg3YmMwMzcxYmU2ZDQ4OGJiOTlhMTNlZDYyNDZhN2YyYzlkMmE1Y2Q5MDE0NGJlOTNkNzU3YTZkNDcyZWQ0YzAiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImZiNTgwZTk2NGY4M2E0NzNmNDNkNDQzODQ2Mjk0OWQ2OGI1NjAwZmRhNzg3ZjE2Mzc0NWQwMGRlODljYmYzNmEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjgwYzBhZjdkMmI1ZDA4Njk3MjM4MTBmZjE5NDI1MjM2NWMxOGVjYWEwNDY3Y2ZkMzk2MmQ4YmQ4NzY2MjI2MjcifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_04f12c565d3442e5be244d29e5116aad",
+      "statement": "search-analytics-item-normalizer.ts provides per-item normalizers for the three search endpoints where avgPosition (1-based) and avgCtr preserve null (AP#8), counts use toCount, and searchCartAdds is an additive semantic alias of totalClicks (Request #178, WB column mislabeling).",
+      "evidence": [
+        {
+          "resource": "repo://src/lib/api/search-analytics-item-normalizer.ts#L14-L44",
+          "version": "repo-lines-v1:sha256:2f3570c5ab77f09262400a636f98b1414baa9eaab978e508a2f27da25f24795d:eyJzZWxlY3RlZExpbmVDb3VudCI6MzEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImJkN2U4NTNlZmNmYjlkOTdiY2Q0OGEyZDQ0MjExZTIxN2RhZTRmZTRmNTg4M2FkMTdkY2Y5NjEyNTE4YzkzNWMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjA4ZjFjYjA5N2U3OTQ4NWYwY2EzMzczNTBlZmY1Njk1MTUyZDk1YTc0ZmQ3YmIzOTMyOTQzZWQ0OWM5NGRlNTIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjdlMTkzYTVkYjU0ZTNmNDM2Y2E4ZjE0NTRhZDQ4NDY1Nzc0Y2U3YTQ4N2IwZjRiNDJmMmZhMzI3NDE0ZmI5ZmYifQ"
+        },
+        {
+          "resource": "repo://src/types/search-analytics.ts#L37-L51",
+          "version": "repo-lines-v1:sha256:d5f4430bafefb3b2007bbb5dfe323ec6574cacf460f0fef56405530f6917cea2:eyJzZWxlY3RlZExpbmVDb3VudCI6MTUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImZlOTA1YTM0YWE1YjA3YjUxOWYyMWI2NzUzYTkzY2EzMDEwNDM4YjY4ZTUwNTg5NzJhODc5NTdiNzMwODdkNGYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjA4ZDk4ODQzYjhkYmQ5OWFmOGFiYjFjZjNmM2E0MjMyYmFjZjExYzgwZGZlZjZhZWI0ZTRmZWZhYjEzMjY0MDQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImZmYTA1ZGNmZmVkN2UxMTlhMmI1MWExOWYwNGI4MThlMjUwYzNmYzFkNDQyYWZhYzJhMTk2NGJlYjU3NmE1YTcifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_82dfb28bc83f4ab3a159167021991979",
+      "statement": "normalizeSearchOrderItem absorbs key drift: it returns null for un-renderable items (key missing or a non-string/number type, which the consumer filters out), coerces numeric keys to string, and sets optional fields only when present so undefined canonicalizes to property omission, not null.",
+      "evidence": [
+        {
+          "resource": "repo://src/lib/api/search-analytics-item-normalizer.ts#L46-L86",
+          "version": "repo-lines-v1:sha256:4e244399bd65784f58efc708b29fc9c200a7f4ed3148ab1d06f6c1dfb7ee6b75:eyJzZWxlY3RlZExpbmVDb3VudCI6NDEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImVhZjIyY2YwNzMyNTkyYzI0NzE0MWNiZTYxZWZhMTEwMTI2MTJmNWEzMTIyYjlhZjliYmFmNTJmNTcyNGQxOTQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImZiNTgwZTk2NGY4M2E0NzNmNDNkNDQzODQ2Mjk0OWQ2OGI1NjAwZmRhNzg3ZjE2Mzc0NWQwMGRlODljYmYzNmEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_811192e385a1402ebe4ffa1529947abf",
+      "statement": "search-position-trends-normalizer.ts normalizes four endpoints (position/trends, position-movers, page-one-opportunities, position-history/:nmId); TrendDirection includes 'unknown' so a missing or unrecognized direction renders neutral instead of a fabricated 'stable', and position/ctr fields preserve null per AP#8 while counts and summary counts use toCount.",
+      "evidence": [
+        {
+          "resource": "repo://src/lib/api/search-position-trends-normalizer.ts#L31-L53",
+          "version": "repo-lines-v1:sha256:0e931e08ad37f1a00f15ef794b2bf29bd057fb3a0ff28456880c7e53fab5e8cc:eyJzZWxlY3RlZExpbmVDb3VudCI6MjMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjI0ZDhjNTE4ZDg3MzJiYmQzMDI1NDZjZDAwOTE1NjIzZWE2YzgyZjNlN2E5ZjA4MDEzZjhlMTk0OTkyMTc0ZGQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjllYWRlOGE3MTU3OTRmNjRkMmQyN2IyNzc5NzRkNDIxNDM1NjkzYjkyMDdlZWFiZjE0ZTdhOWE0ZDlhMTliYTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImRiNmIyOTE3MzljOTYwMzZlYTNjMWRhNzA0NGM3MDBhZDUwNGUwODg5YmY1YTQwZTI4MjZjNjMzMmNmMTliN2UifQ"
+        },
+        {
+          "resource": "repo://src/types/search-position-trends.ts#L5-L17",
+          "version": "repo-lines-v1:sha256:9b722ba4577231b37f28cd3a34072dc8515cb88cdc4c690d8a3bbac91271680c:eyJzZWxlY3RlZExpbmVDb3VudCI6MTMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjEwMzVkMjRiM2RiOTg4ZjQ3NWI0NWViNWQ1YmE4ZjVmYjBiYWNiNmFhYmJiOWYwMzQxNTg4ZjJjYmI3NGQ5OWEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjBhYjkzOTgzNDA5MWNmMDhjNDljOGY5ZTg1YWRkNmUxODIwN2U5YjQyYTZjZTIxOTUwMjQ4N2M2Y2FjNjUzY2EiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImQ0YzE1NDBhMGUxZjUzNjg3YThlZDZlZjQ2MDYxNDIzMWVkY2Y3NDQ5YmRiZDQyZDI1OTA5Y2Q1ZWNjOTU2ZTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjdjYmM2YjE4ODQ0ZTA1MTA2OTViM2YyMTM1ZTYxZGE3NTI3ZDhhZjAxMjhlM2ZhNjI2ZDFlY2Q4MmVhMDE0YWEifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_1dc081dd3d01495880b2a1305e6a38ba",
+      "statement": "Unrecognized trend direction values warn exactly once per distinct value via a module-level warnedTrendValues set, so a large garbage payload cannot spam repeated warns; an absent trend is legitimate no-data and is silently 'unknown'.",
+      "evidence": [
+        {
+          "resource": "repo://src/lib/api/search-position-trends-normalizer.ts#L39-L53",
+          "version": "repo-lines-v1:sha256:2f93effa11305d9d7e20105c5cc3fc1f6cd5d558cd574de49a630f17411322b6:eyJzZWxlY3RlZExpbmVDb3VudCI6MTUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjgwODhmOWMxZWJlYzllZDIwZDUwZmZkNDlhMDIxMGUzZDAxYjlhMzg2M2QwNzAzNTJiYzEyYzE5NDE2OTJjMjMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjM4YWI2NTZkZDBjMjJhY2Q4MzM5YjExMThhNDYxODdhMmRiNTI2NGY3YmQ4ZWVmNDY2OWMwNDI4MjRkZjVmY2UiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImRiNmIyOTE3MzljOTYwMzZlYTNjMWRhNzA0NGM3MDBhZDUwNGUwODg5YmY1YTQwZTI4MjZjNjMzMmNmMTliN2UifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_71a8ba06e7544cd08fd0ed9d30eb5ecb",
+      "statement": "src/lib/csv/search-csv-export.ts provides pure, side-effect-free CSV builders (exportSearchByProductToCsv, exportSearchByQueryToCsv, exportSearchOrdersToCsv) that produce UTF-8-BOM CRLF-joined CSV with every cell escaped; unknown numeric values (null position/CTR) uniformly render as empty cells rather than '—' so spreadsheet blank filters catch all unknowns, and empty inputs yield BOM + headers only.",
+      "evidence": [
+        {
+          "resource": "repo://src/lib/csv/search-csv-export.ts#L13-L51",
+          "version": "repo-lines-v1:sha256:ed58bc4cae6c9a3a4139afa407db738e335da1514be9be52adec4965d974b07c:eyJzZWxlY3RlZExpbmVDb3VudCI6MzksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijk4OGYwNGVlM2QwYzRmNWIxNmY0ZTAwYmI0YWVhNTBjMTQ5NzNkZWFlNzNlYTRhOTg0Yzk0MjMyMzllNDVlNWIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImIxMjFjYjcwMTMzY2Y2OGMwYmQzNGRjMTA5NTU2ZWY2NWM2ODgxNmRhN2QzYWE5Yjk0ZTUxZmViNTFmMTNhMGUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6Ijk0YTBmZGQxOTk1YWM2OGQ2MzNjNzE0Mzg2ZjJjZjk3NzExYzZmNDI2ZjhmODAzZDg4MzVmMjg1OTlmNTgxZjcifQ"
+        },
+        {
+          "resource": "repo://src/lib/csv/search-csv-export.ts#L64-L100",
+          "version": "repo-lines-v1:sha256:2442db199b93bc621d7425615dac00eb4efeac742f38c3913fa22577d160d56f:eyJzZWxlY3RlZExpbmVDb3VudCI6MzcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjIxNGU5Mjc0MzE5NDNmMzMyMTllNzViYjczOTE1MzE4MzI3NmU4NjdiZjQwMzdiYWM4YmFkNzgzZDEyZDk4YzgiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImQ5ZDljNmM2NDMxZDcwZTIyZGM1YmQ1ZmYwYmE4NTc3MTllYTQ4MGVkMTA0YzVkZWIzM2Y2MDJlMjU2NDdkM2YiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImExN2NmMDFiODhhMGY4Y2RmMDY5YzA2MDBiYWMwZWQxN2UzNjUyYmMzZTI3NGJmMGY2MmNhYzU5MmI2MzMxYWUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_490ad6fbe7ab40f188c89cd15e850cb7",
+      "statement": "Focused tests in src/lib/api/__tests__/advertising-analytics-normalizer.test.ts cover the full-response happy path, nullability, type coercion, and empty response shapes per the Boundary Normalizer Pattern.",
+      "evidence": [
+        {
+          "resource": "repo://src/lib/api/__tests__/advertising-analytics-normalizer.test.ts#L1-L60",
+          "version": "repo-lines-v1:sha256:2ce54eddb4ebbc08ca19aae97b6f4fbf44894045e43e019887fc58ee6e7562a9:eyJzZWxlY3RlZExpbmVDb3VudCI6NjAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImVhZjIyY2YwNzMyNTkyYzI0NzE0MWNiZTYxZWZhMTEwMTI2MTJmNWEzMTIyYjlhZjliYmFmNTJmNTcyNGQxOTQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ5NjIxNWUxZTdkZjc3OTc5ZDM2NmJmM2IwMmVmZWViMGQyNWE3YjQ1YmJlOGEzMTdmYzY3YTI3YWJlMzAzMjQiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjowLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjBhYWU1MjgxZTY3M2Y1MjVjNjQxYzNkNWIwYTAyYjNjMGZhNDBlZTBlZjEyNjcyYTgzN2Y2MjE2Zjc5ZGQwY2QifQ"
+        }
+      ]
+    }
+  ],
+  "verification": {
+    "by": "openwiki/0.4.0",
+    "at": "2026-08-26T08:47:51.873Z"
+  }
+}
