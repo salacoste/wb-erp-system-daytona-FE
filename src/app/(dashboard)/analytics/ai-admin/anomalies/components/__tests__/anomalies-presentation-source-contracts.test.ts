@@ -107,4 +107,9 @@ describe('Story 171.1 route presentation source contracts', () => {
     expect(dialog).toMatch(/aria-live="polite"/)
     expect(dialog).toMatch(/Отправка данных…/)
   })
+
+  it('round-2 L1: 44px reset button pinned (min-h-11 in source)', () => {
+    const src = readFileSync(join(componentsDirectory, 'AnomaliesList.tsx'), 'utf8')
+    expect(src).toMatch(/min-h-11/) // 44px primary-action canon
+  })
 })
