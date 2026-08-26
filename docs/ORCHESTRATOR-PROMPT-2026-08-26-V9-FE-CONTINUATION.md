@@ -37,7 +37,7 @@ git worktree list                  # зафиксируй ЧУЖИЕ worktrees (
 
 | # | Документ (путь от корня FE-репо) | Роль |
 |---|---|---|
-| 1 | `docs/HANDOFF-2026-08-26-epic-171-models-tree-and-full-debt-registry.md` | **ВХОД-ТОЧКА**: состояние, что сделано в 171.6, NEXT, полный реестр долгов |
+| 1 | `docs/HANDOFF-2026-08-26-LATE-epic-171-complete-172-recon-ready.md` | **ВХОД-ТОЧКА**: состояние (эпик 171 закрыт 9/9), NEXT 172.1 с готовой разведкой (`docs/recon-172-1-dashboard.md`), новые ловушки P9-P11. Заменяет `docs/HANDOFF-2026-08-26-epic-171-models-tree-and-full-debt-registry.md` (его §0 синхронизирован, §1-§5 исторические; полный реестр BE-долгов — там §3) |
 | 2 | `CLAUDE.md` | **ПРАВИЛА РЕПО** (критические правила разработки, baselines-таблица, двухпроходное ревью, анти-паттерны) |
 | 3 | `.omx/plans/shadcn-full-ui-migration-master.md` | Мастер-план миграции + standard-story-execution-protocol (наследуемый протокол каждой стори) |
 | 4 | `_bmad-output/planning-artifacts/epics-166-174-fe-shadcn-migration.md` | Канонические ID/требования/AC каждой стори ( authority по скоупу) |
@@ -54,20 +54,24 @@ git worktree list                  # зафиксируй ЧУЖИЕ worktrees (
 
 ## 3. Текущая задача
 
-**Дерево `/analytics/models`**: корень (171.6) закрыт 2026-08-26. Осталось 3 стори эпика 171:
+**Эпик 171 закрыт 9/9** (вечер 26.08: 171.7-171.9 — PRs #266-#271). Текущая задача — **эпик 172 (Core Business Ops, 17 стори)**, начиная с крупнейшей стори миграции:
 
 | Порядок | Стори | Роут | План (полный путь) |
 |---|---|---|---|
-| 1 | **171.7-FE** Model Evaluations List | `/analytics/models/[id]/evaluations` | `.omx/plans/171.7-migrate-model-evaluations-list.md` |
-| 2 | **171.8-FE** Evaluation SKU Accuracy Detail | `/analytics/models/[id]/evaluations/sku-accuracy` | `.omx/plans/171.8-migrate-evaluation-sku-accuracy-detail.md` |
-| 3 | **171.9-FE** Model Performance Detail | `/analytics/models/[id]/performance` | `.omx/plans/171.9-migrate-model-performance-detail.md` |
+| 1 | **172.1-FE** Business Dashboard | `/dashboard` | `.omx/plans/172.1-migrate-the-business-dashboard.md` |
+| 2+ | 172.2-172.17 | automation (×3), COGS (×4), communications, finances-docs, monitor (×2), moysklad, orders (×3), products | `.omx/plans/172.{2..17}-*.md` |
 
-После 171.9: epic-171 retrospective (sprint-status: `epic-171-fe-retrospective: optional`) → **эпик 172** (17 стори, планы `.omx/plans/172.1..172.17-*.md`) → 173 (13) → 174 (5, завершающий: ledger-parity, legacy-removal, a11y-verification, full-regression, docs-cleanup).
+После 172 → 173 (13) → 174 (5, завершающий: ledger-parity, legacy-removal, a11y-verification, full-regression, docs-cleanup).
 
-**Спец-заметки к 171.7-171.9** (из 171.6):
-- `src/app/(dashboard)/analytics/models/components/model-list-helpers.ts` — `STATUS_BADGE_CONFIG` имеет поле `className` ТОЛЬКО ради двух потребителей в `[id]`-саброутах: `EvaluationsHeaderCard.tsx:66` (171.7) и `ModelPerformanceDetail.tsx:143` (171.9). Каждая стори **отвязывает своего потребителя** (переходит на собственный variant/токены); кто отвяжет последним — **удаляет поле** и обновляет гард 171.6 (`models/components/__tests__/model-registry-presentation-source-contracts.test.ts`, пин каталога 4 файлов не меняется).
-- 171.9 `MapeTrendChart` — chart: применять chart-hex/chartframe-канон 171.4 (см. артефакт 171.4 в `_bmad-output/implementation-artifacts/`).
-- E2E: `e2e/analytics/ai-models.spec.ts` уже покрывает все 3 саброута — прогонять на ветке (§4 шаг 6).
+**Спец-заметки к 172.1** (полная разведка — `docs/recon-172-1-dashboard.md`, НЕ пересчитывать):
+- **FULL-цикл**: 92 файла / 339 palette-сайтов + 31 файл / 78 hex; owned = `src/app/(dashboard)/dashboard/**` + `src/components/custom/dashboard/**` (~161 prod-файл).
+- Волновое делегирование (§10): 3 волны executor-сабагентов по канон-таблице из recon → каждая волна targeted vitest → гарды → валидация → ревью ≥3 проходов (дифф ~>1000 строк → Triggers §6.2).
+- Baseline targeted снимать ДО правок: `npm test -- --run 'src/app/(dashboard)/dashboard' 'src/components/custom/dashboard'`.
+- E2E: 3 спеки (`dashboard-metrics`, `dashboard-period`, `dashboard-session-fixes`) через npm-обёртку на ветке.
+- Тест-пины на palette-подстроки обновлять на token-подстроки (re-pin, не weakening — урок 171.9).
+- НОВЫЕ ловушки сессии 171.7-171.9: гард × имя worktree (relative-first фильтры, P9), tsc-фантом concurrent (P10), `.next/dev` truncated (P11), `playwright-cli open` сбрасывает логин → `goto` (P2-дополнение).
+
+**Cross-story контракт (обновление)**: `STATUS_BADGE_CONFIG.className` — оба `[id]`-потребителя отвязаны (171.7/171.9); поле живёт только для registry-root `ModelListSection.tsx:149`; **удаление — carry-out 174.2** (5-item список в артефакте 171.9 и handoff §3.2), НЕ задача стори эпика 172.
 
 **ЧУЖАЯ LANE — НЕ ТРОГАТЬ** (§8.1): стори 169.12/169.14/169.15 ведёт параллельная команда (worktrees `/private/tmp/wb-repricer-fe-169-14-*`).
 
@@ -212,4 +216,4 @@ git worktree list                  # зафиксируй ЧУЖИЕ worktrees (
 4. Уроки фиксируются в Lessons стори (≤120 симв) и эскалируются в CLAUDE.md/PATTERNS, если класс ошибки новый.
 5. Handoff-док §0 обновляется при каждом значимом сдвиге (эпик закрыт/открыт, floor изменился).
 
-**Первое действие после прочтения: §1 bootstrap, затем план `.omx/plans/171.7-migrate-model-evaluations-list.md`.**
+**Первое действие после прочтения: §1 bootstrap, затем handoff (`docs/HANDOFF-2026-08-26-LATE-epic-171-complete-172-recon-ready.md`) + `docs/recon-172-1-dashboard.md`, затем план `.omx/plans/172.1-migrate-the-business-dashboard.md`.**
