@@ -2,7 +2,7 @@
 
 /**
  * Accuracy aggregate metrics cards — MAPE, MAE, Bias, Total Validated.
- * Epic 123-FE Story 123.4
+ * Epic 123-FE Story 123.4 (migrated Story 171.5-FE)
  */
 
 import { cn, formatPercentage } from '@/lib/utils'
@@ -66,7 +66,7 @@ export function AccuracyMetricsCards({
           <CardTitle className="text-sm font-medium text-muted-foreground">Средний MAPE</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className={cn('text-2xl font-bold', isHighMape && 'text-amber-600')}>
+          <div className={cn('text-2xl font-bold', isHighMape && 'text-status-warning' /* Story 171.5: binary MAPE>200 warning band; text-swap marker preserved */)}>
             {isHighMape ? '>200 %' : formatMape(avgMAPE)}
           </div>
           <p className="text-xs text-muted-foreground">
