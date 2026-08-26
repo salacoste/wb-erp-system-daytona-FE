@@ -12,6 +12,10 @@
  * Read-only fields (id/cabinetId/timestamps/category) are surfaced read-only and
  * NEVER sent on PATCH (diffEditorForm enforces this). Raw backend never reaches
  * this component — useInstalledRule returns a normalized AutomationRuleDetail.
+ *
+ * Migrated Story 172.4-FE: success alert on status-success tokens; back
+ * affordance on the Button primitive; double page padding removed (the
+ * dashboard layout provides outer padding).
  */
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useRouter } from 'next/navigation'
@@ -160,7 +164,10 @@ export function InstalledRuleEditor({ ruleId }: InstalledRuleEditorProps) {
           </Alert>
         )}
         {updateMutation.isSuccess && (
-          <Alert className="mb-4 border-green-300 bg-green-50 text-green-800">
+          <Alert
+            className="mb-4 border-status-success/40 bg-status-success/10 text-status-success"
+            data-testid="editor-update-success"
+          >
             <AlertDescription>Правило обновлено.</AlertDescription>
           </Alert>
         )}
@@ -199,18 +206,19 @@ export function InstalledRuleEditor({ ruleId }: InstalledRuleEditorProps) {
 /** Page shell with an optional back affordance. */
 function EditorShell({ children, onBack }: { children: React.ReactNode; onBack?: () => void }) {
   return (
-    <div className="container py-6">
+    <div className="container">
       {onBack && (
         <div className="mb-6">
-          <button
-            type="button"
+          <Button
+            variant="link"
+            size="sm"
             onClick={onBack}
-            className="inline-flex items-center text-sm text-muted-foreground hover:text-foreground"
+            className="px-0 text-muted-foreground hover:text-foreground"
             data-testid="editor-back"
           >
             <ArrowLeft className="mr-1.5 h-4 w-4" />
             Назад к списку
-          </button>
+          </Button>
         </div>
       )}
       {children}
