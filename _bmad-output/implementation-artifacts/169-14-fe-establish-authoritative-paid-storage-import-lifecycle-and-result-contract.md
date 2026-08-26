@@ -31,9 +31,9 @@ so that the frontend can report progress, imported rows, failure details, and sa
 - [x] Correct the verified-base lifecycle for foreign WIP that blocks a safe local-main fast-forward.
 - [x] Correct ownership for method-level shared polling `CabinetGuard`/OpenAPI decorator hunks and direct Excel/paid-storage regression evidence.
 - [x] Merge the docs-only preflight correction and clean its frontend branch/worktree.
-- [ ] Re-fetch backend `origin/main`, assert exact backend identity, and re-run fail-closed collision proof across uncommitted/committed linked worktrees, clean unattached local branches, and open-PR paths whose fully paginated enumeration count equals `changedFiles`; create the exact Story backend branch/worktree from the approved base only after the scan passes.
-- [ ] Add and retain honest behavioral RED controller/guard/status-builder/E2E tests.
-- [ ] Independently review the RED matrix and exact backend implementation manifest.
+- [x] Re-fetch backend `origin/main`, assert exact backend identity, and re-run fail-closed collision proof across uncommitted/committed linked worktrees, clean unattached local branches, and open-PR paths whose fully paginated enumeration count equals `changedFiles`; create the exact Story backend branch/worktree from the approved base only after the scan passes.
+- [x] Add and retain honest behavioral RED controller/guard/status-builder/E2E tests.
+- [x] Independently review the RED matrix and exact backend implementation manifest.
 - [ ] Commit the exact base, RED, reviewer, review-evidence, and frozen reviewed-manifest markers/delimiters to this artifact before the first backend production edit; require the retained reviewer payload's unique exact privacy attestation, authorize the extracted canonical manifest against the allowed/required sets, fetch/assert the exact frontend origin, prove evidence-commit ancestry on refreshed frontend `origin/main`, and re-read these committed bytes.
 - [ ] Implement the smallest GREEN backend correction inside the frozen manifest.
 - [ ] Run targeted and universal backend gates, exact scope audit, two fresh reviews, and all required reruns.
@@ -96,7 +96,7 @@ Preflight evidence before backend Story worktree creation:
 - Refreshed backend `origin/main`: `250a329c616194cf1e263a4fa8303a574939e615`.
 - Local `main` ancestry on refreshed `origin/main`: proven.
 - Approved planned Story base: refreshed `origin/main` `250a329c616194cf1e263a4fa8303a574939e615` under the foreign-WIP fallback.
-- Actual Story base after worktree creation: pending.
+- Actual Story base after worktree creation: `250a329c616194cf1e263a4fa8303a574939e615`.
 - Exact incoming paths that overlap foreign local WIP and block a safe local-main fast-forward:
   - `openwiki/.last-update.json`;
   - `openwiki/quickstart.md`;
@@ -114,61 +114,406 @@ Preflight evidence before backend Story worktree creation:
 
 ### RED Evidence
 
-Status: pending backend worktree creation and Story-specific failing tests.
+Status: **complete behavioral RED retained before the first backend production edit**.
 
-The retained RED update must record:
+- Backend base: `250a329c616194cf1e263a4fa8303a574939e615`.
+- Exact combined command exited `1` by design after both Story-specific lanes failed behaviorally.
+- Unit/controller result: 3 suites failed; 9 failed, 27 passed, 36 total.
+- E2E result: 1 suite failed; 5 failed, 4 passed, 9 total.
+- All failures are current contract drift: missing method-level/start cabinet guards, `queued` instead of `pending`, fabricated pre-completion `rows_imported`, missing completed `rowsImported` projection, and BullMQ `unknown` incorrectly mapped to `pending`.
+- Corrected real-service same-cabinet Excel, absent/foreign paid-storage 404 boundary, snake_case rejection, and completed-result pass-through fixtures execute successfully.
+- No failure is caused by a missing import, fixture, type, database, Redis, or WB-network dependency.
 
-- exact commands and exit codes;
-- failing assertion names and complete behavioral failure output;
-- proof that failures are not missing imports, fixtures, types, databases, Redis, or WB network access;
-- manual and smart `queued` → `pending` drift;
-- fabricated pre-completion `rows_imported` removal;
-- completed `rowsImported` projection;
-- paid-storage start and polling JWT-claim cabinet isolation;
-- unchanged Excel status runtime shape.
+STORY_169_14_BACKEND_BASE_SHA: 250a329c616194cf1e263a4fa8303a574939e615
+STORY_169_14_RED_CLASSIFICATION: BEHAVIORAL_CONTRACT_FAILURE
+STORY_169_14_RED_COMMAND: PATH=/opt/homebrew/opt/node@24/bin:/opt/homebrew/bin:/usr/bin:/bin bash -c 'set +e; JEST_NO_RETRY=1 npm test -- --runInBand src/imports/services/import-status-builder.service.spec.ts src/imports/controllers/__tests__/paid-storage-import.controller.spec.ts src/imports/controllers/__tests__/imports-paid-storage-status.controller.spec.ts; unit_exit=$?; npm run test:e2e -- test/imports/paid-storage.e2e-spec.ts; e2e_exit=$?; printf "STORY_169_14_UNIT_RED_EXIT=%s\\nSTORY_169_14_E2E_RED_EXIT=%s\\n" "$unit_exit" "$e2e_exit"; if test "$unit_exit" -eq 0 || test "$e2e_exit" -eq 0; then exit 70; fi; exit 1'
+STORY_169_14_RED_EXIT_CODE: 1
+STORY_169_14_RED_OUTPUT_SHA256: 9586f76dda5527ad82923192c69c1146f94a80d3e178a4c389724aeee9feb32b
+STORY_169_14_REVIEWED_MANIFEST_SHA256: 3e0f8c47508f81109ded9add476663ff928794d55aee0c5a21a1f2c9e29c429e
+STORY_169_14_REVIEW_EVIDENCE_SHA256: 00325d7ebc014abb6622ee09f3a8075b0aca92a96f27bf0d9ce1223664c872ed
+STORY_169_14_FROZEN_MANIFEST_SHA256: 3e0f8c47508f81109ded9add476663ff928794d55aee0c5a21a1f2c9e29c429e
 
-Story-specific RED unit commands must use `JEST_NO_RETRY=1` so repository-wide Jest retries cannot hide the first behavioral failure. The direct E2E command must use the package script's existing `--maxWorkers=1` and must not add the invalid `--runInBand` combination.
+<!-- STORY_169_14_RETAINED_RED_OUTPUT:START -->
+
+> wb-repricer-system@1.0.0 test
+> jest --runInBand src/imports/services/import-status-builder.service.spec.ts src/imports/controllers/__tests__/paid-storage-import.controller.spec.ts src/imports/controllers/__tests__/imports-paid-storage-status.controller.spec.ts
+
+FAIL src/imports/controllers/__tests__/imports-paid-storage-status.controller.spec.ts
+  ● ImportsController shared paid-storage polling boundary › applies method-level CabinetGuard to the shared polling route
+
+    expect(received).toEqual(expected) // deep equality
+
+    - Expected  - 3
+    + Received  + 1
+
+    - Array [
+    -   [Function CabinetGuard],
+    - ]
+    + Array []
+
+      20 |     const guards = (Reflect.getMetadata('__guards__', ImportsController.prototype.getImportStatus) as unknown[]) ?? [];
+      21 |
+    > 22 |     expect(guards).toEqual([CabinetGuard]);
+         |                    ^
+      23 |   });
+      24 |
+      25 |   it('preserves the authorized same-cabinet Excel lookup delegation', async () => {
+
+      at Object.<anonymous> (imports/controllers/__tests__/imports-paid-storage-status.controller.spec.ts:22:20)
+
+FAIL src/imports/controllers/__tests__/paid-storage-import.controller.spec.ts
+  ● PaidStorageImportController lifecycle contract › returns pending for an accepted manual import
+
+    expect(received).toBe(expected) // Object.is equality
+
+    Expected: "pending"
+    Received: "queued"
+
+      29 |     });
+      30 |
+    > 31 |     expect(result.status).toBe('pending');
+         |                           ^
+      32 |   });
+      33 |
+      34 |   it('does not fabricate rows_imported before manual work completes', async () => {
+
+      at Object.<anonymous> (imports/controllers/__tests__/paid-storage-import.controller.spec.ts:31:27)
+
+  ● PaidStorageImportController lifecycle contract › does not fabricate rows_imported before manual work completes
+
+    expect(received).toBe(expected) // Object.is equality
+
+    Expected: false
+    Received: true
+
+      38 |     });
+      39 |
+    > 40 |     expect(Object.prototype.hasOwnProperty.call(result, 'rows_imported')).toBe(false);
+         |                                                                           ^
+      41 |   });
+      42 |
+      43 |   it('preserves the canonical manual queue payload', async () => {
+
+      at Object.<anonymous> (imports/controllers/__tests__/paid-storage-import.controller.spec.ts:40:75)
+
+  ● PaidStorageImportController lifecycle contract › returns pending for an accepted smart import
+
+    expect(received).toBe(expected) // Object.is equality
+
+    Expected: "pending"
+    Received: "queued"
+
+      66 |     const result = await controller.smartImportPaidStorage(CABINET_ID);
+      67 |
+    > 68 |     expect(result.status).toBe('pending');
+         |                           ^
+      69 |   });
+      70 |
+      71 |   it.each(['importPaidStorage', 'smartImportPaidStorage'] as const)(
+
+      at Object.<anonymous> (imports/controllers/__tests__/paid-storage-import.controller.spec.ts:68:27)
+
+  ● PaidStorageImportController lifecycle contract › applies CabinetGuard before RolesGuard to importPaidStorage
+
+    expect(received).toEqual(expected) // deep equality
+
+    - Expected  - 1
+    + Received  + 0
+
+      Array [
+    -   [Function CabinetGuard],
+        [Function RolesGuard],
+      ]
+
+      75 |         (Reflect.getMetadata('__guards__', PaidStorageImportController.prototype[method]) as unknown[]) ?? [];
+      76 |
+    > 77 |       expect(guards).toEqual([CabinetGuard, RolesGuard]);
+         |                      ^
+      78 |     },
+      79 |   );
+      80 | });
+
+      at imports/controllers/__tests__/paid-storage-import.controller.spec.ts:77:22
+
+  ● PaidStorageImportController lifecycle contract › applies CabinetGuard before RolesGuard to smartImportPaidStorage
+
+    expect(received).toEqual(expected) // deep equality
+
+    - Expected  - 1
+    + Received  + 0
+
+      Array [
+    -   [Function CabinetGuard],
+        [Function RolesGuard],
+      ]
+
+      75 |         (Reflect.getMetadata('__guards__', PaidStorageImportController.prototype[method]) as unknown[]) ?? [];
+      76 |
+    > 77 |       expect(guards).toEqual([CabinetGuard, RolesGuard]);
+         |                      ^
+      78 |     },
+      79 |   );
+      80 | });
+
+      at imports/controllers/__tests__/paid-storage-import.controller.spec.ts:77:22
+
+FAIL src/imports/services/import-status-builder.service.spec.ts
+  ● ImportStatusBuilderService › buildPaidStorageJobStatus() › should project completed rowsImported value 37
+
+    expect(received).toHaveProperty(path, value)
+
+    Expected path: "rows_imported"
+    Received path: []
+
+    Expected value: 37
+    Received value: {"cabinet_id": "cab-1", "completed_at": "2026-08-26T20:53:00.742Z", "date_range": {"end": "2026-01-31", "start": "2026-01-01"}, "duration_ms": 6000, "error": null, "file_size_bytes": 0, "import_id": "job-1", "original_filename": "paid_storage_api", "progress": null, "report_type": "paid_storage", "started_at": "2026-08-26T20:52:54.742Z", "status": "completed", "uploaded_at": "2026-08-26T20:52:52.742Z", "week_range": undefined, "weeks_included": undefined}
+
+      220 |       expect(result.duration_ms).toBe(6000);
+      221 |       expect(result.error).toBeNull();
+    > 222 |       expect(result).toHaveProperty('rows_imported', rowsImported);
+          |                      ^
+      223 |     });
+      224 |
+      225 |     it('should preserve ordinary JOB_FAILED detail without exposing a completion result', async () => {
+
+      at imports/services/import-status-builder.service.spec.ts:222:22
+
+  ● ImportStatusBuilderService › buildPaidStorageJobStatus() › should project completed rowsImported value 0
+
+    expect(received).toHaveProperty(path, value)
+
+    Expected path: "rows_imported"
+    Received path: []
+
+    Expected value: 0
+    Received value: {"cabinet_id": "cab-1", "completed_at": "2026-08-26T20:53:00.745Z", "date_range": {"end": "2026-01-31", "start": "2026-01-01"}, "duration_ms": 6000, "error": null, "file_size_bytes": 0, "import_id": "job-1", "original_filename": "paid_storage_api", "progress": null, "report_type": "paid_storage", "started_at": "2026-08-26T20:52:54.745Z", "status": "completed", "uploaded_at": "2026-08-26T20:52:52.745Z", "week_range": undefined, "weeks_included": undefined}
+
+      220 |       expect(result.duration_ms).toBe(6000);
+      221 |       expect(result.error).toBeNull();
+    > 222 |       expect(result).toHaveProperty('rows_imported', rowsImported);
+          |                      ^
+      223 |     });
+      224 |
+      225 |     it('should preserve ordinary JOB_FAILED detail without exposing a completion result', async () => {
+
+      at imports/services/import-status-builder.service.spec.ts:222:22
+
+  ● ImportStatusBuilderService › buildPaidStorageJobStatus() › should fail closed with sanitized detail when BullMQ reports unknown
+
+    expect(received).toBe(expected) // Object.is equality
+
+    Expected: "failed"
+    Received: "pending"
+
+      302 |       const result = await service.buildPaidStorageJobStatus(job as unknown as Job);
+      303 |
+    > 304 |       expect(result.status).toBe(ImportStatus.failed);
+          |                             ^
+      305 |       expect(result.error).toEqual({
+      306 |         code: 'UNKNOWN_QUEUE_STATE',
+      307 |         message: expect.any(String),
+
+      at Object.<anonymous> (imports/services/import-status-builder.service.spec.ts:304:29)
+
+Test Suites: 3 failed, 3 total
+Tests:       9 failed, 27 passed, 36 total
+Snapshots:   0 total
+Time:        2.853 s, estimated 3 s
+Ran all test suites matching /src\/imports\/services\/import-status-builder.service.spec.ts|src\/imports\/controllers\/__tests__\/paid-storage-import.controller.spec.ts|src\/imports\/controllers\/__tests__\/imports-paid-storage-status.controller.spec.ts/i.
+
+> wb-repricer-system@1.0.0 test:e2e
+> jest --config ./test/jest-e2e.json --forceExit --maxWorkers=1 test/imports/paid-storage.e2e-spec.ts
+
+FAIL test/imports/paid-storage.e2e-spec.ts
+  Paid-storage import HTTP contract
+    ✕ accepts canonical camelCase dates and returns pending without a fabricated result (13 ms)
+    ✓ rejects undocumented snake_case date aliases before enqueue (2 ms)
+    ✕ returns pending for an accepted smart import (1 ms)
+    ✕ rejects a JWT/header cabinet mismatch before enqueue at /v1/imports/paid-storage (1 ms)
+    ✕ rejects a JWT/header cabinet mismatch before enqueue at /v1/imports/paid-storage/smart (1 ms)
+    ✓ preserves authorized same-cabinet Excel polling (2 ms)
+    ✕ rejects a JWT/header cabinet mismatch before shared polling lookup (1 ms)
+    ✓ passes through a completed paid-storage result from the shared status boundary (1 ms)
+    ✓ keeps unknown and cross-cabinet job identifiers on the same 404 boundary (2 ms)
+
+  ● Paid-storage import HTTP contract › accepts canonical camelCase dates and returns pending without a fabricated result
+
+    expect(received).toBe(expected) // Object.is equality
+
+    Expected: "pending"
+    Received: "queued"
+
+      123 |       .expect(202);
+      124 |
+    > 125 |     expect(response.body.status).toBe('pending');
+          |                                  ^
+      126 |     expect(Object.prototype.hasOwnProperty.call(response.body, 'rows_imported')).toBe(false);
+      127 |     expect(queueService.enqueueTask).toHaveBeenCalledWith(
+      128 |       expect.objectContaining({
+
+      at Object.<anonymous> (imports/paid-storage.e2e-spec.ts:125:34)
+
+  ● Paid-storage import HTTP contract › returns pending for an accepted smart import
+
+    expect(received).toBe(expected) // Object.is equality
+
+    Expected: "pending"
+    Received: "queued"
+
+      150 |       .expect(202);
+      151 |
+    > 152 |     expect(response.body.status).toBe('pending');
+          |                                  ^
+      153 |     expect(Object.prototype.hasOwnProperty.call(response.body, 'rows_imported')).toBe(false);
+      154 |   });
+      155 |
+
+      at Object.<anonymous> (imports/paid-storage.e2e-spec.ts:152:34)
+
+  ● Paid-storage import HTTP contract › rejects a JWT/header cabinet mismatch before enqueue at /v1/imports/paid-storage
+
+    expected 403 "Forbidden", got 202 "Accepted"
+
+      164 |       }
+      165 |
+    > 166 |       await pendingRequest.expect(403);
+          |                            ^
+      167 |       expect(queueService.enqueueTask).not.toHaveBeenCalled();
+      168 |     },
+      169 |   );
+
+      at imports/paid-storage.e2e-spec.ts:166:28
+      ----
+      at Test._assertStatus (../../../../Users/r2d2/Documents/Code_Projects/wb-repricer-system-new/node_modules/supertest/lib/test.js:252:14)
+      at ../../../../Users/r2d2/Documents/Code_Projects/wb-repricer-system-new/node_modules/supertest/lib/test.js:308:13
+      at Test._assertFunction (../../../../Users/r2d2/Documents/Code_Projects/wb-repricer-system-new/node_modules/supertest/lib/test.js:285:13)
+      at Test.assert (../../../../Users/r2d2/Documents/Code_Projects/wb-repricer-system-new/node_modules/supertest/lib/test.js:164:23)
+      at Server.localAssert (../../../../Users/r2d2/Documents/Code_Projects/wb-repricer-system-new/node_modules/supertest/lib/test.js:120:14)
+
+  ● Paid-storage import HTTP contract › rejects a JWT/header cabinet mismatch before enqueue at /v1/imports/paid-storage/smart
+
+    expected 403 "Forbidden", got 202 "Accepted"
+
+      164 |       }
+      165 |
+    > 166 |       await pendingRequest.expect(403);
+          |                            ^
+      167 |       expect(queueService.enqueueTask).not.toHaveBeenCalled();
+      168 |     },
+      169 |   );
+
+      at imports/paid-storage.e2e-spec.ts:166:28
+      ----
+      at Test._assertStatus (../../../../Users/r2d2/Documents/Code_Projects/wb-repricer-system-new/node_modules/supertest/lib/test.js:252:14)
+      at ../../../../Users/r2d2/Documents/Code_Projects/wb-repricer-system-new/node_modules/supertest/lib/test.js:308:13
+      at Test._assertFunction (../../../../Users/r2d2/Documents/Code_Projects/wb-repricer-system-new/node_modules/supertest/lib/test.js:285:13)
+      at Test.assert (../../../../Users/r2d2/Documents/Code_Projects/wb-repricer-system-new/node_modules/supertest/lib/test.js:164:23)
+      at Server.localAssert (../../../../Users/r2d2/Documents/Code_Projects/wb-repricer-system-new/node_modules/supertest/lib/test.js:120:14)
+
+  ● Paid-storage import HTTP contract › rejects a JWT/header cabinet mismatch before shared polling lookup
+
+    expected 403 "Forbidden", got 404 "Not Found"
+
+      194 |       .get('/v1/imports/paid-storage-job-1')
+      195 |       .set('X-Cabinet-Id', FOREIGN_CABINET_ID)
+    > 196 |       .expect(403);
+          |        ^
+      197 |
+      198 |     expect(paidStorageQueue.getJob).not.toHaveBeenCalled();
+      199 |   });
+
+      at Object.<anonymous> (imports/paid-storage.e2e-spec.ts:196:8)
+      ----
+      at Test._assertStatus (../../../../Users/r2d2/Documents/Code_Projects/wb-repricer-system-new/node_modules/supertest/lib/test.js:252:14)
+      at ../../../../Users/r2d2/Documents/Code_Projects/wb-repricer-system-new/node_modules/supertest/lib/test.js:308:13
+      at Test._assertFunction (../../../../Users/r2d2/Documents/Code_Projects/wb-repricer-system-new/node_modules/supertest/lib/test.js:285:13)
+      at Test.assert (../../../../Users/r2d2/Documents/Code_Projects/wb-repricer-system-new/node_modules/supertest/lib/test.js:164:23)
+      at Server.localAssert (../../../../Users/r2d2/Documents/Code_Projects/wb-repricer-system-new/node_modules/supertest/lib/test.js:120:14)
+
+Test Suites: 1 failed, 1 total
+Tests:       5 failed, 4 passed, 9 total
+Snapshots:   0 total
+Time:        2.665 s, estimated 3 s
+Ran all test suites matching /test\/imports\/paid-storage.e2e-spec.ts/i.
+Force exiting Jest: Have you considered using `--detectOpenHandles` to detect async operations that kept running after all tests finished?
+STORY_169_14_UNIT_RED_EXIT=1
+STORY_169_14_E2E_RED_EXIT=1
+<!-- STORY_169_14_RETAINED_RED_OUTPUT:END -->
 
 ### Frozen Reviewed Manifest
 
-Status: **not yet frozen**.
+Status: **frozen and independently reviewed before the first backend production edit**.
 
-Hard gate: after honest RED and before the first backend production edit, update this section in a separate frontend documentation branch/PR and merge or otherwise durably commit it to the canonical frontend history. Record reviewer identity/disposition, the exact evidence commit SHA, and the exact sorted newline-delimited manifest's SHA-256. The evidence commit must have exactly one parent and change exactly this artifact; prove both properties from the committed objects, then read the artifact with `git show <evidence-commit>:_bmad-output/implementation-artifacts/169-14-fe-establish-authoritative-paid-storage-import-lifecycle-and-result-contract.md` into a temporary file. Embed the complete behavioral RED output and independent review evidence as exact nonempty delimited blocks produced with synthetic identities and sanitized logging. First validate all six retained/manifest delimiters with one global exact-order state machine that rejects duplicate, same-type or cross-type nested, mismatched/early END, reordered, and unclosed markers; then extract every payload to a file. Canonical payload bytes exclude delimiter lines and contain one LF for every complete payload line, including every trailing blank payload line; hash the nonempty extracted files directly, never command-substitution strings. Evidence-preflight must fail closed until that extracted manifest is canonical, nonempty, a subset of the Story 169.14 allowed manifest, and contains every required path; delivery and publish recovery rerun the same authorization. Before commit or consumption, run a fail-closed non-echoing scan that rejects common credential-bearing headers, Bearer/Basic values, supported plain or compound credential assignments, private-key material, and credential-bearing URI userinfo. The retained reviewer payload must contain exactly one complete `STORY_169_14_PRIVACY_REVIEW_ATTESTATION: PASS_NO_SECRET_OR_CUSTOMER_PII` line inside the committed bytes covered by `STORY_169_14_REVIEW_EVIDENCE_SHA256`; missing or duplicate attestations fail closed. The independent reviewer confirms no secret or customer/PII bytes are retained; repair the emitting test/logger and rerun instead of redacting hashed evidence. Require equality with the committed markers, then export identical manifest lines as `STORY_169_14_FROZEN_REVIEWED_MANIFEST` and its file hash as `STORY_169_14_FROZEN_MANIFEST_SHA256` in the backend lane.
+- Reviewer: `omx-team-code-reviewer-story-16914-preimplementation-r2-20260826`.
+- Disposition: **PASS** — Critical=0, High=0, Medium=0, Low=0.
+- Frontend evidence commit: pending creation by this exact single-parent artifact-only lane; its feature SHA is supplied and authenticated by evidence-preflight after merge.
+- Frozen manifest SHA-256: `3e0f8c47508f81109ded9add476663ff928794d55aee0c5a21a1f2c9e29c429e`.
+- Frozen after honest RED and before first production edit: **PASS**.
+- The reviewer independently confirmed the corrected E2E uses the real production `ImportsService`, the absent/foreign 404 boundary is sufficient, Story 169.15 owns the known frontend snake_case caller, `GET /v1/imports/paid-storage/status` remains excluded, and the nine-path manifest is minimal and sufficient.
+- The exact reviewer payload below is authoritative for the unique reviewer identity, PASS disposition, and privacy attestation; those machine-readable lines are intentionally not duplicated elsewhere in this artifact.
 
-The committed artifact must contain exactly one of every marker below. The RED exit code is nonzero; every SHA-256 is 64 lowercase hexadecimal characters; the reviewer identifier is nonempty and constrained by the executable plan; reviewed/frozen manifest hashes match; and the manifest is exact, nonempty, sorted, newline-delimited, a subset of the allowed manifest, contains all required paths, and is enclosed by the exact delimiters. The privacy attestation is retained reviewer-payload content, not a new top-level marker.
+<!-- STORY_169_14_RETAINED_REVIEW_EVIDENCE:START -->
+# Story 169.14 Independent Pre-Implementation Review
 
-- `STORY_169_14_BACKEND_BASE_SHA`
-- `STORY_169_14_RED_CLASSIFICATION: BEHAVIORAL_CONTRACT_FAILURE`
-- `STORY_169_14_RED_COMMAND`
-- `STORY_169_14_RED_EXIT_CODE`
-- `STORY_169_14_RED_OUTPUT_SHA256`
-- `STORY_169_14_PRE_IMPLEMENTATION_REVIEWER_ID`
-- `STORY_169_14_PRE_IMPLEMENTATION_REVIEW_DISPOSITION: PASS`
-- `STORY_169_14_REVIEWED_MANIFEST_SHA256`
-- `STORY_169_14_REVIEW_EVIDENCE_SHA256`
-- `STORY_169_14_FROZEN_MANIFEST_SHA256`
-- `<!-- STORY_169_14_RETAINED_RED_OUTPUT:START -->`
-- `<!-- STORY_169_14_RETAINED_RED_OUTPUT:END -->`
-- `<!-- STORY_169_14_RETAINED_REVIEW_EVIDENCE:START -->`
-- `<!-- STORY_169_14_RETAINED_REVIEW_EVIDENCE:END -->`
-- `<!-- STORY_169_14_FROZEN_REVIEWED_MANIFEST:START -->`
-- `<!-- STORY_169_14_FROZEN_REVIEWED_MANIFEST:END -->`
+Critical
 
-Before consuming these values, fetch the exact frontend origin, assert `salacoste/wb-erp-system-daytona-FE`, and prove the single-parent artifact-only evidence commit is reachable from refreshed frontend `origin/main`. Caller-supplied hashes without byte-for-byte recomputation of the committed retained RED/reviewer blocks, a PR body, backend-local note, untrusted local object, or later diff are not evidence.
+- None.
 
-Do not derive the manifest from the final backend diff. No backend production edit is authorized while this section remains `not yet frozen`.
+High
 
-Reviewer: pending.
+- None.
 
-Frontend evidence commit: pending.
+Medium
 
-Frozen manifest SHA-256: pending.
+- None.
 
-Frozen after honest RED and before first production edit: pending.
+Low
 
-```text
-PENDING — replace with the exact sorted newline-delimited reviewed backend manifest
-```
+- None.
+
+Scope and acceptance evidence
+
+- Reviewed exactly the four current RED test changes against backend base `250a329c616194cf1e263a4fa8303a574939e615`; no production edit was treated as present or approved beyond the frozen manifest.
+- Validation and start lifecycle are covered: canonical `dateFrom`/`dateTo` succeeds, snake_case aliases fail before enqueue, manual and smart starts require `pending`, and pre-completion `rows_imported` is absent.
+- Status-builder coverage explicitly maps `waiting | delayed | prioritized | waiting-children` to `pending`, `active` to `processing`, and terminal states to `completed | failed`; explicit BullMQ `unknown` must fail closed with `UNKNOWN_QUEUE_STATE` without leaking the synthetic internal failure detail.
+- Completed `job.returnvalue.rowsImported` projection covers both a positive value and zero. Pending, processing, failed, and Excel shapes are checked for result omission, while ordinary `JOB_FAILED` code/message detail is preserved.
+- Guard metadata requires `CabinetGuard` before `RolesGuard` on exactly the manual and smart paid-storage start methods and method-level `CabinetGuard` on shared `GET /v1/imports/:id`. The unrelated `GET /v1/imports/paid-storage/status` exclusion is canonical and was not treated as a defect.
+- The E2E harness uses the real production `ImportsService` with deterministic Prisma, queue, and status-builder seams. It proves same-cabinet Excel compatibility, rejects JWT/header cabinet mismatches before queue/service access, exercises absent and foreign-cabinet queue jobs through the existing common 404/`NOT_FOUND` shape, and proves the status builder is not invoked for either unauthorized/absent job.
+- The E2E is deterministic and local: fixed synthetic identities/dates, one worker, no database, Redis, WB network, or external credential dependency.
+
+RED evidence
+
+- The retained transcript loads and executes every suite: unit/controller RED reports 9 behavioral failures and 27 passes; E2E reports 5 behavioral failures and 4 passes. All 14 failures are expected assertions for current lifecycle, result projection, or cabinet-isolation drift. There are no fixture, import, syntax, TypeScript, database, Redis, or WB-network failures.
+- Verified RED transcript SHA-256: `9586f76dda5527ad82923192c69c1146f94a80d3e178a4c389724aeee9feb32b`.
+- A non-echoing scan of the exact RED bytes found no credential-bearing header or assignment, Bearer/Basic value, credential-bearing URI userinfo, connection string, private-key material, secret, or real customer email/phone/PII.
+
+Frozen manifest evidence
+
+- Verified frozen-manifest SHA-256: `3e0f8c47508f81109ded9add476663ff928794d55aee0c5a21a1f2c9e29c429e`.
+- The manifest has exactly nine sorted, unique, newline-delimited paths with a trailing LF. It is the smallest sufficient required set: four RED tests plus the paid-storage controller, shared polling controller, shared status DTO, status builder, and API-path documentation.
+- `src/imports/dto/paid-storage-import.dto.ts` is correctly excluded because the canonical request DTO and start-response result optionality already satisfy the tested contract. `src/imports/imports.service.ts` remains production-read-only because the real-service E2E proves its existing Excel lookup and absent/foreign-cabinet queue branches. Processor/orchestration/storage, queue/module, Prisma/schema, dependencies, and frontend runtime remain excluded.
+- The known frontend snake_case caller belongs to prerequisite Story 169.15 and is not a Story 169.14 finding. No scope expansion is recommended.
+
+STORY_169_14_PRE_IMPLEMENTATION_REVIEWER_ID: omx-team-code-reviewer-story-16914-preimplementation-r2-20260826
+
+STORY_169_14_PRE_IMPLEMENTATION_REVIEW_DISPOSITION: PASS
+
+STORY_169_14_PRIVACY_REVIEW_ATTESTATION: PASS_NO_SECRET_OR_CUSTOMER_PII
+
+Recommendation: APPROVE — Critical=0, High=0, Medium=0; the retained RED is behavioral, both evidence hashes verify exactly, privacy review passes, and the nine-path backend manifest is canonical and sufficient without crossing Story boundaries.
+<!-- STORY_169_14_RETAINED_REVIEW_EVIDENCE:END -->
+
+<!-- STORY_169_14_FROZEN_REVIEWED_MANIFEST:START -->
+docs/API-PATHS-REFERENCE.md
+src/imports/controllers/__tests__/imports-paid-storage-status.controller.spec.ts
+src/imports/controllers/__tests__/paid-storage-import.controller.spec.ts
+src/imports/controllers/paid-storage-import.controller.ts
+src/imports/dto/import-status.dto.ts
+src/imports/imports.controller.ts
+src/imports/services/import-status-builder.service.spec.ts
+src/imports/services/import-status-builder.service.ts
+test/imports/paid-storage.e2e-spec.ts
+<!-- STORY_169_14_FROZEN_REVIEWED_MANIFEST:END -->
 
 ### Review Evidence
 
@@ -193,7 +538,7 @@ PENDING — replace with the exact sorted newline-delimited reviewed backend man
 - [x] [Review][Patch] Authenticate the backend PR head branch and head OID together during final-handoff preflight; prove that the exact Story branch plus reviewed OID passes and a foreign branch with the identical OID fails.
 - [x] [Review][Patch] Require every present lifecycle-authority record to be a non-symlink regular mode-600 file and every expected-absent record/worktree path to be nonexistent and non-symlinked; cover regular/live-symlink, absent/dangling-symlink, and cleanup-before-deletion ordering synthetics in both Story plans.
 - [x] [Review][Patch] Reject exact seal `05ccde49eeeae3076401b5442d2b55b4aea7297c`; capture every authoritative Git absence, cleanliness, and manifest query under an explicit failure guard before testing or composition, and cover invalid-repository/missing-remote failure before cleanup, retirement, publication, and successor-authorization mutations.
-- RED-manifest review: pending.
+- RED-manifest review: **PASS** — reviewer `omx-team-code-reviewer-story-16914-preimplementation-r2-20260826`; Critical=0, High=0, Medium=0, Low=0.
 - Backend adversarial review pass 1: pending.
 - Backend fresh verifier review pass 2: pending.
 
@@ -302,10 +647,21 @@ Frontend preflight correction owns exactly:
 - `_bmad-output/planning-artifacts/shadcn-migration-status-and-debt-registry.md`;
 - `_bmad-output/planning-artifacts/sprint-change-proposal-2026-08-24-story-169-14-preflight-correction.md`.
 
-The final backend File List is pending the honest RED freeze and must equal the committed Frozen Reviewed Manifest exactly.
+Backend frozen reviewed File List (implementation still pending) equals the committed nine-path manifest exactly:
+
+- `docs/API-PATHS-REFERENCE.md`;
+- `src/imports/controllers/__tests__/imports-paid-storage-status.controller.spec.ts`;
+- `src/imports/controllers/__tests__/paid-storage-import.controller.spec.ts`;
+- `src/imports/controllers/paid-storage-import.controller.ts`;
+- `src/imports/dto/import-status.dto.ts`;
+- `src/imports/imports.controller.ts`;
+- `src/imports/services/import-status-builder.service.spec.ts`;
+- `src/imports/services/import-status-builder.service.ts`;
+- `test/imports/paid-storage.e2e-spec.ts`.
 
 ## Change Log
 
+- 2026-08-27: Created the isolated backend Story lane from verified base `250a329c616194cf1e263a4fa8303a574939e615`, retained complete behavioral RED output (unit/controller 9 failed and 27 passed; E2E 5 failed and 4 passed), corrected the E2E to exercise the real `ImportsService` absent/foreign 404 branch, and froze the exact nine-path implementation manifest after an independent zero-finding PASS plus privacy attestation. This artifact-only evidence update remains `in-progress`; no backend production source has been edited, and GREEN remains blocked until this single-file evidence commit is merged and the canonical evidence-preflight succeeds.
 - 2026-08-26: Refreshed the checkout-independent backend base after a newer OpenWiki Bot commit advanced live backend `main` to `250a329c616194cf1e263a4fa8303a574939e615`. Re-ran the fail-closed collision inventory: all ten Story-owned paths remain clean and non-overlapping, the prescribed branch/worktree and open-PR collision surfaces remain absent, and the exact foreign-WIP/incoming intersection is now the canonical three-path reservation `openwiki/.last-update.json`, `openwiki/quickstart.md`, and `openwiki/workflows/fe-shadcn-migration.md`. This artifact-only correction does not authorize a production edit; honest RED, independent manifest review, merged evidence bytes, and evidence-preflight remain mandatory before GREEN implementation.
 - 2026-08-26: Exact-SHA Review A rejected seal `05ccde49eeeae3076401b5442d2b55b4aea7297c` because failed Git command substitutions could be converted to successful empty-output assertions by outer `test -z` or `printf` commands. Repaired every affected branch, remote-ref, status, diff, and untracked-file query with independent explicit failure capture; added executable invalid-repository/missing-remote regressions proving cleanup, retirement, artifact-publication, and Story 169.15 authorization mutations remain unreachable on failure. The rejected seal and all reviews over it are superseded; validation and two fresh exact-SHA reviews restart from a new empty seal.
 - 2026-08-26: Closed the rejected-seal scope findings by adding explicit `--no-renames` to all nineteen scope-bearing staged, unstaged, committed, cumulative, delivery, recovery, handoff, retirement, and cleanup manifest enumerations across Stories 169.14 and 169.15. Executable forbidden-source → allowed-destination synthetics now prove the default control view hides the forbidden deletion, the hardened staged/three-dot/two-endpoint views expose both paths, and the real manifest-authorization semantics reject the result. The correction proposal records the new invariant; seal `dc821ce81df85726334e7fc28c238716dd1f7549` and every review over it remain superseded, so the complete validation suite and two independent exact-SHA reviews must run against a new empty seal.
