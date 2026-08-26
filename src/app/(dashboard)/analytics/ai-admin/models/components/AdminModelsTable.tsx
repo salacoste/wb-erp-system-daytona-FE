@@ -125,7 +125,7 @@ export function AdminModelsTable({
               {/* F-40: localized label (admin endpoint returns 10 model types as raw
                   snake_case); unknown types fall back to the raw value. */}
               <TableCell>{getModelTypeLabel(model.modelType)}</TableCell>
-              <TableCell>v{model.version}</TableCell>
+              <TableCell className="tabular-nums" /* r1-F2: v-prefix constant, digits align */>{'v'}{model.version}</TableCell>
               <TableCell>
                 <Badge variant={STATUS_VARIANTS[model.status] ?? 'outline'}>
                   {STATUS_LABELS[model.status] ?? model.status}

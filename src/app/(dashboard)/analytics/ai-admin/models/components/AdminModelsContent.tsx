@@ -124,11 +124,12 @@ export function AdminModelsContent({
               // the dialog is conditionally unmounted via rollbackTarget state and has no
               // AlertDialogTrigger, so Radix's built-in focus-return cannot apply — capture
               // the invoking row's rollback button BEFORE unmount, then focus it after.
-              const rowButton = document.querySelector<HTMLElement>(
-                `[data-rollback-model-id="${CSS.escape(String(rollbackTarget.id))}"]`
-              )
+              const selector = `[data-rollback-model-id="${CSS.escape(String(rollbackTarget.id))}"]`
               setRollbackTarget(null)
-              requestAnimationFrame(() => rowButton?.focus())
+              // Round-1 F3: re-query INSIDE the rAF — a background refetch may
+              // unmount+remount the row between capture and frame; a stale node
+              // reference would silently no-op the focus.
+              requestAnimationFrame(() => document.querySelector<HTMLElement>(selector)?.focus())
             }
           }}
           onSuccess={() => setRollbackTarget(null)}

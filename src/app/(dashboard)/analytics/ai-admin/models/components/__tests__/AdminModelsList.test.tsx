@@ -380,7 +380,10 @@ describe('AdminModelsList', () => {
     renderComponent()
     const badge = screen.getByText('weird_status')
     // outline variant = bordered badge (not default/destructive/secondary fills)
-    expect(badge.className).toContain('border')
+    // Round-1 F1: 'border' is in the cva BASE (tautology) — assert outline-DISTINCTIVE
+    // tokens instead: outline = text-foreground + NO bg-* fill.
+    expect(badge.className).toContain('text-foreground')
+    expect(badge.className).not.toMatch(/bg-(destructive|secondary|success)/)
   })
 
   it('171.2 gap-5: focus returns to the invoking row rollback button after dialog close', async () => {
