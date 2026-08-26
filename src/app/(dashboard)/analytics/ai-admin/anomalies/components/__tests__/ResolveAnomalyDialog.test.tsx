@@ -276,6 +276,8 @@ describe('ResolveAnomalyDialog', () => {
     )
     // Input retained: dialog open, note value preserved
     expect(noteField).toHaveValue('Test note 409')
+    // Round-1 F4: CAUSE (combobox) retained too, not just the note.
+    expect(screen.getByText('Прочее')).toBeInTheDocument()
     expect(screen.getByRole('button', { name: /Подтвердить разрешение/ })).toBeInTheDocument()
   })
 

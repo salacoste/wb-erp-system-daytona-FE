@@ -249,10 +249,14 @@ describe('AnomaliesList', () => {
       expect(screen.getByText('Нет аномалий с выбранным фильтром.')).toBeInTheDocument()
     )
     const resetBtn = screen.getByRole('button', { name: 'Сбросить фильтр' })
+    // Round-1 F1: pin the SERVER-PARAM contract — the static mock made the
+    // refetch invisible; a dropped status param would pass unchanged without this.
+    expect(mockGetAnomalies).toHaveBeenLastCalledWith({ status: 'resolved' })
     fireEvent.click(resetBtn)
     await waitFor(() =>
       expect(screen.getByText('Нет аномалий, требующих внимания.')).toBeInTheDocument()
     )
+    expect(mockGetAnomalies).toHaveBeenLastCalledWith({}) // reset → status undefined
   })
 
   it('empty anomalyType renders muted «Неизвестный тип» fallback (gap 6)', async () => {

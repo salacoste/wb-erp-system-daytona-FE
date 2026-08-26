@@ -122,7 +122,8 @@ export function AnomaliesList() {
         ) : (
           <div className="space-y-2">
             <p className="text-sm text-muted-foreground">Нет аномалий с выбранным фильтром.</p>
-            <Button variant="outline" size="sm" onClick={() => setStatusFilter('all')}>
+            {/* Round-1 F2: min-h-11 = 44px primary-action canon (size="sm" is 36px). */}
+            <Button variant="outline" size="sm" className="min-h-11" onClick={() => setStatusFilter('all')}>
               Сбросить фильтр
             </Button>
           </div>
