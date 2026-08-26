@@ -8,6 +8,10 @@
  * CannedRulesGallery. Loading/error/empty states mirror the dashboard-page
  * convention (see shipments/page.tsx).
  *
+ * Migrated Story 172.2-FE: token-clean born-clean surface; double page
+ * padding removed (the dashboard layout provides outer padding), retry
+ * control moved to the Button primitive.
+ *
  * FUTURE: after install, deep-link to the rule editor (GET/PATCH
  * /v1/automation/rules/:id) so the operator tunes thresholds/scope. The
  * rule-editor page does not exist yet — see docs/request-backend/224-…md
@@ -17,6 +21,7 @@
  * Reference: docs/request-backend/224-automation-canned-rules-backend-contract.md
  */
 import { Alert, AlertDescription } from '@/components/ui/alert'
+import { Button } from '@/components/ui/button'
 import { AlertCircle } from 'lucide-react'
 import { useCannedRules } from '@/hooks/useAutomation'
 import { CannedRulesGallery } from '@/components/custom/automation/CannedRulesGallery'
@@ -26,7 +31,7 @@ export default function CannedRulesPage() {
 
   if (isLoading) {
     return (
-      <div className="container py-6">
+      <div className="container">
         <h1 className="mb-6 text-2xl font-semibold">Шаблоны автоматизации</h1>
         <p className="text-muted-foreground">Загрузка…</p>
       </div>
@@ -35,7 +40,7 @@ export default function CannedRulesPage() {
 
   if (isError) {
     return (
-      <div className="container py-6">
+      <div className="container">
         <h1 className="mb-6 text-2xl font-semibold">Шаблоны автоматизации</h1>
         <Alert variant="destructive">
           <AlertCircle className="h-4 w-4" />
@@ -43,20 +48,22 @@ export default function CannedRulesPage() {
             Не удалось загрузить шаблоны. {error instanceof Error ? error.message : ''}
           </AlertDescription>
         </Alert>
-        <button
-          type="button"
+        <Button
+          variant="link"
+          size="sm"
           onClick={() => refetch()}
-          className="mt-4 text-sm text-primary underline-offset-4 hover:underline"
+          className="mt-4 px-0"
+          data-testid="canned-rules-retry"
         >
           Повторить
-        </button>
+        </Button>
       </div>
     )
   }
 
   const list = templates ?? []
   return (
-    <div className="container py-6">
+    <div className="container">
       <h1 className="mb-2 text-2xl font-semibold">Шаблоны автоматизации</h1>
       <p className="mb-6 text-sm text-muted-foreground">
         Готовые правила в один клик. После установки правило можно настроить.

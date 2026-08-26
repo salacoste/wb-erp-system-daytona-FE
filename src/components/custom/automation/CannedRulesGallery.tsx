@@ -12,6 +12,10 @@
  * On 409 (duplicate name), a Dialog prompts for a custom name override and
  * retries the install. 404 surfaces via the hook's toast.
  *
+ * Migrated Story 172.2-FE: born-clean on merged shadcn primitives + semantic
+ * tokens (Card/Button/Badge/Dialog/Input/Label, text-muted-foreground) —
+ * presentation guard-pinned in the canned-rules route tree.
+ *
  * Reference: docs/request-backend/224-automation-canned-rules-backend-contract.md
  */
 import { useState } from 'react'
