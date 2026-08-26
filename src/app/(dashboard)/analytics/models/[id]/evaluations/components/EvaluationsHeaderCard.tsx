@@ -6,6 +6,9 @@
  * Renders: page title, model identity row (type + version + status badge),
  * 3 summary cards (cabinetMape / evaluatedAt / skuCount), and ExportCsvButton.
  * Pure presenter — no hooks, no side effects.
+ * Migrated Story 171.7-FE: status badge overlay now uses the route-local token map
+ * (label still sourced from the shared registry config; its className field is no
+ * longer read here — removal owned by Story 171.9).
  */
 
 import { useMemo } from 'react'
@@ -13,6 +16,7 @@ import { Badge } from '@/components/ui/badge'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { getModelTypeLabel } from '@/types/ai/forecast'
 import { STATUS_BADGE_CONFIG } from '../../../components/model-list-helpers'
+import { EVALUATION_STATUS_BADGE_CLASS } from './evaluations-list-helpers'
 import { formatDate, formatPercentage } from '@/lib/utils'
 import { formatNumber } from '@/lib/fbs-analytics-formatters'
 import { ExportCsvButton } from '@/components/custom/ai/ExportCsvButton'
@@ -47,7 +51,9 @@ export function EvaluationsHeaderCard({ model, data, modelId }: EvaluationsHeade
 
   if (!model) return null
 
-  const statusBadge = STATUS_BADGE_CONFIG[model.status]
+  // Label only from the shared registry (single label source of truth);
+  // colour overlay is route-local (Story 171.7-FE detach from the className field).
+  const statusLabel = STATUS_BADGE_CONFIG[model.status].label
 
   return (
     <Card>
@@ -63,8 +69,8 @@ export function EvaluationsHeaderCard({ model, data, modelId }: EvaluationsHeade
         <div className="flex items-center gap-3 text-sm text-muted-foreground mt-1">
           <span>{getModelTypeLabel(model.modelType)}</span>
           <span>v{model.version}</span>
-          <Badge variant="outline" className={statusBadge.className}>
-            {statusBadge.label}
+          <Badge variant="outline" className={EVALUATION_STATUS_BADGE_CLASS[model.status]}>
+            {statusLabel}
           </Badge>
         </div>
       </CardHeader>

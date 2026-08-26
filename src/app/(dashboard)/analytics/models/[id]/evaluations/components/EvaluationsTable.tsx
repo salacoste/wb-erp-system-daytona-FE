@@ -10,11 +10,14 @@
  * 2nd-pass F-1: "Дата" cell renders formatDate(evaluationDate) per-row; forecastId in tooltip (full id).
  * 2nd-pass F-3: TooltipTrigger child stops click propagation to prevent nested-interactive violation.
  * Forecast columns: forecastDate, horizonDays, predictedRevenue, actualRevenue — surfaced from EvaluationEntry.
+ * Migrated Story 171.7-FE: table caption (RTC — names the model, 169.7 spec-order canon),
+ * tabular-nums on numeric cells (nmId stays non-tabular — opaque ID, 171.5 lesson).
  */
 
 import {
   Table,
   TableBody,
+  TableCaption,
   TableCell,
   TableHead,
   TableHeader,
@@ -36,6 +39,8 @@ interface EvaluationsTableProps {
   onRowClick: (nmId: number | null) => void
   /** Optional — when provided, feedback submission invalidates model cache (Story 110.4-FE AC 2) */
   modelId?: string
+  /** Optional — table caption naming the model (RTC contract, Story 171.7-FE) */
+  captionText?: string
 }
 
 export function EvaluationsTable({
@@ -45,12 +50,16 @@ export function EvaluationsTable({
   onSortClick,
   onRowClick,
   modelId,
+  captionText,
 }: EvaluationsTableProps) {
   const sorted = sortEvaluationsByMape(entries, sortCol, sortDir)
 
   return (
     <TooltipProvider>
       <Table>
+        {/* Story 171.7: caption names the model (RTC); spec-order above header (169.7 canon),
+            visually bottom via ui Table caption-bottom. Empty string renders nothing (r-NIT fix). */}
+        {captionText ? <TableCaption>{captionText}</TableCaption> : null}
         <TableHeader>
           <TableRow>
             <TableHead>Дата оценки</TableHead>
@@ -145,19 +154,19 @@ export function EvaluationsTable({
               {/* Forecast date — ISO date of forecast horizon start */}
               <TableCell>{formatDate(new Date(entry.forecastDate))}</TableCell>
               {/* Horizon days — count, always present */}
-              <TableCell>{entry.horizonDays} дн.</TableCell>
+              <TableCell className="tabular-nums">{entry.horizonDays} дн.</TableCell>
               {/* F-8: nmId is an opaque identifier — String() preserves copy-paste semantics; formatNumber adds non-breaking spaces */}
               <TableCell>{entry.nmId !== null ? String(entry.nmId) : 'По кабинету'}</TableCell>
-              <TableCell>{formatNumber(entry.predictedUnits)}</TableCell>
-              <TableCell>{formatNumber(entry.actualUnits)}</TableCell>
+              <TableCell className="tabular-nums">{formatNumber(entry.predictedUnits)}</TableCell>
+              <TableCell className="tabular-nums">{formatNumber(entry.actualUnits)}</TableCell>
               {/* predictedRevenue — null for unit-target models (AP#8: null → '—') */}
-              <TableCell>
+              <TableCell className="tabular-nums">
                 {entry.predictedRevenue !== null ? formatCurrency(entry.predictedRevenue) : '—'}
               </TableCell>
               {/* actualRevenue — semantic-zero OK */}
-              <TableCell>{formatCurrency(entry.actualRevenue)}</TableCell>
-              <TableCell>{formatMapeDisplay(entry.mapeUnits)}</TableCell>
-              <TableCell>{formatMapeDisplay(entry.mapeRevenue)}</TableCell>
+              <TableCell className="tabular-nums">{formatCurrency(entry.actualRevenue)}</TableCell>
+              <TableCell className="tabular-nums">{formatMapeDisplay(entry.mapeUnits)}</TableCell>
+              <TableCell className="tabular-nums">{formatMapeDisplay(entry.mapeRevenue)}</TableCell>
               {/* Story 110.4-FE: FeedbackButtons — stopPropagation is inside FeedbackButtons onClick (F-3 discipline) */}
               <TableCell>
                 <FeedbackButtons forecastId={entry.forecastId} modelId={modelId} />
