@@ -45,8 +45,12 @@ sr-alternative + filter-context subtitle + invalid-range). 170.5 SHIPPED 2026-08
 e2e на ветке 6/1↓/0, 2×opus; прямое зеркало 170.3 + Caption/tabular/scroll-дельта + entityFallback AX-пин).
 170.6 SHIPPED 2026-08-26 (6/7): #247 (`d1bb947e`; 17 файлов, owned 51→78, полный пол **19 180/0** (+26),
 e2e на ветке 7/5↓/0; 3-pass trail — r1-фиксы дефектны (косметика+вакуум-regex), r2 REQUEST_CHANGES
-поймал оба, r3 verify; AC-2 закрыт). **NEXT = 170.7 search analytics workspace** (backlog;
-план `.omx/plans/170.7-...md`) — финал Эпика 170;
+поймал оба, r3 verify; AC-2 закрыт). 170.7 SHIPPED 2026-08-26 — **ЭПИК 170 ЗАВЕРШЁН 7/7**: #249 preface + #250 (`7a94dac0`; 26 файлов,
+owned 174→195, полный пол **19 204/0**, e2e 8/8 оживлены, 3-pass Trigger-1). Волна Эпика 170:
+7 историй за 25-26.08 (PRs #237-#250), 3 preface-грани, все маршруты с e2e на ветке.
+
+**NEXT = 171.1 ai-anomaly-triage** (backlog; план `.omx/plans/171.1-...md`) — Эпик 171 (9 историй,
+AI/forecast/model-governance);
 параллельно независимо: 169.14 → 169.15 → 169.12 contract closeout (169.14/169.15 `backlog`; 169.12 `review`; plans `.omx/plans/169.14-establish-authoritative-paid-storage-import-lifecycle-and-result-contract.md`, `.omx/plans/169.15-align-shared-frontend-paid-storage-import-boundary.md`, and `.omx/plans/169.12-migrate-storage-analytics-and-paid-storage-import.md`). Story 169.13 remains an independent backlog route.
 **Волна 23-24.08** (два полных цикла + инфраструктура): 169.11 returns — preface #218 (`d6ed2c65`,
 unknown-категория на boundary + нейтральный лейбл) + #219 (`129e99ed`; owned 50→73) + e2e-gap закрыт
