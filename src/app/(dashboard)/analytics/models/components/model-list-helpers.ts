@@ -1,7 +1,7 @@
 /**
  * Pure helper functions for ModelListSection.
  * Extracted per proactive-extraction discipline (Story 99.2-FE) — testable without React render.
- * Story 109.3-FE.
+ * Story 109.3-FE. Migrated Story 171.6-FE: palette badge classes → semantic status tokens.
  */
 
 import type { ModelEngine, ModelStatus } from '@/types/ai/models'
@@ -14,49 +14,55 @@ export const ENGINE_LABELS: Record<ModelEngine, string> = {
 }
 
 /**
- * Status badge configuration — colour + Russian label.
+ * Status badge configuration — semantic status-token colour + Russian label.
  * Exported for direct unit testing (pure-function discipline, Epic 89-FE lesson).
  * WCAG 2.1 AA: text label is the accessible name; colour is supplementary (Epic 108-FE retro § C-3).
+ *
+ * Story 171.6-FE: raw light-only palette classes replaced with semantic status
+ * tokens — hue mapping preserved 1:1 (green→success, blue→information,
+ * amber→warning, red→error, gray→muted).
+ * `className` field stays because [id]/evaluations + [id]/performance subroutes
+ * (Stories 171.7/171.9) overlay it on an outline Badge; they own its removal.
  */
 export const STATUS_BADGE_CONFIG: Record<
   ModelStatus,
   { className: string; label: string; pulse: boolean }
 > = {
   active: {
-    className: 'border-transparent bg-green-100 text-green-800',
+    className: 'border-status-success/40 bg-status-success/10 text-status-success',
     label: 'Активна',
     pulse: false,
   },
   training: {
-    className: 'border-transparent bg-blue-100 text-blue-800',
+    className: 'border-status-information/40 bg-status-information/10 text-status-information',
     label: 'Обучается',
     pulse: true,
   },
   degraded: {
-    className: 'border-transparent bg-amber-100 text-amber-800',
+    className: 'border-status-warning/40 bg-status-warning/10 text-status-warning',
     label: 'Деградировала',
     pulse: false,
   },
   retired: {
-    className: 'border-transparent bg-gray-100 text-gray-600',
+    className: 'border-border bg-muted text-muted-foreground',
     label: 'Снята',
     pulse: false,
   },
   // F-10: statuses added to ModelStatus union — provide badge config for public model list.
   rolled_back: {
-    className: 'border-transparent bg-gray-100 text-gray-600',
+    className: 'border-border bg-muted text-muted-foreground',
     label: 'Откачена',
     pulse: false,
   },
   failed: {
-    className: 'border-transparent bg-red-100 text-red-800',
+    className: 'border-status-error/40 bg-status-error/10 text-status-error',
     label: 'Ошибка',
     pulse: false,
   },
   // F-39: 'deprecated' is returned live by GET /v1/ai/models — without an entry the
   // Record lookup was undefined → crash. Grey "Устарела" badge.
   deprecated: {
-    className: 'border-transparent bg-gray-100 text-gray-600',
+    className: 'border-border bg-muted text-muted-foreground',
     label: 'Устарела',
     pulse: false,
   },

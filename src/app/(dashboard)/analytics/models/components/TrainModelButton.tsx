@@ -2,7 +2,7 @@
 
 /**
  * TrainModelButton — per-row training trigger for the AI Models table.
- * Story 109.4-FE.
+ * Story 109.4-FE. Migrated Story 171.6-FE: verified token-clean (semantic tokens only).
  * 8 visual states per AC-4. WCAG 2.1 AA: aria-busy, aria-hidden, role="status".
  */
 
