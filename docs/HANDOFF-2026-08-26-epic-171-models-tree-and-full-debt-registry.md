@@ -1,23 +1,26 @@
-# HANDOFF 2026-08-26 — Эпик 171 (AI/Forecast analytics → shadcn): 6/9, models-дерево закрыто наполовину + полный реестр долгов FE
+# HANDOFF 2026-08-26 — Эпик 171 (AI/Forecast analytics → shadcn): **9/9 ЗАКРЫТ** + полный реестр долгов FE
 
-> Вход-точка после закрытия **Story 171.6-FE** (PRs #262+#263, `main = c7492829`).
+> Вход-точка после закрытия **Эпика 171-FE целиком** (171.7: PRs #266+#267 · 171.8: #268+#269 · 171.9: #270+#271, `main = 9c503fe4`).
 > **Оркестратору новой команды**: операционный промпт-продолжение — [`ORCHESTRATOR-PROMPT-2026-08-26-V9-FE-CONTINUATION.md`](ORCHESTRATOR-PROMPT-2026-08-26-V9-FE-CONTINUATION.md) (bootstrap, цикл стори, гейты, нормы, ловушки).
 > Предыдущий вход: [`../docs/HANDOFF-2026-08-23-W9-FULL-DEBTS-AND-ROADMAP.md`](../docs/HANDOFF-2026-08-23-W9-FULL-DEBTS-AND-ROADMAP.md) (BE-репо, W9, все 60 стори + FE-D/C1-C16) → его §1-§4 по историям до 169.10 частично устарели — прогресс ниже актуален.
 
 ---
 
-## 0. Верифицированное состояние (26.08, после 171.6)
+## 0. Верифицированное состояние (26.08, эпик 171 закрыт 9/9)
 
 | Метрика | Значение |
 |---|---|
-| `main` | `c7492829` (merge PR #263 closeout 171.6), дерево чистое, ветки/worktree 171-6 = 0/0/0 |
-| Прогресс миграции 166-174 | **51/94** канонических стори |
-| Эпики | 166 ✅ · 167 ✅ · 168 ✅ · 170 ✅ (7/7) · **171 in-progress 6/9** · 169 in-progress (чужая lane, см. §2.3) · 172/173/174 backlog |
-| Полный пол (vitest) | **19 253 / 0** (floor растёт точными гардовыми +N; был 19 246) |
+| `main` | `9c503fe4` (merge PR #271 closeout 171.9 + эпик-flip), дерево чистое, все ветки/worktrees 171.x = 0/0/0 |
+| Прогресс миграции 166-174 | **54/94** канонических стори |
+| Эпики | 166 ✅ · 167 ✅ · 168 ✅ · 170 ✅ (7/7) · **171 ✅ (9/9, retrospective optional — отложена owner'у)** · 169 in-progress (чужая lane, §2.4) · 172/173/174 backlog |
+| Полный пол (vitest) | **19 281 / 0** (floor рос точными +N: 19 253 → 19 263 (171.7) → 19 271 (171.8) → 19 281 (171.9)) |
 | Линтер/типы | lint 0/0 (zero-warning), tsc 0, max-lines OK, check:docs = baseline (97 entries), check:locale-percent ratchet = **4** |
-| PR за последние 2 сессии | #236–#263 (171.x микрос + closeouts) |
+| PR сессии 26.08 (вечер) | #264–#271 (171.7-171.9 микрос + closeouts + эпик-flip) |
+| **NEXT** | **172.1-FE dashboard** (эпик 172 Core Business Ops, 17 стори, планы `.omx/plans/172.1..172.17-*.md`) |
 
-Процесс-канон v8: [`../docs/ORCHESTRATOR-PROMPT-2026-08-22-V8-AGENT-TEAM-CONTINUATION.md`](../docs/ORCHESTRATOR-PROMPT-2026-08-22-V8-AGENT-TEAM-CONTINUATION.md) — micro-cycle паттерн, owner-карта, параллельные lanes.
+**Carry-out → 174.2 owner** (из 171.9, route-ledger handoff, см. реестр): удалить поле `className` из `STATUS_BADGE_CONFIG` после миграции `ModelListSection` на собственный overlay; переписать 2 stale ownership-комментария (model-list-helpers.ts, evaluations-list-helpers.ts); перенести статус-токен пины гарда 171.6; anchor-hardening гарда 171.6 (join-before-filter, 171.8-класс).
+
+Процесс-канон v8: [`../docs/ORCHESTRATOR-PROMPT-2026-08-22-V8-AGENT-TEAM-CONTINUATION.md`](../docs/ORCHESTRATOR-PROMPT-2026-08-22-V8-AGENT-TEAM-CONTINUATION.md) — micro-cycle паттерн, owner-карта, параллельные lanes. Новые ловушки сессии: гард × имя-worktree (см. артефакт 171.8 + memory), tsc-фантом от concurrent-сессии, `.next/dev` truncated-генерат убитого dev-сервера (rm -rf .next/dev лечит).
 
 ---
 
