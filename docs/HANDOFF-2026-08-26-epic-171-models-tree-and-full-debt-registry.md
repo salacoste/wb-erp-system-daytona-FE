@@ -1,6 +1,7 @@
 # HANDOFF 2026-08-26 — Эпик 171 (AI/Forecast analytics → shadcn): 6/9, models-дерево закрыто наполовину + полный реестр долгов FE
 
 > Вход-точка после закрытия **Story 171.6-FE** (PRs #262+#263, `main = c7492829`).
+> **Оркестратору новой команды**: операционный промпт-продолжение — [`ORCHESTRATOR-PROMPT-2026-08-26-V9-FE-CONTINUATION.md`](ORCHESTRATOR-PROMPT-2026-08-26-V9-FE-CONTINUATION.md) (bootstrap, цикл стори, гейты, нормы, ловушки).
 > Предыдущий вход: [`../docs/HANDOFF-2026-08-23-W9-FULL-DEBTS-AND-ROADMAP.md`](../docs/HANDOFF-2026-08-23-W9-FULL-DEBTS-AND-ROADMAP.md) (BE-репо, W9, все 60 стори + FE-D/C1-C16) → его §1-§4 по историям до 169.10 частично устарели — прогресс ниже актуален.
 
 ---
