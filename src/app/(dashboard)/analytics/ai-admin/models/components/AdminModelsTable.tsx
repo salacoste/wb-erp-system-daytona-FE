@@ -88,6 +88,7 @@ export function AdminModelsTable({
         scrollContainerTabIndex={0}
         scrollContainerAriaLabel="Таблица версий моделей под управлением"
       >
+        <TableCaption>Версии моделей под управлением</TableCaption>
         <TableHeader>
           <TableRow>
             <TableHead>Артикул модели</TableHead>
@@ -125,7 +126,7 @@ export function AdminModelsTable({
               {/* F-40: localized label (admin endpoint returns 10 model types as raw
                   snake_case); unknown types fall back to the raw value. */}
               <TableCell>{getModelTypeLabel(model.modelType)}</TableCell>
-              <TableCell className="tabular-nums" /* r1-F2: v-prefix constant, digits align */>{'v'}{model.version}</TableCell>
+              <TableCell className="tabular-nums">v{model.version}</TableCell>
               <TableCell>
                 <Badge variant={STATUS_VARIANTS[model.status] ?? 'outline'}>
                   {STATUS_LABELS[model.status] ?? model.status}
@@ -168,8 +169,7 @@ export function AdminModelsTable({
           ))}
         </TableBody>
         {/* 171.2 gap-1: static caption naming the governed-versions collection */}
-        <TableCaption>Версии моделей под управлением</TableCaption>
-      </Table>
+              </Table>
     </div>
   )
 }
