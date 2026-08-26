@@ -2,7 +2,7 @@
 
 /**
  * Forecast Accuracy page — aggregate MAPE/MAE/Bias cards + breakdown tables.
- * Epic 123-FE Story 123.4: consumes GET /v1/ai/forecast-accuracy.
+ * Epic 123-FE Story 123.4 (migrated Story 171.5-FE): consumes GET /v1/ai/forecast-accuracy.
  */
 
 import { AlertTriangle, Target } from 'lucide-react'

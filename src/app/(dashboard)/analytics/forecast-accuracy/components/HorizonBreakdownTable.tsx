@@ -2,13 +2,14 @@
 
 /**
  * Horizon breakdown table — accuracy metrics per forecast horizon.
- * Epic 123-FE Story 123.4
+ * Epic 123-FE Story 123.4 (migrated Story 171.5-FE)
  */
 
 import { formatPercentage } from '@/lib/utils'
 import {
   Table,
   TableBody,
+  TableCaption,
   TableCell,
   TableHead,
   TableHeader,
@@ -27,6 +28,8 @@ export function HorizonBreakdownTable({ rows }: HorizonBreakdownTableProps) {
 
   return (
     <Table>
+      {/* Story 171.5: static caption (169.7 canon) */}
+      <TableCaption>Точность прогнозов по горизонтам</TableCaption>
       <TableHeader>
         <TableRow>
           <TableHead>Горизонт (дни)</TableHead>
@@ -38,14 +41,14 @@ export function HorizonBreakdownTable({ rows }: HorizonBreakdownTableProps) {
       <TableBody>
         {rows.map(row => (
           <TableRow key={row.horizonDays}>
-            <TableCell className="font-medium">{row.horizonDays}</TableCell>
-            <TableCell className="text-right">
+            <TableCell className="font-medium tabular-nums">{row.horizonDays}</TableCell>
+            <TableCell className="text-right tabular-nums">
               {row.mape != null ? formatPercentage(row.mape) : '—'}
             </TableCell>
-            <TableCell className="text-right">
+            <TableCell className="text-right tabular-nums">
               {row.mae != null ? row.mae.toLocaleString('ru-RU') : '—'}
             </TableCell>
-            <TableCell className="text-right">{row.count}</TableCell>
+            <TableCell className="text-right tabular-nums">{row.count}</TableCell>
           </TableRow>
         ))}
       </TableBody>
