@@ -37,12 +37,9 @@ export function SearchPositionSummaryCards({ summary, isLoading, isError }: Sear
     )
   }
 
-  // Round-1 MEDIUM: tri-state mirrors movers/opportunities siblings — an
-  // undefined summary while NOT loading/error is an explicit empty, never an
-  // indefinite skeleton (retained-data-aware contract).
-  if (isError && !summary) {
-    return null // sibling sections (movers/opportunities) render the error chrome (Pattern-1)
-  }
+  // Round-1 MEDIUM tri-state + r3-fix: the error branch above renders the section's
+  // own destructive Alert; loading-without-data skeletons; a not-loading/not-error
+  // undefined summary is an explicit empty (null) — never an indefinite skeleton.
   if (isLoading && !summary) {
     return (
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-4" role="status" aria-busy="true">
