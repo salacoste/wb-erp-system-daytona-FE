@@ -18,12 +18,15 @@ const routeDirectory = resolve(dirname(fileURLToPath(import.meta.url)), '..', '.
 function productionFiles(): string[] {
   return (
     readdirSync(routeDirectory, { recursive: true })
-      .map(f => join(routeDirectory, f as string))
-      .filter(f => /\.(?:ts|tsx)$/.test(f))
-      // sku-accuracy/** is NOT part of Story 171.7's owned surface (Story 171.8 owns it).
+      .map(f => f as string)
+      // Anchor-safe (171.8 fix): filter RELATIVE segments BEFORE join — the plan-pinned
+      // 171.8 worktree name itself contains the sku-accuracy substring, so a joined
+      // absolute-path substring filter matched every file and emptied the catalog.
       .filter(f => !f.includes('sku-accuracy'))
       .filter(f => !f.includes('__tests__'))
       .filter(f => !/\.(?:test|spec)\./.test(f))
+      .filter(f => /\.(?:ts|tsx)$/.test(f))
+      .map(f => join(routeDirectory, f as string))
       .sort()
   )
 }
@@ -43,8 +46,10 @@ describe('Story 171.7 route presentation source contracts', () => {
     expect(files.some(f => f.endsWith('EvaluationsHeaderCard.tsx'))).toBe(true)
     expect(files.some(f => f.endsWith('EvaluationsTable.tsx'))).toBe(true)
     expect(files.some(f => f.endsWith('evaluations-list-helpers.ts'))).toBe(true)
-    // sku-accuracy/** must never leak into the catalog (Story 171.8's surface)
-    expect(files.every(f => !f.includes('sku-accuracy'))).toBe(true)
+    // sku-accuracy/** must never leak into the catalog (Story 171.8's surface).
+    // Anchor-safe: the joined path segment, not a bare substring — the 171.8 worktree
+    // name itself carries the sku-accuracy substring (same lesson as productionFiles()).
+    expect(files.every(f => !f.includes(join('evaluations', 'sku-accuracy')))).toBe(true)
   })
 
   it('no legacy palette classes in any production file', () => {

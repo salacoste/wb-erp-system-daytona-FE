@@ -7,6 +7,8 @@
  * Story 163.5-FE (FR10): naiveBaseline units column "Базовый прогноз (ед.)" — distinct from
  * "Naive MAPE" (%). Finite → formatNumber (0 → "0"); null → "—" (no ?? 0 coercion, AP#8).
  * Empty-state: "SKU не найден" + back-link when nmId not in response.
+ * Migrated Story 171.8-FE: history-table caption naming the SKU (RTC), tabular-nums on
+ * numeric cells, route-level paddings removed (dashboard layout provides its own).
  */
 
 import Link from 'next/link'
@@ -15,6 +17,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import {
   Table,
   TableBody,
+  TableCaption,
   TableCell,
   TableHead,
   TableHeader,
@@ -51,7 +54,7 @@ export function SkuAccuracyDetail({
   // only render "SKU не найден" when data has arrived AND nmId truly not found.
   if (isLoading) {
     return (
-      <div className="space-y-4 p-6" data-testid="sku-detail-skeleton">
+      <div className="space-y-4" data-testid="sku-detail-skeleton">
         <div className="h-8 w-64 animate-pulse rounded bg-muted" />
         <div className="h-48 w-full animate-pulse rounded bg-muted" />
       </div>
@@ -60,7 +63,7 @@ export function SkuAccuracyDetail({
 
   if (isError) {
     return (
-      <div className="p-6">
+      <div>
         <Alert variant="destructive">
           <AlertDescription>Ошибка загрузки данных по SKU</AlertDescription>
         </Alert>
@@ -73,7 +76,7 @@ export function SkuAccuracyDetail({
 
   if (!entry) {
     return (
-      <div className="p-6">
+      <div>
         <Alert>
           <AlertDescription>
             SKU не найден. {/* F-6: focus-visible ring for WCAG 2.4.7 compliance */}
@@ -92,7 +95,7 @@ export function SkuAccuracyDetail({
   const sortedHistory = sortHistoryDesc(entry.history)
 
   return (
-    <div className="space-y-6 p-6">
+    <div className="space-y-6">
       {/* Header card */}
       <Card>
         <CardHeader>
@@ -140,6 +143,9 @@ export function SkuAccuracyDetail({
           </CardHeader>
           <CardContent>
             <Table>
+              {/* Story 171.8: caption names the SKU (RTC); spec-order above header (169.7 canon),
+                  visually bottom via ui Table caption-bottom. */}
+              <TableCaption>История оценок — артикул {entry.nmId}</TableCaption>
               <TableHeader>
                 <TableRow>
                   <TableHead>Дата оценки</TableHead>
@@ -155,15 +161,23 @@ export function SkuAccuracyDetail({
                   <TableRow key={row.evaluationDate}>
                     <TableCell>{formatDate(row.evaluationDate)}</TableCell>
                     {/* eslint-disable-next-line no-restricted-syntax -- SEMANTIC-ZERO: count field */}
-                    <TableCell>{formatNumber(row.predictedUnits ?? 0)}</TableCell>
+                    <TableCell className="tabular-nums">
+                      {formatNumber(row.predictedUnits ?? 0)}
+                    </TableCell>
                     {/* Story 163.5-FE: naiveBaseline is nullable units — null → '—' (no ?? 0, AP#8) */}
-                    <TableCell>
+                    <TableCell className="tabular-nums">
                       {row.naiveBaseline !== null ? formatNumber(row.naiveBaseline) : '—'}
                     </TableCell>
                     {/* eslint-disable-next-line no-restricted-syntax -- SEMANTIC-ZERO: count field */}
-                    <TableCell>{formatNumber(row.actualUnits ?? 0)}</TableCell>
-                    <TableCell>{formatSkuMapeDisplay(row.mapeUnits)}</TableCell>
-                    <TableCell>{formatSkuMapeDisplay(row.naiveMape)}</TableCell>
+                    <TableCell className="tabular-nums">
+                      {formatNumber(row.actualUnits ?? 0)}
+                    </TableCell>
+                    <TableCell className="tabular-nums">
+                      {formatSkuMapeDisplay(row.mapeUnits)}
+                    </TableCell>
+                    <TableCell className="tabular-nums">
+                      {formatSkuMapeDisplay(row.naiveMape)}
+                    </TableCell>
                   </TableRow>
                 ))}
               </TableBody>

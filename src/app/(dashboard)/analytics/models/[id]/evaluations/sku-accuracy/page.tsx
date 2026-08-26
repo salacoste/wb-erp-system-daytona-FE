@@ -4,6 +4,8 @@
  * SKU Accuracy page — /analytics/models/[id]/evaluations/sku-accuracy
  * Story 110.3-FE Task 5: routing on ?nmId= param, breadcrumb, dual-view dispatch.
  * If nmId present → <SkuAccuracyDetail>; else → <SkuAccuracyOverview>.
+ * Migrated Story 171.8-FE: route-level paddings removed (dashboard layout
+ * provides its own outer padding — 171.6 canon).
  */
 
 import { useParams, useSearchParams } from 'next/navigation'
@@ -34,8 +36,8 @@ export default function SkuAccuracyPage() {
 
   return (
     <div className="space-y-4">
-      {/* Breadcrumb */}
-      <nav className="flex items-center gap-2 px-6 pt-6 text-sm text-muted-foreground">
+      {/* Breadcrumb — Story 171.8: route paddings removed (layout provides them) */}
+      <nav className="flex items-center gap-2 text-sm text-muted-foreground">
         <Link
           href={buildModelEvaluationsRoute(modelId)}
           className="hover:text-foreground underline"
@@ -46,7 +48,7 @@ export default function SkuAccuracyPage() {
         <span className="text-foreground">Точность по SKU</span>
       </nav>
 
-      <h1 className="px-6 text-2xl font-semibold">Точность по SKU</h1>
+      <h1 className="text-2xl font-semibold">Точность по SKU</h1>
 
       {nmId !== null ? (
         <SkuAccuracyDetail
