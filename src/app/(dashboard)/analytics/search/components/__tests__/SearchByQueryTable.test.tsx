@@ -1,5 +1,6 @@
 import { describe, it, expect } from 'vitest'
 import { render, screen } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
 import { SearchByQueryTable } from '../SearchByQueryTable'
 import type { SearchProductItem } from '@/types/search-analytics'
 
@@ -32,5 +33,20 @@ describe('SearchByQueryTable null avgPosition (170.7)', () => {
     const idxBest = cells.findIndex(c => c.includes('1,2'))
     expect(idxBest).toBeGreaterThan(0)
     expect(idxNull).toBe(cells.length - 1) // header + 3 rows; null row last
+  })
+
+  it('preface F3: nulls sort LAST in DESC too (unknown never masquerades via sort)', async () => {
+    render(<SearchByQueryTable products={[mk(1, null), mk(2, 5), mk(3, 1.2)]} />)
+    // Default sort = avgPosition asc. Click the avgPosition sort header to flip to desc.
+    await userEvent.click(screen.getByRole('button', { name: /по возрастанию|ascending/i }))
+    const cells = screen.getAllByRole('row').map(r => r.textContent ?? '')
+    const idxFive = cells.findIndex(c => c.includes('5,0'))
+    const idxBest = cells.findIndex(c => c.includes('1,2'))
+    const idxNull = cells.findIndex(c => c.includes('—'))
+    // DESC: 5,0 first among data rows, 1,2 second — explicit ordinals (review F4)
+    expect(idxFive).toBeGreaterThan(0)
+    expect(idxBest).toBeGreaterThan(idxFive)
+    // nulls LAST even in desc — unknown never masquerades as a position via sort
+    expect(idxNull).toBe(cells.length - 1)
   })
 })

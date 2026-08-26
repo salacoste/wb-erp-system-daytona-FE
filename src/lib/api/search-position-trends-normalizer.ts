@@ -36,15 +36,19 @@ const VALID_DIRECTIONS: Readonly<Record<string, TrendDirection>> = {
   stable: 'stable',
 }
 
+// Preface-review F1: warn ONCE per distinct unrecognized value (a 500-row garbage
+// payload must not produce 500 identical warns); absent trend is legitimate
+// no-data — silent 'unknown', no warn.
+const warnedTrendValues = new Set<string>()
 function toTrendDirection(raw: unknown): TrendDirection {
   if (typeof raw === 'string') {
     const v = VALID_DIRECTIONS[raw]
     if (v !== undefined) return v
+    if (!warnedTrendValues.has(raw)) {
+      warnedTrendValues.add(raw)
+      logger.warn('[170.7] toTrendDirection: unrecognized trend direction %o -> "unknown"', raw)
+    }
   }
-  logger.warn(
-    '[170.7] toTrendDirection: unrecognized trend direction %o -> "unknown"',
-    raw,
-  )
   return 'unknown'
 }
 

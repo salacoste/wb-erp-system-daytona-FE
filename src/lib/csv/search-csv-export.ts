@@ -12,7 +12,9 @@ function fmt(n: number): string {
 
 /** Format percent value (0-100 scale) with 1 decimal, Russian locale. */
 function fmtPct(n: number | null): string {
-  if (n == null) return '—'
+  // Preface-review F2: unknown NUMERIC -> empty cell (uniform sentinel across this
+// module — spreadsheet filters for blanks catch all unknowns; '—' mixed with '' hid them).
+  if (n == null) return ''
   return n.toLocaleString('ru-RU', { minimumFractionDigits: 1, maximumFractionDigits: 1 }) + ' %'
 }
 
