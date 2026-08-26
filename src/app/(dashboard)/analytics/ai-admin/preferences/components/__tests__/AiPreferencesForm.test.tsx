@@ -371,6 +371,20 @@ describe('AiPreferencesForm', () => {
     )
     expect(sw.getAttribute('aria-describedby')).toContain('ai-enabled-mutation-error')
     expect(document.getElementById('ai-enabled-mutation-error')).toBeInTheDocument()
+    // review-MEDIUM: chain REVERTS to desc-only when the error clears.
+    mockUseUpdateAiPreferences.mockReturnValue(
+      defaultMutation as unknown as ReturnType<
+        typeof useUpdateAiPreferencesModule.useUpdateAiPreferences
+      >
+    )
+    rerender(
+      <QueryClientProvider
+        client={new QueryClient({ defaultOptions: { queries: { retry: false } } })}
+      >
+        <AiPreferencesForm />
+      </QueryClientProvider>
+    )
+    expect(sw.getAttribute('aria-describedby')).toBe('ai-enabled-desc')
   })
 
   it('Story 171.3 RTC: form wrapper has max-w-2xl readable width', () => {
