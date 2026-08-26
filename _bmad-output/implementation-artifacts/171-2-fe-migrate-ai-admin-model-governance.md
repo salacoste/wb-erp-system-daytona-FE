@@ -1,6 +1,6 @@
 # Story 171.2-FE: Migrate AI Admin Model Governance
 
-Status: review — implementation + r1/r2 fixes on branch; PR/merge/cleanup pending
+Status: done — PR #254 merged (`103a3ffe`); 2-pass fresh review APPROVE×2; e2e N/A; cleanup 0/0/0
 
 ## Story
 
@@ -19,7 +19,7 @@ Plan: `.omx/plans/171.2-migrate-ai-admin-model-governance.md` (authoritative —
 
 - [x] Task 0: NONE — born token-clean; `#185` = ticket-ref (BD-33 MAPE sentinel doc); no boundary lies (STATUS_LABELS/VARIANTS Record-lookup with ?? fallback = VALID-set semantics already).
 - [x] Task 1: Behavior lock — baseline **50 tests / 4 files**. LOCK: identity cols (String(model.id) + v{version}); interactive client sort (SortableHead aria-sort ×3 + toggle + default desc — PRESERVE, tested); status Badge text+variant (STATUS_LABELS ?? raw — known-set fallback); two distinct empties (global «Модели не найдены.» vs filtered-empty + reset btn F-8); rollback eligibility 5-status block (F-10 disabled + named aria); AlertDialog primitives (F-7 description purity); 403 dialog branch + non-Owner gate + hydration skeleton (F-11); null mape/trainedAt → «—»; #185 MAPE-0 sentinel → «—» not 0; invalidation documented prefix-over; consequence wording existing.
-- [ ] Task 2 (the 7 gaps — compliance-enumerated):
+- [x] Task 2 (the 7 gaps — compliance-enumerated):
   1. `<TableCaption>` naming governed versions («Версии моделей под управлением» — match page h1 noun; static)
   2. tabular-nums on mape/date columns (version/id cols stay as-is — mono if id is opaque)
   3. **DISPOSITION-NOT-FIX**: URL-pagination = feature add (current = useState in-session, satisfies epic RTC "preserves state" within session; adding URL sync = behavior change like severity-render 171.1) — document
@@ -28,7 +28,7 @@ Plan: `.omx/plans/171.2-migrate-ai-admin-model-governance.md` (authoritative —
   6. Missing states: **409 conflict branch** in RollbackDialog onError («Модель уже откатана. Обновите список.» — 171.1 pattern, input/reason retained? read the form — reason gate exists; retain) + 3 tests (unknown-status render fallback, pending disabled+spinner, 409 message)
   7. AC-2 «server truth» phrasing: append to confirm description («Актуальный статус определяется на сервере после отката.» — honest non-promise)
 - [x] Task 3: Guards — light (born-clean pin): no-palette/no-hex over 6 production files (#185 prose-exempt self-test!); caption/tabular/scroll-region pins; focus-return test (real focus assertion); 409 + unknown-status + pending tests.
-- [x] Task 4: Validation + 2-pass fresh review + PR + cleanup — route **58/4** (baseline 50/4; +8 growth); full **19 226/0** (floor 19 217, +8 exact); lint 0/0; tsc 0; max-lines OK; build 0. e2e N/A (no models spec). Reviews: r1 opus APPROVE (1 MEDIUM tautological border-pin + 3 LOW → F1 outline-distinctive + F2 version-tabular + F3 fresh-node-rAF applied `6cb03754`); r2 opus **APPROVE — merge gate passes** (3 LOW: L1 v-split revert + L2 caption spec-order applied `9e2b879d`; L3 focus-no-op-if-row-gone → Gaps acceptable degradation). CE: siblings + /analytics/models/** + hooks zero-diff (r2 exit-1 grep verified).
+- [x] Task 4: Validation + 2-pass fresh review + PR + cleanup — route **58/4** (baseline 50/4; +8 growth); full **19 226/0** (floor 19 217, +8 exact); lint 0/0; tsc 0; max-lines OK; build 0. e2e N/A (no models spec). Reviews: r1 opus APPROVE (1 MEDIUM tautological border-pin + 3 LOW → F1 outline-distinctive + F2 version-tabular + F3 fresh-node-rAF applied `6cb03754`); r2 opus **APPROVE — merge gate passes** (3 LOW: L1 v-split revert + L2 caption spec-order applied `9e2b879d`; L3 focus-no-op-if-row-gone → Gaps acceptable degradation). CE: siblings + /analytics/models/** + hooks zero-diff (r2 exit-1 grep verified). PR #254 merged `103a3ffe`; branch remote/local + worktree deleted, 0/0/0 absence proofs.
 
 ## Dev Notes
 
@@ -79,3 +79,4 @@ Diff cd9aa949..HEAD = **6 files** (M Table, M Content, M List, M RollbackDialog,
 |---|---|
 | 2026-08-26 | Story created from compliance-check recon (born token-clean; 7 gaps incl. epic-literal focus-return; URL-pagination dispositioned preserve). Plan referenced as authoritative. |
 | 2026-08-26 | r1 fixes (distinctive pin, version tabular, fresh-node focus) + r2 fixes (v-split revert, caption spec-order). Status: ready-for-dev → review. |
+| 2026-08-26 | Implemented + merged: PR #254 (impl `ff3c5e17` + r1 `6cb03754` + r2 `9e2b879d` + story `61b709e9`, merge `103a3ffe`); route 58/4, full 19 226/0 (+8 exact), e2e N/A; 2×opus APPROVE×2; cleanup 0/0/0. Epic 171: 2/9. Status: review → done. **Lessons:** (1) Badge-пин на cva-BASE-класс = тавтология; пинь variant-DISTINCTIVE токены. (2) Колбэк-открытый AlertDialog без trigger-ref: явный re-query в rAF. (3) caption после TableBody = валидный JSX, невалидный DOM-порядок. |
