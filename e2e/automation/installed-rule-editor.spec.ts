@@ -10,10 +10,12 @@
  *  - expect.poll / toBeVisible for terminal-state assertions.
  *  - Route globs scoped to EXACT API paths (no `**`), via the 163.3 fixture.
  *
- * This spec is WRITTEN, not run live — the orchestrator coordinates live E2E
- * (shared backend login rate-limit + in-flight browser session). Do not fake a
- * run. The fixture (e2e/fixtures/story-163-3-installed-rule-editor.ts) is the
- * authoritative source of the mocked contract.
+ * First LIVE run: 2026-08-27, Story 172.4 branch (worktree
+ * wb-repricer-fe-172-4-installed-rule-detail), npm wrapper on pinned node 24 —
+ * 8/8 passed post-change (run report playwright-report). Earlier "written, not
+ * run live" status is superseded. The fixture
+ * (e2e/fixtures/story-163-3-installed-rule-editor.ts) remains the authoritative
+ * source of the mocked contract.
  *
  * Reference: docs/request-backend/224-automation-canned-rules-backend-contract.md
  */
@@ -106,6 +108,13 @@ test.describe('Story 163.3 — Installed rule editor @automation', () => {
     await page.getByTestId('editor-save').click()
     const response = await patchResponse
     expect(response.status()).toBe(200)
+
+    // Story 172.4: success feedback surfaces in the status region on the
+    // status-success tokens (consumes the editor-update-success testid).
+    await expect(page.getByTestId('editor-update-success')).toBeVisible({
+      timeout: SETTLE_TIMEOUT,
+    })
+    await expect(page.getByTestId('editor-update-success')).toContainText('Правило обновлено.')
 
     // Only the changed editable field was sent (no read-only fields leaked).
     const body = controller.getLastPatchBody()

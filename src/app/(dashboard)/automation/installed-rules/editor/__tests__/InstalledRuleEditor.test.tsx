@@ -131,6 +131,17 @@ describe('InstalledRuleEditor (163.3)', () => {
     expect(screen.getByTestId('field-name')).toHaveValue('Changed')
   })
 
+  // Story 172.4: success feedback (status-success tint) — unit twin of the
+  // e2e AC5 assertion on editor-update-success.
+  it('shows the success status alert on mutation success', () => {
+    mockUseInstalledRule.mockReturnValue(detailResult({ data: makeRule() }))
+    mockUseUpdateInstalledRule.mockReturnValue(mutationResult({ isSuccess: true }))
+    renderWithProviders(<InstalledRuleEditor ruleId="r1" />)
+    const success = screen.getByTestId('editor-update-success')
+    expect(success).toBeInTheDocument()
+    expect(success).toHaveTextContent('Правило обновлено.')
+  })
+
   it('fires the unsaved-changes guard when leaving with dirty edits', () => {
     mockUseInstalledRule.mockReturnValue(detailResult({ data: makeRule() }))
     renderWithProviders(<InstalledRuleEditor ruleId="r1" />)
