@@ -17,7 +17,8 @@ export function ForecastPageHeader({ children }: ForecastPageHeaderProps) {
   return (
     <div className="flex flex-wrap items-center justify-between gap-3">
       <div className="flex items-center gap-3">
-        <Brain className="h-8 w-8 text-purple-600" />
+        {/* Story 171.4: decorative icon → muted token (no legacy purple) */}
+        <Brain className="h-8 w-8 text-muted-foreground" />
         <div>
           <h1 className="text-2xl font-bold">AI Прогноз продаж</h1>
           <p className="text-sm text-muted-foreground">
