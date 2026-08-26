@@ -1,6 +1,6 @@
 # Story 170.7-FE: Migrate Search Analytics Workspace
 
-Status: review — implementation + r1/r2 fixes on branch; PR/merge/cleanup pending
+Status: done — PR #250 merged (`7a94dac0`); 3-pass fresh review (Trigger 1) + preface #249; e2e 8/8 revived; cleanup 0/0/0
 
 ## Story
 
@@ -100,3 +100,4 @@ Diff 2179e6b8..HEAD = **26 files** (5 A: search-chart-config.ts, SearchPositionO
 | 2026-08-26 | Story created from deep recon (BIGGEST epic-170 route: 43 files; Task-0 preface REQUIRED — 3 boundary lies; Pattern-1 gap; dead deep-link; e2e label mismatch; duplicate test suites noted). Plan referenced as authoritative. |
 | 2026-08-26 | Validation PASS-WITH-FINDINGS → 3 CRITICAL applied (badge fact GREEN-not-RED; type-file exception scope widened; consumer sites enumerated incl. nulls-LAST sort) + verdicts: deep-link IMPLEMENT, label LOCK «Поисковый запрос» (revert; e2e silently skipping today) + Pattern-1 hook-level test note + exact 174/21. |
 | 2026-08-26 | r1 fixes (tri-state, canonical bridge) applied `df52152e`; r2 fixes (comment reword) `d7c8432f`; honest e2e 8/8 derived; r3 (Trigger-1) — deep-link/tri-state verified, r1-artifact dead branch removed `d3cdc9f1`. Status: ready-for-dev → review. |
+| 2026-08-26 | Implemented + merged: preface PR #249 (`2179e6b8`) + PR #250 (impl `07a78b68` + r1 `df52152e` + r2 `d7c8432f` + r3 `d3cdc9f1` + story `dd2c7db1`, merge `7a94dac0`); route 195/25, full 19 204/0, e2e 8/8 revived; 3×opus trail; cleanup 0/0/0. **EPIC 170 COMPLETE (7/7).** Status: review → done. **Lessons:** (1) Мой r1-фикс добавил недостижимую дубль-ветку под существующей — правь ПОСЛЕ чтения полной функции, не по диффу. (2) Честный e2e-счёт = счёт спеки, не wrapper-бандла (13 = 8 search + 5 orders-smoke). (3) С silently-skipping e2e (Jam-gate) ревёрс лейбла = воскресить 2 теста — проверяй skip-статус спеки до «все зелёные». |
