@@ -63,7 +63,10 @@ export function InstalledRuleRow({ rule, highlighted }: InstalledRuleRowProps) {
           </Link>
         </h3>
         {rule.enabled ? (
-          <Badge className="bg-green-100 text-green-800" data-testid={`enabled-badge-${rule.id}`}>
+          <Badge
+            className="border-status-success/40 bg-status-success/10 text-status-success"
+            data-testid={`enabled-badge-${rule.id}`}
+          >
             Включено
           </Badge>
         ) : (
@@ -90,8 +93,11 @@ export function InstalledRuleRow({ rule, highlighted }: InstalledRuleRowProps) {
 
       {requiresArm && (
         <div className="flex items-start gap-2" data-testid={`safety-${rule.id}`}>
-          <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0 text-yellow-600" aria-hidden="true" />
-          <p className="text-sm text-yellow-700">
+          <AlertTriangle
+            className="mt-0.5 h-4 w-4 shrink-0 text-status-warning"
+            aria-hidden="true"
+          />
+          <p className="text-sm text-status-warning">
             <span className="font-medium">Требует arm write-back.</span>{' '}
             {rule.enabled
               ? 'Изменение цены включается отдельным рубильником кабинета (PRICE_WRITEBACK_ENABLED). Правило установлено, но цены не меняются до включения рубильника.'
