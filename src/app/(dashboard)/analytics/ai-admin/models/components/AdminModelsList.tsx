@@ -22,6 +22,10 @@ const PAGE_LIMIT = 20
 export function AdminModelsList() {
   const user = useAuthStore(s => s.user)
   const [statusFilter, setStatusFilter] = useState('all')
+  // 171.2 gap-3 DISPOSITION (preserve-migration): pagination stays in-session useState,
+  // NOT URL-synced. The epic RTC requires state preservation WITHIN a session (satisfied);
+  // URL pagination is a feature add / behavior change (cf. 171.1 severity-render) and is
+  // out of scope for a migration story.
   const [page, setPage] = useState(1)
   const [sortCol, setSortCol] = useState<SortCol>('version')
   const [sortDir, setSortDir] = useState<SortDir>('desc')
