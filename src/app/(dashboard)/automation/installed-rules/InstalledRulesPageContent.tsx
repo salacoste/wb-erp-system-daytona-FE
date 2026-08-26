@@ -9,6 +9,9 @@
  *  - populated → InstalledRulesList
  *
  * A failure in this query never blanks the templates gallery (separate query).
+ *
+ * Migrated Story 172.3-FE: double page padding removed (the dashboard layout
+ * provides outer padding); primitives verified (Alert/Button-asChild-Link).
  */
 import Link from 'next/link'
 import { AlertCircle } from 'lucide-react'
@@ -28,7 +31,7 @@ export function InstalledRulesPageContent({ highlightId }: InstalledRulesPageCon
 
   if (isLoading) {
     return (
-      <div className="container py-6">
+      <div className="container">
         <h1 className="mb-6 text-2xl font-semibold">Установленные правила</h1>
         <p className="text-muted-foreground">Загрузка…</p>
       </div>
@@ -37,7 +40,7 @@ export function InstalledRulesPageContent({ highlightId }: InstalledRulesPageCon
 
   if (isError) {
     return (
-      <div className="container py-6">
+      <div className="container">
         <h1 className="mb-6 text-2xl font-semibold">Установленные правила</h1>
         <Alert variant="destructive">
           <AlertCircle className="h-4 w-4" />
@@ -54,7 +57,7 @@ export function InstalledRulesPageContent({ highlightId }: InstalledRulesPageCon
 
   const list = rules ?? []
   return (
-    <div className="container py-6">
+    <div className="container">
       <h1 className="mb-2 text-2xl font-semibold">Установленные правила</h1>
       <p className="mb-6 text-sm text-muted-foreground">
         Правила, установленные в этом кабинете. Установка и включение всегда безопасны.

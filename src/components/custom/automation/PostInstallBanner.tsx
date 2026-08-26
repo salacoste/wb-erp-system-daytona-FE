@@ -3,6 +3,8 @@
  * after a successful install (Story 163.2-FE). Links to the installed-rules
  * list with ?highlight=<ruleId> so the operator lands on the newly-installed
  * rule. Purely presentational.
+ *
+ * Migrated Story 172.3-FE: success tint on status-success tokens.
  */
 import Link from 'next/link'
 import { ROUTES } from '@/lib/routes'
@@ -15,10 +17,10 @@ interface PostInstallBannerProps {
 export function PostInstallBanner({ ruleId }: PostInstallBannerProps) {
   return (
     <div
-      className="flex flex-wrap items-center justify-between gap-2 rounded-md border border-green-300 bg-green-50 p-3"
+      className="flex flex-wrap items-center justify-between gap-2 rounded-md border border-status-success/40 bg-status-success/10 p-3"
       data-testid="post-install-deeplink"
     >
-      <p className="text-sm text-green-800">Шаблон установлен.</p>
+      <p className="text-sm text-status-success">Шаблон установлен.</p>
       <div className="flex flex-wrap items-center gap-3">
         {/* Story 163.3-FE: primary CTA deep-links into the editor for the new rule. */}
         <Link
@@ -30,7 +32,7 @@ export function PostInstallBanner({ ruleId }: PostInstallBannerProps) {
         </Link>
         <Link
           href={`${ROUTES.AUTOMATION.INSTALLED_RULES}?highlight=${encodeURIComponent(ruleId)}`}
-          className="text-sm text-green-700 underline-offset-4 hover:underline"
+          className="text-sm text-status-success underline-offset-4 hover:underline"
           data-testid="open-installed-rules-link"
         >
           Открыть установленные правила
