@@ -105,7 +105,8 @@
 
 | Что | Где |
 |---|---|
-| Оркестратор-промпт V9 (процесс) | [`docs/ORCHESTRATOR-PROMPT-2026-08-26-V9-FE-CONTINUATION.md`](ORCHESTRATOR-PROMPT-2026-08-26-V9-FE-CONTINUATION.md) |
+| **Оркестратор-промпт V10 (операционный, OMC-делегирование)** | [`docs/ORCHESTRATOR-PROMPT-2026-08-26-V10-OMC-SUBAGENT-ORCHESTRATION.md`](ORCHESTRATOR-PROMPT-2026-08-26-V10-OMC-SUBAGENT-ORCHESTRATION.md) |
+| Оркестратор-промпт V9 (справочник цикла/гейтов/ловушек) | [`docs/ORCHESTRATOR-PROMPT-2026-08-26-V9-FE-CONTINUATION.md`](ORCHESTRATOR-PROMPT-2026-08-26-V9-FE-CONTINUATION.md) |
 | Мастер-план миграции | [`.omx/plans/shadcn-full-ui-migration-master.md`](../.omx/plans/shadcn-full-ui-migration-master.md) |
 | **Recon 172.1 (разведка готова)** | [`docs/recon-172-1-dashboard.md`](recon-172-1-dashboard.md) |
 | Артефакты сессии | [`_bmad-output/implementation-artifacts/171-{7,8,9}-fe-*.md`](../_bmad-output/implementation-artifacts/) |
@@ -117,10 +118,10 @@
 
 ## 5. Как продолжать
 
-1. V9-промпт §1 bootstrap (fetch/switch/pull — ожидается `a6167e88` или новее; repo > doc).
+1. **V10-промпт** (`ORCHESTRATOR-PROMPT-2026-08-26-V10-OMC-SUBAGENT-ORCHESTRATION.md`) §1 bootstrap (fetch/switch/pull — ожидается `9c579b3d` или новее; repo > doc).
 2. Прочитать этот handoff + `docs/recon-172-1-dashboard.md` (не пересчитывать разведку).
-3. 172.1 по плану стори волновым делегированием (§2.1); микро-цикл §4 V9 для последующих.
-4. Гейты §5, нормы §6, ловушки §8 + новые P9-P11.
-5. После каждого merge — reconciliation (sprint-flip + registry-строка делает closeout-ветка).
+3. 172.1 по плану стори волновым OMC-делегированием (V10 §4-§6); микро-цикл V9 §4 — справочник для последующих MINOR-сторий.
+4. Гейты V9 §5 (= V10 §7), нормы V9 §6, ловушки V9 §8 + P9-P11 + делегационные V10 §9.16-19.
+5. После каждого merge — reconciliation (sprint-flip + registry-строка делает closeout-ветка); handoff §0 — на сдвигах.
 
 **Продолжение = 172.1** (§2.1).
