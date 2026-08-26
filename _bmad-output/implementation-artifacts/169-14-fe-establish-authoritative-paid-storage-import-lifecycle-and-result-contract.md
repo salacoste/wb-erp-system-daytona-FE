@@ -30,7 +30,7 @@ so that the frontend can report progress, imported rows, failure details, and sa
 - [x] Identify the missing durable delivery record and approve this artifact as that record.
 - [x] Correct the verified-base lifecycle for foreign WIP that blocks a safe local-main fast-forward.
 - [x] Correct ownership for method-level shared polling `CabinetGuard`/OpenAPI decorator hunks and direct Excel/paid-storage regression evidence.
-- [ ] Merge the docs-only preflight correction and clean its frontend branch/worktree.
+- [x] Merge the docs-only preflight correction and clean its frontend branch/worktree.
 - [ ] Re-fetch backend `origin/main`, assert exact backend identity, and re-run fail-closed collision proof across uncommitted/committed linked worktrees, clean unattached local branches, and open-PR paths whose fully paginated enumeration count equals `changedFiles`; create the exact Story backend branch/worktree from the approved base only after the scan passes.
 - [ ] Add and retain honest behavioral RED controller/guard/status-builder/E2E tests.
 - [ ] Independently review the RED matrix and exact backend implementation manifest.
@@ -93,13 +93,15 @@ Primary orchestrator with independent repository-inventory, architecture, test-d
 Preflight evidence before backend Story worktree creation:
 
 - Backend local `main`: `e8cff608da1aa87e1c482a68566e8ba824fe1e2d`.
-- Refreshed backend `origin/main`: `25b41be67f9f7e3b0aa6e8081f741b263dbecd64`.
+- Refreshed backend `origin/main`: `250a329c616194cf1e263a4fa8303a574939e615`.
 - Local `main` ancestry on refreshed `origin/main`: proven.
-- Approved planned Story base: refreshed `origin/main` `25b41be67f9f7e3b0aa6e8081f741b263dbecd64` under the foreign-WIP fallback.
+- Approved planned Story base: refreshed `origin/main` `250a329c616194cf1e263a4fa8303a574939e615` under the foreign-WIP fallback.
 - Actual Story base after worktree creation: pending.
 - Exact incoming paths that overlap foreign local WIP and block a safe local-main fast-forward:
   - `openwiki/.last-update.json`;
+  - `openwiki/quickstart.md`;
   - `openwiki/workflows/fe-shadcn-migration.md`.
+- The previously merged two-path reservation was superseded after OpenWiki Bot advanced backend `main` from `25b41be67f9f7e3b0aa6e8081f741b263dbecd64` to `250a329c616194cf1e263a4fa8303a574939e615`; the exact current path intersection above is the canonical recorded-origin fallback reservation.
 - Broader foreign WIP remains under `frontend/**`, `openwiki/**`, and `.env.bak-*`; it must not be staged, committed, stashed, reset, restored, cleaned, or otherwise mutated by Story 169.14.
 - Story-owned backend paths: clean and non-overlapping at preflight; fresh fail-closed proof remains mandatory immediately before worktree creation and must cover staged, unstaged, and untracked WIP plus clean committed divergence in every linked worktree, committed divergence in every clean unattached local branch, and open-PR changed-file overlap. PR discovery must reject list results at the configured limit, enumerate changed files with `gh api --paginate`, and require the enumerated count to equal `changedFiles` before overlap comparison.
 
@@ -304,6 +306,7 @@ The final backend File List is pending the honest RED freeze and must equal the 
 
 ## Change Log
 
+- 2026-08-26: Refreshed the checkout-independent backend base after a newer OpenWiki Bot commit advanced live backend `main` to `250a329c616194cf1e263a4fa8303a574939e615`. Re-ran the fail-closed collision inventory: all ten Story-owned paths remain clean and non-overlapping, the prescribed branch/worktree and open-PR collision surfaces remain absent, and the exact foreign-WIP/incoming intersection is now the canonical three-path reservation `openwiki/.last-update.json`, `openwiki/quickstart.md`, and `openwiki/workflows/fe-shadcn-migration.md`. This artifact-only correction does not authorize a production edit; honest RED, independent manifest review, merged evidence bytes, and evidence-preflight remain mandatory before GREEN implementation.
 - 2026-08-26: Exact-SHA Review A rejected seal `05ccde49eeeae3076401b5442d2b55b4aea7297c` because failed Git command substitutions could be converted to successful empty-output assertions by outer `test -z` or `printf` commands. Repaired every affected branch, remote-ref, status, diff, and untracked-file query with independent explicit failure capture; added executable invalid-repository/missing-remote regressions proving cleanup, retirement, artifact-publication, and Story 169.15 authorization mutations remain unreachable on failure. The rejected seal and all reviews over it are superseded; validation and two fresh exact-SHA reviews restart from a new empty seal.
 - 2026-08-26: Closed the rejected-seal scope findings by adding explicit `--no-renames` to all nineteen scope-bearing staged, unstaged, committed, cumulative, delivery, recovery, handoff, retirement, and cleanup manifest enumerations across Stories 169.14 and 169.15. Executable forbidden-source → allowed-destination synthetics now prove the default control view hides the forbidden deletion, the hardened staged/three-dot/two-endpoint views expose both paths, and the real manifest-authorization semantics reject the result. The correction proposal records the new invariant; seal `dc821ce81df85726334e7fc28c238716dd1f7549` and every review over it remain superseded, so the complete validation suite and two independent exact-SHA reviews must run against a new empty seal.
 - 2026-08-26: Forward-ported the complete eight-file correction after Story 171.9 and the Epic 171 closeout, preserving canonical readiness at 56/94, Epic 171 closed at 9/9, Program NEXT Story 172.1, the Remaining chain beginning with paid storage 169.14 → 169.15 → 169.12 closeout before Story 172.1, and the 19 281/0 Vitest floor. Exact-SHA Pass B rejected seal `dc821ce81df85726334e7fc28c238716dd1f7549` with one HIGH rename-accounting scope bypass and one MEDIUM Remaining-order contradiction; that seal and its earlier Pass A are superseded, and validation plus both independent exact-SHA reviews must restart from a new empty seal after repair.
