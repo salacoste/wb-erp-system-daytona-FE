@@ -1,6 +1,6 @@
 # Shadcn Full-UI Migration — Status & Debt Registry
 
-> **Snapshot date: 2026-08-26** (Story 169.13 shipped independently; Story 169.14 is in progress after the docs-only preflight correction; Epics 170 and 171 are complete; Story 171.9 shipped through PR #270; Program NEXT = 172.4; Stories 172.1-172.3 shipped through PRs #278, #280, #282; Story 169.12 route PR #227 merged early and its contract closeout remains pending). Канонический статус-реестр программы миграции
+> **Snapshot date: 2026-08-26** (Story 169.13 shipped independently; Story 169.14 is in progress after the docs-only preflight correction; Epics 170 and 171 are complete; Story 171.9 shipped through PR #270; Program NEXT = 172.5; Stories 172.1-172.4 shipped through PRs #278, #280, #282, #285; Story 169.12 route PR #227 merged early and its contract closeout remains pending). Канонический статус-реестр программы миграции
 > для BMAD-артефактов. Живая история — sprint-status.yaml (по-сторийно) и ledger
 > BE-репо (docs/tech-debt/TECH-DEBT-2026-08-SESSION.md, Addendum-4 cont.1-25);
 > этот файл = консолидированный срез «что сделано / что осталось / все долги».
@@ -16,7 +16,7 @@
 | 169-FE operational analytics | 15              | **12** | 169.14 → 169.15 → 169.12 closeout | **IN PROGRESS** (12 canonical Stories complete; 169.13 shipped independently; 169.12 route presentation remains review-blocked) |
 | 170-FE                       | 7               | **7**  | —                                 | **CLOSED** (Stories 170.1-170.7 shipped through PRs #237-#250)                                                                  |
 | 171-FE                       | 9               | **9**  | —                                 | **CLOSED** (Stories 171.1-171.9 shipped through PRs #252, #254, #256, #258, #260, #262, #266, #268, and #270)                   |
-| 172-FE                       | 17              | **3**  | 172.4-17                          | IN PROGRESS (172.1 #278 FULL; 172.2 #280 + 172.3 #282 MINOR-серии с новыми e2e-пакетами и гардами; см. owner-заметки §5)          |
+| 172-FE                       | 17              | **4**  | 172.5-17                          | IN PROGRESS (172.1 #278 FULL; 172.2-172.4 #280/#282/#285 MINOR-серии; automation-домен gallery+list+editor мигрирован целиком; см. §5) |
 | 173-FE                       | 13              | 0      | 173.1-13                          | backlog                                                                                                                         |
 | 174-FE консолидация          | 5               | 0      | 174.1-5                           | финал (СТРОГО после 166-173; 174.2 design-system/source-boundary/contrast; 174.3 visual/a11y; 174.4 functional/backend)         |
 
@@ -93,7 +93,8 @@ caption naming model + tabular + p-6; guard-9 + caption role-тест + 6 re-pin
 **172.1 SHIPPED (2026-08-26, PR #278, merge `a001abee`)** — FULL-цикл: 127 файлов (125M+2A guard-теста), 4 executor-волны, targeted 65/1394→67/1410, полный пол **19 281→19 297** (+16 гардов), e2e 28/1↓/1 pre-existing (бисект на main), 3 ревью-прохода (REJECT 1 MAJOR chart-token collision → 2× APPROVE-WITH-NOTES), light+dark+390px visual, cleanup 0/0/0. Артефакт: `implementation-artifacts/172-1-fe-migrate-the-business-dashboard.md`.
 **172.2 SHIPPED (2026-08-27, PR #280, merge `d35f1e09`)** — MINOR-GAP born-clean: 5 файлов (+437/−7), py-6-долг и raw-button закрыты, СОЗДАН e2e-пакет галереи (fixture-контроллер + 6-тестовая спека по канонической матрице; 1×opus review с HIGH-фиксом fixture-гонки), гард 7 тестов, полный пол **19 304/0**. Артефакт: `implementation-artifacts/172-2-fe-migrate-the-canned-automation-rules-gallery.md`.
 **172.3 SHIPPED (2026-08-27, PR #282, merge `629b74c1`)** — MINOR-GAP-plus: 6 файлов (+291/−9), статус-токены (badge/safety/banner), полный пол **19 311/0**, e2e 10/0 first-run. Артефакт: `implementation-artifacts/172-3-fe-migrate-the-installed-automation-rules-list.md`.
-**NEXT = 172.4 dynamic installed-rule editor** (эпик 172, 14 стори осталось; планы `.omx/plans/172.{4..17}-*.md`; owner-координация: 172.5/172.6/172.14).
+**172.4 SHIPPED (2026-08-27, PR #285, merge `25c8bc19`)** — MINOR-GAP-plus: 5 файлов (+144/−15), status-токены editor'а, полный пол **19 319/0**; **163.3 editor-спека впервые live 8/8** (stale-заголовок снят). Артефакт: `implementation-artifacts/172-4-fe-migrate-the-installed-rule-detail-and-editor.md`.
+**NEXT = 172.5 COGS single assignment (OWNER-КООРДИНАЦИЯ!)** (эпик 172, 13 стори осталось; owner-зависимые: 172.5/172.6/172.14 — см. §5; планы `.omx/plans/172.{5..17}-*.md`).
 **Carry-out → 174.2 owner (route-ledger handoff из 171.9):** (1) удалить поле className из
 STATUS_BADGE_CONFIG после миграции ModelListSection на собственный overlay; (2) переписать
 stale-комментарий model-list-helpers.ts:24-26 («subroutes 171.7/171.9» — остался только
