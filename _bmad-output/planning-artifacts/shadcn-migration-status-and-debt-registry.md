@@ -72,10 +72,20 @@ route-paddings ×8 убраны; guard-6 + caption-тесты ×2; CROSS-SURFACE
 (substring-фильтр на абсолютном пути матчил имя worktree 171.8 — коллизия план-пиновых имён,
 доказана симуляцией; relative-first фильтры); owned 63→71, полный пол **19 271/0**, 1×opus
 APPROVE-WITH-NOTES (0 дефектов), e2e 13/1↓/0, light+dark visual оба вида).
-**NEXT = 171.9 model performance detail** (backlog; план `.omx/plans/171.9-...md`;
-спец-заметки: STATUS_BADGE_CONFIG.className — последний потребитель ModelPerformanceDetail:143,
-после detach — удалить поле + обновить ownership-комментарий и гард 171.6; MapeTrendChart —
-chart-hex/chartframe-канон 171.4);
+171.9 SHIPPED 2026-08-26 (**ЭПИК 171 ЗАКРЫТ 9/9** — models-дерево мигрировано полностью): #270
+(`2d46a175`; MINOR-GAP-plus — единственный саброут с реальной палитрой+hex: DRIFT+valence
+palette→status tokens (dark-fix), MapeTrendChart 8 hex→171.4 chart-канон CSS vars (border/
+chart-axis/chart-1, parity по живому ForecastChart), STATUS_BADGE_CONFIG.className DETACH
+(route-local 1:1 map; поле остаётся — registry-root ModelListSection:149 тоже потребитель);
+caption naming model + tabular + p-6; guard-9 + caption role-тест + 6 re-pins; owned 41→51,
+полный пол **19 281/0**, 1×opus APPROVE (0 дефектов), e2e 13/1↓/0, light+dark visual с графиком).
+**NEXT = 172.1 core business ops — dashboard** (эпик 172, 17 стори; планы `.omx/plans/172.1..172.17-*.md`).
+**Carry-out → 174.2 owner (route-ledger handoff из 171.9):** (1) удалить поле className из
+STATUS_BADGE_CONFIG после миграции ModelListSection на собственный overlay; (2) переписать
+stale-комментарий model-list-helpers.ts:24-26 («subroutes 171.7/171.9» — остался только
+registry-root); (3) переписать stale-комментарий evaluations-list-helpers.ts:20-23 («removal
+owned by 171.9»); (4) перенести статус-токен пины гарда 171.6 (читают helpers напрямую);
+(5) anchor-hardening гарда 171.6 (join-before-filter — 171.8-класс, латентно).
 параллельно независимо: 169.14 → 169.15 → 169.12 contract closeout (169.14/169.15 `backlog`; 169.12 `review`; plans `.omx/plans/169.14-establish-authoritative-paid-storage-import-lifecycle-and-result-contract.md`, `.omx/plans/169.15-align-shared-frontend-paid-storage-import-boundary.md`, and `.omx/plans/169.12-migrate-storage-analytics-and-paid-storage-import.md`). Story 169.13 remains an independent backlog route.
 **Волна 23-24.08** (два полных цикла + инфраструктура): 169.11 returns — preface #218 (`d6ed2c65`,
 unknown-категория на boundary + нейтральный лейбл) + #219 (`129e99ed`; owned 50→73) + e2e-gap закрыт
