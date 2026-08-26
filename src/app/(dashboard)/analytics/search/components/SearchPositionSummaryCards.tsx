@@ -37,7 +37,13 @@ export function SearchPositionSummaryCards({ summary, isLoading, isError }: Sear
     )
   }
 
-  if (isLoading || !summary) {
+  // Round-1 MEDIUM: tri-state mirrors movers/opportunities siblings — an
+  // undefined summary while NOT loading/error is an explicit empty, never an
+  // indefinite skeleton (retained-data-aware contract).
+  if (isError && !summary) {
+    return null // section-level error chrome renders at the tab level (Pattern-1)
+  }
+  if (isLoading && !summary) {
     return (
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-4" role="status" aria-busy="true">
         {Array.from({ length: 4 }).map((_, i) => (
@@ -46,6 +52,10 @@ export function SearchPositionSummaryCards({ summary, isLoading, isError }: Sear
       </div>
     )
   }
+
+  // Round-1 MEDIUM: not-loading/not-error undefined summary — explicit empty
+  // (never an indefinite busy skeleton).
+  if (!summary) return null
 
   return (
     <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">

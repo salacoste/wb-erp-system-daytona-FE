@@ -56,9 +56,9 @@ const mockJamData: JamStatusResponse = {
 beforeEach(() => {
   vi.clearAllMocks()
   queryClient = createTestQueryClient()
-  mockedUseJamStatus.mockReturnValue({ data: mockJamData } as ReturnType<
-    typeof useJamStatus
-  >)
+  mockedUseJamStatus.mockReturnValue({
+    data: mockJamData,
+  } as unknown as ReturnType<typeof useJamStatus>) // anti-pattern #4 canonical bridge (round-1 L6)
 })
 
 function activeTab(): string {
