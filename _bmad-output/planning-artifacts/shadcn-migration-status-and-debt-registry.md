@@ -53,7 +53,9 @@ owned 174→195, полный пол **19 204/0**, e2e 8/8 оживлены, 3-p
 токен-чистым, 7 контракт-гэпов закрыты; owned 23→37, полный пол **19 217/0**, 2×opus APPROVE×2).
 171.2 SHIPPED 2026-08-26 (2/9): #254 (`103a3ffe`; MINOR-GAP — born-clean, 7 гэпов; owned 50→58,
 полный пол **19 226/0** (+8), 2×opus APPROVE×2; epic-literal focus-return-to-row доставлен).
-**NEXT = 171.3 ai preferences** (backlog; план `.omx/plans/171.3-...md`);
+171.3 SHIPPED 2026-08-26 (3/9): #256 (`116263fc`; NO-OP-вердикт + 2 микро-фикса — error-association AC-3 +
+max-w; owned 26→28, полный пол **19 228/0**, 1×opus, e2e 10/1↓/0). **NEXT = 171.4 forecast workspace**
+(backlog; план `.omx/plans/171.4-...md`);
 параллельно независимо: 169.14 → 169.15 → 169.12 contract closeout (169.14/169.15 `backlog`; 169.12 `review`; plans `.omx/plans/169.14-establish-authoritative-paid-storage-import-lifecycle-and-result-contract.md`, `.omx/plans/169.15-align-shared-frontend-paid-storage-import-boundary.md`, and `.omx/plans/169.12-migrate-storage-analytics-and-paid-storage-import.md`). Story 169.13 remains an independent backlog route.
 **Волна 23-24.08** (два полных цикла + инфраструктура): 169.11 returns — preface #218 (`d6ed2c65`,
 unknown-категория на boundary + нейтральный лейбл) + #219 (`129e99ed`; owned 50→73) + e2e-gap закрыт
