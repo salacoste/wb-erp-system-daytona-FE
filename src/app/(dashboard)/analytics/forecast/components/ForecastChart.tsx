@@ -120,7 +120,7 @@ export function ForecastChart({ predictions }: ForecastChartProps) {
                 type="monotone"
                 dataKey="bandLower"
                 stroke="none"
-                fill="var(--color-background)"
+                fill="var(--color-card)"
                 fillOpacity={1}
                 legendType="none"
               />

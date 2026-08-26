@@ -115,12 +115,12 @@ describe('Story 171.4 forecast presentation source contracts', () => {
     expect(chart).not.toContain('#757575')
   })
 
-  it('cutout-var pin (dark-FIX): band cutout uses var(--color-background), no #ffffff literal', () => {
+  it('cutout-var pin (dark-FIX, r1-HIGH correction): band cutout uses var(--color-card) (CARD surface — background 3.9% painted a near-black slab over card 6.7% in dark), no #ffffff literal', () => {
     const chart = CHART()
     expect(chart).toMatch(
       /dataKey="bandUpper"[\s\S]*?fill="var\(--color-status-error\)"\s*\n\s*fillOpacity=\{0\.15\}/
     )
-    expect(chart).toMatch(/dataKey="bandLower"[\s\S]*?fill="var\(--color-background\)"/)
+    expect(chart).toMatch(/dataKey="bandLower"[\s\S]*?fill="var\(--color-card\)"/)
     expect(chart).not.toContain('#ffffff')
     expect(chart).not.toContain('#E53935')
   })

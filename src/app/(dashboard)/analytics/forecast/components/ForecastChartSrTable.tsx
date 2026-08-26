@@ -2,8 +2,9 @@
  * ForecastChartSrTable — sr-only data alternative for the forecast chart.
  *
  * Story 171.4 (169.11/169.12 canon): screen-reader table exposing every date
- * with AI/naive values at tooltip precision (Math.round, matching
- * ForecastChartTooltip byte-for-byte) plus the band range. Null values render
+ * with AI/naive values at tooltip precision (numeric formatting matches
+ * ForecastChartTooltip; nulls render «нет данных» here vs tooltip «—» — sr-row
+ * convention, disclosed r1-L2) plus the band range. Null values render
  * «нет данных» (AP#8: real nulls, never fabricated 0s). Extracted into its own
  * file to keep ForecastChart.tsx under the 200-line cap.
  */
