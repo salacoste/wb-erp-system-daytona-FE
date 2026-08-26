@@ -1,6 +1,6 @@
 # Story 171.3-FE: Migrate AI Preferences
 
-Status: review — micro-fix cycle complete; PR/merge/cleanup pending
+Status: done — PR #256 merged (`116263fc`); proportionate 1-pass fresh review APPROVE; e2e on branch 10/1↓/0; cleanup 0/0/0
 
 ## Story
 
@@ -19,7 +19,7 @@ Plan: `.omx/plans/171.3-migrate-ai-preferences.md` (authoritative — branch `cd
 
 - [x] Task 0: NONE — born token-clean (Story 112.2 native build); no boundary files.
 - [x] Task 1: Behavior lock — baseline **26 tests / 2 files**. LOCK: state-precedence chain (hydration skeleton → role-denied → loading → error → happy); Switch label htmlFor + describedby-desc; immediate-mutation (no dirty/reset — N-A by design); duplicate-submit via isPending-disabled; pre-check errors silent (hydration race); 403 distinct vs generic; inline mutation Alert role=status polite (F-12) + toast; payload {aiEnabled}; narrow invalidation; e2e pins (h1 ×1 «Настройки AI»).
-- [ ] Task 2 (the 2 micro-fixes — compliance-enumerated):
+- [x] Task 2 (the 2 micro-fixes — compliance-enumerated):
   1. **Error ASSOCIATION (AC-3 literal «errors are associated»)**: mutation-error Alert gets `id={MUTATION_ERROR_ID}` and the Switch `aria-describedby` chains desc + error id when error present (build the id list conditionally: `${SWITCH_DESC_ID}${mutationErrorMessage ? ' ' + MUTATION_ERROR_ID : ''}`) — screen readers link the control to its error. + test (on error, switch describedby includes error id).
   2. **Readable width (RTC-form «constrained readable width»)**: `max-w-2xl` on the outer wrapper (matches form-card house widths; single-toggle page, low impact but literal AC).
   - DISPOSITION-NOT-FIX (documented): 409/conflict — immediate PATCH toggle, no optimistic-locking contract; error summary region — single-control form N/A (inline Alert IS the summary); unsaved-navigation guard — no unsaved state by design; Switch 44px — shadcn default hit-area + focus-visible ring (cosmetic).
@@ -69,3 +69,4 @@ Diff 08c2307f..HEAD = **2 files** (M AiPreferencesForm.tsx +8, M test +40). Exac
 |---|---|
 | 2026-08-26 | Story created from compliance-check recon (NO-OP verdict — native 112.2 build satisfies ACs; 2 micro-fixes: error-association AC-3 literal + max-w width). Plan referenced as authoritative. |
 | 2026-08-26 | Micro-fix cycle + review fixes (revert-assert). Status: ready-for-dev → review. |
+| 2026-08-26 | Implemented + merged: PR #256 (micro `a377ba35` + review `1e1eaf22` + story `7fe53f37`, merge `116263fc`); route 28/2, full 19 228/0 (+2 exact), e2e-on-branch 10/1↓/0; 1×opus APPROVE. Epic 171: 3/9. Status: review → done. **Lessons:** (1) Мокнутый хук: onError-инъекция НЕ обновляет мок-состояние — используй mockReturnValue state-паттерн. (2) NO-OP вердикт ≠ нулевой PR: буквальные AC-слова («errors are associated») — гэпы, даже когда всё остальное нативно. |
