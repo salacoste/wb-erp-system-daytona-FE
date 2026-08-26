@@ -1,6 +1,6 @@
 # Story 171.4-FE: Migrate Forecast Workspace
 
-Status: review — implementation + r1 fix on branch; PR/merge/cleanup pending
+Status: done — PR #258 merged (`5a1e40f1`); 2-pass fresh review (REQUEST CHANGES→fixed→APPROVE merge-gate); e2e on branch 11/1↓/0; cleanup 0/0/0
 
 ## Story
 
@@ -22,7 +22,7 @@ Per epic §Story 171.4 (BDD ×3 + plan delivery ACs — see plan; recon §4-5 co
   - **Valence sweeps**: SneakPreview trend icons → financial; Collecting (purple Brain→muted-primary?; green Check→status-success; amber-700 missing→status-warning; blue Bell→status-information; purple TrendingUp→muted); Header purple Brain→muted (decorative); StatusBadge dots green/amber/red-500 → status-success/warning/error solid; amber-600/red-600 texts → status-warning/error.
 - [x] Task 3: RTC/AX additions: **sr-only data alternative for the chart** (none beyond role=img label — add: every date × AI/naive values at tooltip precision + band note; 169.11 canon); TableCaption «Прогноз продаж» (static, params-driven — 169.7); tabular-nums numeric cells (date col as-is); scroll-region; h1 stays in Header (text-2xl verify).
 - [x] Task 4: Guards — recursive no-palette/no-hex (170.1 3-branch canon + self-tests) + pinned file count (17 source); band-tier-collapse (3 distinct + label); cutout-var pin (no #ffffff); naive-dashed pin; sr-alternative tests; e2e forecast-page.spec.ts on branch (palette-safe; forecast-accuracy = DIFFERENT route, N/A).
-- [x] Task 5: Validation + 2-pass fresh review + PR + cleanup — route **196/20** (baseline 183/19; +13 guard growth); full **19 241/0** (floor 19 228, +13 exact); lint 0/0; tsc 0; max-lines OK; build 0; **e2e ON BRANCH 11✓/1↓/0✗** (forecast-page spec). Reviews: r1 opus **REQUEST CHANGES** (1 HIGH — cutout var(--color-background) WRONG SURFACE: dark bg 3.9% over card 6.7% = near-black slab; +2 LOW → CARD-token fix + guard-lockstep + honest sr-comment `307295be`); r2 opus **APPROVE — merge gate PASS** (0 blocking; caption-deviation + 18-pin disclosed-acceptable; globals.css values verified 3.92/6.67). CE: shared surfaces zero-diff.
+- [x] Task 5: Validation + 2-pass fresh review + PR + cleanup — route **196/20** (baseline 183/19; +13 guard growth); full **19 241/0** (floor 19 228, +13 exact); lint 0/0; tsc 0; max-lines OK; build 0; **e2e ON BRANCH 11✓/1↓/0✗** (forecast-page spec). Reviews: r1 opus **REQUEST CHANGES** (1 HIGH — cutout var(--color-background) WRONG SURFACE: dark bg 3.9% over card 6.7% = near-black slab; +2 LOW → CARD-token fix + guard-lockstep + honest sr-comment `307295be`); r2 opus **APPROVE — merge gate PASS** (0 blocking; caption-deviation + 18-pin disclosed-acceptable; globals.css values verified 3.92/6.67). CE: shared surfaces zero-diff. PR #258 merged `5a1e40f1`; branch remote/local + worktree deleted, 0/0/0 absence proofs.
 
 ## Dev Notes
 
@@ -74,3 +74,4 @@ Diff 15bbb5ab..HEAD = **10 files** (8 M + 2 A: ForecastChartSrTable.tsx, forecas
 |---|---|
 | 2026-08-26 | Story created from deep recon (full-cycle: 13 chart-hex incl. LIGHT-ONLY #ffffff cutout dark-bug; band tiers; valence sweeps; sr-alternative missing; horizonDays disposition). Plan referenced as authoritative. |
 | 2026-08-26 | r1 fix (CARD-token cutout + guard lockstep + honest sr-comment). Status: ready-for-dev → review. |
+| 2026-08-26 | Implemented + merged: PR #258 (impl `d569e813` + r1 `307295be` + story `6193e054`, merge `5a1e40f1`); route 196/20, full 19 241/0 (+13 exact), e2e-on-branch 11/1↓/0; 2×opus RC→APPROVE; cleanup 0/0/0. Epic 171: 4/9. Status: review → done. **Lessons:** (1) Cutout на Card-поверхности: bg ≠ card в dark (3.9/6.7%) — «white→background» = второй light-only баг; думай о SURFACE. (2) «var() вместо hex» ≠ доказательство — сверяй значения globals.css. |
