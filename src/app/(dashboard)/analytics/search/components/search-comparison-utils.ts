@@ -51,5 +51,5 @@ export function formatDelta(delta: SearchDelta): string {
 /** Get Tailwind color class for delta direction */
 export function getDeltaColor(direction: 'up' | 'down' | 'neutral'): string {
   if (direction === 'neutral') return 'text-muted-foreground'
-  return direction === 'up' ? 'text-green-600' : 'text-red-600'
+  return direction === 'up' ? 'text-financial-positive' : 'text-financial-negative'
 }

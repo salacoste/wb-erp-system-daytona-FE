@@ -9,52 +9,41 @@
 
 import { useState } from 'react'
 import { usePositionTrends } from '@/hooks/use-search-position-trends'
-import { Skeleton } from '@/components/ui/skeleton'
-import { Alert, AlertDescription } from '@/components/ui/alert'
-import { AlertCircle } from 'lucide-react'
 import { SearchPositionSummaryCards } from './SearchPositionSummaryCards'
-import {
-  SearchPositionMoversTable,
-  SearchPositionOpportunitiesTable,
-} from './SearchPositionMoversTable'
+import { SearchPositionMoversTable } from './SearchPositionMoversTable'
+import { SearchPositionOpportunitiesTable } from './SearchPositionOpportunitiesTable'
 import { PositionHistoryChart } from './PositionHistoryChart'
 
+/**
+ * Story 170.7 Task 3 Pattern-1: the former whole-tab destructive error/skeleton
+ * split into per-section chrome (summary cards / movers / opportunities each
+ * render their OWN error chrome) over the SHARED usePositionTrends fetch.
+ * Residual (documented): a fetch-level failure still degrades all three shared
+ * sections together — the fetch is shared by design. PositionHistoryChart keeps
+ * its OWN independent usePositionHistory fetch and is never blanked by it.
+ */
 export function SearchPositionTrendsTab() {
   const { data, isLoading, isError } = usePositionTrends()
   const [selectedNmId, setSelectedNmId] = useState<number | null>(null)
 
-  if (isError) {
-    return (
-      <Alert variant="destructive">
-        <AlertCircle className="h-4 w-4" />
-        <AlertDescription>Не удалось загрузить данные по позициям</AlertDescription>
-      </Alert>
-    )
-  }
-
-  if (isLoading || !data) {
-    return (
-      <div className="space-y-4">
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-          {Array.from({ length: 4 }).map((_, i) => (
-            <Skeleton key={i} className="h-24" />
-          ))}
-        </div>
-        <Skeleton className="h-64" />
-      </div>
-    )
-  }
-
   return (
     <div className="space-y-6">
-      <SearchPositionSummaryCards summary={data.summary} />
+      <SearchPositionSummaryCards
+        summary={data?.summary}
+        isLoading={isLoading}
+        isError={isError}
+      />
       <SearchPositionMoversTable
-        movers={data.movers}
+        movers={data?.movers ?? []}
+        isLoading={isLoading}
+        isError={isError}
         onSelectSku={setSelectedNmId}
         selectedNmId={selectedNmId}
       />
       <SearchPositionOpportunitiesTable
-        items={data.closeToPageOne}
+        items={data?.closeToPageOne ?? []}
+        isLoading={isLoading}
+        isError={isError}
         onSelectSku={setSelectedNmId}
         selectedNmId={selectedNmId}
       />

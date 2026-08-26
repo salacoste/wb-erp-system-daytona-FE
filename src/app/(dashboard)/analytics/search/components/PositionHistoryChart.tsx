@@ -121,7 +121,7 @@ export function PositionHistoryChart({ nmId, className }: PositionHistoryChartPr
                 dataKey="avgPosition"
                 stroke={LINE_COLOR}
                 strokeWidth={2}
-                dot={{ r: 3, strokeWidth: 2, fill: 'white' }}
+                dot={{ r: 3, strokeWidth: 2, fill: 'var(--color-background)' }}
                 activeDot={{ r: 5, strokeWidth: 2 }}
                 animationDuration={reducedMotion ? 0 : 300}
                 animationEasing="ease-in-out"

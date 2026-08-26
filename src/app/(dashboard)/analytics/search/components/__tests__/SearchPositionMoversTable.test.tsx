@@ -1,9 +1,7 @@
 import { describe, it, expect } from 'vitest'
 import { render, screen } from '@testing-library/react'
-import {
-  SearchPositionMoversTable,
-  SearchPositionOpportunitiesTable,
-} from '../SearchPositionMoversTable'
+import { SearchPositionMoversTable } from '../SearchPositionMoversTable'
+import { SearchPositionOpportunitiesTable } from '../SearchPositionOpportunitiesTable'
 import type { PositionTrendMover, CloseToPageOneItem } from '@/types/search-position-trends'
 
 const mockMovers: PositionTrendMover[] = [
@@ -54,14 +52,14 @@ describe('SearchPositionMoversTable null guards (170.7)', () => {
         topQuery: undefined,
       },
     ]
-    render(<SearchPositionMoversTable movers={movers} />)
+    render(<SearchPositionMoversTable isLoading={false} isError={false} movers={movers} />)
     expect(screen.getAllByText('Нет данных').length).toBe(2) // position + change cells
   })
 })
 
 describe('SearchPositionMoversTable', () => {
   it('renders table header columns', () => {
-    render(<SearchPositionMoversTable movers={mockMovers} />)
+    render(<SearchPositionMoversTable isLoading={false} isError={false} movers={mockMovers} />)
     expect(screen.getByText('nmId')).toBeInTheDocument()
     expect(screen.getByText('Позиция')).toBeInTheDocument()
     expect(screen.getByText('Изменение')).toBeInTheDocument()
@@ -70,29 +68,29 @@ describe('SearchPositionMoversTable', () => {
   })
 
   it('renders mover rows with nmId links', () => {
-    render(<SearchPositionMoversTable movers={mockMovers} />)
+    render(<SearchPositionMoversTable isLoading={false} isError={false} movers={mockMovers} />)
     expect(screen.getByText('123456')).toBeInTheDocument()
     expect(screen.getByText('789012')).toBeInTheDocument()
   })
 
   it('colors an improving mover green (rank improvement)', () => {
-    render(<SearchPositionMoversTable movers={mockMovers} />)
+    render(<SearchPositionMoversTable isLoading={false} isError={false} movers={mockMovers} />)
     const change = screen.getByText('+5,8')
     expect(change).toBeInTheDocument()
-    expect(change.className).toContain('text-green-600')
+    expect(change.className).toContain('text-status-success')
   })
 
   it('colors a declining mover red (rank decline)', () => {
-    render(<SearchPositionMoversTable movers={mockMovers} />)
+    render(<SearchPositionMoversTable isLoading={false} isError={false} movers={mockMovers} />)
     const change = screen.getByText('-5,1')
     expect(change).toBeInTheDocument()
-    expect(change.className).toContain('text-red-500')
+    expect(change.className).toContain('text-status-error')
   })
 
   it('colors a stable mover muted', () => {
     render(
       <SearchPositionMoversTable
-        movers={[
+        isLoading={false} isError={false} movers={[
           {
             nmId: 111,
             currentAvgPosition: 10,
@@ -115,7 +113,7 @@ describe('SearchPositionMoversTable', () => {
     // Color MUST follow `trend`, so a POSITIVE number with trend:'declining' is RED.
     render(
       <SearchPositionMoversTable
-        movers={[
+        isLoading={false} isError={false} movers={[
           {
             nmId: 222,
             currentAvgPosition: 30,
@@ -130,19 +128,19 @@ describe('SearchPositionMoversTable', () => {
       />
     )
     const change = screen.getByText('+4,2')
-    expect(change.className).toContain('text-red-500')
-    expect(change.className).not.toContain('text-green-600')
+    expect(change.className).toContain('text-status-error')
+    expect(change.className).not.toContain('text-status-success')
   })
 
   it('shows dash for null topQuery', () => {
-    render(<SearchPositionMoversTable movers={mockMovers} />)
+    render(<SearchPositionMoversTable isLoading={false} isError={false} movers={mockMovers} />)
     // The row for 789012 has topQuery: null → renders '—'
     const dashes = screen.getAllByText('—')
     expect(dashes.length).toBeGreaterThanOrEqual(1)
   })
 
   it('shows empty state when no movers', () => {
-    render(<SearchPositionMoversTable movers={[]} />)
+    render(<SearchPositionMoversTable isLoading={false} isError={false} movers={[]} />)
     expect(
       screen.getByText('Нет данных об изменениях позиций за выбранный период')
     ).toBeInTheDocument()
@@ -151,24 +149,24 @@ describe('SearchPositionMoversTable', () => {
 
 describe('SearchPositionOpportunitiesTable', () => {
   it('renders opportunity rows', () => {
-    render(<SearchPositionOpportunitiesTable items={mockCloseItems} />)
+    render(<SearchPositionOpportunitiesTable isLoading={false} isError={false} items={mockCloseItems} />)
     expect(screen.getByText('345678')).toBeInTheDocument()
   })
 
   it('shows "До топ-20" column header', () => {
-    render(<SearchPositionOpportunitiesTable items={mockCloseItems} />)
+    render(<SearchPositionOpportunitiesTable isLoading={false} isError={false} items={mockCloseItems} />)
     expect(screen.getByText('До топ-20')).toBeInTheDocument()
   })
 
   it('shows positionsAway as negative blue number', () => {
-    render(<SearchPositionOpportunitiesTable items={mockCloseItems} />)
+    render(<SearchPositionOpportunitiesTable isLoading={false} isError={false} items={mockCloseItems} />)
     const away = screen.getByText('-5')
     expect(away).toBeInTheDocument()
-    expect(away.className).toContain('text-blue-600')
+    expect(away.className).toContain('text-status-information')
   })
 
   it('shows empty state when no items', () => {
-    render(<SearchPositionOpportunitiesTable items={[]} />)
+    render(<SearchPositionOpportunitiesTable isLoading={false} isError={false} items={[]} />)
     expect(screen.getByText('Нет SKU рядом с первой страницей поиска')).toBeInTheDocument()
   })
 })

@@ -79,7 +79,9 @@ export function SearchByQueryTab({ from, to, initialQuery }: SearchByQueryTabPro
           value={queryInput}
           onChange={e => handleInputChange(e.target.value)}
           placeholder="Введите поисковый запрос (мин. 2 символа)"
-          aria-label="Поиск по запросам"
+          // 170.7: label reverted to the e2e-locked «Поисковый запрос» — the 7f08f688
+          // rename to «Поиск по запросам» left e2e tests 5+8 silently skipping.
+          aria-label="Поисковый запрос"
           className="pl-9 pr-9"
         />
         {queryInput && (

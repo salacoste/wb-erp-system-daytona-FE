@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest'
 import { render, screen } from '@testing-library/react'
 import { SearchPositionSummaryCards } from '../SearchPositionSummaryCards'
-import type { PositionTrendsSummary } from '../SearchPositionSummaryCards'
+import type { PositionTrendsSummary } from '@/types/search-position-trends'
 
 const mockSummary: PositionTrendsSummary = {
   improvingCount: 12,
@@ -9,10 +9,12 @@ const mockSummary: PositionTrendsSummary = {
   stableCount: 3,
   closeToPageOneCount: 8,
   totalSkusAnalyzed: 20,
+  currentWeekStart: '2026-08-17',
+  previousWeekStart: '2026-08-10',
 }
 
 function renderCards(summary: PositionTrendsSummary) {
-  return render(<SearchPositionSummaryCards summary={summary} />)
+  return render(<SearchPositionSummaryCards isLoading={false} isError={false} summary={summary} />)
 }
 
 describe('SearchPositionSummaryCards', () => {
@@ -28,21 +30,21 @@ describe('SearchPositionSummaryCards', () => {
     renderCards(mockSummary)
     const improvingValue = screen.getByText('12')
     expect(improvingValue).toBeInTheDocument()
-    expect(improvingValue.className).toContain('text-green-600')
+    expect(improvingValue.className).toContain('text-status-success')
   })
 
   it('displays declining count in red', () => {
     renderCards(mockSummary)
     const decliningValue = screen.getByText('5')
     expect(decliningValue).toBeInTheDocument()
-    expect(decliningValue.className).toContain('text-red-500')
+    expect(decliningValue.className).toContain('text-status-error')
   })
 
   it('displays close-to-page-one count in blue', () => {
     renderCards(mockSummary)
     const closeValue = screen.getByText('8')
     expect(closeValue).toBeInTheDocument()
-    expect(closeValue.className).toContain('text-blue-600')
+    expect(closeValue.className).toContain('text-status-information')
   })
 
   it('formats total SKU count with locale', () => {
@@ -63,6 +65,8 @@ describe('SearchPositionSummaryCards', () => {
       stableCount: 0,
       closeToPageOneCount: 0,
       totalSkusAnalyzed: 0,
+      currentWeekStart: '2026-08-17',
+      previousWeekStart: '2026-08-10',
     }
     renderCards(zeroSummary)
     const zeros = screen.getAllByText('0')

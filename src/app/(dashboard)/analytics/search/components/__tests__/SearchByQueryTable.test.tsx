@@ -23,6 +23,8 @@ describe('SearchByQueryTable null avgPosition (170.7)', () => {
     expect(screen.getByText('—')).toBeInTheDocument()
     // no green best-tier badge span (badge class only applies to non-null positions)
     expect(document.querySelector('.bg-green-100')).toBeNull()
+    // 170.7: unknown position renders NO badge at all (not even neutral) — preface pin preserved.
+    expect(document.querySelector('[class*="bg-status-success/15"], [class*="bg-status-warning/15"], [class*="bg-status-error/15"]')).toBeNull()
   })
 
   it('sorts null avgPosition LAST in default asc order', () => {
