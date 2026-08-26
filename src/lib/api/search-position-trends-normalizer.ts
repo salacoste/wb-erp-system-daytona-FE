@@ -13,6 +13,7 @@ import {
   toStr,
   asRecord,
 } from '@/lib/api/normalizer-helpers'
+import { logger } from '@/lib/logger'
 import type {
   PositionTrendMover,
   CloseToPageOneItem,
@@ -27,11 +28,24 @@ import type {
   TrendDirection,
 } from '@/types/search-position-trends'
 
-const VALID_DIRECTIONS = new Set<TrendDirection>(['improving', 'declining', 'stable'])
+// Story 170.7 Task 0 (pattern #218): cast-free VALID-set map.
+// Missing/absent → 'unknown' (NOT fabricated 'stable'); unrecognized → 'unknown' + logger.warn (F-50).
+const VALID_DIRECTIONS: Readonly<Record<string, TrendDirection>> = {
+  improving: 'improving',
+  declining: 'declining',
+  stable: 'stable',
+}
 
 function toTrendDirection(raw: unknown): TrendDirection {
-  const s = String(raw ?? 'stable') as TrendDirection
-  return VALID_DIRECTIONS.has(s) ? s : 'stable'
+  if (typeof raw === 'string') {
+    const v = VALID_DIRECTIONS[raw]
+    if (v !== undefined) return v
+  }
+  logger.warn(
+    '[170.7] toTrendDirection: unrecognized trend direction %o -> "unknown"',
+    raw,
+  )
+  return 'unknown'
 }
 
 // --- Per-item normalizers ---
@@ -40,9 +54,9 @@ function normalizePositionTrendMover(raw: unknown): PositionTrendMover {
   const r = asRecord(raw)
   return {
     nmId: toCount(r.nmId),
-    currentAvgPosition: toNullableNumber(r.currentAvgPosition) ?? 0,
-    previousAvgPosition: toNullableNumber(r.previousAvgPosition) ?? 0,
-    positionChange: toNullableNumber(r.positionChange) ?? 0,
+    currentAvgPosition: toNullableNumber(r.currentAvgPosition),
+    previousAvgPosition: toNullableNumber(r.previousAvgPosition),
+    positionChange: toNullableNumber(r.positionChange),
     trend: toTrendDirection(r.trend),
     totalQueries: toCount(r.totalQueries),
     totalImpressions: toCount(r.totalImpressions),
@@ -58,7 +72,7 @@ function normalizeCloseToPageOneItem(raw: unknown): CloseToPageOneItem {
   const r = asRecord(raw)
   return {
     nmId: toCount(r.nmId),
-    currentAvgPosition: toNullableNumber(r.currentAvgPosition) ?? 0,
+    currentAvgPosition: toNullableNumber(r.currentAvgPosition),
     positionsAway: toCount(r.positionsAway),
     totalImpressions: toCount(r.totalImpressions),
     totalQueries: toCount(r.totalQueries),
@@ -96,9 +110,9 @@ function normalizePositionMoverItem(raw: unknown): PositionMoverItem {
     nmId: toCount(r.nmId),
     vendorCode: toStringOrNull(r.vendorCode),
     productName: toStringOrNull(r.productName),
-    currentPosition: toNullableNumber(r.currentPosition) ?? 0,
-    previousPosition: toNullableNumber(r.previousPosition) ?? 0,
-    positionDelta: toNullableNumber(r.positionDelta) ?? 0,
+    currentPosition: toNullableNumber(r.currentPosition),
+    previousPosition: toNullableNumber(r.previousPosition),
+    positionDelta: toNullableNumber(r.positionDelta),
     query: toStringOrNull(r.query),
   }
 }
@@ -117,7 +131,7 @@ function normalizePageOneOpportunityItem(raw: unknown): PageOneOpportunityItem {
   return {
     nmId: toCount(r.nmId),
     vendorCode: toStringOrNull(r.vendorCode),
-    currentPosition: toNullableNumber(r.currentPosition) ?? 0,
+    currentPosition: toNullableNumber(r.currentPosition),
     query: toStringOrNull(r.query),
     avgImpressions: toCount(r.avgImpressions),
     avgClicks: toCount(r.avgClicks),

@@ -40,6 +40,25 @@ const mockCloseItems: CloseToPageOneItem[] = [
   },
 ]
 
+describe('SearchPositionMoversTable null guards (170.7)', () => {
+  it('renders «Нет данных» for null position fields (never fabricated 0)', () => {
+    const movers: PositionTrendMover[] = [
+      {
+        nmId: 1,
+        currentAvgPosition: null,
+        previousAvgPosition: null,
+        positionChange: null,
+        trend: 'unknown',
+        totalQueries: 0,
+        totalImpressions: 0,
+        topQuery: undefined,
+      },
+    ]
+    render(<SearchPositionMoversTable movers={movers} />)
+    expect(screen.getAllByText('Нет данных').length).toBe(2) // position + change cells
+  })
+})
+
 describe('SearchPositionMoversTable', () => {
   it('renders table header columns', () => {
     render(<SearchPositionMoversTable movers={mockMovers} />)

@@ -15,7 +15,7 @@ export function normalizeSearchQueryItem(raw: unknown): SearchQueryItem {
   const r = (raw ?? {}) as Record<string, unknown>
   return {
     searchQuery: String(r.searchQuery ?? ''),
-    avgPosition: toCount(r.avgPosition),
+    avgPosition: toNullableNumber(r.avgPosition), // 170.7: 1-based position — null stays null, never ?? 0
     totalImpressions: toCount(r.totalImpressions),
     totalClicks: toCount(r.totalClicks),
     avgCtr: toNullableNumber(r.avgCtr), // rate → preserve null (NOT toCount's ?? 0), per the AP#8 split
@@ -33,7 +33,7 @@ export function normalizeSearchProductItem(raw: unknown): SearchProductItem {
   return {
     nmId: toCount(r.nmId),
     vendorCode: toStringOrNull(r.vendorCode),
-    avgPosition: toCount(r.avgPosition),
+    avgPosition: toNullableNumber(r.avgPosition), // 170.7: 1-based position — null stays null, never ?? 0
     totalImpressions: toCount(r.totalImpressions),
     totalClicks: toCount(r.totalClicks),
     avgCtr: toNullableNumber(r.avgCtr), // rate → preserve null (NOT toCount's ?? 0), per the AP#8 split

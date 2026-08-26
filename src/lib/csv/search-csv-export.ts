@@ -29,7 +29,7 @@ const BY_PRODUCT_HEADERS = [
 function queryItemToRow(item: SearchQueryItem): string[] {
   return [
     item.searchQuery,
-    fmt(item.avgPosition),
+    item.avgPosition == null ? '' : fmt(item.avgPosition), // 170.7: unknown position -> empty cell
     fmt(item.totalImpressions),
     fmt(item.totalClicks),
     fmtPct(item.avgCtr),
@@ -63,7 +63,7 @@ function productItemToRow(item: SearchProductItem): string[] {
   return [
     String(item.nmId),
     item.vendorCode ?? '—',
-    fmt(item.avgPosition),
+    item.avgPosition == null ? '' : fmt(item.avgPosition), // 170.7: unknown position -> empty cell
     fmt(item.totalImpressions),
     fmt(item.totalClicks),
     fmtPct(item.avgCtr),

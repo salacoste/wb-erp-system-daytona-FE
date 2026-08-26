@@ -88,21 +88,26 @@ export function SearchByQueryTable({ products }: SearchByQueryTableProps) {
     }
   }
 
-  const getSortValue = (item: SearchProductItem, field: SortField): number => {
-    if (field === 'cartConversionRate') return getCartConversionRate(item) ?? 0
-    return Number(item[field] ?? 0)
+  const getSortValue = (item: SearchProductItem, field: SortField): number | null => {
+    if (field === 'cartConversionRate') return getCartConversionRate(item)
+    return item[field] ?? null
   }
 
+  // 170.7 (169.13 pattern): nulls sort LAST in BOTH directions — unknown stays at
+  // the bottom instead of masquerading as best (asc) or worst-fabricated (desc).
   const sorted = [...products].sort((a, b) => {
     const aVal = getSortValue(a, sort)
     const bVal = getSortValue(b, sort)
+    if (aVal == null && bVal == null) return 0
+    if (aVal == null) return 1
+    if (bVal == null) return -1
     return order === 'desc' ? bVal - aVal : aVal - bVal
   })
 
   const formatCell = (field: SortField, value: number | null): string => {
     switch (field) {
       case 'avgPosition':
-        return formatDecimal(value ?? 0)
+        return value == null ? '—' : formatDecimal(value) // 170.7: null position is unknown, not 0
       case 'avgCtr':
         return formatPercent(value)
       case 'cartConversionRate':
@@ -157,7 +162,7 @@ export function SearchByQueryTable({ products }: SearchByQueryTableProps) {
                 const value = getCellValue(item, col.field)
                 return (
                   <TableCell key={col.field}>
-                    {col.field === 'avgPosition' ? (
+                    {col.field === 'avgPosition' && item.avgPosition != null ? (
                       <span className={getPositionBadgeClass(item.avgPosition)}>
                         {formatCell(col.field, value)}
                       </span>

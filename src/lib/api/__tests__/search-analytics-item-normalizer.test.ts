@@ -40,7 +40,8 @@ describe('normalizeSearchQueryItem', () => {
 
   it('defaults counts to 0 when missing', () => {
     const result = normalizeSearchQueryItem({})
-    expect(result.avgPosition).toBe(0)
+    // 170.7: avgPosition is 1-based — missing stays null (0 meaningless), NOT toCount's 0
+    expect(result.avgPosition).toBeNull()
     expect(result.totalImpressions).toBe(0)
     expect(result.totalClicks).toBe(0)
     expect(result.totalOrders).toBe(0)
