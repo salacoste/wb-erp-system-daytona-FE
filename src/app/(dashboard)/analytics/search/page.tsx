@@ -4,6 +4,9 @@
  * Story 119.2-FE Pass-1 F-1: forward ?query= URL param to SearchPageContent so the
  * Funnel "Топ поисковых запросов" cross-page link lands on the by-query tab with
  * the query pre-populated.
+ * Story 170.7 Task 3: deep-link IMPLEMENTED — also reads ?tab (validated against
+ * the 4 known tab values) and ?nmId (by-product preselect), making the movers'
+ * `?tab=by-product&nmId=...` cross-links live (previously dead params).
  */
 
 import { SearchPageContent } from './components/SearchPageContent'
@@ -17,14 +20,34 @@ import { SearchPageContent } from './components/SearchPageContent'
  * analytics/acquiring/reports/[id]) all use the Promise-based async API.
  */
 interface SearchPageProps {
-  searchParams?: Promise<{ query?: string | string[] }>
+  searchParams?: Promise<{
+    query?: string | string[]
+    tab?: string | string[]
+    nmId?: string | string[]
+  }>
 }
+
+/** Story 170.7: the 4 known tab values — anything else falls back to defaults. */
+const KNOWN_TABS = ['orders', 'by-product', 'by-query', 'position-trends'] as const
 
 export default async function SearchPage({ searchParams }: SearchPageProps) {
   const params = (await searchParams) ?? {}
-  const rawQuery = params.query
-  // Defensive: searchParams.query can be string | string[] | undefined per Next.js
+  // Defensive: each param can be string | string[] | undefined per Next.js
   // typing; we only consume the first value (single-cardinality semantic).
-  const initialQuery = Array.isArray(rawQuery) ? rawQuery[0] : rawQuery
-  return <SearchPageContent initialQuery={initialQuery} />
+  const first = (v: string | string[] | undefined): string | undefined =>
+    Array.isArray(v) ? v[0] : v
+  const initialQuery = first(params.query)
+  const rawTab = first(params.tab)
+  const initialTab =
+    rawTab && (KNOWN_TABS as readonly string[]).includes(rawTab) ? rawTab : undefined
+  // nmId deep-link: numeric only — garbage silently ignored (no fabricated IDs).
+  const rawNmId = first(params.nmId)
+  const parsedNmId = rawNmId && /^\d+$/.test(rawNmId) ? Number(rawNmId) : undefined
+  return (
+    <SearchPageContent
+      initialQuery={initialQuery}
+      initialTab={initialTab}
+      initialNmId={parsedNmId}
+    />
+  )
 }

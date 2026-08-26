@@ -47,7 +47,7 @@ export function SearchShareCard({ summary, formatPercent, inflatedMessage }: Sea
   return (
     <Card>
       <CardContent className="flex items-center gap-4 p-4">
-        <div className="text-orange-600" aria-hidden="true">
+        <div className="text-status-information" aria-hidden="true">
           <Percent className="h-8 w-8" />
         </div>
         <div>

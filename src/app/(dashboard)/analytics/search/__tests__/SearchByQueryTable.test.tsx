@@ -118,7 +118,7 @@ describe('SearchByQueryTable', () => {
     render(<SearchByQueryTable products={mockProducts} />)
     // nmId 11111111 has avgPosition 5.2 → green badge
     const rows = screen.getAllByRole('row')
-    const greenBadge = rows[1].querySelector('.bg-green-100')
+    const greenBadge = rows[1].querySelector('[class*="bg-status-success/15"]')
     expect(greenBadge).toBeInTheDocument()
   })
 
@@ -126,7 +126,7 @@ describe('SearchByQueryTable', () => {
     render(<SearchByQueryTable products={mockProducts} />)
     // nmId 22222222 has avgPosition 25.7 → yellow badge
     const rows = screen.getAllByRole('row')
-    const yellowBadge = rows[2].querySelector('.bg-yellow-100')
+    const yellowBadge = rows[2].querySelector('[class*="bg-status-warning/15"]')
     expect(yellowBadge).toBeInTheDocument()
   })
 
@@ -134,7 +134,7 @@ describe('SearchByQueryTable', () => {
     render(<SearchByQueryTable products={mockProducts} />)
     // nmId 33333333 has avgPosition 42.1 → red badge
     const rows = screen.getAllByRole('row')
-    const redBadge = rows[3].querySelector('.bg-red-100')
+    const redBadge = rows[3].querySelector('[class*="bg-status-error/15"]')
     expect(redBadge).toBeInTheDocument()
   })
 

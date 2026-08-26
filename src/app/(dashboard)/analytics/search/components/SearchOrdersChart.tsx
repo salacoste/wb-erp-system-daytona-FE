@@ -30,6 +30,7 @@ import { Skeleton } from '@/components/ui/skeleton'
 import { useSearchOrders } from '@/hooks/use-search-analytics'
 import { pluralize, DAY_FORMS } from '@/lib/russian-plural'
 import type { SearchOrderItem } from '@/types/search-analytics'
+import { SEARCH_CHART_TOKENS } from './search-chart-config'
 
 interface SearchOrdersChartProps {
   from: string
@@ -146,18 +147,18 @@ export function SearchOrdersChart({ from, to }: SearchOrdersChartProps) {
         </p>
         <ResponsiveContainer width="100%" height="100%">
           <LineChart data={rows} margin={{ top: 12, right: 16, bottom: 32, left: 8 }}>
-            <CartesianGrid strokeDasharray="3 3" stroke="#EEEEEE" />
+            <CartesianGrid strokeDasharray="3 3" stroke={SEARCH_CHART_TOKENS.grid} />
             <XAxis
               dataKey="date"
               tickFormatter={formatDayTick}
-              tick={{ fontSize: 12, fill: '#757575' }}
-              axisLine={{ stroke: '#EEEEEE' }}
-              tickLine={{ stroke: '#EEEEEE' }}
+              tick={{ fontSize: 12, fill: SEARCH_CHART_TOKENS.tick }}
+              axisLine={{ stroke: SEARCH_CHART_TOKENS.grid }}
+              tickLine={{ stroke: SEARCH_CHART_TOKENS.grid }}
             />
             <YAxis
               allowDecimals={false}
-              tick={{ fontSize: 12, fill: '#757575' }}
-              axisLine={{ stroke: '#EEEEEE' }}
+              tick={{ fontSize: 12, fill: SEARCH_CHART_TOKENS.tick }}
+              axisLine={{ stroke: SEARCH_CHART_TOKENS.grid }}
               tickLine={false}
               width={48}
             />
@@ -168,9 +169,9 @@ export function SearchOrdersChart({ from, to }: SearchOrdersChartProps) {
             <Line
               type="monotone"
               dataKey="totalOrders"
-              stroke="#3B82F6"
+              stroke={SEARCH_CHART_TOKENS.line}
               strokeWidth={2}
-              dot={{ r: 3, strokeWidth: 2, fill: 'white' }}
+              dot={{ r: 3, strokeWidth: 2, fill: 'var(--color-background)' }}
               activeDot={{ r: 5, strokeWidth: 2 }}
               animationDuration={prefersReducedMotion ? 0 : 300}
             />

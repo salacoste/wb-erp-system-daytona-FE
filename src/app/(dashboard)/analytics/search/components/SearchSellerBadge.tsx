@@ -43,14 +43,14 @@ export function SearchSellerBadge() {
     return (
       <div role="status" aria-busy="true" className="inline-flex">
         <span className="sr-only">Загрузка информации о продавце</span>
-        <span className="h-4 w-28 animate-pulse rounded bg-gray-100" aria-hidden="true" />
+        <span className="h-4 w-28 animate-pulse rounded bg-muted" aria-hidden="true" />
       </div>
     )
   }
 
   return (
-    <div className="flex items-center gap-2 text-sm font-medium text-gray-700">
-      <Store className="h-4 w-4 shrink-0 text-gray-500" aria-hidden="true" />
+    <div className="flex items-center gap-2 text-sm font-medium text-foreground">
+      <Store className="h-4 w-4 shrink-0 text-muted-foreground" aria-hidden="true" />
       <span className="truncate">{displayName}</span>
       {showWarning && (
         <Tooltip>
@@ -60,7 +60,7 @@ export function SearchSellerBadge() {
               className="inline-flex"
               aria-label="Предупреждение: нет данных о продавце от WB"
             >
-              <AlertTriangle className="h-4 w-4 shrink-0 text-yellow-500" aria-hidden="true" />
+              <AlertTriangle className="h-4 w-4 shrink-0 text-status-warning" aria-hidden="true" />
             </button>
           </TooltipTrigger>
           <TooltipContent>

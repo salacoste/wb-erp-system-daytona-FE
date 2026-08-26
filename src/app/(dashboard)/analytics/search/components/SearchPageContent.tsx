@@ -10,6 +10,9 @@
  * Story 119.2-FE Pass-1 F-1: optional `initialQuery` from `?query=` URL param —
  * when present, defaults to the by-query tab and pre-populates the query input
  * (closes the silent-drop on Funnel "Топ поисковых запросов" cross-page links).
+ * Story 170.7 Task 3: deep-link — optional `initialTab` (validated at page level
+ * against the 4 tab values) and `initialNmId` (by-product preselect) from
+ * ?tab=/?nmId= URL params; explicit ?tab= wins over the initialQuery default.
  */
 
 import { useState, useMemo } from 'react'
@@ -54,9 +57,17 @@ interface SearchPageContentProps {
   /** Story 119.2-FE Pass-1 F-1: when provided (via `?query=` URL param), the
    * by-query tab is the default and the query input is pre-populated. */
   initialQuery?: string
+  /** Story 170.7: validated tab value from ?tab= — wins over initialQuery default. */
+  initialTab?: string
+  /** Story 170.7: numeric nmId from ?nmId= — preselects the by-product combobox. */
+  initialNmId?: number
 }
 
-export function SearchPageContent({ initialQuery }: SearchPageContentProps = {}) {
+export function SearchPageContent({
+  initialQuery,
+  initialTab,
+  initialNmId,
+}: SearchPageContentProps = {}) {
   const [dateRange, setDateRange] = useState<DateRange | undefined>(getDefaultRange)
   const [comparisonEnabled, setComparisonEnabled] = useState(false)
   const [comparisonPreset, setComparisonPreset] = useState<ComparisonPreset>('previous')
@@ -78,12 +89,13 @@ export function SearchPageContent({ initialQuery }: SearchPageContentProps = {})
   }
 
   const hasInitialQuery = typeof initialQuery === 'string' && initialQuery.length > 0
-  const defaultTab = hasInitialQuery ? 'by-query' : 'orders'
+  // Story 170.7 precedence: explicit ?tab= > ?query= (by-query) > orders.
+  const defaultTab = initialTab ?? (hasInitialQuery ? 'by-query' : 'orders')
 
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-3xl font-bold tracking-tight text-gray-900">Поисковая аналитика</h1>
+        <h1 className="text-2xl font-semibold tracking-tight">Поисковая аналитика</h1>
         <p className="text-muted-foreground mt-1">Анализ поисковых запросов, позиций и заказов</p>
         <div className="mt-2">
           <SearchSellerBadge />
@@ -132,7 +144,7 @@ export function SearchPageContent({ initialQuery }: SearchPageContentProps = {})
             />
           </TabsContent>
           <TabsContent value="by-product">
-            <SearchByProductTab from={apiFrom} to={apiTo} />
+            <SearchByProductTab from={apiFrom} to={apiTo} initialNmId={initialNmId} />
           </TabsContent>
           <TabsContent value="by-query">
             <SearchByQueryTab from={apiFrom} to={apiTo} initialQuery={initialQuery} />

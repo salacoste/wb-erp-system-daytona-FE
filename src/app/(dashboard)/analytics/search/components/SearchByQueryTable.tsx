@@ -54,9 +54,9 @@ function formatPercent(n: number | null): string {
 const BADGE_BASE = 'inline-flex rounded-full px-2 py-0.5 text-xs font-medium'
 
 function getPositionBadgeClass(position: number): string {
-  if (position <= 10) return `${BADGE_BASE} bg-green-100 text-green-800`
-  if (position <= 30) return `${BADGE_BASE} bg-yellow-100 text-yellow-800`
-  return `${BADGE_BASE} bg-red-100 text-red-800`
+  if (position <= 10) return `${BADGE_BASE} bg-status-success/15 text-status-success`
+  if (position <= 30) return `${BADGE_BASE} bg-status-warning/15 text-status-warning`
+  return `${BADGE_BASE} bg-status-error/15 text-status-error`
 }
 
 const COLUMNS: { label: string; field: SortField }[] = [

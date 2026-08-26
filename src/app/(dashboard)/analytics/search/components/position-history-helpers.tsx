@@ -15,10 +15,16 @@ export interface ChartDatum {
   clicks: number
 }
 
-/** Shared color/style constants for the position history chart. */
-export const LINE_COLOR = '#3B82F6'
-export const GRID_STROKE = '#EEEEEE'
-export const TICK_FILL = '#757575'
+/**
+ * Shared color/style constants for the position history chart.
+ * Story 170.7: legacy hex palette -> registered var() tokens, single-sourced in
+ * search-chart-config.ts (line=chart-1, grid=border, tick=chart-axis; 169.4 canon).
+ */
+import { SEARCH_CHART_TOKENS } from './search-chart-config'
+
+export const LINE_COLOR = SEARCH_CHART_TOKENS.line
+export const GRID_STROKE = SEARCH_CHART_TOKENS.grid
+export const TICK_FILL = SEARCH_CHART_TOKENS.tick
 
 /** Convert API history points to chart-friendly data. */
 export function toChartData(history: PositionHistoryPoint[]): ChartDatum[] {
@@ -58,7 +64,7 @@ export function PositionTooltipContent({
   if (!active || !payload?.length) return null
   const d = payload[0].payload
   return (
-    <div className="rounded-md border bg-white px-3 py-2 text-sm shadow-sm">
+    <div className="rounded-md border bg-popover px-3 py-2 text-sm shadow-sm">
       <p className="font-medium">{formatDate(d.date)}</p>
       <p>
         Позиция:{' '}

@@ -6,14 +6,13 @@
  */
 
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Skeleton } from '@/components/ui/skeleton'
+import { Alert, AlertDescription } from '@/components/ui/alert'
+import { AlertCircle } from 'lucide-react'
 import { formatNumber, formatDecimal, cn } from '@/lib/utils'
 import Link from 'next/link'
 import { ROUTES } from '@/lib/routes'
-import type {
-  PositionTrendMover,
-  CloseToPageOneItem,
-  TrendDirection,
-} from '@/types/search-position-trends'
+import type { PositionTrendMover, TrendDirection } from '@/types/search-position-trends'
 
 /**
  * Color the "Изменение" cell off the semantic `trend` enum, NOT the raw
@@ -27,20 +26,51 @@ import type {
  * uses positionDelta where NEGATIVE = up; driving off `trend` avoids that trap.)
  */
 function trendColorClass(trend: TrendDirection): string {
-  if (trend === 'improving') return 'text-green-600 font-medium'
-  if (trend === 'declining') return 'text-red-500'
+  if (trend === 'improving') return 'text-status-success font-medium'
+  if (trend === 'declining') return 'text-status-error'
   return 'text-muted-foreground'
 }
 
+/**
+ * Story 170.7 Task 3 Pattern-1: own loading/error chrome over the SHARED
+ * usePositionTrends fetch. A shared-fetch failure is signalled per-section;
+ * retained data still renders (isError && non-empty list wins over the chrome).
+ */
 export function SearchPositionMoversTable({
   movers,
+  isLoading,
+  isError,
   onSelectSku,
   selectedNmId,
 }: {
   movers: PositionTrendMover[]
+  isLoading: boolean
+  isError: boolean
   onSelectSku?: (nmId: number) => void
   selectedNmId?: number | null
 }) {
+  if (isLoading && movers.length === 0) {
+    return (
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-base">Изменения позиций</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <Skeleton className="h-48 w-full" />
+        </CardContent>
+      </Card>
+    )
+  }
+
+  if (isError && movers.length === 0) {
+    return (
+      <Alert variant="destructive">
+        <AlertCircle className="h-4 w-4" />
+        <AlertDescription>Не удалось загрузить изменения позиций</AlertDescription>
+      </Alert>
+    )
+  }
+
   if (movers.length === 0) {
     return (
       <Card>
@@ -74,7 +104,7 @@ export function SearchPositionMoversTable({
                   key={m.nmId}
                   className={cn(
                     'border-b last:border-0 hover:bg-muted/50',
-                    selectedNmId === m.nmId && 'bg-blue-50',
+                    selectedNmId === m.nmId && 'bg-status-information/15',
                     onSelectSku && 'cursor-pointer'
                   )}
                   onClick={() => onSelectSku?.(m.nmId)}
@@ -82,7 +112,7 @@ export function SearchPositionMoversTable({
                   <td className="p-2 font-mono text-xs">
                     <Link
                       href={`${ROUTES.ANALYTICS.SEARCH}?tab=by-product&nmId=${m.nmId}`}
-                      className="text-blue-600 hover:underline"
+                      className="text-status-information hover:underline"
                       onClick={e => e.stopPropagation()}
                     >
                       {m.nmId}
@@ -99,82 +129,6 @@ export function SearchPositionMoversTable({
                   <td className="p-2 text-right">{formatNumber(m.totalQueries)}</td>
                   <td className="p-2 text-sm text-muted-foreground max-w-48 truncate">
                     {m.topQuery || '—'}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      </CardContent>
-    </Card>
-  )
-}
-
-export function SearchPositionOpportunitiesTable({
-  items,
-  onSelectSku,
-  selectedNmId,
-}: {
-  items: CloseToPageOneItem[]
-  onSelectSku?: (nmId: number) => void
-  selectedNmId?: number | null
-}) {
-  if (items.length === 0) {
-    return (
-      <Card>
-        <CardContent className="py-8 text-center text-muted-foreground">
-          Нет SKU рядом с первой страницей поиска
-        </CardContent>
-      </Card>
-    )
-  }
-
-  return (
-    <Card>
-      <CardHeader>
-        <CardTitle className="text-base">Рядом с первой страницей</CardTitle>
-      </CardHeader>
-      <CardContent>
-        <div className="rounded-md border overflow-x-auto">
-          <table className="w-full text-sm">
-            <thead>
-              <tr className="border-b text-left text-muted-foreground">
-                <th className="p-2 font-medium">nmId</th>
-                <th className="p-2 font-medium text-right">Позиция</th>
-                <th className="p-2 font-medium text-right">До топ-20</th>
-                <th className="p-2 font-medium text-right">Показы</th>
-                <th className="p-2 font-medium">Топ запрос</th>
-              </tr>
-            </thead>
-            <tbody>
-              {items.slice(0, 20).map(item => (
-                <tr
-                  key={item.nmId}
-                  className={cn(
-                    'border-b last:border-0 hover:bg-muted/50',
-                    selectedNmId === item.nmId && 'bg-blue-50',
-                    onSelectSku && 'cursor-pointer'
-                  )}
-                  onClick={() => onSelectSku?.(item.nmId)}
-                >
-                  <td className="p-2 font-mono text-xs">
-                    <Link
-                      href={`${ROUTES.ANALYTICS.SEARCH}?tab=by-product&nmId=${item.nmId}`}
-                      className="text-blue-600 hover:underline"
-                      onClick={e => e.stopPropagation()}
-                    >
-                      {item.nmId}
-                    </Link>
-                  </td>
-                  <td className="p-2 text-right font-medium">
-                    {item.currentAvgPosition == null ? 'Нет данных' : formatDecimal(item.currentAvgPosition, 1)}
-                  </td>
-                  <td className="p-2 text-right">
-                    <span className="text-blue-600 font-medium">-{item.positionsAway}</span>
-                  </td>
-                  <td className="p-2 text-right">{formatNumber(item.totalImpressions)}</td>
-                  <td className="p-2 text-sm text-muted-foreground max-w-48 truncate">
-                    {item.topQuery || '—'}
                   </td>
                 </tr>
               ))}

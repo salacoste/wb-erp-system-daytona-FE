@@ -5,7 +5,7 @@
  * Story 71.6-FE: By-Product Keyword Explorer Tab
  */
 
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useEffect } from 'react'
 import { useSearchByProduct } from '@/hooks/use-search-analytics'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Alert, AlertDescription } from '@/components/ui/alert'
@@ -19,10 +19,20 @@ import { SearchByProductTable } from './SearchByProductTable'
 interface SearchByProductTabProps {
   from: string
   to: string
+  /** Story 170.7 deep-link: numeric nmId from ?nmId= — preselects the product
+   * (movers/opportunities cross-links are live). Reseeded on prop change like
+   * SearchByQueryTab's initialQuery reseed (119.2-FE P2-4 pattern). */
+  initialNmId?: number
 }
 
-export function SearchByProductTab({ from, to }: SearchByProductTabProps) {
-  const [selectedNmId, setSelectedNmId] = useState<number | undefined>()
+export function SearchByProductTab({ from, to, initialNmId }: SearchByProductTabProps) {
+  const [selectedNmId, setSelectedNmId] = useState<number | undefined>(initialNmId)
+  // Reseed on deep-link prop change after mount (119.2-FE P2-4 pattern):
+  // a second movers link click while already on the page must re-preselect.
+  useEffect(() => {
+    if (initialNmId !== undefined) setSelectedNmId(initialNmId)
+  }, [initialNmId])
+
   const { data, isLoading, isError } = useSearchByProduct(selectedNmId, from, to)
 
   return (

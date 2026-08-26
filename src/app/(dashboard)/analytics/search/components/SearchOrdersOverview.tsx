@@ -143,7 +143,7 @@ function SummaryCards({
     <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
       <Card>
         <CardContent className="flex items-center gap-4 p-4">
-          <div className="text-blue-600" aria-hidden="true">
+          <div className="text-status-information" aria-hidden="true">
             <ShoppingCart className="h-8 w-8" />
           </div>
           <div>
