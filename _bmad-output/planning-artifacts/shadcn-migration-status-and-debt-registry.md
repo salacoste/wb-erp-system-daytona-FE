@@ -66,7 +66,16 @@ DETACH → route-local Record<ModelStatus,string> (hue-preserving 1:1, все 7 
 shared-конфига; удаление поля — 171.9), TableCaption naming model, tabular-nums ×7 (nmId exempt),
 p-6 double-pad; guard-8 (sku-accuracy exclusion load-bearing) + caption-тесты; owned 55→65,
 полный пол **19 263/0**, 1×opus APPROVE-WITH-NOTES (0 дефектов), e2e 13/1↓/0, light+dark visual).
-**NEXT = 171.8 sku-accuracy detail** (backlog; план `.omx/plans/171.8-...md`);
+171.8 SHIPPED 2026-08-26 (8/9): #268 (`4970c17a`; MINOR-GAP — born-clean: TableCaption ×2
+(overview names model AP#10 String-form; history names SKU), tabular-nums ×9 (nmId exempt),
+route-paddings ×8 убраны; guard-6 + caption-тесты ×2; CROSS-SURFACE: anchor-safe фикс гарда 171.7
+(substring-фильтр на абсолютном пути матчил имя worktree 171.8 — коллизия план-пиновых имён,
+доказана симуляцией; relative-first фильтры); owned 63→71, полный пол **19 271/0**, 1×opus
+APPROVE-WITH-NOTES (0 дефектов), e2e 13/1↓/0, light+dark visual оба вида).
+**NEXT = 171.9 model performance detail** (backlog; план `.omx/plans/171.9-...md`;
+спец-заметки: STATUS_BADGE_CONFIG.className — последний потребитель ModelPerformanceDetail:143,
+после detach — удалить поле + обновить ownership-комментарий и гард 171.6; MapeTrendChart —
+chart-hex/chartframe-канон 171.4);
 параллельно независимо: 169.14 → 169.15 → 169.12 contract closeout (169.14/169.15 `backlog`; 169.12 `review`; plans `.omx/plans/169.14-establish-authoritative-paid-storage-import-lifecycle-and-result-contract.md`, `.omx/plans/169.15-align-shared-frontend-paid-storage-import-boundary.md`, and `.omx/plans/169.12-migrate-storage-analytics-and-paid-storage-import.md`). Story 169.13 remains an independent backlog route.
 **Волна 23-24.08** (два полных цикла + инфраструктура): 169.11 returns — preface #218 (`d6ed2c65`,
 unknown-категория на boundary + нейтральный лейбл) + #219 (`129e99ed`; owned 50→73) + e2e-gap закрыт
