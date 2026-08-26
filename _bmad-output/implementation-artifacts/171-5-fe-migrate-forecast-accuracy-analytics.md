@@ -1,6 +1,6 @@
 # Story 171.5-FE: Migrate Forecast Accuracy Analytics
 
-Status: review — micro cycle + guard joins fix on branch; PR/merge/cleanup pending
+Status: done — PR #260 merged (`ae2eb11a`); proportionate 1-pass fresh review APPROVE; e2e on branch 7/1↓/0; cleanup 0/0/0
 
 ## Story
 
@@ -16,7 +16,7 @@ Per plan (C1-C11 apply; route self-identifies as Story 123.4 — provenance comm
 
 - [x] Task 0: NONE — hook read-only (cabinet-scoped, no coercions flagged).
 - [x] Task 1: Behavior lock — baseline **39 tests / 5 files**. LOCK: binary MAPE band (>200 high — text-swap non-color marker + caption swap + extreme ≥1000 Alert); null MAPE «—»; slice(0,20) SKU cap; horizon table unpaginated; single generic error Alert; loading skeleton; empty per-table messages; h1 text-2xl ×1 «Точность прогнозов»; e2e pins (role/heading/locale-regex — palette-safe).
-- [ ] Task 2 (gaps):
+- [x] Task 2 (gaps):
   1. `AccuracyMetricsCards.tsx:69` `text-amber-600` → `text-status-warning` (binary band; marker preserved).
   2. TableCaption ×2 («Точность прогнозов по горизонтам» / «по SKU» — match table titles; static).
   3. tabular-nums on numeric cells (nmId font-mono stays no-tabular); `th scope="row"` on row-header cells where applicable (Horizon table first col if row-header semantics exist — read; SKU table nmId is NOT a th).
@@ -41,7 +41,7 @@ Per plan (C1-C11 apply; route self-identifies as Story 123.4 — provenance comm
 
 - Implementation: orchestrator-direct micro cycle (`62c4ab16` + guard fix `18ca6873`). Review: 1× code-reviewer (opus fresh) — APPROVE (code).
 
-### Post-1st-pass-review fixes (2028-26)
+### Post-1st-pass-review fixes (2026-08-26)
 
 Story reconciliation (this record); th-scope disposition documented (review-L2): horizon first col is DATA not row-header — kept TableCell, no scope. hex-regex =-prefix: not adopted (marginal; palette-regex + lint cover).
 
@@ -69,3 +69,4 @@ Diff a26e78e9..HEAD = **5 files** (4 M components + 1 A guard test); +~90/−12.
 |---|---|
 | 2026-08-26 | Story created from compliance-check recon (born-clean + 1 amber; captions/tabular/scope; provenance 123.4→171.5 note). Plan referenced as authoritative. |
 | 2026-08-26 | Micro cycle + guard joins fix + review dispositions. Status: ready-for-dev → review. |
+| 2026-08-26 | Implemented + merged: PR #260 (micro `62c4ab16` + guard-fix `18ca6873` + story `8b71627b`, merge `ae2eb11a`); route 44/6, full 19 246/0 (+5 exact), e2e-on-branch 7/1↓/0; 1×opus APPROVE. Epic 171: 5/9. Status: review → done. **Lessons:** (1) `echo EXIT=$?` между &&-звеньями сбрасывает $? — цепь продолжилась на красном suite; echo ПОСЛЕ цепи или без него. (2) Vite-трансформ переписывает static new URL() в тестах — resolve(dirname(fileURLToPath(import.meta.url))) канон. |
