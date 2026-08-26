@@ -6,6 +6,8 @@
  * state-precedence chain: loading → list-error → model-not-found → evaluations-error → happy.
  * Table extracted to EvaluationsTable.tsx; sort helpers in evaluations-list-helpers.ts.
  * Header extracted to EvaluationsHeaderCard.tsx (Story 112.4-FE, A-5).
+ * Migrated Story 171.7-FE: route-level padding removed (layout provides it — 171.6 canon),
+ * table caption names the model (RTC contract).
  */
 
 import { useState, type ReactNode } from 'react'
@@ -14,6 +16,7 @@ import { useRouter } from 'next/navigation'
 import { useAiModels } from '@/hooks/useAiModels'
 import { useAiEvaluations } from '@/hooks/useAiEvaluations'
 import { ROUTES, buildModelSkuAccuracyRoute } from '@/lib/routes'
+import { getModelTypeLabel } from '@/types/ai/forecast'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import { Card, CardContent } from '@/components/ui/card'
@@ -27,7 +30,7 @@ interface EvaluationsListProps {
 
 function EvaluationsPageShell({ children }: { children: ReactNode }) {
   return (
-    <div className="space-y-6 p-6">
+    <div className="space-y-6">
       <h1 className="text-2xl font-bold tracking-tight">Оценки точности модели</h1>
       {children}
     </div>
@@ -149,6 +152,7 @@ export function EvaluationsList({ modelId }: EvaluationsListProps) {
               onSortClick={handleSortClick}
               onRowClick={handleRowClick}
               modelId={modelId}
+              captionText={`Оценки точности модели — ${getModelTypeLabel(model.modelType)} v${model.version}`}
             />
           </CardContent>
         </Card>

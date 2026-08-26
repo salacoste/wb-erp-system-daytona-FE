@@ -115,6 +115,19 @@ describe('EvaluationsTable', () => {
     expect(screen.getByText('Оценка')).toBeTruthy()
   })
 
+  it('Story 171.7: renders table caption naming the model when captionText provided', () => {
+    renderTable({ ...defaultProps, captionText: 'Оценки точности модели — Прогноз продаж v3' })
+    // r-NIT fix: pin the caption SEMANTIC (role), not just the text
+    expect(screen.getByRole('caption')).toHaveTextContent(
+      'Оценки точности модели — Прогноз продаж v3'
+    )
+  })
+
+  it('Story 171.7: no caption rendered when captionText is undefined', () => {
+    renderTable(defaultProps)
+    expect(screen.queryByText(/Оценки точности модели —/)).toBeNull()
+  })
+
   it('F-1: Дата оценки cell renders formatDate(evaluationDate) in DD.MM.YYYY format', () => {
     renderTable(defaultProps)
     // evaluationDate '2026-05-17' → formatDate → '17.05.2026'
