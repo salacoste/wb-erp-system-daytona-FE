@@ -119,7 +119,17 @@ export function AdminModelsContent({
           model={rollbackTarget}
           open={true}
           onOpenChange={open => {
-            if (!open) setRollbackTarget(null)
+            if (!open) {
+              // 171.2 gap-5 (epic AX literal «focus returns to the invoking row»):
+              // the dialog is conditionally unmounted via rollbackTarget state and has no
+              // AlertDialogTrigger, so Radix's built-in focus-return cannot apply — capture
+              // the invoking row's rollback button BEFORE unmount, then focus it after.
+              const rowButton = document.querySelector<HTMLElement>(
+                `[data-rollback-model-id="${CSS.escape(String(rollbackTarget.id))}"]`
+              )
+              setRollbackTarget(null)
+              requestAnimationFrame(() => rowButton?.focus())
+            }
           }}
           onSuccess={() => setRollbackTarget(null)}
         />

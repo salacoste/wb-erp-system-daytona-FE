@@ -12,6 +12,7 @@ import { Button } from '@/components/ui/button'
 import {
   Table,
   TableBody,
+  TableCaption,
   TableCell,
   TableHead,
   TableHeader,
@@ -80,8 +81,13 @@ export function AdminModelsTable({
   onRollback,
 }: AdminModelsTableProps) {
   return (
-    <div className="rounded-lg border overflow-x-auto">
-      <Table>
+    <div className="rounded-lg border">
+      {/* 171.2: scroll-region semantics delegated to ui Table's scrollContainer* props
+          (Story 170.x pattern) — tabIndex=0 + named region for keyboard users. */}
+      <Table
+        scrollContainerTabIndex={0}
+        scrollContainerAriaLabel="Таблица версий моделей под управлением"
+      >
         <TableHeader>
           <TableRow>
             <TableHead>Артикул модели</TableHead>
@@ -115,7 +121,7 @@ export function AdminModelsTable({
           {models.map(model => (
             <TableRow key={model.id}>
               {/* AP#10: opaque ID via String() — never formatNumber */}
-              <TableCell>{String(model.id)}</TableCell>
+              <TableCell className="font-mono">{String(model.id)}</TableCell>
               {/* F-40: localized label (admin endpoint returns 10 model types as raw
                   snake_case); unknown types fall back to the raw value. */}
               <TableCell>{getModelTypeLabel(model.modelType)}</TableCell>
@@ -126,8 +132,13 @@ export function AdminModelsTable({
                 </Badge>
               </TableCell>
               {/* AP#8: null MAPE → '—' */}
-              <TableCell>{formatMapeDisplay(model.metrics.mape)}</TableCell>
-              <TableCell>{model.trainedAt ? formatDate(model.trainedAt) : '—'}</TableCell>
+              {/* 171.2 gap-2: tabular-nums keeps digits column-aligned on locale digits */}
+              <TableCell className="tabular-nums">
+                {formatMapeDisplay(model.metrics.mape)}
+              </TableCell>
+              <TableCell className="tabular-nums">
+                {model.trainedAt ? formatDate(model.trainedAt) : '—'}
+              </TableCell>
               <TableCell>
                 {/* F-10: disable for statuses where rollback is nonsensical / backend rejects */}
                 {(() => {
@@ -136,6 +147,7 @@ export function AdminModelsTable({
                     <Button
                       variant="destructive"
                       size="sm"
+                      data-rollback-model-id={String(model.id)}
                       disabled={isBlocked}
                       onClick={e => {
                         e.stopPropagation()
@@ -155,6 +167,8 @@ export function AdminModelsTable({
             </TableRow>
           ))}
         </TableBody>
+        {/* 171.2 gap-1: static caption naming the governed-versions collection */}
+        <TableCaption>Версии моделей под управлением</TableCaption>
       </Table>
     </div>
   )

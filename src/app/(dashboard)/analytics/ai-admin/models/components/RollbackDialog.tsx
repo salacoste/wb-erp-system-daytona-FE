@@ -69,6 +69,10 @@ export function RollbackDialog({ model, open, onOpenChange, onSuccess }: Rollbac
         onError: (err: unknown) => {
           if (err instanceof ApiError && err.status === 403) {
             setErrorMessage('Нет доступа. Проверьте, что вы являетесь владельцем кабинета.')
+          } else if (err instanceof ApiError && err.status === 409) {
+            // 171.2 gap-6: conflict — model already rolled back server-side; dialog stays
+            // open with the entered reason retained so the admin can recover deliberately.
+            setErrorMessage('Модель уже откатана. Обновите список.')
           } else {
             setErrorMessage('Не удалось выполнить откат. Попробуйте позже.')
           }
@@ -87,6 +91,8 @@ export function RollbackDialog({ model, open, onOpenChange, onSuccess }: Rollbac
           <AlertDialogDescription>
             Модель v{model.version} будет откачена к предыдущей стабильной версии. Это действие
             отразится на всех активных прогнозах. Укажите причину:
+            {/* 171.2 gap-7 (AC-2 «server truth»): honest non-promise about post-rollback state */}
+            Актуальный статус определяется на сервере после отката.
           </AlertDialogDescription>
         </AlertDialogHeader>
         {/* Form elements outside description — valid DOM + ARIA contract preserved */}

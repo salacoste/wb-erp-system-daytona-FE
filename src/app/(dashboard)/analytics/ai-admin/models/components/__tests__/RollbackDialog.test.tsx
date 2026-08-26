@@ -178,6 +178,42 @@ describe('RollbackDialog', () => {
     })
   })
 
+  it('error 409: shows conflict-specific message AND retains entered reason (171.2 gap-6)', async () => {
+    const conflict = new ApiError('Conflict', 409)
+    const mutateMock = vi.fn((_vars, callbacks) => {
+      callbacks.onError(conflict)
+    })
+    mockUseModelRollback.mockReturnValue(buildMutationMock({ mutate: mutateMock }))
+    renderDialog()
+
+    const textarea = screen.getByRole('textbox', { name: /Причина отката/i })
+    fireEvent.change(textarea, { target: { value: 'деградация MAPE после релиза' } })
+    fireEvent.click(screen.getByRole('button', { name: /Подтвердить откат/i }))
+
+    await waitFor(() => {
+      expect(screen.getByText('Модель уже откатана. Обновите список.')).toBeInTheDocument()
+    })
+    // Dialog stays open with the reason retained (bounded recovery, no duplicate rollback offer)
+    expect(textarea).toHaveValue('деградация MAPE после релиза')
+  })
+
+  it('pending: confirm disabled + spinner while mutation is in flight (171.2 pin)', () => {
+    mockUseModelRollback.mockReturnValue(buildMutationMock({ isPending: true }))
+    renderDialog()
+
+    const btn = screen.getByRole('button', { name: /Подтвердить откат/i })
+    expect(btn).toBeDisabled()
+    expect(screen.getByRole('button', { name: /Отменить/i })).toBeDisabled()
+    expect(document.querySelector('.animate-spin')).not.toBeNull()
+  })
+
+  it('AC-2 server truth: description states status is determined on the server (171.2 gap-7)', () => {
+    renderDialog()
+    expect(
+      screen.getByText(/Актуальный статус определяется на сервере после отката\./)
+    ).toBeInTheDocument()
+  })
+
   it('cancel button calls onOpenChange(false)', () => {
     const onOpenChange = vi.fn()
     renderDialog({ onOpenChange })

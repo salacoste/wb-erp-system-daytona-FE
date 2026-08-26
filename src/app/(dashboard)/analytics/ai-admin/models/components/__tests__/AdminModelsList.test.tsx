@@ -340,4 +340,63 @@ describe('AdminModelsList', () => {
     expect(firstRowText).toContain('v1')
     expect(secondRowText).toContain('v3')
   })
+
+  // ---- 171.2 gap pins (growth-only) ----
+
+  it('171.2 gap-1: table renders caption «Версии моделей под управлением»', () => {
+    renderComponent()
+    expect(screen.getByText('Версии моделей под управлением')).toBeInTheDocument()
+  })
+
+  it('171.2 gap-2: mape and date cells use tabular-nums; id cell uses mono', () => {
+    renderComponent()
+    const mapeCell = screen.getByText(/15/).closest('td')
+    expect(mapeCell?.className).toContain('tabular-nums')
+    const dateCell = screen.getByText(/10\.01\.2026/).closest('td')
+    expect(dateCell?.className).toContain('tabular-nums')
+    const idCell = screen.getByText('12345').closest('td')
+    expect(idCell?.className).toContain('font-mono')
+  })
+
+  it('171.2 gap-4: scroll container is a named focusable region (tabIndex=0)', () => {
+    renderComponent()
+    const region = screen.getByRole('region', { name: 'Таблица версий моделей под управлением' })
+    expect(region).toHaveAttribute('tabindex', '0')
+  })
+
+  it('171.2 gap-6: unknown status renders raw value in outline badge (known-set fallback)', () => {
+    // AP#4 bridge: deliberately out-of-union status to exercise the raw-value fallback
+    const weirdModel = {
+      ...model1,
+      id: '77777',
+      status: 'weird_status',
+      version: 9,
+    } as unknown as AiModel
+    mockUseAdminModels.mockReturnValue({
+      data: { models: [weirdModel], total: 1, page: 1, limit: 20 },
+      isLoading: false,
+      error: null,
+    } as unknown as ReturnType<typeof useAdminModelsModule.useAdminModels>)
+    renderComponent()
+    const badge = screen.getByText('weird_status')
+    // outline variant = bordered badge (not default/destructive/secondary fills)
+    expect(badge.className).toContain('border')
+  })
+
+  it('171.2 gap-5: focus returns to the invoking row rollback button after dialog close', async () => {
+    const { waitFor } = await import('@testing-library/react')
+    renderComponent()
+    const rollbackBtn = screen.getByRole('button', { name: 'Откатить модель v2' })
+    rollbackBtn.focus()
+    expect(document.activeElement).toBe(rollbackBtn)
+    fireEvent.click(rollbackBtn)
+    expect(screen.getByText(/Откатить модель v2\?/)).toBeInTheDocument()
+    fireEvent.click(screen.getByRole('button', { name: /Отменить/i }))
+    await waitFor(
+      () => {
+        expect(document.activeElement).toBe(rollbackBtn)
+      },
+      { timeout: 2000 }
+    )
+  })
 })
