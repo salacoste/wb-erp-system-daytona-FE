@@ -1,5 +1,7 @@
 # HANDOFF 2026-08-26 (вечерняя сессия) — Эпик 171 ЗАКРЫТ 9/9; NEXT 172.1 с готовой разведкой
 
+> **§0 RECONCILED 2026-08-26 (сессия 172.1)**: Story 172.1 SHIPPED (PR #278, merge `a001abee`) — полный пол **19 297/0**, NEXT = **172.2**. Ниже §0 обновлён; §1-§2 исторические (вход-точка эпохи 171).
+
 > **Вход-точка** после закрытия эпика 171-FE целиком (171.7: PRs #266+#267 · 171.8: #268+#269 · 171.9: #270+#271 · эпик-flip: #271 · handoff-§0: #272 · recon 172.1: #273; `main = a6167e88`).
 > **Оркестратору следующей сессии**: операционный промпт — [`ORCHESTRATOR-PROMPT-2026-08-26-V9-FE-CONTINUATION.md`](ORCHESTRATOR-PROMPT-2026-08-26-V9-FE-CONTINUATION.md) (bootstrap §1, цикл стори §4, гейты §5, нормы §6, ловушки §8). Этот handoff заменяет вход-точку [`HANDOFF-2026-08-26-epic-171-models-tree-and-full-debt-registry.md`](HANDOFF-2026-08-26-epic-171-models-tree-and-full-debt-registry.md) (его §0 синхронизирован PR #272; §1-§5 исторические).
 > BE-канон: [`../docs/HANDOFF-2026-08-23-W9-FULL-DEBTS-AND-ROADMAP.md`](../docs/HANDOFF-2026-08-23-W9-FULL-DEBTS-AND-ROADMAP.md) (по FE-прогрессу устарел, по BE-долгам актуален).
@@ -10,14 +12,14 @@
 
 | Метрика | Значение |
 |---|---|
-| `main` | `a6167e88`, дерево чистое, все сессионные ветки/worktrees = **0/0/0** |
-| Прогресс миграции 166-174 | **54/94** канонических стори |
-| Эпики | 166 ✅ · 167 ✅ · 168 ✅ · 170 ✅ (7/7) · **171 ✅ (9/9)** · 169 in-progress (чужая lane, §2.4) · 172/173/174 backlog |
-| Полный пол (vitest) | **19 281 / 0** (floor рос точными +N: 19 253 → 19 263 → 19 271 → 19 281) |
+| `main` | `a001abee` (PR #278), дерево чистое, сессионные ветки/worktrees 172.1 = **0/0/0** |
+| Прогресс миграции 166-174 | **55/94** канонических стори |
+| Эпики | 166 ✅ · 167 ✅ · 168 ✅ · 170 ✅ (7/7) · 171 ✅ (9/9) · **172 IN PROGRESS (1/17 — 172.1 ✅)** · 169 in-progress (чужая lane, §2.4) · 173/174 backlog |
+| Полный пол (vitest) | **19 297 / 0** (… → 19 281 → 19 297 [+16 гардов 172.1]) |
 | Линтер/типы | lint 0/0 (zero-warning), tsc 0, max-lines OK, check:docs = baseline (97 entries, exit 0), check:locale-percent ratchet = **4** |
 | PR вечерней сессии | #266–#273 (3 стори × impl+closeout + эпик-flip внутри #271 + handoff + recon) |
 | pm2 | `wb-repricer-frontend-dev` online на :3100; BE на :3000 |
-| **NEXT** | **172.1-FE Business Dashboard** — FULL-цикл, **разведка ГОТОВА**: [`recon-172-1-dashboard.md`](recon-172-1-dashboard.md) |
+| **NEXT** | **172.2-FE Automation Rules Gallery** (план `.omx/plans/172.2-*.md`); 172.1 ✅ — артефакт `implementation-artifacts/172-1-fe-migrate-the-business-dashboard.md` |
 
 ---
 

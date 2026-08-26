@@ -818,7 +818,7 @@ development_status:
 
   # Epic 172-FE: Consistent Core Business Operations
   epic-172-fe: backlog
-  172-1-fe-migrate-the-business-dashboard: backlog
+  172-1-fe-migrate-the-business-dashboard: done # PR #278 (e5a42171, merge a001abee): FULL 127 files (125M+2A guards +941/-609); 4 executor-waves; targeted 65/1394->67/1410; full 19297/0 (floor 19281, +16 guards); lint 0/0 tsc 0 build OK; e2e 28/1skip/1 pre-existing (bisected on main); 3-pass review (REJECT MAJOR chart-token collision -> 2x APPROVE-WITH-NOTES); visual light+dark+390; getMarginColor carry-in re-routed 174.2 (cross-surface); cleanup 0/0/0.
   172-2-fe-migrate-the-canned-automation-rules-gallery: backlog
   172-3-fe-migrate-the-installed-automation-rules-list: backlog
   172-4-fe-migrate-the-installed-rule-detail-and-editor: backlog
