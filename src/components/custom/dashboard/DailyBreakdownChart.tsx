@@ -97,41 +97,41 @@ export function DailyBreakdownChart({
         </p>
         <ResponsiveContainer width="100%" height={240}>
           <LineChart data={chartData} margin={{ top: 12, right: 10, bottom: 40, left: 40 }}>
-            <CartesianGrid strokeDasharray="3 3" stroke="#EEEEEE" />
+            <CartesianGrid strokeDasharray="3 3" stroke="var(--color-chart-grid)" />
             <XAxis
               dataKey="date"
               tickFormatter={date => formatDayLabel(date, periodType)}
-              tick={{ fontSize: 12, fill: '#757575' }}
-              axisLine={{ stroke: '#EEEEEE' }}
-              tickLine={{ stroke: '#EEEEEE' }}
+              tick={{ fontSize: 12, fill: 'var(--color-chart-axis)' }}
+              axisLine={{ stroke: 'var(--color-chart-grid)' }}
+              tickLine={{ stroke: 'var(--color-chart-grid)' }}
             />
             <YAxis
               yAxisId="left"
               tickFormatter={formatCompactCurrency}
-              tick={{ fontSize: 12, fill: '#757575' }}
-              axisLine={{ stroke: '#EEEEEE' }}
+              tick={{ fontSize: 12, fill: 'var(--color-chart-axis)' }}
+              axisLine={{ stroke: 'var(--color-chart-grid)' }}
               tickLine={false}
               width={55}
               label={{
                 value: '₽',
                 angle: -90,
                 position: 'insideLeft',
-                style: { fontSize: 11, fill: '#757575' },
+                style: { fontSize: 11, fill: 'var(--color-chart-axis)' },
               }}
             />
             <YAxis
               yAxisId="right"
               orientation="right"
               tickFormatter={formatCompactCurrency}
-              tick={{ fontSize: 12, fill: '#757575' }}
-              axisLine={{ stroke: '#EEEEEE' }}
+              tick={{ fontSize: 12, fill: 'var(--color-chart-axis)' }}
+              axisLine={{ stroke: 'var(--color-chart-grid)' }}
               tickLine={false}
               width={55}
               label={{
                 value: '₽',
                 angle: 90,
                 position: 'insideRight',
-                style: { fontSize: 11, fill: '#757575' },
+                style: { fontSize: 11, fill: 'var(--color-chart-axis)' },
               }}
             />
             <Tooltip content={<DailyBreakdownTooltip visibleSeries={visibleSeries} />} />

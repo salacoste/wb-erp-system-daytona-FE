@@ -29,11 +29,11 @@ interface DailyMetricsTableRowProps {
  */
 function getCellColor(column: ColumnDef, value: number): string | undefined {
   if (column.colorize) {
-    if (value > 0) return 'text-green-500'
-    if (value < 0) return 'text-red-500'
+    if (value > 0) return 'text-status-success'
+    if (value < 0) return 'text-status-error'
   }
   if (column.isExpense) {
-    return 'text-gray-500'
+    return 'text-muted-foreground'
   }
   return undefined
 }
@@ -66,7 +66,7 @@ export function DailyMetricsTableRow({ row, index, isTotals = false }: DailyMetr
               'px-4 py-3 text-sm whitespace-nowrap',
               column.align === 'right' ? 'text-right' : 'text-left',
               column.key === 'date' && 'sticky left-0 bg-inherit z-10',
-              isTotals ? 'font-semibold text-gray-800' : 'text-gray-800',
+              isTotals ? 'font-semibold text-foreground' : 'text-foreground',
               colorClass
             )}
           >

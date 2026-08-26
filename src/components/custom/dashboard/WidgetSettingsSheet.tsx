@@ -87,7 +87,7 @@ function WidgetToggle({
         aria-hidden="true"
         className={cn(
           'pointer-events-none absolute inset-0 rounded-full border-2 transition-colors',
-          checked ? 'border-transparent bg-primary' : 'border-gray-400 bg-gray-300',
+          checked ? 'border-transparent bg-primary' : 'border-border bg-muted',
           disabled && 'opacity-50'
         )}
       />

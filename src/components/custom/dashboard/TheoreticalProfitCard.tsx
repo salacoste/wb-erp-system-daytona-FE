@@ -72,16 +72,16 @@ export function TheoreticalProfitCard({
   const missingLabels = profit?.missingFields?.map(f => FIELD_LABELS[f] || f) || []
 
   const borderColor = !isComplete
-    ? 'border-yellow-500'
+    ? 'border-status-warning'
     : isPositive
-      ? 'border-blue-500'
-      : 'border-red-500'
+      ? 'border-status-information'
+      : 'border-status-error'
   const bgGradient = !isComplete
-    ? 'bg-gradient-to-br from-yellow-50 to-white'
+    ? 'bg-gradient-to-br from-status-warning/10 to-card'
     : isPositive
-      ? 'bg-gradient-to-br from-blue-50 to-white'
-      : 'bg-gradient-to-br from-red-50 to-white'
-  const valueColor = isPositive ? 'text-green-500' : 'text-red-500'
+      ? 'bg-gradient-to-br from-status-information/10 to-card'
+      : 'bg-gradient-to-br from-status-error/10 to-card'
+  const valueColor = isPositive ? 'text-status-success' : 'text-status-error'
 
   return (
     <Card
@@ -117,7 +117,7 @@ export function TheoreticalProfitCard({
           </div>
         )}
         {!isComplete && missingLabels.length > 0 && (
-          <div className="mt-2 text-xs text-yellow-600">Не хватает: {missingLabels.join(', ')}</div>
+          <div className="mt-2 text-xs text-status-warning">Не хватает: {missingLabels.join(', ')}</div>
         )}
         {profit?.breakdown && (
           <Popover open={breakdownOpen} onOpenChange={setBreakdownOpen}>
@@ -145,12 +145,12 @@ function Header({ isComplete }: { isComplete: boolean }): React.ReactElement {
   return (
     <div className="flex items-center justify-between">
       <div className="flex items-center gap-2">
-        <Calculator className="h-4 w-4 text-gray-500" />
+        <Calculator className="h-4 w-4 text-muted-foreground" />
         <span className="text-sm font-medium text-muted-foreground">Теор. прибыль</span>
       </div>
       <div className="flex items-center gap-2">
         {!isComplete && (
-          <Badge variant="outline" className="border-yellow-500 text-yellow-600">
+          <Badge variant="outline" className="border-status-warning/40 text-status-warning">
             <AlertTriangle className="mr-1 h-3 w-3" />
             Неполные данные
           </Badge>

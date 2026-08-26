@@ -53,15 +53,15 @@ export interface BuyoutRateCardProps {
  * Epic 69, AC-69.7.3: >= 80% green, < 80% red warning.
  */
 function getValueColor(rate: number): string {
-  if (rate >= 80) return 'text-green-600'
-  return 'text-red-600'
+  if (rate >= 80) return 'text-status-success'
+  return 'text-status-error'
 }
 
 /** Color class for the pp comparison */
 function getPpColor(diff: number): string {
-  if (diff > 0) return 'text-green-600'
-  if (diff < 0) return 'text-red-600'
-  return 'text-gray-500'
+  if (diff > 0) return 'text-status-success'
+  if (diff < 0) return 'text-status-error'
+  return 'text-muted-foreground'
 }
 
 /**
@@ -133,7 +133,7 @@ export function BuyoutRateCard({
       title="Процент выкупа"
       tooltip={tooltip}
       icon={ShoppingBag}
-      accentColor="text-blue-500"
+      accentColor="text-status-information"
       value={currentRate}
       format="percent"
       inverted={false}

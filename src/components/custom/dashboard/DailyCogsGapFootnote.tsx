@@ -27,7 +27,7 @@ export function DailyCogsGapFootnote({ data }: DailyCogsGapFootnoteProps) {
   if (daysMissingCogs === 0) return null
 
   return (
-    <p className="mt-2 text-xs text-amber-700">
+    <p className="mt-2 text-xs text-status-warning">
       * COGS неизвестна для {daysMissingCogs} дн. — теоретическая прибыль за эти дни рассчитана без
       учёта себестоимости.
     </p>

@@ -50,9 +50,9 @@ function getDirection(
 
 /** Color styles by direction */
 const DIRECTION_STYLES = {
-  positive: 'bg-green-100 text-green-700',
-  negative: 'bg-red-100 text-red-700',
-  neutral: 'bg-gray-100 text-gray-600',
+  positive: 'bg-status-success/10 text-status-success',
+  negative: 'bg-status-error/10 text-status-error',
+  neutral: 'bg-muted text-muted-foreground',
 } as const
 
 /** Arrow icons by direction */

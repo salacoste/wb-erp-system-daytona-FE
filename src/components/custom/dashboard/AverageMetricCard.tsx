@@ -32,8 +32,8 @@ export interface AverageMetricCardProps {
 
 /** Determine value color class based on sign */
 function getSignColor(value: number): string {
-  if (value > 0) return 'text-green-600'
-  if (value < 0) return 'text-red-500'
+  if (value > 0) return 'text-status-success'
+  if (value < 0) return 'text-status-error'
   return ''
 }
 

@@ -136,7 +136,7 @@ describe('LogisticsBreakdownPopover', () => {
       const row = screen.getByText(/К клиенту при продаже/).closest('[data-testid]')
       expect(row).toBeInTheDocument()
       if (row) {
-        expect(row.className).toMatch(/green/)
+        expect(row.className).toMatch(/status-success/)
       }
     })
 
@@ -148,7 +148,7 @@ describe('LogisticsBreakdownPopover', () => {
 
       const cancelRow = screen.getByText(/К клиенту при отмене/).closest('[data-testid]')
       if (cancelRow) {
-        expect(cancelRow.className).toMatch(/red/)
+        expect(cancelRow.className).toMatch(/status-error/)
       }
     })
   })

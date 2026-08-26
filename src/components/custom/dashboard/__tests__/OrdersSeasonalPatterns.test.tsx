@@ -168,7 +168,7 @@ describe('Insights Card', () => {
     expect(screen.getByText('Декабрь')).toBeInTheDocument()
     expect(screen.getByText(/4 500/)).toBeInTheDocument()
     expect(document.querySelector('.lucide-trending-up')).toBeInTheDocument()
-    expect(container.querySelector('.border-green-200')).toBeInTheDocument()
+    expect(container.querySelector('[class*="border-status-success/40"]')).toBeInTheDocument()
   })
   it('low month: label, Russian name, order count, TrendingDown, red border', () => {
     ok()
@@ -177,7 +177,7 @@ describe('Insights Card', () => {
     expect(screen.getByText('Июль')).toBeInTheDocument()
     expect(screen.getByText(/2 000/)).toBeInTheDocument()
     expect(document.querySelector('.lucide-trending-down')).toBeInTheDocument()
-    expect(container.querySelector('.border-red-200')).toBeInTheDocument()
+    expect(container.querySelector('[class*="border-status-error/40"]')).toBeInTheDocument()
   })
   it('peak day: label, Russian name, peak hour, CalendarDays, blue border', () => {
     ok()
@@ -186,7 +186,7 @@ describe('Insights Card', () => {
     expect(screen.getByText('Суббота')).toBeInTheDocument()
     expect(screen.getByText(/Пик: 11:00/)).toBeInTheDocument()
     expect(document.querySelector('.lucide-calendar-days')).toBeInTheDocument()
-    expect(container.querySelector('.border-blue-200')).toBeInTheDocument()
+    expect(container.querySelector('[class*="border-status-information/40"]')).toBeInTheDocument()
   })
   it('layout: grid-cols-1 mobile, md:grid-cols-3 desktop', () => {
     ok()
@@ -479,7 +479,7 @@ describe('Peak Indicators', () => {
     const { container } = R()
     expect(screen.getByText('Декабрь')).toBeInTheDocument()
     expect(screen.getByText('Суббота')).toBeInTheDocument()
-    expect(container.querySelector('.border-green-200')).toBeInTheDocument()
+    expect(container.querySelector('[class*="border-status-success/40"]')).toBeInTheDocument()
     expect(screen.getByText('Распределение по месяцам')).toBeInTheDocument()
   })
   it('shows Russian peak labels', () => {
@@ -492,7 +492,7 @@ describe('Peak Indicators', () => {
     ok()
     const { container } = R()
     expect(screen.getAllByText('Мин месяц').length).toBeGreaterThan(0)
-    expect(container.querySelector('.border-red-200')).toBeInTheDocument()
+    expect(container.querySelector('[class*="border-status-error/40"]')).toBeInTheDocument()
   })
 })
 

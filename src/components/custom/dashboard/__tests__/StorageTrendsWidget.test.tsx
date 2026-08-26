@@ -295,8 +295,8 @@ describe('StorageTrendsWidget - TrendBadge Inverted Colors', () => {
 
     // TrendBadge with invertColors should show red for positive (increase in costs)
     const trendBadge = screen.getByText(/Тренд:.*12,5\s*%/).closest('div')
-    expect(trendBadge).toHaveClass('text-red-600')
-    expect(trendBadge).toHaveClass('bg-red-50')
+    expect(trendBadge).toHaveClass('text-status-error')
+    expect(trendBadge).toHaveClass('bg-status-error/10')
   })
 
   it('shows green color for negative trend (decrease = good for costs)', () => {
@@ -318,8 +318,8 @@ describe('StorageTrendsWidget - TrendBadge Inverted Colors', () => {
     // Negative renders with a leading minus (ASCII hyphen or Intl U+2212 depending on ICU) — require
     // it so a sign-flip regression is caught, but tolerate either character.
     const trendBadge = screen.getByText(/Тренд:.*[-−]8,5\s*%/).closest('div')
-    expect(trendBadge).toHaveClass('text-green-600')
-    expect(trendBadge).toHaveClass('bg-green-50')
+    expect(trendBadge).toHaveClass('text-status-success')
+    expect(trendBadge).toHaveClass('bg-status-success/10')
   })
 
   it('shows gray color for zero trend (neutral)', () => {

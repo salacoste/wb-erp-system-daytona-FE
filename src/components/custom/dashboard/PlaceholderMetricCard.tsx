@@ -34,7 +34,7 @@ export function PlaceholderMetricCard({
 }: PlaceholderMetricCardProps): React.ReactElement {
   if (isLoading) {
     return (
-      <div className="min-h-[100px] rounded-lg border border-[#EEEEEE] bg-card p-4">
+      <div className="min-h-[100px] rounded-lg border border-border bg-card p-4">
         <div className="animate-pulse">
           <div className="h-4 w-24 rounded bg-muted" />
           <div className="mt-1 h-7 w-32 rounded bg-muted" />
@@ -47,7 +47,9 @@ export function PlaceholderMetricCard({
     <div
       className={cn(
         'min-h-[100px] rounded-lg border p-4 transition-shadow hover:shadow-md',
-        highlighted ? 'border-blue-500 bg-blue-50/50' : 'border-[#EEEEEE] bg-card'
+        highlighted
+          ? 'border-status-information/40 bg-status-information/10'
+          : 'border-border bg-card'
       )}
       role="article"
       aria-label={title}

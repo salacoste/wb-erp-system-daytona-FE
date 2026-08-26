@@ -51,32 +51,32 @@ describe('DataAvailabilityBadge', () => {
       renderWithTooltip(<DataAvailabilityBadge status="realtime" />)
 
       const badge = screen.getByRole('status')
-      expect(badge).toHaveClass('bg-green-50')
-      expect(badge).toHaveClass('text-green-700')
+      expect(badge).toHaveClass('bg-status-success/10')
+      expect(badge).toHaveClass('text-status-success')
     })
 
     it('applies yellow colors for delayed status', () => {
       renderWithTooltip(<DataAvailabilityBadge status="delayed" />)
 
       const badge = screen.getByRole('status')
-      expect(badge).toHaveClass('bg-yellow-50')
-      expect(badge).toHaveClass('text-yellow-700')
+      expect(badge).toHaveClass('bg-status-warning/10')
+      expect(badge).toHaveClass('text-status-warning')
     })
 
     it('applies gray colors for pending_week status', () => {
       renderWithTooltip(<DataAvailabilityBadge status="pending_week" />)
 
       const badge = screen.getByRole('status')
-      expect(badge).toHaveClass('bg-gray-100')
-      expect(badge).toHaveClass('text-gray-600')
+      expect(badge).toHaveClass('bg-muted')
+      expect(badge).toHaveClass('text-muted-foreground')
     })
 
     it('applies red colors for unavailable status', () => {
       renderWithTooltip(<DataAvailabilityBadge status="unavailable" />)
 
       const badge = screen.getByRole('status')
-      expect(badge).toHaveClass('bg-red-50')
-      expect(badge).toHaveClass('text-red-700')
+      expect(badge).toHaveClass('bg-status-error/10')
+      expect(badge).toHaveClass('text-status-error')
     })
   })
 

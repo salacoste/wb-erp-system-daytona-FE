@@ -246,8 +246,8 @@ describe('Chart', () => {
     const s = [...document.querySelectorAll('.recharts-line')].map(l =>
       l.getAttribute('data-stroke')
     )
-    expect(s).toContain('#3B82F6')
-    expect(s).toContain('#22C55E')
+    expect(s).toContain('var(--color-chart-1)')
+    expect(s).toContain('var(--color-chart-4)')
   })
   it('grid + x + y', () => {
     go()
@@ -301,13 +301,13 @@ describe('Summary', () => {
   })
   it('up green', () => {
     go()
-    expect(screen.getAllByText(/\+16,0\s*%/)[0].closest('div')).toHaveClass('text-green-600')
+    expect(screen.getAllByText(/\+16,0\s*%/)[0].closest('div')).toHaveClass('text-status-success')
   })
   it('down red', () => {
     go({
       data: { data: D8, summary: { wb_sales_gross: mkS({ trend: '-5.2%' }) }, period: OK.period },
     })
-    expect(screen.getByText(/-5,2\s*%/).closest('div')).toHaveClass('text-red-600')
+    expect(screen.getByText(/-5,2\s*%/).closest('div')).toHaveClass('text-status-error')
   })
   it('border', () => {
     go()
@@ -565,8 +565,8 @@ describe('TrendsChart', () => {
     const s = [...document.querySelectorAll('.recharts-line')].map(l =>
       l.getAttribute('data-stroke')
     )
-    expect(s).toContain('#3B82F6')
-    expect(s).toContain('#22C55E')
+    expect(s).toContain('var(--color-chart-1)')
+    expect(s).toContain('var(--color-chart-4)')
   })
   it('tooltip + grid + y', () => {
     renderWithProviders(<TrendsChart data={D8} visibleMetrics={vis} />)
@@ -603,7 +603,7 @@ describe('TrendsSummaryCard', () => {
     avg: 100000,
     trendPct: 16.0,
     format: 'currency' as const,
-    color: '#3B82F6',
+    color: 'var(--color-chart-1)',
   }
   it('title+min+max+avg+trend', () => {
     renderWithProviders(<TrendsSummaryCard {...b} />)
@@ -622,10 +622,10 @@ describe('TrendsSummaryCard', () => {
   })
   it('up green + down red', () => {
     renderWithProviders(<TrendsSummaryCard {...b} />)
-    expect(screen.getByText(/\+16,0\s*%/).closest('div')).toHaveClass('text-green-600')
+    expect(screen.getByText(/\+16,0\s*%/).closest('div')).toHaveClass('text-status-success')
     cleanup()
     renderWithProviders(<TrendsSummaryCard {...b} trendPct={-5.2} />)
-    expect(screen.getByText(/-5,2\s*%/).closest('div')).toHaveClass('text-red-600')
+    expect(screen.getByText(/-5,2\s*%/).closest('div')).toHaveClass('text-status-error')
   })
 })
 describe('TrendsPeriodSelector', () => {
@@ -772,7 +772,7 @@ describe('Edge', () => {
         avg={5.2}
         trendPct={-12.5}
         format="percentage"
-        color="#F59E0B"
+        color="var(--color-chart-5)"
       />
     )
     expect(screen.getByText(/-12,5\s*%/)).toBeInTheDocument()

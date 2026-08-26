@@ -60,7 +60,7 @@ export function PayoutCard({
   return (
     <Card
       className={cn(
-        'border-2 border-green-500 bg-gradient-to-br from-green-50 to-white',
+        'border-2 border-status-success bg-gradient-to-br from-status-success/10 to-card',
         'transition-shadow hover:shadow-md',
         className
       )}
@@ -70,7 +70,7 @@ export function PayoutCard({
       <CardContent className="p-3">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <Banknote className="h-4 w-4 text-green-600" aria-hidden="true" />
+            <Banknote className="h-4 w-4 text-status-success" aria-hidden="true" />
             <span className="text-sm font-medium text-muted-foreground">
               К перечислению
               {showPreTaxLabel && (
@@ -97,7 +97,7 @@ export function PayoutCard({
           </Tooltip>
         </div>
         <div className="mt-1">
-          <span className="text-xl font-bold text-green-600">{displayValue}</span>
+          <span className="text-xl font-bold text-status-success">{displayValue}</span>
         </div>
         {comparison && (
           <div className="mt-2 flex items-center gap-1.5">
@@ -110,7 +110,7 @@ export function PayoutCard({
           </div>
         )}
         <div className="mt-1">
-          <span className="text-xs text-gray-400">После всех удержаний WB</span>
+          <span className="text-xs text-muted-foreground">После всех удержаний WB</span>
         </div>
       </CardContent>
     </Card>

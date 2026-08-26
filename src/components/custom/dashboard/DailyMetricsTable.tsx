@@ -47,7 +47,7 @@ function TableSkeleton() {
 /** Empty state component */
 function EmptyState() {
   return (
-    <div className="flex flex-col items-center justify-center py-12 text-gray-500">
+    <div className="flex flex-col items-center justify-center py-12 text-muted-foreground">
       <p className="text-sm">Нет данных за выбранный период</p>
     </div>
   )
@@ -77,7 +77,7 @@ export function DailyMetricsTable({ data, periodType, isLoading, error }: DailyM
   // Handle error state
   if (error) {
     return (
-      <div className="flex items-center justify-center py-12 text-red-500">
+      <div className="flex items-center justify-center py-12 text-status-error">
         <p className="text-sm">Ошибка загрузки данных: {error.message}</p>
       </div>
     )

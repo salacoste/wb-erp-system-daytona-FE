@@ -56,13 +56,13 @@ export function InventoryCard({
 
   if (error) {
     return (
-      <Card className={cn('border-red-200', className)} role="alert">
+      <Card className={cn('border-status-error/40', className)} role="alert">
         <CardContent className="p-3">
           <div className="flex items-center gap-2">
-            <Package className="h-4 w-4 text-gray-500" aria-hidden="true" />
+            <Package className="h-4 w-4 text-muted-foreground" aria-hidden="true" />
             <span className="text-sm font-medium text-muted-foreground">Остатки</span>
           </div>
-          <div className="mt-2 text-sm text-red-600">{error.message}</div>
+          <div className="mt-2 text-sm text-status-error">{error.message}</div>
         </CardContent>
       </Card>
     )
@@ -73,7 +73,7 @@ export function InventoryCard({
       <Card className={cn('transition-shadow hover:shadow-md', className)} role="article">
         <CardContent className="p-3">
           <div className="flex items-center gap-2">
-            <Package className="h-4 w-4 text-blue-500" aria-hidden="true" />
+            <Package className="h-4 w-4 text-status-information" aria-hidden="true" />
             <span className="text-sm font-medium text-muted-foreground">Остатки</span>
           </div>
           <div className="mt-2 text-xl font-bold">{noDataMessage ?? '\u2014'}</div>
@@ -87,7 +87,7 @@ export function InventoryCard({
       <CardContent className="p-3">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <Package className="h-4 w-4 text-blue-500" aria-hidden="true" />
+            <Package className="h-4 w-4 text-status-information" aria-hidden="true" />
             <span className="text-sm font-medium text-muted-foreground">Остатки</span>
           </div>
           <BreakdownTooltip

@@ -34,7 +34,7 @@ export interface AdvertisingMetricCardProps {
  * Advertising expense metric card
  *
  * Displays advertising spend with:
- * - Yellow/orange color (#F59E0B) for value
+ * - Warning-amber accent color for value
  * - Megaphone icon
  * - Inverted comparison (decrease = green, increase = red)
  * - Spend as % of revenue subtitle
@@ -61,7 +61,7 @@ export function AdvertisingMetricCard({
       title="Рекламные затраты"
       tooltip="Общие расходы на рекламу в Wildberries за выбранный период."
       icon={Megaphone}
-      valueColor="text-yellow-600"
+      valueColor="text-status-warning"
       value={totalSpend}
       previousValue={previousSpend}
       revenueTotal={revenueTotal}

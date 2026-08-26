@@ -22,30 +22,48 @@ export interface TrendsMetricConfig {
   format: 'currency' | 'percentage'
 }
 
+/**
+ * Metric palette (Story 172.1): categorical chart tokens, hue-faithful to the
+ * legacy palette; the logistics cost keeps its negative-leaning tone via the
+ * chart-negative token (parallel to StorageTrendsChart's storage accent on
+ * chart-2 — an analogy of role, not an identity of value).
+ */
 export const TRENDS_METRICS: TrendsMetricConfig[] = [
   {
     key: 'wb_sales_gross',
     label: 'Выручка',
-    color: '#3B82F6',
+    color: 'var(--color-chart-1)',
     yAxisId: 'left',
     format: 'currency',
   },
   {
     key: 'payout_total',
     label: 'К перечислению',
-    color: '#22C55E',
+    color: 'var(--color-chart-4)',
     yAxisId: 'left',
     format: 'currency',
   },
-  { key: 'margin_pct', label: 'Маржа', color: '#F59E0B', yAxisId: 'right', format: 'percentage' },
+  {
+    key: 'margin_pct',
+    label: 'Маржа',
+    color: 'var(--color-chart-5)',
+    yAxisId: 'right',
+    format: 'percentage',
+  },
   {
     key: 'logistics_cost',
     label: 'Логистика',
-    color: '#EF4444',
+    color: 'var(--color-chart-negative)',
     yAxisId: 'left',
     format: 'currency',
   },
-  { key: 'storage_cost', label: 'Хранение', color: '#7C4DFF', yAxisId: 'left', format: 'currency' },
+  {
+    key: 'storage_cost',
+    label: 'Хранение',
+    color: 'var(--color-chart-2)',
+    yAxisId: 'left',
+    format: 'currency',
+  },
 ]
 
 export const TRENDS_METRIC_MAP = TRENDS_METRICS.reduce(

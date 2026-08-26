@@ -77,7 +77,7 @@ function HeroKpiTile({
         className={cn(
           'mt-1 min-w-0 break-words font-bold tabular-nums',
           def.lead ? 'text-2xl' : 'text-xl',
-          isNegative ? 'text-red-600' : 'text-foreground'
+          isNegative ? 'text-status-error' : 'text-foreground'
         )}
       >
         {text}

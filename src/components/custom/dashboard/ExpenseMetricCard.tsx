@@ -126,7 +126,7 @@ export function ExpenseMetricCard({
         {/* Revenue % subtitle */}
         {revenuePercentage && (
           <div className="mt-1">
-            <span className="text-xs text-gray-400">{revenuePercentage} от выручки</span>
+            <span className="text-xs text-muted-foreground">{revenuePercentage} от выручки</span>
           </div>
         )}
       </CardContent>

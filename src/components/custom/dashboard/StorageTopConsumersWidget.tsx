@@ -57,7 +57,7 @@ export function StorageTopConsumersWidget({
     <Card className={cn('', className)}>
       <CardHeader className="flex flex-row items-center justify-between pb-2">
         <CardTitle className="flex items-center gap-2 text-base font-medium">
-          <Package className="h-5 w-5 text-[#7C4DFF]" />
+          <Package className="h-5 w-5 text-chart-2" />
           Топ по расходам на хранение
         </CardTitle>
         <Button
@@ -170,7 +170,7 @@ function ConsumerRow({
           </p>
           {/* Request #156: No stock indicator */}
           {item.has_warehouse_stock === false && (
-            <PackageX className="h-3 w-3 text-amber-600 flex-shrink-0" aria-label="Нет на складе" />
+            <PackageX className="h-3 w-3 text-status-warning flex-shrink-0" aria-label="Нет на складе" />
           )}
         </div>
         <div className="flex items-center gap-2">
@@ -193,7 +193,7 @@ function ConsumerRow({
         </div>
       </div>
       <div className="text-right flex-shrink-0">
-        <p className="text-sm font-medium text-[#7C4DFF]">{storageCostLabel}</p>
+        <p className="text-sm font-medium text-chart-2">{storageCostLabel}</p>
         <p className="text-xs text-muted-foreground">
           {/* Story 169.12 Task 0 (AP#8): unknown percent renders '—', not "0,0 %". */}
           {item.percent_of_total === null ? '—' : formatPercentage(item.percent_of_total, 1)}

@@ -153,7 +153,7 @@ describe('TurnoverCard', () => {
 
       // Lower turnover = faster selling = good
       const indicator = screen.getByTestId('trend-indicator')
-      expect(indicator).toHaveClass('text-green-500')
+      expect(indicator).toHaveClass('text-status-success')
     })
 
     it('uses inverted comparison: higher turnover days = negative (red)', () => {
@@ -170,7 +170,7 @@ describe('TurnoverCard', () => {
 
       // Higher turnover = slower selling = bad
       const indicator = screen.getByTestId('trend-indicator')
-      expect(indicator).toHaveClass('text-red-500')
+      expect(indicator).toHaveClass('text-status-error')
     })
 
     it('hides comparison when previousTurnoverDays is null', () => {
@@ -208,7 +208,7 @@ describe('TurnoverCard', () => {
       )
 
       const valueEl = screen.getByTestId('metric-value')
-      expect(valueEl).toHaveClass('text-green-500')
+      expect(valueEl).toHaveClass('text-status-success')
     })
 
     it('shows yellow color for turnover 30-90 days (medium)', () => {
@@ -227,7 +227,7 @@ describe('TurnoverCard', () => {
       )
 
       const valueEl = screen.getByTestId('metric-value')
-      expect(valueEl).toHaveClass('text-yellow-500')
+      expect(valueEl).toHaveClass('text-status-warning')
     })
 
     it('shows red color for turnover > 90 days (slow)', () => {
@@ -245,7 +245,7 @@ describe('TurnoverCard', () => {
       )
 
       const valueEl = screen.getByTestId('metric-value')
-      expect(valueEl).toHaveClass('text-red-500')
+      expect(valueEl).toHaveClass('text-status-error')
     })
   })
 

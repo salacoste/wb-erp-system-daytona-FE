@@ -60,16 +60,16 @@ export function OperatingProfitCard({
       : null
 
   const borderColor = !canShow
-    ? 'border-gray-300'
+    ? 'border-border'
     : isPositive
-      ? 'border-green-500'
-      : 'border-red-500'
+      ? 'border-status-success'
+      : 'border-status-error'
   const bgGradient = !canShow
-    ? 'bg-gradient-to-br from-gray-50 to-white'
+    ? 'bg-gradient-to-br from-muted to-card'
     : isPositive
-      ? 'bg-gradient-to-br from-green-50 to-white'
-      : 'bg-gradient-to-br from-red-50 to-white'
-  const valueColor = isPositive ? 'text-green-600' : 'text-red-600'
+      ? 'bg-gradient-to-br from-status-success/10 to-card'
+      : 'bg-gradient-to-br from-status-error/10 to-card'
+  const valueColor = isPositive ? 'text-status-success' : 'text-status-error'
 
   return (
     <Card
@@ -85,7 +85,7 @@ export function OperatingProfitCard({
       <CardContent className="p-3">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <TrendingUp className="h-4 w-4 text-gray-500" aria-hidden="true" />
+            <TrendingUp className="h-4 w-4 text-muted-foreground" aria-hidden="true" />
             <span className="text-sm font-medium text-muted-foreground">
               Операционная прибыль
               {showPreTaxLabel && (
@@ -130,7 +130,7 @@ export function OperatingProfitCard({
           </div>
         )}
         {cogsCoverage < 100 && (
-          <div className="mt-1 flex items-center gap-1 text-xs text-yellow-600">
+          <div className="mt-1 flex items-center gap-1 text-xs text-status-warning">
             <AlertTriangle className="h-3 w-3 shrink-0" />
             <span>Покрытие COGS: {formatPercentageInt(cogsCoverage)}</span>
             {onAssignCogs && (

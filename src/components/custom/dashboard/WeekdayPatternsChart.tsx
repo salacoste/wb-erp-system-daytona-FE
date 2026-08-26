@@ -41,14 +41,16 @@ export function WeekdayPatternsChart({ data, peakDay, height = 250 }: WeekdayPat
     return [...data]
       .sort((a, b) => WEEKDAY_ORDER.indexOf(a.dayOfWeek) - WEEKDAY_ORDER.indexOf(b.dayOfWeek))
       .map(item => {
-        // Peak day gets green, weekends get slightly different shade if not peak
+        // Peak day gets the highlight tone; weekends use a softened categorical
+        // tone derived from the series token (color-mix idiom, liquidity
+        // components precedent: LiquidityDistributionCards/LiquidityTableRowCells)
         const isWeekend = WEEKEND_DAYS.includes(item.dayOfWeek)
         let fill: string
 
         if (item.dayOfWeek === peakDay) {
           fill = SEASONAL_COLORS.bar.peak
         } else if (isWeekend) {
-          fill = '#60A5FA' // Lighter blue for weekends
+          fill = 'color-mix(in srgb, var(--color-chart-1) 60%, transparent)'
         } else {
           fill = SEASONAL_COLORS.bar.default
         }
@@ -64,7 +66,7 @@ export function WeekdayPatternsChart({ data, peakDay, height = 250 }: WeekdayPat
 
   return (
     <div>
-      <h4 className="text-sm font-medium text-gray-700 mb-2">Распределение по дням</h4>
+      <h4 className="text-sm font-medium text-foreground mb-2">Распределение по дням</h4>
       <ResponsiveContainer width="100%" height={height}>
         <BarChart data={chartData} margin={{ top: 10, right: 10, bottom: 0, left: 0 }}>
           <XAxis dataKey="dayRu" tick={{ fontSize: 11 }} axisLine={false} tickLine={false} />

@@ -91,7 +91,7 @@ export function SalesMetricCard({
     <Card
       className={cn(
         'min-h-[100px] transition-all hover:shadow-md hover:scale-[1.01]',
-        'border border-[#EEEEEE] rounded-lg',
+        'border border-border rounded-lg',
         'focus-within:ring-2 focus-within:ring-primary focus-within:ring-offset-2',
         className
       )}
@@ -103,7 +103,7 @@ export function SalesMetricCard({
         {/* Header: Icon + Title + Info */}
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <ShoppingBag className="h-4 w-4 text-green-500" aria-hidden="true" />
+            <ShoppingBag className="h-4 w-4 text-status-success" aria-hidden="true" />
             <span className="text-sm font-medium text-muted-foreground">Выкупы</span>
           </div>
           <Tooltip>
@@ -124,9 +124,11 @@ export function SalesMetricCard({
           </Tooltip>
         </div>
 
-        {/* Main Value - Green for revenue */}
+        {/* Main Value - positive valence for revenue */}
         <div className="mt-1">
-          <span className="text-[32px] font-bold leading-tight text-green-500">{displayValue}</span>
+          <span className="text-[32px] font-bold leading-tight text-status-success">
+            {displayValue}
+          </span>
         </div>
 
         {/* Comparison Row */}
@@ -147,7 +149,7 @@ export function SalesMetricCard({
         {/* Net sales subtitle (after returns) */}
         {netSales != null && returnsGross != null && (
           <div className="mt-1">
-            <span className="text-xs text-gray-400">
+            <span className="text-xs text-muted-foreground">
               Чистая сумма (после возвратов): {formatCurrency(netSales)}
             </span>
           </div>

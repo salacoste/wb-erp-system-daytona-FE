@@ -97,8 +97,8 @@ describe('CommissionBreakdownPopover', () => {
 
       const correctionRow = screen.getByText(/Корректировка ВВ/).closest('[data-testid]')
       expect(correctionRow).toBeInTheDocument()
-      expect(correctionRow?.className).toMatch(/red/)
-      expect(correctionRow?.className).not.toMatch(/green/)
+      expect(correctionRow?.className).toMatch(/status-error/)
+      expect(correctionRow?.className).not.toMatch(/status-success/)
     })
 
     it('shows other subcategories in red (expenses)', async () => {
@@ -108,7 +108,7 @@ describe('CommissionBreakdownPopover', () => {
       await user.click(screen.getByTestId('commission-breakdown-badge'))
 
       const commissionRow = screen.getByText(/Номинальная комиссия/).closest('[data-testid]')
-      expect(commissionRow?.className).toMatch(/red/)
+      expect(commissionRow?.className).toMatch(/status-error/)
     })
   })
 

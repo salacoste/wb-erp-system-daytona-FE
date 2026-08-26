@@ -101,7 +101,7 @@ describe('RoiCard', () => {
       )
 
       const ppElement = screen.getByText(/\+3,2\s*п\.п\./)
-      expect(ppElement.className).toMatch(/green/)
+      expect(ppElement.className).toMatch(/status-success/)
     })
 
     it('uses red for negative ROI decrease', () => {
@@ -116,7 +116,7 @@ describe('RoiCard', () => {
       )
 
       const ppElement = screen.getByText(/-3,2\s*п\.п\./)
-      expect(ppElement.className).toMatch(/red/)
+      expect(ppElement.className).toMatch(/status-error/)
     })
 
     it('does not show comparison when previous data is missing', () => {
@@ -150,7 +150,7 @@ describe('RoiCard', () => {
       renderWithProviders(<RoiCard grossProfit={900_000} cogsTotal={600_000} isLoading={false} />)
 
       const valueElement = screen.getByText(/150,0\s*%/)
-      expect(valueElement.className).toMatch(/green/)
+      expect(valueElement.className).toMatch(/status-success/)
     })
 
     it('shows yellow when ROI is 50-100%', () => {
@@ -158,7 +158,7 @@ describe('RoiCard', () => {
       renderWithProviders(<RoiCard grossProfit={350_000} cogsTotal={600_000} isLoading={false} />)
 
       const valueElement = screen.getByText(/58,3\s*%/)
-      expect(valueElement.className).toMatch(/yellow/)
+      expect(valueElement.className).toMatch(/status-warning/)
     })
 
     it('shows red when ROI < 50%', () => {
@@ -166,7 +166,7 @@ describe('RoiCard', () => {
       renderWithProviders(<RoiCard grossProfit={200_000} cogsTotal={600_000} isLoading={false} />)
 
       const valueElement = screen.getByText(/33,3\s*%/)
-      expect(valueElement.className).toMatch(/red/)
+      expect(valueElement.className).toMatch(/status-error/)
     })
   })
 

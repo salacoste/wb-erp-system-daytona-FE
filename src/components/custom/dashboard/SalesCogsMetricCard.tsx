@@ -89,7 +89,7 @@ export function SalesCogsMetricCard({
       <CardContent className="p-3">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <Package className="h-4 w-4 text-gray-500" aria-hidden="true" />
+            <Package className="h-4 w-4 text-muted-foreground" aria-hidden="true" />
             <span className="text-sm font-medium text-muted-foreground">COGS выкупов</span>
           </div>
           <Tooltip>
@@ -110,12 +110,12 @@ export function SalesCogsMetricCard({
           </Tooltip>
         </div>
         {hasNoCogs ? (
-          <div className="mt-2 rounded-md bg-yellow-100 p-2">
-            <div className="flex items-center gap-2 text-yellow-600">
+          <div className="mt-2 rounded-md bg-status-warning/10 p-2">
+            <div className="flex items-center gap-2 text-status-warning">
               <AlertTriangle className="h-4 w-4" />
               <span className="text-sm font-medium">COGS не заполнен</span>
             </div>
-            <p className="mt-1 text-xs text-yellow-700">
+            <p className="mt-1 text-xs text-status-warning">
               {fmtNum(productsWithCogs)} из {fmtNum(totalProducts)} товаров ({fmtPct(cogsCoverage)})
             </p>
             <button
@@ -129,7 +129,7 @@ export function SalesCogsMetricCard({
         ) : (
           <>
             <div className="mt-1">
-              <span className="text-[32px] font-bold text-gray-500">
+              <span className="text-[32px] font-bold text-muted-foreground">
                 {formatCurrency(cogsTotal!)}
               </span>
             </div>
@@ -147,9 +147,14 @@ export function SalesCogsMetricCard({
             )}
             <div className="mt-1 flex items-center gap-1">
               {isIncomplete && (
-                <AlertTriangle className="h-3 w-3 text-yellow-500" aria-hidden="true" />
+                <AlertTriangle className="h-3 w-3 text-status-warning" aria-hidden="true" />
               )}
-              <span className={cn('text-xs', isIncomplete ? 'text-yellow-600' : 'text-gray-400')}>
+              <span
+                className={cn(
+                  'text-xs',
+                  isIncomplete ? 'text-status-warning' : 'text-muted-foreground'
+                )}
+              >
                 COGS: {fmtNum(productsWithCogs)} из {fmtNum(totalProducts)} товаров (
                 {fmtPct(cogsCoverage)})
               </span>

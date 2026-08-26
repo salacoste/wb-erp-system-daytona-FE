@@ -65,7 +65,7 @@ export function CostsCard({
       <CardContent className="p-3">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <Package className="h-4 w-4 text-gray-500" aria-hidden="true" />
+            <Package className="h-4 w-4 text-muted-foreground" aria-hidden="true" />
             <span className="text-sm font-medium text-muted-foreground">Себестоимость</span>
           </div>
           <Tooltip>
@@ -88,9 +88,9 @@ export function CostsCard({
         </div>
         <div className="mt-1">
           {hasNoCogs ? (
-            <span className="text-xl font-bold text-gray-400">—</span>
+            <span className="text-xl font-bold text-muted-foreground">—</span>
           ) : (
-            <span className="text-xl font-bold text-gray-600">{formatCurrency(cogsTotal!)}</span>
+            <span className="text-xl font-bold text-foreground">{formatCurrency(cogsTotal!)}</span>
           )}
         </div>
         {comparison && (

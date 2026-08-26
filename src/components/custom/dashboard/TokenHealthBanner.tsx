@@ -79,22 +79,22 @@ export function TokenHealthBanner() {
   }
 
   return (
-    <Alert className="mx-4 mt-2 border-yellow-300 bg-yellow-50">
+    <Alert className="mx-4 mt-2 border-status-warning/40 bg-status-warning/10">
       <div className="flex items-start justify-between gap-3">
         <div className="flex items-start gap-2">
-          <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0 text-yellow-600" />
-          <AlertDescription className="text-yellow-900">
+          <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0 text-status-warning" />
+          <AlertDescription className="text-status-warning">
             <p className="font-medium">Проблема с WB API токеном</p>
             {data.recommendation && <p className="mt-1 text-sm">{data.recommendation}</p>}
             {data.lastError && (
-              <p className="mt-1 text-xs text-yellow-700">
+              <p className="mt-1 text-xs text-status-warning">
                 Ошибка: {data.lastError}
                 {data.lastErrorAt && ` (${new Date(data.lastErrorAt).toLocaleString('ru-RU')})`}
               </p>
             )}
             <Link
               href={ROUTES.SETTINGS.CABINET}
-              className="mt-2 inline-block text-sm font-medium text-yellow-800 underline"
+              className="mt-2 inline-block text-sm font-medium text-status-warning underline"
             >
               Настройки кабинета
             </Link>
@@ -104,7 +104,7 @@ export function TokenHealthBanner() {
           variant="ghost"
           size="sm"
           onClick={handleDismiss}
-          className="shrink-0 text-yellow-700 hover:text-yellow-900"
+          className="shrink-0 text-status-warning hover:text-status-warning/80"
           aria-label="Скрыть предупреждение"
         >
           <X className="h-4 w-4" />

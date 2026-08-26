@@ -3,7 +3,7 @@
  * Story 63.6-FE: Storage Trends Chart Enhancement (Dashboard)
  * Epic 63: Dashboard Main Page (Frontend)
  *
- * Recharts-based area chart with purple gradient for storage cost trends.
+ * Recharts-based area chart with a categorical gradient for storage cost trends.
  *
  * @see docs/stories/epic-63/story-63.6-fe-storage-trends-chart.md
  */
@@ -22,10 +22,11 @@ import {
 import { formatCurrency } from '@/lib/utils'
 import type { StorageTrendPoint } from '@/types/storage-analytics'
 
-// Chart color scheme - purple for storage
+// Chart color scheme (Story 172.1 tokens): the storage series keeps its
+// categorical tone via chart-2; null/absent points render muted.
 const CHART_COLORS = {
-  line: '#7C4DFF',
-  nullPoint: '#9CA3AF',
+  line: 'var(--color-chart-2)',
+  nullPoint: 'var(--color-muted-foreground)',
 }
 
 export interface StorageTrendsChartProps {
@@ -67,7 +68,12 @@ export function StorageTrendsChart({ data, height }: StorageTrendsChartProps) {
           strokeWidth={2}
           connectNulls={false}
           dot={<ChartDot />}
-          activeDot={{ r: 6, fill: CHART_COLORS.line, stroke: 'white', strokeWidth: 2 }}
+          activeDot={{
+            r: 6,
+            fill: CHART_COLORS.line,
+            stroke: 'var(--color-card)',
+            strokeWidth: 2,
+          }}
         />
       </AreaChart>
     </ResponsiveContainer>
@@ -99,7 +105,16 @@ function ChartDot({ cx, cy, payload }: ChartDotProps) {
     )
   }
 
-  return <circle cx={cx} cy={cy} r={4} fill={CHART_COLORS.line} stroke="white" strokeWidth={2} />
+  return (
+    <circle
+      cx={cx}
+      cy={cy}
+      r={4}
+      fill={CHART_COLORS.line}
+      stroke="var(--color-card)"
+      strokeWidth={2}
+    />
+  )
 }
 
 // Custom tooltip

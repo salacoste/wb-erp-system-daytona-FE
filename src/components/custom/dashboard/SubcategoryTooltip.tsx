@@ -91,8 +91,8 @@ export function SubcategoryTooltip({
           role="tooltip"
           className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 z-50"
           style={{
-            backgroundColor: '#1e293b',
-            color: '#f1f5f9',
+            backgroundColor: 'var(--color-chart-tooltip)',
+            color: 'var(--color-chart-tooltip-foreground)',
             fontSize: '12px',
             lineHeight: 1.4,
             padding: '8px 12px',
@@ -106,8 +106,8 @@ export function SubcategoryTooltip({
           <div className="flex flex-col gap-1.5">
             {subcategories.map(item => (
               <div key={item.label} className="flex items-center justify-between gap-3">
-                <span className="text-xs text-slate-300 shrink-0">{item.label}</span>
-                <span className="text-xs font-medium text-slate-100 whitespace-nowrap">
+                <span className="text-xs text-chart-tooltip-foreground/70 shrink-0">{item.label}</span>
+                <span className="text-xs font-medium text-chart-tooltip-foreground whitespace-nowrap">
                   {formatValue(item.value)}
                   <span aria-hidden="true"> / </span>
                   <span>{formatPct(item.value, parentTotal)}</span>

@@ -22,7 +22,7 @@ export function formatValue(value: number, format: MetricFormat): string {
 }
 
 export function getSentimentClasses(direction: TrendDirection): string {
-  if (direction === 'positive') return 'bg-green-50 border-green-200'
-  if (direction === 'negative') return 'bg-red-50 border-red-200'
+  if (direction === 'positive') return 'bg-status-success/10 border-status-success/40'
+  if (direction === 'negative') return 'bg-status-error/10 border-status-error/40'
   return ''
 }

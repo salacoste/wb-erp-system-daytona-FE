@@ -52,7 +52,7 @@ export function Header(): React.ReactElement {
   return (
     <div className="flex items-center justify-between">
       <div className="flex items-center gap-2">
-        <Receipt className="h-4 w-4 text-orange-500" aria-hidden="true" />
+        <Receipt className="h-4 w-4 text-status-warning" aria-hidden="true" />
         <span className="text-sm font-medium text-muted-foreground">Налоги</span>
       </div>
       <Tooltip>
@@ -108,14 +108,14 @@ export function Body({
   return (
     <>
       <div className="mt-1">
-        <span className="text-xl font-bold text-orange-600" data-testid="metric-value">
+        <span className="text-xl font-bold text-status-warning" data-testid="metric-value">
           {displayValue}
         </span>
       </div>
       <div className="mt-1 flex flex-wrap items-center gap-1.5">
         <span className="text-xs text-muted-foreground">{getTaxLabel(taxMetrics.tax_system)}</span>
         {showEffectiveRate && (
-          <span className="text-xs text-gray-400">{formatRate(taxMetrics.effective_tax_rate)}</span>
+          <span className="text-xs text-muted-foreground">{formatRate(taxMetrics.effective_tax_rate)}</span>
         )}
         {taxMetrics.is_minimum_rule && <MinimumRuleBadge />}
         {taxMetrics.vat_payer && taxMetrics.vat_rate != null && (
@@ -130,7 +130,7 @@ function MinimumRuleBadge(): React.ReactElement {
   return (
     <Tooltip>
       <TooltipTrigger asChild>
-        <span className="rounded bg-yellow-100 px-1.5 py-0.5 text-xs font-medium text-yellow-700">
+        <span className="rounded bg-status-warning/10 px-1.5 py-0.5 text-xs font-medium text-status-warning">
           Мин. 1%
         </span>
       </TooltipTrigger>
@@ -145,7 +145,7 @@ function VatBadge({ taxMetrics }: { taxMetrics: TaxMetrics }): React.ReactElemen
   return (
     <Tooltip>
       <TooltipTrigger asChild>
-        <span className="rounded bg-blue-100 px-1.5 py-0.5 text-xs font-medium text-blue-700">
+        <span className="rounded bg-status-information/10 px-1.5 py-0.5 text-xs font-medium text-status-information">
           НДС {taxMetrics.vat_rate == null ? '—' : formatPercentageInt(taxMetrics.vat_rate)}
         </span>
       </TooltipTrigger>

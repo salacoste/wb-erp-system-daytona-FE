@@ -63,7 +63,7 @@ export function MetricLegend({
       {/* Legend Items - horizontal scroll on mobile */}
       <div className="relative flex flex-1 items-center gap-3 overflow-x-auto scrollbar-none md:flex-wrap">
         {/* Gradient fade for mobile scroll indication */}
-        <div className="pointer-events-none absolute right-0 top-0 hidden h-full w-8 bg-gradient-to-l from-white to-transparent md:hidden" />
+        <div className="pointer-events-none absolute right-0 top-0 hidden h-full w-8 bg-gradient-to-l from-background to-transparent md:hidden" />
 
         {METRIC_SERIES.map(item => (
           <LegendItem
@@ -130,14 +130,14 @@ function LegendItem({ metricKey, label, color, isVisible, onToggle }: LegendItem
       <span
         className="h-3 w-3 rounded-full"
         style={{
-          backgroundColor: isVisible ? color : '#9CA3AF',
+          backgroundColor: isVisible ? color : 'var(--color-muted-foreground)',
         }}
       />
       {/* Label */}
       <span
         className={cn(
           'text-sm hover:underline',
-          isVisible ? 'text-gray-700' : 'text-gray-400 line-through'
+          isVisible ? 'text-foreground' : 'text-muted-foreground line-through'
         )}
       >
         {label}

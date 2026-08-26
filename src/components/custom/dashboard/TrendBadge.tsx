@@ -45,12 +45,12 @@ export function TrendBadge({ trend, invertColors = false, className }: TrendBadg
     if (isNeutral) return 'text-muted-foreground bg-muted border-border'
     if (invertColors) {
       return isPositive
-        ? 'text-red-600 bg-red-50 border-red-200'
-        : 'text-green-600 bg-green-50 border-green-200'
+        ? 'text-status-error bg-status-error/10 border-status-error/40'
+        : 'text-status-success bg-status-success/10 border-status-success/40'
     }
     return isPositive
-      ? 'text-green-600 bg-green-50 border-green-200'
-      : 'text-red-600 bg-red-50 border-red-200'
+      ? 'text-status-success bg-status-success/10 border-status-success/40'
+      : 'text-status-error bg-status-error/10 border-status-error/40'
   }
 
   const Icon = isPositive ? TrendingUp : isNegative ? TrendingDown : Minus

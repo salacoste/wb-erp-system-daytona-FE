@@ -20,9 +20,9 @@ export interface ProcessingAlertProps {
 /** Processing status alert for dashboard */
 export function ProcessingAlert({ processingStatus }: ProcessingAlertProps): React.ReactElement {
   return (
-    <Alert className="border-blue-500 bg-blue-50">
-      <Info className="h-4 w-4 text-blue-600" />
-      <AlertDescription className="text-blue-900">
+    <Alert className="border-status-information/40 bg-status-information/10">
+      <Info className="h-4 w-4 text-status-information" />
+      <AlertDescription className="text-status-information">
         <p className="mb-1 font-semibold">Обработка финансовых данных</p>
         <p>
           Финансовые отчеты обрабатываются. Метрики появятся после завершения.
@@ -57,9 +57,9 @@ export interface DataGapsAlertProps {
 /** Warning alert for partial data gaps (failed imports exist but data is available) */
 export function DataGapsAlert({ failedCount }: DataGapsAlertProps): React.ReactElement {
   return (
-    <Alert className="border-yellow-500 bg-yellow-50">
-      <Info className="h-4 w-4 text-yellow-600" />
-      <AlertDescription className="text-yellow-900">
+    <Alert className="border-status-warning/40 bg-status-warning/10">
+      <Info className="h-4 w-4 text-status-warning" />
+      <AlertDescription className="text-status-warning">
         {failedCount} {failedCount === 1 ? 'импорт завершился' : 'импортов завершились'} с ошибкой —
         возможны пропуски данных за некоторые периоды.
       </AlertDescription>

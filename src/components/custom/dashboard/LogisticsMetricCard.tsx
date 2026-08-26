@@ -40,7 +40,7 @@ export interface LogisticsMetricCardProps {
  * Logistics expense metric card
  *
  * Displays logistics cost with:
- * - Red color (#EF4444) for value
+ * - Error status color for value
  * - Truck icon
  * - Inverted comparison (decrease = green, increase = red)
  * - Cost as % of revenue subtitle
@@ -65,7 +65,7 @@ export function LogisticsMetricCard({
           'Расходы на логистику WB: доставка товаров покупателям, обратная логистика при возвратах, перемещения между складами.\nЧем больше возвратов — тем выше логистика (платите за доставку в обе стороны).\nИсточник: еженедельный финансовый отчёт WB.'
         }
         icon={Truck}
-        valueColor="text-red-500"
+        valueColor="text-status-error"
         value={logisticsCost}
         previousValue={previousLogisticsCost}
         revenueTotal={revenueTotal}

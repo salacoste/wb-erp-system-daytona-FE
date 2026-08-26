@@ -67,7 +67,7 @@ export function CapitalizationCard({
       <CardContent className="p-3">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <Banknote className="h-4 w-4 text-green-600" aria-hidden="true" />
+            <Banknote className="h-4 w-4 text-status-success" aria-hidden="true" />
             <span className="text-sm font-medium text-muted-foreground">{title}</span>
           </div>
           {hasTooltipData && (
@@ -85,7 +85,7 @@ export function CapitalizationCard({
         </div>
 
         {showCoverageWarning && (
-          <div className="mt-1 text-xs text-amber-600">
+          <div className="mt-1 text-xs text-status-warning">
             Покрытие себестоимости: {formatPct(cogsCoveragePct!)} %
           </div>
         )}

@@ -95,7 +95,7 @@ export function createBaseMetricCardProps(
     title: 'Тестовая метрика',
     tooltip: 'Описание тестовой метрики',
     icon: MockIcon,
-    accentColor: 'text-blue-500',
+    accentColor: 'text-status-information',
     value: 12345,
     format: 'currency',
     ...overrides,
@@ -119,7 +119,7 @@ export function createHighlightedCardProps(
   return createBaseMetricCardProps({
     variant: 'highlighted',
     value: 40794,
-    valueColor: 'text-green-600',
+    valueColor: 'text-status-success',
     ...overrides,
   })
 }

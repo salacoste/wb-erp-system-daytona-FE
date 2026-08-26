@@ -68,7 +68,7 @@ export function SalesNetCard({
       <CardContent className="p-3">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <TrendingUp className="h-4 w-4 text-green-500" aria-hidden="true" />
+            <TrendingUp className="h-4 w-4 text-status-success" aria-hidden="true" />
             <span className="text-sm font-medium text-muted-foreground">Продажи</span>
           </div>
           <Tooltip>
@@ -86,7 +86,7 @@ export function SalesNetCard({
           </Tooltip>
         </div>
         <div className="mt-1">
-          <span className="text-xl font-bold text-green-600">{displayValue}</span>
+          <span className="text-xl font-bold text-status-success">{displayValue}</span>
         </div>
         {comparison && (
           <div className="mt-1 flex items-center gap-1.5">
@@ -100,7 +100,7 @@ export function SalesNetCard({
         )}
         {wbSalesGross != null && wbReturnsGross != null && (
           <div className="mt-1">
-            <span className="text-xs text-gray-400">
+            <span className="text-xs text-muted-foreground">
               Выкупы {formatCurrency(wbSalesGross)} — Возвраты {formatCurrency(wbReturnsGross)}
             </span>
           </div>

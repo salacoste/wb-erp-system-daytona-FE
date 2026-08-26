@@ -67,8 +67,8 @@ describe('IncompleteWeekBanner', () => {
       render(<IncompleteWeekBanner period="2026-W05" periodType="week" />)
 
       const alert = screen.getByRole('status')
-      expect(alert).toHaveClass('border-blue-200')
-      expect(alert).toHaveClass('bg-blue-50')
+      expect(alert).toHaveClass('border-status-information/40')
+      expect(alert).toHaveClass('bg-status-information/10')
     })
 
     it('applies custom className', () => {

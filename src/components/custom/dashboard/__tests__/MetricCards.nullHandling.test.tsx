@@ -115,7 +115,7 @@ describe('ExpenseMetricCard null handling', () => {
     title: 'Test Expense',
     tooltip: 'Test tooltip',
     icon: DollarSign,
-    valueColor: 'text-red-500',
+    valueColor: 'text-status-error',
     isLoading: false,
     error: null,
   }

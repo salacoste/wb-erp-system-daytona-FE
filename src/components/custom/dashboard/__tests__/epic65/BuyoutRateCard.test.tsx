@@ -70,28 +70,28 @@ describe('BuyoutRateCard', () => {
       renderWithProviders(<BuyoutRateCard buyoutRate={85.0} isLoading={false} />)
 
       const valueElement = screen.getByText(/85,0\s*%/)
-      expect(valueElement.className).toMatch(/green/)
+      expect(valueElement.className).toMatch(/status-success/)
     })
 
     it('shows green when buyoutRate = 100% (perfect)', () => {
       renderWithProviders(<BuyoutRateCard buyoutRate={100} isLoading={false} />)
 
       const valueElement = screen.getByText(/100,0\s*%/)
-      expect(valueElement.className).toMatch(/green/)
+      expect(valueElement.className).toMatch(/status-success/)
     })
 
     it('shows red when buyoutRate < 80% (warning)', () => {
       renderWithProviders(<BuyoutRateCard buyoutRate={70.0} isLoading={false} />)
 
       const valueElement = screen.getByText(/70,0\s*%/)
-      expect(valueElement.className).toMatch(/red/)
+      expect(valueElement.className).toMatch(/status-error/)
     })
 
     it('shows red when buyoutRate is very low', () => {
       renderWithProviders(<BuyoutRateCard buyoutRate={30.0} isLoading={false} />)
 
       const valueElement = screen.getByText(/30,0\s*%/)
-      expect(valueElement.className).toMatch(/red/)
+      expect(valueElement.className).toMatch(/status-error/)
     })
   })
 
@@ -124,7 +124,7 @@ describe('BuyoutRateCard', () => {
       )
 
       const ppElement = screen.getByText(/\+15,0\s*п\.п\./)
-      expect(ppElement.className).toMatch(/green/)
+      expect(ppElement.className).toMatch(/status-success/)
     })
 
     it('uses red color when buyout rate decreased (negative is bad)', () => {
@@ -133,7 +133,7 @@ describe('BuyoutRateCard', () => {
       )
 
       const ppElement = screen.getByText(/-25,0\s*п\.п\./)
-      expect(ppElement.className).toMatch(/red/)
+      expect(ppElement.className).toMatch(/status-error/)
     })
 
     it('does not show comparison when previousBuyoutRate is not provided', () => {

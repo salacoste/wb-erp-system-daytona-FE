@@ -28,11 +28,11 @@ export interface RoiCardProps {
   className?: string
 }
 
-/** ROI value color by threshold: green >=100%, yellow 50-100%, red <50% */
+/** ROI value color by threshold: success >=100%, warning 50-100%, error <50% */
 function getRoiColor(roi: number): string {
-  if (roi >= 100) return 'text-green-600'
-  if (roi >= 50) return 'text-yellow-600'
-  return 'text-red-600'
+  if (roi >= 100) return 'text-status-success'
+  if (roi >= 50) return 'text-status-warning'
+  return 'text-status-error'
 }
 
 /** Format ROI as "XX,X %" with 1 decimal, Russian locale (comma + NBSP via canonical helper) */
@@ -95,7 +95,7 @@ export function RoiCard({
       <CardContent className="p-3">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <TrendingUp className="h-4 w-4 text-blue-500" aria-hidden="true" />
+            <TrendingUp className="h-4 w-4 text-status-information" aria-hidden="true" />
             <span className="text-sm font-medium text-muted-foreground">ROI</span>
           </div>
           <Tooltip>
@@ -129,7 +129,11 @@ export function RoiCard({
             <span
               className={cn(
                 'text-sm font-medium',
-                diff > 0 ? 'text-green-600' : diff < 0 ? 'text-red-600' : 'text-gray-500'
+                diff > 0
+                  ? 'text-status-success'
+                  : diff < 0
+                    ? 'text-status-error'
+                    : 'text-muted-foreground'
               )}
             >
               {formatPercentagePoints(diff)}

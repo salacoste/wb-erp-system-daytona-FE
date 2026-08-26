@@ -18,7 +18,7 @@ function payloadFor(percentage: number) {
         name: 'COGS',
         value: 1000,
         percentage,
-        color: '#6366F1',
+        color: 'var(--color-chart-1)',
       } as ExpenseChartDataItem,
     },
   ]

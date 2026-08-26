@@ -43,9 +43,9 @@ function calculateTurnover(
 
 /** Sentiment color based on turnover day thresholds */
 function getValueColor(days: number): string {
-  if (days < 30) return 'text-green-500'
-  if (days <= 90) return 'text-yellow-500'
-  return 'text-red-500'
+  if (days < 30) return 'text-status-success'
+  if (days <= 90) return 'text-status-warning'
+  return 'text-status-error'
 }
 
 /** Format turnover as "N дн." */
@@ -62,8 +62,8 @@ function getTrendDirection(current: number, previous: number): TrendDirection {
 }
 
 const TREND_COLORS: Record<TrendDirection, string> = {
-  positive: 'text-green-500',
-  negative: 'text-red-500',
+  positive: 'text-status-success',
+  negative: 'text-status-error',
   neutral: 'text-muted-foreground',
 }
 
@@ -109,7 +109,7 @@ export function TurnoverCard({
       <CardContent className="p-3">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <RotateCw className="h-4 w-4 text-blue-500" aria-hidden="true" />
+            <RotateCw className="h-4 w-4 text-status-information" aria-hidden="true" />
             <span className="text-sm font-medium text-muted-foreground">{TITLES[type]}</span>
           </div>
           <TurnoverTooltip type={type} />

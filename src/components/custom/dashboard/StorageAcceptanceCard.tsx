@@ -74,7 +74,7 @@ export function StorageAcceptanceCard({
       <CardContent className="p-3">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <Warehouse className="h-4 w-4 text-red-500" aria-hidden="true" />
+            <Warehouse className="h-4 w-4 text-status-error" aria-hidden="true" />
             <span className="text-sm font-medium text-muted-foreground">Хранение и приёмка</span>
           </div>
           <Tooltip>
@@ -96,7 +96,7 @@ export function StorageAcceptanceCard({
           </Tooltip>
         </div>
         <div className="mt-1">
-          <span className="text-xl font-bold text-red-500">
+          <span className="text-xl font-bold text-status-error">
             {hasValue ? formatCurrency(total) : '—'}
           </span>
         </div>
@@ -112,17 +112,17 @@ export function StorageAcceptanceCard({
         )}
         <div className="mt-1 flex flex-wrap gap-x-2">
           {storageCost != null && (
-            <span className="text-xs text-gray-400">Хранение {formatCurrency(storageCost)}</span>
+            <span className="text-xs text-muted-foreground">Хранение {formatCurrency(storageCost)}</span>
           )}
           {paidAcceptanceCost != null && paidAcceptanceCost > 0 && (
-            <span className="text-xs text-gray-400">
+            <span className="text-xs text-muted-foreground">
               Приёмка {formatCurrency(paidAcceptanceCost)}
             </span>
           )}
         </div>
         {pctOfSales != null && (
           <div className="mt-0.5">
-            <span className="text-xs text-gray-400">{formatPercentage(pctOfSales)} от продаж</span>
+            <span className="text-xs text-muted-foreground">{formatPercentage(pctOfSales)} от продаж</span>
           </div>
         )}
       </CardContent>

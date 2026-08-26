@@ -34,9 +34,9 @@ export interface StorageMetricCardProps {
  * Storage expense metric card
  *
  * Displays storage cost with:
- * - Purple color (#7C4DFF) for value
+ * - chart-2 categorical tone for value (storage domain accent)
  * - Warehouse icon
- * - Inverted comparison (decrease = green, increase = red)
+ * - Inverted comparison (decrease = success, increase = error)
  * - Cost as % of revenue subtitle
  *
  * @example
@@ -61,7 +61,7 @@ export function StorageMetricCard({
       title="Хранение"
       tooltip="Расходы на хранение товаров на складах Wildberries за период.\n⚠ Это сумма начислений, не текущие остатки.\nТовар может быть уже продан, но начисление за период хранения остаётся.\nИсточник: недельный финансовый отчёт WB."
       icon={Warehouse}
-      valueColor="text-purple-500"
+      valueColor="text-chart-2"
       value={storageCost}
       previousValue={previousStorageCost}
       revenueTotal={revenueTotal}

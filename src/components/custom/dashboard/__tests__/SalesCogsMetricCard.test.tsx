@@ -151,7 +151,7 @@ describe('SalesCogsMetricCard', () => {
       expect(cardText).toMatch(/74.*74|100\s%/) // ru-RU: "100 %" (NBSP); was dead "100%" branch
 
       // Should NOT have yellow warning
-      expect(document.querySelector('.bg-yellow-100')).not.toBeInTheDocument()
+      expect(document.querySelector('[class*="bg-status-warning/10"]')).not.toBeInTheDocument()
     })
 
     it('renders warning state when coverage < 100%', () => {
@@ -169,7 +169,7 @@ describe('SalesCogsMetricCard', () => {
       expect(cardElement.textContent).toMatch(/74.*80|92/)
 
       // Should have warning styling
-      const warningElement = cardElement.querySelector('.text-yellow-600, .bg-yellow-100')
+      const warningElement = cardElement.querySelector('[class*="text-status-warning"], [class*="bg-status-warning/10"]')
       expect(warningElement).toBeInTheDocument()
     })
 
@@ -186,7 +186,7 @@ describe('SalesCogsMetricCard', () => {
       )
 
       // Should show yellow warning panel
-      expect(document.querySelector('.bg-yellow-100')).toBeInTheDocument()
+      expect(document.querySelector('[class*="bg-status-warning/10"]')).toBeInTheDocument()
 
       // Should show "COGS not filled" message
       const cardText = screen.getByRole('article').textContent
@@ -199,7 +199,7 @@ describe('SalesCogsMetricCard', () => {
       )
 
       // Should show missing/warning state
-      expect(document.querySelector('.bg-yellow-100')).toBeInTheDocument()
+      expect(document.querySelector('[class*="bg-status-warning/10"]')).toBeInTheDocument()
     })
   })
 
@@ -237,7 +237,7 @@ describe('SalesCogsMetricCard', () => {
       )
 
       // Should have AlertTriangle icon
-      const warningIcon = document.querySelector('svg[class*="yellow"]')
+      const warningIcon = document.querySelector('svg[class*="status-warning"]')
       expect(warningIcon).toBeInTheDocument()
     })
   })
@@ -389,18 +389,18 @@ describe('SalesCogsMetricCard', () => {
   // =============================================================================
 
   describe('color coding', () => {
-    it('displays main value in gray color (#757575 / gray-500)', () => {
+    it('displays main value in muted color', () => {
       renderWithProviders(<SalesCogsMetricCard {...defaultProps} />)
 
       // COGS value should be gray (expense = gray per design spec)
       const mainValue = screen.getByText(/85.*000/i).closest('span')
-      expect(mainValue).toHaveClass(/gray|text-gray/)
+      expect(mainValue).toHaveClass(/muted-foreground/)
     })
 
     it('uses gray for Package icon', () => {
       renderWithProviders(<SalesCogsMetricCard {...defaultProps} />)
 
-      const icon = document.querySelector('svg[class*="gray"]')
+      const icon = document.querySelector('svg[class*="muted-foreground"]')
       expect(icon).toBeInTheDocument()
     })
 
@@ -414,7 +414,7 @@ describe('SalesCogsMetricCard', () => {
         />
       )
 
-      expect(document.querySelector('.bg-yellow-100')).toBeInTheDocument()
+      expect(document.querySelector('[class*="bg-status-warning/10"]')).toBeInTheDocument()
     })
 
     it('warning text is yellow-600', () => {
@@ -422,7 +422,7 @@ describe('SalesCogsMetricCard', () => {
         <SalesCogsMetricCard {...defaultProps} cogsCoverage={80} productsWithCogs={64} />
       )
 
-      const warningText = document.querySelector('.text-yellow-600')
+      const warningText = document.querySelector('.text-status-warning')
       expect(warningText).toBeInTheDocument()
     })
   })
@@ -485,7 +485,7 @@ describe('SalesCogsMetricCard', () => {
       )
 
       // Warning should be announced to screen readers
-      const warningContainer = document.querySelector('.text-yellow-600, .bg-yellow-100')
+      const warningContainer = document.querySelector('[class*="text-status-warning"], [class*="bg-status-warning/10"]')
       expect(warningContainer).toBeInTheDocument()
       // Could have role="status" or aria-live="polite"
     })
@@ -520,7 +520,7 @@ describe('SalesCogsMetricCard', () => {
         />
       )
 
-      const warningPanel = document.querySelector('.bg-yellow-100')
+      const warningPanel = document.querySelector('[class*="bg-status-warning/10"]')
       expect(warningPanel).toHaveClass('rounded-md')
     })
   })
@@ -568,7 +568,7 @@ describe('SalesCogsMetricCard', () => {
       )
 
       // Should treat as complete (100%)
-      expect(document.querySelector('.bg-yellow-100')).not.toBeInTheDocument()
+      expect(document.querySelector('[class*="bg-status-warning/10"]')).not.toBeInTheDocument()
     })
   })
 })

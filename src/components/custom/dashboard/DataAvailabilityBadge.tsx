@@ -43,24 +43,24 @@ const statusIcons: Record<DataAvailability, typeof Clock> = {
 /** Color classes for each status */
 const statusColors: Record<DataAvailability, { icon: string; bg: string; text: string }> = {
   realtime: {
-    icon: 'text-green-500',
-    bg: 'bg-green-50',
-    text: 'text-green-700',
+    icon: 'text-status-success',
+    bg: 'bg-status-success/10',
+    text: 'text-status-success',
   },
   delayed: {
-    icon: 'text-yellow-500',
-    bg: 'bg-yellow-50',
-    text: 'text-yellow-700',
+    icon: 'text-status-warning',
+    bg: 'bg-status-warning/10',
+    text: 'text-status-warning',
   },
   pending_week: {
-    icon: 'text-gray-400',
-    bg: 'bg-gray-100',
-    text: 'text-gray-600',
+    icon: 'text-muted-foreground',
+    bg: 'bg-muted',
+    text: 'text-muted-foreground',
   },
   unavailable: {
-    icon: 'text-red-500',
-    bg: 'bg-red-50',
-    text: 'text-red-700',
+    icon: 'text-status-error',
+    bg: 'bg-status-error/10',
+    text: 'text-status-error',
   },
 }
 
@@ -118,7 +118,7 @@ export function DataAvailabilityBadge({
       <TooltipContent side="top" size="md">
         <div className="space-y-1">
           <div className="font-medium">{displayInfo.label}</div>
-          <div className="text-xs text-gray-300">{displayInfo.description}</div>
+          <div className="text-xs text-muted-foreground">{displayInfo.description}</div>
         </div>
       </TooltipContent>
     </Tooltip>

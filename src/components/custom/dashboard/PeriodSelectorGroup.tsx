@@ -38,7 +38,7 @@ export function PeriodSelectorGroup({ value, onChange }: PeriodSelectorGroupProp
             option.value === 4 && 'rounded-l-md',
             option.value === 24 && 'rounded-r-md',
             value === option.value
-              ? 'bg-[#E53935] text-white'
+              ? 'bg-primary text-primary-foreground'
               : 'bg-card text-muted-foreground hover:bg-muted'
           )}
         >

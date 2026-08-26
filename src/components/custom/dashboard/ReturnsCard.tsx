@@ -81,12 +81,12 @@ export function ReturnsCard({
       title="Возвраты"
       tooltip="Сумма возвратов из еженедельного отчёта WB. Количество — агрегация FBO + FBS."
       icon={RotateCcw}
-      accentColor="text-red-500"
+      accentColor="text-status-error"
       value={wbReturnsGross ?? null}
       previousValue={previousWbReturnsGross}
       format="currency"
       inverted={true}
-      valueColor="text-red-500"
+      valueColor="text-status-error"
       secondaryValue={wbReturnsGross != null ? formatCount(returnsCount) : undefined}
       isLoading={false}
       error={error}

@@ -47,25 +47,25 @@ const ROWS: RowDef[] = [
   {
     label: 'К клиенту при продаже',
     value: null,
-    colorClass: 'text-green-600 bg-green-50',
+    colorClass: 'text-status-success bg-status-success/10',
     testId: 'row-to-buyer',
   },
   {
     label: 'К клиенту при отмене',
     value: null,
-    colorClass: 'text-red-600 bg-red-50',
+    colorClass: 'text-status-error bg-status-error/10',
     testId: 'row-to-buyer-cancel',
   },
   {
     label: 'От клиента при отмене',
     value: null,
-    colorClass: 'text-red-600 bg-red-50',
+    colorClass: 'text-status-error bg-status-error/10',
     testId: 'row-from-buyer-cancel',
   },
   {
     label: 'От клиента при возврате',
     value: null,
-    colorClass: 'text-red-600 bg-red-50',
+    colorClass: 'text-status-error bg-status-error/10',
     testId: 'row-from-buyer-return',
   },
 ]
@@ -134,7 +134,7 @@ export function LogisticsBreakdownPopover(
         {hasAny && (
           <div className="mt-1 flex items-center justify-between border-t pt-2 text-sm font-semibold">
             <span>Итого</span>
-            <span className="text-red-600">{formatCurrency(total)}</span>
+            <span className="text-status-error">{formatCurrency(total)}</span>
           </div>
         )}
       </PopoverContent>

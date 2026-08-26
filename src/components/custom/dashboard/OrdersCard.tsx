@@ -66,7 +66,7 @@ export function OrdersCard({
       <CardContent className="p-3">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <ShoppingCart className="h-4 w-4 text-blue-500" aria-hidden="true" />
+            <ShoppingCart className="h-4 w-4 text-status-information" aria-hidden="true" />
             <span className="text-sm font-medium text-muted-foreground">Заказы</span>
           </div>
           <Tooltip>
@@ -84,7 +84,7 @@ export function OrdersCard({
           </Tooltip>
         </div>
         <div className="mt-1">
-          <span className="text-xl font-bold text-blue-600">{display}</span>
+          <span className="text-xl font-bold text-status-information">{display}</span>
         </div>
         {comparison && (
           <div className="mt-1 flex items-center gap-1.5">

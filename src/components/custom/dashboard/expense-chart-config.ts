@@ -12,18 +12,24 @@ import type { CostsPct, CostsRub } from '@/types/unit-economics'
 /**
  * Expense category configuration with colors and Russian labels
  * Colors match COST_CATEGORIES in unit-economics-utils.ts
+ *
+ * Story 172.1: registered tokens, hue-faithful where a same-family token
+ * exists (indigo/violet → chart-1/2, pink → chart-6, orange → chart-5,
+ * cyan → chart-3, misc gray → muted-foreground). The two red-family costs
+ * keep their negative reading via chart-negative / status-error, and the
+ * amber acceptance fee maps to the warning tone (amber ≡ warning canon).
  */
 export const EXPENSE_COLORS: Record<keyof CostsPct, { color: string; label: string }> = {
-  cogs: { color: '#6366F1', label: 'Себестоимость' },
-  commission: { color: '#8B5CF6', label: 'Комиссия WB' },
-  logistics_delivery: { color: '#EC4899', label: 'Доставка' },
-  logistics_return: { color: '#F43F5E', label: 'Возвраты' },
-  storage: { color: '#F97316', label: 'Хранение' },
-  paid_acceptance: { color: '#EAB308', label: 'Приёмка' },
-  penalties: { color: '#EF4444', label: 'Штрафы' },
-  other_deductions: { color: '#6B7280', label: 'Прочие' },
-  advertising: { color: '#14B8A6', label: 'Реклама' },
-  delivery_to_warehouse: { color: '#06B6D4', label: 'Доставка на склад' },
+  cogs: { color: 'var(--color-chart-1)', label: 'Себестоимость' },
+  commission: { color: 'var(--color-chart-2)', label: 'Комиссия WB' },
+  logistics_delivery: { color: 'var(--color-chart-6)', label: 'Доставка' },
+  logistics_return: { color: 'var(--color-status-error)', label: 'Возвраты' },
+  storage: { color: 'var(--color-chart-5)', label: 'Хранение' },
+  paid_acceptance: { color: 'var(--color-status-warning)', label: 'Приёмка' },
+  penalties: { color: 'var(--color-chart-negative)', label: 'Штрафы' },
+  other_deductions: { color: 'var(--color-muted-foreground)', label: 'Прочие' },
+  advertising: { color: 'var(--color-chart-4)', label: 'Реклама' },
+  delivery_to_warehouse: { color: 'var(--color-chart-3)', label: 'Доставка на склад' },
 }
 
 /**
@@ -39,7 +45,7 @@ export interface ExpenseChartDataItem {
   value: number
   /** Percentage of total costs */
   percentage: number
-  /** Hex color */
+  /** Segment color (CSS-variable token string) */
   color: string
   /** Index signature for Recharts compatibility */
   [key: string]: string | number
@@ -60,7 +66,7 @@ export function transformToChartData(
       name: EXPENSE_COLORS[key]?.label ?? key,
       value,
       percentage: costsPct[key] ?? 0,
-      color: EXPENSE_COLORS[key]?.color ?? '#6B7280',
+      color: EXPENSE_COLORS[key]?.color ?? 'var(--color-muted-foreground)',
     }))
     .sort((a, b) => b.value - a.value)
 }

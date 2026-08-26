@@ -64,8 +64,8 @@ export function CapitalizationTooltip({
           role="tooltip"
           className="absolute bottom-full left-1/2 z-50 mb-2 -translate-x-1/2"
           style={{
-            backgroundColor: '#1e293b',
-            color: '#f1f5f9',
+            backgroundColor: 'var(--color-chart-tooltip)',
+            color: 'var(--color-chart-tooltip-foreground)',
             padding: '8px 12px',
             borderRadius: '6px',
             minWidth: '220px',
@@ -73,7 +73,9 @@ export function CapitalizationTooltip({
           onMouseEnter={show}
           onMouseLeave={hide}
         >
-          <p className="mb-1.5 text-xs font-medium text-slate-100">Расчёт капитализации:</p>
+          <p className="mb-1.5 text-xs font-medium text-chart-tooltip-foreground">
+            Расчёт капитализации:
+          </p>
           <div className="flex flex-col gap-1">
             <TooltipRow
               label="Остатки"
@@ -91,8 +93,8 @@ export function CapitalizationTooltip({
 function TooltipRow({ label, value }: { label: string; value: string }) {
   return (
     <div className="flex items-center justify-between gap-4">
-      <span className="text-xs text-slate-300">{label}</span>
-      <span className="text-xs font-medium text-slate-100">{value}</span>
+      <span className="text-xs text-chart-tooltip-foreground/70">{label}</span>
+      <span className="text-xs font-medium text-chart-tooltip-foreground">{value}</span>
     </div>
   )
 }

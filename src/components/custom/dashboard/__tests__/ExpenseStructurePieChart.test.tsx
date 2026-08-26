@@ -297,85 +297,85 @@ describe('ExpenseStructurePieChart - Color Palette', () => {
     capturedCells.length = 0
   })
 
-  it('should use purple #6366F1 for COGS segment', () => {
+  it('should use chart-1 token for COGS segment', () => {
     renderChart()
     const cells = screen.getAllByTestId('pie-cell')
     const pieData = capturedChart.data as Array<{ key: string; color: string }>
     const cogsIndex = pieData.findIndex(d => d.key === 'cogs')
     expect(cogsIndex).toBeGreaterThanOrEqual(0)
-    expect(cells[cogsIndex].dataset.fill).toBe('#6366F1')
+    expect(cells[cogsIndex].dataset.fill).toBe('var(--color-chart-1)')
   })
 
-  it('should use deep purple #8B5CF6 for Commission segment', () => {
+  it('should use chart-2 token for Commission segment', () => {
     renderChart()
     const cells = screen.getAllByTestId('pie-cell')
     const pieData = capturedChart.data as Array<{ key: string; color: string }>
     const index = pieData.findIndex(d => d.key === 'commission')
     expect(index).toBeGreaterThanOrEqual(0)
-    expect(cells[index].dataset.fill).toBe('#8B5CF6')
+    expect(cells[index].dataset.fill).toBe('var(--color-chart-2)')
   })
 
-  it('should use pink #EC4899 for Logistics Delivery segment', () => {
+  it('should use chart-6 token for Logistics Delivery segment', () => {
     renderChart()
     const cells = screen.getAllByTestId('pie-cell')
     const pieData = capturedChart.data as Array<{ key: string; color: string }>
     const index = pieData.findIndex(d => d.key === 'logistics_delivery')
     expect(index).toBeGreaterThanOrEqual(0)
-    expect(cells[index].dataset.fill).toBe('#EC4899')
+    expect(cells[index].dataset.fill).toBe('var(--color-chart-6)')
   })
 
-  it('should use rose #F43F5E for Logistics Return segment', () => {
+  it('should use status-error token for Logistics Return segment', () => {
     renderChart()
     const cells = screen.getAllByTestId('pie-cell')
     const pieData = capturedChart.data as Array<{ key: string; color: string }>
     const index = pieData.findIndex(d => d.key === 'logistics_return')
     expect(index).toBeGreaterThanOrEqual(0)
-    expect(cells[index].dataset.fill).toBe('#F43F5E')
+    expect(cells[index].dataset.fill).toBe('var(--color-status-error)')
   })
 
-  it('should use orange #F97316 for Storage segment', () => {
+  it('should use chart-5 token for Storage segment', () => {
     renderChart()
     const cells = screen.getAllByTestId('pie-cell')
     const pieData = capturedChart.data as Array<{ key: string; color: string }>
     const index = pieData.findIndex(d => d.key === 'storage')
     expect(index).toBeGreaterThanOrEqual(0)
-    expect(cells[index].dataset.fill).toBe('#F97316')
+    expect(cells[index].dataset.fill).toBe('var(--color-chart-5)')
   })
 
-  it('should use yellow #EAB308 for Paid Acceptance segment', () => {
+  it('should use status-warning token for Paid Acceptance segment', () => {
     renderChart()
     const cells = screen.getAllByTestId('pie-cell')
     const pieData = capturedChart.data as Array<{ key: string; color: string }>
     const index = pieData.findIndex(d => d.key === 'paid_acceptance')
     expect(index).toBeGreaterThanOrEqual(0)
-    expect(cells[index].dataset.fill).toBe('#EAB308')
+    expect(cells[index].dataset.fill).toBe('var(--color-status-warning)')
   })
 
-  it('should use red #EF4444 for Penalties segment', () => {
+  it('should use chart-negative token for Penalties segment', () => {
     renderChart()
     const cells = screen.getAllByTestId('pie-cell')
     const pieData = capturedChart.data as Array<{ key: string; color: string }>
     const index = pieData.findIndex(d => d.key === 'penalties')
     expect(index).toBeGreaterThanOrEqual(0)
-    expect(cells[index].dataset.fill).toBe('#EF4444')
+    expect(cells[index].dataset.fill).toBe('var(--color-chart-negative)')
   })
 
-  it('should use gray #6B7280 for Other Deductions segment', () => {
+  it('should use muted-foreground token for Other Deductions segment', () => {
     renderChart()
     const cells = screen.getAllByTestId('pie-cell')
     const pieData = capturedChart.data as Array<{ key: string; color: string }>
     const index = pieData.findIndex(d => d.key === 'other_deductions')
     expect(index).toBeGreaterThanOrEqual(0)
-    expect(cells[index].dataset.fill).toBe('#6B7280')
+    expect(cells[index].dataset.fill).toBe('var(--color-muted-foreground)')
   })
 
-  it('should use teal #14B8A6 for Advertising segment', () => {
+  it('should use chart-4 token for Advertising segment', () => {
     renderChart()
     const cells = screen.getAllByTestId('pie-cell')
     const pieData = capturedChart.data as Array<{ key: string; color: string }>
     const index = pieData.findIndex(d => d.key === 'advertising')
     expect(index).toBeGreaterThanOrEqual(0)
-    expect(cells[index].dataset.fill).toBe('#14B8A6')
+    expect(cells[index].dataset.fill).toBe('var(--color-chart-4)')
   })
 })
 
@@ -693,7 +693,7 @@ describe('ExpenseStructurePieChart - Data Transformation', () => {
     expect(firstItem.name).toBe('Себестоимость')
     expect(firstItem.value).toBe(175000)
     expect(firstItem.percentage).toBe(35.0)
-    expect(firstItem.color).toBe('#6366F1')
+    expect(firstItem.color).toBe('var(--color-chart-1)')
   })
 
   it('should use costs_pct for percentage values', () => {

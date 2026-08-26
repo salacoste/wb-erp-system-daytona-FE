@@ -101,7 +101,7 @@ export function DailyMetricsTableHeader({
                         type="button"
                         aria-label={column.tooltip}
                         onClick={e => e.stopPropagation()}
-                        className="inline-flex items-center text-muted-foreground hover:text-foreground focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-400 rounded"
+                        className="inline-flex items-center text-muted-foreground hover:text-foreground focus:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded"
                       >
                         <Info className="h-3 w-3" aria-hidden="true" />
                       </button>

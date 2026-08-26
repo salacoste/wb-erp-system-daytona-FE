@@ -8,18 +8,26 @@
  */
 
 // ============================================================================
-// Chart Colors (from wireframe)
+// Chart Colors (Story 172.1: registered chart tokens, hue-faithful)
 // ============================================================================
+// Categorical series map onto chart-1..6 by legacy hue (channel-styling 170.1
+// precedent). The two COGS series shared the orange tone family in the legacy
+// palette and therefore share chart-5. "Теор. прибыль" is a SIGNED series that
+// renders beside the sales line by default → primary (legacy brand-red hue);
+// chart-positive would collide with chart-4 (identical token value in the
+// light theme) — review pass 1 finding. Latent registry identity to remember:
+// chart-negative equals primary in the light theme (harmless today — they
+// never share a canvas; review pass 2 note).
 
 export const CHART_COLORS = {
-  orders: '#3B82F6', // Blue
-  ordersCogs: '#F97316', // Orange
-  sales: '#22C55E', // Green
-  salesCogs: '#FB923C', // Light Orange
-  advertising: '#7C3AED', // Purple
-  logistics: '#06B6D4', // Cyan
-  storage: '#EC4899', // Pink
-  profit: '#E53935', // Primary Red
+  orders: 'var(--color-chart-1)',
+  ordersCogs: 'var(--color-chart-5)',
+  sales: 'var(--color-chart-4)',
+  salesCogs: 'var(--color-chart-5)',
+  advertising: 'var(--color-chart-2)',
+  logistics: 'var(--color-chart-3)',
+  storage: 'var(--color-chart-6)',
+  profit: 'var(--color-primary)',
 } as const
 
 // ============================================================================

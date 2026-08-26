@@ -285,9 +285,9 @@ describe('StorageTopConsumersWidget - Storage Cost Display', () => {
 
   it('should use purple color scheme for storage values', () => {
     renderWidget()
-    // Storage cost text uses text-[#7C4DFF] class
+    // Storage cost text uses the chart-2 storage tone
     const costEl = screen.getByText(/3 500/)
-    expect(costEl.className).toContain('text-[#7C4DFF]')
+    expect(costEl.className).toContain('text-chart-2')
   })
 
   it('should show RUB symbol after value', () => {
@@ -336,21 +336,21 @@ describe('StorageTopConsumersWidget - Ratio Indicators', () => {
     renderWidget()
     const highLabel = screen.getByLabelText('Высокие затраты на хранение (>20%)')
     expect(highLabel).toBeInTheDocument()
-    expect(highLabel.className).toContain('bg-red-500')
+    expect(highLabel.className).toContain('bg-status-error')
   })
 
   it('should show yellow dot for ratio 10-20% (medium)', () => {
     renderWidget()
     const mediumLabel = screen.getByLabelText('Умеренные затраты (10-20%)')
     expect(mediumLabel).toBeInTheDocument()
-    expect(mediumLabel.className).toContain('bg-yellow-500')
+    expect(mediumLabel.className).toContain('bg-status-warning')
   })
 
   it('should show green dot for ratio <10% (healthy)', () => {
     renderWidget()
     const lowLabel = screen.getAllByLabelText('Низкие затраты (<10%)')
     expect(lowLabel.length).toBeGreaterThanOrEqual(1)
-    expect(lowLabel[0].className).toContain('bg-green-500')
+    expect(lowLabel[0].className).toContain('bg-status-success')
   })
 
   it('should show gray dot for null ratio (no revenue data)', () => {
@@ -376,7 +376,7 @@ describe('StorageTopConsumersWidget - Ratio Indicators', () => {
     renderWidget()
     const unknownLabel = screen.getByLabelText('Нет данных о выручке')
     expect(unknownLabel).toBeInTheDocument()
-    expect(unknownLabel.className).toContain('bg-gray-300')
+    expect(unknownLabel.className).toContain('bg-muted')
   })
 
   it('should show warning icon (AlertTriangle) for ratio >20%', () => {
@@ -417,9 +417,9 @@ describe('StorageTopConsumersWidget - Ratio Indicators', () => {
 
   it('should apply red text color for high ratio values', () => {
     renderWidget()
-    // The text span for high ratio has text-red-600
+    // The text span for high ratio uses the error tone
     const ratioText = screen.getByText(/23,3/)
-    expect(ratioText.className).toContain('text-red-600')
+    expect(ratioText.className).toContain('text-status-error')
   })
 
   it('should display ratio percentage text', () => {
@@ -923,7 +923,7 @@ describe('StorageTopConsumersWidget - Header', () => {
 
   it('should display Package icon in header', () => {
     renderWidget()
-    // The header Package icon has text-[#7C4DFF] class
+    // The header Package icon uses the chart-2 storage tone
     const header = screen.getByText('Топ по расходам на хранение').closest('div')
     expect(header).toBeInTheDocument()
     // Header contains an SVG (Package icon)
@@ -948,10 +948,10 @@ describe('StorageTopConsumersWidget - Header', () => {
 
   it('should apply purple color theme to header icon', () => {
     renderWidget()
-    // The Package icon in header uses text-[#7C4DFF]
+    // The Package icon in header uses the chart-2 storage tone
     const titleEl = screen.getByText('Топ по расходам на хранение')
     const iconContainer = titleEl.closest('div')
     const svg = iconContainer?.querySelector('svg')
-    expect(svg?.className.baseVal || svg?.getAttribute('class')).toContain('text-[#7C4DFF]')
+    expect(svg?.className.baseVal || svg?.getAttribute('class')).toContain('text-chart-2')
   })
 })

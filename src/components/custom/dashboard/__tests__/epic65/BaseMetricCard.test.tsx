@@ -84,11 +84,11 @@ describe('BaseMetricCard', () => {
     })
 
     it('applies accentColor to icon', () => {
-      const props = createBaseMetricCardProps({ accentColor: 'text-red-500' })
+      const props = createBaseMetricCardProps({ accentColor: 'text-status-error' })
       renderWithProviders(<BaseMetricCard {...props} />)
 
       const icon = screen.getByTestId('mock-icon')
-      expect(icon).toHaveClass('text-red-500')
+      expect(icon).toHaveClass('text-status-error')
     })
   })
 
@@ -129,11 +129,11 @@ describe('BaseMetricCard', () => {
     })
 
     it('applies valueColor override when provided', () => {
-      const props = createBaseMetricCardProps({ valueColor: 'text-green-600' })
+      const props = createBaseMetricCardProps({ valueColor: 'text-status-success' })
       renderWithProviders(<BaseMetricCard {...props} />)
 
       const value = screen.getByTestId('metric-value')
-      expect(value).toHaveClass('text-green-600')
+      expect(value).toHaveClass('text-status-success')
     })
   })
 
@@ -300,23 +300,23 @@ describe('BaseMetricCard', () => {
 
   describe('sentiment background (Story 65.15)', () => {
     /** AC-65.15.1: positive trend -> green-tinted background */
-    it('positive trend applies bg-green-50 background', () => {
+    it('positive trend applies status-success tinted background', () => {
       const props = createComparisonProps('positive', { sentimentBg: true })
       renderWithProviders(<BaseMetricCard {...props} />)
 
       const card = screen.getByRole('article')
-      expect(card).toHaveClass('bg-green-50')
-      expect(card).toHaveClass('border-green-200')
+      expect(card).toHaveClass('bg-status-success/10')
+      expect(card).toHaveClass('border-status-success/40')
     })
 
     /** AC-65.15.2: negative trend -> red-tinted background */
-    it('negative trend applies bg-red-50 background', () => {
+    it('negative trend applies status-error tinted background', () => {
       const props = createComparisonProps('negative', { sentimentBg: true })
       renderWithProviders(<BaseMetricCard {...props} />)
 
       const card = screen.getByRole('article')
-      expect(card).toHaveClass('bg-red-50')
-      expect(card).toHaveClass('border-red-200')
+      expect(card).toHaveClass('bg-status-error/10')
+      expect(card).toHaveClass('border-status-error/40')
     })
 
     /** AC-65.15.3: neutral trend -> default background */
@@ -325,8 +325,8 @@ describe('BaseMetricCard', () => {
       renderWithProviders(<BaseMetricCard {...props} />)
 
       const card = screen.getByRole('article')
-      expect(card).not.toHaveClass('bg-green-50')
-      expect(card).not.toHaveClass('bg-red-50')
+      expect(card).not.toHaveClass('bg-status-success/10')
+      expect(card).not.toHaveClass('bg-status-error/10')
     })
 
     /** AC-65.15.8: highlighted variant does NOT get sentiment bg */
@@ -339,8 +339,8 @@ describe('BaseMetricCard', () => {
 
       const card = screen.getByRole('article')
       // Highlighted has its own gradient, sentinel bg must not apply
-      expect(card).not.toHaveClass('bg-green-50')
-      expect(card).not.toHaveClass('bg-red-50')
+      expect(card).not.toHaveClass('bg-status-success/10')
+      expect(card).not.toHaveClass('bg-status-error/10')
       // But should still have gradient
       expect(card.className).toMatch(/bg-gradient/)
     })
@@ -350,8 +350,8 @@ describe('BaseMetricCard', () => {
       renderWithProviders(<BaseMetricCard {...props} />)
 
       const card = screen.getByRole('article')
-      expect(card).not.toHaveClass('bg-green-50')
-      expect(card).not.toHaveClass('bg-red-50')
+      expect(card).not.toHaveClass('bg-status-success/10')
+      expect(card).not.toHaveClass('bg-status-error/10')
     })
 
     it('no sentiment background when sentimentBg not provided', () => {
@@ -359,8 +359,8 @@ describe('BaseMetricCard', () => {
       renderWithProviders(<BaseMetricCard {...props} />)
 
       const card = screen.getByRole('article')
-      expect(card).not.toHaveClass('bg-green-50')
-      expect(card).not.toHaveClass('bg-red-50')
+      expect(card).not.toHaveClass('bg-status-success/10')
+      expect(card).not.toHaveClass('bg-status-error/10')
     })
   })
 

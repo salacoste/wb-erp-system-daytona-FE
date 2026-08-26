@@ -169,7 +169,7 @@ describe('AverageMetricCard — profit color coding', () => {
       )
 
       const valueElement = screen.getByTestId('average-metric-value')
-      expect(valueElement.className).toMatch(/green/)
+      expect(valueElement.className).toMatch(/status-success/)
     })
 
     it('shows red when avgProfitPerUnit < 0', () => {
@@ -183,7 +183,7 @@ describe('AverageMetricCard — profit color coding', () => {
       )
 
       const valueElement = screen.getByTestId('average-metric-value')
-      expect(valueElement.className).toMatch(/red/)
+      expect(valueElement.className).toMatch(/status-error/)
     })
   })
 })
