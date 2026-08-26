@@ -86,7 +86,7 @@ export function AveragePriceBeforeDiscountCard({
       title="Ср. цена до скидок"
       tooltip="Средняя розничная цена до скидки маркетплейса. Формула: сумма розничных цен / количество выкупов."
       icon={Tag}
-      accentColor="text-orange-500"
+      accentColor="text-status-warning"
       value={averagePrice}
       previousValue={previousValue}
       format="currency"

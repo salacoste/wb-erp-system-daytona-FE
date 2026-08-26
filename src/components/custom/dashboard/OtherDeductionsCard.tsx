@@ -88,7 +88,7 @@ export function OtherDeductionsCard({
       <CardContent className="p-3">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <FileText className="h-4 w-4 text-red-500" aria-hidden="true" />
+            <FileText className="h-4 w-4 text-status-error" aria-hidden="true" />
             <span className="text-sm font-medium text-muted-foreground">
               {DASHBOARD_WB_DEDUCTIONS_COPY.servicesTitle}
             </span>
@@ -112,11 +112,11 @@ export function OtherDeductionsCard({
         <div className="mt-1 flex items-baseline gap-1">
           {hasValue ? (
             <>
-              <span className="text-xl font-bold text-red-500">{formatCurrency(total!)}</span>
+              <span className="text-xl font-bold text-status-error">{formatCurrency(total!)}</span>
               {pctOfSales != null && (
                 <>
                   <span className="text-lg font-bold text-muted-foreground">/</span>
-                  <span className="text-xl font-bold text-red-500">
+                  <span className="text-xl font-bold text-status-error">
                     {new Intl.NumberFormat('ru-RU', {
                       minimumFractionDigits: 0,
                       maximumFractionDigits: 1,

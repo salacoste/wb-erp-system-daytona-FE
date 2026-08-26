@@ -28,13 +28,13 @@ export function EmptyStateFulfillment({
 }: EmptyStateFulfillmentProps): React.ReactElement {
   return (
     <div className="flex flex-col items-center justify-center space-y-3 py-4 text-center">
-      <div className="rounded-full bg-blue-50 p-3">
-        <Package className="h-6 w-6 text-blue-400" />
+      <div className="rounded-full bg-status-information/10 p-3">
+        <Package className="h-6 w-6 text-status-information" />
       </div>
 
       <div className="space-y-1">
-        <p className="text-sm font-medium text-gray-700">FBO/FBS аналитика</p>
-        <p className="max-w-xs text-xs text-gray-500">
+        <p className="text-sm font-medium text-foreground">FBO/FBS аналитика</p>
+        <p className="max-w-xs text-xs text-muted-foreground">
           Данные FBO/FBS ещё не загружены. Запустите синхронизацию для получения аналитики.
         </p>
       </div>

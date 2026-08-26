@@ -27,14 +27,35 @@ interface SeverityMeta {
 }
 
 const SEVERITY_META: Record<StatusSeverity, SeverityMeta> = {
-  failed: { icon: AlertCircle, tone: 'border-red-200 bg-red-50 text-red-900' },
-  error: { icon: AlertCircle, tone: 'border-red-200 bg-red-50 text-red-900' },
-  processing: { icon: RefreshCw, tone: 'border-blue-200 bg-blue-50 text-blue-900' },
-  dataGaps: { icon: AlertTriangle, tone: 'border-yellow-200 bg-yellow-50 text-yellow-900' },
-  missingCogs: { icon: AlertTriangle, tone: 'border-yellow-200 bg-yellow-50 text-yellow-900' },
-  tax: { icon: AlertTriangle, tone: 'border-yellow-200 bg-yellow-50 text-yellow-900' },
-  incompleteWeek: { icon: Clock, tone: 'border-blue-200 bg-blue-50 text-blue-900' },
-  reportPending: { icon: Clock, tone: 'border-amber-200 bg-amber-50 text-amber-900' },
+  failed: {
+    icon: AlertCircle,
+    tone: 'border-status-error/40 bg-status-error/10 text-status-error',
+  },
+  error: { icon: AlertCircle, tone: 'border-status-error/40 bg-status-error/10 text-status-error' },
+  processing: {
+    icon: RefreshCw,
+    tone: 'border-status-information/40 bg-status-information/10 text-status-information',
+  },
+  dataGaps: {
+    icon: AlertTriangle,
+    tone: 'border-status-warning/40 bg-status-warning/10 text-status-warning',
+  },
+  missingCogs: {
+    icon: AlertTriangle,
+    tone: 'border-status-warning/40 bg-status-warning/10 text-status-warning',
+  },
+  tax: {
+    icon: AlertTriangle,
+    tone: 'border-status-warning/40 bg-status-warning/10 text-status-warning',
+  },
+  incompleteWeek: {
+    icon: Clock,
+    tone: 'border-status-information/40 bg-status-information/10 text-status-information',
+  },
+  reportPending: {
+    icon: Clock,
+    tone: 'border-status-warning/40 bg-status-warning/10 text-status-warning',
+  },
 }
 
 /** Russian pluralization: "N элемент(а/ов) требу(ет/ют) внимания". */

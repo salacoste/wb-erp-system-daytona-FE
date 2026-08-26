@@ -27,27 +27,27 @@ export interface GrossMarginCardProps {
 // iter-120: same profit-vs-loss fix as MarginCard — the <30% band was a single red, painting a
 // positive-but-low gross margin (e.g. +20%) identically to a LOSS (e.g. −10%, possible when
 // COGS > net revenue). Per the Defensive Frontend Principle, split into 0–30% orange ("низкая
-// наценка") and <0% red ("убыток"). Text uses -600 to match this card's green/yellow/red text
-// shades (top-table-utils uses -500); borders -500, backgrounds -50, per the card's palette.
+// наценка") and <0% red ("убыток"). Semantic status tokens since 172.1; the weakest positive
+// band dims the warning tone for a 4-state scale (same idiom as TopProductsTableRow).
 function getMarginColor(pct: number): string {
-  if (pct >= 50) return 'text-green-600'
-  if (pct >= 30) return 'text-yellow-600'
-  if (pct >= 0) return 'text-orange-600'
-  return 'text-red-600'
+  if (pct >= 50) return 'text-status-success'
+  if (pct >= 30) return 'text-status-warning'
+  if (pct >= 0) return 'text-status-warning/80'
+  return 'text-status-error'
 }
 
 function getMarginBorder(pct: number): string {
-  if (pct >= 50) return 'border-green-500'
-  if (pct >= 30) return 'border-yellow-500'
-  if (pct >= 0) return 'border-orange-500'
-  return 'border-red-500'
+  if (pct >= 50) return 'border-status-success'
+  if (pct >= 30) return 'border-status-warning'
+  if (pct >= 0) return 'border-status-warning/80'
+  return 'border-status-error'
 }
 
 function getMarginBg(pct: number): string {
-  if (pct >= 50) return 'bg-gradient-to-br from-green-50 to-white'
-  if (pct >= 30) return 'bg-gradient-to-br from-yellow-50 to-white'
-  if (pct >= 0) return 'bg-gradient-to-br from-orange-50 to-white'
-  return 'bg-gradient-to-br from-red-50 to-white'
+  if (pct >= 50) return 'bg-gradient-to-br from-status-success/10 to-card'
+  if (pct >= 30) return 'bg-gradient-to-br from-status-warning/10 to-card'
+  if (pct >= 0) return 'bg-gradient-to-br from-status-warning/10 to-card'
+  return 'bg-gradient-to-br from-status-error/10 to-card'
 }
 
 export function GrossMarginCard({
@@ -78,10 +78,8 @@ export function GrossMarginCard({
   const diff =
     canShow && previousGrossMarginPct != null ? grossMarginPct! - previousGrossMarginPct : null
 
-  const borderColor = canShow ? getMarginBorder(grossMarginPct!) : 'border-gray-300'
-  const bgGradient = canShow
-    ? getMarginBg(grossMarginPct!)
-    : 'bg-gradient-to-br from-gray-50 to-white'
+  const borderColor = canShow ? getMarginBorder(grossMarginPct!) : 'border-border'
+  const bgGradient = canShow ? getMarginBg(grossMarginPct!) : 'bg-gradient-to-br from-muted to-card'
 
   return (
     <Card
@@ -98,7 +96,7 @@ export function GrossMarginCard({
       <CardContent className="p-3">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <Percent className="h-4 w-4 text-gray-500" aria-hidden="true" />
+            <Percent className="h-4 w-4 text-muted-foreground" aria-hidden="true" />
             <span className="text-sm font-medium text-muted-foreground">Валовая маржа</span>
           </div>
           <Tooltip>
@@ -133,7 +131,11 @@ export function GrossMarginCard({
             <span
               className={cn(
                 'text-sm font-medium',
-                diff > 0 ? 'text-green-600' : diff < 0 ? 'text-red-600' : 'text-gray-500'
+                diff > 0
+                  ? 'text-status-success'
+                  : diff < 0
+                    ? 'text-status-error'
+                    : 'text-muted-foreground'
               )}
             >
               {formatPercentagePoints(diff)}
@@ -144,7 +146,7 @@ export function GrossMarginCard({
           </div>
         )}
         {cogsCoverage < 100 && (
-          <div className="mt-1 flex items-center gap-1 text-xs text-yellow-600">
+          <div className="mt-1 flex items-center gap-1 text-xs text-status-warning">
             <AlertTriangle className="h-3 w-3 shrink-0" />
             <span>Покрытие COGS: {formatPercentageInt(cogsCoverage)}</span>
             {onAssignCogs && (

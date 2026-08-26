@@ -36,7 +36,7 @@ export function DashboardMonthWeekScope({
     <div
       data-testid="dashboard-month-week-scope"
       role="note"
-      className="rounded-md border border-blue-200 bg-blue-50 px-3 py-2 text-sm text-blue-900"
+      className="rounded-md border border-status-information/40 bg-status-information/10 px-3 py-2 text-sm text-status-information"
     >
       Месячная выборка по недельным WB-отчётам: {scope.weeksLabel}; включены даты:{' '}
       {scope.dateRangeLabel}.

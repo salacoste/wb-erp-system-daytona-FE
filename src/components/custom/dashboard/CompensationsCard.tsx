@@ -26,8 +26,8 @@ function formatRevenuePct(value: number): string {
 }
 
 const TREND_COLORS: Record<TrendDirection, string> = {
-  positive: 'text-green-500',
-  negative: 'text-red-500',
+  positive: 'text-status-success',
+  negative: 'text-status-error',
   neutral: 'text-muted-foreground',
 }
 
@@ -88,12 +88,12 @@ export function CompensationsCard({
     >
       <CardContent className="p-3">
         <div className="flex items-center gap-2">
-          <ShieldCheck className="h-4 w-4 text-green-500" aria-hidden="true" />
+          <ShieldCheck className="h-4 w-4 text-status-success" aria-hidden="true" />
           <span className="text-sm font-medium text-muted-foreground">Компенсации</span>
         </div>
 
         <div className="mt-1">
-          <span className="text-xl font-bold text-green-600" data-testid="metric-value">
+          <span className="text-xl font-bold text-status-success" data-testid="metric-value">
             {displayValue}
           </span>
         </div>
@@ -111,7 +111,9 @@ export function CompensationsCard({
 
         {revenuePct != null && (
           <div className="mt-1">
-            <span className="text-xs text-gray-400">{formatRevenuePct(revenuePct)} от выручки</span>
+            <span className="text-xs text-muted-foreground">
+              {formatRevenuePct(revenuePct)} от выручки
+            </span>
           </div>
         )}
       </CardContent>

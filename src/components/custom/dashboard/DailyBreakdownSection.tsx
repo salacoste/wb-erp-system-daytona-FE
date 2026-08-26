@@ -65,7 +65,7 @@ export function DailyBreakdownSection({ className }: DailyBreakdownSectionProps)
     <section className={cn('space-y-4', className)} aria-labelledby="daily-breakdown-title">
       {/* Header with title and view toggle */}
       <div className="flex items-center justify-between">
-        <h3 id="daily-breakdown-title" className="text-lg font-semibold text-gray-900">
+        <h3 id="daily-breakdown-title" className="text-lg font-semibold text-foreground">
           Детализация по дням
         </h3>
         <ViewToggle value={view} onChange={setView} />

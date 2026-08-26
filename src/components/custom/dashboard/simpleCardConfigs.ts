@@ -29,10 +29,10 @@ export function buildSimpleCards(p: DashboardMetricsGridProps): CardConfig[] {
   return [
     {
       icon: ShoppingCart,
-      iconColor: 'text-blue-500',
+      iconColor: 'text-status-information',
       title: 'Заказы, шт',
       value: fmtPcs(p.totalOrders),
-      valueColor: 'text-blue-600',
+      valueColor: 'text-status-information',
       current: p.totalOrders,
       previous: prev?.ordersCount,
       tooltip:
@@ -40,19 +40,19 @@ export function buildSimpleCards(p: DashboardMetricsGridProps): CardConfig[] {
     },
     {
       icon: Package,
-      iconColor: 'text-green-500',
+      iconColor: 'text-status-success',
       title: 'Выкупы, шт',
       value: fmtPcs(p.salesCount),
-      valueColor: 'text-green-600',
+      valueColor: 'text-status-success',
       tooltip:
         'Количество выкупленных товаров за период.\nВключает все каналы: FBO, FBS и EAEU.\nИсточник: еженедельный финансовый отчёт WB (product_transactions).',
     },
     {
       icon: RotateCcw,
-      iconColor: 'text-red-500',
+      iconColor: 'text-status-error',
       title: 'Возвраты',
       value: `${fmtPcs(p.returnsCount)} / ${fmtRub(p.wbReturnsGross)}`,
-      valueColor: 'text-red-600',
+      valueColor: 'text-status-error',
       current: p.returnsCount,
       tooltip:
         'Возвраты за период в штуках и ₽.\nШтуки: количество возвращённых товаров (FBO + FBS), источник — fulfillment.\n₽: сколько WB удержал за возвращённые товары на уровне поставщика, источник — еженедельный финансовый отчёт WB.\nРозничная стоимость возвратов выше, так как не учитывает комиссию WB.',

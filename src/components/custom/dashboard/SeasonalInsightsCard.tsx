@@ -44,46 +44,48 @@ export function SeasonalInsightsCard({
   return (
     <div className={`grid grid-cols-1 md:grid-cols-3 gap-4 ${className || ''}`}>
       {/* Peak Month Card */}
-      <Card className="border-green-200 bg-green-50">
+      <Card className="border-status-success/40 bg-status-success/10">
         <CardContent className="p-3">
-          <div className="flex items-center gap-2 text-green-700">
+          <div className="flex items-center gap-2 text-status-success">
             <TrendingUp className="h-5 w-5" aria-hidden="true" />
             <span className="text-sm font-medium">Пик месяц</span>
           </div>
-          <p className="text-xl font-bold text-green-900 mt-1">
+          <p className="text-xl font-bold text-status-success mt-1">
             {localizeMonth(insights.peakMonth)}
           </p>
-          <p className="text-sm text-green-600">
+          <p className="text-sm text-status-success">
             {peakMonthData?.avgOrders.toLocaleString('ru-RU')} заказов
           </p>
         </CardContent>
       </Card>
 
       {/* Low Month Card */}
-      <Card className="border-red-200 bg-red-50">
+      <Card className="border-status-error/40 bg-status-error/10">
         <CardContent className="p-3">
-          <div className="flex items-center gap-2 text-red-700">
+          <div className="flex items-center gap-2 text-status-error">
             <TrendingDown className="h-5 w-5" aria-hidden="true" />
             <span className="text-sm font-medium">Мин месяц</span>
           </div>
-          <p className="text-xl font-bold text-red-900 mt-1">{localizeMonth(insights.lowMonth)}</p>
-          <p className="text-sm text-red-600">
+          <p className="text-xl font-bold text-status-error mt-1">
+            {localizeMonth(insights.lowMonth)}
+          </p>
+          <p className="text-sm text-status-error">
             {lowMonthData?.avgOrders.toLocaleString('ru-RU')} заказов
           </p>
         </CardContent>
       </Card>
 
       {/* Peak Day Card */}
-      <Card className="border-blue-200 bg-blue-50">
+      <Card className="border-status-information/40 bg-status-information/10">
         <CardContent className="p-3">
-          <div className="flex items-center gap-2 text-blue-700">
+          <div className="flex items-center gap-2 text-status-information">
             <CalendarDays className="h-5 w-5" aria-hidden="true" />
             <span className="text-sm font-medium">Пик день</span>
           </div>
-          <p className="text-xl font-bold text-blue-900 mt-1">
+          <p className="text-xl font-bold text-status-information mt-1">
             {localizeWeekday(insights.peakDay)}
           </p>
-          <p className="text-sm text-blue-600 flex items-center gap-1">
+          <p className="text-sm text-status-information flex items-center gap-1">
             <Clock className="h-3 w-3" aria-hidden="true" />
             Пик: {formatPeakHour(peakDayData?.peakHour ?? 0)}
           </p>

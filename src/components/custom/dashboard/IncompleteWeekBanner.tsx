@@ -52,15 +52,15 @@ export function IncompleteWeekBanner({
   return (
     <Alert
       variant="default"
-      className={cn('border-blue-200 bg-blue-50', className)}
+      className={cn('border-status-information/40 bg-status-information/10', className)}
       role="status"
       aria-live="polite"
     >
-      <Clock className="h-4 w-4 text-blue-500" />
-      <AlertTitle className="text-blue-800">
+      <Clock className="h-4 w-4 text-status-information" />
+      <AlertTitle className="text-status-information">
         {isWeek ? 'Неделя ещё не завершена' : 'Месяц ещё не завершён'}
       </AlertTitle>
-      <AlertDescription className="text-blue-700">
+      <AlertDescription className="text-status-information">
         {isWeek ? (
           <>
             Некоторые метрики (выкупы, логистика, хранение, теор. прибыль) будут доступны после

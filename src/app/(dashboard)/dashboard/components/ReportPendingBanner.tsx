@@ -31,13 +31,13 @@ export function ReportPendingBanner({
   return (
     <Alert
       variant="default"
-      className="border-amber-200 bg-amber-50"
+      className="border-status-warning/40 bg-status-warning/10"
       role="status"
       aria-live="polite"
     >
-      <Clock className="h-4 w-4 text-amber-600" />
-      <AlertTitle className="text-amber-800">Финансовый отчёт ещё не готов</AlertTitle>
-      <AlertDescription className="text-amber-700">
+      <Clock className="h-4 w-4 text-status-warning" />
+      <AlertTitle className="text-status-warning">Финансовый отчёт ещё не готов</AlertTitle>
+      <AlertDescription className="text-status-warning">
         <p>
           Данные о заказах и рекламе доступны в реальном времени. Финансовые метрики (выкупы,
           логистика, хранение, прибыль) появятся после формирования недельного отчёта{' '}
@@ -47,7 +47,7 @@ export function ReportPendingBanner({
           <Button
             variant="outline"
             size="sm"
-            className="mt-2 border-amber-300 text-amber-800 hover:bg-amber-100"
+            className="mt-2 border-status-warning/40 text-status-warning hover:bg-status-warning/10"
             onClick={() => setWeek(latestAvailableWeek)}
           >
             Показать последнюю доступную неделю ({latestAvailableWeek})

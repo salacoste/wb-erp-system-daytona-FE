@@ -250,8 +250,8 @@ describe('OrdersStatusBreakdown - View Toggle', () => {
   it('should highlight active view button', () => {
     renderComponent()
     const radios = screen.getAllByRole('radio')
-    expect(radios[0].className).toContain('bg-[#E53935]')
-    expect(radios[1].className).toContain('bg-white')
+    expect(radios[0].className).toContain('bg-primary')
+    expect(radios[1].className).toContain('bg-card')
   })
   it('should preserve data when switching views', async () => {
     const user = userEvent.setup()

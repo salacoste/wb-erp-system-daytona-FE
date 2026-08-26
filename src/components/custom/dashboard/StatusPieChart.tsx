@@ -71,8 +71,8 @@ export function StatusPieChart({ data, total, height = 200, onSegmentClick }: St
       </ResponsiveContainer>
       {/* Center total */}
       <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
-        <span className="text-xl font-bold text-gray-900">{total.toLocaleString('ru-RU')}</span>
-        <span className="text-xs text-gray-500">заказов</span>
+        <span className="text-xl font-bold text-foreground">{total.toLocaleString('ru-RU')}</span>
+        <span className="text-xs text-muted-foreground">заказов</span>
       </div>
     </div>
   )

@@ -40,9 +40,9 @@ export interface NetProfitCardProps {
 
 /** Margin color thresholds */
 function marginColorClass(margin: number): string {
-  if (margin > 10) return 'text-green-600'
-  if (margin >= 0) return 'text-yellow-600'
-  return 'text-red-600'
+  if (margin > 10) return 'text-status-success'
+  if (margin >= 0) return 'text-status-warning'
+  return 'text-status-error'
 }
 
 export function NetProfitCard({
@@ -86,16 +86,16 @@ export function NetProfitCard({
   // Style by sign
   const isPositive = result != null && result.value >= 0
   const borderColor = !result
-    ? 'border-gray-300'
+    ? 'border-border'
     : isPositive
-      ? 'border-green-500'
-      : 'border-red-500'
+      ? 'border-status-success'
+      : 'border-status-error'
   const bgGradient = !result
-    ? 'bg-gradient-to-br from-gray-50 to-white'
+    ? 'bg-gradient-to-br from-muted to-card'
     : isPositive
-      ? 'bg-gradient-to-br from-green-50 to-white'
-      : 'bg-gradient-to-br from-red-50 to-white'
-  const valueColor = isPositive ? 'text-green-600' : 'text-red-600'
+      ? 'bg-gradient-to-br from-status-success/10 to-card'
+      : 'bg-gradient-to-br from-status-error/10 to-card'
+  const valueColor = isPositive ? 'text-status-success' : 'text-status-error'
 
   // Title with optional pre-tax suffix
   const title = result
@@ -120,7 +120,7 @@ export function NetProfitCard({
       <CardContent className="p-3">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <Banknote className="h-4 w-4 text-gray-500" aria-hidden="true" />
+            <Banknote className="h-4 w-4 text-muted-foreground" aria-hidden="true" />
             <span className="text-sm font-medium text-muted-foreground">{title}</span>
           </div>
           <Tooltip>
@@ -155,7 +155,7 @@ export function NetProfitCard({
               <TooltipTrigger asChild>
                 <button
                   type="button"
-                  className="text-yellow-600 hover:text-yellow-700"
+                  className="text-status-warning hover:text-status-warning/80"
                   aria-label="Значение чистой прибыли противоречит операционной прибыли"
                 >
                   <AlertTriangle className="h-4 w-4" />

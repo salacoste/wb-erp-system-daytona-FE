@@ -86,7 +86,7 @@ export function FulfillmentMetricCard({
     >
       <div className="flex items-center justify-between mb-2">
         <div className="flex items-center gap-2">
-          <Package className="h-5 w-5 text-blue-500" />
+          <Package className="h-5 w-5 text-status-information" />
           <span className="font-medium text-sm">Заказы FBO/FBS</span>
         </div>
         <Tooltip>
@@ -110,10 +110,10 @@ export function FulfillmentMetricCard({
             className={cn(
               'text-xs px-1.5 py-0.5 rounded',
               pctChange > 0.5
-                ? 'bg-green-100 text-green-700'
+                ? 'bg-status-success/10 text-status-success'
                 : pctChange < -0.5
-                  ? 'bg-red-100 text-red-700'
-                  : 'bg-gray-100 text-gray-600'
+                  ? 'bg-status-error/10 text-status-error'
+                  : 'bg-muted text-muted-foreground'
             )}
           >
             {pctChange > 0 ? '+' : ''}
@@ -132,13 +132,13 @@ export function FulfillmentMetricCard({
         <div
           data-testid="fbo-bar"
           data-type="fbo"
-          className="bg-blue-500 h-full"
+          className="bg-chart-1 h-full"
           style={{ width: `${fboShare}%` }}
         />
         <div
           data-testid="fbs-bar"
           data-type="fbs"
-          className="bg-purple-500 h-full"
+          className="bg-chart-2 h-full"
           style={{ width: `${fbsShare}%` }}
         />
       </div>

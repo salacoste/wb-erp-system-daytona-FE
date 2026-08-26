@@ -94,7 +94,7 @@ describe('PenaltiesCard', () => {
 
       // Growth in penalties is bad — should show negative direction
       const indicator = screen.getByTestId('trend-indicator')
-      expect(indicator).toHaveClass('text-red-500')
+      expect(indicator).toHaveClass('text-status-error')
     })
 
     it('uses inverted comparison: decrease in penalties = positive (green)', () => {
@@ -104,7 +104,7 @@ describe('PenaltiesCard', () => {
 
       // Decrease in penalties is good — should show positive direction
       const indicator = screen.getByTestId('trend-indicator')
-      expect(indicator).toHaveClass('text-green-500')
+      expect(indicator).toHaveClass('text-status-success')
     })
   })
 
@@ -195,7 +195,7 @@ describe('CompensationsCard', () => {
 
       // Growth in compensations is good — should show positive direction
       const indicator = screen.getByTestId('trend-indicator')
-      expect(indicator).toHaveClass('text-green-500')
+      expect(indicator).toHaveClass('text-status-success')
     })
 
     it('uses direct comparison: decrease in compensations = negative (red)', () => {
@@ -205,7 +205,7 @@ describe('CompensationsCard', () => {
 
       // Decrease in compensations is bad — should show negative direction
       const indicator = screen.getByTestId('trend-indicator')
-      expect(indicator).toHaveClass('text-red-500')
+      expect(indicator).toHaveClass('text-status-error')
     })
   })
 

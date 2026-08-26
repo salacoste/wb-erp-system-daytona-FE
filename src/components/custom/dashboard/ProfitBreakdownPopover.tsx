@@ -34,11 +34,11 @@ export function ProfitBreakdownPopover({
   taxMetrics,
 }: ProfitBreakdownPopoverProps): React.ReactElement {
   const rows: BreakdownRow[] = [
-    { label: 'Выкупы', value: breakdown.sales, sign: '+', color: 'text-blue-500' },
-    { label: 'COGS', value: breakdown.cogs, sign: '-', color: 'text-gray-500' },
-    { label: 'Реклама', value: breakdown.advertising, sign: '-', color: 'text-yellow-600' },
-    { label: 'Логистика', value: breakdown.logistics, sign: '-', color: 'text-red-500' },
-    { label: 'Хранение', value: breakdown.storage, sign: '-', color: 'text-purple-500' },
+    { label: 'Выкупы', value: breakdown.sales, sign: '+', color: 'text-status-information' },
+    { label: 'COGS', value: breakdown.cogs, sign: '-', color: 'text-muted-foreground' },
+    { label: 'Реклама', value: breakdown.advertising, sign: '-', color: 'text-status-warning' },
+    { label: 'Логистика', value: breakdown.logistics, sign: '-', color: 'text-status-error' },
+    { label: 'Хранение', value: breakdown.storage, sign: '-', color: 'text-chart-2' },
   ]
 
   // Epic 66-FE: Add tax/VAT rows when data available
@@ -49,7 +49,7 @@ export function ProfitBreakdownPopover({
         label: 'Налог на доход',
         value: taxMetrics.tax_amount,
         sign: '-',
-        color: 'text-orange-500',
+        color: 'text-status-warning',
       })
     }
     if (taxMetrics.vat_payer && taxMetrics.vat_payable != null && taxMetrics.vat_payable !== 0) {
@@ -57,7 +57,7 @@ export function ProfitBreakdownPopover({
         label: 'НДС к уплате',
         value: taxMetrics.vat_payable,
         sign: '-',
-        color: 'text-orange-400',
+        color: 'text-status-warning/80',
       })
     }
   }
@@ -92,7 +92,7 @@ export function ProfitBreakdownPopover({
         <div className="border-t pt-2">
           <div className="flex justify-between text-sm font-bold">
             <span>{label}</span>
-            <span className={cn(isPositive ? 'text-green-500' : 'text-red-500')}>
+            <span className={cn(isPositive ? 'text-status-success' : 'text-status-error')}>
               = {formatCurrency(finalProfit)}
             </span>
           </div>

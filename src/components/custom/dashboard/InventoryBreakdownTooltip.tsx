@@ -57,8 +57,8 @@ export function BreakdownTooltip({
           role="tooltip"
           className="absolute bottom-full left-1/2 z-50 mb-2 -translate-x-1/2"
           style={{
-            backgroundColor: '#1e293b',
-            color: '#f1f5f9',
+            backgroundColor: 'var(--color-chart-tooltip)',
+            color: 'var(--color-chart-tooltip-foreground)',
             padding: '8px 12px',
             borderRadius: '6px',
             minWidth: '220px',
@@ -69,8 +69,8 @@ export function BreakdownTooltip({
           <div className="flex flex-col gap-1">
             {rows.map(r => (
               <div key={r.label} className="flex items-center justify-between gap-4">
-                <span className="text-xs text-slate-300">{r.label}</span>
-                <span className="text-xs font-medium text-slate-100">
+                <span className="text-xs text-chart-tooltip-foreground/70">{r.label}</span>
+                <span className="text-xs font-medium text-chart-tooltip-foreground">
                   {new Intl.NumberFormat('ru-RU').format(r.value)} шт
                 </span>
               </div>

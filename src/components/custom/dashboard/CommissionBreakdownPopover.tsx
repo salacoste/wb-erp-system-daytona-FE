@@ -81,19 +81,19 @@ export function CommissionBreakdownPopover(
     {
       label: DASHBOARD_WB_DEDUCTIONS_COPY.correctionLabel,
       value: wbCommissionAdj ?? 0,
-      colorClass: 'text-red-600 bg-red-50',
+      colorClass: 'text-status-error bg-status-error/10',
       testId: 'row-correction',
     },
     {
       label: DASHBOARD_WB_DEDUCTIONS_COPY.nominalCommissionLabel,
       value: commissionSales ?? 0,
-      colorClass: 'text-red-600 bg-red-50',
+      colorClass: 'text-status-error bg-status-error/10',
       testId: 'row-commission',
     },
     {
       label: DASHBOARD_WB_DEDUCTIONS_COPY.acquiringLabel,
       value: acquiringFee ?? 0,
-      colorClass: 'text-red-600 bg-red-50',
+      colorClass: 'text-status-error bg-status-error/10',
       testId: 'row-acquiring',
     },
   ]
@@ -102,7 +102,7 @@ export function CommissionBreakdownPopover(
     rows.push({
       label: DASHBOARD_WB_DEDUCTIONS_COPY.loyaltyPenaltiesLabel,
       value: prochie,
-      colorClass: 'text-red-600 bg-red-50',
+      colorClass: 'text-status-error bg-status-error/10',
       testId: 'row-other',
     })
   }
@@ -139,7 +139,7 @@ export function CommissionBreakdownPopover(
         </div>
         <div className="mt-1 flex items-center justify-between border-t pt-2 text-sm font-semibold">
           <span>Итого</span>
-          <span className="text-red-600">
+          <span className="text-status-error">
             {netTotal != null ? formatCurrency(Math.abs(netTotal)) : '—'}
           </span>
         </div>

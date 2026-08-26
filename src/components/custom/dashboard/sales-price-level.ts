@@ -26,7 +26,7 @@ export interface SalesPriceLevelRow {
   current: number | undefined
   /** Previous-period raw value for comparison (null/undefined → no comparison badge). */
   previous: number | null | undefined
-  /** Tailwind text color for the value (blue = order price level, green = revenue). */
+  /** Tailwind text color for the value (information = order price level, success = revenue). */
   valueColor: string
 }
 
@@ -44,7 +44,7 @@ export function buildSalesPriceLevelRows(p: DashboardMetricsGridProps): SalesPri
       clarifier: 'полная цена каталога',
       current: p.ordersRevenue,
       previous: prev?.ordersAmount,
-      valueColor: 'text-blue-600',
+      valueColor: 'text-status-information',
     },
     {
       id: 'orders-discounted',
@@ -52,7 +52,7 @@ export function buildSalesPriceLevelRows(p: DashboardMetricsGridProps): SalesPri
       clarifier: 'после скидки продавца',
       current: p.ordersRevenueDiscounted,
       previous: undefined,
-      valueColor: 'text-blue-600',
+      valueColor: 'text-status-information',
     },
     {
       id: 'buyouts',
@@ -60,7 +60,7 @@ export function buildSalesPriceLevelRows(p: DashboardMetricsGridProps): SalesPri
       clarifier: 'выручка после комиссии WB',
       current: p.wbSalesGross,
       previous: prev?.salesAmount,
-      valueColor: 'text-green-600',
+      valueColor: 'text-status-success',
     },
     {
       id: 'retail-sales',
@@ -68,7 +68,7 @@ export function buildSalesPriceLevelRows(p: DashboardMetricsGridProps): SalesPri
       clarifier: 'до комиссии WB',
       current: p.saleGross,
       previous: prev?.saleGross,
-      valueColor: 'text-green-600',
+      valueColor: 'text-status-success',
     },
   ]
 }

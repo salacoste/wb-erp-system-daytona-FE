@@ -20,10 +20,10 @@ import { cn, formatCurrency } from '@/lib/utils'
 import { calculateComparison, type TrendDirection } from '@/lib/comparison-helpers'
 import { StandardMetricSkeleton } from './MetricCardStates'
 
-/** Color mapping for trend indicators -- text-green-500 for positive, text-red-500 for negative */
+/** Color mapping for trend indicators -- status-success for positive, status-error for negative */
 const TREND_COLORS: Record<TrendDirection, string> = {
-  positive: 'text-green-500',
-  negative: 'text-red-500',
+  positive: 'text-status-success',
+  negative: 'text-status-error',
   neutral: 'text-muted-foreground',
 }
 
@@ -67,7 +67,7 @@ export function GmvCard({
       <CardContent className="p-3">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <ShoppingCart className="h-4 w-4 text-blue-500" aria-hidden="true" />
+            <ShoppingCart className="h-4 w-4 text-status-information" aria-hidden="true" />
             <span className="text-sm font-medium text-muted-foreground">Реализация</span>
           </div>
           <GmvTooltip />
@@ -94,7 +94,7 @@ export function GmvCard({
   )
 }
 
-/** Inline trend icon with text-green-500 / text-red-500 coloring */
+/** Inline trend icon with status-success / status-error coloring */
 function InlineTrend({ direction }: { direction: TrendDirection }) {
   const Icon = TREND_ICONS[direction]
   return (
@@ -141,8 +141,8 @@ function GmvTooltip() {
           role="tooltip"
           className="absolute bottom-full left-1/2 z-50 mb-2 -translate-x-1/2"
           style={{
-            backgroundColor: '#1e293b',
-            color: '#f1f5f9',
+            backgroundColor: 'var(--color-chart-tooltip)',
+            color: 'var(--color-chart-tooltip-foreground)',
             padding: '8px 12px',
             borderRadius: '6px',
             minWidth: '200px',
@@ -150,7 +150,9 @@ function GmvTooltip() {
           onMouseEnter={show}
           onMouseLeave={hide}
         >
-          <p className="text-xs text-slate-100">Полный объём реализации до вычета возвратов</p>
+          <p className="text-xs text-chart-tooltip-foreground">
+            Полный объём реализации до вычета возвратов
+          </p>
         </div>
       )}
     </div>

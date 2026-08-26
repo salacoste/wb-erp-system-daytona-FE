@@ -73,7 +73,7 @@ export function WbCommissionsCard({
         title={DASHBOARD_WB_DEDUCTIONS_COPY.commissionTitle}
         tooltip={WB_COMMISSION_CARD_TOOLTIP}
         icon={Receipt}
-        valueColor="text-red-500"
+        valueColor="text-status-error"
         value={total}
         previousValue={previousTotal}
         revenueTotal={saleGross}

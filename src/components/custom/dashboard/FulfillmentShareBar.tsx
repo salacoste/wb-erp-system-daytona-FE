@@ -2,7 +2,7 @@
  * Fulfillment Share Bar Component - Epic 60: FBO/FBS Order Analytics
  * Visual bar showing FBO vs FBS distribution.
  *
- * Colors: FBO = purple (#7C4DFF), FBS = blue (#3B82F6)
+ * Series colors pair with FulfillmentMetricCard: FBO = chart-1, FBS = chart-2.
  *
  * @see docs/request-backend/130-DASHBOARD-FBO-ORDERS-API.md
  */
@@ -25,25 +25,25 @@ export interface FulfillmentShareBarProps {
 export function FulfillmentShareBar({ fboShare, fbsShare }: FulfillmentShareBarProps) {
   return (
     <div className="mt-4 space-y-2" role="img" aria-label={`FBO: ${fboShare}%, FBS: ${fbsShare}%`}>
-      <div className="flex h-3 w-full overflow-hidden rounded-full bg-gray-100">
+      <div className="flex h-3 w-full overflow-hidden rounded-full bg-muted">
         <div
-          className="bg-purple-500 transition-all duration-300"
+          className="bg-chart-1 transition-all duration-300"
           style={{ width: `${fboShare}%` }}
           aria-hidden="true"
         />
         <div
-          className="bg-blue-500 transition-all duration-300"
+          className="bg-chart-2 transition-all duration-300"
           style={{ width: `${fbsShare}%` }}
           aria-hidden="true"
         />
       </div>
       <div className="flex justify-between text-xs">
         <span className="flex items-center gap-1">
-          <span className="inline-block h-2 w-2 rounded-full bg-purple-500" aria-hidden="true" />
+          <span className="inline-block h-2 w-2 rounded-full bg-chart-1" aria-hidden="true" />
           <span className="text-muted-foreground">FBO: {formatNumber(fboShare)}%</span>
         </span>
         <span className="flex items-center gap-1">
-          <span className="inline-block h-2 w-2 rounded-full bg-blue-500" aria-hidden="true" />
+          <span className="inline-block h-2 w-2 rounded-full bg-chart-2" aria-hidden="true" />
           <span className="text-muted-foreground">FBS: {formatNumber(fbsShare)}%</span>
         </span>
       </div>

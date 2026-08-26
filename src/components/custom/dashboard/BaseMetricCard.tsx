@@ -100,7 +100,7 @@ export function BaseMetricCard(props: BaseMetricCardProps): React.ReactElement {
   const cardClasses = clsx(
     'rounded-xl border bg-card text-card-foreground shadow',
     'transition-shadow transition-colors hover:shadow-md',
-    isHighlighted && 'border-2 bg-gradient-to-br from-green-50 to-white',
+    isHighlighted && 'border-2 bg-gradient-to-br from-status-success/10 to-card',
     sentimentClasses,
     className
   )

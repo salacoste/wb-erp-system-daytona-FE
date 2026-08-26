@@ -269,19 +269,19 @@ describe('SalesMetricCard', () => {
   // =============================================================================
 
   describe('color coding', () => {
-    it('displays main value in green color (#22C55E)', () => {
+    it('displays main value in success color', () => {
       renderWithProviders(<SalesMetricCard {...defaultProps} />)
 
       // Main value should be styled green (revenue = green per design spec)
       const mainValue = screen.getByText(/131.*134/i).closest('span')
-      expect(mainValue).toHaveClass(/green|text-green/)
+      expect(mainValue).toHaveClass(/status-success/)
     })
 
     it('uses green for icon', () => {
       renderWithProviders(<SalesMetricCard {...defaultProps} />)
 
-      // Shopping bag icon should be green
-      const icon = document.querySelector('svg[class*="green"]')
+      // Shopping bag icon uses the success tone
+      const icon = document.querySelector('svg[class*="status-success"]')
       expect(icon).toBeInTheDocument()
     })
   })

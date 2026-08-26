@@ -49,8 +49,8 @@ export function TurnoverTooltip({ type }: { type: 'sales' | 'orders' }) {
           role="tooltip"
           className="absolute bottom-full left-1/2 z-50 mb-2 -translate-x-1/2"
           style={{
-            backgroundColor: '#1e293b',
-            color: '#f1f5f9',
+            backgroundColor: 'var(--color-chart-tooltip)',
+            color: 'var(--color-chart-tooltip-foreground)',
             padding: '8px 12px',
             borderRadius: '6px',
             minWidth: '220px',
@@ -59,7 +59,7 @@ export function TurnoverTooltip({ type }: { type: 'sales' | 'orders' }) {
           onMouseEnter={show}
           onMouseLeave={hide}
         >
-          <p className="text-xs text-slate-100">{LABELS[type]}</p>
+          <p className="text-xs text-chart-tooltip-foreground">{LABELS[type]}</p>
         </div>
       )}
     </div>

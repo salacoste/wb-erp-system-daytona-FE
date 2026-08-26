@@ -51,7 +51,7 @@ export function StorageTrendsWidget({
     <Card className={cn('', className)}>
       <CardHeader className="flex flex-row items-center justify-between pb-2">
         <CardTitle className="flex items-center gap-2 text-base font-medium">
-          <TrendingUp className="h-5 w-5 text-[#7C4DFF]" />
+          <TrendingUp className="h-5 w-5 text-chart-2" />
           Динамика расходов на хранение
         </CardTitle>
         {summary && <TrendBadge trend={summary.trend} invertColors />}
@@ -111,7 +111,7 @@ function ChartErrorState({
       className="flex flex-col items-center justify-center text-center border rounded-lg"
       style={{ height }}
     >
-      <AlertCircle className="h-10 w-10 text-red-500 mb-2" />
+      <AlertCircle className="h-10 w-10 text-status-error mb-2" />
       <p className="text-sm text-muted-foreground mb-3">
         {error?.message || 'Ошибка загрузки данных'}
       </p>

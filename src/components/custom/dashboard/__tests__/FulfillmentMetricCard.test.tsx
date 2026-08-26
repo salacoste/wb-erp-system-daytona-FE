@@ -91,7 +91,7 @@ describe('FulfillmentMetricCard', () => {
     it('shows positive badge when orders increased', () => {
       renderWithProviders(<FulfillmentMetricCard {...propsWithComparison} />)
       const badge = screen.getByTestId('comparison-badge')
-      expect(badge).toHaveClass(/green|positive/i)
+      expect(badge).toHaveClass(/status-success/)
       expect(badge.textContent).toMatch(/\+/)
     })
 
@@ -106,7 +106,7 @@ describe('FulfillmentMetricCard', () => {
         />
       )
       const badge = screen.getByTestId('comparison-badge')
-      expect(badge).toHaveClass(/red|negative/i)
+      expect(badge).toHaveClass(/status-error/)
       expect(badge.textContent).toMatch(/-/)
     })
 
@@ -180,12 +180,12 @@ describe('FulfillmentMetricCard', () => {
       expect(screen.getByRole('article')).toHaveClass('min-h-[100px]')
     })
 
-    it('FBO bar uses blue color and FBS bar uses purple color', () => {
+    it('FBO bar uses chart-1 and FBS bar uses chart-2 series colors', () => {
       renderWithProviders(<FulfillmentMetricCard {...defaultProps} />)
       const fboBar = screen.getByTestId('fbo-bar')
       const fbsBar = screen.getByTestId('fbs-bar')
-      expect(fboBar?.className || '').toMatch(/blue/)
-      expect(fbsBar?.className || '').toMatch(/purple|violet/)
+      expect(fboBar?.className || '').toMatch(/chart-1/)
+      expect(fbsBar?.className || '').toMatch(/chart-2/)
     })
   })
 })

@@ -101,7 +101,7 @@ export function AdvertisingCard({
       <CardContent className="p-3">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <Megaphone className="h-4 w-4 text-yellow-600" aria-hidden="true" />
+            <Megaphone className="h-4 w-4 text-status-warning" aria-hidden="true" />
             <span className="text-sm font-medium text-muted-foreground">{cardLabel}</span>
           </div>
           <Tooltip>
@@ -121,7 +121,7 @@ export function AdvertisingCard({
           </Tooltip>
         </div>
         <div className="mt-1">
-          <span className="text-xl font-bold text-yellow-600">{displayValue}</span>
+          <span className="text-xl font-bold text-status-warning">{displayValue}</span>
         </div>
         {comparison && (
           <div className="mt-1 flex items-center gap-1.5">
@@ -155,12 +155,12 @@ export function AdvertisingCard({
             </span>
           )}
           {roas != null && drr != null && (
-            <span className="text-xs text-gray-300" aria-hidden="true">
+            <span className="text-xs text-muted-foreground" aria-hidden="true">
               ·
             </span>
           )}
           {drr != null && (
-            <span className="text-xs text-gray-400 flex items-center gap-0.5">
+            <span className="text-xs text-muted-foreground flex items-center gap-0.5">
               ДРР: {formatPercentage(drr)}
               {showDrrz && drrz != null && ` · ДРРз: ${formatPercentage(drrz)}`}
               <Tooltip>

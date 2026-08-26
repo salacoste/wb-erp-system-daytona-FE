@@ -40,7 +40,7 @@ export function SalesByPriceLevelCard(props: DashboardMetricsGridProps): React.R
       <CardContent className="p-3">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <TrendingUp className="h-4 w-4 text-green-500" aria-hidden="true" />
+            <TrendingUp className="h-4 w-4 text-status-success" aria-hidden="true" />
             <span className="text-sm font-medium text-muted-foreground">
               Продажи по ценовым уровням
             </span>

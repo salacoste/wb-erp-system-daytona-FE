@@ -82,7 +82,7 @@ export function OrdersMetricCard({
       <Card className={cn('min-h-[100px]', className)} role="article" aria-label="Нет заказов FBS">
         <CardContent className="p-3">
           <div className="flex items-center gap-2 mb-2">
-            <ShoppingCart className="h-4 w-4 text-blue-500" aria-hidden="true" />
+            <ShoppingCart className="h-4 w-4 text-status-information" aria-hidden="true" />
             <span className="text-sm font-medium text-muted-foreground">Заказы</span>
           </div>
           <EmptyStateFBS
@@ -107,7 +107,7 @@ export function OrdersMetricCard({
     <Card
       className={cn(
         'min-h-[100px] transition-all hover:shadow-md hover:scale-[1.01]',
-        'border border-[#EEEEEE] rounded-lg',
+        'border border-border rounded-lg',
         'focus-within:ring-2 focus-within:ring-primary focus-within:ring-offset-2',
         className
       )}
@@ -118,7 +118,7 @@ export function OrdersMetricCard({
       <CardContent className="p-3">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <ShoppingCart className="h-4 w-4 text-blue-500" aria-hidden="true" />
+            <ShoppingCart className="h-4 w-4 text-status-information" aria-hidden="true" />
             <span className="text-sm font-medium text-muted-foreground">Заказы</span>
           </div>
           <Tooltip>
@@ -136,7 +136,9 @@ export function OrdersMetricCard({
           </Tooltip>
         </div>
         <div className="mt-1">
-          <span className="text-[32px] font-bold leading-tight text-blue-500">{displayValue}</span>
+          <span className="text-[32px] font-bold leading-tight text-status-information">
+            {displayValue}
+          </span>
         </div>
         {comparison && (
           <div className="mt-1 flex items-center gap-1.5">
@@ -152,7 +154,7 @@ export function OrdersMetricCard({
           </div>
         )}
         <div className="mt-1">
-          <span className="text-xs text-gray-400">
+          <span className="text-xs text-muted-foreground">
             {totalOrders != null ? pluralizeOrders(totalOrders) : ''}
           </span>
         </div>

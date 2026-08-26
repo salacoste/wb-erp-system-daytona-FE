@@ -38,7 +38,7 @@ export function EmptyState() {
 export function ErrorState({ error, onRetry }: { error: Error | null; onRetry: () => void }) {
   return (
     <div className="flex flex-col items-center justify-center py-8 text-center">
-      <AlertCircle className="h-10 w-10 text-red-500 mb-2" />
+      <AlertCircle className="h-10 w-10 text-status-error mb-2" />
       <p className="text-sm text-muted-foreground mb-3">
         {error?.message || 'Ошибка загрузки данных'}
       </p>

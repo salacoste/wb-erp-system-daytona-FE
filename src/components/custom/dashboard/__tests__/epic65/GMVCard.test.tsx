@@ -68,7 +68,7 @@ describe('GmvCard', () => {
 
       // GMV growth is good — positive direction
       const indicator = screen.getByTestId('trend-indicator')
-      expect(indicator).toHaveClass('text-green-500')
+      expect(indicator).toHaveClass('text-status-success')
     })
 
     it('shows negative direction for GMV decline (red)', () => {
@@ -76,7 +76,7 @@ describe('GmvCard', () => {
 
       // GMV decline is bad — negative direction
       const indicator = screen.getByTestId('trend-indicator')
-      expect(indicator).toHaveClass('text-red-500')
+      expect(indicator).toHaveClass('text-status-error')
     })
 
     it('hides comparison when previousValue is null', () => {

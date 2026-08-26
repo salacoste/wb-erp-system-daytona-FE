@@ -4,9 +4,9 @@
  * Epic 63: Dashboard Main Page (Frontend)
  *
  * Displays storage-to-revenue ratio with color-coded severity indicators.
- * - >20%: Red (high risk) + warning icon
- * - 10-20%: Yellow (medium)
- * - <10%: Green (healthy)
+ * - >20%: error tone (high risk) + warning icon
+ * - 10-20%: warning tone (medium)
+ * - <10%: success tone (healthy)
  *
  * @see docs/stories/epic-63/story-63.5-fe-storage-top-consumers.md
  */
@@ -38,10 +38,10 @@ export function getStorageRatioSeverity(ratio: number | null | undefined): Ratio
 }
 
 const SEVERITY_COLORS: Record<RatioSeverity, string> = {
-  high: 'bg-red-500',
-  medium: 'bg-yellow-500',
-  low: 'bg-green-500',
-  unknown: 'bg-gray-300',
+  high: 'bg-status-error',
+  medium: 'bg-status-warning',
+  low: 'bg-status-success',
+  unknown: 'bg-muted',
 }
 
 const SEVERITY_LABELS: Record<RatioSeverity, string> = {
@@ -61,12 +61,12 @@ export function StorageRatioIndicator({ ratio, showWarning = true }: StorageRati
         <TooltipTrigger asChild>
           <div className="flex items-center gap-1 cursor-help">
             {hasData && (
-              <span className={cn('text-sm', severity === 'high' && 'text-red-600 font-medium')}>
+              <span className={cn('text-sm', severity === 'high' && 'text-status-error font-medium')}>
                 {formatPercentage(ratio, 1)}
               </span>
             )}
             {showWarning && severity === 'high' && (
-              <AlertTriangle className="h-3 w-3 text-red-500" aria-label="Требуется оптимизация" />
+              <AlertTriangle className="h-3 w-3 text-status-error" aria-label="Требуется оптимизация" />
             )}
             <span
               className={cn('w-2 h-2 rounded-full flex-shrink-0', SEVERITY_COLORS[severity])}

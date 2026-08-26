@@ -99,13 +99,13 @@ describe('buildSalesPriceLevelRows (TZ-3)', () => {
     expect(byId['retail-sales']).toBe(45000) // prev.saleGross
   })
 
-  it('groups value colors: blue for order-price levels, green for revenue', () => {
+  it('groups value colors: information tone for order-price levels, success tone for revenue', () => {
     const rows = buildSalesPriceLevelRows(createProps())
     const byId = Object.fromEntries(rows.map(r => [r.id, r.valueColor]))
-    expect(byId['orders-rrc']).toBe('text-blue-600')
-    expect(byId['orders-discounted']).toBe('text-blue-600')
-    expect(byId.buyouts).toBe('text-green-600')
-    expect(byId['retail-sales']).toBe('text-green-600')
+    expect(byId['orders-rrc']).toBe('text-status-information')
+    expect(byId['orders-discounted']).toBe('text-status-information')
+    expect(byId.buyouts).toBe('text-status-success')
+    expect(byId['retail-sales']).toBe('text-status-success')
   })
 
   it('each row carries a non-empty clarifier', () => {

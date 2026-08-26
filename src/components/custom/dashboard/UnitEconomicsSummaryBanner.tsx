@@ -90,7 +90,7 @@ export function UnitEconomicsSummaryBanner({
             <>
               <div className="h-4 w-px bg-border" />
               <div className="text-sm">
-                <span className="text-red-600 font-medium">
+                <span className="text-status-error font-medium">
                   {needsAttention} товаров требуют внимания
                 </span>
               </div>

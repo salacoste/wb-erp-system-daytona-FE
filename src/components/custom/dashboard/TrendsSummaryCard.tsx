@@ -79,11 +79,15 @@ export function TrendsSummaryCard({
   const TrendIcon = direction === 'up' ? TrendingUp : direction === 'down' ? TrendingDown : Minus
 
   const trendColor =
-    direction === 'up' ? 'text-green-600' : direction === 'down' ? 'text-red-600' : 'text-gray-500'
+    direction === 'up'
+      ? 'text-status-success'
+      : direction === 'down'
+        ? 'text-status-error'
+        : 'text-muted-foreground'
 
   return (
     <div
-      className={cn('rounded-md border bg-white p-3', className)}
+      className={cn('rounded-md border bg-card p-3', className)}
       style={{ borderLeftColor: color, borderLeftWidth: '3px' }}
     >
       {/* Title */}

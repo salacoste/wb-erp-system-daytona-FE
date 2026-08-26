@@ -30,7 +30,7 @@ export function NotImplementedState({ baseClass }: StateBaseProps) {
         <Package className="h-5 w-5" />
         <span className="font-medium">Заказы FBO/FBS</span>
       </div>
-      <p className="text-sm text-amber-600 font-medium">Скоро</p>
+      <p className="text-sm text-status-warning font-medium">Скоро</p>
       <p className="text-xs text-muted-foreground mt-1">Функция в разработке</p>
     </article>
   )

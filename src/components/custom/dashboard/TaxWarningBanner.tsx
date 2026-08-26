@@ -35,24 +35,24 @@ export function TaxWarningBanner({
   return (
     <div
       role="alert"
-      className="flex items-center justify-between rounded-lg border border-yellow-300 bg-yellow-50 px-4 py-3"
+      className="flex items-center justify-between rounded-lg border border-status-warning/40 bg-status-warning/10 px-4 py-3"
     >
       <div className="flex items-center gap-3">
-        <AlertTriangle className="h-5 w-5 shrink-0 text-yellow-600" aria-hidden="true" />
-        <p className="text-sm text-yellow-800">
+        <AlertTriangle className="h-5 w-5 shrink-0 text-status-warning" aria-hidden="true" />
+        <p className="text-sm text-status-warning">
           Налоговая система не настроена. Прибыль отображается до вычета налогов.
         </p>
       </div>
       <div className="flex items-center gap-2">
         <Link
           href={ROUTES.SETTINGS.TAX}
-          className="rounded-md bg-yellow-600 px-3 py-1 text-sm font-medium text-white hover:bg-yellow-700"
+          className="rounded-md bg-status-warning px-3 py-1 text-sm font-medium text-white hover:bg-status-warning/90"
         >
           Настроить
         </Link>
         <button
           onClick={handleDismiss}
-          className="text-yellow-600 hover:text-yellow-800"
+          className="text-status-warning hover:text-status-warning/80"
           aria-label="Скрыть предупреждение"
         >
           <X className="h-4 w-4" />
