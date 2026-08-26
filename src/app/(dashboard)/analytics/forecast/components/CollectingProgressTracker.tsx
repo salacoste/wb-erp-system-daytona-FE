@@ -52,7 +52,7 @@ export function CollectingProgressTracker({ status }: Props) {
         <CardContent className="pt-6 space-y-4">
           {/* Header */}
           <div className="flex items-center gap-3">
-            <Brain className="h-6 w-6 text-purple-600 shrink-0" />
+            <Brain className="h-6 w-6 text-muted-foreground shrink-0" />
             <h2 className="text-lg font-semibold">Сбор данных для AI</h2>
           </div>
 
@@ -85,14 +85,14 @@ export function CollectingProgressTracker({ status }: Props) {
 
           {/* Missing requirements */}
           {missingRequirements.length === 0 ? (
-            <div className="flex items-center gap-2 text-sm text-green-600">
+            <div className="flex items-center gap-2 text-sm text-status-success">
               <CheckCircle className="h-4 w-4 shrink-0" />
               <span>Все требования выполнены</span>
             </div>
           ) : (
             <ul className="space-y-1">
               {missingRequirements.map(req => (
-                <li key={req} className="flex items-start gap-2 text-sm text-amber-700">
+                <li key={req} className="flex items-start gap-2 text-sm text-status-warning">
                   <AlertTriangle className="h-4 w-4 shrink-0 mt-0.5" />
                   <span>{req}</span>
                 </li>
@@ -126,15 +126,24 @@ export function CollectingProgressTracker({ status }: Props) {
           {/* F-2 fix: authored actionable items while AI data is accumulating. */}
           <ul className="space-y-3 mb-2">
             <li className="flex items-start gap-2 text-sm">
-              <CheckCircle aria-hidden="true" className="h-4 w-4 shrink-0 mt-0.5 text-green-600" />
+              <CheckCircle
+                aria-hidden="true"
+                className="h-4 w-4 shrink-0 mt-0.5 text-status-success"
+              />
               <span>Загрузите COGS для топ-SKU — увеличьте покрытие до ≥90% для активации AI</span>
             </li>
             <li className="flex items-start gap-2 text-sm">
-              <Bell aria-hidden="true" className="h-4 w-4 shrink-0 mt-0.5 text-blue-500" />
+              <Bell
+                aria-hidden="true"
+                className="h-4 w-4 shrink-0 mt-0.5 text-status-information"
+              />
               <span>Подключите Telegram-уведомления — получайте сводки прогнозов</span>
             </li>
             <li className="flex items-start gap-2 text-sm">
-              <TrendingUp aria-hidden="true" className="h-4 w-4 shrink-0 mt-0.5 text-purple-600" />
+              <TrendingUp
+                aria-hidden="true"
+                className="h-4 w-4 shrink-0 mt-0.5 text-muted-foreground"
+              />
               <span>
                 Перейдите в{' '}
                 <a href="/analytics/unit-economics" className="underline hover:no-underline">

@@ -34,8 +34,12 @@ function TrendIndicator({ trend }: { trend: TrendDirection }) {
   const label = TREND_LABELS[trend]
   return (
     <span className="inline-flex items-center gap-1" aria-label={label}>
-      {trend === 'up' && <TrendingUp className="h-4 w-4 text-green-600" aria-hidden="true" />}
-      {trend === 'down' && <TrendingDown className="h-4 w-4 text-red-600" aria-hidden="true" />}
+      {trend === 'up' && (
+        <TrendingUp className="h-4 w-4 text-financial-positive" aria-hidden="true" />
+      )}
+      {trend === 'down' && (
+        <TrendingDown className="h-4 w-4 text-financial-negative" aria-hidden="true" />
+      )}
       {trend === 'stable' && <Minus className="h-4 w-4 text-muted-foreground" aria-hidden="true" />}
       <span className="text-xs">{label}</span>
     </span>

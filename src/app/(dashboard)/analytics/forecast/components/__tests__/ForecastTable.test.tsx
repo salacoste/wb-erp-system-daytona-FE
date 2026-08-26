@@ -43,11 +43,11 @@ beforeEach(() => {
 // Pure helper — getAiVsNaiveColor
 // ---------------------------------------------------------------------------
 describe('getAiVsNaiveColor', () => {
-  it('returns text-green-600 for "+" prefix', () => {
-    expect(getAiVsNaiveColor('+12.3%')).toBe('text-green-600')
+  it('returns text-financial-positive for "+" prefix', () => {
+    expect(getAiVsNaiveColor('+12.3%')).toBe('text-financial-positive')
   })
-  it('returns text-red-600 for "-" prefix', () => {
-    expect(getAiVsNaiveColor('-5.1%')).toBe('text-red-600')
+  it('returns text-financial-negative for "-" prefix', () => {
+    expect(getAiVsNaiveColor('-5.1%')).toBe('text-financial-negative')
   })
   it('returns text-muted-foreground for null', () => {
     expect(getAiVsNaiveColor(null)).toBe('text-muted-foreground')

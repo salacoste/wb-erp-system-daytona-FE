@@ -23,8 +23,13 @@ export type AiEngineStatusBadgeState =
   | { kind: 'offline' }
 
 function StatusDot({ color }: { color: 'green' | 'amber' | 'red' }) {
+  // Story 171.4: status solid tokens (prop names kept — non-color API marker)
   const colorClass =
-    color === 'green' ? 'bg-green-500' : color === 'amber' ? 'bg-amber-500' : 'bg-red-500'
+    color === 'green'
+      ? 'bg-status-success'
+      : color === 'amber'
+        ? 'bg-status-warning'
+        : 'bg-status-error'
   return <span className={`inline-block h-2 w-2 rounded-full ${colorClass}`} />
 }
 
@@ -35,7 +40,7 @@ export function AiEngineStatusBadgeView({ state }: { state: AiEngineStatusBadgeS
 
   if (state.kind === 'error') {
     return (
-      <span className="flex items-center gap-1 text-xs text-amber-600">
+      <span className="flex items-center gap-1 text-xs text-status-warning">
         <AlertTriangle className="h-3 w-3" />
         Не удалось получить статус движка
       </span>
@@ -48,7 +53,7 @@ export function AiEngineStatusBadgeView({ state }: { state: AiEngineStatusBadgeS
       <TooltipProvider>
         <Tooltip>
           <TooltipTrigger asChild>
-            <span className="flex cursor-default items-center gap-1.5 text-xs text-green-700">
+            <span className="flex cursor-default items-center gap-1.5 text-xs text-status-success">
               <StatusDot color="green" />
               Движок: подключён
             </span>
@@ -64,7 +69,7 @@ export function AiEngineStatusBadgeView({ state }: { state: AiEngineStatusBadgeS
 
   if (state.kind === 'offline-cache') {
     return (
-      <span className="flex items-center gap-1.5 text-xs text-amber-600">
+      <span className="flex items-center gap-1.5 text-xs text-status-warning">
         <StatusDot color="amber" />
         Движок: офлайн (кэш доступен)
       </span>
@@ -73,7 +78,7 @@ export function AiEngineStatusBadgeView({ state }: { state: AiEngineStatusBadgeS
 
   // offline-no-cache
   return (
-    <span className="flex items-center gap-1.5 text-xs text-red-600">
+    <span className="flex items-center gap-1.5 text-xs text-status-error">
       <StatusDot color="red" />
       Движок: офлайн
     </span>

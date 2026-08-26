@@ -25,6 +25,7 @@ import {
   formatBandRange,
   type ForecastChartRow,
 } from './forecast-chart-helpers'
+import { ForecastChartSrTable } from './ForecastChartSrTable'
 
 // Re-export for direct unit testing (pure-function discipline)
 export { getForecastBand } from './forecast-chart-helpers'
@@ -87,64 +88,72 @@ export function ForecastChart({ predictions }: ForecastChartProps) {
         >
           <ResponsiveContainer width="100%" height="100%">
             <ComposedChart data={chartData} margin={{ top: 8, right: 10, bottom: 24, left: 10 }}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#EEEEEE" />
+              <CartesianGrid strokeDasharray="3 3" stroke="var(--color-border)" />
               <XAxis
                 dataKey="dateLabel"
-                tick={{ fontSize: 12, fill: '#757575' }}
-                axisLine={{ stroke: '#EEEEEE' }}
-                tickLine={{ stroke: '#EEEEEE' }}
+                tick={{ fontSize: 12, fill: 'var(--color-chart-axis)' }}
+                axisLine={{ stroke: 'var(--color-border)' }}
+                tickLine={{ stroke: 'var(--color-border)' }}
               />
               <YAxis
                 domain={['auto', 'auto']}
                 tickFormatter={(v: number) => Math.round(v).toString()}
-                tick={{ fontSize: 12, fill: '#757575' }}
-                axisLine={{ stroke: '#EEEEEE' }}
+                tick={{ fontSize: 12, fill: 'var(--color-chart-axis)' }}
+                axisLine={{ stroke: 'var(--color-border)' }}
                 tickLine={false}
                 width={50}
               />
               <Tooltip content={<ForecastChartTooltip />} />
-              {/* Layer 1 (bottom): confidence band — brand red at low opacity */}
+              {/* Layer 1 (bottom): confidence band — status-error token at low opacity
+                  (recharts composes var() fill with the separate fillOpacity prop). */}
               <Area
                 type="monotone"
                 dataKey="bandUpper"
                 stroke="none"
-                fill="#E53935"
+                fill="var(--color-status-error)"
                 fillOpacity={0.15}
                 legendType="none"
               />
+              {/* Band cutout — background token (Story 171.4 dark-FIX): the previous
+                  #ffffff literal was LIGHT-ONLY and rendered a white slab in dark mode. */}
               <Area
                 type="monotone"
                 dataKey="bandLower"
                 stroke="none"
-                fill="#ffffff"
+                fill="var(--color-background)"
                 fillOpacity={1}
                 legendType="none"
               />
-              {/* Layer 2: naive baseline — dashed gray */}
+              {/* Layer 2: naive baseline — muted chart-axis tone; dash pattern kept
+                  (non-color marker distinguishing baseline from the AI series). */}
               <Line
                 type="monotone"
                 dataKey="naiveBaseline"
-                stroke="#9CA3AF"
+                stroke="var(--color-chart-axis)"
                 strokeDasharray="4 4"
                 strokeWidth={2}
                 dot={false}
                 connectNulls={false}
               />
-              {/* Layer 3 (top): AI prediction — solid brand red.
+              {/* Layer 3 (top): AI prediction — categorical chart-1 primary
+                  (Story 171.4 decision: forecast series carry no valence semantics —
+                  AI = primary series chart-1, naive = muted dashed; NOT brand red).
                   connectNulls={false}: revenue-target models (Epic 113 I1) send null
                   predictedSales → skip those points (no flat-0 line, no NaN). */}
               <Line
                 type="monotone"
                 dataKey="predictedSales"
-                stroke="#E53935"
+                stroke="var(--color-chart-1)"
                 strokeWidth={2.5}
                 dot={false}
                 connectNulls={false}
-                activeDot={{ r: 4, fill: '#E53935' }}
+                activeDot={{ r: 4, fill: 'var(--color-chart-1)' }}
               />
             </ComposedChart>
           </ResponsiveContainer>
         </div>
+        {/* sr-only data alternative (169.11 canon) — see ForecastChartSrTable */}
+        <ForecastChartSrTable rows={chartData} />
       </CardContent>
     </Card>
   )
