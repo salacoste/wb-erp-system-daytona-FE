@@ -41,7 +41,7 @@ export function SearchPositionSummaryCards({ summary, isLoading, isError }: Sear
   // undefined summary while NOT loading/error is an explicit empty, never an
   // indefinite skeleton (retained-data-aware contract).
   if (isError && !summary) {
-    return null // section-level error chrome renders at the tab level (Pattern-1)
+    return null // sibling sections (movers/opportunities) render the error chrome (Pattern-1)
   }
   if (isLoading && !summary) {
     return (
