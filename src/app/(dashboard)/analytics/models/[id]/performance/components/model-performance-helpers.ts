@@ -1,11 +1,13 @@
 /**
  * Pure helper functions for ModelPerformanceDetail.
  * Extracted per proactive-extraction discipline (Story 99.2-FE) — testable without React render.
- * Story 109.5-FE.
+ * Story 109.5-FE. Migrated Story 171.9-FE: drift badges + MAPE-delta valence → semantic
+ * status tokens (hue-preserving, 171.6 canon; light-only palette eliminated, dark-mode fixed);
+ * route-local status-badge map detaches this route from the shared registry overlay field.
  */
 
 import { formatPercentage } from '@/lib/utils'
-import type { DriftStatus } from '@/types/ai/models'
+import type { DriftStatus, ModelStatus } from '@/types/ai/models'
 
 /** Drift badge config — colour + Russian label per AC-4. Exported for direct unit testing. */
 export const DRIFT_BADGE_CONFIG: Record<
@@ -13,37 +15,54 @@ export const DRIFT_BADGE_CONFIG: Record<
   { className: string; label: string }
 > = {
   improving: {
-    className: 'bg-green-100 text-green-800 border-green-200',
+    className: 'border-status-success/40 bg-status-success/10 text-status-success',
     label: 'Улучшается',
   },
   stable: {
-    className: 'bg-blue-100 text-blue-800 border-blue-200',
+    className: 'border-status-information/40 bg-status-information/10 text-status-information',
     label: 'Стабильно',
   },
   degrading: {
-    className: 'bg-red-100 text-red-800 border-red-200',
+    className: 'border-status-error/40 bg-status-error/10 text-status-error',
     label: 'Деградирует',
   },
 }
 
 /** Config for the null drift case (insufficient history). */
 export const DRIFT_NULL_CONFIG = {
-  className: 'bg-gray-100 text-gray-600 border-gray-200',
+  className: 'border-border bg-muted text-muted-foreground',
   label: 'Недостаточно данных',
 }
 
 /**
- * Map delta sign to Tailwind text colour class.
- * delta < 0 → green (MAPE decreased = improvement).
- * delta > 0 → red (MAPE increased = regression).
+ * Route-local status badge overlay for the model-identity row (Story 171.9-FE).
+ * Hue-preserving mirror of the registry badge tokens (171.6 semantic canon) —
+ * detaches this route from the shared config's className field (the field itself
+ * still has the registry-root consumer; its removal is a registry-owner carry-out).
+ * Labels stay sourced from STATUS_BADGE_CONFIG (single label source of truth).
+ */
+export const PERFORMANCE_STATUS_BADGE_CLASS: Record<ModelStatus, string> = {
+  active: 'border-status-success/40 bg-status-success/10 text-status-success',
+  training: 'border-status-information/40 bg-status-information/10 text-status-information',
+  degraded: 'border-status-warning/40 bg-status-warning/10 text-status-warning',
+  retired: 'border-border bg-muted text-muted-foreground',
+  rolled_back: 'border-border bg-muted text-muted-foreground',
+  failed: 'border-status-error/40 bg-status-error/10 text-status-error',
+  deprecated: 'border-border bg-muted text-muted-foreground',
+}
+
+/**
+ * Map delta sign to semantic status text colour class (valence, 171.4 canon).
+ * delta < 0 → success (MAPE decreased = improvement).
+ * delta > 0 → error (MAPE increased = regression).
  * delta === 0 → neutral.
  * Exported for direct unit testing (pure-function discipline, Story 99.2-FE).
  */
 export function getMapeDeltaColor(
   delta: number
-): 'text-green-600' | 'text-red-600' | 'text-muted-foreground' {
-  if (delta < 0) return 'text-green-600'
-  if (delta > 0) return 'text-red-600'
+): 'text-status-success' | 'text-status-error' | 'text-muted-foreground' {
+  if (delta < 0) return 'text-status-success'
+  if (delta > 0) return 'text-status-error'
   return 'text-muted-foreground'
 }
 

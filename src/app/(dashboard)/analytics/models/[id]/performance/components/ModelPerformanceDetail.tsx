@@ -4,6 +4,9 @@
  * ModelPerformanceDetail — per-model drift status, MAPE trend chart, and evaluation table.
  * Story 109.5-FE: consumes useModelPerformance + useAiModels for header identity.
  * File-size discipline: evaluation table extracted to EvaluationHistoryTable.tsx.
+ * Migrated Story 171.9-FE: status badge detached from the shared registry overlay field
+ * (route-local token map; label still from the shared config), route-level padding removed
+ * (dashboard layout provides its own), history-table caption names the model.
  */
 
 import Link from 'next/link'
@@ -22,6 +25,7 @@ import { EvaluationHistoryTable } from './EvaluationHistoryTable'
 import {
   DRIFT_BADGE_CONFIG,
   DRIFT_NULL_CONFIG,
+  PERFORMANCE_STATUS_BADGE_CLASS,
   getMapeDeltaColor,
   formatMapeDelta,
   getCurrentMape,
@@ -38,7 +42,7 @@ interface ModelPerformanceDetailProps {
 
 function ModelPerformancePageShell({ children }: { children: ReactNode }) {
   return (
-    <div className="space-y-6 p-6">
+    <div className="space-y-6">
       <h1 className="text-2xl font-bold tracking-tight">Производительность модели</h1>
       {children}
     </div>
@@ -125,7 +129,10 @@ export function ModelPerformanceDetail({ modelId }: ModelPerformanceDetailProps)
     deltaColor = getMapeDeltaColor(currentMape - prevMape)
   }
 
-  const statusBadge = STATUS_BADGE_CONFIG[model.status]
+  // Label only from the shared registry (single label source of truth);
+  // colour overlay is route-local (Story 171.9-FE detach from the className field —
+  // the field itself remains for the registry-root consumer; removal is a registry-owner carry-out).
+  const statusLabel = STATUS_BADGE_CONFIG[model.status].label
 
   return (
     <ModelPerformancePageShell>
@@ -140,8 +147,8 @@ export function ModelPerformanceDetail({ modelId }: ModelPerformanceDetailProps)
           <div className="flex items-center gap-3 text-sm text-muted-foreground mt-1">
             <span>{getModelTypeLabel(model.modelType)}</span>
             <span>v{model.version}</span>
-            <Badge variant="outline" className={statusBadge.className}>
-              {statusBadge.label}
+            <Badge variant="outline" className={PERFORMANCE_STATUS_BADGE_CLASS[model.status]}>
+              {statusLabel}
             </Badge>
           </div>
         </CardHeader>
@@ -170,8 +177,11 @@ export function ModelPerformanceDetail({ modelId }: ModelPerformanceDetailProps)
         </CardContent>
       </Card>
 
-      {/* Evaluation rows table — AC-7 */}
-      <EvaluationHistoryTable mapeTrend={mapeTrend} />
+      {/* Evaluation rows table — AC-7; caption names the model (RTC, Story 171.9-FE) */}
+      <EvaluationHistoryTable
+        mapeTrend={mapeTrend}
+        captionText={`История оценок — ${getModelTypeLabel(model.modelType)} v${model.version}`}
+      />
     </ModelPerformancePageShell>
   )
 }
