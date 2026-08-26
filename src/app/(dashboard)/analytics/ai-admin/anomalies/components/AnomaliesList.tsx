@@ -24,6 +24,7 @@ import {
 import {
   Table,
   TableBody,
+  TableCaption,
   TableCell,
   TableHead,
   TableHeader,
@@ -114,11 +115,22 @@ export function AnomaliesList() {
         </Select>
       </div>
 
-      {/* Table or empty state */}
+      {/* Table or empty state — filtered-empty (Story 171.1 gap 4) is distinct from no-anomalies */}
       {anomalies.length === 0 ? (
-        <p className="text-sm text-muted-foreground">Нет аномалий, требующих внимания.</p>
+        statusFilter === 'all' ? (
+          <p className="text-sm text-muted-foreground">Нет аномалий, требующих внимания.</p>
+        ) : (
+          <div className="space-y-2">
+            <p className="text-sm text-muted-foreground">Нет аномалий с выбранным фильтром.</p>
+            <Button variant="outline" size="sm" onClick={() => setStatusFilter('all')}>
+              Сбросить фильтр
+            </Button>
+          </div>
+        )
       ) : (
         <Table>
+          {/* Static caption naming the analysis (169.7 canon; server-default data, no period) */}
+          <TableCaption>Аномалии ИИ-прогнозов</TableCaption>
           <TableHeader>
             {/* Sort is server-default (triggeredAt DESC). Not user-interactive in v1. */}
             <TableRow>
@@ -133,11 +145,18 @@ export function AnomaliesList() {
           <TableBody>
             {anomalies.map(anomaly => (
               <TableRow key={anomaly.id}>
-                {/* AP#10: String() for opaque IDs — never formatNumber */}
+                {/* AP#10: String() for opaque IDs — never formatNumber. font-mono, no tabular-nums (169.x pin) */}
                 <TableCell className="font-mono text-xs">{String(anomaly.id)}</TableCell>
-                <TableCell>{String(anomaly.nmId)}</TableCell>
-                <TableCell>{anomaly.anomalyType}</TableCell>
-                <TableCell>{formatDate(anomaly.triggeredAt)}</TableCell>
+                <TableCell className="tabular-nums">{String(anomaly.nmId)}</TableCell>
+                <TableCell>
+                  {anomaly.anomalyType.trim() !== '' ? (
+                    anomaly.anomalyType
+                  ) : (
+                    // 169.x canon: unknown enum value → muted neutral fallback, not an error
+                    <span className="text-muted-foreground">Неизвестный тип</span>
+                  )}
+                </TableCell>
+                <TableCell className="tabular-nums">{formatDate(anomaly.triggeredAt)}</TableCell>
                 <TableCell>
                   <Badge variant={anomaly.status === 'pending' ? 'destructive' : 'secondary'}>
                     {anomaly.status === 'pending' ? 'Ожидает' : 'Разрешено'}
@@ -145,7 +164,12 @@ export function AnomaliesList() {
                 </TableCell>
                 <TableCell>
                   {anomaly.status === 'pending' && (
-                    <Button variant="outline" size="sm" onClick={() => setDialogTarget(anomaly)}>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => setDialogTarget(anomaly)}
+                      aria-label={`Разрешить аномалию #${String(anomaly.id)}`}
+                    >
                       Разрешить
                     </Button>
                   )}

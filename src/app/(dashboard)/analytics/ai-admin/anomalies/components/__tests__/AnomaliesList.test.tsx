@@ -6,7 +6,7 @@
  */
 import React from 'react'
 import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { render, screen, waitFor } from '@testing-library/react'
+import { render, screen, waitFor, fireEvent } from '@testing-library/react'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { AnomaliesList } from '../AnomaliesList'
 import * as systemApi from '@/lib/api/ai/system'
@@ -177,9 +177,102 @@ describe('AnomaliesList', () => {
     )
     renderList()
     // Table row "Разрешить" button per anomaly (live mode — Request #167 shipped).
+    // Story 171.1 gap 2: accessible name carries anomaly identity.
     await waitFor(() => {
-      const buttons = screen.getAllByRole('button', { name: 'Разрешить' })
+      const buttons = screen.getAllByRole('button', { name: 'Разрешить аномалию #anomaly-1' })
       expect(buttons.length).toBeGreaterThanOrEqual(1)
+    })
+  })
+
+  it('renders TableCaption naming the analysis (Story 171.1 gap 1)', async () => {
+    const responseWithData: AnomalyListResponse = {
+      anomalies: [makeAnomaly()],
+      total: 1,
+      page: 1,
+      limit: 20,
+    }
+    mockGetAnomalies.mockResolvedValue(responseWithData)
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    mockUseAuthStore.mockImplementation((selector: any) =>
+      selector({ cabinetId: 'cab-123', user: { role: 'Owner' } })
+    )
+    renderList()
+    await waitFor(() => expect(screen.getByText('Аномалии ИИ-прогнозов')).toBeInTheDocument())
+  })
+
+  it('nmId and triggeredAt cells are tabular-nums; id stays font-mono without tabular (gap 3)', async () => {
+    const responseWithData: AnomalyListResponse = {
+      anomalies: [makeAnomaly()],
+      total: 1,
+      page: 1,
+      limit: 20,
+    }
+    mockGetAnomalies.mockResolvedValue(responseWithData)
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    mockUseAuthStore.mockImplementation((selector: any) =>
+      selector({ cabinetId: 'cab-123', user: { role: 'Owner' } })
+    )
+    renderList()
+    await waitFor(() => expect(screen.getByText('anomaly-1')).toBeInTheDocument())
+    const row = screen.getByText('anomaly-1').closest('tr')
+    expect(row).not.toBeNull()
+    const cells = row?.querySelectorAll('td')
+    expect(cells?.length).toBe(6)
+    // id: font-mono, NO tabular-nums (169.x negative pin)
+    expect(cells?.[0]).toHaveClass('font-mono')
+    expect(cells?.[0]).not.toHaveClass('tabular-nums')
+    // nmId: tabular-nums
+    expect(cells?.[1]).toHaveClass('tabular-nums')
+    // triggeredAt: tabular-nums
+    expect(cells?.[3]).toHaveClass('tabular-nums')
+  })
+
+  it('filtered-empty shows distinct message + reset path; reset returns to no-anomalies (gap 4)', async () => {
+    mockGetAnomalies.mockResolvedValue(emptyResponse)
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    mockUseAuthStore.mockImplementation((selector: any) =>
+      selector({ cabinetId: 'cab-123', user: { role: 'Owner' } })
+    )
+    renderList()
+    // Default 'all' → no-anomalies message, no reset button
+    await waitFor(() =>
+      expect(screen.getByText('Нет аномалий, требующих внимания.')).toBeInTheDocument()
+    )
+    expect(screen.queryByText('Сбросить фильтр')).not.toBeInTheDocument()
+
+    // Apply server-side status filter via the control (mirror of its reset idiom)
+    fireEvent.click(screen.getByRole('combobox'))
+    await waitFor(() => screen.getByText('Разрешено'))
+    fireEvent.click(screen.getByText('Разрешено'))
+
+    await waitFor(() =>
+      expect(screen.getByText('Нет аномалий с выбранным фильтром.')).toBeInTheDocument()
+    )
+    const resetBtn = screen.getByRole('button', { name: 'Сбросить фильтр' })
+    fireEvent.click(resetBtn)
+    await waitFor(() =>
+      expect(screen.getByText('Нет аномалий, требующих внимания.')).toBeInTheDocument()
+    )
+  })
+
+  it('empty anomalyType renders muted «Неизвестный тип» fallback (gap 6)', async () => {
+    const responseWithData: AnomalyListResponse = {
+      anomalies: [makeAnomaly({ anomalyType: '' })],
+      total: 1,
+      page: 1,
+      limit: 20,
+    }
+    mockGetAnomalies.mockResolvedValue(responseWithData)
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    mockUseAuthStore.mockImplementation((selector: any) =>
+      selector({ cabinetId: 'cab-123', user: { role: 'Owner' } })
+    )
+    renderList()
+    await waitFor(() => {
+      const fallback = screen.getByText('Неизвестный тип')
+      expect(fallback).toBeInTheDocument()
+      // muted (169.x unknown=muted canon), not an error color
+      expect(fallback).toHaveClass('text-muted-foreground')
     })
   })
 })

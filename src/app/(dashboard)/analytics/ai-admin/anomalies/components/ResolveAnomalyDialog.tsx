@@ -74,6 +74,10 @@ export function ResolveAnomalyDialog({ anomaly, open, onOpenChange }: ResolveAno
         onError: (err: unknown) => {
           if (err instanceof ApiError && err.status === 403) {
             setErrorMessage('Нет доступа. Требуется роль Owner или Manager.')
+          } else if (err instanceof ApiError && err.status === 409) {
+            // Conflict/already-resolved (Story 171.1 gap 5): distinct honest-state message.
+            // cause/note state is NOT reset here — input retained per AC-2.
+            setErrorMessage('Аномалия уже разрешена. Обновите список.')
           } else {
             setErrorMessage('Не удалось разрешить аномалию. Попробуйте позже.')
           }
@@ -102,7 +106,13 @@ export function ResolveAnomalyDialog({ anomaly, open, onOpenChange }: ResolveAno
           </div>
         )}
 
-        <div className="space-y-4">
+        <div className="space-y-4" aria-busy={mutation.isPending}>
+          {/* F-12 polite (Story 171.1 gap 7): submitting announced once, politely, while pending */}
+          {mutation.isPending && (
+            <p role="status" aria-live="polite" className="sr-only">
+              Отправка данных…
+            </p>
+          )}
           <div className="space-y-1">
             <Label htmlFor="resolve-cause">Причина разрешения</Label>
             <Select value={cause} onValueChange={v => setCause(v as ResolutionCause)}>

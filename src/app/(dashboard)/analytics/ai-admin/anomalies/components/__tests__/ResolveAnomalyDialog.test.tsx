@@ -233,4 +233,74 @@ describe('ResolveAnomalyDialog', () => {
     renderDialog(false)
     expect(screen.queryByText(/Разрешить аномалию/)).not.toBeInTheDocument()
   })
+
+  it('shows 409-conflict message on ApiError 409, distinct from generic (Story 171.1 gap 5)', async () => {
+    // AP#3: real ApiError constructor
+    const conflict = new ApiError('Conflict', 409)
+    mockPatchAnomalyResolve.mockRejectedValueOnce(conflict)
+
+    renderDialog()
+
+    const trigger = screen.getByRole('combobox')
+    fireEvent.click(trigger)
+    await waitFor(() => screen.getByText('Прочее'))
+    fireEvent.click(screen.getByText('Прочее'))
+
+    const submitBtn = screen.getByRole('button', { name: /Подтвердить разрешение/ })
+    await waitFor(() => expect(submitBtn).not.toBeDisabled())
+    fireEvent.click(submitBtn)
+
+    await waitFor(() =>
+      expect(screen.getByText('Аномалия уже разрешена. Обновите список.')).toBeInTheDocument()
+    )
+  })
+
+  it('retains cause and note input after 409-conflict failure (AC-2, gap 5)', async () => {
+    mockPatchAnomalyResolve.mockRejectedValueOnce(new ApiError('Conflict', 409))
+    renderDialog()
+
+    const trigger = screen.getByRole('combobox')
+    fireEvent.click(trigger)
+    await waitFor(() => screen.getByText('Прочее'))
+    fireEvent.click(screen.getByText('Прочее'))
+
+    const noteField = screen.getByPlaceholderText('Дополнительный контекст')
+    fireEvent.change(noteField, { target: { value: 'Test note 409' } })
+
+    const submitBtn = screen.getByRole('button', { name: /Подтвердить разрешение/ })
+    await waitFor(() => expect(submitBtn).not.toBeDisabled())
+    fireEvent.click(submitBtn)
+
+    await waitFor(() =>
+      expect(screen.getByText('Аномалия уже разрешена. Обновите список.')).toBeInTheDocument()
+    )
+    // Input retained: dialog open, note value preserved
+    expect(noteField).toHaveValue('Test note 409')
+    expect(screen.getByRole('button', { name: /Подтвердить разрешение/ })).toBeInTheDocument()
+  })
+
+  it('announces submitting politely once: aria-busy form + sr-only polite status (gap 7)', async () => {
+    // Never-resolving promise keeps the mutation in isPending for assertion
+    mockPatchAnomalyResolve.mockImplementationOnce(() => new Promise(() => {}))
+
+    renderDialog()
+
+    const trigger = screen.getByRole('combobox')
+    fireEvent.click(trigger)
+    await waitFor(() => screen.getByText('Прочее'))
+    fireEvent.click(screen.getByText('Прочее'))
+
+    const submitBtn = screen.getByRole('button', { name: /Подтвердить разрешение/ })
+    await waitFor(() => expect(submitBtn).not.toBeDisabled())
+    fireEvent.click(submitBtn)
+
+    await waitFor(() => expect(screen.getByText('Отправка данных…')).toBeInTheDocument())
+    const live = screen.getByText('Отправка данных…')
+    // F-12: polite (not assertive), announced once
+    expect(live).toHaveAttribute('role', 'status')
+    expect(live).toHaveAttribute('aria-live', 'polite')
+    expect(live.className).toMatch(/sr-only/)
+    // Form container carries aria-busy while pending
+    expect(screen.getByText('Отправка данных…').closest('[aria-busy="true"]')).not.toBeNull()
+  })
 })
