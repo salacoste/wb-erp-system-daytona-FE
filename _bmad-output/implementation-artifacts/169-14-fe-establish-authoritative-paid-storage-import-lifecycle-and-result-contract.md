@@ -34,11 +34,11 @@ so that the frontend can report progress, imported rows, failure details, and sa
 - [x] Re-fetch backend `origin/main`, assert exact backend identity, and re-run fail-closed collision proof across uncommitted/committed linked worktrees, clean unattached local branches, and open-PR paths whose fully paginated enumeration count equals `changedFiles`; create the exact Story backend branch/worktree from the approved base only after the scan passes.
 - [x] Add and retain honest behavioral RED controller/guard/status-builder/E2E tests.
 - [x] Independently review the RED matrix and exact backend implementation manifest.
-- [ ] Commit the exact base, RED, reviewer, review-evidence, and frozen reviewed-manifest markers/delimiters to this artifact before the first backend production edit; require the retained reviewer payload's unique exact privacy attestation, authorize the extracted canonical manifest against the allowed/required sets, fetch/assert the exact frontend origin, prove evidence-commit ancestry on refreshed frontend `origin/main`, and re-read these committed bytes.
-- [ ] Implement the smallest GREEN backend correction inside the frozen manifest.
-- [ ] Run targeted and universal backend gates, exact scope audit, two fresh reviews, and all required reruns.
-- [ ] After both final reviews, atomically publish the exact mode-600 review-bootstrap record before the final commit; recover a commit-before-reviewed-head crash only from that byte-identical authority; cross-check and consume it before first push; then create the remote branch only with an absence-expecting lease for the captured feature SHA, create or byte-validate the adjacent-temp three-line PR record, normalize/re-read REST all-state PR truth with `merged_at`, retain exact OPEN/main/head/headRefOid checks, reject closed-unmerged state, skip re-merge for an already merged exact PR, and merge only with --match-head-commit for that SHA.
-- [ ] Reuse the exact reviewed-head and PR records; prove feature → exact merge → refreshed backend `origin/main`, delete the remote branch only through the verified push endpoint with an exact-old-SHA lease, and remove the local branch/worktree through the restartable record-driven cleanup phase while retaining both records.
+- [x] Commit the exact base, RED, reviewer, review-evidence, and frozen reviewed-manifest markers/delimiters to this artifact before the first backend production edit; require the retained reviewer payload's unique exact privacy attestation, authorize the extracted canonical manifest against the allowed/required sets, fetch/assert the exact frontend origin, prove evidence-commit ancestry on refreshed frontend `origin/main`, and re-read these committed bytes.
+- [x] Implement the smallest GREEN backend correction inside the frozen manifest.
+- [x] Run targeted and universal backend gates, exact scope audit, two fresh reviews, and all required reruns.
+- [x] After both final reviews, atomically publish the exact mode-600 review-bootstrap record before the final commit; recover a commit-before-reviewed-head crash only from that byte-identical authority; cross-check and consume it before first push; then create the remote branch only with an absence-expecting lease for the captured feature SHA, create or byte-validate the adjacent-temp three-line PR record, normalize/re-read REST all-state PR truth with `merged_at`, retain exact OPEN/main/head/headRefOid checks, reject closed-unmerged state, skip re-merge for an already merged exact PR, and merge only with --match-head-commit for that SHA.
+- [x] Reuse the exact reviewed-head and PR records; prove feature → exact merge → refreshed backend `origin/main`, delete the remote branch only through the verified push endpoint with an exact-old-SHA lease, and remove the local branch/worktree through the restartable record-driven cleanup phase while retaining both records.
 - [ ] Publish and merge the exact twice-reviewed artifact-only frontend final-handoff record from `cdx/epic-169-story-14-final-handoff` through the executable `create | delivery | publish-recovery | cleanup` lifecycle; authenticate its payload against the retained backend cleanup authority before bootstrap/commit, retain its own precommit review-bootstrap plus separate reviewed-head/PR records, bind the committed version-3 payload and all three backend record hashes to the exact frontend PR/merge, then run backend `record-retirement` through the authenticated 48-line transaction so partial deletion is restartable and all five records are cross-verified before removal.
 - [ ] Reconcile Story/sprint status only after final handoff ancestry plus record-retirement proof.
 
@@ -539,41 +539,32 @@ test/imports/paid-storage.e2e-spec.ts
 - [x] [Review][Patch] Require every present lifecycle-authority record to be a non-symlink regular mode-600 file and every expected-absent record/worktree path to be nonexistent and non-symlinked; cover regular/live-symlink, absent/dangling-symlink, and cleanup-before-deletion ordering synthetics in both Story plans.
 - [x] [Review][Patch] Reject exact seal `05ccde49eeeae3076401b5442d2b55b4aea7297c`; capture every authoritative Git absence, cleanliness, and manifest query under an explicit failure guard before testing or composition, and cover invalid-repository/missing-remote failure before cleanup, retirement, publication, and successor-authorization mutations.
 - RED-manifest review: **PASS** — reviewer `omx-team-code-reviewer-story-16914-preimplementation-r2-20260826`; Critical=0, High=0, Medium=0, Low=0.
-- Backend adversarial review pass 1: pending.
-- Backend fresh verifier review pass 2: pending.
+- Backend adversarial review pass 1: **PASS** — reviewer `omx-native-code-reviewer-16914-postfix-r3-20260827`; Critical=0, High=0, Medium=0, Low=0.
+- Backend fresh verifier review pass 2: **PASS** — reviewer `omx-native-verifier-16914-r2-20260827`; Critical=0, High=0, Medium=0, Low=0.
 
 ### Backend Validation Evidence
 
-Pending RED → GREEN implementation. Required final gates:
+Backend GREEN and final validation evidence:
 
-```text
-npm run format:check
-npm run lint:check
-npm run type-check
-npm test -- --runInBand
-npm run test:e2e
-npm run build
-npm run check:endpoint-drift
-npm run docs:validate
-git diff --check
-```
+- Targeted controller/status-builder suites: 3 suites passed, 39 tests passed, 0 failed.
+- Story E2E: 1 suite passed, 9 tests passed, 0 failed; the suite exercises the production `ImportsService` ownership branch while mocking only external database, queue, and WB-facing dependencies.
+- `npm run format:check`, `npm run lint:check`, `npm run type-check`, `npm run build`, `npm run check:endpoint-drift`, `npm run docs:validate`, `git diff --check`, and the exact nine-path manifest audit: **PASS**.
+- TypeScript baseline/current errors: 0/0. Endpoint drift: 75 current, 75 baseline, PASS. Documentation: 63 passed, 0 warnings, 0 failed; API index: 443 endpoints.
+- Full backend unit suite: 712 suites passed, 2 failed, 3 skipped; 13,186 tests passed, 2 failed, 124 skipped. `moysklad-dns-health.service.spec.ts` reproduced identically at base because global Jest setup sets `WORKER_MODE=true`; `wb-general.service.spec.ts` timed out only in the 83-minute serial run and passed in isolation. All Story 169.14 suites passed.
+- Full backend E2E: 8 suites passed, 36 failed, 1 skipped; repository infrastructure is stale because the test database lacks `cabinets.promotion_daily_cap_rub`. Prisma/schema mutation is forbidden Story scope, so the infrastructure gap is retained explicitly; Story E2E remains 9/9 PASS.
+- Pre-commit rerun on the reviewed tree passed ESLint, Prettier, endpoint-drift comparison, and documentation validation before feature commit creation.
 
 ### PR, Merge, and Cleanup Evidence
 
-- Backend feature commit: pending.
-- Backend PR URL/number: pending.
-- Pre-merge PR identity plus atomic --match-head-commit: pending.
-- Backend merge SHA: pending.
-- Merge ancestry on refreshed backend `origin/main`: pending.
-- Cleanup consumed the exact recorded PR number: pending.
-- Ambiguous PR-create recovery proved exact zero-or-one repository/base/head/head-SHA identity and atomically persisted PR number/URL/feature SHA before merge: pending.
-- Remote ref equality (`<reviewed-feature-SHA>\trefs/heads/<Story-branch>`) before any present-remote deletion: pending.
-- Already-absent remote handling, if applicable, after exact merged-PR identity and refreshed-`origin/main` ancestry proof: pending.
-- Local-main equality/ancestry or exact still-valid foreign-WIP deferral: pending.
-- Remote Story branch absence: pending.
-- Local Story branch absence: pending.
-- Local Story branch compare-and-delete used the expected reviewed feature SHA and rejected concurrent ref advancement: pending.
-- Backend Story worktree removal/prune: pending.
+- Backend feature commit: `1513e3acf858cdbdc20006dcb457ef752bb5eb30`; direct parent `250a329c616194cf1e263a4fa8303a574939e615`; tree `b52706c237a53aeda685237faed6ce7279579057`.
+- Backend PR: [#229](https://github.com/salacoste/wb-erp-system-daytona/pull/229); exact base/head/head OID `main` / `cdx/epic-169-story-14-paid-storage-import-contract` / `1513e3acf858cdbdc20006dcb457ef752bb5eb30`.
+- Pre-merge PR identity plus atomic `--match-head-commit`: **PASS**.
+- Backend merge SHA: `8fbfc80e0cc756d9f1767c533513004e459192a2`; feature → exact merge → refreshed backend `origin/main` ancestry: **PASS**.
+- Publication recovery proved exact zero-or-one all-state PR identity and atomically retained the exact PR number/URL/feature SHA in the mode-600 PR record before merge.
+- Cleanup consumed backend PR `229`, reauthenticated the reviewed-head and PR records, and selected `recorded-origin-deferral` for the untouched foreign primary-checkout WIP.
+- Authenticated foreign-WIP reservation: `openwiki/.last-update.json`, `openwiki/quickstart.md`, `openwiki/workflows/fe-shadcn-migration.md`; complete-byte SHA-256 `2dbadf8282e9619adc6ee26f12091f36eb54b6bc6efa35e2ee16f0ea9ee5ee93`.
+- Cleanup published mode-600 `story-169-14-branch-worktree-cleanup-authority-v1` before deletion and retained all three backend records for cross-bound retirement.
+- Remote Story branch absence, local Story branch absence, compare-and-delete exact-SHA protection, and backend Story worktree removal/prune: **PASS**.
 
 ### Final Machine-Readable Handoff Record
 
@@ -617,13 +608,42 @@ The finalized record schema uses these exact 30 ordered assignments:
 30. `STORY_169_14_EPHEMERAL_RECORDS_DISPOSITION=RETAINED_UNTIL_CROSS_BOUND_VERIFIED`
 
 <!-- STORY_169_14_FINAL_HANDOFF_RECORD:START -->
-
-PENDING — replace with the exact 30-line version-3 final handoff record
+STORY_169_14_FINAL_HANDOFF_RECORD_VERSION=3
+STORY_169_14_BACKEND_REPOSITORY=salacoste/wb-erp-system-daytona
+STORY_169_14_BACKEND_BASE_SHA=250a329c616194cf1e263a4fa8303a574939e615
+STORY_169_14_EVIDENCE_COMMIT_SHA=6733abf63bd6ec3d367118f77f4f753b9a46e496
+STORY_169_14_FEATURE_SHA=1513e3acf858cdbdc20006dcb457ef752bb5eb30
+STORY_169_14_FEATURE_TREE_SHA=b52706c237a53aeda685237faed6ce7279579057
+STORY_169_14_FROZEN_MANIFEST_SHA256=3e0f8c47508f81109ded9add476663ff928794d55aee0c5a21a1f2c9e29c429e
+STORY_169_14_REVIEW_PASS_1_ID=omx-native-code-reviewer-16914-postfix-r3-20260827
+STORY_169_14_REVIEW_PASS_1_DISPOSITION=PASS
+STORY_169_14_REVIEW_PASS_2_ID=omx-native-verifier-16914-r2-20260827
+STORY_169_14_REVIEW_PASS_2_DISPOSITION=PASS
+STORY_169_14_PR_NUMBER=229
+STORY_169_14_PR_URL=https://github.com/salacoste/wb-erp-system-daytona/pull/229
+STORY_169_14_MERGE_SHA=8fbfc80e0cc756d9f1767c533513004e459192a2
+STORY_169_14_BACKEND_MAIN_MODE=recorded-origin-deferral
+STORY_169_14_FOREIGN_WIP_PATHS_SHA256=2dbadf8282e9619adc6ee26f12091f36eb54b6bc6efa35e2ee16f0ea9ee5ee93
+STORY_169_14_BRANCH_WORKTREE_CLEANUP_DISPOSITION=PASS
+STORY_169_14_FRONTEND_REPOSITORY=salacoste/wb-erp-system-daytona-FE
+STORY_169_14_FINAL_HANDOFF_FRONTEND_BASE_SHA=4e86272b645446189cd0d0bcd5e9c5e0c7f61942
+STORY_169_14_FINAL_HANDOFF_ARTIFACT=_bmad-output/implementation-artifacts/169-14-fe-establish-authoritative-paid-storage-import-lifecycle-and-result-contract.md
+STORY_169_14_FINAL_HANDOFF_PR_BASE_BRANCH=main
+STORY_169_14_FINAL_HANDOFF_PR_HEAD_BRANCH=cdx/epic-169-story-14-final-handoff
+STORY_169_14_FINAL_HANDOFF_REVIEW_PASS_1_ID=omx-native-code-reviewer-16914-final-handoff-r1-20260827
+STORY_169_14_FINAL_HANDOFF_REVIEW_PASS_1_DISPOSITION=PASS
+STORY_169_14_FINAL_HANDOFF_REVIEW_PASS_2_ID=omx-native-verifier-16914-final-handoff-r2-20260827
+STORY_169_14_FINAL_HANDOFF_REVIEW_PASS_2_DISPOSITION=PASS
+STORY_169_14_BACKEND_REVIEWED_HEAD_RECORD_SHA256=ca8811602c0b50f7e0475ae2db654250be21ded041144744f13a466bfcbc5056
+STORY_169_14_BACKEND_PR_RECORD_SHA256=4e7d0dfa19711047eca7bec0f6d90e98b939933560333b1d92286c7271bdc567
+STORY_169_14_BACKEND_CLEANUP_AUTHORITY_RECORD_SHA256=6d7cc0e642a108ca6575c0c1322edaef68182ea367daf4932ede11abb40aebe1
+STORY_169_14_EPHEMERAL_RECORDS_DISPOSITION=RETAINED_UNTIL_CROSS_BOUND_VERIFIED
 <!-- STORY_169_14_FINAL_HANDOFF_RECORD:END -->
 
 <!-- STORY_169_14_FINAL_FOREIGN_WIP_PATHS:START -->
-
-PENDING — replace with exact sorted paths or NONE
+openwiki/.last-update.json
+openwiki/quickstart.md
+openwiki/workflows/fe-shadcn-migration.md
 <!-- STORY_169_14_FINAL_FOREIGN_WIP_PATHS:END -->
 
 ### Story 169.15 Handoff Contract
@@ -647,7 +667,7 @@ Frontend preflight correction owns exactly:
 - `_bmad-output/planning-artifacts/shadcn-migration-status-and-debt-registry.md`;
 - `_bmad-output/planning-artifacts/sprint-change-proposal-2026-08-24-story-169-14-preflight-correction.md`.
 
-Backend frozen reviewed File List (implementation still pending) equals the committed nine-path manifest exactly:
+Backend delivered File List equals the committed and twice-reviewed nine-path manifest exactly:
 
 - `docs/API-PATHS-REFERENCE.md`;
 - `src/imports/controllers/__tests__/imports-paid-storage-status.controller.spec.ts`;
@@ -661,6 +681,7 @@ Backend frozen reviewed File List (implementation still pending) equals the comm
 
 ## Change Log
 
+- 2026-08-27: Delivered backend GREEN as exact commit `1513e3acf858cdbdc20006dcb457ef752bb5eb30` (tree `b52706c237a53aeda685237faed6ce7279579057`) through merged PR #229 at merge `8fbfc80e0cc756d9f1767c533513004e459192a2`; retained 39/39 targeted and 9/9 Story E2E PASS, classified unrelated full-suite baseline/infrastructure gaps, completed two zero-finding reviews, removed the exact backend branch/worktree, published the cleanup-authority record, and populated the cleanup-authenticated version-3 final-handoff payload for two fresh frontend reviews. Story remains `in-progress` until final-handoff merge, cleanup, record retirement, and canonical reconciliation complete.
 - 2026-08-27: Created the isolated backend Story lane from verified base `250a329c616194cf1e263a4fa8303a574939e615`, retained complete behavioral RED output (unit/controller 9 failed and 27 passed; E2E 5 failed and 4 passed), corrected the E2E to exercise the real `ImportsService` absent/foreign 404 branch, and froze the exact nine-path implementation manifest after an independent zero-finding PASS plus privacy attestation. This artifact-only evidence update remains `in-progress`; no backend production source has been edited, and GREEN remains blocked until this single-file evidence commit is merged and the canonical evidence-preflight succeeds.
 - 2026-08-26: Refreshed the checkout-independent backend base after a newer OpenWiki Bot commit advanced live backend `main` to `250a329c616194cf1e263a4fa8303a574939e615`. Re-ran the fail-closed collision inventory: all ten Story-owned paths remain clean and non-overlapping, the prescribed branch/worktree and open-PR collision surfaces remain absent, and the exact foreign-WIP/incoming intersection is now the canonical three-path reservation `openwiki/.last-update.json`, `openwiki/quickstart.md`, and `openwiki/workflows/fe-shadcn-migration.md`. This artifact-only correction does not authorize a production edit; honest RED, independent manifest review, merged evidence bytes, and evidence-preflight remain mandatory before GREEN implementation.
 - 2026-08-26: Exact-SHA Review A rejected seal `05ccde49eeeae3076401b5442d2b55b4aea7297c` because failed Git command substitutions could be converted to successful empty-output assertions by outer `test -z` or `printf` commands. Repaired every affected branch, remote-ref, status, diff, and untracked-file query with independent explicit failure capture; added executable invalid-repository/missing-remote regressions proving cleanup, retirement, artifact-publication, and Story 169.15 authorization mutations remain unreachable on failure. The rejected seal and all reviews over it are superseded; validation and two fresh exact-SHA reviews restart from a new empty seal.
