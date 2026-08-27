@@ -41,7 +41,13 @@ export function useImportStatus(importId: string | null, options: UseImportStatu
     enabled: enabled && !!importId,
     staleTime: 0, // Always fetch fresh status
     gcTime: 60000, // Keep in cache for 1 minute
-    refetchInterval: typeof refetchInterval === 'number' ? refetchInterval : undefined,
+    refetchInterval: query => {
+      const status = query.state.data?.status
+      if (status === 'completed' || status === 'failed') {
+        return false
+      }
+      return typeof refetchInterval === 'number' ? refetchInterval : false
+    },
     retry: 2,
   })
 }

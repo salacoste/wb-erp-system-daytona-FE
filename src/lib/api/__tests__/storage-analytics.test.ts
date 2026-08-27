@@ -307,8 +307,11 @@ describe('Storage Analytics API Client', () => {
     const mockResponse = {
       import_id: 'import-uuid-123',
       status: 'pending' as const,
-      message: 'Import queued successfully',
-      estimated_time_sec: 120,
+      date_range: {
+        from: '2025-11-18',
+        to: '2025-11-24',
+      },
+      message: 'Import started. Use GET /v1/imports/{import_id} to check status.',
     }
 
     it('calls API with correct endpoint and body', async () => {
@@ -320,8 +323,8 @@ describe('Storage Analytics API Client', () => {
       })
 
       expect(apiClient.post).toHaveBeenCalledWith('/v1/imports/paid-storage', {
-        date_from: '2025-11-18',
-        date_to: '2025-11-24',
+        dateFrom: '2025-11-18',
+        dateTo: '2025-11-24',
       })
     })
 
@@ -335,7 +338,7 @@ describe('Storage Analytics API Client', () => {
 
       expect(result.import_id).toBe('import-uuid-123')
       expect(result.status).toBe('pending')
-      expect(result.estimated_time_sec).toBe(120)
+      expect(result.date_range).toEqual({ from: '2025-11-18', to: '2025-11-24' })
     })
   })
 
@@ -369,6 +372,24 @@ describe('Storage Analytics API Client', () => {
       expect(result.completed_at).toBe('2025-11-24T12:00:00Z')
     })
 
+    it('preserves an authoritative completed zero-row result and date range', async () => {
+      const mockResponse = {
+        import_id: 'import-uuid-zero',
+        status: 'completed' as const,
+        rows_imported: 0,
+        date_range: {
+          start: '2025-11-18',
+          end: '2025-11-24',
+        },
+      }
+      vi.mocked(apiClient.get).mockResolvedValue(mockResponse)
+
+      const result = await getImportStatus('import-uuid-zero')
+
+      expect(result.rows_imported).toBe(0)
+      expect(result.date_range).toEqual(mockResponse.date_range)
+    })
+
     it('returns processing status', async () => {
       const mockResponse = {
         import_id: 'import-uuid-123',
@@ -381,11 +402,15 @@ describe('Storage Analytics API Client', () => {
       expect(result.status).toBe('processing')
     })
 
-    it('returns failed status with error message', async () => {
+    it('returns failed status with structured actionable error detail', async () => {
       const mockResponse = {
         import_id: 'import-uuid-123',
         status: 'failed' as const,
-        error_message: 'WB API timeout',
+        error: {
+          code: 'JOB_FAILED',
+          message: 'WB API timeout',
+          details: { retryAfterSeconds: 30 },
+        },
       }
       vi.mocked(apiClient.get).mockResolvedValue(mockResponse)
 
@@ -393,6 +418,7 @@ describe('Storage Analytics API Client', () => {
 
       expect(result.status).toBe('failed')
       expect(result.error_message).toBe('WB API timeout')
+      expect(result.error).toEqual(mockResponse.error)
     })
   })
 

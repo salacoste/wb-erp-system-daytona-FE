@@ -5,7 +5,7 @@
  */
 
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
-import { renderHook, waitFor } from '@testing-library/react'
+import { act, renderHook, waitFor } from '@testing-library/react'
 import {
   useStorageBySku,
   useStorageTopConsumers,
@@ -14,7 +14,7 @@ import {
   useImportStatus,
   storageQueryKeys,
 } from '../useStorageAnalytics'
-import { createQueryWrapper } from '@/test/utils/test-utils'
+import { createQueryWrapper, createTestQueryClient } from '@/test/utils/test-utils'
 import {
   mockStorageBySkuResponse,
   mockEmptyStorageBySkuResponse,
@@ -42,6 +42,7 @@ describe('Storage Analytics Hooks', () => {
   })
 
   afterEach(() => {
+    vi.useRealTimers()
     vi.restoreAllMocks()
   })
 
@@ -354,8 +355,8 @@ describe('Storage Analytics Hooks', () => {
       await waitFor(() => expect(result.current.isSuccess).toBe(true))
 
       expect(apiClient.post).toHaveBeenCalledWith('/v1/imports/paid-storage', {
-        date_from: '2025-11-18',
-        date_to: '2025-11-24',
+        dateFrom: '2025-11-18',
+        dateTo: '2025-11-24',
       })
       expect(onSuccess).toHaveBeenCalledWith(mockPaidStorageImportResponse)
     })
@@ -429,6 +430,81 @@ describe('Storage Analytics Hooks', () => {
       expect(apiClient.get).toHaveBeenCalledTimes(1)
       expect(result.current.data?.status).toBe('processing')
     })
+
+    it.each(['pending', 'processing', 'unknown_future_state'] as const)(
+      'continues polling for %s lifecycle data',
+      async wireStatus => {
+        vi.useFakeTimers()
+        const importId = `import-${wireStatus}`
+        const queryClient = createTestQueryClient()
+        const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {})
+        vi.mocked(apiClient.get).mockResolvedValue({
+          import_id: importId,
+          status: wireStatus,
+        })
+
+        let unmount: (() => void) | undefined
+        try {
+          const rendered = renderHook(() => useImportStatus(importId, { refetchInterval: 20 }), {
+            wrapper: createQueryWrapper(queryClient),
+          })
+          unmount = rendered.unmount
+          await act(async () => {
+            await vi.advanceTimersByTimeAsync(0)
+          })
+          expect(apiClient.get).toHaveBeenCalledTimes(1)
+
+          await act(async () => {
+            await vi.advanceTimersByTimeAsync(25)
+          })
+          expect(apiClient.get).toHaveBeenCalledTimes(2)
+        } finally {
+          unmount?.()
+          queryClient.clear()
+          warnSpy.mockRestore()
+        }
+      }
+    )
+
+    it.each(['completed', 'failed'] as const)(
+      'stops polling for %s lifecycle data',
+      async wireStatus => {
+        vi.useFakeTimers()
+        const importId = `import-${wireStatus}`
+        const queryClient = createTestQueryClient()
+        const initialStatus = wireStatus === 'completed' ? 'processing' : 'pending'
+        vi.mocked(apiClient.get)
+          .mockResolvedValueOnce({ import_id: importId, status: initialStatus })
+          .mockResolvedValue({ import_id: importId, status: wireStatus })
+
+        let unmount: (() => void) | undefined
+        try {
+          const rendered = renderHook(() => useImportStatus(importId, { refetchInterval: 20 }), {
+            wrapper: createQueryWrapper(queryClient),
+          })
+          unmount = rendered.unmount
+          await act(async () => {
+            await vi.advanceTimersByTimeAsync(0)
+          })
+          expect(apiClient.get).toHaveBeenCalledTimes(1)
+          expect(rendered.result.current.data?.status).toBe(initialStatus)
+
+          await act(async () => {
+            await vi.advanceTimersByTimeAsync(25)
+          })
+          expect(apiClient.get).toHaveBeenCalledTimes(2)
+          expect(rendered.result.current.data?.status).toBe(wireStatus)
+
+          await act(async () => {
+            await vi.advanceTimersByTimeAsync(100)
+          })
+          expect(apiClient.get).toHaveBeenCalledTimes(2)
+        } finally {
+          unmount?.()
+          queryClient.clear()
+        }
+      }
+    )
 
     it('respects enabled option', () => {
       const { result } = renderHook(
