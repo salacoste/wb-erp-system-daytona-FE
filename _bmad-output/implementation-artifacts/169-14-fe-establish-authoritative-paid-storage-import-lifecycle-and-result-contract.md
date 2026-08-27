@@ -1,6 +1,6 @@
 # Story 169.14: Establish the Authoritative Paid-Storage Import Lifecycle and Result Contract
 
-Status: in-progress
+Status: done
 
 ## Story
 
@@ -39,8 +39,8 @@ so that the frontend can report progress, imported rows, failure details, and sa
 - [x] Run targeted and universal backend gates, exact scope audit, two fresh reviews, and all required reruns.
 - [x] After both final reviews, atomically publish the exact mode-600 review-bootstrap record before the final commit; recover a commit-before-reviewed-head crash only from that byte-identical authority; cross-check and consume it before first push; then create the remote branch only with an absence-expecting lease for the captured feature SHA, create or byte-validate the adjacent-temp three-line PR record, normalize/re-read REST all-state PR truth with `merged_at`, retain exact OPEN/main/head/headRefOid checks, reject closed-unmerged state, skip re-merge for an already merged exact PR, and merge only with --match-head-commit for that SHA.
 - [x] Reuse the exact reviewed-head and PR records; prove feature → exact merge → refreshed backend `origin/main`, delete the remote branch only through the verified push endpoint with an exact-old-SHA lease, and remove the local branch/worktree through the restartable record-driven cleanup phase while retaining both records.
-- [ ] Publish and merge the exact twice-reviewed artifact-only frontend final-handoff record from `cdx/epic-169-story-14-final-handoff` through the executable `create | delivery | publish-recovery | cleanup` lifecycle; authenticate its payload against the retained backend cleanup authority before bootstrap/commit, retain its own precommit review-bootstrap plus separate reviewed-head/PR records, bind the committed version-3 payload and all three backend record hashes to the exact frontend PR/merge, then run backend `record-retirement` through the authenticated 48-line transaction so partial deletion is restartable and all five records are cross-verified before removal.
-- [ ] Reconcile Story/sprint status only after final handoff ancestry plus record-retirement proof.
+- [x] Publish and merge the exact twice-reviewed artifact-only frontend final-handoff record from `cdx/epic-169-story-14-final-handoff` through the executable `create | delivery | publish-recovery | cleanup` lifecycle; authenticate its payload against the retained backend cleanup authority before bootstrap/commit, retain its own precommit review-bootstrap plus separate reviewed-head/PR records, bind the committed version-3 payload and all three backend record hashes to the exact frontend PR/merge, then run backend `record-retirement` through the authenticated 48-line transaction so partial deletion is restartable and all five records are cross-verified before removal.
+- [x] Reconcile Story/sprint status only after final handoff ancestry plus record-retirement proof.
 
 ## Dev Notes
 
@@ -541,6 +541,8 @@ test/imports/paid-storage.e2e-spec.ts
 - RED-manifest review: **PASS** — reviewer `omx-team-code-reviewer-story-16914-preimplementation-r2-20260826`; Critical=0, High=0, Medium=0, Low=0.
 - Backend adversarial review pass 1: **PASS** — reviewer `omx-native-code-reviewer-16914-postfix-r3-20260827`; Critical=0, High=0, Medium=0, Low=0.
 - Backend fresh verifier review pass 2: **PASS** — reviewer `omx-native-verifier-16914-r2-20260827`; Critical=0, High=0, Medium=0, Low=0.
+- Frontend final-handoff review pass 1: **PASS** — reviewer `omx-native-code-reviewer-16914-final-handoff-r1-20260827`; reviewed tree `8e505f7436d934678036e6dfa69b89264b3eb7ed`; Critical=0, High=0, Medium=0, Low=0.
+- Frontend final-handoff fresh verifier pass 2: **PASS** — reviewer `omx-native-verifier-16914-final-handoff-r2-20260827`; reviewed tree `8e505f7436d934678036e6dfa69b89264b3eb7ed`; Critical=0, High=0, Medium=0, Low=0.
 
 ### Backend Validation Evidence
 
@@ -565,6 +567,11 @@ Backend GREEN and final validation evidence:
 - Authenticated foreign-WIP reservation: `openwiki/.last-update.json`, `openwiki/quickstart.md`, `openwiki/workflows/fe-shadcn-migration.md`; complete-byte SHA-256 `2dbadf8282e9619adc6ee26f12091f36eb54b6bc6efa35e2ee16f0ea9ee5ee93`.
 - Cleanup published mode-600 `story-169-14-branch-worktree-cleanup-authority-v1` before deletion and retained all three backend records for cross-bound retirement.
 - Remote Story branch absence, local Story branch absence, compare-and-delete exact-SHA protection, and backend Story worktree removal/prune: **PASS**.
+- The canonical final-handoff fence was corrected through frontend PR [#290](https://github.com/salacoste/wb-erp-system-daytona-FE/pull/290): commit `6a3c785a4389b3eb002de8f3be9d5c563fda9921`, merge `1d4ec2374e2143fb3d2bc820a9a38bee6e720462`. The one-line correction uses exact-path `git add -f --` for the ignored BMAD artifact while retaining every exact-scope, reviewed-tree, hash, and artifact-only commit guard.
+- Frontend final-handoff commit: `eaed12636036cda0b4529a5ba4d712d491591f8b`; direct parent `4e86272b645446189cd0d0bcd5e9c5e0c7f61942`; tree `8e505f7436d934678036e6dfa69b89264b3eb7ed`; artifact-only manifest: **PASS**.
+- Frontend final-handoff PR: [#292](https://github.com/salacoste/wb-erp-system-daytona-FE/pull/292); exact base branch `main`; head branch `cdx/epic-169-story-14-final-handoff`; head OID `eaed12636036cda0b4529a5ba4d712d491591f8b`; merge commit `83f29b7ff48360ed496f3ef9ce6c56ca61173141`; handoff commit → exact merge → refreshed frontend `origin/main` ancestry: **PASS**.
+- Frontend final-handoff remote branch, local branch, worktree, and precommit review-bootstrap absence after canonical cleanup: **PASS**.
+- Authenticated 48-line backend `record-retirement` completed after both merge chains and both branch/worktree cleanup proofs. All three backend source records, both frontend final-handoff source records, the retirement transaction, and both review-bootstrap records are absent and non-symlinked: **PASS**.
 
 ### Final Machine-Readable Handoff Record
 
@@ -679,8 +686,14 @@ Backend delivered File List equals the committed and twice-reviewed nine-path ma
 - `src/imports/services/import-status-builder.service.ts`;
 - `test/imports/paid-storage.e2e-spec.ts`.
 
+Final Story reconciliation owns exactly:
+
+- `_bmad-output/implementation-artifacts/169-14-fe-establish-authoritative-paid-storage-import-lifecycle-and-result-contract.md`;
+- `_bmad-output/implementation-artifacts/sprint-status.yaml`.
+
 ## Change Log
 
+- 2026-08-27: Completed Story 169.14 after two zero-finding frontend final-handoff reviews, merged artifact-only PR #292 at `83f29b7ff48360ed496f3ef9ce6c56ca61173141`, removed the exact handoff branch/worktree, and completed authenticated five-source record retirement with no bootstrap or transaction residue. Canonical fence correction PR #290 made ignored-artifact force-staging reproducible without weakening scope or reviewed-tree guards. Story and sprint tracking are reconciled to `done`; Story 169.15 may now start from refreshed frontend `main` and must independently authenticate the committed handoff and cleanup absence before worktree creation. **Lessons:** (1) Refresh `origin/main` before reconciliation publication. (2) Keep sprint headers and machine epic state atomic.
 - 2026-08-27: Delivered backend GREEN as exact commit `1513e3acf858cdbdc20006dcb457ef752bb5eb30` (tree `b52706c237a53aeda685237faed6ce7279579057`) through merged PR #229 at merge `8fbfc80e0cc756d9f1767c533513004e459192a2`; retained 39/39 targeted and 9/9 Story E2E PASS, classified unrelated full-suite baseline/infrastructure gaps, completed two zero-finding reviews, removed the exact backend branch/worktree, published the cleanup-authority record, and populated the cleanup-authenticated version-3 final-handoff payload for two fresh frontend reviews. Story remains `in-progress` until final-handoff merge, cleanup, record retirement, and canonical reconciliation complete.
 - 2026-08-27: Created the isolated backend Story lane from verified base `250a329c616194cf1e263a4fa8303a574939e615`, retained complete behavioral RED output (unit/controller 9 failed and 27 passed; E2E 5 failed and 4 passed), corrected the E2E to exercise the real `ImportsService` absent/foreign 404 branch, and froze the exact nine-path implementation manifest after an independent zero-finding PASS plus privacy attestation. This artifact-only evidence update remains `in-progress`; no backend production source has been edited, and GREEN remains blocked until this single-file evidence commit is merged and the canonical evidence-preflight succeeds.
 - 2026-08-26: Refreshed the checkout-independent backend base after a newer OpenWiki Bot commit advanced live backend `main` to `250a329c616194cf1e263a4fa8303a574939e615`. Re-ran the fail-closed collision inventory: all ten Story-owned paths remain clean and non-overlapping, the prescribed branch/worktree and open-PR collision surfaces remain absent, and the exact foreign-WIP/incoming intersection is now the canonical three-path reservation `openwiki/.last-update.json`, `openwiki/quickstart.md`, and `openwiki/workflows/fe-shadcn-migration.md`. This artifact-only correction does not authorize a production edit; honest RED, independent manifest review, merged evidence bytes, and evidence-preflight remain mandatory before GREEN implementation.
