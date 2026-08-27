@@ -10,8 +10,8 @@
 export type ImportState =
   | { status: 'idle' }
   | { status: 'processing'; importId: string }
-  | { status: 'success'; rowsImported: number }
-  | { status: 'error'; message: string }
+  | { status: 'success'; rowsImported: number | undefined }
+  | { status: 'error'; message: string; code?: string }
 
 /** Format date string for Russian locale display */
 export const formatDateDisplay = (dateStr: string): string => {

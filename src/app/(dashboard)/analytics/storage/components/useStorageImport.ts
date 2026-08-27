@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useCallback } from 'react'
+import { useState, useCallback, useEffect } from 'react'
 import {
   usePaidStorageImport,
   useImportStatus,
@@ -54,27 +54,25 @@ export function useStorageImport(onOpenChange: (open: boolean) => void): UseStor
     }
   )
 
-  // Handle status updates from polling
-  if (importState.status === 'processing' && statusData) {
+  // Handle terminal polling updates after render. Pending, processing, and the
+  // frontend-only unknown sentinel intentionally keep polling.
+  useEffect(() => {
+    if (importState.status !== 'processing' || !statusData) return
+
     if (statusData.status === 'completed') {
       setImportState({
         status: 'success',
-        rowsImported: statusData.rows_imported || 0,
+        rowsImported: statusData.rows_imported,
       })
       invalidateQueries()
     } else if (statusData.status === 'failed') {
       setImportState({
         status: 'error',
-        message: statusData.error_message || 'Ошибка импорта',
+        code: statusData.error?.code,
+        message: statusData.error?.message || statusData.error_message || 'Ошибка импорта',
       })
     }
-    // Story 169.12 Task 0: 'unknown' (unrecognized backend status) and 'pending'
-    // intentionally fall through — the poll keeps running, mirroring 'pending'
-    // handling. The dialog's close-confirmation is the natural terminal guard;
-    // only an explicit 'failed' is an error (Defensive Frontend: indicate, never
-    // coerce — previously unknown was coerced to 'failed' at the normalizer,
-    // rendering a false import error).
-  }
+  }, [importState.status, invalidateQueries, statusData])
 
   const validationError = validateDates(dateFrom, dateTo)
 
@@ -112,9 +110,6 @@ export function useStorageImport(onOpenChange: (open: boolean) => void): UseStor
 
   const handleReset = useCallback(() => {
     setImportState({ status: 'idle' })
-    const defaults = getDefaultDates()
-    setDateFrom(defaults.from)
-    setDateTo(defaults.to)
   }, [])
 
   return {

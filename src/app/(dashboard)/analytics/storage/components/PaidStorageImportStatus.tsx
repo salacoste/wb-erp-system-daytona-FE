@@ -90,7 +90,7 @@ export function ImportProcessing({ statusUnknown = false }: { statusUnknown?: bo
 }
 
 interface ImportSuccessProps {
-  rowsImported: number
+  rowsImported: number | undefined
   dateFrom: string
   dateTo: string
   onClose: () => void
@@ -109,7 +109,7 @@ export function ImportSuccess({ rowsImported, dateFrom, dateTo, onClose }: Impor
       <CheckCircle className="h-12 w-12 mx-auto text-status-success" />
       <p className="font-medium text-lg">Импорт завершён!</p>
       <p className="text-sm text-muted-foreground">
-        Импортировано строк: {rowsImported.toLocaleString('ru-RU')}
+        Импортировано строк: {rowsImported == null ? '—' : rowsImported.toLocaleString('ru-RU')}
       </p>
       <p className="text-sm text-muted-foreground">
         Период: {formatDateDisplay(dateFrom)} - {formatDateDisplay(dateTo)}
@@ -121,11 +121,12 @@ export function ImportSuccess({ rowsImported, dateFrom, dateTo, onClose }: Impor
 
 interface ImportErrorProps {
   message: string
+  code?: string
   onClose: () => void
   onRetry: () => void
 }
 
-export function ImportError({ message, onClose, onRetry }: ImportErrorProps) {
+export function ImportError({ message, code, onClose, onRetry }: ImportErrorProps) {
   return (
     <div
       className="py-8 text-center space-y-4"
@@ -138,11 +139,19 @@ export function ImportError({ message, onClose, onRetry }: ImportErrorProps) {
       <AlertCircle className="h-12 w-12 mx-auto text-status-error" />
       <p className="font-medium text-lg">Ошибка импорта</p>
       <p className="text-sm text-muted-foreground">{message}</p>
+      {code && (
+        <p className="text-xs text-muted-foreground">
+          Код ошибки: <span className="font-mono">{code}</span>
+        </p>
+      )}
+      <p className="text-sm text-muted-foreground">
+        Для повторной попытки вернитесь к форме и запустите импорт для всего выбранного периода.
+      </p>
       <div className="flex justify-center gap-2">
         <Button variant="outline" onClick={onClose}>
           Закрыть
         </Button>
-        <Button onClick={onRetry}>Попробовать снова</Button>
+        <Button onClick={onRetry}>Вернуться к периоду</Button>
       </div>
     </div>
   )

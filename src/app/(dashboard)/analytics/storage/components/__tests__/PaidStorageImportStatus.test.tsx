@@ -49,7 +49,9 @@ describe('PaidStorageImportStatus - Story 169.12 contracts', () => {
   })
 
   it('success is a focusable bounded live summary with status-success icon', () => {
-    render(<ImportSuccess rowsImported={1234} dateFrom="2026-03-01" dateTo="2026-03-07" onClose={noop} />)
+    render(
+      <ImportSuccess rowsImported={1234} dateFrom="2026-03-01" dateTo="2026-03-07" onClose={noop} />
+    )
     const summary = screen.getByRole('status')
     expect(summary).toHaveAttribute('tabIndex', '0')
     expect(screen.getByText('Импорт завершён!')).toBeInTheDocument()
@@ -58,12 +60,44 @@ describe('PaidStorageImportStatus - Story 169.12 contracts', () => {
     expect(icon).toHaveClass('text-status-success')
   })
 
-  it('error is a focusable bounded alert summary with status-error icon', () => {
-    render(<ImportError message="WB API недоступен" onClose={noop} onRetry={noop} />)
+  it('renders an unavailable marker when the completed row count is absent', () => {
+    render(
+      <ImportSuccess
+        rowsImported={undefined}
+        dateFrom="2026-03-01"
+        dateTo="2026-03-07"
+        onClose={noop}
+      />
+    )
+    expect(screen.getByText('Импортировано строк: —')).toBeInTheDocument()
+  })
+
+  it('error shows the safe nested message, stable code, and whole-range retry scope', () => {
+    render(
+      <ImportError
+        code="UNKNOWN_QUEUE_STATE"
+        message="WB API недоступен"
+        onClose={noop}
+        onRetry={noop}
+      />
+    )
     const alert = screen.getByRole('alert')
     expect(alert).toHaveAttribute('tabIndex', '0')
     expect(screen.getByText('Ошибка импорта')).toBeInTheDocument()
     expect(screen.getByText('WB API недоступен')).toBeInTheDocument()
+    expect(screen.getByText(/UNKNOWN_QUEUE_STATE/)).toBeInTheDocument()
+    expect(
+      screen.getByText(
+        'Для повторной попытки вернитесь к форме и запустите импорт для всего выбранного периода.'
+      )
+    ).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Вернуться к периоду' })).toBeInTheDocument()
+    expect(alert).not.toHaveTextContent('частично')
     expect(alert.querySelector('svg')).toHaveClass('text-status-error')
+  })
+
+  it('does not fabricate a failure code when structured detail is absent', () => {
+    render(<ImportError message="Ошибка импорта" onClose={noop} onRetry={noop} />)
+    expect(screen.queryByText(/Код ошибки:/)).not.toBeInTheDocument()
   })
 })

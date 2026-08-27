@@ -1,5 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { render, screen } from '@/test/utils/test-utils'
+import { fireEvent, render, screen } from '@/test/utils/test-utils'
+import type { ImportState } from '../storage-import-utils'
 
 // Mock the useStorageImport hook
 const mockHandleClose = vi.fn()
@@ -10,13 +11,21 @@ const mockSetDateTo = vi.fn()
 const mockHandleConfirmClose = vi.fn()
 const mockSetShowCloseConfirm = vi.fn()
 
+interface MockImportStateHolder {
+  current: ImportState
+}
+
+const mockImportState = vi.hoisted<MockImportStateHolder>(() => ({
+  current: { status: 'idle' },
+}))
+
 vi.mock('../useStorageImport', () => ({
   useStorageImport: () => ({
     dateFrom: '2026-03-01',
     dateTo: '2026-03-08',
     setDateFrom: mockSetDateFrom,
     setDateTo: mockSetDateTo,
-    importState: { status: 'idle' },
+    importState: mockImportState.current,
     showCloseConfirm: false,
     setShowCloseConfirm: mockSetShowCloseConfirm,
     validationError: null,
@@ -38,6 +47,7 @@ import { PaidStorageImportDialog } from '../PaidStorageImportDialog'
 describe('PaidStorageImportDialog', () => {
   beforeEach(() => {
     vi.clearAllMocks()
+    mockImportState.current = { status: 'idle' }
   })
 
   it('renders dialog title when open', () => {
@@ -74,5 +84,26 @@ describe('PaidStorageImportDialog', () => {
   it('renders dialog description', () => {
     render(<PaidStorageImportDialog open={true} onOpenChange={vi.fn()} />)
     expect(screen.getByText('Загрузка данных о платном хранении из WB API')).toBeInTheDocument()
+  })
+
+  it('wires authoritative failure detail and whole-range recovery through the dialog', () => {
+    mockImportState.current = {
+      status: 'error',
+      code: 'UNKNOWN_QUEUE_STATE',
+      message: 'Не удалось определить состояние очереди',
+    }
+
+    render(<PaidStorageImportDialog open={true} onOpenChange={vi.fn()} />)
+
+    expect(screen.getByText('Не удалось определить состояние очереди')).toBeInTheDocument()
+    expect(screen.getByText(/UNKNOWN_QUEUE_STATE/)).toBeInTheDocument()
+    expect(
+      screen.getByText(
+        'Для повторной попытки вернитесь к форме и запустите импорт для всего выбранного периода.'
+      )
+    ).toBeInTheDocument()
+
+    fireEvent.click(screen.getByRole('button', { name: 'Вернуться к периоду' }))
+    expect(mockHandleReset).toHaveBeenCalledTimes(1)
   })
 })
