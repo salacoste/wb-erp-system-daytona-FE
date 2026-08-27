@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "pageVersion": "sha256:37f4a90b12c685799cc7a07befe434d4c6ff51dc16fd9817a14a8ebb963815b7",
+  "pageVersion": "sha256:379510d40bfcb86533d35deba043519312261d4ba67c04c8946b0e1fc33c6139",
   "claims": [
     {
       "id": "claim_8c3a6291230143c1bb2cfa65a84e4ec3",
@@ -106,15 +106,15 @@
     },
     {
       "id": "claim_27101fe3ea9642cca0405bbe5a1225c1",
-      "statement": "As of 2026-08-26 the 94-story migration program is at 51 canonical stories complete: Epics 166, 167, 168, and 170 closed; Epic 171 in progress at 6/9; Epic 169 at 11/15 awaiting its 169.14→169.15→169.12 contract tail; Epics 172–174 in backlog. Full Vitest floor 19 253/0 with lint 0/0 and tsc 0.",
+      "statement": "As of 2026-08-27 (main 25c8bc19) the 94-story migration program is at 58 canonical stories complete: Epics 166, 167, 168, 170, and 171 closed; Epic 172 in progress at 4/17 (172.1 dashboard PR #278, 172.2 gallery #280, 172.3 list #282, 172.4 editor #285; NEXT = 172.5 owner-coordinated COGS); Epic 169 at 12/15 awaiting its 169.14→169.15→169.12 contract tail; Epics 173 (13 stories) and 174 (5 stories) in backlog. Full Vitest floor 19 319/0 with lint 0/0 and tsc 0.",
       "evidence": [
         {
           "resource": "repo://_bmad-output/planning-artifacts/shadcn-migration-status-and-debt-registry.md",
-          "version": "repo-file-v1:sha256:049ee615657e2d5ce85c37bfea13d0132a0bed5364b9b230368df25377c64e4c"
+          "version": "repo-file-v1:sha256:8f1caeb007083367157eda0f42e8fb1f1f612ae3af17d353218a2dc4a8aaf11d"
         },
         {
-          "resource": "repo://docs/HANDOFF-2026-08-26-epic-171-models-tree-and-full-debt-registry.md",
-          "version": "repo-file-v1:sha256:566885a2f55abb06118734a262c5739602618b6ed8f99545ee9bc5ec1ee51c16"
+          "resource": "repo://docs/HANDOFF-2026-08-26-LATE-epic-171-complete-172-recon-ready.md",
+          "version": "repo-file-v1:sha256:c41c9a5d4c432c91a4bed75723dc5c7cf2fc760761292b3e6b837b607737c95c"
         }
       ]
     },
@@ -166,11 +166,11 @@
     },
     {
       "id": "claim_ca7b65bdb3464718af7f1c7cba8cd450",
-      "statement": "Story 171.6 migrated the model-registry root by replacing 7 light-only palette classes in STATUS_BADGE_CONFIG (model-list-helpers.ts) with semantic status tokens while freezing the {className,label,pulse} shape, because the unmigrated [id] subroutes (EvaluationsHeaderCard, ModelPerformanceDetail) read className; removal of the field is delegated to Stories 171.7/171.9. Epic 171 remainder is 171.7, 171.8, 171.9.",
+      "statement": "Story 171.6 migrated the model-registry root by replacing 7 light-only palette classes in STATUS_BADGE_CONFIG (model-list-helpers.ts) with semantic status tokens while freezing the {className,label,pulse} shape. Epics 171.7/171.9 then detached both [id] subroute consumers via byte-identical route-local Record<ModelStatus,string> maps (EVALUATION_STATUS_BADGE_CLASS / PERFORMANCE_STATUS_BADGE_CLASS), but the className field is retained because registry-root ModelListSection.tsx:149 also renders it; its removal is re-routed to Story 174.2.",
       "evidence": [
         {
-          "resource": "repo://docs/HANDOFF-2026-08-26-epic-171-models-tree-and-full-debt-registry.md",
-          "version": "repo-file-v1:sha256:566885a2f55abb06118734a262c5739602618b6ed8f99545ee9bc5ec1ee51c16"
+          "resource": "repo://docs/HANDOFF-2026-08-26-LATE-epic-171-complete-172-recon-ready.md",
+          "version": "repo-file-v1:sha256:c41c9a5d4c432c91a4bed75723dc5c7cf2fc760761292b3e6b837b607737c95c"
         },
         {
           "resource": "repo://src/app/(dashboard)/analytics/models/components/model-list-helpers.ts",
@@ -180,7 +180,7 @@
     },
     {
       "id": "claim_a73723f5705a490ca4c65d6a45932a07",
-      "statement": "Every migrated route ships a *-presentation-source-contracts guard: comment-stripped owned production files must contain no raw hex and no Tailwind palette classes (regexes with self-tests), with a pinned owned-file catalog and explicit exclusions for unmigrated subtrees (advertising excludes campaigns/[advertId]; model-registry excludes [id]/**). Guards exist for advertising, anomalies, brand-share, campaign-detail, cross-reference, forecast, forecast-accuracy, funnel, gaps, liquidity, model-registry, returns, search, storage, and supply-planning.",
+      "statement": "Every migrated route ships a *-presentation-source-contract guard: comment-stripped owned production files must contain no raw hex and no Tailwind palette classes (regexes with self-tests), with a pinned owned-file catalog and explicit exclusions for unmigrated subtrees. Guards now exist for the Epics 169–171 routes (advertising, anomalies, brand-share, campaign-detail, cross-reference, forecast, forecast-accuracy, funnel, gaps, liquidity, model-registry, returns, search, storage, supply-planning, evaluations-list, sku-accuracy, model-performance) and the Epic 172 family (dashboard, dashboard-widgets, canned-rules, installed-rules, installed-rule-editor).",
       "evidence": [
         {
           "resource": "repo://src/app/(dashboard)/analytics/advertising/components/__tests__/advertising-presentation-source-contracts.test.tsx",
@@ -208,15 +208,15 @@
     },
     {
       "id": "claim_d67ba51ddbaf422194461ae5a2c3ca8a",
-      "statement": "Outstanding migration debt: the Epic 169 contract tail (169.14 backend → 169.15 shared FE → 169.12 closeout, with 169.12 route presentation merged but review-blocked), Epic 171's 171.7–171.9 models [id] subroutes, a load-dependent sidebar→supply-planning E2E flake queued for hardening before 172.1, browser/theme/visual evidence deferred to 174.3, and credentialed functional E2E to 174.4.",
+      "statement": "Outstanding migration debt: the Epic 169 contract tail (169.14 backend paid-storage contract, in progress, on a parallel team lane → 169.15 shared FE boundary → 169.12 bounded closeout, with 169.12 route presentation merged in #227 but review-blocked), Epic 172 stories 172.5–172.17 (NEXT = 172.5 COGS single assignment, owner-coordinated like 172.6/172.14), Epics 173/174 backlog, removal of the retained STATUS_BADGE_CONFIG.className (only registry-root ModelListSection.tsx:149 still consumes it, re-routed to 174.2 with stale-comment rewrites and 171.6 guard-pin migration), a load-dependent sidebar→supply-planning E2E flake, browser/theme/visual evidence deferred to 174.3, and credentialed functional E2E (incl. 171.1–171.3 routes without e2e specs) to 174.4.",
       "evidence": [
         {
           "resource": "repo://_bmad-output/planning-artifacts/shadcn-migration-status-and-debt-registry.md",
-          "version": "repo-file-v1:sha256:049ee615657e2d5ce85c37bfea13d0132a0bed5364b9b230368df25377c64e4c"
+          "version": "repo-file-v1:sha256:8f1caeb007083367157eda0f42e8fb1f1f612ae3af17d353218a2dc4a8aaf11d"
         },
         {
-          "resource": "repo://docs/HANDOFF-2026-08-26-epic-171-models-tree-and-full-debt-registry.md",
-          "version": "repo-file-v1:sha256:566885a2f55abb06118734a262c5739602618b6ed8f99545ee9bc5ec1ee51c16"
+          "resource": "repo://docs/HANDOFF-2026-08-26-LATE-epic-171-complete-172-recon-ready.md",
+          "version": "repo-file-v1:sha256:c41c9a5d4c432c91a4bed75723dc5c7cf2fc760761292b3e6b837b607737c95c"
         }
       ]
     },
@@ -226,7 +226,7 @@
       "evidence": [
         {
           "resource": "repo://_bmad-output/planning-artifacts/shadcn-migration-status-and-debt-registry.md",
-          "version": "repo-file-v1:sha256:049ee615657e2d5ce85c37bfea13d0132a0bed5364b9b230368df25377c64e4c"
+          "version": "repo-file-v1:sha256:8f1caeb007083367157eda0f42e8fb1f1f612ae3af17d353218a2dc4a8aaf11d"
         },
         {
           "resource": "repo://src/styles/__tests__/globals-compiled-contrast.test.ts",
@@ -247,10 +247,82 @@
           "version": "repo-file-v1:sha256:116a5f56478cbf57f7c81c0b082db84c4223de3857fa913e3d5c533176139fcc"
         }
       ]
+    },
+    {
+      "id": "claim_6e671c53ec1d469c819df055f6e62352",
+      "statement": "Epic 171 closed 9/9 on 2026-08-26: 171.7 model evaluations list (PR #266), 171.8 SKU-accuracy detail (PR #268), and 171.9 model performance detail (PR #270) fully migrate the /analytics/models tree, each with its own presentation-source-contract guard (evaluations-list, sku-accuracy, model-performance). 171.9 was the only subroute with real palette+hex: DRIFT/valence palette became status tokens and MapeTrendChart's 8 hexes became the 171.4 chart canon CSS vars (border, --color-chart-axis, --color-chart-1).",
+      "evidence": [
+        {
+          "resource": "repo://src/app/(dashboard)/analytics/models/%5Bid%5D/evaluations/components/__tests__/evaluations-list-presentation-source-contracts.test.ts",
+          "version": "repo-file-v1:sha256:5bb143845e7101a4f41004599b0767fc68a918e1d07adc157ed37925c6bdd132"
+        },
+        {
+          "resource": "repo://src/app/(dashboard)/analytics/models/%5Bid%5D/evaluations/sku-accuracy/components/__tests__/sku-accuracy-presentation-source-contracts.test.ts",
+          "version": "repo-file-v1:sha256:9ebe4065d269f7ea3a45007880bf018798958a9163acef1555280b148098408e"
+        },
+        {
+          "resource": "repo://src/app/(dashboard)/analytics/models/%5Bid%5D/performance/components/__tests__/model-performance-presentation-source-contracts.test.ts",
+          "version": "repo-file-v1:sha256:c0f5f1bb57bddf6aa7b4bc747d04e65ecd4286615dc4ef3d198dca9fb05272c2"
+        },
+        {
+          "resource": "repo://src/app/(dashboard)/automation/installed-rules/editor/__tests__/installed-rule-editor-presentation-source-contracts.test.ts",
+          "version": "repo-file-v1:sha256:09512b48ff07cfa3e906e6f29e95a5c90d22f7197e5980802f9e3fdf4f9088b2"
+        },
+        {
+          "resource": "repo://src/app/(dashboard)/dashboard/__tests__/dashboard-presentation-source-contracts.test.ts",
+          "version": "repo-file-v1:sha256:272a0b5f6144c701c26ce5438dd3c41c588ab90d823cc5a5fa8c47dc2840562d"
+        }
+      ]
+    },
+    {
+      "id": "claim_3a61e7d30f59419ba29b8a97e640472a",
+      "statement": "Story 172.1 (PR #278) migrated the business dashboard across src/app/(dashboard)/dashboard/** and the src/components/custom/dashboard/** family (incl. BaseMetricCard) in four delegated waves with new dashboard-presentation-source-contracts and dashboard-widgets-presentation-source-contracts guards; DashboardStatusStrip consolidates the 8 conditional banners into one expandable status line built from status-* token tones, keeping children mounted via the hidden attribute so banner state and DOM assertions are preserved.",
+      "evidence": [
+        {
+          "resource": "repo://src/app/(dashboard)/dashboard/components/DashboardStatusStrip.tsx",
+          "version": "repo-file-v1:sha256:484c4f486f2512baf3e258df33fcfbe892c8379e71ef7b48d8778b2105aad6c3"
+        },
+        {
+          "resource": "repo://src/components/custom/dashboard/BaseMetricCard.tsx",
+          "version": "repo-file-v1:sha256:ebb76bec3ef638c7ba27f354695c09c5f2ac5b5323f3a5f14631eea5c5d638e6"
+        },
+        {
+          "resource": "repo://src/components/custom/dashboard/__tests__/dashboard-widgets-presentation-source-contracts.test.ts",
+          "version": "repo-file-v1:sha256:10e5fb7d1fd3d11f8cfbdb05c6302081c8d49bd92605eaeab64bfd21cc00c243"
+        }
+      ]
+    },
+    {
+      "id": "claim_8284504e1567487da391c7b8c3a2902a",
+      "statement": "Stories 172.2–172.4 (PRs #280/#282/#285) migrated the automation domain end-to-end: the CannedRulesGallery born-clean on shadcn primitives with a new fixture-controlled e2e package, the installed-rules list with status tokens across badge/safety/banner (incl. InstalledRuleRow), and the installed-rule detail/editor whose WritebackSafetyAcknowledgement composes the editor and whose 163.3 editor spec is finally live 8/8; each route tree carries its own presentation-source-contract guard.",
+      "evidence": [
+        {
+          "resource": "repo://src/app/(dashboard)/automation/installed-rules/editor/InstalledRuleEditor.tsx",
+          "version": "repo-file-v1:sha256:16d441831fe2334bb62588caeccbcb91067e8cfe61934917427483eec5d1b3a0"
+        },
+        {
+          "resource": "repo://src/app/(dashboard)/automation/installed-rules/editor/WritebackSafetyAcknowledgement.tsx",
+          "version": "repo-file-v1:sha256:5b607beb06de36bf1ce8c1137dda2a161e7fb8fc887a87be2fe9b8072d01fe40"
+        },
+        {
+          "resource": "repo://src/components/custom/automation/CannedRulesGallery.tsx",
+          "version": "repo-file-v1:sha256:1911307a328a2544d431dfd629ce784ae6aabd8d456cf583525a282c1fdf26e6"
+        }
+      ]
+    },
+    {
+      "id": "claim_1e44c6ec7a144b3fb547e355eb969b2d",
+      "statement": "Route-guard catalogs must filter relative path segments before joining to an absolute path: 171.8 discovered (and proved by simulation) that the 171.7 guard's substring filter on the joined absolute path matched a sibling plan-pinned worktree whose name contained the subtree name, silently emptying the owned-file catalog; relative-first filtering is now the canon.",
+      "evidence": [
+        {
+          "resource": "repo://src/app/(dashboard)/analytics/models/%5Bid%5D/evaluations/components/__tests__/evaluations-list-presentation-source-contracts.test.ts",
+          "version": "repo-file-v1:sha256:5bb143845e7101a4f41004599b0767fc68a918e1d07adc157ed37925c6bdd132"
+        }
+      ]
     }
   ],
   "verification": {
-    "by": "openwiki/0.4.0",
-    "at": "2026-08-26T08:47:51.873Z"
+    "by": "openwiki/0.4.3",
+    "at": "2026-08-27T08:47:50.418Z"
   }
 }

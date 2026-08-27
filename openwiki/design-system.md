@@ -65,13 +65,13 @@ openwiki:
   validation_commands:
     - npx vitest run src/styles/__tests__ src/components/ui/__tests__ src/components/product
 verified:
-  - by: openwiki/0.4.0
-    at: 2026-08-26T08:47:51.873Z
+  - by: openwiki/0.4.3
+    at: 2026-08-27T08:47:50.418Z
 sources:
   - id: openwiki-source-c278c3812722174099a1e7a5
     resource: repo://_bmad-output/planning-artifacts/shadcn-migration-status-and-debt-registry.md
-  - id: openwiki-source-2b72575b2d943fa2edcc5712
-    resource: repo://docs/HANDOFF-2026-08-26-epic-171-models-tree-and-full-debt-registry.md
+  - id: openwiki-source-808c20fe8494873098c93449
+    resource: repo://docs/HANDOFF-2026-08-26-LATE-epic-171-complete-172-recon-ready.md
   - id: openwiki-source-fbccae247df2d4fe4a532ee8
     resource: repo://postcss.config.js
   - id: openwiki-source-de60c3a1a7a87a20895fd687
@@ -90,18 +90,40 @@ sources:
     resource: repo://src/app/(dashboard)/analytics/forecast/components/ForecastChart.tsx
   - id: openwiki-source-538597c338cc4b457795a958
     resource: repo://src/app/(dashboard)/analytics/forecast/components/ForecastChartSrTable.tsx
+  - id: openwiki-source-375758d93f0d6c32f76edc38
+    resource: repo://src/app/(dashboard)/analytics/models/%5Bid%5D/evaluations/components/__tests__/evaluations-list-presentation-source-contracts.test.ts
+  - id: openwiki-source-87c04216da2cb1b91d886b42
+    resource: repo://src/app/(dashboard)/analytics/models/%5Bid%5D/evaluations/sku-accuracy/components/__tests__/sku-accuracy-presentation-source-contracts.test.ts
+  - id: openwiki-source-dc9d5d1a7cf992a9104c4b84
+    resource: repo://src/app/(dashboard)/analytics/models/%5Bid%5D/performance/components/__tests__/model-performance-presentation-source-contracts.test.ts
   - id: openwiki-source-c8e549ad350aea3a7bbac3d5
     resource: repo://src/app/(dashboard)/analytics/models/components/__tests__/model-registry-presentation-source-contracts.test.ts
   - id: openwiki-source-0d7b6245d39c7d7fa74deef5
     resource: repo://src/app/(dashboard)/analytics/models/components/model-list-helpers.ts
   - id: openwiki-source-eac6d7fc43bfdc82ac5fac96
     resource: repo://src/app/(dashboard)/analytics/search/components/SearchPageContent.tsx
+  - id: openwiki-source-d588046a71f5543a05a18744
+    resource: repo://src/app/(dashboard)/automation/installed-rules/editor/__tests__/installed-rule-editor-presentation-source-contracts.test.ts
+  - id: openwiki-source-f34d44a53d114470e383a6ff
+    resource: repo://src/app/(dashboard)/automation/installed-rules/editor/InstalledRuleEditor.tsx
+  - id: openwiki-source-a0c5a8e0ea17fc31186171b4
+    resource: repo://src/app/(dashboard)/automation/installed-rules/editor/WritebackSafetyAcknowledgement.tsx
+  - id: openwiki-source-bc888743a63aad335d44e7d2
+    resource: repo://src/app/(dashboard)/dashboard/__tests__/dashboard-presentation-source-contracts.test.ts
+  - id: openwiki-source-ad88034ef008e556f571f28c
+    resource: repo://src/app/(dashboard)/dashboard/components/DashboardStatusStrip.tsx
   - id: openwiki-source-5ae86fd6949078bf3ad8edb1
     resource: repo://src/app/not-found.tsx
   - id: openwiki-source-4762fce35fccca75d26d559e
     resource: repo://src/components/custom/analytics/__tests__/brand-share-presentation-source-contracts.test.tsx
   - id: openwiki-source-2896eabf49b46e0348e49dd9
     resource: repo://src/components/custom/analytics/BrandShareView.tsx
+  - id: openwiki-source-3d245e5676d70cc94118cad1
+    resource: repo://src/components/custom/automation/CannedRulesGallery.tsx
+  - id: openwiki-source-9ce5e1562aa7550a904ae8e6
+    resource: repo://src/components/custom/dashboard/__tests__/dashboard-widgets-presentation-source-contracts.test.ts
+  - id: openwiki-source-bf9271387a65438b5f9a2bcc
+    resource: repo://src/components/custom/dashboard/BaseMetricCard.tsx
   - id: openwiki-source-912b7e3e539c3dd145998d5d
     resource: repo://src/components/product/__tests__/product-composition-source-contracts.test.ts
   - id: openwiki-source-9a77cae6730eea6df8151a9c
@@ -130,7 +152,7 @@ sources:
     resource: repo://src/styles/__tests__/globals-compiled-contrast.test.ts
   - id: openwiki-source-13697ff46e81b49dcb27ba68
     resource: repo://src/styles/globals.css
-generated: {by: "openwiki/0.4.0", at: "2026-08-26T08:47:51.873Z"}
+generated: { by: "openwiki/0.4.3", at: "2026-08-27T08:47:50.418Z" }
 ---
 
 # Design System
@@ -284,12 +306,12 @@ Honest state and recovery compositions, plus the single global not-found owner.
 
 ## Migration program (Epics 166–174)
 
-The foundation above is the first phase of a 92-story, 76-route migration defined in:
+The foundation above is the first phase of a 94-story, 76-route migration defined in:
 
 - `.omx/plans/shadcn-full-ui-migration-master.md` — approved master plan, delivery DAG, standard per-story protocol, non-negotiable principles.
 - `_bmad-output/planning-artifacts/epics-166-174-fe-shadcn-migration.md` — story scope, acceptance criteria, ownership, forbidden shared files.
 - `_bmad-output/planning-artifacts/shadcn-route-ledger.md` — exact route-to-story ownership for all 76 `page.tsx` routes.
-- `_bmad-output/planning-artifacts/shadcn-migration-status-and-debt-registry.md` — rolling status/debt snapshot of the migration waves (latest: 2026-08-26, 51/94 canonical stories complete; Epics 166–168 and 170 closed, 171 at 6/9, 169 at 11/15 awaiting its contract tail).
+- `_bmad-output/planning-artifacts/shadcn-migration-status-and-debt-registry.md` — rolling status/debt snapshot of the migration waves (latest: 2026-08-27; 58/94 canonical stories complete; Epics 166–168, 170, 171 closed; 169 at 12/15 awaiting its contract tail; 172 in progress at 4/17).
 - `_bmad-output/planning-artifacts/ux-design-specification.md` — visual/interaction/responsive/table/chart/state/theme/accessibility contracts.
 
 **Non-negotiable principles**: preserve behavior before changing presentation; keep `src/components/ui/**` generic and domain-agnostic; build in layers; one shared file = one upstream owner Story; never run `shadcn init --force`; do not hide financial/operational/chart/table/availability/error meaning behind color, hover, truncation, or viewport width; local validation is the merge gate; production/deployment work is forbidden (see [Architecture — Configuration](architecture.md#configuration) and [Testing & Operations](testing-and-ops.md)).
@@ -298,7 +320,9 @@ The full foundation (Stories 166.1–166.8) has landed in order: 166.1 tokens �
 
 **Epic 170 (marketing analytics) is closed 7/7** (PRs #237–#250, 2026-08-25/26): 170.1 advertising analytics (route + route-local `advertising-tokens.ts` efficiency/campaign-status maps, `daily-trend-config.ts` and `ad-cost-discrepancy-config.ts` on chart tokens, sr-only `DailyTrendSrTable`, status `status-warning` `/15`+`/30` matched pairs for over-attribution/multi-campaign banners, honest-null `meta.last_sync` post-preface #236); 170.2 campaign detail (plain semantic back `Link`, no nested Button); 170.3 brand and 170.5 category (direct mirrors — `text-2xl font-semibold` h1 token canon, info-panel status-information tints in `BrandHelpSection`/`CategoryHelpSection`); 170.4 brand-share (`src/components/custom/analytics/BrandShareView.tsx` family — `id`+`aria-labelledby` filter names, filter context threaded into the chart subtitle, ≥44px SelectTrigger/retry Button, share-axis domain pinned 0–100); 170.6 cross-reference (single-source `channel-styling.ts`, unified correlation taxonomy on `interpretCorrelation`, one-source-partial coexistence: a failed query keeps the other sources' data visible — the 169.12 pattern); 170.7 search analytics (route + deep-link `?tab=`/`?nmId=` validated at page level with precedence `?tab=` > `?query=` > orders, single-source `search-chart-config.ts`, Pattern-1 own loading/error chrome over shared position tables).
 
-**Epic 171 (AI/forecast analytics) is in progress at 6/9** (PRs #252–#263): 171.1 ai-admin anomalies (born token-clean, 7 contract gaps closed — accessible anomaly identity, filtered-empty distinct from no-anomalies, 409-conflict honest state, polite pending announcement); 171.2 ai-admin models list (`AdminModelsContent` filter-empty vs no-data split; epic AX literal "focus returns to the invoking row" delivered in the rollback dialog by capturing the row's button before unmount and re-querying it inside a `requestAnimationFrame` — a background refetch may remount the row between capture and frame); 171.3 ai-admin preferences (NO-OP verdict plus micro-fixes: mutation error `Alert` id joined into the Switch's describedby chain, `max-w-2xl` readable form width); 171.4 forecast (`ForecastChart` band cutout fixed for dark mode, 13 chart hexes removed, band tiers, sr-only `ForecastChartSrTable`, forecast series deliberately carry no financial valence); 171.5 forecast-accuracy (MINOR-GAP — born clean, single amber MAPE>200 warning site + 169.7 static captions); 171.6 model registry root (`STATUS_BADGE_CONFIG` in `model-list-helpers.ts`: 7 light-only palette classes → semantic status tokens with hue preserved, shape frozen `{className,label,pulse}` because the not-yet-migrated `[id]` subroutes read `.className` — subroutes got token-clean rendering for free, field removal is delegated to 171.7/171.9; `ModelListSection` pulse dot → `bg-status-information`, `ModelsPageShell` double-`p-6` removed, tabular-nums on version/MAPE/trained columns). Remaining: 171.7 model evaluations list → 171.8 evaluation SKU accuracy detail → 171.9 model performance detail (closes the `/analytics/models` tree and Epic 171); 169.14 → 169.15 → 169.12 closeout runs as a parallel lane.
+**Epic 171 (AI/forecast analytics) is CLOSED 9/9** (PRs #252–#262 then the evening wave #266/#268/#270, 2026-08-26): 171.1 ai-admin anomalies (born token-clean, 7 contract gaps closed — accessible anomaly identity, filtered-empty distinct from no-anomalies, 409-conflict honest state, polite pending announcement); 171.2 ai-admin models list (`AdminModelsContent` filter-empty vs no-data split; epic AX literal "focus returns to the invoking row" delivered in the rollback dialog by capturing the row's button before unmount and re-querying it inside a `requestAnimationFrame` — a background refetch may remount the row between capture and frame); 171.3 ai-admin preferences (NO-OP verdict plus micro-fixes: mutation error `Alert` id joined into the Switch's describedby chain, `max-w-2xl` readable form width); 171.4 forecast (`ForecastChart` band cutout fixed for dark mode, 13 chart hexes removed, band tiers, sr-only `ForecastChartSrTable`, forecast series deliberately carry no financial valence — this is the live chart canon later reused by 171.9); 171.5 forecast-accuracy (MINOR-GAP — born clean, single amber MAPE>200 warning site + 169.7 static captions); 171.6 model registry root (`STATUS_BADGE_CONFIG` in `model-list-helpers.ts`: 7 light-only palette classes → semantic status tokens with hue preserved, shape frozen `{className,label,pulse}` because the then-unmigrated `[id]` subroutes read `.className`; pulse dot → `bg-status-information`, double-`p-6` removed, tabular-nums on version/MAPE/trained columns); **171.7 model evaluations list** (PR #266 — born-clean MINOR-GAP: `STATUS_BADGE_CONFIG.className` detached via route-local `EVALUATION_STATUS_BADGE_CLASS` `Record<ModelStatus,string>` map, byte-identical 1:1 across all 7 statuses, label still single-sourced from the shared config; TableCaption naming the model, tabular-nums ×7 with nmId exempt); **171.8 evaluation SKU-accuracy detail** (PR #268 — born-clean: TableCaption ×2, tabular-nums ×9, route paddings removed; also a cross-surface fix of the 171.7 guard whose substring filter on the joined absolute path matched the 171.8 plan-pinned worktree name and emptied the catalog — guards now filter relative segments before join); **171.9 model performance detail** (PR #270 — the only `[id]` subroute with real palette+hex: DRIFT+valence palette → status tokens with dark fix, `MapeTrendChart`'s 8 hexes → the 171.4 chart canon CSS vars (border/`chart-axis`/`chart-1`), performance consumers detached from `STATUS_BADGE_CONFIG.className` via a route-local map). The `className` field itself was **not** deleted: live-code check showed registry-root `ModelListSection.tsx:149` also renders `badge.className`, so removal was re-routed to 174.2 (route-ledger handoff from 171.9) together with rewriting the stale helper comments and migrating the 171.6 guard pins. The `/analytics/models` tree is now fully migrated and each `[id]` subroute has its own guard (`evaluations-list`, `sku-accuracy`, `model-performance`).
+
+**Epic 172 (business operations, 17 stories) is IN PROGRESS at 4/17** (PRs #278–#285, 2026-08-26/27): 172.1 business dashboard (PR #278, FULL cycle — 127 files across `src/app/(dashboard)/dashboard/**` and the `src/components/custom/dashboard/**` family incl. `BaseMetricCard`, executed in four delegated waves; `DashboardStatusStrip` consolidates the 8 conditional banners into one expandable status line using `status-*` token tones while children stay mounted via `hidden` so banner state and DOM assertions are preserved; `dashboard-presentation-source-contracts` + `dashboard-widgets-presentation-source-contracts` guards added, full floor 19 281 → 19 297); 172.2 canned automation rules gallery (PR #280 — `CannedRulesGallery` born-clean on merged shadcn primitives, py-6 debt and raw-button closed, new gallery e2e package with a fixture controller); 172.3 installed rules list (PR #282 — status tokens across badge/safety/banner, incl. `InstalledRuleRow`); 172.4 installed rule detail/editor (PR #285 — editor status tokens, `WritebackSafetyAcknowledgement` in the editor, and the 163.3 editor spec finally live 8/8). **NEXT = 172.5** (COGS single assignment — owner-coordination required, as are 172.6 and 172.14; see registry §5); the automation domain (gallery + list + editor) is migrated end-to-end. Epics 173 (13 stories) and 174 (5 stories, final consolidation) remain in backlog. The parallel 169 lane runs independently: 169.14 (backend paid-storage contract, in progress) → 169.15 (shared FE boundary) → 169.12 bounded closeout.
 
 ## Route presentation source-contract guards (Epics 169–171 canon)
 
@@ -309,20 +333,21 @@ Every migrated route ships a `*-presentation-source-contracts.test(.tsx)` guard 
 - **Story-anchored pins** — token-flipped test pins (e.g. `getAdDeltaColor` → `text-status-success/error`, severity chips → status tokens) carry `Story 170.x` comments tying each pin to its migration, with thresholds explicitly unchanged.
 - **C4 state-disposition matrix** — 170.1's guard documents, per data state (initial loading, background refresh, global vs filtered empty, sync gaps, over-attribution, partial daily/finance, stale), whether it is TESTED, N/A-with-evidence, or route-owned, so state honesty is auditable from the guard itself.
 
-Current guards: `advertising`, `anomalies`, `brand-share` (in `src/components/custom/analytics/__tests__/`), `campaign-detail` (in `src/components/custom/advertising/__tests__/`), `cross-reference`, `forecast`, `forecast-accuracy`, `funnel`, `gaps`, `liquidity`, `model-registry`, `returns`, `search`, `storage`, `supply-planning`.
+Current guards: `advertising`, `anomalies`, `brand-share` (in `src/components/custom/analytics/__tests__/`), `campaign-detail` (in `src/components/custom/advertising/__tests__/`), `cross-reference`, `forecast`, `forecast-accuracy`, `funnel`, `gaps`, `liquidity`, `model-registry`, `returns`, `search`, `storage`, `supply-planning`; the models `[id]` subroutes from Epic 171 — `evaluations-list`, `sku-accuracy`, `model-performance` (under `src/app/(dashboard)/analytics/models/[id]/`); and the Epic 172 family — `dashboard`, `dashboard-widgets` (in `src/components/custom/dashboard/__tests__/`), `canned-rules`, `installed-rules`, `installed-rule-editor` (under `src/app/(dashboard)/automation/`). The 171.8 anchor-safe lesson is canon for all relative-path guards: filter relative segments before joining to an absolute path, or a sibling worktree whose plan-pinned name contains the subtree name will silently empty the owned-file catalog.
 
 ## Remaining migration debt registry
 
-Per `_bmad-output/planning-artifacts/shadcn-migration-status-and-debt-registry.md` and `docs/HANDOFF-2026-08-26-epic-171-models-tree-and-full-debt-registry.md` (main `c7492829`, 51/94 canonical stories, full Vitest floor 19 253/0, lint 0/0, tsc 0):
+Per `_bmad-output/planning-artifacts/shadcn-migration-status-and-debt-registry.md` and `docs/HANDOFF-2026-08-26-LATE-epic-171-complete-172-recon-ready.md` (§0 reconciled 2026-08-27 after 172.1–172.4; main `25c8bc19`, 58/94 canonical stories, full Vitest floor 19 319/0, lint 0/0, tsc 0):
 
 | Debt | Owner / due |
 |------|-------------|
-| Epic 169 contract tail: 169.14 backend paid-storage import contract → 169.15 shared FE boundary → 169.12 bounded closeout | Parallel lane; 169.12 route presentation already merged (#227) but remains review-blocked |
-| Epic 171 remainder: 171.7 evaluations list, 171.8 SKU accuracy detail, 171.9 performance detail (incl. `MapeTrendChart` chart-hex check and removing the `STATUS_BADGE_CONFIG.className` dependency from `EvaluationsHeaderCard`/`ModelPerformanceDetail`) | Next lane; closes the models tree → Epic 172 (17 stories, business operations) |
-| `STATUS_BADGE_CONFIG` frozen shape (`{className,label,pulse}`) — `className` consumed by unmigrated `[id]` subroutes | Removal delegated to 171.7/171.9 |
-| Sidebar→supply-planning E2E flake (dashboard URL-race, load-dependent, documented in the test) | e2e-hardening before 172.1 |
-| Browser/theme/visual evidence for merged stories | Epic 174.3 |
-| Credentialed functional E2E | Epic 174.4 |
+| Epic 169 contract tail: 169.14 backend paid-storage import contract (in progress) → 169.15 shared FE boundary → 169.12 bounded closeout | Parallel lane, run by a separate team; 169.12 route presentation already merged (#227) but the Story stays `review` until the chain closes |
+| Epic 172 remainder: 172.5–172.17 (NEXT = 172.5 COGS single assignment, owner-coordination; 172.6 and 172.14 also owner-dependent) | Current lane |
+| Epics 173 (13 stories) and 174 (5 stories) | Backlog; 174 strictly after 166–173 |
+| `STATUS_BADGE_CONFIG.className` — both `[id]` consumers detached (171.7/171.9 route-local 1:1 maps), field retained only for registry-root `ModelListSection.tsx:149`; removal plus stale-comment rewrites (`model-list-helpers.ts:24-26`, `evaluations-list-helpers.ts:20-23`), migration of the 171.6 guard token pins, and 171.6 anchor-hardening | Re-routed to 174.2 (route-ledger handoff from 171.9) |
+| Sidebar→supply-planning E2E flake (dashboard URL-race, load-dependent, documented in the test) | e2e-hardening queue |
+| Browser/theme/visual evidence for merged stories (incl. dark/breakpoint/zoom/reduced-motion manual runs) | Epic 174.3 |
+| Credentialed functional E2E (incl. early-Epic-171 stories without e2e specs: 171.1/171.2/171.3) | Epic 174.4 |
 | locale-percent ratchet at 4; docs check baseline 97 entries | Continuous ratchets, not blockers |
 
 ## When to consult this page

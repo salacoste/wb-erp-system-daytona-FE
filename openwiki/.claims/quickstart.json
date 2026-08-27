@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "pageVersion": "sha256:e9a1526b85a3662d7e2623daedf0f682cd9c18a2b52bc478bb80b654369a61ea",
+  "pageVersion": "sha256:5463ee1ea835d3ed512a1617930139b253093db871edd9dbd9c33d99cd8d59b2",
   "claims": [
     {
       "id": "claim_07e85bb249e745f69c550323b16664e1",
@@ -44,73 +44,87 @@
     },
     {
       "id": "claim_72df5eaf202143038b58f48061b0b78a",
-      "statement": "The Epics 166–174 shadcn full-UI migration program has Epic 166 (foundation 166.1-166.8), Epic 167 (AppShell/auth), and Epic 168 (analytics core) closed; Epic 169 has route work 169.1-169.13 merged with the Correct Course sequence 169.14 (backend paid-storage contract) → 169.15 (shared FE boundary) → 169.12 bounded closeout outstanding.",
+      "statement": "In the Epics 166–174 shadcn full-UI migration program, Epics 166 (foundation), 167 (AppShell/auth), 168 (analytics core), 170, and 171 are all closed. Epic 169 remains in progress at 12/15: route work 169.1–169.13 is merged, and the remaining Correct Course chain is 169.14 (backend paid-storage contract, in progress) → 169.15 (shared FE boundary) → 169.12 bounded contract closeout (its 27-file route PR #227 was merged early at 52f7f506 but the story is not counted complete).",
       "evidence": [
         {
           "resource": "repo://_bmad-output/implementation-artifacts/sprint-status.yaml",
-          "version": "repo-file-v1:sha256:8e07967a8ac086235377500edf21fdffccad3f36613cacd1c1253fb8a9608851"
+          "version": "repo-file-v1:sha256:df38a2981672e6f45438dbba6817bad4c3bb8118737a2a99eda5732983b54207"
         },
         {
-          "resource": "repo://_bmad-output/planning-artifacts/shadcn-migration-status-and-debt-registry.md#L11-L34",
-          "version": "repo-lines-v1:sha256:4315e25a96e1dc22c4a7a67bbd1de26d391917a11abb98050a4f38f55b954c10:eyJzZWxlY3RlZExpbmVDb3VudCI6MjQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImM2Y2MxZDU3MTQ2ZGY1ZTEyNzEwOWExYmYwMTk5MTVkMTIxMzFlZWJlZmQ4M2M5YmI3NjY4ZTIwN2VkM2Q1Y2EiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjcxZmE3MDBhZTc2N2JkMGRiMzU1ZGM2NTI1YWU0MjRiODg2NTJjODk0ZTc0NzVjMDY4MTdkMDNiNTQ0YzUxYmYiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImM1YWQ0NGY2M2FkZTMxMDg3NzA0NWRiZjM4MjllMzdlYmFkZmU5ZmU3NmY5ODNkMmI4ZjJiOWJlNWI0Y2NhYzYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6Ijc2M2RlMDQ5M2U4OTBiMDI2MDQ2NDAwYTYxM2NkOTliMDAxNDU4ZGU0MDBmNTU5NGVkYzc3Y2U5YjA0OTQ0N2QifQ"
+          "resource": "repo://_bmad-output/planning-artifacts/shadcn-migration-status-and-debt-registry.md#L13-L19",
+          "version": "repo-lines-v1:sha256:e4b94ff805a8c272a8df84d65f00fdd13da09f0bef49b33539ac45e290555f7d:eyJzZWxlY3RlZExpbmVDb3VudCI6NywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZjNlOGUxOWY4ZDVkOWZlZDVhMzg5Nzc3MTc5NGNlMTBlNzYwNGUzMDk4ZmU4NjBjMGE4MWIyODk0NzdlODE4NSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiZmE4YjdmZTk0NTc3MmRiOWE3NjExMzBhOGEwM2RhOWVhNzNiZmM2NWZjMmE1YTgxZjhiNjJlYzEyZTYwMmNiNiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMWE1MmYwNWEzZTg0OGNjODAyYzE2ZTYwMmM4YWZmODAwYjJkNzU4OTY4YWY3YjI2NTlkMTZiM2U3ZWRkOTFhMCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNzc3ZjRiMGUxYzVjOWVlNTA2OTg2MTMwNDJmMTJjMjcwNTJlOGI2MmNiYzYwOWIwZDVjYzEzNjhhNWY2ZDM4YSJ9"
         }
       ]
     },
     {
       "id": "claim_98a84272332b47e6bbc42371df92c426",
-      "statement": "Epic 170 (marketing/marketplace analytics) is complete 7/7: 170.1 advertising workspace, 170.2 campaign bid-recommendation detail, 170.3 brand margin, 170.4 brand share, 170.5 category margin, 170.6 advertising–organic cross-reference, and 170.7 search analytics were all merged 2026-08-25/26.",
+      "statement": "Epic 170 (marketing/marketplace analytics) is complete 7/7: 170.1 advertising workspace, 170.2 campaign bid-recommendation detail, 170.3 brand margin, 170.4 brand share, 170.5 category margin, 170.6 advertising–organic cross-reference, and 170.7 search analytics were all merged 2026-08-25/26 through PRs #237–#250.",
       "evidence": [
         {
-          "resource": "repo://_bmad-output/implementation-artifacts/sprint-status.yaml#L795-L804",
-          "version": "repo-lines-v1:sha256:c72ba334854d5ec95a57b8bc908848c3957c48aab493bcdb948b6dec4b5d975a:eyJzZWxlY3RlZExpbmVDb3VudCI6MTAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjA3ZjJmMWMwYjFiODRmZDc2ZDg2YThiN2UyNzkwMmE1Yjk0YTdmYzQ0Yzc0OTQwZjUwMzhiNzNmZGFlMDIyYmYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjFkYTBmZWZlNDRjMzU2MjVkYjc1ZGE4ZmU3YWQ5M2U1Y2QxMWY2M2E3MmQzODViMDJiZjVmYTk4MzVkYjM3OTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjQzY2M5ZGQyZjQ3NTVjMjAyMjI1Njk4MGVmNmM2ZTQ4ZDFlNDBhMTE5NmY4OTM3N2ZmNjE2YTU1M2ZiYzAyNDUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjA2Njc5MTNjZGEzODk2YzliZDFjNzFiOGFmNmNjMTE1MjQwMjZmNGFhMDIzYTJlMDcwN2Y5MGQ5NTE3ODI5MzkifQ"
+          "resource": "repo://_bmad-output/implementation-artifacts/sprint-status.yaml",
+          "version": "repo-file-v1:sha256:df38a2981672e6f45438dbba6817bad4c3bb8118737a2a99eda5732983b54207"
         },
         {
-          "resource": "repo://_bmad-output/planning-artifacts/shadcn-migration-status-and-debt-registry.md#L36-L50",
-          "version": "repo-lines-v1:sha256:d6b857f1ac788c1071a27695418b21c657865dc92f537eae224bf49332a70c2e:eyJzZWxlY3RlZExpbmVDb3VudCI6MTUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQyMzNkMTkyMTlmZTAzZjVlMWEwNjQyOWI1ZTdlN2IwOGEyYzJlNWUwNDIzMzk4YjIyNzFiNzE3NGJkMDhjODYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImY1OGQ5ODlkYjZkMjkwOWNjMWJhMDA3MGJmNDY5MmVhZWZjZTVmZGViOTFmOGYwMmFmODc1OTUwYzFiODExNjciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjFjY2ZhZGRiZGY5YjA1NzcwZDBjOWUxMDM1ZWNjZjZhMjRlZGE5NGY5NzBhZDU3MjdmNGEyMmRlMjQ0MTc4MDciLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImI1MWFmODQ4MTEwZGNhYjQxYmY5Zjg1NjU2NTVjNGJhOGI4ZDM1MGY4ZTlkNTVlYTM1MDdjMDU3YTMwMzAzZjQifQ"
+          "resource": "repo://_bmad-output/planning-artifacts/shadcn-migration-status-and-debt-registry.md#L17-L17",
+          "version": "repo-lines-v1:sha256:eabd9d0f24958ecfb2b3fa7350559f9e7c225fad028460ae8e99b71bf255b8a9:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZWFiZDlkMGYyNDk1OGVjZmIyYjNmYTczNTA1NTlmOWU3YzIyNWZhZDAyODQ2MGFlOGU5OWI3MWJmMjU1YjhhOSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiZWFiZDlkMGYyNDk1OGVjZmIyYjNmYTczNTA1NTlmOWU3YzIyNWZhZDAyODQ2MGFlOGU5OWI3MWJmMjU1YjhhOSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiYjQzNTk3YjQ1M2FlNzc0N2VhYWU5ODdkMDM3NjEwMzVlYzQ3NjVmNDMwZWU4ZWVjZDY0MTZjMGU3OGFmNzcxMCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiOTE4OGY5ZjE1MDJmNzcwYzM3NmJhNmQ5NWE2NDY3MDI2ZWY0YmEwODc4MDFlZGVmMzliMjkxOTQ3YWU5MTc1OSJ9"
         }
       ]
     },
     {
       "id": "claim_92633316fb044ba9ad9942c0bf9cc2af",
-      "statement": "Epic 171 (AI/forecast analytics) is in progress at 6/9: 171.1 AI anomaly triage, 171.2 AI admin model governance, 171.3 AI preferences, 171.4 forecast workspace, 171.5 forecast accuracy, and 171.6 model registry/training entry are done; 171.7 model evaluations list, 171.8 evaluation SKU-accuracy detail, and 171.9 model performance detail remain to close the /analytics/models tree.",
+      "statement": "Epic 171 (AI/forecast analytics) is CLOSED 9/9: stories 171.1–171.9 (AI anomaly triage, AI admin model governance, AI preferences, forecast workspace, forecast accuracy, model registry/training entry, model evaluations list, evaluation SKU-accuracy detail, model performance detail) shipped through PRs #252–#270, closing the /analytics/models tree.",
       "evidence": [
         {
-          "resource": "repo://_bmad-output/implementation-artifacts/sprint-status.yaml#L806-L817",
-          "version": "repo-lines-v1:sha256:101f88326a00d67a212509b9f163d60ffdca08e245d48c33292db77fb5387205:eyJzZWxlY3RlZExpbmVDb3VudCI6MTIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImYyYjNiODEyMmQ5M2ZjMzJkYjgyMGVhYzE5NDhhZDAxY2M2ZjlhMzU0NzMzNTg5NmMzYzMwY2IwODMyZDE4MzYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjIyY2Y0NmNmOWYxNWE0NGUxM2FkZWJlY2E1MGRjZTAxMzY5YTkzMTQ2MjFhYWFiN2MwMmI3ZWYwYWFkOGZlMzAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImFhNTQ2MjJhNDIxZjA4Mjc3Y2I5ODZlOWNmMjI1MzU2Nzg2YzRlYjY4Njg5MzU0ZTZjNjg5NmU1YTZjYTc1ZDQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6Ijk5NzQ3YjNhZmQ0ZDc1ZGNlNjBmYWRiMTEwZTU0MGM4OTllMGYzNzVlZGU0YTJhMmU5NTY3ODIwMTlmMmM3YTcifQ"
+          "resource": "repo://_bmad-output/planning-artifacts/shadcn-migration-status-and-debt-registry.md#L18-L18",
+          "version": "repo-lines-v1:sha256:8aba73ea4e8b6f5c112e20c96a6cd520641273c6021e98af0b11bde43f1af8d3:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiOGFiYTczZWE0ZThiNmY1YzExMmUyMGM5NmE2Y2Q1MjA2NDEyNzNjNjAyMWU5OGFmMGIxMWJkZTQzZjFhZjhkMyIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiOGFiYTczZWE0ZThiNmY1YzExMmUyMGM5NmE2Y2Q1MjA2NDEyNzNjNjAyMWU5OGFmMGIxMWJkZTQzZjFhZjhkMyIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiYjNlNTIxZmJhNjkzZGY4NWIzNWFiZjQzZmVkYWI2MjYyZTFhYmUxMzRhYzc3ODZmMmE1ZmRhODBiOWI1NGFlMCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMjIyZmZiYTQ1NjU0MTA4ODZjNGU2ZWU1Yzk0NzhmMjliMmI4ZmU0MTEzODZlYTNiNGY2NzM2YzIyOGYzOWE3ZCJ9"
         },
         {
-          "resource": "repo://docs/HANDOFF-2026-08-26-epic-171-models-tree-and-full-debt-registry.md#L107-L115",
-          "version": "repo-lines-v1:sha256:891a6aa6070a5dfbac30a24b55d5aa766fb33226d80319e7343831d59a51629c:eyJzZWxlY3RlZExpbmVDb3VudCI6OSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZGZmYjFiYjRiYzdhZmMxMmNiMjkyNGU1MGFlYmE2NTRlNjZmM2VlMDUwZjM2MjE3ZTc3MGNjYmFkMzI1NjhiMSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiYzkyN2E5OTFkODhhYTNjOGIwZmI1OTM0ZjFkMGMzOWY4ZWUwOWIxNDJhMWQyMzg4N2E4YjEyZmYwNWEyYzU2OCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZWFlYzk0OTRmYWViMmRmYjJiMTMwYzg0YzNkZGFmMGRkZDE4N2RmOTA2ZTY2ZTk4NWY0NzZlYTFhMWQyNmUzNiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMWJjYzg5NGNhYTM5MWEzYmQyNTgxODY2NTkxYWEyMTMyZTM4ZTNjYzQ5NjkxYTYyMWE5MjQ0NjAxZmNiYzA2MiJ9"
+          "resource": "repo://docs/HANDOFF-2026-08-26-LATE-epic-171-complete-172-recon-ready.md#L26-L36",
+          "version": "repo-lines-v1:sha256:69f86a3a11abe8e8158c8af017dcdb36e9ee85afc0b83f9f99684deb0a6febb1:eyJzZWxlY3RlZExpbmVDb3VudCI6MTEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImVjNzUwNzZmN2RhNjZiMWUzYmFmMWI1NDE1ZDdmNTc4OWEwNTdmMDVhMDdhNjk1NzA2NjVhNWNhMWY0ZDE2MzUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImZjYTU5YWU0ZGY0N2NiZjNmZWE1MDdhYjlhNDBjZjg2OTc3MTBiODNkMDQ1YzczOWM5NGQxNTMzZDM1ODMwODEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjAwMWYyZWMxNzU5M2MxMDU0ZWI0NjM2N2Q4NDUzZWYyNGExNzNjZTk2YjcxMTdkOTFmOWE2OGQ0NGZlZjhiMDEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjkxZjc5ZDY0ZWRkZjQ4NjNmMmIyYzBiNWY1OWNiMGZmMjgwMGYxN2JhOTU0YThhNmUwMzA2NTNkYzhkNzc4Y2YifQ"
         }
       ]
     },
     {
       "id": "claim_dd79ea97bda64354be2e99e3694ff328",
-      "statement": "As of the 2026-08-26 handoff (after Story 171.6, main = c7492829), the Epics 166–174 migration stands at 51/94 canonical Stories with the full Vitest floor at 19 253/0, lint 0/0, and tsc 0; the consolidated status/debt registry is updated at the end of each orchestrator session.",
+      "statement": "As of the 2026-08-26 late handoff (after Story 172.4, main = 25c8bc19), the Epics 166–174 migration stands at 58/94 canonical Stories with the full Vitest floor at 19 319/0, lint 0/0, tsc 0; the consolidated status/debt registry is updated at the end of each orchestrator session.",
       "evidence": [
         {
-          "resource": "repo://_bmad-output/planning-artifacts/shadcn-migration-status-and-debt-registry.md#L1-L7",
-          "version": "repo-lines-v1:sha256:55b6868c7172f7f9e2f2d36095e9dda6d1a59b6cc9ec02fd257b4a6ca803691c:eyJzZWxlY3RlZExpbmVDb3VudCI6NywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZTgyZDUxODRlN2I0OWM4ZDIzZDNmZGYzZDg0OTA5MTBkMGJkNzQwZTAyMWE2MzA4NTJkOTFjMjZiYWVlZGQzYSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNjZlNjRmYmJkYmFhMzRhNWQ0NjE3NTgyOWEwMjVhNjA2MWJiZWU3YmFlMGE3YWM3ZTczODY5MmQ3MTFjMWZiYSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjAsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZTNiMGM0NDI5OGZjMWMxNDlhZmJmNGM4OTk2ZmI5MjQyN2FlNDFlNDY0OWI5MzRjYTQ5NTk5MWI3ODUyYjg1NSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiYzVhZDQ0ZjYzYWRlMzEwODc3MDQ1ZGJmMzgyOWUzN2ViYWRmZTlmZTc2Zjk4M2QyYjhmMmI5YmU1YjRjY2FjNiJ9"
+          "resource": "repo://_bmad-output/planning-artifacts/shadcn-migration-status-and-debt-registry.md#L3-L7",
+          "version": "repo-lines-v1:sha256:8dd0b2b846f07fb2b7d710dc87888ca6b70e08a21b4ab268650dd04c76e4b18f:eyJzZWxlY3RlZExpbmVDb3VudCI6NSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiN2Y0MTY0OWViOTRiYzdhOGZlZWM5YWYwZTliMDZkYmI5Y2I0NmYzN2MxOWFmMDc0OGFiZWY3OWI5MTQ2N2E3ZCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNjZlNjRmYmJkYmFhMzRhNWQ0NjE3NTgyOWEwMjVhNjA2MWJiZWU3YmFlMGE3YWM3ZTczODY5MmQ3MTFjMWZiYSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjIsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMzA4YzI2NWJkN2JkNzZiMTUzNzZmOWFjZjA5ODMwMWZjMzg3YzU0NjQwMzQ4NmY2MzM3NWE2MTljY2RhZjA3NiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiYzVhZDQ0ZjYzYWRlMzEwODc3MDQ1ZGJmMzgyOWUzN2ViYWRmZTlmZTc2Zjk4M2QyYjhmMmI5YmU1YjRjY2FjNiJ9"
         },
         {
-          "resource": "repo://docs/HANDOFF-2026-08-26-epic-171-models-tree-and-full-debt-registry.md#L9-L19",
-          "version": "repo-lines-v1:sha256:ecef5b1449ac1cac8f1f771bcf7071fc72a4a48706d6751eb740bb3b7a3209fb:eyJzZWxlY3RlZExpbmVDb3VudCI6MTEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjMzMzhjZDg5NGZlZjM3MDZhM2E2ODM3MWEyMTBiMTdjODZkZGQ1MmZkYjZmOGNiMGVjMGRhMzk3MjlhNzRiOWYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjAwMWYyZWMxNzU5M2MxMDU0ZWI0NjM2N2Q4NDUzZWYyNGExNzNjZTk2YjcxMTdkOTFmOWE2OGQ0NGZlZjhiMDEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6Ijk1OWRhYjAyYjBhNTU4OTA1ODc4MjExZjBlODdhMTFkYjUzMGRkYjg2Nzk0MTlkOTI4Yzk5ZWQzYjZlZjdhNTgifQ"
+          "resource": "repo://docs/HANDOFF-2026-08-26-LATE-epic-171-complete-172-recon-ready.md#L13-L19",
+          "version": "repo-lines-v1:sha256:be2c5f9f750928ce1a54bd214c697e804ded3e2590581ebe55e49335da616784:eyJzZWxlY3RlZExpbmVDb3VudCI6NywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMmY4YzgxZDJmYmQyMDk5ZTVlYjIwYWZiMzM1ZjU4OTM1NTZjMjU3NjU1ZGQ4NzZjMmQwMGI1ODEyZjljZmEzMyIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiYjAxMTEyMDBmOWVjYjdmNmNiYWMzNzU3OTgzMjg1ZjYwMTRmYmZkMjgzNjYyNTdmZGI0ZDc3OTc2YjU3MjNkNCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiYTlmYzMzMGJjYzBjNjJjYzBiZTI1N2FmMjZmZDUyZGVmM2RmOTg0NmUwOTM0ZjE4YmRmMDcxOGU2ZGEzNmQ4ZiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiN2I5NDQxNGMzOGFmYjAwNGM1Yjg0OTlhMDJjMGIyMzIxZDhjNTYyOGJiZWJhZDMwMTNmODA2NDhiMDZhNzhmYyJ9"
         }
       ]
     },
     {
       "id": "claim_96d258cda9124aaf8ed68b675a35061b",
-      "statement": "OpenWiki navigation maps the system into Architecture (configuration, route groups, auth proxy), Design System (Tailwind v4 semantic tokens, shadcn primitives, product composition families, migration program), API Layer & Normalizers (Boundary Normalizer Pattern, AP#8, CSV export, communications write-back), Domain Logic, Conventions & Quality Gates, and Testing & Operations.",
+      "statement": "OpenWiki navigation maps the system into Architecture (route groups, auth proxy, environment configuration), Design System (Tailwind v4 semantic tokens, shadcn primitives, product composition families, Epics 166–174 migration program), API Layer & Normalizers (Boundary Normalizer Pattern, AP#8, CSV export, communications write-back), Domain Logic, Conventions & Quality Gates, and Testing & Operations.",
       "evidence": [
         {
           "resource": "repo://README.md",
           "version": "repo-file-v1:sha256:4e3f44bf5b86e1c45307f91b5de80ee587959c736145a7c5384e1b37dbed3b9f"
         }
       ]
+    },
+    {
+      "id": "claim_5fcce7849f4544209259e67c83fe982d",
+      "statement": "Epic 172 (dashboard/automation/COGS/orders routes) is in progress at 4/17: 172.1 business dashboard (PR #278), 172.2 automation gallery (#280), 172.3 rules list (#282), and 172.4 rule editor (#285) are shipped, migrating the dashboard and the entire automation gallery/list/editor domain; the next story is 172.5 COGS Single (owner-coordinated).",
+      "evidence": [
+        {
+          "resource": "repo://_bmad-output/planning-artifacts/shadcn-migration-status-and-debt-registry.md#L19-L19",
+          "version": "repo-lines-v1:sha256:fa8b7fe945772db9a761130a8a03da9ea73bfc65fc2a5a81f8b62ec12e602cb6:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZmE4YjdmZTk0NTc3MmRiOWE3NjExMzBhOGEwM2RhOWVhNzNiZmM2NWZjMmE1YTgxZjhiNjJlYzEyZTYwMmNiNiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiZmE4YjdmZTk0NTc3MmRiOWE3NjExMzBhOGEwM2RhOWVhNzNiZmM2NWZjMmE1YTgxZjhiNjJlYzEyZTYwMmNiNiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiM2M4MDdiYmYzYmExNTE4OGFlNTVmMGJiMGQ2Yjg0MDhhZDRkMDE5YTNlYTE4MmZhZTc0ZDM2NjJmMmFkZDZkYSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNzc3ZjRiMGUxYzVjOWVlNTA2OTg2MTMwNDJmMTJjMjcwNTJlOGI2MmNiYzYwOWIwZDVjYzEzNjhhNWY2ZDM4YSJ9"
+        },
+        {
+          "resource": "repo://docs/HANDOFF-2026-08-26-LATE-epic-171-complete-172-recon-ready.md#L13-L22",
+          "version": "repo-lines-v1:sha256:f4ba519f0b10c224985d760c88a56671d921929cfa9ee947cb5167ddb605840c:eyJzZWxlY3RlZExpbmVDb3VudCI6MTAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjJmOGM4MWQyZmJkMjA5OWU1ZWIyMGFmYjMzNWY1ODkzNTU2YzI1NzY1NWRkODc2YzJkMDBiNTgxMmY5Y2ZhMzMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjMyZGRhMjRhODZmNzQwYjlmNmIzMmIwNTdhMDRiYTM4ZjFhMmExYjZlMjBkZThmNWU4NTExMDFiNjkxOWU3YjIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImE5ZmMzMzBiY2MwYzYyY2MwYmUyNTdhZjI2ZmQ1MmRlZjNkZjk4NDZlMDkzNGYxOGJkZjA3MThlNmRhMzZkOGYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjAwMWYyZWMxNzU5M2MxMDU0ZWI0NjM2N2Q4NDUzZWYyNGExNzNjZTk2YjcxMTdkOTFmOWE2OGQ0NGZlZjhiMDEifQ"
+        }
+      ]
     }
   ],
   "verification": {
-    "by": "openwiki/0.4.0",
-    "at": "2026-08-26T08:47:51.873Z"
+    "by": "openwiki/0.4.3",
+    "at": "2026-08-27T08:47:50.418Z"
   }
 }
