@@ -42,8 +42,8 @@ export async function triggerPaidStorageImport(
   })
 
   const response = await apiClient.post<PaidStorageImportResponse>('/v1/imports/paid-storage', {
-    date_from: request.dateFrom,
-    date_to: request.dateTo,
+    dateFrom: request.dateFrom,
+    dateTo: request.dateTo,
   })
 
   logger.debug('[Storage Analytics] Import triggered:', {

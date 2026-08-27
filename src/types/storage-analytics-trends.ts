@@ -102,7 +102,7 @@ export interface PaidStorageImportResponse {
   /** Unique import job ID for status polling */
   import_id: string
   /** Current status of the import */
-  status: ImportStatus
+  status: 'pending'
   /** Date range being imported */
   date_range: {
     from: string
@@ -124,8 +124,19 @@ export interface ImportStatusResponse {
   rows_imported?: number
   /** Error message (available when failed) */
   error_message?: string
+  /** Authoritative structured failure detail (available when failed) */
+  error?: {
+    code: string
+    message: string
+    details?: unknown
+  }
   /** Completion timestamp (available when completed/failed) */
   completed_at?: string
+  /** Paid-storage source date range */
+  date_range?: {
+    start: string
+    end: string
+  }
 }
 
 // ============================================================================
