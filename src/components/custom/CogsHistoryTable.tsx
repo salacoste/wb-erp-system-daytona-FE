@@ -4,6 +4,7 @@ import { useState } from 'react'
 import {
   Table,
   TableBody,
+  TableCaption,
   TableCell,
   TableHead,
   TableHeader,
@@ -26,17 +27,23 @@ export interface CogsHistoryTableProps {
   onIncludeDeletedChange: (value: boolean) => void
   /** BD-14: canonical (Capitalized) auth role — required so the page can't forget it. */
   userRole: User['role']
+  /** Optional caption naming the table (RTC a11y contract, 169.7/171.x canon). */
+  captionText?: string
 }
 
 /**
  * COGS History Table Component
  * Story 5.1-fe: View COGS History
+ *
+ * Migrated Story 172.7-FE: born-clean on semantic tokens (muted/foreground);
+ * table caption + tabular numeric cells added per the 171.x table contract.
  */
 export function CogsHistoryTable({
   data,
   includeDeleted,
   onIncludeDeletedChange,
   userRole,
+  captionText,
 }: CogsHistoryTableProps) {
   const [editRecord, setEditRecord] = useState<CogsHistoryItem | null>(null)
   const [deleteRecord, setDeleteRecord] = useState<CogsHistoryItem | null>(null)
@@ -63,6 +70,8 @@ export function CogsHistoryTable({
 
       <div className="rounded-md border overflow-x-auto">
         <Table>
+          {/* captionText renders visually bottom via ui Table caption styling */}
+          {captionText ? <TableCaption>{captionText}</TableCaption> : null}
           <TableHeader>
             <TableRow>
               <TableHead className="w-[120px]">Дата начала</TableHead>
@@ -80,9 +89,11 @@ export function CogsHistoryTable({
                 key={record.cogs_id}
                 className={cn(!record.is_active && 'bg-muted/50 opacity-60')}
               >
-                <TableCell>{formatDate(record.valid_from)}</TableCell>
-                <TableCell>{formatDate(record.valid_to)}</TableCell>
-                <TableCell className={cn('font-medium', !record.is_active && 'line-through')}>
+                <TableCell className="tabular-nums">{formatDate(record.valid_from)}</TableCell>
+                <TableCell className="tabular-nums">{formatDate(record.valid_to)}</TableCell>
+                <TableCell
+                  className={cn('font-medium tabular-nums', !record.is_active && 'line-through')}
+                >
                   {formatCurrency(record.unit_cost_rub)}
                 </TableCell>
                 <TableCell className="text-center">
