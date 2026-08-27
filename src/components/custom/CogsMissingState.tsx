@@ -30,8 +30,10 @@ function MarginTooltip(): React.ReactElement {
   return (
     <div className="space-y-2">
       <p className="font-semibold">Маржа = (Выручка − COGS) / Выручка</p>
-      <p className="text-xs text-gray-300">Назначьте себестоимость товарам, чтобы видеть:</p>
-      <ul className="text-xs text-gray-300 space-y-1 ml-4">
+      <p className="text-xs text-muted-foreground">
+        Назначьте себестоимость товарам, чтобы видеть:
+      </p>
+      <ul className="text-xs text-muted-foreground space-y-1 ml-4">
         <li>Валовую прибыль по каждому товару</li>
         <li>Маржинальность по брендам и категориям</li>
         <li>Рентабельность вашего бизнеса</li>
@@ -49,16 +51,16 @@ function LoadingState(): React.ReactElement {
     >
       <CardContent className="p-4">
         <div className="flex items-start gap-3">
-          <div className="rounded-full p-2 bg-gray-100 shrink-0" aria-hidden="true">
-            <div className="h-4 w-4 bg-gray-300 rounded animate-pulse" />
+          <div className="rounded-full p-2 bg-muted shrink-0" aria-hidden="true">
+            <div className="h-4 w-4 bg-muted-foreground/30 rounded animate-pulse" />
           </div>
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-2 mb-2">
-              <div className="h-5 w-16 bg-gray-200 rounded animate-pulse" />
-              <div className="h-4 w-24 bg-gray-100 rounded animate-pulse" />
+              <div className="h-5 w-16 bg-border rounded animate-pulse" />
+              <div className="h-4 w-24 bg-muted rounded animate-pulse" />
             </div>
-            <div className="h-4 w-full bg-gray-100 rounded animate-pulse mb-2" />
-            <div className="h-8 w-32 bg-gray-100 rounded animate-pulse" />
+            <div className="h-4 w-full bg-muted rounded animate-pulse mb-2" />
+            <div className="h-8 w-32 bg-muted rounded animate-pulse" />
           </div>
         </div>
       </CardContent>

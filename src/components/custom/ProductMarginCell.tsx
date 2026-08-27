@@ -48,7 +48,7 @@ export function ProductMarginCell({
     return (
       <Badge
         variant="outline"
-        className="flex items-center gap-1.5 border-blue-200 bg-blue-50 text-blue-700"
+        className="flex items-center gap-1.5 border-status-information/40 bg-status-information/10 text-status-information"
       >
         <Loader2 className="h-3 w-3 animate-spin" />
         <span className="text-xs">Расчёт...</span>
@@ -63,10 +63,10 @@ export function ProductMarginCell({
     // would contradict it (margin display IS on; the backend failed).
     return (
       <div className="flex items-center gap-2">
-        <span className="text-sm text-gray-400">—</span>
+        <span className="text-sm text-muted-foreground">—</span>
         {product.has_cogs && !marginUnavailable && (
           <span
-            className="text-xs text-gray-400"
+            className="text-xs text-muted-foreground"
             title="Включите отображение маржи или откройте карточку товара"
           >
             (в карточке)
@@ -83,10 +83,10 @@ export function ProductMarginCell({
   if (hasValidMargin) {
     const marginColor =
       product.current_margin_pct! > 0
-        ? 'text-green-600'
+        ? 'text-status-success'
         : product.current_margin_pct! < 0
-          ? 'text-red-600'
-          : 'text-gray-500'
+          ? 'text-status-error'
+          : 'text-muted-foreground'
 
     return (
       <span className={`text-sm font-medium ${marginColor}`}>
@@ -109,7 +109,7 @@ export function ProductMarginCell({
           isRecalculating={isRecalculating}
         />
       ) : (
-        <div className="text-xs text-gray-400 mt-0.5">(нет COGS)</div>
+        <div className="text-xs text-muted-foreground mt-0.5">(нет COGS)</div>
       )}
     </div>
   )

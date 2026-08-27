@@ -57,25 +57,30 @@ export function MarginCalculationStatus({
 
   return (
     <div
-      className={cn('rounded-lg border border-blue-200 bg-blue-50 p-4', className)}
+      className={cn(
+        'rounded-lg border border-status-information/40 bg-status-information/10 p-4',
+        className
+      )}
       role="status"
       aria-live="polite"
       aria-label="Расчёт маржи в процессе"
     >
       <div className="flex items-center gap-3">
-        <Loader2 className="h-5 w-5 animate-spin text-blue-600" />
+        <Loader2 className="h-5 w-5 animate-spin text-status-information" />
         <div className="flex-1">
-          <div className="text-sm font-medium text-blue-900">
+          <div className="text-sm font-medium text-foreground">
             {isBulk && bulkCount ? `Расчёт маржи для ${bulkCount} товаров...` : 'Расчёт маржи...'}
           </div>
-          <div className="mt-1 text-xs text-blue-700">Ожидаемое время: ~{estimatedSeconds}с</div>
+          <div className="mt-1 text-xs text-status-information">
+            Ожидаемое время: ~{estimatedSeconds}с
+          </div>
         </div>
       </div>
 
       {/* Progress bar */}
       <div className="mt-3">
         <Progress value={progress} className="h-2" />
-        <div className="mt-1 text-xs text-blue-600">
+        <div className="mt-1 text-xs text-status-information">
           Попытка {attempts} из {maxAttempts}
         </div>
       </div>

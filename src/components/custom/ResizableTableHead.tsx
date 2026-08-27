@@ -78,7 +78,7 @@ export function ResizableTableHead({
         <span className="flex-1 truncate">{children}</span>
         {!isLast && (
           <div
-            className="cursor-col-resize flex items-center justify-center px-1 py-1 -my-1 rounded hover:bg-gray-100 active:bg-gray-200 transition-colors flex-shrink-0 text-gray-400 hover:text-gray-600"
+            className="cursor-col-resize flex items-center justify-center px-1 py-1 -my-1 rounded hover:bg-muted active:bg-muted/80 transition-colors flex-shrink-0 text-muted-foreground hover:text-foreground"
             onMouseDown={handleMouseDown}
             onTouchStart={e => {
               const touch = e.touches[0]

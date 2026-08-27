@@ -52,7 +52,7 @@ export function SingleCogsFormFields({
       {/* Unit Cost Input */}
       <div className="space-y-2">
         <Label htmlFor="unit_cost_rub">
-          Себестоимость ({'\u20BD'}) <span className="text-red-500">*</span>
+          Себестоимость ({'\u20BD'}) <span className="text-destructive">*</span>
         </Label>
         <Input
           id="unit_cost_rub"
@@ -71,20 +71,20 @@ export function SingleCogsFormFields({
             },
           })}
           disabled={isDisabled}
-          className={errors.unit_cost_rub ? 'border-red-500' : ''}
+          className={errors.unit_cost_rub ? 'border-destructive' : ''}
         />
         {errors.unit_cost_rub && (
-          <p className="text-sm text-red-500">{errors.unit_cost_rub.message}</p>
+          <p className="text-sm text-destructive">{errors.unit_cost_rub.message}</p>
         )}
         {formattedPreview && !errors.unit_cost_rub && (
-          <p className="text-sm text-gray-500">Предпросмотр: {formattedPreview}</p>
+          <p className="text-sm text-muted-foreground">Предпросмотр: {formattedPreview}</p>
         )}
       </div>
 
       {/* Valid From Date */}
       <div className="space-y-2">
         <Label htmlFor="valid_from">
-          Дата начала действия <span className="text-red-500">*</span>
+          Дата начала действия <span className="text-destructive">*</span>
         </Label>
         <Input
           id="valid_from"
@@ -105,10 +105,12 @@ export function SingleCogsFormFields({
             },
           })}
           disabled={isDisabled}
-          className={errors.valid_from ? 'border-red-500' : ''}
+          className={errors.valid_from ? 'border-destructive' : ''}
         />
-        {errors.valid_from && <p className="text-sm text-red-500">{errors.valid_from.message}</p>}
-        <p className="text-xs text-gray-500">
+        {errors.valid_from && (
+          <p className="text-sm text-destructive">{errors.valid_from.message}</p>
+        )}
+        <p className="text-xs text-muted-foreground">
           С какой даты применяется эта себестоимость (обычно сегодня)
         </p>
 
@@ -133,7 +135,7 @@ export function SingleCogsFormFields({
           {...register('notes')}
           disabled={isDisabled}
         />
-        <p className="text-xs text-gray-500">Дополнительная информация о себестоимости</p>
+        <p className="text-xs text-muted-foreground">Дополнительная информация о себестоимости</p>
       </div>
     </>
   )

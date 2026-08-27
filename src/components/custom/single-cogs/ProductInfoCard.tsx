@@ -19,18 +19,18 @@ export interface ProductInfoCardProps {
  */
 export function ProductInfoCard({ productName, nmId, existingCogs }: ProductInfoCardProps) {
   return (
-    <div className="rounded-lg bg-gray-50 p-4">
-      <div className="text-sm font-medium text-gray-600">Товар</div>
-      <div className="mt-1 text-lg font-semibold text-gray-900">{productName}</div>
-      <div className="text-sm text-gray-500">Артикул: {nmId}</div>
+    <div className="rounded-lg bg-muted p-4">
+      <div className="text-sm font-medium text-muted-foreground">Товар</div>
+      <div className="mt-1 text-lg font-semibold text-foreground">{productName}</div>
+      <div className="text-sm text-muted-foreground">Артикул: {nmId}</div>
 
       {existingCogs && (
-        <div className="mt-3 border-t border-gray-200 pt-3">
-          <div className="text-sm font-medium text-gray-600">Текущая себестоимость</div>
-          <div className="mt-1 text-base font-semibold text-blue-600">
+        <div className="mt-3 border-t border-border pt-3">
+          <div className="text-sm font-medium text-muted-foreground">Текущая себестоимость</div>
+          <div className="mt-1 text-base font-semibold text-status-information">
             {formatCogs(parseFloat(existingCogs.unit_cost_rub))}
           </div>
-          <div className="text-xs text-gray-500">
+          <div className="text-xs text-muted-foreground">
             с {new Date(existingCogs.valid_from).toLocaleDateString('ru-RU')}
           </div>
         </div>

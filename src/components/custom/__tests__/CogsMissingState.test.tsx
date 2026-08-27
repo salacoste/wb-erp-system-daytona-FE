@@ -69,7 +69,7 @@ describe('CogsMissingState Component', () => {
       render(<CogsMissingState productsWithCogs={0} totalProducts={100} coverage={0} />)
       const badge = screen.getByTestId('coverage-badge')
       expect(badge).toHaveTextContent('Критично')
-      expect(badge).toHaveClass('bg-red-600', 'text-white')
+      expect(badge).toHaveClass('bg-status-error', 'text-status-error-foreground')
     })
 
     it('should show critical message for 0% coverage', () => {
@@ -82,7 +82,7 @@ describe('CogsMissingState Component', () => {
     it('should show red alert triangle icon for critical level', () => {
       render(<CogsMissingState productsWithCogs={0} totalProducts={100} coverage={0} />)
       const iconContainer = screen.getByRole('alert').querySelector('.rounded-full')
-      expect(iconContainer).toHaveClass('bg-red-50')
+      expect(iconContainer).toHaveClass('bg-status-error/10')
     })
 
     it('should show remaining products count for critical level', () => {
@@ -118,7 +118,7 @@ describe('CogsMissingState Component', () => {
     it('should show orange styling for warning level', () => {
       render(<CogsMissingState productsWithCogs={25} totalProducts={100} coverage={25} />)
       const badge = screen.getByTestId('coverage-badge')
-      expect(badge).toHaveClass('bg-orange-100', 'text-orange-800')
+      expect(badge).toHaveClass('bg-status-warning/10', 'text-status-warning')
     })
   })
 
@@ -149,7 +149,7 @@ describe('CogsMissingState Component', () => {
     it('should show yellow styling for info level', () => {
       render(<CogsMissingState productsWithCogs={75} totalProducts={100} coverage={75} />)
       const badge = screen.getByTestId('coverage-badge')
-      expect(badge).toHaveClass('bg-yellow-100', 'text-yellow-800')
+      expect(badge).toHaveClass('bg-status-warning/10', 'text-status-warning')
     })
   })
 
