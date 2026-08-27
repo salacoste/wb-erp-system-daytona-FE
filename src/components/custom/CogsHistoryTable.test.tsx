@@ -293,4 +293,32 @@ describe('CogsHistoryTable', () => {
 
     expect(screen.getByText('Текущий')).toBeInTheDocument()
   })
+
+  // Story 172.7: the RTC a11y contract — a product-named caption renders as a
+  // semantic <caption> when provided, and nothing renders without it
+  // (171.9 behavioral canon).
+  it('renders the caption element when captionText is provided', () => {
+    render(
+      React.createElement(
+        createWrapper(),
+        null,
+        React.createElement(CogsHistoryTable, {
+          ...defaultProps,
+          captionText: 'История себестоимости — тест',
+        })
+      )
+    )
+    expect(screen.getByRole('caption')).toHaveTextContent('История себестоимости — тест')
+  })
+
+  it('renders no caption element without captionText', () => {
+    render(
+      React.createElement(
+        createWrapper(),
+        null,
+        React.createElement(CogsHistoryTable, defaultProps)
+      )
+    )
+    expect(screen.queryByRole('caption')).not.toBeInTheDocument()
+  })
 })

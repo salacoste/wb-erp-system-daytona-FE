@@ -5,6 +5,9 @@
  * Story 5.1-fe: View COGS History
  * Route: /cogs/history?nmId={nmId}
  * Sub-components: CogsHistoryPageStates (no-nmId, loading, error, empty states)
+ *
+ * Migrated Story 172.7-FE: born-clean on semantic tokens; table caption names
+ * the product (RTC a11y contract) and numeric cells align via tabular-nums.
  */
 
 import { useSearchParams } from 'next/navigation'
@@ -104,6 +107,7 @@ export default function CogsHistoryPage() {
             includeDeleted={includeDeleted}
             onIncludeDeletedChange={handleIncludeDeletedChange}
             userRole={userRole ?? 'Analyst'}
+            captionText={`История себестоимости — ${data?.meta?.product_name || 'товар'}`}
           />
 
           {/* AC: 6 - Pagination */}
