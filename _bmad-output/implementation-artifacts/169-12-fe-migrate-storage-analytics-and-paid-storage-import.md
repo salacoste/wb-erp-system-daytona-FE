@@ -1,6 +1,6 @@
 # Story 169.12-FE: Migrate Storage Analytics and Paid-Storage Import
 
-Status: review — route presentation merged in PR #227; authoritative paid-storage contract closeout blocked on Stories 169.14 and 169.15
+Status: review — route presentation merged in PR #227; paid-storage contract closeout implementation ready for independent review and universal validation
 
 ## Story
 
@@ -95,8 +95,43 @@ Tested: route loading, per-section loading, page error (bySku), global empty, fi
 
 - Preface (Task 0): executor (sonnet) + reviewer (opus fresh) — PR #226, merge `2c7a3c59`.
 - Implementation: executor (sonnet) ×2 rounds via orchestrator (migration `4377cd99` + round-1 fixes `71b1105b`); review round 1: code-reviewer (opus fresh) APPROVE_WITH_NOTES; round-2 record reconciliation `ebfcf015`; PR #227 merge `52f7f506`.
+- Contract closeout: native executor `implement_16912_closeout`; independent reviewer `review_16912_closeout` round 1 REQUEST CHANGES, round 2 PASS; independent verifier `verify_16912_closeout` PASS before commit/PR.
 
 ### Debug Log References
+
+- 2026-08-27 contract-closeout baseline (before Story-owned edits): pinned Node 24.18.0/npm 11.11.0, `npx vitest run "src/app/(dashboard)/analytics/storage"` → exit 0; 13 files passed, 147 tests passed, 0 failed.
+- 2026-08-27 honest RED (tests written before production edits): pinned Node 24.18.0/npm 11.11.0, `npx vitest run 'src/app/(dashboard)/analytics/storage/components/__tests__/useStorageImport.test.tsx' 'src/app/(dashboard)/analytics/storage/components/__tests__/PaidStorageImportStatus.test.tsx'` → exit 1; 2 files failed; 5 failed / 10 passed. Failures proved the intended route gaps: absent completed `rows_imported` became fabricated `0`; nested `error.message`/`error.code` collapsed to the compatibility message; retry replaced the selected date range with defaults; `ImportSuccess` threw on an absent count instead of rendering unavailable; `ImportError` omitted the stable code and whole-range retry guidance.
+- Frozen before the first production edit:
+
+```text
+STORY_169_12_FROZEN_REVIEWED_MANIFEST
+_bmad-output/implementation-artifacts/169-12-fe-migrate-storage-analytics-and-paid-storage-import.md
+src/app/(dashboard)/analytics/storage/components/PaidStorageImportDialog.tsx
+src/app/(dashboard)/analytics/storage/components/PaidStorageImportStatus.tsx
+src/app/(dashboard)/analytics/storage/components/__tests__/PaidStorageImportDialog.test.tsx
+src/app/(dashboard)/analytics/storage/components/__tests__/PaidStorageImportStatus.test.tsx
+src/app/(dashboard)/analytics/storage/components/__tests__/useStorageImport.test.tsx
+src/app/(dashboard)/analytics/storage/components/storage-import-utils.ts
+src/app/(dashboard)/analytics/storage/components/useStorageImport.ts
+
+STORY_169_12_REQUIRED_MANIFEST
+_bmad-output/implementation-artifacts/169-12-fe-migrate-storage-analytics-and-paid-storage-import.md
+src/app/(dashboard)/analytics/storage/components/PaidStorageImportDialog.tsx
+src/app/(dashboard)/analytics/storage/components/PaidStorageImportStatus.tsx
+src/app/(dashboard)/analytics/storage/components/__tests__/PaidStorageImportDialog.test.tsx
+src/app/(dashboard)/analytics/storage/components/__tests__/PaidStorageImportStatus.test.tsx
+src/app/(dashboard)/analytics/storage/components/__tests__/useStorageImport.test.tsx
+src/app/(dashboard)/analytics/storage/components/storage-import-utils.ts
+src/app/(dashboard)/analytics/storage/components/useStorageImport.ts
+```
+
+- 2026-08-27 post-review manifest expansion: the independent reviewer proved a route-glue coverage gap in the already Allowed `src/app/(dashboard)/analytics/storage/**` surface. Before editing it, `PaidStorageImportDialog.test.tsx` was added to both frozen manifests. The added path is colocated, route-owned, has no shared/E2E/package/backend overlap, and is required to prove that `PaidStorageImportDialog` forwards authoritative `error.code` and binds whole-range recovery to `handleReset`. The affected regression guard is mutation-RED verified before final GREEN.
+- 2026-08-27 independent review round 1 (`review_16912_closeout`) requested two changes: MEDIUM route-glue coverage for `error.code`/whole-range recovery and LOW removal of a new prohibited `as` assertion. Both were accepted. Mutation RED removed only `code={importState.code}` after the new dialog test existed and produced exit 1, 1 failed / 7 passed, proving the guard detects the broken wiring; the line was immediately restored. Final focused GREEN passed 3 files / 23 tests and the expanded route target passed 14 files / 158 tests. The hoisted mock holder is now explicitly typed without `as`.
+- 2026-08-27 independent review round 2 (`review_16912_closeout`) reviewed the exact expanded eight-path manifest and returned PASS / APPROVE with 0 CRITICAL, HIGH, MEDIUM, or LOW findings. It independently confirmed closure of both round-1 findings, exact request/lifecycle/result/error/recovery behavior, absence of arbitrary `error.details` disclosure or fabricated partial success, and exact manifest/scope purity. Fresh reviewer validation passed 3 focused files / 23 tests, 14 route files / 158 tests, TypeScript, changed-path ESLint, exact-manifest Prettier, and `git diff --check` on pinned Node 24.18.0/npm 11.11.0.
+- 2026-08-27 independent verifier (`verify_16912_closeout`) returned PASS with 0 CRITICAL, HIGH, MEDIUM, or LOW findings and no file edits. It confirmed reviewer independence/closure, exact equality of the actual eight-path manifest with both frozen manifests, absence of every forbidden/shared path class, and commit/PR readiness. Fresh verifier evidence on pinned Node 24.18.0/npm 11.11.0: route Vitest 14 files / 158 tests, full ESLint with 0 warnings, TypeScript, exact-manifest Prettier, `git diff --check`, max-lines, lessons 275/85/0, markers 275/0, and docs with the exact 97-entry historical baseline all passed; it also authenticated the recorded full-suite, E2E, webpack-build, and Turbopack environment-gap evidence.
+- 2026-08-27 universal validation after review fixes, pinned Node 24.18.0/npm 11.11.0: the sandboxed full Vitest run reached 19,365 passes but could not open the historical ephemeral listener (`listen EPERM 0.0.0.0`), so it was not counted as a pass. The unsandboxed rerun passed 1,213 files / 19,367 tests. ESLint, TypeScript, max-lines, Story-owned Prettier, `check:docs` (unchanged 97-entry baseline), `check:lessons` (85 lines, 0 violations), `check:markers` (0 violations), exact scope audit, and `git diff --check` passed.
+- 2026-08-27 production build: exact `npm run build` reached a Turbopack worktree limitation before compilation because the ignored `node_modules` symlink points outside Turbopack's filesystem root. The same production build with the repository-used webpack fallback, `npm run build -- --webpack`, compiled, type-checked, and generated all 70 static pages successfully. This tooling limitation is a named environment gap, not represented as a Turbopack pass.
+- 2026-08-27 read-only E2E ran on the actual Story worktree at `http://localhost:3100` against the existing local backend health endpoint. `TEST_PASSWORD` was read from backend `.env` only into the child process environment; it was neither printed nor written. Preflight passed, mutation mode remained disabled, Chromium storage analytics passed, and the result was 4 passed / 1 optional Manager-coverage skip / 0 failed. The temporary Story frontend process and temporary `.env.e2e` symlink were removed; the original frontend PM2 process was restored and both frontend/backend health probes returned 200.
 
 ### Completion Notes List
 
@@ -113,7 +148,7 @@ Tested: route loading, per-section loading, page error (bySku), global empty, fi
 
 ### Gaps
 
-- **Correct Course blocker:** PR #227 shipped the shadcn route presentation before Stories 169.14 and 169.15 existed on canonical `main`. The route must be revalidated after those contracts merge; Story lifecycle remains `review`, not `done`.
+- **Correct Course closeout:** Stories 169.14 and 169.15 are merged and their route-owned consumption has been revalidated/corrected. Story lifecycle remains `review`, not `done`, until independent review, universal/E2E validation, merge, cleanup, and final canonical reconciliation complete.
 
 - **AC-2 wording deviation (reviewer sign-off requested):** epic lists uploading/partial import states — backend import contract has no such lifecycle (verified test-api); dispositioned N/A-backend-absent; unknown-status handling added instead.
 - **e2e evidence:** run ON THE BRANCH (worktree dev :3100 swap): 6 passed / 1 skipped (role-gated setup, by-design) / 0 failed — pins h1/«Товар хранения Story 162.6»/«Динамика…»/recharts-wrapper/exact API params.
@@ -123,9 +158,26 @@ Tested: route loading, per-section loading, page error (bySku), global empty, fi
 - **DISPOSITION-NOT-FIX (carried):** normalizer `has_data` overrides (:112/:126) + pagination.total fallback (:103) — need backend-contract verification → request-backend if wrong.
 - **CustomDot `stroke="var(--color-background)"`** — repo-wide recharts canon since 168.11 (presentation-attribute var() resolution); if selected-dot rings ever render unstyled, check here first.
 
+- Contract closeout GREEN: the route now preserves authoritative completed `rows_imported: 0`, keeps a missing/non-authoritative count unavailable as `—`, prioritizes nested `error.message`, carries and displays stable `error.code`, and deliberately does not carry/render arbitrary `error.details`.
+- Whole-range recovery is explicit: the selected date range is retained when returning to the form and the error action/guidance names retry of the entire selected period; no partial-success state or retry subset is synthesized.
+- Terminal polling transitions now run in an effect instead of issuing state updates during render. `pending`, `processing`, and the frontend-only `unknown` sentinel remain nonterminal; `completed` invalidates storage queries and `failed` remains a terminal error.
+- Contract closeout targeted GREEN (pinned Node 24.18.0/npm 11.11.0): smallest affected target 2 files / 15 tests passed; full route target 14 files / 157 tests passed; Story-owned Prettier, repository lint, repository type-check, max-lines, docs-baseline (97 pre-existing broken citations unchanged), lessons, markers, and `git diff --check` passed.
+- Review-fix closure expanded the route-owned manifest by one dialog integration test, removed all new TypeScript assertions, and proved the `error.code` glue with mutation RED. Final focused/route evidence is 23/23 and 158/158; universal regression is 19,367/19,367; read-only Chromium E2E is 4 passed / 1 optional skip / 0 failed; webpack production build generated 70/70 pages.
+
 ### File List
 
 Edited/deleted/new in PR (27 route files; preface files were PR #226): see `git diff --name-status 2c7a3c59..HEAD` — 17 M non-test + 4 M test (StoragePage, StorageBySkuTable, StorageTrendsChart, TopConsumersWidget) + 4 A (`storage-format.ts`, `StorageTrendSrTable.tsx`, `storage-presentation-source-contracts.test.tsx`, `__tests__/PaidStorageImportStatus.test.tsx`) + 2 D (`ProductNameCell.tsx`, `ProductNameCell.test.tsx`) = 27 files. Verified unchanged: loading.tsx (token-clean, pinned), WarehouseBadges.tsx, StoragePageContent.tsx, useStorageUrlSync.ts, useStorageBySkuTable.ts, useStorageImport.ts (comment-only in preface), StoragePageHeader.tsx.
+
+Contract closeout changed/reviewed manifest:
+
+- `_bmad-output/implementation-artifacts/169-12-fe-migrate-storage-analytics-and-paid-storage-import.md`
+- `src/app/(dashboard)/analytics/storage/components/PaidStorageImportDialog.tsx`
+- `src/app/(dashboard)/analytics/storage/components/PaidStorageImportStatus.tsx`
+- `src/app/(dashboard)/analytics/storage/components/__tests__/PaidStorageImportDialog.test.tsx`
+- `src/app/(dashboard)/analytics/storage/components/__tests__/PaidStorageImportStatus.test.tsx`
+- `src/app/(dashboard)/analytics/storage/components/__tests__/useStorageImport.test.tsx`
+- `src/app/(dashboard)/analytics/storage/components/storage-import-utils.ts`
+- `src/app/(dashboard)/analytics/storage/components/useStorageImport.ts`
 
 ### Change Log
 
@@ -134,3 +186,4 @@ Edited/deleted/new in PR (27 route files; preface files were PR #226): see `git 
 | 2026-08-24 | Story created via create-story context engine from deep recon (38-file route, 119-test baseline, boundary red flags → Task 0 preface scope). Plan referenced as authoritative. Fresh-context validation caught 3 context blockers (line numbers, type-safety scope, consumer enumeration) — fixed pre-preface. |
 | 2026-08-24 | Round-1 review fixes applied (error retention coexistence, aria-sort none, rgba/hsl guard blindspots, story reconciliation). Status: ready-for-dev → review.                                                                                                                                                   |
 | 2026-08-24 | PR #227 merged route presentation (`4377cd99`, `71b1105b`, `ebfcf015`; merge `52f7f506`). Correct Course reconciliation keeps Status at review and adds Task 6 for post-169.14/169.15 contract closeout.                                                                                                       |
+| 2026-08-27 | Story 169.12 contract-closeout implementation: RED locked route-level merged-contract gaps; GREEN preserved zero versus unavailable counts, nested failure code/message, retained whole-range retry input/guidance, and effect-based terminal transitions. Task 6 remains open pending independent review, universal/E2E gates, merge, cleanup, and final reconciliation. |

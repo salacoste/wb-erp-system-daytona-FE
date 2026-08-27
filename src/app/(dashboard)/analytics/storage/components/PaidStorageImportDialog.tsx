@@ -102,6 +102,7 @@ export function PaidStorageImportDialog({ open, onOpenChange }: PaidStorageImpor
 
           {importState.status === 'error' && (
             <ImportError
+              code={importState.code}
               message={importState.message}
               onClose={handleClose}
               onRetry={handleReset}
