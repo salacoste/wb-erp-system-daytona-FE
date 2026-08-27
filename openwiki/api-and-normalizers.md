@@ -214,6 +214,19 @@ Chat sends enqueue with a **deterministic BullMQ jobId** (dedup), so retrying a 
 
 The pinned-reviews read endpoint (`GET /v1/communications/feedbacks/pinned`) is a **live SDK passthrough** that returns `{ data: PinnedReviewItem[], next }`. Because `apiClient` auto-unwraps `rawData.data ?? rawData` on every response, this endpoint REQUIRES `skipDataUnwrap: true` — without it, the `data` array would be hoisted out of the envelope and the normalizer would see `.data` = undefined → empty list. The liquidity trends endpoint (`GET /v1/analytics/liquidity/trends`) also uses `skipDataUnwrap: true` for its `{ meta, trends, insights }` envelope.
 
+## Paid Storage Import Boundary (Stories 169.14–169.15)
+
+The paid-storage import flow (`POST /v1/imports/paid-storage` → poll `GET /v1/imports/{id}`) was realigned in the Epic 169 contract tail: Story 169.14 defined the authoritative backend lifecycle/result/error contract, and Story 169.15 (PR #296) aligned the shared frontend boundary; the 169.12 route closeout (PR #299) validated the storage route against it without changing shared APIs. The normalizer is `src/lib/api/storage-import-normalizer.ts` (`normalizeImportStatusResponse`), called from `getImportStatus` in `src/lib/api/storage-analytics.ts`; `ImportStatusResponse` lives in `src/types/storage-analytics-trends.ts`.
+
+Boundary invariants:
+
+- **Unknown status is distinguishable, not a failure.** An unrecognized backend status maps to `'unknown'` (with a `logger.warn`) instead of being coerced to `'failed'`; consumers keep polling it like `pending` (the same unknown-honesty canon as returns/supply planning above).
+- **`rows_imported` is only present when `completed`** and only when it is a non-negative safe integer; otherwise it is `undefined` and the route renders an em dash rather than a false zero.
+- **Structured error passthrough.** A nested `error: { code, message, details? }` is surfaced only for `status === 'failed'`, with both `code` and `message` required; the raw details are carried without being rendered directly.
+- **`date_range` is optional and whole.** Present only when both `start` and `end` parse; the route retains the selected range for recovery so a failed import can be retried verbatim.
+
+Polling is owned by `useImportStatus` (`src/hooks/useImportStatus.ts`): TanStack Query with `refetchInterval` that stops on terminal `completed`/`failed` but continues for `pending`/`processing`/`unknown`, `staleTime: 0` (status must always be fresh), and `retry: 2`. The route-level state machine (request serialization, nonterminal polling, terminal invalidation, whole-range recovery) is tested in `src/app/(dashboard)/analytics/storage/components/__tests__/useStorageImport.test.tsx` and the `PaidStorageImportDialog`/`PaidStorageImportStatus` tests beside it; the normalizer contract itself is pinned in `src/lib/api/__tests__/storage-import-normalizer.test.ts` and `storage-analytics.test.ts`.
+
 ## Financial API Modules
 
 | Module | Purpose |
