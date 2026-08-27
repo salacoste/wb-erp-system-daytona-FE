@@ -107,7 +107,9 @@ export function BulkCogsForm({ onSuccess }: BulkCogsFormProps) {
         <div className="flex-1">
           <BulkCogsSearch search={search} onSearchChange={handleSearchChange} />
         </div>
-        <div className="text-sm font-medium text-gray-700">Выбрано: {selectedCount} товаров</div>
+        <div className="text-sm font-medium text-muted-foreground">
+          Выбрано: {selectedCount} товаров
+        </div>
       </div>
 
       <BulkCogsProductTable
@@ -132,11 +134,7 @@ export function BulkCogsForm({ onSuccess }: BulkCogsFormProps) {
       />
 
       <div className="flex gap-3">
-        <Button
-          type="submit"
-          disabled={isDisabled || selectedCount === 0}
-          className="flex-1 bg-blue-600 hover:bg-blue-700"
-        >
+        <Button type="submit" disabled={isDisabled || selectedCount === 0} className="flex-1">
           {submit.isPending ? (
             <>
               <Loader2 className="mr-2 h-4 w-4 animate-spin" />

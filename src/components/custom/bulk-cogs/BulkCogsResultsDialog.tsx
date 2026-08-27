@@ -82,7 +82,7 @@ export function BulkCogsResultsDialog({
             {/* Failed Items */}
             {resultData.failed > 0 && (
               <div>
-                <div className="mb-2 text-sm font-medium text-gray-900">Не удалось обновить:</div>
+                <div className="mb-2 text-sm font-medium text-foreground">Не удалось обновить:</div>
                 <div className="max-h-64 overflow-y-auto rounded-lg border">
                   <Table>
                     <TableBody>
@@ -91,7 +91,7 @@ export function BulkCogsResultsDialog({
                         .map(result => (
                           <TableRow key={result.nm_id}>
                             <TableCell className="font-mono text-sm">{result.nm_id}</TableCell>
-                            <TableCell className="text-sm text-red-600">
+                            <TableCell className="text-sm text-status-error">
                               {result.error_message || result.error_code}
                             </TableCell>
                           </TableRow>

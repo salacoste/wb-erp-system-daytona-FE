@@ -49,13 +49,13 @@ export function BulkCogsPreviewDialog({
         </DialogHeader>
 
         <div className="space-y-4">
-          <div className="rounded-lg bg-gray-50 p-4">
-            <div className="mb-2 text-sm font-medium text-gray-600">Себестоимость</div>
-            <div className="text-2xl font-bold text-gray-900">{formattedPreview || '\u2014'}</div>
+          <div className="rounded-lg bg-muted p-4">
+            <div className="mb-2 text-sm font-medium text-muted-foreground">Себестоимость</div>
+            <div className="text-2xl font-bold text-foreground">{formattedPreview || '\u2014'}</div>
           </div>
 
           <div>
-            <div className="mb-2 text-sm font-medium text-gray-600">
+            <div className="mb-2 text-sm font-medium text-muted-foreground">
               Выбранные товары ({selectedProductDetails.length}):
             </div>
             <div className="max-h-64 overflow-y-auto rounded-lg border">
@@ -70,7 +70,7 @@ export function BulkCogsPreviewDialog({
                 </TableBody>
               </Table>
               {selectedProductDetails.length > 50 && (
-                <div className="p-2 text-center text-sm text-gray-500">
+                <div className="p-2 text-center text-sm text-muted-foreground">
                   ...и ещё {selectedProductDetails.length - 50} товаров
                 </div>
               )}
@@ -86,11 +86,7 @@ export function BulkCogsPreviewDialog({
           >
             Отмена
           </Button>
-          <Button
-            onClick={onConfirm}
-            disabled={isPending || isPolling}
-            className="bg-blue-600 hover:bg-blue-700"
-          >
+          <Button onClick={onConfirm} disabled={isPending || isPolling}>
             {isPending ? (
               <>
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />

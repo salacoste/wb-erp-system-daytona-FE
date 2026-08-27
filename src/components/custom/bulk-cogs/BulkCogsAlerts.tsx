@@ -42,9 +42,9 @@ export function BulkCogsAlerts({
     <>
       {/* Margin Recalculation Status (Request #118/119) */}
       {resultData.marginRecalculation && (
-        <Alert variant="default" className="border-blue-200 bg-blue-50">
-          <AlertCircle className="h-4 w-4 text-blue-600" />
-          <AlertDescription className="text-blue-900">
+        <Alert variant="default" className="border-status-information/40 bg-status-information/10">
+          <AlertCircle className="h-4 w-4 text-status-information" />
+          <AlertDescription className="text-status-information">
             <div className="mb-1 font-medium">Пересчёт маржи запущен автоматически</div>
             <div className="space-y-1 text-sm">
               <div>
@@ -63,9 +63,9 @@ export function BulkCogsAlerts({
 
       {/* No Margin Recalculation Warning */}
       {resultData.succeeded > 0 && !resultData.marginRecalculation && (
-        <Alert variant="default" className="border-yellow-200 bg-yellow-50">
-          <AlertCircle className="h-4 w-4 text-yellow-600" />
-          <AlertDescription className="text-yellow-900">
+        <Alert variant="default" className="border-status-warning/40 bg-status-warning/10">
+          <AlertCircle className="h-4 w-4 text-status-warning" />
+          <AlertDescription className="text-status-warning">
             <div className="mb-1 font-medium">Пересчёт маржи не требуется</div>
             <div className="text-sm">
               Для загруженных недель нет данных о продажах. Маржа будет рассчитана автоматически
@@ -99,20 +99,20 @@ export function BulkCogsAlerts({
 
       {/* Summary */}
       <div className="grid grid-cols-2 gap-4">
-        <div className="rounded-lg border border-green-200 bg-green-50 p-4">
+        <div className="rounded-lg border border-status-success/40 bg-status-success/10 p-4">
           <div className="flex items-center gap-2">
-            <CheckCircle2 className="h-5 w-5 text-green-600" />
-            <div className="text-sm font-medium text-green-900">Успешно</div>
+            <CheckCircle2 className="h-5 w-5 text-status-success" />
+            <div className="text-sm font-medium text-status-success">Успешно</div>
           </div>
-          <div className="mt-2 text-2xl font-bold text-green-900">{resultData.succeeded}</div>
+          <div className="mt-2 text-2xl font-bold text-status-success">{resultData.succeeded}</div>
         </div>
 
-        <div className="rounded-lg border border-red-200 bg-red-50 p-4">
+        <div className="rounded-lg border border-status-error/40 bg-status-error/10 p-4">
           <div className="flex items-center gap-2">
-            <XCircle className="h-5 w-5 text-red-600" />
-            <div className="text-sm font-medium text-red-900">Ошибок</div>
+            <XCircle className="h-5 w-5 text-status-error" />
+            <div className="text-sm font-medium text-status-error">Ошибок</div>
           </div>
-          <div className="mt-2 text-2xl font-bold text-red-900">{resultData.failed}</div>
+          <div className="mt-2 text-2xl font-bold text-status-error">{resultData.failed}</div>
         </div>
       </div>
     </>
