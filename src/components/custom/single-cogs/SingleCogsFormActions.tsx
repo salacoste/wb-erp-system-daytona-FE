@@ -28,11 +28,7 @@ export function SingleCogsFormActions({
     <>
       {/* Action Buttons */}
       <div className="flex gap-3">
-        <Button
-          type="submit"
-          disabled={isPending || isPolling}
-          className="flex-1 bg-blue-600 hover:bg-blue-700"
-        >
+        <Button type="submit" disabled={isPending || isPolling} className="flex-1">
           {isPending ? (
             <>
               <Loader2 className="mr-2 h-4 w-4 animate-spin" />
@@ -63,7 +59,7 @@ export function SingleCogsFormActions({
       </div>
 
       {/* Help Text */}
-      <div className="rounded-lg border border-blue-200 bg-blue-50 p-4 text-sm text-blue-900">
+      <div className="rounded-lg border border-status-information/40 bg-status-information/10 p-4 text-sm text-status-information">
         <strong>Совет:</strong>{' '}
         {isEditMode
           ? 'При обновлении себестоимости будет создана новая версия. Старая версия сохранится в истории.'

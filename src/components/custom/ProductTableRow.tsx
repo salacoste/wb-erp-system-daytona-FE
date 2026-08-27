@@ -55,7 +55,7 @@ export function ProductTableRow({
 
   return (
     <TableRow
-      className={`${enableSelection ? 'cursor-pointer hover:bg-gray-50' : ''} ${isSelected ? 'bg-blue-50 hover:bg-blue-100' : ''}`}
+      className={`${enableSelection ? 'cursor-pointer hover:bg-muted/50' : ''} ${isSelected ? 'bg-status-information/10 hover:bg-status-information/20' : ''}`}
       onClick={() => onProductClick(product)}
     >
       <TableCell className="font-mono text-sm truncate" style={getCellStyle('article')}>
@@ -67,7 +67,7 @@ export function ProductTableRow({
                 <TooltipTrigger asChild>
                   <Badge
                     variant="outline"
-                    className="text-[10px] px-1 py-0 h-4 bg-amber-50 text-amber-700 border-amber-200"
+                    className="text-[10px] px-1 py-0 h-4 border-status-warning/40 bg-status-warning/10 text-status-warning"
                   >
                     отчёт
                   </Badge>
@@ -81,15 +81,17 @@ export function ProductTableRow({
         </div>
       </TableCell>
       <TableCell
-        className="font-mono text-sm truncate text-gray-600"
+        className="font-mono text-sm truncate text-muted-foreground"
         style={getCellStyle('vendor_code')}
       >
         {product.vendor_code || '—'}
       </TableCell>
       <TableCell style={getCellStyle('name')}>
         <div className="truncate">
-          <div className="font-medium text-gray-900 truncate">{product.sa_name}</div>
-          {product.brand && <div className="text-xs text-gray-500 truncate">{product.brand}</div>}
+          <div className="font-medium text-foreground truncate">{product.sa_name}</div>
+          {product.brand && (
+            <div className="text-xs text-muted-foreground truncate">{product.brand}</div>
+          )}
         </div>
       </TableCell>
       <TableCell style={getCellStyle('cogs')}>
@@ -97,13 +99,13 @@ export function ProductTableRow({
           <div>
             <div className="font-medium">{formatCogs(product.cogs.unit_cost_rub)}</div>
             {product.cogs.valid_from && (
-              <div className="text-xs text-gray-500">
+              <div className="text-xs text-muted-foreground">
                 с {new Date(product.cogs.valid_from).toLocaleDateString('ru-RU')}
               </div>
             )}
           </div>
         ) : (
-          <span className="text-sm text-gray-400">—</span>
+          <span className="text-sm text-muted-foreground">—</span>
         )}
       </TableCell>
       <TableCell style={getCellStyle('margin')}>
@@ -124,7 +126,7 @@ export function ProductTableRow({
             <TooltipProvider>
               <Tooltip>
                 <TooltipTrigger asChild>
-                  <span className="text-purple-600">
+                  <span className="text-chart-2">
                     {formatCurrency(product.storage_cost_daily_avg)}/д
                   </span>
                 </TooltipTrigger>
@@ -138,7 +140,7 @@ export function ProductTableRow({
               </Tooltip>
             </TooltipProvider>
           ) : (
-            <span className="text-gray-400">—</span>
+            <span className="text-muted-foreground">—</span>
           )}
         </TableCell>
       )}

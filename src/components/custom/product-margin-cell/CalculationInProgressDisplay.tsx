@@ -45,7 +45,7 @@ export function CalculationInProgressDisplay({
   return (
     <div className="flex flex-col gap-1">
       <div
-        className="text-xs text-gray-400"
+        className="text-xs text-muted-foreground"
         title="Маржа рассчитывается для последней завершенной недели. Расчёт может занять несколько секунд."
       >
         (расчёт маржи...)
@@ -56,7 +56,7 @@ export function CalculationInProgressDisplay({
         <Button
           variant="ghost"
           size="sm"
-          className="h-6 text-xs text-yellow-600 hover:text-yellow-700 hover:bg-yellow-50 -ml-1"
+          className="h-6 text-xs text-status-warning hover:text-status-warning/80 hover:bg-status-warning/10 -ml-1"
           onClick={e => {
             e.stopPropagation()
             const affectedWeeks = getAffectedWeeks(product.nm_id)

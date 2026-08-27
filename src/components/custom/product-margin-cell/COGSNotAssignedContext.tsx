@@ -33,8 +33,8 @@ function formatWeekShort(week: string | null | undefined): string {
 
 function getMarginColorClass(margin: number | null): string {
   if (margin === null) return 'text-muted-foreground'
-  if (margin > 0) return 'text-green-600'
-  if (margin < 0) return 'text-red-600'
+  if (margin > 0) return 'text-status-success'
+  if (margin < 0) return 'text-status-error'
   return 'text-muted-foreground'
 }
 
@@ -76,7 +76,7 @@ export function COGSNotAssignedContext({
       {hasFutureCogs &&
         (product.applicable_cogs && !product.applicable_cogs.is_same_as_current ? (
           <div
-            className="flex items-center gap-1.5 text-xs text-blue-600"
+            className="flex items-center gap-1.5 text-xs text-status-information"
             title={`COGS ${formatCogs(product.applicable_cogs.unit_cost_rub)} действует с ${product.applicable_cogs.valid_from.split('T')[0]}`}
           >
             <Info className="h-3 w-3" aria-hidden="true" />

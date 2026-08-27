@@ -54,9 +54,11 @@ function getBadgeVariant(coverage: number): 'default' | 'secondary' | 'destructi
 
 /** Get badge class based on coverage */
 function getBadgeClass(coverage: number): string {
-  if (coverage >= 100) return 'bg-green-100 text-green-800 hover:bg-green-100'
-  if (coverage >= 50) return 'bg-yellow-100 text-yellow-800 hover:bg-yellow-100'
-  return 'bg-red-100 text-red-800 hover:bg-red-100'
+  if (coverage >= 100)
+    return 'border-status-success/40 bg-status-success/10 text-status-success hover:bg-status-success/10'
+  if (coverage >= 50)
+    return 'border-status-warning/40 bg-status-warning/10 text-status-warning hover:bg-status-warning/10'
+  return 'border-status-error/40 bg-status-error/10 text-status-error hover:bg-status-error/10'
 }
 
 /**

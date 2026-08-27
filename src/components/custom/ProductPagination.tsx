@@ -28,10 +28,10 @@ export function ProductPagination({
 }: ProductPaginationProps): React.ReactElement {
   return (
     <div className="flex items-center justify-between">
-      <div className="text-sm text-gray-600">
+      <div className="text-sm text-muted-foreground">
         Показано {displayedCount} из {totalCount} товаров
         {searchQuery && (
-          <span className="ml-2 text-gray-400">(поиск: &quot;{searchQuery}&quot;)</span>
+          <span className="ml-2 text-muted-foreground/70">(поиск: &quot;{searchQuery}&quot;)</span>
         )}
       </div>
       <div className="flex gap-2">

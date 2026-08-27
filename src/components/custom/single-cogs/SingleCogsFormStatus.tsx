@@ -63,9 +63,9 @@ export function SingleCogsFormStatus({
 
       {/* Success Message */}
       {isSuccess && !isPolling && (
-        <Alert className="border-green-500 bg-green-50">
-          <CheckCircle2 className="h-4 w-4 text-green-600" />
-          <AlertDescription className="text-green-800">
+        <Alert className="border-status-success/40 bg-status-success/10">
+          <CheckCircle2 className="h-4 w-4 text-status-success" />
+          <AlertDescription className="text-status-success">
             Себестоимость успешно назначена!
           </AlertDescription>
         </Alert>

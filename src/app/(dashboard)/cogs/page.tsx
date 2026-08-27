@@ -119,32 +119,32 @@ export default function CogsManagementPage() {
       </Sheet>
 
       {/* Help Section */}
-      <Card className="border-blue-200 bg-blue-50">
+      <Card className="border-status-information/40 bg-status-information/10">
         <CardHeader>
-          <CardTitle className="text-blue-900">Как это работает?</CardTitle>
+          <CardTitle className="text-status-information">Как это работает?</CardTitle>
         </CardHeader>
-        <CardContent className="space-y-3 text-sm text-blue-900">
+        <CardContent className="space-y-3 text-sm text-status-information">
           <div>
             <strong>1. Выберите товар</strong>
-            <p className="mt-1 text-blue-800">
+            <p className="mt-1 text-status-information">
               Используйте поиск или фильтры для нахождения нужного товара
             </p>
           </div>
           <div>
             <strong>2. Укажите себестоимость</strong>
-            <p className="mt-1 text-blue-800">
+            <p className="mt-1 text-status-information">
               Введите стоимость единицы товара в рублях и дату начала действия
             </p>
           </div>
           <div>
             <strong>3. Получите расчёт маржи</strong>
-            <p className="mt-1 text-blue-800">
+            <p className="mt-1 text-status-information">
               Система автоматически рассчитает маржинальность на основе данных продаж
             </p>
           </div>
           <div>
             <strong>4. Версионирование</strong>
-            <p className="mt-1 text-blue-800">
+            <p className="mt-1 text-status-information">
               История изменений себестоимости сохраняется, можно назначить новую себестоимость с
               любой даты
             </p>

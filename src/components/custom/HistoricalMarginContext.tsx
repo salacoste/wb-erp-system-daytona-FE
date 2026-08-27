@@ -59,10 +59,10 @@ export function HistoricalMarginContext({
 
   // Determine margin color based on value
   const getMarginColorClass = (margin: number | null): string => {
-    if (margin === null) return 'text-gray-500'
-    if (margin > 0) return 'text-green-600'
-    if (margin < 0) return 'text-red-600'
-    return 'text-gray-500' // margin === 0
+    if (margin === null) return 'text-muted-foreground'
+    if (margin > 0) return 'text-status-success'
+    if (margin < 0) return 'text-status-error'
+    return 'text-muted-foreground' // margin === 0
   }
 
   const hasHistoricalData = lastSalesWeek !== null

@@ -14,11 +14,11 @@ export function ProductEmptyState({ hasSearchQuery }: ProductEmptyStateProps): R
   return (
     <div
       data-testid="product-empty-state"
-      className="flex flex-col items-center justify-center rounded-lg border border-dashed border-gray-300 bg-gray-50 p-12 text-center"
+      className="flex flex-col items-center justify-center rounded-lg border border-dashed border-border bg-muted p-12 text-center"
     >
-      <Package className="mb-4 h-12 w-12 text-gray-400" />
-      <h3 className="mb-2 text-lg font-semibold text-gray-900">Товары не найдены</h3>
-      <p className="text-sm text-gray-500">
+      <Package className="mb-4 h-12 w-12 text-muted-foreground" />
+      <h3 className="mb-2 text-lg font-semibold text-foreground">Товары не найдены</h3>
+      <p className="text-sm text-muted-foreground">
         {hasSearchQuery
           ? 'Попробуйте изменить условия поиска'
           : 'В этой категории пока нет товаров'}

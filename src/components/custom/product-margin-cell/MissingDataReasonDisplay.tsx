@@ -15,11 +15,11 @@ export function MissingDataReasonDisplay({
 }: MissingDataReasonDisplayProps): React.ReactElement {
   // Simple text reasons - use wrapper div with text-xs
   if (product.missing_data_reason === 'NO_SALES_IN_PERIOD') {
-    return <div className="text-xs text-gray-400 mt-0.5">(нет продаж за неделю)</div>
+    return <div className="text-xs text-muted-foreground mt-0.5">(нет продаж за неделю)</div>
   }
 
   if (product.missing_data_reason === 'ANALYTICS_UNAVAILABLE') {
-    return <div className="text-xs text-gray-400 mt-0.5">(недоступно)</div>
+    return <div className="text-xs text-muted-foreground mt-0.5">(недоступно)</div>
   }
 
   // Story 4.9: Show historical margin context for NO_SALES_DATA
@@ -49,5 +49,5 @@ export function MissingDataReasonDisplay({
   }
 
   // Fallback for unknown reasons
-  return <div className="text-xs text-gray-400 mt-0.5" />
+  return <div className="text-xs text-muted-foreground mt-0.5" />
 }

@@ -41,7 +41,7 @@ describe('HistoricalMarginContext', () => {
       // iter-66: Russian locale "92,32 %" (comma + NBSP), was "92.32%" dot-locale.
       const marginText = screen.getByText(/92,32\s%/)
       expect(marginText).toBeInTheDocument()
-      expect(marginText).toHaveClass('text-green-600')
+      expect(marginText).toHaveClass('text-status-success')
     })
 
     it('renders quantity', () => {
@@ -96,7 +96,7 @@ describe('HistoricalMarginContext', () => {
       render(<HistoricalMarginContext {...negativeMarginProps} />)
       const marginText = screen.getByText(/-5,23\s%/)
       expect(marginText).toBeInTheDocument()
-      expect(marginText).toHaveClass('text-red-600')
+      expect(marginText).toHaveClass('text-status-error')
     })
   })
 
@@ -111,7 +111,7 @@ describe('HistoricalMarginContext', () => {
       // iter-66: zero margin now "0,0 %" (formatPercentage min 1 decimal), was "0.00%".
       const marginText = screen.getByText(/0,0\s%/)
       expect(marginText).toBeInTheDocument()
-      expect(marginText).toHaveClass('text-gray-500')
+      expect(marginText).toHaveClass('text-muted-foreground')
     })
   })
 

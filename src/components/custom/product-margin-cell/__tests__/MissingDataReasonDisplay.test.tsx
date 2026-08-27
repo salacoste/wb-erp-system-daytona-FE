@@ -94,7 +94,7 @@ describe('MissingDataReasonDisplay', () => {
         enableMarginDisplay={true}
       />
     )
-    const div = container.querySelector('.text-gray-400')
+    const div = container.querySelector('.text-muted-foreground')
     expect(div).toBeInTheDocument()
   })
 })

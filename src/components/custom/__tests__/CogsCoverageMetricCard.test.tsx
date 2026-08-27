@@ -97,21 +97,21 @@ describe('CogsCoverageMetricCard', () => {
       renderCard({ productsWithCogs: 100, totalProducts: 100, coverage: 100 })
 
       const badge = screen.getByText(/100\s%/)
-      expect(badge).toHaveClass('bg-green-100')
+      expect(badge).toHaveClass('bg-status-success/10')
     })
 
     it('should use yellow badge for 50-99% coverage', () => {
       renderCard({ productsWithCogs: 75, totalProducts: 100, coverage: 75 })
 
       const badge = screen.getByText(/75\s%/)
-      expect(badge).toHaveClass('bg-yellow-100')
+      expect(badge).toHaveClass('bg-status-warning/10')
     })
 
     it('should use red badge for < 50% coverage', () => {
       renderCard({ productsWithCogs: 25, totalProducts: 100, coverage: 25 })
 
       const badge = screen.getByText(/25\s%/)
-      expect(badge).toHaveClass('bg-red-100')
+      expect(badge).toHaveClass('bg-status-error/10')
     })
   })
 
