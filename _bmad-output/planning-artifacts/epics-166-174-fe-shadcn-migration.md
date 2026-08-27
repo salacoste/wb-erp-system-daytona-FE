@@ -371,7 +371,7 @@ Operations and finance users can review acquiring reports, buyout and reconcilia
 
 **Route scope:** `/analytics/acquiring`, `/analytics/acquiring/period`, `/analytics/acquiring/reports/[id]`, `/analytics/buyout`, `/analytics/buyout-reconciliation`, `/analytics/fbs-enhanced`, `/analytics/fbs-stock`, `/analytics/funnel`, `/analytics/gaps`, `/analytics/liquidity`, `/analytics/returns`, `/analytics/storage`, `/analytics/supply-planning`
 
-**Dependencies:** Epic 166-FE and Epic 167-FE AppShell. PR #227 delivered the Story 169.12 route presentation early without completing the authoritative paid-storage contract. Remaining paid-storage execution order: 169.14 → 169.15 → 169.12 contract closeout; Story 169.13 completed independently.
+**Dependencies:** Epic 166-FE and Epic 167-FE AppShell. The paid-storage prerequisite chain 169.14 → 169.15 → 169.12 contract closeout is complete; Story 169.13 completed independently.
 
 **Standalone outcome:** Operational exception detection, investigation, action handoff, and verification work consistently across all operational analytics routes.
 
@@ -1291,7 +1291,7 @@ No deployment, production infrastructure/configuration, production data operatio
 
 **Shared Dependencies:** C2; merged Story 169.14 authoritative backend paid-storage import contract; merged Story 169.15 shared frontend paid-storage import boundary; existing storage analytics hooks/contracts, URL filters, and financial formatting.
 
-**Current Delivery State:** PR #227 merged the 27-file route presentation at `52f7f5061d73f5633fbc0fe575ff35f2055be194` before the approved prerequisite documentation integrated. Stories 169.14 and 169.15 are now merged and cleaned, so preserve that route delivery, keep the Story in `review`, and execute the bounded contract-closeout validation next from refreshed frontend `main`.
+**Current Delivery State:** `done`. PR #227 merged the 27-file route presentation at `52f7f5061d73f5633fbc0fe575ff35f2055be194`. After Stories 169.14 and 169.15 merged and cleaned, exact eight-path feature commit `6ac5dcb5e1bee32b9fb80bc2d20c1473bbdf3bc3` validated and minimally corrected route-owned consumption of the authoritative request/start/status/result/error contract. Independent review round 2 and the independent verifier returned PASS with zero findings; 158/158 route tests, 19,367/19,367 full tests, read-only Chromium E2E 4 passed / 1 optional skip / 0 failed, and the 70-page webpack production build passed. PR #299 merged as `3ff35bf69be3630e279111076968976d7726152c`.
 
 **Allowed Change Surface:** Only `src/app/(dashboard)/analytics/storage/**` plus the exact existing Story implementation artifact for contract-closeout evidence and lifecycle reconciliation.
 
@@ -1313,9 +1313,9 @@ No deployment, production infrastructure/configuration, production data operatio
 
 **Test and Visual Evidence:** VE plus alert, filtered-empty, partial analytical section, and the complete authoritative import lifecycle from idle through success/failure, including request/status/result contract evidence. No import partial-success screenshot is required while that state is contractually N/A.
 
-**Branch/Worktree Lifecycle:** route presentation merged through PR #227 from `cdx/epic-169-story-12-storage-shadcn`; Stories 169.14 and 169.15 are merged and cleaned, so the remaining BLC is eligible on `cdx/epic-169-story-12-contract-closeout` from refreshed frontend `main`.
+**Branch/Worktree Lifecycle:** route presentation merged through PR #227 from `cdx/epic-169-story-12-storage-shadcn`; contract closeout merged through PR #299 from `cdx/epic-169-story-12-contract-closeout`, created from refreshed prerequisite-complete frontend `main`.
 
-**Cleanup Evidence:** PR #227 local route branch/worktree absence plus final contract-closeout CE; remote absence and final Story completion remain mandatory.
+**Cleanup Evidence:** PR #227 route cleanup remained intact. After PR #299 merge ancestry was proven on primary `main`, the contract-closeout remote branch, local branch, `/private/tmp/wb-repricer-fe-169-12-contract-closeout`, and Story-specific lifecycle records were proven absent; `git worktree prune` ran and primary `main` was clean.
 
 **Out of Scope:** NP.
 

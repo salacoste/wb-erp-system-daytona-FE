@@ -330,13 +330,13 @@ Story identity is the numeric `Epic.Story` ID, not the descriptive sprint-status
 > Канонический реестр долгов/статуса: `_bmad-output/planning-artifacts/shadcn-migration-status-and-debt-registry.md`.
 > Живые по-сторийные статусы: `_bmad-output/implementation-artifacts/sprint-status.yaml`.
 
-- **Epics CLOSED**: 166-FE (foundation), 167-FE (AppShell/auth, freeze-8), 168-FE (analytics core, 11/11), 170-FE (marketing and marketplace analytics, 7/7), 171-FE (models, 9/9).
-- **Canonical Story readiness: 65/94**; **169-FE IN PROGRESS: 14/15** (169.1-169.11 and 169.13-169.15 complete; only 169.12 remains in review for bounded contract closeout); **170-FE CLOSED: 7/7**; **171-FE CLOSED: 9/9** (Stories 171.1-171.9 shipped through PRs #252, #254, #256, #258, #260, #262, #266, #268, and #270); **172-FE IN PROGRESS: 7/17** through PR #294.
-- **Program NEXT = Story 172.8**. Independently, Story 169.12 is unblocked and next for the paid-storage contract closeout after completed and cleaned Stories 169.14-169.15. Story 169.13 is done.
-- **Remaining**: paid-storage Story 169.12 contract closeout; 172.8-17 (172.14 owner prerequisite for 172.15-172.16) → 173.1-13 (173.8/173.12 owner) → 174.1-5 (консолидация;
+- **Epics CLOSED**: 166-FE (foundation), 167-FE (AppShell/auth, freeze-8), 168-FE (analytics core, 11/11), 169-FE (operational analytics, 15/15), 170-FE (marketing and marketplace analytics, 7/7), 171-FE (models, 9/9).
+- **Canonical Story readiness: 66/94**; **169-FE CLOSED: 15/15** (final Story 169.12 route contract closeout merged in PR #299 as `3ff35bf6` and cleaned); **170-FE CLOSED: 7/7**; **171-FE CLOSED: 9/9** (Stories 171.1-171.9 shipped through PRs #252, #254, #256, #258, #260, #262, #266, #268, and #270); **172-FE IN PROGRESS: 7/17** through PR #294.
+- **Program NEXT = Story 172.8**. Epic 169 paid-storage chain 169.14 → 169.15 → 169.12 and independent Story 169.13 are complete.
+- **Remaining**: 172.8-17 (172.14 owner prerequisite for 172.15-172.16) → 173.1-13 (173.8/173.12 owner) → 174.1-5 (консолидация;
   174.2 — применимые design-system/source-boundary/contrast долги; 174.3 — browser/theme/axe/keyboard/visual;
   174.4 — functional/local-backend regression; trigger-specific behavior/API debts сохраняют registry-owner).
-- Пол: FE vitest **19 343/0** after Story 172.7. Story 169.15 targeted contract suite: **3 files / 70 tests**; production build:
+- Пол: FE vitest **19 367/0** after Story 169.12 contract closeout; route target **14 files / 158 tests**; production build:
   **70/70** static pages. Browser/theme/responsive/axe/keyboard/visual evidence remains an explicit
   174.3 carry-out; credentialed functional E2E, auth/session/error-recovery, and local-backend critical
   journeys remain explicit 174.4 carry-outs.

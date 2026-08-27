@@ -1,6 +1,6 @@
 # Story 169.12-FE: Migrate Storage Analytics and Paid-Storage Import
 
-Status: review — route presentation merged in PR #227; paid-storage contract closeout implementation ready for independent review and universal validation
+Status: done — route presentation PR #227 plus paid-storage contract closeout PR #299 merged, validated, reviewed, verified, and cleaned
 
 ## Story
 
@@ -50,7 +50,7 @@ The nested checkboxes below are the original implementation ledger and are retai
   - [ ] aria-sort semantics tests; import 4-state distinct tests (incl. unknown-status from Task 0 — neutral, not error-red); per-section error tests; sr-only alternative tests; tri-state has_warehouse_stock rendering (null→«—», false→«Нет на складе», true→nothing/badge)
   - [ ] e2e run-only: storage-analytics.spec.ts pins h1/«Товар хранения Story 162.6»/«Динамика…»/recharts-wrapper + exact API params — verify intact, run when stack up
 - [x] Task 5: Route-delivery validation + review + PR #227 merge (AC: #4-9) — gates green (route 147/13, full 19 033/0, lint 0/0, tsc 0, max-lines OK, build 0, e2e-on-branch 6/1↓/0); round-1 findings fixed in `71b1105b`; round-2 record reconciliation committed as `ebfcf015`; merge `52f7f506`; local route branch/worktree absent.
-- [ ] Task 6: Correct Course contract closeout — merge/clean backend Story 169.14; merge/clean frontend Story 169.15; create only `cdx/epic-169-story-12-contract-closeout` from refreshed `main`; validate PR #227 route behavior against the authoritative request/start/status/result/error contract; apply only proven route-owned corrections; rerun targeted/full/E2E evidence; reconcile this artifact and sprint lifecycle to `done`; merge and clean the closeout branch/worktree.
+- [x] Task 6: Correct Course contract closeout — backend Story 169.14 and frontend Story 169.15 were merged/cleaned; `cdx/epic-169-story-12-contract-closeout` was created from refreshed `main`; PR #227 route behavior was validated and minimally corrected against the authoritative request/start/status/result/error contract; targeted/full/E2E evidence, two review passes, independent verification, PR #299 merge, and complete branch/worktree cleanup passed.
 
 ## Dev Notes
 
@@ -132,6 +132,7 @@ src/app/(dashboard)/analytics/storage/components/useStorageImport.ts
 - 2026-08-27 universal validation after review fixes, pinned Node 24.18.0/npm 11.11.0: the sandboxed full Vitest run reached 19,365 passes but could not open the historical ephemeral listener (`listen EPERM 0.0.0.0`), so it was not counted as a pass. The unsandboxed rerun passed 1,213 files / 19,367 tests. ESLint, TypeScript, max-lines, Story-owned Prettier, `check:docs` (unchanged 97-entry baseline), `check:lessons` (85 lines, 0 violations), `check:markers` (0 violations), exact scope audit, and `git diff --check` passed.
 - 2026-08-27 production build: exact `npm run build` reached a Turbopack worktree limitation before compilation because the ignored `node_modules` symlink points outside Turbopack's filesystem root. The same production build with the repository-used webpack fallback, `npm run build -- --webpack`, compiled, type-checked, and generated all 70 static pages successfully. This tooling limitation is a named environment gap, not represented as a Turbopack pass.
 - 2026-08-27 read-only E2E ran on the actual Story worktree at `http://localhost:3100` against the existing local backend health endpoint. `TEST_PASSWORD` was read from backend `.env` only into the child process environment; it was neither printed nor written. Preflight passed, mutation mode remained disabled, Chromium storage analytics passed, and the result was 4 passed / 1 optional Manager-coverage skip / 0 failed. The temporary Story frontend process and temporary `.env.e2e` symlink were removed; the original frontend PM2 process was restored and both frontend/backend health probes returned 200.
+- 2026-08-27 feature lifecycle: exact eight-path feature commit `6ac5dcb5e1bee32b9fb80bc2d20c1473bbdf3bc3` was pushed only to `cdx/epic-169-story-12-contract-closeout`; PR [#299](https://github.com/salacoste/wb-erp-system-daytona-FE/pull/299) was server-side CLEAN/MERGEABLE with the exact reviewed manifest and merged as `3ff35bf69be3630e279111076968976d7726152c`. Primary frontend `main` fast-forwarded to that merge and proved ancestry. The remote Story branch, local Story branch, `/private/tmp/wb-repricer-fe-169-12-contract-closeout`, and Story-specific lifecycle records are absent; `git worktree prune` completed; primary `main` remained clean. No deployment, production operation, direct push to `main`, force-push, backend mutation, or required CI-gate change occurred.
 
 ### Completion Notes List
 
@@ -148,7 +149,7 @@ src/app/(dashboard)/analytics/storage/components/useStorageImport.ts
 
 ### Gaps
 
-- **Correct Course closeout:** Stories 169.14 and 169.15 are merged and their route-owned consumption has been revalidated/corrected. Story lifecycle remains `review`, not `done`, until independent review, universal/E2E validation, merge, cleanup, and final canonical reconciliation complete.
+- **Correct Course closeout complete:** Stories 169.14 and 169.15 are merged/cleaned; route-owned consumption was revalidated/corrected; independent review and verification passed; PR #299 merged as `3ff35bf69be3630e279111076968976d7726152c`; feature branch/worktree/lifecycle records are absent after prune. Canonical lifecycle is now `done`.
 
 - **AC-2 wording deviation (reviewer sign-off requested):** epic lists uploading/partial import states — backend import contract has no such lifecycle (verified test-api); dispositioned N/A-backend-absent; unknown-status handling added instead.
 - **e2e evidence:** run ON THE BRANCH (worktree dev :3100 swap): 6 passed / 1 skipped (role-gated setup, by-design) / 0 failed — pins h1/«Товар хранения Story 162.6»/«Динамика…»/recharts-wrapper/exact API params.
@@ -163,6 +164,7 @@ src/app/(dashboard)/analytics/storage/components/useStorageImport.ts
 - Terminal polling transitions now run in an effect instead of issuing state updates during render. `pending`, `processing`, and the frontend-only `unknown` sentinel remain nonterminal; `completed` invalidates storage queries and `failed` remains a terminal error.
 - Contract closeout targeted GREEN (pinned Node 24.18.0/npm 11.11.0): smallest affected target 2 files / 15 tests passed; full route target 14 files / 157 tests passed; Story-owned Prettier, repository lint, repository type-check, max-lines, docs-baseline (97 pre-existing broken citations unchanged), lessons, markers, and `git diff --check` passed.
 - Review-fix closure expanded the route-owned manifest by one dialog integration test, removed all new TypeScript assertions, and proved the `error.code` glue with mutation RED. Final focused/route evidence is 23/23 and 158/158; universal regression is 19,367/19,367; read-only Chromium E2E is 4 passed / 1 optional skip / 0 failed; webpack production build generated 70/70 pages.
+- Feature delivery and cleanup closed through PR #299: commit `6ac5dcb5e1bee32b9fb80bc2d20c1473bbdf3bc3`, merge `3ff35bf69be3630e279111076968976d7726152c`, clean primary `main`, and verified absence of the remote/local feature branch, temporary feature worktree, and Story-specific lifecycle records.
 
 ### File List
 
@@ -187,3 +189,4 @@ Contract closeout changed/reviewed manifest:
 | 2026-08-24 | Round-1 review fixes applied (error retention coexistence, aria-sort none, rgba/hsl guard blindspots, story reconciliation). Status: ready-for-dev → review.                                                                                                                                                   |
 | 2026-08-24 | PR #227 merged route presentation (`4377cd99`, `71b1105b`, `ebfcf015`; merge `52f7f506`). Correct Course reconciliation keeps Status at review and adds Task 6 for post-169.14/169.15 contract closeout.                                                                                                       |
 | 2026-08-27 | Story 169.12 contract-closeout implementation: RED locked route-level merged-contract gaps; GREEN preserved zero versus unavailable counts, nested failure code/message, retained whole-range retry input/guidance, and effect-based terminal transitions. Task 6 remains open pending independent review, universal/E2E gates, merge, cleanup, and final reconciliation. |
+| 2026-08-27 | Story 169.12 completed: both review passes and independent verification closed with 0 remaining findings; feature commit `6ac5dcb5` merged through PR #299 as `3ff35bf6`; primary `main` was fast-forwarded; remote/local Story branch, temporary worktree, and Story lifecycle records were removed and prune/absence checks passed. |
