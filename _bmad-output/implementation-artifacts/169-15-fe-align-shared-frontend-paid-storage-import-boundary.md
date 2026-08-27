@@ -1,6 +1,6 @@
 # Story 169.15: Align the Shared Frontend Paid-Storage Import Boundary
 
-Status: in-progress
+Status: done
 
 ## Story
 
@@ -24,13 +24,13 @@ so that route presentation receives truthful lifecycle, result, and failure evid
 - [x] Inventory PR #226 preface behavior and the merged backend request/status/result/error contract.
 - [x] Add honest behavioral RED tests without relabeling already-green `unknown` preservation.
 - [x] Resolve the first pre-implementation review findings and freeze the corrected seven-path manifest.
-- [ ] Commit this evidence artifact alone and pass the canonical evidence-preflight fence.
-- [ ] Implement the smallest shared request/type/normalizer/polling correction inside the frozen manifest.
-- [ ] Run targeted tests and all universal frontend validation gates.
-- [ ] Complete adversarial review pass 1, resolve accepted findings, and rerun affected gates.
-- [ ] Complete fresh verifier review pass 2 and final PR-readiness audit.
-- [ ] Deliver through the canonical guarded commit/push/PR/merge lifecycle and remove the Story branch, worktree, bootstrap, reviewed-head, PR, and cleanup-transaction records.
-- [ ] Reconcile Story and sprint documentation after merge and cleanup.
+- [x] Commit this evidence artifact alone and pass the canonical evidence-preflight fence.
+- [x] Implement the smallest shared request/type/normalizer/polling correction inside the frozen manifest.
+- [x] Run targeted tests and all universal frontend validation gates.
+- [x] Complete adversarial review pass 1, resolve accepted findings, and rerun affected gates.
+- [x] Complete fresh verifier review pass 2 and final PR-readiness audit.
+- [x] Deliver through the canonical guarded commit/push/PR/merge lifecycle and remove the Story branch, worktree, bootstrap, reviewed-head, PR, and cleanup-transaction records.
+- [x] Reconcile Story and sprint documentation after merge and cleanup.
 
 ## Dev Notes
 
@@ -399,6 +399,11 @@ src/types/storage-analytics-trends.ts
 - Preflight, behavioral RED, privacy scan, and corrected pre-implementation review are complete.
 - No production file has been edited before this evidence artifact.
 - The first review correctly blocked a TanStack-internal test, stale unsupported camelCase/count behavior, and incomplete malformed-status diagnostics; all three were corrected before this PASS freeze.
+- Evidence commit `aac4dd01036e2e9e8cb3054e04e4647818170210` anchored the retained RED, reviewer, and frozen-manifest bytes; feature commit `08cf13037f06f5c417f274a1815e0c7c5899ca23` produced reviewed tree `1c048606f1785cd9170276b39b3c8a2b26642610`.
+- The shared boundary now serializes `dateFrom`/`dateTo`, preserves pending/processing/completed/failed plus the defensive frontend `unknown` sentinel, preserves completed zero rows and structured errors, sanitizes malformed-status diagnostics, and stops polling only for authoritative terminal states.
+- Reviewer `native-edge-16915-final-r1-20260827` reported four accepted correctness/privacy/typing findings plus one warning-rate advisory. All accepted correctness findings were fixed before final verification.
+- Verifier `native-verifier-16915-final-r2-20260827` returned PASS with zero findings. Targeted Vitest passed 70/70; Story-owned Prettier, ESLint, TypeScript, max-lines, the 70-page production build, and `git diff --check` passed. The global format baseline remained exactly 38 historical warnings.
+- PR #296 merged as `2d99f7f3302a23d393b5a756f5c006b90af52666`. The local and remote Story branch, temporary worktree, review bootstrap, reviewed-head, lifecycle record, and cleanup transaction are absent after canonical cleanup.
 
 ### File List
 
@@ -414,5 +419,7 @@ src/types/storage-analytics-trends.ts
 ## Change Log
 
 - 2026-08-27: Added immutable Story base, corrected behavioral RED, independent privacy/manifest review, and frozen seven-path implementation evidence.
+- 2026-08-27: Delivered feature `08cf1303` through PR #296, merged as `2d99f7f3`, verified all gates, and completed lifecycle cleanup.
 - **Lessons:** Test observable polling behavior, not library internals.
 - **Lessons:** Authoritative row counts exist only after completion.
+- **Lessons:** Prototype-key status values require own-property checks before lifecycle normalization.
