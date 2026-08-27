@@ -18,7 +18,7 @@ interface BulkCogsSearchProps {
 export function BulkCogsSearch({ search, onSearchChange }: BulkCogsSearchProps) {
   return (
     <div className="relative">
-      <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
+      <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
       <Input
         type="text"
         placeholder="Поиск по артикулу или названию..."
@@ -76,10 +76,10 @@ export function BulkCogsEmptyState({ search, onSearchChange }: BulkCogsEmptyStat
     <div className="space-y-4">
       <BulkCogsSearch search={search} onSearchChange={onSearchChange} />
 
-      <div className="flex flex-col items-center justify-center rounded-lg border border-dashed border-gray-300 bg-gray-50 p-12 text-center">
-        <CheckSquare className="mb-4 h-12 w-12 text-gray-400" />
-        <h3 className="mb-2 text-lg font-semibold text-gray-900">Товары не найдены</h3>
-        <p className="text-sm text-gray-500">
+      <div className="flex flex-col items-center justify-center rounded-lg border border-dashed border-border bg-muted p-12 text-center">
+        <CheckSquare className="mb-4 h-12 w-12 text-muted-foreground" />
+        <h3 className="mb-2 text-lg font-semibold text-foreground">Товары не найдены</h3>
+        <p className="text-sm text-muted-foreground">
           {search ? 'Попробуйте изменить условия поиска' : 'Все товары уже имеют себестоимость'}
         </p>
       </div>

@@ -65,7 +65,11 @@ export function BulkCogsProductTable({
             {products.map(product => (
               <TableRow
                 key={product.nm_id}
-                className={selectedProducts.has(product.nm_id) ? 'bg-blue-50' : ''}
+                className={
+                  selectedProducts.has(product.nm_id)
+                    ? 'bg-status-information/10 hover:bg-status-information/20'
+                    : ''
+                }
               >
                 <TableCell>
                   <Checkbox
@@ -76,7 +80,9 @@ export function BulkCogsProductTable({
                 </TableCell>
                 <TableCell className="font-mono text-sm">{product.nm_id}</TableCell>
                 <TableCell className="font-medium">{product.sa_name}</TableCell>
-                <TableCell className="text-sm text-gray-600">{product.brand || '\u2014'}</TableCell>
+                <TableCell className="text-sm text-muted-foreground">
+                  {product.brand || '\u2014'}
+                </TableCell>
               </TableRow>
             ))}
           </TableBody>
@@ -84,7 +90,7 @@ export function BulkCogsProductTable({
       </div>
 
       {/* Pagination */}
-      <div className="flex items-center justify-between text-sm text-gray-600">
+      <div className="flex items-center justify-between text-sm text-muted-foreground">
         <div>
           Показано {products.length} из {totalProducts} товаров
         </div>

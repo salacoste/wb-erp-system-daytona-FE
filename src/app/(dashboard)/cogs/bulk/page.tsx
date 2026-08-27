@@ -71,42 +71,42 @@ export default function BulkCogsPage() {
       </Card>
 
       {/* Help Section */}
-      <Card className="border-blue-200 bg-blue-50">
+      <Card className="border-status-information/40 bg-status-information/10">
         <CardHeader>
-          <CardTitle className="text-blue-900">Советы по использованию</CardTitle>
+          <CardTitle className="text-status-information">Советы по использованию</CardTitle>
         </CardHeader>
-        <CardContent className="space-y-3 text-sm text-blue-900">
+        <CardContent className="space-y-3 text-sm text-status-information">
           <div>
             <strong>1. Выбор товаров</strong>
-            <p className="mt-1 text-blue-800">
+            <p className="mt-1 text-status-information">
               Используйте чекбоксы для выбора отдельных товаров или кнопку "Выбрать все" для выбора
               всех товаров на текущей странице. Можно выбирать товары с разных страниц.
             </p>
           </div>
           <div>
             <strong>2. Поиск и фильтрация</strong>
-            <p className="mt-1 text-blue-800">
+            <p className="mt-1 text-status-information">
               Используйте поиск по артикулу или названию, чтобы быстро найти нужные товары. В списке
               показаны только товары без себестоимости.
             </p>
           </div>
           <div>
             <strong>3. Предпросмотр перед назначением</strong>
-            <p className="mt-1 text-blue-800">
+            <p className="mt-1 text-status-information">
               Перед отправкой данных вы увидите окно предпросмотра со списком выбранных товаров и
               указанной себестоимостью. Проверьте данные и подтвердите операцию.
             </p>
           </div>
           <div>
             <strong>4. Частичный успех</strong>
-            <p className="mt-1 text-blue-800">
+            <p className="mt-1 text-status-information">
               Если некоторые товары не удалось обновить, вы увидите детальный отчёт с причинами
               ошибок. Можно повторить операцию только для неудачных товаров.
             </p>
           </div>
           <div>
             <strong>5. Ограничения</strong>
-            <p className="mt-1 text-blue-800">
+            <p className="mt-1 text-status-information">
               Максимум 1000 товаров за один раз. Если нужно обновить больше товаров, разделите их на
               несколько групп.
             </p>

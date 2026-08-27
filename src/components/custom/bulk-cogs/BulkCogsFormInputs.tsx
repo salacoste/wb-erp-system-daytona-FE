@@ -28,8 +28,8 @@ export function BulkCogsFormInputs({
 }: BulkCogsFormInputsProps) {
   return (
     <>
-      <div className="rounded-lg border border-blue-200 bg-blue-50 p-6">
-        <h3 className="mb-4 text-lg font-semibold text-blue-900">
+      <div className="rounded-lg border border-status-information/40 bg-status-information/10 p-6">
+        <h3 className="mb-4 text-lg font-semibold text-status-information">
           Назначить себестоимость для выбранных товаров
         </h3>
 
@@ -37,7 +37,7 @@ export function BulkCogsFormInputs({
           {/* Unit Cost */}
           <div className="space-y-2">
             <Label htmlFor="unit_cost_rub">
-              Себестоимость (&#8381;) <span className="text-red-500">*</span>
+              Себестоимость (&#8381;) <span className="text-destructive">*</span>
             </Label>
             <Input
               id="unit_cost_rub"
@@ -56,20 +56,20 @@ export function BulkCogsFormInputs({
                 },
               })}
               disabled={isDisabled}
-              className={errors.unit_cost_rub ? 'border-red-500' : ''}
+              className={errors.unit_cost_rub ? 'border-destructive' : ''}
             />
             {errors.unit_cost_rub && (
-              <p className="text-sm text-red-500">{errors.unit_cost_rub.message}</p>
+              <p className="text-sm text-destructive">{errors.unit_cost_rub.message}</p>
             )}
             {formattedPreview && !errors.unit_cost_rub && (
-              <p className="text-sm text-gray-600">Предпросмотр: {formattedPreview}</p>
+              <p className="text-sm text-muted-foreground">Предпросмотр: {formattedPreview}</p>
             )}
           </div>
 
           {/* Valid From */}
           <div className="space-y-2">
             <Label htmlFor="valid_from">
-              Дата начала действия <span className="text-red-500">*</span>
+              Дата начала действия <span className="text-destructive">*</span>
             </Label>
             <Input
               id="valid_from"
@@ -78,10 +78,10 @@ export function BulkCogsFormInputs({
                 required: 'Дата обязательна',
               })}
               disabled={isDisabled}
-              className={errors.valid_from ? 'border-red-500' : ''}
+              className={errors.valid_from ? 'border-destructive' : ''}
             />
             {errors.valid_from && (
-              <p className="text-sm text-red-500">{errors.valid_from.message}</p>
+              <p className="text-sm text-destructive">{errors.valid_from.message}</p>
             )}
           </div>
 
