@@ -150,7 +150,7 @@ Each story closes only when EVERY quality gate matches its baseline. Current acc
 | Next.js async-params | `bash scripts/check-next-async-params.sh` | OK: all params/searchParams props Promise-typed (only required for App Router page/layout changes) |
 | Dot-locale percent | `bash scripts/check-locale-percent.sh` | 4 (ratchet ↓; lower `.locale-percent-baseline.txt` when migrating OR exempting; started at ~108 in iter-67) |
 | ESLint | `npm run lint` (from this frontend repository root) | 0 errors; 0 warnings (zero-warning policy, Story 164.4-FE) |
-| Vitest | `npm test -- --run` | ≥ 19423 passing, 0 skipped, 0 failed (floor) |
+| Vitest | `npm test -- --run` | ≥ 19433 passing, 0 skipped, 0 failed (floor) |
 
 **Drift rules.** check:docs — exit code is the gate (automated). type-check — count must equal 0. lint — errors must equal 0 and warnings must equal 0 (zero-warning policy enforced via `--max-warnings 0` in `lint` + `lint:fix`, Story 164.4-FE; lint-staged already `--max-warnings=0`); fix warnings rather than relaxing the budget. test — passing ≥ floor (additions OK, regressions not); 0 failed; skipped is informational. `max-lines` is enforced through `eslint.config.js` (cap 200 source / 800 test, `skipBlankLines` + `skipComments`); `next lint` is deprecated, so run `npm run lint` from this repository root. **When a story legitimately moves a baseline, update this table in the same PR.**
 
