@@ -2231,15 +2231,16 @@ So that I can triage and respond without losing drafts or context.
 - **Route/User Value:** feedback, questions, chats, claims, pinned reviews, reply/composer workflows and unread states.
 - **Owned Surface:** route directory and communications-exclusive components/tests under the current domain paths.
 - **Shared Dependencies:** foundation/AppShell.
+- **Current Delivery State:** `done`. Commit `2ec7c7c5` migrated the communications presentation through PR #305, merged as `feb35cfd`. The Story closed as MINOR-GAP across eight production files plus a source-contract guard and dedicated E2E fixture/spec; 15 palette usages moved to semantic status/destructive/primary/warning tokens and the row action moved to the shared ghost Button without changing communication hooks, API/types, writeback semantics, selection, drafts, retry, or session behavior. Targeted proof passed at 84/84; the full Vitest floor passed at 19,394/0 across 1,218 files; lint, TypeScript, max-lines, and the 70-page webpack build passed. Dedicated E2E passed 11 with one intentional skip in two post-fix runs; light/dark visual review passed. Closeout PR #306 merged as `8036da81`.
 - **Allowed Change Surface:** Owned Surface plus communications E2E/visual fixtures.
 - **Forbidden Shared Files:** tokens/primitives/AppShell, communication hooks/API/types/writeback semantics.
 - **State Coverage:** loading per section, empty, unread, draft, sending, success, partial/retryable writeback, session/network uncertainty, error.
 - **Responsive/Table/Chart Contract:** tabs and queue/detail behavior preserve selection; mobile uses explicit list/detail transition; no chart requirement.
 - **Accessibility Contract:** tab semantics, named conversation actions, composer labels, retained focus/draft, live-region moderation, Dialog/Sheet lifecycle.
-- **Test and Visual Evidence:** existing writeback/retry regression tests plus responsive/theme/state screenshots.
+- **Test and Visual Evidence:** existing writeback/retry regression tests, an 11-assertion source guard, dedicated six-scenario communications E2E, and light/dark visual review.
 - **Local Validation:** targeted communications tests and integration-sensitive E2E plus universal checks.
-- **Branch/Worktree Lifecycle:** `cdx/epic-172-story-9-communications`, dedicated temporary worktree.
-- **Cleanup Evidence:** writeback regression and mandatory repository cleanup evidence.
+- **Branch/Worktree Lifecycle:** `cdx/epic-172-story-9-communications` merged through PR #305 as `feb35cfd`; docs closeout merged through PR #306 as `8036da81`.
+- **Cleanup Evidence:** feature and closeout remote/local branches and temporary worktrees are absent; worktree pruning completed and primary `main` is clean and synchronized.
 
 **Acceptance Criteria:**
 

@@ -1,32 +1,34 @@
-# HANDOFF 2026-08-27 (cross-team) — Оркестратору OMC-сабагентов: продолжение эпика 172 с 172.8
+# HANDOFF 2026-08-27 (cross-team) — Оркестратору OMC-сабагентов: продолжение эпика 172 с 172.10
 
 > **Аудитория**: агент-оркестратор НОВОЙ команды, работающий через **OMC-делегирование** (executor/code-reviewer/verifier сабагенты). Документ самодостаточен: прочитай целиком → §1 bootstrap → §2 миссия.
-> **Точка входа**: этот документ заменяет [`HANDOFF-2026-08-26-LATE-…`](HANDOFF-2026-08-26-LATE-epic-171-complete-172-recon-ready.md) (его §0 синхронизирован PR #294; §1-§5 исторические). Операционный промпт V10 — [`ORCHESTRATOR-PROMPT-2026-08-26-V10-OMC-SUBAGENT-ORCHESTRATION.md`](ORCHESTRATOR-PROMPT-2026-08-26-V10-OMC-SUBAGENT-ORCHESTRATION.md) остаётся процесс-каноном делегирования; **этот handoff добавляет поверх него 17 уроков сессии 172.1-172.7 и верифицированное состояние**.
+> **Точка входа**: этот документ заменяет [`HANDOFF-2026-08-26-LATE-…`](HANDOFF-2026-08-26-LATE-epic-171-complete-172-recon-ready.md) (его §0 синхронизирован PR #294; §1-§5 исторические). Supervisor prompt V11 — [`ORCHESTRATOR-PROMPT-2026-08-28-V11-HANDOFF-SUPERVISOR-OMC.md`](ORCHESTRATOR-PROMPT-2026-08-28-V11-HANDOFF-SUPERVISOR-OMC.md); V10 остаётся расширенным справочником. **Этот handoff содержит уроки 172.1-172.9 и верифицированное состояние**.
 > **Приоритет при конфликте**: план стори > V10 > этот handoff; живой код + проходящие тесты — финальная инстанция.
 
 ---
 
-## 0. Верифицированное состояние (2026-08-28, после PR #305; floor перепроверен живым прогоном)
+## 0. Верифицированное состояние (2026-08-28, после Story 172.9 closeout PR #306)
 
 | Метрика | Значение |
 |---|---|
-| `main` | `feb35cfd`, дерево чистое, main ↔ origin/main **IN-SYNC** |
-| Прогресс миграции 166-174 | **63/94** канонических стори |
-| Эпики | 166 ✅ · 167 ✅ · 168 ✅ · 170 ✅ (7/7) · 171 ✅ (9/9) · **172 IN PROGRESS (9/17)** · 169 ✅ (15/15; 169.12 closed PR #299/#304-lane) · 173/174 backlog |
+| `main` | `8036da81`, дерево чистое, main ↔ origin/main **IN-SYNC** после PR #306 |
+| Прогресс миграции 166-174 | **68/94** канонических стори |
+| Эпики | 166 ✅ · 167 ✅ · 168 ✅ · **169 ✅ (15/15; 169.12 closeout PR #299)** · 170 ✅ (7/7) · 171 ✅ (9/9) · **172 IN PROGRESS (9/17)** · 173/174 backlog |
 | Полный пол (vitest, **живой прогон при handoff**) | **19 394 passed / 0 failed / 1218 файлов / EXIT=0** (рост: 19 356 → 19 383 [+27 чужие #299/#301] → **19 394** [+11 гард 172.9]) |
 | Остальные гейты | lint 0/0 (zero-warning), tsc 0, max-lines OK, check:docs exit 0, locale-percent ratchet 4, lessons-length 0 |
 | PM2 | `wb-repricer-frontend-dev` online :3100; BE :3000 |
 | **NEXT** | **172.10-FE Finances & Documents** (план `.omx/plans/172.10-*.md`; owner-координация: 172.14) |
-| Сессионные ветки/worktrees 172.x | **0/0/0** (все вычищены после каждого merge; чужой 172-8-docs-sync lane завершён и вычищен его сессией) |
+| Сессионные ветки/worktrees 172.x | Story 172.9 feature/closeout **0/0/0**; отдельные docs-reconciliation worktrees не являются product lanes и очищаются после merge |
 
-**Сделано сессией 172.1-172.7** (эталонные артефакты — читай перед стартом):
+**Сделано сессией 172.1-172.9** (эталонные артефакты — читай перед стартом):
 - **172.1** Business Dashboard — FULL 127 файлов, 4 executor-волны, 3-проходное ревью (PRs #278/#279) — эталон FULL-конвейера.
 - **172.2-172.4** Automation (gallery/list/editor) — MINOR-серии + **созданные e2e-пакеты** + первый live-прогон 163.3-спеки (PRs #280-#286) — эталон MINOR + e2e-создания.
 - **172.5** COGS single — FULL-lite, 3 прохода, **import-closure канон** (PRs #287/#288) — эталон closure-аудита.
 - **172.6** COGS bulk — owner-стори (PRs #289/#291) — эталон owner-исполнения.
 - **172.7** COGS history — **born-clean** + caption-контракт (PRs #293/#294) — эталон born-clean-пайплайна.
+- **172.8** Price Calculator — semantic responsive migration с сохранённой formula boundary; feature #301 + reconciliation #303 + lifecycle #304; dynamic Playwright gap явный.
+- **172.9** Communications Workspace — MINOR-GAP; feature #305 + closeout #306; targeted 84/84, full 19 394/0, dedicated E2E 11+1skip ×2, cleanup 0/0/0.
 
-Артефакты: `_bmad-output/implementation-artifacts/172-{1..7}-fe-*.md` (7 шт; формат Change Log + Lessons — обязателен к копированию).
+Артефакты: `_bmad-output/implementation-artifacts/172-{1..9}-fe-*.md` (9 шт; формат Change Log + Lessons — обязателен к копированию).
 
 ---
 
@@ -37,14 +39,14 @@ Primary checkout: `/Users/r2d2/Documents/Code_Projects/wb-repricer-system-new/fr
 ```bash
 cd <FR>
 git fetch origin && git switch main && git pull --ff-only origin main
-git rev-parse HEAD                 # ожидается 2d99f7f3 или новее (repo > doc)
+git rev-parse HEAD                 # ожидается 8036da81 или новее (repo > doc)
 git status --short                 # ожидается пусто
 git worktree list                  # зафиксируй ЧУЖИЕ worktrees (169-lane НЕ трогать)
 export PATH="/opt/homebrew/opt/node@24/bin:$PATH"   # КРИТИЧНО: системный node = 26.7.0 ЛОМАЕТ webpack (§7.1)
 node --version                     # v24.18.0
 ```
 
-Затем: этот handoff §2-§6 → план стори 172.8 → конвейер §3. **Handoff-контроль**: сверь §0 с живым репо (grep registry NEXT + sprint-status 172.8 + floor прогоном при сомнении); расхождение → доверяй репо, исправь §0 в первом closeout-коммите.
+Затем: этот handoff §2-§6 → план стори 172.10 → конвейер §3. **Handoff-контроль**: сверь §0 с живым репо (grep registry NEXT + sprint-status 172.10 + floor прогоном при сомнении); расхождение → доверяй репо, исправь §0 в первом closeout-коммите.
 
 Веди TaskCreate-трекинг: одна стори = одна задача с подзадачами конвейера §3.
 
@@ -52,11 +54,11 @@ node --version                     # v24.18.0
 
 ## 2. Миссия
 
-**Немедленно: Story 172.8-FE Price Calculator** (план `.omx/plans/172.8-*.md`). Затем **172.9-172.17** (порядок планов; owner-координация: **172.14** — см. registry §5; остальные owner-блокеров сняты: 172.5/172.6 закрыты) → **173 (13 стори)** → **174 (5, финальный: ledger-parity, legacy-removal, a11y, regression, docs)**.
+**Немедленно: Story 172.10-FE Finances & Documents** (план `.omx/plans/172.10-*.md`). Затем **172.11-172.17** (порядок планов; owner-координация: **172.14** — см. registry §5; остальные owner-блокеры сняты) → **173 (13 стори)** → **174 (5, финальный: ledger-parity, legacy-removal, a11y, regression, docs)**.
 
 **Мета-задача**: после каждого значимого сдвига (стори/эпик/floor/ловушка) — обновляй handoff §0 docs-веткой как обычный closeout-PR. Расхождение handoff ↔ репо = твой дефект.
 
-**ЧУЖАЯ LANE — НЕ ТРОГАТЬ**: 169-хвост (остался только **169.12 contract-closeout**, `review`); их worktrees `/private/tmp/wb-repricer-fe-169-*`. Параллельная команда активна (вливала #295/#296 ПОВЕРХ наших PR — см. §7.18 про merge-гонки).
+**CURRENT LANE CHECK**: на snapshot нет product branch/worktree Story 172.10; перед созданием обязательно повторить collision/PR/worktree scan. Epic 169 закрыт; чужие worktrees и docs-reconciliation lanes не трогать.
 
 ---
 
@@ -88,7 +90,7 @@ node --version                     # v24.18.0
 **G. Ревью**: микро-дифф <50 строк прод → 1 проход; behavior-changing → 2 в РАЗНЫХ свежих вызовах; триггеры ≥3 (novel-pattern / >12 находок / >5 в проходе / meta-claims). **Обязательный элемент чек-листа: import-closure аудит** (§7.10).
 **H. Фиксы**: мелкие сам, крупные executor'у; перепрогон наименьшего таргета + универсальные.
 **I. Коммит/PR/merge/cleanup** (только ты): `git branch --show-current` ПЕРЕД каждым коммитом (§7.18); stage явных файлов; conventional commit; `gh pr create` → `gh pr merge --merge`; cleanup до 0/0/0 (remote/local/worktree) + prune.
-**J. Closeout** (сам): артефакт (формат 172-{1..7}; Change Log close-строка + **Lessons ≤120 симв/шт**; APPEND-ONLY) → sprint-flip → registry SHIPPED + NEXT → handoff §0 (этот документ) → процесс-гейты (lessons-length 0, check:docs exit 0) → docs-PR → merge → cleanup → IN-SYNC.
+**J. Closeout** (сам): артефакт (формат 172-{1..9}; Change Log close-строка + **Lessons ≤120 симв/шт**; APPEND-ONLY) → sprint-flip → registry SHIPPED + NEXT → handoff §0 (этот документ) → процесс-гейты (lessons-length 0, check:docs exit 0) → docs-PR → merge → cleanup → IN-SYNC.
 
 ---
 
@@ -96,7 +98,7 @@ node --version                     # v24.18.0
 
 | Гейт | Команда (из worktree) | Baseline |
 |---|---|---|
-| Vitest полный | `npm test -- --run` | **≥ 19 356 passing / 0 failed / 0 skipped** (floor растёт точными +N) |
+| Vitest полный | `npm test -- --run` | **≥ 19 394 passing / 0 failed / 0 skipped** (floor растёт точными +N) |
 | ESLint | `npm run lint` | 0 errors, **0 warnings** |
 | TypeScript | `npm run type-check` | 0; без `any`/`as` |
 | max-lines | `npm run check:max-lines` | source ≤200, test ≤800 |
@@ -127,7 +129,7 @@ Allowed Change Surface = только файлы плана стори. Forbidde
 ## 6. Ревью-дисциплина и closeout-формат
 
 - Автор ≠ ревьюер; находки чинить или disposition с evidence; оба прохода ДО flip review→done и ДО коммита.
-- Closeout-артефакт: прецеденты `172-{1..7}-fe-*.md`; Status: done + PR/merge SHA; Tasks-чекбоксы; Dev Agent Record с `### Post-Nth-pass-review fixes (ДАТА)`; File List = точный diff; Change Log close-строка + `**Lessons:** (1)…(2)…(3)…` ≤120 симв; закрытые строки APPEND-ONLY.
+- Closeout-артефакт: прецеденты `172-{1..9}-fe-*.md`; Status: done + PR/merge SHA; Tasks-чекбоксы; Dev Agent Record с `### Post-Nth-pass-review fixes (ДАТА)`; File List = точный diff; Change Log close-строка + `**Lessons:** (1)…(2)…(3)…` ≤120 симв; закрытые строки APPEND-ONLY.
 - Attestation-дисциплина: числовые аттестации должны реконструироваться (e2e-суммы обёртки раскладывай: «13 = 8 spec + 2 orders + 3 auth»).
 - Реестры: sprint-status flip + registry SHIPPED/NEXT + **handoff §0 этого документа** + CLAUDE.md floor — в одном closeout-PR.
 
@@ -183,12 +185,12 @@ Allowed Change Surface = только файлы плана стори. Forbidde
 | 1 | Этот handoff | ВХОД-ТОЧКА / состояние / уроки |
 | 1a | `docs/ORCHESTRATOR-PROMPT-2026-08-28-V11-HANDOFF-SUPERVISOR-OMC.md` | **Операционный промпт контролёра** исполнения этого handoff через OMC-сабагентов (петля стори-за-стори, mid-flight правила, критерии успеха) |
 | 2 | `docs/ORCHESTRATOR-PROMPT-2026-08-26-V10-OMC-SUBAGENT-ORCHESTRATION.md` | Процесс-канон OMC-делегирования (§4 матрица, §5 роутинг, §6 конвейер, §7 гейты, §8 нормы, §9 ловушки) |
-| 3 | `.omx/plans/172.8-*.md` (затем 172.9+) | План стори — **authoritative** (branch/worktree/surface/валидация/cleanup) |
+| 3 | `.omx/plans/172.10-*.md` (затем 172.11+) | План стори — **authoritative** (branch/worktree/surface/валидация/cleanup) |
 | 4 | `CLAUDE.md` | Правила репо: baselines-таблица, двухпроходность, анти-паттерны, гейты |
 | 5 | `_bmad-output/planning-artifacts/epics-166-174-fe-shadcn-migration.md` | Канонические ID/AC стори |
 | 6 | `_bmad-output/implementation-artifacts/sprint-status.yaml` | Живые статусы (flip — твой) |
 | 7 | `_bmad-output/planning-artifacts/shadcn-migration-status-and-debt-registry.md` | Реестр + SHIPPED-строки + NEXT + carry-ins (§5 owner-заметки) |
-| 8 | Артефакты `172-{1..7}-fe-*.md`, `171-{7,8,9}-fe-*.md` | Эталоны closeout-формата и конвейеров |
+| 8 | Артефакты `172-{1..9}-fe-*.md`, `171-{7,8,9}-fe-*.md` | Эталоны closeout-формата и конвейеров |
 | 9 | `docs/HANDOFF-2026-08-26-LATE-…md` | Прежний вход (§0 синхронизирован; §1-§5 исторические) |
 | 10 | Гарды-эталоны | 172.1 (обa dashboard-гарда), 172.5 (каталог-21 + closure), 172.7 (born-clean + caption + padding-скоупинг) |
 
@@ -196,11 +198,11 @@ Allowed Change Surface = только файлы плана стори. Forbidde
 
 ## 11. Критерии успеха оркестратора
 
-1. Стори закрываются полным конвейером §3 без пропуска гейтов; floor монотонно растёт точными +N (текущий: **19 356**).
+1. Стори закрываются полным конвейером §3 без пропуска гейтов; floor монотонно растёт точными +N (текущий: **19 394**).
 2. Контекст survives: ни одной смерти на разведке (разведка = файл); делегирование по §3.1.
 3. Реестры (sprint + registry + этот handoff §0 + CLAUDE.md) отражают реальность после каждого merge; reconciliation — в том же closeout-PR.
 4. Ноль остаточных артефактов: 0/0/0 после каждой стори; primary чист; IN-SYNC.
 5. Уроки — в Lessons (≤120) каждого артефакта; новые КЛАССЫ ошибок — эскалируй в §7 этого handoff (APPEND-ONLY) docs-PR'ом.
 6. Делегационная гигиена: ревьюер ≠ автор; сабагенты не коммитят; каждый промпт самодостаточен (абсолютные пути, списки, канон).
 
-**Первое действие после прочтения: §1 bootstrap → §2 план 172.8 → конвейер §3 (verdict по §3.C → волны/правки → гард §5 → валидация §4 → ревью §6 с closure-аудитом → merge → closeout с обновлением §0 этого документа).**
+**Первое действие после прочтения: §1 bootstrap → проверить collision для 172.10 → §2 план 172.10 → конвейер §3 (verdict по §3.C → волны/правки → гард §5 → валидация §4 → ревью §6 с closure-аудитом → merge → closeout с обновлением §0 этого документа).**
