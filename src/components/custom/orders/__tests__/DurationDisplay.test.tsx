@@ -483,11 +483,11 @@ describe('HistorySourceBadge Component', () => {
       expect(screen.getByText('WB')).toBeInTheDocument()
     })
 
-    it('applies purple background color', () => {
+    it('applies pending token styling (WB = special source)', () => {
       renderWithProviders(<HistorySourceBadge source="wb_native" />)
       const badge = screen.getByText('WB').closest('span')
-      expect(badge?.className).toContain('bg-purple-100')
-      expect(badge?.className).toContain('text-purple-700')
+      expect(badge?.className).toContain('bg-status-pending/10')
+      expect(badge?.className).toContain('text-status-pending')
     })
 
     it('includes Truck icon', () => {
@@ -510,11 +510,11 @@ describe('HistorySourceBadge Component', () => {
       expect(screen.getByText('Локальная')).toBeInTheDocument()
     })
 
-    it('applies blue background color', () => {
+    it('applies muted neutral styling (local = internal system)', () => {
       renderWithProviders(<HistorySourceBadge source="local" />)
       const badge = screen.getByText('Локальная').closest('span')
-      expect(badge?.className).toContain('bg-blue-100')
-      expect(badge?.className).toContain('text-blue-700')
+      expect(badge?.className).toContain('bg-muted')
+      expect(badge?.className).toContain('text-muted-foreground')
     })
 
     it('includes Database icon', () => {

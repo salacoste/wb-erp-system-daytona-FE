@@ -27,10 +27,11 @@ interface SlaComplianceWidgetProps {
 
 /** Get status icon based on compliance percentage */
 function getStatusIcon(percent: number) {
-  if (percent >= 95) return <CheckCircle className="h-4 w-4 text-green-600" aria-label="Отлично" />
+  if (percent >= 95)
+    return <CheckCircle className="h-4 w-4 text-status-success" aria-label="Отлично" />
   if (percent >= 85)
-    return <AlertTriangle className="h-4 w-4 text-yellow-600" aria-label="Внимание" />
-  return <XCircle className="h-4 w-4 text-red-600" aria-label="Критично" />
+    return <AlertTriangle className="h-4 w-4 text-status-warning" aria-label="Внимание" />
+  return <XCircle className="h-4 w-4 text-status-error" aria-label="Критично" />
 }
 
 /** Single SLA metric display */
@@ -92,7 +93,7 @@ function SlaWidgetSkeleton() {
 function SlaWidgetError({ onRetry }: { onRetry?: () => void }) {
   return (
     <div className="flex flex-col items-center justify-center py-8 text-center">
-      <XCircle className="mb-2 h-8 w-8 text-red-500" />
+      <XCircle className="mb-2 h-8 w-8 text-status-error" />
       <p className="mb-2 text-sm text-muted-foreground">Не удалось загрузить данные SLA</p>
       {onRetry && (
         <Button variant="outline" size="sm" onClick={onRetry}>
@@ -155,7 +156,7 @@ export function SlaComplianceWidget({ data, isLoading, error, onRetry }: SlaComp
               <span className="text-muted-foreground">В ожидании: {data.pendingOrdersCount}</span>
               {data.breachedCount > 0 ? (
                 <span
-                  className="rounded-full bg-red-100 px-2 py-0.5 text-red-600"
+                  className="rounded-full bg-status-error/10 px-2 py-0.5 text-status-error"
                   data-testid="breached-badge"
                 >
                   <span data-testid="breached-count">Нарушено: {data.breachedCount}</span>

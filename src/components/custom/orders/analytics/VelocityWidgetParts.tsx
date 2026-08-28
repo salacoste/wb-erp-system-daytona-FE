@@ -109,7 +109,7 @@ export function VelocityWidgetSkeleton() {
 export function VelocityWidgetError({ onRetry }: { onRetry?: () => void }) {
   return (
     <div className="flex flex-col items-center justify-center py-8 text-center">
-      <XCircle className="mb-2 h-8 w-8 text-red-500" />
+      <XCircle className="mb-2 h-8 w-8 text-status-error" />
       <p className="mb-2 text-sm text-muted-foreground">Не удалось загрузить скорость обработки</p>
       {onRetry && (
         <Button variant="outline" size="sm" onClick={onRetry}>

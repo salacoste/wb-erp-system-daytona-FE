@@ -46,58 +46,58 @@ describe('OrderStatusBadge', () => {
 
   describe('Status Colors', () => {
     describe('new status', () => {
-      it('applies yellow text color (text-yellow-700)', () => {
+      it('applies warning text color (text-status-warning)', () => {
         const { container } = render(<OrderStatusBadge status="new" />)
         const badge = container.firstChild as HTMLElement
-        expect(badge.className).toContain('text-yellow-700')
+        expect(badge.className).toContain('text-status-warning')
       })
 
-      it('applies yellow background color (bg-yellow-50)', () => {
+      it('applies warning background color (bg-status-warning/10)', () => {
         const { container } = render(<OrderStatusBadge status="new" />)
         const badge = container.firstChild as HTMLElement
-        expect(badge.className).toContain('bg-yellow-50')
+        expect(badge.className).toContain('bg-status-warning/10')
       })
     })
 
     describe('confirm status', () => {
-      it('applies blue text color (text-blue-700)', () => {
+      it('applies information text color (text-status-information)', () => {
         const { container } = render(<OrderStatusBadge status="confirm" />)
         const badge = container.firstChild as HTMLElement
-        expect(badge.className).toContain('text-blue-700')
+        expect(badge.className).toContain('text-status-information')
       })
 
-      it('applies blue background color (bg-blue-50)', () => {
+      it('applies information background color (bg-status-information/10)', () => {
         const { container } = render(<OrderStatusBadge status="confirm" />)
         const badge = container.firstChild as HTMLElement
-        expect(badge.className).toContain('bg-blue-50')
+        expect(badge.className).toContain('bg-status-information/10')
       })
     })
 
     describe('complete status', () => {
-      it('applies green text color (text-green-700)', () => {
+      it('applies success text color (text-status-success)', () => {
         const { container } = render(<OrderStatusBadge status="complete" />)
         const badge = container.firstChild as HTMLElement
-        expect(badge.className).toContain('text-green-700')
+        expect(badge.className).toContain('text-status-success')
       })
 
-      it('applies green background color (bg-green-50)', () => {
+      it('applies success background color (bg-status-success/10)', () => {
         const { container } = render(<OrderStatusBadge status="complete" />)
         const badge = container.firstChild as HTMLElement
-        expect(badge.className).toContain('bg-green-50')
+        expect(badge.className).toContain('bg-status-success/10')
       })
     })
 
     describe('cancel status', () => {
-      it('applies red text color (text-red-700)', () => {
+      it('applies error text color (text-status-error)', () => {
         const { container } = render(<OrderStatusBadge status="cancel" />)
         const badge = container.firstChild as HTMLElement
-        expect(badge.className).toContain('text-red-700')
+        expect(badge.className).toContain('text-status-error')
       })
 
-      it('applies red background color (bg-red-50)', () => {
+      it('applies error background color (bg-status-error/10)', () => {
         const { container } = render(<OrderStatusBadge status="cancel" />)
         const badge = container.firstChild as HTMLElement
-        expect(badge.className).toContain('bg-red-50')
+        expect(badge.className).toContain('bg-status-error/10')
       })
     })
   })
@@ -135,8 +135,8 @@ describe('OrderStatusBadge', () => {
     it('still resolves known statuses through the guard', () => {
       expect(getSupplierStatusConfig('complete')).toEqual({
         label: 'Выполнен',
-        color: 'text-green-700',
-        bgColor: 'bg-green-50',
+        color: 'text-status-success',
+        bgColor: 'bg-status-success/10',
       })
     })
   })
@@ -239,9 +239,9 @@ describe('OrderStatusBadge', () => {
     it('color contrast meets WCAG 2.1 AA standards — uses valid color classes', () => {
       const { container } = render(<OrderStatusBadge status="cancel" />)
       const badge = container.firstChild as HTMLElement
-      // Verify the standard color classes are applied (these meet WCAG AA)
-      expect(badge.className).toContain('text-red-700')
-      expect(badge.className).toContain('bg-red-50')
+      // Verify the semantic token classes are applied (these meet WCAG AA)
+      expect(badge.className).toContain('text-status-error')
+      expect(badge.className).toContain('bg-status-error/10')
     })
   })
 
@@ -252,10 +252,18 @@ describe('OrderStatusBadge', () => {
   describe('TDD Verification', () => {
     it('should have expected status configuration', () => {
       const expectedConfig = {
-        new: { label: 'Новый', color: 'text-yellow-700', bgColor: 'bg-yellow-50' },
-        confirm: { label: 'Подтверждён', color: 'text-blue-700', bgColor: 'bg-blue-50' },
-        complete: { label: 'Выполнен', color: 'text-green-700', bgColor: 'bg-green-50' },
-        cancel: { label: 'Отменён', color: 'text-red-700', bgColor: 'bg-red-50' },
+        new: { label: 'Новый', color: 'text-status-warning', bgColor: 'bg-status-warning/10' },
+        confirm: {
+          label: 'Подтверждён',
+          color: 'text-status-information',
+          bgColor: 'bg-status-information/10',
+        },
+        complete: {
+          label: 'Выполнен',
+          color: 'text-status-success',
+          bgColor: 'bg-status-success/10',
+        },
+        cancel: { label: 'Отменён', color: 'text-status-error', bgColor: 'bg-status-error/10' },
       }
 
       expect(expectedConfig.new.label).toBe('Новый')

@@ -89,7 +89,7 @@ function VolumeWidgetSkeleton() {
 function VolumeWidgetError({ onRetry }: { onRetry?: () => void }) {
   return (
     <div className="flex flex-col items-center justify-center py-6 text-center">
-      <XCircle className="mb-2 h-8 w-8 text-red-500" />
+      <XCircle className="mb-2 h-8 w-8 text-status-error" />
       <p className="mb-2 text-sm text-muted-foreground">Не удалось загрузить объём</p>
       {onRetry && (
         <Button variant="outline" size="sm" onClick={onRetry}>

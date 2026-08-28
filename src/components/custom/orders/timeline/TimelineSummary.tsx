@@ -117,7 +117,7 @@ function LocalSummaryContent({ data }: { data: LocalSummaryData }) {
       ) : (
         <>
           <span className="text-muted-foreground">|</span>
-          <span className="text-yellow-600">В процессе</span>
+          <span className="text-status-warning">В процессе</span>
         </>
       )}
     </div>

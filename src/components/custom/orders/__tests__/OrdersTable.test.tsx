@@ -312,10 +312,10 @@ describe('OrdersTable', () => {
       renderTable()
       // "Новый" is the label for supplierStatus='new'. The operational-status
       // badge (NEW) also renders "Новый" (Story O1), so scope to the supplier
-      // badge via its yellow color class.
+      // badge via its warning token class.
       const supplierBadges = screen
         .getAllByText('Новый')
-        .filter(el => el.className.includes('text-yellow-700'))
+        .filter(el => el.className.includes('text-status-warning'))
       expect(supplierBadges).toHaveLength(1)
     })
 
@@ -325,25 +325,25 @@ describe('OrdersTable', () => {
       expect(screen.getByText('Ожидает сборки')).toBeInTheDocument()
     })
 
-    it('displays correct color for new supplier status (yellow)', () => {
+    it('displays correct color for new supplier status (warning)', () => {
       renderTable()
       // Story O1: operational NEW badge also shows "Новый"; filter by color.
       const badge = screen
         .getAllByText('Новый')
-        .find(el => el.className.includes('text-yellow-700'))
-      expect(badge?.className).toContain('text-yellow-700')
+        .find(el => el.className.includes('text-status-warning'))
+      expect(badge?.className).toContain('text-status-warning')
     })
 
-    it('displays correct color for confirm supplier status (blue)', () => {
+    it('displays correct color for confirm supplier status (information)', () => {
       renderTable()
       const badge = screen.getByText('Подтверждён')
-      expect(badge.className).toContain('text-blue-700')
+      expect(badge.className).toContain('text-status-information')
     })
 
-    it('displays correct color for complete supplier status (green)', () => {
+    it('displays correct color for complete supplier status (success)', () => {
       renderTable()
       const badge = screen.getByText('Выполнен')
-      expect(badge.className).toContain('text-green-700')
+      expect(badge.className).toContain('text-status-success')
     })
 
     it('renders all three order rows', () => {

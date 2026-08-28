@@ -135,15 +135,15 @@ describe('TimelineSkeleton', () => {
 })
 
 describe('StatusBadge', () => {
-  it('renders supplier variant with blue styling', () => {
+  it('renders supplier variant with muted neutral styling', () => {
     render(<StatusBadge label="new" variant="supplier" />)
     const badge = screen.getByText('new')
-    expect(badge).toHaveClass('bg-blue-50', 'text-blue-700')
+    expect(badge).toHaveClass('bg-muted', 'text-muted-foreground')
   })
-  it('renders wb variant with purple styling', () => {
+  it('renders wb variant with pending token styling', () => {
     render(<StatusBadge label="waiting" variant="wb" />)
     const badge = screen.getByText('waiting')
-    expect(badge).toHaveClass('bg-purple-50', 'text-purple-700')
+    expect(badge).toHaveClass('bg-status-pending/10', 'text-status-pending')
   })
 })
 
@@ -237,8 +237,10 @@ describe('FullHistoryTab', () => {
       )
       const dots = container.querySelectorAll('.rounded-full')
       expect(dots.length).toBe(5)
-      expect(Array.from(dots).filter(d => d.classList.contains('bg-purple-500')).length).toBe(3)
-      expect(Array.from(dots).filter(d => d.classList.contains('bg-blue-500')).length).toBe(2)
+      expect(Array.from(dots).filter(d => d.classList.contains('bg-status-pending')).length).toBe(3)
+      expect(Array.from(dots).filter(d => d.classList.contains('bg-muted-foreground')).length).toBe(
+        2
+      )
       // Trailing lines = entries - 1
       expect(container.querySelectorAll('.bg-border').length).toBe(4)
     })

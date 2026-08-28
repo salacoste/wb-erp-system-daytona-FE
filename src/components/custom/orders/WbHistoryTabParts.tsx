@@ -53,7 +53,9 @@ export function WbHistoryTimelineEntry({ entry, isLast }: WbHistoryTimelineEntry
         <div className="flex items-center justify-between gap-2">
           <span className="text-sm text-muted-foreground">{timestamp}</span>
           {statusConfig.isFinal && (
-            <span className="text-xs bg-green-100 text-green-800 px-1.5 py-0.5 rounded">Финал</span>
+            <span className="text-xs bg-status-success/10 text-status-success px-1.5 py-0.5 rounded">
+              Финал
+            </span>
           )}
         </div>
 

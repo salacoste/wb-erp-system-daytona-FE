@@ -34,15 +34,17 @@ function getSyncHealth(lastSyncAt: string | null): {
   const minutesSince = Math.floor((now.getTime() - lastSync.getTime()) / 60000)
 
   if (minutesSince < 5) {
-    return { health: 'healthy', color: 'bg-green-500', label: 'Синхронизировано' }
+    return { health: 'healthy', color: 'bg-status-success', label: 'Синхронизировано' }
   }
+  // Story 172.14-FE: orange has no semantic token — degraded/stale tiers share
+  // status-warning (amber-family collapse, distinct labels carry the tiers)
   if (minutesSince < 15) {
-    return { health: 'degraded', color: 'bg-yellow-500', label: 'Давно' }
+    return { health: 'degraded', color: 'bg-status-warning', label: 'Давно' }
   }
   if (minutesSince < 30) {
-    return { health: 'stale', color: 'bg-orange-500', label: 'Устарело' }
+    return { health: 'stale', color: 'bg-status-warning', label: 'Устарело' }
   }
-  return { health: 'unhealthy', color: 'bg-red-500', label: 'Проблема' }
+  return { health: 'unhealthy', color: 'bg-status-error', label: 'Проблема' }
 }
 
 /** Format relative time in Russian */

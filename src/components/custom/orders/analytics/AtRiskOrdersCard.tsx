@@ -41,7 +41,7 @@ interface AtRiskOrdersCardProps {
 function EmptyState() {
   return (
     <div className="flex flex-col items-center justify-center py-8 text-center">
-      <CheckCircle className="mb-2 h-10 w-10 text-green-500" data-testid="empty-state-icon" />
+      <CheckCircle className="mb-2 h-10 w-10 text-status-success" data-testid="empty-state-icon" />
       <p className="text-sm text-muted-foreground">Нет заказов под угрозой</p>
     </div>
   )
@@ -62,7 +62,7 @@ function AtRiskCardSkeleton() {
 function AtRiskCardError({ onRetry }: { onRetry?: () => void }) {
   return (
     <div className="flex flex-col items-center justify-center py-8 text-center">
-      <XCircle className="mb-2 h-8 w-8 text-red-500" />
+      <XCircle className="mb-2 h-8 w-8 text-status-error" />
       <p className="mb-2 text-sm text-muted-foreground">Не удалось загрузить заказы</p>
       {onRetry && (
         <Button variant="outline" size="sm" onClick={onRetry}>
@@ -136,11 +136,11 @@ export function AtRiskOrdersCard({
       <CardHeader className="pb-2">
         <CardTitle className="flex items-center justify-between text-base">
           <span className="flex items-center gap-2">
-            <AlertTriangle className="h-4 w-4 text-yellow-500" />
+            <AlertTriangle className="h-4 w-4 text-status-warning" />
             Заказы под угрозой SLA
           </span>
           {total > 0 && !isLoading && (
-            <span className="rounded-full bg-yellow-100 px-2 py-0.5 text-sm font-normal text-yellow-700">
+            <span className="rounded-full bg-status-warning/10 px-2 py-0.5 text-sm font-normal text-status-warning">
               {getOrdersPlural(total)}
             </span>
           )}

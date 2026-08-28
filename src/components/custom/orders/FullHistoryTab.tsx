@@ -79,7 +79,13 @@ function FullHistoryTimelineEntry({ entry, isLast }: FullHistoryTimelineEntryPro
     <div className="flex gap-3 py-2">
       {/* Timeline dot and line */}
       <div className="flex flex-col items-center">
-        <div className={cn('w-2.5 h-2.5 rounded-full', isWb ? 'bg-purple-500' : 'bg-blue-500')} />
+        {/* Story 172.14-FE (wave 2): WB=legacy purple→pending, local=internal system→neutral */}
+        <div
+          className={cn(
+            'w-2.5 h-2.5 rounded-full',
+            isWb ? 'bg-status-pending' : 'bg-muted-foreground'
+          )}
+        />
         {!isLast && <div className="w-0.5 flex-1 bg-border mt-1" />}
       </div>
 

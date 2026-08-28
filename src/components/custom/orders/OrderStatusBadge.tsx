@@ -15,15 +15,23 @@ interface OrderStatusBadgeProps {
   className?: string
 }
 
-/** Supplier status configuration with Russian labels and colors */
+/**
+ * Supplier status configuration with Russian labels and semantic color tokens
+ * (Story 172.14-FE): new=ожидание→warning, confirm=информация→information,
+ * complete=успех→success, cancel=отмена→error.
+ */
 const SUPPLIER_STATUS_CONFIG: Record<
   SupplierStatus,
   { label: string; color: string; bgColor: string }
 > = {
-  new: { label: 'Новый', color: 'text-yellow-700', bgColor: 'bg-yellow-50' },
-  confirm: { label: 'Подтверждён', color: 'text-blue-700', bgColor: 'bg-blue-50' },
-  complete: { label: 'Выполнен', color: 'text-green-700', bgColor: 'bg-green-50' },
-  cancel: { label: 'Отменён', color: 'text-red-700', bgColor: 'bg-red-50' },
+  new: { label: 'Новый', color: 'text-status-warning', bgColor: 'bg-status-warning/10' },
+  confirm: {
+    label: 'Подтверждён',
+    color: 'text-status-information',
+    bgColor: 'bg-status-information/10',
+  },
+  complete: { label: 'Выполнен', color: 'text-status-success', bgColor: 'bg-status-success/10' },
+  cancel: { label: 'Отменён', color: 'text-status-error', bgColor: 'bg-status-error/10' },
 }
 
 /**

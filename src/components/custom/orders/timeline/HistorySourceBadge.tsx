@@ -20,20 +20,25 @@ export interface HistorySourceBadgeProps {
   className?: string
 }
 
+/**
+ * Story 172.14-FE (wave 2): WB (special external source, legacy purple) uses
+ * the theme's purpose-built hue-277 token status-pending; local (internal
+ * system, legacy blue) stays the muted neutral — natively distinct sources.
+ */
 const SOURCE_CONFIG = {
   wb_native: {
     label: 'WB',
     ariaLabel: 'Источник: Wildberries',
     icon: Truck,
-    color: 'text-purple-700',
-    bgColor: 'bg-purple-100',
+    color: 'text-status-pending',
+    bgColor: 'bg-status-pending/10',
   },
   local: {
     label: 'Локальная',
     ariaLabel: 'Источник: Локальная система',
     icon: Database,
-    color: 'text-blue-700',
-    bgColor: 'bg-blue-100',
+    color: 'text-muted-foreground',
+    bgColor: 'bg-muted',
   },
 }
 
