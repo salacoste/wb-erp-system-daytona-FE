@@ -324,21 +324,21 @@ Story identity is the numeric `Epic.Story` ID, not the descriptive sprint-status
 - Lifecycle safety scan: no unresolved angle-bracket placeholders and no unanchored post-merge/cleanup Git commands.
 - Validation method: parse canonical `### Story N.M: Title` headings, parse every numeric plan's `storyId`, `storyTitle`, `branch`, and `temporaryWorktree` frontmatter, compare set/count/title parity, walk `src/app/**/page.tsx`, and compare normalized routes and route-entry paths with the ledger.
 
-## Execution Status & Debt Snapshot (2026-08-28)
+## Execution Status & Debt Snapshot (2026-08-29)
 
 > Датированный срез прогресса; НЕ генерируемая секция (parity-валидатор выше не затронут).
 > Канонический реестр долгов/статуса: `_bmad-output/planning-artifacts/shadcn-migration-status-and-debt-registry.md`.
 > Живые по-сторийные статусы: `_bmad-output/implementation-artifacts/sprint-status.yaml`.
 
-- **Epics CLOSED**: 166-FE (foundation), 167-FE (AppShell/auth, freeze-8), 168-FE (analytics core, 11/11), 169-FE (operational analytics, 15/15), 170-FE (marketing and marketplace analytics, 7/7), 171-FE (models, 9/9).
-- **Canonical Story readiness: 70/94**; **169-FE CLOSED: 15/15** (final Story 169.12 route contract closeout merged in PR #299 as `3ff35bf6` and cleaned); **170-FE CLOSED: 7/7**; **171-FE CLOSED: 9/9** (Stories 171.1-171.9 shipped through PRs #252, #254, #256, #258, #260, #262, #266, #268, and #270); **172-FE IN PROGRESS: 11/17** through Story 172.11 feature commit `d39ad37c`, merged in PR #311 as `8b172445`, and closeout commit `8602fdbd`, merged in PR #312 as `73174259`; the exact feature/closeout branches and Story 172.11 temporary worktree are absent after cleanup, while the separate Story 172.12 lane remains active and protected.
-- **Program NEXT = Story 172.12**.
-- **Remaining**: 172.12-17 (172.14 owner prerequisite for 172.15-172.16) → 173.1-13 (173.8/173.12 owner) → 174.1-5 (консолидация;
+- **Epics CLOSED**: 166-FE (foundation), 167-FE (AppShell/auth, freeze-8), 168-FE (analytics core, 11/11), 169-FE (operational analytics, 15/15), 170-FE (marketing and marketplace analytics, 7/7), 171-FE (models, 9/9), and 172-FE (core operations, 17/17).
+- **Canonical Story readiness: 76/94**; Story 172.17 feature commit `d88b52ed` merged in PR #325 as `caee8523`, and its closeout commit `2cbfe35c` merged in PR #326 as `04659967`. Epic 172's completed feature/closeout branches and temporary worktrees are absent after cleanup.
+- **Program NEXT = Epic 173 / Story 173.1**.
+- **Remaining**: 173.1-13 (173.1 settings owner, 173.8 shipments owner, 173.12 supplies owner) → 174.1-5 (consolidation;
   174.2 — применимые design-system/source-boundary/contrast долги; 174.3 — browser/theme/axe/keyboard/visual;
   174.4 — functional/local-backend regression; trigger-specific behavior/API debts сохраняют registry-owner).
-- Пол: FE vitest **19 423/0** across **1,221 files** after Story 172.11; monitor target **21 files / 155 tests**, lint, TypeScript, max-lines, `git diff --check`, and `npm run build -- --webpack` passed. The repaired monitor E2E assertion and a warm 4/0 retry passed; a final credentialed full-suite rerun was not claimed because the backend login throttle was exhausted. Story 172.11 live axe, light/dark, width-matrix, 200% zoom, keyboard/focus, reduced-motion, and real-screen-reader evidence remains an explicit
+- Recorded floor: FE Vitest **19,467/0** across **1,227 files** after Story 172.17. This is the committed Story floor; each later Story must run and record the validation required by its exact plan. Consolidated live axe, light/dark, width-matrix, 200% zoom, keyboard/focus, reduced-motion, and real-screen-reader evidence remains an explicit
   174.3 carry-out; credentialed functional E2E, auth/session/error-recovery, and local-backend critical
   journeys remain explicit 174.4 carry-outs.
-- Route-ledger row statuses remain globally `planned` for already-shipped Stories; Story 172.11 does not create a one-row exception. Reconciliation of all 76 status transitions and linked completion evidence is an explicit Story 174.1 audit obligation.
+- Route-ledger row statuses remain globally `planned` for already-shipped Stories; this snapshot does not create partial row exceptions. Story 174.1 validates and reconciles all 76 ownership and evidence records without changing route implementation state. Story 174.5 owns final status transitions to `verified` after Stories 174.2–174.4 provide the required evidence.
 - Полный долг-реестр + параллельные треки (W4 Epic-121 P3 ready-to-implement, W5 Epic-128 owner-акты,
   W7 финанс W34 авто-пулл Пн 24.08) — в registry-файле выше и BE handoff-цепочке.
