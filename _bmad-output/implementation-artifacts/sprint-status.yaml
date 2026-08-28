@@ -1,5 +1,5 @@
 # generated: 2026-08-03
-# last_updated: 2026-08-28 — Story 172.12 shipped through feature PR #315 (merge 9498cb76); Epic 172 is 12/17; Program NEXT = Story 172.13.
+# last_updated: 2026-08-28 — Story 172.13 shipped through feature PR #317 (merge 485fa27d); Epic 172 is 13/17; Program NEXT = Story 172.14.
 # project: frontend
 # project_key: NOKEY
 # tracking_system: file-system
@@ -37,7 +37,7 @@
 #   they are excluded from story and retrospective counts and must be documented with a no-story-ID note.
 
 generated: 2026-08-03 # refreshed after Epic 127 truth reconciliation and Epics 162-165 registration
-last_updated: 2026-08-28 # Story 172.12 shipped through feature PR #315 (merge 9498cb76); Epic 172 is 12/17; Program NEXT = Story 172.13.
+last_updated: 2026-08-28 # Story 172.13 shipped through feature PR #317 (merge 485fa27d); Epic 172 is 13/17; Program NEXT = Story 172.14.
 project: frontend
 project_key: NOKEY
 tracking_system: file-system
@@ -830,7 +830,7 @@ development_status:
   172-10-fe-migrate-finances-and-documents: done # Feature PR #308 (e1406cd2, merge eb09f735) + closeout PR #309 (de5519db, merge e6d05de4): born-clean + absorbed parallel-session delta; 10 files (6M+4A) +558/-105: caption RTC (171.9 canon), download a11y (pending/success announcements, visible failure, aria-hidden icons, mutation.reset on format switch), categoryState loading/error, filtered-empty + reset, error.tsx boundary; DocumentsBody extraction (max-lines); guard 10 (catalog 8 exact-array, no-palette/no-hex, contract pins); e2e REPAIRED (bisect-proven pre-existing on main: end-anchored globs missed query URLs -> RegExp; strict-mode exact:true) + filtered-empty test; targeted 6/46; full 19414/0/1220 (floor 19394, +20 exact); lint 0/0, tsc 0, max-lines OK, Prettier OK, build --webpack 0; standard Turbopack worktree-symlink gap explicit; e2e 12 passed +1 intentional manager-setup skip (3 setup+2 orders+7 finances passed); 3 review passes (MEDIUM+2 LOW applied, 4 LOW/NIT dispositioned); source/component/E2E DOM semantics recorded, live visual/axe/keyboard -> 174.3; feature + closeout cleanup 0/0/0; route-ledger status reconciliation -> 174.1.
   172-11-fe-migrate-the-monitor-route: done # PR #311 (d39ad37c, merge 8b172445): MINOR-GAP; 14 files (13M+1A guard) +213/-52: 18 palette + 9 hex -> semantic tokens (status valence, chart-1/positive/negative/grid, muted-foreground, destructive, foreground); gauge band hex->color CSS-var + style-prop stroke; weekly chart recharts var() idiom; test re-pins; guard 9 (catalog 14 exact-array BFS-verified, no-palette/no-hex self-tested, band/banner/valence/chart pins, mutation-tested); e2e legend assert REPAIRED (BD-22 rename #41 strict-mode, bisect+archaeology pre-existing proof; exact fix); targeted 21/155 (base 20/146); full 19423/0/1221 (floor 19414, +9 exact); lint 0/0, tsc 0, build 0; e2e repair-green + sidebar-nav flake disposition (clean-main bisect + warm retry 4/0); 1xopus APPROVE-WITH-NOTES; carry-out STATUS_COLORS (src/lib, -> 172.12); cleanup 0/0/0.
   172-12-fe-migrate-the-monitoring-operations-console: done # PR #315 (ef59a7cf, merge 9498cb76): FULL-class MINOR; 23 files (22M+1A guard) +352/-134: 74 palette + 20 hex + 2 rawbtn -> semantic tokens x19 files; heatmap STATUS+LEGEND synced (recovered=color-mix alpha, one-green-HSL rationale); 2 Button conversions (type=button restored); 10 test re-pins; guard 10 (catalog 32 exact-array + dead-trio annotation, per-key heatmap pins, cross-file legend-sync); a11y side-fix tooltip contrast; targeted 10/70 (base 9/60); full 19433/0/1222 (floor 19423, +10 exact); e2e 11 x2; 2x APPROVE-WITH-NOTES; carry-outs (dead trio, STATUS_COLORS lib, text-white circles, role=listitem); cleanup 0/0/0.
-  172-13-fe-migrate-the-moysklad-integration-workspace: backlog
+  172-13-fe-migrate-the-moysklad-integration-workspace: done # PR #317 (5fe9af95, merge 485fa27d): MINOR-GAP; 8 files (7M one-line + 1A guard) +115/-7: 7 palette -> tokens (health badge success branch, 3 warning banners canonical, unmapped headline -> status-warning, link -> primary, recalc badge); guard 6 (catalog 13 exact-array BFS, mutation-tested); targeted 5/45 (base 4/39); full 19439/0/1223 (floor 19433, +6 exact); e2e 12 (4 plan specs); 1xopus APPROVE-WITH-NOTES (3 LOW info); cleanup 0/0/0.
   172-14-fe-migrate-the-orders-overview: backlog
   172-15-fe-migrate-fbo-orders: backlog
   172-16-fe-migrate-order-integrity-analysis: backlog
