@@ -1,5 +1,5 @@
 # generated: 2026-08-03
-# last_updated: 2026-08-27 — Story 169.12 is done through PR #299; Epic 169 is complete at 15/15. Epic 172 remains 7/17 through PR #294; Program NEXT = 172.8.
+# last_updated: 2026-08-28 — Story 172.8 feature PR #301 merged and cleaned; canonical reconciliation PR #303 is in review; Epic 172 remains 7/17; Program NEXT = Story 172.8 lifecycle closeout.
 # project: frontend
 # project_key: NOKEY
 # tracking_system: file-system
@@ -37,7 +37,7 @@
 #   they are excluded from story and retrospective counts and must be documented with a no-story-ID note.
 
 generated: 2026-08-03 # refreshed after Epic 127 truth reconciliation and Epics 162-165 registration
-last_updated: 2026-08-27 # Story 169.12 is done through PR #299; Epic 169 is complete at 15/15. Epic 172 remains 7/17 through PR #294; Program NEXT = 172.8.
+last_updated: 2026-08-28 # Story 172.8 feature PR #301 merged and cleaned; canonical reconciliation PR #303 is in review; Epic 172 remains 7/17; Program NEXT = Story 172.8 lifecycle closeout.
 project: frontend
 project_key: NOKEY
 tracking_system: file-system
@@ -825,7 +825,7 @@ development_status:
   172-5-fe-migrate-single-product-cogs-management: done # PR #287 (66ae4f09, merge 4e86272b): FULL-lite owner; 23 файла ->0 palette (вкл. 2 живых транзитива: MarginCalculationStatus polling, ResizableTableHead grip); гард каталог-21; 11 re-pin (вкл. wave-external custom/__tests__); 3 ревью-прохода (HIGH, 2xHIGH, APPROVE + closure-аудит 28 файлов); targeted 8/54; full 19327/0 (floor 19319, +8); e2e 23+2 cold-flake(172.7, бисект); cleanup 0/0/0.
   172-6-fe-migrate-bulk-cogs-assignment: done # PR #289 (27535e8d, merge 42ac0686): MINOR-GAP-plus owner; 8 прод-файлов ->0 palette (49 строк; вкл. 2 blue-override drop); гард(7, каталог-11+шим+page); 1xopus APPROVE-WITH-NOTES (closure чист, 0 blocking); targeted 2/17->3/24; full 19334/0 (floor 19327, +7); e2e cold-flake(3, nav-visibility 172.5-класс)->warm 8/8; cleanup 0/0/0.
   172-7-fe-migrate-cogs-history: done # PR #293 (00368153, merge da3e9078): MINOR-GAP born-clean; caption-контракт (captionText->TableCaption, 171.9 канон) + 2 поведенческих теста; tabular-nums; гард(7, каталог 5+5, born-clean pinned, padding-пин с intra-card экземпляцией); targeted 3/18->4/25; full 19343/0 (floor 19334, +9); 1xopus APPROVE-WITH-NOTES (MEDIUM+2 LOW applied); e2e 11+2 cold-flake->warm 5/0; cleanup 0/0/0.
-  172-8-fe-migrate-the-cogs-price-calculator: backlog
+  172-8-fe-migrate-the-cogs-price-calculator: review # Feature PR #301 (9adf7d33, merge 08191dae) merged and cleanup 0/0/0 passed; target 70/1759, composite full 19383/0, lint/tsc/build/static E2E guards green, 2 review passes; dynamic Playwright gap explicit; canonical reconciliation PR #303 pending merge/cleanup.
   172-9-fe-migrate-communications-workspace: backlog
   172-10-fe-migrate-finances-and-documents: backlog
   172-11-fe-migrate-the-monitor-route: backlog

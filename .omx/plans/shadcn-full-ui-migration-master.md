@@ -324,20 +324,19 @@ Story identity is the numeric `Epic.Story` ID, not the descriptive sprint-status
 - Lifecycle safety scan: no unresolved angle-bracket placeholders and no unanchored post-merge/cleanup Git commands.
 - Validation method: parse canonical `### Story N.M: Title` headings, parse every numeric plan's `storyId`, `storyTitle`, `branch`, and `temporaryWorktree` frontmatter, compare set/count/title parity, walk `src/app/**/page.tsx`, and compare normalized routes and route-entry paths with the ledger.
 
-## Execution Status & Debt Snapshot (2026-08-27)
+## Execution Status & Debt Snapshot (2026-08-28)
 
 > Датированный срез прогресса; НЕ генерируемая секция (parity-валидатор выше не затронут).
 > Канонический реестр долгов/статуса: `_bmad-output/planning-artifacts/shadcn-migration-status-and-debt-registry.md`.
 > Живые по-сторийные статусы: `_bmad-output/implementation-artifacts/sprint-status.yaml`.
 
 - **Epics CLOSED**: 166-FE (foundation), 167-FE (AppShell/auth, freeze-8), 168-FE (analytics core, 11/11), 169-FE (operational analytics, 15/15), 170-FE (marketing and marketplace analytics, 7/7), 171-FE (models, 9/9).
-- **Canonical Story readiness: 66/94**; **169-FE CLOSED: 15/15** (final Story 169.12 route contract closeout merged in PR #299 as `3ff35bf6` and cleaned); **170-FE CLOSED: 7/7**; **171-FE CLOSED: 9/9** (Stories 171.1-171.9 shipped through PRs #252, #254, #256, #258, #260, #262, #266, #268, and #270); **172-FE IN PROGRESS: 7/17** through PR #294.
-- **Program NEXT = Story 172.8**. Epic 169 paid-storage chain 169.14 → 169.15 → 169.12 and independent Story 169.13 are complete.
-- **Remaining**: 172.8-17 (172.14 owner prerequisite for 172.15-172.16) → 173.1-13 (173.8/173.12 owner) → 174.1-5 (консолидация;
+- **Canonical Story readiness: 66/94**; **169-FE CLOSED: 15/15** (final Story 169.12 route contract closeout merged in PR #299 as `3ff35bf6` and cleaned); **170-FE CLOSED: 7/7**; **171-FE CLOSED: 9/9** (Stories 171.1-171.9 shipped through PRs #252, #254, #256, #258, #260, #262, #266, #268, and #270); **172-FE IN PROGRESS: 7/17** through PR #294. Story 172.8 feature PR #301 merged as `08191dae` and its feature branch/worktree cleanup passed; canonical reconciliation PR #303 remains in review.
+- **Program NEXT = Story 172.8 lifecycle closeout**, then Story 172.9.
+- **Remaining**: Story 172.8 reconciliation merge/cleanup/final lifecycle record → 172.9-17 (172.14 owner prerequisite for 172.15-172.16) → 173.1-13 (173.8/173.12 owner) → 174.1-5 (консолидация;
   174.2 — применимые design-system/source-boundary/contrast долги; 174.3 — browser/theme/axe/keyboard/visual;
   174.4 — functional/local-backend regression; trigger-specific behavior/API debts сохраняют registry-owner).
-- Пол: FE vitest **19 367/0** after Story 169.12 contract closeout; route target **14 files / 158 tests**; production build:
-  **70/70** static pages. Browser/theme/responsive/axe/keyboard/visual evidence remains an explicit
+- Пол: FE vitest **19 383/0** after Story 172.8, covered by the four-worker run plus exact isolated reruns for two resource-starved files and the sandbox-denied listener suite; calculator target **70 files / 1 759 tests**; production build: **70/70** static pages. Dynamic credentialed browser execution remains an explicit
   174.3 carry-out; credentialed functional E2E, auth/session/error-recovery, and local-backend critical
   journeys remain explicit 174.4 carry-outs.
 - Полный долг-реестр + параллельные треки (W4 Epic-121 P3 ready-to-implement, W5 Epic-128 owner-акты,

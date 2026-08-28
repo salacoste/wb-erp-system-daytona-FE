@@ -1,6 +1,6 @@
 # Story 172.8-FE: Migrate the COGS Price Calculator
 
-Status: review — feature implementation and two fresh-context adversarial reviews are complete on `cdx/epic-172-story-8-price-calculator`; local merge gates pass on pinned Node `24.18.0` / npm `11.11.0`, with dynamic Playwright explicitly unavailable because the Story worktree has no `.env.e2e`; feature PR/merge, reconciliation, and exact cleanup remain open.
+Status: review — feature commit `9adf7d33` merged through PR #301 as `08191dae` and feature cleanup passed; canonical reconciliation PR #303 remains pending merge and exact cleanup.
 
 ## Story
 
@@ -27,8 +27,9 @@ Per the canonical plan:
 - [x] Task 5: run targeted calculator tests and applicable calculator E2E/visual checks; record responsive, theme, keyboard, focus, semantics, non-color meaning, and accessibility evidence or explicit environment gaps.
 - [x] Task 6: run universal local validation on the final feature diff.
 - [x] Task 7: complete two independent fresh-context adversarial reviews plus independent verification; resolve every accepted material finding and rerun affected proof.
-- [ ] Task 8: commit, push the feature branch, open and merge the PR, then remove the feature branch, exact temporary worktree, and lifecycle records and prune worktrees.
-- [ ] Task 9: update canonical Story/master/Epic/sprint state only after feature merge in the separately owned reconciliation branch/PR, then perform the same exact branch/worktree cleanup.
+- [x] Task 8: commit, push the feature branch, open and merge the PR, then remove the feature branch, exact temporary worktree, and lifecycle records and prune worktrees.
+- [x] Task 9a: prepare and validate the post-feature canonical Story/master/Epic/sprint updates in separately owned reconciliation PR #303.
+- [ ] Task 9b: merge reconciliation PR #303, remove its remote/local branch and exact temporary worktree, prune, then record the completed lifecycle in a final close record.
 
 ## Dev Notes
 
@@ -242,6 +243,15 @@ Backend code/contracts, foundation tokens, AppShell/navigation, dependencies, re
 - Final full regression on the completed diff: `1214` files / `19364` tests passed in the four-worker run; one `historical-spp-server-lifecycle` test failed only because sandbox denied its temporary listener, and two workers timed out before starting `useSupplyDetail` / `ReturnsCard`. The two resource-starved files passed immediately in a pinned single-worker rerun (`2/2`, `18/18`), and the listener suite passed outside sandbox (`1/1`, `11/11`). Composite final evidence therefore covers the full `1217`-file / `19383`-test corpus with every test passing in either the full run or its exact isolated environmental rerun.
 - Earlier full-run flakes were also isolated before the final run: `useStorageAnalytics` and `OrderDetailsModal` passed together at `2/2` files / `58/58` tests; earlier calculator-adjacent timeout groups passed at `3/3` files / `136/136` tests and `8/8` files / `220/220` tests.
 
+### Lifecycle Evidence
+
+- Feature commit: `9adf7d331002ba35be9f571af264a0cca43d134d` (`feat(cogs): migrate the COGS price calculator`).
+- Feature PR: [#301](https://github.com/salacoste/wb-erp-system-daytona-FE/pull/301), merged as `08191dae387b9f130ac291ba48e48b2047d63a34`.
+- Primary `main` was clean and fast-forwarded to `origin/main` at `08191dae`; feature merge ancestry was proven.
+- `cdx/epic-172-story-8-price-calculator`, its remote branch, and `/private/tmp/wb-repricer-fe-172-8-price-calculator` are absent; `git worktree prune` completed.
+- Canonical reconciliation uses `cdx/epic-172-story-8-reconciliation` and `/private/tmp/wb-repricer-fe-172-8-reconciliation` from merged base `08191dae`.
+- Canonical reconciliation commit `18de839a4b23a96b3db4308fb4413968cf5cfe87` was rebased onto concurrent merged `main` `a2bfa472` and published in [PR #303](https://github.com/salacoste/wb-erp-system-daytona-FE/pull/303); merge and cleanup remain open.
+
 ### Completion Notes List
 
 - Story 172.8 began from the reconciled Story 169.12 program state; no Story 169 branch, worktree, or lifecycle residue was reused.
@@ -250,8 +260,8 @@ Backend code/contracts, foundation tokens, AppShell/navigation, dependencies, re
 - The mutable presentation manifest moved from `175` raw color violations to zero. The guard now rejects `black`, `white`, and `950` utilities as well as named palette/hex values.
 - Formula/request/query/state behavior remained outside the edit surface. All 24 read-only formula/business/support files are byte-identical to base `35503067`; `package.json`, `package-lock.json`, all 20 unreachable calculator files, shared primitives/products/hooks/types/styles, and `sprint-status.yaml` have zero feature diff.
 - Field errors expose stable IDs with `aria-invalid`/`aria-describedby`; dimensions stack below `sm`; the warehouse popover is viewport-constrained; the all-zero submit path remains a silent no-op while a non-zero form calls both established callbacks.
-- The E2E proof was made deterministic and semantic: shared tariff-reference mocks prevent rate-limit noise; duplicate-tree workarounds, synthetic events, palette assertions, and vacuous fallbacks were removed.
-- The declared browser proof now covers light/dark × `320/390/768/1024/1280/1440`, real `<main>` overflow, both popover bounds, page-wide and state-specific axe, 200% zoom, long financial values, keyboard-only calculation completion/focus, screenshot attachments, and computed VAT/margin color distinction.
+- The authored E2E suite was made deterministic and semantic: shared tariff-reference mocks prevent rate-limit noise; duplicate-tree workarounds, synthetic events, palette assertions, and vacuous fallbacks were removed.
+- The authored Playwright suite declares light/dark × `320/390/768/1024/1280/1440`, real `<main>` overflow, both popover bounds, page-wide and state-specific axe, 200% zoom, long financial values, keyboard-only calculation completion/focus, screenshot attachments, and computed VAT/margin color distinction; it was not dynamically executed.
 
 ### Post-1st-pass-review fixes (2026-08-28)
 
@@ -265,9 +275,9 @@ Backend code/contracts, foundation tokens, AppShell/navigation, dependencies, re
 ### Post-2nd-pass-review fixes (2026-08-28)
 
 - Review outcome: REQUEST CHANGES with four MEDIUM findings; all four were accepted and resolved before commit.
-- Assigned VAT to `var(--color-chart-5)` so it no longer aliases the positive-margin role in either theme; browser proof compares computed swatch colors.
+- Assigned VAT to `var(--color-chart-5)` so it no longer aliases the positive-margin role in either theme; the authored browser assertion compares computed swatch colors when executed.
 - Replaced the remaining `bg-black/5` with `bg-muted` and strengthened the source guard with explicit black/white/950 regression fixtures.
-- Expanded the visual proof to the complete theme/viewport matrix, real main-container overflow, both popover edges, whole-page/state-specific axe, 200% zoom/reflow, long values, keyboard-only completion/focus, and screenshot identifiers.
+- Expanded the authored visual suite to declare the complete theme/viewport matrix, real main-container overflow, both popover edges, whole-page/state-specific axe, 200% zoom/reflow, long values, keyboard-only completion/focus, and screenshot identifiers.
 - Extracted deterministic rate-limited tariff-reference mocks into `e2e/fixtures/story-172-8-price-calculator.ts` and reused them from both calculator suites.
 - Post-fix exact ESLint, TypeScript, Prettier, E2E static guards, focused tests, and the complete targeted calculator suite all pass.
 
@@ -276,7 +286,6 @@ Backend code/contracts, foundation tokens, AppShell/navigation, dependencies, re
 - Dynamic Playwright execution is unavailable because this isolated Story worktree has no `.env.e2e` containing `E2E_BASE_URL`, `E2E_API_URL`, `E2E_TEST_EMAIL`, and `E2E_TEST_PASSWORD`. The earlier password authorization was scoped only to Story 167.5, so no credential was read, copied, printed, or persisted for Story 172.8. The browser matrix, screenshot attachments, axe runs, and computed contrast/color assertions are implemented but remain an explicit environment gap, never reported as a pass.
 - Manual browser contrast/focus/screenshot disposition cannot be honestly recorded without the same E2E environment. Semantic token/source proof, component-level accessibility assertions, static E2E quality guards, and production build are the next-best evidence.
 - The sandboxed full suite cannot itself bind the temporary listener used by `historical-spp-server-lifecycle`; the exact isolated suite passed outside sandbox at `1/1` file / `11/11` tests. Two four-worker startup timeouts also passed immediately at `2/2` files / `18/18` tests in single-worker mode. These are recorded as execution-environment splits, not product passes hidden behind retries.
-- Feature commit/push/PR/merge evidence, post-merge canonical reconciliation, and exact local/remote branch/worktree cleanup remain pending and belong to Tasks 8-9.
 
 ### File List
 
@@ -345,3 +354,4 @@ Backend code/contracts, foundation tokens, AppShell/navigation, dependencies, re
 | --- | --- |
 | 2026-08-27 | Story opened from clean base `35503067`; Epic 166, Story 167.1, and Story 172.5 ancestry verified; targeted baseline passed at 66 files / 1743 tests; initial legacy-presentation inventory recorded at 294 matches / 58 files. Status: backlog → in-progress. |
 | 2026-08-28 | Implementation complete for the feature branch: one semantic responsive calculator tree, zero raw palette debt in the 71-file mutable manifest, formula/business files byte-preserved, deterministic Story E2E contract, and two fresh-context review passes with all accepted code/test findings resolved. **Lessons:** (1) Story-172.8-FE color-token names must be checked at computed-value level because aliases can collapse chart meaning. (2) Route evidence must inspect the real scrolling container, not a body hidden by AppShell overflow rules. (3) Rate-limited reference APIs require deterministic presentation fixtures while live contract smoke stays separate. Status: in-progress → review. |
+| 2026-08-28 | Feature PR #301 merged as `08191dae`; exact feature cleanup passed; canonical reconciliation PR #303 was prepared from updated `main`. Status remains review pending reconciliation merge and cleanup. |
