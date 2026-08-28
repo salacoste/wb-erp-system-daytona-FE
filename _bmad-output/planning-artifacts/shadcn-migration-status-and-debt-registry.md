@@ -106,7 +106,8 @@ caption naming model + tabular + p-6; guard-9 + caption role-тест + 6 re-pin
 **172.14 SHIPPED (2026-08-29, PR #319, merge `4b988aae`)** — FULL owner-story: shared orders family (29 M + гард), статус-карты (status-pending!), cross-restraint 0-import proof, mirror→lib-import; полный пол **19 447/0/1224** (+8 exact); e2e 7×2; lib-passthrough residue = lib-wave carry-out. Артефакт: `172-14-fe-migrate-the-orders-overview.md`.
 **172.15 SHIPPED (2026-08-29, PR #321, merge `81bc35cc`)** — born-clean: caption ×2 + tabular + гард 7; полный пол **19 458/0/1225** (+11 exact); 1×opus APPROVE; e2e-gap честный. Артефакт: `172-15-fe-migrate-fbo-orders.md`.
 **172.16 SHIPPED (2026-08-29, PR #323, merge `8939aea4`)** — MINOR-GAP: 6 свапов + гард 5 (HEAD-мутационно проверен); полный пол **19 463/0/1226** (+5 exact); 1×opus APPROVE. Артефакт: `172-16-fe-migrate-order-integrity-analysis.md`.
-**NEXT = 172.17 product management** (эпик 172, ПОСЛЕДНЯЯ стори; планы `.omx/plans/172.17-*.md`).
+**172.17 SHIPPED (2026-08-29, PR #325, merge `caee8523`) — ЭПИК 172 ЗАВЕРШЁН 17/17** — MINOR-GAP: 2 свапа + гард 4; полный пол **19 467/0/1227** (+4 exact); 1×opus APPROVE. Артефакт: `172-17-fe-migrate-product-management.md` (включая Epic-172 retrospective).
+**NEXT = Эпик 173 (13 стори; owner-стори: 173.1 settings, 173.8 shipments, 173.12 supplies)** — вход через sprint-status/sprint-planning эпика 173.
 **Carry-out → 174.2 owner (route-ledger handoff из 171.9):** (1) удалить поле className из
 STATUS_BADGE_CONFIG после миграции ModelListSection на собственный overlay; (2) переписать
 stale-комментарий model-list-helpers.ts:24-26 («subroutes 171.7/171.9» — остался только
