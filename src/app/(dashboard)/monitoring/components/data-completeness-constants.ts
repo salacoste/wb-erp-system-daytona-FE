@@ -12,13 +12,21 @@ export const COMPLETENESS_BADGE: Record<
   string,
   { label: string; variant: 'outline'; className: string }
 > = {
-  complete: { label: 'Полные', variant: 'outline', className: 'border-green-500 text-green-700' },
+  complete: {
+    label: 'Полные',
+    variant: 'outline',
+    className: 'border-status-success text-status-success',
+  },
   incomplete: {
     label: 'Неполные',
     variant: 'outline',
-    className: 'border-yellow-500 text-yellow-700',
+    className: 'border-status-warning text-status-warning',
   },
-  critical: { label: 'Критично', variant: 'outline', className: 'border-red-500 text-red-700' },
+  critical: {
+    label: 'Критично',
+    variant: 'outline',
+    className: 'border-status-error text-status-error',
+  },
 }
 
 // --- Health bar config by overall status ---
@@ -27,18 +35,18 @@ export const HEALTH_CONFIG: Record<string, { label: string; className: string; b
   {
     healthy: {
       label: 'Все данные загружены',
-      className: 'text-green-700',
-      barClass: '[&>div]:bg-green-500',
+      className: 'text-status-success',
+      barClass: '[&>div]:bg-status-success',
     },
     degraded: {
       label: 'Незначительные пропуски',
-      className: 'text-yellow-700',
-      barClass: '[&>div]:bg-yellow-500',
+      className: 'text-status-warning',
+      barClass: '[&>div]:bg-status-warning',
     },
     critical: {
       label: 'Требуется внимание',
-      className: 'text-red-700',
-      barClass: '[&>div]:bg-red-500',
+      className: 'text-status-error',
+      barClass: '[&>div]:bg-status-error',
     },
   }
 

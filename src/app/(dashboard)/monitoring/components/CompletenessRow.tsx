@@ -112,7 +112,7 @@ function DetailContent({ detail }: { detail: TableCompletenessDetail }) {
         </span>
         <span className="text-muted-foreground">
           Восстановление:{' '}
-          <strong className={detail.recoverable ? 'text-green-600' : 'text-red-600'}>
+          <strong className={detail.recoverable ? 'text-status-success' : 'text-status-error'}>
             {detail.recoverable ? 'возможно' : 'невозможно'}
           </strong>
         </span>
@@ -134,7 +134,7 @@ function DetailContent({ detail }: { detail: TableCompletenessDetail }) {
       )}
 
       {detail.missingDates.length === 0 && (
-        <p className="text-green-600">Все даты за период присутствуют</p>
+        <p className="text-status-success">Все даты за период присутствуют</p>
       )}
     </div>
   )

@@ -50,7 +50,7 @@ export function HeatmapTooltip({ cell, pipelineName }: HeatmapTooltipProps) {
       <p className="font-semibold">{pipelineName}</p>
 
       {/* Period */}
-      <p className="text-slate-300">
+      <p className="text-muted-foreground">
         {formatDate(cell.periodStart)} — {formatDate(cell.periodEnd)}
       </p>
 
@@ -73,19 +73,19 @@ export function HeatmapTooltip({ cell, pipelineName }: HeatmapTooltipProps) {
 
       {/* Errors section */}
       {hasErrors && (
-        <div className="mt-1 border-t border-slate-600 pt-1">
+        <div className="mt-1 border-t border-border pt-1">
           <p className="font-semibold">Ошибки</p>
           <ul className="mt-0.5 space-y-0.5">
             {visibleErrors.map((err, i) => (
-              <li key={i} className="text-red-300">
-                <span className="text-slate-400">{formatDate(err.timestamp)}</span>
+              <li key={i} className="text-status-error">
+                <span className="text-muted-foreground">{formatDate(err.timestamp)}</span>
                 {' — '}
                 {err.errorMessage}
               </li>
             ))}
           </ul>
           {cell.errors.length > 5 && (
-            <p className="mt-0.5 text-slate-400">+{cell.errors.length - 5} ещё...</p>
+            <p className="mt-0.5 text-muted-foreground">+{cell.errors.length - 5} ещё...</p>
           )}
         </div>
       )}

@@ -54,7 +54,7 @@ export function PipelineHeatmap({ enabled }: PipelineHeatmapProps) {
   if (isError) {
     return (
       <div className="flex flex-col items-center py-12" role="alert">
-        <p className="text-sm text-red-600">Не удалось загрузить карту активности</p>
+        <p className="text-sm text-status-error">Не удалось загрузить карту активности</p>
         <Button variant="outline" size="sm" className="mt-2" onClick={() => refetch()}>
           Повторить
         </Button>
@@ -98,24 +98,21 @@ export function PipelineHeatmap({ enabled }: PipelineHeatmapProps) {
         {FILTER_PRESETS.map(fp => {
           const active = activeFilter === fp.key
           return (
-            <button
+            <Button
               key={fp.key}
               type="button"
+              variant={active ? 'default' : 'outline'}
+              size="sm"
               onClick={() => setActiveFilter(active && fp.key !== 'all' ? 'all' : fp.key)}
               aria-pressed={active}
             >
-              <Badge
-                variant={active ? 'default' : 'outline'}
-                className="cursor-pointer select-none"
-              >
-                {fp.label}
-                {active && fp.key !== 'all' && (
-                  <span className="ml-1 text-xs opacity-70" aria-hidden="true">
-                    ×
-                  </span>
-                )}
-              </Badge>
-            </button>
+              {fp.label}
+              {active && fp.key !== 'all' && (
+                <span className="ml-1 text-xs opacity-70" aria-hidden="true">
+                  ×
+                </span>
+              )}
+            </Button>
           )
         })}
       </div>
@@ -129,7 +126,7 @@ export function PipelineHeatmap({ enabled }: PipelineHeatmapProps) {
         <div className="min-w-[600px]">
           {filteredPipelines.map(pipeline => (
             <div key={pipeline.pipelineId} className="flex border-b last:border-b-0" role="row">
-              <div className="sticky left-0 z-10 flex w-48 shrink-0 items-center gap-1.5 border-r bg-white px-3 py-2">
+              <div className="sticky left-0 z-10 flex w-48 shrink-0 items-center gap-1.5 border-r bg-background px-3 py-2">
                 <div className="min-w-0">
                   <p className="truncate text-sm font-medium">{pipeline.displayName}</p>
                   <div className="flex items-center gap-1">
@@ -169,7 +166,7 @@ export function PipelineHeatmap({ enabled }: PipelineHeatmapProps) {
         {LEGEND_ITEMS.map(item => (
           <div key={item.label} className="flex items-center gap-1">
             <div
-              className={`h-3.5 w-3.5 rounded-sm ${item.border ? 'border border-gray-300' : ''}`}
+              className={`h-3.5 w-3.5 rounded-sm ${item.border ? 'border' : ''}`}
               style={{ backgroundColor: item.color }}
             />
             <span>{item.label}</span>

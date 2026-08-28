@@ -11,9 +11,18 @@ import { healthReportSuccessCount } from './health-report-utils'
 import type { HealthReportDetail } from '../types/monitoring'
 
 const SEV_CFG: Record<string, { label: string; cls: string }> = {
-  critical: { label: 'Критично', cls: 'bg-red-100 text-red-700 border-red-200' },
-  warning: { label: 'Внимание', cls: 'bg-yellow-100 text-yellow-700 border-yellow-200' },
-  info: { label: 'Инфо', cls: 'bg-blue-100 text-blue-700 border-blue-200' },
+  critical: {
+    label: 'Критично',
+    cls: 'bg-status-error/10 text-status-error border-status-error/40',
+  },
+  warning: {
+    label: 'Внимание',
+    cls: 'bg-status-warning/10 text-status-warning border-status-warning/40',
+  },
+  info: {
+    label: 'Инфо',
+    cls: 'bg-status-information/10 text-status-information border-status-information/40',
+  },
 }
 
 export function SheetBody({ report }: { report: HealthReportDetail }) {
@@ -25,9 +34,9 @@ export function SheetBody({ report }: { report: HealthReportDetail }) {
       <section aria-label="Выполнение задач">
         <h4 className="mb-2 text-sm font-semibold">Выполнение задач</h4>
         <div className="grid grid-cols-3 gap-3 text-center">
-          <Metric label="Успешно" value={successCount} color="text-green-600" />
-          <Metric label="Ошибки" value={summary.tasksFailed} color="text-red-600" />
-          <Metric label="Ожидают" value={summary.tasksPending} color="text-gray-500" />
+          <Metric label="Успешно" value={successCount} color="text-status-success" />
+          <Metric label="Ошибки" value={summary.tasksFailed} color="text-status-error" />
+          <Metric label="Ожидают" value={summary.tasksPending} color="text-muted-foreground" />
         </div>
       </section>
       <Separator />
@@ -48,7 +57,7 @@ export function SheetBody({ report }: { report: HealthReportDetail }) {
             {Object.entries(report.dataCompleteness).map(([table, info]) => (
               <li key={table} className="flex items-center justify-between">
                 <span>{table}</span>
-                <span className={info.status === 'critical' ? 'text-red-500' : ''}>
+                <span className={info.status === 'critical' ? 'text-status-error' : ''}>
                   {formatPercentageInt(info.ratio * 100)}
                   {info.missingCount > 0 && ` (${info.missingCount} пробелов)`}
                 </span>

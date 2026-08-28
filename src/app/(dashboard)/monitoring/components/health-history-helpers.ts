@@ -14,15 +14,15 @@ export const PERIOD_OPTIONS: { days: PeriodDays; label: string }[] = [
 ]
 
 export const STATUS_COLORS: Record<OverallStatus, string> = {
-  healthy: 'bg-green-500',
-  degraded: 'bg-yellow-500',
-  critical: 'bg-red-500',
+  healthy: 'bg-status-success',
+  degraded: 'bg-status-warning',
+  critical: 'bg-status-error',
 }
 
 export const STATUS_RING: Record<OverallStatus, string> = {
-  healthy: 'ring-green-300',
-  degraded: 'ring-yellow-300',
-  critical: 'ring-red-300',
+  healthy: 'ring-status-success/50',
+  degraded: 'ring-status-warning/50',
+  critical: 'ring-status-error/50',
 }
 
 export const STATUS_EMOJI: Record<OverallStatus, string> = {

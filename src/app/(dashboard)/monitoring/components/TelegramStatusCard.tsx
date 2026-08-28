@@ -20,10 +20,10 @@ interface TelegramStatusCardProps {
 }
 
 const BOT_STATUS_CONFIG: Record<BotStatus, { icon: string; label: string; color: string }> = {
-  active: { icon: '\u{1F7E2}', label: 'Активен', color: 'text-green-600' },
-  degraded: { icon: '\u26A0\uFE0F', label: 'Проблемы с доставкой', color: 'text-yellow-600' },
-  offline: { icon: '\u{1F534}', label: 'Бот оффлайн', color: 'text-red-600' },
-  not_configured: { icon: '\u26AA', label: 'Не настроен', color: 'text-gray-500' },
+  active: { icon: '\u{1F7E2}', label: 'Активен', color: 'text-status-success' },
+  degraded: { icon: '\u26A0\uFE0F', label: 'Проблемы с доставкой', color: 'text-status-warning' },
+  offline: { icon: '\u{1F534}', label: 'Бот оффлайн', color: 'text-status-error' },
+  not_configured: { icon: '\u26AA', label: 'Не настроен', color: 'text-muted-foreground' },
 } as const
 
 export function TelegramStatusCard({ telegram, isLoading }: TelegramStatusCardProps) {
@@ -66,10 +66,10 @@ function StatusMetrics({ deliveryRate, failures }: { deliveryRate: number; failu
   // deliveryRate is a 0-1 ratio (request #149); gate on 0-1 scale, render via comma+NBSP formatter
   const rateColor =
     deliveryRate >= 0.95
-      ? 'text-green-600'
+      ? 'text-status-success'
       : deliveryRate >= 0.8
-        ? 'text-yellow-600'
-        : 'text-red-600'
+        ? 'text-status-warning'
+        : 'text-status-error'
 
   return (
     <div className="flex items-end gap-6">
@@ -85,7 +85,7 @@ function StatusMetrics({ deliveryRate, failures }: { deliveryRate: number; failu
       <div>
         <p className="text-xs text-muted-foreground">Ошибки</p>
         <p
-          className={`text-lg font-bold ${failures > 0 ? 'text-red-600' : 'text-foreground'}`}
+          className={`text-lg font-bold ${failures > 0 ? 'text-status-error' : 'text-foreground'}`}
           aria-label={`Недавних ошибок: ${failures}`}
         >
           {failures}

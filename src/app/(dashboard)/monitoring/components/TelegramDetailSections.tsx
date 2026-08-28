@@ -53,7 +53,7 @@ export function EventBreakdownTable({ events }: { events: TelegramEventBreakdown
               <TableCell className="text-sm">{e.eventType}</TableCell>
               <TableCell className="text-right text-sm">{e.sentCount}</TableCell>
               <TableCell
-                className={`text-right text-sm ${e.failedCount > 0 ? 'text-red-600 font-medium' : ''}`}
+                className={`text-right text-sm ${e.failedCount > 0 ? 'text-status-error font-medium' : ''}`}
               >
                 {e.failedCount}
               </TableCell>
@@ -79,7 +79,7 @@ function formatTimestamp(iso: string): string {
 export function FailuresSection({ failures }: { failures: TelegramFailure[] }) {
   return (
     <div className="space-y-1">
-      <h4 className="text-sm font-semibold text-red-600">Недавние ошибки</h4>
+      <h4 className="text-sm font-semibold text-status-error">Недавние ошибки</h4>
       <ul className="space-y-1.5" aria-label="Список недавних ошибок доставки">
         {failures.map((f, i) => (
           <li key={`${f.timestamp}-${i}`} className="text-xs">
@@ -87,7 +87,7 @@ export function FailuresSection({ failures }: { failures: TelegramFailure[] }) {
             <Badge variant="outline" className="text-xs">
               {f.eventType}
             </Badge>{' '}
-            <span className="text-red-600">{f.errorMessage}</span>
+            <span className="text-status-error">{f.errorMessage}</span>
           </li>
         ))}
       </ul>
@@ -136,7 +136,7 @@ export function NotConfiguredBlock() {
         </p>
         <Link
           href="/settings/notifications"
-          className="rounded-md bg-primary px-4 py-2 text-sm font-medium text-white hover:bg-primary/90"
+          className="rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90"
         >
           Настроить Telegram
         </Link>

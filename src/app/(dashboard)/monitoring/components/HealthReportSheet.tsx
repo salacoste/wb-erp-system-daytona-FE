@@ -24,9 +24,18 @@ interface HealthReportSheetProps {
 }
 
 const STATUS_CFG: Record<OverallStatus, { label: string; cls: string }> = {
-  healthy: { label: 'Здоровая', cls: 'bg-green-100 text-green-700 border-green-200' },
-  degraded: { label: 'Деградация', cls: 'bg-yellow-100 text-yellow-700 border-yellow-200' },
-  critical: { label: 'Критично', cls: 'bg-red-100 text-red-700 border-red-200' },
+  healthy: {
+    label: 'Здоровая',
+    cls: 'bg-status-success/10 text-status-success border-status-success/40',
+  },
+  degraded: {
+    label: 'Деградация',
+    cls: 'bg-status-warning/10 text-status-warning border-status-warning/40',
+  },
+  critical: {
+    label: 'Критично',
+    cls: 'bg-status-error/10 text-status-error border-status-error/40',
+  },
 }
 
 function fmtDate(s: string) {

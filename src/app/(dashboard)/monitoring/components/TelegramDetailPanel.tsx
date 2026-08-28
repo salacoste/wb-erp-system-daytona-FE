@@ -26,10 +26,10 @@ interface TelegramDetailPanelProps {
 }
 
 const BOT_STATUS_CONFIG: Record<BotStatus, { icon: string; label: string; color: string }> = {
-  active: { icon: '\u{1F7E2}', label: 'Активен', color: 'text-green-600' },
-  degraded: { icon: '\u26A0\uFE0F', label: 'Проблемы с доставкой', color: 'text-yellow-600' },
-  offline: { icon: '\u{1F534}', label: 'Бот оффлайн', color: 'text-red-600' },
-  not_configured: { icon: '\u26AA', label: 'Не настроен', color: 'text-gray-500' },
+  active: { icon: '\u{1F7E2}', label: 'Активен', color: 'text-status-success' },
+  degraded: { icon: '\u26A0\uFE0F', label: 'Проблемы с доставкой', color: 'text-status-warning' },
+  offline: { icon: '\u{1F534}', label: 'Бот оффлайн', color: 'text-status-error' },
+  not_configured: { icon: '\u26AA', label: 'Не настроен', color: 'text-muted-foreground' },
 } as const
 
 export function TelegramDetailPanel({ enabled }: TelegramDetailPanelProps) {
@@ -96,11 +96,11 @@ function BotInfoSection({
         {username && <span className="text-muted-foreground">@{username}</span>}
         {boundAt && <span className="text-muted-foreground">с {formatDate(boundAt)}</span>}
         {isVerified ? (
-          <Badge variant="secondary" className="text-green-700">
+          <Badge variant="secondary" className="text-status-success">
             Подтверждён
           </Badge>
         ) : (
-          <Badge variant="outline" className="text-yellow-600">
+          <Badge variant="outline" className="text-status-warning">
             Не подтверждён
           </Badge>
         )}
@@ -128,7 +128,9 @@ function DeliveryStatsSection({ delivery }: { delivery: TelegramDelivery }) {
         {stats.map(s => (
           <div key={s.label}>
             <p className="text-xs text-muted-foreground">{s.label}</p>
-            <p className={`text-sm font-semibold ${s.warn ? 'text-red-600' : ''}`}>{s.value}</p>
+            <p className={`text-sm font-semibold ${s.warn ? 'text-status-error' : ''}`}>
+              {s.value}
+            </p>
           </div>
         ))}
       </div>
