@@ -34,19 +34,19 @@ const STATUS_CONFIG: Record<
     icon: CheckCircle2,
     label: 'Данные в порядке',
     variant: 'default',
-    color: 'text-green-600',
+    color: 'text-status-success',
   },
   warning: {
     icon: AlertTriangle,
     label: 'Есть предупреждения',
     variant: 'secondary',
-    color: 'text-amber-600',
+    color: 'text-status-warning',
   },
   unhealthy: {
     icon: XCircle,
     label: 'Обнаружены проблемы',
     variant: 'destructive',
-    color: 'text-red-600',
+    color: 'text-status-error',
   },
 }
 
