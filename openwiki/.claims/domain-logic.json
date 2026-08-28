@@ -1,0 +1,168 @@
+{
+  "schemaVersion": 1,
+  "pageVersion": "sha256:a5e4d826ebbd38bcd05cf3c3ee925752230804ea7d5ed778fc51b828d6fd3324",
+  "claims": [
+    {
+      "id": "claim_9bfdc04061f14b3bb2bb441081e614c3",
+      "statement": "Theoretical profit is computed as sales (выкупы) minus COGS, advertising, logistics, and storage; missing COGS/tariff data yields a null profit result rather than zero, per AP#8 null-money semantics.",
+      "evidence": [
+        {
+          "resource": "repo://src/lib/theoretical-profit.ts",
+          "version": "repo-file-v1:sha256:fed7824db6c3fc5261edb6781a5afa391ab7a0737b8eddc26e38f4bfce95ec51"
+        }
+      ]
+    },
+    {
+      "id": "claim_cd1873f7e96b4548b27a8188518f6e0d",
+      "statement": "COGS entries are valid per ISO week anchored to Moscow timezone; margin-helpers compute the last completed week and check whether COGS was set after it to decide if margin recalculation is needed.",
+      "evidence": [
+        {
+          "resource": "repo://src/lib/margin-helpers.ts",
+          "version": "repo-file-v1:sha256:1e7f8737ae7f0894a6f2585d70d93f3711478f05050585f29f2965debecc1c19"
+        }
+      ]
+    },
+    {
+      "id": "claim_d41eaff7a8a949afa7c3b7702f5815cb",
+      "statement": "normalizePriceBasis passes only 'SELLER' and 'STOREFRONT_ANON' through; null/missing/future enum values map to 'UNKNOWN' so the badge indicates an unrecognized basis instead of silently relabeling it as SELLER, and updatePricingBasis runtime-guards the PUT to the two settable values.",
+      "evidence": [
+        {
+          "resource": "repo://src/lib/api/pricing-basis.ts#L24-L47",
+          "version": "repo-lines-v1:sha256:7a5585376ab6a62f80b36b4781c2d51df68f4e7dae4f5aec1c2a26c956931309:eyJzZWxlY3RlZExpbmVDb3VudCI6MjQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjlmOGJhZWNhMTRmYmFmNDg4YzA3MDk2MTI1YWRmYjU0YWNiNzlkMzQ5YzkyMmJmYzRkZTc0YTgyMjc5ZGU4M2YiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjcwZDA3MzkzN2FmY2Y3M2Y0MmNhZWZiNDc1YWUwOWY0NzJlOGE0ODEwMjgzNzUzZTNjNjU2MTNmNTc1NzY4ZTIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjBhZTFhODRlNTdhMTk5MDg0NTgzOTg4YmY5YzY4ZWZjYjBiMDQxODdlYjRhYWNiZTU2MGM5MzM5MGUzNmMwMzciLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_159ac50d873d4df2b8a7d3541b79b209",
+      "statement": "Each cabinet carries a nullable targetMarginPct (null means unconfigured, UI falls back to a 20% proposal), persisted via PUT /v1/cabinets/:id as target_margin_pct and normalized by accepting either casing while coercing to number|null (never 0).",
+      "evidence": [
+        {
+          "resource": "repo://src/lib/api/cabinet-normalizer.ts",
+          "version": "repo-file-v1:sha256:385f7b2d47c9844e2c95cbec4d0a55ec8639693a33a50cfcb2e3686f9eafcbd5"
+        },
+        {
+          "resource": "repo://src/lib/api/cabinet.ts",
+          "version": "repo-file-v1:sha256:380d6f587a43f4429d499fa35228e9cd63ca2baf845f1c198e4009e3922e82d4"
+        }
+      ]
+    },
+    {
+      "id": "claim_d647e3fef7624d6197a1ede702e809d8",
+      "statement": "getLiquidityTrends throws when the response body lacks meta or has a non-array trends field, so TanStack surfaces isError and the trends section renders its retry branch instead of the normalizer coercing a genuine backend failure to an empty response; a well-formed empty response still passes.",
+      "evidence": [
+        {
+          "resource": "repo://src/lib/api/liquidity-normalizer.ts",
+          "version": "repo-file-v1:sha256:07d506d08f514eac587f0740179c2995e2c444643655ed19ef7da7c189fd9563"
+        },
+        {
+          "resource": "repo://src/lib/api/liquidity.ts",
+          "version": "repo-file-v1:sha256:5f91e64ae079d429cfe48936bd77592eca9764d42017730cba9df2d27a4dc90e"
+        }
+      ]
+    },
+    {
+      "id": "claim_fd94c0eb4e8d4bb180bdec0c08059e92",
+      "statement": "Account balance money fields (current, forWithdraw) are nullable per AP#8 and render as — via formatNullableCurrency; document download returns base64 content that download-blob.ts decodes to a Blob and triggers via a transient anchor click, returning false on empty/malformed base64 with a 1s revoke grace for Firefox.",
+      "evidence": [
+        {
+          "resource": "repo://src/lib/api/finances.ts#L36-L76",
+          "version": "repo-lines-v1:sha256:2b44522ddbb75ba60500ed98ed05555713131fc47b25668e0baacfcb26e4463a:eyJzZWxlY3RlZExpbmVDb3VudCI6NDEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjE4YzY0MjEzNzUyODE2YWJjNzE0ZjZlYWFlM2U4NDNjMjliNDYyOTBiODVmZGVkMmFmNTFkMjc4NDRjYzEzZjkiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjhiOTEyY2RlMGQxNWUyZTJjYjU5N2MzMmIzMjQ1NmU2NGVjYWFlOTZhYWQ1NGVkYjgyN2Q3Njk3ODY4ZTg5ZWQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6Ijg3NTBmZDk1OTVmYzFlNzIwZGI1OTU5MTQzMGQzYzNmMjFhMDM1ZDcyMTM2ZTA3MWIyYzAxMGE3NzVkODFmMjAifQ"
+        },
+        {
+          "resource": "repo://src/lib/finances/download-blob.ts",
+          "version": "repo-file-v1:sha256:6e32182d6de981b1f8f33026c2adbee184464d728a5357e06a8678230c5193fe"
+        },
+        {
+          "resource": "repo://src/lib/finances/finances-formatters.ts",
+          "version": "repo-file-v1:sha256:0c282051803072fbc14b48a1b88dcac1063af02830c7ccd092223e7d8615ea9a"
+        }
+      ]
+    },
+    {
+      "id": "claim_1430f084935a474f8a43224016e39514",
+      "statement": "Communications write-back is a gated async API: all write routes return HTTP 202 {jobId, status} for BullMQ jobs, a 403 from the 4-factor gate (auth + cabinet + env/arm/token write switch) surfaces as a RU 'disabled' message, and confirmationToken is presence-only and rotated fresh per user gesture by the hook — this module never invents a token.",
+      "evidence": [
+        {
+          "resource": "repo://src/lib/api/communications-writeback.ts#L1-L60",
+          "version": "repo-lines-v1:sha256:1f25b3a1d0c6948e83f67e1bb1d20d085c75116249f917ab0e0511b0a5a1e0c2:eyJzZWxlY3RlZExpbmVDb3VudCI6NjAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImVhZjIyY2YwNzMyNTkyYzI0NzE0MWNiZTYxZWZhMTEwMTI2MTJmNWEzMTIyYjlhZjliYmFmNTJmNTcyNGQxOTQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImRhMDQxYjE1NDVmYWYzZDRhYTI4YTRlNjM3MjI3NzkxOGUzZTdhNGNkMWZiMTZjZTZjYjE5OWRjOTEyMjUwYmQiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjowLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImM0NzBlMWMzYWQ0ZThjYThhOGNjM2ZlMjg5ZDBjMjIyOTA1MDg1ZDQxNGY3NDM2YWExMTU3M2VhNTI3YTgzM2EifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_378ecaf7612d464c85fb745a891a79fc",
+      "statement": "The chats endpoint returns a threads list (no chatId) or a single thread + messages (with chatId); an empty-string chatId collapses to list mode sharing the same cache entry as undefined to avoid a cache split.",
+      "evidence": [
+        {
+          "resource": "repo://src/lib/api/communications.ts",
+          "version": "repo-file-v1:sha256:8c040f6faceb0fef18c570781ab6b6d381b0eece850e3ddc0741d623bf3c9e8c"
+        }
+      ]
+    },
+    {
+      "id": "claim_3fd646e60e1b46999cccc86de59cdce0",
+      "statement": "Price-calculator cost-breakdown domain logic lives in non-component modules: cost-breakdown-types.ts defines ChartInputParams, ChartSegment, a design-token CHART_COLORS palette, and MIN_SEGMENT_WIDTH_PX = 24 for non-zero segments; cost-breakdown-helpers.ts re-exports them and builds segments that return [] when recommendedPrice <= 0, derive the fixed-cost base as price minus percentage segments and margin, and sort by size with margin last.",
+      "evidence": [
+        {
+          "resource": "repo://src/components/custom/price-calculator/cost-breakdown-helpers.ts#L29-L50",
+          "version": "repo-lines-v1:sha256:ee25ad53a1e00aa12ac014293cddd9a1a3b6bcb6de9b0b4704e82471f5b6e707:eyJzZWxlY3RlZExpbmVDb3VudCI6MjIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNmYjdjYmI2ODk2ZWIwNjRjN2Q2Zjk0OGRkZTMyMTE5NzJhMDcxMDcyMzQ0YmJhN2I0ODM5YTAwNDNjYzBiZWMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjMwODA2NzdlNmM3ZWQ2M2ZmYzIxYTdkNmZjMmE0N2JmMTZlYzA3MDYyMWY2ZjhiNTk3MDdhNmE0MzU2MzRlNjciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImI3MGU5NDkwMTNmNWQxMmIwNGEzY2U4NzhkNmY3YzEzNDk0NGQ4ZDg4YmJjNjFkZDY0NGNlNWRiNmZiZTU0Y2IiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjAyYjM1M2M2NGU4NDVmMGQ2Y2E3ZmEzNmQyNDk0MjcxYWRlYjU1M2YwMTJkODM0NDI4YzI2ODBlZWVjNjc2NzIifQ"
+        },
+        {
+          "resource": "repo://src/components/custom/price-calculator/cost-breakdown-types.ts",
+          "version": "repo-file-v1:sha256:fa3ba1512ef3d44ce9b6c68806553faff25b08fbf1ee32a9fa5f8c600d6ed6d5"
+        }
+      ]
+    },
+    {
+      "id": "claim_623470991c7d4a788c440402b2057a8d",
+      "statement": "margin-status-helpers.ts defines the calculator margin tiers via MARGIN_STATUS_CONFIG (Russian labels + token-based badge classes) and getMarginStatus/getMarginColor thresholds: >=20% excellent, >=10% good, >=5% warning, else critical — distinct from the cabinet targetMarginPct and the analytics PROFITABILITY_STATUS_CONFIG tier systems.",
+      "evidence": [
+        {
+          "resource": "repo://src/components/custom/price-calculator/margin-status-helpers.ts#L7-L40",
+          "version": "repo-lines-v1:sha256:236734858fc7e50742074f908ed40f9b0f8b3d9684c8d581fdb97acd72029c7b:eyJzZWxlY3RlZExpbmVDb3VudCI6MzQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNlNDQ0NmMyOTRjZWY4YWZlNWM0ZmE0MjZkYjdmMmU1N2MxZDYxZjg0ZDg3MDYzNmEwYTM1MTQxYzA5OTE1MDIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjQ3Mjg4ZTljMGY1NDAyNDFhOWY5NzBmYzBkNWU3ODJiMWRhZDhkNDdiYmZhYzg5MGIzNjU3MWEwM2UzYjIyNzEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_38d4cd4159af4b57a8b1f2f95b04b666",
+      "statement": "Analytics operate on ISO weeks anchored to Moscow timezone (UTC+3); week boundaries, navigation, ranges, and period comparisons come from src/lib/iso-week/ modules and date utilities.",
+      "evidence": [
+        {
+          "resource": "repo://src/lib/iso-week/comparison.ts",
+          "version": "repo-file-v1:sha256:a232c924f8c54175351f91fb60471d3f319c3b34af87cd6c5046a95c3fae5113"
+        },
+        {
+          "resource": "repo://src/lib/iso-week/core.ts",
+          "version": "repo-file-v1:sha256:a68e1a639922934d915c1fbafa0730c32b311bdf53572596169c18bac77349a7"
+        }
+      ]
+    },
+    {
+      "id": "claim_4232500f621c4524a82b1ade86cf1575",
+      "statement": "null-helpers.ts enforces the 'null not undefined' standard (isNullish, coerceToNull, hasValue, nullSafe) underpinning AP#8 semantics where missing money/ratio data stays null, and decimal-utils.ts parseDecimal handles Prisma DECIMAL strings.",
+      "evidence": [
+        {
+          "resource": "repo://src/lib/decimal-utils.ts",
+          "version": "repo-file-v1:sha256:356ef55492a858b079b14d21f4f557d09aba5a3ce6151ad913572be3f95ac251"
+        },
+        {
+          "resource": "repo://src/lib/null-helpers.ts",
+          "version": "repo-file-v1:sha256:0f956331ba651389c48d83f19e245c6ab31fe48f83ea19caf78335d6e151cf6d"
+        }
+      ]
+    },
+    {
+      "id": "claim_b7b7e1a1057644679751293cb23c2481",
+      "statement": "Backfill retry routes per source through a RETRY_PATH map in retryBackfill (POST /v1/admin/backfill/report/retry vs /analytics/retry, keyed by 'reports' | 'analytics') and normalizes the response to {success, message} with an attempt counter.",
+      "evidence": [
+        {
+          "resource": "repo://src/lib/api/backfill.ts",
+          "version": "repo-file-v1:sha256:bcc27c01cf01f1c9effe537c0e1c1477dd5f8dd81db13efebe7b42faf24261e4"
+        }
+      ]
+    }
+  ],
+  "verification": {
+    "by": "openwiki/0.4.3",
+    "at": "2026-08-28T08:47:49.990Z"
+  }
+}

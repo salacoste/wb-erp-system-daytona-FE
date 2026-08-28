@@ -1,11 +1,22 @@
 ---
 type: "Architecture Overview"
 title: "API Layer & Normalizers"
-description: "API client singleton with auto-injected auth and cabinet headers, the Boundary Normalizer Pattern that transforms backend responses into frontend-canonical shapes, the Epic 170/171 advertising and search normalizers with AP#8 null semantics, CSV export infrastructure, and the communications gated write-back with async 202 job polling."
+description: "API client singleton with auto-injected auth and cabinet headers, the Boundary Normalizer Pattern that transforms backend responses into frontend-canonical shapes, the Epic 170/171 advertising and search normalizers with AP#8 null semantics, the Story 169.14 paid-storage import result contract and polling lifecycle, CSV export infrastructure, and the communications gated write-back with async 202 job polling."
+tags: [api-client, boundary-normalizer, anti-pattern-8, paid-storage-import, csv-export]
 verified:
-  - by: openwiki/0.4.0
-    at: 2026-08-26T08:47:51.873Z
+  - by: openwiki/0.4.3
+    at: 2026-08-28T08:47:49.990Z
 sources:
+  - id: openwiki-source-0356db40a2d778a419e19e0a
+    resource: repo://src/app/(dashboard)/analytics/storage/components/__tests__/useStorageImport.test.tsx
+  - id: openwiki-source-ae6882e559ce8d6bde21ce50
+    resource: repo://src/app/(dashboard)/analytics/storage/components/PaidStorageImportDialog.tsx
+  - id: openwiki-source-45a9dcc683e9a9e6307fd8d2
+    resource: repo://src/app/(dashboard)/analytics/storage/components/storage-import-utils.ts
+  - id: openwiki-source-5ad8136814fac3dc9c0f8c05
+    resource: repo://src/app/(dashboard)/analytics/storage/components/useStorageImport.ts
+  - id: openwiki-source-c593501e17fac82698a1f2dd
+    resource: repo://src/hooks/useImportStatus.ts
   - id: openwiki-source-799369765e8510490f4c8afb
     resource: repo://src/lib/api/__tests__/advertising-analytics-normalizer.test.ts
   - id: openwiki-source-3136b8e4d07052b039480489
@@ -16,6 +27,10 @@ sources:
     resource: repo://src/lib/api/search-analytics-item-normalizer.ts
   - id: openwiki-source-56ba59b2a1b792b5b080168f
     resource: repo://src/lib/api/search-position-trends-normalizer.ts
+  - id: openwiki-source-c15148050ee24bccad8866e5
+    resource: repo://src/lib/api/storage-analytics.ts
+  - id: openwiki-source-d5aaa919c05988e303391c6a
+    resource: repo://src/lib/api/storage-import-normalizer.ts
   - id: openwiki-source-0a8f3c97ee393f0b1753cfb2
     resource: repo://src/lib/csv/search-csv-export.ts
   - id: openwiki-source-2a7d3923430c2d4ebc362db4
@@ -24,7 +39,9 @@ sources:
     resource: repo://src/types/search-analytics.ts
   - id: openwiki-source-ad938ca2eb935c98c4827d9c
     resource: repo://src/types/search-position-trends.ts
-generated: {by: "openwiki/0.4.0", at: "2026-08-26T08:47:51.873Z"}
+  - id: openwiki-source-1a54b5e313512af1de402e65
+    resource: repo://src/types/storage-analytics-trends.ts
+generated: { by: "openwiki/0.4.3", at: "2026-08-28T08:47:49.990Z" }
 ---
 # API Layer & Normalizers
 
@@ -85,7 +102,7 @@ Each domain follows the same pattern:
 40+ normalizer files exist under `src/lib/api/`, one per API domain. Representative examples:
 - `fulfillment-normalizer.ts` — FBO/FBS fulfillment metrics
 - `storage-queries-normalizer.ts` — Storage cost by SKU, top consumers. Story 169.12 Task 0 hardened the boundary values: `has_warehouse_stock` is tri-state (`boolean | null` — absent/null stays `null`/unknown instead of being coerced to a false «Нет на складе» claim) and `percent_of_total` is nullable (unknown ratio stays `null`, never `0%`, per AP#8).
-- `storage-import-normalizer.ts` — Storage import job status; an unrecognized backend status maps to a distinct `'unknown'` state (Story 169.12 Task 0) instead of being coerced to `'failed'`, which had rendered a false import error — consumers keep polling as with `'pending'`.
+- `storage-import-normalizer.ts` — Storage import job status; an unrecognized backend status maps to a distinct `'unknown'` state (Story 169.12 Task 0) instead of being coerced to `'failed'`, which had rendered a false import error — consumers keep polling as with `'pending'`. The full Story 169.14 authoritative result contract and polling lifecycle are detailed in the dedicated section below.
 - `return-analytics-normalizer.ts` — Buyout/return analytics; an unrecognized return `category` stays a distinguishable `'unknown'` (Story 169.11 preface) with the neutral label «Неклассифицированный возврат» instead of silent coercion to a real category.
 - `supply-planning-normalizer.ts` — Supply planning; Story 169.13 Task 0 (pattern #218/#226) hardened the boundary: unrecognized/absent `stockout_risk` and `reorder_status` map to a distinct `'unknown'` via map-based lookups (`STOCKOUT_RISK_MAP` / `REORDER_STATUS_MAP`) instead of the previous optimistic coercion to `'healthy'`/`'ok'`, and `avg_daily_sales` / `total_reorder_value` stay nullable (AP#8 — no `?? 0`). `has_cogs` uses `Boolean()` coercion because the backend schema declares it a required boolean (contract-faithful, not a boundary lie). Focused tests: `src/lib/api/__tests__/supply-planning-normalizer.test.ts`.
 - `buyout-analytics-normalizer.ts` — Buyout/return rate (enum validation for source, confidence, trend)
@@ -136,6 +153,46 @@ Focused tests: `src/lib/api/__tests__/advertising-analytics-normalizer.test.ts` 
 - `normalize<Name>Response` — endpoint response normalizer
 - `to<Type>` — scalar/enum coercion
 - `normalize<Name>` — per-item normalizer
+
+## Paid Storage Import — Authoritative Result Contract (Story 169.14)
+
+The paid-storage import is the canonical example of a normalized **async job lifecycle**: the write endpoint returns a job id, and a boundary normalizer turns each subsequent status poll into a typed, status-scoped result that the UI state machine consumes without any defensive re-checking.
+
+### API boundary (`src/lib/api/storage-analytics.ts`)
+
+- `triggerPaidStorageImport({ dateFrom, dateTo })` → `POST /v1/imports/paid-storage`, returning `PaidStorageImportResponse` with `import_id` (snake_case contract; the backend enforces a max 8-day range per WB API limit).
+- `getImportStatus(importId)` → `GET /v1/imports/{id}` with the raw response typed `unknown`, immediately passed through `normalizeImportStatusResponse` (`storage-import-normalizer.ts`). The normalizer is the **only** place backend import shapes are interpreted.
+
+### Result contract (`normalizeImportStatusResponse`)
+
+The `ImportStatusResponse` (types in `src/types/storage-analytics-trends.ts`) is the authoritative result shape, and every optional field is **status-scoped** — the normalizer only surfaces a field when the status legitimately owns it:
+
+- `status` — validated against a `{ pending, processing, completed, failed }` map; any unrecognized or missing value becomes the frontend-only `'unknown'` sentinel with a single `logger.warn`. `'unknown'` is not a failure.
+- `rows_imported` — only present when `status === 'completed'` **and** the raw value is a safe integer ≥ 0; otherwise `undefined` (never a fabricated 0).
+- `error` (structured `{ code, message, details? }`) — only present when `status === 'failed'` **and** both `code` and `message` are strings; `details` is forwarded only when present. `error_message` mirrors `error?.message`.
+- `date_range: { start, end }` — only present when both endpoints are strings.
+
+### Lifecycle and consumers
+
+The UI state machine lives in `useStorageImport` (`src/app/(dashboard)/analytics/storage/components/`), with the pure state type and date validation in `storage-import-utils.ts` (`ImportState = idle | processing | success | error`; `validateDates` enforces ordering, ≤8 days, and no future dates, all with RU messages; `getDefaultDates` defaults to the last 7 days ending yesterday). `PaidStorageImportDialog` renders one sub-view per state (`ImportIdleForm` / `ImportProcessing` / `ImportSuccess` / `ImportError`), passing `statusUnknown={statusData?.status === 'unknown'}` so the processing view can display an honest "status unknown" hint rather than pretending. Closing the dialog while `processing` requires an explicit confirm.
+
+```mermaid
+stateDiagram-v2
+    [*] --> idle
+    idle --> processing: mutateAsync accepted import_id
+    processing --> processing: poll every 2s pending processing unknown
+    processing --> success: status completed invalidateQueries
+    processing --> error: status failed or trigger rejected
+    success --> idle: close
+    error --> idle: close or reset
+```
+
+*Paid-storage import lifecycle: only `completed`/`failed` from the normalized poll are terminal; the frontend-only `unknown` sentinel keeps polling exactly like `pending`/`processing` (`useImportStatus` stops `refetchInterval` only for `completed`/`failed`).*
+
+Terminal transitions happen in a post-render `useEffect`: `completed` sets `status: 'success'` with `rows_imported` and invalidates the storage query cache; `failed` sets `status: 'error'` with the structured `error.code`/`error.message` (falling back to `error_message`, then a default RU message). The `useImportStatus` hook (TanStack Query, `staleTime: 0`, `retry: 2`) polls every 2s while the dialog is in `processing`, and its own `refetchInterval` callback treats only `completed` and `failed` as terminal — so an `'unknown'` poll result never silently freezes the UI on a stale state.
+
+Focused tests: `src/app/(dashboard)/analytics/storage/components/__tests__/useStorageImport.test.tsx` pins the exact trigger payload, the 2s polling interval, terminal transitions, cache invalidation on success, and that `unknown` keeps polling.
+
 
 ## Anti-Pattern 8: Preserve Null Money and Ratio Values
 

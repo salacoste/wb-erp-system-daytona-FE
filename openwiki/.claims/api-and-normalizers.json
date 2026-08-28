@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "pageVersion": "sha256:fd5b91e3133a5231d17c0d132accc156a0d92436a650aba5e689cab405d79311",
+  "pageVersion": "sha256:8e3053feb1d25950608aec4ce26306d0f8e2dee9603a84131264099021cff020",
   "claims": [
     {
       "id": "claim_3c95e61d2ae84921b460d8cba8de0595",
@@ -165,10 +165,90 @@
           "version": "repo-lines-v1:sha256:2ce54eddb4ebbc08ca19aae97b6f4fbf44894045e43e019887fc58ee6e7562a9:eyJzZWxlY3RlZExpbmVDb3VudCI6NjAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImVhZjIyY2YwNzMyNTkyYzI0NzE0MWNiZTYxZWZhMTEwMTI2MTJmNWEzMTIyYjlhZjliYmFmNTJmNTcyNGQxOTQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ5NjIxNWUxZTdkZjc3OTc5ZDM2NmJmM2IwMmVmZWViMGQyNWE3YjQ1YmJlOGEzMTdmYzY3YTI3YWJlMzAzMjQiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjowLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjBhYWU1MjgxZTY3M2Y1MjVjNjQxYzNkNWIwYTAyYjNjMGZhNDBlZTBlZjEyNjcyYTgzN2Y2MjE2Zjc5ZGQwY2QifQ"
         }
       ]
+    },
+    {
+      "id": "claim_255470a4dec04b3ab4aceeb9ac33c0f9",
+      "statement": "The paid-storage import boundary pair (Story 169.14): triggerPaidStorageImport POSTs { dateFrom, dateTo } to /v1/imports/paid-storage and returns import_id, while getImportStatus (GET /v1/imports/{id}) types the raw response unknown and routes it exclusively through normalizeImportStatusResponse, which is the sole interpreter of backend import shapes.",
+      "evidence": [
+        {
+          "resource": "repo://src/lib/api/storage-analytics.ts#L36-L65",
+          "version": "repo-lines-v1:sha256:865a39dcb6c8b089ed84fd08c774d2f74d32180f699ec0346997ae61e7141f77:eyJzZWxlY3RlZExpbmVDb3VudCI6MzAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjZjYTE3NzBjMTAyMjZlMjdjN2MzMjliMDUzOWEzNGQ3OWJiNTcyZGY0MjIzMzAyZWY5N2U4YmE5Y2MxZTFhZjQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjM5OTBjOGEyMjY4OTk2ZDQ4NWJiM2JhZjJkNWE1NTljMDQ2ODM1N2I1NzY2NTlkZjQ4MWJjNGFjM2NjMTAwOWEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        },
+        {
+          "resource": "repo://src/lib/api/storage-import-normalizer.ts#L19-L82",
+          "version": "repo-lines-v1:sha256:84687a7e69d1bb0d9f3454f0364f54d5f39817022311d24576c1aa1a9157e529:eyJzZWxlY3RlZExpbmVDb3VudCI6NjQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjJkNjg3OTY5NDI1MGQ5ZmJjYjk0Mzk4ZTA2NWU3YzYwMGY0ZDIyOWVmMjQzOTc2MDBhYTNmMmQwNWM1MzNiZjMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjJjNTI5YTBiNWJmMTdjOTBhNWJjNTc2ZmM0MTM0NTlkYWQ0NDFkMTgyZWE1MzcyZWQyYTllYjQ0ZmU3NjJkZWIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_dde80b27b18948fda2d66ef14f4913ea",
+      "statement": "The ImportStatusResponse result contract is status-scoped: rows_imported is surfaced only when status is 'completed' and the raw value is a safe integer >= 0, the structured error { code, message, details? } only when status is 'failed' and both code and message are strings (details forwarded only when present), and date_range only when both start and end are strings — so optional fields are never fabricated from an incompatible status.",
+      "evidence": [
+        {
+          "resource": "repo://src/lib/api/storage-import-normalizer.ts#L26-L71",
+          "version": "repo-lines-v1:sha256:5223c21edd0b9b590ac0a360ac2beeab354e3b8cc749b2a0f0f41118210e0207:eyJzZWxlY3RlZExpbmVDb3VudCI6NDYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijg0OGMzMTUxNjk1NDQxNDMwZmIyOTNiNDJjZTY3YWIzODRjYTk4Yjk4ZDU0YWM4NDY5NDc4ODNmYmZjYjU3MTEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImY3MGI2NThjMTlkZGRkNjI5NjAxM2RiYzk1NGI1MmIzZDE5NWU1M2M1MTMwMWI0ZjZhOGVmZTkxMGU1ZmFiNmMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijg0YWRmNzdlOTQ1YTkwYjdlYzM3MmExZjhhYmI4MjhmMjg4ZjVjYjljZWQ1NjlkN2YxMDdiODc1YjA3NzhlNjkiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImY5ZWRlODFiNGNhNTE1M2VjYjNlZTZkOWIyZDE0ZWMwYjQwMTM3NDRlYTMzOTdjNzg5ZjU2M2JmMTZiN2E3MWQifQ"
+        },
+        {
+          "resource": "repo://src/types/storage-analytics-trends.ts#L96-L140",
+          "version": "repo-lines-v1:sha256:38b0bec18e1fa0e01c4db821ffb3a1ccfb22ad385322fbbb71cc878fcf4f4a64:eyJzZWxlY3RlZExpbmVDb3VudCI6NDUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImE5YmRkZmYxZmJkYzQ0ZTUzN2U3ODE0YmZjYjFjODRlMDQ1MDU4NGZhZmM4ZDQyMjAzMTk1MDhjY2RhYjgwMTgiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImNmY2UyODYxODNjMDNhNjEyYzk2NDgyZGNhYzk4ZWVjMDdkYWU1ODU1NzE3ZDE5Y2IxMTk4MmRjMGFlODk4MDIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjBiMDdhMTQ5ZWJkNmNjMTM0NmZlNjc3YzlhMTk0ZjY3MzI4MDY0MmRiNTQ4MzdmZGRhZTEyMjFhMjQzMWE2ZGIifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_54fe06810f1e4b89aa3e6f5323e824db",
+      "statement": "An unrecognized or missing backend import status maps to the frontend-only 'unknown' sentinel with a single logger.warn instead of 'failed'; 'unknown' is not a failure — downstream consumers keep polling exactly as with 'pending'/'processing'.",
+      "evidence": [
+        {
+          "resource": "repo://src/lib/api/storage-import-normalizer.ts#L26-L39",
+          "version": "repo-lines-v1:sha256:a013ddd786346700ae90632913f9228efb082e00381a7dcf6e4e3bcf3853c38b:eyJzZWxlY3RlZExpbmVDb3VudCI6MTQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijg0OGMzMTUxNjk1NDQxNDMwZmIyOTNiNDJjZTY3YWIzODRjYTk4Yjk4ZDU0YWM4NDY5NDc4ODNmYmZjYjU3MTEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjI3ZTU3ODhkNWQ5ZDczZDI0YTgxZGJjMGE1YTc0YmZhODJjOWMzYjNhZjk5ZTUyYWY3OTZlOTBiNDY4YThhM2QiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijg0YWRmNzdlOTQ1YTkwYjdlYzM3MmExZjhhYmI4MjhmMjg4ZjVjYjljZWQ1NjlkN2YxMDdiODc1YjA3NzhlNjkiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjE1MWE2NDYwMTE0YWExY2JkNjlhNzliZWJmYzY3ZTAyOTljZWNlZDExN2ZkMWIyNDVhOTc4Njc0MGI0MWViODQifQ"
+        },
+        {
+          "resource": "repo://src/types/storage-analytics-trends.ts#L91-L96",
+          "version": "repo-lines-v1:sha256:2950ba4efe1a436077ce32a65033e765f18b0025a06cb6920fab70fe6f0e1291:eyJzZWxlY3RlZExpbmVDb3VudCI6NiwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZWFmMjJjZjA3MzI1OTJjMjQ3MTQxY2JlNjFlZmExMTAxMjYxMmY1YTMxMjJiOWFmOWJiYWY1MmY1NzI0ZDE5NCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiYTliZGRmZjFmYmRjNDRlNTM3ZTc4MTRiZmNiMWM4NGUwNDUwNTg0ZmFmYzhkNDIyMDMxOTUwOGNjZGFiODAxOCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMzNhYjE2NDdjZGIzZjI2YzU5YmIzNWIxOTEyMGY3MDcxYmRiNGMzZGExZTE2YWE3ZjkyZDM5NTFkYmQ0YTJiNSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNjA5MzZiMTY0MjUzOWJlYTM4ZjZhMmJiYWY4OGQwMDBmOWU0NDYyOWRiOWJkZTIxMDcwNjliZWQ4YTEzNTdkNyJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_1ccf9524a9f04aa7aa526c92500b64dd",
+      "statement": "The import polling lifecycle: useStorageImport enters 'processing' with the accepted import_id and polls via useImportStatus every 2s (staleTime 0, retry 2); useImportStatus's refetchInterval callback stops only on 'completed'/'failed' so 'unknown' never freezes polling, and the post-render effect maps 'completed' to success + rows_imported + storage query invalidation and 'failed' to an error state with structured error.code/message (fallback error_message, then a default RU message).",
+      "evidence": [
+        {
+          "resource": "repo://src/app/(dashboard)/analytics/storage/components/useStorageImport.ts#L50-L94",
+          "version": "repo-lines-v1:sha256:0766f2b94617c2d5a6221029b6d04b463a5ca2decb0f015acc794d5975d60987:eyJzZWxlY3RlZExpbmVDb3VudCI6NDUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjkyOGFiMjY3YzU5MmI5OWI3MWI0ZmFiOTljZTdkMWZjZmQ0ZGNkMTU0ODFmYTMyZmEwZWMyZTljMmEzMDM1ZTYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjZlOTNhZTZjYTg5Njg5NWRhODhlZDQ3NjE4NWVjYzY2MDQ5MzI4NGE5NGE0OWI0OWVhOTVhZDg5ZTBlNzJjODAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImZkMjFhMzIxZmRhYzUwODg4NjNjMTg1OTg2ZDA0OTYzMzU5ZmQxN2RlZmUyMDdkNDdmZTIzZWE3YzJiNDZmZjYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6Ijg3MzNjZGJiYTdjNDcxYjc5N2M3ZTZkYzIwY2YxMTc1NzAxZjAxYjkzMDgxNGRlMjhlNzZlZTg5NDdkOGVjZTIifQ"
+        },
+        {
+          "resource": "repo://src/hooks/useImportStatus.ts#L30-L53",
+          "version": "repo-lines-v1:sha256:b81dbc7322fdf6d1c8013fc99b5cf9491a7eb294de6b2c8290cf98dd618ed66d:eyJzZWxlY3RlZExpbmVDb3VudCI6MjQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjdlMjM1NDZjZWEwMGUwYjM4NzYwYTFmOTQxM2FjMDczMjRmZDBkNjJjOTgxNDU4MTI5ZDU4MzU2NTg1MGIyMzQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImU5MTBmZjIyMzVkN2NmYjhjNzk3ZTU4ZDk2YjIyZmRhMGIzNTYxNTBkMGQwMDMwZmFkNmJkZjIzNGQyM2UxYTciLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_db1ddf01822b4e388ab06f62456499a9",
+      "statement": "PaidStorageImportDialog renders one sub-view per ImportState (idle form, processing with an honest statusUnknown hint from statusData?.status === 'unknown', success, error) and requires an explicit confirm to close while processing; storage-import-utils defines the pure ImportState machine and validateDates, enforcing from <= to, a max 8-day window, and no future dates with RU messages, with defaults of the last 7 days ending yesterday.",
+      "evidence": [
+        {
+          "resource": "repo://src/app/(dashboard)/analytics/storage/components/PaidStorageImportDialog.tsx#L70-L100",
+          "version": "repo-lines-v1:sha256:e6c08aae6eeb1cdc35c7cf7e35df6d4efa81e810d927e8e62068ab9920da2220:eyJzZWxlY3RlZExpbmVDb3VudCI6MzEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ2OGYxNGZhZGMzMTk2NmM5OTE4NTFiZDhlNjc0ZDc4NWI3NjM3NDYwNWEyN2Q3MTJhM2IxODMzNjcyMWJkMGUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjJhNDE0MzY3NjZiMmY4YzRmZDcwNzZlOWE3YmUyZmIzYzI0NTcyODIyOGJjYjlkYzNhNzZmNTFhNWE0MGMxZDgiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjI4YmZlMTY3NDFmYjZlN2M2ZGJjYmVkNTNkNDA2ZWMwYjk3MjQ2NGQ5YmE4YjA3Mjg3ZTRkMmY2ODc0YWFhZmYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImFkZmEwMjYyYTY2MTMwYTgzNWU4MjA5NjRjYWMxOWY2MmMwODM3MDI5YTRkNmI5Y2EyMzQ2MjJlNDM2MmY0ZWEifQ"
+        },
+        {
+          "resource": "repo://src/app/(dashboard)/analytics/storage/components/storage-import-utils.ts#L10-L61",
+          "version": "repo-lines-v1:sha256:c3683c02aaede05cb5397cfcccc59e2ea8cf5c2123ac3023d22aa548739df80f:eyJzZWxlY3RlZExpbmVDb3VudCI6NTIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjFkM2ZlZTcxNmZmNGQxOTE0MjRkMDU0MDg3Nzk0N2JmNmMxYjg5MzYzMjJiMzllZjdlMGFkMWJiOGYzYWQ1YjIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjcyNDViYjhkOTRjMzI0MmVkNDQyOWQxZDEyYjkzMjEyNTk1Mzk3YWEwOGQ4M2JmOTYwMDM4NzQ0ZjMwOTYwMmEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_76fb6ace3aa6497eaa2a5291e0dbb48f",
+      "statement": "Focused tests in useStorageImport.test.tsx pin the authoritative Story 169.12/169.14 contract: exact trigger payload, 2s polling interval keyed by import id, terminal completed/failed transitions with cache invalidation, and that pending/processing/unknown all keep polling.",
+      "evidence": [
+        {
+          "resource": "repo://src/app/(dashboard)/analytics/storage/components/__tests__/useStorageImport.test.tsx#L52-L80",
+          "version": "repo-lines-v1:sha256:84bb2f008f6ea8f7315c090361a0e15e5ad5530d03f045517142d471ccf7df42:eyJzZWxlY3RlZExpbmVDb3VudCI6MjksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4NzAzZjU5NzI2YjAzNmE1MDFkZGVjNzM4NDUzNzU1MjM3YTNjY2UwOWQ2MDg4ODcyZWY2ZDRiOWRiOGNlN2YiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjY0NzVlOTRhOTA0YWM0OWIzMTU0ZDQ2NzJhNjZlODYyOWI4NmRhYzc0ZTNlMjkzN2JlNjkyN2FlM2RhMTFjNTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImRjZjk1ZjJhMmZmNDU0NDJlMTM1ZDA0ZjY2ZmIyNTRiYTcwMTBlZTMyYmU4YjNhY2EwMDI3M2UxNzdkMDlmMjMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjhkMzhhZTg5YTc3ZWI2MGU3YWQ0ZDhlZDgwN2MwZGVkZGUxYmJhNDE3NWEwMzkxYWUzNDgxMzczYWUyNGIyOGYifQ"
+        }
+      ]
     }
   ],
   "verification": {
-    "by": "openwiki/0.4.0",
-    "at": "2026-08-26T08:47:51.873Z"
+    "by": "openwiki/0.4.3",
+    "at": "2026-08-28T08:47:49.990Z"
   }
 }

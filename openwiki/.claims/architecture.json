@@ -1,0 +1,166 @@
+{
+  "schemaVersion": 1,
+  "pageVersion": "sha256:15b87969e3782dd762489d76033fab58a57b8354dfae202d9941319fad8fe77c",
+  "claims": [
+    {
+      "id": "claim_2c9c1829b6b846cd913111aee59b6f27",
+      "statement": "The root layout (src/app/layout.tsx) is a server component that wraps the app in ThemeProvider (next-themes, class-based, light default), then Providers, with AuthProvider around children and a sonner Toaster.",
+      "evidence": [
+        {
+          "resource": "repo://src/app/layout.tsx",
+          "version": "repo-file-v1:sha256:ceb09f1bb153f46d8d89d1f8f1b359dd4937d0ff0f824cf3e479f92e65206038"
+        }
+      ]
+    },
+    {
+      "id": "claim_0416426500f94052af7e1f88d9fe1c8a",
+      "statement": "Providers (src/app/providers.tsx, 'use client') creates the TanStack QueryClient via a browser-singleton accessor (fresh client per render on the server, reused browser client) with defaults staleTime 60s, gcTime 5min, retry 1, refetch on window focus/reconnect, and conditionally mounts ReactQueryDevtools when env.enableDevTools is true.",
+      "evidence": [
+        {
+          "resource": "repo://src/app/providers.tsx#L9-L58",
+          "version": "repo-lines-v1:sha256:41af7f267103153711489eaf192212d19a9c498642df31cc0557e3ea6f879598:eyJzZWxlY3RlZExpbmVDb3VudCI6NTAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImQ1MTFjNjUxYzljOWNlYzY2ZmI2NzEzYjljZGVjOGNmMTc4ODQ1YjIwNTVhN2JkMThiZWU3NDU2ZTBhMTE4OWMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjU2MjY3OTM1ZmM2MzM0NjVkODQ4YjQwYTRlZDY5NjdlN2I3YTMyM2Y4MWNkNTNjMTEwYWUyMTAyOTY4N2FhMTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjM4NTNhN2Q3MjMyMGVmNGE2MjM5MjI3NThkMTAwMjI1ZTMyMTYwYzY2ZjQyZDI3ZWFjZTBlNGVmZTFhYTI5OTciLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_0da0817585414f779aec1ae2bd43dca7",
+      "statement": "The app directory uses three URL-neutral route groups — (auth), (onboarding), and (dashboard) — organizing login/registration, new-user setup, and all authenticated dashboard pages.",
+      "evidence": [
+        {
+          "resource": "repo://src/app/layout.tsx#L13-L13",
+          "version": "repo-lines-v1:sha256:d20e058966307e73df6abcf6d15b6849be7f515c183ce0856c3ce2ebeac27dc1:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZDIwZTA1ODk2NjMwN2U3M2RmNmFiY2Y2ZDE1YjY4NDliZTdmNTE1YzE4M2NlMDg1NmMzY2UyZWJlYWMyN2RjMSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiZDIwZTA1ODk2NjMwN2U3M2RmNmFiY2Y2ZDE1YjY4NDliZTdmNTE1YzE4M2NlMDg1NmMzY2UyZWJlYWMyN2RjMSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMWQzOTJhZjQ4OTM0ZDk3YTRlNWIzZTZjNjJjNGQ0NDdlMGE1MTA3MWRmNjdkNTljZTE2YTI2YTEzNzkxMTQ4ZSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNWU4NWM1NjA1ODVjNDI3MDBmMDNiOTE0Y2ViZmI1MGNjM2IzMmJkMjczOTY3NjhkYjczZjM2ZTdmMGVkYWVlNSJ9"
+        },
+        {
+          "resource": "repo://src/proxy.ts#L1-L5",
+          "version": "repo-lines-v1:sha256:0f0c13f5206950dc59bb5b970016cb9a3aad610364bdc5f2821c5644a46897dc:eyJzZWxlY3RlZExpbmVDb3VudCI6NSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZjIxYWZkYzEyZjEwZmJkNGI5YmIyYTEyZGE3ZmRkYmIwYzhjYmY0ZWYxZjdhZThmM2EzMDI4NjFhMzk1MmViMCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNTc5OTQ0MzZjNjRjMzVjNDhiOWNkNWY4M2E5NGEwNjg0M2MxNTNkMTJhNjY2NmZlOTU0NGNmMDBlMzc0YjE3MiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjAsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZTNiMGM0NDI5OGZjMWMxNDlhZmJmNGM4OTk2ZmI5MjQyN2FlNDFlNDY0OWI5MzRjYTQ5NTk5MWI3ODUyYjg1NSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZTRlNDhiZmRlMTNhYTM2N2JjYzFkZDgyOGIxNzE4Zjk5NTkwMzkxZDBlZGI4MGI1YzFlNDg1ZTgzOTk4NDQzZCJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_f1d7472f4eb64558bec5857f4ebc3b50",
+      "statement": "Next.js server page/layout wrappers coexist with client components: the interactive, data-driven pages fetch client-side through custom hooks and TanStack Query useQuery backed by the centralized ApiClient; the page does not claim every page uses the 'use client' directive.",
+      "evidence": [
+        {
+          "resource": "repo://src/app/providers.tsx#L1-L1",
+          "version": "repo-lines-v1:sha256:d664e00ea57ec39d88fc3f6934c4b7091db056a6c2d5b11a9712300d06f8d23c:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZDY2NGUwMGVhNTdlYzM5ZDg4ZmMzZjY5MzRjNGI3MDkxZGIwNTZhNmMyZDViMTFhOTcxMjMwMGQwNmY4ZDIzYyIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiZDY2NGUwMGVhNTdlYzM5ZDg4ZmMzZjY5MzRjNGI3MDkxZGIwNTZhNmMyZDViMTFhOTcxMjMwMGQwNmY4ZDIzYyIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjAsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZTNiMGM0NDI5OGZjMWMxNDlhZmJmNGM4OTk2ZmI5MjQyN2FlNDFlNDY0OWI5MzRjYTQ5NTk5MWI3ODUyYjg1NSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMzQ2MmI5ZTIwNjBkN2E5Yjg5MDM4ZWRlMjliMjg5OGNlMTYxOTAyYmViZTVjZGQ5OTU2MDNkNzI1MjYyMjFlNSJ9"
+        },
+        {
+          "resource": "repo://src/lib/api-client.ts#L20-L66",
+          "version": "repo-lines-v1:sha256:ed3668704cf576c838de4b8986c7a6a3094c336f0ce550a5133da5a1a2da5f9b:eyJzZWxlY3RlZExpbmVDb3VudCI6NDcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjI5MmZhMzBkNDc0YTU3NTgxY2Y1ZjhlYjkxNTZmMDM1YWJiMjY4YzI5OTg3Yzk3YTQ2NjhlOWRjZDk4NzdlZjciLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImVhOTBjYTA1NTlmOGViM2I1ZDk1ZDJjMjhlMDVlNTRkOTcwODA3NmVjMmNlMjYzOTc5YjQ4MWY4YzRkZjk4YTIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImMxYWZjN2ZiNDE5ZTA0NGJhNzcyZTMxMzczZDZiZjQ2ZWMxZTA5YjMwMmQxODg1ZDMxM2IyZmJmNzgzM2EwYTEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImY5NmE0ZjdjNGJhMGI3YmM1MmE0NjMyY2VkNTYxMGZlMGVjNDQ2NWQ0NGM4ZGFiZDE3YjIzY2U2NzUzZWI0OTAifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_cbcd4250a6334b7b832df7243eb01f7b",
+      "statement": "The centralized ApiClient (src/lib/api-client.ts) auto-injects Authorization: Bearer <token> and X-Cabinet-Id headers read from the Zustand auth store on every request, unless skipAuth/skipCabinetId is set; an immutable initiating authToken/cabinetIdOverride wins over the mutable store values, non-OK responses throw ApiError with Retry-After extraction for 429/503, and the constructor rejects plain-HTTP production API URLs (outside localhost).",
+      "evidence": [
+        {
+          "resource": "repo://src/lib/api-client.ts#L24-L97",
+          "version": "repo-lines-v1:sha256:cc9b76dbe69c767d30b6ed2f1d66f0def12d51a400be8b9775ce2e72c5d88f29:eyJzZWxlY3RlZExpbmVDb3VudCI6NzQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImU1NGIzM2QwZjI1YmQ5NDQ3ZjQyNDVjZmI4MTFhNTY4YTc4ZDRlNGMzMWJhMTg4OGU0Y2UyNmMzMWM0ZjBiZjciLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjliNjJmNjBkODU5MGE1NzljZjQ2ZjhkNjczNzhjNGM1NzJiOTYyY2VjY2RiOTBjN2E1ZjdiNDJiOTYwNzgyYTQiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImQ4Nzc1MDE2ZjViNDZhOGJjZGRiNDA3ZDNhMzkxYWRhYmJlZjY1YzkyZDE1YjYwZjY3ZGYzZTIzY2U4Y2MzZTkiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjkwNDAxMmMxYmMyZmNmYjgzOGU0NGQ4ZTAwMzBjM2UwZjAzMjQ3ZWI5MDRlOWMxMDkwZTNkYmEzMGZmNGJjNzQifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_e1495c654c184f439648778118633df2",
+      "statement": "src/proxy.ts implements the Next.js 16 proxy (renamed from middleware) auth gate: it reads the auth-token cookie (falling back to the Authorization header), and protected routes without a structurally valid JWT redirect to /login with a redirect param; its matcher excludes /api, _next assets, favicon, and static image files.",
+      "evidence": [
+        {
+          "resource": "repo://src/proxy.ts#L35-L92",
+          "version": "repo-lines-v1:sha256:e06c7688089bc8d74749f43e60d70900bfb1629a491f5491ab722d17f6ca01bb:eyJzZWxlY3RlZExpbmVDb3VudCI6NTgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjY0MzY4ZDYxZDJmYTVjOTViODAxYjdhMGZjZWEyYzFlNjg1MWEyMDZjMmY2OWVlZGE5N2FlOTEzY2QxMGNiZjciLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjA2OTk3YTBkOTIxMjA0YzNlNTU5YmU5ZDVjY2UyNzFmMTQ3ODgxZjI1MmViYjRhZDMzOTM2NGU3Y2FkMTE0YjEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_bcf0a60ab2f14b4fa6f430a3f069f3e2",
+      "statement": "getSafeAuthRedirect in src/proxy.ts sanitizes authenticated redirects away from /login and /register: a redirect param is honored only if it starts with a single '/' (rejecting protocol-relative '//'), resolves to the same origin, and does not target an auth page; anything else falls back to /dashboard.",
+      "evidence": [
+        {
+          "resource": "repo://src/proxy.ts#L7-L29",
+          "version": "repo-lines-v1:sha256:6e070d297f7cf89ac375b5589f557b4e8af6c681e8972c0a548895e49191fdf5:eyJzZWxlY3RlZExpbmVDb3VudCI6MjMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjlhNTYwOGIyNDI0NTVhNTBmZTY0YzA2OWIzOWU4OWY4ZGZlMzllYmRjZTliN2MyZjRmYjhjYjdkYjkzZTE1OWEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjJjNWQ4YzU2OTU2YjE1YTNhNTE2MzczNDQ4YjNjMmM3ZDYwYTZhMjUxZTYwYTU2NWJkYTgwNDI0NjNlMmMyMTMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjdlMWNiNGI0MGE4YjUxMTE4M2VhY2FlYWJkOTdmYmIyMzJmNTgyMzVjYWE4ZjE2OTgyMGM5YTM2Njk0ZTAwYTEifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_567b76dfc9cf417c928ef03dc917bad0",
+      "statement": "The Zustand authStore (src/stores/authStore.ts) persists user, token, cabinetId, and a per-login sessionNonce to localStorage via persist; login()/refreshToken() mirror the token into the auth-token cookie (24h) for the server proxy, logout() clears state and the cookie and signals cross-tab logout via a storage event, and rehydration re-establishes isAuthenticated, re-normalizes the user, re-sets the cookie, and syncs state across tabs via storage-event listeners.",
+      "evidence": [
+        {
+          "resource": "repo://src/stores/authStore.ts#L43-L168",
+          "version": "repo-lines-v1:sha256:0f1c1f4c2abb05a674bf237ca933cae14a57d2f5adad69b16ed15e03ecd97051:eyJzZWxlY3RlZExpbmVDb3VudCI6MTI2LCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiJmMjU5ZmQzYjU2ODJlZDNmZTFlZTNmNTdkZjRhYTI1YTRiM2I5NmMyNTc5YTIyMTEyN2FlM2RiYjQzMDk1NzAyIiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiI0MTJjYTM0NWNjZjc1YmY5YzA4MDZiY2U2OTViZThkZTgwOGI3OTk4NDI1MWE3YTU0ZDIwMmNmNjEwMWRkNDUxIiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiI3ZGMwODBjMWEwMGE5ZTI1ZTFiMDA2YzRiMTQzNGJhZTE3MTcwYTA2OGJhMjdhMGExMjY1NGIzMWMzYTdkNzc3IiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MCwiZm9sbG93aW5nQ29udGV4dEhhc2giOiJlM2IwYzQ0Mjk4ZmMxYzE0OWFmYmY0Yzg5OTZmYjkyNDI3YWU0MWU0NjQ5YjkzNGNhNDk1OTkxYjc4NTJiODU1In0"
+        }
+      ]
+    },
+    {
+      "id": "claim_96295e72dcd24015ac1834121b2bc928",
+      "statement": "The (dashboard) layout is a client-component fallback auth gate: it waits for Zustand persist hydration, and when an unauthenticated tab (no localStorage token, or a cross-tab logout) is detected it first clears the auth-token cookie and then router.replace's to /login with a redirect param — clearing the cookie first prevents the dashboard↔login redirect loop the proxy alone would cause.",
+      "evidence": [
+        {
+          "resource": "repo://src/app/(dashboard)/layout.tsx#L36-L81",
+          "version": "repo-lines-v1:sha256:a053d56966cb8e1711e59e5db2320e3d9a6ee8d1f0a656a9ff79b64fd1ab0761:eyJzZWxlY3RlZExpbmVDb3VudCI6NDYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjU5NjZmYmZhODg5OThkYTc0NjU2YzUwMTk0OTU2YzI1ZjA4NDk0NTc2NjBjMDA5ZmU2M2QxZTlmYTlkYzkzMWMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjI3ZTU3ODhkNWQ5ZDczZDI0YTgxZGJjMGE1YTc0YmZhODJjOWMzYjNhZjk5ZTUyYWY3OTZlOTBiNDY4YThhM2QiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjhhMDJlYjE4ZTExNTdjMjY4NzI5YTVlNDA3MDAwNTE5YmUyYjQzODhkN2Q5NjJkY2VmMjg5NTFkYjQ2MDA5MjgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6Ijg3M2NjM2ZjNWMxMzYzZGZmMWI3NTE1YTEzYmQxYzM1MGRiNjUyOGVlZjJiMzIxZDQ1OGNkZDg2ZDdjMzVmNTkifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_20fe1ba8cf35400b8db2be4df2037bf1",
+      "statement": "The dashboard layout resolves one canonical navigation model via resolveNavigationItems({ role, urgentCount }) and passes identical entries to the desktop Sidebar and mobile MobileSidebarSheet, so labels, hrefs, icons, role visibility, and the supply-planning urgent badge cannot drift between renderers; the layout also renders a skip-link to #main-content and the TokenHealthBanner.",
+      "evidence": [
+        {
+          "resource": "repo://src/app/(dashboard)/layout.tsx#L28-L33",
+          "version": "repo-lines-v1:sha256:1cfcdde089fb2d199aa097e8c464c4b4682d271fae2e6db93065e8b4fdbb5bba:eyJzZWxlY3RlZExpbmVDb3VudCI6NiwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMzE3MTc2MmYxYjhhNjI4NjQyYzNmOTJmNmNjZjA1MWY4YTgwNTllOTA4NTExOGQ1NGMwN2IzOWRlYTJmODE4ZSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiYTI5NjMxMDI0ZDBhY2I3ZWM0M2JjZmRhMGMzMDExZmZmZTBhNzRhYjVhM2JjMTEzOWI0MWY3OTViZjlmY2U5NSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMzNjOTRkNWRmMGUzZmJjMDMyYzhkYjI0NDU5ODg0N2YyNDQyZWQ3MGI2ZTQ5MTYyOGY1MjNlNTAzNWJhZjE3ZiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiYzI1YzFkMDI0ODZiZTc2NTVmYmQxNGFkYTUyOWZlNGNhZTFlOTVkYTcxYmIzMDk3MzFiYzdjOTMxN2M3M2Q3MCJ9"
+        },
+        {
+          "resource": "repo://src/app/(dashboard)/layout.tsx#L83-L100",
+          "version": "repo-lines-v1:sha256:091e49deb61ca2fc98419bb381c771f962ecd1ac2596a5248794e260ece8b6d7:eyJzZWxlY3RlZExpbmVDb3VudCI6MTgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImU3MjE2ZThlOWMwYTFhNjhkMDZjMmZiYWE1ZmQyMTM5NDgyYjhlZmQwYTE5MzE1YjkxNWU2Y2NlODQ5ZDg5ZGMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijg0NWE1YTE3MWJjMDI3MjVjZDMzYTVlMjMzYTExNTY4ZThkZjM2MmI3NDNmY2JmMGU1YTFmNTc5ZGZhZmYxYmEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjhiZjM5YTg3MjM2NzBlYjBhMWFmYmExMzZhMTkwYTM3MjczNzZjMmJmZDAxMWYwZmVhMjEzNTc1NWI0ZjhkNjIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjI3Y2ZmM2RlODk1YjgyYWUxYWIxY2Q1YjgwMDYzMmJkZGYwODA4OTYyYzI3NTVkNDRkMWU5ZDkxN2QwNzJhZjEifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_a47ecbcb008741ffa4928f103ff2dfca",
+      "statement": "src/lib/env.ts exposes a build-time env object: apiUrl (NEXT_PUBLIC_API_URL, default http://localhost:3000), appName/appVersion, and === 'true' flags enableAnalytics, enableWebSocket, enableDevTools, plus isProduction/isDevelopment; enableDevTools gates ReactQueryDevtools.",
+      "evidence": [
+        {
+          "resource": "repo://src/app/providers.tsx#L55-L55",
+          "version": "repo-lines-v1:sha256:8bae4b02e1ecef3b5e298fc95a825263270ec8e1d7520edbaf7e911ed7eb57f0:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiOGJhZTRiMDJlMWVjZWYzYjVlMjk4ZmM5NWE4MjUyNjMyNzBlYzhlMWQ3NTIwZWRiYWY3ZTkxMWVkN2ViNTdmMCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiOGJhZTRiMDJlMWVjZWYzYjVlMjk4ZmM5NWE4MjUyNjMyNzBlYzhlMWQ3NTIwZWRiYWY3ZTkxMWVkN2ViNTdmMCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMjBmOTRmZTA5N2M4ZTQ1NTk2OGZiNzg5ODhmNTRjOWZiZTJmOGMxOTE3NjdjODMwYWE4ZDQ2MjlkN2RjMTgyYSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiODU2NjQwYjU3Y2JkZWQxYmQ2Nzg2NTc1YzRmMmUwOTM1YTNiODA3ZWQ5Njg0ZWI1NTNjY2Q2Nzk5ZmEwYjUyNSJ9"
+        },
+        {
+          "resource": "repo://src/lib/env.ts",
+          "version": "repo-file-v1:sha256:d884444a2cbb07ea0beda4e612da5fa0795777426f7b4f9d6562fb256e896217"
+        }
+      ]
+    },
+    {
+      "id": "claim_fa212173ce6a429f8b3a6937bbf795cd",
+      "statement": "Project configuration files and their roles: next.config.ts (Next.js config), tsconfig.json (strict TypeScript with the @/ path alias), eslint.config.js (flat ESLint config including a custom no-restricted-syntax rule for anti-pattern 8), postcss.config.js (@tailwindcss/postcss + autoprefixer), components.json (shadcn/ui CLI metadata aligned to Tailwind v4 CSS variables), and .env.example (environment variable names).",
+      "evidence": [
+        {
+          "resource": "repo://.env.example",
+          "version": "repo-file-v1:sha256:b720e8d0efdcfca5c4172696691ac8e17e6a684c4561608144e224f19aa37d7a"
+        },
+        {
+          "resource": "repo://components.json",
+          "version": "repo-file-v1:sha256:774f2801f12e30f9b44887309c29c29abf4764c023a651fda54ea184347fc49a"
+        },
+        {
+          "resource": "repo://eslint.config.js",
+          "version": "repo-file-v1:sha256:a560ce9f7f6c5dd13daf1c6d043d24170db6692aaa1bb65c625be880b5f2bfae"
+        },
+        {
+          "resource": "repo://next.config.ts",
+          "version": "repo-file-v1:sha256:1bdd4806e85f4c243416345605559fc2a5d37fa67ce8516f4cbb0a6762a2e594"
+        },
+        {
+          "resource": "repo://postcss.config.js",
+          "version": "repo-file-v1:sha256:137e618876acb0d2d008c7d52c3030e23084cfbf0b27cb3e330b8c1fbc456ea4"
+        },
+        {
+          "resource": "repo://tsconfig.json",
+          "version": "repo-file-v1:sha256:dbd59d5b3f11855b6414b61386ead3d12c1ac2385c1094a6ac3d45f11ad808e9"
+        }
+      ]
+    }
+  ],
+  "verification": {
+    "by": "openwiki/0.4.3",
+    "at": "2026-08-28T08:47:49.990Z"
+  }
+}

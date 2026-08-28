@@ -1,7 +1,39 @@
 ---
 type: "Architecture Overview"
 title: "Architecture"
-description: "Next.js App Router dashboard architecture — route groups, layout and provider hierarchy, client-side data fetching for interactive pages, authentication (proxy + Zustand store), and state management."
+description: "Next.js App Router dashboard architecture — route groups, layout and provider hierarchy, client-side data fetching for interactive pages, authentication (proxy + Zustand store), state management, and environment configuration."
+tags: [architecture, nextjs, app-router, authentication, tanstack-query, zustand, configuration]
+verified:
+  - by: openwiki/0.4.3
+    at: 2026-08-28T08:47:49.990Z
+sources:
+  - id: openwiki-source-5f5b95b3d6a215fa02ceb945
+    resource: repo://.env.example
+  - id: openwiki-source-6ae244f79c5e27a2b1f08014
+    resource: repo://components.json
+  - id: openwiki-source-276795f6d5ad19adb078c64e
+    resource: repo://eslint.config.js
+  - id: openwiki-source-50a18d054b596a7ed0eeffb0
+    resource: repo://next.config.ts
+  - id: openwiki-source-fbccae247df2d4fe4a532ee8
+    resource: repo://postcss.config.js
+  - id: openwiki-source-d9e1ff9416fc7e39bc47b9bb
+    resource: repo://src/app/(dashboard)/layout.tsx
+  - id: openwiki-source-8d46e58add4326fa55236087
+    resource: repo://src/app/layout.tsx
+  - id: openwiki-source-8d0f263ceba491caec34db6c
+    resource: repo://src/app/providers.tsx
+  - id: openwiki-source-a7c7d558f70edbb3171b87ab
+    resource: repo://src/lib/api-client.ts
+  - id: openwiki-source-204fc5ae728b15ba9daed4a2
+    resource: repo://src/lib/env.ts
+  - id: openwiki-source-f34ac1e549d94dc3ac475ae4
+    resource: repo://src/proxy.ts
+  - id: openwiki-source-e745bb5faf82e54620afb942
+    resource: repo://src/stores/authStore.ts
+  - id: openwiki-source-98d5ddb014a0fd4d678f6f2a
+    resource: repo://tsconfig.json
+generated: { by: "openwiki/0.4.3", at: "2026-08-28T08:47:49.990Z" }
 ---
 # Architecture
 
@@ -105,6 +137,10 @@ The presentation layer is migrating to a layered, semantic design system built o
 4. **Domain-shared / route-owned UI** — Epics 167–173 are migrating the 76 `page.tsx` routes onto these layers one BMAD Story at a time (Epic 167 closed; Epic 168 analytics migration in progress).
 
 See [Design System](design-system.md) for the token contract, primitive hardening, product-composition APIs, and the Epics 166–174 migration program.
+
+## Environment Configuration
+
+`src/lib/env.ts` exposes a single `env` object reading `NEXT_PUBLIC_*` variables at build time: `apiUrl` (`NEXT_PUBLIC_API_URL`, defaulting to the local backend at `http://localhost:3000`), `appName` / `appVersion`, boolean flags `enableAnalytics`, `enableWebSocket`, `enableDevTools` (each `=== 'true'`), plus `isProduction`/`isDevelopment`. `env.enableDevTools` conditionally mounts `ReactQueryDevtools` inside `Providers`, and the API client constructor warns if a production `apiUrl` uses plain `http://` outside localhost.
 
 ## Configuration
 

@@ -1,7 +1,52 @@
 ---
 type: "Domain Reference"
 title: "Domain Logic"
-description: "Financial and business-logic helpers as pure functions in src/lib/ — theoretical profit, margin/COGS temporal logic, unit economics, liquidity with trends, repricing price basis (SPP-1 lane), account finances + document download (NEW-7), seller communications with gated write-back (NEW-2), cost/tariff calculations, ISO-week/Moscow-timezone handling, and Russian-locale formatters."
+description: "Financial and business-logic helpers as pure functions in src/lib/ plus the extracted price-calculator domain modules — theoretical profit, margin/COGS temporal logic, unit economics, liquidity with trends, repricing price basis (SPP-1 lane), account finances + document download (NEW-7), seller communications with gated write-back (NEW-2), cost/tariff calculations, ISO-week/Moscow-timezone handling, and Russian-locale formatters."
+verified:
+  - by: openwiki/0.4.3
+    at: 2026-08-28T08:47:49.990Z
+sources:
+  - id: openwiki-source-4230efdc9fbc632cdf76bba0
+    resource: repo://src/components/custom/price-calculator/cost-breakdown-helpers.ts
+  - id: openwiki-source-cc78c96d33c9553dc7ca90b1
+    resource: repo://src/components/custom/price-calculator/cost-breakdown-types.ts
+  - id: openwiki-source-c4a70565d56a4d861147959a
+    resource: repo://src/components/custom/price-calculator/margin-status-helpers.ts
+  - id: openwiki-source-8e7e58eae241bb5c791600ca
+    resource: repo://src/lib/api/backfill.ts
+  - id: openwiki-source-057a326f1915437fde67c721
+    resource: repo://src/lib/api/cabinet-normalizer.ts
+  - id: openwiki-source-ffc146ac79ce772f32b40e3d
+    resource: repo://src/lib/api/cabinet.ts
+  - id: openwiki-source-93aafa2b4729c4c15af817b6
+    resource: repo://src/lib/api/communications-writeback.ts
+  - id: openwiki-source-ce36b790e472c05878b894f0
+    resource: repo://src/lib/api/communications.ts
+  - id: openwiki-source-7a414d2dc45e97925f74024e
+    resource: repo://src/lib/api/finances.ts
+  - id: openwiki-source-dab499a5384418a05217b0b5
+    resource: repo://src/lib/api/liquidity-normalizer.ts
+  - id: openwiki-source-8477dacceadc4b2b956d1994
+    resource: repo://src/lib/api/liquidity.ts
+  - id: openwiki-source-e840a46938b1c4cab850c627
+    resource: repo://src/lib/api/pricing-basis.ts
+  - id: openwiki-source-c5d12e34dea3a25c49823079
+    resource: repo://src/lib/decimal-utils.ts
+  - id: openwiki-source-b9312fcbc31f54766055eb16
+    resource: repo://src/lib/finances/download-blob.ts
+  - id: openwiki-source-f53ff5d422ace1c7ad410a9b
+    resource: repo://src/lib/finances/finances-formatters.ts
+  - id: openwiki-source-c9876184ef14e671aa243c15
+    resource: repo://src/lib/iso-week/comparison.ts
+  - id: openwiki-source-41a86e7fc276267763562134
+    resource: repo://src/lib/iso-week/core.ts
+  - id: openwiki-source-9a4987e93ebea1fd47b35bce
+    resource: repo://src/lib/margin-helpers.ts
+  - id: openwiki-source-3ce869e30606517f4bf48ded
+    resource: repo://src/lib/null-helpers.ts
+  - id: openwiki-source-d6b8b04abd546dc2eafc55e1
+    resource: repo://src/lib/theoretical-profit.ts
+generated: { by: "openwiki/0.4.3", at: "2026-08-28T08:47:49.990Z" }
 ---
 # Domain Logic
 
@@ -156,6 +201,31 @@ The SKU analytics page (`/analytics/sku`, Story 128.27) exposes **historical SPP
 | `unit-economics-config.ts` | Cost categories, profitability status configs (`PROFITABILITY_STATUS_CONFIG` is the single token-based tier set — `/15` chip classes + `var(--color-*)`, Story 168.11 — shared with the sku-financials legend; the legacy `bgColor` hex field was removed) |
 | `unit-economics-analysis.ts` | `getTopMarginKillers`, `calculateHealthScore`, `sortByProfitability`, `filterLossMaking`, `filterMissingCogs` |
 | `unit-economics-formatters.ts` | Domain-specific formatting |
+
+## Price Calculator Domain Logic (COGS → Калькулятор цены)
+
+The price calculator (`/cogs/price-calculator`, `src/components/custom/price-calculator/`) has its business logic extracted into sibling non-component modules (a repeated "file size compliance" pattern), separate from the presentational components covered in [Design System](design-system.md).
+
+### Cost breakdown types & chart building
+
+`cost-breakdown-types.ts` defines the pure data contract for the recommended-price cost breakdown chart:
+
+- `ChartInputParams` — the form-derived percentages (`commissionPct`, `acquiringPct`, `drrPct`, `vatPct`) threaded through `PriceCalculatorResults` → `CostBreakdownChart` for dynamic segment labels.
+- `ChartSegment` — one chart slice: `key`, `label`, share of price (`pct`), ruble amount (`rub`), `color`, `isMargin` (margin is always last), and the input percentage for tooltips.
+- `CHART_COLORS` — design-token color mapping per cost kind (`commission_wb` → `var(--color-chart-1)`, …, `margin` → `var(--color-chart-positive)`), so chart colors follow the theme, not hex literals.
+- `MIN_SEGMENT_WIDTH_PX = 24` — minimum visual width for any non-zero segment so thin slices stay visible.
+
+`cost-breakdown-helpers.ts` re-exports these for backward compatibility and contains the builders: `formatPctRu()` (Russian comma decimal), `buildLabel()` (labels echo the user's actual input percentage), and `buildChartSegments()` — which returns `[]` when `recommendedPrice <= 0`, computes each segment's share of the recommended price, derives the fixed-cost base as price minus all percentage segments and margin, and sorts segments by size with margin last.
+
+### Margin status helpers
+
+`margin-status-helpers.ts` is shared between `MarginSection` and related components:
+
+- `MARGIN_STATUS_CONFIG` — the four margin tiers with Russian labels and token-based badge classes (`/15` backgrounds + `text-*` status tokens): excellent «Отлично», good «Хорошо», warning «Низкая», critical «Критично».
+- `getMarginStatus(pct)` — threshold mapping: **≥ 20% excellent, ≥ 10% good, ≥ 5% warning, else critical**.
+- `getMarginColor(marginPct)` — the same thresholds mapped to text-color classes for inline health coloring.
+
+Note these thresholds are calculator-internal defaults; the cabinet-level configurable target is `targetMarginPct` (see above), and the analytics-wide profitability tiers live in `PROFITABILITY_STATUS_CONFIG` — three distinct tier systems with different purposes.
 
 ## Liquidity Analysis
 

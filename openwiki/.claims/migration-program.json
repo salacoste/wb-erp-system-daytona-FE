@@ -1,0 +1,180 @@
+{
+  "schemaVersion": 1,
+  "pageVersion": "sha256:72d4c3c3102f5859321e2cb9558b0474411717170529258ca51a1fba50964fbf",
+  "claims": [
+    {
+      "id": "claim_1d26e9aebb064ef8aade7c1b04d7ca12",
+      "statement": "The shadcn full-UI migration program (Epics 166-174) migrates the entire frontend presentation layer one BMAD story at a time while preserving backend contracts, calculations, query keys, mutation behavior, URLs/search parameters, authentication, cabinet context, Russian localization, and formatting semantics, with completion defined as 94 stories with evidence, 76 routes verified exactly once, legacy removal after last consumer, and all worktrees/branches cleaned.",
+      "evidence": [
+        {
+          "resource": "repo://.omx/plans/shadcn-full-ui-migration-master.md#L18-L22",
+          "version": "repo-lines-v1:sha256:0af571176c1e7423da6244e84a1bcf05f29bc0209185f7845e026edab2c7be2d:eyJzZWxlY3RlZExpbmVDb3VudCI6NSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiYjhkNTUzNTQzZWQ0Yjk2MDc4NjE2YjVlOGJjZjc5OTNmZWEwODAwOTkwZjllNjNhNTFlYzY1ZGEzODdkOWQwYSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiM2Q2MWJmYWE4YjFiYWRjYmI1MWM3ZGEyOWU4ZjgwYTI2ZDI1NjRkOThmM2JiMGM4ZjFhY2FhYTZlMzc3MzBmOCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiYzMwZGEwZTAwZWZiNTJhZTM3OGNmNjVlN2UyN2ZiZTRjZWJiMTg1MjFlYzVkZjk2Y2JhMWI3NGZkYmEyN2I2YyIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNzY1MjA5MWEwNDFlMGU5ZWI4ZTEyMGJlYzRkMjVlYTA4YzdmMTczNTc3NGMxMTRmNmZiYTUyY2Y0NjNhZGM3YyJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_32564f75a2cf4c9ea35cc40d8de8d0ad",
+      "statement": "Exactly Stories 167.8 (cabinet session reconciliation/create-idempotency) and 169.14 (paid-storage import lifecycle/result) are approved cross-repository exceptions executed in the backend repository; no other story inherits backend-contract authority, and neither has a route-ledger row.",
+      "evidence": [
+        {
+          "resource": "repo://.omx/plans/shadcn-full-ui-migration-master.md#L45-L46",
+          "version": "repo-lines-v1:sha256:68b0d6dadca83815e489ba81328fde2ef6e8baff6439da49582ff4990b7a624a:eyJzZWxlY3RlZExpbmVDb3VudCI6MiwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNjc0YzJmM2I1YzA3ODYyNTNmNWY1NzUyYzUyMWU2ZWQyZGE2MWViNTc3NTk3MWEzMjVjYzQ3NTYxZTkzNjZlNCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMjkxMTRiODEyOWJiZWJhYTVhYWZiNTJiYzkxOTU4NDFkMTg0OTQ0MTIwZWE1ODMwNTRiZWRkZjAwMTViMGVkZiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiM2VkOTQwMGQ2ZjdmYjhlODgwN2NhYTQzZDIzNzc1NTQwZjJjOTUzYjQyMWVjNDNjYTU2NzI0NTMxNzExNjI5OSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMmVlYmFhODNmNjNkNDllMTYxYWE4ODA2N2RjMjIwMDkwNjZiOTgxMTIzMjg0OTM2YjRmMWViOTVjNDk0N2EzOSJ9"
+        },
+        {
+          "resource": "repo://.omx/plans/shadcn-full-ui-migration-master.md#L83-L84",
+          "version": "repo-lines-v1:sha256:3c33a287b1e8007456314e4c94a19c2bf601832472f269d7d5e7ab6ccf69f54a:eyJzZWxlY3RlZExpbmVDb3VudCI6MiwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiOGFkNmJhNDViYTg4YWFjNWVmZTRhZGQyZTQxMDBhYzVlMGFhNmUxMTA2ZDY5ZTRkMDMxNjY3YjYwZDEwMjNiMCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiYWQ2ODQ4M2JjYjNkYjBmMjgyYTc0N2VlNDQ0ODZkZGQ3OGRlNjI3YjIzNjI4ZTBlZGIwZjNhYWMwNDhlNDk5OCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNmFjNmFkOGY5MTVjYmRjNmViMGQzYWI2NTdjZjM3OGI4MmEwNzQ5YTc0MzBlZTBlMDhhNjhhNTRiZWM4ZmQ0ZSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNDhiZjgzOTI5MzNkM2I3YTQ3ZGE4MDRkMTZjMDU4ZGZkZjQ2ZWIzNzMyOGNhYjg2NjgyMTFhMDE2NzZhMWViZSJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_2422069a47944e469fbe4e7b49a9720f",
+      "statement": "The migration builds in layers (semantic tokens → generic shadcn primitives → product compositions → domain-shared components → route-owned UI trees), keeps src/components/ui/** generic, gives multi-route files one upstream owner story, and forbids route stories from editing shared files (package.json, src/components/ui/**, src/hooks/**, src/lib/**, src/types/**, src/stores/**, AppShell, analytics/shared/**) without escalation.",
+      "evidence": [
+        {
+          "resource": "repo://.omx/plans/shadcn-full-ui-migration-master.md#L37-L42",
+          "version": "repo-lines-v1:sha256:346115f01623e010e0aa9f50b7259ca90c97a962aff4f29f9a56e36689943bd2:eyJzZWxlY3RlZExpbmVDb3VudCI6NiwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiYWI4YzZhODMyMjc5YjEzYWFjY2IwOTZkOWJmNzlhYmY0NTBhZWI5YTAwYzU5YWIxYzJlMzMzMTkzZjBjNjM3YiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNjk3MTc1MzgwMjAxMGQxODgzYjQwZjg0YjBkYzMxNWEzNDIzNDk2ODAwZDZlZjlkNWJmYWU5NzkxNDRjNjdiMSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMTc4MmJiYzkwYzY3ZWFmODgzMGJjZjIwMGFiYjAxNmQ4Y2VlMDliZWRhNzk5OWQ1MDEzYTU3MmM5NThlMTRkMSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNTczMzlhYzYxMWFkNDMwZTA1YzY5N2I4NmE1NWIxYzRiYmUxZTc2ZWNjNjRiMzAwOWM0M2E5NzNkOWRmNmU4YSJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_6b3a7398c876406685d3ff3b1029e32f",
+      "statement": "Execution follows a delivery DAG rather than numeric story order: 166.1 tokens precede all primitives; 167.1 AppShell precedes route stories; the corrected onboarding lane merges 167.8 → 167.9 → 167.5 before 167.6/167.7; 169.14 → 169.15 → 169.12 closeout; named owner stories (e.g. 172.5, 172.14, 173.1, 173.8, 173.12) merge before consumers; Epic 174 starts only after Epics 166-173 complete.",
+      "evidence": [
+        {
+          "resource": "repo://.omx/plans/shadcn-full-ui-migration-master.md#L50-L84",
+          "version": "repo-lines-v1:sha256:974e0bddb25757bab63f7244f03bded49fb5a265694887a4d2dd1cc46c4ca0aa:eyJzZWxlY3RlZExpbmVDb3VudCI6MzUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjJjMzdkMjVlM2FiMDEzMDNhMDhjOTExNzJjYjQ1YjcxMjA0OWEyZmRhZDcxNjcyZDMzMWIyODUyOTIwMTE5OGQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFkNjg0ODNiY2IzZGIwZjI4MmE3NDdlZTQ0NDg2ZGRkNzhkZTYyN2IyMzYyOGUwZWRiMGYzYWFjMDQ4ZTQ5OTgiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjJlZWJhYTgzZjYzZDQ5ZTE2MWFhODgwNjdkYzIyMDA5MDY2Yjk4MTEyMzI4NDkzNmI0ZjFlYjk1YzQ5NDdhMzkiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQ4YmY4MzkyOTMzZDNiN2E0N2RhODA0ZDE2YzA1OGRmZGY0NmViMzczMjhjYWI4NjY4MjExYTAxNjc2YTFlYmUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_cb8b44f80a274f829a7abac9cdc7aa2a",
+      "statement": "As of 2026-08-28 (PR #305, merge feb35cfd), program progress is 63/94 stories: Epics 166, 167, 168, 169 (15/15, with 169.12 closed via the PR #299/#304 contract-closeout lane), 170 (7/7) and 171 (9/9) complete; Epic 172 in progress at 9/17 with NEXT = 172.10 Finances & Documents; Epics 173 and 174 in backlog; Vitest floor 19,394 passed / 0 failed.",
+      "evidence": [
+        {
+          "resource": "repo://docs/HANDOFF-2026-08-27-CROSS-TEAM-OMC-ORCHESTRATOR-172-8-CONTINUATION.md#L9-L20",
+          "version": "repo-lines-v1:sha256:2869e38a47c59c022bfe4c25c0c5180f800d6b51c82c01a787f825e2632d2f65:eyJzZWxlY3RlZExpbmVDb3VudCI6MTIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjA0NWI1YzdlZWMxNDEzMjAzNzQxYzc5OTk3YzFmNDg1MThhMDY5MGNjNjU1N2E4OTU3ZWM2ZmYzY2JmMGE1MjkiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImRmN2EzMGJlNGM4OWY5ZjgyNjY1NmVjNzIyNjRmNDZhZGY4MDUyZDg0YmY5YTE3NDZmZjQ5MDEyM2JiMzQ0ZWIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjAwMWYyZWMxNzU5M2MxMDU0ZWI0NjM2N2Q4NDUzZWYyNGExNzNjZTk2YjcxMTdkOTFmOWE2OGQ0NGZlZjhiMDEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQ3M2MwOTQzZjVmZmUzMDYxYWFiNWJlZTg5MmIwMTdlOWQ4NmRlMWUyYzM3ODUzMzdkZjRkOWY2NjBjN2M4MjcifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_6f96490e8d764e82bc737c9cdd1ba525",
+      "statement": "Per-story migration status is tracked live in _bmad-output/implementation-artifacts/sprint-status.yaml, consolidated per-epic in _bmad-output/planning-artifacts/shadcn-migration-status-and-debt-registry.md, and reconciled in handoff §0; on drift between docs and repository, the repository is authoritative.",
+      "evidence": [
+        {
+          "resource": "repo://_bmad-output/planning-artifacts/shadcn-migration-status-and-debt-registry.md#L11-L35",
+          "version": "repo-lines-v1:sha256:726360982ad6d5ce83013b50462c54a7361991bb9b54021e2f6fec7cd7a8a32e:eyJzZWxlY3RlZExpbmVDb3VudCI6MjUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjRmNDJhNmE3MWIwMWZmYTJlNTNiZWVlZDFhZjE4MjRhY2Q1YzY4YjFmNWUzM2IyNTBkODIzN2U4NDA5NDBiNWYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijc3YWI0N2E0NDlhYTdhYmZkNmZmYjIxZWJiNDIxYWU0N2YyNjA2MGQ1NDIwMmY1Zjc1Y2M1ODEzNjA4NjkyODkiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImM1YWQ0NGY2M2FkZTMxMDg3NzA0NWRiZjM4MjllMzdlYmFkZmU5ZmU3NmY5ODNkMmI4ZjJiOWJlNWI0Y2NhYzYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImYwZDUyNmExMDkxYjk4NDI4Y2EyOTVlNDk4NGE1M2ViOWZlYWVmYTc3MmY5YjcyYjVkZWI0NTM5MzIzMGUyNjEifQ"
+        },
+        {
+          "resource": "repo://docs/HANDOFF-2026-08-27-CROSS-TEAM-OMC-ORCHESTRATOR-172-8-CONTINUATION.md#L9-L20",
+          "version": "repo-lines-v1:sha256:2869e38a47c59c022bfe4c25c0c5180f800d6b51c82c01a787f825e2632d2f65:eyJzZWxlY3RlZExpbmVDb3VudCI6MTIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjA0NWI1YzdlZWMxNDEzMjAzNzQxYzc5OTk3YzFmNDg1MThhMDY5MGNjNjU1N2E4OTU3ZWM2ZmYzY2JmMGE1MjkiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImRmN2EzMGJlNGM4OWY5ZjgyNjY1NmVjNzIyNjRmNDZhZGY4MDUyZDg0YmY5YTE3NDZmZjQ5MDEyM2JiMzQ0ZWIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjAwMWYyZWMxNzU5M2MxMDU0ZWI0NjM2N2Q4NDUzZWYyNGExNzNjZTk2YjcxMTdkOTFmOWE2OGQ0NGZlZjhiMDEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQ3M2MwOTQzZjVmZmUzMDYxYWFiNWJlZTg5MmIwMTdlOWQ4NmRlMWUyYzM3ODUzMzdkZjRkOWY2NjBjN2M4MjcifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_bb9f4d38b2334d18b40ff8168f4397db",
+      "statement": "Every story runs a unified A-J pipeline (plan/pre-flight, worktree+behavior-lock, explicit-path compliance count with import-closure pre-scan, edits via executor waves for FULL stories, guard tests, validation gates, adversarial review with reviewer ≠ author and mandatory import-closure audit, fixes, commit/PR/merge/cleanup, closeout updating sprint-status, registry, handoff §0 and CLAUDE.md floor in one closeout PR).",
+      "evidence": [
+        {
+          "resource": "repo://docs/HANDOFF-2026-08-27-CROSS-TEAM-OMC-ORCHESTRATOR-172-8-CONTINUATION.md#L80-L91",
+          "version": "repo-lines-v1:sha256:6d03dd1f5478520347aa64bbd81d116d9f16c08197d4af2ad94fce0be0dcffc5:eyJzZWxlY3RlZExpbmVDb3VudCI6MTIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjhlM2M5MzIwNzk1MWI4ODdkNDAwMGMyMmVhNDFjYjk1ZTU2MjVkYWE4YzEzNTVkYThmYmY1YmJlZDk2ZTM4ZWYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImY5NWRjODJhZGMyZmM0NzZiMmU3OWNjZDRhYzZiOTkyZDA4OTYxNjZjOTM3NTliYzljOGJjYmRkZTRlMjg3YjMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImI0MDFjNDEzN2M2NTZlMzA1MDEwZDA1M2U0NTZmN2UxZTVmYzI4OTQ5OTBkYmE3YTQxYWJiMDk0YzYxZDE2ZmEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjAwMWYyZWMxNzU5M2MxMDU0ZWI0NjM2N2Q4NDUzZWYyNGExNzNjZTk2YjcxMTdkOTFmOWE2OGQ0NGZlZjhiMDEifQ"
+        },
+        {
+          "resource": "repo://docs/ORCHESTRATOR-PROMPT-2026-08-28-V11-HANDOFF-SUPERVISOR-OMC.md#L59-L70",
+          "version": "repo-lines-v1:sha256:bdfacdf538ac444aac96aa7ce5073068dc71024454340cf5fd329709fc806a30:eyJzZWxlY3RlZExpbmVDb3VudCI6MTIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijc0ZWYxYjVhNjJmYjc2MTJlZjE3YjJkYmJkYjhjNDhhZWM4OTg0NTlkNDA0ODkyOTg2NjcyMmNhZWRmMTBjYTIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjZlNWUzYjYyY2M4YWZiOGU1ZTk0YjVjNzE4MGZlNTg1ZmUxOWNlM2NkYmIwNWI0OTYyNjNjNzkzM2ZmNTU0ZjkiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjAwMWYyZWMxNzU5M2MxMDU0ZWI0NjM2N2Q4NDUzZWYyNGExNzNjZTk2YjcxMTdkOTFmOWE2OGQ0NGZlZjhiMDEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjAwMWYyZWMxNzU5M2MxMDU0ZWI0NjM2N2Q4NDUzZWYyNGExNzNjZTk2YjcxMTdkOTFmOWE2OGQ0NGZlZjhiMDEifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_1e0982b18b504624b9146d6dc4b422d1",
+      "statement": "Story verdict classes are decided by an explicit compliance count over the owned surface: NO-OP (close with evidence), MINOR-GAP (≤10 files, direct edits), born-clean (token-clean route, guard/contract gaps only), and FULL/FULL-lite (palette-heavy surfaces executed in ~30-file executor waves with targeted Vitest after each; 172.1 is the FULL reference and 172.5 the import-closure-audit reference).",
+      "evidence": [
+        {
+          "resource": "repo://_bmad-output/planning-artifacts/shadcn-migration-status-and-debt-registry.md#L93-L99",
+          "version": "repo-lines-v1:sha256:e9411d7f211b7f58f2b46600952140cef37d7eadf0e4a6fc3a23a6ac4ee71997:eyJzZWxlY3RlZExpbmVDb3VudCI6NywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMWNlMzI2MmIxM2RmOTBiMmU0MzBmNzM3MTE0YjU5NzEyNDVjNjg5OWRkM2JhMjlhZTIzYWFlZjU5YmJjYTIzNyIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiZjg2OWJhYjgyN2RkNDAwMDc0MDkzZTIwODk2MzgxNjIyMzQ1ZGVmNWM0ZDFmZjQwNTI5YWU0YTAxZDEwY2VjMiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiODg2YWNhNzY0ZjQ0MTRhZmI1Yjg2NjJhNGM4NzQ4OTA5YzQzNGU3YjY3YTBkMWZmZGQzNjMzNTIxOTE2ZDNmNiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMzQwYjZhOTRlODVkMWE1ZThiYzIwOTIwNzllMWExN2UwMGJiZjFkM2NkNGNhMjJjZDc2MmI0OWJiOTRkMDZjYyJ9"
+        },
+        {
+          "resource": "repo://docs/HANDOFF-2026-08-27-CROSS-TEAM-OMC-ORCHESTRATOR-172-8-CONTINUATION.md#L80-L87",
+          "version": "repo-lines-v1:sha256:e91019ed72e041014eb514973c4ebc3581c35975c5a79bb88c0ac53b0427dd9d:eyJzZWxlY3RlZExpbmVDb3VudCI6OCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiOGUzYzkzMjA3OTUxYjg4N2Q0MDAwYzIyZWE0MWNiOTVlNTYyNWRhYThjMTM1NWRhOGZiZjViYmVkOTZlMzhlZiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiZWM3N2ZjOTMzYWE1OTY5NTE3MmJjZWU4MzczZWE4OGE1YmVkODIyYjZlOWY3YmQxNjcyMjU1MGNkYmY3ZTdjZCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiYjQwMWM0MTM3YzY1NmUzMDUwMTBkMDUzZTQ1NmY3ZTFlNWZjMjg5NDk5MGRiYTdhNDFhYmIwOTRjNjFkMTZmYSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNGRjODNkZjZkYzFiZTY0NTM1ZDNlY2I5MzA2ZTNhOTI4ZTBlN2U1OGU1ZDMzYWU2YWMyYzcwNmJkNjllZDM0YiJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_a03e50e26e324514ab6ea0b79274809e",
+      "statement": "Per-PR validation gates require unpiped exit codes on Node 24.18.0 (system Node 26 breaks webpack builds): full Vitest ≥ floor with 0 failed, ESLint 0 errors/0 warnings, type-check 0, check:max-lines (source ≤200/test ≤800), check:docs exit 0, locale-percent ratchet, lessons-length ≤120 chars, `next build --webpack`, and Playwright e2e 0 failed via the npm wrapper (which injects orders+auth setup, so counts must be attested by decomposition).",
+      "evidence": [
+        {
+          "resource": "repo://.omx/plans/shadcn-full-ui-migration-master.md#L130-L141",
+          "version": "repo-lines-v1:sha256:3c1fe0b0eec2ddaec8f64e5f8c29e64e5b715844cdf0e12da16b0e664b6d2686:eyJzZWxlY3RlZExpbmVDb3VudCI6MTIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjJhMTU2MmYzN2NkZjg2ZDJkYThlMjRlN2M5ZDJlMjkyN2FhYjQ3OTc1YzAwZmRmMDAxNTBmODlkZDFhYWVhN2MiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImY0ZGYyNDhlOGQ3Y2FiMWUwOGQ0YTlkZjZkNmQyOWRlMjdiMmY1ODc0NTYxMGE1NWE4NTg2OTdiZDdlNTk5MzkiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjgwMTMzMGU5ZmY3YTEyYzA0MGVmMDAzN2RjZjM5NGY5YmM4NzI5MmEwZmQwMDllOGQ5ZGI1NTQwNjNmMzY5ZTgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjI3NzUwZTc4MDA5M2UxNjlhOTI4ZTkwZTM2ZjRjNmY4ZDM0MDg4NjU4ZTZkNzc1NDNkYmU5ZGVlNjUxMDQ3MTAifQ"
+        },
+        {
+          "resource": "repo://docs/HANDOFF-2026-08-27-CROSS-TEAM-OMC-ORCHESTRATOR-172-8-CONTINUATION.md#L95-L108",
+          "version": "repo-lines-v1:sha256:695bc336d5e81c0f19c98322bb8a93ad288278bf6c8ca509a82ddeea16dd1b36:eyJzZWxlY3RlZExpbmVDb3VudCI6MTQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjgyOWFlZTFjOWVhNGNlMzIyNjY0MTJkNWM3N2E3Yzc0MjM5OWYwZWM3NjI0MzFmODQ5OTZlNzRjZDFkOGRjODYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjAwMWYyZWMxNzU5M2MxMDU0ZWI0NjM2N2Q4NDUzZWYyNGExNzNjZTk2YjcxMTdkOTFmOWE2OGQ0NGZlZjhiMDEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImRmZWRjMGRkMzNiMTNlMDkyMTAxODliMGEzNjg2YTFlOGVkYjA3NzU5ZjRlOTMyZTAwZDI0NTk2NmQ0MGM2MWMifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_cd74db2fa25049168d325e6eaed2b57f",
+      "statement": "Worktree hygiene mandates one story = one branch (cdx/epic-{epic}-story-{story}-{slug}) = one temporary worktree at an explicit validated path created from current main after prerequisites merge; subagents never perform git mutations; cleanup to 0/0/0 remote/local/worktree with prune and --match-head-commit merge fences is a completion condition, not housekeeping.",
+      "evidence": [
+        {
+          "resource": "repo://.omx/plans/shadcn-full-ui-migration-master.md#L102-L106",
+          "version": "repo-lines-v1:sha256:d7e43f4ddd556d90243a7d0159ffce779c64e7d2261e23b52979fbaa4409c176:eyJzZWxlY3RlZExpbmVDb3VudCI6NSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiODU4MjUzYjIzM2QyZjVkNjBjOTgzM2Y5ZDVlN2Y0ZWY0Y2UxZTgwOGRlNWI0ZWQyZmIxZTk2YTg1OTFkOGYwMCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiOWVhMzIyZWQyMTNjODYxYTgzMTE2YWU4MjM5YjBhNjVmZjBkZjFkYWU0Y2FiNWRlNGJlYjg2ZjhmNTg5MDRlMSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZThhNTRhZWQzYjJjNDU0YjU1NzY3YmEwMTUxYWZlNzAyZTdjN2E2OTM1MzYwMDQ5NDE4YmJlYmQxMGQ2YzQ3NiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiOTA3MzViNThkZGFhY2Y0MTZhNmQ3ZjI0Njk0NDZiNTc5MjE0MzJhMDRjMTcxM2Y1ZjUzNzczN2U1ZGY2M2IxMyJ9"
+        },
+        {
+          "resource": "repo://docs/HANDOFF-2026-08-27-CROSS-TEAM-OMC-ORCHESTRATOR-172-8-CONTINUATION.md#L86-L91",
+          "version": "repo-lines-v1:sha256:c4f91980b7c877f60849d86782b516df209e1e9df8df18c29fb86fa406b8e13a:eyJzZWxlY3RlZExpbmVDb3VudCI6NiwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiOTVjNGUyNmM0YTlhYTMwMGE5NDViMTNiMmY2ZDdlMjFjMGE1NmE0ZjIwNThjMzM4ZWNkMWExNzU1ZmNkYzcxMCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiZjk1ZGM4MmFkYzJmYzQ3NmIyZTc5Y2NkNGFjNmI5OTJkMDg5NjE2NmM5Mzc1OWJjOWM4YmNiZGRlNGUyODdiMyIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiYTA1NWNmNjBhYzBhNTgzYWRkYmNjMzk2OWI1OTcwMTU1NjQwZDQ1NjBlYmI1ODQxNWRjNWJhYTc0NzA3NGU4NiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMDAxZjJlYzE3NTkzYzEwNTRlYjQ2MzY3ZDg0NTNlZjI0YTE3M2NlOTZiNzExN2Q5MWY5YTY4ZDQ0ZmVmOGIwMSJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_b76239dac1784134a8ea51cbc4bf2ad0",
+      "statement": "Cross-team coordination cautions: parallel sessions are active (PRs #295/#296/#300/#301 landed atop other sessions' PRs), foreign worktrees such as the 169 tail (/private/tmp/wb-repricer-fe-169-*) must never be touched, a mid-flight conflict for the NEXT story means taking the next unclaimed story instead of duplicating, and every Agent call requires an explicit model tier alias.",
+      "evidence": [
+        {
+          "resource": "repo://docs/HANDOFF-2026-08-27-CROSS-TEAM-OMC-ORCHESTRATOR-172-8-CONTINUATION.md#L42-L59",
+          "version": "repo-lines-v1:sha256:483951845d9e68795f9ba225395ac96140a4107b14ad8080ff472cb6b1626c8a:eyJzZWxlY3RlZExpbmVDb3VudCI6MTgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjZmNDk2Mjc3MWI0YThhOWJlNGY1NTQ0OGMxMzI3OWIxZmYyODQ1M2I0YWM3M2ZiNjU0ZjJjODUzMTNmYzM0NGQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijk2YjBiYjY5MzEyMDBmMjFlNGUzNzRhYTJhZmFmMGZlZDhkYjE1MDY5Y2U0MmZhMzlmOWJjMmYzMGQzNTgxZDkiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImY4ODI1YjliMWUxOTFjMGU2MDZiYjUxNDdiYmQ1Mzg4NjZhOGEzMzViMzNlZWMxYzZkNDU2MzliOTlmNjBlNDQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjAwMWYyZWMxNzU5M2MxMDU0ZWI0NjM2N2Q4NDUzZWYyNGExNzNjZTk2YjcxMTdkOTFmOWE2OGQ0NGZlZjhiMDEifQ"
+        },
+        {
+          "resource": "repo://docs/ORCHESTRATOR-PROMPT-2026-08-28-V11-HANDOFF-SUPERVISOR-OMC.md#L35-L49",
+          "version": "repo-lines-v1:sha256:17c9974d6e428b3167361c65edc673097e594f614071513d06651d84bb15ff55:eyJzZWxlY3RlZExpbmVDb3VudCI6MTUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjFiZDliYTIzNTA1YWQ1MmIxMTIwMzY2YjZkZmU5MWJiODA0NDMzNTg5Mjk0Y2ZkNzc1NjMzMDBmNDAyMzg5NzkiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImU0ZWE2YmE1MTA1ZDQzZTZkNjUwMWI4N2E0Yzk0NDUxY2RkNDMyZjRmNWU0NzAwY2U0NTZkZDU0N2NjZjRlNGYiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjAwMWYyZWMxNzU5M2MxMDU0ZWI0NjM2N2Q4NDUzZWYyNGExNzNjZTk2YjcxMTdkOTFmOWE2OGQ0NGZlZjhiMDEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjAwMWYyZWMxNzU5M2MxMDU0ZWI0NjM2N2Q4NDUzZWYyNGExNzNjZTk2YjcxMTdkOTFmOWE2OGQ0NGZlZjhiMDEifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_96e01548b2994651981f80c8c5c5dd55",
+      "statement": "Story 169.14 established the authoritative paid-storage import contract mapping BullMQ waiting|delayed|prioritized|waiting-children to wire pending, active to processing, terminal states unchanged, and BullMQ unknown failing closed as wire failed with sanitized UNKNOWN_QUEUE_STATE detail; Story 169.15's frontend-only unknown sentinel applies solely to unrecognized backend wire values; Story 169.12's early route delivery (PR #227) was closed only after the 169.14 → 169.15 chain validated it, completing Epic 169 at 15/15.",
+      "evidence": [
+        {
+          "resource": "repo://.omx/plans/169.14-establish-authoritative-paid-storage-import-lifecycle-and-result-contract.md",
+          "version": "repo-file-v1:sha256:7fa16a6ab28bd7d90cc46b293f9e24d057491ed6977f6a71ee12e817e2f98695"
+        },
+        {
+          "resource": "repo://.omx/plans/shadcn-full-ui-migration-master.md#L45-L45",
+          "version": "repo-lines-v1:sha256:674c2f3b5c0786253f5f5752c521e6ed2da61eb5775971a325cc47561e9366e4:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNjc0YzJmM2I1YzA3ODYyNTNmNWY1NzUyYzUyMWU2ZWQyZGE2MWViNTc3NTk3MWEzMjVjYzQ3NTYxZTkzNjZlNCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNjc0YzJmM2I1YzA3ODYyNTNmNWY1NzUyYzUyMWU2ZWQyZGE2MWViNTc3NTk3MWEzMjVjYzQ3NTYxZTkzNjZlNCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiM2VkOTQwMGQ2ZjdmYjhlODgwN2NhYTQzZDIzNzc1NTQwZjJjOTUzYjQyMWVjNDNjYTU2NzI0NTMxNzExNjI5OSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZTgwYzg5ZjM3ZDlkMzgyMDU3NDY1OWYxYWY1NTY1ODQyZTgyN2U4N2ZlOWZkZGU4ZjAzYmUzZTUzMjBkNzExYSJ9"
+        },
+        {
+          "resource": "repo://_bmad-output/planning-artifacts/shadcn-migration-status-and-debt-registry.md#L35-L45",
+          "version": "repo-lines-v1:sha256:ef753b3d31cdf104ad2e74f2118a45f016c59a973a002962c795454b1dd1f9bf:eyJzZWxlY3RlZExpbmVDb3VudCI6MTEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijc3YWI0N2E0NDlhYTdhYmZkNmZmYjIxZWJiNDIxYWU0N2YyNjA2MGQ1NDIwMmY1Zjc1Y2M1ODEzNjA4NjkyODkiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImQzODg3NDRlZTY4ZTVjNDgzYjVhMWU3Y2Q2ZTdhODlkNTZmNDNhOGNmNWM4OTYzZmQ2NWY4OTE2ZDc1MDFiYTgiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjFjY2ZhZGRiZGY5YjA1NzcwZDBjOWUxMDM1ZWNjZjZhMjRlZGE5NGY5NzBhZDU3MjdmNGEyMmRlMjQ0MTc4MDciLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6Ijc2M2RlMDQ5M2U4OTBiMDI2MDQ2NDAwYTYxM2NkOTliMDAxNDU4ZGU0MDBmNTU5NGVkYzc3Y2U5YjA0OTQ0N2QifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_89bbad605b6c4dc58ca27f2a79080639",
+      "statement": "The 169.14/169.15 cross-repository lane enforces a serialized single-leader lifecycle with mode-600 review-bootstrap and record-retirement transactions, byte/hash-verified RED/reviewer/manifest payload evidence re-read from trusted frontend history, and a suffix-aware privacy scan rejecting credential families across =, :=, +=, -=, ?=, &&=, and ||= — because it is the only authorized cross-repository contract change.",
+      "evidence": [
+        {
+          "resource": "repo://.omx/plans/shadcn-full-ui-migration-master.md#L99-L100",
+          "version": "repo-lines-v1:sha256:6ffaac3be0b2e178d878773f4716470238d1c187f48354548cf0e3cff532030f:eyJzZWxlY3RlZExpbmVDb3VudCI6MiwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiODM2NmZjNjc4YjkwZjhiN2E4ZTY1NWMxYWJjZTk3M2ZmZjUxNDhiZTg2NzE3NjgyODY0YTI4MzU1YTU1ODhmMCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNWQzZjRmM2ZjZDlhMTEyNmM4ZDliOTE3MWYzZmRkNzUzM2JkODUzZmZjNDQxZmMxY2ZiYWViZmIyOTkwMzE2ZSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNTdkYmUwZWQ4MDZmMzVmNzA4MDE3ZTY3NWQ2YjM3YmZmOTAzMGM5NTY4YzQyMGQyZWY4MzllZGRmNTg1NDI5NyIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMGE2YTBhMjVmYTcxYzRlYTE2M2U4YjRmMjQ5MmIxZWQ5Yzg1MmJlMmNhMzU3NTJmYjBhYmExNmE3ZTBlNzkyMSJ9"
+        },
+        {
+          "resource": "repo://_bmad-output/planning-artifacts/shadcn-migration-status-and-debt-registry.md#L43-L45",
+          "version": "repo-lines-v1:sha256:301c8e472246435dbe3a48274c9dd3e94307e8edb42428336aa39d5e83081175:eyJzZWxlY3RlZExpbmVDb3VudCI6MywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNmIzYmY2ZjZjODYyNjdkNzgxYzU4NDA3ZWNmNjQzOTE1YjM3OTg1MjIwMjkzMjE0Y2JkNmVkZTA5ZWI2YzBhNyIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiZDM4ODc0NGVlNjhlNWM0ODNiNWExZTdjZDZlN2E4OWQ1NmY0M2E4Y2Y1Yzg5NjNmZDY1Zjg5MTZkNzUwMWJhOCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZDhkMWM1Mjk1ZTA4OGZhNTMxOTQ3N2RjNWQxOGRjZjYyNTMwMzVlZmE3ZTVmNjdiZDdlYWE2ZTU1MmRjZGI3YSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNzYzZGUwNDkzZTg5MGIwMjYwNDY0MDBhNjEzY2Q5OWIwMDE0NThkZTQwMGY1NTk0ZWRjNzdjZTliMDQ5NDQ3ZCJ9"
+        }
+      ]
+    }
+  ],
+  "verification": {
+    "by": "openwiki/0.4.3",
+    "at": "2026-08-28T08:47:49.990Z"
+  }
+}

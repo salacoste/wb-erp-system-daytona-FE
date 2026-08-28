@@ -2,20 +2,23 @@
 type: "Project Overview"
 title: "WB ERP System — Frontend OpenWiki"
 description: "Financial analytics dashboard for Wildberries (WB) marketplace sellers. Built with Next.js App Router, TypeScript, Tailwind, and a Russian-locale UI. Entry point for frontend OpenWiki documentation."
+verified:
+  - by: openwiki/0.4.3
+    at: 2026-08-28T08:47:49.990Z
 sources:
+  - id: openwiki-source-f607f5c80beb9ee0ee1c5cbc
+    resource: repo://_bmad-output/implementation-artifacts/172-9-fe-migrate-communications-workspace.md
   - id: openwiki-source-89e2a6b1ae97c68779084212
     resource: repo://_bmad-output/implementation-artifacts/sprint-status.yaml
   - id: openwiki-source-c278c3812722174099a1e7a5
     resource: repo://_bmad-output/planning-artifacts/shadcn-migration-status-and-debt-registry.md
-  - id: openwiki-source-808c20fe8494873098c93449
-    resource: repo://docs/HANDOFF-2026-08-26-LATE-epic-171-complete-172-recon-ready.md
+  - id: openwiki-source-9cd9828c7e89fc81b1851bb7
+    resource: repo://docs/HANDOFF-2026-08-27-CROSS-TEAM-OMC-ORCHESTRATOR-172-8-CONTINUATION.md
   - id: openwiki-source-23775c3de52f3ab95a13cb8b
     resource: repo://README.md
-generated: { by: "openwiki/0.4.3", at: "2026-08-27T08:47:50.418Z" }
-verified:
-  - by: openwiki/0.4.3
-    at: 2026-08-27T08:47:50.418Z
+generated: { by: "openwiki/0.4.3", at: "2026-08-28T08:47:49.990Z" }
 ---
+
 # WB ERP System — Frontend OpenWiki
 
 Financial analytics dashboard for Wildberries marketplace sellers. Built with Next.js 16 App Router, TypeScript, and a Russian-locale UI.
@@ -29,6 +32,17 @@ Financial analytics dashboard for Wildberries marketplace sellers. Built with Ne
 
 Development and validation are **local-only**: there is no deployment target or production platform. These statuses mirror the **Current Delivery Status** section in `README.md`.
 
+## Epics 166–174 Migration Snapshot
+
+As of the 2026-08-28 cross-team handoff (after PR #305, `main` = `feb35cfd`), the shadcn full-UI migration program stands at **63/94 canonical stories**:
+
+- Epics 166 (foundation), 167 (AppShell/auth), 168 (analytics core), 170 (marketing analytics, 7/7), and 171 (AI/forecast analytics, 9/9) are **done**.
+- Epic 169 (operational analytics) is **fully closed 15/15** — the final Story 169.12 contract closeout was merged through PR #299 (with the #304 docs-sync lane).
+- Epic 172 (core business operations) is **in progress at 9/17**: stories 172.1–172.9 are shipped (business dashboard, the full automation domain, the COGS domain single/bulk/history, price calculator, and communications workspace); the next story is **172.10 Finances & Documents**.
+- Epics 173 (13 stories) and 174 (5 stories, final consolidation) remain backlog.
+
+Full per-story status, the story pipeline, the route ledger, and the orchestration/handoff process live in [Migration Program (Epics 166–174)](migration-program.md). The design contract itself (tokens, primitives, composition families) is documented in [Design System](design-system.md).
+
 ## Overview
 
 | Aspect | Detail |
@@ -36,7 +50,7 @@ Development and validation are **local-only**: there is no deployment target or 
 | **Stack** | Next.js 16 + TypeScript 5 + Tailwind CSS + shadcn/ui (Radix) |
 | **Server State** | TanStack Query v5 (Next.js server page/layout wrappers coexist with client components; interactive data fetching is client-side) |
 | **Client State** | Zustand (auth, dashboard widgets, rate-limit, polling) |
-| **Testing** | Vitest (~1165 unit test files, MSW) + Playwright E2E (~87 specs) + outbound network guards + privacy/diagnostic-capture checks |
+| **Testing** | Vitest (1218 unit test files / 19 394 tests floor, MSW) + Playwright E2E + outbound network guards + privacy/diagnostic-capture checks |
 | **Backend** | REST API via `NEXT_PUBLIC_API_URL` (default `http://localhost:3000`) |
 | **Port** | 3100 (dev and prod) |
 
@@ -62,7 +76,8 @@ npm run check:anti-pattern-8-normalizer  # AP#8 normalizer ratchet
 ## Documentation Sections
 
 - **[Architecture](architecture.md)** — Route groups, layout/provider hierarchy, client-side data fetching, auth proxy, environment configuration (`NEXT_PUBLIC_API_URL`).
-- **[Design System](design-system.md)** — Tailwind v4 semantic token contract, hardened shadcn primitives, the six product-composition families (page context, metrics/status, filters, tables, charts, page states), and the Epics 166–174 full UI migration program (foundation 166.1–166.8, AppShell/auth Epic 167 closed, analytics-core Epic 168 closed, Epic 169 operational analytics: route work for 169.1–169.13 is merged, with the remaining sequence 169.14 (backend paid-storage contract, in progress) → 169.15 (shared FE boundary) → 169.12 contract closeout, Epic 170 marketing/marketplace analytics closed 7/7 (advertising workspace, campaign bid-recommendation detail, brand margin, brand share, category margin, ad/organic cross-reference, search analytics), **Epic 171 AI/forecast analytics closed 9/9** (171.1–171.9 shipped through PRs #252–#270, closing the `/analytics/models` tree with the evaluations list, SKU-accuracy detail, and performance detail), and **Epic 172 in progress at 4/17** — 172.1 business dashboard (#278), 172.2 automation gallery (#280), 172.3 rules list (#282), and 172.4 rule editor (#285) shipped, migrating the dashboard and the entire automation domain (gallery/list/editor); next is 172.5 COGS Single (owner-coordinated). Epics 173 (backlog) and 174 (final consolidation) follow.
+- **[Design System](design-system.md)** — Tailwind v4 semantic token contract, hardened shadcn primitives, and the six product-composition families (page context, metrics/status, filters, tables, charts, page states).
+- **[Migration Program (Epics 166–174)](migration-program.md)** — Master plan, story pipeline (FULL/MINOR/born-clean), per-epic status ledger, and handoff/orchestration process for the full-UI shadcn migration.
 - **[API Layer & Normalizers](api-and-normalizers.md)** — API client singleton, Boundary Normalizer Pattern, Anti-Pattern #8 null semantics, CSV export, communications write-back (async 202 job polling).
 - **[Domain Logic](domain-logic.md)** — Financial formulas (theoretical profit, margin, liquidity with trends, unit economics), account finances + document download (NEW-7), seller communications with gated write-back (NEW-2), historical SPP (Story 128.27), ISO week / Moscow timezone, profitability thresholds.
 - **[Conventions & Quality Gates](conventions-and-quality.md)** — File size limits, ESLint enforcement, Defensive Frontend Principle, ratchet scripts, toolchain pinning, two-pass review discipline.
@@ -107,5 +122,5 @@ npm run check:anti-pattern-8-normalizer  # AP#8 normalizer ratchet
 | docs/ directory structure | `docs/epics/`, `docs/stories/`, `docs/request-backend/` | 211 resolved backend requests; primarily project-management artifacts, not code documentation |
 | Backlog task tracking | `backlog/tasks/` | 55 tracked tasks via Backlog.md CLI; process artifacts, not source code |
 | Zustand store details | `src/stores/` | 5 stores; architecture covered in [Architecture](architecture.md); individual store APIs are self-documenting |
-| Route migrations (Epics 167–174) | `.omx/plans/shadcn-full-ui-migration-master.md`, `src/app/(dashboard)/**/page.tsx` | Foundation (Epic 166), the full onboarding lane (Epic 167, closed), Epic 168 analytics core (168.1–168.11, closed incl. unit-economics and shared profitability consolidation), and Epic 169 stories 169.1–169.13 (acquiring index/period/transaction detail, buyout, buyout reconciliation, enhanced FBS, FBS stock, funnel, gaps triage, liquidity, returns incl. the unknown-category boundary preface) are merged; 169.12's storage route presentation merged early (PR #227) but stays review-blocked pending the Correct Course sequence — Story 169.14 (backend paid-storage import contract, in progress) then 169.15 (shared FE boundary) then the bounded 169.12 closeout — while 169.13 supply planning is fully done (preface PR #231 preserving unknown risk/reorder enums, PR #232 with `supply-risk-tokens.ts` as the single risk-tier token source). The remaining ledger routes migrate one Story at a time under the master plan: **Epic 170 is complete 7/7** (170.1 advertising workspace, 170.2 campaign bid-recommendation detail, 170.3 brand margin, 170.4 brand share, 170.5 category margin, 170.6 advertising–organic cross-reference, 170.7 search analytics — all merged 2026-08-25/26), and **Epic 171 is complete 9/9** (171.1 AI anomaly triage, 171.2 AI admin model governance, 171.3 AI preferences, 171.4 forecast workspace, 171.5 forecast accuracy, 171.6 model registry/training entry, 171.7 model evaluations list, 171.8 evaluation SKU-accuracy detail, 171.9 model performance detail — shipped through PRs #252–#270, closing the `/analytics/models` tree). **Epic 172 is in progress at 4/17** (172.1 business dashboard #278, 172.2 automation gallery #280, 172.3 rules list #282, 172.4 rule editor #285 — the dashboard and the entire automation gallery/list/editor domain are migrated; next is 172.5 COGS Single, owner-coordinated, followed by 172.6–172.17). Epics 173 (13 stories, backlog) and 174 (5 stories, final consolidation) follow. In parallel, the independent 169 lane still owes 169.14 → 169.15 → 169.12 closeout (12/15 done). Migration is 58/94 canonical Stories (status snapshot: `_bmad-output/planning-artifacts/shadcn-migration-status-and-debt-registry.md`; handoff: `docs/HANDOFF-2026-08-26-LATE-epic-171-complete-172-recon-ready.md`). See [Design System](design-system.md). |
+| Route migrations (Epics 167–174) | `.omx/plans/shadcn-full-ui-migration-master.md`, `src/app/(dashboard)/**/page.tsx` | Per-story progress, route ledger, and orchestration process are tracked in [Migration Program (Epics 166–174)](migration-program.md) |
 | OMX story-plan orchestration | `scripts/manage-omx-story-plans.mjs`, `.omx/plans/`, `docs/process/omx-story-worktree-orchestrator-prompt.md` | Process/planning tooling for epic 162–165 story plans; not runtime source |
