@@ -1,5 +1,5 @@
 # generated: 2026-08-03
-# last_updated: 2026-08-28 — Story 172.8 feature PR #301 and canonical reconciliation PR #303 merged and cleaned; Epic 172 is 8/17; Program NEXT = Story 172.9.
+# last_updated: 2026-08-28 — Story 172.9 shipped through PR #305 (merge feb35cfd); Epic 172 is 9/17; Program NEXT = Story 172.10.
 # project: frontend
 # project_key: NOKEY
 # tracking_system: file-system
@@ -37,7 +37,7 @@
 #   they are excluded from story and retrospective counts and must be documented with a no-story-ID note.
 
 generated: 2026-08-03 # refreshed after Epic 127 truth reconciliation and Epics 162-165 registration
-last_updated: 2026-08-28 # Story 172.8 feature PR #301 and canonical reconciliation PR #303 merged and cleaned; Epic 172 is 8/17; Program NEXT = Story 172.9.
+last_updated: 2026-08-28 # Story 172.9 shipped through PR #305 (merge feb35cfd); Epic 172 is 9/17; Program NEXT = Story 172.10.
 project: frontend
 project_key: NOKEY
 tracking_system: file-system
@@ -826,7 +826,7 @@ development_status:
   172-6-fe-migrate-bulk-cogs-assignment: done # PR #289 (27535e8d, merge 42ac0686): MINOR-GAP-plus owner; 8 прод-файлов ->0 palette (49 строк; вкл. 2 blue-override drop); гард(7, каталог-11+шим+page); 1xopus APPROVE-WITH-NOTES (closure чист, 0 blocking); targeted 2/17->3/24; full 19334/0 (floor 19327, +7); e2e cold-flake(3, nav-visibility 172.5-класс)->warm 8/8; cleanup 0/0/0.
   172-7-fe-migrate-cogs-history: done # PR #293 (00368153, merge da3e9078): MINOR-GAP born-clean; caption-контракт (captionText->TableCaption, 171.9 канон) + 2 поведенческих теста; tabular-nums; гард(7, каталог 5+5, born-clean pinned, padding-пин с intra-card экземпляцией); targeted 3/18->4/25; full 19343/0 (floor 19334, +9); 1xopus APPROVE-WITH-NOTES (MEDIUM+2 LOW applied); e2e 11+2 cold-flake->warm 5/0; cleanup 0/0/0.
   172-8-fe-migrate-the-cogs-price-calculator: done # Feature PR #301 (9adf7d33, merge 08191dae) and reconciliation PR #303 (de4653ce, merge 0b4c9deb) merged; both exact branch/worktree cleanups passed; target 70/1759, composite full 19383/0, lint/tsc/build/static E2E guards green, 2 review passes; dynamic Playwright gap explicit.
-  172-9-fe-migrate-communications-workspace: backlog
+  172-9-fe-migrate-communications-workspace: done # PR #305 (2ec7c7c5, merge feb35cfd): MINOR-GAP; 11 files (8M prod +591/-18: 15 palette->0 status/destructive/primary/warning tokens, raw-button->ghost Button px-0) + guard(11: catalog 18 per-file, no-palette/no-hex, contract pins) + e2e fixture+spec(6) created; targeted 84/84 (73 base +11 guard); full 19394/0/1218 (floor 19383, +11 exact); lint 0/0, tsc 0, max-lines OK, build --webpack 0 x2; e2e 11+1skip (3 setup+2 orders+6 communications) x2 post AC4-race split; 1xopus APPROVE-WITH-NOTES (closure 64 files clean; 4 fixed, 1 dispositioned); visual light+dark; cleanup 0/0/0.
   172-10-fe-migrate-finances-and-documents: backlog
   172-11-fe-migrate-the-monitor-route: backlog
   172-12-fe-migrate-the-monitoring-operations-console: backlog
