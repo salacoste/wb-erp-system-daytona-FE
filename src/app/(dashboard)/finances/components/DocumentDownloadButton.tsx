@@ -52,13 +52,19 @@ export function DocumentDownloadButton({
   }
 
   // Inline error (rate-limit / WB-unavailable / empty base64). Cleared on retry.
-  const showError = mutation.isError
+  const showError = mutation.isError || (mutation.isSuccess && mutation.data === false)
+  const showSuccess = mutation.isSuccess && mutation.data === true
 
   return (
     <div className="flex items-center gap-1">
       <Select
         value={extension}
-        onValueChange={v => setExtension(v as DocumentExtension)}
+        onValueChange={v => {
+          setExtension(v as DocumentExtension)
+          // Pass-3 review fix: switching format clears stale success/failure
+          // feedback — the message described the PREVIOUS extension's attempt.
+          mutation.reset()
+        }}
         disabled={disabled || available.length <= 1}
       >
         <SelectTrigger className="h-8 w-[84px]" aria-label="Формат скачивания" disabled={disabled}>
@@ -82,16 +88,28 @@ export function DocumentDownloadButton({
         aria-label={`Скачать документ (${extension.toUpperCase()})`}
       >
         {mutation.isPending ? (
-          <Loader2 className="h-4 w-4 animate-spin" />
+          <Loader2 className="h-4 w-4 animate-spin" aria-hidden />
         ) : showError ? (
-          <AlertCircle className="h-4 w-4 text-destructive" />
+          <AlertCircle className="h-4 w-4 text-destructive" aria-hidden />
         ) : (
-          <Download className="h-4 w-4" />
+          <Download className="h-4 w-4" aria-hidden />
         )}
       </Button>
+      {/* Story 172.10: pending status announcement (plan a11y contract) — the
+          spinner is visual-only; screen readers get a polite live-region text. */}
+      {mutation.isPending && (
+        <span className="sr-only" role="status">
+          Скачивание документа…
+        </span>
+      )}
       {showError && (
-        <span className="sr-only" role="alert">
-          Ошибка скачивания документа
+        <span className="text-xs font-medium text-destructive" role="alert">
+          Не удалось скачать
+        </span>
+      )}
+      {showSuccess && (
+        <span className="sr-only" role="status">
+          Документ скачан
         </span>
       )}
     </div>
