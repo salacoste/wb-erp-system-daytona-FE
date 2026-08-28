@@ -6,18 +6,18 @@
 
 ---
 
-## 0. Верифицированное состояние (2026-08-29, после Story 172.15 feature PR #321)
+## 0. Верифицированное состояние (2026-08-29, после Story 172.16 feature PR #323)
 
 | Метрика | Значение |
 |---|---|
-| `main` lifecycle anchor | Story 172.15 feature PR #321 merged as `81bc35cc`. Точный HEAD сверять с `origin/main` по §1 |
-| Прогресс миграции 166-174 | **74/94** канонических стори |
-| Эпики | 166 ✅ · 167 ✅ · 168 ✅ · **169 ✅ (15/15; 169.12 closeout PR #299)** · 170 ✅ (7/7) · 171 ✅ (9/9) · **172 IN PROGRESS (15/17)** · 173/174 backlog |
-| Полный пол (vitest, **живой прогон при handoff**) | **19 458 passed / 0 failed / 1225 файлов / EXIT=0** (рост: … → 19 447 → **19 458** [+11 exact 172.15]) |
+| `main` lifecycle anchor | Story 172.16 feature PR #323 merged as `8939aea4`. Точный HEAD сверять с `origin/main` по §1 |
+| Прогресс миграции 166-174 | **75/94** канонических стори |
+| Эпики | 166 ✅ · 167 ✅ · 168 ✅ · **169 ✅ (15/15; 169.12 closeout PR #299)** · 170 ✅ (7/7) · 171 ✅ (9/9) · **172 IN PROGRESS (16/17)** · 173/174 backlog |
+| Полный пол (vitest, **живой прогон при handoff**) | **19 463 passed / 0 failed / 1226 файлов / EXIT=0** (рост: … → 19 458 → **19 463** [+5 exact 172.16 guard]) |
 | Остальные гейты | lint 0/0 (zero-warning), tsc 0, max-lines OK, check:docs exit 0, locale-percent ratchet 4, lessons-length 0 |
 | PM2 | `wb-repricer-frontend-dev` online :3100; BE :3000 |
-| **NEXT** | **172.16-FE Order Integrity Analysis** (план `.omx/plans/172.16-*.md`) |
-| Сессионные ветки/worktrees 172.x | Story 172.15 feature + closeout **0/0/0**; чужие docs-reconciliation lanes самоочищаются |
+| **NEXT** | **172.17-FE Product Management** (план `.omx/plans/172.17-*.md`; ПОСЛЕДНЯЯ стори эпика 172) |
+| Сессионные ветки/worktrees 172.x | Story 172.16 feature + closeout **0/0/0**; чужие docs-reconciliation lanes самоочищаются |
 
 **Сделано сессией 172.1-172.11** (эталонные артефакты — читай перед стартом):
 - **172.1** Business Dashboard — FULL 127 файлов, 4 executor-волны, 3-проходное ревью (PRs #278/#279) — эталон FULL-конвейера.
