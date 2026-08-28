@@ -1,5 +1,5 @@
 # generated: 2026-08-03
-# last_updated: 2026-08-28 — Story 172.9 shipped through PR #305 (merge feb35cfd); Epic 172 is 9/17; Program NEXT = Story 172.10.
+# last_updated: 2026-08-28 — Story 172.10 shipped through PR #308 (merge eb09f735); Epic 172 is 10/17; Program NEXT = Story 172.11.
 # project: frontend
 # project_key: NOKEY
 # tracking_system: file-system
@@ -37,7 +37,7 @@
 #   they are excluded from story and retrospective counts and must be documented with a no-story-ID note.
 
 generated: 2026-08-03 # refreshed after Epic 127 truth reconciliation and Epics 162-165 registration
-last_updated: 2026-08-28 # Story 172.9 shipped through PR #305 (merge feb35cfd); Epic 172 is 9/17; Program NEXT = Story 172.10.
+last_updated: 2026-08-28 # Story 172.10 shipped through PR #308 (merge eb09f735); Epic 172 is 10/17; Program NEXT = Story 172.11.
 project: frontend
 project_key: NOKEY
 tracking_system: file-system
@@ -827,7 +827,7 @@ development_status:
   172-7-fe-migrate-cogs-history: done # PR #293 (00368153, merge da3e9078): MINOR-GAP born-clean; caption-контракт (captionText->TableCaption, 171.9 канон) + 2 поведенческих теста; tabular-nums; гард(7, каталог 5+5, born-clean pinned, padding-пин с intra-card экземпляцией); targeted 3/18->4/25; full 19343/0 (floor 19334, +9); 1xopus APPROVE-WITH-NOTES (MEDIUM+2 LOW applied); e2e 11+2 cold-flake->warm 5/0; cleanup 0/0/0.
   172-8-fe-migrate-the-cogs-price-calculator: done # Feature PR #301 (9adf7d33, merge 08191dae) and reconciliation PR #303 (de4653ce, merge 0b4c9deb) merged; both exact branch/worktree cleanups passed; target 70/1759, composite full 19383/0, lint/tsc/build/static E2E guards green, 2 review passes; dynamic Playwright gap explicit.
   172-9-fe-migrate-communications-workspace: done # PR #305 (2ec7c7c5, merge feb35cfd): MINOR-GAP; 11 files (8M prod +591/-18: 15 palette->0 status/destructive/primary/warning tokens, raw-button->ghost Button px-0) + guard(11: catalog 18 per-file, no-palette/no-hex, contract pins) + e2e fixture+spec(6) created; targeted 84/84 (73 base +11 guard); full 19394/0/1218 (floor 19383, +11 exact); lint 0/0, tsc 0, max-lines OK, build --webpack 0 x2; e2e 11+1skip (3 setup+2 orders+6 communications) x2 post AC4-race split; 1xopus APPROVE-WITH-NOTES (closure 64 files clean; 4 fixed, 1 dispositioned); visual light+dark; cleanup 0/0/0.
-  172-10-fe-migrate-finances-and-documents: backlog
+  172-10-fe-migrate-finances-and-documents: done # PR #308 (e1406cd2, merge eb09f735): born-clean + absorbed parallel-session delta; 10 files (6M+4A) +558/-105: caption RTC (171.9 canon), download a11y (pending/success announcements, visible failure, aria-hidden icons, mutation.reset on format switch), categoryState loading/error, filtered-empty + reset, error.tsx boundary; DocumentsBody extraction (max-lines); guard 10 (catalog 8 exact-array, no-palette/no-hex, contract pins); e2e REPAIRED (bisect-proven pre-existing on main: end-anchored globs missed query URLs -> RegExp; strict-mode exact:true) + filtered-empty test; targeted 6/46; full 19414/0/1220 (floor 19394, +20 exact); lint 0/0, tsc 0, max-lines OK, build --webpack 0; e2e 12 (3 setup+2 orders+7 finances); 3 review passes (MEDIUM+2 LOW applied, 4 LOW/NIT dispositioned); a11y DOM snapshots (visual light/dark -> 174.3); cleanup 0/0/0.
   172-11-fe-migrate-the-monitor-route: backlog
   172-12-fe-migrate-the-monitoring-operations-console: backlog
   172-13-fe-migrate-the-moysklad-integration-workspace: backlog
