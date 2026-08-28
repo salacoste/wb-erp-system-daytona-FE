@@ -1,25 +1,25 @@
-# HANDOFF 2026-08-27 (cross-team) — Оркестратору OMC-сабагентов: продолжение эпика 172 с 172.11
+# HANDOFF 2026-08-27 (cross-team) — Оркестратору OMC-сабагентов: продолжение эпика 172 с 172.12
 
 > **Аудитория**: агент-оркестратор НОВОЙ команды, работающий через **OMC-делегирование** (executor/code-reviewer/verifier сабагенты). Документ самодостаточен: прочитай целиком → §1 bootstrap → §2 миссия.
-> **Точка входа**: этот документ заменяет [`HANDOFF-2026-08-26-LATE-…`](HANDOFF-2026-08-26-LATE-epic-171-complete-172-recon-ready.md) (его §0 синхронизирован PR #294; §1-§5 исторические). Supervisor prompt V11 — [`ORCHESTRATOR-PROMPT-2026-08-28-V11-HANDOFF-SUPERVISOR-OMC.md`](ORCHESTRATOR-PROMPT-2026-08-28-V11-HANDOFF-SUPERVISOR-OMC.md); V10 остаётся расширенным справочником. **Этот handoff содержит уроки 172.1-172.10 и верифицированное состояние**.
+> **Точка входа**: этот документ заменяет [`HANDOFF-2026-08-26-LATE-…`](HANDOFF-2026-08-26-LATE-epic-171-complete-172-recon-ready.md) (его §0 синхронизирован PR #294; §1-§5 исторические). Supervisor prompt V11 — [`ORCHESTRATOR-PROMPT-2026-08-28-V11-HANDOFF-SUPERVISOR-OMC.md`](ORCHESTRATOR-PROMPT-2026-08-28-V11-HANDOFF-SUPERVISOR-OMC.md); V10 остаётся расширенным справочником. **Этот handoff содержит уроки 172.1-172.11 и верифицированное состояние**.
 > **Приоритет при конфликте**: план стори > V10 > этот handoff; живой код + проходящие тесты — финальная инстанция.
 
 ---
 
-## 0. Верифицированное состояние (2026-08-28, после Story 172.11 feature PR #311 и reconciliation PR #310)
+## 0. Верифицированное состояние (2026-08-28, после Story 172.11 feature PR #311 и closeout PR #312)
 
 | Метрика | Значение |
 |---|---|
-| `main` | `402df723` (PR #310+#311; 172.11 closeout PR мержится поверх), дерево чистое, IN-SYNC после closeout |
+| `main` | `73174259` (Story 172.11 closeout PR #312 merged), primary-дерево чистое и IN-SYNC |
 | Прогресс миграции 166-174 | **70/94** канонических стори |
 | Эпики | 166 ✅ · 167 ✅ · 168 ✅ · **169 ✅ (15/15; 169.12 closeout PR #299)** · 170 ✅ (7/7) · 171 ✅ (9/9) · **172 IN PROGRESS (11/17)** · 173/174 backlog |
 | Полный пол (vitest, **живой прогон при handoff**) | **19 423 passed / 0 failed / 1221 файл / EXIT=0** (рост: … → 19 414 → **19 423** [+9 exact 172.11 guard]) |
 | Остальные гейты | lint 0/0 (zero-warning), tsc 0, max-lines OK, check:docs exit 0, locale-percent ratchet 4, lessons-length 0 |
 | PM2 | `wb-repricer-frontend-dev` online :3100; BE :3000 |
 | **NEXT** | **172.12-FE Monitoring Operations Console** (план `.omx/plans/172.12-*.md`; owner: lib STATUS_COLORS carry-out из 172.11) |
-| Сессионные ветки/worktrees 172.x | Story 172.11 feature + closeout **0/0/0**; чужие docs-reconciliation lanes самоочищаются после merge |
+| Сессионные ветки/worktrees 172.x | Story 172.11 feature + closeout **0/0/0**; Story 172.12 branch `cdx/epic-172-story-12-monitoring` + worktree `/private/tmp/wb-repricer-fe-172-12-monitoring` активны и защищены от reset/rebase/stage/delete |
 
-**Сделано сессией 172.1-172.10** (эталонные артефакты — читай перед стартом):
+**Сделано сессией 172.1-172.11** (эталонные артефакты — читай перед стартом):
 - **172.1** Business Dashboard — FULL 127 файлов, 4 executor-волны, 3-проходное ревью (PRs #278/#279) — эталон FULL-конвейера.
 - **172.2-172.4** Automation (gallery/list/editor) — MINOR-серии + **созданные e2e-пакеты** + первый live-прогон 163.3-спеки (PRs #280-#286) — эталон MINOR + e2e-создания.
 - **172.5** COGS single — FULL-lite, 3 прохода, **import-closure канон** (PRs #287/#288) — эталон closure-аудита.
@@ -28,8 +28,9 @@
 - **172.8** Price Calculator — semantic responsive migration с сохранённой formula boundary; feature #301 + reconciliation #303 + lifecycle #304; dynamic Playwright gap явный.
 - **172.9** Communications Workspace — MINOR-GAP; feature #305 + closeout #306; targeted 84/84, full 19 394/0, dedicated E2E 11+1skip ×2, cleanup 0/0/0.
 - **172.10** Finances & Documents — born-clean + **абсорбция параллельной дельты** (mid-flight-коллизия, разрешена владельцем) + e2e-спеки repair (glob→RegExp) — feature PR #308 + closeout PR #309; targeted 6/46, full 19 414/0/1220, e2e 12 passed + 1 intentional skip, feature + closeout cleanup 0/0/0; live visual/axe/keyboard/real-SR → 174.3, route-ledger status audit → 174.1.
+- **172.11** Monitor Route — MINOR-GAP; feature PR #311 + closeout PR #312; 18 palette + 9 hex → semantic tokens, guard 9, targeted 21 files/155 tests, full 19 423/0/1221, strict E2E legend repair + warm retry 4/0, feature + closeout cleanup 0/0/0; shared STATUS_COLORS → 172.12, live visual/axe/keyboard/real-SR → 174.3, route-ledger status audit → 174.1.
 
-Артефакты: `_bmad-output/implementation-artifacts/172-{1..10}-fe-*.md` (10 шт; формат Change Log + Lessons — обязателен к копированию).
+Артефакты: `_bmad-output/implementation-artifacts/172-{1..11}-fe-*.md` (11 шт; формат Change Log + Lessons — обязателен к копированию).
 
 ---
 
@@ -40,14 +41,14 @@ Primary checkout: `/Users/r2d2/Documents/Code_Projects/wb-repricer-system-new/fr
 ```bash
 cd <FR>
 git fetch origin && git switch main && git pull --ff-only origin main
-git rev-parse HEAD                 # ожидается e6d05de4 или новее (repo > doc)
+git rev-parse HEAD                 # ожидается 73174259 или новее (repo > doc)
 git status --short                 # ожидается пусто
-git worktree list                  # зафиксируй ЧУЖИЕ worktrees; active 172.11 lane НЕ трогать
+git worktree list                  # зафиксируй ЧУЖИЕ worktrees; active 172.12 lane НЕ трогать
 export PATH="/opt/homebrew/opt/node@24/bin:$PATH"   # КРИТИЧНО: системный node = 26.7.0 ЛОМАЕТ webpack (§7.1)
 node --version                     # v24.18.0
 ```
 
-Затем: этот handoff §2-§6 → план стори 172.11 → конвейер §3 в уже активном worktree. **Handoff-контроль**: сверь §0 с живым репо (grep registry NEXT + sprint-status 172.11 + floor прогоном при сомнении); расхождение → доверяй репо, исправь §0 в первом closeout-коммите.
+Затем: этот handoff §2-§6 → план стори 172.12 → конвейер §3 в уже активном worktree. **Handoff-контроль**: сверь §0 с живым репо (grep registry NEXT + sprint-status 172.12 + floor прогоном при сомнении); расхождение → доверяй репо, исправь §0 в первом closeout-коммите.
 
 Веди TaskCreate-трекинг: одна стори = одна задача с подзадачами конвейера §3.
 
@@ -55,11 +56,11 @@ node --version                     # v24.18.0
 
 ## 2. Миссия
 
-**Немедленно: Story 172.11-FE Monitor Route** (план `.omx/plans/172.11-*.md`) в уже активном Story 172.11 lane. Затем **172.12-172.17** (порядок планов; owner-координация: **172.14** — см. registry §5; остальные owner-блокеры сняты) → **173 (13 стори)** → **174 (5, финальный: ledger-parity, legacy-removal, a11y, regression, docs)**.
+**Немедленно: Story 172.12-FE Monitoring Operations Console** (план `.omx/plans/172.12-*.md`) в уже активном Story 172.12 lane. Затем **172.13-172.17** (порядок планов; owner-координация: **172.14** — см. registry §5; остальные owner-блокеры сняты) → **173 (13 стори)** → **174 (5, финальный: ledger-parity, legacy-removal, a11y, regression, docs)**.
 
 **Мета-задача**: после каждого значимого сдвига (стори/эпик/floor/ловушка) — обновляй handoff §0 docs-веткой как обычный closeout-PR. Расхождение handoff ↔ репо = твой дефект.
 
-**CURRENT LANE CHECK**: Story 172.11 уже имеет branch `cdx/epic-172-story-11-monitor` и worktree `/private/tmp/wb-repricer-fe-172-11-monitor`; не создавай дублирующий lane. Сначала сверь branch/HEAD/status и координируйся с текущим owner; не ребейзи, не сбрасывай, не стейджи и не удаляй чужой WIP. Epic 169 закрыт; посторонние worktrees и docs-reconciliation lanes не трогать.
+**CURRENT LANE CHECK**: Story 172.12 уже имеет branch `cdx/epic-172-story-12-monitoring` и worktree `/private/tmp/wb-repricer-fe-172-12-monitoring`; не создавай дублирующий lane. Сначала сверь branch/HEAD/status и координируйся с текущим owner; не ребейзи, не сбрасывай, не стейджи и не удаляй чужой WIP. Epic 169 закрыт; посторонние worktrees и docs-reconciliation lanes не трогать.
 
 ---
 
@@ -91,7 +92,7 @@ node --version                     # v24.18.0
 **G. Ревью**: микро-дифф <50 строк прод → 1 проход; behavior-changing → 2 в РАЗНЫХ свежих вызовах; триггеры ≥3 (novel-pattern / >12 находок / >5 в проходе / meta-claims). **Обязательный элемент чек-листа: import-closure аудит** (§7.10).
 **H. Фиксы**: мелкие сам, крупные executor'у; перепрогон наименьшего таргета + универсальные.
 **I. Коммит/PR/merge/cleanup** (только ты): `git branch --show-current` ПЕРЕД каждым коммитом (§7.18); stage явных файлов; conventional commit; `gh pr create` → `gh pr merge --merge`; cleanup до 0/0/0 (remote/local/worktree) + prune.
-**J. Closeout** (сам): артефакт (формат 172-{1..10}; Change Log close-строка + **Lessons ≤120 симв/шт**; APPEND-ONLY) → sprint-flip → registry SHIPPED + NEXT → handoff §0 (этот документ) → процесс-гейты (lessons-length 0, check:docs exit 0) → docs-PR → merge → cleanup → IN-SYNC.
+**J. Closeout** (сам): артефакт (формат 172-{1..11}; Change Log close-строка + **Lessons ≤120 симв/шт**; APPEND-ONLY) → sprint-flip → registry SHIPPED + NEXT → handoff §0 (этот документ) → процесс-гейты (lessons-length 0, check:docs exit 0) → docs-PR → merge → cleanup → IN-SYNC.
 
 ---
 
@@ -99,7 +100,7 @@ node --version                     # v24.18.0
 
 | Гейт | Команда (из worktree) | Baseline |
 |---|---|---|
-| Vitest полный | `npm test -- --run` | **≥ 19 414 passing / 0 failed / 0 skipped** across **≥ 1,220 files** (floor растёт точными +N) |
+| Vitest полный | `npm test -- --run` | **≥ 19 423 passing / 0 failed / 0 skipped** across **≥ 1,221 files** (floor растёт точными +N) |
 | ESLint | `npm run lint` | 0 errors, **0 warnings** |
 | TypeScript | `npm run type-check` | 0; без `any`/`as` |
 | max-lines | `npm run check:max-lines` | source ≤200, test ≤800 |
@@ -130,7 +131,7 @@ Allowed Change Surface = только файлы плана стори. Forbidde
 ## 6. Ревью-дисциплина и closeout-формат
 
 - Автор ≠ ревьюер; находки чинить или disposition с evidence; оба прохода ДО flip review→done и ДО коммита.
-- Closeout-артефакт: прецеденты `172-{1..10}-fe-*.md`; Status: done + PR/merge SHA; Tasks-чекбоксы; Dev Agent Record с `### Post-Nth-pass-review fixes (ДАТА)`; File List = точный diff; Change Log close-строка + `**Lessons:** (1)…(2)…(3)…` ≤120 симв; закрытые строки APPEND-ONLY.
+- Closeout-артефакт: прецеденты `172-{1..11}-fe-*.md`; Status: done + PR/merge SHA; Tasks-чекбоксы; Dev Agent Record с `### Post-Nth-pass-review fixes (ДАТА)`; File List = точный diff; Change Log close-строка + `**Lessons:** (1)…(2)…(3)…` ≤120 симв; закрытые строки APPEND-ONLY.
 - Attestation-дисциплина: числовые аттестации должны реконструироваться (e2e-суммы обёртки раскладывай: «13 = 8 spec + 2 orders + 3 auth»).
 - Реестры: sprint-status flip + registry SHIPPED/NEXT + **handoff §0 этого документа** + CLAUDE.md floor — в одном closeout-PR.
 
@@ -191,12 +192,12 @@ Allowed Change Surface = только файлы плана стори. Forbidde
 | 1 | Этот handoff | ВХОД-ТОЧКА / состояние / уроки |
 | 1a | `docs/ORCHESTRATOR-PROMPT-2026-08-28-V11-HANDOFF-SUPERVISOR-OMC.md` | **Операционный промпт контролёра** исполнения этого handoff через OMC-сабагентов (петля стори-за-стори, mid-flight правила, критерии успеха) |
 | 2 | `docs/ORCHESTRATOR-PROMPT-2026-08-26-V10-OMC-SUBAGENT-ORCHESTRATION.md` | Процесс-канон OMC-делегирования (§4 матрица, §5 роутинг, §6 конвейер, §7 гейты, §8 нормы, §9 ловушки) |
-| 3 | `.omx/plans/172.11-*.md` (затем 172.12+) | План стори — **authoritative** (branch/worktree/surface/валидация/cleanup) |
+| 3 | `.omx/plans/172.12-*.md` (затем 172.13+) | План стори — **authoritative** (branch/worktree/surface/валидация/cleanup) |
 | 4 | `CLAUDE.md` | Правила репо: baselines-таблица, двухпроходность, анти-паттерны, гейты |
 | 5 | `_bmad-output/planning-artifacts/epics-166-174-fe-shadcn-migration.md` | Канонические ID/AC стори |
 | 6 | `_bmad-output/implementation-artifacts/sprint-status.yaml` | Живые статусы (flip — твой) |
 | 7 | `_bmad-output/planning-artifacts/shadcn-migration-status-and-debt-registry.md` | Реестр + SHIPPED-строки + NEXT + carry-ins (§5 owner-заметки) |
-| 8 | Артефакты `172-{1..10}-fe-*.md`, `171-{7,8,9}-fe-*.md` | Эталоны closeout-формата и конвейеров |
+| 8 | Артефакты `172-{1..11}-fe-*.md`, `171-{7,8,9}-fe-*.md` | Эталоны closeout-формата и конвейеров |
 | 9 | `docs/HANDOFF-2026-08-26-LATE-…md` | Прежний вход (§0 синхронизирован; §1-§5 исторические) |
 | 10 | Гарды-эталоны | 172.1 (обa dashboard-гарда), 172.5 (каталог-21 + closure), 172.7 (born-clean + caption + padding-скоупинг) |
 
@@ -204,11 +205,11 @@ Allowed Change Surface = только файлы плана стори. Forbidde
 
 ## 11. Критерии успеха оркестратора
 
-1. Стори закрываются полным конвейером §3 без пропуска гейтов; floor монотонно растёт точными +N (текущий: **19 414** across **1,220 files**).
+1. Стори закрываются полным конвейером §3 без пропуска гейтов; floor монотонно растёт точными +N (текущий: **19 423** across **1,221 files**).
 2. Контекст survives: ни одной смерти на разведке (разведка = файл); делегирование по §3.1.
 3. Реестры (sprint + registry + этот handoff §0 + CLAUDE.md) отражают реальность после каждого merge; reconciliation — в том же closeout-PR.
 4. Ноль остаточных артефактов: 0/0/0 после каждой стори; primary чист; IN-SYNC.
 5. Уроки — в Lessons (≤120) каждого артефакта; новые КЛАССЫ ошибок — эскалируй в §7 этого handoff (APPEND-ONLY) docs-PR'ом.
 6. Делегационная гигиена: ревьюер ≠ автор; сабагенты не коммитят; каждый промпт самодостаточен (абсолютные пути, списки, канон).
 
-**Первое действие после прочтения: §1 bootstrap → сверить active branch/worktree/status Story 172.11 и координацию с её owner без создания дублирующего lane → §2 план 172.11 → конвейер §3 (verdict по §3.C → волны/правки → гард §5 → валидация §4 → ревью §6 с closure-аудитом → merge → closeout с обновлением §0 этого документа).**
+**Первое действие после прочтения: §1 bootstrap → сверить active branch/worktree/status Story 172.12 и координацию с её owner без создания дублирующего lane → §2 план 172.12 → конвейер §3 (verdict по §3.C → волны/правки → гард §5 → валидация §4 → ревью §6 с closure-аудитом → merge → closeout с обновлением §0 этого документа).**

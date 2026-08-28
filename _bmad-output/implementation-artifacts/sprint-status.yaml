@@ -1,5 +1,5 @@
 # generated: 2026-08-03
-# last_updated: 2026-08-28 — Story 172.11 shipped through feature PR #311 (merge 8b172445); Epic 172 is 11/17; Program NEXT = Story 172.12.
+# last_updated: 2026-08-28 — Story 172.11 shipped through feature PR #311 (merge 8b172445) and closeout PR #312 (merge 73174259); Epic 172 is 11/17; Program NEXT = Story 172.12.
 # project: frontend
 # project_key: NOKEY
 # tracking_system: file-system
@@ -37,7 +37,7 @@
 #   they are excluded from story and retrospective counts and must be documented with a no-story-ID note.
 
 generated: 2026-08-03 # refreshed after Epic 127 truth reconciliation and Epics 162-165 registration
-last_updated: 2026-08-28 # Story 172.11 shipped through feature PR #311 (merge 8b172445); Epic 172 is 11/17; Program NEXT = Story 172.12.
+last_updated: 2026-08-28 # Story 172.11 shipped through feature PR #311 (merge 8b172445) and closeout PR #312 (merge 73174259); Epic 172 is 11/17; Program NEXT = Story 172.12.
 project: frontend
 project_key: NOKEY
 tracking_system: file-system
