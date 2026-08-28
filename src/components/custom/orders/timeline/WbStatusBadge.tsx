@@ -84,7 +84,7 @@ export function WbStatusBadge({
             <div>
               <span className="font-medium">Категория:</span> {config.category}
             </div>
-            {isFinal && <div className="text-green-400 font-medium">Финальный статус</div>}
+            {isFinal && <div className="text-status-success font-medium">Финальный статус</div>}
           </div>
         </TooltipContent>
       </Tooltip>

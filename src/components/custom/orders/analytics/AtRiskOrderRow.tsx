@@ -9,6 +9,7 @@
  */
 
 import { XCircle } from 'lucide-react'
+import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
 import { formatDuration, getCountdownColor } from '@/lib/analytics-utils'
 import type { AtRiskOrder } from '@/types/orders-analytics'
@@ -27,17 +28,21 @@ export function AtRiskOrderRow({ order, onClick }: AtRiskOrderRowProps) {
   const riskTypeLabel = order.riskType === 'confirmation' ? 'Подтверждение' : 'Выполнение'
 
   return (
-    <button
+    <Button
       type="button"
+      variant="outline"
       className={cn(
-        'flex w-full items-center justify-between rounded-lg border p-3 text-left transition-colors',
-        'cursor-pointer hover:bg-muted/50 focus:outline-none focus:ring-2 focus:ring-primary/20',
-        isBreached && 'border-red-200 bg-red-50'
+        // Story 172.14-FE: raw button → ui Button (outline); h-auto/p-3/text-left
+        // override the h-9/px-4/whitespace-nowrap defaults that break the row
+        // layout (172.9 lesson (c)); hover:text-foreground neutralizes the
+        // outline variant hover shift the un-colored orderId never had (pass-1).
+        'flex h-auto w-full items-center justify-between whitespace-normal rounded-lg border p-3 text-left font-normal shadow-none transition-colors',
+        'cursor-pointer hover:bg-muted/50 hover:text-foreground focus-visible:ring-2 focus-visible:ring-primary/20',
+        isBreached && 'border-status-error/30 bg-status-error/10'
       )}
       onClick={() => onClick?.(order.orderId)}
       data-testid={`at-risk-order-row-${order.orderId}`}
       data-order-id={order.orderId}
-      role="button"
       aria-label={`Заказ ${order.orderId}, ${isBreached ? 'просрочен' : `${order.minutesRemaining} минут до нарушения`}`}
     >
       <div className="flex flex-col gap-0.5">
@@ -54,9 +59,9 @@ export function AtRiskOrderRow({ order, onClick }: AtRiskOrderRowProps) {
           {isBreached ? 'Просрочен' : formatDuration(order.minutesRemaining)}
         </span>
         {isBreached && (
-          <XCircle className="h-4 w-4 text-red-500" data-testid="breached-indicator" />
+          <XCircle className="h-4 w-4 text-status-error" data-testid="breached-indicator" />
         )}
       </div>
-    </button>
+    </Button>
   )
 }

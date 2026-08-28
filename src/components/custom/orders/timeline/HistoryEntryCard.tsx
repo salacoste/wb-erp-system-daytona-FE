@@ -86,7 +86,8 @@ function TimelineDot({ isWb, statusCode }: TimelineDotProps) {
     <div
       className={cn(
         'w-2.5 h-2.5 rounded-full border-2',
-        bgColor ?? (isWb ? 'bg-purple-500' : 'bg-blue-500')
+        // Story 172.14-FE (wave 2): WB=legacy purple→pending, local=internal system→neutral
+        bgColor ?? (isWb ? 'bg-status-pending' : 'bg-muted-foreground')
       )}
     />
   )

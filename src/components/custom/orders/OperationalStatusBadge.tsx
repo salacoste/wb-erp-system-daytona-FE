@@ -5,6 +5,9 @@
  * Colored badge rendering ORDER_OPERATIONAL_STATUS_LABELS[status].
  * Story O1 color map: NEW=blue, ASSEMBLED=amber, PACKED=orange,
  * SHIPPED=purple, DELIVERED=green, CANCELLED=red, RETURNED=gray.
+ * Story 172.14-FE semantic tokens: blue→information, purple→pending
+ * (theme's hue-277 token, wave 2), amber/orange→warning (orange keeps /15
+ * vs ASSEMBLED /10), green→success, red→error, gray→muted.
  *
  * Reference: docs/epics/epic-moysklad-order-management.md (Story O1)
  */
@@ -17,15 +20,15 @@ interface OperationalStatusBadgeProps {
   className?: string
 }
 
-/** Color config per operational status (Story O1 spec) */
+/** Color config per operational status (Story O1 spec, tokens per 172.14-FE) */
 const STATUS_COLOR_CONFIG: Record<OrderOperationalStatus, { color: string; bgColor: string }> = {
-  NEW: { color: 'text-blue-700', bgColor: 'bg-blue-50' },
-  ASSEMBLED: { color: 'text-amber-700', bgColor: 'bg-amber-50' },
-  PACKED: { color: 'text-orange-700', bgColor: 'bg-orange-50' },
-  SHIPPED: { color: 'text-purple-700', bgColor: 'bg-purple-50' },
-  DELIVERED: { color: 'text-green-700', bgColor: 'bg-green-50' },
-  CANCELLED: { color: 'text-red-700', bgColor: 'bg-red-50' },
-  RETURNED: { color: 'text-gray-700', bgColor: 'bg-gray-100' },
+  NEW: { color: 'text-status-information', bgColor: 'bg-status-information/10' },
+  ASSEMBLED: { color: 'text-status-warning', bgColor: 'bg-status-warning/10' },
+  PACKED: { color: 'text-status-warning', bgColor: 'bg-status-warning/15' },
+  SHIPPED: { color: 'text-status-pending', bgColor: 'bg-status-pending/10' },
+  DELIVERED: { color: 'text-status-success', bgColor: 'bg-status-success/10' },
+  CANCELLED: { color: 'text-status-error', bgColor: 'bg-status-error/10' },
+  RETURNED: { color: 'text-muted-foreground', bgColor: 'bg-muted' },
 }
 
 /**

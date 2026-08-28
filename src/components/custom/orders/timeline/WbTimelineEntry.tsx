@@ -47,7 +47,9 @@ export function WbTimelineEntry({
             {timestamp}
           </time>
           {isFinal && (
-            <span className="text-xs bg-green-100 text-green-800 px-1.5 py-0.5 rounded">Финал</span>
+            <span className="text-xs bg-status-success/10 text-status-success px-1.5 py-0.5 rounded">
+              Финал
+            </span>
           )}
         </div>
 

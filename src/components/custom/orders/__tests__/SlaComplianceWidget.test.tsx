@@ -88,7 +88,7 @@ describe('SlaComplianceWidget', () => {
       it('shows green check icon for excellent compliance', () => {
         renderWidget({ data: mockSlaMetricsExcellent })
         const icon = screen.getByTestId('confirmation-sla-status-icon')
-        expect(icon.querySelector('.text-green-600')).toBeInTheDocument()
+        expect(icon.querySelector('.text-status-success')).toBeInTheDocument()
       })
     })
 
@@ -110,7 +110,7 @@ describe('SlaComplianceWidget', () => {
       it('shows yellow warning icon for warning compliance', () => {
         renderWidget({ data: mockSlaMetricsWarning })
         const icon = screen.getByTestId('confirmation-sla-status-icon')
-        expect(icon.querySelector('.text-yellow-600')).toBeInTheDocument()
+        expect(icon.querySelector('.text-status-warning')).toBeInTheDocument()
       })
     })
 
@@ -132,7 +132,7 @@ describe('SlaComplianceWidget', () => {
       it('shows red alert icon for critical compliance', () => {
         renderWidget({ data: mockSlaMetricsCritical })
         const icon = screen.getByTestId('confirmation-sla-status-icon')
-        expect(icon.querySelector('.text-red-600')).toBeInTheDocument()
+        expect(icon.querySelector('.text-status-error')).toBeInTheDocument()
       })
     })
   })
@@ -156,13 +156,13 @@ describe('SlaComplianceWidget', () => {
       renderWidget({ data: mockSlaMetricsCritical })
       const badge = screen.getByTestId('breached-badge')
       // Red color is on the badge wrapper
-      expect(badge.className).toContain('text-red-600')
+      expect(badge.className).toContain('text-status-error')
     })
 
     it('shows red badge for breached orders', () => {
       renderWidget({ data: mockSlaMetricsCritical })
       const badge = screen.getByTestId('breached-badge')
-      expect(badge.className).toContain('bg-red-100')
+      expect(badge.className).toContain('bg-status-error/10')
     })
 
     it('shows "Нарушено: 0" with normal styling when no breaches', () => {

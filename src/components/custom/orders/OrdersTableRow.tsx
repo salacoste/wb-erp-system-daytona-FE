@@ -10,6 +10,7 @@
 'use client'
 
 import Link from 'next/link'
+import { Button } from '@/components/ui/button'
 import { TableRow, TableCell } from '@/components/ui/table'
 import { formatCurrency, formatDateTime } from '@/lib/utils'
 import { OrderStatusBadge } from './OrderStatusBadge'
@@ -73,9 +74,12 @@ export function OrdersTableRow({
       <TableCell className="font-medium">
         <div className="flex flex-col items-start gap-1">
           <span>{order.orderId}</span>
-          <button
+          {/* Story 172.14-FE: raw button → ui Button (link); h-auto/px-1 strip the
+              h-9/px-4 defaults so the row height is unchanged (172.9 lesson (c)) */}
+          <Button
             type="button"
-            className="inline-flex rounded px-1 text-xs font-medium text-primary underline-offset-4 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+            variant="link"
+            className="h-auto w-auto justify-start px-1 py-0 text-xs font-medium focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
             aria-label={`Открыть заказ ${order.orderId}`}
             onClick={e => {
               e.stopPropagation()
@@ -83,7 +87,7 @@ export function OrdersTableRow({
             }}
           >
             Открыть
-          </button>
+          </Button>
         </div>
       </TableCell>
 

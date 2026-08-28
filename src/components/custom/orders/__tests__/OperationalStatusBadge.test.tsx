@@ -28,16 +28,18 @@ describe('OperationalStatusBadge (Story O1)', () => {
 
   it('applies the spec color per status', () => {
     const { container: newEl } = render(<OperationalStatusBadge status="NEW" />)
-    expect(newEl.querySelector('[data-operational-status="NEW"]')).toHaveClass('text-blue-700')
+    expect(newEl.querySelector('[data-operational-status="NEW"]')).toHaveClass(
+      'text-status-information'
+    )
 
     const { container: deliveredEl } = render(<OperationalStatusBadge status="DELIVERED" />)
     expect(deliveredEl.querySelector('[data-operational-status="DELIVERED"]')).toHaveClass(
-      'text-green-700'
+      'text-status-success'
     )
 
     const { container: cancelledEl } = render(<OperationalStatusBadge status="CANCELLED" />)
     expect(cancelledEl.querySelector('[data-operational-status="CANCELLED"]')).toHaveClass(
-      'text-red-700'
+      'text-status-error'
     )
   })
 

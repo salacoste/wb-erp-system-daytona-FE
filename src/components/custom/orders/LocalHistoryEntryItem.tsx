@@ -50,7 +50,9 @@ export function CurrentStatusSection({ currentStatus }: CurrentStatusSectionProp
       <StatusBadge label={currentStatus.supplierStatus} variant="supplier" />
       <StatusBadge label={currentStatus.wbStatus} variant="wb" />
       {currentStatus.isFinal && (
-        <span className="text-xs bg-green-100 text-green-800 px-1.5 py-0.5 rounded">Финал</span>
+        <span className="text-xs bg-status-success/10 text-status-success px-1.5 py-0.5 rounded">
+          Финал
+        </span>
       )}
     </div>
   )
@@ -70,7 +72,8 @@ export function LocalHistoryTimelineEntry({ entry, isLast }: LocalHistoryTimelin
   return (
     <div className="flex gap-3 py-2">
       <div className="flex flex-col items-center">
-        <div className="w-2.5 h-2.5 rounded-full bg-blue-500" />
+        {/* Local-only view: dot = in-flight status, not source (172.14). */}
+        <div className="w-2.5 h-2.5 rounded-full bg-status-information" />
         {!isLast && <div className="w-0.5 flex-1 bg-border mt-1" />}
       </div>
       <div className="flex-1 min-w-0 pb-3">
@@ -130,7 +133,10 @@ export function StatusBadge({ label, variant }: StatusBadgeProps) {
     <span
       className={cn(
         'inline-flex items-center px-1.5 py-0.5 rounded text-xs font-medium',
-        variant === 'supplier' ? 'bg-blue-50 text-blue-700' : 'bg-purple-50 text-purple-700'
+        // Story 172.14-FE (wave 2): wb (legacy purple) → pending, supplier (local system) → muted
+        variant === 'supplier'
+          ? 'bg-muted text-muted-foreground'
+          : 'bg-status-pending/10 text-status-pending'
       )}
     >
       {label}

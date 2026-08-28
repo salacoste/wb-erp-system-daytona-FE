@@ -4,6 +4,7 @@
  */
 
 import { AlertTriangle } from 'lucide-react'
+import { Button } from '@/components/ui/button'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
 import { cn, formatCurrency } from '@/lib/utils'
 import { getWbStatusConfig } from '@/lib/wb-status-mapping'
@@ -61,14 +62,17 @@ export function SalePriceCell({ price, salePrice }: { price: number; salePrice: 
     <TooltipProvider>
       <Tooltip>
         <TooltipTrigger asChild>
-          <button
+          {/* Story 172.14-FE: raw button → ui Button (ghost); h-auto/px-0/font-normal
+              neutralize the h-9/px-4/font-medium defaults (172.9 lesson (c)) */}
+          <Button
             type="button"
+            variant="ghost"
             aria-label={anomalyMessage}
-            className="inline-flex items-center gap-1 focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-400 rounded"
+            className="h-auto w-auto gap-1 px-0 py-0 text-sm font-normal hover:bg-transparent hover:text-foreground focus-visible:ring-2 focus-visible:ring-status-warning [&_svg]:size-3.5"
           >
             {formatCurrency(salePrice)}
-            <AlertTriangle className="h-3.5 w-3.5 text-amber-500" aria-hidden="true" />
-          </button>
+            <AlertTriangle className="h-3.5 w-3.5 text-status-warning" aria-hidden="true" />
+          </Button>
         </TooltipTrigger>
         <TooltipContent>
           <p className="max-w-xs text-xs">{anomalyMessage}</p>

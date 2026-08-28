@@ -65,7 +65,7 @@ export class OrdersErrorBoundary extends Component<OrdersErrorBoundaryProps, Sta
       return (
         <Card className="mx-auto mt-8 max-w-md" data-testid="orders-error-boundary">
           <CardContent className="pt-6 text-center">
-            <AlertTriangle className="mx-auto mb-4 h-12 w-12 text-yellow-500" />
+            <AlertTriangle className="mx-auto mb-4 h-12 w-12 text-status-warning" />
             <h3 className="mb-2 text-lg font-semibold">Произошла ошибка</h3>
             <p className="mb-4 text-sm text-muted-foreground">
               Не удалось загрузить страницу заказов. Попробуйте обновить страницу.

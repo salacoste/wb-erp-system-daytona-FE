@@ -30,7 +30,13 @@ export function LocalTimelineEntry({
       {/* Timeline dot and line */}
       <div className="flex flex-col items-center">
         <div
-          className={cn('w-2.5 h-2.5 rounded-full', isFinalStatus ? 'bg-green-500' : 'bg-blue-500')}
+          className={cn(
+            'w-2.5 h-2.5 rounded-full',
+            // Local-only view: dots encode STATUS (final vs in-flight),
+            // not source — the pending/muted source split applies to the
+            // mixed Full-history timeline only (172.14 pass-1 review).
+            isFinalStatus ? 'bg-status-success' : 'bg-status-information'
+          )}
         />
         {!isLast && <div className="w-0.5 flex-1 bg-border mt-1" />}
       </div>
@@ -43,7 +49,9 @@ export function LocalTimelineEntry({
             {timestamp}
           </time>
           {isFinalStatus && (
-            <span className="text-xs bg-green-100 text-green-800 px-1.5 py-0.5 rounded">Финал</span>
+            <span className="text-xs bg-status-success/10 text-status-success px-1.5 py-0.5 rounded">
+              Финал
+            </span>
           )}
         </div>
 

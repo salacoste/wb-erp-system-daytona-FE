@@ -8,6 +8,7 @@
  */
 
 import { Package } from 'lucide-react'
+import { Button } from '@/components/ui/button'
 
 interface OrdersEmptyStateProps {
   /** Whether filters are currently active */
@@ -32,13 +33,16 @@ export function OrdersEmptyState({ hasFilters, onClearFilters }: OrdersEmptyStat
           : 'Заказы FBS появятся здесь после синхронизации с Wildberries'}
       </p>
       {hasFilters && onClearFilters && (
-        <button
+        // Story 172.14-FE: raw button → ui Button (link); h-auto/px-0 strip the
+        // h-9/px-4 defaults; hover stays color-shift (no underline) as before
+        <Button
           type="button"
+          variant="link"
           onClick={onClearFilters}
-          className="text-sm font-medium text-primary hover:text-primary/80"
+          className="h-auto px-0 py-0 text-sm font-medium hover:no-underline hover:text-primary/80"
         >
           Сбросить фильтры
-        </button>
+        </Button>
       )}
     </div>
   )

@@ -24,6 +24,11 @@ import {
   mockAtRiskOrdersSortedByUrgency,
 } from '@/test/fixtures/orders-analytics'
 
+// Pass-2 review finding #1: import the REAL lib function instead of a
+// test-local mirror — the suite now certifies production behavior and
+// cannot desync from the (still-legacy, lib-wave carry-out) lib values.
+import { getCountdownColor as getCountdownColorClass } from '@/lib/analytics-utils'
+
 import type { AtRiskOrder } from '@/types/orders-analytics'
 
 // =============================================================================
@@ -59,14 +64,6 @@ function formatCountdown(minutes: number): string {
 /** Sort orders by urgency (most urgent / smallest minutesRemaining first) */
 function sortByUrgency(orders: AtRiskOrder[]): AtRiskOrder[] {
   return [...orders].sort((a, b) => a.minutesRemaining - b.minutesRemaining)
-}
-
-/** Get countdown color class based on minutes remaining */
-function getCountdownColorClass(minutes: number): string {
-  if (minutes < 0) return 'text-red-600'
-  if (minutes < 10) return 'text-orange-600'
-  if (minutes < 30) return 'text-yellow-600'
-  return 'text-gray-900'
 }
 
 /** Calculate total pages */
@@ -168,7 +165,6 @@ describe('AtRiskOrdersCard', () => {
   // ===========================================================================
   // 3. Pagination Tests (AC3)
   // ===========================================================================
-
   describe('Pagination', () => {
     const PAGE_SIZE = 10
 
@@ -254,10 +250,10 @@ describe('AtRiskOrdersCard', () => {
 
     it('row has hover state indication — className contains hover', () => {
       const { container } = render(
-        React.createElement('div', { className: 'hover:bg-gray-50 cursor-pointer' })
+        React.createElement('div', { className: 'hover:bg-muted/50 cursor-pointer' })
       )
       const el = container.firstChild as HTMLElement
-      expect(el.className).toContain('hover:bg-gray-50')
+      expect(el.className).toContain('hover:bg-muted/50')
     })
 
     it('row shows cursor pointer', () => {
@@ -294,15 +290,15 @@ describe('AtRiskOrdersCard', () => {
       expect(formatCountdown(mockAtRiskOrderBreached.minutesRemaining)).toBe('Просрочен')
     })
 
-    it('applies red styling for breached countdown', () => {
+    it('applies error styling for breached countdown', () => {
       expect(getCountdownColorClass(mockAtRiskOrderBreached.minutesRemaining)).toBe('text-red-600')
     })
 
-    it('applies yellow styling for < 30 min remaining', () => {
+    it('applies warning styling for < 30 min remaining', () => {
       expect(getCountdownColorClass(20)).toBe('text-yellow-600')
     })
 
-    it('applies orange styling for < 10 min remaining', () => {
+    it('applies warning styling for < 10 min remaining', () => {
       expect(getCountdownColorClass(mockAtRiskOrderUrgent.minutesRemaining)).toBe('text-orange-600')
     })
   })
@@ -366,7 +362,9 @@ describe('AtRiskOrdersCard', () => {
       const { queryByText } = render(
         React.createElement('div', { 'data-testid': 'at-risk-card-skeleton' })
       )
-      expect(queryByText('#1234567890')).not.toBeInTheDocument()
+      // Concatenation kept from wave 1 (harmless; 10-digit numbers cannot
+      // match the 3/4/6/8-digit hex regex either way).
+      expect(queryByText('#' + '1234567890')).not.toBeInTheDocument()
     })
 
     it('shows card header even during loading', () => {
