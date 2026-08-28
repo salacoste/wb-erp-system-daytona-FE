@@ -97,7 +97,9 @@ caption naming model + tabular + p-6; guard-9 + caption role-тест + 6 re-pin
 **172.5 SHIPPED (2026-08-27, PR #287, merge `4e86272b`)** — FULL-lite owner: 24 файла, ~80 palette → 0, полный пол **19 327/0**; 3-проходное ревью с транзитивным closure-аудитом (28 файлов). Артефакт: `172-5-fe-migrate-single-product-cogs-management.md`.
 **172.6 SHIPPED (2026-08-27, PR #289, merge `42ac0686`)** — MINOR-GAP-plus owner: 9 файлов, 49 palette → 0, полный пол **19 334/0**, closure-аудит ревьюера чист. Артефакт: `172-6-fe-migrate-bulk-cogs-assignment.md`.
 **172.7 SHIPPED (2026-08-27, PR #293, merge `da3e9078`)** — MINOR-GAP born-clean: caption-контракт + гард, полный пол **19 343/0**. Артефакт: `172-7-fe-migrate-cogs-history.md`.
-**NEXT = 172.8 price calculator** (эпик 172, 10 стори; owner: 172.14; планы `.omx/plans/172.{8..17}-*.md`).
+**172.8 SHIPPED (2026-08-28, feature PR #301 merge `08191dae` + reconciliation PR #303 merge `0b4c9deb`)** — MINOR-GAP: price calculator, target 70/1759, composite full **19 383/0**, lint/tsc/build/static-E2E-guards green, 2 ревью-прохода, dynamic-Playwright gap явный; cleanup обеих веток пройден. Артефакт: `172-8-fe-migrate-the-cogs-price-calculator.md`.
+**172.9 SHIPPED (2026-08-28, PR #305, merge `feb35cfd`)** — MINOR-GAP: communications workspace, 11 файлов (+591/−18): 15 palette → 0 (status-success/-error valence, destructive writeback ×5 + unread дот/каунтер, primary seller-пузырь, status-warning звёзды), raw-button → ghost Button (px-0); гард 11 (каталог 18 per-file); **e2e-пакет СОЗДАН** (fixture точные пути + спека 6); полный пол **19 394/0** (+11 exact от 19 383); 1×opus APPROVE-WITH-NOTES, closure-аудит 64 файла чист. Артефакт: `172-9-fe-migrate-communications-workspace.md`.
+**NEXT = 172.10 finances & documents** (эпик 172, 8 остаточных стори 172.10-172.17; owner: 172.14; планы `.omx/plans/172.{10..17}-*.md`).
 **Carry-out → 174.2 owner (route-ledger handoff из 171.9):** (1) удалить поле className из
 STATUS_BADGE_CONFIG после миграции ModelListSection на собственный overlay; (2) переписать
 stale-комментарий model-list-helpers.ts:24-26 («subroutes 171.7/171.9» — остался только
