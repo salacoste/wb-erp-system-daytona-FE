@@ -1,6 +1,6 @@
 # Shadcn Full-UI Migration — Status & Debt Registry
 
-> **Snapshot date: 2026-08-28** (Epics 166-171 are complete; Story 169.12 contract closeout merged through PR #299; Stories 172.8 and 172.9 shipped through PRs #301/#303/#304 and #305/#306; Program NEXT = 172.10; Stories 172.1-172.9 are done). Канонический статус-реестр программы миграции
+> **Snapshot date: 2026-08-28** (Epics 166-171 are complete; Story 169.12 contract closeout merged through PR #299; Story 172.10 shipped through feature PR #308 and closeout PR #309; Program NEXT = 172.11; Stories 172.1-172.10 are done). Канонический статус-реестр программы миграции
 > для BMAD-артефактов. Живая история — sprint-status.yaml (по-сторийно) и ledger
 > BE-репо (docs/tech-debt/TECH-DEBT-2026-08-SESSION.md, Addendum-4 cont.1-25);
 > этот файл = консолидированный срез «что сделано / что осталось / все долги».
@@ -16,15 +16,16 @@
 | 169-FE operational analytics | 15              | **15** | —                                 | **CLOSED** (169.14 backend prerequisite, 169.15 shared frontend boundary, and 169.12 closeout completed)                         |
 | 170-FE                       | 7               | **7**  | —                                 | **CLOSED** (Stories 170.1-170.7 shipped through PRs #237-#250)                                                                  |
 | 171-FE                       | 9               | **9**  | —                                 | **CLOSED** (Stories 171.1-171.9 shipped through PRs #252, #254, #256, #258, #260, #262, #266, #268, and #270)                   |
-| 172-FE                       | 17              | **9**  | 172.10-17                         | IN PROGRESS (172.1-172.7 through #278/#280/#282/#285/#287/#289/#293; 172.8 through #301/#303/#304; 172.9 through #305/#306)    |
+| 172-FE                       | 17              | **10** | 172.11-17                         | IN PROGRESS (172.1-172.9 through #278-#306; 172.10 through feature #308 + closeout #309)                                      |
 | 173-FE                       | 13              | 0      | 173.1-13                          | backlog                                                                                                                         |
 | 174-FE консолидация          | 5               | 0      | 174.1-5                           | финал (СТРОГО после 166-173; 174.2 design-system/source-boundary/contrast; 174.3 visual/a11y; 174.4 functional/backend)         |
 
-**Story readiness: 68 of 94 canonical Stories complete.** Story 169.11 shipped through PRs #218/#219;
+**Story readiness: 69 of 94 canonical Stories complete.** Story 169.11 shipped through PRs #218/#219;
 Story 169.13 shipped independently through PR #232. The approved Correct Course prerequisites 169.14 and
 169.15 completed before the bounded Story 169.12 contract closeout merged through PR #299, closing Epic 169
-at 15/15. Story 172.8 shipped through PRs #301/#303/#304 and Story 172.9 through PRs #305/#306, bringing
-Epic 172 to 9/17 and the verified Vitest floor to **19 394/0**.
+at 15/15. Story 172.8 shipped through PRs #301/#303/#304, Story 172.9 through PRs #305/#306, and Story
+172.10 through feature PR #308 plus closeout PR #309, bringing Epic 172 to 10/17 and the verified Vitest
+floor to **19 414/0** across 1,220 files.
 
 169.13 SHIPPED 2026-08-25 (последний backlog-роут эпика; 12/15): preface #231 (`95522187` — unknown enums + nullables, opus APPROVE) + #232 (`2778d43e`; 26 файлов, owned 58→73, **e2e на ветке 33/1↓/0**, 2×opus);
 полный пол **19 055/0**. Исторический срез на момент 169.13: оставались 169.14 (BE) → 169.15 (shared FE) → 169.12-closeout. Carry-out: e2e-flake
@@ -98,7 +99,7 @@ caption naming model + tabular + p-6; guard-9 + caption role-тест + 6 re-pin
 **172.7 SHIPPED (2026-08-27, PR #293, merge `da3e9078`)** — MINOR-GAP born-clean: caption-контракт + гард, полный пол **19 343/0**. Артефакт: `172-7-fe-migrate-cogs-history.md`.
 **172.8 SHIPPED (2026-08-28, feature PR #301 merge `08191dae` + reconciliation PR #303 merge `0b4c9deb`)** — MINOR-GAP: price calculator, target 70/1759, composite full **19 383/0**, lint/tsc/build/static-E2E-guards green, 2 ревью-прохода, dynamic-Playwright gap явный; cleanup обеих веток пройден. Артефакт: `172-8-fe-migrate-the-cogs-price-calculator.md`.
 **172.9 SHIPPED (2026-08-28, PR #305, merge `feb35cfd`)** — MINOR-GAP: communications workspace, 11 файлов (+591/−18): 15 palette → 0 (status-success/-error valence, destructive writeback ×5 + unread дот/каунтер, primary seller-пузырь, status-warning звёзды), raw-button → ghost Button (px-0); гард 11 (каталог 18 per-file); **e2e-пакет СОЗДАН** (fixture точные пути + спека 6); полный пол **19 394/0** (+11 exact от 19 383); 1×opus APPROVE-WITH-NOTES, closure-аудит 64 файла чист. Артефакт: `172-9-fe-migrate-communications-workspace.md`.
-**172.10 SHIPPED (2026-08-28, PR #308, merge `eb09f735`)** — born-clean + абсорбированная параллельная дельта, 10 файлов (+558/−105): caption RTC-контракт, download-a11y (pending/success, visible failure, сброс stale-фидбека при смене формата), categoryState, filtered-empty+reset, error.tsx boundary, DocumentsBody-extraction; гард 10 (каталог 8 exact-array); **e2e-спека ПОЧИНЕНА** (glob→RegExp — end-anchored globs молча промахивались по query-URL, bisect-доказано pre-existing; strict-mode exact); полный пол **19 414/0/1220** (+20 exact от 19 394); 3 ревью-прохода; mid-flight коллизия разрешена владельцем (абсорбция + полный повторный конвейер). Артефакт: `172-10-fe-migrate-finances-and-documents.md`.
+**172.10 SHIPPED (2026-08-28, feature PR #308 merge `eb09f735` + closeout PR #309 merge `e6d05de4`)** — born-clean + абсорбированная параллельная дельта, 10 файлов (+558/−105): caption RTC-контракт, download-a11y (pending/success, visible failure, сброс stale-фидбека при смене формата), categoryState, filtered-empty+reset, error.tsx boundary, DocumentsBody-extraction; гард 10 (каталог 8 exact-array); **e2e-спека ПОЧИНЕНА** (glob→RegExp — end-anchored globs молча промахивались по query-URL, bisect-доказано pre-existing; strict-mode exact); полный пол **19 414/0/1220** (+20 exact от 19 394); e2e **12 passed + 1 intentional skip**; 3 ревью-прохода; mid-flight коллизия разрешена владельцем (абсорбция + полный повторный конвейер). Standard Turbopack build и live visual/axe/keyboard/real-SR не заявлены как pass: worktree-symlink gap + carry-out 174.3. Route-ledger status reconciliation для всех 76 routes → 174.1. Артефакт: `172-10-fe-migrate-finances-and-documents.md`.
 **NEXT = 172.11 monitor route** (эпик 172, 7 остаточных стори 172.11-172.17; owner: 172.14; планы `.omx/plans/172.{11..17}-*.md`).
 **Carry-out → 174.2 owner (route-ledger handoff из 171.9):** (1) удалить поле className из
 STATUS_BADGE_CONFIG после миграции ModelListSection на собственный overlay; (2) переписать
@@ -114,7 +115,7 @@ post-close #222 (гнилой пин от стандартизации 1804aa8f;
 маршрутная миграция #227 (`52f7f506`; 27 файлов, owned 119→147, **e2e на ветке 6/1↓/0**, 2×opus FRESH);
 CSV-security #223 (OWASP defang + trade-off documented); чужой WIP реконсилирован #225 (cogs-split +
 rateLimit + csv-dedupe); Correct Course #228 (`4d0ff685`) ввёл 169.14/169.15 + bounded 169.12-closeout.
-**Пол vitest 19 394/0** (актуальный floor after Story 172.9); lint 0/0; tsc 0. Browser/theme/visual evidence — carry-out 174.3;
+**Пол vitest 19 414/0** (актуальный floor after Story 172.10); lint 0/0; tsc 0. Browser/theme/visual evidence — carry-out 174.3;
 credentialed functional E2E — carry-out 174.4. Plan-status аудит 2026-08-24: 167.5/167.8/167.9 → executed
 (были review/ready-for-dev/backlog при done-строках).
 

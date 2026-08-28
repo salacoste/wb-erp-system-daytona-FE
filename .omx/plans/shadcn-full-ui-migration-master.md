@@ -331,13 +331,14 @@ Story identity is the numeric `Epic.Story` ID, not the descriptive sprint-status
 > Живые по-сторийные статусы: `_bmad-output/implementation-artifacts/sprint-status.yaml`.
 
 - **Epics CLOSED**: 166-FE (foundation), 167-FE (AppShell/auth, freeze-8), 168-FE (analytics core, 11/11), 169-FE (operational analytics, 15/15), 170-FE (marketing and marketplace analytics, 7/7), 171-FE (models, 9/9).
-- **Canonical Story readiness: 68/94**; **169-FE CLOSED: 15/15** (final Story 169.12 route contract closeout merged in PR #299 as `3ff35bf6` and cleaned); **170-FE CLOSED: 7/7**; **171-FE CLOSED: 9/9** (Stories 171.1-171.9 shipped through PRs #252, #254, #256, #258, #260, #262, #266, #268, and #270); **172-FE IN PROGRESS: 9/17** through Story 172.9 feature PR #305 (`feb35cfd`) and closeout PR #306 (`8036da81`), both merged and cleaned.
-- **Program NEXT = Story 172.10**.
-- **Remaining**: 172.10-17 (172.14 owner prerequisite for 172.15-172.16) → 173.1-13 (173.8/173.12 owner) → 174.1-5 (консолидация;
+- **Canonical Story readiness: 69/94**; **169-FE CLOSED: 15/15** (final Story 169.12 route contract closeout merged in PR #299 as `3ff35bf6` and cleaned); **170-FE CLOSED: 7/7**; **171-FE CLOSED: 9/9** (Stories 171.1-171.9 shipped through PRs #252, #254, #256, #258, #260, #262, #266, #268, and #270); **172-FE IN PROGRESS: 10/17** through Story 172.10 feature commit `e1406cd2`, merged in PR #308 as `eb09f735`, and closeout PR #309, merged as `e6d05de4`; the exact feature/closeout branches and Story 172.10 temporary worktree are absent after cleanup.
+- **Program NEXT = Story 172.11**.
+- **Remaining**: 172.11-17 (172.14 owner prerequisite for 172.15-172.16) → 173.1-13 (173.8/173.12 owner) → 174.1-5 (консолидация;
   174.2 — применимые design-system/source-boundary/contrast долги; 174.3 — browser/theme/axe/keyboard/visual;
   174.4 — functional/local-backend regression; trigger-specific behavior/API debts сохраняют registry-owner).
-- Пол: FE vitest **19 394/0** after Story 172.9; communications target **84/84**, dedicated E2E **11 passed / 1 intentional skip** across two post-fix runs, and production build **70/70** static pages. Story 172.8 dynamic browser execution remains an explicit
+- Пол: FE vitest **19 414/0** across **1,220 files** after Story 172.10; finance target **46/46**, dedicated E2E wrapper **12 passed / 1 intentional manager-setup skip** (3 setup + 2 orders + 7 finances passed), and `npm run build -- --webpack` completed **70/70** static pages. The standard Turbopack build remained an explicit temporary-worktree infrastructure gap because `node_modules` resolved outside Turbopack's filesystem root; it was not reported as a pass. Story 172.10 live axe, light/dark, width-matrix, 200% zoom, keyboard/focus, reduced-motion, and real-screen-reader evidence remains an explicit
   174.3 carry-out; credentialed functional E2E, auth/session/error-recovery, and local-backend critical
   journeys remain explicit 174.4 carry-outs.
+- Route-ledger row statuses remain globally `planned` for already-shipped Stories; Story 172.10 does not create a one-row exception. Reconciliation of all 76 status transitions and linked completion evidence is an explicit Story 174.1 audit obligation.
 - Полный долг-реестр + параллельные треки (W4 Epic-121 P3 ready-to-implement, W5 Epic-128 owner-акты,
   W7 финанс W34 авто-пулл Пн 24.08) — в registry-файле выше и BE handoff-цепочке.
