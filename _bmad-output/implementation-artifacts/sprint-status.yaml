@@ -1,5 +1,5 @@
 # generated: 2026-08-03
-# last_updated: 2026-08-28 — Story 172.10 shipped through feature PR #308 (merge eb09f735) and closeout PR #309 (merge e6d05de4); Epic 172 is 10/17; Program NEXT = Story 172.11.
+# last_updated: 2026-08-28 — Story 172.11 shipped through feature PR #311 (merge 8b172445); Epic 172 is 11/17; Program NEXT = Story 172.12.
 # project: frontend
 # project_key: NOKEY
 # tracking_system: file-system
@@ -37,7 +37,7 @@
 #   they are excluded from story and retrospective counts and must be documented with a no-story-ID note.
 
 generated: 2026-08-03 # refreshed after Epic 127 truth reconciliation and Epics 162-165 registration
-last_updated: 2026-08-28 # Story 172.10 shipped through feature PR #308 (merge eb09f735) and closeout PR #309 (merge e6d05de4); Epic 172 is 10/17; Program NEXT = Story 172.11.
+last_updated: 2026-08-28 # Story 172.11 shipped through feature PR #311 (merge 8b172445); Epic 172 is 11/17; Program NEXT = Story 172.12.
 project: frontend
 project_key: NOKEY
 tracking_system: file-system
@@ -828,7 +828,7 @@ development_status:
   172-8-fe-migrate-the-cogs-price-calculator: done # Feature PR #301 (9adf7d33, merge 08191dae) and reconciliation PR #303 (de4653ce, merge 0b4c9deb) merged; both exact branch/worktree cleanups passed; target 70/1759, composite full 19383/0, lint/tsc/build/static E2E guards green, 2 review passes; dynamic Playwright gap explicit.
   172-9-fe-migrate-communications-workspace: done # PR #305 (2ec7c7c5, merge feb35cfd): MINOR-GAP; 11 files (8M prod +591/-18: 15 palette->0 status/destructive/primary/warning tokens, raw-button->ghost Button px-0) + guard(11: catalog 18 per-file, no-palette/no-hex, contract pins) + e2e fixture+spec(6) created; targeted 84/84 (73 base +11 guard); full 19394/0/1218 (floor 19383, +11 exact); lint 0/0, tsc 0, max-lines OK, build --webpack 0 x2; e2e 11+1skip (3 setup+2 orders+6 communications) x2 post AC4-race split; 1xopus APPROVE-WITH-NOTES (closure 64 files clean; 4 fixed, 1 dispositioned); visual light+dark; cleanup 0/0/0.
   172-10-fe-migrate-finances-and-documents: done # Feature PR #308 (e1406cd2, merge eb09f735) + closeout PR #309 (de5519db, merge e6d05de4): born-clean + absorbed parallel-session delta; 10 files (6M+4A) +558/-105: caption RTC (171.9 canon), download a11y (pending/success announcements, visible failure, aria-hidden icons, mutation.reset on format switch), categoryState loading/error, filtered-empty + reset, error.tsx boundary; DocumentsBody extraction (max-lines); guard 10 (catalog 8 exact-array, no-palette/no-hex, contract pins); e2e REPAIRED (bisect-proven pre-existing on main: end-anchored globs missed query URLs -> RegExp; strict-mode exact:true) + filtered-empty test; targeted 6/46; full 19414/0/1220 (floor 19394, +20 exact); lint 0/0, tsc 0, max-lines OK, Prettier OK, build --webpack 0; standard Turbopack worktree-symlink gap explicit; e2e 12 passed +1 intentional manager-setup skip (3 setup+2 orders+7 finances passed); 3 review passes (MEDIUM+2 LOW applied, 4 LOW/NIT dispositioned); source/component/E2E DOM semantics recorded, live visual/axe/keyboard -> 174.3; feature + closeout cleanup 0/0/0; route-ledger status reconciliation -> 174.1.
-  172-11-fe-migrate-the-monitor-route: backlog
+  172-11-fe-migrate-the-monitor-route: done # PR #311 (d39ad37c, merge 8b172445): MINOR-GAP; 14 files (13M+1A guard) +213/-52: 18 palette + 9 hex -> semantic tokens (status valence, chart-1/positive/negative/grid, muted-foreground, destructive, foreground); gauge band hex->color CSS-var + style-prop stroke; weekly chart recharts var() idiom; test re-pins; guard 9 (catalog 14 exact-array BFS-verified, no-palette/no-hex self-tested, band/banner/valence/chart pins, mutation-tested); e2e legend assert REPAIRED (BD-22 rename #41 strict-mode, bisect+archaeology pre-existing proof; exact fix); targeted 21/155 (base 20/146); full 19423/0/1221 (floor 19414, +9 exact); lint 0/0, tsc 0, build 0; e2e repair-green + sidebar-nav flake disposition (clean-main bisect + warm retry 4/0); 1xopus APPROVE-WITH-NOTES; carry-out STATUS_COLORS (src/lib, -> 172.12); cleanup 0/0/0.
   172-12-fe-migrate-the-monitoring-operations-console: backlog
   172-13-fe-migrate-the-moysklad-integration-workspace: backlog
   172-14-fe-migrate-the-orders-overview: backlog
