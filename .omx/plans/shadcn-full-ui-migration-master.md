@@ -331,9 +331,9 @@ Story identity is the numeric `Epic.Story` ID, not the descriptive sprint-status
 > Живые по-сторийные статусы: `_bmad-output/implementation-artifacts/sprint-status.yaml`.
 
 - **Epics CLOSED**: 166-FE (foundation), 167-FE (AppShell/auth, freeze-8), 168-FE (analytics core, 11/11), 169-FE (operational analytics, 15/15), 170-FE (marketing and marketplace analytics, 7/7), 171-FE (models, 9/9).
-- **Canonical Story readiness: 66/94**; **169-FE CLOSED: 15/15** (final Story 169.12 route contract closeout merged in PR #299 as `3ff35bf6` and cleaned); **170-FE CLOSED: 7/7**; **171-FE CLOSED: 9/9** (Stories 171.1-171.9 shipped through PRs #252, #254, #256, #258, #260, #262, #266, #268, and #270); **172-FE IN PROGRESS: 7/17** through PR #294. Story 172.8 feature PR #301 merged as `08191dae` and its feature branch/worktree cleanup passed; canonical reconciliation PR #303 remains in review.
-- **Program NEXT = Story 172.8 lifecycle closeout**, then Story 172.9.
-- **Remaining**: Story 172.8 reconciliation merge/cleanup/final lifecycle record → 172.9-17 (172.14 owner prerequisite for 172.15-172.16) → 173.1-13 (173.8/173.12 owner) → 174.1-5 (консолидация;
+- **Canonical Story readiness: 67/94**; **169-FE CLOSED: 15/15** (final Story 169.12 route contract closeout merged in PR #299 as `3ff35bf6` and cleaned); **170-FE CLOSED: 7/7**; **171-FE CLOSED: 9/9** (Stories 171.1-171.9 shipped through PRs #252, #254, #256, #258, #260, #262, #266, #268, and #270); **172-FE IN PROGRESS: 8/17** through Story 172.8 feature PR #301 (`08191dae`) and canonical reconciliation PR #303 (`0b4c9deb`), both merged and cleaned.
+- **Program NEXT = Story 172.9**.
+- **Remaining**: 172.9-17 (172.14 owner prerequisite for 172.15-172.16) → 173.1-13 (173.8/173.12 owner) → 174.1-5 (консолидация;
   174.2 — применимые design-system/source-boundary/contrast долги; 174.3 — browser/theme/axe/keyboard/visual;
   174.4 — functional/local-backend regression; trigger-specific behavior/API debts сохраняют registry-owner).
 - Пол: FE vitest **19 383/0** after Story 172.8, covered by the four-worker run plus exact isolated reruns for two resource-starved files and the sandbox-denied listener suite; calculator target **70 files / 1 759 tests**; production build: **70/70** static pages. Dynamic credentialed browser execution remains an explicit

@@ -1,6 +1,6 @@
 # Story 172.8-FE: Migrate the COGS Price Calculator
 
-Status: review — feature commit `9adf7d33` merged through PR #301 as `08191dae` and feature cleanup passed; canonical reconciliation PR #303 remains pending merge and exact cleanup.
+Status: done — feature PR #301 merged as `08191dae` and feature cleanup passed; canonical reconciliation PR #303 merged as `0b4c9deb` and its exact branch/worktree cleanup passed.
 
 ## Story
 
@@ -29,7 +29,7 @@ Per the canonical plan:
 - [x] Task 7: complete two independent fresh-context adversarial reviews plus independent verification; resolve every accepted material finding and rerun affected proof.
 - [x] Task 8: commit, push the feature branch, open and merge the PR, then remove the feature branch, exact temporary worktree, and lifecycle records and prune worktrees.
 - [x] Task 9a: prepare and validate the post-feature canonical Story/master/Epic/sprint updates in separately owned reconciliation PR #303.
-- [ ] Task 9b: merge reconciliation PR #303, remove its remote/local branch and exact temporary worktree, prune, then record the completed lifecycle in a final close record.
+- [x] Task 9b: merge reconciliation PR #303, remove its remote/local branch and exact temporary worktree, prune, then record the completed lifecycle in this final close record.
 
 ## Dev Notes
 
@@ -249,8 +249,9 @@ Backend code/contracts, foundation tokens, AppShell/navigation, dependencies, re
 - Feature PR: [#301](https://github.com/salacoste/wb-erp-system-daytona-FE/pull/301), merged as `08191dae387b9f130ac291ba48e48b2047d63a34`.
 - Primary `main` was clean and fast-forwarded to `origin/main` at `08191dae`; feature merge ancestry was proven.
 - `cdx/epic-172-story-8-price-calculator`, its remote branch, and `/private/tmp/wb-repricer-fe-172-8-price-calculator` are absent; `git worktree prune` completed.
-- Canonical reconciliation uses `cdx/epic-172-story-8-reconciliation` and `/private/tmp/wb-repricer-fe-172-8-reconciliation` from merged base `08191dae`.
-- Canonical reconciliation commit `18de839a4b23a96b3db4308fb4413968cf5cfe87` was rebased onto concurrent merged `main` `a2bfa472` and published in [PR #303](https://github.com/salacoste/wb-erp-system-daytona-FE/pull/303); merge and cleanup remain open.
+- Canonical reconciliation used `cdx/epic-172-story-8-reconciliation` and `/private/tmp/wb-repricer-fe-172-8-reconciliation`; its published commits were based on updated `main` `a2bfa472`.
+- Canonical reconciliation commits `18de839a4b23a96b3db4308fb4413968cf5cfe87` and `de4653ce5b50cd408fc1a54fc3cdeec55aad2ad5` were rebased onto concurrent merged `main` `a2bfa472`, independently verified, and merged through [PR #303](https://github.com/salacoste/wb-erp-system-daytona-FE/pull/303) as `0b4c9deb05725ceb5eda148f180c0b59432024a1`.
+- Primary `main` was clean and fast-forwarded to `0b4c9deb`; reconciliation merge ancestry was proven. The remote/local `cdx/epic-172-story-8-reconciliation` branch and `/private/tmp/wb-repricer-fe-172-8-reconciliation` are absent, and worktrees were pruned.
 
 ### Completion Notes List
 
@@ -355,3 +356,4 @@ Backend code/contracts, foundation tokens, AppShell/navigation, dependencies, re
 | 2026-08-27 | Story opened from clean base `35503067`; Epic 166, Story 167.1, and Story 172.5 ancestry verified; targeted baseline passed at 66 files / 1743 tests; initial legacy-presentation inventory recorded at 294 matches / 58 files. Status: backlog → in-progress. |
 | 2026-08-28 | Implementation complete for the feature branch: one semantic responsive calculator tree, zero raw palette debt in the 71-file mutable manifest, formula/business files byte-preserved, deterministic Story E2E contract, and two fresh-context review passes with all accepted code/test findings resolved. **Lessons:** (1) Story-172.8-FE color-token names must be checked at computed-value level because aliases can collapse chart meaning. (2) Route evidence must inspect the real scrolling container, not a body hidden by AppShell overflow rules. (3) Rate-limited reference APIs require deterministic presentation fixtures while live contract smoke stays separate. Status: in-progress → review. |
 | 2026-08-28 | Feature PR #301 merged as `08191dae`; exact feature cleanup passed; canonical reconciliation PR #303 was prepared from updated `main`. Status remains review pending reconciliation merge and cleanup. |
+| 2026-08-28 | Canonical reconciliation PR #303 merged as `0b4c9deb`; exact remote/local branch and worktree cleanup passed, and the final lifecycle record advanced the program to Story 172.9. **Lessons:** (1) Story-172.8-FE kept feature scope exact by reconciling lifecycle docs only after merge. (2) Composite regressions must name exact environmental reruns instead of claiming one monolithic pass. (3) Cleanup proof pairs merge ancestry with exact branch and worktree absence. Status: review → done. |
