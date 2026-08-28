@@ -43,7 +43,7 @@ export function MoyskladOverview() {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-amber-600">
+            <div className="text-2xl font-bold text-status-warning">
               {pendingView.isLoading ? <Skeleton className="h-8 w-12" /> : (pending ?? 0)}
             </div>
           </CardContent>

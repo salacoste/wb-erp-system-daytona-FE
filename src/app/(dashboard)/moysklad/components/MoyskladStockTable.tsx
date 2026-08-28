@@ -70,7 +70,7 @@ export function MoyskladStockTable() {
       {stock.isError && (
         <div
           role="alert"
-          className="flex items-start gap-2 rounded-md border border-amber-200 bg-amber-50 p-3 text-sm text-amber-800"
+          className="flex items-start gap-2 rounded-md border border-status-warning/40 bg-status-warning/10 p-3 text-sm text-status-warning"
         >
           <AlertTriangle className="h-4 w-4 mt-0.5 flex-shrink-0" />
           <span>Не удалось загрузить сток за эту дату. Проверьте дату и повторите попытку.</span>
