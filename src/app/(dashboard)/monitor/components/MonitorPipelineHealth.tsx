@@ -62,7 +62,7 @@ export function MonitorPipelineHealth({ pipelines }: MonitorPipelineHealthProps)
 
         {/* Row B — Unhealthy pipelines or all-healthy empty state */}
         {unhealthy.length === 0 ? (
-          <div className="flex items-center gap-2 text-green-600">
+          <div className="flex items-center gap-2 text-status-success">
             <CheckCircle2 className="h-4 w-4 shrink-0" />
             <span className="text-sm font-medium">Все пайплайны работают исправно</span>
           </div>
@@ -110,7 +110,7 @@ function PipelineRow({ pipeline }: { pipeline: GridPipeline }) {
         {isErrorRateOutOfRange && (
           <Tooltip>
             <TooltipTrigger asChild>
-              <span className="inline-flex items-center gap-0.5 text-amber-600 cursor-help">
+              <span className="inline-flex items-center gap-0.5 text-status-warning cursor-help">
                 <AlertTriangle className="h-3 w-3" aria-hidden="true" />
               </span>
             </TooltipTrigger>
@@ -124,7 +124,7 @@ function PipelineRow({ pipeline }: { pipeline: GridPipeline }) {
             <TooltipTrigger asChild>
               <Badge
                 variant="outline"
-                className="border-amber-500 text-amber-700 text-xs px-1.5 cursor-help"
+                className="border-status-warning/50 text-status-warning text-xs px-1.5 cursor-help"
               >
                 <AlertTriangle className="h-3 w-3 mr-0.5" />
                 {formatPercentageInt(Math.min(errorRate, 1) * 100)}

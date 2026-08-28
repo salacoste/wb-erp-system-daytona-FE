@@ -75,7 +75,7 @@ export function MonitorPageContent() {
     <div className="space-y-6" data-testid="monitor-page">
       {/* Header */}
       <div>
-        <h1 className="text-3xl font-bold tracking-tight text-gray-900">Монитор</h1>
+        <h1 className="text-3xl font-bold tracking-tight text-foreground">Монитор</h1>
         <p className="text-muted-foreground mt-1">
           Обзор состояния кабинета и ключевые метрики за периоды
         </p>
@@ -112,7 +112,7 @@ export function MonitorPageContent() {
         <>
           {/* Inline refetch-error chip when we have cached data but the refetch failed */}
           {isError && (
-            <div className="rounded-md border border-amber-200 bg-amber-50 px-4 py-2 text-sm text-amber-800 flex items-center justify-between">
+            <div className="rounded-md border border-status-warning/40 bg-status-warning/10 px-4 py-2 text-sm text-status-warning flex items-center justify-between">
               <span>Не удалось обновить. Показаны кэшированные данные.</span>
               <Button variant="ghost" size="sm" onClick={() => void refetch()}>
                 Повторить
@@ -125,7 +125,7 @@ export function MonitorPageContent() {
           {/* Story 92.4: weekly chart — independent loading/error state */}
           {dailyQuery.isLoading && !dailyQuery.data && <Skeleton className="h-72 w-full" />}
           {dailyQuery.isError && !dailyQuery.data && (
-            <div className="rounded-md border border-red-200 bg-red-50 p-4 text-sm text-red-700 flex items-center justify-between">
+            <div className="rounded-md border border-destructive/40 bg-destructive/10 p-4 text-sm text-destructive flex items-center justify-between">
               <span>Не удалось загрузить график за 7 дней.</span>
               <Button variant="ghost" size="sm" onClick={() => void dailyQuery.refetch()}>
                 Повторить
@@ -142,7 +142,7 @@ export function MonitorPageContent() {
             <Skeleton className="h-32 w-full" data-testid="monitor-pipeline-skeleton" />
           )}
           {pipelineQuery.isError && !pipelineQuery.data && (
-            <div className="rounded-md border border-amber-200 bg-amber-50 p-4 text-sm text-amber-800 flex items-center justify-between">
+            <div className="rounded-md border border-status-warning/40 bg-status-warning/10 p-4 text-sm text-status-warning flex items-center justify-between">
               <span>Не удалось загрузить состояние пайплайнов.</span>
               <Button variant="ghost" size="sm" onClick={() => void pipelineQuery.refetch()}>
                 Повторить

@@ -25,10 +25,12 @@ export interface ChartRow {
   returns: number
 }
 
+// Story 172.11: chart series tokens (recharts var() idiom — MarginTrendChart
+// canon); valence tokens match the gauge band mapping.
 export const LINE_COLORS = {
-  sales: '#3B82F6', // blue
-  orders: '#22C55E', // green
-  returns: '#F59E0B', // amber
+  sales: 'var(--color-chart-1)', // primary series
+  orders: 'var(--color-chart-positive)',
+  returns: 'var(--color-status-warning)',
 } as const
 
 export const LINE_LABELS = {

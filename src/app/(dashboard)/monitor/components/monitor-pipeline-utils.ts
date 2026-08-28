@@ -20,15 +20,33 @@ import type { GridPipeline } from '@/app/(dashboard)/monitoring/types/monitoring
  * This divergence is INTENTIONAL — different visualizations, different budgets.
  */
 export function getBuyoutColor(rate: number | null): {
-  hex: string
+  color: string
   textClass: string
   bandLabel: string
 } {
-  if (rate == null) return { hex: '#9CA3AF', textClass: 'text-gray-400', bandLabel: 'Нет данных' }
-  if (rate >= 90) return { hex: '#22C55E', textClass: 'text-green-600', bandLabel: 'Отличный' }
+  if (rate == null)
+    return {
+      color: 'var(--color-muted-foreground)',
+      textClass: 'text-muted-foreground',
+      bandLabel: 'Нет данных',
+    }
+  if (rate >= 90)
+    return {
+      color: 'var(--color-chart-positive)',
+      textClass: 'text-status-success',
+      bandLabel: 'Отличный',
+    }
   if (rate >= 70)
-    return { hex: '#F59E0B', textClass: 'text-amber-600', bandLabel: 'Требует внимания' }
-  return { hex: '#EF4444', textClass: 'text-red-600', bandLabel: 'Низкий' }
+    return {
+      color: 'var(--color-status-warning)',
+      textClass: 'text-status-warning',
+      bandLabel: 'Требует внимания',
+    }
+  return {
+    color: 'var(--color-chart-negative)',
+    textClass: 'text-status-error',
+    bandLabel: 'Низкий',
+  }
 }
 
 // ---------------------------------------------------------------------------

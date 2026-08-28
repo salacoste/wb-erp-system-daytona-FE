@@ -22,29 +22,29 @@ import {
 describe('getBuyoutColor', () => {
   it('returns gray band for null (no data)', () => {
     const result = getBuyoutColor(null)
-    expect(result.hex).toBe('#9CA3AF')
-    expect(result.textClass).toBe('text-gray-400')
+    expect(result.color).toBe('var(--color-muted-foreground)')
+    expect(result.textClass).toBe('text-muted-foreground')
     expect(result.bandLabel).toBe('Нет данных')
   })
 
   it('returns green band for rate >= 90 (excellent)', () => {
     const result = getBuyoutColor(95)
-    expect(result.hex).toBe('#22C55E')
-    expect(result.textClass).toBe('text-green-600')
+    expect(result.color).toBe('var(--color-chart-positive)')
+    expect(result.textClass).toBe('text-status-success')
     expect(result.bandLabel).toBe('Отличный')
   })
 
   it('returns amber band for rate in 70-89 range (warning)', () => {
     const result = getBuyoutColor(80)
-    expect(result.hex).toBe('#F59E0B')
-    expect(result.textClass).toBe('text-amber-600')
+    expect(result.color).toBe('var(--color-status-warning)')
+    expect(result.textClass).toBe('text-status-warning')
     expect(result.bandLabel).toBe('Требует внимания')
   })
 
   it('returns red band for rate < 70 (poor)', () => {
     const result = getBuyoutColor(50)
-    expect(result.hex).toBe('#EF4444')
-    expect(result.textClass).toBe('text-red-600')
+    expect(result.color).toBe('var(--color-chart-negative)')
+    expect(result.textClass).toBe('text-status-error')
     expect(result.bandLabel).toBe('Низкий')
   })
 

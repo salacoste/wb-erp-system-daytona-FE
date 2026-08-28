@@ -2,11 +2,11 @@
  * MonitorBuyoutGauge — Block 4: Semi-circular SVG buyout rate gauge
  * Epic 92-FE Story 92.5
  *
- * Threshold bands (doc-1 Block 4 spec):
- *   null  → gray  (#9CA3AF) — "Нет данных"
- *   >= 90 → green (#22C55E) — "Отличный"
- *   70-89 → amber (#F59E0B) — "Требует внимания"
- *   < 70  → red   (#EF4444) — "Низкий"
+ * Threshold bands (doc-1 Block 4 spec), semantic tokens (Story 172.11):
+ *   null  → gray  (var(--color-muted-foreground)) — "Нет данных"
+ *   >= 90 → green (var(--color-chart-positive)) — "Отличный"
+ *   70-89 → amber (var(--color-status-warning)) — "Требует внимания"
+ *   < 70  → red   (var(--color-chart-negative)) — "Низкий"
  *
  * NOTE: BuyoutRateCard.tsx uses a simpler 80% cutoff (green/red only).
  * This gauge uses the 3-band doc-1 spec because it has spatial real estate
@@ -44,7 +44,7 @@ function arcPath(): string {
 }
 
 export function MonitorBuyoutGauge({ buyoutRatePercent: rate }: MonitorBuyoutGaugeProps) {
-  const { hex, textClass, bandLabel } = getBuyoutColor(rate)
+  const { color, textClass, bandLabel } = getBuyoutColor(rate)
 
   // AC-9: clamp arc fill to [0, 100] for out-of-range inputs;
   // display the raw number + AlertTriangle anomaly indicator.
@@ -84,23 +84,26 @@ export function MonitorBuyoutGauge({ buyoutRatePercent: rate }: MonitorBuyoutGau
             aria-hidden="true"
             className="overflow-visible"
           >
-            {/* Background track */}
+            {/* Background track — stroke via style prop (Story 172.11 token migration) */}
             <path
               d={path}
               fill="none"
-              stroke="#E5E7EB"
               strokeWidth={STROKE_WIDTH}
               strokeLinecap="round"
+              style={{ stroke: 'var(--color-chart-grid)' }}
             />
-            {/* Filled arc — clamp prevents geometry overflow */}
+            {/* Filled arc — clamp prevents geometry overflow.
+                Story 172.11: stroke via inline style — resolves token strings
+                reliably for raw SVG (chosen over the attribute form for
+                robustness; recharts wrappers use the attribute idiom). */}
             <path
               d={path}
               fill="none"
-              stroke={hex}
               strokeWidth={STROKE_WIDTH}
               strokeLinecap="round"
               strokeDasharray={`${fillLength} ${ARC_LENGTH}`}
               className="motion-safe:transition-[stroke-dasharray] motion-safe:duration-700 motion-safe:ease-out"
+              style={{ stroke: color }}
             />
           </svg>
 
@@ -123,7 +126,7 @@ export function MonitorBuyoutGauge({ buyoutRatePercent: rate }: MonitorBuyoutGau
         {isOutOfRange && (
           <Tooltip>
             <TooltipTrigger asChild>
-              <span className="mt-1 inline-flex items-center gap-1 text-xs text-amber-600 cursor-help">
+              <span className="mt-1 inline-flex items-center gap-1 text-xs text-status-warning cursor-help">
                 <AlertTriangle className="h-3 w-3" />
                 Аномальное значение
               </span>

@@ -33,7 +33,7 @@ function formatValue(v: number | null, isMoney: boolean): string {
 
 /** Per-cell helper: red class when this is the margin row and value is negative (fix M-1). */
 function getNegativeMarginClass(isMargin: boolean, value: number | null): string {
-  return isMargin && value != null && value < 0 ? 'text-red-600' : ''
+  return isMargin && value != null && value < 0 ? 'text-status-error' : ''
 }
 
 export function MonitorMetricsTable({ periods }: { periods: MonitorSummaryResponse['periods'] }) {
@@ -60,7 +60,7 @@ export function MonitorMetricsTable({ periods }: { periods: MonitorSummaryRespon
               {todayIsLagging && (
                 <Badge
                   variant="outline"
-                  className="ml-2 border-amber-500 text-amber-700 bg-amber-50"
+                  className="ml-2 border-status-warning/50 bg-status-warning/10 text-status-warning"
                 >
                   Нет данных за сегодня
                 </Badge>
@@ -91,7 +91,7 @@ export function MonitorMetricsTable({ periods }: { periods: MonitorSummaryRespon
                         <TooltipTrigger asChild>
                           <span className="inline-flex items-center cursor-help">
                             <AlertTriangle
-                              className="ml-2 h-4 w-4 text-amber-500"
+                              className="ml-2 h-4 w-4 text-status-warning"
                               aria-label="Аномалия данных"
                             />
                           </span>

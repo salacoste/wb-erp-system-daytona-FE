@@ -97,8 +97,13 @@ test.describe('Monitor Dashboard', () => {
     await page.goto(ROUTES.monitor, { waitUntil: 'domcontentloaded' })
     await expect(page.getByTestId('monitor-page')).toBeVisible({ timeout: TIMEOUTS.api })
     await expect(page.getByTestId('monitor-weekly-chart')).toBeVisible()
-    // L-3 fix: scoped to chart landmark to avoid false-positives from sidebar/table text
-    await expect(page.getByTestId('monitor-weekly-chart').getByText(/Продажи/)).toBeVisible()
+    // L-3 fix: scoped to chart landmark to avoid false-positives from sidebar/table text.
+    // Story 172.11 repair: exact match — the BD-22 rename (PR #41) added a
+    // second legend item «Продажи + Возвраты», making the /Продажи/ regex
+    // resolve 2 elements (strict-mode violation, pre-existing on main).
+    await expect(
+      page.getByTestId('monitor-weekly-chart').getByText('Продажи', { exact: true })
+    ).toBeVisible()
   })
 
   // Story 92.5-FE: Block 4 gauge + Block 5 pipeline panel landmarks

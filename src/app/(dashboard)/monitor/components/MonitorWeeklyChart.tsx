@@ -77,7 +77,7 @@ export function MonitorWeeklyChart({ data }: MonitorWeeklyChartProps) {
       <h3 className="text-sm font-medium mb-4">За последние 7 дней</h3>
       <ResponsiveContainer width="100%" height={280}>
         <LineChart data={chartData} margin={{ top: 20, right: 30, left: 0, bottom: 10 }}>
-          <CartesianGrid strokeDasharray="3 3" stroke="#E5E7EB" />
+          <CartesianGrid strokeDasharray="3 3" stroke="var(--color-chart-grid)" />
           <XAxis dataKey="label" tick={{ fontSize: 11 }} axisLine={false} tickLine={false} />
           <YAxis tick={{ fontSize: 11 }} allowDecimals={false} axisLine={false} tickLine={false} />
           <Tooltip content={<WeeklyChartTooltip />} />

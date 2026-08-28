@@ -101,10 +101,10 @@ describe('MonitorMetricsTable', () => {
 
     const cells = marginTr!.querySelectorAll('td')
     // cells[0] = label, cells[1..4] = today/yesterday/last30/prev30
-    expect(cells[1]).toHaveClass('text-red-600') // today  (-500)
-    expect(cells[2]).toHaveClass('text-red-600') // yesterday (-200)
-    expect(cells[3]).toHaveClass('text-red-600') // last30 (-1000)
-    expect(cells[4]).not.toHaveClass('text-red-600') // prev30 (+800)
+    expect(cells[1]).toHaveClass('text-status-error') // today  (-500)
+    expect(cells[2]).toHaveClass('text-status-error') // yesterday (-200)
+    expect(cells[3]).toHaveClass('text-status-error') // last30 (-1000)
+    expect(cells[4]).not.toHaveClass('text-status-error') // prev30 (+800)
   })
 
   it('shows ↑ green delta when today sales > yesterday sales (higher-is-better)', () => {
@@ -115,7 +115,7 @@ describe('MonitorMetricsTable', () => {
     renderWithProviders(<MonitorMetricsTable periods={periods} />)
 
     // Should render a green "↑ +100.0%" delta for sales row
-    const greenSpans = document.querySelectorAll('span.text-green-600')
+    const greenSpans = document.querySelectorAll('span.text-status-success')
     const hasPositiveDelta = Array.from(greenSpans).some(el => el.textContent?.includes('↑'))
     expect(hasPositiveDelta).toBe(true)
   })
@@ -128,7 +128,7 @@ describe('MonitorMetricsTable', () => {
     renderWithProviders(<MonitorMetricsTable periods={periods} />)
 
     // COGS increased = bad (red)
-    const redSpans = document.querySelectorAll('span.text-red-600')
+    const redSpans = document.querySelectorAll('span.text-status-error')
     const hasBadIncrease = Array.from(redSpans).some(el => el.textContent?.includes('↑'))
     expect(hasBadIncrease).toBe(true)
   })
