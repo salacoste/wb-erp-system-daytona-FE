@@ -8,6 +8,7 @@
 import {
   Table,
   TableBody,
+  TableCaption,
   TableCell,
   TableHead,
   TableHeader,
@@ -26,6 +27,8 @@ interface FboOrdersTableProps {
   totalPages: number
   totalCount: number
   onPageChange: (page: number) => void
+  /** Optional — table caption naming the source (RTC contract, Story 172.15-FE) */
+  captionText?: string
 }
 
 export function FboOrdersTable({
@@ -35,6 +38,7 @@ export function FboOrdersTable({
   totalPages,
   totalCount,
   onPageChange,
+  captionText,
 }: FboOrdersTableProps) {
   if (isLoading) {
     return (
@@ -61,6 +65,9 @@ export function FboOrdersTable({
 
       <div className="rounded-md border overflow-x-auto">
         <Table>
+          {/* Story 172.15: caption names the source (RTC); spec-order above header,
+              visually bottom via ui Table caption-bottom (171.9 canon). */}
+          {captionText ? <TableCaption>{captionText}</TableCaption> : null}
           <TableHeader>
             <TableRow>
               <TableHead>Дата</TableHead>
@@ -76,15 +83,17 @@ export function FboOrdersTable({
           <TableBody>
             {orders.map(order => (
               <TableRow key={order.id} data-testid={`fbo-order-${order.orderId}`}>
-                <TableCell className="whitespace-nowrap">{formatDate(order.orderDate)}</TableCell>
+                <TableCell className="whitespace-nowrap tabular-nums">
+                  {formatDate(order.orderDate)}
+                </TableCell>
                 <TableCell>{order.nmId}</TableCell>
                 <TableCell className="max-w-[120px] truncate">{order.brand}</TableCell>
                 <TableCell className="max-w-[200px] truncate">{order.subject}</TableCell>
                 <TableCell className="max-w-[120px] truncate">{order.warehouseName}</TableCell>
-                <TableCell className="text-right whitespace-nowrap">
+                <TableCell className="text-right whitespace-nowrap tabular-nums">
                   {formatCurrency(order.totalPrice)}
                 </TableCell>
-                <TableCell className="text-right whitespace-nowrap">
+                <TableCell className="text-right whitespace-nowrap tabular-nums">
                   {formatCurrency(order.finishedPrice)}
                 </TableCell>
                 <TableCell>

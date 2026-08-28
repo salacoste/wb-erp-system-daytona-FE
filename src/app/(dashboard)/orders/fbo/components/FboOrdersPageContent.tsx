@@ -138,6 +138,7 @@ export function FboOrdersPageContent() {
             totalPages={Math.ceil((ordersQuery.data?.pagination.total ?? 0) / PAGE_SIZE)}
             totalCount={ordersQuery.data?.pagination.total ?? 0}
             onPageChange={setPage}
+            captionText="Заказы FBO Wildberries"
           />
         </TabsContent>
 
@@ -149,6 +150,7 @@ export function FboOrdersPageContent() {
             totalPages={Math.ceil((salesQuery.data?.pagination.total ?? 0) / PAGE_SIZE)}
             totalCount={salesQuery.data?.pagination.total ?? 0}
             onPageChange={setPage}
+            captionText="Продажи FBO Wildberries"
           />
         </TabsContent>
       </Tabs>
