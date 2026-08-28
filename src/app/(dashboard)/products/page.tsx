@@ -47,7 +47,7 @@ function DiscontinuedSection() {
   const { data, isLoading, isError } = useDiscontinuedProducts()
   const toggle = useUpdateProductLifecycle()
   if (isLoading) return <p className="text-muted-foreground">Загрузка…</p>
-  if (isError) return <p className="text-red-600">Ошибка загрузки списка.</p>
+  if (isError) return <p className="text-status-error">Ошибка загрузки списка.</p>
   if (!data || data.length === 0)
     return <p className="text-muted-foreground">Нет снятых товаров.</p>
   return (
@@ -86,7 +86,7 @@ function SuggestionsSection() {
   // but it lives on the other card — guard the one-click assortment change).
   const [pending, setPending] = useState<LifecycleProduct | null>(null)
   if (isLoading) return <p className="text-muted-foreground">Загрузка…</p>
-  if (isError) return <p className="text-red-600">Ошибка загрузки подсказок.</p>
+  if (isError) return <p className="text-status-error">Ошибка загрузки подсказок.</p>
   if (!data || data.length === 0)
     return <p className="text-muted-foreground">Подсказок нет — все товары активны.</p>
   return (
