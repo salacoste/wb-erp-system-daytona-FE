@@ -33,31 +33,31 @@ export function getDrrLevel(drr: number): DrrLevelConfig {
     return {
       level: 'low',
       label: DRR_LEVEL_LABELS['low'],
-      color: 'text-green-600',
-      bgColor: 'bg-green-100',
+      color: 'text-status-success',
+      bgColor: 'bg-status-success/15',
     }
   }
   if (drr <= 7) {
     return {
       level: 'moderate',
       label: DRR_LEVEL_LABELS['moderate'],
-      color: 'text-yellow-600',
-      bgColor: 'bg-yellow-100',
+      color: 'text-status-information',
+      bgColor: 'bg-status-information/15',
     }
   }
   if (drr <= 15) {
     return {
       level: 'high',
       label: DRR_LEVEL_LABELS['high'],
-      color: 'text-orange-600',
-      bgColor: 'bg-orange-100',
+      color: 'text-status-warning',
+      bgColor: 'bg-status-warning/15',
     }
   }
   return {
     level: 'very-high',
     label: DRR_LEVEL_LABELS['very-high'],
-    color: 'text-red-600',
-    bgColor: 'bg-red-100',
+    color: 'text-status-error',
+    bgColor: 'bg-status-error/15',
   }
 }
 
@@ -132,10 +132,10 @@ export function DrrSlider({
           {/* Zone background overlay - visual indicator of DRR zones (max=50%) */}
           {/* 0-3%=6%, 3-7%=8%, 7-15%=16%, 15-50%=70% */}
           <div className="absolute inset-x-0 top-1 h-2 rounded-full overflow-hidden flex pointer-events-none">
-            <div className="bg-green-100 w-[6%]" />
-            <div className="bg-yellow-100 w-[8%]" />
-            <div className="bg-orange-100 w-[16%]" />
-            <div className="bg-red-100 flex-1" />
+            <div className="bg-status-success/20 w-[6%]" />
+            <div className="bg-status-information/20 w-[8%]" />
+            <div className="bg-status-warning/20 w-[16%]" />
+            <div className="bg-status-error/20 flex-1" />
           </div>
           <Slider
             value={[value]}
@@ -176,7 +176,7 @@ export function DrrSlider({
       {/* Warning for very high DRR */}
       {isVeryHigh && (
         <div
-          className="flex items-center gap-1 text-xs text-red-600"
+          className="flex items-center gap-1 text-xs text-status-error"
           role="alert"
           aria-live="polite"
           data-testid="drr-high-warning"

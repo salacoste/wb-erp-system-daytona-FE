@@ -155,7 +155,7 @@ export function ErrorMessage({ error, onRetry }: ErrorMessageProps) {
             <summary className="cursor-pointer opacity-70 hover:opacity-100">
               Технические детали
             </summary>
-            <pre className="mt-2 p-2 bg-black/5 rounded overflow-x-auto">{error.message}</pre>
+            <pre className="mt-2 overflow-x-auto rounded bg-muted p-2">{error.message}</pre>
           </details>
         )}
       </AlertDescription>

@@ -12,18 +12,21 @@ import { AlertTriangle, TrendingUp } from 'lucide-react'
 const getPriceGapStyles = (pct: number) => {
   if (pct > 20) {
     return {
-      container: 'p-3 rounded-lg bg-green-50 text-green-700 border border-green-200',
+      container:
+        'p-3 rounded-lg bg-financial-positive/10 text-financial-positive border border-financial-positive/30',
       icon: TrendingUp,
     }
   }
   if (pct > 10) {
     return {
-      container: 'p-3 rounded-lg bg-yellow-50 text-yellow-700 border border-yellow-200',
+      container:
+        'p-3 rounded-lg bg-status-warning/10 text-status-warning border border-status-warning/30',
       icon: TrendingUp,
     }
   }
   return {
-    container: 'p-3 rounded-lg bg-red-50 text-red-700 border border-red-200',
+    container:
+      'p-3 rounded-lg bg-financial-negative/10 text-financial-negative border border-financial-negative/30',
     icon: AlertTriangle,
   }
 }

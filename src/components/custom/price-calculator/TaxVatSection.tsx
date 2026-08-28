@@ -28,7 +28,7 @@ export function TaxVatSection({
   disabled,
 }: TaxVatSectionProps) {
   return (
-    <div className="space-y-2 pt-2 border-t border-amber-200">
+    <div className="space-y-2 border-t border-status-warning/30 pt-2">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
           <Label htmlFor="vat-toggle" className="text-sm">

@@ -176,8 +176,8 @@ describe('CoefficientCalendar', () => {
 
       const cells = screen.getAllByRole('gridcell')
       const selectedCell = cells[1]
-      expect(selectedCell.className).toContain('ring')
-      expect(selectedCell.className).toContain('blue')
+      expect(selectedCell).toHaveClass('ring-2')
+      expect(selectedCell).toHaveClass('ring-ring')
     })
 
     it('calls onDateSelect when available date is clicked', async () => {

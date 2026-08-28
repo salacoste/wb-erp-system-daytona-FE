@@ -14,12 +14,12 @@ interface SupplyTariffInfoProps {
 
 export function SupplyTariffInfo({ effectiveTariffs }: SupplyTariffInfoProps) {
   return (
-    <div className="text-xs text-muted-foreground bg-blue-50 border border-blue-200 rounded-md p-3">
-      <p className="font-medium text-blue-700 mb-1">Тарифы SUPPLY</p>
+    <div className="rounded-md border border-status-information/30 bg-status-information/10 p-3 text-xs text-muted-foreground">
+      <p className="mb-1 font-medium text-status-information">Тарифы SUPPLY</p>
       <p>
         Тарифы на дату поставки уже включают коэффициент склада
         {effectiveTariffs.displayLogisticsCoefficient !== 1.0 && (
-          <span className="font-semibold text-blue-600">
+          <span className="font-semibold text-status-information">
             {' '}
             x{formatDecimal(effectiveTariffs.displayLogisticsCoefficient, 2)}
           </span>

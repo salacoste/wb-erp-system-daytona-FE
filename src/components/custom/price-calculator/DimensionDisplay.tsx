@@ -41,14 +41,14 @@ export function DimensionSummary({
       <div className="flex items-center justify-between text-sm">
         <div className="flex items-center gap-2">
           {cargoType && <CargoTypeBadge cargoType={cargoType} />}
-          <span className="text-purple-800">Объём: {formatVolume(volumeLiters)}</span>
+          <span className="text-foreground">Объём: {formatVolume(volumeLiters)}</span>
           {hasDimensions && volumeTier.tier !== 'standard' && (
             <Badge
               variant="outline"
               className={cn(
                 'text-xs',
-                volumeTier.color === 'green' && 'bg-green-100 text-green-700',
-                volumeTier.color === 'orange' && 'bg-orange-100 text-orange-700'
+                volumeTier.color === 'green' && 'bg-status-success/10 text-status-success',
+                volumeTier.color === 'orange' && 'bg-status-warning/10 text-status-warning'
               )}
             >
               {volumeTier.label}

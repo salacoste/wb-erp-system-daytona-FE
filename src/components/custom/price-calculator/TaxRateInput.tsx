@@ -72,7 +72,7 @@ export function TaxRateInput({ taxRate, onTaxRateChange, disabled }: TaxRateInpu
       </div>
       {isHighTaxRate && (
         <div
-          className="flex items-center gap-1 text-xs text-yellow-600"
+          className="flex items-center gap-1 text-xs text-status-warning"
           data-testid="high-tax-warning"
         >
           <AlertTriangle className="h-3 w-3" />

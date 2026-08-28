@@ -96,7 +96,7 @@ export function RecommendedPriceCard({
         <div className="text-center">
           <div
             className={`text-4xl md:text-5xl font-bold ${
-              isPositiveMargin ? 'text-green-600' : 'text-red-600'
+              isPositiveMargin ? 'text-financial-positive' : 'text-financial-negative'
             }`}
           >
             {formatCurrency(recommended_price)}
@@ -133,12 +133,12 @@ export function RecommendedPriceCard({
             <span
               className={`font-medium ${
                 actual_margin_pct >= 20
-                  ? 'text-green-600'
+                  ? 'text-financial-positive'
                   : actual_margin_pct >= 10
-                    ? 'text-yellow-600'
+                    ? 'text-status-success'
                     : actual_margin_pct >= 5
-                      ? 'text-orange-600'
-                      : 'text-red-600'
+                      ? 'text-status-warning'
+                      : 'text-financial-negative'
               }`}
             >
               {formatPercentage(actual_margin_pct, 2)} (

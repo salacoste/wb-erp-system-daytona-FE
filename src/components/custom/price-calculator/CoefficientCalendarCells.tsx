@@ -55,11 +55,11 @@ export function CalendarCell({
             config.bgColor,
             config.textColor,
             isTodayDate && 'ring-2 ring-primary ring-offset-1',
-            isSelected && 'ring-2 ring-blue-500 ring-offset-1',
+            isSelected && 'ring-2 ring-ring ring-offset-1',
             canClick &&
               'cursor-pointer hover:opacity-80 hover:scale-105 active:scale-95 transition-transform duration-150',
             !isAvailable && 'cursor-not-allowed opacity-60',
-            'focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500'
+            'focus:outline-none focus-visible:ring-2 focus-visible:ring-ring'
           )}
           role="gridcell"
           tabIndex={isAvailable ? 0 : -1}
@@ -79,7 +79,7 @@ export function CalendarCell({
           {isAvailable ? `Коэффициент: ${coeffDisplay} (${config.label})` : 'Недоступно для сдачи'}
         </p>
         {isTodayDate && <p className="text-primary text-xs mt-1">Сегодня</p>}
-        {isSelected && <p className="text-blue-500 text-xs mt-1">Выбрано</p>}
+        {isSelected && <p className="text-primary text-xs mt-1">Выбрано</p>}
       </TooltipContent>
     </Tooltip>
   )
@@ -89,19 +89,19 @@ export function CalendarLegend() {
   return (
     <div className="flex flex-wrap gap-x-3 gap-y-1 text-xs text-muted-foreground mt-2">
       <div className="flex items-center gap-1">
-        <div className="w-2 h-2 rounded bg-green-200" />
+        <div className="w-2 h-2 rounded bg-status-success/40" />
         <span>≤1.0</span>
       </div>
       <div className="flex items-center gap-1">
-        <div className="w-2 h-2 rounded bg-yellow-200" />
+        <div className="w-2 h-2 rounded bg-status-information/40" />
         <span>1.0-1.5</span>
       </div>
       <div className="flex items-center gap-1">
-        <div className="w-2 h-2 rounded bg-orange-200" />
+        <div className="w-2 h-2 rounded bg-status-warning/40" />
         <span>1.5-2.0</span>
       </div>
       <div className="flex items-center gap-1">
-        <div className="w-2 h-2 rounded bg-red-200" />
+        <div className="w-2 h-2 rounded bg-status-error/40" />
         <span>&gt;2.0</span>
       </div>
       <div className="flex items-center gap-1">

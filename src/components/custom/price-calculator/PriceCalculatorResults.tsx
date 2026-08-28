@@ -101,6 +101,11 @@ export function PriceCalculatorResults({
 
   return (
     <div className="space-y-6" data-testid="price-calculator-results">
+      <h2 className="text-xl font-semibold tracking-tight">Результат расчёта</h2>
+      <p role="status" aria-live="polite" className="sr-only">
+        Расчёт завершён
+      </p>
+
       {/* Two-Level Pricing Display (Story 44.20) */}
       {twoLevelResult && formData ? (
         <TwoLevelPricingDisplay

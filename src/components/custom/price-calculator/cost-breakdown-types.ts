@@ -38,12 +38,12 @@ export interface ChartSegment {
 
 /** Color palette for chart segments (fix #9: teal for acquiring instead of green) */
 export const CHART_COLORS = {
-  commission_wb: '#8b5cf6', // purple
-  acquiring: '#3b82f6', // blue (was green, changed for color-blind safety)
-  advertising: '#f97316', // orange
-  vat: '#ef4444', // red
-  margin: '#10b981', // emerald
-  fixed: '#64748b', // slate — base cost (COGS + logistics + storage)
+  commission_wb: 'var(--color-chart-1)',
+  acquiring: 'var(--color-chart-2)',
+  advertising: 'var(--color-chart-3)',
+  vat: 'var(--color-chart-5)',
+  margin: 'var(--color-chart-positive)',
+  fixed: 'var(--color-chart-6)',
 } as const
 
 /** Minimum visual width in pixels for any non-zero segment (#7) */

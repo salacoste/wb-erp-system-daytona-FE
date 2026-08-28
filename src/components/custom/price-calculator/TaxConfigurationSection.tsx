@@ -55,12 +55,12 @@ export function TaxConfigurationSection({
 
   return (
     <div
-      className="bg-amber-50 rounded-lg p-4 border-l-4 border-l-amber-400"
+      className="rounded-lg border-l-4 border-l-status-warning bg-status-warning/10 p-4"
       data-testid="tax-configuration-section"
     >
       <div className="flex items-center gap-2 mb-4">
-        <Receipt className="h-4 w-4 text-amber-600" aria-hidden="true" />
-        <div className="text-sm font-medium text-amber-900">Налоги</div>
+        <Receipt className="h-4 w-4 text-status-warning" aria-hidden="true" />
+        <div className="text-sm font-medium text-foreground">Налоги</div>
       </div>
 
       <div className="space-y-4">

@@ -102,7 +102,7 @@ function BoxTypeTariffCard({ tariffs, compact }: { tariffs: BoxTypeTariffs; comp
         {tariffs.storage.usingStorageFallback && (
           <Badge
             variant="outline"
-            className="text-[10px] px-1 py-0 h-4 border-amber-300 text-amber-700"
+            className="h-4 border-status-warning/40 px-1 text-[10px] text-status-warning"
             title="Backend вернул нулевой тариф хранения; используется значение по умолчанию"
           >
             замещ.
@@ -131,7 +131,7 @@ function BoxTypeTariffCard({ tariffs, compact }: { tariffs: BoxTypeTariffs; comp
         </span>
       </div>
       {tariffs.storage.usingStorageFallback && (
-        <div className="flex items-start gap-1 text-xs text-amber-700">
+        <div className="flex items-start gap-1 text-xs text-status-warning">
           <AlertTriangle className="mt-0.5 h-3 w-3 shrink-0" aria-hidden="true" />
           <span>Тариф хранения замещён значением по умолчанию</span>
         </div>
@@ -142,7 +142,7 @@ function BoxTypeTariffCard({ tariffs, compact }: { tariffs: BoxTypeTariffs; comp
         <div className="text-xs">
           <span className="text-muted-foreground">Коэф:</span>{' '}
           <span
-            className={cn('font-medium', tariffs.delivery.coefficient > 1 && 'text-yellow-600')}
+            className={cn('font-medium', tariffs.delivery.coefficient > 1 && 'text-status-warning')}
           >
             ×{tariffs.delivery.coefficient.toFixed(2)}
           </span>

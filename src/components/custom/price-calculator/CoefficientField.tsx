@@ -133,7 +133,7 @@ export function CoefficientField({
 
       {/* Warning for high coefficient values (> 2.0) */}
       {value > 2.0 && (
-        <p className="flex items-center gap-1.5 text-xs text-amber-600">
+        <p className="flex items-center gap-1.5 text-xs text-status-warning">
           <AlertTriangle className="h-3.5 w-3.5" aria-hidden="true" />
           Высокий коэффициент может существенно увеличить расходы
         </p>

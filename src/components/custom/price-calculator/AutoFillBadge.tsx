@@ -62,8 +62,8 @@ export function AutoFillBadge({ status, source, onRestore, className }: AutoFill
         variant={isAuto ? 'secondary' : 'outline'}
         className={cn(
           'text-xs font-normal transition-colors duration-200',
-          isAuto && 'bg-green-100 text-green-700 border-green-200',
-          !isAuto && 'bg-yellow-100 text-yellow-700 border-yellow-200',
+          isAuto && 'bg-status-success/10 text-status-success border-status-success/30',
+          !isAuto && 'bg-status-warning/10 text-status-warning border-status-warning/30',
           className
         )}
         aria-live="polite"
@@ -92,8 +92,8 @@ export function AutoFillBadge({ status, source, onRestore, className }: AutoFill
         variant={isAuto ? 'secondary' : 'outline'}
         className={cn(
           'text-xs font-normal transition-colors duration-200',
-          isAuto && 'bg-green-100 text-green-700 border-green-200',
-          isModified && 'bg-yellow-100 text-yellow-700 border-yellow-200'
+          isAuto && 'bg-status-success/10 text-status-success border-status-success/30',
+          isModified && 'bg-status-warning/10 text-status-warning border-status-warning/30'
         )}
       >
         {isAuto ? 'Автозаполнено' : 'Изменено'}
@@ -107,8 +107,8 @@ export function AutoFillBadge({ status, source, onRestore, className }: AutoFill
           onClick={onRestore}
           className={cn(
             'h-6 px-2 text-xs font-normal',
-            'text-yellow-700 hover:text-yellow-800',
-            'hover:bg-yellow-100/50',
+            'text-status-warning hover:text-status-warning/80',
+            'hover:bg-status-warning/10',
             'transition-colors duration-200'
           )}
           aria-label="Восстановить автозаполненные значения"

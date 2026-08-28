@@ -127,15 +127,15 @@ describe('Story 44.20: Two-Level Pricing Display', () => {
       expect(within(gapIndicator).getByText(/26[.,]3/)).toBeInTheDocument()
     })
 
-    it('should show green indicator for gap > 20%', () => {
+    it('should use the positive financial role for gap > 20%', () => {
       render(<TwoLevelPricingDisplay {...defaultProps} />)
 
       // Find the gap indicator by test id for more reliable selection
       const gapIndicator = screen.getByTestId('price-gap-indicator')
-      expect(gapIndicator).toHaveClass('text-green-700')
+      expect(gapIndicator).toHaveClass('text-financial-positive')
     })
 
-    it('should show yellow indicator for gap 10-20%', () => {
+    it('should use the warning status role for gap 10-20%', () => {
       const lowGapResult = {
         ...mockResult,
         priceGap: { rub: 200, pct: 15 },
@@ -143,10 +143,10 @@ describe('Story 44.20: Two-Level Pricing Display', () => {
       render(<TwoLevelPricingDisplay {...defaultProps} result={lowGapResult} />)
 
       const gapIndicator = screen.getByTestId('price-gap-indicator')
-      expect(gapIndicator).toHaveClass('text-yellow-700')
+      expect(gapIndicator).toHaveClass('text-status-warning')
     })
 
-    it('should show red indicator for gap < 10%', () => {
+    it('should use the negative financial role for gap < 10%', () => {
       const tightGapResult = {
         ...mockResult,
         priceGap: { rub: 100, pct: 5 },
@@ -154,7 +154,7 @@ describe('Story 44.20: Two-Level Pricing Display', () => {
       render(<TwoLevelPricingDisplay {...defaultProps} result={tightGapResult} />)
 
       const gapIndicator = screen.getByTestId('price-gap-indicator')
-      expect(gapIndicator).toHaveClass('text-red-700')
+      expect(gapIndicator).toHaveClass('text-financial-negative')
     })
 
     it('should show tight margin warning when gap < 10%', () => {
@@ -570,7 +570,7 @@ describe('Price Gap Classification', () => {
     priceGap: { rub: 100, pct: gapPct },
   })
 
-  it('should classify > 30% as excellent (green)', () => {
+  it('should classify > 30% as excellent with the positive financial role', () => {
     render(
       <TwoLevelPricingDisplay
         {...{
@@ -584,10 +584,10 @@ describe('Price Gap Classification', () => {
     )
 
     const gapIndicator = screen.getByTestId('price-gap-indicator')
-    expect(gapIndicator).toHaveClass('text-green-700')
+    expect(gapIndicator).toHaveClass('text-financial-positive')
   })
 
-  it('should classify 20-30% as good (green)', () => {
+  it('should classify 20-30% as good with the positive financial role', () => {
     render(
       <TwoLevelPricingDisplay
         {...{
@@ -601,10 +601,10 @@ describe('Price Gap Classification', () => {
     )
 
     const gapIndicator = screen.getByTestId('price-gap-indicator')
-    expect(gapIndicator).toHaveClass('text-green-700')
+    expect(gapIndicator).toHaveClass('text-financial-positive')
   })
 
-  it('should classify 10-20% as normal (yellow)', () => {
+  it('should classify 10-20% as normal with the warning status role', () => {
     render(
       <TwoLevelPricingDisplay
         {...{
@@ -618,10 +618,10 @@ describe('Price Gap Classification', () => {
     )
 
     const gapIndicator = screen.getByTestId('price-gap-indicator')
-    expect(gapIndicator).toHaveClass('text-yellow-700')
+    expect(gapIndicator).toHaveClass('text-status-warning')
   })
 
-  it('should classify 5-10% as low (orange/red)', () => {
+  it('should classify 5-10% as low with the negative financial role', () => {
     render(
       <TwoLevelPricingDisplay
         {...{
@@ -635,11 +635,10 @@ describe('Price Gap Classification', () => {
     )
 
     const gapIndicator = screen.getByTestId('price-gap-indicator')
-    // Below 10% threshold shows red in current implementation
-    expect(gapIndicator?.className).toMatch(/text-(yellow|red)-700/)
+    expect(gapIndicator).toHaveClass('text-financial-negative')
   })
 
-  it('should classify < 5% as critical (red)', () => {
+  it('should classify < 5% as critical with the negative financial role', () => {
     render(
       <TwoLevelPricingDisplay
         {...{
@@ -653,6 +652,6 @@ describe('Price Gap Classification', () => {
     )
 
     const gapIndicator = screen.getByTestId('price-gap-indicator')
-    expect(gapIndicator).toHaveClass('text-red-700')
+    expect(gapIndicator).toHaveClass('text-financial-negative')
   })
 })

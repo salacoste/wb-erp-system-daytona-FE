@@ -55,19 +55,22 @@ export function DimensionInputSection<T extends FieldValues>({
   const volumeTier = getVolumeTier(volumeLiters)
   const isKgt = cargoType === 'KGT'
   const autoFillStatus = autoFillState?.status ?? 'none'
+  const lengthError = (errors.length_cm as { message?: string })?.message
+  const widthError = (errors.width_cm as { message?: string })?.message
+  const heightError = (errors.height_cm as { message?: string })?.message
 
   return (
-    <div className="bg-purple-50 rounded-lg p-4 border-l-4 border-l-purple-400">
+    <div className="rounded-lg border-l-4 border-l-primary bg-primary/5 p-4">
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-2">
-          <Ruler className="h-4 w-4 text-purple-600" aria-hidden="true" />
-          <div className="text-sm font-medium text-purple-900">Габариты товара</div>
+          <Ruler className="h-4 w-4 text-primary" aria-hidden="true" />
+          <div className="text-sm font-medium text-foreground">Габариты товара</div>
           <AutoFillBadge status={autoFillStatus} onRestore={onRestore} />
         </div>
         <FieldTooltip content="Укажите размеры товара для автоматического расчёта объёма и определения типа груза (МГТ/СГТ/КГТ). Это влияет на тарифы логистики." />
       </div>
 
-      <div className="grid grid-cols-3 gap-3 mb-4">
+      <div className="grid grid-cols-1 gap-3 mb-4 sm:grid-cols-3">
         {/* Length */}
         <div className="space-y-1.5">
           <Label htmlFor="length_cm" className="text-xs">
@@ -82,6 +85,8 @@ export function DimensionInputSection<T extends FieldValues>({
             placeholder="0,0"
             disabled={disabled}
             className="h-9"
+            aria-invalid={lengthError ? true : undefined}
+            aria-describedby={lengthError ? 'length_cm-error' : undefined}
             {...register(
               lengthField,
               numericFieldOptions({
@@ -91,9 +96,9 @@ export function DimensionInputSection<T extends FieldValues>({
               })
             )}
           />
-          {errors.length_cm && (
-            <p className="text-xs text-destructive">
-              {(errors.length_cm as { message?: string })?.message}
+          {lengthError && (
+            <p id="length_cm-error" className="text-xs text-destructive" role="alert">
+              {lengthError}
             </p>
           )}
         </div>
@@ -112,6 +117,8 @@ export function DimensionInputSection<T extends FieldValues>({
             placeholder="0,0"
             disabled={disabled}
             className="h-9"
+            aria-invalid={widthError ? true : undefined}
+            aria-describedby={widthError ? 'width_cm-error' : undefined}
             {...register(
               widthField,
               numericFieldOptions({
@@ -121,9 +128,9 @@ export function DimensionInputSection<T extends FieldValues>({
               })
             )}
           />
-          {errors.width_cm && (
-            <p className="text-xs text-destructive">
-              {(errors.width_cm as { message?: string })?.message}
+          {widthError && (
+            <p id="width_cm-error" className="text-xs text-destructive" role="alert">
+              {widthError}
             </p>
           )}
         </div>
@@ -142,6 +149,8 @@ export function DimensionInputSection<T extends FieldValues>({
             placeholder="0,0"
             disabled={disabled}
             className="h-9"
+            aria-invalid={heightError ? true : undefined}
+            aria-describedby={heightError ? 'height_cm-error' : undefined}
             {...register(
               heightField,
               numericFieldOptions({
@@ -151,9 +160,9 @@ export function DimensionInputSection<T extends FieldValues>({
               })
             )}
           />
-          {errors.height_cm && (
-            <p className="text-xs text-destructive">
-              {(errors.height_cm as { message?: string })?.message}
+          {heightError && (
+            <p id="height_cm-error" className="text-xs text-destructive" role="alert">
+              {heightError}
             </p>
           )}
         </div>

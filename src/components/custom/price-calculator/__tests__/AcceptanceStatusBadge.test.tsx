@@ -33,16 +33,16 @@ const BADGE_TEST_CASES = [
     coefficient: -1,
     expectedLabel: 'Недоступно',
     expectedColor: 'destructive',
-    colorClass: 'text-red-700',
-    bgClass: 'bg-red-100',
+    colorClass: 'text-status-error',
+    bgClass: 'bg-status-error/10',
     icon: '⛔',
   },
   {
     coefficient: 0,
     expectedLabel: 'Бесплатно',
     expectedColor: 'success',
-    colorClass: 'text-green-700',
-    bgClass: 'bg-green-100',
+    colorClass: 'text-status-success',
+    bgClass: 'bg-status-success/10',
     icon: '✅',
   },
   {
@@ -57,16 +57,16 @@ const BADGE_TEST_CASES = [
     coefficient: 1.25,
     expectedLabel: '×1,25',
     expectedColor: 'warning',
-    colorClass: 'text-yellow-700',
-    bgClass: 'bg-yellow-100',
+    colorClass: 'text-status-warning',
+    bgClass: 'bg-status-warning/10',
     icon: '⚠️',
   },
   {
     coefficient: 1.65,
     expectedLabel: '×1,65',
     expectedColor: 'high',
-    colorClass: 'text-orange-700',
-    bgClass: 'bg-orange-100',
+    colorClass: 'text-status-warning',
+    bgClass: 'bg-status-warning/15',
     icon: '🔴',
   },
 ] as const
@@ -88,22 +88,22 @@ describe('AcceptanceStatusBadge', () => {
   })
 
   describe('AC1: Badge Component - Correct colors', () => {
-    it('renders unavailable badge with red (destructive) color', () => {
+    it('renders unavailable badge with the error status role', () => {
       render(<AcceptanceStatusBadge coefficient={-1} />)
 
       const badge = screen.getByText('Недоступно').closest('[class*="bg-"]')
-      expect(badge).toHaveClass('bg-red-100')
-      expect(badge).toHaveClass('text-red-700')
-      expect(badge).toHaveClass('border-red-200')
+      expect(badge).toHaveClass('bg-status-error/10')
+      expect(badge).toHaveClass('text-status-error')
+      expect(badge).toHaveClass('border-status-error/30')
     })
 
-    it('renders free badge with green (success) color', () => {
+    it('renders free badge with the success status role', () => {
       render(<AcceptanceStatusBadge coefficient={0} />)
 
       const badge = screen.getByText('Бесплатно').closest('[class*="bg-"]')
-      expect(badge).toHaveClass('bg-green-100')
-      expect(badge).toHaveClass('text-green-700')
-      expect(badge).toHaveClass('border-green-200')
+      expect(badge).toHaveClass('bg-status-success/10')
+      expect(badge).toHaveClass('text-status-success')
+      expect(badge).toHaveClass('border-status-success/30')
     })
 
     it('renders standard badge with gray (default) color', () => {
@@ -115,22 +115,22 @@ describe('AcceptanceStatusBadge', () => {
       expect(badge).toHaveClass('border-border')
     })
 
-    it('renders elevated badge with yellow (warning) color', () => {
+    it('renders elevated badge with the warning status role', () => {
       render(<AcceptanceStatusBadge coefficient={1.25} />)
 
       const badge = screen.getByText('×1,25').closest('[class*="bg-"]')
-      expect(badge).toHaveClass('bg-yellow-100')
-      expect(badge).toHaveClass('text-yellow-700')
-      expect(badge).toHaveClass('border-yellow-200')
+      expect(badge).toHaveClass('bg-status-warning/10')
+      expect(badge).toHaveClass('text-status-warning')
+      expect(badge).toHaveClass('border-status-warning/30')
     })
 
-    it('renders high badge with orange (high) color', () => {
+    it('renders high badge with the emphasized warning role', () => {
       render(<AcceptanceStatusBadge coefficient={1.65} />)
 
       const badge = screen.getByText('×1,65').closest('[class*="bg-"]')
-      expect(badge).toHaveClass('bg-orange-100')
-      expect(badge).toHaveClass('text-orange-700')
-      expect(badge).toHaveClass('border-orange-200')
+      expect(badge).toHaveClass('bg-status-warning/15')
+      expect(badge).toHaveClass('text-status-warning')
+      expect(badge).toHaveClass('border-status-warning/40')
     })
   })
 
@@ -367,9 +367,8 @@ describe('AcceptanceStatusBadge', () => {
       render(<AcceptanceStatusBadge coefficient={10} />)
 
       expect(screen.getByText('×10,00')).toBeInTheDocument()
-      // Should be high status (orange)
       const badge = screen.getByText('×10,00').closest('[class*="bg-"]')
-      expect(badge).toHaveClass('bg-orange-100')
+      expect(badge).toHaveClass('bg-status-warning/15')
     })
 
     it('handles decimal precision in display', () => {
@@ -383,14 +382,14 @@ describe('AcceptanceStatusBadge', () => {
       render(<AcceptanceStatusBadge coefficient={1.5} />)
 
       const badge = screen.getByText('×1,50').closest('[class*="bg-"]')
-      expect(badge).toHaveClass('bg-yellow-100') // elevated = warning = yellow
+      expect(badge).toHaveClass('bg-status-warning/10')
     })
 
     it('handles coefficient at boundary 1.51 as high', () => {
       render(<AcceptanceStatusBadge coefficient={1.51} />)
 
       const badge = screen.getByText('×1,51').closest('[class*="bg-"]')
-      expect(badge).toHaveClass('bg-orange-100') // high = orange
+      expect(badge).toHaveClass('bg-status-warning/15')
     })
   })
 
@@ -434,17 +433,17 @@ describe('AcceptanceStatusBadge - Calendar Integration Support', () => {
     render(<AcceptanceStatusBadge coefficient={0} />)
 
     const badge = screen.getByText('Бесплатно').closest('[class*="border"]')
-    expect(badge).toHaveClass('border-green-200')
+    expect(badge).toHaveClass('border-status-success/30')
   })
 
   it('provides consistent status determination for calendar cells', () => {
     // All these should map to correct statuses for calendar rendering
     const testCases = [
-      { coefficient: -1, expectedBorder: 'border-red-200' },
-      { coefficient: 0, expectedBorder: 'border-green-200' },
+      { coefficient: -1, expectedBorder: 'border-status-error/30' },
+      { coefficient: 0, expectedBorder: 'border-status-success/30' },
       { coefficient: 1, expectedBorder: 'border-border' },
-      { coefficient: 1.25, expectedBorder: 'border-yellow-200' },
-      { coefficient: 1.65, expectedBorder: 'border-orange-200' },
+      { coefficient: 1.25, expectedBorder: 'border-status-warning/30' },
+      { coefficient: 1.65, expectedBorder: 'border-status-warning/40' },
     ]
 
     testCases.forEach(({ coefficient, expectedBorder }) => {

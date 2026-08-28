@@ -452,13 +452,15 @@ describe('Story 44.44: Preset Save/Load', () => {
       vi.useRealTimers()
     })
 
-    it('should have green styling for the badge', async () => {
+    it('should use the success status role for the loaded badge', async () => {
       const { PresetIndicator } = await import('../PresetIndicator')
 
       render(<PresetIndicator isVisible={true} />)
 
       const badge = screen.getByText(/Пресет загружен/).closest('[class]')
-      expect(badge).toHaveClass(/green/)
+      expect(badge).toHaveClass('bg-status-success/10')
+      expect(badge).toHaveClass('text-status-success')
+      expect(badge).toHaveClass('border-status-success/30')
     })
   })
 

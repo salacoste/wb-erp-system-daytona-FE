@@ -49,10 +49,14 @@ export function FormActionsSection({
   presetActions,
 }: FormActionsSectionProps) {
   return (
-    <div className="border-t border-muted pt-6">
+    <div className="border-t border-muted pt-6" aria-busy={loading}>
       {loading && (
-        <div className="flex items-center gap-2 text-sm text-muted-foreground mb-4">
-          <Loader2 className="h-4 w-4 animate-spin" />
+        <div
+          role="status"
+          aria-live="polite"
+          className="mb-4 flex items-center gap-2 text-sm text-muted-foreground"
+        >
+          <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" />
           <span>Расчёт...</span>
         </div>
       )}

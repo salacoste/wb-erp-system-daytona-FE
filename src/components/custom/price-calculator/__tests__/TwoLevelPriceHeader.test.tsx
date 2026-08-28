@@ -93,7 +93,7 @@ describe('TwoLevelPriceHeader', () => {
     })
 
     describe('AC3: Price Gap Indicator Colors', () => {
-      it('shows green indicator when gap > 20%', () => {
+      it('uses the positive financial role when gap > 20%', () => {
         const props = {
           ...defaultProps,
           priceGap: { rub: 314.16, pct: 25 },
@@ -101,12 +101,12 @@ describe('TwoLevelPriceHeader', () => {
         const { container } = render(<TwoLevelPriceHeader {...props} />)
 
         const indicator = container.querySelector('[data-testid="price-gap-indicator"]')
-        expect(indicator).toHaveClass('bg-green-50')
-        expect(indicator).toHaveClass('text-green-700')
-        expect(indicator).toHaveClass('border-green-200')
+        expect(indicator).toHaveClass('bg-financial-positive/10')
+        expect(indicator).toHaveClass('text-financial-positive')
+        expect(indicator).toHaveClass('border-financial-positive/30')
       })
 
-      it('shows yellow indicator when gap is 10-20%', () => {
+      it('uses the warning status role when gap is 10-20%', () => {
         const props = {
           ...defaultProps,
           priceGap: { rub: 150, pct: 15 },
@@ -114,12 +114,12 @@ describe('TwoLevelPriceHeader', () => {
         const { container } = render(<TwoLevelPriceHeader {...props} />)
 
         const indicator = container.querySelector('[data-testid="price-gap-indicator"]')
-        expect(indicator).toHaveClass('bg-yellow-50')
-        expect(indicator).toHaveClass('text-yellow-700')
-        expect(indicator).toHaveClass('border-yellow-200')
+        expect(indicator).toHaveClass('bg-status-warning/10')
+        expect(indicator).toHaveClass('text-status-warning')
+        expect(indicator).toHaveClass('border-status-warning/30')
       })
 
-      it('shows red indicator when gap < 10%', () => {
+      it('uses the negative financial role when gap < 10%', () => {
         const props = {
           ...defaultProps,
           priceGap: { rub: 50, pct: 5 },
@@ -127,9 +127,9 @@ describe('TwoLevelPriceHeader', () => {
         const { container } = render(<TwoLevelPriceHeader {...props} />)
 
         const indicator = container.querySelector('[data-testid="price-gap-indicator"]')
-        expect(indicator).toHaveClass('bg-red-50')
-        expect(indicator).toHaveClass('text-red-700')
-        expect(indicator).toHaveClass('border-red-200')
+        expect(indicator).toHaveClass('bg-financial-negative/10')
+        expect(indicator).toHaveClass('text-financial-negative')
+        expect(indicator).toHaveClass('border-financial-negative/30')
       })
 
       it('shows TrendingUp icon for gap > 10%', () => {

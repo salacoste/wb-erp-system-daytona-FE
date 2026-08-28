@@ -140,19 +140,19 @@ describe('PercentageCostsFormSection', () => {
     })
   })
 
-  // Story 44.30: Updated styling tests - color changed from purple to emerald
+  // Story 172.8: Presentation is expressed through semantic status roles.
   describe('Styling', () => {
-    it('should have emerald background color scheme', () => {
+    it('should use the success surface role', () => {
       const { container } = renderPercentageCostsFormSection()
 
-      const section = container.querySelector('.bg-emerald-50')
+      const section = container.querySelector('.bg-status-success\\/10')
       expect(section).toBeInTheDocument()
     })
 
-    it('should have emerald left border', () => {
+    it('should use the success border role', () => {
       const { container } = renderPercentageCostsFormSection()
 
-      const section = container.querySelector('.border-l-emerald-400')
+      const section = container.querySelector('.border-l-status-success')
       expect(section).toBeInTheDocument()
     })
   })
