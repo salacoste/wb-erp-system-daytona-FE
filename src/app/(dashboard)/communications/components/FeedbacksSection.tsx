@@ -76,7 +76,9 @@ export function FeedbackRating({ rating }: { rating: number | null }) {
         <Star
           key={i}
           className={
-            i < rating ? 'h-3.5 w-3.5 fill-yellow-500 text-yellow-500' : 'h-3.5 w-3.5 text-muted'
+            i < rating
+              ? 'h-3.5 w-3.5 fill-status-warning text-status-warning'
+              : 'h-3.5 w-3.5 text-muted'
           }
           aria-hidden
         />

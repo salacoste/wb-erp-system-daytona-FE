@@ -103,8 +103,8 @@ function PinnedRow({ item }: { item: PinnedReviewItem }) {
 
 /** State badge: pinned → "Закреплён", unpinned → "Откреплён", else neutral. */
 function StateBadge({ state }: { state: string | null }) {
-  if (state === 'pinned') return <span className="text-green-600">Закреплён</span>
-  if (state === 'unpinned') return <span className="text-red-600">Откреплён</span>
+  if (state === 'pinned') return <span className="text-status-success">Закреплён</span>
+  if (state === 'unpinned') return <span className="text-status-error">Откреплён</span>
   return <span>Статус неизвестен</span>
 }
 

@@ -33,7 +33,7 @@ function MessageRow({ message }: { message: WbChatMessage }) {
     <li className={`flex ${isSeller ? 'justify-end' : 'justify-start'}`}>
       <div
         className={`max-w-[80%] rounded-lg px-3 py-2 text-sm ${
-          isSeller ? 'bg-red-600 text-white' : 'bg-muted text-foreground'
+          isSeller ? 'bg-primary text-primary-foreground' : 'bg-muted text-foreground'
         }`}
       >
         <div className="mb-0.5 flex items-center gap-2 text-xs opacity-80">

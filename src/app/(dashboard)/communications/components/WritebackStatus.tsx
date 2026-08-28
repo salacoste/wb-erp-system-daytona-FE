@@ -63,7 +63,7 @@ export function WritebackStatus({
 }: WritebackStatusProps) {
   if (isWritebackDisabledError(error)) {
     return (
-      <p role="alert" className="mt-1 text-xs text-red-600" data-testid={testId}>
+      <p role="alert" className="mt-1 text-xs text-destructive" data-testid={testId}>
         {WRITEBACK_DISABLED_MESSAGE}
       </p>
     )
@@ -71,7 +71,7 @@ export function WritebackStatus({
   if (error) {
     // Finding 10: never leak raw error.message (BE/English) — RU generic copy.
     return (
-      <p role="alert" className="mt-1 text-xs text-red-600" data-testid={testId}>
+      <p role="alert" className="mt-1 text-xs text-destructive" data-testid={testId}>
         {writebackErrorMessage(error)}
       </p>
     )
@@ -80,14 +80,14 @@ export function WritebackStatus({
   // generic failure) — the acceptance "a RU timeout message shows" is met here.
   if (status === WRITEBACK_TIMEOUT_STATUS) {
     return (
-      <p role="alert" className="mt-1 text-xs text-red-600" data-testid={testId}>
+      <p role="alert" className="mt-1 text-xs text-destructive" data-testid={testId}>
         {WRITEBACK_TIMEOUT_MESSAGE}
       </p>
     )
   }
   if (pollError) {
     return (
-      <p role="alert" className="mt-1 text-xs text-red-600" data-testid={testId}>
+      <p role="alert" className="mt-1 text-xs text-destructive" data-testid={testId}>
         {WRITEBACK_GENERIC_ERROR_MESSAGE}
       </p>
     )
@@ -97,7 +97,12 @@ export function WritebackStatus({
     // verbatim); preserve the raw failedReason in the title attr only (Defensive
     // Frontend: indicate + preserve raw, don't dump it as visible text).
     return (
-      <p role="alert" className="mt-1 text-xs text-red-600" data-testid={testId} title={jobError}>
+      <p
+        role="alert"
+        className="mt-1 text-xs text-destructive"
+        data-testid={testId}
+        title={jobError}
+      >
         {WRITEBACK_GENERIC_ERROR_MESSAGE}
       </p>
     )
