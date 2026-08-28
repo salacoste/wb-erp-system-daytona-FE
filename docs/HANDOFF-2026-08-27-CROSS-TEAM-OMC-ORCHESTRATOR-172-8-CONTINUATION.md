@@ -181,6 +181,7 @@ Allowed Change Surface = только файлы плана стори. Forbidde
 | # | Документ | Роль |
 |---|---|---|
 | 1 | Этот handoff | ВХОД-ТОЧКА / состояние / уроки |
+| 1a | `docs/ORCHESTRATOR-PROMPT-2026-08-28-V11-HANDOFF-SUPERVISOR-OMC.md` | **Операционный промпт контролёра** исполнения этого handoff через OMC-сабагентов (петля стори-за-стори, mid-flight правила, критерии успеха) |
 | 2 | `docs/ORCHESTRATOR-PROMPT-2026-08-26-V10-OMC-SUBAGENT-ORCHESTRATION.md` | Процесс-канон OMC-делегирования (§4 матрица, §5 роутинг, §6 конвейер, §7 гейты, §8 нормы, §9 ловушки) |
 | 3 | `.omx/plans/172.8-*.md` (затем 172.9+) | План стори — **authoritative** (branch/worktree/surface/валидация/cleanup) |
 | 4 | `CLAUDE.md` | Правила репо: baselines-таблица, двухпроходность, анти-паттерны, гейты |
