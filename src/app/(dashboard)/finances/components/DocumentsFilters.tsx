@@ -31,6 +31,7 @@ export interface DocumentsFiltersProps {
   onSortChange: (value: DocumentsSort) => void
   onOrderChange: (value: DocumentsOrder) => void
   categoryOptions?: DocumentCategory[]
+  categoryState?: 'ready' | 'loading' | 'error'
 }
 
 export function DocumentsFilters({
@@ -45,15 +46,22 @@ export function DocumentsFilters({
   onSortChange,
   onOrderChange,
   categoryOptions,
+  categoryState = 'ready',
 }: DocumentsFiltersProps) {
+  const categoryUnavailable = categoryState !== 'ready'
+
   return (
     <div className="flex flex-wrap items-end gap-3" role="group" aria-label="Фильтры документов">
       <div className="flex flex-col gap-1">
         <Label htmlFor="docs-category" className="text-xs text-muted-foreground">
           Категория
         </Label>
-        <Select value={category} onValueChange={onCategoryChange}>
-          <SelectTrigger id="docs-category" className="h-9 w-[180px]">
+        <Select value={category} onValueChange={onCategoryChange} disabled={categoryUnavailable}>
+          <SelectTrigger
+            id="docs-category"
+            className="h-9 w-[180px]"
+            aria-describedby={categoryUnavailable ? 'docs-category-status' : undefined}
+          >
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
@@ -69,6 +77,16 @@ export function DocumentsFilters({
               ))}
           </SelectContent>
         </Select>
+        {categoryState === 'loading' && (
+          <p id="docs-category-status" className="text-xs text-muted-foreground" role="status">
+            Загрузка категорий…
+          </p>
+        )}
+        {categoryState === 'error' && (
+          <p id="docs-category-status" className="text-xs text-destructive" role="status">
+            Категории временно недоступны
+          </p>
+        )}
       </div>
 
       <div className="flex flex-col gap-1">

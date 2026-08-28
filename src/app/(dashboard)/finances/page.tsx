@@ -32,7 +32,12 @@ export default function FinancesPage() {
 
       {/* AC4: independent sources — balance failure never blanks documents. */}
       <BalanceCard enabled={cabinetReady} />
-      <DocumentsTable enabled={cabinetReady} locale="ru" />
+      {/* Story 172.10: caption names the documents source (RTC contract). */}
+      <DocumentsTable
+        enabled={cabinetReady}
+        locale="ru"
+        captionText="Финансовые документы Wildberries"
+      />
     </div>
   )
 }

@@ -19,8 +19,18 @@ import { ROUTES, TIMEOUTS } from './fixtures/test-data'
 
 const FINANCES_URL = ROUTES.finances
 const BALANCE_API = '**/v1/finances/balance'
-const DOCS_API = '**/v1/finances/documents'
-const CATEGORIES_API = '**/v1/finances/documents/categories'
+// NOTE (Story 172.10 repair): Playwright globs are end-anchored, so the old
+// '**/v1/finances/documents' never matched the real request — the documents
+// query ALWAYS carries ?locale=ru&limit=…, the stub silently missed, and the
+// page rendered live-BE documents instead of fixtures. A RegExp covers the
+// request with and without a query string and cannot collide with
+// /documents/categories or /documents/*/download (those continue with '/'
+// after "documents", not '?' or end-of-URL).
+const DOCS_API = /\/v1\/finances\/documents(?:\?.*)?$/
+// Same query-string repair as DOCS_API: the categories request carries
+// ?locale=ru, so the old end-anchored glob never matched and the dropdown
+// silently listed live-BE categories instead of the stubs.
+const CATEGORIES_API = /\/v1\/finances\/documents\/categories(?:\?.*)?$/
 const DOWNLOAD_API = '**/v1/finances/documents/*/download*'
 const TEST_TIMEOUT = 60_000
 
@@ -116,12 +126,17 @@ test.describe('NEW-7 — Finances page', () => {
     await gotoFinances(page)
     await balanceResponse
 
-    await expect(page.getByText('Баланс кабинета')).toBeVisible({ timeout: TIMEOUTS.api })
+    // exact:true — 'Баланс кабинета' is also a substring of the page subtitle;
+    // 'Финансовые документы' is additionally a substring of the table caption
+    // (strict mode resolved 2-3 elements without the flag).
+    await expect(page.getByText('Баланс кабинета', { exact: true })).toBeVisible({
+      timeout: TIMEOUTS.api,
+    })
     await expect(page.getByText('Текущий баланс')).toBeVisible()
     // Money formatted as RUB (regex — locale-formatted).
     await expect(page.getByText(/1\s523\s400/)).toBeVisible()
     // Documents table renders rows.
-    await expect(page.getByText('Финансовые документы')).toBeVisible()
+    await expect(page.getByText('Финансовые документы', { exact: true })).toBeVisible()
     await expect(page.getByText('Платёжное поручение за январь')).toBeVisible({
       timeout: TIMEOUTS.api,
     })
@@ -135,7 +150,7 @@ test.describe('NEW-7 — Finances page', () => {
       timeout: TIMEOUTS.api,
     })
     // Documents table still usable (AC4 independence).
-    await expect(page.getByText('Финансовые документы')).toBeVisible()
+    await expect(page.getByText('Финансовые документы', { exact: true })).toBeVisible()
   })
 
   test('renders balance error + retry on 503 (documents stay usable)', async ({ page }) => {
@@ -147,7 +162,7 @@ test.describe('NEW-7 — Finances page', () => {
     ).toBeVisible({ timeout: TIMEOUTS.api })
     await expect(page.getByRole('button', { name: /Повторить/ })).toBeVisible()
     // AC4: documents independent — not blanked by the balance failure.
-    await expect(page.getByText('Финансовые документы')).toBeVisible()
+    await expect(page.getByText('Финансовые документы', { exact: true })).toBeVisible()
   })
 
   test('filters the documents list by category via an exact request', async ({ page }) => {
@@ -173,6 +188,39 @@ test.describe('NEW-7 — Finances page', () => {
     await expect(page.getByText('Акт сверки за декабрь')).toBeVisible({ timeout: TIMEOUTS.api })
   })
 
+  test('distinguishes filtered empty and resets to the unfiltered first page', async ({ page }) => {
+    test.setTimeout(TEST_TIMEOUT)
+    await installRoutes(page)
+    await page.route(DOCS_API, async route => {
+      const url = new URL(route.request().url())
+      if (url.searchParams.get('category') === 'ЭДО') {
+        await route.fulfill({ json: [] })
+        return
+      }
+      await route.fallback()
+    })
+    await gotoFinances(page)
+    await page.getByLabel('Категория').click()
+    await page.getByRole('option', { name: 'Электронный документооборот' }).click()
+    await expect(page.getByText('По выбранным фильтрам документов нет')).toBeVisible({
+      timeout: TIMEOUTS.api,
+    })
+
+    const resetResponse = page.waitForResponse(resp => {
+      const url = new URL(resp.url())
+      return (
+        url.pathname.endsWith('/v1/finances/documents') &&
+        !url.searchParams.has('category') &&
+        Number(url.searchParams.get('offset')) === 0
+      )
+    })
+    await page.getByRole('button', { name: 'Сбросить фильтры' }).click()
+    await resetResponse
+    await expect(page.getByText('Платёжное поручение за январь')).toBeVisible({
+      timeout: TIMEOUTS.api,
+    })
+  })
+
   test('paginates the documents list via an offset request', async ({ page }) => {
     test.setTimeout(TEST_TIMEOUT)
     // Seed >pageSize (DEFAULT_PAGE_SIZE=20) rows so the Next button is ENABLED;
@@ -180,7 +228,11 @@ test.describe('NEW-7 — Finances page', () => {
     // click is a no-op, which would let the offset>0 waitForResponse time out.
     await installRoutes(page, { docs: PAGED_DOCUMENTS })
     await gotoFinances(page)
-    await expect(page.getByText('Платёжное поручение 1')).toBeVisible({ timeout: TIMEOUTS.api })
+    // exact:true — rows 10-19 contain "Платёжное поручение 1" as a substring
+    // (non-exact getByText resolved 11 elements → strict mode violation).
+    await expect(page.getByText('Платёжное поручение 1', { exact: true })).toBeVisible({
+      timeout: TIMEOUTS.api,
+    })
     // Next-page button issues a request with offset > 0.
     const nextResponse = page.waitForResponse(resp => {
       const u = new URL(resp.url())

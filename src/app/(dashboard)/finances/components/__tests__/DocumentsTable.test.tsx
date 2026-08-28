@@ -51,7 +51,8 @@ function mockDocs(
     isError: boolean
     refetch: ReturnType<typeof vi.fn>
   }>,
-  categories: DocumentCategory[] = []
+  categories: DocumentCategory[] = [],
+  categoryResult: Partial<{ isLoading: boolean; isError: boolean }> = {}
 ) {
   vi.spyOn(financesHooks, 'useFinanceDocuments').mockReturnValue({
     data: result.data,
@@ -67,6 +68,7 @@ function mockDocs(
     isError: false,
     error: null,
     refetch: vi.fn(),
+    ...categoryResult,
   } as unknown as ReturnType<typeof financesHooks.useFinanceDocumentCategories>)
 }
 
@@ -83,6 +85,9 @@ describe('DocumentsTable — independent states (AC4)', () => {
   it('renders a skeleton while loading', () => {
     mockDocs({ isLoading: true })
     const { container } = renderWithClient(<DocumentsTable />)
+    expect(
+      screen.getByRole('status', { name: 'Загрузка финансовых документов' })
+    ).toBeInTheDocument()
     expect(container.querySelector('.animate-pulse')).toBeTruthy()
   })
 
@@ -90,6 +95,10 @@ describe('DocumentsTable — independent states (AC4)', () => {
     mockDocs({ data: POPULATED_DOCS }, POPULATED_CATS)
     renderWithClient(<DocumentsTable />)
     expect(screen.getByRole('table')).toBeInTheDocument()
+    expect(screen.getByRole('region', { name: 'Финансовые документы' })).toHaveAttribute(
+      'tabindex',
+      '0'
+    )
     expect(screen.getByText('Платёжное поручение')).toBeInTheDocument()
     expect(screen.getByText('ПА')).toBeInTheDocument()
     // Download button present per row.
@@ -133,6 +142,84 @@ describe('DocumentsTable — independent states (AC4)', () => {
 
     await waitFor(() => expect(createObjectURL).toHaveBeenCalledTimes(1))
     expect(clickSpy).toHaveBeenCalledTimes(1)
+    expect(await screen.findByRole('status')).toHaveTextContent('Документ скачан')
+  })
+
+  it.each([
+    ['empty', ''],
+    ['malformed', '%%%not-base64%%%'],
+  ])('surfaces a visible download failure for a %s payload', async (_label, document) => {
+    mockDocs({ data: POPULATED_DOCS }, POPULATED_CATS)
+    server.use(
+      http.get(`${API_BASE_URL}/v1/finances/documents/:serviceName/download`, () =>
+        HttpResponse.json({ fileName: 'doc.pdf', extension: 'pdf', document })
+      )
+    )
+    renderWithClient(<DocumentsTable />)
+    fireEvent.click(screen.getByRole('button', { name: /Скачать документ/ }))
+    expect(await screen.findByRole('alert')).toHaveTextContent('Не удалось скачать')
+    expect(URL.createObjectURL).not.toHaveBeenCalled()
+  })
+
+  it('clears stale download failure when the format is switched (pass-3 fix)', async () => {
+    mockDocs({ data: POPULATED_DOCS }, POPULATED_CATS)
+    server.use(
+      http.get(`${API_BASE_URL}/v1/finances/documents/:serviceName/download`, () =>
+        HttpResponse.json({ fileName: 'doc.pdf', extension: 'pdf', document: '' })
+      )
+    )
+    const user = userEvent.setup()
+    renderWithClient(<DocumentsTable />)
+    fireEvent.click(screen.getByRole('button', { name: /Скачать документ/ }))
+    expect(await screen.findByRole('alert')).toHaveTextContent('Не удалось скачать')
+    // Switch pdf → xlsx: the stale failure of the previous attempt must go.
+    await user.click(screen.getByLabelText('Формат скачивания'))
+    await user.click(screen.getByRole('option', { name: 'XLSX' }))
+    expect(screen.queryByRole('alert')).toBeNull()
+  })
+
+  it('renders the RTC caption when captionText is provided (Story 172.10)', () => {
+    mockDocs({ data: POPULATED_DOCS }, POPULATED_CATS)
+    renderWithClient(<DocumentsTable captionText="Финансовые документы Wildberries" />)
+    expect(screen.getByRole('caption')).toHaveTextContent('Финансовые документы Wildberries')
+  })
+
+  it('renders NO caption element without captionText (Story 172.10)', () => {
+    mockDocs({ data: POPULATED_DOCS }, POPULATED_CATS)
+    renderWithClient(<DocumentsTable />)
+    expect(screen.queryByRole('caption')).toBeNull()
+  })
+
+  it('announces download pending via a polite live region (Story 172.10)', async () => {
+    // Never-resolving handler keeps the real mutation pending → the sr-only
+    // role="status" text appears (spinner alone is visual-only, aria-hidden).
+    mockDocs({ data: POPULATED_DOCS }, POPULATED_CATS)
+    server.use(
+      http.get(
+        `${API_BASE_URL}/v1/finances/documents/:serviceName/download`,
+        () => new Promise(() => {})
+      )
+    )
+    renderWithClient(<DocumentsTable />)
+    expect(screen.queryByRole('status')).toBeNull()
+    fireEvent.click(screen.getByRole('button', { name: /Скачать документ/ }))
+    expect(await screen.findByRole('status')).toHaveTextContent('Скачивание документа…')
+  })
+
+  it('keeps documents usable while categories fail and explains the partial state', () => {
+    mockDocs({ data: POPULATED_DOCS }, [], { isError: true })
+    renderWithClient(<DocumentsTable />)
+    expect(screen.getByText('Платёжное поручение')).toBeInTheDocument()
+    expect(screen.getByRole('status')).toHaveTextContent('Категории временно недоступны')
+    expect(screen.getByLabelText('Категория')).toBeDisabled()
+  })
+
+  it('announces category loading and disables only the category filter', () => {
+    mockDocs({ data: POPULATED_DOCS }, [], { isLoading: true })
+    renderWithClient(<DocumentsTable />)
+    expect(screen.getByRole('status')).toHaveTextContent('Загрузка категорий…')
+    expect(screen.getByLabelText('Категория')).toBeDisabled()
+    expect(screen.getByLabelText('Начало периода')).toBeEnabled()
   })
 })
 
@@ -227,5 +314,35 @@ describe('DocumentsTable — filter & pagination interactions', () => {
     // No option carries an empty string value (the "all" collision).
     const options = screen.getAllByRole('option')
     expect(options.every(opt => opt.getAttribute('data-value') !== '')).toBe(true)
+  })
+
+  it('distinguishes filtered empty and resets filters plus pagination', async () => {
+    const docsSpy = vi.spyOn(financesHooks, 'useFinanceDocuments').mockImplementation(
+      (query: FinanceDocumentsQuery = {}) =>
+        ({
+          data: query.category ? [] : POPULATED_DOCS,
+          isLoading: false,
+          isError: false,
+          error: null,
+          refetch: vi.fn(),
+        }) as unknown as ReturnType<typeof financesHooks.useFinanceDocuments>
+    )
+    vi.spyOn(financesHooks, 'useFinanceDocumentCategories').mockReturnValue({
+      data: POPULATED_CATS,
+      isLoading: false,
+      isError: false,
+      error: null,
+      refetch: vi.fn(),
+    } as unknown as ReturnType<typeof financesHooks.useFinanceDocumentCategories>)
+
+    const user = userEvent.setup()
+    renderWithClient(<DocumentsTable />)
+    await user.click(screen.getByLabelText('Категория'))
+    await user.click(screen.getByRole('option', { name: 'Платёжное поручение' }))
+    expect(await screen.findByText('По выбранным фильтрам документов нет')).toBeInTheDocument()
+
+    await user.click(screen.getByRole('button', { name: 'Сбросить фильтры' }))
+    expect(lastQuery(docsSpy)).toEqual(expect.objectContaining({ category: undefined, offset: 0 }))
+    expect(await screen.findByText('Платёжное поручение')).toBeInTheDocument()
   })
 })
