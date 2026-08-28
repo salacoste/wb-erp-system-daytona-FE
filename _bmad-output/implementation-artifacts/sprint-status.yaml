@@ -1,5 +1,5 @@
 # generated: 2026-08-03
-# last_updated: 2026-08-28 — Story 172.13 shipped through feature PR #317 (merge 485fa27d); Epic 172 is 13/17; Program NEXT = Story 172.14.
+# last_updated: 2026-08-29 — Story 172.14 shipped through feature PR #319 (merge 4b988aae); Epic 172 is 14/17; Program NEXT = Story 172.15.
 # project: frontend
 # project_key: NOKEY
 # tracking_system: file-system
@@ -37,7 +37,7 @@
 #   they are excluded from story and retrospective counts and must be documented with a no-story-ID note.
 
 generated: 2026-08-03 # refreshed after Epic 127 truth reconciliation and Epics 162-165 registration
-last_updated: 2026-08-28 # Story 172.13 shipped through feature PR #317 (merge 485fa27d); Epic 172 is 13/17; Program NEXT = Story 172.14.
+last_updated: 2026-08-29 # Story 172.14 shipped through feature PR #319 (merge 4b988aae); Epic 172 is 14/17; Program NEXT = Story 172.15.
 project: frontend
 project_key: NOKEY
 tracking_system: file-system
@@ -831,7 +831,7 @@ development_status:
   172-11-fe-migrate-the-monitor-route: done # PR #311 (d39ad37c, merge 8b172445): MINOR-GAP; 14 files (13M+1A guard) +213/-52: 18 palette + 9 hex -> semantic tokens (status valence, chart-1/positive/negative/grid, muted-foreground, destructive, foreground); gauge band hex->color CSS-var + style-prop stroke; weekly chart recharts var() idiom; test re-pins; guard 9 (catalog 14 exact-array BFS-verified, no-palette/no-hex self-tested, band/banner/valence/chart pins, mutation-tested); e2e legend assert REPAIRED (BD-22 rename #41 strict-mode, bisect+archaeology pre-existing proof; exact fix); targeted 21/155 (base 20/146); full 19423/0/1221 (floor 19414, +9 exact); lint 0/0, tsc 0, build 0; e2e repair-green + sidebar-nav flake disposition (clean-main bisect + warm retry 4/0); 1xopus APPROVE-WITH-NOTES; carry-out STATUS_COLORS (src/lib, -> 172.12); cleanup 0/0/0.
   172-12-fe-migrate-the-monitoring-operations-console: done # PR #315 (ef59a7cf, merge 9498cb76): FULL-class MINOR; 23 files (22M+1A guard) +352/-134: 74 palette + 20 hex + 2 rawbtn -> semantic tokens x19 files; heatmap STATUS+LEGEND synced (recovered=color-mix alpha, one-green-HSL rationale); 2 Button conversions (type=button restored); 10 test re-pins; guard 10 (catalog 32 exact-array + dead-trio annotation, per-key heatmap pins, cross-file legend-sync); a11y side-fix tooltip contrast; targeted 10/70 (base 9/60); full 19433/0/1222 (floor 19423, +10 exact); e2e 11 x2; 2x APPROVE-WITH-NOTES; carry-outs (dead trio, STATUS_COLORS lib, text-white circles, role=listitem); cleanup 0/0/0.
   172-13-fe-migrate-the-moysklad-integration-workspace: done # PR #317 (5fe9af95, merge 485fa27d): MINOR-GAP; 8 files (7M one-line + 1A guard) +115/-7: 7 palette -> tokens (health badge success branch, 3 warning banners canonical, unmapped headline -> status-warning, link -> primary, recalc badge); guard 6 (catalog 13 exact-array BFS, mutation-tested); targeted 5/45 (base 4/39); full 19439/0/1223 (floor 19433, +6 exact); e2e 12 (4 plan specs); 1xopus APPROVE-WITH-NOTES (3 LOW info); cleanup 0/0/0.
-  172-14-fe-migrate-the-orders-overview: backlog
+  172-14-fe-migrate-the-orders-overview: done # PR #319 (4213dbfd, merge 4b988aae): FULL owner-story; 30 files (29M+1A guard) +350/-132: status-badge token maps (SHIPPED->status-pending purple native; alpha-tiers), WB-vs-local pending/muted, analytics family, 4 Button conversions, ~50 re-pins + test mirror->real lib import; guard 8 (dual-root 61 exact-array, fbo/integrity excluded); cross-restraint 0-import proof; targeted 27/995 (base 26/987); full 19447/0/1224 (floor 19439, +8 exact); e2e 7x2; 2x APPROVE-WITH-NOTES (pass-1 MEDIUM lib-mirror drift fixed); lib-passthrough residue documented; cleanup 0/0/0.
   172-15-fe-migrate-fbo-orders: backlog
   172-16-fe-migrate-order-integrity-analysis: backlog
   172-17-fe-migrate-product-management: backlog
