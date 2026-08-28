@@ -2200,6 +2200,7 @@ So that I can evaluate pricing outcomes without misunderstanding units or assump
 - **Route/User Value:** price-calculator form, validation, assumptions, result, and reset/recalculation.
 - **Owned Surface:** route directory and exclusive price-calculator components/tests.
 - **Shared Dependencies:** Story 172.5 formatting/presentation plus foundation/AppShell.
+- **Current Delivery State:** `done`. Feature commit `9adf7d331002ba35be9f571af264a0cca43d134d` migrated the live calculator presentation while all 24 read-only formula/business files and all 20 unreachable calculator files remained unchanged. Two fresh-context adversarial passes were completed and every accepted finding was fixed. The calculator suite passed at 70 files / 1,759 tests; the full corpus is covered at 19,383 passing tests by the four-worker run plus exact isolated environmental reruns; lint, TypeScript, max-lines, production build, and static E2E guards passed. Dynamic Playwright remained explicitly unavailable because Story 172.8 had no authorized `.env.e2e`; it was not reported as a pass. PR #301 merged as `08191dae387b9f130ac291ba48e48b2047d63a34`.
 - **Allowed Change Surface:** Owned Surface and calculator tests/fixtures.
 - **Forbidden Shared Files:** tokens/primitives/AppShell, calculation helpers/business formulas/API contracts unless explicitly proven presentation-only.
 - **State Coverage:** pristine, valid input, field error, unusual warning, calculating, result, zero/negative result, failure.
@@ -2207,8 +2208,8 @@ So that I can evaluate pricing outcomes without misunderstanding units or assump
 - **Accessibility Contract:** visible units, associated errors, logical result heading, announced completion, non-color profit direction.
 - **Test and Visual Evidence:** formula-boundary regression fixtures and form/result screenshots.
 - **Local Validation:** targeted calculator tests plus universal checks.
-- **Branch/Worktree Lifecycle:** `cdx/epic-172-story-8-price-calculator`, dedicated temporary worktree.
-- **Cleanup Evidence:** formula-preservation evidence plus branch/worktree cleanup.
+- **Branch/Worktree Lifecycle:** `cdx/epic-172-story-8-price-calculator` was created from `35503067e7b49e8f2970437d17211c9a36913a65`; PR #301 merged the feature as `08191dae387b9f130ac291ba48e48b2047d63a34`.
+- **Cleanup Evidence:** merge ancestry was proven on clean primary `main`; the remote feature branch, local feature branch, `/private/tmp/wb-repricer-fe-172-8-price-calculator`, and Story-specific lifecycle records were removed, and worktrees were pruned.
 
 **Acceptance Criteria:**
 
