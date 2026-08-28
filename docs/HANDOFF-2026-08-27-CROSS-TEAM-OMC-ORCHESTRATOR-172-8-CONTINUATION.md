@@ -6,18 +6,18 @@
 
 ---
 
-## 0. Верифицированное состояние (2026-08-28, после Story 172.10 feature PR #308 и closeout PR #309)
+## 0. Верифицированное состояние (2026-08-28, после Story 172.11 feature PR #311 и reconciliation PR #310)
 
 | Метрика | Значение |
 |---|---|
-| `main` | `e6d05de4`, Story closeout merge baseline; repo > doc допустим после canonical reconciliation |
-| Прогресс миграции 166-174 | **69/94** канонических стори |
-| Эпики | 166 ✅ · 167 ✅ · 168 ✅ · **169 ✅ (15/15; 169.12 closeout PR #299)** · 170 ✅ (7/7) · 171 ✅ (9/9) · **172 IN PROGRESS (10/17)** · 173/174 backlog |
-| Полный пол (vitest, **живой прогон при handoff**) | **19 414 passed / 0 failed / 1220 файлов / EXIT=0** (рост: 19 356 → 19 383 → 19 394 → **19 414** [+20 exact 172.10: 10 guard + 10 behavior/error]); e2e: **12 passed / 1 intentional manager-setup skip** |
+| `main` | `402df723` (PR #310+#311; 172.11 closeout PR мержится поверх), дерево чистое, IN-SYNC после closeout |
+| Прогресс миграции 166-174 | **70/94** канонических стори |
+| Эпики | 166 ✅ · 167 ✅ · 168 ✅ · **169 ✅ (15/15; 169.12 closeout PR #299)** · 170 ✅ (7/7) · 171 ✅ (9/9) · **172 IN PROGRESS (11/17)** · 173/174 backlog |
+| Полный пол (vitest, **живой прогон при handoff**) | **19 423 passed / 0 failed / 1221 файл / EXIT=0** (рост: … → 19 414 → **19 423** [+9 exact 172.11 guard]) |
 | Остальные гейты | lint 0/0 (zero-warning), tsc 0, max-lines OK, check:docs exit 0, locale-percent ratchet 4, lessons-length 0 |
 | PM2 | `wb-repricer-frontend-dev` online :3100; BE :3000 |
-| **NEXT** | **172.11-FE Monitor Route** (план `.omx/plans/172.11-*.md`; owner-координация: 172.14) |
-| Сессионные ветки/worktrees 172.x | Story 172.10 feature + closeout **0/0/0**; canonical reconciliation branch очищается сразу после merge; active Story 172.11 worktree — чужой product lane, не трогать |
+| **NEXT** | **172.12-FE Monitoring Operations Console** (план `.omx/plans/172.12-*.md`; owner: lib STATUS_COLORS carry-out из 172.11) |
+| Сессионные ветки/worktrees 172.x | Story 172.11 feature + closeout **0/0/0**; чужие docs-reconciliation lanes самоочищаются после merge |
 
 **Сделано сессией 172.1-172.10** (эталонные артефакты — читай перед стартом):
 - **172.1** Business Dashboard — FULL 127 файлов, 4 executor-волны, 3-проходное ревью (PRs #278/#279) — эталон FULL-конвейера.
@@ -159,6 +159,7 @@ Allowed Change Surface = только файлы плана стори. Forbidde
 18. **Параллельная сессия может ДОРАБАТЫВАТЬ внутрь твоего стори-worktree mid-flight** (172.10): файлы появляются/правятся поверх твоего WIP, branch перемещается на новый main. Протокол: криминалистический снапшот в /tmp → опрос mtime активности → СТОП + эскалация владельцу (AskUserQuestion) → по решению: абсорбция = полный повторный конвейер на объединённом дереве (валидация + СВЕЖЕЕ ревью дельты) либо восстановление своего отревьюенного состояния из /tmp-диффа. Никаких git-операций над спорным деревом до решения.
 19. **Playwright end-anchored globs молча промахиваются по URL с query** (`'**/api/x'` ≠ `x?locale=ru&limit=…`): стабы не применяются, страница рендерит живые BE-данные, тесты «зелёные» на чужих данных или падают на текстах. Лечение: RegExp-роуты `/\/api\/x(?:\?.*)?$/` с проверкой коллизий; соседний паттерн с хвостом `*` в той же спеке — подсказка автора. Bisect на stash-clean дереве доказывает pre-existing.
 20. **Фоновый полный пол vitest параллельно с build/e2e = «Timeout starting forks runner»** (пулы не стартуют, файлы «пропадают», EXIT=1 при обманчиво-зелёном счёте): читай Unhandled Errors в логе; полный пол — ТОЛЬКО соло, без конкурирующих тяжёлых процессов.
+21. **Сетевые ConnectionRefused-смерти сабагентов** (3× за сессию 172.10-172.11: ревьюер, wave-2 executor, ещё ревьюер): агент падает с API Error, WIP частичен или пуст. Лечение: SendMessage-резюм по agentId восстанавливает контекст из транскрипта (ревьюеры доезжали); волна-исполнитель, умерший ДО правок, — перезапуск задачи вручную контролёром дешевле резюма. Проверяй git status worktree перед перезапуском (что успело примениться).
 
 **V10-канон ловушек** (полный список в V10 §9): concurrent-сессии (`git branch --show-current` перед КАЖДЫМ коммитом; коммитить сразу; чужие worktrees не трогать; re-grep origin/main перед финализацией closeout — **merge-гонки реальны**: 169-lane влила #295/#296 поверх наших PR); Turbopack×symlink (только `--webpack`); порт 3100 pm2-конфликт (остановить → вернуть); exit-коды только `cmd > log; echo EXIT=$?`; BE-репо НИКОГДА `git add -A frontend/` (зеркал-дрейф блокирует BE-pull — не твой мандат); playwright-cli `goto` после логина; сабагенты наследуют PRIMARY cwd — абсолютный путь worktree первой командой; промежуточные unused-imports (импорт+использование одним батчем); волна вне списка = брак (откат + перезапуск).
 
