@@ -84,6 +84,35 @@ describe('FboSalesTable', () => {
     expect(screen.getByText('100001')).toBeInTheDocument()
   })
 
+  it('renders the RTC caption when captionText is provided (Story 172.15)', () => {
+    renderWithProviders(
+      <FboSalesTable
+        sales={[makeSale()]}
+        isLoading={false}
+        page={1}
+        totalPages={1}
+        totalCount={1}
+        onPageChange={vi.fn()}
+        captionText="Продажи FBO Wildberries"
+      />
+    )
+    expect(screen.getByRole('caption')).toHaveTextContent('Продажи FBO Wildberries')
+  })
+
+  it('renders NO caption element without captionText (Story 172.15)', () => {
+    renderWithProviders(
+      <FboSalesTable
+        sales={[makeSale()]}
+        isLoading={false}
+        page={1}
+        totalPages={1}
+        totalCount={1}
+        onPageChange={vi.fn()}
+      />
+    )
+    expect(screen.queryByRole('caption')).toBeNull()
+  })
+
   it('renders destructive badge for storno (return) rows', () => {
     const sale = makeSale({ isStorno: true })
     renderWithProviders(

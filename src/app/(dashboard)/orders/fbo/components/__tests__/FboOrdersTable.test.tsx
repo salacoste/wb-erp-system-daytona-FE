@@ -89,6 +89,35 @@ describe('FboOrdersTable', () => {
     expect(screen.getByText('100001')).toBeInTheDocument()
   })
 
+  it('renders the RTC caption when captionText is provided (Story 172.15)', () => {
+    renderWithProviders(
+      <FboOrdersTable
+        orders={[makeOrder()]}
+        isLoading={false}
+        page={1}
+        totalPages={1}
+        totalCount={1}
+        onPageChange={vi.fn()}
+        captionText="Заказы FBO Wildberries"
+      />
+    )
+    expect(screen.getByRole('caption')).toHaveTextContent('Заказы FBO Wildberries')
+  })
+
+  it('renders NO caption element without captionText (Story 172.15)', () => {
+    renderWithProviders(
+      <FboOrdersTable
+        orders={[makeOrder()]}
+        isLoading={false}
+        page={1}
+        totalPages={1}
+        totalCount={1}
+        onPageChange={vi.fn()}
+      />
+    )
+    expect(screen.queryByRole('caption')).toBeNull()
+  })
+
   it('renders destructive badge for cancelled orders', () => {
     const order = makeOrder({ isCancel: true })
     renderWithProviders(
