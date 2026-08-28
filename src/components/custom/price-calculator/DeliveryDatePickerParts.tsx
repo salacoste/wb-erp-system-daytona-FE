@@ -126,19 +126,19 @@ function CoefficientColorLegend() {
       <h4 className="font-semibold mb-1">Цвета коэффициентов приёмки</h4>
       <ul className="text-muted-foreground space-y-0.5">
         <li>
-          <span className="inline-block w-3 h-3 rounded bg-green-200 mr-1" />
+          <span className="inline-block w-3 h-3 rounded bg-status-success/40 mr-1" />
           ≤1.0 — базовый тариф
         </li>
         <li>
-          <span className="inline-block w-3 h-3 rounded bg-yellow-200 mr-1" />
+          <span className="inline-block w-3 h-3 rounded bg-status-information/40 mr-1" />
           1.0-1.5 — повышенный
         </li>
         <li>
-          <span className="inline-block w-3 h-3 rounded bg-orange-200 mr-1" />
+          <span className="inline-block w-3 h-3 rounded bg-status-warning/40 mr-1" />
           1.5-2.0 — высокий
         </li>
         <li>
-          <span className="inline-block w-3 h-3 rounded bg-red-200 mr-1" />
+          <span className="inline-block w-3 h-3 rounded bg-status-error/40 mr-1" />
           &gt;2.0 — пиковый
         </li>
         <li>

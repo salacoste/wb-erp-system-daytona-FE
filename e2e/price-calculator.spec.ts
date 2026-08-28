@@ -1,4 +1,5 @@
 import { test, expect, type Page } from './fixtures/network-test'
+import { mockPriceCalculatorTariffReferences } from './fixtures/story-172-8-price-calculator'
 
 /**
  * Epic 44-FE: Price Calculator UI - E2E Tests
@@ -20,8 +21,8 @@ import { test, expect, type Page } from './fixtures/network-test'
  * - Dev сервер запущен на localhost:3100
  * - Авторизация через e2e/.auth/user.json
  *
- * Примечание: Используем page.evaluate для заполнения input полей
- * из-за особенностей react-hook-form с valueAsNumber
+ * Поля и клавиатурные сценарии управляются реальными Playwright actions,
+ * чтобы проверять пользовательское поведение, а не DOM implementation details.
  */
 
 test.describe('Epic 44-FE: Price Calculator UI', () => {
@@ -38,121 +39,8 @@ test.describe('Epic 44-FE: Price Calculator UI', () => {
    * real UI regressions behind backend 429 noise. Live backend/tariff contract
    * checks are covered by separate smoke diagnostics; this spec validates UI.
    */
-  async function mockTariffReferenceData(page: Page) {
-    const tariffSettings = {
-      default_commission_fbo_pct: 15,
-      default_commission_fbs_pct: 18,
-      acceptance_box_rate_per_liter: 0.11,
-      acceptance_pallet_rate: 0,
-      logistics_volume_tiers: [{ min: 0, max: 5, rate: 46 }],
-      logistics_large_first_liter_rate: 46,
-      logistics_large_additional_liter_rate: 14,
-      return_logistics_fbo_rate: 50,
-      return_logistics_fbs_rate: 50,
-      storage_free_days: 30,
-      fbs_uses_fbo_logistics_rates: false,
-      effective_from: '2026-01-01',
-    }
-
-    const warehouse = {
-      id: 507,
-      name: 'Коледино',
-      city: 'Коледино',
-      federal_district: 'ЦФО',
-      cargo_type: 'box',
-      tariffs: {
-        fbo: {
-          delivery_base_rub: 46,
-          delivery_liter_rub: 14,
-          logistics_coefficient: 1,
-        },
-        fbs: {
-          delivery_base_rub: 30,
-          delivery_liter_rub: 10,
-          logistics_coefficient: 1,
-        },
-        storage: {
-          base_per_day_rub: 0.07,
-          liter_per_day_rub: 0.05,
-          coefficient: 1,
-        },
-        effective_from: '2026-01-01',
-      },
-    }
-
-    const coefficients = [
-      {
-        warehouseId: 507,
-        warehouseName: 'Коледино',
-        date: '2026-01-01',
-        coefficient: 1,
-        isAvailable: true,
-        allowUnload: true,
-        boxTypeId: 2,
-        boxTypeName: 'Короб',
-        delivery: { coefficient: 1, baseLiterRub: 46, additionalLiterRub: 14 },
-        storage: { coefficient: 1, baseLiterRub: 0.07, additionalLiterRub: 0.05 },
-        isSortingCenter: false,
-      },
-    ]
-
-    await page.route('**/v1/tariffs/warehouses-with-tariffs**', route =>
-      route.fulfill({
-        status: 200,
-        contentType: 'application/json',
-        body: JSON.stringify({ warehouses: [warehouse], updated_at: '2026-01-01T00:00:00Z' }),
-      })
-    )
-
-    await page.route('**/v1/tariffs/acceptance/coefficients/all**', route =>
-      route.fulfill({
-        status: 200,
-        contentType: 'application/json',
-        body: JSON.stringify({
-          coefficients,
-          meta: {
-            total: coefficients.length,
-            available: coefficients.length,
-            unavailable: 0,
-            cache_ttl_seconds: 3600,
-          },
-        }),
-      })
-    )
-
-    await page.route('**/v1/tariffs/commissions**', route =>
-      route.fulfill({
-        status: 200,
-        contentType: 'application/json',
-        body: JSON.stringify({
-          commissions: [
-            {
-              parentID: 1,
-              parentName: 'Одежда',
-              subjectID: 11,
-              subjectName: 'Футболки',
-              paidStorageKgvp: 15,
-              kgvpMarketplace: 18,
-              kgvpSupplier: 15,
-              kgvpSupplierExpress: 20,
-            },
-          ],
-          meta: { total: 1, cached: true, cache_ttl_seconds: 86400 },
-        }),
-      })
-    )
-
-    await page.route('**/v1/tariffs/settings**', route =>
-      route.fulfill({
-        status: 200,
-        contentType: 'application/json',
-        body: JSON.stringify(tariffSettings),
-      })
-    )
-  }
-
   test.beforeEach(async ({ page }) => {
-    await mockTariffReferenceData(page)
+    await mockPriceCalculatorTariffReferences(page)
 
     // Навигация на страницу калькулятора цены
     await page.goto('/cogs/price-calculator')
@@ -234,9 +122,9 @@ test.describe('Epic 44-FE: Price Calculator UI', () => {
     const formCard = page.locator('[data-testid="price-calculator-form"]')
     await expect(formCard).toBeVisible()
 
-    // Правая колонка - результаты (пустое состояние). Results render twice (desktop column +
-    // lg:hidden mobile copy, both in the DOM) — assert the first (desktop, visible on this viewport).
-    const emptyState = page.getByText('Введите параметры затрат и нажмите').first()
+    // Правая колонка - единое пустое состояние результатов.
+    const emptyState = page.getByText(/Введите параметры затрат и нажмите/)
+    await expect(emptyState).toHaveCount(1)
     await expect(emptyState).toBeVisible()
   })
 
@@ -285,74 +173,36 @@ test.describe('Epic 44-FE: Price Calculator UI', () => {
   // ============================================================================
 
   test('TC-E2E-003: Слайдер маржи работает и показывает зоны', async ({ page }) => {
-    // Находим секцию целевой маржи
-    const marginSection = page.locator('.bg-primary\\/5').filter({ hasText: 'Целевая маржа' })
-    await expect(marginSection).toBeVisible()
-
-    // Находим слайдер
-    const slider = marginSection.locator('[role="slider"]')
-    await expect(slider).toBeVisible()
-
-    // Находим input для маржи
-    const marginInput = marginSection.locator('input[type="number"]')
+    const marginSection = page
+      .getByText('Целевая маржа', { exact: true })
+      .locator('..')
+      .locator('..')
+    const marginInput = marginSection.getByLabel('Маржа')
     await expect(marginInput).toBeVisible()
 
-    // Проверяем зоновые метки (используем first() так как есть дубликаты)
-    await expect(marginSection.getByText('Низкая').first()).toBeVisible()
-    await expect(marginSection.getByText('Средняя').first()).toBeVisible()
-    await expect(marginSection.getByText('Высокая').first()).toBeVisible()
+    const slider = marginSection.getByRole('slider')
+    await expect(slider).toBeVisible()
+
+    await expect(marginSection.getByText('Низкая', { exact: true })).toHaveCount(1)
+    await expect(marginSection.getByText('Средняя', { exact: true })).toHaveCount(2)
+    await expect(marginSection.getByText('Высокая', { exact: true })).toHaveCount(1)
   })
 
   test('TC-E2E-003b: Badge маржи меняется при изменении значения', async ({ page }) => {
-    const marginSection = page.locator('.bg-primary\\/5').filter({ hasText: 'Целевая маржа' })
+    const marginSection = page
+      .getByText('Целевая маржа', { exact: true })
+      .locator('..')
+      .locator('..')
+    const marginInput = marginSection.getByLabel('Маржа')
+    await expect(marginSection.getByText('Средняя', { exact: true })).toHaveCount(2)
 
-    // Проверяем что начальное значение 20 (Средняя)
-    let badge = marginSection.locator('div.rounded-md.border.shadow-sm')
-    await expect(badge).toContainText('Средняя')
-
-    // Устанавливаем высокую маржу (> 25%) - используем слайдер через aria
-    const slider = marginSection.locator('[role="slider"]')
-    await slider.focus()
-    // Story 162.8: after the native-value-setter + input event, observe React
-    // Hook Form's reflection of the new value via a bounded `toHaveValue`
-    // (replaces the prior elapsed 400ms wait). The badge text assertion that
-    // follows is itself bounded, so the value settle is the only missing link.
-    const marginInput = marginSection.locator('input[type="number"]')
-    await page.evaluate(() => {
-      const section = document.querySelector('.bg-primary\\/5')
-      const input = section?.querySelector('input[type="number"]') as HTMLInputElement
-      if (input) {
-        // Используем нативный React способ - симулируем изменение через Object.getOwnPropertyDescriptor
-        const nativeInputValueSetter = Object.getOwnPropertyDescriptor(
-          window.HTMLInputElement.prototype,
-          'value'
-        )?.set
-        if (nativeInputValueSetter) {
-          nativeInputValueSetter.call(input, '30')
-          input.dispatchEvent(new Event('input', { bubbles: true }))
-        }
-      }
-    })
+    await marginInput.fill('30')
     await expect(marginInput).toHaveValue('30', { timeout: 5000 })
-    await expect(badge).toContainText('Высокая')
+    await expect(marginSection.getByText('Высокая', { exact: true })).toHaveCount(2)
 
-    // Устанавливаем низкую маржу (< 10%)
-    await page.evaluate(() => {
-      const section = document.querySelector('.bg-primary\\/5')
-      const input = section?.querySelector('input[type="number"]') as HTMLInputElement
-      if (input) {
-        const nativeInputValueSetter = Object.getOwnPropertyDescriptor(
-          window.HTMLInputElement.prototype,
-          'value'
-        )?.set
-        if (nativeInputValueSetter) {
-          nativeInputValueSetter.call(input, '5')
-          input.dispatchEvent(new Event('input', { bubbles: true }))
-        }
-      }
-    })
+    await marginInput.fill('5')
     await expect(marginInput).toHaveValue('5', { timeout: 5000 })
-    await expect(badge).toContainText('Низкая')
+    await expect(marginSection.getByText('Низкая', { exact: true })).toHaveCount(2)
   })
 
   // ============================================================================
@@ -360,13 +210,8 @@ test.describe('Epic 44-FE: Price Calculator UI', () => {
   // ============================================================================
 
   test('TC-E2E-004: Поля фиксированных затрат доступны', async ({ page }) => {
-    const fixedCostsSection = page
-      .locator('[data-testid="price-calculator-form"]')
-      .locator('.bg-blue-50.border-l-4')
-    await expect(fixedCostsSection).toBeVisible()
-    await expect(
-      fixedCostsSection.getByText('Фиксированные затраты (₽)', { exact: true })
-    ).toBeVisible()
+    const form = page.getByTestId('price-calculator-form')
+    await expect(form.getByText('Фиксированные затраты (₽)', { exact: true })).toBeVisible()
 
     // COGS поле - используем fillInput helper
     const cogsInput = page.locator('#cogs_rub')
@@ -465,8 +310,9 @@ test.describe('Epic 44-FE: Price Calculator UI', () => {
     })
 
     // UI показывает двухуровневый расчёт из отправленных параметров формы.
-    const resultsCard = page.locator('[data-testid="price-calculator-results"]:visible')
+    const resultsCard = page.getByTestId('price-calculator-results')
     const pricingDisplay = resultsCard.locator('[data-testid="two-level-pricing-display"]')
+    await expect(resultsCard).toHaveCount(1)
     await expect(resultsCard).toBeVisible()
     await expect(pricingDisplay).toBeVisible()
     await expect(resultsCard.locator('[data-testid="minimum-price"]')).toHaveText(
@@ -508,11 +354,7 @@ test.describe('Epic 44-FE: Price Calculator UI', () => {
     await fillInput(page, 'logistics_forward_rub', '150')
     await fillInput(page, 'logistics_reverse_rub', '200')
 
-    // Нажимаем кнопку расчёта через JavaScript
-    await page.evaluate(() => {
-      const btn = document.querySelector('button[type="submit"]') as HTMLButtonElement
-      if (btn) btn.click()
-    })
+    await page.getByRole('button', { name: 'Рассчитать цену' }).click()
 
     // Проверяем индикатор загрузки (текст "Расчёт..." в секции кнопок)
     try {
@@ -559,7 +401,8 @@ test.describe('Epic 44-FE: Price Calculator UI', () => {
     )
     await page.getByRole('button', { name: 'Рассчитать цену' }).click()
     expect((await responsePromise).status()).toBe(200)
-    const resultsCard = page.locator('[data-testid="price-calculator-results"]:visible')
+    const resultsCard = page.getByTestId('price-calculator-results')
+    await expect(resultsCard).toHaveCount(1)
     await expect(resultsCard).toBeVisible()
 
     await page.getByRole('button', { name: 'Сбросить', exact: true }).click()
@@ -583,16 +426,7 @@ test.describe('Epic 44-FE: Price Calculator UI', () => {
     const cogsInput = page.locator('#cogs_rub')
     await fillInput(page, 'cogs_rub', '1500')
 
-    // Симулируем Escape через JavaScript KeyboardEvent
-    await page.evaluate(() => {
-      const event = new KeyboardEvent('keydown', {
-        key: 'Escape',
-        code: 'Escape',
-        keyCode: 27,
-        bubbles: true,
-      })
-      window.dispatchEvent(event)
-    })
+    await page.keyboard.press('Escape')
 
     // Story 162.8: observe the reset via a bounded `toHaveValue` on the COGS
     // input (replaces the prior elapsed 300ms wait + unbounded inputValue()).
@@ -606,29 +440,12 @@ test.describe('Epic 44-FE: Price Calculator UI', () => {
   // ============================================================================
 
   test('TC-E2E-009: Collapsible sections работают (TaxConfiguration)', async ({ page }) => {
-    // Скроллим вниз чтобы найти налоговую секцию (best-effort: the page may not
-    // overflow, so scrollY may stay 0 — do NOT assert it). Story 162.8: the prior
-    // elapsed 200ms wait is removed; the tax-section isVisible() check below is
-    // the bounded observable signal.
-    await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight))
-
-    // Проверяем что есть collapsible секция (TaxPresetGrid или TaxConfiguration)
-    const taxSection = page.locator('[data-testid="tax-configuration-section"]')
-    const isTaxSectionVisible = await taxSection.isVisible().catch(() => false)
-
-    // Если налоговая секция видна, проверяем её
-    if (isTaxSectionVisible) {
-      await expect(taxSection).toBeVisible()
-      // Проверяем элементы налоговой секции
-      const taxRateInput = page.locator('[data-testid="tax-rate-input"]')
-      const isTaxRateVisible = await taxRateInput.isVisible().catch(() => false)
-      expect(isTaxRateVisible).toBeTruthy()
-    } else {
-      // Если секция отсутствует, проверяем что форма имеет другую структуру
-      // Форма должна содержать базовые элементы
-      const formCard = page.locator('[data-testid="price-calculator-form"]')
-      await expect(formCard).toBeVisible()
-    }
+    const taxSection = page.getByTestId('tax-configuration-section')
+    await taxSection.scrollIntoViewIfNeeded()
+    await expect(taxSection).toBeVisible()
+    await expect(taxSection.getByLabel('Ставка налога')).toBeVisible()
+    await expect(taxSection.getByRole('button', { name: 'С выручки' })).toBeVisible()
+    await expect(taxSection.getByRole('button', { name: 'С прибыли' })).toBeVisible()
   })
 
   // ============================================================================
@@ -662,45 +479,39 @@ test.describe('Epic 44-FE: Price Calculator UI', () => {
   })
 
   test('TC-E2E-010c: Клавиатурная навигация работает', async ({ page }) => {
-    // Кликаем на первый input чтобы установить начальный фокус
     const cogsInput = page.locator('#cogs_rub')
-    await cogsInput.focus()
+    await cogsInput.click()
+    await expect(cogsInput).toBeFocused()
 
-    // Story 162.8: observe focus via a bounded poll on document.activeElement
-    // (replaces the prior elapsed 100ms wait + unbounded evaluate read).
-    await expect
-      .poll(async () => page.evaluate(() => document.activeElement?.id), { timeout: 5000 })
-      .toBe('cogs_rub')
+    await page.keyboard.press('Tab')
+    await expect(cogsInput).not.toBeFocused()
+    await expect(page.locator(':focus')).toBeVisible()
 
-    // Tab к следующему элементу используя JavaScript
-    await page.evaluate(() => {
-      const focusable = Array.from(
-        document.querySelectorAll(
-          'input, button, select, textarea, a[href], [tabindex]:not([tabindex="-1"])'
-        )
-      ) as HTMLElement[]
-      const current = document.activeElement
-      const currentIndex = focusable.indexOf(current as HTMLElement)
-      if (currentIndex >= 0 && currentIndex < focusable.length - 1) {
-        focusable[currentIndex + 1].focus()
-      }
-    })
-
-    // Проверяем что фокус переместился на интерактивный элемент. Bounded poll
-    // on the active-element tag (replaces the prior elapsed 100ms wait).
-    await expect
-      .poll(async () => page.evaluate(() => document.activeElement?.tagName ?? ''), {
-        timeout: 5000,
-      })
-      .toMatch(/^(INPUT|BUTTON|SELECT|A|DIV|SPAN|TEXTAREA)$/)
+    await page.keyboard.press('Shift+Tab')
+    await expect(cogsInput).toBeFocused()
   })
 
   test('TC-E2E-010d: Иерархия заголовков корректна', async ({ page }) => {
+    await mockCalculationSuccess(page)
+    await fillInput(page, 'cogs_rub', '1500')
+    await fillInput(page, 'logistics_forward_rub', '150')
+    await fillInput(page, 'logistics_reverse_rub', '200')
+    const responsePromise = page.waitForResponse(
+      response =>
+        response.request().method() === 'POST' &&
+        response.url().includes('/v1/products/price-calculator')
+    )
+    await page.getByRole('button', { name: 'Рассчитать цену' }).click()
+    expect((await responsePromise).status()).toBe(200)
+
     const main = page.getByRole('main')
     await expect(
       main.getByRole('heading', { name: 'Калькулятор цены', level: 1, exact: true })
     ).toHaveCount(1)
-    await expect(main.locator('h2, h3, h4, h5, h6')).toHaveCount(0)
+    await expect(
+      main.getByRole('heading', { name: 'Результат расчёта', level: 2, exact: true })
+    ).toHaveCount(1)
+    await expect(page.getByTestId('price-calculator-results')).toHaveCount(1)
   })
 
   // ============================================================================

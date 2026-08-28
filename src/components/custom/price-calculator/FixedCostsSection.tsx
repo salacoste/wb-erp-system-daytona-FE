@@ -46,10 +46,10 @@ export function FixedCostsSection<T extends FieldValues>({
   const storageField = 'storage_rub' as Path<T>
 
   return (
-    <div className="bg-blue-50 rounded-lg p-4 border-l-4 border-l-blue-400">
+    <div className="rounded-lg border-l-4 border-l-status-information bg-status-information/10 p-4">
       <div className="flex items-center gap-2 mb-4">
-        <Package className="h-4 w-4 text-blue-600" aria-hidden="true" />
-        <div className="text-base font-semibold text-blue-900">Фиксированные затраты (₽)</div>
+        <Package className="h-4 w-4 text-status-information" aria-hidden="true" />
+        <div className="text-base font-semibold text-foreground">Фиксированные затраты (₽)</div>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-start">

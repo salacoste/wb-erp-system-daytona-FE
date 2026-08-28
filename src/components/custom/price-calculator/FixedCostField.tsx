@@ -1,5 +1,6 @@
 'use client'
 
+import { cloneElement, type InputHTMLAttributes, type ReactElement } from 'react'
 import { Label } from '@/components/ui/label'
 import { Badge } from '@/components/ui/badge'
 import { FieldTooltip } from './FieldTooltip'
@@ -27,7 +28,7 @@ export interface FixedCostFieldProps {
   /** Error message to display */
   error?: string
   /** Input element(s) to render */
-  children: React.ReactNode
+  children: ReactElement<InputHTMLAttributes<HTMLInputElement>>
 }
 
 /**
@@ -50,6 +51,15 @@ export function FixedCostField({
   error,
   children,
 }: FixedCostFieldProps) {
+  const errorId = `${id}-error`
+  const describedBy = [children.props['aria-describedby'], error ? errorId : null]
+    .filter(Boolean)
+    .join(' ')
+  const input = cloneElement(children, {
+    'aria-invalid': error ? true : children.props['aria-invalid'],
+    'aria-describedby': describedBy || undefined,
+  })
+
   return (
     <div className="flex flex-col">
       {/* Zone 1: Label Row - fixed height for consistent alignment */}
@@ -58,7 +68,7 @@ export function FixedCostField({
           {label}
         </Label>
         {showBadge && (
-          <Badge variant="secondary" className="bg-green-100 text-green-700 text-xs">
+          <Badge variant="secondary" className="bg-status-success/10 text-status-success text-xs">
             {badgeText}
           </Badge>
         )}
@@ -66,12 +76,12 @@ export function FixedCostField({
       </div>
 
       {/* Zone 2: Input field */}
-      {children}
+      {input}
 
       {/* Zone 3: Helper text with reserved height */}
       <div className="min-h-[20px] mt-1.5">
         {error ? (
-          <p className="text-sm text-destructive" role="alert">
+          <p id={errorId} className="text-sm text-destructive" role="alert">
             {error}
           </p>
         ) : showCalculated && calculatedValue != null ? (

@@ -4,7 +4,7 @@
  */
 
 import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { render, screen } from '@testing-library/react'
+import { act, render, screen } from '@testing-library/react'
 import * as React from 'react'
 
 /** Minimal prop shape shared across mock shadcn/ui components */
@@ -12,6 +12,16 @@ interface MockUIProps {
   children?: React.ReactNode
   [key: string]: unknown
 }
+
+const calculatorHookMock = vi.hoisted(() => ({
+  mutate: vi.fn(),
+  options: undefined as
+    | {
+        onSuccess?: () => void
+        onError?: () => void
+      }
+    | undefined,
+}))
 
 // Mock shadcn/ui components first
 vi.mock('@/components/ui/button', () => ({
@@ -100,12 +110,15 @@ vi.mock('@/components/custom/price-calculator/ErrorMessage', () => ({
 }))
 
 vi.mock('@/hooks/usePriceCalculator', () => ({
-  usePriceCalculator: () => ({
-    mutate: vi.fn(),
-    isPending: false,
-    data: null,
-    error: null,
-  }),
+  usePriceCalculator: (options: { onSuccess?: () => void; onError?: () => void }) => {
+    calculatorHookMock.options = options
+    return {
+      mutate: calculatorHookMock.mutate,
+      isPending: false,
+      data: null,
+      error: null,
+    }
+  },
 }))
 
 // Import the page after mocks
@@ -114,16 +127,21 @@ import PriceCalculatorPage from '@/app/(dashboard)/cogs/price-calculator/page'
 describe('PriceCalculator Page', () => {
   beforeEach(() => {
     vi.clearAllMocks()
+    calculatorHookMock.options = undefined
   })
 
   describe('Page Layout', () => {
-    it('renders page component', () => {
+    it('renders exactly one results tree for the responsive page', () => {
       render(<PriceCalculatorPage />)
 
       expect(screen.getByTestId('price-calculator-form')).toBeInTheDocument()
-      // Results component is rendered twice for responsive layout (desktop + mobile)
-      const results = screen.getAllByTestId('price-calculator-results')
-      expect(results.length).toBeGreaterThanOrEqual(1)
+      expect(screen.getAllByTestId('price-calculator-results')).toHaveLength(1)
+    })
+
+    it('renders route identity through the shared PageHeader composition', () => {
+      const { container } = render(<PriceCalculatorPage />)
+
+      expect(container.querySelector('[data-slot="page-header"]')).toBeInTheDocument()
     })
 
     it('renders h1 heading with title', () => {
@@ -160,6 +178,55 @@ describe('PriceCalculator Page', () => {
       render(<PriceCalculatorPage />)
 
       expect(screen.getByRole('heading', { level: 1 })).toBeInTheDocument()
+    })
+
+    it('uses instant result scrolling when reduced motion is preferred', () => {
+      vi.useFakeTimers()
+      const originalMatchMedia = window.matchMedia
+      const originalScrollIntoView = HTMLElement.prototype.scrollIntoView
+      const scrollIntoView = vi.fn()
+
+      Object.defineProperty(window, 'matchMedia', {
+        configurable: true,
+        value: vi.fn().mockImplementation((query: string) => ({
+          matches: query === '(prefers-reduced-motion: reduce)',
+          media: query,
+          onchange: null,
+          addListener: vi.fn(),
+          removeListener: vi.fn(),
+          addEventListener: vi.fn(),
+          removeEventListener: vi.fn(),
+          dispatchEvent: vi.fn(),
+        })),
+      })
+      Object.defineProperty(HTMLElement.prototype, 'scrollIntoView', {
+        configurable: true,
+        value: scrollIntoView,
+      })
+
+      try {
+        render(<PriceCalculatorPage />)
+
+        act(() => {
+          calculatorHookMock.options?.onSuccess?.()
+          vi.advanceTimersByTime(100)
+        })
+
+        expect(scrollIntoView).toHaveBeenCalledWith({
+          behavior: 'auto',
+          block: 'nearest',
+        })
+      } finally {
+        Object.defineProperty(window, 'matchMedia', {
+          configurable: true,
+          value: originalMatchMedia,
+        })
+        Object.defineProperty(HTMLElement.prototype, 'scrollIntoView', {
+          configurable: true,
+          value: originalScrollIntoView,
+        })
+        vi.useRealTimers()
+      }
     })
   })
 })

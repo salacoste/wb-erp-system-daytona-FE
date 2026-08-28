@@ -84,13 +84,13 @@ export function WarehouseSection({
   )
 
   return (
-    <div className="bg-purple-50 rounded-lg p-4 border-l-4 border-l-purple-400 space-y-5">
+    <div className="space-y-5 rounded-lg border-l-4 border-l-primary bg-primary/5 p-4">
       <div className="flex items-center gap-2 mb-4">
-        <WarehouseIcon className="h-4 w-4 text-purple-600" aria-hidden="true" />
-        <div className="text-base font-semibold text-purple-900">Склад и хранение</div>
+        <WarehouseIcon className="h-4 w-4 text-primary" aria-hidden="true" />
+        <div className="text-base font-semibold text-foreground">Склад и хранение</div>
         {isLoading && (
           <Loader2
-            className="h-4 w-4 animate-spin text-purple-500"
+            className="h-4 w-4 animate-spin text-primary"
             role="status"
             aria-label="Загрузка данных склада"
           />

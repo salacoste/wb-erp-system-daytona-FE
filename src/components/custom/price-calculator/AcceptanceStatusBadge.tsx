@@ -42,11 +42,11 @@ interface AcceptanceStatusBadgeProps {
  * Based on Story 44.43-FE acceptance criteria
  */
 const COLOR_CLASSES: Record<string, string> = {
-  destructive: 'bg-red-100 text-red-700 border-red-200',
-  success: 'bg-green-100 text-green-700 border-green-200',
+  destructive: 'bg-status-error/10 text-status-error border-status-error/30',
+  success: 'bg-status-success/10 text-status-success border-status-success/30',
   default: 'bg-muted text-foreground border-border',
-  warning: 'bg-yellow-100 text-yellow-700 border-yellow-200',
-  high: 'bg-orange-100 text-orange-700 border-orange-200',
+  warning: 'bg-status-warning/10 text-status-warning border-status-warning/30',
+  high: 'bg-status-warning/15 text-status-warning border-status-warning/40',
 } as const
 
 /**
@@ -104,7 +104,7 @@ export function AcceptanceStatusBadge({
             <p className="font-medium">Коэффициент приёмки: {formatCoefficient(coefficient)}</p>
             <p className="text-sm text-muted-foreground">{info.description}</p>
             {info.percentageIncrease && info.percentageIncrease > 25 && (
-              <p className="text-sm text-amber-600">
+              <p className="text-sm text-status-warning">
                 Рекомендуем выбрать дату с меньшим коэффициентом
               </p>
             )}

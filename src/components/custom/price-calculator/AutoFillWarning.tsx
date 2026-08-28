@@ -40,13 +40,13 @@ export function AutoFillWarning({ type, message, dismissible = true }: AutoFillW
   return (
     <Alert
       variant="default"
-      className="border-yellow-300 bg-yellow-50"
+      className="border-status-warning/40 bg-status-warning/10"
       role="alert"
       aria-live="polite"
     >
       <div className="flex items-start gap-2">
-        <AlertTriangle className="h-4 w-4 text-yellow-600 mt-0.5 shrink-0" aria-hidden="true" />
-        <AlertDescription className="flex-1 text-yellow-800 text-sm">
+        <AlertTriangle className="h-4 w-4 text-status-warning mt-0.5 shrink-0" aria-hidden="true" />
+        <AlertDescription className="flex-1 text-status-warning text-sm">
           {displayMessage}
         </AlertDescription>
         {dismissible && (
@@ -60,7 +60,7 @@ export function AutoFillWarning({ type, message, dismissible = true }: AutoFillW
             variant="ghost"
             size="sm"
             onClick={() => setDismissed(true)}
-            className="h-6 w-6 min-h-11 min-w-11 p-0 text-yellow-600 hover:text-yellow-800 hover:bg-yellow-100 shrink-0"
+            className="h-6 w-6 min-h-11 min-w-11 p-0 text-status-warning hover:text-status-warning/80 hover:bg-status-warning/10 shrink-0"
             aria-label="Закрыть предупреждение"
           >
             <X className="h-4 w-4" />

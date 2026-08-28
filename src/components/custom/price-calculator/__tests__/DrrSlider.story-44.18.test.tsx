@@ -100,40 +100,40 @@ describe('Story 44.18: DRR Input (Advertising Percentage Slider)', () => {
   })
 
   describe('AC3: Visual Level Indicator', () => {
-    it('should show "Низкий" (green) for DRR 0-3%', () => {
+    it('should show "Низкий" with the success status role for DRR 0-3%', () => {
       render(<DrrSlider value={2} onChange={mockOnChange} />)
 
       const badge = screen.getByTestId('drr-level-badge')
       expect(badge).toHaveTextContent('Низкий')
-      expect(badge).toHaveClass('bg-green-100')
-      expect(badge).toHaveClass('text-green-600')
+      expect(badge).toHaveClass('bg-status-success/15')
+      expect(badge).toHaveClass('text-status-success')
     })
 
-    it('should show "Умеренный" (yellow) for DRR 3-7%', () => {
+    it('should show "Умеренный" with the information status role for DRR 3-7%', () => {
       render(<DrrSlider value={5} onChange={mockOnChange} />)
 
       const badge = screen.getByTestId('drr-level-badge')
       expect(badge).toHaveTextContent('Умеренный')
-      expect(badge).toHaveClass('bg-yellow-100')
-      expect(badge).toHaveClass('text-yellow-600')
+      expect(badge).toHaveClass('bg-status-information/15')
+      expect(badge).toHaveClass('text-status-information')
     })
 
-    it('should show "Высокий" (orange) for DRR 7-15%', () => {
+    it('should show "Высокий" with the warning status role for DRR 7-15%', () => {
       render(<DrrSlider value={10} onChange={mockOnChange} />)
 
       const badge = screen.getByTestId('drr-level-badge')
       expect(badge).toHaveTextContent('Высокий')
-      expect(badge).toHaveClass('bg-orange-100')
-      expect(badge).toHaveClass('text-orange-600')
+      expect(badge).toHaveClass('bg-status-warning/15')
+      expect(badge).toHaveClass('text-status-warning')
     })
 
-    it('should show "Очень высокий" (red) for DRR >15%', () => {
+    it('should show "Очень высокий" with the error status role for DRR >15%', () => {
       render(<DrrSlider value={20} onChange={mockOnChange} />)
 
       const badge = screen.getByTestId('drr-level-badge')
       expect(badge).toHaveTextContent('Очень высокий')
-      expect(badge).toHaveClass('bg-red-100')
-      expect(badge).toHaveClass('text-red-600')
+      expect(badge).toHaveClass('bg-status-error/15')
+      expect(badge).toHaveClass('text-status-error')
     })
 
     it('should handle boundary value DRR = 3% (still low)', () => {
@@ -413,9 +413,9 @@ describe('getDrrLevel Helper Function', () => {
   })
 
   it('should return correct colors for each level', () => {
-    expect(getDrrLevel(2).color).toContain('green')
-    expect(getDrrLevel(5).color).toContain('yellow')
-    expect(getDrrLevel(10).color).toContain('orange')
-    expect(getDrrLevel(20).color).toContain('red')
+    expect(getDrrLevel(2).color).toBe('text-status-success')
+    expect(getDrrLevel(5).color).toBe('text-status-information')
+    expect(getDrrLevel(10).color).toBe('text-status-warning')
+    expect(getDrrLevel(20).color).toBe('text-status-error')
   })
 })

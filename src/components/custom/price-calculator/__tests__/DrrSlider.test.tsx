@@ -265,10 +265,10 @@ describe('getDrrLevel', () => {
   })
 
   it('should return correct colors for each level', () => {
-    expect(getDrrLevel(2).color).toContain('green')
-    expect(getDrrLevel(5).color).toContain('yellow')
-    expect(getDrrLevel(10).color).toContain('orange')
-    expect(getDrrLevel(20).color).toContain('red')
+    expect(getDrrLevel(2).color).toBe('text-status-success')
+    expect(getDrrLevel(5).color).toBe('text-status-information')
+    expect(getDrrLevel(10).color).toBe('text-status-warning')
+    expect(getDrrLevel(20).color).toBe('text-status-error')
   })
 })
 
@@ -325,36 +325,36 @@ describe('DrrSlider - AC2: Tooltip Content', () => {
 describe('DrrSlider - AC3: Visual Zone Colors', () => {
   const mockOnChange = vi.fn()
 
-  it('should apply green background for low DRR (0-3%)', () => {
+  it('should apply the success role for low DRR (0-3%)', () => {
     render(<DrrSlider value={2} onChange={mockOnChange} />)
 
     const badge = screen.getByTestId('drr-level-badge')
-    expect(badge).toHaveClass('bg-green-100')
-    expect(badge).toHaveClass('text-green-600')
+    expect(badge).toHaveClass('bg-status-success/15')
+    expect(badge).toHaveClass('text-status-success')
   })
 
-  it('should apply yellow background for moderate DRR (3-7%)', () => {
+  it('should apply the information role for moderate DRR (3-7%)', () => {
     render(<DrrSlider value={5} onChange={mockOnChange} />)
 
     const badge = screen.getByTestId('drr-level-badge')
-    expect(badge).toHaveClass('bg-yellow-100')
-    expect(badge).toHaveClass('text-yellow-600')
+    expect(badge).toHaveClass('bg-status-information/15')
+    expect(badge).toHaveClass('text-status-information')
   })
 
-  it('should apply orange background for high DRR (7-15%)', () => {
+  it('should apply the warning role for high DRR (7-15%)', () => {
     render(<DrrSlider value={10} onChange={mockOnChange} />)
 
     const badge = screen.getByTestId('drr-level-badge')
-    expect(badge).toHaveClass('bg-orange-100')
-    expect(badge).toHaveClass('text-orange-600')
+    expect(badge).toHaveClass('bg-status-warning/15')
+    expect(badge).toHaveClass('text-status-warning')
   })
 
-  it('should apply red background for very high DRR (>15%)', () => {
+  it('should apply the error role for very high DRR (>15%)', () => {
     render(<DrrSlider value={20} onChange={mockOnChange} />)
 
     const badge = screen.getByTestId('drr-level-badge')
-    expect(badge).toHaveClass('bg-red-100')
-    expect(badge).toHaveClass('text-red-600')
+    expect(badge).toHaveClass('bg-status-error/15')
+    expect(badge).toHaveClass('text-status-error')
   })
 })
 
@@ -678,11 +678,10 @@ describe('DrrSlider - TDD RED PHASE: Future Enhancements', () => {
     // Should have visual zone indicators on slider
     const sliderSection = screen.getByTestId('drr-slider-section')
 
-    // Zone overlay should exist (green/yellow/orange/red gradient)
-    expect(sliderSection.querySelector('.bg-green-100')).toBeInTheDocument()
-    expect(sliderSection.querySelector('.bg-yellow-100')).toBeInTheDocument()
-    expect(sliderSection.querySelector('.bg-orange-100')).toBeInTheDocument()
-    expect(sliderSection.querySelector('.bg-red-100')).toBeInTheDocument()
+    expect(sliderSection.querySelector('.bg-status-success\\/20')).toBeInTheDocument()
+    expect(sliderSection.querySelector('.bg-status-information\\/20')).toBeInTheDocument()
+    expect(sliderSection.querySelector('.bg-status-warning\\/20')).toBeInTheDocument()
+    expect(sliderSection.querySelector('.bg-status-error\\/20')).toBeInTheDocument()
   })
 })
 
@@ -719,10 +718,10 @@ describe('DrrSlider - Complete AC Verification', () => {
   // AC3: Visual feedback with all 4 color levels
   it('AC3: should show all 4 DRR levels with correct colors', () => {
     const levels = [
-      { value: 2, label: 'Низкий', bgClass: 'bg-green-100' },
-      { value: 5, label: 'Умеренный', bgClass: 'bg-yellow-100' },
-      { value: 10, label: 'Высокий', bgClass: 'bg-orange-100' },
-      { value: 20, label: 'Очень высокий', bgClass: 'bg-red-100' },
+      { value: 2, label: 'Низкий', bgClass: 'bg-status-success/15' },
+      { value: 5, label: 'Умеренный', bgClass: 'bg-status-information/15' },
+      { value: 10, label: 'Высокий', bgClass: 'bg-status-warning/15' },
+      { value: 20, label: 'Очень высокий', bgClass: 'bg-status-error/15' },
     ]
 
     for (const { value, label, bgClass } of levels) {

@@ -126,6 +126,23 @@ describe('PriceCalculatorResults', () => {
   })
 
   describe('Accessibility', () => {
+    it('renders a logical level-two heading for the completed result region', () => {
+      render(<PriceCalculatorResults data={mockPriceCalculatorResponse} />)
+
+      expect(
+        screen.getByRole('heading', { level: 2, name: 'Результат расчёта' })
+      ).toBeInTheDocument()
+    })
+
+    it('exposes one polite completion announcement when results arrive', () => {
+      render(<PriceCalculatorResults data={mockPriceCalculatorResponse} />)
+
+      const announcements = screen.getAllByRole('status')
+      expect(announcements).toHaveLength(1)
+      expect(announcements[0]).toHaveAttribute('aria-live', 'polite')
+      expect(announcements[0]).toHaveTextContent('Расчёт завершён')
+    })
+
     it('has proper heading structure', () => {
       render(<PriceCalculatorResults data={mockPriceCalculatorResponse} />)
 

@@ -42,7 +42,7 @@ function SegmentBar({
         <div className="space-y-1">
           <p className="font-medium">{segment.label}</p>
           <p>{formatCurrency(segment.rub)}</p>
-          <p className="text-slate-400">{formatPctRu(sharePct)}% от цены</p>
+          <p className="text-muted-foreground">{formatPctRu(sharePct)}% от цены</p>
         </div>
       </TooltipContent>
     </Tooltip>

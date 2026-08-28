@@ -123,19 +123,19 @@ export function TurnoverDaysInput({
         <div
           className={cn(
             'p-3 bg-muted/50 rounded-lg',
-            isFreePeriod && 'bg-green-50 border border-green-200',
-            !isFreePeriod && value > 90 && 'bg-yellow-50 border border-yellow-200'
+            isFreePeriod && 'bg-status-success/10 border border-status-success/30',
+            !isFreePeriod && value > 90 && 'bg-status-warning/10 border border-status-warning/30'
           )}
         >
           {isFreePeriod ? (
-            <p className="text-sm text-green-700">
+            <p className="text-sm text-status-success">
               <strong>Бесплатно</strong> — первые 60 дней хранения на WB бесплатны
             </p>
           ) : (
             <>
               <p className="text-sm">
                 Хранение за период:{' '}
-                <strong className={cn(value > 90 && 'text-yellow-700')}>
+                <strong className={cn(value > 90 && 'text-status-warning')}>
                   {formatCurrency(calculatedStorageRub)}
                 </strong>
                 <span className="text-muted-foreground">
@@ -149,7 +149,7 @@ export function TurnoverDaysInput({
             </>
           )}
           {!isFreePeriod && value > 90 && (
-            <p className="text-xs text-yellow-700 mt-1">
+            <p className="mt-1 text-xs text-status-warning">
               Длительное хранение снизит маржинальность
             </p>
           )}

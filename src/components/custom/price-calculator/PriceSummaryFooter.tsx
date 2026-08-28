@@ -130,7 +130,10 @@ function CopyButton({ onClick, copied, label }: CopyButtonProps) {
     <Button
       variant="ghost"
       size="icon"
-      className={cn('h-6 w-6 transition-all duration-200', copied && 'scale-110 text-green-600')}
+      className={cn(
+        'h-6 w-6 transition-all duration-200',
+        copied && 'scale-110 text-status-success'
+      )}
       onClick={onClick}
       aria-label={label}
     >

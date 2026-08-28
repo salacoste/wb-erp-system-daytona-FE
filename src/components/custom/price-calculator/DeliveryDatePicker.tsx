@@ -154,7 +154,7 @@ export function DeliveryDatePicker({
                 maxDays={15}
               />
             ) : (
-              <div className="text-sm text-yellow-700 bg-yellow-50 p-2 rounded">
+              <div className="rounded bg-status-warning/10 p-2 text-sm text-status-warning">
                 Нет доступных дат для типа «
                 {byBoxType.find(b => b.boxType === selectedBoxType)?.label}»
               </div>

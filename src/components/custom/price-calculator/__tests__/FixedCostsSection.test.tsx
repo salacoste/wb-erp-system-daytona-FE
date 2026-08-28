@@ -188,17 +188,17 @@ describe('FixedCostsSection', () => {
   })
 
   describe('Styling', () => {
-    it('should have blue background color scheme', () => {
+    it('should use the information surface role', () => {
       const { container } = renderFixedCostsSection()
 
-      const section = container.querySelector('.bg-blue-50')
+      const section = container.querySelector('.bg-status-information\\/10')
       expect(section).toBeInTheDocument()
     })
 
-    it('should have blue left border', () => {
+    it('should use the information border role', () => {
       const { container } = renderFixedCostsSection()
 
-      const section = container.querySelector('.border-l-blue-400')
+      const section = container.querySelector('.border-l-status-information')
       expect(section).toBeInTheDocument()
     })
   })

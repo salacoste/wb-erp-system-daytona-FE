@@ -64,16 +64,16 @@ export function MarginSection({ margin, taxType, taxRatePct }: MarginSectionProp
                 <div className="space-y-1 text-xs">
                   <p className="font-medium">Уровни маржи:</p>
                   <p>
-                    <span className="text-green-600">●</span> ≥20% — Отлично
+                    <span className="text-financial-positive">●</span> ≥20% — Отлично
                   </p>
                   <p>
-                    <span className="text-lime-600">●</span> 10-20% — Хорошо
+                    <span className="text-status-success">●</span> 10-20% — Хорошо
                   </p>
                   <p>
-                    <span className="text-yellow-600">●</span> 5-10% — Низкая
+                    <span className="text-status-warning">●</span> 5-10% — Низкая
                   </p>
                   <p>
-                    <span className="text-red-600">●</span> {'<'}5% — Критично
+                    <span className="text-status-error">●</span> {'<'}5% — Критично
                   </p>
                 </div>
               </TooltipContent>
@@ -120,12 +120,12 @@ function ProfitCards({
             className={cn(
               'w-2 h-2 rounded-full',
               margin.pct >= 20
-                ? 'bg-green-500'
+                ? 'bg-financial-positive'
                 : margin.pct >= 10
-                  ? 'bg-lime-500'
+                  ? 'bg-status-success'
                   : margin.pct >= 5
-                    ? 'bg-yellow-500'
-                    : 'bg-red-500'
+                    ? 'bg-status-warning'
+                    : 'bg-status-error'
             )}
             aria-hidden="true"
           />
@@ -136,15 +136,15 @@ function ProfitCards({
 
       {/* Net Profit After Tax (profit tax only) */}
       {showAfterTax && (
-        <div className="flex items-center justify-between p-2 rounded-lg bg-green-50/50 ml-4">
+        <div className="ml-4 flex items-center justify-between rounded-lg bg-financial-positive/10 p-2">
           <div className="flex items-center gap-2">
-            <div className="w-2 h-2 rounded-full bg-green-500" aria-hidden="true" />
+            <div className="w-2 h-2 rounded-full bg-financial-positive" aria-hidden="true" />
             <span className="text-muted-foreground">
               Чистая прибыль{' '}
               <span className="text-xs">(после налога {formatPercentageInt(taxRatePct)})</span>
             </span>
           </div>
-          <span className="font-semibold text-green-600">
+          <span className="font-semibold text-financial-positive">
             {formatCurrency(margin.afterTax ?? 0)}
           </span>
         </div>

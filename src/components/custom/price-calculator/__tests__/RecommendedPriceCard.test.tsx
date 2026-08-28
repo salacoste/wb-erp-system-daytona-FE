@@ -70,14 +70,14 @@ describe('RecommendedPriceCard', () => {
       expect(screen.getByText(/2\s*500/)).toBeInTheDocument()
     })
 
-    it('shows green color for positive margin', () => {
+    it('uses the positive financial role for positive margin', () => {
       const { container } = render(<RecommendedPriceCard data={mockPriceCalculatorResponse} />)
 
-      const priceElement = container.querySelector('.text-green-600')
+      const priceElement = container.querySelector('.text-financial-positive')
       expect(priceElement).toBeInTheDocument()
     })
 
-    it('shows red color for negative margin', () => {
+    it('uses the negative financial role for negative margin', () => {
       const negativeMarginData = {
         ...mockPriceCalculatorResponse,
         result: {
@@ -89,7 +89,7 @@ describe('RecommendedPriceCard', () => {
 
       const { container } = render(<RecommendedPriceCard data={negativeMarginData} />)
 
-      const priceElement = container.querySelector('.text-red-600')
+      const priceElement = container.querySelector('.text-financial-negative')
       expect(priceElement).toBeInTheDocument()
     })
   })
@@ -110,14 +110,14 @@ describe('RecommendedPriceCard', () => {
       expect(container.textContent).toContain('500')
     })
 
-    it('shows green for margin >= 20%', () => {
+    it('uses the positive financial role for margin >= 20%', () => {
       const { container } = render(<RecommendedPriceCard data={mockPriceCalculatorResponse} />)
 
-      const marginElement = container.querySelector('.text-green-600')
+      const marginElement = container.querySelector('.text-financial-positive')
       expect(marginElement).toBeInTheDocument()
     })
 
-    it('shows yellow for margin 10-20%', () => {
+    it('uses the success status role for margin 10-20%', () => {
       const mediumMarginData = {
         ...mockPriceCalculatorResponse,
         result: {
@@ -128,11 +128,11 @@ describe('RecommendedPriceCard', () => {
 
       const { container } = render(<RecommendedPriceCard data={mediumMarginData} />)
 
-      const marginElement = container.querySelector('.text-yellow-600')
+      const marginElement = container.querySelector('.text-status-success')
       expect(marginElement).toBeInTheDocument()
     })
 
-    it('shows orange for margin 5-10%', () => {
+    it('uses the warning status role for margin 5-10%', () => {
       const lowMarginData = {
         ...mockPriceCalculatorResponse,
         result: {
@@ -143,11 +143,11 @@ describe('RecommendedPriceCard', () => {
 
       const { container } = render(<RecommendedPriceCard data={lowMarginData} />)
 
-      const marginElement = container.querySelector('.text-orange-600')
+      const marginElement = container.querySelector('.text-status-warning')
       expect(marginElement).toBeInTheDocument()
     })
 
-    it('shows red for margin < 5%', () => {
+    it('uses the negative financial role for margin < 5%', () => {
       const veryLowMarginData = {
         ...mockPriceCalculatorResponse,
         result: {
@@ -158,7 +158,7 @@ describe('RecommendedPriceCard', () => {
 
       const { container } = render(<RecommendedPriceCard data={veryLowMarginData} />)
 
-      const marginElement = container.querySelector('.text-red-600')
+      const marginElement = container.querySelector('.text-financial-negative')
       expect(marginElement).toBeInTheDocument()
     })
   })

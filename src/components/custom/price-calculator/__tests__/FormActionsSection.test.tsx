@@ -8,6 +8,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
+import type { FormEvent } from 'react'
 import { FormActionsSection } from '../FormActionsSection'
 
 describe('FormActionsSection', () => {
@@ -54,6 +55,36 @@ describe('FormActionsSection', () => {
   })
 
   describe('Loading State', () => {
+    it('announces the busy calculation state from an aria-busy region', () => {
+      render(
+        <FormActionsSection loading={true} disabled={false} isValid={true} onReset={mockOnReset} />
+      )
+
+      const status = screen.getByRole('status')
+      expect(status).toHaveAttribute('aria-live', 'polite')
+      expect(status.closest('[aria-busy="true"]')).not.toBeNull()
+      expect(status).toHaveTextContent('Расчёт...')
+    })
+
+    it('prevents duplicate submission while calculation is pending', async () => {
+      const user = userEvent.setup()
+      const onSubmit = vi.fn((event: FormEvent<HTMLFormElement>) => event.preventDefault())
+      render(
+        <form onSubmit={onSubmit}>
+          <FormActionsSection
+            loading={true}
+            disabled={false}
+            isValid={true}
+            onReset={mockOnReset}
+          />
+        </form>
+      )
+
+      await user.dblClick(screen.getByRole('button', { name: /расчёт/i }))
+
+      expect(onSubmit).not.toHaveBeenCalled()
+    })
+
     it('should show loading text when loading', () => {
       render(
         <FormActionsSection loading={true} disabled={false} isValid={true} onReset={mockOnReset} />

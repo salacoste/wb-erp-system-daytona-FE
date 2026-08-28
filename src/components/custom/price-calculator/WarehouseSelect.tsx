@@ -114,6 +114,8 @@ export function WarehouseSelect({
             role="combobox"
             aria-expanded={open}
             aria-label="Выберите склад"
+            aria-invalid={error ? true : undefined}
+            aria-describedby={error ? 'warehouse-select-error' : undefined}
             className={cn(
               'w-full justify-between',
               !value && 'text-muted-foreground',
@@ -137,7 +139,10 @@ export function WarehouseSelect({
             <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
           </Button>
         </PopoverTrigger>
-        <PopoverContent className="w-[400px] p-0" align="start">
+        <PopoverContent
+          className="w-[min(400px,calc(100vw-2rem))] max-w-[calc(100vw-2rem)] p-0"
+          align="start"
+        >
           <Command shouldFilter={false}>
             <CommandInput placeholder="Поиск склада..." value={search} onValueChange={setSearch} />
             <WarehouseCommandList
@@ -159,12 +164,16 @@ export function WarehouseSelect({
           </Button>
         </div>
       )}
-      {error && <p className="text-sm text-destructive">{error}</p>}
+      {error && (
+        <p id="warehouse-select-error" className="text-sm text-destructive" role="alert">
+          {error}
+        </p>
+      )}
       {warehouses && !isLoading && !selectedWarehouse && (
         <p className="text-xs text-muted-foreground">Найдено: {warehouses.length} складов</p>
       )}
       {selectedWarehouse?.tariffs.usingStorageFallback && (
-        <div className="flex items-start gap-2 rounded-md border border-amber-200 bg-amber-50 px-3 py-2 text-xs text-amber-800">
+        <div className="flex items-start gap-2 rounded-md border border-status-warning/30 bg-status-warning/10 px-3 py-2 text-xs text-status-warning">
           <AlertTriangle className="mt-0.5 h-3.5 w-3.5 shrink-0" aria-hidden="true" />
           <span>
             Backend вернул нулевой тариф хранения для этого склада; расчет использует тариф по

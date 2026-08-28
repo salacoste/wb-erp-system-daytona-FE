@@ -9,10 +9,10 @@ import { cn } from '@/lib/utils'
 
 /** Get progress bar fill color class based on margin percentage */
 function getBarColorClass(pct: number): string {
-  if (pct >= 20) return 'bg-green-500'
-  if (pct >= 10) return 'bg-lime-500'
-  if (pct >= 5) return 'bg-yellow-500'
-  return 'bg-red-500'
+  if (pct >= 20) return 'bg-financial-positive'
+  if (pct >= 10) return 'bg-status-success'
+  if (pct >= 5) return 'bg-status-warning'
+  return 'bg-status-error'
 }
 
 export function MarginProgressBar({ marginPct }: { marginPct: number }) {
@@ -53,8 +53,8 @@ export function MarginProgressBar({ marginPct }: { marginPct: number }) {
       {/* Scale labels */}
       <div className="flex justify-between text-xs text-muted-foreground">
         <span>0%</span>
-        <span className="text-yellow-600">10%</span>
-        <span className="text-green-600">20%</span>
+        <span className="text-status-warning">10%</span>
+        <span className="text-financial-positive">20%</span>
         <span>30%+</span>
       </div>
     </div>

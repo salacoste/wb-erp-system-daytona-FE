@@ -30,9 +30,9 @@ function getMarginZone(value: number): ZoneKey {
  * Badge styles by zone
  */
 const badgeStyles: Record<ZoneKey, string> = {
-  low: 'bg-red-100 text-red-700 border-red-200',
-  medium: 'bg-yellow-100 text-yellow-700 border-yellow-200',
-  high: 'bg-green-100 text-green-700 border-green-200',
+  low: 'bg-status-error/10 text-status-error border-status-error/30',
+  medium: 'bg-status-warning/10 text-status-warning border-status-warning/30',
+  high: 'bg-financial-positive/10 text-financial-positive border-financial-positive/30',
 }
 
 /**
@@ -97,9 +97,9 @@ export function MarginSlider<T extends FieldValues = FieldValues>({
             <div className="relative pt-1">
               {/* Zone background overlay - visual indicator of margin zones */}
               <div className="absolute inset-x-0 top-1 h-2 rounded-full overflow-hidden flex pointer-events-none">
-                <div className="bg-red-100 w-[20%]" />
-                <div className="bg-yellow-100 w-[30%]" />
-                <div className="bg-green-100 flex-1" />
+                <div className="bg-status-error/20 w-[20%]" />
+                <div className="bg-status-warning/20 w-[30%]" />
+                <div className="bg-financial-positive/20 flex-1" />
               </div>
 
               {/* Slider component */}
@@ -115,9 +115,9 @@ export function MarginSlider<T extends FieldValues = FieldValues>({
 
             {/* Zone labels */}
             <div className="flex justify-between text-xs px-1">
-              <span className="text-red-600">Низкая</span>
-              <span className="text-yellow-600">Средняя</span>
-              <span className="text-green-600">Высокая</span>
+              <span className="text-status-error">Низкая</span>
+              <span className="text-status-warning">Средняя</span>
+              <span className="text-financial-positive">Высокая</span>
             </div>
 
             {/* Value input with colored badge */}

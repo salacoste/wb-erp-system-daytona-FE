@@ -688,7 +688,7 @@ describe('Story 44.27: Accessibility', () => {
 
     // Header text should have good contrast
     const header = screen.getByText('Склад и хранение')
-    expect(header).toHaveClass('text-purple-900')
+    expect(header).toHaveClass('text-foreground')
   })
 
   it('renders the logistics coefficient with ru-RU comma decimal (x1,50, not x1.50)', () => {
