@@ -153,11 +153,12 @@ function ChatThreadRow({
   const unread = thread.unreadCount ?? 0
   return (
     <li>
-      <button
+      <Button
         type="button"
+        variant="ghost"
         onClick={() => onSelect(thread.chatId)}
         aria-label={`Открыть беседу ${thread.chatId}`}
-        className="flex w-full items-center justify-between gap-2 rounded-md py-3 text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+        className="h-auto w-full justify-between gap-2 whitespace-normal px-0 py-3 text-left font-normal"
       >
         <span className="min-w-0 flex-1">
           <span className="block truncate text-sm font-medium">
@@ -168,11 +169,11 @@ function ChatThreadRow({
           </span>
         </span>
         {unread > 0 ? (
-          <span className="inline-flex h-5 min-w-5 items-center justify-center rounded-full bg-red-600 px-1.5 text-xs font-medium text-white">
+          <span className="inline-flex h-5 min-w-5 items-center justify-center rounded-full bg-destructive px-1.5 text-xs font-medium text-destructive-foreground">
             {unread}
           </span>
         ) : null}
-      </button>
+      </Button>
     </li>
   )
 }

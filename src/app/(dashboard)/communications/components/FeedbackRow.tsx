@@ -53,7 +53,7 @@ export function FeedbackRow({ feedback }: FeedbackRowProps) {
  * answer text — only the backend's isAnswered flag confirms an answer exists).
  */
 function AnswerStatus({ isAnswered }: { isAnswered: boolean | null }) {
-  if (isAnswered === true) return <span className="text-green-600">Отвечено</span>
-  if (isAnswered === false) return <span className="text-red-600">Без ответа</span>
+  if (isAnswered === true) return <span className="text-status-success">Отвечено</span>
+  if (isAnswered === false) return <span className="text-status-error">Без ответа</span>
   return <span>Статус неизвестен</span>
 }

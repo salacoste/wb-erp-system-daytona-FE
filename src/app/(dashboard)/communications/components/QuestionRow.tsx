@@ -49,7 +49,7 @@ export function QuestionRow({ question }: QuestionRowProps) {
  * Frontend: never fabricate "answered" from the answer text).
  */
 function QuestionAnswerStatus({ isAnswered }: { isAnswered: boolean | null }) {
-  if (isAnswered === true) return <span className="text-green-600">Отвечено</span>
-  if (isAnswered === false) return <span className="text-red-600">Без ответа</span>
+  if (isAnswered === true) return <span className="text-status-success">Отвечено</span>
+  if (isAnswered === false) return <span className="text-status-error">Без ответа</span>
   return <span>Статус неизвестен</span>
 }

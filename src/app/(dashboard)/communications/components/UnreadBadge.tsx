@@ -28,7 +28,7 @@ export function UnreadBadge({ enabled = true }: UnreadBadgeProps) {
     <span
       role="status"
       title="Есть новые отзывы или вопросы"
-      className="inline-flex h-2.5 w-2.5 rounded-full bg-red-600"
+      className="inline-flex h-2.5 w-2.5 rounded-full bg-destructive"
       data-testid="unread-dot"
     >
       <span className="sr-only">Есть новые сообщения</span>
