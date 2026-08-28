@@ -58,7 +58,7 @@ export function computeDelta(
   return {
     label: `${change >= 0 ? '+' : ''}${formatPercentage(change, 1)}`,
     arrow,
-    colorClass: improving ? 'text-green-600' : 'text-red-600',
+    colorClass: improving ? 'text-status-success' : 'text-status-error',
   }
 }
 

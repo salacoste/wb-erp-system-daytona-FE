@@ -31,28 +31,28 @@ describe('computeDelta', () => {
     const delta = computeDelta(120, 100, 'higher-is-better')
     expect(delta.label).toBe('+20,0 %')
     expect(delta.arrow).toBe('↑')
-    expect(delta.colorClass).toBe('text-green-600')
+    expect(delta.colorClass).toBe('text-status-success')
   })
 
   it('computes negative delta red for higher-is-better', () => {
     const delta = computeDelta(80, 100, 'higher-is-better')
     expect(delta.label).toBe('-20,0 %')
     expect(delta.arrow).toBe('↓')
-    expect(delta.colorClass).toBe('text-red-600')
+    expect(delta.colorClass).toBe('text-status-error')
   })
 
   it('computes positive delta red for higher-is-worse (COGS direction)', () => {
     const delta = computeDelta(120, 100, 'higher-is-worse')
     expect(delta.label).toBe('+20,0 %')
     expect(delta.arrow).toBe('↑')
-    expect(delta.colorClass).toBe('text-red-600')
+    expect(delta.colorClass).toBe('text-status-error')
   })
 
   it('computes negative delta green for higher-is-worse (COGS decreased)', () => {
     const delta = computeDelta(80, 100, 'higher-is-worse')
     expect(delta.label).toBe('-20,0 %')
     expect(delta.arrow).toBe('↓')
-    expect(delta.colorClass).toBe('text-green-600')
+    expect(delta.colorClass).toBe('text-status-success')
   })
 
   it('returns neutral (no arrow, muted color) when change is exactly zero (fix M-4)', () => {

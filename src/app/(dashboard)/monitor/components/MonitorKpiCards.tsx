@@ -62,7 +62,7 @@ export function MonitorKpiCards({ kpi }: MonitorKpiCardsProps) {
                 <TooltipProvider>
                   <Tooltip>
                     <TooltipTrigger asChild>
-                      <span className="inline-flex items-center text-amber-500 cursor-help">
+                      <span className="inline-flex items-center text-status-warning cursor-help">
                         <AlertTriangle className="h-4 w-4" aria-label="Аномалия данных" />
                       </span>
                     </TooltipTrigger>
