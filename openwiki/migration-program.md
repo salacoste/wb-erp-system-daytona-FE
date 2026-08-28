@@ -22,6 +22,8 @@ generated: { by: "openwiki/0.4.3", at: "2026-08-28T08:47:49.990Z" }
 
 # Migration Program (Epics 166-174)
 
+<!-- openwiki: broken internal link [/openwiki/conventions-and-quality.md] file "/openwiki/conventions-and-quality.md" does not exist. Fix the href or restore the target, then delete this comment. -->
+<!-- openwiki: broken internal link [/openwiki/design-system.md] file "/openwiki/design-system.md" does not exist. Fix the href or restore the target, then delete this comment. -->
 This page is the canonical wiki home for the shadcn full-UI migration **program**: the master plan, the story pipeline, the current status ledger, and the handoff/orchestration process. Per-story migration status lives here (not in `design-system.md` or `quickstart.md`) so status churn is isolated from stable conventions. See [/openwiki/conventions-and-quality.md](/openwiki/conventions-and-quality.md) for coding standards and [/openwiki/design-system.md](/openwiki/design-system.md) for the token/component layers this program delivers.
 
 ## Program goal and invariants
@@ -52,7 +54,7 @@ flowchart TD
   ANALYTICS --> E174
 ```
 
-## Status ledger (verified 2026-08-28, PR #305)
+## Status ledger (verified 2026-08-28, PR #318)
 
 | Epic | Scope | Progress | Status |
 |---|---|---|---|
@@ -62,11 +64,11 @@ flowchart TD
 | 169 operational analytics | 15 stories | 15/15 | **CLOSED** (169.12 contract closeout via PR #299/#304 lane; 169.13 independent via PR #232; 169.14/169.15 paid-storage chain complete) |
 | 170 advertising/brand/search | 7 stories | 7/7 | **CLOSED** (PRs #237-#250) |
 | 171 AI/forecast/models | 9 stories | 9/9 | **CLOSED** (PRs #252-#270) |
-| 172 business workspace | 17 stories | **9/17** | **IN PROGRESS** — latest: 172.9 Communications Workspace (PR #305, merge `feb35cfd`); **NEXT = 172.10 Finances & Documents** |
+| 172 business workspace | 17 stories | **13/17** | **IN PROGRESS** — latest: 172.13 Moysklad Integration Workspace (PR #317, merge `485fa27d`); also shipped 172.10 Finances & Documents (#308), 172.11 Monitor Route (#311), 172.12 Monitoring Operations Console (#315); **NEXT = 172.14 Orders Overview (owner-coordinated)** |
 | 173 settings/shipments/supplies | 13 stories | 0/13 | backlog |
 | 174 consolidation | 5 stories | 0/5 | final; strictly after 166-173 |
 
-**Program total: 63/94 canonical stories.** Full-suite Vitest floor at handoff: 19,394 passed / 0 failed (floor grows only by exact +N per story). `main` = `feb35cfd`, in sync with origin; session branches/worktrees at 0/0/0. Owner coordination note: 172.14 owns order-shared presentation needed by 172.15–172.16.
+**Program total: 67/94 canonical stories.** Full-suite Vitest floor at handoff: 19,439 passed / 0 failed across 1,223 files (floor grows only by exact +N per story). `main` = `b2085290`, in sync with origin; session branches/worktrees at 0/0/0. Owner coordination note: 172.14 owns order-shared presentation needed by 172.15–172.16.
 
 Live per-story history: `_bmad-output/implementation-artifacts/sprint-status.yaml`. Consolidated per-epic slice: `_bmad-output/planning-artifacts/shadcn-migration-status-and-debt-registry.md` (updated at each orchestrator closeout; treat the repo as truth on drift).
 
@@ -104,6 +106,6 @@ This lane carries unusually strict evidence machinery (serialized single-leader 
 
 ## What's next
 
-1. **172.10 Finances & Documents** (`.omx/plans/172.10-migrate-finances-and-documents.md`), then 172.11–172.17 in plan order with 172.14 owner coordination.
+1. **172.14 Orders Overview** (`.omx/plans/172.14-migrate-the-orders-overview.md`; owner-coordinated — it owns order-shared presentation for 172.15–172.16), then 172.15–172.17 in plan order.
 2. Epic 173 (13 stories: settings shell 173.1 owns the layout for 173.2–173.7; 173.8/173.12 own shipment/supply shared compositions).
 3. Epic 174 (5 stories): ledger parity, legacy-source removal, inclusive visual/a11y proof, full local regression, and repository cleanup — only after 166–173 complete.

@@ -338,7 +338,7 @@ The `/finances` page is an **account-level** page (not weekly analytics) with tw
 | **Download** | `GET /v1/finances/documents/:serviceName/download?extension=pdf\|xlsx` returns **base64-encoded** content. `download-blob.ts` (`src/lib/finances/download-blob.ts`) decodes base64 → Blob → transient `<a download>` browser click. Returns `false` on empty/malformed base64 so the mutation can surface an error. The 1s-revoke grace avoids a Firefox download-handoff race. |
 | **Fallback filename** | When the BE omits `fileName`, `useDownloadDocument` builds a fallback from the `serviceName` tail (last `/`-segment) + extension. |
 
-**Components**: `DocumentsTable`, `DocumentsFilters`, `DocumentsPagination`, `DocumentDownloadButton` (`src/app/(dashboard)/finances/components/`). **Focused tests**: `BalanceCard.test.tsx`, `DocumentsTable.test.tsx`, `src/lib/finances/__tests__/download-blob.test.ts`, `e2e/finances.spec.ts`.
+**Components**: `DocumentsTable` (table-only since Story 172.10 extracted the section body into `DocumentsBody`), `DocumentsBody`, `DocumentsFilters`, `DocumentsPagination`, `DocumentDownloadButton` (pending/success a11y announcements, visible failure state, `mutation.reset` on format switch — Story 172.10) (`src/app/(dashboard)/finances/components/`), plus a route-level `error.tsx` boundary at `src/app/(dashboard)/finances/error.tsx`. **Focused tests**: `BalanceCard.test.tsx`, `DocumentsTable.test.tsx`, `src/lib/finances/__tests__/download-blob.test.ts`, `finances/__tests__/finances-presentation-source-contracts.test.ts`, `e2e/finances.spec.ts`.
 
 ## Seller Communications (NEW-2)
 

@@ -7,7 +7,7 @@ verified:
     at: 2026-08-28T08:47:49.990Z
 sources:
   - id: openwiki-source-f607f5c80beb9ee0ee1c5cbc
-    resource: repo://_bmad-output/implementation-artifacts/172-9-fe-migrate-communications-workspace.md
+    resource: repo://_bmad-output/implementation-artifacts/172-13-fe-migrate-the-moysklad-integration-workspace.md
   - id: openwiki-source-89e2a6b1ae97c68779084212
     resource: repo://_bmad-output/implementation-artifacts/sprint-status.yaml
   - id: openwiki-source-c278c3812722174099a1e7a5
@@ -34,11 +34,11 @@ Development and validation are **local-only**: there is no deployment target or 
 
 ## Epics 166–174 Migration Snapshot
 
-As of the 2026-08-28 cross-team handoff (after PR #305, `main` = `feb35cfd`), the shadcn full-UI migration program stands at **63/94 canonical stories**:
+As of the 2026-08-28 closeouts (through PR #318, `main` = `b2085290`), the shadcn full-UI migration program stands at **67/94 canonical stories**:
 
 - Epics 166 (foundation), 167 (AppShell/auth), 168 (analytics core), 170 (marketing analytics, 7/7), and 171 (AI/forecast analytics, 9/9) are **done**.
 - Epic 169 (operational analytics) is **fully closed 15/15** — the final Story 169.12 contract closeout was merged through PR #299 (with the #304 docs-sync lane).
-- Epic 172 (core business operations) is **in progress at 9/17**: stories 172.1–172.9 are shipped (business dashboard, the full automation domain, the COGS domain single/bulk/history, price calculator, and communications workspace); the next story is **172.10 Finances & Documents**.
+- Epic 172 (core business operations) is **in progress at 13/17**: stories 172.1–172.13 are shipped — business dashboard, the automation domain, the COGS domain (single/bulk/history/price calculator), communications workspace, finances & documents (172.10, born-clean with download-a11y and a route `error.tsx` boundary), the monitor route (172.11), the monitoring operations console (172.12), and the Moysklad integration workspace (172.13); the next story is **172.14 Orders Overview** (owner-coordinated).
 - Epics 173 (13 stories) and 174 (5 stories, final consolidation) remain backlog.
 
 Full per-story status, the story pipeline, the route ledger, and the orchestration/handoff process live in [Migration Program (Epics 166–174)](migration-program.md). The design contract itself (tokens, primitives, composition families) is documented in [Design System](design-system.md).
@@ -50,7 +50,7 @@ Full per-story status, the story pipeline, the route ledger, and the orchestrati
 | **Stack** | Next.js 16 + TypeScript 5 + Tailwind CSS + shadcn/ui (Radix) |
 | **Server State** | TanStack Query v5 (Next.js server page/layout wrappers coexist with client components; interactive data fetching is client-side) |
 | **Client State** | Zustand (auth, dashboard widgets, rate-limit, polling) |
-| **Testing** | Vitest (1218 unit test files / 19 394 tests floor, MSW) + Playwright E2E + outbound network guards + privacy/diagnostic-capture checks |
+| **Testing** | Vitest (1223 unit test files / 19 439 tests floor, MSW) + Playwright E2E + outbound network guards + privacy/diagnostic-capture checks |
 | **Backend** | REST API via `NEXT_PUBLIC_API_URL` (default `http://localhost:3000`) |
 | **Port** | 3100 (dev and prod) |
 
