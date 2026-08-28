@@ -10,7 +10,7 @@
 
 | Метрика | Значение |
 |---|---|
-| `main` | `73174259` (Story 172.11 closeout PR #312 merged), primary-дерево чистое и IN-SYNC |
+| `main` lifecycle anchor | Story 172.11 closeout PR #312 merged as `73174259`; canonical reconciliation PR #313 merged as `7b40c80a`. Точный текущий HEAD всегда сверять с `origin/main` по §1; не считать эту строку вечным HEAD-снимком |
 | Прогресс миграции 166-174 | **70/94** канонических стори |
 | Эпики | 166 ✅ · 167 ✅ · 168 ✅ · **169 ✅ (15/15; 169.12 closeout PR #299)** · 170 ✅ (7/7) · 171 ✅ (9/9) · **172 IN PROGRESS (11/17)** · 173/174 backlog |
 | Полный пол (vitest, **живой прогон при handoff**) | **19 423 passed / 0 failed / 1221 файл / EXIT=0** (рост: … → 19 414 → **19 423** [+9 exact 172.11 guard]) |
