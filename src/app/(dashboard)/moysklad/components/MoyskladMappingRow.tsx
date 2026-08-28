@@ -63,7 +63,7 @@ export function MoyskladMappingRow({ mapping, onLink, isRecent = false }: Moyskl
         ) : (
           <Link
             href={`${ROUTES.ANALYTICS.PRODUCT}/${mapping.nmId}`}
-            className="text-blue-600 hover:underline flex items-center gap-1"
+            className="text-primary hover:underline flex items-center gap-1"
           >
             {/* Opaque ID rendered as-is (anti-pattern #10: no formatNumber). */}
             {String(mapping.nmId)}
