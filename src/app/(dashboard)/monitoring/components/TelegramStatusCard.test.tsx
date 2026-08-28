@@ -21,7 +21,7 @@ describe('TelegramStatusCard — StatusMetrics deliveryRate (0-1 ratio)', () => 
     )
     const value = screen.getByLabelText(/Процент доставки за 7 дней/)
     expect(value.textContent).toMatch(/95,0\s%/)
-    expect(value.className).toContain('text-green-600')
+    expect(value.className).toContain('text-status-success')
   })
 
   it('renders 0.85 ratio as "85,0 %" in yellow', () => {
@@ -30,7 +30,7 @@ describe('TelegramStatusCard — StatusMetrics deliveryRate (0-1 ratio)', () => 
     )
     const value = screen.getByLabelText(/Процент доставки за 7 дней/)
     expect(value.textContent).toMatch(/85,0\s%/)
-    expect(value.className).toContain('text-yellow-600')
+    expect(value.className).toContain('text-status-warning')
   })
 
   it('renders 0.5 ratio as "50,0 %" in red', () => {
@@ -39,14 +39,14 @@ describe('TelegramStatusCard — StatusMetrics deliveryRate (0-1 ratio)', () => 
     )
     const value = screen.getByLabelText(/Процент доставки за 7 дней/)
     expect(value.textContent).toMatch(/50,0\s%/)
-    expect(value.className).toContain('text-red-600')
+    expect(value.className).toContain('text-status-error')
   })
 
   it('renders a perfect 1 ratio as "100,0 %" in green', () => {
     render(<TelegramStatusCard telegram={makeTelegram({ deliveryRate7d: 1 })} isLoading={false} />)
     const value = screen.getByLabelText(/Процент доставки за 7 дней/)
     expect(value.textContent).toMatch(/100,0\s%/)
-    expect(value.className).toContain('text-green-600')
+    expect(value.className).toContain('text-status-success')
   })
 
   it('renders 0.8 ratio as "80,0 %" in yellow (exact >= 0.8 boundary)', () => {
@@ -55,7 +55,7 @@ describe('TelegramStatusCard — StatusMetrics deliveryRate (0-1 ratio)', () => 
     )
     const value = screen.getByLabelText(/Процент доставки за 7 дней/)
     expect(value.textContent).toMatch(/80,0\s%/)
-    expect(value.className).toContain('text-yellow-600')
+    expect(value.className).toContain('text-status-warning')
   })
 
   it('renders "0,0 %" in red for a zero delivery rate (the ?? 0 fallback value)', () => {
@@ -70,6 +70,6 @@ describe('TelegramStatusCard — StatusMetrics deliveryRate (0-1 ratio)', () => 
     )
     const value = screen.getByLabelText(/Процент доставки за 7 дней/)
     expect(value.textContent).toMatch(/0,0\s%/)
-    expect(value.className).toContain('text-red-600')
+    expect(value.className).toContain('text-status-error')
   })
 })

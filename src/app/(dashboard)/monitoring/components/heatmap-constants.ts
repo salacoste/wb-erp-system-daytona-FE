@@ -48,12 +48,17 @@ export const CATEGORY_RU: Record<PipelineCategory, string> = {
 
 // --- Legend items ---
 
+// Colors mirror HeatmapCell STATUS_COLORS (semantic CSS-var tokens, Story 172.12-FE);
+// `recovered` uses the alpha-variant positive token to stay distinct from `success`.
 export const LEGEND_ITEMS = [
-  { color: '#22C55E', label: 'Успешно' },
-  { color: '#F59E0B', label: 'Частично' },
-  { color: '#EF4444', label: 'Ошибка' },
-  { color: '#6B7280', label: 'Пропущено' },
-  { color: '#F3F4F6', label: 'Нет данных', border: true },
-  { color: '#3B82F6', label: 'В процессе' },
-  { color: '#10B981', label: 'Восстановлено' },
+  { color: 'var(--color-chart-positive)', label: 'Успешно' },
+  { color: 'var(--color-status-warning)', label: 'Частично' },
+  { color: 'var(--color-chart-negative)', label: 'Ошибка' },
+  { color: 'var(--color-muted-foreground)', label: 'Пропущено' },
+  { color: 'var(--color-muted)', label: 'Нет данных', border: true },
+  { color: 'var(--color-status-information)', label: 'В процессе' },
+  {
+    color: 'color-mix(in srgb, var(--color-chart-positive) 60%, transparent)',
+    label: 'Восстановлено',
+  },
 ]

@@ -11,15 +11,20 @@ import { Tooltip, TooltipTrigger, TooltipContent } from '@/components/ui/tooltip
 import type { HeatmapCell as HeatmapCellType } from '../types/monitoring'
 import { HeatmapTooltip } from './HeatmapTooltip'
 
-/** Status → background color mapping */
+/**
+ * Status → background color mapping (semantic CSS-var tokens, Story 172.12-FE).
+ * `recovered` is positive-valence like `success` but must stay visually distinct
+ * in the legend, so it uses the alpha-variant form of the positive chart token
+ * (the theme has only one green triple — no second solid green token exists).
+ */
 const STATUS_COLORS: Record<string, string> = {
-  success: '#22C55E',
-  partial: '#F59E0B',
-  failed: '#EF4444',
-  missed: '#6B7280',
-  no_data: '#F3F4F6',
-  pending: '#3B82F6',
-  recovered: '#10B981',
+  success: 'var(--color-chart-positive)',
+  partial: 'var(--color-status-warning)',
+  failed: 'var(--color-chart-negative)',
+  missed: 'var(--color-muted-foreground)',
+  no_data: 'var(--color-muted)',
+  pending: 'var(--color-status-information)',
+  recovered: 'color-mix(in srgb, var(--color-chart-positive) 60%, transparent)',
 }
 
 /** Status → Russian label for aria */
@@ -56,7 +61,7 @@ export function HeatmapCellComponent({ cell, pipelineName }: HeatmapCellProps) {
   const ariaLabel = `${pipelineName}, ${dateLabel}, статус: ${statusRu}, ${cell.executionsActual}/${cell.executionsExpected} выполнений`
 
   // Border for no_data to distinguish from white background
-  const borderClass = cell.status === 'no_data' ? 'border border-gray-300' : ''
+  const borderClass = cell.status === 'no_data' ? 'border' : ''
 
   return (
     <Tooltip>

@@ -110,7 +110,7 @@ function PipelineCard({ pipeline }: { pipeline: DashboardPipeline }) {
               <TooltipTrigger asChild>
                 <Badge
                   variant="outline"
-                  className="shrink-0 border-amber-500 text-amber-700 text-xs px-1.5"
+                  className="shrink-0 border-status-warning text-status-warning text-xs px-1.5"
                 >
                   <AlertTriangle className="h-3 w-3 mr-0.5" />
                   {Math.round((errorRate ?? 0) * 100)}%
@@ -141,7 +141,7 @@ function PipelineCard({ pipeline }: { pipeline: DashboardPipeline }) {
 
       {/* Mini progress bar for successRate24h */}
       <div
-        className="mt-1.5 h-1.5 w-full overflow-hidden rounded-full bg-gray-200"
+        className="mt-1.5 h-1.5 w-full overflow-hidden rounded-full bg-muted"
         role="progressbar"
         aria-valuenow={rate}
         aria-valuemin={0}
@@ -151,7 +151,7 @@ function PipelineCard({ pipeline }: { pipeline: DashboardPipeline }) {
         <div
           className={cn(
             'h-full rounded-full transition-all duration-500',
-            rate >= 90 ? 'bg-green-500' : rate >= 70 ? 'bg-yellow-500' : 'bg-red-500'
+            rate >= 90 ? 'bg-status-success' : rate >= 70 ? 'bg-status-warning' : 'bg-status-error'
           )}
           style={{ width: `${rate}%` }}
         />

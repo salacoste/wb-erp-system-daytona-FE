@@ -30,21 +30,22 @@ describe('PipelineStatusGrid — error badge degrades when backend omits errorRa
   it('hides the amber error badge when errorRate is absent (live dashboard shape)', () => {
     const { container } = renderGrid([pipeline()])
     expect(screen.getByText('FBO Заказы')).toBeInTheDocument()
-    expect(container.querySelector('.border-amber-500')).toBeNull()
+    // Story 172.12 re-pin: amber → status-warning token.
+    expect(container.querySelector('.border-status-warning')).toBeNull()
   })
 
   it('hides the badge for a sub-1% error rate (0.004 → no "0%" badge)', () => {
     const { container } = renderGrid([
       pipeline({ errorRate: 0.004, tasksWithErrors: 0, totalResultErrors: 1 }),
     ])
-    expect(container.querySelector('.border-amber-500')).toBeNull()
+    expect(container.querySelector('.border-status-warning')).toBeNull()
   })
 
   it('renders the amber error badge when errorRate is present and >= 1%', () => {
     const { container } = renderGrid([
       pipeline({ status: 'warning', errorRate: 0.1, tasksWithErrors: 2, totalResultErrors: 5 }),
     ])
-    expect(container.querySelector('.border-amber-500')).not.toBeNull()
+    expect(container.querySelector('.border-status-warning')).not.toBeNull()
     expect(screen.getByText('10%')).toBeInTheDocument()
   })
 })

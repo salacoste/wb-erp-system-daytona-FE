@@ -9,6 +9,7 @@
 
 import { useState } from 'react'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { Button } from '@/components/ui/button'
 import { Skeleton } from '@/components/ui/skeleton'
 import { useMonitoringDashboard } from '../hooks/use-monitoring-dashboard'
 import type { MonitoringTab } from '../types/monitoring'
@@ -21,7 +22,7 @@ import { PipelineHeatmap } from './PipelineHeatmap'
 import { RecoveryPanel } from './RecoveryPanel'
 import { HealthHistoryChart } from './HealthHistoryChart'
 
-/** Underline-style tab — clear active state with primary red (#E53935) accent */
+/** Underline-style tab — clear active state with primary accent */
 const TAB_CLS = 'rounded-none bg-transparent px-4 py-2.5 text-sm shadow-none transition-colors'
 
 function tabTriggerProps(isActive: boolean) {
@@ -30,7 +31,7 @@ function tabTriggerProps(isActive: boolean) {
       ? `${TAB_CLS} font-semibold text-foreground`
       : `${TAB_CLS} font-medium text-muted-foreground hover:text-foreground`,
     style: {
-      borderBottom: isActive ? '3px solid #E53935' : '3px solid transparent',
+      borderBottom: isActive ? '3px solid var(--color-primary)' : '3px solid transparent',
     },
   }
 }
@@ -51,13 +52,10 @@ export function MonitoringPageContent() {
   if (isError) {
     return (
       <div className="flex flex-col items-center justify-center py-16" role="alert">
-        <p className="text-sm text-red-600">Не удалось загрузить данные мониторинга</p>
-        <button
-          onClick={() => refetch()}
-          className="mt-2 text-sm font-medium text-primary hover:underline"
-        >
+        <p className="text-sm text-status-error">Не удалось загрузить данные мониторинга</p>
+        <Button variant="outline" size="sm" className="mt-2" onClick={() => refetch()}>
           Повторить
-        </button>
+        </Button>
       </div>
     )
   }

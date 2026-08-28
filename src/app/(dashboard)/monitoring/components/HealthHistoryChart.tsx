@@ -54,6 +54,7 @@ export function HealthHistoryChart({ enabled }: HealthHistoryChartProps) {
         {PERIOD_OPTIONS.map(opt => (
           <Button
             key={opt.days}
+            type="button"
             variant={period === opt.days ? 'default' : 'outline'}
             size="sm"
             onClick={() => setPeriod(opt.days)}
@@ -76,15 +77,15 @@ export function HealthHistoryChart({ enabled }: HealthHistoryChartProps) {
           {counts && (
             <p className="text-sm text-muted-foreground" aria-live="polite">
               За последние {period} дней:{' '}
-              <span className="font-medium text-green-600">
+              <span className="font-medium text-status-success">
                 {counts.healthy} дн. {STATUS_EMOJI.healthy}
               </span>
               {', '}
-              <span className="font-medium text-yellow-600">
+              <span className="font-medium text-status-warning">
                 {counts.degraded} дн. {STATUS_EMOJI.degraded}
               </span>
               {', '}
-              <span className="font-medium text-red-600">
+              <span className="font-medium text-status-error">
                 {counts.critical} дн. {STATUS_EMOJI.critical}
               </span>
             </p>
@@ -100,10 +101,10 @@ export function HealthHistoryChart({ enabled }: HealthHistoryChartProps) {
               const { day, date } = formatDayLabel(report.date)
               const isSelected = report.date === selectedDate && sheetOpen
               return (
-                <button
+                <Button
                   key={report.date}
-                  type="button"
-                  className="group flex flex-col items-center gap-1 rounded-lg p-1.5 transition-colors hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                  variant="ghost"
+                  className="group h-auto w-auto flex-col items-center gap-1 whitespace-normal rounded-lg p-1.5 hover:bg-muted"
                   onClick={() => handleCircleClick(report.date)}
                   aria-label={`${day} ${date}: ${report.status}, проблем: ${report.issues}`}
                   title={`${day} ${date}: ${report.status}, проблем: ${report.issues}`}
@@ -125,11 +126,11 @@ export function HealthHistoryChart({ enabled }: HealthHistoryChartProps) {
                   </span>
                   <span className="text-[10px] leading-tight text-muted-foreground">{date}</span>
                   {report.issues > 0 && (
-                    <span className="text-[10px] font-medium text-red-500">
+                    <span className="text-[10px] font-medium text-status-error">
                       {report.issues} {report.issues === 1 ? 'пробл.' : 'пробл.'}
                     </span>
                   )}
-                </button>
+                </Button>
               )
             })}
           </div>

@@ -52,7 +52,7 @@ export function Confirm({
           <AlertDialogAction
             onClick={onOk}
             disabled={busy}
-            className={cn(danger && 'bg-red-600 hover:bg-red-700')}
+            className={cn(danger && 'bg-destructive hover:bg-destructive/90')}
           >
             {busy && <Loader2 className="mr-1 h-3 w-3 animate-spin" />}
             {act}

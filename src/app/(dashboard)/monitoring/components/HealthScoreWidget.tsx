@@ -18,11 +18,16 @@ interface HealthScoreWidgetProps {
   isLoading: boolean
 }
 
-/** Color thresholds: green >=80, yellow 50-79, red <50 */
-function getScoreColor(score: number): string {
-  if (score >= 80) return '#22C55E'
-  if (score >= 50) return '#F59E0B'
-  return '#EF4444'
+/**
+ * Color thresholds for the gauge arc fill (monitor gauge canon, Story 172.12-FE):
+ * positive >=80, warning 50-79, negative <50. Returns Tailwind stroke-* token classes —
+ * the arc is a raw SVG <path>, where var() does not resolve in the stroke presentation
+ * attribute, so the color is applied as a CSS class instead.
+ */
+function getScoreStrokeClass(score: number): string {
+  if (score >= 80) return 'stroke-chart-positive'
+  if (score >= 50) return 'stroke-status-warning'
+  return 'stroke-chart-negative'
 }
 
 /** Russian status text by score band */
@@ -34,9 +39,9 @@ function getStatusText(score: number): string {
 
 /** Tailwind class for status text color */
 function getStatusColorClass(score: number): string {
-  if (score >= 80) return 'text-green-600'
-  if (score >= 50) return 'text-yellow-600'
-  return 'text-red-600'
+  if (score >= 80) return 'text-status-success'
+  if (score >= 50) return 'text-status-warning'
+  return 'text-status-error'
 }
 
 // Arc geometry: 180-degree semi-circle (top half)
@@ -58,7 +63,7 @@ export function HealthScoreWidget({ system, isLoading }: HealthScoreWidgetProps)
 
   const score = system?.healthScore ?? 0
   const alerts = system?.activeAlerts ?? 0
-  const color = getScoreColor(score)
+  const strokeClass = getScoreStrokeClass(score)
   const statusText = getStatusText(score)
   const statusClass = getStatusColorClass(score)
   // Clamp the arc fill to [0,100] for out-of-range inputs; display the raw score + an anomaly
@@ -91,7 +96,7 @@ export function HealthScoreWidget({ system, isLoading }: HealthScoreWidgetProps)
             <path
               d={path}
               fill="none"
-              stroke="#E5E7EB"
+              className="stroke-chart-grid"
               strokeWidth={STROKE_WIDTH}
               strokeLinecap="round"
             />
@@ -99,11 +104,13 @@ export function HealthScoreWidget({ system, isLoading }: HealthScoreWidgetProps)
             <path
               d={path}
               fill="none"
-              stroke={color}
               strokeWidth={STROKE_WIDTH}
               strokeLinecap="round"
               strokeDasharray={`${fillLength} ${ARC_LENGTH}`}
-              className="motion-safe:transition-[stroke-dasharray] motion-safe:duration-700 motion-safe:ease-out"
+              className={cn(
+                strokeClass,
+                'motion-safe:transition-[stroke-dasharray] motion-safe:duration-700 motion-safe:ease-out'
+              )}
             />
           </svg>
 
@@ -123,7 +130,7 @@ export function HealthScoreWidget({ system, isLoading }: HealthScoreWidgetProps)
         {isOutOfRange && (
           <Tooltip>
             <TooltipTrigger asChild>
-              <span className="mt-1 inline-flex items-center gap-1 text-xs text-amber-600 cursor-help">
+              <span className="mt-1 inline-flex items-center gap-1 text-xs text-status-warning cursor-help">
                 <AlertTriangle className="h-3 w-3" />
                 Аномальное значение
               </span>
@@ -137,7 +144,7 @@ export function HealthScoreWidget({ system, isLoading }: HealthScoreWidgetProps)
         {/* Alert count badge */}
         {alerts > 0 && (
           <span
-            className="mt-2 inline-flex items-center rounded-full bg-red-100 px-2.5 py-0.5 text-xs font-semibold text-red-700"
+            className="mt-2 inline-flex items-center rounded-full bg-status-error/10 px-2.5 py-0.5 text-xs font-semibold text-status-error"
             aria-label={`Активных оповещений: ${alerts}`}
           >
             {alerts} {alerts === 1 ? 'оповещение' : alerts < 5 ? 'оповещения' : 'оповещений'}

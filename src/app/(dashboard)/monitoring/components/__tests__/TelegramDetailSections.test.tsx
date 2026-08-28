@@ -42,7 +42,7 @@ describe('EventBreakdownTable', () => {
     ]
     render(<EventBreakdownTable events={events} />)
     const failedCell = screen.getByText('3')
-    expect(failedCell.className).toContain('text-red-600')
+    expect(failedCell.className).toContain('text-status-error')
   })
 
   it('renders table headers', () => {
