@@ -2293,15 +2293,16 @@ So that I can identify current health and act on meaningful exceptions.
 - **Route/User Value:** monitor KPIs, trends, status surfaces, tables, and actions.
 - **Owned Surface:** `src/app/(dashboard)/monitor/**` and exclusive custom components/tests.
 - **Shared Dependencies:** foundation/AppShell; no implicit ownership of `/monitoring` components.
+- **Current Delivery State:** `done`. Story 172.11 started from the Story 172.10 closeout merge `e6d05de4`. Feature commit `d39ad37c` migrated the exact fourteen-file monitor surface through PR #311, merged as `8b172445`; closeout commit `8602fdbd` then merged through PR #312 as `73174259`. Eighteen legacy palette classes and nine hexadecimal color literals moved to semantic status/chart/foreground tokens without changing monitoring APIs, hooks, types, query behavior, state semantics, or the `/monitoring` surface. The nine-test source guard pins the fourteen-file BFS import closure and was mutation-checked by the independent reviewer. Targeted proof passed across 21 files and 155 tests; the full Vitest floor passed at 19,423/0 across 1,221 files; lint, TypeScript, max-lines, `git diff --check`, and the webpack production build passed. The repaired strict monitor E2E legend assertion passed, its pre-existing ambiguity was confirmed on clean `main`, and a warm monitor retry passed 4/0; a final credentialed full-suite rerun was not claimed after the backend login throttle was exhausted. One independent review completed as APPROVE-WITH-NOTES with the accepted LOW wording fix applied. Shared `STATUS_COLORS` remains explicitly owned by Story 172.12. Live axe, light/dark, width-matrix, 200% zoom, reduced-motion, keyboard, and real-screen-reader proof remains an explicit Story 174.3 carry-out. The feature and closeout branches and Story 172.11 temporary worktree are absent after cleanup; the active Story 172.12 worktree remains protected. Because shipped route-ledger rows remain globally `planned`, `/monitor` is intentionally left for the complete 76-route status/evidence reconciliation in Story 174.1.
 - **Allowed Change Surface:** Owned Surface and route-specific tests/visuals.
 - **Forbidden Shared Files:** tokens/primitives/AppShell, monitoring APIs/hooks/types, `/monitoring` owned files.
 - **State Coverage:** loading, empty, stale, partial, degraded, healthy, error, action pending where applicable.
 - **Responsive/Table/Chart Contract:** exception-first hierarchy; metric/table/chart contracts with units, periods, primary columns, and accessible summaries.
 - **Accessibility Contract:** severity by text/icon/order, keyboard actions, chart alternative, theme contrast.
-- **Test and Visual Evidence:** monitor regression tests and representative health/state screenshots.
-- **Local Validation:** targeted monitor tests plus universal checks.
-- **Branch/Worktree Lifecycle:** `cdx/epic-172-story-11-monitor`, dedicated temporary worktree.
-- **Cleanup Evidence:** merge and worktree cleanup record.
+- **Test and Visual Evidence:** route/component regressions, exact source-contract guard, strict E2E assertion repair, and warm monitor retry passed; representative live theme/width/zoom/assistive-technology evidence remains assigned to Story 174.3.
+- **Local Validation:** monitor target 21 files / 155 tests; full Vitest 19,423/0/1,221; lint 0/0; TypeScript 0; max-lines PASS; webpack build PASS; `git diff --check` PASS; strict E2E repair plus warm retry 4/0 PASS, with the final credentialed full-suite rerun explicitly not claimed after login throttling.
+- **Branch/Worktree Lifecycle:** `cdx/epic-172-story-11-monitor` at `d39ad37c` merged through PR #311 as `8b172445`; documentation closeout commit `8602fdbd` merged through PR #312 as `73174259`; the dedicated `/private/tmp/wb-repricer-fe-172-11-monitor` worktree was removed.
+- **Cleanup Evidence:** feature and closeout local branches, remote branches, remote-tracking refs, and the exact Story 172.11 temporary worktree are absent; pruning completed without touching the active Story 172.12 lane.
 
 **Acceptance Criteria:**
 
@@ -2322,14 +2323,14 @@ So that I can inspect pipeline, heatmap, Telegram, and operational status withou
 
 - **Route/User Value:** monitoring KPIs, pipeline grid, heatmap, charts, metrics tables, Telegram status, tabs/sheets/dialogs.
 - **Owned Surface:** `src/app/(dashboard)/monitoring/**` and exclusive monitoring components/tests.
-- **Shared Dependencies:** foundation/AppShell; Story 172.11 only for explicitly shared owner interfaces.
-- **Allowed Change Surface:** Owned Surface and route E2E/visual fixtures.
-- **Forbidden Shared Files:** tokens/primitives/AppShell, monitoring API/hooks/types, `/monitor` exclusive files.
+- **Shared Dependencies:** foundation/AppShell; Story 172.11 hands off the exact shared `src/lib/monitoring-constants.ts` `STATUS_COLORS` migration because both `/monitor` and `/monitoring` consume it.
+- **Allowed Change Surface:** Owned Surface and route E2E/visual fixtures; exact shared-owner exception `src/lib/monitoring-constants.ts` limited to `STATUS_COLORS` semantic-token values, plus direct `/monitor` consumer tests only when required to prove unchanged keys, labels, types, exports, and status meaning.
+- **Forbidden Shared Files:** tokens/primitives/AppShell, monitoring API/hooks/types, every other shared file, `STATUS_LABELS`/type/export changes in the exact exception, and all `/monitor` production files.
 - **State Coverage:** healthy/degraded/offline, loading, refresh, partial, stale, empty, Telegram disconnected/error, route error.
 - **Responsive/Table/Chart Contract:** operations triage hierarchy; pipeline/heatmap alternatives; table primary columns; Sheet behavior on narrow screens.
 - **Accessibility Contract:** grid/heatmap textual evidence, status labels, keyboard tabs/overlays, focus restoration, both themes.
 - **Test and Visual Evidence:** route tests plus health matrix screenshots at key widths/themes.
-- **Local Validation:** targeted monitoring tests/E2E plus universal checks.
+- **Local Validation:** targeted monitoring tests/E2E plus universal checks and direct `/monitor` shared-constant consumer regressions.
 - **Branch/Worktree Lifecycle:** `cdx/epic-172-story-12-monitoring`, dedicated temporary worktree.
 - **Cleanup Evidence:** review, merge, branch deletion, and worktree removal.
 

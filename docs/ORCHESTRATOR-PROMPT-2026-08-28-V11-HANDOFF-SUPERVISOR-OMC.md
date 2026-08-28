@@ -44,7 +44,7 @@ export PATH="/opt/homebrew/opt/node@24/bin:$PATH"; node --version   # v24.18.0 (
 ```
 
 **Mid-flight обнаружение**: параллельные команды/сессии РЕАЛЬНО активны (прецеденты: #295/#296/#300/#301 вливались поверх чужих PR; worktree'ы чужих сторий живут в /tmp). Правила:
-- Видишь чужую ветку/worktree активной NEXT-стори → **НЕ дублируй**: возьми следующую по реестру незанятую стори (эпики независимы — 172.x между собой последовательны по планам, но 173/174 нет; координируй через registry NEXT-пометки).
+- Видишь чужую ветку/worktree активной NEXT-стори → **НЕ дублируй и НЕ перепрыгивай prerequisite DAG**: сохрани чужой WIP, координируйся с текущим owner и возьми только независимую read-only verification/docs-reconciliation задачу. Следующую продуктовую стори начинай лишь после merge обязательного prerequisite и обновления `main`.
 - `git branch --show-current` НЕПОСРЕДСТВЕННО перед каждым твоим коммитом; коммить сразу; перед финализацией closeout — re-grep `origin/main`.
 - Расхождение HANDOFF §0 ↔ репо → репо = истина; исправь §0 в своём первом closeout-коммите (APPEND-ONLY для §7-уроков; §0-таблицу правь по факту).
 
@@ -67,7 +67,7 @@ F. Валидация по гейт-таблице HANDOFF §4 (exit-коды н
 G. Ревью: пропорции и триггеры HANDOFF §6/G;closure-аудит обязателен; находки — чинить или disposition.
 H. Фиксы: мелкие сам, крупные executor'у; перепрогон наименьшего таргета.
 I. Git/PR/merge/cleanup — ТОЛЬКО сам: ветка перед коммитом, явный stage, conventional commit, PR → `--merge`, 0/0/0 + prune + IN-SYNC.
-J. Closeout — ТОЛЬКО сам: артефакт (формат `172-{1..7}-fe-*.md`; Lessons ≤120; APPEND-ONLY) → sprint-flip → registry SHIPPED+NEXT → **HANDOFF §0** → CLAUDE.md floor → гейты lessons/docs → docs-PR → merge → cleanup.
+J. Closeout — ТОЛЬКО сам: артефакт (формат `172-{1..11}-fe-*.md`; Lessons ≤120; APPEND-ONLY) → sprint-flip → registry SHIPPED+NEXT → **HANDOFF §0** → CLAUDE.md floor → гейты lessons/docs → docs-PR → merge → cleanup.
 
 ---
 
