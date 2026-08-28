@@ -105,7 +105,8 @@ caption naming model + tabular + p-6; guard-9 + caption role-тест + 6 re-pin
 **172.13 SHIPPED (2026-08-28, PR #317, merge `485fa27d`)** — MINOR-GAP: moysklad workspace, 7 однострочных свапов + гард 6 (каталог 13 BFS); полный пол **19 439/0/1223** (+6 exact); e2e 4 спеки плана 12✓. Артефакт: `172-13-fe-migrate-the-moysklad-integration-workspace.md`.
 **172.14 SHIPPED (2026-08-29, PR #319, merge `4b988aae`)** — FULL owner-story: shared orders family (29 M + гард), статус-карты (status-pending!), cross-restraint 0-import proof, mirror→lib-import; полный пол **19 447/0/1224** (+8 exact); e2e 7×2; lib-passthrough residue = lib-wave carry-out. Артефакт: `172-14-fe-migrate-the-orders-overview.md`.
 **172.15 SHIPPED (2026-08-29, PR #321, merge `81bc35cc`)** — born-clean: caption ×2 + tabular + гард 7; полный пол **19 458/0/1225** (+11 exact); 1×opus APPROVE; e2e-gap честный. Артефакт: `172-15-fe-migrate-fbo-orders.md`.
-**NEXT = 172.16 order integrity analysis** (эпик 172, 2 остаточных стори 172.16-172.17; планы `.omx/plans/172.{16..17}-*.md`).
+**172.16 SHIPPED (2026-08-29, PR #323, merge `8939aea4`)** — MINOR-GAP: 6 свапов + гард 5 (HEAD-мутационно проверен); полный пол **19 463/0/1226** (+5 exact); 1×opus APPROVE. Артефакт: `172-16-fe-migrate-order-integrity-analysis.md`.
+**NEXT = 172.17 product management** (эпик 172, ПОСЛЕДНЯЯ стори; планы `.omx/plans/172.17-*.md`).
 **Carry-out → 174.2 owner (route-ledger handoff из 171.9):** (1) удалить поле className из
 STATUS_BADGE_CONFIG после миграции ModelListSection на собственный overlay; (2) переписать
 stale-комментарий model-list-helpers.ts:24-26 («subroutes 171.7/171.9» — остался только

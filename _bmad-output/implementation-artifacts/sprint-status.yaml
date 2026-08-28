@@ -1,5 +1,5 @@
 # generated: 2026-08-03
-# last_updated: 2026-08-29 — Story 172.15 shipped through feature PR #321 (merge 81bc35cc); Epic 172 is 15/17; Program NEXT = Story 172.16.
+# last_updated: 2026-08-29 — Story 172.16 shipped through feature PR #323 (merge 8939aea4); Epic 172 is 16/17; Program NEXT = Story 172.17.
 # project: frontend
 # project_key: NOKEY
 # tracking_system: file-system
@@ -37,7 +37,7 @@
 #   they are excluded from story and retrospective counts and must be documented with a no-story-ID note.
 
 generated: 2026-08-03 # refreshed after Epic 127 truth reconciliation and Epics 162-165 registration
-last_updated: 2026-08-29 # Story 172.15 shipped through feature PR #321 (merge 81bc35cc); Epic 172 is 15/17; Program NEXT = Story 172.16.
+last_updated: 2026-08-29 # Story 172.16 shipped through feature PR #323 (merge 8939aea4); Epic 172 is 16/17; Program NEXT = Story 172.17.
 project: frontend
 project_key: NOKEY
 tracking_system: file-system
@@ -833,7 +833,7 @@ development_status:
   172-13-fe-migrate-the-moysklad-integration-workspace: done # PR #317 (5fe9af95, merge 485fa27d): MINOR-GAP; 8 files (7M one-line + 1A guard) +115/-7: 7 palette -> tokens (health badge success branch, 3 warning banners canonical, unmapped headline -> status-warning, link -> primary, recalc badge); guard 6 (catalog 13 exact-array BFS, mutation-tested); targeted 5/45 (base 4/39); full 19439/0/1223 (floor 19433, +6 exact); e2e 12 (4 plan specs); 1xopus APPROVE-WITH-NOTES (3 LOW info); cleanup 0/0/0.
   172-14-fe-migrate-the-orders-overview: done # PR #319 (4213dbfd, merge 4b988aae): FULL owner-story; 30 files (29M+1A guard) +350/-132: status-badge token maps (SHIPPED->status-pending purple native; alpha-tiers), WB-vs-local pending/muted, analytics family, 4 Button conversions, ~50 re-pins + test mirror->real lib import; guard 8 (dual-root 61 exact-array, fbo/integrity excluded); cross-restraint 0-import proof; targeted 27/995 (base 26/987); full 19447/0/1224 (floor 19439, +8 exact); e2e 7x2; 2x APPROVE-WITH-NOTES (pass-1 MEDIUM lib-mirror drift fixed); lib-passthrough residue documented; cleanup 0/0/0.
   172-15-fe-migrate-fbo-orders: done # PR #321 (8af3b18d, merge 81bc35cc): born-clean; 6 files (5M+1A guard) +184/-6: RTC captions x2 (RU from PageContent), tabular-nums x6, +4 caption tests, guard 7 (catalog 7 exact-array); targeted 6/36 (base 5/25); full 19458/0/1225 (floor 19447, +11 exact); prettier-clean (format:check baseline 39); 1xopus APPROVE; e2e-gap honest (plan spec nonexistent); cleanup 0/0/0.
-  172-16-fe-migrate-order-integrity-analysis: backlog
+  172-16-fe-migrate-order-integrity-analysis: done # PR #323 (ca0330cb, merge 8939aea4): MINOR-GAP; 3 files (2M+1A guard) +84/-6: 6 palette->token swaps (status/warn/fail valence, icons/RU frozen); guard 5 (catalog 6 exact-array, HEAD-mutation-tested); targeted 4/22 (base 3/17); full 19463/0/1226 (floor 19458, +5 exact); prettier clean; e2e 11 (3 setup+2 orders+6 integrity); 1xopus APPROVE; cleanup 0/0/0.
   172-17-fe-migrate-product-management: backlog
   epic-172-fe-retrospective: optional
 
