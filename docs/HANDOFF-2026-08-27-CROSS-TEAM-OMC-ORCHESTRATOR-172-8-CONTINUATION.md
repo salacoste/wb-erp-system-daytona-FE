@@ -6,18 +6,18 @@
 
 ---
 
-## 0. Верифицированное состояние (2026-08-28, после Story 172.11 feature PR #311 и closeout PR #312)
+## 0. Верифицированное состояние (2026-08-28, после Story 172.12 feature PR #315)
 
 | Метрика | Значение |
 |---|---|
-| `main` lifecycle anchor | Story 172.11 closeout PR #312 merged as `73174259`; canonical reconciliation PR #313 merged as `7b40c80a`. Точный текущий HEAD всегда сверять с `origin/main` по §1; не считать эту строку вечным HEAD-снимком |
-| Прогресс миграции 166-174 | **70/94** канонических стори |
-| Эпики | 166 ✅ · 167 ✅ · 168 ✅ · **169 ✅ (15/15; 169.12 closeout PR #299)** · 170 ✅ (7/7) · 171 ✅ (9/9) · **172 IN PROGRESS (11/17)** · 173/174 backlog |
-| Полный пол (vitest, **живой прогон при handoff**) | **19 423 passed / 0 failed / 1221 файл / EXIT=0** (рост: … → 19 414 → **19 423** [+9 exact 172.11 guard]) |
+| `main` lifecycle anchor | Story 172.12 feature PR #315 merged as `9498cb76` (поверх reconciliation #313/#314). Точный HEAD сверять с `origin/main` по §1 |
+| Прогресс миграции 166-174 | **71/94** канонических стори |
+| Эпики | 166 ✅ · 167 ✅ · 168 ✅ · **169 ✅ (15/15; 169.12 closeout PR #299)** · 170 ✅ (7/7) · 171 ✅ (9/9) · **172 IN PROGRESS (12/17)** · 173/174 backlog |
+| Полный пол (vitest, **живой прогон при handoff**) | **19 433 passed / 0 failed / 1222 файла / EXIT=0** (рост: … → 19 423 → **19 433** [+10 exact 172.12 guard]) |
 | Остальные гейты | lint 0/0 (zero-warning), tsc 0, max-lines OK, check:docs exit 0, locale-percent ratchet 4, lessons-length 0 |
 | PM2 | `wb-repricer-frontend-dev` online :3100; BE :3000 |
-| **NEXT** | **172.12-FE Monitoring Operations Console** (план `.omx/plans/172.12-*.md`; owner: lib STATUS_COLORS carry-out из 172.11) |
-| Сессионные ветки/worktrees 172.x | Story 172.11 feature + closeout **0/0/0**; Story 172.12 branch `cdx/epic-172-story-12-monitoring` + worktree `/private/tmp/wb-repricer-fe-172-12-monitoring` активны и защищены от reset/rebase/stage/delete |
+| **NEXT** | **172.13-FE МойСклад Integration Workspace** (план `.omx/plans/172.13-*.md`; owner-координация: 172.14) |
+| Сессионные ветки/worktrees 172.x | Story 172.12 feature + closeout **0/0/0**; чужие docs-reconciliation lanes самоочищаются |
 
 **Сделано сессией 172.1-172.11** (эталонные артефакты — читай перед стартом):
 - **172.1** Business Dashboard — FULL 127 файлов, 4 executor-волны, 3-проходное ревью (PRs #278/#279) — эталон FULL-конвейера.
