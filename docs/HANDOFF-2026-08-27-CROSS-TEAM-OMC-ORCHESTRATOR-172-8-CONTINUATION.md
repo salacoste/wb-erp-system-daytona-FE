@@ -1,25 +1,25 @@
 # HANDOFF 2026-08-27 (cross-team) — Оркестратору OMC-сабагентов: продолжение эпика 172 с 172.10
 
 > **Аудитория**: агент-оркестратор НОВОЙ команды, работающий через **OMC-делегирование** (executor/code-reviewer/verifier сабагенты). Документ самодостаточен: прочитай целиком → §1 bootstrap → §2 миссия.
-> **Точка входа**: этот документ заменяет [`HANDOFF-2026-08-26-LATE-…`](HANDOFF-2026-08-26-LATE-epic-171-complete-172-recon-ready.md) (его §0 синхронизирован PR #294; §1-§5 исторические). Supervisor prompt V11 — [`ORCHESTRATOR-PROMPT-2026-08-28-V11-HANDOFF-SUPERVISOR-OMC.md`](ORCHESTRATOR-PROMPT-2026-08-28-V11-HANDOFF-SUPERVISOR-OMC.md); V10 остаётся расширенным справочником. **Этот handoff содержит уроки 172.1-172.9 и верифицированное состояние**.
+> **Точка входа**: этот документ заменяет [`HANDOFF-2026-08-26-LATE-…`](HANDOFF-2026-08-26-LATE-epic-171-complete-172-recon-ready.md) (его §0 синхронизирован PR #294; §1-§5 исторические). Supervisor prompt V11 — [`ORCHESTRATOR-PROMPT-2026-08-28-V11-HANDOFF-SUPERVISOR-OMC.md`](ORCHESTRATOR-PROMPT-2026-08-28-V11-HANDOFF-SUPERVISOR-OMC.md); V10 остаётся расширенным справочником. **Этот handoff содержит уроки 172.1-172.10 и верифицированное состояние**.
 > **Приоритет при конфликте**: план стори > V10 > этот handoff; живой код + проходящие тесты — финальная инстанция.
 
 ---
 
-## 0. Верифицированное состояние (2026-08-28, после Story 172.9 closeout PR #306)
+## 0. Верифицированное состояние (2026-08-28, после Story 172.10 closeout PR #308)
 
 | Метрика | Значение |
 |---|---|
-| `main` | `8036da81`, дерево чистое, main ↔ origin/main **IN-SYNC** после PR #306 |
-| Прогресс миграции 166-174 | **68/94** канонических стори |
-| Эпики | 166 ✅ · 167 ✅ · 168 ✅ · **169 ✅ (15/15; 169.12 closeout PR #299)** · 170 ✅ (7/7) · 171 ✅ (9/9) · **172 IN PROGRESS (9/17)** · 173/174 backlog |
-| Полный пол (vitest, **живой прогон при handoff**) | **19 394 passed / 0 failed / 1218 файлов / EXIT=0** (рост: 19 356 → 19 383 [+27 чужие #299/#301] → **19 394** [+11 гард 172.9]) |
+| `main` | `eb09f735`, дерево чистое, main ↔ origin/main **IN-SYNC** после PR #308 |
+| Прогресс миграции 166-174 | **69/94** канонических стори |
+| Эпики | 166 ✅ · 167 ✅ · 168 ✅ · **169 ✅ (15/15; 169.12 closeout PR #299)** · 170 ✅ (7/7) · 171 ✅ (9/9) · **172 IN PROGRESS (10/17)** · 173/174 backlog |
+| Полный пол (vitest, **живой прогон при handoff**) | **19 414 passed / 0 failed / 1220 файлов / EXIT=0** (рост: 19 356 → 19 383 → 19 394 → **19 414** [+20 exact 172.10: гард 9 + тесты стори 11]) |
 | Остальные гейты | lint 0/0 (zero-warning), tsc 0, max-lines OK, check:docs exit 0, locale-percent ratchet 4, lessons-length 0 |
 | PM2 | `wb-repricer-frontend-dev` online :3100; BE :3000 |
-| **NEXT** | **172.10-FE Finances & Documents** (план `.omx/plans/172.10-*.md`; owner-координация: 172.14) |
-| Сессионные ветки/worktrees 172.x | Story 172.9 feature/closeout **0/0/0**; отдельные docs-reconciliation worktrees не являются product lanes и очищаются после merge |
+| **NEXT** | **172.11-FE Monitor Route** (план `.omx/plans/172.11-*.md`; owner-координация: 172.14) |
+| Сессионные ветки/worktrees 172.x | Story 172.10 feature/closeout **0/0/0**; отдельные docs-reconciliation worktrees не являются product lanes и очищаются после merge |
 
-**Сделано сессией 172.1-172.9** (эталонные артефакты — читай перед стартом):
+**Сделано сессией 172.1-172.10** (эталонные артефакты — читай перед стартом):
 - **172.1** Business Dashboard — FULL 127 файлов, 4 executor-волны, 3-проходное ревью (PRs #278/#279) — эталон FULL-конвейера.
 - **172.2-172.4** Automation (gallery/list/editor) — MINOR-серии + **созданные e2e-пакеты** + первый live-прогон 163.3-спеки (PRs #280-#286) — эталон MINOR + e2e-создания.
 - **172.5** COGS single — FULL-lite, 3 прохода, **import-closure канон** (PRs #287/#288) — эталон closure-аудита.
@@ -27,8 +27,9 @@
 - **172.7** COGS history — **born-clean** + caption-контракт (PRs #293/#294) — эталон born-clean-пайплайна.
 - **172.8** Price Calculator — semantic responsive migration с сохранённой formula boundary; feature #301 + reconciliation #303 + lifecycle #304; dynamic Playwright gap явный.
 - **172.9** Communications Workspace — MINOR-GAP; feature #305 + closeout #306; targeted 84/84, full 19 394/0, dedicated E2E 11+1skip ×2, cleanup 0/0/0.
+- **172.10** Finances & Documents — born-clean + **абсорбция параллельной дельты** (mid-flight-коллизия, разрешена владельцем) + e2e-спеки repair (glob→RegExp) — PR #308; targeted 6/46, full 19 414/0/1220, e2e 12✓, cleanup 0/0/0.
 
-Артефакты: `_bmad-output/implementation-artifacts/172-{1..9}-fe-*.md` (9 шт; формат Change Log + Lessons — обязателен к копированию).
+Артефакты: `_bmad-output/implementation-artifacts/172-{1..10}-fe-*.md` (10 шт; формат Change Log + Lessons — обязателен к копированию).
 
 ---
 
@@ -135,7 +136,7 @@ Allowed Change Surface = только файлы плана стори. Forbidde
 
 ---
 
-## 7. Ловушки — готовые решения (17 уроков сессии 172.1-172.7 + V10-канон; НЕ наступать повторно)
+## 7. Ловушки — готовые решения (20 уроков сессий 172.1-172.10 + V10-канон; НЕ наступать повторно)
 
 1. **Node-26 (системный brew node = 26.7.0) ломает webpack**: `TypeError: WasmHash._updateWithBuffer` на `next build`. ВСЕ npm/npx — с `export PATH="/opt/homebrew/opt/node@24/bin:$PATH"` (пинн 24.18.0). Симптом «внезапный» build-фейл с webpack-внутренним TypeError → сначала `node --version`.
 2. **e2e-обёртка подмешивает** `e2e/orders.spec.ts` + auth-сетапы к любому вызову → «N passed» ≠ N тестов спеки. Аттестуй разложение. `--no-deps` обёртка ОТКАЗЫВАЕТ («authentication setup is required»).
@@ -154,6 +155,10 @@ Allowed Change Surface = только файлы плана стори. Forbidde
 15. **Chart-токены — сверяй HSL-значения, не имена**: `--chart-positive` ≡ `--chart-4` и `--chart-negative` ≡ `--primary` байт-в-байт (light). Pairwise-distinct ассерты в гардах чарт-конфигов (прецедент 172.1).
 16. **Registry carry-in НЕ наследуется recon**: обязательные carry-in'ы реестра grep'ся по ID стори в pre-flight (пропуск в 172.1 → пост-фактум re-route 174.2 + disclosure). Born-clean поверхность всё равно несёт контракты (caption/tabular) — pre-flight считает не только палитру.
 17. **Дефолт-Badge hover** (`hover:bg-primary/80` на зелёном тинте) — pre-existing, вне color-only скоупа; предупреждение «18 %» и e2e-тексты: `formatNumber(share)%` (blindspot locale-гейта) — не трогать без контракта, фиксировать carry-out.
+
+18. **Параллельная сессия может ДОРАБАТЫВАТЬ внутрь твоего стори-worktree mid-flight** (172.10): файлы появляются/правятся поверх твоего WIP, branch перемещается на новый main. Протокол: криминалистический снапшот в /tmp → опрос mtime активности → СТОП + эскалация владельцу (AskUserQuestion) → по решению: абсорбция = полный повторный конвейер на объединённом дереве (валидация + СВЕЖЕЕ ревью дельты) либо восстановление своего отревьюенного состояния из /tmp-диффа. Никаких git-операций над спорным деревом до решения.
+19. **Playwright end-anchored globs молча промахиваются по URL с query** (`'**/api/x'` ≠ `x?locale=ru&limit=…`): стабы не применяются, страница рендерит живые BE-данные, тесты «зелёные» на чужих данных или падают на текстах. Лечение: RegExp-роуты `/\/api\/x(?:\?.*)?$/` с проверкой коллизий; соседний паттерн с хвостом `*` в той же спеке — подсказка автора. Bisect на stash-clean дереве доказывает pre-existing.
+20. **Фоновый полный пол vitest параллельно с build/e2e = «Timeout starting forks runner»** (пулы не стартуют, файлы «пропадают», EXIT=1 при обманчиво-зелёном счёте): читай Unhandled Errors в логе; полный пол — ТОЛЬКО соло, без конкурирующих тяжёлых процессов.
 
 **V10-канон ловушек** (полный список в V10 §9): concurrent-сессии (`git branch --show-current` перед КАЖДЫМ коммитом; коммитить сразу; чужие worktrees не трогать; re-grep origin/main перед финализацией closeout — **merge-гонки реальны**: 169-lane влила #295/#296 поверх наших PR); Turbopack×symlink (только `--webpack`); порт 3100 pm2-конфликт (остановить → вернуть); exit-коды только `cmd > log; echo EXIT=$?`; BE-репо НИКОГДА `git add -A frontend/` (зеркал-дрейф блокирует BE-pull — не твой мандат); playwright-cli `goto` после логина; сабагенты наследуют PRIMARY cwd — абсолютный путь worktree первой командой; промежуточные unused-imports (импорт+использование одним батчем); волна вне списка = брак (откат + перезапуск).
 
