@@ -1,6 +1,6 @@
 # Shadcn Full-UI Migration — Status & Debt Registry
 
-> **Snapshot date: 2026-08-26** (Story 169.13 shipped independently; Story 169.14 is in progress after the docs-only preflight correction; Epics 170 and 171 are complete; Story 171.9 shipped through PR #270; Program NEXT = 172.8; Stories 172.1-172.7 shipped through PRs #278, #280, #282, #285, #287, #289, #293; Story 169.12 route PR #227 merged early and its contract closeout remains pending). Канонический статус-реестр программы миграции
+> **Snapshot date: 2026-08-28** (Epics 166-171 are complete; Story 169.12 contract closeout merged through PR #299; Stories 172.8 and 172.9 shipped through PRs #301/#303/#304 and #305/#306; Program NEXT = 172.10; Stories 172.1-172.9 are done). Канонический статус-реестр программы миграции
 > для BMAD-артефактов. Живая история — sprint-status.yaml (по-сторийно) и ledger
 > BE-репо (docs/tech-debt/TECH-DEBT-2026-08-SESSION.md, Addendum-4 cont.1-25);
 > этот файл = консолидированный срез «что сделано / что осталось / все долги».
@@ -13,26 +13,25 @@
 | 166-FE foundation            | 8               | 8      | —                                 | **CLOSED** (токены, примитивы, композиции, контракты)                                                                           |
 | 167-FE AppShell/auth         | 9 (с merge'ами) | 9      | —                                 | **CLOSED** (freeze-8, W1)                                                                                                       |
 | 168-FE analytics core        | 11              | 11     | —                                 | **CLOSED** (hub + 10 маршрутов; 168.2-168.11 orchestrator-волной)                                                               |
-| 169-FE operational analytics | 15              | **12** | 169.14 → 169.15 → 169.12 closeout | **IN PROGRESS** (12 canonical Stories complete; 169.13 shipped independently; 169.12 route presentation remains review-blocked) |
+| 169-FE operational analytics | 15              | **15** | —                                 | **CLOSED** (169.14 backend prerequisite, 169.15 shared frontend boundary, and 169.12 closeout completed)                         |
 | 170-FE                       | 7               | **7**  | —                                 | **CLOSED** (Stories 170.1-170.7 shipped through PRs #237-#250)                                                                  |
 | 171-FE                       | 9               | **9**  | —                                 | **CLOSED** (Stories 171.1-171.9 shipped through PRs #252, #254, #256, #258, #260, #262, #266, #268, and #270)                   |
-| 172-FE                       | 17              | **7**  | 172.8-17                          | IN PROGRESS (172.1 #278 FULL; 172.2-172.4 MINOR; 172.5-172.7 #287/#289/#293; automation + COGS-домен single+bulk+history целиком готовы; см. §5) |
+| 172-FE                       | 17              | **9**  | 172.10-17                         | IN PROGRESS (172.1-172.7 through #278/#280/#282/#285/#287/#289/#293; 172.8 through #301/#303/#304; 172.9 through #305/#306)    |
 | 173-FE                       | 13              | 0      | 173.1-13                          | backlog                                                                                                                         |
 | 174-FE консолидация          | 5               | 0      | 174.1-5                           | финал (СТРОГО после 166-173; 174.2 design-system/source-boundary/contrast; 174.3 visual/a11y; 174.4 functional/backend)         |
 
-**Story readiness: 56 of 94 canonical Stories complete.** Story 169.11 returns analytics shipped through
-preface PR #218 and implementation PR #219. PR #227 then merged Story 169.12's 27-file shadcn route
-presentation early at `52f7f506`, but the Story is not counted complete: the approved Correct Course adds
-two sequential non-route prerequisites without changing the 76-route ledger. Story 169.14 owns the backend
-paid-storage request/status/result/error contract, Story 169.15 owns the shared frontend boundary, and only
-then may Story 169.12 perform its bounded contract closeout. Story 169.13 completed independently through PR #232 and does not change this prerequisite chain.
+**Story readiness: 68 of 94 canonical Stories complete.** Story 169.11 shipped through PRs #218/#219;
+Story 169.13 shipped independently through PR #232. The approved Correct Course prerequisites 169.14 and
+169.15 completed before the bounded Story 169.12 contract closeout merged through PR #299, closing Epic 169
+at 15/15. Story 172.8 shipped through PRs #301/#303/#304 and Story 172.9 through PRs #305/#306, bringing
+Epic 172 to 9/17 and the verified Vitest floor to **19 394/0**.
 
 169.13 SHIPPED 2026-08-25 (последний backlog-роут эпика; 12/15): preface #231 (`95522187` — unknown enums + nullables, opus APPROVE) + #232 (`2778d43e`; 26 файлов, owned 58→73, **e2e на ветке 33/1↓/0**, 2×opus);
-полный пол **19 055/0**. Эпик 169: осталось 169.14 (BE) → 169.15 (shared FE) → 169.12-closeout. Carry-out: e2e-flake
+полный пол **19 055/0**. Исторический срез на момент 169.13: оставались 169.14 (BE) → 169.15 (shared FE) → 169.12-closeout. Carry-out: e2e-flake
 «sidebar→supply-planning» (dashboard URL-race, load-зависимый, задокументирован в самом тесте) —
 кандидат на e2e-hardening до 172.1.
 
-**Paid-storage chain NEXT = finish 169.14 → 169.15 → 169.12 contract closeout** (169.14 `in-progress`; 169.15 `backlog`; 169.12 `review`; plans `.omx/plans/169.14-establish-authoritative-paid-storage-import-lifecycle-and-result-contract.md`, `.omx/plans/169.15-align-shared-frontend-paid-storage-import-boundary.md`, and `.omx/plans/169.12-migrate-storage-analytics-and-paid-storage-import.md`). Story 169.14 uses its frontend implementation artifact as the durable cross-repository record: clean backend local-main fast-forward is preferred, while verified refreshed `origin/main` is allowed only under the recorded exact foreign-WIP/no-overlap reservation. Honest RED, independent review, and the frozen reviewed backend manifest must be retained as exact payload bytes in a direct artifact-only evidence commit and re-read from trusted frontend history before the first backend production edit. After backend merge, branch/worktree cleanup retains the reviewed-head, three-line PR, and strict nine-line cleanup-authority records; an exact artifact-only final handoff must then enter trusted frontend history before five-source record retirement. Story 169.13 remains independent and is now `done`.
+**Paid-storage chain CLOSED: 169.14 → 169.15 → 169.12 contract closeout.** The following lifecycle detail is retained as historical implementation evidence. Story 169.14 used its frontend implementation artifact as the durable cross-repository record; Story 169.15 authenticated the shared frontend boundary; Story 169.12 closed through PR #299 after both prerequisites and exact cleanup passed.
 
 **Canonical paid-storage lifecycle gates:** require exactly one fetch URL and one push URL and resolve both independently to the expected backend/frontend repository. Mutation-authorizing reads and deletion use the verified push endpoint. Retain collision, unattached-branch, list-limit, pagination, and count-equality checks. Exactly one serialized Story leader owns the lifecycle; concurrent fence invocations remain outside the supported contract.
 
@@ -106,7 +105,7 @@ stale-комментарий model-list-helpers.ts:24-26 («subroutes 171.7/171.
 registry-root); (3) переписать stale-комментарий evaluations-list-helpers.ts:20-23 («removal
 owned by 171.9»); (4) перенести статус-токен пины гарда 171.6 (читают helpers напрямую);
 (5) anchor-hardening гарда 171.6 (join-before-filter — 171.8-класс, латентно).
-параллельно независимо: 169.14 `in-progress` → 169.15 `backlog` → 169.12 `review` contract closeout (plans `.omx/plans/169.14-establish-authoritative-paid-storage-import-lifecycle-and-result-contract.md`, `.omx/plans/169.15-align-shared-frontend-paid-storage-import-boundary.md`, and `.omx/plans/169.12-migrate-storage-analytics-and-paid-storage-import.md`). Story 169.13 remains independently `done`.
+Paid-storage chain 169.14 → 169.15 → 169.12 contract closeout is complete; Epic 169 is closed at 15/15.
 **Волна 23-24.08** (два полных цикла + инфраструктура): 169.11 returns — preface #218 (`d6ed2c65`,
 unknown-категория на boundary + нейтральный лейбл) + #219 (`129e99ed`; owned 50→73) + e2e-gap закрыт
 post-close #222 (гнилой пин от стандартизации 1804aa8f; финал 12/1↓/0); 169.12 storage — preface #226
@@ -114,7 +113,7 @@ post-close #222 (гнилой пин от стандартизации 1804aa8f;
 маршрутная миграция #227 (`52f7f506`; 27 файлов, owned 119→147, **e2e на ветке 6/1↓/0**, 2×opus FRESH);
 CSV-security #223 (OWASP defang + trade-off documented); чужой WIP реконсилирован #225 (cogs-split +
 rateLimit + csv-dedupe); Correct Course #228 (`4d0ff685`) ввёл 169.14/169.15 + bounded 169.12-closeout.
-**Пол vitest 19 281/0** (актуальный пол); lint 0/0; tsc 0. Browser/theme/visual evidence — carry-out 174.3;
+**Пол vitest 19 394/0** (актуальный floor after Story 172.9); lint 0/0; tsc 0. Browser/theme/visual evidence — carry-out 174.3;
 credentialed functional E2E — carry-out 174.4. Plan-status аудит 2026-08-24: 167.5/167.8/167.9 → executed
 (были review/ready-for-dev/backlog при done-строках).
 
@@ -219,13 +218,13 @@ credentialed functional E2E — carry-out 174.4. Plan-status аудит 2026-08-
 
 ## 5. Owner-зависимые стори (вехи 172-173)
 
-- 172.5 — owner COGS; 172.6 — recovered COGS/CSV/rate-limit WIP merged through PR #225 and its temporary refs/worktrees are cleaned, but canonical Story 172.6 is **not complete**: it still depends on Story 172.5 and requires owner coordination for the `/cogs/bulk` route, validation/preview, explicit partial results, and failed-row retry contract; 172.14 — owner orders;
+- 172.5 and 172.6 owner COGS work is complete; 172.14 remains the owner prerequisite for 172.15-172.16 orders work;
   173.1 — owner settings; 173.8 — owner shipments; 173.12 — owner supplies.
 
 ## 6. Процесс-ссылки
 
-- Оркестратор-промпт v8 (процесс-канон, самодостаточный): docs/ORCHESTRATOR-PROMPT-2026-08-22-V8-AGENT-TEAM-CONTINUATION.md (BE-репо); канон-дельты W8/W9 — в соответствующих handoff.
-- Хэндофф-цепочка: …→ W7-entry → W8 (169.8-9) → **W9** `docs/HANDOFF-2026-08-23-W9-169-10-SHIPPED.md` (актуальный вход) + ПОЛНЫЙ реестр: `docs/HANDOFF-2026-08-23-W9-FULL-DEBTS-AND-ROADMAP.md`.
+- Актуальный supervisor prompt: `docs/ORCHESTRATOR-PROMPT-2026-08-28-V11-HANDOFF-SUPERVISOR-OMC.md`; V10 остаётся расширенным справочником делегационного конвейера.
+- Актуальный вход: `docs/HANDOFF-2026-08-27-CROSS-TEAM-OMC-ORCHESTRATOR-172-8-CONTINUATION.md`, §0 синхронизирован после Story 172.9; более ранние handoff сохраняются как история.
 - Ledger: docs/tech-debt/TECH-DEBT-2026-08-SESSION.md (Addendum-4 cont.1-25; каждая cont = закрытый item с уроками).
 - Дефект-паттерны 1-44 + идиомы волны: v8-промпт + W8 §4 + W9 §3 (lib-hex-каналы, chart-не-текст, PR-reopen).
 - W9 зафиксировала параллельную сессию, которая влила #209/#213 между нашими PR; boot-процесс должен сохранять fetch-детект и reopen-recovery после merge-гонки (W9 §2).
