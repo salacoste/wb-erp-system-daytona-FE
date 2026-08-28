@@ -45,9 +45,9 @@ const STATUS_DISPLAY: Record<
   CheckPassStatus,
   { icon: typeof CheckCircle2; color: string; label: string }
 > = {
-  pass: { icon: CheckCircle2, color: 'text-green-600', label: 'OK' },
-  warn: { icon: AlertTriangle, color: 'text-amber-600', label: 'Внимание' },
-  fail: { icon: XCircle, color: 'text-red-600', label: 'Ошибка' },
+  pass: { icon: CheckCircle2, color: 'text-status-success', label: 'OK' },
+  warn: { icon: AlertTriangle, color: 'text-status-warning', label: 'Внимание' },
+  fail: { icon: XCircle, color: 'text-status-error', label: 'Ошибка' },
 }
 
 export function IntegrityChecksGrid({ checks }: IntegrityChecksGridProps) {
