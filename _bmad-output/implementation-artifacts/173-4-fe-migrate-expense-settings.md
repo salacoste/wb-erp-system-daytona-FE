@@ -1,6 +1,6 @@
 # Story 173.4-FE: Migrate Expense Settings
 
-Status: done — feature PR #338 merged (`505af85e`, merge `6a6e1bf8`); separate documentation closeout and exact feature/docs cleanup gate Story 173.5; Story-owned nine-file feature manifest; full floor **19,615/0/1,235**; focused Story **4 files / 98 tests**; Playwright **37 passed / 1 optional Manager setup skip**; two independent exact-head product reviews approved with zero findings; route-ledger rows intentionally remain `planned` until Story 174.5.
+Status: done — feature PR #338 merged (`505af85e`, merge `6a6e1bf8`); documentation closeout PR #339 merged (`b6a1ea7c`, merge `d99f812e`); exact product and initial documentation branch/worktree/open-PR cleanup proved; Story-owned nine-file feature manifest; full floor **19,615/0/1,235**; focused Story **4 files / 98 tests**; Playwright **37 passed / 1 optional Manager setup skip**; product and documentation reviews approved with zero unresolved issues; route-ledger rows intentionally remain `planned` until Story 174.5.
 
 ## Story
 
@@ -81,8 +81,13 @@ Pinned runtime: Node `24.18.0`, npm `11.11.0`.
 - Feature head: `505af85ecb623d657996d40fc3d3727825a86aad`.
 - Feature merge: `6a6e1bf83da4b044f4fb38a70a16be26a907c353`.
 - PR base/head, one-commit history, mergeability, exact head OID, and exact nine-file manifest were verified before normal merge.
-- The product head and merge are ancestors of refreshed `main`; primary `main` equals `origin/main` at the product merge.
-- The documentation closeout and exact product/docs branch and worktree cleanup will be completed through separate reviewed PR lifecycle steps; no self-merge or future cleanup claim is made here.
+- Documentation closeout PR: #339, `https://github.com/salacoste/wb-erp-system-daytona-FE/pull/339`.
+- Documentation closeout head: `b6a1ea7c38564752cde55af06d9ed6be2f011302`.
+- Documentation closeout merge: `d99f812ee55446bba8254657259a77f8d5c65ff7`.
+- After PR #339 merged, primary `main` was fast-forwarded to `d99f812e` and proved equal to refreshed `origin/main` with 0/0 divergence; the feature and closeout heads and merges are ancestors of that tip.
+- The exact product and initial documentation remote branches, local branches, worktrees, paths, and stale registrations were proved absent. No Story PR remained open before the auxiliary lifecycle-record PR was published.
+- The independent six-file documentation review approved the repaired exact snapshot with zero unresolved issues.
+- The auxiliary lifecycle-record branch/worktree exists only to publish these already-proved facts and is cleaned after its own merge; no recursive self-merge or self-cleanup claim is made.
 - No deploy, production operation, direct push to `main`, force-push, dependency change, credential output, route-ledger transition, ContextBar implementation change, or unrelated debt fix occurred.
 
 ## Lessons and Carry-Outs
@@ -97,4 +102,4 @@ Pinned runtime: Node `24.18.0`, npm `11.11.0`.
 
 | Date       | Change                                                                                                                                                                                                                                                                                                                                                            |
 | ---------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| 2026-08-29 | Story 173.4 implemented, validated, independently reviewed, and merged through feature PR #338; separate documentation closeout and exact cleanup gate Story 173.5. **Lessons:** (1) Fail closed on invalid financial scope. (2) Keep unavailable values explicit across every semantic surface. (3) Treat overlay dismissal and focus as one lifecycle contract. |
+| 2026-08-29 | Story 173.4 implemented, validated, independently reviewed, merged through feature PR #338, closed through documentation PR #339, and cleaned; auxiliary lifecycle evidence published. **Lessons:** (1) Fail closed on invalid financial scope. (2) Keep unavailable values explicit across every semantic surface. (3) Treat overlay dismissal and focus as one lifecycle contract. |
