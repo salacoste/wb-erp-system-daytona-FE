@@ -1,9 +1,12 @@
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
+import { axe, toHaveNoViolations } from 'jest-axe'
 import { describe, expect, it, vi } from 'vitest'
 
 import { ContextBar, type ContextBarState } from '../ContextBar'
 import { Breadcrumbs, PageHeader } from '../PageHeader'
+
+expect.extend(toHaveNoViolations)
 
 describe('PageHeader', () => {
   it('keeps one logical h1 and exposes useful breadcrumb semantics', () => {
@@ -153,6 +156,13 @@ describe('ContextBar', () => {
     render(<ContextBar cabinet="Основной кабинет" />)
 
     expect(screen.getByRole('status')).toHaveTextContent('Контекст по умолчанию')
+  })
+
+  it('keeps definition-list semantics valid while announcing state changes', async () => {
+    const { container } = render(<ContextBar cabinet="Основной кабинет" state="fresh" />)
+
+    expect(screen.getByRole('status')).toHaveTextContent('Данные актуальны')
+    expect(await axe(container)).toHaveNoViolations()
   })
 
   it('renders explicit scope values and route-owned refresh/reset callbacks', async () => {
