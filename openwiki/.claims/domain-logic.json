@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "pageVersion": "sha256:a5e4d826ebbd38bcd05cf3c3ee925752230804ea7d5ed778fc51b828d6fd3324",
+  "pageVersion": "sha256:6189f1d08a3855f1959dfdfce2513b4591bf3077a4e6d33c2fc533ef722becfe",
   "claims": [
     {
       "id": "claim_9bfdc04061f14b3bb2bb441081e614c3",
@@ -159,10 +159,60 @@
           "version": "repo-file-v1:sha256:bcc27c01cf01f1c9effe537c0e1c1477dd5f8dd81db13efebe7b42faf24261e4"
         }
       ]
+    },
+    {
+      "id": "claim_917ac6303c66474c8633d243658e1321",
+      "statement": "monitor-metrics-utils.ts (172.11 extraction) keeps the monitor metrics table presentational: computeDelta is null-safe (— when either value is null or the base is 0, exactly-zero change is a neutral muted label with no arrow) and colors improvement direction-aware via 'higher-is-better' | 'higher-is-worse'; hasAnomaly/getAnomalyPeriods detect advisory anomalies (COGS > revenue or margin > revenue) and return offending periods with labels for tooltips.",
+      "evidence": [
+        {
+          "resource": "repo://src/app/(dashboard)/monitor/components/monitor-metrics-utils.ts",
+          "version": "repo-file-v1:sha256:f44a42349c818942d8793c5a5fff49672e7d34f64429871435685c098be94973"
+        }
+      ]
+    },
+    {
+      "id": "claim_761d64f986b043d893e85db2cf43337a",
+      "statement": "monitor-weekly-chart-utils.ts adapts DailyMetrics into three integer-count chart series on a uniform scale where the 'orders' series is actually the derived transaction sum salesCount + returnsCount (BD-22), labeled «Продажи + Возвраты» rather than «Заказы»; weekday labels are capitalized Russian via a local capitalize() over date-fns ru locale, and LINE_COLORS/LINE_LABELS are the single source of series tokens.",
+      "evidence": [
+        {
+          "resource": "repo://src/app/(dashboard)/monitor/components/monitor-weekly-chart-utils.ts",
+          "version": "repo-file-v1:sha256:7419bf43d0defd7e8f9beedaa6564542df1e9ed1c1ea9d203f2f00e27abca17f"
+        }
+      ]
+    },
+    {
+      "id": "claim_c0a944c61c5f4ed7959e014d488cb1bd",
+      "statement": "monitor-pipeline-utils.ts encodes the buyout gauge's 3-band mapping (null→gray «Нет данных», <70→red, 70–89→amber, ≥90→green), intentionally diverging from BuyoutRateCard's simpler 80% two-band cutoff; it also provides getMostRecentRecalc (latest non-null lastSuccessAt or null), order-preserving getUnhealthyPipelines, and formatRelativeTime using manual-math Russian relative strings (null → «—») mirroring PipelineStatusGrid (M-8).",
+      "evidence": [
+        {
+          "resource": "repo://src/app/(dashboard)/monitor/components/monitor-pipeline-utils.ts",
+          "version": "repo-file-v1:sha256:359e3baff7c25f3f207d1879dfc2dab6d884a90130fa6f7add697bb3183f2cc7"
+        }
+      ]
+    },
+    {
+      "id": "claim_aa646b590b7f4b54962c336f480811b4",
+      "statement": "health-history-helpers.ts formatDayLabel fixes the BD-30 timezone bug: a bare YYYY-MM-DD is parsed by new Date() as UTC midnight, shifting the weekday back one day in Europe/Moscow (UTC+3), so a T00:00:00 suffix is appended for date-only strings while timestamped strings pass through unchanged; the module also owns PERIOD_OPTIONS (7/14/30 days), status color/ring/emoji maps, and countByStatus for the trend summary.",
+      "evidence": [
+        {
+          "resource": "repo://src/app/(dashboard)/monitoring/components/health-history-helpers.ts",
+          "version": "repo-file-v1:sha256:8bbb20cd59455c5ccf9dd0dbcde6fa400b0903d893353be3712229c2c757de1d"
+        }
+      ]
+    },
+    {
+      "id": "claim_8d67c3a250a84950b38bed54cd537f55",
+      "statement": "data-completeness-constants.ts is pure config/helpers for the monitoring data-completeness table: COMPLETENESS_BADGE (complete/incomplete/critical badge variants), HEALTH_CONFIG (status labels + health-bar classes), getOverallPercent (rounded mean completeness ratio, 0 for an empty list), and a non-mutating sortByCompleteness ordering worst tables first.",
+      "evidence": [
+        {
+          "resource": "repo://src/app/(dashboard)/monitoring/components/data-completeness-constants.ts",
+          "version": "repo-file-v1:sha256:b90c7441418a9821d311b8acbfcd47d9679b92932d7e54830b6337109bba745f"
+        }
+      ]
     }
   ],
   "verification": {
     "by": "openwiki/0.4.3",
-    "at": "2026-08-28T08:47:49.990Z"
+    "at": "2026-08-29T08:47:45.377Z"
   }
 }

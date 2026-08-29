@@ -2,9 +2,6 @@
 type: "Engineering Standards"
 title: "Conventions & Quality Gates"
 description: "Coding standards and automated quality gates — file-size limits, TypeScript strictness, the Defensive Frontend Principle, ratchet baseline gates, and the two-pass review discipline."
-verified:
-  - by: openwiki/0.4.3
-    at: 2026-08-28T08:47:49.990Z
 sources:
   - id: openwiki-source-8037e2358a2c4f9b2c722a11
     resource: repo://AGENTS.md
@@ -38,7 +35,10 @@ sources:
     resource: repo://scripts/check-next-async-params.sh
   - id: openwiki-source-a33125899c73194a4c9f0b33
     resource: repo://scripts/check-privacy-console.mjs
-generated: { by: "openwiki/0.4.3", at: "2026-08-28T08:47:49.990Z" }
+generated: { by: "openwiki/0.4.3", at: "2026-08-29T08:47:45.377Z" }
+verified:
+  - by: openwiki/0.4.3
+    at: 2026-08-29T08:47:45.377Z
 ---
 # Conventions & Quality Gates
 
@@ -149,7 +149,15 @@ Every story closes only after **two adversarial code-review passes** in fresh co
 3. High-density Nth pass (>5 findings) → (N+1)th mandatory
 4. Meta-claim escalation → (N+1)th evaluates self-referential claims
 
-**Marker convention**: Each pass produces a `### Post-Nth-pass-review fixes (YYYY-MM-DD)` sub-heading in the story's Dev Agent Record.
+**Marker convention**: Each pass produces a `### Post-Nth-pass-review fixes (YYYY-MM-DD)` sub-heading in the story's Dev Agent Record; two such headings prove both passes ran before approving a `review` PR.
+
+**Lessons line (Story 94.4-FE)**: the final close-row (Status → done) MUST carry a `**Lessons:**` sub-line — 1-3 single-sentence story-specific observations, each ≤120 chars, format `**Lessons:** (1) … (2) … (3) …`. Earlier rows don't need it. Validate via `npm run check:lessons` (`scripts/check-lessons-length.sh`).
+
+**APPEND-ONLY closed rows (Story 111.1-FE F-2)**: later stories MAY append new dated rows to a closed story's Change Log but MUST NOT edit prior rows — especially Lessons. If a closed lesson violates the cap, add a disclosure row; never trim in-place.
+
+**Dual-attestation for N-of-N close-row counts (Story 118.1-FE)**: a count attestation inside a close-row ("N lesson lines", "N-of-N record") is self-falsifying — the row's own `**Lessons:**` line ticks the scan count +1 the instant it is written. Recipe (pick one): (a) dual-attest "(N at write-time; N+1 after this Lessons line counts)"; (b) attest the post-write value and re-run the gate; (c) accept + disclose via an APPEND-ONLY follow-up row (a deliberately-divergent heading like `**Lessons (NOT close-row)…**` keeps the row count-neutral against the validator regex).
+
+**Scope (Epic 107-FE A-2)**: 2-pass is MANDATORY for behavior-changing source code (runtime behavior, type signatures, normalizer logic, API contracts, test assertions); executor-with-inline-verify is acceptable for trivial process-cleanup. Decision rule: if a reviewer reading the diff could plausibly miss a logic defect, run 2 fresh-context reviews.
 
 ## Local Validation and Merge Authority
 

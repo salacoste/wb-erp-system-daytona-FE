@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "pageVersion": "sha256:15b87969e3782dd762489d76033fab58a57b8354dfae202d9941319fad8fe77c",
+  "pageVersion": "sha256:c7d96a04ec9ddc628ded9e9f4c031f9867669856ac69a335da59dad65743bf56",
   "claims": [
     {
       "id": "claim_2c9c1829b6b846cd913111aee59b6f27",
@@ -157,10 +157,20 @@
           "version": "repo-file-v1:sha256:dbd59d5b3f11855b6414b61386ead3d12c1ac2385c1094a6ac3d45f11ad808e9"
         }
       ]
+    },
+    {
+      "id": "claim_a4e6a8cd8dff4cc1bc3356529519f43a",
+      "statement": "src/app/(dashboard)/settings/layout.tsx is a nested server-component layout under the dashboard shell: it wraps /settings/* sub-routes in a two-column grid with a sticky SettingsNav column (14rem) and a min-w-0 content column, demonstrating route-specific shells composed inside the dashboard layout without duplicating auth or chrome.",
+      "evidence": [
+        {
+          "resource": "repo://src/app/(dashboard)/settings/layout.tsx",
+          "version": "repo-file-v1:sha256:a90c9b974a25f17cf9f17440514ba28dcac09cfd281e6a098d53025215e8bec8"
+        }
+      ]
     }
   ],
   "verification": {
     "by": "openwiki/0.4.3",
-    "at": "2026-08-28T08:47:49.990Z"
+    "at": "2026-08-29T08:47:45.377Z"
   }
 }

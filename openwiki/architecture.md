@@ -5,7 +5,7 @@ description: "Next.js App Router dashboard architecture — route groups, layout
 tags: [architecture, nextjs, app-router, authentication, tanstack-query, zustand, configuration]
 verified:
   - by: openwiki/0.4.3
-    at: 2026-08-28T08:47:49.990Z
+    at: 2026-08-29T08:47:45.377Z
 sources:
   - id: openwiki-source-5f5b95b3d6a215fa02ceb945
     resource: repo://.env.example
@@ -19,6 +19,8 @@ sources:
     resource: repo://postcss.config.js
   - id: openwiki-source-d9e1ff9416fc7e39bc47b9bb
     resource: repo://src/app/(dashboard)/layout.tsx
+  - id: openwiki-source-0f7d9f90eda573afa4d28051
+    resource: repo://src/app/(dashboard)/settings/layout.tsx
   - id: openwiki-source-8d46e58add4326fa55236087
     resource: repo://src/app/layout.tsx
   - id: openwiki-source-8d0f263ceba491caec34db6c
@@ -33,7 +35,7 @@ sources:
     resource: repo://src/stores/authStore.ts
   - id: openwiki-source-98d5ddb014a0fd4d678f6f2a
     resource: repo://tsconfig.json
-generated: { by: "openwiki/0.4.3", at: "2026-08-28T08:47:49.990Z" }
+generated: { by: "openwiki/0.4.3", at: "2026-08-29T08:47:45.377Z" }
 ---
 # Architecture
 
@@ -70,7 +72,9 @@ RootLayout (src/app/layout.tsx)
 
 The dashboard layout (`src/app/(dashboard)/layout.tsx`) is a **client component** that acts as an auth fallback gate: checks Zustand store hydration, and if no token exists in localStorage, clears the `auth-token` cookie and redirects to `/login`. This prevents redirect loops that would occur if only middleware guarded the route. Story 167.1 unified this protected AppShell: the layout resolves **one** canonical navigation model via `resolveNavigationItems({ role, urgentCount })` (`src/components/custom/sidebar-navigation.ts`) and passes the same ordered entries to both the desktop `Sidebar` and the mobile `MobileSidebarSheet`, so labels, hrefs, icons, role visibility, and the supply-planning badge cannot drift between renderers. The layout also renders a skip-link to `#main-content` and detects cross-tab logout (storage event on the auth key) before deciding to redirect.
 
-Source: `src/app/layout.tsx`, `src/app/providers.tsx`, `src/app/(dashboard)/layout.tsx`, `src/components/custom/sidebar-navigation.ts`
+Nested layouts compose under this shell: `src/app/(dashboard)/settings/layout.tsx` is a second layout level for the settings area — a server component wrapping children in a two-column grid (`14rem` sticky nav column plus `min-w-0` content column) with the `SettingsNav` component providing section navigation for `/settings/*` sub-routes (cabinet, tariffs, tax, expenses, notifications, backfill). It demonstrates the App Router pattern of nesting route-specific shells inside the dashboard shell without duplicating auth or chrome.
+
+Source: `src/app/layout.tsx`, `src/app/providers.tsx`, `src/app/(dashboard)/layout.tsx`, `src/app/(dashboard)/settings/layout.tsx`, `src/components/custom/sidebar-navigation.ts`
 
 ## Data Fetching — Interactive Pages Are Client-Side
 
@@ -93,6 +97,22 @@ Query keys use structured factory patterns (e.g., `cabinetSummaryKeys.all` / `.b
 ## Authentication
 
 ### Proxy (server-side, Next 16 convention)
+
+```mermaid
+flowchart TD
+    Req["Incoming request"] --> M{"proxy.ts matcher?"}
+    M -- "no - api, _next assets, favicon, images" --> Pass["NextResponse.next()"]
+    M -- "yes" --> Tok["Read auth-token cookie, fall back to Authorization header"]
+    Tok --> Prot{"Protected route?"}
+    Prot -- "yes, no/invalid JWT" --> Login["Redirect to /login with redirect param"]
+    Prot -- "yes, valid JWT" --> Pass
+    Prot -- "no - public route" --> Pub{"On /login or /register with valid JWT?"}
+    Pub -- "yes" --> Safe["getSafeAuthRedirect - sanitized target or /dashboard"]
+    Pub -- "no" --> Pass
+```
+
+*Auth gating in `src/proxy.ts`: server-side JWT gate plus sanitized authenticated redirects away from auth pages.*
+
 `src/proxy.ts` (renamed from `middleware.ts` for Next.js 16) reads the `auth-token` cookie (set client-side after login) and validates the JWT structure. Protected routes without a valid token redirect to `/login` with a `redirect` query param. Authenticated users hitting `/login` or `/register` are redirected to the dashboard (or the `redirect` target).
 
 The authenticated redirect is sanitized by `getSafeAuthRedirect` (`src/proxy.ts`): a `redirect` param is honored only if it starts with a single `/` (protocol-relative `//` is rejected), parses to the **same origin** as the request, and does not itself target `/login` or `/register`; everything else falls back to `/dashboard`. `LoginForm` enforces the same policy client-side before navigating (`isSafeRedirect` in `src/components/custom/LoginForm.tsx`, which additionally rejects backslashes, malformed percent-encoding, and control characters). Next.js 16 renamed the middleware entrypoint from `middleware.ts` to `proxy.ts` and the exported function from `middleware` to `proxy`. Focused tests: `src/proxy.test.ts`.

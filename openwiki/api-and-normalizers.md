@@ -1,11 +1,11 @@
 ---
 type: "Architecture Overview"
 title: "API Layer & Normalizers"
-description: "API client singleton with auto-injected auth and cabinet headers, the Boundary Normalizer Pattern that transforms backend responses into frontend-canonical shapes, the Epic 170/171 advertising and search normalizers with AP#8 null semantics, the Story 169.14 paid-storage import result contract and polling lifecycle, CSV export infrastructure, and the communications gated write-back with async 202 job polling."
-tags: [api-client, boundary-normalizer, anti-pattern-8, paid-storage-import, csv-export]
+description: "API client singleton with auto-injected auth and cabinet headers, the Boundary Normalizer Pattern that transforms backend responses into frontend-canonical shapes, the Epic 170/171 advertising and search normalizers with AP#8 null semantics, the Story 169.14 paid-storage import result contract and polling lifecycle, CSV export infrastructure, the NEW-7/172.10 finances documents flow, and the communications gated write-back with async 202 job polling."
+tags: [api-client, boundary-normalizer, anti-pattern-8, paid-storage-import, csv-export, finances-documents]
 verified:
   - by: openwiki/0.4.3
-    at: 2026-08-28T08:47:49.990Z
+    at: 2026-08-29T08:47:45.377Z
 sources:
   - id: openwiki-source-0356db40a2d778a419e19e0a
     resource: repo://src/app/(dashboard)/analytics/storage/components/__tests__/useStorageImport.test.tsx
@@ -15,8 +15,24 @@ sources:
     resource: repo://src/app/(dashboard)/analytics/storage/components/storage-import-utils.ts
   - id: openwiki-source-5ad8136814fac3dc9c0f8c05
     resource: repo://src/app/(dashboard)/analytics/storage/components/useStorageImport.ts
+  - id: openwiki-source-ce5d4c1220859931ae76637c
+    resource: repo://src/app/(dashboard)/finances/components/DocumentDownloadButton.tsx
+  - id: openwiki-source-29f10d92190f39fdb4590204
+    resource: repo://src/app/(dashboard)/finances/components/DocumentsBody.tsx
+  - id: openwiki-source-561c5f4bcf455a8137d695ec
+    resource: repo://src/app/(dashboard)/finances/components/DocumentsTable.tsx
+  - id: openwiki-source-12ba4095710245aaf19c50de
+    resource: repo://src/app/(dashboard)/finances/error.tsx
+  - id: openwiki-source-9e71a052a2764709de7ad2bc
+    resource: repo://src/app/(dashboard)/finances/page.tsx
+  - id: openwiki-source-1dbc17eca84b2a90af18cf92
+    resource: repo://src/hooks/useFinances-utils.ts
+  - id: openwiki-source-e614b549a49bca8f6a7f5930
+    resource: repo://src/hooks/useFinances.ts
   - id: openwiki-source-c593501e17fac82698a1f2dd
     resource: repo://src/hooks/useImportStatus.ts
+  - id: openwiki-source-a7c7d558f70edbb3171b87ab
+    resource: repo://src/lib/api-client.ts
   - id: openwiki-source-799369765e8510490f4c8afb
     resource: repo://src/lib/api/__tests__/advertising-analytics-normalizer.test.ts
   - id: openwiki-source-3136b8e4d07052b039480489
@@ -33,6 +49,8 @@ sources:
     resource: repo://src/lib/api/storage-import-normalizer.ts
   - id: openwiki-source-0a8f3c97ee393f0b1753cfb2
     resource: repo://src/lib/csv/search-csv-export.ts
+  - id: openwiki-source-b9312fcbc31f54766055eb16
+    resource: repo://src/lib/finances/download-blob.ts
   - id: openwiki-source-2a7d3923430c2d4ebc362db4
     resource: repo://src/types/advertising-analytics/analytics.ts
   - id: openwiki-source-7a5a7c57c8f80800c8bbafa3
@@ -41,7 +59,7 @@ sources:
     resource: repo://src/types/search-position-trends.ts
   - id: openwiki-source-1a54b5e313512af1de402e65
     resource: repo://src/types/storage-analytics-trends.ts
-generated: { by: "openwiki/0.4.3", at: "2026-08-28T08:47:49.990Z" }
+generated: { by: "openwiki/0.4.3", at: "2026-08-29T08:47:45.377Z" }
 ---
 # API Layer & Normalizers
 
@@ -290,3 +308,39 @@ The pinned-reviews read endpoint (`GET /v1/communications/feedbacks/pinned`) is 
 | `pricing-basis.ts` | SPP-1 lane — cabinet repricing price basis (`GET`/`PUT /v1/pricing/basis`); `normalizePriceBasis()` folds unrecognized enum values to `'UNKNOWN'` (indicate, never relabel), `isSettablePriceBasis()` narrows the settable union, and `updatePricingBasis()` runtime-guards the PUT body. See [Domain Logic — Pricing Basis](domain-logic.md#pricing-basis-repricing-spp-1-lane) |
 
 Source: `src/lib/api/`
+
+## Finances Documents Flow (NEW-7, Story 172.10)
+
+The `/finances` page is the canonical multi-source example (AC4): `BalanceCard` and `DocumentsTable` are **independent** sources, each owning its own loading/empty/error state machine, so one failing never blanks the other. Both are gated on `cabinetReady` (`cabinetId` present) — the hooks would 403 before a cabinet is selected, since `apiClient` injects `X-Cabinet-Id` at request time. The route also has its own error boundary (`error.tsx`): a render-time crash shows a `role="alert"` Card with a RU message and a `reset()` retry button (`data-testid="finances-error-state"`), instead of the raw Next.js error screen.
+
+### Rate-limit-aware query hooks (`src/hooks/useFinances.ts`)
+
+WB rate limits are mirrored in TanStack staleTimes (constants in `useFinances-utils.ts`) so the FE never refetches faster than WB allows (which would surface a 503):
+
+| Hook | Endpoint | staleTime | Notes |
+|------|----------|-----------|-------|
+| `useAccountBalance` | `/v1/finances/balance` | 60s (WB 1/min) | `retry: 1` — 429s must not hammer the BE; `refetchOnWindowFocus: false` |
+| `useFinanceDocuments(query)` | `/v1/finances/documents` | 10s (WB 1/10s) | query key includes the full query object (dedupe per filter/page) |
+| `useFinanceDocumentCategories(locale)` | `…/categories` | 5min (stable options) | per-locale key defaulting to `'ru'` |
+
+`useDownloadDocument` is a mutation (`boolean` result): it calls `downloadDocument`, builds a fallback filename from the last `/`-segment of `serviceName`, and pipes through `downloadDocumentResult`. `false` = empty/malformed base64 (a visible failure, not a silent no-op).
+
+### Documents table composition (`src/app/(dashboard)/finances/`)
+
+- **`DocumentsTable`** owns state (category, begin/end dates, sort, order, offset with `DEFAULT_PAGE_SIZE = 20`) and fetching; render branches were extracted to `DocumentsBody` in the Story 172.10 max-lines refactor. Every filter/sort/order change resets `offset` to 0 — otherwise `offset > 0` fetches a stale (likely empty) page under the new ordering. Date inputs are converted to inclusive ISO boundaries (`toIsoStart`/`toIsoEnd`).
+- **`DocumentsFilters`** is stateless: category dropdown (fed by `useFinanceDocumentCategories`, with `categoryState = loading | error | ready` surfaced as a `role="status"` hint so a categories failure never blocks the documents list), native date inputs labeled via `<Label>`, and sort/order selects. Categories without a `name` are skipped — an empty value would collide with the "all" option and silently become a no-op filter.
+- **`DocumentsBody`** renders the state machine: skeleton with `role="status"` loading announcement, destructive Alert + retry on error, **filtered-empty** (offers "Сбросить фильтры") vs **plain-empty** distinction, and the populated table with a `TableCaption` naming the WB source (RTC contract, spec order above the header), plus a keyboard-focusable scroll container (`scrollContainerTabIndex={0}`).
+- **`DocumentDownloadButton`** wraps `useDownloadDocument` per row: an extension selector (pdf/xlsx, coerced from the BE `extensions` array with a `pdf|xlsx` default) + download button.
+
+### Download a11y contract (Story 172.10)
+
+The per-row download button is the a11y reference implementation for async feedback:
+
+- **Pending**: the `Loader2` spinner is visual-only (`aria-hidden`); screen readers get a polite `role="status"` sr-only announcement («Скачивание документа…»).
+- **Success**: an sr-only `role="status"` «Документ скачан» — no visual noise for a happy path.
+- **Failure is visible**: `mutation.isError` **or** `mutation.isSuccess && data === false` (empty base64) renders a visible `role="alert"` «Не удалось скачать» plus the destructive `AlertCircle` icon — a silent failure would leave the user with no file and no explanation. Switching the extension selector calls `mutation.reset()`, clearing stale feedback that described the *previous* extension's attempt.
+- All icons (`Download`, `Loader2`, `AlertCircle`) are `aria-hidden`; the button itself carries an `aria-label` naming the selected format.
+
+### base64 → Blob pipeline (`src/lib/finances/download-blob.ts`)
+
+Pure, side-effect-isolated so the decode + anchor-click is unit-testable without TanStack Query: `resolveMimeType` prefers a BE-returned `pdf`/`xlsx` extension over the requested one; `base64ToBlob` returns `null` (failure, not crash) on empty/malformed base64; `triggerBrowserDownload` appends a transient `<a download>` (Firefox requires DOM attachment), clicks it, and revokes the object URL after a **1s grace** — a 0ms revoke can abort the download before Firefox takes ownership of the blob URL. `downloadDocumentResult` returns `true` only when the full pipeline ran.

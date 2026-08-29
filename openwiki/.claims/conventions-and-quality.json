@@ -1,15 +1,11 @@
 {
   "schemaVersion": 1,
-  "pageVersion": "sha256:78b5be21be62b67cf9e2d96b28f371f0f022d1f565a2afd0d3e5555fc35170f8",
+  "pageVersion": "sha256:434794ca0b9d339465c50be4af2f81539cc6b6eede2d6db8a2943f77ca6432fc",
   "claims": [
     {
       "id": "claim_1515ba3f46a84e5e932489841ef1734b",
       "statement": "File-size limits are ESLint-enforced via `max-lines` in the flat `eslint.config.js`: 200 lines (skipBlankLines + skipComments) for source files, 800 for test files/fixtures/mocks, and exempt for CLI-managed `src/components/ui/**` shadcn files; `next lint` is deprecated, so enforcement is exclusively via `npm run lint` / `npx eslint`, plus a `npm run check:max-lines` cross-check script.",
       "evidence": [
-        {
-          "resource": "repo://CLAUDE.md#L155-L155",
-          "version": "repo-lines-v1:sha256:63df238c014f3453f65fec6022d280a1b13cceee0328a7ae81ee5cd1ac66d037:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNjNkZjIzOGMwMTRmMzQ1M2Y2NWZlYzYwMjJkMjgwYTFiMTNjY2VlZTAzMjhhN2FlODFlZTVjZDFhYzY2ZDAzNyIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNjNkZjIzOGMwMTRmMzQ1M2Y2NWZlYzYwMjJkMjgwYTFiMTNjY2VlZTAzMjhhN2FlODFlZTVjZDFhYzY2ZDAzNyIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMjJiNGM1OWZiZmUxY2M1MThjOGE1NjAwODJhZWZiOGM0NTBhMzllNDYxMzc4MWJkMzc5MTEwMDg3ODFhZjgzZiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiYjE5NmMzYTE0ZTZmMzIzNWM1NWUyM2Y3YTEyNThmYzJiNDQxZmYxYjc4YTU3ZTc0ZmM3MWU4ZjU0Mjc1ZmVjMyJ9"
-        },
         {
           "resource": "repo://CLAUDE.md#L87-L87",
           "version": "repo-lines-v1:sha256:72cf92be0278526ec6caba4009c44c400d4f6332443a1b508b496348ea05ddc1:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNzJjZjkyYmUwMjc4NTI2ZWM2Y2FiYTQwMDljNDRjNDAwZDRmNjMzMjQ0M2ExYjUwOGI0OTYzNDhlYTA1ZGRjMSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNzJjZjkyYmUwMjc4NTI2ZWM2Y2FiYTQwMDljNDRjNDAwZDRmNjMzMjQ0M2ExYjUwOGI0OTYzNDhlYTA1ZGRjMSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMjFkYTkxNjcwNjZmZDY3Yzk3ZmVlZWE0NWFlYWZiNDlhN2FlY2FlZGZhMGM2NzdiMjk4M2E5NDZmNjE3YTY2OSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNzFhOTA4MzZmMThlNjYwYmNlMGY5OTE1NTFiZmI2OTNiYzBlZWQ3NmI1YWU2MzJlMDY0ZWIyOWVmMTdlNTEzMSJ9"
@@ -168,7 +164,7 @@
       "evidence": [
         {
           "resource": "repo://CLAUDE.md#L152-L155",
-          "version": "repo-lines-v1:sha256:11925b02461d4e46ca5583c3166452e06fbc5cc02376dc28ab906d61c02cadee:eyJzZWxlY3RlZExpbmVDb3VudCI6NCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMzA5YjZjYjdiYWIxNzE1YTU0YjU2MTI4ZjRhNmI4YmJmMTcxYzMzN2E3N2QwNDkzZTQwNzM3OTU5NTM0N2ExNSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNjNkZjIzOGMwMTRmMzQ1M2Y2NWZlYzYwMjJkMjgwYTFiMTNjY2VlZTAzMjhhN2FlODFlZTVjZDFhYzY2ZDAzNyIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiYjI2MzVmN2RiNDE5YmEwN2NlYzQ2NDVkN2QyNTM0YmRjODcyOTViNGRhNDBkYTAyYzlkMzMxYzVmMGZlYjVkNiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiYjE5NmMzYTE0ZTZmMzIzNWM1NWUyM2Y3YTEyNThmYzJiNDQxZmYxYjc4YTU3ZTc0ZmM3MWU4ZjU0Mjc1ZmVjMyJ9"
+          "version": "repo-lines-v1:sha256:e774a1944512d74961015381ad54f51ccb263675beb48e0dc1d49d647e175884:eyJzZWxlY3RlZExpbmVDb3VudCI6NCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMzA5YjZjYjdiYWIxNzE1YTU0YjU2MTI4ZjRhNmI4YmJmMTcxYzMzN2E3N2QwNDkzZTQwNzM3OTU5NTM0N2ExNSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNjNkZjIzOGMwMTRmMzQ1M2Y2NWZlYzYwMjJkMjgwYTFiMTNjY2VlZTAzMjhhN2FlODFlZTVjZDFhYzY2ZDAzNyIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiYjI2MzVmN2RiNDE5YmEwN2NlYzQ2NDVkN2QyNTM0YmRjODcyOTViNGRhNDBkYTAyYzlkMzMxYzVmMGZlYjVkNiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiYjE5NmMzYTE0ZTZmMzIzNWM1NWUyM2Y3YTEyNThmYzJiNDQxZmYxYjc4YTU3ZTc0ZmM3MWU4ZjU0Mjc1ZmVjMyJ9"
         },
         {
           "resource": "repo://package.json#L21-L22",
@@ -182,11 +178,11 @@
     },
     {
       "id": "claim_84cf25376af7492f820acc586d07faac",
-      "statement": "The accepted Vitest baseline for `npm test -- --run` is a floor of ≥ 19394 passing with 0 failed; additions are OK, regressions are not, and skipped counts are informational.",
+      "statement": "The accepted Vitest baseline for `npm test -- --run` is a floor of ≥ 19489 passing with 0 failed and 0 skipped; additions are OK, regressions are not.",
       "evidence": [
         {
           "resource": "repo://CLAUDE.md#L153-L155",
-          "version": "repo-lines-v1:sha256:f715fc6d2bb885d7a580b0fc52bca2fc1b4ab30dbf9dc1e26cb842a065c6e344:eyJzZWxlY3RlZExpbmVDb3VudCI6MywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZTVjNTFiMTk2NGI4NmQxNmEzYWIwMDU0ZjY2Y2JhNTg2MzE3NTVmZDk4NWNmNTE5MzgzNmNiYWJiM2ViNGZmMyIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNjNkZjIzOGMwMTRmMzQ1M2Y2NWZlYzYwMjJkMjgwYTFiMTNjY2VlZTAzMjhhN2FlODFlZTVjZDFhYzY2ZDAzNyIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMTVkZTYyYmRkMWY3OTRiOTViMTI0MTcwMTY1NzYzNmE5YmIzYzIwMDU3NjQ5N2I4NmJlZTM0OTBhNzBhY2I4MCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiYjE5NmMzYTE0ZTZmMzIzNWM1NWUyM2Y3YTEyNThmYzJiNDQxZmYxYjc4YTU3ZTc0ZmM3MWU4ZjU0Mjc1ZmVjMyJ9"
+          "version": "repo-lines-v1:sha256:c1c9f7fe22e4251da5882f55d776793475d1d8b32565a56dd4d4ae66d98e3b27:eyJzZWxlY3RlZExpbmVDb3VudCI6MywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiODFkNzNiZDUwZTM2MzA5YjY1MTE5ZGU1NTBmNjY2Mjc3OWQ2M2RhMTU1NjQyMTE0ZGFhMmNmNzllZGM3MmUxNSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNjNkZjIzOGMwMTRmMzQ1M2Y2NWZlYzYwMjJkMjgwYTFiMTNjY2VlZTAzMjhhN2FlODFlZTVjZDFhYzY2ZDAzNyIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMTVkZTYyYmRkMWY3OTRiOTViMTI0MTcwMTY1NzYzNmE5YmIzYzIwMDU3NjQ5N2I4NmJlZTM0OTBhNzBhY2I4MCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiYjE5NmMzYTE0ZTZmMzIzNWM1NWUyM2Y3YTEyNThmYzJiNDQxZmYxYjc4YTU3ZTc0ZmM3MWU4ZjU0Mjc1ZmVjMyJ9"
         }
       ]
     },
@@ -222,7 +218,7 @@
       "evidence": [
         {
           "resource": "repo://CLAUDE.md#L141-L155",
-          "version": "repo-lines-v1:sha256:c59fbc39e7db3546bcef29e4cf00e92e33880d41b9744260dccd73678ccebd20:eyJzZWxlY3RlZExpbmVDb3VudCI6MTUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjExZDM5NGRhNTdlOTRlYWQxY2M2ODg2ZDBjMmNiMTc1NDJlM2IyODZkYTVmYjg0MWE2OGVjZTEzOGI3MmJmZjIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjYzZGYyMzhjMDE0ZjM0NTNmNjVmZWM2MDIyZDI4MGExYjEzY2NlZWUwMzI4YTdhZTgxZWU1Y2QxYWM2NmQwMzciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjUwMzRiMjkwOGNlZjQzZmY5Y2MyYzUzNWViOGExNjkzYjMxMzExNGI3ZmEzNjhiMmY5M2FjOGFkMTYwODQ1NDIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImIxOTZjM2ExNGU2ZjMyMzVjNTVlMjNmN2ExMjU4ZmMyYjQ0MWZmMWI3OGE1N2U3NGZjNzFlOGY1NDI3NWZlYzMifQ"
+          "version": "repo-lines-v1:sha256:20b9921f53e4ba8b3ba625fc54d631b038a5cd39bf962a30c090f7301e041888:eyJzZWxlY3RlZExpbmVDb3VudCI6MTUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjExZDM5NGRhNTdlOTRlYWQxY2M2ODg2ZDBjMmNiMTc1NDJlM2IyODZkYTVmYjg0MWE2OGVjZTEzOGI3MmJmZjIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjYzZGYyMzhjMDE0ZjM0NTNmNjVmZWM2MDIyZDI4MGExYjEzY2NlZWUwMzI4YTdhZTgxZWU1Y2QxYWM2NmQwMzciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjUwMzRiMjkwOGNlZjQzZmY5Y2MyYzUzNWViOGExNjkzYjMxMzExNGI3ZmEzNjhiMmY5M2FjOGFkMTYwODQ1NDIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImIxOTZjM2ExNGU2ZjMyMzVjNTVlMjNmN2ExMjU4ZmMyYjQ0MWZmMWI3OGE1N2U3NGZjNzFlOGY1NDI3NWZlYzMifQ"
         }
       ]
     },
@@ -341,6 +337,6 @@
   ],
   "verification": {
     "by": "openwiki/0.4.3",
-    "at": "2026-08-28T08:47:49.990Z"
+    "at": "2026-08-29T08:47:45.377Z"
   }
 }

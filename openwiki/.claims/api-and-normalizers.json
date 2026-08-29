@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "pageVersion": "sha256:8e3053feb1d25950608aec4ce26306d0f8e2dee9603a84131264099021cff020",
+  "pageVersion": "sha256:cc0b15a01c3e706180799f7e08ab8cf3d8c773752eced48231348516c466fe4d",
   "claims": [
     {
       "id": "claim_3c95e61d2ae84921b460d8cba8de0595",
@@ -245,10 +245,106 @@
           "version": "repo-lines-v1:sha256:84bb2f008f6ea8f7315c090361a0e15e5ad5530d03f045517142d471ccf7df42:eyJzZWxlY3RlZExpbmVDb3VudCI6MjksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4NzAzZjU5NzI2YjAzNmE1MDFkZGVjNzM4NDUzNzU1MjM3YTNjY2UwOWQ2MDg4ODcyZWY2ZDRiOWRiOGNlN2YiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjY0NzVlOTRhOTA0YWM0OWIzMTU0ZDQ2NzJhNjZlODYyOWI4NmRhYzc0ZTNlMjkzN2JlNjkyN2FlM2RhMTFjNTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImRjZjk1ZjJhMmZmNDU0NDJlMTM1ZDA0ZjY2ZmIyNTRiYTcwMTBlZTMyYmU4YjNhY2EwMDI3M2UxNzdkMDlmMjMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjhkMzhhZTg5YTc3ZWI2MGU3YWQ0ZDhlZDgwN2MwZGVkZGUxYmJhNDE3NWEwMzkxYWUzNDgxMzczYWUyNGIyOGYifQ"
         }
       ]
+    },
+    {
+      "id": "claim_f797db2a25ab4709beca6aff9f520299",
+      "statement": "The apiClient singleton auto-injects Authorization: Bearer token and X-Cabinet-Id headers from useAuthStore on every request unless skipped via options; an immutable per-request authToken/cabinetIdOverride wins over the mutable store values (Story 167.9) so a request authenticates as the session that initiated it.",
+      "evidence": [
+        {
+          "resource": "repo://src/lib/api-client.ts#L40-L66",
+          "version": "repo-lines-v1:sha256:9b8fd955ae8c116be2d0bdcaba1ba48934af6efac0cc678b3b167192dad37dac:eyJzZWxlY3RlZExpbmVDb3VudCI6MjcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjUwMGQ2MTA3NDljZmU0YjgyZWJkMmIwNGRlNmNhZjhkZjY3NjI3M2Y5MTRlZTU0NWFjNmNiMDFhMDRlMmJhNWUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImVhOTBjYTA1NTlmOGViM2I1ZDk1ZDJjMjhlMDVlNTRkOTcwODA3NmVjMmNlMjYzOTc5YjQ4MWY4YzRkZjk4YTIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUxNGE1N2JmNTk3NDc1YzUxZGE3MjI2MzlkYjU2NmRlMDg4NjBjMTY3ZjQ4MWRkOGNiZGQwN2YxNWE4ODM3MTQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImY5NmE0ZjdjNGJhMGI3YmM1MmE0NjMyY2VkNTYxMGZlMGVjNDQ2NWQ0NGM4ZGFiZDE3YjIzY2U2NzUzZWI0OTAifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_ac1e5fdb686b445985869a1ba6a6ec57",
+      "statement": "apiClient unwraps backend { data: T } envelopes by default (rawData.data ?? rawData), returns the raw Blob for responseType 'blob' downloads, and supports skipDataUnwrap for envelopes like pinned reviews where data is a legitimate field.",
+      "evidence": [
+        {
+          "resource": "repo://src/lib/api-client.ts#L99-L116",
+          "version": "repo-lines-v1:sha256:7a5e81a0d4e3cb4e77173bb5134cd767b0107879a986dd5e1fd4079f7a928fe9:eyJzZWxlY3RlZExpbmVDb3VudCI6MTgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImUxMDM2NjdiYjU3NzA2MDdmMzk3NGQxOThmNDU4NjBhMGUxOGU5OTQ4NWZhZTdmMDllZTZmYzlmNDVjYTRmM2UiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImM3M2ZjYTg4ZGRiNTZhODFhNjQxYzhmYTQ2NjQzMDViZjczYWEyM2JhODA1M2VhOWY0ZWNkNGIyYTBkNDMxODgiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImNjOWYzODUwZDRkZDlmZjg0ZDcxODA3YzQ2YjZhNTJmNTBlOTQ2ODk1NDI1MzEyOGQyZGNkZjlhMmE2Zjk1MjUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImE2NTAzZTM2N2NiODExZDQxYzlmNmI4ZjAwOTYzZThkNGRjZmJlY2I4N2RhNTQ0ZDI2MWVlZjA2Y2UwNThlYTMifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_f382134d3bac467f940d20065c127b74",
+      "statement": "The NEW-7 finances hooks are rate-limit-aware: balance uses a 60s staleTime mirroring the WB 1/min limit, documents 10s (WB 1/10s) with the full query in the TanStack key, categories 5min — all with retry 1 and refetchOnWindowFocus false so the FE never refetches faster than WB allows (which would surface a 503).",
+      "evidence": [
+        {
+          "resource": "repo://src/hooks/useFinances-utils.ts#L29-L48",
+          "version": "repo-lines-v1:sha256:4a934b437c79bb2e6761a9998eff915cfb5eaf8b99eab23a789d95472ce4840a:eyJzZWxlY3RlZExpbmVDb3VudCI6MjAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImVhZjIyY2YwNzMyNTkyYzI0NzE0MWNiZTYxZWZhMTEwMTI2MTJmNWEzMTIyYjlhZjliYmFmNTJmNTcyNGQxOTQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNmZTUzNzU1ODJlOTEzMDMyNjUwZWZlZWUzMzJlMThjYmQyMjZmNzg4OWE3MjAwNDg4NDdiM2FlNDM5NGI1NzIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjQwYmYxNjNkNzE1ZmE1ZmU1NGE2NTk5NWQ1YTE1MDAzZjMwNDEyNzM0MDU3MzllYmM1NTI3MWE4N2RhZWU5NDAiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        },
+        {
+          "resource": "repo://src/hooks/useFinances.ts#L44-L91",
+          "version": "repo-lines-v1:sha256:7dd969c57a27e6f2a0213f03268177b0002f7eaf03d6660c0eb8115db4ec6a44:eyJzZWxlY3RlZExpbmVDb3VudCI6NDgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjlhZjk0NDI5Y2Q0YmQzMWMxMDg3NmVjNTRkMTYyMzAxNjkxZWM2ZDNhYTA5NDQ4ZDkwMzE1ZDlhN2FhMWYwNGQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijk2MjdlZjc4ZjExM2Q3YjdkZmU4MDBjOTIxMzU1MjJhN2U0OGI3Yjc2N2E5MDdkMjJlYTdkMmJhODMxNmYyMzEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImYxOGIwZmM2ZDc4MTUzZTkyZjk5OTk4YzlmNDE5MjU3ZDlkYjg2YzRhM2E0YTQ0Zjk3MjE0MmFjNDUzMDcyODEifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_376c24905f544fe695508b69772d6ef2",
+      "statement": "useDownloadDocument is a mutation returning boolean: it fetches base64 content from /v1/finances/documents/:serviceName/download, builds a fallback filename from the last slash-segment of serviceName, and pipes through downloadDocumentResult (base64 → Blob → anchor-click); false means empty or malformed base64 and is treated as a real failure.",
+      "evidence": [
+        {
+          "resource": "repo://src/hooks/useFinances.ts#L105-L121",
+          "version": "repo-lines-v1:sha256:c9984f62b09593dbc6ded0750f86344fd84c7076e92998261ea963bc400b134f:eyJzZWxlY3RlZExpbmVDb3VudCI6MTcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNmNzVkZGM4MjA3ODM1YzRkZmNjZWI2YTBmMjliMTE5MDVjYzUxZWI2MGY0ZGY0NGY3ZTA3MWNjZGE1MDA0OTMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImNlMGU5OTE1ZjE1OGY0ZjQ4ZTkwN2NlMmQ5YmE3NzQ3ZDc0YjI3ZWFmZTBiYTI5YzU3M2Y3N2Y3OTNhNzI1ZDAiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        },
+        {
+          "resource": "repo://src/lib/finances/download-blob.ts#L69-L82",
+          "version": "repo-lines-v1:sha256:e1a5a076460f2ba3d14e5dfbdaa63353ca8250e6e75f638b780b207ec56c7f8f:eyJzZWxlY3RlZExpbmVDb3VudCI6MTQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjhhM2Q4Mzk5NzUwMDllM2EyMDdiNzdhMWUyOTQ2NjI2OGFjYTNjNjcyN2NhM2Q0ZGUzYWY5MmU1Y2NhN2E4YjQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjI1NTkwZDgyZTg5NzBhMGQwYzFmZTJmZjQ0MDIwNDllNTE0NTcyZTBkYjM3YzZlNDMyY2U1ZDM4OThkOWM1NjIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_22c73d388fb2413388489e97bdbeadc3",
+      "statement": "download-blob.ts decodes base64 defensively (null on malformed input, never a crash), prefers the BE-returned pdf/xlsx extension for the MIME type, appends the transient download anchor to the DOM (Firefox requirement), and revokes the object URL after a 1s grace to avoid aborting Firefox's download handoff.",
+      "evidence": [
+        {
+          "resource": "repo://src/lib/finances/download-blob.ts#L31-L63",
+          "version": "repo-lines-v1:sha256:25111e8f9d8544038b095b983697d34ccb8160f3b6f44773583d70ae82447adc:eyJzZWxlY3RlZExpbmVDb3VudCI6MzMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjFiYjJiZDBlNjJmY2YzOWJjMDY2NzBiM2I5N2FjNTY0ZDU3YTA5NzA2MTIwZDQ2NDQ4MzAyYWQ2OGMxMzg2MjMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjBkNzY3ODYxMjUzYTcyYjE0YTEwMjE3YjYzZjNiNjdiZmZiYTA2MWZlOWExZTg4NTI1NWU3MTQzMTZmYWEyMDMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjAyYTEyZjNhNzVhMGE2ODhlZjVlMjBmYTJmOGY5MmMxM2IzMGNmYWE2NDMxNDQyNDM4ODgyYjVjMjk0YWIwZTUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_4abdd6c86c4a405cb8fa1fac0d3daf13",
+      "statement": "DocumentDownloadButton implements the Story 172.10 a11y contract: pending shows an aria-hidden spinner plus an sr-only role=status announcement, success is announced sr-only, failure (mutation.isError OR isSuccess with data === false, i.e. empty base64) renders a visible role=alert RU message, and switching the extension selector resets the mutation to clear stale feedback from the previous format's attempt.",
+      "evidence": [
+        {
+          "resource": "repo://src/app/(dashboard)/finances/components/DocumentDownloadButton.tsx#L49-L115",
+          "version": "repo-lines-v1:sha256:4b3d9dd1af3ec10ce67cca74f138b4e2ddf44d200c56fe9952c3598831223416:eyJzZWxlY3RlZExpbmVDb3VudCI6NjcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYjY3YWI0NWZlOTcwZGNkNTFmZDI4YmY3MDdjMTBiMWFjMmIxYWM3MWJiMTlmOGMyZDA2Mjg0NmMyZjM2YjciLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImUwNTYzMDRiMGVlYWJkODhhZDRjYmRkNjBiZGY0NjY1MWFkODU3YWQxZTAxMDRlNDJhYmZmNmIwNDNhZThlYTAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjY3NDUxMTdkMjJjYzk5ZmVlYThlMGY4MTBjMjkxNzQ4YmNhYzRiNzRmMmE1ZDIwN2I4ODQwNTJkNzk5MDY2NWEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjM0MGM1ZDNkYzNhNzczMDc5M2M4OTI3OTQ4YjU1OTY2NDIwN2Y3OWJhODc3NzNjMjE1MDA0NDMxOTYyZmQ0ODgifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_fc8a091212244631810e041f6f3ac40d",
+      "statement": "DocumentsTable owns filter/sort/pagination state and resets offset to 0 on every category/date/sort/order change (otherwise offset>0 fetches a stale, likely empty page under the new ordering); DocumentsBody renders the extracted state machine distinguishing filtered-empty (offers a filter reset) from plain-empty, with a loading role=status skeleton, destructive error Alert with retry, and a source-naming accessible table caption.",
+      "evidence": [
+        {
+          "resource": "repo://src/app/(dashboard)/finances/components/DocumentsBody.tsx#L43-L98",
+          "version": "repo-lines-v1:sha256:cc702190546a3c813a1783669601cf20fe4a35f16e7a931835a2fa163b6b1b33:eyJzZWxlY3RlZExpbmVDb3VudCI6NTYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImZhOTM1ZDA0NjI2NmFmZTgwYWU4MmIwZDNiNTBmNDJjZDk5YjQzZTkxZWJjNzA4YzkwMGE4YzNkODI2MDYwYTQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjM5ODlkOTBiNzMwNTBkZjEyN2E3OTMwOGVkOTJjNjk1Njc0MDE2YzU0ZWRlNTM3ZDkwMGM1ZjhmMTc1MmZhNGIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjM4MTI3ZTY4NTg3Yzg1MDM0MmZiMWU0NDEzNjk5MzM3ODA5ZmMwZDE1OTgyNDFlZWI1YjFjNjYzM2M4YmRjNmUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImNlZTFiZTk4OWIwNzk5NDhkOWFmMDk2NTUyODdiYTM5YjA2YjI4ZGI3NDM4MWZhYTBlMjBmOGZmODUxMWViMzAifQ"
+        },
+        {
+          "resource": "repo://src/app/(dashboard)/finances/components/DocumentsTable.tsx#L32-L100",
+          "version": "repo-lines-v1:sha256:499c844e6e0c3b6baf1af62a456ecc7baf9c7c69582445581a8ff0ed338f30ce:eyJzZWxlY3RlZExpbmVDb3VudCI6NjksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImU5YTFjNmI4YzU5NGM5MWJiZjM0M2M2MzQyNmI2YzUxYjYxOTRhMWY4M2RlODRlZGM0MDcwMzliZDBlMTdhYjUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijk3YjU3MDVhNjhkZTIwM2Y5NGIxOTUwYThkZDY5NzlmYjY2ZTg3MjZmMWZiMTI4ZTE4NDA5YWNhMTYxMDk1MGUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjFmM2JmNzFiYzdmZTdiM2IxMjZhOTY5ZmZlOGE1MjVjMzZjZDM4MTJhNGNkY2ZlYWY1OWY0ZTJiZmE2ZGNmNjYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjJjMzc3ZDliYmQ0YzBlYWJjYTkxM2RhMjExOWIxODcxZDczNjI0MmJiMTFjODVkYTNhZTQ2N2Y3ZTZiM2UxMjIifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_be51a16f93d141a09f4b0e5696c8cfb1",
+      "statement": "The /finances page keeps balance and documents as independent AC4 sources (one failing never blanks the other), both gated on cabinetReady to avoid 403s before cabinet selection, and a route error boundary renders a role=alert RU card with a reset() retry button instead of the raw Next.js error screen.",
+      "evidence": [
+        {
+          "resource": "repo://src/app/(dashboard)/finances/error.tsx#L12-L35",
+          "version": "repo-lines-v1:sha256:d24da23eefe3c22ab01cbfceada15eb222aa1a625f08c6322a7d25b1ab5e50e7:eyJzZWxlY3RlZExpbmVDb3VudCI6MjQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImIzNWQ1YWFiMWMzMjlkNjgwYTdiYjlkMTZhOWNiZmE5OGNiYzVmNDNlMGQ4ZDNmZmJiZGIyYzk0YzJmNzAzNjEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImQzNzU5YzJlZjhmN2YwODhlMDljYzRmNGRkNmM3MDEwOTRhNGUyNTVmNjNjNzI1ZjI1MGFkZWUzZDgzN2Y0MWEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        },
+        {
+          "resource": "repo://src/app/(dashboard)/finances/page.tsx#L18-L41",
+          "version": "repo-lines-v1:sha256:9937599ae3add59128549777a4f53423364eb4cc10ac978e704037b3c358e16e:eyJzZWxlY3RlZExpbmVDb3VudCI6MjQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImNmNWMyMWU5OTBmMDA2ZmQ5ZWYxNGViNjYwMjVhNGYxMDQxM2Y2NmE0NTI3MTUwNGU4NjhhMWZmMDk2YTg5NmEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImUwNTYzMDRiMGVlYWJkODhhZDRjYmRkNjBiZGY0NjY1MWFkODU3YWQxZTAxMDRlNDJhYmZmNmIwNDNhZThlYTAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijk3MTQyNTM0Njk0NTI3YjhkYTdlNDY4NDE4MmUzYzQxZDViMTM4YWMwMTY3ZTY4M2VmYjFjNTI5MWJhODgxNjIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoyLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjdmMTMxNTBkMjFjNmM2NjU0Yjc5NWFkNjIwZmY3ZmRiZDQ1YTQ1OTVjMjI4NzMyYWY0Yjc3Y2YwMDU1NjQ2MGEifQ"
+        }
+      ]
     }
   ],
   "verification": {
     "by": "openwiki/0.4.3",
-    "at": "2026-08-28T08:47:49.990Z"
+    "at": "2026-08-29T08:47:45.377Z"
   }
 }

@@ -5,71 +5,13 @@ description: "Testing strategy (Vitest unit with MSW, Playwright E2E, local E2E 
 tags: [testing, e2e, playwright, vitest, network-guards, privacy, openwiki-workflow, ci]
 verified:
   - by: openwiki/0.4.3
-    at: 2026-08-28T08:47:49.990Z
+    at: 2026-08-29T08:47:45.377Z
 sources:
-  - id: openwiki-source-26842daf3d0cab3a89a80e71
-    resource: repo://.env.e2e.example
-  - id: openwiki-source-6d4b4e707b8d60b6ccfa3425
-    resource: repo://.github/workflows/openwiki-update.yml
-  - id: openwiki-source-354c76158b22ef3b4186301f
-    resource: repo://e2e/communications.spec.ts
-  - id: openwiki-source-946e630aaa4fb6266d59079d
-    resource: repo://e2e/fixtures/mutation-guard.ts
-  - id: openwiki-source-3dcb76f87fa5376416b0619d
-    resource: repo://e2e/fixtures/network-test.ts
-  - id: openwiki-source-3beda60c74d491fa89314fa6
-    resource: repo://e2e/fixtures/playwright-network-guard.ts
-  - id: openwiki-source-a385e8bebb878eaf199687ca
-    resource: repo://e2e/fixtures/story-172-8-price-calculator.ts
-  - id: openwiki-source-28a77f62dc1d1b339b7cfc15
-    resource: repo://e2e/fixtures/story-172-9-communications.ts
-  - id: openwiki-source-103cddf073720fecd0ebc14f
-    resource: repo://e2e/price-calculator.spec.ts
-  - id: openwiki-source-5e753d9d77984cb67aae1517
-    resource: repo://playwright.config.ts
-  - id: openwiki-source-23775c3de52f3ab95a13cb8b
-    resource: repo://README.md
-  - id: openwiki-source-e3dffa80f0c12adcdd00840d
-    resource: repo://scripts/check-e2e-fixed-waits.mjs
-  - id: openwiki-source-2c0332dfeb73d3489e439b09
-    resource: repo://scripts/check-e2e-vacuous-assertions.mjs
-  - id: openwiki-source-a33125899c73194a4c9f0b33
-    resource: repo://scripts/check-privacy-console.mjs
-  - id: openwiki-source-bd2330dc2b13bb7ff673d7f3
-    resource: repo://scripts/e2e-preflight-handshake.mjs
-  - id: openwiki-source-4fdb4d47d7e696977e22dc98
-    resource: repo://scripts/e2e-preflight.mjs
-  - id: openwiki-source-756891db08be50385e107663
-    resource: repo://scripts/historical-spp-global-setup.ts
-  - id: openwiki-source-6b9997d0e00c995dabb10251
-    resource: repo://scripts/privacy/diagnostic-capture-policy.json
-  - id: openwiki-source-c6e3b3b2a0db1291e3321741
-    resource: repo://scripts/privacy/diagnostic-capture.mjs
-  - id: openwiki-source-fa2140791a03d30212444915
-    resource: repo://scripts/story-128-10/frontend-command-manifest.json
-  - id: openwiki-source-c51f0c07656cb668cca34e69
-    resource: repo://scripts/story-128-10/README.md
-  - id: openwiki-source-3e90f50edea46f5ae8c08929
-    resource: repo://src/app/(dashboard)/communications/__tests__/communications-presentation-source-contracts.test.ts
-  - id: openwiki-source-d3b4cc95d0a84fc2ab94e048
-    resource: repo://src/test/e2e-fixed-waits.test.ts
-  - id: openwiki-source-b04beb8b310584adffee2073
-    resource: repo://src/test/network-guard-bootstrap.ts
-  - id: openwiki-source-4205a558c37d7f5cef402272
-    resource: repo://src/test/outbound-network-guard.ts
-  - id: openwiki-source-bb4a08d6c273d23e09f6d665
-    resource: repo://src/test/outbound-node-network-guard.ts
-  - id: openwiki-source-c63e83803a51b5c67a6a2728
-    resource: repo://src/test/playwright-static-boundary.test.ts
-  - id: openwiki-source-c448aae4287d4d4701b86b58
-    resource: repo://src/test/playwright-static-boundary.ts
   - id: openwiki-source-b3c59ed7dd82c4c19f9a9dce
     resource: repo://test-utils/network-policy.json
   - id: openwiki-source-765eb9dfac83102deebc4cc8
     resource: repo://test-utils/outbound-network-policy.ts
-  - id: openwiki-source-fbadcd8591b65031efaaedce
-    resource: repo://vitest.config.ts
-generated: { by: "openwiki/0.4.3", at: "2026-08-28T08:47:49.990Z" }
+generated: { by: "openwiki/0.4.3", at: "2026-08-29T08:47:45.377Z" }
 ---
 # Testing & Operations
 
@@ -83,7 +25,7 @@ generated: { by: "openwiki/0.4.3", at: "2026-08-28T08:47:49.990Z" }
 | Plugin | `@vitejs/plugin-react` |
 | Coverage | V8 provider (text/json/json-summary/html reporters), output `coverage/local` |
 | Fake timers | `shouldAdvanceTime: true` (waitFor/MSW compatibility) |
-| Test count | ~1096 test files across `src/` |
+| Full-suite floor | ≥ 19,489 tests passing across ≥ 1,229 test files (0 failed, 0 skipped) — a full `npm test -- --run` run must not regress this floor |
 
 ### Test setup (`src/test/`)
 Setup files run in explicit list order (`sequence.setupFiles: 'list'`) defined by `VITEST_SETUP_FILES` in `vitest.config.ts`. Order is load-bearing: the outbound network guard must install **before** any general setup or MSW import, or module-evaluation-time network attempts would escape the guard.
@@ -145,6 +87,28 @@ Dashboard, orders, supplies, margin analytics, FBS, COGS, pricing calculator (Ep
 ### Story 172.9 — communications (`e2e/communications.spec.ts`)
 
 `installStory1729Routes(page, mode)` pre-registers **exact-API-path** routes (no `**` globs) for the six `/v1/communications/*` endpoints and fulfills them from in-memory fixtures shaped to the pre-normalizer contract (`src/lib/api/communications-normalizer.ts`, nulls preserved). Modes are `'populated' | 'empty'` with an error variant via `setSectionStatus` (e.g. flip 500 → 200 mid-test for the retry assertion). The spec follows the 163.3 observable-wait canon: `waitForResponse` pre-registered **before** the triggering action, `toBeVisible` terminal states, no hard waits, no `networkidle`; the first test in the file tolerates the dev-server cold compile of `/communications` (>10 s observed) with a 30 s response wait. Coverage matches the plan's state matrix: populated sections with RU labels, rating stars (aria-labeled), answer/pin status chips, unread badge, chat thread drill-in with unread counter, empty markers, section error + retry, and tab selection preserved across switches.
+
+### Story 172.10 — finances & documents (`e2e/finances.spec.ts`, NEW-7)
+
+Covers balance populated/empty/error, the documents list with category filter and pagination (a 25-row fixture exceeds `DEFAULT_PAGE_SIZE = 20` so the Next-page button is enabled and an `offset>0` fetch fires), and the download route being hit when the download button is clicked. All API calls are stubbed via `page.route` with `waitForResponse`/`expect.poll`/`toBeVisible` observable waits only (no `waitForTimeout`, no `networkidle`).
+
+**Story 172.10 repair pattern — end-anchored globs vs query strings.** Playwright glob patterns are end-anchored: the old `'**/v1/finances/documents'` glob never matched the real request because the documents query **always** carries `?locale=ru&limit=…`. The stub silently missed, and the page rendered live-backend documents instead of fixtures while the test stayed green. Both `DOCS_API` and `CATEGORIES_API` now use RegExp route matchers of the shape `/\/v1\/finances\/documents(?:\?.*)?$/` which cover the request with and without a query string and cannot collide with sibling endpoints (`/documents/categories`, `/documents/*/download` continue with `/` after `documents`, not `?` or end-of-URL). Lesson: when a request URL carries query parameters, either include a trailing `**` or use a RegExp — an end-anchored glob without it produces a silently-passing, non-intercepting stub.
+
+### Story 172.11 — monitor (`e2e/monitor.spec.ts`)
+
+Epic 92-FE coverage (KPI cards, metrics table, weekly chart, buyout gauge, pipeline panel) plus empty-state tests that mock exactly one endpoint each (`emptyMonitorSummary`, `emptyPipelineGrid`, `mockEmptyDailyMetrics` — the last mocks **all four** daily endpoints because `useDailyMetrics` fires them in parallel). It follows the domcontentloaded + landmark canon (no `networkidle` — the monitor page runs background polling that never settles) and uses visible `test.skip(condition, reason)` rather than silent returns.
+
+**Story 172.11 repair pattern — strict-mode locator ambiguity.** The BD-22 rename (PR #41) added a second weekly-chart legend item «Продажи + Возвраты», so the previous `/Продажи/` regex locator resolved **two** elements and failed Playwright strict mode — an ambiguity pre-existing on `main`. The repair pins `getByText('Продажи', { exact: true })` scoped to the `monitor-weekly-chart` landmark. Lesson: substring/regex locators over mutable UI text are strict-mode hazards; scope assertions to a landmark (L-3 canon) and prefer `exact: true` when a label can be a prefix of another.
+
+### Settings pages (`e2e/settings-pages.spec.ts`)
+
+Covers `/settings/cabinet`, `/settings/tariffs`, `/settings/notifications`, `/settings/tax`, `/settings/expenses`, and `/settings/backfill` plus the shared settings shell. Beyond per-page heading/landmark and data-or-skeleton assertions, it pins:
+
+- The canonical desktop navigation: the exact seven-item ordered link list (Обзор, Кабинет, Уведомления, Налоги, Тарифы, Расходы, Импорт) with `aria-current="page"` on exactly one visible current item per route, and the sidebar rendered left of the H1 at 1280×900.
+- The compact Sheet (390×844, reduced motion): dialog visibility, current-item `aria-current`, keyboard focus containment over 12 Tab and 12 Shift+Tab presses, Escape closing and returning focus.
+- Light/dark theming via `localStorage.theme` + reload with class-regex assertions on `<html>`, horizontal-overflow checks (`main.scrollWidth ≤ clientWidth + 1`), and per-page axe scans (`wcag2a`, `wcag2aa`, `wcag22aa`) requiring zero violations.
+
+These specs run against the local stack only (frontend `:3100`, backend `:3000`); the project has no deployment target.
 
 > **Note**: A hosted Tier 0 runtime certification harness and governed coverage certification system previously lived here. Both were removed when the project replaced hosted certification with local validation gates. The remaining quality gates are documented in [Conventions & Quality Gates](conventions-and-quality.md).
 

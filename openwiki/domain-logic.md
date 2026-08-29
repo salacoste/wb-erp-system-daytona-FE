@@ -1,11 +1,21 @@
 ---
 type: "Domain Reference"
 title: "Domain Logic"
-description: "Financial and business-logic helpers as pure functions in src/lib/ plus the extracted price-calculator domain modules — theoretical profit, margin/COGS temporal logic, unit economics, liquidity with trends, repricing price basis (SPP-1 lane), account finances + document download (NEW-7), seller communications with gated write-back (NEW-2), cost/tariff calculations, ISO-week/Moscow-timezone handling, and Russian-locale formatters."
+description: "Financial and business-logic helpers as pure functions in src/lib/, route-local domain helpers extracted from monitor/monitoring components, plus the price-calculator domain modules — theoretical profit, margin/COGS temporal logic, unit economics, liquidity with trends, repricing price basis (SPP-1 lane), account finances + document download (NEW-7), seller communications with gated write-back (NEW-2), cost/tariff calculations, ISO-week/Moscow-timezone handling, and Russian-locale formatters."
 verified:
   - by: openwiki/0.4.3
-    at: 2026-08-28T08:47:49.990Z
+    at: 2026-08-29T08:47:45.377Z
 sources:
+  - id: openwiki-source-1550d5500fee77a878edfd70
+    resource: repo://src/app/(dashboard)/monitor/components/monitor-metrics-utils.ts
+  - id: openwiki-source-c727cc80b8094f9fe29cc81f
+    resource: repo://src/app/(dashboard)/monitor/components/monitor-pipeline-utils.ts
+  - id: openwiki-source-691407f76e94ddd8f75bf241
+    resource: repo://src/app/(dashboard)/monitor/components/monitor-weekly-chart-utils.ts
+  - id: openwiki-source-2e361c23e44376cd343bbf9e
+    resource: repo://src/app/(dashboard)/monitoring/components/data-completeness-constants.ts
+  - id: openwiki-source-a658884272ca8f86b90dbbc4
+    resource: repo://src/app/(dashboard)/monitoring/components/health-history-helpers.ts
   - id: openwiki-source-4230efdc9fbc632cdf76bba0
     resource: repo://src/components/custom/price-calculator/cost-breakdown-helpers.ts
   - id: openwiki-source-cc78c96d33c9553dc7ca90b1
@@ -46,7 +56,7 @@ sources:
     resource: repo://src/lib/null-helpers.ts
   - id: openwiki-source-d6b8b04abd546dc2eafc55e1
     resource: repo://src/lib/theoretical-profit.ts
-generated: { by: "openwiki/0.4.3", at: "2026-08-28T08:47:49.990Z" }
+generated: { by: "openwiki/0.4.3", at: "2026-08-29T08:47:45.377Z" }
 ---
 # Domain Logic
 
@@ -293,6 +303,20 @@ All formatters use **Russian locale** (`ru-RU`) for number/currency display.
 Enforces the "null not undefined" standard for missing data: `isNullish`, `coerceToNull`, `hasValue`, `nullSafe`. This is the foundation of AP#8 null semantics — missing money/ratio data is `null`, not `0` or `undefined`.
 
 **File**: `src/lib/decimal-utils.ts` — `parseDecimal()` handles Prisma DECIMAL strings ("96000.0000" → 96000).
+
+## Route-Local Domain Helpers (172.11–172.12 Extractions)
+
+The `/monitor` and `/monitoring` dashboard routes keep their domain logic in sibling non-component modules (the same "file-size split" pattern as the price calculator), so the `.tsx` components stay presentational and the helpers stay directly unit-testable.
+
+| Module | Domain responsibilities |
+|--------|------------------------|
+| `src/app/(dashboard)/monitor/components/monitor-metrics-utils.ts` | `computeDelta()` — null-safe period-over-period percentage delta ("—" when either value is null or the base is 0; exactly-zero change renders a neutral muted `0.0%` with no arrow, fix M-4). Improvement coloring is **direction-aware** (`higher-is-better` vs `higher-is-worse`), so a revenue drop and a returns drop get opposite colors. `hasAnomaly()` / `getAnomalyPeriods()` detect advisory anomalies (COGS > revenue or margin > revenue) and return the offending periods with labels for the enriched tooltip (H-2). |
+| `src/app/(dashboard)/monitor/components/monitor-weekly-chart-utils.ts` | `transformDailyToChartRows()` adapts `DailyMetrics` to chart rows: three **integer-count** series on a uniform scale — sales (`salesCount`), returns (`returnsCount`), and "orders" which is actually the derived transaction sum `salesCount + returnsCount` (BD-22 — the label is deliberately «Продажи + Возвраты», not «Заказы»). Weekday labels are capitalized Russian (`Пн 20.04`) via a local `capitalize()` over date-fns `ru` locale. `LINE_COLORS`/`LINE_LABELS` are the single source of chart series tokens. |
+| `src/app/(dashboard)/monitor/components/monitor-pipeline-utils.ts` | `getBuyoutColor()` — 3-band gauge mapping (null→gray «Нет данных», <70→red, 70–89→amber, ≥90→green); the divergence from `BuyoutRateCard`'s simpler 80% two-band cutoff is intentional. `getMostRecentRecalc()` (pipeline with the latest non-null `lastSuccessAt`, or null), `getUnhealthyPipelines()` (order-preserving non-healthy filter), and `formatRelativeTime()` — manual-math Russian relative time («только что» / «N мин назад» / «N ч назад» / «N дн назад», null → «—») mirroring `PipelineStatusGrid` (M-8). |
+| `src/app/(dashboard)/monitoring/components/health-history-helpers.ts` | `formatDayLabel()` — BD-30 fix: a bare `YYYY-MM-DD` string is parsed by `new Date()` as UTC midnight, which shifts the weekday back a day in Europe/Moscow (UTC+3); appending `T00:00:00` forces local-midnight parsing for date-only strings while leaving timestamped strings untouched. Also `PERIOD_OPTIONS` (7/14/30 days), status color/ring/emoji maps, and `countByStatus()` for the trend summary. |
+| `src/app/(dashboard)/monitoring/components/data-completeness-constants.ts` | Pure config + helpers for the data-completeness table: `COMPLETENESS_BADGE` (complete/incomplete/critical badge variants), `HEALTH_CONFIG` (status labels + health-bar classes), `getOverallPercent()` (mean completeness ratio as rounded integer percent; empty list → 0), and `sortByCompleteness()` (ascending — worst tables first, non-mutating copy sort). |
+
+**Focused tests**: `src/app/(dashboard)/monitor/components/__tests__/` and `src/app/(dashboard)/monitoring/components/__tests__/` exercise these helpers directly (pure-functions-over-hook-mocking pattern).
 
 ## Order Expiration (WB Shelf-Life Management)
 
