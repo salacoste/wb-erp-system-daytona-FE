@@ -1,5 +1,5 @@
 # generated: 2026-08-03
-# last_updated: 2026-08-29 — Story 173.2 shipped through feature PR #332 (merge 7c85b804); documentation closeout and exact product/docs cleanup are the only remaining Story 173.2 lifecycle steps; Epic 173 = 2/13; Program NEXT = Story 173.3 after cleanup.
+# last_updated: 2026-08-29 — Story 173.2 shipped through feature PR #332 (merge 7c85b804) and documentation closeout PR #333 (merge 650f8efc); exact product and initial docs cleanup proved; Epic 173 = 2/13; Program NEXT = Story 173.3 after auxiliary lifecycle-record merge and cleanup.
 # project: frontend
 # project_key: NOKEY
 # tracking_system: file-system
@@ -37,7 +37,7 @@
 #   they are excluded from story and retrospective counts and must be documented with a no-story-ID note.
 
 generated: 2026-08-03 # refreshed after Epic 127 truth reconciliation and Epics 162-165 registration
-last_updated: 2026-08-29 # Story 173.2 shipped through feature PR #332 (merge 7c85b804); documentation closeout and exact product/docs cleanup remain; Epic 173 = 2/13; Program NEXT = Story 173.3 after cleanup.
+last_updated: 2026-08-29 # Story 173.2 shipped through feature PR #332 (merge 7c85b804) and closeout PR #333 (merge 650f8efc); product + initial docs cleanup proved; Epic 173 = 2/13; Program NEXT = Story 173.3 after lifecycle-record cleanup.
 project: frontend
 project_key: NOKEY
 tracking_system: file-system
@@ -840,7 +840,7 @@ development_status:
   # Epic 173-FE: Predictable Settings, Shipments, and Supplies
   epic-173-fe: in-progress
   173-1-fe-migrate-settings-shell-and-overview: done # Feature PR #328 (2839640f, merge 3c560ed2) + closeout PR #329 (25673172, merge 7bec65fd), exact cleanup proved: 6 feature files +630/-47; static overview + shared seven-route settings shell; role-aware restricted/current states; focused 2/22; settings 17/217; full 19489/0/1229; e2e 47 pass/2 explicit skip + repeat 63 pass/1 optional Manager skip; two adversarial passes, accepted findings fixed; credentialed non-Owner visual gap -> 174.3 C18; route ledger unchanged.
-  173-2-fe-migrate-backfill-settings: done # Feature PR #332 (a2a7033a, merge 7c85b804), reviewable documentation closeout in progress: 17 feature files +2108/-598; frozen fingerprint f02bb5fb; truthful unresolved/error/refresh/stale/retry states; dual-pipeline eligibility and combined status; guarded aria-disabled pending trigger with Chromium focus-return regression; focused 6/106; full 19565/0/1232; e2e 77 pass/2 documented conditional skips; Turbopack + webpack 70/70; Claude + architecture APPROVE with zero blockers; Gemini OAuth gap explicit; route ledger unchanged.
+  173-2-fe-migrate-backfill-settings: done # Feature PR #332 (a2a7033a, merge 7c85b804) + closeout PR #333 (c1613245, merge 650f8efc), exact product + initial docs cleanup proved: 17 feature files +2108/-598; frozen fingerprint f02bb5fb; truthful unresolved/error/refresh/stale/retry states; dual-pipeline eligibility and combined status; guarded aria-disabled pending trigger with Chromium focus-return regression; focused 6/106; full 19565/0/1232; e2e 77 pass/2 documented conditional skips; Turbopack + webpack 70/70; Claude + architecture APPROVE with zero blockers; Gemini OAuth gap explicit; route ledger unchanged.
   173-3-fe-migrate-cabinet-settings: backlog
   173-4-fe-migrate-expense-settings: backlog
   173-5-fe-migrate-notification-settings: backlog
