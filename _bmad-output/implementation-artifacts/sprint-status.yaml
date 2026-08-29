@@ -1,5 +1,5 @@
 # generated: 2026-08-03
-# last_updated: 2026-08-29 — Story 173.1 shipped through feature PR #328 (merge 3c560ed2); Epic 173 = 1/13; Program NEXT = Story 173.2 after closeout cleanup.
+# last_updated: 2026-08-29 — Story 173.1 shipped through feature PR #328 (merge 3c560ed2) and closeout PR #329 (merge 7bec65fd), with exact cleanup proved; Epic 173 = 1/13; Program NEXT = Story 173.2.
 # project: frontend
 # project_key: NOKEY
 # tracking_system: file-system
@@ -37,7 +37,7 @@
 #   they are excluded from story and retrospective counts and must be documented with a no-story-ID note.
 
 generated: 2026-08-03 # refreshed after Epic 127 truth reconciliation and Epics 162-165 registration
-last_updated: 2026-08-29 # Story 173.1 shipped through feature PR #328 (merge 3c560ed2); Epic 173 = 1/13; Program NEXT = Story 173.2 after closeout cleanup.
+last_updated: 2026-08-29 # Story 173.1 shipped through feature PR #328 (merge 3c560ed2) and closeout PR #329 (merge 7bec65fd), with exact cleanup proved; Epic 173 = 1/13; Program NEXT = Story 173.2.
 project: frontend
 project_key: NOKEY
 tracking_system: file-system
@@ -839,7 +839,7 @@ development_status:
 
   # Epic 173-FE: Predictable Settings, Shipments, and Supplies
   epic-173-fe: in-progress
-  173-1-fe-migrate-settings-shell-and-overview: done # PR #328 (2839640f, merge 3c560ed2): 6 files +630/-47; static overview + shared seven-route settings shell; role-aware restricted/current states; focused 2/22; settings 17/217; full 19489/0/1229; e2e 47 pass/2 explicit skip + repeat 63 pass/1 optional Manager skip; two adversarial passes, accepted findings fixed; credentialed non-Owner visual gap -> 174.3 C18; route ledger unchanged.
+  173-1-fe-migrate-settings-shell-and-overview: done # Feature PR #328 (2839640f, merge 3c560ed2) + closeout PR #329 (25673172, merge 7bec65fd), exact cleanup proved: 6 feature files +630/-47; static overview + shared seven-route settings shell; role-aware restricted/current states; focused 2/22; settings 17/217; full 19489/0/1229; e2e 47 pass/2 explicit skip + repeat 63 pass/1 optional Manager skip; two adversarial passes, accepted findings fixed; credentialed non-Owner visual gap -> 174.3 C18; route ledger unchanged.
   173-2-fe-migrate-backfill-settings: backlog
   173-3-fe-migrate-cabinet-settings: backlog
   173-4-fe-migrate-expense-settings: backlog

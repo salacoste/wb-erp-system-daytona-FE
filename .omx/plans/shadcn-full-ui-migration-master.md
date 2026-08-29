@@ -331,8 +331,8 @@ Story identity is the numeric `Epic.Story` ID, not the descriptive sprint-status
 > Живые по-сторийные статусы: `_bmad-output/implementation-artifacts/sprint-status.yaml`.
 
 - **Epics CLOSED**: 166-FE (foundation), 167-FE (AppShell/auth, freeze-8), 168-FE (analytics core, 11/11), 169-FE (operational analytics, 15/15), 170-FE (marketing and marketplace analytics, 7/7), 171-FE (models, 9/9), and 172-FE (core operations, 17/17).
-- **Canonical Story readiness: 77/94**; Story 173.1 feature commit `2839640f` merged in PR #328 as `3c560ed2`. The settings shell owner is available to Stories 173.2–173.7; closeout cleanup is the gate before the next lane.
-- **Program NEXT = Epic 173 / Story 173.2**, only after Story 173.1 closeout merge and exact cleanup.
+- **Canonical Story readiness: 77/94**; Story 173.1 feature commit `2839640f` merged in PR #328 as `3c560ed2`, and documentation closeout commit `25673172` merged in PR #329 as `7bec65fd`; exact branch/worktree/open-PR cleanup passed. The settings shell owner is available to Stories 173.2–173.7.
+- **Program NEXT = Epic 173 / Story 173.2** from refreshed clean `main`.
 - **Remaining**: 173.2-13 (173.8 shipments owner, 173.12 supplies owner) → 174.1-5 (consolidation;
   174.2 — применимые design-system/source-boundary/contrast долги; 174.3 — browser/theme/axe/keyboard/visual;
   174.4 — functional/local-backend regression; trigger-specific behavior/API debts сохраняют registry-owner).

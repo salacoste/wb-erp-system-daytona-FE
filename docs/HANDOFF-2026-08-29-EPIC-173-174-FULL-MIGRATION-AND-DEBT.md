@@ -1,9 +1,9 @@
 # WB Repricer Frontend — Full shadcn/ui Migration Handoff and Technical-Debt Register
 
-> **Snapshot:** 2026-08-29, based on `origin/main` commit `3c560ed273371e8ead098291047e855f673f16ca` (Story 173.1 feature merge, PR #328); this closeout lane must merge and clean before Story 173.2.
+> **Snapshot:** 2026-08-29, based on `origin/main` commit `7bec65fd7827020b9553f5007502e037c5b5e7dc` (Story 173.1 documentation closeout merge, PR #329); feature and closeout delivery are merged and their exact lifecycle residue was cleaned.
 > **Audience:** the next autonomous frontend migration team and its orchestrator.
-> **Status:** Epics 166–172 are complete; Story 173.1 is implemented and feature-merged; 77 of 94 canonical Stories are complete; 17 Stories remain in Epics 173–174.
-> **Immediate next product Story:** 173.2, Backfill Settings, only after Story 173.1 closeout merge and exact cleanup.
+> **Status:** Epics 166–172 and Story 173.1 are complete; 77 of 94 canonical Stories are complete; 17 Stories remain in Epics 173–174.
+> **Immediate next product Story:** 173.2, Backfill Settings.
 > **Supersedes operationally:** `docs/HANDOFF-2026-08-27-CROSS-TEAM-OMC-ORCHESTRATOR-172-8-CONTINUATION.md`. That historical file remains unchanged by this documentation lane; it contains obsolete Story 172.12 execution instructions and a known plaintext test-credential exposure, so it must not be used as an execution entry point.
 > **Scope:** this document concerns only `/Users/r2d2/Documents/Code_Projects/wb-repricer-system-new/frontend` and the approved local frontend migration workflow. It grants no deploy, production, force-push, or direct-push-to-main authority.
 
@@ -16,8 +16,8 @@ This document is the single continuation entry point. It intentionally separates
 | Item | Verified state |
 | --- | --- |
 | Repository | `salacoste/wb-erp-system-daytona-FE` |
-| Authoring base | `origin/main` at `3c560ed273371e8ead098291047e855f673f16ca` |
-| Latest lifecycle event | Story 173.1 feature PR #328 merged; reviewable closeout and cleanup in progress |
+| Authoring base | `origin/main` at `7bec65fd7827020b9553f5007502e037c5b5e7dc` |
+| Latest lifecycle event | Story 173.1 closeout PR #329 merged; exact branch/worktree/open-PR cleanup proved |
 | Canonical Story parity | 94 BMAD Stories and 94 per-Story OMX plans |
 | Completed | 77/94 Stories; Epics 166–172 complete; Epic 173 at 1/13 |
 | Remaining | 17/94: Epic 173 has 12; Epic 174 has 5 |
@@ -25,9 +25,9 @@ This document is the single continuation entry point. It intentionally separates
 | Route implementation progress | 64 route-owning Stories complete; 12 Epic 173 routes remain |
 | Route-ledger status | all rows remain `planned`; Story 174.1 validates ownership/evidence without changing implementation state, and Story 174.5 owns final transitions to `verified` |
 | Recorded full Vitest floor | 19,489 passed, 0 failed, 0 skipped, 1,229 files after Story 173.1 |
-| Open PRs at handoff audit | 0 before this documentation lane |
-| Completed Epic 172 branches/worktrees | 0 local branches, 0 remote branches, 0 temporary worktrees |
-| NEXT | merge Story 173.1 closeout, prove exact cleanup and synchronized clean primary `main`, then execute Story 173.2 |
+| Open PRs at handoff audit | 0 after Story 173.1 closeout cleanup |
+| Completed Epic 172–Story 173.1 branches/worktrees | 0 local branches, 0 remote branches, 0 temporary worktrees |
+| NEXT | execute Story 173.2 from refreshed clean `main` |
 | Production/deploy authority | forbidden |
 
 The recorded test floor is a fresh pinned-runtime Story 173.1 full-suite rerun. The first sandboxed attempt failed only on a prohibited local listener bind; the complete outside-sandbox rerun passed 19,489/19,489.
@@ -103,7 +103,7 @@ base:
   origin/main @ 046599670319d9a5d6da935b892ceca6fe01e7d9
 ```
 
-This historical handoff lane was merged as PR #327 and cleaned before Story 173.1 began. Story 173.1 then merged through feature PR #328. The active gate is now the Story 173.1 documentation closeout and exact branch/worktree cleanup before Story 173.2.
+This historical handoff lane was merged as PR #327 and cleaned before Story 173.1 began. Story 173.1 then merged through feature PR #328 and documentation closeout PR #329; both delivery lanes were cleaned. Story 173.2 is now the active product lane.
 
 Never reset, rebase, stage, commit, remove, or clean another team's WIP. When a path or branch is disputed, capture branch/HEAD/status/diffs/untracked files and ownership evidence before any Git mutation.
 
@@ -140,7 +140,7 @@ The last verified Epic 172 chain is:
 | 172.15 | #321 / `81bc35cc` | #322 / `688a7ad2` | 19,458 |
 | 172.16 | #323 / `8939aea4` | #324 / `45e3da76` | 19,463 |
 | 172.17 | #325 / `caee8523` | #326 / `04659967` | 19,467 |
-| 173.1 | #328 / `3c560ed2` | this reviewable closeout lane | 19,489 |
+| 173.1 | #328 / `3c560ed2` | #329 / `7bec65fd` | 19,489 |
 
 All Epic 172 feature/closeout branches and temporary worktrees were absent at audit time. The completed artifacts under `_bmad-output/implementation-artifacts/166-*` through `172-*` are evidence and lessons; they are not invitations to reopen shipped scope.
 
@@ -761,7 +761,7 @@ The Story 173.1 closeout keeps the continuation state synchronized:
 - sprint marks Epic 173 `in-progress` and Story 173.1 `done`;
 - master execution snapshot advances to 77/94 and NEXT Story 173.2 after cleanup;
 - debt-registry header/status/floor/owner note records 173.1 plus C18 → 174.3;
-- this document remains the single continuation entry point with feature PR #328 / merge `3c560ed2` evidence.
+- this document remains the single continuation entry point with feature PR #328 / merge `3c560ed2`, closeout PR #329 / merge `7bec65fd`, and exact cleanup evidence.
 
 Deliberately not changed:
 

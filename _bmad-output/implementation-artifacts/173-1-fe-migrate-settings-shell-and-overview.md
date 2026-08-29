@@ -1,6 +1,6 @@
 # Story 173.1-FE: Migrate Settings Shell and Overview
 
-Status: done — feature PR #328 merged (`2839640f`, merge `3c560ed2`); Story-owned six-file manifest; full floor **19,489/0/1,229**; targeted settings **17/217**; Playwright **47 passed / 2 explicit skips** and Story repeat **63 passed / 1 optional Manager skip**; two adversarial review passes with all accepted findings fixed; a separate documentation PR is prepared on the same Story branch and remains the closeout gate before cleanup; route-ledger rows intentionally remain `planned` until Story 174.5.
+Status: done — feature PR #328 merged (`2839640f`, merge `3c560ed2`); documentation closeout PR #329 merged (`25673172`, merge `7bec65fd`) and exact branch/worktree/open-PR cleanup proved; Story-owned six-file feature manifest; full floor **19,489/0/1,229**; targeted settings **17/217**; Playwright **47 passed / 2 explicit skips** and Story repeat **63 passed / 1 optional Manager skip**; two adversarial review passes with all accepted findings fixed; route-ledger rows intentionally remain `planned` until Story 174.5.
 
 ## Story
 
@@ -85,10 +85,13 @@ Two fresh-context adversarial reviews inspected the complete six-file diff.
 - Feature PR: #328, `https://github.com/salacoste/wb-erp-system-daytona-FE/pull/328`.
 - Feature head: `2839640f055ccce2ad75e65d9c388e7d1d5f714d`.
 - Feature merge: `3c560ed273371e8ead098291047e855f673f16ca`.
+- Documentation closeout PR: #329, `https://github.com/salacoste/wb-erp-system-daytona-FE/pull/329`.
+- Documentation closeout head: `2567317229735eba2f2436874865e4310a9dea0f`.
+- Documentation closeout merge: `7bec65fd7827020b9553f5007502e037c5b5e7dc`.
 - PR base/head/headRefOid and the exact six-file manifest were verified before merge.
-- Feature head and merge commit were verified as ancestors of refreshed `origin/main`.
+- Feature head, feature merge, and documentation closeout head were verified as ancestors of refreshed `origin/main`.
 - The same Story branch/worktree was fast-forwarded to the feature merge solely to publish this reviewable documentation closeout; no future Story lane was opened.
-- Closeout acceptance requires the exact remote branch, local branch, temporary worktree, open PR, and stale worktree registration to be absent after closeout merge, with primary `main` clean and equal to refreshed `origin/main`.
+- After closeout merge, primary `main` was fast-forwarded to `7bec65fd`; the exact remote branch, local branch, temporary worktree, open PR, and stale worktree registration were proved absent; primary `main` was clean and equal to refreshed `origin/main`; the recoverable quarantine remained present; and the original PM2 frontend was online.
 - No deploy, production operation, direct push to `main`, force-push, dependency change, credential output, or route-ledger transition occurred.
 
 ## Lessons and Carry-Outs
@@ -102,4 +105,4 @@ Two fresh-context adversarial reviews inspected the complete six-file diff.
 
 | Date | Change |
 | --- | --- |
-| 2026-08-29 | Story 173.1 implemented, validated, adversarially reviewed, merged through feature PR #328, and prepared for canonical closeout. Program NEXT becomes Story 173.2 only after closeout PR merge and exact cleanup. |
+| 2026-08-29 | Story 173.1 implemented, validated, adversarially reviewed, merged through feature PR #328, closed through documentation PR #329, and cleaned. Program NEXT is Story 173.2. |
