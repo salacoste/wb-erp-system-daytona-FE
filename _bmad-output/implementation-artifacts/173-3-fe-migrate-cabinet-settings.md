@@ -1,6 +1,6 @@
 # Story 173.3-FE: Migrate Cabinet Settings
 
-Status: done — feature PR #335 merged (`a3d23221`, merge `5ce9935e`); this artifact and the synchronized canonical trackers form the reviewable documentation closeout; Story-owned 12-file feature manifest; full floor **19,589/0/1,234**; focused Story **6 files / 49 tests**; Playwright **24 passed / 1 optional Manager setup skip**; two independent final reviews approved with zero unresolved findings; route-ledger rows intentionally remain `planned` until Story 174.5.
+Status: done — feature PR #335 merged (`a3d23221`, merge `5ce9935e`); documentation closeout PR #336 merged (`8a551173`, merge `3e04ccd2`); exact product and initial documentation branch/worktree/open-PR cleanup proved; Story-owned 12-file feature manifest; full floor **19,589/0/1,234**; focused Story **6 files / 49 tests**; Playwright **24 passed / 1 optional Manager setup skip**; product and documentation reviews approved with zero unresolved findings; route-ledger rows intentionally remain `planned` until Story 174.5.
 
 ## Story
 
@@ -87,8 +87,12 @@ Pinned runtime: Node `24.18.0`, npm `11.11.0`.
 - Feature merge: `5ce9935ef4abf90b2ec6db8cde7bdd3cc8e54d44`.
 - PR base/head, one-commit history, mergeability, and the exact 12-file manifest were verified before normal merge.
 - The product merge is present on refreshed `origin/main`.
-- This artifact is published through a separate documentation closeout branch created only after the feature merge. Its future merge SHA is deliberately not preclaimed.
-- Story 173.4 starts only after the feature and documentation PRs are merged, primary `main` equals refreshed `origin/main`, and both completed branches/worktrees/remote refs/open PRs/temporary E2E artifacts are proved absent.
+- Documentation closeout PR: #336, `https://github.com/salacoste/wb-erp-system-daytona-FE/pull/336`.
+- Documentation closeout head: `8a55117382d7662f44124e7eea5687f62153119c`.
+- Documentation closeout merge: `3e04ccd23148b997f7bb335e3ac38585f06ba151`.
+- After PR #336 merged, primary `main` was fast-forwarded to `3e04ccd2` and proved equal to refreshed `origin/main` with 0/0 divergence.
+- The exact product and initial documentation remote branches, local branches, worktrees, paths, and stale registrations were proved absent. No Story PR remained open before the auxiliary lifecycle-record PR was published.
+- The auxiliary lifecycle-record branch/worktree exists only to publish these already-proved facts and is cleaned after its own merge; no recursive self-merge claim is made.
 - No deploy, production operation, direct push to `main`, force-push, dependency change, credential output, route-ledger transition, or unrelated debt fix occurred.
 
 ## Lessons and Carry-Outs
@@ -103,4 +107,4 @@ Pinned runtime: Node `24.18.0`, npm `11.11.0`.
 
 | Date | Change |
 | --- | --- |
-| 2026-08-29 | Story 173.3 implemented, validated, independently reviewed, merged through feature PR #335, and prepared for separate documentation closeout. **Lessons:** (1) Wait for loaded content after reload. (2) Fail closed in API fixtures. (3) Reset live feedback across edits and cabinet ownership changes. |
+| 2026-08-29 | Story 173.3 implemented, validated, independently reviewed, merged through feature PR #335, closed through documentation PR #336, and cleaned; auxiliary lifecycle evidence published. **Lessons:** (1) Wait for loaded content after reload. (2) Fail closed in API fixtures. (3) Reset live feedback across edits and cabinet ownership changes. |
