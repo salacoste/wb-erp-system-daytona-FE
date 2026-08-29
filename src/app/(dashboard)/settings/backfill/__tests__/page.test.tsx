@@ -7,9 +7,10 @@
  */
 
 import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { render, screen } from '@testing-library/react'
+import { act, fireEvent, render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { createTestQueryClient, createQueryWrapper } from '@/test/utils/test-utils'
+import type { BackfillCabinetStatus } from '@/types/backfill'
 
 // ============================================================================
 // Mock Setup
@@ -61,6 +62,21 @@ vi.mocked(usePauseBackfill).mockImplementation(mockUsePauseBackfill as never)
 vi.mocked(useResumeBackfill).mockImplementation(mockUseResumeBackfill as never)
 vi.mocked(useRetryBackfill).mockImplementation(mockUseRetryBackfill as never)
 
+const baseCabinet = {
+  cabinet_id: 'cabinet-1',
+  cabinet_name: 'Основной кабинет',
+  status: 'idle',
+  analytics_status: 'idle',
+  data_source: 'report',
+  oldest_available_date: null,
+  newest_available_date: null,
+  progress: null,
+  last_error: null,
+  started_at: null,
+  completed_at: null,
+  updated_at: '',
+} satisfies BackfillCabinetStatus
+
 function setOwnerUser() {
   mockUseAuth.mockReturnValue({
     user: { id: '1', email: 'owner@test.com', role: 'Owner', name: 'Owner' },
@@ -85,13 +101,33 @@ function setNoUser() {
   } as unknown as ReturnType<typeof useAuth>)
 }
 
-function setLoadedStatus(cabinets: unknown[] = []) {
+function setStatusQuery(overrides: Partial<ReturnType<typeof useBackfillStatus>>) {
   mockUseBackfillStatus.mockReturnValue({
-    data: cabinets,
+    data: [] as BackfillCabinetStatus[],
     isLoading: false,
+    isFetching: false,
+    isError: false,
+    isRefetchError: false,
     refetch: vi.fn(),
     dataUpdatedAt: Date.now(),
+    ...overrides,
   } as unknown as ReturnType<typeof useBackfillStatus>)
+}
+
+type RefetchResult = Awaited<
+  ReturnType<NonNullable<ReturnType<typeof useBackfillStatus>['refetch']>>
+>
+
+function createDeferredRefetch() {
+  let settle!: () => void
+  const refetch = vi.fn(
+    () => new Promise<RefetchResult>(resolve => (settle = () => resolve({} as RefetchResult)))
+  )
+  return { refetch, settle: () => settle() }
+}
+
+function setLoadedStatus(cabinets: BackfillCabinetStatus[] = []) {
+  setStatusQuery({ data: cabinets })
 
   mockUseStartBackfill.mockReturnValue({
     mutateAsync: vi.fn(),
@@ -164,7 +200,7 @@ describe('BackfillAdminPage - Header & Layout', () => {
   it('should not render a nested main landmark inside the dashboard shell', () => {
     const { container } = renderPage()
     expect(container.querySelectorAll('main')).toHaveLength(0)
-    expect(container.querySelector('section.min-h-screen')).toBeInTheDocument()
+    expect(container.querySelector('section.min-h-screen')).not.toBeInTheDocument()
   })
 
   it('should render page subtitle with description', () => {
@@ -201,19 +237,33 @@ describe('BackfillAdminPage - Actions Bar', () => {
     expect(screen.getByText('Обновить')).toBeInTheDocument()
   })
 
+  it('does not announce automatic polling as a user-requested refresh', () => {
+    setStatusQuery({ data: [baseCabinet], isFetching: true })
+
+    renderPage()
+
+    expect(screen.getByRole('button', { name: 'Обновить' })).not.toHaveAttribute('aria-disabled')
+    expect(screen.getByRole('status')).not.toHaveTextContent('Обновление данных')
+  })
+
   it('should show last updated timestamp when data loaded', () => {
     renderPage()
     expect(screen.getByText(/Обновлено:/)).toBeInTheDocument()
   })
 
-  it('should disable start button when mutation is pending', () => {
+  it('keeps the pending start trigger focusable while guarding repeated activation', async () => {
+    const user = userEvent.setup()
     mockUseStartBackfill.mockReturnValue({
       mutateAsync: vi.fn(),
       isPending: true,
     } as unknown as ReturnType<typeof useStartBackfill>)
 
     renderPage()
-    expect(screen.getByText('Запустить бэкфилл')).toBeDisabled()
+    const startButton = screen.getByRole('button', { name: 'Запустить бэкфилл' })
+    expect(startButton).not.toBeDisabled()
+    expect(startButton).toHaveAttribute('aria-disabled', 'true')
+    await user.click(startButton)
+    expect(screen.queryByRole('dialog', { name: 'Запуск бэкфилла' })).not.toBeInTheDocument()
   })
 
   it('should return focus to the start button after the controlled dialog closes', async () => {
@@ -230,23 +280,226 @@ describe('BackfillAdminPage - Actions Bar', () => {
   })
 })
 
-// ============================================================================
-// Loading State Tests
-// ============================================================================
+describe('BackfillAdminPage - Query truth states', () => {
+  it('does not present unknown initial data as a zero-valued summary', () => {
+    setStatusQuery({ data: undefined, isLoading: true, isFetching: true, dataUpdatedAt: 0 })
 
-describe('BackfillAdminPage - Loading State', () => {
-  it('should show loading state while fetching backfill status', () => {
-    mockUseBackfillStatus.mockReturnValue({
-      data: [],
-      isLoading: true,
-      refetch: vi.fn(),
+    const { container } = renderPage()
+
+    expect(screen.getByRole('heading', { name: 'Загружаем состояние бэкфилла' })).toBeVisible()
+    expect(screen.getByText('Данные ещё не получены')).toBeVisible()
+    expect(screen.getByText('Получаем данные')).toBeVisible()
+    expect(screen.queryByText('Нет кабинетов для бэкфилла')).not.toBeInTheDocument()
+    expect(container.querySelector('[data-context-id="custom:completed-pipelines"]')).toBeNull()
+    expect(screen.queryByRole('button', { name: 'Обновить' })).not.toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Запустить бэкфилл' })).toBeDisabled()
+  })
+
+  it('keeps a paused first query unresolved when no data has ever arrived', () => {
+    setStatusQuery({
+      data: undefined,
+      isLoading: false,
+      isFetching: false,
+      isPending: true,
+      isPaused: true,
       dataUpdatedAt: 0,
-    } as unknown as ReturnType<typeof useBackfillStatus>)
+    })
+
+    const { container } = renderPage()
+
+    expect(screen.getByRole('heading', { name: 'Загружаем состояние бэкфилла' })).toBeVisible()
+    expect(screen.queryByText('Нет кабинетов для бэкфилла')).not.toBeInTheDocument()
+    expect(container.querySelector('[data-context-id="custom:completed-pipelines"]')).toBeNull()
+    expect(screen.queryByRole('button', { name: 'Обновить' })).not.toBeInTheDocument()
+  })
+
+  it('presents a successful empty response as real zero counts and an empty list', () => {
+    setStatusQuery({ data: [], dataUpdatedAt: 1_788_000_000_000 })
+
+    const { container } = renderPage()
+
+    expect(screen.getByText('Нет кабинетов для бэкфилла')).toBeVisible()
+    expect(
+      container.querySelector('[data-context-id="custom:completed-pipelines"]')
+    ).toHaveTextContent('Завершено источников0')
+    expect(
+      container.querySelector('[data-context-id="custom:failed-pipelines"]')
+    ).toHaveTextContent('С ошибкой источников0')
+  })
+
+  it('retains usable cabinets while a background refresh is running', () => {
+    setStatusQuery({ data: [baseCabinet], isFetching: true })
 
     renderPage()
-    // The BackfillStatusTable handles its own loading display
-    expect(screen.getByText('Управление бэкфиллом')).toBeInTheDocument()
+
+    expect(screen.getAllByText(baseCabinet.cabinet_name)).not.toHaveLength(0)
+    expect(screen.queryByText('Обновление данных')).not.toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Обновить' })).not.toHaveAttribute('aria-disabled')
   })
+
+  it('announces one explicit refresh and locks the control until its promise settles', async () => {
+    const user = userEvent.setup()
+    const deferred = createDeferredRefetch()
+    setStatusQuery({ data: [baseCabinet], isFetching: true, refetch: deferred.refetch })
+
+    renderPage()
+    await user.click(screen.getByRole('button', { name: 'Обновить' }))
+
+    const refresh = screen.getByRole('button', { name: 'Обновить — выполняется' })
+    expect(screen.getByText('Обновление данных')).toBeVisible()
+    expect(refresh).toHaveAttribute('aria-disabled', 'true')
+    fireEvent.click(refresh)
+    expect(deferred.refetch).toHaveBeenCalledTimes(1)
+
+    await act(async () => deferred.settle())
+    await waitFor(() => expect(screen.getByRole('button', { name: 'Обновить' })).toBeEnabled())
+  })
+
+  it('shows an explicit initial failure and retries without fabricating an empty result', async () => {
+    const user = userEvent.setup()
+    const deferred = createDeferredRefetch()
+    setStatusQuery({
+      data: undefined,
+      isError: true,
+      isRefetchError: false,
+      refetch: deferred.refetch,
+      dataUpdatedAt: 0,
+    })
+
+    const { container } = renderPage()
+
+    expect(
+      screen.getByRole('heading', { name: 'Не удалось загрузить состояние бэкфилла' })
+    ).toBeVisible()
+    expect(screen.getByRole('alert')).toHaveTextContent('Сервер не вернул статусы кабинетов')
+    expect(screen.queryByText('Нет кабинетов для бэкфилла')).not.toBeInTheDocument()
+    expect(container.querySelector('[data-context-id="custom:completed-pipelines"]')).toBeNull()
+    await user.click(screen.getByRole('button', { name: 'Повторить загрузку' }))
+    expect(deferred.refetch).toHaveBeenCalledTimes(1)
+    expect(screen.getByRole('button', { name: 'Загрузка…' })).toBeDisabled()
+    expect(screen.getByText('Обновление данных')).toBeVisible()
+
+    await act(async () => deferred.settle())
+    await waitFor(() =>
+      expect(screen.getByRole('button', { name: 'Повторить загрузку' })).toBeEnabled()
+    )
+  })
+
+  it('retains cabinets and marks them stale after a background refresh failure', async () => {
+    const user = userEvent.setup()
+    const refetch = vi.fn()
+    setStatusQuery({
+      data: [baseCabinet],
+      isError: true,
+      isRefetchError: true,
+      refetch,
+      dataUpdatedAt: 1_788_000_000_000,
+    })
+
+    renderPage()
+
+    expect(
+      screen.getByRole('region', { name: 'Показаны ранее полученные данные' })
+    ).toHaveAttribute('data-state', 'stale')
+    expect(screen.getAllByText(baseCabinet.cabinet_name)).not.toHaveLength(0)
+    expect(screen.getByText('Данные требуют обновления')).toBeVisible()
+    expect(screen.getByText(/Текущие статусы могли измениться/)).toBeVisible()
+    expect(screen.getByRole('button', { name: 'Обновить' })).not.toHaveAttribute('aria-disabled')
+    await user.click(screen.getByRole('button', { name: 'Повторить обновление' }))
+    expect(refetch).toHaveBeenCalledTimes(1)
+  })
+
+  it('guards a retained-error retry tuple without announcing automatic fetching as live', () => {
+    const refetch = vi.fn()
+    setStatusQuery({
+      data: [baseCabinet],
+      isFetching: true,
+      isError: true,
+      isRefetchError: true,
+      refetch,
+    })
+
+    renderPage()
+
+    expect(screen.getAllByText(baseCabinet.cabinet_name)).not.toHaveLength(0)
+    expect(screen.getByText(/Текущие статусы могли измениться/)).toBeVisible()
+    const contextRefresh = screen.queryByRole('button', { name: 'Обновить' })
+    const staleRetry = screen.getByRole('button', { name: 'Обновление…' })
+    expect(contextRefresh).not.toBeInTheDocument()
+    expect(screen.queryByText('Обновление данных')).not.toBeInTheDocument()
+    expect(staleRetry).toBeDisabled()
+    expect(staleRetry).toHaveAttribute('aria-busy', 'true')
+
+    fireEvent.click(staleRetry)
+    expect(refetch).not.toHaveBeenCalled()
+  })
+
+  it('locks both stale-state refresh controls during an explicit retry', async () => {
+    const user = userEvent.setup()
+    const deferred = createDeferredRefetch()
+    setStatusQuery({
+      data: [baseCabinet],
+      isError: true,
+      isRefetchError: true,
+      refetch: deferred.refetch,
+    })
+
+    renderPage()
+    await user.click(screen.getByRole('button', { name: 'Повторить обновление' }))
+
+    const contextRefresh = screen.getByRole('button', { name: 'Обновить — выполняется' })
+    const staleRetry = screen.getByRole('button', { name: 'Обновление…' })
+    expect(contextRefresh).toHaveAttribute('aria-disabled', 'true')
+    expect(staleRetry).toBeDisabled()
+    expect(screen.getByText('Обновление данных')).toBeVisible()
+    fireEvent.click(contextRefresh)
+    fireEvent.click(staleRetry)
+    expect(deferred.refetch).toHaveBeenCalledTimes(1)
+
+    await act(async () => deferred.settle())
+    await waitFor(() =>
+      expect(screen.getByRole('button', { name: 'Повторить обновление' })).toBeEnabled()
+    )
+  })
+})
+
+describe('BackfillAdminPage - Durable job summaries', () => {
+  it('explains that queued or running work continues after leaving the page', () => {
+    setLoadedStatus([{ ...baseCabinet, status: 'in_progress', analytics_status: 'pending' }])
+
+    renderPage()
+
+    expect(
+      screen.getByText('Загрузка продолжится в фоне — страницу можно безопасно закрыть.')
+    ).toHaveClass('text-status-information')
+  })
+
+  it.each([
+    ['completed', 'failed', 1, 0, 0, 1],
+    ['failed', 'completed', 1, 0, 0, 1],
+    ['in_progress', 'failed', 0, 1, 0, 1],
+    ['paused', 'completed', 1, 0, 1, 0],
+  ] as const)(
+    'keeps pipeline truth for reports=%s and analytics=%s',
+    (status, analyticsStatus, completed, active, paused, failed) => {
+      setLoadedStatus([{ ...baseCabinet, status, analytics_status: analyticsStatus }])
+
+      const { container } = renderPage()
+
+      expect(
+        container.querySelector('[data-context-id="custom:completed-pipelines"]')
+      ).toHaveTextContent(`Завершено источников${completed}`)
+      expect(
+        container.querySelector('[data-context-id="custom:active-pipelines"]')
+      ).toHaveTextContent(`В работе источников${active}`)
+      expect(
+        container.querySelector('[data-context-id="custom:paused-pipelines"]')
+      ).toHaveTextContent(`На паузе источников${paused}`)
+      expect(
+        container.querySelector('[data-context-id="custom:failed-pipelines"]')
+      ).toHaveTextContent(`С ошибкой источников${failed}`)
+    }
+  )
 })
 
 // ============================================================================

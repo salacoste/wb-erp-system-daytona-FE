@@ -47,9 +47,10 @@ function RetryButton({
       disabled={inFlight}
       aria-label={`Повторить загрузку «${label}» для ${cabinetName}`}
       aria-busy={inFlight}
+      className="min-h-11 whitespace-normal"
     >
       {inFlight ? (
-        <Loader2 className="mr-1 h-4 w-4 animate-spin" />
+        <Loader2 className="mr-1 h-4 w-4 animate-spin motion-reduce:animate-none" />
       ) : (
         <RotateCcw className="mr-1 h-4 w-4" />
       )}

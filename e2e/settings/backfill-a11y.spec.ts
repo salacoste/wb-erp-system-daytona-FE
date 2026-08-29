@@ -22,11 +22,38 @@
 
 import { test, expect } from '../fixtures/network-test'
 import AxeBuilder from '@axe-core/playwright'
-import { MUTATING_E2E_SKIP_REASON, shouldSkipMutatingE2E } from '../fixtures/mutation-guard'
+import type { Locator, Page } from '@playwright/test'
 
 // Routes
 const BACKFILL_ADMIN_ROUTE = '/settings/backfill'
 const ORDERS_ANALYTICS_ROUTE = '/analytics/orders'
+
+const BACKFILL_LAYOUT_CASES = [320, 390, 768, 1024, 1280, 1440] as const
+const DENSE_BACKFILL_FIXTURE = [
+  ['completed', 'completed', 100, null],
+  ['in_progress', 'pending', 42, null],
+  ['failed', 'completed', 17, 'Отчёты не загрузились после повторной попытки'],
+  ['paused', 'completed', 64, null],
+  ['completed', 'failed', 83, 'Аналитика временно недоступна'],
+  ['pending', 'not_started', 0, null],
+  ['not_started', 'not_started', 0, null],
+  ['in_progress', 'failed', 71, 'Ошибка смешанного сценария'],
+].map(([reportsStatus, analyticsStatus, overallProgress, lastError], index) => ({
+  cabinetId: `visual-evidence-${index + 1}`,
+  cabinetName:
+    index === 0
+      ? 'Очень длинное название кабинета для проверки переноса русскоязычного текста без обрезки и горизонтальной прокрутки'
+      : `Кабинет доказательной матрицы № ${index + 1}`,
+  reportsStatus,
+  analyticsStatus,
+  overallProgress,
+  progress: {
+    percentage: overallProgress,
+    estimated_remaining_seconds: reportsStatus === 'in_progress' ? 3661 : null,
+  },
+  lastError,
+  updatedAt: '2026-08-29T09:00:00Z',
+}))
 
 /**
  * Story 162.8: bounded settle for the backfill admin page. The page resolves
@@ -48,6 +75,83 @@ async function expectBackfillOwnerShellOrRedirect(page: import('@playwright/test
     timeout: 15000,
   })
   return false
+}
+
+async function expectFiniteAnimationsToSettle(root: Locator) {
+  await expect
+    .poll(() =>
+      root.evaluate(
+        element =>
+          element.getAnimations({ subtree: true }).filter(animation => {
+            const timing = animation.effect?.getComputedTiming()
+            return (
+              animation.playState === 'running' &&
+              timing !== undefined &&
+              Number.isFinite(timing.iterations)
+            )
+          }).length
+      )
+    )
+    .toBe(0)
+}
+
+async function openDenseBackfillFixture(page: Page, width: number) {
+  await page.setViewportSize({ width, height: 900 })
+  await page.route('**/v1/admin/backfill/status', route =>
+    route.fulfill({
+      status: 200,
+      contentType: 'application/json',
+      body: JSON.stringify(DENSE_BACKFILL_FIXTURE),
+    })
+  )
+  await page.goto(BACKFILL_ADMIN_ROUTE, { waitUntil: 'domcontentloaded' })
+  await page.locator('main').waitFor({ state: 'visible' })
+
+  const isOwner = await expectBackfillOwnerShellOrRedirect(page)
+  if (!isOwner) {
+    test.skip(true, 'Redirected off /settings/backfill — configured storage state is not Owner')
+  }
+
+  await expect(
+    page.locator(width < 768 ? '[data-table-narrow-content]' : '[data-table-frame]')
+  ).toBeVisible()
+  await expect(
+    page.getByText(DENSE_BACKFILL_FIXTURE[0].cabinetName, { exact: true }).filter({ visible: true })
+  ).toBeVisible()
+}
+
+async function applySettledTheme(page: Page, theme: 'light' | 'dark') {
+  await page.evaluate(selectedTheme => {
+    document.documentElement.classList.toggle('dark', selectedTheme === 'dark')
+    document.documentElement.style.colorScheme = selectedTheme
+  }, theme)
+  await expect
+    .poll(() =>
+      page.evaluate(() => ({
+        dark: document.documentElement.classList.contains('dark'),
+        colorScheme: getComputedStyle(document.documentElement).colorScheme,
+      }))
+    )
+    .toEqual({ dark: theme === 'dark', colorScheme: theme })
+  await expectFiniteAnimationsToSettle(page.locator('main'))
+}
+
+async function expectMainWithoutHorizontalOverflow(page: Page) {
+  const dimensions = await page.locator('main').evaluate(element => ({
+    clientWidth: element.clientWidth,
+    scrollWidth: element.scrollWidth,
+  }))
+  expect(dimensions.clientWidth).toBeGreaterThan(0)
+  expect(dimensions.scrollWidth).toBeLessThanOrEqual(dimensions.clientWidth + 1)
+}
+
+async function expectTouchGeometry(target: Locator, viewportWidth: number) {
+  const box = await target.boundingBox()
+  expect(box).not.toBeNull()
+  expect(box?.width).toBeGreaterThanOrEqual(44)
+  expect(box?.height).toBeGreaterThanOrEqual(44)
+  expect(box?.x).toBeGreaterThan(-1)
+  expect((box?.x ?? 0) + (box?.width ?? 0)).toBeLessThanOrEqual(viewportWidth + 1)
 }
 
 test.describe('Epic 51-FE: Accessibility - Backfill Admin Page', () => {
@@ -199,82 +303,52 @@ test.describe('Epic 51-FE: Accessibility - Backfill Admin Page', () => {
     })
   })
 
-  test.describe('Start Backfill Dialog Accessibility @mutating', () => {
-    test.skip(shouldSkipMutatingE2E(), MUTATING_E2E_SKIP_REASON)
-
+  test.describe('Start Backfill Dialog Accessibility', () => {
     test.beforeEach(async ({ page }) => {
       await page.goto(BACKFILL_ADMIN_ROUTE, { waitUntil: 'domcontentloaded' })
       await page.locator('main').waitFor({ state: 'visible' })
 
-      if (!page.url().includes('/settings/backfill')) {
-        test.skip(true, 'Backfill route not reached — /settings/backfill unavailable in this run')
+      const isOwner = await expectBackfillOwnerShellOrRedirect(page)
+      if (!isOwner) {
+        test.skip(true, 'Redirected off /settings/backfill — configured storage state is not Owner')
       }
     })
 
     test('should have no WCAG violations in start dialog', async ({ page }) => {
-      const startButton = page.locator('button:has-text("Запустить")').first()
-      if (await startButton.isVisible()) {
-        await startButton.click()
+      await page.getByRole('button', { name: 'Запустить бэкфилл', exact: true }).click()
+      const dialog = page.getByRole('dialog', { name: 'Запуск бэкфилла' })
+      await expect(dialog).toBeVisible()
+      await expect(dialog.getByRole('combobox', { name: 'Кабинет' })).toBeFocused()
+      await expectFiniteAnimationsToSettle(page.locator('body'))
 
-        // Story 162.8: observe the dialog open via a bounded wait (replaces
-        // the prior elapsed 500ms). A failed open surfaces here instead of
-        // passing the a11y scan against a half-rendered dialog.
-        const dialog = page.getByRole('dialog')
-        const dialogVisible = await dialog
-          .waitFor({ state: 'visible', timeout: 15000 })
-          .then(() => true)
-          .catch(() => false)
-        if (dialogVisible) {
-          const accessibilityScanResults = await new AxeBuilder({ page })
-            .withTags(['wcag2a', 'wcag2aa'])
-            .include('[role="dialog"]')
-            .analyze()
+      const accessibilityScanResults = await new AxeBuilder({ page })
+        .withTags(['wcag2a', 'wcag2aa'])
+        .include('[role="dialog"]')
+        .analyze()
 
-          expect(accessibilityScanResults.violations).toEqual([])
-
-          // Close dialog
-          await page.keyboard.press('Escape')
-        }
-      }
+      expect(accessibilityScanResults.violations).toEqual([])
+      await page.keyboard.press('Escape')
     })
 
     test('should trap focus within dialog', async ({ page }) => {
-      const startButton = page.locator('button:has-text("Запустить")').first()
-      if (await startButton.isVisible()) {
-        await startButton.click()
+      await page.getByRole('button', { name: 'Запустить бэкфилл', exact: true }).click()
+      const dialog = page.getByRole('dialog', { name: 'Запуск бэкфилла' })
+      await expect(dialog).toBeVisible()
 
-        const dialog = page.getByRole('dialog')
-        if (await dialog.isVisible()) {
-          // Tab through all elements multiple times
-          for (let i = 0; i < 10; i++) {
-            await page.keyboard.press('Tab')
-          }
-
-          // Focus should still be within dialog
-          const activeInDialog = await page.evaluate(() => {
-            const dialog = document.querySelector('[role="dialog"]')
-            return dialog?.contains(document.activeElement)
-          })
-
-          expect(activeInDialog).toBeTruthy()
-
-          // Close dialog
-          await page.keyboard.press('Escape')
-        }
+      for (let i = 0; i < 10; i++) {
+        await page.keyboard.press('Tab')
       }
+
+      expect(await dialog.evaluate(element => element.contains(document.activeElement))).toBe(true)
+      await page.keyboard.press('Escape')
     })
 
     test('should close dialog with Escape key', async ({ page }) => {
-      const startButton = page.locator('button:has-text("Запустить")').first()
-      if (await startButton.isVisible()) {
-        await startButton.click()
-
-        const dialog = page.getByRole('dialog')
-        if (await dialog.isVisible()) {
-          await page.keyboard.press('Escape')
-          await expect(dialog).not.toBeVisible()
-        }
-      }
+      await page.getByRole('button', { name: 'Запустить бэкфилл', exact: true }).click()
+      const dialog = page.getByRole('dialog', { name: 'Запуск бэкфилла' })
+      await expect(dialog).toBeVisible()
+      await page.keyboard.press('Escape')
+      await expect(dialog).not.toBeVisible()
     })
 
     test('should have proper dialog ARIA attributes', async ({ page }) => {
@@ -282,18 +356,13 @@ test.describe('Epic 51-FE: Accessibility - Backfill Admin Page', () => {
         name: 'Запустить бэкфилл',
         exact: true,
       })
-      if (await startButton.isVisible()) {
-        await startButton.click()
+      await startButton.click()
 
-        const dialog = page.getByRole('dialog', { name: 'Запуск бэкфилла', exact: true })
-        if (await dialog.isVisible()) {
-          await expect(dialog).toHaveAttribute('aria-labelledby', /\S+/)
-          await expect(dialog).toHaveAttribute('aria-describedby', /\S+/)
-
-          // Close dialog
-          await page.keyboard.press('Escape')
-        }
-      }
+      const dialog = page.getByRole('dialog', { name: 'Запуск бэкфилла', exact: true })
+      await expect(dialog).toBeVisible()
+      await expect(dialog).toHaveAttribute('aria-labelledby', /\S+/)
+      await expect(dialog).toHaveAttribute('aria-describedby', /\S+/)
+      await page.keyboard.press('Escape')
     })
 
     test('should return focus to trigger after dialog closes', async ({ page }) => {
@@ -334,7 +403,7 @@ test.describe('Epic 51-FE: Accessibility - Backfill Admin Page', () => {
     })
 
     test('should have touch-friendly target sizes (min 44x44)', async ({ page }) => {
-      const buttons = page.locator('button')
+      const buttons = page.locator('main button:visible')
       const buttonCount = await buttons.count()
 
       for (let i = 0; i < Math.min(buttonCount, 5); i++) {
@@ -342,9 +411,8 @@ test.describe('Epic 51-FE: Accessibility - Backfill Admin Page', () => {
         if (await button.isVisible()) {
           const box = await button.boundingBox()
           if (box) {
-            // WCAG 2.1 AAA recommends 44x44, AA recommends 24x24 minimum
-            expect(box.width).toBeGreaterThanOrEqual(24)
-            expect(box.height).toBeGreaterThanOrEqual(24)
+            expect(box.width).toBeGreaterThanOrEqual(44)
+            expect(box.height).toBeGreaterThanOrEqual(44)
           }
         }
       }
@@ -362,8 +430,157 @@ test.describe('Epic 51-FE: Accessibility - Backfill Admin Page', () => {
     })
   })
 
+  test.describe('Story 173.2 Visual and Reflow Evidence Matrix', () => {
+    for (const theme of ['light', 'dark'] as const) {
+      for (const width of BACKFILL_LAYOUT_CASES) {
+        test(`keeps the ${theme} ${width}px layout responsive without main overflow`, async ({
+          page,
+        }) => {
+          await openDenseBackfillFixture(page, width)
+          await applySettledTheme(page, theme)
+
+          const narrowContent = page.locator('[data-table-narrow-content]')
+          const wideContent = page.locator('[data-table-wide-content]')
+          if (width < 768) {
+            await expect(narrowContent).toBeVisible()
+            await expect(wideContent).toBeHidden()
+            await expect(narrowContent.locator(':scope > div > div')).toHaveCount(
+              DENSE_BACKFILL_FIXTURE.length
+            )
+          } else {
+            await expect(narrowContent).toBeHidden()
+            await expect(wideContent).toBeVisible()
+            await expect(wideContent.locator('tbody tr')).toHaveCount(DENSE_BACKFILL_FIXTURE.length)
+          }
+          await expectMainWithoutHorizontalOverflow(page)
+        })
+      }
+
+      test(`reflows dense ${theme} content at 200% zoom without main overflow`, async ({
+        page,
+      }) => {
+        await openDenseBackfillFixture(page, 640)
+        await applySettledTheme(page, theme)
+        await page.evaluate(() => {
+          document.documentElement.style.zoom = '2'
+        })
+        await expect
+          .poll(() => page.evaluate(() => getComputedStyle(document.documentElement).zoom))
+          .toBe('2')
+        await expectFiniteAnimationsToSettle(page.locator('main'))
+
+        const longCabinetName = page
+          .getByText(DENSE_BACKFILL_FIXTURE[0].cabinetName, { exact: true })
+          .filter({ visible: true })
+        await expect(longCabinetName).toBeVisible()
+        const textDimensions = await longCabinetName.evaluate(element => ({
+          clientWidth: element.clientWidth,
+          scrollWidth: element.scrollWidth,
+        }))
+        expect(textDimensions.scrollWidth).toBeLessThanOrEqual(textDimensions.clientWidth + 1)
+        await expect(page.locator('[data-table-narrow-content]')).toBeVisible()
+        await expectMainWithoutHorizontalOverflow(page)
+      })
+    }
+
+    test('keeps portaled dialog targets touch-friendly inside the 390px viewport', async ({
+      page,
+    }) => {
+      await openDenseBackfillFixture(page, 390)
+      await page.getByRole('button', { name: 'Запустить бэкфилл', exact: true }).click()
+      const startDialog = page.getByRole('dialog', { name: 'Запуск бэкфилла' })
+      await expectFiniteAnimationsToSettle(page.locator('body'))
+      const cabinetSelect = startDialog.getByRole('combobox', { name: 'Кабинет' })
+      await expectTouchGeometry(cabinetSelect, 390)
+      await cabinetSelect.click()
+      await expectFiniteAnimationsToSettle(page.locator('body'))
+
+      const portaledOptions = page.getByRole('option')
+      expect(await portaledOptions.count()).toBeGreaterThan(0)
+      for (let index = 0; index < (await portaledOptions.count()); index++) {
+        await expectTouchGeometry(portaledOptions.nth(index), 390)
+      }
+      await page.keyboard.press('Escape')
+      await expect(page.getByRole('listbox')).not.toBeVisible()
+      await page.keyboard.press('Escape')
+      await expect(startDialog).not.toBeVisible()
+
+      await page
+        .getByRole('button', {
+          name: `Показать ошибку для ${DENSE_BACKFILL_FIXTURE[2].cabinetName}`,
+        })
+        .click()
+      const errorDialog = page.getByRole('dialog', { name: /Ошибка бэкфилла/ })
+      await expectFiniteAnimationsToSettle(page.locator('body'))
+      const visibleClose = errorDialog
+        .locator('button:not(:has(.sr-only))')
+        .filter({ hasText: 'Закрыть' })
+      await expectTouchGeometry(visibleClose, 390)
+    })
+
+    test('has no WCAG 2.1 AA violations at the light 320px matrix edge', async ({ page }) => {
+      await openDenseBackfillFixture(page, 320)
+      await applySettledTheme(page, 'light')
+
+      const results = await new AxeBuilder({ page })
+        .include('main')
+        .withTags(['wcag2a', 'wcag2aa'])
+        .analyze()
+      expect(results.violations).toEqual([])
+    })
+
+    test('has no WCAG 2.1 AA violations at the dark 1440px matrix edge', async ({ page }) => {
+      await openDenseBackfillFixture(page, 1440)
+      await applySettledTheme(page, 'dark')
+
+      const results = await new AxeBuilder({ page })
+        .include('main')
+        .withTags(['wcag2a', 'wcag2aa'])
+        .analyze()
+      expect(results.violations).toEqual([])
+    })
+  })
+
   test.describe('Color Contrast', () => {
     test.beforeEach(async ({ page }) => {
+      await page.route('**/v1/admin/backfill/status', route =>
+        route.fulfill({
+          status: 200,
+          contentType: 'application/json',
+          body: JSON.stringify([
+            {
+              cabinetId: 'contrast-running',
+              cabinetName: 'Контраст — выполняется',
+              reportsStatus: 'in_progress',
+              analyticsStatus: 'pending',
+              overallProgress: 42,
+              progress: { percentage: 42, estimated_remaining_seconds: 600 },
+              lastError: null,
+              updatedAt: '2026-08-29T09:00:00Z',
+            },
+            {
+              cabinetId: 'contrast-completed',
+              cabinetName: 'Контраст — завершено',
+              reportsStatus: 'completed',
+              analyticsStatus: 'completed',
+              overallProgress: 100,
+              progress: { percentage: 100, estimated_remaining_seconds: null },
+              lastError: null,
+              updatedAt: '2026-08-29T09:00:00Z',
+            },
+            {
+              cabinetId: 'contrast-failed',
+              cabinetName: 'Контраст — ошибка',
+              reportsStatus: 'failed',
+              analyticsStatus: 'paused',
+              overallProgress: 17,
+              progress: { percentage: 17, estimated_remaining_seconds: null },
+              lastError: 'Ошибка контрастного сценария',
+              updatedAt: '2026-08-29T09:00:00Z',
+            },
+          ]),
+        })
+      )
       await page.goto(BACKFILL_ADMIN_ROUTE, { waitUntil: 'domcontentloaded' })
       await page.locator('main').waitFor({ state: 'visible' })
 
@@ -374,46 +591,29 @@ test.describe('Epic 51-FE: Accessibility - Backfill Admin Page', () => {
       }
     })
 
-    test('should have sufficient color contrast for status badges', async ({ page }) => {
-      const badges = page.locator('[class*="badge"]')
-      const badgeCount = await badges.count()
+    for (const theme of ['light', 'dark'] as const) {
+      test(`has deterministic status and table contrast in ${theme} theme`, async ({ page }) => {
+        await page.evaluate(selectedTheme => {
+          document.documentElement.classList.toggle('dark', selectedTheme === 'dark')
+          document.documentElement.style.colorScheme = selectedTheme
+        }, theme)
 
-      for (let i = 0; i < Math.min(badgeCount, 5); i++) {
-        const badge = badges.nth(i)
-        if (await badge.isVisible()) {
-          const colors = await badge.evaluate(el => {
-            const styles = window.getComputedStyle(el)
-            return {
-              color: styles.color,
-              backgroundColor: styles.backgroundColor,
-            }
-          })
+        const badges = page.locator('[data-slot="backfill-status-badge"]:visible')
+        const tableCells = page.locator('table:visible tbody td')
+        await expect(badges).toHaveCount(6)
+        expect(await tableCells.count()).toBeGreaterThan(0)
+        await expect(
+          page.getByRole('button', { name: 'Обновить', exact: true })
+        ).not.toHaveAttribute('aria-disabled', 'true')
+        await expectFiniteAnimationsToSettle(page.locator('main'))
 
-          // Log colors for manual verification
-          console.log(`Badge ${i} colors:`, colors)
-
-          // Colors should be defined
-          expect(colors.color).toBeTruthy()
-        }
-      }
-    })
-
-    test('should have sufficient contrast for table text', async ({ page }) => {
-      const tableCell = page.locator('table tbody td').first()
-      if (await tableCell.isVisible()) {
-        const colors = await tableCell.evaluate(el => {
-          const styles = window.getComputedStyle(el)
-          return {
-            color: styles.color,
-            backgroundColor: styles.backgroundColor,
-          }
-        })
-
-        // Text color should be defined
-        expect(colors.color).toBeTruthy()
-        console.log('Table cell colors:', colors)
-      }
-    })
+        const contrastResults = await new AxeBuilder({ page })
+          .include('main')
+          .withRules(['color-contrast'])
+          .analyze()
+        expect(contrastResults.violations).toEqual([])
+      })
+    }
   })
 
   test.describe('Live Regions and Announcements', () => {
@@ -454,25 +654,30 @@ test.describe('Epic 51-FE: Accessibility - Backfill Admin Page', () => {
     })
 
     test('should have aria-live regions for dynamic content', async ({ page }) => {
-      // Check for aria-live regions (used for toasts, progress updates, etc.)
-      const liveRegions = page.locator('[aria-live]')
-      const liveRegionCount = await liveRegions.count()
-
-      test.skip(
-        liveRegionCount === 0,
-        'Configured running Backfill fixture exposes progressbar semantics but no aria-live region'
-      )
-      await expect(liveRegions.first()).toHaveAttribute('aria-live', /^(polite|assertive)$/)
+      await expect(
+        page.getByRole('status').filter({ hasText: 'Данные актуальны' })
+      ).toHaveAttribute('aria-live', 'polite')
     })
 
     test('should announce progress changes to assistive technology', async ({ page }) => {
       // Check for progress indicators with proper ARIA
-      const progressIndicators = page.locator('[role="progressbar"], [aria-valuenow]')
+      const progressIndicators = page.locator('[role="progressbar"]:visible')
       await expect(progressIndicators).toHaveCount(1)
       await expect(progressIndicators.first()).toHaveAttribute('aria-label', 'Прогресс: 42%')
       await expect(progressIndicators.first()).toHaveAttribute('aria-valuemin', '0')
       await expect(progressIndicators.first()).toHaveAttribute('aria-valuemax', '100')
       await expect(progressIndicators.first()).toHaveAttribute('aria-valuenow', '42')
+    })
+
+    test('honors reduced motion for active progress', async ({ page }) => {
+      await page.emulateMedia({ reducedMotion: 'reduce' })
+      const progressIndicator = page.locator('[role="progressbar"]:visible')
+      await expect(progressIndicator).toHaveClass(/motion-reduce:animate-none/)
+      await expect(progressIndicator).toHaveClass(/motion-reduce:transition-none/)
+      const reducedTransitionSeconds = await progressIndicator.evaluate(element =>
+        Number.parseFloat(getComputedStyle(element).transitionDuration)
+      )
+      expect(reducedTransitionSeconds).toBeLessThan(0.001)
     })
   })
 })
@@ -588,43 +793,3 @@ test.describe('Epic 51-FE: Accessibility - FBS Orders Analytics Page', () => {
     expect(accessibilityScanResults.violations).toEqual([])
   })
 })
-
-/**
- * QA HANDOFF NOTES:
- *
- * 1. Install @axe-core/playwright:
- *    ```bash
- *    npm install --save-dev @axe-core/playwright
- *    ```
- *
- * 2. Run accessibility tests:
- *    ```bash
- *    npx playwright test e2e/settings/backfill-a11y.spec.ts
- *    ```
- *
- * 3. Manual screen reader testing required:
- *    - macOS: VoiceOver (Cmd+F5)
- *    - Windows: NVDA or JAWS
- *    - Mobile: TalkBack (Android), VoiceOver (iOS)
- *
- * 4. Expected results:
- *    - 0 axe-core violations
- *    - All keyboard navigation tests pass
- *    - Focus trap works in dialogs
- *    - Screen reader announces page structure correctly
- *
- * 5. Key WCAG 2.1 AA requirements checked:
- *    - 1.3.1 Info and Relationships (headings, tables, landmarks)
- *    - 1.4.3 Contrast (text, badges, buttons)
- *    - 2.1.1 Keyboard (all interactive elements)
- *    - 2.1.2 No Keyboard Trap (dialogs)
- *    - 2.4.3 Focus Order (logical tab sequence)
- *    - 2.4.7 Focus Visible (focus indicators)
- *    - 4.1.2 Name, Role, Value (ARIA attributes)
- *
- * 6. Known limitations:
- *    - Automated tests catch ~30-40% of accessibility issues
- *    - Manual screen reader testing is REQUIRED for full compliance
- *    - Color contrast calculations are logged for manual verification
- *    - Backfill admin tests require Owner role for access
- */

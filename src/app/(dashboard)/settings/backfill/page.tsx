@@ -1,48 +1,26 @@
-/**
- * Backfill Admin Page
- * Story 51.11-FE: Backfill Admin Page
- * Epic 51-FE: FBS Historical Analytics UI (365 Days)
- *
- * Owner-only admin page for managing historical data backfill.
- * Provides status monitoring and control for FBS data loading.
- */
-
 'use client'
 
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useRouter } from 'next/navigation'
-import Link from 'next/link'
-import { Database, RefreshCw, Plus } from 'lucide-react'
+import { Plus } from 'lucide-react'
 import { useAuth } from '@/hooks/useAuth'
 import { useBackfillStatus } from '@/hooks/useBackfillAdmin'
 import { Button } from '@/components/ui/button'
-import { Skeleton } from '@/components/ui/skeleton'
+import { ContextBar, PageHeader } from '@/components/product'
 import { BackfillStatusTable } from './components/BackfillStatusTable'
 import { StartBackfillDialog } from './components/StartBackfillDialog'
+import {
+  BackfillInitialErrorState,
+  BackfillInitialLoadingState,
+  BackfillPageSkeleton,
+  BackfillStaleState,
+} from './components/backfill-presentation'
 import { useBackfillHandlers } from './use-backfill-handlers'
-
-// ============================================================================
-// Loading Skeleton Component
-// ============================================================================
-
-function BackfillPageSkeleton() {
-  return (
-    <div className="container py-6 space-y-6">
-      <Skeleton className="h-4 w-48" data-testid="skeleton" />
-      <Skeleton className="h-8 w-64" data-testid="skeleton" />
-      <Skeleton className="h-4 w-96" data-testid="skeleton" />
-      <Skeleton className="h-10 w-full max-w-md" data-testid="skeleton" />
-      <Skeleton className="h-96 w-full" data-testid="skeleton" />
-    </div>
-  )
-}
-
-// ============================================================================
-// Main Page Component
-// ============================================================================
 
 export default function BackfillAdminPage() {
   const startButtonRef = useRef<HTMLButtonElement>(null)
+  const manualRefreshInFlightRef = useRef(false)
+  const [isManualRefreshing, setIsManualRefreshing] = useState(false)
   const router = useRouter()
   const { user } = useAuth()
   const isOwner = user?.role === 'Owner'
@@ -61,110 +39,162 @@ export default function BackfillAdminPage() {
     handleRetrySource,
   } = useBackfillHandlers()
 
-  // Fetch backfill status with polling only for owners; managers must not call owner-only API.
   const {
-    data: cabinets = [],
-    isLoading,
+    data: cabinets,
+    isFetching,
+    isError = false,
+    isRefetchError = false,
     refetch,
     dataUpdatedAt,
-  } = useBackfillStatus({
-    enabled: isOwner,
-  })
+  } = useBackfillStatus({ enabled: isOwner })
 
-  // Owner check - redirect non-owners after mount to avoid router updates during render.
   useEffect(() => {
-    if (user && !isOwner) {
-      router.push('/dashboard')
-    }
+    if (user && !isOwner) router.push('/dashboard')
   }, [isOwner, router, user])
 
-  // Loading/redirect state while checking auth or redirecting non-owners.
-  if (!user || !isOwner) {
-    return <BackfillPageSkeleton />
-  }
+  if (!user || !isOwner) return <BackfillPageSkeleton />
+  const hasUsableData = cabinets !== undefined
+  const visibleCabinets = cabinets ?? []
+  const isInitialError = !hasUsableData && isError
+  const isInitialPending = !hasUsableData && !isInitialError
+  const isBackgroundError = hasUsableData && isRefetchError
+  const isRetainedRetryFetching = isBackgroundError && isFetching
+  const isRefreshBlocked = isManualRefreshing || isRetainedRetryFetching
+  const lastUpdated =
+    hasUsableData && dataUpdatedAt
+      ? new Date(dataUpdatedAt).toLocaleTimeString('ru-RU', { timeZone: 'Europe/Moscow' })
+      : null
 
-  // Europe/Moscow freshness stamp (project rule: all times are Moscow, not browser-local).
-  const lastUpdated = dataUpdatedAt
-    ? new Date(dataUpdatedAt).toLocaleTimeString('ru-RU', { timeZone: 'Europe/Moscow' })
-    : null
+  const isActive = (status: (typeof visibleCabinets)[number]['status']) =>
+    status === 'pending' || status === 'in_progress'
+  const pipelineStatuses = visibleCabinets.flatMap(cabinet => [
+    cabinet.status,
+    cabinet.analytics_status,
+  ])
+  const activeCount = pipelineStatuses.filter(isActive).length
+  const completedCount = pipelineStatuses.filter(status => status === 'completed').length
+  const pausedCount = pipelineStatuses.filter(status => status === 'paused').length
+  const failedCount = pipelineStatuses.filter(status => status === 'failed').length
+  const contextState = isInitialError
+    ? 'unavailable'
+    : isBackgroundError
+      ? 'stale'
+      : lastUpdated
+        ? 'fresh'
+        : 'default'
+  const handleManualRefresh = async () => {
+    if (manualRefreshInFlightRef.current || isRetainedRetryFetching) return
+
+    manualRefreshInFlightRef.current = true
+    setIsManualRefreshing(true)
+    try {
+      await refetch()
+    } finally {
+      manualRefreshInFlightRef.current = false
+      setIsManualRefreshing(false)
+    }
+  }
+  const statusTable = (
+    <BackfillStatusTable
+      cabinets={visibleCabinets}
+      onPause={handlePause}
+      onResume={handleResume}
+      onRetry={handleRetry}
+      onRetrySource={handleRetrySource}
+      pausingCabinetId={pausingId}
+      resumingCabinetId={resumingId}
+      retryingCabinetId={retryingId}
+      retryingSourceKeys={retryingSourceKeys}
+    />
+  )
 
   return (
-    <section className="min-h-screen bg-background">
-      {/* Page Header */}
-      <div className="bg-card border-b border-border">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-          {/* Breadcrumbs */}
-          <nav className="text-sm text-muted-foreground mb-2" aria-label="Breadcrumb">
-            <Link href="/dashboard" className="hover:text-foreground">
-              Главная
-            </Link>
-            {' > '}
-            <Link href="/settings" className="hover:text-foreground">
-              Настройки
-            </Link>
-            {' > '}
-            <span className="text-foreground">Бэкфилл</span>
-          </nav>
-
-          {/* Header */}
-          <div className="flex items-center gap-3">
-            <Database className="h-8 w-8 text-muted-foreground" />
-            <div>
-              <h1 className="text-2xl font-bold text-foreground">Управление бэкфиллом</h1>
-              <p className="text-muted-foreground">Загрузка исторических данных FBS за 365 дней</p>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Page Content */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-        {/* Actions Bar */}
-        <div className="mb-6 flex flex-wrap items-center justify-between gap-4">
+    <section className="space-y-6 py-2">
+      <PageHeader
+        title="Управление бэкфиллом"
+        description="Загрузка исторических данных FBS за 365 дней"
+        breadcrumbs={[
+          { label: 'Главная', href: '/dashboard' },
+          { label: 'Настройки', href: '/settings' },
+          { label: 'Бэкфилл' },
+        ]}
+        busy={isInitialPending}
+        actions={
           <Button
             ref={startButtonRef}
-            onClick={() => setIsStartDialogOpen(true)}
-            disabled={startMutation.isPending}
+            onClick={() => !startMutation.isPending && hasUsableData && setIsStartDialogOpen(true)}
+            disabled={!hasUsableData}
+            aria-disabled={startMutation.isPending || !hasUsableData}
+            className="min-h-11 whitespace-normal"
           >
             <Plus className="mr-2 h-4 w-4" />
             Запустить бэкфилл
           </Button>
+        }
+        status={
+          hasUsableData && activeCount > 0 ? (
+            <p className="rounded-md border border-status-information/40 bg-status-information/10 px-3 py-2 text-sm text-status-information">
+              Загрузка продолжится в фоне — страницу можно безопасно закрыть.
+            </p>
+          ) : undefined
+        }
+      />
+      <ContextBar
+        freshness={
+          lastUpdated
+            ? `Обновлено: ${lastUpdated} (МСК)`
+            : hasUsableData
+              ? 'Успешный ответ получен'
+              : 'Данные ещё не получены'
+        }
+        items={
+          hasUsableData
+            ? [
+                { id: 'completed-pipelines', label: 'Завершено источников', value: completedCount },
+                { id: 'active-pipelines', label: 'В работе источников', value: activeCount },
+                { id: 'paused-pipelines', label: 'На паузе источников', value: pausedCount },
+                { id: 'failed-pipelines', label: 'С ошибкой источников', value: failedCount },
+              ]
+            : []
+        }
+        state={contextState}
+        stateLabel={isInitialPending ? 'Получаем данные' : undefined}
+        onRefresh={
+          hasUsableData && (!isRetainedRetryFetching || isManualRefreshing)
+            ? () => void handleManualRefresh()
+            : undefined
+        }
+        isRefreshing={isManualRefreshing}
+        refreshLabel="Обновить"
+      />
 
-          <div className="flex items-center gap-4">
-            {lastUpdated && (
-              <span className="text-sm text-muted-foreground">Обновлено: {lastUpdated}</span>
-            )}
-            <Button variant="outline" size="sm" onClick={() => refetch()} disabled={isLoading}>
-              <RefreshCw className={`mr-2 h-4 w-4 ${isLoading ? 'animate-spin' : ''}`} />
-              Обновить
-            </Button>
-          </div>
-        </div>
-
-        {/* Status Table */}
-        <BackfillStatusTable
-          cabinets={cabinets}
-          isLoading={isLoading}
-          onPause={handlePause}
-          onResume={handleResume}
-          onRetry={handleRetry}
-          onRetrySource={handleRetrySource}
-          pausingCabinetId={pausingId}
-          resumingCabinetId={resumingId}
-          retryingCabinetId={retryingId}
-          retryingSourceKeys={retryingSourceKeys}
+      {isInitialError ? (
+        <BackfillInitialErrorState
+          isRefreshing={isManualRefreshing}
+          onRetry={handleManualRefresh}
         />
+      ) : isInitialPending ? (
+        <BackfillInitialLoadingState />
+      ) : isBackgroundError ? (
+        <BackfillStaleState
+          isRefreshing={isRefreshBlocked}
+          lastUpdated={lastUpdated}
+          onRetry={() => void handleManualRefresh()}
+        >
+          {statusTable}
+        </BackfillStaleState>
+      ) : (
+        statusTable
+      )}
 
-        {/* Start Dialog */}
-        <StartBackfillDialog
-          cabinets={cabinets}
-          isOpen={isStartDialogOpen}
-          onOpenChange={setIsStartDialogOpen}
-          onStart={handleStart}
-          isStarting={startMutation.isPending}
-          returnFocusRef={startButtonRef}
-        />
-      </div>
+      <StartBackfillDialog
+        cabinets={visibleCabinets}
+        isOpen={isStartDialogOpen}
+        onOpenChange={setIsStartDialogOpen}
+        onStart={handleStart}
+        isStarting={startMutation.isPending}
+        returnFocusRef={startButtonRef}
+      />
     </section>
   )
 }
