@@ -1,6 +1,6 @@
 # Shadcn Full-UI Migration — Status & Debt Registry
 
-> **Snapshot date: 2026-08-29** (Epics 166-172 are complete; Story 173.2 shipped through feature PR #332 and its reviewable documentation closeout is in progress; Epic 173 = 2/13; Program NEXT = Story 173.3 only after Story 173.2 cleanup; Stories 166.1-173.2 are done). Канонический статус-реестр программы миграции
+> **Snapshot date: 2026-08-29** (Epics 166-172 are complete; Story 173.2 shipped through feature PR #332 and documentation closeout PR #333 with exact product and initial docs cleanup proved; Epic 173 = 2/13; Program NEXT = Story 173.3 after auxiliary lifecycle-record merge and cleanup; Stories 166.1-173.2 are done). Канонический статус-реестр программы миграции
 > для BMAD-артефактов. Живая история — sprint-status.yaml (по-сторийно) и ledger
 > BE-репо (docs/tech-debt/TECH-DEBT-2026-08-SESSION.md, Addendum-4 cont.1-25);
 > этот файл = консолидированный срез «что сделано / что осталось / все долги».
@@ -21,7 +21,7 @@
 | 174-FE консолидация          | 5               | 0      | 174.1-5                           | финал (СТРОГО после 166-173; 174.2 design-system/source-boundary/contrast; 174.3 visual/a11y; 174.4 functional/backend)         |
 
 **Story readiness: 78 of 94 canonical Stories complete.** Epics 166-172 are closed. Story 173.2 merged through
-feature PR #332 and its reviewable documentation closeout is in progress, advancing Epic 173 to 2/13 and raising the recorded Vitest floor to
+feature PR #332 and documentation closeout PR #333 with exact product and initial docs cleanup proved, advancing Epic 173 to 2/13 and raising the recorded Vitest floor to
 **19,565/0** across 1,232 files. The remaining program is Epic 173 (11 route Stories) followed by the strict
 Epic 174.1 → 174.5 assurance and cleanup chain.
 
@@ -105,8 +105,8 @@ caption naming model + tabular + p-6; guard-9 + caption role-тест + 6 re-pin
 **172.15 SHIPPED (2026-08-29, PR #321, merge `81bc35cc`)** — born-clean: caption ×2 + tabular + гард 7; полный пол **19 458/0/1225** (+11 exact); 1×opus APPROVE; e2e-gap честный. Артефакт: `172-15-fe-migrate-fbo-orders.md`.
 **172.16 SHIPPED (2026-08-29, PR #323, merge `8939aea4`)** — MINOR-GAP: 6 свапов + гард 5 (HEAD-мутационно проверен); полный пол **19 463/0/1226** (+5 exact); 1×opus APPROVE. Артефакт: `172-16-fe-migrate-order-integrity-analysis.md`.
 **172.17 SHIPPED (2026-08-29, PR #325, merge `caee8523`) — ЭПИК 172 ЗАВЕРШЁН 17/17** — MINOR-GAP: 2 свапа + гард 4; полный пол **19 467/0/1227** (+4 exact); 1×opus APPROVE. Артефакт: `172-17-fe-migrate-product-management.md` (включая Epic-172 retrospective).
-**173.2 SHIPPED (2026-08-29, feature PR #332, merge `7c85b804`)** — 17 файлов (+2108/−598), frozen fingerprint `f02bb5fb`; truthful query/recovery states, dual-pipeline status, responsive cards/table, guarded pending trigger and Chromium focus return; focused **6/106**; полный пол **19 565/0/1232**; e2e **77 pass / 2 documented conditional skips**; Turbopack + webpack **70/70**; Claude + architecture APPROVE, Gemini OAuth gap explicit. Documentation closeout and exact cleanup are in progress. Артефакт: `173-2-fe-migrate-backfill-settings.md`.
-**NEXT = Story 173.3 Cabinet Settings after Story 173.2 documentation closeout and exact cleanup** — backfill feature #332 merged; оставшиеся owner-стори: 173.8 shipments и 173.12 supplies.
+**173.2 SHIPPED (2026-08-29, feature PR #332 merge `7c85b804` + closeout PR #333 merge `650f8efc`)** — 17 файлов (+2108/−598), frozen fingerprint `f02bb5fb`; truthful query/recovery states, dual-pipeline status, responsive cards/table, guarded pending trigger and Chromium focus return; focused **6/106**; полный пол **19 565/0/1232**; e2e **77 pass / 2 documented conditional skips**; Turbopack + webpack **70/70**; Claude + architecture APPROVE, Gemini OAuth gap explicit; exact product and initial docs cleanup proved. Артефакт: `173-2-fe-migrate-backfill-settings.md`.
+**NEXT = Story 173.3 Cabinet Settings after auxiliary lifecycle-record merge and cleanup** — Story 173.2 feature #332 + closeout #333 merged and its product/initial-docs residue is absent; оставшиеся owner-стори: 173.8 shipments и 173.12 supplies.
 **Carry-out → 174.2 owner (route-ledger handoff из 171.9):** (1) удалить поле className из
 STATUS_BADGE_CONFIG после миграции ModelListSection на собственный overlay; (2) переписать
 stale-комментарий model-list-helpers.ts:24-26 («subroutes 171.7/171.9» — остался только
@@ -227,7 +227,7 @@ credentialed functional E2E — carry-out 174.4. Plan-status аудит 2026-08-
 
 ## 5. Owner-зависимые стори (вехи 172-173)
 
-- Epic 172 owner chains are complete. Epic 173 settings owner 173.1 and Backfill Settings 173.2 are merged; the remaining Epic 173 owners are 173.8 shipments and 173.12 supplies. Story 173.3 starts only after 173.2 documentation closeout and exact cleanup; other consumers start only after the applicable owner merge and closeout cleanup.
+- Epic 172 owner chains are complete. Epic 173 settings owner 173.1 and Backfill Settings 173.2 are merged and closed; the remaining Epic 173 owners are 173.8 shipments and 173.12 supplies. Story 173.3 starts only after the auxiliary 173.2 lifecycle-record merge and cleanup; other consumers start only after the applicable owner merge and closeout cleanup.
 
 ## 6. Процесс-ссылки
 

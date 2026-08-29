@@ -1,6 +1,6 @@
 # Story 173.2-FE: Migrate Backfill Settings
 
-Status: done — feature PR #332 merged (`a2a7033a`, merge `7c85b804`); Story-owned 17-file feature manifest; frozen content fingerprint `f02bb5fbc638358b8d699514d31d7ced3160325002a46241eee2276b8d68665f`; full floor **19,565/0/1,232**; focused Story **6 files / 106 tests**; Playwright **77 passed / 2 documented conditional skips**; Claude and independent architecture reviews approved with zero blockers; documentation closeout and exact product/docs cleanup will be recorded through the reviewable follow-up lifecycle; route-ledger rows intentionally remain `planned` until Story 174.5.
+Status: done — feature PR #332 merged (`a2a7033a`, merge `7c85b804`); documentation closeout PR #333 merged (`c1613245`, merge `650f8efc`); exact product and initial documentation branch/worktree/open-PR cleanup proved; Story-owned 17-file feature manifest; frozen content fingerprint `f02bb5fbc638358b8d699514d31d7ced3160325002a46241eee2276b8d68665f`; full floor **19,565/0/1,232**; focused Story **6 files / 106 tests**; Playwright **77 passed / 2 documented conditional skips**; Claude and independent architecture reviews approved with zero blockers; route-ledger rows intentionally remain `planned` until Story 174.5.
 
 ## Story
 
@@ -89,8 +89,12 @@ Pinned runtime: Node `24.18.0`, npm `11.11.0`.
 - Feature merge: `7c85b804c5da65245987b514e13afd811f91d64e`.
 - PR base/head/headRefOid and the exact 17-file manifest were verified before merge.
 - The product merge is present on refreshed `origin/main`.
-- Documentation closeout uses a separate reviewable documentation-only PR. Its exact head, merge, and final cleanup proof are recorded only after they exist; this artifact does not pre-claim them.
-- Product and documentation branch/worktree cleanup remains sequenced after documentation merge so the final absence proof can be canonicalized without reopening product scope.
+- Documentation closeout PR: #333, `https://github.com/salacoste/wb-erp-system-daytona-FE/pull/333`.
+- Documentation closeout head: `c16132456fad00a0a8c38b9c5589a45c4a4be904`.
+- Documentation closeout merge: `650f8efcd3a2233d72dfa879522af3ef8bbc87d1`.
+- After PR #333 merged, primary `main` was fast-forwarded to `650f8efc` and proved equal to refreshed `origin/main` with 0/0 divergence.
+- The exact product and initial documentation remote branches, local branches, worktrees, paths, and stale registrations were proved absent. No Story PR remained open before the auxiliary lifecycle-record PR was published.
+- The auxiliary lifecycle-record branch/worktree exists only to publish these already-proved facts and is cleaned after its own merge; no recursive self-merge claim is made.
 - No deploy, production operation, direct push to `main`, force-push, dependency change, credential output, route-ledger transition, or unrelated debt fix occurred.
 
 ## Lessons and Carry-Outs
@@ -105,4 +109,4 @@ Pinned runtime: Node `24.18.0`, npm `11.11.0`.
 
 | Date | Change |
 | --- | --- |
-| 2026-08-29 | Story 173.2 implemented, validated, independently reviewed, and merged through feature PR #332; reviewable documentation closeout started. **Lessons:** (1) Guarded focusable triggers preserve focus restoration. (2) Explicit refresh needs route-owned intent state. (3) Stale data needs visible limits. |
+| 2026-08-29 | Story 173.2 implemented, validated, independently reviewed, merged through feature PR #332, closed through documentation PR #333, and cleaned; auxiliary lifecycle evidence published. **Lessons:** (1) Guarded focusable triggers preserve focus restoration. (2) Explicit refresh needs route-owned intent state. (3) Stale data needs visible limits. |
