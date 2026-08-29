@@ -1,6 +1,6 @@
 # Story 173.5-FE: Migrate Notification Settings
 
-Status: done — feature PR #341 merged (`12798d9f`, merge `41d686de`); separate documentation closeout and exact feature/docs cleanup gate Story 173.6; Story-owned 28-file feature manifest; fresh merged-main full floor **19,647/0/1,242**; focused Story **10 files / 68 tests**; Playwright **40 tests discovered** with browser execution explicitly unavailable because the required frontend/backend services were not running; route-ledger rows intentionally remain `planned` until Story 174.5.
+Status: done — feature PR #341 merged (`12798d9f`, merge `41d686de`); documentation closeout PR #342 merged (`6aab9d8a`, merge `45c35498`); exact product and initial documentation branch/worktree/open-PR cleanup proved; Story-owned 28-file feature manifest; fresh merged-main full floor **19,647/0/1,242**; focused Story **10 files / 68 tests**; Playwright **40 tests discovered** with browser execution explicitly unavailable because the required frontend/backend services were not running; product and documentation reviews have zero unresolved P0–P2 findings; route-ledger rows intentionally remain `planned` until Story 174.5.
 
 ## Story
 
@@ -85,7 +85,9 @@ Pinned runtime: Node `24.18.0`, npm `11.11.0`.
 - Two independent product reviewers found the async-unbind premature close, invalid quiet-hours candidate leakage, digest-time click bubbling, missing visible radio focus, heading hierarchy, deterministic post-unbind focus, and narrow/reflow evidence gaps.
 - The repaired snapshot closed every P1. Product re-review identified one residual P2—the loading branch used `h3` instead of the route-level `h2`—which was then fixed test-first.
 - The final product diff SHA-256 is `b5b13a9b5ba5b5b9bfc356e9b7bce52913b6500ed55dbee3b2517f4aa2fe922a`. The final delta after the last product re-review was limited to `h3` → `h2` plus one loading-state unit assertion; focused tests, TypeScript, ESLint, Prettier, and diff checks passed afterward.
-- A fresh independent merged-product/documentation closeout review with explicit P0–P2 disposition is required before the documentation commit. No exact-final-hash product approval is preclaimed here.
+- The independent closeout review covered the exact 28-file product commit and all five closeout files. It confirmed P0 = 0 and P1 = 0, found one P2 stale master snapshot date, and otherwise approved the product/spec/lifecycle evidence.
+- The sole P2 was corrected exactly from 2026-08-29 to 2026-08-30. Exact-five Prettier, YAML, arithmetic, plan/route/ledger, stale-marker, marker, lessons, relative-link, privacy, and diff checks were rerun; no unresolved P0–P2 finding remains.
+- Repo-wide `check:docs` retains one inherited current-main citation-baseline mismatch caused by the merged product line-count change in a historical archive citation; the same mismatch exists on clean product `main`, and this five-file closeout adds no source-line citation. The archive/baseline repair remains outside this lifecycle manifest.
 
 ## Lifecycle
 
@@ -93,9 +95,12 @@ Pinned runtime: Node `24.18.0`, npm `11.11.0`.
 - Feature head: `12798d9fca553d7eb8f05408b40a06c765e6996b`.
 - Feature merge: `41d686de886442d579a19aabb8331bf3995f12e3`.
 - PR base/head, one-commit history, mergeability, exact head OID, and exact 28-file manifest were verified before merge with `--match-head-commit` protection.
-- The product head and merge are ancestors of refreshed `main`; primary `main` equalled `origin/main` at the product merge before this documentation lane began.
-- The exact product remote branch, local branch, worktree, path, stale registration, and open feature PR were proved absent.
-- The documentation closeout and exact docs branch/worktree cleanup will be completed through separate reviewed PR lifecycle steps; no self-merge or future cleanup claim is made here.
+- Documentation closeout PR: #342, `https://github.com/salacoste/wb-erp-system-daytona-FE/pull/342`.
+- Documentation closeout head: `6aab9d8acb151dc73bcc8fd795e8c6d7558132da`.
+- Documentation closeout merge: `45c3549882beea86b9c589f79c12a4673d6cb0bb`.
+- After PR #342 merged, primary `main` was fast-forwarded to `45c35498` and proved equal to refreshed `origin/main`; the feature and closeout heads and merges are ancestors of that tip.
+- The exact product and initial documentation remote branches, local branches, worktrees, paths, open PRs, and stale registrations were proved absent before this auxiliary lane was created.
+- The auxiliary lifecycle-record branch/worktree exists only to publish these already-proved facts and is cleaned after its own merge; no recursive self-merge or self-cleanup claim is made.
 - No deploy, production operation, direct push to `main`, force-push, dependency change, credential output, route-ledger transition, ContextBar implementation change, or unrelated debt fix occurred.
 
 ## Lessons and Carry-Outs
@@ -111,4 +116,4 @@ Pinned runtime: Node `24.18.0`, npm `11.11.0`.
 
 | Date       | Change |
 | ---------- | ------ |
-| 2026-08-30 | Story 173.5 implemented, validated, reviewed through final repairs, and merged through feature PR #341; separate documentation closeout and exact cleanup gate Story 173.6. **Lessons:** (1) Keep unavailable distinct from unbound. (2) Validate composite drafts before every write. (3) Treat pending dismissal and focus restoration as one lifecycle. |
+| 2026-08-30 | Story 173.5 implemented, validated, independently reviewed, merged through feature PR #341, and closed through documentation PR #342, with product and initial-documentation residue cleaned; auxiliary lifecycle evidence prepared for reviewed publication. **Lessons:** (1) Keep unavailable distinct from unbound. (2) Validate composite drafts before every write. (3) Treat pending dismissal and focus restoration as one lifecycle. |
