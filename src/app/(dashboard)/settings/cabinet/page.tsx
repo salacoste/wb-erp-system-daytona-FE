@@ -3,38 +3,59 @@
 import { CabinetInfoCard } from '@/components/custom/settings/CabinetInfoCard'
 import { TargetMarginSettingsCard } from '@/components/custom/settings/TargetMarginSettingsCard'
 import { JamStatusBadge } from '@/components/custom/settings/JamStatusBadge'
+import { ContextBar, PageHeader } from '@/components/product'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Skeleton } from '@/components/ui/skeleton'
 import { useAuthStore } from '@/stores/authStore'
 
 export default function CabinetSettingsPage() {
   const cabinetId = useAuthStore(state => state.cabinetId)
 
-  if (!cabinetId) {
-    return (
-      <div className="container mx-auto max-w-2xl py-6">
-        <Skeleton className="mb-2 h-8 w-64" />
-        <Skeleton className="mb-6 h-4 w-96" />
-        <Skeleton className="h-96 w-full rounded-lg" />
-      </div>
-    )
-  }
-
   return (
-    <div className="container mx-auto max-w-2xl py-6">
-      <div className="mb-6">
-        <h1 className="text-2xl font-bold">Кабинет</h1>
-        <p className="mt-1 text-sm text-muted-foreground">
-          Информация о продавце и статус подписки Джем
-        </p>
-      </div>
-      <CabinetInfoCard cabinetId={cabinetId} />
-      <div className="mt-6">
-        <TargetMarginSettingsCard cabinetId={cabinetId} />
-      </div>
-      <div className="mt-4">
-        <h2 className="mb-2 text-sm font-medium text-muted-foreground">Подписка Джем</h2>
-        <JamStatusBadge cabinetId={cabinetId} />
-      </div>
-    </div>
+    <section className="mx-auto w-full max-w-3xl space-y-6 py-2">
+      <PageHeader
+        title="Кабинет"
+        description={<p>Информация о продавце, параметры аналитики и статус подписки Джем</p>}
+        breadcrumbs={[{ label: 'Настройки', href: '/settings' }, { label: 'Кабинет' }]}
+        busy={!cabinetId}
+      />
+
+      {!cabinetId ? (
+        <div
+          role="status"
+          aria-label="Определение активного кабинета"
+          aria-busy="true"
+          className="space-y-6"
+        >
+          <span className="sr-only">Определяем активный кабинет</span>
+          <Skeleton className="h-16 w-full" />
+          <Skeleton className="h-72 w-full" />
+          <Skeleton className="h-52 w-full" />
+        </div>
+      ) : (
+        <>
+          <ContextBar
+            cabinet={<span className="font-mono text-xs">{cabinetId}</span>}
+            scope="Профиль, рейтинг, подписка и целевая маржа"
+            stateLabel="Активный кабинет выбран"
+          />
+          <CabinetInfoCard cabinetId={cabinetId} />
+          <TargetMarginSettingsCard cabinetId={cabinetId} />
+          <Card>
+            <CardHeader>
+              <CardTitle>
+                <h2 className="text-lg">Действия с подпиской Джем</h2>
+              </CardTitle>
+              <CardDescription>
+                Текущий тариф и безопасный переход к управлению подпиской на Wildberries.
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <JamStatusBadge cabinetId={cabinetId} />
+            </CardContent>
+          </Card>
+        </>
+      )}
+    </section>
   )
 }

@@ -60,12 +60,119 @@ async function expectSettingsAxeClean(page: Page, context: string) {
   expect(results.violations, context).toEqual([])
 }
 
+async function expectCabinetAxeClean(page: Page, context: string) {
+  const results = await new AxeBuilder({ page })
+    .include('main')
+    .withTags(['wcag2a', 'wcag2aa', 'wcag22aa'])
+    .analyze()
+  expect(results.violations, context).toEqual([])
+}
+
+async function expectCabinetLoaded(page: Page) {
+  const main = page.locator('main')
+  await expect(main.getByRole('heading', { level: 2, name: 'Информация о продавце' })).toBeVisible()
+  await expect(main.getByLabel('Целевая маржа, %')).toBeVisible()
+  await expect(
+    main.getByText(
+      'Очень длинное название кабинета продавца для проверки переноса без потери данных'
+    )
+  ).toBeVisible()
+}
+
+const cabinetApiCounts = new WeakMap<Page, { updates: number }>()
+
+function getCabinetApiCounts(page: Page) {
+  const counts = cabinetApiCounts.get(page)
+  if (!counts) throw new Error('Cabinet API fixture is not installed for this page')
+  return counts
+}
+
+async function installCabinetApiFixture(page: Page) {
+  const counts = { updates: 0 }
+  cabinetApiCounts.set(page, counts)
+  await page.route('**/v1/cabinets/**', async route => {
+    const request = route.request()
+    const pathname = new URL(request.url()).pathname
+    const nestedEndpoint = pathname.match(
+      /^\/v1\/cabinets\/[^/]+\/(seller-info|jam-status|seller-rating|token-status)\/?$/
+    )?.[1]
+    let body: object
+
+    if (nestedEndpoint) {
+      if (request.method() !== 'GET') {
+        throw new Error(`Unexpected cabinet fixture method: ${request.method()} ${pathname}`)
+      }
+    }
+
+    if (nestedEndpoint === 'seller-info') {
+      body = {
+        available: true,
+        name: 'Очень длинное название кабинета продавца для проверки переноса без потери данных',
+        sid: 'seller-story-173-3',
+        tradeMark: 'Длинная торговая марка с русским названием',
+      }
+    } else if (nestedEndpoint === 'jam-status') {
+      body = {
+        available: true,
+        tier: 'standard',
+        searchTextsLimit: 50,
+        checkedAt: '2026-08-29T12:00:00Z',
+        probeCallsMade: 1,
+      }
+    } else if (nestedEndpoint === 'seller-rating') {
+      body = { available: true, valuation: 4.6, feedbackCount: 1234 }
+    } else if (nestedEndpoint === 'token-status') {
+      body = { healthy: true, errorCount: 0 }
+    } else if (/^\/v1\/cabinets\/[^/]+\/?$/.test(pathname)) {
+      if (request.method() === 'PUT') {
+        const payload = request.postDataJSON() as unknown
+        if (
+          typeof payload !== 'object' ||
+          payload === null ||
+          Array.isArray(payload) ||
+          Object.keys(payload).length !== 1 ||
+          (payload as Record<string, unknown>).target_margin_pct !== 35
+        ) {
+          throw new Error(`Unexpected target-margin payload for ${pathname}`)
+        }
+        counts.updates += 1
+      } else if (request.method() !== 'GET') {
+        throw new Error(`Unexpected cabinet fixture method: ${request.method()} ${pathname}`)
+      }
+      body = {
+        id: pathname.split('/').at(-1) ?? 'cabinet-story-173-3',
+        name: 'Story 173.3 cabinet',
+        isActive: true,
+        createdAt: '2026-08-29T10:00:00Z',
+        updatedAt: '2026-08-29T12:00:00Z',
+        taxSystem: null,
+        taxRate: null,
+        vatPayer: false,
+        vatRate: null,
+        targetMarginPct: request.method() === 'PUT' ? 35 : 20,
+      }
+    } else {
+      throw new Error(`Unhandled cabinet fixture request: ${request.method()} ${pathname}`)
+    }
+
+    await route.fulfill({
+      status: 200,
+      contentType: 'application/json',
+      body: JSON.stringify(body),
+    })
+  })
+}
+
 test.describe('Settings Pages', () => {
   // ===========================================================================
   // Cabinet Settings Page
   // ===========================================================================
 
   test.describe('Cabinet page', () => {
+    test.beforeEach(async ({ page }) => {
+      await installCabinetApiFixture(page)
+    })
+
     test('navigates to /settings/cabinet and shows heading', async ({ page }) => {
       await page.goto(SETTINGS_ROUTES.cabinet, { waitUntil: 'domcontentloaded' })
 
@@ -75,39 +182,127 @@ test.describe('Settings Pages', () => {
       })
     })
 
-    test('renders seller info section or skeleton', async ({ page }) => {
+    test('renders deterministic seller information without dropping long values', async ({
+      page,
+    }) => {
       await page.goto(SETTINGS_ROUTES.cabinet, { waitUntil: 'domcontentloaded' })
+      const main = page.locator('main')
       await expect(page.getByRole('heading', { name: 'Кабинет' })).toBeVisible({
         timeout: TIMEOUTS.navigation,
       })
 
-      // Either the "Информация о продавце" card is visible (data loaded)
-      // or skeleton placeholders are showing (loading state)
-      const hasSellerInfo = (await page.getByText('Информация о продавце').count()) > 0
-      const hasSkeleton = (await page.getByTestId('skeleton').count()) > 0
-
-      test.skip(
-        !hasSellerInfo && !hasSkeleton,
-        'Neither seller info card nor skeleton visible — needs backend data'
-      )
-      expect(hasSellerInfo || hasSkeleton).toBeTruthy()
+      await expect(
+        page.getByRole('heading', { level: 2, name: 'Информация о продавце' })
+      ).toBeVisible()
+      await expect(
+        main.getByText(
+          'Очень длинное название кабинета продавца для проверки переноса без потери данных'
+        )
+      ).toBeVisible()
+      await expect(main.getByText('Длинная торговая марка с русским названием')).toBeVisible()
     })
 
-    test('shows subscription section (Джем) or skeleton', async ({ page }) => {
+    test('shows the Jam and seller-rating sections with deterministic responses', async ({
+      page,
+    }) => {
       await page.goto(SETTINGS_ROUTES.cabinet, { waitUntil: 'domcontentloaded' })
+      const main = page.locator('main')
       await expect(page.getByRole('heading', { name: 'Кабинет' })).toBeVisible({
         timeout: TIMEOUTS.navigation,
       })
 
-      const hasJamSection = (await page.getByText('Подписка Джем').count()) > 0
-      const hasSkeleton = (await page.getByTestId('skeleton').count()) > 0
-
-      test.skip(
-        !hasJamSection && !hasSkeleton,
-        'Neither Jam section nor skeleton visible — needs backend data'
-      )
-      expect(hasJamSection || hasSkeleton).toBeTruthy()
+      await expect(page.getByRole('heading', { level: 2, name: 'Подписка Джем' })).toBeVisible()
+      await expect(main.getByText('Джем Стандарт')).toHaveCount(2)
+      await expect(page.getByLabel('Рейтинг: 4.6 из 5')).toBeVisible()
     })
+
+    test('announces a successful target-margin save', async ({ page }) => {
+      await page.goto(SETTINGS_ROUTES.cabinet, { waitUntil: 'domcontentloaded' })
+      const input = page.getByLabel('Целевая маржа, %')
+      await expect(input).toHaveValue('20')
+      await input.fill('35')
+      const updateResponse = page.waitForResponse(
+        response =>
+          response.request().method() === 'PUT' &&
+          /\/v1\/cabinets\/[^/]+\/?$/.test(new URL(response.url()).pathname)
+      )
+      await page.getByRole('button', { name: 'Сохранить' }).click()
+      await updateResponse
+
+      await expect(
+        page.getByRole('status', { name: 'Результат сохранения целевой маржи' })
+      ).toHaveText('Целевая маржа сохранена')
+      expect(getCabinetApiCounts(page).updates).toBe(1)
+    })
+
+    test('associates validation feedback without issuing an update request', async ({ page }) => {
+      await page.goto(SETTINGS_ROUTES.cabinet, { waitUntil: 'domcontentloaded' })
+      const input = page.getByLabel('Целевая маржа, %')
+      await input.fill('101')
+      await page.getByRole('button', { name: 'Сохранить' }).click()
+
+      const error = page.getByText(/целевая маржа должна быть от 0 до 100/i)
+      await expect(error).toBeVisible()
+      await expect(input).toHaveAttribute('aria-invalid', 'true')
+      const describedBy = await input.getAttribute('aria-describedby')
+      expect(describedBy).toContain(await error.getAttribute('id'))
+      expect(getCabinetApiCounts(page).updates).toBe(0)
+    })
+
+    test('supports keyboard-only editing with reduced motion', async ({ page }) => {
+      await page.emulateMedia({ reducedMotion: 'reduce' })
+      await page.goto(SETTINGS_ROUTES.cabinet, { waitUntil: 'domcontentloaded' })
+      const input = page.getByLabel('Целевая маржа, %')
+      await input.focus()
+      await expect(input).toBeFocused()
+      await page.keyboard.press('ControlOrMeta+A')
+      await page.keyboard.type('35')
+      await page.keyboard.press('Tab')
+      const save = page.getByRole('button', { name: 'Сохранить' })
+      await expect(save).toBeFocused()
+      const updateResponse = page.waitForResponse(
+        response => response.request().method() === 'PUT' && /\/v1\/cabinets\//.test(response.url())
+      )
+      await page.keyboard.press('Enter')
+      await updateResponse
+
+      await expect(
+        page.getByRole('status', { name: 'Результат сохранения целевой маржи' })
+      ).toHaveText('Целевая маржа сохранена')
+    })
+
+    for (const theme of ['light', 'dark'] as const) {
+      for (const width of [320, 390, 768, 1024, 1280, 1440]) {
+        test(`${theme} cabinet settings reflows without overflow at ${width}px`, async ({
+          page,
+        }) => {
+          await page.setViewportSize({ width, height: width < 1024 ? 844 : 900 })
+          await page.goto(SETTINGS_ROUTES.cabinet, { waitUntil: 'domcontentloaded' })
+          await setTheme(page, theme)
+          await expectCabinetLoaded(page)
+          await expect(page.getByRole('heading', { level: 1, name: 'Кабинет' })).toBeVisible({
+            timeout: TIMEOUTS.navigation,
+          })
+          await expectMainHasNoHorizontalOverflow(page)
+          if (width === 390 || width === 1280) {
+            await expectCabinetAxeClean(page, `${theme} cabinet settings at ${width}px`)
+          }
+        })
+      }
+
+      test(`${theme} cabinet settings preserves reflow at 200 percent zoom`, async ({ page }) => {
+        await page.setViewportSize({ width: 640, height: 900 })
+        await page.goto(SETTINGS_ROUTES.cabinet, { waitUntil: 'domcontentloaded' })
+        await setTheme(page, theme)
+        await expectCabinetLoaded(page)
+        await page.evaluate(() => {
+          document.documentElement.style.zoom = '200%'
+        })
+
+        await expect(page.getByRole('heading', { level: 1, name: 'Кабинет' })).toBeVisible()
+        await expectMainHasNoHorizontalOverflow(page)
+      })
+    }
   })
 
   // ===========================================================================

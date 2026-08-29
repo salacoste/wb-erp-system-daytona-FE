@@ -19,7 +19,8 @@ function RatingStars({ value }: { value: number }) {
       {Array.from({ length: 5 }, (_, i) => (
         <Star
           key={i}
-          className={`h-5 w-5 ${i < Math.round(clamped) ? 'fill-yellow-400 text-yellow-400' : 'text-gray-300'}`}
+          aria-hidden="true"
+          className={`h-5 w-5 ${i < Math.round(clamped) ? 'fill-status-warning text-status-warning' : 'text-muted-foreground/30'}`}
         />
       ))}
       <span className="ml-2 text-lg font-semibold">{clamped.toFixed(1)}</span>
@@ -33,23 +34,35 @@ export function SellerRatingCard({ cabinetId }: { cabinetId: string }) {
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="flex items-center gap-2 text-lg">
-          <Star className="h-5 w-5" />
-          Рейтинг продавца
+        <CardTitle>
+          <h2 className="flex items-center gap-2 text-lg">
+            <Star aria-hidden="true" className="h-5 w-5" />
+            Рейтинг продавца
+          </h2>
         </CardTitle>
       </CardHeader>
       <CardContent>
         {isLoading ? (
-          <div className="space-y-3">
+          <div
+            className="space-y-3"
+            role="status"
+            aria-label="Загрузка рейтинга продавца"
+            aria-busy="true"
+          >
+            <span className="sr-only">Загружаем рейтинг продавца</span>
             <Skeleton className="h-6 w-48" />
             <Skeleton className="h-5 w-32" />
           </div>
         ) : data ? (
           <>
             {data.available === false && (
-              <Alert className="mb-4 border-yellow-500 bg-yellow-50">
-                <AlertTriangle className="h-4 w-4 text-yellow-600" />
-                <AlertDescription className="text-yellow-900">
+              <Alert
+                role="status"
+                aria-live="polite"
+                className="mb-4 border-status-warning/40 bg-status-warning/10"
+              >
+                <AlertTriangle aria-hidden="true" className="h-4 w-4 text-status-warning" />
+                <AlertDescription>
                   Рейтинг недоступен:{' '}
                   {(data.reason && SELLER_RATING_REASON_LABELS[data.reason]) ??
                     'неизвестная ошибка'}
@@ -69,7 +82,14 @@ export function SellerRatingCard({ cabinetId }: { cabinetId: string }) {
               <p className="text-sm text-muted-foreground">Рейтинг пока отсутствует</p>
             )}
           </>
-        ) : null}
+        ) : (
+          <Alert role="status" aria-live="polite">
+            <AlertTriangle aria-hidden="true" className="h-4 w-4 text-status-warning" />
+            <AlertDescription>
+              Рейтинг продавца сейчас недоступен. Проверьте токен WB или повторите позже.
+            </AlertDescription>
+          </Alert>
+        )}
       </CardContent>
     </Card>
   )

@@ -58,20 +58,23 @@ describe('CabinetSettingsPage', () => {
       expect(skeletons.length).toBeGreaterThanOrEqual(3)
     })
 
-    it('should not render page title in loading state', () => {
+    it('keeps the route identity and announces cabinet-context loading', () => {
       mockCabinetId.mockReturnValue(null)
 
       render(<CabinetSettingsPage />)
 
-      expect(screen.queryByRole('heading')).not.toBeInTheDocument()
+      expect(screen.getByRole('heading', { level: 1, name: 'Кабинет' })).toBeVisible()
+      expect(screen.getByRole('status', { name: /определение активного кабинета/i })).toBeVisible()
     })
 
-    it('should not render CabinetInfoCard in loading state', () => {
+    it('does not mount cabinet-bound sections before an active cabinet exists', () => {
       mockCabinetId.mockReturnValue(null)
 
       render(<CabinetSettingsPage />)
 
       expect(screen.queryByTestId('cabinet-info-card')).not.toBeInTheDocument()
+      expect(screen.queryByTestId('target-margin-card')).not.toBeInTheDocument()
+      expect(screen.queryByTestId('jam-status-badge')).not.toBeInTheDocument()
     })
   })
 
@@ -89,7 +92,7 @@ describe('CabinetSettingsPage', () => {
     it('should render page subtitle about subscription info', () => {
       render(<CabinetSettingsPage />)
 
-      expect(screen.getByText(/информация о продавце и статус подписки/i)).toBeInTheDocument()
+      expect(screen.getByText(/информация о продавце.*статус подписки/i)).toBeInTheDocument()
     })
 
     it('should render CabinetInfoCard with correct cabinetId', () => {
@@ -109,6 +112,15 @@ describe('CabinetSettingsPage', () => {
       )
     })
 
+    it('passes the active cabinet id to the standalone Jam status', () => {
+      render(<CabinetSettingsPage />)
+
+      expect(screen.getByTestId('jam-status-badge')).toHaveAttribute(
+        'data-cabinet-id',
+        'cabinet-123'
+      )
+    })
+
     it('should not render skeleton elements when cabinetId exists', () => {
       const { container } = render(<CabinetSettingsPage />)
 
@@ -116,10 +128,10 @@ describe('CabinetSettingsPage', () => {
       expect(skeletons.length).toBe(0)
     })
 
-    it('should render within a max-w-2xl container', () => {
+    it('keeps the cabinet cards in a focused readable container', () => {
       const { container } = render(<CabinetSettingsPage />)
 
-      const mainContainer = container.querySelector('.max-w-2xl')
+      const mainContainer = container.querySelector('.max-w-3xl')
       expect(mainContainer).toBeInTheDocument()
     })
   })
