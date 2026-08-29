@@ -6,6 +6,8 @@
  */
 
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { PageState } from '@/components/product/states'
+import { Button } from '@/components/ui/button'
 import { Skeleton } from '@/components/ui/skeleton'
 import { formatCurrency } from '@/lib/utils'
 import { useExpensesSummary } from '@/hooks/useExpensesCRUD'
@@ -16,11 +18,15 @@ interface ExpenseSummaryCardsProps {
 }
 
 export function ExpenseSummaryCards({ month }: ExpenseSummaryCardsProps) {
-  const { data: summary, isLoading } = useExpensesSummary(month, month)
+  const { data: summary, isLoading, isError, refetch } = useExpensesSummary(month, month)
 
   if (isLoading) {
     return (
-      <div className="grid gap-4 md:grid-cols-3">
+      <div
+        className="grid gap-4 md:grid-cols-3"
+        role="status"
+        aria-label="Загружаем сводку расходов"
+      >
         {Array.from({ length: 3 }).map((_, i) => (
           <Card key={i}>
             <CardHeader className="pb-2">
@@ -35,7 +41,29 @@ export function ExpenseSummaryCards({ month }: ExpenseSummaryCardsProps) {
     )
   }
 
-  const total = summary?.total ?? 0
+  if (isError) {
+    return (
+      <PageState
+        state="error"
+        title="Не удалось загрузить сводку расходов"
+        explanation="Сервер не вернул итоговые суммы за выбранный месяц."
+        trust="Сводка скрыта, чтобы ошибка не выглядела как нулевые расходы."
+        recovery={<Button onClick={() => void refetch()}>Повторить загрузку сводки</Button>}
+      />
+    )
+  }
+
+  if (!summary || !Number.isFinite(summary.total)) {
+    return (
+      <PageState
+        state="error"
+        title="Сводка расходов пока недоступна"
+        explanation="Сервер ещё не подтвердил итоговые суммы за выбранный месяц."
+        trust="Неизвестные суммы не показываются как нулевые расходы."
+        recovery={<Button onClick={() => void refetch()}>Повторить загрузку сводки</Button>}
+      />
+    )
+  }
 
   return (
     <div className="grid gap-4 md:grid-cols-3">
@@ -46,7 +74,7 @@ export function ExpenseSummaryCards({ month }: ExpenseSummaryCardsProps) {
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <p className="text-2xl font-bold">{formatCurrency(total)}</p>
+          <p className="text-2xl font-bold">{formatCurrency(summary.total)}</p>
         </CardContent>
       </Card>
 
@@ -71,11 +99,7 @@ export function ExpenseSummaryCards({ month }: ExpenseSummaryCardsProps) {
   )
 }
 
-function CategoryBreakdownCard({
-  summary,
-}: {
-  summary: { byCategory: Record<string, number> } | undefined
-}) {
+function CategoryBreakdownCard({ summary }: { summary: { byCategory: Record<string, number> } }) {
   return (
     <Card className="md:col-span-3">
       <CardHeader className="pb-2">

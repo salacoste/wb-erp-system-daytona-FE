@@ -1,131 +1,167 @@
 'use client'
 
-/**
- * Operational Expenses Page
- * Manual expense tracking with CRUD operations
- */
-
-import { useState } from 'react'
-import { Button } from '@/components/ui/button'
-import { Card, CardContent } from '@/components/ui/card'
-import { Input } from '@/components/ui/input'
-import { Skeleton } from '@/components/ui/skeleton'
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from '@/components/ui/table'
-import { formatCurrency } from '@/lib/utils'
-import { useExpensesList, useDeleteExpense } from '@/hooks/useExpensesCRUD'
-import { getExpenseCategoryLabel, type ExpenseItem } from '@/types/expenses'
+import { useRef, useState, type MouseEvent } from 'react'
 import { Plus } from 'lucide-react'
-import { ExpenseSummaryCards } from './components/ExpenseSummaryCards'
+import { ContextBar, PageHeader } from '@/components/product'
+import { PageState } from '@/components/product/states'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { useExpensesList } from '@/hooks/useExpensesCRUD'
+import type { ExpenseItem } from '@/types/expenses'
 import { ExpenseFormDialog } from './components/ExpenseFormDialog'
+import { ExpenseSummaryCards } from './components/ExpenseSummaryCards'
+import { ExpenseTable } from './components/ExpenseTable'
 
-function getCurrentMonth(): string {
+function getCurrentMonth() {
   const now = new Date()
-  const y = now.getFullYear()
-  const m = String(now.getMonth() + 1).padStart(2, '0')
-  return `${y}-${m}`
+  return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`
 }
 
 export default function ExpensesPage() {
   const [month, setMonth] = useState(getCurrentMonth)
   const [dialogOpen, setDialogOpen] = useState(false)
   const [editingExpense, setEditingExpense] = useState<ExpenseItem | null>(null)
+  const addButtonRef = useRef<HTMLButtonElement>(null)
+  const dialogTriggerRef = useRef<HTMLButtonElement | null>(null)
+  const monthIsValid = /^\d{4}-(0[1-9]|1[0-2])$/.test(month)
+  const queryMonth = monthIsValid ? month : ''
+  const { data: expenses, isLoading, isError, isFetching, refetch } = useExpensesList(queryMonth)
 
-  const { data: expenses, isLoading } = useExpensesList(month)
-  const deleteMutation = useDeleteExpense()
-
-  function handleEdit(expense: ExpenseItem) {
-    setEditingExpense(expense)
-    setDialogOpen(true)
-  }
-
-  function handleAdd() {
+  function openCreate(event: MouseEvent<HTMLButtonElement>) {
+    dialogTriggerRef.current = event.currentTarget
     setEditingExpense(null)
     setDialogOpen(true)
   }
 
-  function handleDelete(id: string) {
-    deleteMutation.mutate(id)
+  function openEdit(expense: ExpenseItem, trigger: HTMLButtonElement) {
+    dialogTriggerRef.current = trigger
+    setEditingExpense(expense)
+    setDialogOpen(true)
   }
 
+  function returnDialogFocus(useFallback: boolean) {
+    const opener = dialogTriggerRef.current
+    const target = !useFallback && opener?.isConnected ? opener : addButtonRef.current
+    target?.focus()
+  }
+
+  const count = expenses?.length ?? 0
+
   return (
-    <div className="container mx-auto max-w-4xl py-6 space-y-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-bold">Операционные расходы</h1>
-          <p className="mt-1 text-sm text-muted-foreground">
-            Учёт и управление операционными расходами по месяцам
-          </p>
+    <section aria-label="Настройки операционных расходов" className="space-y-6 py-2">
+      <PageHeader
+        title="Операционные расходы"
+        description="Учёт и управление операционными расходами по месяцам"
+        breadcrumbs={[
+          { label: 'Главная', href: '/dashboard' },
+          { label: 'Настройки', href: '/settings' },
+          { label: 'Расходы' },
+        ]}
+        busy={monthIsValid && isLoading}
+        actions={
+          <Button ref={addButtonRef} onClick={openCreate} className="min-h-11">
+            <Plus aria-hidden="true" className="mr-2 size-4" />
+            Добавить расход
+          </Button>
+        }
+      />
+
+      <ContextBar
+        period={month}
+        periodLabel="Учётный месяц"
+        items={
+          monthIsValid && expenses && !isError
+            ? [{ id: 'expense-count', label: 'Сохранено расходов', value: count }]
+            : []
+        }
+        state={
+          !monthIsValid || isError
+            ? 'unavailable'
+            : isFetching || !expenses
+              ? 'refreshing'
+              : 'fresh'
+        }
+        stateLabel={
+          !monthIsValid ? 'Выберите корректный месяц' : isError ? 'Список недоступен' : undefined
+        }
+      >
+        <div className="flex min-w-0 flex-wrap items-center gap-3">
+          <label htmlFor="month-selector" className="text-sm font-medium">
+            Выбрать месяц
+          </label>
+          <Input
+            id="month-selector"
+            type="month"
+            value={month}
+            onChange={event => setMonth(event.target.value)}
+            aria-invalid={!monthIsValid || undefined}
+            aria-describedby={!monthIsValid ? 'month-selector-error' : undefined}
+            className="min-h-11 w-44 max-w-full"
+          />
+          {!monthIsValid && (
+            <p id="month-selector-error" role="alert" className="text-sm text-destructive">
+              Выберите корректный месяц
+            </p>
+          )}
         </div>
-        <Button onClick={handleAdd}>
-          <Plus className="mr-2 h-4 w-4" />
-          Добавить расход
-        </Button>
-      </div>
+      </ContextBar>
 
-      <div className="flex items-center gap-3">
-        <label htmlFor="month-selector" className="text-sm font-medium">
-          Месяц:
-        </label>
-        <Input
-          id="month-selector"
-          type="month"
-          value={month}
-          onChange={e => setMonth(e.target.value)}
-          className="w-44"
+      {monthIsValid && <ExpenseSummaryCards month={month} />}
+
+      {!monthIsValid ? (
+        <PageState
+          state="error"
+          title="Выберите корректный месяц"
+          explanation="Список и сводка недоступны без корректного учётного месяца."
+          trust="Нулевые суммы и пустой список не показываются без ответа сервера."
+          recovery={
+            <Button onClick={() => document.getElementById('month-selector')?.focus()}>
+              Выбрать месяц
+            </Button>
+          }
         />
-      </div>
-
-      <ExpenseSummaryCards month={month} />
-
-      {isLoading ? (
-        <Card>
-          <CardContent className="p-6 space-y-3">
-            {Array.from({ length: 3 }).map((_, i) => (
-              <Skeleton key={i} className="h-10 w-full" />
-            ))}
-          </CardContent>
-        </Card>
-      ) : !expenses || expenses.length === 0 ? (
-        <Card>
-          <CardContent className="flex flex-col items-center justify-center py-12">
-            <p className="text-muted-foreground">Нет расходов за этот месяц</p>
-            <Button variant="outline" className="mt-4" onClick={handleAdd}>
-              <Plus className="mr-2 h-4 w-4" />
+      ) : isLoading ? (
+        <PageState
+          state="loading"
+          title="Загружаем расходы"
+          explanation="Получаем сохранённые расходы за выбранный месяц."
+          trust="Список появится только после успешного ответа сервера."
+        />
+      ) : isError ? (
+        <PageState
+          state="error"
+          title="Не удалось загрузить расходы"
+          explanation="Сервер не вернул список расходов за выбранный месяц."
+          trust="Пустой список не показывается, чтобы ошибка не выглядела как отсутствие расходов."
+          recovery={<Button onClick={() => void refetch()}>Повторить загрузку</Button>}
+        />
+      ) : !expenses ? (
+        <PageState
+          state="error"
+          title="Список расходов пока недоступен"
+          explanation="Сервер ещё не подтвердил данные за выбранный месяц."
+          trust="Неизвестный результат не показывается как пустой список."
+          recovery={<Button onClick={() => void refetch()}>Повторить загрузку</Button>}
+        />
+      ) : count === 0 ? (
+        <PageState
+          state="empty"
+          title="Нет расходов за этот месяц"
+          explanation="Для выбранного месяца пока нет сохранённых операционных расходов."
+          trust="Добавьте первый расход или выберите другой месяц."
+          action={
+            <Button variant="outline" onClick={openCreate}>
+              <Plus aria-hidden="true" className="mr-2 size-4" />
               Добавить первый расход
             </Button>
-          </CardContent>
-        </Card>
+          }
+        />
       ) : (
-        <Card>
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Категория</TableHead>
-                <TableHead className="text-right">Сумма</TableHead>
-                <TableHead>Описание</TableHead>
-                <TableHead className="text-right">Действия</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {expenses.map(expense => (
-                <ExpenseRow
-                  key={expense.id}
-                  expense={expense}
-                  onEdit={handleEdit}
-                  onDelete={handleDelete}
-                  isDeleting={deleteMutation.isPending}
-                />
-              ))}
-            </TableBody>
-          </Table>
-        </Card>
+        <ExpenseTable
+          expenses={expenses!}
+          onEdit={openEdit}
+          onDeleteSuccessFocus={() => addButtonRef.current?.focus()}
+        />
       )}
 
       <ExpenseFormDialog
@@ -133,40 +169,8 @@ export default function ExpensesPage() {
         onOpenChange={setDialogOpen}
         month={month}
         editingExpense={editingExpense}
+        onReturnFocus={returnDialogFocus}
       />
-    </div>
-  )
-}
-
-interface ExpenseRowProps {
-  expense: ExpenseItem
-  onEdit: (expense: ExpenseItem) => void
-  onDelete: (id: string) => void
-  isDeleting: boolean
-}
-
-function ExpenseRow({ expense, onEdit, onDelete, isDeleting }: ExpenseRowProps) {
-  return (
-    <TableRow>
-      <TableCell className="font-medium">{getExpenseCategoryLabel(expense.category)}</TableCell>
-      <TableCell className="text-right">{formatCurrency(expense.amount)}</TableCell>
-      <TableCell className="text-muted-foreground">{expense.description ?? '—'}</TableCell>
-      <TableCell className="text-right">
-        <div className="flex justify-end gap-1">
-          <Button variant="ghost" size="sm" onClick={() => onEdit(expense)}>
-            Изменить
-          </Button>
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => onDelete(expense.id)}
-            disabled={isDeleting}
-            className="text-destructive hover:text-destructive"
-          >
-            Удалить
-          </Button>
-        </div>
-      </TableCell>
-    </TableRow>
+    </section>
   )
 }

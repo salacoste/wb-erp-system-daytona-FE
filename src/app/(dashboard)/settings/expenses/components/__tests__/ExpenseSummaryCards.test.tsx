@@ -33,11 +33,18 @@ const mockSummary: ExpenseSummary = {
 }
 
 function setupHookReturn(
-  overrides: Partial<{ data: ExpenseSummary | undefined; isLoading: boolean }>
+  overrides: Partial<{
+    data: ExpenseSummary | undefined
+    isLoading: boolean
+    isError: boolean
+    refetch: () => void
+  }>
 ) {
   mockUseExpensesSummary.mockReturnValue({
     data: undefined,
     isLoading: false,
+    isError: false,
+    refetch: vi.fn(),
     ...overrides,
   })
 }
@@ -58,6 +65,11 @@ describe('ExpenseSummaryCards', () => {
       expect(skeletons.length).toBeGreaterThanOrEqual(3)
     })
 
+    it('announces summary loading by name', () => {
+      render(<ExpenseSummaryCards month="2026-06" />)
+      expect(screen.getByRole('status', { name: /загружаем сводку расходов/i })).toBeInTheDocument()
+    })
+
     it('does not render total amount text during loading', () => {
       render(<ExpenseSummaryCards month="2026-06" />)
       expect(screen.queryByText(/итого/i)).not.toBeInTheDocument()
@@ -76,9 +88,7 @@ describe('ExpenseSummaryCards', () => {
 
     it('renders formatted total amount', () => {
       render(<ExpenseSummaryCards month="2026-06" />)
-      // formatCurrency(150000) produces "150 000,00 ₽" or similar
-      const totalCard = screen.getByText('Итого за месяц').closest('.card, [class]')
-      expect(totalCard).toBeInTheDocument()
+      expect(screen.getAllByText(/150.*000.*₽/).length).toBeGreaterThanOrEqual(1)
     })
 
     it('renders first two category cards', () => {
@@ -90,10 +100,9 @@ describe('ExpenseSummaryCards', () => {
     })
 
     it('renders category amounts with formatted currency', () => {
-      const { container } = render(<ExpenseSummaryCards month="2026-06" />)
-      // Top cards contain formatted amounts like "50 000 ₽"
-      const boldTexts = container.querySelectorAll('p.text-2xl')
-      expect(boldTexts.length).toBeGreaterThanOrEqual(3) // total + 2 category cards
+      render(<ExpenseSummaryCards month="2026-06" />)
+      expect(screen.getAllByText(/50.*000.*₽/).length).toBeGreaterThanOrEqual(1)
+      expect(screen.getAllByText(/60.*000.*₽/).length).toBeGreaterThanOrEqual(1)
     })
 
     it('calls useExpensesSummary with month as both from and to', () => {
@@ -102,25 +111,41 @@ describe('ExpenseSummaryCards', () => {
     })
   })
 
-  describe('Null summary defaults', () => {
+  describe('Error state', () => {
+    it('distinguishes a failed summary from zero expenses and retries', () => {
+      const refetch = vi.fn()
+      setupHookReturn({ isError: true, refetch })
+      render(<ExpenseSummaryCards month="2026-06" />)
+
+      expect(
+        screen.getByRole('heading', { name: /не удалось загрузить сводку/i })
+      ).toBeInTheDocument()
+      expect(screen.queryByText('Итого за месяц')).not.toBeInTheDocument()
+      screen.getByRole('button', { name: /повторить загрузку сводки/i }).click()
+      expect(refetch).toHaveBeenCalledOnce()
+    })
+  })
+
+  describe('Unavailable summary', () => {
     beforeEach(() => {
       setupHookReturn({ data: undefined, isLoading: false })
     })
 
-    it('renders total card with 0 when summary is undefined', () => {
+    it('does not present an unknown summary as zero', () => {
       render(<ExpenseSummaryCards month="2026-06" />)
-      expect(screen.getByText('Итого за месяц')).toBeInTheDocument()
-      // The amount defaults to 0 — formatCurrency(0)
+      expect(
+        screen.getByRole('heading', { name: /сводка расходов пока недоступна/i })
+      ).toBeInTheDocument()
+      expect(screen.queryByText('Итого за месяц')).not.toBeInTheDocument()
+      expect(screen.queryByText(/0.*₽/)).not.toBeInTheDocument()
     })
 
-    it('renders category breakdown with 0 for all categories', () => {
+    it('offers a retry for an unconfirmed summary', () => {
+      const refetch = vi.fn()
+      setupHookReturn({ data: undefined, isLoading: false, refetch })
       render(<ExpenseSummaryCards month="2026-06" />)
-      // CategoryBreakdownCard renders all 5 categories (duplicated in top cards + breakdown)
-      expect(screen.getAllByText('Аренда').length).toBeGreaterThanOrEqual(1)
-      expect(screen.getAllByText('Зарплата').length).toBeGreaterThanOrEqual(1)
-      expect(screen.getAllByText('Упаковка').length).toBeGreaterThanOrEqual(1)
-      expect(screen.getAllByText('Транспорт').length).toBeGreaterThanOrEqual(1)
-      expect(screen.getAllByText('Прочее').length).toBeGreaterThanOrEqual(1)
+      screen.getByRole('button', { name: /повторить загрузку сводки/i }).click()
+      expect(refetch).toHaveBeenCalledOnce()
     })
   })
 

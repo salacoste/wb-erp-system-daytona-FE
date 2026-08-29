@@ -12,15 +12,17 @@ import type { ExpenseItem } from '@/types/expenses'
 // Mock mutations
 const mockCreateMutate = vi.fn()
 const mockUpdateMutate = vi.fn()
+let createPending = false
+let updatePending = false
 
 vi.mock('@/hooks/useExpensesCRUD', () => ({
   useCreateExpense: () => ({
     mutate: mockCreateMutate,
-    isPending: false,
+    isPending: createPending,
   }),
   useUpdateExpense: () => ({
     mutate: mockUpdateMutate,
-    isPending: false,
+    isPending: updatePending,
   }),
 }))
 
@@ -44,11 +46,14 @@ const defaultProps = {
   onOpenChange: vi.fn(),
   month: '2026-06',
   editingExpense: null,
+  onReturnFocus: vi.fn(),
 }
 
 describe('ExpenseFormDialog', () => {
   beforeEach(() => {
     vi.clearAllMocks()
+    createPending = false
+    updatePending = false
     // Reset mock implementations to default (success)
     mockCreateMutate.mockImplementation((_data: unknown, opts?: { onSuccess?: () => void }) => {
       if (opts?.onSuccess) opts.onSuccess()
@@ -312,6 +317,19 @@ describe('ExpenseFormDialog', () => {
       expect(mockCreateMutate).not.toHaveBeenCalled()
     })
 
+    it('associates a visible validation error and focuses the amount field', () => {
+      render(<ExpenseFormDialog {...defaultProps} />)
+      const amountInput = screen.getByLabelText(/сумма/i)
+      fireEvent.change(amountInput, { target: { value: '0' } })
+
+      fireEvent.submit(amountInput.closest('form')!)
+
+      const error = screen.getByText('Введите сумму от 0,01 ₽ с точностью до копеек')
+      expect(amountInput).toHaveAttribute('aria-invalid', 'true')
+      expect(amountInput).toHaveAttribute('aria-describedby', error.id)
+      expect(amountInput).toHaveFocus()
+    })
+
     it('does not submit when amount is negative', () => {
       render(<ExpenseFormDialog {...defaultProps} />)
       const amountInput = screen.getByLabelText(/сумма/i)
@@ -322,33 +340,96 @@ describe('ExpenseFormDialog', () => {
 
       expect(mockCreateMutate).not.toHaveBeenCalled()
     })
+
+    it('rejects sub-cent precision before mutation', () => {
+      render(<ExpenseFormDialog {...defaultProps} />)
+      const amountInput = screen.getByLabelText(/сумма/i)
+      fireEvent.change(amountInput, { target: { value: '0.001' } })
+
+      fireEvent.submit(amountInput.closest('form')!)
+
+      expect(mockCreateMutate).not.toHaveBeenCalled()
+      expect(amountInput).toHaveAttribute('aria-invalid', 'true')
+      expect(amountInput).toHaveFocus()
+    })
+
+    it.each(['.5', '1e3'])('preserves native-valid numeric syntax %s', value => {
+      render(<ExpenseFormDialog {...defaultProps} />)
+      const amountInput = screen.getByLabelText(/сумма/i)
+      fireEvent.change(amountInput, { target: { value } })
+
+      fireEvent.submit(amountInput.closest('form')!)
+
+      expect(mockCreateMutate).toHaveBeenCalledOnce()
+    })
+
+    it('associates and focuses a cleared required month without mutation', () => {
+      render(<ExpenseFormDialog {...defaultProps} />)
+      const amountInput = screen.getByLabelText(/сумма/i)
+      const monthInput = screen.getByLabelText(/месяц/i)
+      fireEvent.change(amountInput, { target: { value: '100' } })
+      fireEvent.change(monthInput, { target: { value: '' } })
+
+      fireEvent.submit(amountInput.closest('form')!)
+
+      const error = screen.getByText('Выберите корректный месяц')
+      expect(mockCreateMutate).not.toHaveBeenCalled()
+      expect(monthInput).toHaveAttribute('aria-invalid', 'true')
+      expect(monthInput).toHaveAttribute('aria-describedby', error.id)
+      expect(monthInput).toHaveFocus()
+    })
   })
 
   describe('Pending state', () => {
     it('shows "Сохранение..." when create is pending', () => {
-      vi.doMock('@/hooks/useExpensesCRUD', () => ({
-        useCreateExpense: () => ({
-          mutate: vi.fn(),
-          isPending: true,
-        }),
-        useUpdateExpense: () => ({
-          mutate: vi.fn(),
-          isPending: false,
-        }),
-      }))
-      // Re-render with the updated mock
+      createPending = true
       render(<ExpenseFormDialog {...defaultProps} />)
-      // Since vi.doMock requires re-import, we verify via the button text
-      // The pending state would show "Сохранение..." — tested via direct props
+
+      expect(screen.getByRole('button', { name: /сохранение/i })).toBeDisabled()
+      expect(screen.getByRole('form')).toHaveAttribute('aria-busy', 'true')
     })
 
     it('shows "Сохранение..." when update is pending', () => {
-      // Test by checking both mutations control the pending label
-      // In practice, the component checks createMutation.isPending || updateMutation.isPending
-      // We verify the text exists in the component logic via the edit path
+      updatePending = true
       render(<ExpenseFormDialog {...defaultProps} editingExpense={mockExpense} />)
-      // The button shows "Сохранить" when not pending
-      expect(screen.getByRole('button', { name: /сохранить$/i })).toBeInTheDocument()
+
+      expect(screen.getByRole('button', { name: /сохранение/i })).toBeDisabled()
+      expect(screen.getByRole('form')).toHaveAttribute('aria-busy', 'true')
+    })
+
+    it('guards all controlled close requests and duplicate submits while create is pending', () => {
+      createPending = true
+      const onOpenChange = vi.fn()
+      render(<ExpenseFormDialog {...defaultProps} onOpenChange={onOpenChange} />)
+      const amountInput = screen.getByLabelText(/сумма/i)
+      fireEvent.change(amountInput, { target: { value: '5000' } })
+
+      expect(screen.getByRole('button', { name: /отмена/i })).toBeDisabled()
+      fireEvent.click(screen.getByRole('button', { name: /закрыть/i }))
+      fireEvent.submit(amountInput.closest('form')!)
+
+      expect(onOpenChange).not.toHaveBeenCalledWith(false)
+      expect(mockCreateMutate).not.toHaveBeenCalled()
+      expect(screen.getByRole('dialog')).toBeInTheDocument()
+    })
+  })
+
+  describe('Failure state', () => {
+    it('keeps values and reports a failed create inside the open dialog', () => {
+      mockCreateMutate.mockImplementationOnce((_data: unknown, options: { onError?: () => void }) =>
+        options.onError?.()
+      )
+      const onOpenChange = vi.fn()
+      render(<ExpenseFormDialog {...defaultProps} onOpenChange={onOpenChange} />)
+      const amountInput = screen.getByLabelText(/сумма/i)
+      fireEvent.change(amountInput, { target: { value: '5000' } })
+
+      fireEvent.submit(amountInput.closest('form')!)
+
+      expect(screen.getByRole('alert')).toHaveTextContent(/не удалось сохранить расход/i)
+      expect(amountInput).toHaveValue(5000)
+      expect(onOpenChange).not.toHaveBeenCalledWith(false)
+      expect(screen.getByRole('dialog')).toBeInTheDocument()
     })
   })
 
