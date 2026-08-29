@@ -5,7 +5,7 @@
 // Extracted from notifications/page.tsx (Epic 34-FE: Story 34.5-FE)
 // ============================================================================
 
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Card, CardContent, CardHeader } from '@/components/ui/card'
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import { Lock } from 'lucide-react'
 
@@ -27,25 +27,23 @@ export function NotificationsDisabledPanel({
   lockMessage,
 }: NotificationsDisabledPanelProps) {
   return (
-    <Card className="relative">
-      {/* Disabled Overlay */}
-      <div className="absolute inset-0 bg-white/60 backdrop-blur-sm z-10 rounded-lg flex items-center justify-center">
-        <div className="text-center px-6">
-          <Lock className="h-12 w-12 text-gray-400 mx-auto mb-3" />
-          <p className="text-lg font-medium text-gray-700 mb-1">Подключите Telegram</p>
-          <p className="text-sm text-gray-500">{lockMessage}</p>
-        </div>
-      </div>
-
+    <Card aria-disabled="true" className="border-dashed bg-muted/20">
       <CardHeader>
-        <CardTitle className="flex items-center gap-3">
-          <span className="text-2xl">{icon}</span>
+        <h2 className="flex items-center gap-3 font-semibold leading-none tracking-tight">
+          <span className="text-2xl" aria-hidden="true">
+            {icon}
+          </span>
           {title}
-        </CardTitle>
+        </h2>
       </CardHeader>
-      <CardContent className="space-y-4 opacity-40">
-        <Alert>
-          <AlertDescription className="text-sm">{description}</AlertDescription>
+      <CardContent className="space-y-4">
+        <p className="text-sm text-muted-foreground">{description}</p>
+        <Alert className="border-telegram/30 bg-telegram/5">
+          <Lock aria-hidden="true" className="size-4 text-telegram" />
+          <AlertDescription className="space-y-1 text-sm">
+            <span className="block font-medium text-foreground">Подключите Telegram</span>
+            <span className="block text-muted-foreground">{lockMessage}</span>
+          </AlertDescription>
         </Alert>
       </CardContent>
     </Card>

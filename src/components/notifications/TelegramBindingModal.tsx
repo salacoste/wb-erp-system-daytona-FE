@@ -24,6 +24,7 @@ interface TelegramBindingModalProps {
   open: boolean
   onOpenChange: (open: boolean) => void
   onSuccess: () => void
+  onReturnFocus?: () => void
 }
 
 // ============================================================================
@@ -42,7 +43,12 @@ interface TelegramBindingModalProps {
  *
  * @see docs/stories/epic-34/story-34.2-fe-telegram-binding-flow.md
  */
-export function TelegramBindingModal({ open, onOpenChange, onSuccess }: TelegramBindingModalProps) {
+export function TelegramBindingModal({
+  open,
+  onOpenChange,
+  onSuccess,
+  onReturnFocus,
+}: TelegramBindingModalProps) {
   const {
     bindingCode,
     isBound,
@@ -57,8 +63,27 @@ export function TelegramBindingModal({ open, onOpenChange, onSuccess }: Telegram
   } = useTelegramBindingModal({ open, onSuccess })
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[540px] max-h-[90vh] overflow-y-auto">
+    <Dialog
+      open={open}
+      onOpenChange={nextOpen => {
+        if (isStartingBinding && !nextOpen) return
+        onOpenChange(nextOpen)
+      }}
+    >
+      <DialogContent
+        className="max-h-[90vh] max-w-[calc(100vw-2rem)] overflow-y-auto sm:max-w-[540px]"
+        onEscapeKeyDown={event => {
+          if (isStartingBinding) event.preventDefault()
+        }}
+        onPointerDownOutside={event => {
+          if (isStartingBinding) event.preventDefault()
+        }}
+        onCloseAutoFocus={event => {
+          if (!onReturnFocus) return
+          event.preventDefault()
+          onReturnFocus()
+        }}
+      >
         <DialogHeader>
           <DialogTitle className="text-2xl font-semibold">Подключение Telegram</DialogTitle>
           <DialogDescription>
@@ -69,8 +94,16 @@ export function TelegramBindingModal({ open, onOpenChange, onSuccess }: Telegram
         <div className="space-y-6">
           {/* Loading State */}
           {isStartingBinding && (
-            <div className="flex items-center justify-center py-8">
-              <Loader2 className="h-8 w-8 animate-spin text-[#0088CC]" />
+            <div
+              role="status"
+              aria-label="Создаём код привязки"
+              className="flex items-center justify-center gap-3 py-8 text-muted-foreground"
+            >
+              <Loader2
+                aria-hidden="true"
+                className="size-8 animate-spin text-telegram motion-reduce:animate-none"
+              />
+              <span>Создаём код привязки…</span>
             </div>
           )}
 

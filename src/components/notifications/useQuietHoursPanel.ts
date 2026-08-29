@@ -7,6 +7,19 @@ import { useState, useEffect, useCallback } from 'react'
 import { useQuietHours } from '@/hooks/useQuietHours'
 import type { UpdatePreferencesRequestDto } from '@/types/notifications'
 
+const TIME_PATTERN = /^(?:[01]\d|2[0-3]):[0-5]\d$/
+
+function getTimeError(value: string | undefined): string | undefined {
+  return TIME_PATTERN.test(value ?? '') ? undefined : 'Введите время в формате ЧЧ:ММ'
+}
+
+function getTimeErrors(value: UpdatePreferencesRequestDto['quiet_hours']) {
+  return {
+    from: getTimeError(value?.from),
+    to: getTimeError(value?.to),
+  }
+}
+
 /**
  * Hook that manages QuietHoursPanel state and handlers.
  * Returns local quiet hours state, current time, and update callbacks.
@@ -20,11 +33,13 @@ export function useQuietHoursPanel(_disabled: boolean) {
 
   // Current time preview state
   const [currentTime, setCurrentTime] = useState('')
+  const [timeErrors, setTimeErrors] = useState<Partial<Record<'from' | 'to', string>>>({})
 
   // Sync with fetched quiet hours
   useEffect(() => {
     if (quietHours) {
       setLocalQuietHours(quietHours)
+      setTimeErrors({})
     }
   }, [quietHours])
 
@@ -49,6 +64,15 @@ export function useQuietHoursPanel(_disabled: boolean) {
     return () => clearInterval(interval)
   }, [localQuietHours?.timezone])
 
+  const writeIfValid = useCallback(
+    (updated: UpdatePreferencesRequestDto['quiet_hours']) => {
+      const errors = getTimeErrors(updated)
+      setTimeErrors(errors)
+      if (!errors.from && !errors.to) updateQuietHours(updated)
+    },
+    [updateQuietHours]
+  )
+
   /** Toggle quiet hours enabled */
   const toggleEnabled = useCallback(() => {
     const updated = {
@@ -56,31 +80,27 @@ export function useQuietHoursPanel(_disabled: boolean) {
       enabled: !localQuietHours?.enabled,
     }
     setLocalQuietHours(updated)
-    updateQuietHours(updated)
-  }, [localQuietHours, updateQuietHours])
+    writeIfValid(updated)
+  }, [localQuietHours, writeIfValid])
 
   /** Update time range (from or to) */
   const updateTimeRange = useCallback(
     (field: 'from' | 'to', value: string) => {
-      setLocalQuietHours(prev => {
-        const updated = { ...prev, [field]: value }
-        updateQuietHours(updated)
-        return updated
-      })
+      const updated = { ...localQuietHours, [field]: value }
+      setLocalQuietHours(updated)
+      writeIfValid(updated)
     },
-    [updateQuietHours]
+    [localQuietHours, writeIfValid]
   )
 
   /** Update timezone */
   const updateTimezone = useCallback(
     (timezone: string) => {
-      setLocalQuietHours(prev => {
-        const updated = { ...prev, timezone }
-        updateQuietHours(updated)
-        return updated
-      })
+      const updated = { ...localQuietHours, timezone }
+      setLocalQuietHours(updated)
+      writeIfValid(updated)
     },
-    [updateQuietHours]
+    [localQuietHours, writeIfValid]
   )
 
   return {
@@ -88,6 +108,7 @@ export function useQuietHoursPanel(_disabled: boolean) {
     currentTime,
     isUpdating,
     isQuietHoursActive,
+    timeErrors,
     toggleEnabled,
     updateTimeRange,
     updateTimezone,

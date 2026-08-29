@@ -33,8 +33,8 @@ export function PreferencesActionBar({
   onCancel,
 }: PreferencesActionBarProps) {
   return (
-    <div className="pt-6 border-t border-gray-200">
-      <div className="flex justify-between items-center gap-4">
+    <div className="border-t border-border pt-6">
+      <div className="flex flex-wrap items-center justify-between gap-4">
         <Button variant="outline" onClick={onCancel} disabled={!hasUnsavedChanges || isUpdating}>
           Отменить
         </Button>
@@ -43,16 +43,24 @@ export function PreferencesActionBar({
           variant="default"
           onClick={onSave}
           disabled={!hasUnsavedChanges || isUpdating}
-          className="bg-primary hover:bg-primary-dark disabled:bg-gray-300 disabled:text-gray-600 disabled:cursor-not-allowed"
+          aria-busy={isUpdating || undefined}
+          className="disabled:cursor-not-allowed"
         >
           {isUpdating ? (
             <>
-              <span className="mr-2 inline-block animate-spin">&#9203;</span>
+              <span
+                className="mr-2 inline-block animate-spin motion-reduce:animate-none"
+                aria-hidden="true"
+              >
+                &#9203;
+              </span>
               Сохранение...
             </>
           ) : (
             <>
-              <span className="mr-2">&#10003;</span>
+              <span className="mr-2" aria-hidden="true">
+                &#10003;
+              </span>
               Сохранить настройки
             </>
           )}

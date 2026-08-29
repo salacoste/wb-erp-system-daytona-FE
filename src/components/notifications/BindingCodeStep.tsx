@@ -55,7 +55,7 @@ export function BindingCodeStep({
         </p>
 
         {/* Verification Code */}
-        <div className="flex items-center gap-2 p-3 bg-gray-100 rounded-lg">
+        <div className="flex flex-wrap items-center gap-2 rounded-lg bg-muted p-3">
           <code className="flex-1 font-mono text-lg select-all">/start {bindingCode}</code>
           <Button variant="ghost" size="sm" onClick={handleCopyCode} aria-label="Копировать код">
             <Copy className="h-4 w-4" />
@@ -66,14 +66,15 @@ export function BindingCodeStep({
 
       {/* Divider */}
       <div className="flex items-center gap-4">
-        <div className="flex-1 h-px bg-gray-300" />
+        <div className="h-px flex-1 bg-border" />
         <span className="text-sm text-muted-foreground">или</span>
-        <div className="flex-1 h-px bg-gray-300" />
+        <div className="h-px flex-1 bg-border" />
       </div>
 
       {/* Deep Link Button */}
       <Button
-        className="w-full bg-[#0088CC] hover:bg-[#0077B3] text-white"
+        variant="outline"
+        className="w-full border-telegram/40 text-telegram hover:bg-telegram/10 hover:text-telegram"
         size="lg"
         onClick={handleOpenTelegram}
         aria-label="Открыть в Telegram"
@@ -89,10 +90,10 @@ export function BindingCodeStep({
             Код действителен ещё:{' '}
             <strong className="font-semibold">{formatTime(timeRemaining)}</strong>
           </p>
-          <div className="h-2 bg-gray-200 rounded-full overflow-hidden">
+          <div className="h-2 overflow-hidden rounded-full bg-muted">
             <div
-              className={`h-full ${getProgressColor()} transition-all duration-1000 ${
-                timeRemaining <= 30 ? 'animate-pulse' : ''
+              className={`h-full ${getProgressColor()} transition-all duration-1000 motion-reduce:transition-none ${
+                timeRemaining <= 30 ? 'animate-pulse motion-reduce:animate-none' : ''
               }`}
               style={{ width: `${progress}%` }}
               role="progressbar"
@@ -119,7 +120,10 @@ export function BindingCodeStep({
           aria-live="polite"
           aria-atomic="true"
         >
-          <Loader2 className="h-6 w-6 animate-spin text-[#0088CC]" />
+          <Loader2
+            aria-hidden="true"
+            className="size-6 animate-spin text-telegram motion-reduce:animate-none"
+          />
           <p>{getPollingMessage()}</p>
         </div>
       )}

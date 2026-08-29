@@ -43,7 +43,7 @@ export function QuietHoursScheduleDisplay({
       <div>
         <label
           htmlFor="quiet-hours-timezone"
-          className="block text-sm font-medium text-gray-700 mb-2"
+          className="mb-2 block text-sm font-medium text-foreground"
         >
           Часовой пояс:
         </label>
@@ -56,7 +56,7 @@ export function QuietHoursScheduleDisplay({
 
       {/* Current Time Preview */}
       {/* Ref: Story 34.4-FE AC#3 - Updates every 60s */}
-      <div className="flex items-center gap-2 text-sm text-gray-600">
+      <div className="flex items-center gap-2 text-sm text-muted-foreground">
         <span aria-hidden="true">&#8505;&#65039;</span>
         <p>
           Сейчас в {timezone}: <strong>{currentTime}</strong>
@@ -66,14 +66,18 @@ export function QuietHoursScheduleDisplay({
       {/* Active Quiet Hours Badge */}
       {/* Ref: Story 34.4-FE AC#5 - Shows when current time within quiet hours */}
       {isQuietHoursActive && (
-        <Alert className="bg-blue-50 border-blue-500" role="status" aria-live="polite">
+        <Alert
+          className="border-status-information/40 bg-status-information/10"
+          role="status"
+          aria-live="polite"
+        >
           <div className="flex items-start gap-2">
             <span className="text-xl" aria-hidden="true">
               &#127769;
             </span>
             <div>
-              <p className="text-sm font-medium text-blue-700">Сейчас активны тихие часы</p>
-              <p className="text-xs text-blue-600">(уведомления не отправляются)</p>
+              <p className="text-sm font-medium text-foreground">Сейчас активны тихие часы</p>
+              <p className="text-xs text-muted-foreground">(уведомления не отправляются)</p>
             </div>
           </div>
         </Alert>

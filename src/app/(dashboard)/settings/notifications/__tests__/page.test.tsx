@@ -19,14 +19,24 @@ vi.mock('@/lib/analytics/telegram-metrics', () => ({
 
 // Mock useTelegramBinding hook
 const mockIsBound = vi.fn<() => boolean>()
+const mockStatus = vi.fn<
+  () => {
+    bound: boolean
+    telegram_user_id: number | null
+    telegram_username: string | null
+    binding_expires_at: string | null
+  } | null
+>()
+const mockIsCheckingStatus = vi.fn<() => boolean>()
+const mockCheckStatus = vi.fn()
 vi.mock('@/hooks/useTelegramBinding', () => ({
   useTelegramBinding: () => ({
     isBound: mockIsBound(),
-    status: { bound: mockIsBound() },
-    isCheckingStatus: false,
+    status: mockStatus(),
+    isCheckingStatus: mockIsCheckingStatus(),
     startBinding: vi.fn(),
     unbind: vi.fn(),
-    checkStatus: vi.fn(),
+    checkStatus: mockCheckStatus,
     isStartingBinding: false,
     isUnbinding: false,
     bindingError: null,
@@ -96,6 +106,14 @@ import NotificationsSettingsPage from '../page'
 describe('NotificationsSettingsPage', () => {
   beforeEach(() => {
     vi.clearAllMocks()
+    mockIsBound.mockReturnValue(false)
+    mockStatus.mockReturnValue({
+      bound: false,
+      telegram_user_id: null,
+      telegram_username: null,
+      binding_expires_at: null,
+    })
+    mockIsCheckingStatus.mockReturnValue(false)
   })
 
   describe('Page structure', () => {
@@ -113,17 +131,18 @@ describe('NotificationsSettingsPage', () => {
       const { container } = render(<NotificationsSettingsPage />)
 
       expect(container.querySelectorAll('main')).toHaveLength(0)
-      expect(container.querySelector('section.min-h-screen')).toBeInTheDocument()
+      expect(
+        screen.getByRole('region', { name: 'Настройки Telegram-уведомлений' })
+      ).toBeInTheDocument()
     })
 
-    it('should render the Bell icon alongside the title', () => {
+    it('uses the shared page header identity composition', () => {
       mockIsBound.mockReturnValue(false)
 
       const { container } = render(<NotificationsSettingsPage />)
 
-      // lucide-react Bell renders as an SVG
-      const svg = container.querySelector('svg.lucide-bell')
-      expect(svg).toBeInTheDocument()
+      expect(container.querySelector('[data-slot="page-header"]')).toBeInTheDocument()
+      expect(screen.getAllByRole('heading', { level: 1 })).toHaveLength(1)
     })
 
     it('should render breadcrumbs on desktop', () => {
@@ -136,12 +155,62 @@ describe('NotificationsSettingsPage', () => {
       expect(screen.getByText('Уведомления')).toBeInTheDocument()
     })
 
-    it('should render back link for mobile', () => {
+    it('links the settings breadcrumb to the canonical settings route', () => {
       mockIsBound.mockReturnValue(false)
 
       render(<NotificationsSettingsPage />)
 
-      expect(screen.getByText(/← настройки/i)).toBeInTheDocument()
+      expect(screen.getByRole('link', { name: 'Настройки' })).toHaveAttribute('href', '/settings')
+    })
+  })
+
+  describe('Telegram status truthfulness', () => {
+    it('shows an accessible loading state without presenting Telegram as unbound', () => {
+      mockStatus.mockReturnValue(null)
+      mockIsCheckingStatus.mockReturnValue(true)
+
+      render(<NotificationsSettingsPage />)
+
+      expect(
+        screen.getByRole('heading', { name: 'Проверяем подключение Telegram' })
+      ).toBeInTheDocument()
+      expect(screen.queryByTestId('notifications-hero-banner')).not.toBeInTheDocument()
+      expect(screen.queryByText('Статус Telegram недоступен')).not.toBeInTheDocument()
+    })
+
+    it('shows a retryable unavailable state that is distinct from unbound', () => {
+      mockStatus.mockReturnValue(null)
+
+      render(<NotificationsSettingsPage />)
+
+      expect(
+        screen.getByRole('heading', { name: 'Статус Telegram недоступен' })
+      ).toBeInTheDocument()
+      expect(screen.queryByTestId('notifications-hero-banner')).not.toBeInTheDocument()
+
+      fireEvent.click(screen.getByRole('button', { name: 'Повторить проверку' }))
+      expect(mockCheckStatus).toHaveBeenCalledTimes(1)
+    })
+
+    it('reports the confirmed unbound status in the shared context bar', () => {
+      render(<NotificationsSettingsPage />)
+
+      expect(screen.getByText('Не подключен')).toBeInTheDocument()
+      expect(screen.getByText('Данные актуальны')).toBeInTheDocument()
+    })
+
+    it('reports the confirmed bound status in the shared context bar', () => {
+      mockIsBound.mockReturnValue(true)
+      mockStatus.mockReturnValue({
+        bound: true,
+        telegram_user_id: 1735,
+        telegram_username: 'story_user',
+        binding_expires_at: null,
+      })
+
+      render(<NotificationsSettingsPage />)
+
+      expect(screen.getByText('Подключен')).toBeInTheDocument()
     })
   })
 
@@ -229,6 +298,12 @@ describe('NotificationsSettingsPage', () => {
   describe('Bound state (connected to Telegram)', () => {
     beforeEach(() => {
       mockIsBound.mockReturnValue(true)
+      mockStatus.mockReturnValue({
+        bound: true,
+        telegram_user_id: 1735,
+        telegram_username: 'story_user',
+        binding_expires_at: null,
+      })
     })
 
     it('should render TelegramBindingCard', () => {
