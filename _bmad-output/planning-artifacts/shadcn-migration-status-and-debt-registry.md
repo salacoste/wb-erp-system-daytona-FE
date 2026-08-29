@@ -1,6 +1,6 @@
 # Shadcn Full-UI Migration — Status & Debt Registry
 
-> **Snapshot date: 2026-08-29** (Epics 166-172 are complete; Story 172.17 shipped through feature PR #325 and closeout PR #326; Program NEXT = Epic 173 / Story 173.1; Stories 166.1-172.17 are done). Канонический статус-реестр программы миграции
+> **Snapshot date: 2026-08-29** (Epics 166-172 are complete; Story 173.1 shipped through feature PR #328; Epic 173 = 1/13; Program NEXT = Story 173.2 after Story 173.1 closeout cleanup; Stories 166.1-173.1 are done). Канонический статус-реестр программы миграции
 > для BMAD-артефактов. Живая история — sprint-status.yaml (по-сторийно) и ledger
 > BE-репо (docs/tech-debt/TECH-DEBT-2026-08-SESSION.md, Addendum-4 cont.1-25);
 > этот файл = консолидированный срез «что сделано / что осталось / все долги».
@@ -17,12 +17,12 @@
 | 170-FE                       | 7               | **7**  | —                                 | **CLOSED** (Stories 170.1-170.7 shipped through PRs #237-#250)                                                                  |
 | 171-FE                       | 9               | **9**  | —                                 | **CLOSED** (Stories 171.1-171.9 shipped through PRs #252, #254, #256, #258, #260, #262, #266, #268, and #270)                   |
 | 172-FE                       | 17              | **17** | —                                 | **CLOSED** (Stories 172.1-172.17; Story 172.17 feature #325 + closeout #326)                                                     |
-| 173-FE                       | 13              | 0      | 173.1-13                          | NEXT; owner Stories 173.1 settings, 173.8 shipments, 173.12 supplies                                                            |
+| 173-FE                       | 13              | **1**  | 173.2-13                          | **IN PROGRESS**; settings owner 173.1 shipped; NEXT 173.2; owners 173.8 shipments and 173.12 supplies remain                    |
 | 174-FE консолидация          | 5               | 0      | 174.1-5                           | финал (СТРОГО после 166-173; 174.2 design-system/source-boundary/contrast; 174.3 visual/a11y; 174.4 functional/backend)         |
 
-**Story readiness: 76 of 94 canonical Stories complete.** Epics 166-172 are closed. Story 172.17 merged through
-feature PR #325 and closeout PR #326, bringing Epic 172 to 17/17 and the recorded Vitest floor to
-**19,467/0** across 1,227 files. The remaining program is Epic 173 (13 route Stories) followed by the strict
+**Story readiness: 77 of 94 canonical Stories complete.** Epics 166-172 are closed. Story 173.1 merged through
+feature PR #328, opening Epic 173 at 1/13 and raising the recorded Vitest floor to
+**19,489/0** across 1,229 files. The remaining program is Epic 173 (12 route Stories) followed by the strict
 Epic 174.1 → 174.5 assurance and cleanup chain.
 
 169.13 SHIPPED 2026-08-25 (последний backlog-роут эпика; 12/15): preface #231 (`95522187` — unknown enums + nullables, opus APPROVE) + #232 (`2778d43e`; 26 файлов, owned 58→73, **e2e на ветке 33/1↓/0**, 2×opus);
@@ -105,7 +105,7 @@ caption naming model + tabular + p-6; guard-9 + caption role-тест + 6 re-pin
 **172.15 SHIPPED (2026-08-29, PR #321, merge `81bc35cc`)** — born-clean: caption ×2 + tabular + гард 7; полный пол **19 458/0/1225** (+11 exact); 1×opus APPROVE; e2e-gap честный. Артефакт: `172-15-fe-migrate-fbo-orders.md`.
 **172.16 SHIPPED (2026-08-29, PR #323, merge `8939aea4`)** — MINOR-GAP: 6 свапов + гард 5 (HEAD-мутационно проверен); полный пол **19 463/0/1226** (+5 exact); 1×opus APPROVE. Артефакт: `172-16-fe-migrate-order-integrity-analysis.md`.
 **172.17 SHIPPED (2026-08-29, PR #325, merge `caee8523`) — ЭПИК 172 ЗАВЕРШЁН 17/17** — MINOR-GAP: 2 свапа + гард 4; полный пол **19 467/0/1227** (+4 exact); 1×opus APPROVE. Артефакт: `172-17-fe-migrate-product-management.md` (включая Epic-172 retrospective).
-**NEXT = Эпик 173 (13 стори; owner-стори: 173.1 settings, 173.8 shipments, 173.12 supplies)** — вход через sprint-status/sprint-planning эпика 173.
+**NEXT = Story 173.2 Backfill Settings после closeout cleanup 173.1** — settings owner 173.1 merged; оставшиеся owner-стори: 173.8 shipments и 173.12 supplies.
 **Carry-out → 174.2 owner (route-ledger handoff из 171.9):** (1) удалить поле className из
 STATUS_BADGE_CONFIG после миграции ModelListSection на собственный overlay; (2) переписать
 stale-комментарий model-list-helpers.ts:24-26 («subroutes 171.7/171.9» — остался только
@@ -120,7 +120,7 @@ post-close #222 (гнилой пин от стандартизации 1804aa8f;
 маршрутная миграция #227 (`52f7f506`; 27 файлов, owned 119→147, **e2e на ветке 6/1↓/0**, 2×opus FRESH);
 CSV-security #223 (OWASP defang + trade-off documented); чужой WIP реконсилирован #225 (cogs-split +
 rateLimit + csv-dedupe); Correct Course #228 (`4d0ff685`) ввёл 169.14/169.15 + bounded 169.12-closeout.
-**Recorded full Vitest floor: 19,467/0 across 1,227 files** after Story 172.17. Browser/theme/visual evidence — carry-out 174.3;
+**Recorded full Vitest floor: 19,489/0 across 1,229 files** after Story 173.1. Browser/theme/visual evidence — carry-out 174.3;
 credentialed functional E2E — carry-out 174.4. Plan-status аудит 2026-08-24: 167.5/167.8/167.9 → executed
 (были review/ready-for-dev/backlog при done-строках).
 
@@ -184,6 +184,7 @@ credentialed functional E2E — carry-out 174.4. Plan-status аудит 2026-08-
 | C15 | URGENCY_CLASS кириллическими label-ключами (rename в lib = тихий fallback)                                                                                                    | analytics/liquidity/LiquidationScenarioCard.tsx                              | при касании: типизировать ключи через lib-тир или days-tier map                                                                                           |
 | C16 | Pie `as unknown as` double-cast (pre-existing) + chart-3-as-text запас 0.02 (4.52)                                                                                            | analytics/liquidity/LiquidityDistributionChart.tsx                           | при касании waterfall-подобных графов; 174.2 контраст-ревью                                                                                               |
 | C17 | Credentialed functional E2E для Story 169.9 corrective не выполнен                                                                                                            | analytics/gaps auth/session/error-recovery + local-backend critical journeys | Story 174.4; требуется отдельное явное credential-разрешение. Если оно выдано, передавать credential только in-memory, никогда не выводить и не сохранять |
+| C18 | Story 173.1 credentialed non-Owner restricted-navigation visual отсутствует; optional Manager credentials не настроены                                                          | settings shell desktop + compact Sheet, both themes                           | Story 174.3; semantic Manager/Analyst/Service × Tariffs/Import proof is deterministic in Vitest; не заявлять Manager screenshot без реального прогона      |
 
 ### 3.3 BE-debt
 
@@ -225,7 +226,7 @@ credentialed functional E2E — carry-out 174.4. Plan-status аудит 2026-08-
 
 ## 5. Owner-зависимые стори (вехи 172-173)
 
-- Epic 172 owner chains are complete. The remaining Epic 173 owners are 173.1 settings, 173.8 shipments, and 173.12 supplies; their consumer Stories start only after the applicable owner merge.
+- Epic 172 owner chains are complete. Epic 173 settings owner 173.1 is merged; the remaining Epic 173 owners are 173.8 shipments and 173.12 supplies. Consumer Stories start only after the applicable owner merge and closeout cleanup.
 
 ## 6. Процесс-ссылки
 
