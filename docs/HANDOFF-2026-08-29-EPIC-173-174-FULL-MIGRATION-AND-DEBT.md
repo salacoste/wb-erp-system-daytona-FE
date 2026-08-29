@@ -1,9 +1,9 @@
 # WB Repricer Frontend — Full shadcn/ui Migration Handoff and Technical-Debt Register
 
-> **Snapshot:** 2026-08-29, based on `origin/main` commit `d99f812ee55446bba8254657259a77f8d5c65ff7` (Story 173.4 documentation closeout merge, PR #339); the product and initial documentation lanes are merged and cleaned, and only this auxiliary lifecycle record plus its own cleanup gate the next Story.
+> **Snapshot:** 2026-08-30, based on `origin/main` commit `41d686de886442d579a19aabb8331bf3995f12e3` (Story 173.5 feature merge, PR #341); product delivery is merged and cleaned, and its separate documentation closeout plus exact docs cleanup gate the next Story.
 > **Audience:** the next autonomous frontend migration team and its orchestrator.
-> **Status:** Epics 166–172 and Stories 173.1–173.4 are complete; 80 of 94 canonical Stories are complete; 14 Stories remain in Epics 173–174.
-> **Immediate next product Story:** 173.5, Notification Settings, after the Story 173.4 auxiliary lifecycle record merges and its own exact branch/worktree cleanup passes.
+> **Status:** Epics 166–172 and Stories 173.1–173.5 are complete; 81 of 94 canonical Stories are complete; 13 Stories remain in Epics 173–174.
+> **Immediate next product Story:** 173.6, Tariff Settings, only after the Story 173.5 documentation closeout merges and exact feature/docs branch and worktree cleanup passes.
 > **Supersedes operationally:** `docs/HANDOFF-2026-08-27-CROSS-TEAM-OMC-ORCHESTRATOR-172-8-CONTINUATION.md`. That historical file remains unchanged by this documentation lane; it contains obsolete Story 172.12 execution instructions and a known plaintext test-credential exposure, so it must not be used as an execution entry point.
 > **Scope:** this document concerns only `/Users/r2d2/Documents/Code_Projects/wb-repricer-system-new/frontend` and the approved local frontend migration workflow. It grants no deploy, production, force-push, or direct-push-to-main authority.
 
@@ -13,24 +13,24 @@ This document is the single continuation entry point. It intentionally separates
 
 ## 0. Executive snapshot
 
-| Item | Verified state |
-| --- | --- |
-| Repository | `salacoste/wb-erp-system-daytona-FE` |
-| Authoring base | `origin/main` at `d99f812ee55446bba8254657259a77f8d5c65ff7` |
-| Latest lifecycle event | Story 173.4 documentation closeout PR #339 merged; product and initial docs cleanup proved |
-| Canonical Story parity | 94 BMAD Stories and 94 per-Story OMX plans |
-| Completed | 80/94 Stories; Epics 166–172 complete; Epic 173 at 4/13 |
-| Remaining | 14/94: Epic 173 has 9; Epic 174 has 5 |
-| Route inventory | 76 source routes and 76 ledger rows |
-| Route implementation progress | 67 route-owning Stories complete; 9 Epic 173 routes remain |
-| Route-ledger status | all rows remain `planned`; Story 174.1 validates ownership/evidence without changing implementation state, and Story 174.5 owns final transitions to `verified` |
-| Recorded full Vitest floor | 19,615 passed, 0 failed, 0 skipped, 1,235 files after Story 173.4 |
-| Open PRs before auxiliary lifecycle-record publication | 0 |
-| Story 173.4 lifecycle residue | product and initial documentation refs/paths are absent; only the auxiliary lifecycle-record lane remains until its own merge and cleanup |
-| NEXT | execute Story 173.5 from refreshed clean `main` after Story 173.4 auxiliary lifecycle-record merge and cleanup |
-| Production/deploy authority | forbidden |
+| Item                          | Verified state                                                                                                                                                  |
+| ----------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Repository                    | `salacoste/wb-erp-system-daytona-FE`                                                                                                                            |
+| Authoring base                | `origin/main` at `41d686de886442d579a19aabb8331bf3995f12e3`                                                                                                     |
+| Latest lifecycle event        | Story 173.5 feature PR #341 merged; product cleanup proved and separate docs closeout remains                                                                   |
+| Canonical Story parity        | 94 BMAD Stories and 94 per-Story OMX plans                                                                                                                      |
+| Completed                     | 81/94 Stories; Epics 166–172 complete; Epic 173 at 5/13                                                                                                         |
+| Remaining                     | 13/94: Epic 173 has 8; Epic 174 has 5                                                                                                                           |
+| Route inventory               | 76 source routes and 76 ledger rows                                                                                                                             |
+| Route implementation progress | 68 route-owning Stories complete; 8 Epic 173 routes remain                                                                                                      |
+| Route-ledger status           | all rows remain `planned`; Story 174.1 validates ownership/evidence without changing implementation state, and Story 174.5 owns final transitions to `verified` |
+| Recorded full Vitest floor    | 19,647 passed, 0 failed, 1,242 files after Story 173.5                                                                                                          |
+| Story 173.5 product PR state  | #341 merged; no open product PR remains                                                                                                                         |
+| Story 173.5 lifecycle residue | product refs/paths are absent; documentation closeout branch/worktree remains only until its merge and exact cleanup                                            |
+| NEXT                          | execute Story 173.6 from refreshed clean `main` only after Story 173.5 closeout merge and cleanup                                                               |
+| Production/deploy authority   | forbidden                                                                                                                                                       |
 
-The recorded test floor is the fresh pinned-runtime Story 173.4 unrestricted full-suite rerun: 19,615/19,615 across 1,235 files. The earlier sandbox-only listener-bind failure was superseded by the complete successful run.
+The recorded test floor is the fresh pinned-runtime Story 173.5 unrestricted merged-main full-suite rerun: 19,647/19,647 across 1,242 files. The known jsdom navigation diagnostic remained non-failing.
 
 ### Immutable continuation anchors
 
@@ -103,7 +103,7 @@ base:
   origin/main @ 046599670319d9a5d6da935b892ceca6fe01e7d9
 ```
 
-This historical handoff lane was merged as PR #327 and cleaned before Story 173.1 began. Story 173.1 then merged through feature PR #328 and documentation closeout PR #329; both delivery lanes were cleaned. Story 173.2 merged through feature PR #332 and documentation closeout PR #333; all of its lifecycle lanes were cleaned. Story 173.3 merged through feature PR #335, documentation closeout PR #336, and lifecycle-record PR #337; all lanes were cleaned before Story 173.4. Story 173.4 merged through feature PR #338 and documentation closeout PR #339; the product and initial documentation lanes were cleaned, and only the auxiliary lifecycle-record lane remains until its own merge and cleanup.
+This historical handoff lane was merged as PR #327 and cleaned before Story 173.1 began. Story 173.1 then merged through feature PR #328 and documentation closeout PR #329; both delivery lanes were cleaned. Story 173.2 merged through feature PR #332 and documentation closeout PR #333; all of its lifecycle lanes were cleaned. Story 173.3 merged through feature PR #335, documentation closeout PR #336, and lifecycle-record PR #337; all lanes were cleaned before Story 173.4. Story 173.4 merged through feature PR #338, documentation closeout PR #339, and lifecycle-record PR #340; all lanes were cleaned before Story 173.5. Story 173.5 product work merged through feature PR #341; its separate documentation closeout and exact docs cleanup are the only active Story lifecycle steps.
 
 Never reset, rebase, stage, commit, remove, or clean another team's WIP. When a path or branch is disputed, capture branch/HEAD/status/diffs/untracked files and ownership evidence before any Git mutation.
 
@@ -116,34 +116,35 @@ The following recoverable audit quarantine existed at handoff time:
 size: approximately 112 MiB
 ```
 
-It contains five historical/audit-evidence directories associated with Story 172.11 and Story 169.14 review snapshots. It is not a registered product worktree and is not active product WIP. Do not permanently delete it without an explicit informed destructive decision. Its presence does not block Story 173.5.
+It contains five historical/audit-evidence directories associated with Story 172.11 and Story 169.14 review snapshots. It is not a registered product worktree and is not active product WIP. Do not permanently delete it without an explicit informed destructive decision. Its presence does not block Story 173.6.
 
 ---
 
 ## 3. Completed migration history: Epics 166–172
 
-| Epic | Result | Stories | What is now available |
-| --- | --- | ---: | --- |
-| 166 | complete | 8/8 | Tailwind v4 semantic tokens, hardened shadcn primitives, PageHeader/ContextBar, metrics/financial/availability/status compositions, filters/period controls, table/chart contracts, and page-state compositions |
-| 167 | complete | 9/9 | AppShell and protected/public/auth/cabinet/onboarding/processing/WB-token surfaces, including the approved backend reconciliation/idempotency prerequisite and shared frontend conditional-settlement boundary |
-| 168 | complete | 11/11 | Analytics shared owner and core analytics route wave |
-| 169 | complete | 15/15 | Operational analytics routes plus the approved paid-storage backend lifecycle/result prerequisite and shared frontend boundary/closeout |
-| 170 | complete | 7/7 | Advertising, brand, category, and search analytics route wave |
-| 171 | complete | 9/9 | AI anomaly, model governance/preferences/registry/evaluation/performance, and forecast route wave |
-| 172 | complete | 17/17 | Core business dashboard, rules, COGS, communications, finance, monitor/monitoring, MoySklad, orders, integrity, and product management route wave |
+| Epic | Result   | Stories | What is now available                                                                                                                                                                                           |
+| ---- | -------- | ------: | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 166  | complete |     8/8 | Tailwind v4 semantic tokens, hardened shadcn primitives, PageHeader/ContextBar, metrics/financial/availability/status compositions, filters/period controls, table/chart contracts, and page-state compositions |
+| 167  | complete |     9/9 | AppShell and protected/public/auth/cabinet/onboarding/processing/WB-token surfaces, including the approved backend reconciliation/idempotency prerequisite and shared frontend conditional-settlement boundary  |
+| 168  | complete |   11/11 | Analytics shared owner and core analytics route wave                                                                                                                                                            |
+| 169  | complete |   15/15 | Operational analytics routes plus the approved paid-storage backend lifecycle/result prerequisite and shared frontend boundary/closeout                                                                         |
+| 170  | complete |     7/7 | Advertising, brand, category, and search analytics route wave                                                                                                                                                   |
+| 171  | complete |     9/9 | AI anomaly, model governance/preferences/registry/evaluation/performance, and forecast route wave                                                                                                               |
+| 172  | complete |   17/17 | Core business dashboard, rules, COGS, communications, finance, monitor/monitoring, MoySklad, orders, integrity, and product management route wave                                                               |
 
 The last verified Epic 172 chain is:
 
-| Story | Feature PR/merge | Closeout PR/merge | Recorded full Vitest floor |
-| --- | --- | --- | ---: |
-| 172.14 | #319 / `4b988aae` | #320 / `cdc5cfe2` | 19,447 |
-| 172.15 | #321 / `81bc35cc` | #322 / `688a7ad2` | 19,458 |
-| 172.16 | #323 / `8939aea4` | #324 / `45e3da76` | 19,463 |
-| 172.17 | #325 / `caee8523` | #326 / `04659967` | 19,467 |
-| 173.1 | #328 / `3c560ed2` | #329 / `7bec65fd` | 19,489 |
-| 173.2 | #332 / `7c85b804` | #333 / `650f8efc` | 19,565 |
-| 173.3 | #335 / `5ce9935e` | #336 / `3e04ccd2` | 19,589 |
-| 173.4 | #338 / `6a6e1bf8` | #339 / `d99f812e` | 19,615 |
+| Story  | Feature PR/merge  | Closeout PR/merge                  | Recorded full Vitest floor |
+| ------ | ----------------- | ---------------------------------- | -------------------------: |
+| 172.14 | #319 / `4b988aae` | #320 / `cdc5cfe2`                  |                     19,447 |
+| 172.15 | #321 / `81bc35cc` | #322 / `688a7ad2`                  |                     19,458 |
+| 172.16 | #323 / `8939aea4` | #324 / `45e3da76`                  |                     19,463 |
+| 172.17 | #325 / `caee8523` | #326 / `04659967`                  |                     19,467 |
+| 173.1  | #328 / `3c560ed2` | #329 / `7bec65fd`                  |                     19,489 |
+| 173.2  | #332 / `7c85b804` | #333 / `650f8efc`                  |                     19,565 |
+| 173.3  | #335 / `5ce9935e` | #336 / `3e04ccd2`                  |                     19,589 |
+| 173.4  | #338 / `6a6e1bf8` | #339 / `d99f812e`                  |                     19,615 |
+| 173.5  | #341 / `41d686de` | documentation closeout in progress |                     19,647 |
 
 All Epic 172 feature/closeout branches and temporary worktrees were absent at audit time. The completed artifacts under `_bmad-output/implementation-artifacts/166-*` through `172-*` are evidence and lessons; they are not invitations to reopen shipped scope.
 
@@ -153,7 +154,7 @@ Reuse the established product layer, including `src/components/product/PageHeade
 
 ---
 
-## 4. Execution DAG (14 Stories remaining)
+## 4. Execution DAG (13 Stories remaining)
 
 ```mermaid
 flowchart TD
@@ -196,21 +197,21 @@ Named owner Stories must merge before their consumers. The repository plan permi
 
 Every row below is a synopsis. The linked exact plan is authoritative and must be read fully before lane creation.
 
-| Story | Exact lane | Prerequisites and ownership | Required state/behavior evidence | Targeted validation anchor |
-| --- | --- | --- | --- | --- |
-| [173.1 Settings Shell and Overview](../.omx/plans/173.1-migrate-settings-shell-and-overview.md) | **DONE** — feature #328 / `3c560ed2`; closeout #329 / `7bec65fd`; exact cleanup proved | Shared seven-route shell, static overview, desktop grid, compact Sheet, Owner/non-Owner semantics delivered in exact six-file manifest; credentialed non-Owner visual gap is C18 → 174.3 | focused 2/22; settings 17/217; full 19,489/0/1,229; browser 47 pass/2 explicit skip + repeat 63 pass/1 optional Manager skip | [implementation artifact](../_bmad-output/implementation-artifacts/173-1-fe-migrate-settings-shell-and-overview.md) |
-| [173.2 Backfill Settings](../.omx/plans/173.2-migrate-backfill-settings.md) | **DONE** — feature #332 / `7c85b804`; closeout #333 / `650f8efc`; exact lifecycle cleanup proved | Truthful unresolved/error/refresh/stale/retry states; dual-pipeline status/eligibility; responsive cards/table; guarded pending trigger and focus restoration delivered in exact 17-file manifest | focused 6/106; full 19,565/0/1,232; browser 77 pass/2 documented conditional skips; both builds 70/70 | [implementation artifact](../_bmad-output/implementation-artifacts/173-2-fe-migrate-backfill-settings.md) |
-| [173.3 Cabinet Settings](../.omx/plans/173.3-migrate-cabinet-settings.md) | **DONE** — feature #335 / `5ce9935e`; closeout #336 / `3e04ccd2`; exact lifecycle cleanup proved | Stable active-cabinet context; semantic seller/Jam/rating/subscription states; accessible loading, validation, and save lifecycle; fail-closed unknown tier and exact fixtures delivered in exact 12-file manifest | focused 6/49; full 19,589/0/1,234; browser 24 pass/1 optional Manager setup skip; both builds 70/70; product + docs reviews approved | [implementation artifact](../_bmad-output/implementation-artifacts/173-3-fe-migrate-cabinet-settings.md) |
-| [173.4 Expense Settings](../.omx/plans/173.4-migrate-expense-settings.md) | **DONE** — feature #338 / `6a6e1bf8`; closeout #339 / `d99f812e`; exact product and initial docs cleanup proved | Truthful invalid/loading/error/empty/unavailable states; native validation; pending-safe CRUD overlays; unavailable financial evidence; deterministic focus and privacy-safe responsive/theme/reflow/axe proof delivered in exact nine-file manifest | focused 4/98; full 19,615/0/1,235; browser 37 pass/1 optional Manager setup skip; build 70/70; product + docs reviews approved | [implementation artifact](../_bmad-output/implementation-artifacts/173-4-fe-migrate-expense-settings.md) |
-| [173.5 Notification Settings](../.omx/plans/173.5-migrate-notification-settings.md) | `cdx/epic-173-story-5-settings-notifications`; `/private/tmp/wb-repricer-fe-173-5-settings-notifications` | Requires 173.1 and the existing semantic external-brand token. Route/exclusive UI/binding modal/tests; preserve Telegram API/writeback behavior. A fresh broad scan found 71 raw-palette matches in this owner surface; classify them in the Story rather than preempting them in 174.2. | bound/unbound; connect/verification pending; save success/failure; unavailable; quiet-hours validation; labeled switches; modal focus; both themes; no hardcoded white/gray/brand palette | notification route/component Vitest; Telegram notifications E2E |
-| [173.6 Tariff Settings](../.omx/plans/173.6-migrate-tariff-settings.md) | `cdx/epic-173-story-6-settings-tariffs`; `/private/tmp/wb-repricer-fe-173-6-settings-tariffs` | Requires 173.1. Route/tariff-exclusive UI/tests; calculations/APIs/hooks/types forbidden. | loading; pristine/dirty; valid/invalid; pending/success/failure; partial/unavailable; retain valid input after recoverable failure; associated units/errors/results | route/tariff-admin Vitest; settings-pages E2E |
-| [173.7 Tax Settings](../.omx/plans/173.7-migrate-tax-settings.md) | `cdx/epic-173-story-7-settings-tax`; `/private/tmp/wb-repricer-fe-173-7-settings-tax` | Requires 173.1 and financial presentation foundation. Route/tax-exclusive UI/tests; preserve tax calculations/contracts. | loading; pristine/dirty; valid/invalid; unusual warning; pending/success/failure; visible percentage/period units; confirmation/focus/announcement | route/TaxSettingsForm/tax-display-helper Vitest; settings-pages E2E |
-| [173.8 Shipments List](../.omx/plans/173.8-migrate-the-shipments-list.md) | `cdx/epic-173-story-8-shipments`; `/private/tmp/wb-repricer-fe-173-8-shipments` | Shared shipment-list/status owner for 173.9–173.11. Freeze an explicit shared/exclusive manifest before editing. Preserve shipment API/type/lifecycle logic. | loading/empty/filtered-empty; lifecycle states; stale/partial; create pending/success/failure; route error; named row/actions; dialog focus/errors | shipment list/table/dialog Vitest; list/a11y E2E |
-| [173.9 Shipment Detail](../.omx/plans/173.9-migrate-shipment-detail.md) | `cdx/epic-173-story-9-shipment-detail`; `/private/tmp/wb-repricer-fe-173-9-shipment-detail` | Requires 173.8. Dynamic route and detail-exclusive files/tests only. | loading/not-found/partial calculation; warning/error; action pending/success/failure; completed lifecycle; pallet Accordion/table; mobile navigation; validation summary; confirmation/focus/status | detail and shipment-component Vitest; detail/lifecycle E2E |
-| [173.10 Shipment Box Types](../.omx/plans/173.10-migrate-shipment-box-types.md) | `cdx/epic-173-story-10-box-types`; `/private/tmp/wb-repricer-fe-173-10-box-types` | Requires 173.8. Box-types route/components/exclusive tests. | loading/empty/populated; validation; create/edit pending/success/failure; deactivate confirmation; dimensions/units/actions; focus return | route/box-types Vitest; box-types E2E |
-| [173.11 SKU Packaging](../.omx/plans/173.11-migrate-sku-packaging.md) | `cdx/epic-173-story-11-sku-packaging`; `/private/tmp/wb-repricer-fe-173-11-sku-packaging` | Requires 173.8 and 173.10. Packaging route/exclusive shipment UI/tests. | loading/empty/filtered-empty; valid/invalid mapping; pending/success/failure; narrow row detail; named entities/actions; units; validation summary; result announcement | route/sku-packaging Vitest; sku-packaging E2E |
-| [173.12 Supplies List](../.omx/plans/173.12-migrate-supplies-list.md) | `cdx/epic-173-story-12-supplies`; `/private/tmp/wb-repricer-fe-173-12-supplies` | Shared supply-list/status owner for 173.13. Freeze explicit shared/exclusive manifest. Preserve supply contracts. | loading/empty/filtered-empty; lifecycle; stale/partial; create pending/success/failure; error; identifier/status/date/action; overlay focus/errors | supply list/filter/table Vitest; list/a11y E2E |
-| [173.13 Supply Detail](../.omx/plans/173.13-migrate-supply-detail.md) | `cdx/epic-173-story-13-supply-detail`; `/private/tmp/wb-repricer-fe-173-13-supply-detail` | Requires 173.12. Dynamic route and detail-exclusive files/tests. | loading/not-found/partial; lifecycle; document/picker states; close pending/success/failure; stepper, orders, documents, drawer/dialog, sticker/act; focus and announcements | detail/supply-component Vitest; detail/lifecycle E2E |
+| Story                                                                                           | Exact lane                                                                                                      | Prerequisites and ownership                                                                                                                                                                                                                                                                                                   | Required state/behavior evidence                                                                                                                                                                    | Targeted validation anchor                                                                                          |
+| ----------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------- |
+| [173.1 Settings Shell and Overview](../.omx/plans/173.1-migrate-settings-shell-and-overview.md) | **DONE** — feature #328 / `3c560ed2`; closeout #329 / `7bec65fd`; exact cleanup proved                          | Shared seven-route shell, static overview, desktop grid, compact Sheet, Owner/non-Owner semantics delivered in exact six-file manifest; credentialed non-Owner visual gap is C18 → 174.3                                                                                                                                      | focused 2/22; settings 17/217; full 19,489/0/1,229; browser 47 pass/2 explicit skip + repeat 63 pass/1 optional Manager skip                                                                        | [implementation artifact](../_bmad-output/implementation-artifacts/173-1-fe-migrate-settings-shell-and-overview.md) |
+| [173.2 Backfill Settings](../.omx/plans/173.2-migrate-backfill-settings.md)                     | **DONE** — feature #332 / `7c85b804`; closeout #333 / `650f8efc`; exact lifecycle cleanup proved                | Truthful unresolved/error/refresh/stale/retry states; dual-pipeline status/eligibility; responsive cards/table; guarded pending trigger and focus restoration delivered in exact 17-file manifest                                                                                                                             | focused 6/106; full 19,565/0/1,232; browser 77 pass/2 documented conditional skips; both builds 70/70                                                                                               | [implementation artifact](../_bmad-output/implementation-artifacts/173-2-fe-migrate-backfill-settings.md)           |
+| [173.3 Cabinet Settings](../.omx/plans/173.3-migrate-cabinet-settings.md)                       | **DONE** — feature #335 / `5ce9935e`; closeout #336 / `3e04ccd2`; exact lifecycle cleanup proved                | Stable active-cabinet context; semantic seller/Jam/rating/subscription states; accessible loading, validation, and save lifecycle; fail-closed unknown tier and exact fixtures delivered in exact 12-file manifest                                                                                                            | focused 6/49; full 19,589/0/1,234; browser 24 pass/1 optional Manager setup skip; both builds 70/70; product + docs reviews approved                                                                | [implementation artifact](../_bmad-output/implementation-artifacts/173-3-fe-migrate-cabinet-settings.md)            |
+| [173.4 Expense Settings](../.omx/plans/173.4-migrate-expense-settings.md)                       | **DONE** — feature #338 / `6a6e1bf8`; closeout #339 / `d99f812e`; exact product and initial docs cleanup proved | Truthful invalid/loading/error/empty/unavailable states; native validation; pending-safe CRUD overlays; unavailable financial evidence; deterministic focus and privacy-safe responsive/theme/reflow/axe proof delivered in exact nine-file manifest                                                                          | focused 4/98; full 19,615/0/1,235; browser 37 pass/1 optional Manager setup skip; build 70/70; product + docs reviews approved                                                                      | [implementation artifact](../_bmad-output/implementation-artifacts/173-4-fe-migrate-expense-settings.md)            |
+| [173.5 Notification Settings](../.omx/plans/173.5-migrate-notification-settings.md)             | **DONE** — feature #341 / `41d686de`; documentation closeout and exact cleanup gate 173.6                       | Truthful loading/unavailable/bound/unbound Telegram state; FBS independence; semantic tokens; labeled switches and visible radio focus; complete quiet-hours validation; pending-safe binding/unbind lifecycle; deterministic focus; responsive/theme/reflow/reduced-motion/axe discovery delivered in exact 28-file manifest | focused 10/68; full 19,647/0/1,242; Playwright 40 discovered with service-dependent browser gap explicit; build 70/70; product review repairs closed                                                | [implementation artifact](../_bmad-output/implementation-artifacts/173-5-fe-migrate-notification-settings.md)       |
+| [173.6 Tariff Settings](../.omx/plans/173.6-migrate-tariff-settings.md)                         | `cdx/epic-173-story-6-settings-tariffs`; `/private/tmp/wb-repricer-fe-173-6-settings-tariffs`                   | Requires 173.1. Route/tariff-exclusive UI/tests; calculations/APIs/hooks/types forbidden.                                                                                                                                                                                                                                     | loading; pristine/dirty; valid/invalid; pending/success/failure; partial/unavailable; retain valid input after recoverable failure; associated units/errors/results                                 | route/tariff-admin Vitest; settings-pages E2E                                                                       |
+| [173.7 Tax Settings](../.omx/plans/173.7-migrate-tax-settings.md)                               | `cdx/epic-173-story-7-settings-tax`; `/private/tmp/wb-repricer-fe-173-7-settings-tax`                           | Requires 173.1 and financial presentation foundation. Route/tax-exclusive UI/tests; preserve tax calculations/contracts.                                                                                                                                                                                                      | loading; pristine/dirty; valid/invalid; unusual warning; pending/success/failure; visible percentage/period units; confirmation/focus/announcement                                                  | route/TaxSettingsForm/tax-display-helper Vitest; settings-pages E2E                                                 |
+| [173.8 Shipments List](../.omx/plans/173.8-migrate-the-shipments-list.md)                       | `cdx/epic-173-story-8-shipments`; `/private/tmp/wb-repricer-fe-173-8-shipments`                                 | Shared shipment-list/status owner for 173.9–173.11. Freeze an explicit shared/exclusive manifest before editing. Preserve shipment API/type/lifecycle logic.                                                                                                                                                                  | loading/empty/filtered-empty; lifecycle states; stale/partial; create pending/success/failure; route error; named row/actions; dialog focus/errors                                                  | shipment list/table/dialog Vitest; list/a11y E2E                                                                    |
+| [173.9 Shipment Detail](../.omx/plans/173.9-migrate-shipment-detail.md)                         | `cdx/epic-173-story-9-shipment-detail`; `/private/tmp/wb-repricer-fe-173-9-shipment-detail`                     | Requires 173.8. Dynamic route and detail-exclusive files/tests only.                                                                                                                                                                                                                                                          | loading/not-found/partial calculation; warning/error; action pending/success/failure; completed lifecycle; pallet Accordion/table; mobile navigation; validation summary; confirmation/focus/status | detail and shipment-component Vitest; detail/lifecycle E2E                                                          |
+| [173.10 Shipment Box Types](../.omx/plans/173.10-migrate-shipment-box-types.md)                 | `cdx/epic-173-story-10-box-types`; `/private/tmp/wb-repricer-fe-173-10-box-types`                               | Requires 173.8. Box-types route/components/exclusive tests.                                                                                                                                                                                                                                                                   | loading/empty/populated; validation; create/edit pending/success/failure; deactivate confirmation; dimensions/units/actions; focus return                                                           | route/box-types Vitest; box-types E2E                                                                               |
+| [173.11 SKU Packaging](../.omx/plans/173.11-migrate-sku-packaging.md)                           | `cdx/epic-173-story-11-sku-packaging`; `/private/tmp/wb-repricer-fe-173-11-sku-packaging`                       | Requires 173.8 and 173.10. Packaging route/exclusive shipment UI/tests.                                                                                                                                                                                                                                                       | loading/empty/filtered-empty; valid/invalid mapping; pending/success/failure; narrow row detail; named entities/actions; units; validation summary; result announcement                             | route/sku-packaging Vitest; sku-packaging E2E                                                                       |
+| [173.12 Supplies List](../.omx/plans/173.12-migrate-supplies-list.md)                           | `cdx/epic-173-story-12-supplies`; `/private/tmp/wb-repricer-fe-173-12-supplies`                                 | Shared supply-list/status owner for 173.13. Freeze explicit shared/exclusive manifest. Preserve supply contracts.                                                                                                                                                                                                             | loading/empty/filtered-empty; lifecycle; stale/partial; create pending/success/failure; error; identifier/status/date/action; overlay focus/errors                                                  | supply list/filter/table Vitest; list/a11y E2E                                                                      |
+| [173.13 Supply Detail](../.omx/plans/173.13-migrate-supply-detail.md)                           | `cdx/epic-173-story-13-supply-detail`; `/private/tmp/wb-repricer-fe-173-13-supply-detail`                       | Requires 173.12. Dynamic route and detail-exclusive files/tests.                                                                                                                                                                                                                                                              | loading/not-found/partial; lifecycle; document/picker states; close pending/success/failure; stepper, orders, documents, drawer/dialog, sticker/act; focus and announcements                        | detail/supply-component Vitest; detail/lifecycle E2E                                                                |
 
 ### Epic 173 owner boundaries
 
@@ -430,7 +431,7 @@ Node 26 is a known webpack incompatibility in this repository. Validate the acti
 
 ### Documentation-handoff PR gates
 
-Because this lane changes only five existing Markdown/YAML tracking files, updates the existing current handoff and Story 173.4 implementation artifact, and does not modify the obsolete credential-bearing handoff, its proportional gates are:
+Because this lane changes exactly five Markdown/YAML tracking files, updates the existing current handoff, and adds the Story 173.5 implementation artifact without modifying the obsolete credential-bearing handoff, its proportional gates are:
 
 ```bash
 git diff --check
@@ -442,12 +443,12 @@ npm run check:lessons
 Additionally prove:
 
 - `sprint-status.yaml` parses as YAML;
-- exactly 94 canonical Stories = 80 done + 14 backlog;
-- completed arithmetic is 8+9+11+15+7+9+17+4 = 80;
+- exactly 94 canonical Stories = 81 done + 13 backlog;
+- completed arithmetic is 8+9+11+15+7+9+17+5 = 81;
 - 94 OMX Story plans exist and 76 source routes equal 76 ledger rows;
 - all 76 ledger rows intentionally remain `planned`;
-- master, sprint, registry, this handoff, and `CLAUDE.md` agree on 80/94, Epic 173 at 4/13, NEXT Story 173.5 after auxiliary lifecycle-record cleanup, and 19,615/1,235;
-- stale-state scan finds no live continuation instruction that directs the new team to Story 173.4;
+- master, sprint, registry, Story artifact, and this handoff agree on 81/94, Epic 173 at 5/13, NEXT Story 173.6 after cleanup, and 19,647/1,242;
+- stale-state scan finds no live continuation instruction that directs the new team to Story 173.5;
 - a non-echoing staged-diff scan proves that this lane introduces no new credential-bearing line; SEC-DOC-1 remains open because a full tracked-tree inventory found five files with ten additional occurrences;
 - all new relative document/plan links resolve.
 
@@ -465,47 +466,47 @@ This section is the consolidated continuation register. “Known” means backed
 
 ### 11.1 Frontend behavior/security debt requiring a separate owner-trigger
 
-| ID | Debt | Risk | Trigger/owner |
-| --- | --- | --- | --- |
-| FE-D1 | Mutation configuration `retry: 1` also retries 4xx; the WB-token PUT can execute twice and existing E2E pins two attempts. | Duplicate non-idempotent mutation and behavior/test coupling. | Separate behavior-change lane with full Vitest/E2E and deliberate update to the E2E pin; not an incidental UI cleanup. |
-| FE-D2 | `WbTokenBanner` is dead code with zero importers. | Orphaned legacy presentation. | Proven-unused cleanup in a bounded frontend Story or applicable 174.2 manifest. |
-| FE-D3 | `getErrorMessage` may expose raw `error.message` to users. | Internal/sensitive error disclosure. | API-client/error-path owner; scrub, classify, and truncate with behavior tests. |
-| FE-D5 | Cross-tab cabinet creation has no compare-and-set/Web Locks boundary. | Duplicate creation from concurrent tabs. | Dedicated Web Locks/conditional-settlement fast-follow; not visual migration. |
-| FE-D6 | `ExportConfigForm` duplicates/dead-ends `ExportDialogForm`. | Duplicate implementation and drift. | Proven-unused cleanup or 174.2 import-closure sweep. |
-| FE-D8 | A middle path in `getCabinetCreationOperation` can leave the user in `SAFE_RECONCILIATION`. | Stuck onboarding/recovery UX. | Fresh behavior/UX review and dedicated corrective Story; do not change opportunistically. |
-| FE-D9 | `logApiError` can log non-2xx response bodies, including registration secrets. | Credential/PII leakage to logs. | Nearest authorized API-client security lane; redact before logging and preserve password-policy classification. High priority, but outside route-presentation ownership. |
+| ID    | Debt                                                                                                                       | Risk                                                          | Trigger/owner                                                                                                                                                            |
+| ----- | -------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| FE-D1 | Mutation configuration `retry: 1` also retries 4xx; the WB-token PUT can execute twice and existing E2E pins two attempts. | Duplicate non-idempotent mutation and behavior/test coupling. | Separate behavior-change lane with full Vitest/E2E and deliberate update to the E2E pin; not an incidental UI cleanup.                                                   |
+| FE-D2 | `WbTokenBanner` is dead code with zero importers.                                                                          | Orphaned legacy presentation.                                 | Proven-unused cleanup in a bounded frontend Story or applicable 174.2 manifest.                                                                                          |
+| FE-D3 | `getErrorMessage` may expose raw `error.message` to users.                                                                 | Internal/sensitive error disclosure.                          | API-client/error-path owner; scrub, classify, and truncate with behavior tests.                                                                                          |
+| FE-D5 | Cross-tab cabinet creation has no compare-and-set/Web Locks boundary.                                                      | Duplicate creation from concurrent tabs.                      | Dedicated Web Locks/conditional-settlement fast-follow; not visual migration.                                                                                            |
+| FE-D6 | `ExportConfigForm` duplicates/dead-ends `ExportDialogForm`.                                                                | Duplicate implementation and drift.                           | Proven-unused cleanup or 174.2 import-closure sweep.                                                                                                                     |
+| FE-D8 | A middle path in `getCabinetCreationOperation` can leave the user in `SAFE_RECONCILIATION`.                                | Stuck onboarding/recovery UX.                                 | Fresh behavior/UX review and dedicated corrective Story; do not change opportunistically.                                                                                |
+| FE-D9 | `logApiError` can log non-2xx response bodies, including registration secrets.                                             | Credential/PII leakage to logs.                               | Nearest authorized API-client security lane; redact before logging and preserve password-policy classification. High priority, but outside route-presentation ownership. |
 
 ### 11.2 Registered route-wave carry-outs C1–C17
 
-| ID | Carry-out | Destination |
-| --- | --- | --- |
-| C1 | The registry's historical “four tooltip containers” count has drifted and needs fresh classification. Current candidates include `TrendsChart.tsx` `bg-white`, a raw white switch knob in `WidgetSettingsSheet.tsx`, and advertising translucent white/black filter chips; one previously named tooltip is already semantic. | Applicable dashboard/advertising owner or 174.2. Recount an exact manifest before change and use semantic popover/control/overlay contracts. |
-| C2 | `MarginDisplay` retains legacy gray/green/red palette. | Dashboard/financial presentation owner or 174.2; sign uses financial semantics, zero uses muted. |
-| C3 | `getProfitabilityColor` and `getProfitabilityBgClass` appear to have no direct production callers beyond a barrel, while tests still consume them. | `reverify` with barrel/dynamic/build proof before a proven-unused 174.2 deletion. |
-| C4 | `getHealthScoreInfo` returns raw hex/`bgColor` and appears to have no direct production caller beyond a barrel. | `reverify` reachability and tests before deletion. |
-| C5 | Waterfall rendering has two color authorities: utility green versus config blue. | Dedicated chart-owner decision; establish one source of truth before cleanup. |
-| C6 | Acquiring date cells in three tables lack `tabular-nums`. | Tree-wide/table-owner sweep, not inconsistent per-route edits. |
-| C7 | Acquiring E2E still describes an “amber” rate-limit banner. | Correct comment on next owned spec change. |
-| C8 | `FunnelPageContent` is exactly at the 200-line cap. | Extract the sync/toolbar block on the next owned functional change; no speculative refactor. |
-| C9 | Funnel, gaps, and liquidity lack the consolidated browser/theme/responsive/axe/keyboard/visual matrix. | Story 174.3. |
-| C10 | Funnel uses semantic KPI icons while related FBS routes use muted icon canon. | 174.2 owner reconciliation; current direction is semantic. |
-| C11 | One cold-cache Funnel Vitest episode produced 12 failures, while warm/full runs were stable. | Investigate only if freshly reproducible; not an active failure claim. |
-| C12 | Gaps route/component suites partially duplicate composition coverage. | Dedicated test cleanup preserving corrective lifecycle coverage. |
-| C13 | `GapsTable` caption and scroll `aria-label` duplicate the same accessible meaning. | Low-priority accessibility naming deduplication. |
-| C14 | Remaining route source guards need an owner sweep after the Gaps pure-digit-hex correction. | Route owner or applicable 174.2 source-boundary sweep; preserve ticket-reference exclusions. |
-| C15 | Liquidity `URGENCY_CLASS` keys are localized labels; renaming can silently fall back. | Type by stable tier/day key on next owner change. |
-| C16 | Liquidity pie uses a double cast and chart token as text with only a marginal contrast result on card and failures on tint. | Chart/174.2 contrast owner; remove cast only with type-proof and use chart token only as visual mark. |
-| C17 | Credentialed functional E2E for the Story 169.9 corrective journey is missing. | Story 174.4 under explicit in-memory credential authorization. |
+| ID  | Carry-out                                                                                                                                                                                                                                                                                                                    | Destination                                                                                                                                  |
+| --- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------- |
+| C1  | The registry's historical “four tooltip containers” count has drifted and needs fresh classification. Current candidates include `TrendsChart.tsx` `bg-white`, a raw white switch knob in `WidgetSettingsSheet.tsx`, and advertising translucent white/black filter chips; one previously named tooltip is already semantic. | Applicable dashboard/advertising owner or 174.2. Recount an exact manifest before change and use semantic popover/control/overlay contracts. |
+| C2  | `MarginDisplay` retains legacy gray/green/red palette.                                                                                                                                                                                                                                                                       | Dashboard/financial presentation owner or 174.2; sign uses financial semantics, zero uses muted.                                             |
+| C3  | `getProfitabilityColor` and `getProfitabilityBgClass` appear to have no direct production callers beyond a barrel, while tests still consume them.                                                                                                                                                                           | `reverify` with barrel/dynamic/build proof before a proven-unused 174.2 deletion.                                                            |
+| C4  | `getHealthScoreInfo` returns raw hex/`bgColor` and appears to have no direct production caller beyond a barrel.                                                                                                                                                                                                              | `reverify` reachability and tests before deletion.                                                                                           |
+| C5  | Waterfall rendering has two color authorities: utility green versus config blue.                                                                                                                                                                                                                                             | Dedicated chart-owner decision; establish one source of truth before cleanup.                                                                |
+| C6  | Acquiring date cells in three tables lack `tabular-nums`.                                                                                                                                                                                                                                                                    | Tree-wide/table-owner sweep, not inconsistent per-route edits.                                                                               |
+| C7  | Acquiring E2E still describes an “amber” rate-limit banner.                                                                                                                                                                                                                                                                  | Correct comment on next owned spec change.                                                                                                   |
+| C8  | `FunnelPageContent` is exactly at the 200-line cap.                                                                                                                                                                                                                                                                          | Extract the sync/toolbar block on the next owned functional change; no speculative refactor.                                                 |
+| C9  | Funnel, gaps, and liquidity lack the consolidated browser/theme/responsive/axe/keyboard/visual matrix.                                                                                                                                                                                                                       | Story 174.3.                                                                                                                                 |
+| C10 | Funnel uses semantic KPI icons while related FBS routes use muted icon canon.                                                                                                                                                                                                                                                | 174.2 owner reconciliation; current direction is semantic.                                                                                   |
+| C11 | One cold-cache Funnel Vitest episode produced 12 failures, while warm/full runs were stable.                                                                                                                                                                                                                                 | Investigate only if freshly reproducible; not an active failure claim.                                                                       |
+| C12 | Gaps route/component suites partially duplicate composition coverage.                                                                                                                                                                                                                                                        | Dedicated test cleanup preserving corrective lifecycle coverage.                                                                             |
+| C13 | `GapsTable` caption and scroll `aria-label` duplicate the same accessible meaning.                                                                                                                                                                                                                                           | Low-priority accessibility naming deduplication.                                                                                             |
+| C14 | Remaining route source guards need an owner sweep after the Gaps pure-digit-hex correction.                                                                                                                                                                                                                                  | Route owner or applicable 174.2 source-boundary sweep; preserve ticket-reference exclusions.                                                 |
+| C15 | Liquidity `URGENCY_CLASS` keys are localized labels; renaming can silently fall back.                                                                                                                                                                                                                                        | Type by stable tier/day key on next owner change.                                                                                            |
+| C16 | Liquidity pie uses a double cast and chart token as text with only a marginal contrast result on card and failures on tint.                                                                                                                                                                                                  | Chart/174.2 contrast owner; remove cast only with type-proof and use chart token only as visual mark.                                        |
+| C17 | Credentialed functional E2E for the Story 169.9 corrective journey is missing.                                                                                                                                                                                                                                               | Story 174.4 under explicit in-memory credential authorization.                                                                               |
 
 ### 11.3 Contrast and semantic-foundation debt owned by 174.2
 
-| Family | Known condition | Required disposition |
-| --- | --- | --- |
+| Family                                     | Known condition                                                                           | Required disposition                                                                                                                                                  |
+| ------------------------------------------ | ----------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | Warning/success `/15` chips in light theme | measured examples can fall below 4.5:1; historical values include approximately 3.96–4.21 | Reconcile semantic light status foregrounds at the foundation, measure on the actual substrate, and regression-test both themes. Do not fix inconsistently per route. |
-| Chart tokens used as text | can barely pass on card and fail around 3.71–4.19 on tinted surfaces | Use chart tokens for fill/stroke/border; normal text on tints uses semantic foreground/status text. |
-| Weaker `/80` text in light theme | historical measurements around 3.2–3.45 | Reassess intended text role/size and either raise contrast or record an owner-approved non-text/decorative use; do not silently accept normal-text failure. |
-| Margin-tier semantics | different implementations encode tiers differently | Establish one financial semantic canon and migrate through ownership-aware imports. |
-| Substrate dependence | the same pair differs on `background`, `card`, and tinted layers | Every contrast record names foreground, background token, substrate, theme, font size/weight, and result. |
+| Chart tokens used as text                  | can barely pass on card and fail around 3.71–4.19 on tinted surfaces                      | Use chart tokens for fill/stroke/border; normal text on tints uses semantic foreground/status text.                                                                   |
+| Weaker `/80` text in light theme           | historical measurements around 3.2–3.45                                                   | Reassess intended text role/size and either raise contrast or record an owner-approved non-text/decorative use; do not silently accept normal-text failure.           |
+| Margin-tier semantics                      | different implementations encode tiers differently                                        | Establish one financial semantic canon and migrate through ownership-aware imports.                                                                                   |
+| Substrate dependence                       | the same pair differs on `background`, `card`, and tinted layers                          | Every contrast record names foreground, background token, substrate, theme, font size/weight, and result.                                                             |
 
 ### 11.4 Story-specific completed-wave carry-outs
 
@@ -527,13 +528,13 @@ The individual Story artifacts remain the detail source. The next team must appe
 
 ### 11.5 Backend/external debt affecting frontend behavior
 
-| ID | External debt | Frontend handling |
-| --- | --- | --- |
-| TD-S2b | Supply-sync terminal branch: first-seen CLOSED records may not receive `syncSupplyOrders`; backfill is limited beyond 14 days by design. | Keep as backend owner debt; revalidate on an authorized supply-sync Story. Do not mask it in UI. |
-| TD-P8 | Supply barcode flow can return 409 for an unpacked box. | Recheck on the next real supply; present accurate recoverable error state. Backend fix requires separate authority. |
-| legacy test-api ×42 | Historical April test-API naming remains. | Owner decision before mass cleanup. Do not bulk-rename during UI migration. |
-| OPS-BE-DEAD-HOURS (MEDIUM) | No alert currently proves that the backend has been unavailable for a configured number of hours; one recorded infrastructure outage went unnoticed for four days, 2026-08-18 through 2026-08-22. | Assign an operations/backend observability owner to define the outage threshold, health signal, notification channel, deduplication/escalation, recovery notice, and retained evidence. This migration may consume the resulting state but does not authorize production monitoring changes. |
-| `getMarginColor` deduplication | Copies remain across analytics/shared/dashboard despite tokenization. | Routed to 174.2 because safe deduplication crosses route/shared ownership. |
+| ID                             | External debt                                                                                                                                                                                     | Frontend handling                                                                                                                                                                                                                                                                            |
+| ------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| TD-S2b                         | Supply-sync terminal branch: first-seen CLOSED records may not receive `syncSupplyOrders`; backfill is limited beyond 14 days by design.                                                          | Keep as backend owner debt; revalidate on an authorized supply-sync Story. Do not mask it in UI.                                                                                                                                                                                             |
+| TD-P8                          | Supply barcode flow can return 409 for an unpacked box.                                                                                                                                           | Recheck on the next real supply; present accurate recoverable error state. Backend fix requires separate authority.                                                                                                                                                                          |
+| legacy test-api ×42            | Historical April test-API naming remains.                                                                                                                                                         | Owner decision before mass cleanup. Do not bulk-rename during UI migration.                                                                                                                                                                                                                  |
+| OPS-BE-DEAD-HOURS (MEDIUM)     | No alert currently proves that the backend has been unavailable for a configured number of hours; one recorded infrastructure outage went unnoticed for four days, 2026-08-18 through 2026-08-22. | Assign an operations/backend observability owner to define the outage threshold, health signal, notification channel, deduplication/escalation, recovery notice, and retained evidence. This migration may consume the resulting state but does not authorize production monitoring changes. |
+| `getMarginColor` deduplication | Copies remain across analytics/shared/dashboard despite tokenization.                                                                                                                             | Routed to 174.2 because safe deduplication crosses route/shared ownership.                                                                                                                                                                                                                   |
 
 ### 11.6 Evidence debt owned by 174.3 and 174.4
 
@@ -586,12 +587,12 @@ Use one of these states when updating this register:
 
 The highest-priority current incidents are:
 
-| ID | State | Incident | Completion criterion |
-| --- | --- | --- | --- |
-| SEC-DOC-1 | confirmed-live / open | The same plaintext local test credential remains in tracked historical documentation and implementation artifacts. | A separate reviewed security lane redacts every tracked occurrence; a full non-echoing `git ls-files` scan returns zero; the security owner separately decides rotation and history remediation. No autonomous history rewrite. |
-| DOC-TRUTH-1 | addressed; maintained per closeout | Master, debt registry, sprint, handoff, and `CLAUDE.md` can route a team to completed work if a Story closes without synchronized documentation. | All current entry-point snapshots agree on 80/94, Epic 173 4/13, NEXT 173.5 after cleanup, and 19,615/1,235. |
-| FE-D9 | confirmed-live, high security risk | Arbitrary non-2xx response bodies can be serialized into logs. | Recursively redact sensitive keys across objects/arrays/casing/non-JSON payloads; preserve safe classification; add security regressions; assign API/security owner. |
-| FE-D3 | confirmed-live | Unknown WB-token errors can expose raw server messages to the user. | Bounded fallback plus scrub/truncate behavior and regression tests for stack/internal/sensitive text. |
+| ID          | State                              | Incident                                                                                                                                             | Completion criterion                                                                                                                                                                                                            |
+| ----------- | ---------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| SEC-DOC-1   | confirmed-live / open              | The same plaintext local test credential remains in tracked historical documentation and implementation artifacts.                                   | A separate reviewed security lane redacts every tracked occurrence; a full non-echoing `git ls-files` scan returns zero; the security owner separately decides rotation and history remediation. No autonomous history rewrite. |
+| DOC-TRUTH-1 | addressed; maintained per closeout | Master, debt registry, sprint, handoff, and Story artifacts can route a team to completed work if a Story closes without synchronized documentation. | All current entry-point snapshots agree on 81/94, Epic 173 5/13, NEXT 173.6 after cleanup, and 19,647/1,242.                                                                                                                    |
+| FE-D9       | confirmed-live, high security risk | Arbitrary non-2xx response bodies can be serialized into logs.                                                                                       | Recursively redact sensitive keys across objects/arrays/casing/non-JSON payloads; preserve safe classification; add security regressions; assign API/security owner.                                                            |
+| FE-D3       | confirmed-live                     | Unknown WB-token errors can expose raw server messages to the user.                                                                                  | Bounded fallback plus scrub/truncate behavior and regression tests for stack/internal/sensitive text.                                                                                                                           |
 
 ### 11.10 Raw-palette classification baseline for 174.2
 
@@ -604,7 +605,7 @@ Confirmed or high-value candidates include:
 - `top-table-utils.ts`, `analytics-utils.ts`, `liquidity-action-benchmark.ts`, `liquidity-formatters.ts`, and `monitoring-constants.ts`;
 - `orders-status-config.ts`, `wb-status-data-core.ts`, `wb-status-data-delivery.ts`, and `wb-status-data-returns.ts`;
 - supply-planning configs;
-- notification components that must first be owned by Story 173.5;
+- notification components classified and migrated by Story 173.5, with any remaining shared/dead-code candidate disposition reserved for the 174.2 inventory;
 - shipment/supply components that must first be owned by Stories 173.8–173.13.
 
 Story 174.2 must persist an explicit manifest classifying every candidate as:
@@ -678,7 +679,7 @@ Neutral `bg-black/50` and `bg-black/80` scrims were retained because Story 166.1
 - Advertising daily-trend screen-reader data represents only default-visible series.
 - Advertising daily-trend historically retained categorical `#7C3AED`; reverify the current active source and classify it as a chart exception or semantic migration rather than assuming completion removed it.
 - Campaign bid detail has no dedicated E2E; its `cacheAge` is mock-only because the normalizer does not set `cachedAt`.
-- Brand-margin source-comment stripping is tokenizer-unaware and can mishandle a future string containing ` // `.
+- Brand-margin source-comment stripping is tokenizer-unaware and can mishandle a future string containing `//`.
 - Brand share has no E2E, `BrandShareView` exceeds the 200-line guideline at about 205 raw lines, and malformed ISO dates can pass through.
 - Category margin lacks empty-state E2E.
 - Cross-reference error E2E must avoid substring collisions; pseudo-keywords are product-name words, not real advertising keywords; no real ad-keywords API exists; channel labels are duplicated.
@@ -759,14 +760,12 @@ Every decision needs a named owner, exact scope, tests/evidence, and a canonical
 
 ## 12. Canonical documentation drift and deliberate non-changes
 
-The Story 173.4 closeout keeps the continuation state synchronized:
+The Story 173.5 closeout keeps the continuation state synchronized:
 
-- sprint keeps Epic 173 `in-progress`, keeps Stories 173.1–173.3 `done`, and marks Story 173.4 `done`;
-- master execution snapshot remains at 80/94 and gates NEXT Story 173.5 only on this auxiliary lifecycle-record merge and cleanup;
-- debt-registry header/status/floor/owner note records Story 173.4 feature PR #338, documentation closeout PR #339, the 19,615/1,235 floor, and remaining 174.3 evidence gaps;
-- this document remains the single continuation entry point with feature PR #338 / head `505af85e` / merge `6a6e1bf8` and documentation PR #339 / head `b6a1ea7c` / merge `d99f812e`;
-- primary `main` was fast-forwarded and proved equal to refreshed `origin/main` at `d99f812e`; the exact product and initial documentation refs, worktrees, paths, open PRs, and stale registrations were proved absent before this auxiliary lane was published;
-- the auxiliary branch/worktree is the only remaining Story 173.4 lane and is cleaned after its own merge; no recursive self-merge or self-cleanup claim is made.
+- sprint keeps Epic 173 `in-progress`, keeps Stories 173.1–173.4 `done`, and marks Story 173.5 `done`;
+- master execution snapshot advances to 81/94 and NEXT Story 173.6 only after Story 173.5 closeout merge and cleanup;
+- debt-registry header/status/floor/owner note records Story 173.5 feature PR #341, the 19,647/1,242 floor, and remaining 174.3 evidence gaps;
+- this document remains the single continuation entry point with feature PR #341 / head `12798d9f` / merge `41d686de`; the documentation merge SHA and final cleanup evidence are added only after they exist and are not preclaimed here.
 
 Deliberately not changed:
 
@@ -810,20 +809,20 @@ Deliberately not changed:
 
 ## 15. Next-Story bootstrap checklist
 
-Before Story 173.5:
+Before Story 173.6:
 
-- [ ] Read §1 authorities, the Story 173.4 implementation artifact, and the complete Story 173.5 plan.
+- [ ] Read §1 authorities, the Story 173.5 implementation artifact, and the complete Story 173.6 plan.
 - [ ] `git fetch origin` and verify repository identity.
-- [ ] Verify no Story 173.4 feature, documentation closeout, or auxiliary lifecycle-record PR remains open.
+- [ ] Verify no Story 173.5 feature or documentation closeout PR remains open.
 - [ ] Verify primary `main` is clean and fast-forward it to refreshed `origin/main`.
-- [ ] Verify the Story 173.4 product, initial docs, and auxiliary lifecycle-record local/remote branches, worktrees, paths, and stale worktree registrations are absent.
-- [ ] Verify no existing Story 173.5 branch/worktree/open PR exists.
+- [ ] Verify the Story 173.5 product/docs local and remote branches, worktrees, paths, and stale worktree registrations are absent.
+- [ ] Verify no existing Story 173.6 branch/worktree/open PR exists.
 - [ ] Recount 94 BMAD Stories, 94 OMX plans, 76 routes, and 76 ledger rows.
-- [ ] Confirm sprint arithmetic: 80 done, 14 backlog; Epic 173 in progress at 4/13; Story 173.5 NEXT.
-- [ ] Confirm the recorded floor is 19,615/0/1,235 and understand it is a floor, not a substitute for fresh Story validation.
-- [ ] Freeze the 173.5 allowed/forbidden manifest and notification-settings-exclusive consumer closure while reusing the merged settings shell and existing semantic external-brand token.
+- [ ] Confirm sprint arithmetic: 81 done, 13 backlog; Epic 173 in progress at 5/13; Story 173.6 NEXT.
+- [ ] Confirm the recorded floor is 19,647/0/1,242 and understand it is a floor, not a substitute for fresh Story validation.
+- [ ] Freeze the 173.6 allowed/forbidden manifest and tariff-settings-exclusive consumer closure while reusing the merged settings shell.
 - [ ] Run the smallest behavior-locking baseline.
-- [ ] Create only the exact Story 173.5 branch/worktree from updated local `main`.
+- [ ] Create only the exact Story 173.6 branch/worktree from updated local `main`.
 
 Do not delete the recoverable quarantine, edit route-ledger statuses, start Epic 174, or create any later Story worktree during this bootstrap.
 
@@ -884,6 +883,9 @@ The migration is complete only when all conditions are true:
 - [Story 173.3 implementation artifact](../_bmad-output/implementation-artifacts/173-3-fe-migrate-cabinet-settings.md)
 - [Story 173.4 plan](../.omx/plans/173.4-migrate-expense-settings.md)
 - [Story 173.4 implementation artifact](../_bmad-output/implementation-artifacts/173-4-fe-migrate-expense-settings.md)
+- [Story 173.5 plan](../.omx/plans/173.5-migrate-notification-settings.md)
+- [Story 173.5 implementation artifact](../_bmad-output/implementation-artifacts/173-5-fe-migrate-notification-settings.md)
+- [Story 173.6 plan](../.omx/plans/173.6-migrate-tariff-settings.md)
 - [Story 174.1 plan](../.omx/plans/174.1-prove-bmad-route-ledger-and-omx-plan-parity.md)
 - [Story 174.2 plan](../.omx/plans/174.2-remove-legacy-ui-and-enforce-the-design-system-boundary.md)
 - [Story 174.3 plan](../.omx/plans/174.3-complete-accessibility-responsive-theme-and-visual-verification.md)
