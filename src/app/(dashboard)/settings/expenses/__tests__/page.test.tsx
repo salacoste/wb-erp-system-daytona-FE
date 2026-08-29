@@ -83,11 +83,20 @@ const mockExpenses: ExpenseItem[] = [
 ]
 
 function setupHookReturn(
-  overrides: Partial<{ data: ExpenseItem[] | undefined; isLoading: boolean }>
+  overrides: Partial<{
+    data: ExpenseItem[] | undefined
+    isLoading: boolean
+    isError: boolean
+    isFetching: boolean
+    refetch: () => void
+  }>
 ) {
   mockUseExpensesList.mockReturnValue({
     data: undefined,
     isLoading: false,
+    isError: false,
+    isFetching: false,
+    refetch: vi.fn(),
     ...overrides,
   })
 }
@@ -122,7 +131,7 @@ describe('ExpensesPage', () => {
 
     it('renders month selector input', () => {
       render(<ExpensesPage />)
-      expect(screen.getByLabelText(/месяц/i)).toBeInTheDocument()
+      expect(screen.getByLabelText(/выбрать месяц/i)).toBeInTheDocument()
     })
 
     it('renders ExpenseSummaryCards', () => {
@@ -141,15 +150,19 @@ describe('ExpensesPage', () => {
       setupHookReturn({ data: undefined, isLoading: true })
     })
 
-    it('renders skeleton placeholders when loading', () => {
-      const { container } = render(<ExpensesPage />)
-      const skeletons = container.querySelectorAll('[class*="animate-pulse"]')
-      expect(skeletons.length).toBeGreaterThanOrEqual(3)
+    it('announces the named loading state', () => {
+      render(<ExpensesPage />)
+      expect(screen.getByRole('heading', { name: /загружаем расходы/i })).toBeInTheDocument()
     })
 
     it('does not render table during loading', () => {
       render(<ExpensesPage />)
       expect(screen.queryByRole('table')).not.toBeInTheDocument()
+    })
+
+    it('does not present an unknown saved count as zero', () => {
+      render(<ExpensesPage />)
+      expect(screen.queryByText(/сохранено расходов/i)).not.toBeInTheDocument()
     })
   })
 
@@ -171,6 +184,28 @@ describe('ExpensesPage', () => {
     it('does not render table when empty', () => {
       render(<ExpensesPage />)
       expect(screen.queryByRole('table')).not.toBeInTheDocument()
+    })
+
+    it('shows zero only for a successful empty result', () => {
+      render(<ExpensesPage />)
+      expect(screen.getByText(/сохранено расходов/i)).toBeInTheDocument()
+      expect(screen.getByText('0')).toBeInTheDocument()
+    })
+  })
+
+  describe('Error state', () => {
+    it('distinguishes a failed list from an empty result and retries', () => {
+      const refetch = vi.fn()
+      setupHookReturn({ data: undefined, isLoading: false, isError: true, refetch })
+      render(<ExpensesPage />)
+
+      expect(
+        screen.getByRole('heading', { name: /не удалось загрузить расходы/i })
+      ).toBeInTheDocument()
+      expect(screen.queryByText(/нет расходов за этот месяц/i)).not.toBeInTheDocument()
+      expect(screen.queryByText(/сохранено расходов/i)).not.toBeInTheDocument()
+      fireEvent.click(screen.getByRole('button', { name: /повторить загрузку/i }))
+      expect(refetch).toHaveBeenCalledOnce()
     })
   })
 
@@ -226,14 +261,14 @@ describe('ExpensesPage', () => {
 
     it('renders month input with current month default', () => {
       render(<ExpensesPage />)
-      const monthInput = screen.getByLabelText(/месяц/i) as HTMLInputElement
+      const monthInput = screen.getByLabelText(/выбрать месяц/i) as HTMLInputElement
       // Should be current month in YYYY-MM format
       expect(monthInput.value).toMatch(/^\d{4}-\d{2}$/)
     })
 
     it('updates month value on change', () => {
       render(<ExpensesPage />)
-      const monthInput = screen.getByLabelText(/месяц/i) as HTMLInputElement
+      const monthInput = screen.getByLabelText(/выбрать месяц/i) as HTMLInputElement
       fireEvent.change(monthInput, { target: { value: '2026-01' } })
       expect(monthInput.value).toBe('2026-01')
     })
@@ -246,10 +281,28 @@ describe('ExpensesPage', () => {
 
     it('passes updated month to ExpenseSummaryCards after change', () => {
       render(<ExpensesPage />)
-      const monthInput = screen.getByLabelText(/месяц/i) as HTMLInputElement
+      const monthInput = screen.getByLabelText(/выбрать месяц/i) as HTMLInputElement
       fireEvent.change(monthInput, { target: { value: '2025-12' } })
       const summaryCards = screen.getByTestId('expense-summary-cards')
       expect(summaryCards).toHaveAttribute('data-month', '2025-12')
+    })
+
+    it('keeps a cleared month explicit instead of showing successful zero data', () => {
+      render(<ExpensesPage />)
+      const monthInput = screen.getByLabelText(/выбрать месяц/i)
+      fireEvent.change(monthInput, { target: { value: '' } })
+
+      const error = document.getElementById('month-selector-error')
+      expect(error).toHaveTextContent('Выберите корректный месяц')
+      expect(monthInput).toHaveAttribute('aria-invalid', 'true')
+      expect(monthInput).toHaveAttribute('aria-describedby', error!.id)
+      expect(
+        screen.getByRole('heading', { name: /выберите корректный месяц/i })
+      ).toBeInTheDocument()
+      expect(screen.queryByTestId('expense-summary-cards')).not.toBeInTheDocument()
+      expect(screen.queryByText(/нет расходов за этот месяц/i)).not.toBeInTheDocument()
+      expect(screen.queryByText(/сохранено расходов/i)).not.toBeInTheDocument()
+      expect(mockUseExpensesList).toHaveBeenLastCalledWith('')
     })
   })
 
@@ -288,7 +341,7 @@ describe('ExpensesPage', () => {
   })
 
   describe('Delete action', () => {
-    it('calls deleteMutation.mutate with expense id when delete clicked', () => {
+    it('calls deleteMutation.mutate only after confirmation', () => {
       const mockMutate = vi.fn()
       mockUseDeleteExpense.mockReturnValue({ mutate: mockMutate, isPending: false })
       setupHookReturn({ data: mockExpenses, isLoading: false })
@@ -296,16 +349,22 @@ describe('ExpensesPage', () => {
       render(<ExpensesPage />)
       const deleteButtons = screen.getAllByRole('button', { name: /удалить/i })
       fireEvent.click(deleteButtons[0])
-      expect(mockMutate).toHaveBeenCalledWith('exp-1')
+      expect(mockMutate).not.toHaveBeenCalled()
+      fireEvent.click(screen.getByRole('button', { name: /подтвердить удаление/i }))
+      expect(mockMutate).toHaveBeenCalledWith(
+        'exp-1',
+        expect.objectContaining({ onSuccess: expect.any(Function), onError: expect.any(Function) })
+      )
     })
 
-    it('disables delete buttons when mutation is pending', () => {
+    it('disables the selected confirmation when mutation is pending', () => {
       mockUseDeleteExpense.mockReturnValue({ mutate: vi.fn(), isPending: true })
       setupHookReturn({ data: mockExpenses, isLoading: false })
 
       render(<ExpensesPage />)
       const deleteButtons = screen.getAllByRole('button', { name: /удалить/i })
-      deleteButtons.forEach(btn => expect(btn).toBeDisabled())
+      fireEvent.click(deleteButtons[0])
+      expect(screen.getByRole('button', { name: /удаление расхода/i })).toBeDisabled()
     })
   })
 
