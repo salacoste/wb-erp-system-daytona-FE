@@ -1,9 +1,9 @@
 # WB Repricer Frontend — Full shadcn/ui Migration Handoff and Technical-Debt Register
 
-> **Snapshot:** 2026-08-29, based on `origin/main` commit `7bec65fd7827020b9553f5007502e037c5b5e7dc` (Story 173.1 documentation closeout merge, PR #329); feature and closeout delivery are merged and their exact lifecycle residue was cleaned.
+> **Snapshot:** 2026-08-29, based on `origin/main` commit `7c85b804c5da65245987b514e13afd811f91d64e` (Story 173.2 feature merge, PR #332); product delivery is merged, and its reviewable documentation closeout plus exact product/docs cleanup are in progress.
 > **Audience:** the next autonomous frontend migration team and its orchestrator.
-> **Status:** Epics 166–172 and Story 173.1 are complete; 77 of 94 canonical Stories are complete; 17 Stories remain in Epics 173–174.
-> **Immediate next product Story:** 173.2, Backfill Settings.
+> **Status:** Epics 166–172 and Stories 173.1–173.2 are complete; 78 of 94 canonical Stories are complete; 16 Stories remain in Epics 173–174.
+> **Immediate next product Story:** 173.3, Cabinet Settings, only after Story 173.2 documentation closeout and exact cleanup.
 > **Supersedes operationally:** `docs/HANDOFF-2026-08-27-CROSS-TEAM-OMC-ORCHESTRATOR-172-8-CONTINUATION.md`. That historical file remains unchanged by this documentation lane; it contains obsolete Story 172.12 execution instructions and a known plaintext test-credential exposure, so it must not be used as an execution entry point.
 > **Scope:** this document concerns only `/Users/r2d2/Documents/Code_Projects/wb-repricer-system-new/frontend` and the approved local frontend migration workflow. It grants no deploy, production, force-push, or direct-push-to-main authority.
 
@@ -16,21 +16,21 @@ This document is the single continuation entry point. It intentionally separates
 | Item | Verified state |
 | --- | --- |
 | Repository | `salacoste/wb-erp-system-daytona-FE` |
-| Authoring base | `origin/main` at `7bec65fd7827020b9553f5007502e037c5b5e7dc` |
-| Latest lifecycle event | Story 173.1 closeout PR #329 merged; exact branch/worktree/open-PR cleanup proved |
+| Authoring base | `origin/main` at `7c85b804c5da65245987b514e13afd811f91d64e` |
+| Latest lifecycle event | Story 173.2 feature PR #332 merged; documentation closeout and exact cleanup in progress |
 | Canonical Story parity | 94 BMAD Stories and 94 per-Story OMX plans |
-| Completed | 77/94 Stories; Epics 166–172 complete; Epic 173 at 1/13 |
-| Remaining | 17/94: Epic 173 has 12; Epic 174 has 5 |
+| Completed | 78/94 Stories; Epics 166–172 complete; Epic 173 at 2/13 |
+| Remaining | 16/94: Epic 173 has 11; Epic 174 has 5 |
 | Route inventory | 76 source routes and 76 ledger rows |
-| Route implementation progress | 64 route-owning Stories complete; 12 Epic 173 routes remain |
+| Route implementation progress | 65 route-owning Stories complete; 11 Epic 173 routes remain |
 | Route-ledger status | all rows remain `planned`; Story 174.1 validates ownership/evidence without changing implementation state, and Story 174.5 owns final transitions to `verified` |
-| Recorded full Vitest floor | 19,489 passed, 0 failed, 0 skipped, 1,229 files after Story 173.1 |
-| Open PRs at handoff audit | 0 after Story 173.1 closeout cleanup |
-| Completed Epic 172–Story 173.1 branches/worktrees | 0 local branches, 0 remote branches, 0 temporary worktrees |
-| NEXT | execute Story 173.2 from refreshed clean `main` |
+| Recorded full Vitest floor | 19,565 passed, 0 failed, 0 skipped, 1,232 files after Story 173.2 |
+| Open PRs at snapshot | Story 173.2 documentation closeout PR is the only expected Story PR after publication |
+| Story 173.2 lifecycle residue | product and documentation branches/worktrees remain only until documentation merge and exact cleanup proof |
+| NEXT | execute Story 173.3 from refreshed clean `main` only after Story 173.2 cleanup |
 | Production/deploy authority | forbidden |
 
-The recorded test floor is a fresh pinned-runtime Story 173.1 full-suite rerun. The first sandboxed attempt failed only on a prohibited local listener bind; the complete outside-sandbox rerun passed 19,489/19,489.
+The recorded test floor is a fresh pinned-runtime Story 173.2 full-suite rerun. The first sandboxed attempt failed only on a prohibited local listener bind; the complete outside-sandbox rerun passed 19,565/19,565.
 
 ### Immutable continuation anchors
 
@@ -103,7 +103,7 @@ base:
   origin/main @ 046599670319d9a5d6da935b892ceca6fe01e7d9
 ```
 
-This historical handoff lane was merged as PR #327 and cleaned before Story 173.1 began. Story 173.1 then merged through feature PR #328 and documentation closeout PR #329; both delivery lanes were cleaned. Story 173.2 is now the active product lane.
+This historical handoff lane was merged as PR #327 and cleaned before Story 173.1 began. Story 173.1 then merged through feature PR #328 and documentation closeout PR #329; both delivery lanes were cleaned. Story 173.2 product work merged through feature PR #332; its documentation closeout and exact cleanup are now the only active lifecycle lane.
 
 Never reset, rebase, stage, commit, remove, or clean another team's WIP. When a path or branch is disputed, capture branch/HEAD/status/diffs/untracked files and ownership evidence before any Git mutation.
 
@@ -116,7 +116,7 @@ The following recoverable audit quarantine existed at handoff time:
 size: approximately 112 MiB
 ```
 
-It contains five historical/audit-evidence directories associated with Story 172.11 and Story 169.14 review snapshots. It is not a registered product worktree and is not active product WIP. Do not permanently delete it without an explicit informed destructive decision. Its presence does not block Story 173.1.
+It contains five historical/audit-evidence directories associated with Story 172.11 and Story 169.14 review snapshots. It is not a registered product worktree and is not active product WIP. Do not permanently delete it without an explicit informed destructive decision. Its presence does not block Story 173.3.
 
 ---
 
@@ -141,6 +141,7 @@ The last verified Epic 172 chain is:
 | 172.16 | #323 / `8939aea4` | #324 / `45e3da76` | 19,463 |
 | 172.17 | #325 / `caee8523` | #326 / `04659967` | 19,467 |
 | 173.1 | #328 / `3c560ed2` | #329 / `7bec65fd` | 19,489 |
+| 173.2 | #332 / `7c85b804` | documentation closeout in progress | 19,565 |
 
 All Epic 172 feature/closeout branches and temporary worktrees were absent at audit time. The completed artifacts under `_bmad-output/implementation-artifacts/166-*` through `172-*` are evidence and lessons; they are not invitations to reopen shipped scope.
 
@@ -150,7 +151,7 @@ Reuse the established product layer, including `src/components/product/PageHeade
 
 ---
 
-## 4. Remaining 17-Story execution DAG
+## 4. Remaining 16-Story execution DAG
 
 ```mermaid
 flowchart TD
@@ -195,8 +196,8 @@ Every row below is a synopsis. The linked exact plan is authoritative and must b
 
 | Story | Exact lane | Prerequisites and ownership | Required state/behavior evidence | Targeted validation anchor |
 | --- | --- | --- | --- | --- |
-| [173.1 Settings Shell and Overview](../.omx/plans/173.1-migrate-settings-shell-and-overview.md) | **DONE** — feature #328 / `3c560ed2`; closeout cleanup gates 173.2 | Shared seven-route shell, static overview, desktop grid, compact Sheet, Owner/non-Owner semantics delivered in exact six-file manifest; credentialed non-Owner visual gap is C18 → 174.3 | focused 2/22; settings 17/217; full 19,489/0/1,229; browser 47 pass/2 explicit skip + repeat 63 pass/1 optional Manager skip | [implementation artifact](../_bmad-output/implementation-artifacts/173-1-fe-migrate-settings-shell-and-overview.md) |
-| [173.2 Backfill Settings](../.omx/plans/173.2-migrate-backfill-settings.md) | `cdx/epic-173-story-2-settings-backfill`; `/private/tmp/wb-repricer-fe-173-2-settings-backfill` | Requires 173.1. Route/backfill-exclusive UI and tests only; preserve job/API semantics and shared shell. | loading/empty; queued/running/safe-to-leave; success/partial/failure/retry; exact progress/durable result; duplicate submission prevention | route and backfill-utils Vitest; backfill page/a11y/admin E2E |
+| [173.1 Settings Shell and Overview](../.omx/plans/173.1-migrate-settings-shell-and-overview.md) | **DONE** — feature #328 / `3c560ed2`; closeout #329 / `7bec65fd`; exact cleanup proved | Shared seven-route shell, static overview, desktop grid, compact Sheet, Owner/non-Owner semantics delivered in exact six-file manifest; credentialed non-Owner visual gap is C18 → 174.3 | focused 2/22; settings 17/217; full 19,489/0/1,229; browser 47 pass/2 explicit skip + repeat 63 pass/1 optional Manager skip | [implementation artifact](../_bmad-output/implementation-artifacts/173-1-fe-migrate-settings-shell-and-overview.md) |
+| [173.2 Backfill Settings](../.omx/plans/173.2-migrate-backfill-settings.md) | **DONE** — feature #332 / `7c85b804`; documentation closeout and exact cleanup gate 173.3 | Truthful unresolved/error/refresh/stale/retry states; dual-pipeline status/eligibility; responsive cards/table; guarded pending trigger and focus restoration delivered in exact 17-file manifest | focused 6/106; full 19,565/0/1,232; browser 77 pass/2 documented conditional skips; both builds 70/70 | [implementation artifact](../_bmad-output/implementation-artifacts/173-2-fe-migrate-backfill-settings.md) |
 | [173.3 Cabinet Settings](../.omx/plans/173.3-migrate-cabinet-settings.md) | `cdx/epic-173-story-3-settings-cabinet`; `/private/tmp/wb-repricer-fe-173-3-settings-cabinet` | Requires 173.1. Cabinet-settings route/exclusive UI/tests; preserve cabinet API/session contracts. | loading; unavailable/partial cabinet info; valid/invalid; save pending/success/failure; restricted action; no implicit auth/cabinet change | route/CabinetInfoCard Vitest; settings-pages E2E |
 | [173.4 Expense Settings](../.omx/plans/173.4-migrate-expense-settings.md) | `cdx/epic-173-story-4-settings-expenses`; `/private/tmp/wb-repricer-fe-173-4-settings-expenses` | Requires 173.1. Expense route/exclusive UI/tests; preserve expense models/APIs. | loading/empty/populated; validation; add/edit/delete pending/success/failure; explicit currency/period; destructive semantics; AlertDialog focus return | route Vitest; expenses-page E2E |
 | [173.5 Notification Settings](../.omx/plans/173.5-migrate-notification-settings.md) | `cdx/epic-173-story-5-settings-notifications`; `/private/tmp/wb-repricer-fe-173-5-settings-notifications` | Requires 173.1 and the existing semantic external-brand token. Route/exclusive UI/binding modal/tests; preserve Telegram API/writeback behavior. A fresh broad scan found 71 raw-palette matches in this owner surface; classify them in the Story rather than preempting them in 174.2. | bound/unbound; connect/verification pending; save success/failure; unavailable; quiet-hours validation; labeled switches; modal focus; both themes; no hardcoded white/gray/brand palette | notification route/component Vitest; Telegram notifications E2E |
@@ -427,7 +428,7 @@ Node 26 is a known webpack incompatibility in this repository. Validate the acti
 
 ### Documentation-handoff PR gates
 
-Because this lane changes only Markdown/YAML tracking state, updates the existing current handoff, and adds the Story 173.1 implementation artifact without modifying the obsolete credential-bearing handoff, its proportional gates are:
+Because this lane changes only Markdown/YAML tracking state, updates the existing current handoff, and adds the Story 173.2 implementation artifact without modifying the obsolete credential-bearing handoff, its proportional gates are:
 
 ```bash
 git diff --check
@@ -439,12 +440,12 @@ npm run check:lessons
 Additionally prove:
 
 - `sprint-status.yaml` parses as YAML;
-- exactly 94 canonical Stories = 77 done + 17 backlog;
-- completed arithmetic is 8+9+11+15+7+9+17+1 = 77;
+- exactly 94 canonical Stories = 78 done + 16 backlog;
+- completed arithmetic is 8+9+11+15+7+9+17+2 = 78;
 - 94 OMX Story plans exist and 76 source routes equal 76 ledger rows;
 - all 76 ledger rows intentionally remain `planned`;
-- master, sprint, registry, and this handoff agree on 77/94, Epic 173 at 1/13, NEXT Story 173.2 after cleanup, and 19,489/1,229;
-- stale-state scan finds no live continuation instruction that directs the new team to Story 172.12;
+- master, sprint, registry, this handoff, and `CLAUDE.md` agree on 78/94, Epic 173 at 2/13, NEXT Story 173.3 after cleanup, and 19,565/1,232;
+- stale-state scan finds no live continuation instruction that directs the new team to Story 173.2;
 - a non-echoing staged-diff scan proves that this lane introduces no new credential-bearing line; SEC-DOC-1 remains open because a full tracked-tree inventory found five files with ten additional occurrences;
 - all new relative document/plan links resolve.
 
@@ -586,7 +587,7 @@ The highest-priority current incidents are:
 | ID | State | Incident | Completion criterion |
 | --- | --- | --- | --- |
 | SEC-DOC-1 | confirmed-live / open | The same plaintext local test credential remains in tracked historical documentation and implementation artifacts. | A separate reviewed security lane redacts every tracked occurrence; a full non-echoing `git ls-files` scan returns zero; the security owner separately decides rotation and history remediation. No autonomous history rewrite. |
-| DOC-TRUTH-1 | addressed; maintained per closeout | Master, debt registry, sprint, and handoff can route a team to completed work if a Story closes without synchronized documentation. | All current entry-point snapshots agree on 77/94, Epic 173 1/13, NEXT 173.2 after cleanup, and 19,489/1,229. |
+| DOC-TRUTH-1 | addressed; maintained per closeout | Master, debt registry, sprint, handoff, and `CLAUDE.md` can route a team to completed work if a Story closes without synchronized documentation. | All current entry-point snapshots agree on 78/94, Epic 173 2/13, NEXT 173.3 after cleanup, and 19,565/1,232. |
 | FE-D9 | confirmed-live, high security risk | Arbitrary non-2xx response bodies can be serialized into logs. | Recursively redact sensitive keys across objects/arrays/casing/non-JSON payloads; preserve safe classification; add security regressions; assign API/security owner. |
 | FE-D3 | confirmed-live | Unknown WB-token errors can expose raw server messages to the user. | Bounded fallback plus scrub/truncate behavior and regression tests for stack/internal/sensitive text. |
 
@@ -756,12 +757,12 @@ Every decision needs a named owner, exact scope, tests/evidence, and a canonical
 
 ## 12. Canonical documentation drift and deliberate non-changes
 
-The Story 173.1 closeout keeps the continuation state synchronized:
+The Story 173.2 closeout keeps the continuation state synchronized:
 
-- sprint marks Epic 173 `in-progress` and Story 173.1 `done`;
-- master execution snapshot advances to 77/94 and NEXT Story 173.2 after cleanup;
-- debt-registry header/status/floor/owner note records 173.1 plus C18 → 174.3;
-- this document remains the single continuation entry point with feature PR #328 / merge `3c560ed2`, closeout PR #329 / merge `7bec65fd`, and exact cleanup evidence.
+- sprint keeps Epic 173 `in-progress`, keeps Story 173.1 `done`, and marks Story 173.2 `done`;
+- master execution snapshot advances to 78/94 and NEXT Story 173.3 only after Story 173.2 cleanup;
+- debt-registry header/status/floor/owner note records Story 173.2 feature PR #332, the 19,565/1,232 floor, and remaining 174.3 evidence gaps;
+- this document remains the single continuation entry point with feature PR #332 / merge `7c85b804`; documentation PR identity, merge, and final cleanup evidence are added only after they exist.
 
 Deliberately not changed:
 
@@ -805,20 +806,20 @@ Deliberately not changed:
 
 ## 15. Next-Story bootstrap checklist
 
-Before Story 173.2:
+Before Story 173.3:
 
-- [ ] Read §1 authorities, the Story 173.1 implementation artifact, and the complete Story 173.2 plan.
+- [ ] Read §1 authorities, the Story 173.2 implementation artifact, and the complete Story 173.3 plan.
 - [ ] `git fetch origin` and verify repository identity.
-- [ ] Verify no Story 173.1 closeout PR remains open.
+- [ ] Verify no Story 173.2 feature or documentation closeout PR remains open.
 - [ ] Verify primary `main` is clean and fast-forward it to refreshed `origin/main`.
-- [ ] Verify the Story 173.1 local/remote branch, worktree, and stale worktree registration are absent.
-- [ ] Verify no existing Story 173.2 branch/worktree/open PR exists.
+- [ ] Verify the Story 173.2 product/docs local and remote branches, worktrees, and stale worktree registrations are absent.
+- [ ] Verify no existing Story 173.3 branch/worktree/open PR exists.
 - [ ] Recount 94 BMAD Stories, 94 OMX plans, 76 routes, and 76 ledger rows.
-- [ ] Confirm sprint arithmetic: 77 done, 17 backlog; Epic 173 in progress at 1/13; Story 173.2 NEXT.
-- [ ] Confirm the recorded floor is 19,489/0/1,229 and understand it is a floor, not a substitute for fresh Story validation.
-- [ ] Freeze the 173.2 allowed/forbidden manifest and backfill-exclusive consumer closure while reusing the merged settings shell.
+- [ ] Confirm sprint arithmetic: 78 done, 16 backlog; Epic 173 in progress at 2/13; Story 173.3 NEXT.
+- [ ] Confirm the recorded floor is 19,565/0/1,232 and understand it is a floor, not a substitute for fresh Story validation.
+- [ ] Freeze the 173.3 allowed/forbidden manifest and cabinet-settings-exclusive consumer closure while reusing the merged settings shell.
 - [ ] Run the smallest behavior-locking baseline.
-- [ ] Create only the exact Story 173.2 branch/worktree from updated local `main`.
+- [ ] Create only the exact Story 173.3 branch/worktree from updated local `main`.
 
 Do not delete the recoverable quarantine, edit route-ledger statuses, start Epic 174, or create any later Story worktree during this bootstrap.
 
@@ -873,6 +874,8 @@ The migration is complete only when all conditions are true:
 - [Sprint status](../_bmad-output/implementation-artifacts/sprint-status.yaml)
 - [Migration status/debt registry](../_bmad-output/planning-artifacts/shadcn-migration-status-and-debt-registry.md)
 - [Story 173.1 plan](../.omx/plans/173.1-migrate-settings-shell-and-overview.md)
+- [Story 173.2 plan](../.omx/plans/173.2-migrate-backfill-settings.md)
+- [Story 173.2 implementation artifact](../_bmad-output/implementation-artifacts/173-2-fe-migrate-backfill-settings.md)
 - [Story 174.1 plan](../.omx/plans/174.1-prove-bmad-route-ledger-and-omx-plan-parity.md)
 - [Story 174.2 plan](../.omx/plans/174.2-remove-legacy-ui-and-enforce-the-design-system-boundary.md)
 - [Story 174.3 plan](../.omx/plans/174.3-complete-accessibility-responsive-theme-and-visual-verification.md)

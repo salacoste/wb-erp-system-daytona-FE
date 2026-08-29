@@ -331,12 +331,12 @@ Story identity is the numeric `Epic.Story` ID, not the descriptive sprint-status
 > Живые по-сторийные статусы: `_bmad-output/implementation-artifacts/sprint-status.yaml`.
 
 - **Epics CLOSED**: 166-FE (foundation), 167-FE (AppShell/auth, freeze-8), 168-FE (analytics core, 11/11), 169-FE (operational analytics, 15/15), 170-FE (marketing and marketplace analytics, 7/7), 171-FE (models, 9/9), and 172-FE (core operations, 17/17).
-- **Canonical Story readiness: 77/94**; Story 173.1 feature commit `2839640f` merged in PR #328 as `3c560ed2`, and documentation closeout commit `25673172` merged in PR #329 as `7bec65fd`; exact branch/worktree/open-PR cleanup passed. The settings shell owner is available to Stories 173.2–173.7.
-- **Program NEXT = Epic 173 / Story 173.2** from refreshed clean `main`.
-- **Remaining**: 173.2-13 (173.8 shipments owner, 173.12 supplies owner) → 174.1-5 (consolidation;
+- **Canonical Story readiness: 78/94**; Story 173.2 feature commit `a2a7033a` merged in PR #332 as `7c85b804`; frozen 17-file fingerprint `f02bb5fb`; reviewable documentation closeout is in progress before exact product/docs branch and worktree cleanup. The settings shell owner remains available to Stories 173.3–173.7.
+- **Program NEXT = Epic 173 / Story 173.3** only after Story 173.2 documentation merge and exact cleanup proof.
+- **Remaining**: 173.3-13 (173.8 shipments owner, 173.12 supplies owner) → 174.1-5 (consolidation;
   174.2 — применимые design-system/source-boundary/contrast долги; 174.3 — browser/theme/axe/keyboard/visual;
   174.4 — functional/local-backend regression; trigger-specific behavior/API debts сохраняют registry-owner).
-- Recorded floor: FE Vitest **19,489/0** across **1,229 files** after Story 173.1. Consolidated live axe, light/dark, width-matrix, 200% zoom, keyboard/focus, reduced-motion, and real-screen-reader evidence remains an explicit
+- Recorded floor: FE Vitest **19,565/0** across **1,232 files** after Story 173.2. Consolidated live axe, light/dark, width-matrix, real browser-UI zoom, keyboard/focus, retained visual artifacts, and real-screen-reader evidence remains an explicit
   174.3 carry-out; credentialed functional E2E, auth/session/error-recovery, and local-backend critical
   journeys remain explicit 174.4 carry-outs.
 - Route-ledger row statuses remain globally `planned` for already-shipped Stories; this snapshot does not create partial row exceptions. Story 174.1 validates and reconciles all 76 ownership and evidence records without changing route implementation state. Story 174.5 owns final status transitions to `verified` after Stories 174.2–174.4 provide the required evidence.
