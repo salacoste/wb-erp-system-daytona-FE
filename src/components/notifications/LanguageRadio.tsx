@@ -39,11 +39,11 @@ export function LanguageRadio({ value, label, selected, onSelect }: LanguageRadi
   return (
     <label
       className={cn(
-        'flex items-center gap-2 px-5 py-3 rounded-lg cursor-pointer transition-all',
-        'border-2',
+        'flex min-h-11 cursor-pointer items-center gap-2 rounded-lg px-5 py-3 transition-all',
+        'border-2 focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-2',
         selected
-          ? 'border-telegram-blue bg-blue-50 text-gray-800 font-medium' // AC3: Selected state (Q8)
-          : 'border-gray-300 bg-white text-gray-600 hover:bg-gray-50' // AC3: Unselected state (Q8)
+          ? 'border-telegram bg-telegram/10 font-medium text-foreground'
+          : 'border-border bg-card text-muted-foreground hover:bg-muted'
       )}
     >
       <input
@@ -59,12 +59,12 @@ export function LanguageRadio({ value, label, selected, onSelect }: LanguageRadi
       {/* Custom Radio Circle */}
       <div
         className={cn(
-          'w-5 h-5 rounded-full border-2 flex items-center justify-center transition-colors',
-          selected ? 'border-telegram-blue' : 'border-gray-400'
+          'flex size-5 items-center justify-center rounded-full border-2 transition-colors',
+          selected ? 'border-telegram' : 'border-muted-foreground'
         )}
         aria-hidden="true"
       >
-        {selected && <div className="w-3 h-3 rounded-full bg-telegram-blue" />}
+        {selected && <div className="size-3 rounded-full bg-telegram" />}
       </div>
 
       <span>{label}</span>

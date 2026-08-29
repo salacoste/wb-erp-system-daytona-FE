@@ -5,6 +5,11 @@
 
 import { cn } from '@/lib/utils'
 import { Switch } from '@/components/ui/switch'
+import { useId } from 'react'
+import type { MouseEvent } from 'react'
+
+const INTERACTIVE_SELECTOR =
+  'a[href], button, input, select, textarea, label, [role="button"], [role="switch"], [contenteditable="true"]'
 
 /**
  * Props for EventTypeCard component
@@ -45,24 +50,22 @@ export function EventTypeCard({
   onToggle,
   children,
 }: EventTypeCardProps) {
+  const titleId = useId()
+  const descriptionId = useId()
+
+  const handleCardClick = (event: MouseEvent<HTMLDivElement>) => {
+    if ((event.target as HTMLElement).closest(INTERACTIVE_SELECTOR)) return
+    onToggle()
+  }
+
   return (
     <div
-      onClick={onToggle}
+      onClick={handleCardClick}
       className={cn(
         'relative cursor-pointer rounded-lg p-5 transition-all',
         'hover:shadow-md',
-        enabled
-          ? 'border-2 border-telegram-blue bg-white shadow-sm' // AC1: Enabled state (Q6)
-          : 'border border-gray-300 bg-white' // AC1: Disabled state (Q6)
+        enabled ? 'border-2 border-telegram bg-card shadow-sm' : 'border border-border bg-card'
       )}
-      role="button"
-      tabIndex={0}
-      onKeyDown={e => {
-        if (e.key === 'Enter' || e.key === ' ') {
-          e.preventDefault()
-          onToggle()
-        }
-      }}
     >
       <div className="flex items-start justify-between gap-3">
         {/* Icon + Title + Description */}
@@ -72,11 +75,15 @@ export function EventTypeCard({
             <span className="text-xl" aria-hidden="true">
               {enabled ? '☑️' : '☐'}
             </span>
-            <h4 className="text-base font-medium text-gray-800">{title}</h4>
+            <h4 id={titleId} className="text-base font-medium text-foreground">
+              {title}
+            </h4>
           </div>
 
           {/* AC2: Description text always visible with 2-line truncation (Q7) */}
-          <p className="text-sm text-gray-600 line-clamp-2">{description}</p>
+          <p id={descriptionId} className="line-clamp-2 text-sm text-muted-foreground">
+            {description}
+          </p>
         </div>
 
         {/* AC1: Toggle Switch (shadcn/ui) */}
@@ -85,10 +92,11 @@ export function EventTypeCard({
           onCheckedChange={onToggle}
           onClick={e => e.stopPropagation()} // Prevent double-toggle
           className={cn(
-            'data-[state=checked]:bg-telegram-blue',
-            'data-[state=unchecked]:bg-gray-300'
+            'data-[state=checked]:bg-telegram',
+            'data-[state=unchecked]:bg-muted-foreground/40'
           )}
-          aria-label={`Переключить уведомления: ${title}`}
+          aria-labelledby={titleId}
+          aria-describedby={descriptionId}
         />
       </div>
 

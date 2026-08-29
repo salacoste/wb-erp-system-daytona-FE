@@ -62,7 +62,7 @@ export function HourInput({
           if (!isNaN(n)) onChange(Math.max(0, Math.min(23, n)))
         }}
         disabled={disabled}
-        className="w-20 rounded-md border border-gray-300 px-2 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-[#E53935]"
+        className="w-20 rounded-md border border-input bg-background px-2 py-1 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-ring"
         aria-label={label}
       />
       <span className="text-xs text-muted-foreground">ч (0–23)</span>
@@ -95,7 +95,7 @@ export function SlaInput({
           if (!isNaN(n)) onChange(Math.max(1, Math.min(1440, n)))
         }}
         disabled={disabled}
-        className="w-24 rounded-md border border-gray-300 px-2 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-[#E53935]"
+        className="w-24 rounded-md border border-input bg-background px-2 py-1 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-ring"
         aria-label={label}
       />
       <span className="text-xs text-muted-foreground">мин</span>

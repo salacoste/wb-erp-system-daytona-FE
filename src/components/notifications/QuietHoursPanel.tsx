@@ -34,6 +34,7 @@ export function QuietHoursPanel({ disabled = false }: QuietHoursPanelProps) {
     currentTime,
     isUpdating,
     isQuietHoursActive,
+    timeErrors,
     toggleEnabled,
     updateTimeRange,
     updateTimezone,
@@ -46,13 +47,14 @@ export function QuietHoursPanel({ disabled = false }: QuietHoursPanelProps) {
         <CardHeader>
           <div className="flex items-center gap-3">
             <span className="text-2xl">&#127769;</span>
-            <h3 className="text-2xl font-semibold">Тихие часы</h3>
+            <h2 className="text-2xl font-semibold">Тихие часы</h2>
           </div>
         </CardHeader>
         <CardContent>
-          <div className="animate-pulse space-y-4">
-            <div className="h-12 bg-gray-200 rounded"></div>
-            <div className="h-12 bg-gray-200 rounded"></div>
+          <div className="space-y-4" role="status" aria-label="Загружаем тихие часы">
+            <span className="sr-only">Загружаем настройки тихих часов</span>
+            <div className="h-12 animate-pulse rounded bg-muted motion-reduce:animate-none"></div>
+            <div className="h-12 animate-pulse rounded bg-muted motion-reduce:animate-none"></div>
           </div>
         </CardContent>
       </Card>
@@ -66,7 +68,7 @@ export function QuietHoursPanel({ disabled = false }: QuietHoursPanelProps) {
           <span className="text-2xl" aria-hidden="true">
             &#127769;
           </span>
-          <h3 className="text-2xl font-semibold">Тихие часы</h3>
+          <h2 className="text-2xl font-semibold">Тихие часы</h2>
         </div>
       </CardHeader>
 
@@ -80,7 +82,7 @@ export function QuietHoursPanel({ disabled = false }: QuietHoursPanelProps) {
               </span>
               <h4 className="font-medium">Включить тихие часы</h4>
             </div>
-            <p className="text-sm text-gray-600">
+            <p className="text-sm text-muted-foreground">
               Уведомления не будут отправляться в заданный период
             </p>
           </div>
@@ -90,8 +92,8 @@ export function QuietHoursPanel({ disabled = false }: QuietHoursPanelProps) {
             onCheckedChange={toggleEnabled}
             disabled={disabled || isUpdating}
             className={cn(
-              'data-[state=checked]:bg-telegram-blue',
-              'data-[state=unchecked]:bg-gray-300'
+              'data-[state=checked]:bg-telegram',
+              'data-[state=unchecked]:bg-muted-foreground/40'
             )}
             aria-label="Включить тихие часы"
           />
@@ -105,6 +107,7 @@ export function QuietHoursPanel({ disabled = false }: QuietHoursPanelProps) {
               disabled={disabled}
               isUpdating={isUpdating}
               onTimeChange={updateTimeRange}
+              errors={timeErrors}
             />
 
             <QuietHoursScheduleDisplay

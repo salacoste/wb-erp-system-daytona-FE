@@ -68,7 +68,7 @@ export function TimezoneSelect({ value, onChange, disabled = false }: TimezoneSe
       <SelectContent className="max-h-80">
         {TIMEZONES.map(group => (
           <SelectGroup key={group.group}>
-            <SelectLabel className="text-xs font-semibold text-gray-700 uppercase">
+            <SelectLabel className="text-xs font-semibold uppercase text-foreground">
               {group.group}
             </SelectLabel>
             {group.zones.map(zone => (

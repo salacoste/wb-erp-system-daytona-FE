@@ -6,10 +6,12 @@
 // ============================================================================
 
 import { Button } from '@/components/ui/button'
-import { Rocket, Check, Smartphone } from 'lucide-react'
+import { Send, Check, Smartphone } from 'lucide-react'
+import type { Ref } from 'react'
 
 interface NotificationsHeroBannerProps {
   onConnect: () => void
+  connectButtonRef?: Ref<HTMLButtonElement>
 }
 
 /** Three benefit bullets displayed in the hero banner */
@@ -21,52 +23,47 @@ const benefits = [
 
 /**
  * Empty State Hero Banner (Q19) - Only shown when NOT bound.
- * Gradient background, rocket icon, benefit bullets, large CTA.
+ * Semantic channel accent, benefit bullets, and a prominent CTA.
  */
-export function NotificationsHeroBanner({ onConnect }: NotificationsHeroBannerProps) {
+export function NotificationsHeroBanner({
+  onConnect,
+  connectButtonRef,
+}: NotificationsHeroBannerProps) {
   return (
-    <div className="relative overflow-hidden rounded-lg border-2 border-blue-300 bg-gradient-to-br from-blue-500 via-purple-500 to-purple-600 p-6 sm:p-8">
-      {/* Decorative blur circles */}
-      <div
-        className="absolute -left-8 -top-8 h-32 w-32 rounded-full bg-white/10 blur-2xl pointer-events-none"
-        aria-hidden="true"
-      />
-      <div
-        className="absolute -right-8 -bottom-8 h-32 w-32 rounded-full bg-white/10 blur-2xl pointer-events-none"
-        aria-hidden="true"
-      />
-
-      {/* Rocket Icon */}
-      <div className="relative mb-4 flex justify-center">
-        <Rocket className="h-10 w-10 sm:h-12 sm:w-12 text-white" aria-label="Ракета" />
+    <div className="rounded-lg border border-telegram/30 bg-card p-6 text-card-foreground shadow-sm sm:p-8">
+      <div className="mb-4 flex justify-center">
+        <span className="rounded-full bg-telegram/10 p-3 text-telegram">
+          <Send className="size-8 sm:size-10" aria-hidden="true" />
+        </span>
       </div>
 
       {/* Heading */}
-      <h3 className="relative mb-3 text-center text-xl sm:text-2xl font-bold text-white">
+      <h2 className="mb-3 text-center text-xl font-semibold text-foreground sm:text-2xl">
         Получайте уведомления в Telegram
-      </h3>
+      </h2>
 
       {/* Description */}
-      <p className="relative mb-6 text-center text-sm sm:text-base text-white/90">
+      <p className="mb-6 text-center text-sm text-muted-foreground sm:text-base">
         Мгновенные push-уведомления о состоянии импортов, синхронизаций и ошибках прямо в Telegram.
       </p>
 
       {/* Benefits List */}
-      <ul className="relative mb-8 space-y-3">
+      <ul className="mb-8 space-y-3">
         {benefits.map(text => (
           <li key={text} className="flex items-start gap-3">
-            <Check className="mt-0.5 h-5 w-5 flex-shrink-0 text-green-300" aria-label="Галочка" />
-            <span className="text-sm sm:text-base text-white font-medium">{text}</span>
+            <Check className="mt-0.5 size-5 shrink-0 text-status-success" aria-hidden="true" />
+            <span className="text-sm font-medium text-foreground sm:text-base">{text}</span>
           </li>
         ))}
       </ul>
 
       {/* CTA Button */}
-      <div className="relative flex justify-center">
+      <div className="flex justify-center">
         <Button
+          ref={connectButtonRef}
           onClick={onConnect}
           size="lg"
-          className="w-full sm:w-auto bg-[#E53935] hover:bg-[#D32F2F] text-white font-semibold px-8 py-3 text-base shadow-lg hover:shadow-xl transition-all duration-200 focus-visible:ring-2 focus-visible:ring-white/80"
+          className="min-h-11 w-full px-8 text-base font-semibold sm:w-auto"
           aria-label="Подключить Telegram"
         >
           <Smartphone className="h-5 w-5 mr-2" aria-hidden="true" />
@@ -75,7 +72,7 @@ export function NotificationsHeroBanner({ onConnect }: NotificationsHeroBannerPr
       </div>
 
       {/* Bot info */}
-      <p className="relative mt-4 text-center text-xs text-white/60">Бот: @Kernel_crypto_bot</p>
+      <p className="mt-4 text-center text-xs text-muted-foreground">Бот: @Kernel_crypto_bot</p>
     </div>
   )
 }

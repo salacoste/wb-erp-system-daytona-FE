@@ -18,6 +18,7 @@ import {
 import { useTelegramBinding } from '@/hooks/useTelegramBinding'
 import { toast } from 'sonner'
 import { logger } from '@/lib/logger'
+import type { MouseEvent } from 'react'
 
 // ============================================================================
 // Component Props
@@ -27,6 +28,7 @@ interface UnbindConfirmationDialogProps {
   open: boolean
   onOpenChange: (open: boolean) => void
   onConfirm: () => void
+  onReturnFocus?: () => void
 }
 
 // ============================================================================
@@ -48,6 +50,7 @@ export function UnbindConfirmationDialog({
   open,
   onOpenChange,
   onConfirm,
+  onReturnFocus,
 }: UnbindConfirmationDialogProps) {
   // ============================================================================
   // Hooks
@@ -59,7 +62,8 @@ export function UnbindConfirmationDialog({
   // Handlers
   // ============================================================================
 
-  const handleUnbind = () => {
+  const handleUnbind = (event: MouseEvent<HTMLButtonElement>) => {
+    event.preventDefault()
     unbind(undefined, {
       onSuccess: () => {
         toast.success('Telegram отключен')
@@ -77,32 +81,52 @@ export function UnbindConfirmationDialog({
   // ============================================================================
 
   return (
-    <AlertDialog open={open} onOpenChange={onOpenChange}>
-      <AlertDialogContent className="sm:max-w-[480px]">
+    <AlertDialog
+      open={open}
+      onOpenChange={nextOpen => {
+        if (isUnbinding && !nextOpen) return
+        onOpenChange(nextOpen)
+      }}
+    >
+      <AlertDialogContent
+        className="max-h-[90vh] max-w-[calc(100vw-2rem)] overflow-y-auto sm:max-w-[480px]"
+        onEscapeKeyDown={event => {
+          if (isUnbinding) event.preventDefault()
+        }}
+        onCloseAutoFocus={event => {
+          if (!onReturnFocus) return
+          event.preventDefault()
+          onReturnFocus()
+        }}
+      >
         <AlertDialogHeader>
           <AlertDialogTitle className="flex items-center gap-2">
-            <span className="text-orange-500 text-2xl" role="img" aria-label="Предупреждение">
+            <span className="text-2xl text-status-warning" aria-hidden="true">
               ⚠️
             </span>
             Отключить Telegram?
           </AlertDialogTitle>
-          <AlertDialogDescription className="space-y-4">
-            <p className="text-gray-700">Вы уверены, что хотите отключить Telegram-уведомления?</p>
+          <AlertDialogDescription asChild>
+            <div className="space-y-4 text-sm text-muted-foreground">
+              <p className="text-foreground">
+                Вы уверены, что хотите отключить Telegram-уведомления?
+              </p>
 
-            <ul className="space-y-2 text-sm text-gray-600">
-              <li className="flex items-start gap-2">
-                <span className="mt-0.5">•</span>
-                <span>Вы перестанете получать уведомления о задачах</span>
-              </li>
-              <li className="flex items-start gap-2">
-                <span className="mt-0.5">•</span>
-                <span>Настройки будут сброшены</span>
-              </li>
-              <li className="flex items-start gap-2">
-                <span className="mt-0.5">•</span>
-                <span>Вы сможете переподключить Telegram в любое время</span>
-              </li>
-            </ul>
+              <ul className="space-y-2">
+                <li className="flex items-start gap-2">
+                  <span className="mt-0.5">•</span>
+                  <span>Вы перестанете получать уведомления о задачах</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="mt-0.5">•</span>
+                  <span>Настройки будут сброшены</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="mt-0.5">•</span>
+                  <span>Вы сможете переподключить Telegram в любое время</span>
+                </li>
+              </ul>
+            </div>
           </AlertDialogDescription>
         </AlertDialogHeader>
 

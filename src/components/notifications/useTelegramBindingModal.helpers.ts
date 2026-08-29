@@ -17,9 +17,9 @@ export function formatTime(seconds: number): string {
 
 /** Get progress bar color based on remaining time */
 export function getProgressColor(timeRemaining: number): string {
-  if (timeRemaining > 120) return 'bg-[#0088CC]'
-  if (timeRemaining > 30) return 'bg-orange-500'
-  return 'bg-red-500'
+  if (timeRemaining > 120) return 'bg-telegram'
+  if (timeRemaining > 30) return 'bg-status-warning'
+  return 'bg-status-error'
 }
 
 /** Get polling status message based on elapsed duration */

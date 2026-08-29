@@ -5,7 +5,7 @@
 
 'use client'
 
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import { Card, CardHeader, CardContent } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Alert, AlertDescription } from '@/components/ui/alert'
@@ -21,6 +21,7 @@ import { CheckCircle } from 'lucide-react'
 interface TelegramBindingCardProps {
   onBindingComplete?: () => void
   onUnbindComplete?: () => void
+  onUnbindReturnFocus?: () => void
 }
 
 // ============================================================================
@@ -39,6 +40,7 @@ interface TelegramBindingCardProps {
 export function TelegramBindingCard({
   onBindingComplete,
   onUnbindComplete,
+  onUnbindReturnFocus,
 }: TelegramBindingCardProps) {
   // ============================================================================
   // State
@@ -47,6 +49,9 @@ export function TelegramBindingCard({
   const { status, isBound, isCheckingStatus } = useTelegramBinding()
   const [bindingModalOpen, setBindingModalOpen] = useState(false)
   const [unbindDialogOpen, setUnbindDialogOpen] = useState(false)
+  const connectButtonRef = useRef<HTMLButtonElement>(null)
+  const unbindButtonRef = useRef<HTMLButtonElement>(null)
+  const unbindSucceededRef = useRef(false)
 
   // ============================================================================
   // Handlers
@@ -58,8 +63,18 @@ export function TelegramBindingCard({
   }
 
   const handleUnbindSuccess = () => {
+    unbindSucceededRef.current = true
     setUnbindDialogOpen(false)
     onUnbindComplete?.()
+  }
+
+  const returnUnbindFocus = () => {
+    if (unbindSucceededRef.current && onUnbindReturnFocus) {
+      unbindSucceededRef.current = false
+      onUnbindReturnFocus()
+      return
+    }
+    unbindButtonRef.current?.focus()
   }
 
   // ============================================================================
@@ -74,7 +89,7 @@ export function TelegramBindingCard({
             <span className="text-2xl" role="img" aria-label="Телефон">
               📱
             </span>
-            <h3 className="text-lg font-semibold">Подключение Telegram</h3>
+            <h2 className="text-lg font-semibold">Подключение Telegram</h2>
           </div>
         </CardHeader>
 
@@ -99,6 +114,7 @@ export function TelegramBindingCard({
               </Alert>
 
               <Button
+                ref={connectButtonRef}
                 onClick={() => setBindingModalOpen(true)}
                 className="w-full sm:w-auto"
                 aria-label="Подключить Telegram"
@@ -111,9 +127,9 @@ export function TelegramBindingCard({
           {/* Bound State (Story 34.7-FE) */}
           {!isCheckingStatus && isBound && status && (
             <>
-              <div className="flex items-center gap-3">
-                <CheckCircle className="h-6 w-6 text-green-500" aria-label="Подключен" />
-                <span className="text-lg font-semibold text-gray-900">Telegram подключен</span>
+              <div className="flex items-center gap-3" role="status">
+                <CheckCircle className="size-6 text-status-success" aria-hidden="true" />
+                <span className="text-lg font-semibold text-foreground">Telegram подключен</span>
               </div>
 
               {status.telegram_username ? (
@@ -123,6 +139,7 @@ export function TelegramBindingCard({
               )}
 
               <Button
+                ref={unbindButtonRef}
                 variant="destructive"
                 onClick={() => setUnbindDialogOpen(true)}
                 className="w-full sm:w-auto"
@@ -140,6 +157,7 @@ export function TelegramBindingCard({
         open={bindingModalOpen}
         onOpenChange={setBindingModalOpen}
         onSuccess={handleBindingSuccess}
+        onReturnFocus={() => connectButtonRef.current?.focus()}
       />
 
       {/* Unbind Confirmation Dialog */}
@@ -147,6 +165,7 @@ export function TelegramBindingCard({
         open={unbindDialogOpen}
         onOpenChange={setUnbindDialogOpen}
         onConfirm={handleUnbindSuccess}
+        onReturnFocus={returnUnbindFocus}
       />
     </>
   )
