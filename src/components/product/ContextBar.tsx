@@ -160,9 +160,10 @@ export function ContextBar({
             <ContextItemView key={`custom:${item.id}`} item={item} namespace="custom" />
           ))}
           {resolvedStateLabel && (
-            <div data-slot="context-state" role="status" aria-live="polite" className="px-2 py-1">
+            <div data-slot="context-state" className="px-2 py-1">
               <dt className="sr-only">Состояние данных</dt>
-              <dd className="text-sm font-medium text-muted-foreground">{resolvedStateLabel}</dd>
+              {/* prettier-ignore */}
+              <dd className="text-sm font-medium text-muted-foreground"><span role="status" aria-live="polite">{resolvedStateLabel}</span></dd>
             </div>
           )}
         </dl>
