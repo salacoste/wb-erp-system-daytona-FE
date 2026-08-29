@@ -10,7 +10,6 @@
 
 import { cn, formatPercentage } from '@/lib/utils'
 import type { BackfillStatus } from '@/types/backfill'
-import { getProgressColorClass } from '@/lib/backfill-utils'
 
 interface BackfillProgressBarProps {
   /** Progress percentage (0-100) */
@@ -37,7 +36,16 @@ export function BackfillProgressBar({
   showText = true,
   className,
 }: BackfillProgressBarProps) {
-  const colorClass = getProgressColorClass(status)
+  const colorClass: Record<BackfillStatus, string> = {
+    idle: 'bg-muted-foreground/50',
+    not_started: 'bg-muted-foreground/40',
+    pending: 'bg-status-warning',
+    in_progress: 'bg-status-information',
+    completed: 'bg-status-success',
+    failed: 'bg-status-error',
+    paused: 'bg-status-warning',
+  }
+  const clampedProgress = Math.min(100, Math.max(0, progress))
   const isAnimated = status === 'in_progress'
 
   return (
@@ -45,24 +53,27 @@ export function BackfillProgressBar({
       <div className="relative h-2 w-full min-w-[100px] overflow-hidden rounded-full bg-muted">
         <div
           className={cn(
-            'h-full transition-all duration-500 ease-out',
-            colorClass,
-            isAnimated && 'animate-pulse'
+            'h-full transition-all duration-500 ease-out motion-reduce:transition-none',
+            colorClass[status],
+            isAnimated && 'animate-pulse motion-reduce:animate-none'
           )}
-          style={{ width: `${Math.min(100, Math.max(0, progress))}%` }}
+          style={{ width: `${clampedProgress}%` }}
           role="progressbar"
-          aria-valuenow={progress}
+          aria-valuenow={clampedProgress}
           aria-valuemin={0}
           aria-valuemax={100}
-          aria-label={`Прогресс: ${progress}%`}
+          aria-label={`Прогресс: ${clampedProgress}%`}
         />
       </div>
       {showText && (
-        <span className="min-w-[3rem] text-sm font-medium text-foreground" aria-hidden="true">
+        <span
+          className="min-w-[3rem] text-sm font-medium text-foreground tabular-nums"
+          aria-hidden="true"
+        >
           {/* visible % → ru-RU 1 decimal ("75,0 %", NBSP). 1 decimal (NOT Int) keeps a LIVE
               in-progress value honest: Int would round 99.7→"100 %" while the bar isn't full and
               status is still in_progress. aria-label keeps dot-locale (§4); CSS width uses raw. */}
-          {formatPercentage(progress, 1)}
+          {formatPercentage(clampedProgress, 1)}
         </span>
       )}
     </div>

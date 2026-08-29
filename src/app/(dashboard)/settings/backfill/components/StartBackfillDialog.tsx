@@ -8,7 +8,7 @@
 
 'use client'
 
-import { useState, type RefObject } from 'react'
+import { useEffect, useRef, useState, type RefObject } from 'react'
 import { Play, Loader2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import {
@@ -34,7 +34,7 @@ interface StartBackfillDialogProps {
   cabinets: BackfillCabinetStatus[]
   isOpen: boolean
   onOpenChange: (open: boolean) => void
-  onStart: (request: StartBackfillRequest) => void
+  onStart: (request: StartBackfillRequest) => void | Promise<void>
   isStarting?: boolean
   returnFocusRef?: RefObject<HTMLElement | null>
 }
@@ -51,17 +51,35 @@ export function StartBackfillDialog({
   returnFocusRef,
 }: StartBackfillDialogProps) {
   const [selectedCabinetId, setSelectedCabinetId] = useState<string>('')
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const submissionLock = useRef(false)
+  const selectTriggerRef = useRef<HTMLButtonElement>(null)
 
-  // Filter cabinets that can start backfill
-  const availableCabinets = cabinets.filter(c => canStartBackfill(c.status))
+  const availableCabinets = cabinets.filter(
+    cabinet => canStartBackfill(cabinet.status) && canStartBackfill(cabinet.analytics_status)
+  )
+  const selectedCabinet = availableCabinets.find(
+    cabinet => cabinet.cabinet_id === selectedCabinetId
+  )
 
-  const handleStart = () => {
-    if (!selectedCabinetId) return
+  useEffect(() => {
+    if (selectedCabinetId && !selectedCabinet) setSelectedCabinetId('')
+  }, [selectedCabinet, selectedCabinetId])
 
-    onStart({
-      cabinet_id: selectedCabinetId,
-    })
+  const handleStart = async () => {
+    if (!selectedCabinet || submissionLock.current) return
+
+    submissionLock.current = true
+    setIsSubmitting(true)
+    try {
+      await onStart({ cabinet_id: selectedCabinet.cabinet_id })
+    } finally {
+      submissionLock.current = false
+      setIsSubmitting(false)
+    }
   }
+
+  const isBusy = isStarting || isSubmitting
 
   const handleOpenChange = (open: boolean) => {
     if (!open) {
@@ -74,6 +92,10 @@ export function StartBackfillDialog({
     <Dialog open={isOpen} onOpenChange={handleOpenChange}>
       <DialogContent
         className="sm:max-w-md"
+        onOpenAutoFocus={event => {
+          event.preventDefault()
+          selectTriggerRef.current?.focus()
+        }}
         onCloseAutoFocus={event => {
           if (!returnFocusRef?.current) return
           event.preventDefault()
@@ -93,18 +115,30 @@ export function StartBackfillDialog({
         <div className="space-y-4 py-4">
           <div className="space-y-2">
             <Label htmlFor="cabinet-select">Кабинет</Label>
-            <Select value={selectedCabinetId} onValueChange={setSelectedCabinetId}>
-              <SelectTrigger id="cabinet-select">
+            <Select
+              value={selectedCabinet?.cabinet_id ?? ''}
+              onValueChange={setSelectedCabinetId}
+              disabled={isBusy}
+            >
+              <SelectTrigger ref={selectTriggerRef} id="cabinet-select" className="min-h-11">
                 <SelectValue placeholder="Выберите кабинет" />
               </SelectTrigger>
-              <SelectContent>
+              <SelectContent className="max-w-[calc(100vw-2rem)]">
                 {availableCabinets.length === 0 ? (
-                  <SelectItem value="none" disabled>
+                  <SelectItem
+                    value="none"
+                    disabled
+                    className="min-h-11 whitespace-normal break-words"
+                  >
                     Нет доступных кабинетов
                   </SelectItem>
                 ) : (
                   availableCabinets.map(cabinet => (
-                    <SelectItem key={cabinet.cabinet_id} value={cabinet.cabinet_id}>
+                    <SelectItem
+                      key={cabinet.cabinet_id}
+                      value={cabinet.cabinet_id}
+                      className="min-h-11 whitespace-normal break-words"
+                    >
                       {cabinet.cabinet_name}
                     </SelectItem>
                   ))
@@ -114,20 +148,25 @@ export function StartBackfillDialog({
           </div>
 
           {availableCabinets.length === 0 && (
-            <p className="text-sm text-amber-600">
+            <p className="text-sm text-status-warning">
               Все кабинеты уже загружают данные или находятся на паузе
             </p>
           )}
         </div>
 
         <DialogFooter>
-          <Button variant="outline" onClick={() => handleOpenChange(false)} disabled={isStarting}>
+          <Button variant="outline" onClick={() => handleOpenChange(false)} className="min-h-11">
             Отмена
           </Button>
-          <Button onClick={handleStart} disabled={!selectedCabinetId || isStarting}>
-            {isStarting ? (
+          <Button
+            onClick={() => void handleStart()}
+            disabled={!selectedCabinet || isBusy}
+            aria-busy={isBusy}
+            className="min-h-11"
+          >
+            {isBusy ? (
               <>
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                <Loader2 className="mr-2 h-4 w-4 animate-spin motion-reduce:animate-none" />
                 Запуск...
               </>
             ) : (
