@@ -11,7 +11,8 @@
  * Run: npx playwright test e2e/settings-pages.spec.ts
  */
 
-import { test, expect } from './fixtures/network-test'
+import AxeBuilder from '@axe-core/playwright'
+import { test, expect, type Page } from './fixtures/network-test'
 import { TIMEOUTS, ROUTES } from './fixtures/test-data'
 
 const SETTINGS_ROUTES = {
@@ -20,7 +21,43 @@ const SETTINGS_ROUTES = {
   notifications: ROUTES.settings.notifications,
   tax: ROUTES.settings.tax,
   expenses: ROUTES.settings.expenses,
+  backfill: '/settings/backfill',
   root: '/settings',
+}
+
+const SETTINGS_NAV_ROUTES = [
+  [SETTINGS_ROUTES.root, 'Обзор'],
+  [SETTINGS_ROUTES.cabinet, 'Кабинет'],
+  [SETTINGS_ROUTES.notifications, 'Уведомления'],
+  [SETTINGS_ROUTES.tax, 'Налоги'],
+  [SETTINGS_ROUTES.tariffs, 'Тарифы'],
+  [SETTINGS_ROUTES.expenses, 'Расходы'],
+  [SETTINGS_ROUTES.backfill, 'Импорт'],
+] as const
+
+async function setTheme(page: Page, theme: 'light' | 'dark') {
+  await page.evaluate(selectedTheme => window.localStorage.setItem('theme', selectedTheme), theme)
+  await page.reload({ waitUntil: 'domcontentloaded' })
+  await expect(page.locator('html')).toHaveClass(
+    theme === 'dark' ? /(^|\s)dark(\s|$)/ : /^(?!.*(^|\s)dark(\s|$)).*$/
+  )
+}
+
+async function expectMainHasNoHorizontalOverflow(page: Page) {
+  const main = page.locator('main')
+  await expect(main).toHaveCount(1)
+  const dimensions = await main.evaluate(node => ({
+    clientWidth: node.clientWidth,
+    scrollWidth: node.scrollWidth,
+  }))
+  expect(dimensions.scrollWidth).toBeLessThanOrEqual(dimensions.clientWidth + 1)
+}
+
+async function expectSettingsAxeClean(page: Page, context: string) {
+  const results = await new AxeBuilder({ page })
+    .withTags(['wcag2a', 'wcag2aa', 'wcag22aa'])
+    .analyze()
+  expect(results.violations, context).toEqual([])
 }
 
 test.describe('Settings Pages', () => {
@@ -208,18 +245,146 @@ test.describe('Settings Pages', () => {
   })
 
   // ===========================================================================
-  // Root Settings Page (redirect)
+  // Root Settings Overview and Shared Navigation
   // ===========================================================================
 
-  test.describe('Root settings redirect', () => {
-    test('/settings redirects to a sub-page with content visible', async ({ page }) => {
+  test.describe('Settings shell', () => {
+    test('/settings remains on the overview and exposes the canonical desktop navigation', async ({
+      page,
+    }) => {
+      await page.setViewportSize({ width: 1280, height: 900 })
       await page.goto(SETTINGS_ROUTES.root, { waitUntil: 'domcontentloaded' })
 
-      // Root /settings redirects to /settings/notifications — wait for any heading
-      await expect(page.locator('h1, h2').first()).toBeVisible({
+      await expect(page.getByRole('heading', { level: 1, name: 'Настройки' })).toBeVisible({
         timeout: TIMEOUTS.navigation,
       })
+      expect(new URL(page.url()).pathname).toBe(SETTINGS_ROUTES.root)
+
+      const navigation = page.getByRole('navigation', { name: 'Разделы настроек' })
+      await expect(navigation).toBeVisible()
+      await expect(navigation.getByRole('link')).toHaveText([
+        'Обзор',
+        'Кабинет',
+        'Уведомления',
+        'Налоги',
+        'Тарифы',
+        'Расходы',
+        'Импорт',
+      ])
+      await expect(navigation.getByRole('link', { name: 'Обзор' })).toHaveAttribute(
+        'aria-current',
+        'page'
+      )
+
+      const navigationBox = await navigation.boundingBox()
+      const headingBox = await page
+        .getByRole('heading', { level: 1, name: 'Настройки' })
+        .boundingBox()
+      expect(navigationBox).not.toBeNull()
+      expect(headingBox).not.toBeNull()
+      expect(navigationBox!.x + navigationBox!.width).toBeLessThan(headingBox!.x)
     })
+
+    for (const [route, label] of SETTINGS_NAV_ROUTES) {
+      test(`${route} exposes exactly one visible current settings item`, async ({ page }) => {
+        await page.setViewportSize({ width: 1280, height: 900 })
+        await page.goto(route, { waitUntil: 'domcontentloaded' })
+
+        const navigation = page.getByRole('navigation', { name: 'Разделы настроек' })
+        await expect(navigation).toBeVisible({ timeout: TIMEOUTS.navigation })
+        const currentItems = navigation.locator('[aria-current="page"]:visible')
+        await expect(currentItems).toHaveCount(1)
+        await expect(currentItems).toHaveAccessibleName(label)
+      })
+    }
+
+    test('compact Sheet contains focus, navigates, and returns focus after Escape', async ({
+      page,
+    }) => {
+      await page.setViewportSize({ width: 390, height: 844 })
+      await page.goto(SETTINGS_ROUTES.notifications, { waitUntil: 'domcontentloaded' })
+      await page.emulateMedia({ reducedMotion: 'reduce' })
+
+      const trigger = page.getByRole('button', { name: 'Открыть разделы настроек' })
+      await expect(trigger).toBeVisible({ timeout: TIMEOUTS.navigation })
+      await trigger.click()
+
+      const dialog = page.getByRole('dialog')
+      await expect(dialog).toBeVisible()
+      const navigation = dialog.getByRole('navigation', { name: 'Разделы настроек' })
+      await expect(navigation.getByRole('link', { name: 'Уведомления' })).toHaveAttribute(
+        'aria-current',
+        'page'
+      )
+
+      for (let step = 0; step < 12; step += 1) {
+        await page.keyboard.press('Tab')
+        expect(await dialog.evaluate(node => node.contains(document.activeElement))).toBe(true)
+      }
+      for (let step = 0; step < 12; step += 1) {
+        await page.keyboard.press('Shift+Tab')
+        expect(await dialog.evaluate(node => node.contains(document.activeElement))).toBe(true)
+      }
+
+      await page.keyboard.press('Escape')
+      await expect(dialog).toBeHidden()
+      await expect(trigger).toBeFocused()
+
+      await trigger.click()
+      const reopenedDialog = page.getByRole('dialog')
+      await reopenedDialog.getByRole('link', { name: 'Кабинет' }).click()
+      await expect(page).toHaveURL(/\/settings\/cabinet\/?$/)
+      await expect(reopenedDialog).toBeHidden()
+    })
+
+    for (const theme of ['light', 'dark'] as const) {
+      for (const width of [320, 390, 768, 1024, 1280, 1440]) {
+        test(`${theme} settings overview reflows without overflow at ${width}px`, async ({
+          page,
+        }) => {
+          await page.setViewportSize({ width, height: width < 1024 ? 844 : 900 })
+          await page.goto(SETTINGS_ROUTES.root, { waitUntil: 'domcontentloaded' })
+          await expect(page.getByRole('heading', { level: 1, name: 'Настройки' })).toBeVisible({
+            timeout: TIMEOUTS.navigation,
+          })
+          await setTheme(page, theme)
+          await expectMainHasNoHorizontalOverflow(page)
+
+          const trigger = page.getByRole('button', { name: 'Открыть разделы настроек' })
+          const navigation = page.getByRole('navigation', { name: 'Разделы настроек' })
+          if (width < 1024) {
+            await expect(trigger).toBeVisible()
+            await expect(navigation).toBeHidden()
+          } else {
+            await expect(trigger).toBeHidden()
+            await expect(navigation).toBeVisible()
+          }
+
+          if (width === 390) {
+            await trigger.click()
+            const dialog = page.getByRole('dialog')
+            await expect(dialog).toBeVisible()
+            await expectSettingsAxeClean(page, `${theme} compact settings Sheet`)
+          }
+          if (width === 1280) {
+            await expectSettingsAxeClean(page, `${theme} desktop settings overview`)
+          }
+        })
+      }
+
+      test(`${theme} settings overview preserves reflow at 200 percent zoom`, async ({ page }) => {
+        await page.setViewportSize({ width: 640, height: 900 })
+        await page.goto(SETTINGS_ROUTES.root, { waitUntil: 'domcontentloaded' })
+        await setTheme(page, theme)
+        await page.evaluate(() => {
+          document.documentElement.style.zoom = '200%'
+        })
+
+        await expect(page.getByRole('heading', { level: 1, name: 'Настройки' })).toBeVisible()
+        await expect(page.getByRole('button', { name: 'Открыть разделы настроек' })).toBeVisible()
+        await expectMainHasNoHorizontalOverflow(page)
+      })
+    }
   })
 
   // ===========================================================================
@@ -228,6 +393,11 @@ test.describe('Settings Pages', () => {
 
   test.describe('Accessibility', () => {
     const pages = [
+      {
+        name: 'Overview',
+        url: SETTINGS_ROUTES.root,
+        heading: 'Настройки',
+      },
       {
         name: 'Cabinet',
         url: SETTINGS_ROUTES.cabinet,
@@ -253,6 +423,11 @@ test.describe('Settings Pages', () => {
         url: SETTINGS_ROUTES.expenses,
         heading: 'Операционные расходы',
       },
+      {
+        name: 'Backfill',
+        url: SETTINGS_ROUTES.backfill,
+        heading: 'Управление бэкфиллом',
+      },
     ]
 
     for (const { name, url, heading } of pages) {
@@ -263,7 +438,7 @@ test.describe('Settings Pages', () => {
         })
 
         const h1Count = await page.getByRole('heading', { level: 1 }).count()
-        expect(h1Count).toBeGreaterThanOrEqual(1)
+        expect(h1Count).toBe(1)
       })
     }
   })
