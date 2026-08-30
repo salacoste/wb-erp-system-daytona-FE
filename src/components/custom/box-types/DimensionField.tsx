@@ -4,6 +4,7 @@
 
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
+import type { RefObject } from 'react'
 
 interface DimensionFieldProps {
   id: string
@@ -12,6 +13,7 @@ interface DimensionFieldProps {
   onChange: (value: string) => void
   error?: string
   errorId: string
+  inputRef?: RefObject<HTMLInputElement | null>
 }
 
 export function DimensionField({
@@ -21,11 +23,13 @@ export function DimensionField({
   onChange,
   error,
   errorId,
+  inputRef,
 }: DimensionFieldProps) {
   return (
     <div className="space-y-2">
       <Label htmlFor={id}>{label}</Label>
       <Input
+        ref={inputRef}
         id={id}
         type="number"
         min="0"

@@ -6,8 +6,11 @@
 import { describe, it, expect, vi } from 'vitest'
 import { screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
+import { axe, toHaveNoViolations } from 'jest-axe'
 import { renderWithProviders } from '@/test/utils/test-utils'
 import { BoxTypesEmptyState } from '../BoxTypesEmptyState'
+
+expect.extend(toHaveNoViolations)
 
 describe('BoxTypesEmptyState', () => {
   it('renders empty state text', () => {
@@ -32,5 +35,11 @@ describe('BoxTypesEmptyState', () => {
     await user.click(screen.getByRole('button', { name: /добавить тип коробки/i }))
 
     expect(onCreateClick).toHaveBeenCalledTimes(1)
+  })
+
+  it('has no detectable accessibility violations', async () => {
+    const { container } = renderWithProviders(<BoxTypesEmptyState onCreateClick={vi.fn()} />)
+
+    expect(await axe(container)).toHaveNoViolations()
   })
 })

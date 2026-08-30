@@ -10,7 +10,7 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 
 interface BoxTypesEmptyStateProps {
-  onCreateClick: () => void
+  onCreateClick: (trigger: HTMLButtonElement) => void
 }
 
 export function BoxTypesEmptyState({ onCreateClick }: BoxTypesEmptyStateProps) {
@@ -27,7 +27,7 @@ export function BoxTypesEmptyState({ onCreateClick }: BoxTypesEmptyStateProps) {
           Добавьте типы коробок для расчёта стоимости доставки
         </p>
 
-        <Button onClick={onCreateClick}>
+        <Button onClick={event => onCreateClick(event.currentTarget)}>
           <Plus className="h-4 w-4 mr-2" />
           Добавить тип коробки
         </Button>
