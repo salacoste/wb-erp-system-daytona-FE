@@ -1,6 +1,6 @@
 # WB Repricer Frontend — Full shadcn/ui Migration Handoff and Technical-Debt Register
 
-> **Snapshot:** 2026-08-30, based on `origin/main` commit `069c96458d3c2d708e91a9d1f57aa90ae6227b44` (Story 173.9 feature merge, PR #353); exact Story 173.9 product cleanup is proved, the initial exact-five documentation closeout is active, and its separate auxiliary lifecycle-record lane follows.
+> **Snapshot:** 2026-08-30, based on `origin/main` commit `cd05d31cc50ba1cd1d1fee482ed744450d55fdbb` (Story 173.9 exact-five documentation closeout merge, PR #354); exact Story 173.9 product and initial documentation cleanup is proved, and only this auxiliary lifecycle-record lane remains.
 > **Audience:** the next autonomous frontend migration team and its orchestrator.
 > **Status:** Epics 166–172 and Stories 173.1–173.9 are complete; 85 of 94 canonical Stories are complete; 9 Stories remain in Epics 173–174.
 > **Immediate next product Story:** 173.10, Shipment Box Types, only after the initial and auxiliary Story 173.9 documentation lanes both merge and their branch/worktree cleanup passes.
@@ -16,8 +16,8 @@ This document is the single continuation entry point. It intentionally separates
 | Item                          | Verified state                                                                                                                                                  |
 | ----------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | Repository                    | `salacoste/wb-erp-system-daytona-FE`                                                                                                                            |
-| Authoring base                | `origin/main` at `069c96458d3c2d708e91a9d1f57aa90ae6227b44`                                                                                                     |
-| Latest lifecycle event        | Story 173.9 feature PR #353 merged as `069c9645`; exact 24-file product cleanup proved                                                                          |
+| Authoring base                | `origin/main` at `cd05d31cc50ba1cd1d1fee482ed744450d55fdbb`                                                                                                     |
+| Latest lifecycle event        | Story 173.9 exact-five documentation PR #354 merged as `cd05d31c`; exact product and initial docs cleanup proved                                                |
 | Canonical Story parity        | 94 BMAD Stories and 94 per-Story OMX plans                                                                                                                      |
 | Completed                     | 85/94 Stories; Epics 166–172 complete; Epic 173 at 9/13                                                                                                         |
 | Remaining                     | 9/94: Epic 173 has 4; Epic 174 has 5                                                                                                                            |
@@ -26,8 +26,8 @@ This document is the single continuation entry point. It intentionally separates
 | Route-ledger status           | all rows remain `planned`; Story 174.1 validates ownership/evidence without changing implementation state, and Story 174.5 owns final transitions to `verified` |
 | Recorded full Vitest floor    | 19,733 passed, 0 failed, 1,249 files after Story 173.9                                                                                                          |
 | Story 173.8 lifecycle         | Feature #350, closeout #351, and auxiliary #352 merged; all product/docs refs, paths, and PR residue absent                                                     |
-| Story 173.9 lifecycle         | Feature #353 merged; product refs/path/open-PR residue absent; initial docs active and auxiliary lifecycle record follows                                       |
-| NEXT                          | execute Story 173.10 from refreshed clean `main` only after both Story 173.9 docs lanes merge and clean                                                         |
+| Story 173.9 lifecycle         | Feature #353 and initial docs #354 merged; product and initial-docs refs/paths/open-PR residue absent; only auxiliary record remains                            |
+| NEXT                          | execute Story 173.10 from refreshed clean `main` only after this auxiliary lane merges and cleans                                                               |
 | Production/deploy authority   | forbidden                                                                                                                                                       |
 
 The recorded test floor is the fresh pinned-runtime Story 173.9 unrestricted final-product-snapshot full-suite rerun: 19,733/19,733 across 1,249 files. The known jsdom navigation diagnostic remained non-failing.
@@ -103,25 +103,25 @@ base:
   origin/main @ 046599670319d9a5d6da935b892ceca6fe01e7d9
 ```
 
-This historical handoff lane was merged as PR #327 and cleaned before Story 173.1 began. Story 173.1 then merged through feature PR #328 and documentation closeout PR #329; both delivery lanes were cleaned. Story 173.2 merged through feature PR #332 and documentation closeout PR #333; all of its lifecycle lanes were cleaned. Story 173.3 merged through feature PR #335, documentation closeout PR #336, and lifecycle-record PR #337; all lanes were cleaned before Story 173.4. Story 173.4 merged through feature PR #338, documentation closeout PR #339, and lifecycle-record PR #340; all lanes were cleaned before Story 173.5. Story 173.5 merged through feature PR #341, documentation closeout PR #342, and lifecycle-record PR #343; those lanes were cleaned before Story 173.6. Story 173.6 merged through feature PR #344, documentation closeout PR #345, and lifecycle-record PR #346; all lanes were cleaned before Story 173.7. Story 173.7 merged through feature PR #347, documentation closeout PR #348, and lifecycle-record PR #349; all lanes were cleaned before Story 173.8. Story 173.8 merged through feature PR #350, documentation closeout PR #351, and auxiliary lifecycle-record PR #352 (`55e21498`); all product and documentation residue was absent before Story 173.9. Story 173.9 product work merged through feature PR #353, and exact product cleanup was proved before this initial documentation lane began.
+This historical handoff lane was merged as PR #327 and cleaned before Story 173.1 began. Story 173.1 then merged through feature PR #328 and documentation closeout PR #329; both delivery lanes were cleaned. Story 173.2 merged through feature PR #332 and documentation closeout PR #333; all of its lifecycle lanes were cleaned. Story 173.3 merged through feature PR #335, documentation closeout PR #336, and lifecycle-record PR #337; all lanes were cleaned before Story 173.4. Story 173.4 merged through feature PR #338, documentation closeout PR #339, and lifecycle-record PR #340; all lanes were cleaned before Story 173.5. Story 173.5 merged through feature PR #341, documentation closeout PR #342, and lifecycle-record PR #343; those lanes were cleaned before Story 173.6. Story 173.6 merged through feature PR #344, documentation closeout PR #345, and lifecycle-record PR #346; all lanes were cleaned before Story 173.7. Story 173.7 merged through feature PR #347, documentation closeout PR #348, and lifecycle-record PR #349; all lanes were cleaned before Story 173.8. Story 173.8 merged through feature PR #350, documentation closeout PR #351, and auxiliary lifecycle-record PR #352 (`55e21498`); all product and documentation residue was absent before Story 173.9. Story 173.9 product work merged through feature PR #353, exact-five documentation closeout PR #354 merged as `cd05d31c`, and exact product plus initial-docs cleanup was proved before this auxiliary lane began.
 
-### Active Story 173.9 initial documentation closeout lane
+### Active Story 173.9 auxiliary lifecycle-record lane
 
 ```text
 branch:
-  cdx/docs-story-173-9-closeout
+  cdx/docs-story-173-9-final-lifecycle-record
 
 worktree:
-  /private/tmp/wb-repricer-fe-173-9-docs-closeout
+  /private/tmp/wb-repricer-fe-173-9-final-lifecycle-record
 
 base:
-  product merge 069c96458d3c2d708e91a9d1f57aa90ae6227b44
+  initial documentation merge cd05d31cc50ba1cd1d1fee482ed744450d55fdbb
 
 scope:
-  exactly five Story 173.9 program tracking files: four existing entry points plus the new implementation artifact
+  exactly the same five existing Story 173.9 program tracking files
 ```
 
-This initial documentation lane publishes the already-proved Story 173.9 feature PR #353 head/merge and exact product cleanup facts. Its future PR number, head, merge, primary fast-forward, and cleanup are unknown until they happen and are not preclaimed here. A separate auxiliary lifecycle-record lane will publish those initial-closeout facts after this lane has merged and cleaned; that auxiliary lane must not recursively preclaim its own future lifecycle.
+This auxiliary lane publishes the already-proved initial documentation PR #354 head/merge, primary fast-forward, and exact product/initial-docs cleanup facts. Its own future PR number, head, merge, primary fast-forward, and cleanup are unknown until they happen and are not recursively preclaimed here.
 
 Never reset, rebase, stage, commit, remove, or clean another team's WIP. When a path or branch is disputed, capture branch/HEAD/status/diffs/untracked files and ownership evidence before any Git mutation.
 
@@ -166,7 +166,7 @@ The last verified Epic 172 chain is:
 | 173.6  | #344 / `80427f28` | #345 / `d079dcb6` |                     19,663 |
 | 173.7  | #347 / `7f9f046f` | #348 / `27577ca2` |                     19,688 |
 | 173.8  | #350 / `65f73fed` | #351 / `4bda841f` |                     19,703 |
-| 173.9  | #353 / `069c9645` | active            |                     19,733 |
+| 173.9  | #353 / `069c9645` | #354 / `cd05d31c` |                     19,733 |
 
 All Epic 172 feature/closeout branches and temporary worktrees were absent at audit time. The completed artifacts under `_bmad-output/implementation-artifacts/166-*` through `172-*` are evidence and lessons; they are not invitations to reopen shipped scope.
 
@@ -229,7 +229,7 @@ Every row below is a synopsis. The linked exact plan is authoritative and must b
 | [173.6 Tariff Settings](../.omx/plans/173.6-migrate-tariff-settings.md)                         | **DONE** — feature #344 / `80427f28`; closeout #345 / `d079dcb6`; exact product and initial docs cleanup proved               | Truthful query-backed ContextBar states; responsive tabs; accessible skeleton, partial notice, validation summary, associated scalar/tier errors; controlled dirty state; pending-safe confirmation; recoverable retry; pristine rebase; result/focus lifecycle delivered in exact 29-file manifest                           | focused 10/162; full 19,663/0/1,244; Playwright 81 file-level tests discovered including 20 tariff scenarios with browser gap explicit; build 70/70; product and docs reviews P0/P1/P2=0, scope PASS, APPROVE | [implementation artifact](../_bmad-output/implementation-artifacts/173-6-fe-migrate-tariff-settings.md)             |
 | [173.7 Tax Settings](../.omx/plans/173.7-migrate-tax-settings.md)                               | **DONE** — feature #347 / `7f9f046f`; closeout #348 / `27577ca2`; exact product and initial docs cleanup proved               | PageHeader and truthful ContextBar; native form; validation and no-tax warning; same-cabinet draft preservation; cabinet-boundary isolation; unsupported saved VAT safety; pending/success/failure/retry/cancel/read-only lifecycle delivered in exact 11-file manifest                                                       | focused 5/64; full 19,688/0/1,246; Playwright 99 file-level tests discovered including 20 tax scenarios with browser gap explicit; build 70/70; product + docs reviews P0/P1/P2=0, scope PASS, APPROVE        | [implementation artifact](../_bmad-output/implementation-artifacts/173-7-fe-migrate-tax-settings.md)                |
 | [173.8 Shipments List](../.omx/plans/173.8-migrate-the-shipments-list.md)                       | **DONE** — feature #350 / `65f73fed`; closeout #351 / `4bda841f`; auxiliary #352 / `55e21498`; exact lifecycle cleanup proved | Shared shipment-list/status owner delivered in exact 18-file manifest: persistent PageHeader/PageState identity; retained stale refresh data; shared filters/responsive table/state/pagination; queue cards; semantic unknown-safe status; filtered-empty reset; role-gated pending-safe creation and exact focus return      | focused 6/50; full 19,703/0/1,248; static Playwright boundary 4/4; credentialed browser execution gap explicit; webpack build 70/70; product + docs reviews P0/P1/P2=0, scope PASS, APPROVE                   | [implementation artifact](../_bmad-output/implementation-artifacts/173-8-fe-migrate-the-shipments-list.md)          |
-| [173.9 Shipment Detail](../.omx/plans/173.9-migrate-shipment-detail.md)                         | **DONE / product merged, docs active** — feature #353 / `069c9645`; exact product cleanup proved                              | Exact 24-file detail-owned manifest: persistent route identity; safe loading/404/error/retry/validation/partial states; PageHeader/ContextBar/shared status; truthful conditional table contracts; complete mutation and focus lifecycle. APIs/hooks/types/calculations/query/auth preserved.                                 | focused 19/192; focused + static 20/196; full 19,733/0/1,249; webpack 70/70; browser execution gap explicit; fingerprint `41d945d2`; final review P0/P1/P2=0, scope PASS, APPROVE                             | [implementation artifact](../_bmad-output/implementation-artifacts/173-9-fe-migrate-shipment-detail.md)             |
+| [173.9 Shipment Detail](../.omx/plans/173.9-migrate-shipment-detail.md)                         | **DONE** — feature #353 / `069c9645`; closeout #354 / `cd05d31c`; exact product and initial docs cleanup proved               | Exact 24-file detail-owned manifest: persistent route identity; safe loading/404/error/retry/validation/partial states; PageHeader/ContextBar/shared status; truthful conditional table contracts; complete mutation and focus lifecycle. APIs/hooks/types/calculations/query/auth preserved.                                 | focused 19/192; focused + static 20/196; full 19,733/0/1,249; webpack 70/70; browser execution gap explicit; fingerprint `41d945d2`; product + docs reviews P0/P1/P2=0, scope PASS, APPROVE                   | [implementation artifact](../_bmad-output/implementation-artifacts/173-9-fe-migrate-shipment-detail.md)             |
 | [173.10 Shipment Box Types](../.omx/plans/173.10-migrate-shipment-box-types.md)                 | `cdx/epic-173-story-10-box-types`; `/private/tmp/wb-repricer-fe-173-10-box-types`                                             | Requires 173.8. Box-types route/components/exclusive tests.                                                                                                                                                                                                                                                                   | loading/empty/populated; validation; create/edit pending/success/failure; deactivate confirmation; dimensions/units/actions; focus return                                                                     | route/box-types Vitest; box-types E2E                                                                               |
 | [173.11 SKU Packaging](../.omx/plans/173.11-migrate-sku-packaging.md)                           | `cdx/epic-173-story-11-sku-packaging`; `/private/tmp/wb-repricer-fe-173-11-sku-packaging`                                     | Requires 173.8 and 173.10. Packaging route/exclusive shipment UI/tests.                                                                                                                                                                                                                                                       | loading/empty/filtered-empty; valid/invalid mapping; pending/success/failure; narrow row detail; named entities/actions; units; validation summary; result announcement                                       | route/sku-packaging Vitest; sku-packaging E2E                                                                       |
 | [173.12 Supplies List](../.omx/plans/173.12-migrate-supplies-list.md)                           | `cdx/epic-173-story-12-supplies`; `/private/tmp/wb-repricer-fe-173-12-supplies`                                               | Shared supply-list/status owner for 173.13. Freeze explicit shared/exclusive manifest. Preserve supply contracts.                                                                                                                                                                                                             | loading/empty/filtered-empty; lifecycle; stale/partial; create pending/success/failure; error; identifier/status/date/action; overlay focus/errors                                                            | supply list/filter/table Vitest; list/a11y E2E                                                                      |
@@ -453,7 +453,7 @@ Node 26 is a known webpack incompatibility in this repository. Validate the acti
 
 ### Documentation-handoff PR gates
 
-Because this initial Story 173.9 documentation lane changes exactly five Markdown/YAML tracking files, including the new Story implementation artifact and the current handoff, without modifying the obsolete credential-bearing handoff, its proportional gates are:
+Because this auxiliary Story 173.9 lifecycle lane changes exactly the same five existing Markdown/YAML tracking files, including the Story implementation artifact and the current handoff, without modifying the obsolete credential-bearing handoff, its proportional gates are:
 
 ```bash
 git diff --check
@@ -469,14 +469,14 @@ Additionally prove:
 - completed arithmetic is 8+9+11+15+7+9+17+9 = 85;
 - 94 OMX Story plans exist and 76 source routes equal 76 ledger rows;
 - all 76 ledger rows intentionally remain `planned`;
-- master, sprint, registry, Story artifact, and this handoff agree on 85/94, Epic 173 at 9/13, NEXT Story 173.10 after both Story 173.9 docs lanes clean, and 19,733/1,249;
+- master, sprint, registry, Story artifact, and this handoff agree on 85/94, Epic 173 at 9/13, NEXT Story 173.10 after this Story 173.9 auxiliary lane cleans, and 19,733/1,249;
 - stale-state scan finds no live continuation instruction that directs the new team to Story 173.8 or Story 173.9 product work;
 - a non-echoing staged-diff scan proves that this lane introduces no new credential-bearing line; SEC-DOC-1 remains open because a full tracked-tree inventory found five files with ten additional occurrences;
 - all new relative document/plan links resolve.
 
-`npm run check:docs` remains an explicit inherited gap, not a green claim. On this Story 173.9 initial-closeout candidate snapshot it exits `1` with 95 broken citations, one citation classified as new relative to the committed baseline, three classified as resolved, 94 accepted baseline matches, and an overall baseline mismatch. The result matches the inherited Story 173.8 disposition; this lane intentionally does not update the citation baseline or repair historical archive citations.
+`npm run check:docs` remains an explicit inherited gap, not a green claim. On this Story 173.9 auxiliary candidate snapshot it exits `1` with 95 broken citations, one citation classified as new relative to the committed baseline, three classified as resolved, 94 accepted baseline matches, and an overall baseline mismatch. The result matches the initial Story 173.9 closeout; this lane intentionally does not update the citation baseline or repair historical archive citations.
 
-This initial closeout is backed by the Story product evidence. Its documentation-only delta additionally requires docs/marker/lesson checks, YAML parsing, link validation, formatting, and a fresh non-author review.
+This auxiliary record is backed by the Story product and initial-closeout evidence. Its documentation-only delta additionally requires docs/marker/lesson checks, YAML parsing, link validation, formatting, and a fresh non-author review.
 
 ### Product Story gates
 
@@ -614,7 +614,7 @@ The highest-priority current incidents are:
 | ID          | State                              | Incident                                                                                                                                             | Completion criterion                                                                                                                                                                                                            |
 | ----------- | ---------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | SEC-DOC-1   | confirmed-live / open              | The same plaintext local test credential remains in tracked historical documentation and implementation artifacts.                                   | A separate reviewed security lane redacts every tracked occurrence; a full non-echoing `git ls-files` scan returns zero; the security owner separately decides rotation and history remediation. No autonomous history rewrite. |
-| DOC-TRUTH-1 | addressed; maintained per closeout | Master, debt registry, sprint, handoff, and Story artifacts can route a team to completed work if a Story closes without synchronized documentation. | All current entry-point snapshots agree on 85/94, Epic 173 9/13, NEXT 173.10 after both Story 173.9 documentation lanes clean, and 19,733/1,249.                                                                                |
+| DOC-TRUTH-1 | addressed; maintained per closeout | Master, debt registry, sprint, handoff, and Story artifacts can route a team to completed work if a Story closes without synchronized documentation. | All current entry-point snapshots agree on 85/94, Epic 173 9/13, NEXT 173.10 after this Story 173.9 auxiliary lane cleans, and 19,733/1,249.                                                                                    |
 | FE-D9       | confirmed-live, high security risk | Arbitrary non-2xx response bodies can be serialized into logs.                                                                                       | Recursively redact sensitive keys across objects/arrays/casing/non-JSON payloads; preserve safe classification; add security regressions; assign API/security owner.                                                            |
 | FE-D3       | confirmed-live                     | Unknown WB-token errors can expose raw server messages to the user.                                                                                  | Bounded fallback plus scrub/truncate behavior and regression tests for stack/internal/sensitive text.                                                                                                                           |
 
@@ -784,14 +784,14 @@ Every decision needs a named owner, exact scope, tests/evidence, and a canonical
 
 ## 12. Canonical documentation drift and deliberate non-changes
 
-The Story 173.9 initial documentation closeout keeps the continuation state synchronized:
+The Story 173.9 auxiliary lifecycle record keeps the continuation state synchronized:
 
 - sprint keeps Epic 173 `in-progress`, keeps Stories 173.1–173.8 `done`, and marks Story 173.9 `done` with feature PR #353 recorded;
-- master execution snapshot records 85/94 and NEXT Story 173.10 only after both Story 173.9 documentation lanes merge and clean;
-- debt-registry header/status/floor/owner note records Story 173.8's fully completed three-lane lifecycle, Story 173.9 feature PR #353, the 19,733/1,249 floor, and remaining 174.3/174.4 evidence gaps;
-- this document remains the single continuation entry point with Story 173.9 feature PR #353 / head `5f6bb615` / merge `069c9645`;
-- primary `main` equalled refreshed `origin/main` at `069c9645` before this initial documentation lane began; the exact Story 173.8 product/docs and Story 173.9 product branches, worktrees, paths, stale registrations, and open PRs were absent;
-- the initial documentation lane and its later auxiliary lifecycle record are the only remaining Story 173.9 lifecycle work; this record makes no future documentation PR/head/merge/cleanup claim.
+- master execution snapshot records 85/94 and NEXT Story 173.10 only after this auxiliary lifecycle record merges and its own cleanup passes;
+- debt-registry header/status/floor/owner note records Story 173.8's fully completed three-lane lifecycle, Story 173.9 feature PR #353, documentation closeout PR #354, the 19,733/1,249 floor, and remaining 174.3/174.4 evidence gaps;
+- this document remains the single continuation entry point with Story 173.9 feature PR #353 / head `5f6bb615` / merge `069c9645` and documentation PR #354 / head `84696c91` / merge `cd05d31c`;
+- primary `main` equalled refreshed `origin/main` at `cd05d31c` before this auxiliary lane began; the exact Story 173.8 product/docs and Story 173.9 product/initial-docs branches, worktrees, paths, stale registrations, and open PRs were absent;
+- the auxiliary lane is the only remaining Story 173.9 residue, and this record makes no recursive self-merge or self-cleanup claim.
 
 Deliberately not changed:
 
