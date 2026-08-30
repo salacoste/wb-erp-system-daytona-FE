@@ -53,6 +53,14 @@ async function expectMainHasNoHorizontalOverflow(page: Page) {
   expect(dimensions.scrollWidth).toBeLessThanOrEqual(dimensions.clientWidth + 1)
 }
 
+async function expectDocumentHasNoHorizontalOverflow(page: Page) {
+  const dimensions = await page.evaluate(() => ({
+    clientWidth: document.documentElement.clientWidth,
+    scrollWidth: document.documentElement.scrollWidth,
+  }))
+  expect(dimensions.scrollWidth).toBeLessThanOrEqual(dimensions.clientWidth + 1)
+}
+
 async function expectSettingsAxeClean(page: Page, context: string) {
   const results = await new AxeBuilder({ page })
     .withTags(['wcag2a', 'wcag2aa', 'wcag22aa'])
@@ -161,6 +169,129 @@ async function installCabinetApiFixture(page: Page) {
       body: JSON.stringify(body),
     })
   })
+}
+
+const TARIFF_SETTINGS_FIXTURE = {
+  acceptanceBoxRatePerLiter: 1.8,
+  acceptancePalletRate: 520,
+  logisticsVolumeTiers: [
+    { fromLiters: 0.001, toLiters: 0.2, rateRub: 24 },
+    { fromLiters: 0.201, toLiters: 0.4, rateRub: 27 },
+  ],
+  logisticsLargeFirstLiterRate: 48,
+  logisticsLargeAdditionalLiterRate: 15,
+  returnLogisticsFboRate: 50,
+  returnLogisticsFbsRate: 60,
+  defaultCommissionFboPct: 15,
+  defaultCommissionFbsPct: 12,
+  storageFreeDays: 30,
+  fixationClothingDays: 14,
+  fixationOtherDays: 7,
+  fbsUsesFboLogisticsRates: true,
+  source: 'manual',
+  notes: 'Плановое обновление тарифов для длинного русского описания',
+} as const
+
+interface TariffApiFixtureOptions {
+  failPatchAttempts?: number
+  holdFirstPatch?: boolean
+}
+
+interface TariffApiFixtureState {
+  patchPayloads: unknown[]
+  releaseFirstPatch: () => void
+}
+
+async function installTariffApiFixture(
+  page: Page,
+  { failPatchAttempts = 0, holdFirstPatch = false }: TariffApiFixtureOptions = {}
+): Promise<TariffApiFixtureState> {
+  let currentSettings: Record<string, unknown> = { ...TARIFF_SETTINGS_FIXTURE }
+  let remainingFailures = failPatchAttempts
+  let releaseFirstPatch: () => void = () => {}
+  const firstPatchGate = holdFirstPatch
+    ? new Promise<void>(resolve => {
+        releaseFirstPatch = resolve
+      })
+    : Promise.resolve()
+  const state: TariffApiFixtureState = {
+    patchPayloads: [],
+    releaseFirstPatch: () => releaseFirstPatch(),
+  }
+
+  await page.route('**/v1/tariffs/settings', async route => {
+    const request = route.request()
+    const method = request.method()
+
+    if (method === 'GET') {
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify(currentSettings),
+      })
+      return
+    }
+
+    if (method !== 'PATCH') {
+      throw new Error(`Unexpected tariff fixture method: ${method} ${request.url()}`)
+    }
+
+    const payload = request.postDataJSON() as unknown
+    state.patchPayloads.push(payload)
+    if (state.patchPayloads.length === 1) await firstPatchGate
+
+    if (remainingFailures > 0) {
+      remainingFailures -= 1
+      await route.fulfill({
+        status: 503,
+        contentType: 'application/json',
+        body: JSON.stringify({ message: 'Временная ошибка тарифного сервиса' }),
+      })
+      return
+    }
+
+    if (typeof payload !== 'object' || payload === null || Array.isArray(payload)) {
+      throw new Error('Tariff PATCH payload must be an object')
+    }
+    currentSettings = { ...currentSettings, ...payload }
+    await route.fulfill({
+      status: 200,
+      contentType: 'application/json',
+      body: JSON.stringify(currentSettings),
+    })
+  })
+
+  return state
+}
+
+async function expectTariffSettingsLoaded(page: Page) {
+  await expect(page.getByRole('heading', { level: 1, name: 'Управление тарифами' })).toBeVisible({
+    timeout: TIMEOUTS.navigation,
+  })
+  await expect(
+    page.getByRole('heading', { level: 2, name: 'Редактирование тарифов' })
+  ).toBeVisible()
+  await expect(page.getByLabel(/Тариф приёмки.*₽\/литр/i)).toHaveValue('1.8')
+  await expect(page.getByLabel('Заметки')).toHaveValue(
+    'Плановое обновление тарифов для длинного русского описания'
+  )
+}
+
+async function editAcceptanceRateWithKeyboard(page: Page, value: string) {
+  const input = page.getByLabel(/Тариф приёмки.*₽\/литр/i)
+  await input.focus()
+  await expect(input).toBeFocused()
+  await page.keyboard.press('ControlOrMeta+A')
+  await page.keyboard.type(value)
+  await page.keyboard.press('Tab')
+  await expect(input).toHaveValue(value)
+}
+
+async function openTariffSaveDialog(page: Page) {
+  const save = page.getByRole('button', { name: 'Сохранить', exact: true })
+  await expect(save).toBeEnabled()
+  await save.press('Enter')
+  return page.getByRole('alertdialog', { name: 'Сохранить изменения тарифов?' })
 }
 
 test.describe('Settings Pages', () => {
@@ -311,38 +442,168 @@ test.describe('Settings Pages', () => {
 
   test.describe('Tariffs page', () => {
     test('navigates to /settings/tariffs and shows heading', async ({ page }) => {
+      await installTariffApiFixture(page)
       await page.goto(SETTINGS_ROUTES.tariffs, { waitUntil: 'domcontentloaded' })
 
-      // Heading "Управление тарифами" (owner-only page; non-owners get redirected)
-      await expect(page.getByRole('heading', { name: 'Управление тарифами' })).toBeVisible({
-        timeout: TIMEOUTS.navigation,
-      })
+      await expectTariffSettingsLoaded(page)
     })
 
     test('renders tab navigation with three tabs', async ({ page }) => {
+      await installTariffApiFixture(page)
       await page.goto(SETTINGS_ROUTES.tariffs, { waitUntil: 'domcontentloaded' })
-      await expect(page.getByRole('heading', { name: 'Управление тарифами' })).toBeVisible({
-        timeout: TIMEOUTS.navigation,
-      })
+      await expectTariffSettingsLoaded(page)
 
-      // Three tab triggers must be present
       await expect(page.getByRole('tab', { name: 'Текущие настройки' })).toBeVisible()
       await expect(page.getByRole('tab', { name: 'История версий' })).toBeVisible()
       await expect(page.getByRole('tab', { name: 'Журнал изменений' })).toBeVisible()
     })
 
     test('shows rate-limit indicator in header', async ({ page }) => {
+      await installTariffApiFixture(page)
       await page.goto(SETTINGS_ROUTES.tariffs, { waitUntil: 'domcontentloaded' })
-      await expect(page.getByRole('heading', { name: 'Управление тарифами' })).toBeVisible({
-        timeout: TIMEOUTS.navigation,
-      })
+      await expectTariffSettingsLoaded(page)
 
-      // Rate limit indicator component is present in the header area
       const rateLimit = page.getByTestId('rate-limit-indicator')
       const rateLimitVisible = await rateLimit.isVisible().catch(() => false)
       test.skip(!rateLimitVisible, 'Rate limit indicator not rendered — may need API response')
       expect(rateLimitVisible).toBeTruthy()
     })
+
+    test('sends one exact PATCH after keyboard editing and announces success with focus recovery', async ({
+      page,
+    }) => {
+      const fixture = await installTariffApiFixture(page)
+      await page.goto(SETTINGS_ROUTES.tariffs, { waitUntil: 'domcontentloaded' })
+      await expectTariffSettingsLoaded(page)
+
+      await editAcceptanceRateWithKeyboard(page, '2.75')
+      const dialog = await openTariffSaveDialog(page)
+      await expect(dialog).toBeVisible()
+      await dialog.getByRole('button', { name: 'Подтвердить' }).press('Enter')
+
+      await expect(dialog).toBeHidden()
+      await expect(page.getByRole('status', { name: 'Результат сохранения тарифов' })).toHaveText(
+        /Тарифы сохранены/
+      )
+      await expect(page.getByLabel(/Тариф приёмки.*₽\/литр/i)).toHaveValue('2.75')
+      await expect(page.getByRole('button', { name: 'Сохранить', exact: true })).toBeDisabled()
+      const formCard = page.locator('[tabindex="-1"]').filter({
+        has: page.getByRole('heading', { level: 2, name: 'Редактирование тарифов' }),
+      })
+      await expect(formCard).toBeFocused()
+      expect(fixture.patchPayloads).toEqual([{ acceptanceBoxRatePerLiter: 2.75 }])
+    })
+
+    test('contains the pending dialog, blocks dismissal, and honors reduced motion', async ({
+      page,
+    }) => {
+      await page.emulateMedia({ reducedMotion: 'reduce' })
+      const fixture = await installTariffApiFixture(page, { holdFirstPatch: true })
+      await page.goto(SETTINGS_ROUTES.tariffs, { waitUntil: 'domcontentloaded' })
+      await expectTariffSettingsLoaded(page)
+
+      await editAcceptanceRateWithKeyboard(page, '2.75')
+      const dialog = await openTariffSaveDialog(page)
+      await dialog.getByRole('button', { name: 'Подтвердить' }).press('Enter')
+      await expect.poll(() => fixture.patchPayloads.length).toBe(1)
+
+      const pendingAction = dialog.getByRole('button', { name: 'Сохранение...' })
+      await expect(dialog).toBeVisible()
+      await expect(dialog.getByRole('status')).toHaveText(/Не закрывайте окно/)
+      await expect(dialog.getByRole('button', { name: 'Отмена' })).toBeDisabled()
+      await expect(pendingAction).toBeDisabled()
+      await expect(pendingAction.locator('svg')).toHaveCSS('animation-name', 'none')
+      await page.keyboard.press('Escape')
+      await expect(dialog).toBeVisible()
+      await page.mouse.click(1, 1)
+      await expect(dialog).toBeVisible()
+
+      fixture.releaseFirstPatch()
+      await expect(dialog).toBeHidden()
+      expect(fixture.patchPayloads).toEqual([{ acceptanceBoxRatePerLiter: 2.75 }])
+    })
+
+    test('retains the valid draft after a recoverable failure and retries the same PATCH', async ({
+      page,
+    }) => {
+      const fixture = await installTariffApiFixture(page, { failPatchAttempts: 1 })
+      await page.goto(SETTINGS_ROUTES.tariffs, { waitUntil: 'domcontentloaded' })
+      await expectTariffSettingsLoaded(page)
+
+      await editAcceptanceRateWithKeyboard(page, '2.75')
+      const dialog = await openTariffSaveDialog(page)
+      await dialog.getByRole('button', { name: 'Подтвердить' }).press('Enter')
+
+      await expect(dialog.getByRole('alert')).toHaveText(/Не удалось сохранить тарифы/)
+      await expect(page.getByLabel(/Тариф приёмки.*₽\/литр/i)).toHaveValue('2.75')
+      await dialog.getByRole('button', { name: 'Повторить сохранение' }).press('Enter')
+      await expect(dialog).toBeHidden()
+      await expect(page.getByRole('status', { name: 'Результат сохранения тарифов' })).toHaveText(
+        /Тарифы сохранены/
+      )
+      expect(fixture.patchPayloads).toEqual([
+        { acceptanceBoxRatePerLiter: 2.75 },
+        { acceptanceBoxRatePerLiter: 2.75 },
+      ])
+    })
+
+    for (const theme of ['light', 'dark'] as const) {
+      for (const width of [320, 390, 768, 1024, 1280, 1440]) {
+        test(`${theme} tariff settings reflows without overflow at ${width}px`, async ({
+          page,
+        }) => {
+          await installTariffApiFixture(page)
+          await page.setViewportSize({ width, height: width < 1024 ? 844 : 900 })
+          await page.goto(SETTINGS_ROUTES.tariffs, { waitUntil: 'domcontentloaded' })
+          await setTheme(page, theme)
+          await expectTariffSettingsLoaded(page)
+
+          await expect(page.getByText('Стоимость приёмки за литр объёма')).toBeVisible()
+          await expect(page.getByLabel(/Крупногабарит доп.*₽\/л/i)).toBeVisible()
+          const actionLabels = await page
+            .getByRole('form', { name: 'Редактирование тарифов' })
+            .getByRole('button')
+            .allTextContents()
+          const cancelIndex = actionLabels.findIndex(label => label.trim() === 'Отмена')
+          const saveIndex = actionLabels.findIndex(label => label.trim() === 'Сохранить')
+          expect(cancelIndex).toBeGreaterThanOrEqual(0)
+          expect(saveIndex).toBeGreaterThan(cancelIndex)
+          await expectMainHasNoHorizontalOverflow(page)
+          await expectDocumentHasNoHorizontalOverflow(page)
+
+          if (width === 390 || width === 1280) {
+            await expectSettingsAxeClean(page, `${theme} tariff settings at ${width}px`)
+          }
+        })
+      }
+
+      test(`${theme} tariff settings preserves dialog containment at 200 percent zoom`, async ({
+        page,
+      }) => {
+        await installTariffApiFixture(page)
+        await page.setViewportSize({ width: 640, height: 900 })
+        await page.goto(SETTINGS_ROUTES.tariffs, { waitUntil: 'domcontentloaded' })
+        await setTheme(page, theme)
+        await expectTariffSettingsLoaded(page)
+        await page.evaluate(() => {
+          document.documentElement.style.zoom = '200%'
+        })
+
+        await expectMainHasNoHorizontalOverflow(page)
+        await expectDocumentHasNoHorizontalOverflow(page)
+        await editAcceptanceRateWithKeyboard(page, '2.75')
+        const dialog = await openTariffSaveDialog(page)
+        await expect(dialog).toBeVisible()
+        const viewport = page.viewportSize()
+        const box = await dialog.boundingBox()
+        expect(viewport).not.toBeNull()
+        expect(box).not.toBeNull()
+        expect(box!.x).toBeGreaterThanOrEqual(0)
+        expect(box!.y).toBeGreaterThanOrEqual(0)
+        expect(box!.x + box!.width).toBeLessThanOrEqual(viewport!.width + 1)
+        expect(box!.y + box!.height).toBeLessThanOrEqual(viewport!.height + 1)
+      })
+    }
   })
 
   // ===========================================================================

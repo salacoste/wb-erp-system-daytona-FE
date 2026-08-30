@@ -9,10 +9,18 @@
 import { Plus } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Label } from '@/components/ui/label'
-import { Table, TableBody, TableHead, TableHeader, TableRow } from '@/components/ui/table'
+import { useId } from 'react'
+import {
+  Table,
+  TableBody,
+  TableCaption,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table'
 import { cn } from '@/lib/utils'
 import { LogisticsTierRow } from './LogisticsTierRow'
-import type { VolumeTierFormData } from './tariffSettingsSchema'
+import { getFirstTariffErrorMessage, type VolumeTierFormData } from './tariffSettingsSchema'
 
 interface LogisticsTiersEditorProps {
   /** Current tiers array */
@@ -21,6 +29,8 @@ interface LogisticsTiersEditorProps {
   onChange: (tiers: VolumeTierFormData[]) => void
   /** Error message (e.g., "Минимум 1 тарифный уровень") */
   error?: string
+  /** React Hook Form errors for individual tier cells. */
+  fieldErrors?: unknown
   /** Disabled state */
   disabled?: boolean
   /** Label text */
@@ -35,9 +45,23 @@ export function LogisticsTiersEditor({
   tiers,
   onChange,
   error,
+  fieldErrors,
   disabled = false,
   label = 'Тарифные уровни по объёму',
 }: LogisticsTiersEditorProps) {
+  const id = useId()
+  const resolvedError = error ?? getFirstTariffErrorMessage(fieldErrors)
+
+  const getRowErrors = (index: number): Partial<Record<keyof VolumeTierFormData, string>> => {
+    if (!Array.isArray(fieldErrors)) return {}
+    const row = fieldErrors[index]
+    if (!row || typeof row !== 'object') return {}
+    return {
+      fromLiters: getFirstTariffErrorMessage((row as Record<string, unknown>).fromLiters),
+      toLiters: getFirstTariffErrorMessage((row as Record<string, unknown>).toLiters),
+      rateRub: getFirstTariffErrorMessage((row as Record<string, unknown>).rateRub),
+    }
+  }
   const handleAddTier = () => {
     const lastTier = tiers[tiers.length - 1]
     const newTier: VolumeTierFormData = {
@@ -61,10 +85,13 @@ export function LogisticsTiersEditor({
 
   return (
     <div className="space-y-3">
-      <Label className={cn('text-sm font-medium', error && 'text-destructive')}>{label}</Label>
+      <Label className={cn('text-sm font-medium', resolvedError && 'text-destructive')}>
+        {label}
+      </Label>
 
       <div className="rounded-md border overflow-x-auto">
         <Table>
+          <TableCaption className="sr-only">{label}</TableCaption>
           <TableHeader>
             <TableRow>
               <TableHead className="w-[120px]">От (л)</TableHead>
@@ -83,6 +110,8 @@ export function LogisticsTiersEditor({
                 canRemove={tiers.length > 1}
                 onUpdate={handleUpdateTier}
                 onRemove={handleRemoveTier}
+                errors={getRowErrors(index)}
+                errorIdPrefix={`tariff-tier-${id}-${index}`}
               />
             ))}
           </TableBody>
@@ -101,9 +130,9 @@ export function LogisticsTiersEditor({
         Добавить уровень
       </Button>
 
-      {error && (
+      {resolvedError && (
         <p className="text-sm text-destructive" role="alert">
-          {error}
+          {resolvedError}
         </p>
       )}
     </div>

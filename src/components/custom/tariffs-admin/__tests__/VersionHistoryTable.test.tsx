@@ -205,7 +205,7 @@ describe('VersionHistoryTable', () => {
       await waitFor(() => {
         const scheduledBadge = screen.getByText('Запланировано')
         expect(scheduledBadge).toBeInTheDocument()
-        expect(scheduledBadge).toHaveClass('bg-blue-100')
+        expect(scheduledBadge).toHaveClass('bg-status-information/15')
       })
     })
 
@@ -216,7 +216,7 @@ describe('VersionHistoryTable', () => {
       await waitFor(() => {
         const activeBadge = screen.getByText('Активно')
         expect(activeBadge).toBeInTheDocument()
-        expect(activeBadge).toHaveClass('bg-green-100')
+        expect(activeBadge).toHaveClass('bg-status-success/15')
       })
     })
 

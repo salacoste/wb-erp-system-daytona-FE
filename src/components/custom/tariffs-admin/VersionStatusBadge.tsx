@@ -19,13 +19,13 @@ const STATUS_CONFIG: Record<
 > = {
   scheduled: {
     label: 'Запланировано',
-    bgColor: 'bg-blue-100',
-    textColor: 'text-blue-800',
+    bgColor: 'bg-status-information/15',
+    textColor: 'text-status-information',
   },
   active: {
     label: 'Активно',
-    bgColor: 'bg-green-100',
-    textColor: 'text-green-800',
+    bgColor: 'bg-status-success/15',
+    textColor: 'text-status-success',
   },
   expired: {
     label: 'Истекло',

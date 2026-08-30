@@ -19,6 +19,8 @@ interface LogisticsTierRowProps {
   canRemove: boolean
   onUpdate: (index: number, field: keyof VolumeTierFormData, value: number) => void
   onRemove: (index: number) => void
+  errors?: Partial<Record<keyof VolumeTierFormData, string>>
+  errorIdPrefix: string
 }
 
 export function LogisticsTierRow({
@@ -28,6 +30,8 @@ export function LogisticsTierRow({
   canRemove,
   onUpdate,
   onRemove,
+  errors,
+  errorIdPrefix,
 }: LogisticsTierRowProps) {
   return (
     <TableRow>
@@ -41,7 +45,14 @@ export function LogisticsTierRow({
           disabled={disabled}
           className="h-8"
           aria-label={`От литров для уровня ${index + 1}`}
+          aria-invalid={!!errors?.fromLiters}
+          aria-describedby={errors?.fromLiters ? `${errorIdPrefix}-fromLiters` : undefined}
         />
+        {errors?.fromLiters && (
+          <span id={`${errorIdPrefix}-fromLiters`} className="sr-only">
+            {errors.fromLiters}
+          </span>
+        )}
       </TableCell>
       <TableCell>
         <Input
@@ -53,7 +64,14 @@ export function LogisticsTierRow({
           disabled={disabled}
           className="h-8"
           aria-label={`До литров для уровня ${index + 1}`}
+          aria-invalid={!!errors?.toLiters}
+          aria-describedby={errors?.toLiters ? `${errorIdPrefix}-toLiters` : undefined}
         />
+        {errors?.toLiters && (
+          <span id={`${errorIdPrefix}-toLiters`} className="sr-only">
+            {errors.toLiters}
+          </span>
+        )}
       </TableCell>
       <TableCell>
         <Input
@@ -65,7 +83,14 @@ export function LogisticsTierRow({
           disabled={disabled}
           className="h-8"
           aria-label={`Тариф для уровня ${index + 1}`}
+          aria-invalid={!!errors?.rateRub}
+          aria-describedby={errors?.rateRub ? `${errorIdPrefix}-rateRub` : undefined}
         />
+        {errors?.rateRub && (
+          <span id={`${errorIdPrefix}-rateRub`} className="sr-only">
+            {errors.rateRub}
+          </span>
+        )}
       </TableCell>
       <TableCell>
         <Button

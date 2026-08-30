@@ -105,7 +105,9 @@ describe('TariffSettingsForm', () => {
         expect(screen.getByText(/логистика/i)).toBeInTheDocument()
         expect(screen.getByLabelText(/крупногабарит 1-й литр.*₽/i)).toBeInTheDocument()
         expect(screen.getByLabelText(/крупногабарит доп.*₽\/л/i)).toBeInTheDocument()
-        expect(screen.getByText(/тарифные уровни по объёму/i)).toBeInTheDocument()
+        expect(
+          screen.getByRole('table', { name: /тарифные уровни по объёму/i })
+        ).toBeInTheDocument()
       })
     })
 

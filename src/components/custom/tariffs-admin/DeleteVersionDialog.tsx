@@ -79,10 +79,18 @@ export function DeleteVersionDialog({ open, version, onClose }: DeleteVersionDia
 
   return (
     <AlertDialog open={open} onOpenChange={handleOpenChange}>
-      <AlertDialogContent aria-label="Удалить запланированную версию?">
+      <AlertDialogContent
+        aria-label="Удалить запланированную версию?"
+        className="max-h-[calc(100dvh-2rem)] w-[calc(100%-2rem)] overflow-y-auto"
+        onEscapeKeyDown={event => {
+          if (deleteVersion.isPending) event.preventDefault()
+        }}
+      >
         <AlertDialogHeader>
           <AlertDialogTitle className="flex items-center gap-2">
-            <span className="text-amber-500">⚠️</span>
+            <span className="text-status-warning" aria-hidden="true">
+              ⚠️
+            </span>
             Подтвердите удаление
           </AlertDialogTitle>
           <AlertDialogDescription asChild>
@@ -91,7 +99,7 @@ export function DeleteVersionDialog({ open, version, onClose }: DeleteVersionDia
                 Вы уверены, что хотите удалить версию, запланированную на{' '}
                 <strong>{formattedDate}</strong>?
               </span>
-              <span className="block text-red-600">Это действие нельзя отменить.</span>
+              <span className="block text-destructive">Это действие нельзя отменить.</span>
             </div>
           </AlertDialogDescription>
         </AlertDialogHeader>
@@ -112,7 +120,7 @@ export function DeleteVersionDialog({ open, version, onClose }: DeleteVersionDia
           >
             {deleteVersion.isPending ? (
               <>
-                <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                <Loader2 className="mr-2 h-4 w-4 animate-spin motion-reduce:animate-none" />
                 Удаление...
               </>
             ) : (

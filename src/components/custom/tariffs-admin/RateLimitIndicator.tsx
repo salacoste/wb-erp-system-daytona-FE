@@ -22,9 +22,9 @@ import { cn } from '@/lib/utils'
  * - Red (0-3): Near or at limit
  */
 function getProgressColor(remaining: number): string {
-  if (remaining <= 3) return 'bg-red-500'
-  if (remaining <= 6) return 'bg-yellow-500'
-  return 'bg-green-500'
+  if (remaining <= 3) return 'bg-status-error'
+  if (remaining <= 6) return 'bg-status-warning'
+  return 'bg-status-success'
 }
 
 /**
@@ -68,7 +68,10 @@ export function RateLimitIndicator() {
   const colorClass = getProgressColor(safeRemaining)
 
   return (
-    <div data-testid="rate-limit-indicator" className="flex items-center gap-2 text-sm">
+    <div
+      data-testid="rate-limit-indicator"
+      className="flex min-w-0 flex-wrap items-center gap-2 text-sm"
+    >
       <span className="text-muted-foreground">
         Запросов: {safeRemaining}/{limit}
       </span>
@@ -80,10 +83,10 @@ export function RateLimitIndicator() {
         aria-valuemax={100}
         aria-valuenow={percentage}
         aria-label="Лимит запросов"
-        className={cn('w-20 h-2 rounded-full overflow-hidden', colorClass)}
+        className={cn('h-2 w-20 shrink-0 overflow-hidden rounded-full', colorClass)}
       >
         <div
-          className="h-full bg-card/30 transition-all duration-300"
+          className="h-full bg-card/30 transition-all duration-300 motion-reduce:transition-none"
           style={{ width: `${100 - percentage}%`, marginLeft: 'auto' }}
         />
       </div>

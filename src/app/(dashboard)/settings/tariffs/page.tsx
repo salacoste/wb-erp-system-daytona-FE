@@ -8,17 +8,18 @@
 
 import { useEffect } from 'react'
 import { useRouter } from 'next/navigation'
-import Link from 'next/link'
 import { useAuth } from '@/hooks/useAuth'
+import { useTariffSettings } from '@/hooks/useTariffSettings'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Skeleton } from '@/components/ui/skeleton'
-import { Settings2 } from 'lucide-react'
+import { ContextBar, PageHeader } from '@/components/product'
 import {
   RateLimitIndicator,
   VersionHistoryTable,
   AuditLogTable,
   TariffSettingsForm,
 } from '@/components/custom/tariffs-admin'
+import { getUnavailableTariffFieldLabels } from '@/components/custom/tariffs-admin/tariffSettingsSchema'
 
 // ============================================================================
 // Loading Skeleton Component
@@ -29,7 +30,13 @@ import {
  */
 function TariffSettingsPageSkeleton() {
   return (
-    <div className="container py-6 space-y-6">
+    <div
+      role="status"
+      aria-label="Проверка доступа к тарифам"
+      aria-busy="true"
+      className="mx-auto w-full max-w-7xl space-y-6 py-2"
+    >
+      <span className="sr-only">Проверяем доступ к управлению тарифами</span>
       {/* Breadcrumb skeleton */}
       <Skeleton className="h-4 w-48" data-testid="skeleton" />
 
@@ -37,7 +44,7 @@ function TariffSettingsPageSkeleton() {
       <Skeleton className="h-8 w-64" data-testid="skeleton" />
 
       {/* Subtitle skeleton */}
-      <Skeleton className="h-4 w-96" data-testid="skeleton" />
+      <Skeleton className="h-4 w-full max-w-96" data-testid="skeleton" />
 
       {/* Tabs skeleton */}
       <Skeleton className="h-10 w-full max-w-md" data-testid="skeleton" />
@@ -82,43 +89,44 @@ export default function TariffSettingsPage() {
     return <TariffSettingsPageSkeleton />
   }
 
+  return <TariffSettingsContent />
+}
+
+function TariffSettingsContent() {
+  const { data: settings, isLoading, isFetching, error } = useTariffSettings()
+  const unavailableFieldLabels = getUnavailableTariffFieldLabels(settings)
+  const contextState =
+    isLoading || isFetching
+      ? { state: 'refreshing' as const, label: 'Загружаем тарифные данные' }
+      : error
+        ? { state: 'unavailable' as const, label: 'Тарифные данные временно недоступны' }
+        : unavailableFieldLabels.length > 0
+          ? { state: 'partial' as const, label: 'Часть тарифных данных недоступна' }
+          : { state: 'fresh' as const, label: 'Тарифные данные доступны для управления' }
+
   return (
-    <section className="min-h-screen bg-background">
-      {/* Page Header */}
-      <div className="bg-card border-b border-border">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-          {/* Breadcrumbs (AC7) */}
-          <nav className="text-sm text-muted-foreground mb-2">
-            <Link href="/dashboard" className="hover:text-foreground">
-              Главная
-            </Link>
-            {' > '}
-            <Link href="/settings" className="hover:text-foreground">
-              Настройки
-            </Link>
-            {' > '}
-            <span className="text-foreground">Тарифы</span>
-          </nav>
+    <section className="mx-auto w-full max-w-7xl space-y-6 py-2">
+      <PageHeader
+        title="Управление тарифами"
+        description="Настройки глобальных тарифов Wildberries"
+        breadcrumbs={[
+          { label: 'Главная', href: '/dashboard' },
+          { label: 'Настройки', href: '/settings' },
+          { label: 'Тарифы' },
+        ]}
+        actions={<RateLimitIndicator />}
+      />
 
-          {/* Header with title and rate limit indicator */}
-          <div className="flex justify-between items-center">
-            <div className="flex items-center gap-3">
-              <Settings2 className="h-8 w-8 text-muted-foreground" />
-              <div>
-                <h1 className="text-2xl font-bold text-foreground">Управление тарифами</h1>
-                <p className="text-muted-foreground">Настройки глобальных тарифов Wildberries</p>
-              </div>
-            </div>
-            <RateLimitIndicator />
-          </div>
-        </div>
-      </div>
+      <ContextBar
+        scope="Текущие настройки, история версий и журнал изменений"
+        state={contextState.state}
+        stateLabel={contextState.label}
+      />
 
-      {/* Page Content */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+      <div className="min-w-0">
         {/* Tabs (AC3) */}
         <Tabs defaultValue="current" className="w-full">
-          <TabsList className="grid w-full max-w-lg grid-cols-3">
+          <TabsList className="grid h-auto w-full grid-cols-1 gap-1 sm:max-w-2xl sm:grid-cols-3">
             <TabsTrigger value="current">Текущие настройки</TabsTrigger>
             <TabsTrigger value="history">История версий</TabsTrigger>
             <TabsTrigger value="audit">Журнал изменений</TabsTrigger>

@@ -45,7 +45,7 @@ export function LogisticsRatesSection({
   onToggle,
 }: LogisticsRatesSectionProps) {
   const handleTiersChange = (newTiers: VolumeTierFormData[]) => {
-    setValue('logisticsVolumeTiers', newTiers, { shouldValidate: true })
+    setValue('logisticsVolumeTiers', newTiers, { shouldDirty: true, shouldValidate: true })
   }
 
   return (
@@ -86,7 +86,7 @@ export function LogisticsRatesSection({
         <LogisticsTiersEditor
           tiers={volumeTiers}
           onChange={handleTiersChange}
-          error={errors.logisticsVolumeTiers?.message}
+          fieldErrors={errors.logisticsVolumeTiers}
           disabled={disabled}
           label="Тарифные уровни по объёму"
         />

@@ -74,6 +74,8 @@ export function TariffFieldInput({
   const id = useId()
   const inputId = `tariff-${id}`
   const errorId = `tariff-error-${id}`
+  const helpId = `tariff-help-${id}`
+  const describedBy = [helpText ? helpId : null, error ? errorId : null].filter(Boolean).join(' ')
 
   return (
     <div className={cn('space-y-2', className)}>
@@ -92,7 +94,7 @@ export function TariffFieldInput({
           placeholder={placeholder}
           disabled={disabled}
           aria-invalid={!!error}
-          aria-describedby={error ? errorId : undefined}
+          aria-describedby={describedBy || undefined}
           className={cn('w-full', error && 'border-destructive focus-visible:ring-destructive')}
           {...register}
         />
@@ -104,7 +106,11 @@ export function TariffFieldInput({
         </p>
       )}
 
-      {helpText && !error && <p className="text-xs text-muted-foreground">{helpText}</p>}
+      {helpText && (
+        <p id={helpId} className="text-xs text-muted-foreground">
+          {helpText}
+        </p>
+      )}
     </div>
   )
 }

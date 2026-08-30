@@ -60,7 +60,7 @@ export function TariffSectionWrapper({
       onOpenChange={onToggle}
       className={cn('border rounded-lg', className)}
     >
-      <CollapsibleTrigger className="flex w-full items-center justify-between p-4 hover:bg-muted/50 transition-colors rounded-t-lg">
+      <CollapsibleTrigger className="flex w-full items-center justify-between rounded-t-lg p-4 transition-colors hover:bg-muted/50 motion-reduce:transition-none">
         <div className="flex items-center gap-2">
           {Icon && <Icon className="h-4 w-4 text-muted-foreground" />}
           <span className="font-medium">{title}</span>
@@ -72,7 +72,7 @@ export function TariffSectionWrapper({
         )}
       </CollapsibleTrigger>
 
-      <CollapsibleContent className="px-4 pb-4 data-[state=closed]:animate-collapsible-up data-[state=open]:animate-collapsible-down">
+      <CollapsibleContent className="px-4 pb-4 data-[state=closed]:animate-collapsible-up data-[state=open]:animate-collapsible-down motion-reduce:animate-none">
         <div className="pt-2">{children}</div>
       </CollapsibleContent>
     </Collapsible>

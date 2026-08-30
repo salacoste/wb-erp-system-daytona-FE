@@ -516,7 +516,7 @@ describe('AuditLogTable', () => {
       await waitFor(() => {
         const updateBadge = screen.getAllByText('Изменение')[0]
         expect(updateBadge).toBeInTheDocument()
-        expect(updateBadge).toHaveClass('bg-blue-100')
+        expect(updateBadge).toHaveClass('bg-status-information/15')
       })
     })
 
@@ -527,7 +527,7 @@ describe('AuditLogTable', () => {
       await waitFor(() => {
         const createBadge = screen.getByText('Создание')
         expect(createBadge).toBeInTheDocument()
-        expect(createBadge).toHaveClass('bg-green-100')
+        expect(createBadge).toHaveClass('bg-status-success/15')
       })
     })
 
@@ -538,7 +538,7 @@ describe('AuditLogTable', () => {
       await waitFor(() => {
         const deleteBadge = screen.getByText('Удаление')
         expect(deleteBadge).toBeInTheDocument()
-        expect(deleteBadge).toHaveClass('bg-red-100')
+        expect(deleteBadge).toHaveClass('bg-status-error/15')
       })
     })
   })
