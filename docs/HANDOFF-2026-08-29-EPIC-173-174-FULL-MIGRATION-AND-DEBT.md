@@ -3,7 +3,7 @@
 > **Snapshot:** 2026-08-30, based on `origin/main` commit `137e2ee5794a534632b5fb9a6e277318b368677c` (Story 173.11 feature merge, PR #359); exact Story 173.11 product cleanup is proved, and the documentation closeout lane is active.
 > **Audience:** the next autonomous frontend migration team and its orchestrator.
 > **Status:** Epics 166–172 and Stories 173.1–173.11 are complete; 87 of 94 canonical Stories are complete; 7 Stories remain in Epics 173–174.
-> **Immediate next product Story:** 173.12, Supplies List, only after the Story 173.11 documentation lifecycle merges and its branch/worktree cleanup passes.
+> **Immediate next product Story:** 173.13, Supply Detail (the last of Epic 173) — Story 173.12 shipped via PR #361 (merge 747f8449); 173.11 lifecycle is historical.
 > **Supersedes operationally:** `docs/HANDOFF-2026-08-27-CROSS-TEAM-OMC-ORCHESTRATOR-172-8-CONTINUATION.md`. That historical file remains unchanged by this documentation lane; it contains obsolete Story 172.12 execution instructions and a known plaintext test-credential exposure, so it must not be used as an execution entry point.
 > **Scope:** this document concerns only `/Users/r2d2/Documents/Code_Projects/wb-repricer-system-new/frontend` and the approved local frontend migration workflow. It grants no deploy, production, force-push, or direct-push-to-main authority.
 
@@ -19,7 +19,7 @@ This document is the single continuation entry point. It intentionally separates
 | Authoring base                | `origin/main` at `137e2ee5794a534632b5fb9a6e277318b368677c`                                                                                                     |
 | Latest lifecycle event        | Story 173.11 feature PR #359 merged as `137e2ee5`; exact product branch/worktree/path/open-PR cleanup proved; documentation closeout active                     |
 | Canonical Story parity        | 94 BMAD Stories and 94 per-Story OMX plans                                                                                                                      |
-| Completed                     | 87/94 Stories; Epics 166–172 complete; Epic 173 at 11/13                                                                                                        |
+| Completed                     | 88/94 Stories; Epics 166–172 complete; Epic 173 at 12/13 (173.12 via PR #361)                                                                                                        |
 | Remaining                     | 7/94: Epic 173 has 2; Epic 174 has 5                                                                                                                            |
 | Route inventory               | 76 source routes and 76 ledger rows                                                                                                                             |
 | Route implementation progress | 74 route-owning Stories complete; 2 Epic 173 routes remain                                                                                                      |
@@ -29,7 +29,7 @@ This document is the single continuation entry point. It intentionally separates
 | Story 173.9 lifecycle         | Feature #353, initial docs #354, and auxiliary #355 merged; all product/docs refs, paths, worktrees, and PR residue absent                                      |
 | Story 173.10 lifecycle        | Feature #356, initial docs #357, and auxiliary #358 merged; all product/docs refs, paths, worktrees, and PR residue absent                                      |
 | Story 173.11 lifecycle        | Feature #359 merged; exact product refs/path/worktree/open-PR residue absent; documentation closeout lane active                                                |
-| NEXT                          | execute Story 173.12 from refreshed clean `main` only after the Story 173.11 documentation lifecycle merges and cleans                                          |
+| NEXT                          | execute Story 173.13 from refreshed clean `main` (owner-boundary list = DETAIL_EXCLUDED in the 173.12 guard; carry-in: legacy-twin SUPPLY_STATUS_CONFIG)                                          |
 | Production/deploy authority   | forbidden                                                                                                                                                       |
 
 The recorded test floor is the fresh pinned-runtime Story 173.9 unrestricted final-product-snapshot full-suite rerun: 19,733/19,733 across 1,249 files. Story 173.11 ran a fresh pinned-runtime focused 112/112 plus immutable hook/API contracts 23/23 and static discovery of seven Story browser scenarios, but no full-suite snapshot, so the floor is intentionally unchanged. The known jsdom navigation diagnostic remained non-failing.
