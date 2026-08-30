@@ -331,8 +331,8 @@ Story identity is the numeric `Epic.Story` ID, not the descriptive sprint-status
 > Живые по-сторийные статусы: `_bmad-output/implementation-artifacts/sprint-status.yaml`.
 
 - **Epics CLOSED**: 166-FE (foundation), 167-FE (AppShell/auth, freeze-8), 168-FE (analytics core, 11/11), 169-FE (operational analytics, 15/15), 170-FE (marketing and marketplace analytics, 7/7), 171-FE (models, 9/9), and 172-FE (core operations, 17/17).
-- **Canonical Story readiness: 82/94**; Story 173.6 feature commit `9266ead5` merged in PR #344 as `80427f28`; the exact 29-file product lane and temporary dependency artifacts were cleaned locally and remotely; final product review records P0/P1/P2 = 0, scope PASS, and APPROVE. The exact-five-file documentation closeout lane is active from the product merge and will be followed by a narrow auxiliary lifecycle record. The settings shell owner remains available to Story 173.7.
-- **Program NEXT = Epic 173 / Story 173.7** only after the Story 173.6 initial documentation closeout and auxiliary lifecycle record both merge and their branch/worktree cleanup passes.
+- **Canonical Story readiness: 82/94**; Story 173.6 feature commit `9266ead5` merged in PR #344 as `80427f28`; documentation closeout commit `b5f99d93` merged in PR #345 as `d079dcb6`; the exact product and initial documentation branches/worktrees/paths/open-PR residue were removed locally and remotely. Final product and documentation reviews record P0/P1/P2 = 0, scope PASS, and APPROVE. Only the auxiliary lifecycle-record lane remains. The settings shell owner remains available to Story 173.7.
+- **Program NEXT = Epic 173 / Story 173.7** after this auxiliary lifecycle record merges and its own branch/worktree cleanup passes.
 - **Remaining**: 173.7-13 (173.8 shipments owner, 173.12 supplies owner) → 174.1-5 (consolidation;
   174.2 — применимые design-system/source-boundary/contrast долги; 174.3 — browser/theme/axe/keyboard/visual;
   174.4 — functional/local-backend regression; trigger-specific behavior/API debts сохраняют registry-owner).

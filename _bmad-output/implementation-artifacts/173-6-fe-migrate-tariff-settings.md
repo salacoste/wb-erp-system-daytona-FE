@@ -1,6 +1,6 @@
 # Story 173.6-FE: Migrate Tariff Settings
 
-Status: done — feature PR #344 merged (`9266ead5`, merge `80427f28`); exact product branch/worktree/open-PR cleanup proved; documentation closeout lane `cdx/docs-story-173-6-closeout` is active from the product merge and will be followed by a narrow auxiliary lifecycle record; Story-owned 29-file feature manifest; fresh full floor **19,663/0/1,244**; focused Story **10 files / 162 tests**; Playwright **81 tests discovered** in the settings-pages file, including **20 tariff scenarios**, with browser execution explicitly unavailable because the required services and credentialed preflight were absent; production build **70/70**; final independent product review has zero unresolved P0–P2 findings; route-ledger rows intentionally remain `planned` until Story 174.5.
+Status: done — feature PR #344 merged (`9266ead5`, merge `80427f28`); documentation closeout PR #345 merged (`b5f99d93`, merge `d079dcb6`); exact product and initial documentation branch/worktree/path/open-PR cleanup proved; only the auxiliary lifecycle-record lane remains; Story-owned 29-file feature manifest; fresh full floor **19,663/0/1,244**; focused Story **10 files / 162 tests**; Playwright **81 tests discovered** in the settings-pages file, including **20 tariff scenarios**, with browser execution explicitly unavailable because the required services and credentialed preflight were absent; production build **70/70**; final independent product and documentation reviews have zero unresolved P0–P2 findings; route-ledger rows intentionally remain `planned` until Story 174.5.
 
 ## Story
 
@@ -105,6 +105,9 @@ Pinned runtime: Node `24.18.0`, npm `11.11.0`.
 - Independent final re-review covered exact product diff SHA-256 `64586c8dd3f8e228823b01a157c3ab0baaa74e8f3804dd98629037dd714a284c`.
 - Final disposition: P0 = 0, P1 = 0, P2 = 0; scope PASS; recommendation APPROVE.
 - No unresolved correctness, security, accessibility, responsive, async-lifecycle, API-contract, or test-quality finding remains.
+- Independent review of the initial exact-five documentation snapshot found one P2: the canonical handoff still described the historical Epic 166 count of 97 broken citations as current instead of recording the fresh `check:docs` result.
+- The docs P2 was fixed by recording the exact inherited result—exit 1, 95 broken, one new, three resolved, 94 accepted baseline matches—and explicitly leaving citation baseline/archive remediation outside scope.
+- Final documentation re-review covered exact staged diff SHA-256 `67b6b41eb52a6270bfa1f38e40a1490775d1ad1f47b2abdb7a67bd7349d33e9f` and approved P0 = 0, P1 = 0, P2 = 0; exact-five scope PASS; premature-lifecycle-claims PASS.
 
 ## Lifecycle
 
@@ -112,9 +115,13 @@ Pinned runtime: Node `24.18.0`, npm `11.11.0`.
 - Feature head: `9266ead5f0dbb8aae4d58002b50a7f4734c1d7d1`.
 - Feature merge: `80427f28d6d36a2ec182fd13abb493c97293f37a`.
 - Base/head, mergeability, clean merge state, exact 29-file manifest, and GitGuardian pass were verified before merge; merge used exact-head protection against `9266ead5f0dbb8aae4d58002b50a7f4734c1d7d1`.
-- After merge, primary `main` and refreshed `origin/main` were equal at `80427f28`; the product remote branch, local branch, worktree/path, open PR, and temporary dependency artifacts were absent.
-- The initial documentation closeout lane is active from exact product merge `80427f28`. It changes only the five program tracking files and does not claim its own future PR number, head, merge, or cleanup.
-- After the initial documentation PR merges and is cleaned, a separate narrow auxiliary lifecycle record publishes its exact PR/head/merge and cleanup proof. That later record must not recursively claim its own future merge or cleanup.
+- Documentation closeout PR: #345, `https://github.com/salacoste/wb-erp-system-daytona-FE/pull/345`.
+- Documentation closeout head: `b5f99d93035411e0c1933e292bd6fd9333470356`.
+- Documentation closeout merge: `d079dcb6119b12cd7fd3bf38bebd71f11a57df65`.
+- PR #345 was verified at base `main`, exact head OID, one commit, five files, `MERGEABLE/CLEAN`, and GitGuardian success before exact-head-protected merge.
+- After PR #345 merged, primary `main` was fast-forwarded and proved equal to refreshed `origin/main` at `d079dcb6` with 0/0 divergence.
+- The product and initial documentation remote branches, local branches, worktrees, paths, stale registrations, temporary dependency artifacts, and open PRs were proved absent before the auxiliary lane began; only the primary worktree remained.
+- The auxiliary lifecycle-record branch/worktree exists only to publish these already-proved facts. It makes no recursive claim about its own future PR, merge, primary fast-forward, or cleanup.
 - No deploy, production operation, direct push to `main`, force-push, dependency change, credential output, route-ledger transition, ContextBar implementation change, archive citation remediation, or unrelated debt fix occurred.
 
 ## Lessons and Carry-Outs
@@ -131,3 +138,4 @@ Pinned runtime: Node `24.18.0`, npm `11.11.0`.
 | Date       | Change                                                                                                                                                                                                                                                                                                                                          |
 | ---------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | 2026-08-30 | Story 173.6 implemented, validated, independently reviewed, merged through feature PR #344, and prepared for exact-five-file documentation closeout. **Lessons:** (1) Derive summary availability from the real query. (2) Own the complete pending-dismissal contract. (3) Rebase on success and preserve valid drafts on recoverable failure. |
+| 2026-08-30 | Documentation closeout PR #345 merged and its product/initial-docs cleanup was proved; the sole citation-state P2 was fixed before approval. **Lessons:** (1) Historical baseline counts need explicit dates. (2) Current failing gates belong in the canonical handoff. (3) Publish cleanup facts only after proof.                            |
