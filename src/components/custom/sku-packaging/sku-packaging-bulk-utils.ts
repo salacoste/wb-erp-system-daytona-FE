@@ -58,18 +58,21 @@ export function reconcileBulkResponse(
   }
 
   const errorIds = new Set(response.errors.map(error => error.nmId))
+  const results: BulkResultRow[] = rows.map(row => {
+    if (row.parseError) return { ...row, status: 'error', message: row.parseError }
+    return errorIds.has(row.nmId)
+      ? {
+          ...row,
+          status: 'error',
+          message: 'Не удалось сохранить эту привязку. Проверьте данные.',
+        }
+      : { ...row, status: 'success' }
+  })
+  const errorCount = results.filter(row => row.status === 'error').length
+
   return {
     counts: { created: response.created, updated: response.updated },
-    results: rows.map(row => {
-      if (row.parseError) return { ...row, status: 'error', message: row.parseError }
-      return errorIds.has(row.nmId)
-        ? {
-            ...row,
-            status: 'error',
-            message: 'Не удалось сохранить эту привязку. Проверьте данные.',
-          }
-        : { ...row, status: 'success' }
-    }),
-    completionMessage: `Массовая обработка завершена: создано ${response.created}, обновлено ${response.updated}, ошибок ${response.errors.length}.`,
+    results,
+    completionMessage: `Массовая обработка завершена: создано ${response.created}, обновлено ${response.updated}, ошибок ${errorCount}.`,
   }
 }

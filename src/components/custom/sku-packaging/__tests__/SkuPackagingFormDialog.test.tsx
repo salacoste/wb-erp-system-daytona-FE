@@ -13,6 +13,7 @@ const mockRefetchBoxTypes = vi.fn()
 let mockIsPending = false
 let mockProductsError = false
 let mockBoxTypesError = false
+let mockBoxTypesLoading = false
 
 vi.mock('@/hooks/use-sku-packaging', () => ({
   useCreateSkuPackaging: () => ({
@@ -45,20 +46,21 @@ vi.mock('@/hooks/useProducts', () => ({
 
 vi.mock('@/hooks/use-box-types', () => ({
   useBoxTypes: () => ({
-    data: mockBoxTypesError
-      ? undefined
-      : [
-          {
-            id: 'bt-001',
-            name: 'Коробка A',
-            lengthCm: '60.00',
-            widthCm: '40.00',
-            heightCm: '30.00',
-            volumeCm3: '72000.00',
-            isActive: true,
-          },
-        ],
-    isLoading: false,
+    data:
+      mockBoxTypesError || mockBoxTypesLoading
+        ? undefined
+        : [
+            {
+              id: 'bt-001',
+              name: 'Коробка A',
+              lengthCm: '60.00',
+              widthCm: '40.00',
+              heightCm: '30.00',
+              volumeCm3: '72000.00',
+              isActive: true,
+            },
+          ],
+    isLoading: mockBoxTypesLoading,
     isError: mockBoxTypesError,
     refetch: mockRefetchBoxTypes,
   }),
@@ -127,6 +129,7 @@ describe('SkuPackagingFormDialog', () => {
     mockIsPending = false
     mockProductsError = false
     mockBoxTypesError = false
+    mockBoxTypesLoading = false
   })
 
   describe('create mode', () => {
@@ -294,16 +297,22 @@ describe('SkuPackagingFormDialog', () => {
       expect(screen.getByRole('button', { name: 'Отмена' })).toBeDisabled()
     })
 
-    it('maps a 409 failure to a recoverable inactive-box alert without closing', async () => {
-      const user = userEvent.setup()
-      mockMutateAsync.mockRejectedValueOnce(new ApiError('409 Conflict', 409))
-      renderWithProviders(<SkuPackagingFormDialog {...defaultProps} item={mockItem} />)
+    it.each(['Binding already exists', 'Box type is inactive'])(
+      'maps the 409 variant "%s" to a truthful bounded conflict alert',
+      async apiMessage => {
+        const user = userEvent.setup()
+        mockMutateAsync.mockRejectedValueOnce(new ApiError(apiMessage, 409))
+        renderWithProviders(<SkuPackagingFormDialog {...defaultProps} item={mockItem} />)
 
-      await user.click(screen.getByRole('button', { name: 'Сохранить' }))
+        await user.click(screen.getByRole('button', { name: 'Сохранить' }))
 
-      expect(await screen.findByRole('alert')).toHaveTextContent('Неактивный тип коробки')
-      expect(defaultProps.onClose).not.toHaveBeenCalled()
-    })
+        expect(await screen.findByRole('alert')).toHaveTextContent(
+          'Привязка уже существует или выбранный тип коробки неактивен.'
+        )
+        expect(screen.queryByText(apiMessage)).not.toBeInTheDocument()
+        expect(defaultProps.onClose).not.toHaveBeenCalled()
+      }
+    )
 
     it('announces a generic save failure without closing', async () => {
       const user = userEvent.setup()
@@ -347,6 +356,26 @@ describe('SkuPackagingFormDialog', () => {
 
         await user.click(triggerButton)
         await user.click(screen.getByRole('button', { name: 'Отмена' }))
+
+        await waitFor(() => expect(triggerButton).toHaveFocus())
+      }
+    )
+
+    it.each([
+      { state: 'загрузке', configure: () => (mockBoxTypesLoading = true) },
+      { state: 'ошибке', configure: () => (mockBoxTypesError = true) },
+    ])(
+      'keeps cancellation and exact focus return available при $state справочника',
+      async ({ configure }) => {
+        const user = userEvent.setup()
+        configure()
+        renderWithProviders(<FocusReturnHarness item={null} />)
+        const triggerButton = screen.getByRole('button', { name: 'Открыть создание' })
+
+        await user.click(triggerButton)
+        const cancelButton = screen.getByRole('button', { name: 'Отмена' })
+        expect(cancelButton).toBeEnabled()
+        await user.click(cancelButton)
 
         await waitFor(() => expect(triggerButton).toHaveFocus())
       }

@@ -155,8 +155,9 @@ describe('BulkAddDialog', () => {
   describe('step 3 — results', () => {
     it('submits only valid rows through the unchanged bulk payload', async () => {
       const user = userEvent.setup()
+      const onSuccess = vi.fn()
       mockMutateAsync.mockResolvedValueOnce({ created: 1, updated: 0, errors: [] })
-      renderWithProviders(<BulkAddDialog {...defaultProps} />)
+      renderWithProviders(<BulkAddDialog {...defaultProps} onSuccess={onSuccess} />)
 
       await user.type(screen.getByRole('textbox'), '123456789, bt-001, 10\ninvalid, bt-002, 5')
       await user.click(screen.getByRole('button', { name: 'Предпросмотр' }))
@@ -166,6 +167,13 @@ describe('BulkAddDialog', () => {
       expect(mockMutateAsync).toHaveBeenCalledWith({
         items: [{ nmId: 123456789, boxTypeId: 'bt-001', unitsPerBox: 10 }],
       })
+      const close = (await screen.findAllByRole('button', { name: 'Закрыть' })).find(
+        button => button.textContent === 'Закрыть'
+      )!
+      await user.click(close)
+      expect(onSuccess).toHaveBeenCalledWith(
+        'Массовая обработка завершена: создано 1, обновлено 0, ошибок 1.'
+      )
     })
 
     it('shows created/updated counts after successful submit', async () => {

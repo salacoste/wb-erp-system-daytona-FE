@@ -13,6 +13,7 @@ const OWNED_PRODUCTION_FILES = [
   'src/components/custom/sku-packaging/SkuPackagingDeleteDialog.tsx',
   'src/components/custom/sku-packaging/SkuPackagingEmptyState.tsx',
   'src/components/custom/sku-packaging/SkuPackagingFormDialog.tsx',
+  'src/components/custom/sku-packaging/SkuPackagingFormFields.tsx',
   'src/components/custom/sku-packaging/SkuPackagingTable.tsx',
   'src/components/custom/sku-packaging/index.ts',
   'src/components/custom/sku-packaging/sku-packaging-columns.ts',
