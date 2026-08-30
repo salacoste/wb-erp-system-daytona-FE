@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { screen } from '@testing-library/react'
+import { screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { renderWithProviders } from '@/test/utils/test-utils'
 import { PalletAccordion } from '../PalletAccordion'
@@ -121,6 +121,57 @@ describe('PalletAccordion', () => {
     renderWithProviders(<PalletAccordion shipmentId="s-001" pallets={mockPallets} isDraft={true} />)
     await user.click(screen.getByText('Добавить паллету'))
     expect(mockAddAsync).toHaveBeenCalledOnce()
+  })
+
+  it('announces add pending and success states', async () => {
+    let resolveAdd!: (value: { id: string }) => void
+    mockAddAsync.mockImplementationOnce(
+      () => new Promise(resolve => (resolveAdd = resolve as (value: { id: string }) => void))
+    )
+    const user = userEvent.setup()
+    renderWithProviders(<PalletAccordion shipmentId="s-001" pallets={mockPallets} isDraft />)
+
+    await user.click(screen.getByRole('button', { name: 'Добавить паллету' }))
+    expect(screen.getByRole('status')).toHaveTextContent('Добавляем паллету')
+
+    resolveAdd({ id: 'p-new' })
+    await waitFor(() => expect(screen.getByRole('status')).toHaveTextContent('Паллета добавлена'))
+  })
+
+  it('announces add failure', async () => {
+    mockAddAsync.mockRejectedValueOnce(new Error('failed'))
+    const user = userEvent.setup()
+    renderWithProviders(<PalletAccordion shipmentId="s-001" pallets={mockPallets} isDraft />)
+
+    await user.click(screen.getByRole('button', { name: 'Добавить паллету' }))
+
+    await waitFor(() =>
+      expect(screen.getByRole('status')).toHaveTextContent('Не удалось добавить паллету')
+    )
+  })
+
+  it('announces remove failure', async () => {
+    mockRemoveAsync.mockRejectedValueOnce(new Error('failed'))
+    const user = userEvent.setup()
+    renderWithProviders(<PalletAccordion shipmentId="s-001" pallets={mockPallets} isDraft />)
+
+    await user.click(screen.getByLabelText('Удалить паллету 1'))
+    await user.click(screen.getByRole('button', { name: 'Удалить' }))
+
+    await waitFor(() =>
+      expect(screen.getByRole('status')).toHaveTextContent('Не удалось удалить паллету')
+    )
+  })
+
+  it('announces remove success', async () => {
+    mockRemoveAsync.mockResolvedValueOnce(undefined)
+    const user = userEvent.setup()
+    renderWithProviders(<PalletAccordion shipmentId="s-001" pallets={mockPallets} isDraft />)
+
+    await user.click(screen.getByLabelText('Удалить паллету 1'))
+    await user.click(screen.getByRole('button', { name: 'Удалить' }))
+
+    await waitFor(() => expect(screen.getByRole('status')).toHaveTextContent('Паллета удалена'))
   })
 
   it('shows empty message when no pallets', () => {

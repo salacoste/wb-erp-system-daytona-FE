@@ -148,11 +148,27 @@ describe('ShipmentActions', () => {
       expect(onSuccess).toHaveBeenCalledWith(mockResult)
     })
 
+    it('announces calculation while the mutation is pending', async () => {
+      let resolveCalculation: ((value: { results: never[] }) => void) | undefined
+      mockCalculateAsync.mockReturnValueOnce(
+        new Promise(resolve => {
+          resolveCalculation = resolve
+        })
+      )
+      renderActions(baseDraftShipment)
+
+      await userEvent.click(screen.getByText('Рассчитать'))
+
+      expect(screen.getByRole('status')).toHaveTextContent('Выполняется расчёт стоимости')
+      resolveCalculation?.({ results: [] })
+    })
+
     it('calls confirm and shows toast on success', async () => {
       renderActions(baseDraftShipment)
       await userEvent.click(screen.getByText('Подтвердить'))
       expect(mockConfirmAsync).toHaveBeenCalledWith('owner@test.com')
       expect(toast.success).toHaveBeenCalledWith('Отправка подтверждена')
+      expect(screen.getByRole('status')).toHaveTextContent('Отправка подтверждена')
     })
   })
 
@@ -221,6 +237,7 @@ describe('ShipmentActions', () => {
       expect(onStart).toHaveBeenCalled()
       expect(mockRecalculateAsync).toHaveBeenCalled()
       expect(toast.success).toHaveBeenCalledWith('Пересчёт выполнен')
+      expect(screen.getByRole('status')).toHaveTextContent('Пересчёт выполнен')
       expect(onSuccess).not.toHaveBeenCalled()
     })
   })

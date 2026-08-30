@@ -5,7 +5,7 @@
  * Epic 76-FE, Story 76.3 (AC: #1, #3, #5, #6)
  */
 
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState, type RefObject } from 'react'
 import { Button } from '@/components/ui/button'
 import {
   Dialog,
@@ -30,6 +30,8 @@ interface BoxLineFormProps {
   shipmentId: string
   palletId: string
   editingLine: BoxLine | null
+  returnFocusRef?: RefObject<HTMLButtonElement | null>
+  onSuccess?: (action: 'add' | 'update') => void
 }
 
 export function BoxLineForm({
@@ -38,11 +40,16 @@ export function BoxLineForm({
   shipmentId,
   palletId,
   editingLine,
+  returnFocusRef,
+  onSuccess,
 }: BoxLineFormProps) {
   const [nmId, setNmId] = useState<number | null>(null)
   const [boxCount, setBoxCount] = useState('')
   const [totalUnits, setTotalUnits] = useState('')
   const [errors, setErrors] = useState<BoxLineFormErrors>({})
+  const productFieldRef = useRef<HTMLDivElement>(null)
+  const boxCountRef = useRef<HTMLInputElement>(null)
+  const totalUnitsRef = useRef<HTMLInputElement>(null)
 
   const { mutateAsync: addAsync, isPending: isAdding } = useAddBoxLine(shipmentId, palletId)
   const { mutateAsync: updateAsync, isPending: isUpdating } = useUpdateBoxLine(shipmentId)
@@ -64,33 +71,48 @@ export function BoxLineForm({
     }
   }, [open, editingLine])
 
-  function handleSubmit(e: React.FormEvent) {
+  async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
     const errs = validateBoxLineForm({ nmId, boxCount, totalUnits }, isEdit)
     setErrors(errs)
-    if (Object.keys(errs).length > 0) return
+    if (Object.keys(errs).length > 0) {
+      if (errs.nmId) {
+        productFieldRef.current?.querySelector<HTMLButtonElement>('[role="combobox"]')?.focus()
+      } else if (errs.boxCount) boxCountRef.current?.focus()
+      else if (errs.totalUnits) totalUnitsRef.current?.focus()
+      return
+    }
 
     const payload = buildBoxLinePayload({ nmId, boxCount, totalUnits })
-    if (isEdit && editingLine) {
-      updateAsync({
-        boxLineId: editingLine.id,
-        data: {
-          boxCount: payload.boxCount,
-          ...(payload.totalUnits != null ? { totalUnits: payload.totalUnits } : {}),
-        },
-      })
-        .then(onClose)
-        .catch(() => setErrors({ form: 'Ошибка сохранения. Попробуйте ещё раз.' }))
-    } else {
-      addAsync(payload)
-        .then(onClose)
-        .catch(() => setErrors({ form: 'Ошибка сохранения. Попробуйте ещё раз.' }))
+    try {
+      if (isEdit && editingLine) {
+        await updateAsync({
+          boxLineId: editingLine.id,
+          data: {
+            boxCount: payload.boxCount,
+            ...(payload.totalUnits != null ? { totalUnits: payload.totalUnits } : {}),
+          },
+        })
+        onSuccess?.('update')
+      } else {
+        await addAsync(payload)
+        onSuccess?.('add')
+      }
+      onClose()
+    } catch {
+      setErrors({ form: 'Ошибка сохранения. Попробуйте ещё раз.' })
     }
   }
 
   return (
     <Dialog open={open} onOpenChange={v => !v && !isPending && onClose()}>
-      <DialogContent>
+      <DialogContent
+        onCloseAutoFocus={event => {
+          if (!returnFocusRef?.current) return
+          event.preventDefault()
+          returnFocusRef.current.focus()
+        }}
+      >
         <DialogHeader>
           <DialogTitle>{isEdit ? 'Редактировать товар' : 'Добавить товар'}</DialogTitle>
           <DialogDescription>
@@ -111,7 +133,16 @@ export function BoxLineForm({
             onNmIdChange={setNmId}
             onBoxCountChange={setBoxCount}
             onTotalUnitsChange={setTotalUnits}
+            productFieldRef={productFieldRef}
+            boxCountRef={boxCountRef}
+            totalUnitsRef={totalUnitsRef}
           />
+
+          {isPending && (
+            <p className="sr-only" role="status" aria-live="polite">
+              {isEdit ? 'Сохраняем изменения товарной строки' : 'Добавляем товарную строку'}
+            </p>
+          )}
 
           <DialogFooter>
             <Button type="button" variant="outline" onClick={onClose} disabled={isPending}>

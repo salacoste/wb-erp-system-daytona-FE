@@ -33,7 +33,7 @@ interface BoxLineTableRowProps {
   hasCalculated: boolean
   isDraft: boolean
   isHighlighted: boolean
-  onEdit: (line: BoxLine) => void
+  onEdit: (line: BoxLine, trigger: HTMLButtonElement) => void
   onRemove: (boxLineId: string) => void
 }
 
@@ -48,29 +48,29 @@ export function BoxLineTableRow({
   return (
     <TableRow className={isHighlighted ? 'bg-destructive/10 border-l-2 border-l-destructive' : ''}>
       <TableCell className="font-medium">{line.nmId}</TableCell>
-      <TableCell className="text-right">{line.boxCount}</TableCell>
-      <TableCell className="text-right">{line.totalUnits ?? '—'}</TableCell>
+      <TableCell className="text-right tabular-nums">{line.boxCount}</TableCell>
+      <TableCell className="text-right tabular-nums">{line.totalUnits ?? '—'}</TableCell>
       {hasCalculated && (
-        <TableCell className="text-right">
+        <TableCell className="text-right tabular-nums">
           {hasFiniteCost(line.unitCostRub) ? formatCurrency(parseDecimal(line.unitCostRub)) : '—'}
         </TableCell>
       )}
       {hasCalculated && (
-        <TableCell className="text-right">
+        <TableCell className="text-right tabular-nums">
           {hasFiniteCost(line.deliveryCostPerUnit)
             ? formatCurrency(parseDecimal(line.deliveryCostPerUnit))
             : '—'}
         </TableCell>
       )}
       {hasCalculated && (
-        <TableCell className="text-right font-medium">
+        <TableCell className="text-right font-medium tabular-nums">
           {hasFiniteCost(line.finalCostPerUnit)
             ? formatCurrency(parseDecimal(line.finalCostPerUnit))
             : '—'}
         </TableCell>
       )}
       {hasCalculated && (
-        <TableCell className="text-right">
+        <TableCell className="text-right tabular-nums">
           {hasFiniteCost(line.finalCostLine)
             ? formatCurrency(parseDecimal(line.finalCostLine))
             : '—'}
@@ -82,7 +82,7 @@ export function BoxLineTableRow({
             <Button
               variant="ghost"
               size="sm"
-              onClick={() => onEdit(line)}
+              onClick={event => onEdit(line, event.currentTarget)}
               aria-label={`Редактировать товар ${line.nmId}`}
             >
               <Pencil className="h-4 w-4" />

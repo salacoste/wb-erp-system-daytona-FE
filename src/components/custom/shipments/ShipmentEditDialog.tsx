@@ -5,7 +5,7 @@
  * Epic 76-FE, Story 76.2 (AC: #2)
  */
 
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState, type RefObject } from 'react'
 import { Button } from '@/components/ui/button'
 import {
   Dialog,
@@ -26,6 +26,7 @@ interface ShipmentEditDialogProps {
   shipment: Shipment
   open: boolean
   onClose: () => void
+  returnFocusRef?: RefObject<HTMLButtonElement | null>
 }
 
 interface FormErrors {
@@ -34,7 +35,12 @@ interface FormErrors {
   submit?: string
 }
 
-export function ShipmentEditDialog({ shipment, open, onClose }: ShipmentEditDialogProps) {
+export function ShipmentEditDialog({
+  shipment,
+  open,
+  onClose,
+  returnFocusRef,
+}: ShipmentEditDialogProps) {
   const { mutateAsync, isPending } = useUpdateShipment()
 
   const costSource =
@@ -49,6 +55,8 @@ export function ShipmentEditDialog({ shipment, open, onClose }: ShipmentEditDial
   const [name, setName] = useState(shipment.name ?? '')
   const [costValue, setCostValue] = useState(String(parseDecimal(costSource)))
   const [errors, setErrors] = useState<FormErrors>({})
+  const nameRef = useRef<HTMLInputElement>(null)
+  const costRef = useRef<HTMLInputElement>(null)
 
   useEffect(() => {
     if (open) {
@@ -71,6 +79,8 @@ export function ShipmentEditDialog({ shipment, open, onClose }: ShipmentEditDial
     const errs = validate()
     if (Object.keys(errs).length > 0) {
       setErrors(errs)
+      if (errs.name) nameRef.current?.focus()
+      else if (errs.cost) costRef.current?.focus()
       return
     }
 
@@ -90,7 +100,14 @@ export function ShipmentEditDialog({ shipment, open, onClose }: ShipmentEditDial
 
   return (
     <Dialog open={open} onOpenChange={v => !v && !isPending && onClose()}>
-      <DialogContent className="sm:max-w-[425px]">
+      <DialogContent
+        className="sm:max-w-[425px]"
+        onCloseAutoFocus={event => {
+          if (!returnFocusRef?.current) return
+          event.preventDefault()
+          returnFocusRef.current.focus()
+        }}
+      >
         <DialogHeader>
           <DialogTitle>Редактировать отправку</DialogTitle>
           <DialogDescription>Измените название и стоимость доставки</DialogDescription>
@@ -100,6 +117,7 @@ export function ShipmentEditDialog({ shipment, open, onClose }: ShipmentEditDial
           <div className="space-y-2">
             <Label htmlFor="se-name">Название</Label>
             <Input
+              ref={nameRef}
               id="se-name"
               value={name}
               onChange={e => {
@@ -126,6 +144,7 @@ export function ShipmentEditDialog({ shipment, open, onClose }: ShipmentEditDial
           <div className="space-y-2">
             <Label htmlFor="se-cost">{costLabel}</Label>
             <Input
+              ref={costRef}
               id="se-cost"
               type="number"
               min="0"
@@ -145,7 +164,17 @@ export function ShipmentEditDialog({ shipment, open, onClose }: ShipmentEditDial
             )}
           </div>
 
-          {errors.submit && <p className="text-sm text-destructive">{errors.submit}</p>}
+          {errors.submit && (
+            <p className="text-sm text-destructive" role="alert">
+              {errors.submit}
+            </p>
+          )}
+
+          {isPending && (
+            <p className="sr-only" role="status" aria-live="polite">
+              Сохраняем изменения отправки
+            </p>
+          )}
 
           <DialogFooter>
             <Button type="button" variant="outline" onClick={onClose} disabled={isPending}>

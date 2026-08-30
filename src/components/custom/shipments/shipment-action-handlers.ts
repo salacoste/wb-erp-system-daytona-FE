@@ -3,6 +3,7 @@
  * Epic 76-FE, Story 76.5
  */
 
+import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { useQueryClient } from '@tanstack/react-query'
 import { toast } from 'sonner'
@@ -30,6 +31,7 @@ export interface ShipmentActionHandlers {
   isCalculating: boolean
   isConfirming: boolean
   isRecalculating: boolean
+  announcement: string
   handleDelete: () => Promise<void>
   handleCalculate: () => Promise<void>
   handleConfirm: () => Promise<void>
@@ -54,6 +56,7 @@ export function useShipmentActionHandlers(
   const { mutateAsync: recalculateAsync, isPending: isRecalculating } = useRecalculateShipment(
     shipment.id
   )
+  const [announcement, setAnnouncement] = useState('')
 
   const isDraft = shipment.status === ShipmentStatus.DRAFT
   const canRecalculate = userRole === 'Owner' || userRole === 'Manager' || userRole === 'Service'
@@ -62,25 +65,32 @@ export function useShipmentActionHandlers(
     const errors = extractValidationErrors(err)
     if (errors) {
       onCalculateError?.(errors)
+      setAnnouncement('Расчёт требует исправления данных')
       return
     }
     toast.error(label)
+    setAnnouncement(label)
   }
 
   async function handleDelete() {
+    setAnnouncement('Удаляем отправку')
     try {
       await deleteAsync(shipment.id)
+      setAnnouncement('Отправка удалена')
       router.push(ROUTES.SHIPMENTS.ROOT)
     } catch {
+      setAnnouncement('Не удалось удалить отправку')
       // Error handled by TanStack Query
     }
   }
 
   async function handleCalculate() {
+    setAnnouncement('Выполняется расчёт стоимости')
     onCalculateStart?.()
     try {
       const result = await calculateAsync()
       onCalculateSuccess?.(result)
+      setAnnouncement('Расчёт стоимости завершён')
     } catch (err: unknown) {
       handleMutationError(err, 'Ошибка при расчёте')
     }
@@ -89,15 +99,19 @@ export function useShipmentActionHandlers(
   async function handleConfirm() {
     if (!userEmail) {
       toast.error('Не удалось определить пользователя')
+      setAnnouncement('Не удалось определить пользователя')
       return
     }
+    setAnnouncement('Подтверждаем отправку')
     onCalculateStart?.()
     try {
       await confirmAsync(userEmail)
       toast.success('Отправка подтверждена')
+      setAnnouncement('Отправка подтверждена')
     } catch (err: unknown) {
       if (err instanceof ApiError && err.status === 409) {
         toast.error('Отправка уже подтверждена')
+        setAnnouncement('Отправка уже подтверждена')
         queryClient.invalidateQueries({ queryKey: ['shipments'] })
         return
       }
@@ -112,9 +126,11 @@ export function useShipmentActionHandlers(
     // per src/types/shipment-cost.ts. Recalc flows trigger TanStack Query cache
     // invalidation in the hook itself; no callback propagation needed here.
     onCalculateStart?.()
+    setAnnouncement('Выполняется пересчёт стоимости')
     try {
       await recalculateAsync()
       toast.success('Пересчёт выполнен')
+      setAnnouncement('Пересчёт выполнен')
     } catch (err: unknown) {
       handleMutationError(err, 'Ошибка при пересчёте')
     }
@@ -127,6 +143,7 @@ export function useShipmentActionHandlers(
     isCalculating,
     isConfirming,
     isRecalculating,
+    announcement,
     handleDelete,
     handleCalculate,
     handleConfirm,

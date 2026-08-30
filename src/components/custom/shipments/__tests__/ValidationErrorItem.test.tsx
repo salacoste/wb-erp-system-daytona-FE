@@ -14,7 +14,7 @@ describe('ValidationErrorItem', () => {
     expect(screen.getByText('Не указана себестоимость товара')).toBeInTheDocument()
   })
 
-  it('uses yellow border class for warning severity (DUPLICATE_SKU_IN_PALLET)', () => {
+  it('uses semantic warning tokens for warning severity (DUPLICATE_SKU_IN_PALLET)', () => {
     const { container } = render(
       <ValidationErrorItem
         code={ValidationErrorCode.DUPLICATE_SKU_IN_PALLET}
@@ -22,8 +22,10 @@ describe('ValidationErrorItem', () => {
       />
     )
     const wrapper = container.firstElementChild as HTMLElement
-    expect(wrapper.className).toContain('border-yellow-500/50')
-    expect(wrapper.className).toContain('bg-yellow-50')
+    expect(wrapper.className).toContain('border-status-warning/30')
+    expect(wrapper.className).toContain('bg-status-warning/10')
+    expect(wrapper.innerHTML).toContain('text-status-warning')
+    expect(wrapper.innerHTML).not.toMatch(/yellow-/)
   })
 
   it('uses destructive border class for error severity (MISSING_COGS)', () => {

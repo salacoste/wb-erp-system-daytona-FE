@@ -55,6 +55,14 @@ describe('CalculationResults', () => {
     expect(screen.getByText('Итого (FCU)')).toBeInTheDocument()
     expect(screen.getByText('Кол-во')).toBeInTheDocument()
     expect(screen.getByText('Сумма')).toBeInTheDocument()
+    expect(screen.getByRole('table', { name: 'Результаты расчёта по товарам' })).toHaveAttribute(
+      'data-narrow-strategy',
+      'horizontal-scroll'
+    )
+    expect(screen.getByRole('region', { name: 'Таблица результатов расчёта' })).toHaveAttribute(
+      'tabindex',
+      '0'
+    )
   })
 
   it('renders total units as plain numbers', () => {

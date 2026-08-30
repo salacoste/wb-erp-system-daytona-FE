@@ -2,7 +2,7 @@
 
 /** Shipment action buttons for DRAFT and CONFIRMED states (Epic 76-FE, Story 76.5) */
 
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { Calculator, CheckCircle, Loader2, Pencil, RefreshCw } from 'lucide-react'
 import type { Shipment, CalculateShipmentResponse } from '@/types/shipment-cost'
@@ -30,6 +30,7 @@ export function ShipmentActions({
     isCalculating,
     isConfirming,
     isRecalculating,
+    announcement,
     handleDelete,
     handleCalculate,
     handleConfirm,
@@ -37,12 +38,19 @@ export function ShipmentActions({
   } = useShipmentActionHandlers(shipment, onCalculateStart, onCalculateSuccess, onCalculateError)
 
   const [isEditOpen, setIsEditOpen] = useState(false)
+  const editTriggerRef = useRef<HTMLButtonElement>(null)
+  const liveStatus = (
+    <p className="sr-only" role="status" aria-live="polite" aria-atomic="true">
+      {announcement}
+    </p>
+  )
 
   if (!isDraft) {
     return (
       <>
+        {liveStatus}
         {canRecalculate && (
-          <div className="flex items-center gap-2">
+          <div className="flex flex-wrap items-center gap-2">
             <Button
               variant="outline"
               size="sm"
@@ -65,8 +73,14 @@ export function ShipmentActions({
 
   return (
     <>
-      <div className="flex items-center gap-2">
-        <Button variant="outline" size="sm" onClick={() => setIsEditOpen(true)}>
+      {liveStatus}
+      <div className="flex flex-wrap items-center gap-2">
+        <Button
+          ref={editTriggerRef}
+          variant="outline"
+          size="sm"
+          onClick={() => setIsEditOpen(true)}
+        >
           <Pencil className="h-4 w-4 mr-1" />
           Редактировать
         </Button>
@@ -103,6 +117,7 @@ export function ShipmentActions({
         shipment={shipment}
         open={isEditOpen}
         onClose={() => setIsEditOpen(false)}
+        returnFocusRef={editTriggerRef}
       />
     </>
   )

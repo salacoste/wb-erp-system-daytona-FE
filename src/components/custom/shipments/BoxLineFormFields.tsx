@@ -11,6 +11,7 @@ import { Label } from '@/components/ui/label'
 import { ProductCombobox } from '@/components/custom/sku-packaging/ProductCombobox'
 import { PreflightWarnings } from './PreflightWarnings'
 import type { BoxLineFormErrors } from './box-line-form-helpers'
+import type { RefObject } from 'react'
 
 interface BoxLineFormFieldsProps {
   isEdit: boolean
@@ -22,6 +23,9 @@ interface BoxLineFormFieldsProps {
   onNmIdChange: (value: number | null) => void
   onBoxCountChange: (value: string) => void
   onTotalUnitsChange: (value: string) => void
+  productFieldRef: RefObject<HTMLDivElement | null>
+  boxCountRef: RefObject<HTMLInputElement | null>
+  totalUnitsRef: RefObject<HTMLInputElement | null>
 }
 
 export function BoxLineFormFields({
@@ -34,10 +38,13 @@ export function BoxLineFormFields({
   onNmIdChange,
   onBoxCountChange,
   onTotalUnitsChange,
+  productFieldRef,
+  boxCountRef,
+  totalUnitsRef,
 }: BoxLineFormFieldsProps) {
   return (
     <>
-      <div className="space-y-2">
+      <div ref={productFieldRef} className="space-y-2">
         <Label htmlFor="boxline-nmid">Товар</Label>
         {isEdit ? (
           <Input id="boxline-nmid" value={editingLineNmId ?? ''} disabled />
@@ -61,6 +68,7 @@ export function BoxLineFormFields({
       <div className="space-y-2">
         <Label htmlFor="boxline-count">Количество коробок</Label>
         <Input
+          ref={boxCountRef}
           id="boxline-count"
           type="number"
           min={1}
@@ -82,6 +90,7 @@ export function BoxLineFormFields({
           Всего штук <span className="text-muted-foreground">(необязательно)</span>
         </Label>
         <Input
+          ref={totalUnitsRef}
           id="boxline-units"
           type="number"
           min={1}
@@ -99,7 +108,11 @@ export function BoxLineFormFields({
         )}
       </div>
 
-      {errors.form && <p className="text-sm text-destructive">{errors.form}</p>}
+      {errors.form && (
+        <p className="text-sm text-destructive" role="alert">
+          {errors.form}
+        </p>
+      )}
     </>
   )
 }
