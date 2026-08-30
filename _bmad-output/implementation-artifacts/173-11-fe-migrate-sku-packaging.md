@@ -1,8 +1,8 @@
 # Story 173.11-FE: Migrate SKU Packaging
 
-Status: done — feature PR #359 merged (`b1772e48` + review-fix `e484c30f`, merge `137e2ee5`); exact product branch/worktree/path/open-PR cleanup proved; documentation closeout active; Story-owned 24-file feature manifest; focused Story **10 files / 112 tests** plus immutable hook/API contracts **3 files / 23 tests**; seven deterministic Story Playwright scenarios statically discovered; production build **70/70**; the recorded full-suite floor remains **19,733/0/1,249** from Story 173.9 because Story 173.11 did not run a fresh full-suite snapshot; credential-dependent browser execution was unavailable because `.env.e2e` was absent; final exact-head product review has zero unresolved material findings; route-ledger rows intentionally remain `planned` until Story 174.5.
+Status: done — feature PR #359 merged (`b1772e48` + review-fix `e484c30f`, merge `137e2ee5`); exact-five documentation PR #360 merged (`66b30d7d`, merge `b2136273`); exact product and initial-documentation branch/worktree/path/open-PR cleanup proved; auxiliary lifecycle record active; Story-owned 24-file feature manifest; focused Story **10 files / 112 tests** plus immutable hook/API contracts **3 files / 23 tests**; seven deterministic Story Playwright scenarios statically discovered; production build **70/70**; Story 173.11 did not refresh the then-current full-suite floor, while the program floor has since advanced through Story 173.12 to **19,800/0/1,252**; credential-dependent browser execution was unavailable because `.env.e2e` was absent; exact-head product and documentation reviews have zero actionable findings; route-ledger rows intentionally remain `planned` until Story 174.5.
 
-Program snapshot: **87/94** canonical Stories complete; Epic 173 is **11/13**; NEXT is Story 173.12 only after this Story 173.11 documentation lifecycle merges and cleans.
+Program snapshot: **88/94** canonical Stories complete; Epic 173 is **12/13** after Story 173.12 feature PR #361 and docs PR #362; NEXT is Story 173.13 only after this Story 173.11 auxiliary lifecycle record merges/cleans and Story 173.12 residue is proved absent.
 
 ## Story
 
@@ -16,9 +16,12 @@ Requirement: FR27. Authoritative plan: `.omx/plans/173.11-migrate-sku-packaging.
 - Epic 166 foundation, Story 167.1 AppShell, Story 173.8 shipment-list/status owner, Story 173.10 box-type owner, and the separate ContextBar accessibility hotfix PR #331 were reachable from the base.
 - Product branch: `cdx/epic-173-story-11-sku-packaging`.
 - Product worktree: `/private/tmp/wb-repricer-fe-173-11-sku-packaging`.
-- Documentation closeout branch: `cdx/docs-story-173-11-closeout`.
-- Documentation closeout worktree: `/private/tmp/wb-repricer-docs-story-173-11-closeout`.
+- Initial documentation closeout branch: `cdx/docs-story-173-11-closeout` (merged and removed).
+- Initial documentation closeout worktree: `/private/tmp/wb-repricer-docs-story-173-11-closeout` (removed).
 - Documentation closeout base: product merge `137e2ee5794a534632b5fb9a6e277318b368677c`.
+- Auxiliary lifecycle-record branch: `cdx/docs-story-173-11-final-lifecycle-record`.
+- Auxiliary lifecycle-record worktree: `/private/tmp/wb-repricer-docs-story-173-11-final-lifecycle-record`.
+- Auxiliary base: initial documentation merge `b21362730e728b00d136dc729ffc31041a1bffa7`.
 - Shipment APIs, hooks, query/cache keys, request contracts, authorization, shared shipment owners, generic primitives, package metadata, and route-ledger rows were reused without contract changes.
 
 ## Delivered Behavior
@@ -81,8 +84,8 @@ Pinned runtime: Node `24.18.0`, npm `11.11.0`.
 - The sandboxed build attempt failed only because the restricted environment denied Turbopack process creation and local port binding; the authorized local rerun passed.
 - Credentialed Playwright execution did not run because `.env.e2e` and the required local auth capability were absent. The configuration was not created or inspected, preflight was not bypassed, and no runtime browser/theme/contrast/axe PASS is claimed.
 - Screenshots, traces, videos, reports, credentials, auth state, cookies, tokens, and test-result artifacts were not created or retained.
-- The recorded full Vitest floor remains the fresh Story 173.9 snapshot: 1,249 files, 19,733 passed, 0 failed. Focused Story 173.11 counts are not added arithmetically to that floor.
-- Repository-wide `check:docs` retains the inherited citation-baseline mismatch. This closeout does not modify the citation baseline or historical archive citations.
+- At Story 173.11 closure time, the recorded full Vitest floor remained the Story 173.9 snapshot: 1,249 files, 19,733 passed, 0 failed. The current program floor has since advanced through Story 173.12 to 1,252 files, 19,800 passed, 0 failed. Focused Story 173.11 counts are not added arithmetically to either floor.
+- At initial Story 173.11 closeout, repository-wide `check:docs` retained an inherited citation-baseline mismatch. After integrating Story 173.12 documentation and its baseline refresh, the auxiliary candidate scans 427 citations, finds the same 95 broken entries as the committed baseline, and exits successfully. This auxiliary lane does not modify the citation baseline or historical archive citations.
 
 ## Independent Review Disposition
 
@@ -100,7 +103,10 @@ Pinned runtime: Node `24.18.0`, npm `11.11.0`.
 - PR #359 base `main`, exact head branch and `headRefOid`, two-commit/24-file identity, title, state, and `MERGEABLE/CLEAN` status were verified before merge. Merge was protected against exact head `e484c30f` and produced a merge commit.
 - After merge, the feature head was proved reachable from refreshed `origin/main`; primary `main` was fast-forwarded and proved equal to `origin/main` at `137e2ee5` with 0/0 divergence.
 - The product remote branch, local branch, worktree, path, stale registration, and open PR residue were removed; the recoverable audit quarantine remained present.
-- This initial documentation lane records the merged product and already-proved product cleanup. Its own future PR number, head, merge, primary fast-forward, and cleanup are unknown until they happen and are not recursively preclaimed.
+- Documentation closeout PR #360 used exact head `66b30d7d3cbed348e5e72da127d8aa556cc88aec`, one commit, and exactly five canonical files; independent review found zero actionable findings, exact scope PASS, privacy PASS, and APPROVE.
+- PR #360 merged as `b21362730e728b00d136dc729ffc31041a1bffa7`; refreshed primary `main` was fast-forwarded and proved equal to `origin/main` at that merge with 0/0 divergence, and both product and documentation heads were proved ancestors.
+- The initial documentation remote/local branch, worktree, path, stale registration, and open-PR residue were removed and independently rechecked absent.
+- This auxiliary lifecycle record publishes only those already-proved closeout facts. Its own future PR number, head, merge, primary fast-forward, and cleanup are unknown until they happen and are not recursively preclaimed.
 - No deploy, production operation, direct push to `main`, force-push, dependency change, credential output, route-ledger transition, citation-baseline update, or unrelated debt fix occurred.
 
 ## Lessons and Carry-Outs
@@ -117,3 +123,4 @@ Pinned runtime: Node `24.18.0`, npm `11.11.0`.
 | Date       | Change                                                                                                                                                                                                                                                                                                                                 |
 | ---------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | 2026-08-30 | Story 173.11 implemented, corrected through independent review, validated, merged through feature PR #359, product residue cleaned, and prepared for exact-five documentation closeout. **Lessons:** unify terminal truth; keep cancellation recoverable; use bounded conflict copy; do not waive architecture gates. |
+| 2026-08-30 | Exact-five documentation PR #360 merged and cleaned; auxiliary lifecycle record prepared without recursive self-merge claims. **Lessons:** publish exact reviewed heads; prove cleanup before recording it; keep the active auxiliary lane explicit. |
