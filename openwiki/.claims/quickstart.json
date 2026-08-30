@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "pageVersion": "sha256:3504ae8503e0264be05252c36e155acf1bf87037e9b5830ba896e47772105ece",
+  "pageVersion": "sha256:cddedf279cef5d72fac56ccf28beccfd43ec240583c26ccf079030f9f91817c7",
   "claims": [
     {
       "id": "claim_07e85bb249e745f69c550323b16664e1",
@@ -52,45 +52,35 @@
       "evidence": [
         {
           "resource": "repo://_bmad-output/implementation-artifacts/sprint-status.yaml#L2-L2",
-          "version": "repo-lines-v1:sha256:d3e49fa513ee3fafaf31ef7c0d244863950577b5f6d9ddeef1f38ca7ab9508c9:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZDNlNDlmYTUxM2VlM2ZhZmFmMzFlZjdjMGQyNDQ4NjM5NTA1NzdiNWY2ZDlkZGVlZjFmMzhjYTdhYjk1MDhjOSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiZDNlNDlmYTUxM2VlM2ZhZmFmMzFlZjdjMGQyNDQ4NjM5NTA1NzdiNWY2ZDlkZGVlZjFmMzhjYTdhYjk1MDhjOSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjEsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiOTVhY2MwNjQyMzA1MmFiZDhlN2Q0NjFhYThhYWE5MjhjZGQ3ZGZlZDI2ZjhiNzIyOWNhYTljOTU1MzJkMWU3NCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiYmMwNGU4ZGNhMGNkMGE4YTZkMzE2MmViNTZmOWZkNjliMjU4ZGJhYjU4MzZkNzExNDBiZjE5MjA0NGFmZWZmZCJ9"
+          "version": "repo-lines-v1:sha256:cfc9f244863dbd13556a3b2cfaeef2beebe5da6b22c0962e423e4abe0ed1e349:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiY2ZjOWYyNDQ4NjNkYmQxMzU1NmEzYjJjZmFlZWYyYmVlYmU1ZGE2YjIyYzA5NjJlNDIzZTRhYmUwZWQxZTM0OSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiY2ZjOWYyNDQ4NjNkYmQxMzU1NmEzYjJjZmFlZWYyYmVlYmU1ZGE2YjIyYzA5NjJlNDIzZTRhYmUwZWQxZTM0OSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjEsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiOTVhY2MwNjQyMzA1MmFiZDhlN2Q0NjFhYThhYWE5MjhjZGQ3ZGZlZDI2ZjhiNzIyOWNhYTljOTU1MzJkMWU3NCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiYmMwNGU4ZGNhMGNkMGE4YTZkMzE2MmViNTZmOWZkNjliMjU4ZGJhYjU4MzZkNzExNDBiZjE5MjA0NGFmZWZmZCJ9"
         },
         {
-          "resource": "repo://_bmad-output/planning-artifacts/shadcn-migration-status-and-debt-registry.md#L13-L21",
-          "version": "repo-lines-v1:sha256:96b4ae6cd09c5d284f22c0f04cd8dd9c236dc77a3c818018dc35aab1a22997a0:eyJzZWxlY3RlZExpbmVDb3VudCI6OSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZjNlOGUxOWY4ZDVkOWZlZDVhMzg5Nzc3MTc5NGNlMTBlNzYwNGUzMDk4ZmU4NjBjMGE4MWIyODk0NzdlODE4NSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiYzhmNzk4YTcwODYyN2I0ZGQ3OWI4N2NmMTU0NDdkMDdiNGE0MTUxZTA4YTBkNGQ1N2RmZTNmMGM1OWZhMTlkMiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMWE1MmYwNWEzZTg0OGNjODAyYzE2ZTYwMmM4YWZmODAwYjJkNzU4OTY4YWY3YjI2NTlkMTZiM2U3ZWRkOTFhMCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiYTZlNjY1YTI4Mjg3NzQ4OTVmMDdjODY2MGRiYTRlM2IwZDNiNmY1OGEyMDNkMGYxMzc0MjFhMjYyMGYxZGQ1NCJ9"
-        }
-      ]
-    },
-    {
-      "id": "claim_98a84272332b47e6bbc42371df92c426",
-      "statement": "Epic 170 (marketing/marketplace analytics) is complete 7/7 (Stories 170.1–170.7 shipped through PRs #237–#250), and Epic 171 (AI/forecast analytics) is CLOSED 9/9 (Stories 171.1–171.9 shipped through PRs #252–#270), closing the /analytics/models tree.",
-      "evidence": [
-        {
-          "resource": "repo://_bmad-output/planning-artifacts/shadcn-migration-status-and-debt-registry.md#L17-L18",
-          "version": "repo-lines-v1:sha256:218afb5199b1d329a72d97925a4df43e295c2aee4bd4f80824175811b766075d:eyJzZWxlY3RlZExpbmVDb3VudCI6MiwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZWFiZDlkMGYyNDk1OGVjZmIyYjNmYTczNTA1NTlmOWU3YzIyNWZhZDAyODQ2MGFlOGU5OWI3MWJmMjU1YjhhOSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiOGFiYTczZWE0ZThiNmY1YzExMmUyMGM5NmE2Y2Q1MjA2NDEyNzNjNjAyMWU5OGFmMGIxMWJkZTQzZjFhZjhkMyIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMGE4MWQxZDhiNmQ5YjFhYTA0YzE2ZjUwYTY2ODNlODkzNjJmNTI4MWU0N2M1YzcxN2ZjZmRmMTkxMjJmZjRhOCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZWRmNjU0MTZkMmI2NGU1ZDYwNmEyYWJlNjkzNDFhM2RmYzYwM2ZlZTIzZDYwNmE5NzJlODVkOGM3OGNhN2U2YiJ9"
+          "resource": "repo://_bmad-output/planning-artifacts/shadcn-migration-status-and-debt-registry.md#L13-L19",
+          "version": "repo-lines-v1:sha256:9a7812d9c8fa2ff438331ba721af832e28d5d34854347a8f3e6f4326c141d1b4:eyJzZWxlY3RlZExpbmVDb3VudCI6NywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNTZhNTdlY2Y3ODkzODgyZTQwY2Y5MDEwMTM4NDNhNzA4ZjA2MDg1MDk4MzkyNDZhNTYxMmQ0MGU1YWQ4NDA0MSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMmY2NmYyMTU5MDU2ZGQzZmFlMjU0OGE0ZDVlZWVmZDc1NThiNTg2NWEyZDI5MzA5NDAzMWM1MzEzMzJmZGNlNSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiYTg5NmJlNGMyZTc1ZjNkYTE0YjJiN2MyMzgwZDBlMmUzOWIxYzhkN2YyZDg5NjhlYjY5NTUyMjliNmM4Yzk4ZCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiOGY1ZjEwY2YxMTM4MDdhNzhkOTAxMmIzMWMxNDhjOTI4NTZiYzcyMjFkMTY4NDgxYjc0ZjVhZjBmZDAzOGE0ZCJ9"
         }
       ]
     },
     {
       "id": "claim_dd79ea97bda64354be2e99e3694ff328",
-      "statement": "As of the 2026-08-29 snapshot (main = 7bec65fd, after Story 173.1 closeout PR #329), the Epics 166–174 migration program stands at 77/94 canonical stories; Epic 173 is IN PROGRESS at 1/13 with Story 173.1 (settings shell + overview, feature PR #328 and closeout PR #329) done and NEXT = Story 173.2; Epic 174 (5 stories) is the strict final consolidation; the recorded Vitest floor is 19,489 passed / 0 failed across 1,229 files.",
+      "statement": "As of the 2026-08-30 snapshot (main = cd05d31c, after Story 173.9 exact-five documentation PR #354), the Epics 166–174 migration program stands at 85/94 canonical stories; Epic 173 is IN PROGRESS at 9/13 with Stories 173.1–173.9 (settings shell/overview, backfill, cabinet, expenses, notifications, tariffs, tax settings, shipments list, shipment detail) done and NEXT = Story 173.10 (Shipment Box Types) after the Story 173.9 auxiliary lifecycle-record lane; Epic 174 (5 stories) is the strict final consolidation; the recorded Vitest floor is 19,733 passed / 0 failed across 1,249 files.",
       "evidence": [
         {
-          "resource": "repo://_bmad-output/implementation-artifacts/sprint-status.yaml#L840-L854",
-          "version": "repo-lines-v1:sha256:5f16216f4c5fc8211c4ebbe4ff5b0253a393714732ffb26935e0b181b313864a:eyJzZWxlY3RlZExpbmVDb3VudCI6MTUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjU0MzlkNTAxMzYwZTJhYTY1ZWE0MGNjZDdmOTg5MGY5MGRhODNlNmViYmIwYzg5MzdjN2NlYzMzNGFlOTczMjAiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ5OWViZGZiNjYwNzgyNjNhZDE3M2U2ODIxMTE1ZDAwMTU1MWY5MmY2ZDYwOWE0ZWEzOGRiY2RhMDRiZjhhMTAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjVlYWEzYzRkYTAyMTA3NWI1NjYxMDc2YjRjZWJjYjBkMGVmY2E5MmZhZDI5ZDQxZTg1MTc5NzE3ZWQzNmM2YTgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjZmMGU2OTg1OWY4OGE5ODkzZDEyNzRhNWEzMTA1MTM0MjYxZTY0YjQ2NDRjYjY0MzE2M2RlYWM5MGQ2OGI0ZDgifQ"
+          "resource": "repo://_bmad-output/implementation-artifacts/sprint-status.yaml#L840-L855",
+          "version": "repo-lines-v1:sha256:60492021e60af38768e0d5994cbbf266ea24f185a38b77edaa789f1a7b165909:eyJzZWxlY3RlZExpbmVDb3VudCI6MTYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjU0MzlkNTAxMzYwZTJhYTY1ZWE0MGNjZDdmOTg5MGY5MGRhODNlNmViYmIwYzg5MzdjN2NlYzMzNGFlOTczMjAiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijg1MmFjOWExYzg1OThmM2ZkN2YxYzhjMTFlZGE0NTkxMWQ0MTQzZTRkNDNjMmNlYTJjNGI1ZGFjNTNiMjViMjciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjVlYWEzYzRkYTAyMTA3NWI1NjYxMDc2YjRjZWJjYjBkMGVmY2E5MmZhZDI5ZDQxZTg1MTc5NzE3ZWQzNmM2YTgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjFiNmYyYjdkYzc3MjFkOWVlMWVmOGRiZGM4ZjhjODQ0MDdkY2U1YWQ3YWI0MDZiMGQ2NGJiNzZlYTVhZDllNGEifQ"
         },
         {
-          "resource": "repo://_bmad-output/planning-artifacts/shadcn-migration-status-and-debt-registry.md#L20-L26",
-          "version": "repo-lines-v1:sha256:d470250012a62bd1f9e6f0d90666e23709f6ea597f4e5471b533af95d4748c2d:eyJzZWxlY3RlZExpbmVDb3VudCI6NywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNjBhMjBiZWVmNzIyNWRkZjc2MjliNDZlODQ3NzAyY2U5ZWJmOGRiZDBiMDU1YWNjYTdlYjA5ZTVkZDkwZWRjZSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiY2U3NWE1ZGMyZDNiNzJiYmY0YmNhODRmYjllYTg3NWVkNzdlNGM1ZGQ4YTZlZmQ4YWVjOTE4OTNjZjhlNjhjYyIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNzFkNDY2NjIyMTRlZjI4ZDQ2MDVmYjQwZGUwNzY3Y2FjNjM0YTE2NzFlZjY3M2JhZmEzMDIyZmE5MmU3MmFiNiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiYjU3ZmMyNmY1YTBlYTI4MTllZDZhYTQ0ZTg4NWFkODdiNDRkMDIwMmRiYzdiMGU5NDJiOTg5MTYxNjQ3MmZlYSJ9"
+          "resource": "repo://_bmad-output/planning-artifacts/shadcn-migration-status-and-debt-registry.md#L20-L25",
+          "version": "repo-lines-v1:sha256:51023b1541d609bd2baa1030d62c8fa70e98bb95e3deca508cc7441ff97eacdf:eyJzZWxlY3RlZExpbmVDb3VudCI6NiwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiOWUwMDhmYzRlZDMzMTBiNzdmY2EzYzMzYjcxM2VkYzVkNDYyZDc4NDlmNzFmZTVjZmEzYmFlMTY3ZWVkNDdkMyIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiY2U3NWE1ZGMyZDNiNzJiYmY0YmNhODRmYjllYTg3NWVkNzdlNGM1ZGQ4YTZlZmQ4YWVjOTE4OTNjZjhlNjhjYyIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMWE0NmNkZTM3MGI2MTNkOGZiODAyMDNhNDQyMDNlZGFiM2FiN2Q0NjkzZDhkMGQzMDYwZTQ5NzgyOTk4OWJiMyIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiYjU3ZmMyNmY1YTBlYTI4MTllZDZhYTQ0ZTg4NWFkODdiNDRkMDIwMmRiYzdiMGU5NDJiOTg5MTYxNjQ3MmZlYSJ9"
         },
         {
-          "resource": "repo://docs/HANDOFF-2026-08-29-EPIC-173-174-FULL-MIGRATION-AND-DEBT.md#L14-L31",
-          "version": "repo-lines-v1:sha256:b67989a39555f0781d7571768184aeb85358db2dc3dd63e38ccbf8646effc11e:eyJzZWxlY3RlZExpbmVDb3VudCI6MTgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjBjNzE5YmRjZTU1MjhhMWU4MDA4MTc3YWI0MzVlMDgyM2JkNzRlZGMxN2Y3MTNkNDIyZjhmNmMxZjBiMzUyMWYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjI5ZjY4N2Y4ZWMxY2Y1MjNjZTU3OWNhYzMzYWE2YTAzMTE2MTU0YzI3ZGYwOTdlZDMzMzMwOGUwZDAzMmI3NzciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjAwMWYyZWMxNzU5M2MxMDU0ZWI0NjM2N2Q4NDUzZWYyNGExNzNjZTk2YjcxMTdkOTFmOWE2OGQ0NGZlZjhiMDEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImMwNTA2MmZiNjVhMzZjY2MzZWMzODY3NDFjMTA3ZTVhZWFmZDA2YTI4OWNjMmFjNzM2NTIyOTczZTM3YjhhODEifQ"
+          "resource": "repo://docs/HANDOFF-2026-08-29-EPIC-173-174-FULL-MIGRATION-AND-DEBT.md#L14-L33",
+          "version": "repo-lines-v1:sha256:ac2549e20bcb3401e2c3da4aea40e3beeebeb5cca09bd289747774c559e70c45:eyJzZWxlY3RlZExpbmVDb3VudCI6MjAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjBjNzE5YmRjZTU1MjhhMWU4MDA4MTc3YWI0MzVlMDgyM2JkNzRlZGMxN2Y3MTNkNDIyZjhmNmMxZjBiMzUyMWYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImU5ZGY0ZDk4MjRhNjc5NzA3N2U3MzZkYTQxMGMxMmFkMjEwODdkZGU0ZTlhZTM0Y2Y5ZjUzMGFlZDBmNGRhODkiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjAwMWYyZWMxNzU5M2MxMDU0ZWI0NjM2N2Q4NDUzZWYyNGExNzNjZTk2YjcxMTdkOTFmOWE2OGQ0NGZlZjhiMDEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjJiZTczMzQ1YzczODNiNjE1ZTI0ODk4M2E3YjQ2YzhmZmYzM2Y0YmQwMzllZGZkMzliNDJjNzA2NGZkMDQ2NTIifQ"
         }
       ]
     },
     {
       "id": "claim_96d258cda9124aaf8ed68b675a35061b",
-      "statement": "OpenWiki navigation maps the system into Architecture (route groups, auth proxy, environment configuration), Design System (Tailwind v4 semantic tokens, shadcn primitives, product composition families), Migration Program (Epics 166–174 status ledger and orchestration process), API Layer & Normalizers (Boundary Normalizer Pattern, AP#8, CSV export, communications write-back), Domain Logic, Conventions & Quality Gates, and Testing & Operations; the quickstart task-routing map sends route-migration work to migration-program.md, token/component work to design-system.md, API/data work to api-and-normalizers.md, formula work to domain-logic.md, gate/baseline work to conventions-and-quality.md, and test/e2e/automation work to testing-and-ops.md.",
+      "statement": "OpenWiki navigation maps the system into Architecture (route groups, auth proxy, environment/API configuration), Design System (Tailwind v4 semantic tokens, shadcn primitives, composition families including migrated settings/tariffs-admin/notifications/shipments families), Migration Program (Epics 166–174 status ledger, route ledger, orchestration process), Conventions & Quality Gates, and Testing & Operations (including new settings and shipments e2e specs); the quickstart task-routing map sends route-migration work to migration-program.md, token/component work to design-system.md, app-structure/auth/env/API work to architecture.md, gate/baseline work to conventions-and-quality.md, and test/e2e/automation work to testing-and-ops.md.",
       "evidence": [
         {
           "resource": "repo://README.md",
@@ -104,11 +94,11 @@
       "evidence": [
         {
           "resource": "repo://_bmad-output/implementation-artifacts/sprint-status.yaml",
-          "version": "repo-file-v1:sha256:32021b2b25c9db328f158783ffd09df36632ce3c89e3d3146ea023444b562e22"
+          "version": "repo-file-v1:sha256:1a05092d4ef7e49198848fe2203dbb280b6e81b44c09f98cf5e2a4a486420009"
         },
         {
-          "resource": "repo://_bmad-output/planning-artifacts/shadcn-migration-status-and-debt-registry.md#L100-L107",
-          "version": "repo-lines-v1:sha256:eb94517ca9a37a8d85c3b3710b7965aafee9e430fc1c0e0d9cc825eb194d8586:eyJzZWxlY3RlZExpbmVDb3VudCI6OCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiYmViMDdkMWVkNDc3MjAwYTVmZjM2ZTBiOGIxY2Q3MzUwNzNjOWE1ZDY4YzAxMDYxNGY4OWM4MTg3MWM5YmE2NiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMTkyYjBkMWE4NGM2ZjE2ZGYxM2NmMmRiMjE3NzgxYzZkMzNmMGU1NGU1ZGQyNzNmMGM4ZTAzODNhMGM0OGI5YSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiN2E5YjE4YjY3YWEyZGViZTc2MGJmNzRmMjlmMWRhNGUwMjY0ODFkYTFlZjNjNmIzMjEyNmM5YmMwZTMzZDRlMyIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiYmZjODM3NjFjY2VmZDZmZTg0MDk1YzEzNTBiMTAxMTk4ZjkxNjMwMzY5ZTNhMzJjNzViNGE5MzViYzAxZWIwNiJ9"
+          "resource": "repo://_bmad-output/planning-artifacts/shadcn-migration-status-and-debt-registry.md#L103-L106",
+          "version": "repo-lines-v1:sha256:ee5cbef07b2ad63723d52e46c7f4446da21404a93a73d230a81ace3b459bdf5e:eyJzZWxlY3RlZExpbmVDb3VudCI6NCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZDgzMTY3MWY1Y2YxOWFjMDI4NTkwZWQzODg2OTg1ZGIzMmUwMGRlMzhmZTEyZTZmODMxNjk2MGJkODdiYTYwMSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMTkyYjBkMWE4NGM2ZjE2ZGYxM2NmMmRiMjE3NzgxYzZkMzNmMGU1NGU1ZGQyNzNmMGM4ZTAzODNhMGM0OGI5YSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMDgwNGJkZDJlMTAxNTUyMzlhOGRiOTJkZjg2ZWJlYzQ2MDY4YzQ5M2M1N2MwZmFlMDI1ODU2YmFkNzlhYmM0ZSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiY2Q5OWNjMTMzZjJlZDEwYWM0MTNjNjk2OWNmYzNhMDRiNjVkZjg1NThkMjcyNjVlNGRhMGYxMDUyOTkyNDQ0MiJ9"
         }
       ]
     },
@@ -147,10 +137,32 @@
           "version": "repo-file-v1:sha256:a90c9b974a25f17cf9f17440514ba28dcac09cfd281e6a098d53025215e8bec8"
         }
       ]
+    },
+    {
+      "id": "claim_f503002702ed43ab8a091c44daaa84fa",
+      "statement": "Shipments routes and data access are defined via ROUTES.SHIPMENTS (ROOT /shipments, DETAIL /shipments/[id], BOX_TYPES, SKU_PACKAGING), buildShipmentDetailRoute in src/lib/route-helpers.ts, and the src/lib/api/shipment-cost/ tree (shipments-api.ts CRUD + pallets, shipments-normalizer.ts, shipment-calculations-api.ts calculate/confirm/recalculate, box-types-api.ts, sku-packaging-api.ts).",
+      "evidence": [
+        {
+          "resource": "repo://src/lib/api/shipment-cost/index.ts",
+          "version": "repo-file-v1:sha256:46168a43452c8f4f17ed760ec9797e34a6ff933bb6889ebd24b7535ab6b81fa7"
+        },
+        {
+          "resource": "repo://src/lib/api/shipment-cost/shipments-api.ts",
+          "version": "repo-file-v1:sha256:ace2fbfbacc10508c8580b3128e40e8aab1cf84c1462bf408328c83c47baaa14"
+        },
+        {
+          "resource": "repo://src/lib/route-helpers.ts#L13-L15",
+          "version": "repo-lines-v1:sha256:25c7869f34f76d43f36934fd20ece1f6632491ddde14bc825eb9140dd8f1c720:eyJzZWxlY3RlZExpbmVDb3VudCI6MywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZTcwZjVmNzIwNDRhZjFkZDk0NGM1MTI2OTg3YmE0MTI5MmI1NTNjY2RjNGFmNTg2MDc3MjFjMDA2Zjg4NDNkOCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiM2M3ZTljZTZjMGM0MjJhMmVhNjQwZDJhOTA0ZDFmZGQ5ZGJlMTNkMzBhMTU0MTYxMTJjNDQzM2NjMjk3NjNmYSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNDdhNmFjMGZiNjc3NjUwMjg0MDYxZjNkMmI0M2RiOGY1YjM3NWE1NDgzY2U4ODg5MDk1MjQ2OGE5YjY3NjljOSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMDE0YTQzNmEzYmRlNWZmODMxZWQ1NmI4Y2U2ODAyZDMwM2FjNTU3ODJlMzlkZjhlZThiYmFhNTdiMDc5ODFjYyJ9"
+        },
+        {
+          "resource": "repo://src/lib/routes.ts#L86-L89",
+          "version": "repo-lines-v1:sha256:fb2000672d4852d123a05bf6864525305168fa8199d9445b7c916bff8bc82310:eyJzZWxlY3RlZExpbmVDb3VudCI6NCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiYWZmNmZjMjU3NTMzNjg1NGMyMzBjYzhkMDE2ODc1N2E2YWExNDQwNjZiYmRhM2MxZDM0OWNmNjcyM2MxNzNjOCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiYjg0ZDZmNmUyNGU0ODdjY2JhNTdmODM1YmRmMzU5ZmJkZDFhYWY4YjU0ZWUzNTVhZGEyZTdmNDU0YzBjNjMyMyIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNWZmMTc3NzM0NjdmNTIxM2Q3NDNiYTgwMTI3ZTExYThjN2NmNDIyMmViNjY1NDcyMGNkNWM4YzY3OWIwNTFjNyIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZmU3ZTkzMWFlNzFmNmQ2ODYxZDAyOWEzOTkwMmZiMmNmOTNhMmY4YmQwZTIwYmZlNmM4ODQxNmNkNzYyYjI5MSJ9"
+        }
+      ]
     }
   ],
   "verification": {
     "by": "openwiki/0.4.3",
-    "at": "2026-08-29T08:47:45.377Z"
+    "at": "2026-08-30T08:47:56.434Z"
   }
 }

@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "pageVersion": "sha256:dcee54996c13f7bd45bb29c9d55141f7f80032a8bdb284cd4dceee1245ea4b81",
+  "pageVersion": "sha256:562fe7a601c6a723251d5853f98ecbdd206a12473d047fcf7879d1993f06d87e",
   "claims": [
     {
       "id": "claim_1d26e9aebb064ef8aade7c1b04d7ca12",
@@ -48,25 +48,25 @@
     },
     {
       "id": "claim_cb8b44f80a274f829a7abac9cdc7aa2a",
-      "statement": "As of 2026-08-29 (Story 173.1 closeout PR #329, main 7bec65fd), program readiness is 77/94 canonical stories: Epics 166-172 all CLOSED — Epic 172 fully at 17/17 with stories 172.10-172.17 shipped through PRs #308-#325 — and Epic 173 in progress at 1/13 with 173.1 shipped via feature PR #328 and closeout PR #329 with exact cleanup proved; NEXT = 173.2 Backfill Settings; Epic 174 (5 stories) remains; recorded Vitest floor is 19,489 passed / 0 failed / 0 skipped across 1,229 files, with 0 open PRs and 0/0/0 branches/worktrees for completed lanes.",
+      "statement": "As of 2026-08-30 (Story 173.9 exact-five docs closeout PR #354, main cd05d31c), program readiness is 85/94 canonical stories: Epics 166-172 all CLOSED and Epic 173 in progress at 9/13 with 173.1-173.9 shipped (173.8 fully historical through feature #350, closeout #351, auxiliary #352; 173.9 through feature #353 + docs #354 with only the auxiliary lifecycle-record lane remaining); NEXT = 173.10 Shipment Box Types after that auxiliary lane merges and cleans; Epic 174 (5 stories) remains; recorded Vitest floor is 19,733 passed / 0 failed across 1,249 files; 72 route-owning stories are complete with 4 Epic 173 routes remaining, and all 76 route-ledger rows stay `planned` until 174.1 validates evidence and 174.5 transitions them to `verified`.",
       "evidence": [
         {
-          "resource": "repo://_bmad-output/planning-artifacts/shadcn-migration-status-and-debt-registry.md#L23-L26",
-          "version": "repo-lines-v1:sha256:cb68f38f0b95c0b9ee576239a00e0b662b05af463056154774bb425643820182:eyJzZWxlY3RlZExpbmVDb3VudCI6NCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMDA4OTdkZDY4OTIxNWM2ZWZlM2NlODRkZWI3MWM0YjI2ZTA1NDdjNGFmM2ViMWNiNTMyODRiOGU3ODMzOWVmZSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiY2U3NWE1ZGMyZDNiNzJiYmY0YmNhODRmYjllYTg3NWVkNzdlNGM1ZGQ4YTZlZmQ4YWVjOTE4OTNjZjhlNjhjYyIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMjA1Y2M5ZjE4MTgyODc4YmZjYzZmODQ3Y2U0MDM4NjVmN2I1OGRiOGU1MWQzMzUwNWM2Yjk3MjlmNmZiYmZiNSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiYjU3ZmMyNmY1YTBlYTI4MTllZDZhYTQ0ZTg4NWFkODdiNDRkMDIwMmRiYzdiMGU5NDJiOTg5MTYxNjQ3MmZlYSJ9"
+          "resource": "repo://_bmad-output/planning-artifacts/shadcn-migration-status-and-debt-registry.md#L20-L26",
+          "version": "repo-lines-v1:sha256:f0b90cbe9204feb6b989c7ce14cf85679a4de48169fb222e4a3835a8d7b7940e:eyJzZWxlY3RlZExpbmVDb3VudCI6NywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiOWUwMDhmYzRlZDMzMTBiNzdmY2EzYzMzYjcxM2VkYzVkNDYyZDc4NDlmNzFmZTVjZmEzYmFlMTY3ZWVkNDdkMyIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMDFiYTQ3MTljODBiNmZlOTExYjA5MWE3YzA1MTI0YjY0ZWVlY2U5NjRlMDljMDU4ZWY4Zjk4MDVkYWNhNTQ2YiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMWE0NmNkZTM3MGI2MTNkOGZiODAyMDNhNDQyMDNlZGFiM2FiN2Q0NjkzZDhkMGQzMDYwZTQ5NzgyOTk4OWJiMyIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMzQyZTc4ZjI3ZWEyMzlhNzQxMzRmMTU4ZjY0OThkYzNmYjdhNDNjNGI1YjMyZjMzYzQ5NzhiNjBhMDU1OTMwZiJ9"
         },
         {
-          "resource": "repo://docs/HANDOFF-2026-08-29-EPIC-173-174-FULL-MIGRATION-AND-DEBT.md#L14-L33",
-          "version": "repo-lines-v1:sha256:57d1725c2c3b7a447127c76faadf1fe8650e955ac7ec75b6213a4865dd4201de:eyJzZWxlY3RlZExpbmVDb3VudCI6MjAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjBjNzE5YmRjZTU1MjhhMWU4MDA4MTc3YWI0MzVlMDgyM2JkNzRlZGMxN2Y3MTNkNDIyZjhmNmMxZjBiMzUyMWYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijc2MmVjNTc1NTU3ZGIwMGU1Y2JhNmEwZmM3MTE4YzVmMWFlNzViNWM5NmRkZTFlYmM1NjgyYWRiYTI5YTg2OWIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjAwMWYyZWMxNzU5M2MxMDU0ZWI0NjM2N2Q4NDUzZWYyNGExNzNjZTk2YjcxMTdkOTFmOWE2OGQ0NGZlZjhiMDEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjJiZTczMzQ1YzczODNiNjE1ZTI0ODk4M2E3YjQ2YzhmZmYzM2Y0YmQwMzllZGZkMzliNDJjNzA2NGZkMDQ2NTIifQ"
+          "resource": "repo://docs/HANDOFF-2026-08-29-EPIC-173-174-FULL-MIGRATION-AND-DEBT.md#L20-L30",
+          "version": "repo-lines-v1:sha256:8b17d76b49c81fd853e880c4e9612845478044a5e8f2153593ea22c0793eee4d:eyJzZWxlY3RlZExpbmVDb3VudCI6MTEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjU5MjIyYTNkY2Q2MTFlOTU4NGU4NjkxMjE3ZTVhOTFiMDIxMWNhNzEzMzE0YzExOWYzMjk2ZDdkMzc5Njg4ZTYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjdiMmUyMGY2NmIwNzgwNGJjZDdjOWYyOWQxMDQxMDViNzNkZDExNmU5Y2YyNzNlZTM2N2NiMDJhNjU4Y2UwMGMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImRmMmM1MTVhY2Q4ZmEyZTkzMTkyMjZhNmQ3NjQyNDM0ZDA0MzdhNWI2ZTJhNDdmMTk3ZGYyNzYxZDI1MDJmZmUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjhlNDdhZDYxMjkzNDVjZmJlZTU2MTExNjRjZTc5YjQyYzY2ZjI4OTZlMGRlMGM3MjI0ZmU4MTg3NDg4ODQyZGEifQ"
         }
       ]
     },
     {
       "id": "claim_6f96490e8d764e82bc737c9cdd1ba525",
-      "statement": "Per-story migration status is tracked live in _bmad-output/implementation-artifacts/sprint-status.yaml and consolidated per-epic in _bmad-output/planning-artifacts/shadcn-migration-status-and-debt-registry.md (snapshot 2026-08-29), with the 2026-08-29 handoff as the current continuation snapshot; conflicts resolve in favor of live source and passing behavior-locking tests, then the exact story plan, then canonical BMAD/route/UX artifacts, with drift corrected through a reviewable documentation lane.",
+      "statement": "Per-story migration status is tracked live in _bmad-output/implementation-artifacts/sprint-status.yaml and consolidated per-epic in _bmad-output/planning-artifacts/shadcn-migration-status-and-debt-registry.md (snapshot 2026-08-30), with docs/HANDOFF-2026-08-29-EPIC-173-174-FULL-MIGRATION-AND-DEBT.md (snapshot refreshed 2026-08-30) as the current continuation entry point; conflicts resolve in favor of live source and passing behavior-locking tests, then the exact story plan, then canonical BMAD/route/UX artifacts, with drift corrected through a reviewable documentation lane.",
       "evidence": [
         {
           "resource": "repo://_bmad-output/planning-artifacts/shadcn-migration-status-and-debt-registry.md#L1-L7",
-          "version": "repo-lines-v1:sha256:a6362dfcc5aca7cd95d197fb32d67bf922b056da1eb59a6b3c8c09117afdc2a7:eyJzZWxlY3RlZExpbmVDb3VudCI6NywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZTgyZDUxODRlN2I0OWM4ZDIzZDNmZGYzZDg0OTA5MTBkMGJkNzQwZTAyMWE2MzA4NTJkOTFjMjZiYWVlZGQzYSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNjZlNjRmYmJkYmFhMzRhNWQ0NjE3NTgyOWEwMjVhNjA2MWJiZWU3YmFlMGE3YWM3ZTczODY5MmQ3MTFjMWZiYSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjAsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZTNiMGM0NDI5OGZjMWMxNDlhZmJmNGM4OTk2ZmI5MjQyN2FlNDFlNDY0OWI5MzRjYTQ5NTk5MWI3ODUyYjg1NSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiYzVhZDQ0ZjYzYWRlMzEwODc3MDQ1ZGJmMzgyOWUzN2ViYWRmZTlmZTc2Zjk4M2QyYjhmMmI5YmU1YjRjY2FjNiJ9"
+          "version": "repo-lines-v1:sha256:4ccaf85a7b43b83e664f3af00af86488abd20f03bcadbdfd168305ac5713b309:eyJzZWxlY3RlZExpbmVDb3VudCI6NywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZTgyZDUxODRlN2I0OWM4ZDIzZDNmZGYzZDg0OTA5MTBkMGJkNzQwZTAyMWE2MzA4NTJkOTFjMjZiYWVlZGQzYSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNjZlNjRmYmJkYmFhMzRhNWQ0NjE3NTgyOWEwMjVhNjA2MWJiZWU3YmFlMGE3YWM3ZTczODY5MmQ3MTFjMWZiYSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjAsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZTNiMGM0NDI5OGZjMWMxNDlhZmJmNGM4OTk2ZmI5MjQyN2FlNDFlNDY0OWI5MzRjYTQ5NTk5MWI3ODUyYjg1NSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiYzVhZDQ0ZjYzYWRlMzEwODc3MDQ1ZGJmMzgyOWUzN2ViYWRmZTlmZTc2Zjk4M2QyYjhmMmI5YmU1YjRjY2FjNiJ9"
         },
         {
           "resource": "repo://docs/HANDOFF-2026-08-29-EPIC-173-174-FULL-MIGRATION-AND-DEBT.md#L35-L47",
@@ -110,15 +110,15 @@
     },
     {
       "id": "claim_cd74db2fa25049168d325e6eaed2b57f",
-      "statement": "Worktree hygiene mandates one story = one branch (cdx/epic-{epic}-story-{story}-{slug}) = one temporary worktree at an explicit validated path created from current main after prerequisites merge; subagents never perform git mutations; cleanup to 0/0/0 remote/local/worktree with prune and --match-head-commit merge fences is a completion condition, not housekeeping — proven for Story 173.1's feature and closeout lanes and audited as 0/0/0 across all completed Epic 172-173.1 lanes.",
+      "statement": "Worktree hygiene mandates one story = one branch (cdx/epic-{epic}-story-{story}-{slug}) = one temporary worktree at an explicit validated path created from current main after prerequisites merge; subagents never perform git mutations; cleanup to 0/0/0 remote/local/worktree with prune and --match-head-commit merge fences is a completion condition, not housekeeping — proven for 173.1's two lanes, 173.8's three lanes (feature/closeout/auxiliary with no residue), and 173.9's product + initial-docs cleanup, audited as 0/0/0 across all completed Epic 172-173.9 lanes.",
       "evidence": [
         {
           "resource": "repo://.omx/plans/shadcn-full-ui-migration-master.md#L102-L106",
           "version": "repo-lines-v1:sha256:d7e43f4ddd556d90243a7d0159ffce779c64e7d2261e23b52979fbaa4409c176:eyJzZWxlY3RlZExpbmVDb3VudCI6NSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiODU4MjUzYjIzM2QyZjVkNjBjOTgzM2Y5ZDVlN2Y0ZWY0Y2UxZTgwOGRlNWI0ZWQyZmIxZTk2YTg1OTFkOGYwMCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiOWVhMzIyZWQyMTNjODYxYTgzMTE2YWU4MjM5YjBhNjVmZjBkZjFkYWU0Y2FiNWRlNGJlYjg2ZjhmNTg5MDRlMSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZThhNTRhZWQzYjJjNDU0YjU1NzY3YmEwMTUxYWZlNzAyZTdjN2E2OTM1MzYwMDQ5NDE4YmJlYmQxMGQ2YzQ3NiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiOTA3MzViNThkZGFhY2Y0MTZhNmQ3ZjI0Njk0NDZiNTc5MjE0MzJhMDRjMTcxM2Y1ZjUzNzczN2U1ZGY2M2IxMyJ9"
         },
         {
-          "resource": "repo://docs/HANDOFF-2026-08-29-EPIC-173-174-FULL-MIGRATION-AND-DEBT.md#L26-L33",
-          "version": "repo-lines-v1:sha256:fa1e8625653593cd56366ac937fbee547075ce68620eac5b4421a068ca410db8:eyJzZWxlY3RlZExpbmVDb3VudCI6OCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNDA5ZmU4YzFjMDA2Y2Q3OThiZWJhN2UwM2M2YzA1NDM3NmVhMzhlMTAzNGJmZWJhYTIzYzA5ZjEyYTZhODU2NSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNzYyZWM1NzU1NTdkYjAwZTVjYmE2YTBmYzcxMThjNWYxYWU3NWI1Yzk2ZGRlMWViYzU2ODJhZGJhMjlhODY5YiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiYzNjYTk3M2Q4MmQyNzk0MjY1YTA3MmExZWUxNmRkOTdhOWM2MGZhODQ0ZjQyYWJjYTE2NDkwZjkyZDQzNWVjNiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMmJlNzMzNDVjNzM4M2I2MTVlMjQ4OTgzYTdiNDZjOGZmZjMzZjRiZDAzOWVkZmQzOWI0MmM3MDY0ZmQwNDY1MiJ9"
+          "resource": "repo://docs/HANDOFF-2026-08-29-EPIC-173-174-FULL-MIGRATION-AND-DEBT.md#L24-L30",
+          "version": "repo-lines-v1:sha256:f06fde54d1480cacf13246a8a85755cda7e6337ff4ab6f6ce3bc6f6e6dfb5d1b:eyJzZWxlY3RlZExpbmVDb3VudCI6NywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiYjlhN2FiM2Q2MDFmMzQ1ZGNlODk3NmNmMTIwMDhkYmRlMjc4MjU2OWEzYjBiNDc0ODk5MGZmYjg3MzM2NzE2NyIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiN2IyZTIwZjY2YjA3ODA0YmNkN2M5ZjI5ZDEwNDEwNWI3M2RkMTE2ZTljZjI3M2VlMzY3Y2IwMmE2NThjZTAwYyIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiOWIwZTIxZDc3MGQwZDk3Zjk1NzM0MTU5Y2EwNWVlOWI1ZThmNzg0YTNhZjAzODI4YzRmNGZhYWU1MzliZDJkMyIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiOGU0N2FkNjEyOTM0NWNmYmVlNTYxMTE2NGNlNzliNDJjNjZmMjg5NmUwZGUwYzcyMjRmZTgxODc0ODg4NDJkYSJ9"
         }
       ]
     },
@@ -127,8 +127,8 @@
       "statement": "Cross-team coordination cautions: parallel sessions are active (PRs #295/#296/#300/#301 landed atop other sessions' PRs, and a mid-flight 172.10 collision was resolved by the owner absorbing the parallel delta and re-running the full pipeline), foreign worktrees must never be touched, a mid-flight conflict for the NEXT story means taking the next unclaimed story instead of duplicating, and every Agent call requires an explicit model tier alias.",
       "evidence": [
         {
-          "resource": "repo://docs/HANDOFF-2026-08-29-EPIC-173-174-FULL-MIGRATION-AND-DEBT.md#L18-L30",
-          "version": "repo-lines-v1:sha256:4a8e70b25d4817a635693e752a1e090ec5454dd6712975b755a2e23be87b8e81:eyJzZWxlY3RlZExpbmVDb3VudCI6MTMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImZlZGE3N2YzNzA1NWU4NGJjYTAzNmFkZDgwZTFiZDllODdjNjk1NDJkNmFmM2FjYzM5MmVmZmUxYzM5NGU0OGEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjY2YWIzOGFiNzk4MTIzYWE2OGNhMmFiMzM5Yzk3NjM3OThhODM5YzRiYTQzMTMwNjk5OTM0OTBjZmRkMGYyNDUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjNlMjM2OTkyNzRlYjBjMGY0OGMwM2UxNTBmNGFiYjYwZDJlYjgxYzU4N2JlZDYxNjQ4M2MyZTIyM2I4NGVhZmYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjRkZGQyYzRjN2YxYzQxYmViY2I1ZGFiZTg1ZDg0NzEzZGZiY2U5OTlhZGIxMTZlM2RjMmNkNmVhMzk0NWY2MjYifQ"
+          "resource": "repo://docs/HANDOFF-2026-08-29-EPIC-173-174-FULL-MIGRATION-AND-DEBT.md#L20-L30",
+          "version": "repo-lines-v1:sha256:8b17d76b49c81fd853e880c4e9612845478044a5e8f2153593ea22c0793eee4d:eyJzZWxlY3RlZExpbmVDb3VudCI6MTEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjU5MjIyYTNkY2Q2MTFlOTU4NGU4NjkxMjE3ZTVhOTFiMDIxMWNhNzEzMzE0YzExOWYzMjk2ZDdkMzc5Njg4ZTYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjdiMmUyMGY2NmIwNzgwNGJjZDdjOWYyOWQxMDQxMDViNzNkZDExNmU5Y2YyNzNlZTM2N2NiMDJhNjU4Y2UwMGMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImRmMmM1MTVhY2Q4ZmEyZTkzMTkyMjZhNmQ3NjQyNDM0ZDA0MzdhNWI2ZTJhNDdmMTk3ZGYyNzYxZDI1MDJmZmUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjhlNDdhZDYxMjkzNDVjZmJlZTU2MTExNjRjZTc5YjQyYzY2ZjI4OTZlMGRlMGM3MjI0ZmU4MTg3NDg4ODQyZGEifQ"
         },
         {
           "resource": "repo://docs/ORCHESTRATOR-PROMPT-2026-08-28-V11-HANDOFF-SUPERVISOR-OMC.md#L35-L49",
@@ -169,12 +169,12 @@
       "statement": "Story 173.1 established the settings-family owner pattern: a static overview page plus a shared seven-route settings shell with desktop grid and compact Sheet layouts and role-aware restricted/current Owner/non-Owner semantics, delivered in an exact six-file manifest; child settings stories 173.2-173.7 own only route-exclusive UI/tests and must not silently edit the shell. Its credentialed non-Owner restricted-navigation visual is missing (debt C18, no Manager credentials configured) and is carried out to Story 174.3, with Manager screenshots never claimed without a real credentialed run.",
       "evidence": [
         {
-          "resource": "repo://docs/HANDOFF-2026-08-29-EPIC-173-174-FULL-MIGRATION-AND-DEBT.md#L196-L216",
-          "version": "repo-lines-v1:sha256:6bc917c3979031900fdfbf9ae978b62f056dd80269f7c094a4841aa5e1f25fdc:eyJzZWxlY3RlZExpbmVDb3VudCI6MjEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjBiZmU2MmNiNmEyN2MyZjNkNWE5NWQ3NWVjMmMzOWQzNGZkZWYyNWRhMGI0YTQwYjUxNTE2YzVmMjZlNDMxMDYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjA2YzdmMTU2YmY3MTMwMTFmNmMxOGUzMjIwMDE3ZWRiMTI2YTg4NDYyZDdjNzhkYTY5OGM4NzExZmY1NzdiNTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImY1YmIzZWRkZjlhMTk3MTY0Yjk3YzU4YzQ1NGRhMWY4MTg0NGY1ZDAyNjg1ZTE4NWM1NjBkNmQxOWUxNmVlZDAiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjYxNjdlNDdmMTk5MjY4NDRmMjhkZjkzOTBlNjQ3NGQ4NTRiMDE5M2JhMDUzNzYyODRlMjlhMTkwYWE3OGFhNGYifQ"
+          "resource": "repo://docs/HANDOFF-2026-08-29-EPIC-173-174-FULL-MIGRATION-AND-DEBT.md#L224-L232",
+          "version": "repo-lines-v1:sha256:a57451145ee1571c4327a157d95f3e5829021e531a6fe4fb21f53f907c3c51ca:eyJzZWxlY3RlZExpbmVDb3VudCI6OSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiOGE4Y2I0OGM2YTAyNjA1OGY2MTg1NjJmN2Y3NDViYjRiMGI2YWUzNzllZGIzYThlOTVmN2Q1YWNjY2FiOGIxNiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiZDcwODQwMzdlNDA4NTlhY2Y2ZmU4NmViMWRiNDdmZmI5NWEzMDU2YzdiMGFkZWY3ZmRlZjBkNDAyMmQ1YjY2MiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZWY2MjBlZWYwZTE3MTM3ZTJmOWFmNzEwZmJjNjEzOGU1ZGFhZjU3M2ZmNGRiNmIzMzYxMDVhZDMwMTRlZWQ2YyIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiYjZkYWRiMTIxZWZhYmQxNDQzMTg2OTY1YTI5MTRmMmM4NzEwMTQ1ZjdjMDA2ODY2NzY0MGY3ZmM3ZDQwNmM2OCJ9"
         },
         {
-          "resource": "repo://docs/HANDOFF-2026-08-29-EPIC-173-174-FULL-MIGRATION-AND-DEBT.md#L759-L763",
-          "version": "repo-lines-v1:sha256:a5d2c4a8dd846380b0deb9c26a659f8e2aa1663c29bba199f21b6f585d53e1d7:eyJzZWxlY3RlZExpbmVDb3VudCI6NSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNWU0NDNiZTA0ZTEwMmQ5MzhhNDJiMWE3NDg0OTRmMWZmMmY3ZDc0MDhlMGUzNDM0NTk4ZDlhZGY3MTkzNzJhOCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNmI0YTM5YWNmM2JkZTQ0YTNiY2IyYWE3ZWMwMGNhMmYxMTg0NmJiMTBiYjNjZWJlZjRiM2UzNTJiN2Y4NGU1OSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiN2M5NjIyNDQwNjE0OWNhODQxZTc0MjhkNGIzZGY5MzU1YTQyMzJiNmE2ZDFlYjEwN2M4YzcwODg1ZjljODJiYyIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMTMzYzUzMTc4YjA2OWMwZDhhYjMzNDdkYWNmNjMxN2Y5MWU0NDAyZGM4NDVhMmIyYzE3YWVmMjJjY2Q1MGQwZiJ9"
+          "resource": "repo://docs/HANDOFF-2026-08-29-EPIC-173-174-FULL-MIGRATION-AND-DEBT.md#L238-L243",
+          "version": "repo-lines-v1:sha256:ced066b1eb7da1a55aaaad0919e12109556a0021fa55bc36dbaab0fd2852ac8f:eyJzZWxlY3RlZExpbmVDb3VudCI6NiwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiYzFmOTJhMzhmMjg1MTVkNTU4ZDM3ODBiZmYwMjJjOWQxOTJmOTE1OGU3YTM4OTk1ZDJiZjQ1ZWQwZTM3ZGZhNCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiOGIwNjRmZTQ0OGYzZmQ0OTAzMDcxNGQyZGZmNzg4NmIwNWViZmY5NDk2ODU1N2VjODVmNTgxYmU4MTU5ZDJmOCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiOWI2Mjk4OTI1MWI5Y2UyNWEyMTI0OGRiZGFiMzk4OWYyYTE0YjQ0OGQ2OGRkOTA5ZjkwZjNhNWVkZjJkN2FhNSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMDAxZjJlYzE3NTkzYzEwNTRlYjQ2MzY3ZDg0NTNlZjI0YTE3M2NlOTZiNzExN2Q5MWY5YTY4ZDQ0ZmVmOGIwMSJ9"
         }
       ]
     },
@@ -183,36 +183,56 @@
       "statement": "Carry-out debt is recorded rather than blocking route stories and lands in later epics: the 172.12 monitoring console left a dead export trio, the STATUS_COLORS lib, text-white circles, and role=listitem semantics; 172.10 deferred route-ledger status reconciliation for all 76 routes to Story 174.1 and live visual/axe/keyboard/SR evidence to 174.3; Story 173.1's non-Owner visual gap is C18 → 174.3; and the 171.9 handoff routes STATUS_BADGE_CONFIG.className removal, stale-comment rewrites, 171.6 guard re-pins, and guard anchor-hardening to the 174.2 owner.",
       "evidence": [
         {
-          "resource": "repo://_bmad-output/implementation-artifacts/sprint-status.yaml#L832-L832",
-          "version": "repo-lines-v1:sha256:f4abdd442280de44d05f3f31c6c0e1df6a91b508a1ba7ace5013ad711447b016:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZjRhYmRkNDQyMjgwZGU0NGQwNWYzZjMxYzZjMGUxZGY2YTkxYjUwOGExYmE3YWNlNTAxM2FkNzExNDQ3YjAxNiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiZjRhYmRkNDQyMjgwZGU0NGQwNWYzZjMxYzZjMGUxZGY2YTkxYjUwOGExYmE3YWNlNTAxM2FkNzExNDQ3YjAxNiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNDJlZTFkZWQ2YjcwOTNiMmM1YzVjYmZmMjkwM2JhODc2NzAxZTdiMTQ5MjI1MWQ3NWE1OTQzNTdlMDlmMjAwNiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZmIzOTQ5NDhjYWU0ZDMyNWEzZmQ1ZjJkZjZjMWJmODFlODZmNDdmMjA4NjcwYzdkOTg2NmYyODkwNDc0YThlOSJ9"
-        },
-        {
-          "resource": "repo://_bmad-output/planning-artifacts/shadcn-migration-status-and-debt-registry.md#L109-L115",
-          "version": "repo-lines-v1:sha256:46f6a14e9bc6bb698565bdc36c2be522a0d3101d36468a1aeb63e5abc9b629ed:eyJzZWxlY3RlZExpbmVDb3VudCI6NywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMmJlODE2MGI5NzQ2ZmMxYTViNTlhNzI5MjlmMDA4ZjhlNTg2OTU3OGNjZWVhMDA0ZWU1NmRlM2RmZmM5ZTc1MiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNjc1ODlkZjg1MWNhNzNmODBhOWQ5NmQ1MWQ5ZjAwMzU1ZmYyM2I1ODQ1MWFlZjEzMmRhMDUxNzAxMTg3N2VmZSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZmIxNGMyMmM3MTdhNDI5ZjMzMDE0ZjhhOTYwNTEwNDM5ZDA4MWNmYjdlYWNkYWFjZTNhYWRkNDg1YTZlNmM0MSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMzA1OWQxZjMzMTkyNDk1YjAxMDY4Zjk4MzM4MzVjNmEzNjdlOTcxZDIwZGE2MDVlYmMwNDVjZThjNmUyNWZkMCJ9"
+          "resource": "repo://_bmad-output/planning-artifacts/shadcn-migration-status-and-debt-registry.md#L107-L121",
+          "version": "repo-lines-v1:sha256:b916948d7d663ad5a1dbdabbcdda92852a6755892abf787858c8a5047a17fccc:eyJzZWxlY3RlZExpbmVDb3VudCI6MTUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImRiMjZjOGRjMTAwMTVhZDc4MTkyMzA0ZDJkYWQ2NWZkMjk1ZWZmNWZkZjZkODM5NDQxYTdlNTk3ZmFjODAzNmEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjUxNTNjYmUxYWJiOGExODdiODI2ZjI5YWUzZmRiMTE3OTY3ZWYyYmE2YjAyNjg1ZTg4ODVkZjc5YTgxMTIxYzEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjRkNmI3NmUzZGE2OGE0MzJhMThhNmY5YWU3MmJkMjA4MTNlYTg4ZTZkYTU1NWI0ZDI4MGU1NjY1Y2E4M2RjMWYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjAzNWQ2NDU4OGU2MDg4NTAwYTMyNDNmZmQxMTVhMjQ1MTUyMTAyMzgwZmYzMTdhNTAzZDljMTUxYzMzMWY4ZjYifQ"
         },
         {
           "resource": "repo://docs/HANDOFF-2026-08-29-EPIC-173-174-FULL-MIGRATION-AND-DEBT.md#L24-L30",
-          "version": "repo-lines-v1:sha256:fdac85f9af27b8dd1d279134ff6ca2acc7a9deda4a2bfeb9986385737724d385:eyJzZWxlY3RlZExpbmVDb3VudCI6NywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMmNhODM3MDc4OGJhNTA1MjZjMGY3MjYwOWRhZThiNWUxODFmZmJhNjc2Y2E2ZGE3ZGVhZjc0ZDk5ZjdiZDU2YSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNjZhYjM4YWI3OTgxMjNhYTY4Y2EyYWIzMzljOTc2Mzc5OGE4MzljNGJhNDMxMzA2OTk5MzQ5MGNmZGQwZjI0NSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNjE1ZmVmNThjNTFhOTc0MWI0YTU5NzVmMjVkNjI3ZTMzZDUzNjM0ZDRjZjllNjRkYjgyZjkzZWRkMzljMTg3MyIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNGRkZDJjNGM3ZjFjNDFiZWJjYjVkYWJlODVkODQ3MTNkZmJjZTk5OWFkYjExNmUzZGMyY2Q2ZWEzOTQ1ZjYyNiJ9"
+          "version": "repo-lines-v1:sha256:f06fde54d1480cacf13246a8a85755cda7e6337ff4ab6f6ce3bc6f6e6dfb5d1b:eyJzZWxlY3RlZExpbmVDb3VudCI6NywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiYjlhN2FiM2Q2MDFmMzQ1ZGNlODk3NmNmMTIwMDhkYmRlMjc4MjU2OWEzYjBiNDc0ODk5MGZmYjg3MzM2NzE2NyIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiN2IyZTIwZjY2YjA3ODA0YmNkN2M5ZjI5ZDEwNDEwNWI3M2RkMTE2ZTljZjI3M2VlMzY3Y2IwMmE2NThjZTAwYyIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiOWIwZTIxZDc3MGQwZDk3Zjk1NzM0MTU5Y2EwNWVlOWI1ZThmNzg0YTNhZjAzODI4YzRmNGZhYWU1MzliZDJkMyIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiOGU0N2FkNjEyOTM0NWNmYmVlNTYxMTE2NGNlNzliNDJjNjZmMjg5NmUwZGUwYzcyMjRmZTgxODc0ODg4NDJkYSJ9"
         }
       ]
     },
     {
       "id": "claim_a2ffa98f262c448f8f726521b91cf1a5",
-      "statement": "The orchestration handoff lineage is 08-27 cross-team OMC continuation → 08-28 V11 supervisor prompt → 08-29 Epic 173/174 handoff: docs/HANDOFF-2026-08-29-EPIC-173-174-FULL-MIGRATION-AND-DEBT.md is the current single continuation entry point and operationally supersedes the 08-27 file, which retains obsolete Story 172.12 instructions and a known plaintext test-credential exposure (open debt SEC-DOC-1) and must not be used as an execution entry point; V11 remains the current supervisor prompt and V10 the extended delegation reference.",
+      "statement": "The orchestration handoff lineage is 08-27 cross-team OMC continuation → 08-28 V11 supervisor prompt → the Epic 173/174 handoff: docs/HANDOFF-2026-08-29-EPIC-173-174-FULL-MIGRATION-AND-DEBT.md is the current single continuation entry point and operationally supersedes the 08-27 file, which retains obsolete Story 172.12 instructions and a known plaintext test-credential exposure (open debt SEC-DOC-1) and must not be used as an execution entry point; V11 remains the current supervisor prompt and V10 the extended delegation reference.",
       "evidence": [
         {
           "resource": "repo://_bmad-output/planning-artifacts/shadcn-migration-status-and-debt-registry.md#L231-L236",
-          "version": "repo-lines-v1:sha256:9d4152710bc0a02e162af06d0e4ace053c7a8336ff38142da72616dc76d55278:eyJzZWxlY3RlZExpbmVDb3VudCI6NiwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNWFkMTMwNmRmODczOTA2ZjYzMDZjYmFlMjQ4NzY3YzYyNWFjZDk0OThhNzA3OWM3ZGE2ZTdkNjExOTU4YTJmNiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiYmFmODMwOTNkMjU4Y2UyOTI4NGYyYTg0MTY4NmI1ZWY2N2M5ODQ2YTQxNDEzNzIzNWY3N2Y5ZmI5NDFmMmQ0YiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMGFkYTBiYjRmZjQxZGFkNWNmYTFiODQ0MThmYjYwN2RiYjFjOGUzNjlhOWZhOTM5Yjc4NTFmZmJkMDAyYjkxYSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjEsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMzI1MDU3ZDdiNDU0MjRkY2VjOWFiMWEyZDllMmM2Yjc4MTdiM2E1YWUxMDI3MzMyOWY2NWE1OGEyOGI5ZTM5ZiJ9"
+          "version": "repo-lines-v1:sha256:3566ef6b40fc9ae2c607ecd89dd42995b5b074e52dd903fcdce5c450a022859b:eyJzZWxlY3RlZExpbmVDb3VudCI6NiwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiOTVhYjhkZjlmMzM4OWE2YWIxZDkyZTQ3ZjczMjc2MzdmODIzZTAyZDMwNDM4MzhhNjAyYTIzNzRlODhiODM1ZCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiODBmMjc2ZGZmNWJkYmZiOGYxOThhZTdjNDEyYTM2ZjYxZDRjMjU0MWY3MmI4ZTkxY2UwNmMxMGE3N2M4ZDQ3YSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZGFmMTgxNmRlZDYxYWRmNDg3YjQ5ZTg4MzBiYjQ3YzdlNmQ5MzZmYWYwM2E1YmJmMGQ0MmUxZjBhNjM3ZTY5MCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiYmM1YzNmMmJlOWE5NDNmNzg3OGRhOGZmMzhlYTJiMmRmMjcyN2YwNTNmN2UzYjdhYWVmODkwZDZhNDI1MmQwMSJ9"
         },
         {
-          "resource": "repo://docs/HANDOFF-2026-08-29-EPIC-173-174-FULL-MIGRATION-AND-DEBT.md#L5-L8",
-          "version": "repo-lines-v1:sha256:7fec65b9396c0393edeed74eb91c79e10411e614dbda1705b2159c49ef7b7f6e:eyJzZWxlY3RlZExpbmVDb3VudCI6NCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZjk4NGI0NTE2ZjJkOWNiYjRmZWNlZjNhNWYwZTEwOTVhZDc2MzQ2MDY1NGQzYTNkYmZlZTA5N2U4YzA5YTdmNSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNWU4MGI0YWQyZjczZjdlOGQ1MTg2OWRiOGMwMGQwNzUzNGUyZmQxOTIxYjQ4MmNmYzRjYWY0NWJlZTc0NWYzMyIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNjc1YzNkNzJkMDMwMzk0MzkxNmEyNDg3Yzc2OTBlYTIxZjc3OWFhOGY0NWJmMzJhMGJjZWZlY2I2ZmI4ZjJiMCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiYzEwNzJiYjdjZWEwZDkzODcyY2U0NTc1NWUwMzM4ZDhlMjg5M2VmNDNkMTM4ZTM0NjIwMjQxMTE5OTJiOGZiYiJ9"
+          "resource": "repo://docs/HANDOFF-2026-08-29-EPIC-173-174-FULL-MIGRATION-AND-DEBT.md#L6-L8",
+          "version": "repo-lines-v1:sha256:6a1b70c69be7222494a84cc8b0e11f94c8d6a4b255847fe697b39f3b8b8801fe:eyJzZWxlY3RlZExpbmVDb3VudCI6MywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiN2RhMmY1ZDFmNjlhZjFmOGU4Mzg3ZTIyZGY5ZmU0MjE5MDA4YTU1ODIwNWIxM2U1ZDNlNjljMTMyODI4MzRkNCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNWU4MGI0YWQyZjczZjdlOGQ1MTg2OWRiOGMwMGQwNzUzNGUyZmQxOTIxYjQ4MmNmYzRjYWY0NWJlZTc0NWYzMyIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZDczZGY1NTRiZTlhNmJhMjBkYjczZDMxZTBjNGMxMzQ1NDAyZGU2MDQ0ZDYyYWRlMGU3YTQ5MDM3YjM0ZGIyNyIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiYzEwNzJiYjdjZWEwZDkzODcyY2U0NTc1NWUwMzM4ZDhlMjg5M2VmNDNkMTM4ZTM0NjIwMjQxMTE5OTJiOGZiYiJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_b36279cbd9e14f49ac22943e6edf024a",
+      "statement": "Epic 173 stories 173.2-173.9 are shipped, each with a feature PR + closeout (or exact-five docs) PR pair, an exact-file implementation artifact, a full-floor Vitest advance, and migrated routes under src/app/(dashboard)/settings/* (backfill, cabinet, expenses, notifications, tariffs, tax) and src/app/(dashboard)/shipments/* (list, detail); 173.8 is the shipments-shared owner for 173.9-173.11 and 173.12 remains the supplies-shared owner for 173.13.",
+      "evidence": [
+        {
+          "resource": "repo://_bmad-output/planning-artifacts/shadcn-migration-status-and-debt-registry.md#L107-L114",
+          "version": "repo-lines-v1:sha256:53939a5422cee57b81518dd127778faefe2c7abb9b7ad4f11b9d45ff7848ff22:eyJzZWxlY3RlZExpbmVDb3VudCI6OCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZGIyNmM4ZGMxMDAxNWFkNzgxOTIzMDRkMmRhZDY1ZmQyOTVlZmY1ZmRmNmQ4Mzk0NDFhN2U1OTdmYWM4MDM2YSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiZDE0NTIxZmQ1ZTAxYzJkMmM4MjZlNmRmNGQ0Yzk3ZWZkNDJlYzliMTE2YTg5ZWM5NzJlMTNkZDZmOGRiZDBhYyIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNGQ2Yjc2ZTNkYTY4YTQzMmExOGE2ZjlhZTcyYmQyMDgxM2VhODhlNmRhNTU1YjRkMjgwZTU2NjVjYTgzZGMxZiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMTdkOGViNjNmMTRlYzZhYTAyMWZlOWQ1N2ViNjRkNTcxMmIwM2NhMzM4MzM2MTMzYTYyNmI4MzE3MGNmOWUwOCJ9"
+        },
+        {
+          "resource": "repo://docs/HANDOFF-2026-08-29-EPIC-173-174-FULL-MIGRATION-AND-DEBT.md#L224-L232",
+          "version": "repo-lines-v1:sha256:a57451145ee1571c4327a157d95f3e5829021e531a6fe4fb21f53f907c3c51ca:eyJzZWxlY3RlZExpbmVDb3VudCI6OSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiOGE4Y2I0OGM2YTAyNjA1OGY2MTg1NjJmN2Y3NDViYjRiMGI2YWUzNzllZGIzYThlOTVmN2Q1YWNjY2FiOGIxNiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiZDcwODQwMzdlNDA4NTlhY2Y2ZmU4NmViMWRiNDdmZmI5NWEzMDU2YzdiMGFkZWY3ZmRlZjBkNDAyMmQ1YjY2MiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZWY2MjBlZWYwZTE3MTM3ZTJmOWFmNzEwZmJjNjEzOGU1ZGFhZjU3M2ZmNGRiNmIzMzYxMDVhZDMwMTRlZWQ2YyIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiYjZkYWRiMTIxZWZhYmQxNDQzMTg2OTY1YTI5MTRmMmM4NzEwMTQ1ZjdjMDA2ODY2NzY0MGY3ZmM3ZDQwNmM2OCJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_b0fb185c935a4e6da22b389a5548ab4d",
+      "statement": "Epic 174 runs as a strict sequential chain only after all 13 Epic 173 stories merge and clean: 174.1 proves BMAD/route-ledger/OMX/evidence parity (94 stories = 94 plans, 76 routes = 76 rows) without flipping ledger statuses; 174.2 removes only proven-unused legacy UI with a consumer/import-closure manifest and enforces the design-system boundary; 174.3 completes the visual/theme/responsive/accessibility matrix recording unavailable environments as gaps; 174.4 runs full local functional and backend-contract regression with in-memory-only credentialed E2E; 174.5 finalizes documentation, transitions all 76 routes to verified only with complete linked evidence, and finishes at 94/94 stories with zero migration branches/worktrees.",
+      "evidence": [
+        {
+          "resource": "repo://docs/HANDOFF-2026-08-29-EPIC-173-174-FULL-MIGRATION-AND-DEBT.md#L247-L302",
+          "version": "repo-lines-v1:sha256:17549c62d49d686dea4aa048f68db5d0f4004e14126f9e2b3c8aa690ca498504:eyJzZWxlY3RlZExpbmVDb3VudCI6NTYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjlmM2UzMWZhNGE5MzQyMzYxMzNlMTMwMTYwN2Y3Yzk0NTgxNTU5MTAxZjk1ZmI0MjEyODVhNjM5M2U4NmU4OGUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjVjMjFkNDJmYzM0NzQ4OTMzZGM1YTcyMGQ5ZGNkOTE1NmMwZDZjZjBhNmUxYzhjNmVhOTM1ZWUzNTZhMGM1ZmYiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjAwMWYyZWMxNzU5M2MxMDU0ZWI0NjM2N2Q4NDUzZWYyNGExNzNjZTk2YjcxMTdkOTFmOWE2OGQ0NGZlZjhiMDEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjAwMWYyZWMxNzU5M2MxMDU0ZWI0NjM2N2Q4NDUzZWYyNGExNzNjZTk2YjcxMTdkOTFmOWE2OGQ0NGZlZjhiMDEifQ"
         }
       ]
     }
   ],
   "verification": {
     "by": "openwiki/0.4.3",
-    "at": "2026-08-29T08:47:45.377Z"
+    "at": "2026-08-30T08:47:56.434Z"
   }
 }

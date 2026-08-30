@@ -3,12 +3,7 @@ type: migration-program
 title: Migration Program (Epics 166-174)
 description: Master plan and per-story status ledger for the shadcn full-UI migration of Epics 166-174 (94 stories, 76 routes), including the FULL/MINOR/born-clean story pipeline, OMC story-worktree orchestration, the Story 173.1 settings-shell pattern, and the carry-out debt registry.
 tags: [migration, shadcn, epics, orchestration, status-ledger, omc, debt-registry]
-verified:
-  - by: openwiki/0.4.3
-    at: 2026-08-29T08:47:45.377Z
 sources:
-  - id: openwiki-source-89e2a6b1ae97c68779084212
-    resource: repo://_bmad-output/implementation-artifacts/sprint-status.yaml
   - id: openwiki-source-c278c3812722174099a1e7a5
     resource: repo://_bmad-output/planning-artifacts/shadcn-migration-status-and-debt-registry.md
   - id: openwiki-source-9ec6b92a3b92f033928e3a94
@@ -19,7 +14,10 @@ sources:
     resource: repo://docs/HANDOFF-2026-08-29-EPIC-173-174-FULL-MIGRATION-AND-DEBT.md
   - id: openwiki-source-757b90dfe03eafd6e1bd05cc
     resource: repo://docs/ORCHESTRATOR-PROMPT-2026-08-28-V11-HANDOFF-SUPERVISOR-OMC.md
-generated: { by: "openwiki/0.4.3", at: "2026-08-29T08:47:45.377Z" }
+generated: { by: "openwiki/0.4.3", at: "2026-08-30T08:47:56.434Z" }
+verified:
+  - by: openwiki/0.4.3
+    at: 2026-08-30T08:47:56.434Z
 ---
 
 # Migration Program (Epics 166-174)
@@ -60,7 +58,7 @@ flowchart TD
   S17313 --> E174
 ```
 
-## Status ledger (verified 2026-08-29, PR #329)
+## Status ledger (verified 2026-08-30, PR #354)
 
 | Epic | Scope | Progress | Status |
 |---|---|---|---|
@@ -71,16 +69,28 @@ flowchart TD
 | 170 advertising/brand/search | 7 stories | 7/7 | **CLOSED** (PRs #237-#250) |
 | 171 AI/forecast/models | 9 stories | 9/9 | **CLOSED** (PRs #252-#270) |
 | 172 business workspace | 17 stories | 17/17 | **CLOSED** — 172.10 Finances & Documents (#308/#309), 172.11 Monitor (#311/#312), 172.12 Monitoring Operations Console (#315), 172.13 Moysklad workspace (#317), 172.14 Orders Overview (#319), 172.15 FBO Orders (#321), 172.16 Order Integrity (#323), 172.17 Product Management (#325, includes Epic-172 retrospective) |
-| 173 settings/shipments/supplies | 13 stories | **1/13** | **IN PROGRESS** — 173.1 settings shell + overview shipped (feature PR #328 / `3c560ed2`, closeout PR #329 / `7bec65fd`) with exact cleanup proved; **NEXT = 173.2 Backfill Settings**; remaining owners 173.8 shipments and 173.12 supplies |
-| 174 consolidation | 5 stories | 0/5 | final; strictly after 166-173 (174.2 design-system/source-boundary/contrast; 174.3 visual/a11y; 174.4 functional/backend) |
+| 173 settings/shipments/supplies | 13 stories | **9/13** | **IN PROGRESS** — settings shell 173.1 (#328/#329), 173.2 Backfill (#332/#333), 173.3 Cabinet (#335/#336), 173.4 Expenses (#338/#339), 173.5 Notifications (#341/#342), 173.6 Tariffs (#344/#345), 173.7 Tax (#347/#348), 173.8 Shipments List owner (#350/#351 + auxiliary #352, no residue), 173.9 Shipment Detail (#353/#354, only the auxiliary lifecycle-record lane remains); **NEXT = 173.10 Shipment Box Types** (after the 173.9 auxiliary lane merges and cleans); remaining owners: 173.12 supplies (for 173.13) |
+| 174 consolidation | 5 stories | 0/5 | final; strictly after all 13 Epic 173 stories merge and clean: 174.1 BMAD/route-ledger/OMX/evidence parity → 174.2 legacy removal + design-system boundary → 174.3 visual/theme/responsive/a11y proof → 174.4 full functional + backend-contract regression → 174.5 final docs, verified routes (76/76), cleanup proof |
 
-**Program readiness: 77 of 94 canonical stories complete** (17 remain: 12 in Epic 173, 5 in Epic 174). Recorded full-suite Vitest floor after 173.1: **19,489 passed / 0 failed / 0 skipped across 1,229 files** (a fresh pinned-runtime full-suite rerun; the floor grows only by exact +N per story). `origin/main` = `7bec65fd` (Story 173.1 closeout merge); 0 open PRs; 0 local branches / 0 remote branches / 0 temporary worktrees for all completed Epic 172–173.1 lanes. Route implementation: 64 route-owning stories complete, 12 Epic 173 routes remain; all 76 route-ledger rows stay `planned` until Story 174.1 validates ownership/evidence and Story 174.5 owns the final transitions to `verified`.
+**Program readiness: 85 of 94 canonical stories complete** (9 remain: 4 in Epic 173, 5 in Epic 174). Recorded full-suite Vitest floor after 173.9: **19,733 passed / 0 failed across 1,249 files** (a fresh pinned-runtime final-product-snapshot rerun; the floor grows only by exact +N per story). `origin/main` = `cd05d31c` (Story 173.9 exact-five documentation closeout PR #354). Route implementation: 72 route-owning stories complete, 4 Epic 173 routes remain (173.10 box types, 173.11 SKU packaging, 173.12 supplies list, 173.13 supply detail); all 76 route-ledger rows stay `planned` until Story 174.1 validates ownership/evidence without changing implementation state, and Story 174.5 owns the final transitions to `verified`.
 
-Live per-story history: `_bmad-output/implementation-artifacts/sprint-status.yaml`. Consolidated per-epic slice: `_bmad-output/planning-artifacts/shadcn-migration-status-and-debt-registry.md` (snapshot 2026-08-29, updated at each orchestrator closeout; treat the repo as truth on drift).
+Epic 173 owner boundaries (from the handoff execution map): 173.1 owns the settings shell (children 173.2–173.7 must not silently edit it); 173.8 owns shipment-shared list/status presentation for 173.9–173.11; 173.12 owns supply-shared list/status presentation for 173.13. APIs, hooks, query keys, types, calculations, authentication, cabinet context, URLs/search parameters, mutation semantics, cache behavior, and backend contracts remain behavior-preservation surfaces unless an exact story explicitly owns a change. Numeric order 173.10 → 173.13 → 174.1 → 174.5 is safe and satisfies the DAG (173.11 requires 173.8 + 173.10; 173.13 requires 173.12).
+
+### Epic 174 consolidation chain
+
+Epic 174 is sequential and starts only after all 13 Epic 173 stories merge with lifecycle cleanup/evidence complete; frontmatter wording such as `ready-for-execution` never overrides a plan's prerequisite DAG.
+
+1. **174.1 parity** — prove 94 BMAD stories = 94 OMX plans and 76 `page.tsx` routes = 76 ledger rows = 76 route-owning stories; reconstruct and validate all 76 linked implementation records; the validator fails deterministically on missing/extra/duplicate/orphaned/mismatched evidence. It does **not** flip ledger rows to `verified` — 174.5 owns those final transitions.
+2. **174.2 legacy removal + boundary enforcement** — consumer/import-closure manifest before deletion, exception-register reconciliation, deletion only of code proven unused, strengthened file/line guards, and the carried-out design-system/source-boundary debt (see the debt registry below).
+3. **174.3 inclusive visual/theme/responsive/a11y proof** — the state matrix (default/loading/refresh/empty/filtered-empty/error/stale/partial/permission/pending/partial-success/not-found) across light+dark themes, six widths, 200% zoom, reduced motion, keyboard/SR proof; automated axe alone is never sufficient, and unavailable environments are recorded as gaps, never passes.
+4. **174.4 full functional/backend-contract regression** — full local unit/integration/E2E against the approved local environment, including mandatory credentialed E2E (credentials in-memory only, never printed or persisted); a missing environment blocks completion.
+5. **174.5 final documentation and cleanup** — verified routes only with complete linked evidence, delivery manifest/retrospective/cleanup report, every exception resolved or owner-accepted, finishing at 94/94 stories, 76/76 verified routes, zero completed migration branches/worktrees, no deploy action.
+
+Live per-story history: `_bmad-output/implementation-artifacts/sprint-status.yaml`. Consolidated per-epic slice: `_bmad-output/planning-artifacts/shadcn-migration-status-and-debt-registry.md` (snapshot 2026-08-30, updated at each orchestrator closeout; treat the repo as truth on drift).
 
 ## The Story 173.1 settings-shell pattern
 
-Story 173.1 (Settings Shell and Overview) established the reusable owner pattern for the settings family: a **static overview page** plus a **shared seven-route settings shell** consumed by the child settings stories (173.2–173.7), with a desktop grid layout and a compact Sheet for narrow viewports, and role-aware **restricted/current states** carrying Owner/non-Owner semantics. It was delivered in an exact six-file manifest (focused 2/22, settings 17/217, full floor 19,489/0). Child settings stories must not silently edit the shell; they own only their route-exclusive UI and tests while preserving job/API semantics and the shared shell.
+Story 173.1 (Settings Shell and Overview) established the reusable owner pattern for the settings family: a **static overview page** plus a **shared seven-route settings shell** consumed by the child settings stories (173.2–173.7), with a desktop grid layout and a compact Sheet for narrow viewports, and role-aware **restricted/current states** carrying Owner/non-Owner semantics. It was delivered in an exact six-file manifest (focused 2/22, settings 17/217, full floor 19,489/0). The child settings stories shipped through it without touching the shell: 173.2 Backfill (17 files, dual-pipeline status, guarded pending trigger), 173.3 Cabinet (12 files, fail-closed unknown Jam tier), 173.4 Expenses (9 files, pending-safe CRUD overlays), 173.5 Notifications (28 files, Telegram binding lifecycle, quiet-hours validation), 173.6 Tariffs (29 files, nested-tier validation, controlled dirty state), and 173.7 Tax (11 files, same-cabinet draft preservation, cross-cabinet isolation), each with its own exact manifest, feature + closeout PR pair, and full-floor advance. Their migrated routes live under `src/app/(dashboard)/settings/*`; 173.8's shipments list and 173.9's shipment detail migrated routes live under `src/app/(dashboard)/shipments/*`.
 
 Its known gap is debt item **C18**: the credentialed non-Owner restricted-navigation visual (Manager/Analyst/Service × Tariffs/Import, desktop + compact Sheet, both themes) was not captured because optional Manager credentials are not configured. The semantic proof is deterministic in Vitest; a Manager screenshot must not be claimed without a real credentialed run. C18 is carried out to Story **174.3** (visual/a11y), together with browser/theme/responsive evidence for other lanes.
 
@@ -103,14 +113,14 @@ Handoff lineage (each superseding the previous as the execution entry point; old
 
 1. `docs/HANDOFF-2026-08-27-CROSS-TEAM-OMC-ORCHESTRATOR-172-8-CONTINUATION.md` — cross-team OMC continuation canon (delegation matrix, gates, accumulated lessons). **Now superseded operationally**: it contains obsolete Story 172.12 execution instructions and a known plaintext test-credential exposure (open debt SEC-DOC-1 until a review-safe security remediation), so it must not be used as an execution entry point.
 2. `docs/ORCHESTRATOR-PROMPT-2026-08-28-V11-HANDOFF-SUPERVISOR-OMC.md` — supervisor control loop (V11); V10 remains the extended delegation-conveyor reference.
-3. `docs/HANDOFF-2026-08-29-EPIC-173-174-FULL-MIGRATION-AND-DEBT.md` — **current single continuation entry point** for Epics 173–174: authority hierarchy and mandatory reading order, git/worktree topology, per-story tables with exact branch/worktree names, the debt register, and Epic 174 assurance scope. Priority on conflict: live source + passing behavior-locking tests → exact story plan → canonical BMAD/route/UX artifacts → the handoff snapshot; drift is corrected through a reviewable documentation lane, never by silently picking convenient text.
+3. `docs/HANDOFF-2026-08-29-EPIC-173-174-FULL-MIGRATION-AND-DEBT.md` — **current single continuation entry point** for Epics 173–174 (snapshot refreshed 2026-08-30 at `cd05d31c`, Story 173.9 docs closeout): authority hierarchy and mandatory reading order, git/worktree topology, per-story tables with exact branch/worktree names, the debt register, and Epic 174 assurance scope. Priority on conflict: live source + passing behavior-locking tests → exact story plan → canonical BMAD/route/UX artifacts → the handoff snapshot; drift is corrected through a reviewable documentation lane, never by silently picking convenient text.
 
 Worktree hygiene, summarized:
 
 - One story = one branch `cdx/epic-{epic}-story-{story}-{slug}` = one temporary worktree at an explicit validated path (`/private/tmp/wb-repricer-fe-...`), created from current `main` only after prerequisites merge; never reuse a stale branch or another story's worktree. The standing operator policy is sequential execution; numeric order is safe and satisfies the DAG.
 - Subagents never commit/push/merge — git operations belong exclusively to the orchestrator; each wave of a story runs in the single story worktree with non-overlapping file lists.
 - Every Agent call in this environment requires an explicit model tier (`opus`/`sonnet`/`haiku`); defaults are executor=sonnet (opus for hard edits), code-reviewer=opus, explore/verifier/writer=sonnet.
-- Mandatory cleanup is completion evidence, not housekeeping: PR merged with `--match-head-commit` identity fences, exact recorded PR number, remote branch deleted via exact-old-SHA lease, worktree removed, `git worktree prune`, verified 0/0/0 (remote/local/worktree) and primary checkout in sync. Story 173.1 proved exact cleanup for both its feature and closeout lanes; the 2026-08-29 handoff audit recorded 0 open PRs and 0/0/0 for all completed Epic 172–173.1 lanes.
+- Mandatory cleanup is completion evidence, not housekeeping: PR merged with `--match-head-commit` identity fences, exact recorded PR number, remote branch deleted via exact-old-SHA lease, worktree removed, `git worktree prune`, verified 0/0/0 (remote/local/worktree) and primary checkout in sync. Story 173.1 proved exact cleanup for both its feature and closeout lanes, 173.8 through all three lanes (feature/closeout/auxiliary with no residue), and 173.9 through product + initial-docs cleanup with only the auxiliary record remaining; the handoff audit recorded 0 open PRs and 0/0/0 for all completed Epic 172–173.9 lanes.
 
 Cross-team cautions: parallel teams/sessions are real (PRs #295/#296/#300/#301 landed on top of other sessions' PRs; a mid-flight 172.10 collision was resolved by the owner absorbing the parallel delta and re-running the full pipeline). Never touch foreign worktrees; on a mid-flight conflict for the NEXT story, take the next unclaimed story per the registry instead of duplicating. Registry/handoff vs repo drift resolves in favor of the repo, corrected in the next closeout commit.
 
@@ -129,3 +139,4 @@ Route migrations may leave wave-scoped carry-outs recorded in the registry and s
 Story 169.14 established the authoritative paid-storage import lifecycle/result contract in the **backend** repository: BullMQ `waiting | delayed | prioritized | waiting-children` map to wire `pending`, `active` maps to `processing`, terminal states keep their meanings, and BullMQ `unknown` fails closed as wire `failed` with sanitized `UNKNOWN_QUEUE_STATE` detail. Story 169.15 aligned the shared frontend boundary and may use a frontend-only `unknown` sentinel solely for an unrecognized backend wire value. Story 169.12's route presentation had merged early (PR #227) and was only closed after the 169.14 → 169.15 chain validated the route (contract-closeout lane PRs #299/#304), closing Epic 169 at 15/15.
 
 This lane carries unusually strict evidence machinery (serialized single-leader lifecycle, mode-600 review-bootstrap and record-retirement transactions, payload-hash-verified RED/reviewer/manifest evidence re-read from trusted history, and a suffix-aware secret scan rejecting credential families across `=`, `:=`, `+=`, `-=`, `?=`, `&&=`, `||=`) because it is the only authorized cross-repository contract change; see the plans `169.14-establish-authoritative-paid-storage-import-lifecycle-and-result-contract.md` and `169.15-align-shared-frontend-paid-storage-import-boundary.md` under `.omx/plans/` for the executable detail. For frontend stories, the practical takeaway is: the paid-storage wire contract above is authoritative, and no other story may touch backend contracts.
+ory may touch backend contracts.

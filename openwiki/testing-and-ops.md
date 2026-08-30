@@ -5,13 +5,33 @@ description: "Testing strategy (Vitest unit with MSW, Playwright E2E, local E2E 
 tags: [testing, e2e, playwright, vitest, network-guards, privacy, openwiki-workflow, ci]
 verified:
   - by: openwiki/0.4.3
-    at: 2026-08-29T08:47:45.377Z
+    at: 2026-08-30T08:47:56.434Z
 sources:
+  - id: openwiki-source-89e2a6b1ae97c68779084212
+    resource: repo://_bmad-output/implementation-artifacts/sprint-status.yaml
+  - id: openwiki-source-6d4b4e707b8d60b6ccfa3425
+    resource: repo://.github/workflows/openwiki-update.yml
+  - id: openwiki-source-f323b150aa81d8e8d0adb0eb
+    resource: repo://e2e/settings-pages.spec.ts
+  - id: openwiki-source-b0480c34c110ffe1e27be32c
+    resource: repo://e2e/settings/backfill-a11y.spec.ts
+  - id: openwiki-source-576e1036a00b6180ac2fd526
+    resource: repo://e2e/settings/backfill-admin.spec.ts
+  - id: openwiki-source-86456ce6fabc47629e634fc6
+    resource: repo://e2e/shipments/shipments-detail.spec.ts
+  - id: openwiki-source-de6278600cd3a14fa502ad43
+    resource: repo://e2e/shipments/shipments-list.spec.ts
+  - id: openwiki-source-ffa6c3af53b402f151308103
+    resource: repo://e2e/telegram-notifications.spec.ts
+  - id: openwiki-source-23775c3de52f3ab95a13cb8b
+    resource: repo://README.md
+  - id: openwiki-source-c448aae4287d4d4701b86b58
+    resource: repo://src/test/playwright-static-boundary.ts
   - id: openwiki-source-b3c59ed7dd82c4c19f9a9dce
     resource: repo://test-utils/network-policy.json
   - id: openwiki-source-765eb9dfac83102deebc4cc8
     resource: repo://test-utils/outbound-network-policy.ts
-generated: { by: "openwiki/0.4.3", at: "2026-08-29T08:47:45.377Z" }
+generated: { by: "openwiki/0.4.3", at: "2026-08-30T08:47:56.434Z" }
 ---
 # Testing & Operations
 
@@ -25,7 +45,7 @@ generated: { by: "openwiki/0.4.3", at: "2026-08-29T08:47:45.377Z" }
 | Plugin | `@vitejs/plugin-react` |
 | Coverage | V8 provider (text/json/json-summary/html reporters), output `coverage/local` |
 | Fake timers | `shouldAdvanceTime: true` (waitFor/MSW compatibility) |
-| Full-suite floor | ≥ 19,489 tests passing across ≥ 1,229 test files (0 failed, 0 skipped) — a full `npm test -- --run` run must not regress this floor |
+| Full-suite floor | ≥ 19,733 tests passing across ≥ 1,249 test files (0 failed) — raised after Story 173.9 closed (sprint-status.yaml, 2026-08-30); a full `npm test -- --run` run must not regress this floor |
 
 ### Test setup (`src/test/`)
 Setup files run in explicit list order (`sequence.setupFiles: 'list'`) defined by `VITEST_SETUP_FILES` in `vitest.config.ts`. Order is load-bearing: the outbound network guard must install **before** any general setup or MSW import, or module-evaluation-time network attempts would escape the guard.
@@ -58,7 +78,7 @@ Tests are co-located with source in `__tests__/` directories:
 
 | Aspect | Detail |
 |--------|--------|
-| Test directory | `./e2e/` (~87 `.spec.ts` files) |
+| Test directory | `./e2e/` (~94 `.spec.ts` files, including the `settings/`, `shipments/`, `supplies/`, `analytics/`, and `automation/` subdirectories) |
 | Base URL | `http://localhost:3100` (overridable via `E2E_BASE_URL`, validated against the network policy allowlist via `assertAllowedTestUrl`) |
 | Projects | `setup` (auth, uses storage state) → `chromium` (desktop, depends on setup); `historical-spp` (self-contained, empty storage state, skips `setup`) for the Story 128.27 exact-command spec |
 | CI behavior | 2 retries, 1 worker, `forbidOnly: true`, auto-starts dev server |
@@ -107,6 +127,26 @@ Covers `/settings/cabinet`, `/settings/tariffs`, `/settings/notifications`, `/se
 - The canonical desktop navigation: the exact seven-item ordered link list (Обзор, Кабинет, Уведомления, Налоги, Тарифы, Расходы, Импорт) with `aria-current="page"` on exactly one visible current item per route, and the sidebar rendered left of the H1 at 1280×900.
 - The compact Sheet (390×844, reduced motion): dialog visibility, current-item `aria-current`, keyboard focus containment over 12 Tab and 12 Shift+Tab presses, Escape closing and returning focus.
 - Light/dark theming via `localStorage.theme` + reload with class-regex assertions on `<html>`, horizontal-overflow checks (`main.scrollWidth ≤ clientWidth + 1`), and per-page axe scans (`wcag2a`, `wcag2aa`, `wcag22aa`) requiring zero violations.
+
+### Backfill admin specs (`e2e/settings/backfill-admin.spec.ts`, `e2e/settings/backfill-a11y.spec.ts`)
+
+Story 173.2 migrated the backfill admin page to `/settings/backfill` with two dedicated specs (both import `test`/`expect` from `../fixtures/network-test`):
+
+- **`backfill-admin.spec.ts`** — deterministic Owner-shell coverage of `/settings/backfill` against a stubbed `**/v1/admin/backfill/status`: per-cabinet dual-pipeline status (reports vs analytics: `in_progress`/`pending`/`failed`/`paused`/`completed`/`not_started`), progress percentage with ETA rendering, `lastError` display, and `@mutating`-guarded interactions behind `shouldSkipMutatingE2E`.
+- **`backfill-a11y.spec.ts`** — axe-core WCAG 2.1 AA scans (including a dense eight-cabinet mixed-status fixture with a very long RU cabinet name to prove wrapping without horizontal overflow), keyboard navigation, dialog focus management, ARIA/role support, and layout cases at 320/390/768/1024/1280/1440 px. It uses the Story 162.8 bounded-settle pattern: the page must resolve to one of two terminals (Owner shell heading «Управление бэкфиллом» or its fallback) with no open-ended polling wait.
+
+### Shipments specs (`e2e/shipments/*.spec.ts`)
+
+Story 173.8 (list) and 173.9 (detail) restored dedicated shipments e2e packages:
+
+- **`shipments-list.spec.ts`** — `/shipments` list coverage driven by a switchable scenario fixture (`default`/`empty`/`error`/gated `pending`): DRAFT vs CONFIRMED status filtering, pagination, the create-shipment dialog, empty and error states.
+- **`shipments-detail.spec.ts`** — `/shipments/story-173-9-detail` detail coverage stubbing `**/v1/shipments/story-173-9-detail`: header, pallet accordion, box-line table with per-line allocation results (calculated vs pending lines), draft-vs-confirmed action buttons, plus an axe scan.
+- The subdirectory also carries `shipments-a11y.spec.ts` and `shipments-lifecycle.spec.ts`; `e2e/supplies/` mirrors this shape for supplies (list/detail/lifecycle/a11y).
+
+### Expenses, backfill page, and telegram notifications
+
+- `e2e/expenses-page.spec.ts` and `e2e/backfill-page.spec.ts` cover their settings routes with the same shell conventions (headings/landmarks, data-or-skeleton, theme and overflow assertions).
+- `e2e/telegram-notifications.spec.ts` covers the Telegram binding lifecycle (status types with `bound`/`telegram_user_id`/`binding_expires_at`, notification preferences, quiet hours) and mutation success/failure/pending modes via `page.route` stubs, with axe scans. A former duplicate at `tests/e2e/telegram-notifications.spec.ts` is **no longer present** in the current tree; only the `e2e/` copy exists. (The Playwright static boundary still scans the `tests/e2e/` path prefix defensively — see [Outbound Network Guards](#outbound-network-guards).)
 
 These specs run against the local stack only (frontend `:3100`, backend `:3000`); the project has no deployment target.
 

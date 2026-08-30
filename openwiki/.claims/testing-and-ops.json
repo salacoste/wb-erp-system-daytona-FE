@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "pageVersion": "sha256:95ffff6da4c065e01aeb52b42da05fe7bf248527c89e5a93c244be0c062aac3d",
+  "pageVersion": "sha256:ace95a2e832ad686de0b8e5c4295ee5bd96d4ccf50f2584fc1a2c7c72532ee46",
   "claims": [
     {
       "id": "claim_34d4e9ec9e0249299eb57f3e06db8784",
@@ -15,10 +15,102 @@
           "version": "repo-file-v1:sha256:261fb671cf52a5e22b8e7af173afd4907fa106e4dbcac767fcd840d251294628"
         }
       ]
+    },
+    {
+      "id": "claim_6f40c953f4a54d4f9d1a5f2db9c186a0",
+      "statement": "The full Vitest suite floor was raised after Story 173.9 closed (sprint-status.yaml, 2026-08-30): a full `npm test -- --run` run must keep ≥ 19,733 tests passing across ≥ 1,249 test files with 0 failed; this is a floor, not a substitute for fresh per-story validation.",
+      "evidence": [
+        {
+          "resource": "repo://_bmad-output/implementation-artifacts/sprint-status.yaml",
+          "version": "repo-file-v1:sha256:1a05092d4ef7e49198848fe2203dbb280b6e81b44c09f98cf5e2a4a486420009"
+        }
+      ]
+    },
+    {
+      "id": "claim_ab2c6d66c6174f97a89ee3e81586e315",
+      "statement": "Story 173.2 delivered two dedicated backfill-admin e2e specs under e2e/settings/: backfill-admin.spec.ts pins the deterministic Owner shell at /settings/backfill against a stubbed `**/v1/admin/backfill/status` (per-cabinet dual-pipeline reports/analytics status, progress with ETA, lastError, mutating-guarded interactions), and backfill-a11y.spec.ts pins WCAG 2.1 AA axe scans over a dense eight-cabinet mixed-status fixture (including a long RU cabinet name proving wrap without horizontal overflow), keyboard/dialog focus, and 320–1440px layout cases using the Story 162.8 bounded-settle terminal pattern.",
+      "evidence": [
+        {
+          "resource": "repo://e2e/settings/backfill-a11y.spec.ts",
+          "version": "repo-file-v1:sha256:64deb77182df1df1795ec073eb45897066f30539f58709f51b8af4653d5034ce"
+        },
+        {
+          "resource": "repo://e2e/settings/backfill-admin.spec.ts",
+          "version": "repo-file-v1:sha256:e84c13805bee9d3dbf362cdb8125769609c7de2cbcf3843a6ace9f473b6d1c78"
+        }
+      ]
+    },
+    {
+      "id": "claim_e78eda06624f468a9b935c08754850bb",
+      "statement": "Stories 173.8/173.9 restored dedicated shipments e2e packages under e2e/shipments/: shipments-list.spec.ts drives /shipments via a switchable scenario fixture (default/empty/error/gated-pending) covering status filtering, pagination, the create-shipment dialog, and empty/error states; shipments-detail.spec.ts stubs `**/v1/shipments/story-173-9-detail` to cover the header, pallet accordion, box-line allocation table (calculated vs pending lines), draft-vs-confirmed actions, and an axe scan. Sibling specs cover shipments a11y/lifecycle, and e2e/supplies/ mirrors the same list/detail/lifecycle/a11y shape.",
+      "evidence": [
+        {
+          "resource": "repo://e2e/shipments/shipments-detail.spec.ts",
+          "version": "repo-file-v1:sha256:f5141998eb48ed344ff003a7c0f64e11280ef50bb2acaf698f46cb216f4ad283"
+        },
+        {
+          "resource": "repo://e2e/shipments/shipments-list.spec.ts",
+          "version": "repo-file-v1:sha256:a29e4910e7269737140deb9f1ce42ee66ac3c0196ef800eebc9ce6a48e68d564"
+        }
+      ]
+    },
+    {
+      "id": "claim_a7c6ff34de22490d9af425fd1bac4de0",
+      "statement": "Telegram notification e2e coverage lives only in e2e/telegram-notifications.spec.ts (binding status with bound/telegram_user_id/binding_expires_at, preferences, quiet hours, and success/failure/pending mutation modes via route stubs with axe scans); the former duplicate at tests/e2e/telegram-notifications.spec.ts is absent from the current tree, while src/test/playwright-static-boundary.ts still scans the `tests/e2e/` path prefix defensively.",
+      "evidence": [
+        {
+          "resource": "repo://e2e/telegram-notifications.spec.ts",
+          "version": "repo-file-v1:sha256:07703204166da1b111cd9b7f347885e3364e8dd671fdc032ab52b4a209742f23"
+        },
+        {
+          "resource": "repo://src/test/playwright-static-boundary.ts#L111-L111",
+          "version": "repo-lines-v1:sha256:bed79fbd704bb46e609efb559a46a3fd44839852f0ef3d3cf03dd0d538a224fb:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiYmVkNzlmYmQ3MDRiYjQ2ZTYwOWVmYjU1OWE0NmEzZmQ0NDgzOTg1MmYwZWYzZDNjZjAzZGQwZDUzOGEyMjRmYiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiYmVkNzlmYmQ3MDRiYjQ2ZTYwOWVmYjU1OWE0NmEzZmQ0NDgzOTg1MmYwZWYzZDNjZjAzZGQwZDUzOGEyMjRmYiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiYjU3NzdkZTRhMzM2MzhlOWJhNWFlMzFiYmNmZGFiY2JlOWRjZDIzNzY5ZDk2MjMwOTUwZTMxOTI2MzU2YzVlZCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiOTk0YzA2YmJlZTg3ODdiNmNmODRlMWI0ZDhhZTZkZTM1YmJhY2JmOTFkNTFiMjNlY2VkYzA0YjE3YzVmZDNlNCJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_84268477a05342edbe881d4a567f7bae",
+      "statement": "e2e/settings-pages.spec.ts pins the shared settings shell across cabinet/tariffs/notifications/tax/expenses/backfill routes: the exact seven-item ordered navigation (Обзор, Кабинет, Уведомления, Налоги, Тарифы, Расходы, Импорт) with exactly one visible `aria-current=\"page\"` per route, compact-Sheet keyboard focus containment, light/dark theming via localStorage.theme with reload, horizontal-overflow checks, and zero-violation per-page axe scans (wcag2a/wcag2aa/wcag22aa).",
+      "evidence": [
+        {
+          "resource": "repo://e2e/settings-pages.spec.ts",
+          "version": "repo-file-v1:sha256:0bdf13f25500033a9345e6d0c11c15b6bb418d90c8c50107f211ad6454a40af8"
+        }
+      ]
+    },
+    {
+      "id": "claim_58c037bfa0e24fa9b7575bafb27cfb10",
+      "statement": "Current local validation is the README.md Local validation command list (type-check, lint, `npm test -- --run`, test:privacy, test:coverage, check:privacy, format:check, build) plus the active story plan; there is no mandatory CI merge gate, and development/validation are local-only (frontend :3100, backend :3000). scripts/story-128-10/ is immutable historical, branch-bound Story 128.10 evidence tied to the former feat/epic-128-10-frontend-verification-foundation branch and must not be treated as a current validation entry point.",
+      "evidence": [
+        {
+          "resource": "repo://README.md#L43-L63",
+          "version": "repo-lines-v1:sha256:0e640f7721d655d51d43a04b94e17dbcc60ccecc678082cb29b3478070bfb28c:eyJzZWxlY3RlZExpbmVDb3VudCI6MjEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImQ4NTk5NmQxODg1ODhiY2M5MmVhMGZlNjdlYmM5ODhhZjY4Yjg5MWU0YTk2NDM3MmEwNmE4NDNlZjg5ZDlkYTQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijc3YjJjMzQ4Y2JkMjk2MTUyY2I0NGE1ODU2Mzk4NGM2ZjY3NzA5YzUwMzI2NDM4ZmZiNTA0MTNlZTM5ZjZlY2EiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImFiNGIyNmI1NDExODljNWNkNmJjOTljZTAzOGZhZWQyZDA1ZmIwNzYyNmRkMjlhODQxYzFiYTE5MDg5Mjg1NGYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImI3MzRhMzgyNGIyYTZmZDZjNmU1YmEzMzhiMmJkYjAzZTQ3MThiM2U2NGE3ZWQxZDdkNGI1Y2E1Nzk3NGZmZjUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_2fd204a653214578972c182511abc3b5",
+      "statement": "The openwiki-update.yml workflow protects a generated/protected boundary: after generation it restores .github/workflows/openwiki-update.yml, every AGENTS.md, CLAUDE.md, and openwiki/INSTRUCTIONS.md to their HEAD versions; it stages only `git add -A -- openwiki/ ':(top,exclude)openwiki/INSTRUCTIONS.md'` and refuses to commit anything staged outside openwiki/, any unexpected unstaged/untracked/ignored file; checkout uses persist-credentials: false.",
+      "evidence": [
+        {
+          "resource": "repo://.github/workflows/openwiki-update.yml#L70-L126",
+          "version": "repo-lines-v1:sha256:b6218534bccd0a00c0a1beea9d8b88be5aa19643f479d260e86dc77c4917dde0:eyJzZWxlY3RlZExpbmVDb3VudCI6NTcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImYyZWIxZjU1NzkzNzZkMzAwYTNmYzE3MTZkY2M5YzJhZWFiOWIwMWVjY2QyYzA1NzNlMGQyNDUyNmMzYWE0ZmMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjcwZTc2ZWNkMDJhYjFiODJlYmY2NDg3NGUyNDM5OGNlMTdhZmI2ZTZkMjI4NmNiNTY2ZjIxNmMxNjU0MGJlYWYiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjI2OGNiNDBlNTAwNDZkMTAxNWMwMTg0YTA5NTZkMWZjNGQ2MjY5OWNiOTQwMzY4NmE2ODFhNDQwZTc5YTUzN2UiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImVjODk3NzhmYmM4ZDA1ZTExZTM0ODI5ZGIxM2QzODJkMTRhMjRjNDAyNWYyNGE3NGJkOTQxZjkwYWZlYmNkNDYifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_ccc0dadf4de047fda22ee52e4b8d5d61",
+      "statement": "Scheduled openwiki runs on main commit, then create and push a unique automation branch `automation/openwiki-${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}` (attempt included so failed-publication reruns use a fresh branch) via a temporary x-access-token remote URL restored through an EXIT trap, and open a PR against main via the GitHub REST API with curl — no gh CLI, no force-push, no direct push to main, no auto-merge. Manual dispatches must target a non-main branch ref and push the generated commit back to that same branch; dispatch on main is rejected before checkout.",
+      "evidence": [
+        {
+          "resource": "repo://.github/workflows/openwiki-update.yml#L128-L183",
+          "version": "repo-lines-v1:sha256:50429e1062123c4630cf2a304b225e48d420b0af550b875ce96f0e36473fe50b:eyJzZWxlY3RlZExpbmVDb3VudCI6NTYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjVmMjg5N2IzMTY3ZDFlNGU2YzM2ZmI2YjczNTk4ZTgwOTEyOWU5Nzk5NjkyYjU3NzU0NjIxM2ZjNjcxMzVkNTIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjI1NGZiN2Q5MzMwOTJjZGE1ZTVlMjZhYjRhMTBkMGMzY2EzNjRiMWU4NDAxYzg4NGNhNWEzYjgyMmQ2ZDRjMTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImY1MDRmZmEyMDRhMWZjNjBiNGE5MjllMDZiYjM5ZDlkZGEyMWExNmIzNmQzMzQ5MzU0ZmJiZmMxMTNlNGMwZmYifQ"
+        }
+      ]
     }
   ],
   "verification": {
     "by": "openwiki/0.4.3",
-    "at": "2026-08-29T08:47:45.377Z"
+    "at": "2026-08-30T08:47:56.434Z"
   }
 }

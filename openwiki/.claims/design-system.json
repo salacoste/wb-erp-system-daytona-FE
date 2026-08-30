@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "pageVersion": "sha256:343278ad383e610658d856040c6fd0995769f1cb87930199a881dad1a9f2a258",
+  "pageVersion": "sha256:9ad99be4f4bd2a76feabcf416f797d3baedb0d1b1194b0b57047cd42ab40bfbd",
   "claims": [
     {
       "id": "claim_71020c7a6f2f4b9480557ec3710c8984",
@@ -78,7 +78,7 @@
     },
     {
       "id": "claim_f42be4486e444abaa0ffdedf6bf616a2",
-      "statement": "PageHeader renders exactly one logical h1 per page regardless of visual size (non-empty title required), and ContextBar renders its semantic state (fresh/refreshing/stale/partial/unavailable/restricted/overridden/default) as localized text, never conveying state by color alone, with refresh/reset left to route-owned callbacks.",
+      "statement": "PageHeader renders exactly one logical h1 per page regardless of visual size (non-empty title required), and ContextBar renders its semantic state (fresh/refreshing/stale/partial/unavailable/restricted/overridden/default) as localized text, never conveying state by color alone, with refresh/reset left to route-owned callbacks. The current PageContextCompositions test pins the single h1, breadcrumb navigation-landmark naming (default «Навигация по странице»), exactly one aria-current=\"page\" item with safe fallback for invalid (including fractional) indices, rejection of empty breadcrumb labels, and busy metadata refresh announced without replacing route identity.",
       "evidence": [
         {
           "resource": "repo://src/components/product/PageHeader.tsx",
@@ -86,7 +86,7 @@
         },
         {
           "resource": "repo://src/components/product/__tests__/PageContextCompositions.test.tsx",
-          "version": "repo-file-v1:sha256:1d7edd286123e3bf23a087d1e202a03c55d09c5b058d86f516e0246a6ea0aa5d"
+          "version": "repo-file-v1:sha256:08ed00e3f40d7ea138fd917c64752e09e7e9005b8c535a8283eab74f76cfaad8"
         }
       ]
     },
@@ -158,7 +158,7 @@
     },
     {
       "id": "claim_e9d5030533ac42339589db7f996ef940",
-      "statement": "Every migrated route ships a *-presentation-source-contracts guard that pins the migrated surface: comment-stripped source is checked against self-tested hex and Tailwind-palette regexes, an exact owned-file catalog is pinned (relative-segment filtering before path join, per the 171.8 anchor-safety lesson), and token/story pins prevent regression; the Epic 172 closing wave added guards for finances, monitor, monitoring (with cross-file legend-sync pins), moysklad, orders (dual-root, fbo/integrity excluded), fbo, integrity, and products, while 173.1's settings shell shipped without a guard.",
+      "statement": "Every migrated route ships a *-presentation-source-contracts guard that pins the migrated surface: comment-stripped source is checked against self-tested hex and Tailwind-palette regexes, an exact owned-file catalog is pinned (relative-segment filtering before path join, per the 171.8 anchor-safety lesson), and token/story pins prevent regression. The Epic 172 closing wave added guards for finances, monitor, monitoring (with cross-file legend-sync pins), moysklad, orders (dual-root, fbo/integrity excluded), fbo, integrity, and products; the Epic 173 wave closed the 173.1 no-guard gap with guards for backfill, cabinet, notifications, tariffs (29-file exact route-reachable catalog), and tax under the settings routes, plus shipments (11-file catalog with an explicit exclusion set for 173.9-owned detail files) and shipment-detail.",
       "evidence": [
         {
           "resource": "repo://src/app/(dashboard)/finances/__tests__/finances-presentation-source-contracts.test.ts",
@@ -186,15 +186,15 @@
     },
     {
       "id": "claim_23d5c62e294743fdae8cc341171bb81d",
-      "statement": "Migration program status (snapshot 2026-08-29): Epics 166–172 are closed (172 complete 17/17), Story 173.1 (settings shell and overview) is done opening Epic 173 at 1/13 with NEXT = 173.2, 77 of 94 canonical stories complete, and the recorded Vitest floor is 19,489/0 across 1,229 files.",
+      "statement": "Migration program status (snapshot 2026-08-30): Epics 166–172 are closed (172 at 17/17) and Epic 173 is 9/13 — settings Stories 173.1–173.7 and shipments Stories 173.8–173.9 are fully migrated, with NEXT = Story 173.10 (shipment box types) after the 173.9 auxiliary lifecycle-record merge and owner Story 173.12 supplies unchanged — leaving 85 of 94 canonical stories complete and a recorded Vitest floor of 19,733/0 across 1,249 files.",
       "evidence": [
         {
-          "resource": "repo://_bmad-output/implementation-artifacts/sprint-status.yaml#L830-L842",
-          "version": "repo-lines-v1:sha256:4dd845663bb68174b41159761cfc9be1d90f81a289f1a9ae483b28e8bd217151:eyJzZWxlY3RlZExpbmVDb3VudCI6MTMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjJkZDMzYWYxNjA3MWZhYTEyZTEyMTkzNjg0ZTQ1OGRiMzUyMjk0NDg3OGQ1MDQyNjk3ZjRmZGE3NDJkNWMyNGEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijc1ZjdhNWU2OWJjYjVhZmQyNGZmOWY1NTU4YmJlNmY3NjFiMGU0NzMwOGRmYzAzNGIxODc3ZmM3MjYxYjI0MGEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjMxMmJhYWUzZTlhMWJmOTZjMDkyM2M5ODU2ZjhjNjQzYzY5ODhkNTFmNTlhYWI0OGUxODU3MzA2NjM5NzExMDMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjA1YmUzMmM3NTAyYWU3Y2I5OWRmNTQyMWFiZDFiYjU4ODNhZjU4Y2YyZDk4MzQ2OGE0ZjQwZGEwZWRlNmQ3NTAifQ"
+          "resource": "repo://_bmad-output/implementation-artifacts/sprint-status.yaml",
+          "version": "repo-file-v1:sha256:1a05092d4ef7e49198848fe2203dbb280b6e81b44c09f98cf5e2a4a486420009"
         },
         {
           "resource": "repo://_bmad-output/planning-artifacts/shadcn-migration-status-and-debt-registry.md",
-          "version": "repo-file-v1:sha256:8364829799c37ce5a2ba246a6247b321124d35a6fa1f9aab00584fb2d8eae449"
+          "version": "repo-file-v1:sha256:20a1bdef2d41812c47e2108e99a815fb343a726909b2a64bed7b015ba4c41c9b"
         }
       ]
     },
@@ -213,8 +213,8 @@
       "statement": "Story 173.1 delivered a static settings overview plus a shared seven-route settings shell under src/app/(dashboard)/settings/ (backfill, cabinet, expenses, notifications, tariffs, tax, overview) with role-aware restricted/current states, and carries a credentialed non-Owner visual gap to Epic 174.3 (C18).",
       "evidence": [
         {
-          "resource": "repo://_bmad-output/implementation-artifacts/sprint-status.yaml#L842-L842",
-          "version": "repo-lines-v1:sha256:75f7a5e69bcb5afd24ff9f5558bbe6f761b0e47308dfc034b1877fc7261b240a:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNzVmN2E1ZTY5YmNiNWFmZDI0ZmY5ZjU1NThiYmU2Zjc2MWIwZTQ3MzA4ZGZjMDM0YjE4NzdmYzcyNjFiMjQwYSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNzVmN2E1ZTY5YmNiNWFmZDI0ZmY5ZjU1NThiYmU2Zjc2MWIwZTQ3MzA4ZGZjMDM0YjE4NzdmYzcyNjFiMjQwYSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZjg2YTFmMDIwZGIxNDlmYTYzMmRiNTMzYjhhYTZhMTBkMTU5ZDlhMWU2ZjZjMjFkYmE5ZmZlNjgyNTJmMTBhNyIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMDViZTMyYzc1MDJhZTdjYjk5ZGY1NDIxYWJkMWJiNTg4M2FmNThjZjJkOTgzNDY4YTRmNDBkYTBlZGU2ZDc1MCJ9"
+          "resource": "repo://_bmad-output/implementation-artifacts/sprint-status.yaml",
+          "version": "repo-file-v1:sha256:1a05092d4ef7e49198848fe2203dbb280b6e81b44c09f98cf5e2a4a486420009"
         },
         {
           "resource": "repo://src/app/(dashboard)/settings/layout.tsx",
@@ -231,18 +231,70 @@
       "statement": "Design-system changes are validated with the focused suite `npx vitest run src/styles/__tests__ src/components/ui/__tests__ src/components/product` rather than the full run; token edits also require npm run build because the compiled CSS is what the contrast test parses, and primitive changes must keep the four updated consumer modal tests (shared Russian close label «Закрыть») green.",
       "evidence": [
         {
-          "resource": "repo://_bmad-output/implementation-artifacts/sprint-status.yaml#L834-L834",
-          "version": "repo-lines-v1:sha256:54ec570ae4942ae0824ef54ede83daf02acc474eaf0ef253977b101f59d08bfb:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNTRlYzU3MGFlNDk0MmFlMDgyNGVmNTRlZGU4M2RhZjAyYWNjNDc0ZWFmMGVmMjUzOTc3YjEwMWY1OWQwOGJmYiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNTRlYzU3MGFlNDk0MmFlMDgyNGVmNTRlZGU4M2RhZjAyYWNjNDc0ZWFmMGVmMjUzOTc3YjEwMWY1OWQwOGJmYiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNDQ1MTI1OTM3M2RmZDdmNDc0ODY5YzQzMjgzZDU0NGNmMjlkNTllMTRkMmRlOTBkODBkMWRjZmQwZGM5ODAyMiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMzM2ZDFmODgzYzg0OWEyOGU1Yzc1MWI2MjcyZjZiYmMyMjAyYjI1ZGVmY2NkYTZkZmE5MDhiYTc0ZDQ4ZTBkMSJ9"
+          "resource": "repo://_bmad-output/implementation-artifacts/sprint-status.yaml",
+          "version": "repo-file-v1:sha256:1a05092d4ef7e49198848fe2203dbb280b6e81b44c09f98cf5e2a4a486420009"
         },
         {
           "resource": "repo://src/app/(dashboard)/orders/__tests__/orders-presentation-source-contracts.test.ts",
           "version": "repo-file-v1:sha256:633d6d37f77ea2fc678674e4aee6f37aa03ee662b50580576883656ff07b59d1"
         }
       ]
+    },
+    {
+      "id": "claim_607511a8e9494a1783b37ae97f0f9876",
+      "statement": "The migrated settings family (Stories 173.3/173.7) composes ui/card, ui/alert, ui/badge, and ui/skeleton primitives with semantic status tokens: CabinetInfoCard maps Jam tiers via a Record<JamTier,string> style map using status-information/status-success /30-border + /10-tint pairs and a deliberate status-warning for an unrecognized backend tier, delays loading skeletons via useDelayedLoadingState so slow loads flip to a polite role=\"status\" warning instead of fabricating content; TaxSettingsForm renders query state through the product ContextBar (taxSettingsContext), keeps draft/baseline TaxSettingsDraft state with pristine rebase (a refetch replaces the draft only when it matches the baseline), role-gates writes via canManageOperationalData, and delegates sections/actions/warning-dialog to sibling modules.",
+      "evidence": [
+        {
+          "resource": "repo://src/components/custom/settings/CabinetInfoCard.tsx",
+          "version": "repo-file-v1:sha256:fb72cdb87853a6c4a7726c418a844fb9ccd71455fd05a94a7ff6228468d08a35"
+        },
+        {
+          "resource": "repo://src/components/custom/settings/TaxSettingsForm.tsx",
+          "version": "repo-file-v1:sha256:cb3590e88775d9f9eb40e4efc29794ed62594b55e7e237bd069aa64dfd86c9db"
+        }
+      ]
+    },
+    {
+      "id": "claim_a6f83281c6fd45de9abafc7e530ece1d",
+      "statement": "The tariffs-admin family (Story 173.6) follows the slim-orchestrator pattern: TariffSettingsForm delegates all logic to useTariffSettingsForm (react-hook-form + Zod via tariffSettingsSchema, dirty tracking, save-confirm lifecycle), skeleton/error to TariffFormSkeleton/TariffFormError, and actions to TariffFormActions, rendering six collapsible rate sections framed by TariffSectionWrapper with exact nested-tier label association; the form Card is a focusable region (tabIndex={-1} with focus-visible ring) so pending-safe save can deterministically move focus, and unavailable fields surface as labeled evidence (unavailableFieldLabels) rather than zeros.",
+      "evidence": [
+        {
+          "resource": "repo://src/components/custom/tariffs-admin/TariffSettingsForm.tsx",
+          "version": "repo-file-v1:sha256:a2948c5268853bb7d2e28cb3d314ac283692b6973044cfb385df89da8f2ed69e"
+        },
+        {
+          "resource": "repo://src/components/custom/tariffs-admin/useTariffSettingsForm.ts",
+          "version": "repo-file-v1:sha256:e4a16f9957fac472061147ad16386a9763cddec77b0f1a9c405a16adff23b034"
+        }
+      ]
+    },
+    {
+      "id": "claim_e1f075a3caa04e3ebad77993340b15f4",
+      "statement": "The notifications family (Story 173.5) composes ui Card/Alert over usePreferencesPanelState (local draft, dirty detection, save/cancel): NotificationPreferencesPanel renders four EventTypeCards, LanguageRadio, and PreferencesActionBar; when Telegram is unbound the panel is disabled (opacity-50 pointer-events-none) rather than hidden, and its loading state is an honest role=\"status\" pulse skeleton with motion-reduce:animate-none.",
+      "evidence": [
+        {
+          "resource": "repo://src/components/notifications/NotificationPreferencesPanel.tsx",
+          "version": "repo-file-v1:sha256:a7a68fa43b495012b5edac463d0f8b264880170109430cbb4aef079d303979aa"
+        }
+      ]
+    },
+    {
+      "id": "claim_08dd42bb20ae4cbaac309cee749a17a5",
+      "statement": "ShipmentsTable is the canonical product-tables consumer for the shipments family (Stories 173.8/173.9): it composes ResponsiveTable/Header/SortButton/NumericCell/TableState from the tables subtree barrel with an explicit TableConsumerContract — a pallets numeric column (end-aligned, integer precision, count unit, tabularNumerals, fullValueAccess 'visible'), caller-controlled createdAt sorting, selection kind 'none', and caller-rendered row actions with the accessible name pattern «Открыть отправку {entityId}» — while filtering, pagination, and sort toggling stay route-owned callbacks, and narrow screens fall back to ShipmentQueueCards preserving identity/status/date/action.",
+      "evidence": [
+        {
+          "resource": "repo://src/components/custom/shipments/ShipmentQueueCards.tsx",
+          "version": "repo-file-v1:sha256:155f94e021bf0e1e0ca205cb8e02bdc23ee370c1bd9a4227136e3f04697ba955"
+        },
+        {
+          "resource": "repo://src/components/custom/shipments/ShipmentsTable.tsx",
+          "version": "repo-file-v1:sha256:464fd8149407be44328b1cadaa003b276ce7e52d96f7674b9e8468b8c45ee75e"
+        }
+      ]
     }
   ],
   "verification": {
     "by": "openwiki/0.4.3",
-    "at": "2026-08-29T08:47:45.377Z"
+    "at": "2026-08-30T08:47:56.434Z"
   }
 }

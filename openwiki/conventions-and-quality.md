@@ -1,45 +1,17 @@
 ---
 type: "Engineering Standards"
 title: "Conventions & Quality Gates"
-description: "Coding standards and automated quality gates — file-size limits, TypeScript strictness, the Defensive Frontend Principle, ratchet baseline gates, and the two-pass review discipline."
-sources:
-  - id: openwiki-source-8037e2358a2c4f9b2c722a11
-    resource: repo://AGENTS.md
-  - id: openwiki-source-a2371d6362e5db4bc834ad03
-    resource: repo://CLAUDE.md
-  - id: openwiki-source-276795f6d5ad19adb078c64e
-    resource: repo://eslint.config.js
-  - id: openwiki-source-5b54a58d1b51cd490b0e7162
-    resource: repo://package.json
-  - id: openwiki-source-23775c3de52f3ab95a13cb8b
-    resource: repo://README.md
-  - id: openwiki-source-cf420d2a3bbc3f5b978f6bfe
-    resource: repo://scripts/.check-docs-baseline.txt
-  - id: openwiki-source-93be2452ba6015c243eb2277
-    resource: repo://scripts/.locale-percent-baseline.txt
-  - id: openwiki-source-7e46d883fe1bcda72cae11f8
-    resource: repo://scripts/check-anti-pattern-8-normalizer.sh
-  - id: openwiki-source-923e9b0f6880bb117fed18e3
-    resource: repo://scripts/check-doc-citations.sh
-  - id: openwiki-source-f1a63cd07f9c5e8ce68e5902
-    resource: repo://scripts/check-e2e-bare-skips.mjs
-  - id: openwiki-source-fe55be4cddefac27c4372aea
-    resource: repo://scripts/check-e2e-bare-skips.test.mjs
-  - id: openwiki-source-e3dffa80f0c12adcdd00840d
-    resource: repo://scripts/check-e2e-fixed-waits.mjs
-  - id: openwiki-source-2c0332dfeb73d3489e439b09
-    resource: repo://scripts/check-e2e-vacuous-assertions.mjs
-  - id: openwiki-source-d04f4722a3d19a2f20e7ee82
-    resource: repo://scripts/check-eslint-rules.sh
-  - id: openwiki-source-f8125e376025e8041a2c3f86
-    resource: repo://scripts/check-next-async-params.sh
-  - id: openwiki-source-a33125899c73194a4c9f0b33
-    resource: repo://scripts/check-privacy-console.mjs
-generated: { by: "openwiki/0.4.3", at: "2026-08-29T08:47:45.377Z" }
+description: "Coding standards and automated quality gates — file-size limits, TypeScript strictness, the Defensive Frontend Principle, the presentation-source-contract test pattern, ratchet baseline gates, and the two-pass review discipline."
+tags: [conventions, quality-gates, testing, eslint, review-discipline, presentation-contracts]
 verified:
   - by: openwiki/0.4.3
-    at: 2026-08-29T08:47:45.377Z
+    at: 2026-08-30T08:47:56.434Z
+sources:
+  - id: openwiki-source-a2371d6362e5db4bc834ad03
+    resource: repo://CLAUDE.md
+generated: { by: "openwiki/0.4.3", at: "2026-08-30T08:47:56.434Z" }
 ---
+
 # Conventions & Quality Gates
 
 The project enforces a rigorous set of coding standards and automated quality gates. These are load-bearing for every PR — not optional guidelines.
@@ -58,7 +30,7 @@ The canonical references for conventions are:
 | Source files | 200 lines (ESLint `max-lines`, `skipBlankLines` + `skipComments`) | ~150 lines (proactive extraction) |
 | Test files, fixtures, mock handlers | 800 lines | — |
 
-Enforced via `eslint.config.js` flat config. `next lint` is deprecated and does NOT load this — enforcement is exclusively via `npx eslint`.
+Enforced via `eslint.config.js` flat config. `next lint` is deprecated and does NOT load this — enforcement is exclusively via `npm run lint` / `npx eslint`, plus the `npm run check:max-lines` cross-check script.
 
 ## TypeScript Rules
 
@@ -86,6 +58,28 @@ Referenced as "AP#N" throughout the codebase:
 
 See [API Layer & Normalizers](api-and-normalizers.md) for AP#8 details.
 
+## Presentation-Source-Contract Test Pattern
+
+The Epic 173 settings/shipments migration established a two-layer test contract that now appears across every migrated page: a **page-level source-contract test** colocated in the route's `__tests__/` directory, plus **component-level behavior/state contracts** for the migrated forms.
+
+### Layer 1 — Page source contracts
+
+Each migrated route owns a `*-presentation-source-contracts.test.ts` (Vitest, no DOM) that reads production source with `node:fs` and asserts four families of invariants. The pattern appears for settings/backfill (Story 173.2), settings/cabinet (173.3), settings/notifications (173.5), settings/tariffs (173.6), settings/tax (173.7), the shipments list (173.8), and shipment detail (173.9), as well as earlier analytics/cogs/monitor routes (40+ such suites total):
+
+1. **Pinned production catalog** — the test enumerates every production file the route owns (either recursively discovering non-test `.ts/.tsx` files under the route directory, as backfill does, or via an explicit `OWNED_PRODUCTION_FILES` array cross-checked against directory discovery, as shipments and cabinet do) and asserts the exact expected list. Adding or removing a file in a migrated route fails the suite until the catalog is consciously updated.
+2. **No legacy palette or contextual hex** — every owned file must not match `LEGACY_PALETTE` (Tailwind palette classes like `text-yellow-600`, `bg-blue-500`, etc. across ~20 color families and shades 50–950) nor `CONTEXTUAL_HEX` (inline hex literals like `'#3B82F6'` in strings or Tailwind arbitrary values `bg-[#...]`). Colors must come from semantic design-system tokens instead of raw palettes.
+3. **Merged semantic compositions** — pages must use the shared design-system compositions (`PageHeader`, `ContextBar`, `PageState`, `ResponsiveTable`/`TableState`, `FilterToolbar`, `StatusBadge`) and must NOT reintroduce `min-h-screen` layout; tables must use accessibility affordances like `kind: 'horizontal-scroll'` with Russian `regionLabel` and `caption` strings.
+4. **Raw-palette helpers banished** — legacy helper functions such as `getStatusConfig`/`getProgressColorClass` and raw `<button>` elements in migrated render trees are asserted absent by name.
+
+### Layer 2 — Component behavior/state contracts
+
+The migrated forms keep their behavior suites and gain story-scoped contracts:
+
+- `TaxSettingsForm.test.tsx` holds the Story 66.3-FE behavior regression suite (tax-system radios, VAT checkbox, conditional manual-rate fields) with mocked TanStack hooks, while `TaxSettingsForm.story-173-7.test.tsx` pins the migration state contract: named loading state (`role="status"` with `aria-busy`), recoverable query-error state (`role="alert"` + "Повторить загрузку" retry button wired to `refetch`), and out-of-range percentage rejection without issuing a request.
+- `TariffSettingsForm.test.tsx` holds the Story 52-FE.2 field-rendering contract (all 21 editable fields grouped by category, accessible Russian labels), while `TariffSettingsForm.story-173-6.test.tsx` adds the Story 173.6 form state and accessibility contract.
+
+The net effect: a migrated page cannot silently regress to raw palette classes, ad-hoc layout, or unnamed loading/error states, because the contract tests fail on source text itself, independent of rendered output.
+
 ## Defensive Frontend Principle
 
 > Full text: `CLAUDE-PATTERNS.md` § Defensive Frontend Principle
@@ -104,7 +98,7 @@ See [API Layer & Normalizers](api-and-normalizers.md) for AP#8 details.
 
 ## Quality Gates (Ratchet Scripts)
 
-Each gate has an accepted baseline. Stories close only when all gates match their baselines.
+Each story closes only when every quality gate matches its accepted baseline (the CLAUDE.md "Accepted Baselines" table); when a story legitimately moves a baseline, that table is updated in the same PR.
 
 | Gate | Command | Baseline |
 |------|---------|----------|
@@ -115,14 +109,14 @@ Each gate has an accepted baseline. Stories close only when all gates match thei
 | Dot-locale percent | `npm run check:locale-percent` | Ratchet ↓ — current count 4 in `scripts/.locale-percent-baseline.txt` (started at ~108); lower the baseline when migrating |
 | AP#8 normalizer | `npm run check:anti-pattern-8-normalizer` | Ratchet guard vs baseline (`scripts/.anti-pattern-8-normalizer-baseline.txt`) |
 | ESLint | `npm run lint` | 0 errors, 0 warnings (zero-warning policy, `--max-warnings 0` in `lint` + `lint:fix`, Story 164.4) |
-| Vitest | `npm test -- --run` | ≥ 19394 passing, 0 failed (floor; skipped informational) |
+| Vitest | `npm test -- --run` | ≥ 19615 passing, 0 failed (floor; additions OK, regressions not; skipped informational) |
 | E2E bare skips | `npm run check:e2e-bare-skips` + `scripts/check-e2e-bare-skips.test.mjs` | No bare `.skip` without reason in owned E2E specs |
 | Max-lines cross-check | `npm run check:max-lines` | Matches the ESLint `max-lines` caps (200 source / 800 test) |
 | Privacy console guard | `npm run check:privacy` | 0 forbidden `console.*` calls in PII-adjacent files (see [Testing & Operations](testing-and-ops.md#privacy-console-check)) |
 | Privacy + diagnostic-capture unit tests | `npm run test:privacy` | Console guard + diagnostic-capture-policy tests pass (see [Testing & Operations](testing-and-ops.md#diagnostic-capture-policy)) |
 | Outbound network guards | focused vitest run + `e2e/outbound-network-guard.spec.ts` | All non-local test network attempts denied (see [Testing & Operations](testing-and-ops.md#outbound-network-guards)) |
 | Playwright static boundary | `npx vitest run src/test/playwright-static-boundary.test.ts` | No raw `@playwright/test` imports / dynamic code outside approved modules |
-| E2E vacuous assertions (AP#6) | `npm run check:e2e-assertions` + `src/test/e2e-vacuous-assertions.test.ts` | AST scanner finds tautological assertions (`>= 0`, `|| true`, always-true) in owned E2E specs; self-test under `npm test` |
+| E2E vacuous assertions (AP#6) | `npm run check:e2e-assertions` + `src/test/e2e-vacuous-assertions.test.ts` | AST scanner finds tautological assertions (`>= 0`, `\|\| true`, always-true) in owned E2E specs; self-test under `npm test` |
 | E2E fixed waits (AP#7) | `npm run check:e2e-waits` + `src/test/e2e-fixed-waits.test.ts` | AST scanner finds `waitForTimeout`, raw `setTimeout`, and arbitrary wait helpers (`sleep`/`delay`/`pause`) in owned E2E specs; self-test under `npm test` |
 
 ### Ratchet gate behavior
@@ -137,7 +131,7 @@ Ratchet gates (check:docs, check:locale-percent, check:anti-pattern-8-normalizer
 
 ## Two-Pass Review Discipline
 
-Every story closes only after **two adversarial code-review passes** in fresh contexts, both completed before flipping `Status: review → done`.
+Every story closes only after **two adversarial code-review passes** in fresh contexts, both completed before flipping `Status: review → done` and before any commit.
 
 - **1st pass** typically catches structural/correctness defects
 - **2nd pass** catches narrative/factual/attestation drift
@@ -147,7 +141,7 @@ Every story closes only after **two adversarial code-review passes** in fresh co
 1. Novel-pattern story → ≥3 passes by default
 2. Cumulative >12 findings → 3rd pass mandatory
 3. High-density Nth pass (>5 findings) → (N+1)th mandatory
-4. Meta-claim escalation → (N+1)th evaluates self-referential claims
+4. Meta-claim escalation → (N+1)th evaluates self-referential claims — MANDATORY for discipline-codification stories (default 4-pass schedule), RECOMMENDED otherwise; a declined escalation must carry the "unaudited meta-claim" qualifier
 
 **Marker convention**: Each pass produces a `### Post-Nth-pass-review fixes (YYYY-MM-DD)` sub-heading in the story's Dev Agent Record; two such headings prove both passes ran before approving a `review` PR.
 
