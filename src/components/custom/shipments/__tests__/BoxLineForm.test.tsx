@@ -4,18 +4,25 @@ import userEvent from '@testing-library/user-event'
 import { renderWithProviders } from '@/test/utils/test-utils'
 import { BoxLineForm } from '../BoxLineForm'
 import type { BoxLine } from '@/types/shipment-cost'
+import { useRef, useState } from 'react'
 
 const mockAddAsync = vi.fn()
 const mockUpdateAsync = vi.fn()
+let mockIsAdding = false
+let mockIsUpdating = false
 
 vi.mock('@/hooks/use-box-lines', () => ({
   useAddBoxLine: () => ({
     mutateAsync: mockAddAsync,
-    isPending: false,
+    get isPending() {
+      return mockIsAdding
+    },
   }),
   useUpdateBoxLine: () => ({
     mutateAsync: mockUpdateAsync,
-    isPending: false,
+    get isPending() {
+      return mockIsUpdating
+    },
   }),
 }))
 
@@ -28,8 +35,20 @@ vi.mock('@/hooks/useProducts', () => ({
 }))
 
 vi.mock('@/components/custom/sku-packaging/ProductCombobox', () => ({
-  ProductCombobox: ({ onChange }: { onChange: (id: number | null) => void }) => (
-    <button data-testid="mock-product-combobox" onClick={() => onChange(999)}>
+  ProductCombobox: ({
+    onChange,
+    ...props
+  }: {
+    onChange: (id: number | null) => void
+    'aria-invalid'?: boolean
+  }) => (
+    <button
+      type="button"
+      role="combobox"
+      data-testid="mock-product-combobox"
+      aria-invalid={props['aria-invalid']}
+      onClick={() => onChange(999)}
+    >
       Select Product
     </button>
   ),
@@ -58,6 +77,8 @@ describe('BoxLineForm', () => {
 
   beforeEach(() => {
     vi.clearAllMocks()
+    mockIsAdding = false
+    mockIsUpdating = false
   })
 
   it('renders create dialog with correct title when open', () => {
@@ -98,6 +119,7 @@ describe('BoxLineForm', () => {
 
     await waitFor(() => {
       expect(screen.getByText('Укажите целое число > 0')).toBeInTheDocument()
+      expect(countInput).toHaveFocus()
     })
     expect(mockUpdateAsync).not.toHaveBeenCalled()
   })
@@ -135,8 +157,64 @@ describe('BoxLineForm', () => {
 
     await waitFor(() => {
       expect(screen.getByText('Ошибка сохранения. Попробуйте ещё раз.')).toBeInTheDocument()
+      expect(screen.getByRole('alert')).toHaveTextContent('Ошибка сохранения')
     })
     expect(onClose).not.toHaveBeenCalled()
+  })
+
+  it('focuses the product combobox when it is the first invalid create field', async () => {
+    const user = userEvent.setup()
+    renderWithProviders(
+      <BoxLineForm open onClose={onClose} shipmentId="s-1" palletId="p-1" editingLine={null} />
+    )
+
+    await user.click(screen.getByRole('button', { name: 'Добавить' }))
+
+    await waitFor(() => expect(screen.getByRole('combobox')).toHaveFocus())
+  })
+
+  it('exposes pending save through a polite status', () => {
+    mockIsUpdating = true
+    renderWithProviders(
+      <BoxLineForm open onClose={onClose} shipmentId="s-1" palletId="p-1" editingLine={editLine} />
+    )
+
+    expect(screen.getByRole('status')).toHaveTextContent('Сохраняем изменения товарной строки')
+  })
+
+  it('exposes pending create through a polite status', () => {
+    mockIsAdding = true
+    renderWithProviders(
+      <BoxLineForm open onClose={onClose} shipmentId="s-1" palletId="p-1" editingLine={null} />
+    )
+
+    expect(screen.getByRole('status')).toHaveTextContent('Добавляем товарную строку')
+  })
+
+  it('exposes a create failure as an alert', async () => {
+    const user = userEvent.setup()
+    mockAddAsync.mockRejectedValueOnce(new Error('Server error'))
+    renderWithProviders(
+      <BoxLineForm open onClose={onClose} shipmentId="s-1" palletId="p-1" editingLine={null} />
+    )
+
+    await user.click(screen.getByRole('combobox'))
+    await user.type(screen.getByLabelText('Количество коробок'), '3')
+    await user.click(screen.getByRole('button', { name: 'Добавить' }))
+
+    await waitFor(() => expect(screen.getByRole('alert')).toHaveTextContent('Ошибка сохранения'))
+  })
+
+  it('restores focus to the invoking trigger after a successful save', async () => {
+    const user = userEvent.setup()
+    mockUpdateAsync.mockResolvedValueOnce({ id: 'bl-1' })
+    renderWithProviders(<FocusReturnHarness />)
+    const trigger = screen.getByText('Invoking edit trigger').closest('button')
+    expect(trigger).not.toBeNull()
+
+    await user.click(screen.getByRole('button', { name: 'Сохранить' }))
+
+    await waitFor(() => expect(trigger).toHaveFocus())
   })
 
   it('submits create with nmId and boxCount', async () => {
@@ -172,3 +250,24 @@ describe('BoxLineForm', () => {
     expect(screen.queryByText('Добавить товар')).not.toBeInTheDocument()
   })
 })
+
+function FocusReturnHarness() {
+  const [open, setOpen] = useState(true)
+  const triggerRef = useRef<HTMLButtonElement>(null)
+
+  return (
+    <>
+      <button ref={triggerRef} type="button">
+        Invoking edit trigger
+      </button>
+      <BoxLineForm
+        open={open}
+        onClose={() => setOpen(false)}
+        shipmentId="s-1"
+        palletId="p-1"
+        editingLine={editLine}
+        returnFocusRef={triggerRef}
+      />
+    </>
+  )
+}

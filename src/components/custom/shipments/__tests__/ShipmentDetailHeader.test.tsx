@@ -58,8 +58,13 @@ describe('ShipmentDetailHeader', () => {
 
   it('renders shipment name and status badge for DRAFT', () => {
     renderWithProviders(<ShipmentDetailHeader shipment={baseDraft} />)
-    expect(screen.getByText('Мартовская отправка')).toBeInTheDocument()
+    expect(
+      screen.getByRole('heading', { level: 1, name: 'Мартовская отправка' })
+    ).toBeInTheDocument()
     expect(screen.getByText('ЧЕРНОВИК')).toBeInTheDocument()
+    expect(document.querySelector('[data-slot="page-header"]')).toBeInTheDocument()
+    expect(document.querySelector('[data-slot="context-bar"]')).toBeInTheDocument()
+    expect(document.querySelector('[data-slot="status-badge"]')).toBeInTheDocument()
   })
 
   it('renders delivery mode and formatted cost', () => {
@@ -91,9 +96,10 @@ describe('ShipmentDetailHeader', () => {
     expect(screen.getByText('ПОДТВЕРЖДЕНА')).toBeInTheDocument()
   })
 
-  it('renders dash when name is null', () => {
+  it('retains entity identity when name is null', () => {
     renderWithProviders(<ShipmentDetailHeader shipment={{ ...baseDraft, name: null }} />)
-    expect(screen.getByText('—')).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: 'Отправка s-001' })).toBeInTheDocument()
+    expect(screen.getByText('Название не указано')).toBeInTheDocument()
   })
 
   it('calls deleteAsync when delete is confirmed', async () => {
@@ -123,5 +129,16 @@ describe('ShipmentDetailHeader', () => {
     await waitFor(() => {
       expect(screen.getByText('Редактировать отправку')).toBeInTheDocument()
     })
+  })
+
+  it('restores focus to the exact edit trigger after the dialog closes', async () => {
+    const user = userEvent.setup()
+    renderWithProviders(<ShipmentDetailHeader shipment={baseDraft} />)
+    const trigger = screen.getByRole('button', { name: 'Редактировать' })
+
+    await user.click(trigger)
+    await user.keyboard('{Escape}')
+
+    await waitFor(() => expect(trigger).toHaveFocus())
   })
 })

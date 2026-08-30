@@ -7,11 +7,12 @@
  * Route: /shipments/:id
  */
 
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
+import Link from 'next/link'
 import { useParams } from 'next/navigation'
-import { Alert, AlertDescription } from '@/components/ui/alert'
 import { Button } from '@/components/ui/button'
-import { AlertCircle } from 'lucide-react'
+import { PageHeader } from '@/components/product/PageHeader'
+import { PageState } from '@/components/product/states/PageState'
 import { useShipment } from '@/hooks/use-shipments'
 import { ShipmentDetailHeader } from '@/components/custom/shipments/ShipmentDetailHeader'
 import { PalletAccordion } from '@/components/custom/shipments/PalletAccordion'
@@ -26,6 +27,18 @@ import {
   type CalculationResultItem,
   type ValidationError,
 } from '@/types/shipment-cost'
+import { ApiError } from '@/types/api'
+import { ROUTES } from '@/lib/routes'
+
+const DETAIL_BREADCRUMBS = [
+  { label: 'Главная', href: ROUTES.DASHBOARD },
+  { label: 'Отправки', href: ROUTES.SHIPMENTS.ROOT },
+  { label: 'Детали отправки' },
+]
+
+function DetailRouteHeader() {
+  return <PageHeader title="Детали отправки" breadcrumbs={DETAIL_BREADCRUMBS} compact />
+}
 
 export default function ShipmentDetailPage() {
   const params = useParams<{ id: string }>()
@@ -33,57 +46,113 @@ export default function ShipmentDetailPage() {
   const { data: shipment, isLoading, isError, error, refetch } = useShipment(shipmentId)
   const [calcResults, setCalcResults] = useState<CalculationResultItem[]>([])
   const [validationErrors, setValidationErrors] = useState<ValidationError[]>([])
+  const [calculationLimitation, setCalculationLimitation] = useState<string | null>(null)
+  const validationSummaryRef = useRef<HTMLDivElement>(null)
+  const expectedNmIds = new Set(
+    shipment?.pallets.flatMap(pallet => pallet.boxLines.map(line => line.nmId)) ?? []
+  )
+
+  useEffect(() => {
+    if (validationErrors.length > 0) validationSummaryRef.current?.focus()
+  }, [validationErrors])
 
   function handleCalculateStart() {
     setCalcResults([])
     setValidationErrors([])
+    setCalculationLimitation(null)
   }
 
   function handleCalculateSuccess(result: CalculateShipmentResponse) {
-    // iter-65 (request #193 §2): the live backend returns `{ pallets: [{ lines }] }`, NOT the
-    // documented `{ results }` envelope — so `result.results` is undefined, which previously
-    // crashed CalculationResults (undefined.length). Coerce to [] to keep the state a valid array
-    // (graceful empty-state) until the backend aligns the envelope.
-    setCalcResults(Array.isArray(result.results) ? result.results : [])
+    // Keep the detail usable when the live service omits or only partially fills `results`.
+    const detailedResults = Array.isArray(result.results) ? result.results : []
+    const resultNmIds = new Set(detailedResults.map(item => item.nmId))
+    const hasDetailedResults =
+      expectedNmIds.size > 0 && [...expectedNmIds].every(nmId => resultNmIds.has(nmId))
+    setCalcResults(detailedResults)
     setValidationErrors([])
+    setCalculationLimitation(
+      hasDetailedResults
+        ? null
+        : detailedResults.length > 0
+          ? 'Расчёт завершён, но детализация получена не для всех товаров.'
+          : 'Расчёт завершён, но детализация по товарам недоступна в ответе сервиса.'
+    )
   }
 
   function handleCalculateError(errors: ValidationError[]) {
     setValidationErrors(errors)
     setCalcResults([])
+    setCalculationLimitation(null)
   }
 
   if (isLoading) {
     return (
       <div className="space-y-6">
-        <div className="animate-pulse space-y-4">
-          <div className="h-10 bg-muted rounded w-1/3" />
-          <div className="h-24 bg-muted rounded" />
-          <div className="h-64 bg-muted rounded" />
-        </div>
+        <DetailRouteHeader />
+        <PageState
+          state="loading"
+          title="Загрузка отправки"
+          explanation="Получаем состав, стоимость и состояние отправки."
+          trust="Идентификатор маршрута сохранён; действия появятся после загрузки данных."
+        />
       </div>
     )
   }
 
   if (isError || !shipment) {
+    const isNotFound = error instanceof ApiError && error.status === 404
+
     return (
       <div className="space-y-6">
-        <h1 className="text-2xl font-semibold">Детали отправки</h1>
-        <Alert variant="destructive">
-          <AlertCircle className="h-4 w-4" />
-          <AlertDescription className="flex items-center justify-between">
-            <span>{error instanceof Error ? error.message : 'Ошибка загрузки отправки'}</span>
-            <Button variant="outline" size="sm" onClick={() => refetch()}>
-              Повторить
-            </Button>
-          </AlertDescription>
-        </Alert>
+        <DetailRouteHeader />
+        {isNotFound ? (
+          <PageState
+            state="not-found"
+            title="Отправка не найдена"
+            explanation="Запрошенная отправка не существует или больше недоступна."
+            trust="Данные других отправок не затронуты."
+            action={
+              <Button asChild variant="outline">
+                <Link href={ROUTES.SHIPMENTS.ROOT}>Вернуться к отправкам</Link>
+              </Button>
+            }
+          />
+        ) : (
+          <PageState
+            state="error"
+            title="Не удалось загрузить отправку"
+            explanation="Сервис временно не вернул детали отправки."
+            trust="Изменения не выполнялись; запрос можно безопасно повторить."
+            recovery={
+              <Button type="button" variant="outline" onClick={() => refetch()}>
+                Повторить
+              </Button>
+            }
+          />
+        )}
       </div>
     )
   }
 
   const isDraft = shipment.status === ShipmentStatus.DRAFT
   const highlightedLineIds = getAffectedBoxLineIds(validationErrors)
+  const boxLines = shipment.pallets.flatMap(pallet => pallet.boxLines)
+  const calculatedLineCount = boxLines.filter(line => line.finalCostPerUnit !== null).length
+  const hasStoredPartialCalculation =
+    calculatedLineCount > 0 && calculatedLineCount < boxLines.length
+  const partialLimitation =
+    calculationLimitation ??
+    (hasStoredPartialCalculation
+      ? 'Стоимость рассчитана не для всех товарных строк. Недоступные значения обозначены прочерком.'
+      : null)
+  const palletContent = (
+    <PalletAccordion
+      shipmentId={shipmentId}
+      pallets={shipment.pallets}
+      isDraft={isDraft}
+      highlightedLineIds={highlightedLineIds}
+    />
+  )
 
   return (
     <div className="space-y-6">
@@ -93,14 +162,28 @@ export default function ShipmentDetailPage() {
         onCalculateSuccess={handleCalculateSuccess}
         onCalculateError={handleCalculateError}
       />
-      <ValidationErrorPanel errors={validationErrors} />
+      <div
+        ref={validationSummaryRef}
+        tabIndex={-1}
+        aria-label={validationErrors.length ? 'Сводка ошибок валидации' : undefined}
+        className="focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+      >
+        <ValidationErrorPanel errors={validationErrors} />
+      </div>
       <CalculationResults results={calcResults} />
-      <PalletAccordion
-        shipmentId={shipmentId}
-        pallets={shipment.pallets}
-        isDraft={isDraft}
-        highlightedLineIds={highlightedLineIds}
-      />
+      {partialLimitation ? (
+        <PageState
+          state="partial"
+          title="Расчёт выполнен частично"
+          explanation="Доступные данные сохранены в контексте отправки."
+          trust="Исходный состав паллет и товарных строк не изменён."
+          limitation={partialLimitation}
+        >
+          {palletContent}
+        </PageState>
+      ) : (
+        palletContent
+      )}
     </div>
   )
 }

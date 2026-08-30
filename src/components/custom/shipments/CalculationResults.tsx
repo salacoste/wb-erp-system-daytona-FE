@@ -5,14 +5,12 @@
  * Epic 76-FE, Story 76.4 (AC: #2)
  */
 
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from '@/components/ui/table'
+import { TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
+import { ResponsiveTable } from '@/components/product/tables/ResponsiveTable'
+import type {
+  TableConsumerContract,
+  TableNumericColumnContract,
+} from '@/components/product/tables/contracts'
 import { CheckCircle2 } from 'lucide-react'
 import { formatCurrency } from '@/lib/utils'
 import type { CalculationResultItem } from '@/types/shipment-cost'
@@ -23,6 +21,46 @@ interface CalculationResultsProps {
   results: CalculationResultItem[] | undefined
 }
 
+function currencyColumn(id: string, label: string): TableNumericColumnContract {
+  return {
+    id,
+    label,
+    alignment: 'end',
+    precision: 'caller-preserved',
+    unit: { kind: 'currency', code: 'RUB' },
+    tabularNumerals: true,
+    fullValueAccess: 'visible',
+  }
+}
+
+const CALCULATION_TABLE_CONTRACT: TableConsumerContract = {
+  primaryColumn: { id: 'nmId', label: 'Товар' },
+  numericColumns: [
+    currencyColumn('unitCostRub', 'Себестоимость (PCU)'),
+    currencyColumn('deliveryCostPerUnit', 'Доставка (DCU)'),
+    currencyColumn('finalCostPerUnit', 'Итого на единицу (FCU)'),
+    {
+      id: 'totalUnits',
+      label: 'Количество',
+      alignment: 'end',
+      precision: 'integer',
+      unit: { kind: 'quantity', label: 'штук' },
+      tabularNumerals: true,
+      fullValueAccess: 'visible',
+    },
+    currencyColumn('finalCostLine', 'Сумма по строке'),
+  ],
+  sorting: { kind: 'none' },
+  selection: { kind: 'none' },
+  rowActions: { kind: 'none' },
+  narrowStrategy: {
+    kind: 'horizontal-scroll',
+    regionLabel: 'Таблица результатов расчёта',
+    minimumWidth: '48rem',
+  },
+  pagination: { kind: 'none' },
+}
+
 export function CalculationResults({ results }: CalculationResultsProps) {
   if (!results?.length) return null
 
@@ -30,12 +68,15 @@ export function CalculationResults({ results }: CalculationResultsProps) {
 
   return (
     <div className="space-y-3">
-      <div className="flex items-center gap-2 text-green-600">
+      <div className="flex items-center gap-2 text-status-success">
         <CheckCircle2 className="h-5 w-5" aria-hidden="true" />
         <h3 className="text-sm font-semibold">Результаты расчёта</h3>
       </div>
-      <div className="rounded-md border overflow-x-auto">
-        <Table>
+      <div className="rounded-md border">
+        <ResponsiveTable
+          accessibleLabel="Результаты расчёта по товарам"
+          contract={CALCULATION_TABLE_CONTRACT}
+        >
           <TableHeader>
             <TableRow>
               <TableHead>Товар</TableHead>
@@ -57,15 +98,17 @@ export function CalculationResults({ results }: CalculationResultsProps) {
                     )}
                   </div>
                 </TableCell>
-                <TableCell className="text-right">{formatCurrency(item.unitCostRub)}</TableCell>
-                <TableCell className="text-right">
+                <TableCell className="text-right tabular-nums">
+                  {formatCurrency(item.unitCostRub)}
+                </TableCell>
+                <TableCell className="text-right tabular-nums">
                   {formatCurrency(item.deliveryCostPerUnit)}
                 </TableCell>
-                <TableCell className="text-right font-medium">
+                <TableCell className="text-right font-medium tabular-nums">
                   {formatCurrency(item.finalCostPerUnit)}
                 </TableCell>
-                <TableCell className="text-right">{item.totalUnits}</TableCell>
-                <TableCell className="text-right font-medium">
+                <TableCell className="text-right tabular-nums">{item.totalUnits}</TableCell>
+                <TableCell className="text-right font-medium tabular-nums">
                   {formatCurrency(item.finalCostLine)}
                 </TableCell>
               </TableRow>
@@ -74,10 +117,10 @@ export function CalculationResults({ results }: CalculationResultsProps) {
               <TableCell colSpan={5} className="text-right">
                 Итого
               </TableCell>
-              <TableCell className="text-right">{formatCurrency(totalCost)}</TableCell>
+              <TableCell className="text-right tabular-nums">{formatCurrency(totalCost)}</TableCell>
             </TableRow>
           </TableBody>
-        </Table>
+        </ResponsiveTable>
       </div>
     </div>
   )

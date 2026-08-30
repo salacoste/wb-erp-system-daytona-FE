@@ -33,26 +33,34 @@ export function PalletAccordion({
     variables: removingPalletId,
   } = useRemovePallet(shipmentId)
   const [newPalletId, setNewPalletId] = useState<string | null>(null)
+  const [announcement, setAnnouncement] = useState('')
 
   async function handleAdd() {
+    setAnnouncement('Добавляем паллету')
     try {
       const pallet = await addAsync()
       setNewPalletId(pallet.id)
+      setAnnouncement('Паллета добавлена')
     } catch {
-      // Error handled by TanStack Query
+      setAnnouncement('Не удалось добавить паллету')
     }
   }
 
   async function handleRemove(palletId: string) {
+    setAnnouncement('Удаляем паллету')
     try {
       await removeAsync(palletId)
+      setAnnouncement('Паллета удалена')
     } catch {
-      // Error handled by TanStack Query
+      setAnnouncement('Не удалось удалить паллету')
     }
   }
 
   return (
     <div className="space-y-4">
+      <p className="sr-only" role="status" aria-live="polite">
+        {announcement}
+      </p>
       <div className="flex items-center justify-between">
         <h2 className="text-lg font-semibold">Паллеты ({pallets.length})</h2>
         {isDraft && (

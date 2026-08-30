@@ -123,6 +123,7 @@ describe('ShipmentActions error paths', () => {
     await userEvent.click(screen.getByText('Рассчитать'))
     await waitFor(() => {
       expect(toast.error).toHaveBeenCalledWith('Ошибка при расчёте')
+      expect(screen.getByRole('status')).toHaveTextContent('Ошибка при расчёте')
     })
   })
 
@@ -166,6 +167,7 @@ describe('ShipmentActions error paths', () => {
       expect(onError).toHaveBeenCalledWith([
         { code: 'MISSING_COGS', message: 'No COGS', affectedIds: ['1'] },
       ])
+      expect(screen.getByRole('status')).toHaveTextContent('Расчёт требует исправления данных')
     })
   })
 })

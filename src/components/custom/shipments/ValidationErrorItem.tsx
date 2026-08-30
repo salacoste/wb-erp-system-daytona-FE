@@ -24,12 +24,12 @@ export function ValidationErrorItem({ code, message, affectedIds }: ValidationEr
   const borderClass =
     config.severity === 'error'
       ? 'border-destructive/50 bg-destructive/5'
-      : 'border-yellow-500/50 bg-yellow-50'
+      : 'border-status-warning/30 bg-status-warning/10'
 
   return (
     <div className={`flex items-start gap-3 rounded-md border p-3 ${borderClass}`}>
       <Icon
-        className={`h-5 w-5 shrink-0 mt-0.5 ${config.severity === 'error' ? 'text-destructive' : 'text-yellow-600'}`}
+        className={`h-5 w-5 shrink-0 mt-0.5 ${config.severity === 'error' ? 'text-destructive' : 'text-status-warning'}`}
         aria-hidden="true"
       />
       <div className="flex-1 space-y-1">

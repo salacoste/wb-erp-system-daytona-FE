@@ -90,6 +90,7 @@ describe('ShipmentEditDialog', () => {
     await waitFor(() => {
       expect(screen.getByText('Название обязательно')).toBeInTheDocument()
       expect(screen.getByText('Введите число больше 0')).toBeInTheDocument()
+      expect(nameInput).toHaveFocus()
     })
   })
 
@@ -138,6 +139,7 @@ describe('ShipmentEditDialog', () => {
 
     await waitFor(() => {
       expect(screen.getByText('Conflict')).toBeInTheDocument()
+      expect(screen.getByRole('alert')).toHaveTextContent('Conflict')
     })
   })
 
@@ -147,5 +149,6 @@ describe('ShipmentEditDialog', () => {
       <ShipmentEditDialog shipment={baseShipment} open={true} onClose={onClose} />
     )
     expect(screen.getByRole('button', { name: /сохранение/i })).toBeDisabled()
+    expect(screen.getByRole('status')).toHaveTextContent('Сохраняем изменения отправки')
   })
 })

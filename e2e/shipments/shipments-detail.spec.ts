@@ -13,8 +13,180 @@
  */
 
 import { test, expect, type Page } from '../fixtures/network-test'
+import AxeBuilder from '@axe-core/playwright'
 
 const SHIPMENTS_ROUTE = '/shipments'
+const STORY_DETAIL_ROUTE = '/shipments/story-173-9-detail'
+const STORY_DETAIL_API = '**/v1/shipments/story-173-9-detail'
+
+const STORY_DETAIL_FIXTURE = {
+  id: 'story-173-9-detail',
+  cabinetId: 'cabinet-e2e',
+  name: 'Отправка для приёмки',
+  deliveryMode: 'FIXED_VEHICLE',
+  totalDeliveryCost: '15000.0000',
+  palletRate: null,
+  status: 'DRAFT',
+  createdBy: 'manager@example.test',
+  confirmedBy: null,
+  confirmedAt: null,
+  supplyId: null,
+  pallets: [
+    {
+      id: 'pallet-story-173-9',
+      shipmentId: 'story-173-9-detail',
+      palletNumber: 1,
+      boxLines: [
+        {
+          id: 'line-calculated',
+          palletId: 'pallet-story-173-9',
+          nmId: 123456,
+          boxCount: 2,
+          totalUnits: 20,
+          unitCostRub: '500.00',
+          boxVolume: '1.00',
+          totalVolume: '2.00',
+          volumeShare: '0.50',
+          allocatedDeliveryCost: '1000.00',
+          deliveryCostPerUnit: '50.00',
+          finalCostPerUnit: '550.00',
+          finalCostLine: '11000.00',
+          createdAt: '2026-08-30T08:00:00.000Z',
+          updatedAt: '2026-08-30T08:00:00.000Z',
+        },
+        {
+          id: 'line-pending',
+          palletId: 'pallet-story-173-9',
+          nmId: 789012,
+          boxCount: 1,
+          totalUnits: 5,
+          unitCostRub: null,
+          boxVolume: null,
+          totalVolume: null,
+          volumeShare: null,
+          allocatedDeliveryCost: null,
+          deliveryCostPerUnit: null,
+          finalCostPerUnit: null,
+          finalCostLine: null,
+          createdAt: '2026-08-30T08:00:00.000Z',
+          updatedAt: '2026-08-30T08:00:00.000Z',
+        },
+      ],
+      createdAt: '2026-08-30T08:00:00.000Z',
+      updatedAt: '2026-08-30T08:00:00.000Z',
+    },
+  ],
+  createdAt: '2026-08-30T08:00:00.000Z',
+  updatedAt: '2026-08-30T09:00:00.000Z',
+} as const
+
+async function installStoryDetailFixture(
+  page: Page,
+  options: { status?: 200 | 404 | 500; gate?: Promise<void> } = {}
+) {
+  await page.route(STORY_DETAIL_API, async route => {
+    await options.gate
+    const status = options.status ?? 200
+    await route.fulfill({
+      status,
+      contentType: 'application/json',
+      body: JSON.stringify(
+        status === 200
+          ? STORY_DETAIL_FIXTURE
+          : { message: status === 404 ? 'Hostile missing detail' : 'Hostile service detail' }
+      ),
+    })
+  })
+}
+
+test.describe('Story 173.9 deterministic shipment detail', () => {
+  test('exposes entity, lifecycle, partial evidence, accordion, and named table contracts', async ({
+    page,
+  }) => {
+    await installStoryDetailFixture(page)
+    await page.goto(STORY_DETAIL_ROUTE, { waitUntil: 'domcontentloaded' })
+
+    await expect(
+      page.getByRole('heading', { level: 1, name: 'Отправка для приёмки' })
+    ).toBeVisible()
+    await expect(page.locator('[data-slot="context-bar"]')).toBeVisible()
+    await expect(page.locator('[data-slot="status-badge"]')).toContainText('ЧЕРНОВИК')
+    await expect(page.getByRole('region', { name: 'Расчёт выполнен частично' })).toBeVisible()
+
+    const palletTrigger = page.getByRole('button', { name: 'Раскрыть паллету 1' })
+    await expect(palletTrigger).toHaveAttribute('aria-expanded', 'false')
+    await palletTrigger.click()
+    await expect(palletTrigger).toHaveAttribute('aria-expanded', 'true')
+    await expect(page.getByRole('table', { name: 'Товары паллеты' })).toBeVisible()
+    await expect(page.getByRole('region', { name: 'Таблица товаров паллеты' })).toHaveAttribute(
+      'tabindex',
+      '0'
+    )
+  })
+
+  test('keeps route identity visible while detail data is loading', async ({ page }) => {
+    let releaseResponse!: () => void
+    const gate = new Promise<void>(resolve => {
+      releaseResponse = resolve
+    })
+    await installStoryDetailFixture(page, { gate })
+    await page.goto(STORY_DETAIL_ROUTE, { waitUntil: 'domcontentloaded' })
+
+    await expect(page.getByRole('heading', { level: 1, name: 'Детали отправки' })).toBeVisible()
+    await expect(page.getByRole('region', { name: 'Загрузка отправки' })).toHaveAttribute(
+      'data-state',
+      'loading'
+    )
+
+    releaseResponse()
+    await expect(
+      page.getByRole('heading', { level: 1, name: 'Отправка для приёмки' })
+    ).toBeVisible()
+  })
+
+  test('renders a safe not-found terminal with a return action', async ({ page }) => {
+    await installStoryDetailFixture(page, { status: 404 })
+    await page.goto(STORY_DETAIL_ROUTE, { waitUntil: 'domcontentloaded' })
+
+    await expect(page.getByRole('region', { name: 'Отправка не найдена' })).toHaveAttribute(
+      'data-state',
+      'not-found'
+    )
+    await expect(page.getByRole('link', { name: 'Вернуться к отправкам' })).toHaveAttribute(
+      'href',
+      '/shipments'
+    )
+    await expect(page.getByText('Hostile missing detail')).toHaveCount(0)
+  })
+
+  test('preserves mobile navigation and contains wide detail tables locally', async ({ page }) => {
+    await page.setViewportSize({ width: 320, height: 700 })
+    await installStoryDetailFixture(page)
+    await page.goto(STORY_DETAIL_ROUTE, { waitUntil: 'domcontentloaded' })
+    await page.getByRole('button', { name: 'Раскрыть паллету 1' }).click()
+
+    const scrollRegion = page.getByRole('region', { name: 'Таблица товаров паллеты' })
+    const regionBox = await scrollRegion.boundingBox()
+    expect(regionBox?.width).toBeLessThanOrEqual(320)
+    expect(
+      await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)
+    ).toBe(true)
+    await scrollRegion.focus()
+    await expect(scrollRegion).toBeFocused()
+  })
+
+  test('has no deterministic WCAG 2.2 AA violations in the loaded detail state', async ({
+    page,
+  }) => {
+    await installStoryDetailFixture(page)
+    await page.goto(STORY_DETAIL_ROUTE, { waitUntil: 'domcontentloaded' })
+
+    const results = await new AxeBuilder({ page })
+      .withTags(['wcag2a', 'wcag2aa', 'wcag22aa'])
+      .analyze()
+    expect(results.violations).toEqual([])
+  })
+})
 
 /**
  * Navigate to the first available shipment detail page.
