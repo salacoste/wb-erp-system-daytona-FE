@@ -1,6 +1,6 @@
 /**
  * E2E Tests: Settings Pages
- * Covers /settings/cabinet, /settings/tariffs, /settings/notifications
+ * Covers /settings/cabinet, /settings/tariffs, /settings/notifications, /settings/tax
  *
  * Conventions (from CLAUDE.md / CLAUDE-ANTI-PATTERNS.md):
  * - domcontentloaded + element-presence waits only (anti-pattern #9 — no networkidle)
@@ -292,6 +292,156 @@ async function openTariffSaveDialog(page: Page) {
   await expect(save).toBeEnabled()
   await save.press('Enter')
   return page.getByRole('alertdialog', { name: 'Сохранить изменения тарифов?' })
+}
+
+interface TaxSettingsPayload {
+  taxSystem: 'usn6' | 'usn15' | 'manual' | null
+  taxRate: number | null
+  vatPayer: boolean
+  vatRate: number
+}
+
+interface TaxApiFixtureOptions {
+  failPutAttempts?: number
+  holdFirstPut?: boolean
+}
+
+interface TaxApiFixtureState {
+  putPayloads: TaxSettingsPayload[]
+  releaseFirstPut: () => void
+}
+
+const TAX_CABINET_FIXTURE = {
+  id: 'cabinet-story-173-7',
+  name: 'Story 173.7 cabinet',
+  isActive: true,
+  createdAt: '2026-08-30T00:00:00Z',
+  updatedAt: '2026-08-30T00:00:00Z',
+  taxSystem: 'usn6',
+  taxRate: null,
+  vatPayer: false,
+  vatRate: null,
+  targetMarginPct: 20,
+} as const
+
+function assertTaxPayload(payload: unknown): asserts payload is TaxSettingsPayload {
+  if (typeof payload !== 'object' || payload === null || Array.isArray(payload)) {
+    throw new Error('Tax PUT payload must be an object')
+  }
+  const record = payload as Record<string, unknown>
+  const keys = Object.keys(record).sort()
+  if (keys.join(',') !== 'taxRate,taxSystem,vatPayer,vatRate') {
+    throw new Error(`Unexpected tax PUT keys: ${keys.join(',')}`)
+  }
+  const allowedTaxSystems: unknown[] = [null, 'usn6', 'usn15', 'manual']
+  if (!allowedTaxSystems.includes(record.taxSystem)) {
+    throw new Error(`Unexpected taxSystem: ${String(record.taxSystem)}`)
+  }
+  if (record.taxRate !== null && typeof record.taxRate !== 'number') {
+    throw new Error('taxRate must be a number or null')
+  }
+  if (typeof record.vatPayer !== 'boolean' || typeof record.vatRate !== 'number') {
+    throw new Error('vatPayer and vatRate must preserve their API types')
+  }
+  if (
+    (record.taxSystem === 'manual' &&
+      (typeof record.taxRate !== 'number' || record.taxRate < 0 || record.taxRate > 100)) ||
+    (record.taxSystem !== 'manual' && record.taxRate !== null)
+  ) {
+    throw new Error('taxRate must match the selected tax system and the inclusive 0–100 range')
+  }
+  if (
+    (record.vatPayer && ![0, 5, 20, 22].includes(record.vatRate)) ||
+    (!record.vatPayer && record.vatRate !== 0)
+  ) {
+    throw new Error('vatRate must match VAT-payer state and the supported rate catalog')
+  }
+}
+
+async function installTaxApiFixture(
+  page: Page,
+  { failPutAttempts = 0, holdFirstPut = false }: TaxApiFixtureOptions = {}
+): Promise<TaxApiFixtureState> {
+  let currentCabinet: Record<string, unknown> = { ...TAX_CABINET_FIXTURE }
+  let remainingFailures = failPutAttempts
+  let releaseFirstPut: () => void = () => {}
+  const firstPutGate = holdFirstPut
+    ? new Promise<void>(resolve => {
+        releaseFirstPut = resolve
+      })
+    : Promise.resolve()
+  const state: TaxApiFixtureState = {
+    putPayloads: [],
+    releaseFirstPut: () => releaseFirstPut(),
+  }
+
+  await page.route('**/v1/cabinets/**', async route => {
+    const request = route.request()
+    const pathname = new URL(request.url()).pathname
+    if (!/^\/v1\/cabinets\/[^/]+\/?$/.test(pathname)) {
+      throw new Error(`Unexpected tax fixture endpoint: ${request.method()} ${pathname}`)
+    }
+    if (request.method() === 'GET') {
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify(currentCabinet),
+      })
+      return
+    }
+    if (request.method() !== 'PUT') {
+      throw new Error(`Unexpected tax fixture method: ${request.method()} ${pathname}`)
+    }
+
+    const payload = request.postDataJSON() as unknown
+    assertTaxPayload(payload)
+    state.putPayloads.push(payload)
+    if (state.putPayloads.length === 1) await firstPutGate
+    if (remainingFailures > 0) {
+      remainingFailures -= 1
+      await route.fulfill({
+        status: 503,
+        contentType: 'application/json',
+        body: JSON.stringify({ message: 'Временная ошибка налогового сервиса' }),
+      })
+      return
+    }
+
+    currentCabinet = {
+      ...currentCabinet,
+      ...payload,
+      vatRate: payload.vatPayer ? payload.vatRate : null,
+      updatedAt: '2026-08-30T01:00:00Z',
+    }
+    await route.fulfill({
+      status: 200,
+      contentType: 'application/json',
+      body: JSON.stringify(currentCabinet),
+    })
+  })
+
+  return state
+}
+
+async function expectTaxSettingsLoaded(page: Page) {
+  await expect(page.getByRole('heading', { level: 1, name: 'Налоговые настройки' })).toBeVisible({
+    timeout: TIMEOUTS.navigation,
+  })
+  const form = page.getByRole('form', { name: 'Налоговые настройки' })
+  await expect(form).toBeVisible()
+  await expect(form.getByRole('radio', { name: 'УСН 6% — по доходам' })).toBeChecked()
+  await expect(form.getByRole('checkbox', { name: 'Являюсь плательщиком НДС' })).not.toBeChecked()
+}
+
+async function enterManualTaxWithVat(page: Page, rate = '7.5') {
+  const form = page.getByRole('form', { name: 'Налоговые настройки' })
+  await form.getByRole('radio', { name: 'Пользовательская ставка' }).press('Space')
+  const taxRate = form.getByLabel('Ставка налога (%)')
+  await taxRate.focus()
+  await page.keyboard.type(rate)
+  await form.getByRole('checkbox', { name: 'Являюсь плательщиком НДС' }).press('Space')
+  await form.getByRole('radio', { name: '20% — стандартная ставка' }).press('Space')
+  await expect(taxRate).toHaveValue(rate)
 }
 
 test.describe('Settings Pages', () => {
@@ -655,25 +805,165 @@ test.describe('Settings Pages', () => {
   // ===========================================================================
 
   test.describe('Tax page', () => {
-    test('navigates to /settings/tax and shows heading', async ({ page }) => {
+    test('loads the exact saved tax and VAT values', async ({ page }) => {
+      await installTaxApiFixture(page)
       await page.goto(SETTINGS_ROUTES.tax, { waitUntil: 'domcontentloaded' })
-
-      await expect(page.getByRole('heading', { name: 'Налоговые настройки' })).toBeVisible({
-        timeout: TIMEOUTS.navigation,
-      })
+      await expectTaxSettingsLoaded(page)
+      await expect(page.getByText('Система налогообложения и НДС')).toBeVisible()
+      await expect(page.getByText('Налоговые настройки получены')).toBeVisible()
     })
 
-    test('renders form area or skeleton', async ({ page }) => {
+    test('sends one exact PUT after keyboard editing and restores focus after success', async ({
+      page,
+    }) => {
+      const fixture = await installTaxApiFixture(page)
       await page.goto(SETTINGS_ROUTES.tax, { waitUntil: 'domcontentloaded' })
-      await expect(page.getByRole('heading', { name: 'Налоговые настройки' })).toBeVisible({
-        timeout: TIMEOUTS.navigation,
-      })
+      await expectTaxSettingsLoaded(page)
+      await enterManualTaxWithVat(page)
 
-      const hasForm = (await page.locator('form').count()) > 0
-      const hasSkeleton = (await page.getByTestId('skeleton').count()) > 0
-      test.skip(!hasForm && !hasSkeleton, 'Neither form nor skeleton visible — needs backend data')
-      expect(hasForm || hasSkeleton).toBeTruthy()
+      await page.getByRole('button', { name: 'Сохранить', exact: true }).press('Enter')
+      await expect(page.getByRole('status', { name: 'Результат сохранения' })).toHaveText(
+        /Налоговые настройки сохранены/
+      )
+      await expect(page.getByRole('form', { name: 'Налоговые настройки' })).toBeFocused()
+      expect(fixture.putPayloads).toEqual([
+        { taxSystem: 'manual', taxRate: 7.5, vatPayer: true, vatRate: 20 },
+      ])
     })
+
+    test('rejects an out-of-range manual rate without a PUT and focuses the field', async ({
+      page,
+    }) => {
+      const fixture = await installTaxApiFixture(page)
+      await page.goto(SETTINGS_ROUTES.tax, { waitUntil: 'domcontentloaded' })
+      await expectTaxSettingsLoaded(page)
+      const form = page.getByRole('form', { name: 'Налоговые настройки' })
+      await form.getByRole('radio', { name: 'Пользовательская ставка' }).press('Space')
+      await form.getByLabel('Ставка налога (%)').fill('100.01')
+      await form.getByRole('button', { name: 'Сохранить', exact: true }).press('Enter')
+
+      await expect(form.getByRole('alert')).toHaveText(/Исправьте ошибки в форме/)
+      await expect(form.getByLabel('Ставка налога (%)')).toBeFocused()
+      await expect(form.getByLabel('Ставка налога (%)')).toHaveAttribute('aria-invalid', 'true')
+      expect(fixture.putPayloads).toEqual([])
+    })
+
+    test('requires keyboard confirmation before saving without a tax system', async ({ page }) => {
+      const fixture = await installTaxApiFixture(page)
+      await page.goto(SETTINGS_ROUTES.tax, { waitUntil: 'domcontentloaded' })
+      await expectTaxSettingsLoaded(page)
+      const form = page.getByRole('form', { name: 'Налоговые настройки' })
+      await form.getByRole('radio', { name: 'Не настроена' }).press('Space')
+      await form.getByRole('button', { name: 'Сохранить', exact: true }).press('Enter')
+
+      const dialog = page.getByRole('alertdialog', { name: 'Сохранить без налоговой системы?' })
+      await expect(dialog).toBeVisible()
+      await expect(dialog).toContainText('Прибыль продолжит отображаться до вычета налогов')
+      expect(fixture.putPayloads).toEqual([])
+      await dialog.getByRole('button', { name: 'Сохранить без системы' }).press('Enter')
+      await expect(dialog).toBeHidden()
+      await expect(form).toBeFocused()
+      expect(fixture.putPayloads).toEqual([
+        { taxSystem: null, taxRate: null, vatPayer: false, vatRate: 0 },
+      ])
+    })
+
+    test('locks every control, prevents duplicate PUTs, and honors reduced motion while pending', async ({
+      page,
+    }) => {
+      await page.emulateMedia({ reducedMotion: 'reduce' })
+      const fixture = await installTaxApiFixture(page, { holdFirstPut: true })
+      await page.goto(SETTINGS_ROUTES.tax, { waitUntil: 'domcontentloaded' })
+      await expectTaxSettingsLoaded(page)
+      await enterManualTaxWithVat(page)
+      const form = page.getByRole('form', { name: 'Налоговые настройки' })
+      await form.getByRole('button', { name: 'Сохранить', exact: true }).press('Enter')
+      await expect.poll(() => fixture.putPayloads.length).toBe(1)
+
+      await expect(form.getByRole('status', { name: 'Состояние сохранения' })).toBeVisible()
+      await expect(form.getByLabel('Ставка налога (%)')).toBeDisabled()
+      await expect(form.getByRole('checkbox', { name: 'Являюсь плательщиком НДС' })).toBeDisabled()
+      const pendingButton = form.getByRole('button', { name: 'Сохранение…' })
+      await expect(pendingButton).toBeDisabled()
+      await expect(pendingButton.locator('svg')).toHaveCSS('animation-name', 'none')
+      await pendingButton.click({ force: true })
+      expect(fixture.putPayloads).toHaveLength(1)
+
+      fixture.releaseFirstPut()
+      await expect(page.getByRole('status', { name: 'Результат сохранения' })).toBeVisible()
+      expect(fixture.putPayloads).toHaveLength(1)
+    })
+
+    test('retains a failed draft and retries the identical PUT', async ({ page }) => {
+      const fixture = await installTaxApiFixture(page, { failPutAttempts: 1 })
+      await page.goto(SETTINGS_ROUTES.tax, { waitUntil: 'domcontentloaded' })
+      await expectTaxSettingsLoaded(page)
+      await enterManualTaxWithVat(page)
+      const form = page.getByRole('form', { name: 'Налоговые настройки' })
+      await form.getByRole('button', { name: 'Сохранить', exact: true }).press('Enter')
+
+      await expect(form.getByRole('alert')).toHaveText(/Черновик сохранён/)
+      await expect(form.getByLabel('Ставка налога (%)')).toHaveValue('7.5')
+      await form.getByRole('button', { name: 'Повторить сохранение' }).press('Enter')
+      await expect(page.getByRole('status', { name: 'Результат сохранения' })).toBeVisible()
+      expect(fixture.putPayloads).toEqual([
+        { taxSystem: 'manual', taxRate: 7.5, vatPayer: true, vatRate: 20 },
+        { taxSystem: 'manual', taxRate: 7.5, vatPayer: true, vatRate: 20 },
+      ])
+    })
+
+    for (const theme of ['light', 'dark'] as const) {
+      for (const width of [320, 390, 768, 1024, 1280, 1440]) {
+        test(`${theme} tax settings reflows without overflow at ${width}px`, async ({ page }) => {
+          await installTaxApiFixture(page)
+          await page.setViewportSize({ width, height: width < 1024 ? 844 : 900 })
+          await page.goto(SETTINGS_ROUTES.tax, { waitUntil: 'domcontentloaded' })
+          await setTheme(page, theme)
+          await expectTaxSettingsLoaded(page)
+
+          const form = page.getByRole('form', { name: 'Налоговые настройки' })
+          await form.getByRole('radio', { name: 'Пользовательская ставка' }).click()
+          await expect(form.getByLabel('Ставка налога (%)')).toBeVisible()
+          await expect(form.getByText('Допустимое значение: от 0 до 100 процентов.')).toBeVisible()
+          await expect(form.getByText('%', { exact: true })).toBeVisible()
+          await expectMainHasNoHorizontalOverflow(page)
+          await expectDocumentHasNoHorizontalOverflow(page)
+
+          if (width === 390 || width === 1280) {
+            await expectSettingsAxeClean(page, `${theme} tax settings at ${width}px`)
+          }
+        })
+      }
+
+      test(`${theme} tax settings preserves warning containment at 200 percent zoom`, async ({
+        page,
+      }) => {
+        await installTaxApiFixture(page)
+        await page.setViewportSize({ width: 640, height: 900 })
+        await page.goto(SETTINGS_ROUTES.tax, { waitUntil: 'domcontentloaded' })
+        await setTheme(page, theme)
+        await expectTaxSettingsLoaded(page)
+        await page.evaluate(() => {
+          document.documentElement.style.zoom = '200%'
+        })
+
+        const form = page.getByRole('form', { name: 'Налоговые настройки' })
+        await form.getByRole('radio', { name: 'Не настроена' }).click()
+        await form.getByRole('button', { name: 'Сохранить', exact: true }).click()
+        const dialog = page.getByRole('alertdialog', { name: 'Сохранить без налоговой системы?' })
+        await expect(dialog).toBeVisible()
+        await expectMainHasNoHorizontalOverflow(page)
+        await expectDocumentHasNoHorizontalOverflow(page)
+        const viewport = page.viewportSize()
+        const box = await dialog.boundingBox()
+        expect(viewport).not.toBeNull()
+        expect(box).not.toBeNull()
+        expect(box!.x).not.toBeLessThan(0)
+        expect(box!.y).not.toBeLessThan(0)
+        expect(box!.x + box!.width).toBeLessThanOrEqual(viewport!.width + 1)
+        expect(box!.y + box!.height).toBeLessThanOrEqual(viewport!.height + 1)
+      })
+    }
   })
 
   // ===========================================================================

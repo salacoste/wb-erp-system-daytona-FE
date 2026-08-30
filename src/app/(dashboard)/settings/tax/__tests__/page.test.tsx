@@ -41,12 +41,16 @@ describe('TaxSettingsPage', () => {
       expect(skeletons.length).toBeGreaterThanOrEqual(3)
     })
 
-    it('should not render page title in loading state', () => {
+    it('keeps the route identity visible and marks cabinet resolution as busy', () => {
       mockCabinetId.mockReturnValue(null)
 
       render(<TaxSettingsPage />)
 
-      expect(screen.queryByRole('heading')).not.toBeInTheDocument()
+      expect(screen.getByRole('heading', { level: 1, name: 'Налоговые настройки' })).toBeVisible()
+      expect(screen.getByRole('status', { name: 'Подготовка налоговых настроек' })).toHaveAttribute(
+        'aria-busy',
+        'true'
+      )
     })
 
     it('should not render TaxSettingsForm in loading state', () => {
@@ -92,10 +96,10 @@ describe('TaxSettingsPage', () => {
       expect(skeletons.length).toBe(0)
     })
 
-    it('should render within a max-w-2xl container', () => {
+    it('should render within the focused max-w-3xl form container', () => {
       const { container } = render(<TaxSettingsPage />)
 
-      const mainContainer = container.querySelector('.max-w-2xl')
+      const mainContainer = container.querySelector('.max-w-3xl')
       expect(mainContainer).toBeInTheDocument()
     })
   })
@@ -130,13 +134,13 @@ describe('TaxSettingsPage', () => {
       expect(heading).toHaveTextContent('Налоговые настройки')
     })
 
-    it('should have a descriptive paragraph after the heading', () => {
+    it('should have a visible route description after the heading', () => {
       mockCabinetId.mockReturnValue('cabinet-456')
 
       render(<TaxSettingsPage />)
 
       const description = screen.getByText(/настройки системы налогообложения/i)
-      expect(description.tagName).toBe('P')
+      expect(description).toBeVisible()
     })
   })
 })

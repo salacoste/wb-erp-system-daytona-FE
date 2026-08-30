@@ -1,10 +1,6 @@
 /**
- * TDD RED phase tests for TaxSettingsForm component
- * Story 66.3-FE: Tax & VAT Settings Page
- * Epic 66-FE: Tax & Accounting Frontend
- *
- * These tests define the expected behavior of the TaxSettingsForm
- * component BEFORE it is implemented. All tests should FAIL.
+ * Regression tests for the Story 66.3-FE Tax & VAT Settings behavior contract.
+ * Story-specific migration coverage is maintained in TaxSettingsForm.story-173-7.test.tsx.
  */
 
 import { describe, it, expect, vi, beforeEach } from 'vitest'
@@ -157,7 +153,7 @@ describe('TaxSettingsForm (Story 66.3-FE)', () => {
 
     renderWithProviders(<TaxSettingsForm cabinetId={TEST_CABINET_ID} />)
 
-    expect(screen.getByRole('button', { name: /сохранить/i })).toBeDisabled()
+    expect(screen.getByRole('button', { name: /сохранение/i })).toBeDisabled()
   })
 
   it('9: calls mutation with correct payload on submit', async () => {
