@@ -1,6 +1,6 @@
 # Story 173.7-FE: Migrate Tax Settings
 
-Status: done — feature PR #347 merged (`f0d1fa2e`, merge `7f9f046f`); exact product branch/worktree/path/open-PR cleanup proved; the exact-five-file documentation closeout lane is active and will be followed by one narrow auxiliary lifecycle record; Story-owned 11-file feature manifest; fresh full floor **19,688/0/1,246**; focused Story **5 files / 64 tests**; Playwright **99 tests discovered** in the settings-pages file, including **20 tax scenarios**, with browser execution explicitly unavailable because real `.env.e2e` configuration and credentials were absent; production build **70/70**; final independent product review has zero unresolved P0–P2 findings; route-ledger rows intentionally remain `planned` until Story 174.5.
+Status: done — feature PR #347 merged (`f0d1fa2e`, merge `7f9f046f`); documentation closeout PR #348 merged (`14edf30e`, merge `27577ca2`); exact product and initial documentation branch/worktree/path/open-PR cleanup proved; only the auxiliary lifecycle-record lane remains; Story-owned 11-file feature manifest; fresh full floor **19,688/0/1,246**; focused Story **5 files / 64 tests**; Playwright **99 tests discovered** in the settings-pages file, including **20 tax scenarios**, with browser execution explicitly unavailable because real `.env.e2e` configuration and credentials were absent; production build **70/70**; final independent product and documentation reviews have zero unresolved P0–P2 findings; route-ledger rows intentionally remain `planned` until Story 174.5.
 
 ## Story
 
@@ -72,6 +72,8 @@ Pinned runtime: Node `24.18.0`, npm `11.11.0` for the authoritative leader valid
 - The final strict external review found one P1 cabinet A→B isolation defect and one P2 route-catalog discovery bypass. The route now keys the form by cabinet, stale callbacks are mount-guarded, four direct cabinet-transition regressions pass, and owned route/component discovery is recursive.
 - Independent final re-review covered exact product diff SHA-256 `3ef5d0b72c4b15d8078e68158a2a6b48fbdb207a30a7d360b332ddd4fdb154a3`.
 - Final disposition: P0 = 0, P1 = 0, P2 = 0; scope PASS; exact 11-file manifest PASS; forbidden files unchanged PASS; payload semantics PASS; E2E static contract PASS; recommendation APPROVE.
+- Before the initial docs snapshot was frozen, its stale next-Story checklist was corrected from Story 173.7 product bootstrap to the Story 173.8 shipments owner boundary.
+- Independent documentation review covered exact staged diff SHA-256 `d48aaed2ea0908596ba5e363daf3b431ff6073c99b19beb0fafb9cff94313df8` and approved P0 = 0, P1 = 0, P2 = 0; exact-five scope PASS; 76-route parity PASS; premature-lifecycle-claims PASS.
 
 ## Lifecycle
 
@@ -79,9 +81,13 @@ Pinned runtime: Node `24.18.0`, npm `11.11.0` for the authoritative leader valid
 - Feature head: `f0d1fa2eac87c2e452d445be84c8596c091b0510`.
 - Feature merge: `7f9f046f608c411386c1d8a395fe167db317e3e0`.
 - Base/head, mergeability, clean merge state, exact 11-file manifest, and GitGuardian pass were verified before merge; merge used exact-head protection against `f0d1fa2eac87c2e452d445be84c8596c091b0510`.
-- After feature merge, primary `main` was fast-forwarded and proved equal to refreshed `origin/main` at `7f9f046f` with 0/0 divergence.
-- The product remote branch, local branch, worktree, path, stale registration, and open PRs were proved absent before the documentation lane began; only the primary worktree and this documentation worktree remained.
-- This initial documentation closeout lane will be followed by one auxiliary lifecycle-record lane that publishes the closeout PR's exact merge and cleanup facts. This record does not preclaim either documentation lane's future PR number, head, merge, primary fast-forward, or cleanup.
+- Documentation closeout PR: #348, `https://github.com/salacoste/wb-erp-system-daytona-FE/pull/348`.
+- Documentation closeout head: `14edf30ef952837803af505ddf0845d6ee4ddc17`.
+- Documentation closeout merge: `27577ca21d3c308f806a6bf5888e6b5d044e5eff`.
+- PR #348 was verified at base `main`, exact head OID, one commit, five files, `MERGEABLE/CLEAN`, and GitGuardian success before exact-head-protected merge.
+- After PR #348 merged, primary `main` was fast-forwarded and proved equal to refreshed `origin/main` at `27577ca2` with 0/0 divergence.
+- The product and initial documentation remote branches, local branches, worktrees, paths, stale registrations, and open PRs were proved absent before the auxiliary lane began; only the primary worktree remained.
+- The auxiliary lifecycle-record branch/worktree exists only to publish these already-proved facts. It makes no recursive claim about its own future PR, merge, primary fast-forward, or cleanup.
 - No deploy, production operation, direct push to `main`, force-push, dependency change, credential output, route-ledger transition, ContextBar implementation change, citation-baseline update, or unrelated debt fix occurred.
 
 ## Lessons and Carry-Outs
@@ -98,3 +104,4 @@ Pinned runtime: Node `24.18.0`, npm `11.11.0` for the authoritative leader valid
 | Date       | Change                                                                                                                                                                                                                                                                                                                                                                      |
 | ---------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | 2026-08-30 | Story 173.7 implemented, validated, independently reviewed, merged through feature PR #347, and prepared for exact-five-file documentation closeout. **Lessons:** (1) Scope drafts by cabinet identity. (2) Validate persisted numeric catalogs at runtime. (3) Discover exact source catalogs recursively. |
+| 2026-08-30 | Documentation closeout PR #348 merged and exact product/initial-docs cleanup was proved; final docs review approved the frozen five-file snapshot. **Lessons:** (1) Freeze continuation routing only after stale-state repair. (2) Separate discovery evidence from browser execution. (3) Publish cleanup facts only after proof. |

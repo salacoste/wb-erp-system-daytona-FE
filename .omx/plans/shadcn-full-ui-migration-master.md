@@ -331,8 +331,8 @@ Story identity is the numeric `Epic.Story` ID, not the descriptive sprint-status
 > Живые по-сторийные статусы: `_bmad-output/implementation-artifacts/sprint-status.yaml`.
 
 - **Epics CLOSED**: 166-FE (foundation), 167-FE (AppShell/auth, freeze-8), 168-FE (analytics core, 11/11), 169-FE (operational analytics, 15/15), 170-FE (marketing and marketplace analytics, 7/7), 171-FE (models, 9/9), and 172-FE (core operations, 17/17).
-- **Canonical Story readiness: 83/94**; Story 173.7 feature commit `f0d1fa2e` merged in PR #347 as `7f9f046f`; the exact 11-file product branch/worktree/path/open-PR residue was removed locally and remotely. Final product review records P0/P1/P2 = 0, scope PASS, and APPROVE. The exact-five-file documentation closeout lane is active from the product merge and will be followed by a narrow auxiliary lifecycle record. The settings shell owner remains available to the completed settings Stories.
-- **Program NEXT = Epic 173 / Story 173.8** only after the Story 173.7 initial documentation closeout and auxiliary lifecycle record both merge and their branch/worktree cleanup passes.
+- **Canonical Story readiness: 83/94**; Story 173.7 feature commit `f0d1fa2e` merged in PR #347 as `7f9f046f`; documentation closeout commit `14edf30e` merged in PR #348 as `27577ca2`; the exact product and initial documentation branches/worktrees/paths/open-PR residue were removed locally and remotely. Final product and documentation reviews record P0/P1/P2 = 0, scope PASS, and APPROVE. Only the auxiliary lifecycle-record lane remains. The settings shell owner remains available to the completed settings Stories.
+- **Program NEXT = Epic 173 / Story 173.8** after this auxiliary lifecycle record merges and its own branch/worktree cleanup passes.
 - **Remaining**: 173.8-13 (173.8 shipments owner, 173.12 supplies owner) → 174.1-5 (consolidation;
   174.2 — применимые design-system/source-boundary/contrast долги; 174.3 — browser/theme/axe/keyboard/visual;
   174.4 — functional/local-backend regression; trigger-specific behavior/API debts сохраняют registry-owner).
