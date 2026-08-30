@@ -10,7 +10,7 @@ import { ROUTES } from '@/lib/routes'
 
 interface SkuPackagingEmptyStateProps {
   hasBoxTypes: boolean
-  onCreateClick: () => void
+  onCreateClick: (trigger: HTMLButtonElement) => void
 }
 
 export function SkuPackagingEmptyState({
@@ -38,7 +38,7 @@ export function SkuPackagingEmptyState({
           </p>
         )}
 
-        <Button onClick={onCreateClick} disabled={!hasBoxTypes}>
+        <Button onClick={event => onCreateClick(event.currentTarget)} disabled={!hasBoxTypes}>
           <Plus className="h-4 w-4 mr-2" />
           Добавить упаковку
         </Button>

@@ -10,12 +10,14 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table'
-import { CheckCircle2, XCircle } from 'lucide-react'
+import { XCircle } from 'lucide-react'
+import { StatusBadge } from '@/components/product/metrics'
 
 export interface BulkRow {
   nmId: number
   boxTypeId: string
   unitsPerBox: number
+  boxTypeName?: string
   parseError?: string
 }
 
@@ -27,16 +29,21 @@ export interface BulkResultRow extends BulkRow {
 interface BulkPreviewTableProps {
   rows: BulkRow[] | BulkResultRow[]
   showStatus?: boolean
+  accessibleName: string
 }
 
 function isResultRow(row: BulkRow | BulkResultRow): row is BulkResultRow {
   return 'status' in row
 }
 
-export function BulkPreviewTable({ rows, showStatus }: BulkPreviewTableProps) {
+export function BulkPreviewTable({ rows, showStatus, accessibleName }: BulkPreviewTableProps) {
   return (
-    <div className="max-h-64 overflow-auto border rounded-md">
-      <Table>
+    <div className="max-h-64 rounded-md border">
+      <Table
+        aria-label={accessibleName}
+        scrollContainerTabIndex={0}
+        scrollContainerAriaLabel={`${accessibleName}: горизонтальная прокрутка`}
+      >
         <TableHeader>
           <TableRow>
             <TableHead>Код WB</TableHead>
@@ -55,15 +62,17 @@ export function BulkPreviewTable({ rows, showStatus }: BulkPreviewTableProps) {
                   : isResultRow(row) && row.status === 'error'
                     ? 'bg-destructive/10'
                     : isResultRow(row) && row.status === 'success'
-                      ? 'bg-green-50 dark:bg-green-950/20'
+                      ? 'bg-primary/5'
                       : ''
               }
             >
               <TableCell>{row.nmId || '—'}</TableCell>
               <TableCell className="font-mono text-xs truncate max-w-[200px]">
-                {row.boxTypeId || '—'}
+                {row.boxTypeName || row.boxTypeId || '—'}
               </TableCell>
-              <TableCell className="text-right">{row.unitsPerBox || '—'}</TableCell>
+              <TableCell className="text-right">
+                {row.unitsPerBox ? `${row.unitsPerBox} шт.` : '—'}
+              </TableCell>
               {showStatus && (
                 <TableCell>
                   {row.parseError ? (
@@ -72,9 +81,7 @@ export function BulkPreviewTable({ rows, showStatus }: BulkPreviewTableProps) {
                     </span>
                   ) : isResultRow(row) ? (
                     row.status === 'success' ? (
-                      <span className="text-green-600 text-sm flex items-center gap-1">
-                        <CheckCircle2 className="h-3 w-3" /> OK
-                      </span>
+                      <StatusBadge status="success" label="Сохранено" />
                     ) : (
                       <span className="text-destructive text-sm flex items-center gap-1">
                         <XCircle className="h-3 w-3" /> {row.message}
