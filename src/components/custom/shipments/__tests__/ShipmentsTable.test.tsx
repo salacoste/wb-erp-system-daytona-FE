@@ -1,9 +1,11 @@
-import { describe, it, expect, vi } from 'vitest'
-import { screen } from '@testing-library/react'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
+import { screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
+
 import { renderWithProviders } from '@/test/utils/test-utils'
-import { ShipmentsTable } from '../ShipmentsTable'
 import { DeliveryMode, ShipmentStatus, type Shipment } from '@/types/shipment-cost'
+
+import { ShipmentsTable } from '../ShipmentsTable'
 
 const mockShipments: Shipment[] = [
   {
@@ -62,67 +64,147 @@ const defaultProps = {
   onSortToggle: vi.fn(),
 }
 
+beforeEach(() => vi.clearAllMocks())
+
 describe('ShipmentsTable', () => {
-  it('renders shipment names', () => {
+  it('declares the shipment queue table and responsive contract', () => {
     renderWithProviders(<ShipmentsTable {...defaultProps} />)
-    expect(screen.getByText('Мартовская отправка')).toBeInTheDocument()
-    expect(screen.getByText('Подтверждённая')).toBeInTheDocument()
+
+    const table = screen.getByRole('table', { name: 'Очередь отправок' })
+    expect(table).toHaveAttribute('data-primary-column', 'name')
+    expect(table).toHaveAttribute('data-narrow-strategy', 'stacked-detail')
+    expect(table).toHaveAttribute('data-pagination-kind', 'offset')
+    expect(table).toHaveAttribute('data-sort-direction', 'descending')
   })
 
-  it('renders status badges', () => {
+  it('renders names, delivery modes, lifecycle statuses, and pallet precision in the table', () => {
     renderWithProviders(<ShipmentsTable {...defaultProps} />)
-    expect(screen.getByText('ЧЕРНОВИК')).toBeInTheDocument()
-    expect(screen.getByText('ПОДТВЕРЖДЕНА')).toBeInTheDocument()
+    const table = screen.getByRole('table', { name: 'Очередь отправок' })
+
+    expect(within(table).getByText('Мартовская отправка')).toBeVisible()
+    expect(within(table).getByText('Подтверждённая')).toBeVisible()
+    expect(within(table).getByText('Фиксированная стоимость')).toBeVisible()
+    expect(within(table).getByText('За паллету')).toBeVisible()
+    expect(within(table).getByText('ЧЕРНОВИК').closest('[data-status]')).toHaveAttribute(
+      'data-status',
+      'pending'
+    )
+    expect(within(table).getByText('ПОДТВЕРЖДЕНА').closest('[data-status]')).toHaveAttribute(
+      'data-status',
+      'success'
+    )
+    expect(within(table).getByRole('cell', { name: '1 паллет' })).toHaveTextContent('1')
   })
 
-  it('renders delivery mode labels', () => {
+  it('names every row action with shipment identity and preserves detail routes', () => {
     renderWithProviders(<ShipmentsTable {...defaultProps} />)
-    expect(screen.getByText('Фиксированная стоимость')).toBeInTheDocument()
-    expect(screen.getByText('За паллету')).toBeInTheDocument()
+    const table = screen.getByRole('table', { name: 'Очередь отправок' })
+
+    expect(
+      within(table).getByRole('link', { name: 'Открыть отправку «Мартовская отправка»' })
+    ).toHaveAttribute('href', '/shipments/s-001')
+    expect(
+      within(table).getByRole('link', { name: 'Открыть отправку «Подтверждённая»' })
+    ).toHaveAttribute('href', '/shipments/s-002')
   })
 
-  it('renders pallet count', () => {
+  it('retains identity, status, date, and primary action in the narrow queue', () => {
     renderWithProviders(<ShipmentsTable {...defaultProps} />)
-    expect(screen.getByText('1')).toBeInTheDocument()
-    expect(screen.getByText('0')).toBeInTheDocument()
+    const narrowQueue = screen.getByRole('group', {
+      name: 'Карточки отправок: название, статус, дата и основное действие',
+    })
+
+    expect(within(narrowQueue).getByText('Мартовская отправка')).toBeVisible()
+    expect(within(narrowQueue).getByText('ЧЕРНОВИК')).toBeVisible()
+    expect(within(narrowQueue).getByText('11.03.2026')).toBeVisible()
+    expect(
+      within(narrowQueue).getByRole('link', {
+        name: 'Открыть отправку «Мартовская отправка»',
+      })
+    ).toHaveAttribute('href', '/shipments/s-001')
   })
 
-  it('renders total count', () => {
-    renderWithProviders(<ShipmentsTable {...defaultProps} />)
-    expect(screen.getByText('Найдено: 2')).toBeInTheDocument()
+  it('uses the shipment id as a visible fallback for partial rows', () => {
+    renderWithProviders(
+      <ShipmentsTable
+        {...defaultProps}
+        shipments={[{ ...mockShipments[0], name: null }]}
+        total={1}
+      />
+    )
+
+    const table = screen.getByRole('table', { name: 'Очередь отправок' })
+    expect(within(table).getByText('Отправка s-001')).toBeVisible()
+    expect(within(table).getByText('Название не указано')).toBeVisible()
   })
 
-  it('renders view buttons with aria-label', () => {
-    renderWithProviders(<ShipmentsTable {...defaultProps} />)
-    const viewButtons = screen.getAllByRole('link', { name: 'Открыть отправку' })
-    expect(viewButtons).toHaveLength(2)
+  it('shows an explicit neutral fallback for an unknown lifecycle status', () => {
+    renderWithProviders(
+      <ShipmentsTable
+        {...defaultProps}
+        shipments={[{ ...mockShipments[0], status: 'LEGACY' as ShipmentStatus }]}
+        total={1}
+      />
+    )
+
+    const table = screen.getByRole('table', { name: 'Очередь отправок' })
+    expect(within(table).getByText('НЕИЗВЕСТНЫЙ СТАТУС')).toBeVisible()
+    expect(within(table).getByText('LEGACY')).toBeVisible()
   })
 
-  it('disables prev button on first page', () => {
-    renderWithProviders(<ShipmentsTable {...defaultProps} page={1} />)
-    expect(screen.getByRole('button', { name: 'Назад' })).toBeDisabled()
-  })
-
-  it('disables next button on last page', () => {
-    renderWithProviders(<ShipmentsTable {...defaultProps} page={1} total={5} limit={10} />)
-    expect(screen.getByRole('button', { name: 'Вперёд' })).toBeDisabled()
-  })
-
-  it('renders sort button with aria-label on date column', () => {
-    renderWithProviders(<ShipmentsTable {...defaultProps} />)
-    const sortBtn = screen.getByRole('button', { name: /сортировать по дате/i })
-    expect(sortBtn).toBeInTheDocument()
-  })
-
-  it('calls onSortToggle when sort button is clicked', async () => {
+  it('exposes the current sort direction and delegates sort changes', async () => {
     const user = userEvent.setup()
     renderWithProviders(<ShipmentsTable {...defaultProps} />)
+
+    const dateHeader = screen.getByRole('columnheader', { name: /дата создания/i })
+    expect(dateHeader).toHaveAttribute('aria-sort', 'descending')
     await user.click(screen.getByRole('button', { name: /сортировать по дате/i }))
     expect(defaultProps.onSortToggle).toHaveBeenCalledOnce()
   })
 
-  it('shows empty message when no shipments match filter', () => {
-    renderWithProviders(<ShipmentsTable {...defaultProps} shipments={[]} total={0} />)
-    expect(screen.getByText('Нет отправок по фильтру')).toBeInTheDocument()
+  it('reports result scope and disables pagination at the only page', () => {
+    renderWithProviders(<ShipmentsTable {...defaultProps} />)
+
+    expect(screen.getByText('Показано 1–2 из 2')).toBeVisible()
+    expect(screen.getByRole('button', { name: 'Предыдущая страница' })).toBeDisabled()
+    expect(screen.getByRole('button', { name: 'Следующая страница' })).toBeDisabled()
+  })
+
+  it('exposes filter state and delegates a status change', async () => {
+    const user = userEvent.setup()
+    renderWithProviders(<ShipmentsTable {...defaultProps} />)
+
+    expect(screen.getByText('Найдено отправок: 2')).toBeVisible()
+    await user.click(screen.getByRole('combobox', { name: 'Статус отправки' }))
+    await user.click(screen.getByRole('option', { name: 'Черновик' }))
+    expect(defaultProps.onStatusChange).toHaveBeenCalledWith(ShipmentStatus.DRAFT)
+  })
+
+  it('renders a recoverable filtered-empty state and clears the filter', async () => {
+    const user = userEvent.setup()
+    renderWithProviders(
+      <ShipmentsTable
+        {...defaultProps}
+        shipments={[]}
+        total={0}
+        statusFilter={ShipmentStatus.DRAFT}
+      />
+    )
+
+    expect(screen.getByText('Нет отправок по выбранному статусу.')).toBeVisible()
+    expect(screen.getByText('Применён фильтр: ЧЕРНОВИК.')).toBeVisible()
+    const resetButtons = screen.getAllByRole('button', { name: 'Показать все отправки' })
+    await user.click(resetButtons.at(-1)!)
+    expect(defaultProps.onStatusChange).toHaveBeenCalledWith(undefined)
+  })
+
+  it('keeps current data visible and announces background refresh', () => {
+    renderWithProviders(<ShipmentsTable {...defaultProps} busy />)
+
+    expect(screen.getByText('Обновляем очередь отправок, текущие данные доступны.')).toBeVisible()
+    expect(screen.getByRole('table', { name: 'Очередь отправок' })).toHaveAttribute(
+      'aria-busy',
+      'true'
+    )
   })
 })

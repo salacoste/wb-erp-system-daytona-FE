@@ -1,5 +1,5 @@
 import { describe, it, expect, vi } from 'vitest'
-import { screen } from '@testing-library/react'
+import { screen, within } from '@testing-library/react'
 import { renderWithProviders } from '@/test/utils/test-utils'
 import { ShipmentsEmptyState } from '../ShipmentsEmptyState'
 
@@ -11,20 +11,31 @@ describe('ShipmentsEmptyState', () => {
 
   it('renders empty state title and description', () => {
     renderWithProviders(<ShipmentsEmptyState {...defaultProps} />)
-    expect(screen.getByText('Нет отправок')).toBeInTheDocument()
+    expect(screen.getByRole('region', { name: 'Нет отправок' })).toHaveAttribute(
+      'data-state',
+      'empty'
+    )
     expect(
-      screen.getByText('Создайте первую отправку для расчёта стоимости доставки')
-    ).toBeInTheDocument()
+      within(screen.getByRole('region', { name: 'Нет отправок' }))
+        .getAllByText(/создайте первую отправку, чтобы рассчитать стоимость доставки/i)
+        .some(element => !element.classList.contains('sr-only'))
+    ).toBe(true)
+    expect(screen.getByText(/фильтры не применены/i)).toBeVisible()
   })
 
   it('shows packaging hint when hasSkuPackaging is false', () => {
     renderWithProviders(<ShipmentsEmptyState {...defaultProps} hasSkuPackaging={false} />)
-    expect(screen.getByText('Сначала настройте упаковку товаров')).toBeInTheDocument()
+    expect(screen.getByRole('link', { name: /настройте упаковку товаров/i })).toHaveAttribute(
+      'href',
+      '/shipments/sku-packaging'
+    )
   })
 
   it('hides packaging hint when hasSkuPackaging is true', () => {
     renderWithProviders(<ShipmentsEmptyState {...defaultProps} hasSkuPackaging={true} />)
-    expect(screen.queryByText('Сначала настройте упаковку товаров')).not.toBeInTheDocument()
+    expect(
+      screen.queryByRole('link', { name: /настройте упаковку товаров/i })
+    ).not.toBeInTheDocument()
   })
 
   it('disables create button when no packaging exists', () => {
@@ -35,5 +46,10 @@ describe('ShipmentsEmptyState', () => {
   it('enables create button when packaging exists', () => {
     renderWithProviders(<ShipmentsEmptyState {...defaultProps} hasSkuPackaging={true} />)
     expect(screen.getByRole('button', { name: /создать отправку/i })).toBeEnabled()
+  })
+
+  it('does not expose a create action to read-only users', () => {
+    renderWithProviders(<ShipmentsEmptyState {...defaultProps} canCreate={false} />)
+    expect(screen.queryByRole('button', { name: /создать отправку/i })).not.toBeInTheDocument()
   })
 })
