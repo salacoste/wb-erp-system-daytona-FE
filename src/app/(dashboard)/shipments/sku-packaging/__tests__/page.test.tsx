@@ -1,160 +1,236 @@
-/**
- * SKU Packaging Page Tests
- * Tests for src/app/(dashboard)/shipments/sku-packaging/page.tsx
- */
+import { beforeEach, describe, expect, it, vi } from 'vitest'
+import { screen, waitFor } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
+import type { RefObject } from 'react'
 
-import { describe, it, expect, vi } from 'vitest'
-import { render, screen } from '@/test/utils/test-utils'
+import { render } from '@/test/utils/test-utils'
 
-// Mock the page state hook
-const mockState: {
-  items: unknown[]
-  hasBoxTypes: boolean
-  isLoading: boolean
-  isError: boolean
-  error: Error | null
-  refetch: ReturnType<typeof vi.fn>
-  isCreateOpen: boolean
-  setIsCreateOpen: ReturnType<typeof vi.fn>
-  isBulkOpen: boolean
-  setIsBulkOpen: ReturnType<typeof vi.fn>
-  editingItem: unknown
-  deletingItem: unknown
-  handleEdit: ReturnType<typeof vi.fn>
-  handleDelete: ReturnType<typeof vi.fn>
-  handleFormClose: ReturnType<typeof vi.fn>
-  handleDeleteClose: ReturnType<typeof vi.fn>
-  handleBulkClose: ReturnType<typeof vi.fn>
-} = {
-  items: [],
-  hasBoxTypes: false,
-  isLoading: false,
-  isError: false,
-  error: null,
-  refetch: vi.fn(),
-  isCreateOpen: false,
-  setIsCreateOpen: vi.fn(),
-  isBulkOpen: false,
-  setIsBulkOpen: vi.fn(),
-  editingItem: null,
-  deletingItem: null,
-  handleEdit: vi.fn(),
-  handleDelete: vi.fn(),
-  handleFormClose: vi.fn(),
-  handleDeleteClose: vi.fn(),
-  handleBulkClose: vi.fn(),
-}
+const mockPageState = vi.fn()
 
 vi.mock('../useSkuPackagingPageState', () => ({
-  useSkuPackagingPageState: () => mockState,
+  useSkuPackagingPageState: () => mockPageState(),
 }))
 
-// Mock SKU packaging components
 vi.mock('@/components/custom/sku-packaging', () => ({
-  SkuPackagingEmptyState: ({ onCreateClick }: { onCreateClick: () => void }) => (
-    <div data-testid="empty-state" onClick={onCreateClick}>
-      EmptyState
+  SkuPackagingEmptyState: ({
+    onCreateClick,
+  }: {
+    onCreateClick: (trigger: HTMLButtonElement) => void
+  }) => (
+    <button data-testid="empty-state" onClick={event => onCreateClick(event.currentTarget)}>
+      Пустое состояние
+    </button>
+  ),
+  SkuPackagingFilterToolbar: ({
+    query,
+    onQueryChange,
+    onReset,
+    inputRef,
+  }: {
+    query: string
+    onQueryChange: (value: string) => void
+    onReset: () => void
+    inputRef: RefObject<HTMLInputElement | null>
+  }) => (
+    <div>
+      <label htmlFor="packaging-filter">Поиск привязок</label>
+      <input
+        ref={inputRef}
+        id="packaging-filter"
+        aria-label="Поиск привязок"
+        value={query}
+        onChange={event => onQueryChange(event.target.value)}
+      />
+      <button onClick={onReset}>Сбросить поиск</button>
     </div>
   ),
   SkuPackagingTable: ({ items }: { items: unknown[] }) => (
-    <div data-testid="packaging-table">Table with {items.length} items</div>
+    <div data-testid="packaging-table">Таблица: {items.length}</div>
   ),
-  SkuPackagingFormDialog: ({ open }: { open: boolean }) => (
+  SkuPackagingFormDialog: ({
+    open,
+    onSuccess,
+  }: {
+    open: boolean
+    onSuccess: (message: string) => void
+  }) => (
     <div data-testid="form-dialog" data-open={open}>
-      FormDialog
+      {open && (
+        <button onClick={() => onSuccess('Упаковка SKU 123456789 сохранена.')}>
+          Завершить сохранение
+        </button>
+      )}
     </div>
   ),
   SkuPackagingDeleteDialog: ({ item }: { item: unknown }) => (
-    <div data-testid="delete-dialog">{item ? 'DeleteDialog with item' : 'DeleteDialog'}</div>
+    <div data-testid="delete-dialog" data-open={!!item} />
   ),
   BulkAddDialog: ({ open }: { open: boolean }) => (
-    <div data-testid="bulk-add-dialog" data-open={open}>
-      BulkAddDialog
-    </div>
+    <div data-testid="bulk-dialog" data-open={open} />
   ),
 }))
 
-// Import after mocks
 import SkuPackagingPage from '../page'
 
+function state(overrides: Record<string, unknown> = {}) {
+  return {
+    items: [],
+    filteredItems: [],
+    query: '',
+    setQuery: vi.fn(),
+    clearQuery: vi.fn(),
+    hasBoxTypes: true,
+    isLoading: false,
+    isFetching: false,
+    isError: false,
+    isBoxTypesError: false,
+    error: null,
+    refetch: vi.fn(),
+    refetchBoxTypes: vi.fn(),
+    isCreateOpen: false,
+    handleCreate: vi.fn(),
+    isBulkOpen: false,
+    handleBulk: vi.fn(),
+    editingItem: null,
+    deletingItem: null,
+    handleEdit: vi.fn(),
+    handleDelete: vi.fn(),
+    handleFormClose: vi.fn(),
+    handleDeleteClose: vi.fn(),
+    handleBulkClose: vi.fn(),
+    returnFocusRef: { current: null },
+    ...overrides,
+  }
+}
+
 describe('SkuPackagingPage', () => {
-  it('should render without crash', () => {
-    render(<SkuPackagingPage />)
-
-    expect(screen.getByRole('heading', { name: /упаковка товаров/i })).toBeInTheDocument()
+  beforeEach(() => {
+    vi.clearAllMocks()
+    mockPageState.mockReturnValue(state())
   })
 
-  it('should render page heading "Упаковка товаров"', () => {
+  it('preserves route identity and announces the combined dependency loading state', () => {
+    mockPageState.mockReturnValue(state({ isLoading: true, isFetching: true }))
+
     render(<SkuPackagingPage />)
 
-    expect(screen.getByRole('heading', { name: /упаковка товаров/i, level: 1 })).toBeInTheDocument()
+    expect(screen.getByRole('heading', { level: 1, name: 'Упаковка товаров' })).toBeInTheDocument()
+    expect(
+      screen.getAllByText('Получаем привязки SKU и доступные типы коробок текущего кабинета.')
+    ).not.toHaveLength(0)
+    expect(screen.getByRole('heading', { name: 'Загружаем привязки упаковки' })).toBeInTheDocument()
   })
 
-  it('should show empty state when no items', () => {
+  it('renders a safe packaging-query failure and retries exactly once', async () => {
+    const user = userEvent.setup()
+    const refetch = vi.fn()
+    mockPageState.mockReturnValue(
+      state({ isError: true, error: new Error('Sensitive backend detail'), refetch })
+    )
+
     render(<SkuPackagingPage />)
 
-    expect(screen.getByTestId('empty-state')).toBeInTheDocument()
+    expect(screen.getByRole('alert')).toHaveAccessibleName('Не удалось загрузить привязки упаковки')
+    expect(screen.queryByText('Sensitive backend detail')).not.toBeInTheDocument()
+    await user.click(screen.getByRole('button', { name: 'Повторить' }))
+    expect(refetch).toHaveBeenCalledTimes(1)
+  })
+
+  it('disables repeated packaging retry while recovery is fetching', () => {
+    mockPageState.mockReturnValue(state({ isError: true, isFetching: true }))
+
+    render(<SkuPackagingPage />)
+
+    expect(screen.getByRole('button', { name: 'Повторяем...' })).toBeDisabled()
+  })
+
+  it('truthfully blocks mutations when the box-type dependency fails', () => {
+    mockPageState.mockReturnValue(
+      state({
+        isBoxTypesError: true,
+        items: [{ nmId: 123456789 }],
+        filteredItems: [{ nmId: 123456789 }],
+      })
+    )
+
+    render(<SkuPackagingPage />)
+
+    expect(screen.getByRole('alert')).toHaveAccessibleName('Не удалось проверить типы коробок')
+    expect(screen.queryByRole('button', { name: 'Добавить упаковку' })).not.toBeInTheDocument()
     expect(screen.queryByTestId('packaging-table')).not.toBeInTheDocument()
   })
 
-  it('should show table when items exist', () => {
-    const originalItems = mockState.items
-    mockState.items = [
-      { id: 1, name: 'Item 1' },
-      { id: 2, name: 'Item 2' },
-    ] as unknown[]
+  it('opens creation from the exact empty-state trigger', async () => {
+    const user = userEvent.setup()
+    const handleCreate = vi.fn()
+    mockPageState.mockReturnValue(state({ handleCreate }))
+    render(<SkuPackagingPage />)
+    const trigger = screen.getByTestId('empty-state')
+
+    await user.click(trigger)
+
+    expect(handleCreate).toHaveBeenCalledWith(trigger)
+  })
+
+  it('renders stable header actions for loaded data and preserves their invoking triggers', async () => {
+    const user = userEvent.setup()
+    const handleCreate = vi.fn()
+    const handleBulk = vi.fn()
+    const item = { nmId: 123456789 }
+    mockPageState.mockReturnValue(
+      state({ items: [item], filteredItems: [item], handleCreate, handleBulk })
+    )
+    render(<SkuPackagingPage />)
+
+    expect(screen.getByRole('navigation', { name: 'Навигация по странице' })).toBeInTheDocument()
+    const create = screen.getByRole('button', { name: 'Добавить упаковку' })
+    const bulk = screen.getByRole('button', { name: 'Массовое добавление' })
+    await user.click(create)
+    await user.click(bulk)
+    expect(handleCreate).toHaveBeenCalledWith(create)
+    expect(handleBulk).toHaveBeenCalledWith(bulk)
+  })
+
+  it('renders only client-filtered items without changing route ownership', () => {
+    const allItems = [{ nmId: 1 }, { nmId: 2 }]
+    mockPageState.mockReturnValue(
+      state({ items: allItems, filteredItems: [allItems[1]], query: '2' })
+    )
 
     render(<SkuPackagingPage />)
 
-    expect(screen.getByTestId('packaging-table')).toBeInTheDocument()
-    expect(screen.getByTestId('packaging-table')).toHaveTextContent('2 items')
-
-    // Cleanup
-    mockState.items = originalItems
+    expect(screen.getByTestId('packaging-table')).toHaveTextContent('Таблица: 1')
+    expect(screen.getByLabelText('Поиск привязок')).toHaveValue('2')
   })
 
-  it('should show loading state', () => {
-    mockState.isLoading = true
-
-    const { container } = render(<SkuPackagingPage />)
-
-    expect(screen.getByRole('heading', { name: /упаковка товаров/i })).toBeInTheDocument()
-    const pulse = container.querySelectorAll('.animate-pulse')
-    expect(pulse.length).toBeGreaterThan(0)
-
-    // Cleanup
-    mockState.isLoading = false
-  })
-
-  it('should show error state when isError is true', () => {
-    mockState.isError = true
-    mockState.error = new Error('Test error message')
+  it('renders filtered-empty recovery and resets the presentation-local query', async () => {
+    const user = userEvent.setup()
+    const clearQuery = vi.fn()
+    mockPageState.mockReturnValue(
+      state({ items: [{ nmId: 1 }], filteredItems: [], query: 'нет', clearQuery })
+    )
 
     render(<SkuPackagingPage />)
 
-    expect(screen.getByText(/test error message/i)).toBeInTheDocument()
-    expect(screen.getByRole('button', { name: /повторить/i })).toBeInTheDocument()
-
-    // Cleanup
-    mockState.isError = false
-    mockState.error = null
+    expect(
+      screen.getAllByText('Измените поисковый запрос или покажите все привязки.')
+    ).not.toHaveLength(0)
+    expect(
+      screen.getByRole('heading', { name: 'По фильтру ничего не найдено' })
+    ).toBeInTheDocument()
+    expect(screen.queryByTestId('empty-state')).not.toBeInTheDocument()
+    await user.click(screen.getByRole('button', { name: 'Показать все привязки' }))
+    expect(clearQuery).toHaveBeenCalledTimes(1)
+    await waitFor(() => expect(screen.getByLabelText('Поиск привязок')).toHaveFocus())
   })
 
-  it('should render form dialog', () => {
+  it('keeps a dialog success announcement in the route DOM', async () => {
+    const user = userEvent.setup()
+    mockPageState.mockReturnValue(state({ isCreateOpen: true }))
+
     render(<SkuPackagingPage />)
+    await user.click(screen.getByRole('button', { name: 'Завершить сохранение' }))
 
-    expect(screen.getByTestId('form-dialog')).toBeInTheDocument()
-  })
-
-  it('should render delete dialog', () => {
-    render(<SkuPackagingPage />)
-
-    expect(screen.getByTestId('delete-dialog')).toBeInTheDocument()
-  })
-
-  it('should render bulk add dialog', () => {
-    render(<SkuPackagingPage />)
-
-    expect(screen.getByTestId('bulk-add-dialog')).toBeInTheDocument()
+    expect(screen.getByRole('status')).toHaveTextContent('Упаковка SKU 123456789 сохранена.')
   })
 })

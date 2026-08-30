@@ -2,7 +2,7 @@
 
 /** Bulk add dialog for SKU Packaging — Epic 75-FE, Story 75.3 (AC: #7) */
 
-import { useState } from 'react'
+import { useRef, useState, type RefObject } from 'react'
 import {
   Dialog,
   DialogContent,
@@ -15,52 +15,59 @@ import { Button } from '@/components/ui/button'
 import { Textarea } from '@/components/ui/textarea'
 import { Label } from '@/components/ui/label'
 import { useBulkCreateSkuPackaging } from '@/hooks/use-sku-packaging'
+import { useBoxTypes } from '@/hooks/use-box-types'
 import { BulkPreviewTable, type BulkResultRow, type BulkRow } from './BulkPreviewTable'
+import { useSkuPackagingDialogFocus } from './useSkuPackagingDialogFocus'
+import {
+  attachActiveBoxTypes,
+  parseBulkInput,
+  reconcileBulkResponse,
+} from './sku-packaging-bulk-utils'
 
 interface BulkAddDialogProps {
   open: boolean
   onClose: () => void
+  onSuccess?: (message: string) => void
+  returnFocusRef?: RefObject<HTMLButtonElement | null>
+  successFocusRef?: RefObject<HTMLElement | null>
 }
 
-function parseBulkInput(text: string): BulkRow[] {
-  return text
-    .trim()
-    .split('\n')
-    .filter(line => line.trim())
-    .map(line => {
-      const parts = line.split(/[,\t;]/).map(p => p.trim())
-      const nmId = parseInt(parts[0], 10)
-      const boxTypeId = parts[1] || ''
-      const unitsPerBox = parseInt(parts[2], 10)
-
-      if (isNaN(nmId) || nmId <= 0)
-        return { nmId: 0, boxTypeId, unitsPerBox, parseError: 'Неверный nmId' }
-      if (!boxTypeId) return { nmId, boxTypeId, unitsPerBox, parseError: 'Не указан boxTypeId' }
-      if (isNaN(unitsPerBox) || unitsPerBox <= 0)
-        return { nmId, boxTypeId, unitsPerBox: 0, parseError: 'Неверное кол-во' }
-
-      return { nmId, boxTypeId, unitsPerBox }
-    })
-}
-
-export function BulkAddDialog({ open, onClose }: BulkAddDialogProps) {
+export function BulkAddDialog({
+  open,
+  onClose,
+  onSuccess,
+  returnFocusRef,
+  successFocusRef,
+}: BulkAddDialogProps) {
   const mutation = useBulkCreateSkuPackaging()
+  const {
+    data: boxTypes = [],
+    isLoading: isBoxTypesLoading,
+    isError: isBoxTypesError,
+    refetch: refetchBoxTypes,
+  } = useBoxTypes()
+  const inFlightRef = useRef(false)
+  const focus = useSkuPackagingDialogFocus(returnFocusRef, successFocusRef)
   const [input, setInput] = useState('')
   const [parsed, setParsed] = useState<BulkRow[]>([])
   const [results, setResults] = useState<BulkResultRow[] | null>(null)
   const [step, setStep] = useState<'input' | 'preview' | 'results'>('input')
   const [apiCounts, setApiCounts] = useState<{ created: number; updated: number } | null>(null)
+  const [completionMessage, setCompletionMessage] = useState<string | null>(null)
 
   const handleParse = () => {
-    const rows = parseBulkInput(input)
+    if (isBoxTypesLoading || isBoxTypesError) return
+    const rows = attachActiveBoxTypes(parseBulkInput(input), boxTypes)
     setParsed(rows)
     setStep('preview')
   }
 
   const handleSubmit = async () => {
+    if (inFlightRef.current) return
     const validRows = parsed.filter(r => !r.parseError)
     if (validRows.length === 0) return
 
+    inFlightRef.current = true
     try {
       const response = await mutation.mutateAsync({
         items: validRows.map(r => ({
@@ -70,22 +77,18 @@ export function BulkAddDialog({ open, onClose }: BulkAddDialogProps) {
         })),
       })
 
-      setApiCounts({ created: response.created, updated: response.updated })
-      const errorMap = new Map(response.errors.map(e => [e.nmId, e.error]))
-      const resultRows: BulkResultRow[] = parsed.map(row => {
-        if (row.parseError) return { ...row, status: 'error' as const, message: row.parseError }
-        const err = errorMap.get(row.nmId)
-        return err
-          ? { ...row, status: 'error' as const, message: err }
-          : { ...row, status: 'success' as const }
-      })
-
-      setResults(resultRows)
+      const reconciled = reconcileBulkResponse(parsed, response)
+      setApiCounts(reconciled.counts)
+      setResults(reconciled.results)
+      setCompletionMessage(reconciled.completionMessage)
+      if (reconciled.completionMessage) focus.markSuccessFocus()
       setStep('results')
-    } catch (err: unknown) {
-      const msg = err instanceof Error ? err.message : 'Ошибка массового добавления'
+    } catch {
+      const msg = 'Не удалось выполнить массовое добавление. Повторите попытку.'
       setResults(parsed.map(row => ({ ...row, status: 'error' as const, message: msg })))
       setStep('results')
+    } finally {
+      inFlightRef.current = false
     }
   }
 
@@ -94,6 +97,8 @@ export function BulkAddDialog({ open, onClose }: BulkAddDialogProps) {
     setParsed([])
     setResults(null)
     setApiCounts(null)
+    if (completionMessage) onSuccess?.(completionMessage)
+    setCompletionMessage(null)
     setStep('input')
     onClose()
   }
@@ -102,8 +107,14 @@ export function BulkAddDialog({ open, onClose }: BulkAddDialogProps) {
   const errorCount = parsed.filter(r => r.parseError).length
 
   return (
-    <Dialog open={open} onOpenChange={v => !v && !mutation.isPending && handleClose()}>
-      <DialogContent className="max-w-2xl">
+    <Dialog
+      open={open}
+      onOpenChange={v => !v && !mutation.isPending && !inFlightRef.current && handleClose()}
+    >
+      <DialogContent
+        className="max-h-[calc(100dvh-2rem)] w-[calc(100%-2rem)] overflow-y-auto sm:max-w-2xl"
+        onCloseAutoFocus={focus.handleCloseAutoFocus}
+      >
         <DialogHeader>
           <DialogTitle>Массовое добавление упаковки</DialogTitle>
           <DialogDescription>
@@ -124,6 +135,12 @@ export function BulkAddDialog({ open, onClose }: BulkAddDialogProps) {
             <p className="text-xs text-muted-foreground">
               Одна строка на товар. Разделитель: запятая, табуляция или точка с запятой.
             </p>
+            {isBoxTypesError && (
+              <div role="alert" className="space-y-2 text-sm text-destructive">
+                <span>Не удалось загрузить типы коробок.</span>
+                <Button onClick={() => refetchBoxTypes()}>Повторить</Button>
+              </div>
+            )}
           </div>
         )}
 
@@ -132,34 +149,57 @@ export function BulkAddDialog({ open, onClose }: BulkAddDialogProps) {
             <p className="text-sm">
               Найдено строк: {parsed.length} (корректных: {validCount}, с ошибками: {errorCount})
             </p>
-            <BulkPreviewTable rows={parsed} showStatus={errorCount > 0} />
+            <BulkPreviewTable
+              rows={parsed}
+              showStatus
+              accessibleName="Предпросмотр массового добавления упаковки"
+            />
           </div>
         )}
 
         {step === 'results' && results && (
           <div className="space-y-3">
-            <p className="text-sm">
+            <p role="status" aria-live="polite" className="text-sm">
               Создано: {apiCounts?.created ?? 0}, обновлено: {apiCounts?.updated ?? 0}, ошибок:{' '}
               {results.filter(r => r.status === 'error').length}
             </p>
-            <BulkPreviewTable rows={results} showStatus />
+            <BulkPreviewTable
+              rows={results}
+              showStatus
+              accessibleName="Результаты массового добавления упаковки"
+            />
           </div>
         )}
 
         <DialogFooter>
+          <p role="status" aria-live="polite" className="sr-only">
+            {mutation.isPending ? 'Отправляем привязки упаковки' : ''}
+          </p>
+          {step === 'results' && results?.some(row => row.status === 'error') && (
+            <p role="alert" className="sr-only">
+              Часть привязок не сохранена
+            </p>
+          )}
           {step === 'input' && (
             <>
               <Button variant="outline" onClick={handleClose}>
                 Отмена
               </Button>
-              <Button onClick={handleParse} disabled={!input.trim()}>
+              <Button
+                onClick={handleParse}
+                disabled={!input.trim() || isBoxTypesLoading || isBoxTypesError}
+              >
                 Предпросмотр
               </Button>
             </>
           )}
           {step === 'preview' && (
             <>
-              <Button variant="outline" onClick={() => setStep('input')}>
+              <Button
+                variant="outline"
+                onClick={() => setStep('input')}
+                disabled={mutation.isPending}
+              >
                 Назад
               </Button>
               <Button onClick={handleSubmit} disabled={mutation.isPending || validCount === 0}>

@@ -12,5 +12,6 @@ export const SKU_PACKAGING_COLUMNS: SkuPackagingColumn[] = [
   { key: 'product', label: 'Товар' },
   { key: 'boxType', label: 'Тип коробки' },
   { key: 'unitsPerBox', label: 'Штук в коробке', align: 'right' },
+  { key: 'status', label: 'Статус' },
   { key: 'actions', label: 'Действия', align: 'right', srOnly: true },
 ]
