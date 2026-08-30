@@ -6,9 +6,11 @@
  * Route: /shipments/box-types
  */
 
-import { Alert, AlertDescription } from '@/components/ui/alert'
+import { useRef } from 'react'
+import { PageHeader } from '@/components/product'
+import { PageState } from '@/components/product/states'
 import { Button } from '@/components/ui/button'
-import { AlertCircle } from 'lucide-react'
+import { Plus } from 'lucide-react'
 import {
   BoxTypesEmptyState,
   BoxTypesTable,
@@ -18,62 +20,96 @@ import {
 import { useBoxTypesPageState } from './useBoxTypesPageState'
 
 export default function BoxTypesPage() {
+  const stableFocusRef = useRef<HTMLElement>(null)
   const {
     boxTypes,
     isLoading,
+    isFetching,
     isError,
-    error,
     refetch,
     isCreateOpen,
-    setIsCreateOpen,
+    handleCreate,
     editingBoxType,
     deactivatingBoxType,
     handleEdit,
     handleDeactivate,
     handleFormClose,
     handleDeactivateClose,
+    returnFocusRef,
   } = useBoxTypesPageState()
+
+  const header = (
+    <PageHeader
+      title="Типы коробок"
+      description="Справочник габаритов коробок для расчёта стоимости доставки."
+      breadcrumbs={[{ label: 'Главная', href: '/dashboard' }, { label: 'Типы коробок' }]}
+      busy={isFetching}
+      actions={
+        !isLoading && !isError && boxTypes.length > 0 ? (
+          <Button onClick={event => handleCreate(event.currentTarget)}>
+            <Plus aria-hidden="true" className="size-4" />
+            Добавить тип коробки
+          </Button>
+        ) : undefined
+      }
+    />
+  )
 
   if (isLoading) {
     return (
-      <div className="space-y-6">
-        <h1 className="text-2xl font-semibold">Типы коробок</h1>
-        <div className="animate-pulse space-y-4">
-          <div className="h-10 bg-muted rounded" />
-          <div className="h-64 bg-muted rounded" />
-        </div>
-      </div>
+      <section
+        ref={stableFocusRef}
+        tabIndex={-1}
+        aria-label="Типы коробок"
+        className="space-y-6 py-2"
+      >
+        {header}
+        <PageState
+          state="loading"
+          title="Загружаем типы коробок"
+          explanation="Получаем типы коробок текущего кабинета."
+          trust="Данные и действия станут доступны после завершения загрузки."
+        />
+      </section>
     )
   }
 
   if (isError) {
     return (
-      <div className="space-y-6">
-        <h1 className="text-2xl font-semibold">Типы коробок</h1>
-        <Alert variant="destructive">
-          <AlertCircle className="h-4 w-4" />
-          <AlertDescription className="flex items-center justify-between">
-            <span>{error instanceof Error ? error.message : 'Ошибка загрузки типов коробок'}</span>
-            <Button variant="outline" size="sm" onClick={() => refetch()}>
-              Повторить
+      <section
+        ref={stableFocusRef}
+        tabIndex={-1}
+        aria-label="Типы коробок"
+        className="space-y-6 py-2"
+      >
+        {header}
+        <PageState
+          state="error"
+          title="Не удалось загрузить типы коробок"
+          explanation="Справочник типов коробок временно недоступен."
+          trust="Новые данные не показаны; повторная попытка не изменит справочник."
+          context="Проверьте соединение и повторите попытку."
+          recovery={
+            <Button type="button" variant="outline" disabled={isFetching} onClick={() => refetch()}>
+              {isFetching ? 'Повторяем...' : 'Повторить'}
             </Button>
-          </AlertDescription>
-        </Alert>
-      </div>
+          }
+        />
+      </section>
     )
   }
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-semibold">Типы коробок</h1>
-        {boxTypes.length > 0 && (
-          <Button onClick={() => setIsCreateOpen(true)}>Добавить тип коробки</Button>
-        )}
-      </div>
+    <section
+      ref={stableFocusRef}
+      tabIndex={-1}
+      aria-label="Типы коробок"
+      className="space-y-6 py-2"
+    >
+      {header}
 
       {boxTypes.length === 0 ? (
-        <BoxTypesEmptyState onCreateClick={() => setIsCreateOpen(true)} />
+        <BoxTypesEmptyState onCreateClick={handleCreate} />
       ) : (
         <BoxTypesTable boxTypes={boxTypes} onEdit={handleEdit} onDeactivate={handleDeactivate} />
       )}
@@ -82,9 +118,17 @@ export default function BoxTypesPage() {
         open={isCreateOpen || !!editingBoxType}
         boxType={editingBoxType}
         onClose={handleFormClose}
+        returnFocusRef={returnFocusRef}
+        successFocusRef={stableFocusRef}
+        focusFallbackOnSuccess={isCreateOpen && boxTypes.length === 0}
       />
 
-      <BoxTypeDeactivateDialog boxType={deactivatingBoxType} onClose={handleDeactivateClose} />
-    </div>
+      <BoxTypeDeactivateDialog
+        boxType={deactivatingBoxType}
+        onClose={handleDeactivateClose}
+        returnFocusRef={returnFocusRef}
+        successFocusRef={stableFocusRef}
+      />
+    </section>
   )
 }

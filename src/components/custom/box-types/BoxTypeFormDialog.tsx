@@ -2,7 +2,7 @@
 
 /** Create/Edit dialog for Box Types — Epic 75-FE, Story 75.2 (AC: #3, #4, #7) */
 
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState, type RefObject } from 'react'
 import {
   Dialog,
   DialogContent,
@@ -16,6 +16,8 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { useCreateBoxType, useUpdateBoxType } from '@/hooks/use-box-types'
 import { DimensionField } from './DimensionField'
+import { getBoxTypeFormErrors, type BoxTypeFormErrors } from './boxTypeFormValidation'
+import { useBoxTypeDialogFocus } from './useBoxTypeDialogFocus'
 import { parseDecimal } from '@/lib/decimal-utils'
 import type { BoxType } from '@/types/shipment-cost'
 
@@ -23,17 +25,19 @@ interface BoxTypeFormDialogProps {
   open: boolean
   boxType: BoxType | null
   onClose: () => void
+  returnFocusRef?: RefObject<HTMLButtonElement | null>
+  successFocusRef?: RefObject<HTMLElement | null>
+  focusFallbackOnSuccess?: boolean
 }
 
-interface FormErrors {
-  name?: string
-  lengthCm?: string
-  widthCm?: string
-  heightCm?: string
-  api?: string
-}
-
-export function BoxTypeFormDialog({ open, boxType, onClose }: BoxTypeFormDialogProps) {
+export function BoxTypeFormDialog({
+  open,
+  boxType,
+  onClose,
+  returnFocusRef,
+  successFocusRef,
+  focusFallbackOnSuccess = false,
+}: BoxTypeFormDialogProps) {
   const isEdit = !!boxType
   const createMutation = useCreateBoxType()
   const updateMutation = useUpdateBoxType()
@@ -43,10 +47,20 @@ export function BoxTypeFormDialog({ open, boxType, onClose }: BoxTypeFormDialogP
   const [lengthCm, setLengthCm] = useState('')
   const [widthCm, setWidthCm] = useState('')
   const [heightCm, setHeightCm] = useState('')
-  const [errors, setErrors] = useState<FormErrors>({})
+  const [errors, setErrors] = useState<BoxTypeFormErrors>({})
+  const nameInputRef = useRef<HTMLInputElement>(null)
+  const lengthInputRef = useRef<HTMLInputElement>(null)
+  const widthInputRef = useRef<HTMLInputElement>(null)
+  const heightInputRef = useRef<HTMLInputElement>(null)
+  const inFlightRef = useRef(false)
+  const { handleCloseAutoFocus, markSuccessFocus, resetSuccessFocus } = useBoxTypeDialogFocus(
+    returnFocusRef,
+    successFocusRef
+  )
 
   useEffect(() => {
     if (open) {
+      resetSuccessFocus()
       if (boxType) {
         setName(boxType.name)
         setLengthCm(String(parseDecimal(boxType.lengthCm)))
@@ -63,20 +77,19 @@ export function BoxTypeFormDialog({ open, boxType, onClose }: BoxTypeFormDialogP
   }, [open, boxType])
 
   const validate = (): boolean => {
-    const next: FormErrors = {}
-    if (!name.trim()) next.name = 'Название обязательно'
-    const l = parseFloat(lengthCm)
-    const w = parseFloat(widthCm)
-    const h = parseFloat(heightCm)
-    if (!lengthCm || isNaN(l) || l <= 0) next.lengthCm = 'Длина должна быть больше 0'
-    if (!widthCm || isNaN(w) || w <= 0) next.widthCm = 'Ширина должна быть больше 0'
-    if (!heightCm || isNaN(h) || h <= 0) next.heightCm = 'Высота должна быть больше 0'
+    const next = getBoxTypeFormErrors(name, lengthCm, widthCm, heightCm)
     setErrors(next)
+    if (next.name) nameInputRef.current?.focus()
+    else if (next.lengthCm) lengthInputRef.current?.focus()
+    else if (next.widthCm) widthInputRef.current?.focus()
+    else if (next.heightCm) heightInputRef.current?.focus()
     return Object.keys(next).length === 0
   }
 
   const handleSubmit = async () => {
+    if (inFlightRef.current) return
     if (!validate()) return
+    inFlightRef.current = true
     setErrors({})
     const data = {
       name: name.trim(),
@@ -90,16 +103,25 @@ export function BoxTypeFormDialog({ open, boxType, onClose }: BoxTypeFormDialogP
       } else {
         await createMutation.mutateAsync(data)
       }
+      markSuccessFocus(focusFallbackOnSuccess)
       onClose()
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : 'Ошибка сохранения'
       setErrors({ api: msg.includes('409') ? 'Тип коробки с таким названием уже существует' : msg })
+    } finally {
+      inFlightRef.current = false
     }
   }
 
   return (
-    <Dialog open={open} onOpenChange={v => !v && !mutation.isPending && onClose()}>
-      <DialogContent>
+    <Dialog
+      open={open}
+      onOpenChange={v => !v && !mutation.isPending && !inFlightRef.current && onClose()}
+    >
+      <DialogContent
+        className="max-h-[calc(100dvh-2rem)] w-[calc(100%-2rem)] overflow-y-auto sm:max-w-lg"
+        onCloseAutoFocus={handleCloseAutoFocus}
+      >
         <DialogHeader>
           <DialogTitle>{isEdit ? 'Редактировать тип коробки' : 'Добавить тип коробки'}</DialogTitle>
           <DialogDescription>
@@ -114,11 +136,20 @@ export function BoxTypeFormDialog({ open, boxType, onClose }: BoxTypeFormDialogP
           }}
           className="space-y-4 py-2"
         >
-          {errors.api && <p className="text-sm text-destructive">{errors.api}</p>}
+          {errors.api && (
+            <p role="alert" className="text-sm text-destructive">
+              {errors.api}
+            </p>
+          )}
+
+          <p role="status" aria-live="polite" className="sr-only">
+            {mutation.isPending ? 'Сохраняем тип коробки' : ''}
+          </p>
 
           <div className="space-y-2">
             <Label htmlFor="bt-name">Название</Label>
             <Input
+              ref={nameInputRef}
               id="bt-name"
               value={name}
               onChange={e => setName(e.target.value)}
@@ -132,7 +163,7 @@ export function BoxTypeFormDialog({ open, boxType, onClose }: BoxTypeFormDialogP
             )}
           </div>
 
-          <div className="grid grid-cols-3 gap-4">
+          <div className="grid gap-4 sm:grid-cols-3">
             <DimensionField
               id="bt-length"
               label="Длина (см)"
@@ -140,6 +171,7 @@ export function BoxTypeFormDialog({ open, boxType, onClose }: BoxTypeFormDialogP
               onChange={setLengthCm}
               error={errors.lengthCm}
               errorId="bt-length-error"
+              inputRef={lengthInputRef}
             />
             <DimensionField
               id="bt-width"
@@ -148,6 +180,7 @@ export function BoxTypeFormDialog({ open, boxType, onClose }: BoxTypeFormDialogP
               onChange={setWidthCm}
               error={errors.widthCm}
               errorId="bt-width-error"
+              inputRef={widthInputRef}
             />
             <DimensionField
               id="bt-height"
@@ -156,11 +189,17 @@ export function BoxTypeFormDialog({ open, boxType, onClose }: BoxTypeFormDialogP
               onChange={setHeightCm}
               error={errors.heightCm}
               errorId="bt-height-error"
+              inputRef={heightInputRef}
             />
           </div>
 
           <DialogFooter>
-            <Button variant="outline" type="button" onClick={onClose} disabled={mutation.isPending}>
+            <Button
+              variant="outline"
+              type="button"
+              onClick={() => !inFlightRef.current && onClose()}
+              disabled={mutation.isPending}
+            >
               Отмена
             </Button>
             <Button type="submit" disabled={mutation.isPending}>

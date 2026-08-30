@@ -13,5 +13,6 @@ export const BOX_TYPES_COLUMNS: BoxTypesColumn[] = [
   { key: 'name', label: 'Название' },
   { key: 'dimensions', label: 'Размеры (Д×Ш×В, см)', align: 'right' },
   { key: 'volume', label: 'Объём (см³)', align: 'right' },
-  { key: 'actions', label: '', align: 'right' },
+  { key: 'status', label: 'Статус' },
+  { key: 'actions', label: 'Действия', align: 'right' },
 ]
