@@ -62,6 +62,74 @@ export type TariffSettingsFormData = z.infer<typeof tariffSettingsSchema>
 /** Volume tier type */
 export type VolumeTierFormData = z.infer<typeof volumeTierSchema>
 
+export const TARIFF_FIELD_LABELS: Partial<Record<keyof TariffSettingsFormData, string>> = {
+  acceptanceBoxRatePerLiter: 'Тариф приёмки',
+  acceptancePalletRate: 'Тариф паллеты',
+  logisticsVolumeTiers: 'Тарифные уровни по объёму',
+  logisticsLargeFirstLiterRate: 'Крупногабарит: первый литр',
+  logisticsLargeAdditionalLiterRate: 'Крупногабарит: дополнительный литр',
+  returnLogisticsFboRate: 'Возврат FBO',
+  returnLogisticsFbsRate: 'Возврат FBS',
+  defaultCommissionFboPct: 'Комиссия FBO',
+  defaultCommissionFbsPct: 'Комиссия FBS',
+  storageFreeDays: 'Бесплатные дни хранения',
+  fixationClothingDays: 'Фиксация одежда',
+  fixationOtherDays: 'Фиксация прочее',
+  fbsUsesFboLogisticsRates: 'Использование тарифов FBO для FBS',
+  logisticsFbsVolumeTiers: 'Тарифные уровни FBS по объёму',
+  logisticsFbsLargeFirstLiterRate: 'FBS крупногабарит: первый литр',
+  logisticsFbsLargeAdditionalLiterRate: 'FBS крупногабарит: дополнительный литр',
+  notes: 'Заметки',
+}
+
+const ALWAYS_AVAILABLE_VALUE_KEYS = [
+  'acceptanceBoxRatePerLiter',
+  'acceptancePalletRate',
+  'logisticsVolumeTiers',
+  'logisticsLargeFirstLiterRate',
+  'logisticsLargeAdditionalLiterRate',
+  'returnLogisticsFboRate',
+  'returnLogisticsFbsRate',
+  'defaultCommissionFboPct',
+  'defaultCommissionFbsPct',
+  'storageFreeDays',
+  'fixationClothingDays',
+  'fixationOtherDays',
+  'fbsUsesFboLogisticsRates',
+] as const satisfies readonly (keyof TariffSettingsFormData)[]
+
+const FBS_VALUE_KEYS = [
+  'logisticsFbsVolumeTiers',
+  'logisticsFbsLargeFirstLiterRate',
+  'logisticsFbsLargeAdditionalLiterRate',
+] as const satisfies readonly (keyof TariffSettingsFormData)[]
+
+/** Human-readable fields whose server values were absent in a partial response. */
+export function getUnavailableTariffFieldLabels(
+  settings: Partial<TariffSettingsFormData> | null | undefined
+): string[] {
+  if (!settings) return []
+
+  const keys: readonly (keyof TariffSettingsFormData)[] =
+    settings.fbsUsesFboLogisticsRates === false
+      ? [...ALWAYS_AVAILABLE_VALUE_KEYS, ...FBS_VALUE_KEYS]
+      : ALWAYS_AVAILABLE_VALUE_KEYS
+
+  return keys
+    .filter(key => settings[key] == null)
+    .map(key => TARIFF_FIELD_LABELS[key] ?? String(key))
+}
+
+export function getFirstTariffErrorMessage(value: unknown): string | undefined {
+  if (!value || typeof value !== 'object') return undefined
+  if ('message' in value && typeof value.message === 'string') return value.message
+  for (const nested of Object.values(value)) {
+    const message = getFirstTariffErrorMessage(nested)
+    if (message) return message
+  }
+  return undefined
+}
+
 /**
  * Get default form values from existing settings
  * Used to populate form on load

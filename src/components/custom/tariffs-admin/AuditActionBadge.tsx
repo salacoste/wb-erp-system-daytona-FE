@@ -18,18 +18,18 @@ type AuditAction = TariffAuditEntry['action']
 const ACTION_CONFIG: Record<AuditAction, { label: string; bgColor: string; textColor: string }> = {
   UPDATE: {
     label: 'Изменение',
-    bgColor: 'bg-blue-100',
-    textColor: 'text-blue-800',
+    bgColor: 'bg-status-information/15',
+    textColor: 'text-status-information',
   },
   CREATE: {
     label: 'Создание',
-    bgColor: 'bg-green-100',
-    textColor: 'text-green-800',
+    bgColor: 'bg-status-success/15',
+    textColor: 'text-status-success',
   },
   DELETE: {
     label: 'Удаление',
-    bgColor: 'bg-red-100',
-    textColor: 'text-red-800',
+    bgColor: 'bg-status-error/15',
+    textColor: 'text-status-error',
   },
 }
 

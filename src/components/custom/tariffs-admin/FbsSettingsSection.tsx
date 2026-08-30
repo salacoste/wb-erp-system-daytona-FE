@@ -51,11 +51,11 @@ export function FbsSettingsSection({
   const usesFboRates = watch('fbsUsesFboLogisticsRates')
 
   const handleToggleChange = (checked: boolean) => {
-    setValue('fbsUsesFboLogisticsRates', checked, { shouldValidate: true })
+    setValue('fbsUsesFboLogisticsRates', checked, { shouldDirty: true, shouldValidate: true })
   }
 
   const handleFbsTiersChange = (newTiers: VolumeTierFormData[]) => {
-    setValue('logisticsFbsVolumeTiers', newTiers, { shouldValidate: true })
+    setValue('logisticsFbsVolumeTiers', newTiers, { shouldDirty: true, shouldValidate: true })
   }
 
   return (
@@ -117,7 +117,7 @@ export function FbsSettingsSection({
             <LogisticsTiersEditor
               tiers={fbsTiers ?? []}
               onChange={handleFbsTiersChange}
-              error={errors.logisticsFbsVolumeTiers?.message}
+              fieldErrors={errors.logisticsFbsVolumeTiers}
               disabled={disabled}
               label="Тарифные уровни FBS по объёму"
             />

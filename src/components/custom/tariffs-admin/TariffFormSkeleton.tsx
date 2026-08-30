@@ -17,7 +17,13 @@ import { Alert, AlertDescription } from '@/components/ui/alert'
  */
 export function TariffFormSkeleton() {
   return (
-    <Card data-testid="form-skeleton">
+    <Card
+      data-testid="form-skeleton"
+      role="status"
+      aria-label="Загрузка настроек тарифов"
+      aria-busy="true"
+    >
+      <span className="sr-only">Загружаем актуальные значения тарифов</span>
       <CardHeader className="border-b">
         <Skeleton className="h-6 w-48" />
       </CardHeader>
@@ -42,7 +48,7 @@ export function TariffFormError() {
   return (
     <Card>
       <CardContent className="py-8">
-        <Alert variant="destructive">
+        <Alert variant="destructive" aria-label="Ошибка загрузки настроек тарифов">
           <AlertCircle className="h-4 w-4" />
           <AlertDescription>
             Ошибка загрузки настроек тарифов. Попробуйте обновить страницу.

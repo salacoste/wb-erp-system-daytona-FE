@@ -38,11 +38,43 @@ vi.mock('@/components/custom/tariffs-admin', () => ({
 vi.mock('@/hooks/useAuth', () => ({
   useAuth: vi.fn(),
 }))
+vi.mock('@/hooks/useTariffSettings', () => ({
+  useTariffSettings: vi.fn(),
+}))
 
 // Import after mocks
 import { useAuth } from '@/hooks/useAuth'
+import { useTariffSettings } from '@/hooks/useTariffSettings'
 
 const mockUseAuth = vi.mocked(useAuth)
+const mockUseTariffSettings = vi.mocked(useTariffSettings)
+
+const COMPLETE_TARIFF_SETTINGS = {
+  acceptanceBoxRatePerLiter: 1.8,
+  acceptancePalletRate: 520,
+  logisticsVolumeTiers: [{ fromLiters: 0.001, toLiters: 0.2, rateRub: 24 }],
+  logisticsLargeFirstLiterRate: 48,
+  logisticsLargeAdditionalLiterRate: 15,
+  returnLogisticsFboRate: 50,
+  returnLogisticsFbsRate: 60,
+  defaultCommissionFboPct: 15,
+  defaultCommissionFbsPct: 12,
+  storageFreeDays: 30,
+  fixationClothingDays: 14,
+  fixationOtherDays: 7,
+  fbsUsesFboLogisticsRates: true,
+  source: 'manual' as const,
+}
+
+function mockTariffQuery(overrides: Partial<ReturnType<typeof useTariffSettings>> = {}) {
+  mockUseTariffSettings.mockReturnValue({
+    data: COMPLETE_TARIFF_SETTINGS,
+    isLoading: false,
+    isFetching: false,
+    error: null,
+    ...overrides,
+  } as ReturnType<typeof useTariffSettings>)
+}
 
 // Test utilities
 function createTestQueryClient(): QueryClient {
@@ -83,6 +115,7 @@ describe('TariffSettingsPage', () => {
   beforeEach(() => {
     vi.clearAllMocks()
     mockPush.mockClear()
+    mockTariffQuery()
   })
 
   describe('AC2: Admin Role Check', () => {
@@ -312,6 +345,54 @@ describe('TariffSettingsPage', () => {
     })
   })
 
+  describe('ContextBar tariff state', () => {
+    beforeEach(() => {
+      mockUseAuth.mockReturnValue(
+        createMockAuth({
+          user: { id: '1', email: 'owner@test.com', role: 'Owner' },
+          isAuthenticated: true,
+          token: 'test-token',
+        })
+      )
+    })
+
+    it.each([
+      [
+        'refreshing',
+        { data: undefined, isLoading: true, isFetching: true, error: null },
+        'Загружаем тарифные данные',
+      ],
+      [
+        'unavailable',
+        { data: undefined, isLoading: false, isFetching: false, error: new Error('offline') },
+        'Тарифные данные временно недоступны',
+      ],
+      [
+        'partial',
+        {
+          data: { ...COMPLETE_TARIFF_SETTINGS, acceptancePalletRate: undefined },
+          isLoading: false,
+          isFetching: false,
+          error: null,
+        },
+        'Часть тарифных данных недоступна',
+      ],
+      [
+        'fresh',
+        { data: COMPLETE_TARIFF_SETTINGS, isLoading: false, isFetching: false, error: null },
+        'Тарифные данные доступны для управления',
+      ],
+    ])('reports %s without overstating tariff availability', async (state, query, label) => {
+      mockTariffQuery(query as Partial<ReturnType<typeof useTariffSettings>>)
+      const { default: TariffSettingsPage } = await import('../page')
+      renderWithProviders(<TariffSettingsPage />)
+
+      const contextBar = document.querySelector('[data-slot="context-bar"]')
+      expect(contextBar).toHaveAttribute('data-state', state)
+      expect(screen.getByRole('status')).toHaveTextContent(label)
+    })
+  })
+
   it('should not render a nested main landmark inside the dashboard shell', async () => {
     mockUseAuth.mockReturnValue(
       createMockAuth({
@@ -325,6 +406,8 @@ describe('TariffSettingsPage', () => {
     renderWithProviders(<TariffSettingsPage />)
 
     expect(document.querySelectorAll('main')).toHaveLength(0)
-    expect(document.querySelector('section.min-h-screen')).toBeInTheDocument()
+    expect(document.querySelector('section.min-h-screen')).not.toBeInTheDocument()
+    expect(document.querySelector('[data-slot="page-header"]')).toBeInTheDocument()
+    expect(document.querySelector('[data-slot="context-bar"]')).toBeInTheDocument()
   })
 })

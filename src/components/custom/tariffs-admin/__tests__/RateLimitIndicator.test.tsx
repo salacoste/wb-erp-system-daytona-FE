@@ -87,7 +87,7 @@ describe('RateLimitIndicator', () => {
       render(<RateLimitIndicator />)
 
       const progressBar = screen.getByRole('progressbar')
-      expect(progressBar).toHaveClass('bg-green-500')
+      expect(progressBar).toHaveClass('bg-status-success')
     })
 
     it('shows yellow color for 4-6 remaining (caution)', () => {
@@ -96,7 +96,7 @@ describe('RateLimitIndicator', () => {
       render(<RateLimitIndicator />)
 
       const progressBar = screen.getByRole('progressbar')
-      expect(progressBar).toHaveClass('bg-yellow-500')
+      expect(progressBar).toHaveClass('bg-status-warning')
     })
 
     it('shows red color for 0-3 remaining (warning)', () => {
@@ -105,7 +105,7 @@ describe('RateLimitIndicator', () => {
       render(<RateLimitIndicator />)
 
       const progressBar = screen.getByRole('progressbar')
-      expect(progressBar).toHaveClass('bg-red-500')
+      expect(progressBar).toHaveClass('bg-status-error')
     })
   })
 
@@ -285,7 +285,7 @@ describe('RateLimitIndicator', () => {
 
       expect(screen.getByText(/запросов.*0.*10/i)).toBeInTheDocument()
       const progressBar = screen.getByRole('progressbar')
-      expect(progressBar).toHaveClass('bg-red-500')
+      expect(progressBar).toHaveClass('bg-status-error')
     })
 
     it('handles negative remaining as 0', () => {
