@@ -89,9 +89,9 @@ export function SyncStatusIndicator({
         {isLoading ? (
           <RefreshCw className="h-4 w-4 animate-spin text-primary" />
         ) : syncResult === 'success' ? (
-          <Check className="h-4 w-4 text-green-600" />
+          <Check className="h-4 w-4 text-status-success" />
         ) : syncResult === 'error' ? (
-          <AlertCircle className="h-4 w-4 text-red-500" />
+          <AlertCircle className="h-4 w-4 text-status-error" />
         ) : (
           <RefreshCw className="h-4 w-4" />
         )}

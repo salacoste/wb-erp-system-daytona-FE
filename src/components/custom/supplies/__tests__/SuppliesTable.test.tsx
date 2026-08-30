@@ -413,9 +413,9 @@ describe('SuppliesTable', () => {
     it('applies correct color classes for OPEN status', () => {
       renderTable({ supplies: [mockSupplyListItemOpen] })
       const label = screen.getByText('Открыта')
-      // Badge renders as <div class="...bg-blue-50..."><Icon /><span>Открыта</span></div>
+      // Badge renders as <div class="...bg-status-information/10..."><Icon /><span>Открыта</span></div>
       const badge = label.parentElement!
-      expect(badge.className).toContain('bg-blue-50')
+      expect(badge.className).toContain('bg-status-information/10')
     })
 
     it('applies correct color classes for CLOSED status', () => {
@@ -424,28 +424,28 @@ describe('SuppliesTable', () => {
       const tbody = screen.getByRole('table').querySelector('tbody')!
       const label = within(tbody as HTMLElement).getByText('Закрыта')
       const badge = label.parentElement!
-      expect(badge.className).toContain('bg-orange-50')
+      expect(badge.className).toContain('bg-status-warning')
     })
 
     it('applies correct color classes for DELIVERING status', () => {
       renderTable({ supplies: [mockSupplyListItemDelivering] })
       const label = screen.getByText('В пути')
       const badge = label.parentElement!
-      expect(badge.className).toContain('bg-purple-50')
+      expect(badge.className).toContain('bg-status-pending/10')
     })
 
     it('applies correct color classes for DELIVERED status', () => {
       renderTable({ supplies: [mockSupplyListItemDelivered] })
       const label = screen.getByText('Доставлена')
       const badge = label.parentElement!
-      expect(badge.className).toContain('bg-green-50')
+      expect(badge.className).toContain('bg-status-success/10')
     })
 
     it('applies correct color classes for CANCELLED status', () => {
       renderTable({ supplies: [mockSupplyListItemCancelled] })
       const label = screen.getByText('Отменена')
       const badge = label.parentElement!
-      expect(badge.className).toContain('bg-red-50')
+      expect(badge.className).toContain('bg-status-error/10')
     })
 
     it('displays icon for each status', () => {

@@ -21,28 +21,28 @@ type SupplyStatus = 'OPEN' | 'CLOSED' | 'DELIVERING' | 'DELIVERED' | 'CANCELLED'
 const EXPECTED_STATUS_CONFIG = {
   OPEN: {
     label: 'Открыта',
-    colorClass: 'text-blue-700',
-    bgClass: 'bg-blue-50',
+    colorClass: 'text-status-information',
+    bgClass: 'bg-status-information/10',
   },
   CLOSED: {
     label: 'Закрыта',
-    colorClass: 'text-orange-700',
-    bgClass: 'bg-orange-50',
+    colorClass: 'text-status-warning-foreground',
+    bgClass: 'bg-status-warning',
   },
   DELIVERING: {
     label: 'В пути',
-    colorClass: 'text-purple-700',
-    bgClass: 'bg-purple-50',
+    colorClass: 'text-status-pending',
+    bgClass: 'bg-status-pending/10',
   },
   DELIVERED: {
     label: 'Доставлена',
-    colorClass: 'text-green-700',
-    bgClass: 'bg-green-50',
+    colorClass: 'text-status-success',
+    bgClass: 'bg-status-success/10',
   },
   CANCELLED: {
     label: 'Отменена',
-    colorClass: 'text-red-700',
-    bgClass: 'bg-red-50',
+    colorClass: 'text-status-error',
+    bgClass: 'bg-status-error/10',
   },
 }
 
@@ -108,63 +108,65 @@ describe('SupplyStatusBadge', () => {
       render(<SupplyStatusBadge status="OPEN" />)
 
       const badge = screen.getByText('Открыта').closest('[class]')
-      expect(badge?.className).toContain('text-blue-700')
-      expect(badge?.className).toContain('bg-blue-50')
+      expect(badge?.className).toContain('text-status-information')
+      expect(badge?.className).toContain('bg-status-information/10')
     })
 
     it('applies orange colors for CLOSED status', () => {
       render(<SupplyStatusBadge status="CLOSED" />)
 
       const badge = screen.getByText('Закрыта').closest('[class]')
-      expect(badge?.className).toContain('text-orange-700')
-      expect(badge?.className).toContain('bg-orange-50')
+      expect(badge?.className).toContain('text-status-warning-foreground')
+      expect(badge?.className).toContain('bg-status-warning')
     })
 
     it('applies purple colors for DELIVERING status', () => {
       render(<SupplyStatusBadge status="DELIVERING" />)
 
       const badge = screen.getByText('В пути').closest('[class]')
-      expect(badge?.className).toContain('text-purple-700')
-      expect(badge?.className).toContain('bg-purple-50')
+      expect(badge?.className).toContain('text-status-pending')
+      expect(badge?.className).toContain('bg-status-pending/10')
     })
 
     it('applies green colors for DELIVERED status', () => {
       render(<SupplyStatusBadge status="DELIVERED" />)
 
       const badge = screen.getByText('Доставлена').closest('[class]')
-      expect(badge?.className).toContain('text-green-700')
-      expect(badge?.className).toContain('bg-green-50')
+      expect(badge?.className).toContain('text-status-success')
+      expect(badge?.className).toContain('bg-status-success/10')
     })
 
     it('applies red colors for CANCELLED status', () => {
       render(<SupplyStatusBadge status="CANCELLED" />)
 
       const badge = screen.getByText('Отменена').closest('[class]')
-      expect(badge?.className).toContain('text-red-700')
-      expect(badge?.className).toContain('bg-red-50')
+      expect(badge?.className).toContain('text-status-error')
+      expect(badge?.className).toContain('bg-status-error/10')
     })
 
     it('applies text color class correctly', () => {
       const { container } = render(<SupplyStatusBadge status="DELIVERED" />)
 
       // Green text for DELIVERED
-      const el = container.querySelector('.text-green-700')
+      const el = container.querySelector('.text-status-success')
       expect(el).toBeInTheDocument()
     })
 
     it('applies background color class correctly', () => {
-      const { container } = render(<SupplyStatusBadge status="CANCELLED" />)
+      render(<SupplyStatusBadge status="CANCELLED" />)
 
-      // Red background for CANCELLED
-      const el = container.querySelector('.bg-red-50')
-      expect(el).toBeInTheDocument()
+      // Red background for CANCELLED. 172.x re-pin: opacity-modifier tokens
+      // (bg-status-error/10) contain "/" — invalid in CSS selectors, so the
+      // assertion reads the rendered className instead of querySelector.
+      const badge = screen.getByText('Отменена').closest('[class]')
+      expect(badge?.className).toContain('bg-status-error/10')
     })
 
     it('applies border color class matching status', () => {
-      const { container } = render(<SupplyStatusBadge status="OPEN" />)
+      render(<SupplyStatusBadge status="OPEN" />)
 
-      const el = container.querySelector('.border-blue-200')
-      expect(el).toBeInTheDocument()
+      const badge = screen.getByText('Открыта').closest('[class]')
+      expect(badge?.className).toContain('border-status-information/40')
     })
   })
 
@@ -279,16 +281,16 @@ describe('SupplyStatusBadge', () => {
 
       const badge = container.querySelector('.custom-class')
       // Status color classes should still be present
-      expect(badge?.className).toContain('text-blue-700')
-      expect(badge?.className).toContain('bg-blue-50')
+      expect(badge?.className).toContain('text-status-information')
+      expect(badge?.className).toContain('bg-status-information/10')
     })
 
     it('custom className does not override status colors', () => {
       const { container } = render(<SupplyStatusBadge status="CANCELLED" className="extra-class" />)
 
       const badge = container.querySelector('.extra-class')
-      expect(badge?.className).toContain('text-red-700')
-      expect(badge?.className).toContain('bg-red-50')
+      expect(badge?.className).toContain('text-status-error')
+      expect(badge?.className).toContain('bg-status-error/10')
     })
   })
 
