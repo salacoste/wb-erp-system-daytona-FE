@@ -141,7 +141,7 @@ export function CreateSupplyModal({ open, onOpenChange, returnFocusRef }: Create
               onKeyDown={handleKeyDown}
             />
             {form.formState.errors.name && (
-              <p className="text-sm text-red-500" role="alert">
+              <p className="text-sm text-status-error" role="alert">
                 {form.formState.errors.name.message}
               </p>
             )}
