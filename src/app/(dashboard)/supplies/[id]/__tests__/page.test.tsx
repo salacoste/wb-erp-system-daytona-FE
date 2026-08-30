@@ -20,7 +20,6 @@ import type { SupplyDetailResponse } from '@/types/supplies'
 
 const mockUseSupplyDetail = vi.fn()
 const mockUseRemoveOrders = vi.fn()
-const mockUseDownloadDocument = vi.fn()
 const mockRouter = { push: vi.fn(), back: vi.fn(), replace: vi.fn() }
 
 // Pre-create a resolved params promise that React.use() can resolve synchronously.
@@ -51,10 +50,6 @@ vi.mock('@/hooks/useRemoveOrders', () => ({
   useRemoveOrders: (supplyId: string) => mockUseRemoveOrders(supplyId),
 }))
 
-vi.mock('@/hooks/useDownloadDocument', () => ({
-  useDownloadDocument: () => mockUseDownloadDocument(),
-}))
-
 // Story O5: acceptance-act hooks stub (idle by default).
 vi.mock('@/hooks/useAcceptanceAct', () => ({
   useUploadAcceptanceAct: () => ({ mutate: vi.fn(), isPending: false }),
@@ -73,19 +68,12 @@ vi.mock('sonner', () => ({
 
 // Import fixtures
 import {
-  mockSupplyOpen,
   mockSupplyClosed,
   mockSupplyDelivering,
   mockSupplyDelivered,
   mockSupplyCancelled,
-  mockSupplyEmpty,
   mockSupplyDetailResponse,
 } from '@/test/fixtures/supplies-responses'
-import {
-  mockErrorNotFound,
-  mockErrorForbidden,
-  mockErrorNetworkError,
-} from '@/test/fixtures/supplies'
 
 // Import page component AFTER mocks
 import SupplyDetailPage from '../page'
@@ -123,7 +111,6 @@ function renderPage(overrides: Partial<MockSupplyDetailResult> = {}) {
   const qc = new QueryClient({ defaultOptions: { queries: { retry: false } } })
   mockUseSupplyDetail.mockReturnValue(createResult(overrides))
   mockUseRemoveOrders.mockReturnValue({ mutate: vi.fn(), isPending: false })
-  mockUseDownloadDocument.mockReturnValue({ mutate: vi.fn(), isPending: false })
 
   // Create the params promise and register it with our mock use() override
   cachedParamsPromise = Promise.resolve({ id: 'supply-001' })
@@ -196,7 +183,7 @@ describe('SupplyDetailPage', () => {
     it('shows SupplyOrdersTable component', async () => {
       await renderPage()
       await waitFor(() => {
-        expect(screen.getByText(/Заказы в поставке/)).toBeDefined()
+        expect(screen.getByRole('table', { name: 'Заказы в поставке' })).toBeDefined()
       })
     })
 
@@ -317,6 +304,17 @@ describe('SupplyDetailPage', () => {
   // ============================================================================
 
   describe('Error States', () => {
+    it('shows a not-found state when loading succeeds without supply data', async () => {
+      await renderPage({ data: undefined, isSuccess: true })
+
+      await waitFor(() => {
+        expect(screen.getByText('Поставка не найдена')).toBeDefined()
+      })
+      expect(screen.getByRole('link', { name: 'Вернуться к списку' }).getAttribute('href')).toBe(
+        '/supplies'
+      )
+    })
+
     describe('404 Not Found', () => {
       it('shows "Поставка не найдена" error page', async () => {
         await renderPage({
@@ -391,7 +389,9 @@ describe('SupplyDetailPage', () => {
           isSuccess: false,
         })
         await waitFor(() => {
-          expect(screen.getByText(/Не удалось загрузить/)).toBeDefined()
+          expect(screen.getByRole('alert').textContent).toContain(
+            'Не удалось загрузить данные поставки'
+          )
         })
       })
 
@@ -446,7 +446,9 @@ describe('SupplyDetailPage', () => {
           isSuccess: false,
         })
         await waitFor(() => {
-          expect(screen.getByText(/Не удалось загрузить/)).toBeDefined()
+          expect(screen.getByRole('alert').textContent).toContain(
+            'Не удалось загрузить данные поставки'
+          )
         })
       })
 
@@ -666,9 +668,9 @@ describe('SupplyDetailPage', () => {
     it('orders table horizontally scrollable', async () => {
       await renderPage()
       await waitFor(() => {
-        expect(screen.getByText(/Заказы в поставке/)).toBeDefined()
+        expect(screen.getByRole('table', { name: 'Заказы в поставке' })).toBeDefined()
       })
-      const tableSection = screen.getByText(/Заказы в поставке/).parentElement
+      const tableSection = screen.getByRole('table', { name: 'Заказы в поставке' }).parentElement
       expect(tableSection).toBeDefined()
     })
 
@@ -735,38 +737,94 @@ describe('SupplyDetailPage', () => {
     })
   })
 
-  // ============================================================================
-  // TDD Verification Test
-  // ============================================================================
+  describe('Interaction Wiring', () => {
+    it('navigates to the selected order search result', async () => {
+      const user = userEvent.setup()
+      await renderPage()
 
-  describe('TDD Verification', () => {
-    it('should have test fixtures ready', () => {
-      expect(mockSupplyOpen).toBeDefined()
-      expect(mockSupplyClosed).toBeDefined()
-      expect(mockSupplyDelivering).toBeDefined()
-      expect(mockSupplyDelivered).toBeDefined()
-      expect(mockSupplyCancelled).toBeDefined()
-      expect(mockSupplyEmpty).toBeDefined()
+      await user.click(await screen.findByText('1234567890'))
+
+      expect(mockRouter.push).toHaveBeenCalledWith('/orders?search=1234567890')
     })
 
-    it('should have mock hooks ready', () => {
-      expect(mockUseSupplyDetail).toBeDefined()
-      expect(mockUseRemoveOrders).toBeDefined()
-      expect(mockUseDownloadDocument).toBeDefined()
+    it('opens the order picker from the primary action', async () => {
+      const user = userEvent.setup()
+      await renderPage()
+
+      await user.click(await screen.findByRole('button', { name: 'Добавить заказы' }))
+
+      expect(
+        await screen.findByRole('dialog', { name: 'Добавить заказы в поставку' })
+      ).toBeDefined()
     })
 
-    it('should have error fixtures ready', () => {
-      expect(mockErrorNotFound).toBeDefined()
-      expect(mockErrorNotFound.code).toBe('SUPPLY_NOT_FOUND')
-      expect(mockErrorForbidden).toBeDefined()
-      expect(mockErrorNetworkError).toBeDefined()
+    it('opens the close confirmation from the supply action', async () => {
+      const user = userEvent.setup()
+      await renderPage()
+
+      await user.click(await screen.findByRole('button', { name: 'Закрыть поставку' }))
+
+      expect(await screen.findByRole('alertdialog', { name: 'Закрыть поставку?' })).toBeDefined()
     })
 
-    it('should have testing utilities available', () => {
-      expect(render).toBeDefined()
-      expect(screen).toBeDefined()
-      expect(waitFor).toBeDefined()
-      expect(userEvent).toBeDefined()
+    it('announces refresh success only after refetch resolves', async () => {
+      const user = userEvent.setup()
+      const refetch = vi.fn().mockResolvedValue({ error: null })
+      await renderPage({
+        data: { ...mockSupplyDetailResponse, ...mockSupplyClosed, status: 'CLOSED' },
+        refetch,
+      })
+
+      await user.click(await screen.findByRole('button', { name: 'Обновить статус' }))
+
+      await waitFor(() => {
+        expect(screen.getByTestId('supply-detail-announcement-1')).toHaveTextContent(
+          'Статус поставки обновлён'
+        )
+      })
+    })
+
+    it('announces a failed refresh truthfully', async () => {
+      const user = userEvent.setup()
+      const refetch = vi.fn().mockResolvedValue({ error: new Error('refresh failed') })
+      await renderPage({
+        data: { ...mockSupplyDetailResponse, ...mockSupplyClosed, status: 'CLOSED' },
+        refetch,
+      })
+
+      await user.click(await screen.findByRole('button', { name: 'Обновить статус' }))
+
+      await waitFor(() => {
+        expect(screen.getByTestId('supply-detail-announcement-1')).toHaveTextContent(
+          'Не удалось обновить статус поставки'
+        )
+      })
+      expect(screen.queryByText('Статус поставки обновлён')).not.toBeInTheDocument()
+    })
+
+    it('alternates live channels for repeated identical announcements', async () => {
+      const user = userEvent.setup()
+      const refetch = vi.fn().mockResolvedValue({ error: null })
+      await renderPage({
+        data: { ...mockSupplyDetailResponse, ...mockSupplyClosed, status: 'CLOSED' },
+        refetch,
+      })
+      const refresh = await screen.findByRole('button', { name: 'Обновить статус' })
+
+      await user.click(refresh)
+      await waitFor(() =>
+        expect(screen.getByTestId('supply-detail-announcement-1')).toHaveTextContent(
+          'Статус поставки обновлён'
+        )
+      )
+      await user.click(refresh)
+
+      await waitFor(() => {
+        expect(screen.getByTestId('supply-detail-announcement-0')).toHaveTextContent(
+          'Статус поставки обновлён'
+        )
+        expect(screen.getByTestId('supply-detail-announcement-1')).toBeEmptyDOMElement()
+      })
     })
   })
 })

@@ -7,6 +7,7 @@
  * download flow, loading states, error handling, accessibility, cache invalidation.
  */
 
+import { useState } from 'react'
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { render, screen, waitFor, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
@@ -225,7 +226,7 @@ describe('GenerateStickersModal', () => {
       renderWithQC(<GenerateStickersModal {...defaultProps} />)
       await user.click(screen.getByRole('radio', { name: /ZPL/i }))
       const infoText = screen.getByText('Предпросмотр ZPL недоступен.')
-      expect(infoText.closest('div[class*="bg-blue"]')).toBeInTheDocument()
+      expect(infoText.closest('div[class*="bg-status-information"]')).toBeInTheDocument()
     })
   })
 
@@ -550,6 +551,28 @@ describe('GenerateStickersModal', () => {
       renderWithQC(<GenerateStickersModal {...defaultProps} />)
       const focusable = within(screen.getByRole('dialog')).getAllByRole('button')
       expect(focusable.length).toBeGreaterThanOrEqual(2)
+    })
+
+    it('returns focus to the external trigger when closed', async () => {
+      const user = userEvent.setup()
+
+      function Harness() {
+        const [open, setOpen] = useState(false)
+        return (
+          <>
+            <button type="button" onClick={() => setOpen(true)}>
+              Открыть генерацию стикеров
+            </button>
+            <GenerateStickersModal open={open} onOpenChange={setOpen} supplyId="sup_123abc" />
+          </>
+        )
+      }
+
+      renderWithQC(<Harness />)
+      const trigger = screen.getByRole('button', { name: 'Открыть генерацию стикеров' })
+      await user.click(trigger)
+      await user.click(screen.getByRole('button', { name: 'Отмена' }))
+      await waitFor(() => expect(trigger).toHaveFocus())
     })
 
     it('radio buttons are keyboard navigable with proper role', () => {

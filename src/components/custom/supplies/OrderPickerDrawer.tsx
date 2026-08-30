@@ -9,7 +9,7 @@
  * Orchestrator that delegates to OrderPickerContent and OrderPickerFooter.
  */
 
-import { useState, useMemo, useCallback, useEffect } from 'react'
+import { useState, useMemo, useCallback, useEffect, useRef } from 'react'
 import {
   Sheet,
   SheetContent,
@@ -34,6 +34,7 @@ export function OrderPickerDrawer({
   onClose,
   onSuccess,
 }: OrderPickerDrawerProps) {
+  const returnFocusRef = useRef<HTMLElement | null>(null)
   // Filter state
   const [searchValue, setSearchValue] = useState('')
   const [statusFilter, setStatusFilter] = useState<EligibleSupplierStatus | null>(null)
@@ -76,6 +77,21 @@ export function OrderPickerDrawer({
     }
   }, [isOpen])
 
+  useEffect(() => {
+    if (isOpen) return
+
+    const rememberFocus = () => {
+      if (document.activeElement instanceof HTMLElement) {
+        if (document.activeElement.closest('[role="dialog"], [role="alertdialog"]')) return
+        returnFocusRef.current = document.activeElement
+      }
+    }
+
+    rememberFocus()
+    document.addEventListener('focusin', rememberFocus)
+    return () => document.removeEventListener('focusin', rememberFocus)
+  }, [isOpen])
+
   // Filter logic
   const activeFilterCount = useMemo(() => {
     let count = 0
@@ -100,6 +116,16 @@ export function OrderPickerDrawer({
         side="right"
         className="flex w-full flex-col sm:max-w-2xl lg:max-w-3xl"
         aria-describedby="order-picker-description"
+        onOpenAutoFocus={() => {
+          if (document.activeElement instanceof HTMLElement) {
+            returnFocusRef.current = document.activeElement
+          }
+        }}
+        onCloseAutoFocus={event => {
+          if (!returnFocusRef.current?.isConnected) return
+          event.preventDefault()
+          returnFocusRef.current.focus()
+        }}
       >
         <SheetHeader>
           <SheetTitle>Добавить заказы в поставку</SheetTitle>

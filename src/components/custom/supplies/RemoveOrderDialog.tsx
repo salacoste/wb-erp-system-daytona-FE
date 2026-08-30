@@ -8,6 +8,7 @@
  * Confirmation dialog for removing an order from a supply.
  */
 
+import { useEffect, useRef, type RefObject } from 'react'
 import { Loader2 } from 'lucide-react'
 import {
   AlertDialog,
@@ -28,6 +29,7 @@ interface RemoveOrderDialogProps {
   onConfirm: () => void
   onCancel: () => void
   isLoading?: boolean
+  fallbackFocusRef?: RefObject<HTMLElement | null>
 }
 
 export function RemoveOrderDialog({
@@ -36,12 +38,44 @@ export function RemoveOrderDialog({
   onConfirm,
   onCancel,
   isLoading = false,
+  fallbackFocusRef,
 }: RemoveOrderDialogProps) {
+  const returnFocusRef = useRef<HTMLElement | null>(null)
+
+  useEffect(() => {
+    if (isOpen) return
+
+    const rememberFocus = () => {
+      if (document.activeElement instanceof HTMLElement) {
+        if (document.activeElement.closest('[role="dialog"], [role="alertdialog"]')) return
+        returnFocusRef.current = document.activeElement
+      }
+    }
+
+    rememberFocus()
+    document.addEventListener('focusin', rememberFocus)
+    return () => document.removeEventListener('focusin', rememberFocus)
+  }, [isOpen])
+
   if (!order) return null
 
   return (
     <AlertDialog open={isOpen} onOpenChange={open => !open && !isLoading && onCancel()}>
-      <AlertDialogContent>
+      <AlertDialogContent
+        onOpenAutoFocus={() => {
+          if (document.activeElement instanceof HTMLElement) {
+            returnFocusRef.current = document.activeElement
+          }
+        }}
+        onCloseAutoFocus={event => {
+          const focusTarget = returnFocusRef.current?.isConnected
+            ? returnFocusRef.current
+            : fallbackFocusRef?.current
+          if (!focusTarget) return
+          event.preventDefault()
+          focusTarget.focus()
+        }}
+      >
         <AlertDialogHeader>
           <AlertDialogTitle>Удалить заказ?</AlertDialogTitle>
           <AlertDialogDescription asChild>
@@ -68,16 +102,22 @@ export function RemoveOrderDialog({
             </div>
           </AlertDialogDescription>
         </AlertDialogHeader>
+        <span className="sr-only" role="status" aria-live="polite">
+          {isLoading ? 'Заказ удаляется из поставки' : ''}
+        </span>
         <AlertDialogFooter>
           <AlertDialogCancel disabled={isLoading}>Отмена</AlertDialogCancel>
           <AlertDialogAction
-            onClick={onConfirm}
+            onClick={event => {
+              event.preventDefault()
+              onConfirm()
+            }}
             disabled={isLoading}
-            className="bg-red-600 hover:bg-red-700 focus:ring-red-600"
+            className="bg-destructive text-destructive-foreground hover:bg-destructive/90 focus-visible:ring-destructive"
           >
             {isLoading ? (
               <>
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" aria-hidden="true" />
                 Удаление...
               </>
             ) : (

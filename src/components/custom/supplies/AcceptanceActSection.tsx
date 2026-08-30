@@ -66,11 +66,18 @@ export function AcceptanceActSection({
   return (
     <div className="rounded-lg border bg-card p-6" data-testid="acceptance-act-section">
       <h2 className="mb-4 text-lg font-semibold">Акт приёмки</h2>
+      <span className="sr-only" role="status" aria-live="polite" aria-atomic="true">
+        {uploadPending
+          ? 'Акт приёмки загружается'
+          : downloadPending
+            ? 'Акт приёмки подготавливается к скачиванию'
+            : ''}
+      </span>
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-        <div className="text-sm">
+        <div className="text-sm" aria-live="polite">
           {storedAct ? (
             <div className="flex items-center gap-2">
-              <FileCheck2 className="h-4 w-4 text-green-600" aria-hidden />
+              <FileCheck2 className="h-4 w-4 text-status-success" aria-hidden="true" />
               <span>Загружен {formatDateTime(storedAct.generatedAt)}</span>
             </div>
           ) : (
@@ -85,9 +92,9 @@ export function AcceptanceActSection({
             data-testid="acceptance-act-upload-btn"
           >
             {uploadPending ? (
-              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" aria-hidden="true" />
             ) : (
-              <Upload className="mr-2 h-4 w-4" />
+              <Upload className="mr-2 h-4 w-4" aria-hidden="true" />
             )}
             Загрузить акт
           </Button>
@@ -99,9 +106,9 @@ export function AcceptanceActSection({
               data-testid="acceptance-act-download-btn"
             >
               {downloadPending ? (
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" aria-hidden="true" />
               ) : (
-                <Download className="mr-2 h-4 w-4" />
+                <Download className="mr-2 h-4 w-4" aria-hidden="true" />
               )}
               Скачать
             </Button>

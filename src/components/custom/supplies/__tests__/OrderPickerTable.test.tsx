@@ -255,11 +255,11 @@ describe('OrderPickerTable - Story 53.5-FE', () => {
       expect(mockOnToggleOrder).toHaveBeenCalledWith(mockEligibleOrderConfirm.orderId)
     })
 
-    it('selected row has bg-blue-50 highlight class', () => {
+    it('selected row uses the semantic primary highlight', () => {
       const selectedIds = new Set([mockEligibleOrderConfirm.orderId])
       renderTable({ orders: [mockEligibleOrderConfirm], selectedIds })
       const row = screen.getByRole('listitem')
-      expect(row.className).toContain('bg-blue-50')
+      expect(row.className).toContain('bg-primary/10')
     })
 
     it('checkbox has aria-label with order ID', () => {

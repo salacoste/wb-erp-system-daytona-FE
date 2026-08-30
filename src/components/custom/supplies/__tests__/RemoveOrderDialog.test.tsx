@@ -12,6 +12,7 @@
  * - Error handling
  */
 
+import { useState } from 'react'
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { render, screen, waitFor, fireEvent } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
@@ -120,7 +121,7 @@ describe('RemoveOrderDialog', () => {
     it('confirm button has destructive/warning styling', () => {
       render(<RemoveOrderDialog {...defaultProps} />)
       const btn = screen.getByText('Удалить')
-      expect(btn.className).toContain('bg-red-600')
+      expect(btn.className).toContain('bg-destructive')
     })
 
     it('clicking confirm calls onConfirm', async () => {
@@ -260,9 +261,30 @@ describe('RemoveOrderDialog', () => {
       })
     })
 
-    it('focus returns to trigger on close', () => {
-      const { unmount } = render(<RemoveOrderDialog {...defaultProps} />)
-      unmount()
+    it('focus returns to trigger on close', async () => {
+      const user = userEvent.setup()
+
+      function Harness() {
+        const [isOpen, setIsOpen] = useState(false)
+        return (
+          <>
+            <button type="button" onClick={() => setIsOpen(true)}>
+              Открыть удаление заказа
+            </button>
+            <RemoveOrderDialog
+              {...defaultProps}
+              isOpen={isOpen}
+              onCancel={() => setIsOpen(false)}
+            />
+          </>
+        )
+      }
+
+      render(<Harness />)
+      const trigger = screen.getByRole('button', { name: 'Открыть удаление заказа' })
+      await user.click(trigger)
+      await user.click(screen.getByRole('button', { name: 'Отмена' }))
+      await waitFor(() => expect(trigger).toHaveFocus())
     })
 
     it('buttons have accessible labels', () => {

@@ -20,9 +20,18 @@ export const ROW_HEIGHT = 48
 
 export const STATUS_CONFIG: Record<SupplierStatus, { label: string; className: string }> = {
   new: { label: 'Новый', className: 'bg-muted/50 text-foreground border-border' },
-  confirm: { label: 'Подтвержден', className: 'bg-blue-50 text-blue-700 border-blue-200' },
-  complete: { label: 'Завершен', className: 'bg-green-50 text-green-700 border-green-200' },
-  cancel: { label: 'Отменен', className: 'bg-red-50 text-red-700 border-red-200' },
+  confirm: {
+    label: 'Подтвержден',
+    className: 'border-status-information/30 bg-status-information/10 text-status-information',
+  },
+  complete: {
+    label: 'Завершен',
+    className: 'border-status-success/30 bg-status-success/10 text-status-success',
+  },
+  cancel: {
+    label: 'Отменен',
+    className: 'border-status-error/30 bg-status-error/10 text-status-error',
+  },
 }
 
 // =============================================================================
@@ -60,7 +69,7 @@ export function OrderRow({
       className={`
         flex items-center border-b
         transition-colors hover:bg-muted/50
-        ${isSelected ? 'bg-blue-50' : 'bg-card'}
+        ${isSelected ? 'bg-primary/10' : 'bg-card'}
       `}
     >
       <div className="pl-4">
@@ -71,6 +80,8 @@ export function OrderRow({
         />
       </div>
       <button
+        // A native button keeps the virtualized row action keyboard-operable
+        // without adding another focus-management layer to react-window.
         type="button"
         aria-label={`Переключить выбор заказа #${order.orderId}`}
         aria-pressed={isSelected}

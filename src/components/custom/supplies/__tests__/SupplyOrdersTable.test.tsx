@@ -14,7 +14,7 @@
  */
 
 import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { screen, within } from '@testing-library/react'
+import { act, screen, waitFor, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 
 import { renderWithProviders } from '@/test/utils/test-utils'
@@ -38,7 +38,7 @@ function renderTable(
     orders: SupplyOrder[]
     supplyId: string
     status: SupplyStatus
-    onRemoveOrder: (ids: string[]) => void
+    onRemoveOrder: (ids: string[], onSuccess: () => void) => void
     onOrderClick: (order: SupplyOrder) => void
     isRemoving: boolean
   }> = {}
@@ -345,6 +345,21 @@ describe('SupplyOrdersTable', () => {
       expect(props.onOrderClick).not.toHaveBeenCalled()
     })
 
+    it.each(['{Enter}', ' '])(
+      'pressing %s on a remove button opens the dialog without row navigation',
+      async key => {
+        const user = userEvent.setup()
+        const { props } = renderTable({ status: 'OPEN' })
+        const button = screen.getByLabelText(`Удалить заказ ${mockSupplyOrder.orderId}`)
+
+        button.focus()
+        await user.keyboard(key)
+
+        expect(screen.getByRole('alertdialog', { name: 'Удалить заказ?' })).toBeInTheDocument()
+        expect(props.onOrderClick).not.toHaveBeenCalled()
+      }
+    )
+
     it('Enter key on focused row triggers onOrderClick', async () => {
       const user = userEvent.setup()
       const { props } = renderTable({ status: 'OPEN' })
@@ -373,7 +388,7 @@ describe('SupplyOrdersTable', () => {
   // ===========================================================================
 
   describe('Remove Order Dialog Flow', () => {
-    it('confirming removal calls onRemoveOrder with orderId array', async () => {
+    it('confirming removal passes the order ID and a success callback', async () => {
       const user = userEvent.setup()
       const { props } = renderTable({ status: 'OPEN' })
       // Open dialog
@@ -381,7 +396,36 @@ describe('SupplyOrdersTable', () => {
       // Confirm
       const confirmBtn = screen.getByRole('button', { name: 'Удалить' })
       await user.click(confirmBtn)
-      expect(props.onRemoveOrder).toHaveBeenCalledWith([mockSupplyOrder.orderId])
+      expect(props.onRemoveOrder).toHaveBeenCalledWith(
+        [mockSupplyOrder.orderId],
+        expect.any(Function)
+      )
+    })
+
+    it('keeps pending feedback mounted and closes with focus return only on success', async () => {
+      const user = userEvent.setup()
+      const onRemoveOrder = vi.fn()
+      const { props, rerender } = renderTable({ status: 'OPEN', onRemoveOrder })
+      const trigger = screen.getByLabelText(`Удалить заказ ${mockSupplyOrder.orderId}`)
+
+      await user.click(trigger)
+      await user.click(screen.getByRole('button', { name: 'Удалить' }))
+      const onSuccess = onRemoveOrder.mock.calls[0][1]
+
+      rerender(<SupplyOrdersTable {...props} isRemoving />)
+      expect(screen.getByRole('alertdialog', { name: 'Удалить заказ?' })).toBeInTheDocument()
+      expect(screen.getByRole('status')).toHaveTextContent('Заказ удаляется из поставки')
+
+      rerender(<SupplyOrdersTable {...props} isRemoving={false} />)
+      expect(screen.getByRole('alertdialog', { name: 'Удалить заказ?' })).toBeInTheDocument()
+
+      act(() => onSuccess())
+      await waitFor(() => {
+        expect(
+          screen.queryByRole('alertdialog', { name: 'Удалить заказ?' })
+        ).not.toBeInTheDocument()
+        expect(trigger).toHaveFocus()
+      })
     })
 
     it('cancelling removal does not call onRemoveOrder', async () => {

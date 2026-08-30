@@ -50,6 +50,34 @@ describe('AcceptanceActSection (Story O5)', () => {
     expect(onDownload).toHaveBeenCalledTimes(1)
   })
 
+  it('announces an acceptance-act upload in progress', () => {
+    renderWithProviders(
+      <AcceptanceActSection
+        storedAct={null}
+        onUpload={onUpload}
+        onDownload={onDownload}
+        uploadPending
+      />
+    )
+
+    expect(screen.getByRole('status')).toHaveTextContent('Акт приёмки загружается')
+  })
+
+  it('announces acceptance-act download preparation', () => {
+    renderWithProviders(
+      <AcceptanceActSection
+        storedAct={storedAct}
+        onUpload={onUpload}
+        onDownload={onDownload}
+        downloadPending
+      />
+    )
+
+    expect(screen.getByRole('status')).toHaveTextContent(
+      'Акт приёмки подготавливается к скачиванию'
+    )
+  })
+
   it('uploads a valid .xlsx file picked via the hidden input', async () => {
     const user = userEvent.setup()
     renderWithProviders(

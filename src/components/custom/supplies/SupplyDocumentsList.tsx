@@ -8,9 +8,12 @@
  * Displays available documents for download.
  */
 
+import { useState } from 'react'
 import { FileText, Download, Loader2, File } from 'lucide-react'
+import { toast } from 'sonner'
 import { Button } from '@/components/ui/button'
 import { formatDateTime } from '@/lib/utils'
+import { downloadDocument as downloadSupplyDocument } from '@/lib/api/supplies'
 import type { SupplyDocument, DocumentType } from '@/types/supplies'
 
 interface SupplyDocumentsListProps {
@@ -19,6 +22,37 @@ interface SupplyDocumentsListProps {
   onDownload: (docType: string, filename: string) => void
   isDownloading?: boolean
   downloadingType?: string
+}
+
+export function useSupplyDocumentDownload(supplyId: string, announce: (message: string) => void) {
+  const [downloadingType, setDownloadingType] = useState<string>()
+
+  const downloadDocument = async (docType: string, filename: string) => {
+    let url: string | undefined
+    let link: HTMLAnchorElement | undefined
+
+    try {
+      setDownloadingType(docType)
+      const blob = await downloadSupplyDocument(supplyId, docType as DocumentType)
+      url = URL.createObjectURL(blob)
+      link = document.createElement('a')
+      link.href = url
+      link.download = filename
+      document.body.appendChild(link)
+      link.click()
+      toast.success('Документ скачан')
+      announce('Документ скачан')
+    } catch {
+      toast.error('Не удалось скачать документ')
+      announce('Не удалось скачать документ')
+    } finally {
+      link?.remove()
+      if (url) URL.revokeObjectURL(url)
+      setDownloadingType(undefined)
+    }
+  }
+
+  return { downloadDocument, downloadingType }
 }
 
 /** Get document type label in Russian */
@@ -66,7 +100,7 @@ export function SupplyDocumentsList({
   }
 
   return (
-    <div className="rounded-lg border bg-card p-6">
+    <div className="rounded-lg border bg-card p-6" aria-busy={isDownloading}>
       <h2 className="mb-4 text-lg font-semibold">Документы</h2>
       <ul className="divide-y">
         {documents.map(doc => {
@@ -78,7 +112,7 @@ export function SupplyDocumentsList({
           return (
             <li
               key={`${doc.type}-${doc.format}`}
-              className="flex items-center justify-between py-3"
+              className="flex flex-col gap-3 py-3 sm:flex-row sm:items-center sm:justify-between"
             >
               <div className="flex items-center gap-3">
                 <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-muted">
@@ -99,9 +133,9 @@ export function SupplyDocumentsList({
                 aria-label={`Скачать ${label}`}
               >
                 {isThisDownloading ? (
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" aria-hidden="true" />
                 ) : (
-                  <Download className="mr-2 h-4 w-4" />
+                  <Download className="mr-2 h-4 w-4" aria-hidden="true" />
                 )}
                 Скачать
               </Button>

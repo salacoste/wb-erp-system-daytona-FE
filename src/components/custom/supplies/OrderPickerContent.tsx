@@ -104,7 +104,7 @@ export function OrderPickerContent({
       {/* Selection Counter */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <span className="font-medium">
+          <span className="font-medium" role="status" aria-live="polite" aria-atomic="true">
             Выбрано: {selectedCount} {pluralizeOrders(selectedCount)}
           </span>
           {selectedCount > 0 && (
@@ -117,9 +117,9 @@ export function OrderPickerContent({
 
       {/* Near Limit Warning */}
       {isNearLimit && (
-        <Alert variant="default" className="border-amber-200 bg-amber-50">
-          <AlertTriangle className="h-4 w-4 text-amber-600" />
-          <AlertDescription className="text-amber-800">
+        <Alert variant="default" className="border-status-warning/40 bg-status-warning/10">
+          <AlertTriangle className="h-4 w-4 text-status-warning" aria-hidden="true" />
+          <AlertDescription className="text-status-warning">
             {isAtLimit
               ? 'Достигнут лимит выбора (максимум 1000 заказов)'
               : `Приближается к лимиту выбора (${selectedCount}/1000)`}
@@ -135,13 +135,13 @@ export function OrderPickerContent({
           </div>
         ) : isError ? (
           <div role="alert" className="flex flex-col items-center justify-center py-12">
-            <Package className="mb-4 h-12 w-12 text-red-300" />
+            <Package className="mb-4 h-12 w-12 text-destructive" aria-hidden="true" />
             <p className="text-lg font-medium text-foreground">Не удалось загрузить заказы</p>
             <p className="mt-1 text-sm text-muted-foreground">
               {error?.message || 'Произошла ошибка при загрузке'}
             </p>
             <Button variant="outline" onClick={() => refetch()} className="mt-4">
-              <RefreshCw className="mr-2 h-4 w-4" />
+              <RefreshCw className="mr-2 h-4 w-4" aria-hidden="true" />
               Повторить
             </Button>
           </div>

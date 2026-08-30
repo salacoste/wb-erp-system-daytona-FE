@@ -54,12 +54,19 @@ export function StickerPreview({
   // ZPL format - show info placeholder
   if (format === 'zpl') {
     return (
-      <div className={cn('rounded-lg border border-blue-200 bg-blue-50 p-6', className)}>
+      <div
+        className={cn(
+          'rounded-lg border border-status-information/40 bg-status-information/10 p-6',
+          className
+        )}
+      >
         <div className="flex items-start gap-3">
-          <Info className="h-5 w-5 shrink-0 text-blue-500" aria-hidden="true" />
-          <div className="text-sm text-blue-700">
+          <Info className="h-5 w-5 shrink-0 text-status-information" aria-hidden="true" />
+          <div className="text-sm text-foreground">
             <p className="font-medium">Предпросмотр ZPL недоступен.</p>
-            <p className="mt-1 text-blue-600">Этот формат предназначен для термопринтеров Zebra.</p>
+            <p className="mt-1 text-muted-foreground">
+              Этот формат предназначен для термопринтеров Zebra.
+            </p>
           </div>
         </div>
       </div>
@@ -78,16 +85,19 @@ export function StickerPreview({
   // Error state
   if (error || imageError) {
     return (
-      <div className={cn('rounded-lg border border-red-200 bg-red-50 p-6', className)}>
+      <div
+        className={cn('rounded-lg border border-destructive/40 bg-destructive/10 p-6', className)}
+        role="alert"
+      >
         <div className="flex flex-col items-center gap-3 text-center">
-          <AlertCircle className="h-8 w-8 text-red-500" aria-hidden="true" />
-          <div className="text-sm text-red-700">
+          <AlertCircle className="h-8 w-8 text-destructive" aria-hidden="true" />
+          <div className="text-sm text-foreground">
             <p className="font-medium">Не удалось загрузить превью</p>
-            {error && <p className="mt-1 text-red-600">{error}</p>}
+            {error && <p className="mt-1 text-destructive">{error}</p>}
           </div>
           {onRetry && (
             <Button variant="outline" size="sm" onClick={onRetry} className="mt-2">
-              <RefreshCw className="mr-2 h-4 w-4" />
+              <RefreshCw className="mr-2 h-4 w-4" aria-hidden="true" />
               Повторить
             </Button>
           )}

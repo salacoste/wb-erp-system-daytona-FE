@@ -9,6 +9,7 @@
  * Validates that supply is not empty before closing.
  */
 
+import { useEffect, useRef } from 'react'
 import { AlertTriangle, Loader2 } from 'lucide-react'
 import {
   AlertDialog,
@@ -63,6 +64,7 @@ export function CloseSupplyDialog({
   ordersCount,
   onSuccess,
 }: CloseSupplyDialogProps) {
+  const returnFocusRef = useRef<HTMLElement | null>(null)
   const { mutate: closeSupplyMutation, isPending } = useCloseSupply({
     onSuccess: () => {
       onOpenChange(false)
@@ -82,18 +84,44 @@ export function CloseSupplyDialog({
     onOpenChange(newOpen)
   }
 
+  useEffect(() => {
+    if (open) return
+
+    const rememberFocus = () => {
+      if (document.activeElement instanceof HTMLElement) {
+        if (document.activeElement.closest('[role="dialog"], [role="alertdialog"]')) return
+        returnFocusRef.current = document.activeElement
+      }
+    }
+
+    rememberFocus()
+    document.addEventListener('focusin', rememberFocus)
+    return () => document.removeEventListener('focusin', rememberFocus)
+  }, [open])
+
   return (
     <AlertDialog open={open} onOpenChange={handleOpenChange}>
-      <AlertDialogContent>
+      <AlertDialogContent
+        onOpenAutoFocus={() => {
+          if (document.activeElement instanceof HTMLElement) {
+            returnFocusRef.current = document.activeElement
+          }
+        }}
+        onCloseAutoFocus={event => {
+          if (!returnFocusRef.current?.isConnected) return
+          event.preventDefault()
+          returnFocusRef.current.focus()
+        }}
+      >
         <AlertDialogHeader>
           <AlertDialogTitle className="flex items-center gap-2">
-            <AlertTriangle className="h-5 w-5 text-orange-500" aria-hidden="true" />
+            <AlertTriangle className="h-5 w-5 text-status-warning" aria-hidden="true" />
             Закрыть поставку?
           </AlertDialogTitle>
           <AlertDialogDescription asChild>
             <div className="space-y-3">
               {/* Warning message */}
-              <div className="rounded-md bg-orange-50 p-3 text-sm text-orange-800">
+              <div className="rounded-md border border-status-warning/40 bg-status-warning/10 p-3 text-sm text-foreground">
                 После закрытия поставки вы не сможете добавлять или удалять заказы.
               </div>
 
@@ -108,16 +136,23 @@ export function CloseSupplyDialog({
           </AlertDialogDescription>
         </AlertDialogHeader>
 
+        <span className="sr-only" role="status" aria-live="polite">
+          {isPending ? 'Поставка закрывается' : ''}
+        </span>
+
         <AlertDialogFooter>
           <AlertDialogCancel disabled={isPending}>Отмена</AlertDialogCancel>
           <AlertDialogAction
-            onClick={handleConfirm}
+            onClick={event => {
+              event.preventDefault()
+              handleConfirm()
+            }}
             disabled={isPending}
-            className="bg-orange-600 hover:bg-orange-700 focus:ring-orange-600"
+            className="bg-status-warning text-status-warning-foreground hover:bg-status-warning/90 focus-visible:ring-status-warning"
           >
             {isPending ? (
               <>
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" aria-hidden="true" />
                 Закрытие...
               </>
             ) : (

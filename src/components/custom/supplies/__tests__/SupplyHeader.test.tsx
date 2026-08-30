@@ -52,15 +52,15 @@ describe('SupplyHeader', () => {
   // ===========================================================================
 
   describe('Supply Name Display', () => {
-    it('displays supply name prominently as h1', () => {
+    it('displays supply name prominently as h2 below the route heading', () => {
       renderHeader()
-      const heading = screen.getByRole('heading', { level: 1 })
+      const heading = screen.getByRole('heading', { level: 2 })
       expect(heading).toHaveTextContent('Поставка январь')
     })
 
     it('displays "Поставка #ID" when name is null', () => {
       renderHeader({ supply: mockSupplyEmpty })
-      const heading = screen.getByRole('heading', { level: 1 })
+      const heading = screen.getByRole('heading', { level: 2 })
       expect(heading).toHaveTextContent(/Поставка #/)
     })
 
@@ -75,7 +75,7 @@ describe('SupplyHeader', () => {
         name: 'Очень длинное название поставки которое должно быть видно',
       }
       renderHeader({ supply: longNameSupply })
-      const heading = screen.getByRole('heading', { level: 1 })
+      const heading = screen.getByRole('heading', { level: 2 })
       expect(heading.textContent).toContain('Очень длинное')
     })
 
@@ -353,7 +353,7 @@ describe('SupplyHeader', () => {
   describe('Mobile Responsive', () => {
     it('stacks header vertically on mobile', () => {
       renderHeader()
-      const container = screen.getByRole('heading', { level: 1 }).closest('div')
+      const container = screen.getByRole('heading', { level: 2 }).closest('div')
       expect(container).toBeInTheDocument()
     })
 
@@ -379,9 +379,9 @@ describe('SupplyHeader', () => {
   // ===========================================================================
 
   describe('Accessibility', () => {
-    it('supply name is h1 heading', () => {
+    it('supply name is an h2 below the route PageHeader', () => {
       renderHeader()
-      const heading = screen.getByRole('heading', { level: 1 })
+      const heading = screen.getByRole('heading', { level: 2 })
       expect(heading).toBeInTheDocument()
     })
 
