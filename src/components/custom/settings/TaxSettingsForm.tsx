@@ -1,173 +1,218 @@
-/**
- * TaxSettingsForm — Tax & VAT Settings Form
- * Story 66.3-FE: Tax & VAT Settings Page
- * Epic 66-FE: Tax & Accounting Frontend
- *
- * P1 fixes: toast feedback, vatRate validation, Cancel button
- * P2 fixes: loading/error states, spinner, button layout, isDirty
- */
-
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState, type FormEvent } from 'react'
 import { toast } from 'sonner'
-import { Loader2, Save, X } from 'lucide-react'
-import { AlertCircle } from 'lucide-react'
-import { Button } from '@/components/ui/button'
-import { Skeleton } from '@/components/ui/skeleton'
-import { Alert, AlertDescription } from '@/components/ui/alert'
+import { ContextBar } from '@/components/product'
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { useCabinetTaxSettings, useUpdateTaxSettings } from '@/hooks/useCabinetTaxSettings'
 import { canManageOperationalData } from '@/lib/role-permissions'
 import { useAuthStore } from '@/stores/authStore'
-import type { TaxSystem, VatRate } from '@/types/cabinet'
+import type { TaxSystem, UpdateCabinetTaxRequest, VatRate } from '@/types/cabinet'
+import { TaxSettingsWarningDialog } from './TaxSettingsWarningDialog'
+import {
+  EMPTY_TAX_DRAFT,
+  draftFromCabinet,
+  draftsMatch,
+  requestFromDraft,
+  taxSettingsContext,
+  validateTaxDraft,
+} from './tax-settings-form-model'
+import type { TaxSettingsDraft, TaxSettingsErrors } from './tax-settings-form-model'
+import { TaxSettingsActions, TaxSettingsLoadState } from './TaxSettingsFormStates'
 import { TaxSystemSection, VatSection } from './tax-settings-sections'
 
 interface TaxSettingsFormProps {
   cabinetId: string
 }
 
-export function TaxSettingsForm({ cabinetId }: TaxSettingsFormProps) {
-  const { data, isLoading, isError } = useCabinetTaxSettings(cabinetId)
-  const mutation = useUpdateTaxSettings(cabinetId)
-  const userRole = useAuthStore(state => state.user?.role)
-  const canManageTaxSettings = canManageOperationalData(userRole)
+type SaveResult = 'idle' | 'success' | 'error'
 
-  const [taxSystem, setTaxSystem] = useState<TaxSystem | null>(null)
-  const [taxRate, setTaxRate] = useState('')
-  const [vatPayer, setVatPayer] = useState(false)
-  const [vatRate, setVatRate] = useState<VatRate | null>(null)
-  const [error, setError] = useState<string | null>(null)
-  const [vatError, setVatError] = useState<string | null>(null)
-  const [isDirty, setIsDirty] = useState(false)
+interface TaxSettingsFormState {
+  draft: TaxSettingsDraft
+  baseline: TaxSettingsDraft
+}
+
+export function TaxSettingsForm({ cabinetId }: TaxSettingsFormProps) {
+  const { data, isLoading, isError, isFetching, refetch } = useCabinetTaxSettings(cabinetId)
+  const mutation = useUpdateTaxSettings(cabinetId)
+  const role = useAuthStore(state => state.user?.role)
+  const canManage = canManageOperationalData(role)
+  const [{ draft, baseline }, setFormState] = useState<TaxSettingsFormState>({
+    draft: EMPTY_TAX_DRAFT,
+    baseline: EMPTY_TAX_DRAFT,
+  })
+  const [errors, setErrors] = useState<TaxSettingsErrors>({})
+  const [saveResult, setSaveResult] = useState<SaveResult>('idle')
+  const [warningOpen, setWarningOpen] = useState(false)
+  const [failedPayload, setFailedPayload] = useState<UpdateCabinetTaxRequest | null>(null)
+  const formRef = useRef<HTMLFormElement>(null)
+  const saveButtonRef = useRef<HTMLButtonElement>(null)
+  const taxRateRef = useRef<HTMLInputElement>(null)
+  const vatGroupRef = useRef<HTMLDivElement>(null)
+  const isMountedRef = useRef(false)
+
+  useEffect(() => {
+    isMountedRef.current = true
+    return () => {
+      isMountedRef.current = false
+    }
+  }, [])
 
   useEffect(() => {
     if (!data) return
-    setTaxSystem(data.taxSystem ?? null)
-    setTaxRate(data.taxRate != null ? String(data.taxRate) : '')
-    setVatPayer(data.vatPayer ?? false)
-    setVatRate(data.vatRate != null ? (data.vatRate as VatRate) : null)
-    setIsDirty(false)
+    const next = draftFromCabinet(data)
+    setFormState(current => ({
+      baseline: next,
+      draft: draftsMatch(current.draft, current.baseline) ? next : current.draft,
+    }))
+    setErrors({})
   }, [data])
 
-  const markDirty = () => setIsDirty(true)
+  const isDirty = !draftsMatch(draft, baseline)
+  const disabled = !canManage || mutation.isPending
+  const context = taxSettingsContext({ data, isError, isLoading, isFetching })
 
-  const handleSubmit = () => {
-    setError(null)
-    setVatError(null)
+  const updateDraft = (patch: Partial<TaxSettingsDraft>) => {
+    setFormState(current => ({
+      ...current,
+      draft: { ...current.draft, ...patch },
+    }))
+    setErrors({})
+    setSaveResult('idle')
+    setFailedPayload(null)
+  }
 
-    if (taxSystem === 'manual' && !taxRate.trim()) {
-      setError('Укажите ставку налога')
-      return
-    }
-    if (vatPayer && vatRate == null) {
-      setVatError('Выберите ставку НДС')
-      return
-    }
+  const focusFirstError = (nextErrors: TaxSettingsErrors) => {
+    queueMicrotask(() => {
+      if (nextErrors.taxRate) taxRateRef.current?.focus()
+      else if (nextErrors.vatRate) vatGroupRef.current?.focus()
+    })
+  }
 
-    mutation.mutate(
-      {
-        taxSystem,
-        taxRate: taxSystem === 'manual' ? Number(taxRate) : null,
-        vatPayer,
-        // BD-FE-004: BE PUT rejects `vatRate:null` (must be 0|5|20|22) even though GET
-        // returns null for non-VAT-payers. Send 0 (the canonical "no-VAT" value); BE
-        // stores null internally. Verified: PUT with vatRate:0 → 200.
-        vatRate: vatPayer ? vatRate : 0,
+  const runMutation = (payload: UpdateCabinetTaxRequest) => {
+    const submittedDraft = { ...draft }
+    setSaveResult('idle')
+    mutation.mutate(payload, {
+      onSuccess: () => {
+        if (!isMountedRef.current) return
+        toast.success('Налоговые настройки сохранены')
+        setFormState(current => ({ ...current, baseline: submittedDraft }))
+        setFailedPayload(null)
+        setSaveResult('success')
+        setWarningOpen(false)
+        queueMicrotask(() => formRef.current?.focus())
       },
-      {
-        onSuccess: () => {
-          toast.success('Налоговые настройки сохранены')
-          setIsDirty(false)
-        },
-        onError: () => {
-          toast.error('Не удалось сохранить настройки')
-        },
-      }
-    )
+      onError: () => {
+        if (!isMountedRef.current) return
+        toast.error('Не удалось сохранить настройки')
+        setFailedPayload(payload)
+        setSaveResult('error')
+        if (!warningOpen) queueMicrotask(() => saveButtonRef.current?.focus())
+      },
+    })
   }
 
-  const handleCancel = () => {
-    if (!data) return
-    setTaxSystem(data.taxSystem ?? null)
-    setTaxRate(data.taxRate != null ? String(data.taxRate) : '')
-    setVatPayer(data.vatPayer ?? false)
-    setVatRate(data.vatRate != null ? (data.vatRate as VatRate) : null)
-    setError(null)
-    setVatError(null)
-    setIsDirty(false)
+  const requestSave = (event?: FormEvent<HTMLFormElement>) => {
+    event?.preventDefault()
+    if (!canManage || mutation.isPending) return
+    if (saveResult === 'error' && failedPayload) {
+      runMutation(failedPayload)
+      return
+    }
+    if (!isDirty) return
+    const nextErrors = validateTaxDraft(draft)
+    setErrors(nextErrors)
+    if (nextErrors.taxRate || nextErrors.vatRate) {
+      setSaveResult('idle')
+      focusFirstError(nextErrors)
+      return
+    }
+
+    const payload = requestFromDraft(draft)
+    if (draft.taxSystem == null) {
+      setFailedPayload(payload)
+      setWarningOpen(true)
+      return
+    }
+    runMutation(payload)
   }
 
-  if (isError) {
-    return (
-      <Alert variant="destructive">
-        <AlertCircle className="h-4 w-4" />
-        <AlertDescription>Ошибка загрузки настроек. Попробуйте обновить страницу.</AlertDescription>
-      </Alert>
-    )
+  const resetDraft = () => {
+    setFormState(current => ({ ...current, draft: current.baseline }))
+    setErrors({})
+    setSaveResult('idle')
+    setFailedPayload(null)
   }
-
-  if (isLoading) return <Skeleton className="h-96 w-full rounded-lg" />
 
   return (
     <div className="space-y-6">
-      <TaxSystemSection
-        taxSystem={taxSystem}
-        taxRate={taxRate}
-        error={error}
-        onTaxSystemChange={v => {
-          setTaxSystem(v)
-          setError(null)
-          markDirty()
-        }}
-        onTaxRateChange={v => {
-          setTaxRate(v)
-          markDirty()
-        }}
-        disabled={!canManageTaxSettings}
-      />
-      <VatSection
-        vatPayer={vatPayer}
-        vatRate={vatRate}
-        vatError={vatError}
-        onVatPayerChange={v => {
-          setVatPayer(v)
-          setVatError(null)
-          markDirty()
-        }}
-        onVatRateChange={v => {
-          setVatRate(v)
-          setVatError(null)
-          markDirty()
-        }}
-        disabled={!canManageTaxSettings}
-      />
-      {canManageTaxSettings ? (
-        <div className="flex justify-end gap-3 border-t pt-4">
-          <Button
-            type="button"
-            variant="outline"
-            onClick={handleCancel}
-            disabled={mutation.isPending || !isDirty}
-          >
-            <X className="mr-2 h-4 w-4" />
-            Отменить
-          </Button>
-          <Button onClick={handleSubmit} disabled={mutation.isPending}>
-            {mutation.isPending ? (
-              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-            ) : (
-              <Save className="mr-2 h-4 w-4" />
-            )}
-            Сохранить
-          </Button>
-        </div>
+      <ContextBar scope="Система налогообложения и НДС" {...context} />
+
+      {isError || isLoading || !data ? (
+        <TaxSettingsLoadState
+          isError={isError}
+          isLoading={isLoading || !data}
+          onRetry={() => void refetch()}
+        />
       ) : (
-        <Alert>
-          <AlertCircle className="h-4 w-4" />
-          <AlertDescription>
-            Налоговые настройки доступны только для просмотра вашей роли.
-          </AlertDescription>
-        </Alert>
+        <form
+          ref={formRef}
+          noValidate
+          aria-label="Налоговые настройки"
+          aria-busy={mutation.isPending || undefined}
+          tabIndex={-1}
+          className="space-y-6 outline-none"
+          onSubmit={requestSave}
+        >
+          {(errors.taxRate || errors.vatRate) && (
+            <Alert variant="destructive" role="alert">
+              <AlertTitle>Исправьте ошибки в форме</AlertTitle>
+              <AlertDescription>
+                Проверьте ставку налога и обязательную ставку НДС перед сохранением.
+              </AlertDescription>
+            </Alert>
+          )}
+
+          <TaxSystemSection
+            taxSystem={draft.taxSystem}
+            taxRate={draft.taxRate}
+            error={errors.taxRate}
+            disabled={disabled}
+            inputRef={taxRateRef}
+            onTaxSystemChange={(taxSystem: TaxSystem | null) => updateDraft({ taxSystem })}
+            onTaxRateChange={taxRate => updateDraft({ taxRate })}
+          />
+          <VatSection
+            vatPayer={draft.vatPayer}
+            vatRate={draft.vatRate}
+            error={errors.vatRate}
+            disabled={disabled}
+            groupRef={vatGroupRef}
+            onVatPayerChange={vatPayer => updateDraft({ vatPayer })}
+            onVatRateChange={(vatRate: VatRate) => updateDraft({ vatRate })}
+          />
+
+          <TaxSettingsActions
+            canManage={canManage}
+            isPending={mutation.isPending}
+            isDirty={isDirty}
+            saveResult={saveResult}
+            warningOpen={warningOpen}
+            saveButtonRef={saveButtonRef}
+            onReset={resetDraft}
+          />
+
+          <TaxSettingsWarningDialog
+            open={warningOpen}
+            isPending={mutation.isPending}
+            hasError={saveResult === 'error'}
+            onOpenChange={setWarningOpen}
+            onReturnFocus={() =>
+              saveResult === 'success' ? formRef.current?.focus() : saveButtonRef.current?.focus()
+            }
+            onConfirm={() => failedPayload && runMutation(failedPayload)}
+          />
+        </form>
       )}
     </div>
   )
