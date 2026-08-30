@@ -1,6 +1,6 @@
 # Story 173.10-FE: Migrate Shipment Box Types
 
-Status: done — feature PR #356 merged (`cece1693`, merge `9e4f6254`) and exact product branch/worktree/path/open-PR cleanup proved; exact-five documentation closeout is in progress; Story-owned 17-file feature manifest; focused Story **7 files / 89 tests** plus Playwright static boundary **4/4**; production build **70/70**; the recorded full-suite floor remains **19,733/0/1,249** from Story 173.9 because Story 173.10 did not run a fresh full-suite snapshot; credential-dependent browser execution was unavailable because `.env.e2e` was absent; final product reviews have zero unresolved P0–P2 findings; route-ledger rows intentionally remain `planned` until Story 174.5.
+Status: done — feature PR #356 merged (`cece1693`, merge `9e4f6254`) and exact-five documentation PR #357 merged (`40934bda`, merge `ebba17a5`); exact product and initial documentation branch/worktree/path/open-PR cleanup proved; only the auxiliary lifecycle record remains; Story-owned 17-file feature manifest; focused Story **7 files / 89 tests** plus Playwright static boundary **4/4**; production build **70/70**; the recorded full-suite floor remains **19,733/0/1,249** from Story 173.9 because Story 173.10 did not run a fresh full-suite snapshot; credential-dependent browser execution was unavailable because `.env.e2e` was absent; final product and documentation reviews have zero unresolved P0–P2 findings; route-ledger rows intentionally remain `planned` until Story 174.5.
 
 ## Story
 
@@ -17,6 +17,9 @@ Requirement: FR27. Authoritative plan: `.omx/plans/173.10-migrate-shipment-box-t
 - Documentation closeout branch: `cdx/docs-story-173-10-closeout`.
 - Documentation closeout worktree: `/private/tmp/wb-repricer-docs-story-173-10-closeout`.
 - Documentation closeout base: product merge `9e4f62542d0c2e83eb7b70d93a3795e3c1d1688a`.
+- Auxiliary lifecycle branch: `cdx/docs-story-173-10-final-lifecycle-record`.
+- Auxiliary lifecycle worktree: `/private/tmp/wb-repricer-docs-story-173-10-final-lifecycle-record`.
+- Auxiliary lifecycle base: documentation merge `ebba17a580f071d47e1df5b5fd179e2ce22fcd78`.
 - Shipment APIs, hooks, types, query/cache keys, mutation payloads, authorization, shared shipment-owner components, generic primitives, and route-ledger rows were reused without contract changes.
 
 ## Delivered Behavior
@@ -89,7 +92,13 @@ Pinned runtime: Node `24.18.0`, npm `11.11.0`.
 - PR #356 base `main`, exact head branch and `headRefOid`, title, state, and `MERGEABLE/CLEAN` identity were verified before merge. Merge used the exact reviewed head and produced a merge commit.
 - After merge, the feature head was proved reachable from refreshed `origin/main`; primary `main` was fast-forwarded and proved equal to `origin/main` at `9e4f6254` with 0/0 divergence.
 - The product remote branch, local branch, worktree, path, stale registration, and open PR residue were proved absent. The recoverable audit quarantine remained present.
-- This exact-five documentation lane records already-proved product facts. Its own future PR number, head, merge, primary fast-forward, and cleanup are unknown until they happen and are not recursively preclaimed.
+- Initial documentation PR: #357, `https://github.com/salacoste/wb-erp-system-daytona-FE/pull/357`.
+- Initial documentation head: `40934bdab93b808e415ce9d1369a10ec18181625`.
+- Initial documentation merge: `ebba17a580f071d47e1df5b5fd179e2ce22fcd78`.
+- PR #357 had exact base/head identity, one commit, exactly the five canonical tracking files, and `MERGEABLE/CLEAN`; merge was protected against the exact reviewed head. Its frozen staged SHA-256 `5352b2e3e52f29d77e84bf9cc80ee475f733e8f79308328fd3af0e41217c3d94` received independent APPROVE with no actionable finding and zero secret-bearing added lines.
+- After PR #357 merged, the documentation head was proved reachable from refreshed `origin/main`; primary `main` was fast-forwarded and proved equal to `origin/main` at `ebba17a5` with 0/0 divergence.
+- The product and initial-documentation remote branches, local branches, worktrees, paths, stale registrations, and open PR residue were proved absent before this auxiliary lane began; the recoverable audit quarantine remained present.
+- This auxiliary lifecycle record publishes those already-proved facts. Its own future PR number, head, merge, primary fast-forward, and cleanup are unknown until they happen and are not recursively preclaimed.
 - No deploy, production operation, direct push to `main`, force-push, dependency change, credential output, route-ledger transition, citation-baseline update, or unrelated debt fix occurred.
 
 ## Lessons and Carry-Outs
@@ -104,6 +113,7 @@ Pinned runtime: Node `24.18.0`, npm `11.11.0`.
 
 ## Change Log
 
-| Date       | Change                                                                                                                                                                                                                                                                                                                                 |
-| ---------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Date       | Change                                                                                                                                                                                                                                                                                                                           |
+| ---------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | 2026-08-30 | Story 173.10 implemented, validated, independently reviewed, merged through feature PR #356, and prepared for exact-five documentation closeout. **Lessons:** (1) Measure both responsive projections. (2) Clear same-entity dialog errors. (3) Preserve active-only semantics unless shared-hook ownership authorizes a change. |
+| 2026-08-30 | Initial exact-five documentation closeout merged through PR #357 and exact product plus initial-docs cleanup was proved; only the auxiliary lifecycle record remains.                                                                                                                                                            |
