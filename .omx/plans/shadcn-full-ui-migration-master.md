@@ -331,8 +331,8 @@ Story identity is the numeric `Epic.Story` ID, not the descriptive sprint-status
 > Живые по-сторийные статусы: `_bmad-output/implementation-artifacts/sprint-status.yaml`.
 
 - **Epics CLOSED**: 166-FE (foundation), 167-FE (AppShell/auth, freeze-8), 168-FE (analytics core, 11/11), 169-FE (operational analytics, 15/15), 170-FE (marketing and marketplace analytics, 7/7), 171-FE (models, 9/9), 172-FE (core operations, 17/17), and 173-FE (settings, shipments, and supplies, 13/13).
-- **Canonical Story readiness: 89/94; Epic 173: 13/13, complete**; Story 173.11 auxiliary lifecycle PR #363 merged as `73ebb5f0`; Story 173.12 feature/docs lifecycle is historical with residue absent. Story 173.13 feature commit `8a9c074c` merged in PR #365 as `2dfe56c1`; the exact product branch, remote ref, and worktree are absent. This exact-five candidate records the product lifecycle without preclaiming its own future documentation PR merge or cleanup.
-- **Program NEXT = Epic 174 / Story 174.1** — parity and evidence reconstruction only; it must not change runtime UI or mark route-ledger rows `verified`.
+- **Canonical Story readiness: 89/94; Epic 173: 13/13, complete**; Story 173.11 auxiliary lifecycle PR #363 merged as `73ebb5f0`; Story 173.12 feature/docs lifecycle is historical with residue absent. Story 173.13 feature commit `8a9c074c` merged in PR #365 as `2dfe56c1`; exact-five documentation commit `1d1d3935` merged through PR #366 as `d5c62276`. Primary `main` was fast-forwarded, and the exact product and initial-documentation branches, remote refs, worktrees, paths, stale registrations, and open-PR residue are absent.
+- **Program NEXT = Epic 174 / Story 174.1 after this auxiliary lifecycle record merges and cleans** — parity and evidence reconstruction only; it must not change runtime UI or mark route-ledger rows `verified`.
 - **Remaining**: 174.1-5 only (consolidation;
   174.2 — применимые design-system/source-boundary/contrast долги; 174.3 — browser/theme/axe/keyboard/visual;
   174.4 — functional/local-backend regression; trigger-specific behavior/API debts сохраняют registry-owner).

@@ -1,9 +1,9 @@
 # WB Repricer Frontend — Full shadcn/ui Migration Handoff and Technical-Debt Register
 
-> **Snapshot:** 2026-08-31, based on `origin/main` commit `2dfe56c1e159451eb048d8057f13ba6e0880c547` (Story 173.13 feature merge, PR #365); Story 173.13 product branch, remote ref, and worktree cleanup is proved. This exact-five candidate records that product lifecycle without preclaiming its own future documentation PR merge or cleanup.
+> **Snapshot:** 2026-08-31, based on `origin/main` commit `d5c622765723c10c57c4fabb722ac90876df580a` (Story 173.13 exact-five documentation merge, PR #366); exact product and initial-documentation branch, remote-ref, worktree, path, stale-registration, and open-PR cleanup is proved. This auxiliary lifecycle candidate records those facts without preclaiming its own future PR merge or cleanup.
 > **Audience:** the next autonomous frontend migration team and its orchestrator.
 > **Status:** Epics 166–173 are complete; 89 of 94 canonical Stories are complete; the five Epic 174 assurance and cleanup Stories remain.
-> **Immediate next Story:** 174.1, BMAD / route-ledger / OMX / evidence parity. It reconstructs and validates evidence only; it does not modify runtime UI or mark route-ledger rows `verified`.
+> **Immediate next Story:** 174.1 after this auxiliary lifecycle record merges and cleans, BMAD / route-ledger / OMX / evidence parity. It reconstructs and validates evidence only; it does not modify runtime UI or mark route-ledger rows `verified`.
 > **Supersedes operationally:** `docs/HANDOFF-2026-08-27-CROSS-TEAM-OMC-ORCHESTRATOR-172-8-CONTINUATION.md`. That historical file remains unchanged by this documentation lane; it contains obsolete Story 172.12 execution instructions and a known plaintext test-credential exposure, so it must not be used as an execution entry point.
 > **Scope:** this document concerns only `/Users/r2d2/Documents/Code_Projects/wb-repricer-system-new/frontend` and the approved local frontend migration workflow. It grants no deploy, production, force-push, or direct-push-to-main authority.
 
@@ -16,8 +16,8 @@ This document is the single continuation entry point. It intentionally separates
 | Item                          | Verified state                                                                                                                                                  |
 | ----------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | Repository                    | `salacoste/wb-erp-system-daytona-FE`                                                                                                                            |
-| Authoring base                | `origin/main` at `2dfe56c1e159451eb048d8057f13ba6e0880c547`                                                                                                     |
-| Latest lifecycle event        | Story 173.13 feature PR #365 merged reviewed commit `8a9c074c` as `2dfe56c1`; exact product branch, remote ref, and worktree cleanup proved                     |
+| Authoring base                | `origin/main` at `d5c622765723c10c57c4fabb722ac90876df580a`                                                                                                     |
+| Latest lifecycle event        | Story 173.13 exact-five docs commit `1d1d3935` merged through PR #366 as `d5c62276`; primary fast-forward and exact initial-docs cleanup proved                 |
 | Canonical Story parity        | 94 BMAD Stories and 94 per-Story OMX plans                                                                                                                      |
 | Completed                     | 89/94 Stories; Epics 166–173 complete; Epic 173 at 13/13 (173.13 via PR #365)                                                                                   |
 | Remaining                     | 5/94: Epic 174.1–174.5                                                                                                                                          |
@@ -30,8 +30,8 @@ This document is the single continuation entry point. It intentionally separates
 | Story 173.10 lifecycle        | Feature #356, initial docs #357, and auxiliary #358 merged; all product/docs refs, paths, worktrees, and PR residue absent                                      |
 | Story 173.11 lifecycle        | Feature #359, initial docs #360, and auxiliary #363 merged; exact product/documentation refs, paths, worktrees, and PR residue absent                           |
 | Story 173.12 lifecycle        | Feature #361 and docs #362 merged; exact product/documentation refs, paths, worktrees, and PR residue absent                                                    |
-| Story 173.13 lifecycle        | Feature #365 merged; exact product branch, remote ref, worktree, and open-PR residue absent; this exact-five candidate does not preclaim its own docs lifecycle |
-| NEXT                          | execute Story 174.1 after this exact-five documentation lane merges and cleans                                                                                  |
+| Story 173.13 lifecycle        | Feature #365 and exact-five docs #366 merged; exact product and initial-docs refs, paths, worktrees, stale registrations, and open-PR residue absent            |
+| NEXT                          | execute Story 174.1 after this auxiliary lifecycle-record lane merges and cleans                                                                                |
 | Production/deploy authority   | forbidden                                                                                                                                                       |
 
 The recorded test floor is the fresh Story 173.13 full-suite rerun: 19,874/19,874 across 1,255 files. Its focused pinned-runtime floor is 975/975 across 22 files. The first sandboxed full run encountered only the known listener restriction in `historical-spp-server-lifecycle.test.ts`; the approved out-of-sandbox rerun passed the entire suite.
@@ -107,7 +107,7 @@ base:
   origin/main @ 046599670319d9a5d6da935b892ceca6fe01e7d9
 ```
 
-This historical handoff lane was merged as PR #327 and cleaned before Story 173.1 began. Story 173.1 then merged through feature PR #328 and documentation closeout PR #329; both delivery lanes were cleaned. Story 173.2 merged through feature PR #332 and documentation closeout PR #333; all of its lifecycle lanes were cleaned. Story 173.3 merged through feature PR #335, documentation closeout PR #336, and lifecycle-record PR #337; all lanes were cleaned before Story 173.4. Story 173.4 merged through feature PR #338, documentation closeout PR #339, and lifecycle-record PR #340; all lanes were cleaned before Story 173.5. Story 173.5 merged through feature PR #341, documentation closeout PR #342, and lifecycle-record PR #343; those lanes were cleaned before Story 173.6. Story 173.6 merged through feature PR #344, documentation closeout PR #345, and lifecycle-record PR #346; all lanes were cleaned before Story 173.7. Story 173.7 merged through feature PR #347, documentation closeout PR #348, and lifecycle-record PR #349; all lanes were cleaned before Story 173.8. Story 173.8 merged through feature PR #350, documentation closeout PR #351, and auxiliary lifecycle-record PR #352 (`55e21498`); all product and documentation residue was absent before Story 173.9. Story 173.9 merged through feature PR #353, exact-five documentation closeout PR #354, and auxiliary lifecycle-record PR #355 (`6cfa782d`); all product and documentation residue was absent before Story 173.10. Story 173.10 merged through feature PR #356, exact-five documentation closeout PR #357, and auxiliary lifecycle-record PR #358 (`7ee1f51e`); all product and documentation residue was absent before Story 173.11. Story 173.11 product work merged through feature PR #359 as `137e2ee5`; exact-five documentation commit `66b30d7d` merged through PR #360 as `b2136273`; exact product and initial-documentation cleanup was proved before this auxiliary lane began.
+This historical handoff lane was merged as PR #327 and cleaned before Story 173.1 began. Story 173.1 then merged through feature PR #328 and documentation closeout PR #329; both delivery lanes were cleaned. Story 173.2 merged through feature PR #332 and documentation closeout PR #333; all of its lifecycle lanes were cleaned. Story 173.3 merged through feature PR #335, documentation closeout PR #336, and lifecycle-record PR #337; all lanes were cleaned before Story 173.4. Story 173.4 merged through feature PR #338, documentation closeout PR #339, and lifecycle-record PR #340; all lanes were cleaned before Story 173.5. Story 173.5 merged through feature PR #341, documentation closeout PR #342, and lifecycle-record PR #343; those lanes were cleaned before Story 173.6. Story 173.6 merged through feature PR #344, documentation closeout PR #345, and lifecycle-record PR #346; all lanes were cleaned before Story 173.7. Story 173.7 merged through feature PR #347, documentation closeout PR #348, and lifecycle-record PR #349; all lanes were cleaned before Story 173.8. Story 173.8 merged through feature PR #350, documentation closeout PR #351, and auxiliary lifecycle-record PR #352 (`55e21498`); all product and documentation residue was absent before Story 173.9. Story 173.9 merged through feature PR #353, exact-five documentation closeout PR #354, and auxiliary lifecycle-record PR #355 (`6cfa782d`); all product and documentation residue was absent before Story 173.10. Story 173.10 merged through feature PR #356, exact-five documentation closeout PR #357, and auxiliary lifecycle-record PR #358 (`7ee1f51e`); all product and documentation residue was absent before Story 173.11. Story 173.11 product work merged through feature PR #359 as `137e2ee5`; exact-five documentation commit `66b30d7d` merged through PR #360 as `b2136273`; its auxiliary PR #363 merged as `73ebb5f0` and all residue is absent. Story 173.12 feature and documentation PRs #361/#362 are merged with residue absent. Story 173.13 product commit `8a9c074c` merged through feature PR #365 as `2dfe56c1`; exact-five documentation commit `1d1d3935` merged through PR #366 as `d5c62276`; exact product and initial-documentation cleanup was proved before this auxiliary lane began.
 
 ### Historical Story 173.11 auxiliary lifecycle-record lane
 
@@ -126,6 +126,24 @@ scope:
 ```
 
 This historical auxiliary lane published the already-proved initial documentation PR #360 head/merge, primary fast-forward, exact product and initial-docs cleanup, validation, and review facts. It merged through PR #363 as `73ebb5f0`; its local/remote branch, worktree, stale registration, and open-PR residue are absent. It is not an active continuation lane.
+
+### Active Story 173.13 auxiliary lifecycle-record lane
+
+```text
+branch:
+  cdx/docs-story-173-13-final-lifecycle-record
+
+worktree:
+  /private/tmp/wb-repricer-docs-story-173-13-final-lifecycle-record
+
+base:
+  exact-five documentation merge d5c622765723c10c57c4fabb722ac90876df580a
+
+scope:
+  exactly the same five Story 173.13 program tracking files: master, implementation artifact, sprint, debt registry, and this handoff
+```
+
+This auxiliary lane publishes the already-proved initial documentation PR #366 head/merge, primary fast-forward, exact product and initial-docs cleanup, validation, and review facts. It does not preclaim its own future PR merge or cleanup. Story 174.1 remains gated until this lane is merged and its local/remote branch, worktree, path, stale registration, remote ref, and open-PR residue are absent.
 
 Never reset, rebase, stage, commit, remove, or clean another team's WIP. When a path or branch is disputed, capture branch/HEAD/status/diffs/untracked files and ownership evidence before any Git mutation.
 
@@ -174,7 +192,7 @@ The last verified Epic 172 chain is:
 | 173.10 | #356 / `9e4f6254` | #357 / `ebba17a5`                    |                    19,733† |
 | 173.11 | #359 / `137e2ee5` | #360 / `b2136273`; #363 / `73ebb5f0` |                    19,733‡ |
 | 173.12 | #361 / `747f8449` | #362 / `2ef9eff8`                    |                     19,800 |
-| 173.13 | #365 / `2dfe56c1` | exact-five candidate; not preclaimed |                     19,874 |
+| 173.13 | #365 / `2dfe56c1` | #366 / `d5c62276`; auxiliary pending |                     19,874 |
 
 † Story 173.10 passed focused 89/89 plus the static boundary 4/4 but did not run a fresh full suite, so the recorded full floor remains the Story 173.9 snapshot.
 
@@ -245,7 +263,7 @@ Every row below is a synopsis. The linked exact plan is authoritative and must b
 | [173.10 Shipment Box Types](../.omx/plans/173.10-migrate-shipment-box-types.md)                 | **DONE** — feature #356 / `9e4f6254`; closeout #357 / `ebba17a5`; exact product and initial docs cleanup proved                   | Preserved active-only query; PageHeader/PageState; named wide table + stacked cards; semantic status/units; visible 44px entity actions; 320/768 overflow-safe action stacks; complete dialog validation/pending/failure/focus lifecycle; APIs/hooks/types/query shared owners unchanged                                      | focused 7/89 + static 1/4; full floor remains 19,733/0/1,249; build 70/70; credentialed browser execution gap explicit; product + docs reviews P0/P1/P2=0, scope PASS, APPROVE                                                                                                                                                                                                     | [implementation artifact](../_bmad-output/implementation-artifacts/173-10-fe-migrate-shipment-box-types.md)         |
 | [173.11 SKU Packaging](../.omx/plans/173.11-migrate-sku-packaging.md)                           | **DONE** — feature #359 / `137e2ee5`; initial docs #360 / `b2136273`; auxiliary #363 / `73ebb5f0`; exact lifecycle cleanup proved | Exact 24-file packaging-exclusive manifest; preserved unparameterized SKU and active-only box-type queries; exact single/bulk/delete contracts; shared hooks/APIs/types/query keys/foundation unchanged                                                                                                                       | truthful dependency failures; local filtered-empty reset; named wide table + narrow cards; mapping status/units; bounded dialogs/errors; validation summary; reconciled announcements and exact cancellation/success focus; focused 10/112 + immutable 3/23; seven Story browser scenarios discovered; build 70/70; browser execution gap explicit; product + docs reviews APPROVE | [implementation artifact](../_bmad-output/implementation-artifacts/173-11-fe-migrate-sku-packaging.md)              |
 | [173.12 Supplies List](../.omx/plans/173.12-migrate-supplies-list.md)                           | **DONE** — feature #361 / `747f8449`; docs #362 / `2ef9eff8`; exact lifecycle cleanup proved                                      | Shared supply-list/status owner for 173.13 delivered with a load-bearing 18-file detail exclusion boundary; preserved supply contracts; responsive table/cards, semantic status owner, exact list lifecycle, and pending-safe creation                                                                                        | targeted 257/257; full 19,800/0/1,252; E2E 53/0; production build passed twice; feature/docs merged without reverting Story 173.11; exact local/remote branch, worktree, path, stale-registration, and PR residue absent                                                                                                                                                           | [implementation artifact](../_bmad-output/implementation-artifacts/173-12-fe-migrate-supplies-list.md)              |
-| [173.13 Supply Detail](../.omx/plans/173.13-migrate-supply-detail.md)                           | **DONE** — feature #365 / `2dfe56c1`; exact product cleanup proved; docs PR/merge not preclaimed                                  | Exact 30-file delta within the frozen 22-file production manifest; dynamic ID/API/navigation/mutation/picker/document contracts preserved; Story 173.12 shared-surface fingerprints unchanged                                                                                                                                 | truthful route states; semantic lifecycle; named table/overlays; pending-safe remove/close retry and exact/fallback focus; repeat-safe live channels; settled refresh and act/document announcements; blob cleanup in `finally`; focused 22/975; full 19,874/0/1,255; build 70 pages; final reviews APPROVE, zero findings                                                         | [implementation artifact](../_bmad-output/implementation-artifacts/173-13-fe-migrate-supply-detail.md)              |
+| [173.13 Supply Detail](../.omx/plans/173.13-migrate-supply-detail.md)                           | **DONE** — feature #365 / `2dfe56c1`; exact-five docs #366 / `d5c62276`; exact product + initial docs cleanup proved              | Exact 30-file delta within the frozen 22-file production manifest; dynamic ID/API/navigation/mutation/picker/document contracts preserved; Story 173.12 shared-surface fingerprints unchanged                                                                                                                                 | truthful route states; semantic lifecycle; named table/overlays; pending-safe remove/close retry and exact/fallback focus; repeat-safe live channels; settled refresh and act/document announcements; blob cleanup in `finally`; focused 22/975; full 19,874/0/1,255; build 70 pages; final reviews APPROVE, zero findings                                                         | [implementation artifact](../_bmad-output/implementation-artifacts/173-13-fe-migrate-supply-detail.md)              |
 
 ### Epic 173 owner boundaries
 
@@ -258,7 +276,7 @@ Every row below is a synopsis. The linked exact plan is authoritative and must b
 
 ## 6. Epic 174 assurance and closeout plan
 
-Epic 174 is sequential. All 13 Epic 173 product Stories are merged and their product cleanup/evidence is complete; Story 174.1 becomes executable after this exact-five documentation lane merges and cleans. Frontmatter wording such as `ready-for-execution` never overrides a plan's prerequisite DAG.
+Epic 174 is sequential. All 13 Epic 173 product Stories and their initial documentation closeouts are merged with exact cleanup proved; Story 174.1 becomes executable after this auxiliary lifecycle-record lane merges and cleans. Frontmatter wording such as `ready-for-execution` never overrides a plan's prerequisite DAG.
 
 ### 174.1 — BMAD, route-ledger, OMX, and evidence parity
 
@@ -465,7 +483,7 @@ Node 26 is a known webpack incompatibility in this repository. Validate the acti
 
 ### Documentation-handoff PR gates
 
-Because this Story 173.13 exact-five closeout changes only the master plan, Story implementation artifact, sprint, debt registry, and this handoff—without modifying the obsolete credential-bearing handoff—its proportional gates are:
+Because this Story 173.13 auxiliary lifecycle record changes only the master plan, Story implementation artifact, sprint, debt registry, and this handoff—without modifying the obsolete credential-bearing handoff—its proportional gates are:
 
 ```bash
 git diff --check
@@ -481,14 +499,14 @@ Additionally prove:
 - completed arithmetic is 8+9+11+15+7+9+17+13 = 89;
 - 94 OMX Story plans exist and 76 source routes equal 76 ledger rows;
 - all 76 ledger rows intentionally remain `planned`;
-- master, sprint, registry, Story artifacts, and this handoff agree on 89/94, Epic 173 at 13/13 complete, NEXT Story 174.1 after this exact-five lane cleans, the current 19,874/1,255 full floor, and the focused 22-file/975-test Story floor;
+- master, sprint, registry, Story artifacts, and this handoff agree on 89/94, Epic 173 at 13/13 complete, NEXT Story 174.1 after this auxiliary lifecycle-record lane cleans, the current 19,874/1,255 full floor, and the focused 22-file/975-test Story floor;
 - stale-state scan finds no live continuation instruction that directs the new team to Story 173.13 product work;
 - a non-echoing staged-diff scan proves that this lane introduces no new credential-bearing line; SEC-DOC-1 remains open because a full tracked-tree inventory found five files with ten additional occurrences;
 - all new relative document/plan links resolve.
 
 Historical validation on the Story 173.11 auxiliary candidate after integrating Story 173.12 established the committed `check:docs` baseline: 427 citations, 95 known broken entries, and zero baseline drift. This lane neither edits that baseline nor repairs historical archive citations.
 
-This Story 173.13 exact-five record is backed by the reviewed feature head, merge ancestry, pinned local validation, independent reviews, and product cleanup evidence. Its documentation-only delta additionally requires docs/marker/lesson checks, YAML parsing, link validation, formatting, exact-five scope proof, a privacy scan, and a fresh non-author review.
+This Story 173.13 auxiliary lifecycle record is backed by the reviewed feature and exact-five documentation heads, both merge topologies, pinned local validation, independent reviews, and exact product plus initial-documentation cleanup evidence. Its documentation-only delta additionally requires docs/marker/lesson checks, YAML parsing, link validation, formatting, exact-five scope proof, a privacy scan, and a fresh non-author review.
 
 ### Product Story gates
 
@@ -623,12 +641,12 @@ Use one of these states when updating this register:
 
 The highest-priority current incidents are:
 
-| ID          | State                              | Incident                                                                                                                                             | Completion criterion                                                                                                                                                                                                            |
-| ----------- | ---------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| SEC-DOC-1   | confirmed-live / open              | The same plaintext local test credential remains in tracked historical documentation and implementation artifacts.                                   | A separate reviewed security lane redacts every tracked occurrence; a full non-echoing `git ls-files` scan returns zero; the security owner separately decides rotation and history remediation. No autonomous history rewrite. |
-| DOC-TRUTH-1 | addressed; maintained per closeout | Master, debt registry, sprint, handoff, and Story artifacts can route a team to completed work if a Story closes without synchronized documentation. | All current entry-point snapshots agree on 89/94, Epic 173 13/13 complete, NEXT 174.1 after this exact-five lane cleans, the current 19,874/1,255 full floor, and the focused Story 173.13 floor of 975 tests across 22 files.  |
-| FE-D9       | confirmed-live, high security risk | Arbitrary non-2xx response bodies can be serialized into logs.                                                                                       | Recursively redact sensitive keys across objects/arrays/casing/non-JSON payloads; preserve safe classification; add security regressions; assign API/security owner.                                                            |
-| FE-D3       | confirmed-live                     | Unknown WB-token errors can expose raw server messages to the user.                                                                                  | Bounded fallback plus scrub/truncate behavior and regression tests for stack/internal/sensitive text.                                                                                                                           |
+| ID          | State                              | Incident                                                                                                                                             | Completion criterion                                                                                                                                                                                                                           |
+| ----------- | ---------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| SEC-DOC-1   | confirmed-live / open              | The same plaintext local test credential remains in tracked historical documentation and implementation artifacts.                                   | A separate reviewed security lane redacts every tracked occurrence; a full non-echoing `git ls-files` scan returns zero; the security owner separately decides rotation and history remediation. No autonomous history rewrite.                |
+| DOC-TRUTH-1 | addressed; maintained per closeout | Master, debt registry, sprint, handoff, and Story artifacts can route a team to completed work if a Story closes without synchronized documentation. | All current entry-point snapshots agree on 89/94, Epic 173 13/13 complete, NEXT 174.1 after this auxiliary lifecycle-record lane cleans, the current 19,874/1,255 full floor, and the focused Story 173.13 floor of 975 tests across 22 files. |
+| FE-D9       | confirmed-live, high security risk | Arbitrary non-2xx response bodies can be serialized into logs.                                                                                       | Recursively redact sensitive keys across objects/arrays/casing/non-JSON payloads; preserve safe classification; add security regressions; assign API/security owner.                                                                           |
+| FE-D3       | confirmed-live                     | Unknown WB-token errors can expose raw server messages to the user.                                                                                  | Bounded fallback plus scrub/truncate behavior and regression tests for stack/internal/sensitive text.                                                                                                                                          |
 
 ### 11.10 Raw-palette classification baseline for 174.2
 
@@ -796,14 +814,14 @@ Every decision needs a named owner, exact scope, tests/evidence, and a canonical
 
 ## 12. Canonical documentation drift and deliberate non-changes
 
-The Story 173.13 exact-five closeout keeps the continuation state synchronized:
+The Story 173.13 auxiliary lifecycle record keeps the continuation state synchronized:
 
 - sprint marks Epic 173 `done` and Stories 173.1–173.13 `done`;
-- master records 89/94, Epic 173 at 13/13 complete, and NEXT Story 174.1 after this exact-five lane merges and cleans;
-- debt registry records feature PR #365, commit `8a9c074c`, merge `2dfe56c1`, the current 19,874/1,255 full floor, the focused 22-file/975-test floor, product cleanup proof, and remaining 174.2–174.4 evidence/debt;
+- master records 89/94, Epic 173 at 13/13 complete, and NEXT Story 174.1 after this auxiliary lifecycle-record lane merges and cleans;
+- debt registry records feature PR #365 (`8a9c074c` → `2dfe56c1`), exact-five documentation PR #366 (`1d1d3935` → `d5c62276`), the current 19,874/1,255 full floor, the focused 22-file/975-test floor, exact product and initial-documentation cleanup proof, and remaining 174.2–174.4 evidence/debt;
 - this document remains the single continuation entry point and records all 76 route-owning Stories implemented while every route-ledger row remains `planned`;
-- this integration is based on current `origin/main = 2dfe56c1`; the exact Story 173.13 product branch, remote ref, worktree, stale registration, and open PR are absent;
-- this record makes no recursive claim about its own future documentation PR merge, branch cleanup, remote-ref cleanup, or worktree cleanup.
+- this integration is based on current `origin/main = d5c62276`; the exact Story 173.13 product and initial-documentation branches, remote refs, worktrees, paths, stale registrations, and open PRs are absent;
+- this record makes no recursive claim about its own future auxiliary lifecycle-record PR merge, branch cleanup, remote-ref cleanup, or worktree cleanup.
 
 Deliberately not changed:
 
@@ -851,14 +869,14 @@ Before Story 174.1:
 
 - [ ] Read §1 authorities, the Story 173.13 implementation artifact, and the complete Story 174.1 plan.
 - [ ] `git fetch origin` and verify repository identity.
-- [ ] Verify the Story 173.13 exact-five documentation PR is merged and its local/remote branch, worktree, path, stale registration, and open-PR residue are absent.
+- [ ] Verify the Story 173.13 auxiliary lifecycle-record PR is merged and its local/remote branch, worktree, path, stale registration, remote ref, and open-PR residue are absent.
 - [ ] Verify primary `main` is clean and fast-forward it to refreshed `origin/main`.
 - [ ] Recount 94 BMAD Stories, 94 OMX plans, 76 routes, 76 route-owning Stories, and 76 ledger rows.
 - [ ] Confirm sprint arithmetic: 89 done, 5 backlog; Epic 173 done at 13/13; Story 174.1 NEXT.
 - [ ] Confirm the recorded floor is 19,874/0/1,255 after Story 173.13 and the focused Story floor is 975/0 across 22 files.
 - [ ] Freeze the 174.1 planning/evidence-only allowed/forbidden manifest and define positive and negative parity fixtures before implementation.
 - [ ] Confirm all 76 route-ledger rows remain `planned`; Story 174.1 must not change implementation state and Story 174.5 owns final `verified` transitions.
-- [ ] Create only the exact Story 174.1 branch/worktree from updated clean `main` after this documentation lifecycle is fully absent.
+- [ ] Create only the exact Story 174.1 branch/worktree from updated clean `main` after this auxiliary lifecycle is fully absent.
 
 Do not delete the recoverable quarantine, modify runtime UI, edit route-ledger statuses, or create any later Epic 174 worktree during this bootstrap.
 
