@@ -137,13 +137,13 @@ describe('StickerPreview', () => {
 
     it('info container has distinctive background color', () => {
       const { container } = renderPreview({ format: 'zpl', data: undefined })
-      const infoBox = container.querySelector('.bg-blue-50')
+      const infoBox = container.querySelector('.bg-status-information\\/10')
       expect(infoBox).toBeInTheDocument()
     })
 
     it('info icon is blue/info colored', () => {
       const { container } = renderPreview({ format: 'zpl', data: undefined })
-      const icon = container.querySelector('.text-blue-500')
+      const icon = container.querySelector('.text-status-information')
       expect(icon).toBeInTheDocument()
     })
 
@@ -222,13 +222,13 @@ describe('StickerPreview', () => {
 
     it('error state has error icon', () => {
       const { container } = renderPreview({ error: 'Network error' })
-      const icon = container.querySelector('.text-red-500')
+      const icon = container.querySelector('.text-destructive')
       expect(icon).toBeInTheDocument()
     })
 
     it('error container has error styling', () => {
       const { container } = renderPreview({ error: 'Network error' })
-      const errorBox = container.querySelector('.bg-red-50')
+      const errorBox = container.querySelector('.bg-destructive\\/10')
       expect(errorBox).toBeInTheDocument()
     })
   })

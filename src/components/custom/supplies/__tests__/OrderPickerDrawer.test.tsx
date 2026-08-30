@@ -10,6 +10,7 @@
  * - Accessibility requirements (AC10)
  */
 
+import { useState } from 'react'
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
 import { screen, waitFor, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
@@ -226,11 +227,30 @@ describe('OrderPickerDrawer - Story 53.5-FE', () => {
       })
     })
 
-    it('returns focus to trigger element on close', () => {
-      const onClose = vi.fn()
-      const { unmount } = renderDrawer({ onClose })
-      unmount()
-      expect(onClose).not.toHaveBeenCalled()
+    it('returns focus to trigger element on close', async () => {
+      const user = userEvent.setup()
+
+      function Harness() {
+        const [isOpen, setIsOpen] = useState(false)
+        return (
+          <>
+            <button type="button" onClick={() => setIsOpen(true)}>
+              Открыть выбор заказов
+            </button>
+            <OrderPickerDrawer
+              supplyId="supply-001"
+              isOpen={isOpen}
+              onClose={() => setIsOpen(false)}
+            />
+          </>
+        )
+      }
+
+      renderWithProviders(<Harness />)
+      const trigger = screen.getByRole('button', { name: 'Открыть выбор заказов' })
+      await user.click(trigger)
+      await user.click(getCloseButton('footer'))
+      await waitFor(() => expect(trigger).toHaveFocus())
     })
 
     it('traps focus inside drawer', async () => {

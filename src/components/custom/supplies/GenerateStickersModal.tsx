@@ -8,7 +8,7 @@
  * Modal for generating and downloading stickers with format selection and preview.
  */
 
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { Download, Loader2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import {
@@ -43,6 +43,7 @@ export function GenerateStickersModal({
   onOpenChange,
   supplyId,
 }: GenerateStickersModalProps) {
+  const returnFocusRef = useRef<HTMLElement | null>(null)
   const [format, setFormat] = useState<StickerFormat>('png')
 
   const { mutateAsync: generateStickersMutation, isPending: isGenerating } = useGenerateStickers()
@@ -76,9 +77,36 @@ export function GenerateStickersModal({
     onOpenChange(newOpen)
   }
 
+  useEffect(() => {
+    if (open) return
+
+    const rememberFocus = () => {
+      if (document.activeElement instanceof HTMLElement) {
+        if (document.activeElement.closest('[role="dialog"], [role="alertdialog"]')) return
+        returnFocusRef.current = document.activeElement
+      }
+    }
+
+    rememberFocus()
+    document.addEventListener('focusin', rememberFocus)
+    return () => document.removeEventListener('focusin', rememberFocus)
+  }, [open])
+
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
-      <DialogContent className="sm:max-w-md">
+      <DialogContent
+        className="sm:max-w-md"
+        onOpenAutoFocus={() => {
+          if (document.activeElement instanceof HTMLElement) {
+            returnFocusRef.current = document.activeElement
+          }
+        }}
+        onCloseAutoFocus={event => {
+          if (!returnFocusRef.current?.isConnected) return
+          event.preventDefault()
+          returnFocusRef.current.focus()
+        }}
+      >
         <DialogHeader>
           <DialogTitle>Генерация стикеров</DialogTitle>
           <DialogDescription>Выберите формат и скачайте стикеры для поставки.</DialogDescription>
@@ -92,6 +120,10 @@ export function GenerateStickersModal({
           <StickerPreview format={format} isLoading={isPending} />
         </div>
 
+        <span className="sr-only" role="status" aria-live="polite">
+          {isPending ? 'Стикеры генерируются и подготавливаются к скачиванию' : ''}
+        </span>
+
         <DialogFooter className="gap-2 sm:gap-0">
           <Button variant="outline" onClick={() => onOpenChange(false)} disabled={isPending}>
             Отмена
@@ -99,12 +131,12 @@ export function GenerateStickersModal({
           <Button onClick={handleDownload} disabled={isPending}>
             {isPending ? (
               <>
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" aria-hidden="true" />
                 Генерация...
               </>
             ) : (
               <>
-                <Download className="mr-2 h-4 w-4" />
+                <Download className="mr-2 h-4 w-4" aria-hidden="true" />
                 Скачать
               </>
             )}

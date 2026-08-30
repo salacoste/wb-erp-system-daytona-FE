@@ -34,13 +34,16 @@ export function OrderPickerFooter({
 }: OrderPickerFooterProps) {
   return (
     <div className="flex items-center justify-end gap-3 border-t pt-4">
+      <span className="sr-only" role="status" aria-live="polite">
+        {isPending ? 'Выбранные заказы добавляются в поставку' : ''}
+      </span>
       <Button variant="outline" onClick={onClose} disabled={isPending}>
         Закрыть
       </Button>
       <Button onClick={onAddOrders} disabled={selectedCount === 0 || isPending}>
         {isPending ? (
           <>
-            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+            <Loader2 className="mr-2 h-4 w-4 animate-spin" aria-hidden="true" />
             Добавление...
           </>
         ) : (

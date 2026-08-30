@@ -138,7 +138,7 @@ describe('SupplyStatusStepper', () => {
 
     it('no checkmarks visible (no completed steps)', () => {
       const { container } = renderStepper('OPEN')
-      const checkIcons = container.querySelectorAll('.text-white')
+      const checkIcons = container.querySelectorAll('.text-status-success-foreground')
       expect(checkIcons.length).toBe(0)
     })
 
@@ -157,7 +157,7 @@ describe('SupplyStatusStepper', () => {
   describe('CLOSED Status', () => {
     it('OPEN step shows green checkmark (completed)', () => {
       const { container } = renderStepper('CLOSED')
-      const greenCircles = container.querySelectorAll('.bg-green-500')
+      const greenCircles = container.querySelectorAll('.bg-status-success')
       expect(greenCircles.length).toBeGreaterThanOrEqual(1)
     })
 
@@ -178,7 +178,7 @@ describe('SupplyStatusStepper', () => {
     it('connector between OPEN and CLOSED is green', () => {
       renderStepper('CLOSED')
       const nav = screen.getByRole('navigation', { name: 'Статус поставки' })
-      const greenConnectors = nav.querySelectorAll('.bg-green-500')
+      const greenConnectors = nav.querySelectorAll('.bg-status-success')
       expect(greenConnectors.length).toBeGreaterThan(0)
     })
 
@@ -197,13 +197,13 @@ describe('SupplyStatusStepper', () => {
   describe('DELIVERING Status', () => {
     it('OPEN step shows green checkmark', () => {
       const { container } = renderStepper('DELIVERING')
-      const greenCircles = container.querySelectorAll('.bg-green-500')
+      const greenCircles = container.querySelectorAll('.bg-status-success')
       expect(greenCircles.length).toBeGreaterThanOrEqual(1)
     })
 
     it('CLOSED step shows green checkmark', () => {
       const { container } = renderStepper('DELIVERING')
-      const greenCircles = container.querySelectorAll('.bg-green-500')
+      const greenCircles = container.querySelectorAll('.bg-status-success')
       expect(greenCircles.length).toBeGreaterThanOrEqual(2)
     })
 
@@ -221,7 +221,7 @@ describe('SupplyStatusStepper', () => {
 
     it('connectors up to DELIVERING are green', () => {
       const { container } = renderStepper('DELIVERING')
-      const greenConnectors = container.querySelectorAll('.bg-green-500')
+      const greenConnectors = container.querySelectorAll('.bg-status-success')
       expect(greenConnectors.length).toBeGreaterThanOrEqual(2)
     })
 
@@ -240,19 +240,19 @@ describe('SupplyStatusStepper', () => {
   describe('DELIVERED Status', () => {
     it('OPEN step shows green checkmark', () => {
       const { container } = renderStepper('DELIVERED')
-      const greenCircles = container.querySelectorAll('.bg-green-500')
+      const greenCircles = container.querySelectorAll('.bg-status-success')
       expect(greenCircles.length).toBeGreaterThanOrEqual(1)
     })
 
     it('CLOSED step shows green checkmark', () => {
       const { container } = renderStepper('DELIVERED')
-      const greenCircles = container.querySelectorAll('.bg-green-500')
+      const greenCircles = container.querySelectorAll('.bg-status-success')
       expect(greenCircles.length).toBeGreaterThanOrEqual(2)
     })
 
     it('DELIVERING step shows green checkmark', () => {
       const { container } = renderStepper('DELIVERED')
-      const greenCircles = container.querySelectorAll('.bg-green-500')
+      const greenCircles = container.querySelectorAll('.bg-status-success')
       expect(greenCircles.length).toBeGreaterThanOrEqual(3)
     })
 
@@ -271,7 +271,7 @@ describe('SupplyStatusStepper', () => {
 
     it('final step has checkmark', () => {
       const { container } = renderStepper('DELIVERED')
-      const greenCircles = container.querySelectorAll('.bg-green-500')
+      const greenCircles = container.querySelectorAll('.bg-status-success')
       expect(greenCircles.length).toBeGreaterThanOrEqual(3)
     })
   })
@@ -293,8 +293,8 @@ describe('SupplyStatusStepper', () => {
 
     it('shows red styling for cancelled state', () => {
       const { container } = renderStepper('CANCELLED')
-      const redElements = container.querySelectorAll('[class*="red"]')
-      expect(redElements.length).toBeGreaterThan(0)
+      const errorElements = container.querySelectorAll('[class*="status-error"]')
+      expect(errorElements.length).toBeGreaterThan(0)
     })
 
     it('shows cancelled icon (XCircle)', () => {

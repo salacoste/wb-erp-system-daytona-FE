@@ -9,38 +9,53 @@
  * Skeleton and error components extracted for file size compliance (Epic 74).
  */
 
-import { use, useState } from 'react'
+import { use, useCallback, useState } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
-import { ArrowLeft } from 'lucide-react'
+import { Button } from '@/components/ui/button'
+import { PageState } from '@/components/product/states/PageState'
 import { useSupplyDetail } from '@/hooks/useSupplyDetail'
 import { useRemoveOrders } from '@/hooks/useRemoveOrders'
-import { downloadDocument } from '@/lib/api/supplies'
-import type { DocumentType } from '@/types/supplies'
 import { SupplyHeader } from '@/components/custom/supplies/SupplyHeader'
 import { SupplyStatusStepper } from '@/components/custom/supplies/SupplyStatusStepper'
 import { SupplyOrdersTable } from '@/components/custom/supplies/SupplyOrdersTable'
-import { SupplyDocumentsList } from '@/components/custom/supplies/SupplyDocumentsList'
+import {
+  SupplyDocumentsList,
+  useSupplyDocumentDownload,
+} from '@/components/custom/supplies/SupplyDocumentsList'
 import { OrderPickerDrawer } from '@/components/custom/supplies/OrderPickerDrawer'
 import { CloseSupplyDialog } from '@/components/custom/supplies/CloseSupplyDialog'
 import { GenerateStickersModal } from '@/components/custom/supplies/GenerateStickersModal'
 import { AcceptanceActSection } from '@/components/custom/supplies/AcceptanceActSection'
 import { useUploadAcceptanceAct, useDownloadAcceptanceAct } from '@/hooks/useAcceptanceAct'
 import { toast } from 'sonner'
-import { SupplyDetailSkeleton } from './SupplyDetailSkeleton'
+import {
+  SupplyDetailAnnouncements,
+  SupplyDetailRouteHeader,
+  SupplyDetailSkeleton,
+} from './SupplyDetailSkeleton'
 import { SupplyDetailError } from './SupplyDetailError'
 
 interface PageProps {
   params: Promise<{ id: string }>
 }
 
+type Announcement = { message: string; channel: 0 | 1 }
+
 export default function SupplyDetailPage({ params }: PageProps) {
   const { id: supplyId } = use(params)
   const router = useRouter()
-  const [downloadingType, setDownloadingType] = useState<string | undefined>()
   const [isOrderPickerOpen, setIsOrderPickerOpen] = useState(false)
   const [isCloseDialogOpen, setIsCloseDialogOpen] = useState(false)
   const [isStickersModalOpen, setIsStickersModalOpen] = useState(false)
+  const [announcement, setAnnouncement] = useState<Announcement>({ message: '', channel: 0 })
+  const announce = useCallback((message: string) => {
+    setAnnouncement(previous => ({
+      message,
+      channel: previous.channel === 0 ? 1 : 0,
+    }))
+  }, [])
+  const { downloadDocument, downloadingType } = useSupplyDocumentDownload(supplyId, announce)
 
   const { data: supply, isLoading, error, refetch } = useSupplyDetail(supplyId)
   const removeOrdersMutation = useRemoveOrders(supplyId)
@@ -48,46 +63,20 @@ export default function SupplyDetailPage({ params }: PageProps) {
   const uploadAcceptanceActMutation = useUploadAcceptanceAct()
   const downloadAcceptanceActMutation = useDownloadAcceptanceAct()
 
-  const handleRemoveOrders = (orderIds: string[]) => {
-    removeOrdersMutation.mutate(orderIds)
+  const handleRemoveOrders = (orderIds: string[], onSuccess: () => void) => {
+    removeOrdersMutation.mutate(orderIds, { onSuccess })
   }
 
-  const handleDownload = async (docType: string, filename: string) => {
+  const handleRefreshStatus = async () => {
     try {
-      setDownloadingType(docType)
-      const blob = await downloadDocument(supplyId, docType as DocumentType)
-      // Create download link
-      const url = URL.createObjectURL(blob)
-      const link = document.createElement('a')
-      link.href = url
-      link.download = filename
-      document.body.appendChild(link)
-      link.click()
-      document.body.removeChild(link)
-      URL.revokeObjectURL(url)
-      toast.success('Документ скачан')
+      const result = await refetch()
+      if (result.error) throw result.error
+      toast.success('Статус обновлён')
+      announce('Статус поставки обновлён')
     } catch {
-      toast.error('Не удалось скачать документ')
-    } finally {
-      setDownloadingType(undefined)
+      toast.error('Не удалось обновить статус')
+      announce('Не удалось обновить статус поставки')
     }
-  }
-
-  const handleAddOrders = () => {
-    setIsOrderPickerOpen(true)
-  }
-
-  const handleCloseSupply = () => {
-    setIsCloseDialogOpen(true)
-  }
-
-  const handleGenerateStickers = () => {
-    setIsStickersModalOpen(true)
-  }
-
-  const handleRefreshStatus = () => {
-    refetch()
-    toast.success('Статус обновлён')
   }
 
   // Loading state
@@ -102,16 +91,8 @@ export default function SupplyDetailPage({ params }: PageProps) {
   // Error state
   if (error) {
     return (
-      <div className="container py-6">
-        <div className="mb-6">
-          <Link
-            href="/supplies"
-            className="inline-flex items-center text-sm text-muted-foreground hover:text-foreground"
-          >
-            <ArrowLeft className="mr-1.5 h-4 w-4" />
-            Назад к списку
-          </Link>
-        </div>
+      <div className="container space-y-6 py-6">
+        <SupplyDetailRouteHeader />
         <SupplyDetailError error={error} onRetry={() => refetch()} />
       </div>
     )
@@ -119,33 +100,41 @@ export default function SupplyDetailPage({ params }: PageProps) {
 
   // No data (shouldn't happen after loading)
   if (!supply) {
-    return null
+    return (
+      <div className="container space-y-6 py-6">
+        <SupplyDetailRouteHeader />
+        <PageState
+          state="not-found"
+          title="Поставка не найдена"
+          explanation="Сервис не вернул данные для указанной поставки."
+          trust="Данные других поставок не затронуты."
+          action={
+            <Button asChild variant="outline">
+              <Link href="/supplies">Вернуться к списку</Link>
+            </Button>
+          }
+        />
+      </div>
+    )
   }
 
   const showDocuments = ['CLOSED', 'DELIVERING', 'DELIVERED'].includes(supply.status)
+  const hasPartialOrders = supply.ordersCount > supply.orders.length
   // Story O5: stored acceptance-act doc (if any).
   const storedAcceptanceAct = supply.documents.find(d => d.type === 'acceptance_act') ?? null
 
   return (
-    <div className="container py-6">
-      {/* Back navigation */}
-      <div className="mb-6">
-        <Link
-          href="/supplies"
-          className="inline-flex items-center text-sm text-muted-foreground hover:text-foreground"
-        >
-          <ArrowLeft className="mr-1.5 h-4 w-4" />
-          Назад к списку
-        </Link>
-      </div>
+    <div className="container space-y-6 py-6">
+      <SupplyDetailRouteHeader busy={removeOrdersMutation.isPending} />
+      <SupplyDetailAnnouncements {...announcement} />
 
       <div className="space-y-6">
         {/* Header */}
         <SupplyHeader
           supply={supply}
-          onAddOrders={handleAddOrders}
-          onCloseSupply={handleCloseSupply}
-          onGenerateStickers={handleGenerateStickers}
+          onAddOrders={() => setIsOrderPickerOpen(true)}
+          onCloseSupply={() => setIsCloseDialogOpen(true)}
+          onGenerateStickers={() => setIsStickersModalOpen(true)}
           onRefreshStatus={handleRefreshStatus}
           isLoading={removeOrdersMutation.isPending}
         />
@@ -154,24 +143,45 @@ export default function SupplyDetailPage({ params }: PageProps) {
         <SupplyStatusStepper status={supply.status} />
 
         {/* Orders table */}
-        <div>
-          <h2 className="mb-4 text-lg font-semibold">Заказы в поставке ({supply.ordersCount})</h2>
-          <SupplyOrdersTable
-            orders={supply.orders}
-            supplyId={supply.id}
-            status={supply.status}
-            onRemoveOrder={handleRemoveOrders}
-            onOrderClick={order => router.push(`/orders?search=${order.orderId}`)}
-            isRemoving={removeOrdersMutation.isPending}
-          />
-        </div>
+        {hasPartialOrders ? (
+          <PageState
+            state="partial"
+            title={`Заказы в поставке (${supply.ordersCount})`}
+            explanation="Доступная часть состава показана ниже."
+            trust="Действия применяются только к загруженным заказам."
+            limitation={`Загружено ${supply.orders.length} из ${supply.ordersCount} заказов.`}
+          >
+            <SupplyOrdersTable
+              orders={supply.orders}
+              supplyId={supply.id}
+              status={supply.status}
+              onRemoveOrder={handleRemoveOrders}
+              onOrderClick={order => router.push(`/orders?search=${order.orderId}`)}
+              isRemoving={removeOrdersMutation.isPending}
+            />
+          </PageState>
+        ) : (
+          <section aria-labelledby="supply-orders-title">
+            <h2 id="supply-orders-title" className="mb-4 text-lg font-semibold">
+              Заказы в поставке ({supply.ordersCount})
+            </h2>
+            <SupplyOrdersTable
+              orders={supply.orders}
+              supplyId={supply.id}
+              status={supply.status}
+              onRemoveOrder={handleRemoveOrders}
+              onOrderClick={order => router.push(`/orders?search=${order.orderId}`)}
+              isRemoving={removeOrdersMutation.isPending}
+            />
+          </section>
+        )}
 
         {/* Documents list (only for CLOSED+ statuses) */}
         {showDocuments && (
           <SupplyDocumentsList
             supplyId={supply.id}
             documents={supply.documents}
-            onDownload={handleDownload}
+            onDownload={downloadDocument}
             isDownloading={!!downloadingType}
             downloadingType={downloadingType}
           />

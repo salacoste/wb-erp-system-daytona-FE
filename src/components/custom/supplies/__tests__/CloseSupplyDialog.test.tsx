@@ -9,7 +9,7 @@
 
 import React from 'react'
 import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { render, screen, waitFor } from '@testing-library/react'
+import { act, render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { CloseSupplyDialog } from '../CloseSupplyDialog'
@@ -146,12 +146,12 @@ describe('CloseSupplyDialog', () => {
       ).toBeInTheDocument()
     })
 
-    it('warning message has orange styling', () => {
+    it('warning message uses semantic warning styling', () => {
       renderDialog()
       const warningEl = screen
         .getByText('После закрытия поставки вы не сможете добавлять или удалять заказы.')
         .closest('div')
-      expect(warningEl?.className).toContain('orange')
+      expect(warningEl?.className).toContain('bg-status-warning/10')
     })
   })
 
@@ -264,10 +264,10 @@ describe('CloseSupplyDialog', () => {
       expect(screen.getByRole('button', { name: 'Закрыть поставку' })).toBeInTheDocument()
     })
 
-    it('confirm button has orange styling', () => {
+    it('confirm button uses semantic warning styling', () => {
       renderDialog()
       const confirmBtn = screen.getByRole('button', { name: 'Закрыть поставку' })
-      expect(confirmBtn.className).toContain('orange')
+      expect(confirmBtn.className).toContain('bg-status-warning')
     })
 
     it('clicking confirm triggers close mutation', async () => {
@@ -427,7 +427,7 @@ describe('CloseSupplyDialog', () => {
       await user.click(screen.getByRole('button', { name: 'Закрыть поставку' }))
       await waitFor(() => screen.getByText('Закрытие...'))
 
-      // Record calls from the Action click (Radix auto-closes on Action click)
+      // The controlled dialog must remain open after confirmation.
       const callsBeforeEscape = onOpenChange.mock.calls.length
 
       // Press Escape — handleOpenChange should block it while isPending
@@ -617,18 +617,62 @@ describe('CloseSupplyDialog', () => {
       })
     })
 
-    it('dialog remains open after generic error', async () => {
-      mockCloseSupply.mockRejectedValueOnce(new Error('Network error'))
-
+    it('keeps pending and error context, then closes with focus return on success', async () => {
+      let rejectMutation!: (reason: Error) => void
+      mockCloseSupply
+        .mockReturnValueOnce(
+          new Promise<CloseSupplyResponse>((_resolve, reject) => {
+            rejectMutation = reject
+          })
+        )
+        .mockResolvedValueOnce({
+          status: 'CLOSED',
+          closedAt: '2026-01-01T00:00:00Z',
+          message: 'Supply closed successfully',
+        })
       const user = userEvent.setup()
-      renderDialog()
+
+      function Harness() {
+        const [open, setOpen] = React.useState(false)
+        return (
+          <>
+            <button type="button" onClick={() => setOpen(true)}>
+              Открыть закрытие поставки
+            </button>
+            <CloseSupplyDialog
+              open={open}
+              onOpenChange={setOpen}
+              supplyId="supply-001"
+              ordersCount={1}
+            />
+          </>
+        )
+      }
+
+      render(<Harness />, { wrapper: createWrapper() })
+      const trigger = screen.getByRole('button', { name: 'Открыть закрытие поставки' })
+      await user.click(trigger)
+      await user.click(screen.getByRole('button', { name: 'Закрыть поставку' }))
+
+      await waitFor(() => {
+        expect(screen.getByRole('alertdialog', { name: 'Закрыть поставку?' })).toBeInTheDocument()
+        expect(screen.getByRole('status')).toHaveTextContent('Поставка закрывается')
+        expect(screen.getByRole('button', { name: 'Закрытие...' })).toBeDisabled()
+      })
+
+      act(() => rejectMutation(new Error('Network error')))
+      await waitFor(() => {
+        expect(screen.getByRole('alertdialog', { name: 'Закрыть поставку?' })).toBeInTheDocument()
+        expect(screen.getByRole('button', { name: 'Закрыть поставку' })).not.toBeDisabled()
+      })
 
       await user.click(screen.getByRole('button', { name: 'Закрыть поставку' }))
 
-      // Error toast is shown with the error message (falls through to apiError.message)
-      const { toast } = await import('sonner')
       await waitFor(() => {
-        expect(toast.error).toHaveBeenCalledWith('Network error')
+        expect(
+          screen.queryByRole('alertdialog', { name: 'Закрыть поставку?' })
+        ).not.toBeInTheDocument()
+        expect(trigger).toHaveFocus()
       })
     })
 
@@ -695,6 +739,33 @@ describe('CloseSupplyDialog', () => {
         // Focus should be within the dialog
         expect(dialog.contains(document.activeElement)).toBe(true)
       })
+    })
+
+    it('returns focus to the external trigger when closed', async () => {
+      const user = userEvent.setup()
+
+      function Harness() {
+        const [open, setOpen] = React.useState(false)
+        return (
+          <>
+            <button type="button" onClick={() => setOpen(true)}>
+              Открыть закрытие поставки
+            </button>
+            <CloseSupplyDialog
+              open={open}
+              onOpenChange={setOpen}
+              supplyId="supply-001"
+              ordersCount={1}
+            />
+          </>
+        )
+      }
+
+      render(<Harness />, { wrapper: createWrapper() })
+      const trigger = screen.getByRole('button', { name: 'Открыть закрытие поставки' })
+      await user.click(trigger)
+      await user.click(screen.getByRole('button', { name: 'Отмена' }))
+      await waitFor(() => expect(trigger).toHaveFocus())
     })
 
     it('warning icon has aria-hidden="true"', () => {

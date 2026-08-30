@@ -35,15 +35,21 @@ interface SupplyStatusStepperProps {
 }
 
 /** Cancelled state display */
-function CancelledState() {
+function CancelledState({ className }: { className?: string }) {
   return (
-    <div className="flex items-center gap-3 rounded-lg border border-red-200 bg-red-50 p-4">
-      <div className="flex h-10 w-10 items-center justify-center rounded-full bg-red-100">
-        <XCircle className="h-6 w-6 text-red-600" aria-hidden="true" />
+    <div
+      className={cn(
+        'flex items-center gap-3 rounded-lg border border-status-error/40 bg-status-error/10 p-4',
+        className
+      )}
+      role="status"
+    >
+      <div className="flex h-10 w-10 items-center justify-center rounded-full bg-status-error/15">
+        <XCircle className="h-6 w-6 text-status-error" aria-hidden="true" />
       </div>
       <div>
-        <p className="font-medium text-red-700">Отменена</p>
-        <p className="text-sm text-red-600">Поставка была отменена</p>
+        <p className="font-medium text-status-error">Отменена</p>
+        <p className="text-sm text-foreground">Поставка была отменена</p>
       </div>
     </div>
   )
@@ -52,7 +58,7 @@ function CancelledState() {
 export function SupplyStatusStepper({ status, className }: SupplyStatusStepperProps) {
   // Special case for cancelled status
   if (status === 'CANCELLED') {
-    return <CancelledState />
+    return <CancelledState className={className} />
   }
 
   const currentIndex = STATUS_ORDER[status]
@@ -73,18 +79,18 @@ export function SupplyStatusStepper({ status, className }: SupplyStatusStepperPr
                 <div
                   className={cn(
                     'flex h-10 w-10 items-center justify-center rounded-full border-2 transition-colors',
-                    isComplete && 'border-green-500 bg-green-500',
+                    isComplete && 'border-status-success bg-status-success',
                     isCurrent && 'border-primary bg-primary',
                     isFuture && 'border-border bg-card'
                   )}
                 >
                   {isComplete ? (
-                    <Check className="h-5 w-5 text-white" aria-hidden="true" />
+                    <Check className="h-5 w-5 text-status-success-foreground" aria-hidden="true" />
                   ) : (
                     <span
                       className={cn(
                         'h-3 w-3 rounded-full',
-                        isCurrent && 'bg-card',
+                        isCurrent && 'bg-primary-foreground',
                         isFuture && 'bg-muted'
                       )}
                     />
@@ -95,11 +101,12 @@ export function SupplyStatusStepper({ status, className }: SupplyStatusStepperPr
                 <span
                   className={cn(
                     'mt-2 text-sm font-medium',
-                    isComplete && 'text-green-600',
+                    isComplete && 'text-status-success',
                     isCurrent && 'text-primary',
                     isFuture && 'text-muted-foreground'
                   )}
                   aria-current={isCurrent ? 'step' : undefined}
+                  aria-label={`${step.label}, ${isComplete ? 'этап завершён' : isCurrent ? 'текущий этап' : 'ожидает'}`}
                 >
                   {step.label}
                 </span>
@@ -110,7 +117,7 @@ export function SupplyStatusStepper({ status, className }: SupplyStatusStepperPr
                 <div
                   className={cn(
                     'mx-2 h-0.5 flex-1',
-                    index < currentIndex ? 'bg-green-500' : 'bg-muted'
+                    index < currentIndex ? 'bg-status-success' : 'bg-muted'
                   )}
                   aria-hidden="true"
                 />

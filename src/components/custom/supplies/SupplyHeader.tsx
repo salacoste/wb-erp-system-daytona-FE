@@ -59,7 +59,7 @@ export function SupplyHeader({
       <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
         <div className="space-y-2">
           <div className="flex items-center gap-3">
-            <h1 className="text-2xl font-bold text-foreground">{displayName}</h1>
+            <h2 className="text-2xl font-bold text-foreground">{displayName}</h2>
             <SupplyStatusBadge status={status} size="lg" />
           </div>
 
@@ -87,7 +87,7 @@ export function SupplyHeader({
           {status === 'OPEN' && (
             <>
               <Button onClick={onAddOrders} disabled={isLoading}>
-                <Plus className="mr-2 h-4 w-4" />
+                <Plus className="mr-2 h-4 w-4" aria-hidden="true" />
                 Добавить заказы
               </Button>
               <TooltipProvider>
@@ -98,9 +98,9 @@ export function SupplyHeader({
                         variant="outline"
                         onClick={onCloseSupply}
                         disabled={!canClose || isLoading}
-                        className="text-orange-600 border-orange-300 hover:bg-orange-50"
+                        className="border-status-warning/40 text-status-warning hover:bg-status-warning/10 hover:text-status-warning"
                       >
-                        <Lock className="mr-2 h-4 w-4" />
+                        <Lock className="mr-2 h-4 w-4" aria-hidden="true" />
                         Закрыть поставку
                       </Button>
                     </span>
@@ -118,11 +118,11 @@ export function SupplyHeader({
           {status === 'CLOSED' && (
             <>
               <Button onClick={onGenerateStickers} disabled={isLoading}>
-                <FileText className="mr-2 h-4 w-4" />
+                <FileText className="mr-2 h-4 w-4" aria-hidden="true" />
                 Сгенерировать стикеры
               </Button>
               <Button variant="outline" onClick={onRefreshStatus} disabled={isLoading}>
-                <RefreshCw className="mr-2 h-4 w-4" />
+                <RefreshCw className="mr-2 h-4 w-4" aria-hidden="true" />
                 Обновить статус
               </Button>
             </>

@@ -11,11 +11,11 @@
  * - File size formatting
  */
 
-import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { screen } from '@testing-library/react'
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
+import { act, renderHook, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { renderWithProviders } from '@/test/utils/test-utils'
-import { SupplyDocumentsList } from '../SupplyDocumentsList'
+import { SupplyDocumentsList, useSupplyDocumentDownload } from '../SupplyDocumentsList'
 import {
   mockStickerDocumentPng,
   mockStickerDocumentSvg,
@@ -30,6 +30,23 @@ import {
   mockSupplyDelivered,
 } from '@/test/fixtures/supplies-responses'
 import type { SupplyDocument } from '@/types/supplies'
+
+const { mockDownloadSupplyDocument, mockToastSuccess, mockToastError } = vi.hoisted(() => ({
+  mockDownloadSupplyDocument: vi.fn(),
+  mockToastSuccess: vi.fn(),
+  mockToastError: vi.fn(),
+}))
+
+vi.mock('@/lib/api/supplies', () => ({
+  downloadDocument: mockDownloadSupplyDocument,
+}))
+
+vi.mock('sonner', () => ({
+  toast: {
+    success: mockToastSuccess,
+    error: mockToastError,
+  },
+}))
 
 const mockDocuments = [mockStickerDocumentPng, mockBarcodeDocument, mockAcceptanceActDocument]
 
@@ -49,6 +66,10 @@ function renderDocs(overrides: Partial<Parameters<typeof SupplyDocumentsList>[0]
 describe('SupplyDocumentsList', () => {
   beforeEach(() => {
     vi.clearAllMocks()
+  })
+
+  afterEach(() => {
+    vi.restoreAllMocks()
   })
 
   // ===========================================================================
@@ -201,21 +222,51 @@ describe('SupplyDocumentsList', () => {
       const downloadingBtn = buttons.find(b => b.querySelector('.animate-spin'))
       expect(downloadingBtn).toBeTruthy()
     })
+  })
 
-    it('shows success toast after download (callback called)', async () => {
-      const user = userEvent.setup()
-      const onDownload = vi.fn()
-      renderDocs({ onDownload })
-      await user.click(screen.getAllByText('Скачать')[0])
-      expect(onDownload).toHaveBeenCalled()
+  describe('Download Controller', () => {
+    it('downloads the requested document and cleans up its blob URL', async () => {
+      const blob = new Blob(['document'], { type: 'application/pdf' })
+      const announce = vi.fn()
+      const createObjectURL = vi.fn().mockReturnValue('blob:supply-document')
+      const revokeObjectURL = vi.fn()
+      Object.defineProperties(URL, {
+        createObjectURL: { configurable: true, value: createObjectURL },
+        revokeObjectURL: { configurable: true, value: revokeObjectURL },
+      })
+      const click = vi.spyOn(HTMLAnchorElement.prototype, 'click').mockImplementation(() => {})
+      mockDownloadSupplyDocument.mockResolvedValue(blob)
+      const { result } = renderHook(() => useSupplyDocumentDownload('supply-42', announce))
+
+      await act(async () => {
+        await result.current.downloadDocument('acceptance_act', 'acceptance-act-42.xlsx')
+      })
+
+      expect(mockDownloadSupplyDocument).toHaveBeenCalledWith('supply-42', 'acceptance_act')
+      expect(createObjectURL).toHaveBeenCalledWith(blob)
+      const anchor = click.mock.instances[0] as HTMLAnchorElement
+      expect(anchor.download).toBe('acceptance-act-42.xlsx')
+      expect(anchor.href).toBe('blob:supply-document')
+      expect(anchor).not.toBeInTheDocument()
+      expect(revokeObjectURL).toHaveBeenCalledWith('blob:supply-document')
+      expect(mockToastSuccess).toHaveBeenCalledWith('Документ скачан')
+      expect(announce).toHaveBeenCalledWith('Документ скачан')
+      expect(result.current.downloadingType).toBeUndefined()
     })
 
-    it('shows error toast if download fails (callback called with args)', async () => {
-      const user = userEvent.setup()
-      const onDownload = vi.fn()
-      renderDocs({ onDownload })
-      await user.click(screen.getAllByText('Скачать')[0])
-      expect(onDownload).toHaveBeenCalledTimes(1)
+    it('announces API download failures and resets pending state', async () => {
+      const announce = vi.fn()
+      mockDownloadSupplyDocument.mockRejectedValue(new Error('download failed'))
+      const { result } = renderHook(() => useSupplyDocumentDownload('supply-42', announce))
+
+      await act(async () => {
+        await result.current.downloadDocument('barcode', 'barcode.pdf')
+      })
+
+      expect(mockDownloadSupplyDocument).toHaveBeenCalledWith('supply-42', 'barcode')
+      expect(mockToastError).toHaveBeenCalledWith('Не удалось скачать документ')
+      expect(announce).toHaveBeenCalledWith('Не удалось скачать документ')
+      expect(result.current.downloadingType).toBeUndefined()
     })
   })
 
