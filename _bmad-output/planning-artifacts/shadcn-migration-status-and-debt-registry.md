@@ -1,6 +1,6 @@
 # Shadcn Full-UI Migration — Status & Debt Registry
 
-> **Snapshot date: 2026-08-30** (Epics 166-172 are complete; Story 173.7 shipped through feature PR #347 and documentation closeout PR #348 with exact product and initial docs cleanup proved; only the auxiliary lifecycle-record lane remains; Epic 173 = 7/13; Program NEXT = Story 173.8 after auxiliary merge and cleanup; Stories 166.1-173.7 are done). Канонический статус-реестр программы миграции
+> **Snapshot date: 2026-08-30** (Epics 166-172 are complete; Story 173.8 product shipped through feature PR #350 with exact product cleanup proved; the initial documentation closeout is active and will be followed by an auxiliary lifecycle record; Epic 173 = 8/13; Program NEXT = Story 173.9 only after both Story 173.8 documentation lanes merge and clean; Stories 166.1-173.8 are done). Канонический статус-реестр программы миграции
 > для BMAD-артефактов. Живая история — sprint-status.yaml (по-сторийно) и ledger
 > BE-репо (docs/tech-debt/TECH-DEBT-2026-08-SESSION.md, Addendum-4 cont.1-25);
 > этот файл = консолидированный срез «что сделано / что осталось / все долги».
@@ -8,21 +8,21 @@
 
 ## 1. Execution status (по эпикам)
 
-| Epic                         | Stories         | Done   | Остаток  | Статус                                                                                                                                           |
-| ---------------------------- | --------------- | ------ | -------- | ------------------------------------------------------------------------------------------------------------------------------------------------ |
-| 166-FE foundation            | 8               | 8      | —        | **CLOSED** (токены, примитивы, композиции, контракты)                                                                                            |
-| 167-FE AppShell/auth         | 9 (с merge'ами) | 9      | —        | **CLOSED** (freeze-8, W1)                                                                                                                        |
-| 168-FE analytics core        | 11              | 11     | —        | **CLOSED** (hub + 10 маршрутов; 168.2-168.11 orchestrator-волной)                                                                                |
-| 169-FE operational analytics | 15              | **15** | —        | **CLOSED** (169.14 backend prerequisite, 169.15 shared frontend boundary, and 169.12 closeout completed)                                         |
-| 170-FE                       | 7               | **7**  | —        | **CLOSED** (Stories 170.1-170.7 shipped through PRs #237-#250)                                                                                   |
-| 171-FE                       | 9               | **9**  | —        | **CLOSED** (Stories 171.1-171.9 shipped through PRs #252, #254, #256, #258, #260, #262, #266, #268, and #270)                                    |
-| 172-FE                       | 17              | **17** | —        | **CLOSED** (Stories 172.1-172.17; Story 172.17 feature #325 + closeout #326)                                                                     |
-| 173-FE                       | 13              | **7**  | 173.8-13 | **IN PROGRESS**; settings 173.1-173.7 shipped; NEXT 173.8 after Story 173.7 auxiliary cleanup; owners 173.8 shipments and 173.12 supplies remain |
-| 174-FE консолидация          | 5               | 0      | 174.1-5  | финал (СТРОГО после 166-173; 174.2 design-system/source-boundary/contrast; 174.3 visual/a11y; 174.4 functional/backend)                          |
+| Epic                         | Stories         | Done   | Остаток  | Статус                                                                                                                                                          |
+| ---------------------------- | --------------- | ------ | -------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 166-FE foundation            | 8               | 8      | —        | **CLOSED** (токены, примитивы, композиции, контракты)                                                                                                           |
+| 167-FE AppShell/auth         | 9 (с merge'ами) | 9      | —        | **CLOSED** (freeze-8, W1)                                                                                                                                       |
+| 168-FE analytics core        | 11              | 11     | —        | **CLOSED** (hub + 10 маршрутов; 168.2-168.11 orchestrator-волной)                                                                                               |
+| 169-FE operational analytics | 15              | **15** | —        | **CLOSED** (169.14 backend prerequisite, 169.15 shared frontend boundary, and 169.12 closeout completed)                                                        |
+| 170-FE                       | 7               | **7**  | —        | **CLOSED** (Stories 170.1-170.7 shipped through PRs #237-#250)                                                                                                  |
+| 171-FE                       | 9               | **9**  | —        | **CLOSED** (Stories 171.1-171.9 shipped through PRs #252, #254, #256, #258, #260, #262, #266, #268, and #270)                                                   |
+| 172-FE                       | 17              | **17** | —        | **CLOSED** (Stories 172.1-172.17; Story 172.17 feature #325 + closeout #326)                                                                                    |
+| 173-FE                       | 13              | **8**  | 173.9-13 | **IN PROGRESS**; settings 173.1-173.7 and shipments-list owner 173.8 shipped; NEXT 173.9 after Story 173.8 documentation cleanup; owner 173.12 supplies remains |
+| 174-FE консолидация          | 5               | 0      | 174.1-5  | финал (СТРОГО после 166-173; 174.2 design-system/source-boundary/contrast; 174.3 visual/a11y; 174.4 functional/backend)                                         |
 
-**Story readiness: 83 of 94 canonical Stories complete.** Epics 166-172 are closed. Story 173.7 merged through
-feature PR #347 and documentation closeout PR #348 with exact product and initial docs cleanup proved; only one narrow auxiliary lifecycle-record lane remains. Story 173.7 advances Epic 173 to 7/13 and raises the recorded Vitest floor to
-**19,688/0** across 1,246 files. The remaining program is Epic 173 (6 route Stories) followed by the strict
+**Story readiness: 84 of 94 canonical Stories complete.** Epics 166-172 are closed. Story 173.8 product merged through
+feature PR #350 with exact product cleanup proved; the exact-five initial documentation closeout is active and will be followed by one narrow auxiliary lifecycle-record lane. Story 173.8 advances Epic 173 to 8/13 and raises the recorded Vitest floor to
+**19,703/0** across 1,248 files. The remaining program is Epic 173 (5 route Stories) followed by the strict
 Epic 174.1 → 174.5 assurance and cleanup chain.
 
 169.13 SHIPPED 2026-08-25 (последний backlog-роут эпика; 12/15): preface #231 (`95522187` — unknown enums + nullables, opus APPROVE) + #232 (`2778d43e`; 26 файлов, owned 58→73, **e2e на ветке 33/1↓/0**, 2×opus);
@@ -111,7 +111,8 @@ caption naming model + tabular + p-6; guard-9 + caption role-тест + 6 re-pin
 **173.5 SHIPPED (2026-08-30, feature PR #341 merge `41d686de` + closeout PR #342 merge `45c35498`)** — 28 файлов (+1806/−944); truthful Telegram loading/unavailable/bound/unbound states; FBS independence; semantic Telegram/status tokens; labeled switches and visible radio focus; complete quiet-hours candidate validation; pending-safe binding/unbind lifecycle; deterministic focus; responsive/theme/reflow/reduced-motion/axe discovery; focused **10/68**; свежий полный пол **19 647/0/1242**; Playwright **40 discovered**, browser execution gap explicit; production build **70/70**; product repairs + sole docs P2 date finding resolved with zero unresolved P0–P2; inherited `check:docs` baseline drift explicit; exact product and initial docs cleanup proved. Артефакт: `173-5-fe-migrate-notification-settings.md`.
 **173.6 SHIPPED (2026-08-30, feature PR #344 merge `80427f28` + closeout PR #345 merge `d079dcb6`)** — 29 файлов (+1125/−121); truthful query-backed ContextBar refreshing/unavailable/partial/fresh states; responsive tariff tabs; accessible skeleton, partial notice, validation summary, units/help/errors and exact nested-tier association; controlled dirty tracking; pending-safe save confirmation; recoverable same-payload retry; DOM result announcement; pristine rebase and deterministic focus; semantic tokens, reduced motion and reflow containment; focused **10/162**; свежий полный пол **19 663/0/1244**; Playwright **81 file-level discovered / 20 tariff scenarios**, browser execution gap explicit; production build **70/70**; final exact product snapshot `64586c8d` reviewed at P0/P1/P2=0, scope PASS, APPROVE; exact-five docs review's citation-state P2 fixed, final P0/P1/P2=0; inherited 95-citation `check:docs` mismatch explicit; exact product and initial docs cleanup proved. Артефакт: `173-6-fe-migrate-tariff-settings.md`.
 **173.7 SHIPPED (2026-08-30, feature PR #347 merge `7f9f046f` + closeout PR #348 merge `27577ca2`)** — 11 файлов (+1545/−244); shared PageHeader and truthful query-backed ContextBar; named loading/error/retry states; native form; inclusive manual-rate and supported-VAT validation; no-tax consequence warning; pending-safe controls; success/failure/identical retry/cancel/read-only lifecycle; same-cabinet draft preservation and cross-cabinet draft/retry/warning/in-flight isolation; unsupported saved VAT safe presentation; focused **5/64**; свежий полный пол **19 688/0/1246**; Playwright **99 file-level discovered / 20 tax scenarios**, browser execution gap explicit; production build **70/70**; final exact product snapshot `3ef5d0b7` and docs snapshot `d48aaed2` reviewed at P0/P1/P2=0, scope PASS, APPROVE; exact product and initial docs cleanup proved. Артефакт: `173-7-fe-migrate-tax-settings.md`.
-**NEXT = Story 173.8 Shipments List after this auxiliary lifecycle record merges and cleans** — feature #347 and closeout #348 merged; product and initial docs residue is absent; only the auxiliary record remains; оставшиеся owner-стори: 173.8 shipments и 173.12 supplies.
+**173.8 PRODUCT SHIPPED (2026-08-30, feature PR #350 merge `65f73fed`)** — 18 файлов (+1214/−386); persistent PageHeader/PageState identity; truthful initial/error/retained-stale refresh states; shared filters/responsive table/state/pagination; narrow queue cards preserving identity/status/date/action; semantic and unknown-source statuses; filtered-empty reset; role-gated and pending-safe creation; exact payload/navigation/focus contracts; focused **6/50**; свежий полный пол **19 703/0/1248**; static Playwright boundary **4/4**, credentialed browser execution gap explicit; webpack production build **70/70**; final exact product snapshot `6dddfb72` reviewed at P0/P1/P2=0, scope PASS, APPROVE; exact product cleanup proved; initial docs closeout active. Артефакт: `173-8-fe-migrate-the-shipments-list.md`.
+**NEXT = Story 173.9 Shipment Detail only after the Story 173.8 initial closeout and auxiliary lifecycle record both merge and clean** — feature #350 merged and product residue is absent; remaining owner Story 173.12 supplies is unchanged.
 **Carry-out → 174.2 owner (route-ledger handoff из 171.9):** (1) удалить поле className из
 STATUS_BADGE_CONFIG после миграции ModelListSection на собственный overlay; (2) переписать
 stale-комментарий model-list-helpers.ts:24-26 («subroutes 171.7/171.9» — остался только
@@ -126,7 +127,7 @@ post-close #222 (гнилой пин от стандартизации 1804aa8f;
 маршрутная миграция #227 (`52f7f506`; 27 файлов, owned 119→147, **e2e на ветке 6/1↓/0**, 2×opus FRESH);
 CSV-security #223 (OWASP defang + trade-off documented); чужой WIP реконсилирован #225 (cogs-split +
 rateLimit + csv-dedupe); Correct Course #228 (`4d0ff685`) ввёл 169.14/169.15 + bounded 169.12-closeout.
-**Recorded full Vitest floor: 19,688/0 across 1,246 files** after Story 173.7. Real screen-reader and browser-UI zoom evidence — carry-out 174.3; retained raw visual artifacts remain prohibited by repository privacy policy;
+**Recorded full Vitest floor: 19,703/0 across 1,248 files** after Story 173.8. Real screen-reader and browser-UI zoom evidence — carry-out 174.3; retained raw visual artifacts remain prohibited by repository privacy policy;
 credentialed functional E2E — carry-out 174.4. Plan-status аудит 2026-08-24: 167.5/167.8/167.9 → executed
 (были review/ready-for-dev/backlog при done-строках).
 
@@ -232,7 +233,7 @@ credentialed functional E2E — carry-out 174.4. Plan-status аудит 2026-08-
 
 ## 5. Owner-зависимые стори (вехи 172-173)
 
-- Epic 172 owner chains are complete. Epic 173 settings shell 173.1, Backfill Settings 173.2, Cabinet Settings 173.3, Expense Settings 173.4, Notification Settings 173.5, Tariff Settings 173.6, and Tax Settings 173.7 are product-complete; the remaining Epic 173 owners are 173.8 shipments and 173.12 supplies. Story 173.8 starts only after this Story 173.7 auxiliary lifecycle record merges and cleans; other consumers start only after the applicable owner merge and closeout cleanup.
+- Epic 172 owner chains are complete. Epic 173 settings shell 173.1, Backfill Settings 173.2, Cabinet Settings 173.3, Expense Settings 173.4, Notification Settings 173.5, Tariff Settings 173.6, Tax Settings 173.7, and the shipment-list/status owner 173.8 are product-complete. The remaining Epic 173 owner is 173.12 supplies. Story 173.9 starts only after both Story 173.8 documentation lanes merge and clean; other consumers start only after the applicable owner merge and closeout cleanup.
 
 ## 6. Процесс-ссылки
 
