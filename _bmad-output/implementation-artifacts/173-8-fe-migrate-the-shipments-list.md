@@ -1,6 +1,6 @@
 # Story 173.8-FE: Migrate the Shipments List
 
-Status: done — feature PR #350 merged (`66b9b6b6`, merge `65f73fed`); exact product branch/worktree/path/open-PR cleanup proved; initial documentation closeout is active and will be followed by a narrow auxiliary lifecycle record; Story-owned 18-file feature manifest; fresh full floor **19,703/0/1,248**; focused Story **6 files / 50 tests**; Playwright static boundary **4/4**; credentialed browser execution explicitly unavailable because the required `.env.e2e` configuration was absent; webpack production build **70/70**; final independent product review has zero unresolved P0–P2 findings; route-ledger rows intentionally remain `planned` until Story 174.5.
+Status: done — feature PR #350 merged (`66b9b6b6`, merge `65f73fed`); documentation closeout PR #351 merged (`a9cd76b7`, merge `4bda841f`); exact product and initial documentation branch/worktree/path/open-PR cleanup proved; only the auxiliary lifecycle-record lane remains; Story-owned 18-file feature manifest; fresh full floor **19,703/0/1,248**; focused Story **6 files / 50 tests**; Playwright static boundary **4/4**; credentialed browser execution explicitly unavailable because the required `.env.e2e` configuration was absent; webpack production build **70/70**; final independent product and initial documentation reviews have zero unresolved P0–P2 findings; route-ledger rows intentionally remain `planned` until Story 174.5.
 
 ## Story
 
@@ -79,6 +79,7 @@ Pinned runtime: Node `24.18.0`, npm `11.11.0` for the authoritative leader valid
 - The final source-contract guard independently enumerates the Story-owned production candidates and retains a classification self-test proving a hypothetical `LegacyShipmentQueue.tsx` cannot bypass catalog equality.
 - Independent final re-review covered exact product diff SHA-256 `6dddfb7210c3ea0d944625c951de89dd688d8b248731efb8b4b04d6702c70878`.
 - Final disposition: P0 = 0, P1 = 0, P2 = 0; scope PASS; exact 18-file manifest PASS; forbidden files unchanged PASS; creation payload semantics PASS; static Playwright boundary PASS; recommendation APPROVE.
+- Independent documentation review covered exact staged diff SHA-256 `d345f2a74f82d4bc2cdad0a563581211fda61ea6065203f1c2604db7fe88deb7` and approved P0 = 0, P1 = 0, P2 = 0; exact-five scope PASS; exact-hash stability PASS; 76-route parity PASS; premature-lifecycle-claims PASS.
 
 ## Lifecycle
 
@@ -86,10 +87,13 @@ Pinned runtime: Node `24.18.0`, npm `11.11.0` for the authoritative leader valid
 - Feature head: `66b9b6b68a18028acb5d0ff8360f0e96c7536a99`.
 - Feature merge: `65f73fed8438aed5bf2058a4ecad491622433a5c`.
 - Base/head, one-commit topology, exact 18-file manifest, mergeability, clean merge state, and GitGuardian success were verified before merge; merge used exact-head protection against `66b9b6b68a18028acb5d0ff8360f0e96c7536a99`.
-- Primary `main` was fast-forwarded and proved equal to refreshed `origin/main` at `65f73fed` with 0/0 divergence.
-- The product remote branch, local branch, worktree, path, stale registration, and open PRs were proved absent before the documentation lane began; only the primary worktree remained.
-- The initial documentation closeout branch/worktree exists only to publish the already-proved product facts. It makes no recursive claim about its own future PR, merge, primary fast-forward, or cleanup.
-- One narrow auxiliary lifecycle-record lane will publish the initial documentation PR merge and cleanup facts before Story 173.9 can begin.
+- Documentation closeout PR: #351, `https://github.com/salacoste/wb-erp-system-daytona-FE/pull/351`.
+- Documentation closeout head: `a9cd76b78f65d70f1737b9fe932b55cdd0bcb9a1`.
+- Documentation closeout merge: `4bda841f5a9bcaff55ac8541b1ebca2d4c6494dd`.
+- PR #351 was verified at base `main`, exact head OID, one commit, five files, `MERGEABLE/CLEAN`, and GitGuardian success before exact-head-protected merge.
+- After PR #351 merged, primary `main` was fast-forwarded and proved equal to refreshed `origin/main` at `4bda841f` with 0/0 divergence.
+- The product and initial documentation remote branches, local branches, worktrees, paths, stale registrations, and open PRs were proved absent before the auxiliary lane began; only the primary worktree remained.
+- The auxiliary lifecycle-record branch/worktree exists only to publish these already-proved facts. It makes no recursive claim about its own future PR, merge, primary fast-forward, or cleanup.
 - No deploy, production operation, direct push to `main`, force-push, dependency change, credential output, route-ledger transition, ContextBar implementation change, citation-baseline update, or unrelated debt fix occurred.
 
 ## Lessons and Carry-Outs
@@ -104,6 +108,7 @@ Pinned runtime: Node `24.18.0`, npm `11.11.0` for the authoritative leader valid
 
 ## Change Log
 
-| Date       | Change                                                                                                                                                                                                                                                                                                        |
-| ---------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| 2026-08-30 | Story 173.8 implemented, validated, independently reviewed, merged through feature PR #350, and prepared for exact-five-file documentation closeout. **Lessons:** (1) Install E2E fixtures before navigation. (2) Make catalog guards independently discoverable. (3) Preserve complete mobile queue meaning. |
+| Date       | Change                                                                                                                                                                                                                                                                                                                                   |
+| ---------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 2026-08-30 | Story 173.8 implemented, validated, independently reviewed, merged through feature PR #350, and prepared for exact-five-file documentation closeout. **Lessons:** (1) Install E2E fixtures before navigation. (2) Make catalog guards independently discoverable. (3) Preserve complete mobile queue meaning.                            |
+| 2026-08-30 | Documentation closeout PR #351 merged and exact product/initial-docs cleanup was proved; final docs review approved the frozen five-file snapshot. **Lessons:** (1) Freeze continuation routing only after stale-state repair. (2) Separate static-boundary evidence from browser execution. (3) Publish cleanup facts only after proof. |
