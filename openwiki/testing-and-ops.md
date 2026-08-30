@@ -45,7 +45,7 @@ generated: { by: "openwiki/0.4.3", at: "2026-08-30T08:47:56.434Z" }
 | Plugin | `@vitejs/plugin-react` |
 | Coverage | V8 provider (text/json/json-summary/html reporters), output `coverage/local` |
 | Fake timers | `shouldAdvanceTime: true` (waitFor/MSW compatibility) |
-| Full-suite floor | ≥ 19,733 tests passing across ≥ 1,249 test files (0 failed) — raised after Story 173.9 closed (sprint-status.yaml, 2026-08-30); a full `npm test -- --run` run must not regress this floor |
+| Full-suite floor | ≥ 19,733 tests passing across ≥ 1,249 test files (0 failed) — raised after Story 173.9 closed (sprint-status.yaml, 2026-08-30); a full `npm test -- --run` run must not regress this floor (Story 173.11 ran a fresh focused 112/112 plus immutable hook/API contracts 23/23 but no full-suite snapshot, so the floor is intentionally unchanged) |
 
 ### Test setup (`src/test/`)
 Setup files run in explicit list order (`sequence.setupFiles: 'list'`) defined by `VITEST_SETUP_FILES` in `vitest.config.ts`. Order is load-bearing: the outbound network guard must install **before** any general setup or MSW import, or module-evaluation-time network attempts would escape the guard.
@@ -142,6 +142,7 @@ Story 173.8 (list) and 173.9 (detail) restored dedicated shipments e2e packages:
 - **`shipments-list.spec.ts`** — `/shipments` list coverage driven by a switchable scenario fixture (`default`/`empty`/`error`/gated `pending`): DRAFT vs CONFIRMED status filtering, pagination, the create-shipment dialog, empty and error states.
 - **`shipments-detail.spec.ts`** — `/shipments/story-173-9-detail` detail coverage stubbing `**/v1/shipments/story-173-9-detail`: header, pallet accordion, box-line table with per-line allocation results (calculated vs pending lines), draft-vs-confirmed action buttons, plus an axe scan.
 - The subdirectory also carries `shipments-a11y.spec.ts` and `shipments-lifecycle.spec.ts`; `e2e/supplies/` mirrors this shape for supplies (list/detail/lifecycle/a11y).
+- Stories 173.10/173.11 added the sibling route specs `e2e/box-types-page.spec.ts` (box-types route) and `e2e/sku-packaging-page.spec.ts` (SKU packaging, seven deterministic Story scenarios). Both lanes are recorded with the explicit credentialed-browser-execution gap: the scenarios are statically discovered/verified, and no live credentialed browser run is claimed.
 
 ### Expenses, backfill page, and telegram notifications
 

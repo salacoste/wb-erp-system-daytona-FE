@@ -52,14 +52,14 @@ Development and validation are **local-only**: there is no deployment target or 
 
 ## Epics 166–174 Migration Snapshot
 
-Canonical snapshot sources: the consolidated status/debt registry (`_bmad-output/planning-artifacts/shadcn-migration-status-and-debt-registry.md`, snapshot **2026-08-30**) and per-story execution state in `_bmad-output/implementation-artifacts/sprint-status.yaml`. The handoff `docs/HANDOFF-2026-08-29-EPIC-173-174-FULL-MIGRATION-AND-DEBT.md` (updated through the 2026-08-30 snapshot at `main` = `cd05d31c`) is the single continuation entry point (it supersedes the obsolete 2026-08-27 handoff).
+Canonical snapshot sources: the consolidated status/debt registry (`_bmad-output/planning-artifacts/shadcn-migration-status-and-debt-registry.md`, snapshot **2026-08-30**) and per-story execution state in `_bmad-output/implementation-artifacts/sprint-status.yaml`. The handoff `docs/HANDOFF-2026-08-29-EPIC-173-174-FULL-MIGRATION-AND-DEBT.md` (authoring base `137e2ee5`, Story 173.11 feature PR #359) is the single continuation entry point (it supersedes the obsolete 2026-08-27 handoff).
 
-As of the 2026-08-30 snapshot (`main` = `cd05d31c`, after Story 173.9 exact-five documentation PR #354), the shadcn full-UI migration program stands at **85/94 canonical stories**:
+As of the 2026-08-30 snapshot (`main` = `b2136273` after Story 173.11 documentation closeout PR #360; handoff authoring base `137e2ee5` = feature PR #359), the shadcn full-UI migration program stands at **87/94 canonical stories**:
 
 - Epics 166 (foundation), 167 (AppShell/auth), 168 (analytics core), 169 (operational analytics, 15/15), 170 (marketing analytics, 7/7), 171 (AI/forecast analytics, 9/9), and **172 are all CLOSED**. Epic 172 closed **17/17** (172.1–172.17, through Product Management PRs #325/#326).
-- Epic 173 (settings/shipments/supplies) is **IN PROGRESS at 9/13**: Stories 173.1–173.7 (settings shell + overview, backfill, cabinet, expenses, notifications, tariffs, tax settings), 173.8 shipments list (#350/#351/#352), and 173.9 shipment detail (#353/#354) are all done. **NEXT = Story 173.10 (Shipment Box Types)**, after the narrow Story 173.9 auxiliary lifecycle-record lane merges and cleans; remaining backlog is 173.10–173.13 with 173.12 owning supplies.
+- Epic 173 (settings/shipments/supplies) is **IN PROGRESS at 11/13**: Stories 173.1–173.7 (settings shell + overview, backfill, cabinet, expenses, notifications, tariffs, tax settings), 173.8 shipments list (#350/#351 + auxiliary #352), 173.9 shipment detail (#353/#354 + auxiliary #358, no residue), 173.10 box types (#356/#357, no residue), and 173.11 SKU packaging (#359/#360; exact product cleanup proved, documentation closeout lane active) are all done. **NEXT = Story 173.12 (Supplies List)**, after the Story 173.11 documentation lifecycle merges and cleans; remaining backlog is 173.12–173.13 with 173.12 owning supplies.
 - Epic 174 (5 stories) is the strict final consolidation chain (174.1 route-ledger parity → 174.5) and runs only after 166–173.
-- The recorded Vitest floor was raised to **19,733 passed / 0 failed / 1,249 files** after Story 173.9; the route ledger still maps all 76 source routes with all rows `planned` (174.1 validates, 174.5 finalizes).
+- The recorded Vitest floor remains **19,733 passed / 0 failed / 1,249 files** after Story 173.9 (Story 173.11 ran a fresh focused 112/112 plus immutable hook/API contracts 23/23 but no full-suite snapshot); the route ledger still maps all 76 source routes with all rows `planned` (174.1 validates, 174.5 finalizes).
 
 Full per-story status, the story pipeline, the route ledger, and the orchestration/handoff process live in [Migration Program (Epics 166–174)](migration-program.md). The design contract itself (tokens, primitives, composition families) is documented in [Design System](design-system.md).
 
@@ -70,7 +70,7 @@ Full per-story status, the story pipeline, the route ledger, and the orchestrati
 | **Stack** | Next.js 16 + TypeScript 5 + Tailwind CSS + shadcn/ui (Radix) |
 | **Server State** | TanStack Query v5 (Next.js server page/layout wrappers coexist with client components; interactive data fetching is client-side) |
 | **Client State** | Zustand (auth, dashboard widgets, rate-limit, polling) |
-| **Testing** | Vitest (1,229 unit test files / 19,489 tests floor, MSW) + Playwright E2E + outbound network guards + privacy/diagnostic-capture checks |
+| **Testing** | Vitest (1,249 unit test files / 19,733 tests floor, MSW) + Playwright E2E + outbound network guards + privacy/diagnostic-capture checks |
 | **Backend** | REST API via `NEXT_PUBLIC_API_URL` (default `http://localhost:3000`) |
 | **Port** | 3100 (dev and prod) |
 
@@ -136,5 +136,5 @@ Additional orientation:
 | Shipments list + detail (Stories 173.8–173.9) | `src/lib/routes.ts` (`SHIPMENTS.ROOT` / `DETAIL` / `BOX_TYPES` / `SKU_PACKAGING`), `src/lib/route-helpers.ts` (`buildShipmentDetailRoute`), `src/lib/api/shipment-cost/` (`shipments-api.ts`, `shipments-normalizer.ts`, `shipment-calculations-api.ts`, `box-types-api.ts`, `sku-packaging-api.ts`) |
 | Communications (NEW-2) — read + write-back | `src/lib/api/communications.ts`, `src/lib/api/communications-writeback.ts`, `src/hooks/useCommunications.ts`, `src/hooks/useCommunicationsWriteback.ts`, `src/hooks/useWritebackJob.ts`, `src/lib/communications-writeback-utils.ts` |
 | Finances (NEW-7) — domain helpers | `src/lib/finances/download-blob.ts`, `src/lib/finances/finances-formatters.ts` |
-s`, `src/hooks/useWritebackJob.ts`, `src/lib/communications-writeback-utils.ts` |
-| Finances (NEW-7) — domain helpers | `src/lib/finances/download-blob.ts`, `src/lib/finances/finances-formatters.ts` |
+| Shipment box types (Story 173.10) | `src/app/(dashboard)/shipments/box-types/page.tsx`, `useBoxTypesPageState.ts`, `src/components/custom/box-types/` (`BoxTypesTable`, `BoxTypeFormDialog`, `BoxTypeDeactivateDialog`, `BoxTypesEmptyState`, `DimensionField`, `boxTypeFormValidation`, `useBoxTypeDialogFocus`) |
+| SKU packaging (Story 173.11) | `src/app/(dashboard)/shipments/sku-packaging/page.tsx`, `useSkuPackagingPageState.ts`, `src/components/custom/sku-packaging/` (`SkuPackagingTable`, `SkuPackagingFormDialog`, `SkuPackagingFormFields`, `SkuPackagingFilterToolbar`, `SkuPackagingProductCombobox`, `BulkAddDialog`, `BulkPreviewTable`, `SkuPackagingDeleteDialog`, `sku-packaging-bulk-utils`, `useSkuPackagingDialogFocus`) |
