@@ -22,7 +22,7 @@ export function useShipmentsPageState() {
     [statusFilter, page, limit]
   )
 
-  const { data, isLoading, isError, error, refetch } = useShipments(params)
+  const { data, isLoading, isFetching, isError, error, refetch } = useShipments(params)
 
   const sortedShipments = useMemo(() => {
     const items = data?.data ?? []
@@ -56,6 +56,7 @@ export function useShipmentsPageState() {
     statusFilter,
     sortOrder,
     isLoading,
+    isFetching,
     isError,
     error,
     refetch,

@@ -27,6 +27,7 @@ const mockShipmentsData = {
 const mockUseShipments = vi.fn().mockReturnValue({
   data: mockShipmentsData,
   isLoading: false,
+  isFetching: false,
   isError: false,
   error: null,
   refetch: vi.fn(),
@@ -60,6 +61,7 @@ describe('useShipmentsPageState', () => {
     expect(result.current.sortOrder).toBe('desc')
     expect(result.current.isCreateOpen).toBe(false)
     expect(result.current.isLoading).toBe(false)
+    expect(result.current.isFetching).toBe(false)
     expect(result.current.isError).toBe(false)
   })
 

@@ -6,9 +6,12 @@
  * Route: /shipments
  */
 
-import { Alert, AlertDescription } from '@/components/ui/alert'
+import { useRef } from 'react'
+import { Plus } from 'lucide-react'
+
+import { PageHeader } from '@/components/product'
+import { PageState } from '@/components/product/states'
 import { Button } from '@/components/ui/button'
-import { AlertCircle } from 'lucide-react'
 import { useSkuPackaging } from '@/hooks/use-sku-packaging'
 import { canManageOperationalData } from '@/lib/role-permissions'
 import { useAuthStore } from '@/stores/authStore'
@@ -20,6 +23,7 @@ import {
 import { useShipmentsPageState } from './useShipmentsPageState'
 
 export default function ShipmentsPage() {
+  const createButtonRef = useRef<HTMLButtonElement>(null)
   const {
     shipments,
     total,
@@ -28,6 +32,7 @@ export default function ShipmentsPage() {
     statusFilter,
     sortOrder,
     isLoading,
+    isFetching,
     isError,
     error,
     refetch,
@@ -44,51 +49,88 @@ export default function ShipmentsPage() {
   const { data: skuPackaging } = useSkuPackaging()
   const hasSkuPackaging = (skuPackaging?.length ?? 0) > 0
 
+  const header = (
+    <PageHeader
+      title="Отправки"
+      description="Очередь отправок по жизненному циклу, способу доставки и дате создания."
+      breadcrumbs={[{ label: 'Главная', href: '/dashboard' }, { label: 'Отправки' }]}
+      busy={isFetching}
+      actions={
+        canManageShipments && shipments.length > 0 ? (
+          <Button ref={createButtonRef} onClick={() => setIsCreateOpen(true)}>
+            <Plus aria-hidden="true" className="size-4" />
+            Создать отправку
+          </Button>
+        ) : undefined
+      }
+    />
+  )
+
   if (isLoading) {
     return (
-      <div className="space-y-6">
-        <h1 className="text-2xl font-semibold">Отправки</h1>
-        <div role="status" aria-live="polite" className="animate-pulse space-y-4">
-          <span className="sr-only">Загрузка отправок</span>
-          <div className="h-10 bg-muted rounded" />
-          <div className="h-64 bg-muted rounded" />
-        </div>
-      </div>
+      <section aria-label="Очередь отправок" className="space-y-6 py-2">
+        {header}
+        <PageState
+          state="loading"
+          title="Загружаем отправки"
+          explanation="Получаем актуальную очередь отправок текущего кабинета."
+          trust="Фильтры и действия станут доступны после завершения загрузки."
+        />
+      </section>
     )
   }
 
-  if (isError) {
+  if (isError && shipments.length === 0) {
     return (
-      <div className="space-y-6">
-        <h1 className="text-2xl font-semibold">Отправки</h1>
-        <Alert variant="destructive">
-          <AlertCircle className="h-4 w-4" />
-          <AlertDescription className="flex items-center justify-between">
-            <span>{error instanceof Error ? error.message : 'Ошибка загрузки отправок'}</span>
-            <Button variant="outline" size="sm" onClick={() => refetch()}>
+      <section aria-label="Очередь отправок" className="space-y-6 py-2">
+        {header}
+        <PageState
+          state="error"
+          title="Не удалось загрузить отправки"
+          explanation={error instanceof Error ? error.message : 'Ошибка загрузки отправок'}
+          trust="Новые данные не показаны; повторная попытка не изменит отправки."
+          recovery={
+            <Button type="button" variant="outline" onClick={() => refetch()}>
               Повторить
             </Button>
-          </AlertDescription>
-        </Alert>
-      </div>
+          }
+        />
+      </section>
     )
   }
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-semibold">Отправки</h1>
-        {canManageShipments && shipments.length > 0 && (
-          <Button onClick={() => setIsCreateOpen(true)}>Создать отправку</Button>
-        )}
-      </div>
+    <section aria-label="Очередь отправок" className="space-y-6 py-2">
+      {header}
 
       {shipments.length === 0 && !statusFilter ? (
         <ShipmentsEmptyState
           hasSkuPackaging={hasSkuPackaging}
           onCreateClick={() => setIsCreateOpen(true)}
           canCreate={canManageShipments}
+          createButtonRef={createButtonRef}
         />
+      ) : isError ? (
+        <PageState
+          state="stale"
+          title="Показаны ранее загруженные отправки"
+          explanation="Фоновое обновление очереди завершилось ошибкой."
+          trust="Сохранённые строки доступны для просмотра, но могли устареть."
+          limitation={error instanceof Error ? error.message : 'Не удалось обновить отправки'}
+        >
+          <ShipmentsTable
+            shipments={shipments}
+            total={total}
+            page={page}
+            limit={limit}
+            statusFilter={statusFilter}
+            sortOrder={sortOrder}
+            onStatusChange={handleStatusChange}
+            onPageChange={handlePageChange}
+            onLimitChange={handleLimitChange}
+            onSortToggle={handleSortToggle}
+          />
+        </PageState>
       ) : (
         <ShipmentsTable
           shipments={shipments}
@@ -97,6 +139,7 @@ export default function ShipmentsPage() {
           limit={limit}
           statusFilter={statusFilter}
           sortOrder={sortOrder}
+          busy={isFetching}
           onStatusChange={handleStatusChange}
           onPageChange={handlePageChange}
           onLimitChange={handleLimitChange}
@@ -105,8 +148,12 @@ export default function ShipmentsPage() {
       )}
 
       {canManageShipments && (
-        <CreateShipmentDialog open={isCreateOpen} onClose={() => setIsCreateOpen(false)} />
+        <CreateShipmentDialog
+          open={isCreateOpen}
+          onClose={() => setIsCreateOpen(false)}
+          returnFocusRef={createButtonRef}
+        />
       )}
-    </div>
+    </section>
   )
 }

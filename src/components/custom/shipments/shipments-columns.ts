@@ -17,7 +17,7 @@ export const SHIPMENTS_COLUMNS: ShipmentsColumn[] = [
   { key: 'deliveryMode', label: 'Способ доставки' },
   { key: 'pallets', label: 'Паллет', align: 'right' },
   { key: 'createdAt', label: 'Дата создания' },
-  { key: 'actions', label: '', align: 'right' },
+  { key: 'actions', label: 'Действия', align: 'right' },
 ]
 
 export const STATUS_LABELS: Record<ShipmentStatus, string> = {

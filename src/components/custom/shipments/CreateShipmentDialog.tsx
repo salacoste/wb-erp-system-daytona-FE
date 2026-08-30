@@ -5,7 +5,7 @@
  * Epic 76-FE, Story 76.1 (AC: #6)
  */
 
-import { useState } from 'react'
+import { useRef, useState, type RefObject } from 'react'
 import { useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import {
@@ -25,6 +25,7 @@ import { ShipmentFormFields } from './ShipmentFormFields'
 interface CreateShipmentDialogProps {
   open: boolean
   onClose: () => void
+  returnFocusRef?: RefObject<HTMLButtonElement | null>
 }
 
 interface FormErrors {
@@ -33,7 +34,7 @@ interface FormErrors {
   submit?: string
 }
 
-export function CreateShipmentDialog({ open, onClose }: CreateShipmentDialogProps) {
+export function CreateShipmentDialog({ open, onClose, returnFocusRef }: CreateShipmentDialogProps) {
   const router = useRouter()
   const user = useAuthStore(s => s.user)
   const { mutateAsync, isPending } = useCreateShipment()
@@ -42,6 +43,8 @@ export function CreateShipmentDialog({ open, onClose }: CreateShipmentDialogProp
   const [deliveryMode, setDeliveryMode] = useState<DeliveryMode>(DeliveryMode.FIXED_VEHICLE)
   const [costValue, setCostValue] = useState('')
   const [errors, setErrors] = useState<FormErrors>({})
+  const nameInputRef = useRef<HTMLInputElement>(null)
+  const costInputRef = useRef<HTMLInputElement>(null)
 
   function resetForm() {
     setName('')
@@ -71,6 +74,8 @@ export function CreateShipmentDialog({ open, onClose }: CreateShipmentDialogProp
     const errs = validate()
     if (Object.keys(errs).length > 0) {
       setErrors(errs)
+      if (errs.name) nameInputRef.current?.focus()
+      else if (errs.cost) costInputRef.current?.focus()
       return
     }
 
@@ -99,7 +104,14 @@ export function CreateShipmentDialog({ open, onClose }: CreateShipmentDialogProp
 
   return (
     <Dialog open={open} onOpenChange={v => !v && !isPending && onClose()}>
-      <DialogContent className="sm:max-w-[425px]">
+      <DialogContent
+        className="max-h-[calc(100dvh-2rem)] w-[calc(100%-2rem)] overflow-y-auto sm:max-w-[425px]"
+        onCloseAutoFocus={event => {
+          if (!returnFocusRef?.current) return
+          event.preventDefault()
+          returnFocusRef.current.focus()
+        }}
+      >
         <DialogHeader>
           <DialogTitle>Создать отправку</DialogTitle>
           <DialogDescription>Укажите название, способ и стоимость доставки</DialogDescription>
@@ -121,7 +133,13 @@ export function CreateShipmentDialog({ open, onClose }: CreateShipmentDialogProp
               setCostValue(v)
               setErrors(prev => ({ ...prev, cost: undefined }))
             }}
+            nameInputRef={nameInputRef}
+            costInputRef={costInputRef}
           />
+
+          <p role="status" aria-live="polite" className="sr-only">
+            {isPending ? 'Создаём отправку' : ''}
+          </p>
 
           <DialogFooter>
             <Button type="button" variant="outline" onClick={onClose} disabled={isPending}>

@@ -6,6 +6,8 @@
  * Epic 76-FE, Story 76.1 (AC: #6)
  */
 
+import type { RefObject } from 'react'
+
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
@@ -27,6 +29,8 @@ interface ShipmentFormFieldsProps {
   onNameChange: (value: string) => void
   onModeChange: (mode: DeliveryMode) => void
   onCostChange: (value: string) => void
+  nameInputRef?: RefObject<HTMLInputElement | null>
+  costInputRef?: RefObject<HTMLInputElement | null>
 }
 
 export function ShipmentFormFields({
@@ -38,12 +42,15 @@ export function ShipmentFormFields({
   onNameChange,
   onModeChange,
   onCostChange,
+  nameInputRef,
+  costInputRef,
 }: ShipmentFormFieldsProps) {
   return (
     <>
       <div className="space-y-2">
         <Label htmlFor="sp-name">Название</Label>
         <Input
+          ref={nameInputRef}
           id="sp-name"
           value={name}
           onChange={e => onNameChange(e.target.value)}
@@ -58,8 +65,14 @@ export function ShipmentFormFields({
       </div>
 
       <div className="space-y-2">
-        <Label>Способ доставки</Label>
-        <RadioGroup value={deliveryMode} onValueChange={v => onModeChange(v as DeliveryMode)}>
+        <span id="sp-delivery-mode-label" className="text-sm font-medium leading-none">
+          Способ доставки
+        </span>
+        <RadioGroup
+          aria-labelledby="sp-delivery-mode-label"
+          value={deliveryMode}
+          onValueChange={v => onModeChange(v as DeliveryMode)}
+        >
           {Object.values(DeliveryMode).map(mode => (
             <div key={mode} className="flex items-center space-x-2">
               <RadioGroupItem value={mode} id={`mode-${mode}`} />
@@ -72,6 +85,7 @@ export function ShipmentFormFields({
       <div className="space-y-2">
         <Label htmlFor="sp-cost">{costLabel}</Label>
         <Input
+          ref={costInputRef}
           id="sp-cost"
           type="number"
           min="0"
@@ -88,7 +102,11 @@ export function ShipmentFormFields({
         )}
       </div>
 
-      {errors.submit && <p className="text-sm text-destructive">{errors.submit}</p>}
+      {errors.submit && (
+        <p role="alert" className="text-sm text-destructive">
+          {errors.submit}
+        </p>
+      )}
     </>
   )
 }

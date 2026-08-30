@@ -13,11 +13,118 @@
  */
 
 import { test, expect } from '../fixtures/network-test'
+import type { Page } from '@playwright/test'
 
 const SHIPMENTS_ROUTE = '/shipments'
+type ShipmentScenario =
+  | { kind: 'default' }
+  | { kind: 'empty' }
+  | { kind: 'error' }
+  | { kind: 'pending'; gate: Promise<void> }
+
+let shipmentScenario: ShipmentScenario = { kind: 'default' }
+const SHIPMENT_FIXTURES = [
+  {
+    id: 'shipment-draft',
+    cabinetId: 'cabinet-e2e',
+    name: 'Черновая отправка',
+    deliveryMode: 'FIXED_VEHICLE',
+    totalDeliveryCost: '15000.0000',
+    palletRate: null,
+    status: 'DRAFT',
+    createdBy: 'manager@example.test',
+    confirmedBy: null,
+    confirmedAt: null,
+    supplyId: null,
+    pallets: [
+      {
+        id: 'pallet-draft',
+        shipmentId: 'shipment-draft',
+        palletNumber: 1,
+        boxLines: [],
+        createdAt: '2026-08-29T08:00:00.000Z',
+        updatedAt: '2026-08-29T08:00:00.000Z',
+      },
+    ],
+    createdAt: '2026-08-29T08:00:00.000Z',
+    updatedAt: '2026-08-29T08:00:00.000Z',
+  },
+  {
+    id: 'shipment-confirmed',
+    cabinetId: 'cabinet-e2e',
+    name: 'Подтверждённая отправка',
+    deliveryMode: 'PER_PALLET',
+    totalDeliveryCost: null,
+    palletRate: '2500.0000',
+    status: 'CONFIRMED',
+    createdBy: 'manager@example.test',
+    confirmedBy: 'manager@example.test',
+    confirmedAt: '2026-08-30T08:00:00.000Z',
+    supplyId: null,
+    pallets: [],
+    createdAt: '2026-08-28T08:00:00.000Z',
+    updatedAt: '2026-08-30T08:00:00.000Z',
+  },
+] as const
+
+function shipmentListBody(requestUrl: string) {
+  const url = new URL(requestUrl)
+  const status = url.searchParams.get('status')
+  const page = Number(url.searchParams.get('page') ?? '1')
+  const limit = Number(url.searchParams.get('limit') ?? '10')
+  const data = status
+    ? SHIPMENT_FIXTURES.filter(shipment => shipment.status === status)
+    : [...SHIPMENT_FIXTURES]
+
+  return JSON.stringify({ data, total: status ? data.length : 12, page, limit })
+}
+
+async function installShipmentListFixture(page: Page) {
+  await page.route('**/v1/shipments**', async route => {
+    const url = new URL(route.request().url())
+    const detailId = url.pathname.match(/\/v1\/shipments\/([^/]+)$/)?.[1]
+
+    if (detailId) {
+      const shipment = SHIPMENT_FIXTURES.find(item => item.id === detailId)
+      return route.fulfill({
+        status: shipment ? 200 : 404,
+        contentType: 'application/json',
+        body: JSON.stringify(shipment ?? { message: 'Shipment not found' }),
+      })
+    }
+
+    if (shipmentScenario.kind === 'pending') {
+      await shipmentScenario.gate
+    }
+
+    if (shipmentScenario.kind === 'error') {
+      return route.fulfill({
+        status: 500,
+        contentType: 'application/json',
+        body: JSON.stringify({ message: 'Server Error' }),
+      })
+    }
+
+    if (shipmentScenario.kind === 'empty') {
+      return route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify({ data: [], total: 0, page: 1, limit: 10 }),
+      })
+    }
+
+    return route.fulfill({
+      status: 200,
+      contentType: 'application/json',
+      body: shipmentListBody(route.request().url()),
+    })
+  })
+}
 
 test.describe('Shipments List Page - Epic 77-FE', () => {
   test.beforeEach(async ({ page }) => {
+    shipmentScenario = { kind: 'default' }
+    await installShipmentListFixture(page)
     await page.goto(SHIPMENTS_ROUTE, { waitUntil: 'domcontentloaded' })
     await page.locator('main').waitFor({ state: 'visible' })
   })
@@ -34,7 +141,7 @@ test.describe('Shipments List Page - Epic 77-FE', () => {
 
       const hasTable = (await table.count()) > 0 && (await table.isVisible())
       const hasKnownState =
-        /нет отправок|нет отправок по фильтру|создайте первую отправку|загрузка отправок/i.test(
+        /нет отправок|нет отправок по фильтру|создайте первую отправку|загружаем отправки/i.test(
           mainText
         )
       const hasLoadingSkeleton = (await main.locator('.animate-pulse').count()) > 0
@@ -66,11 +173,9 @@ test.describe('Shipments List Page - Epic 77-FE', () => {
 
       const firstRow = rows.first()
       // Status badge should contain ЧЕРНОВИК or ПОДТВЕРЖДЕНА
-      const badge = firstRow.locator('[class*="badge"]')
-      if ((await badge.count()) > 0) {
-        const badgeText = await badge.first().textContent()
-        expect(badgeText?.includes('ЧЕРНОВИК') || badgeText?.includes('ПОДТВЕРЖДЕНА')).toBeTruthy()
-      }
+      const badge = firstRow.locator('[data-slot="status-badge"]')
+      await expect(badge).toHaveCount(1)
+      await expect(badge).toContainText(/ЧЕРНОВИК|ПОДТВЕРЖДЕНА/)
     })
 
     test('should display view button per row', async ({ page }) => {
@@ -119,84 +224,57 @@ test.describe('Shipments List Page - Epic 77-FE', () => {
       await expect(createButton).toBeVisible()
     })
 
-    test('should display loading skeleton on reload', async ({ page }) => {
-      await page.reload()
+    test('should display the semantic loading state while shipments are pending', async ({
+      page,
+    }) => {
+      let releaseResponse!: () => void
+      const responseGate = new Promise<void>(resolve => {
+        releaseResponse = resolve
+      })
+      shipmentScenario = { kind: 'pending', gate: responseGate }
 
-      const skeleton = page
-        .locator('[class*="skeleton"]')
-        .or(page.locator('[class*="animate-pulse"]'))
-        .or(page.locator('table'))
+      await page.reload({ waitUntil: 'domcontentloaded' })
+      const loadingRegion = page.getByRole('region', { name: 'Загружаем отправки' })
+      await expect(loadingRegion).toHaveAttribute('data-state', 'loading')
+      await expect(page.getByRole('heading', { name: 'Отправки' })).toBeVisible()
 
-      await expect(skeleton.first()).toBeVisible({ timeout: 10000 })
+      releaseResponse()
+      await expect(page.getByRole('table', { name: 'Очередь отправок' })).toBeVisible()
     })
   })
 
   test.describe('Status Filtering', () => {
     test('should display status filter', async ({ page }) => {
-      const statusFilter = page
-        .getByLabel('Фильтр по статусу')
-        .or(page.locator('button:has-text("Все статусы")'))
-
-      // Filter may not be visible if no data
-      if (await statusFilter.isVisible()) {
-        await expect(statusFilter).toBeVisible()
-      }
+      await expect(page.getByRole('combobox', { name: 'Статус отправки' })).toBeVisible()
     })
 
     test('should filter by DRAFT status', async ({ page }) => {
-      const statusFilter = page
-        .getByLabel('Фильтр по статусу')
-        .or(page.locator('button:has-text("Все статусы")'))
-
-      if (!(await statusFilter.isVisible())) {
-        test.skip(true, 'Status filter not available')
-        return
-      }
+      const statusFilter = page.getByRole('combobox', { name: 'Статус отправки' })
 
       await statusFilter.click()
       await page.getByText('Черновик').click()
       await page.locator('main').waitFor({ state: 'visible' })
 
       // All visible badges should show ЧЕРНОВИК
-      const badges = page.locator('table tbody [class*="badge"]')
-      const count = await badges.count()
-      for (let i = 0; i < count; i++) {
-        const text = await badges.nth(i).textContent()
-        expect(text).toContain('ЧЕРНОВИК')
-      }
+      const badges = page.locator('table tbody [data-slot="status-badge"]')
+      await expect(badges).toHaveCount(1)
+      await expect(badges.first()).toContainText('ЧЕРНОВИК')
     })
 
     test('should filter by CONFIRMED status', async ({ page }) => {
-      const statusFilter = page
-        .getByLabel('Фильтр по статусу')
-        .or(page.locator('button:has-text("Все статусы")'))
-
-      if (!(await statusFilter.isVisible())) {
-        test.skip(true, 'Status filter not available')
-        return
-      }
+      const statusFilter = page.getByRole('combobox', { name: 'Статус отправки' })
 
       await statusFilter.click()
       await page.getByText('Подтверждена').click()
       await page.locator('main').waitFor({ state: 'visible' })
 
-      const badges = page.locator('table tbody [class*="badge"]')
-      const count = await badges.count()
-      for (let i = 0; i < count; i++) {
-        const text = await badges.nth(i).textContent()
-        expect(text).toContain('ПОДТВЕРЖДЕНА')
-      }
+      const badges = page.locator('table tbody [data-slot="status-badge"]')
+      await expect(badges).toHaveCount(1)
+      await expect(badges.first()).toContainText('ПОДТВЕРЖДЕНА')
     })
 
     test('should show all shipments when filter cleared', async ({ page }) => {
-      const statusFilter = page
-        .getByLabel('Фильтр по статусу')
-        .or(page.locator('button:has-text("Все статусы")'))
-
-      if (!(await statusFilter.isVisible())) {
-        test.skip(true, 'Status filter not available')
-        return
-      }
+      const statusFilter = page.getByRole('combobox', { name: 'Статус отправки' })
 
       // Apply filter first
       await statusFilter.click()
@@ -205,11 +283,8 @@ test.describe('Shipments List Page - Epic 77-FE', () => {
 
       // Clear filter by selecting "Все"
       await statusFilter.click()
-      const allOption = page.getByText('Все').first()
-      if (await allOption.isVisible()) {
-        await allOption.click()
-        await page.locator('main').waitFor({ state: 'visible' })
-      }
+      await page.getByRole('option', { name: 'Все' }).click()
+      await expect(page.locator('table tbody [data-slot="status-badge"]')).toHaveCount(2)
     })
   })
 
@@ -222,8 +297,8 @@ test.describe('Shipments List Page - Epic 77-FE', () => {
       }
 
       const rowsPerPage = page.getByLabel('Строк на странице')
-      const prevButton = page.getByRole('button', { name: 'Назад' })
-      const nextButton = page.getByRole('button', { name: 'Вперёд' })
+      const prevButton = page.getByRole('button', { name: 'Предыдущая страница' })
+      const nextButton = page.getByRole('button', { name: 'Следующая страница' })
 
       // At least one pagination element should be visible
       const hasPagination =
@@ -235,42 +310,25 @@ test.describe('Shipments List Page - Epic 77-FE', () => {
     })
 
     test('should have prev button disabled on first page', async ({ page }) => {
-      const prevButton = page.getByRole('button', { name: 'Назад' })
-      if (await prevButton.isVisible()) {
-        await expect(prevButton).toBeDisabled()
-      }
+      await expect(page.getByRole('button', { name: 'Предыдущая страница' })).toBeDisabled()
     })
 
     test('should navigate to next page if available', async ({ page }) => {
-      const nextButton = page.getByRole('button', { name: 'Вперёд' })
-      if (!(await nextButton.isVisible()) || (await nextButton.isDisabled())) {
-        test.skip(true, 'Next page not available')
-        return
-      }
+      const nextButton = page.getByRole('button', { name: 'Следующая страница' })
+      await expect(nextButton).toBeEnabled()
 
       await nextButton.click()
       await page.locator('main').waitFor({ state: 'visible' })
 
       // Prev button should now be enabled
-      const prevButton = page.getByRole('button', { name: 'Назад' })
-      if (await prevButton.isVisible()) {
-        await expect(prevButton).toBeEnabled()
-      }
+      await expect(page.getByRole('button', { name: 'Предыдущая страница' })).toBeEnabled()
     })
 
     test('should change rows per page', async ({ page }) => {
       const rowsPerPage = page.getByLabel('Строк на странице')
-      if (!(await rowsPerPage.isVisible())) {
-        test.skip(true, 'Rows per page selector not visible')
-        return
-      }
-
       await rowsPerPage.click()
-      const option20 = page.getByText('20 строк')
-      if (await option20.isVisible()) {
-        await option20.click()
-        await page.locator('main').waitFor({ state: 'visible' })
-      }
+      await page.getByRole('option', { name: '20 строк' }).click()
+      await expect(rowsPerPage).toContainText('20 строк')
     })
 
     test('should sort by created date', async ({ page }) => {
@@ -280,14 +338,10 @@ test.describe('Shipments List Page - Epic 77-FE', () => {
         return
       }
 
-      const dateHeader = page.locator('th').filter({ hasText: 'Дата создания' })
-      if (await dateHeader.isVisible()) {
-        const sortButton = dateHeader.locator('button')
-        if (await sortButton.isVisible()) {
-          await sortButton.click()
-          await page.locator('main').waitFor({ state: 'visible' })
-        }
-      }
+      const dateHeader = page.getByRole('columnheader', { name: /Дата создания/i })
+      await expect(dateHeader).toHaveAttribute('aria-sort', 'descending')
+      await dateHeader.getByRole('button', { name: /Сортировать по дате/i }).click()
+      await expect(dateHeader).toHaveAttribute('aria-sort', 'ascending')
     })
   })
 
@@ -395,19 +449,7 @@ test.describe('Shipments List Page - Epic 77-FE', () => {
 
   test.describe('Empty State', () => {
     test('should display empty state when no shipments', async ({ page }) => {
-      // Mock empty API response
-      await page.route('**/v1/shipments**', route =>
-        route.fulfill({
-          status: 200,
-          contentType: 'application/json',
-          body: JSON.stringify({
-            data: [],
-            total: 0,
-            page: 1,
-            limit: 10,
-          }),
-        })
-      )
+      shipmentScenario = { kind: 'empty' }
 
       await page.goto(SHIPMENTS_ROUTE, { waitUntil: 'domcontentloaded' })
       await page.locator('main').waitFor({ state: 'visible' })
@@ -424,12 +466,7 @@ test.describe('Shipments List Page - Epic 77-FE', () => {
 
   test.describe('Error Handling', () => {
     test('should display error on API failure', async ({ page }) => {
-      await page.route('**/v1/shipments**', route =>
-        route.fulfill({
-          status: 500,
-          body: JSON.stringify({ message: 'Server Error' }),
-        })
-      )
+      shipmentScenario = { kind: 'error' }
 
       await page.goto(SHIPMENTS_ROUTE, { waitUntil: 'domcontentloaded' })
       await page.locator('main').waitFor({ state: 'visible' })
@@ -445,12 +482,7 @@ test.describe('Shipments List Page - Epic 77-FE', () => {
     })
 
     test('should have retry button on error', async ({ page }) => {
-      await page.route('**/v1/shipments**', route =>
-        route.fulfill({
-          status: 500,
-          body: JSON.stringify({ message: 'Server Error' }),
-        })
-      )
+      shipmentScenario = { kind: 'error' }
 
       await page.goto(SHIPMENTS_ROUTE, { waitUntil: 'domcontentloaded' })
       await page.locator('main').waitFor({ state: 'visible' })
