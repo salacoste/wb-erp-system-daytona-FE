@@ -1,6 +1,6 @@
 # Story 173.13-FE: Migrate Supply Detail
 
-Status: done — feature PR #365 merged as `2dfe56c1` from reviewed feature commit `8a9c074c`; exact product branch, remote ref, and worktree cleanup proved. This artifact records the product lifecycle and the exact-five documentation closeout candidate without preclaiming the documentation PR's own future merge or cleanup.
+Status: done — feature PR #365 merged reviewed feature commit `8a9c074c` as `2dfe56c1`; exact-five documentation commit `1d1d3935` merged through PR #366 as `d5c62276`. Primary `main` was fast-forwarded, and exact product and initial-documentation branch, remote-ref, worktree, path, stale-registration, and open-PR cleanup is proved. This auxiliary lifecycle record does not preclaim its own future PR merge or cleanup.
 
 ## Story
 
@@ -120,6 +120,17 @@ After PR #365 merged:
 - the exact remote product branch was deleted;
 - no product PR, branch, worktree, or remote-ref residue remained.
 
+After exact-five documentation PR #366 merged:
+
+- reviewed documentation commit `1d1d3935` was the exact one-commit, five-file PR head and merged as `d5c62276` with parents `2dfe56c1` and `1d1d3935`;
+- PR #366 matched repository/base/head/head-OID identity, GitGuardian passed, and no product, route-ledger, dependency, citation-baseline, deploy, or production change was included;
+- targeted documentation validation passed: 427 citations with the committed 95-entry historical baseline unchanged, zero marker/lesson violations, YAML 94 = 89 done + 5 backlog, 94 plans, and 76 source routes = 76 ledger rows = 76 `planned` rows;
+- primary `main` was fast-forwarded to `d5c62276` and matched refreshed `origin/main` with `0/0` divergence;
+- both feature head `8a9c074c` and documentation head `1d1d3935` were proved ancestors of refreshed `origin/main`;
+- the exact local and remote documentation branch were absent;
+- the documentation worktree, path, and stale registration were absent after prune;
+- no open PR or exact remote-ref residue remained.
+
 The route ledger is intentionally unchanged: all 76 rows remain `planned` until Story 174.5.
 
 ## Change log
@@ -127,4 +138,4 @@ The route ledger is intentionally unchanged: all 76 rows remain `planned` until 
 | Date | Change |
 | --- | --- |
 | 2026-08-30 | Feature PR #365 merged reviewed commit `8a9c074c` as `2dfe56c1`; focused 975/975, full 19,874/19,874 across 1,255 files, production build 70 pages, and final reviews approved with zero actionable findings. Product branch, remote ref, and worktree cleanup proved. Epic 173 product implementation reached 13/13 and 76/76 route-owning Stories implemented; route-ledger rows remain `planned`. |
-| 2026-08-31 | Exact-five documentation closeout candidate created, advancing current documentation truth to 89/94 complete and Program NEXT Story 174.1 without preclaiming this documentation lane's own future PR merge or cleanup. |
+| 2026-08-31 | Exact-five documentation commit `1d1d3935` merged through PR #366 as `d5c62276`; primary fast-forward and exact initial-documentation branch, remote-ref, worktree, path, stale-registration, and open-PR cleanup proved. This auxiliary lifecycle candidate records those facts and gates Program NEXT Story 174.1 without preclaiming its own future PR merge or cleanup. |
