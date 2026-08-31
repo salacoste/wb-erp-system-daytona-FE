@@ -99,6 +99,16 @@ This ledger is the machine-checkable source of route-to-Story ownership for the 
 | 173.12 | `/supplies` | `src/app/(dashboard)/supplies/page.tsx` | supplies | planned |
 | 173.13 | `/supplies/[id]` | `src/app/(dashboard)/supplies/[id]/page.tsx` | supplies | planned |
 
+## Story 174.1 Parity Evidence
+
+Story 174.1 validates this ledger from base `9d611369085a1e88783322a50f3c3a043cd25257` with `scripts/check-shadcn-migration-parity.mjs` and its deterministic mutation suite:
+
+- 76 source `page.tsx` entries = 76 ledger rows = 76 unique route-owning Stories;
+- every source entry, normalized effective URL, ledger route, and owner maps exactly once;
+- every row resolves to exactly one existing implementation artifact, enumerated in `_bmad-output/implementation-artifacts/174-1-fe-prove-bmad-route-ledger-and-omx-plan-parity.md` and in the machine report;
+- Stories 167.8 and 169.14 are the only backend exceptions and have no ledger rows;
+- all 76 statuses remain byte-for-byte `planned`; Story 174.1 performs no implementation-state transition.
+
 ## Completion Evidence Schema
 
 Each row receives a linked evidence record containing:

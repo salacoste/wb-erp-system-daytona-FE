@@ -211,9 +211,20 @@ The orchestrator owns the DAG, assigns one Story per branch/worktree, prevents o
 
 This plan authorizes local frontend implementation and local validation plus the narrowly declared local backend contract implementation and validation for Stories 167.8 and 169.14. Each backend Story uses its repository-specific branch/worktree/PR lifecycle. It does not authorize deployment, production infrastructure or configuration, production data operations, backend changes outside Stories 167.8 and 169.14, required CI gates, direct pushes to `main`, or force pushes.
 
+## Backend Exception Lifecycle Records
+
+These two rows are the machine-readable expected lifecycle identities for the only backend exceptions. The parity validator must corroborate them against the exact implementation artifacts and guarded read-only Git metadata; prose keyword presence is not evidence.
+
+Canonical frontend repository: `/Users/r2d2/Documents/Code_Projects/wb-repricer-system-new/frontend`
+
+| Story  | Artifact                                                                                                                                    | Repository                                                   | GitHub repository                 | Branch                                                 | Planned worktree                                                  | Delivered cleanup worktree                                        | Backend merge SHA                          | Backend main ref           | Frontend handoff PR | Frontend handoff branch               | Frontend handoff worktree                          | Frontend handoff commit                    | Frontend handoff merge SHA                 |
+| ------ | ------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------ | --------------------------------- | ------------------------------------------------------ | ----------------------------------------------------------------- | ----------------------------------------------------------------- | ------------------------------------------ | -------------------------- | ------------------- | ------------------------------------- | -------------------------------------------------- | ------------------------------------------ | ------------------------------------------ |
+| 167.8  | `_bmad-output/implementation-artifacts/167-8-fe-establish-authoritative-cabinet-session-reconciliation-and-create-idempotency-contracts.md` | `/Users/r2d2/Documents/Code_Projects/wb-repricer-system-new` | `salacoste/wb-erp-system-daytona` | `cdx/epic-167-story-8-cabinet-reconciliation-contract` | `/private/tmp/wb-be-167-8-cabinet-reconciliation-contract`        | `.claude/worktrees/epic167-8-reconciliation`                      | `c96a2fae8472f24c4c0ded9ee1239e9cffbfbe43` | `refs/remotes/origin/main` | `-`                 | `-`                                   | `-`                                                | `-`                                        | `-`                                        |
+| 169.14 | `_bmad-output/implementation-artifacts/169-14-fe-establish-authoritative-paid-storage-import-lifecycle-and-result-contract.md`              | `/Users/r2d2/Documents/Code_Projects/wb-repricer-system-new` | `salacoste/wb-erp-system-daytona` | `cdx/epic-169-story-14-paid-storage-import-contract`   | `/private/tmp/wb-repricer-be-169-14-paid-storage-import-contract` | `/private/tmp/wb-repricer-be-169-14-paid-storage-import-contract` | `8fbfc80e0cc756d9f1767c533513004e459192a2` | `refs/remotes/origin/main` | `292`               | `cdx/epic-169-story-14-final-handoff` | `/private/tmp/wb-repricer-fe-169-14-final-handoff` | `eaed12636036cda0b4529a5ba4d712d491591f8b` | `83f29b7ff48360ed496f3ef9ce6c56ca61173141` |
+
 ## Story Plan Index
 
-This index is generated from the exact canonical BMAD Story headings and the matching per-Story OMX frontmatter. Prerequisites reproduce each Story's canonical `Shared Dependencies` field; the per-Story plan remains authoritative for the executable DAG and ownership gate.
+This index is generated from the exact canonical BMAD Story headings and the matching per-Story OMX frontmatter. Its prerequisite cells reproduce each Story's canonical `Shared Dependencies` field and are the canonical executable OMX dependency record inherited by every per-Story plan. The fingerprint table below is the corresponding canonical OMX ownership/dependency parity record. Each numeric plan must link back to this master plan and preserve exact Story identity, title, path, branch, status, BMAD-artifact, epic, master-plan, and production-scope contracts; incidental legacy prerequisite prose in an older per-Story plan is not a second canonical dependency graph and must not override later approved BMAD/master updates.
 
 Story identity is the numeric `Epic.Story` ID, not the descriptive sprint-status slug. The orchestrator MUST parse that canonical ID from a sprint key and resolve the OMX path through this Story Plan Index or the matching plan's `storyId` frontmatter. It MUST NOT derive an OMX filename by removing or transforming the sprint slug: route-bearing Stories such as `167.3–167.7` and `168.1–168.11` intentionally have sanitized route fragments in sprint keys that are absent from their human-readable OMX filenames.
 
@@ -258,7 +269,7 @@ Story identity is the numeric `Epic.Story` ID, not the descriptive sprint-status
 | 169.9  | Migrate Analytics Gaps Triage                                                           | [169.9-migrate-analytics-gaps-triage.md](./169.9-migrate-analytics-gaps-triage.md)                                                                                                                     | cdx/epic-169-story-9-gaps-shadcn                        | C2; existing gap classification, query, filters, and recovery/navigation semantics.                                                                                                    |
 | 169.10 | Migrate Liquidity Analytics and Liquidation Planning                                    | [169.10-migrate-liquidity-analytics-and-liquidation-planning.md](./169.10-migrate-liquidity-analytics-and-liquidation-planning.md)                                                                     | cdx/epic-169-story-10-liquidity-shadcn                  | C2; existing liquidity hook, sort mapping, types, calculations, and scenario semantics remain read-only.                                                                               |
 | 169.11 | Migrate Returns Analytics                                                               | [169.11-migrate-returns-analytics.md](./169.11-migrate-returns-analytics.md)                                                                                                                           | cdx/epic-169-story-11-returns-shadcn                    | C2; existing returns query, reason mapping, comparison, and formatting semantics.                                                                                                      |
-| 169.12 | Migrate Storage Analytics and Paid-Storage Import                                       | [169.12-migrate-storage-analytics-and-paid-storage-import.md](./169.12-migrate-storage-analytics-and-paid-storage-import.md)                                                                           | cdx/epic-169-story-12-contract-closeout                 | PR #227 route delivery retained; close only after merged Story 169.14 backend contract and Story 169.15 shared frontend boundary are validated against the route.                      |
+| 169.12 | Migrate Storage Analytics and Paid-Storage Import                                       | [169.12-migrate-storage-analytics-and-paid-storage-import.md](./169.12-migrate-storage-analytics-and-paid-storage-import.md)                                                                           | cdx/epic-169-story-12-contract-closeout                 | C2; merged Story 169.14 authoritative backend paid-storage import contract; merged Story 169.15 shared frontend paid-storage import boundary; existing storage analytics contracts.    |
 | 169.13 | Migrate Supply Planning                                                                 | [169.13-migrate-supply-planning.md](./169.13-migrate-supply-planning.md)                                                                                                                               | cdx/epic-169-story-13-supply-planning-shadcn            | C2; existing supply-planning hook, types, calculations, filters/query params, and navigation/export contracts.                                                                         |
 | 169.14 | Establish the Authoritative Paid-Storage Import Lifecycle and Result Contract           | [169.14-establish-authoritative-paid-storage-import-lifecycle-and-result-contract.md](./169.14-establish-authoritative-paid-storage-import-lifecycle-and-result-contract.md)                           | cdx/epic-169-story-14-paid-storage-import-contract      | refreshed backend `origin/main`; clean local-main FF preferred, or exact recorded foreign-WIP fallback; no overlapping backend writer; two-phase cleanup and durable final handoff.    |
 | 169.15 | Align the Shared Frontend Paid-Storage Import Boundary                                  | [169.15-align-shared-frontend-paid-storage-import-boundary.md](./169.15-align-shared-frontend-paid-storage-import-boundary.md)                                                                         | cdx/epic-169-story-15-storage-import-boundary           | authenticated committed Story 169.14 handoff plus exact backend PR/topology, branch/worktree cleanup, and ephemeral-record absence.                                                    |
@@ -314,15 +325,116 @@ Story identity is the numeric `Epic.Story` ID, not the descriptive sprint-status
 | 174.4  | Complete Full Local Functional and Backend-Contract Regression                          | [174.4-complete-full-local-functional-and-backend-contract-regression.md](./174.4-complete-full-local-functional-and-backend-contract-regression.md)                                                   | cdx/epic-174-story-4-full-local-regression              | all route Stories and Story 174.3 merged.                                                                                                                                              |
 | 174.5  | Finalize Documentation and Repository Cleanup                                           | [174.5-finalize-documentation-and-repository-cleanup.md](./174.5-finalize-documentation-and-repository-cleanup.md)                                                                                     | cdx/epic-174-story-5-docs-cleanup                       | Stories 174.1–174.4 complete with no unresolved migration blocker.                                                                                                                     |
 
+## Canonical Ownership and Dependency Fingerprints
+
+This machine-readable table binds the Story Plan Index to the exact normalized `Owned Surface` and `Shared Dependencies` values in the canonical BMAD Story records. The parity validator computes SHA-256 after collapsing whitespace and compares every row; a field change requires an intentional synchronized update, rather than passing on label presence alone.
+
+| Story  | Owned Surface SHA-256                                            | Shared Dependencies SHA-256                                      |
+| ------ | ---------------------------------------------------------------- | ---------------------------------------------------------------- |
+| 166.1  | 6a18ac526668074bfedb02c8025ef5520a5c5457328b823b0a88ac00cde0c23d | 007fdb0d494f6f6a0564d6efbe5be2d0e1ea9522c34d05b5d33103c503dc1fa1 |
+| 166.2  | 70fe9674c7826eb74cde81d5132e6b0bf0d70f07af029f1d8dfcccc22d91bf6f | 14dd8f60f89bb06650c3a817000b2974a785ef926db5e777882e349225041478 |
+| 166.3  | 437c8f79c2adb9ce827d907d5f68311485317540436f81a01024ebb0b5f07276 | 4d6958c5ad4cd86d6b7e8cade29fc6fae73afc9b56a106bd5abbbd52d52678f9 |
+| 166.4  | 3104cfc55f5abfbc020e46de1523c3037da63b69c58bd4b06ed5b44fad0fa634 | 0376f8fc4f9d998e44e36dc7788472a7abec5e8541845bd0f1a34126243e5b6e |
+| 166.5  | 5894a5c729cca4200df18246dc3a2bef4ec40b79257f76a28ab0edbb60b444e8 | de7612526ec65b164f036b7fdc4a36267c6350d57fadda325f099dcdef9fc756 |
+| 166.6  | f5208c07f20dd578e859c6f898aacea5ddde012690404a74780b5396c1e760d4 | 26ff8d83accceea9764ff2ee3c88988760311d5d71843259c362ee93ce74879b |
+| 166.7  | cd367b5f417ec700fd2cbd275f55ef0be7f21cd28bac8b421177903ac54fd5dd | 0beaa76e73e041416cd9b2ebfee1efeb88fd3de8373d5cd90843a806869a30cb |
+| 166.8  | 0af49129d8c49c57b4ba8417b0b22cfd2b4185a6ecf61b0ac1aca55ad2519164 | 91e6e4dcd4472b839906f56d3b14b17c8b53d7c6e37951a7d812cb446e33716c |
+| 167.1  | 9b43d070727d20e0b72292a365557c87ced5a8cad48d5f782f1517c4a99c9c3d | a1cb6e62d36e644dceb47f57b83b0c1de96a19bc96e98454b06d6bccae523403 |
+| 167.2  | 31804651ae85635e8d6fba20c1620f0bfd6df635fde01eef2e56bfc7af3ede32 | e021d8c86231e99fe55eb1e01572695f951c109fd577be7cfbf6f078ac65c1e6 |
+| 167.3  | ede230db813c67276ca6dbb2915f4d39c24c6328fc8e2f4ba3b0fbfea46d4b8f | dcce64764302272dd4f522ef60018781ad212b7d8abcbd77b1d4f8b5fa5b82fc |
+| 167.4  | 72de1aaa6034a22419f2270037cfbd5728781e19a0c2884b0cc381d0ebb2331e | ec63b464d06bc6000909e907acc8b3e5fbf895b6f83e991eb24372b7397dd5f6 |
+| 167.5  | 39b3a192bbc8f336cfad29bc8cc1695f79af8b5a18ebcf6cf5090725c35299eb | 7cfe1307eda8ef182840f84db2e7558a1f008759ed7351f26daa6a92cd39fbe8 |
+| 167.6  | 15c3e3d1fd93190a54683a2e1bb4d31b42a4be4357b642f0b934da52b1965cbe | 532379355268f8edef4583f2c3ef9dfc72edb0d3516014c10b5339f242a4a832 |
+| 167.7  | cf2980216182cf615e4e0f2599875e438cebbc5fd03ec8882b1e2f05c1a0c548 | 1b7414bda1e738a1bd40fe35477f5ef57a9960ca4030d209cd8c1f489c86b3b8 |
+| 167.8  | 48cdffe6c3f84ec8a37ba2c261826264355b85b2e193252e41d1302476e00f9a | 69b4000d68f914c6d1f5025c3dc56c5824043389bf76728e40efaee28bdb8f84 |
+| 167.9  | b7562d92e71c08aee24b90c70312aba298b0e0cc77e3b8f46612e8207b6d2c68 | 3fc3fde67c3a0a3d228ded73831b80c4640c6c584902bdd94840edb26a929b25 |
+| 168.1  | f515659295f4930245d3d26a09c40744cfdf1b98a63d8a711c0027013b883890 | b3e78f9c8c5becd5f5149dd4d1731c96b007356af06dda2b226f67ac54051928 |
+| 168.2  | 67b065de327b54e6990d5386ab6dc02ebabfab8abb16ef93844a735d8a0a44f2 | 4076983ad3b144faef1c7edad0fd32c76a55938b486200bed4d95c0ff36ccdee |
+| 168.3  | 622dc2e808f79ed2ef3bf790712cf3db53ca06d24794d083647cb0072eff82a1 | 661cc83710dc7e1623fed10503c99016f724ae3a9f82dd2d089b5439aa02b98b |
+| 168.4  | 869c2a0e0d68176a875726363cc39720452a1c90a7e7590e6960b693a0c143bc | d8e5f32b1ae220e85575bae2bdbea97569694eea8c1257ec00a816a43b6f45b4 |
+| 168.5  | 0882baa333e3aa8151cc21e7c448514be065ed95d019a33f7107fdfd7f18a069 | 84da8b617fb20027dd83b5b7e8265f1aebe75a861fd785011c3abd9f77fa2984 |
+| 168.6  | 83a30f9f2d13a2c0d706e6a358d32d01d66ecf2a829244166ddb95bd8bbc4263 | d8e5f32b1ae220e85575bae2bdbea97569694eea8c1257ec00a816a43b6f45b4 |
+| 168.7  | 79298f142bd7d4228d32f229e8f957a0c0ae89d31133c36b24a6c83877f1c8f5 | ca2ef3a4b430f869b546e49600033f6fcc03af80153ef437b8d92265756c1865 |
+| 168.8  | 88e5d7800ddd482dbf25b9b2496937f0bc1396b02276d54507833ab594dd1a2c | d8e5f32b1ae220e85575bae2bdbea97569694eea8c1257ec00a816a43b6f45b4 |
+| 168.9  | ec6901a1aaadc82cd622868113a64c68783279ef49061e31f8b70e607193e87a | 26de508c5d85e1649a509a111b3120e1df1d1ac014fd25d3ece4e8d9d45ca039 |
+| 168.10 | f15d46ecf5d62b32c2051081d367c65f681277d848dc93b61afbb7b19f1e47cd | defa8daa8c409aece23cbf8fd5bd0b4f8b0db6cdd20133e6820ea9561d6f8122 |
+| 168.11 | 0742ac33eb99c6a2bea03bd19f771934c200fbefbe74bfa8947dd3ceacc85d2b | f43eaa2eb32bbc3ee533ce7a32299f7b89c27421bce6b2d4548f19f1807e6a4a |
+| 169.1  | 3c55abeedf42b8476abc1f2ab07b944e72c36d22afa3201554389c2843b5a206 | 962a909e18f97ee7556eae3246144e497eef3bea41f72a020fe2aa980c99ef8b |
+| 169.2  | 67e2a96f0fe4537b055345a9fe0fc2e5707cb1e2a907463bba3808ad8315df7e | d7d7b3fbffd4d3260d2fd4fbb3f299910ea1d6d42f6d22df1740a62e6a6d8161 |
+| 169.3  | a560825ee220bfe1a2d77c211923ffa5b4b5c54ff11f259d6df0b21919a94e05 | 394e2b180c0f6c4a095079673b3737d79b246ce98ae8bd2b461ca15aec238ad8 |
+| 169.4  | 25d7a46b83e941cc4bc076e32d231ad8f307874d4b029bdb428aee9265d1b371 | 263da25506a96eee01014961721d995f654641cfef5c7884cae1cc9dbc06e4f0 |
+| 169.5  | 101c37ccb78350f029bed73ce7ec9dc309695d2cb2d9503a93b9e72d9fcf92dd | ab988bf1a99ce1a4eca09e0018fc00d603bbed3e608b93e9368f663d0ecf59d8 |
+| 169.6  | 710d11000dd207bef4b035afff2f1fd3c27f20a23e6c01d712e24163417c9068 | 90827e5468098e1c3ded2f70cf22bf64be1f80e23a6ed58eea668aa22826b1d9 |
+| 169.7  | ace175c972f750bcbd2f6fba0004876b8eb571377ad7f9e2bca31d82ecf484cf | ff9880e3d832f99cdeb7391cc2f406040753e1011cdacd52827bdafca05cb211 |
+| 169.8  | 4e941cf06b7c95141d16aee5a55f114ccf9966d2ed16ccda11c72fb0d5e9a93b | 1fa1270ffd6cb6e1fe450ec77aa545b7aa1793403cf9d6b35bf6d85d4908d391 |
+| 169.9  | 6390420106759343b45b3c1f38615cf84cd97e0e25b3a559ac9cae2965b71868 | 37799e161a231375e9a44f02c688819f47b5d99135ce338aa66d9d582d13b94c |
+| 169.10 | 75ccdf8fc265a8420b932af9ca7ab91d7ace979cbf7f0b7199d552fef86d9428 | e6e9893c9e60842997f3e90ac87f405b6772bd43673be7c9759bf068f6e50cee |
+| 169.11 | 69346d1301367021bd22e6c08d6710ffda3817ab5042a3b8572119ff4cf25373 | e7b860a9afed4e759428d8d8c01ddeb2ba1ba0141393e62d1a0b3dbc1ce334d2 |
+| 169.12 | 2789b8ef155ee771b6b93e22f7b18c05b840b9df4f502fd317bc3a1f6449d4c7 | c9f508b572ad6264081518593037cdcf5bd0ddcb6f51a46915dc1c1fe92db815 |
+| 169.13 | 55f57a0622c47b892a8382ba35876e940666b6f87446315396c48c0cbdeceaf8 | 4579a25084ba309da34c495d805a5b4aef6388b570fbd04249f46dff1e457037 |
+| 169.14 | 6f34bf6cb53a53749f4838f716a63fedf1b4635fb23edc33d7c495993cde190a | c4d6a8cd73f85493e640c38a422da142ca929eb2b6a93bf206cebeba499df909 |
+| 169.15 | e591e3ab966ce8422a903a0c2941ec252185b2ca0ce54cec614771854783a354 | 7c387850ab6b3850108e14842ab2712f14b105674194450e9e03b8686f457066 |
+| 170.1  | b2429fe470cd8689038170e3ecd2991db74bad1c69c1695c7332928bffe5f8eb | 43437034c3072d7cda5e21bf653dd9f5ac6b8dd02f9d6fefcc70a4a54965632b |
+| 170.2  | 0d46e33b7b463ea7f54fdbc5a229c41761ec7c0453c3f2ccad3f35ed8338c800 | b3f808bf25b58a3d5a466d97f31f276f718b22ad9ae53e8a1de1cd53f82213d6 |
+| 170.3  | 1f7c7c1c461d1af7f7f78a0e170b8382842011e4663bd972cbb9a59803b23843 | 578db96713db9722b15bccc3f9ef8e46501595efa7f3bf6315889b3e2871d264 |
+| 170.4  | 1b33315acd29b66b7e4678d18a2b96abdefe7b4724e554f1d5468c2767547eed | 6fd24aaa5978cbf2f027df8f9da4b0fc60ea5d87f2a158842b1be383913cc725 |
+| 170.5  | 8123324818c9a913249cb4aba16efa833460b7067d200db1d90ab52e2a6e397d | 0e245cff6f93872ddf62ed5bac86f477e7e44e17eafa2162567d9dcc1bebf9d7 |
+| 170.6  | 1990f5f037bc703ee962277c72b2cdd53adb1eb6cdb66389e95af080d3d5ba75 | ac2bcf78dbb46190a50fd9fa290ed1ce71a8db5c7fd6396296b0d1b2a7f0d768 |
+| 170.7  | 453322348607aff0ab1ad5ac822002c143bb12733d14935f5fb66da16a8e39b3 | eff9edc9973e6fc5528419491c2905f6340bc4cac4e68a3aaaf3ec2fa6357f3b |
+| 171.1  | ae3dd073ea8b31e81efb09743ac529823012a98ab96c05c6d51743b0441fdb72 | ee487ce3e0dbb458d40ca52f89f9bf2512fec6c8838a4a5dd4fb916d29464a56 |
+| 171.2  | 7b0e1823a020fae6caaa1cc903545103f1493f35b11b47710a5e333e83cc60f7 | f8c9f2db78273c4aed1153f48655b43a7725c15071f79a150af153386b7dc5b9 |
+| 171.3  | a1bdfc88c63771c1d72064e94e9806ca72c5dda82f4d3296ead2780ac54d5861 | 60b7ada2a2fc21a8a4218cf3d9303819331d0791cadd78b7b11a05ab3aa77a83 |
+| 171.4  | 6a2dd56d3500aee4f67359109b12ad1537731018da8f4d9832b43f0e82218a8b | 05888030fcb8378fee78b08e794f62f919a7d690466c09aff620c468071c3f3b |
+| 171.5  | 0f5ebd5a762409eb925dcf2731b329db2f6c9ef40708d536b30d32dae27a4d61 | c1a9a789f34ae183447cde0e167e9abaaf8b7b720bd288ea42385824aea4a3e0 |
+| 171.6  | fa311a23abd64ae9479ab3b40da7983fac37181b180566f35b39e2bcd595e351 | 0e4a8e2b3f6a3b37a00a3be59b6ddf607e50e2e4cb0e7db4c873d3d2a5bca2a2 |
+| 171.7  | f6d626aecf8b9c0222886c50289b1d7f3bc5503a7849389c580df03b2ef1efc3 | 67982db15afdc349f0de5a2b1ec6bee52b46e4c8b2ac82e2f632a2d732dfe492 |
+| 171.8  | 9e1dc7246ef146e166e88fe922fcf1a4a84aa5f16eb39064d3e7e08f1d9d890d | 09ae827e34e0387156812d180cd1ac42f212396fa2381202d4893a65206f8351 |
+| 171.9  | dad3f99916297219b296c0dfb0b6a7345111c89d09841f2aa53c5798b4237911 | 3a52c8d84595166da4d2565918b372e4bae2e1b9baec8e5739af28540144991b |
+| 172.1  | 343e6453b9098c9cb473b65c1a4a4e8bb5041d25aea725163a71307ac7a41b04 | 49c947eda7ff25d3b1f0e030519faaea85dda28e782b4be4316ae559a445f4c2 |
+| 172.2  | 54cbc8029571b819368f2d849bc8b524bd90bdb7eba572ec4511dac3048c3670 | 8960946612c8db028103f83165a03f8a32c6f6acfd0ab372e38389899099bb78 |
+| 172.3  | 647adc3d169b87876ab43611cc0081f93d98075a7b9fc0f354f839b093d096d0 | 90344c242575098c184ddc7c5f53e1f88ae4f9384e3296f87e3afdf25942503b |
+| 172.4  | bdd549a129121d8d9682965a17410a2b397cc1f7e64b18019e528d6c218b0952 | 2ac149f1a88076d6b6fbdb8bd99961774d41dc095353949797c7f039ffcf864e |
+| 172.5  | 4ccf698402c942f5f1fc5bc10bd190f458ec1459621ea540662db278a9878f71 | 4acc307e822b880c733a61e91487d84f94fa37f681ef3317c2dd78cc9118c9be |
+| 172.6  | d899fc735e819a2448a962a25e349e49281f8199cde4a651fcc45cced6a511ae | 0171e5bcf2aadeeac9250869acbeb8dc5261450893d442adfb3c423aa6fb6bbb |
+| 172.7  | 7bde475481879e8b814c055a5954601a0cfebb617b2bbf1e345fc6ec1ed2cddd | 0171e5bcf2aadeeac9250869acbeb8dc5261450893d442adfb3c423aa6fb6bbb |
+| 172.8  | 2986d7cad2eb01d25c9922604f0adff787afdce7dfffe7d7592a2565ec164293 | fc3874587b95f865884e03d667fdfbbaeafca5af74ba9a4bbb422799f601c375 |
+| 172.9  | 3b858f1237bdd22ef5a16ed343afddce41bf93c2ef6a20b77347487425a21d63 | 48cc6699238ee182956317a0d17c1db6de11c3b98ab7a1a9216bf702c62a7d07 |
+| 172.10 | 1c9eb77ee3740b970db1131fc6ae6faee7f9fa9d5f58f5b7bcac8e07875b7c3d | 48cc6699238ee182956317a0d17c1db6de11c3b98ab7a1a9216bf702c62a7d07 |
+| 172.11 | 03c31ab50d5adac57448b333c03cfd39d83075df9d1bbc48a7a2b837c811a7c7 | 65517eb261a31662094737227877c2a57bba10b1e6acbbe0487eec69726c4f65 |
+| 172.12 | a5b38d08392e88662fd7a8a2d3de18c39fa57470b05d45eb2752b232d18faa63 | a43375232aa0ac99ee5c6fadf30d5419282b96cffa5a7ecf8f4aa6fc52b4c53a |
+| 172.13 | d5586df9ec9acdd0425b9254e334c8d0f5c9053d86a0b4072e0a9b0344addc58 | 48cc6699238ee182956317a0d17c1db6de11c3b98ab7a1a9216bf702c62a7d07 |
+| 172.14 | 61c15af749ec9ce67487b9d014e2200f0efc4f46abbfc430ae5a349ccfbd632c | a93f3086d07e4b4e568b2870d512af7c11ed7b636d0d6fabb0d855057d916d83 |
+| 172.15 | 63a005f03ab7a4ae46b66d36df10cd868dc7d2f7dc9a3e2488480b4c38121cdc | 989c55de0dec949641c17061fdb2d73886f1b9f56020ae574c7d13c13bdb1e2d |
+| 172.16 | 37bb298862dce638995597cfdd6cafd4bc29407862089208b9a8b4f9c323c1a4 | 989c55de0dec949641c17061fdb2d73886f1b9f56020ae574c7d13c13bdb1e2d |
+| 172.17 | 55b18e7fd01698a1675b52b74b94a819bf216df6ec28385de522f486d8bf727e | 48cc6699238ee182956317a0d17c1db6de11c3b98ab7a1a9216bf702c62a7d07 |
+| 173.1  | 8c1912f6a174c17f5054edba5b728df31f90646e7fd9373c3a4de3964e2e3519 | 5f5b3348d6ab6f94c20cb71e1bf3541e26472016618b06073ed41fcd87fd6eb0 |
+| 173.2  | 5b323cd08771244029b4d62f986edbca89109cc04c8ed73dfd770bdb750541cc | 192659177f3d0856fabc002c55d249fb3399ec660a6fd93fd1efedb441c42e45 |
+| 173.3  | c3ae54899d1d155bcec297e9bf6d1e81eed6ba6f1e84c9697e0aee6e961d33bf | 192659177f3d0856fabc002c55d249fb3399ec660a6fd93fd1efedb441c42e45 |
+| 173.4  | 163709bb50057c4d7c2b0fe587f031a167096390c44e68203862f176dc23d53c | 192659177f3d0856fabc002c55d249fb3399ec660a6fd93fd1efedb441c42e45 |
+| 173.5  | 293f89b1c771bcda12503d46ede582d3ef65edff1f5f656dc324f33675684579 | d9d3b8fc494bcecdc779a4c1eaded97950566d61e7531eba94edbda026aa897b |
+| 173.6  | 280df70d515bacd4b3c3c0a1bc8fc06426aa664afee135dcfb8a291d32126e69 | 192659177f3d0856fabc002c55d249fb3399ec660a6fd93fd1efedb441c42e45 |
+| 173.7  | ed8f21aa7bfd2f4e04379586c6eac9006d3e48a34a691c9be5e556d3cb097d8c | 3c432e82d1c6beb35e818a79119f2b21855cebd971f062445308cdee92e65117 |
+| 173.8  | 0b4b3b7e8d6b3d071dc79f6e8cb475fb407776df20794a34209332d3b673151c | c02b1d3c7203650a7bbd23c0f9ff44cabfd211a2cdbbe2e458281ad0762b5f7a |
+| 173.9  | 1f99f8a7bc86ac18634bcd99cf30fb362260eab7cf20a9ddd50d3c87c70e536b | 7f82f65fcf011f12a4640d3338ca6ff641fc60747df45bfeb410e1cda1892771 |
+| 173.10 | d7e6515687d4503069ce9462425de5adac478d7da2e33a1386c6d5394ddd0b0c | 7f82f65fcf011f12a4640d3338ca6ff641fc60747df45bfeb410e1cda1892771 |
+| 173.11 | e2f076a44bd31c329436e0226475790e30cf6837e7b881f9b8f11fd2f138c138 | 4b5dfab479be0c505b2a428468e84a913db6adb7eb4b50c4aad48652ff139089 |
+| 173.12 | 4dff0e96f79f7254efaaabf6b391d12a088cb60d15b027b7b40b232a03eddb4c | dfbc894449f1cff6cb6052ba7d415b18d792c7ee18cafeab08bf14ecf2a514c5 |
+| 173.13 | f3064d9c911af046c44dbe9ce2b5b2ce7724123d4b29bfcae1ed447687d61aa4 | 9778a90bdd62377d725c1ded6ac528d1e41bd4aaf7a5cf4418c15f421a038764 |
+| 174.1  | 261f749211e58e4a9432b4088574a98aa34ec82d7bc12ae745575236ab38be77 | 35a32299e387ac61a9c0f65fd7c3895c9c17100d229c0e6709c1a4f00e67273a |
+| 174.2  | 5a5c7c0a7dc0c3bd76001b092e74c5c99aae513a20f88ee16b736a9a5f004f8d | f8fc1ef1f81d6f3b30aebf3d1b49bd835866cdca380cf89c7d5deba4d50ca09d |
+| 174.3  | 619d4ee51ce951c2889bfc9f8c819b8c12c021e088058cab6b930e9a70fc885a | b72f83d2972545d136fc2893b4920397a4445541cf373592ba701ec1affbe08e |
+| 174.4  | 7281189560c583ddc9f900fdf22c8a4df6c51422b0fe3fa647a094cdf53d7c4f | dfcea849b7d83265b2d9172dec0bf87bb2ee45873fc479fddcaa0ead31099e8f |
+| 174.5  | 74fa3730b292c70eca1e7b6000a38c961fa748b7e55281306ac3b6d9ede46404 | 589ae279431632518fc49ef77de74953fb694a07ef4f7ccd57a82b63379cd566 |
+
 ## Parity Validation Evidence
 
-- Planning parity validation date: `2026-08-24`; this records planning parity, not implementation completion.
+- Planning parity validator candidate date: `2026-08-31`; this records Story 174.1 planning/evidence parity, not runtime implementation completion or final route verification.
 - BMAD Stories: `94`; per-Story OMX plans: `94`; exact Story ID/title mismatches: `0`.
 - Per-Epic counts in both sources: `166=8`, `167=9`, `168=11`, `169=15`, `170=7`, `171=9`, `172=17`, `173=13`, `174=5`.
 - Source `src/app/**/page.tsx` routes: `76`; route-ledger rows: `76`; missing, extra, duplicate, or nonexistent route entries: `0`.
 - Duplicate Story IDs, plan IDs, branches, or temporary worktrees: `0`; missing or orphan plans: `0`.
 - Lifecycle safety scan: no unresolved angle-bracket placeholders and no unanchored post-merge/cleanup Git commands.
-- Validation method: parse canonical `### Story N.M: Title` headings, parse every numeric plan's `storyId`, `storyTitle`, `branch`, and `temporaryWorktree` frontmatter, compare set/count/title parity, walk `src/app/**/page.tsx`, and compare normalized routes and route-entry paths with the ledger.
+- Validation method: dependency-free `scripts/check-shadcn-migration-parity.mjs` plus its deterministic mutation suite parse every canonical Story, numeric plan (including malformed frontmatter), sprint row, source route, ledger row, implementation-artifact link, prerequisite edge, lifecycle identity, and repository exception; the exact command emits machine and human reports from verified base `9d611369`.
 
 ## Execution Status & Debt Snapshot (2026-08-31)
 
@@ -331,8 +443,8 @@ Story identity is the numeric `Epic.Story` ID, not the descriptive sprint-status
 > Живые по-сторийные статусы: `_bmad-output/implementation-artifacts/sprint-status.yaml`.
 
 - **Epics CLOSED**: 166-FE (foundation), 167-FE (AppShell/auth, freeze-8), 168-FE (analytics core, 11/11), 169-FE (operational analytics, 15/15), 170-FE (marketing and marketplace analytics, 7/7), 171-FE (models, 9/9), 172-FE (core operations, 17/17), and 173-FE (settings, shipments, and supplies, 13/13).
-- **Canonical Story readiness: 89/94; Epic 173: 13/13, complete**; Story 173.11 auxiliary lifecycle PR #363 merged as `73ebb5f0`; Story 173.12 feature/docs lifecycle is historical with residue absent. Story 173.13 feature commit `8a9c074c` merged in PR #365 as `2dfe56c1`; exact-five documentation commit `1d1d3935` merged through PR #366 as `d5c62276`. Primary `main` was fast-forwarded, and the exact product and initial-documentation branches, remote refs, worktrees, paths, stale registrations, and open-PR residue are absent.
-- **Program NEXT = Epic 174 / Story 174.1 after this auxiliary lifecycle record merges and cleans** — parity and evidence reconstruction only; it must not change runtime UI or mark route-ledger rows `verified`.
+- **Canonical Story readiness: 89/94; Epic 174: 0/5 complete with Story 174.1 in review**; Story 173.13 feature PR #365, exact-five documentation PR #366, and auxiliary lifecycle PR #367 are merged, and their exact product/documentation/auxiliary residue is absent. Story 174.1 started from refreshed base `9d611369` after unrelated documentation-only PR #368.
+- **Program IN REVIEW = Epic 174 / Story 174.1** — parity and evidence reconstruction only; its frozen nine-file manifest contains no runtime UI and does not mark route-ledger rows `verified`.
 - **Remaining**: 174.1-5 only (consolidation;
   174.2 — применимые design-system/source-boundary/contrast долги; 174.3 — browser/theme/axe/keyboard/visual;
   174.4 — functional/local-backend regression; trigger-specific behavior/API debts сохраняют registry-owner).
