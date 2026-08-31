@@ -443,9 +443,9 @@ This machine-readable table binds the Story Plan Index to the exact normalized `
 > Живые по-сторийные статусы: `_bmad-output/implementation-artifacts/sprint-status.yaml`.
 
 - **Epics CLOSED**: 166-FE (foundation), 167-FE (AppShell/auth, freeze-8), 168-FE (analytics core, 11/11), 169-FE (operational analytics, 15/15), 170-FE (marketing and marketplace analytics, 7/7), 171-FE (models, 9/9), 172-FE (core operations, 17/17), and 173-FE (settings, shipments, and supplies, 13/13).
-- **Canonical Story readiness: 89/94; Epic 174: 0/5 complete with Story 174.1 in review**; Story 173.13 feature PR #365, exact-five documentation PR #366, and auxiliary lifecycle PR #367 are merged, and their exact product/documentation/auxiliary residue is absent. Story 174.1 started from refreshed base `9d611369` after unrelated documentation-only PR #368.
-- **Program IN REVIEW = Epic 174 / Story 174.1** — parity and evidence reconstruction only; its frozen nine-file manifest contains no runtime UI and does not mark route-ledger rows `verified`.
-- **Remaining**: 174.1-5 only (consolidation;
+- **Canonical Story readiness: 90/94; Epic 174: 1/5 complete**; Story 174.1 feature commit `4c930a9d` merged through PR #369 as `360c9cb9`, primary `main` was fast-forwarded, and its exact feature branch/ref/worktree/path/stale-registration/open-PR residue is absent.
+- **Program NEXT = Epic 174 / Story 174.2** — remove remaining legacy UI and enforce the design-system/source boundary without changing the route-ledger status floor.
+- **Remaining**: 174.2-174.5 only (consolidation;
   174.2 — применимые design-system/source-boundary/contrast долги; 174.3 — browser/theme/axe/keyboard/visual;
   174.4 — functional/local-backend regression; trigger-specific behavior/API debts сохраняют registry-owner).
 - Recorded floor: FE Vitest **19,874/0** across **1,255 files** after Story 173.13; its focused floor is **975/0 across 22 files**. Consolidated live axe, light/dark, width-matrix, real browser-UI zoom, keyboard/focus, privacy-safe visual evidence, and real-screen-reader evidence remains an explicit
