@@ -1,6 +1,6 @@
 # Story 174.1-FE: Prove BMAD, Route-Ledger, and OMX Plan Parity
 
-Status: done — feature commit `4c930a9d` merged through PR #369 as `360c9cb9`; primary `main` was fast-forwarded and the exact feature local/remote branch, worktree, path, stale registration, and open-PR residue are absent. Runtime UI and backend product code are unchanged; all 76 route-ledger rows remain `planned` until Story 174.5.
+Status: done — feature commit `4c930a9d` merged through PR #369 as `360c9cb9`; exact-five closeout commit `0492403d` merged through PR #370 as `fbdab2da`. Primary `main` was fast-forwarded after both merges, and exact feature plus initial-closeout branch/ref/worktree/path/stale-registration/open-PR cleanup is proved. Runtime UI and backend product code are unchanged; all 76 route-ledger rows remain `planned` until Story 174.5. This auxiliary lifecycle record does not preclaim its own future PR merge or cleanup.
 
 ## Story
 
@@ -208,6 +208,9 @@ Fresh independent review convergence is complete. The exact reviewed feature lif
 - PR number/URL: [#369](https://github.com/salacoste/wb-erp-system-daytona-FE/pull/369), exact base `main@9d611369`, exact head `cdx/epic-174-story-1-plan-parity@4c930a9d`, verified non-draft and mergeable before merge.
 - Merge SHA: `360c9cb93a2caa53084f4a34460abecc3217e5e9`, with exact parents `9d611369085a1e88783322a50f3c3a043cd25257` and `4c930a9d69dc69e6e561994256a504e754f99a39`.
 - Local/remote branch and worktree cleanup: pass. The local branch, remote branch/ref, temporary worktree path, stale worktree registration, and open PR for the feature head are absent; `/private/tmp/wb-repricer-cleanup-quarantine-20260828.H6K0jw` remains preserved.
+- Initial closeout commit: `0492403d4f276a7a574e2e6307918728634e78c3`.
+- Initial closeout PR/merge: [#370](https://github.com/salacoste/wb-erp-system-daytona-FE/pull/370) merged exact head `0492403d` as `fbdab2daf71bfd328909589bd48e2c07328cfd51`; GitGuardian passed and primary `main` was fast-forwarded.
+- Initial closeout cleanup: pass. The local branch, remote branch/ref, worktree path, stale registration, and open PR for `cdx/docs-story-174-1-closeout` are absent.
 
 ## Dev Agent Record
 
@@ -220,7 +223,7 @@ Fresh independent review convergence is complete. The exact reviewed feature lif
 
 ### Completion Notes
 
-- The dependency-free parity validator, exact backend lifecycle corroboration, canonical ownership/dependency fingerprints, strict identity and mandatory-section checks, and 33-test mutation suite are implemented, locally validated, independently reviewed, merged, and cleaned. Story 174.1 is `done`; Story 174.2 is the next program Story. This closeout record reports only the already-completed feature lifecycle and does not preclaim its own future PR merge or cleanup.
+- The dependency-free parity validator, exact backend lifecycle corroboration, canonical ownership/dependency fingerprints, strict identity and mandatory-section checks, and 33-test mutation suite are implemented, locally validated, independently reviewed, merged, and cleaned. Feature PR #369 and exact-five closeout PR #370 are merged, primary `main` is current, and exact feature plus initial-closeout residue is absent. Story 174.1 is `done`; Story 174.2 is the next program Story. This auxiliary record reports only completed lifecycle facts and does not preclaim its own future PR merge or cleanup.
 
 ### File List
 
@@ -241,3 +244,4 @@ Fresh independent review convergence is complete. The exact reviewed feature lif
 | 2026-08-31 | Story 174.1 started from base `9d611369`; missing-validator RED captured; exact nine-file manifest frozen; parity validator and deterministic mutation suite implemented. Status: backlog → in-progress.                                                                     |
 | 2026-08-31 | Accepted correctness/narrative request-changes findings repaired: exact ownership/dependency parity, backend merge/ancestry/cleanup and 169.14 handoff/retirement proof, strict identity/CLI/base failure checks, exact pinned runtime, and full nine-file privacy evidence. |
 | 2026-08-31 | Feature commit `4c930a9d` merged through PR #369 as `360c9cb9`; primary `main` fast-forwarded and exact feature branch/ref/worktree/path/stale-registration/open-PR cleanup proved. Status: review → done; NEXT: Story 174.2.                                                |
+| 2026-08-31 | Exact-five closeout commit `0492403d` merged through PR #370 as `fbdab2da`; GitGuardian passed, primary `main` fast-forwarded, and exact initial-closeout branch/ref/worktree/path/stale-registration/open-PR cleanup proved.                                                |
