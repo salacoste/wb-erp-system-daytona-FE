@@ -19,6 +19,12 @@ openwiki:
     - src/components/product/tables/contracts.ts
     - src/components/product/charts/contracts.ts
     - src/components/product/states/contracts.ts
+    - scripts/check-shadcn-ui-boundary.mjs
+    - _bmad-output/planning-artifacts/shadcn-ui-boundary-classification-manifest.md
+    - src/components/custom/box-types
+    - src/components/custom/sku-packaging
+    - src/components/custom/supplies
+    - src/components/custom/analytics
   symbols:
     - PageHeader
     - Breadcrumbs
@@ -62,83 +68,16 @@ openwiki:
     - PageHeader renders exactly one logical h1 regardless of visual size.
     - Zero and missing stay distinct everywhere: nullish or non-finite metric input never becomes a fabricated zero; terminal states never fabricate retained content or a zero.
     - tailwind.config.ts is removed; Tailwind v4 config is CSS-first in src/styles/globals.css.
+    - Production source carries no legacy Tailwind palette classes or contextual hex/rgb/hsl/oklch literals outside the ratchet baseline (523) and the registered BOUNDARY_EXCEPTIONS (owner/debt ID + manifest mirror required).
   validation_commands:
     - npx vitest run src/styles/__tests__ src/components/ui/__tests__ src/components/product
 sources:
-  - id: openwiki-source-89e2a6b1ae97c68779084212
-    resource: repo://_bmad-output/implementation-artifacts/sprint-status.yaml
-  - id: openwiki-source-c278c3812722174099a1e7a5
-    resource: repo://_bmad-output/planning-artifacts/shadcn-migration-status-and-debt-registry.md
-  - id: openwiki-source-6ae244f79c5e27a2b1f08014
-    resource: repo://components.json
-  - id: openwiki-source-fbccae247df2d4fe4a532ee8
-    resource: repo://postcss.config.js
-  - id: openwiki-source-941fe8256b0e525c6a5fb312
-    resource: repo://src/app/(dashboard)/finances/__tests__/finances-presentation-source-contracts.test.ts
-  - id: openwiki-source-26b25fbb443e94e855a63231
-    resource: repo://src/app/(dashboard)/monitor/__tests__/monitor-presentation-source-contracts.test.ts
-  - id: openwiki-source-38d719a155389e9aa28281b7
-    resource: repo://src/app/(dashboard)/monitoring/components/heatmap-constants.ts
-  - id: openwiki-source-4c9b120fde01f836cfc88317
-    resource: repo://src/app/(dashboard)/orders/__tests__/orders-presentation-source-contracts.test.ts
-  - id: openwiki-source-0f7d9f90eda573afa4d28051
-    resource: repo://src/app/(dashboard)/settings/layout.tsx
-  - id: openwiki-source-f2806181debf306644b0bfcf
-    resource: repo://src/app/(dashboard)/settings/page.tsx
-  - id: openwiki-source-5ae86fd6949078bf3ad8edb1
-    resource: repo://src/app/not-found.tsx
-  - id: openwiki-source-3acdba71038f40a5961cdfb7
-    resource: repo://src/components/custom/settings/CabinetInfoCard.tsx
-  - id: openwiki-source-a74c6c5553b05757847ab13c
-    resource: repo://src/components/custom/settings/TaxSettingsForm.tsx
-  - id: openwiki-source-0fc85666c11741fa72657508
-    resource: repo://src/components/custom/shipments/ShipmentQueueCards.tsx
-  - id: openwiki-source-bb863a795434e8e4053e934a
-    resource: repo://src/components/custom/shipments/ShipmentsTable.tsx
-  - id: openwiki-source-0e685ec43e75314a6c23e55d
-    resource: repo://src/components/custom/tariffs-admin/TariffSettingsForm.tsx
-  - id: openwiki-source-8f4a3c95e1f879098e7a5ac1
-    resource: repo://src/components/custom/tariffs-admin/useTariffSettingsForm.ts
-  - id: openwiki-source-9c27c13f7d1491f42d626cda
-    resource: repo://src/components/notifications/NotificationPreferencesPanel.tsx
-  - id: openwiki-source-a547ab159a5e201402b2230d
-    resource: repo://src/components/product/__tests__/PageContextCompositions.test.tsx
-  - id: openwiki-source-912b7e3e539c3dd145998d5d
-    resource: repo://src/components/product/__tests__/product-composition-source-contracts.test.ts
-  - id: openwiki-source-38697c5be36fb9b867f9cb59
-    resource: repo://src/components/product/charts/__tests__/chart-composition-source-contracts.test.ts
-  - id: openwiki-source-9a77cae6730eea6df8151a9c
-    resource: repo://src/components/product/charts/contracts.ts
-  - id: openwiki-source-b9b9907228e926b2037248c2
-    resource: repo://src/components/product/filters/__tests__/filter-toolbar-source-contracts.test.ts
-  - id: openwiki-source-1743885f11a36df4a547392d
-    resource: repo://src/components/product/filters/FilterToolbar.tsx
-  - id: openwiki-source-d003b037bb165f51603f75da
-    resource: repo://src/components/product/index.ts
-  - id: openwiki-source-a36c4bcdf5189d15489fa9ab
-    resource: repo://src/components/product/metrics/FinancialValue.tsx
-  - id: openwiki-source-2be049b17b9163f30e0d31fc
-    resource: repo://src/components/product/metrics/presentation.ts
-  - id: openwiki-source-6b887945ce30972bbb3b6fba
-    resource: repo://src/components/product/PageHeader.tsx
-  - id: openwiki-source-161e419e35fc6d57c511f81f
-    resource: repo://src/components/product/states/contracts.ts
-  - id: openwiki-source-f1a5c7ada35c9423a1ce6543
-    resource: repo://src/components/product/tables/contracts.ts
-  - id: openwiki-source-be3d8c8eb12fa66f0ab8eced
-    resource: repo://src/components/ui/__tests__/primitive-behavior-contracts.test.tsx
-  - id: openwiki-source-f57a6b87f57d157e4a9dea9f
-    resource: repo://src/components/ui/__tests__/primitive-semantic-surfaces.test.tsx
-  - id: openwiki-source-3ea42346a1ed3e09a300ee3f
-    resource: repo://src/styles/__tests__/globals-compiled-contrast.test.ts
-  - id: openwiki-source-dc178bdb1c72f55947395b2a
-    resource: repo://src/styles/__tests__/globals-token-contract.test.ts
   - id: openwiki-source-13697ff46e81b49dcb27ba68
     resource: repo://src/styles/globals.css
-generated: { by: "openwiki/0.4.3", at: "2026-08-30T08:47:56.434Z" }
+generated: { by: "openwiki/0.4.3", at: "2026-08-31T08:47:49.410Z" }
 verified:
   - by: openwiki/0.4.3
-    at: 2026-08-30T08:47:56.434Z
+    at: 2026-08-31T08:47:49.410Z
 ---
 
 # Design System
@@ -150,7 +89,8 @@ flowchart TD
   TOKENS["1. Semantic tokens in src/styles/globals.css"] --> PRIM["2. Generic shadcn primitives in src/components/ui"]
   PRIM --> COMP["3. Product composition families in src/components/product"]
   COMP --> DOMAIN["4. Domain-shared and route-owned UI, Epics 167-173, 76 routes"]
-  DOMAIN --> AUDIT["5. Parity, a11y, regression and cleanup, Epic 174"]
+  DOMAIN --> ENF["5. Enforced boundary: ratchet 523 + exceptions register (174.2)"]
+  ENF --> AUDIT["6. Visual/a11y/functional evidence and close, Epics 174.3-174.5"]
 ```
 
 *Build order of the design-system layers; each layer consumes only the layers above it.*
@@ -310,14 +250,26 @@ The 173.5 Telegram-notification family. `NotificationPreferencesPanel.tsx` compo
 
 The 173.8/173.9 shipments family. `ShipmentsTable.tsx` is the canonical Layer-3 consumer composition: it composes `ResponsiveTable`/`ResponsiveTableHeader`/`ResponsiveTableSortButton`/`ResponsiveTableNumericCell`/`TableState` from the product tables subtree barrel with an explicit `TableConsumerContract` — a `PALLETS_CONTRACT` numeric column (`alignment: 'end'`, `precision: 'integer'`, count unit, `tabularNumerals: true`, `fullValueAccess: 'visible'`), `caller-controlled` sorting on `createdAt`, `selection: { kind: 'none' }`, and `caller-rendered` row actions with the accessible name pattern «Открыть отправку {entityId}». All filters, pagination, and sort toggling are route-owned callbacks (`onStatusChange`/`onPageChange`/`onLimitChange`/`onSortToggle`); narrow screens fall back to `ShipmentQueueCards` preserving identity/status/date/action. `ShipmentStatusBadge` is shared between list and detail; detail mutations (shipment, pallet, box line) announce pending/success/failure with first-invalid focus and exact invoking-trigger focus return.
 
+### Box types — `src/components/custom/box-types/*`
+
+The 173.10 shipment box-types family. `BoxTypesTable.tsx` frames the route's named wide table with stacked narrow cards; `box-types-columns.ts` keeps dimensions visibly unit-labeled (`см`/`см³`) with tabular numerals; status is non-color (icon + localized text). `BoxTypeFormDialog`/`BoxTypeDeactivateDialog` own validation (`boxTypeFormValidation.ts`), pending/error semantics, duplicate-submit suppression, and `useBoxTypeDialogFocus` provides the stable focus fallback for removed/CSS-hidden triggers; same-entity stale errors are cleared on retry. Action stacks at 320/768 widths are contained by production CSS (not test-only), and entity actions carry visible labels with 44px targets.
+
+### SKU packaging — `src/components/custom/sku-packaging/*`
+
+The 173.11 SKU-packaging family (24 files). `SkuPackagingTable`/`SkuPackagingFilterToolbar` render the named wide table + stacked narrow cards with local filtered-empty recovery; `BoxTypeSelect` and `SkuPackagingProductCombobox` keep the preserved unparameterized-SKU and active-only box-type queries, surfacing dependency failures truthfully. Mapping status (active/inactive/incomplete/mismatched) is non-color; strict integer validation and exact single/bulk/delete payloads are owned here. `BulkAddDialog` is the bulk-add flow: a three-step input → preview → results dialog driven by `sku-packaging-bulk-utils.ts` (`parseBulkInput` → `attachActiveBoxTypes` → `reconcileBulkResponse`), with duplicate-submit suppression, in-flight ref guard, deterministic cancellation and success focus, and persistent per-row result announcements via `BulkPreviewTable`.
+
+### Supplies list and detail — `src/components/custom/supplies/*`
+
+The 173.12 (list/shared) and 173.13 (detail) supplies family. `SupplyStatusBadge.tsx` is the five-status semantic map: `OPEN` = status-information, `DELIVERING` = status-pending (purple canon), `DELIVERED` = status-success, `CANCELLED` = status-error, and **`CLOSED` = a WCAG solid pair** (`bg-status-warning` + `text-status-warning-foreground`) — an e2e-axe run caught the `/10` tint at 4.06:1 for 12px text (bisect-proven), root-caused as tint-blindness of the compiled-contrast test; an unrecognized status falls back to a muted «Неизвестно» rather than masquerading as OPEN. Detail (`SupplyHeader`, `SupplyStatusStepper`, `SupplyDocumentsList`, `AcceptanceActSection`) and the order-picker drawer (`OrderPickerDrawer` + filters/table/row/footer and `useOrderPickerSelection`) share `SupplyStatusBadge` and `SyncStatusIndicator`; lifecycle dialogs (`CreateSupplyModal`, `CloseSupplyDialog`, `RemoveOrderDialog`, `GenerateStickersModal` + `StickerFormatSelector`/`StickerPreview`) are pending-safe with exact focus returns. The list guard's `DETAIL_EXCLUDED` set (18 files, the exact transitive `[id]`-page closure) is load-bearing ownership separation between 173.12 and 173.13.
+
 ## Migration program (Epics 166–174)
 
-The foundation above is the first phase of a 94-story, 76-route migration defined in (status snapshot 2026-08-30: **85 of 94 canonical stories complete**, recorded Vitest floor 19,733/0 across 1,249 files):
+The foundation above is the first phase of a 94-story, 76-route migration defined in (status snapshot 2026-08-31: **91 of 94 canonical stories complete** — Epics 166–173 all closed, plus Stories 174.1–174.2; recorded Vitest floor **19,118/0 across 1,234 files** after 174.2 deleted 756 dead tests):
 
 - `.omx/plans/shadcn-full-ui-migration-master.md` — approved master plan, delivery DAG, standard per-story protocol, non-negotiable principles.
 - `_bmad-output/planning-artifacts/epics-166-174-fe-shadcn-migration.md` — story scope, acceptance criteria, ownership, forbidden shared files.
 - `_bmad-output/planning-artifacts/shadcn-route-ledger.md` — exact route-to-story ownership for all 76 `page.tsx` routes.
-- `_bmad-output/planning-artifacts/shadcn-migration-status-and-debt-registry.md` — rolling status/debt snapshot of the migration waves (snapshot 2026-08-29: **Epics 166–172 are closed** — 172 at 17/17 — and Story 173.1 shipped through feature PR #328 + closeout PR #329, so Epic 173 is 1/13 with **NEXT = 173.2** and 77 of 94 canonical stories done; the recorded Vitest floor is 19,489/0 across 1,229 files; per-story status lives in `_bmad-output/implementation-artifacts/sprint-status.yaml` and is summarized on [Migration Program](migration-program.md)).
+- `_bmad-output/planning-artifacts/shadcn-migration-status-and-debt-registry.md` — rolling status/debt snapshot of the migration waves (snapshot 2026-08-31: **Epics 166–173 are all closed** — Epic 173 at 13/13 including shipments 173.8–173.11, supplies list 173.12 and supply detail 173.13 — and Stories 174.1 (ledger reconciliation) and 174.2 (legacy-removal/boundary) are shipped, so **Epic 174 is IN PROGRESS at 2/5 with NEXT = 174.3** visual/a11y verification, then 174.4 functional/backend, 174.5 docs/close; per-story status lives in `_bmad-output/implementation-artifacts/sprint-status.yaml` and is summarized on [Migration Program](migration-program.md)).
 - `_bmad-output/planning-artifacts/ux-design-specification.md` — visual/interaction/responsive/table/chart/state/theme/accessibility contracts.
 
 **Non-negotiable principles**: preserve behavior before changing presentation; keep `src/components/ui/**` generic and domain-agnostic; build in layers; one shared file = one upstream owner Story; never run `shadcn init --force`; do not hide financial/operational/chart/table/availability/error meaning behind color, hover, truncation, or viewport width; local validation is the merge gate; production/deployment work is forbidden (see [Architecture — Configuration](architecture.md#configuration) and [Testing & Operations](testing-and-ops.md)).
@@ -339,9 +291,11 @@ The full foundation (Stories 166.1–166.8) has landed in order: 166.1 tokens �
 - **172.16 order integrity analysis** (PR #323 — MINOR-GAP; 3 files +84/−6): 6 palette → token swaps (status/warning/failure valence; icons and RU labels frozen). Guard: `integrity-presentation-source-contracts.test.ts` (catalog 6, HEAD-mutation-tested).
 - **172.17 product management** (PR #325 — MINOR-GAP; 2 files +66/−2): 2 palette → token swaps on error branches. Guard: `products-presentation-source-contracts.test.ts` (dual-root catalog 1+1).
 
-The automation domain (gallery + list + editor), the full COGS domain (single + bulk + history + price calculator), communications, finances/documents, monitor + monitoring console, moysklad, and the full orders/products family are migrated end-to-end — as are the full settings family (173.1–173.7) and the shipments list + detail routes (173.8–173.9).
+The automation domain (gallery + list + editor), the full COGS domain (single + bulk + history + price calculator), communications, finances/documents, monitor + monitoring console, moysklad, and the full orders/products family are migrated end-to-end — as are the full settings family (173.1–173.7), the shipments list + detail routes (173.8–173.9), shipment box types (173.10), SKU packaging incl. bulk add (173.11), the supplies list/shared surface (173.12), and supply detail (173.13).
 
-**Epic 173 (settings, shipments, supplies — 13 stories) is IN PROGRESS at 9/13**: **173.1 settings shell and overview** is done (feature PR #328 + closeout PR #329; 6 feature files +630/−47) — a static settings overview plus the shared seven-route settings shell (`backfill`, `cabinet`, `expenses`, `notifications`, `tariffs`, `tax` + overview under `src/app/(dashboard)/settings/`) with **role-aware restricted/current states** (the shell renders role-gated restricted states rather than hiding routes); it carried a credentialed non-Owner visual gap to 174.3 (C18). The settings route wave then completed: **173.2 backfill settings** (PRs #332/#333 — truthful query/recovery states, dual-pipeline status, responsive cards/table, guarded pending trigger and Chromium focus return; e2e 77 pass), **173.3 cabinet settings** (PRs #335/#336 — semantic seller/Jam/rating/subscription states, fail-closed unknown Jam tier), **173.4 expense settings** (PRs #338/#339 — truthful financial states, native-valid amount semantics, pending-safe CRUD overlays), **173.5 notification settings** (PRs #341/#342 — truthful Telegram loading/unavailable/bound/unbound states, FBS independence, labeled switches and visible radio focus), **173.6 tariff settings** (PRs #344/#345 — query-backed ContextBar refreshing/unavailable/partial/fresh states, responsive tariff tabs, controlled dirty tracking, pending-safe save confirmation), and **173.7 tax settings** (PRs #347/#348 — shared PageHeader and query-backed ContextBar, inclusive manual-rate and supported-VAT validation, same-cabinet draft preservation with cross-cabinet draft/retry/warning/in-flight isolation). **173.8 shipments list** (feature PR #350 + closeout #351 + auxiliary #352, all residue absent) and **173.9 shipment detail** (feature PR #353 + docs PR #354) are done — persistent PageHeader/PageState identity through loading/404/error/retained-partial states, shared ShipmentStatusBadge, ResponsiveTable detail evidence, and pending/success/failure announcements for shipment, pallet, and box-line mutations. Remaining: **NEXT = 173.10** shipment box types, then 173.11 and 173.12–173.13 supplies. Epic 174 (5 stories, final consolidation: 174.1 ledger reconciliation, 174.2 design-system/source-boundary/contrast, 174.3 visual/a11y evidence, 174.4 functional/backend, 174.5 close) remains backlog and runs strictly after 166–173.
+**Epic 173 (settings, shipments, supplies — 13 stories) is CLOSED 13/13**. **173.1 settings shell and overview** (feature PR #328 + closeout PR #329) delivered a static settings overview plus the shared seven-route settings shell under `src/app/(dashboard)/settings/` (backfill, cabinet, expenses, notifications, tariffs, tax + overview) with role-aware restricted/current states — the shell renders role-gated restricted states rather than hiding routes — and carried a credentialed non-Owner visual gap to 174.3 (C18). The route wave then completed: **173.2 backfill** (truthful query/recovery states, dual-pipeline status, guarded pending trigger), **173.3 cabinet**, **173.4 expense** (native-valid amount semantics, pending-safe CRUD overlays), **173.5 notifications**, **173.6 tariffs**, and **173.7 tax** (inclusive manual-rate/supported-VAT validation, same-cabinet draft preservation with cross-cabinet isolation). **173.8 shipments list** (PRs #350/#351/#352) and **173.9 shipment detail** (PRs #353/#354/#355) shipped persistent PageHeader/PageState identity through loading/404/error/retained-partial states, the shared ShipmentStatusBadge, ResponsiveTable detail evidence, and pending/success/failure announcements for shipment, pallet, and box-line mutations. **173.10 shipment box types** (PRs #356/#357) and **173.11 SKU packaging** (PRs #359/#360) are described in Layer 4 above. **173.12 supplies list** (PR #361) and **173.13 supply detail** (PRs #365/#366/#367) closed the epic; the dead legacy twin `SUPPLY_STATUS_CONFIG` in `src/types/supplies/helpers.ts` was rerouted to 174.2 (types were outside 173.13 ownership) and deleted there.
+
+**Epic 174 (consolidation, 5 stories) is IN PROGRESS at 2/5**: **174.1** (ledger reconciliation — feature PR #369 + closeout PR #370 + lifecycle PR #371) proved the schema-v3 ledger 94 = 94 stories and 76 = 76 = 76 route/ledger rows with all linked artifacts unique. **174.2** (legacy-removal and design-system boundary — feature PR #372 on base `fbdab2da`) is summarized in the boundary section below. **NEXT = 174.3** accessibility/responsive/theme/visual verification — including the §3.3 tint-audit of all `text-status-*` on `bg-*/10` pairs without axe evidence; then **174.4** functional/backend (owner of the 13 pre-existing liquidity/monitor e2e failures) and **174.5** docs/cleanup.
 
 ## Route presentation source-contract guards (Epics 169–171 canon)
 
@@ -354,20 +308,46 @@ Every migrated route ships a `*-presentation-source-contracts.test(.tsx)` guard 
 
 Current guards: `advertising`, `anomalies`, `brand-share` (in `src/components/custom/analytics/__tests__/`), `campaign-detail` (in `src/components/custom/advertising/__tests__/`), `cross-reference`, `forecast`, `forecast-accuracy`, `funnel`, `gaps`, `liquidity`, `model-registry`, `returns`, `search`, `storage`, `supply-planning`; the models `[id]` subroutes from Epic 171 — `evaluations-list`, `sku-accuracy`, `model-performance` (under `src/app/(dashboard)/analytics/models/[id]/`); and the Epic 172 family — `dashboard`, `dashboard-widgets` (in `src/components/custom/dashboard/__tests__/`), `canned-rules`, `installed-rules`, `installed-rule-editor` (under `src/app/(dashboard)/automation/`); the COGS/communications wave — `cogs-single`, `bulk-cogs`, `cogs-history` (under `src/app/(dashboard)/cogs/**/__tests__/`), `story-172.8-presentation-source-contract` for the price calculator (in `src/components/custom/price-calculator/__tests__/`), and `communications` (under `src/app/(dashboard)/communications/__tests__/`); the Epic 172 closing wave — `finances`, `monitor`, `monitoring` (cross-file legend-sync pins), `moysklad` (under their `src/app/(dashboard)/<route>/__tests__/`), `orders` (dual-root, fbo/integrity excluded), `fbo`, `integrity` (`src/app/(dashboard)/orders/**/__tests__/`), and `products` (dual-root); and the Epic 173 settings + shipments wave — `backfill`, `cabinet` (`presentation-source-contracts.test.ts`), `notifications`, `tariffs`, `tax` (under `src/app/(dashboard)/settings/<route>/__tests__/`) and `shipments` + `shipment-detail` (under `src/app/(dashboard)/shipments/`). Every migrated family is therefore now guard-covered, closing the 173.1 no-guard gap (the settings shell itself is covered by the per-route settings guards). The shipments guard pins an 11-file route catalog with an explicit exclusion set for the Story 173.9-owned detail files; the tariffs guard pins the exact 29-file route-reachable catalog with self-tested `LEGACY_PALETTE`/`CONTEXTUAL_HEX` regexes. The 171.8 anchor-safe lesson is canon for all relative-path guards: filter relative segments before joining to an absolute path, or a sibling worktree whose plan-pinned name contains the subtree name will silently empty the owned-file catalog.
 
+### Analytics, liquidity, and FBS sections — `src/components/custom/analytics/*`
+
+The shared analytics family is consumed by the marketing/FBS analytics routes: `BrandShareView.tsx` (170.4 — `id`+`aria-labelledby` filter names, filter context threaded into the chart subtitle, share-axis domain pinned 0–100) with `BrandShareChart`/`Tooltip`/`brand-share-chart-config` and the sr-only `brand-share-sr-table` data alternative; the FBS trends sections (`FbsTrendsChart`/`Legend`/`Tooltip` + `FbsTrendsChartStates`, 169.6) remain registered ratchet residue for their hex/palette marks until their owner sweep; `DataSourceIndicator` likewise. Route-local liquidity sections (`src/app/(dashboard)/analytics/liquidity/`, 169.10) own `liquidity-category-tokens.ts` as the single category token source, with the lib-side liquidity maps (`liquidity-category-config`, `liquidity-action-benchmark`, `liquidity-utils`) now partially token-migrated but still carrying registered hex chart marks (category 1 in the boundary manifest, ratchet-registered for the owner sweep; the pre-existing liquidity e2e failures are owned by 174.4).
+
+### Price-calculator sections — `src/components/custom/price-calculator/*`
+
+The 71-file mutable manifest migrated by 172.8 (from `AcceptanceStatusBadge` to `WarehouseTariffsByBoxType`): its guard rejects raw palette classes including black/white/950 utilities and any hex literal, and pins the narrow-width reflow contract for the live calculator controls (`DimensionInputSection`, `WarehouseSelect`). Interactive micro-controls keep the unified 44px hit-area floor (the `AutoFillWarning` dismiss ×, `CategorySelector` clear, and `ErrorMessage` retry); unavailable inputs surface as labeled evidence rather than zeros. Dynamic-Playwright coverage of the live calculator remains a recorded named gap (→ 174.4).
+
+## The enforced design-system boundary (Story 174.2)
+
+Story 174.2 (feature PR #372) converted the per-route guard canon into a **repository-wide, ratcheted boundary**:
+
+- **Validator**: `scripts/check-shadcn-ui-boundary.mjs` (Node stdlib only) scans all production `src/**/*.{ts,tsx}` (tests, `__tests__`, `.d.ts`, `src/test` excluded; enumeration is relative-first per the 171.8 anchor-safety canon) for two detection classes that form the superset regex canon — `LEGACY_PALETTE` (the monitoring-172.12/169.11 guard form extended with `ring-offset`, `shadow`/`inset-shadow`/`text-shadow` prefixes) and `CONTEXTUAL_HEX` (quote/backtick or `-[`-anchored hex with a trailing quote/backtick/`]`/`;` lookahead, plus rgba/hsl/hsla/oklch color functions whose first ~40 chars contain a digit or `#`). It reports per-file/per-route/total counts and ratchets against `scripts/.shadcn-ui-boundary-baseline.txt` — a single integer, currently **523**.
+- **Ratchet semantics**: `node scripts/check-shadcn-ui-boundary.mjs` exits 0 at or below the baseline and exits 1 only when the total **increases**; any migration that lowers the count must lower the baseline in the same commit. There are no file-level waivers — suppression is only possible via the `BOUNDARY_EXCEPTIONS` map, which requires an owner/debt ID and a 1:1 mirror in category 5 of the classification manifest. Current exceptions (4 files, 24 suppressed matches): the F-10 documented WCAG contrast exception in `ai/FeedbackButtons.tsx`, the C5 waterfall categorical hex, and the two historical `#7C3AED` chart marks (pricing `PriceHistorySheet`, product `FunnelTab`).
+- **Self-suite**: `scripts/__tests__/check-shadcn-ui-boundary.test.mjs` runs 10 node:test cases proving the regexes fire on canonical violations and that enumeration/exclusion logic works, so the scanner itself cannot silently rot.
+- **Classification manifest**: `_bmad-output/planning-artifacts/shadcn-ui-boundary-classification-manifest.md` records every finding in six categories and is **arithmetic-closed**: category 1 (live legacy palette/literals in 59 files) 514 + category 2 (route-owner-completed residue, 1 file) 1 + category 6 (comment-only false positives, 4 files) 8 = **523**. Category-1 residue is swept by the ratchet at the owning surface's next touch (C14 owner-sweep pattern); 174.3 uses the manifest's category-1 list as visual-sweep candidates.
+- **174.2's own cleanup**: 65 proven-dead files deleted (import-closure reviewer-verified — including the legacy-twin `SUPPLY_STATUS_CONFIG`, `WbTokenBanner`, `KPICard`/`MetricCard`/`DeltaIndicator`/`MarginBySkuTable` families, and the seasonal/period-comparison analytics surfaces), the lib wave migrated `src/lib` class-maps to status tokens (wb-status trio → **solid pairs**, orders/liquidity/supply-planning/monitoring maps, `analytics-utils` `getDiscrepancyColor`, and a canonical dedupe of `getMarginColor` in `top-table-utils.ts`), and all five 171.9 carry-outs were executed (including removing `STATUS_BADGE_CONFIG.className` and the stale-helper-comment rewrites).
+
+### 174.2 design calls
+
+The lib wave collapsed the legacy hue vocabulary onto semantic tokens rather than mapping hues 1:1:
+
+- **indigo → status-information** (the information hue replaces indigo/violet/sky for neutral-emphasis statuses).
+- **orange and lime → the warning/success collapses** (e.g. `text-orange-600` → `text-status-warning`; lime → `text-status-success`) — hue-level collapses, not per-site judgment.
+- **WbStatusBadge solid pairs**: the wb-status trio (`wb-status-data-core`/`-delivery`/`-returns`) moved to solid `bg-status-*` + `text-status-*-foreground` pairs, and **stale/no_data → muted** rather than a colored status.
+- **WCAG solid pairs over tints for small text**: the CLOSED supply status uses the solid `bg-status-warning` + `text-status-warning-foreground` pair because its `/10` tint measured 4.06:1 at 12px (caught by e2e-axe, bisect-proven) — the compiled-contrast test is tint-blind, so any `text-status-*` on `bg-*/10` pair without axe evidence is queued for the 174.3 tint-audit.
+
+
+
 ## Remaining migration debt registry
 
-Per `_bmad-output/planning-artifacts/shadcn-migration-status-and-debt-registry.md` (snapshot 2026-08-30: Epics 166–172 closed, Epic 173 at 9/13; per-story status is summarized on [Migration Program](migration-program.md)):
+Per `_bmad-output/planning-artifacts/shadcn-migration-status-and-debt-registry.md` (snapshot 2026-08-31: Epics 166–173 closed, Stories 174.1–174.2 shipped, NEXT = 174.3; per-story status is summarized on [Migration Program](migration-program.md)):
 
 | Debt | Owner / due |
 |------|-------------|
-| Epic 173 remainder: 173.10–173.11 shipments (NEXT = 173.10 shipment box types after the 173.9 auxiliary lifecycle-record merge), 173.12–173.13 supplies (owner-coordinated) | Current lane |
-| Epic 174 (5 stories: 174.1 ledger reconciliation, 174.2 design-system/source-boundary/contrast, 174.3 visual/a11y, 174.4 functional/backend, 174.5 close) | Backlog; 174 strictly after 166–173 |
-| `STATUS_BADGE_CONFIG.className` removal (registry-root `ModelListSection.tsx:149` is the last consumer), stale-comment rewrites (`model-list-helpers.ts:24-26`, `evaluations-list-helpers.ts:20-23`), migration of the 171.6 guard token pins, and 171.6 anchor-hardening | 174.2 (route-ledger handoff from 171.9) |
-| FE-debt registry: FE-D1 mutations `retry:1` retries 4xx, FE-D2 `WbTokenBanner` dead code, FE-D3 raw `error.message` echo, FE-D5 cross-tab create duplication (no CAS), FE-D6 dead `ExportConfigForm`, FE-D8 cabinet-creation SAFE_RECONCILIATION middle path, FE-D9 `logApiError` logging non-2xx bodies | On-touch of the owning files or 174.2 sweep |
-| Wave carry-outs C1–C18: dashboard tooltip `bg-white` dark defect (C1), `MarginDisplay` legacy palette (C2), dead lib exports (C3/C4), acquiring tabular-nums sweep (C6), 169.8–169.10 visual/axe/keyboard matrix (C9, → 174.3), KPI-icon canon split (C10, → 174.2), Story 173.1 credentialed non-Owner restricted-navigation visual (C18, → 174.3) | On-touch / 174.2–174.4 per registry |
-| Sidebar→supply-planning E2E flake (dashboard URL-race, load-dependent, documented in the test) | e2e-hardening queue |
-| Real screen-reader and browser-UI zoom evidence (retained raw visual artifacts remain prohibited by repository privacy policy) | Epic 174.3 |
-| Credentialed functional E2E (credentials only in-memory if ever granted) | Epic 174.4 |
+| Epic 174 remainder: 174.3 visual/a11y evidence (incl. the §3.3 tint-audit of `text-status-*` on `bg-*/10` pairs), 174.4 functional/backend, 174.5 docs/close | Current lane |
+| Boundary category-1 residue: 59 files / 514 violations registered in the classification manifest (mostly `src/lib` class-maps, financial-summary, and legacy chart widgets) — swept by the ratchet at the owning surface's next touch; category-2 `ScheduleVersionForm.tsx` residue reverified at next tariffs owner touch | Ratchet owner-sweep (C14) |
+| Liquidity ×12 + monitor weekly-chart ×1 e2e failures pre-existing on main (bisect-proven 2026-08-31); repo-wide text-`/80` opacity sites vs §11.3 contrast (scanner-extension candidate) | 174.4 |
+| Credentialed non-Owner restricted-navigation visual (C18), real screen-reader/zoom evidence, credentialed functional E2E (retained raw visual artifacts remain prohibited by repository privacy policy) | Epic 174.3 / 174.4 |
+| Boundary ratchet semantics: "registered" = baseline-grandfathered (523), exit-1 only on increase (locale-percent precedent); comment-only category-6 noise stays counted at 8 | Accepted exception, continuous |
 | locale-percent ratchet at 4; docs check citation-state drift | Continuous ratchets, not blockers |
 
 ## When to consult this page
@@ -386,5 +366,9 @@ Design-system changes are guarded by focused regression suites; do not run the f
 npx vitest run src/styles/__tests__ src/components/ui/__tests__ src/components/product
 ```
 
-Token edits additionally require `npm run build` because the compiled CSS is what the contrast test parses. Primitive hardening must preserve every existing export, variant, portal, and compatibility prop — check the four updated consumer modal tests when changing close-control or focus behavior. Composition-family changes must keep the family's discriminated-union props exhaustive (a new state kind has to extend the union and the tests together) and keep the family's source-contract manifest in sync with its file list.
-h its file list.
+Token edits additionally require `npm run build` because the compiled CSS is what the contrast test parses. Primitive hardening must preserve every existing export, variant, portal, and compatibility prop — check the four updated consumer modal tests when changing close-control or focus behavior. Composition-family changes must keep the family's discriminated-union props exhaustive (a new state kind has to extend the union and the tests together) and keep the family's source-contract manifest in sync with its file list. Any change that adds a legacy palette class or contextual hex/color literal to production source must either migrate it to semantic tokens or register it in `BOUNDARY_EXCEPTIONS` (owner/debt ID + manifest mirror) — otherwise the boundary gate fails:
+
+```bash
+node scripts/check-shadcn-ui-boundary.mjs                          # exit 1 only on increase past 523
+node --test scripts/__tests__/check-shadcn-ui-boundary.test.mjs   # scanner self-suite (10 cases)
+```

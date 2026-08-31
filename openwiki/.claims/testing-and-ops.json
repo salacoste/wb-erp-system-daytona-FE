@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "pageVersion": "sha256:ace95a2e832ad686de0b8e5c4295ee5bd96d4ccf50f2584fc1a2c7c72532ee46",
+  "pageVersion": "sha256:5ece64a375c1c045d8ac97b8e6adae6cb4c9671b6eb70b53e538285e9f474b4a",
   "claims": [
     {
       "id": "claim_34d4e9ec9e0249299eb57f3e06db8784",
@@ -18,11 +18,19 @@
     },
     {
       "id": "claim_6f40c953f4a54d4f9d1a5f2db9c186a0",
-      "statement": "The full Vitest suite floor was raised after Story 173.9 closed (sprint-status.yaml, 2026-08-30): a full `npm test -- --run` run must keep ≥ 19,733 tests passing across ≥ 1,249 test files with 0 failed; this is a floor, not a substitute for fresh per-story validation.",
+      "statement": "The current full Vitest suite floor after Story 174.2-FE (2026-08-31) is 19,118 tests passing / 0 failed / 1,234 files for a full `npm test -- --run` run. The floor moved exactly −756 tests / −22 files from 19,874/1,256 by deletion of 65 proven-dead test files (import-closure proved, no live test deleted), so earlier per-story peaks such as 19,874 after 173.13 are historical, not the bar; the floor is not a substitute for fresh per-story validation.",
       "evidence": [
         {
-          "resource": "repo://_bmad-output/implementation-artifacts/sprint-status.yaml",
-          "version": "repo-file-v1:sha256:1a05092d4ef7e49198848fe2203dbb280b6e81b44c09f98cf5e2a4a486420009"
+          "resource": "repo://CLAUDE.md#L153-L153",
+          "version": "repo-lines-v1:sha256:743ff46649a0b66dd96ba72a31d742b218ab4bc1cac5be9d63592651b1eb80f1:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNzQzZmY0NjY0OWEwYjY2ZGQ5NmJhNzJhMzFkNzQyYjIxOGFiNGJjMWNhYzViZTlkNjM1OTI2NTFiMWViODBmMSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNzQzZmY0NjY0OWEwYjY2ZGQ5NmJhNzJhMzFkNzQyYjIxOGFiNGJjMWNhYzViZTlkNjM1OTI2NTFiMWViODBmMSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMTVkZTYyYmRkMWY3OTRiOTViMTI0MTcwMTY1NzYzNmE5YmIzYzIwMDU3NjQ5N2I4NmJlZTM0OTBhNzBhY2I4MCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZTIyOTA0MDE3OGM1Y2ZhNTQwMDRlMzRhM2JlZjBhZTE0YTc1MmM3ZDgzNzA3ZDlkOTRkNWJjZWRhOGYyNzVjMyJ9"
+        },
+        {
+          "resource": "repo://_bmad-output/implementation-artifacts/174-2-fe-remove-legacy-ui-and-enforce-the-design-system-boundary.md#L46-L51",
+          "version": "repo-lines-v1:sha256:b39f4135a1a7d8e60fafe29b17298df99ba2b9fae57fb6058866aab43427c1dc:eyJzZWxlY3RlZExpbmVDb3VudCI6NiwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMjc4NDc3YmIwNjc4NzI0NTY1YmNjZDMyMjM5OTVkOTNiODJmODkxOTMyYWQ3ZDc0YjVkNWQ5NjA2ZWFiZWM0YSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiZThiMjM2NWZhMjY4YTFhM2M4NDc3ZTA1Yzg2YmNjM2ZmMDkxNjBmMzIxZjdlMTQ3OWZjMDE4ZThjZmRkMDVjNCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiY2UzMzg1MjAxOGVlYmUxYzJlY2IxMzFiN2VjN2ViNTA5MjA5ZTMzNjM5OTQ1ZjFiOGU4YjhhNDU4NTdlODdhZiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNTdmNzE0OWQ5Y2RlMDgxNWYzYjhjNzdkMmI4MTlkNzMwZmMzODFkMzgxZjBkNjA3YjBjN2Q1MTMyMzdiOWIzMiJ9"
+        },
+        {
+          "resource": "repo://_bmad-output/implementation-artifacts/sprint-status.yaml#L861-L861",
+          "version": "repo-lines-v1:sha256:f2541ea3c1a80e94600da9958eaf093023f64a4e672dd855abb838d1dd4af288:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZjI1NDFlYTNjMWE4MGU5NDYwMGRhOTk1OGVhZjA5MzAyM2Y2NGE0ZTY3MmRkODU1YWJiODM4ZDFkZDRhZjI4OCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiZjI1NDFlYTNjMWE4MGU5NDYwMGRhOTk1OGVhZjA5MzAyM2Y2NGE0ZTY3MmRkODU1YWJiODM4ZDFkZDRhZjI4OCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMjU1YTMwZWJiZmMyZGIzYmJlZmNjYmFhZTYwY2NjNmI5NzRmYzJiYjRmNTVlYjJkMDg4MzllMDk5YjdkMTQ4OSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiYjJiODQ1NjQ2ZWRmMmZjNGI5MWFkYzM3M2YxMTU3YjdiOTdlOWIwOGMxMzBlZTJhMGQ0MTFlZDdhMTY4MTRmZCJ9"
         }
       ]
     },
@@ -63,8 +71,8 @@
           "version": "repo-file-v1:sha256:07703204166da1b111cd9b7f347885e3364e8dd671fdc032ab52b4a209742f23"
         },
         {
-          "resource": "repo://src/test/playwright-static-boundary.ts#L111-L111",
-          "version": "repo-lines-v1:sha256:bed79fbd704bb46e609efb559a46a3fd44839852f0ef3d3cf03dd0d538a224fb:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiYmVkNzlmYmQ3MDRiYjQ2ZTYwOWVmYjU1OWE0NmEzZmQ0NDgzOTg1MmYwZWYzZDNjZjAzZGQwZDUzOGEyMjRmYiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiYmVkNzlmYmQ3MDRiYjQ2ZTYwOWVmYjU1OWE0NmEzZmQ0NDgzOTg1MmYwZWYzZDNjZjAzZGQwZDUzOGEyMjRmYiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiYjU3NzdkZTRhMzM2MzhlOWJhNWFlMzFiYmNmZGFiY2JlOWRjZDIzNzY5ZDk2MjMwOTUwZTMxOTI2MzU2YzVlZCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiOTk0YzA2YmJlZTg3ODdiNmNmODRlMWI0ZDhhZTZkZTM1YmJhY2JmOTFkNTFiMjNlY2VkYzA0YjE3YzVmZDNlNCJ9"
+          "resource": "repo://src/test/playwright-static-boundary.ts#L111-L115",
+          "version": "repo-lines-v1:sha256:bffeacd789173bbf999ab41b226a27bce67cc996e4e83d39a83adf3c335acc8a:eyJzZWxlY3RlZExpbmVDb3VudCI6NSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiOGJmYzQ4NjFhYzdmYWI0MGY0MjE2M2NjMjRlZTFjNTU0YTE3ZjlkYzg5YjlmY2NlYjEyMmQ5MWZkYWY2N2M2YSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiYmVkNzlmYmQ3MDRiYjQ2ZTYwOWVmYjU1OWE0NmEzZmQ0NDgzOTg1MmYwZWYzZDNjZjAzZGQwZDUzOGEyMjRmYiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMWZiNDRlMGZiMTYyMTkzYWZkYzAwMzQ1YjIyZGQwYmE0NzYwMjUyOGVhZDY5YTcxNmZiMGFjNmVmYWMyM2U4MyIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiOTk0YzA2YmJlZTg3ODdiNmNmODRlMWI0ZDhhZTZkZTM1YmJhY2JmOTFkNTFiMjNlY2VkYzA0YjE3YzVmZDNlNCJ9"
         }
       ]
     },
@@ -107,10 +115,70 @@
           "version": "repo-lines-v1:sha256:50429e1062123c4630cf2a304b225e48d420b0af550b875ce96f0e36473fe50b:eyJzZWxlY3RlZExpbmVDb3VudCI6NTYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjVmMjg5N2IzMTY3ZDFlNGU2YzM2ZmI2YjczNTk4ZTgwOTEyOWU5Nzk5NjkyYjU3NzU0NjIxM2ZjNjcxMzVkNTIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjI1NGZiN2Q5MzMwOTJjZGE1ZTVlMjZhYjRhMTBkMGMzY2EzNjRiMWU4NDAxYzg4NGNhNWEzYjgyMmQ2ZDRjMTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImY1MDRmZmEyMDRhMWZjNjBiNGE5MjllMDZiYjM5ZDlkZGEyMWExNmIzNmQzMzQ5MzU0ZmJiZmMxMTNlNGMwZmYifQ"
         }
       ]
+    },
+    {
+      "id": "claim_9ad59c57b01b44fcaf18f91c92f97884",
+      "statement": "scripts/check-shadcn-ui-boundary.mjs (Story 174.2, no npm alias — invoke with `node scripts/…`) scans production src/**/*.{ts,tsx} (tests, __tests__, .d.ts, src/test excluded; relative-first enumeration) for LEGACY_PALETTE and CONTEXTUAL_HEX violations using the superset regex canon, groups them per route, totals them, and ratchets against the single-integer baseline scripts/.shadcn-ui-boundary-baseline.txt (523): exit 0 at or below baseline, exit 1 only on increase, and any decrease must lower the baseline in the same commit. Suppression is only via the exported BOUNDARY_EXCEPTIONS map (4 files with owner/debt IDs, mirrored 1:1 in the classification manifest); the script runs its 10-case node:test self-suite first and fails fast if it fails.",
+      "evidence": [
+        {
+          "resource": "repo://scripts/.shadcn-ui-boundary-baseline.txt",
+          "version": "repo-file-v1:sha256:308674fe33ad5aa848f48d336f6079c2b668de53a3108da4359ee5a0a2a771e5"
+        },
+        {
+          "resource": "repo://scripts/check-shadcn-ui-boundary.mjs#L15-L55",
+          "version": "repo-lines-v1:sha256:a8579b645cc2dd90373ba980aaca6406b3751648eaf47047419cde2ce3bd2b8a:eyJzZWxlY3RlZExpbmVDb3VudCI6NDEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjkxMGVlMThiM2RjM2E5YTI1MmQ0NjFhYzg2MTVmNTI0Mjc0NGI4NjNiYmE5ZTQxMTI1ODIwYTc3NDE5NjdkMzMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImE2M2FhZTM5YWQ1OWZhZjMyZDNhMDQ1OGI4OTM0NmU4ZTg4ZTkxZmRkNDA0NTQwM2E4OGEwNjdlYjU2Mjk5NjMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImFhODM4OWEyNmJmZTg2OWUwMzU2ZTcwZDZmZWYxY2M5ZjZiNmIxYTdiZDlkNTMyNjYxNTFiMmViNTFjMDI5OTMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjU4YzkxOGVhM2M5MGQ0NWNhZTBjZGJiNmJkMTkwYTA1Y2NkZTYwNzk1YjZjYTMxZWU1ZmM4YzlmYWMxZTcyM2EifQ"
+        },
+        {
+          "resource": "repo://scripts/check-shadcn-ui-boundary.mjs#L160-L226",
+          "version": "repo-lines-v1:sha256:95135b529357cae87ef1678b98d475da107102aec2a1cd3181bd6ea17aa04bb8:eyJzZWxlY3RlZExpbmVDb3VudCI6NjcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImNiYzM1NDRhMjRmYjk2ZDc4MWU0ZTcxMDBjYmE4NDk4NjU1ZTY4NjA4ZDNkMTdiOTE4YmUzMjYwMDhiOGY5ODciLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjZjM2FlNzkyNGU0OGJlMTBmOTk0YzdlZmU5NWI5MDQzOTRkMjEwMzg0MDdkZGVmYzQ2NDYxYTMzYWUxNjg2ODYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6Ijg1MzliNjgyODcyYjYxNDgyNDZjNjQwYjYwZGViMTU2MjNhNmNkNmNjY2NlZWI0MjczYmY0OWIyYmE4YWIzYzAifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_d97ecacafd984279ba057943976c1ee2",
+      "statement": "scripts/check-shadcn-migration-parity.mjs (Story 174.1) is a dependency-free, filesystem-only schema-v3 parity validator over the BMAD story artifact, the master OMX plan, and the 76-row route ledger that proves 94 BMAD stories = 94 OMX plans and 76 source routes = 76 ledger rows = 76 unique owners with linked implementation artifacts; it runs a deterministic 33-case node:test mutation self-suite (scripts/__tests__/check-shadcn-migration-parity.test.mjs) before validating the canonical corpus and emits one machine-readable report plus one human summary per run. Both script self-suites are excluded from the Vitest run in vitest.config.ts because they are node:test-only surfaces.",
+      "evidence": [
+        {
+          "resource": "repo://scripts/check-shadcn-migration-parity.mjs#L253-L268",
+          "version": "repo-lines-v1:sha256:df2781c0bf2252c973f1c75e80e91d8abb734ea3507ba0dca18b23e0d2661446:eyJzZWxlY3RlZExpbmVDb3VudCI6MTYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjBiZDI3ZDk4YWEzMDc4MDQ3MmMyN2I5MjFhMTNiOTcxOWYxYjk3YjUyYTcwMjhjZDFiNDJjMzgwNzMwMjZlMjciLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImE4OTcwNThjYTc0NWM0N2JjOTg4ZTMxZjhjNjliYmJlNjFkNDRhMjc2NDU0Yjc1YzEwMjhiODE1ZTViMzMyYzMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImEyMGYxZDNjN2VlYmIwNTM1NzJjMTUwY2RmY2Q5MWNmZDNiOGNjMmQ0OTZkMTY5MTBiZTJkMjM0ZGZhNDA5MjYifQ"
+        },
+        {
+          "resource": "repo://scripts/check-shadcn-migration-parity.mjs#L8-L14",
+          "version": "repo-lines-v1:sha256:f3369ef7930887648da64ae8249a4147476a1bf28efa273ece1a0ddd82cfeb85:eyJzZWxlY3RlZExpbmVDb3VudCI6NywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNzJmNTcxOTIzNDZhYWU3NWQ1OWZiZGMzODY4Y2U0ZmFkOTcxNjExNTRiM2IyOGNhNmVkMWQ5NGFkYWE4YmQzNSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNjVmZmYxZGFiMGQwMGM4Zjk2NTAxNmY0ODNhZjU5MWI3OTVkMzdiZjg4ZDFiYTAwOTUxMWJmMTcyMjZmMTVkMiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiYWE4Mzg5YTI2YmZlODY5ZTAzNTZlNzBkNmZlZjFjYzlmNmI2YjFhN2JkOWQ1MzI2NjE1MWIyZWI1MWMwMjk5MyIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMGRmNGE1NDQ4OWE1ZTRjMDcxNDYxNTI5NWVjN2ZhMjM5NTgxNjlkMDUwMTkyZGU4NGRjNTFkMmUxNTczYWU3MiJ9"
+        },
+        {
+          "resource": "repo://vitest.config.ts#L60-L61",
+          "version": "repo-lines-v1:sha256:ed4630188aefd7f578bc9b596f18439246c01714dba737cb80f2591cb83fdda8:eyJzZWxlY3RlZExpbmVDb3VudCI6MiwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNDc0MDQ3YWNjNjk2MWJjNzhkYTQzMDIxNTgwMzAzYjc2MmQ4YjIzODU0ODIyYTAxNDcyZTE3NjJiODNkYjJkYSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNDA5YmE0YjRlYzBiMjFmZTcyZjEzMzE5OWY0N2M2MDBjOWM1ZDljZjMwNmVkOGVhNDNhNzU1MmJhZjU2NTU0MCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMzJiYjFiMDliNmI0ZTBkNDdjMjRiMDNhMjZiZGRiMjE4Y2QyNTUzZjZhMmRjOGU3NmY4NTY4OTQ0NDNmNDZkNSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNzJiZGY3ZmY2MzZlOTNiNmRlMDk0NzZkN2JlNjNlZTI0N2JjN2FhMDFlM2UwMTc3MTQ5Yjk3MzYzZWM2ZTAzMiJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_bc471e7f6dc24087bda1bb25995b1d1e",
+      "statement": "The Playwright static boundary's APPROVED_RUNTIME_MODULES/SELF_TEST_MODULES allowlist in src/test/playwright-static-boundary.ts not only covers the guard fixtures, playwright.config.ts, and boundary self-tests, but also whitelists scripts/check-privacy-console.test.mjs and scripts/__tests__/check-shadcn-migration-parity.test.mjs — the two node:test self-suites that legitimately need node:child_process (the parity entry added as the Story 174.2 carry-in fix).",
+      "evidence": [
+        {
+          "resource": "repo://src/test/playwright-static-boundary.ts#L6-L27",
+          "version": "repo-lines-v1:sha256:416826d23e8c550265a08dc7f7241612914afad2684d7a95144e3e734f7a13e4:eyJzZWxlY3RlZExpbmVDb3VudCI6MjIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMjE0ZWM2N2UzZGY5OGJmYTM3NzdjNDI5NzAwZmU0NjI4YmFhOTIzYTZkNzc0NWU4YmQ5M2U5NjdjZjI3YzgiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImE2M2FhZTM5YWQ1OWZhZjMyZDNhMDQ1OGI4OTM0NmU4ZTg4ZTkxZmRkNDA0NTQwM2E4OGEwNjdlYjU2Mjk5NjMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjlkNWMwNGZiOGVlNzFjNzA5NTI2ODA5MWI1NGJjM2U0MzhhYmVhYzA5YzAwOGIyNDgwZjA2MTZjZjZhOWY4MjgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6Ijg4OTBjZTNiMDcxMTIwMTE3NTljYjFlMzI4NzEwM2Y4NTMzNGY5Yjc1NTdmZDZkZGE1NGU4NWViOTA1NzNjYWUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_863b5dd4ed6e43d4bfdc11e901050a85",
+      "statement": "e2e/sku-packaging-page.spec.ts (Story 173.11) provides the representative new-spec pattern for the guarded Playwright runtime: it imports test/expect from ./fixtures/network-test and installs exact-method/exact-query page.route fixtures (GET/POST /v1/sku-packaging, POST /v1/sku-packaging/bulk, DELETE /v1/sku-packaging/{nmId}, GET /v1/box-types) in beforeEach before navigation, with handlers that throw on any unexpected method/path/payload so a silently-missed stub cannot pass; it pins the exact single-upsert, bulk, and delete wire contracts, terminal role=status announcements, filter reset focus, keyboard validation with first-invalid focus, and 320/390px narrow-card layout without horizontal overflow.",
+      "evidence": [
+        {
+          "resource": "repo://e2e/sku-packaging-page.spec.ts#L228-L300",
+          "version": "repo-lines-v1:sha256:b409c48a644b373e66f541128795228017fefe034d31c9f69481b7e68b492933:eyJzZWxlY3RlZExpbmVDb3VudCI6NzMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImNlZDE2MTQ1NmRmM2MwYmY0NzY4OTBmZGRkZmVlZDA1ZjI1YjFhZjhmYWE1NGE0ZWY1MDY2MmQ1Zjk1Zjc0ZjQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImIyMzUyNTg5YzM0ZDNjNjA2ODU5MzFiNmVjYzRkNTA5OTFhN2M1NmM4ZmJhMjg5NDExNDY1NzY5MDI3MmNhYzMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImRkZGNkY2E3MDBlNjQ2OTNlYjgwZjJkZmRjY2RlOGIxYzJhMjhiNTI2YmI1MTg1YzRjNTVlZTY3YzM0MzJiMGIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjhlODBkNWYxMjFlZmI5MDc3ZDVjM2VhMzc3ZDY4MzZhZmYwZTExZjc4NWEzZWNhYTYzN2UxZWJiZjllYWNkZjIifQ"
+        },
+        {
+          "resource": "repo://e2e/sku-packaging-page.spec.ts#L74-L162",
+          "version": "repo-lines-v1:sha256:f3afb1883103a1a125959331890560737bbc464ba01f6b962fe91734ac22cb33:eyJzZWxlY3RlZExpbmVDb3VudCI6ODksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijg3YWQ5MGVmZTllZDkxYTZmOTQ0NWZlNzJjZjA3NWIyOWNhZmRmMWZjNjgyMDY5NmEzYzg3ZjFhN2ExNTAwYmEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjEyMDRjNGUyNzA0YjI5MTExMjBiYTc3MTQwMzM0ZTg5YmE5MGVkYzI1MDI5YWIxZmEwZGM2ZjdkODM1OTViNzciLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjMyZWMxMDMzZWQxMmIzNDZhZDdkMTRiNWYxMTcwYTk0MzlhODc4ZTM5YzYxNTc1NGYzMjQ0MmVmYjlhZmE1M2UifQ"
+        }
+      ]
     }
   ],
   "verification": {
     "by": "openwiki/0.4.3",
-    "at": "2026-08-30T08:47:56.434Z"
+    "at": "2026-08-31T08:47:49.410Z"
   }
 }
