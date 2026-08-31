@@ -29,6 +29,16 @@ function makePoint(week: string, overrides: Partial<FinanceSummary> = {}): Weekl
 }
 
 describe('FinanceHistoryTable', () => {
+  it('names the table and its keyboard-focusable horizontal scroll region', () => {
+    renderWithProviders(<FinanceHistoryTable points={[makePoint('2026-W10')]} />)
+
+    expect(screen.getByRole('table', { name: 'Финансовый отчёт по неделям' })).toBeInTheDocument()
+    expect(screen.getByRole('region', { name: 'Финансовый отчёт по неделям' })).toHaveAttribute(
+      'tabindex',
+      '0'
+    )
+  })
+
   it('renders a header column per week', () => {
     const points = [makePoint('2026-W09'), makePoint('2026-W10')]
     renderWithProviders(<FinanceHistoryTable points={points} />)

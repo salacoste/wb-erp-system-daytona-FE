@@ -11,6 +11,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
+import { Label } from '@/components/ui/label'
 import type { ReorderStatusFilter } from '@/types/reorder-recommendations'
 
 const STATUS_OPTIONS: { value: ReorderStatusFilter; label: string }[] = [
@@ -29,9 +30,11 @@ interface ReorderFiltersProps {
 export function ReorderFilters({ value, onChange }: ReorderFiltersProps) {
   return (
     <div className="flex items-center gap-3">
-      <span className="text-sm font-medium text-muted-foreground">Статус:</span>
+      <Label htmlFor="reorder-status" className="text-sm font-medium text-muted-foreground">
+        Статус:
+      </Label>
       <Select value={value} onValueChange={v => onChange(v as ReorderStatusFilter)}>
-        <SelectTrigger className="w-[180px]">
+        <SelectTrigger id="reorder-status" className="w-[180px]">
           <SelectValue />
         </SelectTrigger>
         <SelectContent>

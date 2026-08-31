@@ -1,15 +1,6 @@
 'use client'
 
-/**
- * FbsTrendsChart Component
- * Story 51.4-FE: FBS Trends Chart
- * Epic 51-FE: FBS Historical Analytics UI (365 Days)
- *
- * Multi-line Recharts chart showing orders, revenue, and cancellations trends.
- * Features toggle visibility for metrics, data source indicator, and custom tooltip.
- */
-
-import { useState, useCallback } from 'react'
+import { useCallback, useMemo, useState } from 'react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import {
   LineChart,
@@ -20,7 +11,7 @@ import {
   Tooltip,
   ResponsiveContainer,
 } from 'recharts'
-import { cn } from '@/lib/utils'
+import { cn, formatCurrency } from '@/lib/utils'
 import { useFbsTrends, type UseFbsTrendsOptions } from '@/hooks/useFbsAnalytics'
 import { DataSourceIndicator } from './DataSourceIndicator'
 import { FbsTrendsTooltip } from './FbsTrendsTooltip'
@@ -32,42 +23,25 @@ import {
 } from './FbsTrendsChartStates'
 import {
   formatChartDate,
+  formatNumber,
+  getAggregationLabel,
   DEFAULT_METRIC_VISIBILITY,
   CHART_LINE_COLORS,
   type MetricVisibility,
 } from '@/lib/fbs-analytics-utils'
 import type { AggregationType, FbsTrendsParams } from '@/types/fbs-analytics'
 
-// ============================================================================
-// Component Props
-// ============================================================================
-
 interface FbsTrendsChartProps {
-  /** Start date (YYYY-MM-DD) */
   from: string
-  /** End date (YYYY-MM-DD) */
   to: string
-  /** Aggregation level */
   aggregation?: AggregationType
-  /** Optional height in pixels (default: 400, min: 300) */
   height?: number
-  /** Additional class names */
   className?: string
-  /** Query options (enabled, refetchInterval) */
   queryOptions?: UseFbsTrendsOptions
 }
 
-// ============================================================================
-// Component
-// ============================================================================
+const FBS_TRENDS_TABLE_ID = 'fbs-trends-chart-data'
 
-/**
- * Multi-line chart displaying FBS order trends
- *
- * @example
- * <FbsTrendsChart from="2025-12-31" to="2026-01-29" />
- * <FbsTrendsChart from="2025-01-01" to="2025-12-31" aggregation="month" height={500} />
- */
 export function FbsTrendsChart({
   from,
   to,
@@ -79,6 +53,10 @@ export function FbsTrendsChart({
   const [visibility, setVisibility] = useState<MetricVisibility>(DEFAULT_METRIC_VISIBILITY)
   const params: FbsTrendsParams = { from, to, aggregation }
   const { data, isLoading, error, refetch } = useFbsTrends(params, queryOptions)
+  const prefersReducedMotion = useMemo(() => {
+    if (typeof window === 'undefined' || typeof window.matchMedia !== 'function') return false
+    return window.matchMedia('(prefers-reduced-motion: reduce)').matches
+  }, [])
 
   const toggleMetric = useCallback((metric: keyof MetricVisibility) => {
     setVisibility(prev => {
@@ -104,7 +82,11 @@ export function FbsTrendsChart({
       </CardHeader>
       <CardContent>
         <FbsTrendsLegend visibility={visibility} onToggle={toggleMetric} className="mb-4" />
-        <div aria-label="График динамики заказов FBS" role="img">
+        <div
+          aria-label="График динамики заказов FBS"
+          aria-describedby={FBS_TRENDS_TABLE_ID}
+          role="img"
+        >
           <ResponsiveContainer width="100%" height={chartHeight}>
             <LineChart data={data.trends} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
               <CartesianGrid strokeDasharray="3 3" stroke="#eee" />
@@ -133,6 +115,8 @@ export function FbsTrendsChart({
                   strokeWidth={2}
                   dot={false}
                   activeDot={{ r: 6 }}
+                  isAnimationActive={!prefersReducedMotion}
+                  animationDuration={prefersReducedMotion ? 0 : 300}
                 />
               )}
               {visibility.revenue && (
@@ -144,6 +128,8 @@ export function FbsTrendsChart({
                   strokeWidth={2}
                   dot={false}
                   activeDot={{ r: 6 }}
+                  isAnimationActive={!prefersReducedMotion}
+                  animationDuration={prefersReducedMotion ? 0 : 300}
                 />
               )}
               {visibility.cancellations && (
@@ -155,11 +141,34 @@ export function FbsTrendsChart({
                   strokeWidth={2}
                   dot={false}
                   activeDot={{ r: 6 }}
+                  isAnimationActive={!prefersReducedMotion}
+                  animationDuration={prefersReducedMotion ? 0 : 300}
                 />
               )}
             </LineChart>
           </ResponsiveContainer>
         </div>
+        <table id={FBS_TRENDS_TABLE_ID} className="sr-only" data-chart-summary>
+          <caption>{`Данные графика динамики заказов FBS; период: ${data.period.from} — ${data.period.to}; агрегация: ${getAggregationLabel(data.period.aggregation)}; единицы: заказы и отмены — штуки, выручка — рубли`}</caption>
+          <thead>
+            <tr>
+              <th scope="col">Дата</th>
+              {visibility.orders && <th scope="col">Заказы, шт.</th>}
+              {visibility.revenue && <th scope="col">Выручка, ₽</th>}
+              {visibility.cancellations && <th scope="col">Отмены, шт.</th>}
+            </tr>
+          </thead>
+          <tbody>
+            {data.trends.map(point => (
+              <tr key={point.date}>
+                <th scope="row">{point.date}</th>
+                {visibility.orders && <td>{formatNumber(point.ordersCount)}</td>}
+                {visibility.revenue && <td>{formatCurrency(point.revenue)}</td>}
+                {visibility.cancellations && <td>{formatNumber(point.cancellations)}</td>}
+              </tr>
+            ))}
+          </tbody>
+        </table>
       </CardContent>
     </Card>
   )

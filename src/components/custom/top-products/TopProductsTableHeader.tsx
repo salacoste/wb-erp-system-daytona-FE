@@ -27,7 +27,11 @@ function HeaderWithTooltip({
       {label}
       <Tooltip>
         <TooltipTrigger asChild>
-          <button type="button" className="inline-flex">
+          <button
+            type="button"
+            className="inline-flex"
+            aria-label={`Подробнее о столбце «${label}»`}
+          >
             <HelpCircle className="h-3 w-3 text-muted-foreground hover:text-foreground transition-colors" />
           </button>
         </TooltipTrigger>

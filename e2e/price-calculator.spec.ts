@@ -177,7 +177,7 @@ test.describe('Epic 44-FE: Price Calculator UI', () => {
       .getByText('Целевая маржа', { exact: true })
       .locator('..')
       .locator('..')
-    const marginInput = marginSection.getByLabel('Маржа')
+    const marginInput = marginSection.getByRole('spinbutton', { name: 'Маржа' })
     await expect(marginInput).toBeVisible()
 
     const slider = marginSection.getByRole('slider')
@@ -193,7 +193,7 @@ test.describe('Epic 44-FE: Price Calculator UI', () => {
       .getByText('Целевая маржа', { exact: true })
       .locator('..')
       .locator('..')
-    const marginInput = marginSection.getByLabel('Маржа')
+    const marginInput = marginSection.getByRole('spinbutton', { name: 'Маржа' })
     await expect(marginSection.getByText('Средняя', { exact: true })).toHaveCount(2)
 
     await marginInput.fill('30')

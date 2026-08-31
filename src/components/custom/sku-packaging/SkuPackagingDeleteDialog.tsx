@@ -33,6 +33,7 @@ export function SkuPackagingDeleteDialog({
   const inFlightRef = useRef(false)
   const focus = useSkuPackagingDialogFocus(returnFocusRef, successFocusRef)
   useEffect(() => {
+    if (!item) return
     focus.resetSuccessFocus()
     setApiError(null)
   }, [item?.nmId])

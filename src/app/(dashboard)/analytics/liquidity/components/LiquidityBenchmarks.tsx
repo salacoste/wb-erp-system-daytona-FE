@@ -86,7 +86,11 @@ export function LiquidityBenchmarks({ benchmarks }: LiquidityBenchmarksProps) {
               </span>
             </div>
           </div>
-          <Progress value={turnoverProgress} className="h-2" />
+          <Progress
+            value={turnoverProgress}
+            className="h-2"
+            aria-label="Выполнение цели по среднему обороту"
+          />
           <div className="flex items-center justify-between text-xs text-muted-foreground">
             <span>Быстрее = лучше</span>
             <span>Отрасль: {formatTurnoverDays(benchmarks.industry_avg_turnover)}</span>
@@ -118,6 +122,7 @@ export function LiquidityBenchmarks({ benchmarks }: LiquidityBenchmarksProps) {
           </div>
           <Progress
             value={highlyLiquidProgress}
+            aria-label="Выполнение цели по доле высоколиквидных товаров"
             className={cn(
               'h-2',
               benchmarks.highly_liquid_pct >= benchmarks.target_highly_liquid_pct
@@ -155,6 +160,7 @@ export function LiquidityBenchmarks({ benchmarks }: LiquidityBenchmarksProps) {
           </div>
           <Progress
             value={illiquidProgress}
+            aria-label="Выполнение цели по доле неликвидных товаров"
             className={cn(
               'h-2',
               benchmarks.illiquid_pct <= benchmarks.target_illiquid_pct

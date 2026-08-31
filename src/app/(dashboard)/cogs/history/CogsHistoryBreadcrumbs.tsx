@@ -14,8 +14,15 @@ interface BreadcrumbsProps {
 
 export function Breadcrumbs({ productName }: BreadcrumbsProps) {
   return (
-    <nav className="flex items-center space-x-2 text-sm text-muted-foreground mb-6">
-      <Link href="/dashboard" className="flex items-center hover:text-foreground">
+    <nav
+      className="flex items-center space-x-2 text-sm text-muted-foreground mb-6"
+      aria-label="Навигация по истории COGS"
+    >
+      <Link
+        href="/dashboard"
+        className="flex items-center hover:text-foreground"
+        aria-label="Главная"
+      >
         <Home className="h-4 w-4" />
       </Link>
       <ChevronRight className="h-4 w-4" />

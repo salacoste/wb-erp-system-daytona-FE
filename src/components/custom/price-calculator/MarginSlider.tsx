@@ -110,6 +110,7 @@ export function MarginSlider<T extends FieldValues = FieldValues>({
                 value={[value]}
                 onValueChange={values => field.onChange(values[0])}
                 className="w-full relative z-10"
+                aria-label={ariaLabel}
               />
             </div>
 

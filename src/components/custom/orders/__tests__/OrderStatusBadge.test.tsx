@@ -46,10 +46,10 @@ describe('OrderStatusBadge', () => {
 
   describe('Status Colors', () => {
     describe('new status', () => {
-      it('applies warning text color (text-status-warning)', () => {
+      it('uses readable foreground text on the warning tint', () => {
         const { container } = render(<OrderStatusBadge status="new" />)
         const badge = container.firstChild as HTMLElement
-        expect(badge.className).toContain('text-status-warning')
+        expect(badge.className).toContain('text-foreground')
       })
 
       it('applies warning background color (bg-status-warning/10)', () => {
@@ -60,10 +60,10 @@ describe('OrderStatusBadge', () => {
     })
 
     describe('confirm status', () => {
-      it('applies information text color (text-status-information)', () => {
+      it('uses readable foreground text on the information tint', () => {
         const { container } = render(<OrderStatusBadge status="confirm" />)
         const badge = container.firstChild as HTMLElement
-        expect(badge.className).toContain('text-status-information')
+        expect(badge.className).toContain('text-foreground')
       })
 
       it('applies information background color (bg-status-information/10)', () => {
@@ -74,10 +74,10 @@ describe('OrderStatusBadge', () => {
     })
 
     describe('complete status', () => {
-      it('applies success text color (text-status-success)', () => {
+      it('uses readable foreground text on the success tint', () => {
         const { container } = render(<OrderStatusBadge status="complete" />)
         const badge = container.firstChild as HTMLElement
-        expect(badge.className).toContain('text-status-success')
+        expect(badge.className).toContain('text-foreground')
       })
 
       it('applies success background color (bg-status-success/10)', () => {
@@ -88,10 +88,10 @@ describe('OrderStatusBadge', () => {
     })
 
     describe('cancel status', () => {
-      it('applies error text color (text-status-error)', () => {
+      it('uses readable foreground text on the error tint', () => {
         const { container } = render(<OrderStatusBadge status="cancel" />)
         const badge = container.firstChild as HTMLElement
-        expect(badge.className).toContain('text-status-error')
+        expect(badge.className).toContain('text-foreground')
       })
 
       it('applies error background color (bg-status-error/10)', () => {
@@ -135,7 +135,7 @@ describe('OrderStatusBadge', () => {
     it('still resolves known statuses through the guard', () => {
       expect(getSupplierStatusConfig('complete')).toEqual({
         label: 'Выполнен',
-        color: 'text-status-success',
+        color: 'text-foreground',
         bgColor: 'bg-status-success/10',
       })
     })
@@ -239,8 +239,8 @@ describe('OrderStatusBadge', () => {
     it('color contrast meets WCAG 2.1 AA standards — uses valid color classes', () => {
       const { container } = render(<OrderStatusBadge status="cancel" />)
       const badge = container.firstChild as HTMLElement
-      // Verify the semantic token classes are applied (these meet WCAG AA)
-      expect(badge.className).toContain('text-status-error')
+      // The status meaning remains in the tint while foreground text stays readable.
+      expect(badge.className).toContain('text-foreground')
       expect(badge.className).toContain('bg-status-error/10')
     })
   })
@@ -252,18 +252,18 @@ describe('OrderStatusBadge', () => {
   describe('TDD Verification', () => {
     it('should have expected status configuration', () => {
       const expectedConfig = {
-        new: { label: 'Новый', color: 'text-status-warning', bgColor: 'bg-status-warning/10' },
+        new: { label: 'Новый', color: 'text-foreground', bgColor: 'bg-status-warning/10' },
         confirm: {
           label: 'Подтверждён',
-          color: 'text-status-information',
+          color: 'text-foreground',
           bgColor: 'bg-status-information/10',
         },
         complete: {
           label: 'Выполнен',
-          color: 'text-status-success',
+          color: 'text-foreground',
           bgColor: 'bg-status-success/10',
         },
-        cancel: { label: 'Отменён', color: 'text-status-error', bgColor: 'bg-status-error/10' },
+        cancel: { label: 'Отменён', color: 'text-foreground', bgColor: 'bg-status-error/10' },
       }
 
       expect(expectedConfig.new.label).toBe('Новый')

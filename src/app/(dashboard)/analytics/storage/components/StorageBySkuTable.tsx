@@ -103,13 +103,12 @@ export function StorageBySkuTable({
 
       {/* Table with horizontal scroll region for mobile (UX Decision Q7);
           Story 169.12: keyboard-reachable scroll region + static caption (169.11 canon) */}
-      <div
-        className="overflow-x-auto border rounded-lg"
-        tabIndex={0}
-        role="region"
-        aria-label="Таблица расходов на хранение по товарам"
-      >
-        <Table className="min-w-[900px]">
+      <div className="border rounded-lg">
+        <Table
+          className="min-w-[900px]"
+          scrollContainerTabIndex={0}
+          scrollContainerAriaLabel="Таблица расходов на хранение по товарам"
+        >
           <TableCaption>Расходы на платное хранение по товарам за выбранный период</TableCaption>
           <StorageSkuTableHeader sortField={sortField} sortOrder={sortOrder} onSort={handleSort} />
           <TableBody>

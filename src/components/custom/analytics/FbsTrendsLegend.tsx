@@ -48,10 +48,10 @@ function LegendItem({ metric, label, color, isVisible, onToggle }: LegendItemPro
       }}
       className={cn(
         'flex items-center gap-2 px-3 py-1.5 rounded-md text-sm',
-        'border border-gray-200',
+        'border border-border',
         'transition-all duration-150',
         'focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-1',
-        isVisible ? 'bg-white hover:bg-gray-50' : 'bg-gray-100 opacity-60 hover:opacity-80'
+        isVisible ? 'bg-background hover:bg-muted' : 'bg-muted hover:bg-accent'
       )}
       aria-pressed={isVisible}
       aria-label={`${label}: ${isVisible ? 'показать' : 'скрыть'}`}
@@ -68,9 +68,7 @@ function LegendItem({ metric, label, color, isVisible, onToggle }: LegendItemPro
         }}
       />
       {/* Label */}
-      <span className={cn('font-medium', isVisible ? 'text-gray-900' : 'text-gray-500')}>
-        {label}
-      </span>
+      <span className="font-medium text-foreground">{label}</span>
     </button>
   )
 }

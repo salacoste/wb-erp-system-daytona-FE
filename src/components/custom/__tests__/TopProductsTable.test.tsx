@@ -61,6 +61,8 @@ describe('TopProductsTable', () => {
       render(<TopProductsTable products={mockProducts} />)
 
       expect(screen.getByText('Топ-10 товаров')).toBeInTheDocument()
+      expect(screen.getByRole('button', { name: 'Подробнее о топ-10 товарах' })).toBeVisible()
+      expect(screen.getByRole('table', { name: 'Топ-10 товаров по прибыли' })).toBeVisible()
       expect(screen.getByText('Футболка мужская')).toBeInTheDocument()
       expect(screen.getByText('Джинсы женские')).toBeInTheDocument()
       expect(screen.getByText('Куртка детская')).toBeInTheDocument()

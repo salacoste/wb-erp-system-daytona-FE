@@ -27,6 +27,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { ResponsiveChartFrame } from '@/components/custom/analytics/ResponsiveChartFrame'
 import { LiquidityTrendTooltip } from './LiquidityTrendTooltip'
 import { LiquidityDistributionTrendChart } from './LiquidityDistributionTrendChart'
+import { LiquidityTrendSummary } from './LiquidityTrendSummary'
 import {
   LIQUIDITY_TREND_COLORS,
   LIQUIDITY_TREND_LABELS,
@@ -34,7 +35,6 @@ import {
   formatTrendAxisRub,
   formatTrendAxisDays,
 } from './liquidity-trend-config'
-import { formatCurrency } from '@/lib/utils'
 import type { TrendDataPoint } from '@/types/liquidity'
 
 interface LiquidityTrendChartProps {
@@ -50,31 +50,6 @@ function usePrefersReducedMotion(): boolean {
     if (typeof window === 'undefined') return false
     return window.matchMedia('(prefers-reduced-motion: reduce)').matches
   }, [])
-}
-
-/** sr-only summary table so screen readers get the raw numbers. */
-function TrendSrSummary({ data }: { data: TrendDataPoint[] }) {
-  return (
-    <table className="sr-only">
-      <caption>Динамика ликвидности по дням</caption>
-      <thead>
-        <tr>
-          <th scope="col">Дата</th>
-          <th scope="col">Замороженный капитал</th>
-          <th scope="col">Средний оборот, дней</th>
-        </tr>
-      </thead>
-      <tbody>
-        {data.map(p => (
-          <tr key={p.date}>
-            <th scope="row">{p.date}</th>
-            <td>{formatCurrency(p.frozen_capital)}</td>
-            <td>{Math.round(p.avg_turnover_days)}</td>
-          </tr>
-        ))}
-      </tbody>
-    </table>
-  )
 }
 
 export function LiquidityTrendChart({ data, className, hideHeader }: LiquidityTrendChartProps) {
@@ -184,7 +159,7 @@ export function LiquidityTrendChart({ data, className, hideHeader }: LiquidityTr
         {/* Secondary: distribution percentages stacked area */}
         <LiquidityDistributionTrendChart data={data} prefersReducedMotion={prefersReducedMotion} />
 
-        <TrendSrSummary data={data} />
+        <LiquidityTrendSummary data={data} />
       </CardContent>
     </Card>
   )

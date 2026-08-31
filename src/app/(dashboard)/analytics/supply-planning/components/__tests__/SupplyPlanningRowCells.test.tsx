@@ -51,6 +51,8 @@ describe('VelocityCell', () => {
     const indicator = getByLabelText(/Нет данных о тренде/)
     expect(indicator).toBeInTheDocument()
     expect(indicator.textContent).toBe('—')
+    expect(indicator).toHaveClass('text-foreground')
+    expect(indicator.className).not.toMatch(/foreground\/\d+/)
     // No trend icon should be rendered — the bug coerced 'no_data' → 'stable' (lucide Minus).
     expect(container.querySelector('.lucide-minus')).toBeNull()
     expect(container.querySelector('svg')).toBeNull()

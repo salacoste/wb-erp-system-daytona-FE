@@ -69,6 +69,9 @@ describe('InstalledRuleEditor (163.3)', () => {
   it('renders the loading state', () => {
     mockUseInstalledRule.mockReturnValue(detailResult({ isLoading: true }))
     renderWithProviders(<InstalledRuleEditor ruleId="r1" />)
+    expect(
+      screen.getByRole('heading', { level: 1, name: 'Редактор установленного правила' })
+    ).toBeVisible()
     expect(screen.getByTestId('editor-loading')).toBeInTheDocument()
   })
 
@@ -76,6 +79,10 @@ describe('InstalledRuleEditor (163.3)', () => {
     mockUseInstalledRule.mockReturnValue(detailResult({ data: makeRule() }))
     renderWithProviders(<InstalledRuleEditor ruleId="r1" />)
     expect(screen.getByTestId('editor-title')).toHaveTextContent('Низкий остаток')
+    expect(screen.getByRole('heading', { level: 2, name: 'Низкий остаток' })).toBeVisible()
+    expect(
+      screen.getByRole('heading', { level: 1, name: 'Редактор установленного правила' })
+    ).toBeVisible()
     expect(screen.getByTestId('field-name')).toHaveValue('Низкий остаток')
     expect(screen.getByTestId('field-threshold')).toHaveValue('10')
   })

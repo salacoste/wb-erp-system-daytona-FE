@@ -58,6 +58,11 @@ describe('OrdersTable', () => {
   // ============================================================================
 
   describe('Column Headers', () => {
+    it('exposes an accessible table name', () => {
+      renderTable()
+      expect(screen.getByRole('table', { name: 'Детализация по заказам' })).toBeInTheDocument()
+    })
+
     it('renders Order ID column header', () => {
       renderTable()
       expect(screen.getByText('ID заказа')).toBeInTheDocument()
@@ -315,7 +320,7 @@ describe('OrdersTable', () => {
       // badge via its warning token class.
       const supplierBadges = screen
         .getAllByText('Новый')
-        .filter(el => el.className.includes('text-status-warning'))
+        .filter(el => el.className.includes('text-foreground'))
       expect(supplierBadges).toHaveLength(1)
     })
 
@@ -330,20 +335,20 @@ describe('OrdersTable', () => {
       // Story O1: operational NEW badge also shows "Новый"; filter by color.
       const badge = screen
         .getAllByText('Новый')
-        .find(el => el.className.includes('text-status-warning'))
-      expect(badge?.className).toContain('text-status-warning')
+        .find(el => el.className.includes('text-foreground'))
+      expect(badge?.className).toContain('text-foreground')
     })
 
     it('displays correct color for confirm supplier status (information)', () => {
       renderTable()
       const badge = screen.getByText('Подтверждён')
-      expect(badge.className).toContain('text-status-information')
+      expect(badge.className).toContain('text-foreground')
     })
 
     it('displays correct color for complete supplier status (success)', () => {
       renderTable()
       const badge = screen.getByText('Выполнен')
-      expect(badge.className).toContain('text-status-success')
+      expect(badge.className).toContain('text-foreground')
     })
 
     it('renders all three order rows', () => {

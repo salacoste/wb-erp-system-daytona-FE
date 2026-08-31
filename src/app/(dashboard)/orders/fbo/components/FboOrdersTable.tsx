@@ -63,8 +63,11 @@ export function FboOrdersTable({
         Всего: {totalCount.toLocaleString('ru-RU')}
       </div>
 
-      <div className="rounded-md border overflow-x-auto">
-        <Table>
+      <div className="rounded-md border">
+        <Table
+          scrollContainerTabIndex={0}
+          scrollContainerAriaLabel={captionText ?? 'Заказы FBO Wildberries'}
+        >
           {/* Story 172.15: caption names the source (RTC); spec-order above header,
               visually bottom via ui Table caption-bottom (171.9 canon). */}
           {captionText ? <TableCaption>{captionText}</TableCaption> : null}

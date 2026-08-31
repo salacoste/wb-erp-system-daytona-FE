@@ -268,6 +268,10 @@ describe('SupplyDetailPage', () => {
         const skeletons = document.querySelectorAll('.animate-pulse')
         expect(skeletons.length).toBeGreaterThan(0)
       })
+      expect(screen.getByRole('status', { name: 'Загрузка поставки' })).toHaveAttribute(
+        'aria-busy',
+        'true'
+      )
       // No supply name visible during loading
       expect(screen.queryByText('Поставка январь')).toBeNull()
     })

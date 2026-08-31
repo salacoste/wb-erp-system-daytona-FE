@@ -60,7 +60,7 @@ export function SaveConfirmDialog({
   return (
     <AlertDialog open={open} onOpenChange={handleOpenChange}>
       <AlertDialogContent
-        className="max-h-[calc(100dvh-2rem)] w-[calc(100%-2rem)] overflow-y-auto"
+        className="!left-4 !right-4 !top-4 mx-auto max-h-[calc(100dvh-2rem)] !w-auto !max-w-lg !translate-x-0 !translate-y-0 overflow-y-auto"
         onEscapeKeyDown={event => {
           if (isPending) event.preventDefault()
         }}

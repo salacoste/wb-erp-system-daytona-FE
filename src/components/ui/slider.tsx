@@ -8,18 +8,46 @@ import { cn } from '@/lib/utils'
 const Slider = React.forwardRef<
   React.ElementRef<typeof SliderPrimitive.Root>,
   React.ComponentPropsWithoutRef<typeof SliderPrimitive.Root>
->(({ className, ...props }, ref) => (
-  <SliderPrimitive.Root
-    ref={ref}
-    className={cn('relative flex w-full touch-none select-none items-center', className)}
-    {...props}
-  >
-    <SliderPrimitive.Track className="relative h-2 w-full grow overflow-hidden rounded-full bg-muted">
-      <SliderPrimitive.Range className="absolute h-full bg-primary" />
-    </SliderPrimitive.Track>
-    <SliderPrimitive.Thumb className="block h-5 w-5 cursor-grab rounded-full border-2 border-primary bg-background shadow-md outline-none transition-all hover:scale-110 hover:shadow-lg focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background active:cursor-grabbing disabled:pointer-events-none disabled:opacity-50 motion-reduce:transition-none" />
-  </SliderPrimitive.Root>
-))
+>(
+  (
+    {
+      className,
+      'aria-label': ariaLabel,
+      'aria-labelledby': ariaLabelledBy,
+      'aria-describedby': ariaDescribedBy,
+      'aria-valuetext': ariaValueText,
+      'aria-valuenow': ariaValueNow,
+      'aria-valuemin': ariaValueMin,
+      'aria-valuemax': ariaValueMax,
+      'aria-invalid': ariaInvalid,
+      'aria-required': ariaRequired,
+      ...props
+    },
+    ref
+  ) => (
+    <SliderPrimitive.Root
+      ref={ref}
+      className={cn('relative flex w-full touch-none select-none items-center', className)}
+      {...props}
+    >
+      <SliderPrimitive.Track className="relative h-2 w-full grow overflow-hidden rounded-full bg-muted">
+        <SliderPrimitive.Range className="absolute h-full bg-primary" />
+      </SliderPrimitive.Track>
+      <SliderPrimitive.Thumb
+        {...(ariaLabel === undefined ? {} : { 'aria-label': ariaLabel })}
+        {...(ariaLabelledBy === undefined ? {} : { 'aria-labelledby': ariaLabelledBy })}
+        {...(ariaDescribedBy === undefined ? {} : { 'aria-describedby': ariaDescribedBy })}
+        {...(ariaValueText === undefined ? {} : { 'aria-valuetext': ariaValueText })}
+        {...(ariaValueNow === undefined ? {} : { 'aria-valuenow': ariaValueNow })}
+        {...(ariaValueMin === undefined ? {} : { 'aria-valuemin': ariaValueMin })}
+        {...(ariaValueMax === undefined ? {} : { 'aria-valuemax': ariaValueMax })}
+        {...(ariaInvalid === undefined ? {} : { 'aria-invalid': ariaInvalid })}
+        {...(ariaRequired === undefined ? {} : { 'aria-required': ariaRequired })}
+        className="block h-5 w-5 cursor-grab rounded-full border-2 border-primary bg-background shadow-md outline-none transition-all hover:scale-110 hover:shadow-lg focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background active:cursor-grabbing disabled:pointer-events-none disabled:opacity-50 motion-reduce:transition-none"
+      />
+    </SliderPrimitive.Root>
+  )
+)
 Slider.displayName = SliderPrimitive.Root.displayName
 
 export { Slider }

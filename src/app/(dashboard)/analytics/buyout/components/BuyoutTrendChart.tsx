@@ -33,6 +33,7 @@ import {
 import { BuyoutTrendLegend } from './BuyoutTrendLegend'
 import { useBuyoutDailyTrends } from '@/hooks/use-buyout-daily'
 import { ResponsiveChartFrame } from '@/components/custom/analytics/ResponsiveChartFrame'
+import { BUYOUT_TREND_DATA_TABLE_ID, BuyoutTrendDataTable } from './BuyoutTrendDataTable'
 
 // ============================================================================
 // Line Config
@@ -110,6 +111,7 @@ export function BuyoutTrendChart({ from, to, className }: BuyoutTrendChartProps)
         {/* Chart */}
         <ResponsiveChartFrame
           label="График ежедневной динамики выкупа"
+          descriptionId={BUYOUT_TREND_DATA_TABLE_ID}
           className="h-60 md:h-70 lg:h-80"
         >
           <p className="sr-only">
@@ -167,6 +169,7 @@ export function BuyoutTrendChart({ from, to, className }: BuyoutTrendChartProps)
                   strokeWidth={LINE_CONFIG.strokeWidth}
                   dot={LINE_CONFIG.dot}
                   activeDot={LINE_CONFIG.activeDot}
+                  isAnimationActive={!prefersReducedMotion}
                   animationDuration={prefersReducedMotion ? 0 : LINE_CONFIG.animationDuration}
                   animationEasing={LINE_CONFIG.animationEasing}
                 />
@@ -174,6 +177,12 @@ export function BuyoutTrendChart({ from, to, className }: BuyoutTrendChartProps)
             </LineChart>
           </ResponsiveContainer>
         </ResponsiveChartFrame>
+        <BuyoutTrendDataTable
+          daily={daily}
+          from={data?.period.from ?? from}
+          to={data?.period.to ?? to}
+          visibleSeries={visibleSeries}
+        />
       </CardContent>
     </Card>
   )

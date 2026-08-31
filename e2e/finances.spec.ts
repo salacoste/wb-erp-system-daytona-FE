@@ -206,16 +206,11 @@ test.describe('NEW-7 — Finances page', () => {
       timeout: TIMEOUTS.api,
     })
 
-    const resetResponse = page.waitForResponse(resp => {
-      const url = new URL(resp.url())
-      return (
-        url.pathname.endsWith('/v1/finances/documents') &&
-        !url.searchParams.has('category') &&
-        Number(url.searchParams.get('offset')) === 0
-      )
-    })
     await page.getByRole('button', { name: 'Сбросить фильтры' }).click()
-    await resetResponse
+    // The unfiltered first page is still fresh in TanStack Query's 10-second
+    // cache, so reset is allowed to restore it without another network request.
+    // Assert the observable filter and row state instead of requiring a fetch.
+    await expect(page.getByLabel('Категория')).toContainText('Все категории')
     await expect(page.getByText('Платёжное поручение за январь')).toBeVisible({
       timeout: TIMEOUTS.api,
     })

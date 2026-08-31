@@ -16,13 +16,14 @@ describe('TopBrandsTableHeader', () => {
     expect(screen.getByText('Маржа')).toBeInTheDocument()
   })
 
-  it('renders tooltip icons for column headers', () => {
+  it('renders named tooltip buttons for column headers', () => {
     render(
       <table>
         <TopBrandsTableHeader />
       </table>
     )
-    const buttons = screen.getAllByRole('button')
-    expect(buttons.length).toBeGreaterThanOrEqual(4)
+    for (const label of ['Бренд', 'Выручка', 'Прибыль', 'Маржа']) {
+      expect(screen.getByRole('button', { name: `Подробнее о столбце «${label}»` })).toBeVisible()
+    }
   })
 })

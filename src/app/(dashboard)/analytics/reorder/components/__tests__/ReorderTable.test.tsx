@@ -194,9 +194,19 @@ describe('ReorderTable — semantic status chips (168.8)', () => {
       />
     )
 
+  it('exposes a named table and a keyboard-focusable horizontal scroll region', () => {
+    renderRow('pending')
+    expect(
+      screen.getByRole('table', { name: 'Рекомендации по пополнению запасов' })
+    ).toBeInTheDocument()
+    expect(
+      screen.getByRole('region', { name: 'Рекомендации по пополнению запасов' })
+    ).toHaveAttribute('tabindex', '0')
+  })
+
   it.each([
     // 168.8: exact full-class-token pins (classList.contains) — no substring false-pass
-    ['pending', 'Ожидает', 'bg-status-warning/15', 'text-status-warning'],
+    ['pending', 'Ожидает', 'bg-status-warning/15', 'text-foreground'],
     ['ordered', 'Заказано', 'bg-status-information/15', 'text-status-information'],
     ['received', 'Получено', 'bg-status-success/15', 'text-status-success'],
   ] as const)('renders %s badge with semantic classes %s/%s', (status, label, bg, text) => {

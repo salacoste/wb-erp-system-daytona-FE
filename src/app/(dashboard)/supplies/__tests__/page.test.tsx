@@ -124,7 +124,7 @@ describe('SuppliesPage', () => {
   describe('Page Header', () => {
     it('renders page title "Поставки FBS" with Package icon', () => {
       renderPage(<SuppliesPageStub />)
-      expect(screen.getByText('Поставки FBS')).toBeInTheDocument()
+      expect(screen.getByRole('heading', { level: 1, name: 'Поставки FBS' })).toBeInTheDocument()
     })
 
     it('renders subtitle "Управление поставками и отслеживание статусов"', () => {

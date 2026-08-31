@@ -12,12 +12,37 @@
  * - Color coding (green/red/gray)
  */
 
-import { describe, it, expect, vi, beforeEach } from 'vitest'
+import type { ReactNode } from 'react'
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
 import { render, screen } from '@testing-library/react'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { MarginTrendChart } from './MarginTrendChart'
 import { MarginTrendTooltip } from './margin-trend-chart/MarginTrendTooltip'
 import type { MarginTrendPoint } from '@/types/api'
+
+vi.mock('recharts', () => ({
+  ResponsiveContainer: ({ children }: { children: ReactNode }) => <div>{children}</div>,
+  LineChart: ({ children }: { children: ReactNode }) => <div>{children}</div>,
+  Line: ({
+    isAnimationActive,
+    animationDuration,
+  }: {
+    isAnimationActive?: boolean
+    animationDuration?: number
+  }) => (
+    <div
+      data-testid="margin-line"
+      data-animation-active={String(isAnimationActive)}
+      data-animation-duration={animationDuration}
+    />
+  ),
+  XAxis: () => null,
+  YAxis: () => null,
+  CartesianGrid: () => null,
+  Tooltip: () => null,
+  Legend: () => null,
+  ReferenceLine: () => null,
+}))
 
 // Mock useMarginTrends hook
 vi.mock('@/hooks/useMarginTrends', () => ({
@@ -25,6 +50,8 @@ vi.mock('@/hooks/useMarginTrends', () => ({
 }))
 
 const { useMarginTrends } = await import('@/hooks/useMarginTrends')
+
+afterEach(() => vi.unstubAllGlobals())
 
 type TrendsHookReturn = ReturnType<typeof useMarginTrends>
 
@@ -219,6 +246,41 @@ describe('MarginTrendChart', () => {
       expect(screen.getByText('Custom Title')).toBeInTheDocument()
       expect(screen.getByText('Custom Description')).toBeInTheDocument()
     })
+
+    it('ties an accessible chart name to an exact table alternative with all tooltip data', () => {
+      vi.mocked(useMarginTrends).mockReturnValue(mockTrendsHook(mockTrendData))
+
+      render(<MarginTrendChart queryParams={{ weeks: 12 }} />, { wrapper: createWrapper() })
+
+      const chart = screen.getByRole('img', { name: 'График маржинальности по неделям' })
+      const table = screen.getByRole('table', {
+        name: 'Данные графика маржинальности по неделям; период: 2025-W45 — 2025-W48; единицы: маржа — проценты, финансовые показатели — рубли, продажи и SKU — штуки',
+      })
+
+      expect(table.id).not.toBe('')
+      expect(chart).toHaveAttribute('aria-describedby', table.id)
+      expect(screen.getByRole('columnheader', { name: 'Маржа, %' })).toBeInTheDocument()
+      expect(screen.getByRole('columnheader', { name: 'Выручка, ₽' })).toBeInTheDocument()
+      expect(screen.getByRole('columnheader', { name: 'SKU без COGS, шт.' })).toBeInTheDocument()
+      expect(screen.getByRole('row', { name: /2025-W45.*35,5.*125/ })).toBeInTheDocument()
+    })
+
+    it('disables Recharts animation when reduced motion is requested', () => {
+      vi.stubGlobal(
+        'matchMedia',
+        vi.fn(() => ({
+          matches: true,
+          addEventListener: vi.fn(),
+          removeEventListener: vi.fn(),
+        }))
+      )
+      vi.mocked(useMarginTrends).mockReturnValue(mockTrendsHook(mockTrendData))
+
+      render(<MarginTrendChart queryParams={{ weeks: 12 }} />, { wrapper: createWrapper() })
+
+      expect(screen.getByTestId('margin-line')).toHaveAttribute('data-animation-active', 'false')
+      expect(screen.getByTestId('margin-line')).toHaveAttribute('data-animation-duration', '0')
+    })
   })
 
   describe('summary statistics', () => {
@@ -228,7 +290,7 @@ describe('MarginTrendChart', () => {
       render(<MarginTrendChart queryParams={{ weeks: 12 }} />, { wrapper: createWrapper() })
 
       expect(screen.getByText('Недель')).toBeInTheDocument()
-      expect(screen.getByText('4')).toBeInTheDocument()
+      expect(screen.getByText('4', { selector: 'p' })).toBeInTheDocument()
     })
 
     it('should calculate and display average margin', () => {
@@ -249,7 +311,7 @@ describe('MarginTrendChart', () => {
 
       expect(screen.getByText('Макс. маржа')).toBeInTheDocument()
       // Max: 35.5%
-      const maxMargin = screen.getByText(/35/)
+      const maxMargin = screen.getByText(/35/, { selector: 'p' })
       expect(maxMargin).toBeInTheDocument()
       // 168.10 exact pin: semantic financial token
       expect(maxMargin.closest('p')?.classList.contains('text-financial-positive')).toBe(true)
@@ -262,7 +324,7 @@ describe('MarginTrendChart', () => {
 
       expect(screen.getByText('Мин. маржа')).toBeInTheDocument()
       // Min: -5.5%
-      const minMargin = screen.getByText(/-5/)
+      const minMargin = screen.getByText(/-5/, { selector: 'p' })
       expect(minMargin).toBeInTheDocument()
       // 168.10 exact pin: semantic financial token
       expect(minMargin.closest('p')?.classList.contains('text-financial-negative')).toBe(true)

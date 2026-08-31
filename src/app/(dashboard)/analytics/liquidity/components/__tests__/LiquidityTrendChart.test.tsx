@@ -125,6 +125,14 @@ describe('LiquidityTrendChart', () => {
     expect(sr).toBeTruthy()
     expect(sr?.querySelector('caption')?.textContent).toContain('Динамика ликвидности')
     expect(sr?.querySelectorAll('tbody tr').length).toBe(data.length)
+    for (const label of [
+      'Высоколиквидные',
+      'Средняя ликвидность',
+      'Низкая ликвидность',
+      'Неликвид',
+    ]) {
+      expect(screen.getByRole('columnheader', { name: label })).toBeInTheDocument()
+    }
   })
 
   it('AC2: renders ONLY the BE-provided points — no synthesized days (90 in -> 90 sr rows)', () => {

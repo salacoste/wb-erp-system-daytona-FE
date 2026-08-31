@@ -20,6 +20,7 @@ import { CustomTooltip, WaterfallLegend } from './WaterfallTooltip'
 import { useWaterfallData } from './useWaterfallData'
 import { computeWaterfallYDomain } from './waterfall-chart-utils'
 import { ResponsiveChartFrame } from '@/components/custom/analytics/ResponsiveChartFrame'
+import { UnitEconomicsWaterfallSummary } from './UnitEconomicsWaterfallSummary'
 
 /**
  * Unit Economics Waterfall Chart
@@ -125,7 +126,10 @@ export function UnitEconomicsWaterfall({
           isCollapsed ? 'h-0 py-0' : 'h-auto'
         )}
       >
-        <ResponsiveChartFrame label="График структуры затрат" className="h-[320px]">
+        <ResponsiveChartFrame
+          label={`График структуры затрат: ${chartTitle}`}
+          className="h-[320px]"
+        >
           <ResponsiveContainer
             width="100%"
             height="100%"
@@ -170,6 +174,8 @@ export function UnitEconomicsWaterfall({
             </BarChart>
           </ResponsiveContainer>
         </ResponsiveChartFrame>
+
+        <UnitEconomicsWaterfallSummary title={chartTitle} data={waterfallData} />
 
         {/* Legend */}
         <WaterfallLegend items={legendItems} />

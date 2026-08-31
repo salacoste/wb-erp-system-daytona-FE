@@ -4,7 +4,14 @@
  */
 
 import type { FinanceSummary } from '@/hooks/useDashboard'
-import { Table, TableBody, TableHead, TableHeader, TableRow } from '@/components/ui/table'
+import {
+  Table,
+  TableBody,
+  TableCaption,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { MetricRow } from './MetricRow'
 
@@ -31,6 +38,7 @@ export function CompensationsSection({
       </CardHeader>
       <CardContent>
         <Table>
+          <TableCaption className="sr-only">Компенсации</TableCaption>
           <TableHeader>
             <TableRow>
               <TableHead className="w-[300px]">Показатель</TableHead>

@@ -6,7 +6,7 @@
  * @see docs/stories/epic-51/story-51.4-fe-fbs-trends-chart.md
  */
 
-import { describe, it, expect, beforeEach, vi } from 'vitest'
+import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest'
 import { screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { FbsTrendsChart } from '../FbsTrendsChart'
@@ -21,6 +21,8 @@ import {
   LINE_COLORS,
 } from '@/test/fixtures/fbs-trends'
 import type { TrendsResponse } from '@/types/fbs-analytics'
+
+afterEach(() => vi.unstubAllGlobals())
 
 vi.mock('recharts', () => {
   const React = require('react')
@@ -41,12 +43,16 @@ vi.mock('recharts', () => {
       type,
       dot,
       yAxisId,
+      isAnimationActive,
+      animationDuration,
     }: {
       dataKey: string
       stroke: string
       type: string
       dot: boolean
       yAxisId: string
+      isAnimationActive?: boolean
+      animationDuration?: number
     }) => (
       <div
         data-testid={`line-${dataKey}`}
@@ -54,6 +60,8 @@ vi.mock('recharts', () => {
         data-type={type}
         data-dot={String(dot)}
         data-yaxis={yAxisId}
+        data-animation-active={String(isAnimationActive)}
+        data-animation-duration={animationDuration}
       />
     ),
     XAxis: ({ dataKey, tickFormatter: _tf }: { dataKey: string; tickFormatter?: unknown }) => (
@@ -618,6 +626,38 @@ describe('FbsTrendsChart - Accessibility', () => {
     expect(screen.getByRole('img', { name: /График динамики заказов FBS/ })).toBeInTheDocument()
   })
 
+  it('ties the chart to an exact named data table with period, units, series, and values', () => {
+    renderChart()
+
+    const chart = screen.getByRole('img', { name: 'График динамики заказов FBS' })
+    const table = screen.getByRole('table', {
+      name: 'Данные графика динамики заказов FBS; период: 2025-12-31 — 2026-01-29; агрегация: По дням; единицы: заказы и отмены — штуки, выручка — рубли',
+    })
+
+    expect(table.id).not.toBe('')
+    expect(chart).toHaveAttribute('aria-describedby', table.id)
+    expect(screen.getByRole('columnheader', { name: 'Дата' })).toBeInTheDocument()
+    expect(screen.getByRole('columnheader', { name: 'Заказы, шт.' })).toBeInTheDocument()
+    expect(screen.getByRole('columnheader', { name: 'Выручка, ₽' })).toBeInTheDocument()
+    expect(screen.getByRole('row', { name: /2025-12-31.*40/ })).toBeInTheDocument()
+  })
+
+  it('disables Recharts animation when reduced motion is requested', () => {
+    vi.stubGlobal(
+      'matchMedia',
+      vi.fn(() => ({
+        matches: true,
+        addEventListener: vi.fn(),
+        removeEventListener: vi.fn(),
+      }))
+    )
+
+    renderChart()
+
+    expect(screen.getByTestId('line-ordersCount')).toHaveAttribute('data-animation-active', 'false')
+    expect(screen.getByTestId('line-ordersCount')).toHaveAttribute('data-animation-duration', '0')
+  })
+
   it('makes legend items keyboard accessible via buttons', () => {
     renderChart()
     const legendButtons = screen.getAllByRole('button').filter(b => b.dataset.metric !== undefined)
@@ -635,7 +675,10 @@ describe('FbsTrendsChart - Accessibility', () => {
   it('has aria-pressed state for legend buttons', () => {
     renderChart()
     expect(screen.getByRole('button', { name: /Заказы/ })).toHaveAttribute('aria-pressed', 'true')
-    expect(screen.getByRole('button', { name: /Отмены/ })).toHaveAttribute('aria-pressed', 'false')
+    const hiddenMetric = screen.getByRole('button', { name: /Отмены/ })
+    expect(hiddenMetric).toHaveAttribute('aria-pressed', 'false')
+    expect(hiddenMetric).not.toHaveClass('opacity-60')
+    expect(hiddenMetric.querySelector('.font-medium')).toHaveClass('text-foreground')
   })
 
   it('has descriptive labels for toggle buttons', () => {

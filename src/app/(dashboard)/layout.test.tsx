@@ -169,6 +169,7 @@ describe('DashboardLayout Story 167.1 shell contract', () => {
 
     expect(skipLink).toBeInTheDocument()
     expect(main).toHaveAttribute('id', 'main-content')
+    expect(main).toHaveAttribute('tabindex', '0')
     expect(screen.getByRole('banner')).toBeInTheDocument()
     expect(screen.getByRole('complementary', { name: 'Desktop navigation' })).toBeInTheDocument()
     expect(screen.getByText('Protected report')).toBeInTheDocument()

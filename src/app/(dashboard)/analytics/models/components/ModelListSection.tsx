@@ -9,7 +9,6 @@
  */
 
 import { useState, useEffect, type ReactNode } from 'react'
-import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { useAiModels } from '@/hooks/useAiModels'
 import { getModelTypeLabel } from '@/types/ai/forecast'
@@ -50,8 +49,6 @@ function ModelsPageShell({ children }: { children: ReactNode }) {
 }
 
 export function ModelListSection() {
-  const router = useRouter()
-
   // AC-5: poll only when any model is 'training'.
   // shouldPoll is derived from data after each fetch and stored in state so the
   // polling-on/off transition is explicit and testable (F-1 fix: replaces useRef pattern).
@@ -130,20 +127,15 @@ export function ModelListSection() {
                 const badge = STATUS_BADGE_CONFIG[model.status]
                 const dest = buildModelPerformanceRoute(model.id)
                 return (
-                  <TableRow
-                    key={model.id}
-                    className="cursor-pointer hover:bg-muted/50 focus:ring-2 focus:ring-ring focus:outline-none"
-                    role="button"
-                    tabIndex={0}
-                    onClick={() => router.push(dest)}
-                    onKeyDown={e => {
-                      if (e.key === 'Enter' || e.key === ' ') {
-                        e.preventDefault()
-                        router.push(dest)
-                      }
-                    }}
-                  >
-                    <TableCell>{getModelTypeLabel(model.modelType)}</TableCell>
+                  <TableRow key={model.id} className="hover:bg-muted/50">
+                    <TableCell>
+                      <Link
+                        href={dest}
+                        className="font-medium underline-offset-4 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                      >
+                        {getModelTypeLabel(model.modelType)}
+                      </Link>
+                    </TableCell>
                     <TableCell>{ENGINE_LABELS[model.engine]}</TableCell>
                     <TableCell className="tabular-nums">v{model.version}</TableCell>
                     <TableCell>

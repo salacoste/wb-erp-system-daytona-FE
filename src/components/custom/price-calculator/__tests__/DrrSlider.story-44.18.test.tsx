@@ -323,21 +323,21 @@ describe('Story 44.18: DRR Input (Advertising Percentage Slider)', () => {
     it('should have aria-label on slider', () => {
       render(<DrrSlider value={5} onChange={mockOnChange} />)
 
-      const slider = screen.getByTestId('drr-slider')
+      const slider = screen.getByRole('slider')
       expect(slider).toHaveAttribute('aria-label', 'DRR (Доля рекламных расходов)')
     })
 
     it('should have aria-valuenow on slider', () => {
       render(<DrrSlider value={10} onChange={mockOnChange} />)
 
-      const slider = screen.getByTestId('drr-slider')
+      const slider = screen.getByRole('slider')
       expect(slider).toHaveAttribute('aria-valuenow', '10')
     })
 
     it('should have aria-valuemin and aria-valuemax', () => {
       render(<DrrSlider value={5} onChange={mockOnChange} />)
 
-      const slider = screen.getByTestId('drr-slider')
+      const slider = screen.getByRole('slider')
       expect(slider).toHaveAttribute('aria-valuemin', '0')
       expect(slider).toHaveAttribute('aria-valuemax', '50')
     })
@@ -345,7 +345,7 @@ describe('Story 44.18: DRR Input (Advertising Percentage Slider)', () => {
     it('should have aria-valuetext with level', () => {
       render(<DrrSlider value={5} onChange={mockOnChange} />)
 
-      const slider = screen.getByTestId('drr-slider')
+      const slider = screen.getByRole('slider')
       expect(slider).toHaveAttribute('aria-valuetext', '5% - Умеренный')
     })
 

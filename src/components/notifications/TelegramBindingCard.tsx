@@ -133,7 +133,9 @@ export function TelegramBindingCard({
               </div>
 
               {status.telegram_username ? (
-                <p className="text-sm text-muted-foreground">@{status.telegram_username}</p>
+                <p className="break-all text-sm text-muted-foreground">
+                  @{status.telegram_username}
+                </p>
               ) : (
                 <p className="text-sm text-muted-foreground">@Kernel_crypto_bot</p>
               )}

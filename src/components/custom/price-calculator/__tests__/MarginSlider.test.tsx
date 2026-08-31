@@ -96,5 +96,14 @@ describe('MarginSlider', () => {
       const input = screen.getByRole('spinbutton')
       expect(input).toHaveAttribute('type', 'number')
     })
+
+    it('exposes the required slider value attributes without caller-supplied ARIA values', () => {
+      renderMarginSlider({ min: 10, max: 90 })
+
+      const slider = screen.getByRole('slider', { name: 'Маржа' })
+      expect(slider).toHaveAttribute('aria-valuenow', '50')
+      expect(slider).toHaveAttribute('aria-valuemin', '10')
+      expect(slider).toHaveAttribute('aria-valuemax', '90')
+    })
   })
 })

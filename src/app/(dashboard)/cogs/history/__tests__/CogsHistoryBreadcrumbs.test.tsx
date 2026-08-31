@@ -26,7 +26,7 @@ describe('Breadcrumbs', () => {
 
   it('renders home link', () => {
     renderWithProviders(<Breadcrumbs />)
-    const homeLink = screen.getByRole('link', { name: '' })
+    const homeLink = screen.getByRole('link', { name: 'Главная' })
     expect(homeLink).toBeInTheDocument()
     expect(homeLink).toHaveAttribute('href', '/dashboard')
   })

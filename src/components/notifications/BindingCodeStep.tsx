@@ -74,12 +74,12 @@ export function BindingCodeStep({
       {/* Deep Link Button */}
       <Button
         variant="outline"
-        className="w-full border-telegram/40 text-telegram hover:bg-telegram/10 hover:text-telegram"
+        className="w-full border-telegram/40 text-foreground hover:bg-telegram/10 hover:text-foreground"
         size="lg"
         onClick={handleOpenTelegram}
         aria-label="Открыть в Telegram"
       >
-        <Send className="h-5 w-5" />
+        <Send className="h-5 w-5 text-telegram" />
         Открыть в Telegram
       </Button>
 

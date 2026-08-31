@@ -81,6 +81,14 @@ describe('BulkCogsForm - marginRecalculation UI', () => {
       expect(screen.getByText('Product 1')).toBeInTheDocument()
       expect(screen.getByText('87654321')).toBeInTheDocument()
       expect(screen.getByText('Product 2')).toBeInTheDocument()
+      expect(
+        screen.getByRole('table', { name: 'Товары без назначенной себестоимости' })
+      ).toBeInTheDocument()
+      expect(
+        screen.getByRole('region', { name: 'Товары без назначенной себестоимости' })
+      ).toHaveAttribute('tabindex', '0')
+      expect(screen.getByRole('checkbox', { name: 'Выбрать все' })).toBeInTheDocument()
+      expect(screen.getByRole('checkbox', { name: 'Выбрать 12345678' })).toBeInTheDocument()
     })
   })
 })

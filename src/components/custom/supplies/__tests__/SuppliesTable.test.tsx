@@ -74,6 +74,11 @@ describe('SuppliesTable', () => {
     vi.clearAllMocks()
   })
 
+  it('exposes the live table with a stable accessible name', () => {
+    renderTable()
+    expect(screen.getByRole('table', { name: 'Поставки FBS' })).toBeInTheDocument()
+  })
+
   // ============================================================================
   // 1. Column Headers Tests (AC4)
   // ============================================================================

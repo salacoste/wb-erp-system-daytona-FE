@@ -155,7 +155,11 @@ describe('Sidebar', () => {
 
     renderSidebar()
 
-    expect(within(screen.getByRole('link', { name: /Планирование/ })).getByText('7')).toBeVisible()
+    const badge = within(screen.getByRole('link', { name: /Планирование/ })).getByText('7')
+
+    expect(badge).toBeVisible()
+    expect(badge).toHaveClass('bg-destructive', 'text-destructive-foreground')
+    expect(badge).not.toHaveClass('text-white')
   })
 
   it('renders logout button', { timeout: 5000 }, () => {

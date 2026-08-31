@@ -50,7 +50,7 @@ export function SupplyDetailSkeleton() {
     <div className="space-y-6">
       <SupplyDetailRouteHeader busy />
 
-      <div aria-label="Загрузка поставки" aria-busy="true" className="space-y-4">
+      <div role="status" aria-label="Загрузка поставки" aria-busy="true" className="space-y-4">
         <div className="flex items-center gap-3">
           <Skeleton className="h-8 w-64" />
           <Skeleton className="h-6 w-24" />

@@ -52,7 +52,7 @@ export function UnitEconomicsTablePagination({
             <div className="flex items-center gap-2">
               <span className="text-sm text-muted-foreground">Строк:</span>
               <Select value={String(pageSize)} onValueChange={onPageSizeChange}>
-                <SelectTrigger className="h-8 w-[70px]">
+                <SelectTrigger className="h-8 w-[70px]" aria-label="Количество строк на странице">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
@@ -73,6 +73,7 @@ export function UnitEconomicsTablePagination({
                 className="h-8 w-8 p-0"
                 onClick={() => onPageChange(Math.max(1, currentPage - 1))}
                 disabled={currentPage === 1}
+                aria-label="Предыдущая страница"
               >
                 <ChevronLeft className="h-4 w-4" />
               </Button>
@@ -85,6 +86,7 @@ export function UnitEconomicsTablePagination({
                 className="h-8 w-8 p-0"
                 onClick={() => onPageChange(Math.min(totalPages, currentPage + 1))}
                 disabled={currentPage === totalPages}
+                aria-label="Следующая страница"
               >
                 <ChevronRight className="h-4 w-4" />
               </Button>

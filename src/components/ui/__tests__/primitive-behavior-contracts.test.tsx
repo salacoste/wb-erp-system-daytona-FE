@@ -185,13 +185,19 @@ describe('primitive behavior contracts', () => {
   })
 
   it('gives the Slider thumb a visible semantic focus treatment', () => {
-    render(<Slider defaultValue={[40]} />)
+    render(<Slider defaultValue={[40]} aria-label="Target margin" aria-valuetext="40 percent" />)
 
-    expect(screen.getByRole('slider')).toHaveClass(
+    const thumb = screen.getByRole('slider', { name: 'Target margin' })
+    expect(thumb).toHaveAttribute('aria-valuetext', '40 percent')
+    expect(thumb).toHaveAttribute('aria-valuenow', '40')
+    expect(thumb).toHaveAttribute('aria-valuemin', '0')
+    expect(thumb).toHaveAttribute('aria-valuemax', '100')
+    expect(thumb).toHaveClass(
       'focus-visible:ring-2',
       'focus-visible:ring-ring',
       'focus-visible:ring-offset-2'
     )
+    expect(screen.getByRole('slider').parentElement).not.toHaveAttribute('aria-label')
   })
 
   it('preserves disabled semantics for native Button', () => {

@@ -9,10 +9,17 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
-import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { formatDistanceToNow } from 'date-fns'
 import { ru } from 'date-fns/locale'
 import type { UnitEconomicsViewBy } from '@/types/unit-economics'
+import { cn } from '@/lib/utils'
+
+const VIEW_OPTIONS: Array<{ value: UnitEconomicsViewBy; label: string }> = [
+  { value: 'sku', label: 'SKU' },
+  { value: 'category', label: 'Категория' },
+  { value: 'brand', label: 'Бренд' },
+  { value: 'total', label: 'Итого' },
+]
 
 /**
  * Unit Economics Page Header
@@ -75,22 +82,30 @@ export function UnitEconomicsHeader({
         </Select>
 
         {/* View Toggle */}
-        <Tabs value={viewBy} onValueChange={onViewByChange} className="hidden md:block">
-          <TabsList className="h-9" aria-label="Группировка данных">
-            <TabsTrigger value="sku" className="text-xs px-3">
-              SKU
-            </TabsTrigger>
-            <TabsTrigger value="category" className="text-xs px-3">
-              Категория
-            </TabsTrigger>
-            <TabsTrigger value="brand" className="text-xs px-3">
-              Бренд
-            </TabsTrigger>
-            <TabsTrigger value="total" className="text-xs px-3">
-              Итого
-            </TabsTrigger>
-          </TabsList>
-        </Tabs>
+        <div
+          role="radiogroup"
+          aria-label="Группировка данных"
+          className="hidden h-9 items-center justify-center rounded-lg bg-muted p-1 text-muted-foreground md:flex"
+        >
+          {VIEW_OPTIONS.map(option => {
+            const selected = viewBy === option.value
+            return (
+              <button
+                key={option.value}
+                type="button"
+                role="radio"
+                aria-checked={selected}
+                onClick={() => onViewByChange(option.value)}
+                className={cn(
+                  'inline-flex items-center justify-center whitespace-nowrap rounded-md px-3 py-1 text-xs font-medium ring-offset-background transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2',
+                  selected && 'bg-background text-foreground shadow'
+                )}
+              >
+                {option.label}
+              </button>
+            )
+          })}
+        </div>
 
         {/* Refresh Button */}
         <Button

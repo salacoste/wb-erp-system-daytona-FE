@@ -102,6 +102,12 @@ describe('CannibalizationSection', () => {
     // row[0] = thead, row[1] = first data row (highest spend)
     expect(rows[1]).toHaveTextContent('222')
     expect(rows[2]).toHaveTextContent('111')
+
+    expect(screen.getByRole('region', { name: 'Риск каннибализации рекламы' })).toHaveAttribute(
+      'tabindex',
+      '0'
+    )
+    expect(screen.getByRole('table', { name: 'Таблица риска каннибализации' })).toBeInTheDocument()
   })
 
   // --------------------------------------------------------------------------

@@ -52,7 +52,7 @@ export function LiquidityTable({
 
   return (
     <>
-      <Card>
+      <Card className="min-w-0">
         <CardHeader className="pb-2">
           <h2 className="sr-only">Детализация по ликвидности</h2>
           <div className="flex items-center justify-between">
@@ -70,8 +70,8 @@ export function LiquidityTable({
             <span className="text-sm text-muted-foreground">{data.length} товаров</span>
           </div>
         </CardHeader>
-        <CardContent className="p-0">
-          <div className="overflow-x-auto">
+        <CardContent className="min-w-0 p-0">
+          <div className="max-w-full overflow-x-auto">
             {/* Static caption: the period is visible in the trends preset controls
                 (30/60/90 дн.) — 169.7 picker precedent; no duplicated period text. */}
             <Table

@@ -12,10 +12,12 @@
 import { formatCurrency } from './storage-format'
 import type { StorageTrendPoint } from '@/types/storage-analytics'
 
+export const STORAGE_TREND_DATA_TABLE_ID = 'storage-trend-data-table'
+
 export function StorageTrendSrTable({ data }: { data: StorageTrendPoint[] }) {
   if (data.length === 0) return null
   return (
-    <table className="sr-only">
+    <table id={STORAGE_TREND_DATA_TABLE_ID} className="sr-only" data-chart-summary>
       <caption>
         Данные о расходах на платное хранение по неделям. Расходы — рубли; недели без начислений
         отмечены как «нет данных».

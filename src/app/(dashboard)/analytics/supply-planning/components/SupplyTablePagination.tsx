@@ -47,7 +47,9 @@ export function SupplyTablePagination({
       {/* Results count */}
       <div className="text-sm text-muted-foreground">
         Показано {startIndex + 1}–{endIndex} из {totalItems} товаров
-        {activeFilter && <span className="ml-1 text-muted-foreground">(фильтр: {activeFilter})</span>}
+        {activeFilter && (
+          <span className="ml-1 text-muted-foreground">(фильтр: {activeFilter})</span>
+        )}
       </div>
 
       {/* Pagination controls */}
@@ -56,7 +58,7 @@ export function SupplyTablePagination({
         <div className="flex items-center gap-2">
           <span className="text-sm text-muted-foreground">На странице:</span>
           <Select value={String(pageSize)} onValueChange={onPageSizeChange}>
-            <SelectTrigger className="w-[70px] h-8">
+            <SelectTrigger className="w-[70px] h-8" aria-label="Товаров на странице">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>

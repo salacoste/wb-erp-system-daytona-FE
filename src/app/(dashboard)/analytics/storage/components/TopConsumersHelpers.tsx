@@ -76,7 +76,7 @@ export function CostSeverityDot({ ratio }: { ratio: number | null }) {
             )}
             <span
               className={cn('w-2 h-2 rounded-full flex-shrink-0', colors[severity])}
-              aria-label={labels[severity]}
+              aria-hidden="true"
             />
           </div>
         </TooltipTrigger>

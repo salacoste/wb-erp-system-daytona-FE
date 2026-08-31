@@ -53,6 +53,8 @@ describe('TopBrandsTable', () => {
       render(<TopBrandsTable brands={mockBrands} />)
 
       expect(screen.getByText('Топ-5 брендов')).toBeInTheDocument()
+      expect(screen.getByRole('button', { name: 'Подробнее о топ-5 брендах' })).toBeVisible()
+      expect(screen.getByRole('table', { name: 'Топ-5 брендов по прибыли' })).toBeVisible()
       expect(screen.getByText('Nike')).toBeInTheDocument()
       expect(screen.getByText('Adidas')).toBeInTheDocument()
       expect(screen.getByText('Puma')).toBeInTheDocument()

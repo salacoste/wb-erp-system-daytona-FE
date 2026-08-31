@@ -14,7 +14,14 @@
  */
 
 import { useState, useMemo } from 'react'
-import { Table, TableBody, TableHead, TableHeader, TableRow } from '@/components/ui/table'
+import {
+  Table,
+  TableBody,
+  TableCaption,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table'
 import { ArrowUp, ArrowDown, ArrowUpDown } from 'lucide-react'
 import type { SkuFinancialItem } from '@/types/sku-financials'
 import { getTotalOperatingExpenses } from '@/types/sku-financials'
@@ -114,6 +121,7 @@ export function SkuFinancialsTable({
   return (
     <div className="rounded-md border overflow-x-auto">
       <Table className="sticky-first-column">
+        <TableCaption className="sr-only">Маржинальность по товарам</TableCaption>
         <TableHeader>
           <TableRow>
             <TableHead className="w-[100px]">Код WB</TableHead>

@@ -12,6 +12,7 @@
  */
 
 import AxeBuilder from '@axe-core/playwright'
+import type { Locator } from '@playwright/test'
 import { test, expect, type Page } from './fixtures/network-test'
 import { TIMEOUTS, ROUTES } from './fixtures/test-data'
 
@@ -59,6 +60,25 @@ async function expectDocumentHasNoHorizontalOverflow(page: Page) {
     scrollWidth: document.documentElement.scrollWidth,
   }))
   expect(dimensions.scrollWidth).toBeLessThanOrEqual(dimensions.clientWidth + 1)
+}
+
+async function expectContainedInViewport(page: Page, locator: Locator) {
+  const viewport = page.viewportSize()
+  if (!viewport) throw new Error('A fixed viewport is required for containment evidence')
+
+  await expect
+    .poll(async () => {
+      const box = await locator.boundingBox()
+      if (!box) return Number.POSITIVE_INFINITY
+      return Math.max(
+        0,
+        -box.x,
+        -box.y,
+        box.x + box.width - viewport.width,
+        box.y + box.height - viewport.height
+      )
+    })
+    .toBeLessThanOrEqual(1)
 }
 
 async function expectSettingsAxeClean(page: Page, context: string) {
@@ -375,7 +395,7 @@ async function installTaxApiFixture(
     releaseFirstPut: () => releaseFirstPut(),
   }
 
-  await page.route('**/v1/cabinets/**', async route => {
+  await page.route(/^https?:\/\/[^/]+\/v1\/cabinets\/[^/]+\/?$/, async route => {
     const request = route.request()
     const pathname = new URL(request.url()).pathname
     if (!/^\/v1\/cabinets\/[^/]+\/?$/.test(pathname)) {
@@ -744,14 +764,7 @@ test.describe('Settings Pages', () => {
         await editAcceptanceRateWithKeyboard(page, '2.75')
         const dialog = await openTariffSaveDialog(page)
         await expect(dialog).toBeVisible()
-        const viewport = page.viewportSize()
-        const box = await dialog.boundingBox()
-        expect(viewport).not.toBeNull()
-        expect(box).not.toBeNull()
-        expect(box!.x).toBeGreaterThanOrEqual(0)
-        expect(box!.y).toBeGreaterThanOrEqual(0)
-        expect(box!.x + box!.width).toBeLessThanOrEqual(viewport!.width + 1)
-        expect(box!.y + box!.height).toBeLessThanOrEqual(viewport!.height + 1)
+        await expectContainedInViewport(page, dialog)
       })
     }
   })
@@ -954,14 +967,7 @@ test.describe('Settings Pages', () => {
         await expect(dialog).toBeVisible()
         await expectMainHasNoHorizontalOverflow(page)
         await expectDocumentHasNoHorizontalOverflow(page)
-        const viewport = page.viewportSize()
-        const box = await dialog.boundingBox()
-        expect(viewport).not.toBeNull()
-        expect(box).not.toBeNull()
-        expect(box!.x).not.toBeLessThan(0)
-        expect(box!.y).not.toBeLessThan(0)
-        expect(box!.x + box!.width).toBeLessThanOrEqual(viewport!.width + 1)
-        expect(box!.y + box!.height).toBeLessThanOrEqual(viewport!.height + 1)
+        await expectContainedInViewport(page, dialog)
       })
     }
   })

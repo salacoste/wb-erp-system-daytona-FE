@@ -141,14 +141,14 @@ test.describe('Unit Economics — Story 162.5 deterministic synchronization', ()
 
   test('changes aggregation view through an exact request and visible marker', async ({ page }) => {
     const { controller, week } = await openUnitEconomics(page)
-    const categoryTab = page.getByRole('tab', { name: 'Категория' })
+    const categoryOption = page.getByRole('radio', { name: 'Категория' })
     const changed = page.waitForResponse(response =>
       matchesUnitEconomicsResponse(response, queryFor(week, { view_by: 'category' }))
     )
-    await categoryTab.click()
+    await categoryOption.click()
     await changed
 
-    await expect(categoryTab).toHaveAttribute('data-state', 'active')
+    await expect(categoryOption).toHaveAttribute('aria-checked', 'true')
     await expectUnitEconomicsData(page, new RegExp(`UE ${week} category revenue desc`))
     await expect(page.getByText('Показано 1–4 из 4 записей', { exact: true })).toBeVisible()
     controller.assertNoUnexpectedRequests()

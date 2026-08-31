@@ -9,7 +9,14 @@
 
 'use client'
 
-import { Table, TableBody, TableHeader, TableRow, TableHead } from '@/components/ui/table'
+import {
+  Table,
+  TableBody,
+  TableCaption,
+  TableHeader,
+  TableRow,
+  TableHead,
+} from '@/components/ui/table'
 import { TooltipProvider } from '@/components/ui/tooltip'
 import { ChevronUp, ChevronDown, ChevronsUpDown } from 'lucide-react'
 import { cn } from '@/lib/utils'
@@ -95,6 +102,7 @@ export function SuppliesTable({
     <TooltipProvider>
       <div className="rounded-md border overflow-x-auto">
         <Table>
+          <TableCaption className="sr-only">Поставки FBS</TableCaption>
           <TableHeader>
             <TableRow>
               {COLUMNS.map(col => (

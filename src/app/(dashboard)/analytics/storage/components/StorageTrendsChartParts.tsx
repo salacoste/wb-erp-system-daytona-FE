@@ -23,9 +23,9 @@ export function TrendBadge({ trend }: { trend: number }) {
   // financial-positive; matched /15 tint pairs, both-theme safe (Story 169.12,
   // replacing light-only red/green/gray-50 pairs; 169.10 AA foreground lesson).
   const colorClass = isPositive
-    ? 'text-financial-negative bg-financial-negative/15'
+    ? 'text-foreground bg-financial-negative/15'
     : isNegative
-      ? 'text-financial-positive bg-financial-positive/15'
+      ? 'text-foreground bg-financial-positive/15'
       : 'text-muted-foreground bg-muted'
 
   const Icon = isPositive ? TrendingUp : isNegative ? TrendingDown : Minus

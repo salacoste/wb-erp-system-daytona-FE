@@ -130,8 +130,8 @@ export function FbsStockRegionsSection() {
             </div>
           )}
 
-          <div className="rounded-md border overflow-x-auto">
-            <Table>
+          <div className="rounded-md border">
+            <Table scrollContainerTabIndex={0} scrollContainerAriaLabel="Остатки FBS по регионам">
               <TableCaption>Остатки FBS по регионам</TableCaption>
               <TableHeader>
                 <TableRow>

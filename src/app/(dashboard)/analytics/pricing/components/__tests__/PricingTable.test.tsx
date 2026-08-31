@@ -4,6 +4,8 @@
  */
 
 import { describe, it, expect } from 'vitest'
+import { readFileSync } from 'node:fs'
+import { join } from 'node:path'
 import { renderWithProviders, screen } from '@/test/utils/test-utils'
 import { PricingTable } from '../PricingTable'
 import { emptyPriceRecommendation } from '@/test/fixtures/price-recommendations-empty'
@@ -21,6 +23,26 @@ function item(overrides: Partial<PriceRecommendation> = {}): PriceRecommendation
 }
 
 describe('PricingTable — SPP-1.7 basis badge', () => {
+  it('exposes a named keyboard-focusable horizontal scroll region', () => {
+    renderWithProviders(<PricingTable items={[item()]} isLoading={false} />)
+
+    const region = screen.getByRole('region', { name: 'Рекомендации по ценам' })
+    expect(region).toHaveAttribute('tabindex', '0')
+    expect(screen.getByRole('table', { name: 'Рекомендации по ценам' })).toBeInTheDocument()
+  })
+
+  it('keeps the elasticity table in one named keyboard-focusable scroll region', () => {
+    const source = readFileSync(
+      join(process.cwd(), 'src/app/(dashboard)/analytics/pricing/components/ElasticitySection.tsx'),
+      'utf8'
+    )
+
+    expect(source).toMatch(/scrollContainerTabIndex=\{0\}/)
+    expect(source).toMatch(/scrollContainerAriaLabel="Эластичность цен по товарам"/)
+    expect(source).toMatch(/<TableCaption className="sr-only">Эластичность цен по товарам/)
+    expect(source).not.toMatch(/className="rounded-md border overflow-x-auto"/)
+  })
+
   it('renders the seller basis badge next to the current price', () => {
     renderWithProviders(<PricingTable items={[item()]} isLoading={false} />)
     expect(screen.getByText('Продавец')).toBeInTheDocument()
@@ -106,9 +128,10 @@ describe('PricingTable — 168.6 semantic tokens', () => {
     expect(span.classList.contains('text-financial-negative')).toBe(false)
   })
 
-  it('MarginCell pins status-warning/80 for 0 <= value < 15 (exact class, 3-tier preserved)', () => {
+  it('MarginCell uses the AA foreground for 0 <= value < 15 while preserving the 3-tier threshold', () => {
     const span = marginCellFor(10)
-    expect(span.classList.contains('text-status-warning/80')).toBe(true)
+    expect(span.classList.contains('text-foreground')).toBe(true)
+    expect(span.classList.contains('text-status-warning/80')).toBe(false)
     expect(span.classList.contains('text-financial-positive')).toBe(false)
     expect(span.classList.contains('text-financial-negative')).toBe(false)
   })

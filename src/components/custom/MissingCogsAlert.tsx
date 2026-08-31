@@ -125,7 +125,7 @@ export function MissingCogsAlert({
             asChild
             variant="outline"
             size="sm"
-            className="whitespace-nowrap border-yellow-400 text-yellow-800 hover:bg-yellow-100"
+            className="whitespace-nowrap border-status-warning text-foreground hover:bg-status-warning/10"
           >
             <Link href={`${ROUTES.COGS.ROOT}?has_cogs=false`}>
               Назначить COGS

@@ -78,6 +78,22 @@ function makeBenchmarks(overrides: Partial<LiquidityBenchmarks> = {}): Liquidity
 }
 
 describe('LiquidityBenchmarks — 169.10 status chip', () => {
+  it('names every benchmark progress indicator', () => {
+    render(<LiquidityBenchmarksSection benchmarks={makeBenchmarks()} />)
+
+    expect(
+      screen.getByRole('progressbar', { name: 'Выполнение цели по среднему обороту' })
+    ).toBeVisible()
+    expect(
+      screen.getByRole('progressbar', {
+        name: 'Выполнение цели по доле высоколиквидных товаров',
+      })
+    ).toBeVisible()
+    expect(
+      screen.getByRole('progressbar', { name: 'Выполнение цели по доле неликвидных товаров' })
+    ).toBeVisible()
+  })
+
   it('renders the chip with a color-mix status-token tint and no legacy text classes', () => {
     const { container } = render(<LiquidityBenchmarksSection benchmarks={makeBenchmarks()} />)
     expect(screen.getByText('Отлично')).toBeInTheDocument()

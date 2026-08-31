@@ -28,7 +28,7 @@ export function MoyskladHealthBadge() {
         variant={configured ? 'secondary' : 'outline'}
         className={cn(
           configured
-            ? 'border-status-success/40 bg-status-success/10 text-status-success'
+            ? 'border-status-success/40 bg-status-success/10 text-foreground'
             : 'border-destructive/30 text-destructive'
         )}
       >

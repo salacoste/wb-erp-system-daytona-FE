@@ -56,6 +56,7 @@ export function useUpdateTaxSettings(cabinetId: string) {
   const queryClient = useQueryClient()
 
   return useMutation({
+    retry: false,
     mutationFn: (data: UpdateCabinetTaxRequest) => updateCabinetTaxSettings(cabinetId, data),
 
     onSuccess: updatedCabinet => {

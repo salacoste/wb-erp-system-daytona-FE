@@ -18,7 +18,7 @@
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-MONOREPO_ROOT="$(cd "$SCRIPT_DIR/../.." && pwd)"
+REPO_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
 
 # Colors
 RED='\033[0;31m'
@@ -34,7 +34,7 @@ usage() {
 
 load_known_rules() {
   local rules
-  rules=$(cd "$MONOREPO_ROOT" && npx eslint --print-config frontend/src/app/page.tsx 2>/dev/null \
+  rules=$(cd "$REPO_ROOT" && npx eslint --print-config src/app/page.tsx 2>/dev/null \
     | node -e "
       const chunks = [];
       process.stdin.on('data', c => chunks.push(c));
@@ -44,7 +44,7 @@ load_known_rules() {
       });
     ")
   if [[ -z "$rules" ]]; then
-    rules=$(cd "$MONOREPO_ROOT" && node -e "
+    rules=$(cd "$REPO_ROOT" && node -e "
       const eslint = require('eslint');
       const linter = new eslint.Linter();
       process.stdout.write([...linter.getRules().keys()].join('\n'));
@@ -149,7 +149,7 @@ self_test() {
 
   # Test 5: flat-config extraction should capture @typescript-eslint rules
   local flat_rules
-  flat_rules=$(extract_flat_config_rules "$MONOREPO_ROOT/eslint.config.js")
+  flat_rules=$(extract_flat_config_rules "$REPO_ROOT/eslint.config.js")
   if echo "$flat_rules" | grep -q "@typescript-eslint/no-explicit-any"; then
     echo "  [PASS] Test 5: flat-config extraction captures @typescript-eslint rules"
     ((pass++))
@@ -292,7 +292,7 @@ if [[ -f "$eslintrc" ]]; then
 fi
 
 # --- Validate eslint.config.js (flat config, enforcement path) ---
-flat_config="$MONOREPO_ROOT/eslint.config.js"
+flat_config="$REPO_ROOT/eslint.config.js"
 if [[ -f "$flat_config" ]]; then
   checked_files=$((checked_files + 1))
   flat_rules=$(extract_flat_config_rules "$flat_config")

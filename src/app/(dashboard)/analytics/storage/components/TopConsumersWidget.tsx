@@ -5,6 +5,7 @@ import { ChevronRight, HelpCircle, PackageX, Calendar } from 'lucide-react'
 import {
   Table,
   TableBody,
+  TableCaption,
   TableCell,
   TableHead,
   TableHeader,
@@ -73,7 +74,11 @@ export function TopConsumersWidget({
 
   return (
     <div className="space-y-3">
-      <Table>
+      <Table
+        scrollContainerTabIndex={0}
+        scrollContainerAriaLabel="Топ товаров по расходам на хранение"
+      >
+        <TableCaption className="sr-only">Топ товаров по расходам на хранение</TableCaption>
         <TableHeader>
           <TableRow>
             <TableHead className="w-[50px]">

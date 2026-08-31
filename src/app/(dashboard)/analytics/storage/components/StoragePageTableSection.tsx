@@ -52,9 +52,7 @@ export function StoragePageTableSection({
             </Alert>
           ) : null}
           {(!topConsumersError || (topConsumers ?? []).length > 0) && (
-            <div className="overflow-x-auto">
-              <TopConsumersWidget data={topConsumers ?? []} isLoading={isLoadingTopConsumers} />
-            </div>
+            <TopConsumersWidget data={topConsumers ?? []} isLoading={isLoadingTopConsumers} />
           )}
         </CardContent>
       </Card>
@@ -74,9 +72,7 @@ export function StoragePageTableSection({
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="overflow-x-auto">
-            <StorageBySkuTable data={bySkuData?.data ?? []} isLoading={isLoadingBySku} />
-          </div>
+          <StorageBySkuTable data={bySkuData?.data ?? []} isLoading={isLoadingBySku} />
         </CardContent>
       </Card>
     </>

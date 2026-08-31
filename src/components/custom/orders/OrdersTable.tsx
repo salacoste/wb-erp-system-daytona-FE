@@ -142,7 +142,7 @@ export function OrdersTable({
   return (
     <div className="rounded-md border overflow-x-auto">
       <h2 className="sr-only">Детализация по заказам</h2>
-      <Table>
+      <Table aria-label="Детализация по заказам">
         <TableHeader>
           <TableRow>
             {columns.map(col => (

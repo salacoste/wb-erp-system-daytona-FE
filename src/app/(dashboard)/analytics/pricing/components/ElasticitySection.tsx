@@ -9,7 +9,14 @@ import { useState, useCallback } from 'react'
 import { Activity } from 'lucide-react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Skeleton } from '@/components/ui/skeleton'
-import { Table, TableBody, TableHead, TableHeader, TableRow } from '@/components/ui/table'
+import {
+  Table,
+  TableBody,
+  TableCaption,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table'
 import { usePriceElasticityBatch } from '@/hooks/usePriceElasticity'
 import { formatNumber } from '@/lib/utils'
 import { ElasticityConfidence } from '@/types/price-elasticity'
@@ -111,8 +118,9 @@ export function ElasticitySection() {
         </div>
 
         {/* Expandable per-SKU table */}
-        <div className="rounded-md border overflow-x-auto">
-          <Table>
+        <div className="rounded-md border">
+          <Table scrollContainerTabIndex={0} scrollContainerAriaLabel="Эластичность цен по товарам">
+            <TableCaption className="sr-only">Эластичность цен по товарам</TableCaption>
             <TableHeader>
               <TableRow>
                 <TableHead className="w-8" />

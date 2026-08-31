@@ -5,6 +5,7 @@ import { Checkbox } from '@/components/ui/checkbox'
 import {
   Table,
   TableBody,
+  TableCaption,
   TableCell,
   TableHead,
   TableHeader,
@@ -45,8 +46,12 @@ export function BulkCogsProductTable({
   return (
     <>
       {/* Product List with Checkboxes */}
-      <div className="rounded-md border overflow-x-auto">
-        <Table>
+      <div className="rounded-md border">
+        <Table
+          scrollContainerTabIndex={0}
+          scrollContainerAriaLabel="Товары без назначенной себестоимости"
+        >
+          <TableCaption className="sr-only">Товары без назначенной себестоимости</TableCaption>
           <TableHeader>
             <TableRow>
               <TableHead className="w-[50px]">

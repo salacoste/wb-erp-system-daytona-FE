@@ -1,5 +1,6 @@
 'use client'
 
+import { useMemo } from 'react'
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
 import { useMarginTrends, type MarginTrendsQueryParams } from '@/hooks/useMarginTrends'
 import {
@@ -23,6 +24,10 @@ import {
 } from './margin-trend-chart/margin-trend-utils'
 import { MarginTrendTooltip } from './margin-trend-chart/MarginTrendTooltip'
 import { MarginTrendSummary } from './margin-trend-chart/MarginTrendSummary'
+import {
+  MARGIN_TREND_DATA_TABLE_ID,
+  MarginTrendDataTable,
+} from './margin-trend-chart/MarginTrendDataTable'
 import {
   MarginTrendLoading,
   MarginTrendError,
@@ -52,6 +57,10 @@ export function MarginTrendChart({
 }: MarginTrendChartProps) {
   const queryClient = useQueryClient()
   const { data, isLoading, error, refetch } = useMarginTrends(queryParams)
+  const prefersReducedMotion = useMemo(() => {
+    if (typeof window === 'undefined' || typeof window.matchMedia !== 'function') return false
+    return window.matchMedia('(prefers-reduced-motion: reduce)').matches
+  }, [])
 
   const handleRetry = () => {
     queryClient.invalidateQueries({ queryKey: ['analytics', 'margin-trends'] })
@@ -86,54 +95,77 @@ export function MarginTrendChart({
         <CardDescription>{description}</CardDescription>
       </CardHeader>
       <CardContent>
-        <ResponsiveContainer width="100%" height={height}>
-          <LineChart data={data} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
-            <CartesianGrid strokeDasharray="3 3" stroke="var(--color-border)" />
-            <XAxis
-              dataKey="week"
-              tickFormatter={formatWeekLabel}
-              angle={-45}
-              textAnchor="end"
-              height={80}
-              tick={{ fontSize: 12 }}
-            />
-            <YAxis
-              domain={yDomain}
-              tickFormatter={formatMarginAxis}
-              tick={{ fontSize: 12 }}
-              label={{ value: 'Маржа (%)', angle: -90, position: 'insideLeft' }}
-            />
-            <Tooltip content={<MarginTrendTooltip />} />
-            <Legend formatter={() => 'Маржа (%)'} />
-            <ReferenceLine
-              y={0}
-              stroke="var(--color-chart-reference)"
-              strokeDasharray="3 3"
-              strokeWidth={1}
-            />
-            <Line
-              type="monotone"
-              dataKey="margin_pct"
-              stroke="var(--color-chart-1)"
-              strokeWidth={2}
-              name="Маржа (%)"
-              dot={(props: { cx?: number; cy?: number; payload?: MarginTrendPoint }) => {
-                const { cx, cy, payload } = props
-                if (cx === undefined || cy === undefined || !payload || payload.margin_pct === null)
-                  return null
-                const color = getMarginDotColor(payload.margin_pct)
-                return <circle cx={cx} cy={cy} r={4} fill={color} stroke={color} strokeWidth={1} />
-              }}
-              activeDot={(props: { cx?: number; cy?: number; payload?: MarginTrendPoint }) => {
-                const { cx, cy, payload } = props
-                if (cx === undefined || cy === undefined || !payload || payload.margin_pct === null)
-                  return null
-                const color = getMarginDotColor(payload.margin_pct)
-                return <circle cx={cx} cy={cy} r={6} fill={color} stroke={color} strokeWidth={2} />
-              }}
-            />
-          </LineChart>
-        </ResponsiveContainer>
+        <div
+          role="img"
+          aria-label="График маржинальности по неделям"
+          aria-describedby={MARGIN_TREND_DATA_TABLE_ID}
+        >
+          <ResponsiveContainer width="100%" height={height}>
+            <LineChart data={data} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
+              <CartesianGrid strokeDasharray="3 3" stroke="var(--color-border)" />
+              <XAxis
+                dataKey="week"
+                tickFormatter={formatWeekLabel}
+                angle={-45}
+                textAnchor="end"
+                height={80}
+                tick={{ fontSize: 12 }}
+              />
+              <YAxis
+                domain={yDomain}
+                tickFormatter={formatMarginAxis}
+                tick={{ fontSize: 12 }}
+                label={{ value: 'Маржа (%)', angle: -90, position: 'insideLeft' }}
+              />
+              <Tooltip content={<MarginTrendTooltip />} />
+              <Legend formatter={() => 'Маржа (%)'} />
+              <ReferenceLine
+                y={0}
+                stroke="var(--color-chart-reference)"
+                strokeDasharray="3 3"
+                strokeWidth={1}
+              />
+              <Line
+                type="monotone"
+                dataKey="margin_pct"
+                stroke="var(--color-chart-1)"
+                strokeWidth={2}
+                name="Маржа (%)"
+                dot={(props: { cx?: number; cy?: number; payload?: MarginTrendPoint }) => {
+                  const { cx, cy, payload } = props
+                  if (
+                    cx === undefined ||
+                    cy === undefined ||
+                    !payload ||
+                    payload.margin_pct === null
+                  )
+                    return null
+                  const color = getMarginDotColor(payload.margin_pct)
+                  return (
+                    <circle cx={cx} cy={cy} r={4} fill={color} stroke={color} strokeWidth={1} />
+                  )
+                }}
+                activeDot={(props: { cx?: number; cy?: number; payload?: MarginTrendPoint }) => {
+                  const { cx, cy, payload } = props
+                  if (
+                    cx === undefined ||
+                    cy === undefined ||
+                    !payload ||
+                    payload.margin_pct === null
+                  )
+                    return null
+                  const color = getMarginDotColor(payload.margin_pct)
+                  return (
+                    <circle cx={cx} cy={cy} r={6} fill={color} stroke={color} strokeWidth={2} />
+                  )
+                }}
+                isAnimationActive={!prefersReducedMotion}
+                animationDuration={prefersReducedMotion ? 0 : 300}
+              />
+            </LineChart>
+          </ResponsiveContainer>
+        </div>
+        <MarginTrendDataTable data={data} />
         <MarginTrendSummary
           weeksCount={data.length}
           hasMarginData={hasMarginData}

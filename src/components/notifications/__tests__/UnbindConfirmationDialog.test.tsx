@@ -35,6 +35,22 @@ describe('UnbindConfirmationDialog', () => {
     mocks.isUnbinding = false
   })
 
+  it('overrides the centered primitive geometry for narrow and zoomed viewports', () => {
+    render(<UnbindConfirmationDialog open onOpenChange={vi.fn()} onConfirm={vi.fn()} />)
+
+    expect(screen.getByRole('alertdialog', { name: 'Отключить Telegram?' })).toHaveClass(
+      '!left-4',
+      '!right-4',
+      '!top-4',
+      '!w-auto',
+      '!max-w-[480px]',
+      '!translate-x-0',
+      '!translate-y-0',
+      'max-h-[calc(100dvh-2rem)]',
+      'overflow-y-auto'
+    )
+  })
+
   it('keeps the controlled dialog open while the async unbind is pending', async () => {
     const user = userEvent.setup()
     const onOpenChange = vi.fn()

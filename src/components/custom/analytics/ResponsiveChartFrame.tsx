@@ -1,6 +1,6 @@
 'use client'
 
-import type { AriaRole, ReactNode } from 'react'
+import type { AriaRole, CSSProperties, ReactNode } from 'react'
 import { cn } from '@/lib/utils'
 
 interface ResponsiveChartFrameProps {
@@ -8,10 +8,13 @@ interface ResponsiveChartFrameProps {
   className?: string
   /** Accessible label for informational charts. If omitted, no image role is applied. */
   label?: string
+  /** ID of the exact semantic data alternative describing the chart. */
+  descriptionId?: string
   /** Override when a chart should use different semantics than the default informational image. */
   role?: AriaRole
   /** Override the default positive minimum height without coupling callers to wrapper internals. */
   minHeightClassName?: string
+  style?: CSSProperties
 }
 
 /**
@@ -23,8 +26,10 @@ export function ResponsiveChartFrame({
   children,
   className,
   label,
+  descriptionId,
   role,
   minHeightClassName = 'min-h-[240px]',
+  style,
 }: ResponsiveChartFrameProps) {
   const resolvedRole = role ?? (label ? 'img' : undefined)
 
@@ -32,6 +37,8 @@ export function ResponsiveChartFrame({
     <div
       role={resolvedRole}
       aria-label={label}
+      aria-describedby={descriptionId}
+      style={style}
       className={cn(
         'relative w-full [&_.recharts-responsive-container]:min-h-[inherit]',
         minHeightClassName,

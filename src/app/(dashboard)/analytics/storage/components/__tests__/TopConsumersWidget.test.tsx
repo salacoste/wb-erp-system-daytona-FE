@@ -91,35 +91,35 @@ describe('TopConsumersWidget', () => {
   describe('cost severity indicators', () => {
     it('colors ratio >20% red (high)', () => {
       // First item in mockTopConsumerItems has ratio 26.25 (> 20%)
-      render(<TopConsumersWidget data={mockTopConsumerItems} />)
+      const { container } = render(<TopConsumersWidget data={mockTopConsumerItems} />)
 
       // Should have a red severity dot
-      const highSeverityDot = screen.getByLabelText('Высокие затраты')
+      const highSeverityDot = container.querySelector('.bg-status-error[aria-hidden="true"]')
       expect(highSeverityDot).toHaveClass('bg-status-error')
     })
 
     it('colors ratio 10-20% yellow (medium)', () => {
       // Second item has ratio 12.5 (10-20%)
-      render(<TopConsumersWidget data={mockTopConsumerItems} />)
+      const { container } = render(<TopConsumersWidget data={mockTopConsumerItems} />)
 
-      const mediumSeverityDot = screen.getByLabelText('Средние затраты')
+      const mediumSeverityDot = container.querySelector('.bg-status-warning[aria-hidden="true"]')
       expect(mediumSeverityDot).toHaveClass('bg-status-warning')
     })
 
     it('colors ratio <10% green (low)', () => {
       // Third item has ratio 5.94 (< 10%)
-      render(<TopConsumersWidget data={mockTopConsumerItems} />)
+      const { container } = render(<TopConsumersWidget data={mockTopConsumerItems} />)
 
-      const lowSeverityDots = screen.getAllByLabelText('Низкие затраты')
+      const lowSeverityDots = container.querySelectorAll('.bg-status-success[aria-hidden="true"]')
       expect(lowSeverityDots.length).toBeGreaterThan(0)
       expect(lowSeverityDots[0]).toHaveClass('bg-status-success')
     })
 
     it('handles null ratio gracefully (unknown)', () => {
       // Fourth item has null ratio
-      render(<TopConsumersWidget data={mockTopConsumerItems} />)
+      const { container } = render(<TopConsumersWidget data={mockTopConsumerItems} />)
 
-      const unknownSeverityDot = screen.getByLabelText('Нет данных')
+      const unknownSeverityDot = container.querySelector('.bg-muted[aria-hidden="true"]')
       expect(unknownSeverityDot).toHaveClass('bg-muted')
     })
   })
@@ -203,15 +203,32 @@ describe('TopConsumersWidget', () => {
 describe('TopConsumersWidget - Story 169.12 migration contracts', () => {
   it('tri-state: false → «Нет на складе» (warning), null → «—», true → neither', () => {
     const data = [
-      { ...mockTopConsumerItems[0], nm_id: '1', vendor_code: 'NO-STOCK', rank: 1, has_warehouse_stock: false },
-      { ...mockTopConsumerItems[1], nm_id: '2', vendor_code: 'NULL-STOCK', rank: 2, has_warehouse_stock: null },
-      { ...mockTopConsumerItems[2], nm_id: '3', vendor_code: 'TRUE-STOCK', rank: 3, has_warehouse_stock: true },
+      {
+        ...mockTopConsumerItems[0],
+        nm_id: '1',
+        vendor_code: 'NO-STOCK',
+        rank: 1,
+        has_warehouse_stock: false,
+      },
+      {
+        ...mockTopConsumerItems[1],
+        nm_id: '2',
+        vendor_code: 'NULL-STOCK',
+        rank: 2,
+        has_warehouse_stock: null,
+      },
+      {
+        ...mockTopConsumerItems[2],
+        nm_id: '3',
+        vendor_code: 'TRUE-STOCK',
+        rank: 3,
+        has_warehouse_stock: true,
+      },
     ]
     render(<TopConsumersWidget data={data} />)
 
     const rows = screen.getAllByRole('row')
-    const rowByCode = (code: string) =>
-      rows.find(r => r.textContent?.includes(code)) as HTMLElement
+    const rowByCode = (code: string) => rows.find(r => r.textContent?.includes(code)) as HTMLElement
 
     const noStockRow = rowByCode('NO-STOCK')
     expect(noStockRow.textContent).toContain('Нет на складе')
@@ -228,14 +245,15 @@ describe('TopConsumersWidget - Story 169.12 migration contracts', () => {
   })
 
   it('severity tier-collapse guard: 3 distinct status dots + muted neutral (Set size)', () => {
-    render(<TopConsumersWidget data={mockTopConsumerItems} />)
+    const { container } = render(<TopConsumersWidget data={mockTopConsumerItems} />)
     const dots = [
-      screen.getByLabelText('Высокие затраты'),
-      screen.getByLabelText('Средние затраты'),
-      screen.getAllByLabelText('Низкие затраты')[0],
-      screen.getByLabelText('Нет данных'),
+      container.querySelector('.bg-status-error[aria-hidden="true"]'),
+      container.querySelector('.bg-status-warning[aria-hidden="true"]'),
+      container.querySelector('.bg-status-success[aria-hidden="true"]'),
+      container.querySelector('.bg-muted[aria-hidden="true"]'),
     ]
-    const tokenClasses = dots.map(d => d.className.split(' ').find(c => c.startsWith('bg-')))
+    expect(dots.every(Boolean)).toBe(true)
+    const tokenClasses = dots.map(d => d?.className.split(' ').find(c => c.startsWith('bg-')))
     expect(new Set(tokenClasses).size).toBe(4) // error + warning + success + muted
     expect(tokenClasses).toContain('bg-status-error')
     expect(tokenClasses).toContain('bg-status-warning')

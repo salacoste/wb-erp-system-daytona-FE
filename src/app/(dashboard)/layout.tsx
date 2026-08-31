@@ -112,7 +112,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         {/* Page Content - overscroll-contain prevents elastic scrolling artifacts */}
         <main
           id="main-content"
-          tabIndex={-1}
+          tabIndex={0}
           className="flex-1 overflow-y-auto bg-muted/50 overscroll-y-contain"
         >
           <div className="p-4 lg:p-6">{children}</div>

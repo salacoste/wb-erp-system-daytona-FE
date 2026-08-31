@@ -171,6 +171,10 @@ describe('FbsStockSizesSection (Story 96.11-FE)', () => {
     renderWithProviders(<FbsStockSizesSection />)
     const caption = screen.getByText('Остатки FBS по размерам')
     expect(caption.tagName).toBe('CAPTION')
+    expect(screen.getByRole('region', { name: 'Остатки FBS по размерам' })).toHaveAttribute(
+      'tabindex',
+      '0'
+    )
   })
 
   it('169.7: numeric cells carry tabular-nums; nmId ID column stays mono WITHOUT tabular-nums', () => {

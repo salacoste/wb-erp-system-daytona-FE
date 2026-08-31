@@ -284,9 +284,11 @@ describe('StorageBySkuTable - Story 169.12 migration contracts', () => {
     expect(
       screen.getByText('Расходы на платное хранение по товарам за выбранный период')
     ).toBeInTheDocument()
-    expect(
-      screen.getByRole('region', { name: 'Таблица расходов на хранение по товарам' })
-    ).toBeInTheDocument()
+    const regions = screen.getAllByRole('region', {
+      name: 'Таблица расходов на хранение по товарам',
+    })
+    expect(regions).toHaveLength(1)
+    expect(regions[0]).toHaveAttribute('tabindex', '0')
   })
 
   it('uses tabular-nums on numeric cells but NOT on the font-mono nmId cell', () => {

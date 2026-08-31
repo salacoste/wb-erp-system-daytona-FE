@@ -173,6 +173,13 @@ describe('SkuRow — competitor parity FR-2..FR-5 display (#219)', () => {
 
 // 168.9 pass-2: semantic-token DOM pins over the migrated tree (exact classList)
 describe('SkuFinancialsTable tree — 168.9 semantic tokens', () => {
+  it('exposes the live table with a stable accessible name', () => {
+    render(
+      <SkuFinancialsTable data={[makeItem()]} showExpenseBreakdown={false} showVisibility={false} />
+    )
+    expect(screen.getByRole('table', { name: 'Маржинальность по товарам' })).toBeInTheDocument()
+  })
+
   it('missingCogs row gets bg-status-warning/10 tint (exact classList)', () => {
     const { container } = render(
       <SkuFinancialsTable

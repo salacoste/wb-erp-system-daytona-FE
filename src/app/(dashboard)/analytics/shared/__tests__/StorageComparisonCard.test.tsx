@@ -18,12 +18,14 @@ describe('StorageComparisonCard — divergence tolerance', () => {
   })
 
   it('flags a diff at/above the 3% tolerance', () => {
-    render(
+    const { container } = render(
       <StorageComparisonCard
-        data={{ storage: 110_000, storage_weekly_report: 100_000, storage_difference: 10_000 }}
+        data={{ storage: 90_000, storage_weekly_report: 100_000, storage_difference: -10_000 }}
       />
     )
     expect(screen.getByText('Расхождение')).toBeInTheDocument()
+    expect(screen.getByText('-10 000 ₽')).toHaveClass('text-foreground')
+    expect(container.querySelector('.text-status-warning.font-bold')).not.toBeInTheDocument()
   })
 
   it('shows "—" (not a fabricated "0 ₽") and no warning when the weekly report is null', () => {

@@ -12,6 +12,7 @@ import { Fragment } from 'react'
 import {
   Table,
   TableBody,
+  TableCaption,
   TableCell,
   TableHead,
   TableHeader,
@@ -58,8 +59,13 @@ export function FinanceHistoryTable({ points }: FinanceHistoryTableProps): React
   }
 
   return (
-    <div className="overflow-x-auto rounded-lg border">
-      <Table className="min-w-[640px]">
+    <div className="rounded-lg border">
+      <Table
+        className="min-w-[640px]"
+        scrollContainerTabIndex={0}
+        scrollContainerAriaLabel="Финансовый отчёт по неделям"
+      >
+        <TableCaption className="sr-only">Финансовый отчёт по неделям</TableCaption>
         <TableHeader className="sticky top-0 z-10">
           <TableRow className="hover:bg-muted">
             <TableHead

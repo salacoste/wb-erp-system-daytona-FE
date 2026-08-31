@@ -69,6 +69,12 @@ describe('MonitorMetricsTable', () => {
     expect(screen.getByText('Расходы')).toBeInTheDocument()
     expect(screen.getByText('Маржа')).toBeInTheDocument()
     expect(screen.getByText('Возвраты')).toBeInTheDocument()
+    expect(
+      screen.getByRole('region', { name: 'Сводная таблица метрик за 4 периода' })
+    ).toHaveAttribute('tabindex', '0')
+    expect(
+      screen.getByRole('table', { name: 'Сводная таблица метрик за 4 периода' })
+    ).toBeInTheDocument()
   })
 
   it('renders "—" for null revenue in any period (null-vs-zero discipline)', () => {

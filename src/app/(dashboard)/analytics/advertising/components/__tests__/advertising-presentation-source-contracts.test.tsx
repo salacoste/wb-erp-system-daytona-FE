@@ -219,6 +219,14 @@ describe('Story 170.1 route presentation source contracts', () => {
     expect(DEFAULT_DAILY_VISIBLE).not.toContain('roas')
   })
 
+  it('keeps inactive daily-trend legend controls contrast-safe without opacity dimming', () => {
+    const legend = readFileSync(join(componentsDirectory, 'DailyTrendLegend.tsx'), 'utf8')
+
+    expect(legend).toContain("isVisible ? 'bg-transparent' : 'bg-muted'")
+    expect(legend).toContain('text-foreground')
+    expect(legend).not.toMatch(/opacity-(?:[0-9]|\[)/)
+  })
+
   it('discrepancy layers: 3 categorical chart tokens in layer order', () => {
     expect(AD_COST_LAYERS.map(l => l.color)).toEqual([
       'var(--color-chart-1)',
@@ -309,7 +317,10 @@ describe('Story 170.1 route presentation source contracts', () => {
     )
     expect(perfTable).toMatch(/<TableCaption>/)
     expect(mergedTable).toMatch(/<TableCaption>/)
-    expect(perfTable).toMatch(/role="region"/)
+    expect(perfTable).toMatch(/scrollContainerTabIndex=\{0\}/)
+    expect(perfTable).toMatch(
+      /scrollContainerAriaLabel="Таблица рекламных метрик — горизонтальная прокрутка"/
+    )
     expect(mergedTable).toMatch(/role="region"/)
     expect(perfTable).toMatch(/tabular-nums/)
     // SKU/nmId identifiers keep font-mono (169.7 pin — mono WITHOUT tabular)
@@ -320,6 +331,14 @@ describe('Story 170.1 route presentation source contracts', () => {
     const monoLine = cannibalization.split('\n').find(line => line.includes('font-mono'))
     expect(monoLine, 'font-mono nmId line present').toBeDefined()
     expect(monoLine).not.toMatch(/tabular-nums/)
+  })
+
+  it('grouping controls use toggle-group semantics rather than an invalid tablist', () => {
+    const main = withoutComments(
+      readFileSync(join(componentsDirectory, 'AdvertisingMainContent.tsx'), 'utf8')
+    )
+    expect(main).toMatch(/role="group"/)
+    expect(main).not.toMatch(/role="tablist"/)
   })
 
   it('EfficiencyBadge renders unknown tier muted (visible-unknown, preface #218/#226)', () => {
