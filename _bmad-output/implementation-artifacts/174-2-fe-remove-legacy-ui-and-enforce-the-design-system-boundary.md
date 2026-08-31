@@ -3,8 +3,8 @@
 **Status**: done (2026-08-31)
 **Plan**: `.omx/plans/174.2-remove-legacy-ui-and-enforce-the-design-system-boundary.md`
 **Branch**: `cdx/epic-174-story-2-legacy-enforcement` · **Worktree**: `/private/tmp/wb-repricer-fe-174-2-legacy-enforcement`
-**Base SHA**: `fbdab2da` (Story 174.1 closeout merge, PR #370)
-**Feature PR**: #372 · **Feature SHA**: (recorded post-commit) · **Merge SHA**: (recorded post-merge)
+**Base SHA**: `fbdab2da` (Story 174.1 closeout merge, PR #370; rebased atop `e7d438ce` = 174.1 lifecycle PR #371 before merge)
+**Feature PR**: #372 · **Feature SHA**: `b043e193` · **Merge SHA**: `862d45a1` (reachable from main; exact branch/ref/worktree cleanup proved — remote+local branch absent, worktree removed, prune ran)
 
 ## Prerequisites
 
