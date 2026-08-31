@@ -1,15 +1,31 @@
 ---
 type: "Engineering Standards"
 title: "Conventions & Quality Gates"
-description: "Coding standards and automated quality gates — file-size limits, TypeScript strictness, the Defensive Frontend Principle, the presentation-source-contract test pattern, ratchet baseline gates, and the two-pass review discipline."
+description: "Coding standards and automated quality gates — file-size limits, TypeScript strictness, the Defensive Frontend Principle, the presentation-source-contract test pattern, ratchet baseline gates (incl. the shadcn UI-boundary and migration-parity validators), and the two-pass review discipline."
 tags: [conventions, quality-gates, testing, eslint, review-discipline, presentation-contracts]
 verified:
   - by: openwiki/0.4.3
-    at: 2026-08-30T08:47:56.434Z
+    at: 2026-08-31T08:47:49.410Z
 sources:
   - id: openwiki-source-a2371d6362e5db4bc834ad03
     resource: repo://CLAUDE.md
-generated: { by: "openwiki/0.4.3", at: "2026-08-30T08:47:56.434Z" }
+  - id: openwiki-source-5b54a58d1b51cd490b0e7162
+    resource: repo://package.json
+  - id: openwiki-source-7bebebc56a12d016856c32cc
+    resource: repo://scripts/__tests__/check-shadcn-ui-boundary.test.mjs
+  - id: openwiki-source-63d46e41978bcf9c4a46a1d7
+    resource: repo://scripts/check-shadcn-migration-parity.mjs
+  - id: openwiki-source-bdeb846005a65a32b569a6d3
+    resource: repo://scripts/check-shadcn-ui-boundary.mjs
+  - id: openwiki-source-67291b9dd2f19fa46ea944f3
+    resource: repo://src/app/(dashboard)/shipments/box-types/__tests__/box-types-presentation-source-contracts.test.ts
+  - id: openwiki-source-360f148a5c952ac1ec7fa14b
+    resource: repo://src/app/(dashboard)/shipments/sku-packaging/__tests__/sku-packaging-presentation-source-contracts.test.ts
+  - id: openwiki-source-0dd07dd4cd88fda7bfc7679a
+    resource: repo://src/app/(dashboard)/supplies/%5Bid%5D/__tests__/supply-detail-presentation-source-contracts.test.ts
+  - id: openwiki-source-fbadcd8591b65031efaaedce
+    resource: repo://vitest.config.ts
+generated: { by: "openwiki/0.4.3", at: "2026-08-31T08:47:49.410Z" }
 ---
 
 # Conventions & Quality Gates
@@ -64,12 +80,18 @@ The Epic 173 settings/shipments migration established a two-layer test contract 
 
 ### Layer 1 — Page source contracts
 
-Each migrated route owns a `*-presentation-source-contracts.test.ts` (Vitest, no DOM) that reads production source with `node:fs` and asserts four families of invariants. The pattern appears for settings/backfill (Story 173.2), settings/cabinet (173.3), settings/notifications (173.5), settings/tariffs (173.6), settings/tax (173.7), the shipments list (173.8), and shipment detail (173.9), as well as earlier analytics/cogs/monitor routes (40+ such suites total):
+Each migrated route owns a `*-presentation-source-contracts.test.ts` (Vitest, no DOM) that reads production source with `node:fs` and asserts four families of invariants. Coverage now spans: settings/backfill (Story 173.2), settings/cabinet (173.3), settings/notifications (173.5), settings/tariffs (173.6), settings/tax (173.7), shipments list (173.8), shipment detail (173.9), shipments/box-types (173.10), shipments/sku-packaging (173.11), supplies list (173.12), supplies detail (173.13), plus the earlier analytics/cogs/monitoring and dashboard families (40+ such suites total):
 
 1. **Pinned production catalog** — the test enumerates every production file the route owns (either recursively discovering non-test `.ts/.tsx` files under the route directory, as backfill does, or via an explicit `OWNED_PRODUCTION_FILES` array cross-checked against directory discovery, as shipments and cabinet do) and asserts the exact expected list. Adding or removing a file in a migrated route fails the suite until the catalog is consciously updated.
 2. **No legacy palette or contextual hex** — every owned file must not match `LEGACY_PALETTE` (Tailwind palette classes like `text-yellow-600`, `bg-blue-500`, etc. across ~20 color families and shades 50–950) nor `CONTEXTUAL_HEX` (inline hex literals like `'#3B82F6'` in strings or Tailwind arbitrary values `bg-[#...]`). Colors must come from semantic design-system tokens instead of raw palettes.
 3. **Merged semantic compositions** — pages must use the shared design-system compositions (`PageHeader`, `ContextBar`, `PageState`, `ResponsiveTable`/`TableState`, `FilterToolbar`, `StatusBadge`) and must NOT reintroduce `min-h-screen` layout; tables must use accessibility affordances like `kind: 'horizontal-scroll'` with Russian `regionLabel` and `caption` strings.
 4. **Raw-palette helpers banished** — legacy helper functions such as `getStatusConfig`/`getProgressColorClass` and raw `<button>` elements in migrated render trees are asserted absent by name.
+
+The Epic 173 shipments/supplies wave extended the pattern in three ways:
+
+- **Multi-root catalogs** — the box-types (173.10) and sku-packaging (173.11) suites pin the union of the route directory (`src/app/(dashboard)/shipments/<route>`) *and* the colocated component tree (`src/components/custom/<family>`), so adding or removing a file in either location fails the pinned `OWNED_PRODUCTION_FILES` catalog. The sku-packaging suite also excludes an explicitly shared file (`ProductCombobox.tsx`) from the owned catalog.
+- **Shared-surface SHA-256 pinning** — the supply-detail suite (173.13) pins the exact sha256 of files owned by the sibling supplies-list story (`SupplyStatusBadge.tsx`, the family `index.ts`, and the list contract test itself) so a detail-route story cannot silently mutate the list story's shared surfaces.
+- **Named dialog states** — the box-types and sku-packaging suites additionally require every owned dialog (`SkuPackagingFormDialog`, `SkuPackagingDeleteDialog`, `BulkAddDialog`, `BoxTypeFormDialog`, `BoxTypeDeactivateDialog`) to carry `role="status"` and `role="alert"` announcements, and the supply-detail suite pins the status-stepper's `aria-label="Статус поставки"`, `aria-current="step"`, and `status-*` token usage so lifecycle meaning stays textual, not color-only.
 
 ### Layer 2 — Component behavior/state contracts
 
@@ -98,7 +120,7 @@ The net effect: a migrated page cannot silently regress to raw palette classes, 
 
 ## Quality Gates (Ratchet Scripts)
 
-Each story closes only when every quality gate matches its accepted baseline (the CLAUDE.md "Accepted Baselines" table); when a story legitimately moves a baseline, that table is updated in the same PR.
+Each story closes only when every quality gate matches its accepted baseline (the CLAUDE.md "Accepted Baselines" table, `CLAUDE.md` § Accepted Baselines); when a story legitimately moves a baseline, that table is updated in the same PR.
 
 | Gate | Command | Baseline |
 |------|---------|----------|
@@ -109,7 +131,7 @@ Each story closes only when every quality gate matches its accepted baseline (th
 | Dot-locale percent | `npm run check:locale-percent` | Ratchet ↓ — current count 4 in `scripts/.locale-percent-baseline.txt` (started at ~108); lower the baseline when migrating |
 | AP#8 normalizer | `npm run check:anti-pattern-8-normalizer` | Ratchet guard vs baseline (`scripts/.anti-pattern-8-normalizer-baseline.txt`) |
 | ESLint | `npm run lint` | 0 errors, 0 warnings (zero-warning policy, `--max-warnings 0` in `lint` + `lint:fix`, Story 164.4) |
-| Vitest | `npm test -- --run` | ≥ 19615 passing, 0 failed (floor; additions OK, regressions not; skipped informational) |
+| Vitest | `npm test -- --run` | ≥ 19118 passing, 0 failed / 1234 files (floor moved exactly −756 dead tests, Story 174.2-FE; additions OK, regressions not; skipped informational) |
 | E2E bare skips | `npm run check:e2e-bare-skips` + `scripts/check-e2e-bare-skips.test.mjs` | No bare `.skip` without reason in owned E2E specs |
 | Max-lines cross-check | `npm run check:max-lines` | Matches the ESLint `max-lines` caps (200 source / 800 test) |
 | Privacy console guard | `npm run check:privacy` | 0 forbidden `console.*` calls in PII-adjacent files (see [Testing & Operations](testing-and-ops.md#privacy-console-check)) |
@@ -118,6 +140,8 @@ Each story closes only when every quality gate matches its accepted baseline (th
 | Playwright static boundary | `npx vitest run src/test/playwright-static-boundary.test.ts` | No raw `@playwright/test` imports / dynamic code outside approved modules |
 | E2E vacuous assertions (AP#6) | `npm run check:e2e-assertions` + `src/test/e2e-vacuous-assertions.test.ts` | AST scanner finds tautological assertions (`>= 0`, `\|\| true`, always-true) in owned E2E specs; self-test under `npm test` |
 | E2E fixed waits (AP#7) | `npm run check:e2e-waits` + `src/test/e2e-fixed-waits.test.ts` | AST scanner finds `waitForTimeout`, raw `setTimeout`, and arbitrary wait helpers (`sleep`/`delay`/`pause`) in owned E2E specs; self-test under `npm test` |
+| shadcn UI boundary | `node scripts/check-shadcn-ui-boundary.mjs` | 523 = ratchet baseline in `scripts/.shadcn-ui-boundary-baseline.txt` (exit 1 only on increase; Story 174.2-FE) — see below |
+| shadcn migration parity | `node scripts/check-shadcn-migration-parity.mjs` | Schema-v3 model validates clean: 94 BMAD stories = 94 OMX plans, 76 source routes = 76 route-ledger rows, zero defect codes (Story 174.1-FE) — see below |
 
 ### Ratchet gate behavior
 
@@ -128,6 +152,52 @@ Ratchet gates (check:docs, check:locale-percent, check:anti-pattern-8-normalizer
 ### Toolchain pinning
 
 `package.json` `engines` pins Node `24.18.0` and npm `11.11.0`. Vitest and `@vitest/coverage-v8` are pinned to exact `4.1.10`. These versions are enforced via local validation on the pinned toolchain (see [Local Validation and Merge Authority](#local-validation-and-merge-authority)); the project no longer has a CI workflow that asserts them at job start.
+
+## shadcn Gate Scripts (Stories 174.1 / 174.2)
+
+The Epics 166–174 shadcn full-UI migration added two Node-based gate scripts. Neither has an `npm run` alias — invoke them directly with `node scripts/…`. Both run a `node:test` self-suite first and fail fast if it fails, and both self-suites are excluded from the Vitest run (`vitest.config.ts` exclude list) because they are `node:test`-only surfaces (the Playwright static boundary forbids `node:child_process`/dynamic import in `.test.*` files Vitest would pick up).
+
+### `check-shadcn-ui-boundary.mjs` — design-system boundary ratchet
+
+Story 174.2-FE codifies the repository-wide UI boundary canon. The script scans all production `src/**/*.{ts,tsx}` (excluding tests, `__tests__`, `.d.ts`, and `src/test`) with two regexes that the page-level contract tests reuse:
+
+- `LEGACY_PALETTE` — the widest route-guard form (monitoring 172.12 / 169.11 canon) across ~20 color families and shades 50–950, including the `ring-offset`, `inset-shadow`, and `text-shadow` prefixes; semantic token vocabulary (`bg-status-error`, `text-financial-positive`, `text-chart-3`, `bg-popover`) must never match.
+- `CONTEXTUAL_HEX` — hex literals anchored to quote/backtick/arbitrary-value bracket/`;` contexts (3/4/6/8-digit) plus `rgb/rgba/hsl/hsla/oklch` color functions whose first ~40 chars contain a digit or `#`. Prose ticket numbers (`see ticket #197`) must not match.
+
+Scanned files listed in the exported `BOUNDARY_EXCEPTIONS` map are counted as suppressed rather than active; every entry must carry an owner/debt ID (F-10 WCAG contrast exception, C5 waterfall chart hex, two historical `#7C3AED` chart marks) and be mirrored 1:1 in `_bmad-output/planning-artifacts/shadcn-ui-boundary-classification-manifest.md`. Violations are grouped per route (first `src/app` segment for app files, else first two path segments), totaled, and compared against the single-integer baseline `scripts/.shadcn-ui-boundary-baseline.txt`:
+
+- `total > baseline` → exit 1 (fail) with offending files enumerated
+- `total < baseline` → pass with "ratchet down" — the baseline MUST be lowered in the same commit
+- `--init` writes the current total as a new baseline; an absent/non-integer baseline file is itself an error.
+
+```mermaid
+flowchart TD
+    A["node scripts/check-shadcn-ui-boundary.mjs"] --> B{"node:test self-suite passes?"}
+    B -- no --> F["exit 1 self-test-failed"]
+    B -- yes --> C["scan src production files with LEGACY_PALETTE + CONTEXTUAL_HEX"]
+    C --> D["subtract BOUNDARY_EXCEPTIONS suppressed files"]
+    D --> E{"total vs baseline 523?"}
+    E -- greater --> G["exit 1 FAIL"]
+    E -- equal --> H["PASS"]
+    E -- less --> I["PASS + ratchet down, lower baseline in same commit"]
+```
+
+*The UI-boundary ratchet: scan → suppress registered exceptions → compare the active total against the stored baseline.*
+
+### `check-shadcn-migration-parity.mjs` — schema-v3 plan/ledger/source parity
+
+Story 174.1-FE's validator builds a parity model from four authorities and validates it with ~60 distinct defect codes:
+
+1. **BMAD artifact** (`_bmad-output/planning-artifacts/epics-166-174-fe-shadcn-migration.md`) — parses `### Story N.M:` sections and their 12 EVIDENCE_FIELDS (`Owned Surface`, `Shared Dependencies`, `State Coverage`, …); each story's prerequisite set is derived from its shared-dependencies prose via `dependencyIds()` (range expansions like `Stories 166.1–166.8`, `Epics 169–171-FE`, `AppShell`, `C2`, `foundation` aliases).
+2. **Master OMX plan** (`.omx/plans/shadcn-full-ui-migration-master.md`) — story-plan index, canonical ownership/dependency SHA-256 fingerprints (normalized-text hashes of `Owned Surface`/`Shared Dependencies` must match per story), backend exception lifecycle records, and the expected merge-base SHA.
+3. **Route ledger** (`_bmad-output/planning-artifacts/shadcn-route-ledger.md`) — exactly 76 rows mapping `page.tsx` entries to owning stories; every row must be status `planned`, have a unique story owner and unique route/entry, and a matching implementation artifact.
+4. **Source routes** — recursive discovery of every `page.tsx` under `src/app`, each of which must exist in the ledger with a matching route path; `sprint-status.yaml` rows must reference known stories with valid statuses and matching slugs.
+
+The validator rejects duplicates (stories, plans, branches, worktrees, frontmatter keys, evidence fields, headings), orphans (plans/stories/statuses/ledger rows without counterparts), mismatches (titles, plan paths, owned-surface declarations, plan section profiles per epic era — legacy 166–168 / route 169–171 / modern 172–174), invalid DAG edges (unresolved, self-, future-prerequisites outside `ALLOWED_FORWARD_EDGES`, and prerequisite cycles via DFS), and verifies the two backend-exception stories (167.8, 169.14) end-to-end against live `git`: commit existence, merge ancestry onto `main`, branch/worktree absence (local and cached-remote-tracking — live-remote proof is explicitly an `unavailable` boundary), and merge/cleanup/handoff needles recorded in the historical artifacts. Expected counts are pinned constants: `EXPECTED_STORIES = 94`, `EXPECTED_ROUTES = 76`, exactly 2 backend-exception records, and a fixed `EXPECTED_BASE_SHA`. The report emits `schemaVersion: 3` plus human summary lines.
+
+Both scripts ship node:test self-suites under `scripts/__tests__/`: the boundary suite pins the canon regexes (positives/negatives, 1-based line reporting, scope exclusion via temp dirs, baseline comparison and `--init`), and the parity suite asserts the clean repository corpus validates with zero errors, then injects defects into a cloned model to prove each code fires (missing/orphan/duplicate identities, count drift, forward edges, cycles, git stubbing).
+
+See [Migration Program](migration-program.md) for the program these gates protect and [Design System](design-system.md) for the token canon the boundary script enforces.
 
 ## Two-Pass Review Discipline
 

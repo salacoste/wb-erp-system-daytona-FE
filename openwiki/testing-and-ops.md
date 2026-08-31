@@ -3,14 +3,15 @@ type: "Operations Runbook"
 title: "Testing & Operations"
 description: "Testing strategy (Vitest unit with MSW, Playwright E2E, local E2E preflight and handshake, outbound network guards, Playwright static boundary, privacy console and diagnostic-capture guards), CI/CD workflows, local run modes, and environment variables."
 tags: [testing, e2e, playwright, vitest, network-guards, privacy, openwiki-workflow, ci]
-verified:
-  - by: openwiki/0.4.3
-    at: 2026-08-30T08:47:56.434Z
 sources:
+  - id: openwiki-source-b35c60a473a5134c25a873cf
+    resource: repo://_bmad-output/implementation-artifacts/174-2-fe-remove-legacy-ui-and-enforce-the-design-system-boundary.md
   - id: openwiki-source-89e2a6b1ae97c68779084212
     resource: repo://_bmad-output/implementation-artifacts/sprint-status.yaml
   - id: openwiki-source-6d4b4e707b8d60b6ccfa3425
     resource: repo://.github/workflows/openwiki-update.yml
+  - id: openwiki-source-a2371d6362e5db4bc834ad03
+    resource: repo://CLAUDE.md
   - id: openwiki-source-f323b150aa81d8e8d0adb0eb
     resource: repo://e2e/settings-pages.spec.ts
   - id: openwiki-source-b0480c34c110ffe1e27be32c
@@ -21,17 +22,30 @@ sources:
     resource: repo://e2e/shipments/shipments-detail.spec.ts
   - id: openwiki-source-de6278600cd3a14fa502ad43
     resource: repo://e2e/shipments/shipments-list.spec.ts
+  - id: openwiki-source-deeb82f30d6cfd23df864718
+    resource: repo://e2e/sku-packaging-page.spec.ts
   - id: openwiki-source-ffa6c3af53b402f151308103
     resource: repo://e2e/telegram-notifications.spec.ts
   - id: openwiki-source-23775c3de52f3ab95a13cb8b
     resource: repo://README.md
+  - id: openwiki-source-a6d59436db4440630eef1244
+    resource: repo://scripts/.shadcn-ui-boundary-baseline.txt
+  - id: openwiki-source-63d46e41978bcf9c4a46a1d7
+    resource: repo://scripts/check-shadcn-migration-parity.mjs
+  - id: openwiki-source-bdeb846005a65a32b569a6d3
+    resource: repo://scripts/check-shadcn-ui-boundary.mjs
   - id: openwiki-source-c448aae4287d4d4701b86b58
     resource: repo://src/test/playwright-static-boundary.ts
   - id: openwiki-source-b3c59ed7dd82c4c19f9a9dce
     resource: repo://test-utils/network-policy.json
   - id: openwiki-source-765eb9dfac83102deebc4cc8
     resource: repo://test-utils/outbound-network-policy.ts
-generated: { by: "openwiki/0.4.3", at: "2026-08-30T08:47:56.434Z" }
+  - id: openwiki-source-fbadcd8591b65031efaaedce
+    resource: repo://vitest.config.ts
+generated: { by: "openwiki/0.4.3", at: "2026-08-31T08:47:49.410Z" }
+verified:
+  - by: openwiki/0.4.3
+    at: 2026-08-31T08:47:49.410Z
 ---
 # Testing & Operations
 
@@ -45,7 +59,7 @@ generated: { by: "openwiki/0.4.3", at: "2026-08-30T08:47:56.434Z" }
 | Plugin | `@vitejs/plugin-react` |
 | Coverage | V8 provider (text/json/json-summary/html reporters), output `coverage/local` |
 | Fake timers | `shouldAdvanceTime: true` (waitFor/MSW compatibility) |
-| Full-suite floor | ≥ 19,733 tests passing across ≥ 1,249 test files (0 failed) — raised after Story 173.9 closed (sprint-status.yaml, 2026-08-30); a full `npm test -- --run` run must not regress this floor |
+| Full-suite floor | ≥ 19,118 tests passing across 1,234 test files (0 failed) — raised after Story 174.2-FE; a full `npm test -- --run` run must not regress this floor |
 
 ### Test setup (`src/test/`)
 Setup files run in explicit list order (`sequence.setupFiles: 'list'`) defined by `VITEST_SETUP_FILES` in `vitest.config.ts`. Order is load-bearing: the outbound network guard must install **before** any general setup or MSW import, or module-evaluation-time network attempts would escape the guard.
@@ -71,6 +85,13 @@ Tests are co-located with source in `__tests__/` directories:
 
 ### MSW (Mock Service Worker)
 `src/mocks/server.ts` — MSW v2 server for intercepting API calls in unit tests. Handlers are reset between tests via `server.resetHandlers()`.
+
+### Full-suite floor history
+The floor is a floor, not a substitute for fresh per-story validation. It moves down legitimately only when tests are provably deleted with their production owners:
+
+- **Current floor (after Story 174.2-FE, 2026-08-31): 19,118 passed / 0 failed / 1,234 files.** The floor moved from 19,874/1,256 by an exact −756 tests / −22 files, entirely from 65 proven-dead test files deleted together with their dead production owners (import-closure proved per file, reviewer-verified) — no live test was deleted.
+- **Per-story peaks are historical**, not the current bar: e.g. the 19,874 peak observed after Story 173.13 was superseded by the legitimate 174.2 dead-test deletion. Record the current floor, not the historical peak, when validating.
+- `vitest.config.ts` excludes the two `node:test`-only self-suites (`scripts/__tests__/check-shadcn-migration-parity.test.mjs`, `scripts/__tests__/check-shadcn-ui-boundary.test.mjs`) from the Vitest run — they run under `node --test` from their own scripts instead.
 
 ## E2E Tests — Playwright
 
@@ -98,7 +119,7 @@ Tests are co-located with source in `__tests__/` directories:
 - `e2e/fixtures/story-172-9-communications.ts` — Story 172.9 communications route controller with exact API paths and flippable per-section status (see below)
 
 ### E2E test areas
-Dashboard, orders, supplies, margin analytics, FBS, COGS, pricing calculator (Epic 44-FE + Story 172.8), liquidity (with trends, Story 165.4), unit economics, advertising, funnel, search analytics, forecasts, Moysklad integration, finances (NEW-7), backfill admin (per-source retry, Story 165.5), communications (Story 172.9), accessibility, settings, monitoring, historical SPP analytics (Story 128.27), plus `e2e/outbound-network-guard.spec.ts` which exercises the guard itself end-to-end.
+Dashboard, orders, supplies, shipments (incl. SKU packaging, Story 173.11), margin analytics, FBS, COGS, pricing calculator (Epic 44-FE + Story 172.8), liquidity (with trends, Story 165.4), unit economics, advertising, funnel, search analytics, forecasts, Moysklad integration, finances (NEW-7), backfill admin (per-source retry, Story 165.5), communications (Story 172.9), accessibility, settings, monitoring, historical SPP analytics (Story 128.27), plus `e2e/outbound-network-guard.spec.ts` which exercises the guard itself end-to-end.
 
 ### Story 172.8 — price calculator (`e2e/price-calculator.spec.ts`)
 
@@ -143,6 +164,14 @@ Story 173.8 (list) and 173.9 (detail) restored dedicated shipments e2e packages:
 - **`shipments-detail.spec.ts`** — `/shipments/story-173-9-detail` detail coverage stubbing `**/v1/shipments/story-173-9-detail`: header, pallet accordion, box-line table with per-line allocation results (calculated vs pending lines), draft-vs-confirmed action buttons, plus an axe scan.
 - The subdirectory also carries `shipments-a11y.spec.ts` and `shipments-lifecycle.spec.ts`; `e2e/supplies/` mirrors this shape for supplies (list/detail/lifecycle/a11y).
 
+### SKU Packaging (`e2e/sku-packaging-page.spec.ts`, Story 173.11)
+
+Deterministic coverage of the SKU-packaging management page (`ROUTES.shipmentsSkuPackaging`), importing `test`/`expect` from `./fixtures/network-test` — a representative new-spec pattern the static boundary exercises:
+
+- `installSkuPackagingApiFixtures(page)` registers **exact-method, exact-query** `page.route` handlers (RegExp matchers) for `GET/POST /v1/sku-packaging`, `POST /v1/sku-packaging/bulk`, `DELETE /v1/sku-packaging/{nmId}`, and `GET /v1/box-types`; every unexpected method/path/payload throws inside the handler, so a silently-missed stub cannot pass. Wire contracts are pinned exactly: the single-upsert POST body must equal `{ nmId, boxTypeId, unitsPerBox: 18 }` (asserted again via `waitForRequest` post-data), the bulk POST must equal the one-item `BULK_PAYLOAD`, and DELETE must carry no body.
+- UI coverage: populated rows (active vs inactive box-type statuses «Привязка активна» / «Тип коробки неактивен»), client-side search filter with filtered empty state and «Показать все привязки» reset returning focus to the search field, bulk-add preview→submit flow with terminal `role=status` announcements, delete confirmation dialog, keyboard-driven validation with first-invalid focus, and 320/390 px narrow-card layout with the wide table hidden and a no-horizontal-overflow check.
+- All routes are installed in `beforeEach` **before** navigation so scenarios never accept a live-backend terminal state; waits follow the observable-wait canon (`waitForRequest` pre-registered before the triggering click, `toBeVisible` terminals, `domcontentloaded`).
+
 ### Expenses, backfill page, and telegram notifications
 
 - `e2e/expenses-page.spec.ts` and `e2e/backfill-page.spec.ts` cover their settings routes with the same shell conventions (headings/landmarks, data-or-skeleton, theme and overflow assertions).
@@ -160,6 +189,16 @@ Two AST-based scanners enforce AP#6 (vacuous E2E assertions) and AP#7 (hard `wai
 - **Fixed waits** — `scripts/check-e2e-fixed-waits.mjs` (`npm run check:e2e-waits`) flags `waitForTimeout`, raw `setTimeout`/`new Promise(setTimeout)` timers, and arbitrary wait helpers (`sleep`, `delay`, `pause`). Each story baseline (`STORY_162_5`/`162_6`/`162_7`) pins its owned E2E + fixture file set and the canonical wait/timer counts reduced from the story's base revision. Self-test: `src/test/e2e-fixed-waits.test.ts` (runs under `npm test`).
 
 These are not in the `README.md` **Local validation** command list; they are enforced as quality gates via their Vitest self-tests and the dedicated npm scripts. See [Conventions & Quality Gates — Quality Gates](conventions-and-quality.md#quality-gates-ratchet-scripts) for how they sit alongside the other gates.
+
+## shadcn Gate Scripts (Stories 174.1 / 174.2)
+
+The Epics 166–174 shadcn migration added two Node-based gate scripts. Neither has an `npm run` alias — invoke them directly with `node scripts/…`. Both run a `node:test` self-suite **first** and fail fast if it fails; both self-suites are excluded from the Vitest run (`vitest.config.ts` exclude list) because the Playwright static boundary forbids `node:child_process`/dynamic execution in files Vitest would pick up (the parity self-suite is explicitly whitelisted in `SELF_TEST_MODULES`).
+
+### `check-shadcn-migration-parity.mjs` (Story 174.1)
+Schema-v3 parity validator over three corpora: the BMAD story artifact (`_bmad-output/planning-artifacts/epics-166-174-fe-shadcn-migration.md`, 94 stories with 12 pinned `EVIDENCE_FIELDS` and per-epic section profiles), the master OMX plan (`.omx/plans/shadcn-full-ui-migration-master.md`, ownership/dependency SHA-256 fingerprints, expected base SHA, backend-exception lifecycle records for 167.8/169.14), and the route ledger (exactly 76 rows). It proves 94 BMAD stories = 94 OMX plans and 76 source routes = 76 ledger rows with unique owners and linked implementation artifacts. It is filesystem-only (dependency-free), runs a deterministic mutation self-suite (`scripts/__tests__/check-shadcn-migration-parity.test.mjs`, 33 cases over a deep-cloned real corpus asserting exact `{ code, identity }` defect records) before validating the canonical corpus, and emits one machine-readable report plus one human summary per run.
+
+### `check-shadcn-ui-boundary.mjs` (Story 174.2)
+Design-system boundary ratchet over production `src/**/*.{ts,tsx}` (tests, `__tests__`, `.d.ts`, and `src/test/**` excluded; enumeration is relative-first so foreign worktree paths cannot re-enter). Two detection classes form the superset regex canon — `LEGACY_PALETTE` (the monitoring-172.12 guard form extended with `ring-offset`, `shadow`/`inset-shadow`/`text-shadow` prefixes) and `CONTEXTUAL_HEX` (quote/backtick or `-[`-anchored hex with a trailing lookahead, plus rgba/hsl/hsla/oklch color functions). Violations are grouped per route, totaled, and compared against the single-integer baseline `scripts/.shadcn-ui-boundary-baseline.txt` (currently **523**): a plain run exits 0 at or below the baseline, exits 1 only on increase, and a decrease must lower the baseline in the same commit. There are no file-level waivers — suppression is only via the exported `BOUNDARY_EXCEPTIONS` map (4 files: F-10 WCAG contrast, C5 waterfall hex, two historical `#7C3AED` chart marks), each entry carrying an owner/debt ID and mirrored 1:1 in the classification manifest. Self-suite: `scripts/__tests__/check-shadcn-ui-boundary.test.mjs` (10 `node:test` cases proving the regexes and enumeration logic). See [Design System — boundary enforcement](design-system.md) for the canon's regex details and the arithmetic-closed manifest.
 
 A concrete repaired example of AP#6 (vacuous assertion): the `e2e/login-dashboard.spec.ts` "displays trend graph" check used a `[data-testid="trend-graph"]` selector that only matched unit-test mocks — the real `TrendGraph` never rendered it — and its `.or()` recharts fallback matched the always-mounted `DailyBreakdownChart`, so the test stayed green even if `TrendGraph` were deleted. The contract now puts `data-testid` on the real `TrendGraph` Card (`src/components/custom/TrendGraph.tsx`), and the test expands the «Аналитика» disclosure first (lazy unmount) with no `.or()` fallback. When adding data-testid contracts, bind them to the real component, not to mocks, and prefer expanding collapsed containers over broad `or()` fallbacks.
 
@@ -275,7 +314,7 @@ The browser-side guard is more involved because Playwright owns the browser proc
 ### Playwright static boundary (compile-time guard)
 `src/test/playwright-static-boundary.ts` + `src/test/playwright-static-dataflow.ts` perform a **TypeScript AST analysis** of the whole `e2e/`, `tests/e2e/`, `src/test/`, and `*.{test,spec}.*` source tree to forbid patterns the runtime guard cannot fully close:
 
-- Direct imports of `@playwright/test` / `playwright` / `playwright-core` anywhere except an explicit `APPROVED_RUNTIME_MODULES` allowlist (the guard fixtures themselves, `playwright.config.ts`, and the boundary self-tests). Specs must import from `./fixtures/network-test` instead.
+- Direct imports of `@playwright/test` / `playwright` / `playwright-core` anywhere except an explicit `APPROVED_RUNTIME_MODULES` allowlist (the guard fixtures themselves, `playwright.config.ts`, and the boundary self-tests in `SELF_TEST_MODULES`). `SELF_TEST_MODULES` also carries the two script self-suites that legitimately need `node:child_process` — `scripts/check-privacy-console.test.mjs` and `scripts/__tests__/check-shadcn-migration-parity.test.mjs` (Story 174.2 carry-in fix). Specs must import from `./fixtures/network-test` instead.
 - Dynamic code execution (`eval`, `Function`, `AsyncFunction`, `GeneratorFunction`, etc.), `node:vm`, `node:worker_threads`, `node:child_process`, `node:inspector`, `node:repl`, `node:http2`, `node:dgram`, `node:cluster` in restricted test sources.
 - Reflective object introspection (`Object.getOwnPropertyDescriptor(s)`, `getPrototypeOf`) and `node:module` loader APIs (`createRequire`, `require`, `_linkedBinding`, `binding`, `dlopen`, `getBuiltinModule`) that could unwrap the guarded facade.
 - Browser-type launch/connect methods (`launch`, `connect`, `connectOverCDP`, `launchPersistentContext`, `launchServer`) and serialized-browser execution (`page.evaluate`/`evaluateHandle`/`evaluateAll`) outside approved modules.

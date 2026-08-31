@@ -1,20 +1,172 @@
 {
   "schemaVersion": 1,
-  "pageVersion": "sha256:1b400d71f2b97b727de64e71a29ad4802f798295e18a72dda4fb05d87fca2176",
+  "pageVersion": "sha256:567cbc5cad8731a8b4836f059974b7ed6b7413e5c5649a485791fbeb0b794562",
   "claims": [
     {
       "id": "claim_47ae5092df88459d932915ee945c35e6",
-      "statement": "Each story closes only when every quality gate matches its accepted baseline, and when a story legitimately moves a baseline the CLAUDE.md Accepted Baselines table must be updated in the same PR.",
+      "statement": "Each story closes only when every quality gate matches its accepted baseline in the CLAUDE.md Accepted Baselines table, and when a story legitimately moves a baseline that table must be updated in the same PR.",
       "evidence": [
         {
-          "resource": "repo://CLAUDE.md#L141-L155",
-          "version": "repo-lines-v1:sha256:b0e0aa31c4580328b48e18b45b1f6a939d6ea602570dbd6abb051f06086b1409:eyJzZWxlY3RlZExpbmVDb3VudCI6MTUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjExZDM5NGRhNTdlOTRlYWQxY2M2ODg2ZDBjMmNiMTc1NDJlM2IyODZkYTVmYjg0MWE2OGVjZTEzOGI3MmJmZjIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjYzZGYyMzhjMDE0ZjM0NTNmNjVmZWM2MDIyZDI4MGExYjEzY2NlZWUwMzI4YTdhZTgxZWU1Y2QxYWM2NmQwMzciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjUwMzRiMjkwOGNlZjQzZmY5Y2MyYzUzNWViOGExNjkzYjMxMzExNGI3ZmEzNjhiMmY5M2FjOGFkMTYwODQ1NDIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImIxOTZjM2ExNGU2ZjMyMzVjNTVlMjNmN2ExMjU4ZmMyYjQ0MWZmMWI3OGE1N2U3NGZjNzFlOGY1NDI3NWZlYzMifQ"
+          "resource": "repo://CLAUDE.md#L141-L156",
+          "version": "repo-lines-v1:sha256:538486747e17d84b408fd140ce96becb21ae9f04933b0f2d875f672cf615ba2b:eyJzZWxlY3RlZExpbmVDb3VudCI6MTYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjExZDM5NGRhNTdlOTRlYWQxY2M2ODg2ZDBjMmNiMTc1NDJlM2IyODZkYTVmYjg0MWE2OGVjZTEzOGI3MmJmZjIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjYzZGYyMzhjMDE0ZjM0NTNmNjVmZWM2MDIyZDI4MGExYjEzY2NlZWUwMzI4YTdhZTgxZWU1Y2QxYWM2NmQwMzciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjUwMzRiMjkwOGNlZjQzZmY5Y2MyYzUzNWViOGExNjkzYjMxMzExNGI3ZmEzNjhiMmY5M2FjOGFkMTYwODQ1NDIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImIxOTZjM2ExNGU2ZjMyMzVjNTVlMjNmN2ExMjU4ZmMyYjQ0MWZmMWI3OGE1N2U3NGZjNzFlOGY1NDI3NWZlYzMifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_5ec2030611884799a43b010b9997b39e",
+      "statement": "Source files are ESLint-enforced under 200 lines (max-lines with skipBlankLines + skipComments; test files/fixtures/mocks up to 800) with ~150 lines as the proactive extraction target, and lint runs via npm run lint with a zero-warning policy (--max-warnings 0), since next lint does not load the flat config.",
+      "evidence": [
+        {
+          "resource": "repo://CLAUDE.md#L87-L94",
+          "version": "repo-lines-v1:sha256:d8dd017d96f53a819d115534014a45b41adcf7e3b387555f1936fa3721ec85ff:eyJzZWxlY3RlZExpbmVDb3VudCI6OCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNzJjZjkyYmUwMjc4NTI2ZWM2Y2FiYTQwMDljNDRjNDAwZDRmNjMzMjQ0M2ExYjUwOGI0OTYzNDhlYTA1ZGRjMSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiYTM1M2U2ODIwNjM5NWZhNGRmOTg0ZTdiZGMxZTc0N2RhMTVkNTZlODYzOWRiMzc3YzY4NGVkYTRiZjVjZWM5NiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMjFkYTkxNjcwNjZmZDY3Yzk3ZmVlZWE0NWFlYWZiNDlhN2FlY2FlZGZhMGM2NzdiMjk4M2E5NDZmNjE3YTY2OSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNTk2NjRkNDRmYWQzNjYyMjMzMzRiNWI5ZmRmZTY3MmM2ZmY0NzU0MTlmOTRjYjA1ZTUzNjQwYmQ5Y2I1NjMyMCJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_9dabd84699f841a0b6e50a6d1be2ec79",
+      "statement": "Every migrated route owns a Vitest presentation-source-contract suite that reads production source text with node:fs and pins four invariant families: the exact owned production-file catalog, absence of legacy Tailwind palette classes and contextual hex literals, use of merged semantic compositions (PageHeader/PageState/ResponsiveTable/StatusBadge/FilterToolbar), and banishment of raw-palette helpers — so a migrated page cannot silently regress to raw palette, ad-hoc layout, or unnamed states independent of rendered output.",
+      "evidence": [
+        {
+          "resource": "repo://src/app/(dashboard)/shipments/sku-packaging/__tests__/sku-packaging-presentation-source-contracts.test.ts",
+          "version": "repo-file-v1:sha256:bf05b9acba98eca867f0d27e7bd2c13e7dc1c66fa40e0aff378dd1f5c9d49619"
+        },
+        {
+          "resource": "repo://src/app/(dashboard)/supplies/%5Bid%5D/__tests__/supply-detail-presentation-source-contracts.test.ts",
+          "version": "repo-file-v1:sha256:e71b1b89cdb1d792c60ea682ba78382edd86a5346969f452d17a2b6e62c77dca"
+        }
+      ]
+    },
+    {
+      "id": "claim_a7fe735ba46940e8a7ef092cd48c0ae9",
+      "statement": "The supply-detail contract (Story 173.13) pins exact sha256 hashes of the sibling supplies-list story's shared surfaces (SupplyStatusBadge.tsx, family index.ts, and the list contract test itself), preventing a detail-route story from silently mutating another story's shared files.",
+      "evidence": [
+        {
+          "resource": "repo://src/app/(dashboard)/supplies/%5Bid%5D/__tests__/supply-detail-presentation-source-contracts.test.ts#L31-L76",
+          "version": "repo-lines-v1:sha256:1e96fde910ef807e9a3745880e057e1279d0228d7388ba9c368e4c6173ac2a70:eyJzZWxlY3RlZExpbmVDb3VudCI6NDYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImMwZWJlYjEyMWJjMWYyM2M0MWQxOTZhZTJmYWE2Y2EzMDJmNTRlOWU3NDQyOWIzMDk4N2QzOTA1ZDVjMjY4MzMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImIyMzUyNTg5YzM0ZDNjNjA2ODU5MzFiNmVjYzRkNTA5OTFhN2M1NmM4ZmJhMjg5NDExNDY1NzY5MDI3MmNhYzMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjkyNDk0NGUxOTBhNjMzODkxMGE1ZmRhMmEwNWFhMGMxM2E3YzcyMzVjNDJjNWJmODZiOWRhZGI5NjFkNDc5ZTkiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjNhNzQ2OGVkZmI2OTI2NTk4OWNlYWRiNzZiOGRmMjdkYmJiNmE5ZGVkNTNmNmIyYjkxODM1ZWRkMDBhNTI3NDYifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_3a5bdbbb79734db9942add9f43ce4bc0",
+      "statement": "The Epic 173 shipments wave extended the contract pattern: box-types (173.10) and sku-packaging (173.11) pin multi-root catalogs spanning both the route directory and the colocated src/components/custom family tree, and require every owned dialog to carry role=\"status\" and role=\"alert\" announcements; supply-detail additionally pins the status stepper's aria-label, aria-current, and status-* tokens so lifecycle meaning stays textual rather than color-only.",
+      "evidence": [
+        {
+          "resource": "repo://src/app/(dashboard)/shipments/box-types/__tests__/box-types-presentation-source-contracts.test.ts",
+          "version": "repo-file-v1:sha256:efe3bfba44b3a0fbecac351273dc87b8177ef648098f6186d6e1b58963f0d728"
+        },
+        {
+          "resource": "repo://src/app/(dashboard)/shipments/sku-packaging/__tests__/sku-packaging-presentation-source-contracts.test.ts",
+          "version": "repo-file-v1:sha256:bf05b9acba98eca867f0d27e7bd2c13e7dc1c66fa40e0aff378dd1f5c9d49619"
+        }
+      ]
+    },
+    {
+      "id": "claim_084d7128eb0942879160b2a48980d601",
+      "statement": "scripts/check-shadcn-ui-boundary.mjs (Story 174.2) is the repository-wide design-system boundary gate: it scans all production src/**/*.{ts,tsx} with the LEGACY_PALETTE and CONTEXTUAL_HEX canon regexes (the widest route-guard form, extended with ring-offset, trailing-; hex lookahead, and rgb/hsl/oklch color-function branches), suppresses files registered in BOUNDARY_EXCEPTIONS (each mirrored 1:1 in the classification manifest with an owner/debt ID), and ratchets the active total against the single-integer baseline scripts/.shadcn-ui-boundary-baseline.txt, which stands at 523 per the CLAUDE.md accepted-baselines table.",
+      "evidence": [
+        {
+          "resource": "repo://CLAUDE.md#L154-L154",
+          "version": "repo-lines-v1:sha256:aefedf77ba7a828dbfa382711b27f25cb2bec7e85443cc979880839654450426:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiYWVmZWRmNzdiYTdhODI4ZGJmYTM4MjcxMWIyN2YyNWNiMmJlYzdlODU0NDNjYzk3OTg4MDgzOTY1NDQ1MDQyNiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiYWVmZWRmNzdiYTdhODI4ZGJmYTM4MjcxMWIyN2YyNWNiMmJlYzdlODU0NDNjYzk3OTg4MDgzOTY1NDQ1MDQyNiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNTA3NGVjZGEwOWZmZGU3MWY4YjZkYzEwMmMxY2E4YTJjMTQ0ZWJmZjVkMDZiZWE2OWQyMzlkNTk1ZjkyNjQ0ZSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNzczM2UzYTAyYTM4N2M1NzQzNGU1NDQ4OWVjMWI5OTI4NDE0NmQ4Y2YwMDA1NzFkZGRjYjBiYzVjYmQ5ZWI1ZSJ9"
+        },
+        {
+          "resource": "repo://scripts/check-shadcn-ui-boundary.mjs#L15-L55",
+          "version": "repo-lines-v1:sha256:a8579b645cc2dd90373ba980aaca6406b3751648eaf47047419cde2ce3bd2b8a:eyJzZWxlY3RlZExpbmVDb3VudCI6NDEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjkxMGVlMThiM2RjM2E5YTI1MmQ0NjFhYzg2MTVmNTI0Mjc0NGI4NjNiYmE5ZTQxMTI1ODIwYTc3NDE5NjdkMzMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImE2M2FhZTM5YWQ1OWZhZjMyZDNhMDQ1OGI4OTM0NmU4ZTg4ZTkxZmRkNDA0NTQwM2E4OGEwNjdlYjU2Mjk5NjMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImFhODM4OWEyNmJmZTg2OWUwMzU2ZTcwZDZmZWYxY2M5ZjZiNmIxYTdiZDlkNTMyNjYxNTFiMmViNTFjMDI5OTMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjU4YzkxOGVhM2M5MGQ0NWNhZTBjZGJiNmJkMTkwYTA1Y2NkZTYwNzk1YjZjYTMxZWU1ZmM4YzlmYWMxZTcyM2EifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_a2ef18ff0fc741c78c7b44d25f43e805",
+      "statement": "The UI-boundary ratchet compares current total vs baseline: greater fails with exit 1 and enumerated offending files, equal passes, and less passes with an explicit 'ratchet down' instruction requiring the baseline to be lowered in the same commit; --init writes the current total, and an absent or non-integer baseline file is itself an exit-1 error.",
+      "evidence": [
+        {
+          "resource": "repo://scripts/check-shadcn-ui-boundary.mjs#L160-L237",
+          "version": "repo-lines-v1:sha256:19c23c06845a1c06fa78e17e59e9eebfae295d0334dbce9017680efd0c81cdfc:eyJzZWxlY3RlZExpbmVDb3VudCI6NzgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImNiYzM1NDRhMjRmYjk2ZDc4MWU0ZTcxMDBjYmE4NDk4NjU1ZTY4NjA4ZDNkMTdiOTE4YmUzMjYwMDhiOGY5ODciLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjZjM2FlNzkyNGU0OGJlMTBmOTk0YzdlZmU5NWI5MDQzOTRkMjEwMzg0MDdkZGVmYzQ2NDYxYTMzYWUxNjg2ODYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoyLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImI2MjA4YTYyZDdmN2M5YTY3YzM4YTk3MjE2Y2M5YWQyMGY3ZTExNzBhZjdjMmQ1OWI0YjE3ZGRhMmIxYjAxZDEifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_8530eaa0a0104b2298840ee55a110da7",
+      "statement": "Both shadcn gate scripts run a node:test self-suite before scanning and fail fast on self-test failure; the self-suites are excluded from the Vitest run because they are node:test-only surfaces (static imports only, no node:child_process or dynamic import, per the Playwright static boundary), and they pin regex positives/negatives, scan scope, baseline semantics, and injected-defect detection.",
+      "evidence": [
+        {
+          "resource": "repo://scripts/__tests__/check-shadcn-ui-boundary.test.mjs",
+          "version": "repo-file-v1:sha256:f7867bdf4341bc8b2f3ae0b8956c815fc885498a84517468d56c3b316cbe1679"
+        },
+        {
+          "resource": "repo://scripts/check-shadcn-ui-boundary.mjs#L180-L189",
+          "version": "repo-lines-v1:sha256:e77b40aa33ba0d2c3a117c51f9289207f94ba60306660c76d9f514458e149df2:eyJzZWxlY3RlZExpbmVDb3VudCI6MTAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijg3NDJkMjFiYzU1ZWZkY2YyN2VkMDNiZGZhMjc1NjBmZjk2NWUzYTM1YzJkMTBkMWY3ODhlMjM1YzE0YzdhNTIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjI3ZTU3ODhkNWQ5ZDczZDI0YTgxZGJjMGE1YTc0YmZhODJjOWMzYjNhZjk5ZTUyYWY3OTZlOTBiNDY4YThhM2QiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImIzOGQzMjk0MWM5YmE0NWMzZWJjZmYwYzkyNmQxZmQwMWFiYjliZDQ4MGNhYjc3Y2ZmY2ZhNGQ1MGU2MjQzMjkiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjFhMGM2NWFiYTU2N2UxZmU0NTJkZmI0N2UxZGNkNTEwYzBmOWQ2YzE0NzdmMzZmMjJkMzgwMDk3ZDhhMjBlYzUifQ"
+        },
+        {
+          "resource": "repo://vitest.config.ts#L60-L61",
+          "version": "repo-lines-v1:sha256:ed4630188aefd7f578bc9b596f18439246c01714dba737cb80f2591cb83fdda8:eyJzZWxlY3RlZExpbmVDb3VudCI6MiwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNDc0MDQ3YWNjNjk2MWJjNzhkYTQzMDIxNTgwMzAzYjc2MmQ4YjIzODU0ODIyYTAxNDcyZTE3NjJiODNkYjJkYSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNDA5YmE0YjRlYzBiMjFmZTcyZjEzMzE5OWY0N2M2MDBjOWM1ZDljZjMwNmVkOGVhNDNhNzU1MmJhZjU2NTU0MCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMzJiYjFiMDliNmI0ZTBkNDdjMjRiMDNhMjZiZGRiMjE4Y2QyNTUzZjZhMmRjOGU3NmY4NTY4OTQ0NDNmNDZkNSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNzJiZGY3ZmY2MzZlOTNiNmRlMDk0NzZkN2JlNjNlZTI0N2JjN2FhMDFlM2UwMTc3MTQ5Yjk3MzYzZWM2ZTAzMiJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_852b78130f614e3bb0f0c1603ac59ab6",
+      "statement": "scripts/check-shadcn-migration-parity.mjs (Story 174.1) builds a schemaVersion-3 parity model from four authorities — the BMAD artifact (94 stories with 12 evidence fields each), the master OMX plan (index, SHA-256 ownership fingerprints, backend-exception lifecycle records, expected merge-base SHA), the 76-row route ledger, and source page.tsx discovery cross-checked against sprint-status.yaml — and validates it with ~60 defect codes (duplicates, orphans, title/plan/fingerprint mismatches, per-era plan section profiles, invalid DAG edges including unresolved/self/future prerequisites and cycles, count drift against pinned constants 94 stories and 76 routes).",
+      "evidence": [
+        {
+          "resource": "repo://scripts/check-shadcn-migration-parity.mjs#L1041-L1063",
+          "version": "repo-lines-v1:sha256:11686da099fc50b259823bc78a20b818b497f24b18b9379ea34bcf4c990b14e0:eyJzZWxlY3RlZExpbmVDb3VudCI6MjMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjU2YTEwZjk4Yjk1ZmU1OGZlYTg4OTBiODM2ODI4YzA2YzJjNjFlYTkxYTQ0MTAyY2RmYjIyNGM4M2I4ZDYyZDEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjU2MjY3OTM1ZmM2MzM0NjVkODQ4YjQwYTRlZDY5NjdlN2I3YTMyM2Y4MWNkNTNjMTEwYWUyMTAyOTY4N2FhMTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjcwMmM3ODk2NmM4Y2EyNzllZjAzOTAyMTdiYWQ1YWZjNTNlMjJmNTZiNzM3NDk5NjgyYmMwODNlMWMwMThhYjMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjRhYTJkOGM4NzljNWU3NGU3YzNkYmJkMzFmYTQ0NGYxZDkxYzQxM2RjODUyYTIyZDg3YjQ3MTQ1Y2M3ZTA2ZmMifQ"
+        },
+        {
+          "resource": "repo://scripts/check-shadcn-migration-parity.mjs#L732-L775",
+          "version": "repo-lines-v1:sha256:647f331d59f57ed7ed7527ca6af5c5d74ad1d851e4de11f79386910ddd24983d:eyJzZWxlY3RlZExpbmVDb3VudCI6NDQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjgyN2FiODYwOGI1OTI1YjMyNmRlNWYzZThkNGY0MzI2OTQyMTgzNDAyNGNhZjY0NDYwNGY4YWNiOGQ5NzNjNTAiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImZiNTgwZTk2NGY4M2E0NzNmNDNkNDQzODQ2Mjk0OWQ2OGI1NjAwZmRhNzg3ZjE2Mzc0NWQwMGRlODljYmYzNmEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQ0YjdjOTY3NjhjMmUwOWI2OWI0YTQ0MzNhYTBkNDk3OTY5Y2RiOTNmOGJjNWJhOTc4ZDI2YjExYWNhZWI4YjYifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_46e36f6168cd4b04a625ab5a02b10318",
+      "statement": "The parity validator verifies the two backend-exception stories (167.8, 169.14) against live git: backend merge-SHA commit existence and ancestry on main, frontend handoff commit/merge ancestry, local and cached-remote-tracking branch absence, and planned/delivered worktree absence, with live-remote branch proof explicitly an 'unavailable' boundary; it also needle-checks that merge, cleanup, handoff, and record-retirement evidence is recorded in the historical artifacts.",
+      "evidence": [
+        {
+          "resource": "repo://scripts/check-shadcn-migration-parity.mjs#L552-L684",
+          "version": "repo-lines-v1:sha256:311eec80588a02fd02eff259345b5b66d35eca4baf6e47c09f7867f932a7e3f1:eyJzZWxlY3RlZExpbmVDb3VudCI6MTMzLCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiIwMThjMWNjYWM4M2NlMjE5YTIxNTlhNzkwZTcyYTU4ZGEzZGM3Y2Q3OWE0NzlmNDAxOTQ5YTUxODAzNGVkYTQ2IiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiI0NzJkZDBjMGQwOTBjZmM1ZjNjNzYxM2RiMGRhYjdiOTk2YzkwOWM0YWIzZDkwMDYyZjI3MmFiNzZlYzg3MzM2IiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiJmZjJkOTdkN2M2NzUyMjM3MzExYWYzMWY1ZjQxNmExZmVhODgzNWFkZjBjODQxN2JjZGNlNTJmM2YxY2I0N2U3IiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MywiZm9sbG93aW5nQ29udGV4dEhhc2giOiJkOGQ2ZGNlZWM0YTdlNjhhOGQ3ZjM3NDk2MjdiNzIxNDI2OGJlZTdkMDM3YjJmNDgwOTA4YTEzMTI4YzA1YTQwIn0"
+        },
+        {
+          "resource": "repo://scripts/check-shadcn-migration-parity.mjs#L983-L1033",
+          "version": "repo-lines-v1:sha256:dc9a355ac5b0bac1496660b8a8412c47177ef207e115b346aa4a2154454a1b81:eyJzZWxlY3RlZExpbmVDb3VudCI6NTEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijk4YjE2NTRmMWY1NDZiNTcyYjkwY2QyMGUwNzVhNDAyZTA4Nzc3ZThiZTdiMWU0ZGUwZWM3YTA2MjY1ZTFmNzQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjhkZGY4YzI4YjFmYWVhMGM3NGU2MGJiNTk3ZDY1ZTc0YWNkMzY0ZjA5ODA1YjYyZWNlNzFjMTFiYTgwODI3M2MiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjZmNWIzMzg2YzlkMmQzOWZiZDE1OWYxMmFjOWEzMGI1OWYyZDk1YjA3YzU3NGYwZTAwYTRmNDhmMjEzMzczOWQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjgwZGI0ZjgwZjU1ODAzNDExZDdhY2Y2ZmZiMWMyZDU2OThiOTY5ZmFmNDIyMDI2ZDE1ZjVjMTdkZWNjMDlhZTkifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_7edbfecc3ad34e2aa8eb52c47a05d470",
+      "statement": "The accepted Vitest baseline floor is ≥ 19118 passing / 0 failed across 1234 files, lowered exactly by 756 proven-dead tests in Story 174.2-FE; additions are acceptable, regressions are not, and skipped counts are informational only.",
+      "evidence": [
+        {
+          "resource": "repo://CLAUDE.md#L153-L153",
+          "version": "repo-lines-v1:sha256:743ff46649a0b66dd96ba72a31d742b218ab4bc1cac5be9d63592651b1eb80f1:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNzQzZmY0NjY0OWEwYjY2ZGQ5NmJhNzJhMzFkNzQyYjIxOGFiNGJjMWNhYzViZTlkNjM1OTI2NTFiMWViODBmMSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNzQzZmY0NjY0OWEwYjY2ZGQ5NmJhNzJhMzFkNzQyYjIxOGFiNGJjMWNhYzViZTlkNjM1OTI2NTFiMWViODBmMSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMTVkZTYyYmRkMWY3OTRiOTViMTI0MTcwMTY1NzYzNmE5YmIzYzIwMDU3NjQ5N2I4NmJlZTM0OTBhNzBhY2I4MCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZTIyOTA0MDE3OGM1Y2ZhNTQwMDRlMzRhM2JlZjBhZTE0YTc1MmM3ZDgzNzA3ZDlkOTRkNWJjZWRhOGYyNzVjMyJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_b8cd3d4ca13147b5a26a503970564846",
+      "statement": "Every story closes only after two adversarial code-review passes in fresh contexts, both completed before flipping Status review → done and before any commit, evidenced by two `### Post-Nth-pass-review fixes (YYYY-MM-DD)` headings in the Dev Agent Record; 2-pass is mandatory for behavior-changing source code, with escalation triggers (novel pattern ≥3 passes, >12 cumulative findings, >5 findings in one pass, meta-claims) pushing to additional passes — defaulting to a 4-pass schedule for discipline-codification stories.",
+      "evidence": [
+        {
+          "resource": "repo://CLAUDE.md#L158-L172",
+          "version": "repo-lines-v1:sha256:0288c4f8b5ac0c6c01b0af6d57dad98dc810ad05d6e5253a090617aa2723e0ac:eyJzZWxlY3RlZExpbmVDb3VudCI6MTUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjhhY2RlNzFhODU0NjMxNmI0MjBlZGE0ZTkyMzg5NzkzNWU5ZjZhZjY1MDdkZTJhNTA1YWE5YTc4ZDkzYWI3NDAiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImRiOTEwYzZlY2FjOWMyZDEzZTliMGUzZWNiYWFkM2NhNzhkZTc4OTZlMmZjNWQwY2VkZTRhNzA5OWM0NjVjNmEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijc3MzNlM2EwMmEzODdjNTc0MzRlNTQ0ODllYzFiOTkyODQxNDZkOGNmMDAwNTcxZGRkY2IwYmM1Y2JkOWViNWUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjIyNjE5NzZhNGFjNTcyYTY2MzM1OTdhMmJhZDlmMWI1NDRmMTQ2MWNlNGY1NDYxYWI4OTdmMzM5ZTEyYjU0YzIifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_b9128cae0c9c4ccc89ea0fb28f16400c",
+      "statement": "The toolchain is pinned: package.json engines requires Node 24.18.0 and npm 11.11.0, and vitest is pinned to the exact version 4.1.10; enforcement is via local validation on the pinned toolchain rather than a CI workflow.",
+      "evidence": [
+        {
+          "resource": "repo://package.json#L125-L125",
+          "version": "repo-lines-v1:sha256:fa8626718414ebde48e959e3f801374f075974eef20a46f91cc922a2d6156ba5:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZmE4NjI2NzE4NDE0ZWJkZTQ4ZTk1OWUzZjgwMTM3NGYwNzU5NzRlZWYyMGE0NmY5MWNjOTIyYTJkNjE1NmJhNSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiZmE4NjI2NzE4NDE0ZWJkZTQ4ZTk1OWUzZjgwMTM3NGYwNzU5NzRlZWYyMGE0NmY5MWNjOTIyYTJkNjE1NmJhNSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZDFmOTA4MDA2MTdmMTM5MDY4NmFjMTNkY2IyYTFhODA4YjQyMWNmMjhlYTU4NmY0MjAzYzU0YWQ4Mjg1YmZmMiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjIsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZGY3MzlhMDZjMWNiYjEyNDRlMzM2M2QzOGJjZjlmYTUwY2U4NGZlZDM5OWMyMTkzYTNjN2YwOGQ1OTkxOGIyYSJ9"
+        },
+        {
+          "resource": "repo://package.json#L5-L8",
+          "version": "repo-lines-v1:sha256:cd31f8e914f5440a7540b97bb4c53f1c23d6de3eaad26df6e45d8d4f92bae67e:eyJzZWxlY3RlZExpbmVDb3VudCI6NCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNWY2MDE1NTQxMjJlZmU4NTVkNTZlMTBjYzliYWYyMDMxY2EzZjRhYjExY2RiYTIyZjFlYmM1ZDM5YTc1NTgyNCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNGQ1Y2QyZmI0ZjNkZjg4NDUxNTI1NWIzOTUyM2YyZjhiNTQ3MmJlZWE5ZjU2NmZmY2EyMDRkYjgwMjU2MTA0MSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNjFkMjNhODEzNDhkMzJiMThhMGNlMDg5MzExZTdlN2VjNTRlMzgyMDFiMWI5ODIyOTAyMGVlODNkYWM4ODY1MSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiYzQxYTdiZDFjZDQ4YzExZDdhN2RiYzE1ZThlZDA0NjI2ZDAwNjFiOTg5ZjFkNjBmOTk5ZGI5ZGFiOWQxNmRkOCJ9"
         }
       ]
     }
   ],
   "verification": {
     "by": "openwiki/0.4.3",
-    "at": "2026-08-30T08:47:56.434Z"
+    "at": "2026-08-31T08:47:49.410Z"
   }
 }
