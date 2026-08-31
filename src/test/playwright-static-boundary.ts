@@ -5,6 +5,10 @@ import ts from 'typescript'
 import { createStaticInvocationAnalysis } from './playwright-static-dataflow'
 const SELF_TEST_MODULES = new Set([
   'scripts/check-privacy-console.test.mjs',
+  // Story 174.2 carry-in fix: this node:test self-suite legitimately imports
+  // node:child_process to spawn the parity validator CLI (same precedent as
+  // the check-privacy-console.test.mjs entry above).
+  'scripts/__tests__/check-shadcn-migration-parity.test.mjs',
   'src/test/anti-pattern-8-rule.test.ts',
   'src/test/outbound-network-guard.test.ts',
   'src/test/outbound-node-network-guard.ts',

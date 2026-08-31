@@ -35,12 +35,12 @@ describe('PriceBasisBadge', () => {
     expect(screen.getByText('Продавец')).toBeInTheDocument()
   })
 
-  it('renders blue «Витрина» chip for STOREFRONT_ANON', () => {
+  it('renders information «Витрина» chip for STOREFRONT_ANON', () => {
     render(<PriceBasisBadge basis="STOREFRONT_ANON" />)
     expect(screen.getByText('Витрина')).toBeInTheDocument()
   })
 
-  it('renders amber «Витрина · устарела» chip when STOREFRONT_STALE flag present', () => {
+  it('renders warning «Витрина · устарела» chip when STOREFRONT_STALE flag present', () => {
     render(<PriceBasisBadge basis="STOREFRONT_ANON" flags={['STOREFRONT_STALE']} />)
     expect(screen.getByText('Витрина · устарела')).toBeInTheDocument()
   })

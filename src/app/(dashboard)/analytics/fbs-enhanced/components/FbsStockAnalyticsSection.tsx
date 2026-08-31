@@ -23,14 +23,16 @@ interface KpiCardProps {
   title: string
   value: string
   icon: React.ReactNode
+  /** Story 174.2 (C10): funnel semantic icon canon — muted fallback preserved. */
+  iconClassName?: string
 }
 
-function KpiCard({ title, value, icon }: KpiCardProps) {
+function KpiCard({ title, value, icon, iconClassName = 'text-muted-foreground' }: KpiCardProps) {
   return (
     <Card>
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
         <CardTitle className="text-sm font-medium text-muted-foreground">{title}</CardTitle>
-        <span className="text-muted-foreground">{icon}</span>
+        <span className={iconClassName}>{icon}</span>
       </CardHeader>
       <CardContent>
         <div className="text-2xl font-bold tabular-nums">{value}</div>
@@ -58,30 +60,37 @@ export function FbsStockAnalyticsSection({ stockAnalytics }: FbsStockAnalyticsSe
     <section aria-label="Аналитика остатков" data-testid="fbs-stock-analytics-section">
       <h2 className="text-lg font-semibold mb-3">Аналитика остатков</h2>
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5">
+        {/* Story 174.2 (C10): neutral stock counts get categorical chart roles
+            (funnel-route icon canon); available stock carries the positive valence. */}
         <KpiCard
           title="Товары (SKU)"
           value={formatCount(stockAnalytics.productCount)}
           icon={<Package className="h-4 w-4" />}
+          iconClassName="text-chart-1"
         />
         <KpiCard
           title="Единиц на складе"
           value={formatCount(stockAnalytics.totalStock)}
           icon={<Boxes className="h-4 w-4" />}
+          iconClassName="text-chart-2"
         />
         <KpiCard
           title="Доступно"
           value={formatCount(stockAnalytics.availableStock)}
           icon={<CheckCircle className="h-4 w-4" />}
+          iconClassName="text-status-success"
         />
         <KpiCard
           title="Зарезервировано"
           value={formatCount(stockAnalytics.reservedStock)}
           icon={<Lock className="h-4 w-4" />}
+          iconClassName="text-status-information"
         />
         <KpiCard
           title="В пути"
           value={formatCount(stockAnalytics.inTransit)}
           icon={<Truck className="h-4 w-4" />}
+          iconClassName="text-chart-4"
         />
       </div>
     </section>

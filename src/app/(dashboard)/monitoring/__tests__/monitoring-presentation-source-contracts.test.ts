@@ -1,7 +1,7 @@
 /**
  * Story 172.12 micro-guards — Monitoring operations console (owned surface:
  * the /monitoring route tree only; monitoring APIs/hooks-in-src/hooks/types
- * are shared per plan; src/lib is forbidden). Catalog pinned (32 route prod
+ * are shared per plan; src/lib is forbidden). Catalog pinned (29 route prod
  * files, per-file identity); no-palette/no-hex over the catalog; semantic
  * contract pins (heatmap STATUS color map incl. color-mix recovered,
  * status/severity banner shapes, completeness badge/bar tokens, pipeline
@@ -41,7 +41,7 @@ function component(name: string): string {
 }
 
 describe('Story 172.12 monitoring presentation source contracts', () => {
-  it('catalog pinned (32 route files, per-file identity)', () => {
+  it('catalog pinned (29 route files, per-file identity)', () => {
     const route = routeProdFiles()
     // Exact relative-path equality (172.10/172.11 canon): rename/add/remove
     // must FAIL this pin.
@@ -61,8 +61,6 @@ describe('Story 172.12 monitoring presentation source contracts', () => {
       'components/PipelineStatusGrid.tsx',
       'components/RecoveryPanel.tsx',
       'components/RecoveryPanelSubcomponents.tsx',
-      'components/TelegramDetailPanel.tsx',
-      'components/TelegramDetailSections.tsx',
       'components/TelegramStatusCard.tsx',
       'components/data-completeness-constants.ts',
       'components/health-history-helpers.ts',
@@ -71,7 +69,6 @@ describe('Story 172.12 monitoring presentation source contracts', () => {
       'hooks/use-monitoring-dashboard.ts',
       'hooks/use-pipeline-grid.ts',
       'hooks/use-recovery.ts',
-      'hooks/use-telegram-health.ts',
       'page.tsx',
       'types/monitoring-enums.ts',
       'types/monitoring-grid.ts',
@@ -81,11 +78,6 @@ describe('Story 172.12 monitoring presentation source contracts', () => {
     ]
     const relative = route.map(f => f.slice(routeDirectory.length + 1).replace(/\\/g, '/')).sort()
     expect(relative).toEqual(expected)
-    // Honest dead-code annotation (pass-1 review finding #1, §5.2 canon):
-    // TelegramDetailPanel.tsx, TelegramDetailSections.tsx and
-    // hooks/use-telegram-health.ts have ZERO live importers repo-wide —
-    // pinned as present-but-dead; removal is a filed cleanup carry-out,
-    // not this story's color-only scope.
   })
 
   it('no legacy palette classes in any production file', () => {

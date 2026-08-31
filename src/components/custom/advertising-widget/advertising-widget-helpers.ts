@@ -68,19 +68,19 @@ export { getRoasColorClass } from '@/lib/efficiency-utils'
 /**
  * Get organic-contribution color class (value in percent units, 0-100).
  * Mirrors AdvertisingSummaryCards thresholds so the widget and the analytics card agree:
- * - < 0:   Red (WB re-attribution anomaly — a real negative, not no-data)
- * - >= 50: Green (healthy organic share)
- * - >= 20: Yellow
- * - else:  Orange (low)
+ * - < 0:   Error (WB re-attribution anomaly — a real negative, not no-data)
+ * - >= 50: Success (healthy organic share)
+ * - >= 20: Warning
+ * - else:  Orange (low; legacy accent kept distinct from the warning band)
  * null/NaN → muted (no data). Replaces the widget's prior hardcoded green, which rendered
- * even a negative/low share as "healthy".
+ * even a negative/low share as "healthy". Story 174.2: valence tokens.
  */
 export function getOrganicContributionColorClass(value: number | undefined | null): string {
   if (value == null || isNaN(value)) return 'text-muted-foreground'
-  if (value < 0) return 'text-red-600'
-  if (value >= 50) return 'text-green-600'
-  if (value >= 20) return 'text-yellow-600'
-  return 'text-orange-600'
+  if (value < 0) return 'text-status-error'
+  if (value >= 50) return 'text-status-success'
+  // 0-20 (low) and 20-50 (moderate) share the warning valence — Story 174.2 orange→warning collapse
+  return 'text-status-warning'
 }
 
 /**

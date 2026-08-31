@@ -27,11 +27,19 @@ export function formatPercent(value: number | null): string {
   return formatPercentage(value, 1)
 }
 
-/** Get margin color class based on value */
+/**
+ * Get margin color class based on value — canonical 168.3 tier semantics
+ * (Story 174.2 dedupe: this is the single source; the former local copies in
+ * TopProductsTableRow/TopBrandsTableRow are removed):
+ *   null → muted; excellent (>=30) → financial-positive; good (>=15) and
+ *   fair (>=0) → status-warning; poor (<0) → financial-negative.
+ * Good/fair share the warning valence — /80 text opacity on text is avoided
+ * per the §11.3 contrast debt; the remaining pre-existing text-/80 sites repo-wide
+ * (pricing/automation/cashflow/popover families) are registered follow-up debt.
+ */
 export function getMarginColor(margin: number | null): string {
-  if (margin === null) return 'text-gray-400'
-  if (margin >= 30) return 'text-green-600'
-  if (margin >= 15) return 'text-yellow-600'
-  if (margin >= 0) return 'text-orange-500'
-  return 'text-red-600'
+  if (margin === null) return 'text-muted-foreground'
+  if (margin >= 30) return 'text-financial-positive'
+  if (margin >= 0) return 'text-status-warning'
+  return 'text-financial-negative'
 }

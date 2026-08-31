@@ -58,18 +58,6 @@ export const PROFITABILITY_COLORS: Record<ProfitabilityStatus, string> = {
 }
 
 /**
- * Chart-safe color vars for profitability status (charts/badges)
- */
-export const PROFITABILITY_HEX: Record<ProfitabilityStatus, string> = {
-  excellent: 'var(--color-financial-positive)',
-  good: 'var(--color-status-information)',
-  warning: 'var(--color-status-warning)',
-  critical: 'var(--color-status-error)',
-  loss: 'var(--color-financial-negative)',
-  unknown: 'var(--color-muted-foreground)',
-}
-
-/**
  * Labels for profitability status (Russian)
  */
 export const PROFITABILITY_LABELS: Record<ProfitabilityStatus, string> = {

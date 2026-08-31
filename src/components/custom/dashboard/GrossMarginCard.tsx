@@ -32,7 +32,7 @@ export interface GrossMarginCardProps {
 function getMarginColor(pct: number): string {
   if (pct >= 50) return 'text-status-success'
   if (pct >= 30) return 'text-status-warning'
-  if (pct >= 0) return 'text-status-warning/80'
+  if (pct >= 0) return 'text-status-warning'
   return 'text-status-error'
 }
 

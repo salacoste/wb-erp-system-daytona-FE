@@ -25,14 +25,16 @@ interface KpiCardProps {
   title: string
   value: string
   icon: React.ReactNode
+  /** Story 174.2 (C10): funnel semantic icon canon — muted fallback preserved. */
+  iconClassName?: string
 }
 
-function KpiCard({ title, value, icon }: KpiCardProps) {
+function KpiCard({ title, value, icon, iconClassName = 'text-muted-foreground' }: KpiCardProps) {
   return (
     <Card>
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
         <CardTitle className="text-sm font-medium text-muted-foreground">{title}</CardTitle>
-        <span className="text-muted-foreground">{icon}</span>
+        <span className={iconClassName}>{icon}</span>
       </CardHeader>
       <CardContent>
         <div className="text-2xl font-bold tabular-nums">{value}</div>
@@ -60,35 +62,43 @@ export function FbsOrderStatsSection({ orderStats }: FbsOrderStatsSectionProps) 
     <section aria-label="Статистика заказов" data-testid="fbs-order-stats-section">
       <h2 className="text-lg font-semibold mb-3">Статистика заказов</h2>
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-4">
+        {/* Story 174.2 (C10): icon roles mirror the funnel-route semantic canon —
+            categorical chart roles for counts, financial valence for sums/cancels. */}
         <KpiCard
           title="Всего заказов"
           value={formatCount(orderStats.ordersCount)}
           icon={<ShoppingCart className="h-4 w-4" />}
+          iconClassName="text-chart-5"
         />
         <KpiCard
           title="Сумма заказов"
           value={orderStats.ordersSumRub == null ? '—' : formatCurrency(orderStats.ordersSumRub)}
           icon={<Wallet className="h-4 w-4" />}
+          iconClassName="text-financial-positive"
         />
         <KpiCard
           title="Доставлено"
           value={formatCount(orderStats.buyoutCount)}
           icon={<CheckCircle className="h-4 w-4" />}
+          iconClassName="text-chart-4"
         />
         <KpiCard
           title="Отменено"
           value={formatCount(orderStats.cancelCount)}
           icon={<XCircle className="h-4 w-4" />}
+          iconClassName="text-financial-negative"
         />
         <KpiCard
           title="Процент выкупа"
           value={orderStats.buyoutRate == null ? '—' : formatPercentage(orderStats.buyoutRate)}
           icon={<TrendingUp className="h-4 w-4" />}
+          iconClassName="text-chart-2"
         />
         <KpiCard
           title="Процент отмен"
           value={orderStats.cancelRate == null ? '—' : formatPercentage(orderStats.cancelRate)}
           icon={<TrendingDown className="h-4 w-4" />}
+          iconClassName="text-financial-negative"
         />
       </div>
       {/* Average order value footer — null → '—' per Defensive Frontend Principle */}

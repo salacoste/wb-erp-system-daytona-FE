@@ -22,15 +22,15 @@ import {
 
 describe('SLA status (95 / 85 thresholds)', () => {
   it('color: >=95 green, [85,95) yellow, <85 red', () => {
-    expect(getSlaStatusColor(95)).toBe('text-green-600')
-    expect(getSlaStatusColor(94.9)).toBe('text-yellow-600')
-    expect(getSlaStatusColor(85)).toBe('text-yellow-600')
-    expect(getSlaStatusColor(84.9)).toBe('text-red-600')
+    expect(getSlaStatusColor(95)).toBe('text-status-success')
+    expect(getSlaStatusColor(94.9)).toBe('text-status-warning')
+    expect(getSlaStatusColor(85)).toBe('text-status-warning')
+    expect(getSlaStatusColor(84.9)).toBe('text-status-error')
   })
   it('bg color tracks the same thresholds', () => {
-    expect(getSlaStatusBgColor(95)).toBe('bg-green-50')
-    expect(getSlaStatusBgColor(90)).toBe('bg-yellow-50')
-    expect(getSlaStatusBgColor(80)).toBe('bg-red-50')
+    expect(getSlaStatusBgColor(95)).toBe('bg-status-success/10')
+    expect(getSlaStatusBgColor(90)).toBe('bg-status-warning/10')
+    expect(getSlaStatusBgColor(80)).toBe('bg-status-error/10')
   })
   it('label: Отлично / Внимание / Критично', () => {
     expect(getSlaStatusLabel(95)).toBe('Отлично')
@@ -41,19 +41,19 @@ describe('SLA status (95 / 85 thresholds)', () => {
 
 describe('velocity colors + labels', () => {
   it('confirmation: <30 green, [30,60) yellow, >=60 red', () => {
-    expect(getConfirmationTimeColor(29)).toBe('text-green-600')
-    expect(getConfirmationTimeColor(30)).toBe('text-yellow-600')
-    expect(getConfirmationTimeColor(59)).toBe('text-yellow-600')
-    expect(getConfirmationTimeColor(60)).toBe('text-red-600')
+    expect(getConfirmationTimeColor(29)).toBe('text-status-success')
+    expect(getConfirmationTimeColor(30)).toBe('text-status-warning')
+    expect(getConfirmationTimeColor(59)).toBe('text-status-warning')
+    expect(getConfirmationTimeColor(60)).toBe('text-status-error')
   })
   it('completion: <180 green, [180,360) yellow, >=360 red', () => {
-    expect(getCompletionTimeColor(179)).toBe('text-green-600')
-    expect(getCompletionTimeColor(180)).toBe('text-yellow-600')
-    expect(getCompletionTimeColor(360)).toBe('text-red-600')
+    expect(getCompletionTimeColor(179)).toBe('text-status-success')
+    expect(getCompletionTimeColor(180)).toBe('text-status-warning')
+    expect(getCompletionTimeColor(360)).toBe('text-status-error')
   })
   it('getVelocityStatusColor delegates by type (30 min: confirm=yellow, complete=green)', () => {
-    expect(getVelocityStatusColor(30, 'confirm')).toBe('text-yellow-600')
-    expect(getVelocityStatusColor(30, 'complete')).toBe('text-green-600')
+    expect(getVelocityStatusColor(30, 'confirm')).toBe('text-status-warning')
+    expect(getVelocityStatusColor(30, 'complete')).toBe('text-status-success')
   })
   it('getVelocityStatusLabel uses per-type thresholds', () => {
     expect(getVelocityStatusLabel(29, 'confirm')).toBe('Быстро')
@@ -84,11 +84,11 @@ describe('formatDurationShort', () => {
 })
 
 describe('getCountdownColor', () => {
-  it('red breached / orange <10 / yellow <30 / gray >=30', () => {
-    expect(getCountdownColor(-5)).toBe('text-red-600')
-    expect(getCountdownColor(5)).toBe('text-orange-600')
-    expect(getCountdownColor(20)).toBe('text-yellow-600')
-    expect(getCountdownColor(30)).toBe('text-gray-600')
+  it('error breached / warning <10 / warning <30 / muted >=30', () => {
+    expect(getCountdownColor(-5)).toBe('text-status-error')
+    expect(getCountdownColor(5)).toBe('text-status-warning')
+    expect(getCountdownColor(20)).toBe('text-status-warning')
+    expect(getCountdownColor(30)).toBe('text-muted-foreground')
   })
 })
 

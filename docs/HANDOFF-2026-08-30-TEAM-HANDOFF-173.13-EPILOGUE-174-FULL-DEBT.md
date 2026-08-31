@@ -2,9 +2,9 @@
 
 > **Аудитория**: новая FE-команда, принимающая программу shadcn-миграции на финише (осталось **6 из 94 канонических стори**: 173.13 + 174.1–174.5).
 > **От**: сессии-оркестратора, закрывшей Stories 172.10–172.17 (эпик 172 целиком) и 173.12 (supplies owner), работавшей **параллельно** с командой Epic-173 lane (173.1–173.11).
-> **Дата**: 2026-08-30. **main**: `73ebb5f0` (IN-SYNC), открытых PR — 0, активных worktrees — 0, обе lane завершены и вычищены.
-> **Статус программы**: **88/94** стори; эпики 166–172 ✅ complete; **Epic 173 = 12/13** (осталась 173.13); Epic 174 — backlog (5 стори).
-> **Живые гейты на main**: vitest **≥ 19 800 passed / 0 failed / 1252 файла** (floor); lint 0/0; tsc 0; max-lines OK; check:docs exit 0 (baseline 95); locale-percent 4; lessons-length 0; PM2 `wb-repricer-frontend-dev` online :3100; BE :3000.
+> **Дата**: 2026-08-30 (обновлено 2026-08-31 closeout'ами 173.13/174.1/174.2). **main после 174.2**: base `fbdab2da` (174.1 closeout #370 + lifecycle #371) + PR #372.
+> **Статус программы**: **91/94** стори; эпики 166–173 ✅ complete; **Epic 174 = 2/5** (174.1 parity ✅ PR #369; 174.2 legacy-removal/boundary ✅ PR #372); NEXT = **174.3** → 174.4 → 174.5.
+> **Живые гейты на main (после 174.2)**: vitest **≥ 19 118 passed / 0 failed / 1234 файла** (floor двинут точным −756 мёртвых тестов); lint 0/0; tsc 0; max-lines OK; **ui-boundary 523 (ratchet)**; check:docs exit 0; locale-percent 4; lessons-length 0; PM2 `wb-repricer-frontend-dev` online :3100; BE :3000.
 
 ---
 
@@ -12,12 +12,12 @@
 
 | # | Действие | План (authoritative) | Ветки/PR-прецеденты |
 |---|---|---|---|
-| 1 | **Story 173.13 Supply Detail** — последняя стори эпика 173 | [`.omx/plans/173.13-migrate-supply-detail.md`](../.omx/plans/173.13-migrate-supply-detail.md) | Артефакт-эталон: [`_bmad-output/implementation-artifacts/173-12-fe-migrate-supplies-list.md`] (owner-граница) |
-| 2 | Эпик-173 flip + retrospective (optional) | sprint-status.yaml | Прецедент flip: PR #326 (эпик 172) |
-| 3 | **174.1** Parity (BMAD ↔ route-ledger ↔ OMX ↔ evidence) | [`.omx/plans/174.1-…`](../.omx/plans/174.1-prove-bmad-route-ledger-and-omx-plan-parity.md) | — |
-| 4 | **174.2** Legacy removal + design-system boundary (главный чистильщик долга) | [`.omx/plans/174.2-…`](../.omx/plans/174.2-remove-legacy-ui-and-enforce-the-design-system-boundary.md) | — |
-| 5 | **174.3** A11y/responsive/theme/visual (все отложенные visual-gap'ы) | [`.omx/plans/174.3-…`](../.omx/plans/174.3-complete-accessibility-responsive-theme-and-visual-verification.md) | — |
-| 6 | **174.4** Полная функциональная/контрактная регрессия | [`.omx/plans/174.4-…`](../.omx/plans/174.4-complete-full-local-functional-and-backend-contract-regression.md) | — |
+| 1 | ~~**Story 173.13 Supply Detail**~~ ✅ SHIPPED (PR #365/#366/#367) | [`.omx/plans/173.13-migrate-supply-detail.md`](../.omx/plans/173.13-migrate-supply-detail.md) | Артефакт-эталон: [`_bmad-output/implementation-artifacts/173-12-fe-migrate-supplies-list.md`] (owner-граница) |
+| 2 | ~~Эпик-173 flip~~ ✅ done 13/13 | sprint-status.yaml | Прецедент flip: PR #326 (эпик 172) |
+| 3 | ~~**174.1** Parity~~ ✅ SHIPPED (PR #369, merge `360c9cb9`; closeout #370) | [`.omx/plans/174.1-…`](../.omx/plans/174.1-prove-bmad-route-ledger-and-omx-plan-parity.md) | — |
+| 4 | ~~**174.2** Legacy removal + design-system boundary~~ ✅ SHIPPED (PR #372 на `fbdab2da`; 65 deletions, lib-wave, boundary-скрипт ratchet 523, классификационный манифест; артефакт `174-2-fe-*.md`) | [`.omx/plans/174.2-…`](../.omx/plans/174.2-remove-legacy-ui-and-enforce-the-design-system-boundary.md) | — |
+| 5 | **174.3** A11y/responsive/theme/visual (все отложенные visual-gap'ы + §3.3 tint-audit) | [`.omx/plans/174.3-…`](../.omx/plans/174.3-complete-accessibility-responsive-theme-and-visual-verification.md) | вход: boundary-манифест cat-1 (59 файлов) |
+| 6 | **174.4** Полная функциональная/контрактная регрессия (+ pre-existing liquidity/monitor e2e фейлы — bisect-доказаны, см. registry APPEND) | [`.omx/plans/174.4-…`](../.omx/plans/174.4-complete-full-local-functional-and-backend-contract-regression.md) | — |
 | 7 | **174.5** Финализация документации + cleanup → **94/94** | [`.omx/plans/174.5-…`](../.omx/plans/174.5-finalize-documentation-and-repository-cleanup.md) | — |
 
 **DAG**: 173.13 → (эпик-flip) → 174.1 → 174.2 → 174.3 → 174.4 → 174.5. Полный мерmaid: [HANDOFF-173-174 §4](./HANDOFF-2026-08-29-EPIC-173-174-FULL-MIGRATION-AND-DEBT.md#4-execution-dag-6-stories-remaining).

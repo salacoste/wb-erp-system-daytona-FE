@@ -26,14 +26,22 @@ interface MetricRowProps {
   value: string
   description: string
   icon: React.ReactNode
+  /** Story 174.2 (C10): funnel semantic icon canon — muted fallback preserved. */
+  iconClassName?: string
 }
 
-function MetricRow({ label, value, description, icon }: MetricRowProps) {
+function MetricRow({
+  label,
+  value,
+  description,
+  icon,
+  iconClassName = 'text-muted-foreground',
+}: MetricRowProps) {
   return (
     <Card>
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
         <CardTitle className="text-sm font-medium text-muted-foreground">{label}</CardTitle>
-        <span className="text-muted-foreground">{icon}</span>
+        <span className={iconClassName}>{icon}</span>
       </CardHeader>
       <CardContent>
         <div className="text-2xl font-bold tabular-nums">{value}</div>
@@ -43,9 +51,11 @@ function MetricRow({ label, value, description, icon }: MetricRowProps) {
   )
 }
 
-const METRIC_ICONS = [
-  <ShoppingCart className="h-4 w-4" key="cart" />,
-  <TrendingUp className="h-4 w-4" key="trend" />,
+/** Story 174.2 (C10): conversion metrics mirror the funnel-route icon roles —
+ * cart conversion → chart-3, orders conversion → chart-2 (funnel canon). */
+const METRIC_ICONS: Array<{ icon: React.ReactNode; iconClassName: string }> = [
+  { icon: <ShoppingCart className="h-4 w-4" key="cart" />, iconClassName: 'text-chart-3' },
+  { icon: <TrendingUp className="h-4 w-4" key="trend" />, iconClassName: 'text-chart-2' },
 ]
 
 export function FbsFunnelSection({ funnelData }: FbsFunnelSectionProps) {
@@ -70,7 +80,8 @@ export function FbsFunnelSection({ funnelData }: FbsFunnelSectionProps) {
             label={metric.label}
             value={metric.value == null ? '—' : formatPercentage(metric.value)}
             description={metric.description}
-            icon={METRIC_ICONS[i]}
+            icon={METRIC_ICONS[i]?.icon}
+            iconClassName={METRIC_ICONS[i]?.iconClassName}
           />
         ))}
       </div>

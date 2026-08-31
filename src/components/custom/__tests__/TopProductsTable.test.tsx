@@ -191,9 +191,9 @@ describe('TopProductsTable', () => {
       const midMargin = screen.getByText('20,0 %')
       expect(midMargin).toHaveClass('text-status-warning')
 
-      // Low positive margin (5%) should be weaker warning intensity (0-15% band)
+      // Low positive margin (5%) shares the warning valence (0-15% band; 174.2 canon: /80 text opacity banned)
       const lowMargin = screen.getByText('5,0 %')
-      expect(lowMargin).toHaveClass('text-status-warning/80')
+      expect(lowMargin).toHaveClass('text-status-warning')
     })
 
     it('should show muted tone for null margin', () => {

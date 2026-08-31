@@ -12,13 +12,15 @@ import type { PipelineStatus } from '@/app/(dashboard)/monitoring/types/monitori
 /**
  * Tailwind utility classes for pipeline-status badges.
  * Key: PipelineStatus enum value. Value: `bg-*` + `text-*` class pair.
+ * Story 174.2: semantic status tokens (solid valence pairs for badge text);
+ * stale/no_data render muted — a missing signal is not an error valence.
  */
 export const STATUS_COLORS: Record<PipelineStatus, string> = {
-  healthy: 'bg-green-500 text-white',
-  warning: 'bg-yellow-500 text-white',
-  critical: 'bg-red-500 text-white',
-  stale: 'bg-gray-500 text-white',
-  no_data: 'bg-gray-300 text-gray-700',
+  healthy: 'bg-status-success text-status-success-foreground',
+  warning: 'bg-status-warning text-status-warning-foreground',
+  critical: 'bg-status-error text-status-error-foreground',
+  stale: 'bg-muted text-muted-foreground',
+  no_data: 'bg-muted text-muted-foreground',
 }
 
 /**

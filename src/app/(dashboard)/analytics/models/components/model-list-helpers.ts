@@ -14,58 +14,68 @@ export const ENGINE_LABELS: Record<ModelEngine, string> = {
 }
 
 /**
- * Status badge configuration — semantic status-token colour + Russian label.
+ * Status badge configuration — Russian label + pulse flag (registry-owned).
  * Exported for direct unit testing (pure-function discipline, Epic 89-FE lesson).
  * WCAG 2.1 AA: text label is the accessible name; colour is supplementary (Epic 108-FE retro § C-3).
  *
  * Story 171.6-FE: raw light-only palette classes replaced with semantic status
  * tokens — hue mapping preserved 1:1 (green→success, blue→information,
  * amber→warning, red→error, gray→muted).
- * `className` field stays because [id]/evaluations + [id]/performance subroutes
- * (Stories 171.7/171.9) overlay it on an outline Badge; they own its removal.
+ * Story 174.2-FE: the `className` field was REMOVED from this registry config
+ * (all [id]/ subroutes detached via route-local maps in Stories 171.7/171.9);
+ * colour overlays now live exclusively in route-local maps —
+ * MODEL_LIST_BADGE_CLASS below (registry root) and the [id] subroute maps.
+ * Labels remain the single source of truth here.
  */
-export const STATUS_BADGE_CONFIG: Record<
-  ModelStatus,
-  { className: string; label: string; pulse: boolean }
-> = {
+export const STATUS_BADGE_CONFIG: Record<ModelStatus, { label: string; pulse: boolean }> = {
   active: {
-    className: 'border-status-success/40 bg-status-success/10 text-status-success',
     label: 'Активна',
     pulse: false,
   },
   training: {
-    className: 'border-status-information/40 bg-status-information/10 text-status-information',
     label: 'Обучается',
     pulse: true,
   },
   degraded: {
-    className: 'border-status-warning/40 bg-status-warning/10 text-status-warning',
     label: 'Деградировала',
     pulse: false,
   },
   retired: {
-    className: 'border-border bg-muted text-muted-foreground',
     label: 'Снята',
     pulse: false,
   },
   // F-10: statuses added to ModelStatus union — provide badge config for public model list.
   rolled_back: {
-    className: 'border-border bg-muted text-muted-foreground',
     label: 'Откачена',
     pulse: false,
   },
   failed: {
-    className: 'border-status-error/40 bg-status-error/10 text-status-error',
     label: 'Ошибка',
     pulse: false,
   },
   // F-39: 'deprecated' is returned live by GET /v1/ai/models — without an entry the
   // Record lookup was undefined → crash. Grey "Устарела" badge.
   deprecated: {
-    className: 'border-border bg-muted text-muted-foreground',
     label: 'Устарела',
     pulse: false,
   },
+}
+
+/**
+ * Registry-root status badge overlay for ModelListSection (Story 174.2-FE).
+ * Hue-preserving mirror of the 171.6 semantic canon — green→success,
+ * blue→information, amber→warning, red→error, gray→muted. Same shape as the
+ * [id] subroute maps (EVALUATION_STATUS_BADGE_CLASS / PERFORMANCE_STATUS_BADGE_CLASS);
+ * labels stay sourced from STATUS_BADGE_CONFIG (single label source of truth).
+ */
+export const MODEL_LIST_BADGE_CLASS: Record<ModelStatus, string> = {
+  active: 'border-status-success/40 bg-status-success/10 text-status-success',
+  training: 'border-status-information/40 bg-status-information/10 text-status-information',
+  degraded: 'border-status-warning/40 bg-status-warning/10 text-status-warning',
+  retired: 'border-border bg-muted text-muted-foreground',
+  rolled_back: 'border-border bg-muted text-muted-foreground',
+  failed: 'border-status-error/40 bg-status-error/10 text-status-error',
+  deprecated: 'border-border bg-muted text-muted-foreground',
 }
 
 /**

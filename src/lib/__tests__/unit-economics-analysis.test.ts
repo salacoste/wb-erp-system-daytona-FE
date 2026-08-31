@@ -1,6 +1,6 @@
 /**
  * Unit Tests for Unit Economics Analysis Functions
- * Covers: getTopMarginKillers, calculateHealthScore, getHealthScoreInfo,
+ * Covers: getTopMarginKillers, calculateHealthScore,
  *         sortByProfitability, filterLossMaking, filterMissingCogs, filterByProfitabilityStatus
  */
 
@@ -8,7 +8,6 @@ import { describe, it, expect } from 'vitest'
 import {
   getTopMarginKillers,
   calculateHealthScore,
-  getHealthScoreInfo,
   sortByProfitability,
   filterLossMaking,
   filterMissingCogs,
@@ -207,43 +206,6 @@ describe('calculateHealthScore', () => {
     )
     // 35 (margin) + 0 (profitable) + 0 (cogs) = 35
     expect(score).toBe(35)
-  })
-})
-
-// =============================================================================
-// getHealthScoreInfo
-// =============================================================================
-
-describe('getHealthScoreInfo', () => {
-  it('returns "Отлично" for score >= 80', () => {
-    expect(getHealthScoreInfo(80).label).toBe('Отлично')
-    expect(getHealthScoreInfo(100).label).toBe('Отлично')
-  })
-
-  it('returns "Хорошо" for score 60-79', () => {
-    expect(getHealthScoreInfo(60).label).toBe('Хорошо')
-    expect(getHealthScoreInfo(79).label).toBe('Хорошо')
-  })
-
-  it('returns "Нормально" for score 40-59', () => {
-    expect(getHealthScoreInfo(40).label).toBe('Нормально')
-    expect(getHealthScoreInfo(59).label).toBe('Нормально')
-  })
-
-  it('returns "Слабо" for score 20-39', () => {
-    expect(getHealthScoreInfo(20).label).toBe('Слабо')
-    expect(getHealthScoreInfo(39).label).toBe('Слабо')
-  })
-
-  it('returns "Критично" for score < 20', () => {
-    expect(getHealthScoreInfo(0).label).toBe('Критично')
-    expect(getHealthScoreInfo(19).label).toBe('Критично')
-  })
-
-  it('returns color and bgColor for each level', () => {
-    const info = getHealthScoreInfo(50)
-    expect(info).toHaveProperty('color')
-    expect(info).toHaveProperty('bgColor')
   })
 })
 

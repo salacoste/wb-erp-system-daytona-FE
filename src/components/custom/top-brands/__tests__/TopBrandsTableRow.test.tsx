@@ -3,18 +3,17 @@ import { render, screen } from '@/test/utils/test-utils'
 import { TopBrandsTableRow } from '../TopBrandsTableRow'
 import type { TopBrandItem } from '@/types/analytics'
 
-// Mock formatting utils — absolute path to match component's import resolution
-vi.mock('@/components/custom/top-table-utils', () => ({
-  formatCurrency: (value: number) => `${value.toLocaleString('ru-RU')} ₽`,
-  formatPercent: (value: number | null) => (value === null ? '—' : `${value}%`),
-  getMarginColor: (margin: number | null) => {
-    if (margin === null) return 'text-gray-400'
-    if (margin >= 30) return 'text-green-600'
-    if (margin >= 15) return 'text-yellow-600'
-    if (margin >= 0) return 'text-orange-500'
-    return 'text-red-600'
-  },
-}))
+// Mock formatting utils — absolute path to match component's import resolution.
+// getMarginColor is NOT overridden: the row consumes the canonical shared helper
+// (Story 174.2 dedupe), pulled from the real module via importOriginal.
+vi.mock('@/components/custom/top-table-utils', async importOriginal => {
+  const actual = await importOriginal<typeof import('@/components/custom/top-table-utils')>()
+  return {
+    ...actual,
+    formatCurrency: (value: number) => `${value.toLocaleString('ru-RU')} ₽`,
+    formatPercent: (value: number | null) => (value === null ? '—' : `${value}%`),
+  }
+})
 
 const baseBrand: TopBrandItem = {
   brand: 'TestBrand',

@@ -169,9 +169,9 @@ describe('UNKNOWN_STATUS_CONFIG', () => {
     expect(UNKNOWN_STATUS_CONFIG.label).toContain('Неизвестный')
   })
 
-  it('has gray colors', () => {
-    expect(UNKNOWN_STATUS_CONFIG.color).toContain('gray')
-    expect(UNKNOWN_STATUS_CONFIG.bgColor).toContain('gray')
+  it('has muted colors (Story 174.2-FE: gray → muted token pair)', () => {
+    expect(UNKNOWN_STATUS_CONFIG.color).toBe('text-muted-foreground')
+    expect(UNKNOWN_STATUS_CONFIG.bgColor).toBe('bg-muted')
   })
 
   it('satisfies WbStatusConfig interface', () => {

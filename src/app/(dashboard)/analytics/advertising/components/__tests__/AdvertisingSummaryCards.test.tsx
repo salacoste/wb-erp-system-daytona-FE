@@ -113,7 +113,7 @@ describe('AdvertisingSummaryCards — Story 88.2-FE null ROAS/ROI', () => {
     expect(card.textContent).toMatch(/[-−]5,0\s*%/)
     expect(card.textContent).not.toContain('—')
     // a negative share is an anomaly — flagged red, not orange (the low-but-positive color)
-    expect(card.querySelector('[aria-label]')?.className).toContain('text-red-600')
+    expect(card.querySelector('[aria-label]')?.className).toContain('text-status-error')
   })
 
   it('renders a normal positive organic contribution in Russian locale', () => {

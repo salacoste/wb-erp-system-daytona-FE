@@ -7,15 +7,35 @@ import type { ReorderStatus, VelocityTrend, ReorderStatusConfig } from '@/types/
 
 // -- Reorder Status Helpers --
 
-/** Get display configuration for reorder status */
+/**
+ * Get display configuration for reorder status.
+ * Story 174.2: raw hexes → semantic CSS-var tokens (tints via color-mix idiom;
+ * 'soon' orange maps to the warning valence — the closest caution tier).
+ */
 export function getReorderStatusConfig(status: ReorderStatus): ReorderStatusConfig {
   const configs: Record<ReorderStatus, ReorderStatusConfig> = {
-    urgent: { label: 'Срочно заказать', color: '#EF4444', bgColor: '#FEE2E2' },
-    soon: { label: 'Заказать скоро', color: '#F97316', bgColor: '#FED7AA' },
-    ok: { label: 'Запас достаточен', color: '#22C55E', bgColor: '#D1FAE5' },
+    urgent: {
+      label: 'Срочно заказать',
+      color: 'var(--color-status-error)',
+      bgColor: 'color-mix(in srgb, var(--color-status-error) 15%, transparent)',
+    },
+    soon: {
+      label: 'Заказать скоро',
+      color: 'var(--color-status-warning)',
+      bgColor: 'color-mix(in srgb, var(--color-status-warning) 15%, transparent)',
+    },
+    ok: {
+      label: 'Запас достаточен',
+      color: 'var(--color-status-success)',
+      bgColor: 'color-mix(in srgb, var(--color-status-success) 15%, transparent)',
+    },
     // Story 169.13 (pattern #218/#226): muted visible-unknown tier — never rendered as
     // the optimistic green "Запас достаточен".
-    unknown: { label: 'Статус неизвестен', color: '#6B7280', bgColor: '#F3F4F6' },
+    unknown: {
+      label: 'Статус неизвестен',
+      color: 'var(--color-muted-foreground)',
+      bgColor: 'var(--color-muted)',
+    },
   }
   return configs[status]
 }
@@ -35,6 +55,8 @@ export function getReorderStatusColor(status: ReorderStatus): string {
 /**
  * Velocity trend display configuration
  * UX Specs by Sally (UX Expert) - 2025-12-12
+ * Story 174.2: textClass/color → semantic tokens (growing=success, stable=muted,
+ * declining=error). Route presentation renders via TREND_TEXT_TOKENS (169.13).
  */
 // 'no_data' is excluded: it has no renderable trend display (Defensive Frontend — indicate, don't fabricate).
 export const VELOCITY_TREND_CONFIG: Record<
@@ -50,22 +72,22 @@ export const VELOCITY_TREND_CONFIG: Record<
   growing: {
     label: 'Растёт',
     icon: '↗️',
-    color: '#16A34A',
-    textClass: 'text-green-600',
+    color: 'var(--color-status-success)',
+    textClass: 'text-status-success',
     lucideIcon: 'TrendingUp',
   },
   stable: {
     label: 'Стабильно',
     icon: '➡️',
-    color: '#6B7280',
-    textClass: 'text-gray-500',
+    color: 'var(--color-muted-foreground)',
+    textClass: 'text-muted-foreground',
     lucideIcon: 'Minus',
   },
   declining: {
     label: 'Падает',
     icon: '↘️',
-    color: '#DC2626',
-    textClass: 'text-red-600',
+    color: 'var(--color-status-error)',
+    textClass: 'text-status-error',
     lucideIcon: 'TrendingDown',
   },
 } as const

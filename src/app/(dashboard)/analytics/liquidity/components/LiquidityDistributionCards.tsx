@@ -63,9 +63,10 @@ export function LiquidityDistributionCards({
               <div className="flex items-center justify-between mb-3">
                 <div className="flex items-center gap-2">
                   <span className="text-xl">{config.icon}</span>
-                  <span className="text-sm font-medium" style={{ color }}>
-                    {config.label}
-                  </span>
+                  {/* Story 174.2 (C16): chart-N tokens are fill/stroke roles only —
+                      text labels use muted (chart-3 as text measured a marginal
+                      4.52:1, failing AA headroom in one theme). */}
+                  <span className="text-sm font-medium text-muted-foreground">{config.label}</span>
                 </div>
                 <span
                   className="text-xs px-2 py-0.5 rounded-full font-medium"
@@ -92,9 +93,9 @@ export function LiquidityDistributionCards({
                   </span>
                 ) : (
                   <>
-                    <span className="text-3xl font-bold" style={{ color }}>
-                      {formatPercentage(item.pct)}
-                    </span>
+                    {/* 174.2 (C16): headline value uses default foreground (KPI-value
+                        canon) — the chart token stays on ring/border/tint fills only. */}
+                    <span className="text-3xl font-bold">{formatPercentage(item.pct)}</span>
                     <span className="text-xs text-muted-foreground">от стоимости запасов</span>
                   </>
                 )}

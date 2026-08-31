@@ -87,6 +87,8 @@ describe('Story 171.9 route presentation source contracts', () => {
     )
     expect(detail).toMatch(/PERFORMANCE_STATUS_BADGE_CLASS\[model\.status\]/)
     expect(detail).toMatch(/STATUS_BADGE_CONFIG\[model\.status\]\.label/)
+    // Story 174.2 removed the registry className field outright — this pin now
+    // guards against reintroduction.
     expect(detail).not.toMatch(/statusBadge\.className|STATUS_BADGE_CONFIG\[[^\]]*\]\.className/)
   })
 

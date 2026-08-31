@@ -99,12 +99,12 @@ describe('getStockoutRiskConfig', () => {
 // =============================================================================
 
 describe('getStockoutRiskColor', () => {
-  it('returns color string for each risk', () => {
-    expect(getStockoutRiskColor('out_of_stock')).toBe('#1F2937')
-    expect(getStockoutRiskColor('critical')).toBe('#DC2626')
-    expect(getStockoutRiskColor('warning')).toBe('#F59E0B')
-    expect(getStockoutRiskColor('low')).toBe('#EAB308')
-    expect(getStockoutRiskColor('healthy')).toBe('#22C55E')
+  it('returns a semantic CSS-var token for each risk (174.2: no raw hex)', () => {
+    expect(getStockoutRiskColor('out_of_stock')).toBe('var(--color-muted-foreground)')
+    expect(getStockoutRiskColor('critical')).toBe('var(--color-status-error)')
+    expect(getStockoutRiskColor('warning')).toBe('var(--color-status-warning)')
+    expect(getStockoutRiskColor('low')).toBe('var(--color-status-warning)')
+    expect(getStockoutRiskColor('healthy')).toBe('var(--color-status-success)')
   })
 })
 
@@ -113,10 +113,14 @@ describe('getStockoutRiskColor', () => {
 // =============================================================================
 
 describe('getStockoutRiskBgColor', () => {
-  it('returns background color string for each risk', () => {
-    expect(getStockoutRiskBgColor('out_of_stock')).toBe('#F3F4F6')
-    expect(getStockoutRiskBgColor('critical')).toBe('#FEE2E2')
-    expect(getStockoutRiskBgColor('healthy')).toBe('#DCFCE7')
+  it('returns a semantic tint (color-mix over a status var) for each risk', () => {
+    expect(getStockoutRiskBgColor('out_of_stock')).toBe('var(--color-muted)')
+    expect(getStockoutRiskBgColor('critical')).toBe(
+      'color-mix(in srgb, var(--color-status-error) 15%, transparent)'
+    )
+    expect(getStockoutRiskBgColor('healthy')).toBe(
+      'color-mix(in srgb, var(--color-status-success) 15%, transparent)'
+    )
   })
 })
 
@@ -178,8 +182,8 @@ describe('getStockoutRiskBadgeClasses', () => {
   })
 
   it('returns correct classes for critical', () => {
-    expect(getStockoutRiskBadgeClasses('critical')).toContain('bg-red-600')
-    expect(getStockoutRiskBadgeClasses('critical')).toContain('text-white')
+    expect(getStockoutRiskBadgeClasses('critical')).toContain('bg-status-error')
+    expect(getStockoutRiskBadgeClasses('critical')).toContain('text-status-error-foreground')
   })
 })
 

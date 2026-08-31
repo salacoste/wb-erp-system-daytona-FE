@@ -3,7 +3,8 @@
  *
  * Calendar-month / quarter → ISO-week-range conversion (Thursday-rule membership + buildPeriodRange).
  * Month is 0-indexed (Jan=0). All range outputs node-verified — NOTE the original bare-todo skeleton
- * (src/lib/__tests__/period-presets.test.ts, misplaced) spec'd Feb as W05:W09; the ACTUAL output is
+ * (src/lib/__tests__/period-presets.test.ts, misplaced; deleted in Story 174.2 together with the
+ * dead period-presets.ts barrel it imported through) spec'd Feb as W05:W09; the ACTUAL output is
  * W06:W09 (W05's Thursday 2026-01-29 falls in January). Verify, don't trust unverified todo names.
  */
 

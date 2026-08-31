@@ -1,10 +1,10 @@
 /**
  * Tests for AdvertisingMetricsGrid — organic-share colour + locale.
  *
- * Regression: the organic value <p> was hardcoded text-green-600, so a negative or low
- * share rendered green ("healthy"), and the value used dot-locale `${v.toFixed(0)}%`.
- * It now uses getOrganicContributionColorClass (red <0, green ≥50, …) + formatPercentageInt
- * (Russian locale), consistent with AdvertisingSummaryCards.
+ * Regression: the organic value <p> was once a hardcoded legacy green utility, so a
+ * negative or low share rendered "healthy", and the value used dot-locale `${v.toFixed(0)}%`.
+ * It now uses getOrganicContributionColorClass (error <0, success ≥50, …) + formatPercentageInt
+ * (Russian locale), consistent with AdvertisingSummaryCards. Story 174.2: valence tokens.
  */
 
 import { describe, it, expect } from 'vitest'
@@ -27,19 +27,19 @@ function renderGrid(summary: Summary) {
 }
 
 describe('AdvertisingMetricsGrid — organic contribution', () => {
-  it('renders a negative organic share in red (NOT the old hardcoded green)', () => {
+  it('renders a negative organic share with the error valence (NOT success)', () => {
     renderGrid({ total_sales: 1000, avg_organic_contribution: -40, overall_roas: 2 })
     // \s+ (not \s*) so the regex itself also guards the locale separator: the old
     // dot-locale "-40%" (no NBSP) would NOT match — independent of the classList check.
     const el = screen.getByText(/[-−]40\s+%/)
-    expect(el.classList.contains('text-red-600')).toBe(true)
-    expect(el.classList.contains('text-green-600')).toBe(false)
+    expect(el.classList.contains('text-status-error')).toBe(true)
+    expect(el.classList.contains('text-status-success')).toBe(false)
   })
 
-  it('renders a healthy positive share in green, Russian locale', () => {
+  it('renders a healthy positive share with the success valence, Russian locale', () => {
     renderGrid({ total_sales: 1000, avg_organic_contribution: 92.45, overall_roas: 2 })
     const el = screen.getByText(/92\s+%/)
-    expect(el.classList.contains('text-green-600')).toBe(true)
+    expect(el.classList.contains('text-status-success')).toBe(true)
   })
 
   it('renders "—" muted when organic contribution is null', () => {

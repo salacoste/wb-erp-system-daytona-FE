@@ -22,14 +22,22 @@ interface KpiCardProps {
   value: string
   subtitle?: string
   icon: React.ReactNode
+  /** Story 174.2 (C10): funnel semantic icon canon — muted fallback preserved. */
+  iconClassName?: string
 }
 
-function KpiCard({ title, value, subtitle, icon }: KpiCardProps) {
+function KpiCard({
+  title,
+  value,
+  subtitle,
+  icon,
+  iconClassName = 'text-muted-foreground',
+}: KpiCardProps) {
   return (
     <Card>
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
         <CardTitle className="text-sm font-medium text-muted-foreground">{title}</CardTitle>
-        <span className="text-muted-foreground">{icon}</span>
+        <span className={iconClassName}>{icon}</span>
       </CardHeader>
       <CardContent>
         <div className="text-2xl font-bold tabular-nums">{value}</div>
@@ -55,8 +63,11 @@ export function FbsCalculatedMetricsSection({
     <section aria-label="Расчётные метрики" data-testid="fbs-calculated-metrics-section">
       <h2 className="text-lg font-semibold mb-3">Расчётные метрики</h2>
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+        {/* Story 174.2 (C10): neutral ratio metrics get categorical chart roles
+            (funnel-route icon canon). */}
         <KpiCard
           title="Оборачиваемость"
+          iconClassName="text-chart-2"
           value={
             calculatedMetrics.turnoverRate == null
               ? '—'
@@ -67,6 +78,7 @@ export function FbsCalculatedMetricsSection({
         />
         <KpiCard
           title="Дней покрытия остатков"
+          iconClassName="text-chart-1"
           value={
             calculatedMetrics.stockCoverageDays == null ||
             calculatedMetrics.stockCoverageDays >= 999
@@ -78,6 +90,7 @@ export function FbsCalculatedMetricsSection({
         />
         <KpiCard
           title="Заказов на товар"
+          iconClassName="text-chart-3"
           value={
             calculatedMetrics.ordersPerProduct == null
               ? '—'
