@@ -443,7 +443,7 @@ This machine-readable table binds the Story Plan Index to the exact normalized `
 > Живые по-сторийные статусы: `_bmad-output/implementation-artifacts/sprint-status.yaml`.
 
 - **Epics CLOSED**: 166-FE (foundation), 167-FE (AppShell/auth, freeze-8), 168-FE (analytics core, 11/11), 169-FE (operational analytics, 15/15), 170-FE (marketing and marketplace analytics, 7/7), 171-FE (models, 9/9), 172-FE (core operations, 17/17), and 173-FE (settings, shipments, and supplies, 13/13).
-- **Canonical Story readiness: 90/94; Epic 174: 1/5 complete**; Story 174.1 feature commit `4c930a9d` merged through PR #369 as `360c9cb9`, primary `main` was fast-forwarded, and its exact feature branch/ref/worktree/path/stale-registration/open-PR residue is absent.
+- **Canonical Story readiness: 90/94; Epic 174: 1/5 complete**; Story 174.1 feature commit `4c930a9d` merged through PR #369 as `360c9cb9`, and exact-five closeout commit `0492403d` merged through PR #370 as `fbdab2da`. Primary `main` was fast-forwarded after both merges, and exact feature plus initial-closeout branch/ref/worktree/path/stale-registration/open-PR residue is absent.
 - **Program NEXT = Epic 174 / Story 174.2** — remove remaining legacy UI and enforce the design-system/source boundary without changing the route-ledger status floor.
 - **Remaining**: 174.2-174.5 only (consolidation;
   174.2 — применимые design-system/source-boundary/contrast долги; 174.3 — browser/theme/axe/keyboard/visual;

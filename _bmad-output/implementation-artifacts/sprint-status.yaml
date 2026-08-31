@@ -1,5 +1,5 @@
 # generated: 2026-08-03
-# last_updated: 2026-08-31 — Story 174.1 feature PR #369 merged exact head 4c930a9d as 360c9cb9; primary main fast-forward and exact feature branch/worktree/ref cleanup are proved. Canonical Stories = 90/94; Epic 174 = 1/5 done; Story 174.2 is NEXT. Route-ledger rows remain planned until Story 174.5.
+# last_updated: 2026-08-31 — Story 174.1 feature PR #369 merged as 360c9cb9 and exact-five closeout PR #370 merged as fbdab2da; primary main fast-forward and exact feature plus initial-closeout cleanup are proved. Canonical Stories = 90/94; Epic 174 = 1/5 done; Story 174.2 is NEXT. Route-ledger rows remain planned until Story 174.5.
 # project: frontend
 # project_key: NOKEY
 # tracking_system: file-system
@@ -37,7 +37,7 @@
 #   they are excluded from story and retrospective counts and must be documented with a no-story-ID note.
 
 generated: 2026-08-03 # refreshed after Epic 127 truth reconciliation and Epics 162-165 registration
-last_updated: 2026-08-31 # Story 174.1 feature PR #369 merged exact head 4c930a9d as 360c9cb9; primary main fast-forward and exact feature cleanup are proved. Canonical Stories = 90/94; Epic 174 = 1/5 done; Story 174.2 is NEXT; all 76 ledger rows remain planned until 174.5.
+last_updated: 2026-08-31 # Story 174.1 feature PR #369 merged as 360c9cb9 and exact-five closeout PR #370 merged as fbdab2da; primary main fast-forward and exact feature plus initial-closeout cleanup are proved. Canonical Stories = 90/94; Epic 174 = 1/5 done; Story 174.2 is NEXT; all 76 ledger rows remain planned until 174.5.
 project: frontend
 project_key: NOKEY
 tracking_system: file-system
@@ -856,7 +856,7 @@ development_status:
 
   # Epic 174-FE: Complete Migration Assurance and Legacy Removal
   epic-174-fe: in-progress
-  174-1-fe-prove-bmad-route-ledger-and-omx-plan-parity: done # Feature PR #369 (4c930a9d, merge 360c9cb9): frozen nine-file planning/validator scope; schema-v3 parity 94 Stories = 94 plans and 76 source routes = 76 ledger rows = 76 owners; 33/33 deterministic tests; exact backend historical/local/cached proof with live remote proof unavailable; lint/tsc/policy/format/privacy/build PASS; independent base-plus-delta review convergence with zero actionable P0-P3 findings; all 76 ledger rows remain planned; exact feature branch/ref/worktree/path/stale-registration/open-PR cleanup proved.
+  174-1-fe-prove-bmad-route-ledger-and-omx-plan-parity: done # Feature PR #369 (4c930a9d, merge 360c9cb9) + exact-five closeout PR #370 (0492403d, merge fbdab2da): frozen nine-file planning/validator scope; schema-v3 parity 94 Stories = 94 plans and 76 source routes = 76 ledger rows = 76 owners; 33/33 deterministic tests; exact backend historical/local/cached proof with live remote proof unavailable; lint/tsc/policy/format/privacy/build PASS; independent base-plus-delta review convergence with zero actionable P0-P3 findings; all 76 ledger rows remain planned; exact feature plus initial-closeout branch/ref/worktree/path/stale-registration/open-PR cleanup proved.
   174-2-fe-remove-legacy-ui-and-enforce-the-design-system-boundary: backlog
   174-3-fe-complete-accessibility-responsive-theme-and-visual-verification: backlog
   174-4-fe-complete-full-local-functional-and-backend-contract-regression: backlog
