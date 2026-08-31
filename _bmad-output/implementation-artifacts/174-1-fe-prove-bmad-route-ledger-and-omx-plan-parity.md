@@ -1,6 +1,6 @@
 # Story 174.1-FE: Prove BMAD, Route-Ledger, and OMX Plan Parity
 
-Status: review — planning/evidence parity only. Runtime UI and backend product code are unchanged; all 76 route-ledger rows remain `planned` until Story 174.5.
+Status: done — feature commit `4c930a9d` merged through PR #369 as `360c9cb9`; primary `main` was fast-forwarded and the exact feature local/remote branch, worktree, path, stale registration, and open-PR residue are absent. Runtime UI and backend product code are unchanged; all 76 route-ledger rows remain `planned` until Story 174.5.
 
 ## Story
 
@@ -44,7 +44,7 @@ No runtime source, route implementation, package/dependency file, backend produc
 - [x] Keep every route-ledger status `planned`; no partial implementation-state transition is allowed.
 - [x] Emit one machine-readable report and one concise human summary from the same run and verified base SHA.
 - [x] Complete universal local validation and all fresh-context adversarial review passes; record every accepted finding and rerun.
-- [ ] Freeze the final diff/cached manifest, commit, push, open/verify/merge the PR, and complete exact branch/worktree/ref cleanup without preclaiming future facts.
+- [x] Freeze the final diff/cached manifest, commit, push, open/verify/merge the PR, and complete exact branch/worktree/ref cleanup without preclaiming future facts.
 
 ## RED and GREEN Evidence
 
@@ -200,14 +200,14 @@ No frontend server, backend service, credential, `.env.e2e`, token, cookie, brow
 - Story-worktree exact npm `11.11.0` webpack production build: pass, compilation and TypeScript pass, 70/70 static pages generated, and dynamic routes retained.
 - Standard Turbopack build on the exact clean primary base `9d611369`: the sandbox attempt failed only on process/port `EPERM`; the approved out-of-sandbox rerun passed compilation, TypeScript, and 70/70 pages under the same pinned Node/npm pair.
 
-Fresh independent review convergence is complete. Future commit/PR/merge/cleanup evidence remains pending and is not preclaimed.
+Fresh independent review convergence is complete. The exact reviewed feature lifecycle then completed without widening the Story scope.
 
 ## Lifecycle
 
-- Feature commit: pending.
-- PR number/URL: pending.
-- Merge SHA: pending.
-- Local/remote branch and worktree cleanup: pending.
+- Feature commit: `4c930a9d69dc69e6e561994256a504e754f99a39`.
+- PR number/URL: [#369](https://github.com/salacoste/wb-erp-system-daytona-FE/pull/369), exact base `main@9d611369`, exact head `cdx/epic-174-story-1-plan-parity@4c930a9d`, verified non-draft and mergeable before merge.
+- Merge SHA: `360c9cb93a2caa53084f4a34460abecc3217e5e9`, with exact parents `9d611369085a1e88783322a50f3c3a043cd25257` and `4c930a9d69dc69e6e561994256a504e754f99a39`.
+- Local/remote branch and worktree cleanup: pass. The local branch, remote branch/ref, temporary worktree path, stale worktree registration, and open PR for the feature head are absent; `/private/tmp/wb-repricer-cleanup-quarantine-20260828.H6K0jw` remains preserved.
 
 ## Dev Agent Record
 
@@ -220,7 +220,7 @@ Fresh independent review convergence is complete. Future commit/PR/merge/cleanup
 
 ### Completion Notes
 
-- The dependency-free parity validator, exact backend lifecycle corroboration, canonical ownership/dependency fingerprints, strict identity and mandatory-section checks, and 33-test mutation suite are implemented, locally validated, and independently reviewed. Current state is `review` and pre-lifecycle; final notes will record future Story GitHub and cleanup facts only after they occur.
+- The dependency-free parity validator, exact backend lifecycle corroboration, canonical ownership/dependency fingerprints, strict identity and mandatory-section checks, and 33-test mutation suite are implemented, locally validated, independently reviewed, merged, and cleaned. Story 174.1 is `done`; Story 174.2 is the next program Story. This closeout record reports only the already-completed feature lifecycle and does not preclaim its own future PR merge or cleanup.
 
 ### File List
 
@@ -240,3 +240,4 @@ Fresh independent review convergence is complete. Future commit/PR/merge/cleanup
 | ---------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | 2026-08-31 | Story 174.1 started from base `9d611369`; missing-validator RED captured; exact nine-file manifest frozen; parity validator and deterministic mutation suite implemented. Status: backlog → in-progress.                                                                     |
 | 2026-08-31 | Accepted correctness/narrative request-changes findings repaired: exact ownership/dependency parity, backend merge/ancestry/cleanup and 169.14 handoff/retirement proof, strict identity/CLI/base failure checks, exact pinned runtime, and full nine-file privacy evidence. |
+| 2026-08-31 | Feature commit `4c930a9d` merged through PR #369 as `360c9cb9`; primary `main` fast-forwarded and exact feature branch/ref/worktree/path/stale-registration/open-PR cleanup proved. Status: review → done; NEXT: Story 174.2.                                                |

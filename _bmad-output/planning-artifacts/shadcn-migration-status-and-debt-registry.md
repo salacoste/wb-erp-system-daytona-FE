@@ -1,6 +1,6 @@
 # Shadcn Full-UI Migration — Status & Debt Registry
 
-> **Snapshot date: 2026-08-31** (Epics 166-173 are complete; Story 173.13 auxiliary lifecycle PR #367 merged as `3cc30b66` and exact product, documentation, and auxiliary cleanup is proved. Story 174.1 is in review from base `9d611369` on its frozen nine-file planning/validator manifest; Stories 166.1-173.13 remain done). Канонический статус-реестр программы миграции
+> **Snapshot date: 2026-08-31** (Epics 166-173 and Story 174.1 are complete. Story 174.1 feature commit `4c930a9d` merged through PR #369 as `360c9cb9`; exact feature branch/worktree/ref cleanup is proved. Story 174.2 is NEXT; Stories 166.1-174.1 remain done). Канонический статус-реестр программы миграции
 > для BMAD-артефактов. Живая история — sprint-status.yaml (по-сторийно) и ledger
 > BE-репо (docs/tech-debt/TECH-DEBT-2026-08-SESSION.md, Addendum-4 cont.1-25);
 > этот файл = консолидированный срез «что сделано / что осталось / все долги».
@@ -8,19 +8,19 @@
 
 ## 1. Execution status (по эпикам)
 
-| Epic                         | Stories         | Done   | Остаток   | Статус                                                                                                                                                                              |
-| ---------------------------- | --------------- | ------ | --------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| 166-FE foundation            | 8               | 8      | —         | **CLOSED** (токены, примитивы, композиции, контракты)                                                                                                                               |
-| 167-FE AppShell/auth         | 9 (с merge'ами) | 9      | —         | **CLOSED** (freeze-8, W1)                                                                                                                                                           |
-| 168-FE analytics core        | 11              | 11     | —         | **CLOSED** (hub + 10 маршрутов; 168.2-168.11 orchestrator-волной)                                                                                                                   |
-| 169-FE operational analytics | 15              | **15** | —         | **CLOSED** (169.14 backend prerequisite, 169.15 shared frontend boundary, and 169.12 closeout completed)                                                                            |
-| 170-FE                       | 7               | **7**  | —         | **CLOSED** (Stories 170.1-170.7 shipped through PRs #237-#250)                                                                                                                      |
-| 171-FE                       | 9               | **9**  | —         | **CLOSED** (Stories 171.1-171.9 shipped through PRs #252, #254, #256, #258, #260, #262, #266, #268, and #270)                                                                       |
-| 172-FE                       | 17              | **17** | —         | **CLOSED** (Stories 172.1-172.17; Story 172.17 feature #325 + closeout #326)                                                                                                        |
-| 173-FE                       | 13              | **13** | —         | **CLOSED**; settings 173.1-173.7, shipments 173.8-173.11, supplies list 173.12, and Supply Detail 173.13 shipped                                                                        |
-| 174-FE консолидация          | 5               | 0      | 174.1-5   | **IN REVIEW** — Story 174.1 parity candidate approved locally; 174.2 design-system/source-boundary/contrast; 174.3 visual/a11y; 174.4 functional/backend |
+| Epic                         | Stories         | Done   | Остаток | Статус                                                                                                                                                   |
+| ---------------------------- | --------------- | ------ | ------- | -------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 166-FE foundation            | 8               | 8      | —       | **CLOSED** (токены, примитивы, композиции, контракты)                                                                                                    |
+| 167-FE AppShell/auth         | 9 (с merge'ами) | 9      | —       | **CLOSED** (freeze-8, W1)                                                                                                                                |
+| 168-FE analytics core        | 11              | 11     | —       | **CLOSED** (hub + 10 маршрутов; 168.2-168.11 orchestrator-волной)                                                                                        |
+| 169-FE operational analytics | 15              | **15** | —       | **CLOSED** (169.14 backend prerequisite, 169.15 shared frontend boundary, and 169.12 closeout completed)                                                 |
+| 170-FE                       | 7               | **7**  | —       | **CLOSED** (Stories 170.1-170.7 shipped through PRs #237-#250)                                                                                           |
+| 171-FE                       | 9               | **9**  | —       | **CLOSED** (Stories 171.1-171.9 shipped through PRs #252, #254, #256, #258, #260, #262, #266, #268, and #270)                                            |
+| 172-FE                       | 17              | **17** | —       | **CLOSED** (Stories 172.1-172.17; Story 172.17 feature #325 + closeout #326)                                                                             |
+| 173-FE                       | 13              | **13** | —       | **CLOSED**; settings 173.1-173.7, shipments 173.8-173.11, supplies list 173.12, and Supply Detail 173.13 shipped                                         |
+| 174-FE консолидация          | 5               | 1      | 174.2-5 | **IN PROGRESS** — Story 174.1 parity shipped and cleaned; NEXT 174.2 design-system/source-boundary/contrast; 174.3 visual/a11y; 174.4 functional/backend |
 
-**Story readiness: 89 of 94 canonical Stories complete; Story 174.1 is in review.** Epics 166-173 are closed, including Story 173.13 auxiliary PR #367 and exact lifecycle cleanup. All 76 route-owning Stories are implemented, while all 76 route-ledger rows intentionally remain `planned`. Story 174.1 now runs deterministic BMAD/OMX/route/artifact parity from base `9d611369`; Stories 174.2-174.5 remain backlog.
+**Story readiness: 90 of 94 canonical Stories complete; Story 174.2 is NEXT.** Epics 166-173 and Story 174.1 are complete with exact lifecycle cleanup. All 76 route-owning Stories are implemented, while all 76 route-ledger rows intentionally remain `planned`. Story 174.1 provides deterministic BMAD/OMX/route/artifact parity from base `9d611369`; Stories 174.2-174.5 remain backlog.
 
 169.13 SHIPPED 2026-08-25 (последний backlog-роут эпика; 12/15): preface #231 (`95522187` — unknown enums + nullables, opus APPROVE) + #232 (`2778d43e`; 26 файлов, owned 58→73, **e2e на ветке 33/1↓/0**, 2×opus);
 полный пол **19 055/0**. Исторический срез на момент 169.13: оставались 169.14 (BE) → 169.15 (shared FE) → 169.12-closeout. Carry-out: e2e-flake
@@ -114,7 +114,7 @@ caption naming model + tabular + p-6; guard-9 + caption role-тест + 6 re-pin
 **173.11 SHIPPED (2026-08-30, feature PR #359 heads `b1772e48` + `e484c30f`, merge `137e2ee5`; exact-five docs PR #360 head `66b30d7d`, merge `b2136273`)** — 24 файла (+2528/−567); semantic PageHeader/PageState and local filtered-empty recovery; preserved unparameterized SKU and active-only box-type queries; truthful dependency failures; named wide table + stacked narrow cards; explicit `шт.` units; non-color active/inactive/incomplete/mismatched mapping status; entity-specific 44px actions; strict integer validation; exact single/bulk/delete payloads; duplicate-submit suppression; bounded conflict/transport copy; reconciled persistent result announcements; deterministic cancellation and success focus; focused **10/112** plus immutable contracts **3/23**; seven deterministic Story Playwright scenarios statically discovered; production build **70/70**; product and documentation reviews zero actionable findings, exact scope and privacy PASS, APPROVE; credentialed browser execution gap explicit; route ledger unchanged; exact product and initial-docs cleanup proved. Артефакт: `173-11-fe-migrate-sku-packaging.md`.
 **173.12 SHIPPED (2026-08-30, PR #361, merge `747f8449`)** — owner-story на LIST/SHARED: badge-карта (status-pending; CLOSED = WCAG solid-пара после axe-поимки тинта 4.06:1), гард 6 с load-bearing 18-файловым DETAIL_EXCLUDED (точное замыкание [id]-страницы); полный пол **19 800/0/1252** (+6 exact); e2e 53/0; параллельная lane (173.11 #359/#360) — пересечений 0, ребейз чист. Артефакт: `173-12-fe-migrate-supplies-list.md`.
 **173.13 SHIPPED AND FULLY HISTORICAL (2026-08-31, feature PR #365 merge `2dfe56c1` + exact-five docs PR #366 merge `d5c62276` + auxiliary PR #367 merge `3cc30b66`)** — exact product, documentation, and auxiliary lifecycle residue absent. Focused **975/0 across 22 files**; full **19 874/0/1255**; final general/accessibility/documentation reviews approved. Артефакт: `173-13-fe-migrate-supply-detail.md`.
-**IN REVIEW = Story 174.1 BMAD / route-ledger / OMX / evidence parity** — frozen nine-file planning/validator scope on base `9d611369`; current machine proof is 94 = 94 and 76 = 76 = 76 with all linked artifacts unique and all ledger statuses still `planned`. The dead legacy twin `SUPPLY_STATUS_CONFIG` in `src/types/supplies/helpers.ts` remains routed to Story 174.2.
+**174.1 SHIPPED (2026-08-31, feature PR #369, commit `4c930a9d`, merge `360c9cb9`)** — frozen nine-file planning/validator scope on base `9d611369`; schema-v3 machine proof is 94 = 94 and 76 = 76 = 76 with all linked artifacts unique and all ledger statuses still `planned`; 33/33 deterministic tests and the exact local validation/review floor passed; exact feature cleanup is proved. The dead legacy twin `SUPPLY_STATUS_CONFIG` in `src/types/supplies/helpers.ts` remains routed to Story 174.2.
 **Carry-out → 174.2 owner (route-ledger handoff из 171.9):** (1) удалить поле className из
 STATUS_BADGE_CONFIG после миграции ModelListSection на собственный overlay; (2) переписать
 stale-комментарий model-list-helpers.ts:24-26 («subroutes 171.7/171.9» — остался только
@@ -235,7 +235,7 @@ credentialed functional E2E — carry-out 174.4. Plan-status аудит 2026-08-
 
 ## 5. Owner-зависимые стори (вехи 172-173)
 
-- Epic 172 and Epic 173 owner chains are complete. Epic 173 settings 173.1-173.7, shipments 173.8-173.11, Supplies List 173.12, and Supply Detail 173.13 are product-complete. All 76 route-owning Stories are implemented. Program execution continues with Story 174.1 parity/evidence reconstruction; route-ledger rows remain `planned` until Story 174.5.
+- Epic 172 and Epic 173 owner chains are complete. Epic 173 settings 173.1-173.7, shipments 173.8-173.11, Supplies List 173.12, and Supply Detail 173.13 are product-complete. Story 174.1 parity/evidence reconstruction is complete and cleaned. All 76 route-owning Stories are implemented. Program execution continues with Story 174.2; route-ledger rows remain `planned` until Story 174.5.
 
 ## 6. Процесс-ссылки
 
