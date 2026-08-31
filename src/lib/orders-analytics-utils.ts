@@ -17,16 +17,16 @@
  * - Red: < 85% (Critical)
  */
 export function getSlaStatusColor(percent: number): string {
-  if (percent >= 95) return 'text-green-600'
-  if (percent >= 85) return 'text-yellow-600'
-  return 'text-red-600'
+  if (percent >= 95) return 'text-status-success'
+  if (percent >= 85) return 'text-status-warning'
+  return 'text-status-error'
 }
 
 /** Get SLA compliance background color for badges */
 export function getSlaStatusBgColor(percent: number): string {
-  if (percent >= 95) return 'bg-green-50'
-  if (percent >= 85) return 'bg-yellow-50'
-  return 'bg-red-50'
+  if (percent >= 95) return 'bg-status-success/10'
+  if (percent >= 85) return 'bg-status-warning/10'
+  return 'bg-status-error/10'
 }
 
 /** Get SLA status label */
@@ -47,9 +47,9 @@ export function getSlaStatusLabel(percent: number): string {
  * - Red: >= 60 min (Slow)
  */
 export function getConfirmationTimeColor(minutes: number): string {
-  if (minutes < 30) return 'text-green-600'
-  if (minutes < 60) return 'text-yellow-600'
-  return 'text-red-600'
+  if (minutes < 30) return 'text-status-success'
+  if (minutes < 60) return 'text-status-warning'
+  return 'text-status-error'
 }
 
 /**
@@ -59,9 +59,9 @@ export function getConfirmationTimeColor(minutes: number): string {
  * - Red: >= 360 min / 6h+ (Slow)
  */
 export function getCompletionTimeColor(minutes: number): string {
-  if (minutes < 180) return 'text-green-600'
-  if (minutes < 360) return 'text-yellow-600'
-  return 'text-red-600'
+  if (minutes < 180) return 'text-status-success'
+  if (minutes < 360) return 'text-status-warning'
+  return 'text-status-error'
 }
 
 /** Get velocity status color based on type and minutes */
@@ -134,10 +134,10 @@ export function formatDurationShort(minutes: number): string {
  * - Default: >= 30 min
  */
 export function getCountdownColor(minutesRemaining: number): string {
-  if (minutesRemaining < 0) return 'text-red-600'
-  if (minutesRemaining < 10) return 'text-orange-600'
-  if (minutesRemaining < 30) return 'text-yellow-600'
-  return 'text-gray-600'
+  if (minutesRemaining < 0) return 'text-status-error'
+  if (minutesRemaining < 10) return 'text-status-warning'
+  if (minutesRemaining < 30) return 'text-status-warning'
+  return 'text-muted-foreground'
 }
 
 // ============================================================================

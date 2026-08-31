@@ -17,9 +17,10 @@ export type SortColumn = 'mapeUnits' | 'mapeRevenue'
  * Route-local status-badge overlay for EvaluationsHeaderCard (Story 171.7-FE).
  * Hue-preserving mirror of the registry badge tokens (171.6 semantic canon):
  * green→success, blue→information, amber→warning, red→error, gray→muted.
- * Detaches this route from the shared config's className field — its removal
- * (with the registry comment + guard update) is owned by Story 171.9, the last
- * [id]-consumer to detach. Labels stay sourced from STATUS_BADGE_CONFIG
+ * Story 174.2-FE completed the detach: the shared registry config's className
+ * field was removed and replaced by registry-local maps (this one, the
+ * performance subroute map, and MODEL_LIST_BADGE_CLASS at the registry root).
+ * Labels stay sourced from STATUS_BADGE_CONFIG
  * (single label source of truth, WCAG 2.1 AA text-first).
  */
 export const EVALUATION_STATUS_BADGE_CLASS: Record<ModelStatus, string> = {

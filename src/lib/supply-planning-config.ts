@@ -22,75 +22,81 @@ export {
  * Stockout risk status configuration
  * UX Specs by Sally (UX Expert) - 2025-12-12
  * Reference: docs/stories/6.UX-ANSWERS-SUPPLY-PLANNING.md
+ *
+ * Story 174.2: legacy palette utilities + raw hexes migrated to semantic tokens.
+ * The route presentation renders via SUPPLY_RISK_TOKENS (169.13 single source);
+ * these channels feed only non-route callers (getStockoutRiskBadgeClasses /
+ * getRiskDistributionData). bgColor tints use the color-mix(token 15%, transparent)
+ * idiom from LiquidityTableRowCells; muted tiers use the muted surface var.
  */
 export const STOCKOUT_RISK_CONFIG: Record<StockoutRisk, RiskStatusConfig> = {
   out_of_stock: {
     label: 'Нет в наличии',
     labelShort: 'Нет',
-    color: '#1F2937',
-    bgColor: '#F3F4F6',
+    color: 'var(--color-muted-foreground)',
+    bgColor: 'var(--color-muted)',
     icon: '⬛',
     lucideIcon: 'PackageX',
-    bgClass: 'bg-gray-800',
-    textClass: 'text-white',
+    bgClass: 'bg-muted',
+    textClass: 'text-muted-foreground',
     priority: 0,
   },
   critical: {
     label: 'Критично',
     labelShort: 'Крит.',
-    color: '#DC2626',
-    bgColor: '#FEE2E2',
+    color: 'var(--color-status-error)',
+    bgColor: 'color-mix(in srgb, var(--color-status-error) 15%, transparent)',
     icon: '🔴',
     lucideIcon: 'AlertTriangle',
-    bgClass: 'bg-red-600',
-    textClass: 'text-white',
+    bgClass: 'bg-status-error',
+    textClass: 'text-status-error-foreground',
     priority: 1,
   },
   warning: {
     label: 'Внимание',
     labelShort: 'Вним.',
-    color: '#F59E0B',
-    bgColor: '#FEF3C7',
+    color: 'var(--color-status-warning)',
+    bgColor: 'color-mix(in srgb, var(--color-status-warning) 15%, transparent)',
     icon: '🟠',
     lucideIcon: 'AlertCircle',
-    bgClass: 'bg-amber-500',
-    textClass: 'text-white',
+    bgClass: 'bg-status-warning',
+    textClass: 'text-status-warning-foreground',
     priority: 2,
   },
   low: {
     label: 'Низкий запас',
     labelShort: 'Низкий',
-    color: '#EAB308',
-    bgColor: '#FEF9C3',
+    color: 'var(--color-status-warning)',
+    bgColor: 'color-mix(in srgb, var(--color-status-warning) 10%, transparent)',
     icon: '🟡',
     lucideIcon: 'Clock',
-    bgClass: 'bg-yellow-400',
-    textClass: 'text-gray-900',
+    bgClass: 'bg-status-warning/10',
+    textClass: 'text-status-warning',
     priority: 3,
   },
   healthy: {
     label: 'В норме',
     labelShort: 'Норма',
-    color: '#22C55E',
-    bgColor: '#DCFCE7',
+    color: 'var(--color-status-success)',
+    bgColor: 'color-mix(in srgb, var(--color-status-success) 15%, transparent)',
     icon: '🟢',
     lucideIcon: 'CheckCircle',
-    bgClass: 'bg-green-500',
-    textClass: 'text-white',
+    bgClass: 'bg-status-success',
+    textClass: 'text-status-success-foreground',
     priority: 4,
   },
   // Story 169.13 (pattern #218/#226): visible-unknown tier for absent/unrecognized
   // backend enum values. Neutral muted styling; distinguishable from 'healthy' so an
-  // optimistic lie never renders as a green "all good" badge. Token migration = impl story.
+  // optimistic lie never renders as a green "all good" badge.
   unknown: {
     label: 'Статус риска неизвестен',
     labelShort: 'Неизв.',
-    color: '#6B7280',
-    bgColor: '#F3F4F6',
+    color: 'var(--color-muted-foreground)',
+    bgColor: 'var(--color-muted)',
     icon: '❔',
     lucideIcon: 'HelpCircle',
-    bgClass: 'bg-gray-100',
-    textClass: 'text-gray-500',
+    bgClass: 'bg-muted',
+    textClass: 'text-muted-foreground',
     priority: 5,
   },
 } as const

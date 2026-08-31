@@ -25,17 +25,6 @@ export type {
   SuppliesErrorResponse,
 } from './core'
 
-// UI config & helpers
-export type { SupplyStatusConfig } from './helpers'
-export {
-  SUPPLY_STATUS_CONFIG,
-  getSupplyStatusConfig,
-  getSupplyStatusLabel,
-  isSupplyFinal,
-  canModifySupply,
-  canGenerateStickers,
-} from './helpers'
-
 // Re-exports from supply-orders.ts (backward compatibility)
 export type {
   SupplyOrder,

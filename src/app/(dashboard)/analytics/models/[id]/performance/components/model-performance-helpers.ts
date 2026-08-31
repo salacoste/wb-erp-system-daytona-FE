@@ -36,9 +36,10 @@ export const DRIFT_NULL_CONFIG = {
 
 /**
  * Route-local status badge overlay for the model-identity row (Story 171.9-FE).
- * Hue-preserving mirror of the registry badge tokens (171.6 semantic canon) —
- * detaches this route from the shared config's className field (the field itself
- * still has the registry-root consumer; its removal is a registry-owner carry-out).
+ * Hue-preserving mirror of the registry badge tokens (171.6 semantic canon).
+ * Story 174.2-FE removed the className field from STATUS_BADGE_CONFIG and moved
+ * the registry-root badge classes to MODEL_LIST_BADGE_CLASS (model-list-helpers.ts);
+ * this route-local map remains the performance subroute's colour source.
  * Labels stay sourced from STATUS_BADGE_CONFIG (single label source of truth).
  */
 export const PERFORMANCE_STATUS_BADGE_CLASS: Record<ModelStatus, string> = {

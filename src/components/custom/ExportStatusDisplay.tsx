@@ -62,18 +62,18 @@ export function ExportStatusDisplay({ status, onRetry, className }: ExportStatus
     <div className={cn('space-y-4 py-4', className)}>
       {/* Status Header */}
       <div className="flex items-center gap-3">
-        {/* Status Icon */}
-        {isLoading && <Loader2 className="h-5 w-5 animate-spin text-blue-600" />}
-        {isCompleted && <CheckCircle className="h-5 w-5 text-green-600" />}
-        {isFailed && <XCircle className="h-5 w-5 text-red-600" />}
+        {/* Status Icon — Story 174.2 (C2): status valences (was blue/green/red palette) */}
+        {isLoading && <Loader2 className="h-5 w-5 animate-spin text-status-information" />}
+        {isCompleted && <CheckCircle className="h-5 w-5 text-status-success" />}
+        {isFailed && <XCircle className="h-5 w-5 text-status-error" />}
 
         {/* Status Label */}
         <span
           className={cn(
             'font-medium',
-            isLoading && 'text-blue-700',
-            isCompleted && 'text-green-700',
-            isFailed && 'text-red-700'
+            isLoading && 'text-status-information',
+            isCompleted && 'text-status-success',
+            isFailed && 'text-status-error'
           )}
         >
           {STATUS_LABELS[status.status]}
@@ -81,7 +81,7 @@ export function ExportStatusDisplay({ status, onRetry, className }: ExportStatus
 
         {/* Estimated Time (during processing) */}
         {isLoading && status.estimated_time_sec && (
-          <span className="text-sm text-gray-500 flex items-center gap-1">
+          <span className="text-sm text-muted-foreground flex items-center gap-1">
             <Clock className="h-3 w-3" />~{Math.ceil(status.estimated_time_sec / 60)} мин
           </span>
         )}
@@ -95,13 +95,13 @@ export function ExportStatusDisplay({ status, onRetry, className }: ExportStatus
             <p className="flex items-center gap-2">
               <span className="font-medium">Файл:</span>
               <span>{formatBytes(status.file_size_bytes)}</span>
-              <span className="text-gray-400">•</span>
+              <span className="text-muted-foreground">•</span>
               <span>{status.rows_count?.toLocaleString('ru-RU')} строк</span>
             </p>
 
             {/* Expiration Warning */}
             {status.expires_at && (
-              <p className="flex items-center gap-2 text-amber-600">
+              <p className="flex items-center gap-2 text-status-warning">
                 <Clock className="h-3 w-3" />
                 <span>Ссылка действительна до: {formatExpirationDate(status.expires_at)}</span>
               </p>
@@ -122,7 +122,7 @@ export function ExportStatusDisplay({ status, onRetry, className }: ExportStatus
       {isFailed && (
         <div className="space-y-3">
           {/* Error Message */}
-          <p className="text-sm text-red-600">
+          <p className="text-sm text-status-error">
             {status.error_message || 'Произошла ошибка при экспорте. Попробуйте еще раз.'}
           </p>
 
@@ -135,9 +135,9 @@ export function ExportStatusDisplay({ status, onRetry, className }: ExportStatus
 
       {/* Loading Progress Indicator */}
       {isLoading && (
-        <div className="w-full bg-gray-200 rounded-full h-1.5">
+        <div className="w-full bg-muted rounded-full h-1.5">
           <div
-            className="bg-blue-600 h-1.5 rounded-full animate-pulse"
+            className="bg-status-information h-1.5 rounded-full animate-pulse"
             style={{
               width: status.status === 'processing' ? '60%' : '20%',
             }}

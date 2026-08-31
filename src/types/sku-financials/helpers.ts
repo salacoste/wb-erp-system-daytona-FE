@@ -4,20 +4,13 @@
  */
 
 import type { ProfitabilityStatus, SkuFinancialCosts } from './core'
-import { PROFITABILITY_COLORS, PROFITABILITY_HEX, PROFITABILITY_LABELS } from './core'
+import { PROFITABILITY_COLORS, PROFITABILITY_LABELS } from './core'
 
 /**
  * Get CSS classes for profitability status badge
  */
 export function getProfitabilityBadgeClass(status: ProfitabilityStatus): string {
   return PROFITABILITY_COLORS[status]
-}
-
-/**
- * Get hex color for profitability status
- */
-export function getProfitabilityHex(status: ProfitabilityStatus): string {
-  return PROFITABILITY_HEX[status]
 }
 
 /**

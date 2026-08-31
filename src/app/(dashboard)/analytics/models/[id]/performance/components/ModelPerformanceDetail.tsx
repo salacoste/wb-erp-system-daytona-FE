@@ -130,8 +130,9 @@ export function ModelPerformanceDetail({ modelId }: ModelPerformanceDetailProps)
   }
 
   // Label only from the shared registry (single label source of truth);
-  // colour overlay is route-local (Story 171.9-FE detach from the className field —
-  // the field itself remains for the registry-root consumer; removal is a registry-owner carry-out).
+  // colour overlay is route-local (Story 171.9-FE detach from the className field,
+  // which Story 174.2-FE then removed from STATUS_BADGE_CONFIG — the registry root
+  // now uses MODEL_LIST_BADGE_CLASS from model-list-helpers.ts).
   const statusLabel = STATUS_BADGE_CONFIG[model.status].label
 
   return (

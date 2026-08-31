@@ -83,7 +83,7 @@ describe('Zero Margin Display Bug - TDD Tests', () => {
       /**
        * RED TEST: This test should FAIL if the bug exists
        *
-       * Expected: Shows "0,00 %" with gray color
+       * Expected: Shows "0,00 %" with muted color (zero → neutral, Story 174.2)
        * Actual (BUG): Shows "—" (dash) treating 0 as null
        */
       render(<MarginDisplay marginPct={0} />)
@@ -91,7 +91,7 @@ describe('Zero Margin Display Bug - TDD Tests', () => {
       // Should find the formatted zero percentage
       const marginText = screen.getByText(/0[,.]00\s*%/)
       expect(marginText).toBeInTheDocument()
-      expect(marginText).toHaveClass('text-gray-600')
+      expect(marginText).toHaveClass('text-muted-foreground')
 
       // Should NOT show the dash (null indicator)
       expect(screen.queryByText('—')).not.toBeInTheDocument()
@@ -114,7 +114,7 @@ describe('Zero Margin Display Bug - TDD Tests', () => {
 
       const marginText = screen.getByText(/-5/)
       expect(marginText).toBeInTheDocument()
-      expect(marginText).toHaveClass('text-red-600')
+      expect(marginText).toHaveClass('text-financial-negative')
     })
 
     it('should not show profit/loss label for zero margin', () => {
@@ -266,11 +266,11 @@ describe('Zero Margin Display Bug - TDD Tests', () => {
       expect(screen.getByText(/0[,.]00\s*%/)).toBeInTheDocument()
     })
 
-    it('should use gray color for -0 (same as 0)', () => {
+    it('should use muted color for -0 (same as 0)', () => {
       render(<MarginDisplay marginPct={-0} />)
 
       const marginText = screen.getByText(/0[,.]00\s*%/)
-      expect(marginText).toHaveClass('text-gray-600')
+      expect(marginText).toHaveClass('text-muted-foreground')
     })
   })
 

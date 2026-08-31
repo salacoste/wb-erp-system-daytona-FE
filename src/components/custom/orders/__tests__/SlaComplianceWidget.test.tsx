@@ -76,13 +76,13 @@ describe('SlaComplianceWidget', () => {
         const data = { ...mockSlaMetricsExcellent, confirmationCompliancePercent: 95.0 }
         renderWidget({ data })
         const metric = screen.getByTestId('confirmation-sla-value')
-        expect(metric.className).toContain('text-green-600')
+        expect(metric.className).toContain('text-status-success')
       })
 
       it('applies green color for 100% compliance', () => {
         renderWidget({ data: mockSlaMetricsNoRisk })
         const metric = screen.getByTestId('confirmation-sla-value')
-        expect(metric.className).toContain('text-green-600')
+        expect(metric.className).toContain('text-status-success')
       })
 
       it('shows green check icon for excellent compliance', () => {
@@ -97,14 +97,14 @@ describe('SlaComplianceWidget', () => {
         const data = { ...mockSlaMetricsWarning, confirmationCompliancePercent: 94.9 }
         renderWidget({ data })
         const metric = screen.getByTestId('confirmation-sla-value')
-        expect(metric.className).toContain('text-yellow-600')
+        expect(metric.className).toContain('text-status-warning')
       })
 
       it('applies yellow color for 85% compliance', () => {
         const data = { ...mockSlaMetricsWarning, confirmationCompliancePercent: 85.0 }
         renderWidget({ data })
         const metric = screen.getByTestId('confirmation-sla-value')
-        expect(metric.className).toContain('text-yellow-600')
+        expect(metric.className).toContain('text-status-warning')
       })
 
       it('shows yellow warning icon for warning compliance', () => {
@@ -119,14 +119,14 @@ describe('SlaComplianceWidget', () => {
         const data = { ...mockSlaMetricsCritical, confirmationCompliancePercent: 84.9 }
         renderWidget({ data })
         const metric = screen.getByTestId('confirmation-sla-value')
-        expect(metric.className).toContain('text-red-600')
+        expect(metric.className).toContain('text-status-error')
       })
 
       it('applies red color for 0% compliance', () => {
         const data = { ...mockSlaMetricsCritical, confirmationCompliancePercent: 0 }
         renderWidget({ data })
         const metric = screen.getByTestId('confirmation-sla-value')
-        expect(metric.className).toContain('text-red-600')
+        expect(metric.className).toContain('text-status-error')
       })
 
       it('shows red alert icon for critical compliance', () => {

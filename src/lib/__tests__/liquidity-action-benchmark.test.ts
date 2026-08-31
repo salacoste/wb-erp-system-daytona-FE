@@ -67,9 +67,24 @@ describe('benchmark status config', () => {
 
 describe('trend insight helpers (improvement / warning / info=default)', () => {
   const cases: { type: TrendInsightType; color: string; icon: string; bg: string }[] = [
-    { type: 'improvement', color: '#22C55E', icon: '📈', bg: 'bg-green-50 border-green-200' },
-    { type: 'warning', color: '#F97316', icon: '⚠️', bg: 'bg-orange-50 border-orange-200' },
-    { type: 'info', color: '#3B82F6', icon: 'ℹ️', bg: 'bg-blue-50 border-blue-200' },
+    {
+      type: 'improvement',
+      color: '#22C55E',
+      icon: '📈',
+      bg: 'bg-status-success/10 border-status-success/20',
+    },
+    {
+      type: 'warning',
+      color: '#F97316',
+      icon: '⚠️',
+      bg: 'bg-status-warning/10 border-status-warning/20',
+    },
+    {
+      type: 'info',
+      color: '#3B82F6',
+      icon: 'ℹ️',
+      bg: 'bg-status-information/10 border-status-information/20',
+    },
   ]
   it.each(cases)('maps $type to its color/icon/bg', ({ type, color, icon, bg }) => {
     expect(getTrendInsightColor(type)).toBe(color)

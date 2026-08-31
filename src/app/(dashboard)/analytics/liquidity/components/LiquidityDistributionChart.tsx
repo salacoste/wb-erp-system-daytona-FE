@@ -92,7 +92,9 @@ export function LiquidityDistributionChart({ distribution }: LiquidityDistributi
           <ResponsiveContainer width="100%" height={240}>
             <PieChart>
               <Pie
-                data={chartData as unknown as Record<string, unknown>[]}
+                /* Story 174.2 (C16): no double cast — ChartRow's index signature
+                   ([key: string]: unknown) satisfies recharts' datum row shape. */
+                data={chartData}
                 dataKey="value"
                 nameKey="name"
                 cx="50%"

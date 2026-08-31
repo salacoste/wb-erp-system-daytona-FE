@@ -16,12 +16,16 @@ const routeDirectory = resolve(dirname(fileURLToPath(import.meta.url)), '..', '.
 function productionFiles(): string[] {
   return (
     readdirSync(routeDirectory, { recursive: true })
-      .map(f => join(routeDirectory, f as string))
-      .filter(f => /\.(?:ts|tsx)$/.test(f))
+      .map(f => f as string)
+      // Anchor-safe (171.8 lesson, hardened by Story 174.2): filter RELATIVE entries
+      // BEFORE join — substring filters on joined absolute paths also match the
+      // checkout/worktree name.
       // [id]/** dynamic subroutes are NOT part of Story 171.6's owned surface.
       .filter(f => !f.includes('[id]'))
       .filter(f => !f.includes('__tests__'))
       .filter(f => !/\.(?:test|spec)\./.test(f))
+      .filter(f => /\.(?:ts|tsx)$/.test(f))
+      .map(f => join(routeDirectory, f))
       .sort()
   )
 }
@@ -56,16 +60,26 @@ describe('Story 171.6 route presentation source contracts', () => {
     }
   })
 
-  it('status-token pin: STATUS_BADGE_CONFIG uses semantic status tokens (palette eliminated)', () => {
+  it('status-token pin: registry-local badge map uses semantic status tokens (palette eliminated)', () => {
     const helpers = readFileSync(
       join(routeDirectory, 'components', 'model-list-helpers.ts'),
       'utf8'
     )
+    expect(helpers).toMatch(/MODEL_LIST_BADGE_CLASS/)
     expect(helpers).toMatch(/text-status-success/)
     expect(helpers).toMatch(/text-status-information/)
     expect(helpers).toMatch(/text-status-warning/)
     expect(helpers).toMatch(/text-status-error/)
     expect(helpers).not.toMatch(/bg-green-100|bg-blue-100|bg-amber-100|bg-red-100|bg-gray-100/)
+    // Story 174.2: the registry config carries labels + pulse only — no className
+    // field. Colour overlays live exclusively in route-local maps.
+    expect(helpers).not.toMatch(/className:/)
+  })
+
+  it('detach pin: list badge overlay read from the registry-local map', () => {
+    const list = readFileSync(join(routeDirectory, 'components', 'ModelListSection.tsx'), 'utf8')
+    expect(list).toMatch(/MODEL_LIST_BADGE_CLASS\[model\.status\]/)
+    expect(list).not.toMatch(/badge\.className|STATUS_BADGE_CONFIG\[[^\]]*\]\.className/)
   })
 
   it('pulse-dot pin: training pulse uses status-information (171.4 StatusDot canon)', () => {

@@ -122,20 +122,33 @@ describe('LiquidityDistributionCards — 169.10 theme-aware color tokens', () =>
     Неликвид: 'var(--color-chart-4)',
   }
 
-  it('colors each card via its chart-role token (chart-1..4), not lib legacy hex', () => {
-    render(
+  it('keeps chart-role tokens on fills (border/ring/tint) — never as text color (Story 174.2 C16)', () => {
+    const { container } = render(
       <LiquidityDistributionCards
         distribution={makeDistribution()}
-        activeFilter={null}
+        activeFilter="highly_liquid"
         onCardClick={() => {}}
       />
     )
-    for (const [label, token] of Object.entries(EXPECTED_TOKENS)) {
-      // Label span carries the category color inline
-      expect(screen.getByText(label).style.color).toBe(token)
+    for (const label of Object.keys(EXPECTED_TOKENS)) {
+      const labelEl = screen.getByText(label)
+      // Story 174.2 (C16): chart-N tokens are fill/stroke roles only — the text
+      // label is muted and carries NO inline text color (chart-3-as-text measured
+      // a marginal 4.52:1).
+      expect(labelEl.className).toContain('text-muted-foreground')
+      expect(labelEl.style.color).toBe('')
     }
-    // Headline % of the selling category (highly_liquid, pct=9) uses chart-1 too
-    expect(screen.getByText(/9,0\s*%/).style.color).toBe('var(--color-chart-1)')
+    // Headline % (KPI-value canon) uses default foreground, not a chart token
+    expect(screen.getByText(/9,0\s*%/).style.color).toBe('')
+    // The ACTIVE card keeps its chart-role token on the border (stroke use)
+    const activeCard = screen.getByText('Высоколиквидный').closest<HTMLElement>('.cursor-pointer')
+    expect(activeCard).not.toBeNull()
+    expect(activeCard?.style.borderColor).toBe(EXPECTED_TOKENS['Высоколиквидный'])
+    // The targetShare chip keeps the token as a 15% background tint (fill use)
+    const chip = container.querySelector<HTMLElement>('.rounded-full')
+    expect(chip).not.toBeNull()
+    expect(chip?.style.backgroundColor).toContain('color-mix')
+    expect(chip?.style.backgroundColor).toContain('var(--color-chart-1)')
   })
 
   it('negative: no inline color anywhere on the cards matches a raw hex value', () => {

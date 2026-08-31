@@ -42,160 +42,160 @@ function getBadgeElement(statusCode: string, props = {}) {
 
 describe('WbStatusBadge', () => {
   describe('Category Color Rendering (8 categories)', () => {
-    describe('creation category (blue)', () => {
-      it('renders "created" status with blue background and text', () => {
+    describe('creation category (information)', () => {
+      it('renders "created" status with information background and text', () => {
         const el = getBadgeElement('created')
-        expect(el.className).toContain('bg-blue-50')
-        expect(el.className).toContain('text-blue-600')
+        expect(el.className).toContain('bg-status-information')
+        expect(el.className).toContain('text-status-information-foreground')
       })
     })
 
-    describe('seller_processing category (yellow)', () => {
-      it('renders "waiting" status with yellow background', () => {
+    describe('seller_processing category (warning)', () => {
+      it('renders "waiting" status with warning background', () => {
         const el = getBadgeElement('waiting')
-        expect(el.className).toContain('bg-yellow-50')
+        expect(el.className).toContain('bg-status-warning')
       })
 
-      it('renders "assembling" status with yellow background', () => {
+      it('renders "assembling" status with warning background', () => {
         const el = getBadgeElement('assembling')
-        expect(el.className).toContain('bg-yellow-50')
+        expect(el.className).toContain('bg-status-warning')
       })
 
-      it('renders "assembled" status with yellow background', () => {
+      it('renders "assembled" status with warning background', () => {
         const el = getBadgeElement('assembled')
-        expect(el.className).toContain('bg-yellow-100')
+        expect(el.className).toContain('bg-status-warning')
       })
 
-      it('renders "ready_for_supply" status with green background', () => {
+      it('renders "ready_for_supply" status with success background', () => {
         const el = getBadgeElement('ready_for_supply')
-        expect(el.className).toContain('bg-green-50')
+        expect(el.className).toContain('bg-status-success')
       })
     })
 
-    describe('warehouse category (purple)', () => {
-      it('renders "sorted" status with purple background', () => {
+    describe('warehouse category (pending)', () => {
+      it('renders "sorted" status with pending background', () => {
         const el = getBadgeElement('sorted')
-        expect(el.className).toContain('bg-purple-50')
+        expect(el.className).toContain('bg-status-pending')
       })
 
-      it('renders "sorted_by_wh" status with purple background', () => {
+      it('renders "sorted_by_wh" status with pending background', () => {
         const el = getBadgeElement('sorted_by_wh')
-        expect(el.className).toContain('bg-purple-50')
+        expect(el.className).toContain('bg-status-pending')
       })
 
-      it('renders "accepted_by_wh" status with purple background', () => {
+      it('renders "accepted_by_wh" status with pending background', () => {
         const el = getBadgeElement('accepted_by_wh')
-        expect(el.className).toContain('bg-purple-100')
+        expect(el.className).toContain('bg-status-pending')
       })
     })
 
-    describe('logistics category (indigo)', () => {
-      it('renders "on_way_to_storage" status with indigo background', () => {
+    describe('logistics category (information)', () => {
+      it('renders "on_way_to_storage" status with information background', () => {
         const el = getBadgeElement('on_way_to_storage')
-        expect(el.className).toContain('bg-indigo-50')
+        expect(el.className).toContain('bg-status-information')
       })
 
-      it('renders "on_way_to_pvz" status with indigo background', () => {
+      it('renders "on_way_to_pvz" status with information background', () => {
         const el = getBadgeElement('on_way_to_pvz')
-        expect(el.className).toContain('bg-indigo-100')
+        expect(el.className).toContain('bg-status-information')
       })
 
-      it('renders "arrived_at_pvz" status with indigo background', () => {
+      it('renders "arrived_at_pvz" status with information background', () => {
         const el = getBadgeElement('arrived_at_pvz')
-        expect(el.className).toContain('bg-indigo-100')
+        expect(el.className).toContain('bg-status-information')
       })
 
-      it('renders "on_way_to_client" status with indigo background', () => {
+      it('renders "on_way_to_client" status with information background', () => {
         const el = getBadgeElement('on_way_to_client')
-        expect(el.className).toContain('bg-indigo-100')
+        expect(el.className).toContain('bg-status-information')
       })
     })
 
-    describe('delivery category (green)', () => {
-      it('renders "received_by_client" status with green background', () => {
+    describe('delivery category (success)', () => {
+      it('renders "received_by_client" status with success background', () => {
         const el = getBadgeElement('received_by_client')
-        expect(el.className).toContain('bg-green-50')
+        expect(el.className).toContain('bg-status-success')
       })
 
-      it('renders "sold" status with green background', () => {
+      it('renders "sold" status with success background', () => {
         const el = getBadgeElement('sold')
-        expect(el.className).toContain('bg-green-100')
+        expect(el.className).toContain('bg-status-success')
       })
 
-      it('renders "delivering" status with blue background', () => {
+      it('renders "delivering" status with information background', () => {
         const el = getBadgeElement('delivering')
-        expect(el.className).toContain('bg-blue-50')
+        expect(el.className).toContain('bg-status-information')
       })
     })
 
-    describe('cancellation category (red)', () => {
-      it('renders "canceled" status with red background', () => {
+    describe('cancellation category (error)', () => {
+      it('renders "canceled" status with error background', () => {
         const el = getBadgeElement('canceled')
-        expect(el.className).toContain('bg-red-50')
+        expect(el.className).toContain('bg-status-error')
       })
 
-      it('renders "canceled_by_seller" status with red background', () => {
+      it('renders "canceled_by_seller" status with error background', () => {
         const el = getBadgeElement('canceled_by_seller')
-        expect(el.className).toContain('bg-red-50')
+        expect(el.className).toContain('bg-status-error')
       })
 
-      it('renders "canceled_by_client" status with red background', () => {
+      it('renders "canceled_by_client" status with error background', () => {
         const el = getBadgeElement('canceled_by_client')
-        expect(el.className).toContain('bg-red-50')
+        expect(el.className).toContain('bg-status-error')
       })
 
-      it('renders "canceled_by_wb" status with red background', () => {
+      it('renders "canceled_by_wb" status with error background', () => {
         const el = getBadgeElement('canceled_by_wb')
-        expect(el.className).toContain('bg-red-50')
+        expect(el.className).toContain('bg-status-error')
       })
     })
 
-    describe('return category (orange)', () => {
-      it('renders "return_requested" status with orange background', () => {
+    describe('return category (warning)', () => {
+      it('renders "return_requested" status with warning background', () => {
         const el = getBadgeElement('return_requested')
-        expect(el.className).toContain('bg-orange-50')
+        expect(el.className).toContain('bg-status-warning')
       })
 
-      it('renders "return_at_pvz" status with orange background', () => {
+      it('renders "return_at_pvz" status with warning background', () => {
         const el = getBadgeElement('return_at_pvz')
-        expect(el.className).toContain('bg-orange-50')
+        expect(el.className).toContain('bg-status-warning')
       })
 
-      it('renders "return_in_transit" status with orange background', () => {
+      it('renders "return_in_transit" status with warning background', () => {
         const el = getBadgeElement('return_in_transit')
-        expect(el.className).toContain('bg-orange-50')
+        expect(el.className).toContain('bg-status-warning')
       })
 
-      it('renders "return_received" status with orange background', () => {
+      it('renders "return_received" status with warning background', () => {
         const el = getBadgeElement('return_received')
-        expect(el.className).toContain('bg-orange-100')
+        expect(el.className).toContain('bg-status-warning')
       })
 
-      it('renders "refunded" status with orange background', () => {
+      it('renders "refunded" status with warning background', () => {
         const el = getBadgeElement('refunded')
-        expect(el.className).toContain('bg-orange-100')
+        expect(el.className).toContain('bg-status-warning')
       })
     })
 
-    describe('other category (gray)', () => {
-      it('renders "defect" status with gray background', () => {
+    describe('other category (muted)', () => {
+      it('renders "defect" status with muted background', () => {
         const el = getBadgeElement('defect')
-        expect(el.className).toContain('bg-gray-100')
+        expect(el.className).toContain('bg-muted')
       })
 
-      it('renders "lost" status with gray background', () => {
+      it('renders "lost" status with muted background', () => {
         const el = getBadgeElement('lost')
-        expect(el.className).toContain('bg-gray-100')
+        expect(el.className).toContain('bg-muted')
       })
 
-      it('renders "damaged" status with gray background', () => {
+      it('renders "damaged" status with muted background', () => {
         const el = getBadgeElement('damaged')
-        expect(el.className).toContain('bg-gray-100')
+        expect(el.className).toContain('bg-muted')
       })
 
-      it('renders "expired" status with gray background', () => {
+      it('renders "expired" status with muted background', () => {
         const el = getBadgeElement('expired')
-        expect(el.className).toContain('bg-gray-100')
+        expect(el.className).toContain('bg-muted')
       })
     })
   })
@@ -317,10 +317,10 @@ describe('WbStatusBadge', () => {
       expect(screen.getByText('totally_unknown_status')).toBeInTheDocument()
     })
 
-    it('uses gray color scheme for unknown statuses', () => {
+    it('uses muted color scheme for unknown statuses', () => {
       const el = getBadgeElement('totally_unknown_xyz')
-      expect(el.className).toContain('bg-gray-50')
-      expect(el.className).toContain('text-gray-500')
+      expect(el.className).toContain('bg-muted')
+      expect(el.className).toContain('text-muted-foreground')
     })
 
     it('categorizes unknown status as "other"', () => {

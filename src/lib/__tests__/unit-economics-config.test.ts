@@ -11,10 +11,8 @@ import { describe, it, expect } from 'vitest'
 import {
   PROFITABILITY_STATUS_CONFIG,
   getProfitabilityConfig,
-  getProfitabilityColor,
   getProfitabilityLabel,
   getProfitabilityBadgeClasses,
-  getProfitabilityBgClass,
 } from '../unit-economics-config'
 import type { ProfitabilityStatus } from '@/types/unit-economics'
 
@@ -40,16 +38,12 @@ describe('unit-economics-config — getProfitabilityConfig (F-49 guard)', () => 
     })
 
     it('does not crash on the satellite getters', () => {
-      expect(() => getProfitabilityColor(drift)).not.toThrow()
       expect(() => getProfitabilityLabel(drift)).not.toThrow()
       expect(() => getProfitabilityBadgeClasses(drift)).not.toThrow()
-      expect(() => getProfitabilityBgClass(drift)).not.toThrow()
     })
 
     it('satellite getters return the neutral sentinel values', () => {
-      expect(getProfitabilityColor(drift)).toBe('var(--color-muted-foreground)')
       expect(getProfitabilityLabel(drift)).toBe('Неизвестно')
-      expect(getProfitabilityBgClass(drift)).toBe('bg-muted')
       expect(getProfitabilityBadgeClasses(drift)).toBe('bg-muted text-muted-foreground')
     })
 

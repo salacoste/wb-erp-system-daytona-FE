@@ -63,7 +63,7 @@ describe('MarginDisplay', () => {
 
       const marginText = screen.getByText(/35/)
       expect(marginText).toBeInTheDocument()
-      expect(marginText).toHaveClass('text-green-600')
+      expect(marginText).toHaveClass('text-financial-positive')
     })
 
     it('should show "(прибыльно)" label for positive margin', () => {
@@ -85,7 +85,7 @@ describe('MarginDisplay', () => {
 
       const marginText = screen.getByText(/-12/)
       expect(marginText).toBeInTheDocument()
-      expect(marginText).toHaveClass('text-red-600')
+      expect(marginText).toHaveClass('text-financial-negative')
     })
 
     it('should show "(убыток)" label for negative margin', () => {
@@ -101,7 +101,7 @@ describe('MarginDisplay', () => {
 
       const marginText = screen.getByText(/0/)
       expect(marginText).toBeInTheDocument()
-      expect(marginText).toHaveClass('text-gray-600')
+      expect(marginText).toHaveClass('text-muted-foreground')
     })
 
     it('should not show profit/loss label for zero margin', () => {

@@ -66,13 +66,6 @@ export function formatFrozenCapitalWarning(pct: number): string | null {
   return null
 }
 
-/** Get frozen capital status CSS class */
-export function getFrozenCapitalStatusClass(pct: number): string {
-  if (pct > 10) return 'text-red-600 font-bold'
-  if (pct > 5) return 'text-orange-600 font-medium'
-  return 'text-green-600'
-}
-
 /**
  * Format currency value. Null/undefined/non-finite → "—" (anti-pattern #8: never fabricate a
  * "0 ₽" for an unknown money value — e.g. stock_value when COGS is unassigned). A real 0 still

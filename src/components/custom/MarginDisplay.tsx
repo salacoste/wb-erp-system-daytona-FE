@@ -43,10 +43,10 @@ export function formatMarginPercent(marginPct: number): string {
  * Margin display component with color coding
  * Story 4.4: Automatic Margin Calculation Display
  *
- * Color coding:
- * - Green: Positive margin (profitable)
- * - Red: Negative margin (loss)
- * - Gray: No data available
+ * Color coding (Story 174.2-FE §11.12: financial valence semantics):
+ * - financial-positive: Positive margin (profitable)
+ * - financial-negative: Negative margin (loss)
+ * - muted-foreground: zero margin and no-data states
  *
  * @example
  * <MarginDisplay marginPct={35.5} />
@@ -69,13 +69,21 @@ export function MarginDisplay({
   if (marginPct !== null && marginPct !== undefined && Number.isFinite(marginPct)) {
     const isPositive = marginPct > 0
     const isZero = marginPct === 0
-    const colorClass = isZero ? 'text-gray-600' : isPositive ? 'text-green-600' : 'text-red-600'
+    // 174.2: financial valence tokens (169.4 canon) — positive/negative sign,
+    // zero → muted (neutral). Supplementary annotation stays muted.
+    const colorClass = isZero
+      ? 'text-muted-foreground'
+      : isPositive
+        ? 'text-financial-positive'
+        : 'text-financial-negative'
 
     return (
       <div className={cn('flex items-center gap-2', className)}>
         <span className={cn(sizeClasses[size], colorClass)}>{formatMarginPercent(marginPct)}</span>
         {size !== 'sm' && !isZero && (
-          <span className="text-xs text-gray-500">{isPositive ? '(прибыльно)' : '(убыток)'}</span>
+          <span className="text-xs text-muted-foreground">
+            {isPositive ? '(прибыльно)' : '(убыток)'}
+          </span>
         )}
       </div>
     )
@@ -86,8 +94,8 @@ export function MarginDisplay({
 
   return (
     <div className={cn('flex items-center gap-2', className)}>
-      <span className={cn(sizeClasses[size], 'text-gray-400')}>—</span>
-      {message && size !== 'sm' && <span className="text-xs text-gray-500">{message}</span>}
+      <span className={cn(sizeClasses[size], 'text-muted-foreground')}>—</span>
+      {message && size !== 'sm' && <span className="text-xs text-muted-foreground">{message}</span>}
     </div>
   )
 }

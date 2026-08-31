@@ -47,15 +47,15 @@ describe('formatPercent (top-table-utils)', () => {
 })
 
 describe('getMarginColor (top-table-utils)', () => {
-  it('maps margin thresholds to color classes (>=30 green, >=15 yellow, >=0 orange, <0 red)', () => {
-    expect(getMarginColor(30)).toBe('text-green-600')
-    expect(getMarginColor(15)).toBe('text-yellow-600')
-    expect(getMarginColor(14.9)).toBe('text-orange-500')
-    expect(getMarginColor(0)).toBe('text-orange-500')
-    expect(getMarginColor(-0.1)).toBe('text-red-600')
+  it('maps margin tiers to semantic tokens (>=30 positive, >=15/>=0 warning, <0 negative)', () => {
+    expect(getMarginColor(30)).toBe('text-financial-positive')
+    expect(getMarginColor(15)).toBe('text-status-warning')
+    expect(getMarginColor(14.9)).toBe('text-status-warning')
+    expect(getMarginColor(0)).toBe('text-status-warning')
+    expect(getMarginColor(-0.1)).toBe('text-financial-negative')
   })
 
-  it('returns a neutral gray class for null', () => {
-    expect(getMarginColor(null)).toBe('text-gray-400')
+  it('returns the muted token for null (no data is not a color valence)', () => {
+    expect(getMarginColor(null)).toBe('text-muted-foreground')
   })
 })

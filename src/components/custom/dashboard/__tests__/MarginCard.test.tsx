@@ -59,7 +59,7 @@ describe('MarginCard — profit-vs-loss color bands (iter-120)', () => {
         <MarginCard marginPct={10} previousMarginPct={null} cogsCoverage={100} />
       </TooltipProvider>
     )
-    expect(screen.getByText(/10,0\s+%/)).toHaveClass('text-status-warning/80')
+    expect(screen.getByText(/10,0\s+%/)).toHaveClass('text-status-warning')
     const card = screen.getByTestId('metric-card')
     expect(card).toHaveClass('border-status-warning/80')
     expect(card).toHaveClass('from-status-warning/10')
@@ -84,7 +84,7 @@ describe('MarginCard — profit-vs-loss color bands (iter-120)', () => {
         <MarginCard marginPct={0} previousMarginPct={null} cogsCoverage={100} />
       </TooltipProvider>
     )
-    expect(screen.getByText(/0,0\s+%/)).toHaveClass('text-status-warning/80')
+    expect(screen.getByText(/0,0\s+%/)).toHaveClass('text-status-warning')
     expect(screen.getByTestId('metric-card')).toHaveClass('border-status-warning/80')
   })
 

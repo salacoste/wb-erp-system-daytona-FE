@@ -10,22 +10,7 @@
 import { TableCell, TableRow } from '@/components/ui/table'
 import { cn } from '@/lib/utils'
 import type { TopBrandItem } from '@/types/analytics'
-import { formatCurrency, formatPercent } from '../top-table-utils'
-
-// 168.3: semantic margin tone — 4-tier mapping preserved from the original
-// shared top-table-utils.getMarginColor (thresholds unchanged):
-//   null → muted; >=30 → positive; >=15 → warning; >=0 → warning/80 (weaker
-//   intensity, same hue family); <0 → negative. 4 distinct visual states, zero
-// new tokens. The shared fn is legacy-palette AND shared with the dashboard
-// cards (172.1 surface) — local semantic mapping here instead.
-// TODO(172.1): shared top-table-utils.getMarginColor still legacy — migrate + dedupe these local copies when 172.1 owns them.
-function getMarginColor(margin: number | null): string {
-  if (margin === null) return 'text-muted-foreground'
-  if (margin >= 30) return 'text-financial-positive'
-  if (margin >= 15) return 'text-status-warning'
-  if (margin >= 0) return 'text-status-warning/80'
-  return 'text-financial-negative'
-}
+import { formatCurrency, formatPercent, getMarginColor } from '../top-table-utils'
 
 interface TopBrandsTableRowProps {
   brand: TopBrandItem

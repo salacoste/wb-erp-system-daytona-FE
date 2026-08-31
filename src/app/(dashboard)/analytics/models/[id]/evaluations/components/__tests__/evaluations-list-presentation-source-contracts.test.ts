@@ -89,7 +89,8 @@ describe('Story 171.7 route presentation source contracts', () => {
     expect(header).toMatch(/STATUS_BADGE_CONFIG\[model\.status\]\.label/)
     expect(header).not.toMatch(/statusBadge\.className/)
     // r-LOW hardening (171.7 review): ban ANY re-coupling to the overlay field,
-    // not just the old local-variable spelling.
+    // not just the old local-variable spelling. Story 174.2 removed the registry
+    // className field outright — this pin now guards against reintroduction.
     expect(header).not.toMatch(/STATUS_BADGE_CONFIG\[[^\]]*\]\.className/)
   })
 

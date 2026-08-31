@@ -75,25 +75,25 @@ export const BENCHMARK_STATUS_CONFIG: Record<BenchmarkStatus, BenchmarkStatusCon
   excellent: {
     label: 'Отлично',
     color: '#22C55E',
-    textClass: 'text-green-600',
+    textClass: 'text-status-success',
     icon: '🎯',
   },
   good: {
     label: 'Хорошо',
     color: '#84CC16',
-    textClass: 'text-lime-600',
+    textClass: 'text-status-success',
     icon: '✅',
   },
   warning: {
     label: 'Внимание',
     color: '#F97316',
-    textClass: 'text-orange-600',
+    textClass: 'text-status-warning',
     icon: '⚠️',
   },
   critical: {
     label: 'Критично',
     color: '#EF4444',
-    textClass: 'text-red-600',
+    textClass: 'text-status-error',
     icon: '🚨',
   },
 } as const
@@ -157,11 +157,11 @@ export function getTrendInsightIcon(type: TrendInsightType): string {
 export function getTrendInsightBgClass(type: TrendInsightType): string {
   switch (type) {
     case 'improvement':
-      return 'bg-green-50 border-green-200'
+      return 'bg-status-success/10 border-status-success/20'
     case 'warning':
-      return 'bg-orange-50 border-orange-200'
+      return 'bg-status-warning/10 border-status-warning/20'
     case 'info':
     default:
-      return 'bg-blue-50 border-blue-200'
+      return 'bg-status-information/10 border-status-information/20'
   }
 }

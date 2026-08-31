@@ -58,7 +58,7 @@ describe('GrossMarginCard — Russian locale', () => {
 describe('GrossMarginCard — profit-vs-loss color bands (iter-120)', () => {
   it('colors a positive-but-low gross margin orange (низкая наценка), not the loss red', () => {
     renderCard({ grossMarginPct: 20, previousGrossMarginPct: null })
-    expect(screen.getByText(/20,0\s+%/)).toHaveClass('text-status-warning/80')
+    expect(screen.getByText(/20,0\s+%/)).toHaveClass('text-status-warning')
     expect(screen.getByTestId('metric-card')).toHaveClass('border-status-warning/80')
     expect(screen.getByTestId('metric-card')).toHaveClass('from-status-warning/10')
   })
@@ -73,7 +73,7 @@ describe('GrossMarginCard — profit-vs-loss color bands (iter-120)', () => {
 
   it('colors exactly 0% orange — the boundary belongs to the profit (non-loss) side', () => {
     renderCard({ grossMarginPct: 0, previousGrossMarginPct: null })
-    expect(screen.getByText(/0,0\s+%/)).toHaveClass('text-status-warning/80')
+    expect(screen.getByText(/0,0\s+%/)).toHaveClass('text-status-warning')
   })
 
   it('keeps the unchanged bands: ≥50 green, 30–50 yellow', () => {

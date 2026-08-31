@@ -4,8 +4,10 @@
  * Price Basis Badge (SPP-1.7-FE)
  * Compact chip identifying which price basis a recommendation row was computed
  * under. Mirrors MarginBadge styling (rounded-full border + text-xs).
- * 'STOREFRONT_STALE' flag → amber variant: no fresh observation ≤24h, seller
+ * 'STOREFRONT_STALE' flag → warning variant: no fresh observation ≤24h, seller
  * fallback price used.
+ * Story 174.2-FE (C2): legacy gray/blue/amber palette → semantic valences —
+ * storefront → status-information, stale → status-warning, seller/unknown → muted.
  */
 
 import { cn } from '@/lib/utils'
@@ -30,22 +32,22 @@ export function resolveBasisBadgeVariant(
 
 const VARIANTS = {
   seller: {
-    className: 'border-gray-200 bg-gray-50 text-gray-700',
+    className: 'border-border bg-muted text-muted-foreground',
     label: 'Продавец',
     title: 'Цена продавца (seller API)',
   },
   storefront: {
-    className: 'border-blue-200 bg-blue-50 text-blue-700',
+    className: 'border-status-information/40 bg-status-information/10 text-status-information',
     label: 'Витрина',
     title: 'Цена витрины (аноним, с промо)',
   },
   stale: {
-    className: 'border-amber-200 bg-amber-50 text-amber-700',
+    className: 'border-status-warning/40 bg-status-warning/10 text-status-warning',
     label: 'Витрина · устарела',
     title: 'Нет свежего наблюдения ≤24ч — использована цена продавца',
   },
   unknown: {
-    className: 'border-gray-300 bg-gray-100 text-gray-600',
+    className: 'border-border bg-muted text-muted-foreground',
     label: 'Неизвестный базис',
     title: 'Бэкенд вернул нераспознанное значение базиса — не подменяем его молча',
   },

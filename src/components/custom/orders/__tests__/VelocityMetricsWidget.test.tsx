@@ -39,7 +39,7 @@ describe('VelocityMetricsWidget', () => {
       expect(value).toHaveTextContent('—')
       expect(value).not.toHaveTextContent('0 мин')
       expect(value).toHaveClass('text-muted-foreground')
-      expect(value).not.toHaveClass('text-green-600')
+      expect(value).not.toHaveClass('text-status-success')
       expect(screen.getByText('Нет данных')).toBeInTheDocument()
     })
 
@@ -61,7 +61,7 @@ describe('VelocityMetricsWidget', () => {
       const value = screen.getByTestId('confirmation-time-value')
       expect(value).toHaveTextContent('—')
       expect(value).toHaveClass('text-muted-foreground')
-      expect(value).not.toHaveClass('text-green-600')
+      expect(value).not.toHaveClass('text-status-success')
     })
 
     it('renders a real 0 as "0 мин" (not "—")', () => {
@@ -184,7 +184,7 @@ describe('VelocityMetricsWidget', () => {
       it('applies green color for 25 min confirmation time', () => {
         render(<VelocityMetricsWidget data={mockVelocityMetricsFast} />)
         const metric = screen.getByTestId('confirmation-time-value')
-        expect(metric).toHaveClass('text-green-600')
+        expect(metric).toHaveClass('text-status-success')
       })
 
       it('applies green color for 29 min confirmation time', () => {
@@ -194,7 +194,7 @@ describe('VelocityMetricsWidget', () => {
           />
         )
         const metric = screen.getByTestId('confirmation-time-value')
-        expect(metric).toHaveClass('text-green-600')
+        expect(metric).toHaveClass('text-status-success')
       })
     })
 
@@ -206,7 +206,7 @@ describe('VelocityMetricsWidget', () => {
           />
         )
         const metric = screen.getByTestId('confirmation-time-value')
-        expect(metric).toHaveClass('text-yellow-600')
+        expect(metric).toHaveClass('text-status-warning')
       })
 
       it('applies yellow color for 59 min confirmation time', () => {
@@ -216,7 +216,7 @@ describe('VelocityMetricsWidget', () => {
           />
         )
         const metric = screen.getByTestId('confirmation-time-value')
-        expect(metric).toHaveClass('text-yellow-600')
+        expect(metric).toHaveClass('text-status-warning')
       })
     })
 
@@ -228,13 +228,13 @@ describe('VelocityMetricsWidget', () => {
           />
         )
         const metric = screen.getByTestId('confirmation-time-value')
-        expect(metric).toHaveClass('text-red-600')
+        expect(metric).toHaveClass('text-status-error')
       })
 
       it('applies red color for 90 min confirmation time', () => {
         render(<VelocityMetricsWidget data={mockVelocityMetricsSlow} />)
         const metric = screen.getByTestId('confirmation-time-value')
-        expect(metric).toHaveClass('text-red-600')
+        expect(metric).toHaveClass('text-status-error')
       })
     })
   })
@@ -245,7 +245,7 @@ describe('VelocityMetricsWidget', () => {
       it('applies green color for 150 min completion time', () => {
         render(<VelocityMetricsWidget data={mockVelocityMetricsFast} />)
         const metric = screen.getByTestId('completion-time-value')
-        expect(metric).toHaveClass('text-green-600')
+        expect(metric).toHaveClass('text-status-success')
       })
 
       it('applies green color for 179 min completion time', () => {
@@ -255,7 +255,7 @@ describe('VelocityMetricsWidget', () => {
           />
         )
         const metric = screen.getByTestId('completion-time-value')
-        expect(metric).toHaveClass('text-green-600')
+        expect(metric).toHaveClass('text-status-success')
       })
     })
 
@@ -267,7 +267,7 @@ describe('VelocityMetricsWidget', () => {
           />
         )
         const metric = screen.getByTestId('completion-time-value')
-        expect(metric).toHaveClass('text-yellow-600')
+        expect(metric).toHaveClass('text-status-warning')
       })
 
       it('applies yellow color for 359 min completion time', () => {
@@ -277,7 +277,7 @@ describe('VelocityMetricsWidget', () => {
           />
         )
         const metric = screen.getByTestId('completion-time-value')
-        expect(metric).toHaveClass('text-yellow-600')
+        expect(metric).toHaveClass('text-status-warning')
       })
     })
 
@@ -289,13 +289,13 @@ describe('VelocityMetricsWidget', () => {
           />
         )
         const metric = screen.getByTestId('completion-time-value')
-        expect(metric).toHaveClass('text-red-600')
+        expect(metric).toHaveClass('text-status-error')
       })
 
       it('applies red color for 480 min completion time', () => {
         render(<VelocityMetricsWidget data={mockVelocityMetricsSlow} />)
         const metric = screen.getByTestId('completion-time-value')
-        expect(metric).toHaveClass('text-red-600')
+        expect(metric).toHaveClass('text-status-error')
       })
     })
   })

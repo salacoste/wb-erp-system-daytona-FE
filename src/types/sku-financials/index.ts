@@ -24,12 +24,11 @@ export type {
   SkuFinancialsResponse,
 } from './core'
 
-export { PROFITABILITY_COLORS, PROFITABILITY_HEX, PROFITABILITY_LABELS } from './core'
+export { PROFITABILITY_COLORS, PROFITABILITY_LABELS } from './core'
 
 // Helper functions
 export {
   getProfitabilityBadgeClass,
-  getProfitabilityHex,
   getProfitabilityLabel,
   getTotalOperatingExpenses,
 } from './helpers'

@@ -59,14 +59,16 @@ function withoutComments(source: string): string {
  * ROOT route, EXCLUDING the nested campaigns/[advertId] detail (epic VC note —
  * separate ownership) and test files (incl. stray colocated .test.* files). */
 function ownedProductionFiles(): string[] {
-  const all = readdirSync(routeDirectory, { recursive: true }).map(file =>
-    join(routeDirectory, file as string)
-  )
+  const all = readdirSync(routeDirectory, { recursive: true }).map(file => file as string)
+  // Anchor-safe (171.8 lesson, hardened by Story 174.2): filter RELATIVE entries
+  // BEFORE join — substring filters on joined absolute paths also match the
+  // checkout/worktree name.
   return all
-    .filter(file => /\.(?:ts|tsx)$/.test(file))
     .filter(file => !file.includes('__tests__'))
     .filter(file => !/\.(?:test|spec)\./.test(file))
     .filter(file => !file.includes('campaigns'))
+    .filter(file => /\.(?:ts|tsx)$/.test(file))
+    .map(file => join(routeDirectory, file))
     .sort()
 }
 

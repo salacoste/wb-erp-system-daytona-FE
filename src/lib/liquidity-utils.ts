@@ -47,7 +47,6 @@ export {
   formatTurnoverDays,
   formatVelocity,
   formatFrozenCapitalWarning,
-  getFrozenCapitalStatusClass,
   formatCurrency,
   formatCompactNumber,
   transformDistributionForChart,

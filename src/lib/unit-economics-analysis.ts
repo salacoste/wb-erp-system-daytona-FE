@@ -61,19 +61,6 @@ export function calculateHealthScore(
   return Math.min(100, Math.max(0, score))
 }
 
-/** Get health score label and color */
-export function getHealthScoreInfo(score: number): {
-  label: string
-  color: string
-  bgColor: string
-} {
-  if (score >= 80) return { label: 'Отлично', color: '#22C55E', bgColor: '#DCFCE7' }
-  if (score >= 60) return { label: 'Хорошо', color: '#84CC16', bgColor: '#ECFCCB' }
-  if (score >= 40) return { label: 'Нормально', color: '#EAB308', bgColor: '#FEF9C3' }
-  if (score >= 20) return { label: 'Слабо', color: '#F97316', bgColor: '#FFEDD5' }
-  return { label: 'Критично', color: '#EF4444', bgColor: '#FEE2E2' }
-}
-
 /** Sort items by profitability (worst first for action prioritization) */
 export function sortByProfitability(
   items: UnitEconomicsItem[],

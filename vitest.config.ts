@@ -55,6 +55,10 @@ export default defineConfig({
       'scripts/e2e-preflight.test.mjs', // Runs separately with node:test
       'scripts/privacy/diagnostic-capture-policy.test.mjs', // Runs separately with node:test
       'scripts/story-128-10/verify-frontend.test.mjs', // Runs separately with node:test
+      // CARRY-IN FIX (174.1 → 174.2): node:test suite fails under vitest with
+      // 'URL must be of scheme file' (root cause of the main-RED 19873/1 run).
+      'scripts/__tests__/check-shadcn-migration-parity.test.mjs', // Runs separately with node:test
+      'scripts/__tests__/check-shadcn-ui-boundary.test.mjs', // Runs separately with node:test (Story 174.2, same node:test pattern)
       'dist/**',
       '**/*.config.*',
       // Exclude OMC agent worktrees (stale full-repo copies under

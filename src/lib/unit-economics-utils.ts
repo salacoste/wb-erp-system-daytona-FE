@@ -12,10 +12,8 @@ import { COST_CATEGORIES } from './unit-economics-config'
 export {
   PROFITABILITY_STATUS_CONFIG,
   getProfitabilityConfig,
-  getProfitabilityColor,
   getProfitabilityLabel,
   getProfitabilityBadgeClasses,
-  getProfitabilityBgClass,
   getStatusFromMargin,
   COST_CATEGORIES,
   getCostCategoryConfig,
@@ -29,7 +27,6 @@ export {
 export {
   getTopMarginKillers,
   calculateHealthScore,
-  getHealthScoreInfo,
   sortByProfitability,
   filterLossMaking,
   filterMissingCogs,

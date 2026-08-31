@@ -26,8 +26,9 @@ import {
 
 // Pass-2 review finding #1: import the REAL lib function instead of a
 // test-local mirror — the suite now certifies production behavior and
-// cannot desync from the (still-legacy, lib-wave carry-out) lib values.
-import { getCountdownColor as getCountdownColorClass } from '@/lib/analytics-utils'
+// cannot desync from the lib values (Story 174.2: imported from the source
+// module, which now emits design-system status tokens).
+import { getCountdownColor as getCountdownColorClass } from '@/lib/orders-analytics-utils'
 
 import type { AtRiskOrder } from '@/types/orders-analytics'
 
@@ -158,7 +159,7 @@ describe('AtRiskOrdersCard', () => {
     it('highlights most urgent order (< 10 min remaining)', () => {
       const order = mockAtRiskOrdersSortedByUrgency[0]
       expect(order.minutesRemaining).toBe(3)
-      expect(getCountdownColorClass(order.minutesRemaining)).toBe('text-orange-600')
+      expect(getCountdownColorClass(order.minutesRemaining)).toBe('text-status-warning')
     })
   })
 
@@ -291,15 +292,19 @@ describe('AtRiskOrdersCard', () => {
     })
 
     it('applies error styling for breached countdown', () => {
-      expect(getCountdownColorClass(mockAtRiskOrderBreached.minutesRemaining)).toBe('text-red-600')
+      expect(getCountdownColorClass(mockAtRiskOrderBreached.minutesRemaining)).toBe(
+        'text-status-error'
+      )
     })
 
     it('applies warning styling for < 30 min remaining', () => {
-      expect(getCountdownColorClass(20)).toBe('text-yellow-600')
+      expect(getCountdownColorClass(20)).toBe('text-status-warning')
     })
 
     it('applies warning styling for < 10 min remaining', () => {
-      expect(getCountdownColorClass(mockAtRiskOrderUrgent.minutesRemaining)).toBe('text-orange-600')
+      expect(getCountdownColorClass(mockAtRiskOrderUrgent.minutesRemaining)).toBe(
+        'text-status-warning'
+      )
     })
   })
 

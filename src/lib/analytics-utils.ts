@@ -157,11 +157,11 @@ export function isStorageDivergent(storageApi: number, weeklyReport: number | nu
 export function getDiscrepancyColor(status: DiscrepancyStatus): string {
   switch (status) {
     case 'ok':
-      return 'text-green-600 bg-green-50'
+      return 'text-status-success bg-status-success/10'
     case 'warning':
-      return 'text-yellow-600 bg-yellow-50'
+      return 'text-status-warning bg-status-warning/10'
     case 'error':
-      return 'text-red-600 bg-red-50'
+      return 'text-status-error bg-status-error/10'
   }
 }
 

@@ -29,6 +29,7 @@ import {
 } from '@/components/ui/table'
 import {
   ENGINE_LABELS,
+  MODEL_LIST_BADGE_CLASS,
   STATUS_BADGE_CONFIG,
   formatMape,
   formatTrainedAt,
@@ -146,7 +147,9 @@ export function ModelListSection() {
                     <TableCell>{ENGINE_LABELS[model.engine]}</TableCell>
                     <TableCell className="tabular-nums">v{model.version}</TableCell>
                     <TableCell>
-                      <Badge className={badge.className}>
+                      {/* Story 174.2: overlay from the registry-local class map —
+                          STATUS_BADGE_CONFIG carries labels + pulse only. */}
+                      <Badge className={MODEL_LIST_BADGE_CLASS[model.status]}>
                         {badge.pulse && (
                           <span
                             aria-hidden="true"

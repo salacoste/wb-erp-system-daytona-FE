@@ -98,13 +98,6 @@ export function getProfitabilityConfig(status: string): ProfitabilityStatusConfi
 }
 
 /**
- * Get profitability color
- */
-export function getProfitabilityColor(status: ProfitabilityStatus): string {
-  return getProfitabilityConfig(status).color
-}
-
-/**
  * Get profitability label
  */
 export function getProfitabilityLabel(status: ProfitabilityStatus): string {
@@ -117,13 +110,6 @@ export function getProfitabilityLabel(status: ProfitabilityStatus): string {
 export function getProfitabilityBadgeClasses(status: ProfitabilityStatus): string {
   const config = getProfitabilityConfig(status)
   return `${config.bgClass} ${config.textClass}`
-}
-
-/**
- * Get profitability background class only
- */
-export function getProfitabilityBgClass(status: ProfitabilityStatus): string {
-  return getProfitabilityConfig(status).bgClass
 }
 
 /**
