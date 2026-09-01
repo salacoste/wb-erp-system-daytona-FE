@@ -1,6 +1,6 @@
 # Story 168.3 — Migrate Analytical Dashboard `/analytics/dashboard`
 
-- **Status:** review (awaiting orchestrator commit/PR)
+- **Status:** done — (was: "review (awaiting orchestrator commit/PR)"; synced by Story 174.5 on 2026-09-02; authoritative delivery/gate evidence: sprint-status.yaml row with PR/merge/review/vitest)
 - **Branch / worktree:** `cdx/epic-168-story-3-analytics-dashboard` @ `/private/tmp/wb-fe-168-3-migrate-analytical-dashboard`
 - **Base SHA:** `166e5451` (= FE origin/main)
 - **Acceptance criterion:** Given complete, partial, pending, or failed sections when migrated to shadcn semantic tokens then metrics, periods, availability, top rankings, P&L, navigation, and recovery remain correct and one failed section does not hide valid evidence — only presentation tokens change.

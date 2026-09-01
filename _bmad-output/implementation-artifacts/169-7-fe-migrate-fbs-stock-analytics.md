@@ -2,7 +2,7 @@
 
 - Route: `/analytics/fbs-stock`
 - Worktree: `/private/tmp/wb-repricer-fe-169-7-fbs-stock-shadcn` (base `9bc7423d` = origin/main)
-- Status: implemented, NOT committed (worktree left dirty per protocol)
+- Status: done — (was: "implemented, NOT committed (worktree left dirty per protocol)"; synced by Story 174.5 on 2026-09-02; authoritative delivery/gate evidence: sprint-status.yaml row with PR/merge/review/vitest)
 - Precedents: 169.6 (`169-6-fe-migrate-enhanced-fbs-analytics.md`), 169.5 (TableCaption + tabular-nums)
 
 ## Changes (пофайлово)

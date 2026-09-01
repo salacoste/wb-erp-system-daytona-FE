@@ -1,6 +1,6 @@
 # Story 167.6 — Migrate Processing `/processing`
 
-- **Status:** review (awaiting orchestrator commit/PR)
+- **Status:** done — (was: "review (awaiting orchestrator commit/PR)"; synced by Story 174.5 on 2026-09-02; authoritative delivery/gate evidence: sprint-status.yaml row with PR/merge/review/vitest)
 - **Branch / worktree:** `cdx/epic-167-story-6-processing` @ `/private/tmp/wb-fe-167-6-migrate-processing`
 - **Base SHA:** `e33d2bea` (FE main with 167.5 + 167.9 merged)
 - **Acceptance criterion:** Given running, failed, uncertain, or complete processing when the route is migrated then polling cadence, stage/progress, safe-leave, recovery, and next navigation remain correct without misleading zeros or duplicate requests AND completed onboarding state is retained.

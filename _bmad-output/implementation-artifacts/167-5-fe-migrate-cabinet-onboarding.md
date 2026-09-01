@@ -1,6 +1,6 @@
 # Story 167.5: Migrate Cabinet Onboarding `/cabinet`
 
-Status: review
+Status: done — (was: "review"; synced by Story 174.5 on 2026-09-02; authoritative delivery/gate evidence: sprint-status.yaml row with PR/merge/review/vitest)
 
 ## Story
 

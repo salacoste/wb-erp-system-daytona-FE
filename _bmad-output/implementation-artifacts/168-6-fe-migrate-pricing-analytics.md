@@ -1,6 +1,6 @@
 # Story 168.6 — Migrate Pricing Analytics /analytics/pricing
 
-- **Status:** review (awaiting orchestrator commit/PR)
+- **Status:** done — (was: "review (awaiting orchestrator commit/PR)"; synced by Story 174.5 on 2026-09-02; authoritative delivery/gate evidence: sprint-status.yaml row with PR/merge/review/vitest)
 - **Branch / worktree:** cdx/epic-168-story-6-pricing @ /private/tmp/wb-fe-168-6-migrate-pricing-analytics
 - **Base SHA:** 625e998c
 - **Acceptance criterion:** Given pricing rows and detail states when migrated then filters, recommendation/break-even values, units, zero/missing, selected SKU, focus/return, and recovery remain correct and algorithms are untouched.

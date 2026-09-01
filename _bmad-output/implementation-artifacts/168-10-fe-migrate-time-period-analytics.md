@@ -1,6 +1,6 @@
 # 168.10 FE — Migrate Time-Period Analytics (`/analytics/time-period`) to shadcn tokens
 
-- **Status**: Code-complete (uncommitted in worktree, per wave protocol)
+- **Status**: done — (was: "Code-complete (uncommitted in worktree, per wave protocol)"; synced by Story 174.5 on 2026-09-02; authoritative delivery/gate evidence: sprint-status.yaml row with PR/merge/review/vitest)
 - **Branch**: `cdx/epic-168-story-10-time-period`
 - **Base**: `6dbd2941` (origin/main)
 - **Worktree**: `/private/tmp/wb-fe-168-10-migrate-time-period-analytics`

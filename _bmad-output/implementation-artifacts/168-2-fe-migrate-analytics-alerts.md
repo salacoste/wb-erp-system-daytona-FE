@@ -1,6 +1,6 @@
 # Story 168.2 — Migrate Analytics Alerts `/analytics/alerts`
 
-- **Status:** review (awaiting orchestrator commit/PR)
+- **Status:** done — (was: "review (awaiting orchestrator commit/PR)"; synced by Story 174.5 on 2026-09-02; authoritative delivery/gate evidence: sprint-status.yaml row with PR/merge/review/vitest)
 - **Branch / worktree:** `cdx/epic-168-story-2-alerts` @ `/private/tmp/wb-fe-168-2-migrate-analytics-alerts`
 - **Base SHA:** `e9370c7b` (= FE origin/main)
 - **Acceptance criterion:** Given the alerts center with summary KPI cards, rule list, and history when migrated to shadcn semantic tokens then query keys, URL state, tab semantics (`summary|rules|history`), Russian labels, aria-labels, testids, `useAlertsPageState` contract, role gating (`canManageOperationalData`), threshold parse semantics (parseInt radix 10, NaN-skip), `all`-sentinel filter semantics, and formatting remain unchanged — only presentation tokens change.

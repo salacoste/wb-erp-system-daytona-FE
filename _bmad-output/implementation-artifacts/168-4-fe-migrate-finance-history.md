@@ -1,6 +1,6 @@
 # Story 168.4 — Migrate Finance History `/analytics/finance-history`
 
-- **Status:** review (awaiting orchestrator commit/PR)
+- **Status:** done — (was: "review (awaiting orchestrator commit/PR)"; synced by Story 174.5 on 2026-09-02; authoritative delivery/gate evidence: sprint-status.yaml row with PR/merge/review/vitest)
 - **Branch / worktree:** `cdx/epic-168-story-4-finance-history` @ `/private/tmp/wb-fe-168-4-migrate-finance-history`
 - **Base SHA:** `3f01f972` (= FE origin/main at story start)
 - **Acceptance criterion:** Given the multi-week P&L grid when migrated to shadcn semantic tokens then WoW delta coloring (incl. isNegativeMetric inversion), formatting, and page structure remain correct — only presentation tokens change.

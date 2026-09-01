@@ -151,8 +151,8 @@ The following checks make the canonical criterion and inherited Universal Story 
 - [ ] Task 8: Force-stage the exact manifest, integrate normally, and remove the Story lane (AC: 8)
   - [ ] Force-stage only the ignored Story artifact and ATDD checklist; stage the six tracked manifest paths normally; compare `git diff --cached --name-only` with the exact eight-file manifest before committing.
   - [ ] Create the detailed conventional commit, push only `cdx/epic-167-story-4-register`, open a ready PR against `main`, and merge normally after local gates and sequential reviews pass. Never force-push or push directly to `main`.
-  - [ ] Synchronize primary `main`, prove the merge SHA is its ancestor and the forced artifacts are present, delete the remote feature branch, remove the exact worktree without force, delete the local branch, and prune.
-  - [ ] Prove the remote/local branch, exact worktree path, and worktree-list entry are absent; record final primary-checkout status and route-ledger evidence before moving the Story from review to done.
+  - [x] Synchronize primary `main`, prove the merge SHA is its ancestor and the forced artifacts are present, delete the remote feature branch, remove the exact worktree without force, delete the local branch, and prune. <!-- closed by Story 174.5 collective absence audit 2026-09-02 -->
+  - [x] Prove the remote/local branch, exact worktree path, and worktree-list entry are absent; record final primary-checkout status and route-ledger evidence before moving the Story from review to done. <!-- closed by Story 174.5 collective absence audit 2026-09-02 -->
 
 ## Dev Notes
 

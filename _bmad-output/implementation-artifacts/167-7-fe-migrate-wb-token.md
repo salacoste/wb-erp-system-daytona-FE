@@ -1,6 +1,6 @@
 # Story 167.7 — Migrate WB Token `/wb-token`
 
-- **Status:** review (awaiting orchestrator commit/PR)
+- **Status:** done — (was: "review (awaiting orchestrator commit/PR)"; synced by Story 174.5 on 2026-09-02; authoritative delivery/gate evidence: sprint-status.yaml row with PR/merge/review/vitest)
 - **Branch / worktree:** `cdx/epic-167-story-7-wb-token` @ `/private/tmp/wb-fe-167-7-migrate-wb-token`
 - **Base SHA:** `63ebddb7` (FE main with 167.5 + 167.6 + 167.9 merged)
 - **Acceptance criterion:** Given valid, malformed, rejected, permission, network, or expired-session cases when migrated then validation/storage/transition semantics remain unchanged, input is handled safely, duplicates are prevented, no token leaks AND the shared guard is consumed without modification.

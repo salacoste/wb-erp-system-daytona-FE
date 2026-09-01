@@ -540,7 +540,7 @@ test('guarded Git facts detect the delivered 167.8 worktree residue', () => {
   const delivered = path.resolve(record.repository, record.deliveredCleanupWorktree)
   const fakeGit = (_repository, args) => {
     if (args[0] === 'merge-base' && args[1] === 'HEAD')
-      return { status: 0, stdout: '9d611369085a1e88783322a50f3c3a043cd25257', stderr: '' }
+      return { status: 0, stdout: '0d6225acb9abfafa872d2d2ee45f215594edc4e6', stderr: '' }
     if (args[0] === 'config')
       return {
         status: 0,
@@ -622,13 +622,13 @@ test('Git base discovery fails closed on command failure, malformed SHA, and wro
   assert.deepEqual(wrong.failures, [
     {
       code: 'base-sha-mismatch',
-      identity: `${wrongSha}:9d611369085a1e88783322a50f3c3a043cd25257`,
+      identity: `${wrongSha}:0d6225acb9abfafa872d2d2ee45f215594edc4e6`,
     },
   ])
 
   const model = cloneCorpus()
   model.gitContext.baseSha = wrongSha
-  assertError(model, 'base-sha-mismatch', `${wrongSha}:9d611369085a1e88783322a50f3c3a043cd25257`)
+  assertError(model, 'base-sha-mismatch', `${wrongSha}:0d6225acb9abfafa872d2d2ee45f215594edc4e6`)
 })
 
 test('run propagates deterministic self-test failure without validating corpus', () => {

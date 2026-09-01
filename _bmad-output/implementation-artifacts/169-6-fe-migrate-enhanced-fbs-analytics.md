@@ -1,6 +1,6 @@
 # 169.6 FE — Migrate Enhanced FBS Analytics (`/analytics/fbs-enhanced`) to shadcn tokens
 
-- **Status**: Code-complete (uncommitted in worktree, per wave protocol)
+- **Status**: done — (was: "Code-complete (uncommitted in worktree, per wave protocol)"; synced by Story 174.5 on 2026-09-02; authoritative delivery/gate evidence: sprint-status.yaml row with PR/merge/review/vitest)
 - **Story**: 169.6-FE Migrate Enhanced FBS Analytics
 - **Route**: `/analytics/fbs-enhanced`
 - **Branch**: `cdx/epic-169-story-6-fbs-enhanced-shadcn`

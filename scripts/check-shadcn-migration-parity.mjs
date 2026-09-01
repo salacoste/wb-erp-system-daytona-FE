@@ -7,7 +7,7 @@ import { fileURLToPath } from 'node:url'
 
 const EXPECTED_STORIES = 94
 const EXPECTED_ROUTES = 76
-const EXPECTED_BASE_SHA = '9d611369085a1e88783322a50f3c3a043cd25257'
+const EXPECTED_BASE_SHA = '0d6225acb9abfafa872d2d2ee45f215594edc4e6'
 const FRONTEND_ROOT = '/Users/r2d2/Documents/Code_Projects/wb-repricer-system-new/frontend'
 const MASTER_PLAN = '.omx/plans/shadcn-full-ui-migration-master.md'
 const BMAD_ARTIFACT = '_bmad-output/planning-artifacts/epics-166-174-fe-shadcn-migration.md'
@@ -1036,7 +1036,7 @@ export function validateModel(model) {
     if (!storyIds.has(row.storyId)) add('orphan-ledger-owner', row.storyId)
     if (!routeEntries.has(row.entry)) add('route-entry-missing', row.entry)
     if (!row.artifact) add('implementation-artifact-missing', row.storyId)
-    if (row.status !== 'planned') add('ledger-status-changed', `${row.storyId}:${row.status}`)
+    if (row.status !== 'verified') add('ledger-status-changed', `${row.storyId}:${row.status}`)
   }
   for (const route of model.routes) {
     if (!ledgerEntries.has(route.entry)) add('source-route-missing-ledger', route.entry)
