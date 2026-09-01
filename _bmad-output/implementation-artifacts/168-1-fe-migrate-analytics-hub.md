@@ -1,6 +1,6 @@
 # Story 168.1 — Migrate Analytics Hub `/analytics` and Own Analytics-Shared UI
 
-- **Status:** review (awaiting orchestrator commit/PR)
+- **Status:** done — (was: "review (awaiting orchestrator commit/PR)"; synced by Story 174.5 on 2026-09-02; authoritative delivery/gate evidence: sprint-status.yaml row with PR/merge/review/vitest)
 - **Branch / worktree:** `cdx/epic-168-story-1-analytics-hub` @ `/private/tmp/wb-fe-168-1-migrate-analytics-hub`
 - **Base SHA:** `a581765c` (FE main; epics 166 + 167 fully merged)
 - **Acceptance criterion:** Given hub, financial, marketing, period, availability, and error states when migrated then data/query/formatting/navigation behavior remains unchanged AND every ≥2-route analytics component has this or another already-merged explicit owner.

@@ -1,6 +1,6 @@
 # 168.9 FE — Migrate SKU Analytics (`/analytics/sku`) to shadcn tokens
 
-- **Status**: Code-complete (uncommitted in worktree, per wave protocol)
+- **Status**: done — (was: "Code-complete (uncommitted in worktree, per wave protocol)"; synced by Story 174.5 on 2026-09-02; authoritative delivery/gate evidence: sprint-status.yaml row with PR/merge/review/vitest)
 - **Branch**: `cdx/epic-168-story-9-sku`
 - **Base**: `64472bec` (origin/main)
 - **Worktree**: `/private/tmp/wb-fe-168-9-migrate-sku-analytics`

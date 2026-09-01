@@ -1,6 +1,6 @@
 # Story 168.5 — Migrate Orders Analytics `/analytics/orders`
 
-- **Status:** review (awaiting orchestrator commit/PR)
+- **Status:** done — (was: "review (awaiting orchestrator commit/PR)"; synced by Story 174.5 on 2026-09-02; authoritative delivery/gate evidence: sprint-status.yaml row with PR/merge/review/vitest)
 - **Branch / worktree:** `cdx/epic-168-story-5-orders-analytics` @ `/private/tmp/wb-fe-168-5-migrate-orders-analytics`
 - **Base SHA:** `193ea5db`
 - **Acceptance criterion:** Given the FBS Orders Analytics page (overview/trends/seasonality/comparison tabs) when migrated to shadcn semantic tokens then delta sign coloring, icon colors, tab structure, and Russian formatting (comma decimal, ∞ guard) remain correct — only presentation tokens change.

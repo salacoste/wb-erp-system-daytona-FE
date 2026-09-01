@@ -1,6 +1,6 @@
 # 169.3-FE — Migrate Acquiring Report Transaction Detail (shadcn tokens)
 
-Status: COMPLETE (not committed — left in worktree per protocol)
+Status: done — (was: "COMPLETE (not committed — left in worktree per protocol)"; synced by Story 174.5 on 2026-09-02; authoritative delivery/gate evidence: sprint-status.yaml row with PR/merge/review/vitest)
 Branch: `cdx/epic-169-story-3-acquiring-report-detail-shadcn` (base 3262793b)
 Scope: presentation-only token migration, `/analytics/acquiring/reports/[id]`.
 

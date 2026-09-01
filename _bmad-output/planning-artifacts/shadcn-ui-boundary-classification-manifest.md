@@ -225,6 +225,14 @@ src/types/supplies/helpers.ts
 | `src/app/(dashboard)/analytics/pricing/components/PriceHistorySheet.tsx` | 5 | historical `#7C3AED` chart mark — 6 suppressed matches (:27-32); 170.x carry-out, classified not migrated |
 | `src/app/(dashboard)/analytics/product/[nmId]/components/FunnelTab.tsx` | 5 | historical `#7C3AED` chart mark — 5 suppressed matches (:28-32); 170.x carry-out, classified not migrated |
 
+### Story 174.5 disposition (2026-09-02)
+
+All 4 registered exceptions re-confirmed live and still required; disposition **owner-accepted** (each awaits its named owner decision, none blocks the migration program close):
+- FeedbackButtons — design-system-boundary exception (hardcoded legacy palette class); WCAG dark-theme fail 3.53:1 (#15803d on #18181b; light 5.02:1, muted 4.56:1) → registered **PB-4** (registry §11.9 APPEND (6), final handoff §4); "F-10" is an inline comment ID at FeedbackButtons.tsx:16 — no ledger entry exists.
+- Waterfall categorical hex — C5 chart-palette owner decision (13 series on 11 hex + 2 tokens).
+- `#7C3AED` chart labels ×2 — 170.x carry-out.
+Boundary ratchet re-run at Story 174.5 closeout: total 459 = baseline 459, verdict PASS; exceptions 4 registered / 4 suppressing live matches (gate wording); per-file suppressed-match counts as listed in the §7 table above (2+11+6+5); self-suite 10/10.
+
 ## 8. Category 6 — false positives (4 files, 8 counted violations; comment-only matches)
 
 | path | category | evidence / disposition |

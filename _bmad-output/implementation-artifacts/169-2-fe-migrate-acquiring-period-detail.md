@@ -1,6 +1,6 @@
 # 169.2-FE — Migrate Acquiring Period Detail (shadcn tokens)
 
-Status: COMPLETE (not committed — left in worktree per protocol)
+Status: done — (was: "COMPLETE (not committed — left in worktree per protocol)"; synced by Story 174.5 on 2026-09-02; authoritative delivery/gate evidence: sprint-status.yaml row with PR/merge/review/vitest)
 Branch: `cdx/epic-169-story-2-acquiring-period-shadcn` (base cc8ba015)
 Scope: presentation-only token migration, `/analytics/acquiring/period`.
 

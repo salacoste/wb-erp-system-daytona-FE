@@ -1,7 +1,6 @@
 # Story 174.3-FE — Complete Accessibility, Responsive, Theme, and Visual Verification
 
-**Status**: review — implementation and exact-worktree validation complete; immutable-SHA reviews pending
-as of 2026-09-01
+**Status**: done — implementation and exact-worktree validation complete; immutable-SHA review gate closed via remediation 56b3a6c2; PR #374 merged (c5605a38); validation as of 2026-09-01; synced from stale review by Story 174.5 on 2026-09-02
 **Plan**: `.omx/plans/174.3-complete-accessibility-responsive-theme-and-visual-verification.md`
 **Branch**: `cdx/epic-174-story-3-inclusive-visual-verification`
 **Worktree**: `/private/tmp/wb-repricer-fe-174-3-inclusive-visual-verification`

@@ -1,6 +1,6 @@
 # Story 168.7 — Migrate Product Analytics /analytics/product/[nmId]
 
-- **Status:** review (awaiting orchestrator commit/PR)
+- **Status:** done — (was: "review (awaiting orchestrator commit/PR)"; synced by Story 174.5 on 2026-09-02; authoritative delivery/gate evidence: sprint-status.yaml row with PR/merge/review/vitest)
 - **Branch / worktree:** cdx/epic-168-story-7-product-detail @ /private/tmp/wb-fe-168-7-migrate-product-analytics
 - **Base SHA:** 74896f21
 - **Acceptance criterion:** Given the OrganicTab iROAS card and per-day correlation table when migrated to semantic tokens then all 4 interpretation tiers keep distinct visual intensity (no tier-collapse), the 3 confidence branches map to data-quality semantics, and rendering logic/algorithms are untouched.

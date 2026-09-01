@@ -1,6 +1,6 @@
 # 168.11 FE — Migrate Unit Economics (`/analytics/unit-economics`) to shadcn tokens + shared profitability consolidation
 
-- **Status**: Code-complete (uncommitted in worktree, per wave protocol)
+- **Status**: done — (was: "Code-complete (uncommitted in worktree, per wave protocol)"; synced by Story 174.5 on 2026-09-02; authoritative delivery/gate evidence: sprint-status.yaml row with PR/merge/review/vitest)
 - **Branch**: `cdx/epic-168-story-11-unit-economics`
 - **Base**: `26508fa4` (origin/main)
 - **Worktree**: `/private/tmp/wb-fe-168-11-migrate-unit-economics`

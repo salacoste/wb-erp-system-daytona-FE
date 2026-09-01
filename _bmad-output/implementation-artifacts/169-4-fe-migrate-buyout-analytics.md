@@ -1,6 +1,6 @@
 # 169.4 FE — Migrate Buyout Analytics (`/analytics/buyout`) to shadcn tokens
 
-- **Status**: Code-complete (uncommitted in worktree, per wave protocol)
+- **Status**: done — (was: "Code-complete (uncommitted in worktree, per wave protocol)"; synced by Story 174.5 on 2026-09-02; authoritative delivery/gate evidence: sprint-status.yaml row with PR/merge/review/vitest)
 - **Branch**: `cdx/epic-169-story-4-buyout-shadcn`
 - **Base**: `538e48c8` (origin/main)
 - **Worktree**: `/private/tmp/wb-repricer-fe-169-4-buyout-shadcn`

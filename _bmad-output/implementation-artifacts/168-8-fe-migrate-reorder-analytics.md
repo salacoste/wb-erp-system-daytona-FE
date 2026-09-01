@@ -1,6 +1,6 @@
 # Story 168.8 — Migrate Reorder Analytics /analytics/reorder
 
-- **Status:** review (awaiting orchestrator commit/PR)
+- **Status:** done — (was: "review (awaiting orchestrator commit/PR)"; synced by Story 174.5 on 2026-09-02; authoritative delivery/gate evidence: sprint-status.yaml row with PR/merge/review/vitest)
 - **Branch / worktree:** cdx/epic-168-story-8-reorder @ /private/tmp/wb-fe-168-8-migrate-reorder-analytics
 - **Base SHA:** ca647434
 - **Acceptance criterion (BMAD/plan):** Given recommendation and route states when migrated then query/filter/count/total/quantity/stock/source/dates/amount/status/actions remain unchanged and filtered/empty/narrow scope stays explicit.
