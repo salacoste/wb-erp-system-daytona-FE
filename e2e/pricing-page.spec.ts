@@ -111,14 +111,14 @@ test.describe('Price Recommendations page', () => {
 
     await gotoPricing(page)
 
-    await page.getByRole('combobox').nth(0).click()
+    await page.getByRole('combobox', { name: 'Фильтр по разрыву' }).click()
     await page.getByRole('option', { name: 'Ниже цели' }).click()
 
     await expect
       .poll(() => requestedUrls.some(url => url.includes('gap_filter=below_target')))
       .toBe(true)
 
-    await page.getByRole('combobox').nth(1).click()
+    await page.getByRole('combobox', { name: 'Сортировка' }).click()
     await page.getByRole('option', { name: 'По текущей марже' }).click()
 
     await expect

@@ -474,3 +474,28 @@ describe('ReorderDashboardPage - Refresh', () => {
     expect(mockRefresh).toHaveBeenCalled()
   })
 })
+
+describe('ReorderDashboardPage - Extreme amounts', () => {
+  beforeEach(() => {
+    vi.clearAllMocks()
+    mockMetrics.mockReturnValue(okMetrics())
+  })
+
+  it('renders a twelve-digit reorder amount without overflow or silent truncation', () => {
+    mockRecommendations.mockReturnValue({
+      data: [
+        {
+          ...sampleRecommendation,
+          recommendedQty: 999_999_999,
+          totalReorderValue: 999_999_999_999,
+        },
+      ],
+      isLoading: false,
+      error: null,
+    })
+
+    renderPage()
+
+    expect(screen.getByText(/999[\s ]999[\s ]999[\s ]999/)).toBeInTheDocument()
+  })
+})

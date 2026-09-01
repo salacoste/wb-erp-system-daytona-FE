@@ -1,4 +1,8 @@
 import { STORY_174_3_STATES } from './route-contracts'
+import {
+  STORY_174_3_OWNER_ROUTE_STATE_SCENARIOS,
+  STORY_174_3_OWNER_VARIANT_SCENARIOS,
+} from './owner-state-scenarios'
 import { STORY_174_3_ADDITIONAL_STATE_SCENARIOS } from './state-scenarios-additional'
 
 export type Story1743NonDefaultState = Exclude<(typeof STORY_174_3_STATES)[number], 'default'>
@@ -22,7 +26,7 @@ const exact = (
  * Exact route/state declarations only. An omitted state is deliberately and
  * visibly materialized as route-specific N/A; title-token inference is banned.
  */
-export const STORY_174_3_EXACT_STATE_SCENARIOS: Readonly<
+const STORY_174_3_BASE_EXACT_STATE_SCENARIOS: Readonly<
   Record<string, Partial<Record<Story1743NonDefaultState, Story1743ExactStateScenario>>>
 > = {
   ...STORY_174_3_ADDITIONAL_STATE_SCENARIOS,
@@ -30,22 +34,6 @@ export const STORY_174_3_EXACT_STATE_SCENARIOS: Readonly<
     error: exact(
       'src/app/page.test.tsx',
       '[P1] has no automated accessibility violations in hydrating or error states'
-    ),
-  },
-  '/login': {
-    error: exact(
-      'src/components/custom/LoginForm.test.tsx',
-      'has no automated accessibility violations in the request-error state'
-    ),
-    pending: exact(
-      'src/components/custom/LoginForm.test.tsx',
-      'disables every control and exposes a truthful busy state while submission is pending'
-    ),
-  },
-  '/register': {
-    stale: exact(
-      'src/components/custom/RegistrationForm.test.tsx',
-      '[Review 1 findings 3 and 4] clears stale duplicate feedback on email correction and submits once more with the retained password'
     ),
   },
   '/cabinet': {
@@ -266,8 +254,14 @@ export const STORY_174_3_EXACT_STATE_SCENARIOS: Readonly<
       'renders empty-state directly on a non-loading empty response'
     ),
     error: exact(
-      'src/app/(dashboard)/analytics/models/[id]/evaluations/sku-accuracy/components/__tests__/SkuAccuracyDetail.test.tsx',
-      'F-2: isError=true renders error alert, NOT empty-state'
+      'src/app/(dashboard)/analytics/models/[id]/evaluations/sku-accuracy/components/__tests__/page.test.tsx',
+      'F-5: malformed ?nmId=abc renders an explicit invalid-parameter error',
+      [
+        exact(
+          'src/app/(dashboard)/analytics/models/[id]/evaluations/sku-accuracy/components/__tests__/SkuAccuracyDetail.test.tsx',
+          'F-2: isError=true renders error alert, NOT empty-state'
+        ),
+      ]
     ),
     'not-found': exact(
       'src/app/(dashboard)/analytics/models/[id]/evaluations/sku-accuracy/components/__tests__/SkuAccuracyDetail.test.tsx',
@@ -760,40 +754,32 @@ export const STORY_174_3_EXACT_STATE_SCENARIOS: Readonly<
       'renders model-not-found Alert with link when model absent from list'
     ),
   },
-  '/supplies': {
-    loading: exact(
-      'src/app/(dashboard)/supplies/__tests__/page.test.tsx',
-      'renders loading skeleton with 8 rows'
-    ),
-    empty: exact(
-      'src/app/(dashboard)/supplies/__tests__/page.test.tsx',
-      'renders empty state when no supplies'
-    ),
-    error: exact(
-      'src/app/(dashboard)/supplies/__tests__/page.test.tsx',
-      'renders error message on fetch error'
-    ),
-    pending: exact(
-      'src/app/(dashboard)/supplies/__tests__/page.test.tsx',
-      'disables sync button while sync is pending'
-    ),
-  },
-  '/supplies/[id]': {
-    loading: exact(
-      'src/app/(dashboard)/supplies/[id]/__tests__/page.test.tsx',
-      'shows SupplyDetailSkeleton while loading'
-    ),
-    error: exact(
-      'src/app/(dashboard)/supplies/[id]/__tests__/page.test.tsx',
-      'shows error message for generic errors'
-    ),
-    permission: exact(
-      'src/app/(dashboard)/supplies/[id]/__tests__/page.test.tsx',
-      'shows "Нет доступа к этой поставке" message'
-    ),
-    'not-found': exact(
-      'src/app/(dashboard)/supplies/[id]/__tests__/page.test.tsx',
-      'shows a not-found state when loading succeeds without supply data'
-    ),
-  },
 }
+
+const STORY_174_3_PROMOTED_OWNER_STATE_SCENARIOS: Record<
+  string,
+  Partial<Record<Story1743NonDefaultState, Story1743ExactStateScenario>>
+> = {}
+
+for (const scenario of STORY_174_3_OWNER_VARIANT_SCENARIOS) {
+  if (scenario.normalizedState === 'default') continue
+  const routeScenarios = (STORY_174_3_PROMOTED_OWNER_STATE_SCENARIOS[scenario.route] ??= {})
+  routeScenarios[scenario.normalizedState] ??= scenario.evidence
+}
+
+export const STORY_174_3_EXACT_STATE_SCENARIOS: Readonly<
+  Record<string, Partial<Record<Story1743NonDefaultState, Story1743ExactStateScenario>>>
+> = Object.fromEntries(
+  [...new Set([
+    ...Object.keys(STORY_174_3_BASE_EXACT_STATE_SCENARIOS),
+    ...Object.keys(STORY_174_3_PROMOTED_OWNER_STATE_SCENARIOS),
+    ...Object.keys(STORY_174_3_OWNER_ROUTE_STATE_SCENARIOS),
+  ])].map(route => [
+    route,
+    {
+      ...STORY_174_3_PROMOTED_OWNER_STATE_SCENARIOS[route],
+      ...STORY_174_3_BASE_EXACT_STATE_SCENARIOS[route],
+      ...STORY_174_3_OWNER_ROUTE_STATE_SCENARIOS[route],
+    },
+  ])
+)

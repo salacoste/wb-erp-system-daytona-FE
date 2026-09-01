@@ -37,12 +37,20 @@ vi.mock('../components/useAlertsPageState', () => ({
 
 // Mock sub-components that may have complex deps
 vi.mock('../components/AlertsPageHeader', () => ({
-  AlertsPageHeader: ({ onCreateRule }: { onCreateRule: () => void }) => (
+  AlertsPageHeader: ({
+    onCreateRule,
+    canCreateRule,
+  }: {
+    onCreateRule: () => void
+    canCreateRule: boolean
+  }) => (
     <div data-testid="alerts-header">
       <h1>Оповещения</h1>
-      <button data-testid="create-rule-btn" onClick={onCreateRule}>
-        Создать правило
-      </button>
+      {canCreateRule && (
+        <button data-testid="create-rule-btn" onClick={onCreateRule}>
+          Создать правило
+        </button>
+      )}
     </div>
   ),
 }))
@@ -123,5 +131,20 @@ describe('AlertsPage', () => {
   it('renders create rule button', () => {
     renderWithProviders(<AlertsPage />)
     expect(screen.getByTestId('create-rule-btn')).toBeInTheDocument()
+  })
+
+  it('keeps alert evidence visible but removes mutation controls for an Analyst', () => {
+    useAuthStore.setState({
+      user: { id: 'analyst-1', email: 'analyst@test.local', role: 'Analyst' },
+      token: 'jwt-token',
+      cabinetId: 'cab-1',
+      isAuthenticated: true,
+    })
+
+    renderWithProviders(<AlertsPage />)
+
+    expect(screen.getByTestId('alert-summary-cards')).toBeInTheDocument()
+    expect(screen.queryByTestId('create-rule-btn')).not.toBeInTheDocument()
+    expect(screen.queryByTestId('create-dialog')).not.toBeInTheDocument()
   })
 })

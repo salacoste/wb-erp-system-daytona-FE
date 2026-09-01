@@ -1,6 +1,6 @@
 # Story 174.3-FE — Complete Accessibility, Responsive, Theme, and Visual Verification
 
-**Status**: implementation and exact-worktree validation complete; immutable-SHA reviews pending
+**Status**: review — implementation and exact-worktree validation complete; immutable-SHA reviews pending
 as of 2026-09-01
 **Plan**: `.omx/plans/174.3-complete-accessibility-responsive-theme-and-visual-verification.md`
 **Branch**: `cdx/epic-174-story-3-inclusive-visual-verification`
@@ -23,7 +23,7 @@ truthfully contain its own final SHA.
 ### Actual expanded file manifest
 
 The original three-file scope expanded only when the live matrix found concrete route-owner defects.
-The generated exact scope register contains 337 files relative to the unchanged `origin/main` base;
+The generated exact scope register contains 417 files relative to the unchanged `origin/main` base;
 it is the authoritative file-level inventory. The current delivery contains these principal groups:
 
 - Story evidence runtime:
@@ -90,14 +90,14 @@ their `SC` clauses are expanded, owner-specific labels are normalized into the t
 taxonomy, and every mapping retains its raw owner label and rationale:
 
 ```text
-280 exact executed rows
-632 explicit route-specific not-applicable rows
+444 exact executed rows
+468 explicit route-specific not-applicable rows
 0 blocked rows
 76 canonical Story-runner default rows
-169 owner-unit executable rows
-35 owner-browser executable rows
-69 unique owner-unit sources
-15 unique owner-browser sources
+318 owner-unit executable rows
+50 owner-browser executable rows
+154 unique owner-unit sources
+21 unique owner-browser sources
 ```
 
 Each executed row records route, state, exact source, source SHA-256, literal scenario ID, line,
@@ -181,6 +181,17 @@ table/chart features: 290 executed / 333 explicit N/A
     elasticity, monitoring, supplies, top-products, and top-brands surfaces. Native rows/cells retain
     table semantics; real shadcn `Button` controls now own keyboard activation and `aria-expanded`,
     while pointer row activation remains behavior-compatible.
+14. Unit-economics mode selector: native radio inputs replace the incomplete custom ARIA radio
+    model, preserving one checked value and browser-owned arrow-key focus/selection behavior.
+15. Liquidity and model tables: pointer-only full-row convenience behavior is restored without
+    adding interactive roles or tab stops to native rows; nested links/buttons stop propagation and
+    remain the sole keyboard controls.
+16. Liquidity keyboard proof: the exact SKU disclosure and liquidation planner scenarios now use
+    native keyboard activation only, without a synthetic click that could manufacture a pass.
+17. Elasticity and completeness disclosures expose dynamic `Показать`/`Скрыть` action names that
+    agree with `aria-expanded`, with collapsed and expanded regression coverage.
+18. Acquiring period deep links retain their bounded ISO-date parsing while exposing the page-level
+    `searchParams` prop as an explicit awaited `Promise`, satisfying the Next async-params guard.
 
 No axe rule, threshold, exclusion, network guard, privacy guard, or route assertion was weakened.
 
@@ -197,7 +208,36 @@ Evidence is privacy-safe DOM/accessibility/geometry/computed-style data only. `e
 `test-results/`, and `playwright-report/` must be removed after final browser validation without
 reading auth contents.
 
-### Evidence review — 2026-09-01
+### Operator-driven evidence review — 2026-09-01
+
+The immutable manual ledger is
+`e2e/fixtures/story-174-3/manual-evidence.ts`; its executable contract is
+`src/test/story-174-3-manual-evidence-contract.test.ts`. It records route or representative risk
+group, state/task, primary keyboard path, browser, viewport/theme, focus lifecycle, reading/data
+meaning, operator, date, outcome, and exact gap reference. The operator is identified as a non-human
+Codex App browser operator so these direct sessions cannot be confused with automated test results
+or a human assistive-technology review.
+
+- Chromium and Firefox: `/register` empty-submit keyboard paths passed at 390x900 and 1280x900;
+  focus returned to the invalid email field and the form-level plus field-level Russian validation
+  remained exposed in document order.
+- Chromium and Firefox: `/dashboard` mobile navigation was reached through keyboard traversal,
+  opened with Enter, contained forward Tab focus, closed with Escape, and returned focus to
+  `Open menu` after the close lifecycle.
+- Chromium dark theme: the dashboard retained its route `h1`, visible focus targets, and a semantic
+  table named `Данные графика детализации по дням за неделю; единицы: рубли` with explicit rouble
+  units for every financial series.
+- WebKit: the Safari-engine proxy exposed the route heading, named regions, radio groups, chart
+  description, and complete data table. Enter/Tab/Escape/focus return passed after explicit trigger
+  focus. Native Tab traversal from the body boundary did not reach the header trigger in the local
+  daemon, so the ledger records `ENV-WEBKIT-TAB` rather than claiming a Safari keyboard pass.
+- Real VoiceOver/Safari, Windows NVDA/JAWS, and Android TalkBack were not executed and remain exact
+  environment-capability records. Playwright WebKit is not called Safari or VoiceOver evidence.
+
+The acceptance authority is the Story 174.3 AC together with the UX browser matrix: unavailable
+environments must be recorded rather than silently claimed as passed. Those environment-only gaps
+do not conceal a product defect. The Story plan's approved privacy-safe DOM/accessibility/geometry
+baseline replaces prohibited persisted screenshots, but explicitly does not replace real AT.
 
 - Keyboard-only: modal execution covers Enter, Space, Tab, Shift+Tab, Escape, and focus return;
   non-modal execution covers open, usable focus, Escape, and return.
@@ -215,22 +255,22 @@ True browser-UI 200% zoom is executed on headed macOS Chromium through browser U
 gate proves the doubled device-pixel ratio, reduced CSS viewport, absence of CSS root zoom, and
 bounded geometry for all 76 routes in both themes. Operation with real
 VoiceOver/NVDA/JAWS/TalkBack remains an explicit environment gap and is never reported as an
-automated PASS.
+automated or operator-driven PASS.
 
 ### Final exact-worktree validation ledger
 
 Pinned runtime: Node `v24.18.0`, npm `11.11.0`.
 
 ```text
-Targeted Story state/surface/manifest-reader contracts: 3 files, 32/32 tests passed
+Targeted Story state/surface/manifest-reader/manual-evidence contracts: 4 files, 42/42 tests passed
 Focused native-row regressions: 7 files, 129/129 tests passed
 Supplies route regression suite: 1 file, 90/90 tests passed
-Full Vitest: 1,259 files, 19,239/19,239 tests passed
+Full Vitest: 1,270 files, 19,346/19,346 tests passed
 Canonical Story runner: 82 passed / 1 optional Manager skip / 0 failed
-Owner browser regeneration: 305 passed / 22 accepted optional/live-data skips / 0 failed
+Owner browser regeneration: 368 passed / 22 accepted optional/live-data skips / 0 failed
 Dedicated route/SKU evidence: 4 current-source executions / 0 gaps
 Real browser-UI 200% zoom: all 76 routes × 2 themes passed; 4 harness tests passed / 1 optional Manager skip
-Execution manifest: 354 passed entries (236 Vitest / 118 Playwright / 76 canonical defaults / 4 dedicated), 0 failed
+Execution manifest: 769 passed entries (626 Vitest / 143 Playwright; includes 76 canonical defaults and 4 dedicated), 0 failed
 Production build: PASS, TypeScript PASS, 70/70 pages generated
 npm run lint: PASS, zero warnings/errors
 npx eslint on all changed E2E/scripts sources: PASS, zero warnings/errors
@@ -243,7 +283,7 @@ npm run check:lessons: PASS, 302 files / 96 lesson lines / zero violations
 E2E assertion/wait/bare-skip, Next params, locale-percent, and policy guards: PASS
 Anti-pattern-8 normalizer: PASS at the lowered 50-site baseline
 ESLint rule registry: PASS, 2 configs; relocatability self-test: 8/8 passed
-Privacy policy tests: 29/29 passed; repository scan: 3,608 text files / 0 findings
+Privacy policy tests: 29/29 passed; repository scan: 3,633 text files / 0 findings
 ```
 
 The canonical runner directly verifies all 76 route identities, 912 state dispositions, six widths

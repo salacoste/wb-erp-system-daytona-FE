@@ -17,6 +17,8 @@ vi.mock('sonner', () => ({ toast: { success: vi.fn(), error: vi.fn() } }))
 const sendMock = vi.fn()
 const invalidateMock = vi.fn()
 let sendError: unknown = null
+let sendPending = false
+let jobPending = false
 let capturedTerminal:
   | ((status: string, error: string | null | undefined, m: { actionKind: string | null }) => void)
   | null = null
@@ -28,7 +30,7 @@ vi.mock('@tanstack/react-query', () => ({
 vi.mock('@/hooks/useCommunicationsWriteback', () => ({
   useSendChatMessage: () => ({
     mutate: sendMock,
-    isPending: false,
+    isPending: sendPending,
     isError: sendError != null,
     error: sendError,
   }),
@@ -42,7 +44,7 @@ vi.mock('@/hooks/useWritebackJob', () => ({
   ) => {
     capturedTerminal = onTerminal
     return {
-      jobId: null,
+      jobId: jobPending ? 'job-1' : null,
       status: undefined,
       effectiveStatus: undefined,
       error: null,
@@ -59,6 +61,8 @@ describe('ChatComposer', () => {
     sendMock.mockReset()
     invalidateMock.mockReset()
     sendError = null
+    sendPending = false
+    jobPending = false
     capturedTerminal = null
   })
   afterEach(() => {
@@ -84,6 +88,34 @@ describe('ChatComposer', () => {
     capturedTerminal?.('completed', null, { actionKind: 'send_chat' })
     await waitFor(() => expect(toast.success).toHaveBeenCalledWith('Сообщение отправлено'))
     expect(invalidateMock).toHaveBeenCalled()
+  })
+
+  it('keeps a typed draft local until the user explicitly sends it', () => {
+    render(<ChatComposer replySign="sign-1" />)
+
+    fireEvent.change(screen.getByTestId('chat-message-textarea'), {
+      target: { value: 'черновик' },
+    })
+
+    expect(screen.getByTestId('chat-message-textarea')).toHaveValue('черновик')
+    expect(sendMock).not.toHaveBeenCalled()
+  })
+
+  it('keeps the draft and controls disabled while sending or polling', () => {
+    sendPending = true
+    const { rerender } = render(<ChatComposer replySign="sign-1" />)
+
+    expect(screen.getByTestId('chat-message-textarea')).toBeDisabled()
+    expect(screen.getByTestId('chat-send-btn')).toBeDisabled()
+    expect(screen.getByTestId('chat-writeback-status')).toHaveTextContent('Отправляется…')
+
+    sendPending = false
+    jobPending = true
+    rerender(<ChatComposer replySign="sign-1" />)
+
+    expect(screen.getByTestId('chat-message-textarea')).toBeDisabled()
+    expect(screen.getByTestId('chat-send-btn')).toBeDisabled()
+    expect(screen.getByTestId('chat-writeback-status')).toHaveTextContent('Отправляется…')
   })
 
   it('403 → renders the RU kill-switch message', () => {

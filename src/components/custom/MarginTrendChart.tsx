@@ -2,6 +2,9 @@
 
 import { useMemo } from 'react'
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
+import { Alert, AlertDescription } from '@/components/ui/alert'
+import { Button } from '@/components/ui/button'
+import { AlertCircle } from 'lucide-react'
 import { useMarginTrends, type MarginTrendsQueryParams } from '@/hooks/useMarginTrends'
 import {
   LineChart,
@@ -78,7 +81,7 @@ export function MarginTrendChart({
     )
   }
 
-  if (error) {
+  if (error && (!data || data.length === 0)) {
     return <MarginTrendError title={title} className={className} onRetry={handleRetry} />
   }
 
@@ -95,6 +98,17 @@ export function MarginTrendChart({
         <CardDescription>{description}</CardDescription>
       </CardHeader>
       <CardContent>
+        {error && data.length > 0 && (
+          <Alert className="mb-4 border-status-warning/30 bg-status-warning/15">
+            <AlertCircle className="h-4 w-4 text-status-warning" />
+            <AlertDescription className="flex items-center justify-between gap-4">
+              <span>Не удалось обновить график. Показаны ранее загруженные данные.</span>
+              <Button variant="outline" size="sm" onClick={handleRetry}>
+                Повторить
+              </Button>
+            </AlertDescription>
+          </Alert>
+        )}
         <div
           role="img"
           aria-label="График маржинальности по неделям"

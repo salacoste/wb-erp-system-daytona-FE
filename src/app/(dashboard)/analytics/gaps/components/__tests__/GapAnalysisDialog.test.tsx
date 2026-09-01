@@ -243,4 +243,27 @@ describe('GapAnalysisDialog severity chips', () => {
     )
     expect(badge).not.toHaveClass('bg-blue-100', 'text-blue-800')
   })
+
+  it('renders an unknown root-cause classification as literal bounded warning evidence', () => {
+    const analysis = createAnalysis(RootCause.IMPORT_FAILURE)
+    analysis.root_cause = 'unexpected_backend_classification' as RootCause
+
+    render(
+      <GapAnalysisDialog
+        isOpen={true}
+        onOpenChange={vi.fn()}
+        analysis={analysis}
+        isRemediating={false}
+        onRemediate={vi.fn()}
+        returnFocusRef={emptyReturnFocusRef}
+        fallbackFocusRef={emptyReturnFocusRef}
+      />
+    )
+
+    expect(screen.getByText('unexpected_backend_classification')).toHaveClass(
+      'bg-status-warning/15',
+      'text-status-warning',
+      'border-status-warning/30'
+    )
+  })
 })

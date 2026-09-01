@@ -96,8 +96,9 @@ export function LiquidityTable({
                   data.map(item => (
                     <Fragment key={item.sku_id}>
                       <TableRow
+                        onClick={() => toggleRow(item.sku_id)}
                         className={cn(
-                          'hover:bg-muted/50',
+                          'cursor-pointer hover:bg-muted/50',
                           expandedRow === item.sku_id && 'bg-muted/30'
                         )}
                       >

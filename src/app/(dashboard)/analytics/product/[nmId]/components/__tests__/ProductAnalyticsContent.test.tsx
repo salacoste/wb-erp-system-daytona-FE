@@ -11,12 +11,26 @@ import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { emptyUnifiedProduct, emptyUnifiedProductData } from '@/test/fixtures/unified-product-empty'
 import { UNIFIED_PRODUCT_TABS, UNIFIED_PRODUCT_TAB_LABELS } from '@/types/unified-product'
+import { ApiError } from '@/types/api'
 
 // Mock all 3 data hooks
 vi.mock('@/hooks/use-unified-product-analytics', () => ({
   useUnifiedProductAnalytics: vi.fn(),
   useOrganicShare: vi.fn(),
   useIncrementalRoas: vi.fn(),
+}))
+
+vi.mock('@/components/custom/DateRangePickerExtended', () => ({
+  DateRangePickerExtended: ({ onChange }: { onChange: (range: { from: Date; to: Date }) => void }) => (
+    <button
+      type="button"
+      onClick={() =>
+        onChange({ from: new Date('2026-07-01T00:00:00Z'), to: new Date('2026-07-07T00:00:00Z') })
+      }
+    >
+      Изменить период
+    </button>
+  ),
 }))
 
 import {
@@ -66,6 +80,12 @@ describe('ProductAnalyticsContent', () => {
     expect(screen.getByRole('heading', { name: 'Аналитика товара #00123' })).toBeInTheDocument()
   })
 
+  it('renders a very long opaque product identifier without numeric coercion', () => {
+    const longNmId = '999999999999999999999999999999'
+    render(<ProductAnalyticsContent nmId={longNmId} />)
+    expect(screen.getByRole('heading', { name: `Аналитика товара #${longNmId}` })).toBeInTheDocument()
+  })
+
   it('renders all five tabs with their Russian labels', () => {
     render(<ProductAnalyticsContent nmId="1" />)
     for (const tab of UNIFIED_PRODUCT_TABS) {
@@ -87,6 +107,44 @@ describe('ProductAnalyticsContent', () => {
     } as unknown as ReturnType<typeof useUnifiedProductAnalytics>)
     render(<ProductAnalyticsContent nmId="1" />)
     expect(document.querySelectorAll('.animate-pulse').length).toBe(4)
+  })
+
+  it('renders an explicit not-found state for a missing product instead of a placeholder', () => {
+    mockUnified.mockReturnValue({
+      data: undefined,
+      isLoading: false,
+      isError: true,
+      error: new ApiError('missing', 404),
+      refetch: vi.fn(),
+    } as unknown as ReturnType<typeof useUnifiedProductAnalytics>)
+
+    render(<ProductAnalyticsContent nmId="404" />)
+
+    expect(screen.getByText(/Товар не найден/)).toBeInTheDocument()
+    expect(screen.queryByText(/раздел находится в разработке/i)).not.toBeInTheDocument()
+  })
+
+  it('updates every product query when the date range changes', async () => {
+    const user = userEvent.setup()
+    render(<ProductAnalyticsContent nmId="123" />)
+
+    await user.click(screen.getByRole('button', { name: 'Изменить период' }))
+
+    expect(mockUnified).toHaveBeenLastCalledWith({
+      nmId: '123',
+      from: '2026-07-01',
+      to: '2026-07-07',
+    })
+    expect(mockOrganic).toHaveBeenLastCalledWith({
+      nmId: '123',
+      from: '2026-07-01',
+      to: '2026-07-07',
+    })
+    expect(mockIroas).toHaveBeenLastCalledWith({
+      nmId: '123',
+      from: '2026-07-01',
+      to: '2026-07-07',
+    })
   })
 
   it('switches to advertising tab with campaign data', async () => {

@@ -8,6 +8,7 @@
 
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
 import { act, screen } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
 import { renderWithProviders } from '@/test/utils/test-utils'
 import type { AcquiringDetailResponse } from '@/types/acquiring-analytics'
 import { ApiError } from '@/types/api'
@@ -20,7 +21,15 @@ vi.mock('@/hooks/use-acquiring-period-detail', () => ({
 
 // Mock DateRangePickerExtended to avoid date-fns locale complexity in tests
 vi.mock('@/components/custom/DateRangePickerExtended', () => ({
-  DateRangePickerExtended: () => <div data-testid="mock-date-picker">DatePicker</div>,
+  DateRangePickerExtended: ({
+    onChange,
+  }: {
+    onChange: (range: { from: Date; to: Date } | undefined) => void
+  }) => (
+    <button type="button" data-testid="mock-date-picker" onClick={() => onChange(undefined)}>
+      Clear period
+    </button>
+  ),
 }))
 
 // Mock next/link to avoid router context requirement
@@ -74,6 +83,22 @@ afterEach(() => {
 })
 
 describe('AcquiringPeriodDetailPage', () => {
+  it('keeps a cleared or invalid period out of the query and presents a bounded recovery action', async () => {
+    mockSuccess({ data: [], cachedAt: '' })
+
+    const user = userEvent.setup()
+    renderWithProviders(<AcquiringPeriodDetailPage initialRangeError="Период в ссылке недоступен." />)
+
+    expect(screen.getByText('Период в ссылке недоступен.')).toBeInTheDocument()
+    expect(screen.queryByText(/Транзакции за выбранный период не найдены/)).not.toBeInTheDocument()
+    expect(mockUseAcquiringPeriodDetail).toHaveBeenCalledWith('', '', false)
+
+    await user.click(screen.getByTestId('mock-date-picker'))
+
+    expect(screen.getByText(/Период не выбран/)).toBeInTheDocument()
+    expect(mockUseAcquiringPeriodDetail).toHaveBeenLastCalledWith('', '', false)
+  })
+
   it('renders landmark, header, and back button when data resolves', () => {
     mockSuccess({
       data: [makeTransaction(1), makeTransaction(2)],

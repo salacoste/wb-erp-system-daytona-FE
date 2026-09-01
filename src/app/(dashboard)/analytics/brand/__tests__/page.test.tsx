@@ -285,6 +285,20 @@ describe('MarginAnalysisByBrandPage - Empty State', () => {
   })
 })
 
+describe('MarginAnalysisByBrandPage - Partial storage comparison', () => {
+  beforeEach(() => {
+    vi.clearAllMocks()
+    setupMocks()
+    mockUseCabinetLevelExpenses.mockReturnValue({ data: undefined, isLoading: false })
+  })
+
+  it('keeps brand margin data visible when storage comparison is unavailable', () => {
+    renderPage()
+    expect(screen.queryByTestId('storage-comparison-card')).not.toBeInTheDocument()
+    expect(screen.getByTestId('margin-by-brand-table')).toBeInTheDocument()
+  })
+})
+
 // --- Accessibility ---
 
 describe('MarginAnalysisByBrandPage - Accessibility', () => {

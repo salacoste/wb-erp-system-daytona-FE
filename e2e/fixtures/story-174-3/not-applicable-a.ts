@@ -6,7 +6,6 @@ export const STORY_174_3_NOT_APPLICABLE_A: Readonly<
   Record<string, readonly Story1743NonDefaultState[]>
 > = Object.freeze({
   '/': notApplicable(
-    'loading',
     'refresh',
     'empty',
     'filtered-empty',
@@ -33,11 +32,8 @@ export const STORY_174_3_NOT_APPLICABLE_A: Readonly<
     'refresh',
     'empty',
     'filtered-empty',
-    'error',
     'partial',
     'permission',
-    'pending',
-    'partial-success',
     'not-found'
   ),
   '/cabinet': notApplicable(
@@ -45,16 +41,11 @@ export const STORY_174_3_NOT_APPLICABLE_A: Readonly<
     'refresh',
     'empty',
     'filtered-empty',
-    'error',
-    'permission',
-    'pending',
     'not-found'
   ),
   '/processing': notApplicable(
-    'refresh',
     'empty',
     'filtered-empty',
-    'stale',
     'partial',
     'permission',
     'partial-success',
@@ -62,45 +53,26 @@ export const STORY_174_3_NOT_APPLICABLE_A: Readonly<
   ),
   '/wb-token': notApplicable('refresh', 'filtered-empty', 'stale', 'partial', 'partial-success'),
   '/analytics': notApplicable(
-    'loading',
-    'refresh',
-    'empty',
     'filtered-empty',
-    'error',
-    'stale',
-    'partial',
-    'permission',
     'pending',
     'partial-success',
     'not-found'
   ),
   '/analytics/alerts': notApplicable(
-    'loading',
-    'refresh',
-    'filtered-empty',
     'stale',
     'partial',
-    'permission',
-    'pending',
     'partial-success',
     'not-found'
   ),
   '/analytics/dashboard': notApplicable(
-    'refresh',
     'filtered-empty',
-    'stale',
-    'permission',
     'partial-success',
     'not-found'
   ),
   '/analytics/finance-history': notApplicable(
-    'loading',
     'refresh',
-    'empty',
     'filtered-empty',
-    'error',
     'stale',
-    'partial',
     'permission',
     'pending',
     'partial-success',
@@ -110,17 +82,13 @@ export const STORY_174_3_NOT_APPLICABLE_A: Readonly<
     'refresh',
     'filtered-empty',
     'stale',
-    'partial',
     'permission',
     'pending',
     'partial-success',
     'not-found'
   ),
   '/analytics/pricing': notApplicable(
-    'refresh',
-    'filtered-empty',
     'stale',
-    'partial',
     'permission',
     'pending',
     'partial-success',
@@ -128,56 +96,35 @@ export const STORY_174_3_NOT_APPLICABLE_A: Readonly<
   ),
   '/analytics/product/[nmId]': notApplicable(
     'refresh',
-    'empty',
     'filtered-empty',
-    'error',
     'stale',
-    'partial',
     'permission',
     'pending',
-    'partial-success',
-    'not-found'
+    'partial-success'
   ),
   '/analytics/reorder': notApplicable(
-    'refresh',
-    'filtered-empty',
     'stale',
-    'partial',
     'permission',
     'pending',
     'partial-success',
     'not-found'
   ),
   '/analytics/sku': notApplicable(
-    'loading',
-    'refresh',
-    'empty',
-    'filtered-empty',
     'error',
-    'stale',
-    'partial',
     'permission',
     'pending',
     'partial-success',
     'not-found'
   ),
   '/analytics/time-period': notApplicable(
-    'loading',
-    'refresh',
-    'empty',
     'filtered-empty',
-    'error',
-    'stale',
-    'partial',
     'permission',
     'pending',
     'partial-success',
     'not-found'
   ),
   '/analytics/unit-economics': notApplicable(
-    'filtered-empty',
     'stale',
-    'partial',
     'permission',
     'pending',
     'partial-success',
@@ -187,7 +134,6 @@ export const STORY_174_3_NOT_APPLICABLE_A: Readonly<
     'loading',
     'refresh',
     'filtered-empty',
-    'error',
     'stale',
     'partial',
     'permission',
@@ -210,13 +156,11 @@ export const STORY_174_3_NOT_APPLICABLE_A: Readonly<
     'refresh',
     'empty',
     'filtered-empty',
-    'error',
     'stale',
     'partial',
     'permission',
     'pending',
-    'partial-success',
-    'not-found'
+    'partial-success'
   ),
   '/analytics/buyout': notApplicable(
     'loading',
@@ -234,17 +178,13 @@ export const STORY_174_3_NOT_APPLICABLE_A: Readonly<
   '/analytics/buyout-reconciliation': notApplicable(
     'refresh',
     'filtered-empty',
-    'partial',
     'permission',
-    'pending',
     'partial-success',
     'not-found'
   ),
   '/analytics/fbs-enhanced': notApplicable(
     'refresh',
-    'empty',
     'filtered-empty',
-    'partial',
     'permission',
     'pending',
     'partial-success',
@@ -253,9 +193,7 @@ export const STORY_174_3_NOT_APPLICABLE_A: Readonly<
   '/analytics/fbs-stock': notApplicable(
     'refresh',
     'filtered-empty',
-    'partial',
     'permission',
-    'pending',
     'partial-success',
     'not-found'
   ),
@@ -264,7 +202,6 @@ export const STORY_174_3_NOT_APPLICABLE_A: Readonly<
     'refresh',
     'filtered-empty',
     'stale',
-    'partial',
     'permission',
     'pending',
     'partial-success',
@@ -275,18 +212,15 @@ export const STORY_174_3_NOT_APPLICABLE_A: Readonly<
     'refresh',
     'empty',
     'filtered-empty',
-    'error',
     'stale',
     'partial',
     'permission',
-    'pending',
     'partial-success',
     'not-found'
   ),
   '/analytics/liquidity': notApplicable(
     'filtered-empty',
     'stale',
-    'partial',
     'permission',
     'pending',
     'partial-success',
@@ -294,7 +228,6 @@ export const STORY_174_3_NOT_APPLICABLE_A: Readonly<
   ),
   '/analytics/returns': notApplicable(
     'stale',
-    'partial',
     'permission',
     'pending',
     'partial-success',
@@ -305,14 +238,12 @@ export const STORY_174_3_NOT_APPLICABLE_A: Readonly<
     'filtered-empty',
     'partial',
     'permission',
-    'pending',
     'partial-success',
     'not-found'
   ),
   '/analytics/supply-planning': notApplicable(
     'filtered-empty',
     'stale',
-    'partial',
     'pending',
     'partial-success',
     'not-found'
@@ -322,22 +253,16 @@ export const STORY_174_3_NOT_APPLICABLE_A: Readonly<
     'refresh',
     'empty',
     'filtered-empty',
-    'error',
     'stale',
-    'partial',
     'permission',
     'pending',
     'partial-success',
     'not-found'
   ),
   '/analytics/advertising/campaigns/[advertId]': notApplicable(
-    'loading',
     'refresh',
-    'empty',
     'filtered-empty',
-    'error',
     'stale',
-    'partial',
     'permission',
     'pending',
     'partial-success',
@@ -347,14 +272,11 @@ export const STORY_174_3_NOT_APPLICABLE_A: Readonly<
     'refresh',
     'filtered-empty',
     'stale',
-    'partial',
     'permission',
-    'pending',
     'partial-success',
     'not-found'
   ),
   '/analytics/brand-share': notApplicable(
-    'loading',
     'refresh',
     'filtered-empty',
     'stale',
@@ -368,9 +290,7 @@ export const STORY_174_3_NOT_APPLICABLE_A: Readonly<
     'refresh',
     'filtered-empty',
     'stale',
-    'partial',
     'permission',
-    'pending',
     'partial-success',
     'not-found'
   ),
@@ -386,7 +306,6 @@ export const STORY_174_3_NOT_APPLICABLE_A: Readonly<
     'not-found'
   ),
   '/analytics/search': notApplicable(
-    'refresh',
     'filtered-empty',
     'stale',
     'permission',

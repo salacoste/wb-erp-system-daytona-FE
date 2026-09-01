@@ -9,6 +9,73 @@ const exact = (
 })
 
 export const STORY_174_3_ADDITIONAL_STATE_SCENARIOS = {
+  '/login': {
+    error: exact(
+      'src/components/custom/LoginForm.test.tsx',
+      'has no automated accessibility violations in the request-error state'
+    ),
+    pending: exact(
+      'src/components/custom/LoginForm.test.tsx',
+      'disables every control and exposes a truthful busy state while submission is pending'
+    ),
+  },
+  '/register': {
+    error: exact(
+      'src/components/custom/RegistrationForm.test.tsx',
+      '[Review 3 finding M-1] keeps password-like hostile 5xx detail in generic service recovery',
+      [
+        exact(
+          'src/components/custom/RegistrationForm.test.tsx',
+          '[REG-FORM-01] associates empty-field errors, exposes a focusable summary, focuses email, and sends no request'
+        ),
+        exact(
+          'src/components/custom/RegistrationForm.test.tsx',
+          '[REG-FORM-04] retains masked credentials and exposes associated duplicate recovery with focus and a login link'
+        ),
+      ]
+    ),
+    pending: exact(
+      'src/components/custom/RegistrationForm.test.tsx',
+      '[REG-FORM-03] disables every primary control with truthful pending semantics'
+    ),
+    'partial-success': exact(
+      'src/components/custom/RegistrationForm.test.tsx',
+      '[REG-FORM-06] preserves success toast, exactly one login navigation, and no auth/session write'
+    ),
+    stale: exact(
+      'src/components/custom/RegistrationForm.test.tsx',
+      '[Review 1 findings 3 and 4] clears stale duplicate feedback on email correction and submits once more with the retained password'
+    ),
+  },
+  '/automation/canned-rules': {
+    loading: exact(
+      'e2e/automation/canned-rules.spec.ts',
+      'AC1: loads the gallery grouped by category with trigger→action summaries'
+    ),
+    empty: exact('e2e/automation/canned-rules.spec.ts', 'AC3: no-rules state renders the empty marker'),
+    error: exact(
+      'e2e/automation/canned-rules.spec.ts',
+      'AC4: gallery error renders the destructive alert with a Button retry'
+    ),
+    permission: exact(
+      'e2e/automation/canned-rules.spec.ts',
+      'AC2: restricted price template carries the destructive arm write-back badge'
+    ),
+    pending: exact(
+      'e2e/automation/canned-rules.spec.ts',
+      'AC5/AC6: install pending → success shows the post-install deep-link; wire contract kept'
+    ),
+    'partial-success': exact(
+      'e2e/automation/canned-rules.spec.ts',
+      'AC5/AC6: install pending → success shows the post-install deep-link; wire contract kept',
+      [
+        exact(
+          'e2e/automation/canned-rules.spec.ts',
+          'AC7: 409 duplicate name opens the rename Dialog; the renamed retry installs'
+        ),
+      ]
+    ),
+  },
   '/analytics/pricing': {
     loading: exact(
       'src/app/(dashboard)/analytics/pricing/__tests__/page.test.tsx',
@@ -169,6 +236,42 @@ export const STORY_174_3_ADDITIONAL_STATE_SCENARIOS = {
     empty: exact(
       'src/app/(dashboard)/products/__tests__/page.test.tsx',
       'shows empty-state messages when there are no discontinued SKUs / suggestions'
+    ),
+  },
+  '/supplies': {
+    loading: exact(
+      'src/app/(dashboard)/supplies/__tests__/page.test.tsx',
+      'renders loading skeleton with 8 rows'
+    ),
+    empty: exact(
+      'src/app/(dashboard)/supplies/__tests__/page.test.tsx',
+      'renders empty state when no supplies'
+    ),
+    error: exact(
+      'src/app/(dashboard)/supplies/__tests__/page.test.tsx',
+      'renders error message on fetch error'
+    ),
+    pending: exact(
+      'src/app/(dashboard)/supplies/__tests__/page.test.tsx',
+      'disables sync button while sync is pending'
+    ),
+  },
+  '/supplies/[id]': {
+    loading: exact(
+      'src/app/(dashboard)/supplies/[id]/__tests__/page.test.tsx',
+      'shows SupplyDetailSkeleton while loading'
+    ),
+    error: exact(
+      'src/app/(dashboard)/supplies/[id]/__tests__/page.test.tsx',
+      'shows error message for generic errors'
+    ),
+    permission: exact(
+      'src/app/(dashboard)/supplies/[id]/__tests__/page.test.tsx',
+      'shows "Нет доступа к этой поставке" message'
+    ),
+    'not-found': exact(
+      'src/app/(dashboard)/supplies/[id]/__tests__/page.test.tsx',
+      'shows a not-found state when loading succeeds without supply data'
     ),
   },
 } as const

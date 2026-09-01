@@ -1,4 +1,5 @@
-import { fireEvent, render, screen } from '@testing-library/react'
+import { render, screen } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
 import { describe, expect, it, vi } from 'vitest'
 
 import { LiquidityTable } from '../LiquidityTable'
@@ -41,7 +42,8 @@ const item: LiquidityItem = {
 }
 
 describe('LiquidityTable interactions', () => {
-  it('expands the exact SKU by keyboard and opens its liquidation planner without cross-triggering', () => {
+  it('expands the exact SKU by keyboard and opens its liquidation planner without cross-triggering', async () => {
+    const user = userEvent.setup()
     render(
       <LiquidityTable
         data={[item]}
@@ -55,17 +57,36 @@ describe('LiquidityTable interactions', () => {
 
     const toggle = screen.getByRole('button', { name: 'Показать детали SKU SKU-174-3' })
     toggle.focus()
-    fireEvent.keyDown(toggle, { key: 'Enter' })
-    fireEvent.click(toggle)
+    await user.keyboard('{Enter}')
     expect(toggle).toHaveAttribute('aria-expanded', 'true')
     expect(screen.getByText('Ликвидировать остаток')).toBeInTheDocument()
 
     const action = screen.getByRole('button', { name: 'Ликвидировать' })
-    fireEvent.keyDown(action, { key: 'Enter' })
-    fireEvent.click(action)
+    action.focus()
+    await user.keyboard('{Enter}')
     expect(
       screen.getByRole('dialog', { name: 'План ликвидации SKU SKU-174-3' })
     ).toBeInTheDocument()
     expect(toggle).toHaveAttribute('aria-expanded', 'true')
+  })
+
+  it('keeps pointer activation on a non-interactive row cell', async () => {
+    const user = userEvent.setup()
+    render(
+      <LiquidityTable
+        data={[item]}
+        activeFilter={null}
+        sortBy="turnover_days"
+        sortOrder="desc"
+        onSortChange={vi.fn()}
+        onClearFilter={vi.fn()}
+      />
+    )
+
+    await user.click(screen.getByRole('cell', { name: /Тестовый товар/ }))
+    expect(screen.getByRole('button', { name: 'Скрыть детали SKU SKU-174-3' })).toHaveAttribute(
+      'aria-expanded',
+      'true'
+    )
   })
 })

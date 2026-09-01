@@ -42,7 +42,7 @@ export function ElasticitySkuDetail({ item, isExpanded, onToggle }: ElasticitySk
             variant="ghost"
             size="icon"
             className="h-7 w-7"
-            aria-label={`Показать эластичность SKU ${item.nmId}`}
+            aria-label={`${isExpanded ? 'Скрыть' : 'Показать'} эластичность SKU ${item.nmId}`}
             aria-expanded={isExpanded}
             onClick={event => {
               event.stopPropagation()

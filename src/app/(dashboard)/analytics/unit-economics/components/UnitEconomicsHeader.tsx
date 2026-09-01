@@ -12,7 +12,6 @@ import {
 import { formatDistanceToNow } from 'date-fns'
 import { ru } from 'date-fns/locale'
 import type { UnitEconomicsViewBy } from '@/types/unit-economics'
-import { cn } from '@/lib/utils'
 
 const VIEW_OPTIONS: Array<{ value: UnitEconomicsViewBy; label: string }> = [
   { value: 'sku', label: 'SKU' },
@@ -87,24 +86,22 @@ export function UnitEconomicsHeader({
           aria-label="Группировка данных"
           className="hidden h-9 items-center justify-center rounded-lg bg-muted p-1 text-muted-foreground md:flex"
         >
-          {VIEW_OPTIONS.map(option => {
-            const selected = viewBy === option.value
-            return (
-              <button
-                key={option.value}
-                type="button"
-                role="radio"
-                aria-checked={selected}
-                onClick={() => onViewByChange(option.value)}
-                className={cn(
-                  'inline-flex items-center justify-center whitespace-nowrap rounded-md px-3 py-1 text-xs font-medium ring-offset-background transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2',
-                  selected && 'bg-background text-foreground shadow'
-                )}
-              >
+          {VIEW_OPTIONS.map(option => (
+            <label key={option.value} className="cursor-pointer">
+              <input
+                type="radio"
+                name="unit-economics-view"
+                value={option.value}
+                aria-label={option.label}
+                checked={viewBy === option.value}
+                onChange={() => onViewByChange(option.value)}
+                className="peer sr-only"
+              />
+              <span className="inline-flex items-center justify-center whitespace-nowrap rounded-md px-3 py-1 text-xs font-medium transition-all peer-checked:bg-background peer-checked:text-foreground peer-checked:shadow peer-focus-visible:outline-none peer-focus-visible:ring-2 peer-focus-visible:ring-ring peer-focus-visible:ring-offset-2">
                 {option.label}
-              </button>
-            )
-          })}
+              </span>
+            </label>
+          ))}
         </div>
 
         {/* Refresh Button */}

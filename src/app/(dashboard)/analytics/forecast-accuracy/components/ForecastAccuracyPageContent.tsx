@@ -64,6 +64,17 @@ export function ForecastAccuracyPageContent() {
         avgBias={data.avgBias}
       />
 
+      {data.totalValidated === 0 && (
+        <Alert>
+          <AlertTriangle className="h-4 w-4" />
+          <AlertTitle>Недостаточно данных для оценки</AlertTitle>
+          <AlertDescription>
+            Пока нет подтверждённых наблюдений. Показатели точности появятся после валидации
+            прогнозов.
+          </AlertDescription>
+        </Alert>
+      )}
+
       {hasExtremeMape(data) && (
         <Alert>
           <AlertTriangle className="h-4 w-4" />

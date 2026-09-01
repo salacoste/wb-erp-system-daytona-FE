@@ -336,6 +336,15 @@ describe('PricingPage - Empty State', () => {
     expect(screen.getByText(/Нет рекомендаций по ценам/)).toBeInTheDocument()
   })
 
+  it('keeps pricing filters visible when the current filter result is empty', () => {
+    renderPage()
+
+    expect(screen.getByText(/Нет рекомендаций/)).toBeInTheDocument()
+    expect(screen.getByText(/Целевая маржа:/)).toBeInTheDocument()
+    expect(screen.getByText('Фильтр по разрыву')).toBeInTheDocument()
+    expect(screen.getByText('Сортировка')).toBeInTheDocument()
+  })
+
   it('does not show count badge for zero total', () => {
     renderPage()
     expect(screen.queryByText('(0)')).not.toBeInTheDocument()

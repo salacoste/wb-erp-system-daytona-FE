@@ -33,7 +33,8 @@ export type Story1743RouteEvidence = {
   sessionProfile: 'authenticated' | 'unauthenticated-onboarding'
   stateEvidence: readonly Story1743StateEvidence[]
   screenshotDisposition: 'privacy-safe-dom-equivalent'
-  manualAtDisposition: 'environment-gap-real-at'
+  manualEvidenceSource: 'e2e/fixtures/story-174-3/manual-evidence.ts'
+  manualAtDisposition: 'representative-browser-ledger-with-real-at-gaps'
 }
 
 /**

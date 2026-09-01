@@ -23,11 +23,16 @@ import { PositionHistoryChart } from './PositionHistoryChart'
  * its OWN independent usePositionHistory fetch and is never blanked by it.
  */
 export function SearchPositionTrendsTab() {
-  const { data, isLoading, isError } = usePositionTrends()
+  const { data, isLoading, isError, isFetching } = usePositionTrends()
   const [selectedNmId, setSelectedNmId] = useState<number | null>(null)
 
   return (
     <div className="space-y-6">
+      {isFetching && data ? (
+        <p className="text-sm text-muted-foreground" role="status" aria-live="polite">
+          Обновление результатов…
+        </p>
+      ) : null}
       <SearchPositionSummaryCards summary={data?.summary} isLoading={isLoading} isError={isError} />
       <SearchPositionMoversTable
         movers={data?.movers ?? []}

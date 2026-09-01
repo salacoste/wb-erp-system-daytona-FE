@@ -336,6 +336,25 @@ describe('ProductList', () => {
       expect(screen.getByTestId('product-empty-state')).toBeInTheDocument()
     })
 
+    it('keeps the COGS filter control available in the filtered-empty state', () => {
+      mockUseProducts.mockReturnValue({
+        ...queryBaseProperties,
+        data: { products: [], pagination: { total: 0 } },
+        isLoading: false,
+        isError: false,
+        error: null,
+        refetch: vi.fn(),
+        isFetching: false,
+        isSuccess: true,
+        status: 'success',
+      } as never)
+
+      renderWithProviders(<ProductList showOnlyWithoutCogs />)
+
+      expect(screen.getByTestId('product-empty-state')).toBeInTheDocument()
+      expect(screen.getByTestId('filter-toggle')).toHaveTextContent('Без себестоимости')
+    })
+
     it('request #190: shows the degraded banner and suppresses margin polling when marginUnavailable', () => {
       mockUseProducts.mockReturnValue({
         ...queryBaseProperties,

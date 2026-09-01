@@ -165,8 +165,9 @@ test.describe('COGS Assignment', () => {
         return
       }
 
-      await expect(table.locator('tbody tr').first().locator('td').nth(4)).toHaveText(
-        /%|нет COGS|Расчёт|Нет продаж|Нет данных|Аналитика недоступна|в карточке/
+      const marginCell = table.locator('tbody tr').first().locator('td').nth(4)
+      await expect(marginCell.locator('[role="status"]')).toHaveText(
+        /^Нет COGS(?: для W\d+)?$/
       )
     })
 

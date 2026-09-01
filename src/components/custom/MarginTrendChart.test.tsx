@@ -207,6 +207,19 @@ describe('MarginTrendChart', () => {
       // refetch was called (fn identity set in mockTrendsHook)
       expect(vi.mocked(useMarginTrends).mock.results[0]!.value.refetch).toHaveBeenCalled()
     })
+
+    it('retains stale trend evidence and exposes retry after a background failure', () => {
+      vi.mocked(useMarginTrends).mockReturnValue(
+        mockTrendsHook(mockTrendData, false, new Error('Background failure'))
+      )
+
+      render(<MarginTrendChart queryParams={{ weeks: 12 }} />, { wrapper: createWrapper() })
+
+      expect(screen.getByRole('img', { name: 'График маржинальности по неделям' })).toBeInTheDocument()
+      expect(screen.getByText(/Показаны ранее загруженные данные/)).toBeInTheDocument()
+      screen.getByRole('button', { name: 'Повторить' }).click()
+      expect(vi.mocked(useMarginTrends).mock.results[0]!.value.refetch).toHaveBeenCalled()
+    })
   })
 
   describe('empty state', () => {

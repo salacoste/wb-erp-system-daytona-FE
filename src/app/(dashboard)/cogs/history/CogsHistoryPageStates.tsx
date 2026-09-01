@@ -96,10 +96,12 @@ export function CogsHistoryError({ error, onRetry }: ErrorStateProps) {
 interface EmptyStateProps {
   nmId: string
   meta?: { product_name?: string } | null
+  filtered?: boolean
+  onReset?: () => void
 }
 
 /** Empty state */
-export function CogsHistoryEmpty({ nmId, meta }: EmptyStateProps) {
+export function CogsHistoryEmpty({ nmId, meta, filtered = false, onReset }: EmptyStateProps) {
   return (
     <div className="space-y-6">
       <Breadcrumbs productName={meta?.product_name} />
@@ -108,14 +110,27 @@ export function CogsHistoryEmpty({ nmId, meta }: EmptyStateProps) {
       <Card>
         <CardContent className="flex flex-col items-center justify-center py-12">
           <div className="text-6xl mb-4">📭</div>
-          <CardTitle className="mb-2">История изменений COGS пуста</CardTitle>
+          <CardTitle className="mb-2">
+            <h2>
+              {filtered
+                ? 'Нет записей на выбранной странице истории'
+                : 'История изменений COGS пуста'}
+            </h2>
+          </CardTitle>
           <p className="text-muted-foreground text-center max-w-md">
-            Назначьте COGS товару для начала. После назначения здесь будет отображаться история всех
-            изменений себестоимости.
+            {filtered
+              ? 'Вернитесь к предыдущей странице истории, чтобы продолжить просмотр записей.'
+              : 'Назначьте COGS товару для начала. После назначения здесь будет отображаться история всех изменений себестоимости.'}
           </p>
-          <Button asChild className="mt-6">
-            <Link href={`/cogs?nmId=${nmId}`}>Назначить COGS</Link>
-          </Button>
+          {filtered && onReset ? (
+            <Button className="mt-6" onClick={onReset}>
+              К предыдущей странице
+            </Button>
+          ) : (
+            <Button asChild className="mt-6">
+              <Link href={`/cogs?nmId=${nmId}`}>Назначить COGS</Link>
+            </Button>
+          )}
         </CardContent>
       </Card>
     </div>

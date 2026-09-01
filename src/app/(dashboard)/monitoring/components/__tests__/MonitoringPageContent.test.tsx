@@ -88,6 +88,7 @@ describe('MonitoringPageContent', () => {
       data: dashboard,
       isLoading: false,
       isError: false,
+      isFetching: false,
       refetch: mocks.refetch,
     })
   })
@@ -97,6 +98,7 @@ describe('MonitoringPageContent', () => {
       data: undefined,
       isLoading: true,
       isError: false,
+      isFetching: true,
       refetch: mocks.refetch,
     })
 
@@ -112,6 +114,7 @@ describe('MonitoringPageContent', () => {
       data: undefined,
       isLoading: false,
       isError: true,
+      isFetching: false,
       refetch: mocks.refetch,
     })
 
@@ -144,6 +147,7 @@ describe('MonitoringPageContent', () => {
       data: emptyDashboard,
       isLoading: false,
       isError: false,
+      isFetching: false,
       refetch: mocks.refetch,
     })
 
@@ -161,6 +165,55 @@ describe('MonitoringPageContent', () => {
     expect(screen.getByTestId('telegram-status-card')).toBeInTheDocument()
     expect(screen.getByTestId('pipeline-status-grid')).toBeInTheDocument()
     expect(screen.getByTestId('data-completeness-table')).toBeInTheDocument()
+  })
+
+  it('keeps the dashboard visible and announces background refresh', () => {
+    mocks.useMonitoringDashboard.mockReturnValue({
+      data: dashboard,
+      isLoading: false,
+      isError: false,
+      isFetching: true,
+      refetch: mocks.refetch,
+    })
+
+    render(<MonitoringPageContent />)
+
+    expect(screen.getByRole('status')).toHaveTextContent('Обновление данных мониторинга')
+    expect(screen.getByRole('tab', { name: 'Обзор' })).toBeVisible()
+  })
+
+  it('renders degraded monitoring evidence without collapsing the dashboard', () => {
+    mocks.useMonitoringDashboard.mockReturnValue({
+      data: {
+        ...dashboard,
+        system: { ...dashboard.system, overallStatus: 'degraded', healthScore: 72 },
+        pipelines: dashboard.pipelines.map(pipeline => ({ ...pipeline, status: 'degraded' })),
+      },
+      isLoading: false,
+      isError: false,
+      isFetching: false,
+      refetch: mocks.refetch,
+    })
+
+    render(<MonitoringPageContent />)
+
+    expect(screen.getByRole('tab', { name: 'Обзор' })).toBeVisible()
+    expect(screen.getByTestId('pipeline-status-grid')).toBeVisible()
+  })
+
+  it('keeps cached monitoring evidence visible after a refresh failure', () => {
+    mocks.useMonitoringDashboard.mockReturnValue({
+      data: dashboard,
+      isLoading: false,
+      isError: true,
+      isFetching: false,
+      refetch: mocks.refetch,
+    })
+
+    render(<MonitoringPageContent />)
+
+    expect(screen.getByText(/Показаны последние доступные значения/)).toBeVisible()
+    expect(screen.getByRole('tab', { name: 'Обзор' })).toBeVisible()
   })
 
   it('enables only the selected monitoring panel when switching tabs', async () => {

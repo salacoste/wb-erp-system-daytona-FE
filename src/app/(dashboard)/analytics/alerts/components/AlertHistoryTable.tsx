@@ -7,6 +7,7 @@
 
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Skeleton } from '@/components/ui/skeleton'
+import { Button } from '@/components/ui/button'
 import {
   Table,
   TableBody,
@@ -58,6 +59,7 @@ export function AlertHistoryTable({
   }
 
   if (!items || items.length === 0) {
+    const hasActiveFilters = Boolean(historyParams?.alertType || historyParams?.status)
     return (
       <Card>
         <CardContent className="flex flex-col items-center justify-center py-12 text-center">
@@ -66,6 +68,15 @@ export function AlertHistoryTable({
           <p className="text-sm text-muted-foreground">
             За выбранный период уведомлений не найдено
           </p>
+          {hasActiveFilters && onFilterChange && (
+            <Button
+              variant="outline"
+              className="mt-4"
+              onClick={() => onFilterChange({ alertType: undefined, status: undefined })}
+            >
+              Сбросить фильтры
+            </Button>
+          )}
         </CardContent>
       </Card>
     )

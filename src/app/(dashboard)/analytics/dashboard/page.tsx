@@ -95,7 +95,7 @@ function CabinetDashboardContent() {
     )
   }
 
-  if (isError) {
+  if (isError && !data) {
     return (
       <div className="space-y-6">
         <div>
@@ -171,8 +171,27 @@ function CabinetDashboardContent() {
         </Alert>
       )}
 
+      {isLoading && data && (
+        <p role="status" className="text-sm text-muted-foreground">
+          Обновляем сводку по кабинету…
+        </p>
+      )}
+
+      {isError && data && (
+        <Alert className="border-status-warning/30 bg-status-warning/15">
+          <AlertCircle className="h-4 w-4 text-status-warning" />
+          <AlertDescription className="flex items-center justify-between gap-4">
+            <span>Не удалось обновить сводку. Показаны ранее загруженные данные.</span>
+            <Button variant="outline" size="sm" onClick={() => void refetch()}>
+              <RefreshCw className="mr-2 h-4 w-4" />
+              Повторить
+            </Button>
+          </AlertDescription>
+        </Alert>
+      )}
+
       {/* Content */}
-      {!isLoading && data && (
+      {data && (
         <>
           {/* P&L Waterfall - Complete Financial Overview (Story 28) */}
           <PnLWaterfall data={data.summary.totals} products={data.summary.products} />

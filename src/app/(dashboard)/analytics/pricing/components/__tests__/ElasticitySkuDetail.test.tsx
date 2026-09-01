@@ -42,4 +42,18 @@ describe('ElasticitySkuDetail interactions', () => {
     await user.keyboard('{Enter}')
     expect(onToggle).toHaveBeenCalledTimes(1)
   })
+
+  it('announces the collapse action while expanded', () => {
+    render(
+      <table>
+        <tbody>
+          <ElasticitySkuDetail item={item} isExpanded onToggle={vi.fn()} />
+        </tbody>
+      </table>
+    )
+
+    expect(
+      screen.getByRole('button', { name: 'Скрыть эластичность SKU 12345678' })
+    ).toHaveAttribute('aria-expanded', 'true')
+  })
 })

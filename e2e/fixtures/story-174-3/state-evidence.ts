@@ -9,6 +9,7 @@ import {
   type Story1743RequiredExecution,
 } from './execution-manifest'
 import { STORY_174_3_STATES, type Story1743StateEvidence } from './route-contracts'
+import { STORY_174_3_OWNER_VARIANT_SCENARIOS } from './owner-state-scenarios'
 import { STORY_174_3_NOT_APPLICABLE_A } from './not-applicable-a'
 import { STORY_174_3_NOT_APPLICABLE_B } from './not-applicable-b'
 import {
@@ -17,6 +18,7 @@ import {
   type Story1743NonDefaultState,
 } from './state-scenarios'
 import { story1743CanonicalOwnerStateLabels } from './owner-state-reconciliation'
+import { requireStory1743OwnerStateException } from './owner-state-exceptions'
 
 const REPOSITORY_ROOT = '.'
 const LEDGER_PATH = '_bmad-output/planning-artifacts/shadcn-route-ledger.md'
@@ -102,12 +104,14 @@ function ledgerRoutes(): string[] {
 
 function exactRequirements(): Story1743RequiredExecution[] {
   const requirements: Story1743RequiredExecution[] = []
-  const append = (declaration: Story1743ExactStateScenario) => {
+  const append = (
+    declaration: Story1743ExactStateScenario & { runner?: 'vitest' | 'playwright' }
+  ) => {
     requirements.push({
       source: declaration.source,
       sourceSha256: story1743Sha256(declaration.source),
       scenarioId: declaration.scenarioId,
-      runner: declaration.source.startsWith('e2e/') ? 'playwright' : 'vitest',
+      runner: declaration.runner ?? (declaration.source.startsWith('e2e/') ? 'playwright' : 'vitest'),
     })
     declaration.supportingScenarios?.forEach(append)
   }
@@ -117,6 +121,7 @@ function exactRequirements(): Story1743RequiredExecution[] {
       append(declaration)
     }
   }
+  STORY_174_3_OWNER_VARIANT_SCENARIOS.forEach(scenario => append(scenario.evidence))
   return requirements
 }
 
@@ -295,6 +300,9 @@ export function resolveStory1743StateEvidence(route: string): Story1743StateEvid
     }
     const anchor = notApplicableAnchor(route, state)
     const ownerStateLabels = story1743CanonicalOwnerStateLabels(route, state)
+    const ownerExceptions = ownerStateLabels.map(rawOwnerState =>
+      requireStory1743OwnerStateException(route, rawOwnerState, state)
+    )
     return {
       route,
       state,
@@ -302,12 +310,10 @@ export function resolveStory1743StateEvidence(route: string): Story1743StateEvid
       rationale:
         route +
         ': ' +
-        (ownerStateLabels.length > 0
-          ? 'canonical owner states [' +
-            ownerStateLabels.join('; ') +
-            '] normalize to ' +
-            state +
-            ', but this route-specific audit disposition confirms it ' +
+        (ownerExceptions.length > 0
+          ? 'typed owner decisions [' +
+            ownerExceptions.map(exception => exception.canonicalOwnerDecision).join('; ') +
+            '] independently establish that this route ' +
             NOT_APPLICABLE_RATIONALES[state]
           : NOT_APPLICABLE_RATIONALES[state]),
       declarationSource: anchor.source,

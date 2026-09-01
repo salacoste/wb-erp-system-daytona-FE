@@ -5,6 +5,7 @@
 
 import { describe, it, expect, vi } from 'vitest'
 import { screen } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
 import { renderWithProviders } from '@/test/utils/test-utils'
 import { OperatingProfitInfoBanner, NmIdFilterAlert, PeriodLabel } from '../SkuPageAlerts'
 
@@ -38,6 +39,18 @@ describe('NmIdFilterAlert (168.9 tokens)', () => {
     const btn = screen.getByRole('button', { name: /Показать все/ })
     expect(btn.classList.contains('text-status-information')).toBe(true)
     expect(btn.classList.contains('hover:bg-status-information/10')).toBe(true)
+  })
+
+  it('keeps the active SKU filter and a visible reset action in filtered-empty state', async () => {
+    const user = userEvent.setup()
+    const onClear = vi.fn()
+    renderWithProviders(
+      <NmIdFilterAlert nmIdFilter="123" filteredProductName={null} onClear={onClear} />
+    )
+
+    expect(screen.getByText('123')).toBeInTheDocument()
+    await user.click(screen.getByRole('button', { name: 'Показать все' }))
+    expect(onClear).toHaveBeenCalledTimes(1)
   })
 })
 

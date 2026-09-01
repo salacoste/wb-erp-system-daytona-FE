@@ -109,6 +109,27 @@ describe('SkuAccuracyTable', () => {
     expect(dashes.length).toBeGreaterThanOrEqual(3)
   })
 
+  it('keeps an undefined metric distinct from a valid zero metric in adjacent SKU rows', () => {
+    const zeroEntry: SkuAccuracyEntry = {
+      ...entryA,
+      nmId: 44444,
+      vendorCode: 'SKU-ZERO',
+      avgAiMape: 0,
+      avgNaiveMape: 0,
+      aiAccuracyPercent: 0,
+    }
+    const { container } = render(
+      <SkuAccuracyTable {...defaultProps} entries={[nullMapeEntry, zeroEntry]} />
+    )
+    const rows = Array.from(container.querySelectorAll('tbody tr'))
+    const missingRow = rows.find(row => row.textContent?.includes('33333'))
+    const zeroRow = rows.find(row => row.textContent?.includes('44444'))
+
+    expect(missingRow).toHaveTextContent('—')
+    expect(zeroRow?.textContent).toMatch(/0(?:[,.]0)?\s*%/)
+    expect(zeroRow).not.toHaveTextContent('—')
+  })
+
   it('renders Russian locale percentage for non-null MAPE (no English decimal dot)', () => {
     render(<SkuAccuracyTable {...defaultProps} />)
     const fullText = document.body.textContent ?? ''

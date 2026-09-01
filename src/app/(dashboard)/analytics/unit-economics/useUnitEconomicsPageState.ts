@@ -132,6 +132,9 @@ export function useUnitEconomicsPageState() {
     return { ...data, data: filtered }
   }, [data, selectedStatuses])
 
+  const isFilteredEmpty =
+    selectedStatuses.length > 0 && Boolean(data?.data.length) && filteredData?.data.length === 0
+
   return {
     selectedWeek,
     viewBy,
@@ -140,6 +143,7 @@ export function useUnitEconomicsPageState() {
     selectedSku,
     selectedStatuses,
     data: filteredData,
+    isFilteredEmpty,
     avgDeliveryCost,
     deliverySkuCount,
     deliveryCoverageRatio,

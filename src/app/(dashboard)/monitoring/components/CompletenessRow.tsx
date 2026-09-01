@@ -51,7 +51,7 @@ export function CompletenessRow({
             variant="ghost"
             size="icon"
             className="h-7 w-7"
-            aria-label={`Показать полноту данных ${row.displayName}`}
+            aria-label={`${isExpanded ? 'Скрыть' : 'Показать'} полноту данных ${row.displayName}`}
             aria-expanded={isExpanded}
             onClick={event => {
               event.stopPropagation()

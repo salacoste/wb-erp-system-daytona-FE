@@ -129,6 +129,24 @@ describe('ReturnTrendChart (Story 169.11 state locks)', () => {
     expect(container.querySelector('[class*="animate-pulse"]')).not.toBeInTheDocument()
   })
 
+  it('keeps a partial backend day series visible without synthesizing missing dates', () => {
+    const partialResponse: ReturnsDailyResponse = {
+      ...responseData,
+      period: { from: '2026-05-01', to: '2026-05-03' },
+    }
+    mockUseReturnsDailyTrends.mockReturnValue(hookReturn({ data: partialResponse }))
+
+    const { container } = render(<ReturnTrendChart from="2026-05-01" to="2026-05-03" />)
+
+    const rows = container.querySelectorAll('table.sr-only tbody tr')
+    const body = container.querySelector('table.sr-only tbody')
+    expect(rows).toHaveLength(2)
+    expect(body).toHaveTextContent('2026-05-01')
+    expect(body).toHaveTextContent('2026-05-02')
+    expect(body).not.toHaveTextContent('2026-05-03')
+    expect(screen.getByTestId('composed-chart')).toBeInTheDocument()
+  })
+
   it('background refresh swaps to refetched v2 content without skeleton flash (round-1 review F2)', () => {
     const { rerender, container } = render(<ReturnTrendChart from="2026-05-01" to="2026-05-02" />)
     mockUseReturnsDailyTrends.mockReturnValue(hookReturn({ data: responseData }))

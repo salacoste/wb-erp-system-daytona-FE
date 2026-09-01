@@ -75,25 +75,60 @@ function waitForBrowserReady() {
   })
 }
 
-function applyMacOsBrowserZoom() {
+function findPlaywrightBrowserPid() {
+  const processTable = spawnSync('ps', ['-axo', 'pid=,ppid=,command='], { encoding: 'utf8' })
+  if (processTable.status !== 0) {
+    throw new Error(`Unable to inspect Playwright browser processes: ${processTable.stderr.trim()}`)
+  }
+
+  const processes = processTable.stdout
+    .split('\n')
+    .map(line => line.match(/^\s*(\d+)\s+(\d+)\s+(.+)$/))
+    .filter(Boolean)
+    .map(match => ({
+      pid: Number(match[1]),
+      parentPid: Number(match[2]),
+      command: match[3],
+    }))
+  const descendantPids = new Set([child.pid])
+  let addedDescendant = true
+  while (addedDescendant) {
+    addedDescendant = false
+    for (const process of processes) {
+      if (descendantPids.has(process.parentPid) && !descendantPids.has(process.pid)) {
+        descendantPids.add(process.pid)
+        addedDescendant = true
+      }
+    }
+  }
+
+  const browserProcesses = processes.filter(
+    process =>
+      descendantPids.has(process.pid) &&
+      process.command.includes('--remote-debugging-pipe') &&
+      !process.command.includes('--type=')
+  )
+  if (browserProcesses.length !== 1) {
+    throw new Error(
+      `Expected one headed Playwright browser process; found ${browserProcesses.length}`
+    )
+  }
+  return browserProcesses[0].pid
+}
+
+function applyMacOsBrowserZoom(browserPid) {
   const automation = String.raw`
 tell application "System Events"
-  set browserNames to {"Chromium", "Google Chrome for Testing", "Google Chrome"}
-  repeat with browserName in browserNames
-    if exists process browserName then
-      tell process browserName
-        set frontmost to true
-        keystroke "0" using command down
-        delay 0.2
-        repeat 5 times
-          key code 24 using command down
-          delay 0.35
-        end repeat
-      end tell
-      return
-    end if
-  end repeat
-  error "No supported headed Chromium process is available"
+  set browserProcess to first process whose unix id is ${browserPid}
+  tell browserProcess
+    set frontmost to true
+    keystroke "0" using command down
+    delay 0.2
+    repeat 5 times
+      key code 24 using command down
+      delay 0.35
+    end repeat
+  end tell
 end tell`
   const result = spawnSync('osascript', ['-e', automation], { encoding: 'utf8' })
   if (result.status !== 0) {
@@ -108,9 +143,10 @@ function waitForChildExit() {
 let exitCode = 1
 try {
   await waitForBrowserReady()
-  applyMacOsBrowserZoom()
+  const browserPid = findPlaywrightBrowserPid()
+  applyMacOsBrowserZoom(browserPid)
   process.stdout.write(
-    `Story 174.3 browser UI zoom command applied with Node ${process.version} / npm ${EXPECTED_NPM}.\n`
+    `Story 174.3 browser UI zoom command applied to PID ${browserPid} with Node ${process.version} / npm ${EXPECTED_NPM}.\n`
   )
   exitCode = await waitForChildExit()
 } finally {

@@ -9,6 +9,7 @@
  */
 
 import { useState, useEffect, type ReactNode } from 'react'
+import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { useAiModels } from '@/hooks/useAiModels'
 import { getModelTypeLabel } from '@/types/ai/forecast'
@@ -49,6 +50,7 @@ function ModelsPageShell({ children }: { children: ReactNode }) {
 }
 
 export function ModelListSection() {
+  const router = useRouter()
   // AC-5: poll only when any model is 'training'.
   // shouldPoll is derived from data after each fetch and stored in state so the
   // polling-on/off transition is explicit and testable (F-1 fix: replaces useRef pattern).
@@ -124,13 +126,24 @@ export function ModelListSection() {
             </TableHeader>
             <TableBody>
               {data.models.map(model => {
-                const badge = STATUS_BADGE_CONFIG[model.status]
+                const badge = STATUS_BADGE_CONFIG[model.status] ?? {
+                  label: model.status,
+                  pulse: false,
+                }
+                const badgeClass =
+                  MODEL_LIST_BADGE_CLASS[model.status] ??
+                  'border-border bg-muted text-muted-foreground'
                 const dest = buildModelPerformanceRoute(model.id)
                 return (
-                  <TableRow key={model.id} className="hover:bg-muted/50">
+                  <TableRow
+                    key={model.id}
+                    className="cursor-pointer hover:bg-muted/50"
+                    onClick={() => router.push(dest)}
+                  >
                     <TableCell>
                       <Link
                         href={dest}
+                        onClick={event => event.stopPropagation()}
                         className="font-medium underline-offset-4 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                       >
                         {getModelTypeLabel(model.modelType)}
@@ -141,7 +154,7 @@ export function ModelListSection() {
                     <TableCell>
                       {/* Story 174.2: overlay from the registry-local class map —
                           STATUS_BADGE_CONFIG carries labels + pulse only. */}
-                      <Badge className={MODEL_LIST_BADGE_CLASS[model.status]}>
+                      <Badge className={badgeClass}>
                         {badge.pulse && (
                           <span
                             aria-hidden="true"

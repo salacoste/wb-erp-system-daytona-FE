@@ -13,7 +13,8 @@
 import { useSearchParams } from 'next/navigation'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
-import { ArrowLeft } from 'lucide-react'
+import { Alert, AlertDescription } from '@/components/ui/alert'
+import { AlertCircle, ArrowLeft } from 'lucide-react'
 import Link from 'next/link'
 import { useCogsHistoryFull } from '@/hooks/useCogsHistoryFull'
 import { useAuthStore } from '@/stores/authStore'
@@ -70,11 +71,18 @@ export default function CogsHistoryPage() {
   if (isLoading) return <CogsHistoryLoading />
 
   // AC: 13 - Error state with retry button
-  if (isError) return <CogsHistoryError error={error} onRetry={() => refetch()} />
+  if (isError && !data) return <CogsHistoryError error={error} onRetry={() => refetch()} />
 
   // AC: 12 - Empty state
   if (!data?.data?.length && !isLoading) {
-    return <CogsHistoryEmpty nmId={nmId} meta={data?.meta} />
+    return (
+      <CogsHistoryEmpty
+        nmId={nmId}
+        meta={data?.meta}
+        filtered={cursor !== undefined}
+        onReset={handlePreviousPage}
+      />
+    )
   }
 
   return (
@@ -83,6 +91,18 @@ export default function CogsHistoryPage() {
 
       {/* AC: 2, 9, 10 - Page header with meta info */}
       {data?.meta && <CogsHistoryMeta meta={data.meta} />}
+
+      {isError && data && (
+        <Alert variant="destructive">
+          <AlertCircle className="h-4 w-4" />
+          <AlertDescription className="flex items-center justify-between gap-4">
+            <span>Не удалось обновить историю. Показаны последние доступные данные.</span>
+            <Button variant="outline" size="sm" onClick={() => refetch()}>
+              Повторить
+            </Button>
+          </AlertDescription>
+        </Alert>
+      )}
 
       {/* Main table card */}
       <Card>

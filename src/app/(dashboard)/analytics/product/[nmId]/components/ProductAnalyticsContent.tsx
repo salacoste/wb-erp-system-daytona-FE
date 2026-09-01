@@ -10,12 +10,14 @@
 import { useState } from 'react'
 import { format, subDays } from 'date-fns'
 import Link from 'next/link'
-import { ArrowLeft } from 'lucide-react'
+import { AlertCircle, ArrowLeft, RefreshCw } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import { Alert, AlertDescription } from '@/components/ui/alert'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { DateRangePickerExtended } from '@/components/custom/DateRangePickerExtended'
 import { ROUTES } from '@/lib/routes'
 import type { DateRange } from '@/types/date-range'
+import { ApiError } from '@/types/api'
 import {
   UNIFIED_PRODUCT_TABS,
   UNIFIED_PRODUCT_TAB_LABELS,
@@ -101,21 +103,45 @@ export function ProductAnalyticsContent({ nmId }: ProductAnalyticsContentProps) 
     switch (tab) {
       case 'overview':
         if (unified.isLoading) return <OverviewSkeleton />
-        if (unified.isError || !unified.data) {
+        if (unified.isError) {
+          return (
+            <ProductAnalyticsError
+              error={unified.error}
+              onRetry={() => void unified.refetch()}
+            />
+          )
+        }
+        if (!unified.data) {
           return <ProductTabPlaceholder label={UNIFIED_PRODUCT_TAB_LABELS.overview} />
         }
         return <ProductOverviewTab data={unified.data} />
 
       case 'funnel':
         if (unified.isLoading) return <OverviewSkeleton />
-        if (unified.isError || !unified.data) {
+        if (unified.isError) {
+          return (
+            <ProductAnalyticsError
+              error={unified.error}
+              onRetry={() => void unified.refetch()}
+            />
+          )
+        }
+        if (!unified.data) {
           return <ProductTabPlaceholder label={UNIFIED_PRODUCT_TAB_LABELS.funnel} />
         }
         return <FunnelTab dates={unified.data.funnel.dates} totals={unified.data.funnel.totals} />
 
       case 'advertising':
         if (unified.isLoading) return <OverviewSkeleton />
-        if (unified.isError || !unified.data) {
+        if (unified.isError) {
+          return (
+            <ProductAnalyticsError
+              error={unified.error}
+              onRetry={() => void unified.refetch()}
+            />
+          )
+        }
+        if (!unified.data) {
           return <ProductTabPlaceholder label={UNIFIED_PRODUCT_TAB_LABELS.advertising} />
         }
         return (
@@ -137,6 +163,26 @@ export function ProductAnalyticsContent({ nmId }: ProductAnalyticsContentProps) 
         return <ProductTabPlaceholder label={UNIFIED_PRODUCT_TAB_LABELS[tab]} />
     }
   }
+}
+
+function ProductAnalyticsError({ error, onRetry }: { error: unknown; onRetry: () => void }) {
+  const isNotFound = error instanceof ApiError && error.status === 404
+  return (
+    <Alert variant="destructive">
+      <AlertCircle className="h-4 w-4" />
+      <AlertDescription className="flex items-center justify-between gap-4">
+        <span>
+          {isNotFound
+            ? 'Товар не найден или недоступен в выбранном кабинете.'
+            : 'Не удалось загрузить аналитику товара.'}
+        </span>
+        <Button variant="outline" size="sm" onClick={onRetry}>
+          <RefreshCw className="mr-2 h-4 w-4" />
+          Повторить
+        </Button>
+      </AlertDescription>
+    </Alert>
+  )
 }
 
 function OverviewSkeleton() {

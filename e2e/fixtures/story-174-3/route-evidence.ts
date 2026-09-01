@@ -167,7 +167,8 @@ function parseLedger(): Story1743RouteEvidence[] {
         : ('authenticated' as const),
       stateEvidence,
       screenshotDisposition: 'privacy-safe-dom-equivalent' as const,
-      manualAtDisposition: 'environment-gap-real-at' as const,
+      manualEvidenceSource: 'e2e/fixtures/story-174-3/manual-evidence.ts' as const,
+      manualAtDisposition: 'representative-browser-ledger-with-real-at-gaps' as const,
     }
   })
 

@@ -29,6 +29,22 @@ function renderRow(onToggle = vi.fn()) {
   return onToggle
 }
 
+function renderExpandedRow() {
+  render(
+    <table>
+      <tbody>
+        <CompletenessRow
+          row={row}
+          detail={undefined}
+          isExpanded
+          onToggle={vi.fn()}
+          isLoadingDetail={false}
+        />
+      </tbody>
+    </table>
+  )
+}
+
 describe('CompletenessRow interactions', () => {
   it('toggles from a real focused control while preserving native row and cell semantics', async () => {
     const onToggle = renderRow()
@@ -53,5 +69,13 @@ describe('CompletenessRow interactions', () => {
 
     await user.click(screen.getByRole('cell', { name: 'Заказы' }))
     expect(onToggle).toHaveBeenCalledTimes(1)
+  })
+
+  it('announces the collapse action while expanded', () => {
+    renderExpandedRow()
+    expect(screen.getByRole('button', { name: 'Скрыть полноту данных Заказы' })).toHaveAttribute(
+      'aria-expanded',
+      'true'
+    )
   })
 })

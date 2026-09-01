@@ -197,6 +197,38 @@ describe('BidRecommendationsCard', () => {
       expect(dashes.length).toBeGreaterThanOrEqual(1)
     })
 
+    it('renders an explicit empty recommendation state when every bid tier is unavailable', () => {
+      mockHook({
+        data: {
+          ...successData,
+          recommendations: { competitive: 0, leaders: -1, top2: Number.NaN },
+        },
+      })
+      renderCard({ nmId: 456 })
+
+      expect(
+        screen.getByText('Для этого товара пока нет доступных рекомендаций по ставкам.')
+      ).toBeInTheDocument()
+      expect(screen.queryByText('Конкурентная')).not.toBeInTheDocument()
+    })
+
+    it('keeps available bid tiers visible while marking an unavailable tier with a dash', () => {
+      mockHook({
+        data: {
+          ...successData,
+          recommendations: { competitive: 0, leaders: 80, top2: 120 },
+        },
+      })
+      renderCard({ nmId: 456 })
+
+      expect(screen.getByText('Конкурентная')).toBeInTheDocument()
+      expect(screen.getByText('Лидеры')).toBeInTheDocument()
+      expect(screen.getByText('—')).toBeInTheDocument()
+      expect(
+        screen.queryByText('Для этого товара пока нет доступных рекомендаций по ставкам.')
+      ).not.toBeInTheDocument()
+    })
+
     it('shows "—" for negative bid values', () => {
       mockHook({
         data: {

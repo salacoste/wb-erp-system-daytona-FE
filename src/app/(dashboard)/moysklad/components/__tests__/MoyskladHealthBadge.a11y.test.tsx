@@ -37,4 +37,18 @@ describe('MoyskladHealthBadge accessibility', () => {
     expect(screen.queryByText('Подключён')).not.toBeInTheDocument()
     expect(screen.queryByText('Не настроен')).not.toBeInTheDocument()
   })
+
+  it('renders the disconnected health state with explicit text and non-color meaning', () => {
+    mockUseMoyskladHealth.mockReturnValue({
+      data: { tokenConfigured: false, readOnly: true },
+      isLoading: false,
+    })
+
+    render(<MoyskladHealthBadge />)
+
+    const badge = screen.getByText('Не настроен')
+    expect(badge).toBeVisible()
+    expect(badge).toHaveClass('border-destructive/30', 'text-destructive')
+    expect(mockUseMoyskladOrganizations).toHaveBeenCalledWith(false)
+  })
 })

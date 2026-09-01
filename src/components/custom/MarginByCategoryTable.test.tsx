@@ -92,6 +92,26 @@ describe('MarginByCategoryTable', () => {
 
       expect(screen.getByText('(Без категории)')).toBeInTheDocument()
     })
+
+    it('renders a negative-margin category row with the shared error-colour badge', () => {
+      render(
+        <MarginByCategoryTable
+          data={[
+            {
+              ...mockCategoryData[0],
+              category: 'Negative Category',
+              profit: -24600,
+              operating_profit: -24600,
+              margin_pct: -12.3,
+            },
+          ]}
+        />
+      )
+
+      const row = screen.getByText('Negative Category').closest('tr')
+      expect(row).not.toBeNull()
+      expect(row?.querySelector('.bg-red-50')).toHaveTextContent('-12,30 %')
+    })
   })
 
   describe('empty state', () => {

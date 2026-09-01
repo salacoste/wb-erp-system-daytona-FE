@@ -46,7 +46,10 @@ export function LiquidityTableRowCells({
           className="min-h-11 min-w-11"
           aria-label={`${isExpanded ? 'Скрыть' : 'Показать'} детали SKU ${item.sku_id}`}
           aria-expanded={isExpanded}
-          onClick={onToggle}
+          onClick={event => {
+            event.stopPropagation()
+            onToggle()
+          }}
         >
           {isExpanded ? (
             <ChevronUp className="h-4 w-4 text-muted-foreground" aria-hidden="true" />

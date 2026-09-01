@@ -180,6 +180,31 @@ describe('SuppliesPage', () => {
     })
   })
 
+  it('keeps cached supplies visible after a background refresh failure', () => {
+    mockPageState.mockReturnValue(
+      createPageState({ isError: true, error: new Error('refresh failed') })
+    )
+    renderPage(<SuppliesPageStub />)
+
+    expect(screen.getByText(/Показаны последние доступные данные/)).toBeVisible()
+    expect(screen.getAllByRole('row').length).toBeGreaterThan(1)
+  })
+
+  it('keeps the supplies queue usable when sync status is unavailable', () => {
+    mockPageState.mockReturnValue(
+      createPageState({
+        headerProps: {
+          ...createPageState().headerProps,
+          lastSyncAt: null,
+        },
+      })
+    )
+    renderPage(<SuppliesPageStub />)
+
+    expect(screen.getByText('Не синхронизировано')).toBeVisible()
+    expect(screen.getAllByRole('row').length).toBeGreaterThan(1)
+  })
+
   // 2. Filters Section
   describe('Filters Section', () => {
     it('renders status filter dropdown', () => {
@@ -588,7 +613,12 @@ describe('SuppliesPage', () => {
   describe('Error State', () => {
     it('renders error message on fetch error', () => {
       mockPageState.mockReturnValue(
-        createPageState({ isError: true, error: new Error('Ошибка загрузки поставок') })
+        createPageState({
+          data: undefined as unknown as SuppliesListResponse,
+          sortedItems: [],
+          isError: true,
+          error: new Error('Ошибка загрузки поставок'),
+        })
       )
       renderPage(<SuppliesPageStub />)
       expect(screen.getByTestId('supplies-error-state')).toBeInTheDocument()
@@ -597,7 +627,12 @@ describe('SuppliesPage', () => {
 
     it('renders retry button on error', () => {
       mockPageState.mockReturnValue(
-        createPageState({ isError: true, error: new Error('Network error') })
+        createPageState({
+          data: undefined as unknown as SuppliesListResponse,
+          sortedItems: [],
+          isError: true,
+          error: new Error('Network error'),
+        })
       )
       renderPage(<SuppliesPageStub />)
       expect(screen.getByText('Повторить')).toBeInTheDocument()
@@ -605,7 +640,12 @@ describe('SuppliesPage', () => {
 
     it('clicking retry calls refetch', async () => {
       const user = userEvent.setup()
-      const state = createPageState({ isError: true, error: new Error('Network error') })
+      const state = createPageState({
+        data: undefined as unknown as SuppliesListResponse,
+        sortedItems: [],
+        isError: true,
+        error: new Error('Network error'),
+      })
       mockPageState.mockReturnValue(state)
       renderPage(<SuppliesPageStub />)
       await user.click(screen.getByText('Повторить'))
@@ -614,7 +654,12 @@ describe('SuppliesPage', () => {
 
     it('hides table content on error', () => {
       mockPageState.mockReturnValue(
-        createPageState({ isError: true, error: new Error('Network error') })
+        createPageState({
+          data: undefined as unknown as SuppliesListResponse,
+          sortedItems: [],
+          isError: true,
+          error: new Error('Network error'),
+        })
       )
       renderPage(<SuppliesPageStub />)
       expect(screen.queryByText('WB ID')).not.toBeInTheDocument()
@@ -622,7 +667,12 @@ describe('SuppliesPage', () => {
 
     it('shows appropriate error message for network errors', () => {
       mockPageState.mockReturnValue(
-        createPageState({ isError: true, error: new Error('Network error: Failed to fetch') })
+        createPageState({
+          data: undefined as unknown as SuppliesListResponse,
+          sortedItems: [],
+          isError: true,
+          error: new Error('Network error: Failed to fetch'),
+        })
       )
       renderPage(<SuppliesPageStub />)
       expect(screen.getByText('Network error: Failed to fetch')).toBeInTheDocument()
@@ -782,7 +832,12 @@ describe('SuppliesPage', () => {
 
     it('error state is announced to screen readers', () => {
       mockPageState.mockReturnValue(
-        createPageState({ isError: true, error: new Error('Ошибка загрузки') })
+        createPageState({
+          data: undefined as unknown as SuppliesListResponse,
+          sortedItems: [],
+          isError: true,
+          error: new Error('Ошибка загрузки'),
+        })
       )
       renderPage(<SuppliesPageStub />)
       const alert = screen.getByTestId('supplies-error-state')

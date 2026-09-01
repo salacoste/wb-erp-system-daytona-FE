@@ -101,6 +101,26 @@ describe('MarginByBrandTable', () => {
 
       expect(screen.getByText('(Без бренда)')).toBeInTheDocument()
     })
+
+    it('renders a negative-margin brand row with the shared error-colour badge', () => {
+      render(
+        <MarginByBrandTable
+          data={[
+            {
+              ...mockBrandData[0],
+              brand: 'Negative Brand',
+              profit: -24600,
+              operating_profit: -24600,
+              margin_pct: -12.3,
+            },
+          ]}
+        />
+      )
+
+      const row = screen.getByText('Negative Brand').closest('tr')
+      expect(row).not.toBeNull()
+      expect(row?.querySelector('.bg-red-50')).toHaveTextContent('-12,30 %')
+    })
   })
 
   describe('empty state', () => {

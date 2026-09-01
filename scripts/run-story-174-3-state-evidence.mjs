@@ -11,6 +11,13 @@ const ROOT = process.cwd()
 const OWNER_DECLARATION_SOURCES = [
   'e2e/fixtures/story-174-3/state-scenarios.ts',
   'e2e/fixtures/story-174-3/state-scenarios-additional.ts',
+  'e2e/fixtures/story-174-3/owner-state-evidence-a.ts',
+  'e2e/fixtures/story-174-3/owner-state-evidence-a-additional.ts',
+  'e2e/fixtures/story-174-3/owner-state-evidence-b.ts',
+  'e2e/fixtures/story-174-3/owner-state-evidence-b-additional.ts',
+  'e2e/fixtures/story-174-3/owner-state-evidence-c.ts',
+  'e2e/fixtures/story-174-3/owner-state-evidence-c-requirements.ts',
+  'e2e/fixtures/story-174-3/owner-state-evidence-c-variants.ts',
   'e2e/fixtures/story-174-3-surface-contracts.ts',
   'e2e/fixtures/story-174-3/chart-inventory.ts',
   'e2e/fixtures/story-174-3/table-inventory.ts',
@@ -20,6 +27,7 @@ const STORY_RUNNER_SOURCE = 'e2e/shadcn-migration-visual-accessibility.spec.ts'
 const LEDGER_SOURCE = '_bmad-output/planning-artifacts/shadcn-route-ledger.md'
 const MANIFEST_PATH = 'e2e/fixtures/story-174-3/execution-manifest.json'
 const NPM_CLI = process.env.STORY_174_3_NPM_CLI
+const OWNER_VARIANT_HELPERS = new Set(['bind', 'binding', 'scenario'])
 const mode = process.argv[2] ?? '--all'
 const allowedModes = new Set([
   '--owner-units',
@@ -93,6 +101,32 @@ function exactOwnerExecutions() {
   }
 
   function visit(node) {
+    if (
+      ts.isCallExpression(node) &&
+      ts.isIdentifier(node.expression) &&
+      OWNER_VARIANT_HELPERS.has(node.expression.text)
+    ) {
+      const runnerArgument = node.arguments[5]
+      if (
+        node.arguments.length < 5 ||
+        !ts.isStringLiteralLike(node.arguments[3]) ||
+        !ts.isStringLiteralLike(node.arguments[4]) ||
+        (runnerArgument &&
+          !ts.isStringLiteralLike(runnerArgument) &&
+          !(
+            ts.isIdentifier(runnerArgument) &&
+            runnerArgument.text === 'undefined'
+          ))
+      ) {
+        throw new Error(
+          'Story 174.3 owner variant helper must use literal source/scenarioId and runner in ' +
+            node.getSourceFile().fileName
+        )
+      }
+      const runner =
+        runnerArgument && ts.isStringLiteralLike(runnerArgument) ? runnerArgument.text : undefined
+      append(node.arguments[3].text, node.arguments[4].text, runner)
+    }
     if (
       ts.isCallExpression(node) &&
       ts.isIdentifier(node.expression) &&

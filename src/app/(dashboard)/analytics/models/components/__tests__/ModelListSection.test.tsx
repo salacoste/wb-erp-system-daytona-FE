@@ -8,6 +8,7 @@
 import React from 'react'
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { render, screen, waitFor } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
 import { ModelListSection } from '../ModelListSection'
 import {
   STATUS_BADGE_CONFIG,
@@ -17,6 +18,8 @@ import {
 } from '../model-list-helpers'
 import type { AiModel } from '@/types/ai/models'
 
+const mockPush = vi.fn()
+
 // ── Mocks ────────────────────────────────────────────────────────────────────
 
 vi.mock('next/link', () => ({
@@ -24,11 +27,17 @@ vi.mock('next/link', () => ({
     href,
     children,
     className,
+    onClick,
   }: {
     href: string
     children: React.ReactNode
     className?: string
-  }) => React.createElement('a', { href, className }, children),
+    onClick?: React.MouseEventHandler<HTMLAnchorElement>
+  }) => React.createElement('a', { href, className, onClick }, children),
+}))
+
+vi.mock('next/navigation', () => ({
+  useRouter: () => ({ push: mockPush }),
 }))
 
 vi.mock('@/hooks/useAiModels', () => ({
@@ -231,6 +240,28 @@ describe('ModelListSection — happy path', () => {
     expect(screen.getByText('Обучается')).toBeTruthy()
   })
 
+  it('unknown status renders its raw value in a neutral badge instead of crashing', () => {
+    const unknownStatusModel: AiModel = {
+      ...modelActive,
+      id: 'model-future-status',
+      status: 'awaiting_review' as AiModel['status'],
+    }
+    mockUseAiModels.mockReturnValue({
+      data: { models: [unknownStatusModel] },
+      isLoading: false,
+      isError: false,
+      error: null,
+    } as unknown as ReturnType<typeof useAiModels>)
+
+    renderSection()
+
+    expect(screen.getByText('awaiting_review')).toHaveClass(
+      'border-border',
+      'bg-muted',
+      'text-muted-foreground'
+    )
+  })
+
   it('MAPE non-null renders value without ×100 (post-1st-pass M-2)', () => {
     renderSection()
     // modelActive.metrics.mape = 12.4 → '12,4 %' (0-100 scale; Russian locale comma+NBSP)
@@ -289,6 +320,7 @@ describe('ModelListSection — happy path', () => {
 
 describe('ModelListSection — model navigation', () => {
   beforeEach(() => {
+    mockPush.mockClear()
     mockUseAiModels.mockReturnValue({
       data: { models: [modelActive] },
       isLoading: false,
@@ -303,6 +335,14 @@ describe('ModelListSection — model navigation', () => {
       'href',
       '/analytics/models/model-1/performance'
     )
+  })
+
+  it('keeps pointer navigation on a non-interactive row cell exactly once', async () => {
+    const user = userEvent.setup()
+    renderSection()
+    await user.click(screen.getByRole('cell', { name: 'Prophet' }))
+    expect(mockPush).toHaveBeenCalledTimes(1)
+    expect(mockPush).toHaveBeenCalledWith('/analytics/models/model-1/performance')
   })
 })
 

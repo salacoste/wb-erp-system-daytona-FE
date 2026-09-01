@@ -145,7 +145,8 @@ test.describe('Story 174.3 inclusive visual and accessibility matrix', () => {
         }
       }
       expect(row.screenshotDisposition).toBe('privacy-safe-dom-equivalent')
-      expect(row.manualAtDisposition).toBe('environment-gap-real-at')
+      expect(row.manualEvidenceSource).toBe('e2e/fixtures/story-174-3/manual-evidence.ts')
+      expect(row.manualAtDisposition).toBe('representative-browser-ledger-with-real-at-gaps')
     }
   })
 

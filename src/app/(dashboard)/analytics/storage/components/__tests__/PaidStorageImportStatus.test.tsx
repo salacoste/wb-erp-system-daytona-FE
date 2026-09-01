@@ -39,6 +39,14 @@ describe('PaidStorageImportStatus - Story 169.12 contracts', () => {
     expect(screen.queryByText('Статус импорта неизвестен')).not.toBeInTheDocument()
   })
 
+  it('pending processing state keeps indeterminate progress and expected time visible', () => {
+    render(<ImportProcessing />)
+
+    expect(screen.getByRole('progressbar')).not.toHaveAttribute('aria-valuenow')
+    expect(screen.getByText('Импорт выполняется...')).toBeInTheDocument()
+    expect(screen.getByText('Ожидаемое время: ~60 секунд')).toBeInTheDocument()
+  })
+
   it('unknown poll status renders a NEUTRAL muted hint (not error-red)', () => {
     const { container } = render(<ImportProcessing statusUnknown />)
     const hint = screen.getByText('Статус импорта неизвестен')

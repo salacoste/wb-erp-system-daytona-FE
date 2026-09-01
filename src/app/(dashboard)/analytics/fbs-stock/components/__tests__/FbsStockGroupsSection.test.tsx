@@ -125,6 +125,31 @@ describe('FbsStockGroupsSection (Story 96.11-FE)', () => {
     expect(screen.queryByText('12.5')).not.toBeInTheDocument()
   })
 
+  it('renders a valid zero stock balance as 0 instead of missing data', () => {
+    const populatedResponse = {
+      ...emptyFbsStockGroupsResponse(),
+      data: {
+        groups: [
+          {
+            groupName: 'Нулевой остаток',
+            skuCount: 1,
+            stockUnits: 0,
+            stockValue: 0,
+            averageDailyOutgoing: 0,
+            daysOfCover: 0,
+          },
+        ],
+      },
+    }
+    mockHook({ data: populatedResponse, isLoading: false, isError: false })
+
+    renderWithProviders(<FbsStockGroupsSection />)
+
+    expect(screen.getByText('Нулевой остаток')).toBeInTheDocument()
+    expect(screen.getAllByText('0').length).toBeGreaterThanOrEqual(2)
+    expect(screen.queryByText('—')).not.toBeInTheDocument()
+  })
+
   // ─── Epic 169.7 shadcn migration pins ───────────────────────────────────────
 
   it('169.7: cached-data banner uses status-warning token classes (exact pins)', () => {

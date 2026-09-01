@@ -9,7 +9,16 @@ import {
 } from '../../e2e/fixtures/story-174-3/execution-manifest'
 import { STORY_174_3_DEDICATED_ROUTE_SCENARIOS } from '../../e2e/fixtures/story-174-3/dedicated-route-scenarios'
 import { STORY_174_3_STATES } from '../../e2e/fixtures/story-174-3/route-contracts'
-import { STORY_174_3_OWNER_STATE_RECONCILIATION } from '../../e2e/fixtures/story-174-3/owner-state-reconciliation'
+import {
+  normalizeStory1743OwnerClause,
+  STORY_174_3_OWNER_STATE_RECONCILIATION,
+} from '../../e2e/fixtures/story-174-3/owner-state-reconciliation'
+import { findStory1743OwnerVariantScenario } from '../../e2e/fixtures/story-174-3/owner-state-scenarios'
+import {
+  findStory1743OwnerStateException,
+  requireStory1743OwnerStateException,
+  STORY_174_3_OWNER_STATE_EXCEPTIONS,
+} from '../../e2e/fixtures/story-174-3/owner-state-exceptions'
 import {
   STORY_174_3_EXPLICIT_NOT_APPLICABLE_STATES,
   validateStory1743ExplicitStateContract,
@@ -54,6 +63,247 @@ const routeEvidence = async () =>
   (await import('../../e2e/fixtures/story-174-3/route-evidence')).STORY_174_3_ROUTE_EVIDENCE
 
 describe('Story 174.3 explicit route/state contract', () => {
+  it('fails closed for an unknown owner label and for a missing or incomplete typed exception', () => {
+    expect(() =>
+      normalizeStory1743OwnerClause('/synthetic', '174.3', 'invented owner-only transition')
+    ).toThrow(
+      'Unknown owner State Coverage clause for /synthetic (Story 174.3): invented owner-only transition'
+    )
+
+    expect(findStory1743OwnerStateException('/register', 'network', 'error')).toBeUndefined()
+    expect(() => requireStory1743OwnerStateException('/register', 'network', 'error')).toThrow(
+      '/register/error is required by owner clause [network]'
+    )
+  })
+
+  it('requires exact evidence or an independently typed exception for every normalized owner state', () => {
+    const ownerMappings = STORY_174_3_OWNER_STATE_RECONCILIATION.flatMap(reconciliation =>
+      reconciliation.mappings
+        .filter(mapping => mapping.source === 'owner-story')
+        .map(mapping => ({ reconciliation, mapping }))
+    )
+    const requirements = ownerMappings.flatMap(({ reconciliation, mapping }) =>
+      mapping.normalizedStates.map(state => ({ reconciliation, mapping, state }))
+    )
+    const rawOwnerLabelsByRouteState = new Map<string, Set<string>>()
+    for (const { reconciliation, mapping, state } of requirements) {
+      const key = `${reconciliation.route}::${state}`
+      const labels = rawOwnerLabelsByRouteState.get(key) ?? new Set<string>()
+      labels.add(mapping.rawOwnerState)
+      rawOwnerLabelsByRouteState.set(key, labels)
+    }
+    const exactBindings = requirements.filter(
+      ({ reconciliation, mapping, state }) =>
+        (state === 'default' && mapping.rawOwnerState === 'default') ||
+        findStory1743OwnerVariantScenario(
+          reconciliation.route,
+          mapping.rawOwnerState,
+          state
+        ) ||
+        (state !== 'default' &&
+          rawOwnerLabelsByRouteState.get(`${reconciliation.route}::${state}`)?.size === 1 &&
+          STORY_174_3_EXACT_STATE_SCENARIOS[reconciliation.route]?.[state])
+    )
+    const typedExceptions = requirements.filter(({ reconciliation, mapping, state }) =>
+      findStory1743OwnerStateException(reconciliation.route, mapping.rawOwnerState, state)
+    )
+    const unresolved = requirements
+      .filter(requirement => !exactBindings.includes(requirement))
+      .filter(requirement => !typedExceptions.includes(requirement))
+      .map(
+        ({ reconciliation, mapping, state }) =>
+          reconciliation.route + ' :: ' + mapping.rawOwnerState + ' -> ' + state
+      )
+
+    expect({
+      ownerClauses: ownerMappings.length,
+      ownerRequirements: requirements.length,
+      exactBindings: exactBindings.length,
+      typedExceptions: typedExceptions.length,
+      unresolved: unresolved.length,
+      unresolvedRequirements: unresolved,
+    }).toMatchObject({ unresolved: 0, unresolvedRequirements: [] })
+  })
+
+  it('keeps typed owner-state exceptions exact, non-overlapping, and independently cited', () => {
+    const exceptionKeys = STORY_174_3_OWNER_STATE_EXCEPTIONS.map(
+      exception =>
+        exception.route + '::' + exception.rawOwnerState + '::' + exception.normalizedState
+    )
+    expect(new Set(exceptionKeys).size).toBe(exceptionKeys.length)
+
+    for (const exception of STORY_174_3_OWNER_STATE_EXCEPTIONS) {
+      const ownerMapping = STORY_174_3_OWNER_STATE_RECONCILIATION.find(
+        reconciliation => reconciliation.route === exception.route
+      )?.mappings.find(
+        mapping =>
+          mapping.source === 'owner-story' &&
+          mapping.rawOwnerState === exception.rawOwnerState &&
+          mapping.normalizedStates.includes(exception.normalizedState)
+      )
+      expect(
+        ownerMapping,
+        `${exception.route} :: ${exception.rawOwnerState} -> ${exception.normalizedState}`
+      ).toBeDefined()
+      expect(exception.reason).toContain(exception.route)
+      expect(exception.reason).toContain(`[${exception.rawOwnerState}]`)
+      expect(exception.canonicalOwnerDecision).toContain(exception.route)
+      expect(exception.canonicalOwnerDecision).toContain(`[${exception.rawOwnerState}]`)
+      expect(exception.source).toMatch(/^(src|docs)\//)
+      expect(exception.source).not.toContain('..')
+      expect(exception.sourceAssertion.trim()).not.toBe('')
+      expect(readFileSync(exception.source, 'utf8')).toContain(exception.sourceAssertion)
+
+      const exactRouteState =
+        exception.normalizedState !== 'default' &&
+        STORY_174_3_EXACT_STATE_SCENARIOS[exception.route]?.[exception.normalizedState]
+      const rawOwnerLabelsForState =
+        STORY_174_3_OWNER_STATE_RECONCILIATION.find(
+          reconciliation => reconciliation.route === exception.route
+        )?.mappings.filter(
+          mapping =>
+            mapping.source === 'owner-story' &&
+            mapping.normalizedStates.includes(exception.normalizedState)
+        ) ?? []
+      const exactOwnerVariant = findStory1743OwnerVariantScenario(
+        exception.route,
+        exception.rawOwnerState,
+        exception.normalizedState
+      )
+      if (rawOwnerLabelsForState.length === 1) {
+        expect(exactRouteState).toBeFalsy()
+      }
+      expect(exactOwnerVariant).toBeUndefined()
+    }
+
+    expect(
+      STORY_174_3_OWNER_STATE_EXCEPTIONS.filter(exception => exception.route === '/register')
+    ).toEqual([])
+    expect(
+      STORY_174_3_OWNER_STATE_EXCEPTIONS.filter(
+        exception => exception.route === '/automation/canned-rules'
+      )
+    ).toEqual([])
+  })
+
+  it('binds register and canned-rules owner clauses to exact executable titles', () => {
+    const ownerStates = (route: string, rawOwnerState: string) =>
+      STORY_174_3_OWNER_STATE_RECONCILIATION.find(row => row.route === route)!.mappings.find(
+        mapping => mapping.source === 'owner-story' && mapping.rawOwnerState === rawOwnerState
+      )!.normalizedStates
+
+    expect(ownerStates('/register', 'network')).toEqual(['error'])
+    expect(ownerStates('/register', 'submitting')).toEqual(['pending'])
+    expect(ownerStates('/automation/canned-rules', 'loading')).toEqual(['loading'])
+    expect(ownerStates('/automation/canned-rules', 'no rules')).toEqual(['empty'])
+    expect(ownerStates('/automation/canned-rules', 'restricted')).toEqual(['permission'])
+    expect(ownerStates('/automation/canned-rules', 'unavailable rule')).toEqual(['permission'])
+    expect(ownerStates('/automation/canned-rules', 'install pending')).toEqual(['pending'])
+    expect(ownerStates('/automation/canned-rules', 'success')).toEqual(['partial-success'])
+    expect(ownerStates('/automation/canned-rules', 'error')).toEqual(['error'])
+    expect(STORY_174_3_EXPLICIT_NOT_APPLICABLE_STATES['/register']).not.toEqual(
+      expect.arrayContaining(['error', 'pending', 'partial-success'])
+    )
+    expect(STORY_174_3_EXPLICIT_NOT_APPLICABLE_STATES['/automation/canned-rules']).not.toEqual(
+      expect.arrayContaining([
+        'loading',
+        'empty',
+        'error',
+        'permission',
+        'pending',
+        'partial-success',
+      ])
+    )
+
+    expect(STORY_174_3_EXACT_STATE_SCENARIOS['/register']).toMatchObject({
+      error: {
+        scenarioId:
+          '[Review 3 finding M-1] keeps password-like hostile 5xx detail in generic service recovery',
+      },
+      pending: {
+        scenarioId: '[REG-FORM-03] disables every primary control with truthful pending semantics',
+      },
+      'partial-success': {
+        scenarioId:
+          '[REG-FORM-06] preserves success toast, exactly one login navigation, and no auth/session write',
+      },
+    })
+    expect(STORY_174_3_EXACT_STATE_SCENARIOS['/automation/canned-rules']).toMatchObject({
+      loading: {
+        scenarioId: 'AC1: loads the gallery grouped by category with trigger→action summaries',
+      },
+      empty: { scenarioId: 'AC3: no-rules state renders the empty marker' },
+      error: {
+        scenarioId: 'AC4: gallery error renders the destructive alert with a Button retry',
+      },
+      permission: {
+        scenarioId: 'AC2: restricted price template carries the destructive arm write-back badge',
+      },
+      pending: {
+        scenarioId:
+          'AC5/AC6: install pending → success shows the post-install deep-link; wire contract kept',
+      },
+      'partial-success': {
+        scenarioId:
+          'AC5/AC6: install pending → success shows the post-install deep-link; wire contract kept',
+      },
+    })
+  })
+
+  it('normalizes form submission, valid zero values, and optional dynamic parameters truthfully', () => {
+    expect(normalizeStory1743OwnerClause('/analytics/storage', '169.12', 'submission')).toEqual([
+      'pending',
+    ])
+    expect(
+      normalizeStory1743OwnerClause(
+        '/analytics/forecast-accuracy',
+        '171.5',
+        'valid zero error'
+      )
+    ).toEqual(['default'])
+    expect(
+      normalizeStory1743OwnerClause(
+        '/analytics/models/[id]/evaluations/sku-accuracy',
+        '171.8',
+        'missing'
+      )
+    ).toEqual(['default'])
+    expect(
+      normalizeStory1743OwnerClause(
+        '/analytics/models/[id]/evaluations/sku-accuracy',
+        '171.8',
+        'invalid evaluation parameter'
+      )
+    ).toEqual(['error'])
+    expect(
+      normalizeStory1743OwnerClause(
+        '/analytics/advertising/campaigns/[advertId]',
+        '170.2',
+        'absent'
+      )
+    ).toEqual(['default'])
+    expect(
+      normalizeStory1743OwnerClause(
+        '/analytics/advertising/campaigns/[advertId]',
+        '170.2',
+        'invalid nmId'
+      )
+    ).toEqual(['error'])
+    expect(
+      normalizeStory1743OwnerClause('/analytics/dashboard', '167.3', 'token')
+    ).toEqual(['permission'])
+    expect(
+      normalizeStory1743OwnerClause('/analytics/acquiring/period', '169.2', 'missing period')
+    ).toEqual(['error'])
+    expect(
+      normalizeStory1743OwnerClause(
+        '/analytics/acquiring/reports/[id]',
+        '169.3',
+        'invalid ID'
+      )
+    ).toEqual(['not-found'])
+  })
+
   it('reconciles all 76 owner Story State Coverage clauses with the audit taxonomy', async () => {
     const rows = await routeEvidence()
 
@@ -148,14 +398,14 @@ describe('Story 174.3 explicit route/state contract', () => {
       uniqueOwnerBrowserSources: executionSources('owner-browser-executable'),
     }).toEqual({
       rows: 912,
-      executed: 280,
-      notApplicable: 632,
+      executed: 444,
+      notApplicable: 468,
       blocked: 0,
       storyRunnerDefaults: 76,
-      ownerUnitExecutions: 169,
-      ownerBrowserExecutions: 35,
-      uniqueOwnerUnitSources: 69,
-      uniqueOwnerBrowserSources: 15,
+      ownerUnitExecutions: 318,
+      ownerBrowserExecutions: 50,
+      uniqueOwnerUnitSources: 154,
+      uniqueOwnerBrowserSources: 21,
     })
   })
 

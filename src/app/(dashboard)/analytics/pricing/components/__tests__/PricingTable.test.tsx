@@ -200,6 +200,18 @@ describe('PricingTable — 168.6 semantic tokens', () => {
     expect(span!.classList.contains('text-financial-positive')).toBe(false)
   })
 
+  it('renders a large negative price gap with financial-negative semantics without truncation', () => {
+    renderWithProviders(
+      <PricingTable items={[item({ gap: -999_999_999, gapPct: -99.9 })]} isLoading={false} />
+    )
+
+    const negative = Array.from(document.querySelectorAll('span')).find(s =>
+      s.classList.contains('text-financial-negative')
+    )
+    expect(negative).toBeDefined()
+    expect(negative?.textContent).toMatch(/999[\s ]999[\s ]999/)
+  })
+
   it('renders no legacy palette classes in table rows (168.6 sweep guard)', () => {
     const { container } = renderWithProviders(
       <PricingTable
