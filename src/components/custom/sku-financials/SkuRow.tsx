@@ -97,7 +97,7 @@ export function SkuRow({
       <TableCell className="text-right font-medium">{formatCurrency(item.revenue.net)}</TableCell>
       <TableCell className="hidden lg:table-cell text-right">
         {item.missingCogs ? (
-          <span className="text-xs text-status-warning">Не назначена</span>
+          <span className="text-xs text-foreground">Не назначена</span>
         ) : (
           <span className="text-foreground">{formatCurrency(item.costs.cogs)}</span>
         )}

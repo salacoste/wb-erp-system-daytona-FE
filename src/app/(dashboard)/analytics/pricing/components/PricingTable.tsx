@@ -125,6 +125,15 @@ export function PricingTable({ items, isLoading, onRowClick }: PricingTableProps
             key={item.id}
             className={onRowClick ? 'cursor-pointer hover:bg-muted/50' : undefined}
             onClick={() => onRowClick?.(item.nmId)}
+            role={onRowClick ? 'button' : undefined}
+            tabIndex={onRowClick ? 0 : undefined}
+            aria-label={onRowClick ? `Открыть рекомендации для SKU ${item.nmId}` : undefined}
+            onKeyDown={event => {
+              if (onRowClick && (event.key === 'Enter' || event.key === ' ')) {
+                event.preventDefault()
+                onRowClick(item.nmId)
+              }
+            }}
           >
             <TableCell className="font-mono text-sm">
               {item.vendorCode ?? String(item.nmId)}

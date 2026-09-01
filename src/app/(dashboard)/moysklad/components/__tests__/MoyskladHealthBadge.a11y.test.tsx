@@ -27,4 +27,14 @@ describe('MoyskladHealthBadge accessibility', () => {
     expect(badge).toHaveClass('border-status-success/40', 'bg-status-success/10', 'text-foreground')
     expect(badge).not.toHaveClass('text-status-success')
   })
+
+  it('renders the health badge skeleton while the Moysklad health query is loading', () => {
+    mockUseMoyskladHealth.mockReturnValue({ data: undefined, isLoading: true })
+
+    const { container } = render(<MoyskladHealthBadge />)
+
+    expect(container.querySelectorAll('.animate-pulse')).toHaveLength(1)
+    expect(screen.queryByText('Подключён')).not.toBeInTheDocument()
+    expect(screen.queryByText('Не настроен')).not.toBeInTheDocument()
+  })
 })

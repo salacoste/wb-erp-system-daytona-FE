@@ -1,10 +1,12 @@
 import { formatCurrency } from '@/lib/utils'
 import type { TrendDataPoint } from '@/types/liquidity'
 
+export const LIQUIDITY_TREND_SUMMARY_ID = 'liquidity-trend-complete-data'
+
 /** Exact non-hover alternative for both liquidity trend charts. */
 export function LiquidityTrendSummary({ data }: { data: TrendDataPoint[] }) {
   return (
-    <table className="sr-only" data-chart-summary>
+    <table id={LIQUIDITY_TREND_SUMMARY_ID} className="sr-only" data-chart-summary>
       <caption>Динамика ликвидности по дням</caption>
       <thead>
         <tr>

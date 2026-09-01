@@ -197,7 +197,8 @@ describe('primitive behavior contracts', () => {
       'focus-visible:ring-ring',
       'focus-visible:ring-offset-2'
     )
-    expect(screen.getByRole('slider').parentElement).not.toHaveAttribute('aria-label')
+    expect(thumb.parentElement).not.toHaveAttribute('aria-label')
+    expect(thumb.parentElement).not.toHaveAttribute('aria-valuetext')
   })
 
   it('preserves disabled semantics for native Button', () => {

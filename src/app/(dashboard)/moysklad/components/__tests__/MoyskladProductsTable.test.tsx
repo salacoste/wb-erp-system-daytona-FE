@@ -106,6 +106,19 @@ describe('MoyskladProductsTable', () => {
     expect(screen.getByText(/Показано 0 из 0/)).toBeInTheDocument()
   })
 
+  it('renders the product table skeleton while the live products request is loading', () => {
+    useMoyskladProductsMock.mockReturnValue({
+      data: undefined,
+      isError: false,
+      isLoading: true,
+    })
+
+    const { container } = render(<MoyskladProductsTable />)
+
+    expect(container.querySelectorAll('.animate-pulse')).toHaveLength(1)
+    expect(screen.queryByText('Нет товаров в МойСклад')).not.toBeInTheDocument()
+  })
+
   it('surfaces the live-call error banner (graceful, no crash)', () => {
     useMoyskladProductsMock.mockReturnValue({
       data: undefined,

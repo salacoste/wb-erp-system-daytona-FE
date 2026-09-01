@@ -7,7 +7,7 @@
  * ARIA: inline error uses role="status" + aria-live="polite" per Story 112.1 F-12.
  */
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, type RefObject } from 'react'
 import {
   Dialog,
   DialogContent,
@@ -39,9 +39,15 @@ interface ResolveAnomalyDialogProps {
   anomaly: AnomalyEntry | null
   open: boolean
   onOpenChange: (open: boolean) => void
+  returnFocusRef?: RefObject<HTMLElement | null>
 }
 
-export function ResolveAnomalyDialog({ anomaly, open, onOpenChange }: ResolveAnomalyDialogProps) {
+export function ResolveAnomalyDialog({
+  anomaly,
+  open,
+  onOpenChange,
+  returnFocusRef,
+}: ResolveAnomalyDialogProps) {
   const [cause, setCause] = useState<ResolutionCause | ''>('')
   const [note, setNote] = useState('')
   const [errorMessage, setErrorMessage] = useState<string | null>(null)
@@ -88,7 +94,13 @@ export function ResolveAnomalyDialog({ anomaly, open, onOpenChange }: ResolveAno
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent>
+      <DialogContent
+        onCloseAutoFocus={event => {
+          if (!returnFocusRef?.current) return
+          event.preventDefault()
+          returnFocusRef.current.focus()
+        }}
+      >
         <DialogHeader>
           <DialogTitle>
             {anomaly ? `Разрешить аномалию #${String(anomaly.id)}` : 'Разрешить аномалию'}

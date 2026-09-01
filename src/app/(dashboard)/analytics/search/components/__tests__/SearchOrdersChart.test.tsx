@@ -1,6 +1,13 @@
 import { describe, it, expect, vi } from 'vitest'
-import { render, screen } from '@/test/utils/test-utils'
-import { SearchOrdersChart, formatDayTick, toChartRows } from '../SearchOrdersChart'
+import { render, screen, within } from '@/test/utils/test-utils'
+import {
+  SEARCH_ORDERS_CHART_DATA_TABLE_ID,
+  SearchOrdersChart,
+  formatDayTick,
+  formatSearchOrdersTooltipLabel,
+  formatSearchOrdersTooltipValue,
+  toChartRows,
+} from '../SearchOrdersChart'
 import type { SearchOrderItem, SearchOrdersResponse } from '@/types/search-analytics'
 
 vi.mock('@/hooks/use-search-analytics', () => ({
@@ -100,18 +107,37 @@ describe('SearchOrdersChart', () => {
     expect(screen.getByText('Нет ежедневных данных за выбранный период')).toBeInTheDocument()
   })
 
-  it('renders chart title', () => {
+  it('exposes exact period, units, series, every daily value, and tooltip precision', () => {
     mockUseSearchOrders.mockReturnValue({
       data: {
         period: { from: '2026-03-01', to: '2026-03-31' },
         groupBy: 'day',
-        items: [{ key: '2026-03-15', totalOrders: 10 }],
+        items: [
+          { key: '2026-03-15', totalOrders: 12_345 },
+          { key: '2026-03-16', totalOrders: 67 },
+        ],
         summary: {},
       } as SearchOrdersResponse,
       isLoading: false,
       isError: false,
     } as ReturnType<typeof useSearchOrders>)
     render(<SearchOrdersChart from="2026-03-01" to="2026-03-31" />)
-    expect(screen.getByText('Динамика поисковых заказов по дням')).toBeInTheDocument()
+    const chart = screen.getByRole('img', {
+      name: 'Динамика поисковых заказов по дням: 2 дня',
+    })
+    expect(chart).toHaveAttribute('aria-describedby', SEARCH_ORDERS_CHART_DATA_TABLE_ID)
+
+    const table = screen.getByRole('table', {
+      name: 'Данные динамики поисковых заказов; период: 2026-03-01 — 2026-03-31; единицы: заказы, шт.',
+    })
+    expect(table).toHaveAttribute('id', SEARCH_ORDERS_CHART_DATA_TABLE_ID)
+    expect(within(table).getByRole('columnheader', { name: 'Дата' })).toBeInTheDocument()
+    expect(within(table).getByRole('columnheader', { name: 'Заказы, шт.' })).toBeInTheDocument()
+    expect(within(table).getByRole('rowheader', { name: '2026-03-15' })).toBeInTheDocument()
+    expect(within(table).getByRole('cell', { name: '12 345' })).toBeInTheDocument()
+    expect(within(table).getByRole('rowheader', { name: '2026-03-16' })).toBeInTheDocument()
+    expect(within(table).getByRole('cell', { name: '67' })).toBeInTheDocument()
+    expect(formatSearchOrdersTooltipLabel('2026-03-15')).toBe('15.03')
+    expect(formatSearchOrdersTooltipValue(12_345)).toBe('12 345')
   })
 })

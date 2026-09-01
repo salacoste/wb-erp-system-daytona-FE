@@ -3,10 +3,10 @@
  * Basis badge in the current-price cell + alternative-basis companion price.
  */
 
-import { describe, it, expect } from 'vitest'
+import { describe, it, expect, vi } from 'vitest'
 import { readFileSync } from 'node:fs'
 import { join } from 'node:path'
-import { renderWithProviders, screen } from '@/test/utils/test-utils'
+import { fireEvent, renderWithProviders, screen } from '@/test/utils/test-utils'
 import { PricingTable } from '../PricingTable'
 import { emptyPriceRecommendation } from '@/test/fixtures/price-recommendations-empty'
 import type { PriceRecommendation } from '@/types/price-recommendations'
@@ -29,6 +29,24 @@ describe('PricingTable — SPP-1.7 basis badge', () => {
     const region = screen.getByRole('region', { name: 'Рекомендации по ценам' })
     expect(region).toHaveAttribute('tabindex', '0')
     expect(screen.getByRole('table', { name: 'Рекомендации по ценам' })).toBeInTheDocument()
+  })
+
+  it('opens the exact SKU recommendation from its focused row with Enter', () => {
+    const onRowClick = vi.fn()
+    renderWithProviders(
+      <PricingTable
+        items={[item({ nmId: 123 }), item({ id: 'r-2', nmId: 456 })]}
+        isLoading={false}
+        onRowClick={onRowClick}
+      />
+    )
+
+    const row = screen.getByLabelText('Открыть рекомендации для SKU 456')
+    row.focus()
+    expect(row).toHaveFocus()
+    fireEvent.keyDown(row, { key: 'Enter' })
+    expect(onRowClick).toHaveBeenCalledTimes(1)
+    expect(onRowClick).toHaveBeenCalledWith(456)
   })
 
   it('keeps the elasticity table in one named keyboard-focusable scroll region', () => {

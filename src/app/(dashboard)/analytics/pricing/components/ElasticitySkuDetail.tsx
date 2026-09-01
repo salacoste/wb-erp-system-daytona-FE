@@ -38,6 +38,7 @@ export function ElasticitySkuDetail({ item, isExpanded, onToggle }: ElasticitySk
         className="cursor-pointer hover:bg-muted/50"
         onClick={onToggle}
         role="button"
+        aria-label={`Показать эластичность SKU ${item.nmId}`}
         aria-expanded={isExpanded}
         tabIndex={0}
         onKeyDown={e => {

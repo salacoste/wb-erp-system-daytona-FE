@@ -27,7 +27,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { ResponsiveChartFrame } from '@/components/custom/analytics/ResponsiveChartFrame'
 import { LiquidityTrendTooltip } from './LiquidityTrendTooltip'
 import { LiquidityDistributionTrendChart } from './LiquidityDistributionTrendChart'
-import { LiquidityTrendSummary } from './LiquidityTrendSummary'
+import { LIQUIDITY_TREND_SUMMARY_ID, LiquidityTrendSummary } from './LiquidityTrendSummary'
 import {
   LIQUIDITY_TREND_COLORS,
   LIQUIDITY_TREND_LABELS,
@@ -87,6 +87,7 @@ export function LiquidityTrendChart({ data, className, hideHeader }: LiquidityTr
 
         <ResponsiveChartFrame
           label="График динамики замороженного капитала и среднего оборота"
+          descriptionId={LIQUIDITY_TREND_SUMMARY_ID}
           className="h-56 md:h-64"
         >
           <ResponsiveContainer width="100%" height="100%" minWidth={1} minHeight={1}>
@@ -157,7 +158,11 @@ export function LiquidityTrendChart({ data, className, hideHeader }: LiquidityTr
         </ResponsiveChartFrame>
 
         {/* Secondary: distribution percentages stacked area */}
-        <LiquidityDistributionTrendChart data={data} prefersReducedMotion={prefersReducedMotion} />
+        <LiquidityDistributionTrendChart
+          data={data}
+          prefersReducedMotion={prefersReducedMotion}
+          descriptionId={LIQUIDITY_TREND_SUMMARY_ID}
+        />
 
         <LiquidityTrendSummary data={data} />
       </CardContent>

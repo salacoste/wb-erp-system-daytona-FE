@@ -125,6 +125,17 @@ describe('LiquidityTrendChart', () => {
     expect(sr).toBeTruthy()
     expect(sr?.querySelector('caption')?.textContent).toContain('Динамика ликвидности')
     expect(sr?.querySelectorAll('tbody tr').length).toBe(data.length)
+    expect(sr).toHaveAttribute('id', 'liquidity-trend-complete-data')
+    expect(
+      screen.getByRole('img', {
+        name: 'График динамики замороженного капитала и среднего оборота',
+      })
+    ).toHaveAttribute('aria-describedby', 'liquidity-trend-complete-data')
+    expect(
+      screen.getByRole('img', {
+        name: 'График динамики распределения ликвидности по категориям',
+      })
+    ).toHaveAttribute('aria-describedby', 'liquidity-trend-complete-data')
     for (const label of [
       'Высоколиквидные',
       'Средняя ликвидность',
@@ -171,14 +182,14 @@ describe('LiquidityTrendChart', () => {
 // ============================================================================
 
 describe('LiquidityTrendTooltip (B1 direct-render)', () => {
-  it('renders date + frozen_capital + avg_turnover_days + 4 pct without throwing', () => {
+  it('exposes the exact date, currency, day units, all series, and percentage precision', () => {
     const point: TrendDataPoint = makePoint('2026-08-07')
     // Hand-built recharts payload shape: array of { payload: <datum> }.
     const tooltipPayload = [{ payload: point }]
     // Direct render — bypasses the global recharts Tooltip mock so the tooltip
     // component itself is validated. The distribution AreaChart now feeds
     // full TrendDataPoint rows (no flatten), so this is the exact shape it sees.
-    expect(() => render(<LiquidityTrendTooltip active payload={tooltipPayload} />)).not.toThrow()
+    render(<LiquidityTrendTooltip active payload={tooltipPayload} />)
 
     // Tooltip header (RU full date) is present.
     expect(screen.getByText(/августа 2026/)).toBeInTheDocument()
@@ -190,6 +201,14 @@ describe('LiquidityTrendTooltip (B1 direct-render)', () => {
     expect(screen.getAllByText('Средняя ликвидность').length).toBeGreaterThan(0)
     expect(screen.getAllByText('Низкая ликвидность').length).toBeGreaterThan(0)
     expect(screen.getAllByText('Неликвид').length).toBeGreaterThan(0)
+    const exactText = (expected: string) =>
+      screen.getByText((_, element) => element?.textContent === expected)
+    expect(exactText('500 000 ₽')).toBeInTheDocument()
+    expect(screen.getByText('40 дн.')).toBeInTheDocument()
+    expect(exactText('60,0 %')).toBeInTheDocument()
+    expect(exactText('25,0 %')).toBeInTheDocument()
+    expect(exactText('10,0 %')).toBeInTheDocument()
+    expect(exactText('5,0 %')).toBeInTheDocument()
   })
 })
 

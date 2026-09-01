@@ -367,10 +367,18 @@ describe('ReorderDashboardPage - Accessibility', () => {
     expect(btn.tagName).toBe('BUTTON')
   })
 
-  it('action buttons in table are keyboard accessible', () => {
+  it('marks the exact pending recommendation as ordered from its row action', () => {
     renderPage()
     const actionBtn = screen.getByRole('button', { name: /Заказано/ })
+    actionBtn.focus()
+    expect(actionBtn).toHaveFocus()
+    actionBtn.click()
     expect(actionBtn.tagName).toBe('BUTTON')
+    expect(mockUpdateStatus).toHaveBeenCalledTimes(1)
+    expect(mockUpdateStatus).toHaveBeenCalledWith({
+      id: 'rec-1',
+      payload: { status: 'ordered' },
+    })
   })
 })
 

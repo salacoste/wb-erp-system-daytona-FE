@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it, vi } from 'vitest'
-import { render, screen } from '@/test/utils/test-utils'
+import { render, screen, within } from '@/test/utils/test-utils'
 
 vi.mock('recharts', () => ({
   ResponsiveContainer: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
@@ -13,7 +13,7 @@ vi.mock('recharts', () => ({
   CartesianGrid: () => null,
 }))
 
-import { StorageTrendsChart } from '../StorageTrendsChart'
+import { ChartTooltip, StorageTrendsChart } from '../StorageTrendsChart'
 
 const data = [
   { week: '2026-W30', storage_cost: 1234.5 },
@@ -23,7 +23,7 @@ const data = [
 afterEach(() => vi.unstubAllGlobals())
 
 describe('dashboard StorageTrendsChart accessibility', () => {
-  it('associates the chart with an exact semantic data alternative', () => {
+  it('exposes exact weeks, ruble units, series values, null state, and tooltip precision', () => {
     render(<StorageTrendsChart data={data} height={250} />)
 
     expect(
@@ -32,8 +32,20 @@ describe('dashboard StorageTrendsChart accessibility', () => {
     const table = screen.getByRole('table', {
       name: 'Данные графика расходов на хранение на главной странице',
     })
-    expect(table).toHaveTextContent('2026-W30')
-    expect(table).toHaveTextContent('нет данных')
+    expect(within(table).getByRole('columnheader', { name: 'Неделя' })).toBeInTheDocument()
+    expect(
+      within(table).getByRole('columnheader', { name: 'Расходы на хранение, ₽' })
+    ).toBeInTheDocument()
+    expect(within(table).getByRole('rowheader', { name: '2026-W30' })).toBeInTheDocument()
+    expect(within(table).getByRole('cell', { name: '1 234,5 ₽' })).toBeInTheDocument()
+    expect(within(table).getByRole('rowheader', { name: '2026-W31' })).toBeInTheDocument()
+    expect(within(table).getByRole('cell', { name: 'нет данных' })).toBeInTheDocument()
+
+    render(<ChartTooltip active label="2026-W30" payload={[{ payload: data[0] }]} />)
+    expect(screen.getByText('Неделя 30')).toBeInTheDocument()
+    expect(screen.getAllByText((_, element) => element?.textContent === '1 234,5 ₽')).toHaveLength(
+      2
+    )
   })
 
   it('disables Recharts animation for reduced motion', () => {

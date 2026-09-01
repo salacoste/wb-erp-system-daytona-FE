@@ -228,7 +228,14 @@ test.describe('Liquidity Analysis — Story 162.5 deterministic synchronization'
     await openLiquidity(page)
     const table = getLiquidityTable(page)
     const firstDataRow = table.getByRole('row').nth(1)
-    await firstDataRow.click()
+    const expandDetails = firstDataRow.getByRole('button', {
+      name: /^Показать детали SKU LQ-/,
+    })
+    await expect(expandDetails).toHaveAttribute('aria-expanded', 'false')
+    await expandDetails.click()
+    await expect(
+      firstDataRow.getByRole('button', { name: /^Скрыть детали SKU LQ-/ })
+    ).toHaveAttribute('aria-expanded', 'true')
     await expect(table.getByRole('heading', { name: 'Рекомендация' })).toBeVisible()
     await expect(table.getByText(/SKU: LQ-/)).toBeVisible()
 

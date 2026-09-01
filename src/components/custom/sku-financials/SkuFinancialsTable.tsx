@@ -23,8 +23,7 @@ import {
   TableRow,
 } from '@/components/ui/table'
 import { ArrowUp, ArrowDown, ArrowUpDown } from 'lucide-react'
-import type { SkuFinancialItem } from '@/types/sku-financials'
-import { getTotalOperatingExpenses } from '@/types/sku-financials'
+import { getTotalOperatingExpenses, type SkuFinancialItem } from '@/types/sku-financials'
 import type { SortField, SortOrder } from './sku-table-sorting'
 import { sortSkuData } from './sku-table-sorting'
 import { SalesQtyHeader, RevenueNetHeader, ExpensesHeader, MarginHeader } from './SkuTableHeaders'
@@ -78,6 +77,9 @@ export function SkuFinancialsTable({
     )
   }
 
+  const ariaSort = (field: SortField) =>
+    sortField === field ? (sortOrder === 'asc' ? 'ascending' : 'descending') : undefined
+
   const totals = useMemo(() => {
     const totalSalesQty = data.reduce((sum, item) => sum + item.quantity.salesQty, 0)
     const totalReturnsQty = data.reduce((sum, item) => sum + item.quantity.returnsQty, 0)
@@ -125,7 +127,7 @@ export function SkuFinancialsTable({
         <TableHeader>
           <TableRow>
             <TableHead className="w-[100px]">Код WB</TableHead>
-            <TableHead>
+            <TableHead aria-sort={ariaSort('productName')}>
               <button
                 onClick={() => handleSort('productName')}
                 className="flex items-center font-medium hover:text-status-information"
@@ -134,13 +136,13 @@ export function SkuFinancialsTable({
                 {renderSortIcon('productName')}
               </button>
             </TableHead>
-            <TableHead className="hidden lg:table-cell text-right">
+            <TableHead className="hidden lg:table-cell text-right" aria-sort={ariaSort('salesQty')}>
               <SalesQtyHeader
                 onSort={() => handleSort('salesQty')}
                 sortIcon={renderSortIcon('salesQty')}
               />
             </TableHead>
-            <TableHead className="text-right">
+            <TableHead className="text-right" aria-sort={ariaSort('revenueNet')}>
               <RevenueNetHeader
                 onSort={() => handleSort('revenueNet')}
                 sortIcon={renderSortIcon('revenueNet')}
@@ -150,7 +152,7 @@ export function SkuFinancialsTable({
             <TableHead className="hidden lg:table-cell text-right">
               <ExpensesHeader />
             </TableHead>
-            <TableHead className="text-right">
+            <TableHead className="text-right" aria-sort={ariaSort('operatingProfit')}>
               <button
                 onClick={() => handleSort('operatingProfit')}
                 className="ml-auto flex items-center font-medium hover:text-status-information"
@@ -159,7 +161,7 @@ export function SkuFinancialsTable({
                 {renderSortIcon('operatingProfit')}
               </button>
             </TableHead>
-            <TableHead className="text-right">
+            <TableHead className="text-right" aria-sort={ariaSort('operatingMarginPct')}>
               <MarginHeader
                 onSort={() => handleSort('operatingMarginPct')}
                 sortIcon={renderSortIcon('operatingMarginPct')}

@@ -112,7 +112,7 @@ export function CommissionBreakdownPopover(
       <PopoverTrigger asChild>
         <button
           data-testid="commission-breakdown-badge"
-          className="inline-flex items-center rounded-full bg-muted px-2 py-0.5 text-xs font-medium cursor-pointer hover:bg-muted/80"
+          className="inline-flex size-11 items-center justify-center rounded-full bg-muted text-xs font-medium cursor-pointer hover:bg-muted/80"
           aria-label={`Показать ${rowCount} категории комиссий`}
         >
           {rowCount}

@@ -1,17 +1,21 @@
 # Story 174.3-FE — Complete Accessibility, Responsive, Theme, and Visual Verification
 
-**Status**: implementation and local validation complete; independent reviews pending (2026-08-31)  
-**Plan**: `.omx/plans/174.3-complete-accessibility-responsive-theme-and-visual-verification.md`  
-**Branch**: `cdx/epic-174-story-3-inclusive-visual-verification`  
-**Worktree**: `/private/tmp/wb-repricer-fe-174-3-inclusive-visual-verification`  
-**Base SHA**: `ce0b3c17689ffcc5057fd561b57c770aa86c9340`
+**Status**: done; implementation and exact-worktree evidence complete (2026-09-01)
+**Plan**: `.omx/plans/174.3-complete-accessibility-responsive-theme-and-visual-verification.md`
+**Branch**: `cdx/epic-174-story-3-inclusive-visual-verification`
+**Worktree**: `/private/tmp/wb-repricer-fe-174-3-inclusive-visual-verification`
+**Base SHA**: `0338e56e3baa8e8a6d9d570748488fe2dc7d7f59`
 
-## Authoritative current delivery record — 2026-08-31
+## Authoritative current delivery record — 2026-09-01
 
-This section supersedes the historical implementation log below. Implementation and exact-worktree
-local validation are complete. Two independent `APPROVE` reviews on one unchanged commit remain the
-only pre-PR acceptance gate. No merge, branch deletion, or worktree removal is permitted before both
-reviews report zero unresolved P0–P2 findings and no material P3 finding.
+This section supersedes the historical implementation log below. The two independent
+`REQUEST CHANGES` reviews of commit `a9b4e82d75e78b67a65281e425160c8b34c81de1` were resolved by
+replacing inferred coverage with executable route/state/surface evidence, closing the route-specific
+SKU-accuracy gap, and rerunning the complete exact-worktree validation ledger. Because this Story
+introduces novel validator semantics, three fresh independent `APPROVE` reviews on one unchanged
+final commit remain the immutable pre-merge gate. The final commit SHA, review verdicts, PR identity,
+merge commit, and cleanup evidence are recorded in the PR lifecycle rather than embedded here; a
+commit cannot truthfully contain its own final SHA.
 
 ### Actual expanded file manifest
 
@@ -167,7 +171,7 @@ Evidence is privacy-safe DOM/accessibility/geometry/computed-style data only. `e
 `test-results/`, and `playwright-report/` must be removed after final browser validation without
 reading auth contents.
 
-### Manual evidence review — 2026-08-31
+### Evidence review — 2026-09-01
 
 - Keyboard-only: modal execution covers Enter, Space, Tab, Shift+Tab, Escape, and focus return;
   non-modal execution covers open, usable focus, Escape, and return.
@@ -181,33 +185,38 @@ reading auth contents.
 - Theme behavior: computed root/body signatures must differ between light and dark while retaining
   the selected color scheme.
 
-True browser-UI 200% zoom and operation with real VoiceOver/NVDA/JAWS/TalkBack remain accepted
-environment gaps and are never reported as automated PASS.
+True browser-UI 200% zoom is executed on headed macOS Chromium through browser UI shortcuts. The
+gate proves the doubled device-pixel ratio, reduced CSS viewport, absence of CSS root zoom, and
+bounded geometry for all 76 routes in both themes. Operation with real
+VoiceOver/NVDA/JAWS/TalkBack remains an explicit environment gap and is never reported as an
+automated PASS.
 
 ### Final exact-worktree validation ledger
 
 Pinned runtime: Node `v24.18.0`, npm `11.11.0`.
 
 ```text
-Targeted stale-assertion regressions: 4 files, 139/139 tests passed
-Historical SPP listener lifecycle: 11/11 tests passed with localhost listener permission
-Full Vitest: 1,249 files, 19,176/19,176 tests passed
+Targeted Story state/surface contracts: 2 files, 14/14 tests passed
+Targeted stale source/listener regressions: 2 files, 18/18 tests passed
+Full Vitest: 1,257 files, 19,220/19,220 tests passed
 Canonical Story runner: 82 passed / 1 optional Manager skip / 0 failed
-Epic 37 comparator: 12 passed / 1 optional Manager skip / 0 failed
-Owner browser batch 1: 59 passed / 1 optional Manager skip / 0 failed
-Owner browser batch 2: 243 passed / 22 accepted optional/live-data skips / 0 failed
+Owner browser regeneration: 300 passed / 23 accepted optional/live-data skips / 0 failed
+Epic 37 plus dedicated route/SKU evidence: 18 passed / 1 optional Manager skip / 0 failed
+Real browser-UI 200% zoom: all 76 routes × 2 themes passed; 4 harness tests passed / 1 optional Manager skip
+Execution manifest: 344 passed entries (230 Vitest / 114 Playwright / 76 canonical defaults), 0 failed
 Production build: PASS, TypeScript PASS, 70/70 pages generated
 npm run lint: PASS, zero warnings/errors
+npx eslint on all changed E2E/scripts sources: PASS, zero warnings/errors
 npm run type-check: PASS
 npm run check:max-lines: PASS
+npm run check:max-lines --self-test equivalent: 3/3 passed
 npm run check:docs: PASS against the committed 95-entry / 427-citation baseline
 npm run check:markers: PASS, zero violations
 npm run check:lessons: PASS, 301 files / 96 lesson lines / zero violations
 E2E assertion/wait/bare-skip, Next params, locale-percent, and policy guards: PASS
 Anti-pattern-8 normalizer: PASS at the lowered 50-site baseline
 ESLint rule registry: PASS, 2 configs; relocatability self-test: 8/8 passed
-Privacy policy tests: 29/29 passed; repository scan contains only the two accepted historical
-  raw-browser-capture findings at `e2e/price-calculator-visual.spec.ts:280,306`
+Privacy policy tests: 29/29 passed; repository scan: 3,602 text files / 0 findings
 ```
 
 The canonical runner directly verifies all 76 route identities, 912 state dispositions, six widths
@@ -216,13 +225,13 @@ order, and applicable overlay/table/chart contracts. `measureComputedTextContras
 `computedContrastEvidence`, and `measuredContrastEvidence` remain required nonzero evidence; no axe
 rule, threshold, exclusion, network guard, privacy guard, or route assertion was weakened.
 
-### Pending lifecycle identities
+### Immutable lifecycle record
 
-- final reviewed commit SHA and two independent verdicts: pending;
-- independent review 1 and review 2: pending;
-- PR number/head SHA and merge commit SHA: pending;
-- synchronized `main`, local/remote branch deletion, and worktree removal: pending;
-- original PM2 frontend restoration and final orphan/duplicate audit: pending.
+The final reviewed commit SHA, three independent verdicts, PR number/head SHA, merge commit SHA,
+branch/worktree cleanup, PM2 restoration, and final orphan/duplicate/listener audit are intentionally
+recorded in the PR body and repository lifecycle evidence after this artifact is frozen. Embedding
+those future identities here would require a post-review commit, invalidate the three same-SHA
+reviews, and create a self-referential commit-hash cycle.
 
 ## Historical implementation log — superseded where it conflicts with the authoritative record above
 

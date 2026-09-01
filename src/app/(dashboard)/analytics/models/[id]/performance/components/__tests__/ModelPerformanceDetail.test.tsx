@@ -242,17 +242,16 @@ describe('MapeTrendTooltip', () => {
     expect(container.firstChild).toBeNull()
   })
 
-  it('active with non-null mape: renders Дата, MAPE percentage, and SKU count', () => {
+  it('tooltip exposes the exact date, MAPE units, series value, and SKU precision', () => {
     const payload = [
       {
         payload: { evaluationDate: '2026-05-17', cabinetMape: 12.4, skuCount: 500 },
       },
     ]
     render(<MapeTrendTooltip active={true} payload={payload} />)
-    expect(screen.getByText(/Дата:/)).toBeTruthy()
-    // formatPercentage → Russian comma+NBSP locale ("12,4 %"); regex per locale-assertion rule
-    expect(screen.getByText(/MAPE: 12,4\s%/)).toBeTruthy()
-    expect(screen.getByText(/SKU: 500/)).toBeTruthy()
+    expect(screen.getByText('Дата: 17.05.2026')).toBeTruthy()
+    expect(screen.getByText((_, element) => element?.textContent === 'MAPE: 12,4 %')).toBeTruthy()
+    expect(screen.getByText('SKU: 500')).toBeTruthy()
   })
 
   it('active with null mape: renders em-dash for MAPE (AP#8)', () => {

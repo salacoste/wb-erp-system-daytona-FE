@@ -4,7 +4,7 @@
  * CogsService.createCogs), so local edit/delete is futile. The kebab stays (discoverable)
  * but the actions are disabled with an explanatory label.
  */
-import { describe, it, expect } from 'vitest'
+import { describe, it, expect, vi } from 'vitest'
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { ActionsDropdown } from './CogsHistoryTableCells'
@@ -33,6 +33,20 @@ async function openMenu(record: CogsHistoryItem) {
 }
 
 describe('ActionsDropdown — BD-13 follow-up: moysklad rows are read-only', () => {
+  it('opens dropdown and invokes edit action by keyboard with focus return', async () => {
+    const onEdit = vi.fn()
+    const user = userEvent.setup()
+    render(<ActionsDropdown record={baseRecord} onEdit={onEdit} onDelete={() => undefined} />)
+    const trigger = screen.getByRole('button', { name: /Открыть меню/ })
+    trigger.focus()
+    await user.keyboard('{Enter}')
+    const edit = screen.getByRole('menuitem', { name: 'Редактировать' })
+    expect(edit).toHaveFocus()
+    await user.keyboard('{Enter}')
+    expect(onEdit).toHaveBeenCalledWith(baseRecord)
+    expect(trigger).toHaveFocus()
+  })
+
   it('disables edit/delete with an explanatory label for a МойСклад-synced row', async () => {
     await openMenu({ ...baseRecord, source: 'moysklad' })
     expect(screen.getByText(/Управляется МойСклад/)).toBeInTheDocument()

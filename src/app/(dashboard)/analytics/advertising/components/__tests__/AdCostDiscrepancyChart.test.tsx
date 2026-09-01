@@ -1,6 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import { render, screen } from '@testing-library/react'
-import { AdCostDiscrepancyChart } from '../AdCostDiscrepancyChart'
+import { render, screen, within } from '@testing-library/react'
+import { AdCostDiscrepancyChart, formatAdCostTooltipValue } from '../AdCostDiscrepancyChart'
 
 const originalGetBoundingClientRect = HTMLElement.prototype.getBoundingClientRect
 
@@ -51,9 +51,23 @@ describe('AdCostDiscrepancyChart', () => {
     expect(container.firstChild).toBeNull()
   })
 
-  it('renders chart card when both values are provided', () => {
+  it('exposes exact currency units, accounting series, values, delta, and tooltip precision', () => {
     render(<AdCostDiscrepancyChart platformSpend={100_000} actualDeduction={95_000} />)
-    expect(screen.getByText('Сравнение расходов')).toBeInTheDocument()
+    const table = screen.getByRole('table', {
+      name: 'Сравнение рекламных расходов по слоям, рубли',
+    })
+    expect(within(table).getByRole('columnheader', { name: 'Слой' })).toBeInTheDocument()
+    expect(within(table).getByRole('columnheader', { name: 'Расход, ₽' })).toBeInTheDocument()
+    expect(within(table).getByRole('rowheader', { name: 'Платформа' })).toBeInTheDocument()
+    expect(within(table).getByRole('rowheader', { name: 'Факт (отчёт WB)' })).toBeInTheDocument()
+    expect(within(table).getByRole('cell', { name: '100 000 ₽' })).toBeInTheDocument()
+    expect(within(table).getByRole('cell', { name: '95 000 ₽' })).toBeInTheDocument()
+    expect(
+      within(table).getByRole('rowheader', { name: 'Изменение платформа → факт' })
+    ).toBeInTheDocument()
+    expect(within(table).getByRole('cell', { name: '-5,0 %' })).toBeInTheDocument()
+    expect(formatAdCostTooltipValue(100_000)).toBe('100 000 ₽')
+    expect(formatAdCostTooltipValue('95000')).toBe('95 000 ₽')
   })
 
   it('renders accessible image role with aria-label', () => {

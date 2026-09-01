@@ -159,16 +159,25 @@ export function OrdersTable({
                 }
                 onClick={col.sortable ? () => onSortChange(col.sortField!) : undefined}
               >
-                <div className="flex items-center">
-                  {col.label}
-                  {col.sortable && (
+                {col.sortable ? (
+                  <button
+                    type="button"
+                    className="flex w-full items-center text-left"
+                    onClick={event => {
+                      event.stopPropagation()
+                      onSortChange(col.sortField!)
+                    }}
+                  >
+                    {col.label}
                     <SortIndicator
                       field={col.sortField!}
                       currentSort={sortBy}
                       currentOrder={sortOrder}
                     />
-                  )}
-                </div>
+                  </button>
+                ) : (
+                  <div className="flex items-center">{col.label}</div>
+                )}
               </TableHead>
             ))}
           </TableRow>

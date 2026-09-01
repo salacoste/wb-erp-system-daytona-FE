@@ -6,7 +6,7 @@
  * Story 122.2-FE: price history sheet integration
  */
 
-import { useState, useCallback } from 'react'
+import { useState, useCallback, useRef } from 'react'
 import { List } from 'lucide-react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Alert, AlertDescription } from '@/components/ui/alert'
@@ -26,11 +26,14 @@ export default function PricingPage() {
   const [historyNmId, setHistoryNmId] = useState<number | null>(null)
   const [historyVendorCode, setHistoryVendorCode] = useState<string | null>(null)
   const [historyOpen, setHistoryOpen] = useState(false)
+  const historyTriggerRef = useRef<HTMLElement | null>(null)
 
   const headerActions = <PricingBasisToggle cabinetId={cabinetId} />
 
   const handleRowClick = useCallback(
     (nmId: number) => {
+      historyTriggerRef.current =
+        document.activeElement instanceof HTMLElement ? document.activeElement : null
       const item = state.items.find(i => i.nmId === nmId)
       setHistoryVendorCode(item?.vendorCode ?? null)
       setHistoryNmId(nmId)
@@ -99,6 +102,7 @@ export default function PricingPage() {
         vendorCode={historyVendorCode}
         open={historyOpen}
         onOpenChange={setHistoryOpen}
+        onReturnFocus={() => historyTriggerRef.current?.focus()}
       />
 
       <ElasticitySection />

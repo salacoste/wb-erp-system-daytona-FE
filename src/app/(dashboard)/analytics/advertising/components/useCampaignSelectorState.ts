@@ -73,7 +73,10 @@ export function useCampaignSelectorState(
         setTempSelectedIds(selectedIds)
       } else {
         isInternalUpdateRef.current = true
-        onSelectionChange(tempSelectedIds)
+        const selectionChanged =
+          tempSelectedIds.length !== selectedIds.length ||
+          tempSelectedIds.some((id, index) => id !== selectedIds[index])
+        if (selectionChanged) onSelectionChange(tempSelectedIds)
       }
       setOpen(newOpen)
     },

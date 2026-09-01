@@ -107,7 +107,7 @@ export function AdvertisingCard({
           <Tooltip>
             <TooltipTrigger asChild>
               <button
-                className="text-muted-foreground hover:text-foreground"
+                className="inline-flex size-11 items-center justify-center rounded-md text-muted-foreground hover:text-foreground"
                 aria-label={`Подробнее о метрике ${cardLabel}`}
               >
                 <Info className="h-4 w-4" />

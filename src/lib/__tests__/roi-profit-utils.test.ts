@@ -20,36 +20,36 @@ import {
 
 describe('getROIColor', () => {
   it('returns gray for null', () => {
-    expect(getROIColor(null)).toBe('text-gray-400')
+    expect(getROIColor(null)).toBe('text-muted-foreground')
   })
 
   it('returns gray for undefined', () => {
-    expect(getROIColor(undefined)).toBe('text-gray-400')
+    expect(getROIColor(undefined)).toBe('text-muted-foreground')
   })
 
   it('returns green-600 for ROI >= 100', () => {
-    expect(getROIColor(100)).toBe('text-green-600')
-    expect(getROIColor(250)).toBe('text-green-600')
+    expect(getROIColor(100)).toBe('text-foreground')
+    expect(getROIColor(250)).toBe('text-foreground')
   })
 
   it('returns green-500 for ROI 50-99', () => {
-    expect(getROIColor(50)).toBe('text-green-500')
-    expect(getROIColor(99)).toBe('text-green-500')
+    expect(getROIColor(50)).toBe('text-foreground')
+    expect(getROIColor(99)).toBe('text-foreground')
   })
 
   it('returns yellow-600 for ROI 20-49', () => {
-    expect(getROIColor(20)).toBe('text-yellow-600')
-    expect(getROIColor(49)).toBe('text-yellow-600')
+    expect(getROIColor(20)).toBe('text-foreground')
+    expect(getROIColor(49)).toBe('text-foreground')
   })
 
   it('returns orange-500 for ROI 0-19', () => {
-    expect(getROIColor(0)).toBe('text-orange-500')
-    expect(getROIColor(19)).toBe('text-orange-500')
+    expect(getROIColor(0)).toBe('text-foreground')
+    expect(getROIColor(19)).toBe('text-foreground')
   })
 
   it('returns red-600 for negative ROI', () => {
-    expect(getROIColor(-1)).toBe('text-red-600')
-    expect(getROIColor(-50)).toBe('text-red-600')
+    expect(getROIColor(-1)).toBe('text-foreground')
+    expect(getROIColor(-50)).toBe('text-foreground')
   })
 })
 

@@ -639,7 +639,11 @@ describe('FbsTrendsChart - Accessibility', () => {
     expect(screen.getByRole('columnheader', { name: 'Дата' })).toBeInTheDocument()
     expect(screen.getByRole('columnheader', { name: 'Заказы, шт.' })).toBeInTheDocument()
     expect(screen.getByRole('columnheader', { name: 'Выручка, ₽' })).toBeInTheDocument()
-    expect(screen.getByRole('row', { name: /2025-12-31.*40/ })).toBeInTheDocument()
+    expect(screen.getByRole('columnheader', { name: 'Отмены, шт.' })).toBeInTheDocument()
+    const firstDataRow = screen.getByRole('row', { name: /2025-12-31.*40/ })
+    expect(firstDataRow).toHaveTextContent('40')
+    expect(firstDataRow).toHaveTextContent('60 000 ₽')
+    expect(firstDataRow).toHaveTextContent('2')
   })
 
   it('disables Recharts animation when reduced motion is requested', () => {

@@ -7,6 +7,7 @@
 import React from 'react'
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { render, screen, waitFor, fireEvent } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { AnomaliesList } from '../AnomaliesList'
 import * as systemApi from '@/lib/api/ai/system'
@@ -182,6 +183,34 @@ describe('AnomaliesList', () => {
       const buttons = screen.getAllByRole('button', { name: 'Разрешить аномалию #anomaly-1' })
       expect(buttons.length).toBeGreaterThanOrEqual(1)
     })
+  })
+
+  it('opens the exact anomaly dialog by keyboard and restores focus when cancelled', async () => {
+    const user = userEvent.setup()
+    mockGetAnomalies.mockResolvedValue({
+      anomalies: [makeAnomaly()],
+      total: 1,
+      page: 1,
+      limit: 20,
+    })
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    mockUseAuthStore.mockImplementation((selector: any) =>
+      selector({ cabinetId: 'cab-123', user: { role: 'Owner' } })
+    )
+    renderList()
+
+    const trigger = await screen.findByRole('button', {
+      name: 'Разрешить аномалию #anomaly-1',
+    })
+    trigger.focus()
+    await user.keyboard('{Enter}')
+    expect(
+      screen.getByRole('dialog', { name: 'Разрешить аномалию #anomaly-1' })
+    ).toBeInTheDocument()
+    expect(screen.getByText('Артикул: 11111111')).toBeInTheDocument()
+
+    await user.click(screen.getByRole('button', { name: 'Отменить' }))
+    await waitFor(() => expect(trigger).toHaveFocus())
   })
 
   it('renders TableCaption naming the analysis (Story 171.1 gap 1)', async () => {

@@ -332,6 +332,10 @@ describe('PeriodComparisonSection - Mode Toggle', () => {
   it('should render toggle buttons', () => {
     renderWithProviders(<PeriodComparisonSection currentWeek="2026-W05" />)
     expect(screen.getByRole('tablist')).toBeInTheDocument()
+    expect(screen.getByRole('tab', { selected: true })).toHaveClass(
+      'bg-primary',
+      'text-primary-foreground'
+    )
   })
 
   it('should switch mode on toggle click', async () => {

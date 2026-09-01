@@ -275,6 +275,18 @@ describe('SuppliesTable', () => {
       expect(onSortChange).toHaveBeenCalledWith('orders_count')
     })
 
+    it('changes sort from the focused sortable header with Enter', async () => {
+      const onSortChange = vi.fn()
+      const user = userEvent.setup()
+      renderTable({ onSortChange })
+
+      const sortButton = screen.getByRole('button', { name: /Создана/ })
+      sortButton.focus()
+      await user.keyboard('{Enter}')
+
+      expect(onSortChange).toHaveBeenCalledWith('created_at')
+    })
+
     it('does not show sort indicator on non-sortable columns', () => {
       renderTable()
       const wbIdHeader = getColumnHeader('WB ID')
@@ -390,7 +402,7 @@ describe('SuppliesTable', () => {
 
     it('renders all supplies as rows', () => {
       renderTable()
-      const rows = screen.getAllByRole('button')
+      const rows = screen.getAllByRole('button', { name: /WB-SUPPLY/ })
       expect(rows).toHaveLength(5)
     })
   })

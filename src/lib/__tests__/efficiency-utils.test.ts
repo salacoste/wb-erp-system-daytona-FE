@@ -284,7 +284,7 @@ describe('ALERT_DISMISS_KEY', () => {
 // dashboard AdvertisingCard, the advertising widget (re-export), and the analytics page
 // (via getRoasColor delegation). roas is a raw multiplier, NOT a percent.
 describe('getRoasColorClass — canonical 5-band ROAS color', () => {
-  it('maps each band to its iconColor (-600 inline shade)', () => {
+  it('maps each band to its semantic iconColor', () => {
     expect(getRoasColorClass(6)).toBe(efficiencyConfig.excellent.iconColor) // ≥5 excellent
     expect(getRoasColorClass(4)).toBe(efficiencyConfig.good.iconColor) // 3-5 good
     expect(getRoasColorClass(2.5)).toBe(efficiencyConfig.moderate.iconColor) // 2-3 moderate
@@ -292,20 +292,20 @@ describe('getRoasColorClass — canonical 5-band ROAS color', () => {
     expect(getRoasColorClass(0.5)).toBe(efficiencyConfig.loss.iconColor) // <1 loss
   })
 
-  it('resolves to the expected literal Tailwind classes', () => {
-    expect(getRoasColorClass(6)).toBe('text-green-600')
-    expect(getRoasColorClass(4)).toBe('text-emerald-600')
-    expect(getRoasColorClass(2.5)).toBe('text-yellow-600')
-    expect(getRoasColorClass(1.5)).toBe('text-orange-600')
-    expect(getRoasColorClass(0.5)).toBe('text-red-600')
+  it('resolves every band to a contrast-safe semantic status token', () => {
+    expect(getRoasColorClass(6)).toBe('text-status-success')
+    expect(getRoasColorClass(4)).toBe('text-status-success')
+    expect(getRoasColorClass(2.5)).toBe('text-status-warning')
+    expect(getRoasColorClass(1.5)).toBe('text-status-warning')
+    expect(getRoasColorClass(0.5)).toBe('text-status-error')
   })
 
   it('uses inclusive lower boundaries (>=)', () => {
-    expect(getRoasColorClass(5)).toBe('text-green-600') // exactly 5 → excellent
-    expect(getRoasColorClass(3)).toBe('text-emerald-600') // exactly 3 → good
-    expect(getRoasColorClass(2)).toBe('text-yellow-600') // exactly 2 → moderate
-    expect(getRoasColorClass(1)).toBe('text-orange-600') // exactly 1 → poor
-    expect(getRoasColorClass(0)).toBe('text-red-600') // exactly 0 → loss
+    expect(getRoasColorClass(5)).toBe('text-status-success') // exactly 5 → excellent
+    expect(getRoasColorClass(3)).toBe('text-status-success') // exactly 3 → good
+    expect(getRoasColorClass(2)).toBe('text-status-warning') // exactly 2 → moderate
+    expect(getRoasColorClass(1)).toBe('text-status-warning') // exactly 1 → poor
+    expect(getRoasColorClass(0)).toBe('text-status-error') // exactly 0 → loss
   })
 
   it('returns muted for null / undefined / NaN (no-data, not loss)', () => {

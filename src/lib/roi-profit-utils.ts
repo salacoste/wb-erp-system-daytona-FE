@@ -13,21 +13,13 @@ import { formatPercentage } from '@/lib/utils'
  * Get color class for ROI value
  * Story 6.3-FE: Color coding based on ROI thresholds
  *
- * | ROI Range | Color | Meaning |
+ * | ROI Range | Semantic token | Meaning |
  * |-----------|-------|---------|
- * | ≥100% | Green-600 | Excellent |
- * | 50-99% | Green-500 | Good |
- * | 20-49% | Yellow-600 | Average |
- * | 0-19% | Orange-500 | Low |
- * | <0% | Red-600 | Negative (losing money) |
+ * | any measured value | foreground | Numeric value and rating carry the meaning |
  */
 export function getROIColor(roi: number | null | undefined): string {
-  if (roi === null || roi === undefined) return 'text-gray-400'
-  if (roi >= 100) return 'text-green-600'
-  if (roi >= 50) return 'text-green-500'
-  if (roi >= 20) return 'text-yellow-600'
-  if (roi >= 0) return 'text-orange-500'
-  return 'text-red-600'
+  if (roi === null || roi === undefined) return 'text-muted-foreground'
+  return 'text-foreground'
 }
 
 /** Get ROI rating label */

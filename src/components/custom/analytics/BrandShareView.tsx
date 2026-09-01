@@ -130,7 +130,7 @@ export function BrandShareView({
             >
               <SelectTrigger
                 aria-labelledby="brand-share-brand-label"
-                className="min-h-11"
+                className="min-h-11 bg-background text-foreground"
                 data-testid="brand-share-brand-select"
               >
                 <SelectValue placeholder="Выберите бренд" />
@@ -160,7 +160,7 @@ export function BrandShareView({
             >
               <SelectTrigger
                 aria-labelledby="brand-share-parent-label"
-                className="min-h-11"
+                className="min-h-11 bg-background text-foreground"
                 data-testid="brand-share-parent-select"
               >
                 <SelectValue placeholder="Выберите категорию" />

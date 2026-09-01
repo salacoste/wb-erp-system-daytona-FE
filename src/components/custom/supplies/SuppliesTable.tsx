@@ -127,16 +127,32 @@ export function SuppliesTable({
                       : undefined
                   }
                 >
-                  <div className={cn('flex items-center', col.align === 'right' && 'justify-end')}>
-                    {col.label}
-                    {col.sortable && (
+                  {col.sortable ? (
+                    <button
+                      type="button"
+                      className={cn(
+                        'flex w-full items-center',
+                        col.align === 'right' && 'justify-end'
+                      )}
+                      onClick={event => {
+                        event.stopPropagation()
+                        onSortChange(col.sortField as SuppliesSortField)
+                      }}
+                    >
+                      {col.label}
                       <SortIndicator
                         field={col.sortField as SuppliesSortField}
                         sortBy={sortBy}
                         sortOrder={sortOrder}
                       />
-                    )}
-                  </div>
+                    </button>
+                  ) : (
+                    <div
+                      className={cn('flex items-center', col.align === 'right' && 'justify-end')}
+                    >
+                      {col.label}
+                    </div>
+                  )}
                 </TableHead>
               ))}
             </TableRow>

@@ -173,6 +173,17 @@ describe('SkuRow — competitor parity FR-2..FR-5 display (#219)', () => {
 
 // 168.9 pass-2: semantic-token DOM pins over the migrated tree (exact classList)
 describe('SkuFinancialsTable tree — 168.9 semantic tokens', () => {
+  it('exposes the active sortable column through aria-sort', () => {
+    render(
+      <SkuFinancialsTable data={[makeItem()]} showExpenseBreakdown={false} showVisibility={false} />
+    )
+
+    expect(screen.getByRole('columnheader', { name: /Опер\. прибыль/ })).toHaveAttribute(
+      'aria-sort',
+      'descending'
+    )
+  })
+
   it('exposes the live table with a stable accessible name', () => {
     render(
       <SkuFinancialsTable data={[makeItem()]} showExpenseBreakdown={false} showVisibility={false} />
@@ -202,7 +213,7 @@ describe('SkuFinancialsTable tree — 168.9 semantic tokens', () => {
     expect(row?.className).not.toMatch(/gray-|yellow-50/)
   })
 
-  it('"Не назначена" COGS cell uses text-status-warning (exact classList)', () => {
+  it('"Не назначена" COGS cell keeps contrast-safe foreground text', () => {
     render(
       <SkuFinancialsTable
         data={[
@@ -217,7 +228,7 @@ describe('SkuFinancialsTable tree — 168.9 semantic tokens', () => {
       />
     )
     const el = screen.getByText('Не назначена')
-    expect(el.classList.contains('text-status-warning')).toBe(true)
+    expect(el.classList.contains('text-foreground')).toBe(true)
     expect(el.className).not.toMatch(/gray-/)
   })
 

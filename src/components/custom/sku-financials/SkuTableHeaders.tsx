@@ -22,7 +22,7 @@ export function SalesQtyHeader({ onSort, sortIcon }: SortableHeaderProps) {
         <Tooltip>
           <TooltipTrigger asChild>
             <span
-              className="cursor-help"
+              className="inline-flex size-6 cursor-help items-center justify-center"
               role="button"
               tabIndex={0}
               aria-label="Информация о продажах: продано штук"
@@ -62,7 +62,7 @@ export function RevenueNetHeader({ onSort, sortIcon }: SortableHeaderProps) {
         <Tooltip>
           <TooltipTrigger asChild>
             <span
-              className="cursor-help"
+              className="inline-flex size-6 cursor-help items-center justify-center"
               role="button"
               tabIndex={0}
               aria-label="Информация о выручке: К перечислению"
@@ -136,7 +136,7 @@ export function MarginHeader({ onSort, sortIcon }: SortableHeaderProps) {
         <Tooltip>
           <TooltipTrigger asChild>
             <span
-              className="cursor-help"
+              className="inline-flex size-6 cursor-help items-center justify-center"
               role="button"
               tabIndex={0}
               aria-label="Информация о марже: операционная маржинальность"

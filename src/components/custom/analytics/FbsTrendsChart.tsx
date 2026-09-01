@@ -153,18 +153,18 @@ export function FbsTrendsChart({
           <thead>
             <tr>
               <th scope="col">Дата</th>
-              {visibility.orders && <th scope="col">Заказы, шт.</th>}
-              {visibility.revenue && <th scope="col">Выручка, ₽</th>}
-              {visibility.cancellations && <th scope="col">Отмены, шт.</th>}
+              <th scope="col">Заказы, шт.</th>
+              <th scope="col">Выручка, ₽</th>
+              <th scope="col">Отмены, шт.</th>
             </tr>
           </thead>
           <tbody>
             {data.trends.map(point => (
               <tr key={point.date}>
                 <th scope="row">{point.date}</th>
-                {visibility.orders && <td>{formatNumber(point.ordersCount)}</td>}
-                {visibility.revenue && <td>{formatCurrency(point.revenue)}</td>}
-                {visibility.cancellations && <td>{formatNumber(point.cancellations)}</td>}
+                <td>{formatNumber(point.ordersCount)}</td>
+                <td>{formatCurrency(point.revenue)}</td>
+                <td>{formatNumber(point.cancellations)}</td>
               </tr>
             ))}
           </tbody>

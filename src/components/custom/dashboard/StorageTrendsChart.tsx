@@ -148,7 +148,7 @@ interface TooltipPayload {
   payload: StorageTrendPoint
 }
 
-function ChartTooltip({
+export function ChartTooltip({
   active,
   payload,
   label,

@@ -20,8 +20,15 @@ describe('MultiCampaignWarningBanner', () => {
 
   it('renders alert when warningCount > 0 and not dismissed', () => {
     render(<MultiCampaignWarningBanner warningCount={3} />)
-    expect(screen.getByRole('alert')).toBeInTheDocument()
-    expect(screen.getByText('Мультипликация расходов')).toBeInTheDocument()
+    const alert = screen.getByRole('alert')
+    const title = screen.getByText('Мультипликация расходов')
+    const description = screen.getByText(/3 товара участвуют/)
+
+    expect(alert).toHaveClass('bg-status-warning/15', 'border-status-warning/30')
+    expect(title).toHaveClass('text-foreground')
+    expect(description).toHaveClass('text-foreground')
+    expect(title).not.toHaveClass('text-status-warning')
+    expect(description).not.toHaveClass('text-status-warning')
   })
 
   it('shows correct Russian pluralization for 1 item', () => {

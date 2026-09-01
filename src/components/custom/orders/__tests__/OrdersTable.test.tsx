@@ -202,6 +202,17 @@ describe('OrdersTable', () => {
       expect(defaultProps.onSortChange).toHaveBeenCalledWith('price')
     })
 
+    it('calls onSortChange from the focused sortable header with Enter', async () => {
+      const user = userEvent.setup()
+      renderTable()
+
+      const sortButton = screen.getByRole('button', { name: /^Цена$/ })
+      sortButton.focus()
+      await user.keyboard('{Enter}')
+
+      expect(defaultProps.onSortChange).toHaveBeenCalledWith('price')
+    })
+
     it('does not set aria-sort on non-sortable columns', () => {
       renderTable()
       const productHeader = screen.getByText('Товар').closest('th')

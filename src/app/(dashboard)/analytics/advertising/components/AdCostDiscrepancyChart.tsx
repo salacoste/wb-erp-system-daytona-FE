@@ -54,6 +54,10 @@ function tooltipNumber(value: unknown): number {
   return typeof value === 'number' ? value : Number(value) || 0
 }
 
+export function formatAdCostTooltipValue(value: unknown): string {
+  return formatCurrency(tooltipNumber(value))
+}
+
 export function AdCostDiscrepancyChart({
   platformSpend,
   actualDeduction,
@@ -121,7 +125,7 @@ export function AdCostDiscrepancyChart({
                 width={120}
               />
               <Tooltip
-                formatter={value => [formatCurrency(tooltipNumber(value)), 'Расход']}
+                formatter={value => [formatAdCostTooltipValue(value), 'Расход, ₽']}
                 contentStyle={{ fontSize: 12, borderRadius: 8 }}
               />
               <Bar dataKey="value" radius={[0, 4, 4, 0]} maxBarSize={36} animationDuration={300}>

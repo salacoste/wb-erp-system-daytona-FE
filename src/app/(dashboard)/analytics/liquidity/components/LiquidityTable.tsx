@@ -61,7 +61,12 @@ export function LiquidityTable({
               {activeFilter && (
                 <Badge variant="outline" className="ml-2">
                   {getLiquidityCategoryConfig(activeFilter).label}
-                  <button onClick={onClearFilter} className="ml-1 hover:text-destructive">
+                  <button
+                    type="button"
+                    aria-label={`Сбросить фильтр ${getLiquidityCategoryConfig(activeFilter).label}`}
+                    onClick={onClearFilter}
+                    className="ml-1 hover:text-destructive"
+                  >
                     <X className="h-3 w-3" />
                   </button>
                 </Badge>
@@ -92,14 +97,14 @@ export function LiquidityTable({
                     <Fragment key={item.sku_id}>
                       <TableRow
                         className={cn(
-                          'cursor-pointer hover:bg-muted/50',
+                          'hover:bg-muted/50',
                           expandedRow === item.sku_id && 'bg-muted/30'
                         )}
-                        onClick={() => toggleRow(item.sku_id)}
                       >
                         <LiquidityTableRowCells
                           item={item}
                           isExpanded={expandedRow === item.sku_id}
+                          onToggle={() => toggleRow(item.sku_id)}
                           onPlannerOpen={setPlannerItem}
                         />
                       </TableRow>

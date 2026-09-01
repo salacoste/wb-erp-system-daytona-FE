@@ -204,6 +204,20 @@ describe('CampaignSelector', () => {
   })
 
   describe('Selection Callback', () => {
+    it('does not refetch the page when an unchanged selector closes', async () => {
+      const user = userEvent.setup()
+      renderWithProviders(
+        <CampaignSelector selectedIds={[]} onSelectionChange={onSelectionChange} />
+      )
+
+      await waitFor(() => expect(screen.getByRole('combobox')).toBeEnabled())
+      await user.click(screen.getByRole('combobox'))
+      await waitFor(() => expect(screen.getByRole('button', { name: 'Готово' })).toBeVisible())
+      await user.click(screen.getByRole('button', { name: 'Готово' }))
+
+      expect(onSelectionChange).not.toHaveBeenCalled()
+    })
+
     it('calls onSelectionChange when dropdown closes after selection', async () => {
       const user = userEvent.setup()
       renderWithProviders(

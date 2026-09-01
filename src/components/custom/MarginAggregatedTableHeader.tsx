@@ -44,11 +44,13 @@ export function MarginAggregatedTableHeader({
   showProfitPerUnit,
 }: Props) {
   const Icon = (f: AggregatedSortField) => <SI field={f} current={sortField} order={sortOrder} />
+  const ariaSort = (field: AggregatedSortField) =>
+    sortField === field ? (sortOrder === 'asc' ? 'ascending' : 'descending') : undefined
 
   return (
     <TableHeader>
       <TableRow>
-        <TableHead>
+        <TableHead aria-sort={ariaSort('entity')}>
           <button
             onClick={() => onSort('entity')}
             className="flex items-center font-medium hover:text-blue-600"
@@ -57,7 +59,7 @@ export function MarginAggregatedTableHeader({
             {Icon('entity')}
           </button>
         </TableHead>
-        <TableHead className="text-right">
+        <TableHead className="text-right" aria-sort={ariaSort('qty')}>
           <button
             onClick={() => onSort('qty')}
             className="ml-auto flex items-center font-medium hover:text-blue-600"
@@ -65,7 +67,7 @@ export function MarginAggregatedTableHeader({
             Товаров (SKU){Icon('qty')}
           </button>
         </TableHead>
-        <TableHead className="text-right">
+        <TableHead className="text-right" aria-sort={ariaSort('revenue_net')}>
           <button
             onClick={() => onSort('revenue_net')}
             className="ml-auto flex items-center font-medium hover:text-blue-600"
@@ -76,7 +78,7 @@ export function MarginAggregatedTableHeader({
         <TableHead className="text-right">
           <div className="flex items-center justify-end font-medium">Себестоимость</div>
         </TableHead>
-        <TableHead className="text-right">
+        <TableHead className="text-right" aria-sort={ariaSort('profit')}>
           <button
             onClick={() => onSort('profit')}
             className="ml-auto flex items-center font-medium hover:text-blue-600"
@@ -84,7 +86,7 @@ export function MarginAggregatedTableHeader({
             Прибыль{Icon('profit')}
           </button>
         </TableHead>
-        <TableHead className="text-right">
+        <TableHead className="text-right" aria-sort={ariaSort('margin_pct')}>
           <button
             onClick={() => onSort('margin_pct')}
             className="ml-auto flex items-center font-medium hover:text-blue-600"
@@ -120,7 +122,7 @@ export function MarginAggregatedTableHeader({
           <div className="ml-auto flex items-center font-medium">Доля остатка</div>
         </TableHead>
         {showProfitPerUnit && (
-          <TableHead className="text-right">
+          <TableHead className="text-right" aria-sort={ariaSort('profit_per_unit')}>
             <TooltipProvider>
               <Tooltip>
                 <TooltipTrigger asChild>
@@ -141,7 +143,7 @@ export function MarginAggregatedTableHeader({
           </TableHead>
         )}
         {showROI && (
-          <TableHead className="text-right">
+          <TableHead className="text-right" aria-sort={ariaSort('roi')}>
             <TooltipProvider>
               <Tooltip>
                 <TooltipTrigger asChild>
@@ -161,7 +163,7 @@ export function MarginAggregatedTableHeader({
             </TooltipProvider>
           </TableHead>
         )}
-        <TableHead className="text-right">
+        <TableHead className="text-right" aria-sort={ariaSort('operating_profit')}>
           <TooltipProvider>
             <Tooltip>
               <TooltipTrigger asChild>

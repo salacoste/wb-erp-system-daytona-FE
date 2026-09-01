@@ -1,3 +1,4 @@
+import { createHash } from 'node:crypto'
 import { existsSync, readFileSync } from 'node:fs'
 
 import { describe, expect, it } from 'vitest'
@@ -8,6 +9,52 @@ import {
   TABLE_FEATURES,
 } from '../../e2e/fixtures/story-174-3-surface-contracts'
 import { STORY_174_3_ROUTE_EVIDENCE } from '../../e2e/fixtures/story-174-3-visual-accessibility'
+import type {
+  Story1743ConditionalVerification,
+  Story1743OwnerTestBinding,
+} from '../../e2e/fixtures/story-174-3/surface-types'
+import type { Story1743ExecutionManifest } from '../../e2e/fixtures/story-174-3/execution-manifest'
+
+const EXECUTION_MANIFEST = JSON.parse(
+  readFileSync('e2e/fixtures/story-174-3/execution-manifest.json', 'utf8')
+) as Story1743ExecutionManifest
+
+function expectOwnerTestBinding(binding: Story1743OwnerTestBinding) {
+  expect(binding.execution).toBe('owner-test')
+  expect(binding.runner).toMatch(/^(?:vitest|playwright)$/)
+  expect(binding.source).not.toBe('')
+  expect(binding.scenarioId).not.toBe('')
+  expect(existsSync(binding.source)).toBe(true)
+
+  const source = readFileSync(binding.source, 'utf8')
+  expect(
+    source.split(binding.scenarioId).length - 1,
+    `${binding.source} :: ${binding.scenarioId}`
+  ).toBe(1)
+  const sourceSha256 = createHash('sha256').update(source).digest('hex')
+  const entry = EXECUTION_MANIFEST.entries.find(
+    candidate => candidate.source === binding.source && candidate.scenarioId === binding.scenarioId
+  )
+  expect(entry, `${binding.source} :: ${binding.scenarioId}`).toEqual(
+    expect.objectContaining({
+      exitCode: 0,
+      result: 'passed',
+      runner: binding.runner,
+      sourceSha256,
+    })
+  )
+}
+
+function expectConditionalVerification(verification: Story1743ConditionalVerification) {
+  if (verification.execution === 'owner-test') {
+    expectOwnerTestBinding(verification)
+    return
+  }
+  expect(verification.role).toMatch(/^(?:button|tab)$/)
+  expect(verification.name).not.toBe('')
+  expect(verification.restoreName).not.toBe('')
+  expect(verification.activationKey).toBe('Enter')
+}
 
 const REQUIRED_OVERLAY_ROUTES = [
   '/settings/backfill',
@@ -99,6 +146,8 @@ describe('Story 174.3 fail-closed surface contracts', () => {
 
     for (const row of STORY_174_3_ROUTE_EVIDENCE) {
       const contract = STORY_174_3_SURFACE_CONTRACTS[row.route]
+      expect(contract.keyboard.surface).toBe('main-or-route-body')
+      expect(contract.keyboard.rationale).toContain(row.route)
       expect(contract.overlay.disposition).toBe('executed')
       expect(contract.overlay.expectedCount).toBe(contract.overlay.inventory.length)
       expect(contract.overlay.evidenceSource).toBe(row.entry)
@@ -106,6 +155,7 @@ describe('Story 174.3 fail-closed surface contracts', () => {
       for (const conditional of contract.overlay.conditionalInventory) {
         expect(conditional.disposition).toBe('not-applicable-in-canonical-default')
         expect(conditional.rationale).toContain(row.route)
+        expectConditionalVerification(conditional.verification)
       }
 
       for (const overlay of [
@@ -126,6 +176,14 @@ describe('Story 174.3 fail-closed surface contracts', () => {
         expect(existsSync(overlay.evidence.source)).toBe(true)
         expect(readFileSync(overlay.evidence.source, 'utf8')).toContain(overlay.evidence.anchor)
       }
+
+      for (const overlay of contract.overlay.inventory) {
+        expect(overlay.behavior).toEqual({
+          closeKey: 'Escape',
+          execution: 'canonical-runner',
+          openKey: 'Enter',
+        })
+      }
     }
 
     expect(STORY_174_3_SURFACE_CONTRACTS['/dashboard'].overlay.inventory).toEqual(
@@ -136,6 +194,15 @@ describe('Story 174.3 fail-closed surface contracts', () => {
     expect(STORY_174_3_SURFACE_CONTRACTS['/analytics/funnel'].overlay.inventory).toEqual(
       expect.arrayContaining([
         expect.objectContaining({ id: 'product-filter', archetype: 'non-modal-popover' }),
+      ])
+    )
+    expect(
+      STORY_174_3_SURFACE_CONTRACTS['/cogs/price-calculator'].overlay.conditionalInventory.map(
+        item => item.item
+      )
+    ).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({ id: 'reset-confirmation', archetype: 'modal-dialog' }),
       ])
     )
     for (const route of REQUIRED_OVERLAY_ROUTES) {
@@ -166,6 +233,20 @@ describe('Story 174.3 fail-closed surface contracts', () => {
         for (const conditional of surface.conditionalSurfaces) {
           expect(conditional.disposition).toBe('not-applicable-in-canonical-default')
           expect(conditional.rationale).toContain(row.route)
+          expectConditionalVerification(conditional.verification)
+          if (conditional.verification.execution === 'owner-test') {
+            expect(
+              Object.values(conditional.item.features).every(
+                feature => feature.disposition === 'not-applicable'
+              )
+            ).toBe(true)
+          } else {
+            expect(
+              Object.values(conditional.item.features).some(
+                feature => feature.disposition === 'executed'
+              )
+            ).toBe(true)
+          }
         }
 
         const knownSurfaces = [
@@ -184,6 +265,27 @@ describe('Story 174.3 fail-closed surface contracts', () => {
             expect(disposition.disposition).toMatch(/^(?:executed|not-applicable)$/)
             expect(disposition.rationale).toContain(feature)
             expect(disposition.rationale).toContain(row.route)
+            if (disposition.disposition === 'executed') {
+              expect(disposition.assertion).toMatch(/^canonical-runner:/)
+            }
+          }
+          const paginationFeature =
+            'pagination' in expected.features ? expected.features.pagination : undefined
+          if (surfaceKind === 'table' && paginationFeature?.disposition === 'executed') {
+            expect('pagination' in expected && expected.pagination).toEqual({
+              nextName: expect.any(String),
+              previousName: expect.any(String),
+              evidence: {
+                anchor: expect.any(String),
+                source: expect.stringMatching(/^src\/.+\.tsx$/),
+              },
+            })
+            if ('pagination' in expected && expected.pagination) {
+              expect(existsSync(expected.pagination.evidence.source)).toBe(true)
+              expect(readFileSync(expected.pagination.evidence.source, 'utf8')).toContain(
+                expected.pagination.evidence.anchor
+              )
+            }
           }
 
           if ('narrowWidthDisposition' in expected) {
@@ -191,15 +293,120 @@ describe('Story 174.3 fail-closed surface contracts', () => {
               /^(?:executed|not-applicable)$/
             )
             expect(expected.narrowWidthDisposition.rationale).toContain(row.route)
+            const actionsExecuted =
+              expected.features['selection-and-actions'].disposition === 'executed'
+            const conditional = surface.conditionalSurfaces.find(
+              item => item.item.id === expected.id
+            )
+            if (conditional?.verification.execution === 'owner-test') {
+              expect(actionsExecuted, `${row.route}:${expected.id}`).toBe(false)
+            } else {
+              expect(Boolean(expected.interaction), `${row.route}:${expected.id}`).toBe(
+                actionsExecuted
+              )
+            }
+            if (expected.interaction) expectOwnerTestBinding(expected.interaction)
           }
 
           if ('alternative' in expected) {
-            expect(expected.alternative.association).toBe('explicit-accessible-name')
+            expect(expected.alternative.association).toMatch(
+              /^(?:explicit-accessible-name|shared-complete-data-table)$/
+            )
             expect(expected.alternative.selector).not.toBe('[data-chart-summary]')
             expect(expected.alternative.accessibleName).not.toBe('')
+            expect(expected.alternative.requiredSeriesTokens.length).toBeGreaterThan(0)
+            expectOwnerTestBinding(expected.tooltip)
+            if (expected.alternative.association === 'shared-complete-data-table') {
+              expect(expected.alternative.selector).toMatch(/^#[a-z0-9-]+$/)
+              expect(expected.alternative.sharedSurfaceIds?.length).toBeGreaterThanOrEqual(2)
+              expect(expected.alternative.sharedSurfaceIds).toContain(expected.id)
+            }
           }
         }
       }
+    }
+  })
+
+  it('uses surface-specific feature declarations instead of generic profile claims', () => {
+    const unitEconomics =
+      STORY_174_3_SURFACE_CONTRACTS['/analytics/unit-economics'].table.surfaces[0]!
+    expect(unitEconomics.features.sorting.disposition).toBe('executed')
+    expect(unitEconomics.features.sorting.rationale).toContain('/analytics/unit-economics')
+    expect(unitEconomics.features.pagination.disposition).toBe('not-applicable')
+    expect(unitEconomics.features.pagination.rationale).toContain('page-size threshold')
+
+    expect(
+      Object.entries(STORY_174_3_SURFACE_CONTRACTS)
+        .flatMap(([route, contract]) =>
+          contract.table.surfaces
+            .filter(surface => surface.features.pagination.disposition === 'executed')
+            .map(surface => `${route}:${surface.id}`)
+        )
+        .sort()
+    ).toEqual([
+      '/analytics/advertising:advertising-metrics',
+      '/analytics/buyout:buyout-products',
+      '/analytics/funnel:funnel-days',
+      '/analytics/returns:returns-by-sku',
+      '/analytics/supply-planning:supply-planning-skus',
+      '/orders:fbs-orders',
+      '/supplies:supplies',
+    ])
+
+    const chart = STORY_174_3_SURFACE_CONTRACTS['/analytics/orders'].chart.surfaces[0]!
+    expect(chart.features.title.disposition).toBe('executed')
+    expect(chart.features['responsive-containment'].disposition).toBe('executed')
+    expect(chart.features['reduced-motion'].disposition).toBe('executed')
+    expect(chart.features['exact-data-alternative'].disposition).toBe('executed')
+    expect(chart.features['period-and-units'].disposition).toBe('executed')
+    expect(chart.features['series-or-legend-meaning'].disposition).toBe('executed')
+    expect(chart.features['tooltip-precision'].disposition).toBe('executed')
+
+    const pointInTimeChart =
+      STORY_174_3_SURFACE_CONTRACTS['/analytics/unit-economics'].chart.surfaces[0]!
+    expect(pointInTimeChart.features['period-and-units'].disposition).toBe('not-applicable')
+    expect(pointInTimeChart.features['period-and-units'].rationale).toContain('point-in-time')
+    expect(pointInTimeChart.features['series-or-legend-meaning'].disposition).toBe('executed')
+    expect(pointInTimeChart.features['tooltip-precision'].disposition).toBe('executed')
+
+    const fixture = readFileSync('e2e/fixtures/story-174-3/table-inventory.ts', 'utf8')
+    expect(fixture).not.toContain("profile: 'sortable'")
+    expect(fixture).not.toContain("profile: 'actionable'")
+
+    const featureRationales = Object.values(STORY_174_3_SURFACE_CONTRACTS).flatMap(contract =>
+      [
+        ...contract.table.surfaces,
+        ...contract.table.conditionalSurfaces.map(conditional => conditional.item),
+        ...contract.chart.surfaces,
+        ...contract.chart.conditionalSurfaces.map(conditional => conditional.item),
+      ].flatMap(surface => Object.values(surface.features).map(feature => feature.rationale))
+    )
+    expect(featureRationales).not.toEqual(
+      expect.arrayContaining([
+        expect.stringContaining('not claimed without a surface-specific executable expectation'),
+      ])
+    )
+
+    const sharedLiquidityAlternatives = STORY_174_3_SURFACE_CONTRACTS[
+      '/analytics/liquidity'
+    ].chart.surfaces.filter(
+      surface => surface.alternative.association === 'shared-complete-data-table'
+    )
+    expect(sharedLiquidityAlternatives.map(surface => surface.id).sort()).toEqual([
+      'liquidity-distribution-trend',
+      'liquidity-trend',
+    ])
+    expect(
+      new Set(sharedLiquidityAlternatives.map(surface => surface.alternative.selector))
+    ).toEqual(new Set(['#liquidity-trend-complete-data']))
+    expect(
+      new Set(sharedLiquidityAlternatives.map(surface => surface.alternative.accessibleName))
+    ).toEqual(new Set(['Динамика ликвидности по дням']))
+    for (const surface of sharedLiquidityAlternatives) {
+      expect(surface.alternative.sharedSurfaceIds).toEqual([
+        'liquidity-trend',
+        'liquidity-distribution-trend',
+      ])
     }
   })
 
@@ -241,11 +448,16 @@ describe('Story 174.3 fail-closed surface contracts', () => {
   })
 
   it('keeps the runner fail-closed without counting hidden Radix inputs or obsolete gaps', () => {
-    const runner = readFileSync('e2e/shadcn-migration-visual-accessibility.spec.ts', 'utf8')
-    expect(runner).toContain('input[aria-hidden="true"]')
-    expect(runner).toContain('input[type="hidden"]')
-    expect(runner).toContain('input[tabindex="-1"]')
-    expect(runner).toContain('.filter(visible)')
+    const runner = readFileSync('e2e/support/story-174-3-runner-interactions.ts', 'utf8')
+    expect(runner).toContain(':not([aria-hidden="true"])')
+    expect(runner).toContain(':not([type="hidden"])')
+    expect(runner).toContain(':not([tabindex="-1"])')
+    expect(runner).not.toContain(', [tabindex]:visible')
+    expect(runner).not.toContain('routeOwnedControlCount === 0')
+    expect(runner).toContain('routeSurface.locator')
+    expect(runner).toContain('overlay receives keyboard focus')
+    expect(runner).toContain("page.locator('main:visible').first()")
+    expect(runner).toContain("!node.closest('header, nav, aside, [data-sidebar]')")
     expect(runner).not.toContain('dedicatedBrowserGap')
   })
 })

@@ -169,6 +169,14 @@ describe('BrandShareView', () => {
     renderView()
     expect(screen.getByTestId('brand-share-brand-select').className).toContain('min-h-11')
     expect(screen.getByTestId('brand-share-parent-select').className).toContain('min-h-11')
+    expect(screen.getByTestId('brand-share-brand-select')).toHaveClass(
+      'bg-background',
+      'text-foreground'
+    )
+    expect(screen.getByTestId('brand-share-parent-select')).toHaveClass(
+      'bg-background',
+      'text-foreground'
+    )
     mockReport.mockReturnValue({
       data: undefined,
       isLoading: false,

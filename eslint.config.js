@@ -105,6 +105,17 @@ module.exports = [
     rules: {
       '@typescript-eslint/no-unused-vars': ['error', { argsIgnorePattern: '^_' }],
       'no-console': 'off',
+      'max-lines': ['error', { max: 800, skipBlankLines: true, skipComments: true }],
+    },
+  },
+  // Historical E2E debt predating Story 174.3. Keep the exemptions exact so
+  // every other browser spec and fixture is covered by the executable cap.
+  // These files are unchanged by Story 174.3 and must be split in their owner
+  // lifecycles rather than hidden inside this verification Story.
+  {
+    files: ['e2e/fixtures/playwright-network-guard.ts', 'e2e/onboarding.spec.ts'],
+    rules: {
+      'max-lines': 'off',
     },
   },
   // Test files — higher line cap (800 vs 200)

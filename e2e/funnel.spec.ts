@@ -50,6 +50,51 @@ async function gotoFunnel(page: import('@playwright/test').Page) {
     .waitFor({ state: 'visible', timeout: TIMEOUTS.api })
 }
 
+async function installPopulatedFunnelFixture(page: import('@playwright/test').Page) {
+  const response = emptyFunnelResponse({
+    items: [
+      makeFunnelProductItem({
+        nmId: 887604577,
+        vendorCode: 'story-174-3-funnel',
+        brandName: 'Story 174.3',
+        openCardCount: 120,
+        addToCartCount: 60,
+        ordersCount: 30,
+        ordersSumRub: 45_000,
+        buyoutCount: 24,
+        buyoutSumRub: 36_000,
+        cancelCount: 6,
+        cancelSumRub: 9_000,
+      }),
+    ],
+    summary: {
+      openCardCount: 120,
+      addToCartCount: 60,
+      ordersCount: 30,
+      ordersSumRub: 45_000,
+      buyoutCount: 24,
+      buyoutSumRub: 36_000,
+      cancelCount: 6,
+      cancelSumRub: 9_000,
+      cartConversion: 50,
+      orderConversion: 50,
+      buyoutConversion: 80,
+      cancelRate: 20,
+      totalConversion: 20,
+    },
+    pagination: { total: 1, limit: 50, offset: 0, hasMore: false },
+  })
+
+  await page.route(FUNNEL_API_GLOB, (route, request) => {
+    if (request.url().includes('sync-status')) return route.fallback()
+    return route.fulfill({
+      status: 200,
+      contentType: 'application/json',
+      body: JSON.stringify(response),
+    })
+  })
+}
+
 // ---------------------------------------------------------------------------
 // Main describe block
 // ---------------------------------------------------------------------------
@@ -108,6 +153,7 @@ test.describe('Funnel Analytics page', () => {
   // -------------------------------------------------------------------------
   test('summary cards render metric labels for the 8 funnel KPIs', async ({ page }) => {
     test.setTimeout(TEST_TIMEOUT)
+    await installPopulatedFunnelFixture(page)
     await gotoFunnel(page)
 
     // All 8 metric card labels must be present
@@ -132,6 +178,7 @@ test.describe('Funnel Analytics page', () => {
   // -------------------------------------------------------------------------
   test('table header contains Топ поисковых запросов column', async ({ page }) => {
     test.setTimeout(TEST_TIMEOUT)
+    await installPopulatedFunnelFixture(page)
     await gotoFunnel(page)
 
     const table = page.locator('table')

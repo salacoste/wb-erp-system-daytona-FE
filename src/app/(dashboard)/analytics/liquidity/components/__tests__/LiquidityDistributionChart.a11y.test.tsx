@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from 'vitest'
-import { render, screen } from '@testing-library/react'
+import { render, screen, within } from '@testing-library/react'
 import { LiquidityDistributionChart } from '../LiquidityDistributionChart'
 import type { LiquidityDistribution } from '@/types/liquidity'
 
@@ -20,7 +20,7 @@ const distribution: LiquidityDistribution = {
 }
 
 describe('LiquidityDistributionChart accessibility', () => {
-  it('provides a named chart and an exact category data table', () => {
+  it('exposes exact percentage, SKU, currency units, categories, and value precision', () => {
     render(<LiquidityDistributionChart distribution={distribution} />)
 
     expect(
@@ -28,13 +28,21 @@ describe('LiquidityDistributionChart accessibility', () => {
         name: 'График распределения товаров по категориям ликвидности',
       })
     ).toBeVisible()
+    const table = screen.getByRole('table', { name: 'Распределение товаров по ликвидности' })
+    expect(within(table).getByRole('columnheader', { name: 'Категория' })).toBeInTheDocument()
     expect(
-      screen.getByRole('table', { name: 'Распределение товаров по ликвидности' })
+      within(table).getByRole('columnheader', { name: 'Доля стоимости запасов' })
     ).toBeInTheDocument()
-    expect(screen.getByRole('columnheader', { name: 'Категория' })).toBeInTheDocument()
-    expect(screen.getByRole('columnheader', { name: 'Доля стоимости запасов' })).toBeInTheDocument()
-    expect(screen.getByRole('columnheader', { name: 'SKU' })).toBeInTheDocument()
-    expect(screen.getByRole('columnheader', { name: 'Стоимость запасов' })).toBeInTheDocument()
-    expect(screen.getByRole('rowheader', { name: 'Высоколиквидный' })).toBeInTheDocument()
+    expect(within(table).getByRole('columnheader', { name: 'SKU' })).toBeInTheDocument()
+    expect(
+      within(table).getByRole('columnheader', { name: 'Стоимость запасов' })
+    ).toBeInTheDocument()
+    expect(within(table).getByRole('rowheader', { name: 'Высоколиквидный' })).toBeInTheDocument()
+    expect(within(table).getByRole('cell', { name: '50,0 %' })).toBeInTheDocument()
+    expect(within(table).getByRole('cell', { name: '10' })).toBeInTheDocument()
+    expect(within(table).getByRole('cell', { name: '50 000 ₽' })).toBeInTheDocument()
+    expect(within(table).getByRole('rowheader', { name: 'Неликвид' })).toBeInTheDocument()
+    expect(within(table).getByRole('cell', { name: '5,0 %' })).toBeInTheDocument()
+    expect(within(table).getByRole('cell', { name: '5 000 ₽' })).toBeInTheDocument()
   })
 })

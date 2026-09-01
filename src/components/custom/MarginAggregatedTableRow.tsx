@@ -73,7 +73,7 @@ export function MarginAggregatedTableRow({
   return (
     <TableRow
       key={rowKey}
-      className={cn('cursor-pointer hover:bg-gray-50', hasMissingCogs && 'bg-yellow-50/30')}
+      className={cn('cursor-pointer hover:bg-muted/50', hasMissingCogs && 'bg-status-warning/10')}
       onClick={() => onEntityClick && entityValue && onEntityClick(entityValue)}
     >
       <TableCell>
@@ -87,19 +87,19 @@ export function MarginAggregatedTableRow({
       <TableCell className="text-right font-medium">{formatCogs(item.revenue_net)}</TableCell>
       <TableCell className="text-right">
         {hasCogs ? (
-          <span className="text-gray-700">{formatCogs(item.cogs)}</span>
+          <span className="text-foreground">{formatCogs(item.cogs)}</span>
         ) : (
-          <span className="text-xs text-gray-400">—</span>
+          <span className="text-xs text-muted-foreground">—</span>
         )}
       </TableCell>
       <TableCell className="text-right">
         {hasCogs && item.profit !== undefined ? (
-          <span className={cn('font-medium', item.profit >= 0 ? 'text-green-600' : 'text-red-600')}>
+          <span className="font-medium text-foreground">
             {item.profit > 0 ? '+' : ''}
             {formatCogs(item.profit)}
           </span>
         ) : (
-          <span className="text-xs text-gray-400">—</span>
+          <span className="text-xs text-muted-foreground">—</span>
         )}
       </TableCell>
       <TableCell className="text-right">
@@ -108,38 +108,41 @@ export function MarginAggregatedTableRow({
           missingDataReason={!hasCogs ? 'COGS_NOT_ASSIGNED' : null}
         />
       </TableCell>
-      <TableCell className="text-right text-gray-600" title="Вклад в общую выручку">
+      <TableCell className="text-right text-muted-foreground" title="Вклад в общую выручку">
         {revenueShare === null ? '—' : formatPercentage(revenueShare, 1)}
       </TableCell>
-      <TableCell className="text-right text-gray-600" title="Вклад в валовую прибыль">
+      <TableCell className="text-right text-muted-foreground" title="Вклад в валовую прибыль">
         {profitShare === null ? '—' : formatPercentage(profitShare, 1)}
       </TableCell>
-      <TableCell className="text-right text-gray-600" title="Расходы на рекламу">
+      <TableCell className="text-right text-muted-foreground" title="Расходы на рекламу">
         {item.advertising_cost == null ? '—' : formatCurrency(item.advertising_cost)}
       </TableCell>
       <TableCell
-        className="text-right text-gray-600"
+        className="text-right text-muted-foreground"
         title="Доля рекламных расходов в выручке (ДРР)"
       >
         {item.drr_pct == null ? '—' : formatPercentage(item.drr_pct, 1)}
       </TableCell>
-      <TableCell className="text-right text-gray-600" title="Чистая прибыль после налога">
+      <TableCell className="text-right text-muted-foreground" title="Чистая прибыль после налога">
         {item.net_profit_after_tax == null ? '—' : formatCurrency(item.net_profit_after_tax)}
       </TableCell>
-      <TableCell className="text-right text-gray-600" title="Сумма продаж без скидок (СПП)">
+      <TableCell className="text-right text-muted-foreground" title="Сумма продаж без скидок (СПП)">
         {item.spp_rub == null ? '—' : formatCurrency(item.spp_rub)}
       </TableCell>
-      <TableCell className="text-right text-gray-600" title="Количество отмен">
+      <TableCell className="text-right text-muted-foreground" title="Количество отмен">
         {item.cancellations_qty ?? '—'}
       </TableCell>
-      <TableCell className="text-right text-gray-600" title="Стоимость остатков по закупочной цене">
+      <TableCell
+        className="text-right text-muted-foreground"
+        title="Стоимость остатков по закупочной цене"
+      >
         {item.stock_value_rub == null ? '—' : formatCurrency(item.stock_value_rub)}
       </TableCell>
       {/* Not rowCount-gated (unlike revenueShare/profitShare): a per-entity liquidity ratio
           (stock ÷ working capital), not a contribution-to-table-total share — 100 % for one
           row is meaningful, not degenerate. */}
       <TableCell
-        className="text-right text-gray-600"
+        className="text-right text-muted-foreground"
         title="Доля стоимости остатков в оборотном капитале"
       >
         {item.stock_value_share_pct == null ? '—' : formatPercentage(item.stock_value_share_pct, 1)}
@@ -147,21 +150,13 @@ export function MarginAggregatedTableRow({
       {showProfitPerUnit && (
         <TableCell className="text-right">
           {hasCogs && item.profit !== undefined ? (
-            <span
-              className={cn(
-                'font-medium',
-                (item.profit_per_unit ?? calculateProfitPerUnit(item.profit, item.qty)) !== null &&
-                  (item.profit_per_unit ?? calculateProfitPerUnit(item.profit, item.qty))! >= 0
-                  ? 'text-green-600'
-                  : 'text-red-600'
-              )}
-            >
+            <span className="font-medium text-foreground">
               {formatProfitPerUnit(
                 item.profit_per_unit ?? calculateProfitPerUnit(item.profit, item.qty)
               )}
             </span>
           ) : (
-            <span className="text-xs text-gray-400">—</span>
+            <span className="text-xs text-muted-foreground">—</span>
           )}
         </TableCell>
       )}
@@ -177,7 +172,7 @@ export function MarginAggregatedTableRow({
               {formatROI(item.roi ?? calculateROI(item.profit, item.cogs))}
             </span>
           ) : (
-            <span className="text-xs text-gray-400">—</span>
+            <span className="text-xs text-muted-foreground">—</span>
           )}
         </TableCell>
       )}
@@ -190,7 +185,7 @@ export function MarginAggregatedTableRow({
               e.stopPropagation()
               onEntityClick(entityValue)
             }}
-            className="text-blue-600 hover:text-blue-800"
+            className="text-primary hover:text-primary/80"
             aria-label={`Открыть детали ${entityValue}`}
           >
             <ExternalLink className="h-4 w-4" />

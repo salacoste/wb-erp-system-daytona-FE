@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from 'vitest'
-import { render, screen } from '@testing-library/react'
+import { render, screen, within } from '@testing-library/react'
 import { UnitEconomicsWaterfall } from '../UnitEconomicsWaterfall'
 import type { UnitEconomicsItem, UnitEconomicsSummary } from '@/types/unit-economics'
 
@@ -62,7 +62,7 @@ const summary: UnitEconomicsSummary = {
 }
 
 describe('UnitEconomicsWaterfall accessibility', () => {
-  it('provides a named chart and a precise non-hover data table', () => {
+  it('exposes exact percentage and currency units, categories, values, and precision', () => {
     render(
       <UnitEconomicsWaterfall
         data={[item]}
@@ -72,10 +72,18 @@ describe('UnitEconomicsWaterfall accessibility', () => {
     )
 
     expect(screen.getByRole('img', { name: /График структуры затрат/ })).toBeVisible()
-    expect(screen.getByRole('table', { name: /Структура затрат/ })).toBeInTheDocument()
-    expect(screen.getByRole('columnheader', { name: 'Категория' })).toBeInTheDocument()
-    expect(screen.getByRole('columnheader', { name: 'Доля от выручки' })).toBeInTheDocument()
-    expect(screen.getByRole('columnheader', { name: 'Сумма' })).toBeInTheDocument()
-    expect(screen.getByRole('rowheader', { name: 'Выручка' })).toBeInTheDocument()
+    const table = screen.getByRole('table', { name: /Структура затрат/ })
+    expect(within(table).getByRole('columnheader', { name: 'Категория' })).toBeInTheDocument()
+    expect(within(table).getByRole('columnheader', { name: 'Доля от выручки' })).toBeInTheDocument()
+    expect(within(table).getByRole('columnheader', { name: 'Сумма' })).toBeInTheDocument()
+    expect(within(table).getByRole('rowheader', { name: 'Выручка' })).toBeInTheDocument()
+    expect(within(table).getByRole('cell', { name: '100,0 %' })).toBeInTheDocument()
+    expect(within(table).getByRole('cell', { name: '100 000 ₽' })).toBeInTheDocument()
+    expect(within(table).getByRole('rowheader', { name: 'COGS' })).toBeInTheDocument()
+    expect(within(table).getByRole('cell', { name: '30,0 %' })).toBeInTheDocument()
+    expect(within(table).getByRole('cell', { name: '30 000 ₽' })).toBeInTheDocument()
+    expect(within(table).getByRole('rowheader', { name: 'Прибыль' })).toBeInTheDocument()
+    expect(within(table).getByRole('cell', { name: '55,0 %' })).toBeInTheDocument()
+    expect(within(table).getByRole('cell', { name: '55 000 ₽' })).toBeInTheDocument()
   })
 })

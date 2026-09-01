@@ -41,7 +41,12 @@ describe('LiquidityTableRowCells — 169.10 category badge chip', () => {
       <table>
         <tbody>
           <tr>
-            <LiquidityTableRowCells item={makeItem()} isExpanded={false} onPlannerOpen={() => {}} />
+            <LiquidityTableRowCells
+              item={makeItem()}
+              isExpanded={false}
+              onToggle={() => {}}
+              onPlannerOpen={() => {}}
+            />
           </tr>
         </tbody>
       </table>
