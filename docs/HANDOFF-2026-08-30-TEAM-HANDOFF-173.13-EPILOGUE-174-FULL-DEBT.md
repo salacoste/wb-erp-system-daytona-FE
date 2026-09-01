@@ -3,8 +3,8 @@
 > **Аудитория**: новая FE-команда, принимающая программу shadcn-миграции на финише (осталось **6 из 94 канонических стори**: 173.13 + 174.1–174.5).
 > **От**: сессии-оркестратора, закрывшей Stories 172.10–172.17 (эпик 172 целиком) и 173.12 (supplies owner), работавшей **параллельно** с командой Epic-173 lane (173.1–173.11).
 > **Дата**: 2026-08-30 (обновлено 2026-08-31 closeout'ами 173.13/174.1/174.2). **main после 174.2**: base `fbdab2da` (174.1 closeout #370 + lifecycle #371) + PR #372.
-> **Статус программы**: **91/94** стори; эпики 166–173 ✅ complete; **Epic 174 = 2/5** (174.1 parity ✅ PR #369; 174.2 legacy-removal/boundary ✅ PR #372); NEXT = **174.3** → 174.4 → 174.5.
-> **Живые гейты на main (после 174.2)**: vitest **≥ 19 118 passed / 0 failed / 1234 файла** (floor двинут точным −756 мёртвых тестов); lint 0/0; tsc 0; max-lines OK; **ui-boundary 523 (ratchet)**; check:docs exit 0; locale-percent 4; lessons-length 0; PM2 `wb-repricer-frontend-dev` online :3100; BE :3000.
+> **Статус программы**: **93/94** стори; эпики 166–173 ✅; **Epic 174 = 4/5** (174.1 #369/#370/#371; 174.2 #372/#373; 174.3 #374; 174.4 full-regression ✅); NEXT = **174.5** (финальная) → 94/94.
+> **Живые гейты на main (после 174.4)**: vitest **≥ 19 363 passed / 0 failed**; lint 0/0; tsc 0; max-lines OK; **ui-boundary 459 (ratchet ↓64, дроп предшествует 174.4)**; check:docs exit 0; locale-percent 4; lessons-length 0; PM2 `wb-repricer-frontend-dev` online :3100; BE :3000.
 
 ---
 

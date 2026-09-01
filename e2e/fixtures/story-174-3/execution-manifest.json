@@ -1,494 +1,494 @@
 {
   "schemaVersion": 1,
-  "generatedAt": "2026-09-01T06:49:37.433Z",
+  "generatedAt": "2026-09-01T17:38:39.994Z",
   "runtime": {
     "node": "v24.18.0",
-    "npm": "11.11.0"
+    "npm": "11.16.0"
   },
   "entries": [
     {
       "source": "e2e/acquiring.spec.ts",
-      "sourceSha256": "9699d6a5f146f5fbfab31f532bab31ebc1605ce9cc5919a2bc538ede7af44c05",
+      "sourceSha256": "3eee3f893722b2b2112ab3515565a9e699ebc6923d0e4e84e6b8dab5822ba03f",
       "scenarioId": "report detail page shows rate-limit banner when API returns 503 + Retry-After",
       "runner": "playwright",
-      "command": "/opt/homebrew/Cellar/node@24/24.18.0/bin/node /private/tmp/wb-repricer-node24-npm11.11.0/node_modules/npm/bin/npm-cli.js run test:e2e:full -- e2e/acquiring.spec.ts e2e/alerts-page.spec.ts e2e/automation/canned-rules.spec.ts e2e/backfill-page.spec.ts e2e/brand-analytics.spec.ts e2e/cogs-assignment.spec.ts e2e/communications.spec.ts e2e/dashboard-metrics.spec.ts e2e/expenses-page.spec.ts e2e/finances.spec.ts e2e/funnel.spec.ts e2e/liquidity.spec.ts e2e/moysklad.spec.ts e2e/orders-integrity.spec.ts e2e/price-calculator.spec.ts e2e/pricing-page.spec.ts e2e/settings-pages.spec.ts e2e/settings/backfill-admin.spec.ts e2e/shipments/shipments-detail.spec.ts e2e/sku-analytics.spec.ts e2e/story-174-3-dedicated-route-evidence.spec.ts e2e/telegram-notifications.spec.ts e2e/time-period-analytics.spec.ts e2e/unit-economics.spec.ts --reporter=json",
+      "command": "npm run test:e2e:full -- e2e/acquiring.spec.ts e2e/alerts-page.spec.ts e2e/automation/canned-rules.spec.ts e2e/backfill-page.spec.ts e2e/brand-analytics.spec.ts e2e/cogs-assignment.spec.ts e2e/communications.spec.ts e2e/dashboard-metrics.spec.ts e2e/expenses-page.spec.ts e2e/finances.spec.ts e2e/funnel.spec.ts e2e/liquidity.spec.ts e2e/moysklad.spec.ts e2e/orders-integrity.spec.ts e2e/price-calculator.spec.ts e2e/pricing-page.spec.ts e2e/settings-pages.spec.ts e2e/settings/backfill-admin.spec.ts e2e/shipments/shipments-detail.spec.ts e2e/sku-analytics.spec.ts e2e/story-174-3-dedicated-route-evidence.spec.ts e2e/telegram-notifications.spec.ts e2e/time-period-analytics.spec.ts e2e/unit-economics.spec.ts --reporter=json",
       "result": "passed",
       "exitCode": 0,
-      "startedAt": "2026-09-01T05:58:03.218Z",
-      "durationMs": 102036
+      "startedAt": "2026-09-01T17:35:13.648Z",
+      "durationMs": 206341
     },
     {
       "source": "e2e/alerts-page.spec.ts",
       "sourceSha256": "e9cf40542bccc99fefefac9c7ea5fbef4baf26142caa86fa8b770fefdfbe3044",
       "scenarioId": "API error on rules shows graceful state without crashing page",
       "runner": "playwright",
-      "command": "/opt/homebrew/Cellar/node@24/24.18.0/bin/node /private/tmp/wb-repricer-node24-npm11.11.0/node_modules/npm/bin/npm-cli.js run test:e2e:full -- e2e/acquiring.spec.ts e2e/alerts-page.spec.ts e2e/automation/canned-rules.spec.ts e2e/backfill-page.spec.ts e2e/brand-analytics.spec.ts e2e/cogs-assignment.spec.ts e2e/communications.spec.ts e2e/dashboard-metrics.spec.ts e2e/expenses-page.spec.ts e2e/finances.spec.ts e2e/funnel.spec.ts e2e/liquidity.spec.ts e2e/moysklad.spec.ts e2e/orders-integrity.spec.ts e2e/price-calculator.spec.ts e2e/pricing-page.spec.ts e2e/settings-pages.spec.ts e2e/settings/backfill-admin.spec.ts e2e/shipments/shipments-detail.spec.ts e2e/sku-analytics.spec.ts e2e/story-174-3-dedicated-route-evidence.spec.ts e2e/telegram-notifications.spec.ts e2e/time-period-analytics.spec.ts e2e/unit-economics.spec.ts --reporter=json",
+      "command": "npm run test:e2e:full -- e2e/acquiring.spec.ts e2e/alerts-page.spec.ts e2e/automation/canned-rules.spec.ts e2e/backfill-page.spec.ts e2e/brand-analytics.spec.ts e2e/cogs-assignment.spec.ts e2e/communications.spec.ts e2e/dashboard-metrics.spec.ts e2e/expenses-page.spec.ts e2e/finances.spec.ts e2e/funnel.spec.ts e2e/liquidity.spec.ts e2e/moysklad.spec.ts e2e/orders-integrity.spec.ts e2e/price-calculator.spec.ts e2e/pricing-page.spec.ts e2e/settings-pages.spec.ts e2e/settings/backfill-admin.spec.ts e2e/shipments/shipments-detail.spec.ts e2e/sku-analytics.spec.ts e2e/story-174-3-dedicated-route-evidence.spec.ts e2e/telegram-notifications.spec.ts e2e/time-period-analytics.spec.ts e2e/unit-economics.spec.ts --reporter=json",
       "result": "passed",
       "exitCode": 0,
-      "startedAt": "2026-09-01T05:58:03.218Z",
-      "durationMs": 102036
+      "startedAt": "2026-09-01T17:35:13.648Z",
+      "durationMs": 206341
     },
     {
       "source": "e2e/alerts-page.spec.ts",
       "sourceSha256": "e9cf40542bccc99fefefac9c7ea5fbef4baf26142caa86fa8b770fefdfbe3044",
       "scenarioId": "empty rules list shows no-rules message",
       "runner": "playwright",
-      "command": "/opt/homebrew/Cellar/node@24/24.18.0/bin/node /private/tmp/wb-repricer-node24-npm11.11.0/node_modules/npm/bin/npm-cli.js run test:e2e:full -- e2e/acquiring.spec.ts e2e/alerts-page.spec.ts e2e/automation/canned-rules.spec.ts e2e/backfill-page.spec.ts e2e/brand-analytics.spec.ts e2e/cogs-assignment.spec.ts e2e/communications.spec.ts e2e/dashboard-metrics.spec.ts e2e/expenses-page.spec.ts e2e/finances.spec.ts e2e/funnel.spec.ts e2e/liquidity.spec.ts e2e/moysklad.spec.ts e2e/orders-integrity.spec.ts e2e/price-calculator.spec.ts e2e/pricing-page.spec.ts e2e/settings-pages.spec.ts e2e/settings/backfill-admin.spec.ts e2e/shipments/shipments-detail.spec.ts e2e/sku-analytics.spec.ts e2e/story-174-3-dedicated-route-evidence.spec.ts e2e/telegram-notifications.spec.ts e2e/time-period-analytics.spec.ts e2e/unit-economics.spec.ts --reporter=json",
+      "command": "npm run test:e2e:full -- e2e/acquiring.spec.ts e2e/alerts-page.spec.ts e2e/automation/canned-rules.spec.ts e2e/backfill-page.spec.ts e2e/brand-analytics.spec.ts e2e/cogs-assignment.spec.ts e2e/communications.spec.ts e2e/dashboard-metrics.spec.ts e2e/expenses-page.spec.ts e2e/finances.spec.ts e2e/funnel.spec.ts e2e/liquidity.spec.ts e2e/moysklad.spec.ts e2e/orders-integrity.spec.ts e2e/price-calculator.spec.ts e2e/pricing-page.spec.ts e2e/settings-pages.spec.ts e2e/settings/backfill-admin.spec.ts e2e/shipments/shipments-detail.spec.ts e2e/sku-analytics.spec.ts e2e/story-174-3-dedicated-route-evidence.spec.ts e2e/telegram-notifications.spec.ts e2e/time-period-analytics.spec.ts e2e/unit-economics.spec.ts --reporter=json",
       "result": "passed",
       "exitCode": 0,
-      "startedAt": "2026-09-01T05:58:03.218Z",
-      "durationMs": 102036
+      "startedAt": "2026-09-01T17:35:13.648Z",
+      "durationMs": 206341
     },
     {
       "source": "e2e/automation/canned-rules.spec.ts",
       "sourceSha256": "a939ec45b4d71847f2fa81441ab07e69fd8ffa2ac3c2066e9ff97b311a599812",
       "scenarioId": "AC1: loads the gallery grouped by category with trigger→action summaries",
       "runner": "playwright",
-      "command": "/opt/homebrew/Cellar/node@24/24.18.0/bin/node /private/tmp/wb-repricer-node24-npm11.11.0/node_modules/npm/bin/npm-cli.js run test:e2e:full -- e2e/acquiring.spec.ts e2e/alerts-page.spec.ts e2e/automation/canned-rules.spec.ts e2e/backfill-page.spec.ts e2e/brand-analytics.spec.ts e2e/cogs-assignment.spec.ts e2e/communications.spec.ts e2e/dashboard-metrics.spec.ts e2e/expenses-page.spec.ts e2e/finances.spec.ts e2e/funnel.spec.ts e2e/liquidity.spec.ts e2e/moysklad.spec.ts e2e/orders-integrity.spec.ts e2e/price-calculator.spec.ts e2e/pricing-page.spec.ts e2e/settings-pages.spec.ts e2e/settings/backfill-admin.spec.ts e2e/shipments/shipments-detail.spec.ts e2e/sku-analytics.spec.ts e2e/story-174-3-dedicated-route-evidence.spec.ts e2e/telegram-notifications.spec.ts e2e/time-period-analytics.spec.ts e2e/unit-economics.spec.ts --reporter=json",
+      "command": "npm run test:e2e:full -- e2e/acquiring.spec.ts e2e/alerts-page.spec.ts e2e/automation/canned-rules.spec.ts e2e/backfill-page.spec.ts e2e/brand-analytics.spec.ts e2e/cogs-assignment.spec.ts e2e/communications.spec.ts e2e/dashboard-metrics.spec.ts e2e/expenses-page.spec.ts e2e/finances.spec.ts e2e/funnel.spec.ts e2e/liquidity.spec.ts e2e/moysklad.spec.ts e2e/orders-integrity.spec.ts e2e/price-calculator.spec.ts e2e/pricing-page.spec.ts e2e/settings-pages.spec.ts e2e/settings/backfill-admin.spec.ts e2e/shipments/shipments-detail.spec.ts e2e/sku-analytics.spec.ts e2e/story-174-3-dedicated-route-evidence.spec.ts e2e/telegram-notifications.spec.ts e2e/time-period-analytics.spec.ts e2e/unit-economics.spec.ts --reporter=json",
       "result": "passed",
       "exitCode": 0,
-      "startedAt": "2026-09-01T05:58:03.218Z",
-      "durationMs": 102036
+      "startedAt": "2026-09-01T17:35:13.648Z",
+      "durationMs": 206341
     },
     {
       "source": "e2e/automation/canned-rules.spec.ts",
       "sourceSha256": "a939ec45b4d71847f2fa81441ab07e69fd8ffa2ac3c2066e9ff97b311a599812",
       "scenarioId": "AC2: restricted price template carries the destructive arm write-back badge",
       "runner": "playwright",
-      "command": "/opt/homebrew/Cellar/node@24/24.18.0/bin/node /private/tmp/wb-repricer-node24-npm11.11.0/node_modules/npm/bin/npm-cli.js run test:e2e:full -- e2e/acquiring.spec.ts e2e/alerts-page.spec.ts e2e/automation/canned-rules.spec.ts e2e/backfill-page.spec.ts e2e/brand-analytics.spec.ts e2e/cogs-assignment.spec.ts e2e/communications.spec.ts e2e/dashboard-metrics.spec.ts e2e/expenses-page.spec.ts e2e/finances.spec.ts e2e/funnel.spec.ts e2e/liquidity.spec.ts e2e/moysklad.spec.ts e2e/orders-integrity.spec.ts e2e/price-calculator.spec.ts e2e/pricing-page.spec.ts e2e/settings-pages.spec.ts e2e/settings/backfill-admin.spec.ts e2e/shipments/shipments-detail.spec.ts e2e/sku-analytics.spec.ts e2e/story-174-3-dedicated-route-evidence.spec.ts e2e/telegram-notifications.spec.ts e2e/time-period-analytics.spec.ts e2e/unit-economics.spec.ts --reporter=json",
+      "command": "npm run test:e2e:full -- e2e/acquiring.spec.ts e2e/alerts-page.spec.ts e2e/automation/canned-rules.spec.ts e2e/backfill-page.spec.ts e2e/brand-analytics.spec.ts e2e/cogs-assignment.spec.ts e2e/communications.spec.ts e2e/dashboard-metrics.spec.ts e2e/expenses-page.spec.ts e2e/finances.spec.ts e2e/funnel.spec.ts e2e/liquidity.spec.ts e2e/moysklad.spec.ts e2e/orders-integrity.spec.ts e2e/price-calculator.spec.ts e2e/pricing-page.spec.ts e2e/settings-pages.spec.ts e2e/settings/backfill-admin.spec.ts e2e/shipments/shipments-detail.spec.ts e2e/sku-analytics.spec.ts e2e/story-174-3-dedicated-route-evidence.spec.ts e2e/telegram-notifications.spec.ts e2e/time-period-analytics.spec.ts e2e/unit-economics.spec.ts --reporter=json",
       "result": "passed",
       "exitCode": 0,
-      "startedAt": "2026-09-01T05:58:03.218Z",
-      "durationMs": 102036
+      "startedAt": "2026-09-01T17:35:13.648Z",
+      "durationMs": 206341
     },
     {
       "source": "e2e/automation/canned-rules.spec.ts",
       "sourceSha256": "a939ec45b4d71847f2fa81441ab07e69fd8ffa2ac3c2066e9ff97b311a599812",
       "scenarioId": "AC3: no-rules state renders the empty marker",
       "runner": "playwright",
-      "command": "/opt/homebrew/Cellar/node@24/24.18.0/bin/node /private/tmp/wb-repricer-node24-npm11.11.0/node_modules/npm/bin/npm-cli.js run test:e2e:full -- e2e/acquiring.spec.ts e2e/alerts-page.spec.ts e2e/automation/canned-rules.spec.ts e2e/backfill-page.spec.ts e2e/brand-analytics.spec.ts e2e/cogs-assignment.spec.ts e2e/communications.spec.ts e2e/dashboard-metrics.spec.ts e2e/expenses-page.spec.ts e2e/finances.spec.ts e2e/funnel.spec.ts e2e/liquidity.spec.ts e2e/moysklad.spec.ts e2e/orders-integrity.spec.ts e2e/price-calculator.spec.ts e2e/pricing-page.spec.ts e2e/settings-pages.spec.ts e2e/settings/backfill-admin.spec.ts e2e/shipments/shipments-detail.spec.ts e2e/sku-analytics.spec.ts e2e/story-174-3-dedicated-route-evidence.spec.ts e2e/telegram-notifications.spec.ts e2e/time-period-analytics.spec.ts e2e/unit-economics.spec.ts --reporter=json",
+      "command": "npm run test:e2e:full -- e2e/acquiring.spec.ts e2e/alerts-page.spec.ts e2e/automation/canned-rules.spec.ts e2e/backfill-page.spec.ts e2e/brand-analytics.spec.ts e2e/cogs-assignment.spec.ts e2e/communications.spec.ts e2e/dashboard-metrics.spec.ts e2e/expenses-page.spec.ts e2e/finances.spec.ts e2e/funnel.spec.ts e2e/liquidity.spec.ts e2e/moysklad.spec.ts e2e/orders-integrity.spec.ts e2e/price-calculator.spec.ts e2e/pricing-page.spec.ts e2e/settings-pages.spec.ts e2e/settings/backfill-admin.spec.ts e2e/shipments/shipments-detail.spec.ts e2e/sku-analytics.spec.ts e2e/story-174-3-dedicated-route-evidence.spec.ts e2e/telegram-notifications.spec.ts e2e/time-period-analytics.spec.ts e2e/unit-economics.spec.ts --reporter=json",
       "result": "passed",
       "exitCode": 0,
-      "startedAt": "2026-09-01T05:58:03.218Z",
-      "durationMs": 102036
+      "startedAt": "2026-09-01T17:35:13.648Z",
+      "durationMs": 206341
     },
     {
       "source": "e2e/automation/canned-rules.spec.ts",
       "sourceSha256": "a939ec45b4d71847f2fa81441ab07e69fd8ffa2ac3c2066e9ff97b311a599812",
       "scenarioId": "AC4: gallery error renders the destructive alert with a Button retry",
       "runner": "playwright",
-      "command": "/opt/homebrew/Cellar/node@24/24.18.0/bin/node /private/tmp/wb-repricer-node24-npm11.11.0/node_modules/npm/bin/npm-cli.js run test:e2e:full -- e2e/acquiring.spec.ts e2e/alerts-page.spec.ts e2e/automation/canned-rules.spec.ts e2e/backfill-page.spec.ts e2e/brand-analytics.spec.ts e2e/cogs-assignment.spec.ts e2e/communications.spec.ts e2e/dashboard-metrics.spec.ts e2e/expenses-page.spec.ts e2e/finances.spec.ts e2e/funnel.spec.ts e2e/liquidity.spec.ts e2e/moysklad.spec.ts e2e/orders-integrity.spec.ts e2e/price-calculator.spec.ts e2e/pricing-page.spec.ts e2e/settings-pages.spec.ts e2e/settings/backfill-admin.spec.ts e2e/shipments/shipments-detail.spec.ts e2e/sku-analytics.spec.ts e2e/story-174-3-dedicated-route-evidence.spec.ts e2e/telegram-notifications.spec.ts e2e/time-period-analytics.spec.ts e2e/unit-economics.spec.ts --reporter=json",
+      "command": "npm run test:e2e:full -- e2e/acquiring.spec.ts e2e/alerts-page.spec.ts e2e/automation/canned-rules.spec.ts e2e/backfill-page.spec.ts e2e/brand-analytics.spec.ts e2e/cogs-assignment.spec.ts e2e/communications.spec.ts e2e/dashboard-metrics.spec.ts e2e/expenses-page.spec.ts e2e/finances.spec.ts e2e/funnel.spec.ts e2e/liquidity.spec.ts e2e/moysklad.spec.ts e2e/orders-integrity.spec.ts e2e/price-calculator.spec.ts e2e/pricing-page.spec.ts e2e/settings-pages.spec.ts e2e/settings/backfill-admin.spec.ts e2e/shipments/shipments-detail.spec.ts e2e/sku-analytics.spec.ts e2e/story-174-3-dedicated-route-evidence.spec.ts e2e/telegram-notifications.spec.ts e2e/time-period-analytics.spec.ts e2e/unit-economics.spec.ts --reporter=json",
       "result": "passed",
       "exitCode": 0,
-      "startedAt": "2026-09-01T05:58:03.218Z",
-      "durationMs": 102036
+      "startedAt": "2026-09-01T17:35:13.648Z",
+      "durationMs": 206341
     },
     {
       "source": "e2e/automation/canned-rules.spec.ts",
       "sourceSha256": "a939ec45b4d71847f2fa81441ab07e69fd8ffa2ac3c2066e9ff97b311a599812",
       "scenarioId": "AC5/AC6: install pending → success shows the post-install deep-link; wire contract kept",
       "runner": "playwright",
-      "command": "/opt/homebrew/Cellar/node@24/24.18.0/bin/node /private/tmp/wb-repricer-node24-npm11.11.0/node_modules/npm/bin/npm-cli.js run test:e2e:full -- e2e/acquiring.spec.ts e2e/alerts-page.spec.ts e2e/automation/canned-rules.spec.ts e2e/backfill-page.spec.ts e2e/brand-analytics.spec.ts e2e/cogs-assignment.spec.ts e2e/communications.spec.ts e2e/dashboard-metrics.spec.ts e2e/expenses-page.spec.ts e2e/finances.spec.ts e2e/funnel.spec.ts e2e/liquidity.spec.ts e2e/moysklad.spec.ts e2e/orders-integrity.spec.ts e2e/price-calculator.spec.ts e2e/pricing-page.spec.ts e2e/settings-pages.spec.ts e2e/settings/backfill-admin.spec.ts e2e/shipments/shipments-detail.spec.ts e2e/sku-analytics.spec.ts e2e/story-174-3-dedicated-route-evidence.spec.ts e2e/telegram-notifications.spec.ts e2e/time-period-analytics.spec.ts e2e/unit-economics.spec.ts --reporter=json",
+      "command": "npm run test:e2e:full -- e2e/acquiring.spec.ts e2e/alerts-page.spec.ts e2e/automation/canned-rules.spec.ts e2e/backfill-page.spec.ts e2e/brand-analytics.spec.ts e2e/cogs-assignment.spec.ts e2e/communications.spec.ts e2e/dashboard-metrics.spec.ts e2e/expenses-page.spec.ts e2e/finances.spec.ts e2e/funnel.spec.ts e2e/liquidity.spec.ts e2e/moysklad.spec.ts e2e/orders-integrity.spec.ts e2e/price-calculator.spec.ts e2e/pricing-page.spec.ts e2e/settings-pages.spec.ts e2e/settings/backfill-admin.spec.ts e2e/shipments/shipments-detail.spec.ts e2e/sku-analytics.spec.ts e2e/story-174-3-dedicated-route-evidence.spec.ts e2e/telegram-notifications.spec.ts e2e/time-period-analytics.spec.ts e2e/unit-economics.spec.ts --reporter=json",
       "result": "passed",
       "exitCode": 0,
-      "startedAt": "2026-09-01T05:58:03.218Z",
-      "durationMs": 102036
+      "startedAt": "2026-09-01T17:35:13.648Z",
+      "durationMs": 206341
     },
     {
       "source": "e2e/automation/canned-rules.spec.ts",
       "sourceSha256": "a939ec45b4d71847f2fa81441ab07e69fd8ffa2ac3c2066e9ff97b311a599812",
       "scenarioId": "AC7: 409 duplicate name opens the rename Dialog; the renamed retry installs",
       "runner": "playwright",
-      "command": "/opt/homebrew/Cellar/node@24/24.18.0/bin/node /private/tmp/wb-repricer-node24-npm11.11.0/node_modules/npm/bin/npm-cli.js run test:e2e:full -- e2e/acquiring.spec.ts e2e/alerts-page.spec.ts e2e/automation/canned-rules.spec.ts e2e/backfill-page.spec.ts e2e/brand-analytics.spec.ts e2e/cogs-assignment.spec.ts e2e/communications.spec.ts e2e/dashboard-metrics.spec.ts e2e/expenses-page.spec.ts e2e/finances.spec.ts e2e/funnel.spec.ts e2e/liquidity.spec.ts e2e/moysklad.spec.ts e2e/orders-integrity.spec.ts e2e/price-calculator.spec.ts e2e/pricing-page.spec.ts e2e/settings-pages.spec.ts e2e/settings/backfill-admin.spec.ts e2e/shipments/shipments-detail.spec.ts e2e/sku-analytics.spec.ts e2e/story-174-3-dedicated-route-evidence.spec.ts e2e/telegram-notifications.spec.ts e2e/time-period-analytics.spec.ts e2e/unit-economics.spec.ts --reporter=json",
+      "command": "npm run test:e2e:full -- e2e/acquiring.spec.ts e2e/alerts-page.spec.ts e2e/automation/canned-rules.spec.ts e2e/backfill-page.spec.ts e2e/brand-analytics.spec.ts e2e/cogs-assignment.spec.ts e2e/communications.spec.ts e2e/dashboard-metrics.spec.ts e2e/expenses-page.spec.ts e2e/finances.spec.ts e2e/funnel.spec.ts e2e/liquidity.spec.ts e2e/moysklad.spec.ts e2e/orders-integrity.spec.ts e2e/price-calculator.spec.ts e2e/pricing-page.spec.ts e2e/settings-pages.spec.ts e2e/settings/backfill-admin.spec.ts e2e/shipments/shipments-detail.spec.ts e2e/sku-analytics.spec.ts e2e/story-174-3-dedicated-route-evidence.spec.ts e2e/telegram-notifications.spec.ts e2e/time-period-analytics.spec.ts e2e/unit-economics.spec.ts --reporter=json",
       "result": "passed",
       "exitCode": 0,
-      "startedAt": "2026-09-01T05:58:03.218Z",
-      "durationMs": 102036
+      "startedAt": "2026-09-01T17:35:13.648Z",
+      "durationMs": 206341
     },
     {
       "source": "e2e/backfill-page.spec.ts",
       "sourceSha256": "55422abfe8402c5d8d9bf30d7f3ac01fd148a2d4a91f9317c36935484f186a77",
       "scenarioId": "retains stale data after refresh failure and replaces it after retry at 390px dark",
       "runner": "playwright",
-      "command": "/opt/homebrew/Cellar/node@24/24.18.0/bin/node /private/tmp/wb-repricer-node24-npm11.11.0/node_modules/npm/bin/npm-cli.js run test:e2e:full -- e2e/acquiring.spec.ts e2e/alerts-page.spec.ts e2e/automation/canned-rules.spec.ts e2e/backfill-page.spec.ts e2e/brand-analytics.spec.ts e2e/cogs-assignment.spec.ts e2e/communications.spec.ts e2e/dashboard-metrics.spec.ts e2e/expenses-page.spec.ts e2e/finances.spec.ts e2e/funnel.spec.ts e2e/liquidity.spec.ts e2e/moysklad.spec.ts e2e/orders-integrity.spec.ts e2e/price-calculator.spec.ts e2e/pricing-page.spec.ts e2e/settings-pages.spec.ts e2e/settings/backfill-admin.spec.ts e2e/shipments/shipments-detail.spec.ts e2e/sku-analytics.spec.ts e2e/story-174-3-dedicated-route-evidence.spec.ts e2e/telegram-notifications.spec.ts e2e/time-period-analytics.spec.ts e2e/unit-economics.spec.ts --reporter=json",
+      "command": "npm run test:e2e:full -- e2e/acquiring.spec.ts e2e/alerts-page.spec.ts e2e/automation/canned-rules.spec.ts e2e/backfill-page.spec.ts e2e/brand-analytics.spec.ts e2e/cogs-assignment.spec.ts e2e/communications.spec.ts e2e/dashboard-metrics.spec.ts e2e/expenses-page.spec.ts e2e/finances.spec.ts e2e/funnel.spec.ts e2e/liquidity.spec.ts e2e/moysklad.spec.ts e2e/orders-integrity.spec.ts e2e/price-calculator.spec.ts e2e/pricing-page.spec.ts e2e/settings-pages.spec.ts e2e/settings/backfill-admin.spec.ts e2e/shipments/shipments-detail.spec.ts e2e/sku-analytics.spec.ts e2e/story-174-3-dedicated-route-evidence.spec.ts e2e/telegram-notifications.spec.ts e2e/time-period-analytics.spec.ts e2e/unit-economics.spec.ts --reporter=json",
       "result": "passed",
       "exitCode": 0,
-      "startedAt": "2026-09-01T05:58:03.218Z",
-      "durationMs": 102036
+      "startedAt": "2026-09-01T17:35:13.648Z",
+      "durationMs": 206341
     },
     {
       "source": "e2e/backfill-page.spec.ts",
       "sourceSha256": "55422abfe8402c5d8d9bf30d7f3ac01fd148a2d4a91f9317c36935484f186a77",
       "scenarioId": "shows table or refresh button when page is visible",
       "runner": "playwright",
-      "command": "/opt/homebrew/Cellar/node@24/24.18.0/bin/node /private/tmp/wb-repricer-node24-npm11.11.0/node_modules/npm/bin/npm-cli.js run test:e2e:full -- e2e/acquiring.spec.ts e2e/alerts-page.spec.ts e2e/automation/canned-rules.spec.ts e2e/backfill-page.spec.ts e2e/brand-analytics.spec.ts e2e/cogs-assignment.spec.ts e2e/communications.spec.ts e2e/dashboard-metrics.spec.ts e2e/expenses-page.spec.ts e2e/finances.spec.ts e2e/funnel.spec.ts e2e/liquidity.spec.ts e2e/moysklad.spec.ts e2e/orders-integrity.spec.ts e2e/price-calculator.spec.ts e2e/pricing-page.spec.ts e2e/settings-pages.spec.ts e2e/settings/backfill-admin.spec.ts e2e/shipments/shipments-detail.spec.ts e2e/sku-analytics.spec.ts e2e/story-174-3-dedicated-route-evidence.spec.ts e2e/telegram-notifications.spec.ts e2e/time-period-analytics.spec.ts e2e/unit-economics.spec.ts --reporter=json",
+      "command": "npm run test:e2e:full -- e2e/acquiring.spec.ts e2e/alerts-page.spec.ts e2e/automation/canned-rules.spec.ts e2e/backfill-page.spec.ts e2e/brand-analytics.spec.ts e2e/cogs-assignment.spec.ts e2e/communications.spec.ts e2e/dashboard-metrics.spec.ts e2e/expenses-page.spec.ts e2e/finances.spec.ts e2e/funnel.spec.ts e2e/liquidity.spec.ts e2e/moysklad.spec.ts e2e/orders-integrity.spec.ts e2e/price-calculator.spec.ts e2e/pricing-page.spec.ts e2e/settings-pages.spec.ts e2e/settings/backfill-admin.spec.ts e2e/shipments/shipments-detail.spec.ts e2e/sku-analytics.spec.ts e2e/story-174-3-dedicated-route-evidence.spec.ts e2e/telegram-notifications.spec.ts e2e/time-period-analytics.spec.ts e2e/unit-economics.spec.ts --reporter=json",
       "result": "passed",
       "exitCode": 0,
-      "startedAt": "2026-09-01T05:58:03.218Z",
-      "durationMs": 102036
+      "startedAt": "2026-09-01T17:35:13.648Z",
+      "durationMs": 206341
     },
     {
       "source": "e2e/brand-analytics.spec.ts",
       "sourceSha256": "dd39f677a9084183bac2f01e6bda69b607f88912ce6f8f14ab97131cf1e39011",
       "scenarioId": "holds loading until the deferred brand response is released",
       "runner": "playwright",
-      "command": "/opt/homebrew/Cellar/node@24/24.18.0/bin/node /private/tmp/wb-repricer-node24-npm11.11.0/node_modules/npm/bin/npm-cli.js run test:e2e:full -- e2e/acquiring.spec.ts e2e/alerts-page.spec.ts e2e/automation/canned-rules.spec.ts e2e/backfill-page.spec.ts e2e/brand-analytics.spec.ts e2e/cogs-assignment.spec.ts e2e/communications.spec.ts e2e/dashboard-metrics.spec.ts e2e/expenses-page.spec.ts e2e/finances.spec.ts e2e/funnel.spec.ts e2e/liquidity.spec.ts e2e/moysklad.spec.ts e2e/orders-integrity.spec.ts e2e/price-calculator.spec.ts e2e/pricing-page.spec.ts e2e/settings-pages.spec.ts e2e/settings/backfill-admin.spec.ts e2e/shipments/shipments-detail.spec.ts e2e/sku-analytics.spec.ts e2e/story-174-3-dedicated-route-evidence.spec.ts e2e/telegram-notifications.spec.ts e2e/time-period-analytics.spec.ts e2e/unit-economics.spec.ts --reporter=json",
+      "command": "npm run test:e2e:full -- e2e/acquiring.spec.ts e2e/alerts-page.spec.ts e2e/automation/canned-rules.spec.ts e2e/backfill-page.spec.ts e2e/brand-analytics.spec.ts e2e/cogs-assignment.spec.ts e2e/communications.spec.ts e2e/dashboard-metrics.spec.ts e2e/expenses-page.spec.ts e2e/finances.spec.ts e2e/funnel.spec.ts e2e/liquidity.spec.ts e2e/moysklad.spec.ts e2e/orders-integrity.spec.ts e2e/price-calculator.spec.ts e2e/pricing-page.spec.ts e2e/settings-pages.spec.ts e2e/settings/backfill-admin.spec.ts e2e/shipments/shipments-detail.spec.ts e2e/sku-analytics.spec.ts e2e/story-174-3-dedicated-route-evidence.spec.ts e2e/telegram-notifications.spec.ts e2e/time-period-analytics.spec.ts e2e/unit-economics.spec.ts --reporter=json",
       "result": "passed",
       "exitCode": 0,
-      "startedAt": "2026-09-01T05:58:03.218Z",
-      "durationMs": 102036
+      "startedAt": "2026-09-01T17:35:13.648Z",
+      "durationMs": 206341
     },
     {
       "source": "e2e/brand-analytics.spec.ts",
       "sourceSha256": "dd39f677a9084183bac2f01e6bda69b607f88912ce6f8f14ab97131cf1e39011",
       "scenarioId": "renders the named empty terminal when the brand route resolves to an empty payload",
       "runner": "playwright",
-      "command": "/opt/homebrew/Cellar/node@24/24.18.0/bin/node /private/tmp/wb-repricer-node24-npm11.11.0/node_modules/npm/bin/npm-cli.js run test:e2e:full -- e2e/acquiring.spec.ts e2e/alerts-page.spec.ts e2e/automation/canned-rules.spec.ts e2e/backfill-page.spec.ts e2e/brand-analytics.spec.ts e2e/cogs-assignment.spec.ts e2e/communications.spec.ts e2e/dashboard-metrics.spec.ts e2e/expenses-page.spec.ts e2e/finances.spec.ts e2e/funnel.spec.ts e2e/liquidity.spec.ts e2e/moysklad.spec.ts e2e/orders-integrity.spec.ts e2e/price-calculator.spec.ts e2e/pricing-page.spec.ts e2e/settings-pages.spec.ts e2e/settings/backfill-admin.spec.ts e2e/shipments/shipments-detail.spec.ts e2e/sku-analytics.spec.ts e2e/story-174-3-dedicated-route-evidence.spec.ts e2e/telegram-notifications.spec.ts e2e/time-period-analytics.spec.ts e2e/unit-economics.spec.ts --reporter=json",
+      "command": "npm run test:e2e:full -- e2e/acquiring.spec.ts e2e/alerts-page.spec.ts e2e/automation/canned-rules.spec.ts e2e/backfill-page.spec.ts e2e/brand-analytics.spec.ts e2e/cogs-assignment.spec.ts e2e/communications.spec.ts e2e/dashboard-metrics.spec.ts e2e/expenses-page.spec.ts e2e/finances.spec.ts e2e/funnel.spec.ts e2e/liquidity.spec.ts e2e/moysklad.spec.ts e2e/orders-integrity.spec.ts e2e/price-calculator.spec.ts e2e/pricing-page.spec.ts e2e/settings-pages.spec.ts e2e/settings/backfill-admin.spec.ts e2e/shipments/shipments-detail.spec.ts e2e/sku-analytics.spec.ts e2e/story-174-3-dedicated-route-evidence.spec.ts e2e/telegram-notifications.spec.ts e2e/time-period-analytics.spec.ts e2e/unit-economics.spec.ts --reporter=json",
       "result": "passed",
       "exitCode": 0,
-      "startedAt": "2026-09-01T05:58:03.218Z",
-      "durationMs": 102036
+      "startedAt": "2026-09-01T17:35:13.648Z",
+      "durationMs": 206341
     },
     {
       "source": "e2e/brand-analytics.spec.ts",
       "sourceSha256": "dd39f677a9084183bac2f01e6bda69b607f88912ce6f8f14ab97131cf1e39011",
       "scenarioId": "renders the named error terminal when the brand route resolves to a failure payload",
       "runner": "playwright",
-      "command": "/opt/homebrew/Cellar/node@24/24.18.0/bin/node /private/tmp/wb-repricer-node24-npm11.11.0/node_modules/npm/bin/npm-cli.js run test:e2e:full -- e2e/acquiring.spec.ts e2e/alerts-page.spec.ts e2e/automation/canned-rules.spec.ts e2e/backfill-page.spec.ts e2e/brand-analytics.spec.ts e2e/cogs-assignment.spec.ts e2e/communications.spec.ts e2e/dashboard-metrics.spec.ts e2e/expenses-page.spec.ts e2e/finances.spec.ts e2e/funnel.spec.ts e2e/liquidity.spec.ts e2e/moysklad.spec.ts e2e/orders-integrity.spec.ts e2e/price-calculator.spec.ts e2e/pricing-page.spec.ts e2e/settings-pages.spec.ts e2e/settings/backfill-admin.spec.ts e2e/shipments/shipments-detail.spec.ts e2e/sku-analytics.spec.ts e2e/story-174-3-dedicated-route-evidence.spec.ts e2e/telegram-notifications.spec.ts e2e/time-period-analytics.spec.ts e2e/unit-economics.spec.ts --reporter=json",
+      "command": "npm run test:e2e:full -- e2e/acquiring.spec.ts e2e/alerts-page.spec.ts e2e/automation/canned-rules.spec.ts e2e/backfill-page.spec.ts e2e/brand-analytics.spec.ts e2e/cogs-assignment.spec.ts e2e/communications.spec.ts e2e/dashboard-metrics.spec.ts e2e/expenses-page.spec.ts e2e/finances.spec.ts e2e/funnel.spec.ts e2e/liquidity.spec.ts e2e/moysklad.spec.ts e2e/orders-integrity.spec.ts e2e/price-calculator.spec.ts e2e/pricing-page.spec.ts e2e/settings-pages.spec.ts e2e/settings/backfill-admin.spec.ts e2e/shipments/shipments-detail.spec.ts e2e/sku-analytics.spec.ts e2e/story-174-3-dedicated-route-evidence.spec.ts e2e/telegram-notifications.spec.ts e2e/time-period-analytics.spec.ts e2e/unit-economics.spec.ts --reporter=json",
       "result": "passed",
       "exitCode": 0,
-      "startedAt": "2026-09-01T05:58:03.218Z",
-      "durationMs": 102036
+      "startedAt": "2026-09-01T17:35:13.648Z",
+      "durationMs": 206341
     },
     {
       "source": "e2e/cogs-assignment.spec.ts",
       "sourceSha256": "1c90d3ea8c4cdc6ea126eba69da7401f5d4f7da5ccbbfbbe06971399e9f3343e",
       "scenarioId": "displays loading state during margin calculation",
       "runner": "playwright",
-      "command": "/opt/homebrew/Cellar/node@24/24.18.0/bin/node /private/tmp/wb-repricer-node24-npm11.11.0/node_modules/npm/bin/npm-cli.js run test:e2e:full -- e2e/acquiring.spec.ts e2e/alerts-page.spec.ts e2e/automation/canned-rules.spec.ts e2e/backfill-page.spec.ts e2e/brand-analytics.spec.ts e2e/cogs-assignment.spec.ts e2e/communications.spec.ts e2e/dashboard-metrics.spec.ts e2e/expenses-page.spec.ts e2e/finances.spec.ts e2e/funnel.spec.ts e2e/liquidity.spec.ts e2e/moysklad.spec.ts e2e/orders-integrity.spec.ts e2e/price-calculator.spec.ts e2e/pricing-page.spec.ts e2e/settings-pages.spec.ts e2e/settings/backfill-admin.spec.ts e2e/shipments/shipments-detail.spec.ts e2e/sku-analytics.spec.ts e2e/story-174-3-dedicated-route-evidence.spec.ts e2e/telegram-notifications.spec.ts e2e/time-period-analytics.spec.ts e2e/unit-economics.spec.ts --reporter=json",
+      "command": "npm run test:e2e:full -- e2e/acquiring.spec.ts e2e/alerts-page.spec.ts e2e/automation/canned-rules.spec.ts e2e/backfill-page.spec.ts e2e/brand-analytics.spec.ts e2e/cogs-assignment.spec.ts e2e/communications.spec.ts e2e/dashboard-metrics.spec.ts e2e/expenses-page.spec.ts e2e/finances.spec.ts e2e/funnel.spec.ts e2e/liquidity.spec.ts e2e/moysklad.spec.ts e2e/orders-integrity.spec.ts e2e/price-calculator.spec.ts e2e/pricing-page.spec.ts e2e/settings-pages.spec.ts e2e/settings/backfill-admin.spec.ts e2e/shipments/shipments-detail.spec.ts e2e/sku-analytics.spec.ts e2e/story-174-3-dedicated-route-evidence.spec.ts e2e/telegram-notifications.spec.ts e2e/time-period-analytics.spec.ts e2e/unit-economics.spec.ts --reporter=json",
       "result": "passed",
       "exitCode": 0,
-      "startedAt": "2026-09-01T05:58:03.218Z",
-      "durationMs": 102036
+      "startedAt": "2026-09-01T17:35:13.648Z",
+      "durationMs": 206341
     },
     {
       "source": "e2e/cogs-assignment.spec.ts",
       "sourceSha256": "1c90d3ea8c4cdc6ea126eba69da7401f5d4f7da5ccbbfbbe06971399e9f3343e",
       "scenarioId": "handles API errors gracefully",
       "runner": "playwright",
-      "command": "/opt/homebrew/Cellar/node@24/24.18.0/bin/node /private/tmp/wb-repricer-node24-npm11.11.0/node_modules/npm/bin/npm-cli.js run test:e2e:full -- e2e/acquiring.spec.ts e2e/alerts-page.spec.ts e2e/automation/canned-rules.spec.ts e2e/backfill-page.spec.ts e2e/brand-analytics.spec.ts e2e/cogs-assignment.spec.ts e2e/communications.spec.ts e2e/dashboard-metrics.spec.ts e2e/expenses-page.spec.ts e2e/finances.spec.ts e2e/funnel.spec.ts e2e/liquidity.spec.ts e2e/moysklad.spec.ts e2e/orders-integrity.spec.ts e2e/price-calculator.spec.ts e2e/pricing-page.spec.ts e2e/settings-pages.spec.ts e2e/settings/backfill-admin.spec.ts e2e/shipments/shipments-detail.spec.ts e2e/sku-analytics.spec.ts e2e/story-174-3-dedicated-route-evidence.spec.ts e2e/telegram-notifications.spec.ts e2e/time-period-analytics.spec.ts e2e/unit-economics.spec.ts --reporter=json",
+      "command": "npm run test:e2e:full -- e2e/acquiring.spec.ts e2e/alerts-page.spec.ts e2e/automation/canned-rules.spec.ts e2e/backfill-page.spec.ts e2e/brand-analytics.spec.ts e2e/cogs-assignment.spec.ts e2e/communications.spec.ts e2e/dashboard-metrics.spec.ts e2e/expenses-page.spec.ts e2e/finances.spec.ts e2e/funnel.spec.ts e2e/liquidity.spec.ts e2e/moysklad.spec.ts e2e/orders-integrity.spec.ts e2e/price-calculator.spec.ts e2e/pricing-page.spec.ts e2e/settings-pages.spec.ts e2e/settings/backfill-admin.spec.ts e2e/shipments/shipments-detail.spec.ts e2e/sku-analytics.spec.ts e2e/story-174-3-dedicated-route-evidence.spec.ts e2e/telegram-notifications.spec.ts e2e/time-period-analytics.spec.ts e2e/unit-economics.spec.ts --reporter=json",
       "result": "passed",
       "exitCode": 0,
-      "startedAt": "2026-09-01T05:58:03.218Z",
-      "durationMs": 102036
+      "startedAt": "2026-09-01T17:35:13.648Z",
+      "durationMs": 206341
     },
     {
       "source": "e2e/cogs-assignment.spec.ts",
       "sourceSha256": "1c90d3ea8c4cdc6ea126eba69da7401f5d4f7da5ccbbfbbe06971399e9f3343e",
       "scenarioId": "shows margin after COGS assignment",
       "runner": "playwright",
-      "command": "/opt/homebrew/Cellar/node@24/24.18.0/bin/node /private/tmp/wb-repricer-node24-npm11.11.0/node_modules/npm/bin/npm-cli.js run test:e2e:full -- e2e/acquiring.spec.ts e2e/alerts-page.spec.ts e2e/automation/canned-rules.spec.ts e2e/backfill-page.spec.ts e2e/brand-analytics.spec.ts e2e/cogs-assignment.spec.ts e2e/communications.spec.ts e2e/dashboard-metrics.spec.ts e2e/expenses-page.spec.ts e2e/finances.spec.ts e2e/funnel.spec.ts e2e/liquidity.spec.ts e2e/moysklad.spec.ts e2e/orders-integrity.spec.ts e2e/price-calculator.spec.ts e2e/pricing-page.spec.ts e2e/settings-pages.spec.ts e2e/settings/backfill-admin.spec.ts e2e/shipments/shipments-detail.spec.ts e2e/sku-analytics.spec.ts e2e/story-174-3-dedicated-route-evidence.spec.ts e2e/telegram-notifications.spec.ts e2e/time-period-analytics.spec.ts e2e/unit-economics.spec.ts --reporter=json",
+      "command": "npm run test:e2e:full -- e2e/acquiring.spec.ts e2e/alerts-page.spec.ts e2e/automation/canned-rules.spec.ts e2e/backfill-page.spec.ts e2e/brand-analytics.spec.ts e2e/cogs-assignment.spec.ts e2e/communications.spec.ts e2e/dashboard-metrics.spec.ts e2e/expenses-page.spec.ts e2e/finances.spec.ts e2e/funnel.spec.ts e2e/liquidity.spec.ts e2e/moysklad.spec.ts e2e/orders-integrity.spec.ts e2e/price-calculator.spec.ts e2e/pricing-page.spec.ts e2e/settings-pages.spec.ts e2e/settings/backfill-admin.spec.ts e2e/shipments/shipments-detail.spec.ts e2e/sku-analytics.spec.ts e2e/story-174-3-dedicated-route-evidence.spec.ts e2e/telegram-notifications.spec.ts e2e/time-period-analytics.spec.ts e2e/unit-economics.spec.ts --reporter=json",
       "result": "passed",
       "exitCode": 0,
-      "startedAt": "2026-09-01T05:58:03.218Z",
-      "durationMs": 102036
+      "startedAt": "2026-09-01T17:35:13.648Z",
+      "durationMs": 206341
     },
     {
       "source": "e2e/communications.spec.ts",
       "sourceSha256": "57b3f63bf4fa9e868027d7a72b41728110fc8584f170b9631ab8742a8b9c2848",
       "scenarioId": "AC3: empty workspace renders section empty markers without the unread dot",
       "runner": "playwright",
-      "command": "/opt/homebrew/Cellar/node@24/24.18.0/bin/node /private/tmp/wb-repricer-node24-npm11.11.0/node_modules/npm/bin/npm-cli.js run test:e2e:full -- e2e/acquiring.spec.ts e2e/alerts-page.spec.ts e2e/automation/canned-rules.spec.ts e2e/backfill-page.spec.ts e2e/brand-analytics.spec.ts e2e/cogs-assignment.spec.ts e2e/communications.spec.ts e2e/dashboard-metrics.spec.ts e2e/expenses-page.spec.ts e2e/finances.spec.ts e2e/funnel.spec.ts e2e/liquidity.spec.ts e2e/moysklad.spec.ts e2e/orders-integrity.spec.ts e2e/price-calculator.spec.ts e2e/pricing-page.spec.ts e2e/settings-pages.spec.ts e2e/settings/backfill-admin.spec.ts e2e/shipments/shipments-detail.spec.ts e2e/sku-analytics.spec.ts e2e/story-174-3-dedicated-route-evidence.spec.ts e2e/telegram-notifications.spec.ts e2e/time-period-analytics.spec.ts e2e/unit-economics.spec.ts --reporter=json",
+      "command": "npm run test:e2e:full -- e2e/acquiring.spec.ts e2e/alerts-page.spec.ts e2e/automation/canned-rules.spec.ts e2e/backfill-page.spec.ts e2e/brand-analytics.spec.ts e2e/cogs-assignment.spec.ts e2e/communications.spec.ts e2e/dashboard-metrics.spec.ts e2e/expenses-page.spec.ts e2e/finances.spec.ts e2e/funnel.spec.ts e2e/liquidity.spec.ts e2e/moysklad.spec.ts e2e/orders-integrity.spec.ts e2e/price-calculator.spec.ts e2e/pricing-page.spec.ts e2e/settings-pages.spec.ts e2e/settings/backfill-admin.spec.ts e2e/shipments/shipments-detail.spec.ts e2e/sku-analytics.spec.ts e2e/story-174-3-dedicated-route-evidence.spec.ts e2e/telegram-notifications.spec.ts e2e/time-period-analytics.spec.ts e2e/unit-economics.spec.ts --reporter=json",
       "result": "passed",
       "exitCode": 0,
-      "startedAt": "2026-09-01T05:58:03.218Z",
-      "durationMs": 102036
+      "startedAt": "2026-09-01T17:35:13.648Z",
+      "durationMs": 206341
     },
     {
       "source": "e2e/communications.spec.ts",
       "sourceSha256": "57b3f63bf4fa9e868027d7a72b41728110fc8584f170b9631ab8742a8b9c2848",
       "scenarioId": "AC4: feedbacks error renders the destructive alert while sibling sections stay healthy",
       "runner": "playwright",
-      "command": "/opt/homebrew/Cellar/node@24/24.18.0/bin/node /private/tmp/wb-repricer-node24-npm11.11.0/node_modules/npm/bin/npm-cli.js run test:e2e:full -- e2e/acquiring.spec.ts e2e/alerts-page.spec.ts e2e/automation/canned-rules.spec.ts e2e/backfill-page.spec.ts e2e/brand-analytics.spec.ts e2e/cogs-assignment.spec.ts e2e/communications.spec.ts e2e/dashboard-metrics.spec.ts e2e/expenses-page.spec.ts e2e/finances.spec.ts e2e/funnel.spec.ts e2e/liquidity.spec.ts e2e/moysklad.spec.ts e2e/orders-integrity.spec.ts e2e/price-calculator.spec.ts e2e/pricing-page.spec.ts e2e/settings-pages.spec.ts e2e/settings/backfill-admin.spec.ts e2e/shipments/shipments-detail.spec.ts e2e/sku-analytics.spec.ts e2e/story-174-3-dedicated-route-evidence.spec.ts e2e/telegram-notifications.spec.ts e2e/time-period-analytics.spec.ts e2e/unit-economics.spec.ts --reporter=json",
+      "command": "npm run test:e2e:full -- e2e/acquiring.spec.ts e2e/alerts-page.spec.ts e2e/automation/canned-rules.spec.ts e2e/backfill-page.spec.ts e2e/brand-analytics.spec.ts e2e/cogs-assignment.spec.ts e2e/communications.spec.ts e2e/dashboard-metrics.spec.ts e2e/expenses-page.spec.ts e2e/finances.spec.ts e2e/funnel.spec.ts e2e/liquidity.spec.ts e2e/moysklad.spec.ts e2e/orders-integrity.spec.ts e2e/price-calculator.spec.ts e2e/pricing-page.spec.ts e2e/settings-pages.spec.ts e2e/settings/backfill-admin.spec.ts e2e/shipments/shipments-detail.spec.ts e2e/sku-analytics.spec.ts e2e/story-174-3-dedicated-route-evidence.spec.ts e2e/telegram-notifications.spec.ts e2e/time-period-analytics.spec.ts e2e/unit-economics.spec.ts --reporter=json",
       "result": "passed",
       "exitCode": 0,
-      "startedAt": "2026-09-01T05:58:03.218Z",
-      "durationMs": 102036
+      "startedAt": "2026-09-01T17:35:13.648Z",
+      "durationMs": 206341
     },
     {
       "source": "e2e/communications.spec.ts",
       "sourceSha256": "57b3f63bf4fa9e868027d7a72b41728110fc8584f170b9631ab8742a8b9c2848",
       "scenarioId": "AC4b: the Button retry recovers the section after the wire flips to healthy",
       "runner": "playwright",
-      "command": "/opt/homebrew/Cellar/node@24/24.18.0/bin/node /private/tmp/wb-repricer-node24-npm11.11.0/node_modules/npm/bin/npm-cli.js run test:e2e:full -- e2e/acquiring.spec.ts e2e/alerts-page.spec.ts e2e/automation/canned-rules.spec.ts e2e/backfill-page.spec.ts e2e/brand-analytics.spec.ts e2e/cogs-assignment.spec.ts e2e/communications.spec.ts e2e/dashboard-metrics.spec.ts e2e/expenses-page.spec.ts e2e/finances.spec.ts e2e/funnel.spec.ts e2e/liquidity.spec.ts e2e/moysklad.spec.ts e2e/orders-integrity.spec.ts e2e/price-calculator.spec.ts e2e/pricing-page.spec.ts e2e/settings-pages.spec.ts e2e/settings/backfill-admin.spec.ts e2e/shipments/shipments-detail.spec.ts e2e/sku-analytics.spec.ts e2e/story-174-3-dedicated-route-evidence.spec.ts e2e/telegram-notifications.spec.ts e2e/time-period-analytics.spec.ts e2e/unit-economics.spec.ts --reporter=json",
+      "command": "npm run test:e2e:full -- e2e/acquiring.spec.ts e2e/alerts-page.spec.ts e2e/automation/canned-rules.spec.ts e2e/backfill-page.spec.ts e2e/brand-analytics.spec.ts e2e/cogs-assignment.spec.ts e2e/communications.spec.ts e2e/dashboard-metrics.spec.ts e2e/expenses-page.spec.ts e2e/finances.spec.ts e2e/funnel.spec.ts e2e/liquidity.spec.ts e2e/moysklad.spec.ts e2e/orders-integrity.spec.ts e2e/price-calculator.spec.ts e2e/pricing-page.spec.ts e2e/settings-pages.spec.ts e2e/settings/backfill-admin.spec.ts e2e/shipments/shipments-detail.spec.ts e2e/sku-analytics.spec.ts e2e/story-174-3-dedicated-route-evidence.spec.ts e2e/telegram-notifications.spec.ts e2e/time-period-analytics.spec.ts e2e/unit-economics.spec.ts --reporter=json",
       "result": "passed",
       "exitCode": 0,
-      "startedAt": "2026-09-01T05:58:03.218Z",
-      "durationMs": 102036
+      "startedAt": "2026-09-01T17:35:13.648Z",
+      "durationMs": 206341
     },
     {
       "source": "e2e/dashboard-metrics.spec.ts",
       "sourceSha256": "0de489d662912086247f364ab739002f36b240e2b245e88dc1ffdaa9ce81d039",
       "scenarioId": "holds and releases finance loading with a timer-free deferred gate",
       "runner": "playwright",
-      "command": "/opt/homebrew/Cellar/node@24/24.18.0/bin/node /private/tmp/wb-repricer-node24-npm11.11.0/node_modules/npm/bin/npm-cli.js run test:e2e:full -- e2e/acquiring.spec.ts e2e/alerts-page.spec.ts e2e/automation/canned-rules.spec.ts e2e/backfill-page.spec.ts e2e/brand-analytics.spec.ts e2e/cogs-assignment.spec.ts e2e/communications.spec.ts e2e/dashboard-metrics.spec.ts e2e/expenses-page.spec.ts e2e/finances.spec.ts e2e/funnel.spec.ts e2e/liquidity.spec.ts e2e/moysklad.spec.ts e2e/orders-integrity.spec.ts e2e/price-calculator.spec.ts e2e/pricing-page.spec.ts e2e/settings-pages.spec.ts e2e/settings/backfill-admin.spec.ts e2e/shipments/shipments-detail.spec.ts e2e/sku-analytics.spec.ts e2e/story-174-3-dedicated-route-evidence.spec.ts e2e/telegram-notifications.spec.ts e2e/time-period-analytics.spec.ts e2e/unit-economics.spec.ts --reporter=json",
+      "command": "npm run test:e2e:full -- e2e/acquiring.spec.ts e2e/alerts-page.spec.ts e2e/automation/canned-rules.spec.ts e2e/backfill-page.spec.ts e2e/brand-analytics.spec.ts e2e/cogs-assignment.spec.ts e2e/communications.spec.ts e2e/dashboard-metrics.spec.ts e2e/expenses-page.spec.ts e2e/finances.spec.ts e2e/funnel.spec.ts e2e/liquidity.spec.ts e2e/moysklad.spec.ts e2e/orders-integrity.spec.ts e2e/price-calculator.spec.ts e2e/pricing-page.spec.ts e2e/settings-pages.spec.ts e2e/settings/backfill-admin.spec.ts e2e/shipments/shipments-detail.spec.ts e2e/sku-analytics.spec.ts e2e/story-174-3-dedicated-route-evidence.spec.ts e2e/telegram-notifications.spec.ts e2e/time-period-analytics.spec.ts e2e/unit-economics.spec.ts --reporter=json",
       "result": "passed",
       "exitCode": 0,
-      "startedAt": "2026-09-01T05:58:03.218Z",
-      "durationMs": 102036
+      "startedAt": "2026-09-01T17:35:13.648Z",
+      "durationMs": 206341
     },
     {
       "source": "e2e/dashboard-metrics.spec.ts",
       "sourceSha256": "0de489d662912086247f364ab739002f36b240e2b245e88dc1ffdaa9ce81d039",
       "scenarioId": "keeps finance failures failing until Retry is explicitly allowed",
       "runner": "playwright",
-      "command": "/opt/homebrew/Cellar/node@24/24.18.0/bin/node /private/tmp/wb-repricer-node24-npm11.11.0/node_modules/npm/bin/npm-cli.js run test:e2e:full -- e2e/acquiring.spec.ts e2e/alerts-page.spec.ts e2e/automation/canned-rules.spec.ts e2e/backfill-page.spec.ts e2e/brand-analytics.spec.ts e2e/cogs-assignment.spec.ts e2e/communications.spec.ts e2e/dashboard-metrics.spec.ts e2e/expenses-page.spec.ts e2e/finances.spec.ts e2e/funnel.spec.ts e2e/liquidity.spec.ts e2e/moysklad.spec.ts e2e/orders-integrity.spec.ts e2e/price-calculator.spec.ts e2e/pricing-page.spec.ts e2e/settings-pages.spec.ts e2e/settings/backfill-admin.spec.ts e2e/shipments/shipments-detail.spec.ts e2e/sku-analytics.spec.ts e2e/story-174-3-dedicated-route-evidence.spec.ts e2e/telegram-notifications.spec.ts e2e/time-period-analytics.spec.ts e2e/unit-economics.spec.ts --reporter=json",
+      "command": "npm run test:e2e:full -- e2e/acquiring.spec.ts e2e/alerts-page.spec.ts e2e/automation/canned-rules.spec.ts e2e/backfill-page.spec.ts e2e/brand-analytics.spec.ts e2e/cogs-assignment.spec.ts e2e/communications.spec.ts e2e/dashboard-metrics.spec.ts e2e/expenses-page.spec.ts e2e/finances.spec.ts e2e/funnel.spec.ts e2e/liquidity.spec.ts e2e/moysklad.spec.ts e2e/orders-integrity.spec.ts e2e/price-calculator.spec.ts e2e/pricing-page.spec.ts e2e/settings-pages.spec.ts e2e/settings/backfill-admin.spec.ts e2e/shipments/shipments-detail.spec.ts e2e/sku-analytics.spec.ts e2e/story-174-3-dedicated-route-evidence.spec.ts e2e/telegram-notifications.spec.ts e2e/time-period-analytics.spec.ts e2e/unit-economics.spec.ts --reporter=json",
       "result": "passed",
       "exitCode": 0,
-      "startedAt": "2026-09-01T05:58:03.218Z",
-      "durationMs": 102036
+      "startedAt": "2026-09-01T17:35:13.648Z",
+      "durationMs": 206341
     },
     {
       "source": "e2e/expenses-page.spec.ts",
-      "sourceSha256": "9e21a704e62ec4079eb194f0e8fe706b05b8de720cbbecd993af218528f5f4b0",
+      "sourceSha256": "30485289a9a2742aa9c46d13d939864992da9792f8cecfa14dabd3c6f80a9363",
       "scenarioId": "contains focus and returns it to the invoking delete action",
       "runner": "playwright",
-      "command": "/opt/homebrew/Cellar/node@24/24.18.0/bin/node /private/tmp/wb-repricer-node24-npm11.11.0/node_modules/npm/bin/npm-cli.js run test:e2e:full -- e2e/acquiring.spec.ts e2e/alerts-page.spec.ts e2e/automation/canned-rules.spec.ts e2e/backfill-page.spec.ts e2e/brand-analytics.spec.ts e2e/cogs-assignment.spec.ts e2e/communications.spec.ts e2e/dashboard-metrics.spec.ts e2e/expenses-page.spec.ts e2e/finances.spec.ts e2e/funnel.spec.ts e2e/liquidity.spec.ts e2e/moysklad.spec.ts e2e/orders-integrity.spec.ts e2e/price-calculator.spec.ts e2e/pricing-page.spec.ts e2e/settings-pages.spec.ts e2e/settings/backfill-admin.spec.ts e2e/shipments/shipments-detail.spec.ts e2e/sku-analytics.spec.ts e2e/story-174-3-dedicated-route-evidence.spec.ts e2e/telegram-notifications.spec.ts e2e/time-period-analytics.spec.ts e2e/unit-economics.spec.ts --reporter=json",
+      "command": "npm run test:e2e:full -- e2e/acquiring.spec.ts e2e/alerts-page.spec.ts e2e/automation/canned-rules.spec.ts e2e/backfill-page.spec.ts e2e/brand-analytics.spec.ts e2e/cogs-assignment.spec.ts e2e/communications.spec.ts e2e/dashboard-metrics.spec.ts e2e/expenses-page.spec.ts e2e/finances.spec.ts e2e/funnel.spec.ts e2e/liquidity.spec.ts e2e/moysklad.spec.ts e2e/orders-integrity.spec.ts e2e/price-calculator.spec.ts e2e/pricing-page.spec.ts e2e/settings-pages.spec.ts e2e/settings/backfill-admin.spec.ts e2e/shipments/shipments-detail.spec.ts e2e/sku-analytics.spec.ts e2e/story-174-3-dedicated-route-evidence.spec.ts e2e/telegram-notifications.spec.ts e2e/time-period-analytics.spec.ts e2e/unit-economics.spec.ts --reporter=json",
       "result": "passed",
       "exitCode": 0,
-      "startedAt": "2026-09-01T05:58:03.218Z",
-      "durationMs": 102036
+      "startedAt": "2026-09-01T17:35:13.648Z",
+      "durationMs": 206341
     },
     {
       "source": "e2e/expenses-page.spec.ts",
-      "sourceSha256": "9e21a704e62ec4079eb194f0e8fe706b05b8de720cbbecd993af218528f5f4b0",
+      "sourceSha256": "30485289a9a2742aa9c46d13d939864992da9792f8cecfa14dabd3c6f80a9363",
       "scenarioId": "keeps create pending open across Cancel, Escape, and close requests",
       "runner": "playwright",
-      "command": "/opt/homebrew/Cellar/node@24/24.18.0/bin/node /private/tmp/wb-repricer-node24-npm11.11.0/node_modules/npm/bin/npm-cli.js run test:e2e:full -- e2e/acquiring.spec.ts e2e/alerts-page.spec.ts e2e/automation/canned-rules.spec.ts e2e/backfill-page.spec.ts e2e/brand-analytics.spec.ts e2e/cogs-assignment.spec.ts e2e/communications.spec.ts e2e/dashboard-metrics.spec.ts e2e/expenses-page.spec.ts e2e/finances.spec.ts e2e/funnel.spec.ts e2e/liquidity.spec.ts e2e/moysklad.spec.ts e2e/orders-integrity.spec.ts e2e/price-calculator.spec.ts e2e/pricing-page.spec.ts e2e/settings-pages.spec.ts e2e/settings/backfill-admin.spec.ts e2e/shipments/shipments-detail.spec.ts e2e/sku-analytics.spec.ts e2e/story-174-3-dedicated-route-evidence.spec.ts e2e/telegram-notifications.spec.ts e2e/time-period-analytics.spec.ts e2e/unit-economics.spec.ts --reporter=json",
+      "command": "npm run test:e2e:full -- e2e/acquiring.spec.ts e2e/alerts-page.spec.ts e2e/automation/canned-rules.spec.ts e2e/backfill-page.spec.ts e2e/brand-analytics.spec.ts e2e/cogs-assignment.spec.ts e2e/communications.spec.ts e2e/dashboard-metrics.spec.ts e2e/expenses-page.spec.ts e2e/finances.spec.ts e2e/funnel.spec.ts e2e/liquidity.spec.ts e2e/moysklad.spec.ts e2e/orders-integrity.spec.ts e2e/price-calculator.spec.ts e2e/pricing-page.spec.ts e2e/settings-pages.spec.ts e2e/settings/backfill-admin.spec.ts e2e/shipments/shipments-detail.spec.ts e2e/sku-analytics.spec.ts e2e/story-174-3-dedicated-route-evidence.spec.ts e2e/telegram-notifications.spec.ts e2e/time-period-analytics.spec.ts e2e/unit-economics.spec.ts --reporter=json",
       "result": "passed",
       "exitCode": 0,
-      "startedAt": "2026-09-01T05:58:03.218Z",
-      "durationMs": 102036
+      "startedAt": "2026-09-01T17:35:13.648Z",
+      "durationMs": 206341
     },
     {
       "source": "e2e/expenses-page.spec.ts",
-      "sourceSha256": "9e21a704e62ec4079eb194f0e8fe706b05b8de720cbbecd993af218528f5f4b0",
+      "sourceSha256": "30485289a9a2742aa9c46d13d939864992da9792f8cecfa14dabd3c6f80a9363",
       "scenarioId": "renders a deterministic empty month state",
       "runner": "playwright",
-      "command": "/opt/homebrew/Cellar/node@24/24.18.0/bin/node /private/tmp/wb-repricer-node24-npm11.11.0/node_modules/npm/bin/npm-cli.js run test:e2e:full -- e2e/acquiring.spec.ts e2e/alerts-page.spec.ts e2e/automation/canned-rules.spec.ts e2e/backfill-page.spec.ts e2e/brand-analytics.spec.ts e2e/cogs-assignment.spec.ts e2e/communications.spec.ts e2e/dashboard-metrics.spec.ts e2e/expenses-page.spec.ts e2e/finances.spec.ts e2e/funnel.spec.ts e2e/liquidity.spec.ts e2e/moysklad.spec.ts e2e/orders-integrity.spec.ts e2e/price-calculator.spec.ts e2e/pricing-page.spec.ts e2e/settings-pages.spec.ts e2e/settings/backfill-admin.spec.ts e2e/shipments/shipments-detail.spec.ts e2e/sku-analytics.spec.ts e2e/story-174-3-dedicated-route-evidence.spec.ts e2e/telegram-notifications.spec.ts e2e/time-period-analytics.spec.ts e2e/unit-economics.spec.ts --reporter=json",
+      "command": "npm run test:e2e:full -- e2e/acquiring.spec.ts e2e/alerts-page.spec.ts e2e/automation/canned-rules.spec.ts e2e/backfill-page.spec.ts e2e/brand-analytics.spec.ts e2e/cogs-assignment.spec.ts e2e/communications.spec.ts e2e/dashboard-metrics.spec.ts e2e/expenses-page.spec.ts e2e/finances.spec.ts e2e/funnel.spec.ts e2e/liquidity.spec.ts e2e/moysklad.spec.ts e2e/orders-integrity.spec.ts e2e/price-calculator.spec.ts e2e/pricing-page.spec.ts e2e/settings-pages.spec.ts e2e/settings/backfill-admin.spec.ts e2e/shipments/shipments-detail.spec.ts e2e/sku-analytics.spec.ts e2e/story-174-3-dedicated-route-evidence.spec.ts e2e/telegram-notifications.spec.ts e2e/time-period-analytics.spec.ts e2e/unit-economics.spec.ts --reporter=json",
       "result": "passed",
       "exitCode": 0,
-      "startedAt": "2026-09-01T05:58:03.218Z",
-      "durationMs": 102036
+      "startedAt": "2026-09-01T17:35:13.648Z",
+      "durationMs": 206341
     },
     {
       "source": "e2e/finances.spec.ts",
       "sourceSha256": "e2b2d12c9a7d94de9811e568f389092a14cefb610399b04d1c8ee6deb25bc310",
       "scenarioId": "distinguishes filtered empty and resets to the unfiltered first page",
       "runner": "playwright",
-      "command": "/opt/homebrew/Cellar/node@24/24.18.0/bin/node /private/tmp/wb-repricer-node24-npm11.11.0/node_modules/npm/bin/npm-cli.js run test:e2e:full -- e2e/acquiring.spec.ts e2e/alerts-page.spec.ts e2e/automation/canned-rules.spec.ts e2e/backfill-page.spec.ts e2e/brand-analytics.spec.ts e2e/cogs-assignment.spec.ts e2e/communications.spec.ts e2e/dashboard-metrics.spec.ts e2e/expenses-page.spec.ts e2e/finances.spec.ts e2e/funnel.spec.ts e2e/liquidity.spec.ts e2e/moysklad.spec.ts e2e/orders-integrity.spec.ts e2e/price-calculator.spec.ts e2e/pricing-page.spec.ts e2e/settings-pages.spec.ts e2e/settings/backfill-admin.spec.ts e2e/shipments/shipments-detail.spec.ts e2e/sku-analytics.spec.ts e2e/story-174-3-dedicated-route-evidence.spec.ts e2e/telegram-notifications.spec.ts e2e/time-period-analytics.spec.ts e2e/unit-economics.spec.ts --reporter=json",
+      "command": "npm run test:e2e:full -- e2e/acquiring.spec.ts e2e/alerts-page.spec.ts e2e/automation/canned-rules.spec.ts e2e/backfill-page.spec.ts e2e/brand-analytics.spec.ts e2e/cogs-assignment.spec.ts e2e/communications.spec.ts e2e/dashboard-metrics.spec.ts e2e/expenses-page.spec.ts e2e/finances.spec.ts e2e/funnel.spec.ts e2e/liquidity.spec.ts e2e/moysklad.spec.ts e2e/orders-integrity.spec.ts e2e/price-calculator.spec.ts e2e/pricing-page.spec.ts e2e/settings-pages.spec.ts e2e/settings/backfill-admin.spec.ts e2e/shipments/shipments-detail.spec.ts e2e/sku-analytics.spec.ts e2e/story-174-3-dedicated-route-evidence.spec.ts e2e/telegram-notifications.spec.ts e2e/time-period-analytics.spec.ts e2e/unit-economics.spec.ts --reporter=json",
       "result": "passed",
       "exitCode": 0,
-      "startedAt": "2026-09-01T05:58:03.218Z",
-      "durationMs": 102036
+      "startedAt": "2026-09-01T17:35:13.648Z",
+      "durationMs": 206341
     },
     {
       "source": "e2e/finances.spec.ts",
       "sourceSha256": "e2b2d12c9a7d94de9811e568f389092a14cefb610399b04d1c8ee6deb25bc310",
       "scenarioId": "renders balance error + retry on 503 (documents stay usable)",
       "runner": "playwright",
-      "command": "/opt/homebrew/Cellar/node@24/24.18.0/bin/node /private/tmp/wb-repricer-node24-npm11.11.0/node_modules/npm/bin/npm-cli.js run test:e2e:full -- e2e/acquiring.spec.ts e2e/alerts-page.spec.ts e2e/automation/canned-rules.spec.ts e2e/backfill-page.spec.ts e2e/brand-analytics.spec.ts e2e/cogs-assignment.spec.ts e2e/communications.spec.ts e2e/dashboard-metrics.spec.ts e2e/expenses-page.spec.ts e2e/finances.spec.ts e2e/funnel.spec.ts e2e/liquidity.spec.ts e2e/moysklad.spec.ts e2e/orders-integrity.spec.ts e2e/price-calculator.spec.ts e2e/pricing-page.spec.ts e2e/settings-pages.spec.ts e2e/settings/backfill-admin.spec.ts e2e/shipments/shipments-detail.spec.ts e2e/sku-analytics.spec.ts e2e/story-174-3-dedicated-route-evidence.spec.ts e2e/telegram-notifications.spec.ts e2e/time-period-analytics.spec.ts e2e/unit-economics.spec.ts --reporter=json",
+      "command": "npm run test:e2e:full -- e2e/acquiring.spec.ts e2e/alerts-page.spec.ts e2e/automation/canned-rules.spec.ts e2e/backfill-page.spec.ts e2e/brand-analytics.spec.ts e2e/cogs-assignment.spec.ts e2e/communications.spec.ts e2e/dashboard-metrics.spec.ts e2e/expenses-page.spec.ts e2e/finances.spec.ts e2e/funnel.spec.ts e2e/liquidity.spec.ts e2e/moysklad.spec.ts e2e/orders-integrity.spec.ts e2e/price-calculator.spec.ts e2e/pricing-page.spec.ts e2e/settings-pages.spec.ts e2e/settings/backfill-admin.spec.ts e2e/shipments/shipments-detail.spec.ts e2e/sku-analytics.spec.ts e2e/story-174-3-dedicated-route-evidence.spec.ts e2e/telegram-notifications.spec.ts e2e/time-period-analytics.spec.ts e2e/unit-economics.spec.ts --reporter=json",
       "result": "passed",
       "exitCode": 0,
-      "startedAt": "2026-09-01T05:58:03.218Z",
-      "durationMs": 102036
+      "startedAt": "2026-09-01T17:35:13.648Z",
+      "durationMs": 206341
     },
     {
       "source": "e2e/finances.spec.ts",
       "sourceSha256": "e2b2d12c9a7d94de9811e568f389092a14cefb610399b04d1c8ee6deb25bc310",
       "scenarioId": "renders the balance empty state when WB returns all-null",
       "runner": "playwright",
-      "command": "/opt/homebrew/Cellar/node@24/24.18.0/bin/node /private/tmp/wb-repricer-node24-npm11.11.0/node_modules/npm/bin/npm-cli.js run test:e2e:full -- e2e/acquiring.spec.ts e2e/alerts-page.spec.ts e2e/automation/canned-rules.spec.ts e2e/backfill-page.spec.ts e2e/brand-analytics.spec.ts e2e/cogs-assignment.spec.ts e2e/communications.spec.ts e2e/dashboard-metrics.spec.ts e2e/expenses-page.spec.ts e2e/finances.spec.ts e2e/funnel.spec.ts e2e/liquidity.spec.ts e2e/moysklad.spec.ts e2e/orders-integrity.spec.ts e2e/price-calculator.spec.ts e2e/pricing-page.spec.ts e2e/settings-pages.spec.ts e2e/settings/backfill-admin.spec.ts e2e/shipments/shipments-detail.spec.ts e2e/sku-analytics.spec.ts e2e/story-174-3-dedicated-route-evidence.spec.ts e2e/telegram-notifications.spec.ts e2e/time-period-analytics.spec.ts e2e/unit-economics.spec.ts --reporter=json",
+      "command": "npm run test:e2e:full -- e2e/acquiring.spec.ts e2e/alerts-page.spec.ts e2e/automation/canned-rules.spec.ts e2e/backfill-page.spec.ts e2e/brand-analytics.spec.ts e2e/cogs-assignment.spec.ts e2e/communications.spec.ts e2e/dashboard-metrics.spec.ts e2e/expenses-page.spec.ts e2e/finances.spec.ts e2e/funnel.spec.ts e2e/liquidity.spec.ts e2e/moysklad.spec.ts e2e/orders-integrity.spec.ts e2e/price-calculator.spec.ts e2e/pricing-page.spec.ts e2e/settings-pages.spec.ts e2e/settings/backfill-admin.spec.ts e2e/shipments/shipments-detail.spec.ts e2e/sku-analytics.spec.ts e2e/story-174-3-dedicated-route-evidence.spec.ts e2e/telegram-notifications.spec.ts e2e/time-period-analytics.spec.ts e2e/unit-economics.spec.ts --reporter=json",
       "result": "passed",
       "exitCode": 0,
-      "startedAt": "2026-09-01T05:58:03.218Z",
-      "durationMs": 102036
+      "startedAt": "2026-09-01T17:35:13.648Z",
+      "durationMs": 206341
     },
     {
       "source": "e2e/funnel.spec.ts",
       "sourceSha256": "576209484549a814e4403fca4f95462f2b87075fd3b4d67a273bbce0a1cd524d",
       "scenarioId": "empty funnel response renders an informational alert (no data for period)",
       "runner": "playwright",
-      "command": "/opt/homebrew/Cellar/node@24/24.18.0/bin/node /private/tmp/wb-repricer-node24-npm11.11.0/node_modules/npm/bin/npm-cli.js run test:e2e:full -- e2e/acquiring.spec.ts e2e/alerts-page.spec.ts e2e/automation/canned-rules.spec.ts e2e/backfill-page.spec.ts e2e/brand-analytics.spec.ts e2e/cogs-assignment.spec.ts e2e/communications.spec.ts e2e/dashboard-metrics.spec.ts e2e/expenses-page.spec.ts e2e/finances.spec.ts e2e/funnel.spec.ts e2e/liquidity.spec.ts e2e/moysklad.spec.ts e2e/orders-integrity.spec.ts e2e/price-calculator.spec.ts e2e/pricing-page.spec.ts e2e/settings-pages.spec.ts e2e/settings/backfill-admin.spec.ts e2e/shipments/shipments-detail.spec.ts e2e/sku-analytics.spec.ts e2e/story-174-3-dedicated-route-evidence.spec.ts e2e/telegram-notifications.spec.ts e2e/time-period-analytics.spec.ts e2e/unit-economics.spec.ts --reporter=json",
+      "command": "npm run test:e2e:full -- e2e/acquiring.spec.ts e2e/alerts-page.spec.ts e2e/automation/canned-rules.spec.ts e2e/backfill-page.spec.ts e2e/brand-analytics.spec.ts e2e/cogs-assignment.spec.ts e2e/communications.spec.ts e2e/dashboard-metrics.spec.ts e2e/expenses-page.spec.ts e2e/finances.spec.ts e2e/funnel.spec.ts e2e/liquidity.spec.ts e2e/moysklad.spec.ts e2e/orders-integrity.spec.ts e2e/price-calculator.spec.ts e2e/pricing-page.spec.ts e2e/settings-pages.spec.ts e2e/settings/backfill-admin.spec.ts e2e/shipments/shipments-detail.spec.ts e2e/sku-analytics.spec.ts e2e/story-174-3-dedicated-route-evidence.spec.ts e2e/telegram-notifications.spec.ts e2e/time-period-analytics.spec.ts e2e/unit-economics.spec.ts --reporter=json",
       "result": "passed",
       "exitCode": 0,
-      "startedAt": "2026-09-01T05:58:03.218Z",
-      "durationMs": 102036
+      "startedAt": "2026-09-01T17:35:13.648Z",
+      "durationMs": 206341
     },
     {
       "source": "e2e/funnel.spec.ts",
       "sourceSha256": "576209484549a814e4403fca4f95462f2b87075fd3b4d67a273bbce0a1cd524d",
       "scenarioId": "funnel 500 renders a destructive error alert without crashing the page",
       "runner": "playwright",
-      "command": "/opt/homebrew/Cellar/node@24/24.18.0/bin/node /private/tmp/wb-repricer-node24-npm11.11.0/node_modules/npm/bin/npm-cli.js run test:e2e:full -- e2e/acquiring.spec.ts e2e/alerts-page.spec.ts e2e/automation/canned-rules.spec.ts e2e/backfill-page.spec.ts e2e/brand-analytics.spec.ts e2e/cogs-assignment.spec.ts e2e/communications.spec.ts e2e/dashboard-metrics.spec.ts e2e/expenses-page.spec.ts e2e/finances.spec.ts e2e/funnel.spec.ts e2e/liquidity.spec.ts e2e/moysklad.spec.ts e2e/orders-integrity.spec.ts e2e/price-calculator.spec.ts e2e/pricing-page.spec.ts e2e/settings-pages.spec.ts e2e/settings/backfill-admin.spec.ts e2e/shipments/shipments-detail.spec.ts e2e/sku-analytics.spec.ts e2e/story-174-3-dedicated-route-evidence.spec.ts e2e/telegram-notifications.spec.ts e2e/time-period-analytics.spec.ts e2e/unit-economics.spec.ts --reporter=json",
+      "command": "npm run test:e2e:full -- e2e/acquiring.spec.ts e2e/alerts-page.spec.ts e2e/automation/canned-rules.spec.ts e2e/backfill-page.spec.ts e2e/brand-analytics.spec.ts e2e/cogs-assignment.spec.ts e2e/communications.spec.ts e2e/dashboard-metrics.spec.ts e2e/expenses-page.spec.ts e2e/finances.spec.ts e2e/funnel.spec.ts e2e/liquidity.spec.ts e2e/moysklad.spec.ts e2e/orders-integrity.spec.ts e2e/price-calculator.spec.ts e2e/pricing-page.spec.ts e2e/settings-pages.spec.ts e2e/settings/backfill-admin.spec.ts e2e/shipments/shipments-detail.spec.ts e2e/sku-analytics.spec.ts e2e/story-174-3-dedicated-route-evidence.spec.ts e2e/telegram-notifications.spec.ts e2e/time-period-analytics.spec.ts e2e/unit-economics.spec.ts --reporter=json",
       "result": "passed",
       "exitCode": 0,
-      "startedAt": "2026-09-01T05:58:03.218Z",
-      "durationMs": 102036
+      "startedAt": "2026-09-01T17:35:13.648Z",
+      "durationMs": 206341
     },
     {
       "source": "e2e/liquidity.spec.ts",
       "sourceSha256": "b515cb6c795f5946f43177dbfa05bd4b0fe01c6e6d9e700260eb786e2babee49",
       "scenarioId": "holds loading state behind a timer-free deferred release",
       "runner": "playwright",
-      "command": "/opt/homebrew/Cellar/node@24/24.18.0/bin/node /private/tmp/wb-repricer-node24-npm11.11.0/node_modules/npm/bin/npm-cli.js run test:e2e:full -- e2e/acquiring.spec.ts e2e/alerts-page.spec.ts e2e/automation/canned-rules.spec.ts e2e/backfill-page.spec.ts e2e/brand-analytics.spec.ts e2e/cogs-assignment.spec.ts e2e/communications.spec.ts e2e/dashboard-metrics.spec.ts e2e/expenses-page.spec.ts e2e/finances.spec.ts e2e/funnel.spec.ts e2e/liquidity.spec.ts e2e/moysklad.spec.ts e2e/orders-integrity.spec.ts e2e/price-calculator.spec.ts e2e/pricing-page.spec.ts e2e/settings-pages.spec.ts e2e/settings/backfill-admin.spec.ts e2e/shipments/shipments-detail.spec.ts e2e/sku-analytics.spec.ts e2e/story-174-3-dedicated-route-evidence.spec.ts e2e/telegram-notifications.spec.ts e2e/time-period-analytics.spec.ts e2e/unit-economics.spec.ts --reporter=json",
+      "command": "npm run test:e2e:full -- e2e/acquiring.spec.ts e2e/alerts-page.spec.ts e2e/automation/canned-rules.spec.ts e2e/backfill-page.spec.ts e2e/brand-analytics.spec.ts e2e/cogs-assignment.spec.ts e2e/communications.spec.ts e2e/dashboard-metrics.spec.ts e2e/expenses-page.spec.ts e2e/finances.spec.ts e2e/funnel.spec.ts e2e/liquidity.spec.ts e2e/moysklad.spec.ts e2e/orders-integrity.spec.ts e2e/price-calculator.spec.ts e2e/pricing-page.spec.ts e2e/settings-pages.spec.ts e2e/settings/backfill-admin.spec.ts e2e/shipments/shipments-detail.spec.ts e2e/sku-analytics.spec.ts e2e/story-174-3-dedicated-route-evidence.spec.ts e2e/telegram-notifications.spec.ts e2e/time-period-analytics.spec.ts e2e/unit-economics.spec.ts --reporter=json",
       "result": "passed",
       "exitCode": 0,
-      "startedAt": "2026-09-01T05:58:03.218Z",
-      "durationMs": 102036
+      "startedAt": "2026-09-01T17:35:13.648Z",
+      "durationMs": 206341
     },
     {
       "source": "e2e/liquidity.spec.ts",
       "sourceSha256": "b515cb6c795f5946f43177dbfa05bd4b0fe01c6e6d9e700260eb786e2babee49",
       "scenarioId": "refreshes through an exact successful analytics request",
       "runner": "playwright",
-      "command": "/opt/homebrew/Cellar/node@24/24.18.0/bin/node /private/tmp/wb-repricer-node24-npm11.11.0/node_modules/npm/bin/npm-cli.js run test:e2e:full -- e2e/acquiring.spec.ts e2e/alerts-page.spec.ts e2e/automation/canned-rules.spec.ts e2e/backfill-page.spec.ts e2e/brand-analytics.spec.ts e2e/cogs-assignment.spec.ts e2e/communications.spec.ts e2e/dashboard-metrics.spec.ts e2e/expenses-page.spec.ts e2e/finances.spec.ts e2e/funnel.spec.ts e2e/liquidity.spec.ts e2e/moysklad.spec.ts e2e/orders-integrity.spec.ts e2e/price-calculator.spec.ts e2e/pricing-page.spec.ts e2e/settings-pages.spec.ts e2e/settings/backfill-admin.spec.ts e2e/shipments/shipments-detail.spec.ts e2e/sku-analytics.spec.ts e2e/story-174-3-dedicated-route-evidence.spec.ts e2e/telegram-notifications.spec.ts e2e/time-period-analytics.spec.ts e2e/unit-economics.spec.ts --reporter=json",
+      "command": "npm run test:e2e:full -- e2e/acquiring.spec.ts e2e/alerts-page.spec.ts e2e/automation/canned-rules.spec.ts e2e/backfill-page.spec.ts e2e/brand-analytics.spec.ts e2e/cogs-assignment.spec.ts e2e/communications.spec.ts e2e/dashboard-metrics.spec.ts e2e/expenses-page.spec.ts e2e/finances.spec.ts e2e/funnel.spec.ts e2e/liquidity.spec.ts e2e/moysklad.spec.ts e2e/orders-integrity.spec.ts e2e/price-calculator.spec.ts e2e/pricing-page.spec.ts e2e/settings-pages.spec.ts e2e/settings/backfill-admin.spec.ts e2e/shipments/shipments-detail.spec.ts e2e/sku-analytics.spec.ts e2e/story-174-3-dedicated-route-evidence.spec.ts e2e/telegram-notifications.spec.ts e2e/time-period-analytics.spec.ts e2e/unit-economics.spec.ts --reporter=json",
       "result": "passed",
       "exitCode": 0,
-      "startedAt": "2026-09-01T05:58:03.218Z",
-      "durationMs": 102036
+      "startedAt": "2026-09-01T17:35:13.648Z",
+      "durationMs": 206341
     },
     {
       "source": "e2e/liquidity.spec.ts",
       "sourceSha256": "b515cb6c795f5946f43177dbfa05bd4b0fe01c6e6d9e700260eb786e2babee49",
       "scenarioId": "renders the exact empty terminal state",
       "runner": "playwright",
-      "command": "/opt/homebrew/Cellar/node@24/24.18.0/bin/node /private/tmp/wb-repricer-node24-npm11.11.0/node_modules/npm/bin/npm-cli.js run test:e2e:full -- e2e/acquiring.spec.ts e2e/alerts-page.spec.ts e2e/automation/canned-rules.spec.ts e2e/backfill-page.spec.ts e2e/brand-analytics.spec.ts e2e/cogs-assignment.spec.ts e2e/communications.spec.ts e2e/dashboard-metrics.spec.ts e2e/expenses-page.spec.ts e2e/finances.spec.ts e2e/funnel.spec.ts e2e/liquidity.spec.ts e2e/moysklad.spec.ts e2e/orders-integrity.spec.ts e2e/price-calculator.spec.ts e2e/pricing-page.spec.ts e2e/settings-pages.spec.ts e2e/settings/backfill-admin.spec.ts e2e/shipments/shipments-detail.spec.ts e2e/sku-analytics.spec.ts e2e/story-174-3-dedicated-route-evidence.spec.ts e2e/telegram-notifications.spec.ts e2e/time-period-analytics.spec.ts e2e/unit-economics.spec.ts --reporter=json",
+      "command": "npm run test:e2e:full -- e2e/acquiring.spec.ts e2e/alerts-page.spec.ts e2e/automation/canned-rules.spec.ts e2e/backfill-page.spec.ts e2e/brand-analytics.spec.ts e2e/cogs-assignment.spec.ts e2e/communications.spec.ts e2e/dashboard-metrics.spec.ts e2e/expenses-page.spec.ts e2e/finances.spec.ts e2e/funnel.spec.ts e2e/liquidity.spec.ts e2e/moysklad.spec.ts e2e/orders-integrity.spec.ts e2e/price-calculator.spec.ts e2e/pricing-page.spec.ts e2e/settings-pages.spec.ts e2e/settings/backfill-admin.spec.ts e2e/shipments/shipments-detail.spec.ts e2e/sku-analytics.spec.ts e2e/story-174-3-dedicated-route-evidence.spec.ts e2e/telegram-notifications.spec.ts e2e/time-period-analytics.spec.ts e2e/unit-economics.spec.ts --reporter=json",
       "result": "passed",
       "exitCode": 0,
-      "startedAt": "2026-09-01T05:58:03.218Z",
-      "durationMs": 102036
+      "startedAt": "2026-09-01T17:35:13.648Z",
+      "durationMs": 206341
     },
     {
       "source": "e2e/liquidity.spec.ts",
       "sourceSha256": "b515cb6c795f5946f43177dbfa05bd4b0fe01c6e6d9e700260eb786e2babee49",
       "scenarioId": "renders the exact error terminal state after retry exhaustion",
       "runner": "playwright",
-      "command": "/opt/homebrew/Cellar/node@24/24.18.0/bin/node /private/tmp/wb-repricer-node24-npm11.11.0/node_modules/npm/bin/npm-cli.js run test:e2e:full -- e2e/acquiring.spec.ts e2e/alerts-page.spec.ts e2e/automation/canned-rules.spec.ts e2e/backfill-page.spec.ts e2e/brand-analytics.spec.ts e2e/cogs-assignment.spec.ts e2e/communications.spec.ts e2e/dashboard-metrics.spec.ts e2e/expenses-page.spec.ts e2e/finances.spec.ts e2e/funnel.spec.ts e2e/liquidity.spec.ts e2e/moysklad.spec.ts e2e/orders-integrity.spec.ts e2e/price-calculator.spec.ts e2e/pricing-page.spec.ts e2e/settings-pages.spec.ts e2e/settings/backfill-admin.spec.ts e2e/shipments/shipments-detail.spec.ts e2e/sku-analytics.spec.ts e2e/story-174-3-dedicated-route-evidence.spec.ts e2e/telegram-notifications.spec.ts e2e/time-period-analytics.spec.ts e2e/unit-economics.spec.ts --reporter=json",
+      "command": "npm run test:e2e:full -- e2e/acquiring.spec.ts e2e/alerts-page.spec.ts e2e/automation/canned-rules.spec.ts e2e/backfill-page.spec.ts e2e/brand-analytics.spec.ts e2e/cogs-assignment.spec.ts e2e/communications.spec.ts e2e/dashboard-metrics.spec.ts e2e/expenses-page.spec.ts e2e/finances.spec.ts e2e/funnel.spec.ts e2e/liquidity.spec.ts e2e/moysklad.spec.ts e2e/orders-integrity.spec.ts e2e/price-calculator.spec.ts e2e/pricing-page.spec.ts e2e/settings-pages.spec.ts e2e/settings/backfill-admin.spec.ts e2e/shipments/shipments-detail.spec.ts e2e/sku-analytics.spec.ts e2e/story-174-3-dedicated-route-evidence.spec.ts e2e/telegram-notifications.spec.ts e2e/time-period-analytics.spec.ts e2e/unit-economics.spec.ts --reporter=json",
       "result": "passed",
       "exitCode": 0,
-      "startedAt": "2026-09-01T05:58:03.218Z",
-      "durationMs": 102036
+      "startedAt": "2026-09-01T17:35:13.648Z",
+      "durationMs": 206341
     },
     {
       "source": "e2e/moysklad.spec.ts",
       "sourceSha256": "7b141312bdb7972b3c0bf7b3e084bb053f362277bf51e358b7fcb27da0b0dee8",
       "scenarioId": "mappings table: filter counts + «Привязать» on pending rows + pagination hint",
       "runner": "playwright",
-      "command": "/opt/homebrew/Cellar/node@24/24.18.0/bin/node /private/tmp/wb-repricer-node24-npm11.11.0/node_modules/npm/bin/npm-cli.js run test:e2e:full -- e2e/acquiring.spec.ts e2e/alerts-page.spec.ts e2e/automation/canned-rules.spec.ts e2e/backfill-page.spec.ts e2e/brand-analytics.spec.ts e2e/cogs-assignment.spec.ts e2e/communications.spec.ts e2e/dashboard-metrics.spec.ts e2e/expenses-page.spec.ts e2e/finances.spec.ts e2e/funnel.spec.ts e2e/liquidity.spec.ts e2e/moysklad.spec.ts e2e/orders-integrity.spec.ts e2e/price-calculator.spec.ts e2e/pricing-page.spec.ts e2e/settings-pages.spec.ts e2e/settings/backfill-admin.spec.ts e2e/shipments/shipments-detail.spec.ts e2e/sku-analytics.spec.ts e2e/story-174-3-dedicated-route-evidence.spec.ts e2e/telegram-notifications.spec.ts e2e/time-period-analytics.spec.ts e2e/unit-economics.spec.ts --reporter=json",
+      "command": "npm run test:e2e:full -- e2e/acquiring.spec.ts e2e/alerts-page.spec.ts e2e/automation/canned-rules.spec.ts e2e/backfill-page.spec.ts e2e/brand-analytics.spec.ts e2e/cogs-assignment.spec.ts e2e/communications.spec.ts e2e/dashboard-metrics.spec.ts e2e/expenses-page.spec.ts e2e/finances.spec.ts e2e/funnel.spec.ts e2e/liquidity.spec.ts e2e/moysklad.spec.ts e2e/orders-integrity.spec.ts e2e/price-calculator.spec.ts e2e/pricing-page.spec.ts e2e/settings-pages.spec.ts e2e/settings/backfill-admin.spec.ts e2e/shipments/shipments-detail.spec.ts e2e/sku-analytics.spec.ts e2e/story-174-3-dedicated-route-evidence.spec.ts e2e/telegram-notifications.spec.ts e2e/time-period-analytics.spec.ts e2e/unit-economics.spec.ts --reporter=json",
       "result": "passed",
       "exitCode": 0,
-      "startedAt": "2026-09-01T05:58:03.218Z",
-      "durationMs": 102036
+      "startedAt": "2026-09-01T17:35:13.648Z",
+      "durationMs": 206341
     },
     {
       "source": "e2e/moysklad.spec.ts",
       "sourceSha256": "7b141312bdb7972b3c0bf7b3e084bb053f362277bf51e358b7fcb27da0b0dee8",
       "scenarioId": "renders /moysklad with the health badge + bootstrap-cabinet note",
       "runner": "playwright",
-      "command": "/opt/homebrew/Cellar/node@24/24.18.0/bin/node /private/tmp/wb-repricer-node24-npm11.11.0/node_modules/npm/bin/npm-cli.js run test:e2e:full -- e2e/acquiring.spec.ts e2e/alerts-page.spec.ts e2e/automation/canned-rules.spec.ts e2e/backfill-page.spec.ts e2e/brand-analytics.spec.ts e2e/cogs-assignment.spec.ts e2e/communications.spec.ts e2e/dashboard-metrics.spec.ts e2e/expenses-page.spec.ts e2e/finances.spec.ts e2e/funnel.spec.ts e2e/liquidity.spec.ts e2e/moysklad.spec.ts e2e/orders-integrity.spec.ts e2e/price-calculator.spec.ts e2e/pricing-page.spec.ts e2e/settings-pages.spec.ts e2e/settings/backfill-admin.spec.ts e2e/shipments/shipments-detail.spec.ts e2e/sku-analytics.spec.ts e2e/story-174-3-dedicated-route-evidence.spec.ts e2e/telegram-notifications.spec.ts e2e/time-period-analytics.spec.ts e2e/unit-economics.spec.ts --reporter=json",
+      "command": "npm run test:e2e:full -- e2e/acquiring.spec.ts e2e/alerts-page.spec.ts e2e/automation/canned-rules.spec.ts e2e/backfill-page.spec.ts e2e/brand-analytics.spec.ts e2e/cogs-assignment.spec.ts e2e/communications.spec.ts e2e/dashboard-metrics.spec.ts e2e/expenses-page.spec.ts e2e/finances.spec.ts e2e/funnel.spec.ts e2e/liquidity.spec.ts e2e/moysklad.spec.ts e2e/orders-integrity.spec.ts e2e/price-calculator.spec.ts e2e/pricing-page.spec.ts e2e/settings-pages.spec.ts e2e/settings/backfill-admin.spec.ts e2e/shipments/shipments-detail.spec.ts e2e/sku-analytics.spec.ts e2e/story-174-3-dedicated-route-evidence.spec.ts e2e/telegram-notifications.spec.ts e2e/time-period-analytics.spec.ts e2e/unit-economics.spec.ts --reporter=json",
       "result": "passed",
       "exitCode": 0,
-      "startedAt": "2026-09-01T05:58:03.218Z",
-      "durationMs": 102036
+      "startedAt": "2026-09-01T17:35:13.648Z",
+      "durationMs": 206341
     },
     {
       "source": "e2e/orders-integrity.spec.ts",
       "sourceSha256": "10c98b350492ae553bc32bfc15ae5f4c80d854ae91623abf84bc0044b3acef4d",
       "scenarioId": "shows an explicit empty reconciliation state after a cabinet switch",
       "runner": "playwright",
-      "command": "/opt/homebrew/Cellar/node@24/24.18.0/bin/node /private/tmp/wb-repricer-node24-npm11.11.0/node_modules/npm/bin/npm-cli.js run test:e2e:full -- e2e/acquiring.spec.ts e2e/alerts-page.spec.ts e2e/automation/canned-rules.spec.ts e2e/backfill-page.spec.ts e2e/brand-analytics.spec.ts e2e/cogs-assignment.spec.ts e2e/communications.spec.ts e2e/dashboard-metrics.spec.ts e2e/expenses-page.spec.ts e2e/finances.spec.ts e2e/funnel.spec.ts e2e/liquidity.spec.ts e2e/moysklad.spec.ts e2e/orders-integrity.spec.ts e2e/price-calculator.spec.ts e2e/pricing-page.spec.ts e2e/settings-pages.spec.ts e2e/settings/backfill-admin.spec.ts e2e/shipments/shipments-detail.spec.ts e2e/sku-analytics.spec.ts e2e/story-174-3-dedicated-route-evidence.spec.ts e2e/telegram-notifications.spec.ts e2e/time-period-analytics.spec.ts e2e/unit-economics.spec.ts --reporter=json",
+      "command": "npm run test:e2e:full -- e2e/acquiring.spec.ts e2e/alerts-page.spec.ts e2e/automation/canned-rules.spec.ts e2e/backfill-page.spec.ts e2e/brand-analytics.spec.ts e2e/cogs-assignment.spec.ts e2e/communications.spec.ts e2e/dashboard-metrics.spec.ts e2e/expenses-page.spec.ts e2e/finances.spec.ts e2e/funnel.spec.ts e2e/liquidity.spec.ts e2e/moysklad.spec.ts e2e/orders-integrity.spec.ts e2e/price-calculator.spec.ts e2e/pricing-page.spec.ts e2e/settings-pages.spec.ts e2e/settings/backfill-admin.spec.ts e2e/shipments/shipments-detail.spec.ts e2e/sku-analytics.spec.ts e2e/story-174-3-dedicated-route-evidence.spec.ts e2e/telegram-notifications.spec.ts e2e/time-period-analytics.spec.ts e2e/unit-economics.spec.ts --reporter=json",
       "result": "passed",
       "exitCode": 0,
-      "startedAt": "2026-09-01T05:58:03.218Z",
-      "durationMs": 102036
+      "startedAt": "2026-09-01T17:35:13.648Z",
+      "durationMs": 206341
     },
     {
       "source": "e2e/price-calculator.spec.ts",
       "sourceSha256": "99aa29db59065ba23a0188a15ce1a5fc84aa6bbbec30cfa1959dec1fee051d81",
       "scenarioId": "TC-E2E-006b: Показывается индикатор загрузки",
       "runner": "playwright",
-      "command": "/opt/homebrew/Cellar/node@24/24.18.0/bin/node /private/tmp/wb-repricer-node24-npm11.11.0/node_modules/npm/bin/npm-cli.js run test:e2e:full -- e2e/acquiring.spec.ts e2e/alerts-page.spec.ts e2e/automation/canned-rules.spec.ts e2e/backfill-page.spec.ts e2e/brand-analytics.spec.ts e2e/cogs-assignment.spec.ts e2e/communications.spec.ts e2e/dashboard-metrics.spec.ts e2e/expenses-page.spec.ts e2e/finances.spec.ts e2e/funnel.spec.ts e2e/liquidity.spec.ts e2e/moysklad.spec.ts e2e/orders-integrity.spec.ts e2e/price-calculator.spec.ts e2e/pricing-page.spec.ts e2e/settings-pages.spec.ts e2e/settings/backfill-admin.spec.ts e2e/shipments/shipments-detail.spec.ts e2e/sku-analytics.spec.ts e2e/story-174-3-dedicated-route-evidence.spec.ts e2e/telegram-notifications.spec.ts e2e/time-period-analytics.spec.ts e2e/unit-economics.spec.ts --reporter=json",
+      "command": "npm run test:e2e:full -- e2e/acquiring.spec.ts e2e/alerts-page.spec.ts e2e/automation/canned-rules.spec.ts e2e/backfill-page.spec.ts e2e/brand-analytics.spec.ts e2e/cogs-assignment.spec.ts e2e/communications.spec.ts e2e/dashboard-metrics.spec.ts e2e/expenses-page.spec.ts e2e/finances.spec.ts e2e/funnel.spec.ts e2e/liquidity.spec.ts e2e/moysklad.spec.ts e2e/orders-integrity.spec.ts e2e/price-calculator.spec.ts e2e/pricing-page.spec.ts e2e/settings-pages.spec.ts e2e/settings/backfill-admin.spec.ts e2e/shipments/shipments-detail.spec.ts e2e/sku-analytics.spec.ts e2e/story-174-3-dedicated-route-evidence.spec.ts e2e/telegram-notifications.spec.ts e2e/time-period-analytics.spec.ts e2e/unit-economics.spec.ts --reporter=json",
       "result": "passed",
       "exitCode": 0,
-      "startedAt": "2026-09-01T05:58:03.218Z",
-      "durationMs": 102036
+      "startedAt": "2026-09-01T17:35:13.648Z",
+      "durationMs": 206341
     },
     {
       "source": "e2e/pricing-page.spec.ts",
       "sourceSha256": "9118eef79c57e7565473cbdffb70b32d57dfc57db5ccc32717c1c3b6b375e7fe",
       "scenarioId": "refresh button triggers price refresh request",
       "runner": "playwright",
-      "command": "/opt/homebrew/Cellar/node@24/24.18.0/bin/node /private/tmp/wb-repricer-node24-npm11.11.0/node_modules/npm/bin/npm-cli.js run test:e2e:full -- e2e/acquiring.spec.ts e2e/alerts-page.spec.ts e2e/automation/canned-rules.spec.ts e2e/backfill-page.spec.ts e2e/brand-analytics.spec.ts e2e/cogs-assignment.spec.ts e2e/communications.spec.ts e2e/dashboard-metrics.spec.ts e2e/expenses-page.spec.ts e2e/finances.spec.ts e2e/funnel.spec.ts e2e/liquidity.spec.ts e2e/moysklad.spec.ts e2e/orders-integrity.spec.ts e2e/price-calculator.spec.ts e2e/pricing-page.spec.ts e2e/settings-pages.spec.ts e2e/settings/backfill-admin.spec.ts e2e/shipments/shipments-detail.spec.ts e2e/sku-analytics.spec.ts e2e/story-174-3-dedicated-route-evidence.spec.ts e2e/telegram-notifications.spec.ts e2e/time-period-analytics.spec.ts e2e/unit-economics.spec.ts --reporter=json",
+      "command": "npm run test:e2e:full -- e2e/acquiring.spec.ts e2e/alerts-page.spec.ts e2e/automation/canned-rules.spec.ts e2e/backfill-page.spec.ts e2e/brand-analytics.spec.ts e2e/cogs-assignment.spec.ts e2e/communications.spec.ts e2e/dashboard-metrics.spec.ts e2e/expenses-page.spec.ts e2e/finances.spec.ts e2e/funnel.spec.ts e2e/liquidity.spec.ts e2e/moysklad.spec.ts e2e/orders-integrity.spec.ts e2e/price-calculator.spec.ts e2e/pricing-page.spec.ts e2e/settings-pages.spec.ts e2e/settings/backfill-admin.spec.ts e2e/shipments/shipments-detail.spec.ts e2e/sku-analytics.spec.ts e2e/story-174-3-dedicated-route-evidence.spec.ts e2e/telegram-notifications.spec.ts e2e/time-period-analytics.spec.ts e2e/unit-economics.spec.ts --reporter=json",
       "result": "passed",
       "exitCode": 0,
-      "startedAt": "2026-09-01T05:58:03.218Z",
-      "durationMs": 102036
+      "startedAt": "2026-09-01T17:35:13.648Z",
+      "durationMs": 206341
     },
     {
       "source": "e2e/settings-pages.spec.ts",
       "sourceSha256": "8233c0c80d10c01040b171e24ce14644c5d5d91ee93dc6b4ed8eebf3ea07b73d",
       "scenarioId": "contains the pending dialog, blocks dismissal, and honors reduced motion",
       "runner": "playwright",
-      "command": "/opt/homebrew/Cellar/node@24/24.18.0/bin/node /private/tmp/wb-repricer-node24-npm11.11.0/node_modules/npm/bin/npm-cli.js run test:e2e:full -- e2e/acquiring.spec.ts e2e/alerts-page.spec.ts e2e/automation/canned-rules.spec.ts e2e/backfill-page.spec.ts e2e/brand-analytics.spec.ts e2e/cogs-assignment.spec.ts e2e/communications.spec.ts e2e/dashboard-metrics.spec.ts e2e/expenses-page.spec.ts e2e/finances.spec.ts e2e/funnel.spec.ts e2e/liquidity.spec.ts e2e/moysklad.spec.ts e2e/orders-integrity.spec.ts e2e/price-calculator.spec.ts e2e/pricing-page.spec.ts e2e/settings-pages.spec.ts e2e/settings/backfill-admin.spec.ts e2e/shipments/shipments-detail.spec.ts e2e/sku-analytics.spec.ts e2e/story-174-3-dedicated-route-evidence.spec.ts e2e/telegram-notifications.spec.ts e2e/time-period-analytics.spec.ts e2e/unit-economics.spec.ts --reporter=json",
+      "command": "npm run test:e2e:full -- e2e/acquiring.spec.ts e2e/alerts-page.spec.ts e2e/automation/canned-rules.spec.ts e2e/backfill-page.spec.ts e2e/brand-analytics.spec.ts e2e/cogs-assignment.spec.ts e2e/communications.spec.ts e2e/dashboard-metrics.spec.ts e2e/expenses-page.spec.ts e2e/finances.spec.ts e2e/funnel.spec.ts e2e/liquidity.spec.ts e2e/moysklad.spec.ts e2e/orders-integrity.spec.ts e2e/price-calculator.spec.ts e2e/pricing-page.spec.ts e2e/settings-pages.spec.ts e2e/settings/backfill-admin.spec.ts e2e/shipments/shipments-detail.spec.ts e2e/sku-analytics.spec.ts e2e/story-174-3-dedicated-route-evidence.spec.ts e2e/telegram-notifications.spec.ts e2e/time-period-analytics.spec.ts e2e/unit-economics.spec.ts --reporter=json",
       "result": "passed",
       "exitCode": 0,
-      "startedAt": "2026-09-01T05:58:03.218Z",
-      "durationMs": 102036
+      "startedAt": "2026-09-01T17:35:13.648Z",
+      "durationMs": 206341
     },
     {
       "source": "e2e/settings/backfill-admin.spec.ts",
       "sourceSha256": "e84c13805bee9d3dbf362cdb8125769609c7de2cbcf3843a6ace9f473b6d1c78",
       "scenarioId": "should display error badge for failed cabinets",
       "runner": "playwright",
-      "command": "/opt/homebrew/Cellar/node@24/24.18.0/bin/node /private/tmp/wb-repricer-node24-npm11.11.0/node_modules/npm/bin/npm-cli.js run test:e2e:full -- e2e/acquiring.spec.ts e2e/alerts-page.spec.ts e2e/automation/canned-rules.spec.ts e2e/backfill-page.spec.ts e2e/brand-analytics.spec.ts e2e/cogs-assignment.spec.ts e2e/communications.spec.ts e2e/dashboard-metrics.spec.ts e2e/expenses-page.spec.ts e2e/finances.spec.ts e2e/funnel.spec.ts e2e/liquidity.spec.ts e2e/moysklad.spec.ts e2e/orders-integrity.spec.ts e2e/price-calculator.spec.ts e2e/pricing-page.spec.ts e2e/settings-pages.spec.ts e2e/settings/backfill-admin.spec.ts e2e/shipments/shipments-detail.spec.ts e2e/sku-analytics.spec.ts e2e/story-174-3-dedicated-route-evidence.spec.ts e2e/telegram-notifications.spec.ts e2e/time-period-analytics.spec.ts e2e/unit-economics.spec.ts --reporter=json",
+      "command": "npm run test:e2e:full -- e2e/acquiring.spec.ts e2e/alerts-page.spec.ts e2e/automation/canned-rules.spec.ts e2e/backfill-page.spec.ts e2e/brand-analytics.spec.ts e2e/cogs-assignment.spec.ts e2e/communications.spec.ts e2e/dashboard-metrics.spec.ts e2e/expenses-page.spec.ts e2e/finances.spec.ts e2e/funnel.spec.ts e2e/liquidity.spec.ts e2e/moysklad.spec.ts e2e/orders-integrity.spec.ts e2e/price-calculator.spec.ts e2e/pricing-page.spec.ts e2e/settings-pages.spec.ts e2e/settings/backfill-admin.spec.ts e2e/shipments/shipments-detail.spec.ts e2e/sku-analytics.spec.ts e2e/story-174-3-dedicated-route-evidence.spec.ts e2e/telegram-notifications.spec.ts e2e/time-period-analytics.spec.ts e2e/unit-economics.spec.ts --reporter=json",
       "result": "passed",
       "exitCode": 0,
-      "startedAt": "2026-09-01T05:58:03.218Z",
-      "durationMs": 102036
+      "startedAt": "2026-09-01T17:35:13.648Z",
+      "durationMs": 206341
     },
     {
       "source": "e2e/settings/backfill-admin.spec.ts",
       "sourceSha256": "e84c13805bee9d3dbf362cdb8125769609c7de2cbcf3843a6ace9f473b6d1c78",
       "scenarioId": "should display status table or empty state",
       "runner": "playwright",
-      "command": "/opt/homebrew/Cellar/node@24/24.18.0/bin/node /private/tmp/wb-repricer-node24-npm11.11.0/node_modules/npm/bin/npm-cli.js run test:e2e:full -- e2e/acquiring.spec.ts e2e/alerts-page.spec.ts e2e/automation/canned-rules.spec.ts e2e/backfill-page.spec.ts e2e/brand-analytics.spec.ts e2e/cogs-assignment.spec.ts e2e/communications.spec.ts e2e/dashboard-metrics.spec.ts e2e/expenses-page.spec.ts e2e/finances.spec.ts e2e/funnel.spec.ts e2e/liquidity.spec.ts e2e/moysklad.spec.ts e2e/orders-integrity.spec.ts e2e/price-calculator.spec.ts e2e/pricing-page.spec.ts e2e/settings-pages.spec.ts e2e/settings/backfill-admin.spec.ts e2e/shipments/shipments-detail.spec.ts e2e/sku-analytics.spec.ts e2e/story-174-3-dedicated-route-evidence.spec.ts e2e/telegram-notifications.spec.ts e2e/time-period-analytics.spec.ts e2e/unit-economics.spec.ts --reporter=json",
+      "command": "npm run test:e2e:full -- e2e/acquiring.spec.ts e2e/alerts-page.spec.ts e2e/automation/canned-rules.spec.ts e2e/backfill-page.spec.ts e2e/brand-analytics.spec.ts e2e/cogs-assignment.spec.ts e2e/communications.spec.ts e2e/dashboard-metrics.spec.ts e2e/expenses-page.spec.ts e2e/finances.spec.ts e2e/funnel.spec.ts e2e/liquidity.spec.ts e2e/moysklad.spec.ts e2e/orders-integrity.spec.ts e2e/price-calculator.spec.ts e2e/pricing-page.spec.ts e2e/settings-pages.spec.ts e2e/settings/backfill-admin.spec.ts e2e/shipments/shipments-detail.spec.ts e2e/sku-analytics.spec.ts e2e/story-174-3-dedicated-route-evidence.spec.ts e2e/telegram-notifications.spec.ts e2e/time-period-analytics.spec.ts e2e/unit-economics.spec.ts --reporter=json",
       "result": "passed",
       "exitCode": 0,
-      "startedAt": "2026-09-01T05:58:03.218Z",
-      "durationMs": 102036
+      "startedAt": "2026-09-01T17:35:13.648Z",
+      "durationMs": 206341
     },
     {
       "source": "e2e/settings/backfill-admin.spec.ts",
       "sourceSha256": "e84c13805bee9d3dbf362cdb8125769609c7de2cbcf3843a6ace9f473b6d1c78",
       "scenarioId": "should show error details on click",
       "runner": "playwright",
-      "command": "/opt/homebrew/Cellar/node@24/24.18.0/bin/node /private/tmp/wb-repricer-node24-npm11.11.0/node_modules/npm/bin/npm-cli.js run test:e2e:full -- e2e/acquiring.spec.ts e2e/alerts-page.spec.ts e2e/automation/canned-rules.spec.ts e2e/backfill-page.spec.ts e2e/brand-analytics.spec.ts e2e/cogs-assignment.spec.ts e2e/communications.spec.ts e2e/dashboard-metrics.spec.ts e2e/expenses-page.spec.ts e2e/finances.spec.ts e2e/funnel.spec.ts e2e/liquidity.spec.ts e2e/moysklad.spec.ts e2e/orders-integrity.spec.ts e2e/price-calculator.spec.ts e2e/pricing-page.spec.ts e2e/settings-pages.spec.ts e2e/settings/backfill-admin.spec.ts e2e/shipments/shipments-detail.spec.ts e2e/sku-analytics.spec.ts e2e/story-174-3-dedicated-route-evidence.spec.ts e2e/telegram-notifications.spec.ts e2e/time-period-analytics.spec.ts e2e/unit-economics.spec.ts --reporter=json",
+      "command": "npm run test:e2e:full -- e2e/acquiring.spec.ts e2e/alerts-page.spec.ts e2e/automation/canned-rules.spec.ts e2e/backfill-page.spec.ts e2e/brand-analytics.spec.ts e2e/cogs-assignment.spec.ts e2e/communications.spec.ts e2e/dashboard-metrics.spec.ts e2e/expenses-page.spec.ts e2e/finances.spec.ts e2e/funnel.spec.ts e2e/liquidity.spec.ts e2e/moysklad.spec.ts e2e/orders-integrity.spec.ts e2e/price-calculator.spec.ts e2e/pricing-page.spec.ts e2e/settings-pages.spec.ts e2e/settings/backfill-admin.spec.ts e2e/shipments/shipments-detail.spec.ts e2e/sku-analytics.spec.ts e2e/story-174-3-dedicated-route-evidence.spec.ts e2e/telegram-notifications.spec.ts e2e/time-period-analytics.spec.ts e2e/unit-economics.spec.ts --reporter=json",
       "result": "passed",
       "exitCode": 0,
-      "startedAt": "2026-09-01T05:58:03.218Z",
-      "durationMs": 102036
+      "startedAt": "2026-09-01T17:35:13.648Z",
+      "durationMs": 206341
     },
     {
       "source": "e2e/settings/backfill-admin.spec.ts",
       "sourceSha256": "e84c13805bee9d3dbf362cdb8125769609c7de2cbcf3843a6ace9f473b6d1c78",
       "scenarioId": "should show loading skeleton while checking permissions",
       "runner": "playwright",
-      "command": "/opt/homebrew/Cellar/node@24/24.18.0/bin/node /private/tmp/wb-repricer-node24-npm11.11.0/node_modules/npm/bin/npm-cli.js run test:e2e:full -- e2e/acquiring.spec.ts e2e/alerts-page.spec.ts e2e/automation/canned-rules.spec.ts e2e/backfill-page.spec.ts e2e/brand-analytics.spec.ts e2e/cogs-assignment.spec.ts e2e/communications.spec.ts e2e/dashboard-metrics.spec.ts e2e/expenses-page.spec.ts e2e/finances.spec.ts e2e/funnel.spec.ts e2e/liquidity.spec.ts e2e/moysklad.spec.ts e2e/orders-integrity.spec.ts e2e/price-calculator.spec.ts e2e/pricing-page.spec.ts e2e/settings-pages.spec.ts e2e/settings/backfill-admin.spec.ts e2e/shipments/shipments-detail.spec.ts e2e/sku-analytics.spec.ts e2e/story-174-3-dedicated-route-evidence.spec.ts e2e/telegram-notifications.spec.ts e2e/time-period-analytics.spec.ts e2e/unit-economics.spec.ts --reporter=json",
+      "command": "npm run test:e2e:full -- e2e/acquiring.spec.ts e2e/alerts-page.spec.ts e2e/automation/canned-rules.spec.ts e2e/backfill-page.spec.ts e2e/brand-analytics.spec.ts e2e/cogs-assignment.spec.ts e2e/communications.spec.ts e2e/dashboard-metrics.spec.ts e2e/expenses-page.spec.ts e2e/finances.spec.ts e2e/funnel.spec.ts e2e/liquidity.spec.ts e2e/moysklad.spec.ts e2e/orders-integrity.spec.ts e2e/price-calculator.spec.ts e2e/pricing-page.spec.ts e2e/settings-pages.spec.ts e2e/settings/backfill-admin.spec.ts e2e/shipments/shipments-detail.spec.ts e2e/sku-analytics.spec.ts e2e/story-174-3-dedicated-route-evidence.spec.ts e2e/telegram-notifications.spec.ts e2e/time-period-analytics.spec.ts e2e/unit-economics.spec.ts --reporter=json",
       "result": "passed",
       "exitCode": 0,
-      "startedAt": "2026-09-01T05:58:03.218Z",
-      "durationMs": 102036
+      "startedAt": "2026-09-01T17:35:13.648Z",
+      "durationMs": 206341
     },
     {
       "source": "e2e/shadcn-migration-visual-accessibility.spec.ts",
@@ -1328,256 +1328,256 @@
     },
     {
       "source": "e2e/shipments/shipments-detail.spec.ts",
-      "sourceSha256": "d0e873b599dea77f32ff59f9a5312ccfeac3eae5c3cb8cf728fc299f13dc4cf6",
+      "sourceSha256": "8379229bbdbfbc090c72be3c9682a06f807b8567094d8a4108cccf5ef923b8b8",
       "scenarioId": "exposes entity, lifecycle, partial evidence, accordion, and named table contracts",
       "runner": "playwright",
-      "command": "/opt/homebrew/Cellar/node@24/24.18.0/bin/node /private/tmp/wb-repricer-node24-npm11.11.0/node_modules/npm/bin/npm-cli.js run test:e2e:full -- e2e/acquiring.spec.ts e2e/alerts-page.spec.ts e2e/automation/canned-rules.spec.ts e2e/backfill-page.spec.ts e2e/brand-analytics.spec.ts e2e/cogs-assignment.spec.ts e2e/communications.spec.ts e2e/dashboard-metrics.spec.ts e2e/expenses-page.spec.ts e2e/finances.spec.ts e2e/funnel.spec.ts e2e/liquidity.spec.ts e2e/moysklad.spec.ts e2e/orders-integrity.spec.ts e2e/price-calculator.spec.ts e2e/pricing-page.spec.ts e2e/settings-pages.spec.ts e2e/settings/backfill-admin.spec.ts e2e/shipments/shipments-detail.spec.ts e2e/sku-analytics.spec.ts e2e/story-174-3-dedicated-route-evidence.spec.ts e2e/telegram-notifications.spec.ts e2e/time-period-analytics.spec.ts e2e/unit-economics.spec.ts --reporter=json",
+      "command": "npm run test:e2e:full -- e2e/acquiring.spec.ts e2e/alerts-page.spec.ts e2e/automation/canned-rules.spec.ts e2e/backfill-page.spec.ts e2e/brand-analytics.spec.ts e2e/cogs-assignment.spec.ts e2e/communications.spec.ts e2e/dashboard-metrics.spec.ts e2e/expenses-page.spec.ts e2e/finances.spec.ts e2e/funnel.spec.ts e2e/liquidity.spec.ts e2e/moysklad.spec.ts e2e/orders-integrity.spec.ts e2e/price-calculator.spec.ts e2e/pricing-page.spec.ts e2e/settings-pages.spec.ts e2e/settings/backfill-admin.spec.ts e2e/shipments/shipments-detail.spec.ts e2e/sku-analytics.spec.ts e2e/story-174-3-dedicated-route-evidence.spec.ts e2e/telegram-notifications.spec.ts e2e/time-period-analytics.spec.ts e2e/unit-economics.spec.ts --reporter=json",
       "result": "passed",
       "exitCode": 0,
-      "startedAt": "2026-09-01T05:58:03.218Z",
-      "durationMs": 102036
+      "startedAt": "2026-09-01T17:35:13.648Z",
+      "durationMs": 206341
     },
     {
       "source": "e2e/shipments/shipments-detail.spec.ts",
-      "sourceSha256": "d0e873b599dea77f32ff59f9a5312ccfeac3eae5c3cb8cf728fc299f13dc4cf6",
+      "sourceSha256": "8379229bbdbfbc090c72be3c9682a06f807b8567094d8a4108cccf5ef923b8b8",
       "scenarioId": "keeps route identity visible while detail data is loading",
       "runner": "playwright",
-      "command": "/opt/homebrew/Cellar/node@24/24.18.0/bin/node /private/tmp/wb-repricer-node24-npm11.11.0/node_modules/npm/bin/npm-cli.js run test:e2e:full -- e2e/acquiring.spec.ts e2e/alerts-page.spec.ts e2e/automation/canned-rules.spec.ts e2e/backfill-page.spec.ts e2e/brand-analytics.spec.ts e2e/cogs-assignment.spec.ts e2e/communications.spec.ts e2e/dashboard-metrics.spec.ts e2e/expenses-page.spec.ts e2e/finances.spec.ts e2e/funnel.spec.ts e2e/liquidity.spec.ts e2e/moysklad.spec.ts e2e/orders-integrity.spec.ts e2e/price-calculator.spec.ts e2e/pricing-page.spec.ts e2e/settings-pages.spec.ts e2e/settings/backfill-admin.spec.ts e2e/shipments/shipments-detail.spec.ts e2e/sku-analytics.spec.ts e2e/story-174-3-dedicated-route-evidence.spec.ts e2e/telegram-notifications.spec.ts e2e/time-period-analytics.spec.ts e2e/unit-economics.spec.ts --reporter=json",
+      "command": "npm run test:e2e:full -- e2e/acquiring.spec.ts e2e/alerts-page.spec.ts e2e/automation/canned-rules.spec.ts e2e/backfill-page.spec.ts e2e/brand-analytics.spec.ts e2e/cogs-assignment.spec.ts e2e/communications.spec.ts e2e/dashboard-metrics.spec.ts e2e/expenses-page.spec.ts e2e/finances.spec.ts e2e/funnel.spec.ts e2e/liquidity.spec.ts e2e/moysklad.spec.ts e2e/orders-integrity.spec.ts e2e/price-calculator.spec.ts e2e/pricing-page.spec.ts e2e/settings-pages.spec.ts e2e/settings/backfill-admin.spec.ts e2e/shipments/shipments-detail.spec.ts e2e/sku-analytics.spec.ts e2e/story-174-3-dedicated-route-evidence.spec.ts e2e/telegram-notifications.spec.ts e2e/time-period-analytics.spec.ts e2e/unit-economics.spec.ts --reporter=json",
       "result": "passed",
       "exitCode": 0,
-      "startedAt": "2026-09-01T05:58:03.218Z",
-      "durationMs": 102036
+      "startedAt": "2026-09-01T17:35:13.648Z",
+      "durationMs": 206341
     },
     {
       "source": "e2e/shipments/shipments-detail.spec.ts",
-      "sourceSha256": "d0e873b599dea77f32ff59f9a5312ccfeac3eae5c3cb8cf728fc299f13dc4cf6",
+      "sourceSha256": "8379229bbdbfbc090c72be3c9682a06f807b8567094d8a4108cccf5ef923b8b8",
       "scenarioId": "renders a safe not-found terminal with a return action",
       "runner": "playwright",
-      "command": "/opt/homebrew/Cellar/node@24/24.18.0/bin/node /private/tmp/wb-repricer-node24-npm11.11.0/node_modules/npm/bin/npm-cli.js run test:e2e:full -- e2e/acquiring.spec.ts e2e/alerts-page.spec.ts e2e/automation/canned-rules.spec.ts e2e/backfill-page.spec.ts e2e/brand-analytics.spec.ts e2e/cogs-assignment.spec.ts e2e/communications.spec.ts e2e/dashboard-metrics.spec.ts e2e/expenses-page.spec.ts e2e/finances.spec.ts e2e/funnel.spec.ts e2e/liquidity.spec.ts e2e/moysklad.spec.ts e2e/orders-integrity.spec.ts e2e/price-calculator.spec.ts e2e/pricing-page.spec.ts e2e/settings-pages.spec.ts e2e/settings/backfill-admin.spec.ts e2e/shipments/shipments-detail.spec.ts e2e/sku-analytics.spec.ts e2e/story-174-3-dedicated-route-evidence.spec.ts e2e/telegram-notifications.spec.ts e2e/time-period-analytics.spec.ts e2e/unit-economics.spec.ts --reporter=json",
+      "command": "npm run test:e2e:full -- e2e/acquiring.spec.ts e2e/alerts-page.spec.ts e2e/automation/canned-rules.spec.ts e2e/backfill-page.spec.ts e2e/brand-analytics.spec.ts e2e/cogs-assignment.spec.ts e2e/communications.spec.ts e2e/dashboard-metrics.spec.ts e2e/expenses-page.spec.ts e2e/finances.spec.ts e2e/funnel.spec.ts e2e/liquidity.spec.ts e2e/moysklad.spec.ts e2e/orders-integrity.spec.ts e2e/price-calculator.spec.ts e2e/pricing-page.spec.ts e2e/settings-pages.spec.ts e2e/settings/backfill-admin.spec.ts e2e/shipments/shipments-detail.spec.ts e2e/sku-analytics.spec.ts e2e/story-174-3-dedicated-route-evidence.spec.ts e2e/telegram-notifications.spec.ts e2e/time-period-analytics.spec.ts e2e/unit-economics.spec.ts --reporter=json",
       "result": "passed",
       "exitCode": 0,
-      "startedAt": "2026-09-01T05:58:03.218Z",
-      "durationMs": 102036
+      "startedAt": "2026-09-01T17:35:13.648Z",
+      "durationMs": 206341
     },
     {
       "source": "e2e/shipments/shipments-detail.spec.ts",
-      "sourceSha256": "d0e873b599dea77f32ff59f9a5312ccfeac3eae5c3cb8cf728fc299f13dc4cf6",
+      "sourceSha256": "8379229bbdbfbc090c72be3c9682a06f807b8567094d8a4108cccf5ef923b8b8",
       "scenarioId": "should display error state for non-existent shipment",
       "runner": "playwright",
-      "command": "/opt/homebrew/Cellar/node@24/24.18.0/bin/node /private/tmp/wb-repricer-node24-npm11.11.0/node_modules/npm/bin/npm-cli.js run test:e2e:full -- e2e/acquiring.spec.ts e2e/alerts-page.spec.ts e2e/automation/canned-rules.spec.ts e2e/backfill-page.spec.ts e2e/brand-analytics.spec.ts e2e/cogs-assignment.spec.ts e2e/communications.spec.ts e2e/dashboard-metrics.spec.ts e2e/expenses-page.spec.ts e2e/finances.spec.ts e2e/funnel.spec.ts e2e/liquidity.spec.ts e2e/moysklad.spec.ts e2e/orders-integrity.spec.ts e2e/price-calculator.spec.ts e2e/pricing-page.spec.ts e2e/settings-pages.spec.ts e2e/settings/backfill-admin.spec.ts e2e/shipments/shipments-detail.spec.ts e2e/sku-analytics.spec.ts e2e/story-174-3-dedicated-route-evidence.spec.ts e2e/telegram-notifications.spec.ts e2e/time-period-analytics.spec.ts e2e/unit-economics.spec.ts --reporter=json",
+      "command": "npm run test:e2e:full -- e2e/acquiring.spec.ts e2e/alerts-page.spec.ts e2e/automation/canned-rules.spec.ts e2e/backfill-page.spec.ts e2e/brand-analytics.spec.ts e2e/cogs-assignment.spec.ts e2e/communications.spec.ts e2e/dashboard-metrics.spec.ts e2e/expenses-page.spec.ts e2e/finances.spec.ts e2e/funnel.spec.ts e2e/liquidity.spec.ts e2e/moysklad.spec.ts e2e/orders-integrity.spec.ts e2e/price-calculator.spec.ts e2e/pricing-page.spec.ts e2e/settings-pages.spec.ts e2e/settings/backfill-admin.spec.ts e2e/shipments/shipments-detail.spec.ts e2e/sku-analytics.spec.ts e2e/story-174-3-dedicated-route-evidence.spec.ts e2e/telegram-notifications.spec.ts e2e/time-period-analytics.spec.ts e2e/unit-economics.spec.ts --reporter=json",
       "result": "passed",
       "exitCode": 0,
-      "startedAt": "2026-09-01T05:58:03.218Z",
-      "durationMs": 102036
+      "startedAt": "2026-09-01T17:35:13.648Z",
+      "durationMs": 206341
     },
     {
       "source": "e2e/sku-analytics.spec.ts",
       "sourceSha256": "efa7bfb6ecff17e98aae446012180ecc7b197b9c37455e8b80cb395ccbcdef16",
       "scenarioId": "export button is present",
       "runner": "playwright",
-      "command": "/opt/homebrew/Cellar/node@24/24.18.0/bin/node /private/tmp/wb-repricer-node24-npm11.11.0/node_modules/npm/bin/npm-cli.js run test:e2e:full -- e2e/acquiring.spec.ts e2e/alerts-page.spec.ts e2e/automation/canned-rules.spec.ts e2e/backfill-page.spec.ts e2e/brand-analytics.spec.ts e2e/cogs-assignment.spec.ts e2e/communications.spec.ts e2e/dashboard-metrics.spec.ts e2e/expenses-page.spec.ts e2e/finances.spec.ts e2e/funnel.spec.ts e2e/liquidity.spec.ts e2e/moysklad.spec.ts e2e/orders-integrity.spec.ts e2e/price-calculator.spec.ts e2e/pricing-page.spec.ts e2e/settings-pages.spec.ts e2e/settings/backfill-admin.spec.ts e2e/shipments/shipments-detail.spec.ts e2e/sku-analytics.spec.ts e2e/story-174-3-dedicated-route-evidence.spec.ts e2e/telegram-notifications.spec.ts e2e/time-period-analytics.spec.ts e2e/unit-economics.spec.ts --reporter=json",
+      "command": "npm run test:e2e:full -- e2e/acquiring.spec.ts e2e/alerts-page.spec.ts e2e/automation/canned-rules.spec.ts e2e/backfill-page.spec.ts e2e/brand-analytics.spec.ts e2e/cogs-assignment.spec.ts e2e/communications.spec.ts e2e/dashboard-metrics.spec.ts e2e/expenses-page.spec.ts e2e/finances.spec.ts e2e/funnel.spec.ts e2e/liquidity.spec.ts e2e/moysklad.spec.ts e2e/orders-integrity.spec.ts e2e/price-calculator.spec.ts e2e/pricing-page.spec.ts e2e/settings-pages.spec.ts e2e/settings/backfill-admin.spec.ts e2e/shipments/shipments-detail.spec.ts e2e/sku-analytics.spec.ts e2e/story-174-3-dedicated-route-evidence.spec.ts e2e/telegram-notifications.spec.ts e2e/time-period-analytics.spec.ts e2e/unit-economics.spec.ts --reporter=json",
       "result": "passed",
       "exitCode": 0,
-      "startedAt": "2026-09-01T05:58:03.218Z",
-      "durationMs": 102036
+      "startedAt": "2026-09-01T17:35:13.648Z",
+      "durationMs": 206341
     },
     {
       "source": "e2e/sku-analytics.spec.ts",
       "sourceSha256": "efa7bfb6ecff17e98aae446012180ecc7b197b9c37455e8b80cb395ccbcdef16",
       "scenarioId": "table or grid content area is present",
       "runner": "playwright",
-      "command": "/opt/homebrew/Cellar/node@24/24.18.0/bin/node /private/tmp/wb-repricer-node24-npm11.11.0/node_modules/npm/bin/npm-cli.js run test:e2e:full -- e2e/acquiring.spec.ts e2e/alerts-page.spec.ts e2e/automation/canned-rules.spec.ts e2e/backfill-page.spec.ts e2e/brand-analytics.spec.ts e2e/cogs-assignment.spec.ts e2e/communications.spec.ts e2e/dashboard-metrics.spec.ts e2e/expenses-page.spec.ts e2e/finances.spec.ts e2e/funnel.spec.ts e2e/liquidity.spec.ts e2e/moysklad.spec.ts e2e/orders-integrity.spec.ts e2e/price-calculator.spec.ts e2e/pricing-page.spec.ts e2e/settings-pages.spec.ts e2e/settings/backfill-admin.spec.ts e2e/shipments/shipments-detail.spec.ts e2e/sku-analytics.spec.ts e2e/story-174-3-dedicated-route-evidence.spec.ts e2e/telegram-notifications.spec.ts e2e/time-period-analytics.spec.ts e2e/unit-economics.spec.ts --reporter=json",
+      "command": "npm run test:e2e:full -- e2e/acquiring.spec.ts e2e/alerts-page.spec.ts e2e/automation/canned-rules.spec.ts e2e/backfill-page.spec.ts e2e/brand-analytics.spec.ts e2e/cogs-assignment.spec.ts e2e/communications.spec.ts e2e/dashboard-metrics.spec.ts e2e/expenses-page.spec.ts e2e/finances.spec.ts e2e/funnel.spec.ts e2e/liquidity.spec.ts e2e/moysklad.spec.ts e2e/orders-integrity.spec.ts e2e/price-calculator.spec.ts e2e/pricing-page.spec.ts e2e/settings-pages.spec.ts e2e/settings/backfill-admin.spec.ts e2e/shipments/shipments-detail.spec.ts e2e/sku-analytics.spec.ts e2e/story-174-3-dedicated-route-evidence.spec.ts e2e/telegram-notifications.spec.ts e2e/time-period-analytics.spec.ts e2e/unit-economics.spec.ts --reporter=json",
       "result": "passed",
       "exitCode": 0,
-      "startedAt": "2026-09-01T05:58:03.218Z",
-      "durationMs": 102036
+      "startedAt": "2026-09-01T17:35:13.648Z",
+      "durationMs": 206341
     },
     {
       "source": "e2e/sku-analytics.spec.ts",
       "sourceSha256": "efa7bfb6ecff17e98aae446012180ecc7b197b9c37455e8b80cb395ccbcdef16",
       "scenarioId": "week or period selector is visible",
       "runner": "playwright",
-      "command": "/opt/homebrew/Cellar/node@24/24.18.0/bin/node /private/tmp/wb-repricer-node24-npm11.11.0/node_modules/npm/bin/npm-cli.js run test:e2e:full -- e2e/acquiring.spec.ts e2e/alerts-page.spec.ts e2e/automation/canned-rules.spec.ts e2e/backfill-page.spec.ts e2e/brand-analytics.spec.ts e2e/cogs-assignment.spec.ts e2e/communications.spec.ts e2e/dashboard-metrics.spec.ts e2e/expenses-page.spec.ts e2e/finances.spec.ts e2e/funnel.spec.ts e2e/liquidity.spec.ts e2e/moysklad.spec.ts e2e/orders-integrity.spec.ts e2e/price-calculator.spec.ts e2e/pricing-page.spec.ts e2e/settings-pages.spec.ts e2e/settings/backfill-admin.spec.ts e2e/shipments/shipments-detail.spec.ts e2e/sku-analytics.spec.ts e2e/story-174-3-dedicated-route-evidence.spec.ts e2e/telegram-notifications.spec.ts e2e/time-period-analytics.spec.ts e2e/unit-economics.spec.ts --reporter=json",
+      "command": "npm run test:e2e:full -- e2e/acquiring.spec.ts e2e/alerts-page.spec.ts e2e/automation/canned-rules.spec.ts e2e/backfill-page.spec.ts e2e/brand-analytics.spec.ts e2e/cogs-assignment.spec.ts e2e/communications.spec.ts e2e/dashboard-metrics.spec.ts e2e/expenses-page.spec.ts e2e/finances.spec.ts e2e/funnel.spec.ts e2e/liquidity.spec.ts e2e/moysklad.spec.ts e2e/orders-integrity.spec.ts e2e/price-calculator.spec.ts e2e/pricing-page.spec.ts e2e/settings-pages.spec.ts e2e/settings/backfill-admin.spec.ts e2e/shipments/shipments-detail.spec.ts e2e/sku-analytics.spec.ts e2e/story-174-3-dedicated-route-evidence.spec.ts e2e/telegram-notifications.spec.ts e2e/time-period-analytics.spec.ts e2e/unit-economics.spec.ts --reporter=json",
       "result": "passed",
       "exitCode": 0,
-      "startedAt": "2026-09-01T05:58:03.218Z",
-      "durationMs": 102036
+      "startedAt": "2026-09-01T17:35:13.648Z",
+      "durationMs": 206341
     },
     {
       "source": "e2e/story-174-3-dedicated-route-evidence.spec.ts",
       "sourceSha256": "79dc7c5ccfadd98293bc4c44a31bc94766e329aecfd157f121e54f2d56b417af",
       "scenarioId": "/analytics/brand-share has dedicated settled-route and heading evidence",
       "runner": "playwright",
-      "command": "/opt/homebrew/Cellar/node@24/24.18.0/bin/node /private/tmp/wb-repricer-node24-npm11.11.0/node_modules/npm/bin/npm-cli.js run test:e2e:full -- e2e/acquiring.spec.ts e2e/alerts-page.spec.ts e2e/automation/canned-rules.spec.ts e2e/backfill-page.spec.ts e2e/brand-analytics.spec.ts e2e/cogs-assignment.spec.ts e2e/communications.spec.ts e2e/dashboard-metrics.spec.ts e2e/expenses-page.spec.ts e2e/finances.spec.ts e2e/funnel.spec.ts e2e/liquidity.spec.ts e2e/moysklad.spec.ts e2e/orders-integrity.spec.ts e2e/price-calculator.spec.ts e2e/pricing-page.spec.ts e2e/settings-pages.spec.ts e2e/settings/backfill-admin.spec.ts e2e/shipments/shipments-detail.spec.ts e2e/sku-analytics.spec.ts e2e/story-174-3-dedicated-route-evidence.spec.ts e2e/telegram-notifications.spec.ts e2e/time-period-analytics.spec.ts e2e/unit-economics.spec.ts --reporter=json",
+      "command": "npm run test:e2e:full -- e2e/acquiring.spec.ts e2e/alerts-page.spec.ts e2e/automation/canned-rules.spec.ts e2e/backfill-page.spec.ts e2e/brand-analytics.spec.ts e2e/cogs-assignment.spec.ts e2e/communications.spec.ts e2e/dashboard-metrics.spec.ts e2e/expenses-page.spec.ts e2e/finances.spec.ts e2e/funnel.spec.ts e2e/liquidity.spec.ts e2e/moysklad.spec.ts e2e/orders-integrity.spec.ts e2e/price-calculator.spec.ts e2e/pricing-page.spec.ts e2e/settings-pages.spec.ts e2e/settings/backfill-admin.spec.ts e2e/shipments/shipments-detail.spec.ts e2e/sku-analytics.spec.ts e2e/story-174-3-dedicated-route-evidence.spec.ts e2e/telegram-notifications.spec.ts e2e/time-period-analytics.spec.ts e2e/unit-economics.spec.ts --reporter=json",
       "result": "passed",
       "exitCode": 0,
-      "startedAt": "2026-09-01T05:58:03.218Z",
-      "durationMs": 102036
+      "startedAt": "2026-09-01T17:35:13.648Z",
+      "durationMs": 206341
     },
     {
       "source": "e2e/story-174-3-dedicated-route-evidence.spec.ts",
       "sourceSha256": "79dc7c5ccfadd98293bc4c44a31bc94766e329aecfd157f121e54f2d56b417af",
       "scenarioId": "/analytics/buyout has dedicated settled-route and heading evidence",
       "runner": "playwright",
-      "command": "/opt/homebrew/Cellar/node@24/24.18.0/bin/node /private/tmp/wb-repricer-node24-npm11.11.0/node_modules/npm/bin/npm-cli.js run test:e2e:full -- e2e/acquiring.spec.ts e2e/alerts-page.spec.ts e2e/automation/canned-rules.spec.ts e2e/backfill-page.spec.ts e2e/brand-analytics.spec.ts e2e/cogs-assignment.spec.ts e2e/communications.spec.ts e2e/dashboard-metrics.spec.ts e2e/expenses-page.spec.ts e2e/finances.spec.ts e2e/funnel.spec.ts e2e/liquidity.spec.ts e2e/moysklad.spec.ts e2e/orders-integrity.spec.ts e2e/price-calculator.spec.ts e2e/pricing-page.spec.ts e2e/settings-pages.spec.ts e2e/settings/backfill-admin.spec.ts e2e/shipments/shipments-detail.spec.ts e2e/sku-analytics.spec.ts e2e/story-174-3-dedicated-route-evidence.spec.ts e2e/telegram-notifications.spec.ts e2e/time-period-analytics.spec.ts e2e/unit-economics.spec.ts --reporter=json",
+      "command": "npm run test:e2e:full -- e2e/acquiring.spec.ts e2e/alerts-page.spec.ts e2e/automation/canned-rules.spec.ts e2e/backfill-page.spec.ts e2e/brand-analytics.spec.ts e2e/cogs-assignment.spec.ts e2e/communications.spec.ts e2e/dashboard-metrics.spec.ts e2e/expenses-page.spec.ts e2e/finances.spec.ts e2e/funnel.spec.ts e2e/liquidity.spec.ts e2e/moysklad.spec.ts e2e/orders-integrity.spec.ts e2e/price-calculator.spec.ts e2e/pricing-page.spec.ts e2e/settings-pages.spec.ts e2e/settings/backfill-admin.spec.ts e2e/shipments/shipments-detail.spec.ts e2e/sku-analytics.spec.ts e2e/story-174-3-dedicated-route-evidence.spec.ts e2e/telegram-notifications.spec.ts e2e/time-period-analytics.spec.ts e2e/unit-economics.spec.ts --reporter=json",
       "result": "passed",
       "exitCode": 0,
-      "startedAt": "2026-09-01T05:58:03.218Z",
-      "durationMs": 102036
+      "startedAt": "2026-09-01T17:35:13.648Z",
+      "durationMs": 206341
     },
     {
       "source": "e2e/story-174-3-dedicated-route-evidence.spec.ts",
       "sourceSha256": "79dc7c5ccfadd98293bc4c44a31bc94766e329aecfd157f121e54f2d56b417af",
       "scenarioId": "/analytics/models/[id]/evaluations/sku-accuracy has dedicated route-specific evidence",
       "runner": "playwright",
-      "command": "/opt/homebrew/Cellar/node@24/24.18.0/bin/node /private/tmp/wb-repricer-node24-npm11.11.0/node_modules/npm/bin/npm-cli.js run test:e2e:full -- e2e/acquiring.spec.ts e2e/alerts-page.spec.ts e2e/automation/canned-rules.spec.ts e2e/backfill-page.spec.ts e2e/brand-analytics.spec.ts e2e/cogs-assignment.spec.ts e2e/communications.spec.ts e2e/dashboard-metrics.spec.ts e2e/expenses-page.spec.ts e2e/finances.spec.ts e2e/funnel.spec.ts e2e/liquidity.spec.ts e2e/moysklad.spec.ts e2e/orders-integrity.spec.ts e2e/price-calculator.spec.ts e2e/pricing-page.spec.ts e2e/settings-pages.spec.ts e2e/settings/backfill-admin.spec.ts e2e/shipments/shipments-detail.spec.ts e2e/sku-analytics.spec.ts e2e/story-174-3-dedicated-route-evidence.spec.ts e2e/telegram-notifications.spec.ts e2e/time-period-analytics.spec.ts e2e/unit-economics.spec.ts --reporter=json",
+      "command": "npm run test:e2e:full -- e2e/acquiring.spec.ts e2e/alerts-page.spec.ts e2e/automation/canned-rules.spec.ts e2e/backfill-page.spec.ts e2e/brand-analytics.spec.ts e2e/cogs-assignment.spec.ts e2e/communications.spec.ts e2e/dashboard-metrics.spec.ts e2e/expenses-page.spec.ts e2e/finances.spec.ts e2e/funnel.spec.ts e2e/liquidity.spec.ts e2e/moysklad.spec.ts e2e/orders-integrity.spec.ts e2e/price-calculator.spec.ts e2e/pricing-page.spec.ts e2e/settings-pages.spec.ts e2e/settings/backfill-admin.spec.ts e2e/shipments/shipments-detail.spec.ts e2e/sku-analytics.spec.ts e2e/story-174-3-dedicated-route-evidence.spec.ts e2e/telegram-notifications.spec.ts e2e/time-period-analytics.spec.ts e2e/unit-economics.spec.ts --reporter=json",
       "result": "passed",
       "exitCode": 0,
-      "startedAt": "2026-09-01T05:58:03.218Z",
-      "durationMs": 102036
+      "startedAt": "2026-09-01T17:35:13.648Z",
+      "durationMs": 206341
     },
     {
       "source": "e2e/story-174-3-dedicated-route-evidence.spec.ts",
       "sourceSha256": "79dc7c5ccfadd98293bc4c44a31bc94766e329aecfd157f121e54f2d56b417af",
       "scenarioId": "/orders/fbo has dedicated settled-route and heading evidence",
       "runner": "playwright",
-      "command": "/opt/homebrew/Cellar/node@24/24.18.0/bin/node /private/tmp/wb-repricer-node24-npm11.11.0/node_modules/npm/bin/npm-cli.js run test:e2e:full -- e2e/acquiring.spec.ts e2e/alerts-page.spec.ts e2e/automation/canned-rules.spec.ts e2e/backfill-page.spec.ts e2e/brand-analytics.spec.ts e2e/cogs-assignment.spec.ts e2e/communications.spec.ts e2e/dashboard-metrics.spec.ts e2e/expenses-page.spec.ts e2e/finances.spec.ts e2e/funnel.spec.ts e2e/liquidity.spec.ts e2e/moysklad.spec.ts e2e/orders-integrity.spec.ts e2e/price-calculator.spec.ts e2e/pricing-page.spec.ts e2e/settings-pages.spec.ts e2e/settings/backfill-admin.spec.ts e2e/shipments/shipments-detail.spec.ts e2e/sku-analytics.spec.ts e2e/story-174-3-dedicated-route-evidence.spec.ts e2e/telegram-notifications.spec.ts e2e/time-period-analytics.spec.ts e2e/unit-economics.spec.ts --reporter=json",
+      "command": "npm run test:e2e:full -- e2e/acquiring.spec.ts e2e/alerts-page.spec.ts e2e/automation/canned-rules.spec.ts e2e/backfill-page.spec.ts e2e/brand-analytics.spec.ts e2e/cogs-assignment.spec.ts e2e/communications.spec.ts e2e/dashboard-metrics.spec.ts e2e/expenses-page.spec.ts e2e/finances.spec.ts e2e/funnel.spec.ts e2e/liquidity.spec.ts e2e/moysklad.spec.ts e2e/orders-integrity.spec.ts e2e/price-calculator.spec.ts e2e/pricing-page.spec.ts e2e/settings-pages.spec.ts e2e/settings/backfill-admin.spec.ts e2e/shipments/shipments-detail.spec.ts e2e/sku-analytics.spec.ts e2e/story-174-3-dedicated-route-evidence.spec.ts e2e/telegram-notifications.spec.ts e2e/time-period-analytics.spec.ts e2e/unit-economics.spec.ts --reporter=json",
       "result": "passed",
       "exitCode": 0,
-      "startedAt": "2026-09-01T05:58:03.218Z",
-      "durationMs": 102036
+      "startedAt": "2026-09-01T17:35:13.648Z",
+      "durationMs": 206341
     },
     {
       "source": "e2e/telegram-notifications.spec.ts",
       "sourceSha256": "5773869d9039978a25d3d9db2a237a228f4feecab99191aced9af777166e6fa3",
       "scenarioId": "announces binding-code creation while the request is pending",
       "runner": "playwright",
-      "command": "/opt/homebrew/Cellar/node@24/24.18.0/bin/node /private/tmp/wb-repricer-node24-npm11.11.0/node_modules/npm/bin/npm-cli.js run test:e2e:full -- e2e/acquiring.spec.ts e2e/alerts-page.spec.ts e2e/automation/canned-rules.spec.ts e2e/backfill-page.spec.ts e2e/brand-analytics.spec.ts e2e/cogs-assignment.spec.ts e2e/communications.spec.ts e2e/dashboard-metrics.spec.ts e2e/expenses-page.spec.ts e2e/finances.spec.ts e2e/funnel.spec.ts e2e/liquidity.spec.ts e2e/moysklad.spec.ts e2e/orders-integrity.spec.ts e2e/price-calculator.spec.ts e2e/pricing-page.spec.ts e2e/settings-pages.spec.ts e2e/settings/backfill-admin.spec.ts e2e/shipments/shipments-detail.spec.ts e2e/sku-analytics.spec.ts e2e/story-174-3-dedicated-route-evidence.spec.ts e2e/telegram-notifications.spec.ts e2e/time-period-analytics.spec.ts e2e/unit-economics.spec.ts --reporter=json",
+      "command": "npm run test:e2e:full -- e2e/acquiring.spec.ts e2e/alerts-page.spec.ts e2e/automation/canned-rules.spec.ts e2e/backfill-page.spec.ts e2e/brand-analytics.spec.ts e2e/cogs-assignment.spec.ts e2e/communications.spec.ts e2e/dashboard-metrics.spec.ts e2e/expenses-page.spec.ts e2e/finances.spec.ts e2e/funnel.spec.ts e2e/liquidity.spec.ts e2e/moysklad.spec.ts e2e/orders-integrity.spec.ts e2e/price-calculator.spec.ts e2e/pricing-page.spec.ts e2e/settings-pages.spec.ts e2e/settings/backfill-admin.spec.ts e2e/shipments/shipments-detail.spec.ts e2e/sku-analytics.spec.ts e2e/story-174-3-dedicated-route-evidence.spec.ts e2e/telegram-notifications.spec.ts e2e/time-period-analytics.spec.ts e2e/unit-economics.spec.ts --reporter=json",
       "result": "passed",
       "exitCode": 0,
-      "startedAt": "2026-09-01T05:58:03.218Z",
-      "durationMs": 102036
+      "startedAt": "2026-09-01T17:35:13.648Z",
+      "durationMs": 206341
     },
     {
       "source": "e2e/telegram-notifications.spec.ts",
       "sourceSha256": "5773869d9039978a25d3d9db2a237a228f4feecab99191aced9af777166e6fa3",
       "scenarioId": "contains unbind focus and returns it to the invoking action after Escape",
       "runner": "playwright",
-      "command": "/opt/homebrew/Cellar/node@24/24.18.0/bin/node /private/tmp/wb-repricer-node24-npm11.11.0/node_modules/npm/bin/npm-cli.js run test:e2e:full -- e2e/acquiring.spec.ts e2e/alerts-page.spec.ts e2e/automation/canned-rules.spec.ts e2e/backfill-page.spec.ts e2e/brand-analytics.spec.ts e2e/cogs-assignment.spec.ts e2e/communications.spec.ts e2e/dashboard-metrics.spec.ts e2e/expenses-page.spec.ts e2e/finances.spec.ts e2e/funnel.spec.ts e2e/liquidity.spec.ts e2e/moysklad.spec.ts e2e/orders-integrity.spec.ts e2e/price-calculator.spec.ts e2e/pricing-page.spec.ts e2e/settings-pages.spec.ts e2e/settings/backfill-admin.spec.ts e2e/shipments/shipments-detail.spec.ts e2e/sku-analytics.spec.ts e2e/story-174-3-dedicated-route-evidence.spec.ts e2e/telegram-notifications.spec.ts e2e/time-period-analytics.spec.ts e2e/unit-economics.spec.ts --reporter=json",
+      "command": "npm run test:e2e:full -- e2e/acquiring.spec.ts e2e/alerts-page.spec.ts e2e/automation/canned-rules.spec.ts e2e/backfill-page.spec.ts e2e/brand-analytics.spec.ts e2e/cogs-assignment.spec.ts e2e/communications.spec.ts e2e/dashboard-metrics.spec.ts e2e/expenses-page.spec.ts e2e/finances.spec.ts e2e/funnel.spec.ts e2e/liquidity.spec.ts e2e/moysklad.spec.ts e2e/orders-integrity.spec.ts e2e/price-calculator.spec.ts e2e/pricing-page.spec.ts e2e/settings-pages.spec.ts e2e/settings/backfill-admin.spec.ts e2e/shipments/shipments-detail.spec.ts e2e/sku-analytics.spec.ts e2e/story-174-3-dedicated-route-evidence.spec.ts e2e/telegram-notifications.spec.ts e2e/time-period-analytics.spec.ts e2e/unit-economics.spec.ts --reporter=json",
       "result": "passed",
       "exitCode": 0,
-      "startedAt": "2026-09-01T05:58:03.218Z",
-      "durationMs": 102036
+      "startedAt": "2026-09-01T17:35:13.648Z",
+      "durationMs": 206341
     },
     {
       "source": "e2e/time-period-analytics.spec.ts",
       "sourceSha256": "708d7112b9bf811f42509a92af6062fe809ef4002e6134e79b060243d0a53611",
       "scenarioId": "selecting a different period keeps page stable",
       "runner": "playwright",
-      "command": "/opt/homebrew/Cellar/node@24/24.18.0/bin/node /private/tmp/wb-repricer-node24-npm11.11.0/node_modules/npm/bin/npm-cli.js run test:e2e:full -- e2e/acquiring.spec.ts e2e/alerts-page.spec.ts e2e/automation/canned-rules.spec.ts e2e/backfill-page.spec.ts e2e/brand-analytics.spec.ts e2e/cogs-assignment.spec.ts e2e/communications.spec.ts e2e/dashboard-metrics.spec.ts e2e/expenses-page.spec.ts e2e/finances.spec.ts e2e/funnel.spec.ts e2e/liquidity.spec.ts e2e/moysklad.spec.ts e2e/orders-integrity.spec.ts e2e/price-calculator.spec.ts e2e/pricing-page.spec.ts e2e/settings-pages.spec.ts e2e/settings/backfill-admin.spec.ts e2e/shipments/shipments-detail.spec.ts e2e/sku-analytics.spec.ts e2e/story-174-3-dedicated-route-evidence.spec.ts e2e/telegram-notifications.spec.ts e2e/time-period-analytics.spec.ts e2e/unit-economics.spec.ts --reporter=json",
+      "command": "npm run test:e2e:full -- e2e/acquiring.spec.ts e2e/alerts-page.spec.ts e2e/automation/canned-rules.spec.ts e2e/backfill-page.spec.ts e2e/brand-analytics.spec.ts e2e/cogs-assignment.spec.ts e2e/communications.spec.ts e2e/dashboard-metrics.spec.ts e2e/expenses-page.spec.ts e2e/finances.spec.ts e2e/funnel.spec.ts e2e/liquidity.spec.ts e2e/moysklad.spec.ts e2e/orders-integrity.spec.ts e2e/price-calculator.spec.ts e2e/pricing-page.spec.ts e2e/settings-pages.spec.ts e2e/settings/backfill-admin.spec.ts e2e/shipments/shipments-detail.spec.ts e2e/sku-analytics.spec.ts e2e/story-174-3-dedicated-route-evidence.spec.ts e2e/telegram-notifications.spec.ts e2e/time-period-analytics.spec.ts e2e/unit-economics.spec.ts --reporter=json",
       "result": "passed",
       "exitCode": 0,
-      "startedAt": "2026-09-01T05:58:03.218Z",
-      "durationMs": 102036
+      "startedAt": "2026-09-01T17:35:13.648Z",
+      "durationMs": 206341
     },
     {
       "source": "e2e/unit-economics.spec.ts",
       "sourceSha256": "feb56550aefde5be843e05b2a160622654684e5eea66494555322e10facf13b9",
       "scenarioId": "filters profitability through URL and table state without an API request",
       "runner": "playwright",
-      "command": "/opt/homebrew/Cellar/node@24/24.18.0/bin/node /private/tmp/wb-repricer-node24-npm11.11.0/node_modules/npm/bin/npm-cli.js run test:e2e:full -- e2e/acquiring.spec.ts e2e/alerts-page.spec.ts e2e/automation/canned-rules.spec.ts e2e/backfill-page.spec.ts e2e/brand-analytics.spec.ts e2e/cogs-assignment.spec.ts e2e/communications.spec.ts e2e/dashboard-metrics.spec.ts e2e/expenses-page.spec.ts e2e/finances.spec.ts e2e/funnel.spec.ts e2e/liquidity.spec.ts e2e/moysklad.spec.ts e2e/orders-integrity.spec.ts e2e/price-calculator.spec.ts e2e/pricing-page.spec.ts e2e/settings-pages.spec.ts e2e/settings/backfill-admin.spec.ts e2e/shipments/shipments-detail.spec.ts e2e/sku-analytics.spec.ts e2e/story-174-3-dedicated-route-evidence.spec.ts e2e/telegram-notifications.spec.ts e2e/time-period-analytics.spec.ts e2e/unit-economics.spec.ts --reporter=json",
+      "command": "npm run test:e2e:full -- e2e/acquiring.spec.ts e2e/alerts-page.spec.ts e2e/automation/canned-rules.spec.ts e2e/backfill-page.spec.ts e2e/brand-analytics.spec.ts e2e/cogs-assignment.spec.ts e2e/communications.spec.ts e2e/dashboard-metrics.spec.ts e2e/expenses-page.spec.ts e2e/finances.spec.ts e2e/funnel.spec.ts e2e/liquidity.spec.ts e2e/moysklad.spec.ts e2e/orders-integrity.spec.ts e2e/price-calculator.spec.ts e2e/pricing-page.spec.ts e2e/settings-pages.spec.ts e2e/settings/backfill-admin.spec.ts e2e/shipments/shipments-detail.spec.ts e2e/sku-analytics.spec.ts e2e/story-174-3-dedicated-route-evidence.spec.ts e2e/telegram-notifications.spec.ts e2e/time-period-analytics.spec.ts e2e/unit-economics.spec.ts --reporter=json",
       "result": "passed",
       "exitCode": 0,
-      "startedAt": "2026-09-01T05:58:03.218Z",
-      "durationMs": 102036
+      "startedAt": "2026-09-01T17:35:13.648Z",
+      "durationMs": 206341
     },
     {
       "source": "e2e/unit-economics.spec.ts",
       "sourceSha256": "feb56550aefde5be843e05b2a160622654684e5eea66494555322e10facf13b9",
       "scenarioId": "holds loading state behind a timer-free deferred release",
       "runner": "playwright",
-      "command": "/opt/homebrew/Cellar/node@24/24.18.0/bin/node /private/tmp/wb-repricer-node24-npm11.11.0/node_modules/npm/bin/npm-cli.js run test:e2e:full -- e2e/acquiring.spec.ts e2e/alerts-page.spec.ts e2e/automation/canned-rules.spec.ts e2e/backfill-page.spec.ts e2e/brand-analytics.spec.ts e2e/cogs-assignment.spec.ts e2e/communications.spec.ts e2e/dashboard-metrics.spec.ts e2e/expenses-page.spec.ts e2e/finances.spec.ts e2e/funnel.spec.ts e2e/liquidity.spec.ts e2e/moysklad.spec.ts e2e/orders-integrity.spec.ts e2e/price-calculator.spec.ts e2e/pricing-page.spec.ts e2e/settings-pages.spec.ts e2e/settings/backfill-admin.spec.ts e2e/shipments/shipments-detail.spec.ts e2e/sku-analytics.spec.ts e2e/story-174-3-dedicated-route-evidence.spec.ts e2e/telegram-notifications.spec.ts e2e/time-period-analytics.spec.ts e2e/unit-economics.spec.ts --reporter=json",
+      "command": "npm run test:e2e:full -- e2e/acquiring.spec.ts e2e/alerts-page.spec.ts e2e/automation/canned-rules.spec.ts e2e/backfill-page.spec.ts e2e/brand-analytics.spec.ts e2e/cogs-assignment.spec.ts e2e/communications.spec.ts e2e/dashboard-metrics.spec.ts e2e/expenses-page.spec.ts e2e/finances.spec.ts e2e/funnel.spec.ts e2e/liquidity.spec.ts e2e/moysklad.spec.ts e2e/orders-integrity.spec.ts e2e/price-calculator.spec.ts e2e/pricing-page.spec.ts e2e/settings-pages.spec.ts e2e/settings/backfill-admin.spec.ts e2e/shipments/shipments-detail.spec.ts e2e/sku-analytics.spec.ts e2e/story-174-3-dedicated-route-evidence.spec.ts e2e/telegram-notifications.spec.ts e2e/time-period-analytics.spec.ts e2e/unit-economics.spec.ts --reporter=json",
       "result": "passed",
       "exitCode": 0,
-      "startedAt": "2026-09-01T05:58:03.218Z",
-      "durationMs": 102036
+      "startedAt": "2026-09-01T17:35:13.648Z",
+      "durationMs": 206341
     },
     {
       "source": "e2e/unit-economics.spec.ts",
       "sourceSha256": "feb56550aefde5be843e05b2a160622654684e5eea66494555322e10facf13b9",
       "scenarioId": "keeps the active profitability filter and reset path when it produces no rows",
       "runner": "playwright",
-      "command": "/opt/homebrew/Cellar/node@24/24.18.0/bin/node /private/tmp/wb-repricer-node24-npm11.11.0/node_modules/npm/bin/npm-cli.js run test:e2e:full -- e2e/acquiring.spec.ts e2e/alerts-page.spec.ts e2e/automation/canned-rules.spec.ts e2e/backfill-page.spec.ts e2e/brand-analytics.spec.ts e2e/cogs-assignment.spec.ts e2e/communications.spec.ts e2e/dashboard-metrics.spec.ts e2e/expenses-page.spec.ts e2e/finances.spec.ts e2e/funnel.spec.ts e2e/liquidity.spec.ts e2e/moysklad.spec.ts e2e/orders-integrity.spec.ts e2e/price-calculator.spec.ts e2e/pricing-page.spec.ts e2e/settings-pages.spec.ts e2e/settings/backfill-admin.spec.ts e2e/shipments/shipments-detail.spec.ts e2e/sku-analytics.spec.ts e2e/story-174-3-dedicated-route-evidence.spec.ts e2e/telegram-notifications.spec.ts e2e/time-period-analytics.spec.ts e2e/unit-economics.spec.ts --reporter=json",
+      "command": "npm run test:e2e:full -- e2e/acquiring.spec.ts e2e/alerts-page.spec.ts e2e/automation/canned-rules.spec.ts e2e/backfill-page.spec.ts e2e/brand-analytics.spec.ts e2e/cogs-assignment.spec.ts e2e/communications.spec.ts e2e/dashboard-metrics.spec.ts e2e/expenses-page.spec.ts e2e/finances.spec.ts e2e/funnel.spec.ts e2e/liquidity.spec.ts e2e/moysklad.spec.ts e2e/orders-integrity.spec.ts e2e/price-calculator.spec.ts e2e/pricing-page.spec.ts e2e/settings-pages.spec.ts e2e/settings/backfill-admin.spec.ts e2e/shipments/shipments-detail.spec.ts e2e/sku-analytics.spec.ts e2e/story-174-3-dedicated-route-evidence.spec.ts e2e/telegram-notifications.spec.ts e2e/time-period-analytics.spec.ts e2e/unit-economics.spec.ts --reporter=json",
       "result": "passed",
       "exitCode": 0,
-      "startedAt": "2026-09-01T05:58:03.218Z",
-      "durationMs": 102036
+      "startedAt": "2026-09-01T17:35:13.648Z",
+      "durationMs": 206341
     },
     {
       "source": "e2e/unit-economics.spec.ts",
       "sourceSha256": "feb56550aefde5be843e05b2a160622654684e5eea66494555322e10facf13b9",
       "scenarioId": "paginates, preserves sticky header state, and exports CSV through browser state",
       "runner": "playwright",
-      "command": "/opt/homebrew/Cellar/node@24/24.18.0/bin/node /private/tmp/wb-repricer-node24-npm11.11.0/node_modules/npm/bin/npm-cli.js run test:e2e:full -- e2e/acquiring.spec.ts e2e/alerts-page.spec.ts e2e/automation/canned-rules.spec.ts e2e/backfill-page.spec.ts e2e/brand-analytics.spec.ts e2e/cogs-assignment.spec.ts e2e/communications.spec.ts e2e/dashboard-metrics.spec.ts e2e/expenses-page.spec.ts e2e/finances.spec.ts e2e/funnel.spec.ts e2e/liquidity.spec.ts e2e/moysklad.spec.ts e2e/orders-integrity.spec.ts e2e/price-calculator.spec.ts e2e/pricing-page.spec.ts e2e/settings-pages.spec.ts e2e/settings/backfill-admin.spec.ts e2e/shipments/shipments-detail.spec.ts e2e/sku-analytics.spec.ts e2e/story-174-3-dedicated-route-evidence.spec.ts e2e/telegram-notifications.spec.ts e2e/time-period-analytics.spec.ts e2e/unit-economics.spec.ts --reporter=json",
+      "command": "npm run test:e2e:full -- e2e/acquiring.spec.ts e2e/alerts-page.spec.ts e2e/automation/canned-rules.spec.ts e2e/backfill-page.spec.ts e2e/brand-analytics.spec.ts e2e/cogs-assignment.spec.ts e2e/communications.spec.ts e2e/dashboard-metrics.spec.ts e2e/expenses-page.spec.ts e2e/finances.spec.ts e2e/funnel.spec.ts e2e/liquidity.spec.ts e2e/moysklad.spec.ts e2e/orders-integrity.spec.ts e2e/price-calculator.spec.ts e2e/pricing-page.spec.ts e2e/settings-pages.spec.ts e2e/settings/backfill-admin.spec.ts e2e/shipments/shipments-detail.spec.ts e2e/sku-analytics.spec.ts e2e/story-174-3-dedicated-route-evidence.spec.ts e2e/telegram-notifications.spec.ts e2e/time-period-analytics.spec.ts e2e/unit-economics.spec.ts --reporter=json",
       "result": "passed",
       "exitCode": 0,
-      "startedAt": "2026-09-01T05:58:03.218Z",
-      "durationMs": 102036
+      "startedAt": "2026-09-01T17:35:13.648Z",
+      "durationMs": 206341
     },
     {
       "source": "e2e/unit-economics.spec.ts",
       "sourceSha256": "feb56550aefde5be843e05b2a160622654684e5eea66494555322e10facf13b9",
       "scenarioId": "refreshes through an exact successful analytics request",
       "runner": "playwright",
-      "command": "/opt/homebrew/Cellar/node@24/24.18.0/bin/node /private/tmp/wb-repricer-node24-npm11.11.0/node_modules/npm/bin/npm-cli.js run test:e2e:full -- e2e/acquiring.spec.ts e2e/alerts-page.spec.ts e2e/automation/canned-rules.spec.ts e2e/backfill-page.spec.ts e2e/brand-analytics.spec.ts e2e/cogs-assignment.spec.ts e2e/communications.spec.ts e2e/dashboard-metrics.spec.ts e2e/expenses-page.spec.ts e2e/finances.spec.ts e2e/funnel.spec.ts e2e/liquidity.spec.ts e2e/moysklad.spec.ts e2e/orders-integrity.spec.ts e2e/price-calculator.spec.ts e2e/pricing-page.spec.ts e2e/settings-pages.spec.ts e2e/settings/backfill-admin.spec.ts e2e/shipments/shipments-detail.spec.ts e2e/sku-analytics.spec.ts e2e/story-174-3-dedicated-route-evidence.spec.ts e2e/telegram-notifications.spec.ts e2e/time-period-analytics.spec.ts e2e/unit-economics.spec.ts --reporter=json",
+      "command": "npm run test:e2e:full -- e2e/acquiring.spec.ts e2e/alerts-page.spec.ts e2e/automation/canned-rules.spec.ts e2e/backfill-page.spec.ts e2e/brand-analytics.spec.ts e2e/cogs-assignment.spec.ts e2e/communications.spec.ts e2e/dashboard-metrics.spec.ts e2e/expenses-page.spec.ts e2e/finances.spec.ts e2e/funnel.spec.ts e2e/liquidity.spec.ts e2e/moysklad.spec.ts e2e/orders-integrity.spec.ts e2e/price-calculator.spec.ts e2e/pricing-page.spec.ts e2e/settings-pages.spec.ts e2e/settings/backfill-admin.spec.ts e2e/shipments/shipments-detail.spec.ts e2e/sku-analytics.spec.ts e2e/story-174-3-dedicated-route-evidence.spec.ts e2e/telegram-notifications.spec.ts e2e/time-period-analytics.spec.ts e2e/unit-economics.spec.ts --reporter=json",
       "result": "passed",
       "exitCode": 0,
-      "startedAt": "2026-09-01T05:58:03.218Z",
-      "durationMs": 102036
+      "startedAt": "2026-09-01T17:35:13.648Z",
+      "durationMs": 206341
     },
     {
       "source": "e2e/unit-economics.spec.ts",
       "sourceSha256": "feb56550aefde5be843e05b2a160622654684e5eea66494555322e10facf13b9",
       "scenarioId": "renders exact error and retry terminal states with a handler-local gate",
       "runner": "playwright",
-      "command": "/opt/homebrew/Cellar/node@24/24.18.0/bin/node /private/tmp/wb-repricer-node24-npm11.11.0/node_modules/npm/bin/npm-cli.js run test:e2e:full -- e2e/acquiring.spec.ts e2e/alerts-page.spec.ts e2e/automation/canned-rules.spec.ts e2e/backfill-page.spec.ts e2e/brand-analytics.spec.ts e2e/cogs-assignment.spec.ts e2e/communications.spec.ts e2e/dashboard-metrics.spec.ts e2e/expenses-page.spec.ts e2e/finances.spec.ts e2e/funnel.spec.ts e2e/liquidity.spec.ts e2e/moysklad.spec.ts e2e/orders-integrity.spec.ts e2e/price-calculator.spec.ts e2e/pricing-page.spec.ts e2e/settings-pages.spec.ts e2e/settings/backfill-admin.spec.ts e2e/shipments/shipments-detail.spec.ts e2e/sku-analytics.spec.ts e2e/story-174-3-dedicated-route-evidence.spec.ts e2e/telegram-notifications.spec.ts e2e/time-period-analytics.spec.ts e2e/unit-economics.spec.ts --reporter=json",
+      "command": "npm run test:e2e:full -- e2e/acquiring.spec.ts e2e/alerts-page.spec.ts e2e/automation/canned-rules.spec.ts e2e/backfill-page.spec.ts e2e/brand-analytics.spec.ts e2e/cogs-assignment.spec.ts e2e/communications.spec.ts e2e/dashboard-metrics.spec.ts e2e/expenses-page.spec.ts e2e/finances.spec.ts e2e/funnel.spec.ts e2e/liquidity.spec.ts e2e/moysklad.spec.ts e2e/orders-integrity.spec.ts e2e/price-calculator.spec.ts e2e/pricing-page.spec.ts e2e/settings-pages.spec.ts e2e/settings/backfill-admin.spec.ts e2e/shipments/shipments-detail.spec.ts e2e/sku-analytics.spec.ts e2e/story-174-3-dedicated-route-evidence.spec.ts e2e/telegram-notifications.spec.ts e2e/time-period-analytics.spec.ts e2e/unit-economics.spec.ts --reporter=json",
       "result": "passed",
       "exitCode": 0,
-      "startedAt": "2026-09-01T05:58:03.218Z",
-      "durationMs": 102036
+      "startedAt": "2026-09-01T17:35:13.648Z",
+      "durationMs": 206341
     },
     {
       "source": "e2e/unit-economics.spec.ts",
       "sourceSha256": "feb56550aefde5be843e05b2a160622654684e5eea66494555322e10facf13b9",
       "scenarioId": "renders the exact empty terminal state",
       "runner": "playwright",
-      "command": "/opt/homebrew/Cellar/node@24/24.18.0/bin/node /private/tmp/wb-repricer-node24-npm11.11.0/node_modules/npm/bin/npm-cli.js run test:e2e:full -- e2e/acquiring.spec.ts e2e/alerts-page.spec.ts e2e/automation/canned-rules.spec.ts e2e/backfill-page.spec.ts e2e/brand-analytics.spec.ts e2e/cogs-assignment.spec.ts e2e/communications.spec.ts e2e/dashboard-metrics.spec.ts e2e/expenses-page.spec.ts e2e/finances.spec.ts e2e/funnel.spec.ts e2e/liquidity.spec.ts e2e/moysklad.spec.ts e2e/orders-integrity.spec.ts e2e/price-calculator.spec.ts e2e/pricing-page.spec.ts e2e/settings-pages.spec.ts e2e/settings/backfill-admin.spec.ts e2e/shipments/shipments-detail.spec.ts e2e/sku-analytics.spec.ts e2e/story-174-3-dedicated-route-evidence.spec.ts e2e/telegram-notifications.spec.ts e2e/time-period-analytics.spec.ts e2e/unit-economics.spec.ts --reporter=json",
+      "command": "npm run test:e2e:full -- e2e/acquiring.spec.ts e2e/alerts-page.spec.ts e2e/automation/canned-rules.spec.ts e2e/backfill-page.spec.ts e2e/brand-analytics.spec.ts e2e/cogs-assignment.spec.ts e2e/communications.spec.ts e2e/dashboard-metrics.spec.ts e2e/expenses-page.spec.ts e2e/finances.spec.ts e2e/funnel.spec.ts e2e/liquidity.spec.ts e2e/moysklad.spec.ts e2e/orders-integrity.spec.ts e2e/price-calculator.spec.ts e2e/pricing-page.spec.ts e2e/settings-pages.spec.ts e2e/settings/backfill-admin.spec.ts e2e/shipments/shipments-detail.spec.ts e2e/sku-analytics.spec.ts e2e/story-174-3-dedicated-route-evidence.spec.ts e2e/telegram-notifications.spec.ts e2e/time-period-analytics.spec.ts e2e/unit-economics.spec.ts --reporter=json",
       "result": "passed",
       "exitCode": 0,
-      "startedAt": "2026-09-01T05:58:03.218Z",
-      "durationMs": 102036
+      "startedAt": "2026-09-01T17:35:13.648Z",
+      "durationMs": 206341
     },
     {
       "source": "e2e/unit-economics.spec.ts",
       "sourceSha256": "feb56550aefde5be843e05b2a160622654684e5eea66494555322e10facf13b9",
       "scenarioId": "selects a row for the waterfall and resets selection semantically",
       "runner": "playwright",
-      "command": "/opt/homebrew/Cellar/node@24/24.18.0/bin/node /private/tmp/wb-repricer-node24-npm11.11.0/node_modules/npm/bin/npm-cli.js run test:e2e:full -- e2e/acquiring.spec.ts e2e/alerts-page.spec.ts e2e/automation/canned-rules.spec.ts e2e/backfill-page.spec.ts e2e/brand-analytics.spec.ts e2e/cogs-assignment.spec.ts e2e/communications.spec.ts e2e/dashboard-metrics.spec.ts e2e/expenses-page.spec.ts e2e/finances.spec.ts e2e/funnel.spec.ts e2e/liquidity.spec.ts e2e/moysklad.spec.ts e2e/orders-integrity.spec.ts e2e/price-calculator.spec.ts e2e/pricing-page.spec.ts e2e/settings-pages.spec.ts e2e/settings/backfill-admin.spec.ts e2e/shipments/shipments-detail.spec.ts e2e/sku-analytics.spec.ts e2e/story-174-3-dedicated-route-evidence.spec.ts e2e/telegram-notifications.spec.ts e2e/time-period-analytics.spec.ts e2e/unit-economics.spec.ts --reporter=json",
+      "command": "npm run test:e2e:full -- e2e/acquiring.spec.ts e2e/alerts-page.spec.ts e2e/automation/canned-rules.spec.ts e2e/backfill-page.spec.ts e2e/brand-analytics.spec.ts e2e/cogs-assignment.spec.ts e2e/communications.spec.ts e2e/dashboard-metrics.spec.ts e2e/expenses-page.spec.ts e2e/finances.spec.ts e2e/funnel.spec.ts e2e/liquidity.spec.ts e2e/moysklad.spec.ts e2e/orders-integrity.spec.ts e2e/price-calculator.spec.ts e2e/pricing-page.spec.ts e2e/settings-pages.spec.ts e2e/settings/backfill-admin.spec.ts e2e/shipments/shipments-detail.spec.ts e2e/sku-analytics.spec.ts e2e/story-174-3-dedicated-route-evidence.spec.ts e2e/telegram-notifications.spec.ts e2e/time-period-analytics.spec.ts e2e/unit-economics.spec.ts --reporter=json",
       "result": "passed",
       "exitCode": 0,
-      "startedAt": "2026-09-01T05:58:03.218Z",
-      "durationMs": 102036
+      "startedAt": "2026-09-01T17:35:13.648Z",
+      "durationMs": 206341
     },
     {
       "source": "e2e/unit-economics.spec.ts",
       "sourceSha256": "feb56550aefde5be843e05b2a160622654684e5eea66494555322e10facf13b9",
       "scenarioId": "sorts revenue and margin through exact requests and visible row markers",
       "runner": "playwright",
-      "command": "/opt/homebrew/Cellar/node@24/24.18.0/bin/node /private/tmp/wb-repricer-node24-npm11.11.0/node_modules/npm/bin/npm-cli.js run test:e2e:full -- e2e/acquiring.spec.ts e2e/alerts-page.spec.ts e2e/automation/canned-rules.spec.ts e2e/backfill-page.spec.ts e2e/brand-analytics.spec.ts e2e/cogs-assignment.spec.ts e2e/communications.spec.ts e2e/dashboard-metrics.spec.ts e2e/expenses-page.spec.ts e2e/finances.spec.ts e2e/funnel.spec.ts e2e/liquidity.spec.ts e2e/moysklad.spec.ts e2e/orders-integrity.spec.ts e2e/price-calculator.spec.ts e2e/pricing-page.spec.ts e2e/settings-pages.spec.ts e2e/settings/backfill-admin.spec.ts e2e/shipments/shipments-detail.spec.ts e2e/sku-analytics.spec.ts e2e/story-174-3-dedicated-route-evidence.spec.ts e2e/telegram-notifications.spec.ts e2e/time-period-analytics.spec.ts e2e/unit-economics.spec.ts --reporter=json",
+      "command": "npm run test:e2e:full -- e2e/acquiring.spec.ts e2e/alerts-page.spec.ts e2e/automation/canned-rules.spec.ts e2e/backfill-page.spec.ts e2e/brand-analytics.spec.ts e2e/cogs-assignment.spec.ts e2e/communications.spec.ts e2e/dashboard-metrics.spec.ts e2e/expenses-page.spec.ts e2e/finances.spec.ts e2e/funnel.spec.ts e2e/liquidity.spec.ts e2e/moysklad.spec.ts e2e/orders-integrity.spec.ts e2e/price-calculator.spec.ts e2e/pricing-page.spec.ts e2e/settings-pages.spec.ts e2e/settings/backfill-admin.spec.ts e2e/shipments/shipments-detail.spec.ts e2e/sku-analytics.spec.ts e2e/story-174-3-dedicated-route-evidence.spec.ts e2e/telegram-notifications.spec.ts e2e/time-period-analytics.spec.ts e2e/unit-economics.spec.ts --reporter=json",
       "result": "passed",
       "exitCode": 0,
-      "startedAt": "2026-09-01T05:58:03.218Z",
-      "durationMs": 102036
+      "startedAt": "2026-09-01T17:35:13.648Z",
+      "durationMs": 206341
     },
     {
       "source": "src/app/(dashboard)/analytics/acquiring/components/__tests__/AcquiringPageContent.test.tsx",

@@ -24,13 +24,21 @@ test.describe('Box Types Management Page', () => {
   })
 
   test('renders page heading "Типы коробок"', async ({ page }) => {
-    await expect(page.getByRole('heading', { name: 'Типы коробок' })).toBeVisible({
+    // 174.4: level+exact — the substring match also resolves the pending-state
+    // h2 "Загружаем типы коробок" (PageState title) while data is loading
+    // (strict-mode violation; loading persists when the box-types API never
+    // settles in the guard environment).
+    await expect(
+      page.getByRole('heading', { level: 1, name: 'Типы коробок', exact: true })
+    ).toBeVisible({
       timeout: TIMEOUTS.api,
     })
   })
 
   test('shows table, empty state, or error with retry', async ({ page }) => {
-    await expect(page.getByRole('heading', { name: 'Типы коробок' })).toBeVisible({
+    await expect(
+      page.getByRole('heading', { level: 1, name: 'Типы коробок', exact: true })
+    ).toBeVisible({
       timeout: TIMEOUTS.api,
     })
 

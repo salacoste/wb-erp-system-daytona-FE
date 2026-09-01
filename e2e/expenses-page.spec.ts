@@ -1,6 +1,39 @@
 import AxeBuilder from '@axe-core/playwright'
-import { test, expect, type Page } from './fixtures/network-test'
+import { test, expect, type Locator, type Page } from './fixtures/network-test'
 import { ROUTES, TIMEOUTS } from './fixtures/test-data'
+
+/**
+ * 174.4: axe analysis with a single dev-reload recovery. Under full-suite
+ * load `next dev` can finish a background compile mid-analyze and force a
+ * page reload, destroying the execution context ("Execution context was
+ * destroyed, most likely because of a navigation" — both light and dark
+ * baseline failures at the first .analyze()). One retry after re-awaiting
+ * the page heading absorbs that transient without masking real violations.
+ */
+async function analyzeStably(
+  page: Page,
+  build: () => AxeBuilder,
+  settleHeading: string,
+  // Post-recovery existence guard (174.4 review F4): a reload mid-analysis can
+  // close a dialog, making the retried include() scan zero elements and pass
+  // vacuously. Callers that target overlays must pass a stillPresent locator
+  // asserted after the settle wait, before the retry is trusted.
+  stillPresent?: Locator
+): Promise<Awaited<ReturnType<AxeBuilder['analyze']>>> {
+  try {
+    return await build().analyze()
+  } catch (error) {
+    const destroyed = error instanceof Error && /destroyed/i.test(error.message)
+    if (!destroyed) throw error
+    await expect(page.getByRole('heading', { name: settleHeading })).toBeVisible({
+      timeout: TIMEOUTS.api,
+    })
+    if (stillPresent) {
+      await expect(stillPresent).toBeVisible({ timeout: TIMEOUTS.api })
+    }
+    return await build().analyze()
+  }
+}
 
 type ExpenseRecord = {
   id: string
@@ -538,28 +571,43 @@ test.describe('Expenses Page', () => {
 
   for (const theme of ['light', 'dark'] as const) {
     test(`has no WCAG A, AA, or 2.2 AA axe violations in ${theme}`, async ({ page }) => {
+      const heading = 'Операционные расходы'
       await openPage(page, createFixture())
       await setTheme(page, theme)
-      await expect(page.getByRole('heading', { name: 'Операционные расходы' })).toBeVisible()
-      let results = await new AxeBuilder({ page })
-        .include('[aria-label="Настройки операционных расходов"]')
-        .withTags(['wcag2a', 'wcag2aa', 'wcag22aa'])
-        .analyze()
+      await expect(page.getByRole('heading', { name: heading })).toBeVisible()
+      let results = await analyzeStably(
+        page,
+        () =>
+          new AxeBuilder({ page })
+            .include('[aria-label="Настройки операционных расходов"]')
+            .withTags(['wcag2a', 'wcag2aa', 'wcag22aa']),
+        heading
+      )
       expect(results.violations).toEqual([])
 
       await page.getByRole('button', { name: /удалить расход аренда/i }).click()
-      results = await new AxeBuilder({ page })
-        .include('[role="alertdialog"]')
-        .withTags(['wcag2a', 'wcag2aa', 'wcag22aa'])
-        .analyze()
+      results = await analyzeStably(
+        page,
+        () =>
+          new AxeBuilder({ page })
+            .include('[role="alertdialog"]')
+            .withTags(['wcag2a', 'wcag2aa', 'wcag22aa']),
+        heading,
+        page.locator('[role="alertdialog"]')
+      )
       expect(results.violations).toEqual([])
 
       await page.keyboard.press('Escape')
       await page.getByRole('button', { name: 'Добавить расход' }).click()
-      results = await new AxeBuilder({ page })
-        .include('[role="dialog"]')
-        .withTags(['wcag2a', 'wcag2aa', 'wcag22aa'])
-        .analyze()
+      results = await analyzeStably(
+        page,
+        () =>
+          new AxeBuilder({ page })
+            .include('[role="dialog"]')
+            .withTags(['wcag2a', 'wcag2aa', 'wcag22aa']),
+        heading,
+        page.locator('[role="dialog"]')
+      )
       expect(results.violations).toEqual([])
     })
   }

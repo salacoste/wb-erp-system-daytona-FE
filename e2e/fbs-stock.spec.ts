@@ -244,6 +244,11 @@ test.describe('FBS Export (Story 96.12-FE)', () => {
   const EXPORT_ID = 'e2e-test-export-id'
 
   test('export button visible and triggers download on ready', async ({ page }) => {
+    // 174.4: full-suite load budget. The export chain (page render → click →
+    // POST 202 → 2 polled status calls → signed-url download) is unmodified
+    // since June and passes targeted runs; under the 16-worker full suite the
+    // 30s test/download budget was consumed by cold-compile + slow polling.
+    test.setTimeout(90_000)
     // Mock stock endpoints so page renders
     await page.route('**/v1/analytics/fbs/stock/groups**', route =>
       route.fulfill({
@@ -291,7 +296,15 @@ test.describe('FBS Export (Story 96.12-FE)', () => {
         body: JSON.stringify({
           exportId: EXPORT_ID,
           status,
-          url: status === 'ready' ? 'https://example.com/signed-url.csv' : null,
+          // 174.4: same-origin URL. The failure snapshot showed the export flow
+          // reaching 'ready' (toast + state reset) with NO download event — the
+          // only cross-origin navigation in the chain is the signed-URL anchor
+          // click. The passing precedents (supply-detail documents, unit-economics
+          // CSV) all resolve their download URLs against the app origin, so the
+          // anchor in use-fbs-export-helpers.triggerDownload resolves this
+          // relative URL to http://localhost:3100/signed-url.csv and the mocked
+          // attachment response fires the download event reliably.
+          url: status === 'ready' ? '/signed-url.csv' : null,
           expiresAt: status === 'ready' ? '2026-05-08T20:00:00Z' : null,
         }),
       })
@@ -318,7 +331,9 @@ test.describe('FBS Export (Story 96.12-FE)', () => {
     await expect(exportBtn).toHaveText(/Скачать CSV/)
 
     // Click → button enters loading state
-    const downloadPromise = page.waitForEvent('download', { timeout: TIMEOUTS.api })
+    // 174.4: 60s download budget (was TIMEOUTS.api=30s) — matches the raised
+    // test budget above for the two-step polled export under full-suite load.
+    const downloadPromise = page.waitForEvent('download', { timeout: 60_000 })
     await exportBtn.click()
 
     // Button shows polling label (anti-pattern #6 — regex)

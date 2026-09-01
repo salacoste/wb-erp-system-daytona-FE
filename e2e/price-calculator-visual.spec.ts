@@ -18,6 +18,12 @@ test.describe('Epic 44-FE: Visual Enhancement Tests', () => {
   // ============================================================================
 
   test.beforeEach(async ({ page }) => {
+    // Canonical axe-stability pattern (expenses-page.spec.ts openPage): Radix
+    // popovers/dialogs fade in via animate-in, so an axe scan taken mid-fade
+    // composites foreground/background over the not-yet-opaque layer and
+    // reports phantom low-contrast grays. ui/popover.tsx + ui/dialog.tsx carry
+    // motion-reduce:animate-none, so reduced motion makes colors deterministic.
+    await page.emulateMedia({ reducedMotion: 'reduce' })
     await mockPriceCalculatorTariffReferences(page)
     await page.goto('/cogs/price-calculator', { waitUntil: 'domcontentloaded' })
     await expect(page.locator('[data-testid="price-calculator-form"]')).toBeVisible({
@@ -33,15 +39,17 @@ test.describe('Epic 44-FE: Visual Enhancement Tests', () => {
   }
 
   async function setTheme(page: Page, theme: 'light' | 'dark') {
-    const root = page.locator('html')
-    const themeButton = page
-      .getByRole('button', { name: 'Переключить тему' })
-      .filter({ visible: true })
-    const hasDarkTheme = await root.evaluate(node => node.classList.contains('dark'))
-    if (hasDarkTheme !== (theme === 'dark')) await themeButton.click()
-    await expect
-      .poll(() => root.evaluate(node => node.classList.contains('dark')))
-      .toBe(theme === 'dark')
+    // Canonical theme switch (expenses-page.spec.ts setTheme / login-dashboard
+    // theme matrix): persist the next-themes localStorage key and reload. The
+    // ThemeToggle button lives only inside the desktop Sidebar and the mobile
+    // sidebar sheet (Sidebar.tsx / MobileSidebarSheet.tsx), so no visible
+    // 'Переключить тему' button exists below the lg breakpoint — the previous
+    // click-based toggle timed out on every dark variant at <1024px.
+    await page.evaluate(value => window.localStorage.setItem('theme', value), theme)
+    await page.reload({ waitUntil: 'domcontentloaded' })
+    await expect(page.locator('html')).toHaveClass(
+      theme === 'dark' ? /(^|\s)dark(\s|$)/ : /^(?!.*(^|\s)dark(\s|$)).*$/
+    )
   }
 
   async function expectPageAxeClean(page: Page, context: string) {
@@ -62,7 +70,12 @@ test.describe('Epic 44-FE: Visual Enhancement Tests', () => {
   }
 
   async function tabTo(page: Page, target: ReturnType<Page['locator']>) {
-    for (let step = 0; step < 60; step += 1) {
+    // The desktop sidebar alone exposes 52 navigation hrefs
+    // (sidebar-navigation.ts) plus ~30 focusable form controls render before
+    // «Себестоимость (COGS)» (11 tooltip buttons, 2 radios, 3 comboboxes,
+    // ~8 spinbuttons, 3 sliders, checkboxes, header links) — a 60-step budget
+    // runs out before the first cost field. 150 covers the whole tab order.
+    for (let step = 0; step < 150; step += 1) {
       if (await target.evaluate(node => document.activeElement === node)) break
       await page.keyboard.press('Tab')
     }
@@ -97,12 +110,28 @@ test.describe('Epic 44-FE: Visual Enhancement Tests', () => {
     })
   }
 
-  async function fillAndCalculate(page: Page, marginPct = 20) {
+  async function fillAndCalculate(page: Page, marginPct = 20, drrPct: number | null = null) {
     await fillInput(page, 'cogs_rub', '1500')
     await fillInput(page, 'logistics_forward_rub', '150')
     await fillInput(page, 'logistics_reverse_rub', '200')
-    await page.getByLabel('Маржа').fill(String(marginPct))
-    await expect(page.getByLabel('Маржа')).toHaveValue(String(marginPct))
+    // The margin slider thumb (role=slider) and its paired numeric input
+    // (role=spinbutton) both expose the accessible name 'Маржа' since Story 174.3
+    // forwarded the slider aria-label to the thumb. Resolve by role, mirroring
+    // price-calculator.spec.ts.
+    const marginInput = page.getByRole('spinbutton', { name: 'Маржа', exact: true })
+    await marginInput.fill(String(marginPct))
+    await expect(marginInput).toHaveValue(String(marginPct))
+    // The tight-margin scenarios must lower DRR too: the rendered gap is
+    // computed client-side from the form (two-level-pricing.ts), where
+    // gapPct = (drr+margin) / (1 - commission - acquiring - tax - drr - margin).
+    // With defaults (drr 10, commission 15, acquiring 1.8, tax 6) margin=5
+    // alone yields a 24.1% gap — healthy, so no risk warning renders. drr=0
+    // brings the gap to ~6.9%, below the isTightMargin <10 threshold.
+    if (drrPct !== null) {
+      const drrInput = page.getByRole('spinbutton', { name: 'DRR в процентах' })
+      await drrInput.fill(String(drrPct))
+      await expect(drrInput).toHaveValue(String(drrPct))
+    }
 
     const responsePromise = page.waitForResponse(
       response =>
@@ -218,7 +247,7 @@ test.describe('Epic 44-FE: Visual Enhancement Tests', () => {
 
     test('TC-VIS-011: Tight margin exposes an explicit risk warning', async ({ page }) => {
       await mockCalculation(page, 5)
-      await fillAndCalculate(page, 5)
+      await fillAndCalculate(page, 5, 0)
       const results = await expectSingleResults(page)
       await expect(results.getByTestId('price-gap-indicator')).toContainText(
         'Низкий запас прибыльности — есть риск убытков'
@@ -227,7 +256,7 @@ test.describe('Epic 44-FE: Visual Enhancement Tests', () => {
 
     test('TC-VIS-012: Low margin shows warning text', async ({ page }) => {
       await mockCalculation(page, 5)
-      await fillAndCalculate(page, 5)
+      await fillAndCalculate(page, 5, 0)
 
       const results = await expectSingleResults(page)
       const warningText = results.getByText(/низкий запас прибыльности/i)
@@ -307,22 +336,27 @@ test.describe('Epic 44-FE: Visual Enhancement Tests', () => {
     test('TC-A11Y-001: VAT and margin chart evidence stays distinguishable across themes', async ({
       page,
     }) => {
-      await mockCalculation(page, 20)
-      await fillAndCalculate(page)
-
-      const results = await expectSingleResults(page)
-      const priceValue = results.getByTestId('recommended-price')
-
       for (const theme of ['light', 'dark'] as const) {
+        // setTheme reloads the page (canonical localStorage pattern), so the
+        // calculation must run per theme iteration — a reload discards the
+        // client-side result state.
         await setTheme(page, theme)
+        await mockCalculation(page, 20)
+        await fillAndCalculate(page)
+
+        const results = await expectSingleResults(page)
+        const priceValue = results.getByTestId('recommended-price')
+
         await expect(priceValue, `recommended price in ${theme} theme`).toBeVisible()
         await expect(priceValue, `recommended price value in ${theme} theme`).toHaveText(
           /[\d\s,.]+/
         )
 
         const vatSwatch = results.getByText(/^НДС/).locator('..').locator('[aria-hidden="true"]')
+        // Chart legend renders the label with a trailing colon (CostChartParts.tsx);
+        // exact 'Маржа' would match no element in the results tree.
         const marginSwatch = results
-          .getByText('Маржа', { exact: true })
+          .getByText('Маржа:', { exact: true })
           .locator('..')
           .locator('[aria-hidden="true"]')
         await expect(vatSwatch).toHaveCount(1)

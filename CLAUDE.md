@@ -150,8 +150,8 @@ Each story closes only when EVERY quality gate matches its baseline. Current acc
 | Next.js async-params | `bash scripts/check-next-async-params.sh` | OK: all params/searchParams props Promise-typed (only required for App Router page/layout changes) |
 | Dot-locale percent | `bash scripts/check-locale-percent.sh` | 4 (ratchet ↓; lower `.locale-percent-baseline.txt` when migrating OR exempting; started at ~108 in iter-67) |
 | ESLint | `npm run lint` (from this frontend repository root) | 0 errors; 0 warnings (zero-warning policy, Story 164.4-FE) |
-| Vitest | `npm test -- --run` | ≥ 19118 passing / 0 failed / 1234 files (floor moved exact −756 dead tests, Story 174.2-FE) |
-| UI boundary | `node scripts/check-shadcn-ui-boundary.mjs` | 523 = ratchet baseline (exit 1 only on increase; Story 174.2-FE) |
+| Vitest | `npm test -- --run` | ≥ 19363 passing / 0 failed (floor: 19118 after 174.2 dead-test deletion; +237 from 174.3 window; +8 contract tests 174.4) |
+| UI boundary | `node scripts/check-shadcn-ui-boundary.mjs` | 459 = ratchet baseline (exit 1 only on increase; ↓64 discovered by 174.4's live re-run — drop predates it, 174.3-window) |
 
 **Drift rules.** check:docs — exit code is the gate (automated). type-check — count must equal 0. lint — errors must equal 0 and warnings must equal 0 (zero-warning policy enforced via `--max-warnings 0` in `lint` + `lint:fix`, Story 164.4-FE; lint-staged already `--max-warnings=0`); fix warnings rather than relaxing the budget. test — passing ≥ floor (additions OK, regressions not); 0 failed; skipped is informational. `max-lines` is enforced through `eslint.config.js` (cap 200 source / 800 test, `skipBlankLines` + `skipComments`); `next lint` is deprecated, so run `npm run lint` from this repository root. **When a story legitimately moves a baseline, update this table in the same PR.**
 

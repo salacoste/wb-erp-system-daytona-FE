@@ -265,10 +265,10 @@ describe('getDrrLevel', () => {
   })
 
   it('should return correct colors for each level', () => {
-    expect(getDrrLevel(2).color).toBe('text-status-success')
-    expect(getDrrLevel(5).color).toBe('text-status-information')
-    expect(getDrrLevel(10).color).toBe('text-status-warning')
-    expect(getDrrLevel(20).color).toBe('text-status-error')
+    expect(getDrrLevel(2).color).toBe('text-status-success-foreground')
+    expect(getDrrLevel(5).color).toBe('text-status-information-foreground')
+    expect(getDrrLevel(10).color).toBe('text-status-warning-foreground')
+    expect(getDrrLevel(20).color).toBe('text-status-error-foreground')
   })
 })
 
@@ -329,32 +329,32 @@ describe('DrrSlider - AC3: Visual Zone Colors', () => {
     render(<DrrSlider value={2} onChange={mockOnChange} />)
 
     const badge = screen.getByTestId('drr-level-badge')
-    expect(badge).toHaveClass('bg-status-success/15')
-    expect(badge).toHaveClass('text-status-success')
+    expect(badge).toHaveClass('bg-status-success')
+    expect(badge).toHaveClass('text-status-success-foreground')
   })
 
   it('should apply the information role for moderate DRR (3-7%)', () => {
     render(<DrrSlider value={5} onChange={mockOnChange} />)
 
     const badge = screen.getByTestId('drr-level-badge')
-    expect(badge).toHaveClass('bg-status-information/15')
-    expect(badge).toHaveClass('text-status-information')
+    expect(badge).toHaveClass('bg-status-information')
+    expect(badge).toHaveClass('text-status-information-foreground')
   })
 
   it('should apply the warning role for high DRR (7-15%)', () => {
     render(<DrrSlider value={10} onChange={mockOnChange} />)
 
     const badge = screen.getByTestId('drr-level-badge')
-    expect(badge).toHaveClass('bg-status-warning/15')
-    expect(badge).toHaveClass('text-status-warning')
+    expect(badge).toHaveClass('bg-status-warning')
+    expect(badge).toHaveClass('text-status-warning-foreground')
   })
 
   it('should apply the error role for very high DRR (>15%)', () => {
     render(<DrrSlider value={20} onChange={mockOnChange} />)
 
     const badge = screen.getByTestId('drr-level-badge')
-    expect(badge).toHaveClass('bg-status-error/15')
-    expect(badge).toHaveClass('text-status-error')
+    expect(badge).toHaveClass('bg-status-error')
+    expect(badge).toHaveClass('text-status-error-foreground')
   })
 })
 
@@ -718,10 +718,10 @@ describe('DrrSlider - Complete AC Verification', () => {
   // AC3: Visual feedback with all 4 color levels
   it('AC3: should show all 4 DRR levels with correct colors', () => {
     const levels = [
-      { value: 2, label: 'Низкий', bgClass: 'bg-status-success/15' },
-      { value: 5, label: 'Умеренный', bgClass: 'bg-status-information/15' },
-      { value: 10, label: 'Высокий', bgClass: 'bg-status-warning/15' },
-      { value: 20, label: 'Очень высокий', bgClass: 'bg-status-error/15' },
+      { value: 2, label: 'Низкий', bgClass: 'bg-status-success' },
+      { value: 5, label: 'Умеренный', bgClass: 'bg-status-information' },
+      { value: 10, label: 'Высокий', bgClass: 'bg-status-warning' },
+      { value: 20, label: 'Очень высокий', bgClass: 'bg-status-error' },
     ]
 
     for (const { value, label, bgClass } of levels) {

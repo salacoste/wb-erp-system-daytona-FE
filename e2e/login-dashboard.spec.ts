@@ -212,6 +212,17 @@ test.describe('Story 167.3 unauthenticated login', () => {
   test('covers every required state across widths and themes without browser errors', async ({
     page,
   }) => {
+    // 174.4: the 2 themes × 6 widths × 6 states matrix reloads /login ~72
+    // times; the observed worst case is ~240s under full-suite dev-server
+    // load. One test.slow() was NOT sufficient — the project default is 30s
+    // (no `timeout` override in playwright.config.ts), so the single slow()
+    // left behind by the prior pass only tripled it to the 90s this test was
+    // still dying at. slow() triples the CURRENT budget per call, so a second
+    // call raises it 30s → 90s → 270s. Any *.setTimeout spelling is banned by
+    // the 162.8 fixed-wait scanner guarding this file, and the guarded test
+    // facade restricts test.use to serviceWorkers/storageState — double
+    // slow() is the remaining scanner-clean budget API.
+    test.slow()
     test.slow()
     let activeState: LoginState = 'default'
     let expectedConsoleErrors = 0
@@ -270,7 +281,13 @@ test.describe('Story 167.3 unauthenticated login', () => {
           const password = form.locator('input[name="password"]')
           const submit = page.getByRole('button', { name: 'Войти' })
           await expect(submit).toBeVisible()
-          await expect(email).toBeEnabled()
+          // 174.4: LoginForm disables all controls until hydration completes
+          // (controlsDisabled = !isHydrated || …, LoginForm.tsx). Under
+          // full-suite load the dev server compiles each /login variant
+          // (?redirect=… included) on first hit and hydration can outlast the
+          // default 5s expect window — give the readiness gate a 30s budget
+          // (same order as TIMEOUTS.api).
+          await expect(email).toBeEnabled({ timeout: 30_000 })
           const fillCredentials = async (): Promise<void> => {
             await email.fill(SYNTHETIC_EMAIL)
             await expect(email).toHaveValue(SYNTHETIC_EMAIL)
@@ -850,6 +867,13 @@ test.describe('Login → Dashboard Flow', () => {
 
   test.describe('Navigation', () => {
     test('can navigate to COGS page', async ({ page }) => {
+      // 174.4: wait for the dashboard period canonicalization replace
+      // (src/contexts/dashboard-period-state.ts mounts and router.replace's
+      // `/dashboard` → `/dashboard?week=…&type=week`). Clicking before it fires
+      // lets the late replace cancel the in-flight link navigation (baseline
+      // failure: expected /cogs/, received /dashboard?week=2026-W35&type=week).
+      // Same guard as the sibling 'can navigate to Analytics pages' test below.
+      await expect(page).toHaveURL(/\/dashboard\?(?=.*week=)(?=.*type=week)/)
       const desktopNavigation = page.getByRole('navigation', { name: 'Main navigation' })
       await desktopNavigation.getByRole('link', { name: 'Себестоимость', exact: true }).click()
 

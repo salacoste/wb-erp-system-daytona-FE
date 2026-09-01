@@ -38,6 +38,14 @@ test.describe('Acquiring Analytics Page (Story 90.2-FE)', () => {
     const sidebarLink = page.getByRole('link', { name: SIDEBAR_LINK_TEXT })
     await expect(sidebarLink).toBeVisible({ timeout: TIMEOUTS.navigation })
 
+    // 174.4: wait for the dashboard period canonicalization replace before
+    // clicking — under load it fires after the click and its
+    // router.replace('/dashboard?week=…&type=week') cancels the in-flight link
+    // navigation (baseline failure: acquiring-page landmark never appeared).
+    await expect(page).toHaveURL(/\/dashboard\?(?=.*week=)(?=.*type=week)/, {
+      timeout: TIMEOUTS.navigation,
+    })
+
     // Click it and verify navigation
     await sidebarLink.click()
     await expect(page.locator(PAGE_LANDMARK)).toBeVisible({ timeout: TIMEOUTS.navigation })

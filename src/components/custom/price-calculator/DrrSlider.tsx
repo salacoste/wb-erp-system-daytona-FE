@@ -27,37 +27,42 @@ export const DRR_LEVEL_LABELS: Record<DrrLevel, string> = {
   'very-high': 'Очень высокий',
 } as const
 
-/** Get DRR level config: 0-3% low, 3-7% moderate, 7-15% high, >15% very-high */
+/**
+ * Get DRR level config: 0-3% low, 3-7% moderate, 7-15% high, >15% very-high.
+ * Badge text is `text-xs` (small text) — WCAG 4.5:1 requires SOLID status pairs,
+ * not tinted `/15` backgrounds (Story 174.4 F-A, §11.3 tint-contrast family,
+ * 173.12 canon; measured: warning-on-/15 = 3.96:1, success-on-/15 = 4.21:1).
+ */
 export function getDrrLevel(drr: number): DrrLevelConfig {
   if (drr <= 3) {
     return {
       level: 'low',
       label: DRR_LEVEL_LABELS['low'],
-      color: 'text-status-success',
-      bgColor: 'bg-status-success/15',
+      color: 'text-status-success-foreground',
+      bgColor: 'bg-status-success',
     }
   }
   if (drr <= 7) {
     return {
       level: 'moderate',
       label: DRR_LEVEL_LABELS['moderate'],
-      color: 'text-status-information',
-      bgColor: 'bg-status-information/15',
+      color: 'text-status-information-foreground',
+      bgColor: 'bg-status-information',
     }
   }
   if (drr <= 15) {
     return {
       level: 'high',
       label: DRR_LEVEL_LABELS['high'],
-      color: 'text-status-warning',
-      bgColor: 'bg-status-warning/15',
+      color: 'text-status-warning-foreground',
+      bgColor: 'bg-status-warning',
     }
   }
   return {
     level: 'very-high',
     label: DRR_LEVEL_LABELS['very-high'],
-    color: 'text-status-error',
-    bgColor: 'bg-status-error/15',
+    color: 'text-status-error-foreground',
+    bgColor: 'bg-status-error',
   }
 }
 

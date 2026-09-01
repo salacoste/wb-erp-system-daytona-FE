@@ -50,6 +50,15 @@ test.describe('Monitor Dashboard', () => {
       'Sidebar "Монитор" link not found — sidebar may be collapsed or not rendered'
     )
 
+    // 174.4: wait for the dashboard period canonicalization replace before
+    // clicking (src/contexts/dashboard-period-state.ts mounts late under load
+    // and its router.replace('/dashboard?week=…') cancels the in-flight link
+    // navigation — baseline failure stayed on /dashboard after the click).
+    // beforeEach only waits for the sidebar nav, which renders pre-canonicalization.
+    await expect(page).toHaveURL(/\/dashboard\?(?=.*week=)(?=.*type=week)/, {
+      timeout: TIMEOUTS.navigation,
+    })
+
     await monitorLink.click()
 
     // URL must end with /monitor

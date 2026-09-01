@@ -39,7 +39,11 @@ export function TaxRateInput({ taxRate, onTaxRateChange, disabled }: TaxRateInpu
         </Label>
         <FieldTooltip content="Процент налога от выручки или прибыли в зависимости от вашего налогового режима. Типичные значения: 6% (УСН), 13% (НДФЛ), 15-20% (прибыль)." />
       </div>
-      <div className="flex items-center gap-2">
+      {/* flex-wrap: quick-rate buttons reflow under the input below ~345px
+          (row min-content = w-24 input + % + 4 nowrap buttons); without it the
+          row pins main.scrollWidth at 386px and overflows 320px viewports
+          (Story 174.4 F-B, TC-VIS-013/014). */}
+      <div className="flex flex-wrap items-center gap-2">
         <Input
           id="tax_rate_pct"
           type="number"

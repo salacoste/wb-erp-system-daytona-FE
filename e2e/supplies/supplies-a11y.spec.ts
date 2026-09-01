@@ -181,6 +181,14 @@ test.describe('Epic 53-FE: Accessibility - Supplies Module', () => {
 
   test.describe('Create Supply Modal Accessibility', () => {
     test.beforeEach(async ({ page }) => {
+      // 174.4: the create-supply dialog fades in via Radix animate-in. An axe
+      // scan taken mid-fade composites the muted-foreground description over
+      // the still-transparent card + dark overlay (observed fg #616161 on bg
+      // #d7d7d7 ≈ white at ~80% opacity → phantom 4.3:1). ui/dialog.tsx carries
+      // motion-reduce:animate-none on overlay and content, so reduced motion
+      // renders the dialog fully opaque — canonical pattern from
+      // expenses-page.spec.ts openPage.
+      await page.emulateMedia({ reducedMotion: 'reduce' })
       await page.goto(SUPPLIES_ROUTE, { waitUntil: 'domcontentloaded' })
       await page.locator('main').waitFor({ state: 'visible' })
     })
@@ -342,8 +350,13 @@ test.describe('Epic 53-FE: Accessibility - Supplies Module', () => {
 
       await expect(page.locator('h1')).toBeVisible()
       const stepper = page.getByRole('navigation', { name: 'Статус поставки', exact: true })
+      // 174.4: branch deterministically before the instant isVisible() check —
+      // under load the detail data lands after the first check and the
+      // non-retrying branch fell into the CANCELLED path on a CLOSED fixture
+      // (baseline failure: 'Поставка была отменена' element(s) not found).
+      const cancelledTerminal = page.getByText('Поставка была отменена', { exact: true })
+      await expect(stepper.or(cancelledTerminal).first()).toBeVisible({ timeout: 10_000 })
       if (!(await stepper.isVisible())) {
-        await expect(page.getByText('Поставка была отменена', { exact: true })).toBeVisible()
         test.skip(true, 'Configured supply fixture is CANCELLED and intentionally has no stepper')
         return
       }
