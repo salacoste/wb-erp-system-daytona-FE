@@ -100,15 +100,22 @@ async function installStoryDetailFixture(
 }
 
 test.describe('Story 173.9 deterministic shipment detail', () => {
+  // 174.4: cold-compile/hydration budget. Under full-suite load the dev server
+  // compiles /shipments/[id] for 6.8s+ and the dashboard layout renders its
+  // pre-hydration "Загрузка..." shell past the default 5s expect budget
+  // (baseline failures: h1/region "element(s) not found"). 15s covers the
+  // observed worst case without masking a real hang.
+  const COLD_START = 15_000
+
   test('exposes entity, lifecycle, partial evidence, accordion, and named table contracts', async ({
     page,
   }) => {
     await installStoryDetailFixture(page)
     await page.goto(STORY_DETAIL_ROUTE, { waitUntil: 'domcontentloaded' })
 
-    await expect(
-      page.getByRole('heading', { level: 1, name: 'Отправка для приёмки' })
-    ).toBeVisible()
+    await expect(page.getByRole('heading', { level: 1, name: 'Отправка для приёмки' })).toBeVisible(
+      { timeout: COLD_START }
+    )
     await expect(page.locator('[data-slot="context-bar"]')).toBeVisible()
     await expect(page.locator('[data-slot="status-badge"]')).toContainText('ЧЕРНОВИК')
     await expect(page.getByRole('region', { name: 'Расчёт выполнен частично' })).toBeVisible()
@@ -132,7 +139,9 @@ test.describe('Story 173.9 deterministic shipment detail', () => {
     await installStoryDetailFixture(page, { gate })
     await page.goto(STORY_DETAIL_ROUTE, { waitUntil: 'domcontentloaded' })
 
-    await expect(page.getByRole('heading', { level: 1, name: 'Детали отправки' })).toBeVisible()
+    await expect(page.getByRole('heading', { level: 1, name: 'Детали отправки' })).toBeVisible({
+      timeout: COLD_START,
+    })
     await expect(page.getByRole('region', { name: 'Загрузка отправки' })).toHaveAttribute(
       'data-state',
       'loading'
@@ -148,9 +157,14 @@ test.describe('Story 173.9 deterministic shipment detail', () => {
     await installStoryDetailFixture(page, { status: 404 })
     await page.goto(STORY_DETAIL_ROUTE, { waitUntil: 'domcontentloaded' })
 
+    // 174.4: COLD_START — the 404 query settle lands after hydration; with
+    // retry:1 the terminal can pass the default 5s budget under full-suite
+    // load (baseline failure: region not found while the page still showed
+    // the loading region).
     await expect(page.getByRole('region', { name: 'Отправка не найдена' })).toHaveAttribute(
       'data-state',
-      'not-found'
+      'not-found',
+      { timeout: COLD_START }
     )
     await expect(page.getByRole('link', { name: 'Вернуться к отправкам' })).toHaveAttribute(
       'href',

@@ -40,7 +40,12 @@ test.describe('Unit Economics waterfall — F-44 Y-axis clipping', () => {
     if (!week) throw new Error('Unit Economics fixture request omitted the selected week')
 
     // Wait for the deterministic data table to populate (rows present).
-    const rows = page.locator('tbody tr')
+    // 174.4: scope to the named SKU table — Story 174.3 (a9b4e82d) added an
+    // sr-only chart-alternative table (UnitEconomicsWaterfallSummary, percent
+    // cells) inside the waterfall section ABOVE the data table, so the
+    // page-wide 'tbody tr' resolved to its "100,0 %" row instead of the
+    // revenue-desc top SKU.
+    const rows = page.getByRole('table', { name: 'Юнит-экономика по товарам' }).locator('tbody tr')
     await expect(rows.first()).toBeVisible({ timeout: TIMEOUTS.api })
     await expect(rows.first().locator('td').first()).toHaveText('700052')
 

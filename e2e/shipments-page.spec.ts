@@ -23,13 +23,20 @@ test.describe('Shipments List Page', () => {
   })
 
   test('renders page heading "Отправки"', async ({ page }) => {
-    await expect(page.getByRole('heading', { name: 'Отправки' })).toBeVisible({
+    // 174.4: level+exact — the substring match also resolves the pending-state
+    // h2 "Загружаем отправки" while shipments are loading (strict-mode violation
+    // under slow loads). Same locator shape as shipments-list.spec.ts.
+    await expect(
+      page.getByRole('heading', { level: 1, name: 'Отправки', exact: true })
+    ).toBeVisible({
       timeout: TIMEOUTS.api,
     })
   })
 
   test('shows table or empty state or access denied', async ({ page }) => {
-    await expect(page.getByRole('heading', { name: 'Отправки' })).toBeVisible({
+    await expect(
+      page.getByRole('heading', { level: 1, name: 'Отправки', exact: true })
+    ).toBeVisible({
       timeout: TIMEOUTS.api,
     })
 

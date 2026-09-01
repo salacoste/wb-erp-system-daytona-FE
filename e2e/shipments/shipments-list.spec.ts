@@ -199,12 +199,15 @@ test.describe('Shipments List Page - Epic 77-FE', () => {
         return
       }
 
+      // 174.4: retrying visibility + URL budget. The instant isVisible() guard
+      // raced row paint under load, skipping the click and then failing the
+      // URL assertion; and the first soft navigation to the cold [id] route
+      // (dev compile measured 6.8s) exceeded the default 5s toHaveURL budget.
       const viewLink = rows.first().locator('a[href*="/shipments/"]')
-      if (await viewLink.isVisible()) {
-        await viewLink.click()
-        await page.locator('main').waitFor({ state: 'visible' })
-        await expect(page).toHaveURL(/\/shipments\/[a-zA-Z0-9-]+/)
-      }
+      await expect(viewLink).toBeVisible({ timeout: 10_000 })
+      await viewLink.click()
+      await page.locator('main').waitFor({ state: 'visible' })
+      await expect(page).toHaveURL(/\/shipments\/[a-zA-Z0-9-]+/, { timeout: 15_000 })
     })
 
     test('should display create button when shipments exist', async ({ page }) => {
@@ -234,8 +237,13 @@ test.describe('Shipments List Page - Epic 77-FE', () => {
       shipmentScenario = { kind: 'pending', gate: responseGate }
 
       await page.reload({ waitUntil: 'domcontentloaded' })
+      // 174.4: cold-reload budget — after reload the dashboard layout renders
+      // its pre-hydration "Загрузка..." shell until React re-hydrates, which
+      // exceeded the default 5s budget under full-suite load.
       const loadingRegion = page.getByRole('region', { name: 'Загружаем отправки' })
-      await expect(loadingRegion).toHaveAttribute('data-state', 'loading')
+      await expect(loadingRegion).toHaveAttribute('data-state', 'loading', {
+        timeout: 15_000,
+      })
       await expect(
         page.getByRole('heading', { level: 1, name: 'Отправки', exact: true })
       ).toBeVisible()

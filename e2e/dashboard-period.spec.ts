@@ -66,7 +66,16 @@ test.describe('Dashboard period observable state', () => {
     const responsePromise = page.waitForResponse(response => {
       if (!isExactFinanceResponse(response)) return false
       const requestedWeek = new URL(response.url()).searchParams.get('week')
-      return requestedWeek !== null && requestedWeek !== currentWeek
+      if (requestedWeek === null || requestedWeek === currentWeek) return false
+      // 174.4: selecting a week also fires a previous-period companion
+      // finance-summary request (week-1) for period comparison. Under slow
+      // loads the companion response can land first and the waiter used to
+      // resolve on it (baseline: expected week=2026-W24 from the companion,
+      // URL correctly showed 2026-W25). Once the URL has settled on the
+      // selected week, only accept the response for exactly that week.
+      const settledWeek = new URL(page.url()).searchParams.get('week')
+      if (settledWeek === null || settledWeek === currentWeek) return true
+      return requestedWeek === settledWeek
     })
     await target.click()
     const response = await responsePromise

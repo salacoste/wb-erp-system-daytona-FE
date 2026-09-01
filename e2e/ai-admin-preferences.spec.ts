@@ -52,8 +52,11 @@ test.describe('AI Admin Preferences Page', () => {
   })
 
   test('page has proper structure with heading hierarchy', async ({ page }) => {
-    // Wait for heading to appear (may be delayed by auth hydration)
-    await expect(page.getByRole('heading').first()).toBeVisible({
+    // 174.4: wait for the PAGE-OWNED h1, not "any first heading" — the
+    // sidebar's "WB Repricer" h2 satisfies the old wait from SSR onward, so
+    // the instant h1 count raced the role-gated AiPreferencesForm render
+    // (returns null until auth hydrates) and counted 0 (baseline failure).
+    await expect(page.getByRole('heading', { level: 1 })).toBeVisible({
       timeout: TIMEOUTS.api,
     })
 

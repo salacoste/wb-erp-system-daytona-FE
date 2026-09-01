@@ -54,7 +54,10 @@ test.describe('Shipments Accessibility - Epic 77-FE', () => {
       const main = page.locator('main')
       await expect(main).toBeVisible()
 
-      const h1 = page.getByRole('heading', { name: /Отправки/i })
+      // 174.4: level+exact — the /Отправки/i substring also matched the
+      // pending-state h2 "Загружаем отправки" (strict-mode violation while
+      // loading). The page identity is the h1.
+      const h1 = page.getByRole('heading', { level: 1, name: 'Отправки', exact: true })
       await expect(h1).toBeVisible()
     })
 

@@ -661,6 +661,14 @@ test.describe('Story 167.5 browser-owned evidence', () => {
             },
             token: originalToken,
             cabinetId: null,
+            // 174.4: deterministic session identity. Seeding WITHOUT a nonce
+            // exercises the "session persisted before sessionNonce existed"
+            // path, where handleCreateCabinet settles 'indeterminate' and
+            // SILENTLY swallows the create failure (no recovery alert; see
+            // Story 174.4 artifact PB-1). These specs assert the recovery UX, not
+            // the legacy-nonce fail-safe, so seed a nonce like any session
+            // created after Story 167.9.
+            sessionNonce: 'story-167-5-session-nonce.invalid',
           },
           version: 0,
         })
@@ -1005,7 +1013,12 @@ test.describe('Story 167.5 browser-owned evidence', () => {
     expect(new URL(page.url()).pathname).toBe('/cabinet')
 
     await submit.click()
-    await expect(recoveryAlert).toHaveCount(0)
+    // The retry keeps the previous failure visible until the new attempt
+    // settles: onSubmit (useCabinetCreationSubmission.ts) never clears
+    // recoveryError, and the recovery effect early-returns while the admitted
+    // operation is active (useCabinetCreationRecovery.ts:103). The alert is
+    // replaced by the next outcome below, not removed on resubmit.
+    await expect(recoveryAlert).toHaveText(SYNTHETIC_CREATE_FAILURE)
     const pendingCreate = page.getByRole('button', { name: 'Создание...', exact: true })
     await expect(pendingCreate).toBeVisible()
     await expect(pendingCreate).toBeDisabled()
@@ -1240,17 +1253,20 @@ test.describe('Story 167.5 browser-owned evidence', () => {
 
     const persistedBoundary = await page.evaluate(() => ({
       auth: JSON.parse(window.localStorage.getItem('auth-storage') ?? 'null'),
+      // Recovery markers moved to the v2 per-user key
+      // (cabinetCreationRecovery.ts KEY_PREFIX + encodeURIComponent(userId));
+      // the legacy unversioned token-recovery:v1 key is no longer written.
       recovery: JSON.parse(
-        window.sessionStorage.getItem('cabinet-creation:token-recovery:v1') ?? 'null'
+        window.sessionStorage.getItem('cabinet-creation:recovery:v2:story-167-5-owner.invalid') ??
+          'null'
       ),
     }))
     expect(persistedBoundary.auth.state.token).toBe(SYNTHETIC_REFRESHED_TOKEN)
     expect(persistedBoundary.auth.state.cabinetId).toBeNull()
-    expect(persistedBoundary.recovery).toEqual({
-      version: 1,
-      phase: 'token-recovery-blocked',
-      userId: 'story-167-5-owner.invalid',
-    })
+    expect(persistedBoundary.recovery.version).toBe(2)
+    expect(persistedBoundary.recovery.phase).toBe('token-recovery-blocked')
+    expect(persistedBoundary.recovery.userId).toBe('story-167-5-owner.invalid')
+    expect(typeof persistedBoundary.recovery.operationId).toBe('string')
 
     await page.reload({ waitUntil: 'domcontentloaded' })
 
@@ -1495,7 +1511,11 @@ test.describe('Story 167.7 browser-owned evidence', () => {
       await route.fulfill({
         status: 200,
         contentType: 'application/json',
-        body: JSON.stringify({ id: 'key-id', keyName: 'wb_api_token', updatedAt: '2026-08-17T10:00:00Z' }),
+        body: JSON.stringify({
+          id: 'key-id',
+          keyName: 'wb_api_token',
+          updatedAt: '2026-08-17T10:00:00Z',
+        }),
       })
     })
 
@@ -1505,12 +1525,18 @@ test.describe('Story 167.7 browser-owned evidence', () => {
     const input = page.getByLabel(/wb api токен/i)
     await expect(input).toBeVisible()
     await input.fill(SYNTHETIC_JWT)
+
+    // Privacy scan, part 1 (Review LOW-3): pin the masked input type BEFORE the
+    // save click — textContent alone misses a type="password"→"text" regression
+    // (input values are not in textContent). Asserting it after the
+    // /processing transition raced the unmount: /processing has no textbox, so
+    // the locator only resolved during the navigation window (174.4 baseline
+    // failure: getByRole('textbox') element(s) not found on /processing).
+    await expect(input).toHaveAttribute('type', 'password')
     await page.getByRole('button', { name: /сохранить токен/i }).click()
 
     // Exactly one storage request — no duplicates
-    await expect
-      .poll(() => putAttempts, { timeout: 15000 })
-      .toBe(1)
+    await expect.poll(() => putAttempts, { timeout: 15000 }).toBe(1)
 
     // Transition to the processing step (masked input resets on success)
     let observedProcessing = false
@@ -1525,11 +1551,8 @@ test.describe('Story 167.7 browser-owned evidence', () => {
       )
       .toBe(true)
 
-    // Privacy scan: token value never rendered in page text (masked input, no echo).
-    // Review LOW-3: textContent alone misses a type="password"→"text" regression
-    // (input values are not in textContent), so also pin the masked input type.
-    const tokenInput = page.getByRole('textbox')
-    await expect(tokenInput).toHaveAttribute('type', 'password')
+    // Privacy scan, part 2: token value never rendered in page text
+    // (masked input, no echo).
     expect((await page.textContent('body')) ?? '').not.toContain(SYNTHETIC_JWT)
   })
 
@@ -1566,9 +1589,7 @@ test.describe('Story 167.7 browser-owned evidence', () => {
     })
     await expect(rejectedAlertTitle).toBeVisible({ timeout: 15000 })
     await expect(page.getByRole('link', { name: /получить новый токен/i })).toBeVisible()
-    await expect
-      .poll(() => putAttempts, { timeout: 15000 })
-      .toBe(2)
+    await expect.poll(() => putAttempts, { timeout: 15000 }).toBe(2)
 
     // A genuine value edit clears the server error; one more submit retries
     const rejectedInput = page.getByLabel(/wb api токен/i)
@@ -1576,9 +1597,7 @@ test.describe('Story 167.7 browser-owned evidence', () => {
     await expect(rejectedAlertTitle).toBeHidden()
     await rejectedInput.fill(SYNTHETIC_JWT)
     await page.getByRole('button', { name: /сохранить токен/i }).click()
-    await expect
-      .poll(() => putAttempts, { timeout: 15000 })
-      .toBe(4)
+    await expect.poll(() => putAttempts, { timeout: 15000 }).toBe(4)
     expect(new URL(page.url()).pathname.startsWith('/processing')).toBe(false)
 
     // Privacy scan: token value never rendered
@@ -1607,7 +1626,11 @@ test.describe('Story 167.7 browser-owned evidence', () => {
       }
       const response = responses[Math.min(putAttempts, responses.length - 1)]
       putAttempts += 1
-      await route.fulfill({ status: response.status, contentType: 'application/json', body: response.body })
+      await route.fulfill({
+        status: response.status,
+        contentType: 'application/json',
+        body: response.body,
+      })
     })
 
     await page.goto(ROUTES.onboarding.token, { waitUntil: 'domcontentloaded' })

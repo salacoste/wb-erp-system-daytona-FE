@@ -105,8 +105,8 @@ describe('Story 44.18: DRR Input (Advertising Percentage Slider)', () => {
 
       const badge = screen.getByTestId('drr-level-badge')
       expect(badge).toHaveTextContent('Низкий')
-      expect(badge).toHaveClass('bg-status-success/15')
-      expect(badge).toHaveClass('text-status-success')
+      expect(badge).toHaveClass('bg-status-success')
+      expect(badge).toHaveClass('text-status-success-foreground')
     })
 
     it('should show "Умеренный" with the information status role for DRR 3-7%', () => {
@@ -114,8 +114,8 @@ describe('Story 44.18: DRR Input (Advertising Percentage Slider)', () => {
 
       const badge = screen.getByTestId('drr-level-badge')
       expect(badge).toHaveTextContent('Умеренный')
-      expect(badge).toHaveClass('bg-status-information/15')
-      expect(badge).toHaveClass('text-status-information')
+      expect(badge).toHaveClass('bg-status-information')
+      expect(badge).toHaveClass('text-status-information-foreground')
     })
 
     it('should show "Высокий" with the warning status role for DRR 7-15%', () => {
@@ -123,8 +123,8 @@ describe('Story 44.18: DRR Input (Advertising Percentage Slider)', () => {
 
       const badge = screen.getByTestId('drr-level-badge')
       expect(badge).toHaveTextContent('Высокий')
-      expect(badge).toHaveClass('bg-status-warning/15')
-      expect(badge).toHaveClass('text-status-warning')
+      expect(badge).toHaveClass('bg-status-warning')
+      expect(badge).toHaveClass('text-status-warning-foreground')
     })
 
     it('should show "Очень высокий" with the error status role for DRR >15%', () => {
@@ -132,8 +132,8 @@ describe('Story 44.18: DRR Input (Advertising Percentage Slider)', () => {
 
       const badge = screen.getByTestId('drr-level-badge')
       expect(badge).toHaveTextContent('Очень высокий')
-      expect(badge).toHaveClass('bg-status-error/15')
-      expect(badge).toHaveClass('text-status-error')
+      expect(badge).toHaveClass('bg-status-error')
+      expect(badge).toHaveClass('text-status-error-foreground')
     })
 
     it('should handle boundary value DRR = 3% (still low)', () => {
@@ -413,9 +413,9 @@ describe('getDrrLevel Helper Function', () => {
   })
 
   it('should return correct colors for each level', () => {
-    expect(getDrrLevel(2).color).toBe('text-status-success')
-    expect(getDrrLevel(5).color).toBe('text-status-information')
-    expect(getDrrLevel(10).color).toBe('text-status-warning')
-    expect(getDrrLevel(20).color).toBe('text-status-error')
+    expect(getDrrLevel(2).color).toBe('text-status-success-foreground')
+    expect(getDrrLevel(5).color).toBe('text-status-information-foreground')
+    expect(getDrrLevel(10).color).toBe('text-status-warning-foreground')
+    expect(getDrrLevel(20).color).toBe('text-status-error-foreground')
   })
 })

@@ -78,8 +78,11 @@ test.describe('Merged-group table source-backed state', () => {
     })
     await expect(table).toBeVisible()
 
-    // Aggregate row is the bold gray tier (bg-gray-100) carrying group-level metrics.
-    const aggregateRow = table.locator('tbody tr.bg-gray-100').first()
+    // Aggregate row is the bold muted tier carrying group-level metrics.
+    // 174.4: bg-gray-100 → bg-muted — the Story 170.1 shadcn token migration
+    // (dac5d8a6, 2026-08-25) replaced the raw palette class on the aggregate
+    // row with the semantic muted token (MergedGroupRows.tsx:82).
+    const aggregateRow = table.locator('tbody tr.bg-muted').first()
     await expect(aggregateRow).toBeVisible()
     // formatCurrency(18260) -> "18 260 ₽" (ru-RU, NBSP thousands separator).
     await expect(aggregateRow.getByText('18 260 ₽')).toBeVisible()

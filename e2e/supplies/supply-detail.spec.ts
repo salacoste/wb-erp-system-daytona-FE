@@ -715,7 +715,11 @@ test.describe('Supply Detail Page - Epic 53-FE', () => {
       expect(response.status()).toBe(200)
       expect(new URL(response.url()).pathname).toBe(DOCUMENT_DOWNLOAD_PATH)
       expect(download.suggestedFilename()).toBe('sticker-png.png')
-      await expect(page.getByText('Документ скачан', { exact: true })).toBeVisible()
+      // 174.4: scope to main — the sr-only success announcement and the
+      // sonner toast both carry the exact text 'Документ скачан', so the
+      // page-wide getByText hit a strict-mode violation (2 elements). The
+      // toast lives in the layout-level Notifications region outside main.
+      await expect(page.locator('main').getByText('Документ скачан', { exact: true })).toBeVisible()
     })
   })
 
