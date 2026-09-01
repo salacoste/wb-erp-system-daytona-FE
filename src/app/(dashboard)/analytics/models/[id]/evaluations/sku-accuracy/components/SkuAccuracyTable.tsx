@@ -19,6 +19,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table'
+import { Button } from '@/components/ui/button'
 import { formatNumber } from '@/lib/fbs-analytics-formatters'
 import { buildModelSkuAccuracyRoute } from '@/lib/routes'
 import { sortSkuAccuracyEntries, formatSkuMapeDisplay } from './sku-accuracy-helpers'
@@ -119,18 +120,23 @@ export function SkuAccuracyTable({
             <TableRow
               key={nmId}
               onClick={() => handleRowClick(nmId)}
-              onKeyDown={e => {
-                if (e.key === 'Enter' || e.key === ' ') {
-                  e.preventDefault()
-                  handleRowClick(nmId)
-                }
-              }}
-              tabIndex={0}
               className="cursor-pointer hover:bg-muted/50"
-              role="button"
-              aria-label={`Перейти к детализации по артикулу ${nmId}`}
             >
-              <TableCell>{String(nmId)}</TableCell>
+              <TableCell>
+                <Button
+                  type="button"
+                  variant="link"
+                  size="sm"
+                  className="h-auto p-0 font-normal"
+                  aria-label={`Перейти к детализации по артикулу ${nmId}`}
+                  onClick={event => {
+                    event.stopPropagation()
+                    handleRowClick(nmId)
+                  }}
+                >
+                  {String(nmId)}
+                </Button>
+              </TableCell>
               <TableCell>{entry.vendorCode ?? '—'}</TableCell>
               <TableCell className="tabular-nums">
                 {formatSkuMapeDisplay(entry.avgAiMape)}

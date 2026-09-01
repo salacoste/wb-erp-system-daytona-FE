@@ -9,6 +9,7 @@
 import React from 'react'
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { render, screen, fireEvent } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { EvaluationsTable } from '../EvaluationsTable'
 import type { EvaluationEntry } from '@/types/ai/evaluations'
@@ -188,11 +189,14 @@ describe('EvaluationsTable', () => {
     expect(onSortClick).toHaveBeenCalledWith('mapeRevenue')
   })
 
-  it('click on SKU row fires onRowClick with nmId', () => {
+  it('click on the native SKU detail button fires onRowClick exactly once', () => {
     const onRowClick = vi.fn()
     renderTable({ ...defaultProps, onRowClick })
-    const skuRow = screen.getByRole('button', { name: /Перейти к детализации по артикулу 12345/ })
-    fireEvent.click(skuRow)
+    const detailButton = screen.getByRole('button', {
+      name: 'Перейти к детализации по артикулу 12345',
+    })
+    fireEvent.click(detailButton)
+    expect(onRowClick).toHaveBeenCalledTimes(1)
     expect(onRowClick).toHaveBeenCalledWith(12345)
   })
 
@@ -247,20 +251,34 @@ describe('EvaluationsTable', () => {
     expect(noneHeads.some(h => h.textContent?.includes('MAPE (₽)'))).toBe(true)
   })
 
-  // F-1: keyboard activation on row-button (propagation fix from Story 110.3-FE review)
-  it('F-1: Enter key on SKU row fires onRowClick (keyboard accessibility)', () => {
+  // F-1: keyboard activation stays on a native button while the tr remains a native row.
+  it('F-1: Enter on SKU detail button fires onRowClick and preserves row semantics', async () => {
+    const user = userEvent.setup()
     const onRowClick = vi.fn()
     renderTable({ ...defaultProps, onRowClick })
-    const skuRow = screen.getByRole('button', { name: /Перейти к детализации по артикулу 12345/ })
-    fireEvent.keyDown(skuRow, { key: 'Enter', code: 'Enter' })
+    const detailButton = screen.getByRole('button', {
+      name: 'Перейти к детализации по артикулу 12345',
+    })
+    const skuRow = detailButton.closest('tr')
+    expect(skuRow?.tagName).toBe('TR')
+    expect(skuRow).not.toHaveAttribute('role')
+    expect(skuRow).not.toHaveAttribute('tabindex')
+
+    detailButton.focus()
+    await user.keyboard('{Enter}')
     expect(onRowClick).toHaveBeenCalledWith(12345)
   })
 
-  it('F-1: Space key on SKU row fires onRowClick (keyboard accessibility)', () => {
+  it('F-1: Space on SKU detail button fires onRowClick exactly once', async () => {
+    const user = userEvent.setup()
     const onRowClick = vi.fn()
     renderTable({ ...defaultProps, onRowClick })
-    const skuRow = screen.getByRole('button', { name: /Перейти к детализации по артикулу 12345/ })
-    fireEvent.keyDown(skuRow, { key: ' ', code: 'Space' })
+    const detailButton = screen.getByRole('button', {
+      name: 'Перейти к детализации по артикулу 12345',
+    })
+    detailButton.focus()
+    await user.keyboard(' ')
+    expect(onRowClick).toHaveBeenCalledTimes(1)
     expect(onRowClick).toHaveBeenCalledWith(12345)
   })
 

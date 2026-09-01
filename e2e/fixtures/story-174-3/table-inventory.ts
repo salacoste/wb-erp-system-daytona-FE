@@ -446,7 +446,8 @@ export const TABLE_INVENTORY: Readonly<Record<string, readonly Story1743TableSur
           runner: 'vitest',
           source:
             'src/app/(dashboard)/analytics/models/[id]/evaluations/sku-accuracy/components/__tests__/SkuAccuracyTable.test.tsx',
-          scenarioId: 'F-1: Enter key on row navigates to detail URL (keyboard accessibility)',
+          scenarioId:
+            'F-1: Enter on the native detail button navigates without repurposing the table row',
         },
       }),
     ],

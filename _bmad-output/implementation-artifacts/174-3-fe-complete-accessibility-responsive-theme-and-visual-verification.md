@@ -11,10 +11,12 @@ as of 2026-09-01
 
 This section supersedes the historical implementation log below. Three independent
 `REQUEST CHANGES`/`REJECT` reviews of commit
-`82465fbf96f2319116c1cad101044e8004a52cc3` were resolved by replacing inferred coverage with
+`82465fbf96f2319116c1cad101044e8004a52cc3` and the follow-up critic review of
+`633f202bf91c55f376a4ef56765fc6f94cdaf390` were resolved by replacing inferred coverage with
 executable owner-state reconciliation, closing the route-specific SKU-accuracy gap, making the
-execution-manifest pipeline fail closed, repairing invalid native table-row control semantics, and
-rerunning the complete exact-worktree validation ledger. Because this Story introduces novel
+execution-manifest pipeline fail closed, moving SKU keyboard activation from repurposed native
+table rows to named native buttons, and rerunning the complete exact-worktree validation ledger.
+Because this Story introduces novel
 validator semantics, three fresh independent `APPROVE` reviews on one unchanged final commit remain
 the immutable pre-merge gate. The final commit SHA, review verdicts, PR identity, merge commit, and
 cleanup evidence are recorded in the PR lifecycle rather than embedded here; a commit cannot
@@ -23,7 +25,7 @@ truthfully contain its own final SHA.
 ### Actual expanded file manifest
 
 The original three-file scope expanded only when the live matrix found concrete route-owner defects.
-The generated exact scope register contains 417 files relative to the unchanged `origin/main` base;
+The generated exact scope register contains 421 files relative to the unchanged `origin/main` base;
 it is the authoritative file-level inventory. The current delivery contains these principal groups:
 
 - Story evidence runtime:
@@ -52,6 +54,10 @@ it is the authoritative file-level inventory. The current delivery contains thes
   `src/app/(dashboard)/dashboard/components/DashboardStatusStrip.tsx` and its test;
   `src/app/(dashboard)/cogs/history/CogsHistoryBreadcrumbs.tsx` and its test;
   `src/app/(dashboard)/automation/installed-rules/editor/InstalledRuleEditor.tsx` and its test.
+- Model evaluation table semantics:
+  `EvaluationsTable.tsx`, `SkuAccuracyTable.tsx`, and their focused unit/browser tests preserve
+  native `<tr>`/cell roles, keep pointer-only row convenience, and expose keyboard navigation on
+  named native detail buttons with propagation containment.
 - Dedicated browser/state closure:
   `e2e/story-174-3-dedicated-route-evidence.spec.ts`, exact Settings/Telegram/Shipment/SKU browser
   repairs, and fail-closed Story state/surface contract tests under `src/test/`.
@@ -263,7 +269,7 @@ Pinned runtime: Node `v24.18.0`, npm `11.11.0`.
 
 ```text
 Targeted Story state/surface/manifest-reader/manual-evidence contracts: 4 files, 42/42 tests passed
-Focused native-row regressions: 7 files, 129/129 tests passed
+Focused model-evaluation native-row regressions: 3 files, 71/71 tests passed
 Supplies route regression suite: 1 file, 90/90 tests passed
 Full Vitest: 1,270 files, 19,346/19,346 tests passed
 Canonical Story runner: 82 passed / 1 optional Manager skip / 0 failed
@@ -283,7 +289,7 @@ npm run check:lessons: PASS, 302 files / 96 lesson lines / zero violations
 E2E assertion/wait/bare-skip, Next params, locale-percent, and policy guards: PASS
 Anti-pattern-8 normalizer: PASS at the lowered 50-site baseline
 ESLint rule registry: PASS, 2 configs; relocatability self-test: 8/8 passed
-Privacy policy tests: 29/29 passed; repository scan: 3,633 text files / 0 findings
+Privacy policy tests: 29/29 passed; repository scan: 3,631 text files / 0 findings
 ```
 
 The canonical runner directly verifies all 76 route identities, 912 state dispositions, six widths

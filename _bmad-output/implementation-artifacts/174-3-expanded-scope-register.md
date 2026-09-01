@@ -4,7 +4,7 @@
 > `origin/main` comparison plus current untracked Story files. Regenerate before freeze;
 > any path drift is a review blocker.
 
-**Files:** 417
+**Files:** 421
 
 ## Coordination classes
 
@@ -15,7 +15,7 @@
 | owner-browser-evidence | 15 | route owner + 174.3 | Coordinated deterministic browser proof for an owner route. |
 | remediation-plan | 1 | 174.3 | Accepted review findings, immutable three-review gate, and cleanup protocol. |
 | repository-validation | 3 | 174.3 | Relocatable fail-closed local validation required by the Story evidence pipeline. |
-| route-owner-remediation | 329 | ledger route owner + 174.3 | Accepted route-specific accessibility/responsive/data-semantics repair. |
+| route-owner-remediation | 333 | ledger route owner + 174.3 | Accepted route-specific accessibility/responsive/data-semantics repair. |
 | shared-owner-remediation | 15 | named shared owner + 174.3 | Narrow contract-preserving repair with focused regression evidence. |
 | story-evidence | 45 | 174.3 | Executable route/state/surface/manifest evidence owned by this assurance Story. |
 | story-support | 2 | 174.3 | Direct support file required by the recorded Story validation. |
@@ -171,6 +171,10 @@ deployment, production, force-push, or direct-`main` operation is admitted.
 | `src/app/(dashboard)/analytics/liquidity/components/__tests__/LiquidityTable.test.tsx` | route-owner-remediation |
 | `src/app/(dashboard)/analytics/liquidity/components/__tests__/LiquidityTrendChart.test.tsx` | route-owner-remediation |
 | `src/app/(dashboard)/analytics/liquidity/page.tsx` | route-owner-remediation |
+| `src/app/(dashboard)/analytics/models/[id]/evaluations/components/EvaluationsTable.tsx` | route-owner-remediation |
+| `src/app/(dashboard)/analytics/models/[id]/evaluations/components/__tests__/EvaluationsList.test.tsx` | route-owner-remediation |
+| `src/app/(dashboard)/analytics/models/[id]/evaluations/components/__tests__/EvaluationsTable.test.tsx` | route-owner-remediation |
+| `src/app/(dashboard)/analytics/models/[id]/evaluations/sku-accuracy/components/SkuAccuracyTable.tsx` | route-owner-remediation |
 | `src/app/(dashboard)/analytics/models/[id]/evaluations/sku-accuracy/components/__tests__/SkuAccuracyTable.test.tsx` | route-owner-remediation |
 | `src/app/(dashboard)/analytics/models/[id]/evaluations/sku-accuracy/components/__tests__/page.test.tsx` | route-owner-remediation |
 | `src/app/(dashboard)/analytics/models/[id]/evaluations/sku-accuracy/page.tsx` | route-owner-remediation |

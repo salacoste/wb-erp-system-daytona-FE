@@ -23,6 +23,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table'
+import { Button } from '@/components/ui/button'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
 import { formatDate, formatCurrency } from '@/lib/utils'
 import { formatNumber } from '@/lib/fbs-analytics-formatters'
@@ -114,22 +115,7 @@ export function EvaluationsTable({
             <TableRow
               key={entry.forecastId}
               onClick={() => onRowClick(entry.nmId)}
-              onKeyDown={
-                entry.nmId !== null
-                  ? e => {
-                      if (e.key === 'Enter' || e.key === ' ') {
-                        e.preventDefault()
-                        onRowClick(entry.nmId)
-                      }
-                    }
-                  : undefined
-              }
-              tabIndex={entry.nmId !== null ? 0 : undefined}
               className={entry.nmId !== null ? 'cursor-pointer hover:bg-muted/50' : ''}
-              role={entry.nmId !== null ? 'button' : undefined}
-              aria-label={
-                entry.nmId !== null ? `Перейти к детализации по артикулу ${entry.nmId}` : undefined
-              }
             >
               {/* F-1: Дата cell shows per-row evaluationDate; forecastId moved to tooltip (full id) */}
               {/* F-3: stopPropagation on tooltip trigger prevents nested-interactive conflict */}
@@ -156,7 +142,25 @@ export function EvaluationsTable({
               {/* Horizon days — count, always present */}
               <TableCell className="tabular-nums">{entry.horizonDays} дн.</TableCell>
               {/* F-8: nmId is an opaque identifier — String() preserves copy-paste semantics; formatNumber adds non-breaking spaces */}
-              <TableCell>{entry.nmId !== null ? String(entry.nmId) : 'По кабинету'}</TableCell>
+              <TableCell>
+                {entry.nmId !== null ? (
+                  <Button
+                    type="button"
+                    variant="link"
+                    size="sm"
+                    className="h-auto p-0 font-normal"
+                    aria-label={`Перейти к детализации по артикулу ${entry.nmId}`}
+                    onClick={event => {
+                      event.stopPropagation()
+                      onRowClick(entry.nmId)
+                    }}
+                  >
+                    {String(entry.nmId)}
+                  </Button>
+                ) : (
+                  'По кабинету'
+                )}
+              </TableCell>
               <TableCell className="tabular-nums">{formatNumber(entry.predictedUnits)}</TableCell>
               <TableCell className="tabular-nums">{formatNumber(entry.actualUnits)}</TableCell>
               {/* predictedRevenue — null for unit-target models (AP#8: null → '—') */}

@@ -118,6 +118,7 @@ test.describe('Story 174.3 dedicated route evidence gaps', () => {
 
     const rows = table.locator('tbody tr')
     await expect(rows).toHaveCount(2)
+    await expect(table.locator('tr[role]:not([role="row"])')).toHaveCount(0)
     await expect(rows.nth(0)).toContainText('174300101')
     await expect(rows.nth(0)).toContainText('SKU-ALPHA')
     await expect(rows.nth(0)).toContainText(/8,25\s*%/)
@@ -151,5 +152,15 @@ test.describe('Story 174.3 dedicated route evidence gaps', () => {
     await page.setViewportSize({ width: 390, height: 844 })
     await expect(table).toBeVisible()
     await expectContainedByViewport(page, scrollContainer)
+
+    const detailButton = table.getByRole('button', {
+      name: 'Перейти к детализации по артикулу 174300101',
+      exact: true,
+    })
+    await detailButton.focus()
+    await expect(detailButton).toBeFocused()
+    await page.keyboard.press('Enter')
+    await expect(page).toHaveURL(new RegExp(`${SKU_ACCURACY_PATH}\\?nmId=174300101$`))
+    await expect(page.getByText('Артикул 174300101 — SKU-ALPHA', { exact: true })).toBeVisible()
   })
 })
