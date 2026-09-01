@@ -3,7 +3,7 @@
 **Status**: done (2026-09-01)
 **Plan**: `.omx/plans/174.4-complete-full-local-functional-and-backend-contract-regression.md`
 **Branch**: `cdx/epic-174-story-4-full-local-regression` · **Worktree**: `/private/tmp/wb-repricer-fe-174-4-full-local-regression`
-**Base SHA**: `274b76d7` · **Feature PR**: #375 · **Feature SHA**: 9b4df595(+amend) · **Merge SHA**: (post-merge)
+**Base SHA**: `274b76d7` · **Feature PR**: #375 · **Feature SHA**: `6ac32024` · **Merge SHA**: `a21bf67e` (reachable from main; exact branch/ref/worktree cleanup proved — remote+local absent, worktree removed, prune ran; pm2-dev restored)
 
 ## Prerequisites
 Story 174.3 merged (`c5605a38`, PR #374) reachable ✅; Epics 166–173 merged ✅; Node v24.18.0; BE :3000 health 200; FE :3100.
