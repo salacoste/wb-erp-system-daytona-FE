@@ -152,11 +152,7 @@ describe('BoxTypesTable', () => {
       })
       expect(deactivate).toHaveTextContent('Деактивировать')
       expect(deactivate).toHaveClass('min-h-11')
-      expect(deactivate.parentElement).toHaveClass(
-        'min-w-0',
-        'flex-col',
-        'items-stretch'
-      )
+      expect(deactivate.parentElement).toHaveClass('min-w-0', 'flex-col', 'items-stretch')
       expect(deactivate).toHaveClass('min-w-0', 'w-full')
     }
   })

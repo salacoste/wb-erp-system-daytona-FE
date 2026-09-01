@@ -8,6 +8,7 @@
 'use client'
 
 import { TableCell, TableRow } from '@/components/ui/table'
+import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
 import type { TopProductItem } from '@/types/analytics'
 import { formatCurrency, formatPercent, getMarginColor } from '../top-table-utils'
@@ -22,28 +23,31 @@ interface TopProductsTableRowProps {
  * Renders a single product row with formatting, color coding, and navigation
  */
 export function TopProductsTableRow({ product, index, onProductClick }: TopProductsTableRowProps) {
+  const productLabel = product.sa_name || `Артикул ${product.nm_id}`
+
   return (
     <TableRow
       key={product.nm_id}
       className="cursor-pointer hover:bg-muted/50 transition-colors"
       onClick={() => onProductClick(product.nm_id)}
-      role="button"
-      tabIndex={0}
-      onKeyDown={e => {
-        if (e.key === 'Enter' || e.key === ' ') {
-          onProductClick(product.nm_id)
-        }
-      }}
-      aria-label={`Перейти к товару ${product.sa_name}`}
     >
       <TableCell className="font-medium text-muted-foreground">{index + 1}</TableCell>
       <TableCell>
-        <div className="flex flex-col">
-          <span className="font-medium truncate max-w-[200px]">
-            {product.sa_name || `Артикул ${product.nm_id}`}
+        <Button
+          type="button"
+          variant="link"
+          className="h-auto max-w-full justify-start p-0 text-left font-normal"
+          aria-label={`Перейти к товару ${productLabel}`}
+          onClick={event => {
+            event.stopPropagation()
+            onProductClick(product.nm_id)
+          }}
+        >
+          <span className="flex min-w-0 flex-col items-start">
+            <span className="max-w-[200px] truncate font-medium">{productLabel}</span>
+            <span className="text-xs text-muted-foreground">{product.nm_id}</span>
           </span>
-          <span className="text-xs text-muted-foreground">{product.nm_id}</span>
-        </div>
+        </Button>
       </TableCell>
       <TableCell className="text-right font-medium">
         {formatCurrency(product.revenue_net)}

@@ -16,6 +16,7 @@ import {
   type Story1743ExactStateScenario,
   type Story1743NonDefaultState,
 } from './state-scenarios'
+import { story1743CanonicalOwnerStateLabels } from './owner-state-reconciliation'
 
 const REPOSITORY_ROOT = '.'
 const LEDGER_PATH = '_bmad-output/planning-artifacts/shadcn-route-ledger.md'
@@ -293,11 +294,22 @@ export function resolveStory1743StateEvidence(route: string): Story1743StateEvid
       throw new Error(route + '/' + state + ' has no explicit state disposition')
     }
     const anchor = notApplicableAnchor(route, state)
+    const ownerStateLabels = story1743CanonicalOwnerStateLabels(route, state)
     return {
       route,
       state,
       disposition: 'not-applicable',
-      rationale: route + ': ' + NOT_APPLICABLE_RATIONALES[state],
+      rationale:
+        route +
+        ': ' +
+        (ownerStateLabels.length > 0
+          ? 'canonical owner states [' +
+            ownerStateLabels.join('; ') +
+            '] normalize to ' +
+            state +
+            ', but this route-specific audit disposition confirms it ' +
+            NOT_APPLICABLE_RATIONALES[state]
+          : NOT_APPLICABLE_RATIONALES[state]),
       declarationSource: anchor.source,
       declarationSha256: story1743Sha256(anchor.source),
       declarationLine: anchor.line,

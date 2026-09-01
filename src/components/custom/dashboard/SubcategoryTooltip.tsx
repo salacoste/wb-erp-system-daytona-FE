@@ -106,7 +106,9 @@ export function SubcategoryTooltip({
           <div className="flex flex-col gap-1.5">
             {subcategories.map(item => (
               <div key={item.label} className="flex items-center justify-between gap-3">
-                <span className="text-xs text-chart-tooltip-foreground/70 shrink-0">{item.label}</span>
+                <span className="text-xs text-chart-tooltip-foreground/70 shrink-0">
+                  {item.label}
+                </span>
                 <span className="text-xs font-medium text-chart-tooltip-foreground whitespace-nowrap">
                   {formatValue(item.value)}
                   <span aria-hidden="true"> / </span>

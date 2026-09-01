@@ -201,6 +201,7 @@ export async function assertSemanticDataSurfaces(
           invalidNumericCellCount: numericCells.filter(cell =>
             /NaN|Infinity/.test(cellSemanticValue(cell) ?? '')
           ).length,
+          invalidTableRowRoleCount: table.querySelectorAll('tr[role]:not([role="row"])').length,
           sortControlCount: table.querySelectorAll(
             'th button, [role="columnheader"] button, [aria-sort]'
           ).length,
@@ -319,6 +320,10 @@ export async function assertSemanticDataSurfaces(
     expect(table.invalidNumericCellCount, `${route}: ${expectedSurface.id} numeric precision`).toBe(
       0
     )
+    expect(
+      table.invalidTableRowRoleCount,
+      `${route}: ${expectedSurface.id} preserves native row semantics instead of repurposing tr as an interactive role`
+    ).toBe(0)
     expect(
       table.numericAlignmentVariantCounts.every(count => count === 1),
       `${route}: ${expectedSurface.id} numeric alignment is column-consistent`

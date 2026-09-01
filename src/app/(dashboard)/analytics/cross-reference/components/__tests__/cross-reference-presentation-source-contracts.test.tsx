@@ -124,9 +124,7 @@ describe('Story 170.6 cross-reference presentation source contracts', () => {
     // literal) — a vacuous guard that never matched ANY import; verified by round-2.
     const RELATIVE_BYPASS = /from '\.\..*search\/components\//
     // Positive self-test (hex-guard pattern): the guard MUST catch a real bypass.
-    expect(
-      RELATIVE_BYPASS.test("import X from '../../search/components/SortButton'")
-    ).toBe(true)
+    expect(RELATIVE_BYPASS.test("import X from '../../search/components/SortButton'")).toBe(true)
     expect(RELATIVE_BYPASS.test("import X from '@/(dashboard)/analytics/search/x'")).toBe(false)
     for (const [name, source] of OWNED_SOURCES) {
       expect(withoutComments(source), name).not.toMatch(RELATIVE_BYPASS)

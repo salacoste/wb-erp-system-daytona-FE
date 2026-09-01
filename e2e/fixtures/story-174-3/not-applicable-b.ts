@@ -103,11 +103,7 @@ export const STORY_174_3_NOT_APPLICABLE_B: Readonly<
     'partial-success'
   ),
   '/dashboard': notApplicable(
-    'refresh',
-    'empty',
     'filtered-empty',
-    'stale',
-    'partial',
     'permission',
     'pending',
     'partial-success',
@@ -342,8 +338,6 @@ export const STORY_174_3_NOT_APPLICABLE_B: Readonly<
     'filtered-empty',
     'stale',
     'partial',
-    'permission',
-    'pending',
     'partial-success',
     'not-found'
   ),

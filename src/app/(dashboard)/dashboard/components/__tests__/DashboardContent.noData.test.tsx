@@ -132,9 +132,17 @@ function renderWithProviders(component: React.ReactElement) {
 }
 
 describe('DashboardContent — no_data processing-alert suppression', () => {
-  it('does NOT render the processing alert when status is "no_data"', () => {
+  it('renders the empty dashboard identity without a false processing state', () => {
     renderWithProviders(<DashboardContent />)
-    // The ProcessingAlert headline must be absent — no_data is terminal, not processing.
+
+    expect(screen.getByRole('heading', { level: 1, name: 'Главная страница' })).toBeVisible()
+    expect(screen.getByRole('region', { name: 'Главные метрики · Владелец' })).toBeVisible()
+    expect(screen.getAllByRole('article')).not.toHaveLength(0)
+    expect(
+      screen
+        .getAllByRole('article')
+        .every(article => article.getAttribute('aria-label')?.endsWith(': —'))
+    ).toBe(true)
     expect(screen.queryByText(/обработка финансовых данных/i)).not.toBeInTheDocument()
   })
 })

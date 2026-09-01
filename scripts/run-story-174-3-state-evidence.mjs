@@ -5,6 +5,8 @@ import { basename, relative, resolve } from 'node:path'
 import { spawnSync } from 'node:child_process'
 import ts from 'typescript'
 
+import { readStory1743Manifest } from './lib/story-174-3-manifest.mjs'
+
 const ROOT = process.cwd()
 const OWNER_DECLARATION_SOURCES = [
   'e2e/fixtures/story-174-3/state-scenarios.ts',
@@ -12,6 +14,7 @@ const OWNER_DECLARATION_SOURCES = [
   'e2e/fixtures/story-174-3-surface-contracts.ts',
   'e2e/fixtures/story-174-3/chart-inventory.ts',
   'e2e/fixtures/story-174-3/table-inventory.ts',
+  'e2e/fixtures/story-174-3/dedicated-route-scenarios.ts',
 ]
 const STORY_RUNNER_SOURCE = 'e2e/shadcn-migration-visual-accessibility.spec.ts'
 const LEDGER_SOURCE = '_bmad-output/planning-artifacts/shadcn-route-ledger.md'
@@ -21,6 +24,7 @@ const mode = process.argv[2] ?? '--all'
 const allowedModes = new Set([
   '--owner-units',
   '--owner-browsers',
+  '--dedicated-routes',
   '--owners',
   '--defaults',
   '--all',
@@ -29,7 +33,7 @@ const allowedModes = new Set([
 if (!allowedModes.has(mode)) {
   throw new Error(
     'Usage: node scripts/run-story-174-3-state-evidence.mjs ' +
-      '[--owner-units|--owner-browsers|--owners|--defaults|--all]'
+      '[--owner-units|--owner-browsers|--dedicated-routes|--owners|--defaults|--all]'
   )
 }
 
@@ -300,19 +304,6 @@ function materializeEntries(required, outcomes, invocation) {
   return entries
 }
 
-function readManifest() {
-  try {
-    return JSON.parse(readFileSync(resolve(ROOT, MANIFEST_PATH), 'utf8'))
-  } catch {
-    return {
-      schemaVersion: 1,
-      generatedAt: new Date(0).toISOString(),
-      runtime: { node: process.version, npm: 'unknown' },
-      entries: [],
-    }
-  }
-}
-
 function npmVersion() {
   const result = NPM_CLI
     ? spawnSync(process.execPath, [NPM_CLI, '--version'], { cwd: ROOT, encoding: 'utf8' })
@@ -339,12 +330,12 @@ function writeManifest(entries) {
         left.source.localeCompare(right.source) || left.scenarioId.localeCompare(right.scenarioId)
     ),
   }
-  writeFileSync(resolve(ROOT, MANIFEST_PATH), JSON.stringify(manifest) + '\n')
+  writeFileSync(resolve(ROOT, MANIFEST_PATH), JSON.stringify(manifest, null, 2) + '\n')
 }
 
 const tempRoot = mkdtempSync(resolve(tmpdir(), 'story-174-3-state-evidence-'))
 try {
-  let entries = readManifest().entries ?? []
+  let entries = readStory1743Manifest(resolve(ROOT, MANIFEST_PATH)).entries
   const owners = exactOwnerExecutions()
   if (mode === '--owner-units' || mode === '--owners' || mode === '--all') {
     entries = [
@@ -369,6 +360,17 @@ try {
         tempRoot,
         false
       ),
+    ]
+    writeManifest(entries)
+  }
+  if (mode === '--dedicated-routes') {
+    const dedicated = owners.filter(
+      item => item.source === 'e2e/story-174-3-dedicated-route-evidence.spec.ts'
+    )
+    const dedicatedKeys = new Set(dedicated.map(item => key(item.source, item.scenarioId)))
+    entries = [
+      ...entries.filter(entry => !dedicatedKeys.has(key(entry.source, entry.scenarioId))),
+      ...executePlaywright(dedicated, tempRoot, false),
     ]
     writeManifest(entries)
   }

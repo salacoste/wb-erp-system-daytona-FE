@@ -8,7 +8,7 @@
  */
 
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
-import { render, screen, fireEvent } from '@testing-library/react'
+import { render, screen, fireEvent, within } from '@testing-library/react'
 import { LiquidityTrendChart } from '../LiquidityTrendChart'
 import { LiquidityTrendTooltip } from '../LiquidityTrendTooltip'
 import { LiquidityTrendsSection } from '../LiquidityTrendsSection'
@@ -118,7 +118,7 @@ describe('LiquidityTrendChart', () => {
     expect(screen.getAllByTestId('line').length).toBe(2)
   })
 
-  it('renders an sr-only summary table so screen readers get the numbers', () => {
+  it('exposes percentage units in the distribution summary headers and values', () => {
     const data = [makePoint('2026-08-07'), makePoint('2026-08-06')]
     const { container } = render(<LiquidityTrendChart data={data} />)
     const sr = container.querySelector('table.sr-only')
@@ -137,12 +137,17 @@ describe('LiquidityTrendChart', () => {
       })
     ).toHaveAttribute('aria-describedby', 'liquidity-trend-complete-data')
     for (const label of [
-      'Высоколиквидные',
-      'Средняя ликвидность',
-      'Низкая ликвидность',
-      'Неликвид',
+      'Высоколиквидные, %',
+      'Средняя ликвидность, %',
+      'Низкая ликвидность, %',
+      'Неликвид, %',
     ]) {
       expect(screen.getByRole('columnheader', { name: label })).toBeInTheDocument()
+    }
+    const firstRow = sr?.querySelector('tbody tr')
+    expect(firstRow).not.toBeNull()
+    for (const value of ['60,0 %', '25,0 %', '10,0 %', '5,0 %']) {
+      expect(within(firstRow as HTMLElement).getByRole('cell', { name: value })).toBeInTheDocument()
     }
   })
 

@@ -7,6 +7,7 @@ import { describe, it, expect, vi } from 'vitest'
 import { readFileSync } from 'node:fs'
 import { join } from 'node:path'
 import { fireEvent, renderWithProviders, screen } from '@/test/utils/test-utils'
+import userEvent from '@testing-library/user-event'
 import { PricingTable } from '../PricingTable'
 import { emptyPriceRecommendation } from '@/test/fixtures/price-recommendations-empty'
 import type { PriceRecommendation } from '@/types/price-recommendations'
@@ -31,8 +32,9 @@ describe('PricingTable — SPP-1.7 basis badge', () => {
     expect(screen.getByRole('table', { name: 'Рекомендации по ценам' })).toBeInTheDocument()
   })
 
-  it('opens the exact SKU recommendation from its focused row with Enter', () => {
+  it('opens the exact SKU recommendation from its focused action button with Enter', async () => {
     const onRowClick = vi.fn()
+    const user = userEvent.setup()
     renderWithProviders(
       <PricingTable
         items={[item({ nmId: 123 }), item({ id: 'r-2', nmId: 456 })]}
@@ -41,11 +43,28 @@ describe('PricingTable — SPP-1.7 basis badge', () => {
       />
     )
 
-    const row = screen.getByLabelText('Открыть рекомендации для SKU 456')
-    row.focus()
-    expect(row).toHaveFocus()
-    fireEvent.keyDown(row, { key: 'Enter' })
+    const action = screen.getByRole('button', { name: 'Открыть рекомендации для SKU 456' })
+    const row = action.closest('tr')
+    expect(row).not.toBeNull()
+    expect(row).toHaveRole('row')
+    expect(row).not.toHaveAttribute('role')
+    expect(row).not.toHaveAttribute('tabindex')
+    expect(row?.querySelectorAll('td')).toHaveLength(8)
+    action.focus()
+    expect(action).toHaveFocus()
+    await user.keyboard('{Enter}')
     expect(onRowClick).toHaveBeenCalledTimes(1)
+    expect(onRowClick).toHaveBeenCalledWith(456)
+  })
+
+  it('keeps pointer row activation as a single convenience action', () => {
+    const onRowClick = vi.fn()
+    renderWithProviders(
+      <PricingTable items={[item({ nmId: 456 })]} isLoading={false} onRowClick={onRowClick} />
+    )
+
+    fireEvent.click(screen.getByRole('cell', { name: 'Товар' }))
+    expect(onRowClick).toHaveBeenCalledOnce()
     expect(onRowClick).toHaveBeenCalledWith(456)
   })
 

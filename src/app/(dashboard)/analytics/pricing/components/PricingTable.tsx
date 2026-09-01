@@ -15,6 +15,7 @@ import {
   TableRow,
 } from '@/components/ui/table'
 import { Skeleton } from '@/components/ui/skeleton'
+import { Button } from '@/components/ui/button'
 import { PriceBasisBadge } from '@/components/custom/PriceBasisBadge'
 import { formatCurrency, formatPercentage } from '@/lib/utils'
 import type { PriceRecommendation } from '@/types/price-recommendations'
@@ -125,18 +126,24 @@ export function PricingTable({ items, isLoading, onRowClick }: PricingTableProps
             key={item.id}
             className={onRowClick ? 'cursor-pointer hover:bg-muted/50' : undefined}
             onClick={() => onRowClick?.(item.nmId)}
-            role={onRowClick ? 'button' : undefined}
-            tabIndex={onRowClick ? 0 : undefined}
-            aria-label={onRowClick ? `Открыть рекомендации для SKU ${item.nmId}` : undefined}
-            onKeyDown={event => {
-              if (onRowClick && (event.key === 'Enter' || event.key === ' ')) {
-                event.preventDefault()
-                onRowClick(item.nmId)
-              }
-            }}
           >
-            <TableCell className="font-mono text-sm">
-              {item.vendorCode ?? String(item.nmId)}
+            <TableCell>
+              {onRowClick ? (
+                <Button
+                  type="button"
+                  variant="link"
+                  className="h-auto p-0 font-mono text-sm"
+                  aria-label={`Открыть рекомендации для SKU ${item.nmId}`}
+                  onClick={event => {
+                    event.stopPropagation()
+                    onRowClick(item.nmId)
+                  }}
+                >
+                  {item.vendorCode ?? String(item.nmId)}
+                </Button>
+              ) : (
+                <span className="font-mono text-sm">{item.vendorCode ?? String(item.nmId)}</span>
+              )}
             </TableCell>
             <TableCell className="max-w-[200px] truncate">{item.productName ?? '—'}</TableCell>
             <TableCell className="text-right">

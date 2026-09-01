@@ -122,7 +122,9 @@ export function AiPreferencesForm() {
   }
 
   return (
-    <div className="max-w-2xl space-y-6"> {/* Story 171.3 RTC-form: constrained readable width */}
+    <div className="max-w-2xl space-y-6">
+      {' '}
+      {/* Story 171.3 RTC-form: constrained readable width */}
       {/* Header card */}
       <div className="rounded-lg border bg-card p-6">
         <h1 className="text-lg font-semibold">Настройки AI</h1>
@@ -130,7 +132,6 @@ export function AiPreferencesForm() {
           Управление AI функциями для текущего кабинета.
         </p>
       </div>
-
       {/* Toggle card */}
       <div className="rounded-lg border bg-card p-6">
         <div className="flex items-start justify-between gap-4">
@@ -148,7 +149,9 @@ export function AiPreferencesForm() {
             checked={data?.aiEnabled ?? false}
             onCheckedChange={handleCheckedChange}
             disabled={mutation.isPending}
-            aria-describedby={mutationErrorMessage ? `${SWITCH_DESC_ID} ${MUTATION_ERROR_ID}` : SWITCH_DESC_ID}
+            aria-describedby={
+              mutationErrorMessage ? `${SWITCH_DESC_ID} ${MUTATION_ERROR_ID}` : SWITCH_DESC_ID
+            }
             className="focus-visible:ring-2 focus-visible:ring-offset-2"
           />
         </div>

@@ -5,6 +5,7 @@
 
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { render, screen, fireEvent } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
 import { TopBrandsTable } from '../TopBrandsTable'
 import type { TopBrandItem } from '@/types/analytics'
 
@@ -219,20 +220,24 @@ describe('TopBrandsTable', () => {
       expect(mockPush).toHaveBeenCalledWith('/analytics/brand?brand=Brand%20%26%20Co')
     })
 
-    it('should navigate on Enter key press', () => {
+    it('should navigate from the native brand button on Enter', async () => {
+      const user = userEvent.setup()
       render(<TopBrandsTable brands={mockBrands} />)
 
-      const row = screen.getByText('Nike').closest('tr')
-      fireEvent.keyDown(row!, { key: 'Enter' })
+      const button = screen.getByRole('button', { name: 'Фильтровать по бренду Nike' })
+      button.focus()
+      await user.keyboard('{Enter}')
 
       expect(mockPush).toHaveBeenCalledWith('/analytics/brand?brand=Nike')
     })
 
-    it('should navigate on Space key press', () => {
+    it('should navigate from the native brand button on Space', async () => {
+      const user = userEvent.setup()
       render(<TopBrandsTable brands={mockBrands} />)
 
-      const row = screen.getByText('Adidas').closest('tr')
-      fireEvent.keyDown(row!, { key: ' ' })
+      const button = screen.getByRole('button', { name: 'Фильтровать по бренду Adidas' })
+      button.focus()
+      await user.keyboard(' ')
 
       expect(mockPush).toHaveBeenCalledWith('/analytics/brand?brand=Adidas')
     })
@@ -249,27 +254,21 @@ describe('TopBrandsTable', () => {
   })
 
   describe('Accessibility', () => {
-    it('should have accessible row labels', () => {
+    it('should expose an accessible brand filter button', () => {
       render(<TopBrandsTable brands={mockBrands} />)
 
-      const row = screen.getByLabelText('Фильтровать по бренду Nike')
-      expect(row).toBeInTheDocument()
+      expect(screen.getByRole('button', { name: 'Фильтровать по бренду Nike' })).toBeInTheDocument()
     })
 
-    it('should have role="button" on rows', () => {
+    it('should preserve native row and cell semantics', () => {
       render(<TopBrandsTable brands={mockBrands} />)
 
-      // Check that interactive rows exist (each brand row should be clickable)
-      // Component may have other buttons too, so just verify brand rows have button role
-      const nikeRow = screen.getByLabelText('Фильтровать по бренду Nike')
-      expect(nikeRow).toHaveAttribute('role', 'button')
-    })
-
-    it('should have tabIndex for keyboard navigation', () => {
-      render(<TopBrandsTable brands={mockBrands} />)
-
-      const row = screen.getByText('Nike').closest('tr')
-      expect(row).toHaveAttribute('tabindex', '0')
+      const button = screen.getByRole('button', { name: 'Фильтровать по бренду Nike' })
+      const row = button.closest('tr')!
+      expect(row).toHaveRole('row')
+      expect(row).not.toHaveAttribute('role')
+      expect(row).not.toHaveAttribute('tabindex')
+      expect(row.querySelectorAll('td')).toHaveLength(5)
     })
   })
 

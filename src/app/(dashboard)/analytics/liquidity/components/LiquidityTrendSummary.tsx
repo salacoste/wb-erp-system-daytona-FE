@@ -1,4 +1,4 @@
-import { formatCurrency } from '@/lib/utils'
+import { formatCurrency, formatPercentage } from '@/lib/utils'
 import type { TrendDataPoint } from '@/types/liquidity'
 
 export const LIQUIDITY_TREND_SUMMARY_ID = 'liquidity-trend-complete-data'
@@ -13,10 +13,10 @@ export function LiquidityTrendSummary({ data }: { data: TrendDataPoint[] }) {
           <th scope="col">Дата</th>
           <th scope="col">Замороженный капитал</th>
           <th scope="col">Средний оборот, дней</th>
-          <th scope="col">Высоколиквидные</th>
-          <th scope="col">Средняя ликвидность</th>
-          <th scope="col">Низкая ликвидность</th>
-          <th scope="col">Неликвид</th>
+          <th scope="col">Высоколиквидные, %</th>
+          <th scope="col">Средняя ликвидность, %</th>
+          <th scope="col">Низкая ликвидность, %</th>
+          <th scope="col">Неликвид, %</th>
         </tr>
       </thead>
       <tbody>
@@ -25,10 +25,10 @@ export function LiquidityTrendSummary({ data }: { data: TrendDataPoint[] }) {
             <th scope="row">{point.date}</th>
             <td>{formatCurrency(point.frozen_capital)}</td>
             <td>{Math.round(point.avg_turnover_days)}</td>
-            <td>{point.distribution.highly_liquid_pct}</td>
-            <td>{point.distribution.medium_pct}</td>
-            <td>{point.distribution.low_pct}</td>
-            <td>{point.distribution.illiquid_pct}</td>
+            <td>{formatPercentage(point.distribution.highly_liquid_pct)}</td>
+            <td>{formatPercentage(point.distribution.medium_pct)}</td>
+            <td>{formatPercentage(point.distribution.low_pct)}</td>
+            <td>{formatPercentage(point.distribution.illiquid_pct)}</td>
           </tr>
         ))}
       </tbody>

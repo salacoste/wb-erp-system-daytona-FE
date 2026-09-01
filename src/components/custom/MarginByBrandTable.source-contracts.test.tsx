@@ -45,7 +45,10 @@ const OWNED_SOURCES: [string, string][] = [
 function withoutComments(source: string): string {
   // Round-1 LOW-1: strip BOTH line-start and trailing inline // comments (owned files
   // contain no http:// URLs — verified; conservative direction either way).
-  return source.replace(/\/\*[\s\S]*?\*\//g, '').replace(/^\s*\/\/.*$/gm, '').replace(/\s\/\/.*$/gm, '')
+  return source
+    .replace(/\/\*[\s\S]*?\*\//g, '')
+    .replace(/^\s*\/\/.*$/gm, '')
+    .replace(/\s\/\/.*$/gm, '')
 }
 
 const LEGACY_PALETTE =
@@ -114,7 +117,7 @@ describe('Story 170.3 brand-margin presentation source contracts', () => {
     expect(src).toMatch(/border-status-information\/30 bg-status-information\/15/)
     expect(src).toMatch(/text-foreground/)
     // Round-1 LOW-3: dropped redundant blue-\d00 pin — LEGACY_PALETTE above already covers
-      // every blue shade incl. 950 on the same source; the weaker duplicate invited drift.
+    // every blue shade incl. 950 on the same source; the weaker duplicate invited drift.
     // 169.10 foreground-on-tint: heading strength via font, NOT darker tint text
     expect(src).not.toMatch(/text-blue-900/)
   })

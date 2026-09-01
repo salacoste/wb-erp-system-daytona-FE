@@ -365,7 +365,9 @@ describe('AiPreferencesForm', () => {
       error: new Error('Network down'),
     } as unknown as ReturnType<typeof useUpdateAiPreferencesModule.useUpdateAiPreferences>)
     rerender(
-      <QueryClientProvider client={new QueryClient({ defaultOptions: { queries: { retry: false } } })}>
+      <QueryClientProvider
+        client={new QueryClient({ defaultOptions: { queries: { retry: false } } })}
+      >
         <AiPreferencesForm />
       </QueryClientProvider>
     )

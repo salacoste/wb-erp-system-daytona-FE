@@ -26,7 +26,10 @@ export function renderOrganicSales(item: AdvertisingItem) {
             <div className="flex items-center justify-end gap-1.5 cursor-help">
               <AlertTriangle className="h-3.5 w-3.5 text-status-warning" />
               <span className="text-muted-foreground">—</span>
-              <Badge variant="outline" className="text-xs border-status-warning/50 text-status-warning">
+              <Badge
+                variant="outline"
+                className="text-xs border-status-warning/50 text-status-warning"
+              >
                 Переатрибуция
               </Badge>
             </div>

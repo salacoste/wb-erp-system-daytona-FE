@@ -145,12 +145,12 @@ export const CHART_INVENTORY: Readonly<Record<string, readonly Story1743ChartSur
         alternativeAnchor: 'id={LIQUIDITY_TREND_SUMMARY_ID}',
         alternativeSelector: '#liquidity-trend-complete-data',
         sharedAlternativeSurfaceIds: ['liquidity-trend', 'liquidity-distribution-trend'],
-        requiredPeriodUnitTokens: ['Дата', 'дням'],
+        requiredPeriodUnitTokens: ['Дата', '%'],
         requiredSeriesTokens: [
-          'Высоколиквидные',
-          'Средняя ликвидность',
-          'Низкая ликвидность',
-          'Неликвид',
+          'Высоколиквидные, %',
+          'Средняя ликвидность, %',
+          'Низкая ликвидность, %',
+          'Неликвид, %',
         ],
         tooltipOwnerTest: {
           runner: 'vitest',

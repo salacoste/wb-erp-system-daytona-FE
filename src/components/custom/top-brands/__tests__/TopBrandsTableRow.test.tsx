@@ -1,5 +1,6 @@
 import { describe, it, expect, vi } from 'vitest'
 import { render, screen } from '@/test/utils/test-utils'
+import userEvent from '@testing-library/user-event'
 import { TopBrandsTableRow } from '../TopBrandsTableRow'
 import type { TopBrandItem } from '@/types/analytics'
 
@@ -110,7 +111,7 @@ describe('TopBrandsTableRow', () => {
     expect(screen.getByText('—')).toBeInTheDocument()
   })
 
-  it('calls onBrandClick on row click', async () => {
+  it('keeps pointer row activation as a convenience action', () => {
     render(
       <table>
         <tbody>
@@ -118,12 +119,13 @@ describe('TopBrandsTableRow', () => {
         </tbody>
       </table>
     )
-    const row = screen.getByRole('button')
-    row.click()
+    screen.getByText('100 000 ₽').click()
+    expect(mockOnBrandClick).toHaveBeenCalledTimes(1)
     expect(mockOnBrandClick).toHaveBeenCalledWith('TestBrand')
   })
 
-  it('has accessible aria-label', () => {
+  it('activates the exact brand from a real focused button while preserving native row cells', async () => {
+    const user = userEvent.setup()
     render(
       <table>
         <tbody>
@@ -131,9 +133,16 @@ describe('TopBrandsTableRow', () => {
         </tbody>
       </table>
     )
-    expect(screen.getByRole('button')).toHaveAttribute(
-      'aria-label',
-      'Фильтровать по бренду TestBrand'
-    )
+    const action = screen.getByRole('button', { name: 'Фильтровать по бренду TestBrand' })
+    const row = action.closest('tr')
+    expect(row).toHaveRole('row')
+    expect(row).not.toHaveAttribute('role')
+    expect(row).not.toHaveAttribute('tabindex')
+    expect(row?.querySelectorAll('td')).toHaveLength(5)
+    action.focus()
+    expect(action).toHaveFocus()
+    await user.keyboard('{Enter}')
+    expect(mockOnBrandClick).toHaveBeenCalledTimes(1)
+    expect(mockOnBrandClick).toHaveBeenCalledWith('TestBrand')
   })
 })

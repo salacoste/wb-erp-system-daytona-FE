@@ -106,9 +106,11 @@ describe('Story 170.7 deep-link: page-level ?tab=/?nmId= parsing', () => {
     render(
       await SearchPage({
         searchParams: Promise.resolve({ tab: 'by-product', nmId: '12x3' }),
-      }), {
-      wrapper: createQueryWrapper(queryClient),
-    })
+      }),
+      {
+        wrapper: createQueryWrapper(queryClient),
+      }
+    )
     expect(mockedUseSearchByProduct).toHaveBeenCalledWith(
       undefined,
       expect.any(String),

@@ -1,6 +1,7 @@
 # Story 174.3-FE — Complete Accessibility, Responsive, Theme, and Visual Verification
 
-**Status**: done; implementation and exact-worktree evidence complete (2026-09-01)
+**Status**: implementation and exact-worktree validation complete; immutable-SHA reviews pending
+as of 2026-09-01
 **Plan**: `.omx/plans/174.3-complete-accessibility-responsive-theme-and-visual-verification.md`
 **Branch**: `cdx/epic-174-story-3-inclusive-visual-verification`
 **Worktree**: `/private/tmp/wb-repricer-fe-174-3-inclusive-visual-verification`
@@ -8,19 +9,22 @@
 
 ## Authoritative current delivery record — 2026-09-01
 
-This section supersedes the historical implementation log below. The two independent
-`REQUEST CHANGES` reviews of commit `a9b4e82d75e78b67a65281e425160c8b34c81de1` were resolved by
-replacing inferred coverage with executable route/state/surface evidence, closing the route-specific
-SKU-accuracy gap, and rerunning the complete exact-worktree validation ledger. Because this Story
-introduces novel validator semantics, three fresh independent `APPROVE` reviews on one unchanged
-final commit remain the immutable pre-merge gate. The final commit SHA, review verdicts, PR identity,
-merge commit, and cleanup evidence are recorded in the PR lifecycle rather than embedded here; a
-commit cannot truthfully contain its own final SHA.
+This section supersedes the historical implementation log below. Three independent
+`REQUEST CHANGES`/`REJECT` reviews of commit
+`82465fbf96f2319116c1cad101044e8004a52cc3` were resolved by replacing inferred coverage with
+executable owner-state reconciliation, closing the route-specific SKU-accuracy gap, making the
+execution-manifest pipeline fail closed, repairing invalid native table-row control semantics, and
+rerunning the complete exact-worktree validation ledger. Because this Story introduces novel
+validator semantics, three fresh independent `APPROVE` reviews on one unchanged final commit remain
+the immutable pre-merge gate. The final commit SHA, review verdicts, PR identity, merge commit, and
+cleanup evidence are recorded in the PR lifecycle rather than embedded here; a commit cannot
+truthfully contain its own final SHA.
 
 ### Actual expanded file manifest
 
 The original three-file scope expanded only when the live matrix found concrete route-owner defects.
-The current delivery contains:
+The generated exact scope register contains 337 files relative to the unchanged `origin/main` base;
+it is the authoritative file-level inventory. The current delivery contains these principal groups:
 
 - Story evidence runtime:
   `e2e/fixtures/story-174-3-visual-accessibility.ts`,
@@ -81,15 +85,19 @@ a missing or duplicate visible `h1`, and an exact heading mismatch. `/`, `/login
 are explicit redirectors whose settled destinations are verified. The installed-rule editor owns the
 stable `h1` `Редактор установленного правила`; the backend rule name is an `h2`.
 
-All `76 × 12 = 912` route/state rows are materialized:
+All `76 × 12 = 912` route/state rows are materialized. Canonical owner declarations are parsed,
+their `SC` clauses are expanded, owner-specific labels are normalized into the twelve-state Story
+taxonomy, and every mapping retains its raw owner label and rationale:
 
 ```text
-187 exact executed rows
-725 explicit route-specific not-applicable rows
+280 exact executed rows
+632 explicit route-specific not-applicable rows
 0 blocked rows
-76 explicit route-specific N/A declarations
-37 unique owner-unit sources
-17 unique owner-browser sources
+76 canonical Story-runner default rows
+169 owner-unit executable rows
+35 owner-browser executable rows
+69 unique owner-unit sources
+15 unique owner-browser sources
 ```
 
 Each executed row records route, state, exact source, source SHA-256, literal scenario ID, line,
@@ -98,6 +106,10 @@ declaration source/SHA/line, and stable declaration ID. The former title-token f
 absence of a substring can no longer become N/A, shared test titles cannot be assigned to another
 route, and every declared executable scenario must resolve exactly once.
 
+Exact executable bindings cover the previously disputed `/dashboard` refresh/empty/stale/partial
+states and `/settings/tax` permission/pending states. Dashboard empty evidence proves the route `h1`,
+named hero region, real empty KPI values, and absence of a false processing state.
+
 Dedicated browser closure is complete:
 
 ```text
@@ -105,20 +117,29 @@ Dedicated browser closure is complete:
 0 dedicated browser gaps
 ```
 
-`e2e/story-174-3-dedicated-route-evidence.spec.ts` executes `/analytics/brand-share`,
-`/analytics/buyout`, `/orders/fbo`, and
-`/analytics/models/[id]/evaluations/sku-accuracy`. SKU accuracy therefore has both exact
-loading/empty/error/not-found owner-unit evidence and route-specific browser evidence.
+The dedicated-route registry executes `/analytics/brand-share`, `/analytics/buyout`, `/orders/fbo`,
+and `/analytics/models/[id]/evaluations/sku-accuracy` through the Story state-evidence runner. SKU
+accuracy therefore has both exact loading/empty/error/not-found owner-unit evidence and
+route-specific browser evidence, and all four executions are required in the committed manifest.
+
+### Fail-closed execution-manifest pipeline
+
+The shared Story manifest reader permits an empty initial manifest only for a true `ENOENT`. It
+rejects malformed JSON, an invalid schema or runtime block, an invalid entries array, duplicate or
+stale evidence, and malformed entry fields. Every entry must carry a 64-character SHA-256 source
+hash, supported runner/result values, a non-empty command, an integer exit code, a valid timestamp,
+and a non-negative duration. The manifest is serialized as stable pretty JSON, and focused tests
+prove both the accepted schema and each fail-closed branch.
 
 ### Fail-closed overlay, table, and chart applicability
 
 `STORY_174_3_SURFACE_CONTRACTS` materializes 76 route-specific contracts.
 
 ```text
-overlays: 84 executed / 9 conditional route-specific N/A
+overlays: 83 executed / 15 conditional route-specific N/A
 tables: 42 executed / 21 conditional route-specific N/A
 charts: 13 executed / 4 conditional route-specific N/A
-table/chart features: 389 executed / 234 explicit N/A
+table/chart features: 290 executed / 333 explicit N/A
 ```
 
 - Modal overlay: `/dashboard` executes keyboard traversal, Enter and Space activation, focus entry,
@@ -148,13 +169,18 @@ table/chart features: 389 executed / 234 explicit N/A
 5. Unit-economics pagination: exact names for row count, previous, and next controls.
 6. Unit-economics selector: invalid Tabs semantics replaced by a labelled native radiogroup.
 7. Liquidity: `min-w-0`, bounded table scrolling, exact progressbar names, and complete chart data
-   alternatives.
+   alternatives whose screen-reader headers and localized values expose `%` units for every trend
+   series.
 8. Dashboard/P&L/top-product/top-brand help triggers: exact accessible button names.
 9. Dashboard product/brand tables: exact accessible table names.
 10. COGS breadcrumbs: home link `Главная` and named breadcrumb navigation.
 11. Installed-rule editor: stable route-owned `h1` in loading/error/not-found; dynamic name is `h2`.
 12. Unit-economics, liquidity, dashboard expense, and dashboard daily charts: exact screen-reader-only
     tables exposing period/context, units, series, and formatted data.
+13. Interactive native table rows: invalid `<tr role="button">` semantics were removed from pricing,
+    elasticity, monitoring, supplies, top-products, and top-brands surfaces. Native rows/cells retain
+    table semantics; real shadcn `Button` controls now own keyboard activation and `aria-expanded`,
+    while pointer row activation remains behavior-compatible.
 
 No axe rule, threshold, exclusion, network guard, privacy guard, or route assertion was weakened.
 
@@ -196,14 +222,15 @@ automated PASS.
 Pinned runtime: Node `v24.18.0`, npm `11.11.0`.
 
 ```text
-Targeted Story state/surface contracts: 2 files, 14/14 tests passed
-Targeted stale source/listener regressions: 2 files, 18/18 tests passed
-Full Vitest: 1,257 files, 19,220/19,220 tests passed
+Targeted Story state/surface/manifest-reader contracts: 3 files, 32/32 tests passed
+Focused native-row regressions: 7 files, 129/129 tests passed
+Supplies route regression suite: 1 file, 90/90 tests passed
+Full Vitest: 1,259 files, 19,239/19,239 tests passed
 Canonical Story runner: 82 passed / 1 optional Manager skip / 0 failed
-Owner browser regeneration: 300 passed / 23 accepted optional/live-data skips / 0 failed
-Epic 37 plus dedicated route/SKU evidence: 18 passed / 1 optional Manager skip / 0 failed
+Owner browser regeneration: 305 passed / 22 accepted optional/live-data skips / 0 failed
+Dedicated route/SKU evidence: 4 current-source executions / 0 gaps
 Real browser-UI 200% zoom: all 76 routes × 2 themes passed; 4 harness tests passed / 1 optional Manager skip
-Execution manifest: 344 passed entries (230 Vitest / 114 Playwright / 76 canonical defaults), 0 failed
+Execution manifest: 354 passed entries (236 Vitest / 118 Playwright / 76 canonical defaults / 4 dedicated), 0 failed
 Production build: PASS, TypeScript PASS, 70/70 pages generated
 npm run lint: PASS, zero warnings/errors
 npx eslint on all changed E2E/scripts sources: PASS, zero warnings/errors
@@ -212,11 +239,11 @@ npm run check:max-lines: PASS
 npm run check:max-lines --self-test equivalent: 3/3 passed
 npm run check:docs: PASS against the committed 95-entry / 427-citation baseline
 npm run check:markers: PASS, zero violations
-npm run check:lessons: PASS, 301 files / 96 lesson lines / zero violations
+npm run check:lessons: PASS, 302 files / 96 lesson lines / zero violations
 E2E assertion/wait/bare-skip, Next params, locale-percent, and policy guards: PASS
 Anti-pattern-8 normalizer: PASS at the lowered 50-site baseline
 ESLint rule registry: PASS, 2 configs; relocatability self-test: 8/8 passed
-Privacy policy tests: 29/29 passed; repository scan: 3,602 text files / 0 findings
+Privacy policy tests: 29/29 passed; repository scan: 3,608 text files / 0 findings
 ```
 
 The canonical runner directly verifies all 76 route identities, 912 state dispositions, six widths

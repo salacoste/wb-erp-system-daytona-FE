@@ -170,7 +170,10 @@ function ConsumerRow({
           </p>
           {/* Request #156: No stock indicator */}
           {item.has_warehouse_stock === false && (
-            <PackageX className="h-3 w-3 text-status-warning flex-shrink-0" aria-label="Нет на складе" />
+            <PackageX
+              className="h-3 w-3 text-status-warning flex-shrink-0"
+              aria-label="Нет на складе"
+            />
           )}
         </div>
         <div className="flex items-center gap-2">

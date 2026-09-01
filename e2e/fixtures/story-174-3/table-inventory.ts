@@ -60,7 +60,8 @@ export const TABLE_INVENTORY: Readonly<Record<string, readonly Story1743TableSur
           runner: 'vitest',
           source:
             'src/app/(dashboard)/analytics/pricing/components/__tests__/PricingTable.test.tsx',
-          scenarioId: 'opens the exact SKU recommendation from its focused row with Enter',
+          scenarioId:
+            'opens the exact SKU recommendation from its focused action button with Enter',
         },
       }),
       tableSurface('/analytics/pricing', {

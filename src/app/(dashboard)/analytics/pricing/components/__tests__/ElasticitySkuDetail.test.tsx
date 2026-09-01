@@ -1,4 +1,5 @@
-import { fireEvent, render, screen } from '@testing-library/react'
+import { render, screen } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
 import { describe, expect, it, vi } from 'vitest'
 
 import { ElasticitySkuDetail } from '../ElasticitySkuDetail'
@@ -18,8 +19,9 @@ const item: PriceElasticityItem = {
 }
 
 describe('ElasticitySkuDetail interactions', () => {
-  it('toggles the exact SKU elasticity row by keyboard', () => {
+  it('toggles the exact SKU elasticity row by keyboard', async () => {
     const onToggle = vi.fn()
+    const user = userEvent.setup()
     render(
       <table>
         <tbody>
@@ -28,11 +30,16 @@ describe('ElasticitySkuDetail interactions', () => {
       </table>
     )
 
-    const row = screen.getByRole('button', { name: 'Показать эластичность SKU 12345678' })
-    row.focus()
-    expect(row).toHaveFocus()
-    expect(row).toHaveAttribute('aria-expanded', 'false')
-    fireEvent.keyDown(row, { key: 'Enter' })
+    const action = screen.getByRole('button', { name: 'Показать эластичность SKU 12345678' })
+    const row = action.closest('tr')
+    expect(row).toHaveRole('row')
+    expect(row).not.toHaveAttribute('role')
+    expect(row).not.toHaveAttribute('tabindex')
+    expect(row?.querySelectorAll('td')).toHaveLength(7)
+    action.focus()
+    expect(action).toHaveFocus()
+    expect(action).toHaveAttribute('aria-expanded', 'false')
+    await user.keyboard('{Enter}')
     expect(onToggle).toHaveBeenCalledTimes(1)
   })
 })

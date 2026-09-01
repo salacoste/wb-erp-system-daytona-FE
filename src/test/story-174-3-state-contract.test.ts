@@ -7,7 +7,9 @@ import {
   type Story1743ExecutionManifest,
   type Story1743RequiredExecution,
 } from '../../e2e/fixtures/story-174-3/execution-manifest'
+import { STORY_174_3_DEDICATED_ROUTE_SCENARIOS } from '../../e2e/fixtures/story-174-3/dedicated-route-scenarios'
 import { STORY_174_3_STATES } from '../../e2e/fixtures/story-174-3/route-contracts'
+import { STORY_174_3_OWNER_STATE_RECONCILIATION } from '../../e2e/fixtures/story-174-3/owner-state-reconciliation'
 import {
   STORY_174_3_EXPLICIT_NOT_APPLICABLE_STATES,
   validateStory1743ExplicitStateContract,
@@ -52,10 +54,115 @@ const routeEvidence = async () =>
   (await import('../../e2e/fixtures/story-174-3/route-evidence')).STORY_174_3_ROUTE_EVIDENCE
 
 describe('Story 174.3 explicit route/state contract', () => {
+  it('reconciles all 76 owner Story State Coverage clauses with the audit taxonomy', async () => {
+    const rows = await routeEvidence()
+
+    expect(STORY_174_3_OWNER_STATE_RECONCILIATION).toHaveLength(76)
+    expect(
+      new Set(STORY_174_3_OWNER_STATE_RECONCILIATION.map(reconciliation => reconciliation.route))
+        .size
+    ).toBe(76)
+
+    for (const reconciliation of STORY_174_3_OWNER_STATE_RECONCILIATION) {
+      expect(reconciliation.canonicalCoverage).not.toBe('')
+      expect(reconciliation.mappings.length).toBeGreaterThan(0)
+      const route = rows.find(candidate => candidate.route === reconciliation.route)!
+
+      for (const mapping of reconciliation.mappings) {
+        expect(mapping.rawOwnerState).not.toBe('')
+        expect(mapping.normalizedStates.length).toBeGreaterThan(0)
+        expect(mapping.rationale).not.toBe('')
+        for (const state of mapping.normalizedStates) {
+          const evidence = route.stateEvidence.find(candidate => candidate.state === state)
+          expect(evidence, `${route.route} :: ${mapping.rawOwnerState} -> ${state}`).toBeDefined()
+          if (evidence?.disposition === 'not-applicable' && mapping.source === 'owner-story') {
+            expect(evidence.rationale).toContain(mapping.rawOwnerState)
+            expect(evidence.declarationSource).toMatch(/not-applicable-[ab]\.ts$/)
+            expect(evidence.declarationLine).toBeGreaterThan(0)
+          }
+        }
+      }
+    }
+  })
+
+  it('binds canonical dashboard and tax owner states to exact executable scenarios', async () => {
+    const rows = await routeEvidence()
+    const executed = (route: string) =>
+      Object.fromEntries(
+        rows
+          .find(row => row.route === route)!
+          .stateEvidence.filter(evidence => evidence.disposition === 'executed')
+          .map(evidence => [evidence.state, evidence.scenarioId])
+      )
+
+    expect(executed('/dashboard')).toMatchObject({
+      refresh: 'does not blank the metrics grid for advertising-only refreshes',
+      empty: 'renders the empty dashboard identity without a false processing state',
+      stale: 'does not let stale available-weeks data blank other selected-period metrics',
+      partial: 'keeps available current-period metrics visible while finance is transitioning',
+    })
+    expect(executed('/settings/tax')).toMatchObject({
+      permission: 'presents a truthful read-only view for Analyst without mutation actions',
+      pending: 'blocks every editable control and both actions while a save is pending',
+    })
+  })
+
+  it('registers every dedicated route and SKU scenario in the immutable execution manifest', () => {
+    const committed = JSON.parse(
+      readFileSync('e2e/fixtures/story-174-3/execution-manifest.json', 'utf8')
+    ) as Story1743ExecutionManifest
+
+    for (const required of STORY_174_3_DEDICATED_ROUTE_SCENARIOS) {
+      expect(
+        committed.entries.find(
+          entry => entry.source === required.source && entry.scenarioId === required.scenarioId
+        ),
+        `${required.source} :: ${required.scenarioId}`
+      ).toMatchObject({ result: 'passed', runner: 'playwright', exitCode: 0 })
+    }
+  })
+
+  it('locks authoritative route/state and executable-source counters to committed exports', async () => {
+    const evidence = (await routeEvidence()).flatMap(row => row.stateEvidence)
+    const executions = evidence.filter(row => row.disposition === 'executed')
+    const executionSources = (kind: 'owner-unit-executable' | 'owner-browser-executable') =>
+      new Set(
+        executions.flatMap(row => [
+          ...(row.kind === kind && row.source ? [row.source] : []),
+          ...(row.supportingExecutions ?? [])
+            .filter(supporting => supporting.kind === kind)
+            .map(supporting => supporting.source),
+        ])
+      ).size
+
+    expect({
+      rows: evidence.length,
+      executed: executions.length,
+      notApplicable: evidence.filter(row => row.disposition === 'not-applicable').length,
+      blocked: evidence.filter(row => row.disposition === 'blocked').length,
+      storyRunnerDefaults: executions.filter(row => row.kind === 'story-runner').length,
+      ownerUnitExecutions: executions.filter(row => row.kind === 'owner-unit-executable').length,
+      ownerBrowserExecutions: executions.filter(row => row.kind === 'owner-browser-executable')
+        .length,
+      uniqueOwnerUnitSources: executionSources('owner-unit-executable'),
+      uniqueOwnerBrowserSources: executionSources('owner-browser-executable'),
+    }).toEqual({
+      rows: 912,
+      executed: 280,
+      notApplicable: 632,
+      blocked: 0,
+      storyRunnerDefaults: 76,
+      ownerUnitExecutions: 169,
+      ownerBrowserExecutions: 35,
+      uniqueOwnerUnitSources: 69,
+      uniqueOwnerBrowserSources: 15,
+    })
+  })
+
   it('materializes exactly one disposition for every route and non-default state', async () => {
     const rows = await routeEvidence()
     const declarationLines = new Map<string, string[]>()
-    const rationaleByState = new Map<string, string>()
+    const notApplicableStates = new Set<string>()
 
     expect(rows).toHaveLength(76)
     expect(Object.keys(STORY_174_3_EXPLICIT_NOT_APPLICABLE_STATES)).toHaveLength(76)
@@ -74,12 +181,11 @@ describe('Story 174.3 explicit route/state contract', () => {
         const lines = declarationLines.get(source) ?? readFileSync(source, 'utf8').split(/\r?\n/)
         declarationLines.set(source, lines)
         expect(lines[evidence.declarationLine! - 1]).toContain(`'${evidence.state}'`)
-        const stateRationale = evidence.rationale.slice(row.route.length)
-        expect(rationaleByState.get(evidence.state) ?? stateRationale).toBe(stateRationale)
-        rationaleByState.set(evidence.state, stateRationale)
+        expect(evidence.rationale.startsWith(row.route + ': ')).toBe(true)
+        notApplicableStates.add(evidence.state)
       }
     }
-    expect(new Set(rationaleByState.values()).size).toBe(NON_DEFAULT_STATES.length)
+    expect(notApplicableStates.size).toBe(NON_DEFAULT_STATES.length)
   })
 
   it('binds /login error evidence to the exact executable LoginForm scenario', async () => {

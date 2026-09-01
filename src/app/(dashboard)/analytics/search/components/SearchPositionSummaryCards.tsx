@@ -27,7 +27,11 @@ export interface SearchPositionSummaryCardsProps {
  * usePositionTrends fetch — residual: a fetch-level failure still degrades
  * movers/opportunities together (fetch is shared by design, documented).
  */
-export function SearchPositionSummaryCards({ summary, isLoading, isError }: SearchPositionSummaryCardsProps) {
+export function SearchPositionSummaryCards({
+  summary,
+  isLoading,
+  isError,
+}: SearchPositionSummaryCardsProps) {
   if (isError && !summary) {
     return (
       <Alert variant="destructive">
@@ -88,7 +92,9 @@ export function SearchPositionSummaryCards({ summary, isLoading, isError }: Sear
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <p className="text-2xl font-bold text-status-information">{summary.closeToPageOneCount}</p>
+          <p className="text-2xl font-bold text-status-information">
+            {summary.closeToPageOneCount}
+          </p>
           <p className="text-xs text-muted-foreground">позиция 20-40</p>
         </CardContent>
       </Card>

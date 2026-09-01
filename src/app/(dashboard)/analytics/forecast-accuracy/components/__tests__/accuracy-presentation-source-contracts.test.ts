@@ -49,7 +49,10 @@ describe('Story 171.5 route presentation source contracts', () => {
   })
 
   it('warning-token pin: high-MAPE band uses status-warning (amber eliminated)', () => {
-    const cards = readFileSync(join(routeDirectory, 'components', 'AccuracyMetricsCards.tsx'), 'utf8')
+    const cards = readFileSync(
+      join(routeDirectory, 'components', 'AccuracyMetricsCards.tsx'),
+      'utf8'
+    )
     expect(cards).toMatch(/text-status-warning/)
     expect(cards).not.toMatch(/text-amber-600/)
   })

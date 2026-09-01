@@ -28,11 +28,7 @@ export function SearchPositionTrendsTab() {
 
   return (
     <div className="space-y-6">
-      <SearchPositionSummaryCards
-        summary={data?.summary}
-        isLoading={isLoading}
-        isError={isError}
-      />
+      <SearchPositionSummaryCards summary={data?.summary} isLoading={isLoading} isError={isError} />
       <SearchPositionMoversTable
         movers={data?.movers ?? []}
         isLoading={isLoading}

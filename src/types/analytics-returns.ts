@@ -10,10 +10,7 @@ import type { TrendDirection } from './analytics-buyout'
 // 'unknown' = boundary-honest marker for unrecognized backend category values
 // (Story 169.11 Task 0; CLAUDE.md Defensive Frontend Principle — indicate, never coerce).
 export type ReturnCategory =
-  | 'cancel_before_shipment'
-  | 'refusal_at_pvz'
-  | 'return_after_receipt'
-  | 'unknown'
+  'cancel_before_shipment' | 'refusal_at_pvz' | 'return_after_receipt' | 'unknown'
 
 export interface ReturnCategoryItem {
   category: ReturnCategory

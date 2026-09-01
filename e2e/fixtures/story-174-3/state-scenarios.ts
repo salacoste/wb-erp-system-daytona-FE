@@ -279,10 +279,18 @@ export const STORY_174_3_EXACT_STATE_SCENARIOS: Readonly<
       'e2e/dashboard-metrics.spec.ts',
       'holds and releases finance loading with a timer-free deferred gate'
     ),
+    // prettier-ignore
+    refresh: exact('src/app/(dashboard)/dashboard/components/__tests__/useDashboardData.loading.test.ts', 'does not blank the metrics grid for advertising-only refreshes'),
+    // prettier-ignore
+    empty: exact('src/app/(dashboard)/dashboard/components/__tests__/DashboardContent.noData.test.tsx', 'renders the empty dashboard identity without a false processing state'),
     error: exact(
       'e2e/dashboard-metrics.spec.ts',
       'keeps finance failures failing until Retry is explicitly allowed'
     ),
+    // prettier-ignore
+    stale: exact('src/app/(dashboard)/dashboard/components/__tests__/DashboardContent.previousPeriod.test.tsx', 'does not let stale available-weeks data blank other selected-period metrics'),
+    // prettier-ignore
+    partial: exact('src/app/(dashboard)/dashboard/components/__tests__/DashboardContent.previousPeriod.test.tsx', 'keeps available current-period metrics visible while finance is transitioning'),
   },
   '/cogs/price-calculator': {
     loading: exact('e2e/price-calculator.spec.ts', 'TC-E2E-006b: Показывается индикатор загрузки'),
@@ -519,6 +527,10 @@ export const STORY_174_3_EXACT_STATE_SCENARIOS: Readonly<
       'src/components/custom/settings/__tests__/TaxSettingsForm.story-173-7.test.tsx',
       'exposes named loading and recoverable query-error states'
     ),
+    // prettier-ignore
+    permission: exact('src/components/custom/settings/__tests__/TaxSettingsForm.story-173-7.test.tsx', 'presents a truthful read-only view for Analyst without mutation actions'),
+    // prettier-ignore
+    pending: exact('src/components/custom/settings/__tests__/TaxSettingsForm.story-173-7.test.tsx', 'blocks every editable control and both actions while a save is pending'),
   },
   '/shipments': {
     loading: exact(

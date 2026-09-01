@@ -498,9 +498,8 @@ describe('SuppliesPage', () => {
   describe('Row Interaction', () => {
     it('shows hover state on table rows', () => {
       renderPage(<SuppliesPageStub />)
-      expect(screen.getAllByRole('button', { name: /Поставка/ })[0].className).toContain(
-        'hover:bg-muted'
-      )
+      const action = screen.getAllByRole('button', { name: /Открыть поставку/ })[0]
+      expect(action.closest('tr')).toHaveClass('hover:bg-muted/50')
     })
 
     it('clicking row navigates to /supplies/[id]', async () => {
@@ -508,7 +507,7 @@ describe('SuppliesPage', () => {
       const state = createPageState()
       mockPageState.mockReturnValue(state)
       renderPage(<SuppliesPageStub />)
-      await user.click(screen.getAllByRole('button', { name: /Поставка/ })[0])
+      await user.click(screen.getAllByRole('button', { name: /Открыть поставку/ })[0])
       expect(state.handleRowClick).toHaveBeenCalled()
     })
 
@@ -517,8 +516,8 @@ describe('SuppliesPage', () => {
       const state = createPageState()
       mockPageState.mockReturnValue(state)
       renderPage(<SuppliesPageStub />)
-      const rows = screen.getAllByRole('button', { name: /Поставка/ })
-      rows[0].focus()
+      const actions = screen.getAllByRole('button', { name: /Открыть поставку/ })
+      actions[0].focus()
       await user.keyboard('{Enter}')
       expect(state.handleRowClick).toHaveBeenCalled()
     })
@@ -528,24 +527,26 @@ describe('SuppliesPage', () => {
       const state = createPageState()
       mockPageState.mockReturnValue(state)
       renderPage(<SuppliesPageStub />)
-      const rows = screen.getAllByRole('button', { name: /Поставка/ })
-      rows[0].focus()
+      const actions = screen.getAllByRole('button', { name: /Открыть поставку/ })
+      actions[0].focus()
       await user.keyboard(' ')
       expect(state.handleRowClick).toHaveBeenCalled()
     })
 
     it('rows have cursor pointer style', () => {
       renderPage(<SuppliesPageStub />)
-      expect(screen.getAllByRole('button', { name: /Поставка/ })[0].className).toContain(
-        'cursor-pointer'
-      )
+      const action = screen.getAllByRole('button', { name: /Открыть поставку/ })[0]
+      expect(action.closest('tr')).toHaveClass('cursor-pointer')
     })
 
-    it('rows are keyboard focusable', () => {
+    it('keeps rows native while exposing a keyboard-focusable action', () => {
       renderPage(<SuppliesPageStub />)
-      expect(screen.getAllByRole('button', { name: /Поставка/ })[0].getAttribute('tabindex')).toBe(
-        '0'
-      )
+      const action = screen.getAllByRole('button', { name: /Открыть поставку/ })[0]
+      const row = action.closest('tr')!
+      expect(action).toHaveAttribute('type', 'button')
+      expect(row).toHaveRole('row')
+      expect(row).not.toHaveAttribute('role')
+      expect(row).not.toHaveAttribute('tabindex')
     })
   })
 
@@ -751,7 +752,7 @@ describe('SuppliesPage', () => {
       expect(table).toBeInTheDocument()
       expect(within(table).getAllByRole('columnheader').length).toBe(7)
       expect(within(table).getAllByRole('row').length).toBeGreaterThanOrEqual(1)
-      expect(within(table).getAllByRole('button', { name: /Поставка/ }).length).toBe(5)
+      expect(within(table).getAllByRole('button', { name: /Открыть поставку/ }).length).toBe(5)
     })
 
     it('filters have proper labels', () => {

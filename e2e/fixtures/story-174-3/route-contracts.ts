@@ -16,6 +16,8 @@ export const STORY_174_3_STATES = [
   'not-found',
 ] as const
 
+export type Story1743State = (typeof STORY_174_3_STATES)[number]
+
 export type Story1743RouteEvidence = {
   story: string
   route: string

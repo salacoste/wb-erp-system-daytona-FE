@@ -115,7 +115,9 @@ export function Body({
       <div className="mt-1 flex flex-wrap items-center gap-1.5">
         <span className="text-xs text-muted-foreground">{getTaxLabel(taxMetrics.tax_system)}</span>
         {showEffectiveRate && (
-          <span className="text-xs text-muted-foreground">{formatRate(taxMetrics.effective_tax_rate)}</span>
+          <span className="text-xs text-muted-foreground">
+            {formatRate(taxMetrics.effective_tax_rate)}
+          </span>
         )}
         {taxMetrics.is_minimum_rule && <MinimumRuleBadge />}
         {taxMetrics.vat_payer && taxMetrics.vat_rate != null && (

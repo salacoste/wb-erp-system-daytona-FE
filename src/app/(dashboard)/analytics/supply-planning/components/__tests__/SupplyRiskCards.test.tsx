@@ -26,7 +26,9 @@ vi.mock('../supply-risk-card-styles', () => ({
   },
   // Story 169.13: mock returns token classes (active card carries the ring).
   getCardStyles: (_status: string, isActive: boolean) => ({
-    card: isActive ? 'bg-muted border-border ring-2 ring-muted-foreground' : 'bg-muted/50 border-border',
+    card: isActive
+      ? 'bg-muted border-border ring-2 ring-muted-foreground'
+      : 'bg-muted/50 border-border',
     icon: 'text-muted-foreground',
     label: 'text-foreground',
     count: 'text-foreground',

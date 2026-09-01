@@ -5,6 +5,7 @@
 
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { render, screen, fireEvent } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
 import { TopProductsTable } from '../TopProductsTable'
 import type { TopProductItem } from '@/types/analytics'
 
@@ -230,20 +231,24 @@ describe('TopProductsTable', () => {
       expect(mockPush).toHaveBeenCalledWith('/cogs?search=123456')
     })
 
-    it('should navigate on Enter key press', () => {
+    it('should navigate from the native product button on Enter', async () => {
+      const user = userEvent.setup()
       render(<TopProductsTable products={mockProducts} />)
 
-      const row = screen.getByText('Футболка мужская').closest('tr')
-      fireEvent.keyDown(row!, { key: 'Enter' })
+      const button = screen.getByRole('button', { name: 'Перейти к товару Футболка мужская' })
+      button.focus()
+      await user.keyboard('{Enter}')
 
       expect(mockPush).toHaveBeenCalledWith('/cogs?search=123456')
     })
 
-    it('should navigate on Space key press', () => {
+    it('should navigate from the native product button on Space', async () => {
+      const user = userEvent.setup()
       render(<TopProductsTable products={mockProducts} />)
 
-      const row = screen.getByText('Джинсы женские').closest('tr')
-      fireEvent.keyDown(row!, { key: ' ' })
+      const button = screen.getByRole('button', { name: 'Перейти к товару Джинсы женские' })
+      button.focus()
+      await user.keyboard(' ')
 
       expect(mockPush).toHaveBeenCalledWith('/cogs?search=789012')
     })
@@ -260,27 +265,23 @@ describe('TopProductsTable', () => {
   })
 
   describe('Accessibility', () => {
-    it('should have accessible row labels', () => {
+    it('should expose an accessible product navigation button', () => {
       render(<TopProductsTable products={mockProducts} />)
 
-      const row = screen.getByLabelText('Перейти к товару Футболка мужская')
-      expect(row).toBeInTheDocument()
+      expect(
+        screen.getByRole('button', { name: 'Перейти к товару Футболка мужская' })
+      ).toBeInTheDocument()
     })
 
-    it('should have role="button" on rows', () => {
+    it('should preserve native row and cell semantics', () => {
       render(<TopProductsTable products={mockProducts} />)
 
-      // Check that interactive rows exist (each product row should be clickable)
-      // Component may have other buttons too, so just verify product rows have button role
-      const productRow = screen.getByLabelText('Перейти к товару Футболка мужская')
-      expect(productRow).toHaveAttribute('role', 'button')
-    })
-
-    it('should have tabIndex for keyboard navigation', () => {
-      render(<TopProductsTable products={mockProducts} />)
-
-      const row = screen.getByText('Футболка мужская').closest('tr')
-      expect(row).toHaveAttribute('tabindex', '0')
+      const button = screen.getByRole('button', { name: 'Перейти к товару Футболка мужская' })
+      const row = button.closest('tr')!
+      expect(row).toHaveRole('row')
+      expect(row).not.toHaveAttribute('role')
+      expect(row).not.toHaveAttribute('tabindex')
+      expect(row.querySelectorAll('td')).toHaveLength(6)
     })
   })
 

@@ -8,6 +8,7 @@
 
 import { ChevronDown } from 'lucide-react'
 import { TableCell, TableRow } from '@/components/ui/table'
+import { Button } from '@/components/ui/button'
 import { Progress } from '@/components/ui/progress'
 import { Badge } from '@/components/ui/badge'
 import { Skeleton } from '@/components/ui/skeleton'
@@ -43,25 +44,27 @@ export function CompletenessRow({
 
   return (
     <>
-      <TableRow
-        className="cursor-pointer hover:bg-muted/50"
-        onClick={onToggle}
-        role="button"
-        aria-expanded={isExpanded}
-        tabIndex={0}
-        onKeyDown={e => {
-          if (e.key === 'Enter' || e.key === ' ') {
-            e.preventDefault()
-            onToggle()
-          }
-        }}
-      >
+      <TableRow className="cursor-pointer hover:bg-muted/50" onClick={onToggle}>
         <TableCell className="w-8 px-2">
-          <ChevronDown
-            className={`h-4 w-4 text-muted-foreground transition-transform ${
-              isExpanded ? 'rotate-180' : ''
-            }`}
-          />
+          <Button
+            type="button"
+            variant="ghost"
+            size="icon"
+            className="h-7 w-7"
+            aria-label={`Показать полноту данных ${row.displayName}`}
+            aria-expanded={isExpanded}
+            onClick={event => {
+              event.stopPropagation()
+              onToggle()
+            }}
+          >
+            <ChevronDown
+              aria-hidden="true"
+              className={`h-4 w-4 text-muted-foreground transition-transform ${
+                isExpanded ? 'rotate-180' : ''
+              }`}
+            />
+          </Button>
         </TableCell>
         <TableCell className="font-medium">{row.displayName}</TableCell>
         <TableCell>

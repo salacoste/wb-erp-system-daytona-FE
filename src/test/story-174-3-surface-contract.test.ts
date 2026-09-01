@@ -141,6 +141,60 @@ const REQUIRED_CHART_COUNTS: Readonly<Record<string, number>> = {
 }
 
 describe('Story 174.3 fail-closed surface contracts', () => {
+  it('locks authoritative surface and feature counters to committed exports', () => {
+    const contracts = Object.values(STORY_174_3_SURFACE_CONTRACTS)
+    const tableSurfaces = contracts.flatMap(contract => [
+      ...contract.table.surfaces,
+      ...contract.table.conditionalSurfaces.map(item => item.item),
+    ])
+    const chartSurfaces = contracts.flatMap(contract => [
+      ...contract.chart.surfaces,
+      ...contract.chart.conditionalSurfaces.map(item => item.item),
+    ])
+    const features = [...tableSurfaces, ...chartSurfaces].flatMap(surface =>
+      Object.values(surface.features)
+    )
+
+    expect({
+      overlaysExecuted: contracts.reduce(
+        (count, contract) => count + contract.overlay.inventory.length,
+        0
+      ),
+      overlaysConditional: contracts.reduce(
+        (count, contract) => count + contract.overlay.conditionalInventory.length,
+        0
+      ),
+      tablesExecuted: contracts.reduce(
+        (count, contract) => count + contract.table.surfaces.length,
+        0
+      ),
+      tablesConditional: contracts.reduce(
+        (count, contract) => count + contract.table.conditionalSurfaces.length,
+        0
+      ),
+      chartsExecuted: contracts.reduce(
+        (count, contract) => count + contract.chart.surfaces.length,
+        0
+      ),
+      chartsConditional: contracts.reduce(
+        (count, contract) => count + contract.chart.conditionalSurfaces.length,
+        0
+      ),
+      featuresExecuted: features.filter(feature => feature.disposition === 'executed').length,
+      featuresNotApplicable: features.filter(feature => feature.disposition === 'not-applicable')
+        .length,
+    }).toEqual({
+      overlaysExecuted: 83,
+      overlaysConditional: 15,
+      tablesExecuted: 42,
+      tablesConditional: 21,
+      chartsExecuted: 13,
+      chartsConditional: 4,
+      featuresExecuted: 290,
+      featuresNotApplicable: 333,
+    })
+  })
+
   it('declares an exhaustive route-specific overlay inventory', () => {
     expect(Object.keys(STORY_174_3_SURFACE_CONTRACTS)).toHaveLength(76)
 
