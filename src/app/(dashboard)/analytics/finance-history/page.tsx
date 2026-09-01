@@ -104,11 +104,7 @@ export default function FinanceHistoryPage(): React.ReactElement {
         <Alert variant="destructive">
           <AlertCircle className="h-4 w-4" />
           <AlertDescription className="flex items-center justify-between gap-4">
-            <span>
-              {series.error instanceof Error
-                ? series.error.message
-                : 'Не удалось загрузить историю финансов.'}
-            </span>
+            <span>Не удалось загрузить историю финансов.</span>
             <Button variant="outline" size="sm" onClick={series.refetch}>
               <RefreshCw className="mr-2 h-4 w-4" />
               Повторить

@@ -4,7 +4,7 @@
 > `origin/main` comparison plus current untracked Story files. Regenerate before freeze;
 > any path drift is a review blocker.
 
-**Files:** 423
+**Files:** 424
 
 ## Coordination classes
 
@@ -17,7 +17,7 @@
 | repository-validation | 3 | 174.3 | Relocatable fail-closed local validation required by the Story evidence pipeline. |
 | route-owner-remediation | 335 | ledger route owner + 174.3 | Accepted route-specific accessibility/responsive/data-semantics repair. |
 | shared-owner-remediation | 15 | named shared owner + 174.3 | Narrow contract-preserving repair with focused regression evidence. |
-| story-evidence | 45 | 174.3 | Executable route/state/surface/manifest evidence owned by this assurance Story. |
+| story-evidence | 46 | 174.3 | Executable route/state/surface/manifest evidence owned by this assurance Story. |
 | story-support | 2 | 174.3 | Direct support file required by the recorded Story validation. |
 
 All product/shared entries are coordinated repairs discovered by executable Story 174.3
@@ -91,6 +91,7 @@ deployment, production, force-push, or direct-`main` operation is admitted.
 | `scripts/check-eslint-rules.sh` | repository-validation |
 | `scripts/check-max-lines.sh` | repository-validation |
 | `scripts/generate-story-174-3-scope-register.mjs` | story-evidence |
+| `scripts/lib/story-174-3-execution-requirements.mjs` | story-evidence |
 | `scripts/lib/story-174-3-manifest.mjs` | story-evidence |
 | `scripts/run-story-174-3-real-browser-zoom.mjs` | story-evidence |
 | `scripts/run-story-174-3-state-evidence.mjs` | story-evidence |

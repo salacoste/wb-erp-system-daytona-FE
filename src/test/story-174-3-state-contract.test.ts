@@ -2,6 +2,8 @@ import { readFileSync } from 'node:fs'
 
 import { describe, expect, it } from 'vitest'
 
+import { story1743MergeReadyExecutions } from '../../scripts/lib/story-174-3-execution-requirements.mjs'
+
 import {
   indexStory1743ExecutionManifest,
   type Story1743ExecutionManifest,
@@ -360,6 +362,17 @@ describe('Story 174.3 explicit route/state contract', () => {
     }
   })
 
+  it('requires exact canonical key-set equality for the merge-ready execution manifest', () => {
+    const committed = JSON.parse(
+      readFileSync('e2e/fixtures/story-174-3/execution-manifest.json', 'utf8')
+    ) as Story1743ExecutionManifest
+    const required = story1743MergeReadyExecutions() as Story1743RequiredExecution[]
+
+    expect(
+      indexStory1743ExecutionManifest(committed, required, { requireExactSet: true }).size
+    ).toBe(required.length)
+  })
+
   it('locks authoritative route/state and executable-source counters to committed exports', async () => {
     const evidence = (await routeEvidence()).flatMap(row => row.stateEvidence)
     const executions = evidence.filter(row => row.disposition === 'executed')
@@ -571,5 +584,29 @@ describe('Story 174.3 explicit route/state contract', () => {
         REQUIRED_EXECUTION,
       ])
     ).toThrow('missing execution result')
+  })
+
+  it('rejects duplicate canonical requirements in complete-manifest mode', () => {
+    expect(() =>
+      indexStory1743ExecutionManifest(manifest(), [REQUIRED_EXECUTION, REQUIRED_EXECUTION], {
+        requireExactSet: true,
+      })
+    ).toThrow('duplicate required execution')
+  })
+
+  it.each([
+    ['stale', { scenarioId: 'extra stale', sourceSha256: 'b'.repeat(64) }],
+    ['failed', { scenarioId: 'extra failed', result: 'failed' as const, exitCode: 1 }],
+    ['skipped', { scenarioId: 'extra skipped', result: 'skipped' as const }],
+    ['nonexistent source', { source: 'src/test/removed-owner.test.ts' }],
+    ['obsolete scenario', { scenarioId: 'obsolete Story scenario' }],
+    ['unknown entry', { source: 'src/test/unknown-owner.test.ts', scenarioId: 'unknown' }],
+  ])('fails closed for an extra %s manifest entry', (_label, overrides) => {
+    const extra = { ...manifest().entries[0], ...overrides }
+    expect(() =>
+      indexStory1743ExecutionManifest(manifest({}, [extra]), [REQUIRED_EXECUTION], {
+        requireExactSet: true,
+      })
+    ).toThrow('unexpected execution result')
   })
 })

@@ -25,6 +25,10 @@ export type Story1743ExecutionManifest = {
   entries: Story1743ExecutionManifestEntry[]
 }
 
+export type Story1743ExecutionIndexOptions = {
+  requireExactSet?: boolean
+}
+
 const executionKey = (source: string, scenarioId: string): string =>
   JSON.stringify([source, scenarioId])
 
@@ -33,7 +37,8 @@ const label = (execution: Pick<Story1743RequiredExecution, 'source' | 'scenarioI
 
 export function indexStory1743ExecutionManifest(
   manifest: Story1743ExecutionManifest,
-  requiredExecutions: readonly Story1743RequiredExecution[]
+  requiredExecutions: readonly Story1743RequiredExecution[],
+  options: Story1743ExecutionIndexOptions = {}
 ): ReadonlyMap<string, Story1743ExecutionManifestEntry> {
   if (manifest.schemaVersion !== 1) {
     throw new Error(
@@ -51,6 +56,15 @@ export function indexStory1743ExecutionManifest(
       throw new Error('Story 174.3 duplicate execution result: ' + label(entry))
     }
     entries.set(key, entry)
+  }
+
+  const requiredKeys = new Set<string>()
+  for (const required of requiredExecutions) {
+    const key = executionKey(required.source, required.scenarioId)
+    if (options.requireExactSet && requiredKeys.has(key)) {
+      throw new Error('Story 174.3 duplicate required execution: ' + label(required))
+    }
+    requiredKeys.add(key)
   }
 
   for (const required of requiredExecutions) {
@@ -80,6 +94,14 @@ export function indexStory1743ExecutionManifest(
       throw new Error(
         'Story 174.3 execution result has incomplete runner metadata: ' + label(required)
       )
+    }
+  }
+
+  if (options.requireExactSet) {
+    for (const entry of manifest.entries) {
+      if (!requiredKeys.has(executionKey(entry.source, entry.scenarioId))) {
+        throw new Error('Story 174.3 unexpected execution result: ' + label(entry))
+      }
     }
   }
 

@@ -48,16 +48,18 @@ describe('FinanceHistoryPage owner states', () => {
 
   it('renders a recoverable route error when every requested week fails', () => {
     const refetch = vi.fn()
+    const internalError = 'upstream 502: postgres host=db-primary tenant=merchant-42'
     setSeries({
       data: [{ week: '2026-W30', summary: null }],
       isError: true,
-      error: new Error('История недоступна'),
+      error: new Error(internalError),
       refetch,
     })
 
     render(<FinanceHistoryPage />)
 
-    expect(screen.getByText('История недоступна')).toBeInTheDocument()
+    expect(screen.getByText('Не удалось загрузить историю финансов.')).toBeInTheDocument()
+    expect(screen.queryByText(internalError)).not.toBeInTheDocument()
     fireEvent.click(screen.getByRole('button', { name: 'Повторить' }))
     expect(refetch).toHaveBeenCalledTimes(1)
   })

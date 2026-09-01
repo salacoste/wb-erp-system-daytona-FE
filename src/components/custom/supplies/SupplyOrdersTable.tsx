@@ -65,8 +65,7 @@ export function SupplyOrdersTable({
   const focusFallbackRef = useRef<HTMLDivElement>(null)
   const canRemove = status === 'OPEN'
 
-  const handleRemoveClick = (order: SupplyOrder, e: React.MouseEvent) => {
-    e.stopPropagation()
+  const handleRemoveClick = (order: SupplyOrder) => {
     setOrderToRemove(order)
     setIsRemoveDialogOpen(true)
   }
@@ -118,11 +117,7 @@ export function SupplyOrdersTable({
                 {orders.map(order => {
                   const statusConfig = getSupplierStatusBadge(order.supplierStatus)
                   return (
-                    <TableRow
-                      key={order.orderId}
-                      className={onOrderClick ? 'cursor-pointer hover:bg-muted/50' : undefined}
-                      onClick={() => onOrderClick?.(order)}
-                    >
+                    <TableRow key={order.orderId}>
                       <TableCell className="font-mono text-sm">
                         {onOrderClick ? (
                           <Button
@@ -131,10 +126,7 @@ export function SupplyOrdersTable({
                             size="sm"
                             className="h-auto p-0 font-mono text-sm font-normal"
                             aria-label={`Открыть заказ ${order.orderId}`}
-                            onClick={event => {
-                              event.stopPropagation()
-                              onOrderClick(order)
-                            }}
+                            onClick={() => onOrderClick(order)}
                           >
                             {order.orderId}
                           </Button>
@@ -166,7 +158,7 @@ export function SupplyOrdersTable({
                           <Button
                             variant="ghost"
                             size="sm"
-                            onClick={e => handleRemoveClick(order, e)}
+                            onClick={() => handleRemoveClick(order)}
                             disabled={isRemoving}
                             aria-label={`Удалить заказ ${order.orderId}`}
                           >

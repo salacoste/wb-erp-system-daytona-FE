@@ -21,6 +21,19 @@ independent critic and code-review passes: the supplies table still exposed a fo
 and the model-evaluation route incorrectly declared its rendered sorting and selection/actions
 features N/A. Both findings are now closed by a real named detail button, a canonical fail-closed
 focusable-row invariant, exact owner-test bindings, and an executed-feature regression pin.
+Candidate `f8cbaba2f48ef3b59c0a8154626a237f24cc1276` was then rejected because the
+now-unfocusable supply row still retained pointer-only `onClick` behavior and the ignored
+  `.playwright-cli/` directory retained raw browser diagnostics. The row has no handler or pointer
+  cursor now; its named detail button is the sole navigation action, and all ignored browser
+diagnostics were deleted without reading their contents.
+The same review also identified raw API-derived error text on the finance-history terminal state;
+that route now renders stable localized recovery copy and its owner regression proves that hostile
+internal detail is not exposed.
+The final critic pass additionally found that surplus manifest entries were only indexed, not
+rejected. Merge-ready validation now requires exact key-set equality with the canonical owner plus
+default-route execution union, while recording mode remains explicitly partial. Focused negative
+tests reject surplus stale, failed, skipped, nonexistent-source, obsolete-scenario, and unknown
+entries.
 Because this Story introduces novel
 validator semantics, three fresh independent `APPROVE` reviews on one unchanged final commit remain
 the immutable pre-merge gate. The final commit SHA, review verdicts, PR identity, merge commit, and
@@ -30,7 +43,7 @@ truthfully contain its own final SHA.
 ### Actual expanded file manifest
 
 The original three-file scope expanded only when the live matrix found concrete route-owner defects.
-The generated exact scope register contains 423 files relative to the unchanged `origin/main` base;
+The generated exact scope register contains 424 files relative to the unchanged `origin/main` base;
 it is the authoritative file-level inventory. The current delivery contains these principal groups:
 
 - Story evidence runtime:
@@ -65,9 +78,9 @@ it is the authoritative file-level inventory. The current delivery contains thes
   named native detail buttons with propagation containment. The route inventory binds its rendered
   sorting and selection/actions features to the exact executable owner scenario rather than N/A.
 - Supply-order table semantics:
-  `src/components/custom/supplies/SupplyOrdersTable.tsx` and its focused test preserve pointer-only
-  row convenience while moving Enter/Space activation to a named shadcn `Button`; native rows have
-  neither an interactive role nor a non-negative `tabindex`.
+  `src/components/custom/supplies/SupplyOrdersTable.tsx` and its focused test move pointer,
+  Enter, and Space activation exclusively to a named shadcn `Button`; native rows have no handler,
+  pointer cursor, interactive role, or non-negative `tabindex`.
 - Dedicated browser/state closure:
   `e2e/story-174-3-dedicated-route-evidence.spec.ts`, exact Settings/Telegram/Shipment/SKU browser
   repairs, and fail-closed Story state/surface contract tests under `src/test/`.
@@ -209,11 +222,16 @@ table/chart features: 292 executed / 331 explicit N/A
     agree with `aria-expanded`, with collapsed and expanded regression coverage.
 18. Acquiring period deep links retain their bounded ISO-date parsing while exposing the page-level
     `searchParams` prop as an explicit awaited `Promise`, satisfying the Next async-params guard.
-19. Supply-order detail activation is owned by a descriptive native button (`Открыть заказ <id>`),
-    with exact-once Enter/Space tests; the native row remains pointer-convenient but unfocusable.
+19. Supply-order detail activation is owned exclusively by a descriptive native button
+    (`Открыть заказ <id>`), with exact-once pointer/Enter/Space tests; the native row has no pointer
+    handler, interactive styling, role, or tab stop.
 20. Model-evaluation sorting and selection/actions are declared executed and pinned to their exact
-    combined owner source/scenario; the aggregate is `292 executed / 331 explicit N/A` and fails closed if
-    either interactive feature regresses to N/A.
+     combined owner source/scenario; the aggregate is `292 executed / 331 explicit N/A` and fails closed if
+     either interactive feature regresses to N/A.
+21. Finance-history full-failure recovery renders stable Russian copy rather than arbitrary
+    API-derived `error.message` content; its owner test rejects a hostile internal-detail fixture.
+22. Merge-ready manifest indexing requires exact equality with the canonical execution union and
+    rejects every surplus entry; partial recording validation is explicitly isolated from that gate.
 
 No axe rule, threshold, exclusion, network guard, privacy guard, or route assertion was weakened.
 
@@ -227,8 +245,8 @@ theme tokens, reading/heading order, table/chart semantics, and visible keyboard
 
 Authenticated screenshots, videos, traces, ARIA snapshots, and raw attachments remain prohibited.
 Evidence is privacy-safe DOM/accessibility/geometry/computed-style data only. `e2e/.auth/user.json`,
-`test-results/`, and `playwright-report/` must be removed after final browser validation without
-reading auth contents.
+`test-results/`, `playwright-report/`, and `.playwright-cli/` must be removed after final browser
+validation without reading auth or retained browser-diagnostic contents.
 
 ### Operator-driven evidence review — 2026-09-01
 
@@ -284,9 +302,9 @@ automated or operator-driven PASS.
 Pinned runtime: Node `v24.18.0`, npm `11.11.0`.
 
 ```text
-Targeted Story state/surface/manifest-reader/manual-evidence contracts: 4 files, 43/43 tests passed
-Focused supply-order/model-evaluation native-row regressions: 4 files, 122/122 tests passed
-Full Vitest: 1,270 files, 19,347/19,347 tests passed
+Targeted Story state/surface/manifest-reader/manual-evidence contracts: 4 files, 51/51 tests passed
+Focused supply-order/model-evaluation/finance-history regressions: 5 files, 126/126 tests passed
+Full Vitest: 1,270 files, 19,355/19,355 tests passed
 Canonical Story runner: 82 passed / 1 optional Manager skip / 0 failed
 Owner browser regeneration: 368 passed / 22 accepted optional/live-data skips / 0 failed
 Dedicated route/SKU evidence: 4 current-source executions / 0 gaps
@@ -305,7 +323,7 @@ npm run check:lessons: PASS, 302 files / 96 lesson lines / zero violations
 E2E assertion/wait/bare-skip, Next params, locale-percent, and policy guards: PASS
 Anti-pattern-8 normalizer: PASS at the lowered 50-site baseline
 ESLint rule registry: PASS, 2 configs; relocatability self-test: 8/8 passed
-Privacy policy tests: 29/29 passed; repository scan: 3,633 text files / 0 findings
+Privacy policy tests: 29/29 passed; repository scan: 3,634 text files / 0 findings
 ```
 
 The canonical runner directly verifies all 76 route identities, 912 state dispositions, six widths
