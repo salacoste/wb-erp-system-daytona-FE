@@ -121,6 +121,8 @@ Ledger-каноническое ожидание переведено `planned �
 9. **pm2** — удалить stopped-регистрацию id 5.
 10. (P3, по окну) format:check 39 → 0; унификация ~25 route-гардов.
 
+Развёртка этого чеклиста в исполняемые дорожки (P0→P3, шаги + DoD) — §8 ниже.
+
 ## 6. Точки входа мейнтейнера
 
 | Ресурс                                                   | Путь                                                                                                                                                                                                                                      |
@@ -140,4 +142,49 @@ Ledger-каноническое ожидание переведено `planned �
 - Прошлые handoff'ы (исторические, заменены этим документом): `docs/HANDOFF-2026-08-29-EPIC-173-174-FULL-MIGRATION-AND-DEBT.md` (глубокий канон §11 — остаётся справочником долга), `docs/HANDOFF-2026-08-30-TEAM-HANDOFF-173.13-EPILOGUE-174-FULL-DEBT.md`, `docs/HANDOFF-2026-09-01-TEAM-HANDOFF-174-5-FINAL-CLOSEOUT-AND-DEBT.md`.
 - Окружение (было верно на момент закрытия): Node 24.18.0 PATH-пин `/opt/homebrew/opt/node@24/bin`; npm 11.11.0; build только `npx next build --webpack`; e2e только `npm run test:e2e[:full]`; FE :3100, BE :3000, BE Swagger `/api`, health `/v1/health`.
 
-_Подготовлено в closeout Story 174.5 (94/94); факты сверены с живыми реестрами на базе `0d6225acb9abfafa872d2d2ee45f215594edc4e6`._
+## 8. Рабочий скоуп для принимающей команды (внедренческий бэклог, 2026-09-02)
+
+> Развёртка регистра §4 в исполняемый план: дорожки P0→P3, шаги, definition-of-done. Новых фактов нет — только организация. Каждая дорожка = своя ветка/PR; на каждый PR — гейты §3 + CLAUDE.md «Accepted Baselines» (правила сдвига базлайнов — тем же коммитом).
+
+### P0 — Security-lane (рекомендуется первым)
+
+| #   | Задача                                                                        | Шаги                                                                                                                                                                 | DoD                                                                |
+| --- | ----------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------ |
+| S-1 | **FE-D9** — `logApiError` пишет тела не-2xx ответов (могут содержать секреты) | найти все вызовы (`rg -n "logApiError" src/`); ввести redact-слой (паттерны ключей: token/password/secret/authorization/cookie); добавить vitest на redact-правила   | ни один вызов не логирует raw-тело; redact-правила покрыты тестами |
+| S-2 | **SEC-DOC-1** — plaintext-креды в tracked docs                                | составить каталог вхождений (поиск по паттернам кредов в `docs/`, `*.md`, HTTP-файлам); заменить на env-ссылки/плейсхолдеры; затронутые креды **ротировать** (owner) | каталог пуст; ротация подтверждена владельцем                      |
+
+### P1 — Продуктовые дефекты (каждый = отдельная стори, behavior-changing → 2 прохода ревью)
+
+| #   | Дефект                                    | Фикс                                                                                                                                                                      | Точки входа                                                                                             |
+| --- | ----------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------- |
+| D-1 | **PB-1** silent cabinet-create            | recovery-ветка в `handleCreateCabinet` при settlement `indeterminate`: рендер recovery-алерта + retry (сейчас — молчаливый скип); nonce-lifecycle по артефакту 174.4 (D3) | `src/lib/api.ts:128`, `src/stores/authStore.ts`                                                         |
+| D-2 | **PB-3** нет реактивного 401-refresh      | перехват 401 в api-client → refresh → replay (1 повтор); обновить G4-пин на новое поведение                                                                               | `src/lib/api-client.ts`, `src/lib/api/__tests__/api-client-401-refresh.test.ts`                         |
+| D-3 | **PB-4** FeedbackButtons dark-fail 3.53:1 | solid-пара `bg-status-success text-status-success-foreground`; поправить origin-комментарий (`:16`, неверное «~6.5:1»); затем снять boundary-исключение → ratchet ↓       | `src/components/custom/ai/FeedbackButtons.tsx`; `scripts/check-shadcn-ui-boundary.mjs` + manifest §7    |
+| D-4 | **/15-family** <4.5:1                     | те же solid-пары (канон 173.12 / 174.4-D5); замер обеих тем после замены                                                                                                  | `src/components/custom/price-calculator/margin-status-helpers.ts:13,16`, `AcceptanceStatusBadge.tsx:49` |
+| D-5 | **PB-2** nested `<main>`                  | убрать дублирующий landmark                                                                                                                                               | `src/app/(dashboard)/analytics/ai-admin/preferences`                                                    |
+
+### P2 — Качество/консистентность (волнами)
+
+- **boundary 459 owner-sweep**: волнами по 5–10 файлов из каталога `shadcn-ui-boundary-classification-manifest.md` (per-route counts); каждый файл — import-closure + контраст-замер, НЕ механическая замена; снижение `scripts/.shadcn-ui-boundary-baseline.txt` тем же коммитом (ratchet ↓ только).
+- **/80-sweep**: замер light/dark по всем `text-*/80` → replace на семантические пары или accepted-exception; кандидат на расширение boundary-сканера.
+- **C13** GapsTable caption-dup (`GapsTable.tsx:65,67`); **C15** URGENCY_CLASS типизация (`LiquidationScenarioCard.tsx:20-24`); **C5** waterfall dual-authority — ждёт owner-решения по chart-palette (13 серий / 11 hex + 2 токена); **C8** FunnelPageContent — на капе 200 строк, следить при касании.
+- **FE-D1/D3/D5/D8** — по канону §11.1 (`HANDOFF-2026-08-29`): mutation-retry на 4xx, getErrorMessage raw, cross-tab cabinet CAS, SAFE_RECONCILIATION stuck-path.
+
+### P3 — Инфраструктура/процесс (по удобному окну)
+
+- harness: обобщить restart-per-run раннер (tmp-worktree + собственный дев-сервер на прогон) — канон 174.3.
+- FR-7: ресид тест-данных ИЛИ re-pin на актуальный nmId/неделю (2 замороженных e2e).
+- AT-матрица: реальные скрин-ридеры (VoiceOver/NVDA/JAWS/TalkBack) ИЛИ письменный owner-accept остаточного риска.
+- Manager-creds: прогон Manager-джорней с кредами ИЛИ фиксация optional-статуса ~22-23 скипов.
+- docs-95: canonical-vs-archival split → осознанный `bash scripts/check-doc-citations.sh --update-baseline` с разбором NEW/RESOLVED.
+- format:check 39→0; унификация ~25 route-гардов к exact-array; `pm2 delete 5 && pm2 save` (stopped-регистрация).
+
+### Как работать в этом репо (свод для новой команды)
+
+- **Гейты на каждый PR**: `npm run lint` (0 errors / 0 warnings) · `npm run type-check` (0) · `npm run check:max-lines` · `npx next build --webpack` · полный `npm test -- --run` (floor **19 363**, монотонный: падения недопустимы, рост — ок) · boundary/docs/locale/lessons по таблице §3. Полные правила и базлайны — CLAUDE.md «Accepted Baselines».
+- **Процесс**: двухпроходное ревью в свежих контекстах обязательно для behavior-changing кода; Change Log стори APPEND-ONLY; close-строка с `**Lessons:**` ≤120 симв/пункт; вместо TODO — `PENDING BACKEND:`/`FUTURE:` со ссылкой на файл-запрос.
+- **Worktree-паттерн**: `git worktree add -b <branch> /private/tmp/<name> main` + `ln -s <primary>/node_modules <wt>/node_modules` + копии `.env.local`/`.env.e2e`; после merge — удалить ветку (local+remote), worktree, `git worktree prune`, приложить absence-evidence.
+- **e2e-ловушки**: пиннед-спеки 174.3 руками НЕ править (SHA-манифест ломает module-load всей e2e; регенерация только `scripts/run-story-174-3-state-evidence.mjs --owner-browsers`); storageState TTL ~1 ч (при странностях `rm e2e/.auth/user.json`); BE-логин троттл 5/ч (≤2 прогона/час, пауза 60+ мин при 429, fail-попытки тоже жгутся); дев-сервер деградирует — рестарт на каждый тяжёлый прогон; `networkidle` не использовать (фоновый поллинг).
+- **Запреты**: `src/components/ui/**` только через `npx shadcn@latest add`; force-push и прямые пуши в main; обязательные CI-гейты без owner-решения; `any`/`as`-касты; `?? 0` на money/ratio полях (анти-паттерн #8 — сохранять null → «—»); линтер-директивы без канонического allowlist-формата.
+
+_Подготовлено в closeout Story 174.5 (94/94); факты сверены с живыми реестрами на базе `0d6225acb9abfafa872d2d2ee45f215594edc4e6`. §8 добавлен пост-closeout (2026-09-02, docs-PR) по запросу владельца — развёртка §4/§5 в рабочий бэклог; регистр долга не менялся._
