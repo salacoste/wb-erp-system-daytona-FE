@@ -101,4 +101,12 @@ describe('AnalyticsNavigation — grouped hub navigation lock', () => {
     // at least one card carries a semantic token accent
     expect(container.querySelector('[class*="text-status-"], [class*="text-primary"]')).toBeTruthy()
   })
+
+  it('keeps informational copy at the contrast-safe muted foreground opacity', () => {
+    const container = renderHub()
+    expect(container.querySelector('p.text-muted-foreground\\/70')).not.toBeInTheDocument()
+    for (const section of sections) {
+      expect(container).toHaveTextContent(section.description)
+    }
+  })
 })

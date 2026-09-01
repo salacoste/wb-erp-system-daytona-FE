@@ -6,6 +6,11 @@ import { ROUTES, TIMEOUTS } from './fixtures/test-data'
 const LIQUIDITY_PATH = '/v1/analytics/liquidity'
 const TRENDS_PATH = '/v1/analytics/liquidity/trends'
 const INITIAL_QUERY = { sort_by: 'turnover_days', sort_order: 'desc', limit: '200' }
+const LIQUIDITY_TABLE_NAME = 'Ликвидность товаров по SKU'
+
+function getLiquidityTable(page: Page) {
+  return page.getByRole('table', { name: LIQUIDITY_TABLE_NAME })
+}
 
 function matchesLiquidityResponse(
   response: Response,
@@ -44,12 +49,13 @@ async function expectLiquidityData(page: Page, marker?: RegExp) {
   await expect(page.getByText('Распределение по ликвидности', { exact: true })).toBeVisible({
     timeout: TIMEOUTS.api,
   })
-  await expect(page.getByRole('table')).toBeVisible()
-  if (marker) await expect(page.getByRole('table').getByText(marker).first()).toBeVisible()
+  const table = getLiquidityTable(page)
+  await expect(table).toBeVisible()
+  if (marker) await expect(table.getByText(marker).first()).toBeVisible()
 }
 
 async function expectFirstLiquiditySku(page: Page, sku: string) {
-  await expect(page.getByRole('table').getByRole('row').nth(1)).toContainText(sku)
+  await expect(getLiquidityTable(page).getByRole('row').nth(1)).toContainText(sku)
 }
 
 async function fetchRejectedRequests(
@@ -93,7 +99,9 @@ test.describe('Liquidity Analysis — Story 162.5 deterministic synchronization'
     await expect(page.getByText('Низкая ликвидность', { exact: true }).first()).toBeVisible()
     await expect(page.getByText('Неликвид', { exact: true }).first()).toBeVisible()
     await expect(page.getByText('Всего на складе', { exact: true })).toBeVisible()
-    await expect(page.getByText('Замороженный капитал', { exact: true })).toBeVisible()
+    await expect(
+      page.getByRole('paragraph').filter({ hasText: /^Замороженный капитал$/ })
+    ).toBeVisible()
     await expect(page.getByText('Сравнение с целями', { exact: true })).toBeVisible()
     await expect(page.getByText('Всего артикулов: 8', { exact: true })).toBeVisible()
     await expect(page.locator('svg.recharts-surface').first()).toBeVisible()
@@ -116,7 +124,7 @@ test.describe('Liquidity Analysis — Story 162.5 deterministic synchronization'
     await filteredRequest
     await expectLiquidityData(page, /LQ illiquid turnover_days desc/)
     await expect(page.getByText('2 товаров', { exact: true })).toBeVisible()
-    await expect(page.getByRole('table').getByRole('cell', { name: /Неликвид$/ })).toHaveCount(2)
+    await expect(getLiquidityTable(page).getByRole('cell', { name: /Неликвид$/ })).toHaveCount(2)
 
     await illiquidCard.click()
     await expectLiquidityData(page, /LQ all turnover_days desc/)
@@ -129,22 +137,23 @@ test.describe('Liquidity Analysis — Story 162.5 deterministic synchronization'
   }) => {
     await page.clock.install()
     const controller = await openLiquidity(page)
-    const turnoverHeader = page.getByRole('columnheader', { name: /Оборот/ })
-    await expect(turnoverHeader).toBeVisible()
+    const turnoverSort = page.getByRole('button', { name: 'Оборот' })
+    const turnoverHeader = turnoverSort.locator('xpath=ancestor::th')
+    await expect(turnoverSort).toBeVisible()
 
     const ascendingResponse = page.waitForResponse(response =>
       matchesLiquidityResponse(response, { ...INITIAL_QUERY, sort_order: 'asc' })
     )
-    await turnoverHeader.click()
+    await turnoverSort.click()
     await ascendingResponse
-    await expect(turnoverHeader).toHaveAttribute('class', /cursor-pointer/)
+    await expect(turnoverHeader).toHaveAttribute('aria-sort', 'ascending')
     await expectLiquidityData(page, /LQ all turnover_days asc/)
     await expect(
-      page.getByRole('table').getByText('LQ all turnover_days asc · товар 01')
+      getLiquidityTable(page).getByText('LQ all turnover_days asc · товар 01')
     ).toBeVisible()
     await expectFirstLiquiditySku(page, 'LQ-001')
 
-    const stockValueHeader = page.getByRole('columnheader', { name: /Стоимость/ })
+    const stockValueSort = page.getByRole('button', { name: 'Стоимость' })
     const stockValueResponse = page.waitForResponse(response =>
       matchesLiquidityResponse(response, {
         sort_by: 'frozen_capital',
@@ -152,17 +161,17 @@ test.describe('Liquidity Analysis — Story 162.5 deterministic synchronization'
         limit: '200',
       })
     )
-    await stockValueHeader.click()
+    await stockValueSort.click()
     await stockValueResponse
     await expectLiquidityData(page, /LQ all frozen_capital desc/)
     await expectFirstLiquiditySku(page, 'LQ-008')
 
-    const velocityHeader = page.getByRole('columnheader', { name: /Скорость/ })
+    const velocitySort = page.getByRole('button', { name: 'Скорость' })
     await page.clock.setSystemTime(Date.now() + 300_001)
     const velocityResponse = page.waitForResponse(response =>
       matchesLiquidityResponse(response, INITIAL_QUERY)
     )
-    await velocityHeader.click()
+    await velocitySort.click()
     await velocityResponse
     await expectLiquidityData(page, /LQ all turnover_days desc/)
     await expectFirstLiquiditySku(page, 'LQ-001')
@@ -217,9 +226,16 @@ test.describe('Liquidity Analysis — Story 162.5 deterministic synchronization'
     page,
   }) => {
     await openLiquidity(page)
-    const table = page.getByRole('table')
+    const table = getLiquidityTable(page)
     const firstDataRow = table.getByRole('row').nth(1)
-    await firstDataRow.click()
+    const expandDetails = firstDataRow.getByRole('button', {
+      name: /^Показать детали SKU LQ-/,
+    })
+    await expect(expandDetails).toHaveAttribute('aria-expanded', 'false')
+    await expandDetails.click()
+    await expect(
+      firstDataRow.getByRole('button', { name: /^Скрыть детали SKU LQ-/ })
+    ).toHaveAttribute('aria-expanded', 'true')
     await expect(table.getByRole('heading', { name: 'Рекомендация' })).toBeVisible()
     await expect(table.getByText(/SKU: LQ-/)).toBeVisible()
 
@@ -229,7 +245,7 @@ test.describe('Liquidity Analysis — Story 162.5 deterministic synchronization'
     await expect(dialog.getByRole('heading', { name: 'Планировщик ликвидации' })).toBeVisible()
     await expect(dialog.getByText('Сценарии ликвидации', { exact: true })).toBeVisible()
     await expect(dialog.getByText('Выручка', { exact: true }).first()).toBeVisible()
-    await dialog.getByRole('button', { name: 'Закрыть' }).click()
+    await dialog.getByRole('button', { name: 'Закрыть' }).first().click()
     await expect(dialog).toBeHidden()
   })
 
@@ -309,7 +325,7 @@ test.describe('Liquidity Trends — Story 165.4-FE (independent section states)'
     await expect(page.locator('svg.recharts-surface').first()).toBeVisible()
     // Surrounding sections still usable.
     await expect(page.getByText('Сравнение с целями', { exact: true })).toBeVisible()
-    await expect(page.getByRole('table')).toBeVisible()
+    await expect(getLiquidityTable(page)).toBeVisible()
   })
 
   test('period selector issues an exact trends request', async ({ page }) => {
@@ -365,7 +381,7 @@ test.describe('Liquidity Trends — Story 165.4-FE (independent section states)'
     // AC4 independence: a sibling section + table stay visible despite the
     // trends failure (the surrounding page is NOT blanked).
     await expect(page.getByText('Сравнение с целями', { exact: true })).toBeVisible()
-    await expect(page.getByRole('table')).toBeVisible()
+    await expect(getLiquidityTable(page)).toBeVisible()
     controller.assertNoUnexpectedRequests()
   })
 })

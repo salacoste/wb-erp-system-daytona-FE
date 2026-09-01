@@ -90,7 +90,9 @@ describe('SearchPositionMoversTable', () => {
   it('colors a stable mover muted', () => {
     render(
       <SearchPositionMoversTable
-        isLoading={false} isError={false} movers={[
+        isLoading={false}
+        isError={false}
+        movers={[
           {
             nmId: 111,
             currentAvgPosition: 10,
@@ -113,7 +115,9 @@ describe('SearchPositionMoversTable', () => {
     // Color MUST follow `trend`, so a POSITIVE number with trend:'declining' is RED.
     render(
       <SearchPositionMoversTable
-        isLoading={false} isError={false} movers={[
+        isLoading={false}
+        isError={false}
+        movers={[
           {
             nmId: 222,
             currentAvgPosition: 30,
@@ -149,17 +153,23 @@ describe('SearchPositionMoversTable', () => {
 
 describe('SearchPositionOpportunitiesTable', () => {
   it('renders opportunity rows', () => {
-    render(<SearchPositionOpportunitiesTable isLoading={false} isError={false} items={mockCloseItems} />)
+    render(
+      <SearchPositionOpportunitiesTable isLoading={false} isError={false} items={mockCloseItems} />
+    )
     expect(screen.getByText('345678')).toBeInTheDocument()
   })
 
   it('shows "До топ-20" column header', () => {
-    render(<SearchPositionOpportunitiesTable isLoading={false} isError={false} items={mockCloseItems} />)
+    render(
+      <SearchPositionOpportunitiesTable isLoading={false} isError={false} items={mockCloseItems} />
+    )
     expect(screen.getByText('До топ-20')).toBeInTheDocument()
   })
 
   it('shows positionsAway as negative blue number', () => {
-    render(<SearchPositionOpportunitiesTable isLoading={false} isError={false} items={mockCloseItems} />)
+    render(
+      <SearchPositionOpportunitiesTable isLoading={false} isError={false} items={mockCloseItems} />
+    )
     const away = screen.getByText('-5')
     expect(away).toBeInTheDocument()
     expect(away.className).toContain('text-status-information')

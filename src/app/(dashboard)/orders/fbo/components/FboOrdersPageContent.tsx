@@ -10,6 +10,7 @@
 import { useState } from 'react'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Card, CardContent } from '@/components/ui/card'
+import { Button } from '@/components/ui/button'
 import { FboOrdersTable } from './FboOrdersTable'
 import { FboSalesTable } from './FboSalesTable'
 import { FboSyncControls } from './FboSyncControls'
@@ -131,29 +132,72 @@ export function FboOrdersPageContent() {
         </TabsList>
 
         <TabsContent value="orders">
-          <FboOrdersTable
-            orders={ordersQuery.data?.items ?? []}
-            isLoading={ordersQuery.isLoading && !ordersQuery.data}
-            page={page}
-            totalPages={Math.ceil((ordersQuery.data?.pagination.total ?? 0) / PAGE_SIZE)}
-            totalCount={ordersQuery.data?.pagination.total ?? 0}
-            onPageChange={setPage}
-            captionText="Заказы FBO Wildberries"
-          />
+          {ordersQuery.isError && (
+            <FboListError
+              message={
+                ordersQuery.data
+                  ? 'Не удалось обновить заказы FBO. Показаны ранее загруженные данные.'
+                  : 'Не удалось загрузить заказы FBO.'
+              }
+              onRetry={() => ordersQuery.refetch()}
+            />
+          )}
+          {(!ordersQuery.isError || ordersQuery.data) && (
+            <FboOrdersTable
+              orders={ordersQuery.data?.items ?? []}
+              isLoading={ordersQuery.isLoading && !ordersQuery.data}
+              page={page}
+              totalPages={Math.ceil((ordersQuery.data?.pagination.total ?? 0) / PAGE_SIZE)}
+              totalCount={ordersQuery.data?.pagination.total ?? 0}
+              onPageChange={setPage}
+              captionText="Заказы FBO Wildberries"
+            />
+          )}
         </TabsContent>
 
         <TabsContent value="sales">
-          <FboSalesTable
-            sales={salesQuery.data?.items ?? []}
-            isLoading={salesQuery.isLoading && !salesQuery.data}
-            page={page}
-            totalPages={Math.ceil((salesQuery.data?.pagination.total ?? 0) / PAGE_SIZE)}
-            totalCount={salesQuery.data?.pagination.total ?? 0}
-            onPageChange={setPage}
-            captionText="Продажи FBO Wildberries"
-          />
+          {salesQuery.isError && (
+            <FboListError
+              message={
+                salesQuery.data
+                  ? 'Не удалось обновить продажи FBO. Показаны ранее загруженные данные.'
+                  : 'Не удалось загрузить продажи FBO.'
+              }
+              onRetry={() => salesQuery.refetch()}
+            />
+          )}
+          {(!salesQuery.isError || salesQuery.data) && (
+            <FboSalesTable
+              sales={salesQuery.data?.items ?? []}
+              isLoading={salesQuery.isLoading && !salesQuery.data}
+              page={page}
+              totalPages={Math.ceil((salesQuery.data?.pagination.total ?? 0) / PAGE_SIZE)}
+              totalCount={salesQuery.data?.pagination.total ?? 0}
+              onPageChange={setPage}
+              captionText="Продажи FBO Wildberries"
+            />
+          )}
         </TabsContent>
       </Tabs>
+    </div>
+  )
+}
+
+interface FboListErrorProps {
+  message: string
+  onRetry: () => unknown
+}
+
+function FboListError({ message, onRetry }: FboListErrorProps) {
+  return (
+    <div
+      className="mb-4 flex flex-col items-center justify-center rounded-md border border-destructive/30 bg-destructive/5 px-4 py-6 text-center"
+      role="alert"
+    >
+      <p className="text-sm text-destructive">{message}</p>
+      <Button variant="outline" size="sm" className="mt-3" onClick={onRetry}>
+        Повторить
+      </Button>
     </div>
   )
 }

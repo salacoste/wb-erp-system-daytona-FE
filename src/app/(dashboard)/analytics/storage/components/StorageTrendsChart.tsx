@@ -32,8 +32,9 @@ import type { StorageTrendPoint, MoneyMetricSummary } from '@/types/storage-anal
 import { CHART_COLORS } from './storage-trends-config'
 import { formatWeekShort } from './storage-format'
 import { TrendBadge, SummaryStats, CustomTooltip, CustomDot } from './StorageTrendsChartParts'
+import { ResponsiveChartFrame } from '@/components/custom/analytics/ResponsiveChartFrame'
 // Story 169.12: sr-only data alternative (169.11 ReturnTrendSrTable precedent)
-import { StorageTrendSrTable } from './StorageTrendSrTable'
+import { STORAGE_TREND_DATA_TABLE_ID, StorageTrendSrTable } from './StorageTrendSrTable'
 
 // Barrel re-exports for consumers (formatters single-sourced in storage-format,
 // Story 169.12 dedupe)
@@ -41,6 +42,14 @@ export { CHART_COLORS } from './storage-trends-config'
 export { formatCurrency, formatWeekShort } from './storage-format'
 export { TrendBadge, SummaryStats, CustomTooltip, CustomDot } from './StorageTrendsChartParts'
 export type { TooltipPayload, CustomDotProps } from './StorageTrendsChartParts'
+
+function prefersReducedMotion(): boolean {
+  return (
+    typeof window !== 'undefined' &&
+    typeof window.matchMedia === 'function' &&
+    window.matchMedia('(prefers-reduced-motion: reduce)').matches
+  )
+}
 
 interface StorageTrendsChartProps {
   data: StorageTrendPoint[]
@@ -61,6 +70,7 @@ export function StorageTrendsChart({
   selectedWeek,
   onWeekClick,
 }: StorageTrendsChartProps) {
+  const reduceMotion = prefersReducedMotion()
   // Loading skeleton
   if (isLoading) {
     return (
@@ -112,50 +122,58 @@ export function StorageTrendsChart({
       )}
 
       {/* Chart */}
-      <ResponsiveContainer width="100%" height={height}>
-        <AreaChart data={data} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
-          <defs>
-            <linearGradient id="storageFill" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="5%" stopColor={CHART_COLORS.storage} stopOpacity={0.3} />
-              <stop offset="95%" stopColor={CHART_COLORS.storage} stopOpacity={0} />
-            </linearGradient>
-          </defs>
-          <CartesianGrid strokeDasharray="3 3" className="stroke-muted" />
-          <XAxis
-            dataKey="week"
-            tickFormatter={formatWeekShort}
-            tick={{ fontSize: 12 }}
-            axisLine={{ stroke: 'var(--color-border)' }}
-            tickLine={{ stroke: 'var(--color-border)' }}
-          />
-          <YAxis
-            tickFormatter={(v: number) => `${(v / 1000).toFixed(0)}k`}
-            tick={{ fontSize: 12 }}
-            axisLine={{ stroke: 'var(--color-border)' }}
-            tickLine={{ stroke: 'var(--color-border)' }}
-            width={50}
-          />
-          <Tooltip content={<CustomTooltip />} />
-          {/* Story 24.10: Use CustomDot for click-to-filter with visual highlight */}
-          <Area
-            type="monotone"
-            dataKey="storage_cost"
-            stroke={CHART_COLORS.storage}
-            fill="url(#storageFill)"
-            strokeWidth={2}
-            connectNulls={false}
-            dot={props => (
-              <CustomDot {...props} selectedWeek={selectedWeek} onClick={onWeekClick} />
-            )}
-            activeDot={{
-              r: 6,
-              stroke: CHART_COLORS.storage,
-              strokeWidth: 2,
-              cursor: 'pointer',
-            }}
-          />
-        </AreaChart>
-      </ResponsiveContainer>
+      <ResponsiveChartFrame
+        label="График расходов на платное хранение по неделям"
+        descriptionId={STORAGE_TREND_DATA_TABLE_ID}
+        minHeightClassName="min-h-0"
+        style={{ height }}
+      >
+        <ResponsiveContainer width="100%" height="100%" minWidth={1} minHeight={1}>
+          <AreaChart data={data} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
+            <defs>
+              <linearGradient id="storageFill" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="5%" stopColor={CHART_COLORS.storage} stopOpacity={0.3} />
+                <stop offset="95%" stopColor={CHART_COLORS.storage} stopOpacity={0} />
+              </linearGradient>
+            </defs>
+            <CartesianGrid strokeDasharray="3 3" className="stroke-muted" />
+            <XAxis
+              dataKey="week"
+              tickFormatter={formatWeekShort}
+              tick={{ fontSize: 12 }}
+              axisLine={{ stroke: 'var(--color-border)' }}
+              tickLine={{ stroke: 'var(--color-border)' }}
+            />
+            <YAxis
+              tickFormatter={(v: number) => `${(v / 1000).toFixed(0)}k`}
+              tick={{ fontSize: 12 }}
+              axisLine={{ stroke: 'var(--color-border)' }}
+              tickLine={{ stroke: 'var(--color-border)' }}
+              width={50}
+            />
+            <Tooltip content={<CustomTooltip />} />
+            {/* Story 24.10: Use CustomDot for click-to-filter with visual highlight */}
+            <Area
+              type="monotone"
+              dataKey="storage_cost"
+              stroke={CHART_COLORS.storage}
+              fill="url(#storageFill)"
+              strokeWidth={2}
+              connectNulls={false}
+              isAnimationActive={!reduceMotion}
+              dot={props => (
+                <CustomDot {...props} selectedWeek={selectedWeek} onClick={onWeekClick} />
+              )}
+              activeDot={{
+                r: 6,
+                stroke: CHART_COLORS.storage,
+                strokeWidth: 2,
+                cursor: 'pointer',
+              }}
+            />
+          </AreaChart>
+        </ResponsiveContainer>
+      </ResponsiveChartFrame>
 
       {/* Story 169.12: sr-only every-week data alternative at tooltip precision */}
       <StorageTrendSrTable data={data} />

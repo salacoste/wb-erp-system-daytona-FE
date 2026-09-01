@@ -169,7 +169,7 @@ export function AdminModelsTable({
           ))}
         </TableBody>
         {/* 171.2 gap-1: static caption naming the governed-versions collection */}
-              </Table>
+      </Table>
     </div>
   )
 }

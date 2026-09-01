@@ -52,7 +52,7 @@ export function LiquidityTable({
 
   return (
     <>
-      <Card>
+      <Card className="min-w-0">
         <CardHeader className="pb-2">
           <h2 className="sr-only">Детализация по ликвидности</h2>
           <div className="flex items-center justify-between">
@@ -61,7 +61,12 @@ export function LiquidityTable({
               {activeFilter && (
                 <Badge variant="outline" className="ml-2">
                   {getLiquidityCategoryConfig(activeFilter).label}
-                  <button onClick={onClearFilter} className="ml-1 hover:text-destructive">
+                  <button
+                    type="button"
+                    aria-label={`Сбросить фильтр ${getLiquidityCategoryConfig(activeFilter).label}`}
+                    onClick={onClearFilter}
+                    className="ml-1 hover:text-destructive"
+                  >
                     <X className="h-3 w-3" />
                   </button>
                 </Badge>
@@ -70,8 +75,8 @@ export function LiquidityTable({
             <span className="text-sm text-muted-foreground">{data.length} товаров</span>
           </div>
         </CardHeader>
-        <CardContent className="p-0">
-          <div className="overflow-x-auto">
+        <CardContent className="min-w-0 p-0">
+          <div className="max-w-full overflow-x-auto">
             {/* Static caption: the period is visible in the trends preset controls
                 (30/60/90 дн.) — 169.7 picker precedent; no duplicated period text. */}
             <Table
@@ -91,15 +96,16 @@ export function LiquidityTable({
                   data.map(item => (
                     <Fragment key={item.sku_id}>
                       <TableRow
+                        onClick={() => toggleRow(item.sku_id)}
                         className={cn(
                           'cursor-pointer hover:bg-muted/50',
                           expandedRow === item.sku_id && 'bg-muted/30'
                         )}
-                        onClick={() => toggleRow(item.sku_id)}
                       >
                         <LiquidityTableRowCells
                           item={item}
                           isExpanded={expandedRow === item.sku_id}
+                          onToggle={() => toggleRow(item.sku_id)}
                           onPlannerOpen={setPlannerItem}
                         />
                       </TableRow>

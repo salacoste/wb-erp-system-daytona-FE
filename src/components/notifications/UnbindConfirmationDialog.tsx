@@ -89,7 +89,7 @@ export function UnbindConfirmationDialog({
       }}
     >
       <AlertDialogContent
-        className="max-h-[90vh] max-w-[calc(100vw-2rem)] overflow-y-auto sm:max-w-[480px]"
+        className="!left-4 !right-4 !top-4 mx-auto h-fit max-h-[calc(100dvh-2rem)] !w-auto !max-w-[480px] !translate-x-0 !translate-y-0 overflow-y-auto"
         onEscapeKeyDown={event => {
           if (isUnbinding) event.preventDefault()
         }}

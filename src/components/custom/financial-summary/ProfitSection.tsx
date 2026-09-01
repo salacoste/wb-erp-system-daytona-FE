@@ -4,7 +4,14 @@
  */
 
 import type { FinanceSummary } from '@/hooks/useDashboard'
-import { Table, TableBody, TableHead, TableHeader, TableRow } from '@/components/ui/table'
+import {
+  Table,
+  TableBody,
+  TableCaption,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Gem } from 'lucide-react'
 import { MetricRow } from './MetricRow'
@@ -33,6 +40,7 @@ export function ProfitSection({ summary, comparisonSummary, isComparison }: Prof
       </CardHeader>
       <CardContent className="pt-6">
         <Table>
+          <TableCaption className="sr-only">Чистая прибыль</TableCaption>
           <TableHeader>
             <TableRow>
               <TableHead className="w-[300px]">Показатель</TableHead>

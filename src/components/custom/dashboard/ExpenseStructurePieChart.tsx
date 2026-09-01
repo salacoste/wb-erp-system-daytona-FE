@@ -9,10 +9,11 @@
 
 'use client'
 
+import { useMemo } from 'react'
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Legend } from 'recharts'
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
 import { useExpenseStructure } from '@/hooks/useExpenseStructure'
-import { formatCurrency } from '@/lib/utils'
+import { formatCurrency, formatPercentage } from '@/lib/utils'
 import { EmptyStateIllustration } from '@/components/custom/EmptyStateIllustration'
 import { ExpenseChartSkeleton } from './ExpenseChartSkeleton'
 import { ExpenseChartTooltip } from './ExpenseChartTooltip'
@@ -37,6 +38,10 @@ export interface ExpenseStructurePieChartProps {
  */
 export function ExpenseStructurePieChart({ week, className }: ExpenseStructurePieChartProps) {
   const { data, isLoading, error } = useExpenseStructure({ week })
+  const prefersReducedMotion = useMemo(() => {
+    if (typeof window === 'undefined' || typeof window.matchMedia !== 'function') return false
+    return window.matchMedia('(prefers-reduced-motion: reduce)').matches
+  }, [])
 
   // Loading state
   if (isLoading) {
@@ -86,7 +91,8 @@ export function ExpenseStructurePieChart({ week, className }: ExpenseStructurePi
                 innerRadius={70}
                 outerRadius={110}
                 paddingAngle={2}
-                animationDuration={300}
+                isAnimationActive={!prefersReducedMotion}
+                animationDuration={prefersReducedMotion ? 0 : 300}
               >
                 {chartData.map(entry => (
                   <Cell
@@ -114,6 +120,25 @@ export function ExpenseStructurePieChart({ week, className }: ExpenseStructurePi
             </span>
           </div>
         </div>
+        <table className="sr-only">
+          <caption>{`Структура расходов за ${week}`}</caption>
+          <thead>
+            <tr>
+              <th scope="col">Категория</th>
+              <th scope="col">Доля расходов</th>
+              <th scope="col">Сумма</th>
+            </tr>
+          </thead>
+          <tbody>
+            {chartData.map(item => (
+              <tr key={item.key}>
+                <th scope="row">{item.name}</th>
+                <td>{formatPercentage(item.percentage, 1)}</td>
+                <td>{formatCurrency(item.value)}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
       </CardContent>
     </Card>
   )

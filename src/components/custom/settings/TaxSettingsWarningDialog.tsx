@@ -38,7 +38,7 @@ export function TaxSettingsWarningDialog({
   return (
     <AlertDialog open={open} onOpenChange={next => !isPending && onOpenChange(next)}>
       <AlertDialogContent
-        className="max-h-[calc(100dvh-2rem)] w-[calc(100%-2rem)] max-w-lg overflow-y-auto"
+        className="!left-4 !right-4 !top-4 mx-auto max-h-[calc(100dvh-2rem)] !w-auto !max-w-lg !translate-x-0 !translate-y-0 overflow-y-auto"
         aria-busy={isPending || undefined}
         onEscapeKeyDown={event => isPending && event.preventDefault()}
         onCloseAutoFocus={event => {

@@ -13,7 +13,7 @@
  */
 
 import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { screen, within, fireEvent } from '@testing-library/react'
+import { screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { renderWithProviders } from '@/test/utils/test-utils'
 import {
@@ -60,6 +60,12 @@ function getColumnHeader(label: string) {
   return headers.find(th => th.textContent?.includes(label))!
 }
 
+function getSupplyRow(wbSupplyId: string) {
+  return screen
+    .getByRole('button', { name: `Открыть поставку ${wbSupplyId}` })
+    .closest('tr') as HTMLTableRowElement
+}
+
 /** Helper: create a supply with a long name for truncation tests */
 function supplyWithLongName(): SupplyListItem {
   return {
@@ -72,6 +78,11 @@ function supplyWithLongName(): SupplyListItem {
 describe('SuppliesTable', () => {
   beforeEach(() => {
     vi.clearAllMocks()
+  })
+
+  it('exposes the live table with a stable accessible name', () => {
+    renderTable()
+    expect(screen.getByRole('table', { name: 'Поставки FBS' })).toBeInTheDocument()
   })
 
   // ============================================================================
@@ -155,7 +166,7 @@ describe('SuppliesTable', () => {
 
     it('displays "—" for null names', () => {
       renderTable({ supplies: [mockSupplyListItemDelivering] })
-      const row = screen.getByRole('button', { name: /WB-SUPPLY-12347/ })
+      const row = getSupplyRow('WB-SUPPLY-12347')
       const cells = within(row).getAllByRole('cell')
       expect(cells[1].textContent).toBe('—')
     })
@@ -170,7 +181,7 @@ describe('SuppliesTable', () => {
 
     it('displays orders count right-aligned', () => {
       renderTable()
-      const row = screen.getByRole('button', { name: /WB-SUPPLY-12345/ })
+      const row = getSupplyRow('WB-SUPPLY-12345')
       const cells = within(row).getAllByRole('cell')
       expect(cells[3].textContent).toBe('5')
       expect(cells[3].className).toContain('text-right')
@@ -178,7 +189,7 @@ describe('SuppliesTable', () => {
 
     it('displays total value formatted as currency', () => {
       renderTable()
-      const row = screen.getByRole('button', { name: /WB-SUPPLY-12345/ })
+      const row = getSupplyRow('WB-SUPPLY-12345')
       const cells = within(row).getAllByRole('cell')
       // formatCurrency(15000) produces "15 000 ₽" or similar with thin/narrow space
       expect(cells[4].textContent).toMatch(/15[\s   ]000/)
@@ -190,7 +201,7 @@ describe('SuppliesTable', () => {
         totalValue: undefined,
       }
       renderTable({ supplies: [noValueSupply] })
-      const row = screen.getByRole('button', { name: /WB-SUPPLY-12345/ })
+      const row = getSupplyRow('WB-SUPPLY-12345')
       const cells = within(row).getAllByRole('cell')
       expect(cells[4].textContent).toBe('—')
     })
@@ -212,7 +223,7 @@ describe('SuppliesTable', () => {
 
     it('displays "—" for null closedAt', () => {
       renderTable()
-      const row = screen.getByRole('button', { name: /WB-SUPPLY-12345/ })
+      const row = getSupplyRow('WB-SUPPLY-12345')
       const cells = within(row).getAllByRole('cell')
       // closedAt is last cell (index 6), OPEN supply has closedAt: null
       expect(cells[6].textContent).toBe('—')
@@ -268,6 +279,18 @@ describe('SuppliesTable', () => {
 
       await user.click(getColumnHeader('Заказы'))
       expect(onSortChange).toHaveBeenCalledWith('orders_count')
+    })
+
+    it('changes sort from the focused sortable header with Enter', async () => {
+      const onSortChange = vi.fn()
+      const user = userEvent.setup()
+      renderTable({ onSortChange })
+
+      const sortButton = screen.getByRole('button', { name: /Создана/ })
+      sortButton.focus()
+      await user.keyboard('{Enter}')
+
+      expect(onSortChange).toHaveBeenCalledWith('created_at')
     })
 
     it('does not show sort indicator on non-sortable columns', () => {
@@ -340,8 +363,8 @@ describe('SuppliesTable', () => {
   describe('Row Interaction', () => {
     it('shows hover state on row', () => {
       renderTable()
-      const row = screen.getByRole('button', { name: /WB-SUPPLY-12345/ })
-      expect(row.className).toContain('hover:bg-muted/50')
+      const action = screen.getByRole('button', { name: 'Открыть поставку WB-SUPPLY-12345' })
+      expect(action.closest('tr')?.className).toContain('hover:bg-muted/50')
     })
 
     it('calls onRowClick with supply id when clicking row', async () => {
@@ -349,44 +372,56 @@ describe('SuppliesTable', () => {
       renderTable({ onRowClick })
       const user = userEvent.setup()
 
-      await user.click(screen.getByRole('button', { name: /WB-SUPPLY-12345/ }))
+      await user.click(screen.getByRole('button', { name: 'Открыть поставку WB-SUPPLY-12345' }))
+      expect(onRowClick).toHaveBeenCalledTimes(1)
       expect(onRowClick).toHaveBeenCalledWith(mockSupplyListItemOpen)
     })
 
-    it('calls onRowClick when pressing Enter on focused row', () => {
+    it('calls onRowClick when pressing Enter on focused row', async () => {
       const onRowClick = vi.fn()
       renderTable({ onRowClick })
+      const user = userEvent.setup()
 
-      const row = screen.getByRole('button', { name: /WB-SUPPLY-12345/ })
-      fireEvent.keyDown(row, { key: 'Enter' })
+      const action = screen.getByRole('button', { name: 'Открыть поставку WB-SUPPLY-12345' })
+      action.focus()
+      await user.keyboard('{Enter}')
+      expect(onRowClick).toHaveBeenCalledTimes(1)
       expect(onRowClick).toHaveBeenCalledWith(mockSupplyListItemOpen)
     })
 
-    it('calls onRowClick when pressing Space on focused row', () => {
+    it('calls onRowClick when pressing Space on the focused action button', async () => {
       const onRowClick = vi.fn()
       renderTable({ onRowClick })
+      const user = userEvent.setup()
 
-      const row = screen.getByRole('button', { name: /WB-SUPPLY-12345/ })
-      fireEvent.keyDown(row, { key: ' ' })
+      const action = screen.getByRole('button', { name: 'Открыть поставку WB-SUPPLY-12345' })
+      action.focus()
+      await user.keyboard('[Space]')
+      expect(onRowClick).toHaveBeenCalledTimes(1)
       expect(onRowClick).toHaveBeenCalledWith(mockSupplyListItemOpen)
     })
 
-    it('makes rows focusable with tabindex', () => {
+    it('keeps native row/cell semantics and makes only the action button focusable', () => {
       renderTable()
-      const row = screen.getByRole('button', { name: /WB-SUPPLY-12345/ })
-      expect(row).toHaveAttribute('tabindex', '0')
+      const action = screen.getByRole('button', { name: 'Открыть поставку WB-SUPPLY-12345' })
+      const row = action.closest('tr')
+      expect(row).toHaveRole('row')
+      expect(row).not.toHaveAttribute('role')
+      expect(row).not.toHaveAttribute('tabindex')
+      expect(row?.querySelectorAll('td')).toHaveLength(7)
+      expect(action).toHaveAttribute('type', 'button')
     })
 
     it('has cursor pointer on rows', () => {
       renderTable()
-      const row = screen.getByRole('button', { name: /WB-SUPPLY-12345/ })
-      expect(row.className).toContain('cursor-pointer')
+      const action = screen.getByRole('button', { name: 'Открыть поставку WB-SUPPLY-12345' })
+      expect(action.closest('tr')?.className).toContain('cursor-pointer')
     })
 
     it('renders all supplies as rows', () => {
       renderTable()
-      const rows = screen.getAllByRole('button')
-      expect(rows).toHaveLength(5)
+      const actions = screen.getAllByRole('button', { name: /Открыть поставку WB-SUPPLY/ })
+      expect(actions).toHaveLength(5)
     })
   })
 
@@ -527,24 +562,27 @@ describe('SuppliesTable', () => {
       expect(createdHeader).toHaveAttribute('aria-sort', 'descending')
     })
 
-    it('rows have aria-label describing supply', () => {
+    it('identity actions have exact accessible names', () => {
       renderTable()
-      const row = screen.getByRole('button', { name: /Поставка WB-SUPPLY-12345/ })
-      expect(row).toHaveAttribute('aria-label', 'Поставка WB-SUPPLY-12345')
+      expect(
+        screen.getByRole('button', { name: 'Открыть поставку WB-SUPPLY-12345' })
+      ).toHaveAttribute('aria-label', 'Открыть поставку WB-SUPPLY-12345')
     })
 
-    it('rows are keyboard navigable', () => {
+    it('rows retain native semantics while their identity actions are keyboard navigable', () => {
       renderTable()
-      const row = screen.getByRole('button', { name: /WB-SUPPLY-12345/ })
-      expect(row).toHaveAttribute('tabindex', '0')
-      expect(row).toHaveAttribute('role', 'button')
+      const action = screen.getByRole('button', { name: 'Открыть поставку WB-SUPPLY-12345' })
+      const row = action.closest('tr')
+      expect(row).toHaveRole('row')
+      expect(row).not.toHaveAttribute('role')
+      expect(row).not.toHaveAttribute('tabindex')
     })
 
-    it('focus is visible on focused rows', () => {
+    it('focus is visible on focused identity actions', () => {
       renderTable()
-      const row = screen.getByRole('button', { name: /WB-SUPPLY-12345/ })
-      row.focus()
-      expect(row).toHaveFocus()
+      const action = screen.getByRole('button', { name: 'Открыть поставку WB-SUPPLY-12345' })
+      action.focus()
+      expect(action).toHaveFocus()
     })
   })
 

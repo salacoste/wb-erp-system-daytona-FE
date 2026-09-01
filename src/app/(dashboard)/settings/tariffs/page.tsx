@@ -126,7 +126,7 @@ function TariffSettingsContent() {
       <div className="min-w-0">
         {/* Tabs (AC3) */}
         <Tabs defaultValue="current" className="w-full">
-          <TabsList className="grid h-auto w-full grid-cols-1 gap-1 sm:max-w-2xl sm:grid-cols-3">
+          <TabsList className="grid h-auto w-full grid-cols-1 gap-1 md:max-w-2xl md:grid-cols-3">
             <TabsTrigger value="current">Текущие настройки</TabsTrigger>
             <TabsTrigger value="history">История версий</TabsTrigger>
             <TabsTrigger value="audit">Журнал изменений</TabsTrigger>

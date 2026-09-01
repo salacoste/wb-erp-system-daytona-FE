@@ -91,7 +91,7 @@ export function BulkCogsForm({ onSuccess }: BulkCogsFormProps) {
   }
 
   if (isLoading) return <BulkCogsLoadingSkeleton />
-  if (isError) return <BulkCogsErrorState error={error} onRetry={() => refetch()} />
+  if (isError && !data) return <BulkCogsErrorState error={error} onRetry={() => refetch()} />
 
   const products = data?.products
   if (!products || products.length === 0) {
@@ -103,6 +103,7 @@ export function BulkCogsForm({ onSuccess }: BulkCogsFormProps) {
 
   return (
     <form onSubmit={handleSubmit(handlePreview)} className="space-y-6">
+      {isError && <BulkCogsErrorState error={error} onRetry={() => refetch()} />}
       <div className="flex items-center justify-between gap-4">
         <div className="flex-1">
           <BulkCogsSearch search={search} onSearchChange={handleSearchChange} />

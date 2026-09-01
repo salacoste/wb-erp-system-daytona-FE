@@ -4,7 +4,14 @@
  */
 
 import type { FinanceSummary } from '@/hooks/useDashboard'
-import { Table, TableBody, TableHead, TableHeader, TableRow } from '@/components/ui/table'
+import {
+  Table,
+  TableBody,
+  TableCaption,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { MetricRow } from './MetricRow'
 
@@ -25,6 +32,7 @@ export function PayoutSection({ summary, comparisonSummary, isComparison }: Payo
       </CardHeader>
       <CardContent className="pt-6">
         <Table>
+          <TableCaption className="sr-only">Итого к оплате</TableCaption>
           <TableHeader>
             <TableRow>
               <TableHead className="w-[300px]">Показатель</TableHead>

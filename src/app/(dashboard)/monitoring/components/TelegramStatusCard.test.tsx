@@ -72,4 +72,26 @@ describe('TelegramStatusCard — StatusMetrics deliveryRate (0-1 ratio)', () => 
     expect(value.textContent).toMatch(/0,0\s%/)
     expect(value.className).toContain('text-status-error')
   })
+
+  it('renders the offline bot state with explicit non-color text', () => {
+    render(
+      <TelegramStatusCard
+        telegram={{ status: 'offline', deliveryRate7d: 0, recentFailures: 3 }}
+        isLoading={false}
+      />
+    )
+
+    expect(screen.getByText('Бот оффлайн')).toBeVisible()
+    expect(screen.getByLabelText('Статус бота: Бот оффлайн')).toBeVisible()
+  })
+
+  it('renders the unconfigured Telegram state with a settings recovery link', () => {
+    render(<TelegramStatusCard telegram={undefined} isLoading={false} />)
+
+    expect(screen.getByText('Не настроен')).toBeVisible()
+    expect(screen.getByRole('link', { name: /Настроить Telegram/ })).toHaveAttribute(
+      'href',
+      '/settings/notifications'
+    )
+  })
 })

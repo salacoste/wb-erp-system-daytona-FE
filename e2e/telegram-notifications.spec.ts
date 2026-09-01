@@ -257,6 +257,9 @@ async function setTheme(page: Page, theme: 'light' | 'dark') {
   await expect(page.locator('html')).toHaveClass(
     theme === 'dark' ? /(^|\s)dark(\s|$)/ : /^(?!.*(^|\s)dark(\s|$)).*$/
   )
+  await expect(page.getByRole('heading', { level: 1, name: 'Telegram Уведомления' })).toBeVisible({
+    timeout: TIMEOUTS.navigation,
+  })
 }
 
 async function expectMainHasNoHorizontalOverflow(page: Page) {
@@ -275,24 +278,38 @@ async function expectDialogFitsViewport(
   actionNames: readonly string[]
 ) {
   const viewport = page.viewportSize()
-  const box = await dialog.boundingBox()
   expect(viewport).not.toBeNull()
-  expect(box).not.toBeNull()
-  expect(box!.x).toBeGreaterThanOrEqual(0)
-  expect(box!.x + box!.width).toBeLessThanOrEqual(viewport!.width + 1)
+  await expect(dialog).toBeVisible()
+  await expect
+    .poll(async () => {
+      const box = await dialog.boundingBox()
+      if (!box) return Number.POSITIVE_INFINITY
+      return Math.max(
+        0,
+        -box.x,
+        -box.y,
+        box.x + box.width - viewport!.width,
+        box.y + box.height - viewport!.height
+      )
+    })
+    .toBeLessThanOrEqual(1)
 
   for (const name of actionNames) {
     const action = dialog.getByRole('button', { name })
     await action.scrollIntoViewIfNeeded()
     await expect(action).toBeVisible()
-    const actionBox = await action.boundingBox()
-    expect(actionBox).not.toBeNull()
-    expect(actionBox!.y).toBeGreaterThanOrEqual(0)
-    expect(actionBox!.y + actionBox!.height).toBeLessThanOrEqual(viewport!.height + 1)
+    await expect
+      .poll(async () => {
+        const actionBox = await action.boundingBox()
+        if (!actionBox) return Number.POSITIVE_INFINITY
+        return Math.max(0, -actionBox.y, actionBox.y + actionBox.height - viewport!.height)
+      })
+      .toBeLessThanOrEqual(1)
   }
 }
 
 async function expectScopedAxeClean(page: Page, selector: string, context: string) {
+  await expect(page.locator(selector).first()).toBeVisible({ timeout: TIMEOUTS.navigation })
   const results = await new AxeBuilder({ page })
     .include(selector)
     .withTags(['wcag2a', 'wcag2aa', 'wcag22aa'])
@@ -402,7 +419,7 @@ test.describe('Telegram notification settings', () => {
     })
   })
 
-  test('announces a preference-save failure after exactly one request', async ({ page }) => {
+  test('announces a preference-save failure after the configured retry', async ({ page }) => {
     const state = createFixture()
     state.preferenceMode = 'failure'
     await openNotifications(page, state)
@@ -413,7 +430,8 @@ test.describe('Telegram notification settings', () => {
     await expect(
       page.getByText('Не удалось сохранить настройки. Попробуйте ещё раз.')
     ).toBeVisible()
-    expect(state.preferenceWrites).toHaveLength(1)
+    expect(state.preferenceWrites).toHaveLength(2)
+    expect(state.preferenceWrites[1]).toEqual(state.preferenceWrites[0])
   })
 
   test('writes a valid quiet-hours change immediately with the exact value', async ({ page }) => {
@@ -488,7 +506,9 @@ test.describe('Telegram notification settings', () => {
     await expect(page.getByRole('region', { name: 'Настройки Telegram-уведомлений' })).toBeFocused()
   })
 
-  test('keeps unbind confirmation retryable after a request failure', async ({ page }) => {
+  test('keeps unbind confirmation retryable after a request failure and retry', async ({
+    page,
+  }) => {
     const state = createFixture()
     state.unbindMode = 'failure'
     await openNotifications(page, state)
@@ -503,7 +523,7 @@ test.describe('Telegram notification settings', () => {
       dialog.getByRole('button', { name: 'Подтвердить отключение Telegram' })
     ).toBeEnabled()
     await expect(page.getByText('Telegram подключен', { exact: true })).toBeVisible()
-    expect(state.unbindRequests).toBe(1)
+    expect(state.unbindRequests).toBe(2)
   })
 
   test('contains unbind focus and returns it to the invoking action after Escape', async ({

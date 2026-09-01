@@ -59,7 +59,7 @@ export function Sidebar({ items }: SidebarProps) {
                 <span>{item.label}</span>
                 {item.badge !== undefined && (
                   <span className="ml-auto">
-                    <span className="bg-destructive text-white text-xs font-bold px-2 py-0.5 rounded-full">
+                    <span className="bg-destructive text-destructive-foreground text-xs font-bold px-2 py-0.5 rounded-full">
                       {item.badge}
                     </span>
                   </span>

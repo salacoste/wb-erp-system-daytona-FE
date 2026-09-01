@@ -72,9 +72,9 @@ export function ConfidenceBadge({ confidence }: { confidence?: BuyoutConfidence 
     )
   }
 
-  // Epic 169.4: low-confidence warning chip via /15-chip idiom (no border — source had none)
+  // Keep warning valence in the tint while foreground text preserves normal-text contrast.
   return (
-    <span className="inline-flex items-center px-2 py-0.5 rounded text-xs bg-status-warning/15 text-status-warning">
+    <span className="inline-flex items-center px-2 py-0.5 rounded text-xs bg-status-warning/15 text-foreground">
       Недостаточно данных
     </span>
   )

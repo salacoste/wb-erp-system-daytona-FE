@@ -181,6 +181,18 @@ describe('MoyskladMappingsTable', () => {
     expect(screen.getByText('Нет данных')).toBeInTheDocument()
   })
 
+  it('renders the mapping table skeleton while the active filtered view is loading', () => {
+    useMoyskladMappingsMock.mockImplementation((params: MappingsParams = {}) => {
+      if (params.limit === 1) return { data: countOnly(0), isLoading: false }
+      return { data: undefined, isLoading: true, dataUpdatedAt: 0 }
+    })
+
+    const { container } = render(<MoyskladMappingsTable />)
+
+    expect(container.querySelectorAll('.animate-pulse')).toHaveLength(1)
+    expect(screen.queryByText('Нет данных')).not.toBeInTheDocument()
+  })
+
   it('disables «Назад» at page 0', () => {
     render(<MoyskladMappingsTable />)
     const prev = screen.getByRole('button', { name: 'Предыдущая страница' })

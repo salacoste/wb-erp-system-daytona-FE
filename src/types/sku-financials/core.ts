@@ -45,15 +45,15 @@ export type ProfitabilityStatus = 'excellent' | 'good' | 'warning' | 'critical' 
 
 /**
  * Color mapping for profitability status (Tailwind classes)
- * Story 168.11: /15-chip idiom (168.8 alerts/ReorderTable precedent) — one token
- * set shared with the 168.9 legend (SkuTableHeaders) and lib profitability config.
+ * Story 168.11: /15-chip idiom (168.8 alerts/ReorderTable precedent). Soft tinted
+ * profitability chips keep their semantic background while using the readable foreground token.
  */
 export const PROFITABILITY_COLORS: Record<ProfitabilityStatus, string> = {
-  excellent: 'bg-financial-positive/15 text-financial-positive',
-  good: 'bg-status-information/15 text-status-information',
-  warning: 'bg-status-warning/15 text-status-warning',
-  critical: 'bg-status-error/15 text-status-error',
-  loss: 'bg-financial-negative/15 text-financial-negative',
+  excellent: 'bg-financial-positive/15 text-foreground',
+  good: 'bg-status-information/15 text-foreground',
+  warning: 'bg-status-warning/15 text-foreground',
+  critical: 'bg-status-error/15 text-foreground',
+  loss: 'bg-financial-negative/15 text-foreground',
   unknown: 'bg-muted text-muted-foreground',
 }
 

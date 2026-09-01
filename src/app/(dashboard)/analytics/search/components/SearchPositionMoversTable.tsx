@@ -119,11 +119,15 @@ export function SearchPositionMoversTable({
                     </Link>
                   </td>
                   <td className="p-2 text-right font-medium">
-                    {m.currentAvgPosition == null ? 'Нет данных' : formatDecimal(m.currentAvgPosition, 1)}
+                    {m.currentAvgPosition == null
+                      ? 'Нет данных'
+                      : formatDecimal(m.currentAvgPosition, 1)}
                   </td>
                   <td className="p-2 text-right">
                     <span className={trendColorClass(m.trend)}>
-                      {m.positionChange == null ? 'Нет данных' : `${m.positionChange > 0 ? '+' : ''}${formatDecimal(m.positionChange, 1)}`}
+                      {m.positionChange == null
+                        ? 'Нет данных'
+                        : `${m.positionChange > 0 ? '+' : ''}${formatDecimal(m.positionChange, 1)}`}
                     </span>
                   </td>
                   <td className="p-2 text-right">{formatNumber(m.totalQueries)}</td>

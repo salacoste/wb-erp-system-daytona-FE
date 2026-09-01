@@ -12,6 +12,7 @@ import { useParams, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import { buildModelEvaluationsRoute } from '@/lib/routes'
 import { useAiSkuAccuracy } from '@/hooks/useAiSkuAccuracy'
+import { Alert, AlertDescription } from '@/components/ui/alert'
 import { SkuAccuracyOverview } from './components/SkuAccuracyOverview'
 import { SkuAccuracyDetail } from './components/SkuAccuracyDetail'
 
@@ -27,6 +28,7 @@ export default function SkuAccuracyPage() {
   const parsedNmId = nmIdParam !== null ? Number(nmIdParam) : null
   const nmId =
     parsedNmId !== null && Number.isSafeInteger(parsedNmId) && parsedNmId > 0 ? parsedNmId : null
+  const hasInvalidNmId = nmIdParam !== null && nmId === null
 
   // Pre-fetch data needed by SkuAccuracyDetail (required to look up the entry).
   // SkuAccuracyOverview has its own hook call for the overview table.
@@ -50,7 +52,13 @@ export default function SkuAccuracyPage() {
 
       <h1 className="text-2xl font-semibold">Точность по SKU</h1>
 
-      {nmId !== null ? (
+      {hasInvalidNmId ? (
+        <Alert variant="destructive">
+          <AlertDescription>
+            Некорректный параметр SKU. Вернитесь к обзору и выберите товар снова.
+          </AlertDescription>
+        </Alert>
+      ) : nmId !== null ? (
         <SkuAccuracyDetail
           nmId={nmId}
           modelId={modelId}

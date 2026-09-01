@@ -114,6 +114,20 @@ describe('OrderNotificationSettings', () => {
     expect(screen.getByLabelText('Сборка и отгрузка')).toBeInTheDocument()
   })
 
+  it('stacks fixed-width order controls before the small breakpoint', () => {
+    renderWithProviders(<OrderNotificationSettings />)
+
+    const hourInput = screen.getByLabelText('Час ежедневной сводки')
+    const slaInput = screen.getByLabelText('Подтверждение заказа')
+
+    expect(hourInput.parentElement).toHaveClass('grid-cols-1', 'min-w-0')
+    expect(hourInput.parentElement).toHaveClass('sm:grid-cols-[minmax(0,180px)_5rem_auto]')
+    expect(hourInput).toHaveClass('w-full', 'min-w-0', 'sm:w-20')
+    expect(slaInput.parentElement).toHaveClass('grid-cols-1', 'min-w-0')
+    expect(slaInput.parentElement).toHaveClass('sm:grid-cols-[minmax(0,180px)_6rem_auto]')
+    expect(slaInput).toHaveClass('w-full', 'min-w-0', 'sm:w-24')
+  })
+
   // 4. Toggle click calls updateSettings with correct partial payload
   it('toggle click calls updateSettings with correct partial payload', async () => {
     const user = userEvent.setup()

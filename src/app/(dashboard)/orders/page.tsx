@@ -12,6 +12,8 @@
 
 import { lazy, Suspense, useMemo } from 'react'
 import { Card, CardContent } from '@/components/ui/card'
+import { Alert, AlertDescription } from '@/components/ui/alert'
+import { Button } from '@/components/ui/button'
 import { useOrders, useOrdersSyncStatus, useOrdersSync } from '@/hooks/useOrders'
 import { useClientInfo } from '@/hooks/useClientInfo'
 import { useAuthStore } from '@/stores/authStore'
@@ -124,7 +126,7 @@ function OrdersPageContent() {
   }
 
   // Error state
-  if (isError) {
+  if (isError && !data) {
     return (
       <OrdersErrorState
         headerProps={{
@@ -145,6 +147,17 @@ function OrdersPageContent() {
         isSyncing={isSyncing}
         onSync={() => triggerSync()}
       />
+
+      {isError && data && (
+        <Alert variant="destructive">
+          <AlertDescription className="flex items-center justify-between gap-4">
+            <span>Не удалось обновить заказы. Показаны последние доступные данные.</span>
+            <Button variant="outline" size="sm" onClick={() => refetch()}>
+              Повторить
+            </Button>
+          </AlertDescription>
+        </Alert>
+      )}
 
       {/* Filters */}
       <Card>

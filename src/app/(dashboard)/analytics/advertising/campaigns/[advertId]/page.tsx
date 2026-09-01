@@ -20,7 +20,12 @@ export default function CampaignDetailPage() {
   const cabinetId = useAuthStore(state => state.cabinetId)
   const advertId = Number(params.advertId)
   const nmIdParam = searchParams.get('nmId')
-  const nmId = nmIdParam ? Number(nmIdParam) : undefined
+  const parsedNmId = nmIdParam !== null ? Number(nmIdParam) : undefined
+  const nmId =
+    parsedNmId !== undefined && Number.isSafeInteger(parsedNmId) && parsedNmId > 0
+      ? parsedNmId
+      : undefined
+  const hasInvalidNmId = nmIdParam !== null && nmId === undefined
 
   if (!Number.isFinite(advertId)) {
     return (
@@ -28,6 +33,22 @@ export default function CampaignDetailPage() {
         <BackLink />
         <Alert variant="destructive">
           <AlertDescription>Некорректный ID кампании</AlertDescription>
+        </Alert>
+      </div>
+    )
+  }
+
+  if (hasInvalidNmId) {
+    return (
+      <div className="space-y-4">
+        <div className="flex items-center gap-4">
+          <BackLink />
+          <h1 className="text-2xl font-semibold">Кампания #{advertId}</h1>
+        </div>
+        <Alert variant="destructive">
+          <AlertDescription>
+            Некорректный параметр товара. Вернитесь к рекламной аналитике и выберите товар снова.
+          </AlertDescription>
         </Alert>
       </div>
     )

@@ -387,12 +387,10 @@ describe('StorageTrendsWidget - Period Props', () => {
   it('passes height prop to chart component', () => {
     renderWithProviders(<StorageTrendsWidget {...defaultProps} height={300} />)
 
-    // The chart container should have height 300px applied via style
-    const chartContainer = document.querySelector('.recharts-responsive-container')
-    expect(chartContainer).toBeInTheDocument()
-    // Recharts ResponsiveContainer uses inline style for height
-    const style = chartContainer?.getAttribute('style')
-    expect(style).toContain('300')
+    const chartFrame = screen.getByRole('img', {
+      name: 'График расходов на хранение на главной странице',
+    })
+    expect(chartFrame).toHaveStyle({ height: '300px' })
   })
 })
 
@@ -455,20 +453,19 @@ describe('StorageTrendsWidget - Chart Height', () => {
   it('uses default height of 250px', () => {
     renderWithProviders(<StorageTrendsWidget {...defaultProps} />)
 
-    // Recharts ResponsiveContainer renders with the default height
-    const container = document.querySelector('.recharts-responsive-container')
-    expect(container).toBeInTheDocument()
-    const style = container?.getAttribute('style')
-    expect(style).toContain('250')
+    const chartFrame = screen.getByRole('img', {
+      name: 'График расходов на хранение на главной странице',
+    })
+    expect(chartFrame).toHaveStyle({ height: '250px' })
   })
 
   it('respects custom height prop', () => {
     renderWithProviders(<StorageTrendsWidget {...defaultProps} height={400} />)
 
-    const container = document.querySelector('.recharts-responsive-container')
-    expect(container).toBeInTheDocument()
-    const style = container?.getAttribute('style')
-    expect(style).toContain('400')
+    const chartFrame = screen.getByRole('img', {
+      name: 'График расходов на хранение на главной странице',
+    })
+    expect(chartFrame).toHaveStyle({ height: '400px' })
   })
 
   it('applies height to loading skeleton', () => {

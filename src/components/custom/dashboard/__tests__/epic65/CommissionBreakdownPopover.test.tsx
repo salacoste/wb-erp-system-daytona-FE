@@ -182,6 +182,15 @@ describe('CommissionBreakdownPopover', () => {
   })
 
   describe('accessibility', () => {
+    it('exposes a 44px trigger target', () => {
+      renderWithProviders(<CommissionBreakdownPopover {...defaultProps} />)
+
+      expect(screen.getByTestId('commission-breakdown-badge')).toHaveClass(
+        'size-11',
+        'justify-center'
+      )
+    })
+
     it('popover can be triggered via keyboard (Enter)', async () => {
       const user = userEvent.setup()
       renderWithProviders(<CommissionBreakdownPopover {...defaultProps} />)

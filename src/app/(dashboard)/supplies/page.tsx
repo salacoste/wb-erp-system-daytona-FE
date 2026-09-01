@@ -68,7 +68,7 @@ export default function SuppliesPage() {
   }
 
   // Error
-  if (isError) {
+  if (isError && !data) {
     return (
       <div className="space-y-6">
         <SuppliesPageHeader {...headerProps} createButtonRef={createButtonRef} />
@@ -88,6 +88,18 @@ export default function SuppliesPage() {
   return (
     <div className="space-y-6" data-testid="supplies-page">
       <SuppliesPageHeader {...headerProps} createButtonRef={createButtonRef} />
+
+      {isError && data && (
+        <Alert variant="destructive">
+          <AlertCircle className="h-4 w-4" />
+          <AlertDescription className="flex items-center justify-between gap-4">
+            <span>Не удалось обновить поставки. Показаны последние доступные данные.</span>
+            <Button variant="outline" size="sm" onClick={() => refetch()}>
+              Повторить
+            </Button>
+          </AlertDescription>
+        </Alert>
+      )}
 
       <Card>
         <CardContent className="pt-6">

@@ -54,7 +54,7 @@ function renderForm() {
   const client = new QueryClient({
     defaultOptions: {
       queries: { retry: false },
-      mutations: { retry: false },
+      mutations: { retry: 1 },
     },
   })
   return render(

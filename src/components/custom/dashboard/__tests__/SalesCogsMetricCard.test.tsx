@@ -169,7 +169,9 @@ describe('SalesCogsMetricCard', () => {
       expect(cardElement.textContent).toMatch(/74.*80|92/)
 
       // Should have warning styling
-      const warningElement = cardElement.querySelector('[class*="text-status-warning"], [class*="bg-status-warning/10"]')
+      const warningElement = cardElement.querySelector(
+        '[class*="text-status-warning"], [class*="bg-status-warning/10"]'
+      )
       expect(warningElement).toBeInTheDocument()
     })
 
@@ -485,7 +487,9 @@ describe('SalesCogsMetricCard', () => {
       )
 
       // Warning should be announced to screen readers
-      const warningContainer = document.querySelector('[class*="text-status-warning"], [class*="bg-status-warning/10"]')
+      const warningContainer = document.querySelector(
+        '[class*="text-status-warning"], [class*="bg-status-warning/10"]'
+      )
       expect(warningContainer).toBeInTheDocument()
       // Could have role="status" or aria-live="polite"
     })

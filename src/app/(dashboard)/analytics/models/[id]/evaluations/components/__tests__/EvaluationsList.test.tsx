@@ -342,15 +342,11 @@ describe('EvaluationsList', () => {
     expect(sortBtn.textContent).toContain('↑')
 
     // Verify row order ASC: cabinetEntry (mapeUnits=4.0) first, skuEntry (11.1) second.
-    // The SKU <tr> has role="button" so getAllByRole('row') excludes it.
-    // Use querySelectorAll('tr') to get ALL rows in DOM order regardless of ARIA role.
     const allRowsBefore = Array.from(container.querySelectorAll('tr'))
     const cabinetRowIndexBefore = allRowsBefore.findIndex(r =>
       r.textContent?.includes('По кабинету')
     )
-    const skuRowIndexBefore = allRowsBefore.findIndex(r =>
-      r.getAttribute('aria-label')?.includes('Перейти к детализации')
-    )
+    const skuRowIndexBefore = allRowsBefore.findIndex(r => r.textContent?.includes('12345'))
     expect(cabinetRowIndexBefore).toBeGreaterThan(0) // found, not header
     expect(skuRowIndexBefore).toBeGreaterThan(0) // found
     expect(cabinetRowIndexBefore).toBeLessThan(skuRowIndexBefore)
@@ -362,18 +358,21 @@ describe('EvaluationsList', () => {
     // Verify row order DESC: skuEntry (mapeUnits=11.1) now appears before cabinetEntry (4.0)
     const allRowsAfter = Array.from(container.querySelectorAll('tr'))
     const cabinetRowIndexAfter = allRowsAfter.findIndex(r => r.textContent?.includes('По кабинету'))
-    const skuRowIndexAfter = allRowsAfter.findIndex(r =>
-      r.getAttribute('aria-label')?.includes('Перейти к детализации')
-    )
+    const skuRowIndexAfter = allRowsAfter.findIndex(r => r.textContent?.includes('12345'))
     expect(skuRowIndexAfter).toBeLessThan(cabinetRowIndexAfter)
   })
 
   it('row navigation: click on non-null nmId calls router.push with expected URL', () => {
     setup()
     render(<EvaluationsList modelId="model-1" />, { wrapper: createWrapper() })
-    // Find the row for nmId=12345 (skuEntry)
-    const skuRow = screen.getByRole('button', { name: /Перейти к детализации по артикулу 12345/ })
-    fireEvent.click(skuRow)
+    const detailButton = screen.getByRole('button', {
+      name: 'Перейти к детализации по артикулу 12345',
+    })
+    const skuRow = detailButton.closest('tr')
+    expect(skuRow?.tagName).toBe('TR')
+    expect(skuRow).not.toHaveAttribute('role')
+    fireEvent.click(detailButton)
+    expect(mockPush).toHaveBeenCalledTimes(1)
     expect(mockPush).toHaveBeenCalledWith(expect.stringContaining('model-1'))
     expect(mockPush).toHaveBeenCalledWith(expect.stringContaining('nmId=12345'))
   })

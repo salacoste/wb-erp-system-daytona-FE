@@ -236,6 +236,24 @@ describe('TrainModelButton — error states', () => {
     )
   })
 
+  it('error 403 renders a distinct restricted-action message', () => {
+    let capturedOnError: ((err: ApiError) => void) | undefined
+    const mutateFn = vi.fn((_modelType, callbacks) => {
+      capturedOnError = callbacks.onError
+    })
+    mockUseTrainAiModel.mockReturnValue(makeMutation({ mutate: mutateFn }))
+    renderButton('sales_forecast', 'active')
+
+    fireEvent.click(screen.getByRole('button', { name: 'Обучить' }))
+    act(() => {
+      capturedOnError?.(new ApiError('Forbidden', 403, null))
+    })
+
+    expect(screen.getByRole('status')).toHaveTextContent(
+      'Недостаточно прав для запуска обучения модели'
+    )
+  })
+
   it('error other → renders "Ошибка запуска обучения: {message}"', () => {
     let capturedOnError: ((err: ApiError) => void) | undefined
     const mutateFn = vi.fn((_modelType, callbacks) => {

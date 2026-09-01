@@ -61,12 +61,17 @@ export function StorageRatioIndicator({ ratio, showWarning = true }: StorageRati
         <TooltipTrigger asChild>
           <div className="flex items-center gap-1 cursor-help">
             {hasData && (
-              <span className={cn('text-sm', severity === 'high' && 'text-status-error font-medium')}>
+              <span
+                className={cn('text-sm', severity === 'high' && 'text-status-error font-medium')}
+              >
                 {formatPercentage(ratio, 1)}
               </span>
             )}
             {showWarning && severity === 'high' && (
-              <AlertTriangle className="h-3 w-3 text-status-error" aria-label="Требуется оптимизация" />
+              <AlertTriangle
+                className="h-3 w-3 text-status-error"
+                aria-label="Требуется оптимизация"
+              />
             )}
             <span
               className={cn('w-2 h-2 rounded-full flex-shrink-0', SEVERITY_COLORS[severity])}

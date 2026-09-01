@@ -86,7 +86,9 @@ export function StatusLegend({
               <span className="font-medium text-foreground">
                 {item.count.toLocaleString('ru-RU')}
               </span>
-              <span className="text-muted-foreground">({formatPercentage(item.percentage, 1)})</span>
+              <span className="text-muted-foreground">
+                ({formatPercentage(item.percentage, 1)})
+              </span>
             </span>
           </button>
         )

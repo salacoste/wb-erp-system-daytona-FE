@@ -4,7 +4,14 @@
  */
 
 import type { FinanceSummary } from '@/hooks/useDashboard'
-import { Table, TableBody, TableHead, TableHeader, TableRow } from '@/components/ui/table'
+import {
+  Table,
+  TableBody,
+  TableCaption,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import { Package, AlertTriangle } from 'lucide-react'
@@ -39,6 +46,7 @@ export function CogsSection({ summary, comparisonSummary, isComparison }: CogsSe
         ) : (
           <>
             <Table>
+              <TableCaption className="sr-only">Себестоимость (COGS)</TableCaption>
               <TableHeader>
                 <TableRow>
                   <TableHead className="w-[300px]">Показатель</TableHead>

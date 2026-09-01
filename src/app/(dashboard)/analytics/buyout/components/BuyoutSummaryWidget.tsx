@@ -141,7 +141,7 @@ export function BuyoutSummaryWidget({
               <DeltaTag delta={salesDelta} field="totalSalesCount" loading={prevLoading} />
             )}
           </p>
-          <p className="text-xs text-muted-foreground/70">
+          <p className="text-xs text-muted-foreground">
             В таблице по SKU — все возвраты (FBO+FBS), включая оценочные
           </p>
           <div className="flex items-center gap-1.5 text-xs text-muted-foreground">

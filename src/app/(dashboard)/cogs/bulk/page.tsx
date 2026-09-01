@@ -34,8 +34,13 @@ export default function BulkCogsPage() {
     <div className="space-y-6">
       {/* Page Header */}
       <div className="flex items-center gap-4">
-        <Button variant="outline" size="icon" onClick={handleBack}>
-          <ArrowLeft className="h-4 w-4" />
+        <Button
+          variant="outline"
+          size="icon"
+          onClick={handleBack}
+          aria-label="Вернуться к себестоимости"
+        >
+          <ArrowLeft className="h-4 w-4" aria-hidden="true" />
         </Button>
         <div>
           <h1 className="text-3xl font-bold tracking-tight text-foreground">

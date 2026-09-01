@@ -367,10 +367,18 @@ describe('ReorderDashboardPage - Accessibility', () => {
     expect(btn.tagName).toBe('BUTTON')
   })
 
-  it('action buttons in table are keyboard accessible', () => {
+  it('marks the exact pending recommendation as ordered from its row action', () => {
     renderPage()
     const actionBtn = screen.getByRole('button', { name: /Заказано/ })
+    actionBtn.focus()
+    expect(actionBtn).toHaveFocus()
+    actionBtn.click()
     expect(actionBtn.tagName).toBe('BUTTON')
+    expect(mockUpdateStatus).toHaveBeenCalledTimes(1)
+    expect(mockUpdateStatus).toHaveBeenCalledWith({
+      id: 'rec-1',
+      payload: { status: 'ordered' },
+    })
   })
 })
 
@@ -464,5 +472,30 @@ describe('ReorderDashboardPage - Refresh', () => {
     renderPage()
     screen.getByRole('button', { name: /Обновить/ }).click()
     expect(mockRefresh).toHaveBeenCalled()
+  })
+})
+
+describe('ReorderDashboardPage - Extreme amounts', () => {
+  beforeEach(() => {
+    vi.clearAllMocks()
+    mockMetrics.mockReturnValue(okMetrics())
+  })
+
+  it('renders a twelve-digit reorder amount without overflow or silent truncation', () => {
+    mockRecommendations.mockReturnValue({
+      data: [
+        {
+          ...sampleRecommendation,
+          recommendedQty: 999_999_999,
+          totalReorderValue: 999_999_999_999,
+        },
+      ],
+      isLoading: false,
+      error: null,
+    })
+
+    renderPage()
+
+    expect(screen.getByText(/999[\s ]999[\s ]999[\s ]999/)).toBeInTheDocument()
   })
 })

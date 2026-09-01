@@ -26,6 +26,12 @@ interface PricingFiltersProps {
   onSortChange: (value: SortOption) => void
 }
 
+function labelTargetMarginThumb(node: HTMLSpanElement | null) {
+  node
+    ?.querySelector<HTMLElement>('[role="slider"]')
+    ?.setAttribute('aria-labelledby', 'pricing-target-margin-label')
+}
+
 export function PricingFilters({
   targetMargin,
   gapFilter,
@@ -39,8 +45,9 @@ export function PricingFilters({
       <CardContent className="pt-6">
         <div className="grid gap-4 sm:grid-cols-3">
           <div className="space-y-3">
-            <Label>Целевая маржа: {targetMargin}%</Label>
+            <Label id="pricing-target-margin-label">Целевая маржа: {targetMargin}%</Label>
             <Slider
+              ref={labelTargetMarginThumb}
               value={[targetMargin]}
               onValueChange={([v]) => onTargetMarginChange(v)}
               min={5}
@@ -54,12 +61,12 @@ export function PricingFilters({
           </div>
 
           <div className="space-y-2">
-            <Label>Фильтр по разрыву</Label>
+            <Label htmlFor="pricing-gap-filter">Фильтр по разрыву</Label>
             <Select
               value={gapFilter || 'all'}
               onValueChange={v => onGapFilterChange(v === 'all' ? '' : (v as GapFilter))}
             >
-              <SelectTrigger>
+              <SelectTrigger id="pricing-gap-filter">
                 <SelectValue placeholder="Все товары" />
               </SelectTrigger>
               <SelectContent>
@@ -72,12 +79,12 @@ export function PricingFilters({
           </div>
 
           <div className="space-y-2">
-            <Label>Сортировка</Label>
+            <Label htmlFor="pricing-sort">Сортировка</Label>
             <Select
               value={sort || 'default'}
               onValueChange={v => onSortChange(v === 'default' ? '' : (v as SortOption))}
             >
-              <SelectTrigger>
+              <SelectTrigger id="pricing-sort">
                 <SelectValue placeholder="По умолчанию" />
               </SelectTrigger>
               <SelectContent>

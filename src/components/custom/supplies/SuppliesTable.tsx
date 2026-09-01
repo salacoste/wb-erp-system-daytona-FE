@@ -9,7 +9,14 @@
 
 'use client'
 
-import { Table, TableBody, TableHeader, TableRow, TableHead } from '@/components/ui/table'
+import {
+  Table,
+  TableBody,
+  TableCaption,
+  TableHeader,
+  TableRow,
+  TableHead,
+} from '@/components/ui/table'
 import { TooltipProvider } from '@/components/ui/tooltip'
 import { ChevronUp, ChevronDown, ChevronsUpDown } from 'lucide-react'
 import { cn } from '@/lib/utils'
@@ -95,6 +102,7 @@ export function SuppliesTable({
     <TooltipProvider>
       <div className="rounded-md border overflow-x-auto">
         <Table>
+          <TableCaption className="sr-only">Поставки FBS</TableCaption>
           <TableHeader>
             <TableRow>
               {COLUMNS.map(col => (
@@ -119,16 +127,32 @@ export function SuppliesTable({
                       : undefined
                   }
                 >
-                  <div className={cn('flex items-center', col.align === 'right' && 'justify-end')}>
-                    {col.label}
-                    {col.sortable && (
+                  {col.sortable ? (
+                    <button
+                      type="button"
+                      className={cn(
+                        'flex w-full items-center',
+                        col.align === 'right' && 'justify-end'
+                      )}
+                      onClick={event => {
+                        event.stopPropagation()
+                        onSortChange(col.sortField as SuppliesSortField)
+                      }}
+                    >
+                      {col.label}
                       <SortIndicator
                         field={col.sortField as SuppliesSortField}
                         sortBy={sortBy}
                         sortOrder={sortOrder}
                       />
-                    )}
-                  </div>
+                    </button>
+                  ) : (
+                    <div
+                      className={cn('flex items-center', col.align === 'right' && 'justify-end')}
+                    >
+                      {col.label}
+                    </div>
+                  )}
                 </TableHead>
               ))}
             </TableRow>

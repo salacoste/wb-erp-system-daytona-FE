@@ -30,6 +30,7 @@ export interface UseWeeklyFinancialSeriesResult {
   error: unknown
   /** True only once every requested week has resolved (data or error). */
   isSettled: boolean
+  refetch: () => void
 }
 
 export function useWeeklyFinancialSeries(weeks: readonly string[]): UseWeeklyFinancialSeriesResult {
@@ -75,5 +76,14 @@ export function useWeeklyFinancialSeries(weeks: readonly string[]): UseWeeklyFin
     summary: queries[i].data?.summary_total || queries[i].data?.summary_rus || null,
   }))
 
-  return { data, isLoading, isError, error, isSettled }
+  return {
+    data,
+    isLoading,
+    isError,
+    error,
+    isSettled,
+    refetch: () => {
+      for (const query of queries) void query.refetch()
+    },
+  }
 }

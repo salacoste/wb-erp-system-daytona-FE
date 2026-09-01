@@ -113,6 +113,19 @@ describe('MoyskladVariantsTable', () => {
     expect(screen.getByText(/Показано 0 из 0/)).toBeInTheDocument()
   })
 
+  it('renders the variant table skeleton while the live variants request is loading', () => {
+    useMoyskladVariantsMock.mockReturnValue({
+      data: undefined,
+      isError: false,
+      isLoading: true,
+    })
+
+    const { container } = render(<MoyskladVariantsTable />)
+
+    expect(container.querySelectorAll('.animate-pulse')).toHaveLength(1)
+    expect(screen.queryByText('Нет модификаций в МойСклад')).not.toBeInTheDocument()
+  })
+
   it('surfaces the live-call error banner (graceful, no crash)', () => {
     useMoyskladVariantsMock.mockReturnValue({
       data: undefined,

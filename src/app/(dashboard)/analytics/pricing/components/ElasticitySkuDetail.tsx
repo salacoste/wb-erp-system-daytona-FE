@@ -8,6 +8,7 @@
 
 import { ChevronDown } from 'lucide-react'
 import { TableCell, TableRow } from '@/components/ui/table'
+import { Button } from '@/components/ui/button'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Badge } from '@/components/ui/badge'
 import { usePriceElasticitySku } from '@/hooks/usePriceElasticity'
@@ -34,25 +35,27 @@ export function ElasticitySkuDetail({ item, isExpanded, onToggle }: ElasticitySk
   return (
     <>
       {/* Main summary row */}
-      <TableRow
-        className="cursor-pointer hover:bg-muted/50"
-        onClick={onToggle}
-        role="button"
-        aria-expanded={isExpanded}
-        tabIndex={0}
-        onKeyDown={e => {
-          if (e.key === 'Enter' || e.key === ' ') {
-            e.preventDefault()
-            onToggle()
-          }
-        }}
-      >
+      <TableRow className="cursor-pointer hover:bg-muted/50" onClick={onToggle}>
         <TableCell className="w-8 px-2">
-          <ChevronDown
-            className={`h-4 w-4 text-muted-foreground transition-transform ${
-              isExpanded ? 'rotate-180' : ''
-            }`}
-          />
+          <Button
+            type="button"
+            variant="ghost"
+            size="icon"
+            className="h-7 w-7"
+            aria-label={`${isExpanded ? 'Скрыть' : 'Показать'} эластичность SKU ${item.nmId}`}
+            aria-expanded={isExpanded}
+            onClick={event => {
+              event.stopPropagation()
+              onToggle()
+            }}
+          >
+            <ChevronDown
+              aria-hidden="true"
+              className={`h-4 w-4 text-muted-foreground transition-transform ${
+                isExpanded ? 'rotate-180' : ''
+              }`}
+            />
+          </Button>
         </TableCell>
         <TableCell className="font-mono text-sm">{item.nmId}</TableCell>
         <TableCell className="text-right font-medium">

@@ -142,7 +142,7 @@ export function OrdersTable({
   return (
     <div className="rounded-md border overflow-x-auto">
       <h2 className="sr-only">Детализация по заказам</h2>
-      <Table>
+      <Table aria-label="Детализация по заказам">
         <TableHeader>
           <TableRow>
             {columns.map(col => (
@@ -159,16 +159,25 @@ export function OrdersTable({
                 }
                 onClick={col.sortable ? () => onSortChange(col.sortField!) : undefined}
               >
-                <div className="flex items-center">
-                  {col.label}
-                  {col.sortable && (
+                {col.sortable ? (
+                  <button
+                    type="button"
+                    className="flex w-full items-center text-left"
+                    onClick={event => {
+                      event.stopPropagation()
+                      onSortChange(col.sortField!)
+                    }}
+                  >
+                    {col.label}
                     <SortIndicator
                       field={col.sortField!}
                       currentSort={sortBy}
                       currentOrder={sortOrder}
                     />
-                  )}
-                </div>
+                  </button>
+                ) : (
+                  <div className="flex items-center">{col.label}</div>
+                )}
               </TableHead>
             ))}
           </TableRow>

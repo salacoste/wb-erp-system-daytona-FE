@@ -55,7 +55,7 @@ export function TrendsPeriodSelector({
               'rounded px-3 py-1.5 text-xs font-medium transition-all',
               'focus:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-1',
               isActive
-                ? 'bg-primary text-white shadow-sm'
+                ? 'bg-primary text-primary-foreground shadow-sm'
                 : 'bg-transparent text-muted-foreground hover:bg-muted',
               disabled && 'cursor-not-allowed opacity-50'
             )}

@@ -8,6 +8,7 @@
 'use client'
 
 import { TableCell, TableRow } from '@/components/ui/table'
+import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
 import type { TopBrandItem } from '@/types/analytics'
 import { formatCurrency, formatPercent, getMarginColor } from '../top-table-utils'
@@ -22,22 +23,29 @@ interface TopBrandsTableRowProps {
  * Renders a single brand row with formatting, color coding, and navigation
  */
 export function TopBrandsTableRow({ brand, index, onBrandClick }: TopBrandsTableRowProps) {
+  const brandLabel = brand.brand || 'Без бренда'
+
   return (
     <TableRow
       key={brand.brand}
       className="cursor-pointer hover:bg-muted/50 transition-colors"
       onClick={() => onBrandClick(brand.brand)}
-      role="button"
-      tabIndex={0}
-      onKeyDown={e => {
-        if (e.key === 'Enter' || e.key === ' ') {
-          onBrandClick(brand.brand)
-        }
-      }}
-      aria-label={`Фильтровать по бренду ${brand.brand}`}
     >
       <TableCell className="font-medium text-muted-foreground">{index + 1}</TableCell>
-      <TableCell className="font-medium">{brand.brand || 'Без бренда'}</TableCell>
+      <TableCell>
+        <Button
+          type="button"
+          variant="link"
+          className="h-auto p-0 font-medium"
+          aria-label={`Фильтровать по бренду ${brandLabel}`}
+          onClick={event => {
+            event.stopPropagation()
+            onBrandClick(brand.brand)
+          }}
+        >
+          {brandLabel}
+        </Button>
+      </TableCell>
       <TableCell className="text-right font-medium">{formatCurrency(brand.revenue_net)}</TableCell>
       <TableCell
         className={cn(

@@ -244,6 +244,41 @@ describe('CabinetDashboardPage - Error State', () => {
   })
 })
 
+describe('CabinetDashboardPage - Background freshness', () => {
+  beforeEach(() => {
+    vi.clearAllMocks()
+    setupMocks()
+  })
+
+  it('retains loaded dashboard evidence during a background refresh', () => {
+    setupMocks({ summary: { data: defaultSummaryData, isLoading: true } })
+
+    renderPage()
+
+    expect(screen.getByTestId('pnl-waterfall')).toBeInTheDocument()
+    expect(screen.getByRole('status')).toHaveTextContent('Обновляем сводку по кабинету')
+  })
+
+  it('retains stale dashboard evidence and retries a failed background refresh', () => {
+    const refetch = vi.fn()
+    setupMocks({
+      summary: {
+        data: defaultSummaryData,
+        isError: true,
+        error: new Error('Сбой обновления'),
+        refetch,
+      },
+    })
+
+    renderPage()
+
+    expect(screen.getByTestId('pnl-waterfall')).toBeInTheDocument()
+    expect(screen.getByText(/Показаны ранее загруженные данные/)).toBeInTheDocument()
+    screen.getByRole('button', { name: 'Повторить' }).click()
+    expect(refetch).toHaveBeenCalledTimes(1)
+  })
+})
+
 // --- Finance Unavailable ---
 
 describe('CabinetDashboardPage - Finance Unavailable', () => {

@@ -37,6 +37,7 @@ interface PriceHistorySheetProps {
   vendorCode: string | null
   open: boolean
   onOpenChange: (open: boolean) => void
+  onReturnFocus?: () => void
 }
 
 function formatWeek(dateStr: string): string {
@@ -73,6 +74,7 @@ export function PriceHistorySheet({
   vendorCode,
   open,
   onOpenChange,
+  onReturnFocus,
 }: PriceHistorySheetProps) {
   const { data, isLoading } = usePriceRecommendationHistory(nmId, 12)
 
@@ -90,7 +92,14 @@ export function PriceHistorySheet({
 
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
-      <SheetContent className="w-[540px] sm:w-[640px] sm:max-w-[640px]">
+      <SheetContent
+        className="w-[540px] sm:w-[640px] sm:max-w-[640px]"
+        onCloseAutoFocus={event => {
+          if (!onReturnFocus) return
+          event.preventDefault()
+          onReturnFocus()
+        }}
+      >
         <SheetHeader>
           <SheetTitle>
             История цен{vendorCode ? `: ${vendorCode}` : nmId ? `: ${nmId}` : ''}

@@ -19,7 +19,7 @@ export function OperatingProfitCell({ item }: { item: MarginAnalyticsAggregated 
   if (item.operating_profit === undefined || item.operating_profit === null) {
     return (
       <TableCell className="text-right">
-        <span className="text-xs text-gray-400">—</span>
+        <span className="text-xs text-muted-foreground">—</span>
       </TableCell>
     )
   }
@@ -32,7 +32,7 @@ export function OperatingProfitCell({ item }: { item: MarginAnalyticsAggregated 
             <span
               className={cn(
                 'font-medium cursor-help',
-                item.operating_profit < 0 ? 'text-red-600' : 'text-green-600',
+                'text-foreground',
                 (item.skus_with_expenses_only ?? 0) > 0 && 'underline decoration-dotted'
               )}
             >
@@ -51,7 +51,7 @@ export function OperatingProfitCell({ item }: { item: MarginAnalyticsAggregated 
                 <p>Опер. маржа: {formatPercentage(item.operating_margin_pct, 2)}</p>
               )}
               {(item.skus_with_expenses_only ?? 0) > 0 && (
-                <p className="text-amber-500">{item.skus_with_expenses_only} SKU без продаж</p>
+                <p className="text-status-warning">{item.skus_with_expenses_only} SKU без продаж</p>
               )}
             </div>
           </TooltipContent>
@@ -70,11 +70,11 @@ export function MissingCogsCell({ item }: { item: MarginAnalyticsAggregated }) {
   return (
     <TableCell className="text-center">
       {hasMissingCogs ? (
-        <span className="inline-flex items-center rounded-full bg-yellow-100 px-2.5 py-0.5 text-xs font-semibold text-yellow-800">
+        <span className="inline-flex items-center rounded-full bg-status-warning/15 px-2.5 py-0.5 text-xs font-semibold text-foreground">
           {item.missing_cogs_count}
         </span>
       ) : (
-        <span className="text-xs text-gray-400">—</span>
+        <span className="text-xs text-muted-foreground">—</span>
       )}
     </TableCell>
   )

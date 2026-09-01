@@ -3,8 +3,11 @@
  * Basis badge in the current-price cell + alternative-basis companion price.
  */
 
-import { describe, it, expect } from 'vitest'
-import { renderWithProviders, screen } from '@/test/utils/test-utils'
+import { describe, it, expect, vi } from 'vitest'
+import { readFileSync } from 'node:fs'
+import { join } from 'node:path'
+import { fireEvent, renderWithProviders, screen } from '@/test/utils/test-utils'
+import userEvent from '@testing-library/user-event'
 import { PricingTable } from '../PricingTable'
 import { emptyPriceRecommendation } from '@/test/fixtures/price-recommendations-empty'
 import type { PriceRecommendation } from '@/types/price-recommendations'
@@ -21,6 +24,62 @@ function item(overrides: Partial<PriceRecommendation> = {}): PriceRecommendation
 }
 
 describe('PricingTable — SPP-1.7 basis badge', () => {
+  it('exposes a named keyboard-focusable horizontal scroll region', () => {
+    renderWithProviders(<PricingTable items={[item()]} isLoading={false} />)
+
+    const region = screen.getByRole('region', { name: 'Рекомендации по ценам' })
+    expect(region).toHaveAttribute('tabindex', '0')
+    expect(screen.getByRole('table', { name: 'Рекомендации по ценам' })).toBeInTheDocument()
+  })
+
+  it('opens the exact SKU recommendation from its focused action button with Enter', async () => {
+    const onRowClick = vi.fn()
+    const user = userEvent.setup()
+    renderWithProviders(
+      <PricingTable
+        items={[item({ nmId: 123 }), item({ id: 'r-2', nmId: 456 })]}
+        isLoading={false}
+        onRowClick={onRowClick}
+      />
+    )
+
+    const action = screen.getByRole('button', { name: 'Открыть рекомендации для SKU 456' })
+    const row = action.closest('tr')
+    expect(row).not.toBeNull()
+    expect(row).toHaveRole('row')
+    expect(row).not.toHaveAttribute('role')
+    expect(row).not.toHaveAttribute('tabindex')
+    expect(row?.querySelectorAll('td')).toHaveLength(8)
+    action.focus()
+    expect(action).toHaveFocus()
+    await user.keyboard('{Enter}')
+    expect(onRowClick).toHaveBeenCalledTimes(1)
+    expect(onRowClick).toHaveBeenCalledWith(456)
+  })
+
+  it('keeps pointer row activation as a single convenience action', () => {
+    const onRowClick = vi.fn()
+    renderWithProviders(
+      <PricingTable items={[item({ nmId: 456 })]} isLoading={false} onRowClick={onRowClick} />
+    )
+
+    fireEvent.click(screen.getByRole('cell', { name: 'Товар' }))
+    expect(onRowClick).toHaveBeenCalledOnce()
+    expect(onRowClick).toHaveBeenCalledWith(456)
+  })
+
+  it('keeps the elasticity table in one named keyboard-focusable scroll region', () => {
+    const source = readFileSync(
+      join(process.cwd(), 'src/app/(dashboard)/analytics/pricing/components/ElasticitySection.tsx'),
+      'utf8'
+    )
+
+    expect(source).toMatch(/scrollContainerTabIndex=\{0\}/)
+    expect(source).toMatch(/scrollContainerAriaLabel="Эластичность цен по товарам"/)
+    expect(source).toMatch(/<TableCaption className="sr-only">Эластичность цен по товарам/)
+    expect(source).not.toMatch(/className="rounded-md border overflow-x-auto"/)
+  })
+
   it('renders the seller basis badge next to the current price', () => {
     renderWithProviders(<PricingTable items={[item()]} isLoading={false} />)
     expect(screen.getByText('Продавец')).toBeInTheDocument()
@@ -106,9 +165,10 @@ describe('PricingTable — 168.6 semantic tokens', () => {
     expect(span.classList.contains('text-financial-negative')).toBe(false)
   })
 
-  it('MarginCell pins status-warning/80 for 0 <= value < 15 (exact class, 3-tier preserved)', () => {
+  it('MarginCell uses the AA foreground for 0 <= value < 15 while preserving the 3-tier threshold', () => {
     const span = marginCellFor(10)
-    expect(span.classList.contains('text-status-warning/80')).toBe(true)
+    expect(span.classList.contains('text-foreground')).toBe(true)
+    expect(span.classList.contains('text-status-warning/80')).toBe(false)
     expect(span.classList.contains('text-financial-positive')).toBe(false)
     expect(span.classList.contains('text-financial-negative')).toBe(false)
   })
@@ -138,6 +198,18 @@ describe('PricingTable — 168.6 semantic tokens', () => {
     expect(span).toBeDefined()
     expect(span!.classList.contains('font-medium')).toBe(true)
     expect(span!.classList.contains('text-financial-positive')).toBe(false)
+  })
+
+  it('renders a large negative price gap with financial-negative semantics without truncation', () => {
+    renderWithProviders(
+      <PricingTable items={[item({ gap: -999_999_999, gapPct: -99.9 })]} isLoading={false} />
+    )
+
+    const negative = Array.from(document.querySelectorAll('span')).find(s =>
+      s.classList.contains('text-financial-negative')
+    )
+    expect(negative).toBeDefined()
+    expect(negative?.textContent).toMatch(/999[\s ]999[\s ]999/)
   })
 
   it('renders no legacy palette classes in table rows (168.6 sweep guard)', () => {

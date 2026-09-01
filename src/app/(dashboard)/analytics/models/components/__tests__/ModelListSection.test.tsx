@@ -7,7 +7,8 @@
  */
 import React from 'react'
 import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { render, screen, fireEvent, waitFor } from '@testing-library/react'
+import { render, screen, waitFor } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
 import { ModelListSection } from '../ModelListSection'
 import {
   STATUS_BADGE_CONFIG,
@@ -17,24 +18,26 @@ import {
 } from '../model-list-helpers'
 import type { AiModel } from '@/types/ai/models'
 
-// ── Mocks ────────────────────────────────────────────────────────────────────
-
 const mockPush = vi.fn()
 
-vi.mock('next/navigation', () => ({
-  useRouter: () => ({ push: mockPush }),
-}))
+// ── Mocks ────────────────────────────────────────────────────────────────────
 
 vi.mock('next/link', () => ({
   default: ({
     href,
     children,
     className,
+    onClick,
   }: {
     href: string
     children: React.ReactNode
     className?: string
-  }) => React.createElement('a', { href, className }, children),
+    onClick?: React.MouseEventHandler<HTMLAnchorElement>
+  }) => React.createElement('a', { href, className, onClick }, children),
+}))
+
+vi.mock('next/navigation', () => ({
+  useRouter: () => ({ push: mockPush }),
 }))
 
 vi.mock('@/hooks/useAiModels', () => ({
@@ -136,7 +139,6 @@ const mockUseAiModels = vi.mocked(useAiModels)
 
 beforeEach(() => {
   vi.clearAllMocks()
-  mockPush.mockClear()
 })
 
 function renderSection() {
@@ -222,17 +224,42 @@ describe('ModelListSection — happy path', () => {
     expect(screen.getByText('Действия')).toBeTruthy()
   })
 
-  it('renders 2 data rows (tr[role=button])', () => {
+  it('renders table rows without invalid nested button semantics', () => {
     const { container } = renderSection()
-    // Use DOM query to target only TableRow elements (not TrainModelButton mock buttons).
-    const rows = container.querySelectorAll('tr[role="button"]')
-    expect(rows).toHaveLength(2)
+    expect(container.querySelectorAll('tbody tr')).toHaveLength(2)
+    expect(container.querySelector('tr[role="button"]')).toBeNull()
+    expect(screen.getByRole('link', { name: 'Прогноз продаж' })).toHaveAttribute(
+      'href',
+      '/analytics/models/model-1/performance'
+    )
   })
 
   it('status badges show correct Russian labels', () => {
     renderSection()
     expect(screen.getByText('Активна')).toBeTruthy()
     expect(screen.getByText('Обучается')).toBeTruthy()
+  })
+
+  it('unknown status renders its raw value in a neutral badge instead of crashing', () => {
+    const unknownStatusModel: AiModel = {
+      ...modelActive,
+      id: 'model-future-status',
+      status: 'awaiting_review' as AiModel['status'],
+    }
+    mockUseAiModels.mockReturnValue({
+      data: { models: [unknownStatusModel] },
+      isLoading: false,
+      isError: false,
+      error: null,
+    } as unknown as ReturnType<typeof useAiModels>)
+
+    renderSection()
+
+    expect(screen.getByText('awaiting_review')).toHaveClass(
+      'border-border',
+      'bg-muted',
+      'text-muted-foreground'
+    )
   })
 
   it('MAPE non-null renders value without ×100 (post-1st-pass M-2)', () => {
@@ -291,8 +318,9 @@ describe('ModelListSection — happy path', () => {
   })
 })
 
-describe('ModelListSection — row navigation', () => {
+describe('ModelListSection — model navigation', () => {
   beforeEach(() => {
+    mockPush.mockClear()
     mockUseAiModels.mockReturnValue({
       data: { models: [modelActive] },
       isLoading: false,
@@ -301,25 +329,19 @@ describe('ModelListSection — row navigation', () => {
     } as unknown as ReturnType<typeof useAiModels>)
   })
 
-  it('click navigates to /analytics/models/{id}/performance', () => {
-    const { container } = renderSection()
-    // Target the TableRow (role=button) not the TrainModelButton inside it.
-    const row = container.querySelector('tr[role="button"]')!
-    fireEvent.click(row)
-    expect(mockPush).toHaveBeenCalledWith('/analytics/models/model-1/performance')
+  it('exposes model performance as a native named link', () => {
+    renderSection()
+    expect(screen.getByRole('link', { name: 'Прогноз продаж' })).toHaveAttribute(
+      'href',
+      '/analytics/models/model-1/performance'
+    )
   })
 
-  it('Enter key navigates to /analytics/models/{id}/performance', () => {
-    const { container } = renderSection()
-    const row = container.querySelector('tr[role="button"]')!
-    fireEvent.keyDown(row, { key: 'Enter' })
-    expect(mockPush).toHaveBeenCalledWith('/analytics/models/model-1/performance')
-  })
-
-  it('Space key navigates to /analytics/models/{id}/performance', () => {
-    const { container } = renderSection()
-    const row = container.querySelector('tr[role="button"]')!
-    fireEvent.keyDown(row, { key: ' ' })
+  it('keeps pointer navigation on a non-interactive row cell exactly once', async () => {
+    const user = userEvent.setup()
+    renderSection()
+    await user.click(screen.getByRole('cell', { name: 'Prophet' }))
+    expect(mockPush).toHaveBeenCalledTimes(1)
     expect(mockPush).toHaveBeenCalledWith('/analytics/models/model-1/performance')
   })
 })
@@ -392,10 +414,11 @@ describe('ModelListSection — 7th Actions column (Story 109.4-FE)', () => {
     expect(screen.getByTestId('train-demand_forecast')).toBeTruthy()
   })
 
-  it('clicking the TrainModelButton does NOT call router.push (propagation stopped)', () => {
+  it('keeps the TrainModelButton outside the model performance link', () => {
     renderSection()
     const trainBtn = screen.getByTestId('train-sales_forecast')
-    fireEvent.click(trainBtn)
-    expect(mockPush).not.toHaveBeenCalled()
+    const modelLink = screen.getByRole('link', { name: 'Прогноз продаж' })
+    expect(trainBtn.closest('a')).toBeNull()
+    expect(modelLink).not.toContainElement(trainBtn)
   })
 })

@@ -124,7 +124,7 @@ describe('SuppliesPage', () => {
   describe('Page Header', () => {
     it('renders page title "Поставки FBS" with Package icon', () => {
       renderPage(<SuppliesPageStub />)
-      expect(screen.getByText('Поставки FBS')).toBeInTheDocument()
+      expect(screen.getByRole('heading', { level: 1, name: 'Поставки FBS' })).toBeInTheDocument()
     })
 
     it('renders subtitle "Управление поставками и отслеживание статусов"', () => {
@@ -178,6 +178,31 @@ describe('SuppliesPage', () => {
       renderPage(<SuppliesPageStub />)
       expect(screen.getByText('Обновить статусы')).toBeInTheDocument()
     })
+  })
+
+  it('keeps cached supplies visible after a background refresh failure', () => {
+    mockPageState.mockReturnValue(
+      createPageState({ isError: true, error: new Error('refresh failed') })
+    )
+    renderPage(<SuppliesPageStub />)
+
+    expect(screen.getByText(/Показаны последние доступные данные/)).toBeVisible()
+    expect(screen.getAllByRole('row').length).toBeGreaterThan(1)
+  })
+
+  it('keeps the supplies queue usable when sync status is unavailable', () => {
+    mockPageState.mockReturnValue(
+      createPageState({
+        headerProps: {
+          ...createPageState().headerProps,
+          lastSyncAt: null,
+        },
+      })
+    )
+    renderPage(<SuppliesPageStub />)
+
+    expect(screen.getByText('Не синхронизировано')).toBeVisible()
+    expect(screen.getAllByRole('row').length).toBeGreaterThan(1)
   })
 
   // 2. Filters Section
@@ -498,9 +523,8 @@ describe('SuppliesPage', () => {
   describe('Row Interaction', () => {
     it('shows hover state on table rows', () => {
       renderPage(<SuppliesPageStub />)
-      expect(screen.getAllByRole('button', { name: /Поставка/ })[0].className).toContain(
-        'hover:bg-muted'
-      )
+      const action = screen.getAllByRole('button', { name: /Открыть поставку/ })[0]
+      expect(action.closest('tr')).toHaveClass('hover:bg-muted/50')
     })
 
     it('clicking row navigates to /supplies/[id]', async () => {
@@ -508,7 +532,7 @@ describe('SuppliesPage', () => {
       const state = createPageState()
       mockPageState.mockReturnValue(state)
       renderPage(<SuppliesPageStub />)
-      await user.click(screen.getAllByRole('button', { name: /Поставка/ })[0])
+      await user.click(screen.getAllByRole('button', { name: /Открыть поставку/ })[0])
       expect(state.handleRowClick).toHaveBeenCalled()
     })
 
@@ -517,8 +541,8 @@ describe('SuppliesPage', () => {
       const state = createPageState()
       mockPageState.mockReturnValue(state)
       renderPage(<SuppliesPageStub />)
-      const rows = screen.getAllByRole('button', { name: /Поставка/ })
-      rows[0].focus()
+      const actions = screen.getAllByRole('button', { name: /Открыть поставку/ })
+      actions[0].focus()
       await user.keyboard('{Enter}')
       expect(state.handleRowClick).toHaveBeenCalled()
     })
@@ -528,24 +552,26 @@ describe('SuppliesPage', () => {
       const state = createPageState()
       mockPageState.mockReturnValue(state)
       renderPage(<SuppliesPageStub />)
-      const rows = screen.getAllByRole('button', { name: /Поставка/ })
-      rows[0].focus()
+      const actions = screen.getAllByRole('button', { name: /Открыть поставку/ })
+      actions[0].focus()
       await user.keyboard(' ')
       expect(state.handleRowClick).toHaveBeenCalled()
     })
 
     it('rows have cursor pointer style', () => {
       renderPage(<SuppliesPageStub />)
-      expect(screen.getAllByRole('button', { name: /Поставка/ })[0].className).toContain(
-        'cursor-pointer'
-      )
+      const action = screen.getAllByRole('button', { name: /Открыть поставку/ })[0]
+      expect(action.closest('tr')).toHaveClass('cursor-pointer')
     })
 
-    it('rows are keyboard focusable', () => {
+    it('keeps rows native while exposing a keyboard-focusable action', () => {
       renderPage(<SuppliesPageStub />)
-      expect(screen.getAllByRole('button', { name: /Поставка/ })[0].getAttribute('tabindex')).toBe(
-        '0'
-      )
+      const action = screen.getAllByRole('button', { name: /Открыть поставку/ })[0]
+      const row = action.closest('tr')!
+      expect(action).toHaveAttribute('type', 'button')
+      expect(row).toHaveRole('row')
+      expect(row).not.toHaveAttribute('role')
+      expect(row).not.toHaveAttribute('tabindex')
     })
   })
 
@@ -587,7 +613,12 @@ describe('SuppliesPage', () => {
   describe('Error State', () => {
     it('renders error message on fetch error', () => {
       mockPageState.mockReturnValue(
-        createPageState({ isError: true, error: new Error('Ошибка загрузки поставок') })
+        createPageState({
+          data: undefined as unknown as SuppliesListResponse,
+          sortedItems: [],
+          isError: true,
+          error: new Error('Ошибка загрузки поставок'),
+        })
       )
       renderPage(<SuppliesPageStub />)
       expect(screen.getByTestId('supplies-error-state')).toBeInTheDocument()
@@ -596,7 +627,12 @@ describe('SuppliesPage', () => {
 
     it('renders retry button on error', () => {
       mockPageState.mockReturnValue(
-        createPageState({ isError: true, error: new Error('Network error') })
+        createPageState({
+          data: undefined as unknown as SuppliesListResponse,
+          sortedItems: [],
+          isError: true,
+          error: new Error('Network error'),
+        })
       )
       renderPage(<SuppliesPageStub />)
       expect(screen.getByText('Повторить')).toBeInTheDocument()
@@ -604,7 +640,12 @@ describe('SuppliesPage', () => {
 
     it('clicking retry calls refetch', async () => {
       const user = userEvent.setup()
-      const state = createPageState({ isError: true, error: new Error('Network error') })
+      const state = createPageState({
+        data: undefined as unknown as SuppliesListResponse,
+        sortedItems: [],
+        isError: true,
+        error: new Error('Network error'),
+      })
       mockPageState.mockReturnValue(state)
       renderPage(<SuppliesPageStub />)
       await user.click(screen.getByText('Повторить'))
@@ -613,7 +654,12 @@ describe('SuppliesPage', () => {
 
     it('hides table content on error', () => {
       mockPageState.mockReturnValue(
-        createPageState({ isError: true, error: new Error('Network error') })
+        createPageState({
+          data: undefined as unknown as SuppliesListResponse,
+          sortedItems: [],
+          isError: true,
+          error: new Error('Network error'),
+        })
       )
       renderPage(<SuppliesPageStub />)
       expect(screen.queryByText('WB ID')).not.toBeInTheDocument()
@@ -621,7 +667,12 @@ describe('SuppliesPage', () => {
 
     it('shows appropriate error message for network errors', () => {
       mockPageState.mockReturnValue(
-        createPageState({ isError: true, error: new Error('Network error: Failed to fetch') })
+        createPageState({
+          data: undefined as unknown as SuppliesListResponse,
+          sortedItems: [],
+          isError: true,
+          error: new Error('Network error: Failed to fetch'),
+        })
       )
       renderPage(<SuppliesPageStub />)
       expect(screen.getByText('Network error: Failed to fetch')).toBeInTheDocument()
@@ -751,7 +802,7 @@ describe('SuppliesPage', () => {
       expect(table).toBeInTheDocument()
       expect(within(table).getAllByRole('columnheader').length).toBe(7)
       expect(within(table).getAllByRole('row').length).toBeGreaterThanOrEqual(1)
-      expect(within(table).getAllByRole('button', { name: /Поставка/ }).length).toBe(5)
+      expect(within(table).getAllByRole('button', { name: /Открыть поставку/ }).length).toBe(5)
     })
 
     it('filters have proper labels', () => {
@@ -781,7 +832,12 @@ describe('SuppliesPage', () => {
 
     it('error state is announced to screen readers', () => {
       mockPageState.mockReturnValue(
-        createPageState({ isError: true, error: new Error('Ошибка загрузки') })
+        createPageState({
+          data: undefined as unknown as SuppliesListResponse,
+          sortedItems: [],
+          isError: true,
+          error: new Error('Ошибка загрузки'),
+        })
       )
       renderPage(<SuppliesPageStub />)
       const alert = screen.getByTestId('supplies-error-state')

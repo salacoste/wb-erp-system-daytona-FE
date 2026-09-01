@@ -20,6 +20,7 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog'
 import { Button } from '@/components/ui/button'
+import { Alert, AlertDescription } from '@/components/ui/alert'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Loader2, Info } from 'lucide-react'
@@ -99,6 +100,13 @@ export function CogsEditDialog({ open, onOpenChange, record, onSuccess }: CogsEd
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-4">
+          {mutation.isError && (
+            <Alert variant="destructive">
+              <AlertDescription>
+                Не удалось сохранить изменения COGS. Проверьте соединение и повторите попытку.
+              </AlertDescription>
+            </Alert>
+          )}
           <div className="space-y-2">
             <Label htmlFor="unit_cost_rub">Себестоимость (₽)</Label>
             <div className="text-sm text-muted-foreground">

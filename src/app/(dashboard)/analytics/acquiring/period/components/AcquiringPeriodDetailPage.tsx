@@ -47,13 +47,35 @@ function formatApi(date: Date): string {
   return format(date, 'yyyy-MM-dd')
 }
 
-export function AcquiringPeriodDetailPage() {
-  const [dateRange, setDateRange] = useState<DateRange | undefined>(getDefaultRange)
+interface AcquiringPeriodDetailPageProps {
+  initialRange?: DateRange
+  initialRangeError?: string
+}
+
+export function AcquiringPeriodDetailPage({
+  initialRange,
+  initialRangeError,
+}: AcquiringPeriodDetailPageProps = {}) {
+  const [dateRange, setDateRange] = useState<DateRange | undefined>(
+    () => initialRange ?? (initialRangeError ? undefined : getDefaultRange())
+  )
+  const [periodError, setPeriodError] = useState(initialRangeError)
+
+  const handleDateRangeChange = (range: DateRange | undefined): void => {
+    setDateRange(range)
+    setPeriodError(
+      range ? undefined : 'Период не выбран. Выберите даты, чтобы загрузить транзакции.'
+    )
+  }
 
   const apiFrom = dateRange ? formatApi(dateRange.from) : ''
   const apiTo = dateRange ? formatApi(dateRange.to) : ''
 
-  const { data, isLoading, isError, error, refetch } = useAcquiringPeriodDetail(apiFrom, apiTo)
+  const { data, isLoading, isError, error, refetch } = useAcquiringPeriodDetail(
+    apiFrom,
+    apiTo,
+    Boolean(dateRange)
+  )
   const transactions = data?.data ?? []
   const hasData = transactions.length > 0
 
@@ -109,7 +131,7 @@ export function AcquiringPeriodDetailPage() {
       <div className="flex items-center gap-4 flex-wrap">
         <DateRangePickerExtended
           value={dateRange}
-          onChange={setDateRange}
+          onChange={handleDateRangeChange}
           maxDays={365}
           placeholder="Выберите период"
           id="acquiring-period-range"
@@ -117,7 +139,12 @@ export function AcquiringPeriodDetailPage() {
       </div>
 
       {/* Body state machine — skeleton → rate-limit banner → full-error → empty/cached */}
-      {showSkeleton && !showSlowLoading ? (
+      {periodError ? (
+        <Alert variant="destructive">
+          <AlertCircle className="h-4 w-4" />
+          <AlertDescription>{periodError}</AlertDescription>
+        </Alert>
+      ) : showSkeleton && !showSlowLoading ? (
         <div className="space-y-4" role="status" aria-busy="true" aria-label="Загрузка транзакций">
           <Skeleton className="h-32 w-full" />
           <Skeleton className="h-64 w-full" />

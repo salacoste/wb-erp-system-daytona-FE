@@ -17,6 +17,7 @@ import { Badge } from '@/components/ui/badge'
 import {
   Table,
   TableBody,
+  TableCaption,
   TableCell,
   TableHead,
   TableHeader,
@@ -45,13 +46,12 @@ export function MonitorMetricsTable({ periods }: { periods: MonitorSummaryRespon
   const rows = buildRows(periods)
 
   return (
-    <div
-      role="region"
-      aria-label="Сводная таблица метрик за 4 периода"
-      className="rounded-md border"
-      data-testid="table-metrics-4-periods"
-    >
-      <Table>
+    <div className="rounded-md border" data-testid="table-metrics-4-periods">
+      <Table
+        scrollContainerTabIndex={0}
+        scrollContainerAriaLabel="Сводная таблица метрик за 4 периода"
+      >
+        <TableCaption className="sr-only">Сводная таблица метрик за 4 периода</TableCaption>
         <TableHeader>
           <TableRow>
             <TableHead>Показатель</TableHead>
@@ -60,7 +60,7 @@ export function MonitorMetricsTable({ periods }: { periods: MonitorSummaryRespon
               {todayIsLagging && (
                 <Badge
                   variant="outline"
-                  className="ml-2 border-status-warning/50 bg-status-warning/10 text-status-warning"
+                  className="ml-2 border-status-warning/50 bg-status-warning/10 text-foreground"
                 >
                   Нет данных за сегодня
                 </Badge>

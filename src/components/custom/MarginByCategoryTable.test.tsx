@@ -92,6 +92,26 @@ describe('MarginByCategoryTable', () => {
 
       expect(screen.getByText('(Без категории)')).toBeInTheDocument()
     })
+
+    it('renders a negative-margin category row with the shared error-colour badge', () => {
+      render(
+        <MarginByCategoryTable
+          data={[
+            {
+              ...mockCategoryData[0],
+              category: 'Negative Category',
+              profit: -24600,
+              operating_profit: -24600,
+              margin_pct: -12.3,
+            },
+          ]}
+        />
+      )
+
+      const row = screen.getByText('Negative Category').closest('tr')
+      expect(row).not.toBeNull()
+      expect(row?.querySelector('.bg-red-50')).toHaveTextContent('-12,30 %')
+    })
   })
 
   describe('empty state', () => {
@@ -154,7 +174,7 @@ describe('MarginByCategoryTable', () => {
       const rows = container.querySelectorAll('tbody tr')
       // Category B has missing_cogs_count: 5
       const categoryBRow = Array.from(rows).find(row => row.textContent?.includes('Category B'))
-      expect(categoryBRow).toHaveClass('bg-yellow-50/30')
+      expect(categoryBRow).toHaveClass('bg-status-warning/10')
     })
 
     it('should display missing COGS count badge', () => {
@@ -166,7 +186,9 @@ describe('MarginByCategoryTable', () => {
 
       // Check for the badge specifically (yellow background)
       const { container } = render(<MarginByCategoryTable data={mockCategoryData} />)
-      const badges = container.querySelectorAll('.bg-yellow-100')
+      const badges = Array.from(container.querySelectorAll('span')).filter(element =>
+        element.classList.contains('bg-status-warning/15')
+      )
       expect(badges.length).toBeGreaterThan(0)
     })
   })

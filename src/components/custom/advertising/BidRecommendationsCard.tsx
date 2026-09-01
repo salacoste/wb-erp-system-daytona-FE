@@ -103,6 +103,33 @@ export function BidRecommendationsCard({ cabinetId, advertId, nmId }: BidRecomme
 
   const { recommendations, keywords } = data
   const cacheAge = formatCacheAge(data.cachedAt)
+  const recommendationValues = [
+    recommendations.competitive,
+    recommendations.leaders,
+    recommendations.top2,
+  ]
+  const hasRecommendation = recommendationValues.some(value => Number.isFinite(value) && value > 0)
+
+  if (!hasRecommendation) {
+    return (
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <TrendingUp className="h-5 w-5" aria-hidden="true" />
+            Рекомендации по ставкам
+          </CardTitle>
+          <CardDescription>Товар: {nmId}</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <Alert>
+            <AlertDescription>
+              Для этого товара пока нет доступных рекомендаций по ставкам.
+            </AlertDescription>
+          </Alert>
+        </CardContent>
+      </Card>
+    )
+  }
 
   return (
     <Card>

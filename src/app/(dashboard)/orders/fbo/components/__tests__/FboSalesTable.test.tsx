@@ -97,6 +97,10 @@ describe('FboSalesTable', () => {
       />
     )
     expect(screen.getByRole('caption')).toHaveTextContent('Продажи FBO Wildberries')
+    expect(screen.getByRole('region', { name: 'Продажи FBO Wildberries' })).toHaveAttribute(
+      'tabindex',
+      '0'
+    )
   })
 
   it('renders NO caption element without captionText (Story 172.15)', () => {

@@ -5,7 +5,11 @@ import { ResponsiveChartFrame } from './ResponsiveChartFrame'
 describe('ResponsiveChartFrame', () => {
   it('provides a positive-size frame for Recharts responsive containers', () => {
     render(
-      <ResponsiveChartFrame label="Тестовый график" className="h-48">
+      <ResponsiveChartFrame
+        label="Тестовый график"
+        descriptionId="test-chart-data"
+        className="h-48"
+      >
         <div className="recharts-responsive-container" />
       </ResponsiveChartFrame>
     )
@@ -14,6 +18,7 @@ describe('ResponsiveChartFrame', () => {
     expect(frame).toHaveClass('min-h-[240px]')
     expect(frame).toHaveClass('w-full')
     expect(frame).toHaveClass('[&_.recharts-responsive-container]:min-h-[inherit]')
+    expect(frame).toHaveAttribute('aria-describedby', 'test-chart-data')
   })
 
   it('keeps sizing reusable without forcing image semantics or default min-height', () => {

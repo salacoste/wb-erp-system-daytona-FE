@@ -119,13 +119,19 @@ export function ReturnsTable({ from, to, anomalyOnly }: ReturnsTableProps) {
       {/* Cursor pagination */}
       {pagination && (
         <div className="flex items-center justify-between text-sm text-muted-foreground">
-          <span>{items.length} SKU на странице</span>
+          <span>
+            {items.length} SKU на странице · Страница {cursor ? '2+' : '1'}
+            {!cursor && !pagination.hasMore ? ' из 1' : ''}
+          </span>
           <div className="flex gap-2">
-            {cursor && (
-              <Button variant="outline" size="sm" onClick={() => setCursor(undefined)}>
-                В начало
-              </Button>
-            )}
+            <Button
+              variant="outline"
+              size="sm"
+              disabled={!cursor}
+              onClick={() => setCursor(undefined)}
+            >
+              В начало
+            </Button>
             <Button
               variant="outline"
               size="sm"

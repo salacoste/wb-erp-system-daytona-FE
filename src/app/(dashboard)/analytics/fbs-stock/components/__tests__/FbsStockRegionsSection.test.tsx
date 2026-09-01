@@ -196,6 +196,10 @@ describe('FbsStockRegionsSection (Story 96.11-FE)', () => {
     renderWithProviders(<FbsStockRegionsSection />)
     const caption = screen.getByText('Остатки FBS по регионам')
     expect(caption.tagName).toBe('CAPTION')
+    expect(screen.getByRole('region', { name: 'Остатки FBS по регионам' })).toHaveAttribute(
+      'tabindex',
+      '0'
+    )
   })
 
   it('169.7: numeric cells carry tabular-nums («Складов» column representative)', () => {

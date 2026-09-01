@@ -89,7 +89,12 @@ export function CogsHistoryTable({
                 key={record.cogs_id}
                 className={cn(!record.is_active && 'bg-muted/50 opacity-60')}
               >
-                <TableCell className="tabular-nums">{formatDate(record.valid_from)}</TableCell>
+                <TableCell className="tabular-nums">
+                  {(!Number.isFinite(record.unit_cost_rub) || !record.affected_weeks) && (
+                    <span className="sr-only">Данные записи доступны не полностью. </span>
+                  )}
+                  {formatDate(record.valid_from)}
+                </TableCell>
                 <TableCell className="tabular-nums">{formatDate(record.valid_to)}</TableCell>
                 <TableCell
                   className={cn('font-medium tabular-nums', !record.is_active && 'line-through')}

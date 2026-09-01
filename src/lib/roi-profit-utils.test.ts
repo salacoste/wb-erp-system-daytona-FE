@@ -42,19 +42,19 @@ describe('formatROI', () => {
 
 describe('getROIColor', () => {
   it('maps ROI thresholds to color classes (>=100 / >=50 / >=20 / >=0 / <0)', () => {
-    expect(getROIColor(100)).toBe('text-green-600')
-    expect(getROIColor(99)).toBe('text-green-500') // mid-range, catches off-by-one in the >=100 cut
-    expect(getROIColor(50)).toBe('text-green-500')
-    expect(getROIColor(49)).toBe('text-yellow-600') // mid-range
-    expect(getROIColor(20)).toBe('text-yellow-600')
-    expect(getROIColor(19)).toBe('text-orange-500') // mid-range
-    expect(getROIColor(0)).toBe('text-orange-500')
-    expect(getROIColor(-0.1)).toBe('text-red-600')
+    expect(getROIColor(100)).toBe('text-foreground')
+    expect(getROIColor(99)).toBe('text-foreground')
+    expect(getROIColor(50)).toBe('text-foreground')
+    expect(getROIColor(49)).toBe('text-foreground')
+    expect(getROIColor(20)).toBe('text-foreground')
+    expect(getROIColor(19)).toBe('text-foreground')
+    expect(getROIColor(0)).toBe('text-foreground')
+    expect(getROIColor(-0.1)).toBe('text-foreground')
   })
 
   it('returns a neutral gray class for null/undefined', () => {
-    expect(getROIColor(null)).toBe('text-gray-400')
-    expect(getROIColor(undefined)).toBe('text-gray-400')
+    expect(getROIColor(null)).toBe('text-muted-foreground')
+    expect(getROIColor(undefined)).toBe('text-muted-foreground')
   })
 })
 

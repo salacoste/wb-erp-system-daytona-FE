@@ -40,6 +40,15 @@ describe('AdvertisingCard — BD-12 label follows the data source', () => {
     expect(screen.getByText('Реклама')).toBeInTheDocument()
     expect(screen.queryByText('Продвижение WB')).not.toBeInTheDocument()
   })
+
+  it('uses a contrast-safe ROAS token and a 44px metric-help target', () => {
+    renderCard({ totalSpend: 16779, previousSpend: null, roas: 6, saleGross: 620000 })
+
+    expect(screen.getByText(/ROAS:/)).toHaveClass('text-status-success')
+    expect(screen.getByRole('button', { name: 'Подробнее о метрике Реклама' })).toHaveClass(
+      'size-11'
+    )
+  })
 })
 
 // ROAS is ALWAYS the ad-API value (overall_roas); only the spend HEADLINE switches to

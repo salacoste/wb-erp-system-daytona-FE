@@ -133,6 +133,20 @@ describe('SettingsNav', () => {
     }
   )
 
+  it('keeps Owner-only destinations visible but unavailable to an Analyst', () => {
+    setRole('Analyst')
+    render(<SettingsNav />)
+
+    const nav = within(desktopNav())
+    expect(nav.getAllByRole('link')).toHaveLength(5)
+    for (const label of ['Тарифы', 'Импорт']) {
+      expect(nav.queryByRole('link', { name: new RegExp(label) })).not.toBeInTheDocument()
+      expect(nav.getByText(label).closest('[aria-disabled="true"]')).toHaveTextContent(
+        'Только для владельца'
+      )
+    }
+  })
+
   it.each(
     (['Manager', 'Analyst', 'Service'] as const).flatMap(role => [
       [role, '/settings/tariffs', 'Тарифы'],

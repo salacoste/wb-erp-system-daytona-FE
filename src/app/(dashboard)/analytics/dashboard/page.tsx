@@ -80,7 +80,9 @@ function CabinetDashboardContent() {
       <div className="space-y-6">
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div>
-            <h1 className="text-3xl font-bold tracking-tight text-foreground">Сводка по кабинету</h1>
+            <h1 className="text-3xl font-bold tracking-tight text-foreground">
+              Сводка по кабинету
+            </h1>
             <p className="mt-1 text-sm text-muted-foreground">
               Ключевые показатели эффективности и топ-товары
             </p>
@@ -93,7 +95,7 @@ function CabinetDashboardContent() {
     )
   }
 
-  if (isError) {
+  if (isError && !data) {
     return (
       <div className="space-y-6">
         <div>
@@ -169,8 +171,27 @@ function CabinetDashboardContent() {
         </Alert>
       )}
 
+      {isLoading && data && (
+        <p role="status" className="text-sm text-muted-foreground">
+          Обновляем сводку по кабинету…
+        </p>
+      )}
+
+      {isError && data && (
+        <Alert className="border-status-warning/30 bg-status-warning/15">
+          <AlertCircle className="h-4 w-4 text-status-warning" />
+          <AlertDescription className="flex items-center justify-between gap-4">
+            <span>Не удалось обновить сводку. Показаны ранее загруженные данные.</span>
+            <Button variant="outline" size="sm" onClick={() => void refetch()}>
+              <RefreshCw className="mr-2 h-4 w-4" />
+              Повторить
+            </Button>
+          </AlertDescription>
+        </Alert>
+      )}
+
       {/* Content */}
-      {!isLoading && data && (
+      {data && (
         <>
           {/* P&L Waterfall - Complete Financial Overview (Story 28) */}
           <PnLWaterfall data={data.summary.totals} products={data.summary.products} />

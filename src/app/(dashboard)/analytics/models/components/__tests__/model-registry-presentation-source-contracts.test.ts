@@ -60,16 +60,16 @@ describe('Story 171.6 route presentation source contracts', () => {
     }
   })
 
-  it('status-token pin: registry-local badge map uses semantic status tokens (palette eliminated)', () => {
+  it('status-token pin: badge map uses contrast-safe solid semantic pairs', () => {
     const helpers = readFileSync(
       join(routeDirectory, 'components', 'model-list-helpers.ts'),
       'utf8'
     )
     expect(helpers).toMatch(/MODEL_LIST_BADGE_CLASS/)
-    expect(helpers).toMatch(/text-status-success/)
-    expect(helpers).toMatch(/text-status-information/)
-    expect(helpers).toMatch(/text-status-warning/)
-    expect(helpers).toMatch(/text-status-error/)
+    expect(helpers).toMatch(/bg-status-success text-status-success-foreground/)
+    expect(helpers).toMatch(/bg-status-information text-status-information-foreground/)
+    expect(helpers).toMatch(/bg-status-warning text-status-warning-foreground/)
+    expect(helpers).toMatch(/bg-status-error text-status-error-foreground/)
     expect(helpers).not.toMatch(/bg-green-100|bg-blue-100|bg-amber-100|bg-red-100|bg-gray-100/)
     // Story 174.2: the registry config carries labels + pulse only — no className
     // field. Colour overlays live exclusively in route-local maps.

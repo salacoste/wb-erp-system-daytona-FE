@@ -4,7 +4,14 @@
  */
 
 import type { FinanceSummary } from '@/hooks/useDashboard'
-import { Table, TableBody, TableHead, TableHeader, TableRow } from '@/components/ui/table'
+import {
+  Table,
+  TableBody,
+  TableCaption,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { extractExpenseData } from './expenses-data'
 import { ExpenseTableRows } from './ExpenseTableRows'
@@ -31,7 +38,8 @@ export function ExpensesSection({
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <Table>
+        <Table scrollContainerTabIndex={0} scrollContainerAriaLabel="Расходы Wildberries">
+          <TableCaption className="sr-only">Расходы Wildberries</TableCaption>
           <TableHeader>
             <TableRow>
               <TableHead className="w-[280px]">Статья расходов</TableHead>

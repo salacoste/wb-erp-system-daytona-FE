@@ -65,19 +65,22 @@ export function DeltaDisplay({
   const isGood = inverse ? !isPositive : isPositive
   const isNeutral = Math.abs(percent) < 0.5
 
-  const colorClass = isNeutral ? 'text-gray-500' : isGood ? 'text-green-600' : 'text-red-600'
+  const colorClass = isNeutral ? 'text-muted-foreground' : 'text-foreground'
 
   const Icon = isNeutral ? Minus : isPositive ? ArrowUp : ArrowDown
 
   return (
     <div className={cn('flex items-center gap-1 text-xs', colorClass)}>
-      <Icon className="h-3 w-3" />
+      <Icon className="h-3 w-3" aria-hidden="true" />
+      <span className="sr-only">
+        {isNeutral ? 'без существенного изменения' : isGood ? 'улучшение' : 'ухудшение'}
+      </span>
       <span>
         {type === 'currency'
           ? formatCurrency(Math.abs(value))
           : `${Math.abs(value).toFixed(1)} п.п.`}
       </span>
-      <span className="text-gray-400">
+      <span className="text-muted-foreground">
         ({percent >= 0 ? '+' : ''}
         {formatPercentage(percent, 1)})
       </span>

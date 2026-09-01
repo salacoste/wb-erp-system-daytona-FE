@@ -173,12 +173,12 @@ describe('Story 169.12 route presentation source contracts', () => {
     expect(parts).not.toMatch(/style=\{\{ color: CHART_COLORS/)
   })
 
-  it('TrendBadge uses financial-positive/negative /15 matched pairs; manual "+" sign preserved', () => {
+  it('TrendBadge uses semantic financial /15 backgrounds with AA foreground; manual "+" sign preserved', () => {
     const parts = withoutComments(
       readFileSync(join(componentsDirectory, 'StorageTrendsChartParts.tsx'), 'utf8')
     )
-    expect(parts).toMatch(/text-financial-negative bg-financial-negative\/15/)
-    expect(parts).toMatch(/text-financial-positive bg-financial-positive\/15/)
+    expect(parts).toMatch(/text-foreground bg-financial-negative\/15/)
+    expect(parts).toMatch(/text-foreground bg-financial-positive\/15/)
     expect(parts).toMatch(/text-muted-foreground bg-muted/)
     // Sign contract lock (do NOT enable signDisplay)
     expect(parts).toMatch(/\{isPositive \? '\+' : ''\}/)
@@ -206,11 +206,19 @@ describe('Story 169.12 route presentation source contracts', () => {
       readFileSync(join(componentsDirectory, 'StorageBySkuTable.tsx'), 'utf8')
     )
     expect(table).toMatch(/<TableCaption>/)
-    expect(table).toMatch(/role="region"/)
+    expect(table).toMatch(/scrollContainerTabIndex=\{0\}/)
+    expect(table).toMatch(/scrollContainerAriaLabel="Таблица расходов на хранение по товарам"/)
     expect(table).toMatch(/tabular-nums/)
     const monoLine = table.split('\n').find(line => line.includes('font-mono'))
     expect(monoLine).toBeDefined()
     expect(monoLine).not.toMatch(/tabular-nums/)
+
+    const section = readFileSync(join(componentsDirectory, 'StoragePageTableSection.tsx'), 'utf8')
+    expect(section).not.toMatch(/overflow-x-auto/)
+    const topConsumers = readFileSync(join(componentsDirectory, 'TopConsumersWidget.tsx'), 'utf8')
+    expect(topConsumers).toMatch(/scrollContainerTabIndex=\{0\}/)
+    expect(topConsumers).toMatch(/scrollContainerAriaLabel="Топ товаров по расходам на хранение"/)
+    expect(topConsumers).toMatch(/<TableCaption className="sr-only">/)
   })
 
   it('severity classifier is the shared getStorageRatioSeverity (parked dedupe absorbed)', () => {
@@ -219,6 +227,8 @@ describe('Story 169.12 route presentation source contracts', () => {
     )
     expect(helpers).toMatch(/getStorageRatioSeverity/)
     expect(helpers).not.toMatch(/function getCostSeverity/)
+    expect(helpers).toMatch(/aria-hidden="true"/)
+    expect(helpers).not.toMatch(/aria-label=\{labels\[severity\]\}/)
   })
 
   it('formatters are single-sourced in storage-format (dedupe ×4 currency, ×2 week)', () => {

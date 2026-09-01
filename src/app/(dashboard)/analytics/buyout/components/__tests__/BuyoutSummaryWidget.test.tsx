@@ -158,6 +158,15 @@ describe('BuyoutSummaryWidget', () => {
     expect(screen.getByText(/45 SKU/)).toBeInTheDocument()
   })
 
+  it('renders the SKU-scope note without contrast-reducing text opacity', () => {
+    mockUseBuyoutSummary.mockReturnValue(hookReturn({ data: mockSummary }))
+    renderWithProviders(<BuyoutSummaryWidget {...defaultProps} />)
+
+    const note = screen.getByText(/В таблице по SKU/)
+    expect(note).toHaveClass('text-muted-foreground')
+    expect(note).not.toHaveClass('text-muted-foreground/70')
+  })
+
   it('shows top decliners section', () => {
     mockUseBuyoutSummary.mockReturnValue(hookReturn({ data: mockSummary }))
     renderWithProviders(<BuyoutSummaryWidget {...defaultProps} />)

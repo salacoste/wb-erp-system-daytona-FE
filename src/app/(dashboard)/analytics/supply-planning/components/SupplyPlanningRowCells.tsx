@@ -45,7 +45,7 @@ export function VelocityCell({ item }: CellProps) {
             <Tooltip>
               <TooltipTrigger asChild>
                 <span
-                  className="cursor-help text-muted-foreground/60 text-xs"
+                  className="cursor-help text-foreground text-xs"
                   aria-label="Нет данных о тренде продаж"
                 >
                   —
@@ -104,6 +104,7 @@ export function ActionCell({ item }: CellProps) {
           variant={actionConfig.variant}
           size="sm"
           className={cn('h-8 text-xs', actionConfig.className)}
+          aria-label={actionConfig.label}
         >
           <actionConfig.icon className="h-3 w-3 mr-1" />
           <span className="hidden sm:inline">{actionConfig.label}</span>

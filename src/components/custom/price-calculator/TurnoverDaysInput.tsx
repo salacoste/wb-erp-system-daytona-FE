@@ -109,6 +109,7 @@ export function TurnoverDaysInput({
           step={1}
           disabled={disabled}
           className="w-full"
+          aria-label="Срок оборачиваемости в днях"
         />
         <div className="flex justify-between text-xs text-muted-foreground">
           <span>1 день</span>

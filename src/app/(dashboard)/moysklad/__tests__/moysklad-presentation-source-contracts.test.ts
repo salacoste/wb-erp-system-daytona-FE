@@ -78,7 +78,7 @@ describe('Story 172.13 moysklad presentation source contracts', () => {
 
   it('health badge pin: configured branch on success tokens', () => {
     const src = readFileSync(component('MoyskladHealthBadge.tsx'), 'utf8')
-    expect(src).toMatch(/\? 'border-status-success\/40 bg-status-success\/10 text-status-success'/)
+    expect(src).toMatch(/\? 'border-status-success\/40 bg-status-success\/10 text-foreground'/)
     expect(src).toMatch(/: 'border-destructive\/30 text-destructive'/)
   })
 

@@ -106,6 +106,45 @@ describe('SearchPositionTrendsTab Pattern-1 (Story 170.7)', () => {
     )
   })
 
+  it('keeps the current search results visible while a background refresh is pending', () => {
+    mockedTrends.mockReturnValue({
+      data: {
+        summary: {
+          improvingCount: 3,
+          decliningCount: 2,
+          stableCount: 1,
+          closeToPageOneCount: 4,
+          totalSkusAnalyzed: 10,
+          currentWeekStart: '2026-08-17',
+          previousWeekStart: '2026-08-10',
+        },
+        movers: [
+          {
+            nmId: 111,
+            currentAvgPosition: 10,
+            previousAvgPosition: 20,
+            positionChange: 10,
+            trend: 'improving',
+            totalQueries: 3,
+            totalImpressions: 100,
+            topQuery: 'кепка',
+          },
+        ],
+        closeToPageOne: [],
+      },
+      isLoading: false,
+      isError: false,
+      isFetching: true,
+    } as unknown as ReturnType<typeof usePositionTrends>)
+
+    render(<SearchPositionTrendsTab />, { wrapper: createQueryWrapper(queryClient) })
+
+    expect(screen.getByRole('status')).toHaveTextContent('Обновление результатов…')
+    expect(screen.getByText('Изменения позиций')).toBeInTheDocument()
+    expect(screen.getByRole('link', { name: '111' })).toBeInTheDocument()
+    expect(screen.getByText('История позиций')).toBeInTheDocument()
+  })
+
   it('loading shared fetch renders per-section skeletons, history chart still mounted', () => {
     mockedTrends.mockReturnValue({
       data: undefined,

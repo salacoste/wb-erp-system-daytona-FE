@@ -46,7 +46,8 @@ export function ExpenseTableRows({ d, isComparison }: ExpenseTableRowsProps) {
       {/* Divider before operational deductions */}
       <TableRow>
         <TableCell colSpan={isComparison ? 6 : 3} className="py-1">
-          <hr className="border-gray-200" />
+          <span className="sr-only">Операционные удержания</span>
+          <hr className="border-gray-200" aria-hidden="true" />
         </TableCell>
       </TableRow>
 

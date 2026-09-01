@@ -1,5 +1,6 @@
 import { describe, it, expect, vi } from 'vitest'
 import { render, screen } from '@/test/utils/test-utils'
+import userEvent from '@testing-library/user-event'
 import { TopProductsTableRow } from '../TopProductsTableRow'
 import type { TopProductItem } from '@/types/analytics'
 
@@ -130,7 +131,7 @@ describe('TopProductsTableRow', () => {
     expect(screen.getByText('—')).toBeInTheDocument()
   })
 
-  it('calls onProductClick on row click', () => {
+  it('keeps pointer row activation as a convenience action', () => {
     render(
       <table>
         <tbody>
@@ -142,11 +143,13 @@ describe('TopProductsTableRow', () => {
         </tbody>
       </table>
     )
-    screen.getByRole('button').click()
+    screen.getByText('50 000 ₽').click()
+    expect(mockOnProductClick).toHaveBeenCalledTimes(1)
     expect(mockOnProductClick).toHaveBeenCalledWith('67890')
   })
 
-  it('has accessible aria-label with product name', () => {
+  it('activates the exact product from a real focused button while preserving native row cells', async () => {
+    const user = userEvent.setup()
     render(
       <table>
         <tbody>
@@ -158,9 +161,16 @@ describe('TopProductsTableRow', () => {
         </tbody>
       </table>
     )
-    expect(screen.getByRole('button')).toHaveAttribute(
-      'aria-label',
-      'Перейти к товару Test Product Name'
-    )
+    const action = screen.getByRole('button', { name: 'Перейти к товару Test Product Name' })
+    const row = action.closest('tr')
+    expect(row).toHaveRole('row')
+    expect(row).not.toHaveAttribute('role')
+    expect(row).not.toHaveAttribute('tabindex')
+    expect(row?.querySelectorAll('td')).toHaveLength(6)
+    action.focus()
+    expect(action).toHaveFocus()
+    await user.keyboard('{Enter}')
+    expect(mockOnProductClick).toHaveBeenCalledTimes(1)
+    expect(mockOnProductClick).toHaveBeenCalledWith('67890')
   })
 })

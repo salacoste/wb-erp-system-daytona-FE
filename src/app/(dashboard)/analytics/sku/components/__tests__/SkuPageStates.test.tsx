@@ -6,7 +6,7 @@
 import { describe, it, expect, vi } from 'vitest'
 import { screen } from '@testing-library/react'
 import { renderWithProviders } from '@/test/utils/test-utils'
-import { SkuPageWeeksError, SkuPageDataError } from '../SkuPageStates'
+import { SkuPageLoading, SkuPageWeeksError, SkuPageDataError } from '../SkuPageStates'
 
 function expectH1Pinned() {
   const h1 = screen.getByRole('heading', { level: 1 })
@@ -17,6 +17,12 @@ function expectH1Pinned() {
 }
 
 describe('SkuPageStates h1 scale (168.9)', () => {
+  it('renders the route suspense fallback as a bounded busy state', () => {
+    renderWithProviders(<SkuPageLoading />)
+
+    expect(document.querySelectorAll('.animate-pulse')).not.toHaveLength(0)
+  })
+
   it('SkuPageWeeksError: h1 pinned to 168.1 hub scale (2xl/foreground)', () => {
     renderWithProviders(
       <SkuPageWeeksError error={new Error('auth')} router={{ push: vi.fn() } as never} />
@@ -27,5 +33,13 @@ describe('SkuPageStates h1 scale (168.9)', () => {
   it('SkuPageDataError: same h1 scale across all page states', () => {
     renderWithProviders(<SkuPageDataError error={new Error('boom')} onRetry={vi.fn()} />)
     expectH1Pinned()
+  })
+
+  it('retries the failed SKU query from the route-owned data error', () => {
+    const onRetry = vi.fn()
+    renderWithProviders(<SkuPageDataError error={new Error('boom')} onRetry={onRetry} />)
+
+    screen.getByRole('button', { name: 'Повторить' }).click()
+    expect(onRetry).toHaveBeenCalledTimes(1)
   })
 })

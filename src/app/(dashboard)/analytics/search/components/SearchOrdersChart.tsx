@@ -43,6 +43,7 @@ interface ChartRow {
 }
 
 const TITLE = 'Динамика поисковых заказов по дням'
+export const SEARCH_ORDERS_CHART_DATA_TABLE_ID = 'search-orders-chart-data'
 
 /**
  * Format ISO day key (YYYY-MM-DD) to RU short label "DD.MM"; pass through if not
@@ -86,6 +87,14 @@ export function toChartRows(items: SearchOrderItem[]): ChartRow[] {
 
 function tooltipNumber(value: unknown): number {
   return typeof value === 'number' ? value : Number(value) || 0
+}
+
+export function formatSearchOrdersTooltipValue(value: unknown): string {
+  return tooltipNumber(value).toLocaleString('ru-RU')
+}
+
+export function formatSearchOrdersTooltipLabel(label: unknown): string {
+  return formatDayTick(String(label ?? ''))
 }
 
 function ChartShell({ children }: { children: ReactNode }) {
@@ -141,7 +150,12 @@ export function SearchOrdersChart({ from, to }: SearchOrdersChartProps) {
 
   return (
     <ChartShell>
-      <div role="img" aria-label={`${TITLE}: ${dayCountLabel}`} className="h-60 w-full md:h-72">
+      <div
+        role="img"
+        aria-label={`${TITLE}: ${dayCountLabel}`}
+        aria-describedby={SEARCH_ORDERS_CHART_DATA_TABLE_ID}
+        className="h-60 w-full md:h-72"
+      >
         <p className="sr-only">
           Линейный график показывает количество поисковых заказов за {dayCountLabel}
         </p>
@@ -163,8 +177,8 @@ export function SearchOrdersChart({ from, to }: SearchOrdersChartProps) {
               width={48}
             />
             <Tooltip
-              formatter={value => [tooltipNumber(value).toLocaleString('ru-RU'), 'Заказы']}
-              labelFormatter={label => formatDayTick(String(label ?? ''))}
+              formatter={value => [formatSearchOrdersTooltipValue(value), 'Заказы, шт.']}
+              labelFormatter={formatSearchOrdersTooltipLabel}
             />
             <Line
               type="monotone"
@@ -178,6 +192,25 @@ export function SearchOrdersChart({ from, to }: SearchOrdersChartProps) {
           </LineChart>
         </ResponsiveContainer>
       </div>
+      <table id={SEARCH_ORDERS_CHART_DATA_TABLE_ID} className="sr-only" data-chart-summary>
+        <caption>
+          Данные динамики поисковых заказов; период: {from} — {to}; единицы: заказы, шт.
+        </caption>
+        <thead>
+          <tr>
+            <th scope="col">Дата</th>
+            <th scope="col">Заказы, шт.</th>
+          </tr>
+        </thead>
+        <tbody>
+          {rows.map(row => (
+            <tr key={row.date}>
+              <th scope="row">{row.date}</th>
+              <td>{formatSearchOrdersTooltipValue(row.totalOrders)}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
     </ChartShell>
   )
 }

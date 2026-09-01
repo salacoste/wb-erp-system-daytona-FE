@@ -194,21 +194,21 @@ describe('DrrSlider', () => {
     it('should have aria-label on slider', () => {
       render(<DrrSlider value={5} onChange={mockOnChange} />)
 
-      const slider = screen.getByTestId('drr-slider')
+      const slider = screen.getByRole('slider')
       expect(slider).toHaveAttribute('aria-label', 'DRR (Доля рекламных расходов)')
     })
 
     it('should have aria-valuenow on slider', () => {
       render(<DrrSlider value={10} onChange={mockOnChange} />)
 
-      const slider = screen.getByTestId('drr-slider')
+      const slider = screen.getByRole('slider')
       expect(slider).toHaveAttribute('aria-valuenow', '10')
     })
 
     it('should have aria-valuetext with level', () => {
       render(<DrrSlider value={5} onChange={mockOnChange} />)
 
-      const slider = screen.getByTestId('drr-slider')
+      const slider = screen.getByRole('slider')
       expect(slider).toHaveAttribute('aria-valuetext', '5% - Умеренный')
     })
 
@@ -482,7 +482,7 @@ describe('DrrSlider - Keyboard Accessibility', () => {
   it('should have accessible min/max attributes for screen readers', () => {
     render(<DrrSlider value={5} onChange={mockOnChange} />)
 
-    const slider = screen.getByTestId('drr-slider')
+    const slider = screen.getByRole('slider')
     expect(slider).toHaveAttribute('aria-valuemin', '0')
     expect(slider).toHaveAttribute('aria-valuemax', '50')
   })

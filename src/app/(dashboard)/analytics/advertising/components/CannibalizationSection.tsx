@@ -105,7 +105,12 @@ export function CannibalizationSection({ items, isLoading }: CannibalizationSect
             </span>
           </div>
         )}
-        <div className="overflow-x-auto">
+        <div
+          className="overflow-x-auto"
+          role="region"
+          aria-label="Риск каннибализации рекламы"
+          tabIndex={0}
+        >
           <table className="w-full text-sm" role="table" aria-label="Таблица риска каннибализации">
             <thead>
               <tr className="border-b text-left text-muted-foreground">

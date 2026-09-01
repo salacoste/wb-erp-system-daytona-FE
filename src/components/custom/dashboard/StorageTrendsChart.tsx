@@ -21,6 +21,11 @@ import {
 } from 'recharts'
 import { formatCurrency } from '@/lib/utils'
 import type { StorageTrendPoint } from '@/types/storage-analytics'
+import { ResponsiveChartFrame } from '@/components/custom/analytics/ResponsiveChartFrame'
+import {
+  DASHBOARD_STORAGE_TREND_TABLE_ID,
+  DashboardStorageTrendDataTable,
+} from './DashboardStorageTrendDataTable'
 
 // Chart color scheme (Story 172.1 tokens): the storage series keeps its
 // categorical tone via chart-2; null/absent points render muted.
@@ -34,49 +39,70 @@ export interface StorageTrendsChartProps {
   height: number
 }
 
-export function StorageTrendsChart({ data, height }: StorageTrendsChartProps) {
+function prefersReducedMotion(): boolean {
   return (
-    <ResponsiveContainer width="100%" height={height}>
-      <AreaChart data={data} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
-        <defs>
-          <linearGradient id="storageFillDashboard" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="5%" stopColor={CHART_COLORS.line} stopOpacity={0.3} />
-            <stop offset="95%" stopColor={CHART_COLORS.line} stopOpacity={0.05} />
-          </linearGradient>
-        </defs>
-        <CartesianGrid strokeDasharray="3 3" className="stroke-muted" />
-        <XAxis
-          dataKey="week"
-          tickFormatter={formatWeekShort}
-          tick={{ fontSize: 11 }}
-          axisLine={false}
-          tickLine={false}
-        />
-        <YAxis
-          tickFormatter={formatYAxis}
-          tick={{ fontSize: 11 }}
-          axisLine={false}
-          tickLine={false}
-          width={45}
-        />
-        <Tooltip content={<ChartTooltip />} />
-        <Area
-          type="monotone"
-          dataKey="storage_cost"
-          stroke={CHART_COLORS.line}
-          fill="url(#storageFillDashboard)"
-          strokeWidth={2}
-          connectNulls={false}
-          dot={<ChartDot />}
-          activeDot={{
-            r: 6,
-            fill: CHART_COLORS.line,
-            stroke: 'var(--color-card)',
-            strokeWidth: 2,
-          }}
-        />
-      </AreaChart>
-    </ResponsiveContainer>
+    typeof window !== 'undefined' &&
+    typeof window.matchMedia === 'function' &&
+    window.matchMedia('(prefers-reduced-motion: reduce)').matches
+  )
+}
+
+export function StorageTrendsChart({ data, height }: StorageTrendsChartProps) {
+  const reduceMotion = prefersReducedMotion()
+
+  return (
+    <>
+      <ResponsiveChartFrame
+        label="График расходов на хранение на главной странице"
+        descriptionId={DASHBOARD_STORAGE_TREND_TABLE_ID}
+        minHeightClassName="min-h-0"
+        style={{ height }}
+      >
+        <ResponsiveContainer width="100%" height="100%" minWidth={1} minHeight={1}>
+          <AreaChart data={data} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
+            <defs>
+              <linearGradient id="storageFillDashboard" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="5%" stopColor={CHART_COLORS.line} stopOpacity={0.3} />
+                <stop offset="95%" stopColor={CHART_COLORS.line} stopOpacity={0.05} />
+              </linearGradient>
+            </defs>
+            <CartesianGrid strokeDasharray="3 3" className="stroke-muted" />
+            <XAxis
+              dataKey="week"
+              tickFormatter={formatWeekShort}
+              tick={{ fontSize: 11 }}
+              axisLine={false}
+              tickLine={false}
+            />
+            <YAxis
+              tickFormatter={formatYAxis}
+              tick={{ fontSize: 11 }}
+              axisLine={false}
+              tickLine={false}
+              width={45}
+            />
+            <Tooltip content={<ChartTooltip />} />
+            <Area
+              type="monotone"
+              dataKey="storage_cost"
+              stroke={CHART_COLORS.line}
+              fill="url(#storageFillDashboard)"
+              strokeWidth={2}
+              connectNulls={false}
+              isAnimationActive={!reduceMotion}
+              dot={<ChartDot />}
+              activeDot={{
+                r: 6,
+                fill: CHART_COLORS.line,
+                stroke: 'var(--color-card)',
+                strokeWidth: 2,
+              }}
+            />
+          </AreaChart>
+        </ResponsiveContainer>
+      </ResponsiveChartFrame>
+      <DashboardStorageTrendDataTable data={data} />
+    </>
   )
 }
 
@@ -122,7 +148,7 @@ interface TooltipPayload {
   payload: StorageTrendPoint
 }
 
-function ChartTooltip({
+export function ChartTooltip({
   active,
   payload,
   label,

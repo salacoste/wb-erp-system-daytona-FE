@@ -236,7 +236,9 @@ test.describe('Shipments List Page - Epic 77-FE', () => {
       await page.reload({ waitUntil: 'domcontentloaded' })
       const loadingRegion = page.getByRole('region', { name: 'Загружаем отправки' })
       await expect(loadingRegion).toHaveAttribute('data-state', 'loading')
-      await expect(page.getByRole('heading', { name: 'Отправки' })).toBeVisible()
+      await expect(
+        page.getByRole('heading', { level: 1, name: 'Отправки', exact: true })
+      ).toBeVisible()
 
       releaseResponse()
       await expect(page.getByRole('table', { name: 'Очередь отправок' })).toBeVisible()
@@ -252,7 +254,7 @@ test.describe('Shipments List Page - Epic 77-FE', () => {
       const statusFilter = page.getByRole('combobox', { name: 'Статус отправки' })
 
       await statusFilter.click()
-      await page.getByText('Черновик').click()
+      await page.getByRole('option', { name: 'Черновик', exact: true }).click()
       await page.locator('main').waitFor({ state: 'visible' })
 
       // All visible badges should show ЧЕРНОВИК
@@ -265,7 +267,7 @@ test.describe('Shipments List Page - Epic 77-FE', () => {
       const statusFilter = page.getByRole('combobox', { name: 'Статус отправки' })
 
       await statusFilter.click()
-      await page.getByText('Подтверждена').click()
+      await page.getByRole('option', { name: 'Подтверждена', exact: true }).click()
       await page.locator('main').waitFor({ state: 'visible' })
 
       const badges = page.locator('table tbody [data-slot="status-badge"]')
@@ -278,7 +280,7 @@ test.describe('Shipments List Page - Epic 77-FE', () => {
 
       // Apply filter first
       await statusFilter.click()
-      await page.getByText('Черновик').click()
+      await page.getByRole('option', { name: 'Черновик', exact: true }).click()
       await page.locator('main').waitFor({ state: 'visible' })
 
       // Clear filter by selecting "Все"
@@ -338,9 +340,12 @@ test.describe('Shipments List Page - Epic 77-FE', () => {
         return
       }
 
-      const dateHeader = page.getByRole('columnheader', { name: /Дата создания/i })
+      const table = page.getByRole('table', { name: 'Очередь отправок' })
+      const dateHeader = table.locator('th').filter({
+        has: page.getByRole('button', { name: /Сортировать по дате/i }),
+      })
       await expect(dateHeader).toHaveAttribute('aria-sort', 'descending')
-      await dateHeader.getByRole('button', { name: /Сортировать по дате/i }).click()
+      await dateHeader.getByRole('button', { name: 'Сортировать по дате по возрастанию' }).click()
       await expect(dateHeader).toHaveAttribute('aria-sort', 'ascending')
     })
   })
@@ -454,8 +459,7 @@ test.describe('Shipments List Page - Epic 77-FE', () => {
       await page.goto(SHIPMENTS_ROUTE, { waitUntil: 'domcontentloaded' })
       await page.locator('main').waitFor({ state: 'visible' })
 
-      const emptyState = page.getByText('Нет отправок')
-      await expect(emptyState).toBeVisible()
+      await expect(page.getByRole('heading', { name: 'Нет отправок', exact: true })).toBeVisible()
 
       const createButton = page.getByRole('button', {
         name: 'Создать отправку',

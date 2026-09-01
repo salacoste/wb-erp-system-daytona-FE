@@ -44,9 +44,7 @@ describe('TrendIndicator', () => {
   })
 
   it('known TrendIcon → renders the icon svg', () => {
-    const { container } = render(
-      <TrendIndicator trend="growing" TrendIcon={TrendingUp} />
-    )
+    const { container } = render(<TrendIndicator trend="growing" TrendIcon={TrendingUp} />)
     expect(container.querySelector('.lucide-trending-up')).toBeTruthy()
   })
 })

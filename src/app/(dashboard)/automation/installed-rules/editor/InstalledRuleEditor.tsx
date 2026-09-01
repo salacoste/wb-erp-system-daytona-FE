@@ -147,9 +147,9 @@ export function InstalledRuleEditor({ ruleId }: InstalledRuleEditorProps) {
   return (
     <EditorShell onBack={requestBack}>
       <header className="mb-4 space-y-1">
-        <h1 className="text-2xl font-semibold" data-testid="editor-title">
+        <h2 className="text-xl font-semibold" data-testid="editor-title">
           {rule.name}
-        </h1>
+        </h2>
         <p className="text-sm text-muted-foreground">
           Триггер: {triggerLabel(rule.trigger)} · Действие: {actionLabel(rule.action)}
         </p>
@@ -207,6 +207,9 @@ export function InstalledRuleEditor({ ruleId }: InstalledRuleEditorProps) {
 function EditorShell({ children, onBack }: { children: React.ReactNode; onBack?: () => void }) {
   return (
     <div className="container">
+      <h1 className="mb-4 text-2xl font-semibold" data-testid="editor-route-title">
+        Редактор установленного правила
+      </h1>
       {onBack && (
         <div className="mb-6">
           <Button

@@ -11,7 +11,7 @@ import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { renderHook, waitFor } from '@testing-library/react'
 import { createTestQueryClient, createQueryWrapper } from '@/test/utils/test-utils'
 import type { Cabinet, UpdateCabinetTaxRequest } from '@/types/cabinet'
-import type { QueryClient } from '@tanstack/react-query'
+import { QueryClient } from '@tanstack/react-query'
 
 // Mock API module
 vi.mock('@/lib/api/cabinet', () => ({
@@ -126,6 +126,25 @@ describe('useCabinetTaxSettings', () => {
 // -- Mutation Hook Tests ------------------------------------------------------
 
 describe('useUpdateTaxSettings', () => {
+  it('leaves recovery to the form instead of automatically retrying a failed write', async () => {
+    const clientWithGlobalRetry = new QueryClient({
+      defaultOptions: {
+        queries: { retry: false },
+        mutations: { retry: 1 },
+      },
+    })
+    mockedUpdate.mockRejectedValueOnce(new Error('Temporary failure'))
+
+    const { result } = renderHook(() => useUpdateTaxSettings('cab-123'), {
+      wrapper: createQueryWrapper(clientWithGlobalRetry),
+    })
+
+    result.current.mutate({ taxSystem: 'usn15' })
+    await waitFor(() => expect(result.current.isError).toBe(true))
+
+    expect(mockedUpdate).toHaveBeenCalledTimes(1)
+  })
+
   it('calls updateCabinetTaxSettings with correct params', async () => {
     mockedUpdate.mockResolvedValueOnce(mockUpdatedCabinet)
 

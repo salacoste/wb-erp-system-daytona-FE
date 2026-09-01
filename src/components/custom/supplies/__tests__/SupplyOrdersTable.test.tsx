@@ -315,25 +315,30 @@ describe('SupplyOrdersTable', () => {
   })
 
   // ===========================================================================
-  // 7. Row Click Behavior
+  // 7. Order actions
   // ===========================================================================
 
-  describe('Row Click Behavior', () => {
-    it('clicking a row calls onOrderClick with the order', async () => {
+  describe('Order actions', () => {
+    it('clicking the named detail button calls onOrderClick exactly once', async () => {
       const user = userEvent.setup()
       const { props } = renderTable({ status: 'OPEN' })
-      // Click on the orderId cell to trigger row click
-      const orderIdCell = screen.getByText(mockSupplyOrder.orderId)
-      await user.click(orderIdCell)
+      await user.click(
+        screen.getByRole('button', { name: `Открыть заказ ${mockSupplyOrder.orderId}` })
+      )
+      expect(props.onOrderClick).toHaveBeenCalledTimes(1)
       expect(props.onOrderClick).toHaveBeenCalledWith(
         expect.objectContaining({ orderId: mockSupplyOrder.orderId })
       )
     })
 
-    it('row has cursor-pointer class', () => {
-      renderTable()
-      const row = screen.getByText(mockSupplyOrder.orderId).closest('tr')
-      expect(row).toHaveClass('cursor-pointer')
+    it('keeps the native row non-interactive and ignores clicks outside named actions', async () => {
+      const user = userEvent.setup()
+      const { props } = renderTable()
+      const row = screen.getByText(mockSupplyOrder.orderId).closest('tr')!
+
+      expect(row).not.toHaveClass('cursor-pointer')
+      await user.click(screen.getByText(mockSupplyOrder.productName!))
+      expect(props.onOrderClick).not.toHaveBeenCalled()
     })
 
     it('clicking remove button does not trigger row click', async () => {
@@ -360,23 +365,29 @@ describe('SupplyOrdersTable', () => {
       }
     )
 
-    it('Enter key on focused row triggers onOrderClick', async () => {
+    it('Enter on the native order-detail button triggers onOrderClick exactly once', async () => {
       const user = userEvent.setup()
       const { props } = renderTable({ status: 'OPEN' })
-      const row = screen.getByText(mockSupplyOrder.orderId).closest('tr')!
-      row.focus()
+      const button = screen.getByRole('button', {
+        name: `Открыть заказ ${mockSupplyOrder.orderId}`,
+      })
+      button.focus()
       await user.keyboard('{Enter}')
+      expect(props.onOrderClick).toHaveBeenCalledTimes(1)
       expect(props.onOrderClick).toHaveBeenCalledWith(
         expect.objectContaining({ orderId: mockSupplyOrder.orderId })
       )
     })
 
-    it('Space key on focused row triggers onOrderClick', async () => {
+    it('Space on the native order-detail button triggers onOrderClick exactly once', async () => {
       const user = userEvent.setup()
       const { props } = renderTable({ status: 'OPEN' })
-      const row = screen.getByText(mockSupplyOrder.orderId).closest('tr')!
-      row.focus()
+      const button = screen.getByRole('button', {
+        name: `Открыть заказ ${mockSupplyOrder.orderId}`,
+      })
+      button.focus()
       await user.keyboard(' ')
+      expect(props.onOrderClick).toHaveBeenCalledTimes(1)
       expect(props.onOrderClick).toHaveBeenCalledWith(
         expect.objectContaining({ orderId: mockSupplyOrder.orderId })
       )
@@ -491,10 +502,15 @@ describe('SupplyOrdersTable', () => {
       expect(btn).toHaveAttribute('aria-label', `Удалить заказ ${mockSupplyOrder.orderId}`)
     })
 
-    it('rows are keyboard focusable with tabIndex=0', () => {
+    it('keeps native rows non-interactive and exposes a named detail button', () => {
       renderTable()
       const row = screen.getByText(mockSupplyOrder.orderId).closest('tr')!
-      expect(row).toHaveAttribute('tabindex', '0')
+      expect(row).not.toHaveAttribute('tabindex')
+      expect(row).not.toHaveAttribute('role')
+      expect(row).not.toHaveClass('cursor-pointer')
+      expect(
+        screen.getByRole('button', { name: `Открыть заказ ${mockSupplyOrder.orderId}` })
+      ).toBeInTheDocument()
     })
 
     it('Package icon in empty state has aria-hidden', () => {
@@ -517,6 +533,7 @@ describe('SupplyOrdersTable', () => {
         onRemoveOrder: vi.fn(),
       }
       expect(() => renderWithProviders(<SupplyOrdersTable {...props} />)).not.toThrow()
+      expect(screen.queryByRole('button', { name: /Открыть заказ/ })).not.toBeInTheDocument()
     })
   })
 })

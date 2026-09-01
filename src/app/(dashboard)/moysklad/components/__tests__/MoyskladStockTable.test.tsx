@@ -80,6 +80,19 @@ describe('MoyskladStockTable', () => {
     expect(screen.getByText('Нет данных о стоке за эту дату')).toBeInTheDocument()
   })
 
+  it('renders the stock table skeleton while the selected snapshot is loading', () => {
+    useMoyskladStockDbMock.mockReturnValue({
+      data: undefined,
+      isError: false,
+      isLoading: true,
+    })
+
+    const { container } = render(<MoyskladStockTable />)
+
+    expect(container.querySelectorAll('.animate-pulse')).toHaveLength(1)
+    expect(screen.queryByText('Нет данных о стоке за эту дату')).not.toBeInTheDocument()
+  })
+
   it('surfaces the invalid-date error banner (400 surfaced inline, no crash)', () => {
     useMoyskladStockDbMock.mockReturnValue({
       data: undefined,

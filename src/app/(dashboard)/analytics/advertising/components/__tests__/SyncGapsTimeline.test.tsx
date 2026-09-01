@@ -71,6 +71,24 @@ describe('SyncGapsTimeline', () => {
     expect(dayCells).toHaveLength(5)
   })
 
+  it('marks days within a gap as missing', () => {
+    render(
+      <SyncGapsTimeline
+        from="2025-01-01"
+        to="2025-01-03"
+        syncStatus={{
+          ...baseSyncStatus,
+          dataGaps: [{ from: '2025-01-02', to: '2025-01-02', missingDays: 1 }],
+        }}
+      />
+    )
+
+    fireEvent.click(screen.getByRole('button'))
+
+    expect(screen.getByLabelText('02.01.2025 — Нет данных')).toHaveClass('bg-status-error')
+    expect(screen.getByText(/Синхронизировано 2 из 3 дней/)).toBeInTheDocument()
+  })
+
   it('shows green coverage text when 100% synced', () => {
     render(<SyncGapsTimeline from="2025-01-01" to="2025-01-03" syncStatus={baseSyncStatus} />)
 

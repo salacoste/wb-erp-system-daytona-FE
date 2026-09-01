@@ -43,7 +43,11 @@ export function PnLWaterfall({ data, products, className }: PnLWaterfallProps) {
             Отчёт о прибылях и убытках (P&L)
             <Tooltip>
               <TooltipTrigger asChild>
-                <button type="button" className="inline-flex">
+                <button
+                  type="button"
+                  className="inline-flex"
+                  aria-label="Подробнее об отчёте о прибылях и убытках (P&L)"
+                >
                   <HelpCircle className="h-5 w-5 text-muted-foreground hover:text-foreground transition-colors" />
                 </button>
               </TooltipTrigger>

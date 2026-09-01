@@ -58,7 +58,7 @@ export function AdvertisingMainContent({ state, filters }: AdvertisingMainConten
       />
       <div
         className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between"
-        role="tablist"
+        role="group"
         aria-label="Группировка данных"
       >
         <div className="text-sm font-medium text-muted-foreground">Группировка</div>

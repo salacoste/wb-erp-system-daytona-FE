@@ -166,9 +166,22 @@ async function openPopulatedPage(page: Page) {
   await expect(page.getByRole('heading', { name: 'Упаковка товаров' })).toBeVisible({
     timeout: TIMEOUTS.api,
   })
-  await expect(
-    page.getByRole('row', { name: new RegExp(String(PACKAGING_FIXTURES[0].nmId)) })
-  ).toBeVisible()
+  const viewportWidth = page.viewportSize()?.width ?? 1280
+  if (viewportWidth < 768) {
+    await expect(
+      page
+        .getByRole('group', { name: 'Карточки привязок упаковки для узкого экрана' })
+        .getByRole('heading', { name: new RegExp(String(PACKAGING_FIXTURES[0].nmId)) })
+    ).toBeVisible()
+  } else {
+    await expect(
+      page.getByRole('row', { name: new RegExp(String(PACKAGING_FIXTURES[0].nmId)) })
+    ).toBeVisible()
+  }
+}
+
+function resultAnnouncement(page: Page) {
+  return page.locator('section[aria-label="Упаковка товаров"] > p[role="status"]')
 }
 
 test.describe('SKU Packaging Management Page', () => {
@@ -206,7 +219,7 @@ test.describe('SKU Packaging Management Page', () => {
   test('shows filtered empty state and resets the client-side filter', async ({ page }) => {
     await openPopulatedPage(page)
 
-    const search = page.getByRole('textbox', { name: /Поиск/i })
+    const search = page.getByRole('searchbox', { name: /Поиск/i })
     await search.fill('несуществующий SKU')
 
     await expect(page.getByText(/^По фильтру ничего не найдено$/i)).toBeVisible()
@@ -254,7 +267,7 @@ test.describe('SKU Packaging Management Page', () => {
       unitsPerBox: 18,
     })
     await expect(dialog).toBeHidden()
-    await expect(page.getByRole('status')).toContainText(
+    await expect(resultAnnouncement(page)).toContainText(
       `Упаковка SKU ${PACKAGING_FIXTURES[0].nmId} сохранена.`
     )
     await expect(page.getByRole('region', { name: 'Упаковка товаров' })).toBeFocused()
@@ -279,7 +292,7 @@ test.describe('SKU Packaging Management Page', () => {
       bulkDialog.getByRole('table', { name: 'Результаты массового добавления упаковки' })
     ).toContainText('Сохранено')
     await bulkDialog.getByRole('button', { name: 'Закрыть', exact: true }).last().click()
-    await expect(page.getByRole('status')).toContainText(
+    await expect(resultAnnouncement(page)).toContainText(
       'Массовая обработка завершена: создано 0, обновлено 1, ошибок 0.'
     )
     await expect(page.getByRole('region', { name: 'Упаковка товаров' })).toBeFocused()
@@ -293,7 +306,7 @@ test.describe('SKU Packaging Management Page', () => {
     const deleteDialog = page.getByRole('alertdialog', { name: 'Удалить привязку упаковки?' })
     await deleteDialog.getByRole('button', { name: 'Удалить' }).click()
     await expect(deleteDialog).toBeHidden()
-    await expect(page.getByRole('status')).toContainText(
+    await expect(resultAnnouncement(page)).toContainText(
       `Привязка упаковки SKU ${PACKAGING_FIXTURES[0].nmId} удалена.`
     )
     await expect(page.getByRole('region', { name: 'Упаковка товаров' })).toBeFocused()

@@ -141,14 +141,15 @@ test.describe('Unit Economics — Story 162.5 deterministic synchronization', ()
 
   test('changes aggregation view through an exact request and visible marker', async ({ page }) => {
     const { controller, week } = await openUnitEconomics(page)
-    const categoryTab = page.getByRole('tab', { name: 'Категория' })
+    const categoryOption = page.getByRole('radio', { name: 'Категория' })
     const changed = page.waitForResponse(response =>
       matchesUnitEconomicsResponse(response, queryFor(week, { view_by: 'category' }))
     )
-    await categoryTab.click()
+    await categoryOption.focus()
+    await categoryOption.press('Space')
     await changed
 
-    await expect(categoryTab).toHaveAttribute('data-state', 'active')
+    await expect(categoryOption).toBeChecked()
     await expectUnitEconomicsData(page, new RegExp(`UE ${week} category revenue desc`))
     await expect(page.getByText('Показано 1–4 из 4 записей', { exact: true })).toBeVisible()
     controller.assertNoUnexpectedRequests()
@@ -261,6 +262,20 @@ test.describe('Unit Economics — Story 162.5 deterministic synchronization', ()
     await expect(table.getByRole('row')).toHaveCount(2)
     await expect(table.getByText('Убыток', { exact: true })).toBeVisible()
     await expect(page.getByRole('button', { name: 'Сбросить фильтр' })).toBeVisible()
+    controller.assertNoUnexpectedRequests()
+  })
+
+  test('keeps the active profitability filter and reset path when it produces no rows', async ({
+    page,
+  }) => {
+    const { controller } = await openUnitEconomics(page)
+    await page.getByRole('button', { name: 'Фильтр по рентабельности' }).click()
+    await page.getByRole('menuitemcheckbox', { name: 'Нет данных' }).click()
+
+    await expect(page).toHaveURL(/(?:\?|&)status=unknown(?:&|$)/)
+    await expect(page.getByText('Нет товаров с выбранным фильтром.', { exact: false })).toBeVisible()
+    await expect(page.getByRole('button', { name: 'Сбросить фильтр' })).toBeVisible()
+    await expect(page.getByRole('table', { name: 'Юнит-экономика по товарам' })).toHaveCount(0)
     controller.assertNoUnexpectedRequests()
   })
 

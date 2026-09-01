@@ -19,7 +19,12 @@ import { ExpenseStructurePieChart } from '../ExpenseStructurePieChart'
 // primitives and capture props/data for assertions.
 // ============================================================================
 
-const capturedChart: { data: unknown[]; children: React.ReactNode[] } = {
+const capturedChart: {
+  data: unknown[]
+  children: React.ReactNode[]
+  isAnimationActive?: boolean
+  animationDuration?: number
+} = {
   data: [],
   children: [],
 }
@@ -46,14 +51,20 @@ vi.mock('recharts', async () => {
       children,
       innerRadius,
       outerRadius,
+      isAnimationActive,
+      animationDuration,
     }: {
       data: unknown[]
       children: React.ReactNode
       innerRadius: number
       outerRadius: number
+      isAnimationActive?: boolean
+      animationDuration?: number
     }) => {
       capturedChart.data = data
       capturedChart.children = React.Children.toArray(children)
+      capturedChart.isAnimationActive = isAnimationActive
+      capturedChart.animationDuration = animationDuration
       return (
         <div
           data-testid="pie"
@@ -226,6 +237,8 @@ describe('ExpenseStructurePieChart - Chart Rendering', () => {
     mockHookState.error = null
     capturedChart.data = []
     capturedChart.children = []
+    capturedChart.isAnimationActive = undefined
+    capturedChart.animationDuration = undefined
     capturedCells.length = 0
   })
 
@@ -233,6 +246,28 @@ describe('ExpenseStructurePieChart - Chart Rendering', () => {
     renderChart()
     expect(screen.getByTestId('pie-chart')).toBeInTheDocument()
     expect(screen.getByTestId('pie')).toBeInTheDocument()
+  })
+
+  it('disables Recharts animation when reduced motion is requested', () => {
+    Object.defineProperty(window, 'matchMedia', {
+      configurable: true,
+      writable: true,
+      value: vi.fn((query: string) => ({
+        matches: query === '(prefers-reduced-motion: reduce)',
+        media: query,
+        onchange: null,
+        addListener: vi.fn(),
+        removeListener: vi.fn(),
+        addEventListener: vi.fn(),
+        removeEventListener: vi.fn(),
+        dispatchEvent: vi.fn(),
+      })),
+    })
+
+    renderChart()
+
+    expect(capturedChart.isAnimationActive).toBe(false)
+    expect(capturedChart.animationDuration).toBe(0)
   })
 
   it('should display total expenses amount in center', () => {
@@ -632,6 +667,18 @@ describe('ExpenseStructurePieChart - Accessibility', () => {
   it('should use semantic role=img for chart container', () => {
     renderChart()
     expect(screen.getByRole('img')).toBeInTheDocument()
+  })
+
+  it('exposes an exact non-hover data table with period, units, and values', () => {
+    renderChart()
+
+    expect(
+      screen.getByRole('table', { name: 'Структура расходов за 2026-W05' })
+    ).toBeInTheDocument()
+    expect(screen.getByRole('columnheader', { name: 'Категория' })).toBeInTheDocument()
+    expect(screen.getByRole('columnheader', { name: 'Доля расходов' })).toBeInTheDocument()
+    expect(screen.getByRole('columnheader', { name: 'Сумма' })).toBeInTheDocument()
+    expect(screen.getByRole('row', { name: /Себестоимость.*35,0.*175\s*000/ })).toBeInTheDocument()
   })
 })
 

@@ -82,7 +82,10 @@ describe('Story 172.14 orders presentation source contracts', () => {
   })
 
   it('no legacy palette classes in any production file (both roots)', () => {
-    for (const f of [...prodFiles(routeDirectory, ['fbo', 'integrity']), ...prodFiles(sharedDirectory)]) {
+    for (const f of [
+      ...prodFiles(routeDirectory, ['fbo', 'integrity']),
+      ...prodFiles(sharedDirectory),
+    ]) {
       expect(readFileSync(f, 'utf8'), f).not.toMatch(LEGACY_PALETTE)
     }
   })
@@ -90,18 +93,21 @@ describe('Story 172.14 orders presentation source contracts', () => {
   it('no hex color literals (self-tested regex: quoted value caught, ticket ref exempt)', () => {
     expect(CONTEXTUAL_HEX.test("color: '#3B82F6'")).toBe(true)
     expect(CONTEXTUAL_HEX.test('see ticket #197 covers this')).toBe(false)
-    for (const f of [...prodFiles(routeDirectory, ['fbo', 'integrity']), ...prodFiles(sharedDirectory)]) {
+    for (const f of [
+      ...prodFiles(routeDirectory, ['fbo', 'integrity']),
+      ...prodFiles(sharedDirectory),
+    ]) {
       expect(readFileSync(f, 'utf8'), f).not.toMatch(CONTEXTUAL_HEX)
     }
   })
 
-  it('supplier status pin: new/confirm/complete/cancel on status tokens', () => {
+  it('supplier status pin: readable text with status-tinted backgrounds', () => {
     const src = readFileSync(shared('OrderStatusBadge.tsx'), 'utf8')
-    expect(src).toMatch(/text-status-warning/)
+    expect(src).toMatch(/text-foreground/)
     expect(src).toMatch(/bg-status-warning\/10/)
-    expect(src).toMatch(/text-status-information/)
-    expect(src).toMatch(/text-status-success/)
-    expect(src).toMatch(/text-status-error/)
+    expect(src).toMatch(/bg-status-information\/10/)
+    expect(src).toMatch(/bg-status-success\/10/)
+    expect(src).toMatch(/bg-status-error\/10/)
   })
 
   it('operational status pin: SHIPPED on the purple status-pending token (hue 277)', () => {

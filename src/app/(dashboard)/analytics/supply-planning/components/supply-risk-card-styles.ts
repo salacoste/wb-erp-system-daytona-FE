@@ -36,7 +36,7 @@ export function getCardStyles(status: StockoutRisk, isActive: boolean): CardStyl
   return {
     card: isActive ? tokens.cardActive : tokens.card,
     icon: tokens.icon,
-    label: tokens.accentText,
+    label: 'text-foreground',
     count: 'text-foreground',
   }
 }

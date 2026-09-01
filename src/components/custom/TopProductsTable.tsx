@@ -87,7 +87,11 @@ export function TopProductsTable({
             Топ-10 товаров
             <Tooltip>
               <TooltipTrigger asChild>
-                <button type="button" className="inline-flex">
+                <button
+                  type="button"
+                  className="inline-flex"
+                  aria-label="Подробнее о топ-10 товарах"
+                >
                   <HelpCircle className="h-4 w-4 text-muted-foreground hover:text-foreground transition-colors" />
                 </button>
               </TooltipTrigger>
@@ -103,7 +107,7 @@ export function TopProductsTable({
             <p className="text-center text-muted-foreground py-8">Нет данных о товарах</p>
           ) : (
             <div className="relative overflow-x-auto">
-              <Table>
+              <Table aria-label="Топ-10 товаров по прибыли">
                 <TopProductsTableHeader />
                 <TableBody>
                   {products.slice(0, 10).map((product, index) => (

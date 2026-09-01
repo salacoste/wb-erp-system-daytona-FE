@@ -24,37 +24,49 @@ interface SeverityMeta {
   icon: LucideIcon
   /** border + bg + text tone classes for the strip container. */
   tone: string
+  iconTone: string
 }
 
 const SEVERITY_META: Record<StatusSeverity, SeverityMeta> = {
   failed: {
     icon: AlertCircle,
-    tone: 'border-status-error/40 bg-status-error/10 text-status-error',
+    tone: 'border-status-error/40 bg-status-error/10 text-foreground',
+    iconTone: 'text-status-error',
   },
-  error: { icon: AlertCircle, tone: 'border-status-error/40 bg-status-error/10 text-status-error' },
+  error: {
+    icon: AlertCircle,
+    tone: 'border-status-error/40 bg-status-error/10 text-foreground',
+    iconTone: 'text-status-error',
+  },
   processing: {
     icon: RefreshCw,
-    tone: 'border-status-information/40 bg-status-information/10 text-status-information',
+    tone: 'border-status-information/40 bg-status-information/10 text-foreground',
+    iconTone: 'text-status-information',
   },
   dataGaps: {
     icon: AlertTriangle,
-    tone: 'border-status-warning/40 bg-status-warning/10 text-status-warning',
+    tone: 'border-status-warning/40 bg-status-warning/10 text-foreground',
+    iconTone: 'text-status-warning',
   },
   missingCogs: {
     icon: AlertTriangle,
-    tone: 'border-status-warning/40 bg-status-warning/10 text-status-warning',
+    tone: 'border-status-warning/40 bg-status-warning/10 text-foreground',
+    iconTone: 'text-status-warning',
   },
   tax: {
     icon: AlertTriangle,
-    tone: 'border-status-warning/40 bg-status-warning/10 text-status-warning',
+    tone: 'border-status-warning/40 bg-status-warning/10 text-foreground',
+    iconTone: 'text-status-warning',
   },
   incompleteWeek: {
     icon: Clock,
-    tone: 'border-status-information/40 bg-status-information/10 text-status-information',
+    tone: 'border-status-information/40 bg-status-information/10 text-foreground',
+    iconTone: 'text-status-information',
   },
   reportPending: {
     icon: Clock,
-    tone: 'border-status-warning/40 bg-status-warning/10 text-status-warning',
+    tone: 'border-status-warning/40 bg-status-warning/10 text-foreground',
+    iconTone: 'text-status-warning',
   },
 }
 
@@ -111,7 +123,7 @@ export function DashboardStatusStrip({
         aria-controls="dashboard-status-detail"
         className="flex w-full items-center gap-2 px-4 py-2 text-left text-sm font-medium"
       >
-        <Icon className="h-4 w-4 shrink-0" aria-hidden="true" />
+        <Icon className={cn('h-4 w-4 shrink-0', meta.iconTone)} aria-hidden="true" />
         <span className="flex-1">{formatAttentionCount(count)}</span>
         <ChevronDown
           className={cn('h-4 w-4 shrink-0 transition-transform', open && 'rotate-180')}

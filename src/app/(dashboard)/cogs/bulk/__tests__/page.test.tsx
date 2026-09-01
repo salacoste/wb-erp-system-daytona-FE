@@ -60,6 +60,8 @@ describe('BulkCogsPage', () => {
   it('should render back button', () => {
     render(<BulkCogsPage />)
 
-    expect(screen.getByRole('button')).toBeInTheDocument()
+    const button = screen.getByRole('button', { name: 'Вернуться к себестоимости' })
+    expect(button).toBeInTheDocument()
+    expect(button.querySelector('svg')).toHaveAttribute('aria-hidden', 'true')
   })
 })

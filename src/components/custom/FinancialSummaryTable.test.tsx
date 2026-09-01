@@ -59,7 +59,7 @@ describe('FinancialSummaryTable', () => {
     render(<FinancialSummaryTable summary={mockSummary} />)
 
     // Check revenue section (Updated labels per component refactoring)
-    expect(screen.getByText('Доходы')).toBeInTheDocument()
+    expect(screen.getByRole('table', { name: 'Доходы' })).toBeInTheDocument()
     expect(screen.getByText('Продажи (розница)')).toBeInTheDocument()
 
     // Check specific values in revenue section
@@ -154,9 +154,9 @@ describe('FinancialSummaryTable', () => {
     render(<FinancialSummaryTable summary={mockSummary} />)
 
     // Check all sections are present (Updated labels per component refactoring)
-    expect(screen.getByText('Доходы')).toBeInTheDocument()
-    expect(screen.getByText(/Расходы WB/)).toBeInTheDocument()
-    expect(screen.getByText('Компенсации')).toBeInTheDocument()
+    expect(screen.getByRole('table', { name: 'Доходы' })).toBeInTheDocument()
+    expect(screen.getByRole('table', { name: 'Расходы Wildberries' })).toBeInTheDocument()
+    expect(screen.getByRole('table', { name: 'Компенсации' })).toBeInTheDocument()
     expect(screen.getAllByText('Итого к оплате').length).toBeGreaterThan(0)
   })
 

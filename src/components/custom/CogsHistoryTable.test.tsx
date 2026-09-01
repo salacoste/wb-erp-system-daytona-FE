@@ -282,6 +282,27 @@ describe('CogsHistoryTable', () => {
     expect(dashes.length).toBeGreaterThan(0)
   })
 
+  it('renders partial history rows with explicit unavailable fields', () => {
+    const partialRecord = {
+      ...mockData[0],
+      cogs_id: 'cogs-partial',
+      unit_cost_rub: Number.NaN,
+      notes: null,
+      affected_weeks: [],
+    }
+
+    render(
+      React.createElement(
+        createWrapper(),
+        null,
+        React.createElement(CogsHistoryTable, { ...defaultProps, data: [partialRecord] })
+      )
+    )
+
+    expect(screen.getByText(/Данные записи доступны не полностью/)).toBeInTheDocument()
+    expect(screen.getAllByText('—')).toHaveLength(3)
+  })
+
   it('formats valid_to as "Текущий" when null', () => {
     render(
       React.createElement(

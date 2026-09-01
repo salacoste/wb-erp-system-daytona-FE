@@ -8,9 +8,11 @@
  */
 
 import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { screen } from '@testing-library/react'
+import { screen, within } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
 import { renderWithProviders } from '@/test/utils/test-utils'
 import {
+  createMockQueryResult,
   createSuccessQueryResult,
   createLoadingQueryResult,
   createErrorQueryResult,
@@ -138,6 +140,98 @@ describe('MonitorPageContent', () => {
 
     // No KPI cards
     expect(screen.queryByText('Всего артикулов')).not.toBeInTheDocument()
+  })
+
+  it('renders cached summary with a refetch-error notice and retries the summary request', async () => {
+    const user = userEvent.setup()
+    const summaryRefetch = vi.fn()
+    mockUseMonitorSummary.mockReturnValue(
+      createMockQueryResult(baseResponse, {
+        isError: true,
+        isSuccess: false,
+        error: new Error('summary refetch failed'),
+        status: 'error',
+        refetch: summaryRefetch,
+      })
+    )
+    mockUseDailyMetrics.mockReturnValue(createSuccessQueryResult(emptyDailyMetrics()))
+    mockUsePipelineGrid.mockReturnValue(createSuccessQueryResult(emptyPipelineGrid()))
+
+    renderWithProviders(<MonitorPageContent />)
+
+    expect(screen.getByText('Всего артикулов')).toBeInTheDocument()
+    const notice = screen.getByText('Не удалось обновить. Показаны кэшированные данные.')
+    expect(notice).toBeVisible()
+    await user.click(within(notice.parentElement!).getByRole('button', { name: 'Повторить' }))
+    expect(summaryRefetch).toHaveBeenCalledTimes(1)
+  })
+
+  it('keeps summary content visible while the independent weekly chart is loading', () => {
+    mockSuccess(baseResponse)
+    mockUseDailyMetrics.mockReturnValue(createLoadingQueryResult<DailyMetrics[]>())
+    mockUsePipelineGrid.mockReturnValue(createSuccessQueryResult(emptyPipelineGrid()))
+
+    renderWithProviders(<MonitorPageContent />)
+
+    expect(screen.getByText('Всего артикулов')).toBeInTheDocument()
+    expect(screen.queryByRole('region', { name: 'График за 7 дней' })).not.toBeInTheDocument()
+    expect(screen.getByTestId('monitor-page').querySelector('.h-72.animate-pulse')).toBeVisible()
+    expect(screen.getByRole('region', { name: 'Состояние пайплайнов' })).toBeInTheDocument()
+  })
+
+  it('keeps summary content visible when the independent weekly chart fails and retries it', async () => {
+    const user = userEvent.setup()
+    const weeklyRefetch = vi.fn()
+    mockSuccess(baseResponse)
+    mockUseDailyMetrics.mockReturnValue(
+      createErrorQueryResult<DailyMetrics[]>(new Error('weekly chart failed'), {
+        refetch: weeklyRefetch,
+      })
+    )
+    mockUsePipelineGrid.mockReturnValue(createSuccessQueryResult(emptyPipelineGrid()))
+
+    renderWithProviders(<MonitorPageContent />)
+
+    expect(screen.getByText('Всего артикулов')).toBeInTheDocument()
+    const errorMessage = screen.getByText('Не удалось загрузить график за 7 дней.')
+    expect(errorMessage).toBeVisible()
+    expect(screen.getByRole('region', { name: 'Состояние пайплайнов' })).toBeInTheDocument()
+    await user.click(within(errorMessage.parentElement!).getByRole('button', { name: 'Повторить' }))
+    expect(weeklyRefetch).toHaveBeenCalledTimes(1)
+  })
+
+  it('keeps summary content visible while independent pipeline health is loading', () => {
+    mockSuccess(baseResponse)
+    mockUseDailyMetrics.mockReturnValue(createSuccessQueryResult(emptyDailyMetrics()))
+    mockUsePipelineGrid.mockReturnValue(createLoadingQueryResult<PipelineHealthGrid>())
+
+    renderWithProviders(<MonitorPageContent />)
+
+    expect(screen.getByText('Всего артикулов')).toBeInTheDocument()
+    expect(screen.getByRole('region', { name: 'График за 7 дней' })).toBeInTheDocument()
+    expect(screen.getByTestId('monitor-pipeline-skeleton')).toBeVisible()
+    expect(screen.queryByRole('region', { name: 'Состояние пайплайнов' })).not.toBeInTheDocument()
+  })
+
+  it('keeps summary content visible when independent pipeline health fails and retries it', async () => {
+    const user = userEvent.setup()
+    const pipelineRefetch = vi.fn()
+    mockSuccess(baseResponse)
+    mockUseDailyMetrics.mockReturnValue(createSuccessQueryResult(emptyDailyMetrics()))
+    mockUsePipelineGrid.mockReturnValue(
+      createErrorQueryResult<PipelineHealthGrid>(new Error('pipeline health failed'), {
+        refetch: pipelineRefetch,
+      })
+    )
+
+    renderWithProviders(<MonitorPageContent />)
+
+    expect(screen.getByText('Всего артикулов')).toBeInTheDocument()
+    expect(screen.getByRole('region', { name: 'График за 7 дней' })).toBeInTheDocument()
+    const errorMessage = screen.getByText('Не удалось загрузить состояние пайплайнов.')
+    expect(errorMessage).toBeVisible()
+    await user.click(within(errorMessage.parentElement!).getByRole('button', { name: 'Повторить' }))
+    expect(pipelineRefetch).toHaveBeenCalledTimes(1)
   })
 
   // Story 92.6-FE AC-7: orchestrator empty-success path — all hooks return success+empty

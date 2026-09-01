@@ -173,7 +173,7 @@ describe('SppInput', () => {
     it('should have accessible label for slider', () => {
       render(<SppInput value={0} onChange={mockOnChange} />)
 
-      const slider = screen.getByTestId('spp-slider')
+      const slider = screen.getByRole('slider')
       expect(slider).toHaveAttribute('aria-label', 'СПП процент')
     })
   })

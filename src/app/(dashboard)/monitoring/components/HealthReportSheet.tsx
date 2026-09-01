@@ -2,6 +2,7 @@
 
 'use client'
 
+import type { RefObject } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { useAuthStore } from '@/stores/authStore'
 import { getHealthReport, monitoringQueryKeys } from '@/lib/api/monitoring'
@@ -21,6 +22,7 @@ interface HealthReportSheetProps {
   date: string | null
   open: boolean
   onOpenChange: (open: boolean) => void
+  returnFocusRef?: RefObject<HTMLElement | null>
 }
 
 const STATUS_CFG: Record<OverallStatus, { label: string; cls: string }> = {
@@ -47,7 +49,12 @@ function fmtDate(s: string) {
   })
 }
 
-export function HealthReportSheet({ date, open, onOpenChange }: HealthReportSheetProps) {
+export function HealthReportSheet({
+  date,
+  open,
+  onOpenChange,
+  returnFocusRef,
+}: HealthReportSheetProps) {
   const cabinetId = useAuthStore(s => s.cabinetId)
   const { data: report, isLoading } = useQuery({
     queryKey: monitoringQueryKeys.healthReport(cabinetId ?? '', date ?? ''),
@@ -62,7 +69,16 @@ export function HealthReportSheet({ date, open, onOpenChange }: HealthReportShee
 
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
-      <SheetContent side="right" size="wide" aria-label="Отчёт о здоровье системы">
+      <SheetContent
+        side="right"
+        size="wide"
+        aria-label="Отчёт о здоровье системы"
+        onCloseAutoFocus={event => {
+          if (!returnFocusRef?.current) return
+          event.preventDefault()
+          returnFocusRef.current.focus()
+        }}
+      >
         <SheetHeader>
           <SheetTitle>{date ? fmtDate(date) : 'Отчёт'}</SheetTitle>
           <SheetDescription asChild>

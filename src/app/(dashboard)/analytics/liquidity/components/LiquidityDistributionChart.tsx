@@ -12,6 +12,8 @@ import type { LiquidityDistribution } from '@/types/liquidity'
 import { transformDistributionForChart, formatCurrency } from '@/lib/liquidity-utils'
 import { formatPercentage } from '@/lib/utils'
 import { LIQUIDITY_CATEGORY_TOKENS } from './liquidity-category-tokens'
+import { ResponsiveChartFrame } from '@/components/custom/analytics/ResponsiveChartFrame'
+import { LiquidityDistributionSummary } from './LiquidityDistributionSummary'
 
 interface ChartRow {
   category: string
@@ -89,29 +91,35 @@ export function LiquidityDistributionChart({ distribution }: LiquidityDistributi
       </CardHeader>
       <CardContent>
         <div className="flex flex-col items-center">
-          <ResponsiveContainer width="100%" height={240}>
-            <PieChart>
-              <Pie
-                /* Story 174.2 (C16): no double cast — ChartRow's index signature
+          <ResponsiveChartFrame
+            label="График распределения товаров по категориям ликвидности"
+            className="h-[240px]"
+          >
+            <ResponsiveContainer width="100%" height="100%" minWidth={1} minHeight={1}>
+              <PieChart>
+                <Pie
+                  /* Story 174.2 (C16): no double cast — ChartRow's index signature
                    ([key: string]: unknown) satisfies recharts' datum row shape. */
-                data={chartData}
-                dataKey="value"
-                nameKey="name"
-                cx="50%"
-                cy="50%"
-                innerRadius={60}
-                outerRadius={95}
-                paddingAngle={2}
-                strokeWidth={0}
-              >
-                {chartData.map(entry => (
-                  <Cell key={entry.category} fill={entry.color} />
-                ))}
-              </Pie>
-              <Tooltip content={<DistributionTooltip />} />
-              <Legend content={<DistributionLegend />} />
-            </PieChart>
-          </ResponsiveContainer>
+                  data={chartData}
+                  dataKey="value"
+                  nameKey="name"
+                  cx="50%"
+                  cy="50%"
+                  innerRadius={60}
+                  outerRadius={95}
+                  paddingAngle={2}
+                  strokeWidth={0}
+                >
+                  {chartData.map(entry => (
+                    <Cell key={entry.category} fill={entry.color} />
+                  ))}
+                </Pie>
+                <Tooltip content={<DistributionTooltip />} />
+                <Legend content={<DistributionLegend />} />
+              </PieChart>
+            </ResponsiveContainer>
+          </ResponsiveChartFrame>
+          <LiquidityDistributionSummary data={chartData} />
           <p className="text-sm text-muted-foreground mt-1">Всего артикулов: {totalSku}</p>
         </div>
       </CardContent>

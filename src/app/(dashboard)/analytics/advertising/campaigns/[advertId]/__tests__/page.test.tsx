@@ -98,6 +98,15 @@ describe('CampaignDetailPage', () => {
     expect(card).toHaveAttribute('data-nm-id', '')
   })
 
+  it('renders a distinct error instead of passing an invalid nmId to the recommendation card', () => {
+    mockSearchParams.set('nmId', 'invalid')
+    renderPage()
+
+    expect(screen.getByText(/Некорректный параметр товара/)).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: 'Кампания #12345', level: 1 })).toBeInTheDocument()
+    expect(screen.queryByTestId('bid-recommendations-card')).not.toBeInTheDocument()
+  })
+
   // --- Invalid advertId ---
 
   it('shows error alert for non-numeric advertId', () => {

@@ -89,6 +89,78 @@ describe('ForecastAccuracyPageContent', () => {
     expect(screen.getByText('По SKU (топ-20)')).toBeInTheDocument()
   })
 
+  it('renders valid zero error as 0% and keeps it distinct from an undefined metric', () => {
+    mockUseForecastAccuracy.mockReturnValue({
+      data: {
+        ...mockData,
+        avgMAPE: 0,
+        byHorizon: [{ horizonDays: 7, mape: 0, mae: 0, count: 45 }],
+        bySKU: [{ nmId: 123456, mape: 0, mae: 0, count: 8 }],
+      },
+      isLoading: false,
+      isError: false,
+      error: null,
+    } as ReturnType<typeof useForecastAccuracy>)
+
+    render(<ForecastAccuracyPageContent />)
+
+    expect(screen.getAllByText(/0(?:[,.]0)?\s*%/).length).toBeGreaterThanOrEqual(3)
+    expect(screen.queryByText('—')).not.toBeInTheDocument()
+    expect(screen.queryByText('Ошибка загрузки')).not.toBeInTheDocument()
+  })
+
+  it('renders an undefined metric as a dash instead of a valid zero percentage', () => {
+    mockUseForecastAccuracy.mockReturnValue({
+      data: { ...mockData, avgMAPE: null },
+      isLoading: false,
+      isError: false,
+      error: null,
+    } as ReturnType<typeof useForecastAccuracy>)
+
+    render(<ForecastAccuracyPageContent />)
+
+    const mapeHeading = screen.getByText('Средний MAPE')
+    expect(mapeHeading.closest('[class*="rounded-xl"]')).toHaveTextContent('—')
+  })
+
+  it('labels a zero-observation response as insufficient sample instead of successful accuracy', () => {
+    mockUseForecastAccuracy.mockReturnValue({
+      data: {
+        ...mockData,
+        totalValidated: 0,
+        avgMAPE: null,
+        avgMAE: null,
+        avgBias: null,
+        byHorizon: [],
+        bySKU: [],
+      },
+      isLoading: false,
+      isError: false,
+      error: null,
+    } as unknown as ReturnType<typeof useForecastAccuracy>)
+
+    render(<ForecastAccuracyPageContent />)
+
+    expect(screen.getByText('Недостаточно данных для оценки')).toBeInTheDocument()
+    expect(screen.getByText('Нет данных по горизонтам')).toBeInTheDocument()
+    expect(screen.getByText('Нет данных по SKU')).toBeInTheDocument()
+  })
+
+  it('keeps the populated horizon breakdown when the SKU breakdown is unavailable', () => {
+    mockUseForecastAccuracy.mockReturnValue({
+      data: { ...mockData, bySKU: [] },
+      isLoading: false,
+      isError: false,
+      error: null,
+    } as unknown as ReturnType<typeof useForecastAccuracy>)
+
+    render(<ForecastAccuracyPageContent />)
+
+    expect(screen.getByRole('cell', { name: '7' })).toBeInTheDocument()
+    expect(screen.getByText('Нет данных по SKU')).toBeInTheDocument()
+    expect(screen.getByText('По SKU (топ-20)')).toBeInTheDocument()
+  })
+
   it('explains extreme MAPE values so users do not read outliers as normal accuracy', () => {
     mockUseForecastAccuracy.mockReturnValue({
       data: {

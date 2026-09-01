@@ -48,13 +48,10 @@ export function MultiCampaignWarningBanner({ warningCount }: MultiCampaignWarnin
 
   // Story 170.1: yellow palette → status-warning /15+/30 matched pair (169.5)
   return (
-    <Alert
-      className="relative border-status-warning/30 bg-status-warning/15 pr-12 text-status-warning"
-      role="alert"
-    >
+    <Alert className="relative border-status-warning/30 bg-status-warning/15 pr-12" role="alert">
       <AlertTriangle className="h-4 w-4 text-status-warning" aria-hidden="true" />
-      <AlertTitle className="text-status-warning">Мультипликация расходов</AlertTitle>
-      <AlertDescription className="text-status-warning">
+      <AlertTitle className="text-foreground">Мультипликация расходов</AlertTitle>
+      <AlertDescription className="text-foreground">
         {warningCount} {pluralize(warningCount, 'товар', 'товара', 'товаров')}{' '}
         {pluralize(warningCount, 'участвует', 'участвуют', 'участвуют')} в нескольких кампаниях.
         Показатели прибыли могут быть завышены.

@@ -27,8 +27,8 @@ export function DailyTrendLegend({ visibleSeries, onToggle }: DailyTrendLegendPr
             key={series.key}
             onClick={() => onToggle(series.key)}
             className={cn(
-              'flex items-center gap-1.5 rounded-md px-2 py-1 text-sm transition-opacity',
-              isVisible ? 'opacity-100' : 'opacity-40'
+              'flex items-center gap-1.5 rounded-md px-2 py-1 text-sm text-foreground transition-colors',
+              isVisible ? 'bg-transparent' : 'bg-muted'
             )}
             aria-pressed={isVisible}
             aria-label={`${isVisible ? 'Скрыть' : 'Показать'} ${series.label}`}

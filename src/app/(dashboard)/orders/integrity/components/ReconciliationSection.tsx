@@ -17,6 +17,7 @@ import { Button } from '@/components/ui/button'
 import {
   Table,
   TableBody,
+  TableCaption,
   TableCell,
   TableHead,
   TableHeader,
@@ -128,8 +129,9 @@ export function ReconciliationSection() {
             Нет данных за выбранный период.
           </p>
         ) : (
-          <div className="rounded-md border overflow-x-auto">
-            <Table>
+          <div className="rounded-md border">
+            <Table scrollContainerTabIndex={0} scrollContainerAriaLabel="Сверка заказов по датам">
+              <TableCaption className="sr-only">Сверка заказов по датам</TableCaption>
               <TableHeader>
                 <TableRow>
                   <TableHead>Дата</TableHead>

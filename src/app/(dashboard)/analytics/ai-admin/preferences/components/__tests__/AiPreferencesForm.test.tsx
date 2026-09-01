@@ -280,6 +280,20 @@ describe('AiPreferencesForm', () => {
     expect(screen.getByText(/Не удалось сохранить настройки/)).toBeInTheDocument()
   })
 
+  it('409 conflict uses the generic retry message without losing the current toggle value', () => {
+    mockUseUpdateAiPreferences.mockReturnValue({
+      ...defaultMutation,
+      isError: true,
+      error: new ApiError('Conflict', 409, null),
+    } as unknown as ReturnType<typeof useUpdateAiPreferencesModule.useUpdateAiPreferences>)
+
+    renderComponent()
+
+    expect(screen.getByRole('switch', { name: /Включить AI прогнозы/ })).toBeChecked()
+    expect(screen.getByText(/Не удалось сохранить настройки/)).toBeInTheDocument()
+    expect(screen.queryByText(/Нет доступа/)).not.toBeInTheDocument()
+  })
+
   it('hydration-race generic Error does NOT show error message (stay silent)', () => {
     // F-11: generic Error (user===null hydration race) → no error message shown
     mockUseUpdateAiPreferences.mockReturnValue({
@@ -365,7 +379,9 @@ describe('AiPreferencesForm', () => {
       error: new Error('Network down'),
     } as unknown as ReturnType<typeof useUpdateAiPreferencesModule.useUpdateAiPreferences>)
     rerender(
-      <QueryClientProvider client={new QueryClient({ defaultOptions: { queries: { retry: false } } })}>
+      <QueryClientProvider
+        client={new QueryClient({ defaultOptions: { queries: { retry: false } } })}
+      >
         <AiPreferencesForm />
       </QueryClientProvider>
     )

@@ -36,11 +36,13 @@ import type { TrendDataPoint } from '@/types/liquidity'
 interface LiquidityDistributionTrendChartProps {
   data: TrendDataPoint[]
   prefersReducedMotion: boolean
+  descriptionId: string
 }
 
 export function LiquidityDistributionTrendChart({
   data,
   prefersReducedMotion,
+  descriptionId,
 }: LiquidityDistributionTrendChartProps) {
   // Design-system axis/grid tokens (Story 169.10; funnel FunnelOverlayPlot canon).
   const axisTick = { fontSize: 11, fill: 'var(--color-chart-axis)' }
@@ -49,6 +51,7 @@ export function LiquidityDistributionTrendChart({
   return (
     <ResponsiveChartFrame
       label="График динамики распределения ликвидности по категориям"
+      descriptionId={descriptionId}
       className="h-40 md:h-48"
     >
       <ResponsiveContainer width="100%" height="100%" minWidth={1} minHeight={1}>

@@ -24,14 +24,14 @@ const SUPPLIER_STATUS_CONFIG: Record<
   SupplierStatus,
   { label: string; color: string; bgColor: string }
 > = {
-  new: { label: 'Новый', color: 'text-status-warning', bgColor: 'bg-status-warning/10' },
+  new: { label: 'Новый', color: 'text-foreground', bgColor: 'bg-status-warning/10' },
   confirm: {
     label: 'Подтверждён',
-    color: 'text-status-information',
+    color: 'text-foreground',
     bgColor: 'bg-status-information/10',
   },
-  complete: { label: 'Выполнен', color: 'text-status-success', bgColor: 'bg-status-success/10' },
-  cancel: { label: 'Отменён', color: 'text-status-error', bgColor: 'bg-status-error/10' },
+  complete: { label: 'Выполнен', color: 'text-foreground', bgColor: 'bg-status-success/10' },
+  cancel: { label: 'Отменён', color: 'text-foreground', bgColor: 'bg-status-error/10' },
 }
 
 /**

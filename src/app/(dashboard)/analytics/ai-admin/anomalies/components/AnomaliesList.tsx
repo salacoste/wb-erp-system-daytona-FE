@@ -7,7 +7,7 @@
  *   backend-pending + manual form → list-error → empty → happy table.
  */
 
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import Link from 'next/link'
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import { Badge } from '@/components/ui/badge'
@@ -42,6 +42,7 @@ export function AnomaliesList() {
   const user = useAuthStore(s => s.user)
   const [statusFilter, setStatusFilter] = useState<AnomalyFilter>('all')
   const [dialogTarget, setDialogTarget] = useState<AnomalyEntry | null>(null)
+  const dialogTriggerRef = useRef<HTMLButtonElement | null>(null)
 
   const { data, isLoading, isError } = useAnomalies({
     status: statusFilter === 'all' ? undefined : statusFilter,
@@ -123,7 +124,12 @@ export function AnomaliesList() {
           <div className="space-y-2">
             <p className="text-sm text-muted-foreground">Нет аномалий с выбранным фильтром.</p>
             {/* Round-1 F2: min-h-11 = 44px primary-action canon (size="sm" is 36px). */}
-            <Button variant="outline" size="sm" className="min-h-11" onClick={() => setStatusFilter('all')}>
+            <Button
+              variant="outline"
+              size="sm"
+              className="min-h-11"
+              onClick={() => setStatusFilter('all')}
+            >
               Сбросить фильтр
             </Button>
           </div>
@@ -168,7 +174,10 @@ export function AnomaliesList() {
                     <Button
                       variant="outline"
                       size="sm"
-                      onClick={() => setDialogTarget(anomaly)}
+                      onClick={event => {
+                        dialogTriggerRef.current = event.currentTarget
+                        setDialogTarget(anomaly)
+                      }}
                       aria-label={`Разрешить аномалию #${String(anomaly.id)}`}
                     >
                       Разрешить
@@ -187,6 +196,7 @@ export function AnomaliesList() {
       <ResolveAnomalyDialog
         anomaly={dialogTarget}
         open={dialogTarget !== null}
+        returnFocusRef={dialogTriggerRef}
         onOpenChange={open => {
           if (!open) setDialogTarget(null)
         }}

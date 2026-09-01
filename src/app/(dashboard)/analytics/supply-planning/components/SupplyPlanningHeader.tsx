@@ -78,7 +78,7 @@ export function SupplyPlanningHeader({
             value={String(safetyStockDays)}
             onValueChange={value => onSafetyStockChange(Number(value))}
           >
-            <SelectTrigger className="w-[110px] h-9">
+            <SelectTrigger className="w-[110px] h-9" aria-label="Страховой запас">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
@@ -98,7 +98,7 @@ export function SupplyPlanningHeader({
             value={String(velocityWeeks)}
             onValueChange={value => onVelocityWeeksChange(Number(value))}
           >
-            <SelectTrigger className="w-[120px] h-9">
+            <SelectTrigger className="w-[120px] h-9" aria-label="Период расчёта скорости продаж">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>

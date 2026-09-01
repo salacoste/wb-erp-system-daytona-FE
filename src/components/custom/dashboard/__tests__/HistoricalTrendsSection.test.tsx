@@ -156,7 +156,8 @@ describe('DateRange', () => {
   })
   it('active bg', () => {
     go()
-    expect(screen.getByRole('radio', { name: '8 недель' })).toHaveClass('bg-primary')
+    const activeRange = screen.getByRole('radio', { name: '8 недель' })
+    expect(activeRange).toHaveClass('bg-primary', 'text-primary-foreground')
   })
   it('disabled', async () => {
     go()

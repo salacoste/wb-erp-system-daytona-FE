@@ -37,6 +37,14 @@ export function OrdersIntegrityPageContent() {
       </div>
 
       {/* Integrity health section */}
+      {isError && hasData && (
+        <Alert variant="destructive">
+          <AlertCircle className="h-4 w-4" />
+          <AlertDescription>
+            Не удалось обновить проверку. Показаны последние доступные результаты.
+          </AlertDescription>
+        </Alert>
+      )}
       {showSkeleton ? (
         <div className="space-y-4" role="status" aria-busy="true">
           <Skeleton className="h-24 w-full" />

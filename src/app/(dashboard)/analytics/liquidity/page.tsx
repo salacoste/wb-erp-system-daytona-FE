@@ -113,7 +113,7 @@ export default function LiquidityPage() {
   const sortedData = sortLiquidityItems(filteredData, sortBy, sortOrder)
 
   return (
-    <div className="space-y-6">
+    <div className="min-w-0 space-y-6">
       {/* Page Header */}
       <LiquidityHeader
         onRefresh={handleRefresh}

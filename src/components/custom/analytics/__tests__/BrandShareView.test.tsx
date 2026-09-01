@@ -88,6 +88,24 @@ describe('BrandShareView', () => {
     expect(screen.getByText(/Сначала выберите бренд/i)).toBeInTheDocument()
   })
 
+  it('shows each cascading dependency loading state without hiding the filter context', () => {
+    mockBrands.mockReturnValue({ data: undefined, isLoading: true, error: null })
+    mockSubjects.mockReturnValue({ data: undefined, isLoading: true, error: null })
+    mockReport.mockReturnValue({
+      data: undefined,
+      isLoading: true,
+      error: null,
+      refetch: vi.fn(),
+    })
+
+    renderView({ brand: 'DURABOND', parentId: 42 })
+
+    expect(screen.getByTestId('brand-share-brands-skeleton')).toBeInTheDocument()
+    expect(screen.getByTestId('brand-share-parent-select')).toBeDisabled()
+    expect(screen.getByTestId('brand-share-report-skeleton')).toBeInTheDocument()
+    expect(screen.getByTestId('brand-share-brand-select')).toBeInTheDocument()
+  })
+
   it('renders the empty-state message when the report window is empty', () => {
     mockReport.mockReturnValue({
       data: { report: [] },
@@ -169,6 +187,14 @@ describe('BrandShareView', () => {
     renderView()
     expect(screen.getByTestId('brand-share-brand-select').className).toContain('min-h-11')
     expect(screen.getByTestId('brand-share-parent-select').className).toContain('min-h-11')
+    expect(screen.getByTestId('brand-share-brand-select')).toHaveClass(
+      'bg-background',
+      'text-foreground'
+    )
+    expect(screen.getByTestId('brand-share-parent-select')).toHaveClass(
+      'bg-background',
+      'text-foreground'
+    )
     mockReport.mockReturnValue({
       data: undefined,
       isLoading: false,

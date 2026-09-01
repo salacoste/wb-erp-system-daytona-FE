@@ -8,12 +8,14 @@
 import {
   Table,
   TableBody,
+  TableCaption,
   TableCell,
   TableHead,
   TableHeader,
   TableRow,
 } from '@/components/ui/table'
 import { Skeleton } from '@/components/ui/skeleton'
+import { Button } from '@/components/ui/button'
 import { PriceBasisBadge } from '@/components/custom/PriceBasisBadge'
 import { formatCurrency, formatPercentage } from '@/lib/utils'
 import type { PriceRecommendation } from '@/types/price-recommendations'
@@ -71,12 +73,13 @@ function GapCell({ gap, gapPct }: { gap: number | null; gapPct: number | null })
 
 function MarginCell({ value }: { value: number | null }) {
   if (value === null) return <span className="text-muted-foreground">—</span>
-  // 168.6: 3-tier semantic tokens (thresholds 15/0 unchanged); amber → status-warning/80
+  // Story 174.3: preserve the 15/0 threshold semantics without relying on a low-contrast
+  // warning foreground for the intermediate value range.
   const cls =
     value >= 15
       ? 'text-financial-positive'
       : value >= 0
-        ? 'text-status-warning/80'
+        ? 'text-foreground'
         : 'text-financial-negative'
   return <span className={cls}>{formatPercentage(value)}</span>
 }
@@ -103,7 +106,8 @@ export function PricingTable({ items, isLoading, onRowClick }: PricingTableProps
   }
 
   return (
-    <Table>
+    <Table scrollContainerTabIndex={0} scrollContainerAriaLabel="Рекомендации по ценам">
+      <TableCaption className="sr-only">Рекомендации по ценам</TableCaption>
       <TableHeader>
         <TableRow>
           <TableHead className="w-[120px]">Артикул</TableHead>
@@ -123,8 +127,23 @@ export function PricingTable({ items, isLoading, onRowClick }: PricingTableProps
             className={onRowClick ? 'cursor-pointer hover:bg-muted/50' : undefined}
             onClick={() => onRowClick?.(item.nmId)}
           >
-            <TableCell className="font-mono text-sm">
-              {item.vendorCode ?? String(item.nmId)}
+            <TableCell>
+              {onRowClick ? (
+                <Button
+                  type="button"
+                  variant="link"
+                  className="h-auto p-0 font-mono text-sm"
+                  aria-label={`Открыть рекомендации для SKU ${item.nmId}`}
+                  onClick={event => {
+                    event.stopPropagation()
+                    onRowClick(item.nmId)
+                  }}
+                >
+                  {item.vendorCode ?? String(item.nmId)}
+                </Button>
+              ) : (
+                <span className="font-mono text-sm">{item.vendorCode ?? String(item.nmId)}</span>
+              )}
             </TableCell>
             <TableCell className="max-w-[200px] truncate">{item.productName ?? '—'}</TableCell>
             <TableCell className="text-right">

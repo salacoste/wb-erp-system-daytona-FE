@@ -7,6 +7,7 @@
 import React from 'react'
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { render, screen, fireEvent } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
 import { SkuAccuracyTable } from '../SkuAccuracyTable'
 import type { SkuAccuracyEntry } from '@/types/ai/evaluations'
 
@@ -109,6 +110,27 @@ describe('SkuAccuracyTable', () => {
     expect(dashes.length).toBeGreaterThanOrEqual(3)
   })
 
+  it('keeps an undefined metric distinct from a valid zero metric in adjacent SKU rows', () => {
+    const zeroEntry: SkuAccuracyEntry = {
+      ...entryA,
+      nmId: 44444,
+      vendorCode: 'SKU-ZERO',
+      avgAiMape: 0,
+      avgNaiveMape: 0,
+      aiAccuracyPercent: 0,
+    }
+    const { container } = render(
+      <SkuAccuracyTable {...defaultProps} entries={[nullMapeEntry, zeroEntry]} />
+    )
+    const rows = Array.from(container.querySelectorAll('tbody tr'))
+    const missingRow = rows.find(row => row.textContent?.includes('33333'))
+    const zeroRow = rows.find(row => row.textContent?.includes('44444'))
+
+    expect(missingRow).toHaveTextContent('—')
+    expect(zeroRow?.textContent).toMatch(/0(?:[,.]0)?\s*%/)
+    expect(zeroRow).not.toHaveTextContent('—')
+  })
+
   it('renders Russian locale percentage for non-null MAPE (no English decimal dot)', () => {
     render(<SkuAccuracyTable {...defaultProps} />)
     const fullText = document.body.textContent ?? ''
@@ -181,23 +203,45 @@ describe('SkuAccuracyTable', () => {
     expect(noneHeads).toHaveLength(2)
   })
 
-  it('F-1: Enter key on row navigates to detail URL (keyboard accessibility)', () => {
+  it('F-1: Enter on the native detail button navigates without repurposing the table row', async () => {
+    const user = userEvent.setup()
     render(<SkuAccuracyTable {...defaultProps} />)
-    const row = screen.getByRole('button', { name: /Перейти к детализации по артикулу 11111/ })
-    fireEvent.keyDown(row, { key: 'Enter', code: 'Enter' })
+    const button = screen.getByRole('button', {
+      name: 'Перейти к детализации по артикулу 11111',
+    })
+    const row = button.closest('tr')
+    if (!row) throw new Error('Expected the SKU detail button to remain inside a table row')
+    expect(row?.tagName).toBe('TR')
+    expect(row).not.toHaveAttribute('role')
+    expect(row).not.toHaveAttribute('tabindex')
+
+    button.focus()
+    await user.keyboard('{Enter}')
     expect(mockPush).toHaveBeenCalledWith(expect.stringContaining('nmId=11111'))
   })
 
-  it('F-1: Space key on row navigates to detail URL (keyboard accessibility)', () => {
+  it('F-1: Space on the native detail button navigates exactly once', async () => {
+    const user = userEvent.setup()
     render(<SkuAccuracyTable {...defaultProps} />)
-    const row = screen.getByRole('button', { name: /Перейти к детализации по артикулу 11111/ })
-    fireEvent.keyDown(row, { key: ' ', code: 'Space' })
+    const button = screen.getByRole('button', {
+      name: 'Перейти к детализации по артикулу 11111',
+    })
+    button.focus()
+    await user.keyboard(' ')
+    expect(mockPush).toHaveBeenCalledTimes(1)
     expect(mockPush).toHaveBeenCalledWith(expect.stringContaining('nmId=11111'))
   })
 
-  it('row click navigates to detail URL with nmId', () => {
+  it('pointer click on the non-interactive row still navigates to detail URL with nmId', () => {
     render(<SkuAccuracyTable {...defaultProps} />)
-    const row = screen.getByRole('button', { name: /Перейти к детализации по артикулу 11111/ })
+    const button = screen.getByRole('button', {
+      name: 'Перейти к детализации по артикулу 11111',
+    })
+    const row = button.closest('tr')
+    if (!row) throw new Error('Expected the SKU detail button to remain inside a table row')
+    expect(row?.tagName).toBe('TR')
+    expect(row).not.toHaveAttribute('role')
+    expect(row).not.toHaveAttribute('aria-label')
     fireEvent.click(row)
     expect(mockPush).toHaveBeenCalledWith(expect.stringContaining('nmId=11111'))
   })

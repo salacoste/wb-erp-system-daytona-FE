@@ -45,7 +45,7 @@ function isInsufficientDataBody(v: unknown): v is InsufficientDataErrorBody {
 
 // ── parseTrainErrorMessage — pure helper, exported for direct unit testing ───
 
-export type TrainErrorCode = 'INSUFFICIENT_DATA' | 'RATE_LIMIT' | 'UNKNOWN'
+export type TrainErrorCode = 'INSUFFICIENT_DATA' | 'RATE_LIMIT' | 'PERMISSION' | 'UNKNOWN'
 
 export interface TrainErrorResult {
   code: TrainErrorCode
@@ -84,6 +84,13 @@ export function parseTrainErrorMessage(error: unknown): TrainErrorResult {
     return {
       code: 'RATE_LIMIT',
       message: 'Превышен лимит обучения, попробуйте через час',
+    }
+  }
+
+  if (error.status === 401 || error.status === 403) {
+    return {
+      code: 'PERMISSION',
+      message: 'Недостаточно прав для запуска обучения модели',
     }
   }
 

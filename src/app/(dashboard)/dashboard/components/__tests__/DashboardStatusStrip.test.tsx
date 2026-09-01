@@ -107,4 +107,17 @@ describe('DashboardStatusStrip', () => {
     )
     expect(container.querySelector('svg')).not.toBeNull()
   })
+
+  it('uses foreground text on warning-tinted backgrounds for AA contrast', () => {
+    render(
+      <DashboardStatusStrip count={1} severity="reportPending">
+        <p>pending detail</p>
+      </DashboardStatusStrip>
+    )
+
+    const region = screen.getByRole('region', { name: 'Статус данных' })
+    expect(region).toHaveClass('bg-status-warning/10', 'text-foreground')
+    expect(region).not.toHaveClass('text-status-warning')
+    expect(region.querySelector('svg')).toHaveClass('text-status-warning')
+  })
 })

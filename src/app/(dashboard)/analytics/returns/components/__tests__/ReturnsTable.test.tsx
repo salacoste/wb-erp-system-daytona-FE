@@ -164,9 +164,9 @@ describe('ReturnsTable', () => {
 
     it('shows "В начало" button when cursor is set', () => {
       // The component manages cursor state internally via useState.
-      // Initially no cursor, so "В начало" should not appear.
+      // Initially no cursor, so the stable previous-page control is disabled.
       renderWithProviders(<ReturnsTable anomalyOnly={false} />)
-      expect(screen.queryByText('В начало')).not.toBeInTheDocument()
+      expect(screen.getByRole('button', { name: 'В начало' })).toBeDisabled()
     })
   })
 })

@@ -9,10 +9,16 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
-import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { formatDistanceToNow } from 'date-fns'
 import { ru } from 'date-fns/locale'
 import type { UnitEconomicsViewBy } from '@/types/unit-economics'
+
+const VIEW_OPTIONS: Array<{ value: UnitEconomicsViewBy; label: string }> = [
+  { value: 'sku', label: 'SKU' },
+  { value: 'category', label: 'Категория' },
+  { value: 'brand', label: 'Бренд' },
+  { value: 'total', label: 'Итого' },
+]
 
 /**
  * Unit Economics Page Header
@@ -75,22 +81,28 @@ export function UnitEconomicsHeader({
         </Select>
 
         {/* View Toggle */}
-        <Tabs value={viewBy} onValueChange={onViewByChange} className="hidden md:block">
-          <TabsList className="h-9" aria-label="Группировка данных">
-            <TabsTrigger value="sku" className="text-xs px-3">
-              SKU
-            </TabsTrigger>
-            <TabsTrigger value="category" className="text-xs px-3">
-              Категория
-            </TabsTrigger>
-            <TabsTrigger value="brand" className="text-xs px-3">
-              Бренд
-            </TabsTrigger>
-            <TabsTrigger value="total" className="text-xs px-3">
-              Итого
-            </TabsTrigger>
-          </TabsList>
-        </Tabs>
+        <div
+          role="radiogroup"
+          aria-label="Группировка данных"
+          className="hidden h-9 items-center justify-center rounded-lg bg-muted p-1 text-muted-foreground md:flex"
+        >
+          {VIEW_OPTIONS.map(option => (
+            <label key={option.value} className="cursor-pointer">
+              <input
+                type="radio"
+                name="unit-economics-view"
+                value={option.value}
+                aria-label={option.label}
+                checked={viewBy === option.value}
+                onChange={() => onViewByChange(option.value)}
+                className="peer sr-only"
+              />
+              <span className="inline-flex items-center justify-center whitespace-nowrap rounded-md px-3 py-1 text-xs font-medium transition-all peer-checked:bg-background peer-checked:text-foreground peer-checked:shadow peer-focus-visible:outline-none peer-focus-visible:ring-2 peer-focus-visible:ring-ring peer-focus-visible:ring-offset-2">
+                {option.label}
+              </span>
+            </label>
+          ))}
+        </div>
 
         {/* Refresh Button */}
         <Button

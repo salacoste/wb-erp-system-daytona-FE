@@ -112,6 +112,21 @@ describe('OrdersIntegrityPageContent', () => {
     expect(screen.getByText('Сироты')).toBeInTheDocument()
   })
 
+  it('keeps cached integrity evidence visible after a refresh failure', () => {
+    mockUseOrdersIntegrity.mockReturnValue({
+      data: integrityData,
+      isLoading: false,
+      isError: true,
+      refetch: vi.fn(),
+      isRefetching: false,
+    })
+    renderWithProviders(<OrdersIntegrityPageContent />)
+
+    expect(screen.getByText(/Показаны последние доступные результаты/)).toBeVisible()
+    expect(screen.getByText('Данные в порядке')).toBeVisible()
+    expect(screen.getByText('Дубликаты')).toBeVisible()
+  })
+
   it('renders the page container with testid', () => {
     mockUseOrdersIntegrity.mockReturnValue({
       data: integrityData,

@@ -8,7 +8,7 @@
  */
 
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
-import { render, screen, fireEvent } from '@testing-library/react'
+import { render, screen, fireEvent, within } from '@testing-library/react'
 import { LiquidityTrendChart } from '../LiquidityTrendChart'
 import { LiquidityTrendTooltip } from '../LiquidityTrendTooltip'
 import { LiquidityTrendsSection } from '../LiquidityTrendsSection'
@@ -118,13 +118,37 @@ describe('LiquidityTrendChart', () => {
     expect(screen.getAllByTestId('line').length).toBe(2)
   })
 
-  it('renders an sr-only summary table so screen readers get the numbers', () => {
+  it('exposes percentage units in the distribution summary headers and values', () => {
     const data = [makePoint('2026-08-07'), makePoint('2026-08-06')]
     const { container } = render(<LiquidityTrendChart data={data} />)
     const sr = container.querySelector('table.sr-only')
     expect(sr).toBeTruthy()
     expect(sr?.querySelector('caption')?.textContent).toContain('Динамика ликвидности')
     expect(sr?.querySelectorAll('tbody tr').length).toBe(data.length)
+    expect(sr).toHaveAttribute('id', 'liquidity-trend-complete-data')
+    expect(
+      screen.getByRole('img', {
+        name: 'График динамики замороженного капитала и среднего оборота',
+      })
+    ).toHaveAttribute('aria-describedby', 'liquidity-trend-complete-data')
+    expect(
+      screen.getByRole('img', {
+        name: 'График динамики распределения ликвидности по категориям',
+      })
+    ).toHaveAttribute('aria-describedby', 'liquidity-trend-complete-data')
+    for (const label of [
+      'Высоколиквидные, %',
+      'Средняя ликвидность, %',
+      'Низкая ликвидность, %',
+      'Неликвид, %',
+    ]) {
+      expect(screen.getByRole('columnheader', { name: label })).toBeInTheDocument()
+    }
+    const firstRow = sr?.querySelector('tbody tr')
+    expect(firstRow).not.toBeNull()
+    for (const value of ['60,0 %', '25,0 %', '10,0 %', '5,0 %']) {
+      expect(within(firstRow as HTMLElement).getByRole('cell', { name: value })).toBeInTheDocument()
+    }
   })
 
   it('AC2: renders ONLY the BE-provided points — no synthesized days (90 in -> 90 sr rows)', () => {
@@ -163,14 +187,14 @@ describe('LiquidityTrendChart', () => {
 // ============================================================================
 
 describe('LiquidityTrendTooltip (B1 direct-render)', () => {
-  it('renders date + frozen_capital + avg_turnover_days + 4 pct without throwing', () => {
+  it('exposes the exact date, currency, day units, all series, and percentage precision', () => {
     const point: TrendDataPoint = makePoint('2026-08-07')
     // Hand-built recharts payload shape: array of { payload: <datum> }.
     const tooltipPayload = [{ payload: point }]
     // Direct render — bypasses the global recharts Tooltip mock so the tooltip
     // component itself is validated. The distribution AreaChart now feeds
     // full TrendDataPoint rows (no flatten), so this is the exact shape it sees.
-    expect(() => render(<LiquidityTrendTooltip active payload={tooltipPayload} />)).not.toThrow()
+    render(<LiquidityTrendTooltip active payload={tooltipPayload} />)
 
     // Tooltip header (RU full date) is present.
     expect(screen.getByText(/августа 2026/)).toBeInTheDocument()
@@ -182,6 +206,14 @@ describe('LiquidityTrendTooltip (B1 direct-render)', () => {
     expect(screen.getAllByText('Средняя ликвидность').length).toBeGreaterThan(0)
     expect(screen.getAllByText('Низкая ликвидность').length).toBeGreaterThan(0)
     expect(screen.getAllByText('Неликвид').length).toBeGreaterThan(0)
+    const exactText = (expected: string) =>
+      screen.getByText((_, element) => element?.textContent === expected)
+    expect(exactText('500 000 ₽')).toBeInTheDocument()
+    expect(screen.getByText('40 дн.')).toBeInTheDocument()
+    expect(exactText('60,0 %')).toBeInTheDocument()
+    expect(exactText('25,0 %')).toBeInTheDocument()
+    expect(exactText('10,0 %')).toBeInTheDocument()
+    expect(exactText('5,0 %')).toBeInTheDocument()
   })
 })
 

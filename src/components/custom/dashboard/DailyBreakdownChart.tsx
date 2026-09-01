@@ -20,7 +20,7 @@ import {
   Tooltip,
   ResponsiveContainer,
 } from 'recharts'
-import { cn } from '@/lib/utils'
+import { cn, formatCurrency } from '@/lib/utils'
 import { DailyBreakdownTooltip } from './DailyBreakdownTooltip'
 import {
   ChartLoadingSkeleton,
@@ -80,6 +80,7 @@ export function DailyBreakdownChart({
 
   const expectedDays = periodType === 'week' ? 7 : 28
   const hasPartialData = chartData.length < expectedDays
+  const visibleMetrics = METRIC_SERIES.filter(series => visibleSeries.includes(series.key))
 
   return (
     <div className={cn('w-full', className)}>
@@ -135,7 +136,7 @@ export function DailyBreakdownChart({
               }}
             />
             <Tooltip content={<DailyBreakdownTooltip visibleSeries={visibleSeries} />} />
-            {METRIC_SERIES.filter(s => visibleSeries.includes(s.key)).map(series => (
+            {visibleMetrics.map(series => (
               <Line
                 key={series.key}
                 yAxisId={series.axis}
@@ -155,6 +156,28 @@ export function DailyBreakdownChart({
           </LineChart>
         </ResponsiveContainer>
       </div>
+      <table className="sr-only">
+        <caption>{`Данные графика детализации по дням за ${periodType === 'week' ? 'неделю' : 'месяц'}; единицы: рубли`}</caption>
+        <thead>
+          <tr>
+            <th scope="col">Дата</th>
+            {visibleMetrics.map(series => (
+              <th key={series.key} scope="col">{`${series.label}, ₽`}</th>
+            ))}
+          </tr>
+        </thead>
+        <tbody>
+          {chartData.map(item => (
+            <tr key={item.date}>
+              <th scope="row">{new Date(item.date).toLocaleDateString('ru-RU')}</th>
+              {visibleMetrics.map(series => {
+                const value = item[series.key]
+                return <td key={series.key}>{value === null ? '—' : formatCurrency(value)}</td>
+              })}
+            </tr>
+          ))}
+        </tbody>
+      </table>
     </div>
   )
 }

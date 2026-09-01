@@ -53,6 +53,14 @@ const mockBrandData: MarginAnalyticsAggregated[] = [
 ]
 
 describe('MarginByBrandTable', () => {
+  it('exposes the active sortable column through aria-sort', () => {
+    render(<MarginByBrandTable data={mockBrandData} />)
+
+    expect(screen.getByRole('columnheader', { name: /Маржа %/ })).toHaveAttribute(
+      'aria-sort',
+      'descending'
+    )
+  })
   describe('rendering', () => {
     it('should render table with brand data', () => {
       render(<MarginByBrandTable data={mockBrandData} />)
@@ -60,6 +68,7 @@ describe('MarginByBrandTable', () => {
       expect(screen.getByText('Brand A')).toBeInTheDocument()
       expect(screen.getByText('Brand B')).toBeInTheDocument()
       expect(screen.getByText('Brand C')).toBeInTheDocument()
+      expect(screen.getByText(/\+70\s*000/)).toHaveClass('text-foreground')
     })
 
     it('should display all columns', () => {
@@ -91,6 +100,26 @@ describe('MarginByBrandTable', () => {
       render(<MarginByBrandTable data={noBrandData} />)
 
       expect(screen.getByText('(Без бренда)')).toBeInTheDocument()
+    })
+
+    it('renders a negative-margin brand row with the shared error-colour badge', () => {
+      render(
+        <MarginByBrandTable
+          data={[
+            {
+              ...mockBrandData[0],
+              brand: 'Negative Brand',
+              profit: -24600,
+              operating_profit: -24600,
+              margin_pct: -12.3,
+            },
+          ]}
+        />
+      )
+
+      const row = screen.getByText('Negative Brand').closest('tr')
+      expect(row).not.toBeNull()
+      expect(row?.querySelector('.bg-red-50')).toHaveTextContent('-12,30 %')
     })
   })
 
@@ -165,7 +194,7 @@ describe('MarginByBrandTable', () => {
       const rows = container.querySelectorAll('tbody tr')
       // Brand B has missing_cogs_count: 5
       const brandBRow = Array.from(rows).find(row => row.textContent?.includes('Brand B'))
-      expect(brandBRow).toHaveClass('bg-yellow-50/30')
+      expect(brandBRow).toHaveClass('bg-status-warning/10')
     })
 
     it('should display missing COGS count badge', () => {
@@ -177,7 +206,9 @@ describe('MarginByBrandTable', () => {
 
       // Check for the badge specifically (yellow background)
       const { container } = render(<MarginByBrandTable data={mockBrandData} />)
-      const badges = container.querySelectorAll('.bg-yellow-100')
+      const badges = Array.from(container.querySelectorAll('span')).filter(element =>
+        element.classList.contains('bg-status-warning/15')
+      )
       expect(badges.length).toBeGreaterThan(0)
     })
 

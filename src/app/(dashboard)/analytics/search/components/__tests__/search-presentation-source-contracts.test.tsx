@@ -114,7 +114,9 @@ describe('Story 170.7 route presentation source contracts', () => {
       'utf8'
     )
     expect(ordersChart).toContain('className="sr-only"')
-    expect(ordersChart).toContain('role="img" aria-label')
+    expect(ordersChart).toContain('role="img"')
+    expect(ordersChart).toContain('aria-label={`${TITLE}: ${dayCountLabel}`}')
+    expect(ordersChart).toContain('aria-describedby={SEARCH_ORDERS_CHART_DATA_TABLE_ID}')
     expect(positionChart).toContain('className="sr-only"')
     expect(positionChart).toContain('role="img"')
   })

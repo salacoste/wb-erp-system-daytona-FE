@@ -2,7 +2,7 @@
 
 'use client'
 
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useRef } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { useAuthStore } from '@/stores/authStore'
 import { getHealthReports, monitoringQueryKeys } from '@/lib/api/monitoring'
@@ -30,6 +30,7 @@ export function HealthHistoryChart({ enabled }: HealthHistoryChartProps) {
   const [period, setPeriod] = useState<PeriodDays>(7)
   const [selectedDate, setSelectedDate] = useState<string | null>(null)
   const [sheetOpen, setSheetOpen] = useState(false)
+  const reportTriggerRef = useRef<HTMLButtonElement | null>(null)
 
   const { data: reports, isLoading } = useQuery<HealthReportSummary[]>({
     queryKey: monitoringQueryKeys.healthReports(cabinetId ?? '', period),
@@ -42,7 +43,8 @@ export function HealthHistoryChart({ enabled }: HealthHistoryChartProps) {
 
   const counts = useMemo(() => (reports ? countByStatus(reports) : null), [reports])
 
-  function handleCircleClick(date: string) {
+  function handleCircleClick(date: string, trigger: HTMLButtonElement) {
+    reportTriggerRef.current = trigger
     setSelectedDate(date)
     setSheetOpen(true)
   }
@@ -105,7 +107,7 @@ export function HealthHistoryChart({ enabled }: HealthHistoryChartProps) {
                   key={report.date}
                   variant="ghost"
                   className="group h-auto w-auto flex-col items-center gap-1 whitespace-normal rounded-lg p-1.5 hover:bg-muted"
-                  onClick={() => handleCircleClick(report.date)}
+                  onClick={event => handleCircleClick(report.date, event.currentTarget)}
                   aria-label={`${day} ${date}: ${report.status}, проблем: ${report.issues}`}
                   title={`${day} ${date}: ${report.status}, проблем: ${report.issues}`}
                   role="listitem"
@@ -138,7 +140,12 @@ export function HealthHistoryChart({ enabled }: HealthHistoryChartProps) {
       )}
 
       {/* Detail Sheet */}
-      <HealthReportSheet date={selectedDate} open={sheetOpen} onOpenChange={setSheetOpen} />
+      <HealthReportSheet
+        date={selectedDate}
+        open={sheetOpen}
+        onOpenChange={setSheetOpen}
+        returnFocusRef={reportTriggerRef}
+      />
     </div>
   )
 }

@@ -69,6 +69,9 @@ describe('InstalledRuleEditor (163.3)', () => {
   it('renders the loading state', () => {
     mockUseInstalledRule.mockReturnValue(detailResult({ isLoading: true }))
     renderWithProviders(<InstalledRuleEditor ruleId="r1" />)
+    expect(
+      screen.getByRole('heading', { level: 1, name: 'Редактор установленного правила' })
+    ).toBeVisible()
     expect(screen.getByTestId('editor-loading')).toBeInTheDocument()
   })
 
@@ -76,6 +79,10 @@ describe('InstalledRuleEditor (163.3)', () => {
     mockUseInstalledRule.mockReturnValue(detailResult({ data: makeRule() }))
     renderWithProviders(<InstalledRuleEditor ruleId="r1" />)
     expect(screen.getByTestId('editor-title')).toHaveTextContent('Низкий остаток')
+    expect(screen.getByRole('heading', { level: 2, name: 'Низкий остаток' })).toBeVisible()
+    expect(
+      screen.getByRole('heading', { level: 1, name: 'Редактор установленного правила' })
+    ).toBeVisible()
     expect(screen.getByTestId('field-name')).toHaveValue('Низкий остаток')
     expect(screen.getByTestId('field-threshold')).toHaveValue('10')
   })
@@ -131,6 +138,21 @@ describe('InstalledRuleEditor (163.3)', () => {
     expect(screen.getByTestId('field-name')).toHaveValue('Changed')
   })
 
+  it('preserves edited values when a 409 conflict is returned by the save mutation', () => {
+    mockUseInstalledRule.mockReturnValue(detailResult({ data: makeRule() }))
+    mockUseUpdateInstalledRule.mockReturnValue(
+      mutationResult({ isError: true, error: new ApiError('Conflict', 409, null) })
+    )
+    renderWithProviders(<InstalledRuleEditor ruleId="r1" />)
+
+    fireEvent.change(screen.getByTestId('field-name'), {
+      target: { value: 'Changed after conflict' },
+    })
+
+    expect(screen.getByTestId('editor-update-error')).toBeInTheDocument()
+    expect(screen.getByTestId('field-name')).toHaveValue('Changed after conflict')
+  })
+
   // Story 172.4: success feedback (status-success tint) — unit twin of the
   // e2e AC5 assertion on editor-update-success.
   it('shows the success status alert on mutation success', () => {
@@ -140,6 +162,16 @@ describe('InstalledRuleEditor (163.3)', () => {
     const success = screen.getByTestId('editor-update-success')
     expect(success).toBeInTheDocument()
     expect(success).toHaveTextContent('Правило обновлено.')
+  })
+
+  it('renders save pending as a disabled busy action with retained form values', () => {
+    mockUseInstalledRule.mockReturnValue(detailResult({ data: makeRule() }))
+    mockUseUpdateInstalledRule.mockReturnValue(mutationResult({ isPending: true }))
+    renderWithProviders(<InstalledRuleEditor ruleId="r1" />)
+
+    expect(screen.getByTestId('editor-save')).toBeDisabled()
+    expect(screen.getByTestId('editor-save')).toHaveTextContent('Сохранение…')
+    expect(screen.getByTestId('field-name')).toHaveValue('Низкий остаток')
   })
 
   it('fires the unsaved-changes guard when leaving with dirty edits', () => {

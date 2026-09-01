@@ -9,6 +9,7 @@ const mocks = vi.hoisted(() => ({
 }))
 
 vi.mock('../useTelegramBindingModal', () => ({
+  TELEGRAM_BOT_USERNAME: 'Kernel_crypto_bot',
   useTelegramBindingModal: mocks.useTelegramBindingModal,
 }))
 
@@ -50,5 +51,24 @@ describe('TelegramBindingModal pending state', () => {
     await user.click(screen.getByRole('button', { name: 'Закрыть' }))
     expect(onOpenChange).not.toHaveBeenCalled()
     expect(screen.getByRole('dialog', { name: 'Подключение Telegram' })).toBeVisible()
+  })
+})
+
+describe('TelegramBindingModal binding-code state', () => {
+  beforeEach(() => {
+    mocks.useTelegramBindingModal.mockReturnValue({
+      ...loadingModalState,
+      bindingCode: 'STORY735',
+      isStartingBinding: false,
+    })
+  })
+
+  it('keeps Telegram branding without using low-contrast blue for button text', () => {
+    render(<TelegramBindingModal open onOpenChange={vi.fn()} onSuccess={vi.fn()} />)
+
+    const openTelegram = screen.getByRole('button', { name: 'Открыть в Telegram' })
+    expect(openTelegram).toHaveClass('text-foreground', 'hover:text-foreground')
+    expect(openTelegram).not.toHaveClass('text-telegram')
+    expect(openTelegram.querySelector('svg')).toHaveClass('text-telegram')
   })
 })

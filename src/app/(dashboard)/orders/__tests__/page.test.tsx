@@ -236,6 +236,18 @@ describe('OrdersPage', () => {
     })
   })
 
+  it('keeps cached orders visible after a background refresh failure', () => {
+    mockUseOrders.mockReturnValue(
+      createOrdersResult({ isError: true, error: new Error('refresh failed') })
+    )
+
+    renderPage()
+
+    expect(screen.getByText(/Показаны последние доступные данные/)).toBeVisible()
+    expect(screen.getByText('Заказы FBS')).toBeVisible()
+    expect(screen.getAllByRole('row').length).toBeGreaterThan(1)
+  })
+
   // ============================================================================
   // 2. Filters Section Tests (AC3)
   // ============================================================================
@@ -419,6 +431,7 @@ describe('OrdersPage', () => {
     it('renders error state with message', () => {
       mockUseOrders.mockReturnValue(
         createOrdersResult({
+          data: undefined,
           isError: true,
           error: new Error('Ошибка загрузки заказов'),
           isSuccess: false,
@@ -431,6 +444,7 @@ describe('OrdersPage', () => {
     it('renders retry button', () => {
       mockUseOrders.mockReturnValue(
         createOrdersResult({
+          data: undefined,
           isError: true,
           error: new Error('Test error'),
           isSuccess: false,
@@ -444,6 +458,7 @@ describe('OrdersPage', () => {
       const refetch = vi.fn()
       mockUseOrders.mockReturnValue(
         createOrdersResult({
+          data: undefined,
           isError: true,
           error: new Error('Test error'),
           isSuccess: false,

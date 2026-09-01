@@ -66,7 +66,7 @@ export function StorageComparisonCard({ data }: StorageComparisonCardProps) {
                     ? 'text-financial-positive'
                     : diff > 0
                       ? 'text-financial-negative'
-                      : 'text-status-warning'
+                      : 'text-foreground'
               }`}
             >
               {diff == null

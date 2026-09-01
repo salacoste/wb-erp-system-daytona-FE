@@ -60,8 +60,8 @@ export const PnLRow = ({
   const valueClasses = cn(
     'font-mono tabular-nums text-base',
     isNegative && 'text-financial-negative',
-    isPositive && 'text-financial-positive',
-    highlight === 'positive' && 'text-financial-positive font-bold',
+    isPositive && highlight !== 'positive' && 'text-financial-positive',
+    highlight === 'positive' && 'text-foreground font-bold',
     highlight === 'negative' && 'text-financial-negative font-bold'
   )
 
@@ -80,7 +80,7 @@ export const PnLRow = ({
         {tooltip && (
           <Tooltip>
             <TooltipTrigger asChild>
-              <button type="button" className="inline-flex">
+              <button type="button" className="inline-flex" aria-label={`Подробнее: ${label}`}>
                 <HelpCircle className="h-3.5 w-3.5 text-muted-foreground hover:text-foreground transition-colors" />
               </button>
             </TooltipTrigger>
@@ -101,7 +101,9 @@ export const PnLRow = ({
             'text-xs w-14 text-right font-mono tabular-nums',
             percentOfRevenue !== null && percentOfRevenue !== undefined
               ? isPositive
-                ? 'text-financial-positive'
+                ? highlight === 'positive'
+                  ? 'text-foreground'
+                  : 'text-financial-positive'
                 : 'text-muted-foreground'
               : 'invisible'
           )}

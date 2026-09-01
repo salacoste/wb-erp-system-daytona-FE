@@ -58,16 +58,16 @@ export function ComparisonSummary({ current, compare, className }: ComparisonSum
       : null
 
   return (
-    <div className={cn('border-t bg-gray-50 p-4', className)}>
+    <div className={cn('border-t bg-muted p-4', className)}>
       <div className="grid grid-cols-2 gap-4 text-sm md:grid-cols-4">
         {/* Item Count */}
         <div>
-          <div className="text-gray-600">Всего позиций</div>
-          <div className="text-lg font-semibold text-gray-900">
+          <div className="text-muted-foreground">Всего позиций</div>
+          <div className="text-lg font-semibold text-foreground">
             {current.itemCount.toLocaleString('ru-RU')}
           </div>
           {hasComparison && compare.itemCount !== current.itemCount && (
-            <div className="text-xs text-gray-500">
+            <div className="text-xs text-muted-foreground">
               vs {compare.itemCount.toLocaleString('ru-RU')}
             </div>
           )}
@@ -75,8 +75,8 @@ export function ComparisonSummary({ current, compare, className }: ComparisonSum
 
         {/* Total Revenue */}
         <div>
-          <div className="text-gray-600">Общая выручка</div>
-          <div className="text-lg font-semibold text-gray-900">
+          <div className="text-muted-foreground">Общая выручка</div>
+          <div className="text-lg font-semibold text-foreground">
             {formatCurrency(current.totalRevenue)}
           </div>
           {revenueDelta && (
@@ -90,13 +90,8 @@ export function ComparisonSummary({ current, compare, className }: ComparisonSum
 
         {/* Total Profit */}
         <div>
-          <div className="text-gray-600">Общая прибыль</div>
-          <div
-            className={cn(
-              'text-lg font-semibold',
-              current.totalProfit >= 0 ? 'text-green-600' : 'text-red-600'
-            )}
-          >
+          <div className="text-muted-foreground">Общая прибыль</div>
+          <div className="text-lg font-semibold text-foreground">
             {formatCurrency(current.totalProfit)}
           </div>
           {profitDelta && (
@@ -106,8 +101,8 @@ export function ComparisonSummary({ current, compare, className }: ComparisonSum
 
         {/* Average Margin */}
         <div>
-          <div className="text-gray-600">Средняя маржа</div>
-          <div className="text-lg font-semibold text-gray-900">
+          <div className="text-muted-foreground">Средняя маржа</div>
+          <div className="text-lg font-semibold text-foreground">
             {current.avgMargin !== null ? formatPercentage(current.avgMargin, 2) : '—'}
           </div>
           {marginDelta && <DeltaDisplay value={marginDelta.value} percent={0} type="percent" />}

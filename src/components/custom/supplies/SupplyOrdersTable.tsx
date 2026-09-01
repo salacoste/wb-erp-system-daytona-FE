@@ -65,8 +65,7 @@ export function SupplyOrdersTable({
   const focusFallbackRef = useRef<HTMLDivElement>(null)
   const canRemove = status === 'OPEN'
 
-  const handleRemoveClick = (order: SupplyOrder, e: React.MouseEvent) => {
-    e.stopPropagation()
+  const handleRemoveClick = (order: SupplyOrder) => {
     setOrderToRemove(order)
     setIsRemoveDialogOpen(true)
   }
@@ -118,20 +117,23 @@ export function SupplyOrdersTable({
                 {orders.map(order => {
                   const statusConfig = getSupplierStatusBadge(order.supplierStatus)
                   return (
-                    <TableRow
-                      key={order.orderId}
-                      className="cursor-pointer hover:bg-muted/50"
-                      onClick={() => onOrderClick?.(order)}
-                      tabIndex={0}
-                      onKeyDown={e => {
-                        if (e.target !== e.currentTarget) return
-                        if (e.key === 'Enter' || e.key === ' ') {
-                          e.preventDefault()
-                          onOrderClick?.(order)
-                        }
-                      }}
-                    >
-                      <TableCell className="font-mono text-sm">{order.orderId}</TableCell>
+                    <TableRow key={order.orderId}>
+                      <TableCell className="font-mono text-sm">
+                        {onOrderClick ? (
+                          <Button
+                            type="button"
+                            variant="link"
+                            size="sm"
+                            className="h-auto p-0 font-mono text-sm font-normal"
+                            aria-label={`Открыть заказ ${order.orderId}`}
+                            onClick={() => onOrderClick(order)}
+                          >
+                            {order.orderId}
+                          </Button>
+                        ) : (
+                          order.orderId
+                        )}
+                      </TableCell>
                       <TableCell>
                         <div className="flex flex-col">
                           <span className="font-medium">{order.vendorCode}</span>
@@ -156,7 +158,7 @@ export function SupplyOrdersTable({
                           <Button
                             variant="ghost"
                             size="sm"
-                            onClick={e => handleRemoveClick(order, e)}
+                            onClick={() => handleRemoveClick(order)}
                             disabled={isRemoving}
                             aria-label={`Удалить заказ ${order.orderId}`}
                           >

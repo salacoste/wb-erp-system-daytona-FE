@@ -117,7 +117,9 @@ export function TheoreticalProfitCard({
           </div>
         )}
         {!isComplete && missingLabels.length > 0 && (
-          <div className="mt-2 text-xs text-status-warning">Не хватает: {missingLabels.join(', ')}</div>
+          <div className="mt-2 text-xs text-status-warning">
+            Не хватает: {missingLabels.join(', ')}
+          </div>
         )}
         {profit?.breakdown && (
           <Popover open={breakdownOpen} onOpenChange={setBreakdownOpen}>

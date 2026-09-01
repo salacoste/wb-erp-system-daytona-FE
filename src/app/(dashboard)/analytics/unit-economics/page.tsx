@@ -30,6 +30,7 @@ export default function UnitEconomicsPage() {
     selectedSku,
     selectedStatuses,
     data,
+    isFilteredEmpty,
     avgDeliveryCost,
     deliverySkuCount,
     isLoading,
@@ -88,7 +89,7 @@ export default function UnitEconomicsPage() {
   }
 
   // Empty state
-  if (!data || !data.data || data.data.length === 0) {
+  if (!data || !data.data || (data.data.length === 0 && !isFilteredEmpty)) {
     return (
       <div className="space-y-6">
         <UnitEconomicsHeader {...headerProps} />
@@ -118,24 +119,36 @@ export default function UnitEconomicsPage() {
         onFilterChange={handleFilterChange}
       />
 
+      {isFilteredEmpty && (
+        <Alert>
+          <AlertDescription>
+            Нет товаров с выбранным фильтром. Сбросьте фильтр, чтобы снова увидеть все товары.
+          </AlertDescription>
+        </Alert>
+      )}
+
       {/* Waterfall Chart (Story 5.3); backend-driven order via meta.cost_category_order (Story 96.3-FE) */}
-      <UnitEconomicsWaterfall
-        data={data.data}
-        summary={data.summary}
-        selectedSku={selectedSku}
-        onSelectSku={setSelectedSku}
-        categoryOrder={data.meta.cost_category_order}
-      />
+      {!isFilteredEmpty && (
+        <UnitEconomicsWaterfall
+          data={data.data}
+          summary={data.summary}
+          selectedSku={selectedSku}
+          onSelectSku={setSelectedSku}
+          categoryOrder={data.meta.cost_category_order}
+        />
+      )}
 
       {/* Data Table */}
-      <UnitEconomicsTable
-        data={data.data}
-        sortBy={sortBy}
-        sortOrder={sortOrder}
-        onSort={handleSort}
-        selectedSku={selectedSku}
-        onSelectSku={setSelectedSku}
-      />
+      {!isFilteredEmpty && (
+        <UnitEconomicsTable
+          data={data.data}
+          sortBy={sortBy}
+          sortOrder={sortOrder}
+          onSort={handleSort}
+          selectedSku={selectedSku}
+          onSelectSku={setSelectedSku}
+        />
+      )}
     </div>
   )
 }

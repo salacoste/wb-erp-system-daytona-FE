@@ -1,4 +1,4 @@
-import { describe, it, expect, vi } from 'vitest'
+import { afterEach, describe, it, expect, vi } from 'vitest'
 import { render, screen } from '@/test/utils/test-utils'
 
 // Mock recharts to avoid jsdom SVG issues
@@ -9,7 +9,9 @@ vi.mock('recharts', () => ({
   AreaChart: ({ children }: { children: React.ReactNode }) => (
     <div data-testid="area-chart">{children}</div>
   ),
-  Area: ({ dataKey }: { dataKey: string }) => <div data-testid={`area-${dataKey}`} />,
+  Area: ({ dataKey, isAnimationActive }: { dataKey: string; isAnimationActive?: boolean }) => (
+    <div data-testid={`area-${dataKey}`} data-animation-active={String(isAnimationActive)} />
+  ),
   XAxis: () => <div data-testid="x-axis" />,
   YAxis: () => <div data-testid="y-axis" />,
   Tooltip: ({ content }: { content?: React.ReactNode }) => (
@@ -54,6 +56,10 @@ const mockSummary: MoneyMetricSummary = {
   trend: -10.5,
 }
 
+afterEach(() => {
+  vi.unstubAllGlobals()
+})
+
 describe('StorageTrendsChart', () => {
   it('shows loading skeleton when isLoading is true', () => {
     const { container } = render(<StorageTrendsChart data={[]} isLoading={true} />)
@@ -77,6 +83,9 @@ describe('StorageTrendsChart', () => {
 
   it('renders chart container with data', () => {
     render(<StorageTrendsChart data={mockData} isLoading={false} />)
+    expect(
+      screen.getByRole('img', { name: 'График расходов на платное хранение по неделям' })
+    ).toHaveAttribute('aria-describedby', 'storage-trend-data-table')
     expect(screen.getByTestId('responsive-container')).toBeInTheDocument()
     expect(screen.getByTestId('area-chart')).toBeInTheDocument()
   })
@@ -105,7 +114,24 @@ describe('StorageTrendsChart', () => {
 
   it('uses custom height', () => {
     render(<StorageTrendsChart data={mockData} isLoading={false} height={300} />)
+    expect(
+      screen.getByRole('img', { name: 'График расходов на платное хранение по неделям' })
+    ).toHaveStyle({ height: '300px' })
     expect(screen.getByTestId('area-chart')).toBeInTheDocument()
+  })
+
+  it('disables chart animation when reduced motion is requested', () => {
+    vi.stubGlobal(
+      'matchMedia',
+      vi.fn(() => ({ matches: true }) as MediaQueryList)
+    )
+
+    render(<StorageTrendsChart data={mockData} isLoading={false} />)
+
+    expect(screen.getByTestId('area-storage_cost')).toHaveAttribute(
+      'data-animation-active',
+      'false'
+    )
   })
 })
 
@@ -114,18 +140,13 @@ describe('StorageTrendsChart', () => {
 // ============================================================================
 
 describe('StorageTrendsChart - sr-only data table', () => {
-  const withGap: StorageTrendPoint[] = [
-    ...mockData,
-    { week: '2026-W12', storage_cost: null },
-  ]
+  const withGap: StorageTrendPoint[] = [...mockData, { week: '2026-W12', storage_cost: null }]
 
   it('renders an sr-only table with every week and its value at tooltip precision', () => {
     render(<StorageTrendsChart data={withGap} isLoading={false} />)
     const table = screen.getByRole('table', { hidden: true })
     expect(table).toBeInTheDocument()
-    const rowTexts = Array.from(table.querySelectorAll('tbody tr')).map(
-      tr => tr.textContent ?? ''
-    )
+    const rowTexts = Array.from(table.querySelectorAll('tbody tr')).map(tr => tr.textContent ?? '')
     expect(rowTexts).toHaveLength(4)
     for (const week of ['2026-W09', '2026-W10', '2026-W11', '2026-W12']) {
       expect(rowTexts.some(t => t.startsWith(week))).toBe(true)
@@ -138,8 +159,6 @@ describe('StorageTrendsChart - sr-only data table', () => {
 
   it('sr-only caption is name-distinct from the sr-only h2 «Детализация по хранению»', () => {
     render(<StorageTrendsChart data={mockData} isLoading={false} />)
-    expect(
-      screen.getByText(/Данные о расходах на платное хранение по неделям/)
-    ).toBeInTheDocument()
+    expect(screen.getByText(/Данные о расходах на платное хранение по неделям/)).toBeInTheDocument()
   })
 })

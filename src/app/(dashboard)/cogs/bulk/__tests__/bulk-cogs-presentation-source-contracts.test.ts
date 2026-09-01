@@ -95,6 +95,10 @@ describe('Story 172.6 bulk-COGS presentation source contracts', () => {
   it('selected-row pin: selection highlight on the information tint idiom (172.5 pairing)', () => {
     const table = readFileSync(join(bulkTree, 'BulkCogsProductTable.tsx'), 'utf8')
     expect(table).toMatch(/bg-status-information\/10/)
+    expect(table).toMatch(/scrollContainerTabIndex=\{0\}/)
+    expect(table).toMatch(/scrollContainerAriaLabel="Товары без назначенной себестоимости"/)
+    expect(table).toMatch(/<TableCaption className="sr-only">/)
+    expect(table).not.toMatch(/rounded-md border overflow-x-auto/)
   })
 
   it('form-validation pin: bulk form errors on the destructive token (sibling of SingleCogsFormFields)', () => {

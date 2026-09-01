@@ -27,15 +27,11 @@ export function getEfficiencyConfig(status: string): EfficiencyConfig {
  * analytics page but yellow on the dashboard card).
  *
  * `roas` is a raw MULTIPLIER (e.g. 4.2x, rendered "4,2x" via formatRoas), NOT a percent.
- * Bands + colors mirror efficiencyConfig (the documented business logic, "colors per AC2"):
- *   >=5  Отлично  -> green    (excellent)
- *   3-5 Хорошо   -> emerald  (good)
- *   2-3 Умеренно -> yellow   (moderate)
- *   1-2 Слабо    -> orange   (poor)
- *   <1  Убыток   -> red      (loss)
- * Derived from each band's `iconColor` (the -600 inline shade, NOT the -800 badge textColor)
- * so the mapping stays in lockstep with the config. null/NaN -> muted, so callers may pass an
- * unguarded value.
+ * Bands mirror efficiencyConfig's documented business logic. Inline presentation deliberately
+ * collapses adjacent five-band tiers onto the registered success/warning/error tokens; the text
+ * value still carries the exact band while the token pair stays contrast-safe in both themes.
+ * Derived from each band's `iconColor` so the mapping stays in lockstep with the config.
+ * null/NaN -> muted, so callers may pass an unguarded value.
  */
 export function getRoasColorClass(roas: number | null | undefined): string {
   if (roas == null || isNaN(roas)) return 'text-muted-foreground'

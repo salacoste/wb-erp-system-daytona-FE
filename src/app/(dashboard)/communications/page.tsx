@@ -30,11 +30,11 @@ export default function CommunicationsPage() {
   return (
     <div className="space-y-6">
       <header>
-        <h1 className="flex items-center gap-2 text-2xl font-bold tracking-tight">
-          Сообщения
+        <div className="flex items-center gap-2">
+          <h1 className="text-2xl font-bold tracking-tight">Сообщения</h1>
           {/* AC4: independent query — badge failure never blanks the page. */}
           <UnreadBadge enabled={cabinetReady} />
-        </h1>
+        </div>
         <p className="text-sm text-muted-foreground">
           Отзывы, вопросы, чаты и претензии Wildberries
         </p>

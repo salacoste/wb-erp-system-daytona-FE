@@ -181,10 +181,11 @@ describe('ConfidenceBadge', () => {
     expect(badge).toHaveClass('bg-muted', 'text-muted-foreground')
   })
 
-  it('applies status-warning /15-chip idiom for low confidence (Epic 169.4)', () => {
+  it('keeps the low-confidence warning tint with contrast-safe foreground text', () => {
     render(<ConfidenceBadge confidence="low" />)
     const badge = screen.getByText('Недостаточно данных')
-    expect(badge).toHaveClass('bg-status-warning/15', 'text-status-warning')
+    expect(badge).toHaveClass('bg-status-warning/15', 'text-foreground')
+    expect(badge).not.toHaveClass('text-status-warning')
   })
 })
 

@@ -464,10 +464,10 @@ export async function installStory1625AnalyticsRoutes(
     }
   }
 
-  // Story 165.4-FE: liquidity TRENDS route. Registered BEFORE the main liquidity
-  // route (Playwright first-match-wins) so /v1/analytics/liquidity/trends is
-  // fulfilled here instead of falling through to the main guard (which would
-  // reject the period query). Validates the trends contract: GET + period only.
+  // Story 165.4-FE: liquidity TRENDS route. The main route below explicitly
+  // excludes this pathname because Playwright evaluates matching page.route
+  // handlers in reverse registration order. This keeps the two contracts
+  // fail-closed without allowing the broad list guard to shadow trends.
   await page.route(
     /\/v1\/analytics\/liquidity\/trends(?:\?.*)?$/,
     guarded(async route => {
@@ -492,7 +492,7 @@ export async function installStory1625AnalyticsRoutes(
   )
 
   await page.route(
-    /\/v1\/analytics\/liquidity(?:\/[^?]*)?(?:\?.*)?$/,
+    /\/v1\/analytics\/liquidity(?!\/trends(?:\?|$))(?:\/[^?]*)?(?:\?.*)?$/,
     guarded(async route => {
       const url = validateExactQuery(
         route,

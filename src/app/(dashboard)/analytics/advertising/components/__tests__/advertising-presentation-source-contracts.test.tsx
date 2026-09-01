@@ -39,6 +39,7 @@ import {
 } from '../advertising-tokens'
 import { EfficiencyBadge } from '../EfficiencyBadge'
 import { DailyTrendSrTable } from '../DailyTrendSrTable'
+import { DailyTrendTooltip } from '../DailyTrendTooltip'
 import {
   calculateROAS,
   calculateRevenue,
@@ -219,6 +220,14 @@ describe('Story 170.1 route presentation source contracts', () => {
     expect(DEFAULT_DAILY_VISIBLE).not.toContain('roas')
   })
 
+  it('keeps inactive daily-trend legend controls contrast-safe without opacity dimming', () => {
+    const legend = readFileSync(join(componentsDirectory, 'DailyTrendLegend.tsx'), 'utf8')
+
+    expect(legend).toContain("isVisible ? 'bg-transparent' : 'bg-muted'")
+    expect(legend).toContain('text-foreground')
+    expect(legend).not.toMatch(/opacity-(?:[0-9]|\[)/)
+  })
+
   it('discrepancy layers: 3 categorical chart tokens in layer order', () => {
     expect(AD_COST_LAYERS.map(l => l.color)).toEqual([
       'var(--color-chart-1)',
@@ -275,7 +284,7 @@ describe('Story 170.1 route presentation source contracts', () => {
     expect(getRoasTierTextClass(null)).toBe('text-muted-foreground')
   })
 
-  it('sr-only alternative: DailyTrendSrTable exposes every day × visible series with units', () => {
+  it('daily trend exposes exact dates, units, every visible series value, and tooltip precision', () => {
     const data: AdvertisingDailyItem[] = [
       { date: '2026-03-07', spend: 1234.5, views: 5000, clicks: 120, orders: 10, roas: 2.5 },
       { date: '2026-03-08', spend: 987.25, views: 4000, clicks: 99, orders: 8, roas: null },
@@ -288,6 +297,29 @@ describe('Story 170.1 route presentation source contracts', () => {
     expect(screen.getByText(/ROAS — множитель/)).toBeInTheDocument()
     // roas hidden by default → no ROAS column header in the visible-default render
     expect(screen.queryByRole('columnheader', { name: 'ROAS' })).not.toBeInTheDocument()
+
+    render(
+      <DailyTrendTooltip
+        active
+        visibleSeries={[...DEFAULT_DAILY_VISIBLE]}
+        payload={DEFAULT_DAILY_VISIBLE.map(key => ({
+          dataKey: key,
+          value: data[0][key] ?? 0,
+          payload: data[0],
+        }))}
+      />
+    )
+    const exactText = (expected: string) =>
+      screen.getAllByText((_, element) => element?.textContent === expected)
+    expect(screen.getByText('суббота, 7 марта 2026 г.')).toBeInTheDocument()
+    expect(screen.getAllByText('Расходы').length).toBeGreaterThan(0)
+    expect(screen.getAllByText('Показы').length).toBeGreaterThan(0)
+    expect(screen.getAllByText('Клики').length).toBeGreaterThan(0)
+    expect(screen.getAllByText('Заказы').length).toBeGreaterThan(0)
+    expect(exactText('1 234,5 ₽')).toHaveLength(2)
+    expect(exactText('5 000')).toHaveLength(2)
+    expect(exactText('120')).toHaveLength(2)
+    expect(exactText('10')).toHaveLength(2)
   })
 
   it('sr-only alternative: discrepancy chart table exposes charted layers + % change', () => {
@@ -309,7 +341,10 @@ describe('Story 170.1 route presentation source contracts', () => {
     )
     expect(perfTable).toMatch(/<TableCaption>/)
     expect(mergedTable).toMatch(/<TableCaption>/)
-    expect(perfTable).toMatch(/role="region"/)
+    expect(perfTable).toMatch(/scrollContainerTabIndex=\{0\}/)
+    expect(perfTable).toMatch(
+      /scrollContainerAriaLabel="Таблица рекламных метрик — горизонтальная прокрутка"/
+    )
     expect(mergedTable).toMatch(/role="region"/)
     expect(perfTable).toMatch(/tabular-nums/)
     // SKU/nmId identifiers keep font-mono (169.7 pin — mono WITHOUT tabular)
@@ -320,6 +355,14 @@ describe('Story 170.1 route presentation source contracts', () => {
     const monoLine = cannibalization.split('\n').find(line => line.includes('font-mono'))
     expect(monoLine, 'font-mono nmId line present').toBeDefined()
     expect(monoLine).not.toMatch(/tabular-nums/)
+  })
+
+  it('grouping controls use toggle-group semantics rather than an invalid tablist', () => {
+    const main = withoutComments(
+      readFileSync(join(componentsDirectory, 'AdvertisingMainContent.tsx'), 'utf8')
+    )
+    expect(main).toMatch(/role="group"/)
+    expect(main).not.toMatch(/role="tablist"/)
   })
 
   it('EfficiencyBadge renders unknown tier muted (visible-unknown, preface #218/#226)', () => {

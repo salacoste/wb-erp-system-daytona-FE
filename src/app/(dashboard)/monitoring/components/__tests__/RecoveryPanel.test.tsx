@@ -1,5 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { render, screen } from '@/test/utils/test-utils'
+import userEvent from '@testing-library/user-event'
 import { RecoveryPanel } from '../RecoveryPanel'
 
 // Mock auth store
@@ -46,13 +47,14 @@ vi.mock('../../hooks/use-recovery', () => ({
 }))
 
 // Mock RecoveryPanelSubcomponents (relative from __tests__/ -> ../)
-vi.mock('../RecoveryPanelSubcomponents', () => ({
-  Confirm: ({ children }: { children: React.ReactNode }) => (
-    <div data-testid="confirm">{children}</div>
-  ),
-  Tip: () => <span data-testid="tip" />,
-  Skel: () => <div data-testid="skeleton">Loading...</div>,
-}))
+vi.mock('../RecoveryPanelSubcomponents', async importOriginal => {
+  const actual = await importOriginal<typeof import('../RecoveryPanelSubcomponents')>()
+  return {
+    ...actual,
+    Tip: () => <span data-testid="tip" />,
+    Skel: () => <div data-testid="skeleton">Loading...</div>,
+  }
+})
 
 describe('RecoveryPanel', () => {
   beforeEach(() => {
@@ -107,6 +109,26 @@ describe('RecoveryPanel', () => {
     // Both overdue and no_history tasks have "▶ Восстановить"
     const recoverButtons = screen.getAllByText('▶ Восстановить')
     expect(recoverButtons.length).toBe(2)
+  })
+
+  it('opens the recovery confirmation and cancels without mutation', async () => {
+    const mutate = vi.fn()
+    mockUseTriggerRecovery.mockReturnValue({ mutate, isPending: false })
+    const user = userEvent.setup()
+    render(<RecoveryPanel enabled={true} />)
+
+    const trigger = screen.getAllByRole('button', { name: '▶ Восстановить' })[0]
+    await user.click(trigger)
+    expect(screen.getByRole('alertdialog', { name: 'Восстановить данные?' })).toBeVisible()
+    expect(
+      screen.getByText('Задача «Ежедневная синхронизация» будет перезапущена.')
+    ).toBeInTheDocument()
+    await user.click(screen.getByRole('button', { name: 'Отмена' }))
+    expect(
+      screen.queryByRole('alertdialog', { name: 'Восстановить данные?' })
+    ).not.toBeInTheDocument()
+    expect(mutate).not.toHaveBeenCalled()
+    expect(trigger).toHaveFocus()
   })
 
   it('shows empty message when no tasks', () => {

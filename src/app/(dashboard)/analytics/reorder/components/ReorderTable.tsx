@@ -10,6 +10,7 @@ import { Button } from '@/components/ui/button'
 import {
   Table,
   TableBody,
+  TableCaption,
   TableCell,
   TableHead,
   TableHeader,
@@ -32,7 +33,7 @@ const STATUS_BADGE_MAP: Record<
   { label: string; className: string }
 > = {
   // 168.8: semantic status chips — /15 bg + full text (alerts chip idiom); expired stays muted
-  pending: { label: 'Ожидает', className: 'bg-status-warning/15 text-status-warning' },
+  pending: { label: 'Ожидает', className: 'bg-status-warning/15 text-foreground' },
   ordered: { label: 'Заказано', className: 'bg-status-information/15 text-status-information' },
   received: { label: 'Получено', className: 'bg-status-success/15 text-status-success' },
   expired: { label: 'Просрочено', className: 'bg-muted text-muted-foreground' },
@@ -67,7 +68,11 @@ export function ReorderTable({
   isUpdating,
 }: ReorderTableProps) {
   return (
-    <Table>
+    <Table
+      scrollContainerTabIndex={0}
+      scrollContainerAriaLabel="Рекомендации по пополнению запасов"
+    >
+      <TableCaption className="sr-only">Рекомендации по пополнению запасов</TableCaption>
       <TableHeader>
         <TableRow>
           <TableHead>Артикул</TableHead>

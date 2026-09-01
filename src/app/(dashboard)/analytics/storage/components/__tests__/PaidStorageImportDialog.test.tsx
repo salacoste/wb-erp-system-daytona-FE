@@ -13,10 +13,12 @@ const mockSetShowCloseConfirm = vi.fn()
 
 interface MockImportStateHolder {
   current: ImportState
+  validationError: string | null
 }
 
 const mockImportState = vi.hoisted<MockImportStateHolder>(() => ({
   current: { status: 'idle' },
+  validationError: null,
 }))
 
 vi.mock('../useStorageImport', () => ({
@@ -28,7 +30,7 @@ vi.mock('../useStorageImport', () => ({
     importState: mockImportState.current,
     showCloseConfirm: false,
     setShowCloseConfirm: mockSetShowCloseConfirm,
-    validationError: null,
+    validationError: mockImportState.validationError,
     statusData: null,
     isPending: false,
     handleStartImport: mockHandleStartImport,
@@ -48,6 +50,7 @@ describe('PaidStorageImportDialog', () => {
   beforeEach(() => {
     vi.clearAllMocks()
     mockImportState.current = { status: 'idle' }
+    mockImportState.validationError = null
   })
 
   it('renders dialog title when open', () => {
@@ -59,6 +62,16 @@ describe('PaidStorageImportDialog', () => {
     render(<PaidStorageImportDialog open={true} onOpenChange={vi.fn()} />)
     expect(screen.getByLabelText('С')).toBeInTheDocument()
     expect(screen.getByLabelText('По')).toBeInTheDocument()
+  })
+
+  it('keeps invalid paid-storage dates visible and associates the validation message', () => {
+    mockImportState.validationError = 'Период не может превышать 8 дней'
+
+    render(<PaidStorageImportDialog open={true} onOpenChange={vi.fn()} />)
+
+    expect(screen.getByLabelText('С')).toHaveValue('2026-03-01')
+    expect(screen.getByLabelText('По')).toHaveValue('2026-03-08')
+    expect(screen.getByText('Период не может превышать 8 дней')).toBeInTheDocument()
   })
 
   it('renders start import button', () => {

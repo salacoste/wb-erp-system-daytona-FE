@@ -23,7 +23,7 @@ export const SectionHeader = ({ title, description, formula }: SectionHeaderProp
       {formula && (
         <Tooltip>
           <TooltipTrigger asChild>
-            <button type="button" className="inline-flex">
+            <button type="button" className="inline-flex" aria-label={`Формула расчёта: ${title}`}>
               <Calculator className="h-4 w-4 text-primary hover:text-primary/80" />
             </button>
           </TooltipTrigger>

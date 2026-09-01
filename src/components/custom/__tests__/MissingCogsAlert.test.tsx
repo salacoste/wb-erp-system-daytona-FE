@@ -77,7 +77,10 @@ describe('Story 42.3-FE: AC1 - Alert Rendering', () => {
 
     it('renders action button', () => {
       render(<MissingCogsAlert {...createMockProps()} />)
-      expect(screen.getByRole('link', { name: /назначить cogs/i })).toBeInTheDocument()
+      const action = screen.getByRole('link', { name: /назначить cogs/i })
+      expect(action).toBeInTheDocument()
+      expect(action).toHaveClass('text-foreground')
+      expect(action).not.toHaveClass('text-yellow-800')
     })
   })
 })

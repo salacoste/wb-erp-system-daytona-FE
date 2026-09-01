@@ -8,11 +8,13 @@
  */
 
 import { describe, it, expect } from 'vitest'
-import { render } from '@testing-library/react'
+import { render, screen } from '@testing-library/react'
 import { TooltipProvider } from '@/components/ui/tooltip'
 import { PnLRow } from '../PnLRow'
+import { SectionHeader } from '../PnLSectionHeader'
 import { KeyMetricsSection } from '../KeyMetricsSection'
 import { GrossProfitSection } from '../GrossProfitSection'
+import { PnLWaterfall } from '../PnLWaterfall'
 import type { CabinetSummaryTotals, CabinetProductStats } from '@/types/analytics'
 
 // Widened legacy-palette regex from 168.2
@@ -51,6 +53,28 @@ const findByToken = (container: HTMLElement, token: string) =>
   Array.from(container.querySelectorAll<HTMLElement>('*')).find(el => el.classList.contains(token))
 
 describe('PnLRow — semantic value/row tokens (168.3)', () => {
+  it('names the report help tooltip button', () => {
+    render(<PnLWaterfall data={totals} products={products} />)
+
+    expect(
+      screen.getByRole('button', {
+        name: 'Подробнее об отчёте о прибылях и убытках (P&L)',
+      })
+    ).toBeVisible()
+  })
+
+  it('names row and section formula tooltip buttons', () => {
+    render(
+      <TooltipProvider>
+        <SectionHeader title="Валовая прибыль" formula="Выручка − COGS" />
+        <PnLRow label="Логистика" value={1000} tooltip="Расходы на логистику" />
+      </TooltipProvider>
+    )
+
+    expect(screen.getByRole('button', { name: 'Формула расчёта: Валовая прибыль' })).toBeVisible()
+    expect(screen.getByRole('button', { name: 'Подробнее: Логистика' })).toBeVisible()
+  })
+
   it('positive value renders text-financial-positive', () => {
     const { container } = render(
       <TooltipProvider>
@@ -58,6 +82,24 @@ describe('PnLRow — semantic value/row tokens (168.3)', () => {
       </TooltipProvider>
     )
     expect(findByToken(container, 'text-financial-positive')).toBeDefined()
+  })
+
+  it('uses foreground text on a positive-tinted highlight for AA contrast', () => {
+    const { container } = render(
+      <TooltipProvider>
+        <PnLRow
+          label="Итого к выплате"
+          value={70000}
+          isPositive
+          highlight="positive"
+          percentOfRevenue={70}
+        />
+      </TooltipProvider>
+    )
+
+    expect(findByToken(container, 'bg-financial-positive/10')).toBeDefined()
+    expect(findByToken(container, 'text-financial-positive')).toBeUndefined()
+    expect(container.querySelectorAll('.text-foreground')).toHaveLength(2)
   })
 
   it('negative value renders text-financial-negative', () => {

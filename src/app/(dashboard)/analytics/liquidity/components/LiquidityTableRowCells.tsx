@@ -23,12 +23,14 @@ import { LIQUIDITY_CATEGORY_TOKENS } from './liquidity-category-tokens'
 interface LiquidityTableRowCellsProps {
   item: LiquidityItem
   isExpanded: boolean
+  onToggle: () => void
   onPlannerOpen: (item: LiquidityItem) => void
 }
 
 export function LiquidityTableRowCells({
   item,
   isExpanded,
+  onToggle,
   onPlannerOpen,
 }: LiquidityTableRowCellsProps) {
   const config = getLiquidityCategoryConfig(item.liquidity_category)
@@ -37,11 +39,24 @@ export function LiquidityTableRowCells({
   return (
     <>
       <TableCell className="w-8">
-        {isExpanded ? (
-          <ChevronUp className="h-4 w-4 text-muted-foreground" />
-        ) : (
-          <ChevronDown className="h-4 w-4 text-muted-foreground" />
-        )}
+        <Button
+          type="button"
+          variant="ghost"
+          size="icon"
+          className="min-h-11 min-w-11"
+          aria-label={`${isExpanded ? 'Скрыть' : 'Показать'} детали SKU ${item.sku_id}`}
+          aria-expanded={isExpanded}
+          onClick={event => {
+            event.stopPropagation()
+            onToggle()
+          }}
+        >
+          {isExpanded ? (
+            <ChevronUp className="h-4 w-4 text-muted-foreground" aria-hidden="true" />
+          ) : (
+            <ChevronDown className="h-4 w-4 text-muted-foreground" aria-hidden="true" />
+          )}
+        </Button>
       </TableCell>
       <TableCell>
         <div className="space-y-1">

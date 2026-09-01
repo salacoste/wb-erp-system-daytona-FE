@@ -22,8 +22,9 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 import { Alert, AlertDescription } from '@/components/ui/alert'
+import { Button } from '@/components/ui/button'
 import { Skeleton } from '@/components/ui/skeleton'
-import { ArrowLeft, Info } from 'lucide-react'
+import { AlertCircle, ArrowLeft, Info, RefreshCw } from 'lucide-react'
 import { useAvailableWeeks, useWeeklyFinancialSeries } from '@/hooks/financial'
 import { getLastCompletedWeek } from '@/lib/margin-helpers'
 import { ROUTES } from '@/lib/routes'
@@ -53,6 +54,8 @@ export default function FinanceHistoryPage(): React.ReactElement {
 
   const series = useWeeklyFinancialSeries(weeks)
   const showSkeleton = weeksLoading || (weeks.length > 0 && series.isLoading)
+  const hasData = series.data.some(point => point.summary !== null)
+  const showFullError = series.isError && !hasData
 
   return (
     <div className="space-y-6">
@@ -97,8 +100,33 @@ export default function FinanceHistoryPage(): React.ReactElement {
 
       {showSkeleton ? (
         <Skeleton className="h-96 w-full rounded-lg" />
+      ) : showFullError ? (
+        <Alert variant="destructive">
+          <AlertCircle className="h-4 w-4" />
+          <AlertDescription className="flex items-center justify-between gap-4">
+            <span>Не удалось загрузить историю финансов.</span>
+            <Button variant="outline" size="sm" onClick={series.refetch}>
+              <RefreshCw className="mr-2 h-4 w-4" />
+              Повторить
+            </Button>
+          </AlertDescription>
+        </Alert>
       ) : (
-        <FinanceHistoryTable points={series.data} />
+        <>
+          {series.isError && hasData && (
+            <Alert className="mb-4 border-status-warning/30 bg-status-warning/15">
+              <AlertCircle className="h-4 w-4 text-status-warning" />
+              <AlertDescription className="flex items-center justify-between gap-4">
+                <span>Часть недель недоступна. Показаны все успешно загруженные значения.</span>
+                <Button variant="outline" size="sm" onClick={series.refetch}>
+                  <RefreshCw className="mr-2 h-4 w-4" />
+                  Повторить
+                </Button>
+              </AlertDescription>
+            </Alert>
+          )}
+          <FinanceHistoryTable points={series.data} />
+        </>
       )}
 
       <Alert>

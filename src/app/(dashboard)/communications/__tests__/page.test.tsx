@@ -92,7 +92,7 @@ describe('CommunicationsPage — NEW-2 integration', () => {
       selector({ cabinetId: 'f75836f7-c0bc-4b2c-823c-a1f3508cce8e' })
     )
     renderPage()
-    expect(screen.getByRole('heading', { name: /Сообщения/, level: 1 })).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: 'Сообщения', level: 1 })).toBeInTheDocument()
     // Tabs (radix renders tablist; triggers have role=tab).
     expect(screen.getByRole('tab', { name: 'Отзывы' })).toBeInTheDocument()
     expect(screen.getByRole('tab', { name: 'Вопросы' })).toBeInTheDocument()

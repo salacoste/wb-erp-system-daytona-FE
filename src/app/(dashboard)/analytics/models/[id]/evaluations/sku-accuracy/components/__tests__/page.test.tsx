@@ -109,12 +109,12 @@ describe('SkuAccuracyPage', () => {
     expect(mockUseAiSkuAccuracy).toHaveBeenCalledWith('model-abc')
   })
 
-  // F-5: NaN guard — malformed ?nmId= must fall back to Overview, not render Detail with NaN
-  it('F-5: malformed ?nmId=abc falls back to Overview (NaN guard)', () => {
+  // F-5: malformed context must be distinct from the valid overview state.
+  it('F-5: malformed ?nmId=abc renders an explicit invalid-parameter error', () => {
     mockGet.mockReturnValue('abc')
     render(<SkuAccuracyPage />)
-    // NaN is not finite → nmId resolves to null → Overview rendered, not Detail
-    expect(screen.getByTestId('sku-overview')).toBeTruthy()
+    expect(screen.getByText(/Некорректный параметр SKU/)).toBeTruthy()
+    expect(screen.queryByTestId('sku-overview')).toBeNull()
     expect(screen.queryByTestId('sku-detail')).toBeNull()
   })
 
@@ -127,35 +127,39 @@ describe('SkuAccuracyPage', () => {
     expect(screen.queryByTestId('sku-overview')).toBeNull()
   })
 
-  // F-2: added — 1.5 is a non-integer float, Number.isInteger(1.5) === false → Overview fallback
-  it('F-2: ?nmId=1.5 (true non-integer float) falls back to Overview', () => {
+  // F-2: a non-integer query value is invalid route context, not an overview request.
+  it('F-2: ?nmId=1.5 (true non-integer float) renders an invalid-parameter error', () => {
     mockGet.mockReturnValue('1.5')
     render(<SkuAccuracyPage />)
-    expect(screen.getByTestId('sku-overview')).toBeTruthy()
+    expect(screen.getByText(/Некорректный параметр SKU/)).toBeTruthy()
+    expect(screen.queryByTestId('sku-overview')).toBeNull()
     expect(screen.queryByTestId('sku-detail')).toBeNull()
   })
 
   // F-1: additional boundary tests for tightened Number.isInteger + >0 guard
-  it('F-1: ?nmId=0 falls back to Overview (zero not a valid SKU id)', () => {
+  it('F-1: ?nmId=0 renders an invalid-parameter error (zero is not a valid SKU id)', () => {
     mockGet.mockReturnValue('0')
     render(<SkuAccuracyPage />)
-    expect(screen.getByTestId('sku-overview')).toBeTruthy()
+    expect(screen.getByText(/Некорректный параметр SKU/)).toBeTruthy()
+    expect(screen.queryByTestId('sku-overview')).toBeNull()
     expect(screen.queryByTestId('sku-detail')).toBeNull()
   })
 
-  it('F-1: ?nmId=-1 falls back to Overview (negative not a valid SKU id)', () => {
+  it('F-1: ?nmId=-1 renders an invalid-parameter error', () => {
     mockGet.mockReturnValue('-1')
     render(<SkuAccuracyPage />)
-    expect(screen.getByTestId('sku-overview')).toBeTruthy()
+    expect(screen.getByText(/Некорректный параметр SKU/)).toBeTruthy()
+    expect(screen.queryByTestId('sku-overview')).toBeNull()
     expect(screen.queryByTestId('sku-detail')).toBeNull()
   })
 
-  it('F-1: ?nmId=999999999999999999999 (overflow > 2^53-1) falls back to Overview', () => {
+  it('F-1: ?nmId=999999999999999999999 renders an invalid-parameter error', () => {
     // Number('999999999999999999999') === 1e+21 in JS (not Infinity).
     // Number.isSafeInteger(1e+21) === false → nmId resolves to null → Overview rendered.
     mockGet.mockReturnValue('999999999999999999999')
     render(<SkuAccuracyPage />)
-    expect(screen.getByTestId('sku-overview')).toBeTruthy()
+    expect(screen.getByText(/Некорректный параметр SKU/)).toBeTruthy()
+    expect(screen.queryByTestId('sku-overview')).toBeNull()
     expect(screen.queryByTestId('sku-detail')).toBeNull()
   })
 

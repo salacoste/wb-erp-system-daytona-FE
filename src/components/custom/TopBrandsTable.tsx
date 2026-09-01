@@ -83,7 +83,11 @@ export function TopBrandsTable({ brands, isLoading = false, className }: TopBran
             Топ-5 брендов
             <Tooltip>
               <TooltipTrigger asChild>
-                <button type="button" className="inline-flex">
+                <button
+                  type="button"
+                  className="inline-flex"
+                  aria-label="Подробнее о топ-5 брендах"
+                >
                   <HelpCircle className="h-4 w-4 text-muted-foreground hover:text-foreground transition-colors" />
                 </button>
               </TooltipTrigger>
@@ -99,7 +103,7 @@ export function TopBrandsTable({ brands, isLoading = false, className }: TopBran
             <p className="text-center text-muted-foreground py-8">Нет данных о брендах</p>
           ) : (
             <div className="relative overflow-x-auto">
-              <Table>
+              <Table aria-label="Топ-5 брендов по прибыли">
                 <TopBrandsTableHeader />
                 <TableBody>
                   {brands.slice(0, 5).map((brand, index) => (

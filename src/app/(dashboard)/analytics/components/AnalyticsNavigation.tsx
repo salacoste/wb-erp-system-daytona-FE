@@ -85,7 +85,7 @@ export function NavigationSection({
         <h2 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider">
           {title}
         </h2>
-        <p className="text-xs text-muted-foreground/70">{description}</p>
+        <p className="text-xs text-muted-foreground">{description}</p>
       </div>
       <div
         className={cn('grid gap-3 flex-1', items.length === 1 ? 'grid-cols-1' : 'sm:grid-cols-2')}

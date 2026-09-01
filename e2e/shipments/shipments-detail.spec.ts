@@ -156,7 +156,7 @@ test.describe('Story 173.9 deterministic shipment detail', () => {
       'href',
       '/shipments'
     )
-    await expect(page.getByText('Hostile missing detail')).toHaveCount(0)
+    await expect(page.locator('main').getByText('Hostile missing detail')).toHaveCount(0)
   })
 
   test('preserves mobile navigation and contains wide detail tables locally', async ({ page }) => {

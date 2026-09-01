@@ -48,6 +48,7 @@ export function useUpdateTariffSettings() {
   const router = useRouter()
 
   return useMutation<TariffSettingsDto, ApiError, UpdateTariffSettingsParams>({
+    retry: false,
     mutationFn: async ({ data, method }: UpdateTariffSettingsParams) => {
       if (method === 'PUT') {
         return putTariffSettings(data as TariffSettingsDto)

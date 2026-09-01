@@ -10,6 +10,7 @@
 import { useState } from 'react'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Button } from '@/components/ui/button'
+import { Alert, AlertDescription } from '@/components/ui/alert'
 import { Skeleton } from '@/components/ui/skeleton'
 import { useMonitoringDashboard } from '../hooks/use-monitoring-dashboard'
 import type { MonitoringTab } from '../types/monitoring'
@@ -43,13 +44,13 @@ function isNewCabinet(healthScore: number, pipelines: { status: string }[]): boo
 
 export function MonitoringPageContent() {
   const [activeTab, setActiveTab] = useState<MonitoringTab>('overview')
-  const { data: dashboard, isLoading, isError, refetch } = useMonitoringDashboard()
+  const { data: dashboard, isLoading, isError, isFetching, refetch } = useMonitoringDashboard()
 
   if (isLoading) {
     return <MonitoringPageSkeleton />
   }
 
-  if (isError) {
+  if (isError && !dashboard) {
     return (
       <div className="flex flex-col items-center justify-center py-16" role="alert">
         <p className="text-sm text-status-error">Не удалось загрузить данные мониторинга</p>
@@ -66,49 +67,66 @@ export function MonitoringPageContent() {
   }
 
   return (
-    <Tabs
-      value={activeTab}
-      onValueChange={v => setActiveTab(v as MonitoringTab)}
-      className="w-full"
-    >
-      <TabsList className="mb-6 grid w-full grid-cols-4 rounded-none border-b border-border bg-transparent p-0 h-auto">
-        <TabsTrigger value="overview" {...tabTriggerProps(activeTab === 'overview')}>
-          Обзор
-        </TabsTrigger>
-        <TabsTrigger value="heatmap" {...tabTriggerProps(activeTab === 'heatmap')}>
-          Карта активности
-        </TabsTrigger>
-        <TabsTrigger value="recovery" {...tabTriggerProps(activeTab === 'recovery')}>
-          Восстановление
-        </TabsTrigger>
-        <TabsTrigger value="history" {...tabTriggerProps(activeTab === 'history')}>
-          История
-        </TabsTrigger>
-      </TabsList>
+    <div className="space-y-4">
+      {isFetching && !isError && (
+        <p role="status" className="text-sm text-muted-foreground">
+          Обновление данных мониторинга…
+        </p>
+      )}
+      {isError && dashboard && (
+        <Alert variant="destructive">
+          <AlertDescription className="flex items-center justify-between gap-4">
+            <span>Не удалось обновить данные. Показаны последние доступные значения.</span>
+            <Button variant="outline" size="sm" onClick={() => refetch()}>
+              Повторить
+            </Button>
+          </AlertDescription>
+        </Alert>
+      )}
+      <Tabs
+        value={activeTab}
+        onValueChange={v => setActiveTab(v as MonitoringTab)}
+        className="w-full"
+      >
+        <TabsList className="mb-6 grid w-full grid-cols-4 rounded-none border-b border-border bg-transparent p-0 h-auto">
+          <TabsTrigger value="overview" {...tabTriggerProps(activeTab === 'overview')}>
+            Обзор
+          </TabsTrigger>
+          <TabsTrigger value="heatmap" {...tabTriggerProps(activeTab === 'heatmap')}>
+            Карта активности
+          </TabsTrigger>
+          <TabsTrigger value="recovery" {...tabTriggerProps(activeTab === 'recovery')}>
+            Восстановление
+          </TabsTrigger>
+          <TabsTrigger value="history" {...tabTriggerProps(activeTab === 'history')}>
+            История
+          </TabsTrigger>
+        </TabsList>
 
-      <TabsContent value="overview" role="tabpanel">
-        <div className="space-y-6">
-          <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-            <HealthScoreWidget system={dashboard?.system} isLoading={isLoading} />
-            <TelegramStatusCard telegram={dashboard?.telegram} isLoading={isLoading} />
+        <TabsContent value="overview" role="tabpanel">
+          <div className="space-y-6">
+            <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+              <HealthScoreWidget system={dashboard?.system} isLoading={isLoading} />
+              <TelegramStatusCard telegram={dashboard?.telegram} isLoading={isLoading} />
+            </div>
+            <PipelineStatusGrid pipelines={dashboard?.pipelines} isLoading={isLoading} />
+            <DataCompletenessTable data={dashboard?.dataCompleteness} isLoading={isLoading} />
           </div>
-          <PipelineStatusGrid pipelines={dashboard?.pipelines} isLoading={isLoading} />
-          <DataCompletenessTable data={dashboard?.dataCompleteness} isLoading={isLoading} />
-        </div>
-      </TabsContent>
+        </TabsContent>
 
-      <TabsContent value="heatmap" role="tabpanel">
-        <PipelineHeatmap enabled={activeTab === 'heatmap'} />
-      </TabsContent>
+        <TabsContent value="heatmap" role="tabpanel">
+          <PipelineHeatmap enabled={activeTab === 'heatmap'} />
+        </TabsContent>
 
-      <TabsContent value="recovery" role="tabpanel">
-        <RecoveryPanel enabled={activeTab === 'recovery'} />
-      </TabsContent>
+        <TabsContent value="recovery" role="tabpanel">
+          <RecoveryPanel enabled={activeTab === 'recovery'} />
+        </TabsContent>
 
-      <TabsContent value="history" role="tabpanel">
-        <HealthHistoryChart enabled={activeTab === 'history'} />
-      </TabsContent>
-    </Tabs>
+        <TabsContent value="history" role="tabpanel">
+          <HealthHistoryChart enabled={activeTab === 'history'} />
+        </TabsContent>
+      </Tabs>
+    </div>
   )
 }
 

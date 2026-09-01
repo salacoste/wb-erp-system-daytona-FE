@@ -245,7 +245,7 @@ test.describe('Epic 44-FE: Visual Enhancement Tests', () => {
       for (const width of [320, 390, 768, 1024, 1280, 1440]) {
         test(`TC-VIS-013-${theme}-${width}: ${theme} ${width}px keeps one readable result without overflow`, async ({
           page,
-        }, testInfo) => {
+        }) => {
           await page.setViewportSize({ width, height: width < 768 ? 844 : 900 })
           await setTheme(page, theme)
           await mockCalculation(page, 20)
@@ -274,13 +274,6 @@ test.describe('Epic 44-FE: Visual Enhancement Tests', () => {
               `${theme} ${width}px open warehouse popover accessibility`
             )
           }
-
-          if (width === 320 || width === 1440) {
-            await testInfo.attach(`story-172.8-${theme}-${width}px`, {
-              body: await page.screenshot({ fullPage: true }),
-              contentType: 'image/png',
-            })
-          }
         })
       }
     }
@@ -288,7 +281,7 @@ test.describe('Epic 44-FE: Visual Enhancement Tests', () => {
     for (const theme of ['light', 'dark'] as const) {
       test(`TC-VIS-014-${theme}: ${theme} 200% zoom preserves long Russian values and reflow`, async ({
         page,
-      }, testInfo) => {
+      }) => {
         await page.setViewportSize({ width: 640, height: 900 })
         await setTheme(page, theme)
         await page.evaluate(() => {
@@ -302,10 +295,6 @@ test.describe('Epic 44-FE: Visual Enhancement Tests', () => {
         await expect(results.getByTestId('recommended-price')).toHaveText(/[\d\s,.]+/)
         await expectMainHasNoHorizontalOverflow(page)
         await expectPageAxeClean(page, `${theme} 200% zoom calculator accessibility`)
-        await testInfo.attach(`story-172.8-${theme}-200-percent-zoom`, {
-          body: await page.screenshot({ fullPage: true }),
-          contentType: 'image/png',
-        })
       })
     }
   })

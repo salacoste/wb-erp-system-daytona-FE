@@ -51,7 +51,6 @@ function ModelsPageShell({ children }: { children: ReactNode }) {
 
 export function ModelListSection() {
   const router = useRouter()
-
   // AC-5: poll only when any model is 'training'.
   // shouldPoll is derived from data after each fetch and stored in state so the
   // polling-on/off transition is explicit and testable (F-1 fix: replaces useRef pattern).
@@ -127,29 +126,35 @@ export function ModelListSection() {
             </TableHeader>
             <TableBody>
               {data.models.map(model => {
-                const badge = STATUS_BADGE_CONFIG[model.status]
+                const badge = STATUS_BADGE_CONFIG[model.status] ?? {
+                  label: model.status,
+                  pulse: false,
+                }
+                const badgeClass =
+                  MODEL_LIST_BADGE_CLASS[model.status] ??
+                  'border-border bg-muted text-muted-foreground'
                 const dest = buildModelPerformanceRoute(model.id)
                 return (
                   <TableRow
                     key={model.id}
-                    className="cursor-pointer hover:bg-muted/50 focus:ring-2 focus:ring-ring focus:outline-none"
-                    role="button"
-                    tabIndex={0}
+                    className="cursor-pointer hover:bg-muted/50"
                     onClick={() => router.push(dest)}
-                    onKeyDown={e => {
-                      if (e.key === 'Enter' || e.key === ' ') {
-                        e.preventDefault()
-                        router.push(dest)
-                      }
-                    }}
                   >
-                    <TableCell>{getModelTypeLabel(model.modelType)}</TableCell>
+                    <TableCell>
+                      <Link
+                        href={dest}
+                        onClick={event => event.stopPropagation()}
+                        className="font-medium underline-offset-4 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                      >
+                        {getModelTypeLabel(model.modelType)}
+                      </Link>
+                    </TableCell>
                     <TableCell>{ENGINE_LABELS[model.engine]}</TableCell>
                     <TableCell className="tabular-nums">v{model.version}</TableCell>
                     <TableCell>
                       {/* Story 174.2: overlay from the registry-local class map —
                           STATUS_BADGE_CONFIG carries labels + pulse only. */}
-                      <Badge className={MODEL_LIST_BADGE_CLASS[model.status]}>
+                      <Badge className={badgeClass}>
                         {badge.pulse && (
                           <span
                             aria-hidden="true"

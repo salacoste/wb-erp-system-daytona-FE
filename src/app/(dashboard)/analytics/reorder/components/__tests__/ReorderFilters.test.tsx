@@ -24,6 +24,11 @@ describe('ReorderFilters', () => {
     expect(screen.getByText('Все')).toBeInTheDocument()
   })
 
+  it('names the status combobox from its visible label', () => {
+    renderWithProviders(<ReorderFilters value="all" onChange={vi.fn()} />)
+    expect(screen.getByRole('combobox', { name: /^Статус:/ })).toBeInTheDocument()
+  })
+
   it('calls onChange when selecting a different option', async () => {
     const onChange = vi.fn()
     const user = userEvent.setup()
