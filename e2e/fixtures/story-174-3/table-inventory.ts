@@ -432,6 +432,15 @@ export const TABLE_INVENTORY: Readonly<Record<string, readonly Story1743TableSur
         source:
           'src/app/(dashboard)/analytics/models/[id]/evaluations/components/EvaluationsList.tsx',
         anchor: 'captionText={`Оценки точности модели — ',
+        executedFeatures: ['sorting', 'selection-and-actions'],
+        ownerExecutedFeatures: ['sorting', 'selection-and-actions'],
+        interactionOwnerTest: {
+          runner: 'vitest',
+          source:
+            'src/app/(dashboard)/analytics/models/[id]/evaluations/components/__tests__/EvaluationsTable.test.tsx',
+          scenarioId:
+            'F-1/F-6: sorting and native SKU action remain executable without focusable rows',
+        },
       }),
     ],
     '/analytics/models/[id]/evaluations/sku-accuracy': [
@@ -692,7 +701,7 @@ export const TABLE_INVENTORY: Readonly<Record<string, readonly Story1743TableSur
         interactionOwnerTest: {
           runner: 'vitest',
           source: 'src/components/custom/supplies/__tests__/SupplyOrdersTable.test.tsx',
-          scenarioId: 'Enter key on focused row triggers onOrderClick',
+          scenarioId: 'Enter on the native order-detail button triggers onOrderClick exactly once',
         },
       }),
     ],

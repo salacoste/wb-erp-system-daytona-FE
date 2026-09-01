@@ -87,7 +87,9 @@ describe('AcquiringPeriodDetailPage', () => {
     mockSuccess({ data: [], cachedAt: '' })
 
     const user = userEvent.setup()
-    renderWithProviders(<AcquiringPeriodDetailPage initialRangeError="Период в ссылке недоступен." />)
+    renderWithProviders(
+      <AcquiringPeriodDetailPage initialRangeError="Период в ссылке недоступен." />
+    )
 
     expect(screen.getByText('Период в ссылке недоступен.')).toBeInTheDocument()
     expect(screen.queryByText(/Транзакции за выбранный период не найдены/)).not.toBeInTheDocument()

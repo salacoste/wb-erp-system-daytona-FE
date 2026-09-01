@@ -202,6 +202,8 @@ export async function assertSemanticDataSurfaces(
             /NaN|Infinity/.test(cellSemanticValue(cell) ?? '')
           ).length,
           invalidTableRowRoleCount: table.querySelectorAll('tr[role]:not([role="row"])').length,
+          focusableNativeRowCount: table.querySelectorAll('tr[tabindex]:not([tabindex="-1"])')
+            .length,
           sortControlCount: table.querySelectorAll(
             'th button, [role="columnheader"] button, [aria-sort]'
           ).length,
@@ -323,6 +325,10 @@ export async function assertSemanticDataSurfaces(
     expect(
       table.invalidTableRowRoleCount,
       `${route}: ${expectedSurface.id} preserves native row semantics instead of repurposing tr as an interactive role`
+    ).toBe(0)
+    expect(
+      table.focusableNativeRowCount,
+      `${route}: ${expectedSurface.id} keeps native rows out of the tab order and assigns keyboard actions to named controls`
     ).toBe(0)
     expect(
       table.numericAlignmentVariantCounts.every(count => count === 1),

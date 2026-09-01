@@ -36,9 +36,9 @@ describe('AcquiringReportDetailRoute', () => {
   it('rejects malformed and non-positive report IDs through the route-owned not-found boundary', () => {
     for (const id of ['invalid', '0', '-1', 'Infinity']) {
       currentId = id
-      expect(() =>
-        AcquiringReportDetailRoute({ params: Promise.resolve({ id }) })
-      ).toThrowError('NEXT_NOT_FOUND')
+      expect(() => AcquiringReportDetailRoute({ params: Promise.resolve({ id }) })).toThrowError(
+        'NEXT_NOT_FOUND'
+      )
     }
 
     expect(mockNotFound).toHaveBeenCalledTimes(4)

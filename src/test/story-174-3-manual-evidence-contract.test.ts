@@ -60,9 +60,7 @@ describe('Story 174.3 immutable manual evidence contract', () => {
 
   it('binds the privacy-safe substitute and environment-gap disposition to canonical authority', () => {
     expect(STORY_174_3_MANUAL_EVIDENCE_AUTHORITY.acceptance).toContain('epics-166-174')
-    expect(STORY_174_3_MANUAL_EVIDENCE_AUTHORITY.browserMatrix).toContain(
-      'ux-design-specification'
-    )
+    expect(STORY_174_3_MANUAL_EVIDENCE_AUTHORITY.browserMatrix).toContain('ux-design-specification')
     expect(STORY_174_3_MANUAL_EVIDENCE_AUTHORITY.privacySafeBaseline).toContain(
       '174.3-complete-accessibility'
     )

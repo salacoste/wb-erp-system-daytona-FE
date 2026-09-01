@@ -95,11 +95,7 @@ describe('Story 174.3 explicit route/state contract', () => {
     const exactBindings = requirements.filter(
       ({ reconciliation, mapping, state }) =>
         (state === 'default' && mapping.rawOwnerState === 'default') ||
-        findStory1743OwnerVariantScenario(
-          reconciliation.route,
-          mapping.rawOwnerState,
-          state
-        ) ||
+        findStory1743OwnerVariantScenario(reconciliation.route, mapping.rawOwnerState, state) ||
         (state !== 'default' &&
           rawOwnerLabelsByRouteState.get(`${reconciliation.route}::${state}`)?.size === 1 &&
           STORY_174_3_EXACT_STATE_SCENARIOS[reconciliation.route]?.[state])
@@ -255,11 +251,7 @@ describe('Story 174.3 explicit route/state contract', () => {
       'pending',
     ])
     expect(
-      normalizeStory1743OwnerClause(
-        '/analytics/forecast-accuracy',
-        '171.5',
-        'valid zero error'
-      )
+      normalizeStory1743OwnerClause('/analytics/forecast-accuracy', '171.5', 'valid zero error')
     ).toEqual(['default'])
     expect(
       normalizeStory1743OwnerClause(
@@ -289,18 +281,14 @@ describe('Story 174.3 explicit route/state contract', () => {
         'invalid nmId'
       )
     ).toEqual(['error'])
-    expect(
-      normalizeStory1743OwnerClause('/analytics/dashboard', '167.3', 'token')
-    ).toEqual(['permission'])
+    expect(normalizeStory1743OwnerClause('/analytics/dashboard', '167.3', 'token')).toEqual([
+      'permission',
+    ])
     expect(
       normalizeStory1743OwnerClause('/analytics/acquiring/period', '169.2', 'missing period')
     ).toEqual(['error'])
     expect(
-      normalizeStory1743OwnerClause(
-        '/analytics/acquiring/reports/[id]',
-        '169.3',
-        'invalid ID'
-      )
+      normalizeStory1743OwnerClause('/analytics/acquiring/reports/[id]', '169.3', 'invalid ID')
     ).toEqual(['not-found'])
   })
 

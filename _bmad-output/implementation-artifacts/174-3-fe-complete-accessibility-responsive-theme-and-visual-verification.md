@@ -16,6 +16,11 @@ This section supersedes the historical implementation log below. Three independe
 executable owner-state reconciliation, closing the route-specific SKU-accuracy gap, making the
 execution-manifest pipeline fail closed, moving SKU keyboard activation from repurposed native
 table rows to named native buttons, and rerunning the complete exact-worktree validation ledger.
+The later immutable candidate `7e41cc96fd7e6f6488a480b352f6ce15ec8fd8d5` was also rejected by
+independent critic and code-review passes: the supplies table still exposed a focusable native row,
+and the model-evaluation route incorrectly declared its rendered sorting and selection/actions
+features N/A. Both findings are now closed by a real named detail button, a canonical fail-closed
+focusable-row invariant, exact owner-test bindings, and an executed-feature regression pin.
 Because this Story introduces novel
 validator semantics, three fresh independent `APPROVE` reviews on one unchanged final commit remain
 the immutable pre-merge gate. The final commit SHA, review verdicts, PR identity, merge commit, and
@@ -25,7 +30,7 @@ truthfully contain its own final SHA.
 ### Actual expanded file manifest
 
 The original three-file scope expanded only when the live matrix found concrete route-owner defects.
-The generated exact scope register contains 421 files relative to the unchanged `origin/main` base;
+The generated exact scope register contains 423 files relative to the unchanged `origin/main` base;
 it is the authoritative file-level inventory. The current delivery contains these principal groups:
 
 - Story evidence runtime:
@@ -57,7 +62,12 @@ it is the authoritative file-level inventory. The current delivery contains thes
 - Model evaluation table semantics:
   `EvaluationsTable.tsx`, `SkuAccuracyTable.tsx`, and their focused unit/browser tests preserve
   native `<tr>`/cell roles, keep pointer-only row convenience, and expose keyboard navigation on
-  named native detail buttons with propagation containment.
+  named native detail buttons with propagation containment. The route inventory binds its rendered
+  sorting and selection/actions features to the exact executable owner scenario rather than N/A.
+- Supply-order table semantics:
+  `src/components/custom/supplies/SupplyOrdersTable.tsx` and its focused test preserve pointer-only
+  row convenience while moving Enter/Space activation to a named shadcn `Button`; native rows have
+  neither an interactive role nor a non-negative `tabindex`.
 - Dedicated browser/state closure:
   `e2e/story-174-3-dedicated-route-evidence.spec.ts`, exact Settings/Telegram/Shipment/SKU browser
   repairs, and fail-closed Story state/surface contract tests under `src/test/`.
@@ -145,7 +155,7 @@ prove both the accepted schema and each fail-closed branch.
 overlays: 83 executed / 15 conditional route-specific N/A
 tables: 42 executed / 21 conditional route-specific N/A
 charts: 13 executed / 4 conditional route-specific N/A
-table/chart features: 290 executed / 333 explicit N/A
+table/chart features: 292 executed / 331 explicit N/A
 ```
 
 - Modal overlay: `/dashboard` executes keyboard traversal, Enter and Space activation, focus entry,
@@ -157,7 +167,8 @@ table/chart features: 290 executed / 333 explicit N/A
   state and reference the route entry source.
 - Every rendered table is exhaustively checked for a name/caption, semantic headers/data cells,
   primary identity column and values, finite/consistently aligned numeric values, named interactive
-  actions, valid virtual row counts when present, and mobile containment or scroll strategy.
+  actions, zero repurposed or focusable native rows, valid virtual row counts when present, and
+  mobile containment or scroll strategy.
 - Every rendered Recharts/canvas surface is exhaustively checked for an accessible title, a named
   exact semantic data alternative (not a visual legend alone), alternative headers/cells, legend
   meaning when rendered, responsive containment, and reduced-motion execution.
@@ -198,6 +209,11 @@ table/chart features: 290 executed / 333 explicit N/A
     agree with `aria-expanded`, with collapsed and expanded regression coverage.
 18. Acquiring period deep links retain their bounded ISO-date parsing while exposing the page-level
     `searchParams` prop as an explicit awaited `Promise`, satisfying the Next async-params guard.
+19. Supply-order detail activation is owned by a descriptive native button (`Открыть заказ <id>`),
+    with exact-once Enter/Space tests; the native row remains pointer-convenient but unfocusable.
+20. Model-evaluation sorting and selection/actions are declared executed and pinned to their exact
+    combined owner source/scenario; the aggregate is `292 executed / 331 explicit N/A` and fails closed if
+    either interactive feature regresses to N/A.
 
 No axe rule, threshold, exclusion, network guard, privacy guard, or route assertion was weakened.
 
@@ -268,17 +284,17 @@ automated or operator-driven PASS.
 Pinned runtime: Node `v24.18.0`, npm `11.11.0`.
 
 ```text
-Targeted Story state/surface/manifest-reader/manual-evidence contracts: 4 files, 42/42 tests passed
-Focused model-evaluation native-row regressions: 3 files, 71/71 tests passed
-Supplies route regression suite: 1 file, 90/90 tests passed
-Full Vitest: 1,270 files, 19,346/19,346 tests passed
+Targeted Story state/surface/manifest-reader/manual-evidence contracts: 4 files, 43/43 tests passed
+Focused supply-order/model-evaluation native-row regressions: 4 files, 122/122 tests passed
+Full Vitest: 1,270 files, 19,347/19,347 tests passed
 Canonical Story runner: 82 passed / 1 optional Manager skip / 0 failed
 Owner browser regeneration: 368 passed / 22 accepted optional/live-data skips / 0 failed
 Dedicated route/SKU evidence: 4 current-source executions / 0 gaps
 Real browser-UI 200% zoom: all 76 routes × 2 themes passed; 4 harness tests passed / 1 optional Manager skip
-Execution manifest: 769 passed entries (626 Vitest / 143 Playwright; includes 76 canonical defaults and 4 dedicated), 0 failed
+Execution manifest: 770 passed entries (627 Vitest / 143 Playwright; includes 76 canonical defaults and 4 dedicated), 0 failed
 Production build: PASS, TypeScript PASS, 70/70 pages generated
 npm run lint: PASS, zero warnings/errors
+npm run format:check: PASS across all src TypeScript/JSON/CSS sources
 npx eslint on all changed E2E/scripts sources: PASS, zero warnings/errors
 npm run type-check: PASS
 npm run check:max-lines: PASS
@@ -289,12 +305,12 @@ npm run check:lessons: PASS, 302 files / 96 lesson lines / zero violations
 E2E assertion/wait/bare-skip, Next params, locale-percent, and policy guards: PASS
 Anti-pattern-8 normalizer: PASS at the lowered 50-site baseline
 ESLint rule registry: PASS, 2 configs; relocatability self-test: 8/8 passed
-Privacy policy tests: 29/29 passed; repository scan: 3,631 text files / 0 findings
+Privacy policy tests: 29/29 passed; repository scan: 3,633 text files / 0 findings
 ```
 
 The canonical runner directly verifies all 76 route identities, 912 state dispositions, six widths
 in both themes, reduced motion, axe/computed contrast at mobile and desktop widths, focus/reading
-order, and applicable overlay/table/chart contracts. `measureComputedTextContrast`,
+order, zero focusable native table rows, and applicable overlay/table/chart contracts. `measureComputedTextContrast`,
 `computedContrastEvidence`, and `measuredContrastEvidence` remain required nonzero evidence; no axe
 rule, threshold, exclusion, network guard, privacy guard, or route assertion was weakened.
 

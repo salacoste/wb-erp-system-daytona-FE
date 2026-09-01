@@ -32,7 +32,7 @@ type TableFeature = (typeof TABLE_FEATURES)[number]
 type ChartFeature = (typeof CHART_FEATURES)[number]
 export type SurfaceFeatureDisposition =
   | {
-      assertion: `canonical-runner:${string}`
+      assertion: `canonical-runner:${string}` | `owner-test:${string}`
       disposition: 'executed'
       rationale: string
     }
@@ -106,6 +106,10 @@ export type Story1743TableSurface = {
     evidence: SurfaceEvidence
   }
   interaction?: Story1743OwnerTestBinding
+  ownerFeatureExecution?: {
+    features: readonly TableFeature[]
+    verification: Story1743OwnerTestBinding
+  }
 }
 
 export type Story1743ChartSurface = {
@@ -244,9 +248,11 @@ export function tableSurface(
       anchor: string
     }
     interactionOwnerTest?: Omit<Story1743OwnerTestBinding, 'execution'>
+    ownerExecutedFeatures?: readonly Extract<TableFeature, 'selection-and-actions' | 'sorting'>[]
   }
 ): Story1743TableSurface {
   const optionalExecuted = new Set<TableFeature>(definition.executedFeatures ?? [])
+  const ownerExecuted = new Set<TableFeature>(definition.ownerExecutedFeatures ?? [])
   const executedFeatures = [...BASE_TABLE_EXECUTED, ...optionalExecuted]
   const notApplicableFeatures = OPTIONAL_TABLE_FEATURES.filter(
     feature => !optionalExecuted.has(feature)
@@ -261,6 +267,18 @@ export function tableSurface(
       `${route}/${definition.id} selection/action execution and an exact owner test must be declared together`
     )
   }
+  if (
+    ownerExecuted.size !== (definition.ownerExecutedFeatures?.length ?? 0) ||
+    [...ownerExecuted].some(feature => !optionalExecuted.has(feature)) ||
+    (ownerExecuted.size > 0 && !definition.interactionOwnerTest)
+  ) {
+    throw new Error(
+      `${route}/${definition.id} owner-executed features must be unique executed features with an exact owner test`
+    )
+  }
+  const interaction = definition.interactionOwnerTest
+    ? ownerTestBinding(definition.interactionOwnerTest)
+    : undefined
   const defaultNotApplicableRationales: Partial<Record<TableFeature, string>> = {
     sorting: `${route}: ${definition.id} in ${definition.source} declares no interactive sorting or aria-sort contract`,
     'selection-and-actions': `${route}: ${definition.id} in ${definition.source} declares selection-and-actions not applicable because it is a read-only semantic data surface with no row selection or action contract`,
@@ -297,9 +315,14 @@ export function tableSurface(
           evidence: evidence(definition.pagination.source, definition.pagination.anchor),
         }
       : undefined,
-    interaction: definition.interactionOwnerTest
-      ? ownerTestBinding(definition.interactionOwnerTest)
-      : undefined,
+    interaction,
+    ownerFeatureExecution:
+      ownerExecuted.size > 0 && interaction
+        ? {
+            features: Object.freeze([...ownerExecuted]),
+            verification: interaction,
+          }
+        : undefined,
     narrowWidthDisposition: definition.narrowWidthRationale
       ? {
           disposition: 'not-applicable',

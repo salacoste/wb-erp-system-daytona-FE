@@ -56,8 +56,8 @@ export function AcquiringPeriodDetailPage({
   initialRange,
   initialRangeError,
 }: AcquiringPeriodDetailPageProps = {}) {
-  const [dateRange, setDateRange] = useState<DateRange | undefined>(() =>
-    initialRange ?? (initialRangeError ? undefined : getDefaultRange())
+  const [dateRange, setDateRange] = useState<DateRange | undefined>(
+    () => initialRange ?? (initialRangeError ? undefined : getDefaultRange())
   )
   const [periodError, setPeriodError] = useState(initialRangeError)
 

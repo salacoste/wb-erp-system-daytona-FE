@@ -119,6 +119,7 @@ test.describe('Story 174.3 dedicated route evidence gaps', () => {
     const rows = table.locator('tbody tr')
     await expect(rows).toHaveCount(2)
     await expect(table.locator('tr[role]:not([role="row"])')).toHaveCount(0)
+    await expect(table.locator('tr[tabindex]:not([tabindex="-1"])')).toHaveCount(0)
     await expect(rows.nth(0)).toContainText('174300101')
     await expect(rows.nth(0)).toContainText('SKU-ALPHA')
     await expect(rows.nth(0)).toContainText(/8,25\s*%/)

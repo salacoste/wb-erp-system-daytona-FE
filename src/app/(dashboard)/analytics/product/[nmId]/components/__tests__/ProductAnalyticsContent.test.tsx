@@ -21,7 +21,11 @@ vi.mock('@/hooks/use-unified-product-analytics', () => ({
 }))
 
 vi.mock('@/components/custom/DateRangePickerExtended', () => ({
-  DateRangePickerExtended: ({ onChange }: { onChange: (range: { from: Date; to: Date }) => void }) => (
+  DateRangePickerExtended: ({
+    onChange,
+  }: {
+    onChange: (range: { from: Date; to: Date }) => void
+  }) => (
     <button
       type="button"
       onClick={() =>
@@ -83,7 +87,9 @@ describe('ProductAnalyticsContent', () => {
   it('renders a very long opaque product identifier without numeric coercion', () => {
     const longNmId = '999999999999999999999999999999'
     render(<ProductAnalyticsContent nmId={longNmId} />)
-    expect(screen.getByRole('heading', { name: `Аналитика товара #${longNmId}` })).toBeInTheDocument()
+    expect(
+      screen.getByRole('heading', { name: `Аналитика товара #${longNmId}` })
+    ).toBeInTheDocument()
   })
 
   it('renders all five tabs with their Russian labels', () => {

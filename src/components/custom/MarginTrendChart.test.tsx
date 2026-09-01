@@ -215,7 +215,9 @@ describe('MarginTrendChart', () => {
 
       render(<MarginTrendChart queryParams={{ weeks: 12 }} />, { wrapper: createWrapper() })
 
-      expect(screen.getByRole('img', { name: 'График маржинальности по неделям' })).toBeInTheDocument()
+      expect(
+        screen.getByRole('img', { name: 'График маржинальности по неделям' })
+      ).toBeInTheDocument()
       expect(screen.getByText(/Показаны ранее загруженные данные/)).toBeInTheDocument()
       screen.getByRole('button', { name: 'Повторить' }).click()
       expect(vi.mocked(useMarginTrends).mock.results[0]!.value.refetch).toHaveBeenCalled()

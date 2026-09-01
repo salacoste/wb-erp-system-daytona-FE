@@ -145,7 +145,9 @@ describe('InstalledRuleEditor (163.3)', () => {
     )
     renderWithProviders(<InstalledRuleEditor ruleId="r1" />)
 
-    fireEvent.change(screen.getByTestId('field-name'), { target: { value: 'Changed after conflict' } })
+    fireEvent.change(screen.getByTestId('field-name'), {
+      target: { value: 'Changed after conflict' },
+    })
 
     expect(screen.getByTestId('editor-update-error')).toBeInTheDocument()
     expect(screen.getByTestId('field-name')).toHaveValue('Changed after conflict')

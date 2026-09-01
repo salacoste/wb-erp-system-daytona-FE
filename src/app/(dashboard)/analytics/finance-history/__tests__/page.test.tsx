@@ -12,7 +12,9 @@ vi.mock('@/hooks/financial', () => ({
 }))
 vi.mock('@/components/custom/finance-history/FinanceHistoryTable', () => ({
   FinanceHistoryTable: ({ points }: { points: Array<{ summary: unknown }> }) => (
-    <div data-testid="finance-history-table">{points.filter(point => point.summary).length} ready</div>
+    <div data-testid="finance-history-table">
+      {points.filter(point => point.summary).length} ready
+    </div>
   ),
 }))
 

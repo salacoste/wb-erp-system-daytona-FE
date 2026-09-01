@@ -105,10 +105,7 @@ export function ProductAnalyticsContent({ nmId }: ProductAnalyticsContentProps) 
         if (unified.isLoading) return <OverviewSkeleton />
         if (unified.isError) {
           return (
-            <ProductAnalyticsError
-              error={unified.error}
-              onRetry={() => void unified.refetch()}
-            />
+            <ProductAnalyticsError error={unified.error} onRetry={() => void unified.refetch()} />
           )
         }
         if (!unified.data) {
@@ -120,10 +117,7 @@ export function ProductAnalyticsContent({ nmId }: ProductAnalyticsContentProps) 
         if (unified.isLoading) return <OverviewSkeleton />
         if (unified.isError) {
           return (
-            <ProductAnalyticsError
-              error={unified.error}
-              onRetry={() => void unified.refetch()}
-            />
+            <ProductAnalyticsError error={unified.error} onRetry={() => void unified.refetch()} />
           )
         }
         if (!unified.data) {
@@ -135,10 +129,7 @@ export function ProductAnalyticsContent({ nmId }: ProductAnalyticsContentProps) 
         if (unified.isLoading) return <OverviewSkeleton />
         if (unified.isError) {
           return (
-            <ProductAnalyticsError
-              error={unified.error}
-              onRetry={() => void unified.refetch()}
-            />
+            <ProductAnalyticsError error={unified.error} onRetry={() => void unified.refetch()} />
           )
         }
         if (!unified.data) {

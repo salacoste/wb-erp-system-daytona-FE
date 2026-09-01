@@ -4,7 +4,7 @@
 > `origin/main` comparison plus current untracked Story files. Regenerate before freeze;
 > any path drift is a review blocker.
 
-**Files:** 421
+**Files:** 423
 
 ## Coordination classes
 
@@ -15,7 +15,7 @@
 | owner-browser-evidence | 15 | route owner + 174.3 | Coordinated deterministic browser proof for an owner route. |
 | remediation-plan | 1 | 174.3 | Accepted review findings, immutable three-review gate, and cleanup protocol. |
 | repository-validation | 3 | 174.3 | Relocatable fail-closed local validation required by the Story evidence pipeline. |
-| route-owner-remediation | 333 | ledger route owner + 174.3 | Accepted route-specific accessibility/responsive/data-semantics repair. |
+| route-owner-remediation | 335 | ledger route owner + 174.3 | Accepted route-specific accessibility/responsive/data-semantics repair. |
 | shared-owner-remediation | 15 | named shared owner + 174.3 | Narrow contract-preserving repair with focused regression evidence. |
 | story-evidence | 45 | 174.3 | Executable route/state/surface/manifest evidence owned by this assurance Story. |
 | story-support | 2 | 174.3 | Direct support file required by the recorded Story validation. |
@@ -414,7 +414,9 @@ deployment, production, force-push, or direct-`main` operation is admitted.
 | `src/components/custom/sku-packaging/SkuPackagingDeleteDialog.tsx` | route-owner-remediation |
 | `src/components/custom/supplies/SuppliesTable.tsx` | route-owner-remediation |
 | `src/components/custom/supplies/SuppliesTableRow.tsx` | route-owner-remediation |
+| `src/components/custom/supplies/SupplyOrdersTable.tsx` | route-owner-remediation |
 | `src/components/custom/supplies/__tests__/SuppliesTable.test.tsx` | route-owner-remediation |
+| `src/components/custom/supplies/__tests__/SupplyOrdersTable.test.tsx` | route-owner-remediation |
 | `src/components/custom/tariffs-admin/SaveConfirmDialog.tsx` | route-owner-remediation |
 | `src/components/custom/tariffs-admin/__tests__/TariffSettingsForm.story-173-6.test.tsx` | route-owner-remediation |
 | `src/components/custom/top-brands/TopBrandsTableHeader.tsx` | route-owner-remediation |

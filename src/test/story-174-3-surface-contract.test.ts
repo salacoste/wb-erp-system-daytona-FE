@@ -190,9 +190,31 @@ describe('Story 174.3 fail-closed surface contracts', () => {
       tablesConditional: 21,
       chartsExecuted: 13,
       chartsConditional: 4,
-      featuresExecuted: 290,
-      featuresNotApplicable: 333,
+      featuresExecuted: 292,
+      featuresNotApplicable: 331,
     })
+  })
+
+  it('pins interactive model-evaluation table features as executed rather than N/A', () => {
+    const table =
+      STORY_174_3_SURFACE_CONTRACTS['/analytics/models/[id]/evaluations'].table
+        .conditionalSurfaces[0]!.item
+
+    expect(table.features.sorting.disposition).toBe('executed')
+    expect(table.features['selection-and-actions'].disposition).toBe('executed')
+    expect(table.ownerFeatureExecution).toEqual(
+      expect.objectContaining({
+        features: ['sorting', 'selection-and-actions'],
+        verification: expect.objectContaining({
+          execution: 'owner-test',
+          runner: 'vitest',
+          source:
+            'src/app/(dashboard)/analytics/models/[id]/evaluations/components/__tests__/EvaluationsTable.test.tsx',
+          scenarioId:
+            'F-1/F-6: sorting and native SKU action remain executable without focusable rows',
+        }),
+      })
+    )
   })
 
   it('declares an exhaustive route-specific overlay inventory', () => {
@@ -289,11 +311,17 @@ describe('Story 174.3 fail-closed surface contracts', () => {
           expect(conditional.rationale).toContain(row.route)
           expectConditionalVerification(conditional.verification)
           if (conditional.verification.execution === 'owner-test') {
+            const executedFeatures = Object.entries(conditional.item.features)
+              .filter(([, feature]) => feature.disposition === 'executed')
+              .map(([feature]) => feature)
+            const ownerExecutedFeatures =
+              'ownerFeatureExecution' in conditional.item
+                ? (conditional.item.ownerFeatureExecution?.features ?? [])
+                : []
             expect(
-              Object.values(conditional.item.features).every(
-                feature => feature.disposition === 'not-applicable'
-              )
-            ).toBe(true)
+              executedFeatures,
+              `${row.route}:${conditional.item.id} must not retain canonical feature claims outside the canonical default`
+            ).toEqual(ownerExecutedFeatures)
           } else {
             expect(
               Object.values(conditional.item.features).some(
@@ -320,7 +348,7 @@ describe('Story 174.3 fail-closed surface contracts', () => {
             expect(disposition.rationale).toContain(feature)
             expect(disposition.rationale).toContain(row.route)
             if (disposition.disposition === 'executed') {
-              expect(disposition.assertion).toMatch(/^canonical-runner:/)
+              expect(disposition.assertion).toMatch(/^(?:canonical-runner|owner-test):/)
             }
           }
           const paginationFeature =
@@ -353,13 +381,28 @@ describe('Story 174.3 fail-closed surface contracts', () => {
               item => item.item.id === expected.id
             )
             if (conditional?.verification.execution === 'owner-test') {
-              expect(actionsExecuted, `${row.route}:${expected.id}`).toBe(false)
+              const ownerExecutedActions =
+                expected.ownerFeatureExecution?.features.includes('selection-and-actions')
+              expect(actionsExecuted, `${row.route}:${expected.id}`).toBe(
+                Boolean(ownerExecutedActions)
+              )
             } else {
               expect(Boolean(expected.interaction), `${row.route}:${expected.id}`).toBe(
                 actionsExecuted
               )
             }
             if (expected.interaction) expectOwnerTestBinding(expected.interaction)
+            if (expected.ownerFeatureExecution) {
+              expectOwnerTestBinding(expected.ownerFeatureExecution.verification)
+              for (const feature of expected.ownerFeatureExecution.features) {
+                const disposition = expected.features[feature]
+                expect(disposition.disposition).toBe('executed')
+                if (disposition.disposition !== 'executed') {
+                  throw new Error(`${row.route}:${expected.id}:${feature} lost owner execution`)
+                }
+                expect(disposition.assertion).toMatch(/^owner-test:/)
+              }
+            }
           }
 
           if ('alternative' in expected) {

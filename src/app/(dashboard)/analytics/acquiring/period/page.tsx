@@ -14,11 +14,7 @@ function parseIsoDate(value: string | string[] | undefined): Date | null {
 
   const [year, month, day] = value.split('-').map(Number)
   const date = new Date(year, month - 1, day)
-  if (
-    date.getFullYear() !== year ||
-    date.getMonth() !== month - 1 ||
-    date.getDate() !== day
-  ) {
+  if (date.getFullYear() !== year || date.getMonth() !== month - 1 || date.getDate() !== day) {
     return null
   }
 
@@ -26,9 +22,10 @@ function parseIsoDate(value: string | string[] | undefined): Date | null {
   return date
 }
 
-function resolveDeepLinkRange(
-  query: Record<string, string | string[] | undefined>
-): { initialRange?: DateRange; initialRangeError?: string } {
+function resolveDeepLinkRange(query: Record<string, string | string[] | undefined>): {
+  initialRange?: DateRange
+  initialRangeError?: string
+} {
   const hasFrom = query.from !== undefined
   const hasTo = query.to !== undefined
   if (!hasFrom && !hasTo) return {}

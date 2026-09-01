@@ -520,13 +520,22 @@ function conditionalizeDataSurface<TSurface extends Story1743ChartSurface | Stor
   route: string,
   item: TSurface
 ): TSurface {
+  const ownerExecutedFeatures = new Set<string>(
+    'ownerFeatureExecution' in item ? item.ownerFeatureExecution?.features : []
+  )
   const features = Object.fromEntries(
     Object.keys(item.features).map(feature => [
       feature,
-      {
-        disposition: 'not-applicable' as const,
-        rationale: `${route}: ${item.id} feature ${feature} is not rendered in the canonical default state`,
-      },
+      ownerExecutedFeatures.has(feature)
+        ? {
+            assertion: `owner-test:${item.id}:${feature}` as const,
+            disposition: 'executed' as const,
+            rationale: `${route}: ${item.id} feature ${feature} is executed by its exact manifest-backed owner test outside the canonical default state`,
+          }
+        : {
+            disposition: 'not-applicable' as const,
+            rationale: `${route}: ${item.id} feature ${feature} is not rendered in the canonical default state`,
+          },
     ])
   )
   return Object.freeze({

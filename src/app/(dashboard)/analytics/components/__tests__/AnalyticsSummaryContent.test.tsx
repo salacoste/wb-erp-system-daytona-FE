@@ -13,7 +13,9 @@ vi.mock('@/components/custom/ExpenseChart', () => ({
 
 const summary = { revenue_net: 100 } as FinanceSummary
 
-function renderContent(overrides: Partial<React.ComponentProps<typeof AnalyticsSummaryContent>> = {}) {
+function renderContent(
+  overrides: Partial<React.ComponentProps<typeof AnalyticsSummaryContent>> = {}
+) {
   const props: React.ComponentProps<typeof AnalyticsSummaryContent> = {
     viewMode: 'multi',
     selectedWeek: '2026-W30',

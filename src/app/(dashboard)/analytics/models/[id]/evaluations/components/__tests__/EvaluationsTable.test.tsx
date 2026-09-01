@@ -252,10 +252,14 @@ describe('EvaluationsTable', () => {
   })
 
   // F-1: keyboard activation stays on a native button while the tr remains a native row.
-  it('F-1: Enter on SKU detail button fires onRowClick and preserves row semantics', async () => {
+  it('F-1/F-6: sorting and native SKU action remain executable without focusable rows', async () => {
     const user = userEvent.setup()
     const onRowClick = vi.fn()
-    renderTable({ ...defaultProps, onRowClick })
+    const onSortClick = vi.fn()
+    renderTable({ ...defaultProps, onRowClick, onSortClick })
+    await user.click(screen.getByRole('button', { name: /Сортировать по MAPE выручки/ }))
+    expect(onSortClick).toHaveBeenCalledWith('mapeRevenue')
+
     const detailButton = screen.getByRole('button', {
       name: 'Перейти к детализации по артикулу 12345',
     })
@@ -266,6 +270,7 @@ describe('EvaluationsTable', () => {
 
     detailButton.focus()
     await user.keyboard('{Enter}')
+    expect(onRowClick).toHaveBeenCalledTimes(1)
     expect(onRowClick).toHaveBeenCalledWith(12345)
   })
 
