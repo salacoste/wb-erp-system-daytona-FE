@@ -4,12 +4,34 @@ title: Migration Program (Epics 166-174)
 description: Master plan and per-story status ledger for the shadcn full-UI migration of Epics 166-174 (94 stories, 76 routes), including the FULL/MINOR/born-clean story pipeline, the parity and ui-boundary validator scripts with their ratchet baselines, Epic 174 progress (174.1 and 174.2 done, 174.3 next), and the carry-out debt registry.
 tags: [migration, shadcn, epics, orchestration, status-ledger, omc, debt-registry]
 sources:
+  - id: openwiki-source-9e7c9f2a75e8c54131fe45ec
+    resource: repo://_bmad-output/implementation-artifacts/174-1-fe-prove-bmad-route-ledger-and-omx-plan-parity.md
+  - id: openwiki-source-a85a3a5994b0c404049b89d3
+    resource: repo://_bmad-output/implementation-artifacts/174-3-expanded-scope-register.md
+  - id: openwiki-source-3e71d1b4f21e549179c02918
+    resource: repo://_bmad-output/implementation-artifacts/174-3-fe-complete-accessibility-responsive-theme-and-visual-verification.md
+  - id: openwiki-source-89e2a6b1ae97c68779084212
+    resource: repo://_bmad-output/implementation-artifacts/sprint-status.yaml
+  - id: openwiki-source-61e0371a06d746820bb42371
+    resource: repo://.omx/plans/174.3-complete-accessibility-responsive-theme-and-visual-verification.md
   - id: openwiki-source-02284da49c2233d6ad8eee98
     resource: repo://.omx/plans/shadcn-full-ui-migration-master.md
-generated: { by: "openwiki/0.4.3", at: "2026-08-31T08:47:49.410Z" }
+  - id: openwiki-source-52f9f2aa17dde77e23385c81
+    resource: repo://e2e/fixtures/story-174-3/execution-manifest.ts
+  - id: openwiki-source-bdeb846005a65a32b569a6d3
+    resource: repo://scripts/check-shadcn-ui-boundary.mjs
+  - id: openwiki-source-28021c2f62a088d4d9f6489f
+    resource: repo://scripts/lib/story-174-3-execution-requirements.mjs
+  - id: openwiki-source-11392b4e8de554e0126fdfd1
+    resource: repo://scripts/lib/story-174-3-manifest.mjs
+  - id: openwiki-source-64fe71a7ae47db511ff422d4
+    resource: repo://src/test/story-174-3-state-contract.test.ts
+  - id: openwiki-source-72aa0e35fae33f199ccac4c2
+    resource: repo://src/test/story-174-3-surface-contract.test.ts
+generated: { by: "openwiki/0.4.3", at: "2026-09-01T08:47:48.765Z" }
 verified:
   - by: openwiki/0.4.3
-    at: 2026-08-31T08:47:49.410Z
+    at: 2026-09-01T08:47:48.765Z
 ---
 
 # Migration Program (Epics 166-174)
@@ -62,7 +84,7 @@ flowchart TD
 | 171 AI/forecast/models | 9 stories | 9/9 | **CLOSED** (PRs #252-#270) |
 | 172 business workspace | 17 stories | 17/17 | **CLOSED** — 172.10 Finances & Documents (#308/#309), 172.11 Monitor (#311/#312), 172.12 Monitoring Operations Console (#315), 172.13 Moysklad workspace (#317), 172.14 Orders Overview (#319), 172.15 FBO Orders (#321), 172.16 Order Integrity (#323), 172.17 Product Management (#325, includes Epic-172 retrospective) |
 | 173 settings/shipments/supplies | 13 stories | **13/13** | **CLOSED** — settings 173.1–173.7 (#328–#348), shipments 173.8 (#350/#351 + auxiliary #352, no residue), 173.9 (#353/#354 + auxiliary #355, fully historical), 173.10 Shipment Box Types (#356/#357, 17 files, visible units/44px targets), 173.11 SKU Packaging (#359/#360, 24 files, strict integer/single-bulk-delete payloads), 173.12 Supplies List owner (#361, WCAG solid-pair badge canon after a 4.06:1 axe catch), 173.13 Supply Detail (#365/#366 + auxiliary #367, fully historical; full floor 19,874/0/1255) |
-| 174 consolidation | 5 stories | **2/5** | **IN PROGRESS** — 174.1 parity done (feature #369 `4c930a9d`/`360c9cb9` + closeout #370 `0492403d`/`fbdab2da` + lifecycle #371 `9f792044`/`e7d438ce`); 174.2 legacy removal + design-system boundary done (PR #372 on base `fbdab2da`: 65 proven-dead files deleted, −13,022 lines, boundary ratchet 523); **NEXT = 174.3** a11y/visual → 174.4 functional/backend regression → 174.5 docs, verified routes (76/76), cleanup proof |
+| 174 consolidation | 5 stories | **2/5 done, 174.3 in remediation** | **IN PROGRESS** — 174.1 parity done (feature #369 `4c930a9d`/`360c9cb9` + closeout #370 `0492403d`/`fbdab2da` + lifecycle #371 `9f792044`/`e7d438ce`); 174.2 legacy removal + design-system boundary done (PR #372 on base `fbdab2da`: 65 proven-dead files deleted, −13,022 lines, boundary ratchet 523); 174.3 inclusive a11y/visual verification **implementation + exact-worktree validation complete, blocked on the immutable three-APPROVE review gate** (status `in-progress-remediation`) → then 174.4 functional/backend regression → 174.5 docs, verified routes (76/76), cleanup proof |
 
 **Program readiness: 91 of 94 canonical stories complete** (all 76 route-owning stories implemented; Stories 174.3–174.5 remain). Recorded full-suite Vitest floor after 174.2: **19,118 passed / 0 failed across 1,234 files**. That floor is an exact **downward** move from 19,874/1,255 (post-173.13): 174.1 shipped a main-RED (its plan required no full vitest run, leaving main at 19,873/1) which 174.2 fixed as a carry-in (vitest.config.ts exclude + `playwright-static-boundary.ts` SELF_TEST_MODULES for the parity node:test suite), and 174.2 then deleted 756 tests across 22 proven-dead test files together with their production owners (import-closure proved per file, reviewer-verified) — no live test was deleted. `origin/main` advanced through PR #372 (Story 174.2) atop base `fbdab2da` (174.1 closeout #370 + lifecycle #371). All 76 route-ledger rows intentionally remain `planned`: Story 174.1 validated ownership and evidence without changing implementation state, and Story 174.5 owns the final transitions to `verified`.
 
@@ -74,7 +96,7 @@ Epic 174 is sequential and started only after all 13 Epic 173 stories merged wit
 
 1. **174.1 parity — DONE** (`scripts/check-shadcn-migration-parity.mjs`): proves schema-v3 parity 94 BMAD stories = 94 OMX plans and 76 source routes = 76 ledger rows = 76 unique route-owning stories = 76 unique linked implementation artifacts, including App Router route-group normalization and the exact backend exceptions 167.8/169.14. It is dependency-free and filesystem-only, runs a 33-test deterministic `node:test` mutation suite (deep-cloned real corpus; asserts exact `{ code, identity }` failure records for missing/orphan/duplicate/title/evidence/status/repository/prerequisite/route/artifact defects) before validating the canonical corpus, and emits one machine-readable report plus one human summary from the same run/base SHA. Backend Git corroboration is labeled `PASS(historical+local+cached)` with live remote proof honestly `unavailable` (DNS). It did **not** flip ledger rows to `verified` — 174.5 owns those transitions.
 2. **174.2 legacy removal + boundary enforcement — DONE** (PR #372): 65 proven-dead files deleted (−13,022 lines) across six executor waves with per-file import-closure proof, the complete lib-wave (§3.1 of the 2026-08-30 team handoff: wb-status trio → solid status pairs, monitoring `STATUS_COLORS`, `getMarginColor` dedupe to canonical 168.3 tiers, orders/liquidity/supply-planning helpers), the 171.9 carry-outs ×5, `SUPPLY_STATUS_CONFIG` whole-file delete, and the C2/C3/C4/C10/C16 families. It also added the bounded design-system boundary enforcement described below.
-3. **174.3 inclusive visual/theme/responsive/a11y proof — NEXT** — the state matrix (default/loading/refresh/empty/filtered-empty/error/stale/partial/permission/pending/partial-success/not-found) across light+dark themes, six widths, 200% zoom, reduced motion, keyboard/SR proof; the §3.3 tint-audit (all `text-status-*` on `bg-*/10` surfaces without axe specs — `text-status-warning` at 4.06:1@12px is the known offender; fix canon is the solid pair `bg-status-X` + `text-status-X-foreground`); all deferred credentialed-browser and discovered-but-not-executed Playwright evidence; inputs include the boundary classification manifest category-1 residue (59 files). Automated axe alone is never sufficient; unavailable environments are recorded as gaps, never passes.
+3. **174.3 inclusive visual/theme/responsive/a11y proof — IN PROGRESS (implementation and exact-worktree validation complete; reviews pending)** — see the dedicated section below. Scope now covers the 76-route inclusive visual matrix (the canonical twelve-state ledger taxonomy across light+dark themes, six widths, 200% real browser-UI zoom, reduced motion, keyboard/focus, reading/heading order, non-color data meaning, axe WCAG 2 A/AA/2.2 AA at 390px and 1280px), the remediation of the RED→GREEN product defects the executable matrix discovered, and the fail-closed execution-manifest evidence pipeline. The **three-review remediation gate** blocks merge until three fresh independent reviewers return `APPROVE` on one unchanged final commit SHA with zero unresolved P0–P2 and no material P3; any content change invalidates all approvals and restarts the gate. Automated axe alone is never sufficient; unavailable environments (real VoiceOver/NVDA/JAWS/TalkBack) are recorded as gaps, never passes. 174.1 and 174.2 are done; all 76 route-ledger rows intentionally remain `planned` until Story 174.5 owns the `verified` transitions.
 4. **174.4 full functional/backend-contract regression** — full local unit/integration/E2E against the approved local environment, including mandatory credentialed E2E (credentials in-memory only, never printed or persisted); owner of the 13 bisect-proven pre-existing liquidity (×12) and monitor weekly-chart (×1) e2e failures on clean main; a missing environment blocks completion.
 5. **174.5 final documentation and cleanup** — verified routes only with complete linked evidence, delivery manifest/retrospective/cleanup report, every exception resolved or owner-accepted, finishing at 94/94 stories, 76/76 verified routes, zero completed migration branches/worktrees, no deploy action.
 
@@ -87,6 +109,49 @@ Two enforcement scripts now guard the program, each with a committed plain-text 
 - The docs-citation gate `check:docs` tracks its own historical baseline `scripts/.check-docs-baseline.txt` (95 committed entries, one per line, `--update-baseline` only with NEW/RESOLVED analysis in the commit message); Story 174.1 passed `check:docs` with 427 citations against that unchanged baseline.
 
 Live per-story history: `_bmad-output/implementation-artifacts/sprint-status.yaml`. Consolidated per-epic slice: `_bmad-output/planning-artifacts/shadcn-migration-status-and-debt-registry.md` (snapshot 2026-08-31, updated at each orchestrator closeout; treat the repo as truth on drift).
+
+## Story 174.3: the inclusive visual matrix and its evidence pipeline
+
+Story 174.3 (`in-progress-remediation`, branch `cdx/epic-174-story-3-inclusive-visual-verification`, plan `.omx/plans/174.3-complete-accessibility-responsive-theme-and-visual-verification.md`) is the program's assurance story for accessibility, responsive, theme, and visual verification. Its canonical state taxonomy is the twelve-state matrix **default/loading/refresh/empty/filtered-empty/error/stale/partial/permission/pending/partial-success/not-found** applied to all 76 ledger routes (76 × 12 = 912 materialized route/state rows: 444 exact executed, 468 explicit route-specific not-applicable, 0 blocked, plus 76 canonical Story-runner defaults, 318 owner-unit and 50 owner-browser executable rows across 154/21 unique sources). The title-token fallback was deleted: absence of a substring can never become N/A, and every declared executable scenario must resolve exactly once.
+
+### Three-review remediation gate and the expanded scope register
+
+Commit `82465fbf96f2319116c1cad101044e8004a52cc3` received three independent `REQUEST CHANGES`/`REJECT` verdicts; subsequent candidates `633f202b`, `7e41cc96`, and `f8cbaba2` were also rejected by independent reviews (findings included focusable native table rows, incorrectly N/A-declared model-evaluation features, pointer-only row `onClick`, retained raw browser diagnostics under `.playwright-cli/`, and raw API-derived error text on the finance-history terminal state — all closed). Merge is blocked until every accepted finding is repaired, validation is regenerated, a new immutable commit is created, and three fresh independent reviewers all return `APPROVE` for that same unchanged SHA; any content change invalidates all previous approvals and restarts the gate.
+
+The story began with a frozen three-file bootstrap (`e2e/shadcn-migration-visual-accessibility.spec.ts`, `e2e/fixtures/story-174-3-visual-accessibility.ts`, the delivery record), but the live matrix found concrete route-owner defects, so the scope legitimately expanded. The **generated** register `_bmad-output/implementation-artifacts/174-3-expanded-scope-register.md` — produced by `scripts/generate-story-174-3-scope-register.mjs` from the exact `origin/main` comparison plus current untracked Story files and regenerated before freeze (path drift is a review blocker) — is now the **current file-level coordination authority**, not the historical three-file bootstrap. It enumerates 424 files across coordination classes: `route-owner-remediation` (335 files, ledger route owner + 174.3), `story-evidence` (46), `owner-browser-evidence` (15), `shared-owner-remediation` (15), `foundation-appshell-coordination` (5), `repository-validation` (3), `delivery-record` (2), `story-support` (2), and `remediation-plan` (1). All product/shared entries are coordinated, contract-preserving repairs that add no dependency; no backend, deployment, production, force-push, or direct-`main` operation is admitted.
+
+```mermaid
+flowchart TD
+  B["Three-file frozen bootstrap"] --> RUN["Execute 76-route matrix"]
+  RUN --> DEF["Route-owner defects found"]
+  DEF --> SCOPE["Generate expanded scope register, 424 files"]
+  SCOPE --> REM["Apply coordinated owner repairs"]
+  REM --> VAL["Regenerate exact-worktree validation ledger"]
+  VAL --> SHA["Create immutable final commit"]
+  SHA --> REV{"Three fresh independent reviews"}
+  REV -- "Any REQUEST CHANGES" --> REM
+  REV -- "Three APPROVE, same unchanged SHA" --> PR["PR, merge, cleanup evidence"]
+```
+
+The 174.3 remediation/evidence flow: the frozen bootstrap executes the canonical matrix, discovered defects expand the register, repairs regenerate validation, and only three same-SHA `APPROVE` verdicts unblock merge.
+
+### Execution-manifest pipeline (fail-closed)
+
+The evidence backbone is `e2e/fixtures/story-174-3/execution-manifest.ts` plus `scripts/lib/story-174-3-manifest.mjs`, with contract tests in `src/test/story-174-3-*.test.ts` enforcing the manifest, state, surface, and manual-evidence contracts:
+
+- **Types**: `Story1743RequiredExecution` is `{ source, sourceSha256, scenarioId, runner: 'vitest' | 'playwright' }`; manifest entries extend it with `command`, `result: 'passed' | 'failed' | 'skipped'`, `exitCode`, `startedAt`, `durationMs`; the manifest carries `schemaVersion: 1`, `generatedAt`, and a `runtime { node, npm }` block.
+- **Reader (`scripts/lib/story-174-3-manifest.mjs`)**: `readStory1743Manifest` returns an empty manifest only for a true `ENOENT`, and `validateStory1743Manifest` rejects malformed JSON, unsupported schema, missing runtime metadata, duplicate entries, and every malformed field class — each entry must have a 64-hex-character `sourceSha256`, a supported runner/result, a non-empty command, an integer exit code, a valid ISO timestamp, and a non-negative duration.
+- **Indexer (`indexStory1743ExecutionManifest` in `execution-manifest.ts`)**: keys results by `(source, scenarioId)`; for every required execution it fails on missing entries, stale source hashes, runner mismatches, non-`passed` results or non-zero exit codes, and incomplete runner metadata. With `requireExactSet: true` the merge-ready gate additionally rejects **surplus** entries (stale, failed, skipped, nonexistent-source, obsolete-scenario, unknown) — exact key-set equality with the canonical owner plus default-route execution union — while recording mode remains explicitly partial.
+- **Requirements extraction (`scripts/lib/story-174-3-execution-requirements.mjs`)**: `story1743ExactOwnerExecutions` parses the owner declaration sources (state/owner-evidence/surface-contract/chart/table/dedicated-route scenario fixtures) with the TypeScript compiler, accepts only literal `source`/`scenarioId`/runner arguments in the `bind`/`binding`/`scenario` helper calls, rejects conflicting runners, and computes a SHA-256 of each source file so the committed manifest is pinned to exact content. The runner spec plus the route ledger drive `story1743MergeReadyExecutions`.
+- **Contract tests**: `src/test/story-174-3-state-contract.test.ts` (route/state dispositions, owner reconciliation, explicit N/A clauses, merge-ready execution indexing), `story-174-3-surface-contract.test.ts` (76 route surface contracts: overlays 83 executed / 15 N/A, tables 42/21, charts 13/4, table/chart features 292 executed / 331 N/A, all conditional branches fail closed), `story-174-3-manifest-reader.test.ts` (every fail-closed reader branch), and `story-174-3-manual-evidence-contract.test.ts` (the immutable operator-driven manual ledger `e2e/fixtures/story-174-3/manual-evidence.ts`).
+
+The committed `e2e/fixtures/story-174-3/execution-manifest.json` recorded 770 passed entries (627 Vitest / 143 Playwright, including the 76 canonical defaults and 4 dedicated-route executions) and 0 failed in the final validation ledger, alongside full Vitest 19,355/19,355 across 1,270 files, the canonical Story runner (82 passed / 1 optional Manager skip), owner-browser regeneration (368 passed / 22 accepted skips), real browser-UI 200% zoom for all 76 routes × both themes, and the 70/70-page production build.
+
+### What the matrix verifies and its honesty rules
+
+Every final route run covers light and dark themes at 320/390/768/1024/1280/1440 CSS pixels, `prefers-reduced-motion: reduce`, body-scoped WCAG 2 A/AA/2.2 AA axe at both 390px and 1280px, a nonzero measured contrast set validated against axe's applicable thresholds, route/surface geometry, computed theme tokens (light/dark root/body signatures must differ), reading/heading order (exactly one route-specific visible `h1` before the first semantic data surface; `/`, `/login`, `/register` are explicit redirectors), table/chart semantics, and visible keyboard focus. Zero focusable native table rows is a canonical invariant: pointer-only row convenience may stay, but keyboard activation belongs to named native buttons. True 200% zoom is executed through real browser-UI shortcuts on headed Chromium, proving the doubled device-pixel ratio and bounded geometry.
+
+Authenticated screenshots, videos, traces, ARIA snapshots, and raw attachments are prohibited; evidence is privacy-safe DOM/accessibility/geometry/computed-style data only, and `e2e/.auth/user.json`, `test-results/`, `playwright-report/`, and `.playwright-cli/` must be deleted after final validation without reading their contents. The operator-driven manual ledger records Codex-App browser-operator sessions (never conflated with automated results or human AT review); real VoiceOver/Safari, NVDA/JAWS, and TalkBack remain explicit environment-capability gaps (`ENV-WEBKIT-TAB` style records), and unavailable environments are never relabeled as passes.
 
 ## The Story 173.1 settings-shell pattern
 
@@ -131,7 +196,7 @@ Route migrations may leave wave-scoped carry-outs recorded in the registry and s
 
 - **Landed in 174.2**: the 172.12 monitoring-console carry-outs (dead Telegram trio, `STATUS_COLORS`, `getMarginColor` dedupe); the 171.9 carry-outs ×5 (`STATUS_BADGE_CONFIG.className` → route-local `MODEL_LIST_BADGE_CLASS`, stale-comment rewrites, 171.6 guard re-pins + anchor-hardening); the full lib-wave; `SUPPLY_STATUS_CONFIG` dead twin; C2/C3/C4/C10/C16 and the `/80`-on-text reconciliation in MarginCard/GrossMarginCard.
 - **Landed in 174.1**: route-ledger status reconciliation for all 76 routes (validated, statuses intentionally unchanged); the dead `SUPPLY_STATUS_CONFIG` twin in `src/types/supplies/helpers.ts` was routed onward to 174.2 and deleted there.
-- **Still open → 174.3**: C18 credentialed non-Owner visual gap (see the settings-shell section above); the consolidated visual/theme/responsive matrix and the §3.3 tint-audit; discovered-but-not-executed Playwright evidence (173.5: 40 tests; 173.6: 81 file-level; 173.7: 99 file-level; 172.8 dynamic-Playwright; missing `e2e/orders-fbo.spec.ts`); repo-wide text-`/80` sweep (pricing/automation/cashflow/popover families + hover variants — scanner-extension candidate).
+- **In execution → 174.3**: C18 credentialed non-Owner visual gap (see the settings-shell section above); the consolidated visual/theme/responsive matrix and the §3.3 tint-audit; discovered-but-not-executed Playwright evidence (173.5: 40 tests; 173.6: 81 file-level; 173.7: 99 file-level; 172.8 dynamic-Playwright; missing `e2e/orders-fbo.spec.ts`); repo-wide text-`/80` sweep (pricing/automation/cashflow/popover families + hover variants — scanner-extension candidate). Story 174.3's expanded scope register absorbs the route-level share of these as coordinated `route-owner-remediation`/`owner-browser-evidence` entries; real assistive-technology environments remain recorded gaps, never passes.
 - **Still open → 174.4**: credentialed functional E2E for 169.9 corrective journeys (credentials in-memory only, never printed or stored); 13 bisect-proven pre-existing liquidity/monitor e2e failures on clean main `fbdab2da`.
 - **Still open → 174.5**: baseline/process debt — `check:docs` 95-entry baseline acceptance discipline, 39 pre-existing `format:check` warnings, always deriving the CLAUDE.md floor from a live run.
 - The standing FE-debt table (FE-D1…FE-D9), wave carry-outs C1–C18, BE-debt (TD-S2b, TD-P8, legacy test-api ×42), and contrast escalations live in `_bmad-output/planning-artifacts/shadcn-migration-status-and-debt-registry.md` (snapshot 2026-08-31), cross-referenced against the 2026-08-30 team handoff §3.

@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "pageVersion": "sha256:c7d96a04ec9ddc628ded9e9f4c031f9867669856ac69a335da59dad65743bf56",
+  "pageVersion": "sha256:661305609fe51e4e87c37f5081c07c3d292063f655c9d96ea436f2769b522da3",
   "claims": [
     {
       "id": "claim_2c9c1829b6b846cd913111aee59b6f27",
@@ -38,8 +38,16 @@
     },
     {
       "id": "claim_f1d7472f4eb64558bec5857f4ebc3b50",
-      "statement": "Next.js server page/layout wrappers coexist with client components: the interactive, data-driven pages fetch client-side through custom hooks and TanStack Query useQuery backed by the centralized ApiClient; the page does not claim every page uses the 'use client' directive.",
+      "statement": "Next.js server page/layout wrappers coexist with client components: the interactive, data-driven pages (e.g., analytics/liquidity, analytics/unit-economics, cogs/bulk) are 'use client' pages that fetch client-side through custom hooks and TanStack Query useQuery backed by the centralized ApiClient; the page does not claim every page uses the 'use client' directive.",
       "evidence": [
+        {
+          "resource": "repo://src/app/(dashboard)/analytics/liquidity/page.tsx#L1-L20",
+          "version": "repo-lines-v1:sha256:785cbbbb0da838acdfaa61d326fcd5509c51de348a7e30afd610e6f41dd71aae:eyJzZWxlY3RlZExpbmVDb3VudCI6MjAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImQ2NjRlMDBlYTU3ZWMzOWQ4OGZjM2Y2OTM0YzRiNzA5MWRiMDU2YTZjMmQ1YjExYTk3MTIzMDBkMDZmOGQyM2MiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQwZDI2YzljOTJhMjBkMmVjNzQzNzlhYTVmZjk2YTI0NzE4ODExNjBmOTk5NzdmMmZjOTE4ZTEwOTVmMDAwNDYiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjowLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjIwZjY0MzllMjBiYWUyZTUxNGI1NzExN2NjMDk1OGY4MzY2Y2VjYjYxNjExNmNmYjY1MGY1OGJkN2VkYTE3ZmEifQ"
+        },
+        {
+          "resource": "repo://src/app/(dashboard)/cogs/bulk/page.tsx#L1-L8",
+          "version": "repo-lines-v1:sha256:068f192156db20bb3fe52b14ebd57393fbc3e3a9873518e2e30742325d7c5146:eyJzZWxlY3RlZExpbmVDb3VudCI6OCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZDY2NGUwMGVhNTdlYzM5ZDg4ZmMzZjY5MzRjNGI3MDkxZGIwNTZhNmMyZDViMTFhOTcxMjMwMGQwNmY4ZDIzYyIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMTlkNTMxMDE3NGUzNzU2Zjg0OWYxNjNjNzk5M2M1YjcyNjQ0N2U1NGFkYmM4MzI5MzhmODI0NzM1M2RmNzkwYyIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjAsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZTNiMGM0NDI5OGZjMWMxNDlhZmJmNGM4OTk2ZmI5MjQyN2FlNDFlNDY0OWI5MzRjYTQ5NTk5MWI3ODUyYjg1NSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNDNiOTNiZjkxMzIwMzJhMDMwNDI2YmE0NThmZGQ0NjliNzIwNWVmN2Q3YjI1NWFmNjA4NmIwZDBlM2YwYjMwOCJ9"
+        },
         {
           "resource": "repo://src/app/providers.tsx#L1-L1",
           "version": "repo-lines-v1:sha256:d664e00ea57ec39d88fc3f6934c4b7091db056a6c2d5b11a9712300d06f8d23c:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZDY2NGUwMGVhNTdlYzM5ZDg4ZmMzZjY5MzRjNGI3MDkxZGIwNTZhNmMyZDViMTFhOTcxMjMwMGQwNmY4ZDIzYyIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiZDY2NGUwMGVhNTdlYzM5ZDg4ZmMzZjY5MzRjNGI3MDkxZGIwNTZhNmMyZDViMTFhOTcxMjMwMGQwNmY4ZDIzYyIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjAsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZTNiMGM0NDI5OGZjMWMxNDlhZmJmNGM4OTk2ZmI5MjQyN2FlNDFlNDY0OWI5MzRjYTQ5NTk5MWI3ODUyYjg1NSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMzQ2MmI5ZTIwNjBkN2E5Yjg5MDM4ZWRlMjliMjg5OGNlMTYxOTAyYmViZTVjZGQ5OTU2MDNkNzI1MjYyMjFlNSJ9"
@@ -130,7 +138,7 @@
     },
     {
       "id": "claim_fa212173ce6a429f8b3a6937bbf795cd",
-      "statement": "Project configuration files and their roles: next.config.ts (Next.js config), tsconfig.json (strict TypeScript with the @/ path alias), eslint.config.js (flat ESLint config including a custom no-restricted-syntax rule for anti-pattern 8), postcss.config.js (@tailwindcss/postcss + autoprefixer), components.json (shadcn/ui CLI metadata aligned to Tailwind v4 CSS variables), and .env.example (environment variable names).",
+      "statement": "Project configuration files and their roles: next.config.ts (Next.js config), tsconfig.json (strict TypeScript with the @/ path alias), eslint.config.js (ESLint 9 flat config — the actual CI/lint enforcement path, with the legacy .eslintrc.json kept only for IDE integration — including custom no-restricted-syntax selectors for Anti-Pattern #8 money/ratio '?? 0' sites), postcss.config.js (@tailwindcss/postcss + autoprefixer), components.json (shadcn/ui CLI metadata aligned to Tailwind v4 CSS variables), and .env.example (environment variable names).",
       "evidence": [
         {
           "resource": "repo://.env.example",
@@ -142,7 +150,7 @@
         },
         {
           "resource": "repo://eslint.config.js",
-          "version": "repo-file-v1:sha256:a560ce9f7f6c5dd13daf1c6d043d24170db6692aaa1bb65c625be880b5f2bfae"
+          "version": "repo-file-v1:sha256:cd24a46335861aeae75d68c0725fa399ebf8244d0d79ba3824d82d6ff5c4f3cd"
         },
         {
           "resource": "repo://next.config.ts",
@@ -167,10 +175,24 @@
           "version": "repo-file-v1:sha256:a90c9b974a25f17cf9f17440514ba28dcac09cfd281e6a098d53025215e8bec8"
         }
       ]
+    },
+    {
+      "id": "claim_9460c24826ed4eebb0edefaddb784fc6",
+      "statement": "Local runtime topology: the Next.js frontend dev/start servers bind to port 3100 (next dev -p 3100 / next start -p 3100 in package.json scripts), the backend API serves on port 3000 as the NEXT_PUBLIC_API_URL default, and there is no deployment target (self-hosted setup).",
+      "evidence": [
+        {
+          "resource": "repo://.env.example#L12-L12",
+          "version": "repo-lines-v1:sha256:8afafea8a36413a92932bb8f7efdf798fefd2b2d59b3be87003d5c17124d4c9c:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiOGFmYWZlYThhMzY0MTNhOTI5MzJiYjhmN2VmZGY3OThmZWZkMmIyZDU5YjNiZTg3MDAzZDVjMTcxMjRkNGM5YyIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiOGFmYWZlYThhMzY0MTNhOTI5MzJiYjhmN2VmZGY3OThmZWZkMmIyZDU5YjNiZTg3MDAzZDVjMTcxMjRkNGM5YyIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiN2RiZjdiMTBlNTJjM2U1MWE0MTQxMGMxMjkyYmRiODEyZDk1ODllYWU3YzkxY2I4MTQ5NGI0N2VlNjQxMWU3MSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMTEyOTg2YzVlOThmZjIyZGYwMTBjNDcwNWNiODk0YzRiNDQ4M2ZmOTY2NmRjMDc4NTA4NGZmNmJlNTMxMzUwYyJ9"
+        },
+        {
+          "resource": "repo://package.json#L17-L20",
+          "version": "repo-lines-v1:sha256:3d5d3f70225ed4c754c274c1d85fbdd38963a0a5831402ecdbd54e36125f9a47:eyJzZWxlY3RlZExpbmVDb3VudCI6NCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMzQ4MzNkNTk0OWMwM2E0MGNhOTUyNDkxNjEwYTY2NTk2NDRiM2FhNDY2MzYyZjc5OTAyMGRiZjE5ODE1NDdkYiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNWYyMDNiYWFmMDBmMjAwMzA2M2RjNmVmNjQ3MTU0MTM1ZDY2MTA2N2IzM2FjYTk3MGRlY2IxMTEzNDRiYzdmMSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiODg5YTcxOGZkMGE3MjA5ZTJhNzc0M2IzOTZmZjRjYzBiZGIwZWEwZDRjZTdmN2EzOThjNmYyZWQ2ODhjYWRlNyIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNjMyNGE1Nzc1MzIzNGEyMTIwY2YyOTdiZWJlOTFjYTNhNThhMTFkZDU3NDQzZWUyOTZmOTgyMGI3NDliYmRhOSJ9"
+        }
+      ]
     }
   ],
   "verification": {
     "by": "openwiki/0.4.3",
-    "at": "2026-08-29T08:47:45.377Z"
+    "at": "2026-09-01T08:47:48.765Z"
   }
 }

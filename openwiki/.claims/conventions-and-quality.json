@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "pageVersion": "sha256:567cbc5cad8731a8b4836f059974b7ed6b7413e5c5649a485791fbeb0b794562",
+  "pageVersion": "sha256:fd6c5d23ffdfa649b3b1e75ad799c75935ef26d064896f64be8261a40001505c",
   "claims": [
     {
       "id": "claim_47ae5092df88459d932915ee945c35e6",
@@ -19,13 +19,41 @@
         {
           "resource": "repo://CLAUDE.md#L87-L94",
           "version": "repo-lines-v1:sha256:d8dd017d96f53a819d115534014a45b41adcf7e3b387555f1936fa3721ec85ff:eyJzZWxlY3RlZExpbmVDb3VudCI6OCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNzJjZjkyYmUwMjc4NTI2ZWM2Y2FiYTQwMDljNDRjNDAwZDRmNjMzMjQ0M2ExYjUwOGI0OTYzNDhlYTA1ZGRjMSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiYTM1M2U2ODIwNjM5NWZhNGRmOTg0ZTdiZGMxZTc0N2RhMTVkNTZlODYzOWRiMzc3YzY4NGVkYTRiZjVjZWM5NiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMjFkYTkxNjcwNjZmZDY3Yzk3ZmVlZWE0NWFlYWZiNDlhN2FlY2FlZGZhMGM2NzdiMjk4M2E5NDZmNjE3YTY2OSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNTk2NjRkNDRmYWQzNjYyMjMzMzRiNWI5ZmRmZTY3MmM2ZmY0NzU0MTlmOTRjYjA1ZTUzNjQwYmQ5Y2I1NjMyMCJ9"
+        },
+        {
+          "resource": "repo://eslint.config.js#L121-L127",
+          "version": "repo-lines-v1:sha256:afd0d5c0948706225a6f79d88963caa837db1eed2e419c26222bec2e0058bf03:eyJzZWxlY3RlZExpbmVDb3VudCI6NywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiYmYyMjFlNzBiZGM3N2YwOTJhNjQzMzI5YzgzOTI3YWIyYzNmMTVjYTllYmRhYjIwOGIzMDhmNmQ0ZGYyNGI0ZCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNGQ1Y2QyZmI0ZjNkZjg4NDUxNTI1NWIzOTUyM2YyZjhiNTQ3MmJlZWE5ZjU2NmZmY2EyMDRkYjgwMjU2MTA0MSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZjI4YWMxODBjZmMyZmI0NTEyZTQzNTc3MDE1MTI2YTQ2MThhNzgzMmQyZjgzOWNlN2U5YmEzMjEyODI1NGVhYyIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiYjkwY2ExN2Y5ZTg5NzhjMmVhYTExMmUzZWMzY2M0M2QxZjY5YWNlZDgwODI5ZjZmNjNkYTY0YTVkZjkwYTNmMyJ9"
+        },
+        {
+          "resource": "repo://eslint.config.js#L63-L63",
+          "version": "repo-lines-v1:sha256:07449467eb1cf1950804dbaeffbf5aec16406f945113092c97405a7773bc229c:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMDc0NDk0NjdlYjFjZjE5NTA4MDRkYmFlZmZiZjVhZWMxNjQwNmY5NDUxMTMwOTJjOTc0MDVhNzc3M2JjMjI5YyIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMDc0NDk0NjdlYjFjZjE5NTA4MDRkYmFlZmZiZjVhZWMxNjQwNmY5NDUxMTMwOTJjOTc0MDVhNzc3M2JjMjI5YyIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZWEwYzIyZWMzMzhhMTViYTQ4NDk1ZmRiZTJkODg2YWQ4ZjY5NGNkYWUxMDUwYmRjY2VkYmQyY2M1ZTQ2NmJhYSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiN2Q4NTNmMmU3ZWU1NDE4MDYwMzEzNGM2NzViNDM2ZWM1ZmI2MTkyMDYyYTNjYzI1ZGQyY2E0OGMyMGQzMDQwOSJ9"
         }
       ]
     },
     {
       "id": "claim_9dabd84699f841a0b6e50a6d1be2ec79",
-      "statement": "Every migrated route owns a Vitest presentation-source-contract suite that reads production source text with node:fs and pins four invariant families: the exact owned production-file catalog, absence of legacy Tailwind palette classes and contextual hex literals, use of merged semantic compositions (PageHeader/PageState/ResponsiveTable/StatusBadge/FilterToolbar), and banishment of raw-palette helpers — so a migrated page cannot silently regress to raw palette, ad-hoc layout, or unnamed states independent of rendered output.",
+      "statement": "Every migrated route owns a Vitest presentation-source-contract suite that reads production source text with node:fs and pins four invariant families: the exact owned production-file catalog, absence of legacy Tailwind palette classes and contextual hex literals, use of merged semantic compositions (PageHeader/PageState/ResponsiveTable/StatusBadge/FilterToolbar), and banishment of raw-palette helpers — so a migrated page cannot silently regress to raw palette, ad-hoc layout, or unnamed states independent of rendered output. The pattern now spans 38 suites covering settings, shipments, supplies, orders, moysklad, cogs, analytics AI families, automation, communications, finances, products, monitoring, and the colocated dashboard-widgets tree.",
       "evidence": [
+        {
+          "resource": "repo://src/app/(dashboard)/analytics/ai-admin/anomalies/components/__tests__/anomalies-presentation-source-contracts.test.ts",
+          "version": "repo-file-v1:sha256:af54c7f5f8ed59911515f1cef570274fcec9590dd3dcdceae1234fcd63c8bd86"
+        },
+        {
+          "resource": "repo://src/app/(dashboard)/analytics/models/components/__tests__/model-registry-presentation-source-contracts.test.ts",
+          "version": "repo-file-v1:sha256:45ec34dc5135714a53ff0407048354d661f091b40cc5a5f31ed92f65f5acc0e6"
+        },
+        {
+          "resource": "repo://src/app/(dashboard)/cogs/bulk/__tests__/bulk-cogs-presentation-source-contracts.test.ts",
+          "version": "repo-file-v1:sha256:fe4971a210d991e32f0d495530d35d5d695832e50b576ebb6cbbbee4a35ac0d9"
+        },
+        {
+          "resource": "repo://src/app/(dashboard)/moysklad/__tests__/moysklad-presentation-source-contracts.test.ts",
+          "version": "repo-file-v1:sha256:19e15bcf372e95c18140c3fa41b2895589bf7f5389dc572f3af2000f83a22e24"
+        },
+        {
+          "resource": "repo://src/app/(dashboard)/orders/__tests__/orders-presentation-source-contracts.test.ts",
+          "version": "repo-file-v1:sha256:7a19980be83c7fb45194819a884985437ad251477044e5d72edc44a49dd3d7ba"
+        },
         {
           "resource": "repo://src/app/(dashboard)/shipments/sku-packaging/__tests__/sku-packaging-presentation-source-contracts.test.ts",
           "version": "repo-file-v1:sha256:bf05b9acba98eca867f0d27e7bd2c13e7dc1c66fa40e0aff378dd1f5c9d49619"
@@ -33,6 +61,10 @@
         {
           "resource": "repo://src/app/(dashboard)/supplies/%5Bid%5D/__tests__/supply-detail-presentation-source-contracts.test.ts",
           "version": "repo-file-v1:sha256:e71b1b89cdb1d792c60ea682ba78382edd86a5346969f452d17a2b6e62c77dca"
+        },
+        {
+          "resource": "repo://src/components/custom/dashboard/__tests__/dashboard-widgets-presentation-source-contracts.test.ts",
+          "version": "repo-file-v1:sha256:10e5fb7d1fd3d11f8cfbdb05c6302081c8d49bd92605eaeab64bfd21cc00c243"
         }
       ]
     },
@@ -163,10 +195,66 @@
           "version": "repo-lines-v1:sha256:cd31f8e914f5440a7540b97bb4c53f1c23d6de3eaad26df6e45d8d4f92bae67e:eyJzZWxlY3RlZExpbmVDb3VudCI6NCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNWY2MDE1NTQxMjJlZmU4NTVkNTZlMTBjYzliYWYyMDMxY2EzZjRhYjExY2RiYTIyZjFlYmM1ZDM5YTc1NTgyNCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNGQ1Y2QyZmI0ZjNkZjg4NDUxNTI1NWIzOTUyM2YyZjhiNTQ3MmJlZWE5ZjU2NmZmY2EyMDRkYjgwMjU2MTA0MSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNjFkMjNhODEzNDhkMzJiMThhMGNlMDg5MzExZTdlN2VjNTRlMzgyMDFiMWI5ODIyOTAyMGVlODNkYWM4ODY1MSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiYzQxYTdiZDFjZDQ4YzExZDdhN2RiYzE1ZThlZDA0NjI2ZDAwNjFiOTg5ZjFkNjBmOTk5ZGI5ZGFiOWQxNmRkOCJ9"
         }
       ]
+    },
+    {
+      "id": "claim_447cca6ef5a14f09abedfdfb55d6250c",
+      "statement": "eslint.config.js is the ESLint 9 flat config that is the sole enforcement path (npm run lint / npx eslint with --max-warnings 0); the legacy .eslintrc.json is retained only for IDE integration and is ignored by ESLint 9 when both exist. The src block enforces max-lines 200, jsx-a11y/control-has-associated-label, no-unused-vars with '^_' args pattern, and Anti-Pattern #8 no-restricted-syntax selectors banning '?? 0' on money/ratio field names and suffix fields in both direct-member and optional-chaining forms; reportUnusedDisableDirectives is set to 'off' to preserve the zero-warning baseline against ~34 intentional SEMANTIC-ZERO disable directives, and parserOptions omits 'project' to avoid OOM on the 2 GB CI VPS.",
+      "evidence": [
+        {
+          "resource": "repo://eslint.config.js#L1-L29",
+          "version": "repo-lines-v1:sha256:d4c6fc69bd77b3bb58106d882ea83526a95483e9c3d82267e404d33ae1197db7:eyJzZWxlY3RlZExpbmVDb3VudCI6MjksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImM2ZGE1MjJlMzljNGFlNzE0ZWExNzA1MGI4ZTkwYjMzZDQ3NTVlODMxMDQzZmFmOTE0NWNjZjQ1NGUxZTIxY2YiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjFmMGNkYjk3MmE3YmZiN2VkMjQ2ZjlmZjY3MjM4NWU1NWY0OTY4ZmMxMTA0M2RjNWI2ODRkNTFkZmEzMWRiY2IiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjowLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjE0OTE4N2JkNzFiNDY2ZmZkNTE2OGMwYjU2NGQyNWM2OWQwMGJiMTQwN2VjMDIyYmY0YTgyOGE0MzU2YjM3NWEifQ"
+        },
+        {
+          "resource": "repo://eslint.config.js#L54-L90",
+          "version": "repo-lines-v1:sha256:501658f8ba5d0d2e699662be0467caaa81b91a2709f37184943f82d3caae59f6:eyJzZWxlY3RlZExpbmVDb3VudCI6MzcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijk0ODZhOWIzYzk4NGM1ZmFmMmZmOWQyMjM5Yjk5ODY3MTVlMDEyMjQ3NzMwMjdiNzIyNTQ1ZGNjMDBiNDg4OTYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjFmMGNkYjk3MmE3YmZiN2VkMjQ2ZjlmZjY3MjM4NWU1NWY0OTY4ZmMxMTA0M2RjNWI2ODRkNTFkZmEzMWRiY2IiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImQzMTVmOGNjMWJmZWQxN2VkZDI2OWQyODI5YmY2OWM3OWRmYjI3NTdjYzNjMzFiMjI1MGMwY2VmOTI1MTc3YTIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjM0ODMyM2UzNTkxYzI5MGI5MWVkMGNjYjBlYWQ2YTZhYTFlYjE4OTMzYmU4ZjA5ODBjNmRiYzNlMTFjODA4ZTEifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_341360af7d7c4559b8a16b2630b0ce12",
+      "statement": "The eslint flat config applies tiered max-lines caps: e2e/**/*.ts gets 800 (not 200) with exact per-file 'max-lines: off' exemptions for the two Story 174.3 historical-debt files e2e/fixtures/playwright-network-guard.ts and e2e/onboarding.spec.ts; test surfaces (src/**/__tests__/**, src/**/*.test.*, src/test/**, src/mocks/**) get 800; CLI-managed shadcn components under src/components/ui/** are exempt. A dedicated AP#8 block re-applies the money/ratio '?? 0' selectors to src/lib/api/**/*-normalizer.ts and **-mapper.ts with toNullableNumber/toCount guidance, while the helper-defeat 'toNullableNumber(x) ?? 0' form is ratcheted by scripts/check-anti-pattern-8-normalizer.sh against scripts/.anti-pattern-8-normalizer-baseline.txt.",
+      "evidence": [
+        {
+          "resource": "repo://eslint.config.js#L135-L194",
+          "version": "repo-lines-v1:sha256:cf70bda67dc51667a2f544b7bdc0ead34dc2b1f19e50251d700e5b0d43d7a596:eyJzZWxlY3RlZExpbmVDb3VudCI6NjAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjIyZTU5NTJhMTYwMzdjZGE1NWYyNGY4NGM3YmY0ZjYyOGU2Zjk1NTM0YWJjZTdiNmMxMjQ3Yzc3OGU1ZDNjNWQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjRkNWNkMmZiNGYzZGY4ODQ1MTUyNTViMzk1MjNmMmY4YjU0NzJiZWVhOWY1NjZmZmNhMjA0ZGI4MDI1NjEwNDEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImYyOGFjMTgwY2ZjMmZiNDUxMmU0MzU3NzAxNTEyNmE0NjE4YTc4MzJkMmY4MzljZTdlOWJhMzIxMjgyNTRlYWMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImY5NDE2ZTA5Zjc4YmEzMTZjMDMyNTY4MjEzYjg1NWVlNzU2ZTQxNTY1ZDkxOGYwOTUxOWM4MWZkNjIwZjQwNjAifQ"
+        },
+        {
+          "resource": "repo://eslint.config.js#L92-L133",
+          "version": "repo-lines-v1:sha256:9bc86637e019961673fce187f10b977f3a43656f89c5db54a13b61f72e01e58b:eyJzZWxlY3RlZExpbmVDb3VudCI6NDIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjZlOThlNWZiY2M4M2U4MjkxNTI1N2VhYzc3MmMwMzdlNmQzNjZjZjhiNjliMjNjOTcyNjEzODU3OWFjMTBkYzMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjFmMGNkYjk3MmE3YmZiN2VkMjQ2ZjlmZjY3MjM4NWU1NWY0OTY4ZmMxMTA0M2RjNWI2ODRkNTFkZmEzMWRiY2IiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjlmYTM2ZDVhZDcxNGZjYTlkNTc5MzczYWIwMmE0NjI0Zjg3ZDBiMDg2MTRlZTRhZmQwMzk1N2RmMGU1YmQyZWYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjMyYzYwNzc4MDk0MTA2YTZkODlhOGEwNDE5OTk0MjY2MGU1ZjI2MzU2MzA3NTBjYjcwY2RhOThkYWNlMWFkNTEifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_0c85b1820aec4f3e8b1cc02b9fde42a3",
+      "statement": "npm run check:eslint-rules (scripts/check-eslint-rules.sh, Story 99.2-FE) validates that every rule name declared in .eslintrc.json and eslint.config.js is recognized by ESLint — via npx eslint --print-config with a Linter().getRules() fallback — catching silent disablement from rule-name typos (e.g., max-lines-per-file vs max-lines, the Class 5 defect from the Story 97.7 investigation); flat-config rule names are extracted by requiring the config module and iterating config.rules keys rather than regexing source text, so AP#8 message strings cannot cause false positives.",
+      "evidence": [
+        {
+          "resource": "repo://CLAUDE.md#L129-L131",
+          "version": "repo-lines-v1:sha256:cd2f49c1aa81932765ef077ec15128d2cb572b8ace2cdf55a405a62393db7791:eyJzZWxlY3RlZExpbmVDb3VudCI6MywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiYTVhNDI5YTIyZmU5MGI0Yjk4OGE0Y2UxMWFmMWEyZDU0MjIxOWMyYzQwZTllN2I5NTNjNzE0NzczYTBiM2QyMSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiZmRiZTk1OWUyNjhkMGYyY2Q1MjJiZjhmZjM2YjE5MzhjMjBiY2RiYzUwMWQzZjE0ODQ1MDM4ZjU3MjIxN2QxZCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNTA3OTY4ZjMyNjkwY2JiMjY5OTM4MGU2ZjM0MTU1MjYzYWFhZDNkNGVjMTYyMGZkZjNkZjQyZTc4YjhiMDM5OCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMzAwMDQyMTAxZGIyOWFlNzcxOTc2MmRhMWNkYWY2ZDMwZjdjYjE3MWZmYjMyNWRlYmNmNjUxMGFhZjAwNGFmMiJ9"
+        },
+        {
+          "resource": "repo://scripts/check-eslint-rules.sh#L35-L93",
+          "version": "repo-lines-v1:sha256:0370b695556391d4f9566e813285c9b29d2e511182f7882d9d0d7fe74f90054e:eyJzZWxlY3RlZExpbmVDb3VudCI6NTksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjI0ZWMwNzg2M2MxZmJjZWNlZjBmNDZlZTlmNzUyYzNlNWFkMWFmOGMzNmU4MzMwMWJjY2E1NjM0M2E0MDIyMzMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImJlZmY0OTExY2E3M2Q4Y2VlMjA2Y2QyNjU0OWY0ZWI5ZTkyZWFlYTZkZmM1ZjIxODVjOTZlNTc0OGIxZWZiMTkiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjhhODY1ZmNiNTk4ZjJhMmU4ZTA3ZjY2MDI4NWJhZTFjMmI5YTMyYWUzMjU4YWRkZTNhNTI2MTM0YmZhNTRkNmUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_68b1a268ffca4eb8862760ecf7139b52",
+      "statement": "npm run check:max-lines (scripts/check-max-lines.sh) reports files violating the ESLint max-lines caps by running ESLint itself with the repository's enforcement config, because raw wc -l counts JSDoc comments and blank lines that skipBlankLines+skipComments exclude and produces false over-cap reports; its self-tests pin zero violations under the real config, that a generated 201-code-line file is flagged, and that invalid arguments exit 2.",
+      "evidence": [
+        {
+          "resource": "repo://scripts/check-max-lines.sh#L1-L9",
+          "version": "repo-lines-v1:sha256:5708e619731f07cdf56e1ede3de1a8f1eca625a5d049967f30ed50bcaea8efd5:eyJzZWxlY3RlZExpbmVDb3VudCI6OSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMWQ5NWZjMDRhODBjOTUyZjQ5Y2U0MTg4NjI3YzUzYjBmYmU4YzQ0MDQxYjk1MmQ1OTJhY2QxZGU5OTg2MTQ2NiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiZTAwMjhiZTEzNWJmMWU3MjJmMDkwOGRkZDI3YjQzYjc0ZTM2ZGQwYzdiOGM3Y2YyY2IyYTA2OGM4OTNjYmQ3NiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjAsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZTNiMGM0NDI5OGZjMWMxNDlhZmJmNGM4OTk2ZmI5MjQyN2FlNDFlNDY0OWI5MzRjYTQ5NTk5MWI3ODUyYjg1NSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZDJmMDZmMTQ0MzBmMzZkYjRhNzlkNzgwY2FkY2I3ZjBiODNlZTQxODlmZGIyMGUyZTg1MzA3OWQ1ZTkyOTYxNiJ9"
+        },
+        {
+          "resource": "repo://scripts/check-max-lines.sh#L39-L97",
+          "version": "repo-lines-v1:sha256:a2c064377c31e4f8be11dae5a8b2d9e9c5853c58eff7adca6777c86b3116d612:eyJzZWxlY3RlZExpbmVDb3VudCI6NTksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImExMmEwMTM5YjBmYWNiYjcyZmM3OGFkNjBmZTc0YjAwNmRlNmRjZjRiZmI5Y2NhMTFmODQ3Zjg1YTU3MDg4ODAiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjljMjNkZTgyMzAzNmM5NzUwYTJjMWMyOGRmODUxMDU0MDkwZjZiYTkxZTU5MTllMDNkMzhkNWJmZGYwOTc3YjciLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjZjN2IyNTI5NzQ4ZTI5NzU1ZDYyMjNkNDhlODdkYzUyZWY4MmMyYWNhNjE4ZDI2MTdlZTUwOTEzNDQzYTFjMWYifQ"
+        }
+      ]
     }
   ],
   "verification": {
     "by": "openwiki/0.4.3",
-    "at": "2026-08-31T08:47:49.410Z"
+    "at": "2026-09-01T08:47:48.765Z"
   }
 }

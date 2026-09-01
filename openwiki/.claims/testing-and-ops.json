@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "pageVersion": "sha256:5ece64a375c1c045d8ac97b8e6adae6cb4c9671b6eb70b53e538285e9f474b4a",
+  "pageVersion": "sha256:c2499b651dcf609296f4a2d9b579af8b409c4d2f612c09d817037e0a1427d9b2",
   "claims": [
     {
       "id": "claim_34d4e9ec9e0249299eb57f3e06db8784",
@@ -54,11 +54,11 @@
       "evidence": [
         {
           "resource": "repo://e2e/shipments/shipments-detail.spec.ts",
-          "version": "repo-file-v1:sha256:f5141998eb48ed344ff003a7c0f64e11280ef50bb2acaf698f46cb216f4ad283"
+          "version": "repo-file-v1:sha256:d0e873b599dea77f32ff59f9a5312ccfeac3eae5c3cb8cf728fc299f13dc4cf6"
         },
         {
           "resource": "repo://e2e/shipments/shipments-list.spec.ts",
-          "version": "repo-file-v1:sha256:a29e4910e7269737140deb9f1ce42ee66ac3c0196ef800eebc9ce6a48e68d564"
+          "version": "repo-file-v1:sha256:8fbd37b4af44368909798939a0476991e9582f20cb5adc4c37108909ae103161"
         }
       ]
     },
@@ -68,7 +68,7 @@
       "evidence": [
         {
           "resource": "repo://e2e/telegram-notifications.spec.ts",
-          "version": "repo-file-v1:sha256:07703204166da1b111cd9b7f347885e3364e8dd671fdc032ab52b4a209742f23"
+          "version": "repo-file-v1:sha256:5773869d9039978a25d3d9db2a237a228f4feecab99191aced9af777166e6fa3"
         },
         {
           "resource": "repo://src/test/playwright-static-boundary.ts#L111-L115",
@@ -82,7 +82,7 @@
       "evidence": [
         {
           "resource": "repo://e2e/settings-pages.spec.ts",
-          "version": "repo-file-v1:sha256:0bdf13f25500033a9345e6d0c11c15b6bb418d90c8c50107f211ad6454a40af8"
+          "version": "repo-file-v1:sha256:8233c0c80d10c01040b171e24ce14644c5d5d91ee93dc6b4ed8eebf3ea07b73d"
         }
       ]
     },
@@ -167,18 +167,106 @@
       "statement": "e2e/sku-packaging-page.spec.ts (Story 173.11) provides the representative new-spec pattern for the guarded Playwright runtime: it imports test/expect from ./fixtures/network-test and installs exact-method/exact-query page.route fixtures (GET/POST /v1/sku-packaging, POST /v1/sku-packaging/bulk, DELETE /v1/sku-packaging/{nmId}, GET /v1/box-types) in beforeEach before navigation, with handlers that throw on any unexpected method/path/payload so a silently-missed stub cannot pass; it pins the exact single-upsert, bulk, and delete wire contracts, terminal role=status announcements, filter reset focus, keyboard validation with first-invalid focus, and 320/390px narrow-card layout without horizontal overflow.",
       "evidence": [
         {
-          "resource": "repo://e2e/sku-packaging-page.spec.ts#L228-L300",
-          "version": "repo-lines-v1:sha256:b409c48a644b373e66f541128795228017fefe034d31c9f69481b7e68b492933:eyJzZWxlY3RlZExpbmVDb3VudCI6NzMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImNlZDE2MTQ1NmRmM2MwYmY0NzY4OTBmZGRkZmVlZDA1ZjI1YjFhZjhmYWE1NGE0ZWY1MDY2MmQ1Zjk1Zjc0ZjQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImIyMzUyNTg5YzM0ZDNjNjA2ODU5MzFiNmVjYzRkNTA5OTFhN2M1NmM4ZmJhMjg5NDExNDY1NzY5MDI3MmNhYzMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImRkZGNkY2E3MDBlNjQ2OTNlYjgwZjJkZmRjY2RlOGIxYzJhMjhiNTI2YmI1MTg1YzRjNTVlZTY3YzM0MzJiMGIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjhlODBkNWYxMjFlZmI5MDc3ZDVjM2VhMzc3ZDY4MzZhZmYwZTExZjc4NWEzZWNhYTYzN2UxZWJiZjllYWNkZjIifQ"
+          "resource": "repo://e2e/sku-packaging-page.spec.ts#L241-L313",
+          "version": "repo-lines-v1:sha256:52d84374fdfe79c276778218431e32074d7eb260934f3fe4bd475e7bcca16f84:eyJzZWxlY3RlZExpbmVDb3VudCI6NzMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImNlZDE2MTQ1NmRmM2MwYmY0NzY4OTBmZGRkZmVlZDA1ZjI1YjFhZjhmYWE1NGE0ZWY1MDY2MmQ1Zjk1Zjc0ZjQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImIyMzUyNTg5YzM0ZDNjNjA2ODU5MzFiNmVjYzRkNTA5OTFhN2M1NmM4ZmJhMjg5NDExNDY1NzY5MDI3MmNhYzMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImRkZGNkY2E3MDBlNjQ2OTNlYjgwZjJkZmRjY2RlOGIxYzJhMjhiNTI2YmI1MTg1YzRjNTVlZTY3YzM0MzJiMGIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjhlODBkNWYxMjFlZmI5MDc3ZDVjM2VhMzc3ZDY4MzZhZmYwZTExZjc4NWEzZWNhYTYzN2UxZWJiZjllYWNkZjIifQ"
         },
         {
           "resource": "repo://e2e/sku-packaging-page.spec.ts#L74-L162",
           "version": "repo-lines-v1:sha256:f3afb1883103a1a125959331890560737bbc464ba01f6b962fe91734ac22cb33:eyJzZWxlY3RlZExpbmVDb3VudCI6ODksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijg3YWQ5MGVmZTllZDkxYTZmOTQ0NWZlNzJjZjA3NWIyOWNhZmRmMWZjNjgyMDY5NmEzYzg3ZjFhN2ExNTAwYmEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjEyMDRjNGUyNzA0YjI5MTExMjBiYTc3MTQwMzM0ZTg5YmE5MGVkYzI1MDI5YWIxZmEwZGM2ZjdkODM1OTViNzciLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjMyZWMxMDMzZWQxMmIzNDZhZDdkMTRiNWYxMTcwYTk0MzlhODc4ZTM5YzYxNTc1NGYzMjQ0MmVmYjlhZmE1M2UifQ"
         }
       ]
+    },
+    {
+      "id": "claim_c43051f973474d1ea26cdc69535e9eb3",
+      "statement": "e2e/support/story-174-3-runner-core.ts supplies the shared Story 174.3 runner primitives used by both the 76-route matrix spec and the real-browser-zoom spec: EXPECTED_ROUTE_COUNT = 76, applyTheme (localStorage theme + reload + .dark class regex), prepareSessionProfile (clears cookies and auth-storage keys so unauthenticated-onboarding routes render their own UI instead of redirecting to /dashboard), and assertSettledRoute, which polls the exact pathname (redirectors must settle on a declared final route), requires a settled readyState with zero Next.js error markers and exactly one visible h1, rejects generic error/not-found shells, and verifies the route's identity contract (exact static/materialized h1 text, backend-h1 landmark pattern, route-landmark accessible name, or redirector destination heading).",
+      "evidence": [
+        {
+          "resource": "repo://e2e/support/story-174-3-runner-core.ts#L165-L300",
+          "version": "repo-lines-v1:sha256:1205fbe1c73f5e982fdc93f3cc205d5565be9be68387eaeddd7879504a16f252:eyJzZWxlY3RlZExpbmVDb3VudCI6MTM2LCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiI5MjQ5MGJlOWViYjI3YTIyMmEyOWIzOTZhNWJjYTY0MDZkMGFkYmU4NzZmNjRiNzQwYmU3M2I3ODk4OGM3NWFmIiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiJmZDcyOTA1YTJkMGI4YjNiMjNiNTg3NjUwNDQ3NjZlM2NhY2FjYWY5MjhhMjE1ZTk0MzhmYmYxZGZkZGZiMDAzIiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiJkY2Y5NWYyYTJmZjQ1NDQyZTEzNWQwNGY2NmZiMjU0YmE3MDEwZWUzMmJlOGIzYWNhMDAyNzNlMTc3ZDA5ZjIzIiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MywiZm9sbG93aW5nQ29udGV4dEhhc2giOiIxYzA4Y2I3Yjg1NDkyNjRmMTViMjRjMjNhMzkyYjk0NmIzNDgzNWUzMjA4NTRlMGFjNWEwNTMzYzU2YzljMzZkIn0"
+        }
+      ]
+    },
+    {
+      "id": "claim_08c88d86c72a44da987424f363f8e2d1",
+      "statement": "e2e/story-174-3-dedicated-route-evidence.spec.ts closes dedicated route-evidence gaps: settled-route plus exact-h1 assertions for /analytics/brand-share, /analytics/buyout, and /orders/fbo, and deterministic coverage of the dynamic /analytics/models/[id]/evaluations/sku-accuracy route via an exact-method/exact-query GET /v1/ai/evaluations/sku-accuracy?modelId=… stub — pinned table caption, ordered rows with localized percentages, aria-sort ascending/descending toggling, viewport containment at 1280 and 390 px, and Enter-driven drill-in to ?nmId=… with exact detail text.",
+      "evidence": [
+        {
+          "resource": "repo://e2e/story-174-3-dedicated-route-evidence.spec.ts",
+          "version": "repo-file-v1:sha256:79dc7c5ccfadd98293bc4c44a31bc94766e329aecfd157f121e54f2d56b417af"
+        }
+      ]
+    },
+    {
+      "id": "claim_979c840cfe194afbbee30b6bd9502a0b",
+      "statement": "scripts/run-story-174-3-real-browser-zoom.mjs is a macOS-only orchestrator that pins Node v24.18.0 and npm 11.11.0 (via STORY_174_3_NPM_CLI), spawns the headed single-worker Playwright zoom spec with STORY_174_3_REAL_BROWSER_ZOOM=1 and a private ready-file, then finds the single headed Chromium process by descendant-PID walk and applies real browser UI zoom via osascript (Cmd+0 reset plus five Cmd+Plus presses). The spec (e2e/story-174-3-real-browser-zoom.spec.ts) is skipped without that env pair and proves the zoom is genuine browser UI zoom, not a CSS proxy: root zoom must stay 1|normal, devicePixelRatio must at least double, innerWidth must shrink to ≤ baseline/1.9; at that zoom all 76 routes must keep scrollWidth ≤ clientWidth + 2 with main inside the viewport in both themes, authenticated routes first and then unauthenticated-onboarding routes after session clearing.",
+      "evidence": [
+        {
+          "resource": "repo://e2e/story-174-3-real-browser-zoom.spec.ts",
+          "version": "repo-file-v1:sha256:024fb753a5141a0a80c5d4acd2ad4732719b9eb07db67cf2732014d4cb956e3e"
+        },
+        {
+          "resource": "repo://scripts/run-story-174-3-real-browser-zoom.mjs#L1-L53",
+          "version": "repo-lines-v1:sha256:4ebe87aca47be0c5767c8923b6e8c09fd67f07524dafb3a770435f7c86c1ec7e:eyJzZWxlY3RlZExpbmVDb3VudCI6NTMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjM5ZjFkMmZjODUwODI3Nzk0MGI3YjYzYjYxNTc5MThlYjY2YjE1MDI5ODIzMWE2Nzk2ZDA1YTVjMjk5NzU2MDkiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImZhZmJhMDUyN2MzOTUzYzRiNmUwZTViNTczOWJhODM2MTJmODA1M2JjZGM5NDY2NzMwMTkzY2QxZDU5MGI0MDgiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjowLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjM0OGY2NWFiMWQyNGEzOTZiMjUwOGMwMTQ0NTlkYWIyMDEwNjQzMDQ1OTIyYWU0OGM5NTEzMjY1MjRlNjQxMWMifQ"
+        },
+        {
+          "resource": "repo://scripts/run-story-174-3-real-browser-zoom.mjs#L78-L137",
+          "version": "repo-lines-v1:sha256:4e2e10b4b68037f36d368411b251b2d8f53fe2198e54a8c11aea6a967f37335e:eyJzZWxlY3RlZExpbmVDb3VudCI6NjAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjE3NGYwZTgwMWU4MWU0NWZjYWRlZDFiY2IyODY3NzkwNzNlNGY1NjE5YmI5NmRlYjIxMjAzNjg2YjFjZmM0ZWQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImRjZjk1ZjJhMmZmNDU0NDJlMTM1ZDA0ZjY2ZmIyNTRiYTcwMTBlZTMyYmU4YjNhY2EwMDI3M2UxNzdkMDlmMjMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImVjZjZmZTM0NzA0OGRjNTA4MzA5NmM1MzQzNjY2MDEyMTQ4MGNjZmMxYmVkMjFjNzYwMDQ3NjNlYWNlZWUxZDgifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_62a04e76d6ae4f6a96b6e5c1d76d601f",
+      "statement": "scripts/run-story-174-3-state-evidence.mjs is the fail-closed Story 174.3 execution-manifest orchestrator: modes --owner-units/--owner-browsers/--dedicated-routes/--owners/--defaults/--all run the scenario sets declared in the e2e/fixtures/story-174-3/ fixture sources (extracted by scripts/lib/story-174-3-execution-requirements.mjs with per-source SHA-256 pinning) through Vitest JSON reports and the test:e2e:full Playwright wrapper, map every required scenario id to a recorded outcome, and throw on any missing scenario, non-passed result, or non-zero exit code before rewriting e2e/fixtures/story-174-3/execution-manifest.json (schemaVersion 1, deduplicated sorted entries with command/exitCode/startedAt/durationMs). The --defaults mode additionally requires prior full --owners coverage and passes assertMergeReadyEntries, which rejects duplicate, unexpected, missing, stale (sourceSha256/runner mismatch), or incomplete (non-passed/exit≠0) merge-ready entries.",
+      "evidence": [
+        {
+          "resource": "repo://scripts/lib/story-174-3-execution-requirements.mjs",
+          "version": "repo-file-v1:sha256:9fddd4142286412452644ff1ed7ca9616cacb8fadb060bd840a92c4332459fbc"
+        },
+        {
+          "resource": "repo://scripts/run-story-174-3-state-evidence.mjs#L111-L174",
+          "version": "repo-lines-v1:sha256:6eee1b36e7c881ff8edf6880591e1a0c7c45a844e3b03f7b1286ce971c73f925:eyJzZWxlY3RlZExpbmVDb3VudCI6NjQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNmNGI1YmRiNjEwODkzOGZmZmM0MWM1M2RhMThkMTkyZTJhMmIzNjIyODY5NmNkOTRjMjE4OTVlOTljNWMyZTQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjFkOGZiOTNjMWFhNTdkNTc1MmQyNjc2MzdmZTcxYjc1NmQyYTAwOTUxODQwOTkzMGFlNTFlNTY2NzYzMDQwYjMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjI3ZWM5NmE0OGE1OWFmNjA4NGYzM2ZmMDMzMmRkOTYyZjY1YTQ1MzFkNjg0NzFlNzRiMGZlODViNDQ5MmJjMGMifQ"
+        },
+        {
+          "resource": "repo://scripts/run-story-174-3-state-evidence.mjs#L184-L293",
+          "version": "repo-lines-v1:sha256:2c6da3d3b1086d8dfbaa85a0a8025662cd164378e925c05b7b98ea2481c34e53:eyJzZWxlY3RlZExpbmVDb3VudCI6MTEwLCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiIyZWM5ZDUwYTY5MDZlMjQ2N2U5ZmQ5YjFjNDBiZmU0Yjk3NWI3ZmJhZjZjZmIzZDJiMGUzZTI3NTcwYjk2MzkyIiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiI0MTJjYTM0NWNjZjc1YmY5YzA4MDZiY2U2OTViZThkZTgwOGI3OTk4NDI1MWE3YTU0ZDIwMmNmNjEwMWRkNDUxIiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiI1ZWVjZWFiODA4YTZjNWEzODA1ZTNhMmZkZmY2ZmE0Mjg4ODlkMzA1NGIzN2Y0M2I1NTNlNTAzNmFlN2Q4M2VlIiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MCwiZm9sbG93aW5nQ29udGV4dEhhc2giOiJlM2IwYzQ0Mjk4ZmMxYzE0OWFmYmY0Yzg5OTZmYjkyNDI3YWU0MWU0NjQ5YjkzNGNhNDk1OTkxYjc4NTJiODU1In0"
+        }
+      ]
+    },
+    {
+      "id": "claim_f56f2a32174a4e95996a2937181a6ad8",
+      "statement": "The Story 174.3 fixture corpus under e2e/fixtures/story-174-3/ (~30 typed modules) feeds all 174.3 runners and contract tests: the 76-route registry (route-evidence/route-contracts/state-evidence), owner-state-evidence-{a,b,c}* families with exceptions and reconciliation, the table/chart/overlay inventories that verify production-file anchors at import time, surface-types, dedicated-route-scenarios, the immutable manual-evidence operator ledger, and the execution-manifest pair; the contract guarantees are enforced by the Vitest tests src/test/story-174-3-{manifest-reader,state-contract,surface-contract,manual-evidence-contract}.test.ts.",
+      "evidence": [
+        {
+          "resource": "repo://e2e/fixtures/story-174-3/execution-manifest.ts",
+          "version": "repo-file-v1:sha256:ba9da67248857dd81d190f7b0eb503335e2a8f31363b94ff090e601e018c1433"
+        },
+        {
+          "resource": "repo://e2e/fixtures/story-174-3/state-evidence.ts",
+          "version": "repo-file-v1:sha256:79ccf1cf3a9735a79aa7e6478ef2f4d4ae6a3c9f554381f4c7c3b8e91e477697"
+        },
+        {
+          "resource": "repo://src/test/story-174-3-state-contract.test.ts",
+          "version": "repo-file-v1:sha256:90206185dfa9a417a8c7cb7f559a160b7b7236b470ff740d98aecdf5b519cb5a"
+        },
+        {
+          "resource": "repo://src/test/story-174-3-surface-contract.test.ts",
+          "version": "repo-file-v1:sha256:fcaba6177905dc2a14152174e431594bda6cc1afaa2cc6dc6b6402df99c1723d"
+        }
+      ]
+    },
+    {
+      "id": "claim_d38e685a87d04cbbbce69b2258d94c3b",
+      "statement": "e2e/shadcn-migration-visual-accessibility.spec.ts is the consolidated Story 174.3 matrix runner: its first test is a meta-assertion that the 76-route registry, identities, and surface contracts are internally closed (table/chart/overlay expectedCount == surfaces, chart data-alternative associations constrained, conditional surfaces carry not-applicable-in-canonical-default rationales with owner-test or canonical-trigger verification, executed state evidence pinned by SHA-256 of its cited file plus a line number containing the scenario id), and it then runs the per-route theme × width matrix with axe and computed-contrast evidence, importing the runner support from e2e/support/story-174-3-*.ts and test/expect from ./fixtures/network-test.",
+      "evidence": [
+        {
+          "resource": "repo://e2e/shadcn-migration-visual-accessibility.spec.ts#L33-L148",
+          "version": "repo-lines-v1:sha256:43b485c1a4e95bef2e8ca305d90096e1095dd0ff335a459177fd53f6f912c657:eyJzZWxlY3RlZExpbmVDb3VudCI6MTE2LCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiI0YTZmNDVkYTlmOGQ1NDY0Y2EwYjQzMTE1NTg3MWFiNmFiZjg5ODlkYWQ0YzdiNTE5NWExZTc4YjU0ZGM1Y2Q5IiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiI3YmNmYjg5MzdiZTM1MmQyNmMwMmEwMzk2ZDU4MzI3OTQ3NDBkMjYxN2E3NTM4Yjg2MjVhMjc3NzY1OWVmYzQ4IiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiI3YjkzNjk1MmZhOTVkOTVkYTM1NmI3M2UyMWRhNWZhMDRkODdiNGRjZmNjMDcwMzkxMjFmZDdhYTYzMTBhM2NlIiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MywiZm9sbG93aW5nQ29udGV4dEhhc2giOiI5ZjBmMTZkNmRkZGIzNWI2NGU3MTAxNTMzMjBhODZmMzc0YzU1MWYyNTM5OTFlYTYzMmNlY2M5MmFlMDkwZDgxIn0"
+        }
+      ]
     }
   ],
   "verification": {
     "by": "openwiki/0.4.3",
-    "at": "2026-08-31T08:47:49.410Z"
+    "at": "2026-09-01T08:47:48.765Z"
   }
 }

@@ -1,20 +1,192 @@
 {
   "schemaVersion": 1,
-  "pageVersion": "sha256:fb88ec8b6f3fc27f0994ab399822a9f928577a31db7bb9cdd4c073e93c44d6f9",
+  "pageVersion": "sha256:0f1d375bb431a37c9fa2066fc2396e2c929381cedb1755c83e141fd69be794e4",
   "claims": [
     {
-      "id": "claim_1d26e9aebb064ef8aade7c1b04d7ca12",
-      "statement": "Probe claim.",
+      "id": "claim_7146a57eacad4db2bf7552b903072ad9",
+      "statement": "The shadcn full-UI migration program (Epics 166–174) migrates the frontend presentation layer one BMAD Story at a time while preserving backend contracts, calculations, query keys, URLs/search parameters, authentication, cabinet context, Russian localization, and formatting semantics; the only approved contract exceptions are Stories 167.8 and 169.14, executed in the backend repository.",
       "evidence": [
         {
-          "resource": "repo://.omx/plans/shadcn-full-ui-migration-master.md#L18-L22",
-          "version": "repo-lines-v1:sha256:0af571176c1e7423da6244e84a1bcf05f29bc0209185f7845e026edab2c7be2d:eyJzZWxlY3RlZExpbmVDb3VudCI6NSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiYjhkNTUzNTQzZWQ0Yjk2MDc4NjE2YjVlOGJjZjc5OTNmZWEwODAwOTkwZjllNjNhNTFlYzY1ZGEzODdkOWQwYSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiM2Q2MWJmYWE4YjFiYWRjYmI1MWM3ZGEyOWU4ZjgwYTI2ZDI1NjRkOThmM2JiMGM4ZjFhY2FhYTZlMzc3MzBmOCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiYzMwZGEwZTAwZWZiNTJhZTM3OGNmNjVlN2UyN2ZiZTRjZWJiMTg1MjFlYzVkZjk2Y2JhMWI3NGZkYmEyN2I2YyIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNzY1MjA5MWEwNDFlMGU5ZWI4ZTEyMGJlYzRkMjVlYTA4YzdmMTczNTc3NGMxMTRmNmZiYTUyY2Y0NjNhZGM3YyJ9"
+          "resource": "repo://.omx/plans/shadcn-full-ui-migration-master.md",
+          "version": "repo-file-v1:sha256:c44fc3b04b9d3274d6f9c6256edff0dc2797ba4127777d41667f42c157713f9e"
+        }
+      ]
+    },
+    {
+      "id": "claim_d7aee57830af4f03b21292eb6b2b9f1f",
+      "statement": "Program completion requires exactly 94 stories with matching OMX plans and completion evidence, all 76 page.tsx routes verified exactly once via the route ledger, legacy presentation removed only after its last consumer migrates, and every temporary worktree/branch removed after merge; production/deployment and CI gates are out of scope.",
+      "evidence": [
+        {
+          "resource": "repo://.omx/plans/shadcn-full-ui-migration-master.md",
+          "version": "repo-file-v1:sha256:c44fc3b04b9d3274d6f9c6256edff0dc2797ba4127777d41667f42c157713f9e"
+        }
+      ]
+    },
+    {
+      "id": "claim_533f257f2046482889688aefcfd812c0",
+      "statement": "Epic 174 is a sequential consolidation chain: 174.1 (parity proof) and 174.2 (legacy removal + design-system boundary) are done; 174.3 is in active remediation; 174.4 (functional/backend-contract regression) and 174.5 (final documentation, verified routes, cleanup) remain.",
+      "evidence": [
+        {
+          "resource": "repo://.omx/plans/174.3-complete-accessibility-responsive-theme-and-visual-verification.md#L39-L60",
+          "version": "repo-lines-v1:sha256:1b69437403b64a11de1f4b5abb8398252d3360b26e5d9dc5e3c5a97fea4f8520:eyJzZWxlY3RlZExpbmVDb3VudCI6MjIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImE0MTU0ODk4ODUzYWY0NWU1ZDc4NWU2NDA1MGQ1Zjc0MmE1NzNiYTQyYWI3MTU2NTBhMzQ3YzJjMGZkN2UyMGMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImU1ODE3NWYwMTk5OGJmYTM3MGU1N2FkNTYwYTE3MTEyZDg2N2ZhMWNkZDc0MTY2MTllZDNhZmI3OTZhZGM3ZGIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjQ1MmJhYzRkOWViZjY2OWVhZTJiMjQzYTNiYzg2NjhlODZlZWYxMWUyMDdlMzNjNmJjNDQ3NzViNmRkMjU3NGEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjVlY2FiY2I2NzA0M2FiOWRlMGYyOTBlZTViZjliMTBkZThmMDc4MDU0YTBhMTNkY2M1YWQwZTI4YTI1MWQwNGMifQ"
+        },
+        {
+          "resource": "repo://_bmad-output/implementation-artifacts/174-1-fe-prove-bmad-route-ledger-and-omx-plan-parity.md#L1-L5",
+          "version": "repo-lines-v1:sha256:f69a2c53efe6258dab5c0c052c9543ae795a5af3997efb6426b5163caccc642b:eyJzZWxlY3RlZExpbmVDb3VudCI6NSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMjAwNzhiMGMwYTcxY2ZiZTJlM2Y4ZGYwYmJhMzczMmViMDdjM2ZjYzNiZWE3MjA1MmZkYmU2YzlkNWViNGZhYSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiYmU2NmFlM2E3ZWQyZDIwYmYxYzEzMDZjZWNkYWNmY2NjZDFkYzE4ZDVlZGVhYjg5NGFlNDBiNTA4MDVmZjRhOSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjAsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZTNiMGM0NDI5OGZjMWMxNDlhZmJmNGM4OTk2ZmI5MjQyN2FlNDFlNDY0OWI5MzRjYTQ5NTk5MWI3ODUyYjg1NSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNDk1NjdiMzFiZDYzNzIzYWU3Mjk5OTIxNWVmMzZkN2I5YjQxNTgwZmYwZjg2ODczYmUxZGRkOWM1Y2JhMTM1NiJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_192e99deb34345ac82b23b40ad2a65b6",
+      "statement": "Story 174.1's validator scripts/check-shadcn-migration-parity.mjs proves schema-v3 parity (94 BMAD stories = 94 OMX plans, 76 source routes = 76 ledger rows = 76 unique route-owning stories = 76 unique linked implementation artifacts), runs a 33-test deterministic node:test mutation suite, and intentionally did not flip ledger rows to verified — Story 174.5 owns those transitions, so all 76 route-ledger rows remain planned.",
+      "evidence": [
+        {
+          "resource": "repo://_bmad-output/implementation-artifacts/174-1-fe-prove-bmad-route-ledger-and-omx-plan-parity.md",
+          "version": "repo-file-v1:sha256:342875eae07faa6521dc46ded311a11e4c1886e09f57008520602f915fadb3fa"
+        }
+      ]
+    },
+    {
+      "id": "claim_40680ad34c7f4a82b1c8e3b266b4a0a1",
+      "statement": "Story 174.2's scripts/check-shadcn-ui-boundary.mjs is a node-stdlib-only scanner over production src/**/*.{ts,tsx} detecting the LEGACY_PALETTE regex and CONTEXTUAL_HEX canon, with a ratchet baseline of 523 counted violations at scripts/.shadcn-ui-boundary-baseline.txt (exit 0 at or below, fail only on increase) and 24 suppressed matches in 4 files via BOUNDARY_EXCEPTIONS.",
+      "evidence": [
+        {
+          "resource": "repo://scripts/check-shadcn-ui-boundary.mjs",
+          "version": "repo-file-v1:sha256:292dbdb4aaae3544e325b3a70c80b7c4cf703e995a56934dd3c62f6423c9ff36"
+        }
+      ]
+    },
+    {
+      "id": "claim_f0d76ac4690f43ffba7b05ef422dd851",
+      "statement": "Story 174.3 executes the complete 76-route inclusive visual matrix over the canonical twelve-state ledger taxonomy (default/loading/refresh/empty/filtered-empty/error/stale/partial/permission/pending/partial-success/not-found) across light and dark themes, six widths (320/390/768/1024/1280/1440), reduced motion, axe WCAG 2 A/AA/2.2 AA at 390px and 1280px, keyboard/focus paths, reading/heading order, and non-color data meaning.",
+      "evidence": [
+        {
+          "resource": "repo://.omx/plans/174.3-complete-accessibility-responsive-theme-and-visual-verification.md#L110-L128",
+          "version": "repo-lines-v1:sha256:bfd0707d005d69cb0794693fc4e983f0239105366ba08b91a0fccf3dd90988ad:eyJzZWxlY3RlZExpbmVDb3VudCI6MTksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImRhZjllNjllNmQ3MzRiMDhmN2NkOTQ0ZDQ0MjIxMTMyMTM5ZTMyM2RjMTdkZjQzOTFiZjU3MjI3OTA0ZjU1ZTIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImVmNTM2MTI3OWVlZGQ4NDA2YTk0YTY3ZmE5NjMyYzc5MmUwYWQxOGQ1ZGEyNWRhYzA3M2I5ZDEwYTU3N2Y0ODAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImM2MjYxNzkyNjViMzkwNzJiMmE5YjE2Zjc0MzgzZTJjNDMzZGRiYzA0ZWU2ZTNlNWIzMDljOTZhYmQ4ZWRhZDIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjE1M2I2ZjcxZjkxNzM5ZTE3ZGFiZTg3NzlmZDhlNmE1OGZlNmZjOGFlNzdmY2Q2MGRiOTg5ZWUxNGRlYzExNjgifQ"
+        },
+        {
+          "resource": "repo://_bmad-output/implementation-artifacts/174-3-fe-complete-accessibility-responsive-theme-and-visual-verification.md#L238-L244",
+          "version": "repo-lines-v1:sha256:1a2f95949ea2fc551dedf6941aedc135260fe59546dc7fc135a0f1e5a42fdf5f:eyJzZWxlY3RlZExpbmVDb3VudCI6NywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZGU4MDc0NzNkZTFmYTRjZjk1ZDA0MGZjYWJmMWJiZDdmN2NlYzk5ZTZjZWYwZTZhNjIxYjRmYmE2ZDlmMjI1MSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiYjY1NTkwZmNiMGJkMjZlY2UyZGYzNWExNzhjZDgyM2IzNGU4YWYzMWJhMmY0NGU2YTY0NGIzZTY4ZDU4OWI1YSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNDRhYmEzMzY1MjFiYTgxY2UxNjg4YmU2N2M0YjhjZThmNjViYTIyNWRlZjRkMjZiNWMyMTJjYjhkYWI5ZWQzNCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNmVhMjkwYTAzYWQxNzk4NjYyNWNmMWJlM2E0ZjUwY2YwNGQwNDgzOGE3NmY2ODFhMzg1NzJlMjg0OTcxMmNiMiJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_95052c9a5f514c6ba553dfca95a190c6",
+      "statement": "Story 174.3 is blocked behind a three-review remediation gate: after commit 82465fbf received three independent REQUEST CHANGES/REJECT verdicts, merge and cleanup are blocked until every accepted finding is repaired, validation is regenerated, and three fresh independent reviewers return APPROVE on the same unchanged final commit SHA with zero unresolved P0–P2 and no material P3; any content change invalidates all approvals and restarts the gate.",
+      "evidence": [
+        {
+          "resource": "repo://.omx/plans/174.3-complete-accessibility-responsive-theme-and-visual-verification.md#L25-L37",
+          "version": "repo-lines-v1:sha256:5ce9c7e68f9961ef46ac8ff77bfd7e94777d0bc0379d026e8261090aaec38353:eyJzZWxlY3RlZExpbmVDb3VudCI6MTMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjU0YTEzZTI0ZmMxZGE0YjUwZjQwNTIwNGY5OWU4MzY2ZjI1ODE5OWRkNzVhNWZlMjMyMjEyNmMzOGIwNTM4Y2EiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImM5MGMxMWMzMjY4MzFjZTc1ZGMwN2JlYTRjZWVhZTk5Y2RhMGUzMzAxYjIxNjdiZTIxN2FlZTUwOTFkMzRmOTYiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImMyZjI3YmUyNjliNzU4NjQ0ZWQ0Y2Y3NmJjZTY2ZWMxNWU1ZmYzNDRiZjVmYmQyZjk4NGY3YjczYmZiOTNiYTciLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImIxMDUwN2ZjYjVjODFlODVlNTgyYWQ4MDI5OGIzYWM5Y2Y4MGZjZTM1ZjcyN2E1ZGY3MDEyM2M0ZDRmMmZmNmEifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_2cba7c0b1e28434582e6c757130b24cb",
+      "statement": "The generated register _bmad-output/implementation-artifacts/174-3-expanded-scope-register.md (produced by scripts/generate-story-174-3-scope-register.mjs from the origin/main comparison plus current story files, regenerated before freeze) is the current file-level coordination authority for the 174.3 remediation, superseding the historical three-file bootstrap; it enumerates 424 files in coordination classes led by route-owner-remediation (335 files) and story-evidence (46 files).",
+      "evidence": [
+        {
+          "resource": "repo://_bmad-output/implementation-artifacts/174-3-expanded-scope-register.md#L1-L27",
+          "version": "repo-lines-v1:sha256:36fe96032c0f07e88eadea062a5a3158c9a7fe19be12633696505a366e1f7d10:eyJzZWxlY3RlZExpbmVDb3VudCI6MjcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjgyNDE3YWEzNmZhYjkxNTk4MjRkMmIzZjYwMGNlZTczNzIyZWYxNGZlNzUxMDMyZWM0ZGNkMDkzMWI3ZjdlNWIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImZmOWViYjhkOTVlOGJlZTZlYzY4ZjczMTg0ZjUxZGE2MThlOTEzZThjMGI5Y2VjNWU5NzY2ZTc0NzAzYzUzOTYiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjowLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjhiNjM5NmI1ZDkzMGQzMjYzZjk5NWY5MmQ2NmM4OWE4OGFkMTY4MWI0ODIzNDAxODdhMWNhMTVkYWU4MzllOTMifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_e8cc16c476e64dc68200579149936bf7",
+      "statement": "The 174.3 execution-manifest indexer (indexStory1743ExecutionManifest in e2e/fixtures/story-174-3/execution-manifest.ts) keys results by (source, scenarioId) and fails closed on missing entries, stale source SHA-256 hashes, runner mismatches, non-passed results or non-zero exit codes, and incomplete runner metadata; with requireExactSet it also rejects every surplus entry, enforcing exact key-set equality with the canonical execution union for merge readiness.",
+      "evidence": [
+        {
+          "resource": "repo://e2e/fixtures/story-174-3/execution-manifest.ts#L38-L108",
+          "version": "repo-lines-v1:sha256:b2e2e114ae9130205e4341ab2e05e4d15bf473f05c494e91311f4b28459816f7:eyJzZWxlY3RlZExpbmVDb3VudCI6NzEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjBjMWJjNDk2Yjc0Y2YzYTQzMjgzMDE2ODhmNmJjYTVlYTNmMDlkZjYxZjg3OThiYjEyZWMyZjYwZTc1MTI1MGEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImViMDgzYzQ4YWIyMGJkNWE5M2U0MzEyZGI1ODUzYTgyYTRmMzJmNjVlOWYwZGFkZDdjMDA2ZTA5MWU0MmQ2NzYiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImM5MmQ5NGE3OTZkZmZhM2NlMTk2N2Q5Y2I1NGM2NmFjNTE0NjQ0ZWQzY2NlMWZiNDI0MTY1ZGZhZWJkZmU2ZWMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImU4OTg5ZTc5MTgyNWEyNTczZGY3MWYwOTU3YmE3ZTM3YjllOTI0MWExMzJkYWZlMjY2N2U0MzNhMzAxYzE2MDUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_f909dd8db1fc41ecaad91b0689f2222e",
+      "statement": "The shared manifest reader scripts/lib/story-174-3-manifest.mjs permits an empty manifest only for a true ENOENT and otherwise rejects malformed JSON, unsupported schema, missing runtime metadata, duplicate entries, and malformed fields — requiring a 64-hex sourceSha256, supported vitest/playwright runner, supported passed/failed/skipped result, integer exitCode, valid ISO timestamps, and non-negative durationMs per entry.",
+      "evidence": [
+        {
+          "resource": "repo://scripts/lib/story-174-3-manifest.mjs#L25-L88",
+          "version": "repo-lines-v1:sha256:a06007e360e618780943a7d92b9df6e39dd6762767e32a4bf9359b6379fcbdc7:eyJzZWxlY3RlZExpbmVDb3VudCI6NjQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImViYmMyNGM4Y2E5NzE4ZGZlMDUxZjE1ZmQxNDdjYmQ2M2JkMTU4MjM4MWUxMzA2ZjkyMDdhODNmYTY2MTI1YzYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImZiNTgwZTk2NGY4M2E0NzNmNDNkNDQzODQ2Mjk0OWQ2OGI1NjAwZmRhNzg3ZjE2Mzc0NWQwMGRlODljYmYzNmEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_4061a6ed02224e658c7f520c06451e27",
+      "statement": "scripts/lib/story-174-3-execution-requirements.mjs derives the exact required-execution set by parsing the owner declaration fixtures with the TypeScript compiler, accepting only literal source/scenarioId/runner arguments in bind/binding/scenario helper calls, rejecting conflicting runners, and pinning each entry to a SHA-256 of its current source file so the committed manifest cannot go stale silently.",
+      "evidence": [
+        {
+          "resource": "repo://scripts/lib/story-174-3-execution-requirements.mjs#L6-L60",
+          "version": "repo-lines-v1:sha256:0b2df8ceb30e9079e71f8885e842c3f0a142b741c1b7011e317915041e52a96e:eyJzZWxlY3RlZExpbmVDb3VudCI6NTUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjI3NzUzNzg3YjQwY2NjNmEzZWZjYjExYzk2M2M0N2RhYTc3OGZiMWFkMjA4MDczM2IxZmJmM2NiNDBlZmVjYTEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjI3ZTU3ODhkNWQ5ZDczZDI0YTgxZGJjMGE1YTc0YmZhODJjOWMzYjNhZjk5ZTUyYWY3OTZlOTBiNDY4YThhM2QiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjNiMmI2Y2ZmYjBhNjM1MjBjNmVlMDIxMTc2NDA4ZTEwMzgwNzdhOTA5MmQ1MDgzMGY3MzYzMjBiMGFkNGYzMmMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImQ1NmJlMjY0MTRjYzg3ODcwZTM1YWE2MTllMWQ3MDc3ZTNlNzI2MmFjMjg2MDI0MzI5NjU5YWU3YTQ0YzE5NTIifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_60d5d608571e40c3970c42b2f6269d98",
+      "statement": "Contract tests under src/test/story-174-3-*.test.ts enforce the manifest-reader, state, surface, and manual-evidence contracts of the 174.3 pipeline: state-contract tests validate route/state dispositions, owner reconciliation, and merge-ready execution indexing; surface-contract tests validate 76 route surface contracts (overlays 83 executed/15 N/A, tables 42/21, charts 13/4, table/chart features 292 executed/331 N/A) with fail-closed conditional branches.",
+      "evidence": [
+        {
+          "resource": "repo://src/test/story-174-3-state-contract.test.ts#L1-L70",
+          "version": "repo-lines-v1:sha256:27815f2a40b5cb2726cbb79938e10e03a97c6d137154906b971c920dbea89f46:eyJzZWxlY3RlZExpbmVDb3VudCI6NzAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjFiOTE0ZWZhNWRlMjhlMTAzZjE5ZWUzMDcwNGE1YWQ3ZWU0ZTg5MGUxOTQ3MGU5YTg1OGEyNzJkNTc5MGI2ODAiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImU2NmIzZjE4YzQyYWZhYzc1OWVkMTEyZjgyMmU1YjFiMGJmNGI4MTBhODA3MGUwYTY4MGFmMGQ1ZWNjZGM2OTUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjowLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjFmZWU3ZjljZjRmYTdjZTM3MTcxNjY3MzM5MzNhNGVjOWRmYmE2NDIzMmEyYWU1ZDkzNmJlZjc3NzE2OGU1MDkifQ"
+        },
+        {
+          "resource": "repo://src/test/story-174-3-surface-contract.test.ts#L1-L25",
+          "version": "repo-lines-v1:sha256:755b17d2a907ab146acddba963bc6609b61811e96b9db4738fe1fd452577fecf:eyJzZWxlY3RlZExpbmVDb3VudCI6MjUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImQ4MmIzZjMzNDY2OGEyOGMxNmJlYThlNjQzMDdkM2JhMDYxY2YyNDM2YjlmODAwNWI0OTRjZmM2ZjMyOTFjNTkiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImUwNDNhNTc0ZDg4MDc1MWFlODg1ZjkzZDdlYzU3YTRjN2ZlYTAyMTVlODY2OTQ3NzIxZmRmNGNiZTcwYzNmZWQiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjowLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjVhNGFjNTBlNGIzYWNlZDFhZTBkYWI3NTExZDI3YWIzYzg3NjA4ZGQwZDBkMzc3MzQxMGU4MTljNWI2YjI2MWIifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_42e11096dc9a4d979c01d0103fc27deb",
+      "statement": "The 174.3 route/state evidence matrix materializes all 76 × 12 = 912 rows as 444 exact executed rows, 468 explicit route-specific not-applicable rows, and 0 blocked rows, plus 76 canonical Story-runner defaults, 318 owner-unit and 50 owner-browser executable rows; the former title-token fallback was deleted so absence of a substring can never become N/A and every declared executable scenario must resolve exactly once.",
+      "evidence": [
+        {
+          "resource": "repo://_bmad-output/implementation-artifacts/174-3-fe-complete-accessibility-responsive-theme-and-visual-verification.md#L101-L136",
+          "version": "repo-lines-v1:sha256:680532725de8e7f7beb1dbd1700eecbb057b57b42d196e1197a04b69ca307032:eyJzZWxlY3RlZExpbmVDb3VudCI6MzYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImJlNjYzNzc4MzIwZWNiODNkNmRkNTgwOGZjYTY3M2Y2ZTkwNTEzMDc5MjhkMDQxODA0ZmUxODczNDJlYzU2YzIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjIyOGI0MDgzYzZhYWQ0MGZlN2MxNzNlMjM1YzcxNDk4NDMxZDc0NWZkYTkyNzg3ZjIxZmVjYWM1MmYzNjkxY2IiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjU0ZjA1MGI0ZmM0MDE4MzI3YWM4ODJkNDliZGVjZWQ1NDNjMGM0NDA2ZTY3YjljYTQ5NDk2ZWI1NGY0YWVjYjciLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjE4ZGNiZjViY2NlY2RmOGM2OGFjODk0NTBkYTBiYTQzY2MzZGU4NzQ1ZjA0ODdlMDZlMGQ1NWVlMGZhNTdiMmMifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_1ef23c5b618940cc8846a45f6091cfa2",
+      "statement": "Story 174.3 evidence honesty rules: authenticated screenshots, videos, traces, ARIA snapshots, and raw attachments are prohibited (privacy-safe DOM/accessibility/geometry/computed-style data only, with auth/report/playwright-cli artifacts deleted after validation); true 200% zoom runs through real browser-UI shortcuts proving doubled DPR across all 76 routes × both themes; and unavailable real assistive-technology environments (VoiceOver/NVDA/JAWS/TalkBack) are recorded as explicit gaps, never relabeled as passes.",
+      "evidence": [
+        {
+          "resource": "repo://_bmad-output/implementation-artifacts/174-3-fe-complete-accessibility-responsive-theme-and-visual-verification.md#L238-L298",
+          "version": "repo-lines-v1:sha256:97bc31a4d9926be8cb4c399d363bd0df622b409106fa5b73144337bf6961844a:eyJzZWxlY3RlZExpbmVDb3VudCI6NjEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImRlODA3NDczZGUxZmE0Y2Y5NWQwNDBmY2FiZjFiYmQ3ZjdjZWM5OWU2Y2VmMGU2YTYyMWI0ZmJhNmQ5ZjIyNTEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFjODZkNTVmNmE4MWIwMjdjNDYxYjI0NWRhMmVhYzA2ZDM4MmNiNDg3MWEyYjkzOGEwMjVhM2FiNzY4OGRjYTYiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjQ0YWJhMzM2NTIxYmE4MWNlMTY4OGJlNjdjNGI4Y2U4ZjY1YmEyMjVkZWY0ZDI2YjVjMjEyY2I4ZGFiOWVkMzQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjM1YmVkNmZjY2QzMWI0NDQzNDIzZTA3NGIwZjg3MTRmZWRhYWI3YjU3OTc5NzAwMWJiODVkOTA3NmFhMjJmMWYifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_478c58c92586469a95126592e368c2e1",
+      "statement": "The final 174.3 exact-worktree validation ledger recorded the committed execution manifest at 770 passed entries (627 Vitest / 143 Playwright) with 0 failed, full Vitest 19,355/19,355 across 1,270 files, the canonical Story runner at 82 passed / 1 optional Manager skip, owner-browser regeneration 368 passed / 22 accepted skips, real 200% zoom for all 76 routes in both themes, and a 70/70-page production build — while the immutable pre-merge three-APPROVE gate remained pending.",
+      "evidence": [
+        {
+          "resource": "repo://_bmad-output/implementation-artifacts/174-3-fe-complete-accessibility-responsive-theme-and-visual-verification.md#L300-L333",
+          "version": "repo-lines-v1:sha256:047887df9ee0a3e875df6549c260a285a71c6f3f515b1572beacf2d2fd5ddd50:eyJzZWxlY3RlZExpbmVDb3VudCI6MzQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImU5NGE2MjhjYTdkYzBkMzNhMWM4MDlhY2E0ODc4YmVhMGIzNmI1MjMwNGViOGU0YWZiNDk2NDc5NTg2YTc2MGEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxNTA0NTk3NThiZGI4NDEzOTFjNzFiMDZiMDJjMzZiMTVkOTk3MDAxOTk1YTY5Y2E2ZmUwMjQ3ZTliNDcxY2QiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImVkYWY5ZWY3Y2QyYmU1Mjg4NDI3NDBlYzYzZjU5OTQ3ZjY0NDE4MjE4OWJhMTk1NzlkNDk2YzViNGYzOTc0ZTQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjJjYmYwOTA2NWQwMGJjOWY4YmZhNjg1NzgxMGVkMzQ3ZGEwYzhjNzZlZjlhYmViM2E3ZmZlY2Q3NjE4ZTM4YTYifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_b20a67ecad8e4abeb488bd5c946f0d4d",
+      "statement": "Per-story migration status lives in _bmad-output/implementation-artifacts/sprint-status.yaml (live history) and the consolidated snapshot _bmad-output/planning-artifacts/shadcn-migration-status-and-debt-registry.md; on drift, the repository is truth, corrected through a reviewable documentation lane.",
+      "evidence": [
+        {
+          "resource": "repo://_bmad-output/implementation-artifacts/sprint-status.yaml",
+          "version": "repo-file-v1:sha256:7243bc6484584ff81d783e58eec7ba04a8e27f927f96c660334d369c4586f6d4"
+        }
+      ]
+    },
+    {
+      "id": "claim_53a55c28360b4e968e65e0f94549237d",
+      "statement": "The 174.3 matrix discovered and remediated RED→GREEN product defects as coordinated owner repairs, including replacing invalid tr role=button semantics with named native buttons owning keyboard activation (pricing, elasticity, monitoring, supplies, top-products, top-brands), contrast fixes on the sidebar destructive badge and dashboard status strip, exact accessible table/chart names with screen-reader data alternatives, and rendering stable localized recovery copy instead of raw API-derived error text on finance-history failures.",
+      "evidence": [
+        {
+          "resource": "repo://_bmad-output/implementation-artifacts/174-3-fe-complete-accessibility-responsive-theme-and-visual-verification.md#L192-L234",
+          "version": "repo-lines-v1:sha256:dc49c7ad848ce537624399ba437e42ebb51d25414cb52d7e3c79f36491ec4565:eyJzZWxlY3RlZExpbmVDb3VudCI6NDMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImY5YmJiOWM2MGM1NDc4N2M3NzQ5YzFmNzAyMDlkMzRkM2I3NWVhNTU5NTAyY2FmODcwYTJiOTQ0MmIxZWMwNjQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjY1NWM2MDU0NmQ0NTExYWQ4OGNkMGU4OTMzN2MwYjdkZGEzYWU5NjA3YWM4OGRkMjkyYWZiN2RmMmRkMjRiYWUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImJmMmJlZjAyYWE3NzEyNzY4YmVhZjE0YTM4NTc4MTY4NDg2YzVhZjI3ZDI0OTFkNTI2NjdjMDc3YjJmNTk4YTQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQ0YWJhMzM2NTIxYmE4MWNlMTY4OGJlNjdjNGI4Y2U4ZjY1YmEyMjVkZWY0ZDI2YjVjMjEyY2I4ZGFiOWVkMzQifQ"
         }
       ]
     }
   ],
   "verification": {
     "by": "openwiki/0.4.3",
-    "at": "2026-08-31T08:47:49.410Z"
+    "at": "2026-09-01T08:47:48.765Z"
   }
 }

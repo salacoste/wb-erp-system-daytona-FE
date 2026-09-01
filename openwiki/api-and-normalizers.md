@@ -5,61 +5,11 @@ description: "API client singleton with auto-injected auth and cabinet headers, 
 tags: [api-client, boundary-normalizer, anti-pattern-8, paid-storage-import, csv-export, finances-documents]
 verified:
   - by: openwiki/0.4.3
-    at: 2026-08-29T08:47:45.377Z
+    at: 2026-09-01T08:47:48.765Z
 sources:
-  - id: openwiki-source-0356db40a2d778a419e19e0a
-    resource: repo://src/app/(dashboard)/analytics/storage/components/__tests__/useStorageImport.test.tsx
-  - id: openwiki-source-ae6882e559ce8d6bde21ce50
-    resource: repo://src/app/(dashboard)/analytics/storage/components/PaidStorageImportDialog.tsx
-  - id: openwiki-source-45a9dcc683e9a9e6307fd8d2
-    resource: repo://src/app/(dashboard)/analytics/storage/components/storage-import-utils.ts
-  - id: openwiki-source-5ad8136814fac3dc9c0f8c05
-    resource: repo://src/app/(dashboard)/analytics/storage/components/useStorageImport.ts
-  - id: openwiki-source-ce5d4c1220859931ae76637c
-    resource: repo://src/app/(dashboard)/finances/components/DocumentDownloadButton.tsx
-  - id: openwiki-source-29f10d92190f39fdb4590204
-    resource: repo://src/app/(dashboard)/finances/components/DocumentsBody.tsx
-  - id: openwiki-source-561c5f4bcf455a8137d695ec
-    resource: repo://src/app/(dashboard)/finances/components/DocumentsTable.tsx
-  - id: openwiki-source-12ba4095710245aaf19c50de
-    resource: repo://src/app/(dashboard)/finances/error.tsx
-  - id: openwiki-source-9e71a052a2764709de7ad2bc
-    resource: repo://src/app/(dashboard)/finances/page.tsx
-  - id: openwiki-source-1dbc17eca84b2a90af18cf92
-    resource: repo://src/hooks/useFinances-utils.ts
-  - id: openwiki-source-e614b549a49bca8f6a7f5930
-    resource: repo://src/hooks/useFinances.ts
-  - id: openwiki-source-c593501e17fac82698a1f2dd
-    resource: repo://src/hooks/useImportStatus.ts
   - id: openwiki-source-a7c7d558f70edbb3171b87ab
     resource: repo://src/lib/api-client.ts
-  - id: openwiki-source-799369765e8510490f4c8afb
-    resource: repo://src/lib/api/__tests__/advertising-analytics-normalizer.test.ts
-  - id: openwiki-source-3136b8e4d07052b039480489
-    resource: repo://src/lib/api/advertising-analytics-normalizer.ts
-  - id: openwiki-source-ef4632aa4600675d7d7f4061
-    resource: repo://src/lib/api/advertising-campaigns-normalizer.ts
-  - id: openwiki-source-1a6492e0029647deb3afad70
-    resource: repo://src/lib/api/search-analytics-item-normalizer.ts
-  - id: openwiki-source-56ba59b2a1b792b5b080168f
-    resource: repo://src/lib/api/search-position-trends-normalizer.ts
-  - id: openwiki-source-c15148050ee24bccad8866e5
-    resource: repo://src/lib/api/storage-analytics.ts
-  - id: openwiki-source-d5aaa919c05988e303391c6a
-    resource: repo://src/lib/api/storage-import-normalizer.ts
-  - id: openwiki-source-0a8f3c97ee393f0b1753cfb2
-    resource: repo://src/lib/csv/search-csv-export.ts
-  - id: openwiki-source-b9312fcbc31f54766055eb16
-    resource: repo://src/lib/finances/download-blob.ts
-  - id: openwiki-source-2a7d3923430c2d4ebc362db4
-    resource: repo://src/types/advertising-analytics/analytics.ts
-  - id: openwiki-source-7a5a7c57c8f80800c8bbafa3
-    resource: repo://src/types/search-analytics.ts
-  - id: openwiki-source-ad938ca2eb935c98c4827d9c
-    resource: repo://src/types/search-position-trends.ts
-  - id: openwiki-source-1a54b5e313512af1de402e65
-    resource: repo://src/types/storage-analytics-trends.ts
-generated: { by: "openwiki/0.4.3", at: "2026-08-29T08:47:45.377Z" }
+generated: { by: "openwiki/0.4.3", at: "2026-09-01T08:47:48.765Z" }
 ---
 # API Layer & Normalizers
 
@@ -219,6 +169,11 @@ Focused tests: `src/app/(dashboard)/analytics/storage/components/__tests__/useSt
 **Rule**: `?? 0` on nullable money/ratio fields lies about the data. Preserve `null`, render `—`. Counts and pagination still allow `?? 0`.
 
 This rule governs the report-derived **historical SPP** values (`spp_rub`, `spp_pct`) on the SKU analytics page: a missing value stays `null` and renders `—`, while an explicit `0` renders as `0 ₽` / `0%`. The `includeCogs` filter on `useMarginAnalyticsBySku` (`include_cogs` query param) gates whether the backend returns these fields at all, and lives in the TanStack Query key so enabled/disabled states produce separate requests and cache entries. See [Domain Logic — Historical SPP](domain-logic.md#historical-spp-report-derived-sales-participation).
+
+The consumer-side utilities apply the same semantics:
+
+- **`src/lib/efficiency-accessors.ts`** — accessor wrappers around `efficiencyConfig` (defined in `src/lib/efficiency-utils.ts`, the Story 33.4-FE status table with RU labels, Lucide icons, and Tailwind color tokens per status). `getEfficiencyConfig(status: string)` accepts a plain *string* precisely because `efficiency_status` is backend-provided: an out-of-union value (the F-39 enum-drift crash class) would make `efficiencyConfig[status]` undefined and throw on `.icon`/`.label`, so it falls back to the `'unknown'` config (F-47 — defense-in-depth on top of the authoritative normalizer guard). `getRoasColorClass` is the **canonical ROAS → inline-text-color mapping** (iter-119 resolved a three-way threshold divergence where ROAS=4 rendered green on the analytics page but yellow on the dashboard card); `roas` is a raw multiplier (4.2x, not a percent), bands mirror the config's documented tiers (≥5 excellent, ≥3 good, ≥2 moderate, ≥1 poor, else loss), and `null`/`NaN` map to muted so callers may pass an unguarded value. `isAttentionRequired`/`isLossStatus` are the typed predicate helpers referenced by the normalizer contract above.
+- **`src/lib/roi-profit-utils.ts`** — null-preserving ROI/profit formatters and FE fallback calculations: `formatROI` renders `null`/`undefined` as `—` (percent-units 0–100 scale, canonical ru-RU `formatPercentage`), `getROIRating` maps `null` → `—`, and `calculateROI`/`calculateProfitPerUnit` (used when the backend omits the field) return `null` on missing operands or a zero denominator rather than a fabricated 0 — the arithmetic counterpart of AP#8, not `?? 0`.
 
 **ESLint enforcement** (`eslint.config.js`): A `no-restricted-syntax` AST rule flags new violations. Pre-existing legitimate exceptions use allowlist comments with canonical pattern names:
 `BACKEND-CONTRACT-NON-NULL`, `SEMANTIC-ZERO`, `AGGREGATION-REDUCE`, `DISPLAY-GUARD`, `DEBUG-LOG`, `TEST-ASSERTION`.

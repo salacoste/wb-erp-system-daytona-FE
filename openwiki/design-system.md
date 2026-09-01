@@ -1,8 +1,8 @@
 ---
 type: "Design System"
 title: "Design System — Tailwind v4, shadcn primitives, product compositions"
-description: "The layered semantic design system: CSS-first Tailwind v4 token contract in src/styles/globals.css, hardened domain-agnostic shadcn/ui primitives in src/components/ui, six presentational product-composition families in src/components/product, the migrated domain composition families (settings, tariffs-admin, notifications, shipments), and the Epics 166-174 full UI migration program."
-tags: [design-system, tailwind, shadcn, accessibility, tokens]
+description: "The layered semantic design system: CSS-first Tailwind v4 token contract in src/styles/globals.css, hardened domain-agnostic shadcn/ui primitives in src/components/ui, six presentational product-composition families in src/components/product, the migrated domain composition families, the Epics 166-174 full UI migration program, and the Story 174.3 inclusive visual contract (WCAG 2.2 AA, responsive chart/table frames, both themes, keyboard/focus, real-browser zoom) with its e2e surface-inventory evidence."
+tags: [design-system, tailwind, shadcn, accessibility, tokens, wcag, e2e]
 openwiki:
   roles: [architecture, domain, testing]
   change_kinds: [public-api, lifecycle, design-tokens]
@@ -72,12 +72,68 @@ openwiki:
   validation_commands:
     - npx vitest run src/styles/__tests__ src/components/ui/__tests__ src/components/product
 sources:
+  - id: openwiki-source-963badef5db4ea717da0c93c
+    resource: repo://_bmad-output/planning-artifacts/ux-design-specification.md
+  - id: openwiki-source-61e0371a06d746820bb42371
+    resource: repo://.omx/plans/174.3-complete-accessibility-responsive-theme-and-visual-verification.md
+  - id: openwiki-source-18c74d6f5373cdfcebe82221
+    resource: repo://e2e/fixtures/story-174-3/chart-inventory.ts
+  - id: openwiki-source-f2a4582a0a553ed13286aad6
+    resource: repo://e2e/fixtures/story-174-3/surface-types.ts
+  - id: openwiki-source-12b500bd3220d46b1b5dfb12
+    resource: repo://e2e/shadcn-migration-visual-accessibility.spec.ts
+  - id: openwiki-source-e280fd304221d300f2b53f37
+    resource: repo://e2e/story-174-3-real-browser-zoom.spec.ts
+  - id: openwiki-source-ae4009ca38f56a2f1a8bafb8
+    resource: repo://e2e/support/story-174-3-runner-core.ts
+  - id: openwiki-source-a3d62f3da45e70a872c9b96b
+    resource: repo://e2e/support/story-174-3-runner-interactions.ts
+  - id: openwiki-source-7bebebc56a12d016856c32cc
+    resource: repo://scripts/__tests__/check-shadcn-ui-boundary.test.mjs
+  - id: openwiki-source-a6d59436db4440630eef1244
+    resource: repo://scripts/.shadcn-ui-boundary-baseline.txt
+  - id: openwiki-source-bdeb846005a65a32b569a6d3
+    resource: repo://scripts/check-shadcn-ui-boundary.mjs
+  - id: openwiki-source-fc1275a3ff92de7a48b4b19f
+    resource: repo://src/app/(dashboard)/analytics/unit-economics/components/__tests__/UnitEconomicsWaterfall.a11y.test.tsx
+  - id: openwiki-source-458ef90d4d7693892f440edf
+    resource: repo://src/components/custom/analytics/ResponsiveChartFrame.tsx
+  - id: openwiki-source-57350a34d4572096f5d7830f
+    resource: repo://src/components/custom/financial-summary/__tests__/FinancialSummaryTables.a11y.test.tsx
+  - id: openwiki-source-413c2c0aa79efc6da6d470af
+    resource: repo://src/components/custom/pnl-waterfall/__tests__/semantic-tokens.test.tsx
+  - id: openwiki-source-5fef53995cd8533694ed5234
+    resource: repo://src/components/custom/sku-financials/__tests__/ProfitabilityBadge.test.tsx
+  - id: openwiki-source-9a77cae6730eea6df8151a9c
+    resource: repo://src/components/product/charts/contracts.ts
+  - id: openwiki-source-f872fbbf2adde52ea05e48dc
+    resource: repo://src/components/product/ContextBar.tsx
+  - id: openwiki-source-d003b037bb165f51603f75da
+    resource: repo://src/components/product/index.ts
+  - id: openwiki-source-2be049b17b9163f30e0d31fc
+    resource: repo://src/components/product/metrics/presentation.ts
+  - id: openwiki-source-6b887945ce30972bbb3b6fba
+    resource: repo://src/components/product/PageHeader.tsx
+  - id: openwiki-source-161e419e35fc6d57c511f81f
+    resource: repo://src/components/product/states/contracts.ts
+  - id: openwiki-source-f1a5c7ada35c9423a1ce6543
+    resource: repo://src/components/product/tables/contracts.ts
+  - id: openwiki-source-be3d8c8eb12fa66f0ab8eced
+    resource: repo://src/components/ui/__tests__/primitive-behavior-contracts.test.tsx
+  - id: openwiki-source-f57a6b87f57d157e4a9dea9f
+    resource: repo://src/components/ui/__tests__/primitive-semantic-surfaces.test.tsx
+  - id: openwiki-source-0c69d1d8dea6f03a14c181e6
+    resource: repo://src/components/ui/slider.tsx
+  - id: openwiki-source-3ea42346a1ed3e09a300ee3f
+    resource: repo://src/styles/__tests__/globals-compiled-contrast.test.ts
+  - id: openwiki-source-dc178bdb1c72f55947395b2a
+    resource: repo://src/styles/__tests__/globals-token-contract.test.ts
   - id: openwiki-source-13697ff46e81b49dcb27ba68
     resource: repo://src/styles/globals.css
-generated: { by: "openwiki/0.4.3", at: "2026-08-31T08:47:49.410Z" }
+generated: { by: "openwiki/0.4.3", at: "2026-09-01T08:47:48.765Z" }
 verified:
   - by: openwiki/0.4.3
-    at: 2026-08-31T08:47:49.410Z
+    at: 2026-09-01T08:47:48.765Z
 ---
 
 # Design System
@@ -127,6 +183,8 @@ The JavaScript config was removed: `tailwind.config.ts` is deleted, `postcss.con
 - **Compatibility preserved**: existing exports, variants, portals, and compatibility props are unchanged — only presentation and a11y behavior moved.
 
 Four consumer test files (`OrderDetailsModal`, `GenerateStickersModal`, `OrderPickerDrawer`, `ScheduleVersionModal`) were updated for the shared Russian close label (`Закрыть`).
+
+Story 174.3 added one further primitive hardening exemplar: the `Slider` (`src/components/ui/slider.tsx`) forwards every caller-supplied ARIA attribute (`aria-label`, `aria-labelledby`, `aria-describedby`, `aria-valuetext`, `aria-valuenow/min/max`, `aria-invalid`, `aria-required`) from the Radix root down to the thumb — spread conditionally so absent attributes are not rendered — because Radix applies accessible semantics to the thumb, not the root. The thumb also carries `focus-visible:ring-2` with ring-offset and `motion-reduce:transition-none`, pinned by `primitive-behavior-contracts.test.tsx` (semantic focus treatment) and `primitive-semantic-surfaces.test.tsx` (semantic track/thumb surfaces).
 
 ### Primitive regression tests
 
@@ -295,7 +353,7 @@ The automation domain (gallery + list + editor), the full COGS domain (single + 
 
 **Epic 173 (settings, shipments, supplies — 13 stories) is CLOSED 13/13**. **173.1 settings shell and overview** (feature PR #328 + closeout PR #329) delivered a static settings overview plus the shared seven-route settings shell under `src/app/(dashboard)/settings/` (backfill, cabinet, expenses, notifications, tariffs, tax + overview) with role-aware restricted/current states — the shell renders role-gated restricted states rather than hiding routes — and carried a credentialed non-Owner visual gap to 174.3 (C18). The route wave then completed: **173.2 backfill** (truthful query/recovery states, dual-pipeline status, guarded pending trigger), **173.3 cabinet**, **173.4 expense** (native-valid amount semantics, pending-safe CRUD overlays), **173.5 notifications**, **173.6 tariffs**, and **173.7 tax** (inclusive manual-rate/supported-VAT validation, same-cabinet draft preservation with cross-cabinet isolation). **173.8 shipments list** (PRs #350/#351/#352) and **173.9 shipment detail** (PRs #353/#354/#355) shipped persistent PageHeader/PageState identity through loading/404/error/retained-partial states, the shared ShipmentStatusBadge, ResponsiveTable detail evidence, and pending/success/failure announcements for shipment, pallet, and box-line mutations. **173.10 shipment box types** (PRs #356/#357) and **173.11 SKU packaging** (PRs #359/#360) are described in Layer 4 above. **173.12 supplies list** (PR #361) and **173.13 supply detail** (PRs #365/#366/#367) closed the epic; the dead legacy twin `SUPPLY_STATUS_CONFIG` in `src/types/supplies/helpers.ts` was rerouted to 174.2 (types were outside 173.13 ownership) and deleted there.
 
-**Epic 174 (consolidation, 5 stories) is IN PROGRESS at 2/5**: **174.1** (ledger reconciliation — feature PR #369 + closeout PR #370 + lifecycle PR #371) proved the schema-v3 ledger 94 = 94 stories and 76 = 76 = 76 route/ledger rows with all linked artifacts unique. **174.2** (legacy-removal and design-system boundary — feature PR #372 on base `fbdab2da`) is summarized in the boundary section below. **NEXT = 174.3** accessibility/responsive/theme/visual verification — including the §3.3 tint-audit of all `text-status-*` on `bg-*/10` pairs without axe evidence; then **174.4** functional/backend (owner of the 13 pre-existing liquidity/monitor e2e failures) and **174.5** docs/cleanup.
+**Epic 174 (consolidation, 5 stories) is IN PROGRESS at 2/5**: **174.1** (ledger reconciliation — feature PR #369 + closeout PR #370 + lifecycle PR #371) proved the schema-v3 ledger 94 = 94 stories and 76 = 76 = 76 route/ledger rows with all linked artifacts unique. **174.2** (legacy-removal and design-system boundary — feature PR #372 on base `fbdab2da`) is summarized in the boundary section below. **NEXT = 174.3** accessibility/responsive/theme/visual verification — including the §3.3 tint-audit of all `text-status-*` on `bg-*/10` pairs without axe evidence; then **174.4** functional/backend (owner of the 13 pre-existing liquidity/monitor e2e failures) and **174.5** docs/cleanup. The 174.3 verification apparatus and inclusive visual contract it executes are documented in [the Story 174.3 section below](#the-story-1743-inclusive-visual-contract).
 
 ## Route presentation source-contract guards (Epics 169–171 canon)
 
@@ -336,6 +394,57 @@ The lib wave collapsed the legacy hue vocabulary onto semantic tokens rather tha
 - **WCAG solid pairs over tints for small text**: the CLOSED supply status uses the solid `bg-status-warning` + `text-status-warning-foreground` pair because its `/10` tint measured 4.06:1 at 12px (caught by e2e-axe, bisect-proven) — the compiled-contrast test is tint-blind, so any `text-status-*` on `bg-*/10` pair without axe evidence is queued for the 174.3 tint-audit.
 
 
+
+## The Story 174.3 inclusive visual contract
+
+Story 174.3 turns the design system's accessibility promises into executable, route-exhaustive evidence. The target is **WCAG 2.2 Level AA** for every migrated route (the PRD's WCAG 2.1 AA remains the minimum contract; 2.2 is the migration uplift), verified across **both themes**, the Story width matrix (390/…/1280/1440 CSS px), **reduced motion**, and a complete keyboard path. The contract is enforced by one consolidated Playwright matrix (`e2e/shadcn-migration-visual-accessibility.spec.ts`) plus a separate real-browser-zoom spec, both driven by typed fixture inventories under `e2e/fixtures/story-174-3/`.
+
+```mermaid
+flowchart TD
+  REG["Route evidence registry 76 routes"] --> MAT["Matrix spec per route and theme and width"]
+  REG --> SURF["Surface contracts table chart overlay"]
+  SURF --> INV["Inventories with source anchors"]
+  INV --> RUN["Runners core, interactions, surfaces"]
+  RUN --> MAT
+  RUN --> ZOOM["Real browser 200 percent zoom spec"]
+  MAT --> AXE["Axe wcag2a wcag2aa wcag22aa plus computed contrast"]
+  INV --> A11Y["Vitest a11y and semantic-token owner tests"]
+```
+
+*How the Story 174.3 evidence stack fits together: registry-driven Playwright matrix, fixture inventories with import-time anchor verification, and the vitest owner-test layer.*
+
+### Registry and self-verification
+
+`STORY_174_3_ROUTE_EVIDENCE` covers exactly **76 ledger routes**, each with a unique story/route/entry, a `routeIdentity` (static/materialized h1 or redirector), state evidence for the canonical lifecycle states, and a surface contract. The first matrix test is a meta-assertion: every route's surface contract is internally closed (table expectedCount == surfaces, same for charts and overlays), every chart's data-alternative association is one of `explicit-accessible-name` / `shared-complete-data-table`, every conditional surface records a `not-applicable-in-canonical-default` rationale naming its route plus an owner-test or canonical-trigger verification, and every executed state evidence row carries a SHA-256 of its cited test file plus a line number whose content contains the scenario id. Screenshots stay prohibited (`screenshotDisposition: 'privacy-safe-dom-equivalent'`); manual AT evidence is ledgered as `representative-browser-ledger-with-real-at-gaps`.
+
+The inventories self-verify at **import time**: `evidence(source, anchor)` in `e2e/fixtures/story-174-3/surface-types.ts` reads the cited production file and throws if it is missing or does not contain the anchor string (e.g. `aria-label="График динамики заказов FBS"` or a `<table id={...} className="sr-only" data-chart-summary>` mark), so the inventory cannot silently drift from the code. Feature dispositions are closed too: each table surface must assign exactly one disposition to all **8 table features** (caption-or-name, primary-identity-column, numeric-alignment-and-precision, sorting, selection-and-actions, pagination, virtualization, narrow-width-strategy) and each chart surface to all **7 chart features** (title, period-and-units, series-or-legend-meaning, tooltip-precision, responsive-containment, reduced-motion, exact-data-alternative) — `executed` (canonical runner), `owner-test`, or `not-applicable` with a rationale; duplicates or gaps throw.
+
+### Chart and table data surfaces
+
+- **Chart inventory** (`chart-inventory.ts`): every chart names its accessible name, its alternative surface (an sr-only `data-chart-summary` table or explicitly named summary), the required period/unit tokens («период:», «единицы:») and series tokens the alternative must contain, and the owner vitest test that pins exact tooltip precision/values. Charts without a period dimension record an N/A rationale instead of a fake one — the unit-economics waterfall is point-in-time cost composition, so `period-and-units` is not applicable. A chart may share one complete data table with sibling charts via `shared-complete-data-table` (selector must be an id, ≥2 sharing surfaces).
+- **Table inventory** (`table-inventory.ts`): each table names its accessible name (typically a `sr-only` `TableCaption`), its evidence anchor, executed features, and optional interaction owner tests (e.g. pricing opens the exact SKU row from its focused action button with Enter).
+- **Overlay inventory** (`overlay-inventory.ts`): each overlay is classified by archetype (`modal-dialog`, `modal-alert-dialog`, `modal-sheet`, `non-modal-popover`, `non-modal-menu`) with a trigger role/name and canonical behavior — open with `Enter`, close with `Escape`, executed by the canonical runner.
+
+The consolidated runner (`e2e/support/story-174-3-runner-surfaces.ts`) executes these contracts live: it polls until the route renders exactly the expected count of live (visible, non-sr-only, non-chart-alternative) tables and charts, then asserts pagination semantics (exact single-page terminal when both controls are disabled; keyboard `Enter` on a focused control changes page status or row data), and the chart/table framing asserted from the DOM.
+
+### Keyboard, focus, overlays, and themes
+
+`assertKeyboardFocus` (`story-174-3-runner-interactions.ts`) Tab-walks the route-owned interactive set (excluding header/nav/aside, devtools, and disabled controls) and requires that Tab produces a **visible** focus target with focus-specific computed styling (style snapshot differs after blur) and `:focus-visible`. Overlays are exercised at 390px in both themes: keyboard open (Enter **and** Space for the mobile navigation sheet) must move focus inside the dialog, contain forward and reverse Tab, keep geometry inside the 390px viewport, and `Escape` must close and restore focus to the exact trigger; non-modal popovers assert intentional focus (trigger or content) without a modal-trap claim. The per-route matrix loop asserts for every theme × width: exactly one visible `h1` preceding the first data surface (generic error/not-found shells rejected), no document overflow beyond +2px (with overflow-source diagnostics), reduced-motion media match, `color-scheme` matching the applied theme (localStorage `theme` + `.dark` class), and — at 390 and 1280 — **axe with tags `wcag2a`, `wcag2aa`, `wcag22aa`** plus computed-text contrast measured in-page (canvas-composited foreground over effective ancestor background, expecting 4.5:1 normal / 3:1 large-or-bold text).
+
+### Real-browser 200% zoom
+
+`e2e/story-174-3-real-browser-zoom.spec.ts` runs only through the headed macOS zoom orchestrator (`STORY_174_3_REAL_BROWSER_ZOOM=1` + ready file). It proves the evidence is **actual browser UI zoom, not a CSS-zoom proxy**: root `zoom` must stay `1|normal`, `devicePixelRatio` must at least double, and `innerWidth` must shrink accordingly. At that zoom, every one of the 76 routes must keep the document bounded (`scrollWidth ≤ clientWidth + 2`) with `main` fully inside the viewport, in both themes — the WCAG 1.4.10 reflow requirement executed rather than assumed.
+
+### The vitest a11y and semantic-token layer
+
+Below the e2e matrix sits a per-surface vitest layer, the `*.a11y.test.tsx` files across the analytics and dashboard components — e.g. `UnitEconomicsWaterfall.a11y.test.tsx` (exact percentage/currency units, categories, values, precision), `LiquidityDistributionChart`, `PricingFilters`, `SupplyPlanningControls`, `MoyskladHealthBadge`, `ReconciliationSection`, `DailyBreakdownChart`, `StorageTrendsChart`, and the financial-summary sections. These are the `tooltipOwnerTest`/`interactionOwnerTest` bindings cited by the inventories. Semantic-token honesty is additionally pinned by DOM-level tests using exact `classList.contains` matches (no substring false-passes):
+
+- `src/components/custom/pnl-waterfall/__tests__/semantic-tokens.test.tsx` pins `text-financial-positive`, the AA-contrast idiom (`bg-financial-positive/10` tint with **foreground** text), named help/formula tooltip buttons, and rejects the widened legacy-palette regex in the rendered DOM.
+- `src/components/custom/sku-financials/__tests__/ProfitabilityBadge.test.tsx` pins the `/15` chip idiom (`bg-financial-positive/15` + `text-foreground`; the canonical `-100,0 %` loss uses `bg-financial-negative/15` + `text-foreground` and explicitly **not** `text-financial-negative`), Russian-locale margin formatting, and the no-fabricated-zero fallback to the status label when `marginPct` is null.
+
+### Responsive chart frame
+
+`src/components/custom/analytics/ResponsiveChartFrame.tsx` is the shared positive-size wrapper for Recharts `ResponsiveContainer`: a `min-h-[240px]` (overridable) relative frame that prevents the width/height=-1 warnings when charts mount mid-layout, and couples sizing to semantics — when a `label` is supplied the frame takes `role="img"` with `aria-label` and `aria-describedby={descriptionId}` pointing at the exact semantic data alternative; without a label no image role is applied. Callers may override `role` and `min-height` without depending on wrapper internals.
 
 ## Remaining migration debt registry
 

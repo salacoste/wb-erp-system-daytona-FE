@@ -1,20 +1,250 @@
 {
   "schemaVersion": 1,
-  "pageVersion": "sha256:ab410c559303fb99c682fab65ea346c4034d26201680d8c4c6fbb8d99e2ab710",
+  "pageVersion": "sha256:cf84ddc044eab0cd1f9c2834b37a84ad29d36201b1da925d7a148ec389b23fef",
   "claims": [
     {
-      "id": "claim_71020c7a6f2f4b9480557ec3710c8984",
-      "statement": "test",
+      "id": "claim_633e3a28dfd14bdc90dc2ba40c9dfdd4",
+      "statement": "src/styles/globals.css is the single theme source of truth using Tailwind v4 CSS-first configuration: @import 'tailwindcss', @plugin 'tailwindcss-animate', a class-based dark custom-variant, an @theme inline block mapping utility colors to HSL CSS variables covering background/card/popover/brand/primary/destructive/financial/status/availability/telegram and the full chart role set, with light :root and .dark concrete values; tailwind.config.ts is deleted and components.json points at globals.css with cssVariables enabled.",
       "evidence": [
         {
           "resource": "repo://src/styles/globals.css",
           "version": "repo-file-v1:sha256:ee21bcd653ddbe582301d7ec45ab39fa776be3cc57e0afb9ff9450e0b7879b6e"
         }
       ]
+    },
+    {
+      "id": "claim_97752045dd374f1fa9c156d76602b424",
+      "statement": "The token layer is regression-tested by src/styles/__tests__/globals-token-contract.test.ts (every required semantic role declared and mapped) and globals-compiled-contrast.test.ts (real PostCSS-compiled output resolves to concrete colors and foreground/background pairs meet WCAG contrast in both themes), which is why token edits additionally require npm run build.",
+      "evidence": [
+        {
+          "resource": "repo://src/styles/__tests__/globals-compiled-contrast.test.ts",
+          "version": "repo-file-v1:sha256:e51019a1057cdd658ef37177ad7cf923541d50147a9715dece3d2c0e84e6c80a"
+        },
+        {
+          "resource": "repo://src/styles/__tests__/globals-token-contract.test.ts",
+          "version": "repo-file-v1:sha256:418437bdd87bc7c58a1b9b20a075988abc9558e218342acc3cd9c63b0cdaf86e"
+        },
+        {
+          "resource": "repo://src/styles/globals.css",
+          "version": "repo-file-v1:sha256:ee21bcd653ddbe582301d7ec45ab39fa776be3cc57e0afb9ff9450e0b7879b6e"
+        }
+      ]
+    },
+    {
+      "id": "claim_2c1eb25e17554fe59e3d2488cc246292",
+      "statement": "src/components/ui/** primitives are domain-agnostic shadcn/Radix wrappers that render only semantic-token surfaces with no hardcoded or light-only palette values, hardened a11y (Select focus return, Progress forwarding zero, ≥44×44 native localized close controls, min-[20rem] title space, semantic invalid states, named table scrollers, motion-reduce variants) while preserving all existing exports, variants, portals, and compatibility props; pinned by primitive-behavior-contracts.test.tsx and primitive-semantic-surfaces.test.tsx.",
+      "evidence": [
+        {
+          "resource": "repo://src/components/ui/__tests__/primitive-behavior-contracts.test.tsx",
+          "version": "repo-file-v1:sha256:606061057169768cb1a778cec1346c42165af17ca4931998614da39a75a2c24f"
+        },
+        {
+          "resource": "repo://src/components/ui/__tests__/primitive-semantic-surfaces.test.tsx",
+          "version": "repo-file-v1:sha256:504edd58713a9e9a2b4da4d820619d97d38c499b02ca16a089fc5e2bae328495"
+        }
+      ]
+    },
+    {
+      "id": "claim_7cd197531ec94bce8535891ca9bc2031",
+      "statement": "The ui Slider forwards caller ARIA attributes (aria-label, aria-labelledby, aria-describedby, aria-valuetext, aria-valuenow/min/max, aria-invalid, aria-required) from the Radix root down to the thumb — conditionally so absent attributes are not rendered — with a semantic focus-visible ring and motion-reduce:transition-none on the thumb.",
+      "evidence": [
+        {
+          "resource": "repo://src/components/ui/__tests__/primitive-behavior-contracts.test.tsx#L187-L188",
+          "version": "repo-lines-v1:sha256:218c40614156c3b823b2eb1d84535d0c59fc21f0e5396b5485460a00affdd120:eyJzZWxlY3RlZExpbmVDb3VudCI6MiwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiYzQyMzg5ZGVjZTQwMDg3MTUyNTg2Y2I0NDFkNDU2ZWRhMDdiNzZhMmI4Yzk5NDgxN2JmYzA5OTBiNjc3YTJiYiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNmVmMTFmOWYyZWJmZTAyNjhiZGZmMTg5Nzc0OGY3NDJiM2IxMTRmM2U5NzMzODMyZGFkZWMxODdhYmFiYmExZSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNmU0NzI1OTNlYjVjMjAyOTYxNTQ2MzNkZTczNDM3YmY0NzVkNmY0ZmEwZTRiNzcwMDY3YzNiNDMwZjAwZDcxMiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiODJjOTYxYTcwNTUyN2Y5MjI1NzNhZWJjYWY1MjczMDZiODhhYTNlNjM3OTI3YzYxYTZiOTllNzI4YjdiNzk0ZSJ9"
+        },
+        {
+          "resource": "repo://src/components/ui/slider.tsx#L8-L52",
+          "version": "repo-lines-v1:sha256:261f6d47cc1b235c9501dae536cd0097a45cd91739a70c61b7f00cbfef39efb6:eyJzZWxlY3RlZExpbmVDb3VudCI6NDUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjJlNWU2ZTdjMTE0ZGRkZTU2MDk5MTJmMWI0MzQ0NWNiZDJhMTZiNTlhZjQ5OTdlMjA3OWEwZmI0OWZjZDdiYzUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjFmYzAxZTBlZTgxZjkwZTQ1MmEyMWY3YTJjNmU0MWZhMDkxNmNiOTRmNmVmMmMwZjZiNWFkYmZkZWYwZmNjZTIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjcxNzExNDU5YTNjM2FiNWQ1YjFiMjg0NDcxOGI3NGM1Yjc4ZDE1N2Q5MDdhM2ViMDdhOWE2ZWE0OGI5OTJmNDMifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_b0c8c6980fd24664beced50c929791a5",
+      "statement": "src/components/product/** are presentational, route-supplied composition families (page context, metrics, filters, tables, charts, states) that own no URL/search/debounce/persistence/query/API/store logic; each family ships a source-contract test with an explicit Story-owned manifest rejecting route/API/hook/query/store/raw-palette ownership, and the product root barrel re-exports only page-context, metrics, and filters while tables/charts/states are consumed via their subtree barrels.",
+      "evidence": [
+        {
+          "resource": "repo://src/components/product/charts/contracts.ts",
+          "version": "repo-file-v1:sha256:879ddeaa7dafb5024d5fc19812bead3a6471f51b17a30f6855143feb3bae6e21"
+        },
+        {
+          "resource": "repo://src/components/product/index.ts",
+          "version": "repo-file-v1:sha256:44c71eb66fae258ebe030c3cab2adcbf9191239efd1d71a8ebecd59a330994d0"
+        },
+        {
+          "resource": "repo://src/components/product/states/contracts.ts",
+          "version": "repo-file-v1:sha256:fd7f3786ba7e03a78d1874e84f8637ecaf3dfd3102a17f3cfcfcb2b42da78044"
+        },
+        {
+          "resource": "repo://src/components/product/tables/contracts.ts",
+          "version": "repo-file-v1:sha256:3a16cba9d232d572f8ec8cc166babddd5d3b6bc10ad3f27a892428f7d4c3380b"
+        }
+      ]
+    },
+    {
+      "id": "claim_48a85fb0d6644748918a11d2c6165fa8",
+      "statement": "Product composition honesty invariants: PageHeader renders exactly one logical h1; ContextBar and availability/status presentations convey semantic state as localized text never color alone; zero and missing stay distinct (nullish/non-finite metric input never becomes a fabricated zero; terminal PageState/chart states never fabricate retained content); compact FinancialValue display requires a caller-supplied fullValue so the full value is accessible without a tooltip.",
+      "evidence": [
+        {
+          "resource": "repo://src/components/product/ContextBar.tsx",
+          "version": "repo-file-v1:sha256:8c5d8917c652a2b5562f64686dfd56bb888f0695dee17091db5d02d2ee2ad00d"
+        },
+        {
+          "resource": "repo://src/components/product/PageHeader.tsx",
+          "version": "repo-file-v1:sha256:1b97b8ccc127883b8430db22e41e2de30b2fe48af7bc229b90dc7ea50d626dae"
+        },
+        {
+          "resource": "repo://src/components/product/charts/contracts.ts",
+          "version": "repo-file-v1:sha256:879ddeaa7dafb5024d5fc19812bead3a6471f51b17a30f6855143feb3bae6e21"
+        },
+        {
+          "resource": "repo://src/components/product/metrics/presentation.ts",
+          "version": "repo-file-v1:sha256:7a0d4195f0fe1aab898f0d7273048729bf26bfe71af98274ea8049af7193ba2e"
+        },
+        {
+          "resource": "repo://src/components/product/states/contracts.ts",
+          "version": "repo-file-v1:sha256:fd7f3786ba7e03a78d1874e84f8637ecaf3dfd3102a17f3cfcfcb2b42da78044"
+        }
+      ]
+    },
+    {
+      "id": "claim_12cb3fbbcc314d0f97169faa64a63920",
+      "statement": "Story 174.2 enforces a repository-wide design-system boundary: scripts/check-shadcn-ui-boundary.mjs (Node stdlib) scans all production src/**/*.{ts,tsx} for LEGACY_PALETTE and CONTEXTUAL_HEX patterns and ratchets against scripts/.shadcn-ui-boundary-baseline.txt (523), exiting 0 at-or-below the baseline and 1 only on increase; suppression requires a BOUNDARY_EXCEPTIONS entry with an owner/debt ID mirrored in the classification manifest, and the scanner has a 10-case self-test suite.",
+      "evidence": [
+        {
+          "resource": "repo://scripts/.shadcn-ui-boundary-baseline.txt",
+          "version": "repo-file-v1:sha256:308674fe33ad5aa848f48d336f6079c2b668de53a3108da4359ee5a0a2a771e5"
+        },
+        {
+          "resource": "repo://scripts/__tests__/check-shadcn-ui-boundary.test.mjs",
+          "version": "repo-file-v1:sha256:f7867bdf4341bc8b2f3ae0b8956c815fc885498a84517468d56c3b316cbe1679"
+        },
+        {
+          "resource": "repo://scripts/check-shadcn-ui-boundary.mjs",
+          "version": "repo-file-v1:sha256:292dbdb4aaae3544e325b3a70c80b7c4cf703e995a56934dd3c62f6423c9ff36"
+        }
+      ]
+    },
+    {
+      "id": "claim_57bc2566adbd42af8e77d036bf34af3d",
+      "statement": "The design system targets WCAG 2.2 Level AA for all migrated surfaces (the PRD's WCAG 2.1 AA is the minimum), defined in _bmad-output/planning-artifacts/ux-design-specification.md and repeated as the story accessibility contract across all Epic 166–174 story plans.",
+      "evidence": [
+        {
+          "resource": "repo://.omx/plans/174.3-complete-accessibility-responsive-theme-and-visual-verification.md#L167-L167",
+          "version": "repo-lines-v1:sha256:6c7431c470fef94eab1af8bd246fe47e451bd617c339d67e2e2085bf6e1722a5:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNmM3NDMxYzQ3MGZlZjk0ZWFiMWFmOGJkMjQ2ZmU0N2U0NTFiZDYxN2MzMzlkNjdlMmUyMDg1YmY2ZTE3MjJhNSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNmM3NDMxYzQ3MGZlZjk0ZWFiMWFmOGJkMjQ2ZmU0N2U0NTFiZDYxN2MzMzlkNjdlMmUyMDg1YmY2ZTE3MjJhNSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZTZiZTE0ZmYwOTBiMTY4NTc5ZjQ2NjY5ZmRkNmM4YTdjM2ViOWM5Y2RjODUzZTdmYWJmOGQwYzIxMzQ5ZTA0YiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNTZmNTJlMTY2MGFhMWUzYjkwZTc2YmM3OGQ4YjkyNDc2YzlhM2E5YTljNjI1Y2EwYmUzNmI0N2U2MDA4YTBlZiJ9"
+        },
+        {
+          "resource": "repo://_bmad-output/planning-artifacts/ux-design-specification.md#L2062-L2062",
+          "version": "repo-lines-v1:sha256:56b58f008588f0a7dcc813ef14590965e38c99d65291aeadd2457a6529714817:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNTZiNThmMDA4NTg4ZjBhN2RjYzgxM2VmMTQ1OTA5NjVlMzhjOTlkNjUyOTFhZWFkZDI0NTdhNjUyOTcxNDgxNyIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNTZiNThmMDA4NTg4ZjBhN2RjYzgxM2VmMTQ1OTA5NjVlMzhjOTlkNjUyOTFhZWFkZDI0NTdhNjUyOTcxNDgxNyIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiYzQ5NWZmMzBjZTZhMmE4MTk0MzYzNTExZjU4OWQ2OGUyZTIwNDVkMGZlZjk2MDE3N2I2MzJkMWM4YTNlODJkYiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMzQzMGNhMWJiYmFmZTljODYxYmJjZDQyM2RlM2UyNTZmYTRmOTliMzU5MTliOWJiYTM3ZjQyNTE3YzU2NzNmYyJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_ba8f17d6937a481db0593e1384ce7d45",
+      "statement": "Story 174.3 executes an inclusive visual contract via e2e/shadcn-migration-visual-accessibility.spec.ts over exactly 76 ledger routes: for every theme × width it asserts exactly one visible route h1 preceding the first data surface (generic error/not-found shells rejected), no document overflow beyond +2px, reduced-motion media match, color-scheme matching the applied theme, and at 390/1280 an AxeBuilder run with tags wcag2a, wcag2aa, wcag22aa plus in-page computed-text contrast (4.5:1 normal, 3:1 large/bold) measured by compositing foreground over effective ancestor background.",
+      "evidence": [
+        {
+          "resource": "repo://e2e/shadcn-migration-visual-accessibility.spec.ts#L253-L350",
+          "version": "repo-lines-v1:sha256:4f02ce668c009a4eac09543f756a110f0b0d6c3e9f4f477a3e229f8f3349fd62:eyJzZWxlY3RlZExpbmVDb3VudCI6OTgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImQxMjkwNzZjMzBmZDRjYzMzMzc4ZDY5ODI0Y2Q5NGVmNGE0ZWYzYjRmNjk3MjBjMDY1NWMyYzFkZjQwYTQ5NTUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjVhMTRhOTRjZTdkOGEzYjUyYjkzYzBiMWI2ZDIzYWZjMWQ0MDA5ZTY1N2JlNTJhMGY0ZjIwMGZkZGQzYzUzYjQiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImJhZDE3OGNjMzZiMmMyZDRiNmY5ZmY1OWY0Nzk0M2UzNDJhMzY3ZmU5YzVlMGY3Y2ExMzc1ZjA1NzM2MzZkZTIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjM3YmY1ZWNiYjRjOTYwNTJhNGViZmFmZDUxN2M2ZjY1NjIwOTA0YjdjZTRkNGYyNzBmMTk1ODFhMTI5YzBmZmQifQ"
+        },
+        {
+          "resource": "repo://e2e/support/story-174-3-runner-core.ts#L49-L163",
+          "version": "repo-lines-v1:sha256:f004b95e643a407c79689a15dcd551611e920e1e92d89febc0e4bc6712cf921e:eyJzZWxlY3RlZExpbmVDb3VudCI6MTE1LCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiIxMWI1ODVkNGNmMTQ2N2E5YjQwNDc5YThmNmYxMzkwZDgxZDAxNGNmZjg2Yzg4NjgyNzRkY2RhOTVkNjAxZGQ1IiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiI0MTJjYTM0NWNjZjc1YmY5YzA4MDZiY2U2OTViZThkZTgwOGI3OTk4NDI1MWE3YTU0ZDIwMmNmNjEwMWRkNDUxIiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiJkMjNjMDJhMmRkYmM4MWNmODdiNDVhYjZjMjY2MzcxMTgwYjUyZGM4N2EyZDMzMDExNTQ1MjBlOWFjNjllYTQxIiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MywiZm9sbG93aW5nQ29udGV4dEhhc2giOiI4ZGQwY2Y2ODU2YTYzZDllOTIzMWU5ODQ1ZDk3OWNhM2FkZmUxMTdhZDdkNTM0OTdmYzAwYTQzNWM0NTQwNmI3In0"
+        }
+      ]
+    },
+    {
+      "id": "claim_2cf1f538635d45d28d272b181d331b36",
+      "statement": "The 174.3 surface inventories self-verify at import time: evidence(source, anchor) in e2e/fixtures/story-174-3/surface-types.ts reads each cited production file and throws if missing or if the anchor string is absent, and the feature-disposition builder throws unless every table surface assigns exactly one disposition to all 8 table features and every chart surface to all 7 chart features.",
+      "evidence": [
+        {
+          "resource": "repo://e2e/fixtures/story-174-3/surface-types.ts#L153-L200",
+          "version": "repo-lines-v1:sha256:40de7ce8a0487b789b34bfd775610c5e11ecf5bc6136b9b484cfd94b3d200a5f:eyJzZWxlY3RlZExpbmVDb3VudCI6NDgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjdjMjI5OTQ4ZWFmZDY4ZDE5MzA4YWYwOTU2NzlkODRhMGY5ZWRjN2ViYTI2MjdmZjkzZjUxNjBiZGUxOTcwODAiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjI4ODJhMTg1YjlhNmRiMjY2ZDdjM2QzOTEyMTZkZWM2NjI0OGMxMmQwMjAzZTJlYzdmZTJlNTgwNmVhYjA2NDQiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImJkNDg5MjE4ZGNiNDZmZWE3ZWNmZmE3ZWVhMjFhN2Q3YTlkMmEyNGZmMDNjZDVmNTA0ZTlmZjU5NTEwZDI2YTciLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjM0MGM1ZDNkYzNhNzczMDc5M2M4OTI3OTQ4YjU1OTY2NDIwN2Y3OWJhODc3NzNjMjE1MDA0NDMxOTYyZmQ0ODgifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_758660af83154b65b4b7330d5f567fb6",
+      "statement": "Chart surfaces in the 174.3 inventory must declare an exact semantic data alternative — an sr-only data-chart-summary table or explicitly-named summary carrying required period/unit tokens and series tokens — plus the owner vitest test that pins exact tooltip units, precision, and values; charts lacking a period dimension (e.g. the unit-economics point-in-time waterfall) record a not-applicable rationale for period-and-units instead of faking one, and multiple charts may share one complete data table via the shared-complete-data-table association.",
+      "evidence": [
+        {
+          "resource": "repo://e2e/fixtures/story-174-3/chart-inventory.ts",
+          "version": "repo-file-v1:sha256:1844aba1a80c08a0d3979cc80c9267d638a2c33f88fde1d4f4591449956c6bc4"
+        },
+        {
+          "resource": "repo://e2e/fixtures/story-174-3/surface-types.ts#L115-L130",
+          "version": "repo-lines-v1:sha256:de0ecdf6906b0c9220ed8c406ec2c242895167ab497e06933aba8abea8bfb72a:eyJzZWxlY3RlZExpbmVDb3VudCI6MTYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjViZjVmZGU4MmI3NzdhY2E5ZGQ0YjAyNGYxZTg4NTQ4OWM1ZDU2MmM1NWM3YWRiZWIzOTFjZmRiNzEyNjAxNjciLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImZiNTgwZTk2NGY4M2E0NzNmNDNkNDQzODQ2Mjk0OWQ2OGI1NjAwZmRhNzg3ZjE2Mzc0NWQwMGRlODljYmYzNmEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjkxNDhjM2U4ZDBjNTQwNzE4MTY3YmYzN2FmZGJkNTIwODBiYWFjMTVlZThiYTQzNmM4ODkzNTNjZWFhMTc3NTIifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_fe5b3869665f4acaadcfd54f1fe0a46d",
+      "statement": "The 174.3 keyboard/focus runner Tab-walks route-owned interactive controls and requires a visible focus target with focus-specific computed styling and :focus-visible; overlays are verified at 390px in both themes — keyboard open (Enter, and Space for the mobile sheet) moves focus into the dialog, contains forward/reverse Tab, stays within the viewport, and Escape closes and restores focus to the exact trigger — while non-modal popovers assert intentional focus without a modal-trap claim.",
+      "evidence": [
+        {
+          "resource": "repo://e2e/shadcn-migration-visual-accessibility.spec.ts#L153-L251",
+          "version": "repo-lines-v1:sha256:1ed0b3b15fe21b495d8e29de69397bed4ba43b041755dc95037f926d1ed0f697:eyJzZWxlY3RlZExpbmVDb3VudCI6OTksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ1NzdlNTAzMzU5YWJlNjkzYmQxZjg2MGM4ODU0MDE5NjgzZTBmNGNmYzgzMTMyZThiMDI0Y2M0Yjg0YTM2ZmMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImIyMzUyNTg5YzM0ZDNjNjA2ODU5MzFiNmVjYzRkNTA5OTFhN2M1NmM4ZmJhMjg5NDExNDY1NzY5MDI3MmNhYzMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImJhZDE3OGNjMzZiMmMyZDRiNmY5ZmY1OWY0Nzk0M2UzNDJhMzY3ZmU5YzVlMGY3Y2ExMzc1ZjA1NzM2MzZkZTIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjJmNDBlZmE5NDVmMmU0NDBmMTcxZTY2MzEyNTJiM2ExZTExODcwOTFlZTFhYTVmZWY1NWYwMTIwN2E3OWI0N2MifQ"
+        },
+        {
+          "resource": "repo://e2e/support/story-174-3-runner-interactions.ts",
+          "version": "repo-file-v1:sha256:149373d36b21537272166542159ce6cdb55a53be4f11a5182c9ce1eaeff786a2"
+        }
+      ]
+    },
+    {
+      "id": "claim_a25d563114354d3c95946ed2c918f22f",
+      "statement": "200% zoom evidence is produced only by real browser UI zoom: e2e/story-174-3-real-browser-zoom.spec.ts runs solely through the headed macOS orchestrator (STORY_174_3_REAL_BROWSER_ZOOM=1 plus ready file), asserts root CSS zoom stays 1/normal, devicePixelRatio at least doubles and innerWidth shrinks accordingly, and then requires all 76 routes to keep the document bounded with main inside the viewport in both themes.",
+      "evidence": [
+        {
+          "resource": "repo://e2e/story-174-3-real-browser-zoom.spec.ts#L23-L100",
+          "version": "repo-lines-v1:sha256:2e94494b80324a83aeca922aaee27fd58e3733e3a393276d962e2836c5edf6f4:eyJzZWxlY3RlZExpbmVDb3VudCI6NzgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjFhYjM3YzVmYjFmMDVjZjhlMDFiMjBjZDFiMzcxOTIzYTI2NmQwOTRiZjFmN2Q4ZDU3ZmYwNDMwNWQ4NzIxZjgiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjU3OWM4NzVkODczMTQ1YzYzMjU5MzZlN2Q0ZGI1MjZkMDkzZjg1YjMyNmM4NDUzMGVjYjcwMWU5NjA1ZDZlOGQiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjhhZjI2YjExNDZhZTg2M2MxZjZkNjkwN2Y3MzcwMWE2MDFiODBhMGJlOWE4MjY1ODMyMWI1ZDFlNWYyMzMyZTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjExMmU0ODQ2NzI0ZDdjZTM5NjE4OWIxNThhYTk3MTY5ODFhN2Y4MDVhMDIzZTVhYjI2Y2ZiYTNmYjI1YjdiNWMifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_af6d73f66be54ef39e8ac35714f4990b",
+      "statement": "Below the e2e matrix sits a vitest a11y layer: *.a11y.test.tsx files across analytics, dashboard, financial-summary, moysklad, and orders components serve as the tooltip/interaction owner tests cited by the 174.3 inventories (e.g. UnitEconomicsWaterfall.a11y.test.tsx exposes exact percentage/currency units, categories, values, and precision).",
+      "evidence": [
+        {
+          "resource": "repo://e2e/fixtures/story-174-3/chart-inventory.ts",
+          "version": "repo-file-v1:sha256:1844aba1a80c08a0d3979cc80c9267d638a2c33f88fde1d4f4591449956c6bc4"
+        },
+        {
+          "resource": "repo://src/app/(dashboard)/analytics/unit-economics/components/__tests__/UnitEconomicsWaterfall.a11y.test.tsx",
+          "version": "repo-file-v1:sha256:07b04b4dea12598a6d9539f9e5524e18db0639749003461cb523419799e6baa4"
+        },
+        {
+          "resource": "repo://src/components/custom/financial-summary/__tests__/FinancialSummaryTables.a11y.test.tsx",
+          "version": "repo-file-v1:sha256:90463b07670ad330700f2f1fa44933cde89bfa87839dae0a40d3649d4fca139f"
+        }
+      ]
+    },
+    {
+      "id": "claim_0b600166038d4e9aa256f15749b417dd",
+      "statement": "Semantic-token honesty is pinned by exact classList DOM tests: pnl-waterfall semantic-tokens.test.tsx pins text-financial-positive, the AA-contrast idiom of a bg-financial-positive/10 tint with foreground text, and named help/formula tooltip buttons while rejecting a widened legacy-palette regex; sku-financials ProfitabilityBadge.test.tsx pins the /15 chip idiom (bg-financial-negative/15 + text-foreground, explicitly not text-financial-negative), Russian-locale margin formatting, and a no-fabricated-zero fallback to the status label when marginPct is null.",
+      "evidence": [
+        {
+          "resource": "repo://src/components/custom/pnl-waterfall/__tests__/semantic-tokens.test.tsx",
+          "version": "repo-file-v1:sha256:3ce09aeeb1968cb5459f0047cf081636da788934214628bb407d2645e5e9af9c"
+        },
+        {
+          "resource": "repo://src/components/custom/sku-financials/__tests__/ProfitabilityBadge.test.tsx",
+          "version": "repo-file-v1:sha256:f5b4a6f704d4b2863357600982fa610d1343a740571d6b9b52c28fc9075cd888"
+        }
+      ]
+    },
+    {
+      "id": "claim_faa50296a0a54db7b3127aac7fd10dc0",
+      "statement": "ResponsiveChartFrame (src/components/custom/analytics/ResponsiveChartFrame.tsx) is the shared positive-size wrapper for Recharts ResponsiveContainer: a relative min-h-[240px] frame (overridable) that prevents width/height=-1 mount warnings and couples sizing to semantics — with a label it takes role=\"img\" plus aria-label and aria-describedby pointing at the exact data alternative; without a label no image role is applied.",
+      "evidence": [
+        {
+          "resource": "repo://src/components/custom/analytics/ResponsiveChartFrame.tsx",
+          "version": "repo-file-v1:sha256:89126825907acfc492042183c0aadce92390d65b0d2429a25c1a2e1723608bfb"
+        }
+      ]
     }
   ],
   "verification": {
     "by": "openwiki/0.4.3",
-    "at": "2026-08-31T08:47:49.410Z"
+    "at": "2026-09-01T08:47:48.765Z"
   }
 }

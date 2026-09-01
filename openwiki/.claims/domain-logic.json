@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "pageVersion": "sha256:6189f1d08a3855f1959dfdfce2513b4591bf3077a4e6d33c2fc533ef722becfe",
+  "pageVersion": "sha256:a915d3483bc507c04625844cdd7934c15e354f9cf86b6a78a10e620f5e5b1c2a",
   "claims": [
     {
       "id": "claim_9bfdc04061f14b3bb2bb441081e614c3",
@@ -209,10 +209,82 @@
           "version": "repo-file-v1:sha256:b90c7441418a9821d311b8acbfcd47d9679b92932d7e54830b6337109bba745f"
         }
       ]
+    },
+    {
+      "id": "claim_3fd7a72a17c9478fbc8950d9538780ff",
+      "statement": "Story 174.3 a11y change in roi-profit-utils: getROIColor returns text-foreground for any measured ROI (null/undefined → text-muted-foreground), so color no longer encodes ROI direction — the value and getROIRating labels carry the meaning; the tests assert the new tokens (some test names still say green-600 but expect text-foreground) while numeric semantics (rating thresholds >=100/50/20/0, null rules, formatROI) are unchanged.",
+      "evidence": [
+        {
+          "resource": "repo://src/lib/__tests__/roi-profit-utils.test.ts",
+          "version": "repo-file-v1:sha256:ff133e742a26cba846633f5d7a6e6c78cd6289cd64b4d4e5b553b0ca9a8f73ad"
+        },
+        {
+          "resource": "repo://src/lib/roi-profit-utils.ts#L13-L33",
+          "version": "repo-lines-v1:sha256:9b2eb36ac5194e04539a75adddb5173d8182c59388124ceefa319d217e639f7c:eyJzZWxlY3RlZExpbmVDb3VudCI6MjEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjdkYWE5NDM4Mzg0ZDYyYjE3Mzc2YWUwNWQ1ZDEwNTYzZmE5NjUwOThiNjY5Yjc3ZDM1OWViNDg5Yjk3YWM1OTYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImVlMDMxNzkxN2U4Yzc2Y2NiNTFjNjIxNDk1ZGM5ZTcwY2EyY2NhMzhkMDRjZGI1ZDQzMGUzMzE3OWJlNzY1NTEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjY0ZTRlNmUzNDM0ZjZlYmE1ZTgwNzcwYjQxNjFlNDE4YWJmNDk3ODk0M2IxYzhmODliMjBkMDk5ZDBkZDk3YzgifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_fe811fe1077947e6af3576b664d7ecfc",
+      "statement": "formatROI expects percent-units (0–100, matching calculateROI's (profit/cogs)*100 and the backend roi field), formats via canonical Russian-locale formatPercentage (comma + NBSP, 1 decimal) with null → em dash; calculateROI and calculateProfitPerUnit return null (never 0) when profit is null or the divisor is null/zero.",
+      "evidence": [
+        {
+          "resource": "repo://src/lib/roi-profit-utils.test.ts",
+          "version": "repo-file-v1:sha256:c34bbabf09259d90727de73bf92debe236af71e2a213fdc00949c1639d0b2405"
+        },
+        {
+          "resource": "repo://src/lib/roi-profit-utils.ts#L52-L87",
+          "version": "repo-lines-v1:sha256:8a9d3a5a647ed6cdf25f1a114bb02978dda4f296799e45362c69ab33f7b5e5e2:eyJzZWxlY3RlZExpbmVDb3VudCI6MzYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImVhZjIyY2YwNzMyNTkyYzI0NzE0MWNiZTYxZWZhMTEwMTI2MTJmNWEzMTIyYjlhZjliYmFmNTJmNTcyNGQxOTQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjllODk4YWM1MTM4YWRhYTkzY2U1ZTdmNTY4YzEyNmE1MzZiODZkYThkODhjOGI5MWY0MTkyZDg4OTI3ZmY1MTYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_1012e7b621eb4c2c8f76d9d89a245b20",
+      "statement": "Profitability uses a shared six-status taxonomy with fixed operating-margin thresholds: excellent >25%, good 15–25%, warning 5–15%, critical 0–5%, loss <0%, unknown = COGS not assigned — declared both in EXTENDED_STATUS_CONFIG (profitability-utils.ts, with colors/classes/recommendations) and ProfitabilityStatus/PROFITABILITY_COLORS/PROFITABILITY_LABELS (sku-financials/core.ts, 168.11 /15-chip token classes).",
+      "evidence": [
+        {
+          "resource": "repo://src/lib/profitability-utils.ts#L36-L88",
+          "version": "repo-lines-v1:sha256:d9d3c9e2f1c6c931b9e718e3c57b4dad21889e88442c653d904389006bd4c62b:eyJzZWxlY3RlZExpbmVDb3VudCI6NTMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImE5YmNhMmZiYTJiMTc5MDUzNDg1ZTE4YzFjMmVlOTUzNTc0MzYwNGJhZmZhYjk2MDBlYWI3MTNjOWZlNjU4ZDUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjZkOTFkOTc1NTdmMWVjMzNhZmY3Mzg2ZWU1MzlmYzJmMTNjMmQ0OWQ5NjA1MjMzYTAyNzk0NzM1Y2Q5ZTc5MWMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImViODY2Y2U2N2M1MGU4NTRmMGRjOWRiM2IyY2NkNDM1ODRhNDU3ZGUyNzJhYWM0ODdkNTZhNWE1Yzc3MTllZDIifQ"
+        },
+        {
+          "resource": "repo://src/types/sku-financials/core.ts#L31-L70",
+          "version": "repo-lines-v1:sha256:a3c8c0e4f57f54d93a94f51aa1818deda7b45c42ebd5f912fa49df738f23d50f:eyJzZWxlY3RlZExpbmVDb3VudCI6NDAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAzZjdlNDhhMTZiODhkM2RkNjIyOGFlZjU5OTg0MmQwOGEyM2U2MWE4NDFkZTY0MGQ3YjljOTA5Y2IwYzVhMmIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjM3ODY5ZDUxMmY2ZTBkN2I3NzlhZDIwMzNlZmZkODQxNTZjNjMyNTRjNGNmZmI2NjYyY2MxYzMxYTQ0MmM1NGQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6Ijc4OWZiYzhiZjY4MjE2MjA1OGY2YTc4MDZhNDY2NzE3M2ZiOWU5ZjQ0MTE2ZjNjNWUwNGNkMDQ5MWUyM2JmYTYifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_104dac8cb8a2419980b4a0bb94dcdcf9",
+      "statement": "useWeeklyFinancialSeries keeps each ISO week separate for the /analytics/finance-history grid: one useQueries entry per week against /v1/analytics/weekly/finance-summary?week= (key ['financial','summary',week,'week']), each passing the same single-week aggregateFinanceSummaries margin-consistency pass as useFinancialSummary (with RUS+EAEU product transactions summed); isSettled is true only when every requested week resolved.",
+      "evidence": [
+        {
+          "resource": "repo://src/hooks/financial/useWeeklyFinancialSeries.ts",
+          "version": "repo-file-v1:sha256:38d6f9119a7ea88984a8dadec033af45a87d20481b1d945da0359053c85feca9"
+        }
+      ]
+    },
+    {
+      "id": "claim_aa90be253d0841f2b8728c1641e0668e",
+      "statement": "efficiency-utils.ts centralizes the five advertising efficiency statuses (excellent/good/moderate/poor/loss plus boundary-honest unknown) with Russian labels, Lucide icons, Tailwind classes, ROAS/ROI classification descriptions and recommendations; alert-dismissal state and accessor helpers are re-exported from extracted modules (efficiency-alert-state.ts, efficiency-accessors.ts) for file-size compliance.",
+      "evidence": [
+        {
+          "resource": "repo://src/lib/efficiency-utils.ts",
+          "version": "repo-file-v1:sha256:992e37156b536924a4732cf00941e3359e74e82c2dfcb232e81460cdc3af8c93"
+        }
+      ]
+    },
+    {
+      "id": "claim_2f26d3eaadd94f3e94790c836714abc2",
+      "statement": "Returns-analytics types apply boundary-honest AP#8 semantics: ReturnCategory includes 'unknown' for unrecognized backend categories (indicate, never coerce), overallReturnRate/classificationCoverage are number|null rendering em dash, and BySkuReturnItem.returnRate is null when salesCount is unavailable — a fabricated 0 would color a high-return SKU green/healthy.",
+      "evidence": [
+        {
+          "resource": "repo://src/types/analytics-returns.ts",
+          "version": "repo-file-v1:sha256:83cc4d2b22aa960dd1609ca686e1d6336ffd035eede8e83b1942709c65c30eb2"
+        }
+      ]
     }
   ],
   "verification": {
     "by": "openwiki/0.4.3",
-    "at": "2026-08-29T08:47:45.377Z"
+    "at": "2026-09-01T08:47:48.765Z"
   }
 }

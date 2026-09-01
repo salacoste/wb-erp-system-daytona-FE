@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "pageVersion": "sha256:e7add5d648d2243719d6098c0891194aa67ee9d0cf3ede1e00e63d6ddc75658a",
+  "pageVersion": "sha256:4dda12330f76642ec04e0ddd87bcc8ca37ffc801e54eb928741d4f116738bb08",
   "claims": [
     {
       "id": "claim_07e85bb249e745f69c550323b16664e1",
@@ -14,7 +14,7 @@
     },
     {
       "id": "claim_61682839290d40cf8b0bb2d34e55d52b",
-      "statement": "Development and validation of the frontend are local-only: there is no deployment target or production platform; the frontend runs locally on port 3100 and the backend on port 3000.",
+      "statement": "Development and validation of the frontend are local-only: there is no deployment target or production platform; the frontend runs locally on port 3100 and the backend on port 3000 via NEXT_PUBLIC_API_URL (frontend modules call backend /v1/... routes themselves).",
       "evidence": [
         {
           "resource": "repo://README.md",
@@ -29,12 +29,16 @@
         {
           "resource": "repo://README.md",
           "version": "repo-file-v1:sha256:4e3f44bf5b86e1c45307f91b5de80ee587959c736145a7c5384e1b37dbed3b9f"
+        },
+        {
+          "resource": "repo://package.json",
+          "version": "repo-file-v1:sha256:09291c9463d0f970c3013ab0a919cf95be3d6743d84f6f249002771c29305823"
         }
       ]
     },
     {
       "id": "claim_9682dbb9da65496e8cb391069b72c365",
-      "statement": "Local validation commands include npm run dev (port 3100), build, lint (zero-warning policy, Story 164.4), type-check, test (Vitest), test:e2e / test:e2e:full / test:e2e:preflight (Playwright with preflight gate), check:privacy, test:privacy, check:docs, and check:anti-pattern-8-normalizer.",
+      "statement": "Local validation commands include npm run dev (port 3100), build, start (port 3100), lint (--max-warnings 0 zero-warning policy, Story 164.4), type-check, npm test -- --run (Vitest), test:coverage, test:e2e / test:e2e:full / test:e2e:preflight (Playwright with preflight gate), check:privacy, test:privacy, format:check, check:docs, and check:anti-pattern-8-normalizer; browser E2E additionally requires the backend-seeded Owner user on localhost:3000 and the frontend on localhost:3100, with .env.e2e copied from .env.e2e.example.",
       "evidence": [
         {
           "resource": "repo://README.md",
@@ -58,7 +62,7 @@
     },
     {
       "id": "claim_96d258cda9124aaf8ed68b675a35061b",
-      "statement": "OpenWiki navigation maps the system into Architecture (route groups, auth proxy, environment/API configuration), Design System (Tailwind v4 semantic tokens, shadcn primitives, composition families including migrated settings/tariffs-admin/notifications/shipments families), Migration Program (Epics 166–174 status ledger, route ledger, orchestration process), Conventions & Quality Gates, and Testing & Operations; the quickstart task-routing map sends route-migration work to migration-program.md, token/component work to design-system.md, app-structure/auth/env/API work to architecture.md, gate/baseline/ratchet work (including the ui-boundary and migration-parity scripts) to conventions-and-quality.md, and test/e2e/automation work (including the parity/boundary node:test self-suites) to testing-and-ops.md.",
+      "statement": "OpenWiki navigation maps the system into Architecture (route groups, layouts/providers, client-side data fetching, auth, configuration), Design System (Tailwind v4 semantic tokens, shadcn primitives, composition families, the Story 174.3 WCAG 2.2 AA inclusive visual matrix), Migration Program (Epics 166–174 status ledger, route ledger, Story 174.3 evidence pipeline, orchestration), Conventions & Quality Gates, and Testing & Operations; the quickstart task-routing map sends route-migration and 174.3 evidence-pipeline work to migration-program.md, token/component work to design-system.md, app-structure/auth/env/API work to architecture.md, gate/baseline/ratchet work to conventions-and-quality.md, and test/e2e/automation work — including the story-174-3 runner tooling (e2e/support/story-174-3-runner-*.ts, real-browser-zoom and state-evidence runners, e2e/fixtures/story-174-3/ corpus) — to testing-and-ops.md.",
       "evidence": [
         {
           "resource": "repo://README.md",
@@ -68,15 +72,15 @@
     },
     {
       "id": "claim_5fcce7849f4544209259e67c83fe982d",
-      "statement": "Epic 172 is CLOSED 17/17: after Stories 172.1–172.9, the newly shipped Stories 172.10 Finances & Documents (#308/#309), 172.11 monitor (#311/#312), 172.12 monitoring console (#315), 172.13 MoySklad (#317), 172.14 orders overview (#319), 172.15 FBO orders (#321), 172.16 order integrity (#323), and 172.17 Product Management (#325/#326) completed the epic.",
+      "statement": "Epic 172 is CLOSED 17/17: after Stories 172.1–172.9, Stories 172.10 Finances & Documents (#308/#309), 172.11 monitor (#311/#312), 172.12 monitoring console (#315), 172.13 MoySklad (#317), 172.14 orders overview (#319), 172.15 FBO orders (#321), 172.16 order integrity (#323), and 172.17 Product Management (#325/#326) completed the epic.",
       "evidence": [
-        {
-          "resource": "repo://_bmad-output/implementation-artifacts/sprint-status.yaml",
-          "version": "repo-file-v1:sha256:c239f7ba894d707ab8c60f2746b7217ff0c49000be6a0a079e286041fed8884a"
-        },
         {
           "resource": "repo://_bmad-output/planning-artifacts/shadcn-migration-status-and-debt-registry.md#L19-L21",
           "version": "repo-lines-v1:sha256:72833ea70dafd3435f559aadd5b555bd35ea3128276836b96b9147286a015959:eyJzZWxlY3RlZExpbmVDb3VudCI6MywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNWJmY2IxODQ4OGMzNWUwNzc2MjIzMjdjMDFjN2FiNDdlZmVjMzQ3MjI0YTlmNDVkMTE1MGZhZjlmNTUxM2I3ZiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiOWI1ZTFjYWViNjM3ODNkNjVlYTdhODhmYmJhZDRmZTBmOTljMDMyZWIxYzY0MmE2ZTVkMTAwZmRjM2JjNWFiZiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiOTI4Y2FmOTc3MDJmMDVkY2E0Yzc3ZmZkODhiMGQ3Zjk4NzM0MzY0NjNhNzYyYWI5NjhkNTBmNzNkOTU0ODQyNyIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiN2I3NWViMzRiYTIxMzA3NmNkMDc1OGFiMzM3NjNiMDZlNDFkMGRlNzIzNTdjYjFkOTA0ZGZkZGUzZjE4ODBmZiJ9"
+        },
+        {
+          "resource": "repo://_bmad-output/planning-artifacts/shadcn-migration-status-and-debt-registry.md#L88-L99",
+          "version": "repo-lines-v1:sha256:994f482b8fdc63c273a6684a329e51e625916c5342319d304e4fefd829285af7:eyJzZWxlY3RlZExpbmVDb3VudCI6MTIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjFjZTMyNjJiMTNkZjkwYjJlNDMwZjczNzExNGI1OTcxMjQ1YzY4OTlkZDNiYTI5YWUyM2FhZWY1OWJiY2EyMzciLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImQxNGJmZjQ0ZmIxOWFkYWY4YTc2MzljZjY2ODJlNTE4Y2FmN2E1OTM0N2ExMmZhY2I1N2ZlMDg2ZTZkNmJmNDEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijg4NmFjYTc2NGY0NDE0YWZiNWI4NjYyYTRjODc0ODkwOWM0MzRlN2I2N2EwZDFmZmRkMzYzMzUyMTkxNmQzZjYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjZmMmVhZjQ5MzdhZGFmODgxOTUyOWY1ZTZkOTEwNjIyNmJlMzQ5MjQ0MGVjYmY3Y2IwNTQyMzY1NDdlMjI4OGYifQ"
         }
       ]
     },
@@ -87,53 +91,41 @@
         {
           "resource": "repo://_bmad-output/planning-artifacts/shadcn-migration-status-and-debt-registry.md#L20-L23",
           "version": "repo-lines-v1:sha256:3e4c19d0d91b4c6a3d447cf3eca85bce4285465d132ee351bf1306f41b975602:eyJzZWxlY3RlZExpbmVDb3VudCI6NCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNzg1Mzk1ZDUzYjkwMWM3M2VkNjNhNTBmNTlmNmNlODM4NmQ4ZmNhMzdkODY0NzUyYjM2OGI1MjVmNTA5ODRkMCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiZDI3ZGIzNGE1NmU3YWRjMTYwMjBmOTVkN2RkZGM2YTNjOWYxYzc4ZjcwOWIxNzZiOTg2MGM1YjlhZGFlZGQxNiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiYmZjZDcwNTE4NzZmZmY5OTBiMjliMjEyNWRmMmRhNTRmMTExZTI5NjI0YWJhY2Q1MDdmMzVmNzNlYzBkMGYzMCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiYjU3ZmMyNmY1YTBlYTI4MTllZDZhYTQ0ZTg4NWFkODdiNDRkMDIwMmRiYzdiMGU5NDJiOTg5MTYxNjQ3MmZlYSJ9"
-        },
-        {
-          "resource": "repo://docs/HANDOFF-2026-08-30-TEAM-HANDOFF-173.13-EPILOGUE-174-FULL-DEBT.md#L3-L8",
-          "version": "repo-lines-v1:sha256:397278ad9c871bb97038aaf9da4fb8c26b90d112643e60bdd7a127d7ce297284:eyJzZWxlY3RlZExpbmVDb3VudCI6NiwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMmVjZjJkOTg2YWE1MmRkZmEwYjlkNjE3OTY0NmJjNjhhYzZkMzY3ZDdhNDQ4MzdkNzEyZjQyYjlkZmZiNTQwMCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMDFiYTQ3MTljODBiNmZlOTExYjA5MWE3YzA1MTI0YjY0ZWVlY2U5NjRlMDljMDU4ZWY4Zjk4MDVkYWNhNTQ2YiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjIsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNzU0MmVmZTZjMTcyOTdkN2IxZGE5YzRhN2U5MjI2ZGU3MzYzODM4M2U5Y2I3M2EzMzA2NWZjMWJhZDdlMjFjZCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMmYwNWMxODExODljYTQ5Mjg2MGQxMTFkN2YzODE5MmQwMDQzZTMzY2EzNjJhZjhhNTMyYTdiNWI1MGFlYjY1OCJ9"
         }
       ]
     },
     {
       "id": "claim_0799a102fc4b4acba433d4d8c9fc6001",
-      "statement": "As of the 2026-08-31 snapshot, the Epics 166–174 migration program stands at 91/94 canonical stories: Epic 174 is IN PROGRESS at 2/5 with 174.1 (route-ledger/plan parity via scripts/check-shadcn-migration-parity.mjs, PRs #369/#370/#371) and 174.2 (legacy-UI removal + design-system boundary via scripts/check-shadcn-ui-boundary.mjs with ratchet 523, PR #372 on base fbdab2da) done; NEXT = Story 174.3 (a11y/visual), then 174.4 and 174.5.",
+      "statement": "The Epics 166–174 migration program stands at 91/94 canonical stories: Epic 174 is IN PROGRESS at 2/5 with 174.1 (route-ledger/plan parity via scripts/check-shadcn-migration-parity.mjs) and 174.2 (legacy-UI removal + design-system boundary via scripts/check-shadcn-ui-boundary.mjs with ratchet 523) done; Story 174.3 is currently in active remediation, then 174.4 and 174.5 remain.",
       "evidence": [
+        {
+          "resource": "repo://.omx/plans/174.3-complete-accessibility-responsive-theme-and-visual-verification.md#L25-L37",
+          "version": "repo-lines-v1:sha256:5ce9c7e68f9961ef46ac8ff77bfd7e94777d0bc0379d026e8261090aaec38353:eyJzZWxlY3RlZExpbmVDb3VudCI6MTMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjU0YTEzZTI0ZmMxZGE0YjUwZjQwNTIwNGY5OWU4MzY2ZjI1ODE5OWRkNzVhNWZlMjMyMjEyNmMzOGIwNTM4Y2EiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImM5MGMxMWMzMjY4MzFjZTc1ZGMwN2JlYTRjZWVhZTk5Y2RhMGUzMzAxYjIxNjdiZTIxN2FlZTUwOTFkMzRmOTYiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImMyZjI3YmUyNjliNzU4NjQ0ZWQ0Y2Y3NmJjZTY2ZWMxNWU1ZmYzNDRiZjVmYmQyZjk4NGY3YjczYmZiOTNiYTciLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImIxMDUwN2ZjYjVjODFlODVlNTgyYWQ4MDI5OGIzYWM5Y2Y4MGZjZTM1ZjcyN2E1ZGY3MDEyM2M0ZDRmMmZmNmEifQ"
+        },
         {
           "resource": "repo://_bmad-output/planning-artifacts/shadcn-migration-status-and-debt-registry.md#L21-L23",
           "version": "repo-lines-v1:sha256:aa9e8549c85b61295466e01735c0e57f69d5a1cdc5a9f19f1fa74f756dee93c2:eyJzZWxlY3RlZExpbmVDb3VudCI6MywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiOWI1ZTFjYWViNjM3ODNkNjVlYTdhODhmYmJhZDRmZTBmOTljMDMyZWIxYzY0MmE2ZTVkMTAwZmRjM2JjNWFiZiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiZDI3ZGIzNGE1NmU3YWRjMTYwMjBmOTVkN2RkZGM2YTNjOWYxYzc4ZjcwOWIxNzZiOTg2MGM1YjlhZGFlZGQxNiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNTliYzdmMmZlMjNiZGMzYjViMjM1ZWNhZDQxYzFiNzJlZjdiNjA5ODRiMmNiZTQ1NzA4MmE3ZTcxYTY5OTM1ZCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiYjU3ZmMyNmY1YTBlYTI4MTllZDZhYTQ0ZTg4NWFkODdiNDRkMDIwMmRiYzdiMGU5NDJiOTg5MTYxNjQ3MmZlYSJ9"
-        },
-        {
-          "resource": "repo://docs/HANDOFF-2026-08-30-TEAM-HANDOFF-173.13-EPILOGUE-174-FULL-DEBT.md#L5-L8",
-          "version": "repo-lines-v1:sha256:19de72ad6c33ad1b68c5cef7d6434b0ce1fdca35d6a7572b5f422a0cd201f10e:eyJzZWxlY3RlZExpbmVDb3VudCI6NCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiYmIwNDkwMmQxNzY4ODY1OTgzZTAxMmM5ZmEzNzI3NDQ1MWYwZjNjZmY1NWQxYmUxOGI3ZmIxMDhmN2RjOGVjYSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMDFiYTQ3MTljODBiNmZlOTExYjA5MWE3YzA1MTI0YjY0ZWVlY2U5NjRlMDljMDU4ZWY4Zjk4MDVkYWNhNTQ2YiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZWExNGUzMWI1MTc5MDYwYmI5YzUxNjdhOGJhMmUxZTM0MTQ2MTI2Mzg3NWMyNjJhN2IxNzEwYWQ5MTVmMWYzMSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMmYwNWMxODExODljYTQ5Mjg2MGQxMTFkN2YzODE5MmQwMDQzZTMzY2EzNjJhZjhhNTMyYTdiNWI1MGFlYjY1OCJ9"
         }
       ]
     },
     {
       "id": "claim_51bf0bfbb1624984aaac09740968ee00",
-      "statement": "The recorded full Vitest floor after Story 174.2's exact dead-test deletion is 19,118 passed / 0 failed across 1,234 files, while all 76 route-ledger rows intentionally remain `planned` (Story 174.5 owns the final verified transitions).",
+      "statement": "The repo-owned registry records the full Vitest floor after Story 174.2's exact dead-test deletion as 19,118 passed / 0 failed across 1,234 files, and the Story 174.3 branch additionally commits an execution manifest (e2e/fixtures/story-174-3/execution-manifest.json) recording the matrix executions; all 76 route-ledger rows intentionally remain `planned` (Story 174.5 owns the final verified transitions).",
       "evidence": [
         {
           "resource": "repo://_bmad-output/planning-artifacts/shadcn-migration-status-and-debt-registry.md#L23-L23",
           "version": "repo-lines-v1:sha256:d27db34a56e7adc16020f95d7dddc6a3c9f1c78f709b176b9860c5b9adaedd16:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZDI3ZGIzNGE1NmU3YWRjMTYwMjBmOTVkN2RkZGM2YTNjOWYxYzc4ZjcwOWIxNzZiOTg2MGM1YjlhZGFlZGQxNiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiZDI3ZGIzNGE1NmU3YWRjMTYwMjBmOTVkN2RkZGM2YTNjOWYxYzc4ZjcwOWIxNzZiOTg2MGM1YjlhZGFlZGQxNiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiN2VjOWZjYWZmMzc4NTJmYzlmNzM0ODkwMWE2OGRjY2UzZGE4MTQ5Y2IwZTY1ZWMyMDQ1OGRmZjlmMTc4MzJiZCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiYjU3ZmMyNmY1YTBlYTI4MTllZDZhYTQ0ZTg4NWFkODdiNDRkMDIwMmRiYzdiMGU5NDJiOTg5MTYxNjQ3MmZlYSJ9"
         },
         {
-          "resource": "repo://_bmad-output/planning-artifacts/shadcn-migration-status-and-debt-registry.md#L3-L3",
-          "version": "repo-lines-v1:sha256:27298dd2d5dcbb988c0c669a941eeb5cb5f37cd0124731725c7e32365607fce3:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMjcyOThkZDJkNWRjYmI5ODhjMGM2NjlhOTQxZWViNWNiNWYzN2NkMDEyNDczMTcyNWM3ZTMyMzY1NjA3ZmNlMyIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMjcyOThkZDJkNWRjYmI5ODhjMGM2NjlhOTQxZWViNWNiNWYzN2NkMDEyNDczMTcyNWM3ZTMyMzY1NjA3ZmNlMyIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjIsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMzA4YzI2NWJkN2JkNzZiMTUzNzZmOWFjZjA5ODMwMWZjMzg3YzU0NjQwMzQ4NmY2MzM3NWE2MTljY2RhZjA3NiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMTYyMDBkNjMzNDI2YmQyNDllODkzNDg2NWRlNmMzY2IxN2QxNGNmMGU2YmM1Nzc2ZGU3MDVmNjRkZjEyMzdmZCJ9"
-        },
-        {
-          "resource": "repo://docs/HANDOFF-2026-08-30-TEAM-HANDOFF-173.13-EPILOGUE-174-FULL-DEBT.md#L7-L7",
-          "version": "repo-lines-v1:sha256:12223c11f8107258485a314fb117f359ab2ecc7375f59fc4675f69eb4d57f201:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMTIyMjNjMTFmODEwNzI1ODQ4NWEzMTRmYjExN2YzNTlhYjJlY2M3Mzc1ZjU5ZmM0Njc1ZjY5ZWI0ZDU3ZjIwMSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMTIyMjNjMTFmODEwNzI1ODQ4NWEzMTRmYjExN2YzNTlhYjJlY2M3Mzc1ZjU5ZmM0Njc1ZjY5ZWI0ZDU3ZjIwMSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiYTMwOTY0NjdiYzgxYzY3NTQyMGFhYWQ4MGE3ZDU4MTQ3ZDM5YTM0NWNiMmU0NjBjODg0OWI0N2Y0NzVhY2YxZiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMDAxZjJlYzE3NTkzYzEwNTRlYjQ2MzY3ZDg0NTNlZjI0YTE3M2NlOTZiNzExN2Q5MWY5YTY4ZDQ0ZmVmOGIwMSJ9"
+          "resource": "repo://e2e/fixtures/story-174-3/execution-manifest.json",
+          "version": "repo-file-v1:sha256:8f352ced952eb25952b2d245ed171807f2213f24247aab823525505213693097"
         }
       ]
     },
     {
       "id": "claim_b6851120b3a344e59b791e5ae2973b00",
-      "statement": "The two migration gate scripts have no npm-run alias and are invoked directly: node scripts/check-shadcn-migration-parity.mjs (Story 174.1 schema-v3 BMAD/route-ledger/OMX parity, 94 = 94 and 76 = 76) and node scripts/check-shadcn-ui-boundary.mjs (Story 174.2 design-system boundary ratchet with baseline 523 in scripts/.shadcn-ui-boundary-baseline.txt, exit 1 only on increase); both run node:test self-suites first and are excluded from the Vitest run.",
+      "statement": "The two migration gate scripts have no npm-run alias and are invoked directly: node scripts/check-shadcn-migration-parity.mjs (Story 174.1 schema-v3 BMAD/route-ledger/OMX parity, 94 = 94 and 76 = 76) and node scripts/check-shadcn-ui-boundary.mjs (Story 174.2 design-system boundary ratchet with baseline 523, exit 1 only on increase); both run node:test self-suites first and are excluded from the Vitest run.",
       "evidence": [
-        {
-          "resource": "repo://CLAUDE.md#L154-L154",
-          "version": "repo-lines-v1:sha256:aefedf77ba7a828dbfa382711b27f25cb2bec7e85443cc979880839654450426:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiYWVmZWRmNzdiYTdhODI4ZGJmYTM4MjcxMWIyN2YyNWNiMmJlYzdlODU0NDNjYzk3OTg4MDgzOTY1NDQ1MDQyNiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiYWVmZWRmNzdiYTdhODI4ZGJmYTM4MjcxMWIyN2YyNWNiMmJlYzdlODU0NDNjYzk3OTg4MDgzOTY1NDQ1MDQyNiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNTA3NGVjZGEwOWZmZGU3MWY4YjZkYzEwMmMxY2E4YTJjMTQ0ZWJmZjVkMDZiZWE2OWQyMzlkNTk1ZjkyNjQ0ZSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNzczM2UzYTAyYTM4N2M1NzQzNGU1NDQ4OWVjMWI5OTI4NDE0NmQ4Y2YwMDA1NzFkZGRjYjBiYzVjYmQ5ZWI1ZSJ9"
-        },
         {
           "resource": "repo://README.md",
           "version": "repo-file-v1:sha256:4e3f44bf5b86e1c45307f91b5de80ee587959c736145a7c5384e1b37dbed3b9f"
@@ -143,10 +135,46 @@
           "version": "repo-lines-v1:sha256:f3b443a84df172fb017325e93c0f29164b4ab61bd811c3cdc1d1d36c1db790f8:eyJzZWxlY3RlZExpbmVDb3VudCI6MzYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjM0ODMzZDU5NDljMDNhNDBjYTk1MjQ5MTYxMGE2NjU5NjQ0YjNhYTQ2NjM2MmY3OTkwMjBkYmYxOTgxNTQ3ZGIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImEwNTZmYzI1MjQ3ZmI4MTNkOTFjZDExZjQ5NzMxNjYxMTRkZDZkMDQzZGYzY2UxNDYzYzZiOThlZDc2YTU3ZWMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijg4OWE3MThmZDBhNzIwOWUyYTc3NDNiMzk2ZmY0Y2MwYmRiMGVhMGQ0Y2U3ZjdhMzk4YzZmMmVkNjg4Y2FkZTciLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6Ijc3Yjc3NGVjN2ZlMjNmY2FjMjdhNTdlMmY3YTQ2ZDcyYTBkMDNmN2NkYzA2NTE5YjQ5YzgzMTdlY2U0YjA4MzQifQ"
         }
       ]
+    },
+    {
+      "id": "claim_0d71e7b873684b6a92c01c413697a7ce",
+      "statement": "Story 174.3 is in active remediation: commit 82465fbf96f2319116c1cad101044e8004a52cc3 received three independent REQUEST-CHANGES/REJECT verdicts, and merge/cleanup are blocked until every accepted finding is repaired, validation is regenerated on a new immutable commit, and three fresh independent reviewers return APPROVE on that same unchanged SHA (zero unresolved P0–P2, no material P3); any content change restarts the gate. The accepted scope is recorded in the generated _bmad-output/implementation-artifacts/174-3-expanded-scope-register.md (~424 files across route-owner-remediation, story-evidence, owner-browser-evidence, shared-owner-remediation, foundation/AppShell coordination, and documentation classes), which supersedes the historical three-file bootstrap as the file-level coordination authority.",
+      "evidence": [
+        {
+          "resource": "repo://.omx/plans/174.3-complete-accessibility-responsive-theme-and-visual-verification.md#L25-L37",
+          "version": "repo-lines-v1:sha256:5ce9c7e68f9961ef46ac8ff77bfd7e94777d0bc0379d026e8261090aaec38353:eyJzZWxlY3RlZExpbmVDb3VudCI6MTMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjU0YTEzZTI0ZmMxZGE0YjUwZjQwNTIwNGY5OWU4MzY2ZjI1ODE5OWRkNzVhNWZlMjMyMjEyNmMzOGIwNTM4Y2EiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImM5MGMxMWMzMjY4MzFjZTc1ZGMwN2JlYTRjZWVhZTk5Y2RhMGUzMzAxYjIxNjdiZTIxN2FlZTUwOTFkMzRmOTYiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImMyZjI3YmUyNjliNzU4NjQ0ZWQ0Y2Y3NmJjZTY2ZWMxNWU1ZmYzNDRiZjVmYmQyZjk4NGY3YjczYmZiOTNiYTciLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImIxMDUwN2ZjYjVjODFlODVlNTgyYWQ4MDI5OGIzYWM5Y2Y4MGZjZTM1ZjcyN2E1ZGY3MDEyM2M0ZDRmMmZmNmEifQ"
+        },
+        {
+          "resource": "repo://_bmad-output/implementation-artifacts/174-3-expanded-scope-register.md",
+          "version": "repo-file-v1:sha256:084854b89185c2198e1c18ecebe398c0335b1228c53e7015da281f465b886cb1"
+        }
+      ]
+    },
+    {
+      "id": "claim_88e32c7d0dd64d498674804a0e5edf40",
+      "statement": "Story 174.3 added dedicated evidence tooling invoked directly (no npm alias in package.json): scripts/run-story-174-3-state-evidence.mjs is a fail-closed orchestrator for the committed execution manifest with modes --owner-units/--owner-browsers/--dedicated-routes/--owners/--defaults/--all; scripts/run-story-174-3-real-browser-zoom.mjs drives the headed real-browser 200% zoom spec for all 76 routes × both themes; scripts/generate-story-174-3-scope-register.mjs regenerates the expanded-scope register.",
+      "evidence": [
+        {
+          "resource": "repo://package.json#L17-L52",
+          "version": "repo-lines-v1:sha256:f3b443a84df172fb017325e93c0f29164b4ab61bd811c3cdc1d1d36c1db790f8:eyJzZWxlY3RlZExpbmVDb3VudCI6MzYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjM0ODMzZDU5NDljMDNhNDBjYTk1MjQ5MTYxMGE2NjU5NjQ0YjNhYTQ2NjM2MmY3OTkwMjBkYmYxOTgxNTQ3ZGIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImEwNTZmYzI1MjQ3ZmI4MTNkOTFjZDExZjQ5NzMxNjYxMTRkZDZkMDQzZGYzY2UxNDYzYzZiOThlZDc2YTU3ZWMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijg4OWE3MThmZDBhNzIwOWUyYTc3NDNiMzk2ZmY0Y2MwYmRiMGVhMGQ0Y2U3ZjdhMzk4YzZmMmVkNjg4Y2FkZTciLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6Ijc3Yjc3NGVjN2ZlMjNmY2FjMjdhNTdlMmY3YTQ2ZDcyYTBkMDNmN2NkYzA2NTE5YjQ5YzgzMTdlY2U0YjA4MzQifQ"
+        },
+        {
+          "resource": "repo://scripts/generate-story-174-3-scope-register.mjs",
+          "version": "repo-file-v1:sha256:0d2c56db30446082866116720b9d256f478779da53fee9befad9558006f761f8"
+        },
+        {
+          "resource": "repo://scripts/run-story-174-3-real-browser-zoom.mjs",
+          "version": "repo-file-v1:sha256:a56744588591fc02543be182b3b4464eb0ac8bfa4606ff7fbdd7bee6115434b9"
+        },
+        {
+          "resource": "repo://scripts/run-story-174-3-state-evidence.mjs",
+          "version": "repo-file-v1:sha256:9b34dddd9cbf86dbaaf4696945a5105a57aaaa045c7ec848b3cc00be8d9c1a63"
+        }
+      ]
     }
   ],
   "verification": {
     "by": "openwiki/0.4.3",
-    "at": "2026-08-31T08:47:49.410Z"
+    "at": "2026-09-01T08:47:48.765Z"
   }
 }

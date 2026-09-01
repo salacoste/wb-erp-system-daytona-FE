@@ -5,27 +5,45 @@ description: "Coding standards and automated quality gates — file-size limits,
 tags: [conventions, quality-gates, testing, eslint, review-discipline, presentation-contracts]
 verified:
   - by: openwiki/0.4.3
-    at: 2026-08-31T08:47:49.410Z
+    at: 2026-09-01T08:47:48.765Z
 sources:
   - id: openwiki-source-a2371d6362e5db4bc834ad03
     resource: repo://CLAUDE.md
+  - id: openwiki-source-276795f6d5ad19adb078c64e
+    resource: repo://eslint.config.js
   - id: openwiki-source-5b54a58d1b51cd490b0e7162
     resource: repo://package.json
   - id: openwiki-source-7bebebc56a12d016856c32cc
     resource: repo://scripts/__tests__/check-shadcn-ui-boundary.test.mjs
+  - id: openwiki-source-d04f4722a3d19a2f20e7ee82
+    resource: repo://scripts/check-eslint-rules.sh
+  - id: openwiki-source-993231c193b0c1ee2eeb5f7c
+    resource: repo://scripts/check-max-lines.sh
   - id: openwiki-source-63d46e41978bcf9c4a46a1d7
     resource: repo://scripts/check-shadcn-migration-parity.mjs
   - id: openwiki-source-bdeb846005a65a32b569a6d3
     resource: repo://scripts/check-shadcn-ui-boundary.mjs
+  - id: openwiki-source-8c5a8be7b85f5aeba5617742
+    resource: repo://src/app/(dashboard)/analytics/ai-admin/anomalies/components/__tests__/anomalies-presentation-source-contracts.test.ts
+  - id: openwiki-source-c8e549ad350aea3a7bbac3d5
+    resource: repo://src/app/(dashboard)/analytics/models/components/__tests__/model-registry-presentation-source-contracts.test.ts
+  - id: openwiki-source-9279f4f3ec2fbb6b6482d9ae
+    resource: repo://src/app/(dashboard)/cogs/bulk/__tests__/bulk-cogs-presentation-source-contracts.test.ts
+  - id: openwiki-source-f77bbc8322f7f3d3c5ce166b
+    resource: repo://src/app/(dashboard)/moysklad/__tests__/moysklad-presentation-source-contracts.test.ts
+  - id: openwiki-source-4c9b120fde01f836cfc88317
+    resource: repo://src/app/(dashboard)/orders/__tests__/orders-presentation-source-contracts.test.ts
   - id: openwiki-source-67291b9dd2f19fa46ea944f3
     resource: repo://src/app/(dashboard)/shipments/box-types/__tests__/box-types-presentation-source-contracts.test.ts
   - id: openwiki-source-360f148a5c952ac1ec7fa14b
     resource: repo://src/app/(dashboard)/shipments/sku-packaging/__tests__/sku-packaging-presentation-source-contracts.test.ts
   - id: openwiki-source-0dd07dd4cd88fda7bfc7679a
     resource: repo://src/app/(dashboard)/supplies/%5Bid%5D/__tests__/supply-detail-presentation-source-contracts.test.ts
+  - id: openwiki-source-9ce5e1562aa7550a904ae8e6
+    resource: repo://src/components/custom/dashboard/__tests__/dashboard-widgets-presentation-source-contracts.test.ts
   - id: openwiki-source-fbadcd8591b65031efaaedce
     resource: repo://vitest.config.ts
-generated: { by: "openwiki/0.4.3", at: "2026-08-31T08:47:49.410Z" }
+generated: { by: "openwiki/0.4.3", at: "2026-09-01T08:47:48.765Z" }
 ---
 
 # Conventions & Quality Gates
@@ -46,7 +64,22 @@ The canonical references for conventions are:
 | Source files | 200 lines (ESLint `max-lines`, `skipBlankLines` + `skipComments`) | ~150 lines (proactive extraction) |
 | Test files, fixtures, mock handlers | 800 lines | — |
 
-Enforced via `eslint.config.js` flat config. `next lint` is deprecated and does NOT load this — enforcement is exclusively via `npm run lint` / `npx eslint`, plus the `npm run check:max-lines` cross-check script.
+Enforced via the ESLint 9 **flat config** `eslint.config.js` (the enforcement path for `npm run lint` / `npx eslint`). `next lint` is deprecated and does NOT load this — enforcement is exclusively via `npm run lint` / `npx eslint`, plus two cross-check gates: `npm run check:eslint-rules` and `npm run check:max-lines`.
+
+### `eslint.config.js` (flat config) structure
+
+- The legacy `.eslintrc.json` is retained for IDE/editor integration only (Story 98.1-FE); when both exist, ESLint 9 uses the flat config and ignores `.eslintrc.json`.
+- `linterOptions.reportUnusedDisableDirectives: 'off'` restores the ESLint 8 default so the repo's ~34 intentionally-defensive `// eslint-disable-next-line no-restricted-syntax` comments on SEMANTIC-ZERO sites don't break the zero-warning baseline.
+- `src/**/*.{ts,tsx}` block — `max-lines` 200 (`skipBlankLines`+`skipComments`), `@typescript-eslint/no-unused-vars` (error, `argsIgnorePattern: '^_'`), `no-explicit-any: 'warn'`, `jsx-a11y/control-has-associated-label: 'error'` (icon-only interactive elements must have an accessible name), and the **Anti-Pattern #8** `no-restricted-syntax` selectors banning `?? 0` on money/ratio field names (`revenue|profit|cost|spend|roas|margin|price|…`) and suffix fields (`_rub|_amount|_pct|…`) in both direct-member and optional-chaining forms. `project` is intentionally omitted from `parserOptions` — type-aware linting loads the full TS program (~1.2 GB) and OOMs the 2 GB CI VPS.
+- `e2e/**/*.ts` block — TS-parsed with an 800-line cap instead of 200 (basic hygiene without capping the browser-test suite), plus two exact per-file `max-lines: 'off'` exemptions for historical E2E debt (`e2e/fixtures/playwright-network-guard.ts`, `e2e/onboarding.spec.ts`) that Story 174.3 left for their owner lifecycles.
+- Test block (`src/**/__tests__/**`, `src/**/*.test.*`, `src/test/**`, `src/mocks/**`) — 800-line cap.
+- `src/components/ui/**` (CLI-managed shadcn components) — `max-lines: 'off'`.
+- A dedicated AP#8 block for `src/lib/api/**/*-normalizer.ts` / `**-mapper.ts` re-applies the money/ratio selectors with normalizer-specific guidance (`toNullableNumber` / `toCount`); the helper-defeat `toNullableNumber(x) ?? 0` form is ratcheted separately by `scripts/check-anti-pattern-8-normalizer.sh` (baseline `scripts/.anti-pattern-8-normalizer-baseline.txt`).
+
+### Gate cross-check scripts
+
+- **`npm run check:eslint-rules`** (`scripts/check-eslint-rules.sh`, Story 99.2-FE) — validates that every rule name declared in `.eslintrc.json` *and* `eslint.config.js` is recognized by ESLint (via `npx eslint --print-config`, with a `Linter().getRules()` fallback), catching silent disablement from typos like `max-lines-per-file` instead of `max-lines` (the Class 5 defect from the Story 97.7 investigation). Flat-config rule names are extracted by requiring the config module and iterating `config.rules` keys — not by regex on source text — so string literals inside rule messages can't produce false positives (fixed in Story 109.1-FE). Self-test: `--self-test`.
+- **`npm run check:max-lines`** (`scripts/check-max-lines.sh`) — reports files exceeding the ESLint `max-lines` caps by running ESLint itself with the repository config (the enforcement path). It exists because raw `wc -l` counts JSDoc and blank lines that `skipBlankLines`+`skipComments` exclude, producing false "over-cap" reports; ESLint is the source of truth. Self-tests pin: 0 violations with the real config, a generated 201-code-line file is flagged, and invalid arguments exit 2.
 
 ## TypeScript Rules
 
@@ -80,7 +113,7 @@ The Epic 173 settings/shipments migration established a two-layer test contract 
 
 ### Layer 1 — Page source contracts
 
-Each migrated route owns a `*-presentation-source-contracts.test.ts` (Vitest, no DOM) that reads production source with `node:fs` and asserts four families of invariants. Coverage now spans: settings/backfill (Story 173.2), settings/cabinet (173.3), settings/notifications (173.5), settings/tariffs (173.6), settings/tax (173.7), shipments list (173.8), shipment detail (173.9), shipments/box-types (173.10), shipments/sku-packaging (173.11), supplies list (173.12), supplies detail (173.13), plus the earlier analytics/cogs/monitoring and dashboard families (40+ such suites total):
+Each migrated route owns a `*-presentation-source-contracts.test.ts` (Vitest, no DOM) that reads production source with `node:fs` and asserts four families of invariants. As of the 174.x era the repository carries **38 such suites** spanning: settings/backfill (173.2), settings/cabinet (173.3), settings/notifications (173.5), settings/tariffs (173.6), settings/tax (173.7), shipments list (173.8), shipment detail (173.9), shipments/box-types (173.10), shipments/sku-packaging (173.11), supplies list (173.12), supplies detail (173.13), and — added or already present alongside the 174-family wave — orders (list/fbo/integrity), moysklad, bulk-cogs/cogs-single/cogs-history, analytics AI families (anomalies, forecast accuracy, model registry, model evaluations, sku-accuracy, model performance, funnel, gaps, liquidity), automation (canned-rules, installed-rules, installed-rule editor), communications, finances, products, monitor, monitoring, dashboard, and the colocated dashboard-widgets suite:
 
 1. **Pinned production catalog** — the test enumerates every production file the route owns (either recursively discovering non-test `.ts/.tsx` files under the route directory, as backfill does, or via an explicit `OWNED_PRODUCTION_FILES` array cross-checked against directory discovery, as shipments and cabinet do) and asserts the exact expected list. Adding or removing a file in a migrated route fails the suite until the catalog is consciously updated.
 2. **No legacy palette or contextual hex** — every owned file must not match `LEGACY_PALETTE` (Tailwind palette classes like `text-yellow-600`, `bg-blue-500`, etc. across ~20 color families and shades 50–950) nor `CONTEXTUAL_HEX` (inline hex literals like `'#3B82F6'` in strings or Tailwind arbitrary values `bg-[#...]`). Colors must come from semantic design-system tokens instead of raw palettes.

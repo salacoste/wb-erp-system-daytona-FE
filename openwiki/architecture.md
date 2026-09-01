@@ -3,9 +3,6 @@ type: "Architecture Overview"
 title: "Architecture"
 description: "Next.js App Router dashboard architecture — route groups, layout and provider hierarchy, client-side data fetching for interactive pages, authentication (proxy + Zustand store), state management, and environment configuration."
 tags: [architecture, nextjs, app-router, authentication, tanstack-query, zustand, configuration]
-verified:
-  - by: openwiki/0.4.3
-    at: 2026-08-29T08:47:45.377Z
 sources:
   - id: openwiki-source-5f5b95b3d6a215fa02ceb945
     resource: repo://.env.example
@@ -15,8 +12,14 @@ sources:
     resource: repo://eslint.config.js
   - id: openwiki-source-50a18d054b596a7ed0eeffb0
     resource: repo://next.config.ts
+  - id: openwiki-source-5b54a58d1b51cd490b0e7162
+    resource: repo://package.json
   - id: openwiki-source-fbccae247df2d4fe4a532ee8
     resource: repo://postcss.config.js
+  - id: openwiki-source-9d3d92121c13d276c8efa3b1
+    resource: repo://src/app/(dashboard)/analytics/liquidity/page.tsx
+  - id: openwiki-source-a7e83a5bcb5184c5fcf15853
+    resource: repo://src/app/(dashboard)/cogs/bulk/page.tsx
   - id: openwiki-source-d9e1ff9416fc7e39bc47b9bb
     resource: repo://src/app/(dashboard)/layout.tsx
   - id: openwiki-source-0f7d9f90eda573afa4d28051
@@ -35,7 +38,10 @@ sources:
     resource: repo://src/stores/authStore.ts
   - id: openwiki-source-98d5ddb014a0fd4d678f6f2a
     resource: repo://tsconfig.json
-generated: { by: "openwiki/0.4.3", at: "2026-08-29T08:47:45.377Z" }
+generated: { by: "openwiki/0.4.3", at: "2026-09-01T08:47:48.765Z" }
+verified:
+  - by: openwiki/0.4.3
+    at: 2026-09-01T08:47:48.765Z
 ---
 # Architecture
 
@@ -78,7 +84,7 @@ Source: `src/app/layout.tsx`, `src/app/providers.tsx`, `src/app/(dashboard)/layo
 
 ## Data Fetching — Interactive Pages Are Client-Side
 
-Next.js server page and layout wrappers coexist with client components. **Not every page uses the `use client` directive**; server components still render page/layout wrappers. However, the interactive, data-driven pages fetch client-side — none of the React Server Components fetch data. Those data flows use this layered architecture:
+Next.js server page and layout wrappers coexist with client components. **Not every page uses the `use client` directive**; server components still render page/layout wrappers. However, the interactive, data-driven pages fetch client-side — none of the React Server Components fetch data. For example, `src/app/(dashboard)/analytics/liquidity/page.tsx`, `src/app/(dashboard)/analytics/unit-economics/page.tsx`, and `src/app/(dashboard)/cogs/bulk/page.tsx` are all `'use client'` pages that delegate data loading to custom hooks. Those data flows use this layered architecture:
 
 ```
 Page (client component)
@@ -162,13 +168,15 @@ See [Design System](design-system.md) for the token contract, primitive hardenin
 
 `src/lib/env.ts` exposes a single `env` object reading `NEXT_PUBLIC_*` variables at build time: `apiUrl` (`NEXT_PUBLIC_API_URL`, defaulting to the local backend at `http://localhost:3000`), `appName` / `appVersion`, boolean flags `enableAnalytics`, `enableWebSocket`, `enableDevTools` (each `=== 'true'`), plus `isProduction`/`isDevelopment`. `env.enableDevTools` conditionally mounts `ReactQueryDevtools` inside `Providers`, and the API client constructor warns if a production `apiUrl` uses plain `http://` outside localhost.
 
+Local runtime truth: the Next.js dev/start servers bind to **port 3100** (`next dev -p 3100` / `next start -p 3100` in `package.json`), while the backend API serves on **port 3000** (`NEXT_PUBLIC_API_URL=http://localhost:3000` — endpoints start with `/v1/`, no `/api` suffix). There is no deployment target; this is a self-hosted setup. `eslint.config.js` (ESLint 9 flat config) is the actual enforcement path for `npm run lint` and CI; the legacy `.eslintrc.json` is kept only for IDE/editor integration and is ignored by ESLint 9+ when both exist.
+
 ## Configuration
 
 | File | Purpose |
 |------|---------|
 | `next.config.ts` | Next.js config |
 | `tsconfig.json` | TypeScript strict mode, `@/` path alias |
-| `eslint.config.js` | Flat ESLint config with custom `no-restricted-syntax` for AP#8 |
+| `eslint.config.js` | ESLint 9 flat config — the actual CI/lint enforcement path (legacy `.eslintrc.json` is IDE-only); includes custom `no-restricted-syntax` selectors for Anti-Pattern #8 (`?? 0` on money/ratio fields) |
 | `src/styles/globals.css` | Tailwind v4 CSS-first theme — semantic token palette (background, card, brand/primary, financial, status, availability, chart roles), typography/spacing/radius/shadow scales, light + dark themes. The JavaScript `tailwind.config.ts` was removed; see [Design System](design-system.md). |
 | `postcss.config.js` | `@tailwindcss/postcss` + autoprefixer (Tailwind v4 compiler contract) |
 | `components.json` | shadcn/ui CLI metadata aligned to Tailwind v4 (`config: ""`, CSS variables, new-york style) |

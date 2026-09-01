@@ -12,18 +12,30 @@ sources:
     resource: repo://.github/workflows/openwiki-update.yml
   - id: openwiki-source-a2371d6362e5db4bc834ad03
     resource: repo://CLAUDE.md
+  - id: openwiki-source-52f9f2aa17dde77e23385c81
+    resource: repo://e2e/fixtures/story-174-3/execution-manifest.ts
+  - id: openwiki-source-5bbe945b709b541c065ab0e2
+    resource: repo://e2e/fixtures/story-174-3/state-evidence.ts
   - id: openwiki-source-f323b150aa81d8e8d0adb0eb
     resource: repo://e2e/settings-pages.spec.ts
   - id: openwiki-source-b0480c34c110ffe1e27be32c
     resource: repo://e2e/settings/backfill-a11y.spec.ts
   - id: openwiki-source-576e1036a00b6180ac2fd526
     resource: repo://e2e/settings/backfill-admin.spec.ts
+  - id: openwiki-source-12b500bd3220d46b1b5dfb12
+    resource: repo://e2e/shadcn-migration-visual-accessibility.spec.ts
   - id: openwiki-source-86456ce6fabc47629e634fc6
     resource: repo://e2e/shipments/shipments-detail.spec.ts
   - id: openwiki-source-de6278600cd3a14fa502ad43
     resource: repo://e2e/shipments/shipments-list.spec.ts
   - id: openwiki-source-deeb82f30d6cfd23df864718
     resource: repo://e2e/sku-packaging-page.spec.ts
+  - id: openwiki-source-97ec90ed5b39f439bbd723cf
+    resource: repo://e2e/story-174-3-dedicated-route-evidence.spec.ts
+  - id: openwiki-source-e280fd304221d300f2b53f37
+    resource: repo://e2e/story-174-3-real-browser-zoom.spec.ts
+  - id: openwiki-source-ae4009ca38f56a2f1a8bafb8
+    resource: repo://e2e/support/story-174-3-runner-core.ts
   - id: openwiki-source-ffa6c3af53b402f151308103
     resource: repo://e2e/telegram-notifications.spec.ts
   - id: openwiki-source-23775c3de52f3ab95a13cb8b
@@ -34,18 +46,28 @@ sources:
     resource: repo://scripts/check-shadcn-migration-parity.mjs
   - id: openwiki-source-bdeb846005a65a32b569a6d3
     resource: repo://scripts/check-shadcn-ui-boundary.mjs
+  - id: openwiki-source-28021c2f62a088d4d9f6489f
+    resource: repo://scripts/lib/story-174-3-execution-requirements.mjs
+  - id: openwiki-source-8f2fb2dd82c28c75ce354113
+    resource: repo://scripts/run-story-174-3-real-browser-zoom.mjs
+  - id: openwiki-source-1bbe76f55f6efa9d2465f6c5
+    resource: repo://scripts/run-story-174-3-state-evidence.mjs
   - id: openwiki-source-c448aae4287d4d4701b86b58
     resource: repo://src/test/playwright-static-boundary.ts
+  - id: openwiki-source-64fe71a7ae47db511ff422d4
+    resource: repo://src/test/story-174-3-state-contract.test.ts
+  - id: openwiki-source-72aa0e35fae33f199ccac4c2
+    resource: repo://src/test/story-174-3-surface-contract.test.ts
   - id: openwiki-source-b3c59ed7dd82c4c19f9a9dce
     resource: repo://test-utils/network-policy.json
   - id: openwiki-source-765eb9dfac83102deebc4cc8
     resource: repo://test-utils/outbound-network-policy.ts
   - id: openwiki-source-fbadcd8591b65031efaaedce
     resource: repo://vitest.config.ts
-generated: { by: "openwiki/0.4.3", at: "2026-08-31T08:47:49.410Z" }
+generated: { by: "openwiki/0.4.3", at: "2026-09-01T08:47:48.765Z" }
 verified:
   - by: openwiki/0.4.3
-    at: 2026-08-31T08:47:49.410Z
+    at: 2026-09-01T08:47:48.765Z
 ---
 # Testing & Operations
 
@@ -99,7 +121,7 @@ The floor is a floor, not a substitute for fresh per-story validation. It moves 
 
 | Aspect | Detail |
 |--------|--------|
-| Test directory | `./e2e/` (~94 `.spec.ts` files, including the `settings/`, `shipments/`, `supplies/`, `analytics/`, and `automation/` subdirectories) |
+| Test directory | `./e2e/` (~95 `.spec.ts` files, including the `settings/`, `shipments/`, `supplies/`, `analytics/`, and `automation/` subdirectories plus the Story 174.3 specs) |
 | Base URL | `http://localhost:3100` (overridable via `E2E_BASE_URL`, validated against the network policy allowlist via `assertAllowedTestUrl`) |
 | Projects | `setup` (auth, uses storage state) → `chromium` (desktop, depends on setup); `historical-spp` (self-contained, empty storage state, skips `setup`) for the Story 128.27 exact-command spec |
 | CI behavior | 2 retries, 1 worker, `forbidOnly: true`, auto-starts dev server |
@@ -119,7 +141,7 @@ The floor is a floor, not a substitute for fresh per-story validation. It moves 
 - `e2e/fixtures/story-172-9-communications.ts` — Story 172.9 communications route controller with exact API paths and flippable per-section status (see below)
 
 ### E2E test areas
-Dashboard, orders, supplies, shipments (incl. SKU packaging, Story 173.11), margin analytics, FBS, COGS, pricing calculator (Epic 44-FE + Story 172.8), liquidity (with trends, Story 165.4), unit economics, advertising, funnel, search analytics, forecasts, Moysklad integration, finances (NEW-7), backfill admin (per-source retry, Story 165.5), communications (Story 172.9), accessibility, settings, monitoring, historical SPP analytics (Story 128.27), plus `e2e/outbound-network-guard.spec.ts` which exercises the guard itself end-to-end.
+Dashboard, orders, supplies, shipments (incl. SKU packaging, Story 173.11), margin analytics, FBS, COGS, pricing calculator (Epic 44-FE + Story 172.8), liquidity (with trends, Story 165.4), unit economics, advertising, funnel, search analytics, forecasts, Moysklad integration, finances (NEW-7), backfill admin (per-source retry, Story 165.5), communications (Story 172.9), accessibility, settings, monitoring, historical SPP analytics (Story 128.27), plus `e2e/outbound-network-guard.spec.ts` which exercises the guard itself end-to-end. Story 174.3 added three more top-level specs: `e2e/shadcn-migration-visual-accessibility.spec.ts` (the 76-route inclusive visual/a11y matrix — see [Design System](design-system.md#the-story-1743-inclusive-visual-contract)), `e2e/story-174-3-dedicated-route-evidence.spec.ts`, and `e2e/story-174-3-real-browser-zoom.spec.ts` (see [Story 174.3 Evidence Runners](#story-1743-evidence-runners)).
 
 ### Story 172.8 — price calculator (`e2e/price-calculator.spec.ts`)
 
@@ -190,7 +212,63 @@ Two AST-based scanners enforce AP#6 (vacuous E2E assertions) and AP#7 (hard `wai
 
 These are not in the `README.md` **Local validation** command list; they are enforced as quality gates via their Vitest self-tests and the dedicated npm scripts. See [Conventions & Quality Gates — Quality Gates](conventions-and-quality.md#quality-gates-ratchet-scripts) for how they sit alongside the other gates.
 
+## Story 174.3 Evidence Runners
+
+Story 174.3 (inclusive accessibility/responsive/theme/visual verification) added a dedicated evidence layer on top of the ordinary E2E suites: dedicated-route evidence specs, a real-browser-zoom orchestrator, a fail-closed state-evidence runner that materializes a committed execution manifest, and a large typed fixture corpus under `e2e/fixtures/story-174-3/`. The 76-route matrix contract itself is documented in [Design System](design-system.md#the-story-1743-inclusive-visual-contract); this section covers the operational tooling.
+
+```mermaid
+flowchart TD
+    FX["Fixtures under e2e/fixtures/story-174-3"] --> REQ["story1743ExactOwnerExecutions AST extraction"]
+    FX --> DFT["story1743DefaultExecutions"]
+    REQ -->|owner-units owners| ST["run-story-174-3-state-evidence.mjs"]
+    DFT -->|defaults all| ST
+    ST --> VT["npm test --run reporter json"]
+    ST --> PW["npm run test:e2e:full reporter json"]
+    VT --> MF["execution-manifest.json schemaVersion 1"]
+    PW --> MF
+    MF --> MRG["assertMergeReadyEntries fail closed"]
+    CT["src/test/story-174-3 contract tests"] -.enforce.-> MF
+    ZM["run-story-174-3-real-browser-zoom.mjs"] -->|osascript Cmd + five times| SP["story-174-3-real-browser-zoom.spec.ts"]
+```
+
+Figure: the state-evidence runner extracts literal owner-scenario declarations from the fixtures, executes them via the standard npm wrappers with JSON reporters, and rewrites the committed execution manifest; the zoom orchestrator drives actual macOS browser UI zoom into the skipped-by-default zoom spec.
+
+### Shared runner support (`e2e/support/story-174-3-*.ts`)
+
+Three modules, all importing `expect` and types from `../fixtures/network-test` (so they live inside the guarded Playwright runtime):
+
+- **`story-174-3-runner-core.ts`** — the settled-route and evidence primitives: `EXPECTED_ROUTE_COUNT = 76`, `MATRIX_HEIGHT = 900`, `ROUTE_SETTLE_TIMEOUT = 15_000`; `assertSettledRoute` (polls the exact pathname — redirectors must settle on one of their declared final routes — a settled `document.readyState`, zero Next.js error markers, exactly one visible `h1`, and rejection of generic error/not-found shells, then checks the route's identity contract: `static-h1`/`materialized-h1` exact text, `backend-h1` landmark with pattern + forbidden texts, `route-landmark` accessible name, or `redirector` destination heading); `applyTheme` (localStorage `theme` + reload + `.dark` class regex); `prepareSessionProfile` (unauthenticated-onboarding routes get cookies cleared and auth-storage keys removed via `addInitScript` so their own UI renders instead of the guard redirect); `measureComputedTextContrast` (in-page canvas-composited WCAG contrast evidence); `summarizeAxeViolations`, `readEvidenceLine`, and `evidenceSha256` (SHA-256 of cited evidence files).
+- **`story-174-3-runner-interactions.ts`** — `assertKeyboardFocus` (Tab-walks the route-owned interactive set — excluding `header/nav/aside`, devtools overlays, and disabled controls — requiring a visible focus target with focus-specific computed styling) and overlay/focus exercises (`reachByKeyboard`, `assertOverlayInventory`).
+- **`story-174-3-runner-surfaces.ts`** — executes the table/chart surface contracts live (expected counts of live tables/charts, pagination semantics, chart/table framing).
+
+### Dedicated-route evidence (`e2e/story-174-3-dedicated-route-evidence.spec.ts`)
+
+Closes the evidence gaps the canonical matrix could not prove per-route: `/analytics/brand-share`, `/analytics/buyout`, and `/orders/fbo` each get a settled-route + exact-h1 assertion (via `assertDedicatedRoute` with reduced motion), and the dynamic `/analytics/models/[id]/evaluations/sku-accuracy` route gets full deterministic coverage — an exact-method/exact-query `page.route` for `GET /v1/ai/evaluations/sku-accuracy?modelId=…` (fulfilling a two-SKU fixture), the exact table caption, sorted/ordered rows with localized percentage formatting, `aria-sort` ascending/descending toggling, viewport containment at 1280 and 390 px (no non-`-1` `tabindex`/stray `role` on rows), and the Enter-driven drill-in to `?nmId=…` with the exact detail text.
+
+### Real-browser zoom (`scripts/run-story-174-3-real-browser-zoom.mjs` + `e2e/story-174-3-real-browser-zoom.spec.ts`)
+
+The zoom spec is `test.skip` by default and runs only through its macOS headed orchestrator:
+
+- The orchestrator refuses to run off `darwin`, off Node `v24.18.0`, or without `STORY_174_3_NPM_CLI` naming the pinned npm `11.11.0` CLI (verified before spawning). It spawns `npm run test:e2e:full -- e2e/story-174-3-real-browser-zoom.spec.ts --project=chromium --workers=1 --headed --grep 'real browser 200 percent zoom'` with `STORY_174_3_REAL_BROWSER_ZOOM=1` and a private `STORY_174_3_ZOOM_READY_FILE` in a temp directory.
+- The spec writes the ready file (`wx`) once it has a baseline `devicePixelRatio`/`innerWidth`; the orchestrator polls for it (120 s), finds the single headed Chromium browser process (descendant-PID walk over `ps`, matching `--remote-debugging-pipe` without `--type=`), and applies **actual macOS browser UI zoom** via `osascript` System Events (`Cmd+0` reset, then five `Cmd+Plus` presses). The spec's `expect.poll` waits until `devicePixelRatio` at least doubles.
+- The proof is explicitly **not a CSS-zoom proxy**: root `zoom` must remain `1|normal`, `devicePixelRatio` must at least double, and `innerWidth` must shrink correspondingly (≤ baseline/1.9). At that zoom, all 76 routes must keep the document bounded (`scrollWidth ≤ clientWidth + 2`) with `main` inside the viewport, in **both themes**; authenticated routes run first, then `prepareSessionProfile` clears the session and the unauthenticated-onboarding routes run. Cleanup kills the child and removes the temp root.
+
+### State-evidence runner (`scripts/run-story-174-3-state-evidence.mjs`)
+
+A fail-closed orchestrator for the committed execution manifest `e2e/fixtures/story-174-3/execution-manifest.json` (invoked as `npm run evidence:story-174-3:states` or `node scripts/run-story-174-3-state-evidence.mjs [mode]`):
+
+- Modes: `--owner-units` (Vitest owner tests), `--owner-browsers` (Playwright owner specs), `--dedicated-routes` (only `e2e/story-174-3-dedicated-route-evidence.spec.ts`), `--owners` (both owner groups), `--defaults` (the 76 canonical matrix defaults, run with `STORY_174_3_RECORDING_DEFAULTS=1`), and `--all`. Required executions are extracted from the fixture sources by `scripts/lib/story-174-3-execution-requirements.mjs` (TypeScript-AST parse accepting only literal `source`/`scenarioId`/runner arguments, with per-source SHA-256 pinning).
+- It runs Vitest with `--reporter=json` and Playwright through the `test:e2e:full` wrapper (so the preflight gate still applies) with `PLAYWRIGHT_JSON_OUTPUT_FILE` in a temp directory, maps each required scenario id to its recorded outcome, and throws on any scenario missing from the runner output, any non-`passed` result, or a non-zero exit code ("evidence run failed closed"). Playwright outcome mapping keeps the top-level spec-file identity through the `network-test` wrapper instead of letting the fixture file substitute for the spec.
+- The manifest is rewritten only with deduplicated, sorted entries (`schemaVersion: 1`, runtime node/npm, command, exitCode, startedAt, durationMs per entry). The `--defaults` mode additionally requires that `--owners` ran first (full owner coverage present) and calls `assertMergeReadyEntries`: every merge-ready entry must match the expected `sourceSha256`/runner exactly, be `passed` with exit 0 and a valid command/timestamp/duration — anything stale, missing, unexpected, or incomplete throws before the manifest is written.
+- Reader/contract enforcement lives in `scripts/lib/story-174-3-manifest.mjs` and `src/test/story-174-3-{manifest-reader,state-contract,surface-contract,manual-evidence-contract}.test.ts` (the Vitest-side guarantees; see [Migration Program](migration-program.md#story-1743-the-inclusive-visual-matrix-and-its-evidence-pipeline)).
+
+### Fixture corpus (`e2e/fixtures/story-174-3/`)
+
+~30 typed modules feeding the runners: `route-evidence.ts`/`route-contracts.ts`/`state-evidence.ts` (the 76-route registry and state dispositions), `state-scenarios*.ts` and the `owner-state-evidence-{a,b,c}*` families with their `owner-state-exceptions*` and `owner-state-reconciliation.ts` (owner-test bindings and N/A reconciliation), the surface inventories `table-inventory.ts`, `chart-inventory.ts`, and `overlay-inventory.ts` (import-time anchor verification against cited production files), `surface-types.ts`, `dedicated-route-scenarios.ts`, `manual-evidence.ts` (the operator-driven manual ledger), and the execution-manifest pair. Changing any cited source invalidates its recorded SHA-256 and the next `--defaults` merge-ready check fails closed.
+
 ## shadcn Gate Scripts (Stories 174.1 / 174.2)
+
+
 
 The Epics 166–174 shadcn migration added two Node-based gate scripts. Neither has an `npm run` alias — invoke them directly with `node scripts/…`. Both run a `node:test` self-suite **first** and fail fast if it fails; both self-suites are excluded from the Vitest run (`vitest.config.ts` exclude list) because the Playwright static boundary forbids `node:child_process`/dynamic execution in files Vitest would pick up (the parity self-suite is explicitly whitelisted in `SELF_TEST_MODULES`).
 

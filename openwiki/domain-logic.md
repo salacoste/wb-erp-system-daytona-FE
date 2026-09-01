@@ -1,10 +1,10 @@
 ---
 type: "Domain Reference"
 title: "Domain Logic"
-description: "Financial and business-logic helpers as pure functions in src/lib/, route-local domain helpers extracted from monitor/monitoring components, plus the price-calculator domain modules — theoretical profit, margin/COGS temporal logic, unit economics, liquidity with trends, repricing price basis (SPP-1 lane), account finances + document download (NEW-7), seller communications with gated write-back (NEW-2), cost/tariff calculations, ISO-week/Moscow-timezone handling, and Russian-locale formatters."
+description: "Financial and business-logic pure functions in src/lib/ (theoretical profit, margin/COGS temporal logic, ROI/profit-per-unit and efficiency status tiers, profitability status, unit economics, liquidity with trends, account finances + document download, seller communications with gated write-back, backfill retry, ISO-week/Moscow-timezone handling, null/decimal helpers), the per-week financial series hook, returns-analytics and sku-financials type contracts, route-local monitor/monitoring domain helpers, and the price-calculator cost-breakdown and margin-status modules."
 verified:
   - by: openwiki/0.4.3
-    at: 2026-08-29T08:47:45.377Z
+    at: 2026-09-01T08:47:48.765Z
 sources:
   - id: openwiki-source-1550d5500fee77a878edfd70
     resource: repo://src/app/(dashboard)/monitor/components/monitor-metrics-utils.ts
@@ -22,6 +22,10 @@ sources:
     resource: repo://src/components/custom/price-calculator/cost-breakdown-types.ts
   - id: openwiki-source-c4a70565d56a4d861147959a
     resource: repo://src/components/custom/price-calculator/margin-status-helpers.ts
+  - id: openwiki-source-ca40daf89ea98ab131d36ff4
+    resource: repo://src/hooks/financial/useWeeklyFinancialSeries.ts
+  - id: openwiki-source-e6c63f5a090d825e57444dba
+    resource: repo://src/lib/__tests__/roi-profit-utils.test.ts
   - id: openwiki-source-8e7e58eae241bb5c791600ca
     resource: repo://src/lib/api/backfill.ts
   - id: openwiki-source-057a326f1915437fde67c721
@@ -42,6 +46,8 @@ sources:
     resource: repo://src/lib/api/pricing-basis.ts
   - id: openwiki-source-c5d12e34dea3a25c49823079
     resource: repo://src/lib/decimal-utils.ts
+  - id: openwiki-source-cf5f1822276428503b195822
+    resource: repo://src/lib/efficiency-utils.ts
   - id: openwiki-source-b9312fcbc31f54766055eb16
     resource: repo://src/lib/finances/download-blob.ts
   - id: openwiki-source-f53ff5d422ace1c7ad410a9b
@@ -54,9 +60,19 @@ sources:
     resource: repo://src/lib/margin-helpers.ts
   - id: openwiki-source-3ce869e30606517f4bf48ded
     resource: repo://src/lib/null-helpers.ts
+  - id: openwiki-source-5e15a8c772b52adb92e29080
+    resource: repo://src/lib/profitability-utils.ts
+  - id: openwiki-source-7604bf7e8d8e788dfe59d301
+    resource: repo://src/lib/roi-profit-utils.test.ts
+  - id: openwiki-source-1834adbab3256ce3be6ed751
+    resource: repo://src/lib/roi-profit-utils.ts
   - id: openwiki-source-d6b8b04abd546dc2eafc55e1
     resource: repo://src/lib/theoretical-profit.ts
-generated: { by: "openwiki/0.4.3", at: "2026-08-29T08:47:45.377Z" }
+  - id: openwiki-source-8882572a73a88650eca4e4b9
+    resource: repo://src/types/analytics-returns.ts
+  - id: openwiki-source-dbb29a8befd1ef6fd6b187fb
+    resource: repo://src/types/sku-financials/core.ts
+generated: { by: "openwiki/0.4.3", at: "2026-09-01T08:47:48.765Z" }
 ---
 # Domain Logic
 
@@ -89,16 +105,38 @@ Key design decisions:
 
 **File**: `src/lib/profitability-utils.ts`
 
-`EXTENDED_STATUS_CONFIG` defines profitability tiers with thresholds, colors, Russian labels, and actionable recommendations:
+`EXTENDED_STATUS_CONFIG` (`EXTENDED_STATUS_CONFIG` in `src/lib/profitability-utils.ts`) defines six profitability tiers with thresholds, hex colors, Tailwind classes, Russian labels, and actionable recommendations:
 
-| Status | Threshold |
+| Status | Threshold (margin %) |
 |--------|-----------|
-| Excellent | > 25% |
-| Good | 15–25% |
-| Warning | (below good) |
-| Critical | (below warning) |
+| excellent | > 25% |
+| good | 15–25% |
+| warning | 5–15% |
+| critical | 0–5% |
+| loss | < 0% |
+| unknown | COGS not assigned |
 
-**File**: `src/lib/roi-profit-utils.ts` — ROI color coding (≥100% green, <0% red), `formatProfitPerUnit()`.
+The same six-status taxonomy and thresholds are declared in `ProfitabilityStatus` (`src/types/sku-financials/core.ts`), which also carries `PROFITABILITY_COLORS` (Story 168.11 `/15`-chip classes with `text-foreground`) and `PROFITABILITY_LABELS` (Russian, `unknown` → «Нет COGS»).
+
+### ROI & profit per unit (`src/lib/roi-profit-utils.ts`)
+
+- `getROIRating(roi)` — threshold labels: ≥100 «Отлично», ≥50 «Хорошо», ≥20 «Средне», ≥0 «Низко», else «Убыток»; `null`/`undefined` → «—».
+- `getROIColor(roi)` — **Story 174.3 a11y change**: any measured ROI returns `text-foreground` and only `null`/`undefined` returns `text-muted-foreground`. Color no longer encodes ROI direction (the old green/orange/red coding was low-contrast); the numeric value and `getROIRating` label carry the meaning. Tests (`src/lib/__tests__/roi-profit-utils.test.ts`, `src/lib/roi-profit-utils.test.ts`) assert the new tokens while the numeric semantics (rating thresholds, null rules, formatting) are unchanged — stale test names still saying "green-600" only assert `text-foreground`.
+- `formatROI(value)` — canonical Russian-locale percent (comma + NBSP, 1 fixed decimal) via `formatPercentage`; callers MUST pass percent-units (0–100), since both `calculateROI` (`(profit/cogs)*100`) and the backend `roi` field use that scale; `null` → «—» (AP#8).
+- `calculateROI` / `calculateProfitPerUnit` — frontend fallbacks that return `null` (never a fabricated 0) when profit is null or the divisor (COGS/qty) is null or 0.
+- `formatProfitPerUnit()` — `Intl.NumberFormat('ru-RU', currency RUB)` + `/ед.` suffix; null → «—».
+
+### Efficiency status (`src/lib/efficiency-utils.ts`, Story 33.4-FE)
+
+`efficiencyConfig` maps five advertising efficiency statuses (`excellent`/`good`/`moderate`/`poor`/`loss` plus boundary-honest `unknown`) to Russian labels, Lucide icons, Tailwind bg/text/border/icon-color classes, classification descriptions (ROAS/ROI ranges, e.g. excellent = ROAS ≥ 5.0 / ROI ≥ 100%), and recommendations. Alert dismissal state (`ALERT_DISMISS_KEY`, `get/set/clearAlertDismissState`, `shouldShowLossAlert`) is re-exported from the extracted `efficiency-alert-state.ts`; accessor helpers (`getEfficiencyColor`, `getRoasColorClass`, `isLossStatus`, …) live in `efficiency-accessors.ts` (file-size split). Focused tests: `src/lib/__tests__/efficiency-utils.test.ts`, `efficiency-alert-state.test.ts`, `efficiency-filter-config.test.ts`.
+
+### Per-week financial series (`src/hooks/financial/useWeeklyFinancialSeries.ts`)
+
+Unlike `useMultiWeekFinancialSummary` (N weeks → one aggregate), `useWeeklyFinancialSeries(weeks)` runs one `useQueries` per ISO week against `/v1/analytics/weekly/finance-summary?week=…` (key `['financial','summary',week,'week']`, 30s staleTime / 5-min gcTime), keeping each week separate for the `/analytics/finance-history` metric × week grid. Each week's summary gets the same single-week margin-consistency pass as `useFinancialSummary` — `aggregateFinanceSummaries([raw])` over `summary_total ?? summary_rus`, with RUS+EAEU product transactions summed — so margin/ratio fields read identically to the dashboard's current-week numbers. Derived flags: `isLoading`/`isError` via `some`, `isSettled` only when every requested week resolved (data or error).
+
+### Returns analytics types (`src/types/analytics-returns.ts`, Epic 70-FE)
+
+`ReturnCategory` adds `'unknown'` as the boundary-honest marker for unrecognized backend category values (Story 169.11 — indicate, never coerce). AP#8 nullability: `overallReturnRate` and `classificationCoverage` are `number | null` (render «—», not "0 %"), and `BySkuReturnItem.returnRate` is `number | null` — null when `salesCount` is unavailable; a fabricated 0 would color a high-return SKU green/healthy.
 
 ## Cabinet Target Margin
 
