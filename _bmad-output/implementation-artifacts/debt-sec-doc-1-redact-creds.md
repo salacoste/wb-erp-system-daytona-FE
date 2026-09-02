@@ -1,7 +1,7 @@
 # Debt SEC-DOC-1 — S-2 (§8-P0, security-lane): изъятие plaintext-литералов тестового пароля из tracked docs/artifacts
 
-**Status**: review — 2026-09-02; doc-only механика: 1 запланированный ревью-проход (code-reviewer/opus, APPROVE-WITH-FINDINGS, 5 findings, все закрыты волной-2) + независимая финальная верификация оркестратора; PR: TBD (впишет оркестратор)
-**Item**: S-2 (SEC-DOC-1) — debt-канон: [`docs/HANDOFF-2026-08-29-EPIC-173-174-FULL-MIGRATION-AND-DEBT.md`](../../docs/HANDOFF-2026-08-29-EPIC-173-174-FULL-MIGRATION-AND-DEBT.md) §11.9:646 (security-lane, §8-P0) · **PR**: TBD · **Base**: main `f53b493d` · **Branch**: `debt/sec-doc-1-redact-creds` · **Worktree**: `/private/tmp/sec-doc-1-redact-creds` · **Date**: 2026-09-02
+**Status**: review — 2026-09-02; doc-only механика: 1 запланированный ревью-проход (code-reviewer/opus, APPROVE-WITH-FINDINGS, 5 findings, все закрыты волной-2) + независимая финальная верификация оркестратора; PR #383 (head d1fbd191)
+**Item**: S-2 (SEC-DOC-1) — debt-канон: [`docs/HANDOFF-2026-08-29-EPIC-173-174-FULL-MIGRATION-AND-DEBT.md`](../../docs/HANDOFF-2026-08-29-EPIC-173-174-FULL-MIGRATION-AND-DEBT.md) §11.9:646 (security-lane, §8-P0) · **PR**: #383 · **Head**: `d1fbd191` · **Base**: main `f53b493d` · **Branch**: `debt/sec-doc-1-redact-creds` · **Worktree**: `/private/tmp/sec-doc-1-redact-creds` · **Date**: 2026-09-02
 
 > **Маски литералов.** Секретные строки в этом артефакте НЕ печатаются: «stale-литерал» — устаревший пароль (в живом `.env.e2e` = 0 хитов), «live-литерал» — действующий пароль (подтверждён живым `.env.e2e`). Каноническое значение — только untracked `.env.e2e`; в tracked-файлах — плейсхолдер `<E2E_TEST_PASSWORD>`.
 
