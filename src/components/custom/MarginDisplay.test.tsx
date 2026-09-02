@@ -96,7 +96,7 @@ describe('MarginDisplay', () => {
   })
 
   describe('zero margin', () => {
-    it('should render zero margin with gray color', () => {
+    it('should render zero margin with muted color', () => {
       render(<MarginDisplay marginPct={0} />)
 
       const marginText = screen.getByText(/0/)
@@ -175,13 +175,13 @@ describe('MarginDisplay', () => {
 
 describe('MarginBadge', () => {
   describe('positive margin', () => {
-    it('should render positive margin badge with green styling', () => {
+    it('should render positive margin badge with financial-positive styling', () => {
       const { container } = render(<MarginBadge marginPct={35.5} />)
 
-      const badge = container.querySelector('.bg-green-50')
+      const badge = container.querySelector('.bg-financial-positive\\/5')
       expect(badge).toBeInTheDocument()
-      expect(badge).toHaveClass('text-green-700')
-      expect(badge).toHaveClass('border-green-200')
+      expect(badge).toHaveClass('text-financial-positive')
+      expect(badge).toHaveClass('border-financial-positive/20')
     })
 
     it('should contain formatted margin text', () => {
@@ -192,24 +192,24 @@ describe('MarginBadge', () => {
   })
 
   describe('negative margin', () => {
-    it('should render negative margin badge with red styling', () => {
+    it('should render negative margin badge with financial-negative styling', () => {
       const { container } = render(<MarginBadge marginPct={-12.3} />)
 
-      const badge = container.querySelector('.bg-red-50')
+      const badge = container.querySelector('.bg-financial-negative\\/5')
       expect(badge).toBeInTheDocument()
-      expect(badge).toHaveClass('text-red-700')
-      expect(badge).toHaveClass('border-red-200')
+      expect(badge).toHaveClass('text-financial-negative')
+      expect(badge).toHaveClass('border-financial-negative/20')
     })
   })
 
   describe('zero margin', () => {
-    it('should render zero margin badge with gray styling', () => {
+    it('should render zero margin badge with muted styling', () => {
       const { container } = render(<MarginBadge marginPct={0} />)
 
-      const badge = container.querySelector('.bg-gray-50')
+      const badge = container.querySelector('.bg-muted')
       expect(badge).toBeInTheDocument()
-      expect(badge).toHaveClass('text-gray-700')
-      expect(badge).toHaveClass('border-gray-200')
+      expect(badge).toHaveClass('text-muted-foreground')
+      expect(badge).toHaveClass('border-border')
     })
   })
 
@@ -220,12 +220,12 @@ describe('MarginBadge', () => {
       expect(screen.getByText('—')).toBeInTheDocument()
     })
 
-    it('should have gray styling for missing margin', () => {
+    it('should have muted styling for missing margin', () => {
       const { container } = render(<MarginBadge marginPct={null} />)
 
-      const badge = container.querySelector('.bg-gray-50')
+      const badge = container.querySelector('.bg-muted')
       expect(badge).toBeInTheDocument()
-      expect(badge).toHaveClass('text-gray-500')
+      expect(badge).toHaveClass('text-muted-foreground')
     })
 
     it('should have title attribute with missing data reason', () => {

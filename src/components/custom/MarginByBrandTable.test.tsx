@@ -119,7 +119,7 @@ describe('MarginByBrandTable', () => {
 
       const row = screen.getByText('Negative Brand').closest('tr')
       expect(row).not.toBeNull()
-      expect(row?.querySelector('.bg-red-50')).toHaveTextContent('-12,30 %')
+      expect(row?.querySelector('.bg-financial-negative\\/5')).toHaveTextContent('-12,30 %')
     })
   })
 
@@ -347,11 +347,13 @@ describe('MarginByBrandTable', () => {
         tr.textContent?.includes(name)
       ) as HTMLElement
 
-    it('suppresses the margin badge (→ gray «—») when cogs === 0', () => {
+    it('suppresses the margin badge (→ muted «—») when cogs === 0', () => {
       const { container } = render(<MarginByBrandTable data={bd5Data} />)
       const noCogsRow = rowByName(container, 'NoCogs Co')
-      // Margin 100 % must NOT paint a green/red badge — null → gray «—» fallback.
-      expect(noCogsRow.querySelector('.bg-green-50, .bg-red-50')).toBeNull()
+      // Margin 100 % must NOT paint a financial-positive/negative badge — null → muted «—» fallback.
+      expect(
+        noCogsRow.querySelector('.bg-financial-positive\\/5, .bg-financial-negative\\/5')
+      ).toBeNull()
     })
 
     it('renders «—» for COGS-dependent cells when cogs === 0', () => {
@@ -375,7 +377,7 @@ describe('MarginByBrandTable', () => {
     it('renders real margin badge + profit for cogs > 0 rows (control)', () => {
       const { container } = render(<MarginByBrandTable data={bd5Data} />)
       const cogsOkRow = rowByName(container, 'CogsOK Co')
-      expect(cogsOkRow.querySelector('.bg-green-50')).not.toBeNull() // Маржа 40 % → green
+      expect(cogsOkRow.querySelector('.bg-financial-positive\\/5')).not.toBeNull() // Маржа 40 % → financial-positive
       expect(cogsOkRow.textContent).toMatch(/40\s*000/) // Прибыль 40 000
     })
 
