@@ -13,8 +13,9 @@ export const metadata: Metadata = {
 
 export default function AiPreferencesPage() {
   return (
-    <main className="container mx-auto p-6">
+    // PB-2 / nested main removed (handoff §8-P1 D-5, 2026-09-02).
+    <div className="container mx-auto p-6">
       <AiPreferencesForm />
-    </main>
+    </div>
   )
 }
