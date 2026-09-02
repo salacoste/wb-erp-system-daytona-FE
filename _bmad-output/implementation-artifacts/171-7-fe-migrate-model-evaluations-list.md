@@ -57,7 +57,7 @@ Per plan (product AC 1-3 + plan/delivery AC 4-9). Route self-identifies as Story
 - Visual on branch (playwright-cli, live login): light — badge «Активна» green/readable, layout intact, columns aligned; dark — badge readable on dark, no light-only defects; a11y tree: `table "Оценки точности модели — Прогноз выручки (день) v3"` + caption node; element-screenshot confirms caption visual render (full-page vision pass missed the small muted line — element-level check is the reliable probe).
 - E2E attestation precision: exact command `npm run test:e2e -- e2e/analytics/ai-models.spec.ts --reporter=line` in the worktree; wrapper's preflight expanded to 14 tests = 13 passed / 1 skipped / 0 failed (incl. both evaluations-page tests).
 - Process note: killing the worktree dev server left truncated `.next/dev/types/*` → `tsc` TS1128/TS1109 on generated files; `rm -rf .next/dev` restores (artifact issue, not source regression; BUILD and targeted tests were green throughout).
-- Login-creds drift (P2/P8 known): live BE + `.env.e2e` = `Russia23!`; fresh-profile first-login redirect pattern did not recur this session (second-login already persisted).
+- Login-creds drift (P2/P8 known): live BE + `.env.e2e` = `<E2E_TEST_PASSWORD>`; fresh-profile first-login redirect pattern did not recur this session (second-login already persisted).
 
 ### Gaps
 

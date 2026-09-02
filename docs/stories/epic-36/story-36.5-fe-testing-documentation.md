@@ -106,7 +106,7 @@ test.describe('Epic 36: Product Card Linking', () => {
     // Login and navigate to advertising analytics
     await page.goto('/login')
     await page.fill('input[name="email"]', 'test@test.com')
-    await page.fill('input[name="password"]', 'LocalTest123!')
+    await page.fill('input[name="password"]', '<E2E_TEST_PASSWORD>')
     await page.click('button[type="submit"]')
     await page.waitForURL('/dashboard')
     await page.goto('/analytics/advertising')

@@ -132,7 +132,7 @@ FE-D1 (mutation retry:1 ретраит 4xx; WB-token PUT может дважды
 
 ## 6. Environment quick-facts
 
-Node **24.18.0** (PATH-пин `/opt/homebrew/opt/node@24/bin` на каждую npm/npx; Node-26 ломает webpack) · npm 11.11.0 пинн (NPM_CLI-override в раннерах даёт 11.16 — disclose) · worktree: branch из frontmatter плана + symlink node_modules + `.env.e2e`/`.env.local` копии · build только `npx next build --webpack` · e2e только `npm run test:e2e[:full]` · креды `test@test.com / Russia23!` · BE Swagger `/api`, health `/v1/health`.
+Node **24.18.0** (PATH-пин `/opt/homebrew/opt/node@24/bin` на каждую npm/npx; Node-26 ломает webpack) · npm 11.11.0 пинн (NPM_CLI-override в раннерах даёт 11.16 — disclose) · worktree: branch из frontmatter плана + symlink node_modules + `.env.e2e`/`.env.local` копии · build только `npx next build --webpack` · e2e только `npm run test:e2e[:full]` · креды `test@test.com / <E2E_TEST_PASSWORD>` · BE Swagger `/api`, health `/v1/health`.
 
 ## 7. Стоп-условия
 

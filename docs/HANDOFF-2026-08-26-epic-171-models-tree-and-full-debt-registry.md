@@ -77,7 +77,7 @@
 
 1. Литералы guarded-классов в собственных doc-комментариях матчатся регексом гарда (`bg-green-100 etc.`, `p-4 lg:p-6` в прозе) — гард это поймал живьём; писать описательно, не литералом.
 2. Turbopack падает (panic) на symlinked node_modules в /tmp-worktree — build в worktree только через `next build --webpack`.
-3. Креды дрейфуют: `frontend/CLAUDE.md` говорит `LocalTest123!`, живой BE + `.env.e2e` = `Russia23!` — source of truth `.env.e2e` (§3.4).
+3. Креды дрейфуют: `frontend/CLAUDE.md` говорит `<E2E_TEST_PASSWORD>`, живой BE + `.env.e2e` = `<E2E_TEST_PASSWORD>` — source of truth `.env.e2e` (§3.4).
 
 ---
 
@@ -131,15 +131,17 @@
 |---|---|---|
 | 171.6 | Тёмно-тематический скриншот вручную не снят (токены theme-aware по globals.css dark-блоку; юнит+e2e покрывают рендер) — опционально | [`171-6-...md` § Gaps](../_bmad-output/implementation-artifacts/171-6-fe-migrate-model-registry-and-training-entry.md) |
 | 171.6 | Caption-текст дублирует subtitle+CardDescription дословно (r-NIT ревью; canon 169.7 соблюдён; дифференциация — опциональный follow-up) | там же § Post-1st-pass |
-| 171.6 | Креды-дрейф: доки говорят `LocalTest123!`, живые `Russia23!` — док-фикс вне скоупа стори, **надо поправить в `frontend/CLAUDE.md` + `.env.e2e` комменте** любой ближайшей док-стори | там же § Gaps |
+| 171.6 | Креды-дрейф: доки говорят `<E2E_TEST_PASSWORD>`, живые `<E2E_TEST_PASSWORD>` — док-фикс вне скоупа стори, **надо поправить в `frontend/CLAUDE.md` + `.env.e2e` комменте** любой ближайшей док-стори | там же § Gaps |
 | 171.5 | hex-regex `=`-prefix альтернатива не принята (маргинальное покрытие; опционально) | [`171-5-...md` § Gaps](../_bmad-output/implementation-artifacts/171-5-fe-migrate-forecast-accuracy-analytics.md) |
+
+> SEC-DOC-1 (2026-09-02): парольные литералы изъяты из tracked-доков; указание на «устаревший пароль в CLAUDE.md» выше — исторический дрейф, разрешён env-указателем .env.e2e.
 
 ### 3.4 Процесс-/инфра-долги
 
 | # | Долг | Влияние | Канон |
 |---|---|---|---|
 | P1 | **Turbopack × symlinked node_modules**: `npm run build` в /tmp-worktree паникует — только `next build --webpack`; dev тоже `--webpack` | Каждый worktree-цикл | memory `reference_worktree_e2e_delivery_gotchas` + Lessons 171.6 |
-| P2 | **Креды-дрейф** (`LocalTest123!` vs `Russia23!`) + fresh-profile первый логин редиректит в `/onboarding/cabinet` (404), второй логин проходит | Ручные playwright-cli проверки | memory `reference_e2e_playwright_gotchas` (добавлено 26.08) |
+| P2 | **Креды-дрейф** (`<E2E_TEST_PASSWORD>` vs `<E2E_TEST_PASSWORD>`) + fresh-profile первый логин редиректит в `/onboarding/cabinet` (404), второй логин проходит | Ручные playwright-cli проверки | memory `reference_e2e_playwright_gotchas` (добавлено 26.08) |
 | P3 | **E2E только через npm-обёртку** (`npm run test:e2e -- <spec>`) — прямой `npx playwright test` блокируется preflight-handshake | Каждый e2e-прогон | `scripts/e2e-preflight.mjs` |
 | P4 | **check:locale-percent ratchet = 4** (двигался 108→4); любое снижение — same-commit baseline-апдейт | Миграции роутов с процентами | [`CLAUDE.md` § Dot-locale](../CLAUDE.md) · `scripts/.locale-percent-baseline.txt` |
 | P5 | **check:docs baseline = 97 entries** — исторические битые цитаты приняты; гейт = exit code, не счётчик | Док-сторика | `scripts/.check-docs-baseline.txt` |

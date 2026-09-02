@@ -247,7 +247,7 @@ credentialed functional E2E — carry-out 174.4. Plan-status аудит 2026-08-
 
 - Актуальный supervisor prompt: `docs/ORCHESTRATOR-PROMPT-2026-08-28-V11-HANDOFF-SUPERVISOR-OMC.md`; V10 остаётся расширенным справочником делегационного конвейера.
 - Программа закрыта 2026-09-02 (94/94). Актуальный вход: docs/HANDOFF-2026-09-02-FINAL-94-94-PROGRAM-COMPLETE.md; V13-промпт и оба team-handoff (08-30, 09-01) — история.
-- (История, до 2026-09-02) входом был `docs/HANDOFF-2026-08-29-EPIC-173-174-FULL-MIGRATION-AND-DEBT.md`; см. строку выше для актуального входа. Credential-bearing исторический handoff остаётся открытым долгом SEC-DOC-1 до отдельного review-safe security remediation.
+- (История, до 2026-09-02) входом был `docs/HANDOFF-2026-08-29-EPIC-173-174-FULL-MIGRATION-AND-DEBT.md`; см. строку выше для актуального входа. Credential-bearing исторический handoff остаётся открытым долгом SEC-DOC-1 до отдельного review-safe security remediation. **SEC-DOC-1 update (2026-09-02):** tracked-вхождения ОБЕИХ парольных литерал (stale `Local…` + live `Russ…`) изъяты из FE-дерева (35 файлов, non-echoing скан = 0, артефакт `debt-sec-doc-1-redact-creds.md`); ротация/BE-репо/history — owner-запрос `docs/security/SEC-DOC-1-rotation-owner-decision-2026-09-02.md`.
 - Ledger: docs/tech-debt/TECH-DEBT-2026-08-SESSION.md (Addendum-4 cont.1-25; каждая cont = закрытый item с уроками).
 - Дефект-паттерны 1-44 + идиомы волны: v8-промпт + W8 §4 + W9 §3 (lib-hex-каналы, chart-не-текст, PR-reopen).
 - W9 зафиксировала параллельную сессию, которая влила #209/#213 между нашими PR; boot-процесс должен сохранять fetch-детект и reopen-recovery после merge-гонки (W9 §2).

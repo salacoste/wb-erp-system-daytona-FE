@@ -176,7 +176,7 @@ git worktree list                  # зафиксируй ЧУЖИЕ worktrees (
 1. **Concurrent-сессии**: в репо работают параллельные команды (чужие `worktree-agent-*` ветки, 169-lane). Чужие ветки/worktrees НЕ трогать; своё — коммитить немедленно; перед каждым коммитом `git branch --show-current`; перед финализацией closeout — re-grep `origin/main` (аттестация может устареть в полёте).
 2. **Turbopack × symlinked node_modules**: `next build`/`next dev` (turbopack) в `/tmp`-worktree ПАНИКУЕТ на symlink `node_modules`. В worktree — всегда флаг `--webpack` (build и dev).
 3. **E2E только через npm-обёртку**: `npm run test:e2e -- <spec> ...` (preflight-handshake гейтит прямой `npx playwright test`). Обёртка добавляет preflight-фикстуры к счётчику — цитируй точную команду в evidence.
-4. **Креды**: `test@test.com` / **`Russia23!`** (живой BE + `.env.e2e`; в `CLAUDE.md` устаревший `LocalTest123!` — док-фикс в бэклоге, §3.3 handoff). Fresh-profile: первый логин редиректит в `/onboarding/cabinet` (одноразовый 404), второй логин проходит.
+4. **Креды**: `test@test.com` / **`<E2E_TEST_PASSWORD>`** (живой BE + `.env.e2e`; в `CLAUDE.md` устаревший `<E2E_TEST_PASSWORD>` — док-фикс в бэклоге, §3.3 handoff). Fresh-profile: первый логин редиректит в `/onboarding/cabinet` (одноразовый 404), второй логин проходит.
 5. **Порт 3100**: pm2 `wb-repricer-frontend-dev` и worktree-dev конфликтуют — останавливать pm2 перед worktree-e2e, **возвращать после**; `npm run build` в primary затирает `.next` dev-сервера.
 6. **Exit-коды**: `cmd | tail` ловит exit `tail`; `echo EXIT=$?` между `&&`-звеньями сбрасывает `$?` — только `cmd > log; echo EXIT=$?` отдельными строками.
 7. **Гард-самоматч**: литералы guarded-классов (`bg-green-100`, `p-6`, hex) в комментариях/доках матчатся регексами гардов — формулировать прозой.
@@ -202,7 +202,7 @@ git worktree list                  # зафиксируй ЧУЖИЕ worktrees (
 | FE dev/prod | `http://localhost:3100` (pm2 `wb-repricer-frontend-dev`) |
 | BE API | `http://localhost:3000` (`/v1/health`; Swagger `/api`) |
 | FE remote | `github.com:salacoste/wb-erp-system-daytona-FE.git` (свой git-репо, НЕ часть BE) |
-| Тест-креды | `test@test.com` / `Russia23!` (§8.4) |
+| Тест-креды | `test@test.com` / `<E2E_TEST_PASSWORD>` (§8.4) |
 | Worktrees | `/private/tmp/<путь-из-плана>`; node_modules — symlink из primary; `.env.e2e` — копировать (gitignored) |
 | Контекст-менеджмент | сессия падала от переполнения контекста на разведке — делегируй тяжёлые чтения сабагентам (explore/code-reviewer), держи свой контекст лёгким; результаты разведки СРАЗУ фиксируй в файл (план/артефакт), не держи в голове |
 

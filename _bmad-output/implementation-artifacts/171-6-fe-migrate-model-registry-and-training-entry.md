@@ -60,7 +60,7 @@ Per plan (C1-C11 apply; route self-identifies as Story 109.3/109.4 — provenanc
 ### Gaps
 
 - Manual dark-theme screenshot not captured (tokens theme-aware per globals.css dark block; unit+e2e cover rendering) — optional follow-up.
-- Login-creds drift: frontend/CLAUDE.md says `LocalTest123!`, live BE + `.env.e2e` use `Russia23!` — docs-side fix out of scope.
+- Login-creds drift: frontend/CLAUDE.md says `<E2E_TEST_PASSWORD>`, live BE + `.env.e2e` use `<E2E_TEST_PASSWORD>` — docs-side fix out of scope.
 
 ### File List
 
@@ -72,4 +72,5 @@ Diff main..ce331c1b = **5 files** (4 M + 1 A guard test); +118/−16. Exact: `gi
 |---|---|
 | 2026-08-26 | Story created from compliance-check recon (MINOR-GAP-plus; prev-session full-cycle miscount corrected — tree vs root surface). Plan referenced as authoritative. |
 | 2026-08-26 | Micro cycle: single commit ce331c1b; guard self-match fix in-cycle; 1×opus APPROVE-WITH-NOTES. Status: ready-for-dev → review. |
-| 2026-08-26 | Implemented + merged: PR #262 (`ce331c1b`, merge `b867551f`); targeted 58/3, full 19 253/0 (+7 exact), lint 0/0, tsc 0, max-lines OK, build (webpack) OK, e2e-on-branch 13/1↓/0; cleanup 0/0/0. Epic 171: 6/9. Status: review → done. **Lessons:** (1) Литералы guarded-классов в собственных комментариях матчатся регексом гарда — пиши прозой, не литералом. (2) Turbopack падает на symlink node_modules в /tmp-worktree — build только `next build --webpack`. (3) Док-креды (LocalTest123!) расходятся с живыми (Russia23!) — source of truth `.env.e2e`. |
+| 2026-08-26 | Implemented + merged: PR #262 (`ce331c1b`, merge `b867551f`); targeted 58/3, full 19 253/0 (+7 exact), lint 0/0, tsc 0, max-lines OK, build (webpack) OK, e2e-on-branch 13/1↓/0; cleanup 0/0/0. Epic 171: 6/9. Status: review → done. **Lessons:** (1) Литералы guarded-классов в собственных комментариях матчатся регексом гарда — пиши прозой, не литералом. (2) Turbopack падает на symlink node_modules в /tmp-worktree — build только `next build --webpack`. (3) Док-креды (<E2E_TEST_PASSWORD>) расходятся с живыми (<E2E_TEST_PASSWORD>) — source of truth `.env.e2e`. |
+| 2026-09-02 | SEC-DOC-1 security lane (disclosure): парольные литералы в этом артефакте изъяты (заменены на <E2E_TEST_PASSWORD>); исторический нарратив не изменён |
