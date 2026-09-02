@@ -41,6 +41,8 @@ const ALLOWED_EXTENSIONS = new Set([
   '.css',
   '.svg',
   '.html',
+  // .http allowed (REST-client examples; owner-approved D-4, SEC-DOC-1 2026-09-02)
+  '.http',
   '.xml',
   '.toml',
   '.graphql',
