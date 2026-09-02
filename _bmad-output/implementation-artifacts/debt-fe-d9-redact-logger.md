@@ -1,7 +1,7 @@
 # Debt FE-D9 — S-1 (§8-P0, security-lane): redact-слой для логгирования тел API-ошибок
 
-**Status**: review — 2026-09-02; 4-pass fresh-context review converged (плотность findings 7→4→6→3); PR/merge — TBD (оркестратор впишет после merge)
-**Item**: S-1 (FE-D9) — handoff [`docs/HANDOFF-2026-09-02-FINAL-94-94-PROGRAM-COMPLETE.md`](../../docs/HANDOFF-2026-09-02-FINAL-94-94-PROGRAM-COMPLETE.md) §8-P0 (security-lane, P0) · **PR**: TBD · **Merge SHA**: TBD · **Base**: main `6d95a1de` · **Branch**: `debt/fe-d9-redact-logger` · **Worktree**: `/private/tmp/fe-d9-redact-logger` · **Date**: 2026-09-02
+**Status**: review — 2026-09-02; 4-pass fresh-context review converged (плотность findings 7→4→6→3); PR #382 (head 781d1282)
+**Item**: S-1 (FE-D9) — handoff [`docs/HANDOFF-2026-09-02-FINAL-94-94-PROGRAM-COMPLETE.md`](../../docs/HANDOFF-2026-09-02-FINAL-94-94-PROGRAM-COMPLETE.md) §8-P0 (security-lane, P0) · **PR**: #382 · **Head**: `781d1282` · **Base**: main `6d95a1de` · **Branch**: `debt/fe-d9-redact-logger` · **Worktree**: `/private/tmp/fe-d9-redact-logger` · **Date**: 2026-09-02
 
 ## 1. Долг и DoD
 

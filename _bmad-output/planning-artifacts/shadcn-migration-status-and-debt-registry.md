@@ -176,7 +176,7 @@ credentialed functional E2E — carry-out 174.4. Plan-status аудит 2026-08-
 | FE-D5 | cross-tab create duplication (нет CAS)                                     | fast-follow Web Locks API                                                          |
 | FE-D6 | ExportConfigForm дубль ExportDialogForm (dead)                             | ближайшая чистка или 174.2                                                         |
 | FE-D8 | getCabinetCreationOperation middle-path (юзер висит в SAFE_RECONCILIATION) | по UX-жалобе; НЕ менять без fresh-ревью                                            |
-| FE-D9 | logApiError логирует non-2xx тела (вкл. plaintext password /register)      | **RESOLVED 2026-09-02** (S-1 §8-P0 handoff): redact-слой `redactSensitive`, обе ветки logApiError; PR #TBD; артефакт `debt-fe-d9-redact-logger.md` |
+| FE-D9 | logApiError логирует non-2xx тела (вкл. plaintext password /register)      | **RESOLVED 2026-09-02** (S-1 §8-P0 handoff): redact-слой `redactSensitive`, обе ветки logApiError; PR #382; артефакт `debt-fe-d9-redact-logger.md` |
 
 ### 3.2 Волновые carry-outs (от маршрутных миграций 168.10-169.10)
 
