@@ -143,7 +143,7 @@ describe('GapsTable', () => {
       />
     )
     const region = screen.getByRole('region', {
-      name: 'Таблица пропущенных дней финансовых данных',
+      name: 'Область прокрутки таблицы пропущенных дней',
     })
     expect(region).toHaveAttribute('tabindex', '0')
     expect(container.firstElementChild).not.toHaveClass('overflow-x-auto')

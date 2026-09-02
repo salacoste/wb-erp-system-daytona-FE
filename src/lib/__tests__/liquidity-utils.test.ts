@@ -2,7 +2,7 @@
  * Unit Tests for Liquidity Utility Functions (own exports)
  * Covers: getIlliquidSkuCount, getAttentionNeededCount, isFrozenCapitalHealthy,
  *         isHighlyLiquidHealthy, calculatePotentialUnlock, getRecommendedScenario,
- *         formatDiscount, getScenarioUrgencyLabel, getScenarioUrgencyColor
+ *         formatDiscount, getScenarioUrgencyLabel, getScenarioUrgencyTier, getScenarioUrgencyColor
  *
  * Note: Barrel re-exported functions have their own test files:
  * - liquidity-category-config.test.ts
@@ -21,6 +21,7 @@ import {
   getRecommendedScenario,
   formatDiscount,
   getScenarioUrgencyLabel,
+  getScenarioUrgencyTier,
   getScenarioUrgencyColor,
 } from '../liquidity-utils'
 import type { LiquiditySummary, LiquidityDistributionItem } from '@/types/liquidity'
@@ -269,6 +270,26 @@ describe('getScenarioUrgencyLabel', () => {
   it('returns "Консервативный" for > 60 days', () => {
     expect(getScenarioUrgencyLabel(90)).toBe('Консервативный')
     expect(getScenarioUrgencyLabel(120)).toBe('Консервативный')
+  })
+})
+
+// =============================================================================
+// getScenarioUrgencyTier (C15: single classification source)
+// =============================================================================
+
+describe('getScenarioUrgencyTier', () => {
+  it('returns "aggressive" for <= 30 days', () => {
+    expect(getScenarioUrgencyTier(14)).toBe('aggressive')
+    expect(getScenarioUrgencyTier(30)).toBe('aggressive')
+  })
+
+  it('returns "balanced" for 31-60 days', () => {
+    expect(getScenarioUrgencyTier(31)).toBe('balanced')
+    expect(getScenarioUrgencyTier(60)).toBe('balanced')
+  })
+
+  it('returns "conservative" for > 60 days', () => {
+    expect(getScenarioUrgencyTier(61)).toBe('conservative')
   })
 })
 

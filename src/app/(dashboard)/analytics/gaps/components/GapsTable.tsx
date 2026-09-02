@@ -60,9 +60,10 @@ export function GapsTable({ missingDates, isLoading, analyzingDate, onAnalyze }:
 
   return (
     <div className="rounded-md border">
+      {/* C13 (2026-09-02): caption is the table identity; the scroll-region label describes the scrollable area — deduplicated so SR users don't hear the table twice. */}
       <Table
         scrollContainerTabIndex={0}
-        scrollContainerAriaLabel="Таблица пропущенных дней финансовых данных"
+        scrollContainerAriaLabel="Область прокрутки таблицы пропущенных дней"
       >
         <TableCaption>Пропущенные дни в финансовых данных</TableCaption>
         <TableHeader>
