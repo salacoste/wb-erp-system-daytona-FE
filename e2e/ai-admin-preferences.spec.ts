@@ -37,7 +37,7 @@ test.describe('AI Admin Preferences Page', () => {
   })
 
   test('main content area rendered', async ({ page }) => {
-    // Page wraps content in <main> with container classes
+    // Shell layout renders <main id="main-content"> (layout.tsx); the page renders a div inside it (PB-2 fixed, D-5 2026-09-02)
     const main = page.locator('main')
     await expect(main.first()).toBeVisible()
   })
