@@ -3,6 +3,12 @@
  * Shows net profit after COGS deduction
  */
 
+// P2 boundary wave-1 (2026-09-02): legacy palette → semantic tokens; contrast
+// measured both themes — see debt-p2-boundary-wave1 artifact. text-status-success
+// on success/10 measures 4.49:1 (light) — sub-AA — so this tinted header band
+// keeps foreground text (14.1:1 light) with the success identity carried by the
+// tint, border, and Gem icon (4.49:1 ≥ 3:1 graphic contrast).
+
 import type { FinanceSummary } from '@/hooks/useDashboard'
 import {
   Table,
@@ -28,13 +34,13 @@ export function ProfitSection({ summary, comparisonSummary, isComparison }: Prof
   }
 
   return (
-    <Card className="border-2 border-emerald-500">
-      <CardHeader className="bg-emerald-50">
-        <CardTitle className="flex items-center gap-2 text-emerald-900">
-          <Gem className="h-5 w-5" />
+    <Card className="border-2 border-status-success/20">
+      <CardHeader className="bg-status-success/10">
+        <CardTitle className="flex items-center gap-2 text-foreground">
+          <Gem className="h-5 w-5 text-status-success" />
           Чистая прибыль
         </CardTitle>
-        <CardDescription className="text-emerald-700">
+        <CardDescription className="text-muted-foreground">
           Прибыль после вычета себестоимости товаров
         </CardDescription>
       </CardHeader>

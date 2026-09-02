@@ -3,6 +3,9 @@
  * Shows cost of goods sold and coverage metrics
  */
 
+// P2 boundary wave-1 (2026-09-02): legacy palette → semantic tokens; contrast
+// measured both themes — see debt-p2-boundary-wave1 artifact.
+
 import type { FinanceSummary } from '@/hooks/useDashboard'
 import {
   Table,
@@ -29,7 +32,7 @@ export function CogsSection({ summary, comparisonSummary, isComparison }: CogsSe
     <Card>
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
-          <Package className="h-5 w-5 text-amber-600" />
+          <Package className="h-5 w-5 text-status-warning" />
           Себестоимость (COGS)
         </CardTitle>
         <CardDescription>Себестоимость товаров и расчёт чистой прибыли</CardDescription>

@@ -3,6 +3,9 @@
  * Renders all expense line items within the table body
  */
 
+// P2 boundary wave-1 (2026-09-02): legacy palette → semantic tokens; contrast
+// measured both themes — see debt-p2-boundary-wave1 artifact.
+
 import { TableCell, TableRow } from '@/components/ui/table'
 import { ExpenseRow } from './ExpenseRow'
 import type { extractExpenseData } from './expenses-data'
@@ -47,7 +50,7 @@ export function ExpenseTableRows({ d, isComparison }: ExpenseTableRowsProps) {
       <TableRow>
         <TableCell colSpan={isComparison ? 6 : 3} className="py-1">
           <span className="sr-only">Операционные удержания</span>
-          <hr className="border-gray-200" aria-hidden="true" />
+          <hr className="border-border" aria-hidden="true" />
         </TableCell>
       </TableRow>
 
