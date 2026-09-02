@@ -467,14 +467,14 @@ Expected: `{"success": true, "message": "..."}`
 ### Test User Credentials
 
 **Email**: `test@test.com`
-**Password**: `LocalTest123!`
+**Password**: `<E2E_TEST_PASSWORD>`
 **Cabinet ID**: `f75836f7-c0bc-4b2c-823c-a1f3508cce8e`
 
 **Login**:
 ```bash
 curl -X POST http://localhost:3000/v1/auth/login \
   -H 'Content-Type: application/json' \
-  -d '{"email":"test@test.com","password":"LocalTest123!"}'
+  -d '{"email":"test@test.com","password":"<E2E_TEST_PASSWORD>"}'
 ```
 
 ---

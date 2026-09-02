@@ -105,7 +105,7 @@ const response = await (sdk as any).products.getCardsList(requestPayload);
 # 1. Авторизация
 TOKEN=$(curl -s 'http://localhost:3000/v1/auth/login' -X POST \
   -H 'Content-Type: application/json' \
-  -d '{"email":"test@test.com","password":"LocalTest123!"}' | python3 -c "import sys,json; print(json.load(sys.stdin)['access_token'])")
+  -d '{"email":"test@test.com","password":"<E2E_TEST_PASSWORD>"}' | python3 -c "import sys,json; print(json.load(sys.stdin)['access_token'])")
 
 # 2. Получить cabinet_id
 CABINET=$(curl -s 'http://localhost:3000/v1/cabinets' \

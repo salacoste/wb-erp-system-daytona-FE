@@ -146,7 +146,7 @@
 
 - **Node 24.18.0 / npm 11.11.0** — пинн; PATH-префикс `/opt/homebrew/opt/node@24/bin` на КАЖДУЮ npm/npx (Node 26 ломает webpack: WasmHash TypeError). Команды сабагентов — тоже.
 - Worktrees: `/private/tmp/<путь-из-плана>` + symlink node_modules + копия `.env.e2e`/`.env.local`; build — только `npx next build --webpack` (Turbopack×symlink); e2e — только `npm run test:e2e -- <spec>` (обёртка добавляет auth/orders; `--no-deps` ОТКАЗАНО).
-- Креды: `test@test.com / Russia23!`; BE- Swagger `/api`; health `/v1/health`.
+- Креды: `test@test.com / <E2E_TEST_PASSWORD>`; BE- Swagger `/api`; health `/v1/health`.
 - Логи/диффы волн — в `/tmp/172.{10..17}-*.log`, `/tmp/173.12-*.log` (эфемерны; при необходимости сохранить — переместить в артефакт).
 
 ---

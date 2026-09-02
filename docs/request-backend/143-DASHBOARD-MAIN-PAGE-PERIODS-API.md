@@ -517,7 +517,7 @@ Content-Type: application/json
 
 {
   "email": "test@test.com",
-  "password": "LocalTest123!"
+  "password": "<E2E_TEST_PASSWORD>"
 }
 
 @token = {{login.response.body.access_token}}

@@ -172,7 +172,7 @@ Allowed Change Surface = только файлы плана стори. Forbidde
 |---|---|
 | Node / npm | **24.18.0 / 11.11.0** (пинн; PATH-префикс `/opt/homebrew/opt/node@24/bin`) |
 | FE dev | `http://localhost:3100` (pm2 `wb-repricer-frontend-dev`; для e2e на ветке — worktree-dev `--webpack -p 3100`, pm2 stop → restart) |
-| BE API | `http://localhost:3000` (`/v1/health`; Swagger `/api`; логин `test@test.com`/`Russia23!` — троттл 5/hr) |
+| BE API | `http://localhost:3000` (`/v1/health`; Swagger `/api`; логин `test@test.com`/`<E2E_TEST_PASSWORD>` — троттл 5/hr) |
 | FE remote | `github.com:salacoste/wb-erp-system-daytona-FE.git` |
 | Worktrees | `/private/tmp/<путь-из-плана>`; node_modules symlink; `.env.e2e`+`.env.local` копировать |
 | Тяжёлые чтения | сабагентам; результаты сразу в `/tmp/<story>-*.log` |

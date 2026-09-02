@@ -80,7 +80,7 @@ This is a data integrity issue — products_with_cogs should never exceed produc
 # Login
 TOKEN=$(curl -s http://localhost:3000/v1/auth/login \
   -H 'Content-Type: application/json' \
-  -d '{"email":"test@test.com","password":"LocalTest123!"}' \
+  -d '{"email":"test@test.com","password":"<E2E_TEST_PASSWORD>"}' \
   | python3 -c "import sys,json; print(json.load(sys.stdin)['access_token'])")
 
 CABINET="f75836f7-c0bc-4b2c-823c-a1f3508cce8e"

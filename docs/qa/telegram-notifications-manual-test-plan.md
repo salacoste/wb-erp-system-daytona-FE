@@ -24,7 +24,7 @@
 ✅ **Test Credentials**:
 ```
 Email: test@test.com
-Password: LocalTest123!
+Password: <E2E_TEST_PASSWORD>
 Cabinet ID: f75836f7-c0bc-4b2c-823c-a1f3508cce8e
 ```
 

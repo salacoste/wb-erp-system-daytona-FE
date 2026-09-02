@@ -50,7 +50,7 @@ Either way, the 500-on-UUID should become a 404 (or a 200) — never a 500.
 ```bash
 BASE=http://localhost:3000
 TOKEN=$(curl -s -X POST "$BASE/v1/auth/login" -H 'Content-Type: application/json' \
-  -d '{"email":"test@test.com","password":"LocalTest123!"}' | jq -r .access_token)
+  -d '{"email":"test@test.com","password":"<E2E_TEST_PASSWORD>"}' | jq -r .access_token)
 CAB=f75836f7-c0bc-4b2c-823c-a1f3508cce8e
 H="-H Authorization:Bearer $TOKEN -H X-Cabinet-Id:$CAB"
 UUID=86d7384b-72b7-4f3f-bf26-44834fc6f04f        # order.id from GET /v1/orders
