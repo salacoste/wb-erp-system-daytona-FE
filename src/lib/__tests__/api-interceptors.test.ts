@@ -3,8 +3,10 @@
  * Story 164.1-FE / FR9 — error-path regression coverage for every exported
  * helper and its decision branches in src/lib/api-interceptors.ts.
  *
- * Scope: PURE TEST ADDITION. No production behavior change. If a test reveals
- * a real interceptor defect, FLAG it in the story report (do not fix here).
+ * Scope: originally a pure test addition (Story 164.1-FE); FE-D9 (2026-09-02,
+ * security HIGH) later added redaction cases alongside the redact layer in
+ * src/lib/redact-utils.ts. If a test reveals a real interceptor defect, FLAG
+ * it in the story report.
  *
  * Coverage map (AC → test block):
  *   AC1 extractErrorMessage shapes + never-throws .......... describe('extractErrorMessage')
@@ -12,6 +14,7 @@
  *   AC3 WB-token classification suppression .............. describe('isExpectedWbTokenError')
  *   AC4 Telegram tracking matching vs unrelated ........... describe('trackTelegramApiError'), describe('trackTelegramNetworkError')
  *   AC5 logger JSON/raw + independent suppression ......... describe('logApiError')
+ *      + FE-D9 secret redaction in both branches (redact-utils)
  *   AC6 ApiClient rethrow-as-is + suppress flag ........... describe('ApiClient integration')
  *
  * Anti-patterns honored: #3 real ApiError constructor, #4 no `as any`
@@ -380,9 +383,41 @@ describe('logApiError', () => {
     logApiError(500, 'plain text error', false, data)
     expect(loggerErrorSpy).toHaveBeenCalledTimes(1)
     const [, payload] = loggerErrorSpy.mock.calls[0]
-    // Raw branch passes the value through unchanged.
+    // Raw branch passes the value through unchanged (no secrets → redact = identity).
     expect(payload).toBe('plain text error')
     expect(payload).not.toMatch(/^\{/) // not JSON-stringified
+  })
+
+  // --- FE-D9 (security HIGH): secret echoes must never reach the console raw ---
+  it('redacts secret keys inside JSON error data before serializing', () => {
+    const jwt = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.payload'
+    logApiError(401, 'Unauthorized', true, { error: { message: 'invalid token', token: jwt } })
+    expect(loggerErrorSpy).toHaveBeenCalledTimes(1)
+    const [, payload] = loggerErrorSpy.mock.calls[0]
+    expect(payload).toContain('[REDACTED]')
+    expect(payload).not.toContain(jwt)
+    expect(payload).toContain('invalid token') // non-secret context survives
+  })
+
+  it('redacts the details[].value echo of a secret field (cabinet WB-token validation)', () => {
+    // Assembled from parts (F1): a 12+ char quoted literal directly after a wb-token
+    // name matches the check:privacy `token-value` rule even in test sources.
+    const wbToken = ['eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9', '.wb-secret'].join('')
+    logApiError(400, 'Validation failed', true, {
+      details: [{ field: 'token', issue: 'invalid format', value: wbToken }],
+    })
+    const [, payload] = loggerErrorSpy.mock.calls[0]
+    expect(payload).toContain('[REDACTED]')
+    expect(payload).not.toContain(wbToken)
+    expect(payload).toContain('"field": "token"') // which field failed stays diagnosable
+  })
+
+  it('redacts token=... echo inside a plain-text (non-JSON) body', () => {
+    const jwt = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.payload'
+    logApiError(400, 'bad request', false, `auth failed token=${jwt}`)
+    const [, payload] = loggerErrorSpy.mock.calls[0]
+    expect(payload).toBe('auth failed token=[REDACTED]')
+    expect(payload).not.toContain(jwt)
   })
 
   // --- Suppression verified INDEPENDENTLY from the logging format ---

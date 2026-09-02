@@ -8,6 +8,7 @@
 
 import { TelegramMetrics } from './analytics/telegram-metrics'
 import { logger } from '@/lib/logger'
+import { redactSensitive } from '@/lib/redact-utils'
 
 /**
  * Extract error message from API error response body.
@@ -108,6 +109,11 @@ export function logApiError(
   errorData: unknown
 ): void {
   if (!isExpectedWbTokenError(status, message)) {
-    logger.error(`API Error [${status}]:`, isJson ? JSON.stringify(errorData, null, 2) : errorData)
+    // FE-D9 (security HIGH): raw bodies can echo token/password — redact both the
+    // JSON and the raw-string branch before anything reaches the console.
+    logger.error(
+      `API Error [${status}]:`,
+      isJson ? JSON.stringify(redactSensitive(errorData), null, 2) : redactSensitive(errorData)
+    )
   }
 }
