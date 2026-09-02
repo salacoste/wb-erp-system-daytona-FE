@@ -4,6 +4,9 @@
  * Story 25.2: COGS Section
  */
 
+// P2 boundary wave-1 (2026-09-02): legacy palette → semantic tokens; contrast
+// measured both themes — see debt-p2-boundary-wave1 artifact.
+
 import type { FinanceSummary } from '@/hooks/useDashboard'
 import { formatPercentage, formatPercentagePoints } from '@/lib/utils'
 import { TableCell, TableRow } from '@/components/ui/table'
@@ -41,10 +44,10 @@ export function CogsCoverageRow({
               <span
                 className={
                   summary.cogs_coverage_pct > comparisonSummary.cogs_coverage_pct
-                    ? 'text-green-600'
+                    ? 'text-financial-positive'
                     : summary.cogs_coverage_pct < comparisonSummary.cogs_coverage_pct
-                      ? 'text-red-600'
-                      : 'text-gray-500'
+                      ? 'text-financial-negative'
+                      : 'text-muted-foreground'
                 }
               >
                 {formatPercentagePoints(
@@ -52,7 +55,7 @@ export function CogsCoverageRow({
                 )}
               </span>
             ) : (
-              <span className="text-gray-400">{'—'}</span>
+              <span className="text-muted-foreground">{'—'}</span>
             )}
           </TableCell>
         </>
@@ -92,7 +95,7 @@ export function CogsProductsRow({
               : '—'}
           </TableCell>
           <TableCell className="text-right">
-            <span className="text-gray-400">{'—'}</span>
+            <span className="text-muted-foreground">{'—'}</span>
           </TableCell>
         </>
       )}

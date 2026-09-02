@@ -3,16 +3,35 @@
  * Used exclusively by SalesFunnelSection
  */
 
+// P2 boundary wave-1 (2026-09-02): legacy palette → semantic tokens; contrast
+// measured both themes over the card surface — see debt-p2-boundary-wave1
+// artifact. Funnel stages are informational; the payout/profit stages carry
+// success. Level identity = tint + border (+ title color): information levels
+// keep their colored title (4.98:1 light on info/10) with a deliberate 1px
+// border, while text-status-success on success/10 measures 4.49:1 (light) —
+// sub-AA — so success levels use foreground/muted-foreground text (14.11:1 /
+// 6.85:1 light) with border-2 border-status-success/20 (matching
+// FunnelProfitLevel) and let the tint + border carry the identity. Border-only
+// weights sit outside WCAG 1.4.3 (text contrast) — no text-color impact.
+
 import type { FinanceSummary } from '@/hooks/useDashboard'
 import { ArrowDown } from 'lucide-react'
 import { formatCurrency } from './financial-summary-formatters'
 import { formatPercentage } from '@/lib/utils'
 
 const COLOR_MAP = {
-  indigo: { bg: 'bg-indigo-100', title: 'text-indigo-900', sub: 'text-indigo-600' },
-  blue: { bg: 'bg-blue-100', title: 'text-blue-900', sub: 'text-blue-600' },
-  cyan: { bg: 'bg-cyan-100', title: 'text-cyan-900', sub: 'text-cyan-600' },
-  green: { bg: 'bg-green-100', title: 'text-green-900', sub: 'text-green-600' },
+  information: {
+    bg: 'bg-status-information/10',
+    border: 'border border-status-information/20',
+    title: 'text-status-information',
+    sub: 'text-muted-foreground',
+  },
+  success: {
+    bg: 'bg-status-success/10',
+    border: 'border-2 border-status-success/20',
+    title: 'text-foreground',
+    sub: 'text-muted-foreground',
+  },
 } as const
 
 export type FunnelColorScheme = keyof typeof COLOR_MAP
@@ -34,7 +53,7 @@ export function FunnelLevel({
 }) {
   const c = COLOR_MAP[colorScheme]
   return (
-    <div className={`p-4 ${c.bg} rounded-lg`}>
+    <div className={`p-4 ${c.bg} ${c.border} rounded-lg`}>
       <div className="flex justify-between items-center">
         <div>
           <div className={`font-semibold ${c.title}`}>{title}</div>
@@ -76,7 +95,7 @@ export function FunnelProfitLevel({
 }) {
   return (
     <>
-      <div className="flex items-center justify-center gap-2 text-amber-600">
+      <div className="flex items-center justify-center gap-2 text-status-warning">
         <ArrowDown className="h-5 w-5" />
         <span className="text-sm">
           {'Себестоимость (COGS): \u2212'}
@@ -85,15 +104,15 @@ export function FunnelProfitLevel({
           {formatCurrency(summary.cogs_total)}
         </span>
       </div>
-      <div className="p-4 bg-emerald-100 rounded-lg border-2 border-emerald-400">
+      <div className="p-4 bg-status-success/10 rounded-lg border-2 border-status-success/20">
         <div className="flex justify-between items-center">
           <div>
-            <div className="font-semibold text-emerald-900">{'✅ Прибыль'}</div>
-            <div className="text-sm text-emerald-600">Ваш реальный заработок</div>
+            <div className="font-semibold text-foreground">{'✅ Прибыль'}</div>
+            <div className="text-sm text-muted-foreground">Ваш реальный заработок</div>
           </div>
           <div className="text-right">
-            <div className="text-xl font-bold text-emerald-900">{formatCurrency(grossProfit)}</div>
-            <div className="text-sm text-emerald-600">
+            <div className="text-xl font-bold text-foreground">{formatCurrency(grossProfit)}</div>
+            <div className="text-sm text-muted-foreground">
               Маржа: {formatPercentage(payoutTotal > 0 ? (grossProfit / payoutTotal) * 100 : 0, 1)}
             </div>
           </div>
@@ -101,7 +120,7 @@ export function FunnelProfitLevel({
         {isComparison &&
           comparisonSummary?.gross_profit !== null &&
           comparisonSummary?.gross_profit !== undefined && (
-            <div className="mt-2 text-sm text-emerald-600">
+            <div className="mt-2 text-sm text-muted-foreground">
               Сравнение: {formatCurrency(comparisonSummary.gross_profit)}
             </div>
           )}

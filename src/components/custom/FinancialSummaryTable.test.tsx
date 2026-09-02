@@ -107,9 +107,9 @@ describe('FinancialSummaryTable', () => {
       <FinancialSummaryTable summary={mockSummary} comparisonSummary={mockComparisonSummary} />
     )
 
-    // Revenue increased (positive change) - check for green color class
+    // Revenue increased (positive change) - check for the financial-positive token
     // The percentage text may vary by locale, so we check for the color instead
-    const greenElements = document.querySelectorAll('.text-green-600')
+    const greenElements = document.querySelectorAll('.text-financial-positive')
     expect(greenElements.length).toBeGreaterThan(0)
 
     // Verify that change indicators are present (they contain percentage)
@@ -141,13 +141,15 @@ describe('FinancialSummaryTable', () => {
     render(<FinancialSummaryTable summary={mockSummary} />)
 
     // Check payout card has special styling
-    const payoutCards = document.querySelectorAll('.border-2.border-blue-500')
+    // P2 boundary wave-1: border token is `border-status-information/20`; the
+    // "/" must be escaped inside a CSS selector (not valid unescaped in an ident).
+    const payoutCards = document.querySelectorAll('.border-2.border-status-information\\/20')
     expect(payoutCards.length).toBeGreaterThan(0)
 
     // Check that "Итого к оплате" is within the highlighted card
     const payoutText = screen.getAllByText('Итого к оплате')[0]
     const payoutCard = payoutText.closest('.border-2')
-    expect(payoutCard).toHaveClass('border-blue-500')
+    expect(payoutCard).toHaveClass('border-status-information/20')
   })
 
   it('should display all metric groups', () => {
@@ -168,8 +170,8 @@ describe('FinancialSummaryTable', () => {
 
     render(<FinancialSummaryTable summary={lowerSummary} comparisonSummary={mockSummary} />)
 
-    // Check for red color class (negative change)
-    const redElements = document.querySelectorAll('.text-red-600')
+    // Check for the financial-negative token (negative change)
+    const redElements = document.querySelectorAll('.text-financial-negative')
     expect(redElements.length).toBeGreaterThan(0)
 
     // Verify that negative change indicators are present

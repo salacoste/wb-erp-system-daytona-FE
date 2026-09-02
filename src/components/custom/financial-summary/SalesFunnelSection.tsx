@@ -3,6 +3,11 @@
  * Shows the journey from RRP to profit
  */
 
+// P2 boundary wave-1 (2026-09-02): legacy palette → semantic tokens; contrast
+// measured both themes — see debt-p2-boundary-wave1 artifact. Stage colors map
+// by meaning (indigo/blue/cyan → information, green → success); subtraction
+// arrows: warning (discount/COGS), financial-negative (returns).
+
 import type { FinanceSummary } from '@/hooks/useDashboard'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { formatCurrency } from './financial-summary-formatters'
@@ -65,10 +70,10 @@ export function SalesFunnelSection({
     retailPrice > 0 ? formatPercentageInt((v / retailPrice) * 100) : formatPercentageInt(0)
 
   return (
-    <Card className="border-2 border-indigo-300">
-      <CardHeader className="bg-indigo-50">
-        <CardTitle className="text-indigo-900">{'💰 Воронка продаж'}</CardTitle>
-        <CardDescription className="text-indigo-700">
+    <Card className="border-2 border-status-information/20">
+      <CardHeader className="bg-status-information/10">
+        <CardTitle className="text-status-information">{'💰 Воронка продаж'}</CardTitle>
+        <CardDescription className="text-muted-foreground">
           Путь денег от вашей цены до прибыли
         </CardDescription>
       </CardHeader>
@@ -79,25 +84,25 @@ export function SalesFunnelSection({
             subtitle="Ваша цена в каталоге WB"
             value={retailPrice}
             pctLabel="100 %"
-            colorScheme="indigo"
+            colorScheme="information"
             comparisonValue={isComparison && compRetailPrice > 0 ? compRetailPrice : undefined}
           />
           <FunnelArrow
             text={`Ваша скидка: \u2212${formatCurrency(wbDiscount)} (${formatPercentage(wbDiscountPct, 1)})`}
-            colorClass="text-orange-600"
+            colorClass="text-status-warning"
           />
           <FunnelLevel
             title="Цена на карточке"
             subtitle="База для комиссии WB"
             value={salesGross}
             pctLabel={`${pctOf(salesGross)} от РРЦ`}
-            colorScheme="blue"
+            colorScheme="information"
             comparisonValue={isComparison && compSalesGross > 0 ? compSalesGross : undefined}
           />
           {returnsGross > 0 && (
             <FunnelArrow
               text={`Возвраты: \u2212${formatCurrency(returnsGross)} (${formatPercentage(returnsPct, 1)})`}
-              colorClass="text-red-600"
+              colorClass="text-financial-negative"
             />
           )}
           <FunnelLevel
@@ -105,19 +110,19 @@ export function SalesFunnelSection({
             subtitle="Выкупы \u2212 Возвраты"
             value={saleGross}
             pctLabel={`${pctOf(saleGross)} от РРЦ`}
-            colorScheme="cyan"
+            colorScheme="information"
             comparisonValue={isComparison && compSaleGross > 0 ? compSaleGross : undefined}
           />
           <FunnelArrow
             text={`Удержания WB: \u2212${formatCurrency(wbDeductions)} (${formatPercentage(wbDeductionsPct, 1)} от оборота)`}
-            colorClass="text-gray-600"
+            colorClass="text-muted-foreground"
           />
           <FunnelLevel
             title="На счёт"
             subtitle="К перечислению от WB"
             value={payoutTotal}
             pctLabel={`${pctOf(payoutTotal)} от вашей цены`}
-            colorScheme="green"
+            colorScheme="success"
             comparisonValue={
               isComparison && comparisonSummary?.payout_total
                 ? comparisonSummary.payout_total

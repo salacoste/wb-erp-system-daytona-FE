@@ -5,6 +5,9 @@
  * Отображает текст и маленькую иконку ? с пояснением
  */
 
+// P2 boundary wave-1 (2026-09-02): legacy palette → semantic tokens; contrast
+// measured both themes — see debt-p2-boundary-wave1 artifact.
+
 import { Tooltip, TooltipContent, TooltipTrigger, TooltipProvider } from '@/components/ui/tooltip'
 import { HelpCircle } from 'lucide-react'
 import { METRIC_EXPLANATIONS } from './metric-explanations'
@@ -30,7 +33,7 @@ export function LabelWithTooltip({
       <TooltipProvider delayDuration={200}>
         <Tooltip>
           <TooltipTrigger asChild>
-            <HelpCircle className="h-3.5 w-3.5 text-gray-400 hover:text-gray-600 cursor-help flex-shrink-0" />
+            <HelpCircle className="h-3.5 w-3.5 text-muted-foreground hover:text-foreground transition-colors cursor-help flex-shrink-0" />
           </TooltipTrigger>
           <TooltipContent size="lg" side="top">
             {explanation}

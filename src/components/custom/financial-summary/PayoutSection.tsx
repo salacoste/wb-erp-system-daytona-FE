@@ -3,6 +3,11 @@
  * Shows the total amount to be paid to the seller
  */
 
+// P2 boundary wave-1 (2026-09-02): legacy palette → semantic tokens; contrast
+// measured both themes over the card surface — see debt-p2-boundary-wave1
+// artifact. Information trio (bg-status-information/10 + text-status-information):
+// 4.98:1 light / 7.32:1 dark.
+
 import type { FinanceSummary } from '@/hooks/useDashboard'
 import {
   Table,
@@ -23,10 +28,10 @@ interface PayoutSectionProps {
 
 export function PayoutSection({ summary, comparisonSummary, isComparison }: PayoutSectionProps) {
   return (
-    <Card className="border-2 border-blue-500">
-      <CardHeader className="bg-blue-50">
-        <CardTitle className="text-blue-900">Итого к оплате</CardTitle>
-        <CardDescription className="text-blue-700">
+    <Card className="border-2 border-status-information/20">
+      <CardHeader className="bg-status-information/10">
+        <CardTitle className="text-status-information">Итого к оплате</CardTitle>
+        <CardDescription className="text-muted-foreground">
           Общая сумма к перечислению продавцу за период
         </CardDescription>
       </CardHeader>

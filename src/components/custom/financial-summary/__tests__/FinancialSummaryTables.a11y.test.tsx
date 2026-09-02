@@ -25,6 +25,6 @@ describe('financial summary table accessibility contracts', () => {
     const source = readFileSync(join(testDirectory, '..', 'ExpenseTableRows.tsx'), 'utf8')
 
     expect(source).toContain('<span className="sr-only">Операционные удержания</span>')
-    expect(source).toContain('<hr className="border-gray-200" aria-hidden="true" />')
+    expect(source).toContain('<hr className="border-border" aria-hidden="true" />')
   })
 })
