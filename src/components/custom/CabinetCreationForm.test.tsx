@@ -4,6 +4,7 @@ import userEvent from '@testing-library/user-event'
 import { useRouter } from 'next/navigation'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
+import { getCabinetCreationOperation } from '@/lib/api'
 import { getCabinetTaxSettings, updateCabinetTaxSettings } from '@/lib/api/cabinet'
 import { handleCreateCabinet } from '@/services/cabinets.service'
 import { useAuthStore } from '@/stores/authStore'
@@ -12,6 +13,15 @@ import { toast } from 'sonner'
 import { CabinetCreationForm } from './CabinetCreationForm'
 
 vi.mock('@/services/cabinets.service', () => ({ handleCreateCabinet: vi.fn() }))
+// Partial barrel mock (sibling accountRecovery pattern): the indeterminate
+// path reconciles the durable operation — keep it hermetic (no MSW, no fetch).
+vi.mock('@/lib/api', async importOriginal => {
+  const actual = await importOriginal<typeof import('@/lib/api')>()
+  return {
+    ...actual,
+    getCabinetCreationOperation: vi.fn(),
+  }
+})
 vi.mock('@/lib/api/cabinet', () => ({
   getCabinetTaxSettings: vi.fn(),
   updateCabinetTaxSettings: vi.fn(),
@@ -261,6 +271,7 @@ describe('CabinetCreationForm stale/indeterminate settlement (Story 167.9, porte
       defaultOptions: { queries: { retry: false }, mutations: { retry: false } },
     })
     vi.clearAllMocks()
+    vi.mocked(getCabinetCreationOperation).mockReset()
     useAuthStore.setState({
       user: { id: 'user-b', email: 'b@test.local', role: 'Owner' },
       token: 'jwt-live-session',
@@ -278,13 +289,13 @@ describe('CabinetCreationForm stale/indeterminate settlement (Story 167.9, porte
     queryClient.clear()
   })
 
-  it.each(['stale', 'indeterminate'] as const)(
-    '%s settlement: no toast, no navigation, no reset, input retained',
+  it(
+    'stale settlement: no toast, no navigation, no reset, input retained',
     { timeout: 10000 },
-    async status => {
+    async () => {
       const user = userEvent.setup()
       vi.mocked(handleCreateCabinet).mockResolvedValue({
-        status,
+        status: 'stale',
         operationId: '9ca8c2ba-0b3f-4a2a-b20c-27db4d60a7b0',
       })
 
@@ -307,6 +318,40 @@ describe('CabinetCreationForm stale/indeterminate settlement (Story 167.9, porte
 
       expect(toast.success).not.toHaveBeenCalled()
       expect(toast.error).not.toHaveBeenCalled()
+      expect(mockPush).not.toHaveBeenCalled()
+      // Form is NOT reset — the live session's input must survive.
+      expect(screen.getByLabelText(/название кабинета/i)).toHaveValue('Test Cabinet')
+    }
+  )
+
+  it(
+    'indeterminate settlement surfaces the safe-reconciliation alert for the live owner (D-1/PB-1)',
+    { timeout: 10000 },
+    async () => {
+      // D-1 (PB-1): the cabinet may exist server-side for THIS user — indicate
+      // via the recovery alert instead of silently swallowing the create.
+      const user = userEvent.setup()
+      vi.mocked(handleCreateCabinet).mockResolvedValue({
+        status: 'indeterminate',
+        operationId: '9ca8c2ba-0b3f-4a2a-b20c-27db4d60a7b0',
+      })
+
+      render(
+        <QueryClientProvider client={queryClient}>
+          <CabinetCreationForm />
+        </QueryClientProvider>
+      )
+
+      const nameInput = screen.getByLabelText(/название кабинета/i)
+      await user.clear(nameInput)
+      await user.type(nameInput, 'Test Cabinet')
+      await new Promise(resolve => setTimeout(resolve, 100))
+
+      await user.click(screen.getByRole('button', { name: /создать кабинет/i }))
+
+      const recovery = await screen.findByRole('alert', {}, { timeout: 5000 })
+      expect(recovery).toHaveTextContent(/безопасно подтвердить/)
+      expect(toast.success).not.toHaveBeenCalled()
       expect(mockPush).not.toHaveBeenCalled()
       // Form is NOT reset — the live session's input must survive.
       expect(screen.getByLabelText(/название кабинета/i)).toHaveValue('Test Cabinet')

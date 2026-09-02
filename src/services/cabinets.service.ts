@@ -99,10 +99,16 @@ export async function handleCreateCabinet(
     throw new Error('User not authenticated')
   }
 
+  // D-1 (PB-1): mint-before-capture — a legacy/partially-rehydrated authenticated
+  // session gets a nonce HERE so the create settles `applied` instead of silently
+  // dropping a server-side-created cabinet (initiation mint; complements the
+  // Story 167.9 rehydrate mint, which covers the page-reload path).
+  const sessionNonce = useAuthStore.getState().ensureSessionNonce()
+
   // Immutable initiating context: token + session identity captured once.
   const initiating: InitiatingSessionContext = {
     accountId: user?.id ?? null,
-    sessionNonce: useAuthStore.getState().sessionNonce,
+    sessionNonce,
   }
   const idempotencyKey = crypto.randomUUID()
 
@@ -112,6 +118,11 @@ export async function handleCreateCabinet(
   } catch (error) {
     // Stale failure: the session that initiated this create is gone — the live
     // session must not see an error for work it did not start.
+    // D-1 note: on an `indeterminate` failure settlement the durable operation
+    // cannot be server-reconciled from this path (no response → no
+    // operationId); recovery rests on re-login + `reconciledCreate` or a
+    // same-tab reload re-reading the recovery marker (the marker lives in
+    // sessionStorage — per-tab; a genuinely fresh tab sees no marker).
     const failureSettlement = evaluateCabinetSettlement(initiating)
     if (failureSettlement !== 'applied') {
       logStaleSettlement(failureSettlement)

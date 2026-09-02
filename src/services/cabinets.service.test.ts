@@ -29,6 +29,9 @@ function mockStore(overrides: Record<string, unknown> = {}) {
     token: 'old-token',
     refreshToken: mockRefreshToken,
     setCabinetId: mockSetCabinetId,
+    // D-1 (PB-1): handleCreateCabinet mints-before-capture via this action —
+    // the mocked store returns the session's existing nonce (idempotent no-op).
+    ensureSessionNonce: () => SESSION_NONCE,
     user: {
       id: 'user-a',
       email: 'test@example.com',

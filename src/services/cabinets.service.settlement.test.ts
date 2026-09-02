@@ -49,6 +49,16 @@ const createSuccess = {
   status: 'succeeded' as const,
 }
 
+/** Full Cabinet shape returned by the follow-up tax-settings PUT. */
+const updatedTaxSettings = {
+  ...createSuccess,
+  taxSystem: null,
+  taxRate: null,
+  vatPayer: false,
+  vatRate: null,
+  targetMarginPct: 20,
+}
+
 /** Deferred that lets the test switch sessions while the create is in flight. */
 function deferred<T>() {
   let resolve!: (value: T) => void
@@ -140,17 +150,20 @@ describe('handleCreateCabinet conditional settlement (Story 167.9)', () => {
     await expect(resultPromise).resolves.toMatchObject({ status: 'stale' })
   })
 
-  it('session persisted before sessionNonce existed settles indeterminate and never commits', async () => {
-    // Simulate a legacy persisted session: authenticated but nonce missing
+  it('legacy nonce-less session mints a nonce at initiation and settles applied (D-1/PB-1)', async () => {
+    // Simulate a legacy persisted session: authenticated but nonce missing.
+    // D-1 (PB-1): the initiation mint gives the create a session identity, so
+    // the server-side-created cabinet is COMMITTED instead of silently dropped.
     useAuthStore.setState({ sessionNonce: null })
     vi.mocked(createCabinet).mockResolvedValue(createSuccess)
+    vi.mocked(updateCabinetTaxSettings).mockResolvedValue(updatedTaxSettings)
 
     const result = await handleCreateCabinet('A Cabinet', 20)
 
-    expect(result.status).toBe('indeterminate')
-    expect(useAuthStore.getState().token).toBe('jwt-a') // unchanged
-    expect(useAuthStore.getState().cabinetId).not.toBe('cabinet-a')
-    expect(updateCabinetTaxSettings).not.toHaveBeenCalled()
+    expect(result.status).toBe('applied')
+    expect(useAuthStore.getState().token).toBe('new-jwt-for-a') // committed
+    expect(useAuthStore.getState().cabinetId).toBe('cabinet-a')
+    expect(updateCabinetTaxSettings).toHaveBeenCalledTimes(1)
   })
 
   it('live failure in the same session still throws for error UI', async () => {
@@ -265,5 +278,31 @@ describe('authStore sessionNonce (Story 167.9)', () => {
       /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/
     )
     expect(useAuthStore.getState().token).toBe('legacy-jwt')
+  })
+
+  it('ensureSessionNonce is idempotent — a session that already has a nonce keeps it (D-1/PB-1)', async () => {
+    // beforeEach logged in: nonce present. Capture before/after a full create
+    // initiation — no remint means the settle predicate stays stable.
+    const nonceBefore = useAuthStore.getState().sessionNonce
+    expect(nonceBefore).not.toBeNull()
+    vi.mocked(createCabinet).mockResolvedValue(createSuccess)
+    vi.mocked(updateCabinetTaxSettings).mockResolvedValue(updatedTaxSettings)
+
+    const result = await handleCreateCabinet('A Cabinet', 20)
+
+    expect(useAuthStore.getState().sessionNonce).toBe(nonceBefore)
+    expect(result.status).toBe('applied')
+    expect(result.cabinet?.id).toBe('cabinet-a')
+  })
+
+  it('ensureSessionNonce does not mint for an unauthenticated store (D-1 guard)', () => {
+    // The mint must not fabricate session identity for a logged-out state —
+    // settlement then classifies via the token guard (stale), never applied.
+    const nonceBefore = useAuthStore.getState().sessionNonce
+    useAuthStore.setState({ user: null, token: null, isAuthenticated: false })
+
+    expect(useAuthStore.getState().ensureSessionNonce()).toBeNull()
+    // Store unchanged: the pre-existing nonce is neither replaced nor cleared.
+    expect(useAuthStore.getState().sessionNonce).toBe(nonceBefore)
   })
 })

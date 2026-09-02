@@ -4,6 +4,7 @@ import userEvent from '@testing-library/user-event'
 import { useRouter } from 'next/navigation'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
+import { getCabinetCreationOperation } from '@/lib/api'
 import { getCabinetTaxSettings, updateCabinetTaxSettings } from '@/lib/api/cabinet'
 import { handleCreateCabinet } from '@/services/cabinets.service'
 import { useAuthStore } from '@/stores/authStore'
@@ -21,6 +22,15 @@ import {
 } from './cabinetCreationRecovery'
 
 vi.mock('@/services/cabinets.service', () => ({ handleCreateCabinet: vi.fn() }))
+// Partial barrel mock (sibling accountSwitchRealSettlement pattern): the
+// indeterminate path reconciles the durable operation — keep it hermetic.
+vi.mock('@/lib/api', async importOriginal => {
+  const actual = await importOriginal<typeof import('@/lib/api')>()
+  return {
+    ...actual,
+    getCabinetCreationOperation: vi.fn(),
+  }
+})
 vi.mock('@/lib/api/cabinet', () => ({
   getCabinetTaxSettings: vi.fn(),
   updateCabinetTaxSettings: vi.fn(),
@@ -103,6 +113,7 @@ describe('CabinetCreationForm account-scoped recovery admission', () => {
     sessionStorage.clear()
     vi.clearAllMocks()
     vi.mocked(handleCreateCabinet).mockReset()
+    vi.mocked(getCabinetCreationOperation).mockReset()
     vi.mocked(getCabinetTaxSettings).mockResolvedValue(existingCabinet)
     vi.mocked(updateCabinetTaxSettings).mockReset()
     queryClient = new QueryClient({
@@ -295,6 +306,126 @@ describe('CabinetCreationForm account-scoped recovery admission', () => {
     await userEvent.setup().keyboard('{Enter}')
     await submitNatively()
     expect(handleCreateCabinet).toHaveBeenCalledTimes(1)
+  })
+
+  it('indeterminate settlement surfaces the safe-reconciliation alert and blocks resubmission (D-1/PB-1)', async () => {
+    // The cabinet exists server-side but the initiator identity could not be
+    // confirmed: indicate + block, never silently swallow (Defensive Frontend).
+    vi.mocked(getCabinetCreationOperation).mockResolvedValue({
+      operationId: '11111111-1111-4111-8111-111111111111',
+      status: 'in_progress',
+      retryable: false,
+    })
+    vi.mocked(handleCreateCabinet).mockResolvedValue({
+      status: 'indeterminate',
+      operationId: '11111111-1111-4111-8111-111111111111',
+    })
+    const first = renderForm()
+    await submitCreate('indeterminate-a')
+
+    const recovery = await screen.findByRole('alert')
+    expect(recovery).toHaveTextContent(/безопасно подтвердить/)
+    expect(recovery).toHaveTextContent(/Выйдите из аккаунта и войдите снова/)
+    first.unmount()
+    renderForm()
+    expect(await screen.findByRole('button', { name: /создать кабинет/i })).toBeDisabled()
+
+    await submitNatively()
+    expect(handleCreateCabinet).toHaveBeenCalledTimes(1)
+  })
+
+  it('indeterminate settlement recovers via same-tab logout+login after the liveness flag is released (D-1/PB-1)', async () => {
+    // Review fix (recovery deadlock): the non-applied branch must release the
+    // in-memory liveness flag — otherwise a same-tab logout+login (SPA, no
+    // reload) can never reconcile the durable CREATE_PENDING marker
+    // (`reconciledCreate` gates on !activeOperation) and the form stays
+    // blocked forever.
+    vi.mocked(getCabinetCreationOperation).mockResolvedValue({
+      operationId: '11111111-1111-4111-8111-111111111111',
+      status: 'in_progress',
+      retryable: false,
+    })
+    vi.mocked(handleCreateCabinet).mockResolvedValue({
+      status: 'indeterminate',
+      operationId: '11111111-1111-4111-8111-111111111111',
+    })
+    const first = renderForm()
+    await submitCreate('indeterminate-recovery')
+
+    const recovery = await screen.findByRole('alert')
+    expect(recovery).toHaveTextContent(/безопасно подтвердить/)
+
+    // Same-tab logout+login via the REAL store (fresh session identity). The
+    // create evidently landed server-side, so the re-login resolves an active
+    // cabinet — satisfying `reconciledCreate`'s activeCabinetId predicate.
+    act(() => {
+      useAuthStore.getState().logout()
+      useAuthStore
+        .getState()
+        .login(
+          { id: 'manager-a', email: 'manager-a@test.local', role: 'Manager' },
+          'jwt-token',
+          'cabinet-reconciled'
+        )
+    })
+    first.unmount()
+    renderForm()
+
+    await waitFor(() => expect(readRecoveryMarker('manager-a').kind).toBe('absent'))
+    await waitFor(() =>
+      expect(screen.getByRole('button', { name: /сохранить и продолжить/i })).toBeEnabled()
+    )
+    expect(screen.queryByRole('alert')).not.toBeInTheDocument()
+  })
+
+  it('stale settlement stays quiet — no recovery alert, no toast (Story 167.9 canon)', async () => {
+    vi.mocked(handleCreateCabinet).mockResolvedValue({ status: 'stale' })
+    renderForm()
+    await submitCreate('stale-a')
+    await waitFor(() => expect(handleCreateCabinet).toHaveBeenCalledTimes(1))
+    // Let any (forbidden) success/recovery effects flush before asserting quiet
+    // (sibling-canon flush, CabinetCreationForm.test.tsx 'stale settlement').
+    await new Promise(resolve => setTimeout(resolve, 300))
+
+    expect(screen.queryByRole('alert')).not.toBeInTheDocument()
+    expect(toast.error).not.toHaveBeenCalled()
+    expect(toast.success).not.toHaveBeenCalled()
+  })
+
+  it('stale settle keeps the same form quiet and usable after a same-tab logout+login without a cabinet (D-1 pass-2)', async () => {
+    // Pins the quiet-guard semantics of the D-1 fix wave: the guard drops the
+    // `activeOperation` conjunct (the stale settle released the liveness
+    // flag), so the same form instance must stay quiet — yet must not strand
+    // the pre-normalization 'restoring' phase set during the logout pass.
+    vi.mocked(handleCreateCabinet).mockResolvedValue({ status: 'stale' })
+    renderForm()
+    await submitCreate('stale-same-form')
+    await waitFor(() => expect(handleCreateCabinet).toHaveBeenCalledTimes(1))
+    await new Promise(resolve => setTimeout(resolve, 300))
+    expect(screen.queryByRole('alert')).not.toBeInTheDocument()
+
+    // Two separate acts (NOT one batched act): the logout-state render must
+    // actually flush so the recovery effect runs its `!currentUserId` branch
+    // (phase → 'restoring'); a single batched act coalesces both store writes
+    // and the effect deps return to their pre-logout values — no re-run, and
+    // the test would pass vacuously.
+    act(() => {
+      useAuthStore.getState().logout()
+    })
+    act(() => {
+      // Re-login WITHOUT a cabinetId third arg: `reconciledCreate`'s
+      // Boolean(activeCabinetId) stays false, so the effect falls through
+      // to the quiet-guard for the still-locally-known marker.
+      useAuthStore
+        .getState()
+        .login({ id: 'manager-a', email: 'manager-a@test.local', role: 'Manager' }, 'jwt-b')
+    })
+
+    await waitFor(() =>
+      expect(screen.getByRole('button', { name: /создать кабинет/i })).toBeEnabled()
+    )
+    expect(screen.queryByRole('alert')).not.toBeInTheDocument()
+    expect(screen.queryByText(/безопасно подтвердить/i)).not.toBeInTheDocument()
   })
 
   it('keeps post-create margin recovery update-only and retains the submitted margin', async () => {

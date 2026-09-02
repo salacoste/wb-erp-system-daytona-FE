@@ -100,7 +100,23 @@ export function useCabinetCreationRecovery({
       setPhase('margin-recovery')
       return
     }
-    if (marker && activeOperation && localOperationIds.has(marker.operationId)) return
+    // Quiet-guard for a locally-known operation. Deliberately NOT gated on
+    // `activeOperation`: the mutation's non-applied branch releases the
+    // liveness flag when it settles (D-1 review fix — so a same-tab
+    // logout+login can reconcile via `reconciledCreate`), and this effect can
+    // run AFTER that release (React passive effects are deferred). A form
+    // instance that itself dispatched the operation stays quiet about its
+    // settled marker (stale canon); only a remount (fresh localOperationIds)
+    // surfaces the recovery alert for the durable marker.
+    if (marker && localOperationIds.has(marker.operationId)) {
+      // Pass-2 review (D-1): a released liveness flag + still-local operation
+      // must stay quiet, but must not strand a pre-normalization phase —
+      // 'restoring' silently blocks the form (same-tab logout+login without
+      // a cabinet re-enters here before the fall-through normalization).
+      // Pass-3 review: after indeterminate + same-tab logout+login without a cabinetId, the earlier alert text persists beside the enabled button until a real cabinetId lands (reconciledCreate clears it); production re-login returns cabinet_ids — test-visible-only state.
+      setPhase(current => (current === 'restoring' ? 'idle' : current))
+      return
+    }
     if (marker) {
       setRecoveryError(
         marker.phase === TOKEN_RECOVERY_PHASE ? TOKEN_RECOVERY_MESSAGE : SAFE_RECONCILIATION_MESSAGE

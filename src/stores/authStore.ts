@@ -34,6 +34,14 @@ interface AuthState {
   login: (user: User, token: string, cabinetId?: string | null) => void
   refreshToken: (token: string, user?: User) => void
   logout: () => void
+  /**
+   * D-1 (PB-1): mint a session nonce at cabinet-create INITIATION when the
+   * authenticated session still lacks one (persisted before Story 167.9, or a
+   * cross-tab storage sync that bypassed rehydration). Mirrors the Story 167.9
+   * review-fix HIGH-2 rehydrate mint (onRehydrateStorage) — together they close
+   * the nonce-less-session class. Never mints for an unauthenticated store.
+   */
+  ensureSessionNonce: () => string | null
 }
 
 function createSessionNonce(): string {
@@ -42,7 +50,7 @@ function createSessionNonce(): string {
 
 export const useAuthStore = create<AuthState>()(
   persist(
-    set => ({
+    (set, get) => ({
       // Initial state
       user: null,
       token: null,
@@ -93,6 +101,18 @@ export const useAuthStore = create<AuthState>()(
           window.localStorage.setItem(STORAGE_EVENT_KEY, Date.now().toString())
           window.localStorage.removeItem(STORAGE_EVENT_KEY)
         }
+      },
+
+      // D-1 (PB-1): idempotent initiation mint — returns the current nonce,
+      // minting one only for an authenticated nonce-less session (see interface
+      // doc). Logged-out state returns null unchanged.
+      ensureSessionNonce: () => {
+        const { sessionNonce, token, user } = get()
+        if (!token || !user) return null
+        if (sessionNonce) return sessionNonce
+        const minted = createSessionNonce()
+        set({ sessionNonce: minted })
+        return minted
       },
     }),
     {
