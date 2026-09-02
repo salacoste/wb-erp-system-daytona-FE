@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "pageVersion": "sha256:0f1d375bb431a37c9fa2066fc2396e2c929381cedb1755c83e141fd69be794e4",
+  "pageVersion": "sha256:269cef7105d28d77a286bd8f1325e471f9213c3dbba747a575a32282f1f3e721",
   "claims": [
     {
       "id": "claim_7146a57eacad4db2bf7552b903072ad9",
@@ -48,11 +48,15 @@
     },
     {
       "id": "claim_40680ad34c7f4a82b1c8e3b266b4a0a1",
-      "statement": "Story 174.2's scripts/check-shadcn-ui-boundary.mjs is a node-stdlib-only scanner over production src/**/*.{ts,tsx} detecting the LEGACY_PALETTE regex and CONTEXTUAL_HEX canon, with a ratchet baseline of 523 counted violations at scripts/.shadcn-ui-boundary-baseline.txt (exit 0 at or below, fail only on increase) and 24 suppressed matches in 4 files via BOUNDARY_EXCEPTIONS.",
+      "statement": "scripts/check-shadcn-ui-boundary.mjs is a node-stdlib-only scanner over production src/**/*.{ts,tsx} detecting the LEGACY_PALETTE regex and 3-branch CONTEXTUAL_HEX canon, with a ratchet baseline of 459 counted violations at scripts/.shadcn-ui-boundary-baseline.txt (exit 0 at or below, fail only on increase; born at 523 in Story 174.2, ratcheted down by 174.4) and 3 suppressed matches in 3 files via BOUNDARY_EXCEPTIONS (C5 waterfall hex + two historical #7C3AED chart marks; the FeedbackButtons exception was lifted 2026-09-02 when PB-4 was fixed).",
       "evidence": [
         {
+          "resource": "repo://_bmad-output/planning-artifacts/shadcn-migration-final-delivery-manifest.md#L73-L98",
+          "version": "repo-lines-v1:sha256:6be97d1ae71dbfbc184585888d700aeb4f655d56447f5990b7911223f0d8994a:eyJzZWxlY3RlZExpbmVDb3VudCI6MjYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFmMjBhMjU3N2RhZmZjNzJlNGZmZmVlMDE2NjQ1MjM3NmFhYzE2ZmQ3YzVlYWM2ZGZiYzFjMGYwZmYxZWEyNWYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjVlYTZhNjFmOTcyMDdkZDUzYjFlY2M5MWQxNjllNzE2YWI5MjcxNDMzZWNiOWNmNTg5MWI1OTg5ZGExNjZmZTciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjBkY2FjZDg1NjU2ZTI2NmUyNWYwYzU2OWI1NTZmZTVhZTEwMmNiYzE3N2Q1NDZmMjkyZmM3M2EzNzJlMmI0ZDkiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjUzZjkxNTljMDc2ZWI5MWM2ODFhYzlmYWE4MTUyYjBiZWY4M2ZiNDRkNDI4Y2YwZmFlMzE0YmI2NmFhMTkxMzgifQ"
+        },
+        {
           "resource": "repo://scripts/check-shadcn-ui-boundary.mjs",
-          "version": "repo-file-v1:sha256:292dbdb4aaae3544e325b3a70c80b7c4cf703e995a56934dd3c62f6423c9ff36"
+          "version": "repo-file-v1:sha256:c2b0e0efa87bf1396ef77ca5f20f8df1d7c1b664042c61b100825f856f8af44d"
         }
       ]
     },
@@ -67,16 +71,6 @@
         {
           "resource": "repo://_bmad-output/implementation-artifacts/174-3-fe-complete-accessibility-responsive-theme-and-visual-verification.md#L238-L244",
           "version": "repo-lines-v1:sha256:1a2f95949ea2fc551dedf6941aedc135260fe59546dc7fc135a0f1e5a42fdf5f:eyJzZWxlY3RlZExpbmVDb3VudCI6NywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZGU4MDc0NzNkZTFmYTRjZjk1ZDA0MGZjYWJmMWJiZDdmN2NlYzk5ZTZjZWYwZTZhNjIxYjRmYmE2ZDlmMjI1MSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiYjY1NTkwZmNiMGJkMjZlY2UyZGYzNWExNzhjZDgyM2IzNGU4YWYzMWJhMmY0NGU2YTY0NGIzZTY4ZDU4OWI1YSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNDRhYmEzMzY1MjFiYTgxY2UxNjg4YmU2N2M0YjhjZThmNjViYTIyNWRlZjRkMjZiNWMyMTJjYjhkYWI5ZWQzNCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNmVhMjkwYTAzYWQxNzk4NjYyNWNmMWJlM2E0ZjUwY2YwNGQwNDgzOGE3NmY2ODFhMzg1NzJlMjg0OTcxMmNiMiJ9"
-        }
-      ]
-    },
-    {
-      "id": "claim_95052c9a5f514c6ba553dfca95a190c6",
-      "statement": "Story 174.3 is blocked behind a three-review remediation gate: after commit 82465fbf received three independent REQUEST CHANGES/REJECT verdicts, merge and cleanup are blocked until every accepted finding is repaired, validation is regenerated, and three fresh independent reviewers return APPROVE on the same unchanged final commit SHA with zero unresolved P0–P2 and no material P3; any content change invalidates all approvals and restarts the gate.",
-      "evidence": [
-        {
-          "resource": "repo://.omx/plans/174.3-complete-accessibility-responsive-theme-and-visual-verification.md#L25-L37",
-          "version": "repo-lines-v1:sha256:5ce9c7e68f9961ef46ac8ff77bfd7e94777d0bc0379d026e8261090aaec38353:eyJzZWxlY3RlZExpbmVDb3VudCI6MTMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjU0YTEzZTI0ZmMxZGE0YjUwZjQwNTIwNGY5OWU4MzY2ZjI1ODE5OWRkNzVhNWZlMjMyMjEyNmMzOGIwNTM4Y2EiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImM5MGMxMWMzMjY4MzFjZTc1ZGMwN2JlYTRjZWVhZTk5Y2RhMGUzMzAxYjIxNjdiZTIxN2FlZTUwOTFkMzRmOTYiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImMyZjI3YmUyNjliNzU4NjQ0ZWQ0Y2Y3NmJjZTY2ZWMxNWU1ZmYzNDRiZjVmYmQyZjk4NGY3YjczYmZiOTNiYTciLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImIxMDUwN2ZjYjVjODFlODVlNTgyYWQ4MDI5OGIzYWM5Y2Y4MGZjZTM1ZjcyN2E1ZGY3MDEyM2M0ZDRmMmZmNmEifQ"
         }
       ]
     },
@@ -170,7 +164,7 @@
       "evidence": [
         {
           "resource": "repo://_bmad-output/implementation-artifacts/sprint-status.yaml",
-          "version": "repo-file-v1:sha256:7243bc6484584ff81d783e58eec7ba04a8e27f927f96c660334d369c4586f6d4"
+          "version": "repo-file-v1:sha256:198d66b0c04c7702e88457a2569675e96d29936b3620ee34c109291c7e3ebde6"
         }
       ]
     },
@@ -183,10 +177,70 @@
           "version": "repo-lines-v1:sha256:dc49c7ad848ce537624399ba437e42ebb51d25414cb52d7e3c79f36491ec4565:eyJzZWxlY3RlZExpbmVDb3VudCI6NDMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImY5YmJiOWM2MGM1NDc4N2M3NzQ5YzFmNzAyMDlkMzRkM2I3NWVhNTU5NTAyY2FmODcwYTJiOTQ0MmIxZWMwNjQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjY1NWM2MDU0NmQ0NTExYWQ4OGNkMGU4OTMzN2MwYjdkZGEzYWU5NjA3YWM4OGRkMjkyYWZiN2RmMmRkMjRiYWUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImJmMmJlZjAyYWE3NzEyNzY4YmVhZjE0YTM4NTc4MTY4NDg2YzVhZjI3ZDI0OTFkNTI2NjdjMDc3YjJmNTk4YTQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQ0YWJhMzM2NTIxYmE4MWNlMTY4OGJlNjdjNGI4Y2U4ZjY1YmEyMjVkZWY0ZDI2YjVjMjEyY2I4ZGFiOWVkMzQifQ"
         }
       ]
+    },
+    {
+      "id": "claim_901f9f316dc0446b8cbe1f0a258bf9aa",
+      "statement": "The migration program is complete: 94/94 stories done across Epics 166-174 (all CLOSED), timeline 2026-08-11 to 2026-09-02, final main base 0d6225acb9abfafa872d2d2ee45f215594edc4e6, and all 76 route-ledger rows flipped planned to verified only by Story 174.5 after a per-row evidence audit (54 rows with complete per-story chains, 22 early-wave rows whose cleanup link is satisfied by a collective live-absence audit after an independent verifier refuted 4 builder-map rows).",
+      "evidence": [
+        {
+          "resource": "repo://_bmad-output/planning-artifacts/shadcn-migration-final-delivery-manifest.md#L16-L28",
+          "version": "repo-lines-v1:sha256:bda2830f555573e62f6b22fd99d69ffaf577532d961a5047fe424362d13a1f79:eyJzZWxlY3RlZExpbmVDb3VudCI6MTMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNhYzQwMmM4YTRjNzU1ZTAzMjY0ZDk5YTBkNTAyYzI1MTdmMDYyOGU5NDcwMzk5YjJiMjNmNzViM2E5ZTU3OGUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjgzYTJhOTYwOTUyMWNmMDJiMTRjYjBiMGRmNGJkMGIzYzkxYmY0Y2E1ZGJiOGU1YmEwYTJlZjdjNzg0YzBjMTIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjA5ZTM4OTUyY2FiYzIyM2E2YWIxYzVhMzRhNDA0MDQxZGQzNjRhOTYxNmVmNGVkZDE1MDg0ZDEyMjNiNmUyOTIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjNkNTBlMzFkZmM3MjJkOTFmYmE5MjEwMjZiZWQyN2FhYzIwZTBkYjRmMzQ0NTE0ZjI3MTE1NmU2ODc4Y2QxZDIifQ"
+        },
+        {
+          "resource": "repo://_bmad-output/planning-artifacts/shadcn-route-ledger.md#L131-L139",
+          "version": "repo-lines-v1:sha256:4a6d0f4e2b7e6a27c5171573364257bc33a0f19692b02cd469ad6d77b0930916:eyJzZWxlY3RlZExpbmVDb3VudCI6OSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiYTU3NTQxMWZmMWY0ZDUxYTZkMDNjODViYTc3OGY2NjkyZmI2MzcyYThjODRjYThkOWI4NDRjNTFmMWQ2NWIxMCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNmU0YTYwNGI2YjQ2YjMwOTVhZWI4NWZiN2I1NWJkNjE0ZjIxY2I0MGQwYjQ1NjNjMTIwZjVjMjUxODQzNmE3MyIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNTkzY2RiYmVlMTkxZWU1YTJmYjRkYjg0ODcxZTBjMTg3YTViMTJiMzczYTkxN2RkODk4NDIyYjIwZWJhNTc2MCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNWMzNzA0ZDk0MTdmOWRiNzVmOWMzODFmZjY3ZjY4OGVmNzc3ZjFkNDkwZjg2Njk2ODE1OGRmYzllZjkyZDU4NiJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_0298df2716c942a993aa36ec3a1841d8",
+      "statement": "After program completion, check-shadcn-migration-parity.mjs is a terminal-state regression guard pinned to EXPECTED_BASE_SHA 0d6225ac (the Story 174.5 base) with the ledger expectation moved to verified: it reports base-sha-mismatch BY DESIGN when run on post-merge main, and must be re-run in a worktree based on the pinned SHA or re-pinned to a new base; corpus-only mode is STORY_174_1_SKIP_SELF_TESTS=1.",
+      "evidence": [
+        {
+          "resource": "repo://docs/HANDOFF-2026-09-02-FINAL-94-94-PROGRAM-COMPLETE.md#L56-L75",
+          "version": "repo-lines-v1:sha256:baf2dd4a01d77ff1dea97006157862ea325d49b403bec087643167bb44b8692d:eyJzZWxlY3RlZExpbmVDb3VudCI6MjAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjM2YzM3MzMxMWNiYTdjNDJmZGVjNDE0YTkyMjc5OGEzMTRjMmUyYTEzY2U4ZDMwMjExMWJkZWVjNDNjNDQ0MmUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImIwMTQ5NjdkMTI0Nzk0MjVkZWY1NzFiNjg2ODlmYzA3YTZkOTA5ZTI4OTM2NDUyMTM5Mzg4ZWZlYzA2OGQ4YWIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjM0MThiZTIyMjYzYjhhNzRiNTY0M2Q1N2UwZWY5NzE1MWExN2Q0NWUwNWUzZmFlMmRiYWU2NTEzOWM2NzhlOGUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjFiYTVkOGFhNDVmMmFlYWE1NjIyNmMxMGViYzkwOTA0YzI2MTFhMjhmNmYyMzJjMmQwMWI5NGYyOTMyZWM3NTQifQ"
+        },
+        {
+          "resource": "repo://scripts/check-shadcn-migration-parity.mjs#L8-L11",
+          "version": "repo-lines-v1:sha256:aeb6584137c5a59d5cebe3d6355722ab2e786f05498ab56099e4135b21692fab:eyJzZWxlY3RlZExpbmVDb3VudCI6NCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNzJmNTcxOTIzNDZhYWU3NWQ1OWZiZGMzODY4Y2U0ZmFkOTcxNjExNTRiM2IyOGNhNmVkMWQ5NGFkYWE4YmQzNSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiYzU2OTljOGNmYTVhOTk5NTc5YjA3YzdiN2IzMTBkNTUzNzUyZjYzODZmYTRmOGIwZjQzNzBkZDJlNGU4YzM5MyIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiYWE4Mzg5YTI2YmZlODY5ZTAzNTZlNzBkNmZlZjFjYzlmNmI2YjFhN2JkOWQ1MzI2NjE1MWIyZWI1MWMwMjk5MyIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMzlkOTY2NmRmODU1ZGRkOWM3Y2Q1Y2RmZGM5NTFlYjAzY2M5MjljODVmNjgwNDc5ZTg0MThjZmVkNTkxNTdhZSJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_21dd5610759b4080a9e98bb8050cb693",
+      "statement": "Post-migration debt is owner-scoped aftermath, none blocking: confirmed-live PB-1 (silent cabinet-create skip on nonce-less sessions) and PB-3 (no reactive 401-refresh interceptor) await owner triage, while PB-2, PB-4, the /15-family contrast fix, FE-D9 logApiError redaction, and SEC-DOC-1 doc-credential redaction were resolved/redacted in 2026-09-02 waves (PRs #382-#385) with debt-* artifacts; the full register with statuses, fix-canons, and evidence lives in the final handoff Debt escalation section.",
+      "evidence": [
+        {
+          "resource": "repo://_bmad-output/implementation-artifacts/debt-d3-d4-wcag-solid-pairs.md",
+          "version": "repo-file-v1:sha256:85d8cedbf8695d4ea43cb80f763032c42348e3a6a1e526500b512ca0caac0347"
+        },
+        {
+          "resource": "repo://_bmad-output/implementation-artifacts/debt-sec-doc-1-redact-creds.md",
+          "version": "repo-file-v1:sha256:4617f7a73d9f8cf2762076137105182a6a06c9f43fc0b186f404f9d1fb5a43c5"
+        },
+        {
+          "resource": "repo://docs/HANDOFF-2026-09-02-FINAL-94-94-PROGRAM-COMPLETE.md#L77-L124",
+          "version": "repo-lines-v1:sha256:e7679e8fa7a3599db7ec57ee7dbb7a8b706dc7c865860a8d1472baca6af457da:eyJzZWxlY3RlZExpbmVDb3VudCI6NDgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImVhMzYxZjkyZjkzOTJiMGJjMTg2N2Y1NjkyMDZlNGRhY2ZlNTY4NDc3NDY2ZTljODkzODM5MDRiNjRiNmRlNTUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImEzY2UwYzI4OGI4Nzk0NDQ5Y2QzNWYzNGRjZDdjN2U0MmNmMWI4MjFkOTFiZmY4MTk1MTMyOTI5M2RjYThjM2UiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjA0MmNhNTA5NTNjMDE3MzA1MDg1OWU4YjRhNGUwNmRiMmRiNWQyMWQ5YzcwNDkyNGYyNTQ0NDk5YzI2MDJiOGMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjM0YzVhMmUwMzVjNTcwMDY5NGVjZjJmYTI1NmMwODkwODRjZDFhMGNhZTI5YjRhOGU2ODM2MzYxYzJhM2E4Y2IifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_3d82f97159304e44bbd6a652995f1d0c",
+      "statement": "Story 174.4 fixed ~53 baseline-failing spec tests plus two real product WCAG/layout defects, resolved the 13 bisect-proven pre-existing liquidity/monitor e2e failures, ratcheted the ui-boundary baseline 523 down to 459, and regenerated Story 174.3's SHA-pinned owner-browser execution manifest (367 passed / 0 failed / 23 skipped) via scripts/run-story-174-3-state-evidence.mjs --owner-browsers — the only permitted regeneration path, since any edit to a pinned e2e spec breaks module-load of the whole e2e suite.",
+      "evidence": [
+        {
+          "resource": "repo://_bmad-output/implementation-artifacts/174-4-fe-complete-full-local-functional-and-backend-contract-regression.md#L16-L28",
+          "version": "repo-lines-v1:sha256:b8737d37162787499d9d1268fdffa7f879c69556e8804f898de3f86bdbffc714:eyJzZWxlY3RlZExpbmVDb3VudCI6MTMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjcyZGY5NTkxMWFiZjg0MTEzMTVlNDMzZjAwMmEwMGM4OGNkYzQ3Mjk1ZTVmOTllYWJmMGVlNzkyMDBiOWYyY2EiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjRlYmE2M2QyOTJjYzlhZTk1MDYxZjQ3ODg3ZWYzODJiNmViMmUwNzg1ZTNkMzlkZWE1ZGZjYWVmZmFiOWE0OTIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImNjMDAzZGIwYmJhMGEyM2UxZDVjNDQ1OGU3ZjE0NDk3MTc5YWMzYmYyNzRmZDQ0YTc3N2Q3Y2NjYjFlMzVlYmMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjY4MDY4ZWIwMzg0NzExOWEyM2IxZTIxNjNhOTAzNzk5OTBmMWVjNDZjM2YxZmM1ZDFhMDllZjkyZTU5ZmJhZjgifQ"
+        },
+        {
+          "resource": "repo://_bmad-output/planning-artifacts/shadcn-migration-final-delivery-manifest.md#L102-L116",
+          "version": "repo-lines-v1:sha256:b68fc945f72bf33b3bcd81e3faa2194cf0832afc91cdbf835c5b0ad1c9b33a7c:eyJzZWxlY3RlZExpbmVDb3VudCI6MTUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAwMjY2NGRkZTUyOTM2NGYyODc1MDc1OGZmODYxMWUyMWZhMTQ0YTdjNTAwYmZkNzM0ODg3MjJjZTlkODExODEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjFmNWNmYTczZGFlZTBhNjBhZjE2YmRhMDFjMzNmNGM3ZWY4NThmYTEwOWI4ZDk2YmM5NDBjNzY1MjBlOTYyMmEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjUzZjkxNTljMDc2ZWI5MWM2ODFhYzlmYWE4MTUyYjBiZWY4M2ZiNDRkNDI4Y2YwZmFlMzE0YmI2NmFhMTkxMzgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjJlNmExN2YzMjhhNzc3OWJiZDU3YWJiZTgyM2M0OTlmZDVkODg5N2JkZTU4N2UyYTZiMGY5MTQ5NzQxZDQ5ZTIifQ"
+        }
+      ]
     }
   ],
   "verification": {
-    "by": "openwiki/0.4.3",
-    "at": "2026-09-01T08:47:48.765Z"
+    "by": "openwiki/0.5.0",
+    "at": "2026-09-02T08:47:53.996Z"
   }
 }

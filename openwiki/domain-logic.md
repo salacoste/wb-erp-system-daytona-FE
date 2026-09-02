@@ -2,9 +2,6 @@
 type: "Domain Reference"
 title: "Domain Logic"
 description: "Financial and business-logic pure functions in src/lib/ (theoretical profit, margin/COGS temporal logic, ROI/profit-per-unit and efficiency status tiers, profitability status, unit economics, liquidity with trends, account finances + document download, seller communications with gated write-back, backfill retry, ISO-week/Moscow-timezone handling, null/decimal helpers), the per-week financial series hook, returns-analytics and sku-financials type contracts, route-local monitor/monitoring domain helpers, and the price-calculator cost-breakdown and margin-status modules."
-verified:
-  - by: openwiki/0.4.3
-    at: 2026-09-01T08:47:48.765Z
 sources:
   - id: openwiki-source-1550d5500fee77a878edfd70
     resource: repo://src/app/(dashboard)/monitor/components/monitor-metrics-utils.ts
@@ -72,7 +69,10 @@ sources:
     resource: repo://src/types/analytics-returns.ts
   - id: openwiki-source-dbb29a8befd1ef6fd6b187fb
     resource: repo://src/types/sku-financials/core.ts
-generated: { by: "openwiki/0.4.3", at: "2026-09-01T08:47:48.765Z" }
+generated: { by: "openwiki/0.5.0", at: "2026-09-02T08:47:53.996Z" }
+verified:
+  - by: openwiki/0.5.0
+    at: 2026-09-02T08:47:53.996Z
 ---
 # Domain Logic
 
@@ -269,9 +269,9 @@ The price calculator (`/cogs/price-calculator`, `src/components/custom/price-cal
 
 `margin-status-helpers.ts` is shared between `MarginSection` and related components:
 
-- `MARGIN_STATUS_CONFIG` — the four margin tiers with Russian labels and token-based badge classes (`/15` backgrounds + `text-*` status tokens): excellent «Отлично», good «Хорошо», warning «Низкая», critical «Критично».
+- `MARGIN_STATUS_CONFIG` — the four margin tiers with Russian labels and token-based badge classes: excellent «Отлично», good «Хорошо», warning «Низкая», critical «Критично». Since D-4 (2026-09-02), the **good** and **warning** tiers use solid pairs (`bg-status-success` + `text-status-success-foreground`, `bg-status-warning` + `text-status-warning-foreground`, per 173.12 canon) for WCAG 1.4.3 contrast in both themes, while **excellent** and **critical** intentionally keep the `/15` financial-token tints (`bg-financial-positive/15` / `bg-financial-negative/15`).
 - `getMarginStatus(pct)` — threshold mapping: **≥ 20% excellent, ≥ 10% good, ≥ 5% warning, else critical**.
-- `getMarginColor(marginPct)` — the same thresholds mapped to text-color classes for inline health coloring.
+- `getMarginColor(marginPct)` — the same thresholds mapped to text-color classes for inline health coloring (`text-financial-positive` / `text-status-success` / `text-status-warning` / `text-financial-negative`).
 
 Note these thresholds are calculator-internal defaults; the cabinet-level configurable target is `targetMarginPct` (see above), and the analytics-wide profitability tiers live in `PROFITABILITY_STATUS_CONFIG` — three distinct tier systems with different purposes.
 

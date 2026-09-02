@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "pageVersion": "sha256:a915d3483bc507c04625844cdd7934c15e354f9cf86b6a78a10e620f5e5b1c2a",
+  "pageVersion": "sha256:094e787dcf5eff82cb2d2acd2d52583bdec4c19862a4bffe9f20ab7529bc6e0e",
   "claims": [
     {
       "id": "claim_9bfdc04061f14b3bb2bb441081e614c3",
@@ -114,11 +114,11 @@
     },
     {
       "id": "claim_623470991c7d4a788c440402b2057a8d",
-      "statement": "margin-status-helpers.ts defines the calculator margin tiers via MARGIN_STATUS_CONFIG (Russian labels + token-based badge classes) and getMarginStatus/getMarginColor thresholds: >=20% excellent, >=10% good, >=5% warning, else critical — distinct from the cabinet targetMarginPct and the analytics PROFITABILITY_STATUS_CONFIG tier systems.",
+      "statement": "margin-status-helpers.ts defines the calculator margin tiers via MARGIN_STATUS_CONFIG (Russian labels; since D-4/2026-09-02 good and warning use solid status pairs bg-status-success/text-status-success-foreground and bg-status-warning/text-status-warning-foreground for WCAG 1.4.3 contrast, while excellent and critical keep /15 financial-token tints) and getMarginStatus/getMarginColor thresholds: >=20% excellent, >=10% good, >=5% warning, else critical — distinct from the cabinet targetMarginPct and the analytics PROFITABILITY_STATUS_CONFIG tier systems.",
       "evidence": [
         {
-          "resource": "repo://src/components/custom/price-calculator/margin-status-helpers.ts#L7-L40",
-          "version": "repo-lines-v1:sha256:236734858fc7e50742074f908ed40f9b0f8b3d9684c8d581fdb97acd72029c7b:eyJzZWxlY3RlZExpbmVDb3VudCI6MzQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNlNDQ0NmMyOTRjZWY4YWZlNWM0ZmE0MjZkYjdmMmU1N2MxZDYxZjg0ZDg3MDYzNmEwYTM1MTQxYzA5OTE1MDIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjQ3Mjg4ZTljMGY1NDAyNDFhOWY5NzBmYzBkNWU3ODJiMWRhZDhkNDdiYmZhYzg5MGIzNjU3MWEwM2UzYjIyNzEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+          "resource": "repo://src/components/custom/price-calculator/margin-status-helpers.ts#L7-L46",
+          "version": "repo-lines-v1:sha256:1cf24104f0be022df968014f317b8acf3adacdd441f748650ed16933f32862ec:eyJzZWxlY3RlZExpbmVDb3VudCI6NDAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNlNDQ0NmMyOTRjZWY4YWZlNWM0ZmE0MjZkYjdmMmU1N2MxZDYxZjg0ZDg3MDYzNmEwYTM1MTQxYzA5OTE1MDIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjQ3Mjg4ZTljMGY1NDAyNDFhOWY5NzBmYzBkNWU3ODJiMWRhZDhkNDdiYmZhYzg5MGIzNjU3MWEwM2UzYjIyNzEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
         }
       ]
     },
@@ -284,7 +284,7 @@
     }
   ],
   "verification": {
-    "by": "openwiki/0.4.3",
-    "at": "2026-09-01T08:47:48.765Z"
+    "by": "openwiki/0.5.0",
+    "at": "2026-09-02T08:47:53.996Z"
   }
 }

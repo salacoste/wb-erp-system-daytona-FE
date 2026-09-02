@@ -4,8 +4,8 @@ title: "Conventions & Quality Gates"
 description: "Coding standards and automated quality gates — file-size limits, TypeScript strictness, the Defensive Frontend Principle, the presentation-source-contract test pattern, ratchet baseline gates (incl. the shadcn UI-boundary and migration-parity validators), and the two-pass review discipline."
 tags: [conventions, quality-gates, testing, eslint, review-discipline, presentation-contracts]
 verified:
-  - by: openwiki/0.4.3
-    at: 2026-09-01T08:47:48.765Z
+  - by: openwiki/0.5.0
+    at: 2026-09-02T08:47:53.996Z
 sources:
   - id: openwiki-source-a2371d6362e5db4bc834ad03
     resource: repo://CLAUDE.md
@@ -13,8 +13,12 @@ sources:
     resource: repo://eslint.config.js
   - id: openwiki-source-5b54a58d1b51cd490b0e7162
     resource: repo://package.json
+  - id: openwiki-source-086fa459cb2f8a7f3639152b
+    resource: repo://scripts/__tests__/check-shadcn-migration-parity.test.mjs
   - id: openwiki-source-7bebebc56a12d016856c32cc
     resource: repo://scripts/__tests__/check-shadcn-ui-boundary.test.mjs
+  - id: openwiki-source-a6d59436db4440630eef1244
+    resource: repo://scripts/.shadcn-ui-boundary-baseline.txt
   - id: openwiki-source-d04f4722a3d19a2f20e7ee82
     resource: repo://scripts/check-eslint-rules.sh
   - id: openwiki-source-993231c193b0c1ee2eeb5f7c
@@ -43,7 +47,7 @@ sources:
     resource: repo://src/components/custom/dashboard/__tests__/dashboard-widgets-presentation-source-contracts.test.ts
   - id: openwiki-source-fbadcd8591b65031efaaedce
     resource: repo://vitest.config.ts
-generated: { by: "openwiki/0.4.3", at: "2026-09-01T08:47:48.765Z" }
+generated: { by: "openwiki/0.5.0", at: "2026-09-02T08:47:53.996Z" }
 ---
 
 # Conventions & Quality Gates
@@ -173,7 +177,7 @@ Each story closes only when every quality gate matches its accepted baseline (th
 | Playwright static boundary | `npx vitest run src/test/playwright-static-boundary.test.ts` | No raw `@playwright/test` imports / dynamic code outside approved modules |
 | E2E vacuous assertions (AP#6) | `npm run check:e2e-assertions` + `src/test/e2e-vacuous-assertions.test.ts` | AST scanner finds tautological assertions (`>= 0`, `\|\| true`, always-true) in owned E2E specs; self-test under `npm test` |
 | E2E fixed waits (AP#7) | `npm run check:e2e-waits` + `src/test/e2e-fixed-waits.test.ts` | AST scanner finds `waitForTimeout`, raw `setTimeout`, and arbitrary wait helpers (`sleep`/`delay`/`pause`) in owned E2E specs; self-test under `npm test` |
-| shadcn UI boundary | `node scripts/check-shadcn-ui-boundary.mjs` | 523 = ratchet baseline in `scripts/.shadcn-ui-boundary-baseline.txt` (exit 1 only on increase; Story 174.2-FE) — see below |
+| shadcn UI boundary | `node scripts/check-shadcn-ui-boundary.mjs` | 459 = ratchet baseline in `scripts/.shadcn-ui-boundary-baseline.txt` (exit 1 only on increase; ↓64 from the original Story 174.2 baseline of 523 — drop discovered by 174.4's live re-run, from the 174.3 window) — see below |
 | shadcn migration parity | `node scripts/check-shadcn-migration-parity.mjs` | Schema-v3 model validates clean: 94 BMAD stories = 94 OMX plans, 76 source routes = 76 route-ledger rows, zero defect codes (Story 174.1-FE) — see below |
 
 ### Ratchet gate behavior
@@ -209,7 +213,7 @@ flowchart TD
     B -- no --> F["exit 1 self-test-failed"]
     B -- yes --> C["scan src production files with LEGACY_PALETTE + CONTEXTUAL_HEX"]
     C --> D["subtract BOUNDARY_EXCEPTIONS suppressed files"]
-    D --> E{"total vs baseline 523?"}
+    D --> E{"total vs baseline 459?"}
     E -- greater --> G["exit 1 FAIL"]
     E -- equal --> H["PASS"]
     E -- less --> I["PASS + ratchet down, lower baseline in same commit"]
@@ -226,7 +230,7 @@ Story 174.1-FE's validator builds a parity model from four authorities and valid
 3. **Route ledger** (`_bmad-output/planning-artifacts/shadcn-route-ledger.md`) — exactly 76 rows mapping `page.tsx` entries to owning stories; every row must be status `planned`, have a unique story owner and unique route/entry, and a matching implementation artifact.
 4. **Source routes** — recursive discovery of every `page.tsx` under `src/app`, each of which must exist in the ledger with a matching route path; `sprint-status.yaml` rows must reference known stories with valid statuses and matching slugs.
 
-The validator rejects duplicates (stories, plans, branches, worktrees, frontmatter keys, evidence fields, headings), orphans (plans/stories/statuses/ledger rows without counterparts), mismatches (titles, plan paths, owned-surface declarations, plan section profiles per epic era — legacy 166–168 / route 169–171 / modern 172–174), invalid DAG edges (unresolved, self-, future-prerequisites outside `ALLOWED_FORWARD_EDGES`, and prerequisite cycles via DFS), and verifies the two backend-exception stories (167.8, 169.14) end-to-end against live `git`: commit existence, merge ancestry onto `main`, branch/worktree absence (local and cached-remote-tracking — live-remote proof is explicitly an `unavailable` boundary), and merge/cleanup/handoff needles recorded in the historical artifacts. Expected counts are pinned constants: `EXPECTED_STORIES = 94`, `EXPECTED_ROUTES = 76`, exactly 2 backend-exception records, and a fixed `EXPECTED_BASE_SHA`. The report emits `schemaVersion: 3` plus human summary lines.
+The validator rejects duplicates (stories, plans, branches, worktrees, frontmatter keys, evidence fields, headings), orphans (plans/stories/statuses/ledger rows without counterparts), mismatches (titles, plan paths, owned-surface declarations, plan section profiles per epic era — legacy 166–168 / route 169–171 / modern 172–174), invalid DAG edges (unresolved, self-, future-prerequisites outside `ALLOWED_FORWARD_EDGES`, and prerequisite cycles via DFS), and verifies the two backend-exception stories (167.8, 169.14) end-to-end against live `git`: commit existence, merge ancestry onto `main`, branch/worktree absence (local and cached-remote-tracking — live-remote proof is explicitly an `unavailable` boundary), and merge/cleanup/handoff needles recorded in the historical artifacts. The validator is in **terminal state**: the migration program closed with 94/94 stories, and the parity gate is frozen at the pinned base SHA — later stories must not edit `scripts/check-shadcn-migration-parity.mjs` (per the final program handoff). Expected counts are pinned constants: `EXPECTED_STORIES = 94`, `EXPECTED_ROUTES = 76`, exactly 2 backend-exception records, and a fixed `EXPECTED_BASE_SHA` (re-pinned to each terminal story's active base). The report emits `schemaVersion: 3` plus human summary lines.
 
 Both scripts ship node:test self-suites under `scripts/__tests__/`: the boundary suite pins the canon regexes (positives/negatives, 1-based line reporting, scope exclusion via temp dirs, baseline comparison and `--init`), and the parity suite asserts the clean repository corpus validates with zero errors, then injects defects into a cloned model to prove each code fires (missing/orphan/duplicate identities, count drift, forward edges, cycles, git stubbing).
 
@@ -274,6 +278,10 @@ This complements the [Two-Pass Review Discipline](#two-pass-review-discipline): 
 ## Other Development Rules
 
 - **Pre-flight source-trace verification** — Before implementing a story, grep for the story's AC nouns. If all ACs are already shipped, close as no-op with evidence
+- **Pure functions over hook mocking** — Export testable logic as pure functions from hooks
+- **Error test pattern** — Always use `mockRejectedValueOnce` (not `mockRejectedValue`)
+- **Regex for locale assertions** — Use `/₽/`, `/\d+/` patterns in tests, not exact formatted strings
+s are already shipped, close as no-op with evidence
 - **Pure functions over hook mocking** — Export testable logic as pure functions from hooks
 - **Error test pattern** — Always use `mockRejectedValueOnce` (not `mockRejectedValue`)
 - **Regex for locale assertions** — Use `/₽/`, `/\d+/` patterns in tests, not exact formatted strings

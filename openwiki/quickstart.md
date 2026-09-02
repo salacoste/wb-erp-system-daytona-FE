@@ -3,18 +3,13 @@ type: Reference
 title: "WB ERP System — Frontend OpenWiki"
 description: "Entry page for the WB ERP frontend wiki: current delivery and migration status, stack overview, quick local commands, and a task-routing map to the domain pages."
 tags: [quickstart, overview, delivery-status, commands]
-verified:
-  - by: openwiki/0.4.3
-    at: 2026-09-01T08:47:48.765Z
 sources:
-  - id: openwiki-source-a85a3a5994b0c404049b89d3
-    resource: repo://_bmad-output/implementation-artifacts/174-3-expanded-scope-register.md
   - id: openwiki-source-c278c3812722174099a1e7a5
     resource: repo://_bmad-output/planning-artifacts/shadcn-migration-status-and-debt-registry.md
-  - id: openwiki-source-61e0371a06d746820bb42371
-    resource: repo://.omx/plans/174.3-complete-accessibility-responsive-theme-and-visual-verification.md
-  - id: openwiki-source-2b487a3c9bd5b7b67a02a1a8
-    resource: repo://e2e/fixtures/story-174-3/execution-manifest.json
+  - id: openwiki-source-3ff50b7610374b28cb2b4cf5
+    resource: repo://_bmad-output/planning-artifacts/shadcn-route-ledger.md
+  - id: openwiki-source-3ae3de7eae6af907f9e7299c
+    resource: repo://docs/HANDOFF-2026-09-02-FINAL-94-94-PROGRAM-COMPLETE.md
   - id: openwiki-source-5b54a58d1b51cd490b0e7162
     resource: repo://package.json
   - id: openwiki-source-23775c3de52f3ab95a13cb8b
@@ -25,7 +20,10 @@ sources:
     resource: repo://scripts/run-story-174-3-real-browser-zoom.mjs
   - id: openwiki-source-1bbe76f55f6efa9d2465f6c5
     resource: repo://scripts/run-story-174-3-state-evidence.mjs
-generated: { by: "openwiki/0.4.3", at: "2026-09-01T08:47:48.765Z" }
+generated: { by: "openwiki/0.5.0", at: "2026-09-02T08:47:53.996Z" }
+verified:
+  - by: openwiki/0.5.0
+    at: 2026-09-02T08:47:53.996Z
 ---
 
 # WB ERP System — Frontend OpenWiki
@@ -43,16 +41,17 @@ Development and validation are **local-only**: there is no deployment target or 
 
 ## Epics 166–174 Migration Snapshot
 
-Canonical snapshot sources: the consolidated status/debt registry (`_bmad-output/planning-artifacts/shadcn-migration-status-and-debt-registry.md`, snapshot **2026-08-31**), per-story execution state in `_bmad-output/implementation-artifacts/sprint-status.yaml`, and the Story 174.3 execution plan (`.omx/plans/174.3-complete-accessibility-responsive-theme-and-visual-verification.md`).
+Canonical snapshot sources: the consolidated status/debt registry (`_bmad-output/planning-artifacts/shadcn-migration-status-and-debt-registry.md`, snapshot **2026-09-02**), the route ledger (`_bmad-output/planning-artifacts/shadcn-route-ledger.md`), and the final handoff `docs/HANDOFF-2026-09-02-FINAL-94-94-PROGRAM-COMPLETE.md`.
 
-As of the current snapshot, the shadcn full-UI migration program stands at **91/94 canonical stories**:
+**The program is COMPLETE: 94/94 canonical stories, all 9 epics (166–174) CLOSED** (window 2026-08-11 → 2026-09-02). Final base on main: `0d6225acb9abfafa872d2d2ee45f215594edc4e6`.
 
-- Epics 166 (foundation, 8/8), 167 (AppShell/auth, 9/9), 168 (analytics core, 11/11), 169 (operational analytics, 15/15), 170 (marketing analytics, 7/7), 171 (AI/forecast analytics, 9/9), 172 (core business operations, 17/17), and **173 (13/13)** are all CLOSED.
-- Epic 174 (5 stories) is **IN PROGRESS at 2/5**: **174.1** route-ledger/plan parity (`check-shadcn-migration-parity.mjs` proves 94 BMAD stories = 94 OMX plans and 76 routes = 76 ledger rows) and **174.2** legacy-UI removal + design-system boundary (`check-shadcn-ui-boundary.mjs` ratchet 523) are done and cleaned.
-- **Story 174.3 (complete accessibility, responsive, theme, and visual verification) is in active remediation, not "next".** Commit `82465fbf96f2319116c1cad101044e8004a52cc3` received three independent REQUEST-CHANGES/REJECT verdicts; merge and cleanup are blocked until every accepted finding is repaired, validation is regenerated on a new immutable commit, and three fresh independent reviewers return APPROVE on that same unchanged SHA (zero unresolved P0–P2, no material P3). Any content change restarts the gate. The accepted remediation scope is the generated `_bmad-output/implementation-artifacts/174-3-expanded-scope-register.md` (~424 files across route-owner remediation, story evidence, shared-owner remediation, foundation/AppShell coordination, and documentation classes) — the register, not the historical three-file bootstrap, is the current file-level coordination authority. After 174.3: 174.4 (functional/backend regression) and 174.5 (docs/cleanup) → 94/94.
-- The repo-owned registry records the full Vitest floor after Story 174.2 as **19,118 passed / 0 failed across 1,234 files** (lint/tsc clean, ui-boundary ratchet 523); the Story 174.3 branch additionally committed an execution manifest (`e2e/fixtures/story-174-3/execution-manifest.json`) recording the matrix executions behind the remediation. All 76 route-owning stories are implemented while all 76 route-ledger rows **intentionally remain `planned`** — Story 174.5 owns the final `verified` transitions.
+- Epics 166 (foundation, 8/8), 167 (AppShell/auth, 9/9), 168 (analytics core, 11/11), 169 (operational analytics, 15/15), 170 (marketing analytics, 7/7), 171 (AI/forecast analytics, 9/9), 172 (core business operations, 17/17), 173 (13/13), and 174 (final audit, 5/5) are all CLOSED.
+- Epic 174 final audit: **174.1** parity (PRs #369/#370/#371), **174.2** legacy-UI removal + design-system boundary (#372), **174.3** visual/a11y matrix (#374), **174.4** full functional/backend regression (#375/#376), **174.5** docs/repository closeout (PR #379 on base `0d6225ac`).
+- **Route-ledger: 76/76 rows `verified` (2026-09-02)** — 54 rows with full evidence chains (implementation, validation, visual/a11y, review, merge, cleanup) plus 22 rows whose cleanup links are closed by a collective live-absence audit; all 76 story PR SHAs are ancestors of `0d6225ac`.
+- Final gate floors: Vitest **19,363 passed / 0 failed** (1,270 + 4 files), lint 0/0, tsc 0, build 0 (`npx next build --webpack`), UI boundary ratchet **459 = 459** (3 owner-accepted exceptions after the FeedbackButtons fix), docs-citation baseline 95, locale-percent 4. The parity gate is pinned to `EXPECTED_BASE_SHA = 0d6225ac` and reports base-sha-mismatch on main by design — re-run it in a worktree on the pinned SHA.
+- Full delivery contracts live in `_bmad-output/planning-artifacts/shadcn-migration-final-delivery-manifest.md`; the program retrospective is `_bmad-output/implementation-artifacts/epic-166-174-program-retrospective-2026-09-02.md`. Residual owner-scoped debt (product bugs PB-1/PB-3, WCAG sweeps, boundary residue) is catalogued in the final handoff §4 and the registry — nothing blocks the program.
 
-For the full per-story status ledger, the route ledger, and the **Story 174.3 evidence pipeline** (execution manifest, fail-closed manifest reader, AST-based execution-requirements extraction, contract tests), see [Migration Program (Epics 166–174)](migration-program.md). The design contract itself (tokens, primitives, composition families, the WCAG 2.2 AA inclusive visual matrix) is documented in [Design System](design-system.md).
+For the full per-story status ledger, the route ledger, and the final-verification evidence, see [Migration Program (Epics 166–174)](migration-program.md). The design contract itself (tokens, primitives, composition families, the WCAG 2.2 AA inclusive visual matrix) is documented in [Design System](design-system.md).
 
 ## Overview
 
@@ -98,7 +97,7 @@ Migration and Story 174.3 gates have **no `npm run` alias** — invoke them dire
 
 ```bash
 node scripts/check-shadcn-migration-parity.mjs   # Story 174.1: BMAD ↔ route ledger ↔ OMX plan parity (94 = 94, 76 = 76)
-node scripts/check-shadcn-ui-boundary.mjs        # Story 174.2: design-system boundary ratchet (baseline 523, fails only on increase)
+node scripts/check-shadcn-ui-boundary.mjs        # Story 174.2: design-system boundary ratchet (final baseline 459, fails only on increase)
 node scripts/run-story-174-3-state-evidence.mjs  # Story 174.3: fail-closed state-evidence runner (modes: --owner-units / --owner-browsers / --dedicated-routes / --owners / --defaults / --all)
 node scripts/run-story-174-3-real-browser-zoom.mjs  # Story 174.3: headed macOS real-browser 200% zoom orchestrator (all 76 routes × both themes)
 node scripts/generate-story-174-3-scope-register.mjs  # Story 174.3: regenerate the expanded-scope register from origin/main
@@ -118,5 +117,5 @@ node scripts/generate-story-174-3-scope-register.mjs  # Story 174.3: regenerate 
 
 - **[Architecture](architecture.md)** — route groups, layout/provider hierarchy, client-side data fetching, auth, and the canonical configuration table.
 - **[Design System](design-system.md)** — Tailwind v4 semantic tokens, hardened shadcn primitives, composition families, enforced design-system boundary, and the Story 174.3 inclusive visual contract.
-- **[Migration Program (Epics 166–174)](migration-program.md)** — per-epic/story status ledger, route ledger, parity validation, Story 174.3 remediation and evidence pipeline, orchestration process.
+- **[Migration Program (Epics 166–174)](migration-program.md)** — per-epic/story status ledger, route ledger (76/76 verified), parity validation, Story 174.3 evidence pipeline, orchestration process, and the final 94/94 closeout.
 - **[Conventions & Quality Gates](conventions-and-quality.md)** and **[Testing & Operations](testing-and-ops.md)** — coding standards/gates and the testing strategy with the story-174-3 evidence runners.

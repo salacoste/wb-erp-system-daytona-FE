@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "pageVersion": "sha256:cf84ddc044eab0cd1f9c2834b37a84ad29d36201b1da925d7a148ec389b23fef",
+  "pageVersion": "sha256:7e89b3744ce4f591c574cc31cf29c51a81ca3902fdf4ee952faa9e506edfcd95",
   "claims": [
     {
       "id": "claim_633e3a28dfd14bdc90dc2ba40c9dfdd4",
@@ -108,19 +108,23 @@
     },
     {
       "id": "claim_12cb3fbbcc314d0f97169faa64a63920",
-      "statement": "Story 174.2 enforces a repository-wide design-system boundary: scripts/check-shadcn-ui-boundary.mjs (Node stdlib) scans all production src/**/*.{ts,tsx} for LEGACY_PALETTE and CONTEXTUAL_HEX patterns and ratchets against scripts/.shadcn-ui-boundary-baseline.txt (523), exiting 0 at-or-below the baseline and 1 only on increase; suppression requires a BOUNDARY_EXCEPTIONS entry with an owner/debt ID mirrored in the classification manifest, and the scanner has a 10-case self-test suite.",
+      "statement": "Story 174.2 enforces a repository-wide design-system boundary: scripts/check-shadcn-ui-boundary.mjs (Node stdlib) scans all production src/**/*.{ts,tsx} for LEGACY_PALETTE and CONTEXTUAL_HEX patterns and ratchets against scripts/.shadcn-ui-boundary-baseline.txt, whose final value is 459 (Story 174.4's live re-run discovered the −64 drop from the original 523 caused by raw-class removals in the 174.3 merge window and lowered the baseline same-commit); it exits 0 at-or-below the baseline and 1 only on increase, and suppression requires a BOUNDARY_EXCEPTIONS entry with an owner/debt ID mirrored in the classification manifest — 3 entries remain (C5 waterfall categorical hex and two historical #7C3AED chart marks, 22 suppressed matches) after the F-10 FeedbackButtons exception was lifted 2026-09-02; the scanner has a 10-case self-test suite.",
       "evidence": [
         {
+          "resource": "repo://_bmad-output/planning-artifacts/shadcn-ui-boundary-classification-manifest.md#L228-L236",
+          "version": "repo-lines-v1:sha256:398d68fc962631de6ac84b7291b55876756dfcbc0164ece39a415aff734df762:eyJzZWxlY3RlZExpbmVDb3VudCI6OSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiYmI2MzI2YWY4ZGMyOWMzMDFkYjBhMWU3MDJhNzZlZTk4NTY1ODBjYjNjNWM1ZjYwZTljNmM5MzI2ZGRjZGI5NiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiZjkwMzcyNzg4M2QyOWMzMmQyMTNkMWYzZjFhYzY1NGIzZDJmNmMyNzg1Yzg0ODI5OWI0N2I4NjVhZjU4Y2ExNyIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMTBlYWIwZDc2NmY0YjA4NWI1NDY3ZmZiNDI1MjAwMmUzNjRmYzE5NGVmYmYwNTE3MTg1NTY1MjFiNWYyOTAxZiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMmNiNGQ1YjgzODIxMTRkYzA4NjllZjViNDE4Y2FhYjE3MzNhZmM1MmQ5Y2RlMjNhZGEyMTI4YmY4YzMyNzk4MyJ9"
+        },
+        {
           "resource": "repo://scripts/.shadcn-ui-boundary-baseline.txt",
-          "version": "repo-file-v1:sha256:308674fe33ad5aa848f48d336f6079c2b668de53a3108da4359ee5a0a2a771e5"
+          "version": "repo-file-v1:sha256:7757df589d2dcf60b6ef20aca61d7174620e3e109a7eb27bcd49115a976b40e9"
         },
         {
           "resource": "repo://scripts/__tests__/check-shadcn-ui-boundary.test.mjs",
-          "version": "repo-file-v1:sha256:f7867bdf4341bc8b2f3ae0b8956c815fc885498a84517468d56c3b316cbe1679"
+          "version": "repo-file-v1:sha256:2acf3671f96aa8c8cbd39f514bd3a79956d64e4a598cd01de5ed0cfe7bb1474d"
         },
         {
-          "resource": "repo://scripts/check-shadcn-ui-boundary.mjs",
-          "version": "repo-file-v1:sha256:292dbdb4aaae3544e325b3a70c80b7c4cf703e995a56934dd3c62f6423c9ff36"
+          "resource": "repo://scripts/check-shadcn-ui-boundary.mjs#L33-L52",
+          "version": "repo-lines-v1:sha256:422d1730b989b30121fc14171a21b8e65d455b1e8a8ad634145a0309b6aee274:eyJzZWxlY3RlZExpbmVDb3VudCI6MjAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjE1YzQwNmE2Y2Y1OTZjMTM1NGRjYmU5OTI2ZjljZjE4NGE3N2E3ZmMwOWIxYWFiY2QzN2ViOGNiYjc1MGU2NmQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImE2M2FhZTM5YWQ1OWZhZjMyZDNhMDQ1OGI4OTM0NmU4ZTg4ZTkxZmRkNDA0NTQwM2E4OGEwNjdlYjU2Mjk5NjMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjI5ZWFlM2FiOWFlY2IyNmJmZjBlZDViZTY0MWYyNjc5MjEyYmU3ZmRkMTRmMGUzZDExMjhmYTczMmQyMDJmNjUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjU4YzkxOGVhM2M5MGQ0NWNhZTBjZGJiNmJkMTkwYTA1Y2NkZTYwNzk1YjZjYTMxZWU1ZmM4YzlmYWMxZTcyM2EifQ"
         }
       ]
     },
@@ -244,7 +248,7 @@
     }
   ],
   "verification": {
-    "by": "openwiki/0.4.3",
-    "at": "2026-09-01T08:47:48.765Z"
+    "by": "openwiki/0.5.0",
+    "at": "2026-09-02T08:47:53.996Z"
   }
 }

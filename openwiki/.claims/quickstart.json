@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "pageVersion": "sha256:4dda12330f76642ec04e0ddd87bcc8ca37ffc801e54eb928741d4f116738bb08",
+  "pageVersion": "sha256:f07a48550e581f75f036fd892d055307fb93a0c38219e2c449de85b74ead28c6",
   "claims": [
     {
       "id": "claim_07e85bb249e745f69c550323b16664e1",
@@ -56,7 +56,11 @@
       "evidence": [
         {
           "resource": "repo://_bmad-output/planning-artifacts/shadcn-migration-status-and-debt-registry.md#L13-L21",
-          "version": "repo-lines-v1:sha256:ac31b907eb8bebb2771905082589667933e8b6d5f7b3a056e8e1f5376a8e4809:eyJzZWxlY3RlZExpbmVDb3VudCI6OSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNWMxNjRiODU5MDgyMjUzMjA1Y2E4ZDVjNWZlZjc0ZGJiZjJiMjA5ZWUzMDJhNTIyMDAxM2MxYzMzZTE2NTAzZCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiOWI1ZTFjYWViNjM3ODNkNjVlYTdhODhmYmJhZDRmZTBmOTljMDMyZWIxYzY0MmE2ZTVkMTAwZmRjM2JjNWFiZiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZTgyNWZmN2MxZDczMmE4YTM0OWY4Yjg0Yzk0NjQ0YmI1ODdmYjQyNmE2NjZjMWNjMjE4ZGJkYmVhNzVkOTNhMyIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiN2I3NWViMzRiYTIxMzA3NmNkMDc1OGFiMzM3NjNiMDZlNDFkMGRlNzIzNTdjYjFkOTA0ZGZkZGUzZjE4ODBmZiJ9"
+          "version": "repo-lines-v1:sha256:b78f701e574999559f946959463c360e13def0762c1147ead204424b00643098:eyJzZWxlY3RlZExpbmVDb3VudCI6OSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNWMxNjRiODU5MDgyMjUzMjA1Y2E4ZDVjNWZlZjc0ZGJiZjJiMjA5ZWUzMDJhNTIyMDAxM2MxYzMzZTE2NTAzZCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiZDhjZDMxOGZmOTYyZjA2ODY5YWMyNzk1YjRjMDIwYjUyOTcwOWNkNTc5Y2NhOWZmZGNkMjk4ZWUxMmQxYTQzMiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZTgyNWZmN2MxZDczMmE4YTM0OWY4Yjg0Yzk0NjQ0YmI1ODdmYjQyNmE2NjZjMWNjMjE4ZGJkYmVhNzVkOTNhMyIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiM2E3Y2YwMTNhZTRkZThkMWY3YWJlZjAyNGMxYThiMjkzNjAxMTA1YzIzMzE4MWExNWUxMGMzMTVlYTliMzc4MiJ9"
+        },
+        {
+          "resource": "repo://docs/HANDOFF-2026-09-02-FINAL-94-94-PROGRAM-COMPLETE.md#L15-L25",
+          "version": "repo-lines-v1:sha256:1b35d40252ea97e47b72719b267b73e5c592f5a277fe715efdca49dacf5703c2:eyJzZWxlY3RlZExpbmVDb3VudCI6MTEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImUyN2ZkNzZlZDNiM2MzN2RhM2VlYWI3MzIwNDJlYmJmZDBjMGQ5ODA5N2MwZWI3NzAyMzg4NGM0ZTVlZTY3YmQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImNmODljYzliODlhNWNhYTExYTFmNGY2ZDUxMzVlNDQ0ZmM0ZTFiZTg3MTY2NGU5NTNkYzQzOTk5NTZkYzdiZTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjU0NTRmMDRlZmJkZTJjNzdkYzBhODhlZDc4YTk1YTI0MDU2MjcwODA4MWJjZTFhZjJmNDg1Yjk3ZjU0ZjJhYWIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImM5NzgzMzAzYjIzZmRjZGY3NDU1ZTE5NzgxZDJjNjJkYTg0ZWU3ZTgzYWRlOTBjYzg0ZjBlNjZmYzkzN2Q5N2YifQ"
         }
       ]
     },
@@ -71,54 +75,12 @@
       ]
     },
     {
-      "id": "claim_5fcce7849f4544209259e67c83fe982d",
-      "statement": "Epic 172 is CLOSED 17/17: after Stories 172.1–172.9, Stories 172.10 Finances & Documents (#308/#309), 172.11 monitor (#311/#312), 172.12 monitoring console (#315), 172.13 MoySklad (#317), 172.14 orders overview (#319), 172.15 FBO orders (#321), 172.16 order integrity (#323), and 172.17 Product Management (#325/#326) completed the epic.",
-      "evidence": [
-        {
-          "resource": "repo://_bmad-output/planning-artifacts/shadcn-migration-status-and-debt-registry.md#L19-L21",
-          "version": "repo-lines-v1:sha256:72833ea70dafd3435f559aadd5b555bd35ea3128276836b96b9147286a015959:eyJzZWxlY3RlZExpbmVDb3VudCI6MywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNWJmY2IxODQ4OGMzNWUwNzc2MjIzMjdjMDFjN2FiNDdlZmVjMzQ3MjI0YTlmNDVkMTE1MGZhZjlmNTUxM2I3ZiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiOWI1ZTFjYWViNjM3ODNkNjVlYTdhODhmYmJhZDRmZTBmOTljMDMyZWIxYzY0MmE2ZTVkMTAwZmRjM2JjNWFiZiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiOTI4Y2FmOTc3MDJmMDVkY2E0Yzc3ZmZkODhiMGQ3Zjk4NzM0MzY0NjNhNzYyYWI5NjhkNTBmNzNkOTU0ODQyNyIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiN2I3NWViMzRiYTIxMzA3NmNkMDc1OGFiMzM3NjNiMDZlNDFkMGRlNzIzNTdjYjFkOTA0ZGZkZGUzZjE4ODBmZiJ9"
-        },
-        {
-          "resource": "repo://_bmad-output/planning-artifacts/shadcn-migration-status-and-debt-registry.md#L88-L99",
-          "version": "repo-lines-v1:sha256:994f482b8fdc63c273a6684a329e51e625916c5342319d304e4fefd829285af7:eyJzZWxlY3RlZExpbmVDb3VudCI6MTIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjFjZTMyNjJiMTNkZjkwYjJlNDMwZjczNzExNGI1OTcxMjQ1YzY4OTlkZDNiYTI5YWUyM2FhZWY1OWJiY2EyMzciLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImQxNGJmZjQ0ZmIxOWFkYWY4YTc2MzljZjY2ODJlNTE4Y2FmN2E1OTM0N2ExMmZhY2I1N2ZlMDg2ZTZkNmJmNDEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijg4NmFjYTc2NGY0NDE0YWZiNWI4NjYyYTRjODc0ODkwOWM0MzRlN2I2N2EwZDFmZmRkMzYzMzUyMTkxNmQzZjYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjZmMmVhZjQ5MzdhZGFmODgxOTUyOWY1ZTZkOTEwNjIyNmJlMzQ5MjQ0MGVjYmY3Y2IwNTQyMzY1NDdlMjI4OGYifQ"
-        }
-      ]
-    },
-    {
       "id": "claim_c9fdcad2d4624177825912cd5ca569d6",
       "statement": "Per the 2026-08-31 registry, Epic 173 is CLOSED 13/13 — settings stories 173.1–173.7, shipments 173.8–173.11 (including 173.10 shipment box types and 173.11 SKU packaging), supplies list 173.12, and Supply Detail 173.13 (PRs #365/#366/#367) all shipped.",
       "evidence": [
         {
           "resource": "repo://_bmad-output/planning-artifacts/shadcn-migration-status-and-debt-registry.md#L20-L23",
-          "version": "repo-lines-v1:sha256:3e4c19d0d91b4c6a3d447cf3eca85bce4285465d132ee351bf1306f41b975602:eyJzZWxlY3RlZExpbmVDb3VudCI6NCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNzg1Mzk1ZDUzYjkwMWM3M2VkNjNhNTBmNTlmNmNlODM4NmQ4ZmNhMzdkODY0NzUyYjM2OGI1MjVmNTA5ODRkMCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiZDI3ZGIzNGE1NmU3YWRjMTYwMjBmOTVkN2RkZGM2YTNjOWYxYzc4ZjcwOWIxNzZiOTg2MGM1YjlhZGFlZGQxNiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiYmZjZDcwNTE4NzZmZmY5OTBiMjliMjEyNWRmMmRhNTRmMTExZTI5NjI0YWJhY2Q1MDdmMzVmNzNlYzBkMGYzMCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiYjU3ZmMyNmY1YTBlYTI4MTllZDZhYTQ0ZTg4NWFkODdiNDRkMDIwMmRiYzdiMGU5NDJiOTg5MTYxNjQ3MmZlYSJ9"
-        }
-      ]
-    },
-    {
-      "id": "claim_0799a102fc4b4acba433d4d8c9fc6001",
-      "statement": "The Epics 166–174 migration program stands at 91/94 canonical stories: Epic 174 is IN PROGRESS at 2/5 with 174.1 (route-ledger/plan parity via scripts/check-shadcn-migration-parity.mjs) and 174.2 (legacy-UI removal + design-system boundary via scripts/check-shadcn-ui-boundary.mjs with ratchet 523) done; Story 174.3 is currently in active remediation, then 174.4 and 174.5 remain.",
-      "evidence": [
-        {
-          "resource": "repo://.omx/plans/174.3-complete-accessibility-responsive-theme-and-visual-verification.md#L25-L37",
-          "version": "repo-lines-v1:sha256:5ce9c7e68f9961ef46ac8ff77bfd7e94777d0bc0379d026e8261090aaec38353:eyJzZWxlY3RlZExpbmVDb3VudCI6MTMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjU0YTEzZTI0ZmMxZGE0YjUwZjQwNTIwNGY5OWU4MzY2ZjI1ODE5OWRkNzVhNWZlMjMyMjEyNmMzOGIwNTM4Y2EiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImM5MGMxMWMzMjY4MzFjZTc1ZGMwN2JlYTRjZWVhZTk5Y2RhMGUzMzAxYjIxNjdiZTIxN2FlZTUwOTFkMzRmOTYiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImMyZjI3YmUyNjliNzU4NjQ0ZWQ0Y2Y3NmJjZTY2ZWMxNWU1ZmYzNDRiZjVmYmQyZjk4NGY3YjczYmZiOTNiYTciLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImIxMDUwN2ZjYjVjODFlODVlNTgyYWQ4MDI5OGIzYWM5Y2Y4MGZjZTM1ZjcyN2E1ZGY3MDEyM2M0ZDRmMmZmNmEifQ"
-        },
-        {
-          "resource": "repo://_bmad-output/planning-artifacts/shadcn-migration-status-and-debt-registry.md#L21-L23",
-          "version": "repo-lines-v1:sha256:aa9e8549c85b61295466e01735c0e57f69d5a1cdc5a9f19f1fa74f756dee93c2:eyJzZWxlY3RlZExpbmVDb3VudCI6MywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiOWI1ZTFjYWViNjM3ODNkNjVlYTdhODhmYmJhZDRmZTBmOTljMDMyZWIxYzY0MmE2ZTVkMTAwZmRjM2JjNWFiZiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiZDI3ZGIzNGE1NmU3YWRjMTYwMjBmOTVkN2RkZGM2YTNjOWYxYzc4ZjcwOWIxNzZiOTg2MGM1YjlhZGFlZGQxNiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNTliYzdmMmZlMjNiZGMzYjViMjM1ZWNhZDQxYzFiNzJlZjdiNjA5ODRiMmNiZTQ1NzA4MmE3ZTcxYTY5OTM1ZCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiYjU3ZmMyNmY1YTBlYTI4MTllZDZhYTQ0ZTg4NWFkODdiNDRkMDIwMmRiYzdiMGU5NDJiOTg5MTYxNjQ3MmZlYSJ9"
-        }
-      ]
-    },
-    {
-      "id": "claim_51bf0bfbb1624984aaac09740968ee00",
-      "statement": "The repo-owned registry records the full Vitest floor after Story 174.2's exact dead-test deletion as 19,118 passed / 0 failed across 1,234 files, and the Story 174.3 branch additionally commits an execution manifest (e2e/fixtures/story-174-3/execution-manifest.json) recording the matrix executions; all 76 route-ledger rows intentionally remain `planned` (Story 174.5 owns the final verified transitions).",
-      "evidence": [
-        {
-          "resource": "repo://_bmad-output/planning-artifacts/shadcn-migration-status-and-debt-registry.md#L23-L23",
-          "version": "repo-lines-v1:sha256:d27db34a56e7adc16020f95d7dddc6a3c9f1c78f709b176b9860c5b9adaedd16:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZDI3ZGIzNGE1NmU3YWRjMTYwMjBmOTVkN2RkZGM2YTNjOWYxYzc4ZjcwOWIxNzZiOTg2MGM1YjlhZGFlZGQxNiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiZDI3ZGIzNGE1NmU3YWRjMTYwMjBmOTVkN2RkZGM2YTNjOWYxYzc4ZjcwOWIxNzZiOTg2MGM1YjlhZGFlZGQxNiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiN2VjOWZjYWZmMzc4NTJmYzlmNzM0ODkwMWE2OGRjY2UzZGE4MTQ5Y2IwZTY1ZWMyMDQ1OGRmZjlmMTc4MzJiZCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiYjU3ZmMyNmY1YTBlYTI4MTllZDZhYTQ0ZTg4NWFkODdiNDRkMDIwMmRiYzdiMGU5NDJiOTg5MTYxNjQ3MmZlYSJ9"
-        },
-        {
-          "resource": "repo://e2e/fixtures/story-174-3/execution-manifest.json",
-          "version": "repo-file-v1:sha256:8f352ced952eb25952b2d245ed171807f2213f24247aab823525505213693097"
+          "version": "repo-lines-v1:sha256:0cb05d8faadd2275ac97ec01150f2a90139bd37f261c9d577eca720a4dece33c:eyJzZWxlY3RlZExpbmVDb3VudCI6NCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNzg1Mzk1ZDUzYjkwMWM3M2VkNjNhNTBmNTlmNmNlODM4NmQ4ZmNhMzdkODY0NzUyYjM2OGI1MjVmNTA5ODRkMCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMWRhNGIzNjUzMzY0ZDVhNmNhYjE0NjU5ZGQ3YTI3NmEyOTU1NGEwNmVkNWU1NWFjNzcwNWJkZjlmNTk3MjNjOCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiYmZjZDcwNTE4NzZmZmY5OTBiMjliMjEyNWRmMmRhNTRmMTExZTI5NjI0YWJhY2Q1MDdmMzVmNzNlYzBkMGYzMCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiYjU3ZmMyNmY1YTBlYTI4MTllZDZhYTQ0ZTg4NWFkODdiNDRkMDIwMmRiYzdiMGU5NDJiOTg5MTYxNjQ3MmZlYSJ9"
         }
       ]
     },
@@ -133,20 +95,6 @@
         {
           "resource": "repo://package.json#L17-L52",
           "version": "repo-lines-v1:sha256:f3b443a84df172fb017325e93c0f29164b4ab61bd811c3cdc1d1d36c1db790f8:eyJzZWxlY3RlZExpbmVDb3VudCI6MzYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjM0ODMzZDU5NDljMDNhNDBjYTk1MjQ5MTYxMGE2NjU5NjQ0YjNhYTQ2NjM2MmY3OTkwMjBkYmYxOTgxNTQ3ZGIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImEwNTZmYzI1MjQ3ZmI4MTNkOTFjZDExZjQ5NzMxNjYxMTRkZDZkMDQzZGYzY2UxNDYzYzZiOThlZDc2YTU3ZWMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijg4OWE3MThmZDBhNzIwOWUyYTc3NDNiMzk2ZmY0Y2MwYmRiMGVhMGQ0Y2U3ZjdhMzk4YzZmMmVkNjg4Y2FkZTciLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6Ijc3Yjc3NGVjN2ZlMjNmY2FjMjdhNTdlMmY3YTQ2ZDcyYTBkMDNmN2NkYzA2NTE5YjQ5YzgzMTdlY2U0YjA4MzQifQ"
-        }
-      ]
-    },
-    {
-      "id": "claim_0d71e7b873684b6a92c01c413697a7ce",
-      "statement": "Story 174.3 is in active remediation: commit 82465fbf96f2319116c1cad101044e8004a52cc3 received three independent REQUEST-CHANGES/REJECT verdicts, and merge/cleanup are blocked until every accepted finding is repaired, validation is regenerated on a new immutable commit, and three fresh independent reviewers return APPROVE on that same unchanged SHA (zero unresolved P0–P2, no material P3); any content change restarts the gate. The accepted scope is recorded in the generated _bmad-output/implementation-artifacts/174-3-expanded-scope-register.md (~424 files across route-owner-remediation, story-evidence, owner-browser-evidence, shared-owner-remediation, foundation/AppShell coordination, and documentation classes), which supersedes the historical three-file bootstrap as the file-level coordination authority.",
-      "evidence": [
-        {
-          "resource": "repo://.omx/plans/174.3-complete-accessibility-responsive-theme-and-visual-verification.md#L25-L37",
-          "version": "repo-lines-v1:sha256:5ce9c7e68f9961ef46ac8ff77bfd7e94777d0bc0379d026e8261090aaec38353:eyJzZWxlY3RlZExpbmVDb3VudCI6MTMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjU0YTEzZTI0ZmMxZGE0YjUwZjQwNTIwNGY5OWU4MzY2ZjI1ODE5OWRkNzVhNWZlMjMyMjEyNmMzOGIwNTM4Y2EiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImM5MGMxMWMzMjY4MzFjZTc1ZGMwN2JlYTRjZWVhZTk5Y2RhMGUzMzAxYjIxNjdiZTIxN2FlZTUwOTFkMzRmOTYiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImMyZjI3YmUyNjliNzU4NjQ0ZWQ0Y2Y3NmJjZTY2ZWMxNWU1ZmYzNDRiZjVmYmQyZjk4NGY3YjczYmZiOTNiYTciLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImIxMDUwN2ZjYjVjODFlODVlNTgyYWQ4MDI5OGIzYWM5Y2Y4MGZjZTM1ZjcyN2E1ZGY3MDEyM2M0ZDRmMmZmNmEifQ"
-        },
-        {
-          "resource": "repo://_bmad-output/implementation-artifacts/174-3-expanded-scope-register.md",
-          "version": "repo-file-v1:sha256:084854b89185c2198e1c18ecebe398c0335b1228c53e7015da281f465b886cb1"
         }
       ]
     },
@@ -171,10 +119,66 @@
           "version": "repo-file-v1:sha256:9b34dddd9cbf86dbaaf4696945a5105a57aaaa045c7ec848b3cc00be8d9c1a63"
         }
       ]
+    },
+    {
+      "id": "claim_81eb489914894015a16846a685022e5d",
+      "statement": "The Epics 166–174 shadcn full-UI migration program is COMPLETE at 94/94 canonical stories: all 9 epics (166–174) are CLOSED over the window 2026-08-11 → 2026-09-02, with the final base on main being 0d6225acb9abfafa872d2d2ee45f215594edc4e6; the final handoff is docs/HANDOFF-2026-09-02-FINAL-94-94-PROGRAM-COMPLETE.md.",
+      "evidence": [
+        {
+          "resource": "repo://_bmad-output/planning-artifacts/shadcn-migration-status-and-debt-registry.md#L21-L24",
+          "version": "repo-lines-v1:sha256:2357087eb422a665c9c8474ead5eb4f390a3835d4792cc03a40f017d8655fb49:eyJzZWxlY3RlZExpbmVDb3VudCI6NCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZDhjZDMxOGZmOTYyZjA2ODY5YWMyNzk1YjRjMDIwYjUyOTcwOWNkNTc5Y2NhOWZmZGNkMjk4ZWUxMmQxYTQzMiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMDFiYTQ3MTljODBiNmZlOTExYjA5MWE3YzA1MTI0YjY0ZWVlY2U5NjRlMDljMDU4ZWY4Zjk4MDVkYWNhNTQ2YiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNTliYzdmMmZlMjNiZGMzYjViMjM1ZWNhZDQxYzFiNzJlZjdiNjA5ODRiMmNiZTQ1NzA4MmE3ZTcxYTY5OTM1ZCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMzQyZTc4ZjI3ZWEyMzlhNzQxMzRmMTU4ZjY0OThkYzNmYjdhNDNjNGI1YjMyZjMzYzQ5NzhiNjBhMDU1OTMwZiJ9"
+        },
+        {
+          "resource": "repo://docs/HANDOFF-2026-09-02-FINAL-94-94-PROGRAM-COMPLETE.md#L11-L27",
+          "version": "repo-lines-v1:sha256:d1ae6e76e8e07abd161a6baea136a99f2cf3137d68073acb36029d034435eebc:eyJzZWxlY3RlZExpbmVDb3VudCI6MTcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImUyMTYyMzQ3YzY3YTE0YTBhMWMzOGNiZmVjMmI2ZmVmNTcwM2QxMTYwNWI2MDgzYzA5MWE0MTk5MmE1YjZhOGQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImYyMTVjYTdjMzRjNmM3NTUwMjc3OGMyNWY3YTU4ZDYwOTQ4MThjMzA1OWFhYTlhODZlMDJmOTcyNmZiZTcxMTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjAwMWYyZWMxNzU5M2MxMDU0ZWI0NjM2N2Q4NDUzZWYyNGExNzNjZTk2YjcxMTdkOTFmOWE2OGQ0NGZlZjhiMDEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjgzNDZkNDNkZmQ5ZDZlYWZiMGZlZmI2NDBlY2Y1ZGQxMmQ4Y2EyNmUyZTBjYjJhNTU3ZmQ5ZjdjNDk5MGZmNDgifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_f4f0da41cda14624a02a66e7c7cbb325",
+      "statement": "Epic 174 closed all 5 final-audit stories: 174.1 parity (PRs #369/#370/#371), 174.2 legacy-removal/boundary (#372), 174.3 visual/a11y matrix (#374), 174.4 full regression (#375/#376), and 174.5 docs/repository closeout (PR #379 on base 0d6225ac).",
+      "evidence": [
+        {
+          "resource": "repo://_bmad-output/planning-artifacts/shadcn-migration-status-and-debt-registry.md#L118-L121",
+          "version": "repo-lines-v1:sha256:de1da504934435dd2ff964ace2f32f7fb8c191aa157330a510bf359ce64b660b:eyJzZWxlY3RlZExpbmVDb3VudCI6NCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNTY2OTNiNGQxZmMwOGNhNzJkN2QwZmI1MDIxM2EzMjM2ZWJmZGFhODQ4M2I1ZmEyZmNhMTAyMjJlZDY0YTNiZiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiZjU3NGE2ZDlkYjRiYjI5YTA4ZDE4NGE4NTQ2MGM0M2Y3MTdmOTc5ZGZiY2IwYjQxZWQ2YzA4MmE0ZjdmZTY4ZCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMWI4OGM0ZTQ1YmFkYjRmNWNhZGM3YTljNjU3Yjk3NmIzNTA4MDliYmRlNjYzNjE5OWZlODY5YTgzMzZkOWNhZSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiODJjNzM0ZGQwYjEwOWFjOWIyZmE1ODNkYzE1MmUxM2QxZTEyMjU2MjYwMTNlNWE2OTY4M2YzNTg4MGNlMzA0ZiJ9"
+        },
+        {
+          "resource": "repo://docs/HANDOFF-2026-09-02-FINAL-94-94-PROGRAM-COMPLETE.md#L27-L27",
+          "version": "repo-lines-v1:sha256:f215ca7c34c6c75502778c25f7a58d6094818c3059aaa9a86e02f9726fbe7111:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZjIxNWNhN2MzNGM2Yzc1NTAyNzc4YzI1ZjdhNThkNjA5NDgxOGMzMDU5YWFhOWE4NmUwMmY5NzI2ZmJlNzExMSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiZjIxNWNhN2MzNGM2Yzc1NTAyNzc4YzI1ZjdhNThkNjA5NDgxOGMzMDU5YWFhOWE4NmUwMmY5NzI2ZmJlNzExMSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZjNlY2E2YjM4ZjQwNGY4NjIzZDIwYTIwYmIzYTRlYWViMjFlNzgwNDdiMjBiYWUyYzUxOWMzMDU2YmQ4ZWUzOSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiODM0NmQ0M2RmZDlkNmVhZmIwZmVmYjY0MGVjZjVkZDEyZDhjYTI2ZTJlMGNiMmE1NTdmZDlmN2M0OTkwZmY0OCJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_9e70b37e36d34499856cd53a46a5354d",
+      "statement": "Story 174.5 flipped all 76 route-ledger rows planned → verified (2026-09-02): 54 rows carry full evidence chains and 22 rows are closed by a collective live-absence cleanup audit; every story PR SHA is an ancestor of 0d6225acb9abfafa872d2d2ee45f215594edc4e6.",
+      "evidence": [
+        {
+          "resource": "repo://_bmad-output/planning-artifacts/shadcn-route-ledger.md#L131-L139",
+          "version": "repo-lines-v1:sha256:4a6d0f4e2b7e6a27c5171573364257bc33a0f19692b02cd469ad6d77b0930916:eyJzZWxlY3RlZExpbmVDb3VudCI6OSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiYTU3NTQxMWZmMWY0ZDUxYTZkMDNjODViYTc3OGY2NjkyZmI2MzcyYThjODRjYThkOWI4NDRjNTFmMWQ2NWIxMCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNmU0YTYwNGI2YjQ2YjMwOTVhZWI4NWZiN2I1NWJkNjE0ZjIxY2I0MGQwYjQ1NjNjMTIwZjVjMjUxODQzNmE3MyIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNTkzY2RiYmVlMTkxZWU1YTJmYjRkYjg0ODcxZTBjMTg3YTViMTJiMzczYTkxN2RkODk4NDIyYjIwZWJhNTc2MCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNWMzNzA0ZDk0MTdmOWRiNzVmOWMzODFmZjY3ZjY4OGVmNzc3ZjFkNDkwZjg2Njk2ODE1OGRmYzllZjkyZDU4NiJ9"
+        },
+        {
+          "resource": "repo://docs/HANDOFF-2026-09-02-FINAL-94-94-PROGRAM-COMPLETE.md#L29-L35",
+          "version": "repo-lines-v1:sha256:030e8f72ce19f27cb544982813002596ac8904f3dfac28ea8436f62a9f062e22:eyJzZWxlY3RlZExpbmVDb3VudCI6NywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZDgzNDk4MmI3ZDM5MTg2ZDNkYzkwMjUxYTE1ZDg2YWU3MDMyOGI5NjZhMjkzYWM5NTI2NjExZWQ2YzUxODk4YSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMWVlZmQyNTJjNTk0Nzc5NzIzYmMyNDRkMzU3ODRmNDU4YTJjYTA0ODMwOWRhY2M1MDFmNDYyZDFiNzg3ODMzZiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiYzk3ODMzMDNiMjNmZGNkZjc0NTVlMTk3ODFkMmM2MmRhODRlZTdlODNhZGU5MGNjODRmMGU2NmZjOTM3ZDk3ZiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMDk5ZjEwYTFlMThhMzk1NDM1YTRhNmZmOTExZTgxMTQzNmNiZDM2NDQxYTA3Njg2YzkyZjliNWQ1NzJiMjIzZSJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_daf2b1e06ccc4bcca64fda219d9723f4",
+      "statement": "Final gate floors at program close: Vitest 19,363 passed / 0 failed (1,270 + 4 files), lint 0/0, tsc 0, build 0 via npx next build --webpack, UI-boundary ratchet 459 = 459 with 3 owner-accepted exceptions, docs-citation baseline 95, locale-percent 4; the parity gate is pinned to EXPECTED_BASE_SHA 0d6225ac and reports base-sha-mismatch on main by design (run it in a worktree on the pinned SHA).",
+      "evidence": [
+        {
+          "resource": "repo://_bmad-output/planning-artifacts/shadcn-migration-status-and-debt-registry.md#L2-L4",
+          "version": "repo-lines-v1:sha256:867e278b44203ef686a286b2923749565e00dfbd994aa33601e9627774460785:eyJzZWxlY3RlZExpbmVDb3VudCI6MywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMDFiYTQ3MTljODBiNmZlOTExYjA5MWE3YzA1MTI0YjY0ZWVlY2U5NjRlMDljMDU4ZWY4Zjk4MDVkYWNhNTQ2YiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiYzI5NjYyOTYxZGM0Y2U4MWQ5MWYxNjgxMTRhMWFkODEwZWQ2YzdmYjZlYjNkZDdhZmZmYmYzMTZiMDhhYTdiMCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjEsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZTgyZDUxODRlN2I0OWM4ZDIzZDNmZGYzZDg0OTA5MTBkMGJkNzQwZTAyMWE2MzA4NTJkOTFjMjZiYWVlZGQzYSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZmRjYmNhYWE1NzcyZTIzYjExMThiZmRlNjYxOGMyZjcxYjkxZjgwZWY4YWVhZDViZmY1OTkzYjE1MTNlMjMzNiJ9"
+        },
+        {
+          "resource": "repo://docs/HANDOFF-2026-09-02-FINAL-94-94-PROGRAM-COMPLETE.md#L58-L75",
+          "version": "repo-lines-v1:sha256:c02a8a41d0effbccf80d92278ef1de47ec9ce162580a3598432d4b04f4561ec8:eyJzZWxlY3RlZExpbmVDb3VudCI6MTgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImM0ZDc4Njk1YTljMDViZGQzYWE0YmQwZGJjYzIzZDBmZmI1ZjNiMmYwNjM4ZmEyNTU3YTIxYTIxNGViY2JlYWEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImIwMTQ5NjdkMTI0Nzk0MjVkZWY1NzFiNjg2ODlmYzA3YTZkOTA5ZTI4OTM2NDUyMTM5Mzg4ZWZlYzA2OGQ4YWIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjQ4OTYwOTNiODA5Y2MwODE3MjU5MjU4NDY2NzI5ODAzN2QyODVlM2ZlYWQ1NmY0NTk5YTE5MWExZWIxMDg1ZTgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjFiYTVkOGFhNDVmMmFlYWE1NjIyNmMxMGViYzkwOTA0YzI2MTFhMjhmNmYyMzJjMmQwMWI5NGYyOTMyZWM3NTQifQ"
+        }
+      ]
     }
   ],
   "verification": {
-    "by": "openwiki/0.4.3",
-    "at": "2026-09-01T08:47:48.765Z"
+    "by": "openwiki/0.5.0",
+    "at": "2026-09-02T08:47:53.996Z"
   }
 }
