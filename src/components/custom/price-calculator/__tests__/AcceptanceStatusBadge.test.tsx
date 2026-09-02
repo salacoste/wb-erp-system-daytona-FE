@@ -27,6 +27,10 @@ import { AcceptanceStatusBadge } from '../AcceptanceStatusBadge'
 /**
  * Badge test cases from Story AC1
  * | Coefficient | Badge | Color | Icon |
+ *
+ * P2 /10-family (2026-09-02): success/warning re-pinned from /10 tints to solid pairs
+ * (bg-status-X + text-status-X-foreground, border /40) — WCAG 1.4.3 (173.12 canon);
+ * destructive stays /10 (measured 5.55:1 light, AA pass).
  */
 const BADGE_TEST_CASES = [
   {
@@ -41,8 +45,8 @@ const BADGE_TEST_CASES = [
     coefficient: 0,
     expectedLabel: 'Бесплатно',
     expectedColor: 'success',
-    colorClass: 'text-status-success',
-    bgClass: 'bg-status-success/10',
+    colorClass: 'text-status-success-foreground',
+    bgClass: 'bg-status-success',
     icon: '✅',
   },
   {
@@ -57,8 +61,8 @@ const BADGE_TEST_CASES = [
     coefficient: 1.25,
     expectedLabel: '×1,25',
     expectedColor: 'warning',
-    colorClass: 'text-status-warning',
-    bgClass: 'bg-status-warning/10',
+    colorClass: 'text-status-warning-foreground',
+    bgClass: 'bg-status-warning',
     icon: '⚠️',
   },
   {
@@ -101,9 +105,9 @@ describe('AcceptanceStatusBadge', () => {
       render(<AcceptanceStatusBadge coefficient={0} />)
 
       const badge = screen.getByText('Бесплатно').closest('[class*="bg-"]')
-      expect(badge).toHaveClass('bg-status-success/10')
-      expect(badge).toHaveClass('text-status-success')
-      expect(badge).toHaveClass('border-status-success/30')
+      expect(badge).toHaveClass('bg-status-success')
+      expect(badge).toHaveClass('text-status-success-foreground')
+      expect(badge).toHaveClass('border-status-success/40')
     })
 
     it('renders standard badge with gray (default) color', () => {
@@ -119,9 +123,9 @@ describe('AcceptanceStatusBadge', () => {
       render(<AcceptanceStatusBadge coefficient={1.25} />)
 
       const badge = screen.getByText('×1,25').closest('[class*="bg-"]')
-      expect(badge).toHaveClass('bg-status-warning/10')
-      expect(badge).toHaveClass('text-status-warning')
-      expect(badge).toHaveClass('border-status-warning/30')
+      expect(badge).toHaveClass('bg-status-warning')
+      expect(badge).toHaveClass('text-status-warning-foreground')
+      expect(badge).toHaveClass('border-status-warning/40')
     })
 
     it('renders high badge with the emphasized warning role', () => {
@@ -130,7 +134,7 @@ describe('AcceptanceStatusBadge', () => {
       const badge = screen.getByText('×1,65').closest('[class*="bg-"]')
       expect(badge).toHaveClass('bg-status-warning')
       expect(badge).toHaveClass('text-status-warning-foreground')
-      expect(badge).toHaveClass('border-status-warning/40')
+      expect(badge).toHaveClass('border-status-warning/60')
     })
   })
 
@@ -382,7 +386,7 @@ describe('AcceptanceStatusBadge', () => {
       render(<AcceptanceStatusBadge coefficient={1.5} />)
 
       const badge = screen.getByText('×1,50').closest('[class*="bg-"]')
-      expect(badge).toHaveClass('bg-status-warning/10')
+      expect(badge).toHaveClass('bg-status-warning')
     })
 
     it('handles coefficient at boundary 1.51 as high', () => {
@@ -427,23 +431,24 @@ describe('AcceptanceStatusBadge', () => {
 // ============================================================================
 
 describe('AcceptanceStatusBadge - Calendar Integration Support', () => {
-  it('exports colorClasses for calendar border colors', () => {
-    // This test verifies the component exports its color classes
-    // for use in CoefficientCalendar (Story AC7)
+  it('renders per-status border tint classes', () => {
+    // P2 /10-family pass-3 review: the badge retains distinct per-status border
+    // tints (COLOR_CLASSES is module-private; the calendar consumes its own
+    // COEFFICIENT_STATUS_CONFIG — no export/coupling contract exists).
     render(<AcceptanceStatusBadge coefficient={0} />)
 
     const badge = screen.getByText('Бесплатно').closest('[class*="border"]')
-    expect(badge).toHaveClass('border-status-success/30')
+    expect(badge).toHaveClass('border-status-success/40')
   })
 
   it('provides consistent status determination for calendar cells', () => {
     // All these should map to correct statuses for calendar rendering
     const testCases = [
       { coefficient: -1, expectedBorder: 'border-status-error/30' },
-      { coefficient: 0, expectedBorder: 'border-status-success/30' },
+      { coefficient: 0, expectedBorder: 'border-status-success/40' },
       { coefficient: 1, expectedBorder: 'border-border' },
-      { coefficient: 1.25, expectedBorder: 'border-status-warning/30' },
-      { coefficient: 1.65, expectedBorder: 'border-status-warning/40' },
+      { coefficient: 1.25, expectedBorder: 'border-status-warning/40' },
+      { coefficient: 1.65, expectedBorder: 'border-status-warning/60' },
     ]
 
     testCases.forEach(({ coefficient, expectedBorder }) => {

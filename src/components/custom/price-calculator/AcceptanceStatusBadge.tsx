@@ -40,15 +40,24 @@ interface AcceptanceStatusBadgeProps {
 /**
  * Tailwind CSS color classes for each status variant
  * Based on Story 44.43-FE acceptance criteria
+ *
+ * P2 /10-family (2026-09-02): success/warning moved from /10 tint to solid pair — light
+ * 4.49/4.24 <4.5 AA fail; solid 5.13/4.81 light + 8.0/11.4 dark, both themes pass (173.12 canon);
+ * borders stay tints (now /40 for success/warning, /60 for high; outside 1.4.3 scope).
+ * Values: WCAG on the float blend of the 8-bit
+ * token colors over the card surface — recompute, don't copy.
+ * Destructive stays /10: measured 5.55:1 light (AA pass, both themes ≥5.55) — re-measure before touching.
  */
 const COLOR_CLASSES: Record<string, string> = {
   destructive: 'bg-status-error/10 text-status-error border-status-error/30',
-  success: 'bg-status-success/10 text-status-success border-status-success/30',
+  success: 'bg-status-success text-status-success-foreground border-status-success/40',
   default: 'bg-muted text-foreground border-border',
-  warning: 'bg-status-warning/10 text-status-warning border-status-warning/30',
+  warning: 'bg-status-warning text-status-warning-foreground border-status-warning/40',
   // D-4 (2026-09-02): high moved from the /15 tint to a solid pair (173.12 canon) — WCAG 1.4.3
   // in both themes; border stays a tint (outside the 1.4.3 text-contrast scope).
-  high: 'bg-status-warning text-status-warning-foreground border-status-warning/40',
+  // P2 /10-family follow-up (2026-09-02): warning also moved to a solid pair — high re-differentiates
+  // via border /60 (stronger emphasis; text contrast unaffected, borders outside 1.4.3 scope).
+  high: 'bg-status-warning text-status-warning-foreground border-status-warning/60',
 } as const
 
 /**
@@ -105,6 +114,7 @@ export function AcceptanceStatusBadge({
           <div className="space-y-1">
             <p className="font-medium">Коэффициент приёмки: {formatCoefficient(coefficient)}</p>
             <p className="text-sm text-muted-foreground">{info.description}</p>
+            {/* P2 /10-family (2026-09-02): text-status-warning on popover bg measured 4.81:1 light / 12.71:1 dark — AA pass, class unchanged. */}
             {info.percentageIncrease && info.percentageIncrease > 25 && (
               <p className="text-sm text-status-warning">
                 Рекомендуем выбрать дату с меньшим коэффициентом
