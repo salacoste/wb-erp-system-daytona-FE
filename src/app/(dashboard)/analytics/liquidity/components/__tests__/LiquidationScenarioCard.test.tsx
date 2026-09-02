@@ -151,7 +151,7 @@ describe('LiquidationScenarioCard', () => {
   })
 
   describe('169.10 presentation tokens', () => {
-    it('colors the urgency Clock icon by the lib LABEL (no hex getScenarioUrgencyColor)', () => {
+    it('colors the urgency Clock icon by the lib tier (no hex getScenarioUrgencyColor)', () => {
       // Aggressive (<=30d) → error token
       const { rerender, container } = render(
         <LiquidationScenarioCard

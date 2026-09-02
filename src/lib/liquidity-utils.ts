@@ -120,16 +120,57 @@ export function formatDiscount(pct: number): string {
   return `-${formatPercentageInt(pct)}`
 }
 
-/** Get scenario urgency label based on target days */
-export function getScenarioUrgencyLabel(targetDays: number): string {
-  if (targetDays <= 30) return 'Агрессивный'
-  if (targetDays <= 60) return 'Сбалансированный'
-  return 'Консервативный'
+/**
+ * Scenario urgency tier — non-localized classification id.
+ * C15 (2026-09-02): consumers key visual classes/maps on this tier instead of
+ * localized label strings, so label changes can't silently drop a class.
+ */
+export type ScenarioUrgencyTier = 'aggressive' | 'balanced' | 'conservative'
+
+/**
+ * Single classification source (C15, 2026-09-02).
+ * Same thresholds as the previous inline label returns: <=30 aggressive,
+ * <=60 balanced, else conservative.
+ */
+export function getScenarioUrgencyTier(targetDays: number): ScenarioUrgencyTier {
+  if (targetDays <= 30) return 'aggressive'
+  if (targetDays <= 60) return 'balanced'
+  return 'conservative'
 }
 
-/** Get scenario urgency color */
+/** C15 (2026-09-02): labels map tier→string; behavior identical to the previous inline returns. */
+const SCENARIO_URGENCY_LABEL: Record<ScenarioUrgencyTier, string> = {
+  aggressive: 'Агрессивный',
+  balanced: 'Сбалансированный',
+  conservative: 'Консервативный',
+}
+
+/** Get scenario urgency label based on target days */
+export function getScenarioUrgencyLabel(targetDays: number): string {
+  return SCENARIO_URGENCY_LABEL[getScenarioUrgencyTier(targetDays)]
+}
+
+/**
+ * Get scenario urgency color (hex). Production-dead (UI renders status tokens;
+ * non-use pinned by liquidity-presentation-source-contracts) — kept for API
+ * compatibility. C15 pass-1 review: thresholds now derive from the tier (single
+ * classification source); the hex values intentionally do NOT match the status
+ * tokens — registered as follow-up debt, do not "fix" by swapping hexes silently.
+ */
 export function getScenarioUrgencyColor(targetDays: number): string {
-  if (targetDays <= 30) return '#EF4444'
-  if (targetDays <= 60) return '#EAB308'
-  return '#22C55E'
+  const tier = getScenarioUrgencyTier(targetDays)
+  switch (tier) {
+    case 'aggressive':
+      return '#EF4444'
+    case 'balanced':
+      return '#EAB308'
+    case 'conservative':
+      return '#22C55E'
+    default: {
+      // C15 pass-2 review: compile-time exhaustiveness over the tier union —
+      // a future 4th tier fails HERE instead of silently falling into green.
+      const exhausted: never = tier
+      return exhausted
+    }
+  }
 }

@@ -74,8 +74,8 @@ Vitest полный **≥ 19415 / 0** (флор в CLAUDE.md обновлён т
 | **/80-sweep** | repo-wide `text-*/80` (pricing/automation/cashflow/popover+hover), исторические 3.2-3.45:1 | замер light/dark → solid-пары или accepted-exception; кандидат на расширение boundary-сканера |
 | **/10-family ASB** — ✅ ИСПОЛНЕНО (2026-09-02, сессия-2, PR #392) | `AcceptanceStatusBadge.tsx:45-48` — success /10 = **4.49:1**, warning /10 = **4.24:1** light (dark ≥7.1 ok) | solid-пары применены (5.13/4.81 light, ≥8.0 dark); эскалация high/warning восстановлена бордером /60-vs-/40; destructive /10 документирован (5.55 AA pass); артефакт `debt-p2-10-family-asb.md`; ⚠️ ~100 сиблинг-/10-сайтов repo-wide остаются owner-sweep residual |
 | **financial-foreground токены** (новый residual PR #384) | `globals.css` `--financial-*` без `-foreground`; margin-шкала: excellent/critical на /15 при good/warning solid (инверсия веса) | дизайн-решение о новых токенах → потом solid-пары excellent/critical |
-| **C13** | `GapsTable.tsx:65,67` caption-dup | дедуплировать caption |
-| **C15** | `LiquidationScenarioCard.tsx:20-24` `URGENCY_CLASS` локализованные ключи | типизировать по статусам |
+| **C13** — ✅ ИСПОЛНЕНО (2026-09-02, сессия-2, PR #393) | `GapsTable.tsx:65,67` caption-dup | aria-label → «Область прокрутки…» (caption = идентичность); сиблинг-sweep (~20 таблиц) — follow-up; артефакт `debt-p2-c13-c15-quality-wave.md` |
+| **C15** — ✅ ИСПОЛНЕНО (2026-09-02, сессия-2, PR #393) | `LiquidationScenarioCard.tsx:20-24` `URGENCY_CLASS` локализованные ключи | `ScenarioUrgencyTier` + `getScenarioUrgencyTier` (single source), typed Record, exhaustive color-switch; hex/token мисматч — owner follow-up |
 | **C8** | `FunnelPageContent` ровно 200 строк | следить при касании (max-lines) |
 | **FE-D1** | mutation retry:1 ретраит 4xx (WB-token PUT ×2; e2e пинит `putAttempts===2`) | behavior-change отдельно; обновить e2e-пин; full vitest + e2e |
 | **FE-D3** | `getErrorMessage` эхо сырого error.message | bounded fallback + scrub/truncate + тесты на stack/internal/sensitive |

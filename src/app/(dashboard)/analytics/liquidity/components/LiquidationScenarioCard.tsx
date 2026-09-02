@@ -4,7 +4,13 @@ import { Check, X, Clock } from 'lucide-react'
 import { Card, CardContent } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import type { LiquidationScenario } from '@/types/liquidity'
-import { formatCurrency, formatDiscount, getScenarioUrgencyLabel } from '@/lib/liquidity-utils'
+import {
+  formatCurrency,
+  formatDiscount,
+  getScenarioUrgencyLabel,
+  getScenarioUrgencyTier,
+} from '@/lib/liquidity-utils'
+import type { ScenarioUrgencyTier } from '@/lib/liquidity-utils'
 import { cn, formatDecimal } from '@/lib/utils'
 
 interface LiquidationScenarioCardProps {
@@ -13,14 +19,17 @@ interface LiquidationScenarioCardProps {
 }
 
 /**
- * Urgency label → semantic status class (Story 169.10).
- * getScenarioUrgencyLabel (lib) stays the single classification source;
- * its tiers map to tokens: aggressive=error, balanced=warning, conservative=success.
+ * Urgency tier → semantic status class (Story 169.10; C15 2026-09-02).
+ * getScenarioUrgencyTier (lib) is the single classification source;
+ * the visible label maps from the same tier (getScenarioUrgencyLabel).
+ * Tokens: aggressive=error, balanced=warning, conservative=success.
+ * The map is total over ScenarioUrgencyTier — compile-time exhaustive,
+ * no `?? fallback` needed.
  */
-const URGENCY_CLASS: Record<string, string> = {
-  Агрессивный: 'text-status-error',
-  Сбалансированный: 'text-status-warning',
-  Консервативный: 'text-status-success',
+const URGENCY_CLASS: Record<ScenarioUrgencyTier, string> = {
+  aggressive: 'text-status-error',
+  balanced: 'text-status-warning',
+  conservative: 'text-status-success',
 }
 
 /**
@@ -33,15 +42,14 @@ const URGENCY_CLASS: Record<string, string> = {
  * never fabricated zeros or a false "Убыток".
  */
 export function LiquidationScenarioCard({ scenario, isRecommended }: LiquidationScenarioCardProps) {
-  const urgencyClass =
-    URGENCY_CLASS[getScenarioUrgencyLabel(scenario.target_days)] ?? 'text-foreground'
+  const urgencyClass = URGENCY_CLASS[getScenarioUrgencyTier(scenario.target_days)]
 
   return (
     <Card className={cn('transition-all', isRecommended && 'ring-2 ring-ring shadow-md')}>
       <CardContent className="p-4">
         <div className="flex items-start justify-between mb-4">
           <div className="flex items-center gap-2">
-            {/* Color derives from the lib urgency LABEL (single classification
+            {/* Color derives from the lib urgency tier (single classification
                 source) — the hex getScenarioUrgencyColor is no longer used (169.10). */}
             <Clock className={cn('h-5 w-5', urgencyClass)} />
             <div>
