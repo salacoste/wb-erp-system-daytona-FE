@@ -33,7 +33,7 @@ Vitest полный **≥ 19415 / 0** (флор в CLAUDE.md обновлён т
 
 ### 3.1 P1 — ближайшие два item'а (behavior-changing, полный конвейер + e2e)
 
-#### D-1 — PB-1: silent cabinet-create (приоритет 1 из оставшихся) — ✅ ИСПОЛНЕНО (2026-09-02, сессия-2)
+#### D-1 — PB-1: silent cabinet-create (приоритет 1 из оставшихся) — ✅ ИСПОЛНЕНО (2026-09-02, сессия-2, PR #390)
 
 > Статус: закрыто. Initiation-mint `ensureSessionNonce` + indeterminate recovery-alert + `finishRecoveryOperation` release; e2e true-pin (двухтабный nonce-nulling, падает на main); 3 ревью-прохода; флор vitest 19415→19421. Артефакт: `_bmad-output/implementation-artifacts/debt-d1-pb1-silent-cabinet-create.md`. Follow-ups (для D-2): BE не имеет `/v1/auth/refresh` (404) — реактивный interceptor обязан целиться в реальный маршрут; `decodeJWT` padding-хрупкость (битый base64 → silent logout).
 

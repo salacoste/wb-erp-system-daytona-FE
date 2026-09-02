@@ -1,6 +1,6 @@
 # D-1 (PB-1) — Silent cabinet-create: initiation nonce-mint + indeterminate recovery alert
 
-**Status**: done (2026-09-02, сессия-2 оркестратора V15; PR — см. Change Log)
+**Status**: done (2026-09-02, сессия-2 оркестратора V15; PR #390, merged)
 **Branch**: `debt/d1-pb1-silent-cabinet-create` (worktree `/private/tmp/d1-pb1-silent-cabinet-create`, base main `ecbf3cc9`)
 **Owner-track**: P1 product defect; behavior-changing → полный конвейер A–J + e2e + 3 ревью-прохода (Trigger 3: плотность >5 в проходах 1 и 2).
 
@@ -88,5 +88,5 @@ vitest **19421/0** (1275 файлов) · lint 0/0 · tsc 0 · build --webpack 0
 
 ## Change Log
 
-- 2026-09-02: Item исполнен полным конвейером A–J (executor opus impl + 3 fix-волны; 3 ревью-прохода code-reviewer opus, свежий контекст каждый); e2e true-pin двусторонне верифицирован; флор vitest 19415→19421 тем же PR; манифест 174.3 регенерирован официально ×2 (последний — на финальном состоянии).
+- 2026-09-02: Item исполнен полным конвейером A–J; PR #390. (executor opus impl + 3 fix-волны; 3 ревью-прохода code-reviewer opus, свежий контекст каждый); e2e true-pin двусторонне верифицирован; флор vitest 19415→19421 тем же PR; манифест 174.3 регенерирован официально ×2 (последний — на финальном состоянии).
   **Lessons:** (1) Сид-токен e2e обязан быть настоящим base64url JSON — битый payload молча логинит-аут через fail-safe isTokenExpired. (2) «Спек зелёный» ≠ «спек пинит дельту»: проверяй падение на main до аттестации defect-pin. (3) Освождение in-memory флага меняет достижимость эффектов — ревью каждое удаление conjunct'а в guard'ах.
