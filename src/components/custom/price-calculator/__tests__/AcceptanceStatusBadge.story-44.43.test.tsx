@@ -20,6 +20,10 @@ import { AcceptanceStatusBadge } from '../AcceptanceStatusBadge'
 /**
  * Badge test cases from Story AC1 table
  * | Coefficient | Badge | Color | Icon |
+ *
+ * P2 /10-family (2026-09-02): success/warning re-pinned from /10 tints to solid pairs
+ * (bg-status-X + text-status-X-foreground, border /40) — WCAG 1.4.3 (173.12 canon);
+ * destructive stays /10 (measured 5.55:1 light, AA pass).
  */
 const AC1_BADGE_VARIANTS = [
   {
@@ -36,9 +40,9 @@ const AC1_BADGE_VARIANTS = [
     coefficient: 0,
     label: 'Бесплатно',
     color: 'success',
-    bgClass: 'bg-status-success/10',
-    textClass: 'text-status-success',
-    borderClass: 'border-status-success/30',
+    bgClass: 'bg-status-success',
+    textClass: 'text-status-success-foreground',
+    borderClass: 'border-status-success/40',
     icon: '✅',
     description: 'Приёмка бесплатная',
   },
@@ -56,9 +60,9 @@ const AC1_BADGE_VARIANTS = [
     coefficient: 1.25,
     label: '×1,25',
     color: 'warning',
-    bgClass: 'bg-status-warning/10',
-    textClass: 'text-status-warning',
-    borderClass: 'border-status-warning/30',
+    bgClass: 'bg-status-warning',
+    textClass: 'text-status-warning-foreground',
+    borderClass: 'border-status-warning/40',
     icon: '⚠️',
     description: 'Повышенная стоимость (1.01-1.50)',
   },
@@ -68,7 +72,7 @@ const AC1_BADGE_VARIANTS = [
     color: 'high',
     bgClass: 'bg-status-warning',
     textClass: 'text-status-warning-foreground',
-    borderClass: 'border-status-warning/40',
+    borderClass: 'border-status-warning/60',
     icon: '🔴',
     description: 'Повышенная стоимость (>1.50)',
   },
@@ -217,8 +221,8 @@ describe('Story 44.43: Acceptance Coefficient Status Badge', () => {
 
         const badge = screen.getByTestId('acceptance-status-badge')
         expect(screen.getByText('Бесплатно')).toBeInTheDocument()
-        expect(badge).toHaveClass('bg-status-success/10')
-        expect(badge).toHaveClass('text-status-success')
+        expect(badge).toHaveClass('bg-status-success')
+        expect(badge).toHaveClass('text-status-success-foreground')
       })
 
       it('should show ✅ icon for free', () => {
@@ -261,14 +265,14 @@ describe('Story 44.43: Acceptance Coefficient Status Badge', () => {
         render(<AcceptanceStatusBadge coefficient={1.15} />)
 
         const badge = screen.getByTestId('acceptance-status-badge')
-        expect(badge).toHaveClass('bg-status-warning/10')
+        expect(badge).toHaveClass('bg-status-warning')
       })
 
       it('should show the warning status role for 1.26-1.50 (moderate increase)', () => {
         render(<AcceptanceStatusBadge coefficient={1.4} />)
 
         const badge = screen.getByTestId('acceptance-status-badge')
-        expect(badge).toHaveClass('bg-status-warning/10')
+        expect(badge).toHaveClass('bg-status-warning')
       })
 
       it('should show the emphasized warning role for >1.50 (high increase)', () => {
@@ -506,7 +510,7 @@ describe('Story 44.43: Acceptance Coefficient Status Badge', () => {
       render(<AcceptanceStatusBadge coefficient={1.5} />)
 
       const badge = screen.getByTestId('acceptance-status-badge')
-      expect(badge).toHaveClass('bg-status-warning/10')
+      expect(badge).toHaveClass('bg-status-warning')
     })
 
     it('should handle boundary coefficient 1.51 as high', () => {
