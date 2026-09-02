@@ -4,6 +4,7 @@ import userEvent from '@testing-library/user-event'
 import { useRouter } from 'next/navigation'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
+import { getCabinetCreationOperation } from '@/lib/api'
 import { getCabinetTaxSettings, updateCabinetTaxSettings } from '@/lib/api/cabinet'
 import { handleCreateCabinet } from '@/services/cabinets.service'
 import { useAuthStore } from '@/stores/authStore'
@@ -12,6 +13,15 @@ import { toast } from 'sonner'
 import { CabinetCreationForm } from './CabinetCreationForm'
 
 vi.mock('@/services/cabinets.service', () => ({ handleCreateCabinet: vi.fn() }))
+// Partial barrel mock (sibling accountRecovery pattern): the indeterminate
+// path reconciles the durable operation — keep it hermetic (no MSW, no fetch).
+vi.mock('@/lib/api', async importOriginal => {
+  const actual = await importOriginal<typeof import('@/lib/api')>()
+  return {
+    ...actual,
+    getCabinetCreationOperation: vi.fn(),
+  }
+})
 vi.mock('@/lib/api/cabinet', () => ({
   getCabinetTaxSettings: vi.fn(),
   updateCabinetTaxSettings: vi.fn(),
@@ -261,6 +271,7 @@ describe('CabinetCreationForm stale/indeterminate settlement (Story 167.9, porte
       defaultOptions: { queries: { retry: false }, mutations: { retry: false } },
     })
     vi.clearAllMocks()
+    vi.mocked(getCabinetCreationOperation).mockReset()
     useAuthStore.setState({
       user: { id: 'user-b', email: 'b@test.local', role: 'Owner' },
       token: 'jwt-live-session',

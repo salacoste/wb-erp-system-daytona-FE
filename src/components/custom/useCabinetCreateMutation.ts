@@ -51,9 +51,10 @@ async function reconcileSettledOperation(
   if (!operationId || !initiatingToken) return
   try {
     const operation = await getCabinetCreationOperation(operationId, initiatingToken)
+    // Pass-3 review (LOW): a resolved-but-shapeless operation (undefined — test mocks only) logs 'succeeded'; the operation endpoint replays succeeded results.
     logger.info('Cabinet creation operation reconciled after superseded settlement', {
       operationId,
-      status: 'status' in operation ? operation.status : 'succeeded',
+      status: operation && 'status' in operation ? operation.status : 'succeeded',
     })
   } catch (error) {
     // Pass-1 review: distinguish 404 (operation gone / cross-account — expected
@@ -76,12 +77,25 @@ export function useCabinetCreateMutation({ router, setPhase, showRecoveryError }
       // suppress toast, navigation, form reset, AND marker-clear — the durable
       // marker/operation stays available for reconciliation.
       if (result.status !== 'applied' || !result.cabinet) {
+        // D-1 review fix: release the in-memory liveness flag FIRST — and
+        // unconditionally for BOTH the stale and the indeterminate sub-path
+        // (the mutation is finished, so releasing is always safe). Without
+        // this, a same-tab logout+login (SPA, no reload) can never reconcile
+        // the durable CREATE_PENDING marker: the recovery effect's
+        // `reconciledCreate` gates on `!activeOperation`
+        // (isRecoveryOperationActive, cabinetCreationRecovery.ts). The durable
+        // marker itself is intentionally NOT cleared here — reconciliation
+        // belongs to the recovery effect after re-login.
+        finishRecoveryOperation(marker)
         void reconcileSettledOperation(result.operationId, attempt.token)
         // D-1 (PB-1): `indeterminate` means the initiator may still be the live
         // user (the cabinet exists server-side): indicate, never silently
         // swallow (Defensive Frontend). `stale` stays quiet — the live session
         // is not the initiator (Story 167.9 canon). isLiveOwner keeps the alert
-        // away from a different live account.
+        // away from a different live account. Post-D-1 `indeterminate` is a
+        // fail-safe (login/rehydrate/initiation all mint a nonce; the remaining
+        // window is a create already in flight at deploy time), so this alert
+        // branch is defense-in-depth, not a routinely-hot path.
         if (result.status === 'indeterminate' && isLiveOwner(marker)) {
           showRecoveryError(SAFE_RECONCILIATION_MESSAGE, 'recovery-blocked')
         }

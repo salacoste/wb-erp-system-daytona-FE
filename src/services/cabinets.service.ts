@@ -118,6 +118,11 @@ export async function handleCreateCabinet(
   } catch (error) {
     // Stale failure: the session that initiated this create is gone — the live
     // session must not see an error for work it did not start.
+    // D-1 note: on an `indeterminate` failure settlement the durable operation
+    // cannot be server-reconciled from this path (no response → no
+    // operationId); recovery rests on re-login + `reconciledCreate` or a
+    // same-tab reload re-reading the recovery marker (the marker lives in
+    // sessionStorage — per-tab; a genuinely fresh tab sees no marker).
     const failureSettlement = evaluateCabinetSettlement(initiating)
     if (failureSettlement !== 'applied') {
       logStaleSettlement(failureSettlement)
