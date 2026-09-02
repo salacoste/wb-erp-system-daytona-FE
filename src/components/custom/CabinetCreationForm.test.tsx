@@ -278,13 +278,13 @@ describe('CabinetCreationForm stale/indeterminate settlement (Story 167.9, porte
     queryClient.clear()
   })
 
-  it.each(['stale', 'indeterminate'] as const)(
-    '%s settlement: no toast, no navigation, no reset, input retained',
+  it(
+    'stale settlement: no toast, no navigation, no reset, input retained',
     { timeout: 10000 },
-    async status => {
+    async () => {
       const user = userEvent.setup()
       vi.mocked(handleCreateCabinet).mockResolvedValue({
-        status,
+        status: 'stale',
         operationId: '9ca8c2ba-0b3f-4a2a-b20c-27db4d60a7b0',
       })
 
@@ -307,6 +307,40 @@ describe('CabinetCreationForm stale/indeterminate settlement (Story 167.9, porte
 
       expect(toast.success).not.toHaveBeenCalled()
       expect(toast.error).not.toHaveBeenCalled()
+      expect(mockPush).not.toHaveBeenCalled()
+      // Form is NOT reset — the live session's input must survive.
+      expect(screen.getByLabelText(/название кабинета/i)).toHaveValue('Test Cabinet')
+    }
+  )
+
+  it(
+    'indeterminate settlement surfaces the safe-reconciliation alert for the live owner (D-1/PB-1)',
+    { timeout: 10000 },
+    async () => {
+      // D-1 (PB-1): the cabinet may exist server-side for THIS user — indicate
+      // via the recovery alert instead of silently swallowing the create.
+      const user = userEvent.setup()
+      vi.mocked(handleCreateCabinet).mockResolvedValue({
+        status: 'indeterminate',
+        operationId: '9ca8c2ba-0b3f-4a2a-b20c-27db4d60a7b0',
+      })
+
+      render(
+        <QueryClientProvider client={queryClient}>
+          <CabinetCreationForm />
+        </QueryClientProvider>
+      )
+
+      const nameInput = screen.getByLabelText(/название кабинета/i)
+      await user.clear(nameInput)
+      await user.type(nameInput, 'Test Cabinet')
+      await new Promise(resolve => setTimeout(resolve, 100))
+
+      await user.click(screen.getByRole('button', { name: /создать кабинет/i }))
+
+      const recovery = await screen.findByRole('alert', {}, { timeout: 5000 })
+      expect(recovery).toHaveTextContent(/безопасно подтвердить/)
+      expect(toast.success).not.toHaveBeenCalled()
       expect(mockPush).not.toHaveBeenCalled()
       // Form is NOT reset — the live session's input must survive.
       expect(screen.getByLabelText(/название кабинета/i)).toHaveValue('Test Cabinet')

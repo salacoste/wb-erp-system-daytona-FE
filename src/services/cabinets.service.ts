@@ -99,10 +99,16 @@ export async function handleCreateCabinet(
     throw new Error('User not authenticated')
   }
 
+  // D-1 (PB-1): mint-before-capture — a legacy/partially-rehydrated authenticated
+  // session gets a nonce HERE so the create settles `applied` instead of silently
+  // dropping a server-side-created cabinet (initiation mint; complements the
+  // Story 167.9 rehydrate mint, which covers the page-reload path).
+  const sessionNonce = useAuthStore.getState().ensureSessionNonce()
+
   // Immutable initiating context: token + session identity captured once.
   const initiating: InitiatingSessionContext = {
     accountId: user?.id ?? null,
-    sessionNonce: useAuthStore.getState().sessionNonce,
+    sessionNonce,
   }
   const idempotencyKey = crypto.randomUUID()
 

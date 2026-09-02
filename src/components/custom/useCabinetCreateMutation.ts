@@ -77,6 +77,14 @@ export function useCabinetCreateMutation({ router, setPhase, showRecoveryError }
       // marker/operation stays available for reconciliation.
       if (result.status !== 'applied' || !result.cabinet) {
         void reconcileSettledOperation(result.operationId, attempt.token)
+        // D-1 (PB-1): `indeterminate` means the initiator may still be the live
+        // user (the cabinet exists server-side): indicate, never silently
+        // swallow (Defensive Frontend). `stale` stays quiet — the live session
+        // is not the initiator (Story 167.9 canon). isLiveOwner keeps the alert
+        // away from a different live account.
+        if (result.status === 'indeterminate' && isLiveOwner(marker)) {
+          showRecoveryError(SAFE_RECONCILIATION_MESSAGE, 'recovery-blocked')
+        }
         return
       }
       finishRecoveryOperation(marker)

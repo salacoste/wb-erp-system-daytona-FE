@@ -4,6 +4,7 @@ import userEvent from '@testing-library/user-event'
 import { useRouter } from 'next/navigation'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
+import { getCabinetCreationOperation } from '@/lib/api'
 import { getCabinetTaxSettings, updateCabinetTaxSettings } from '@/lib/api/cabinet'
 import { handleCreateCabinet } from '@/services/cabinets.service'
 import { useAuthStore } from '@/stores/authStore'
@@ -21,6 +22,15 @@ import {
 } from './cabinetCreationRecovery'
 
 vi.mock('@/services/cabinets.service', () => ({ handleCreateCabinet: vi.fn() }))
+// Partial barrel mock (sibling accountSwitchRealSettlement pattern): the
+// indeterminate path reconciles the durable operation — keep it hermetic.
+vi.mock('@/lib/api', async importOriginal => {
+  const actual = await importOriginal<typeof import('@/lib/api')>()
+  return {
+    ...actual,
+    getCabinetCreationOperation: vi.fn(),
+  }
+})
 vi.mock('@/lib/api/cabinet', () => ({
   getCabinetTaxSettings: vi.fn(),
   updateCabinetTaxSettings: vi.fn(),
@@ -103,6 +113,7 @@ describe('CabinetCreationForm account-scoped recovery admission', () => {
     sessionStorage.clear()
     vi.clearAllMocks()
     vi.mocked(handleCreateCabinet).mockReset()
+    vi.mocked(getCabinetCreationOperation).mockReset()
     vi.mocked(getCabinetTaxSettings).mockResolvedValue(existingCabinet)
     vi.mocked(updateCabinetTaxSettings).mockReset()
     queryClient = new QueryClient({
@@ -295,6 +306,43 @@ describe('CabinetCreationForm account-scoped recovery admission', () => {
     await userEvent.setup().keyboard('{Enter}')
     await submitNatively()
     expect(handleCreateCabinet).toHaveBeenCalledTimes(1)
+  })
+
+  it('indeterminate settlement surfaces the safe-reconciliation alert and blocks resubmission (D-1/PB-1)', async () => {
+    // The cabinet exists server-side but the initiator identity could not be
+    // confirmed: indicate + block, never silently swallow (Defensive Frontend).
+    vi.mocked(getCabinetCreationOperation).mockResolvedValue({
+      operationId: '11111111-1111-4111-8111-111111111111',
+      status: 'in_progress',
+      retryable: false,
+    })
+    vi.mocked(handleCreateCabinet).mockResolvedValue({
+      status: 'indeterminate',
+      operationId: '11111111-1111-4111-8111-111111111111',
+    })
+    const first = renderForm()
+    await submitCreate('indeterminate-a')
+
+    const recovery = await screen.findByRole('alert')
+    expect(recovery).toHaveTextContent(/безопасно подтвердить/)
+    expect(recovery).toHaveTextContent(/Выйдите из аккаунта и войдите снова/)
+    first.unmount()
+    renderForm()
+    expect(await screen.findByRole('button', { name: /создать кабинет/i })).toBeDisabled()
+
+    await submitNatively()
+    expect(handleCreateCabinet).toHaveBeenCalledTimes(1)
+  })
+
+  it('stale settlement stays quiet — no recovery alert, no toast (Story 167.9 canon)', async () => {
+    vi.mocked(handleCreateCabinet).mockResolvedValue({ status: 'stale' })
+    renderForm()
+    await submitCreate('stale-a')
+    await waitFor(() => expect(handleCreateCabinet).toHaveBeenCalledTimes(1))
+
+    expect(screen.queryByRole('alert')).not.toBeInTheDocument()
+    expect(toast.error).not.toHaveBeenCalled()
+    expect(toast.success).not.toHaveBeenCalled()
   })
 
   it('keeps post-create margin recovery update-only and retains the submitted margin', async () => {
