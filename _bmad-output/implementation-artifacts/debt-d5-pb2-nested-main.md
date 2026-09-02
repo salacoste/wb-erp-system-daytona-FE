@@ -1,7 +1,7 @@
 # Debt D-5 — PB-2: nested `<main>` removed (handoff §8-P1)
 
-**Status**: review — 2026-09-02; 2 ревью-прохода (структура: APPROVE 3 LOW; факты/финал: APPROVE 1 LOW — оба LOW dispositioned); PR #TBD (оркестратор)
-**Item**: D-5 (**PB-2**) — handoff §8-P1 · **PR**: TBD · **Base**: main `3b094836` · **Branch**: `debt/d5-pb2-nested-main` · **Worktree**: `/private/tmp/d5-pb2-nested-main` · **Date**: 2026-09-02
+**Status**: review — 2026-09-02; 2 ревью-прохода (структура: APPROVE 3 LOW; факты/финал: APPROVE 1 LOW — оба LOW dispositioned); PR #385 (оркестратор)
+**Item**: D-5 (**PB-2**) — handoff §8-P1 · **PR**: #385 · **Head**: `47661aef` · **Base**: main `3b094836` · **Branch**: `debt/d5-pb2-nested-main` · **Worktree**: `/private/tmp/d5-pb2-nested-main` · **Date**: 2026-09-02
 
 ## 1. Долг и DoD
 
