@@ -50,6 +50,8 @@ verified:
 
 # Migration Program (Epics 166-174)
 
+<!-- openwiki: broken internal link [/openwiki/conventions-and-quality.md] file "/openwiki/conventions-and-quality.md" does not exist. Fix the href or restore the target, then delete this comment. -->
+<!-- openwiki: broken internal link [/openwiki/design-system.md] file "/openwiki/design-system.md" does not exist. Fix the href or restore the target, then delete this comment. -->
 This page is the canonical wiki home for the shadcn full-UI migration **program**: the master plan, the story pipeline, the current status ledger, and the handoff/orchestration process. Per-story migration status lives here (not in `design-system.md` or `quickstart.md`) so status churn is isolated from stable conventions. See [/openwiki/conventions-and-quality.md](/openwiki/conventions-and-quality.md) for coding standards and [/openwiki/design-system.md](/openwiki/design-system.md) for the token/component layers this program delivers.
 
 ## Program goal and invariants
@@ -198,6 +200,7 @@ Handoff lineage (each superseding the previous as the execution entry point; old
 4. `docs/HANDOFF-2026-08-30-TEAM-HANDOFF-173.13-EPILOGUE-174-FULL-DEBT.md` — was the continuation entry point through Stories 174.1–174.2; superseded.
 5. `docs/HANDOFF-2026-09-01-TEAM-HANDOFF-174-5-FINAL-CLOSEOUT-AND-DEBT.md` — the 174.5 closeout brief; superseded.
 6. `docs/HANDOFF-2026-09-02-FINAL-94-94-PROGRAM-COMPLETE.md` — **the final handoff and current entry point for maintainers**: program completion summary, final gates and how to re-run them (including the parity base-pin note), the complete **owner-escalated debt register** (§4), an explicit owner-decision checklist (§5), maintainer entry points (§6), and the P0→P3 onboarding backlog (§8). The deep 08-29 §11 debt canon remains its reference vocabulary.
+7. `docs/HANDOFF-2026-09-02-V14-DEBT-SESSION1-EXECUTION-AND-REMAINING-BACKLOG.md` — the V14 debt-backlog execution layer: session-1 results (7 PRs #382–#388, all merged, cleanup 0/0/0), the live gate state (vitest floor ≥ 19,415), and implementation detail for the remaining backlog (D-1 PB-1 silent cabinet-create first, then D-2 PB-3 reactive 401-refresh). It executes on top of the final handoff §4/§8, which remains the debt register canon.
 
 Worktree hygiene, summarized:
 
@@ -210,7 +213,7 @@ Cross-team cautions: parallel teams/sessions are real (PRs #295/#296/#300/#301 l
 
 ## Post-migration debt registry (the program's aftermath)
 
-With the program closed, nothing below blocks anything — every item is **owner-scoped**, registered with status, fix-canon, and evidence in the final handoff (`docs/HANDOFF-2026-09-02-FINAL-94-94-PROGRAM-COMPLETE.md` § Debt escalation), and several 2026-09-02 post-program waves already landed (PRs #382–#385) with artifacts under `_bmad-output/implementation-artifacts/debt-*.md`.
+With the program closed, nothing below blocks anything — every item is **owner-scoped**, registered with status, fix-canon, and evidence in the final handoff (`docs/HANDOFF-2026-09-02-FINAL-94-94-PROGRAM-COMPLETE.md` § Debt escalation), and the 2026-09-02 post-program waves landed through PRs #382–#388 with artifacts under `_bmad-output/implementation-artifacts/debt-*.md`.
 
 **Resolved during the final window / aftermath:**
 
@@ -218,7 +221,7 @@ With the program closed, nothing below blocks anything — every item is **owner
 - **PB-2** — nested `<main>` on `/analytics/ai-admin/preferences` (+ parallel `/models` location, 97.1 propagation) — `<main>` → `<div>` (D-5, PR #385; artifact `debt-d5-pb2-nested-main.md`).
 - **/15-family** — text-status on /15 tints <4.5:1 in `margin-status-helpers.ts` + `AcceptanceStatusBadge.tsx` — solid pairs applied (D-4, PR #384); ~100 remaining /15 sites repo-wide are an owner sweep.
 - **FE-D9** — `logApiError` logged non-2xx bodies including secrets — `redactSensitive` redact layer in both branches (PR #382; artifact `debt-fe-d9-redact-logger.md`).
-- **SEC-DOC-1** — plaintext credentials in tracked docs — both literals removed, non-echoing scan = 0 (PR #383; artifact `debt-sec-doc-1-redact-creds.md`); rotation of the live credential, the backend repo (135 stale hits), and git history remain an explicit owner request (`docs/security/SEC-DOC-1-rotation-owner-decision-2026-09-02.md`).
+- **SEC-DOC-1** — plaintext credentials in tracked docs — **RESOLVED on the frontend**: both literals removed from 35 tracked files with a non-echoing scan = 0 (PR #383; artifact `debt-sec-doc-1-redact-creds.md`), and the live credential was **rotated by the owner and verified (login 200) on 2026-09-02** (PR #387; decisions recorded in `docs/security/SEC-DOC-1-rotation-owner-decision-2026-09-02.md`). D-3 git-history rewrite was explicitly declined (rotation closes the residual risk). Remaining residue is backend-repo documentation hygiene only — ~110 doc-only occurrences of the now-dead literals, covered by the 4-phase plan `docs/security/SEC-DOC-1-BE-remediation-plan-2026-09-02.md` (PR #388). As part of the same closeout, the privacy gate's scanner allowlist was extended to `.http` REST-client files (D-4, PR #386).
 - **C6** (tabular-nums) resolved-by-migration, pinned by RTC tests; the 174.2-registered pre-existing liquidity e2e failures (×12) were resolved by 174.3 and the monitor weekly-chart failure (×1) fixed by 174.4.
 
 **Confirmed live, awaiting owner triage:**

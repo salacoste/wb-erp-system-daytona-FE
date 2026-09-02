@@ -316,6 +316,7 @@ A local privacy guard that scans PII-adjacent source files for forbidden `consol
 - **PII file list** — `PII_FILES` in `check-privacy-console.mjs` enumerates the guarded paths (`orders/client-info-api.ts`, `useClientInfo.ts`, `orders-client-info.ts`, and their tests/components).
 - **AST scan** — parses each file with `@typescript-eslint/parser` and flags any `console.<method>` call where method is in `FORBIDDEN_CONSOLE_METHODS` (log, info, warn, error, debug, trace, dir, table, count, group*, time*, profile*, etc.), including computed access (`console['log']`).
 - **Exit code** — non-zero on the first violation, printing file, line, and the offending expression.
+- **`.http` coverage** — the scanner's extension allowlist (`ALLOWED_EXTENSIONS`) includes `.http` REST-client example files, so their content is scanned like any other text source (owner-approved D-4, SEC-DOC-1 2026-09-02, PR #386; content scanning confirmed by a canary).
 
 | Command | Action |
 |---------|--------|
