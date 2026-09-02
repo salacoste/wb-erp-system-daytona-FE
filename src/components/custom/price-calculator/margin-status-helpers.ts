@@ -7,11 +7,15 @@
 export const MARGIN_STATUS_CONFIG = {
   excellent: {
     label: 'Отлично',
-    bgClass: 'bg-financial-positive/15',
+    // P2 boundary wave-2 (2026-09-03): /15 tint measured 4.19:1 light — WCAG 1.4.3
+    // FAIL (the D-4 "both themes" note covered only the solid pairs); house rule → /5
+    // (4.80:1 light / 8.72:1 dark over card — PASS, same treatment as MarginBadge).
+    bgClass: 'bg-financial-positive/5',
     textClass: 'text-financial-positive',
   },
   // D-4 (2026-09-02): good/warning moved from /15 tints to solid pairs (173.12 canon) —
-  // WCAG 1.4.3 in both themes; financial tokens below intentionally keep their /15 tints.
+  // WCAG 1.4.3 in both themes. Financial tokens keep tints (no -foreground pairs yet);
+  // wave-2 corrected their opacity /15 → /5 after measuring 4.19/4.42 light fails.
   good: {
     label: 'Хорошо',
     bgClass: 'bg-status-success',
@@ -24,7 +28,8 @@ export const MARGIN_STATUS_CONFIG = {
   },
   critical: {
     label: 'Критично',
-    bgClass: 'bg-financial-negative/15',
+    // P2 boundary wave-2 (2026-09-03): /15 → /5 (measured 4.42:1 light fail → 5.20/8.19 PASS).
+    bgClass: 'bg-financial-negative/5',
     textClass: 'text-financial-negative',
   },
 } as const

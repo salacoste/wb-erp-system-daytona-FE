@@ -24,13 +24,26 @@ export function MarginBadge({
   if (marginPct !== null && marginPct !== undefined && Number.isFinite(marginPct)) {
     const isPositive = marginPct > 0
     const isZero = marginPct === 0
-    const bgColor = isZero ? 'bg-gray-50' : isPositive ? 'bg-green-50' : 'bg-red-50'
-    const textColor = isZero ? 'text-gray-700' : isPositive ? 'text-green-700' : 'text-red-700'
-    const borderColor = isZero
-      ? 'border-gray-200'
+    // P2 boundary wave-2 (2026-09-03): financial valence semantics — same tokens as
+    // MarginDisplay (Story 174.2-FE §11.12). Sign = money direction, not error/ok status.
+    // HOUSE RULE (wave-1 canon): tinted chips need colored text ≥4.5:1 light → /5 tint
+    // (fin-pos 4.80 light / 8.72 dark, fin-neg 5.20 / 8.19 over card; /10 and /15 fail
+    // light at 4.49 / 4.19 for fin-pos). Border /20 per W2a canon.
+    const bgColor = isZero
+      ? 'bg-muted'
       : isPositive
-        ? 'border-green-200'
-        : 'border-red-200'
+        ? 'bg-financial-positive/5'
+        : 'bg-financial-negative/5'
+    const textColor = isZero
+      ? 'text-muted-foreground'
+      : isPositive
+        ? 'text-financial-positive'
+        : 'text-financial-negative'
+    const borderColor = isZero
+      ? 'border-border'
+      : isPositive
+        ? 'border-financial-positive/20'
+        : 'border-financial-negative/20'
 
     return (
       <span
@@ -51,7 +64,7 @@ export function MarginBadge({
 
   return (
     <span
-      className="inline-flex items-center rounded-full border border-gray-200 bg-gray-50 px-2.5 py-0.5 text-xs font-semibold text-gray-500"
+      className="inline-flex items-center rounded-full border border-border bg-muted px-2.5 py-0.5 text-xs font-semibold text-muted-foreground"
       title={message || 'Данные недоступны'}
     >
       —
@@ -84,13 +97,13 @@ export function MarginInfoCard({
   className,
 }: MarginInfoCardProps) {
   return (
-    <div className={cn('rounded-lg border border-gray-200 bg-white p-4', className)}>
-      <div className="mb-2 text-sm font-medium text-gray-600">Маржинальность</div>
+    <div className={cn('rounded-lg border border-border bg-card p-4', className)}>
+      <div className="mb-2 text-sm font-medium text-muted-foreground">Маржинальность</div>
 
       <MarginDisplay marginPct={marginPct} missingDataReason={missingDataReason} size="lg" />
 
       {period && marginPct !== null && (
-        <div className="mt-3 space-y-1 text-xs text-gray-500">
+        <div className="mt-3 space-y-1 text-xs text-muted-foreground">
           <div>Период расчёта: {period}</div>
           {salesQty !== null && salesQty !== undefined && <div>Продано: {salesQty} шт.</div>}
           {revenue !== null && revenue !== undefined && (

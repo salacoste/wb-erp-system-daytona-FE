@@ -27,11 +27,14 @@ function SI({
   current: AggregatedSortField
   order: SortOrder
 }) {
-  if (current !== field) return <ArrowUpDown className="ml-1 h-4 w-4 text-gray-400" />
+  // P2 boundary wave-2 (2026-09-03): sort-state accent = status-information, idle +
+  // help icons = muted-foreground — same canon as SkuFinancialsTable/SkuTableHeaders.
+  // status-information on card: 5.75 light / 8.53 dark (both AA).
+  if (current !== field) return <ArrowUpDown className="ml-1 h-4 w-4 text-muted-foreground" />
   return order === 'asc' ? (
-    <ArrowUp className="ml-1 h-4 w-4 text-blue-600" />
+    <ArrowUp className="ml-1 h-4 w-4 text-status-information" />
   ) : (
-    <ArrowDown className="ml-1 h-4 w-4 text-blue-600" />
+    <ArrowDown className="ml-1 h-4 w-4 text-status-information" />
   )
 }
 
@@ -53,7 +56,7 @@ export function MarginAggregatedTableHeader({
         <TableHead aria-sort={ariaSort('entity')}>
           <button
             onClick={() => onSort('entity')}
-            className="flex items-center font-medium hover:text-blue-600"
+            className="flex items-center font-medium hover:text-status-information"
           >
             {entityLabel}
             {Icon('entity')}
@@ -62,7 +65,7 @@ export function MarginAggregatedTableHeader({
         <TableHead className="text-right" aria-sort={ariaSort('qty')}>
           <button
             onClick={() => onSort('qty')}
-            className="ml-auto flex items-center font-medium hover:text-blue-600"
+            className="ml-auto flex items-center font-medium hover:text-status-information"
           >
             Товаров (SKU){Icon('qty')}
           </button>
@@ -70,7 +73,7 @@ export function MarginAggregatedTableHeader({
         <TableHead className="text-right" aria-sort={ariaSort('revenue_net')}>
           <button
             onClick={() => onSort('revenue_net')}
-            className="ml-auto flex items-center font-medium hover:text-blue-600"
+            className="ml-auto flex items-center font-medium hover:text-status-information"
           >
             Выручка{Icon('revenue_net')}
           </button>
@@ -81,7 +84,7 @@ export function MarginAggregatedTableHeader({
         <TableHead className="text-right" aria-sort={ariaSort('profit')}>
           <button
             onClick={() => onSort('profit')}
-            className="ml-auto flex items-center font-medium hover:text-blue-600"
+            className="ml-auto flex items-center font-medium hover:text-status-information"
           >
             Прибыль{Icon('profit')}
           </button>
@@ -89,7 +92,7 @@ export function MarginAggregatedTableHeader({
         <TableHead className="text-right" aria-sort={ariaSort('margin_pct')}>
           <button
             onClick={() => onSort('margin_pct')}
-            className="ml-auto flex items-center font-medium hover:text-blue-600"
+            className="ml-auto flex items-center font-medium hover:text-status-information"
           >
             Маржа %{Icon('margin_pct')}
           </button>
@@ -128,10 +131,10 @@ export function MarginAggregatedTableHeader({
                 <TooltipTrigger asChild>
                   <button
                     onClick={() => onSort('profit_per_unit')}
-                    className="ml-auto flex items-center font-medium hover:text-blue-600"
+                    className="ml-auto flex items-center font-medium hover:text-status-information"
                   >
                     Прибыль/ед.
-                    <HelpCircle className="ml-1 h-3 w-3 text-gray-400" />
+                    <HelpCircle className="ml-1 h-3 w-3 text-muted-foreground" />
                     {Icon('profit_per_unit')}
                   </button>
                 </TooltipTrigger>
@@ -149,10 +152,10 @@ export function MarginAggregatedTableHeader({
                 <TooltipTrigger asChild>
                   <button
                     onClick={() => onSort('roi')}
-                    className="ml-auto flex items-center font-medium hover:text-blue-600"
+                    className="ml-auto flex items-center font-medium hover:text-status-information"
                   >
                     ROI
-                    <HelpCircle className="ml-1 h-3 w-3 text-gray-400" />
+                    <HelpCircle className="ml-1 h-3 w-3 text-muted-foreground" />
                     {Icon('roi')}
                   </button>
                 </TooltipTrigger>
@@ -169,10 +172,10 @@ export function MarginAggregatedTableHeader({
               <TooltipTrigger asChild>
                 <button
                   onClick={() => onSort('operating_profit')}
-                  className="ml-auto flex items-center font-medium hover:text-blue-600"
+                  className="ml-auto flex items-center font-medium hover:text-status-information"
                 >
                   Опер. прибыль
-                  <HelpCircle className="ml-1 h-3 w-3 text-gray-400" />
+                  <HelpCircle className="ml-1 h-3 w-3 text-muted-foreground" />
                   {Icon('operating_profit')}
                 </button>
               </TooltipTrigger>

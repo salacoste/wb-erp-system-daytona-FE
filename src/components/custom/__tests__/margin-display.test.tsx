@@ -184,11 +184,11 @@ describe('Zero Margin Display Bug - TDD Tests', () => {
     it('should display 0% badge when marginPct is exactly zero', () => {
       const { container } = render(<MarginBadge marginPct={0} />)
 
-      // Should have gray styling for zero
-      const badge = container.querySelector('.bg-gray-50')
+      // Should have muted styling for zero
+      const badge = container.querySelector('.bg-muted')
       expect(badge).toBeInTheDocument()
-      expect(badge).toHaveClass('text-gray-700')
-      expect(badge).toHaveClass('border-gray-200')
+      expect(badge).toHaveClass('text-muted-foreground')
+      expect(badge).toHaveClass('border-border')
 
       // Should show formatted zero, not dash
       expect(screen.queryByText('—')).not.toBeInTheDocument()
@@ -206,20 +206,20 @@ describe('Zero Margin Display Bug - TDD Tests', () => {
       expect(screen.getByText('—')).toBeInTheDocument()
     })
 
-    it('should display green badge for positive margin', () => {
+    it('should display financial-positive badge for positive margin', () => {
       const { container } = render(<MarginBadge marginPct={25} />)
 
-      const badge = container.querySelector('.bg-green-50')
+      const badge = container.querySelector('.bg-financial-positive\\/5')
       expect(badge).toBeInTheDocument()
-      expect(badge).toHaveClass('text-green-700')
+      expect(badge).toHaveClass('text-financial-positive')
     })
 
-    it('should display red badge for negative margin', () => {
+    it('should display financial-negative badge for negative margin', () => {
       const { container } = render(<MarginBadge marginPct={-10} />)
 
-      const badge = container.querySelector('.bg-red-50')
+      const badge = container.querySelector('.bg-financial-negative\\/5')
       expect(badge).toBeInTheDocument()
-      expect(badge).toHaveClass('text-red-700')
+      expect(badge).toHaveClass('text-financial-negative')
     })
   })
 
