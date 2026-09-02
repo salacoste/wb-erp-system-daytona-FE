@@ -1,6 +1,6 @@
 # P2 boundary-sweep волна-1: financial-summary family (11 файлов, 58 сайтов)
 
-**Status**: done (2026-09-02, сессия-2 оркестратора V15; PR — см. Change Log)
+**Status**: done (2026-09-02, сессия-2 оркестратора V15; PR #394, merged)
 **Branch**: `debt/p2-boundary-wave1-finsum` (worktree `/private/tmp/p2-bw1-finsum`, base main `c4c7bf3c`)
 **Owner-track**: P2 boundary 459 owner-sweep, волна 1 из ~6 (каталог `_bmad-output/planning-artifacts/shadcn-ui-boundary-classification-manifest.md`)
 
@@ -66,5 +66,5 @@ vitest полный 19424/0 · lint 0/0 · tsc 0 · **boundary 401 = новый 
 
 ## Change Log
 
-- 2026-09-02: Волна-1 исполнена конвейером A–J (executor opus + 2 fix-волны; 2 ревью-прохода opus свежим контекстом; оба ревьюера независимо воспроизводили контраст-математику). Boundary 459→401; флор 19424 не тронут (ре-пины).
+- 2026-09-02: Волна-1 исполнена конвейером; PR #394. A–J (executor opus + 2 fix-волны; 2 ревью-прохода opus свежим контекстом; оба ревьюера независимо воспроизводили контраст-математику). Boundary 459→401; флор 19424 не тронут (ре-пины).
   **Lessons:** (1) Свип семейной директории обязан крыть и co-located потребительские тесты — «exactly N re-pins» без repo-wide grep ложен. (2) Контраст-харнесс обязан моделировать ПОВЕРХНОСТЬ рендера (card ≠ background в dark) — иначе dark-аттестации врут. (3) Правило-в-комментарии формулируй как измеримый порог, не как номинальную схему классов.
