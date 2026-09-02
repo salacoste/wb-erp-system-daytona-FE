@@ -66,8 +66,8 @@ const AC1_BADGE_VARIANTS = [
     coefficient: 1.65,
     label: '×1,65',
     color: 'high',
-    bgClass: 'bg-status-warning/15',
-    textClass: 'text-status-warning',
+    bgClass: 'bg-status-warning',
+    textClass: 'text-status-warning-foreground',
     borderClass: 'border-status-warning/40',
     icon: '🔴',
     description: 'Повышенная стоимость (>1.50)',
@@ -275,7 +275,7 @@ describe('Story 44.43: Acceptance Coefficient Status Badge', () => {
         render(<AcceptanceStatusBadge coefficient={1.65} />)
 
         const badge = screen.getByTestId('acceptance-status-badge')
-        expect(badge).toHaveClass('bg-status-warning/15')
+        expect(badge).toHaveClass('bg-status-warning')
       })
     })
 
@@ -493,7 +493,7 @@ describe('Story 44.43: Acceptance Coefficient Status Badge', () => {
 
       expect(screen.getByText('×2,50')).toBeInTheDocument()
       const badge = screen.getByTestId('acceptance-status-badge')
-      expect(badge).toHaveClass('bg-status-warning/15')
+      expect(badge).toHaveClass('bg-status-warning')
     })
 
     it('should handle very high coefficients (10)', () => {
@@ -513,7 +513,7 @@ describe('Story 44.43: Acceptance Coefficient Status Badge', () => {
       render(<AcceptanceStatusBadge coefficient={1.51} />)
 
       const badge = screen.getByTestId('acceptance-status-badge')
-      expect(badge).toHaveClass('bg-status-warning/15')
+      expect(badge).toHaveClass('bg-status-warning')
     })
 
     it('should apply custom className', () => {

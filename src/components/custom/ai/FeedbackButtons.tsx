@@ -13,7 +13,11 @@
  * F-7: 403 renders "Нет доступа" (Defensive Frontend Principle).
  * F-8 (2nd-pass): Loader2 spinner during isPending for UX feedback on slow backends.
  * F-9: success uses role="status" aria-live="polite" for screen-reader announcement.
- * F-10: text-green-700 (#15803d, ~6.5:1 contrast) for guaranteed WCAG 1.4.3 compliance.
+ * PB-4 (fixed 2026-09-02, debt D-3): success span previously used the legacy green-700
+ * palette color — measured 5.02:1 light / 4.56:1 muted / 3.53:1 dark (AA fail, WCAG 1.4.3).
+ * Now a solid pair (bg-status-success + its foreground token) per the 173.12 canon:
+ * both themes >=4.5:1 by construction (5.13:1 light / 8.00:1 dark;
+ * замер в артефакте debt-d3-d4-wcag-solid-pairs (ветка)).
  */
 import { useState, useEffect } from 'react'
 import { ThumbsUp, ThumbsDown, Check, AlertTriangle, Loader2 } from 'lucide-react'
@@ -62,7 +66,7 @@ export function FeedbackButtons({ forecastId, modelId }: FeedbackButtonsProps) {
       <span
         role="status"
         aria-live="polite"
-        className="inline-flex items-center gap-1 text-xs text-green-700"
+        className="inline-flex items-center gap-1 rounded px-2 py-0.5 text-xs bg-status-success text-status-success-foreground"
       >
         <Check className="h-4 w-4" aria-hidden="true" />
         Спасибо

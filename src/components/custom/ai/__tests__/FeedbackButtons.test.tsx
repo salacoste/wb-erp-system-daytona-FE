@@ -193,6 +193,11 @@ describe('FeedbackButtons', () => {
 
     await waitFor(() => expect(screen.getByRole('status')).toBeTruthy())
     expect(screen.getByRole('status')).toHaveTextContent('Спасибо')
+    // PB-4 / debt D-3: solid pair classes (WCAG 1.4.3) on the success chip.
+    expect(screen.getByRole('status')).toHaveClass(
+      'bg-status-success',
+      'text-status-success-foreground'
+    )
   })
 
   it('success state auto-resets to idle after 2s', async () => {

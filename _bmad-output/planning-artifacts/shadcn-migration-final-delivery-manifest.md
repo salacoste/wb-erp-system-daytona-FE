@@ -79,7 +79,7 @@ Final audit wave (Epic 174): 174.1 parity (PR #369 feature `4c930a9d` / merge `3
 | Types | `npm run type-check` | 0 errors |
 | File-size cap | `npm run check:max-lines` | OK |
 | Production build | `npx next build --webpack` | 0 |
-| UI boundary ratchet | `node scripts/check-shadcn-ui-boundary.mjs` | **459 = 459 PASS** (ratchet; exit 1 only on increase); self-suite 10/10; 4 registered exceptions |
+| UI boundary ratchet | `node scripts/check-shadcn-ui-boundary.mjs` | **459 = 459 PASS** (ratchet; exit 1 only on increase); self-suite 10/10; 3 registered exceptions (FeedbackButtons lifted 2026-09-02) |
 | Story/route/plan parity | `node scripts/check-shadcn-migration-parity.mjs` | 33/33 self-tests + corpus 0 errors at pinned base — terminal state (see maintainer note, final handoff) |
 | Doc citations | `bash scripts/check-doc-citations.sh` | exit 0 (baseline 95 historical) |
 | Locale percent | `bash scripts/check-locale-percent.sh` | 4 (ratchet) |
@@ -88,11 +88,11 @@ Final audit wave (Epic 174): 174.1 parity (PR #369 feature `4c930a9d` / merge `3
 
 ## 4. Exceptions & accepted gaps (disposition 2026-09-02)
 
-All four `BOUNDARY_EXCEPTIONS` (single source of truth: `scripts/check-shadcn-ui-boundary.mjs`, mirrored 1:1 in the classification manifest §7) are **owner-accepted, none blocking**:
+The remaining three `BOUNDARY_EXCEPTIONS` (single source of truth: `scripts/check-shadcn-ui-boundary.mjs`, mirrored 1:1 in the classification manifest §7) are **owner-accepted, none blocking**. The former fourth exception was lifted 2026-09-02 — see the historical row below:
 
 | Exception | ID / debt | Disposition |
 | --- | --- | --- |
-| `src/components/custom/ai/FeedbackButtons.tsx` | F-10 (inline comment at :16) | design-system-boundary exception (hardcoded legacy palette class); the cited "≈6.5:1 TECH-DEBT ledger" record does not exist — measured 5.02:1 light / 4.56:1 muted / **3.53:1 dark (AA fail)** → registered **PB-4** (owner) |
+| `src/components/custom/ai/FeedbackButtons.tsx` | F-10 (inline comment at :16) | **Lifted 2026-09-02 (PB-4 fixed, debt D-3)** — success span moved to the solid status pair (173.12 canon; both themes ≥4.5:1), legacy class gone, exception removed from `BOUNDARY_EXCEPTIONS`. Historical: design-system-boundary exception (hardcoded legacy palette class); the cited "≈6.5:1 TECH-DEBT ledger" record did not exist — measured 5.02:1 light / 4.56:1 muted / **3.53:1 dark (AA fail)** → was registered **PB-4** (owner) |
 | `…/unit-economics/components/waterfall-chart-config.ts` | C5 | Categorical hex (11 hex + 2 tokens across 13 series, tier-collapse guard) — awaits chart-palette owner decision |
 | `…/pricing/components/PriceHistorySheet.tsx` | 170.x carry-out | Historical `#7C3AED` chart mark |
 | `…/product/[nmId]/components/FunnelTab.tsx` | 170.x carry-out | Historical `#7C3AED` chart mark |

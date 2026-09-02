@@ -31,12 +31,9 @@ export const CONTEXTUAL_HEX =
 // owner/debt ID and be mirrored 1:1 in the classification manifest
 // (_bmad-output/planning-artifacts/shadcn-ui-boundary-classification-manifest.md).
 export const BOUNDARY_EXCEPTIONS = new Map([
-  // F-10 (TECH-DEBT ledger): WCAG 1.4.3 contrast exception, documented inline
-  // at the call site — text-green-700 (#15803d) measures ~6.5:1.
-  [
-    'src/components/custom/ai/FeedbackButtons.tsx',
-    'F-10 WCAG 1.4.3 documented contrast exception (text-green-700 ≈6.5:1)',
-  ],
+  // FeedbackButtons exception lifted 2026-09-02 (debt D-3 / PB-4): legacy green-700
+  // success span replaced with a solid status pair (AA-safe in both themes);
+  // the file no longer carries legacy-palette matches.
   // C5 (debt registry §3.2): waterfall double-color-source — categorical hex
   // stays until the chart-palette owner decides the canon source.
   [
