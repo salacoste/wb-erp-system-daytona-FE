@@ -1,6 +1,17 @@
 # SEC-DOC-1 — Owner Decision Request: ротация тест-креденшела и смежные поверхности
 
-**Дата**: 2026-09-02 · **From**: V14 debt-backlog orchestrator (S-2, §8-P0) · **Статус**: ожидает решения владельца
+**Дата**: 2026-09-02 · **From**: V14 debt-backlog orchestrator (S-2, §8-P0) · **Статус**: решения получены 2026-09-02 — **D-1: РОТАЦИЯ ОДОБРЕНА** (исполнение: владелец; FE-харнесс/доки — оркестратор), **D-4: ОДОБРЕНО** (исполнено оркестратором, PR #386 — `.http` в allowlist сканера, контент-сканирование подтверждено canary), D-2/D-3 — без действий пока (D-3 рекомендация «не трогать» принята по умолчанию).
+
+## How-to ротации (D-1, исполняет владелец)
+
+```bash
+cd /Users/r2d2/Documents/Code_Projects/wb-repricer-system-new
+export PATH="/opt/homebrew/opt/node@24/bin:$PATH"
+NEWPASS=$(openssl rand -base64 18); echo "новый пароль: $NEWPASS"
+TEST_PASSWORD="$NEWPASS" npm run seed:rate-limits   # prisma/seed.ts идемпотентно ОБНОВИТ хэш (seed.ts:163-166)
+# затем вписать тот же пароль в frontend/.env.e2e → E2E_TEST_PASSWORD=...
+```
+
 
 > Документ не содержит самих секретов (non-echoing): литералы обозначены масками
 > `stale-литерал` (заменил live в 2026-01…08; в `.env.e2e` отсутствует) и
