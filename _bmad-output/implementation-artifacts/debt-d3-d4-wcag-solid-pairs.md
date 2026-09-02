@@ -1,7 +1,7 @@
 # Debt D-3 + D-4 — WCAG 1.4.3 solid-пары (handoff §8-P1): PB-4 FeedbackButtons + /15-family price-calculator
 
-**Status**: review — 2026-09-02; пройдено 2 ревью-прохода (проход-1 code-reviewer/opus, структура: APPROVE-WITH-FINDINGS, 5 findings, все закрыты фикс-волной; проход-2 свежий контекст, визуальная согласованность + факты: APPROVE-WITH-FINDINGS, 7 findings + 1 INFO-positive); плотность 7 > 5 → **проход-3 MANDATORY запланирован** (Trigger 3) после closeout-правок; PR: TBD (оркестратор)
-**Item**: D-3 (**PB-4**) + D-4 (**/15-family**) одной волной — debt-канон: final handoff §8-P1 (D-3/D-4) + §4 (PB-4, /15-family, BOUNDARY_EXCEPTIONS) · **PR**: TBD · **Base**: main `0bceadf4` · **Branch**: `debt/d3-d4-wcag-solid-pairs` · **Worktree**: `/private/tmp/d3-d4-wcag-solid-pairs` · **Date**: 2026-09-02
+**Status**: review — 2026-09-02; пройдено 2 ревью-прохода (проход-1 code-reviewer/opus, структура: APPROVE-WITH-FINDINGS, 5 findings, все закрыты фикс-волной; проход-2 свежий контекст, визуальная согласованность + факты: APPROVE-WITH-FINDINGS, 7 findings + 1 INFO-positive); плотность 7 > 5 → **проход-3 MANDATORY запланирован** (Trigger 3) после closeout-правок; PR #384 (head dc3a7d10)
+**Item**: D-3 (**PB-4**) + D-4 (**/15-family**) одной волной — debt-канон: final handoff §8-P1 (D-3/D-4) + §4 (PB-4, /15-family, BOUNDARY_EXCEPTIONS) · **PR**: #384 · **Head**: `dc3a7d10` · **Base**: main `0bceadf4` · **Branch**: `debt/d3-d4-wcag-solid-pairs` · **Worktree**: `/private/tmp/d3-d4-wcag-solid-pairs` · **Date**: 2026-09-02
 
 > **Контраст-канон этого артефакта.** Все послеволновые значения — WCAG relative luminance, live-вычисление по токенам из `src/styles/globals.css`; независимо ПЕРЕСЧИТАНЫ ревьюером-1 (побитово) и ревьюером-2 (до третьего знака). Исторические замеры legacy-палитры (light 5.02 / muted 4.56 / dark 3.53) — из 174.5 pass-2, до волны; уточнение поверхностных hex см. F-7 (выводы неизменны).
 
