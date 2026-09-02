@@ -10,11 +10,17 @@ export const MARGIN_STATUS_CONFIG = {
     bgClass: 'bg-financial-positive/15',
     textClass: 'text-financial-positive',
   },
-  good: { label: 'Хорошо', bgClass: 'bg-status-success/15', textClass: 'text-status-success' },
+  // D-4 (2026-09-02): good/warning moved from /15 tints to solid pairs (173.12 canon) —
+  // WCAG 1.4.3 in both themes; financial tokens below intentionally keep their /15 tints.
+  good: {
+    label: 'Хорошо',
+    bgClass: 'bg-status-success',
+    textClass: 'text-status-success-foreground',
+  },
   warning: {
     label: 'Низкая',
-    bgClass: 'bg-status-warning/15',
-    textClass: 'text-status-warning',
+    bgClass: 'bg-status-warning',
+    textClass: 'text-status-warning-foreground',
   },
   critical: {
     label: 'Критично',

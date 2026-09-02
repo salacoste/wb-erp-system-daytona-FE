@@ -120,8 +120,11 @@ test('exceptions register suppresses flagged files and feeds per-route counts', 
     fs.writeFileSync(target, content)
   }
   try {
-    // Real exception path (F-10) — must be scanned but never counted.
-    write('src/components/custom/ai/FeedbackButtons.tsx', 'export const tone = "text-green-700"\n')
+    // Real exception path (C5 waterfall categorical hex) — must be scanned but never counted.
+    write(
+      'src/app/(dashboard)/analytics/unit-economics/components/waterfall-chart-config.ts',
+      "export const WATERFALL_COLORS = { revenue: '#2196F3', cogs: '#FF9800' }\n"
+    )
     write('src/app/(dashboard)/live/Live.tsx', 'export const tone = "bg-red-500"\n')
     const scan = collectViolations(root)
     assert.equal(scan.total, 1)
@@ -130,12 +133,15 @@ test('exceptions register suppresses flagged files and feeds per-route counts', 
       ['src/app/(dashboard)/live/Live.tsx']
     )
     assert.deepEqual(scan.routeCounts, { 'src/app/(dashboard)': 1 })
-    assert.deepEqual(
-      scan.suppressed.map(file => file.path),
-      ['src/components/custom/ai/FeedbackButtons.tsx']
+    assert.deepEqual(scan.suppressed.map(file => file.path), [
+      'src/app/(dashboard)/analytics/unit-economics/components/waterfall-chart-config.ts',
+    ])
+    assert.ok(
+      BOUNDARY_EXCEPTIONS.get(
+        'src/app/(dashboard)/analytics/unit-economics/components/waterfall-chart-config.ts'
+      )
     )
-    assert.ok(BOUNDARY_EXCEPTIONS.get('src/components/custom/ai/FeedbackButtons.tsx'))
-    assert.equal(BOUNDARY_EXCEPTIONS.size, 4)
+    assert.equal(BOUNDARY_EXCEPTIONS.size, 3)
   } finally {
     fs.rmSync(root, { recursive: true, force: true })
   }

@@ -65,8 +65,8 @@ const BADGE_TEST_CASES = [
     coefficient: 1.65,
     expectedLabel: '×1,65',
     expectedColor: 'high',
-    colorClass: 'text-status-warning',
-    bgClass: 'bg-status-warning/15',
+    colorClass: 'text-status-warning-foreground',
+    bgClass: 'bg-status-warning',
     icon: '🔴',
   },
 ] as const
@@ -128,8 +128,8 @@ describe('AcceptanceStatusBadge', () => {
       render(<AcceptanceStatusBadge coefficient={1.65} />)
 
       const badge = screen.getByText('×1,65').closest('[class*="bg-"]')
-      expect(badge).toHaveClass('bg-status-warning/15')
-      expect(badge).toHaveClass('text-status-warning')
+      expect(badge).toHaveClass('bg-status-warning')
+      expect(badge).toHaveClass('text-status-warning-foreground')
       expect(badge).toHaveClass('border-status-warning/40')
     })
   })
@@ -368,7 +368,7 @@ describe('AcceptanceStatusBadge', () => {
 
       expect(screen.getByText('×10,00')).toBeInTheDocument()
       const badge = screen.getByText('×10,00').closest('[class*="bg-"]')
-      expect(badge).toHaveClass('bg-status-warning/15')
+      expect(badge).toHaveClass('bg-status-warning')
     })
 
     it('handles decimal precision in display', () => {
@@ -389,7 +389,7 @@ describe('AcceptanceStatusBadge', () => {
       render(<AcceptanceStatusBadge coefficient={1.51} />)
 
       const badge = screen.getByText('×1,51').closest('[class*="bg-"]')
-      expect(badge).toHaveClass('bg-status-warning/15')
+      expect(badge).toHaveClass('bg-status-warning')
     })
   })
 
