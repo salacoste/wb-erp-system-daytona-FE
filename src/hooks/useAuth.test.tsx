@@ -3,10 +3,19 @@ import { renderHook, waitFor } from '@testing-library/react'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { useAuth } from './useAuth'
 import { useAuthStore } from '@/stores/authStore'
-import { refreshToken } from '@/lib/api'
+import { getFreshToken } from '@/lib/api-client-refresh'
 // Mock dependencies
 vi.mock('@/stores/authStore')
-vi.mock('@/lib/api')
+// D-2 pass-1 (OQ1, 2026-09-03): the hook's proactive path no longer calls the
+// `refreshToken()` API fn — it routes through the single-flight core
+// `getFreshToken()` (the same engine as the reactive 401 interceptor; the
+// store update happens INSIDE it). This file full-mocks the authStore, so the
+// single-flight core MUST be mocked too — otherwise its real
+// `useAuthStore.getState()` would hit an auto-mocked store (getState →
+// undefined) and throw inside the hook's mount effect.
+vi.mock('@/lib/api-client-refresh', () => ({
+  getFreshToken: vi.fn(),
+}))
 const mockPush = vi.fn()
 vi.mock('next/navigation', () => ({
   useRouter: vi.fn(() => ({
@@ -73,21 +82,15 @@ describe('useAuth', () => {
       login: mockLogin,
       logout: mockLogout,
     })
-    ;(refreshToken as ReturnType<typeof vi.fn>).mockResolvedValue({
-      token: 'new-token',
-      user: {
-        id: '1',
-        email: 'test@example.com',
-        role: 'Owner',
-      },
-    })
+    ;(getFreshToken as ReturnType<typeof vi.fn>).mockResolvedValue(true)
 
     renderHook(() => useAuth(), { wrapper })
 
-    // Wait for token refresh to be called
+    // Wait for the single-flight core to be called by the proactive path
+    // (OQ1: the hook delegates the rotation + store update to getFreshToken).
     await waitFor(
       () => {
-        expect(refreshToken).toHaveBeenCalled()
+        expect(getFreshToken).toHaveBeenCalled()
       },
       { timeout: 5000 }
     )

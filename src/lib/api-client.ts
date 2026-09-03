@@ -79,14 +79,22 @@ class ApiClient {
         // authenticated requests only (a skipAuth 401 is a credential
         // failure — nothing to rotate); never the refresh endpoint itself
         // (its own 401 must not recurse); once per request — a replay that
-        // 401s again surfaces the original ApiError (no loop).
+        // 401s again surfaces the original ApiError (no loop). D-2 pass-1
+        // (OQ2): a durable pinned op may opt out via the PUBLIC
+        // `options.allowReactiveRefresh: false`; precedence — the PRIVATE
+        // replay param (false after one replay) always wins over the public
+        // option, which cannot re-enable refresh mid-recovery.
         if (
           response.status === 401 &&
           allowReactiveRefresh &&
+          options.allowReactiveRefresh !== false &&
           !options.skipAuth &&
           !isRefreshEndpoint(endpoint)
         ) {
-          const refreshed = await getFreshToken()
+          // D-2 pass-1 (M1): hand the FAILED request's wire Authorization to
+          // the single-flight core — if it differs from the store token, a
+          // prior rotation completed and no new refresh may start.
+          const refreshed = await getFreshToken(headers['Authorization'])
           if (refreshed) {
             // Replay ONCE. `authToken: undefined` drops a stale Story-167.9
             // initiating override — the revoked token must not ride again;

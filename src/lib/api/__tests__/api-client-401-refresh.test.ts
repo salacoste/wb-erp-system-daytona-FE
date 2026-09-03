@@ -29,6 +29,18 @@
  *   carrying it → 401 TOKEN_REVOKED); expired/revoked JWT → 401 from the
  *   refresh endpoint itself (unrecoverable, must not recurse).
  *
+ * D-2 pass-1 review fixes (2026-09-03) pinned here:
+ *   - M1 rotation-cascade gate: a failed request whose wire token DIFFERS from
+ *     the current store token must NOT trigger a refresh (a prior rotation
+ *     already completed) — recovery replays with the store token directly.
+ *   - M2 refresh deadline: a black-holed refresh POST is aborted (10s default,
+ *     injectable) and treated as refresh failure — original ApiError surfaces.
+ *   - OQ2 durable pinned ops: createCabinet opts out of reactive replay.
+ *   - L1+L2: wire-level POST replay pin (method, body byte-parity,
+ *     Idempotency-Key, X-Cabinet-Id survive the replay).
+ *   - L4: handler asserts moved OUT of MSW handlers (capture + assert after
+ *     await).
+ *
  * No `as`/`any`; real MSW interception (unhandled requests error out).
  */
 
@@ -37,6 +49,8 @@ import { http, HttpResponse } from 'msw'
 import { server } from '@/mocks/server'
 import { apiClient } from '@/lib/api-client'
 import { ApiError } from '@/types/api'
+import { DEFAULT_REFRESH_DEADLINE_MS, setRefreshDeadlineForTests } from '@/lib/api-client-refresh'
+import { createCabinet } from '@/lib/api'
 import { setupMockAuth, clearMockAuth } from '@/test/test-utils'
 
 const API = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000'
@@ -49,10 +63,15 @@ interface ProtectedCapture {
   cabinetHeader: string
 }
 
-/** Install the 401-once-then-200 protected handler + a counting refresh handler. */
+/** Install the 401-once-then-200 protected handler + a counting refresh
+ * handler. L4 (D-2 pass-1): the handler CAPTURES the refresh Authorization
+ * header into `refreshAuthHeaders` — assertions live in the test AFTER the
+ * await, never inside an MSW handler (an in-handler expect failure surfaces
+ * as an opaque unhandled rejection, not a test failure). */
 function useTokenRotationHandlers(
   protectedCaptures: ProtectedCapture[],
-  refreshCount: { calls: number }
+  refreshCount: { calls: number },
+  refreshAuthHeaders: string[]
 ): void {
   server.use(
     http.get(PROTECTED_URL, ({ request }) => {
@@ -67,9 +86,7 @@ function useTokenRotationHandlers(
     }),
     http.post(REFRESH_URL, ({ request }) => {
       refreshCount.calls += 1
-      // The refresh call authenticates with the CURRENT (stale) token via the
-      // explicit header refreshToken() passes — assert it rode on the wire.
-      expect(request.headers.get('Authorization')).toBe('Bearer expired-jwt')
+      refreshAuthHeaders.push(request.headers.get('Authorization') ?? '')
       return HttpResponse.json({ token: 'rotated-jwt' })
     })
   )
@@ -83,7 +100,8 @@ describe('D-2 (PB-3) — reactive 401 refresh (actual behavior, MSW + real apiCl
   it('401 → ONE refresh + ONE replay with the rotated token → caller sees data (no ApiError)', async () => {
     const protectedCaptures: ProtectedCapture[] = []
     const refreshCount = { calls: 0 }
-    useTokenRotationHandlers(protectedCaptures, refreshCount)
+    const refreshAuthHeaders: string[] = []
+    useTokenRotationHandlers(protectedCaptures, refreshCount, refreshAuthHeaders)
 
     setupMockAuth({ token: 'expired-jwt', cabinetId: 'cab-909' })
 
@@ -94,6 +112,9 @@ describe('D-2 (PB-3) — reactive 401 refresh (actual behavior, MSW + real apiCl
 
     // Exactly one refresh for the whole recovery, exactly one replay.
     expect(refreshCount.calls).toBe(1)
+    // L4 pin: the refresh authenticated with the CURRENT (stale) token via
+    // the explicit header refreshToken() passes — asserted after the await.
+    expect(refreshAuthHeaders).toEqual(['Bearer expired-jwt'])
     expect(protectedCaptures).toHaveLength(2)
     // The failed attempt carried the stale session token on the wire.
     expect(protectedCaptures[0].authHeader).toBe('Bearer expired-jwt')
@@ -260,10 +281,9 @@ describe('D-2 (PB-3) — reactive 401 refresh (actual behavior, MSW + real apiCl
     expect(refreshCount.calls).toBe(1)
   })
 
-  it('store-token hazard: refresh authenticates with the STORE token, never the failed request token', async () => {
+  it('rotation-cascade gate (M1): failed wire token ≠ store token (prior rotation completed) → ZERO refresh, replay rides the store token', async () => {
     const protectedCaptures: ProtectedCapture[] = []
     const refreshCount = { calls: 0 }
-    let refreshAuthHeader = ''
 
     server.use(
       http.get(PROTECTED_URL, ({ request }) => {
@@ -277,14 +297,13 @@ describe('D-2 (PB-3) — reactive 401 refresh (actual behavior, MSW + real apiCl
         }
         return HttpResponse.json({ sale_gross: 1000 })
       }),
-      http.post(REFRESH_URL, ({ request }) => {
+      http.post(REFRESH_URL, () => {
         refreshCount.calls += 1
-        refreshAuthHeader = request.headers.get('Authorization') ?? ''
         return HttpResponse.json({ token: 'rotated-jwt' })
       })
     )
 
-    // The store ALREADY holds a newer token (a rotation just completed),
+    // The store ALREADY holds a newer token (a prior rotation just completed),
     // while this request was initiated with the now-revoked old token via
     // the Story 167.9 immutable-initiating-token override.
     setupMockAuth({ token: 'newer-store-jwt', cabinetId: 'cab-909' })
@@ -294,15 +313,16 @@ describe('D-2 (PB-3) — reactive 401 refresh (actual behavior, MSW + real apiCl
     })
     expect(result.sale_gross).toBe(1000)
 
-    // Hazard #1 pin: the refresh rode the STORE token, not the failed
-    // request's revoked one.
-    expect(refreshAuthHeader).toBe('Bearer newer-store-jwt')
-    // The failed attempt carried the revoked initiating token…
-    expect(protectedCaptures[0].authHeader).toBe('Bearer old-revoked-jwt')
-    // …and the replay dropped the override and rode the rotated STORE token.
+    // M1 cascade-gate pin: the failed request's wire token DIFFERS from the
+    // store token ⇒ the store already moved on (a prior rotation completed) —
+    // a new refresh would burn the just-minted JWT. The recovery replays with
+    // the CURRENT store token directly, proven on the wire: the replay rides
+    // the STORE token, NOT the refresh handler's rotated-jwt (which never
+    // fired — refreshCount is 0).
+    expect(refreshCount.calls).toBe(0)
     expect(protectedCaptures).toHaveLength(2)
-    expect(protectedCaptures[1].authHeader).toBe('Bearer rotated-jwt')
-    expect(refreshCount.calls).toBe(1)
+    expect(protectedCaptures[0].authHeader).toBe('Bearer old-revoked-jwt')
+    expect(protectedCaptures[1].authHeader).toBe('Bearer newer-store-jwt')
   })
 
   it('no store token → NO refresh attempt at all (logged-out 401s stay terminal)', async () => {
@@ -372,5 +392,233 @@ describe('D-2 (PB-3) — reactive 401 refresh (actual behavior, MSW + real apiCl
     expect(apiError?.message).toBe('Invalid credentials')
     // A skipAuth 401 is a credential failure — nothing to rotate.
     expect(refreshCount.calls).toBe(0)
+  })
+
+  it('cascade gate e2e (M1): stale-wire-token 401 arriving AFTER a completed rotation → zero extra refresh, replay succeeds with the store token', async () => {
+    const protectedCaptures: ProtectedCapture[] = []
+    const refreshCount = { calls: 0 }
+
+    // Determinism: B's original request goes out PRE-rotation (wire token =
+    // stale-wire-jwt), but its 401 is HELD on the wire until A's recovery has
+    // fully settled — so B's 401 is PROCESSED after the single flight cleared
+    // (inflightRefresh === null), exercising the M1 comparison, not the join.
+    let releaseStale!: () => void
+    const staleGate = new Promise<void>(resolve => {
+      releaseStale = resolve
+    })
+    let seenAOriginal!: () => void
+    const aOriginalSeen = new Promise<void>(resolve => {
+      seenAOriginal = resolve
+    })
+    let seenBOriginal!: () => void
+    const bOriginalSeen = new Promise<void>(resolve => {
+      seenBOriginal = resolve
+    })
+
+    server.use(
+      http.get(PROTECTED_URL, ({ request }) => {
+        const auth = request.headers.get('Authorization') ?? ''
+        protectedCaptures.push({ authHeader: auth, cabinetHeader: '' })
+        // The pre-rotation token is REVOKED server-side (annex hazard #1).
+        if (auth !== 'Bearer stale-wire-jwt') {
+          return HttpResponse.json({ sale_gross: 1000 })
+        }
+        if (protectedCaptures.length === 1) {
+          seenAOriginal()
+          return HttpResponse.json({ message: 'TOKEN_REVOKED' }, { status: 401 })
+        }
+        // B's original: hold the 401 until A's rotation completed.
+        seenBOriginal()
+        return staleGate.then(() => HttpResponse.json({ message: 'Unauthorized' }, { status: 401 }))
+      }),
+      http.post(REFRESH_URL, () => {
+        refreshCount.calls += 1
+        return HttpResponse.json({ token: 'rotated-jwt' })
+      })
+    )
+
+    setupMockAuth({ token: 'stale-wire-jwt', cabinetId: 'cab-909' })
+
+    // A: 401 → refresh → rotation completes (store → rotated-jwt) → replay.
+    const requestA = apiClient.get<{ sale_gross: number }>(PROTECTED_ENDPOINT)
+    await aOriginalSeen
+    // B: issued pre-rotation, so its wire token is the stale one; its 401 is
+    // held by the handler above.
+    const requestB = apiClient.get<{ sale_gross: number }>(PROTECTED_ENDPOINT)
+    await bOriginalSeen
+
+    // A settles completely: exactly one refresh POST, store rotated, replay OK.
+    const resultA = await requestA
+    expect(resultA.sale_gross).toBe(1000)
+
+    // NOW B's held 401 is processed — after the completed rotation.
+    releaseStale()
+    const resultB = await requestB
+    expect(resultB.sale_gross).toBe(1000)
+
+    // B's stale-wire 401 arrived AFTER the rotation completed → the cascade
+    // gate blocked any second refresh: A's rotation is the ONLY refresh POST.
+    expect(refreshCount.calls).toBe(1)
+    expect(protectedCaptures).toHaveLength(4)
+    expect(protectedCaptures[0].authHeader).toBe('Bearer stale-wire-jwt') // A original
+    expect(protectedCaptures[1].authHeader).toBe('Bearer stale-wire-jwt') // B original
+    expect(protectedCaptures[2].authHeader).toBe('Bearer rotated-jwt') // A replay
+    expect(protectedCaptures[3].authHeader).toBe('Bearer rotated-jwt') // B replay (store token)
+  })
+
+  it('refresh deadline (M2): never-responding refresh + 10ms injected deadline → recovery false, original ApiError, no hang', async () => {
+    const protectedCaptures: ProtectedCapture[] = []
+    const refreshCount = { calls: 0 }
+
+    server.use(
+      http.get(PROTECTED_URL, ({ request }) => {
+        protectedCaptures.push({
+          authHeader: request.headers.get('Authorization') ?? '',
+          cabinetHeader: '',
+        })
+        return HttpResponse.json({ message: 'Unauthorized' }, { status: 401 })
+      }),
+      // Black-holed refresh: the handler NEVER responds.
+      http.post(REFRESH_URL, () => {
+        refreshCount.calls += 1
+        return new Promise<never>(() => undefined)
+      })
+    )
+
+    setRefreshDeadlineForTests(10)
+    try {
+      setupMockAuth({ token: 'expired-jwt', cabinetId: 'cab-909' })
+
+      const started = Date.now()
+      let thrown: unknown
+      try {
+        await apiClient.get(PROTECTED_ENDPOINT)
+      } catch (error) {
+        thrown = error
+      }
+      const elapsed = Date.now() - started
+
+      // The PROTECTED request's original ApiError surfaces unmasked.
+      expect(thrown).toBeInstanceOf(ApiError)
+      const apiError = thrown instanceof ApiError ? thrown : null
+      expect(apiError?.status).toBe(401)
+      expect(apiError?.message).toBe('Unauthorized')
+      // The abort was treated as refresh failure → no replay, one attempt.
+      expect(protectedCaptures).toHaveLength(1)
+      expect(refreshCount.calls).toBe(1)
+      // No hang: the deadline freed the single flight (not the 5s test cap).
+      expect(elapsed).toBeLessThan(3000)
+    } finally {
+      setRefreshDeadlineForTests(DEFAULT_REFRESH_DEADLINE_MS)
+    }
+  })
+
+  it('durable pinned op opt-out (OQ2): createCabinet 401 → ZERO refresh, ApiError surfaces (no auto-replay)', async () => {
+    const refreshCount = { calls: 0 }
+    const cabinetCaptures: ProtectedCapture[] = []
+
+    server.use(
+      http.post(`${API}/v1/cabinets`, ({ request }) => {
+        cabinetCaptures.push({
+          authHeader: request.headers.get('Authorization') ?? '',
+          cabinetHeader: request.headers.get('X-Cabinet-Id') ?? '',
+        })
+        return HttpResponse.json({ message: 'Unauthorized' }, { status: 401 })
+      }),
+      http.post(REFRESH_URL, () => {
+        refreshCount.calls += 1
+        return HttpResponse.json({ token: 'rotated-jwt' })
+      })
+    )
+
+    setupMockAuth({ token: 'store-jwt', cabinetId: 'cab-909' })
+
+    let thrown: unknown
+    try {
+      // The REAL production call-site shape (src/lib/api.ts createCabinet):
+      // immutable initiating token + Story 167.8 Idempotency-Key, scoped to
+      // the initiating session.
+      await createCabinet(
+        { name: 'Pinned Cabinet' },
+        { token: 'initiator-jwt', idempotencyKey: '11111111-2222-3333-4444-555555555555' }
+      )
+    } catch (error) {
+      thrown = error
+    }
+
+    expect(thrown).toBeInstanceOf(ApiError)
+    const apiError = thrown instanceof ApiError ? thrown : null
+    expect(apiError?.status).toBe(401)
+    // OQ2 pin: the explicit initiating-token pin means NO reactive refresh
+    // and NO auto-replay — the durable account-scoped create owns its retry
+    // via Story 167.8 reconciliation (cross-session pin-drop defense).
+    expect(refreshCount.calls).toBe(0)
+    expect(cabinetCaptures).toHaveLength(1)
+    expect(cabinetCaptures[0].authHeader).toBe('Bearer initiator-jwt')
+    // Account-scoped create: no X-Cabinet-Id participates (Story 167.8).
+    expect(cabinetCaptures[0].cabinetHeader).toBe('')
+  })
+
+  it('wire-level POST replay pin (L1+L2): method, byte-parity body, Idempotency-Key, X-Cabinet-Id survive the replay', async () => {
+    interface PostCapture {
+      method: string
+      body: string
+      idempotencyKey: string
+      cabinetHeader: string
+      authHeader: string
+    }
+    const postCaptures: PostCapture[] = []
+    const refreshCount = { calls: 0 }
+    const requestPayload = { items: [{ nm_id: 1001, cogs: 250 }] }
+    const expectedBody = JSON.stringify(requestPayload)
+
+    server.use(
+      http.post(`${API}/v1/products/bulk-cogs`, async ({ request }) => {
+        postCaptures.push({
+          method: request.method,
+          body: await request.text(),
+          idempotencyKey: request.headers.get('Idempotency-Key') ?? '',
+          cabinetHeader: request.headers.get('X-Cabinet-Id') ?? '',
+          authHeader: request.headers.get('Authorization') ?? '',
+        })
+        if (postCaptures.length === 1) {
+          return HttpResponse.json({ message: 'Unauthorized' }, { status: 401 })
+        }
+        return HttpResponse.json({ updated: 1 })
+      }),
+      http.post(REFRESH_URL, () => {
+        refreshCount.calls += 1
+        return HttpResponse.json({ token: 'rotated-jwt' })
+      })
+    )
+
+    setupMockAuth({ token: 'expired-jwt', cabinetId: 'store-cab' })
+
+    const result = await apiClient.post<{ updated: number }>(
+      '/v1/products/bulk-cogs',
+      requestPayload,
+      { headers: { 'Idempotency-Key': 'idem-123' }, cabinetIdOverride: 'override-cab' }
+    )
+    expect(result.updated).toBe(1)
+
+    expect(refreshCount.calls).toBe(1)
+    expect(postCaptures).toHaveLength(2)
+    const [original, replay] = postCaptures
+    // L1: the replay is a POST, not a silently-upgraded GET.
+    expect(original.method).toBe('POST')
+    expect(replay.method).toBe('POST')
+    // L1: body byte parity across the replay.
+    expect(original.body).toBe(expectedBody)
+    expect(replay.body).toBe(expectedBody)
+    // L1: the custom header rides the replay untouched.
+    expect(original.idempotencyKey).toBe('idem-123')
+    expect(replay.idempotencyKey).toBe('idem-123')
+    // L2: X-Cabinet-Id PRESENT on the replay capture (the pinned override
+    // survives rotation — the cabinet context is not dropped).
+    expect(original.cabinetHeader).toBe('override-cab')
+    expect(replay.cabinetHeader).toBe('override-cab')
+    // And the replay rode the rotated token.
+    expect(original.authHeader).toBe('Bearer expired-jwt')
+    expect(replay.authHeader).toBe('Bearer rotated-jwt')
   })
 })

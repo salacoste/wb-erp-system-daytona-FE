@@ -36,10 +36,45 @@ export function isRefreshEndpoint(endpoint: string): boolean {
  * recovery — per-request "replay once" is enforced by api-client, not here. */
 let inflightRefresh: Promise<boolean> | null = null
 
+/** Extract the raw JWT from a `Bearer <token>` wire header; null when the
+ * header is absent or not Bearer-shaped (no cascade comparison possible). */
+function bearerTokenOf(header: string): string | null {
+  return header.startsWith('Bearer ') ? header.slice('Bearer '.length) : null
+}
+
+/** D-2 pass-1 (M2): deadline (ms) for the refresh POST — a black-holed
+ * refresh must not wedge every 401 on the single flight. Default 10s;
+ * injectable for tests via `setRefreshDeadlineForTests` (a getFreshToken
+ * parameter cannot reach the REACTIVE path — api-client passes none). */
+export const DEFAULT_REFRESH_DEADLINE_MS = 10_000
+let refreshDeadlineMs = DEFAULT_REFRESH_DEADLINE_MS
+
+/** Test-only seam for the refresh deadline (D-2 pass-1, M2). */
+export function setRefreshDeadlineForTests(ms: number): void {
+  refreshDeadlineMs = ms
+}
+
 /** Join the in-flight refresh, or start one. Resolves true when the store
  * now holds a rotated token (safe to replay); false when recovery failed
- * (the caller must surface its original ApiError). Never rejects. */
-export function getFreshToken(): Promise<boolean> {
+ * (the caller must surface its original ApiError). Never rejects.
+ *
+ * `failedAuthHeader` is the FAILED request's Authorization header (D-2
+ * pass-1, M1 rotation-cascade gate): when its wire token DIFFERS from the
+ * current store token, a prior rotation already completed and the store
+ * moved on — do NOT refresh; resolve true so the caller replays with the
+ * store token directly. Omit it on paths with no wire token (proactive). */
+export function getFreshToken(failedAuthHeader?: string): Promise<boolean> {
+  // M1 rotation-cascade gate: the wire token is a snapshot; the store is
+  // freshest. Difference ⇒ the store token can only be NEWER (rotations are
+  // monotonic), so refreshing would burn the just-minted JWT.
+  if (failedAuthHeader) {
+    const wireToken = bearerTokenOf(failedAuthHeader)
+    const storeToken = useAuthStore.getState().token
+    if (wireToken && storeToken && wireToken !== storeToken) {
+      return Promise.resolve(true)
+    }
+  }
+
   if (!inflightRefresh) {
     inflightRefresh = performRefresh().finally(() => {
       inflightRefresh = null
@@ -60,8 +95,13 @@ async function performRefresh(): Promise<boolean> {
     // Lazy import breaks the load-time cycle api-client.ts → this module →
     // api.ts → api-client.ts. The runtime function is `refreshToken()` from
     // '@/lib/api' (POSTs /v1/auth/refresh, skipAuth + explicit Bearer header).
+    // M2: AbortSignal.timeout rides ApiRequestOptions (extends RequestInit) →
+    // apiClient option spread → fetch; on abort the refresh POST rejects and
+    // the catch below treats it like any other refresh failure (false).
     const { refreshToken } = await import('./api')
-    const response: RefreshTokenResponse = await refreshToken(storeToken)
+    const response: RefreshTokenResponse = await refreshToken(storeToken, {
+      signal: AbortSignal.timeout(refreshDeadlineMs),
+    })
 
     // Hazard #2: store action keeps sessionNonce + user, sets the auth cookie.
     useAuthStore.getState().refreshToken(response.token, response.user)
