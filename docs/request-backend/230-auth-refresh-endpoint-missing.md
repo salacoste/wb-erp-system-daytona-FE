@@ -37,7 +37,7 @@ curl -s -X POST http://localhost:3000/v1/auth/refresh \
 
 ## Resolution — ✅ закрыто 2026-09-03
 
-BE реализовал и опубликовал согласованный sliding-refresh контракт в PR [#230](https://github.com/salacoste/wb-erp-system-daytona/pull/230) (`c1e9b5e7`). Owner одобрил re-scope D-2: FE interceptor может реализовывать single-flight refresh/replay для ещё валидного JWT; восстановление уже истёкшего JWT остаётся отдельным следующим этапом (dedicated refresh-token или grace). Связанное: `decodeJWT` padding-хрупкость на FE (битый base64 payload → fail-safe expired → logout) зарегистрирована в артефакте D-1 как FE-side follow-up.
+✅ ЗАКРЫТО (2026-09-03): (a) исполнено — контракт согласован (ANEX), BE реализовал и опубликовал (BE PR #230, `c1e9b5e7`), FE D-2 реализован по контракту, live-цепочка верифицирована (см. ниже); восстановление истёкшего JWT — следующий BE-этап. Связанное: `decodeJWT` padding-хрупкость на FE (битый base64 payload → fail-safe expired → этот же мёртвый путь → logout) — зарегистрировано в артефакте D-1 как FE-side follow-up.
 
 ---
 

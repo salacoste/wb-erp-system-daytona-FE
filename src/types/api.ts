@@ -62,6 +62,16 @@ export interface ApiRequestOptions extends RequestInit {
    */
   cabinetIdOverride?: string
   /**
+   * D-2 pass-1 (OQ2): opt out of the reactive 401 auto-refresh + replay for
+   * requests that own their retry semantics (e.g. the durable account-scoped
+   * cabinet create — Story 167.8 reconciliation owns its retry). Default
+   * (undefined) → reactive recovery allowed. `false` → a 401 surfaces
+   * immediately as ApiError. Precedence: the client's PRIVATE replay flag
+   * (false after one replay, api-client.ts) always wins — this public option
+   * can never re-enable refresh mid-recovery.
+   */
+  allowReactiveRefresh?: boolean
+  /**
    * Skip auto-unwrapping of response.data field.
    * Use this when the API returns a complex response object that has a 'data' field
    * but you need the full response (e.g., storage analytics with period, summary, pagination).

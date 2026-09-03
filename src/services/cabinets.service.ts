@@ -163,6 +163,9 @@ export async function handleCreateCabinet(
   const marginContext: ApiRequestOptions = {
     authToken: response.newToken,
     cabinetIdOverride: response.id,
+    // D-2 pass-2 (2026-09-03): pinned 167.9 transport keeps its pin
+    // semantics on 401 — no auto-replay under a rotated store token.
+    allowReactiveRefresh: false,
   }
 
   let updatedCabinet

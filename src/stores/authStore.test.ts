@@ -185,4 +185,52 @@ describe('authStore', () => {
       expect(useAuthStore.getState().user?.role).toBe('Owner')
     })
   })
+
+  // D-2 (PB-3, 2026-09-03) — contract annex hazard #2 pinned at the store
+  // level: token refresh (proactive useAuth path + reactive api-client
+  // interceptor) MUST go through `refreshToken()` (nonce-preserving) because
+  // in-flight D-1 (Story 167.9) cabinet-create settlements compare nonces.
+  // `login()` is the ONLY action that mints a new session identity.
+  describe('session nonce semantics (D-2/PB-3 hazard #2)', () => {
+    it('login() mints a fresh sessionNonce on every login', () => {
+      const user: User = { id: '1', email: 'test@example.com', role: 'Owner' }
+
+      useAuthStore.getState().login(user, 'token-1')
+      const firstNonce = useAuthStore.getState().sessionNonce
+      expect(firstNonce).toBeTruthy()
+
+      useAuthStore.getState().login(user, 'token-2')
+      const secondNonce = useAuthStore.getState().sessionNonce
+      expect(secondNonce).toBeTruthy()
+      expect(secondNonce).not.toBe(firstNonce)
+    })
+
+    it('refreshToken(token) preserves sessionNonce while rotating the token', () => {
+      const user: User = { id: '1', email: 'test@example.com', role: 'Owner' }
+      useAuthStore.getState().login(user, 'token-1')
+      const nonceBefore = useAuthStore.getState().sessionNonce
+
+      useAuthStore.getState().refreshToken('token-2')
+
+      const state = useAuthStore.getState()
+      expect(state.token).toBe('token-2')
+      expect(state.sessionNonce).toBe(nonceBefore)
+    })
+
+    it('refreshToken(token, user) preserves sessionNonce while updating the user', () => {
+      useAuthStore.getState().login({ id: '1', email: 'old@example.com', role: 'Owner' }, 'token-1')
+      const nonceBefore = useAuthStore.getState().sessionNonce
+
+      useAuthStore.getState().refreshToken('token-2', {
+        id: '1',
+        email: 'new@example.com',
+        role: 'Owner',
+      })
+
+      const state = useAuthStore.getState()
+      expect(state.token).toBe('token-2')
+      expect(state.user?.email).toBe('new@example.com')
+      expect(state.sessionNonce).toBe(nonceBefore)
+    })
+  })
 })

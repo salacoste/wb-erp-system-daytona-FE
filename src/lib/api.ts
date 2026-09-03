@@ -74,16 +74,26 @@ export async function loginUser(data: LoginRequest): Promise<LoginResponse> {
 /**
  * Refreshes JWT token.
  * @param currentToken - Current JWT token to refresh.
+ * @param options - Extra ApiRequestOptions merged under the forced refresh
+ *   contract (D-2 pass-1, M2): the refresh deadline's AbortSignal rides this
+ *   spread — ApiRequestOptions extends RequestInit, so `signal` flows through
+ *   apiClient's option spread into fetch with zero new plumbing. The forced
+ *   skipAuth + Authorization contract cannot be overridden by a caller.
  * @returns New token and optionally updated user info.
  */
-export async function refreshToken(currentToken: string): Promise<RefreshTokenResponse> {
+export async function refreshToken(
+  currentToken: string,
+  options?: ApiRequestOptions
+): Promise<RefreshTokenResponse> {
   // Use apiClient with manual token header since token might be expired
   return apiClient.post<RefreshTokenResponse>(
     '/v1/auth/refresh',
     {},
     {
+      ...options,
       skipAuth: true,
       headers: {
+        ...options?.headers,
         Authorization: `Bearer ${currentToken}`,
       },
     }
@@ -137,6 +147,14 @@ export async function createCabinet(
     skipCabinetId: true,
     authToken: context.token,
     headers: { 'Idempotency-Key': context.idempotencyKey },
+    // D-2 pass-1 (OQ2, 2026-09-03): explicit initiating-token pin ⇒ no
+    // auto-replay. A 401 on this request is the pinned session's credential
+    // failure, not a stale-transport artifact — the durable account-scoped
+    // create owns its retry via Story 167.8 reconciliation, and silently
+    // replaying under a rotated DIFFERENT session's token would both mask
+    // the failure and drop the Idempotency-Key↔session pairing (cross-session
+    // pin-drop defense).
+    allowReactiveRefresh: false,
   }
   return apiClient.post<CreateCabinetResponse>('/v1/cabinets', data, options)
 }
@@ -158,7 +176,13 @@ export async function getCabinetCreationOperation(
 ): Promise<CreateCabinetResponse | CabinetCreationOperationState> {
   return apiClient.get<CreateCabinetResponse | CabinetCreationOperationState>(
     `/v1/cabinets/creation-operations/${operationId}`,
-    { authToken: token }
+    {
+      authToken: token,
+      // D-2 pass-2 (2026-09-03): initiating-JWT pin ⇒ no auto-replay —
+      // symmetric with createCabinet; cross-account op-id lookups are
+      // indistinguishable 404s by contract.
+      allowReactiveRefresh: false,
+    }
   )
 }
 
