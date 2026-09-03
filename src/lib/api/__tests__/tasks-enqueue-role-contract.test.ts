@@ -42,7 +42,7 @@ function enqueueWeeklySanityCheck(week?: string): Promise<EnqueueTaskResponse> {
 interface EnqueueCapture {
   url: string
   body: Record<string, unknown>
-  authorization: string
+  authHeader: string
   cabinetHeader: string
   contentType: string
 }
@@ -72,15 +72,15 @@ function useRoleAwareEnqueueHandler(
 ): void {
   server.use(
     http.post(ENQUEUE_URL, async ({ request }) => {
-      const authorization = request.headers.get('Authorization') ?? ''
+      const authHeader = request.headers.get('Authorization') ?? ''
       captures.push({
         url: request.url,
         body: await readJsonObject(request),
-        authorization,
+        authHeader,
         cabinetHeader: request.headers.get('X-Cabinet-Id') ?? '',
         contentType: request.headers.get('Content-Type') ?? '',
       })
-      return respond(authorization.replace('Bearer ', ''))
+      return respond(authHeader.replace('Bearer ', ''))
     })
   )
 }
@@ -124,7 +124,7 @@ describe('G2 — /v1/tasks/enqueue wire + role contract (MSW, real apiClient)', 
     expect(payload).toEqual({ cabinet_id: 'cab-771', week: '2026-W35' })
 
     // Auto-injected auth context headers.
-    expect(capture.authorization).toBe('Bearer manager-jwt')
+    expect(capture.authHeader).toBe('Bearer manager-jwt')
     expect(capture.cabinetHeader).toBe('cab-771')
     expect(capture.contentType).toContain('application/json')
     expect(capture.url).toBe(ENQUEUE_URL)
@@ -154,7 +154,7 @@ describe('G2 — /v1/tasks/enqueue wire + role contract (MSW, real apiClient)', 
 
     // No retry storm: the client fired exactly one enqueue request for the 403.
     expect(captures).toHaveLength(1)
-    expect(captures[0].authorization).toBe('Bearer analyst-jwt')
+    expect(captures[0].authHeader).toBe('Bearer analyst-jwt')
     expect(captures[0].cabinetHeader).toBe('cab-771')
   })
 })

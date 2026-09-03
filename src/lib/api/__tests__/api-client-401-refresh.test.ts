@@ -38,7 +38,7 @@ const REFRESH_URL = `${API}/v1/auth/refresh`
 const PROTECTED_ENDPOINT = '/v1/analytics/weekly/finance-summary'
 
 interface ProtectedCapture {
-  authorization: string
+  authHeader: string
   cabinetHeader: string
 }
 
@@ -50,7 +50,7 @@ function useTokenRotationHandlers(
   server.use(
     http.get(PROTECTED_URL, ({ request }) => {
       protectedCaptures.push({
-        authorization: request.headers.get('Authorization') ?? '',
+        authHeader: request.headers.get('Authorization') ?? '',
         cabinetHeader: request.headers.get('X-Cabinet-Id') ?? '',
       })
       if (protectedCaptures.length === 1) {
@@ -94,7 +94,7 @@ describe('G4 — mid-session 401 refresh (actual behavior, MSW + real apiClient)
     expect(apiError?.message).toBe('Unauthorized')
 
     // The failed attempt carried the stale session context on the wire.
-    expect(protectedCaptures[0].authorization).toBe('Bearer expired-jwt')
+    expect(protectedCaptures[0].authHeader).toBe('Bearer expired-jwt')
     expect(protectedCaptures[0].cabinetHeader).toBe('cab-909')
 
     // Pinned actual behavior: no reactive refresh, no auto-retry of the original.
@@ -126,8 +126,8 @@ describe('G4 — mid-session 401 refresh (actual behavior, MSW + real apiClient)
     expect(retried.sale_gross).toBe(1000)
 
     expect(protectedCaptures).toHaveLength(2)
-    expect(protectedCaptures[0].authorization).toBe('Bearer expired-jwt')
-    expect(protectedCaptures[1].authorization).toBe('Bearer rotated-jwt')
+    expect(protectedCaptures[0].authHeader).toBe('Bearer expired-jwt')
+    expect(protectedCaptures[1].authHeader).toBe('Bearer rotated-jwt')
     // The cabinet context survives the token rotation untouched.
     expect(protectedCaptures[1].cabinetHeader).toBe('cab-909')
     // Exactly one refresh for the whole recovery sequence.
@@ -142,7 +142,7 @@ describe('G4 — mid-session 401 refresh (actual behavior, MSW + real apiClient)
     server.use(
       http.get(PROTECTED_URL, ({ request }) => {
         protectedCaptures.push({
-          authorization: request.headers.get('Authorization') ?? '',
+          authHeader: request.headers.get('Authorization') ?? '',
           cabinetHeader: '',
         })
         return HttpResponse.json({ message: 'Unauthorized' }, { status: 401 })
@@ -173,7 +173,7 @@ describe('G4 — mid-session 401 refresh (actual behavior, MSW + real apiClient)
     // No retry storm: exactly one request per call, none replayed.
     expect(protectedCaptures).toHaveLength(3)
     for (const capture of protectedCaptures) {
-      expect(capture.authorization).toBe('Bearer expired-jwt')
+      expect(capture.authHeader).toBe('Bearer expired-jwt')
     }
     // Pinned actual behavior: no refresh dedupe exists because no reactive
     // refresh exists at the client layer at all (finding G4-A).
