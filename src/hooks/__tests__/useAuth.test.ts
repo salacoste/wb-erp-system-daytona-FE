@@ -1,5 +1,11 @@
 /**
  * Unit tests for useAuth hook
+ *
+ * D-2 (PB-3, 2026-09-03): the proactive refresh path updates the store via
+ * the `refreshToken(token, user)` STORE ACTION (nonce-preserving), never via
+ * `login()` — login() mints a new sessionNonce and would break in-flight D-1
+ * (Story 167.9) cabinet-create settlements. Contract annex hazard #2 in
+ * docs/request-backend/230-auth-refresh-endpoint-missing.md.
  */
 
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
@@ -39,6 +45,9 @@ const mockUseRouter = vi.mocked(useRouter)
 const mockUseAuthStore = vi.mocked(useAuthStore)
 const mockRefreshToken = vi.mocked(refreshToken)
 const mockIsTokenExpired = vi.mocked(isTokenExpired)
+// D-2: the STORE action the proactive path must call (alias — same-name
+// function rule; the API fn is `refreshToken` from '@/lib/api' above).
+const mockRefreshTokenStore = vi.fn()
 
 const createWrapper = () => {
   const qc = new QueryClient({ defaultOptions: { queries: { retry: false, gcTime: 0 } } })
@@ -56,6 +65,7 @@ describe('useAuth', () => {
       user: { id: '1', email: 'test@test.com', role: 'Owner', name: 'Test' },
       login: vi.fn(),
       logout: vi.fn(),
+      refreshToken: mockRefreshTokenStore,
     } as unknown as ReturnType<typeof useAuthStore>)
   })
 
@@ -107,7 +117,7 @@ describe('useAuth', () => {
     expect(mockRefreshToken).not.toHaveBeenCalled()
   })
 
-  it('refreshes token when expired', async () => {
+  it('refreshes token when expired via the nonce-preserving store action, not login()', async () => {
     const mockLogin = vi.fn()
     mockIsTokenExpired.mockReturnValue(true)
     mockUseAuthStore.mockReturnValue({
@@ -115,10 +125,12 @@ describe('useAuth', () => {
       user: { id: '1', email: 'test@test.com', role: 'Owner' },
       login: mockLogin,
       logout: vi.fn(),
+      refreshToken: mockRefreshTokenStore,
     } as unknown as ReturnType<typeof useAuthStore>)
+    const responseUser = { id: '1', email: 'test@test.com', role: 'Owner' as const }
     mockRefreshToken.mockResolvedValueOnce({
       token: 'new-token',
-      user: { id: '1', email: 'test@test.com', role: 'Owner' },
+      user: responseUser,
     })
 
     renderHook(() => useAuth(), { wrapper: createWrapper() })
@@ -128,7 +140,59 @@ describe('useAuth', () => {
     })
 
     expect(mockRefreshToken).toHaveBeenCalledWith('expired-token')
-    expect(mockLogin).toHaveBeenCalled()
+    // D-2 hazard #2 pin: the STORE refreshToken action updates (token, user).
+    expect(mockRefreshTokenStore).toHaveBeenCalledWith('new-token', responseUser)
+    // login() mints a new sessionNonce — it must NOT run on token refresh.
+    expect(mockLogin).not.toHaveBeenCalled()
+  })
+
+  it('keeps the existing user when the refresh response omits user', async () => {
+    const mockLogin = vi.fn()
+    mockIsTokenExpired.mockReturnValue(true)
+    const existingUser = { id: '1', email: 'test@test.com', role: 'Owner' }
+    mockUseAuthStore.mockReturnValue({
+      token: 'expired-token',
+      user: existingUser,
+      login: mockLogin,
+      logout: vi.fn(),
+      refreshToken: mockRefreshTokenStore,
+    } as unknown as ReturnType<typeof useAuthStore>)
+    mockRefreshToken.mockResolvedValueOnce({ token: 'new-token' })
+
+    renderHook(() => useAuth(), { wrapper: createWrapper() })
+
+    await act(async () => {
+      await vi.runOnlyPendingTimersAsync()
+    })
+
+    // No user in the response → the store action receives the existing user
+    // (it keeps state.user when none is passed) and login() still never runs.
+    expect(mockRefreshTokenStore).toHaveBeenCalledWith('new-token', existingUser)
+    expect(mockLogin).not.toHaveBeenCalled()
+  })
+
+  it('does not update the store when no user is available at all', async () => {
+    const mockLogin = vi.fn()
+    mockIsTokenExpired.mockReturnValue(true)
+    mockUseAuthStore.mockReturnValue({
+      token: 'expired-token',
+      user: null,
+      login: mockLogin,
+      logout: vi.fn(),
+      refreshToken: mockRefreshTokenStore,
+    } as unknown as ReturnType<typeof useAuthStore>)
+    mockRefreshToken.mockResolvedValueOnce({ token: 'new-token' })
+
+    const { result } = renderHook(() => useAuth(), { wrapper: createWrapper() })
+
+    await act(async () => {
+      await vi.runOnlyPendingTimersAsync()
+    })
+
+    // Graceful no-op (parity with the pre-D-2 branch): warn, update nothing.
+    expect(mockRefreshTokenStore).not.toHaveBeenCalled()
+    expect(mockLogin).not.toHaveBeenCalled()
+    expect(result.current.refreshToken).toBeInstanceOf(Function)
   })
 
   it('logs out and redirects on refresh failure', async () => {

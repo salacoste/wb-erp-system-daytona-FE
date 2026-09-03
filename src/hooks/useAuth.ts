@@ -14,7 +14,13 @@ import { isTokenExpired } from '@/lib/auth'
  */
 export function useAuth() {
   const router = useRouter()
-  const { token, user, login, logout } = useAuthStore()
+  // D-2 (PB-3, 2026-09-03): alias the STORE `refreshToken` action to avoid
+  // the name clash with the `refreshToken()` API function from '@/lib/api'
+  // (same-name modules rule, frontend/CLAUDE.md). The store action keeps
+  // sessionNonce + user; `login()` would mint a new nonce and break in-flight
+  // D-1 (Story 167.9) cabinet-create settlements — contract annex hazard #2
+  // in docs/request-backend/230-auth-refresh-endpoint-missing.md.
+  const { token, user, logout, refreshToken: refreshTokenStore } = useAuthStore()
 
   /**
    * Refresh token if it's expired or about to expire
@@ -26,18 +32,16 @@ export function useAuth() {
     if (isTokenExpired(token)) {
       try {
         const response = await refreshToken(token)
-        // Update token in store
-        if (response.user) {
-          login(response.user, response.token)
-        } else if (user) {
-          // Keep existing user, just update token
-          login(user, response.token)
-        } else {
+        if (!response.user && !user) {
           // No user available, just update token
           // This shouldn't happen, but handle gracefully
           logger.warn('Token refreshed but no user available')
           return false
         }
+        // D-2 hazard #2: nonce-preserving store update — NEVER login() here.
+        // (`?? undefined` narrows the store's `User | null` to the action's
+        // `User | undefined` param; the guard above ensures a user exists.)
+        refreshTokenStore(response.token, response.user ?? user ?? undefined)
         return true
       } catch (error) {
         // Refresh failed, logout user
@@ -48,7 +52,7 @@ export function useAuth() {
       }
     }
     return true
-  }, [token, user, login, logout, router])
+  }, [token, user, logout, refreshTokenStore, router])
 
   /**
    * Check and refresh token on mount and periodically

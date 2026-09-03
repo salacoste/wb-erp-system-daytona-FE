@@ -9,6 +9,7 @@ import { useAuthStore } from '@/stores/authStore'
 import { ApiError, type ApiRequestOptions, type ApiResponse } from '@/types/api'
 import { logger } from '@/lib/logger'
 import { logCogsRawResponse, logCogsProcessedResponse } from './api-client-debug'
+import { getFreshToken, isRefreshEndpoint } from './api-client-refresh'
 import {
   extractErrorMessage,
   extractRetryAfter,
@@ -37,7 +38,11 @@ class ApiClient {
   }
 
   /** Base request method with automatic header injection */
-  private async request<T>(endpoint: string, options: ApiRequestOptions = {}): Promise<T> {
+  private async request<T>(
+    endpoint: string,
+    options: ApiRequestOptions = {},
+    allowReactiveRefresh = true
+  ): Promise<T> {
     const { token, cabinetId } = useAuthStore.getState()
 
     const headers: Record<string, string> = {
@@ -69,6 +74,27 @@ class ApiClient {
       const isJson = contentType?.includes('application/json')
 
       if (!response.ok) {
+        // D-2 (PB-3, 2026-09-03): reactive 401 recovery — contract annex in
+        // docs/request-backend/230-auth-refresh-endpoint-missing.md. Gates:
+        // authenticated requests only (a skipAuth 401 is a credential
+        // failure — nothing to rotate); never the refresh endpoint itself
+        // (its own 401 must not recurse); once per request — a replay that
+        // 401s again surfaces the original ApiError (no loop).
+        if (
+          response.status === 401 &&
+          allowReactiveRefresh &&
+          !options.skipAuth &&
+          !isRefreshEndpoint(endpoint)
+        ) {
+          const refreshed = await getFreshToken()
+          if (refreshed) {
+            // Replay ONCE. `authToken: undefined` drops a stale Story-167.9
+            // initiating override — the revoked token must not ride again;
+            // the replay re-reads the (rotated) store token + cabinet fresh.
+            return this.request<T>(endpoint, { ...options, authToken: undefined }, false)
+          }
+        }
+
         const errorData = isJson
           ? await response.json().catch(() => ({}))
           : await response.text().catch(() => 'Unknown error')
