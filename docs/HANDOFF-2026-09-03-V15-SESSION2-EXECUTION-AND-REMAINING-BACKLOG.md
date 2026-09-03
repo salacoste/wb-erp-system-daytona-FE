@@ -83,7 +83,7 @@ harness restart-per-run раннер · FR-7 (reseed nmId 202867769 W26 ИЛИ r
 
 | Решение | Статус |
 |---|---|
-| D-2 re-scope (§3.1) | ⏳ предложен owner, ждёт «ок» |
+| D-2 re-scope (§3.1) | ✅ owner-«ок» получено 2026-09-03; ⚠️ live-BE локально ещё старый (refresh 404 — инстанс не пересобран; см. аннекс #230) — D-2 идёт по контракту, live-гейт post-rebuild |
 | C5 chart-palette (гейтит chart-hex трек ~50 сайтов) | ⏳ варианты: categorical token-set (рекомендовано) / расширенные exceptions |
 | financial-foreground токены | ⏳ рекомендация: отложить |
 | logger-redact волна | ⏳ рекомендация: после boundary |
