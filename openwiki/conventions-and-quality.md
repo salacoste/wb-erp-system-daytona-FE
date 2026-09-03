@@ -3,9 +3,6 @@ type: "Engineering Standards"
 title: "Conventions & Quality Gates"
 description: "Coding standards and automated quality gates — file-size limits, TypeScript strictness, the Defensive Frontend Principle, the presentation-source-contract test pattern, ratchet baseline gates (incl. the shadcn UI-boundary and migration-parity validators), and the two-pass review discipline."
 tags: [conventions, quality-gates, testing, eslint, review-discipline, presentation-contracts]
-verified:
-  - by: openwiki/0.5.0
-    at: 2026-09-02T08:47:53.996Z
 sources:
   - id: openwiki-source-a2371d6362e5db4bc834ad03
     resource: repo://CLAUDE.md
@@ -23,6 +20,8 @@ sources:
     resource: repo://scripts/check-eslint-rules.sh
   - id: openwiki-source-993231c193b0c1ee2eeb5f7c
     resource: repo://scripts/check-max-lines.sh
+  - id: openwiki-source-a33125899c73194a4c9f0b33
+    resource: repo://scripts/check-privacy-console.mjs
   - id: openwiki-source-63d46e41978bcf9c4a46a1d7
     resource: repo://scripts/check-shadcn-migration-parity.mjs
   - id: openwiki-source-bdeb846005a65a32b569a6d3
@@ -47,7 +46,10 @@ sources:
     resource: repo://src/components/custom/dashboard/__tests__/dashboard-widgets-presentation-source-contracts.test.ts
   - id: openwiki-source-fbadcd8591b65031efaaedce
     resource: repo://vitest.config.ts
-generated: { by: "openwiki/0.5.0", at: "2026-09-02T08:47:53.996Z" }
+generated: { by: "openwiki/0.5.0", at: "2026-09-03T08:47:55.542Z" }
+verified:
+  - by: openwiki/0.5.0
+    at: 2026-09-03T08:47:55.542Z
 ---
 
 # Conventions & Quality Gates
@@ -168,7 +170,7 @@ Each story closes only when every quality gate matches its accepted baseline (th
 | Dot-locale percent | `npm run check:locale-percent` | Ratchet ↓ — current count 4 in `scripts/.locale-percent-baseline.txt` (started at ~108); lower the baseline when migrating |
 | AP#8 normalizer | `npm run check:anti-pattern-8-normalizer` | Ratchet guard vs baseline (`scripts/.anti-pattern-8-normalizer-baseline.txt`) |
 | ESLint | `npm run lint` | 0 errors, 0 warnings (zero-warning policy, `--max-warnings 0` in `lint` + `lint:fix`, Story 164.4) |
-| Vitest | `npm test -- --run` | ≥ 19118 passing, 0 failed / 1234 files (floor moved exactly −756 dead tests, Story 174.2-FE; additions OK, regressions not; skipped informational) |
+| Vitest | `npm test -- --run` | ≥ 19436 passing / 0 failed (floor: 19118 after 174.2 dead-test deletion; then +237 from the 174.3 window, +8 contract tests 174.4, +52 redact suite debt-FE-D9, +6 nonce-mint suite D-1/PB-1, +3 urgency-tier suite C15, +12 reactive-refresh suite D-2/PB-3; additions OK, regressions not; skipped informational) |
 | E2E bare skips | `npm run check:e2e-bare-skips` + `scripts/check-e2e-bare-skips.test.mjs` | No bare `.skip` without reason in owned E2E specs |
 | Max-lines cross-check | `npm run check:max-lines` | Matches the ESLint `max-lines` caps (200 source / 800 test) |
 | Privacy console guard | `npm run check:privacy` | 0 forbidden `console.*` calls in PII-adjacent files (see [Testing & Operations](testing-and-ops.md#privacy-console-check)) |
@@ -190,6 +192,15 @@ Ratchet gates (check:docs, check:locale-percent, check:anti-pattern-8-normalizer
 
 `package.json` `engines` pins Node `24.18.0` and npm `11.11.0`. Vitest and `@vitest/coverage-v8` are pinned to exact `4.1.10`. These versions are enforced via local validation on the pinned toolchain (see [Local Validation and Merge Authority](#local-validation-and-merge-authority)); the project no longer has a CI workflow that asserts them at job start.
 
+### Privacy console guard (`scripts/check-privacy-console.mjs`)
+
+`npm run check:privacy` runs `scripts/check-privacy-console.mjs`, a local privacy/PII scanner that replaced the privacy step that previously ran in CI. It works in two layers:
+
+- **PII-file console ban** — the exported `PII_FILES` list (six paths: the orders client-info API + its test, `useClientInfo.ts` + its test, `orders-client-info.ts`, and the OrdersTable client-column test) is parsed with `@typescript-eslint/parser`, and any `console.<method>` call whose argument text matches a sensitive-material regex (`authorization`, `token`, `cookie`, `headers`, `payload`, `fingerprint`, `email`, `phone`, …) is a violation. Computed member access (`console['log']`) and static template-literal keys are detected too.
+- **Repository-wide secret scan** — `PRIVACY_SCAN_ROOTS` (`src`, `e2e`, `scripts`, `tests`, `test-utils`, `.omx/ultragoal/evidence`) are walked (symlinks rejected, `node_modules`/`.next`/`dist`/`coverage`/reports ignored) over an allowlist of text extensions — including `.http` REST-client examples (owner-approved D-4 / SEC-DOC-1, 2026-09-02) — and each file's text is matched against `SECRET_RULES`: authorization/cookie/token values, browser-storage of secrets, fingerprint material, sensitive raw URLs, unsanitized payloads, and raw browser capture/diagnostics (`page.screenshot(`, logging `msg.text()` / `response.url()`).
+
+The accepted state is **exactly 3 pre-existing findings** (two in `api-client-401-refresh.test.ts`, one in `tasks-enqueue-role-contract.test.ts`) and 0 new; a story that adds findings fails its privacy gate. The guard's own `node:test` self-suite runs together with the diagnostic-capture-policy tests under `npm run test:privacy` (`node --test scripts/check-privacy-console.test.mjs scripts/privacy/diagnostic-capture-policy.test.mjs`), and both self-suite files are excluded from the Vitest run (`vitest.config.ts`). Full details: [Testing & Operations — Privacy Console Check](testing-and-ops.md#privacy-console-check).
+
 ## shadcn Gate Scripts (Stories 174.1 / 174.2)
 
 The Epics 166–174 shadcn full-UI migration added two Node-based gate scripts. Neither has an `npm run` alias — invoke them directly with `node scripts/…`. Both run a `node:test` self-suite first and fail fast if it fails, and both self-suites are excluded from the Vitest run (`vitest.config.ts` exclude list) because they are `node:test`-only surfaces (the Playwright static boundary forbids `node:child_process`/dynamic import in `.test.*` files Vitest would pick up).
@@ -201,7 +212,7 @@ Story 174.2-FE codifies the repository-wide UI boundary canon. The script scans 
 - `LEGACY_PALETTE` — the widest route-guard form (monitoring 172.12 / 169.11 canon) across ~20 color families and shades 50–950, including the `ring-offset`, `inset-shadow`, and `text-shadow` prefixes; semantic token vocabulary (`bg-status-error`, `text-financial-positive`, `text-chart-3`, `bg-popover`) must never match.
 - `CONTEXTUAL_HEX` — hex literals anchored to quote/backtick/arbitrary-value bracket/`;` contexts (3/4/6/8-digit) plus `rgb/rgba/hsl/hsla/oklch` color functions whose first ~40 chars contain a digit or `#`. Prose ticket numbers (`see ticket #197`) must not match.
 
-Scanned files listed in the exported `BOUNDARY_EXCEPTIONS` map are counted as suppressed rather than active; every entry must carry an owner/debt ID (F-10 WCAG contrast exception, C5 waterfall chart hex, two historical `#7C3AED` chart marks) and be mirrored 1:1 in `_bmad-output/planning-artifacts/shadcn-ui-boundary-classification-manifest.md`. Violations are grouped per route (first `src/app` segment for app files, else first two path segments), totaled, and compared against the single-integer baseline `scripts/.shadcn-ui-boundary-baseline.txt`:
+Scanned files listed in the exported `BOUNDARY_EXCEPTIONS` map are counted as suppressed rather than active; every entry must carry an owner/debt ID (F-10 WCAG contrast exception, C5 waterfall chart hex, two historical `#7C3AED` chart marks) (owner/debt IDs) and be mirrored 1:1 in `_bmad-output/planning-artifacts/shadcn-ui-boundary-classification-manifest.md`. After the 2026-09-02 FeedbackButtons fix (debt D-3 / PB-4 — the legacy `green-700` success span was replaced with a solid status pair that is AA-safe in both themes), the map holds exactly **three owner-accepted exceptions**: the C5 waterfall categorical-hex config (`waterfall-chart-config.ts`, pending the chart-palette owner's canon decision) and two historical `#7C3ED`-family `#7C3AED` chart marks (`PriceHistorySheet.tsx`, `FunnelTab.tsx` — 170.x carry-outs, classified not migrated). Violations are grouped per route (first `src/app` segment for app files, else first two path segments), totaled, and compared against the single-integer baseline `scripts/.shadcn-ui-boundary-baseline.txt`:
 
 - `total > baseline` → exit 1 (fail) with offending files enumerated
 - `total < baseline` → pass with "ratchet down" — the baseline MUST be lowered in the same commit
@@ -213,7 +224,7 @@ flowchart TD
     B -- no --> F["exit 1 self-test-failed"]
     B -- yes --> C["scan src production files with LEGACY_PALETTE + CONTEXTUAL_HEX"]
     C --> D["subtract BOUNDARY_EXCEPTIONS suppressed files"]
-    D --> E{"total vs baseline 459?"}
+    D --> E{"total vs baseline 372?"}
     E -- greater --> G["exit 1 FAIL"]
     E -- equal --> H["PASS"]
     E -- less --> I["PASS + ratchet down, lower baseline in same commit"]
@@ -281,7 +292,4 @@ This complements the [Two-Pass Review Discipline](#two-pass-review-discipline): 
 - **Pure functions over hook mocking** — Export testable logic as pure functions from hooks
 - **Error test pattern** — Always use `mockRejectedValueOnce` (not `mockRejectedValue`)
 - **Regex for locale assertions** — Use `/₽/`, `/\d+/` patterns in tests, not exact formatted strings
-s are already shipped, close as no-op with evidence
-- **Pure functions over hook mocking** — Export testable logic as pure functions from hooks
-- **Error test pattern** — Always use `mockRejectedValueOnce` (not `mockRejectedValue`)
-- **Regex for locale assertions** — Use `/₽/`, `/\d+/` patterns in tests, not exact formatted strings
+- **No bare `TODO`** — covered above; `PENDING BACKEND:` / `FUTURE:` / ticket links only

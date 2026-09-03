@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "pageVersion": "sha256:7e89b3744ce4f591c574cc31cf29c51a81ca3902fdf4ee952faa9e506edfcd95",
+  "pageVersion": "sha256:d22d50dfb39fd451f6da3778b775d823ed847943fc6f8b7de329dea0aea9f0b1",
   "claims": [
     {
       "id": "claim_633e3a28dfd14bdc90dc2ba40c9dfdd4",
@@ -108,19 +108,19 @@
     },
     {
       "id": "claim_12cb3fbbcc314d0f97169faa64a63920",
-      "statement": "Story 174.2 enforces a repository-wide design-system boundary: scripts/check-shadcn-ui-boundary.mjs (Node stdlib) scans all production src/**/*.{ts,tsx} for LEGACY_PALETTE and CONTEXTUAL_HEX patterns and ratchets against scripts/.shadcn-ui-boundary-baseline.txt, whose final value is 459 (Story 174.4's live re-run discovered the −64 drop from the original 523 caused by raw-class removals in the 174.3 merge window and lowered the baseline same-commit); it exits 0 at-or-below the baseline and 1 only on increase, and suppression requires a BOUNDARY_EXCEPTIONS entry with an owner/debt ID mirrored in the classification manifest — 3 entries remain (C5 waterfall categorical hex and two historical #7C3AED chart marks, 22 suppressed matches) after the F-10 FeedbackButtons exception was lifted 2026-09-02; the scanner has a 10-case self-test suite.",
+      "statement": "Story 174.2 enforces a repository-wide design-system boundary: scripts/check-shadcn-ui-boundary.mjs (Node stdlib) scans all production src/**/*.{ts,tsx} for LEGACY_PALETTE and CONTEXTUAL_HEX patterns and ratchets against scripts/.shadcn-ui-boundary-baseline.txt, whose current value is 372 (523 at 174.2 close → 459 by 174.4's live re-run → 401 by P2 wave 1 financial-summary → 372 by P2 wave 2 margin, each drop lowering the baseline same-commit); it exits 0 at-or-below the baseline and 1 only on increase, and suppression requires a BOUNDARY_EXCEPTIONS entry with an owner/debt ID mirrored in the classification manifest — 3 entries remain (C5 waterfall categorical hex and two historical #7C3AED chart marks, 22 suppressed matches) after the F-10 FeedbackButtons exception was lifted 2026-09-02; the scanner has a 10-case self-test suite.",
       "evidence": [
         {
-          "resource": "repo://_bmad-output/planning-artifacts/shadcn-ui-boundary-classification-manifest.md#L228-L236",
-          "version": "repo-lines-v1:sha256:398d68fc962631de6ac84b7291b55876756dfcbc0164ece39a415aff734df762:eyJzZWxlY3RlZExpbmVDb3VudCI6OSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiYmI2MzI2YWY4ZGMyOWMzMDFkYjBhMWU3MDJhNzZlZTk4NTY1ODBjYjNjNWM1ZjYwZTljNmM5MzI2ZGRjZGI5NiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiZjkwMzcyNzg4M2QyOWMzMmQyMTNkMWYzZjFhYzY1NGIzZDJmNmMyNzg1Yzg0ODI5OWI0N2I4NjVhZjU4Y2ExNyIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMTBlYWIwZDc2NmY0YjA4NWI1NDY3ZmZiNDI1MjAwMmUzNjRmYzE5NGVmYmYwNTE3MTg1NTY1MjFiNWYyOTAxZiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMmNiNGQ1YjgzODIxMTRkYzA4NjllZjViNDE4Y2FhYjE3MzNhZmM1MmQ5Y2RlMjNhZGEyMTI4YmY4YzMyNzk4MyJ9"
+          "resource": "repo://_bmad-output/implementation-artifacts/debt-p2-boundary-wave1-finsum.md",
+          "version": "repo-file-v1:sha256:04808be9e877a5495b06695e9fc6d9d4c530835d347086e79d2b633c5857b7e4"
+        },
+        {
+          "resource": "repo://_bmad-output/implementation-artifacts/debt-p2-boundary-wave2-margin.md",
+          "version": "repo-file-v1:sha256:bb27db12ac047bfe2712f1e1bf49b1e625da6e85bc4ca3567c5e9aea8aedd967"
         },
         {
           "resource": "repo://scripts/.shadcn-ui-boundary-baseline.txt",
-          "version": "repo-file-v1:sha256:7757df589d2dcf60b6ef20aca61d7174620e3e109a7eb27bcd49115a976b40e9"
-        },
-        {
-          "resource": "repo://scripts/__tests__/check-shadcn-ui-boundary.test.mjs",
-          "version": "repo-file-v1:sha256:2acf3671f96aa8c8cbd39f514bd3a79956d64e4a598cd01de5ed0cfe7bb1474d"
+          "version": "repo-file-v1:sha256:ed57abc02a4ca626324ba2533c1363a21e9c2852d4c42426879978942051a70a"
         },
         {
           "resource": "repo://scripts/check-shadcn-ui-boundary.mjs#L33-L52",
@@ -206,7 +206,7 @@
     },
     {
       "id": "claim_af6d73f66be54ef39e8ac35714f4990b",
-      "statement": "Below the e2e matrix sits a vitest a11y layer: *.a11y.test.tsx files across analytics, dashboard, financial-summary, moysklad, and orders components serve as the tooltip/interaction owner tests cited by the 174.3 inventories (e.g. UnitEconomicsWaterfall.a11y.test.tsx exposes exact percentage/currency units, categories, values, and precision).",
+      "statement": "Below the e2e matrix sits a vitest a11y layer: *.a11y.test.tsx files across analytics, dashboard, financial-summary, moysklad, and orders components; most are DOM-level owner tests cited by the 174.3 inventories (e.g. UnitEconomicsWaterfall.a11y.test.tsx exposes exact percentage/currency units, categories, values, and precision), while the financial-summary pair is a source-contract pin asserting each section table's stable sr-only TableCaption name and the expenses divider's identity value from component source.",
       "evidence": [
         {
           "resource": "repo://e2e/fixtures/story-174-3/chart-inventory.ts",
@@ -218,7 +218,7 @@
         },
         {
           "resource": "repo://src/components/custom/financial-summary/__tests__/FinancialSummaryTables.a11y.test.tsx",
-          "version": "repo-file-v1:sha256:90463b07670ad330700f2f1fa44933cde89bfa87839dae0a40d3649d4fca139f"
+          "version": "repo-file-v1:sha256:d4fbd5592c864ca0cdf615e7b4c41daba25ed9948a5065b8378f1eab6fa19e68"
         }
       ]
     },
@@ -245,10 +245,50 @@
           "version": "repo-file-v1:sha256:89126825907acfc492042183c0aadce92390d65b0d2429a25c1a2e1723608bfb"
         }
       ]
+    },
+    {
+      "id": "claim_aa841a2b079f4cbea758eabeb7bc87b3",
+      "statement": "The financial-summary family is decomposed into focused sub-components: FinancialSummaryTable.tsx is a slim orchestrator composing RevenueSection, SalesFunnelSection (over FunnelParts), ExpensesSection (over ExpenseRow/ExpenseTableRows/CogsSubRows), CompensationsSection, PayoutSection, CogsSection, and ProfitSection (renders only at 100% COGS coverage), with MetricRow/ChangeIndicator and LabelWithTooltip as shared row primitives; the whole subtree was token-migrated by P2 wave 1 (58 sites, boundary 459→401) with per-replacement measured contrast in both themes and the house rule that colored text on a tint must measure ≥4.5:1 light (else tint /5 or text → foreground/muted).",
+      "evidence": [
+        {
+          "resource": "repo://_bmad-output/implementation-artifacts/debt-p2-boundary-wave1-finsum.md",
+          "version": "repo-file-v1:sha256:04808be9e877a5495b06695e9fc6d9d4c530835d347086e79d2b633c5857b7e4"
+        },
+        {
+          "resource": "repo://src/components/custom/financial-summary/FinancialSummaryTable.tsx",
+          "version": "repo-file-v1:sha256:8689d776b5e3a38de6528a14e1bea3d653a90c992154cc780bbedfad553f533e"
+        },
+        {
+          "resource": "repo://src/components/custom/financial-summary/ProfitSection.tsx",
+          "version": "repo-file-v1:sha256:ba443b11677c398b88539350e487d887adade5652c19dde1b00360928ed92a08"
+        }
+      ]
+    },
+    {
+      "id": "claim_789245ca498c4d789e7a44b91ec90335",
+      "statement": "P2 wave 2 token-migrated the margin family (29 live sites, boundary 401→372): MarginBadge chips use financial valence (bg-financial-*/5 + text-financial-* + border-financial-*/20, measured 4.80/5.20 light and 8.72/8.19 dark — the earlier /15 tints failed light at 4.19/4.42), zero renders muted, and null/NaN/Infinity never fabricate a zero (muted «—» chip with the missing-data reason as title); MarginAggregatedTableHeader uses text-status-information active sort icons with muted idle icons and aria-sort on sortable heads; MARGIN_STATUS_CONFIG tiers margins with excellent/critical on /5 financial tints and good/warning on solid status-foreground pairs (the D-4 fix), exposing that the earlier ≥4.5 attestation had covered only the solid pairs.",
+      "evidence": [
+        {
+          "resource": "repo://_bmad-output/implementation-artifacts/debt-p2-boundary-wave2-margin.md",
+          "version": "repo-file-v1:sha256:bb27db12ac047bfe2712f1e1bf49b1e625da6e85bc4ca3567c5e9aea8aedd967"
+        },
+        {
+          "resource": "repo://src/components/custom/MarginAggregatedTableHeader.tsx",
+          "version": "repo-file-v1:sha256:c1a997a268357eff8bb9c5ac3225dfd67dc1ef8ea293dd464f32ff971c4c0b97"
+        },
+        {
+          "resource": "repo://src/components/custom/MarginBadge.tsx",
+          "version": "repo-file-v1:sha256:de1ec452c0323d2bc9f60a0026e7bd703a43adbc90308dfdb291ec731cfcf542"
+        },
+        {
+          "resource": "repo://src/components/custom/price-calculator/margin-status-helpers.ts",
+          "version": "repo-file-v1:sha256:3b5877f761070a8a61c970ae36b2a1585d8637bb7e33ddba95304ebd7182e89f"
+        }
+      ]
     }
   ],
   "verification": {
     "by": "openwiki/0.5.0",
-    "at": "2026-09-02T08:47:53.996Z"
+    "at": "2026-09-03T08:47:55.542Z"
   }
 }

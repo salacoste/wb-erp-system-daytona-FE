@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "pageVersion": "sha256:b8c5e9b1289d33412858ec211dc8f65caa6511f30243fffa7b8b702be1ae89de",
+  "pageVersion": "sha256:ca9e43801f8e71cdb9d1e45158ac98c1cab02724000049491b9819dc169de318",
   "claims": [
     {
       "id": "claim_34d4e9ec9e0249299eb57f3e06db8784",
@@ -18,11 +18,11 @@
     },
     {
       "id": "claim_6f40c953f4a54d4f9d1a5f2db9c186a0",
-      "statement": "The current accepted full Vitest baseline (CLAUDE.md accepted-baselines table, `npm test -- --run`) is ≥ 19,415 passing / 0 failed. That value is the 19,118 floor set by Story 174.2-FE (2026-08-31) — itself an exact −756 tests / −22 files from 19,874/1,256 by deletion of 65 proven-dead test files (import-closure proved, no live test deleted) — plus +237 tests from the 174.3 window, +8 contract tests from 174.4, and +52 redact-suite tests from debt-FE-D9. Earlier per-story peaks such as 19,874 are historical; the baseline is not a substitute for fresh per-story validation, and a story that legitimately moves it must update the table in the same PR.",
+      "statement": "The current accepted full Vitest baseline (CLAUDE.md accepted-baselines table, `npm test -- --run`) is ≥ 19,436 passing / 0 failed. That value is the 19,118 floor set by Story 174.2-FE (2026-08-31) — itself an exact −756 tests / −22 files from 19,874/1,256 by deletion of 65 proven-dead test files (import-closure proved, no live test deleted) — plus +237 tests from the 174.3 window, +8 contract tests from 174.4, +52 redact-suite tests from debt-FE-D9, +6 nonce-mint tests (D-1/PB-1), +3 urgency-tier tests (C15), and +12 reactive-refresh tests (D-2/PB-3). Earlier per-story peaks such as 19,874 are historical; the baseline is not a substitute for fresh per-story validation, and a story that legitimately moves it must update the table in the same PR.",
       "evidence": [
         {
-          "resource": "repo://CLAUDE.md#L153-L153",
-          "version": "repo-lines-v1:sha256:f0e8665deb5c3087c962d8f3f21314e8c21af017f0c04944fbb1103ae7bf91d8:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZjBlODY2NWRlYjVjMzA4N2M5NjJkOGYzZjIxMzE0ZThjMjFhZjAxN2YwYzA0OTQ0ZmJiMTEwM2FlN2JmOTFkOCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiZjBlODY2NWRlYjVjMzA4N2M5NjJkOGYzZjIxMzE0ZThjMjFhZjAxN2YwYzA0OTQ0ZmJiMTEwM2FlN2JmOTFkOCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMTVkZTYyYmRkMWY3OTRiOTViMTI0MTcwMTY1NzYzNmE5YmIzYzIwMDU3NjQ5N2I4NmJlZTM0OTBhNzBhY2I4MCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMzI0ZDRlN2EwZjdlYjJjNzhmNzVjNjJhNmI3NmEzMGZlY2FmNTE4Y2JkY2UwMTBjNzFmNzU4OTlkYjExYTZkNyJ9"
+          "resource": "repo://CLAUDE.md#L152-L154",
+          "version": "repo-lines-v1:sha256:070858439a6b787c609283ab366265d93fbba781037023de6c74ce8fe89ea907:eyJzZWxlY3RlZExpbmVDb3VudCI6MywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMzA5YjZjYjdiYWIxNzE1YTU0YjU2MTI4ZjRhNmI4YmJmMTcxYzMzN2E3N2QwNDkzZTQwNzM3OTU5NTM0N2ExNSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiYmQ2ZmI0MjNjZmRiMDE2NmJmNWExZjAwMTcwMGVmNDZkMWE3M2IwOGIwOGMwMTE1M2FjMjY3YWIyM2E3Y2IwMyIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiYjI2MzVmN2RiNDE5YmEwN2NlYzQ2NDVkN2QyNTM0YmRjODcyOTViNGRhNDBkYTAyYzlkMzMxYzVmMGZlYjVkNiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNzczM2UzYTAyYTM4N2M1NzQzNGU1NDQ4OWVjMWI5OTI4NDE0NmQ4Y2YwMDA1NzFkZGRjYjBiYzVjYmQ5ZWI1ZSJ9"
         }
       ]
     },
@@ -110,19 +110,23 @@
     },
     {
       "id": "claim_9ad59c57b01b44fcaf18f91c92f97884",
-      "statement": "scripts/check-shadcn-ui-boundary.mjs (Story 174.2, no npm alias — invoke with `node scripts/…`) scans production src/**/*.{ts,tsx} (tests, __tests__, .d.ts, src/test excluded; relative-first enumeration) for LEGACY_PALETTE and CONTEXTUAL_HEX violations using the superset regex canon, groups them per route, totals them, and ratchets against the single-integer baseline scripts/.shadcn-ui-boundary-baseline.txt (459, lowered from the 174.2 birth value 523 by 174.4's live re-run): exit 0 at or below baseline, exit 1 only on increase, and any decrease must lower the baseline in the same commit. Suppression is only via the exported BOUNDARY_EXCEPTIONS map (3 files — the C5 waterfall categorical hex and two historical `#7C3AED` chart marks; the former F-10 WCAG-contrast exception was lifted 2026-09-02), each entry carrying an owner/debt ID and mirrored 1:1 in the classification manifest; the script runs its 10-case node:test self-suite first and fails fast if it fails.",
+      "statement": "scripts/check-shadcn-ui-boundary.mjs (Story 174.2, no npm alias — invoke with `node scripts/…`) scans production src/**/*.{ts,tsx} (tests, __tests__, .d.ts, src/test excluded; relative-first enumeration) for LEGACY_PALETTE and CONTEXTUAL_HEX violations using the superset regex canon, groups them per route, totals them, and ratchets against the single-integer baseline scripts/.shadcn-ui-boundary-baseline.txt (372; born at 523 in 174.2, lowered to 401 by the 174.4 re-run, then ↓58 in Margin-family wave-1 removals and ↓29 in wave-2 plus the D-4 /15→/5 fold-in, 2026-09-03): exit 0 at or below baseline, exit 1 only on increase, and any decrease must lower the baseline in the same commit. Suppression is only via the exported BOUNDARY_EXCEPTIONS map (3 files — the C5 waterfall categorical hex and two historical `#7C3AED` chart marks; the former F-10 WCAG-contrast exception was lifted 2026-09-02), each entry carrying an owner/debt ID and mirrored 1:1 in the classification manifest; the script runs its 10-case node:test self-suite first and fails fast if it fails.",
       "evidence": [
         {
+          "resource": "repo://CLAUDE.md#L154-L154",
+          "version": "repo-lines-v1:sha256:bd6fb423cfdb0166bf5a1f001700ef46d1a73b08b08c01153ac267ab23a7cb03:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiYmQ2ZmI0MjNjZmRiMDE2NmJmNWExZjAwMTcwMGVmNDZkMWE3M2IwOGIwOGMwMTE1M2FjMjY3YWIyM2E3Y2IwMyIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiYmQ2ZmI0MjNjZmRiMDE2NmJmNWExZjAwMTcwMGVmNDZkMWE3M2IwOGIwOGMwMTE1M2FjMjY3YWIyM2E3Y2IwMyIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiOGJhNDU3NmY4MzllZmQ1ZDkzZjhiNTdhMjY2MzI2MzYxOTkwZmFlODFlMGM3NzUyMDI1MjdlZjc0MTBmZmU3NiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNzczM2UzYTAyYTM4N2M1NzQzNGU1NDQ4OWVjMWI5OTI4NDE0NmQ4Y2YwMDA1NzFkZGRjYjBiYzVjYmQ5ZWI1ZSJ9"
+        },
+        {
           "resource": "repo://scripts/.shadcn-ui-boundary-baseline.txt",
-          "version": "repo-file-v1:sha256:7757df589d2dcf60b6ef20aca61d7174620e3e109a7eb27bcd49115a976b40e9"
+          "version": "repo-file-v1:sha256:ed57abc02a4ca626324ba2533c1363a21e9c2852d4c42426879978942051a70a"
         },
         {
-          "resource": "repo://scripts/__tests__/check-shadcn-ui-boundary.test.mjs#L140-L144",
-          "version": "repo-lines-v1:sha256:7d88374c94637c84c2fd68426017a0cd723591098c47347f3ed977de0fc7e6a8:eyJzZWxlY3RlZExpbmVDb3VudCI6NSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiOGE5MDQ5NjdmYjllNjhlYTdhZDIwNzA1NzhjNjJkMDRmMmM1NzdiMzcyYWQ3OTdkZTNmNmYzZWRiZmE1YTgzMCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMGJmYjkwMzM1NDkzNjQxY2UyODE2NmM1MThhMzZjMDdjOTQ4NGY0NTM4YzcxMmJiYmMyODA4NDNhN2FlOTcxNyIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiYzI2NTZhMmFiYTg4N2U4ZDAxMGJlNTk3MzU1MzMwYzM0YmMyZTNlYjcxNGM5YTBiNjYyYmU4MDM3MjRkM2ZmYiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNzc4Yzk0YmQ3N2I1ZTE3NGY0ZmVjZjdkMTVkYTU2YmVhY2NhMWEwMmRhMzBjYjhlOGZiMzE2NjNhMzM5Nzg4OSJ9"
+          "resource": "repo://scripts/__tests__/check-shadcn-ui-boundary.test.mjs",
+          "version": "repo-file-v1:sha256:2acf3671f96aa8c8cbd39f514bd3a79956d64e4a598cd01de5ed0cfe7bb1474d"
         },
         {
-          "resource": "repo://scripts/check-shadcn-ui-boundary.mjs#L33-L55",
-          "version": "repo-lines-v1:sha256:f56a0bed9b6ef06c239211d00b15fb227dc99b5f11c8f5c3bc9cb9e084eed89b:eyJzZWxlY3RlZExpbmVDb3VudCI6MjMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjE1YzQwNmE2Y2Y1OTZjMTM1NGRjYmU5OTI2ZjljZjE4NGE3N2E3ZmMwOWIxYWFiY2QzN2ViOGNiYjc1MGU2NmQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjEwN2Q4NGM0ZTllNjQ3Mzc4OTIxZGVkNjRkNWFiNDZjOGViMDEyN2ViMWQ5NTMyY2QyNGMxOGYxMTIxZTg0ZWIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjI5ZWFlM2FiOWFlY2IyNmJmZjBlZDViZTY0MWYyNjc5MjEyYmU3ZmRkMTRmMGUzZDExMjhmYTczMmQyMDJmNjUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQ0MWVlMTY0NDI1NDBmMWU2MjcxZjliYzdiMmU4ZDEwZmJhZjAyYTViNDVlYWFlM2E3NmRiN2VjODZlMWM1OTEifQ"
+          "resource": "repo://scripts/check-shadcn-ui-boundary.mjs#L33-L52",
+          "version": "repo-lines-v1:sha256:422d1730b989b30121fc14171a21b8e65d455b1e8a8ad634145a0309b6aee274:eyJzZWxlY3RlZExpbmVDb3VudCI6MjAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjE1YzQwNmE2Y2Y1OTZjMTM1NGRjYmU5OTI2ZjljZjE4NGE3N2E3ZmMwOWIxYWFiY2QzN2ViOGNiYjc1MGU2NmQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImE2M2FhZTM5YWQ1OWZhZjMyZDNhMDQ1OGI4OTM0NmU4ZTg4ZTkxZmRkNDA0NTQwM2E4OGEwNjdlYjU2Mjk5NjMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjI5ZWFlM2FiOWFlY2IyNmJmZjBlZDViZTY0MWYyNjc5MjEyYmU3ZmRkMTRmMGUzZDExMjhmYTczMmQyMDJmNjUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjU4YzkxOGVhM2M5MGQ0NWNhZTBjZGJiNmJkMTkwYTA1Y2NkZTYwNzk1YjZjYTMxZWU1ZmM4YzlmYWMxZTcyM2EifQ"
         }
       ]
     },
@@ -255,10 +259,34 @@
           "version": "repo-lines-v1:sha256:43b485c1a4e95bef2e8ca305d90096e1095dd0ff335a459177fd53f6f912c657:eyJzZWxlY3RlZExpbmVDb3VudCI6MTE2LCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiI0YTZmNDVkYTlmOGQ1NDY0Y2EwYjQzMTE1NTg3MWFiNmFiZjg5ODlkYWQ0YzdiNTE5NWExZTc4YjU0ZGM1Y2Q5IiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiI3YmNmYjg5MzdiZTM1MmQyNmMwMmEwMzk2ZDU4MzI3OTQ3NDBkMjYxN2E3NTM4Yjg2MjVhMjc3NzY1OWVmYzQ4IiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiI3YjkzNjk1MmZhOTVkOTVkYTM1NmI3M2UyMWRhNWZhMDRkODdiNGRjZmNjMDcwMzkxMjFmZDdhYTYzMTBhM2NlIiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MywiZm9sbG93aW5nQ29udGV4dEhhc2giOiI5ZjBmMTZkNmRkZGIzNWI2NGU3MTAxNTMzMjBhODZmMzc0YzU1MWYyNTM5OTFlYTYzMmNlY2M5MmFlMDkwZDgxIn0"
         }
       ]
+    },
+    {
+      "id": "claim_39283cc8389a4a15a2b579923945ecf3",
+      "statement": "e2e/auth-reactive-refresh.spec.ts (D-2/PB-3) is a synthetic defect-pinned spec for the reactive 401-refresh interceptor: on /analytics/alerts it route-fulfills every /v1 call locally, driving a summary-GET 401 → POST /v1/auth/refresh → replay-with-rotated-token recovery chain (KPI renders data) and a refresh-401 failure chain (terminal failure, no retry loop), with real-base64url synthetic JWTs so isTokenExpired() does not fail-safe-logout mid-test. Its MSW unit counterpart src/lib/api/__tests__/api-client-401-refresh.test.ts pins the actual post-D-2 wire contract: single-flight refresh, exactly one replay with the rotated store token (method/body byte-parity, Idempotency-Key, X-Cabinet-Id preserved), replay-401 surfacing the original ApiError, the M1 rotation-cascade join gate, the M2 10s refresh deadline, and createCabinet opting out of reactive replay.",
+      "evidence": [
+        {
+          "resource": "repo://e2e/auth-reactive-refresh.spec.ts#L1-L45",
+          "version": "repo-lines-v1:sha256:754bdbca771f1ac648c1c1c5dcecb7e46abbf589704a3bbc7e962e850d0e1072:eyJzZWxlY3RlZExpbmVDb3VudCI6NDUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImVhZjIyY2YwNzMyNTkyYzI0NzE0MWNiZTYxZWZhMTEwMTI2MTJmNWEzMTIyYjlhZjliYmFmNTJmNTcyNGQxOTQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImE3N2UwOThmOGU3ZjMyZWJjMWY1NjA4ZGY4ZmFjYTIzMDUwY2YwNzk4NmQxYjc0MGEyNDRmNjU2NjU1NmVjN2UiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjowLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjkyN2MwMTRkOWM3ODUyYjMwZDk3ZTAyZWQ1MGUwZGExZGUzYjdhOTU0ZDBkZDU2M2NmZTk3NjMyMDc4MTRkOGQifQ"
+        },
+        {
+          "resource": "repo://src/lib/api/__tests__/api-client-401-refresh.test.ts#L1-L63",
+          "version": "repo-lines-v1:sha256:0ac81ff7a5ef8746dd4713068863d978dfbf58a5258ca2400a171b462b4efa04:eyJzZWxlY3RlZExpbmVDb3VudCI6NjMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImVhZjIyY2YwNzMyNTkyYzI0NzE0MWNiZTYxZWZhMTEwMTI2MTJmNWEzMTIyYjlhZjliYmFmNTJmNTcyNGQxOTQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjEzNWUyZjhmNjVkNWJkM2IyNGI2NTdhOGVkNmE4ZDkxMWM2YjI5NzEzZDE0NzgyNTQ3MTYxYmFjY2RjNjRkYzEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjowLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImE3YWU1ZjBkMTBiZTI0MDliMDNkNWMzOWQ1NmY0NmViYzRjODFlM2ZjNzBkY2ZmNTkyNmEzMTMwZjM3YzVmNTQifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_f85f21ccff08406eb035067236ed962d",
+      "statement": "e2e/onboarding-cabinet-create-nonce-mint.spec.ts (D-1/PB-1) covers cabinet creation from a legacy nonce-less session: its [P0] test seeds a normal Story-167.5 nonce, then nulls the live store's nonce after rehydration via a cross-tab `storage` event from a second page in the same context (a same-tab setItem does not fire it), pinning D-1's initiation mint (authStore.ensureSessionNonce, mint-before-capture in handleCreateCabinet) which settles the create `applied`; [P1] is a composite regression check of the nonce-less-session class where the user-visible fix was predominantly the Story 167.9 rehydrate mint already on main. Synthetic JWT payloads must be real base64url of the JSON or isTokenExpired() fails-safe to true and the session logs out mid-test.",
+      "evidence": [
+        {
+          "resource": "repo://e2e/onboarding-cabinet-create-nonce-mint.spec.ts#L1-L90",
+          "version": "repo-lines-v1:sha256:056d23b5d444a7c9f8c70d39f817c89667cee2e33f37eaccbae99422399f1724:eyJzZWxlY3RlZExpbmVDb3VudCI6OTAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImZiMWJlMWZiNjBlZDAzNTA4ODVhNjczMzlmYWU2YmJkYThkYmU0MjA3YjQ3NDAzZDM2Y2ZmYjk1NDFhY2RmZTEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjRjZmE3Yjk1MTYzYzZiYTkwODljZTdkNTQ4YTJlOWI5NGNmYjYzNmIxMzgwODY0NmI1ODg0NWMzMDMwMzRiMDIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjowLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6Ijk0Y2UyNWRjNWQzNGZmMTkyMWM1OWJlNjY3NmFkMDUzY2I2OTQwZjhkMjc2YTNkMTk2ZDk1M2YxNzkxZmJiZGMifQ"
+        }
+      ]
     }
   ],
   "verification": {
     "by": "openwiki/0.5.0",
-    "at": "2026-09-02T08:47:53.996Z"
+    "at": "2026-09-03T08:47:55.542Z"
   }
 }

@@ -28,8 +28,16 @@ sources:
     resource: repo://src/app/layout.tsx
   - id: openwiki-source-8d0f263ceba491caec34db6c
     resource: repo://src/app/providers.tsx
+  - id: openwiki-source-681190a6193b7ecf4fbcde87
+    resource: repo://src/components/auth/AuthProvider.tsx
+  - id: openwiki-source-b663e3bb904518d34224b3f9
+    resource: repo://src/hooks/useAuth.ts
+  - id: openwiki-source-b3e9ea042734f0848c410d92
+    resource: repo://src/lib/api-client-refresh.ts
   - id: openwiki-source-a7c7d558f70edbb3171b87ab
     resource: repo://src/lib/api-client.ts
+  - id: openwiki-source-4a2c698892059013040d959c
+    resource: repo://src/lib/api.ts
   - id: openwiki-source-204fc5ae728b15ba9daed4a2
     resource: repo://src/lib/env.ts
   - id: openwiki-source-f34ac1e549d94dc3ac475ae4
@@ -38,10 +46,10 @@ sources:
     resource: repo://src/stores/authStore.ts
   - id: openwiki-source-98d5ddb014a0fd4d678f6f2a
     resource: repo://tsconfig.json
-generated: { by: "openwiki/0.4.3", at: "2026-09-01T08:47:48.765Z" }
+generated: { by: "openwiki/0.5.0", at: "2026-09-03T08:47:55.542Z" }
 verified:
-  - by: openwiki/0.4.3
-    at: 2026-09-01T08:47:48.765Z
+  - by: openwiki/0.5.0
+    at: 2026-09-03T08:47:55.542Z
 ---
 # Architecture
 
@@ -124,10 +132,56 @@ flowchart TD
 The authenticated redirect is sanitized by `getSafeAuthRedirect` (`src/proxy.ts`): a `redirect` param is honored only if it starts with a single `/` (protocol-relative `//` is rejected), parses to the **same origin** as the request, and does not itself target `/login` or `/register`; everything else falls back to `/dashboard`. `LoginForm` enforces the same policy client-side before navigating (`isSafeRedirect` in `src/components/custom/LoginForm.tsx`, which additionally rejects backslashes, malformed percent-encoding, and control characters). Next.js 16 renamed the middleware entrypoint from `middleware.ts` to `proxy.ts` and the exported function from `middleware` to `proxy`. Focused tests: `src/proxy.test.ts`.
 
 ### Client-side auth store
-`src/stores/authStore.ts` — Zustand store with `persist` middleware → localStorage. Stores `token`, `cabinetId`, `user` data. The `auth-token` cookie is mirrored from the store via `setAuthCookie()` in `src/lib/utils.ts` for middleware access.
+`src/stores/authStore.ts` — Zustand store with `persist` middleware → localStorage (`createJSONStorage(() => getBrowserLocalStorage())`, which throws during server rendering). Persists `user`, `token`, `cabinetId`, and the per-login `sessionNonce` (Story 167.9) via `partialize`. `login()` normalizes the user, picks `cabinetId` (argument → first `cabinet_ids` entry → null), mints a fresh `sessionNonce` (`crypto.randomUUID()`), and mirrors the token into the `auth-token` cookie (24h) via `setAuthCookie()` for the proxy. `refreshToken(token, user?)` rotates the token and cookie while **keeping** the existing `sessionNonce` and user (see D-2 below). `logout()` clears state and the cookie and signals cross-tab logout by a set-then-remove write of `STORAGE_EVENT_KEY`. Rehydration (`onRehydrateStorage`) re-establishes `isAuthenticated`, re-normalizes the user, mints a nonce for pre-167.9 sessions lacking one, re-sets the cookie, and registers storage-event listeners that sync state across tabs (logout events on `STORAGE_EVENT_KEY`, full-state sync on the auth storage key, re-normalizing user and re-setting the cookie).
 
-### Token refresh
-`AuthProvider` (`src/components/auth/AuthProvider.tsx`) runs `useAuth()` hook for automatic JWT refresh with a 5-minute pre-expiry buffer (`src/lib/auth.ts`).
+### Token refresh — one rotation engine (D-2)
+
+Both refresh paths converge on a **single-flight rotation core**, `getFreshToken()` in `src/lib/api-client-refresh.ts`:
+
+- **Proactive**: `useAuth()` (`src/hooks/useAuth.ts`, mounted by `AuthProvider`) checks `isTokenExpired(token)` on mount and every 5 minutes and calls `getFreshToken()`; on failed recovery it `logout()`s and redirects to `/login`. The store update happens *inside* `getFreshToken` — the hook never re-writes the rotated token.
+- **Reactive (D-2, PB-3)**: the `ApiClient` request path intercepts 401s (see diagram below).
+
+The contract (`docs/request-backend/230-auth-refresh-endpoint-missing.md` §ANEX): `POST /v1/auth/refresh` with the Bearer of a still-valid access JWT, body `{}` → `{ "token": ... , "user" }`. Rotation is **sliding** — the old JWT is atomically revoked, so in-flight requests carrying it get 401 `TOKEN_REVOKED`.
+
+```mermaid
+sequenceDiagram
+    participant C as Caller
+    participant AC as apiClient.request
+    participant RF as api-client-refresh getFreshToken
+    participant API as api.ts refreshToken
+    participant BE as Backend /v1/auth/refresh
+    participant ST as authStore
+    C->>AC: request (Bearer old JWT)
+    BE-->>AC: 401
+    AC->>AC: gates: allowReactiveRefresh, not skipAuth, not refresh endpoint
+    AC->>RF: getFreshToken("Bearer old")
+    RF->>RF: cascade gate - wire token differs from store token
+    RF->>API: lazy import refreshToken(storeToken)
+    API->>BE: POST /v1/auth/refresh, skipAuth, Bearer storeToken, 10s deadline
+    BE-->>API: new token + user
+    API-->>RF: RefreshTokenResponse
+    RF->>ST: refreshToken(token, user) - keeps sessionNonce
+    RF-->>AC: true
+    AC->>AC: replay once, authToken undefined, private allowReactiveRefresh false
+    AC->>BE: request with rotated store token
+    BE-->>AC: 2xx
+    AC-->>C: result
+```
+
+*Reactive 401 recovery: interceptor gates, single-flight refresh POST, nonce-preserving store rotation, and a single replay.*
+
+Key mechanics and hazards:
+
+- **Replay once** — the interceptor retries the failed request exactly once with the private replay parameter `allowReactiveRefresh = false`; a replay that 401s again surfaces the original `ApiError` (no loop). The private flag always wins over the public `options.allowReactiveRefresh`, which cannot re-enable refresh mid-recovery. Durable pinned operations may opt out via `options.allowReactiveRefresh: false`.
+- **Hazard #1 (single-use revocation)** — `performRefresh()` reads the token from the **store** at refresh time (a concurrent rotation may already have won the race); reusing the failed request's original token would itself 401. No store session → no refresh POST (logged-out 401s stay terminal).
+- **Hazard #2 (sessionNonce preservation)** — the store update goes through the `refreshToken(token, user)` store action, which keeps `sessionNonce` and the existing user; `login()` would mint a new nonce and break in-flight D-1 (Story 167.9) cabinet-create settlements.
+- **Single-flight** — concurrent 401s all join one in-flight refresh promise (one POST total); the promise is cleared on settlement so a later 401 may start a fresh recovery.
+- **Rotation-cascade gate (M1)** — the failed request's wire `Authorization` is compared to the current store token; if they differ, a prior rotation already completed, so no new refresh starts (a straggler joins the pending rotation or replays with the store token). The gate only applies to the reactive path — `useAuth()` calls `getFreshToken()` with no wire header.
+- **Deadline (M2)** — the refresh POST runs under `AbortSignal.timeout` with a 10s default (`DEFAULT_REFRESH_DEADLINE_MS`, injectable via `setRefreshDeadlineForTests`); a black-holed refresh resolves `false` instead of wedging the single flight. Deadline aborts suppress `apiClient`'s network-error log — the recovery catch owns that failure.
+- **Recursion guard** — `AUTH_REFRESH_ENDPOINT` (`/v1/auth/refresh`) is excluded by `isRefreshEndpoint()`: its own 401 is unrecoverable and must not be intercepted.
+- **Module-cycle safety** — `api-client-refresh.ts` imports `api.ts` types only (erased at compile time) and loads `refreshToken()` lazily at runtime, avoiding the load-time cycle `api-client.ts → api-client-refresh.ts → api.ts → api-client.ts`.
+
+Focused tests: `src/lib/api/__tests__/api-client-401-refresh.test.ts` (interceptor gates, single-flight, replay-once, store-action semantics), `src/hooks/__tests__/useAuth.test.ts` (proactive expiry, logout-on-failure).
 
 ### Multi-tenant isolation
 Cabinet ID (tenant) is injected as `X-Cabinet-Id` header on every API call via the API client. Some endpoints also accept `cabinet_id` in request body.
@@ -176,7 +230,7 @@ Local runtime truth: the Next.js dev/start servers bind to **port 3100** (`next 
 |------|---------|
 | `next.config.ts` | Next.js config |
 | `tsconfig.json` | TypeScript strict mode, `@/` path alias |
-| `eslint.config.js` | ESLint 9 flat config — the actual CI/lint enforcement path (legacy `.eslintrc.json` is IDE-only); includes custom `no-restricted-syntax` selectors for Anti-Pattern #8 (`?? 0` on money/ratio fields) |
+| `eslint.config.js` | ESLint 9 flat config — actual `npm run lint` enforcement (legacy `.eslintrc.json` is IDE-only); includes custom `no-restricted-syntax` selectors for Anti-Pattern #8 (`?? 0` on money/ratio fields). There is no mandatory CI merge gate — validation commands live in `README.md`. |
 | `src/styles/globals.css` | Tailwind v4 CSS-first theme — semantic token palette (background, card, brand/primary, financial, status, availability, chart roles), typography/spacing/radius/shadow scales, light + dark themes. The JavaScript `tailwind.config.ts` was removed; see [Design System](design-system.md). |
 | `postcss.config.js` | `@tailwindcss/postcss` + autoprefixer (Tailwind v4 compiler contract) |
 | `components.json` | shadcn/ui CLI metadata aligned to Tailwind v4 (`config: ""`, CSS variables, new-york style) |

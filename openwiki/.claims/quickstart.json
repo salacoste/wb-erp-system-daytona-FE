@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "pageVersion": "sha256:f07a48550e581f75f036fd892d055307fb93a0c38219e2c449de85b74ead28c6",
+  "pageVersion": "sha256:9cc2ec8d29db5c5ab254a353b3866b6eca9e81e6824ccd955dfe34b9ee99573a",
   "claims": [
     {
       "id": "claim_07e85bb249e745f69c550323b16664e1",
@@ -175,10 +175,58 @@
           "version": "repo-lines-v1:sha256:c02a8a41d0effbccf80d92278ef1de47ec9ce162580a3598432d4b04f4561ec8:eyJzZWxlY3RlZExpbmVDb3VudCI6MTgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImM0ZDc4Njk1YTljMDViZGQzYWE0YmQwZGJjYzIzZDBmZmI1ZjNiMmYwNjM4ZmEyNTU3YTIxYTIxNGViY2JlYWEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImIwMTQ5NjdkMTI0Nzk0MjVkZWY1NzFiNjg2ODlmYzA3YTZkOTA5ZTI4OTM2NDUyMTM5Mzg4ZWZlYzA2OGQ4YWIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjQ4OTYwOTNiODA5Y2MwODE3MjU5MjU4NDY2NzI5ODAzN2QyODVlM2ZlYWQ1NmY0NTk5YTE5MWExZWIxMDg1ZTgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjFiYTVkOGFhNDVmMmFlYWE1NjIyNmMxMGViYzkwOTA0YzI2MTFhMjhmNmYyMzJjMmQwMWI5NGYyOTMyZWM3NTQifQ"
         }
       ]
+    },
+    {
+      "id": "claim_4958142d47e14e34b6e37c73b4789c0d",
+      "statement": "Debt item D-1 (PB-1 silent cabinet create, PR #390) added initiation-mint ensureSessionNonce, an indeterminate recovery-alert, finishRecoveryOperation release, and a two-tab nonce-nulling e2e, raising the Vitest floor from 19,363 to 19,421.",
+      "evidence": [
+        {
+          "resource": "repo://docs/HANDOFF-2026-09-03-V15-SESSION2-EXECUTION-AND-REMAINING-BACKLOG.md#L12-L15",
+          "version": "repo-lines-v1:sha256:9aa5d9ea648d7206260971dc673555e8a94454470bff68f6648c1c30f6e7a20b:eyJzZWxlY3RlZExpbmVDb3VudCI6NCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZWMzYTE2NmQyYmU1NjRkMjQ5YThkNTk0YWRiMjA5OWU0NTgwNmU1MWIxMzlmOWJkZjNhYjMzNmRiY2FkOTllMCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiYWJkNTg4MjFjMjE0ZjlkZTNiZmMwNDc1NzUxN2UzMzJiOTJhYjIyYWRjYTk5ODRmY2YyYjhjMzE1NDk4ZTMxYiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiYmQ3N2M2MTVmYWM5ZmQ5YTY5Zjg1OWYyZWJhNzRlM2Q5MzhmZWU3OTY0NDIwNWJjNTM2OTdlZTFmYzM2ZjQxZiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNzQ0NWMzMjZmMDk2MmEzODBlZjkxYWY3ZDQwYjk1ZjcyYmJjMTQ5YjkwNzg2MDBmNzFmZmRlOTAxMDgyNmRlZCJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_d0655c8fd6884676b74a5e7dbaaa84c0",
+      "statement": "D-2 (PB-3) delivered a reactive 401 refresh: backend contract POST /v1/auth/refresh with sliding rotation (expired JWT never refreshes, request-backend #230) and a frontend api-client interceptor with single-flight refresh and one replay, implemented on branch debt/d2-pb3-reactive-refresh and live-verified locally on 2026-09-03.",
+      "evidence": [
+        {
+          "resource": "repo://docs/HANDOFF-2026-09-03-V15-SESSION2-EXECUTION-AND-REMAINING-BACKLOG.md#L51-L60",
+          "version": "repo-lines-v1:sha256:2681a81a09535094315fb4411f2d28617276c7f99e27f2f9c70824e18f3f3751:eyJzZWxlY3RlZExpbmVDb3VudCI6MTAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjM4YWEzZTVjYmIwOTYyYmY0MzRmYzZlOTk1NzBhYzQyODgzYWYxYjYxZTRmMzdiMWE0YWMxYWFmMWFkYTMxMDMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjVkMTRhODI0NTE1ZDk3NzMwZWQzYmYwMWQxYzBiMmZmYjc0NzcxY2E4MDU0ODkwMDhhNmRhZTJkZDZmZWFhOGMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImRmNWZkZDU1YTY2ZTBiZTc3ZjFiMTg3NzRmODFmYmNmMGFjYjFlYTE1MzAxMjFjNGQzZmQ5MDgzMjM4MjIwNTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6Ijk5OGQxMWM4YjFjYjUwZWIxNzZiNDU0NWU3NjE2ZDk1ZGQ4OGZhNDFkOTFlMjU1OTM0Y2FmNjIxOGE1NjlhNjYifQ"
+        },
+        {
+          "resource": "repo://docs/request-backend/230-auth-refresh-endpoint-missing.md",
+          "version": "repo-file-v1:sha256:fb6d85cbbf982e5cc6c3d90690086a9e992d31f3d554e11edc79a73b86d73dc8"
+        }
+      ]
+    },
+    {
+      "id": "claim_dddeaa0fe9de402aaeee3fe79bb6eb74",
+      "statement": "Debt-session boundary waves 1-2 (PRs #394/#395) converted financial-summary (58 sites) and margin-family (29 sites) palette usage to semantic tokens, ratcheting the shadcn UI boundary count from 459 to the current baseline 372 with 3 owner-accepted exceptions.",
+      "evidence": [
+        {
+          "resource": "repo://docs/HANDOFF-2026-09-03-V15-SESSION2-EXECUTION-AND-REMAINING-BACKLOG.md#L18-L19",
+          "version": "repo-lines-v1:sha256:cb8d6827a0a1f458ce63383ac757d6e77dc027e8b0fdb722352ce8188f543f29:eyJzZWxlY3RlZExpbmVDb3VudCI6MiwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMWYzZjc2ZmJjZjk4OWUxN2Q3MGVkZDFlOGRiYzcwMzEyODg2N2FlMmUxZWUxMTQwNmQ4MzM5ZDcyMzI0NDgyNCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNWM2ZWQyMDg5NDA3MTdkMjg1ZDdmN2VmZDBiMDgzZjFiYzExNDA3OTJlYjA4ZGU2Mjk2MmI3ZGEyMGFkOGU1OCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiYjA2OGRjNzgxYmVkNjhlMWNjM2UxODNjYzFiZDg0YTJlNGRiM2I5MjAxNTZkZmUyMTdjNTc2ODhjZGRmYThjNSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNzcwZmJmNTRmNjU5Mjg1ODUwOTI1MDBhZjUwMjc2ZGQ4OGM3ZTNhNDg5MjVjZjRkNjk2YzJmNWYzNjIzYTgzOSJ9"
+        },
+        {
+          "resource": "repo://docs/HANDOFF-2026-09-03-V15-SESSION2-EXECUTION-AND-REMAINING-BACKLOG.md#L27-L29",
+          "version": "repo-lines-v1:sha256:1a529ff7d117e5eac91bc766a71cf4113e625eaabbe32e0c4b28b4832ee51f7f:eyJzZWxlY3RlZExpbmVDb3VudCI6MywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNmNkOTc3ZDM2ZWEzNzlhNWE0MDhkNTcyOTJiMDJmNTEyNTAyMDQ5NTExYTc5Y2FkODYyNjEyOGEwNjlhOTQ5ZiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiN2EwYjZlZDNjMTA3MDVkNTQxZDUyNjk3Y2FkMDk2ODAzY2I4OWE4YTA1MTcwYmZmOGE0MWM5YjQ5ZjQ5OTQ5YSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNWQ3YmY4NDY4OThlZDBhZjk1OWI4ZmQ2MjY3NTE2N2QxYmFlMDYzODJhMDQ5MDBmYTI2ZDZjYjk4ZjAzMzY2YiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNGMwNzY5YTRiMzdkMTRjNjUzZjFlNWMxYzMxMTRhOWQyMTY0NzVjMWJjMTcyODA4MzFmOTI5YzAzYWYyYjI2YSJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_0083ca315f824ae08754e219b8b5c6c4",
+      "statement": "As of main c5ca2669 (2026-09-03) the live gate state is Vitest floor >= 19,424/0, lint 0/0, tsc 0, webpack build 0, boundary 372 = baseline, docs-baseline 95, and exactly 3 pre-existing privacy findings.",
+      "evidence": [
+        {
+          "resource": "repo://docs/HANDOFF-2026-09-03-V15-SESSION2-EXECUTION-AND-REMAINING-BACKLOG.md#L25-L29",
+          "version": "repo-lines-v1:sha256:811e4977c15c51442cb0a76487309467d53951abb4c296399117f67a4aace67b:eyJzZWxlY3RlZExpbmVDb3VudCI6NSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZDY4ZjViYTNiYzBhNDg4MTA4NzVhYmVmODU1YzA5YTM3MmM3YjRiNTA5MzZhYzE5OTAzYTc2N2MxZDA1YTc0OSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiN2EwYjZlZDNjMTA3MDVkNTQxZDUyNjk3Y2FkMDk2ODAzY2I4OWE4YTA1MTcwYmZmOGE0MWM5YjQ5ZjQ5OTQ5YSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiOGU5ZmNjMzE5N2JjM2RhOTQ3NDliOWNiNGI1NWZlODVhNThmNDdhNTcwNGM3Mzg3MDRmNzRiM2RlODk2NzJlMSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNGMwNzY5YTRiMzdkMTRjNjUzZjFlNWMxYzMxMTRhOWQyMTY0NzVjMWJjMTcyODA4MzFmOTI5YzAzYWYyYjI2YSJ9"
+        }
+      ]
     }
   ],
   "verification": {
     "by": "openwiki/0.5.0",
-    "at": "2026-09-02T08:47:53.996Z"
+    "at": "2026-09-03T08:47:55.542Z"
   }
 }

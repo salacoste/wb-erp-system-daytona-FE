@@ -1,15 +1,27 @@
 ---
 type: "Architecture Overview"
 title: "API Layer & Normalizers"
-description: "API client singleton with auto-injected auth and cabinet headers, the Boundary Normalizer Pattern that transforms backend responses into frontend-canonical shapes, the Epic 170/171 advertising and search normalizers with AP#8 null semantics, the Story 169.14 paid-storage import result contract and polling lifecycle, CSV export infrastructure, the NEW-7/172.10 finances documents flow, and the communications gated write-back with async 202 job polling."
-tags: [api-client, boundary-normalizer, anti-pattern-8, paid-storage-import, csv-export, finances-documents]
+description: "API client singleton with auto-injected auth and cabinet headers, D-2 single-flight reactive 401 refresh with one replay, the Boundary Normalizer Pattern that transforms backend responses into frontend-canonical shapes, the Epic 170/171 advertising and search normalizers with AP#8 null semantics, the Story 169.14 paid-storage import result contract and polling lifecycle, CSV export infrastructure, the NEW-7/172.10 finances documents flow, and the communications gated write-back with async 202 job polling."
+tags: [api-client, boundary-normalizer, reactive-401-refresh, anti-pattern-8, paid-storage-import, csv-export, finances-documents]
 verified:
-  - by: openwiki/0.4.3
-    at: 2026-09-01T08:47:48.765Z
+  - by: openwiki/0.5.0
+    at: 2026-09-03T08:47:55.542Z
 sources:
+  - id: openwiki-source-3177abcefd75baab3663fb5b
+    resource: repo://src/hooks/useSanityCheck.ts
+  - id: openwiki-source-b3e9ea042734f0848c410d92
+    resource: repo://src/lib/api-client-refresh.ts
   - id: openwiki-source-a7c7d558f70edbb3171b87ab
     resource: repo://src/lib/api-client.ts
-generated: { by: "openwiki/0.4.3", at: "2026-09-01T08:47:48.765Z" }
+  - id: openwiki-source-4a2c698892059013040d959c
+    resource: repo://src/lib/api.ts
+  - id: openwiki-source-63fbf19eac49b6e765e65f86
+    resource: repo://src/lib/api/__tests__/tasks-enqueue-role-contract.test.ts
+  - id: openwiki-source-a634a54b04d180befb7476e7
+    resource: repo://src/services/cabinets.service.ts
+  - id: openwiki-source-57a6295c7260bc5f8b372d73
+    resource: repo://src/types/api.ts
+generated: { by: "openwiki/0.5.0", at: "2026-09-03T08:47:55.542Z" }
 ---
 # API Layer & Normalizers
 
@@ -20,13 +32,48 @@ generated: { by: "openwiki/0.4.3", at: "2026-09-01T08:47:48.765Z" }
 | Concern | Implementation |
 |---------|----------------|
 | **Base URL** | `env.apiUrl` from `src/lib/env.ts` → reads `NEXT_PUBLIC_API_URL` (default `http://localhost:3000`). Endpoints are `/v1/...` paths. |
-| **Auth header** | Auto-injects `Authorization: Bearer <token>` from `useAuthStore`. Bypassed via `options.skipAuth`. |
-| **Cabinet header** | Auto-injects `X-Cabinet-Id` from `useAuthStore`. Bypassed via `options.skipCabinetId`. This is the multi-tenant isolation mechanism. |
+| **Auth header** | Auto-injects `Authorization: Bearer <token>` from `useAuthStore`. Bypassed via `options.skipAuth`. An immutable per-request `options.authToken` (Story 167.9) wins over the mutable store token, so a request authenticates as the session that initiated it. |
+| **Cabinet header** | Auto-injects `X-Cabinet-Id` from `useAuthStore`. Bypassed via `options.skipCabinetId`. This is the multi-tenant isolation mechanism. `options.cabinetIdOverride` mirrors the `authToken` pattern. |
 | **Response unwrapping** | Backend returns `{ data: T }` envelopes. Client auto-unwraps `rawData.data`. Use `skipDataUnwrap: true` for paginated responses where `data` is a legitimate array field. |
 | **Binary downloads** | `responseType: 'blob'` returns raw `Blob` without JSON parsing. |
 | **Error handling** | Custom `ApiError` class carries `status`, `message`, `data`, `retryAfter`. HTTP 429/503 `Retry-After` header parsed and clamped to [1, 600] seconds. |
 
 Source: `src/lib/api-client.ts`, `src/lib/api-interceptors.ts`, `src/lib/env.ts`
+
+### Reactive 401 refresh (D-2, single-flight + one replay)
+
+The `request()` method intercepts **401 on an authenticated, non-refresh request** and attempts reactive recovery (contract annex in `docs/request-backend/230-auth-refresh-endpoint-missing.md`):
+
+1. **Gate check** — recovery fires only when the private replay flag is still true (once per request), `options.allowReactiveRefresh !== false` (public opt-out), `!options.skipAuth` (a skipAuth 401 is a credential failure — nothing to rotate), and `!isRefreshEndpoint(endpoint)` (the refresh endpoint's own 401 must not recurse).
+2. **Single-flight refresh** — `getFreshToken(headers['Authorization'])` (`src/lib/api-client-refresh.ts`) joins an in-flight refresh or starts one `POST /v1/auth/refresh` (Bearer of a still-valid JWT, body `{}` → `{ token }`; sliding rotation **revokes the old JWT**). It reads the token from the auth **store** at refresh time (hazard #1 — never the failed request's revoked token), updates the store via the `refreshToken(token, user)` store action (hazard #2 — keeps `sessionNonce` + user; `login()` would mint a new nonce and break in-flight Story 167.9 cabinet-create settlements), and has a 10s abort deadline (default `DEFAULT_REFRESH_DEADLINE_MS`, injectable for tests) so a black-holed refresh cannot wedge every 401.
+3. **Rotation-cascade gate (M1)** — when the failed request's wire token differs from the current store token, a prior rotation already completed: no new refresh is started (it would burn the just-minted JWT); a straggler arriving during a pending rotation **joins** it and replays only after it settles.
+4. **Replay once** — on success the request is re-issued with `authToken: undefined` (drops a stale Story 167.9 initiating override — the revoked token must not ride again) and the private replay flag `false`. A replay that 401s again surfaces the original `ApiError` — no loop, no retry storm. The private flag always wins over the public option, which can never re-enable refresh mid-recovery.
+
+```mermaid
+sequenceDiagram
+    participant C as apiClient.request
+    participant S as auth store
+    participant R as getFreshToken (single-flight)
+    participant BE as Backend
+    C->>BE: request (Bearer t1)
+    BE-->>C: 401
+    C->>R: getFreshToken("Bearer t1")
+    R->>S: read store token
+    R->>BE: POST /v1/auth/refresh (Bearer store-token)
+    BE-->>R: { token: t2 }
+    R->>S: refreshToken(t2, user) — keeps sessionNonce
+    R-->>C: true
+    C->>BE: replay (authToken dropped, store t2)
+    BE-->>C: 200
+```
+
+**Durable-op opt-out** — `createCabinet` (and symmetrically `getCabinetCreationOperation`) in `src/lib/api.ts` sets `allowReactiveRefresh: false`: a 401 on the pinned initiating session's durable, account-scoped create (scoped by the Story 167.8 `Idempotency-Key`) is a credential failure whose retry is owned by reconciliation — silently replaying under a rotated *different* session's token would mask the failure and drop the Idempotency-Key↔session pairing. The `src/services/cabinets.service.ts` settlement paths do the same.
+
+Focused tests: `src/lib/api/__tests__/api-client-401-refresh.test.ts` (MSW) pins the flipped D-2 contract — refresh fires once (single-flight, concurrent 401s join one POST), wire-level POST replay parity (method, body, `Idempotency-Key`, `X-Cabinet-Id` survive), replay-401 → original `ApiError`, the M1 cascade gate/join, the M2 deadline, and the OQ2 `createCabinet` opt-out.
+
+### /v1/tasks/enqueue role contract (Story 174.4 G2)
+
+There is no dedicated tasks API module — the real call sites (`useSanityCheck`, `useManualMarginRecalculation`, `useMoyskladSync`) build the body inline (`{ task_type, payload: { cabinet_id, … } }`) and post through the shared `apiClient`. `src/lib/api/__tests__/tasks-enqueue-role-contract.test.ts` mirrors `useSanityCheck`'s exact mutationFn and pins the wire boundary: a Manager token gets 200 with auto-injected `Authorization` + `X-Cabinet-Id`; an Analyst token gets the BE RolesGuard's 403, which surfaces as a **real `ApiError`** (`status === 403`, anti-pattern #3) with exactly **one** request — `apiClient` never auto-retries, so a permission denial produces no retry storm (see `isForbiddenError` in `src/types/api.ts` for the UI-side expected-permission-state idiom).
 
 ### Error tracking
 - `extractErrorMessage()` handles both `{ error: { message } }` and flat `{ message }` JSON shapes.

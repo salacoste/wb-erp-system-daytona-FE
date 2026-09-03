@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "pageVersion": "sha256:094e787dcf5eff82cb2d2acd2d52583bdec4c19862a4bffe9f20ab7529bc6e0e",
+  "pageVersion": "sha256:d72ace7ee6f886b27fb94c956aa6ea3e59a49fd48e90fb9bc5904c6ed9eaac41",
   "claims": [
     {
       "id": "claim_9bfdc04061f14b3bb2bb441081e614c3",
@@ -114,11 +114,11 @@
     },
     {
       "id": "claim_623470991c7d4a788c440402b2057a8d",
-      "statement": "margin-status-helpers.ts defines the calculator margin tiers via MARGIN_STATUS_CONFIG (Russian labels; since D-4/2026-09-02 good and warning use solid status pairs bg-status-success/text-status-success-foreground and bg-status-warning/text-status-warning-foreground for WCAG 1.4.3 contrast, while excellent and critical keep /15 financial-token tints) and getMarginStatus/getMarginColor thresholds: >=20% excellent, >=10% good, >=5% warning, else critical — distinct from the cabinet targetMarginPct and the analytics PROFITABILITY_STATUS_CONFIG tier systems.",
+      "statement": "margin-status-helpers.ts defines the calculator margin tiers via MARGIN_STATUS_CONFIG (Russian labels; since D-4/2026-09-02 good and warning use solid pairs bg-status-success/text-status-success-foreground and bg-status-warning/text-status-warning-foreground, and since the P2 wave-2 pass of 2026-09-03 excellent and critical use /5 financial-token tints bg-financial-positive/5 and bg-financial-negative/5 after their /15 tints measured WCAG 1.4.3 light-mode fails) and getMarginStatus/getMarginColor thresholds: >=20% excellent, >=10% good, >=5% warning, else critical — distinct from the cabinet targetMarginPct and the analytics PROFITABILITY_STATUS_CONFIG tier systems.",
       "evidence": [
         {
-          "resource": "repo://src/components/custom/price-calculator/margin-status-helpers.ts#L7-L46",
-          "version": "repo-lines-v1:sha256:1cf24104f0be022df968014f317b8acf3adacdd441f748650ed16933f32862ec:eyJzZWxlY3RlZExpbmVDb3VudCI6NDAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNlNDQ0NmMyOTRjZWY4YWZlNWM0ZmE0MjZkYjdmMmU1N2MxZDYxZjg0ZDg3MDYzNmEwYTM1MTQxYzA5OTE1MDIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjQ3Mjg4ZTljMGY1NDAyNDFhOWY5NzBmYzBkNWU3ODJiMWRhZDhkNDdiYmZhYzg5MGIzNjU3MWEwM2UzYjIyNzEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+          "resource": "repo://src/components/custom/price-calculator/margin-status-helpers.ts#L7-L51",
+          "version": "repo-lines-v1:sha256:0ed6396e12933b4addea0b4a9c83940fa2e0c77264c5f8ade6797367c3e4199c:eyJzZWxlY3RlZExpbmVDb3VudCI6NDUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNlNDQ0NmMyOTRjZWY4YWZlNWM0ZmE0MjZkYjdmMmU1N2MxZDYxZjg0ZDg3MDYzNmEwYTM1MTQxYzA5OTE1MDIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjQ3Mjg4ZTljMGY1NDAyNDFhOWY5NzBmYzBkNWU3ODJiMWRhZDhkNDdiYmZhYzg5MGIzNjU3MWEwM2UzYjIyNzEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
         }
       ]
     },
@@ -281,10 +281,72 @@
           "version": "repo-file-v1:sha256:83cc4d2b22aa960dd1609ca686e1d6336ffd035eede8e83b1942709c65c30eb2"
         }
       ]
+    },
+    {
+      "id": "claim_0a79f13f2ca74b3d89db8522482d2853",
+      "statement": "handleCreateCabinet in src/services/cabinets.service.ts conditionally settles cabinet creation via evaluateCabinetSettlement, which compares the immutable initiating session snapshot (accountId + sessionNonce) against the live auth store: applied (nonce match commits the new JWT via refreshToken + setCabinetId), stale (no live session, nonce or account mismatch — quiet logger.warn with operationId, never mutates auth state or throws), or indeterminate (a null nonce on either side, treated like stale for UI effects). The session nonce is the primary identity predicate; the account id is a defense-in-depth check only when both sides are non-null.",
+      "evidence": [
+        {
+          "resource": "repo://src/services/cabinets.service.ts#L138-L156",
+          "version": "repo-lines-v1:sha256:a83c9ea25482a6880d6a6fd9cee59fa423670b5ef321a1c85cc16cbfa7e075fe:eyJzZWxlY3RlZExpbmVDb3VudCI6MTksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijk0NzFlNzFkMGVkMGNlMzhhMzA3MDEyZjRkNzAxNDVjZjZjY2YzYjMyZjI0MGJlN2VmNzBiMTE4MGRiMDFiMjMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjZkMmY1OGExNTk1OGFkYWUwMGRlYWU0NTE2YzFlZGM3ZGRlMDQ5NGZlMjc1ZDk1N2NhZTkyOTE2ZDczNTdkNDIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjI0YzM3YzFiNjYwZDQ3NTNiOGE4ZDE3MzFkYTM5ZThiODI4YjExMjU2NmViNjQzZTk5OGQwOWU2ODEwODVjZGIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImIyMjdhOTdhMDBkNmEwMzMyMTI1NDY5Njc1Yjk5ZTQ0NzM5MmNlYTA5N2M1NWExOGIwZDI5Yjc3MzM0OTZkMDgifQ"
+        },
+        {
+          "resource": "repo://src/services/cabinets.service.ts#L51-L69",
+          "version": "repo-lines-v1:sha256:eb04e11f22003c93bfd3079014a9f4e7d30770b8757ee15a0314052bf44579e0:eyJzZWxlY3RlZExpbmVDb3VudCI6MTksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImQzOTg2MzU2MTY0YjVmZGE2YzdhNjA4YTEwOGU0ZTc0N2FhZjRkOTljMWI4MjdhMDI4NGYzYmEyMjI2MjQyNWQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijc1NGU2MGIxNTYxZmNmZWJhYTQ4NzkxY2JmYjkzZDhmY2NlY2ZlZmM1NmZhMjI4NjM1NWRjYzU4NjI1MjNjMWQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6Ijg2ZTViMTVlNGQ0ZGVkOGUxMmI3OTU0MmJjNjBmYTJjNzM0YTM0ZWJmYTE1MDczMTMxYjFkNWMwMTdkZjNjY2YifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_43539ee312c34814b1a2491b004991d1",
+      "statement": "D-1 (PB-1) fix: handleCreateCabinet calls useAuthStore.ensureSessionNonce() before capturing the initiating context, so a legacy nonce-less authenticated session gets a minted nonce and the create settles applied instead of being silently swallowed as indeterminate; it complements the Story 167.9 rehydrate mint. Defect-pinned by the two-tab e2e (seed a normal nonce then null the live nonce via a cross-tab storage event) and the unit test src/services/cabinets.service.settlement.test.ts.",
+      "evidence": [
+        {
+          "resource": "repo://e2e/onboarding-cabinet-create-nonce-mint.spec.ts#L5-L34",
+          "version": "repo-lines-v1:sha256:12890273d81b7ca5fca5c8a131e9f645042b5c8b47d877b04dd35956e6aacfaa:eyJzZWxlY3RlZExpbmVDb3VudCI6MzAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImJjOTgxZjRiYzlkZjU3ZmI5MmY4ZTQ5YWQ4YWYxOGE3MjI2ZTMyNGZiZTE5ZDRjNTMzZTRlYWU5MDM5YWZiODIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijk3MmE0MjkzODJiMmUxNDcxOGUwZTM3YjA1NzBhOGExNzAyOTkxZmNkODQ5OGNkODQwNjBhOGJmNGYwNTAxN2IiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjA2MGM2MmUzZDU2ODdkNzI1MTg0MjExOTI1M2U5Nzc2ZjBkNmM2MmYwNDg3MDJkMjY1Nzc0MDM3MDIyMmMxMzYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjNhMWNkN2M0ZGZiZTZmNGJjNWM5NzVlMWQyMjdjNDFmODczNzM2YjdmOWMzNmRiMjkyZTRjYWU3MzI5M2I0OGIifQ"
+        },
+        {
+          "resource": "repo://src/services/cabinets.service.ts#L102-L112",
+          "version": "repo-lines-v1:sha256:51819a48ece33345907a9790ec493c0dfbb32fa308eddf490da3fdcd98890277:eyJzZWxlY3RlZExpbmVDb3VudCI6MTEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAwNDY5YjFjNjBmNzNiOGU1MjBkMjk4OGI3MDkzZjkxZmM4YmNhZDIwMWY3Y2U2ZGQxZjY4NWI5NzMzYmRjMDYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjI3ZTU3ODhkNWQ5ZDczZDI0YTgxZGJjMGE1YTc0YmZhODJjOWMzYjNhZjk5ZTUyYWY3OTZlOTBiNDY4YThhM2QiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjdjYzhmNGE1MDJkZGVhMDE2MjE5MTI3ZTc3ZTRhZTZhZTdhNTQ2ZDNlYmZjMDRkNzk5MWU0ZjU1MTA2N2IwNDEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjM1NWZlM2Y5MzM2YzJjMmMzYjdiZTEyNjM0NGRkNWIwZWZiNDU4Y2IzNWJkN2IzZWY4ZTg4Y2FjMTU1NjBmMmUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_257ef5ebd78547e8949284f209e5ab44",
+      "statement": "The post-create target-margin PUT is pinned to the just-committed context (authToken: response.newToken, cabinetIdOverride: response.id, allowReactiveRefresh: false per D-2 pass-2) because its await is a session-switch point — a store-based transport could otherwise read a different account's token with the initiating account's cabinet. A margin failure after a superseded settlement is quietly swallowed (logged with operationId); only in a live session does it throw 'Cabinet created, but target margin could not be saved'.",
+      "evidence": [
+        {
+          "resource": "repo://src/services/cabinets.service.ts#L158-L185",
+          "version": "repo-lines-v1:sha256:168749877e21d4cdb2b6f40692af840956b6e418ea95ef64b70565af2a3fdd48:eyJzZWxlY3RlZExpbmVDb3VudCI6MjgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFkYzE4MmUzMDJkZGYxNTFhNzhhZTAwNDRjNzA4OWViOGQ0OGRmNGQwY2FhYjRlY2JjZWQ3ZjI5MTViMDgyYjgiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjI3ZTU3ODhkNWQ5ZDczZDI0YTgxZGJjMGE1YTc0YmZhODJjOWMzYjNhZjk5ZTUyYWY3OTZlOTBiNDY4YThhM2QiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjJjN2ZlZGQ4YjNhZTQzYzg1YjAzOGNhMDExMThiNWZhYWFhOTYzNTg0NGE3YjVhMDNjOWUzY2FlOWEwNTMwYjYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImFmZTkzMjE1ZGQ4NGRhZmE4NGU3MTgwYWE5NzJkMDA1NzQ3ZDBiZGFjNDQwZjg4ODI4MmI5N2M1NDQyNzEyZGMifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_fa902bdc2bac415d8ecbbd652f6002c1",
+      "statement": "useCabinetCreationRecovery drives an account-scoped recovery phase state machine (restoring/idle/recovery-blocked/margin-recovery/token-recovery/creating) from the per-user sessionStorage recovery marker, re-run on RECOVERY_MARKER_EVENT window events filtered by userId; it clears a create-pending marker as reconciledCreate when the operation is settled and a cabinet exists, surfaces margin-recovery retry when markerAllowsUpdate, and — per the D-1 review quiet-guard — keeps a form instance quiet about its own settled local operation while normalizing restoring to idle so the form is not silently blocked after a same-tab logout+login.",
+      "evidence": [
+        {
+          "resource": "repo://src/components/custom/CabinetCreationForm.accountRecovery.test.tsx#L134-L195",
+          "version": "repo-lines-v1:sha256:d28ae7176de70ca308b0593a5c760074f03e64cbcdd9cb85237096489c560024:eyJzZWxlY3RlZExpbmVDb3VudCI6NjIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImEyZTIzZmVkYTkzNjBjNDlhOWUwZDk0ZDNiM2Q2YmM3YmQxODA2NDcyZjA4MjI3ZDdiNzA0NmEwMzI4YzAwM2MiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImIyMzUyNTg5YzM0ZDNjNjA2ODU5MzFiNmVjYzRkNTA5OTFhN2M1NmM4ZmJhMjg5NDExNDY1NzY5MDI3MmNhYzMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjNjM2E3MTAzM2FjYTkwMmQ3MDk4NzRmYTNkNGRlYWUzNDYwZTA0ZTA1Y2MzMGY4MWMyZGYyMTEyMjA1YjRmM2YiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImQ1ZTU4OGNlOGEzMDhlYzljODFjMjAyY2U4MGU0MWZmM2M5YzlhOTU1ZTQ5M2M0NzAyYWRjODlmYzcxYWE2MmIifQ"
+        },
+        {
+          "resource": "repo://src/components/custom/useCabinetCreationRecovery.ts#L56-L135",
+          "version": "repo-lines-v1:sha256:309df0bb1c04ec0936dfcc03114d22ddbd5d7b89f361b70b2d5d4edc11ae57c0:eyJzZWxlY3RlZExpbmVDb3VudCI6ODAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjU5NjZmYmZhODg5OThkYTc0NjU2YzUwMTk0OTU2YzI1ZjA4NDk0NTc2NjBjMDA5ZmU2M2QxZTlmYTlkYzkzMWMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjE0MDgyYTBhNTlmNWNkM2M3Mzg1YWQ1ZTFhMDBhNDYxZDBiYWE1YWRhZjcyODRmYWZlNTE5ZmVkODY0ZDM3NzciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImM1NGQwYzc3MDQwYTQwNjlmNGUxN2Q5MWY0MDllZjJlZDBlYjE4ZmUwZjJkYTkwMDA5NDY4Y2U4M2ZkMDcwOTciLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjIwYzZiNjFhNWFhYmU4NzJhZDdmZTg2NmUzYjBiN2I4NjRiOWUzNGIwNTY1YmEyMzE1NGFjZmZhM2ZiOTg0NTYifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_2cd1531191754268b2f9fe33210332a7",
+      "statement": "Liquidity liquidation-scenario rules in src/lib/liquidity-utils.ts: calculatePotentialUnlock = frozen_capital × (100 − avgDiscountPct)/100 (default 30% discount); getRecommendedScenario filters to is_profitable, prefers target_days === 60, otherwise the lowest suggested_discount_pct, and returns null for empty/unprofitable lists (AP#8). getScenarioUrgencyTier (C15, 2026-09-02) is the single non-localized classification source (≤30 aggressive, ≤60 balanced, else conservative) that consumers key visual classes on; getScenarioUrgencyColor is production-dead legacy hex kept for API compatibility (non-use pinned, hexes intentionally do not match status tokens) with compile-time exhaustiveness over the tier union.",
+      "evidence": [
+        {
+          "resource": "repo://src/lib/liquidity-utils.ts#L84-L176",
+          "version": "repo-lines-v1:sha256:76d1f0543db59666beb7288d5d2a8773115de095fd6ff41b9efbdd99d02eaa90:eyJzZWxlY3RlZExpbmVDb3VudCI6OTMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImQzYzdhMzhmYjI2NjU5NTJmNTJjNWEyYjk2MWUxOWMwNmFkYzY4NDU3MTNiNDJiZGY0MmZlZDU2NzMyYjdjYmMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjhkYjE3MzhiOTNmNjZhN2MwMTM0NzI2Y2YwYWYzNTA0MWQ3ZDdhODI5YjA1YjUyYjkxNGUxYjBiNzEwZWNiYmEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        }
+      ]
     }
   ],
   "verification": {
     "by": "openwiki/0.5.0",
-    "at": "2026-09-02T08:47:53.996Z"
+    "at": "2026-09-03T08:47:55.542Z"
   }
 }

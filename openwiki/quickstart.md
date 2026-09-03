@@ -10,6 +10,10 @@ sources:
     resource: repo://_bmad-output/planning-artifacts/shadcn-route-ledger.md
   - id: openwiki-source-3ae3de7eae6af907f9e7299c
     resource: repo://docs/HANDOFF-2026-09-02-FINAL-94-94-PROGRAM-COMPLETE.md
+  - id: openwiki-source-5bfb8400b5daf58813b7ad6a
+    resource: repo://docs/HANDOFF-2026-09-03-V15-SESSION2-EXECUTION-AND-REMAINING-BACKLOG.md
+  - id: openwiki-source-c66fd1b858bdd6d97345f065
+    resource: repo://docs/request-backend/230-auth-refresh-endpoint-missing.md
   - id: openwiki-source-5b54a58d1b51cd490b0e7162
     resource: repo://package.json
   - id: openwiki-source-23775c3de52f3ab95a13cb8b
@@ -20,10 +24,10 @@ sources:
     resource: repo://scripts/run-story-174-3-real-browser-zoom.mjs
   - id: openwiki-source-1bbe76f55f6efa9d2465f6c5
     resource: repo://scripts/run-story-174-3-state-evidence.mjs
-generated: { by: "openwiki/0.5.0", at: "2026-09-02T08:47:53.996Z" }
+generated: { by: "openwiki/0.5.0", at: "2026-09-03T08:47:55.542Z" }
 verified:
   - by: openwiki/0.5.0
-    at: 2026-09-02T08:47:53.996Z
+    at: 2026-09-03T08:47:55.542Z
 ---
 
 # WB ERP System — Frontend OpenWiki
@@ -52,6 +56,17 @@ Canonical snapshot sources: the consolidated status/debt registry (`_bmad-output
 - Full delivery contracts live in `_bmad-output/planning-artifacts/shadcn-migration-final-delivery-manifest.md`; the program retrospective is `_bmad-output/implementation-artifacts/epic-166-174-program-retrospective-2026-09-02.md`. Residual owner-scoped debt (product bugs PB-1/PB-3, WCAG sweeps, boundary residue) is catalogued in the final handoff §4 and the registry — nothing blocks the program.
 
 For the full per-story status ledger, the route ledger, and the final-verification evidence, see [Migration Program (Epics 166–174)](migration-program.md). The design contract itself (tokens, primitives, composition families, the WCAG 2.2 AA inclusive visual matrix) is documented in [Design System](design-system.md).
+
+## Post-Program Debt Sessions (2026-09-02/03)
+
+After the 94/94 closeout, debt-session waves landed on main (`docs/HANDOFF-2026-09-03-V15-SESSION2-EXECUTION-AND-REMAINING-BACKLOG.md`):
+
+- **D-1 (PB-1, silent cabinet create)** — PR #390: initiation-mint `ensureSessionNonce`, indeterminate recovery-alert, `finishRecoveryOperation` release, and a two-tab nonce-nulling e2e. Test floor 19,363 → 19,421.
+- **D-2 (PB-3, reactive 401 refresh)** — backend contract agreed (request-backend #230: `POST /v1/auth/refresh`, sliding rotation, expired JWT never refreshes); frontend implemented on `debt/d2-pb3-reactive-refresh` — api-client interceptor (single-flight refresh, replay ×1), nonce-preserving `refreshToken` in the auth store. Live-verified locally 2026-09-03 (refresh 200 / revocation 401).
+- **Boundary waves 1-2** (PRs #394/#395): financial-summary (58 sites) and margin-family (29 sites) palette → semantic tokens; boundary ratchet **459 → 401 → 372** (current baseline in `scripts/.shadcn-ui-boundary-baseline.txt`; 3 owner-accepted exceptions — do not touch).
+- Quality wave (PR #392/#393): AcceptanceStatusBadge solid pairs, GapsTable SR dedup, `ScenarioUrgencyTier` single classification source. Vitest floor now **≥ 19,424 / 0**; lint 0/0, tsc 0, build 0.
+
+Remaining backlog (boundary waves 3-5 from a 372 residual, `/80` sweep, FE-D1/D3/D5, logger-redact) is prioritized in the session handoff above.
 
 ## Overview
 
@@ -108,14 +123,18 @@ node scripts/generate-story-174-3-scope-register.mjs  # Story 174.3: regenerate 
 | Task | Go to |
 |------|-------|
 | Route migration work (Stories 166–174, route ledger, worktrees, handoffs), the Story 174.3 evidence pipeline (execution manifest, contract tests, scope register) | [Migration Program (Epics 166–174)](migration-program.md) |
-| Token / component / primitive work, design-system boundary canon (`LEGACY_PALETTE` / `CONTEXTUAL_HEX`), the WCAG 2.2 AA inclusive visual matrix | [Design System](design-system.md) |
-| App structure / route groups / auth / environment & API configuration | [Architecture](architecture.md) |
-| Gate / baseline / ratchet work, including `check-shadcn-ui-boundary.mjs` (ratchet 523) and `check-shadcn-migration-parity.mjs` self-suites | [Conventions & Quality Gates](conventions-and-quality.md) |
-| Test / e2e / automation work, including the story-174-3 e2e runner tooling (`e2e/support/story-174-3-runner-*.ts`, real-browser-zoom and state-evidence runners, fixture corpus under `e2e/fixtures/story-174-3/`) | [Testing & Operations](testing-and-ops.md) |
+| Token / component / primitive work, design-system boundary canon (`LEGACY_PALETTE` / `CONTEXTUAL_HEX`), the WCAG 2.2 AA inclusive visual matrix, and the debt-session boundary waves / contrast sweeps (ratchet 372) | [Design System](design-system.md) |
+| App structure / route groups / auth store (including D-1 `ensureSessionNonce` cabinet-create semantics and D-2 nonce-preserving `refreshToken`) / environment & API configuration | [Architecture](architecture.md) |
+| api-client transport, error semantics, and the D-2 reactive 401 single-flight refresh interceptor | [API Client and Normalizers](api-and-normalizers.md) |
+| Financial summary math, margin/liquidity calculations, cabinet creation and settlement flows, task-role semantics (including the quality-wave `ScenarioUrgencyTier` work) | [Domain Logic](domain-logic.md) |
+| Gate / baseline / ratchet work, including `check-shadcn-ui-boundary.mjs` (current baseline 372, fails only on increase) and `check-shadcn-migration-parity.mjs` self-suites | [Conventions & Quality Gates](conventions-and-quality.md) |
+| Test / e2e / automation work, including the story-174-3 e2e runner tooling (`e2e/support/story-174-3-runner-*.ts`, real-browser-zoom and state-evidence runners, fixture corpus under `e2e/fixtures/story-174-3/`) and the D-1 two-tab nonce-nulling e2e | [Testing & Operations](testing-and-ops.md) |
 
 ## Wiki Map
 
-- **[Architecture](architecture.md)** — route groups, layout/provider hierarchy, client-side data fetching, auth, and the canonical configuration table.
+- **[Architecture](architecture.md)** — route groups, layout/provider hierarchy, client-side data fetching, the auth store, and the canonical configuration table.
+- **[API Client and Normalizers](api-and-normalizers.md)** — the typed API surface, transport, error semantics, and the null-money/ratio preservation rules.
 - **[Design System](design-system.md)** — Tailwind v4 semantic tokens, hardened shadcn primitives, composition families, enforced design-system boundary, and the Story 174.3 inclusive visual contract.
+- **[Domain Logic](domain-logic.md)** — financial-summary math, margin/liquidity calculations, cabinet creation/settlement, and task-role semantics.
 - **[Migration Program (Epics 166–174)](migration-program.md)** — per-epic/story status ledger, route ledger (76/76 verified), parity validation, Story 174.3 evidence pipeline, orchestration process, and the final 94/94 closeout.
 - **[Conventions & Quality Gates](conventions-and-quality.md)** and **[Testing & Operations](testing-and-ops.md)** — coding standards/gates and the testing strategy with the story-174-3 evidence runners.

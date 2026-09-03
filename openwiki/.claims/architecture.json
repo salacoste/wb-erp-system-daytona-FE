@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "pageVersion": "sha256:661305609fe51e4e87c37f5081c07c3d292063f655c9d96ea436f2769b522da3",
+  "pageVersion": "sha256:71364d3b5201368ec2937a57469cdfb5b96c5c651d0b6c6bf8d50862453f181d",
   "claims": [
     {
       "id": "claim_2c9c1829b6b846cd913111aee59b6f27",
@@ -54,17 +54,21 @@
         },
         {
           "resource": "repo://src/lib/api-client.ts#L20-L66",
-          "version": "repo-lines-v1:sha256:ed3668704cf576c838de4b8986c7a6a3094c336f0ce550a5133da5a1a2da5f9b:eyJzZWxlY3RlZExpbmVDb3VudCI6NDcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjI5MmZhMzBkNDc0YTU3NTgxY2Y1ZjhlYjkxNTZmMDM1YWJiMjY4YzI5OTg3Yzk3YTQ2NjhlOWRjZDk4NzdlZjciLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImVhOTBjYTA1NTlmOGViM2I1ZDk1ZDJjMjhlMDVlNTRkOTcwODA3NmVjMmNlMjYzOTc5YjQ4MWY4YzRkZjk4YTIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImMxYWZjN2ZiNDE5ZTA0NGJhNzcyZTMxMzczZDZiZjQ2ZWMxZTA5YjMwMmQxODg1ZDMxM2IyZmJmNzgzM2EwYTEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImY5NmE0ZjdjNGJhMGI3YmM1MmE0NjMyY2VkNTYxMGZlMGVjNDQ2NWQ0NGM4ZGFiZDE3YjIzY2U2NzUzZWI0OTAifQ"
+          "version": "repo-lines-v1:sha256:44408cf2a469111bdee97669f5a3291360e8ea89e919ee37c4cbcd9c94ca4425:eyJzZWxlY3RlZExpbmVDb3VudCI6NTEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjI5MmZhMzBkNDc0YTU3NTgxY2Y1ZjhlYjkxNTZmMDM1YWJiMjY4YzI5OTg3Yzk3YTQ2NjhlOWRjZDk4NzdlZjciLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImVhOTBjYTA1NTlmOGViM2I1ZDk1ZDJjMjhlMDVlNTRkOTcwODA3NmVjMmNlMjYzOTc5YjQ4MWY4YzRkZjk4YTIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImMxYWZjN2ZiNDE5ZTA0NGJhNzcyZTMxMzczZDZiZjQ2ZWMxZTA5YjMwMmQxODg1ZDMxM2IyZmJmNzgzM2EwYTEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImY5NmE0ZjdjNGJhMGI3YmM1MmE0NjMyY2VkNTYxMGZlMGVjNDQ2NWQ0NGM4ZGFiZDE3YjIzY2U2NzUzZWI0OTAifQ"
         }
       ]
     },
     {
       "id": "claim_cbcd4250a6334b7b832df7243eb01f7b",
-      "statement": "The centralized ApiClient (src/lib/api-client.ts) auto-injects Authorization: Bearer <token> and X-Cabinet-Id headers read from the Zustand auth store on every request, unless skipAuth/skipCabinetId is set; an immutable initiating authToken/cabinetIdOverride wins over the mutable store values, non-OK responses throw ApiError with Retry-After extraction for 429/503, and the constructor rejects plain-HTTP production API URLs (outside localhost).",
+      "statement": "The centralized ApiClient (src/lib/api-client.ts) auto-injects Authorization: Bearer <token> and X-Cabinet-Id headers read from the Zustand auth store on every request, unless skipAuth/skipCabinetId is set; an immutable initiating authToken/cabinetIdOverride wins over the mutable store values, non-OK responses throw ApiError with Retry-After extraction for 429/503, and the constructor logs an error (does not throw) for plain-HTTP production API URLs outside localhost.",
       "evidence": [
         {
-          "resource": "repo://src/lib/api-client.ts#L24-L97",
-          "version": "repo-lines-v1:sha256:cc9b76dbe69c767d30b6ed2f1d66f0def12d51a400be8b9775ce2e72c5d88f29:eyJzZWxlY3RlZExpbmVDb3VudCI6NzQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImU1NGIzM2QwZjI1YmQ5NDQ3ZjQyNDVjZmI4MTFhNTY4YTc4ZDRlNGMzMWJhMTg4OGU0Y2UyNmMzMWM0ZjBiZjciLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjliNjJmNjBkODU5MGE1NzljZjQ2ZjhkNjczNzhjNGM1NzJiOTYyY2VjY2RiOTBjN2E1ZjdiNDJiOTYwNzgyYTQiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImQ4Nzc1MDE2ZjViNDZhOGJjZGRiNDA3ZDNhMzkxYWRhYmJlZjY1YzkyZDE1YjYwZjY3ZGYzZTIzY2U4Y2MzZTkiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjkwNDAxMmMxYmMyZmNmYjgzOGU0NGQ4ZTAwMzBjM2UwZjAzMjQ3ZWI5MDRlOWMxMDkwZTNkYmEzMGZmNGJjNzQifQ"
+          "resource": "repo://src/lib/api-client.ts#L106-L130",
+          "version": "repo-lines-v1:sha256:0c0bc00f2bfb72aea794bbf22a6639f182f6dab304514946b7c049595dfa5dde:eyJzZWxlY3RlZExpbmVDb3VudCI6MjUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijg3NjgxMmU3YTk4MTM5M2UxYjc4ZDJlOWY3MjQzZGIxYzRjNmM3NWE4Y2IyY2JiM2Y0YzA1ZTQyMmUwMWE3ZWMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImQwZDcyMmExMDlkNmJhMDk1ODJhNGFmZjY0MzgyNDIwODBjYTVkMWJmZTMyMjI1OGE4ZWVlZjJkZTQ3Zjc3MTciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImFlNzVjYTg4OThhNTZhOTZmZDI3NjY2OGEwMjc1N2UwZmNhY2I5MWY5OTAyYjZkZThmZGY5MTYzZTRkZTQ4ZmMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjdlMDEzYjEzMjRhZjdmMWEyMzFiODNlODhhZjBmMjIzZWQ4ZDUzMzc5NzkyMWUwYWM5YmI3ZTZiYWQ0YmFiMDcifQ"
+        },
+        {
+          "resource": "repo://src/lib/api-client.ts#L25-L66",
+          "version": "repo-lines-v1:sha256:0bc064fb932e49fb26b87e82b4491540acdaadde6876d5d78fd2f05ecc60e105:eyJzZWxlY3RlZExpbmVDb3VudCI6NDIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImU1NGIzM2QwZjI1YmQ5NDQ3ZjQyNDVjZmI4MTFhNTY4YTc4ZDRlNGMzMWJhMTg4OGU0Y2UyNmMzMWM0ZjBiZjciLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImQ4Nzc1MDE2ZjViNDZhOGJjZGRiNDA3ZDNhMzkxYWRhYmJlZjY1YzkyZDE1YjYwZjY3ZGYzZTIzY2U4Y2MzZTkiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImZjN2E5NmM0MWVkNTI1OTk2YzFkNjdlZTIyMDFmMDVmNjg3NDI5ZjI5NzFkYjdjYjI3MzhjMDAyMjRhYWYxOWYifQ"
         }
       ]
     },
@@ -94,7 +98,7 @@
       "evidence": [
         {
           "resource": "repo://src/stores/authStore.ts#L43-L168",
-          "version": "repo-lines-v1:sha256:0f1c1f4c2abb05a674bf237ca933cae14a57d2f5adad69b16ed15e03ecd97051:eyJzZWxlY3RlZExpbmVDb3VudCI6MTI2LCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiJmMjU5ZmQzYjU2ODJlZDNmZTFlZTNmNTdkZjRhYTI1YTRiM2I5NmMyNTc5YTIyMTEyN2FlM2RiYjQzMDk1NzAyIiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiI0MTJjYTM0NWNjZjc1YmY5YzA4MDZiY2U2OTViZThkZTgwOGI3OTk4NDI1MWE3YTU0ZDIwMmNmNjEwMWRkNDUxIiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiI3ZGMwODBjMWEwMGE5ZTI1ZTFiMDA2YzRiMTQzNGJhZTE3MTcwYTA2OGJhMjdhMGExMjY1NGIzMWMzYTdkNzc3IiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MCwiZm9sbG93aW5nQ29udGV4dEhhc2giOiJlM2IwYzQ0Mjk4ZmMxYzE0OWFmYmY0Yzg5OTZmYjkyNDI3YWU0MWU0NjQ5YjkzNGNhNDk1OTkxYjc4NTJiODU1In0"
+          "version": "repo-lines-v1:sha256:c134a01b59e8eb7918ad9959dc495acb5d57e9a7c6a7e03b1135e147c204f28a:eyJzZWxlY3RlZExpbmVDb3VudCI6MTM4LCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiJmMjU5ZmQzYjU2ODJlZDNmZTFlZTNmNTdkZjRhYTI1YTRiM2I5NmMyNTc5YTIyMTEyN2FlM2RiYjQzMDk1NzAyIiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiI0MTJjYTM0NWNjZjc1YmY5YzA4MDZiY2U2OTViZThkZTgwOGI3OTk4NDI1MWE3YTU0ZDIwMmNmNjEwMWRkNDUxIiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiI3ZGMwODBjMWEwMGE5ZTI1ZTFiMDA2YzRiMTQzNGJhZTE3MTcwYTA2OGJhMjdhMGExMjY1NGIzMWMzYTdkNzc3IiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MCwiZm9sbG93aW5nQ29udGV4dEhhc2giOiJlM2IwYzQ0Mjk4ZmMxYzE0OWFmYmY0Yzg5OTZmYjkyNDI3YWU0MWU0NjQ5YjkzNGNhNDk1OTkxYjc4NTJiODU1In0"
         }
       ]
     },
@@ -189,10 +193,66 @@
           "version": "repo-lines-v1:sha256:3d5d3f70225ed4c754c274c1d85fbdd38963a0a5831402ecdbd54e36125f9a47:eyJzZWxlY3RlZExpbmVDb3VudCI6NCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMzQ4MzNkNTk0OWMwM2E0MGNhOTUyNDkxNjEwYTY2NTk2NDRiM2FhNDY2MzYyZjc5OTAyMGRiZjE5ODE1NDdkYiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNWYyMDNiYWFmMDBmMjAwMzA2M2RjNmVmNjQ3MTU0MTM1ZDY2MTA2N2IzM2FjYTk3MGRlY2IxMTEzNDRiYzdmMSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiODg5YTcxOGZkMGE3MjA5ZTJhNzc0M2IzOTZmZjRjYzBiZGIwZWEwZDRjZTdmN2EzOThjNmYyZWQ2ODhjYWRlNyIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNjMyNGE1Nzc1MzIzNGEyMTIwY2YyOTdiZWJlOTFjYTNhNThhMTFkZDU3NDQzZWUyOTZmOTgyMGI3NDliYmRhOSJ9"
         }
       ]
+    },
+    {
+      "id": "claim_fa03e3d796a64faabccdcb0ec5f7f090",
+      "statement": "D-2 reactive 401 recovery: on a 401 the ApiClient request path, gated to authenticated non-refresh endpoints (not skipAuth, not /v1/auth/refresh) with per-request replay-once enforced by a private replay parameter that outranks the public options.allowReactiveRefresh opt-out, calls getFreshToken with the failed request's wire Authorization; on success it replays once with authToken dropped so the replay re-reads the rotated store token.",
+      "evidence": [
+        {
+          "resource": "repo://src/lib/api-client-refresh.ts#L25-L37",
+          "version": "repo-lines-v1:sha256:1ad2526d5c784cdf9fdae3631c7e0a8fb8958f571f8309e4248439afc0b4faab:eyJzZWxlY3RlZExpbmVDb3VudCI6MTMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImM0ZTAzZDg0ZmFiYjU4YjZhMjJkNzkwZWIwNGUxODYxZmY0ZGVlYjUzOTcwNTIyNDk0MGFlY2Y4NDM3Y2U4NmEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijg5YmQyZTk4ZmRhOGM3MGRlNDQzM2I3NzNlYTM5MzkzZjQ5NWRiZDYwNDBkYTVmNTUzODVjZDQ3NmFjMjUxNzEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjAyN2VlYmIxMjQwNTMyMTIxZmIyNGZlYTUxYzFjZjNlNDYwZTcyNzIyNWYwOWI5ZDRhOWFmNWM5MmMyZWE1MzciLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjgxZWE0ZjYxNDM1ZjBkZjI4N2JmMGVkZGQ3MDhmYjc4ZjE1MzkyYzRmMGViMDNiYzQzNjAzNDZhYmZjMWU2M2UifQ"
+        },
+        {
+          "resource": "repo://src/lib/api-client.ts#L76-L103",
+          "version": "repo-lines-v1:sha256:48535a9d62a41150deda135f1c88123c33da346c07df53f6c902e22f63ba58a8:eyJzZWxlY3RlZExpbmVDb3VudCI6MjgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImI4YzVkYTc3ZjcxMzlhNDlmZTMxN2U2MGU4OTEyNDFhOTJlMGYxZDMyZDQ4NDQ3MmE5ZTNkNWYwNjUyZTgzOWQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijg4MDA1ZDU3MTA2YTM2MmViMDAwZGFmM2RhNDY3NGM4MmI1MThmZjVhMmUyZjY3ZWU4ZTc1N2EzMzNjMmFmNjYiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjQ3OTVjNTBmNDk0Y2M1ZTcwZjlhYjExNGRiMmQzMzVjYzJhMWM1OWExMjc1OWNmMjdjZTQ5NzlkZmQ5NDEyYTEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImNjYTBjNDcwZmQ2ZTZmOWNkNDc3N2VlMWVlZmE0ZDhiZDQ5Y2FlYTFkZDJhNDI0NjRhZDYwM2VjYWJmNDlmODYifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_45b21484c8264eab87a5d5e73be12820",
+      "statement": "The single-flight refresh core getFreshToken (src/lib/api-client-refresh.ts) performs at most one POST /v1/auth/refresh at a time (concurrent 401s join the same promise, cleared on settlement), reads the token from the auth store rather than the failed request's revoked token (single-use revocation hazard), applies a rotation-cascade gate where a wire token differing from the store token joins/awaits the pending rotation instead of refreshing, runs under a 10s AbortSignal.timeout deadline, updates the store via the nonce-preserving refreshToken store action, and never rejects (false means surface the original error).",
+      "evidence": [
+        {
+          "resource": "repo://src/lib/api-client-refresh.ts#L34-L123",
+          "version": "repo-lines-v1:sha256:713b91cabf5ff2df52d90bbccbd03f9b000f964b9b59105e24ddfc293cbce5d1:eyJzZWxlY3RlZExpbmVDb3VudCI6OTAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjA5NDQyYTY2NTU2MTBkOGMyYTY2Mjg5NzY0ZmI4OTgwY2Q4Y2ZjNGE3YWI4ZmI1ZDE3YTQyY2RjNWI1NTA4YzUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImNlMmFjMTcwZDIxYjQzOGEyYjA0NGE2MjgwMTJjMzQyYjE3MWEwZTcxYzk3NjI3YjVmNTliMDc0NjRhZDljNWMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        },
+        {
+          "resource": "repo://src/stores/authStore.ts#L80-L89",
+          "version": "repo-lines-v1:sha256:73cc9d99a382e0c8d73b34f43258ab9069b7eb820950a0446cae87fa0325fce3:eyJzZWxlY3RlZExpbmVDb3VudCI6MTAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImVhZmFhZTNlNGEwNGRmZjY4NmEwZmMxZmYxNWVlZDA0ODAyNzFhMzRhNTZkZWJiMTM2N2M0Nzk5NDdhMjNiODciLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImI5NzhlMjUwM2I4Y2YzN2EwNmY3ZDZmMGEzYTZiNmZlMzU2OTFmYmNhYjUwYjg3NzVjYWI2ZmFiYzcxYzU5MmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjE4OWJlNWQzYzk1NWI4ZWEzZjBkYzNhNDQxYzE4YTZjZjk3NTJmMjgyYzEzMjY3MjMwZjVhYzY4MDY5MDQ2OGIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImE2MDNlYjY3YTI0OGFlMTExNjMxMGNlMDRiMmY0NmNjYjEwMTU2NDc5Zjg1OTExYmMzMzViMmE3YmIwZmUzNjAifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_3a10065be84443e4b097e8ee86c0bfe7",
+      "statement": "api.ts refreshToken() POSTs /v1/auth/refresh with body {} under a forced contract (skipAuth plus explicit Authorization Bearer of the passed current token) that callers cannot override, merging extra ApiRequestOptions (e.g. the refresh deadline's AbortSignal) into the apiClient call; the module is lazily imported by the refresh core to avoid a load-time module cycle.",
+      "evidence": [
+        {
+          "resource": "repo://src/lib/api-client-refresh.ts#L96-L115",
+          "version": "repo-lines-v1:sha256:ed8da621762cd711665236de73cfd07489e44d0f779de2a3ee780dd2ee957257:eyJzZWxlY3RlZExpbmVDb3VudCI6MjAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjEwZjNiODU5MTRiMjZhZjlhNDg2ZjIxOWY4MmM0Y2U5MjZjMzY1NGVmMTU0NDY3ZmQzY2NlMGUxYTBjODExY2YiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjFhZjlkZTY5ZWRmNDdiZGZhOTI1MzIwY2NhOWEzYTkxYTllMzUzZjZhZDE4NTVmYTJiYTEyMjMwYzM3OTgwYjIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImNjOTU3NTcwOWY0NjFiYTkwZWM4YWFjMzY4NDNmNDMwMzMxZTJjYjQxYTRiOWY3ZjdjMzM1YWZhZWZlNzJmZDUifQ"
+        },
+        {
+          "resource": "repo://src/lib/api.ts#L74-L101",
+          "version": "repo-lines-v1:sha256:59c5c702a0b52b20b26605ad69d17519e0ef6774fa003e39668db9b15cc294c9:eyJzZWxlY3RlZExpbmVDb3VudCI6MjgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImVhZjIyY2YwNzMyNTkyYzI0NzE0MWNiZTYxZWZhMTEwMTI2MTJmNWEzMTIyYjlhZjliYmFmNTJmNTcyNGQxOTQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImZiNTgwZTk2NGY4M2E0NzNmNDNkNDQzODQ2Mjk0OWQ2OGI1NjAwZmRhNzg3ZjE2Mzc0NWQwMGRlODljYmYzNmEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjNmZmU2M2RiZTA1NGJmNGMwNTc2ZjFkM2I5ZmY2M2RhMGU2ZmQ0ZWQwNzVlODNiMzM1NGIzNzljODFiMGU0M2YifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_34649bee5cc24be195103b5b1df978b4",
+      "statement": "The proactive refresh path in useAuth() (mounted by AuthProvider) checks isTokenExpired on mount and every 5 minutes and routes through the same getFreshToken single-flight core as the reactive 401 interceptor; on failed recovery it logs out and redirects to /login, and it never re-writes the rotated token itself since the store update happens inside getFreshToken.",
+      "evidence": [
+        {
+          "resource": "repo://src/components/auth/AuthProvider.tsx#L10-L12",
+          "version": "repo-lines-v1:sha256:95fb94387936273e7810316fb8fb4b4d17c9293e9f7a93918e694d414c2cbba4:eyJzZWxlY3RlZExpbmVDb3VudCI6MywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZDE4N2U3MzUxNTBmMmY3NGMxZWQ4NzEyMWFjZmJkZjNhZDM5MWYxNDUxY2RhYTg2ZmI0YTIxOTMzMzg3ZDk3ZCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMDFiYTQ3MTljODBiNmZlOTExYjA5MWE3YzA1MTI0YjY0ZWVlY2U5NjRlMDljMDU4ZWY4Zjk4MDVkYWNhNTQ2YiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiN2ZkNDEwNTQ5NmQ2YmIyNzQzYWVmZmFjOWE0MzBlN2JjMDgzZmEzYzRhYTFlMTcxNjAzNGI0MjAxMjY3ZjkyMCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjIsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNDNhY2FhMmMwNzFkMDExNzZjMmY1NmVkZTMzYmFlZjkyOGYwMWZhZTBkMGNhOWMxZmE0Njk3ODRmMzY1ZDhlNCJ9"
+        },
+        {
+          "resource": "repo://src/hooks/useAuth.ts#L31-L68",
+          "version": "repo-lines-v1:sha256:20bd284fe10e93e14a4700d8ae35a2e85eda4c4c75e8260136681fd17a9ecaf6:eyJzZWxlY3RlZExpbmVDb3VudCI6MzgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjBkZGVmYzhlZmU3ZDA0ZTQxNWFhMGUyNWVlZGI4ZGIzODYxYWQ1NDgxMDM0NjIzNTAzZTU2NjM4ZDhlYjg5MWYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjRmZGEzMTY2YjBlZDE1YzU2ZDlmMGEwMzM2ZDk2MmM5OWE0Y2Y1ODliN2Q1OTBjMWI1NWRkMzU3ZjExNzM2M2QiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImNmZTRlOWExNWNkNDlhMjNiNjdmYWM3ODA3ZDhjZjIzZTg2MmI0ZTIxNjg1ZGQ3ZDE5YTFmYjg4OWVkMTk5Y2UiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjVjY2MzYTEwZTEzNWNjMmI1YjEyMjg3NTQ3YzE2MTAzNjU2M2MxYzQ4OWZmYTZkMmVlNzZiNDQxZjEwYzRjZGIifQ"
+        }
+      ]
     }
   ],
   "verification": {
-    "by": "openwiki/0.4.3",
-    "at": "2026-09-01T08:47:48.765Z"
+    "by": "openwiki/0.5.0",
+    "at": "2026-09-03T08:47:55.542Z"
   }
 }

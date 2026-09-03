@@ -3,6 +3,8 @@ type: "Domain Reference"
 title: "Domain Logic"
 description: "Financial and business-logic pure functions in src/lib/ (theoretical profit, margin/COGS temporal logic, ROI/profit-per-unit and efficiency status tiers, profitability status, unit economics, liquidity with trends, account finances + document download, seller communications with gated write-back, backfill retry, ISO-week/Moscow-timezone handling, null/decimal helpers), the per-week financial series hook, returns-analytics and sku-financials type contracts, route-local monitor/monitoring domain helpers, and the price-calculator cost-breakdown and margin-status modules."
 sources:
+  - id: openwiki-source-91faab5d81883f34499f73f4
+    resource: repo://e2e/onboarding-cabinet-create-nonce-mint.spec.ts
   - id: openwiki-source-1550d5500fee77a878edfd70
     resource: repo://src/app/(dashboard)/monitor/components/monitor-metrics-utils.ts
   - id: openwiki-source-c727cc80b8094f9fe29cc81f
@@ -13,12 +15,16 @@ sources:
     resource: repo://src/app/(dashboard)/monitoring/components/data-completeness-constants.ts
   - id: openwiki-source-a658884272ca8f86b90dbbc4
     resource: repo://src/app/(dashboard)/monitoring/components/health-history-helpers.ts
+  - id: openwiki-source-c382d6f9cd955891ed0bf0b6
+    resource: repo://src/components/custom/CabinetCreationForm.accountRecovery.test.tsx
   - id: openwiki-source-4230efdc9fbc632cdf76bba0
     resource: repo://src/components/custom/price-calculator/cost-breakdown-helpers.ts
   - id: openwiki-source-cc78c96d33c9553dc7ca90b1
     resource: repo://src/components/custom/price-calculator/cost-breakdown-types.ts
   - id: openwiki-source-c4a70565d56a4d861147959a
     resource: repo://src/components/custom/price-calculator/margin-status-helpers.ts
+  - id: openwiki-source-2e711585b642065d1909c487
+    resource: repo://src/components/custom/useCabinetCreationRecovery.ts
   - id: openwiki-source-ca40daf89ea98ab131d36ff4
     resource: repo://src/hooks/financial/useWeeklyFinancialSeries.ts
   - id: openwiki-source-e6c63f5a090d825e57444dba
@@ -53,6 +59,8 @@ sources:
     resource: repo://src/lib/iso-week/comparison.ts
   - id: openwiki-source-41a86e7fc276267763562134
     resource: repo://src/lib/iso-week/core.ts
+  - id: openwiki-source-589a2f4245a527f644f3ffef
+    resource: repo://src/lib/liquidity-utils.ts
   - id: openwiki-source-9a4987e93ebea1fd47b35bce
     resource: repo://src/lib/margin-helpers.ts
   - id: openwiki-source-3ce869e30606517f4bf48ded
@@ -65,14 +73,16 @@ sources:
     resource: repo://src/lib/roi-profit-utils.ts
   - id: openwiki-source-d6b8b04abd546dc2eafc55e1
     resource: repo://src/lib/theoretical-profit.ts
+  - id: openwiki-source-a634a54b04d180befb7476e7
+    resource: repo://src/services/cabinets.service.ts
   - id: openwiki-source-8882572a73a88650eca4e4b9
     resource: repo://src/types/analytics-returns.ts
   - id: openwiki-source-dbb29a8befd1ef6fd6b187fb
     resource: repo://src/types/sku-financials/core.ts
-generated: { by: "openwiki/0.5.0", at: "2026-09-02T08:47:53.996Z" }
+generated: { by: "openwiki/0.5.0", at: "2026-09-03T08:47:55.542Z" }
 verified:
   - by: openwiki/0.5.0
-    at: 2026-09-02T08:47:53.996Z
+    at: 2026-09-03T08:47:55.542Z
 ---
 # Domain Logic
 
@@ -158,6 +168,66 @@ Each cabinet carries an explicit **target margin** (`targetMarginPct`, Epic 121 
 | Onboarding (cabinet creation) | `CabinetCreationForm` (`src/components/custom/CabinetCreationForm.tsx`) | Collects target margin alongside the cabinet name; if a cabinet already exists for the session, submitting updates that cabinet's margin via `useUpdateTaxSettings` instead of creating a new one. Includes a retry path: if cabinet creation succeeds but the margin save fails ("target margin" error), the form re-binds to the existing cabinet so the operator can retry just the margin. Story 167.5 hardened non-idempotent-create recovery: a session recovery marker and helpers (`src/components/custom/cabinetCreationRecovery.ts`, `useCabinetCreationRecovery.ts`, `useCabinetCreationSubmission.ts`) restore the "cabinet already exists" alert, focus, and disabled-create state after reload/remount for the same user, and the presentation split lives in `CabinetCreationFormPresentation.tsx`. |
 
 The mutation hook `useUpdateTaxSettings` (`src/hooks/useCabinetTaxSettings.ts`) invalidates both the `cabinet-tax` and `financial` query families on success, so dashboards pick up the new target alongside the canonical tax config.
+
+## Cabinet Creation & Settlement Flow
+
+Cabinet creation (`src/services/cabinets.service.ts`, `handleCreateCabinet`) is a **non-idempotent, session-scoped write** with typed conditional settlement (Story 167.9 + D-1/PB-1). The backend returns a **new JWT** plus the created cabinet; committing that token/cabinet into global auth state must only happen if the session that initiated the create is still the live session.
+
+**Settlement evaluation** — `evaluateCabinetSettlement(expected)` compares the immutable initiating snapshot (`{ accountId, sessionNonce }`) against `useAuthStore.getState()`:
+
+| Status | Trigger | Effect |
+|--------|---------|--------|
+| `applied` | Live token+user, nonce match, and (defense-in-depth) account-id match when both non-null | Commit proceeds |
+| `stale` | No live token/user, nonce mismatch, or account mismatch | Quiet swallow: `logger.warn` with operationId only — never mutates auth state, never throws |
+| `indeterminate` | Either nonce is `null` (session persisted before `sessionNonce` existed) | Treated like stale for all UI effects, but marked so the durable operation can be reconciled |
+
+The **session nonce is the PRIMARY identity predicate**: a nonce match settles `applied` even when the initiating snapshot lacked a user (token-only state); the account id is compared only when both sides are non-null (fail-safe override to `stale`).
+
+**D-1 (PB-1) initiation mint**: `handleCreateCabinet` calls `ensureSessionNonce()` **before** capturing the initiating context. A legacy/partially-rehydrated authenticated session (nonce-less live store, e.g. a cross-tab sync that bypassed rehydrate) gets a nonce here, so the create settles `applied` instead of being **silently swallowed** as `indeterminate` — the PB-1 defect. This complements the Story 167.9 rehydrate mint that covers the page-reload path. Defect pins: the two-tab e2e `e2e/onboarding-cabinet-create-nonce-mint.spec.ts` ([P0] — seeds a normal nonce, then nulls the live store's nonce via a cross-tab `storage` event; without the mint the create is swallowed and the user stays on `/cabinet`) and `src/services/cabinets.service.settlement.test.ts` ("legacy nonce-less session mints a nonce at initiation and settles applied").
+
+**Flow through `handleCreateCabinet`**:
+
+1. Reject unauthenticated (`!token` → throw).
+2. **Mint-before-capture**: `ensureSessionNonce()`, then snapshot `{ accountId, sessionNonce }` and generate a `crypto.randomUUID()` idempotency key.
+3. `createCabinet({ name }, { token, idempotencyKey })`. On failure, re-evaluate settlement: a non-`applied` settlement is logged and returned quietly (a live session must not see an error for work it did not start); only a live-session failure throws. On an `indeterminate` failure there is no response/operationId to server-reconcile — recovery rests on re-login + the `reconciledCreate` path or a same-tab reload re-reading the sessionStorage recovery marker (per-tab; a fresh tab sees no marker).
+4. Evaluate settlement before any commit; `stale`/`indeterminate` return `{ status, operationId }` with a quiet log.
+5. Commit synchronously: `refreshToken(response.newToken, user)` (a token-update failure throws "Cabinet created, but token update failed…") and `setCabinetId(response.id)`. Check-then-commit is safe from interleaving because JS is single-threaded.
+6. Persist the onboarding target margin via `updateCabinetTaxSettings(response.id, { targetMarginPct }, marginContext)` where `marginContext` is **pinned to the just-committed context** (`authToken: response.newToken`, `cabinetIdOverride: response.id`, `allowReactiveRefresh: false` per D-2 pass-2) — the PUT's await is a session-switch point, and a store-based transport could read account B's token with account A's cabinet. A margin failure after a superseded settlement is quietly swallowed; in a live session it throws "Cabinet created, but target margin could not be saved" (the retry-rebind path below).
+7. `applied` result carries the committed cabinet view (with the persisted `targetMarginPct`), `productsSyncTasks`, and the durable `operationId`.
+
+```mermaid
+sequenceDiagram
+    participant F as CabinetCreationForm
+    participant S as handleCreateCabinet
+    participant A as authStore
+    participant BE as Backend /v1/cabinets
+    F->>S: create(name, targetMarginPct)
+    S->>A: ensureSessionNonce() (D-1 mint)
+    S->>S: snapshot accountId + nonce, uuid idempotency key
+    S->>BE: POST create (idempotencyKey)
+    alt session superseded (any checkpoint)
+        S->>S: evaluate = stale or indeterminate
+        S-->>F: quiet result, no auth mutation, no throw
+    else live session
+        S->>A: refreshToken(newToken), setCabinetId
+        S->>BE: PUT target margin (pinned token + cabinet)
+        S-->>F: applied with cabinet view + operationId
+    end
+```
+
+*Conditional settlement: every await boundary re-checks the initiating session against the live auth store before committing or erroring.*
+
+### Account-scoped recovery admission (Story 167.5 + D-1 reviews)
+
+The durable recovery marker (`src/components/custom/cabinetCreationRecovery.ts`, sessionStorage, keyed per user via `recoveryMarkerKey(userId)`) plus `useCabinetCreationRecovery` restore the "cabinet already exists" workflow after reload/remount:
+
+- `useCabinetCreationRecovery` runs a phase state machine (`restoring` → `idle` / `recovery-blocked` / `margin-recovery` / `token-recovery` / `creating`) on mount and on `RECOVERY_MARKER_EVENT` window events (filtered by `userId`, so account A's marker never affects account B's form).
+- A `create-pending` marker whose operation is no longer live **and** a cabinet now exists resolves as `reconciledCreate` → marker cleared, phase `idle`. An unreadable (`indeterminate`) marker blocks recovery with the safe-reconciliation message.
+- A marker in `post-create-margin-recovery` (or update-pending, via `markerAllowsUpdate`) surfaces the retry-only-margin flow.
+- **D-1 review fix (quiet guard)**: a form instance that itself dispatched the operation stays quiet once its liveness flag is released (`localOperationIds.has(marker.operationId)`), but normalizes `restoring` → `idle` so the pre-normalization phase cannot silently block the form after a same-tab logout+login.
+- Marker changes broadcast `RECOVERY_MARKER_EVENT`; a `reconcile: true` detail bumps a reconcile revision that force-resets the form from `existingCabinetData` (name + margin, 20% fallback) so a settled update is not clobbered by stale dirty values.
+
+**Focused tests**: `src/components/custom/CabinetCreationForm.accountRecovery.test.tsx` — account-switch matrix: a held account-A submission keeps account B blocked from double-creating, a late A success cannot mutate B's marker/sessionStorage or fire toasts/navigation for B, and B's held PUT admission survives an A success and B remount; `src/services/cabinets.service.settlement.test.ts` (settlement statuses + nonce mint); `e2e/onboarding-cabinet-create-nonce-mint.spec.ts` (D-1 two-tab nonce-null pin + legacy-session regression).
 
 ## Pricing Basis (Repricing, SPP-1 Lane)
 
@@ -269,7 +339,7 @@ The price calculator (`/cogs/price-calculator`, `src/components/custom/price-cal
 
 `margin-status-helpers.ts` is shared between `MarginSection` and related components:
 
-- `MARGIN_STATUS_CONFIG` — the four margin tiers with Russian labels and token-based badge classes: excellent «Отлично», good «Хорошо», warning «Низкая», critical «Критично». Since D-4 (2026-09-02), the **good** and **warning** tiers use solid pairs (`bg-status-success` + `text-status-success-foreground`, `bg-status-warning` + `text-status-warning-foreground`, per 173.12 canon) for WCAG 1.4.3 contrast in both themes, while **excellent** and **critical** intentionally keep the `/15` financial-token tints (`bg-financial-positive/15` / `bg-financial-negative/15`).
+- `MARGIN_STATUS_CONFIG` — the four margin tiers with Russian labels and token-based badge classes: excellent «Отлично», good «Хорошо», warning «Низкая», critical «Критично». Since D-4 (2026-09-02), the **good** and **warning** tiers use solid pairs (`bg-status-success` + `text-status-success-foreground`, `bg-status-warning` + `text-status-warning-foreground`, per 173.12 canon) for WCAG 1.4.3 contrast in both themes. **excellent** and **critical** keep financial-token tints (no `-foreground` pairs exist for them), but the P2 boundary wave-2 pass (2026-09-03) corrected their opacity `/15` → `/5` (`bg-financial-positive/5` / `bg-financial-negative/5`) after measuring 4.19:1 / 4.42:1 light-mode contrast fails — `/5` passes in both themes.
 - `getMarginStatus(pct)` — threshold mapping: **≥ 20% excellent, ≥ 10% good, ≥ 5% warning, else critical**.
 - `getMarginColor(marginPct)` — the same thresholds mapped to text-color classes for inline health coloring (`text-financial-positive` / `text-status-success` / `text-status-warning` / `text-financial-negative`).
 
@@ -279,11 +349,18 @@ Note these thresholds are calculator-internal defaults; the cabinet-level config
 
 | File | Purpose |
 |------|---------|
-| `liquidity-utils.ts` | Summary helpers: `getIlliquidSkuCount`, `isFrozenCapitalHealthy`, `calculatePotentialUnlock`, `getRecommendedScenario` |
+| `liquidity-utils.ts` | Barrel re-exports + summary helpers: `getIlliquidSkuCount`, `isFrozenCapitalHealthy`, `calculatePotentialUnlock`, `getRecommendedScenario` |
 | `liquidity-category-config.ts` | Category definitions: highly_liquid, medium, low, illiquid (with colors/labels) |
 | `liquidity-action-benchmark.ts` | Action types, benchmark statuses, trend insights |
 | `liquidity-formatters.ts` | Turnover days, velocity, frozen capital formatters |
 | `liquidity-sort.ts` | Sort field mapping and item sorting |
+
+### Liquidation scenario math (`src/lib/liquidity-utils.ts`)
+
+- `calculatePotentialUnlock(summary, avgDiscountPct = 30)` — potential recovery from liquidating dead stock: `frozen_capital × (100 − avgDiscountPct)/100` (i.e. a 30% discount recovers 70% of frozen capital).
+- `getRecommendedScenario(scenarios)` — picks a recommendation from backend liquidation options: filter to `is_profitable === true`, prefer the balanced `target_days === 60` scenario, otherwise the profitable option with the **lowest** `suggested_discount_pct`; returns `null` when the list is null/empty or nothing is profitable (AP#8 — never fabricate a recommendation).
+- `formatDiscount(pct)` — `-${formatPercentageInt(pct)}`; `suggested_discount_pct` is a whole-percent integer in the backend contract, the literal `-` prefix marks the discount direction.
+- `getScenarioUrgencyTier(targetDays)` — C15 (2026-09-02): single non-localized classification source, `≤30` aggressive / `≤60` balanced / else conservative. Consumers key visual classes/maps on the tier id (not on localized label strings, so a label change can't silently drop a class); `getScenarioUrgencyLabel` maps tier → Russian label and `getScenarioUrgencyColor` maps tier → legacy hexes. `getScenarioUrgencyColor` is **production-dead** (UI renders status tokens; non-use pinned by `liquidity-presentation-source-contracts`) and its hexes deliberately do NOT match the status tokens — registered follow-up debt, do not "fix" by swapping hexes; the `never`-typed default gives compile-time exhaustiveness over the tier union so a future fourth tier fails at build time instead of silently rendering green.
 
 ### Liquidity Trends (Story 165.4)
 

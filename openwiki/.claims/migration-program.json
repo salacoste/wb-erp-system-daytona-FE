@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "pageVersion": "sha256:269cef7105d28d77a286bd8f1325e471f9213c3dbba747a575a32282f1f3e721",
+  "pageVersion": "sha256:e64a33ac1f16a5aff431bbaaf3a29a6989705faa0e0b0c269b780460485dc3d6",
   "claims": [
     {
       "id": "claim_7146a57eacad4db2bf7552b903072ad9",
@@ -208,19 +208,23 @@
     },
     {
       "id": "claim_21dd5610759b4080a9e98bb8050cb693",
-      "statement": "Post-migration debt is owner-scoped aftermath, none blocking: confirmed-live PB-1 (silent cabinet-create skip on nonce-less sessions) and PB-3 (no reactive 401-refresh interceptor) await owner triage, while PB-2, PB-4, the /15-family contrast fix, FE-D9 logApiError redaction, and SEC-DOC-1 doc-credential redaction were resolved/redacted in 2026-09-02 waves (PRs #382-#385) with debt-* artifacts; the full register with statuses, fix-canons, and evidence lives in the final handoff Debt escalation section.",
+      "statement": "Post-migration debt is owner-scoped aftermath, none blocking, and its P0 items are resolved: PB-1 (silent cabinet-create on nonce-less sessions) via D-1 (session-2, PR #390, ensureSessionNonce initiation-mint + indeterminate recovery alert + finishRecoveryOperation release), PB-3 (no reactive 401-refresh) via D-2 (2026-09-03, single-flight store-token interceptor, live-verified against a locally rebuilt BE), plus PB-2, PB-4, the /15- and /10-family contrast fixes, C13/C15, FE-D9 logApiError redaction, and SEC-DOC-1 credential redaction + owner rotation; the final handoff Debt escalation register (updated in place by the sessions) holds statuses, fix-canons, and evidence.",
       "evidence": [
         {
-          "resource": "repo://_bmad-output/implementation-artifacts/debt-d3-d4-wcag-solid-pairs.md",
-          "version": "repo-file-v1:sha256:85d8cedbf8695d4ea43cb80f763032c42348e3a6a1e526500b512ca0caac0347"
+          "resource": "repo://_bmad-output/implementation-artifacts/debt-d1-pb1-silent-cabinet-create.md",
+          "version": "repo-file-v1:sha256:8823f5660a129782eb9488a70159d597208f5ca182ee43f35ea4e7d8c418a38b"
+        },
+        {
+          "resource": "repo://_bmad-output/implementation-artifacts/debt-d2-pb3-reactive-refresh.md",
+          "version": "repo-file-v1:sha256:ab81f039f8e08747d4af457febf75673727a1668c2320b8fe9d35af4ad96e441"
         },
         {
           "resource": "repo://_bmad-output/implementation-artifacts/debt-sec-doc-1-redact-creds.md",
           "version": "repo-file-v1:sha256:4617f7a73d9f8cf2762076137105182a6a06c9f43fc0b186f404f9d1fb5a43c5"
         },
         {
-          "resource": "repo://docs/HANDOFF-2026-09-02-FINAL-94-94-PROGRAM-COMPLETE.md#L77-L124",
-          "version": "repo-lines-v1:sha256:e7679e8fa7a3599db7ec57ee7dbb7a8b706dc7c865860a8d1472baca6af457da:eyJzZWxlY3RlZExpbmVDb3VudCI6NDgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImVhMzYxZjkyZjkzOTJiMGJjMTg2N2Y1NjkyMDZlNGRhY2ZlNTY4NDc3NDY2ZTljODkzODM5MDRiNjRiNmRlNTUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImEzY2UwYzI4OGI4Nzk0NDQ5Y2QzNWYzNGRjZDdjN2U0MmNmMWI4MjFkOTFiZmY4MTk1MTMyOTI5M2RjYThjM2UiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjA0MmNhNTA5NTNjMDE3MzA1MDg1OWU4YjRhNGUwNmRiMmRiNWQyMWQ5YzcwNDkyNGYyNTQ0NDk5YzI2MDJiOGMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjM0YzVhMmUwMzVjNTcwMDY5NGVjZjJmYTI1NmMwODkwODRjZDFhMGNhZTI5YjRhOGU2ODM2MzYxYzJhM2E4Y2IifQ"
+          "resource": "repo://docs/HANDOFF-2026-09-02-FINAL-94-94-PROGRAM-COMPLETE.md#L77-L100",
+          "version": "repo-lines-v1:sha256:b60257b1191590e01fbfe7f7ddd1e2ab1b5498aa9748055aaafcfa8602365b1c:eyJzZWxlY3RlZExpbmVDb3VudCI6MjQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImVhMzYxZjkyZjkzOTJiMGJjMTg2N2Y1NjkyMDZlNGRhY2ZlNTY4NDc3NDY2ZTljODkzODM5MDRiNjRiNmRlNTUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImE4YjNiNTVlZDY3M2IzYTQxY2JmMzY0NzdlOGRlOWU2MDZlZjFmNTY2ZWQ1ZWIzMzkyYWE2OTA4NGE5NDIxMDQiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjA0MmNhNTA5NTNjMDE3MzA1MDg1OWU4YjRhNGUwNmRiMmRiNWQyMWQ5YzcwNDkyNGYyNTQ0NDk5YzI2MDJiOGMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQ3YjM5MTJhNjcxNWRiMzE5ZjU0ZTBjYzQ2NDI5OTJmZGQ5OTczM2I1NjYwNjFhYTMyMDJkZWFjYzEyZTUxMTcifQ"
         }
       ]
     },
@@ -237,10 +241,52 @@
           "version": "repo-lines-v1:sha256:b68fc945f72bf33b3bcd81e3faa2194cf0832afc91cdbf835c5b0ad1c9b33a7c:eyJzZWxlY3RlZExpbmVDb3VudCI6MTUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAwMjY2NGRkZTUyOTM2NGYyODc1MDc1OGZmODYxMWUyMWZhMTQ0YTdjNTAwYmZkNzM0ODg3MjJjZTlkODExODEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjFmNWNmYTczZGFlZTBhNjBhZjE2YmRhMDFjMzNmNGM3ZWY4NThmYTEwOWI4ZDk2YmM5NDBjNzY1MjBlOTYyMmEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjUzZjkxNTljMDc2ZWI5MWM2ODFhYzlmYWE4MTUyYjBiZWY4M2ZiNDRkNDI4Y2YwZmFlMzE0YmI2NmFhMTkxMzgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjJlNmExN2YzMjhhNzc3OWJiZDU3YWJiZTgyM2M0OTlmZDVkODg5N2JkZTU4N2UyYTZiMGY5MTQ5NzQxZDQ5ZTIifQ"
         }
       ]
+    },
+    {
+      "id": "claim_33570ad476ad42cb8e923f37ddfa608d",
+      "statement": "Debt session-2 (2026-09-02/03, orchestrator V15) landed 8 merged PRs (#390-#397) with 0/0/0 cleanup: D-1 PB-1 fix, the D-2/PB-3 BE-block then contract-ready pivot (request-backend #230), the /10-family ASB solid pairs, the C13+C15 quality wave, boundary waves 1-2 ratcheting the ui-boundary baseline 459→401→372 (wave-2 caught a hidden 4.19/4.42 AA failure masked by the D-4 attestation), and the BE handoff/contract-annex doc PRs; wave artifacts live under _bmad-output/implementation-artifacts/debt-*.md and carry the WCAG mapping + house-rule + harness canon.",
+      "evidence": [
+        {
+          "resource": "repo://_bmad-output/implementation-artifacts/debt-p2-boundary-wave1-finsum.md",
+          "version": "repo-file-v1:sha256:04808be9e877a5495b06695e9fc6d9d4c530835d347086e79d2b633c5857b7e4"
+        },
+        {
+          "resource": "repo://_bmad-output/implementation-artifacts/debt-p2-boundary-wave2-margin.md",
+          "version": "repo-file-v1:sha256:bb27db12ac047bfe2712f1e1bf49b1e625da6e85bc4ca3567c5e9aea8aedd967"
+        },
+        {
+          "resource": "repo://docs/HANDOFF-2026-09-03-V15-SESSION2-EXECUTION-AND-REMAINING-BACKLOG.md#L10-L31",
+          "version": "repo-lines-v1:sha256:dc6a8e073e9e74e06332abdd32e35c6cbe744a29c1f8bb5c5f1444e8221de707:eyJzZWxlY3RlZExpbmVDb3VudCI6MjIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjRmNjNmMDUyYmY4ZWZiZjM3OTAyNjZiZGFkOGU5MDU5OWEyODMzODI4OGRmMjJhNGFlYzMwOTJjOWM0YmJkMDYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjcwMDEwOWI0OWQ0ZjQxZmYxOTMyNGRiZGVmMDllYjlhYjY5ZjIxNzA4NDdjNGVhYjhkOTMzMmY1MDU3MWZkNzkiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjAwMWYyZWMxNzU5M2MxMDU0ZWI0NjM2N2Q4NDUzZWYyNGExNzNjZTk2YjcxMTdkOTFmOWE2OGQ0NGZlZjhiMDEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6Ijk4NmU5ZmQ1NDhlNTAwMjI5MjkwZDJkMTBkZWUzZjU2YjI2OTczYzg1NDEzNjQzNzczMWYyMGJhOGE5OTYyMzQifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_c6c0477b28b941bd8093982ec1808fc8",
+      "statement": "The V16 orchestrator prompt (2026-09-03) is the current session-3 entry point for continuing the debt backlog: an OMC sub-agent delegation matrix (explore/executor/debugger/verifier/code-reviewer/writer with explicit model tiers, reviewer ≠ author, sub-agents never commit), a per-item control loop ending in closeout artifact + registry flip + 0/0/0 cleanup, and a fixed work order (wave-3 AA quick-wins → D-2 follow-ups → boundary waves 4-5 over the 372 residue → /80-sweep → FE-D3/D1/D5 → P3), with live gate runs as the final authority over doc numbers.",
+      "evidence": [
+        {
+          "resource": "repo://docs/HANDOFF-2026-09-03-V15-SESSION2-EXECUTION-AND-REMAINING-BACKLOG.md#L34-L66",
+          "version": "repo-lines-v1:sha256:98a4864ba25f4b52ac8a8b3e392fabf1260d97836eade339ef62084c4be6a9b1:eyJzZWxlY3RlZExpbmVDb3VudCI6MzMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImVhNDNkNGU3NDJjZDY0MzI3MTRjZDRiZTRlMzFhYWIxNWU5MTNjMTMzZTliNjA1M2ZiN2JlOTQ3YzU0ODJiMTEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxZDU2YzllMjUyN2JmMDljMmVmYzcwZTBjNmJkN2ZmOTI4NjViMGY2NjQ1M2M0ZDdhNTViZDhmZDkyY2QyODMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjYzY2NlZWVkNGNjZGNiZDAyYmZmOTA5YjAzYjcwN2ZmOTAzZDViODk3YmQ1MDA5OWJjZjIzNTc4ZWQ0N2Q2MDYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjJlNzM3Zjc5M2E2MjlhNjhhYTMyYjM1MzJkNmE0YmFhYTQ2YzNiMjNjNDc4NTdjNDI4YWYxZTk4N2I1MWY0ZDMifQ"
+        },
+        {
+          "resource": "repo://docs/ORCHESTRATOR-PROMPT-2026-09-03-V16-SESSION3-CONTINUATION-OMC.md#L12-L23",
+          "version": "repo-lines-v1:sha256:a70bd18f4ad6f83cbd19e6dd3c8f361f1db484b8c8c60455b87e97ba6a65d473:eyJzZWxlY3RlZExpbmVDb3VudCI6MTIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjJlYWRjOTc2ZjVjY2M4MWI2NjJkN2M0OTBmYjhkZDViZDUwMzkxODVlNTMyMTVkMDU0M2I3ZGRiMjBiYzA1MDEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImQ5YTRmNTVlOTdhOTU4ZDVmOTZiMGQ1ZDY1NjNlYmEwNGQ4MjBmZmFhNjEzZTZiZWZmNWY4NWYwOGY3YjMwYWMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjAwMWYyZWMxNzU5M2MxMDU0ZWI0NjM2N2Q4NDUzZWYyNGExNzNjZTk2YjcxMTdkOTFmOWE2OGQ0NGZlZjhiMDEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjNlN2M1NzRmZmQxZjQxOTQ0NTJiZWMyYWI5NDc3ZDk4MWYyODYzYjRjYWRmZTg2N2ZlNjc1NjBjZWFmZWIzNjIifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_dc9619bd68424776a8fd2a52d1571335",
+      "statement": "After the debt sessions the live mainline gates stand at Vitest floor ≥19,424/0 (monotonic: 19,415 after D-1 → 19,421 → 19,424 after the C13+C15 wave, versus the 19,363 program-close floor), ui-boundary baseline 372 with 3 registered exceptions, docs-baseline 95 exit 0, locale 4, lessons 0, and exactly 3 pre-existing privacy matches (api-client-401-refresh ×2, tasks-enqueue-role-contract ×1).",
+      "evidence": [
+        {
+          "resource": "repo://docs/HANDOFF-2026-09-03-V15-SESSION2-EXECUTION-AND-REMAINING-BACKLOG.md#L25-L31",
+          "version": "repo-lines-v1:sha256:1b6648e668bfda40ea2bd2ca4976776b1d5e2e2fa9a7884531b0eece6ee58414:eyJzZWxlY3RlZExpbmVDb3VudCI6NywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZDY4ZjViYTNiYzBhNDg4MTA4NzVhYmVmODU1YzA5YTM3MmM3YjRiNTA5MzZhYzE5OTAzYTc2N2MxZDA1YTc0OSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNzAwMTA5YjQ5ZDRmNDFmZjE5MzI0ZGJkZWYwOWViOWFiNjlmMjE3MDg0N2M0ZWFiOGQ5MzMyZjUwNTcxZmQ3OSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiOGU5ZmNjMzE5N2JjM2RhOTQ3NDliOWNiNGI1NWZlODVhNThmNDdhNTcwNGM3Mzg3MDRmNzRiM2RlODk2NzJlMSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiOTg2ZTlmZDU0OGU1MDAyMjkyOTBkMmQxMGRlZTNmNTZiMjY5NzNjODU0MTM2NDM3NzMxZjIwYmE4YTk5NjIzNCJ9"
+        }
+      ]
     }
   ],
   "verification": {
     "by": "openwiki/0.5.0",
-    "at": "2026-09-02T08:47:53.996Z"
+    "at": "2026-09-03T08:47:55.542Z"
   }
 }

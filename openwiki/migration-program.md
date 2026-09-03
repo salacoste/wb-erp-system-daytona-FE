@@ -12,8 +12,14 @@ sources:
     resource: repo://_bmad-output/implementation-artifacts/174-3-fe-complete-accessibility-responsive-theme-and-visual-verification.md
   - id: openwiki-source-0a41e9b0f6d5cbb55c2aeb55
     resource: repo://_bmad-output/implementation-artifacts/174-4-fe-complete-full-local-functional-and-backend-contract-regression.md
-  - id: openwiki-source-e45a8928f9bfd3b0a9024a1c
-    resource: repo://_bmad-output/implementation-artifacts/debt-d3-d4-wcag-solid-pairs.md
+  - id: openwiki-source-b535db4a2325710206c1ae3c
+    resource: repo://_bmad-output/implementation-artifacts/debt-d1-pb1-silent-cabinet-create.md
+  - id: openwiki-source-534d0450c193054c5f1f3f2d
+    resource: repo://_bmad-output/implementation-artifacts/debt-d2-pb3-reactive-refresh.md
+  - id: openwiki-source-608936d71cd48c100e032fd1
+    resource: repo://_bmad-output/implementation-artifacts/debt-p2-boundary-wave1-finsum.md
+  - id: openwiki-source-54ef9539556b5103cebfee4c
+    resource: repo://_bmad-output/implementation-artifacts/debt-p2-boundary-wave2-margin.md
   - id: openwiki-source-a9bdeeac493ab84f5c393c26
     resource: repo://_bmad-output/implementation-artifacts/debt-sec-doc-1-redact-creds.md
   - id: openwiki-source-89e2a6b1ae97c68779084212
@@ -28,6 +34,10 @@ sources:
     resource: repo://.omx/plans/shadcn-full-ui-migration-master.md
   - id: openwiki-source-3ae3de7eae6af907f9e7299c
     resource: repo://docs/HANDOFF-2026-09-02-FINAL-94-94-PROGRAM-COMPLETE.md
+  - id: openwiki-source-5bfb8400b5daf58813b7ad6a
+    resource: repo://docs/HANDOFF-2026-09-03-V15-SESSION2-EXECUTION-AND-REMAINING-BACKLOG.md
+  - id: openwiki-source-6a59e8092d7b89827f53ccb9
+    resource: repo://docs/ORCHESTRATOR-PROMPT-2026-09-03-V16-SESSION3-CONTINUATION-OMC.md
   - id: openwiki-source-52f9f2aa17dde77e23385c81
     resource: repo://e2e/fixtures/story-174-3/execution-manifest.ts
   - id: openwiki-source-63d46e41978bcf9c4a46a1d7
@@ -42,10 +52,10 @@ sources:
     resource: repo://src/test/story-174-3-state-contract.test.ts
   - id: openwiki-source-72aa0e35fae33f199ccac4c2
     resource: repo://src/test/story-174-3-surface-contract.test.ts
-generated: { by: "openwiki/0.5.0", at: "2026-09-02T08:47:53.996Z" }
+generated: { by: "openwiki/0.5.0", at: "2026-09-03T08:47:55.542Z" }
 verified:
   - by: openwiki/0.5.0
-    at: 2026-09-02T08:47:53.996Z
+    at: 2026-09-03T08:47:55.542Z
 ---
 
 # Migration Program (Epics 166-174)
@@ -121,7 +131,7 @@ Epic 174 is sequential and started only after all 13 Epic 173 stories merged wit
 Two enforcement scripts were built during Epic 174 and now serve as **post-migration regression guards over a finished program** — they protect the completed migration against regressions on future changes; they gate no in-flight stories. Each has a committed plain-text baseline:
 
 - `scripts/check-shadcn-migration-parity.mjs` (Story 174.1) — BMAD/route-ledger/OMX plan parity; self-suite `scripts/__tests__/check-shadcn-migration-parity.test.mjs` (33/33). Now in **terminal state**: the corpus expectation was moved to `verified` and `EXPECTED_BASE_SHA` was re-pinned to the Story 174.5 base `0d6225ac`. Maintainer note: on `main` after merge it reports **base-sha-mismatch BY DESIGN** (precedent 174.1); re-check by running in a worktree based on the pinned SHA or re-pinning the constant to a new story base. Corpus-only mode: `STORY_174_1_SKIP_SELF_TESTS=1` (same pin).
-- `scripts/check-shadcn-ui-boundary.mjs` (Story 174.2, ratchet lowered by 174.4) — node-stdlib-only scanner over production `src/**/*.{ts,tsx}` (tests, d.ts, `src/test/**` excluded; relative-first enumeration so foreign worktree paths cannot re-enter), detecting the extended `LEGACY_PALETTE` regex and 3-branch `CONTEXTUAL_HEX` canon. Its ratchet baseline `scripts/.shadcn-ui-boundary-baseline.txt` = **459** (born at 523 in 174.2; 174.4 actioned the mandated ratchet-down after the 174.3-window raw-class removals dropped live counts to 459): a plain run exits 0 at ≤ 459 counted violations and fails only on increase ("registered" = baseline-grandfathered, locale-percent precedent). **3** suppressed matches in **3** files remain in the `BOUNDARY_EXCEPTIONS` register (single source of truth, mirrored 1:1 by the classification manifest): the C5 waterfall categorical hex (11 hex + 2 tokens across 13 series, awaiting a chart-palette owner decision) and two historical `#7C3AED` chart marks (PriceHistorySheet, FunnelTab — 170.x carry-outs). The former fourth exception (FeedbackButtons) was **lifted 2026-09-02** when PB-4 was fixed via a solid status pair (debt D-3). Self-suite 10/10. The remaining 459 violations are the cat-1 residue (~59 live files) owned by a future owner-sweep through the same ratchet — never a mechanical replacement.
+- `scripts/check-shadcn-ui-boundary.mjs` (Story 174.2, ratcheted down by 174.4 and the post-program boundary waves) — node-stdlib-only scanner over production `src/**/*.{ts,tsx}` (tests, d.ts, `src/test/**` excluded; relative-first enumeration so foreign worktree paths cannot re-enter), detecting the extended `LEGACY_PALETTE` regex and 3-branch `CONTEXTUAL_HEX` canon. Its ratchet baseline `scripts/.shadcn-ui-boundary-baseline.txt` was born at 523 in 174.2, lowered to **459** by 174.4, and is now **372** after debt session-2 boundary waves (459 → 401 via wave-1, the financial-summary family ×11 files / 58 sites → semantic tokens, PR #394; 401 → 372 via wave-2, the Margin family — whose live count had drifted 58→29, proving catalog drift — plus the D-4 fold-in catching a hidden 4.19/4.42 AA failure the D-4 attestation had masked, fixed /15→/5, PR #395). A plain run exits 0 at ≤ the baseline and fails only on increase ("registered" = baseline-grandfathered, locale-percent precedent). **3** suppressed matches in **3** files remain in the `BOUNDARY_EXCEPTIONS` register (single source of truth, mirrored 1:1 by the classification manifest): the C5 waterfall categorical hex (11 hex + 2 tokens across 13 series, awaiting a chart-palette owner decision) and two historical `#7C3AED` chart marks (PriceHistorySheet, FunnelTab — 170.x carry-outs). The former fourth exception (FeedbackButtons) was **lifted 2026-09-02** when PB-4 was fixed via a solid status pair (debt D-3). Self-suite 10/10. The remaining 372 violations are the cat-1 residue owned by a continuing owner-sweep through the same ratchet — never a mechanical replacement; live per-file counts drift, so recount with grep before each wave.
 - The docs-citation gate `check:docs` tracks its own historical baseline `scripts/.check-docs-baseline.txt` (95 committed entries, `--update-baseline` only with NEW/RESOLVED analysis in the commit message); a canonical-vs-archival split of that baseline is an open owner decision.
 
 Live per-story history: `_bmad-output/implementation-artifacts/sprint-status.yaml`. Consolidated per-epic slice: `_bmad-output/planning-artifacts/shadcn-migration-status-and-debt-registry.md` (final snapshot 2026-09-02, PROGRAM COMPLETE; treat the repo as truth on drift, corrected through a reviewable documentation lane).
@@ -197,7 +207,10 @@ Handoff lineage (each superseding the previous as the execution entry point; old
 3. `docs/HANDOFF-2026-08-29-EPIC-173-174-FULL-MIGRATION-AND-DEBT.md` — the deep process canon (19 sections: story lifecycle §7, UX contracts §8, ownership/forbidden §9, gates §10, and the complete debt register §11). Remains a reference for the debt vocabulary (§11.9 status dictionary).
 4. `docs/HANDOFF-2026-08-30-TEAM-HANDOFF-173.13-EPILOGUE-174-FULL-DEBT.md` — was the continuation entry point through Stories 174.1–174.2; superseded.
 5. `docs/HANDOFF-2026-09-01-TEAM-HANDOFF-174-5-FINAL-CLOSEOUT-AND-DEBT.md` — the 174.5 closeout brief; superseded.
-6. `docs/HANDOFF-2026-09-02-FINAL-94-94-PROGRAM-COMPLETE.md` — **the final handoff and current entry point for maintainers**: program completion summary, final gates and how to re-run them (including the parity base-pin note), the complete **owner-escalated debt register** (§4), an explicit owner-decision checklist (§5), maintainer entry points (§6), and the P0→P3 onboarding backlog (§8). The deep 08-29 §11 debt canon remains its reference vocabulary.
+6. `docs/HANDOFF-2026-09-02-FINAL-94-94-PROGRAM-COMPLETE.md` — the final program handoff: program completion summary, final gates and how to re-run them (including the parity base-pin note), the complete **owner-escalated debt register** (§4, statuses updated in place by the debt sessions), an explicit owner-decision checklist (§5), maintainer entry points (§6), and the P0→P3 onboarding backlog (§8). The deep 08-29 §11 debt canon remains its reference vocabulary.
+7. `docs/HANDOFF-2026-09-02-V14-DEBT-SESSION1-EXECUTION-AND-REMAINING-BACKLOG.md` — session-1 debt execution + detailed backlog.
+8. `docs/HANDOFF-2026-09-03-V15-SESSION2-EXECUTION-AND-REMAINING-BACKLOG.md` — **the session-2 record and current backlog authority**: what session-2 shipped (8 PRs), live gate/environment state (main `c5ca2669`, floor ≥19,424, boundary 372), and the prioritized remaining backlog with implementation detail (§3.0 wave-3 next, §3.1 D-2 re-scope, §3.2 waves 4–5 live counts, §3.5 owner-decision ledger, §4 process canon + session-2 traps).
+9. `docs/ORCHESTRATOR-PROMPT-2026-09-03-V16-SESSION3-CONTINUATION-OMC.md` — **the current execution entry point for session-3**: OMC sub-agent orchestration (delegation matrix, model tiers, forbidden surfaces including the parity script, boundary exceptions, pinned scenarioIds), the per-item control loop, and the work order. Priority on conflict: item mini-plan > SESSION2 §3 > SESSION1 §3 > FINAL §4/§8 > CLAUDE.md > prompts — and **live gate runs are the final authority** because numbers in the docs drift.
 
 Worktree hygiene, summarized:
 
@@ -208,35 +221,45 @@ Worktree hygiene, summarized:
 
 Cross-team cautions: parallel teams/sessions are real (PRs #295/#296/#300/#301 landed on top of other sessions' PRs; a mid-flight 172.10 collision was resolved by the owner absorbing the parallel delta and re-running the full pipeline). Never touch foreign worktrees; on a mid-flight conflict for the NEXT story, take the next unclaimed story per the registry instead of duplicating. Registry/handoff vs repo drift resolves in favor of the repo, corrected in the next closeout commit.
 
-## Post-migration debt registry (the program's aftermath)
+## Post-migration debt registry and the debt-execution sessions
 
-With the program closed, nothing below blocks anything — every item is **owner-scoped**, registered with status, fix-canon, and evidence in the final handoff (`docs/HANDOFF-2026-09-02-FINAL-94-94-PROGRAM-COMPLETE.md` § Debt escalation), and several 2026-09-02 post-program waves already landed (PRs #382–#385) with artifacts under `_bmad-output/implementation-artifacts/debt-*.md`.
+With the program closed, nothing below blocks anything — every item is **owner-scoped**, registered with status, fix-canon, and evidence in the final handoff (`docs/HANDOFF-2026-09-02-FINAL-94-94-PROGRAM-COMPLETE.md` § Debt escalation, updated in place by the debt sessions; the 2026-08-29 §11 canon remains the status-dictionary vocabulary). Execution of the backlog began immediately after program close through orchestrator sessions (V14 → V15 → V16), each item = one branch/PR with a `debt-*` artifact, closeout registry flips, and 0/0/0 cleanup — the same A–J discipline as the story pipeline, extended past the program boundary.
 
-**Resolved during the final window / aftermath:**
+### Debt session history
 
-- **PB-4** — FeedbackButtons `text-green-700` 3.53:1 dark-theme AA failure (the origin comment falsely claimed "≈6.5:1") — fixed via the solid `bg-status-success` pair (D-3, PR #384; artifact `debt-d3-d4-wcag-solid-pairs.md`); its boundary exception lifted the same day.
-- **PB-2** — nested `<main>` on `/analytics/ai-admin/preferences` (+ parallel `/models` location, 97.1 propagation) — `<main>` → `<div>` (D-5, PR #385; artifact `debt-d5-pb2-nested-main.md`).
-- **/15-family** — text-status on /15 tints <4.5:1 in `margin-status-helpers.ts` + `AcceptanceStatusBadge.tsx` — solid pairs applied (D-4, PR #384); ~100 remaining /15 sites repo-wide are an owner sweep.
-- **FE-D9** — `logApiError` logged non-2xx bodies including secrets — `redactSensitive` redact layer in both branches (PR #382; artifact `debt-fe-d9-redact-logger.md`).
-- **SEC-DOC-1** — plaintext credentials in tracked docs — both literals removed, non-echoing scan = 0 (PR #383; artifact `debt-sec-doc-1-redact-creds.md`); rotation of the live credential, the backend repo (135 stale hits), and git history remain an explicit owner request (`docs/security/SEC-DOC-1-rotation-owner-decision-2026-09-02.md`).
+- **Session-1 (2026-09-02, V14)** — PRs #382–#386: FE-D9 `logApiError` redaction, SEC-DOC-1 credential redaction, D-3/D-4 WCAG solid pairs (PB-4, /15-family), D-5 PB-2 nested `<main>`, and the `.http` scanner follow-up.
+- **Session-2 (2026-09-02/03, V15 — 8 PRs, all merged, cleanup 0/0/0)** — see `docs/HANDOFF-2026-09-03-V15-SESSION2-EXECUTION-AND-REMAINING-BACKLOG.md` §1: D-1 fixed PB-1 (initiation-mint `ensureSessionNonce`, indeterminate recovery-alert, `finishRecoveryOperation` release; e2e true-pin failing on `main`, PR #390); D-2/PB-3 initially hit a BE blocker (no `/v1/auth/refresh` → request-backend #230, PR #391), then was executed on `debt/d2-pb3-reactive-refresh` after the owner approved the re-scope and the BE contract was agreed; the P2 /10-family ASB solid pairs (PR #392); C13+C15 quality wave (PR #393); boundary waves 1–2 (PRs #394/#395, ratchet 459→401→372); the BE handoff package and refresh-contract annex (PRs #396/#397). D-2 was **live-verified 2026-09-03 02:02Z** after a local BE rebuild (refresh 200, revocation 401); remote BE publish remains the open backend question.
+- **Session-3 (V16 continuation prompt)** — `docs/ORCHESTRATOR-PROMPT-2026-09-03-V16-SESSION3-CONTINUATION-OMC.md` is the current orchestration entry point: OMC sub-agent delegation (explore/executor/debugger/verifier/code-reviewer/writer with explicit model tiers), the control loop per item, and the ordered remaining backlog: P2 wave-3 "AA quick-wins" (all sites pre-measured, `/15→/5` and `/10→/5` house rule), D-2 follow-ups, boundary waves 4–5 over the 372 residue, the `/80` sweep, FE-D3/D1/D5, then P3 items.
+
+**Resolved (final window + debt sessions):**
+
+- **PB-1** — silent cabinet-create skip on nonce-less sessions — **RESOLVED 2026-09-02** (D-1, session-2, PR #390): initiation-mint `authStore.ensureSessionNonce()` (mint-before-capture), an indeterminate recovery alert, and `finishRecoveryOperation` release in the non-applied branch; e2e pins the defect two-sidedly (fails on `main`, passes on the branch). Artifact `debt-d1-pb1-silent-cabinet-create.md`. Follow-ups recorded: missing `/v1/auth/refresh` (superseded by D-2) and decodeJWT padding fragility.
+- **PB-3** — no reactive 401-refresh interceptor — **RESOLVED 2026-09-03** (D-2): interceptor with single-flight refresh (**token from the store**, not the failed request — single-use revocation), replay-once, cascade gate, 10s deadline, nonce-safe counter-fix (`store.refreshToken()` instead of `login()` to avoid minting a new sessionNonce and breaking D-1 in-flight settlements), durable-op opt-outs; G4 pin updated; live gate verified 02:02Z. Artifact `debt-d2-pb3-reactive-refresh.md`. Post-expiration recovery awaits a dedicated BE refresh-token/grace design (trivial FE extension over the interceptor).
+- **PB-4** — FeedbackButtons `text-green-700` 3.53:1 dark-theme AA failure — solid `bg-status-success` pair (D-3, PR #384); boundary exception lifted the same day.
+- **PB-2** — nested `<main>` on `/analytics/ai-admin/preferences` (+ parallel `/models` location, 97.1 propagation) — `<main>` → `<div>` (D-5, PR #385).
+- **/15-family and /10-family ASB** — text-status on tinted backgrounds <4.5:1 — solid pairs applied (`margin-status-helpers.ts`, `AcceptanceStatusBadge.tsx`, D-4 PR #384 + /10-family PR #392 with border-based high/warning escalation re-differentiation); ~100 remaining sibling sites repo-wide are owner sweeps.
+- **C13 / C15** — GapsTable SR-caption duplication and `URGENCY_CLASS` localized keys — **RESOLVED session-2** (PR #393): aria-label ≠ caption identity fix and a typed `ScenarioUrgencyTier` single classification source; floor +3.
+- **FE-D9** — `logApiError` logged non-2xx bodies including secrets — `redactSensitive` redact layer in both branches (PR #382).
+- **SEC-DOC-1** — plaintext credentials in tracked docs — **closed fully**: FE literals redacted (PR #383), live credential rotated by the owner and verified (login 200), `.http` scanner executed (PR #386); canonical value now only in untracked `.env.e2e`. BE-repo stale hits (135) and git history remain explicit owner requests (recommendation: leave history alone).
 - **C6** (tabular-nums) resolved-by-migration, pinned by RTC tests; the 174.2-registered pre-existing liquidity e2e failures (×12) were resolved by 174.3 and the monitor weekly-chart failure (×1) fixed by 174.4.
 
-**Confirmed live, awaiting owner triage:**
+**Confirmed live, awaiting owner action:**
 
-- **PB-1** — silent cabinet-create failure: nonce-less session → settlement `indeterminate` → `handleCreateCabinet` silently skips, the recovery alert never renders (`src/lib/api.ts:128` + `src/stores/authStore.ts` sessionNonce). Priority one in the owner checklist.
-- **PB-3** — no reactive 401-refresh interceptor in the api-client (proactive `useAuth.refreshTokenIfNeeded` only); the actual behavior is pinned by `src/lib/api/__tests__/api-client-401-refresh.test.ts`.
 - **/80-sweep** — repo-wide `text-*/80` (pricing/automation/cashflow/popover + hover variants) at historical 3.2–3.45:1; needs measure-then-replace-or-exception, a candidate for boundary-scanner extension.
-- **Boundary cat-1 residue** — 459 registered violations across ~59 live files; owner-sweep through the ratchet (C14 pattern), explicitly not a mechanical replacement.
-- **C-series leftovers** — C5 waterfall dual color authority (hex ↔ tokens, chart-palette owner decision), C13 GapsTable caption duplication, C15 `URGENCY_CLASS` localized keys, C8 `FunnelPageContent` at the 200-line cap.
-- **FE-D1/D3/D5/D8** — mutation retry:1 retrying 4xx; raw `getErrorMessage`; cross-tab cabinet CAS/Web Locks; `SAFE_RECONCILIATION` stuck-path.
+- **Boundary cat-1 residue** — 372 registered violations (live counts drift; top files include `backfill-utils.ts` 21, `efficiency-filter-config.ts` 20, `SourceBadge.tsx` 16); waves of 5–10 coherent family files, ratchet down in the same commit. **Chart-hex files must not be touched** before the C5 owner decision. Test-pin residual: 44 test files pin legacy classes / 17 pin wave-1/2 classes / 9 pin only `bg-*-50`; pinned scenarioIds ("error-colour badge" in MarginByBrand/Category tests) must not be renamed without manifest regeneration.
+- **C5** waterfall dual color authority (hex ↔ tokens) — awaiting the chart-palette owner decision (categorical token-set recommended vs. extended exceptions); gates the ~50-site chart-hex track.
+- **C8** — `FunnelPageContent` at the 200-line cap; watch on any touch.
+- **FE-D1/D3/D5/D8** — mutation retry:1 retrying 4xx (e2e-pinned); raw `getErrorMessage` (bounded fallback + scrub); cross-tab create duplication (Web Locks API); `getCabinetCreationOperation` middle-path (UX-complaint-triggered only).
+- **logger-redact architecture** — ~84 `logger.error` calls outside `logApiError`; recommended as a separate wave after boundary (redact in `src/lib/logger.ts` would cover all, touching 131 files + 52 mocks).
+- **financial-foreground tokens** — owner recommendation: do not add while the `/5` solid-pair pattern suffices.
 
 **Environment/harness gaps and canons:**
 
 - **AT-matrix** — real screen readers (VoiceOver/NVDA/JAWS/TalkBack) were never executed; proven instead: Chromium+Firefox keyboard, WebKit semantic proxy, axe, and 200% zoom across 76 routes × 2 themes. Owner must run real SR or accept the residual release risk.
 - **Manager-creds** — Manager journeys skipped (22–23 optional skips).
 - **FR-7** — nmId 202867769 W26 FBS variants absent after a DB reseed; 2 e2e unrunnable until reseed or re-pin.
-- Harness canons: shared `next dev` degrades under repeated suite runs (restart-per-run, tmp-worktree pattern); BE login throttle 5/hr shared; storageState TTL ~1h with a preflight that treats stale sessions as fresh.
-- **P3 process leftovers** — 39 pre-existing `format:check` warnings; the docs-95 baseline canonical-vs-archival split; unifying ~25 route guards; deleting the stopped pm2 registration (id 5).
+- Harness canons: shared `next dev` degrades under repeated suite runs (restart-per-run, tmp-worktree pattern); BE login throttle 5/hr shared; storageState TTL ~1h with a preflight that treats stale sessions as fresh; Node 24.18.0 PATH-pinned (system Node 26 breaks webpack).
+- **P3 process leftovers** — `format:check` md debt (~1189, outside the npm gate); the docs-95 baseline canonical-vs-archival split; unifying ~25 route guards; deleting the stopped pm2 registration (id 5).
 
 The standing FE-debt table (FE-D1…FE-D9), wave carry-outs C1–C18, BE-debt, and contrast escalations remain catalogued in `_bmad-output/planning-artifacts/shadcn-migration-status-and-debt-registry.md` (final snapshot 2026-09-02), cross-referenced against the final handoff's escalation register.
 

@@ -8,10 +8,14 @@ sources:
     resource: repo://.github/workflows/openwiki-update.yml
   - id: openwiki-source-a2371d6362e5db4bc834ad03
     resource: repo://CLAUDE.md
+  - id: openwiki-source-d747680fb44dbb7889ed8a14
+    resource: repo://e2e/auth-reactive-refresh.spec.ts
   - id: openwiki-source-52f9f2aa17dde77e23385c81
     resource: repo://e2e/fixtures/story-174-3/execution-manifest.ts
   - id: openwiki-source-5bbe945b709b541c065ab0e2
     resource: repo://e2e/fixtures/story-174-3/state-evidence.ts
+  - id: openwiki-source-91faab5d81883f34499f73f4
+    resource: repo://e2e/onboarding-cabinet-create-nonce-mint.spec.ts
   - id: openwiki-source-f323b150aa81d8e8d0adb0eb
     resource: repo://e2e/settings-pages.spec.ts
   - id: openwiki-source-b0480c34c110ffe1e27be32c
@@ -50,6 +54,8 @@ sources:
     resource: repo://scripts/run-story-174-3-real-browser-zoom.mjs
   - id: openwiki-source-1bbe76f55f6efa9d2465f6c5
     resource: repo://scripts/run-story-174-3-state-evidence.mjs
+  - id: openwiki-source-15700e143886cd1db90b3a7a
+    resource: repo://src/lib/api/__tests__/api-client-401-refresh.test.ts
   - id: openwiki-source-c448aae4287d4d4701b86b58
     resource: repo://src/test/playwright-static-boundary.ts
   - id: openwiki-source-64fe71a7ae47db511ff422d4
@@ -62,10 +68,10 @@ sources:
     resource: repo://test-utils/outbound-network-policy.ts
   - id: openwiki-source-fbadcd8591b65031efaaedce
     resource: repo://vitest.config.ts
-generated: { by: "openwiki/0.5.0", at: "2026-09-02T08:47:53.996Z" }
+generated: { by: "openwiki/0.5.0", at: "2026-09-03T08:47:55.542Z" }
 verified:
   - by: openwiki/0.5.0
-    at: 2026-09-02T08:47:53.996Z
+    at: 2026-09-03T08:47:55.542Z
 ---
 # Testing & Operations
 
@@ -109,7 +115,7 @@ Tests are co-located with source in `__tests__/` directories:
 ### Full-suite floor history
 The floor is a floor, not a substitute for fresh per-story validation. It moves down legitimately only when tests are provably deleted with their production owners:
 
-- **Current accepted baseline (CLAUDE.md, `npm test -- --run`): ≥ 19,415 passing / 0 failed.** That is the 19,118 floor established by Story 174.2-FE (2026-08-31) plus +237 tests from the Story 174.3 window, +8 contract tests from 174.4, and +52 redact-suite tests from debt-FE-D9. The 174.2 floor itself moved from 19,874/1,256 by an exact −756 tests / −22 files, entirely from 65 proven-dead test files deleted together with their dead production owners (import-closure proved per file, reviewer-verified) — no live test was deleted.
+- **Current accepted baseline (CLAUDE.md, `npm test -- --run`): ≥ 19,436 passing / 0 failed.** That is the 19,118 floor established by Story 174.2-FE (2026-08-31) plus +237 tests from the Story 174.3 window, +8 contract tests from 174.4, +52 redact-suite tests from debt-FE-D9, +6 nonce-mint tests (D-1/PB-1), +3 urgency-tier tests (C15), and +12 reactive-refresh tests (D-2/PB-3). The 174.2 floor itself moved from 19,874/1,256 by an exact −756 tests / −22 files, entirely from 65 proven-dead test files deleted together with their dead production owners (import-closure proved per file, reviewer-verified) — no live test was deleted.
 - **Per-story peaks are historical**, not the current bar: e.g. the 19,874 peak observed after Story 173.13 was superseded by the legitimate 174.2 dead-test deletion, then by the 174.3/174.4/debt-FE-D9 additions. Record the current accepted baseline, not historical counts, when validating. When a story legitimately moves a baseline, update the CLAUDE.md table in the same PR.
 - `vitest.config.ts` excludes the two `node:test`-only self-suites (`scripts/__tests__/check-shadcn-migration-parity.test.mjs`, `scripts/__tests__/check-shadcn-ui-boundary.test.mjs`) from the Vitest run — they run under `node --test` from their own scripts instead.
 
@@ -139,7 +145,7 @@ The floor is a floor, not a substitute for fresh per-story validation. It moves 
 - `e2e/fixtures/story-172-9-communications.ts` — Story 172.9 communications route controller with exact API paths and flippable per-section status (see below)
 
 ### E2E test areas
-Dashboard, orders, supplies, shipments (incl. SKU packaging, Story 173.11), margin analytics, FBS, COGS, pricing calculator (Epic 44-FE + Story 172.8), liquidity (with trends, Story 165.4), unit economics, advertising, funnel, search analytics, forecasts, Moysklad integration, finances (NEW-7), backfill admin (per-source retry, Story 165.5), communications (Story 172.9), accessibility, settings, monitoring, historical SPP analytics (Story 128.27), plus `e2e/outbound-network-guard.spec.ts` which exercises the guard itself end-to-end. Story 174.3 added three more top-level specs: `e2e/shadcn-migration-visual-accessibility.spec.ts` (the 76-route inclusive visual/a11y matrix — see [Design System](design-system.md#the-story-1743-inclusive-visual-contract)), `e2e/story-174-3-dedicated-route-evidence.spec.ts`, and `e2e/story-174-3-real-browser-zoom.spec.ts` (see [Story 174.3 Evidence Runners](#story-1743-evidence-runners)).
+Dashboard, orders, supplies, shipments (incl. SKU packaging, Story 173.11), margin analytics, FBS, COGS, pricing calculator (Epic 44-FE + Story 172.8), liquidity (with trends, Story 165.4), unit economics, advertising, funnel, search analytics, forecasts, Moysklad integration, finances (NEW-7), backfill admin (per-source retry, Story 165.5), communications (Story 172.9), accessibility, settings, monitoring, historical SPP analytics (Story 128.27), reactive 401 refresh (D-2/PB-3, `e2e/auth-reactive-refresh.spec.ts`), onboarding cabinet-create nonce-less-session coverage (D-1/PB-1, `e2e/onboarding-cabinet-create-nonce-mint.spec.ts`), plus `e2e/outbound-network-guard.spec.ts` which exercises the guard itself end-to-end. Story 174.3 added three more top-level specs: `e2e/shadcn-migration-visual-accessibility.spec.ts` (the 76-route inclusive visual/a11y matrix — see [Design System](design-system.md#the-story-1743-inclusive-visual-contract)), `e2e/story-174-3-dedicated-route-evidence.spec.ts`, and `e2e/story-174-3-real-browser-zoom.spec.ts` (see [Story 174.3 Evidence Runners](#story-1743-evidence-runners)).
 
 ### Story 172.8 — price calculator (`e2e/price-calculator.spec.ts`)
 
@@ -192,7 +198,25 @@ Deterministic coverage of the SKU-packaging management page (`ROUTES.shipmentsSk
 - UI coverage: populated rows (active vs inactive box-type statuses «Привязка активна» / «Тип коробки неактивен»), client-side search filter with filtered empty state and «Показать все привязки» reset returning focus to the search field, bulk-add preview→submit flow with terminal `role=status` announcements, delete confirmation dialog, keyboard-driven validation with first-invalid focus, and 320/390 px narrow-card layout with the wide table hidden and a no-horizontal-overflow check.
 - All routes are installed in `beforeEach` **before** navigation so scenarios never accept a live-backend terminal state; waits follow the observable-wait canon (`waitForRequest` pre-registered before the triggering click, `toBeVisible` terminals, `domcontentloaded`).
 
-### Expenses, backfill page, and telegram notifications
+### Reactive 401 refresh (`e2e/auth-reactive-refresh.spec.ts`, D-2/PB-3)
+
+Defect-pinned **synthetic** spec for the reactive 401-refresh interceptor (`src/lib/api-client-refresh.ts` + the 401 gate in `src/lib/api-client.ts`). Page under test is `/analytics/alerts` — the lightest data-bearing dashboard route — where the summary KPI «Всего за 7 дней» renders data-dependent content on success and the em-dash placeholder once the query terminal-fails, making the 401 → refresh → replay outcome directly observable:
+
+- A single wildcard `page.route` dispatcher fulfills every `/v1` call locally (deterministic wire control): `POST /v1/auth/refresh` → 200 `{ data: { token } }` (test 1) or 401 (test 2); `GET /v1/alerts/summary?days=7` → first call 401, replay 200 (test 1) or always 401 (test 2); rules/history and dashboard-shell calls → benign 200 fixtures; catch-all → `200 {}` so a non-enumerated local call cannot break the shell. The refresh envelope unwraps via `rawData.data ?? rawData`, so both the annex flat form and the `{ data: { token } }` envelope work.
+- Session seeding mirrors the D-1 canon (see below): empty storageState + init-script auth-storage + `auth-token` cookie, with JWT payloads that are **real base64url of the JSON** — a corrupted payload makes `isTokenExpired()` fail-safe to true and logs the session out mid-test.
+- Test 1 pins the recovery chain (401 → single refresh → replay with the rotated token → KPI renders); test 2 pins the failure chain (refresh 401 → terminal failure surfaces, no retry loop). The live backend contract chain (refresh 200 + single-use revocation 401 `TOKEN_REVOKED` + health) was verified separately per the D-2 annex record.
+
+Its unit-level counterpart is `src/lib/api/__tests__/api-client-401-refresh.test.ts` (MSW), which pins the actual post-D-2 wire behavior: single-flight refresh fired once, exactly one replay with the rotated store token, replay 401 → the original `ApiError` surfaces (no second refresh, no loop); the M1 rotation-cascade gate (a failed request whose wire token differs from the store token joins a pending rotation instead of triggering a second refresh); the M2 refresh deadline (a black-holed refresh POST is aborted at `DEFAULT_REFRESH_DEADLINE_MS` = 10 s and treated as refresh failure); `createCabinet` opting out of reactive replay; and L1+L2 wire-level replay parity (method, byte-parity body, `Idempotency-Key`, `X-Cabinet-Id`). Handler assertions live in the test after the `await`, never inside MSW handlers (an in-handler `expect` failure surfaces as an opaque unhandled rejection).
+
+### Onboarding cabinet create — nonce-less session (`e2e/onboarding-cabinet-create-nonce-mint.spec.ts`, D-1/PB-1)
+
+Synthetic-seeding spec (Story 167.5 canon) covering cabinet creation from a legacy nonce-less session:
+
+- **[P0] — the true D-1 defect pin.** Seeds a *normal* nonce (Story 167.5 family), then nulls the live store's nonce **after** rehydration via the only supported path — a cross-tab `storage` event from a second page in the same context (a same-tab `setItem` does not fire it). With D-1's initiation mint (`authStore.ensureSessionNonce`, mint-before-capture in `handleCreateCabinet`), the create settles `applied` and the user reaches the WB-token step; without it the captured nonce is `null` → `indeterminate` → the create is silently swallowed and the spec fails (stays on `/cabinet`). The initiation mint is also pinned by `src/services/cabinets.service.settlement.test.ts`.
+- **[P1]** is a composite regression check of the nonce-less-session *class* (rehydrate mint + form usability), not a D-1 defect pin — the user-visible fix for legacy sessions was predominantly the Story 167.9 rehydrate mint already on main.
+- The same base64url JWT lesson applies: synthetic token payloads must be real base64url of the JSON, or `isTokenExpired()` fails-safe to true, the proactive refresh fires, and the session logs out mid-test. Init-script seeding omits the nonce key entirely for legacy sessions (Playwright serializes `undefined` init args to `null`, hence a truthiness check).
+
+
 
 - `e2e/expenses-page.spec.ts` and `e2e/backfill-page.spec.ts` cover their settings routes with the same shell conventions (headings/landmarks, data-or-skeleton, theme and overflow assertions).
 - `e2e/telegram-notifications.spec.ts` covers the Telegram binding lifecycle (status types with `bound`/`telegram_user_id`/`binding_expires_at`, notification preferences, quiet hours) and mutation success/failure/pending modes via `page.route` stubs, with axe scans. A former duplicate at `tests/e2e/telegram-notifications.spec.ts` is **no longer present** in the current tree; only the `e2e/` copy exists. (The Playwright static boundary still scans the `tests/e2e/` path prefix defensively — see [Outbound Network Guards](#outbound-network-guards).)
@@ -274,7 +298,7 @@ The Epics 166–174 shadcn migration added two Node-based gate scripts. Neither 
 Schema-v3 parity validator over three corpora: the BMAD story artifact (`_bmad-output/planning-artifacts/epics-166-174-fe-shadcn-migration.md`, 94 stories with 12 pinned `EVIDENCE_FIELDS` and per-epic section profiles), the master OMX plan (`.omx/plans/shadcn-full-ui-migration-master.md`, ownership/dependency SHA-256 fingerprints, expected base SHA, backend-exception lifecycle records for 167.8/169.14), and the route ledger (exactly 76 rows). It proves 94 BMAD stories = 94 OMX plans and 76 source routes = 76 ledger rows with unique owners and linked implementation artifacts. It is filesystem-only (dependency-free), runs a deterministic mutation self-suite (`scripts/__tests__/check-shadcn-migration-parity.test.mjs`, 33 cases over a deep-cloned real corpus asserting exact `{ code, identity }` defect records) before validating the canonical corpus, and emits one machine-readable report plus one human summary per run.
 
 ### `check-shadcn-ui-boundary.mjs` (Story 174.2)
-Design-system boundary ratchet over production `src/**/*.{ts,tsx}` (tests, `__tests__`, `.d.ts`, and `src/test/**` excluded; enumeration is relative-first so foreign worktree paths cannot re-enter). Two detection classes form the superset regex canon — `LEGACY_PALETTE` (the monitoring-172.12 guard form extended with `ring-offset`, `shadow`/`inset-shadow`/`text-shadow` prefixes) and `CONTEXTUAL_HEX` (quote/backtick or `-[`-anchored hex with a trailing lookahead, plus rgba/hsl/hsla/oklch color functions). Violation counts are grouped per route, totaled, and compared against the single-integer baseline `scripts/.shadcn-ui-boundary-baseline.txt` (**459**; born at 523 in 174.2, lowered by 174.4's live re-run after the 174.3-window raw-class removals): a plain run exits 0 at or below the baseline, exits 1 only on increase, and a decrease must lower the baseline in the same commit. There are no file-level waivers — suppression is only via the exported `BOUNDARY_EXCEPTIONS` map (3 files: the C5 waterfall categorical hex and two historical `#7C3AED` chart marks; the former F-10 WCAG-contrast exception was lifted 2026-09-02 when PB-4 was fixed), each entry carrying an owner/debt ID and mirrored 1:1 in the classification manifest. Self-suite: `scripts/__tests__/check-shadcn-ui-boundary.test.mjs` (10 `node:test` cases proving the regexes and enumeration logic). See [Design System — boundary enforcement](design-system.md) for the canon's regex details and the arithmetic-closed manifest.
+Design-system boundary ratchet over production `src/**/*.{ts,tsx}` (tests, `__tests__`, `.d.ts`, and `src/test/**` excluded; enumeration is relative-first so foreign worktree paths cannot re-enter). Two detection classes form the superset regex canon — `LEGACY_PALETTE` (the monitoring-172.12 guard form extended with `ring-offset`, `shadow`/`inset-shadow`/`text-shadow` prefixes) and `CONTEXTUAL_HEX` (quote/backtick or `-[`-anchored hex with a trailing lookahead, plus rgba/hsl/hsla/oklch color functions). Violation counts are grouped per route, totaled, and compared against the single-integer baseline `scripts/.shadcn-ui-boundary-baseline.txt` (**372**; born at 523 in 174.2, lowered to 401 by the 174.4 re-run after the 174.3-window raw-class removals, then ↓58 in the Margin-family wave-1 removals and ↓29 in wave-2 plus the D-4 `/15→/5` fold-in, 2026-09-03): a plain run exits 0 at or below the baseline, exits 1 only on increase, and a decrease must lower the baseline in the same commit. There are no file-level waivers — suppression is only via the exported `BOUNDARY_EXCEPTIONS` map (3 files: the C5 waterfall categorical hex and two historical `#7C3AED` chart marks; the former F-10 WCAG-contrast exception was lifted 2026-09-02 when PB-4 was fixed), each entry carrying an owner/debt ID and mirrored 1:1 in the classification manifest. Self-suite: `scripts/__tests__/check-shadcn-ui-boundary.test.mjs` (10 `node:test` cases proving the regexes and enumeration logic). See [Design System — boundary enforcement](design-system.md) for the canon's regex details and the arithmetic-closed manifest.
 
 A concrete repaired example of AP#6 (vacuous assertion): the `e2e/login-dashboard.spec.ts` "displays trend graph" check used a `[data-testid="trend-graph"]` selector that only matched unit-test mocks — the real `TrendGraph` never rendered it — and its `.or()` recharts fallback matched the always-mounted `DailyBreakdownChart`, so the test stayed green even if `TrendGraph` were deleted. The contract now puts `data-testid` on the real `TrendGraph` Card (`src/components/custom/TrendGraph.tsx`), and the test expands the «Аналитика» disclosure first (lazy unmount) with no `.or()` fallback. When adding data-testid contracts, bind them to the real component, not to mocks, and prefer expanding collapsed containers over broad `or()` fallbacks.
 
