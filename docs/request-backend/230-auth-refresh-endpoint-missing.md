@@ -35,19 +35,19 @@ curl -s -X POST http://localhost:3000/v1/auth/refresh \
 # → 404 {"error":{"code":"NOT_FOUND","message":"Cannot POST /v1/auth/refresh"}}
 ```
 
-## Resolution
+## Resolution — ✅ закрыто 2026-09-03
 
-Ждёт owner-решения: (a) BE реализует refresh-контракт → после мержа D-2 разблокирован (FE interceptor по факту контракта); (b) re-scope D-2 (например, silent re-login UX без refresh — отдельное дизайн-решение); (c) отмена D-2 с регистрацией residual-риска. Связанное: `decodeJWT` padding-хрупкость на FE (битый base64 payload → fail-safe expired → этот же мёртвый путь → logout) — зарегистрировано в артефакте D-1 как FE-side follow-up.
+BE реализовал и опубликовал согласованный sliding-refresh контракт в PR [#230](https://github.com/salacoste/wb-erp-system-daytona/pull/230) (`c1e9b5e7`). Owner одобрил re-scope D-2: FE interceptor может реализовывать single-flight refresh/replay для ещё валидного JWT; восстановление уже истёкшего JWT остаётся отдельным следующим этапом (dedicated refresh-token или grace). Связанное: `decodeJWT` padding-хрупкость на FE (битый base64 payload → fail-safe expired → logout) зарегистрирована в артефакте D-1 как FE-side follow-up.
 
 ---
 
-## ✅ ANEX: ответ BE (2026-09-03) — контракт согласован, реализован в локальной BE-ветке (НЕ задеплоено)
+## ✅ ANEX: ответ BE (2026-09-03) — контракт согласован, merged и поднят локально
 
 **Контракт**: `POST /v1/auth/refresh` · `Authorization: Bearer <valid-access-jwt>` · тело `{}` → **200 `{ "token": "<new>" }`** (user опционален и не возвращается). Sliding access-JWT rotation: требуется ещё валидный JWT; юзер перепроверяется в БД; claims из актуального состояния; новый jti; TTL-класс сохраняется (24ч / remember-me 30д); абсолютный кап сессии 30 дней; **исходный JWT атомарно ревокается** (replay → 401 TOKEN_REVOKED); Redis fail-closed; троттл 10/min/IP; inactive → 401 INVALID_SESSION.
 
 **⚠️ Оговорки для D-2**:
 1. **Истёкший access-JWT обновить НЕЛЬЗЯ** — reactive-восстановление после реального expiration НЕ разблокировано (нужен dedicated refresh-token или grace — следующий этап BE). Разблокировано: proactive-refresh до истечения.
-2. Код не опубликован/не развёрнут: live-endpoint до deploy отдаёт 404, `/v1/health` — старый degraded. Live-верификация FE = post-deploy follow-up.
+2. Маршрут опубликован и поднят локально. Route-resolution и health проверены; полный happy-path 200 + single-use replay FE проверяет валидным тестовым JWT в рамках D-2 e2e.
 
 ### FE-side integration notes (оркестратор V15, 2026-09-03)
 
@@ -57,4 +57,4 @@ curl -s -X POST http://localhost:3000/v1/auth/refresh \
 
 ### Live-верификация (2026-09-03, после owner-сигнала «задеплоено»)
 
-`localhost:3000` (локальный PM2-инстанс `wb-repricer`, uptime с 2026-09-01): `POST /v1/auth/refresh` → **404 NOT_FOUND**; `/v1/health` → старый `queue:down` (фикс семантики не активен). **Локальный рантайм НЕ пересобран** с новой BE-веткой (`npm run rebuild` + `pm2 restart wb-repricer` не выполнялись; ветка BE также не опубликована в remote по последнему отчёту BE-команды). Возможные объяснения: deploy произведён в ДРУГУЮ среду, либо «задеплоено» = «ветка готова». **Для FE**: D-2 исполняется по контракту (синтетика); live-гейт остаётся открытым до пересборки локального BE. Owner-«ок» на D-2 re-scope: ✅ получено 2026-09-03.
+Локальный PM2 runtime пересобран из BE `main` (`852b94abb`) на Node 24.18.0. `POST /v1/auth/refresh` с заведомо невалидным Bearer возвращает **401 UNAUTHORIZED** по пути `/v1/auth/refresh` (маршрут существует; прежнего 404 больше нет). `GET /v1/health` возвращает **200 healthy** с `database: up`, `redis: up`, `queue: up`; API `:3000`, worker `:3001` и FE `:3100` online. **Для FE**: deploy/route health-гейт закрыт, D-2 можно выполнять по контракту; happy-path rotation/replay остаётся частью D-2 e2e. Owner-«ок» на D-2 re-scope: ✅ получено 2026-09-03.
