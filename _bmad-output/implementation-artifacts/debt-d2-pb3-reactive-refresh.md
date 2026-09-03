@@ -1,6 +1,6 @@
 # D-2 (PB-3) — Реактивный 401-refresh: interceptor (single-flight, replay-once) + nonce-safe пративная ветка
 
-**Status**: done (2026-09-03, хвост сессии-2 оркестратора V15; PR — см. Change Log)
+**Status**: done (2026-09-03, хвост сессии-2; PR #403, merged)
 **Branch**: `debt/d2-pb3-reactive-refresh` (worktree `/private/tmp/d2-pb3-reactive-refresh`, base main `70fa2e56`)
 **Owner-track**: P1 product defect; owner-«ок» на re-scope 2026-09-03; контракт [`docs/request-backend/230-...md`](../../docs/request-backend/230-auth-refresh-endpoint-missing.md) (ANEX + ФИНАЛЬНАЯ live-верификация).
 
@@ -46,5 +46,5 @@ Modified (10): api-client.ts, api.ts (opt-outs), cabinets.service.ts (marginCont
 
 ## Change Log
 
-- 2026-09-03: Item исполнен полным конвейером (executor opus + 4 fix-волны; 4 ревью-прохода opus свежим контекстом; live-гейт SATISFIED в процессе — BE пересобран между пробами, поймано adversarial-ревью).
+- 2026-09-03: Item исполнен полным конвейером; PR #403. (executor opus + 4 fix-волны; 4 ревью-прохода opus свежим контекстом; live-гейт SATISFIED в процессе — BE пересобран между пробами, поймано adversarial-ревью).
   **Lessons:** (1) Live-статус меняется под ногами — каждая аттестация с таймстампом и re-probe на close. (2) Fix-block propagation: чиня заголовок, grep-ни параллельные локации той же фразы (поймал pass-4, не pass-3). (3) Хазарды контракта (single-use, nonce) обязаны становиться тестами до реализации — RED-пины ловят механику, а не только намерение.
