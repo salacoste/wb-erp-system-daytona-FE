@@ -104,6 +104,10 @@ async function performRefresh(): Promise<boolean> {
     const { refreshToken } = await import('./api')
     const response: RefreshTokenResponse = await refreshToken(storeToken, {
       signal: AbortSignal.timeout(refreshDeadlineMs),
+      // D-2 pass-3: a deadline abort rejects into apiClient's network-error
+      // logger — suppress it (the recovery catch below is the owner of this
+      // failure; no value in a raw abort-reason line per request).
+      suppressNetworkErrorLog: true,
     })
 
     // Hazard #2: store action keeps sessionNonce + user, sets the auth cookie.

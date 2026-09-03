@@ -2,10 +2,11 @@
  * D-2 (PB-3) — defect-pinned SYNTHETIC spec for the reactive 401-refresh
  * interceptor (src/lib/api-client-refresh.ts + the 401 gate in api-client.ts).
  *
- * The live-BE gate is intentionally synthetic: the local BE is not rebuilt with
- * the POST /v1/auth/refresh route (it 404s live), so both tests route-fulfill
- * every /v1 call locally — see docs/request-backend/230-auth-refresh-endpoint-
- * missing.md §ANEX for the refresh contract.
+ * SYNTHETIC by design (deterministic wire control): both tests route-fulfill
+ * every /v1 call locally. The LIVE contract chain was verified separately
+ * (2026-09-03T02:02Z: refresh 200 + single-use revocation 401 TOKEN_REVOKED
+ * + health healthy — see docs/request-backend/230-auth-refresh-endpoint-
+ * missing.md § ФИНАЛЬНАЯ live-верификация).
  *
  * Page under test: /analytics/alerts — the lightest data-bearing dashboard
  * route (3 page-level protected GETs on load + the fixed dashboard-shell

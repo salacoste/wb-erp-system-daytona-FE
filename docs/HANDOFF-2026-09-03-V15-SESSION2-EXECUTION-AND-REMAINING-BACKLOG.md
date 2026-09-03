@@ -48,11 +48,11 @@
 
 DoD: все пары ≥4.5 обеих тем (харнесс из артефакта волны-2: `/tmp/p2-bw2-contrast.mjs` паттерн, токены живым grep); тест-пины consumer-тестов grep + ре-пин (урок F1: sweep крыть И consumer-тесты, не только семейную директорию); манифест-пины проверить (consumer tests!). НЕ трогать sku-financials (там fg-on-tint — безопасен).
 
-### 3.1 D-2 (PB-3) — CONTRACT-READY, owner re-scope одобрил, BE live-гейт закрыт
+### 3.1 D-2 (PB-3) — ✅ ИСПОЛНЕНО сессией-2-хвостом (2026-09-03): owner-«ок» получен; live-гейт верифицирован (02:02Z: health healthy, refresh 200/ревокация 401 — см. #230 ФИНАЛЬНАЯ верификация); реализация на ветке debt/d2-pb3-reactive-refresh (3 ревью-прохода)
 
 Контракт (аннекс [`docs/request-backend/230-auth-refresh-endpoint-missing.md`](request-backend/230-auth-refresh-endpoint-missing.md)): `POST /v1/auth/refresh`, Bearer валидного JWT, `{}` → `{token}`; sliding-rotation; **истёкший JWT НЕ обновляется**.
 
-**Re-scope (одобрен owner 2026-09-03)**:
+**Re-scope (✅ подтверждён owner 2026-09-03; исполнен)**:
 1. Interceptor в api-client: 401 → single-flight refresh (**токен из СТОРА**, не из упавшего запроса — single-use ревокация!) → replay×1 → повторный 401 → существующий logout-путь
 2. **Пративный фикс**: `useAuth.refreshTokenIfNeeded` использует store-`login()` → минт новой sessionNonce ломает D-1 settlement in-flight creates → заменить на store-`refreshToken(token, user)` (nonce-сохраняющий)
 3. Обновить G4-пин (`api-client-401-refresh.test.ts` — пинит «нет реактивного refresh»)
