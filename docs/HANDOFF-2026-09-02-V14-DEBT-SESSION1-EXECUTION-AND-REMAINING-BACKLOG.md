@@ -52,7 +52,7 @@ Vitest полный **≥ 19415 / 0** (флор в CLAUDE.md обновлён т
 
 **DoD**: при `indeterminate` юзер видит алерт + может retry; молчаливых скипов нет; unit+e2e пинят; гейты §2 зелёные.
 
-#### D-2 — PB-3: реактивный 401-refresh (приоритет 2) — ⛔ BE-BLOCKED (2026-09-02, сессия-2)
+#### D-2 — PB-3: реактивный 401-refresh — ✅ ИСПОЛНЕНО (2026-09-03, хвост сессии-2; контракт live-верифицирован 02:02Z; артефакт `debt-d2-pb3-reactive-refresh.md`; 4 ревью-прохода)
 
 > **Стоп по §8**: BE auth-контроллер имеет ровно 3 маршрута (register/login/logout) — **refresh-эндпоинта не существует** (`/v1/auth/refresh` → 404 NOT_FOUND; 0 упоминаний refresh в auth-модуле BE и в test-api контрактах). Proactive `useAuth.refreshTokenIfNeeded` FE стреляет в несуществующий маршрут → любой протухший/непарсящийся токен = мгновенный logout. Запрос владельцу: [`docs/request-backend/230-auth-refresh-endpoint-missing.md`](request-backend/230-auth-refresh-endpoint-missing.md) (варианты: BE-контракт / re-scope D-2 / отмена с residual-риском). НЕ имплементировать за BE. После решения: план ниже актуален, целевой маршрут — по факту контракта.
 
