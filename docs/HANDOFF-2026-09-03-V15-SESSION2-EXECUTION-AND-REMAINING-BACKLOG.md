@@ -28,7 +28,7 @@
 - **boundary 372 = baseline** (ratchet ↓ волнами; `scripts/.shadcn-ui-boundary-baseline.txt`) · exceptions 3/3 (waterfall 11 + PriceHistorySheet 6 + FunnelTab 5 — НЕ трогать)
 - docs-baseline 95 exit 0 · locale 4 · lessons 0 · privacy = ровно 3 pre-existing (`api-client-401-refresh.test.ts:53,145`, `tasks-enqueue-role-contract.test.ts:75`), 0 новых
 - Парity — терминальный, не трогать. Манифест 174.3: регенерация ТОЛЬКО `node scripts/run-story-174-3-state-evidence.mjs --owner-units` (fail-closed)
-- Окружение: Node **24.18.0** PATH-пин `/opt/homebrew/opt/node@24/bin` (Node-26 ломает webpack) · PM2 `wb-repricer-frontend-dev` :3100 · BE API :3000 + worker :3001 online; **BE PR #230 merged и локальный runtime пересобран** (`/v1/auth/refresh` существует, invalid-token probe → 401 вместо 404; `/v1/health` → healthy, database/redis/queue up)
+- Окружение: Node **24.18.0** PATH-пин `/opt/homebrew/opt/node@24/bin` (Node-26 ломает webpack) · PM2 `wb-repricer-frontend-dev` :3100 · BE :3000 жив; **BE пересобран локально 2026-09-03** (refresh жив: 200/ревокация 401; `/v1/health` healthy/queue-up — см. #230 ФИНАЛЬНАЯ; remote publish BE-ветки — открытый BE-вопрос)
 - Тест-креды: только в untracked `.env.e2e` (SEC-DOC-1 канон)
 
 ## 3. Оставшийся бэклог — по приоритету, с реализационными деталями
@@ -56,7 +56,7 @@ DoD: все пары ≥4.5 обеих тем (харнесс из артефа�
 1. Interceptor в api-client: 401 → single-flight refresh (**токен из СТОРА**, не из упавшего запроса — single-use ревокация!) → replay×1 → повторный 401 → существующий logout-путь
 2. **Пративный фикс**: `useAuth.refreshTokenIfNeeded` использует store-`login()` → минт новой sessionNonce ломает D-1 settlement in-flight creates → заменить на store-`refreshToken(token, user)` (nonce-сохраняющий)
 3. Обновить G4-пин (`api-client-401-refresh.test.ts` — пинит «нет реактивного refresh»)
-4. e2e синтетика (route-interception) + happy-path live rotation/replay валидным тестовым JWT; route-resolution и `/v1/health` уже проверены после локальной пересборки BE
+4. e2e синтетика (route-interpection) ✅ прогнана EXIT=0; **live-верификация ✅ 02:02Z локально** (см. #230 ФИНАЛЬНАЯ); remote post-deploy re-check = BE follow-up
 5. ВНЕ скоупа: post-expiration recovery (ждёт BE dedicated refresh-token/grace — расширение тривиально поверх interceptor)
 
 ### 3.2 P2 boundary волны 4-5 (остаток 372; live per-file counts 2026-09-03)
@@ -83,14 +83,14 @@ harness restart-per-run раннер · FR-7 (reseed nmId 202867769 W26 ИЛИ r
 
 | Решение | Статус |
 |---|---|
-| D-2 re-scope (§3.1) | ✅ owner-«ок» получено 2026-09-03; BE локально пересобран, refresh route-resolution и healthy queue подтверждены; D-2 идёт по контракту |
+| D-2 re-scope (§3.1) | ✅ owner-«ок» получено 2026-09-03; ✅ live-гейт SATISFIED 02:02Z (локальная пересборка BE: refresh 200 + ревокация 401, см. #230 ФИНАЛЬНАЯ) — D-2 исполнен |
 | C5 chart-palette (гейтит chart-hex трек ~50 сайтов) | ⏳ варианты: categorical token-set (рекомендовано) / расширенные exceptions |
 | financial-foreground токены | ⏳ рекомендация: отложить |
 | logger-redact волна | ⏳ рекомендация: после boundary |
 | FR-7 / AT-матрица / Manager-creds / docs-95 / prettier-md / pm2-id5 | ⏳ P3, быстрые ответы |
-| SEC-DOC-1 (все под-item'ы) | ✅ закрыт полностью (FE + BE); BE sweep опубликован в PR #230 |
-| BE queue:down | ✅ исправлено и поднято локально; `/v1/health` → queue up |
-| BE publish/deploy | ✅ PR #230 merged, локальные API/worker пересобраны; route-resolution + health verified, D-2 happy-path e2e остаётся FE-задачей |
+| SEC-DOC-1 (все под-item'ы) | ✅ закрыт полностью (FE + BE in-branch; после BE publish — финальная live-проверка) |
+| BE queue:down | ✅ фикс активен локально (02:02Z: queue up); remote publish — открытый BE-вопрос |
+| BE publish/deploy (remote) | ⏳ локально всё верифицировано (refresh+health+D-2 e2e); остаётся remote-публикация BE-ветки + remote re-check |
 
 ## 4. Процесс-канон сессии-3 (свод; полный — V15-промпт)
 
