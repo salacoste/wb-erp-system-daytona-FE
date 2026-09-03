@@ -71,7 +71,10 @@ export function getFreshToken(failedAuthHeader?: string): Promise<boolean> {
     const wireToken = bearerTokenOf(failedAuthHeader)
     const storeToken = useAuthStore.getState().token
     if (wireToken && storeToken && wireToken !== storeToken) {
-      return Promise.resolve(true)
+      // D-2 pass-2 (2026-09-03): a straggler whose wire token is stale should
+      // ride a pending rotation rather than replay with the token that
+      // rotation is about to revoke.
+      return inflightRefresh ?? Promise.resolve(true)
     }
   }
 

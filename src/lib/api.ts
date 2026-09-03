@@ -176,7 +176,13 @@ export async function getCabinetCreationOperation(
 ): Promise<CreateCabinetResponse | CabinetCreationOperationState> {
   return apiClient.get<CreateCabinetResponse | CabinetCreationOperationState>(
     `/v1/cabinets/creation-operations/${operationId}`,
-    { authToken: token }
+    {
+      authToken: token,
+      // D-2 pass-2 (2026-09-03): initiating-JWT pin ⇒ no auto-replay —
+      // symmetric with createCabinet; cross-account op-id lookups are
+      // indistinguishable 404s by contract.
+      allowReactiveRefresh: false,
+    }
   )
 }
 

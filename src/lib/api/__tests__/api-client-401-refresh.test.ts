@@ -41,6 +41,11 @@
  *   - L4: handler asserts moved OUT of MSW handlers (capture + assert after
  *     await).
  *
+ * D-2 pass-2 (2026-09-03) pinned here:
+ *   - M1 join: a stale-wire 401 arriving DURING a pending rotation JOINS it —
+ *     one refresh total; the straggler replays only after settle, with the
+ *     rotated token (never with the token the pending rotation revokes).
+ *
  * No `as`/`any`; real MSW interception (unhandled requests error out).
  */
 
@@ -464,6 +469,86 @@ describe('D-2 (PB-3) — reactive 401 refresh (actual behavior, MSW + real apiCl
     expect(protectedCaptures[1].authHeader).toBe('Bearer stale-wire-jwt') // B original
     expect(protectedCaptures[2].authHeader).toBe('Bearer rotated-jwt') // A replay
     expect(protectedCaptures[3].authHeader).toBe('Bearer rotated-jwt') // B replay (store token)
+  })
+
+  it('cascade gate JOIN (D-2 pass-2): stale-wire 401 arriving DURING a pending rotation joins it → one refresh total, straggler replays after settle', async () => {
+    const protectedCaptures: ProtectedCapture[] = []
+    const refreshCount = { calls: 0 }
+
+    // Determinism: A's rotation POST is HELD until the straggler's gate check
+    // has run, so `inflightRefresh` is guaranteed non-null when the straggler
+    // 401s — exercising the gate JOIN, not the post-settle comparison.
+    let releaseRotation!: () => void
+    const rotationGate = new Promise<void>(resolve => {
+      releaseRotation = resolve
+    })
+    let seenRefreshPost!: () => void
+    const refreshPostSeen = new Promise<void>(resolve => {
+      seenRefreshPost = resolve
+    })
+    let seenStragglerOriginal!: () => void
+    const stragglerOriginalSeen = new Promise<void>(resolve => {
+      seenStragglerOriginal = resolve
+    })
+
+    server.use(
+      http.get(PROTECTED_URL, ({ request }) => {
+        const auth = request.headers.get('Authorization') ?? ''
+        protectedCaptures.push({ authHeader: auth, cabinetHeader: '' })
+        if (auth === 'Bearer stale-wire-jwt') {
+          seenStragglerOriginal()
+        }
+        // Annex hazard #1: both the pre-rotation store token and the older
+        // stale wire token are REVOKED server-side; only the rotated token
+        // (post-settle) succeeds.
+        if (auth !== 'Bearer rotated-jwt') {
+          return HttpResponse.json({ message: 'TOKEN_REVOKED' }, { status: 401 })
+        }
+        return HttpResponse.json({ sale_gross: 1000 })
+      }),
+      http.post(REFRESH_URL, () => {
+        refreshCount.calls += 1
+        seenRefreshPost()
+        return rotationGate.then(() => HttpResponse.json({ token: 'rotated-jwt' }))
+      })
+    )
+
+    setupMockAuth({ token: 'store-jwt', cabinetId: 'cab-909' })
+
+    // A: store-authenticated 401 → starts the (held) rotation.
+    const requestA = apiClient.get<{ sale_gross: number }>(PROTECTED_ENDPOINT)
+    await refreshPostSeen
+
+    // B (straggler): stale wire token 401s WHILE the rotation is pending —
+    // gate compares 'stale-wire-jwt' ≠ 'store-jwt' with a flight in progress.
+    const requestB = apiClient.get<{ sale_gross: number }>(PROTECTED_ENDPOINT, {
+      authToken: 'stale-wire-jwt',
+    })
+    await stragglerOriginalSeen
+    // Flush macrotask turns so B's 401 processing (gate → join) has run
+    // before the rotation is released.
+    for (let turn = 0; turn < 10; turn += 1) {
+      await new Promise<void>(resolve => {
+        setTimeout(resolve, 0)
+      })
+    }
+
+    releaseRotation()
+
+    const [resultA, resultB] = await Promise.all([requestA, requestB])
+    expect(resultA.sale_gross).toBe(1000)
+    expect(resultB.sale_gross).toBe(1000)
+
+    // ONE refresh total — the straggler joined A's pending rotation.
+    expect(refreshCount.calls).toBe(1)
+    // Wire pin: the straggler NEVER replayed with 'store-jwt' — the token the
+    // pending rotation was about to revoke. Order: A original, B original,
+    // then both replays riding the rotated token AFTER the settle.
+    expect(protectedCaptures).toHaveLength(4)
+    expect(protectedCaptures[0].authHeader).toBe('Bearer store-jwt') // A original
+    expect(protectedCaptures[1].authHeader).toBe('Bearer stale-wire-jwt') // B original
+    expect(protectedCaptures[2].authHeader).toBe('Bearer rotated-jwt') // A replay
+    expect(protectedCaptures[3].authHeader).toBe('Bearer rotated-jwt') // B replay (joined)
   })
 
   it('refresh deadline (M2): never-responding refresh + 10ms injected deadline → recovery false, original ApiError, no hang', async () => {

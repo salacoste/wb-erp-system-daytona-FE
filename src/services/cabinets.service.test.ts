@@ -88,10 +88,15 @@ describe('handleCreateCabinet', () => {
 
     // Story 167.9 (review fix HIGH-1): the margin PUT runs with the JUST-COMMITTED
     // transport context (newToken + created cabinet id), never live-store state.
+    // D-2 pass-2: the pin also opts out of reactive 401 replay.
     expect(updateCabinetTaxSettings).toHaveBeenCalledWith(
       'cabinet-id',
       { targetMarginPct: 20 },
-      { authToken: mockResponse.newToken, cabinetIdOverride: 'cabinet-id' }
+      {
+        authToken: mockResponse.newToken,
+        cabinetIdOverride: 'cabinet-id',
+        allowReactiveRefresh: false,
+      }
     )
 
     // LOW-4: token + active cabinet are installed BEFORE the authenticated margin PUT
@@ -141,7 +146,11 @@ describe('handleCreateCabinet', () => {
     expect(updateCabinetTaxSettings).toHaveBeenCalledWith(
       'cabinet-id',
       { targetMarginPct: 0 },
-      { authToken: mockResponse.newToken, cabinetIdOverride: 'cabinet-id' }
+      {
+        authToken: mockResponse.newToken,
+        cabinetIdOverride: 'cabinet-id',
+        allowReactiveRefresh: false,
+      }
     )
   })
 })

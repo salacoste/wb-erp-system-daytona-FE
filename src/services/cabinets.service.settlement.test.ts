@@ -207,10 +207,15 @@ describe('handleCreateCabinet conditional settlement (Story 167.9)', () => {
 
       expect(result.status).toBe('stale')
       // Transport was pinned to the JUST-COMMITTED context, not live B state
+      // (D-2 pass-2: the pin also opts out of reactive 401 replay).
       expect(updateCabinetTaxSettings).toHaveBeenCalledWith(
         'cabinet-a',
         { targetMarginPct: 20 },
-        { authToken: 'new-jwt-for-a', cabinetIdOverride: 'cabinet-a' }
+        {
+          authToken: 'new-jwt-for-a',
+          cabinetIdOverride: 'cabinet-a',
+          allowReactiveRefresh: false,
+        }
       )
       // B's live state is untouched by the swallowed failure
       expect(useAuthStore.getState().token).toBe('jwt-b')
