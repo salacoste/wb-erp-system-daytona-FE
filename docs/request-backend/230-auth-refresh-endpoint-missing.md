@@ -38,3 +38,19 @@ curl -s -X POST http://localhost:3000/v1/auth/refresh \
 ## Resolution
 
 Ждёт owner-решения: (a) BE реализует refresh-контракт → после мержа D-2 разблокирован (FE interceptor по факту контракта); (b) re-scope D-2 (например, silent re-login UX без refresh — отдельное дизайн-решение); (c) отмена D-2 с регистрацией residual-риска. Связанное: `decodeJWT` padding-хрупкость на FE (битый base64 payload → fail-safe expired → этот же мёртвый путь → logout) — зарегистрировано в артефакте D-1 как FE-side follow-up.
+
+---
+
+## ✅ ANEX: ответ BE (2026-09-03) — контракт согласован, реализован в локальной BE-ветке (НЕ задеплоено)
+
+**Контракт**: `POST /v1/auth/refresh` · `Authorization: Bearer <valid-access-jwt>` · тело `{}` → **200 `{ "token": "<new>" }`** (user опционален и не возвращается). Sliding access-JWT rotation: требуется ещё валидный JWT; юзер перепроверяется в БД; claims из актуального состояния; новый jti; TTL-класс сохраняется (24ч / remember-me 30д); абсолютный кап сессии 30 дней; **исходный JWT атомарно ревокается** (replay → 401 TOKEN_REVOKED); Redis fail-closed; троттл 10/min/IP; inactive → 401 INVALID_SESSION.
+
+**⚠️ Оговорки для D-2**:
+1. **Истёкший access-JWT обновить НЕЛЬЗЯ** — reactive-восстановление после реального expiration НЕ разблокировано (нужен dedicated refresh-token или grace — следующий этап BE). Разблокировано: proactive-refresh до истечения.
+2. Код не опубликован/не развёрнут: live-endpoint до deploy отдаёт 404, `/v1/health` — старый degraded. Live-верификация FE = post-deploy follow-up.
+
+### FE-side integration notes (оркестратор V15, 2026-09-03)
+
+1. **Хазард single-use токена**: proactive-refresh ревокает исходный JWT → любые in-flight запросы со старым токеном получат 401 TOKEN_REVOKED. D-2 interceptor обязан при refresh читать токен ИЗ СТОРА (уже ротированный), не из упавшего запроса; single-flight + очередь ожидания закрывает гонку.
+2. **Хазард sessionNonce**: `useAuth.refreshTokenIfNeeded` сейчас вызывает store-`login()` — а `login()` МИНИТ НОВУЮ sessionNonce → in-flight cabinet-create (D-1 settlement) уйдёт в `stale`. Интеграция обязана использовать store-`refreshToken(token, user)` (не трогает nonce). Это FE-фикс в рамках D-2.
+3. BE-проверки: Jest 13 334 (0 failed), lint/prettier/tsc/build/circular/cred-scan PASS (Node 24.18.0).

@@ -95,7 +95,9 @@ harness restart-per-run раннер (tmp-worktree + свой dev-server; кан
 | SEC-DOC-1 D-1 ротация | ✅ исполнена + верифицирована (login 200) |
 | SEC-DOC-1 D-4 сканер .http | ✅ исполнена (PR #386) |
 | SEC-DOC-1 D-3 history | принята рекомендация «не трогать» (default) |
-| SEC-DOC-1 D-2 BE-репо | план готов (PR #388); ждёт: исполнение BE-стороной ИЛИ явная авторизация FE-оркестратору в BE-репо; ⚠️ предусловие — разобрать 1338-файловый mirror-WIP в BE working tree |
+| SEC-DOC-1 D-2 BE-репо | ✅ исполнено BE-командой (2026-09-03, ответ на BE-handoff): doc-only sweep в изолированной BE-ветке (mirror-WIP не смешан) — 11 сайтов / 10 доков → `<TEST_PASSWORD>`; L-A/L-B = 0 (scan 17 161 файлов); фактический счёт 11 (не ~110 оценки). ⚠️ До publish BE-ветки main BE ещё содержит литералы |
+| BE queue:down (Item 3) | ✅ диагностировано и исправлено BE (2026-09-03, в той же ветке): причина — ложная health-семантика (накопительный totalFailed ≠ liveness); queue реально работала (472 historical failed). Health теперь: metrics-availability + totalWaiting ≥1000; эффект — после deploy |
+| D-2 / PB-3 (Item 1) | 🔶 контракт готов (аннекс request #230): sliding-rotation, истёкший JWT НЕ обновляется → D-2 scope = proactive + interceptor-инфраструктура; полное post-expiration recovery ждёт dedicated refresh-token/grace (следующий BE-этап). До deploy live = 404 |
 | C5 chart-palette | ⏳ ждёт решения |
 | AT-матрица / Manager-creds / docs-95 / FR-7 / pm2-id5 | ⏳ ждут решений (P3) |
 
