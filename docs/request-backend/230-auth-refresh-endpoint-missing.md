@@ -54,3 +54,7 @@ curl -s -X POST http://localhost:3000/v1/auth/refresh \
 1. **Хазард single-use токена**: proactive-refresh ревокает исходный JWT → любые in-flight запросы со старым токеном получат 401 TOKEN_REVOKED. D-2 interceptor обязан при refresh читать токен ИЗ СТОРА (уже ротированный), не из упавшего запроса; single-flight + очередь ожидания закрывает гонку.
 2. **Хазард sessionNonce**: `useAuth.refreshTokenIfNeeded` сейчас вызывает store-`login()` — а `login()` МИНИТ НОВУЮ sessionNonce → in-flight cabinet-create (D-1 settlement) уйдёт в `stale`. Интеграция обязана использовать store-`refreshToken(token, user)` (не трогает nonce). Это FE-фикс в рамках D-2.
 3. BE-проверки: Jest 13 334 (0 failed), lint/prettier/tsc/build/circular/cred-scan PASS (Node 24.18.0).
+
+### Live-верификация (2026-09-03, после owner-сигнала «задеплоено»)
+
+`localhost:3000` (локальный PM2-инстанс `wb-repricer`, uptime с 2026-09-01): `POST /v1/auth/refresh` → **404 NOT_FOUND**; `/v1/health` → старый `queue:down` (фикс семантики не активен). **Локальный рантайм НЕ пересобран** с новой BE-веткой (`npm run rebuild` + `pm2 restart wb-repricer` не выполнялись; ветка BE также не опубликована в remote по последнему отчёту BE-команды). Возможные объяснения: deploy произведён в ДРУГУЮ среду, либо «задеплоено» = «ветка готова». **Для FE**: D-2 исполняется по контракту (синтетика); live-гейт остаётся открытым до пересборки локального BE. Owner-«ок» на D-2 re-scope: ✅ получено 2026-09-03.
