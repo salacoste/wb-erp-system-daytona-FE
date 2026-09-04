@@ -1,7 +1,8 @@
 /**
  * Tests for CashflowRowPrimitives — 168.9 shadcn token migration pins.
  * Waterfall rows → financial-positive/negative; blue subtotal → status-information;
- * chips → /15 idiom. Exact classList.contains assertions (no [class*=] substring matches).
+ * financial chips → /5 (P2 wave-3 AA re-pin; info chip stays /15).
+ * Exact classList.contains assertions (no [class*=] substring matches).
  */
 
 import { describe, it, expect } from 'vitest'
@@ -19,10 +20,10 @@ function rowOf(label: string): HTMLElement {
 }
 
 describe('CashflowRow ROW_STYLES (168.9 tokens)', () => {
-  it('positive variant: /10 bg + /30 border, financial-positive symbol and value', () => {
+  it('positive variant: /5 bg (wave-3 fold-in AA) + /30 border, financial-positive symbol and value', () => {
     renderWithProviders(<CashflowRow variant="positive" symbol="+" label="Продажи" value="100 ₽" />)
     const row = rowOf('Продажи')
-    expect(row.classList.contains('bg-financial-positive/10')).toBe(true)
+    expect(row.classList.contains('bg-financial-positive/5')).toBe(true)
     expect(row.classList.contains('border-financial-positive/30')).toBe(true)
     expect(screen.getByText('+').classList.contains('text-financial-positive')).toBe(true)
     expect(screen.getByText('100 ₽').classList.contains('text-financial-positive')).toBe(true)
@@ -53,21 +54,21 @@ describe('CashflowRow ROW_STYLES (168.9 tokens)', () => {
     expect(screen.getByText('90 ₽').classList.contains('text-foreground')).toBe(true)
   })
 
-  it('badge chip uses the /15 idiom (financial-positive)', () => {
+  it('badge chip uses the /5 AA tint (financial-positive)', () => {
     renderWithProviders(
       <CashflowRow variant="positive" symbol="+" label="Продажи" badge="100%" value="100 ₽" />
     )
     const badge = screen.getByText('100%')
-    expect(badge.classList.contains('bg-financial-positive/15')).toBe(true)
+    expect(badge.classList.contains('bg-financial-positive/5')).toBe(true)
     expect(badge.classList.contains('text-financial-positive')).toBe(true)
   })
 })
 
 describe('PctBadge (168.9 tokens)', () => {
-  it('default (deduction) = financial-negative /15 chip', () => {
+  it('default (deduction) = financial-negative /5 chip', () => {
     renderWithProviders(<PctBadge value={10} pct={pct} />)
     const badge = screen.getByText(/1\.0%/)
-    expect(badge.classList.contains('bg-financial-negative/15')).toBe(true)
+    expect(badge.classList.contains('bg-financial-negative/5')).toBe(true)
     expect(badge.classList.contains('text-financial-negative')).toBe(true)
   })
 
@@ -99,21 +100,21 @@ describe('GrossProfitRow (blue = informational subtotal accent)', () => {
     renderWithProviders(<GrossProfitRow grossProfitSku={-5000} pct={pct} />)
     expect(screen.getByText(/-5 000/).classList.contains('text-financial-negative')).toBe(true)
     const badge = screen.getByText(/-500\.0%/)
-    expect(badge.classList.contains('bg-financial-negative/15')).toBe(true)
+    expect(badge.classList.contains('bg-financial-negative/5')).toBe(true)
     expect(badge.classList.contains('text-financial-negative')).toBe(true)
   })
 })
 
 describe('NetProfitRow (final profit = financial sign)', () => {
-  it('positive: /10 bg + /40 border + /15 badge + financial-positive value', () => {
+  it('positive: /5 bg (wave-3 fold-in AA) + /40 border + /5 badge + financial-positive value', () => {
     renderWithProviders(<NetProfitRow netProfit={35000} pct={pct} />)
     const row = rowOf('ЧИСТАЯ ПРИБЫЛЬ')
-    expect(row.classList.contains('bg-financial-positive/10')).toBe(true)
+    expect(row.classList.contains('bg-financial-positive/5')).toBe(true)
     expect(row.classList.contains('border-financial-positive/40')).toBe(true)
     expect(row.classList.contains('border-2')).toBe(true)
     expect(screen.getByText('=').classList.contains('text-financial-positive')).toBe(true)
     const badge = screen.getByText(/3500\.0%/)
-    expect(badge.classList.contains('bg-financial-positive/15')).toBe(true)
+    expect(badge.classList.contains('bg-financial-positive/5')).toBe(true)
     expect(screen.getByText(/35 000/).classList.contains('text-financial-positive')).toBe(true)
   })
 
@@ -124,7 +125,7 @@ describe('NetProfitRow (final profit = financial sign)', () => {
     expect(row.classList.contains('border-financial-negative/40')).toBe(true)
     expect(screen.getByText('=').classList.contains('text-financial-negative')).toBe(true)
     const badge = screen.getByText(/-200\.0%/)
-    expect(badge.classList.contains('bg-financial-negative/15')).toBe(true)
+    expect(badge.classList.contains('bg-financial-negative/5')).toBe(true)
     expect(screen.getByText(/-2 000/).classList.contains('text-financial-negative')).toBe(true)
   })
 })

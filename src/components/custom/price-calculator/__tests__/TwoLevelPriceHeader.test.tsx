@@ -101,7 +101,7 @@ describe('TwoLevelPriceHeader', () => {
         const { container } = render(<TwoLevelPriceHeader {...props} />)
 
         const indicator = container.querySelector('[data-testid="price-gap-indicator"]')
-        expect(indicator).toHaveClass('bg-financial-positive/10')
+        expect(indicator).toHaveClass('bg-financial-positive/5')
         expect(indicator).toHaveClass('text-financial-positive')
         expect(indicator).toHaveClass('border-financial-positive/30')
       })
@@ -114,7 +114,7 @@ describe('TwoLevelPriceHeader', () => {
         const { container } = render(<TwoLevelPriceHeader {...props} />)
 
         const indicator = container.querySelector('[data-testid="price-gap-indicator"]')
-        expect(indicator).toHaveClass('bg-status-warning/10')
+        expect(indicator).toHaveClass('bg-status-warning/5')
         expect(indicator).toHaveClass('text-status-warning')
         expect(indicator).toHaveClass('border-status-warning/30')
       })

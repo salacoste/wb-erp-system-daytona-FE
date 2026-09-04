@@ -28,11 +28,16 @@ function getMarginZone(value: number): ZoneKey {
 
 /**
  * Badge styles by zone
+ *
+ * P2 wave-3 (2026-09-05): failing tints /10→/5 per house rule — measured <4.5:1 light
+ * (см. артефакт debt-p2-wave3-aa-quickwins / волна-2 canon): warning/10 = 4.24 → /5 = 4.52
+ * (12.23 dark); fin-pos/10 = 4.49 → /5 = 4.80 (8.72 dark). Retained /10 — measured PASS:
+ * status-error/10 = 5.55 light / 9.26 dark. Borders (/30) — non-text 3:1, out of scope.
  */
 const badgeStyles: Record<ZoneKey, string> = {
   low: 'bg-status-error/10 text-status-error border-status-error/30',
-  medium: 'bg-status-warning/10 text-status-warning border-status-warning/30',
-  high: 'bg-financial-positive/10 text-financial-positive border-financial-positive/30',
+  medium: 'bg-status-warning/5 text-status-warning border-status-warning/30',
+  high: 'bg-financial-positive/5 text-financial-positive border-financial-positive/30',
 }
 
 /**

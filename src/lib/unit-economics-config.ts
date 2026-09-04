@@ -15,13 +15,21 @@ import type {
  * Story 168.11: token migration — one token set shared with the 168.9 legend and
  * sku-financials PROFITABILITY_COLORS/HEX (/15-chip idiom, 168.8 precedent).
  * bgColor hex field removed: no consumers outside tests (verified by grep, 168.11).
+ *
+ * P2 wave-3 (2026-09-05): failing chip tints /15→/5 per house rule — measured <4.5:1 light
+ * (см. артефакт debt-p2-wave3-aa-quickwins / волна-2 canon). Colored-text-on-own-tint pairs,
+ * обе темы над card: fin-pos/15 = 4.19 → /5 = 4.80 (8.72 dark); warning/15 = 3.97 (worst in
+ * class) → /5 = 4.52 (12.23 dark); fin-neg/15 = 4.42 → /5 = 5.20 (8.19 dark). Retained /15 —
+ * measured PASS обеих тем: status-information/15 = 4.62 light / 6.64 dark; status-error/15 =
+ * 5.10 light / 8.22 dark. Diverges from the sku-financials /15-chip idiom for the 3 changed
+ * entries only (that config pairs tints with text-foreground — the safe pattern, untouched).
  */
 export const PROFITABILITY_STATUS_CONFIG: Record<ProfitabilityStatus, ProfitabilityStatusConfig> = {
   excellent: {
     label: 'Отлично',
     labelShort: 'Отл.',
     color: 'var(--color-financial-positive)',
-    bgClass: 'bg-financial-positive/15',
+    bgClass: 'bg-financial-positive/5',
     textClass: 'text-financial-positive',
     icon: '🟢',
     minMargin: 25,
@@ -41,7 +49,7 @@ export const PROFITABILITY_STATUS_CONFIG: Record<ProfitabilityStatus, Profitabil
     label: 'Внимание',
     labelShort: 'Вним.',
     color: 'var(--color-status-warning)',
-    bgClass: 'bg-status-warning/15',
+    bgClass: 'bg-status-warning/5',
     textClass: 'text-status-warning',
     icon: '🟠',
     minMargin: 5,
@@ -61,7 +69,7 @@ export const PROFITABILITY_STATUS_CONFIG: Record<ProfitabilityStatus, Profitabil
     label: 'Убыток',
     labelShort: 'Убыт.',
     color: 'var(--color-financial-negative)',
-    bgClass: 'bg-financial-negative/15',
+    bgClass: 'bg-financial-negative/5',
     textClass: 'text-financial-negative',
     icon: '⚫',
     minMargin: -Infinity,

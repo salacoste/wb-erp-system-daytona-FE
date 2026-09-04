@@ -87,14 +87,21 @@ export function GrossProfitSection({
               </div>
             </div>
             <div className="text-right">
+              {/* P2 wave-3 (2026-09-05): chip /15→/5 per house rule — measured <4.5:1 light
+                  (см. артефакт debt-p2-wave3-aa-quickwins / волна-2 canon): fin-pos/15 = 4.19,
+                  warning/15 = 3.97 (worst in class), fin-neg/15 = 4.42 → /5 = 4.80 / 4.52 / 5.20
+                  light PASS (8.72 / 12.23 / 8.19 dark). Fold-in: COGS-coverage warning box
+                  (ниже, hasCogs=false) bg-status-warning/10→/5 — warning text on /10 = 4.24
+                  light FAIL (та же пара, что MarginSlider medium) → 4.52 (12.23 dark);
+                  border /20 kept (non-text ≥3:1). */}
               <span
                 className={cn(
                   'text-sm px-3 py-1.5 rounded-full font-medium',
                   grossMarginPct && grossMarginPct >= 25
-                    ? 'bg-financial-positive/15 text-financial-positive'
+                    ? 'bg-financial-positive/5 text-financial-positive'
                     : grossMarginPct && grossMarginPct >= 15
-                      ? 'bg-status-warning/15 text-status-warning'
-                      : 'bg-financial-negative/15 text-financial-negative'
+                      ? 'bg-status-warning/5 text-status-warning'
+                      : 'bg-financial-negative/5 text-financial-negative'
                 )}
               >
                 {grossMarginPct && grossMarginPct >= 25
@@ -107,7 +114,7 @@ export function GrossProfitSection({
           </div>
         </div>
       ) : (
-        <div className="bg-status-warning/10 border border-status-warning/20 rounded-lg p-4">
+        <div className="bg-status-warning/5 border border-status-warning/20 rounded-lg p-4">
           <div className="flex items-start gap-3">
             <AlertTriangle className="h-5 w-5 text-status-warning mt-0.5 flex-shrink-0" />
             <div>

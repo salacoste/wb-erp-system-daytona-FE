@@ -11,6 +11,12 @@ export function fmtRub(value: number, maxFrac = 2) {
 }
 
 /** Percentage badge helper */
+// P2 wave-3 (2026-09-05): financial chips /15→/5 per house rule — measured <4.5:1 light
+// (см. артефакт debt-p2-wave3-aa-quickwins / волна-2 canon): fin-pos/15 = 4.19,
+// fin-neg/15 = 4.42 → /5 = 4.80 / 5.20 light PASS (8.72 / 8.19 dark). status-information/15
+// = 4.62 light / 6.64 dark PASS → retained /15 (харнесс-замер, обе темы над card).
+// Fold-in (same wave): positive ROW bg /10→/5 (ROW_STYLES.positive + NetProfitRow ниже) —
+// fin-pos text on /10 = 4.49 light FAIL → 4.80 (8.72 dark); fin-neg /10 = 4.80/7.51 PASS → kept.
 export function PctBadge({
   value,
   pct,
@@ -24,7 +30,7 @@ export function PctBadge({
 }) {
   return (
     <span
-      className={`ml-2 px-1.5 py-0.5 text-xs font-medium rounded ${colorClass || (isRemaining ? 'bg-muted text-muted-foreground' : 'bg-financial-negative/15 text-financial-negative')}`}
+      className={`ml-2 px-1.5 py-0.5 text-xs font-medium rounded ${colorClass || (isRemaining ? 'bg-muted text-muted-foreground' : 'bg-financial-negative/5 text-financial-negative')}`}
     >
       {isRemaining ? '' : '−'}
       {pct(value)}%
@@ -32,11 +38,13 @@ export function PctBadge({
   )
 }
 
-// 168.9: waterfall rows → semantic financial tokens; /10 bg + /30 border preserves
+// 168.9: waterfall rows → semantic financial tokens; /30 border preserves
 // the pale-tinted row look of green-100/red-50/gray-100 in both themes.
+// P2 wave-3 fold-in: positive row bg /10→/5 (fin-pos text on /10 = 4.49 light FAIL);
+// negative row keeps /10 (fin-neg on /10 = 4.80 light / 7.51 dark PASS).
 const ROW_STYLES = {
   positive: {
-    bg: 'bg-financial-positive/10 border-financial-positive/30',
+    bg: 'bg-financial-positive/5 border-financial-positive/30',
     symbol: 'text-financial-positive',
     label: 'text-foreground',
     value: 'text-financial-positive',
@@ -79,7 +87,7 @@ export function CashflowRow({
         <span className={`font-bold text-lg ${styles.symbol}`}>{symbol}</span>
         <span className={`text-sm font-medium ${styles.label}`}>{label}</span>
         {badge && (
-          <span className="ml-1 px-1.5 py-0.5 text-xs font-medium rounded bg-financial-positive/15 text-financial-positive">
+          <span className="ml-1 px-1.5 py-0.5 text-xs font-medium rounded bg-financial-positive/5 text-financial-positive">
             {badge}
           </span>
         )}
@@ -106,7 +114,7 @@ export function GrossProfitRow({
         <span className="text-status-information font-bold text-lg">=</span>
         <span className="text-sm font-medium text-foreground">Валовая прибыль по SKU</span>
         <span
-          className={`ml-1 px-1.5 py-0.5 text-xs font-medium rounded ${isPositive ? 'bg-status-information/15 text-status-information' : 'bg-financial-negative/15 text-financial-negative'}`}
+          className={`ml-1 px-1.5 py-0.5 text-xs font-medium rounded ${isPositive ? 'bg-status-information/15 text-status-information' : 'bg-financial-negative/5 text-financial-negative'}`}
         >
           {pct(grossProfitSku)}%
         </span>
@@ -134,10 +142,11 @@ export function NetProfitRow({
   note?: string
 }) {
   const isPositive = netProfit >= 0
-  // 168.9: final profit row = financial sign semantics; /10 bg + /40 border keeps emphasis.
+  // 168.9: final profit row = financial sign semantics; /40 border keeps emphasis.
+  // P2 wave-3 fold-in: positive bg /10→/5 (4.49 light FAIL on fin-pos text); negative keeps /10 (4.80 PASS).
   return (
     <div
-      className={`flex items-center justify-between p-4 rounded-lg border-2 ${isPositive ? 'bg-financial-positive/10 border-financial-positive/40' : 'bg-financial-negative/10 border-financial-negative/40'}`}
+      className={`flex items-center justify-between p-4 rounded-lg border-2 ${isPositive ? 'bg-financial-positive/5 border-financial-positive/40' : 'bg-financial-negative/10 border-financial-negative/40'}`}
     >
       <div className="flex items-center gap-2">
         <span
@@ -149,7 +158,7 @@ export function NetProfitRow({
           {label}
         </span>
         <span
-          className={`ml-1 px-2 py-0.5 text-sm font-bold rounded ${isPositive ? 'bg-financial-positive/15 text-financial-positive' : 'bg-financial-negative/15 text-financial-negative'}`}
+          className={`ml-1 px-2 py-0.5 text-sm font-bold rounded ${isPositive ? 'bg-financial-positive/5 text-financial-positive' : 'bg-financial-negative/5 text-financial-negative'}`}
         >
           {pct(netProfit)}%
         </span>

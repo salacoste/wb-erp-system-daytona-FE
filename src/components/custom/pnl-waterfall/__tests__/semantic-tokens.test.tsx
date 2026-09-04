@@ -156,7 +156,7 @@ describe('KeyMetricsSection — semantic card tokens (168.3)', () => {
 })
 
 describe('GrossProfitSection — coverage warning uses status-warning (168.3)', () => {
-  it('COGS-coverage warning block uses status-warning tokens', () => {
+  it('COGS-coverage warning block uses status-warning tokens (/5 tint, P2 wave-3 AA fold-in)', () => {
     const { container } = render(
       <TooltipProvider>
         <GrossProfitSection
@@ -171,7 +171,7 @@ describe('GrossProfitSection — coverage warning uses status-warning (168.3)', 
         />
       </TooltipProvider>
     )
-    expect(findByToken(container, 'bg-status-warning/10')).toBeDefined()
+    expect(findByToken(container, 'bg-status-warning/5')).toBeDefined()
     expect(findByToken(container, 'text-status-warning')).toBeDefined()
   })
 })

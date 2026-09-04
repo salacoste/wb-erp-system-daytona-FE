@@ -155,14 +155,17 @@ describe('UnitEconomicsTableRow — token colors (168.11)', () => {
 
   it.each([
     ['good', 'bg-status-information/15 text-status-information'],
-    ['loss', 'bg-financial-negative/15 text-financial-negative'],
-    ['excellent', 'bg-financial-positive/15 text-financial-positive'],
-  ] as const)('profitability badge for %s uses the /15-chip token set', (status, expected) => {
-    renderRow(makeItem({ profitability_status: status }))
-    const label = status === 'good' ? 'Хорошо' : status === 'loss' ? 'Убыток' : 'Отлично'
-    const badge = screen.getByText(label)
-    expect(badge.className).toContain(expected)
-  })
+    ['loss', 'bg-financial-negative/5 text-financial-negative'],
+    ['excellent', 'bg-financial-positive/5 text-financial-positive'],
+  ] as const)(
+    'profitability badge for %s uses the wave-3 AA token set (financial /5, info /15)',
+    (status, expected) => {
+      renderRow(makeItem({ profitability_status: status }))
+      const label = status === 'good' ? 'Хорошо' : status === 'loss' ? 'Убыток' : 'Отлично'
+      const badge = screen.getByText(label)
+      expect(badge.className).toContain(expected)
+    }
+  )
 
   it('badge carries no inline style color (token classes only, 168.11)', () => {
     renderRow(makeItem({ profitability_status: 'good' }))
