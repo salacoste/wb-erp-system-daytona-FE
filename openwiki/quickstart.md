@@ -64,7 +64,7 @@ After the 94/94 closeout, debt-session waves landed on main (`docs/HANDOFF-2026-
 - **D-1 (PB-1, silent cabinet create)** — PR #390: initiation-mint `ensureSessionNonce`, indeterminate recovery-alert, `finishRecoveryOperation` release, and a two-tab nonce-nulling e2e. Test floor 19,363 → 19,421.
 - **D-2 (PB-3, reactive 401 refresh)** — backend contract agreed (request-backend #230: `POST /v1/auth/refresh`, sliding rotation, expired JWT never refreshes); frontend implemented on `debt/d2-pb3-reactive-refresh` — api-client interceptor (single-flight refresh, replay ×1), nonce-preserving `refreshToken` in the auth store. Live-verified locally 2026-09-03 (refresh 200 / revocation 401).
 - **Boundary waves 1-2** (PRs #394/#395): financial-summary (58 sites) and margin-family (29 sites) palette → semantic tokens; boundary ratchet **459 → 401 → 372** (current baseline in `scripts/.shadcn-ui-boundary-baseline.txt`; 3 owner-accepted exceptions — do not touch).
-- Quality wave (PR #392/#393): AcceptanceStatusBadge solid pairs, GapsTable SR dedup, `ScenarioUrgencyTier` single classification source. Vitest floor now **≥ 19,424 / 0**; lint 0/0, tsc 0, build 0.
+- Quality wave (PR #392/#393): AcceptanceStatusBadge solid pairs, GapsTable SR dedup, `ScenarioUrgencyTier` single classification source. Vitest floor now **≥ 19,436 / 0** (latest +12 reactive-refresh suite D-2/PB-3, per `CLAUDE.md`); lint 0/0, tsc 0, build 0.
 
 Remaining backlog (boundary waves 3-5 from a 372 residual, `/80` sweep, FE-D1/D3/D5, logger-redact) is prioritized in the session handoff above.
 

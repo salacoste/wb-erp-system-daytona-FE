@@ -85,7 +85,7 @@ verified:
 | Plugin | `@vitejs/plugin-react` |
 | Coverage | V8 provider (text/json/json-summary/html reporters), output `coverage/local` |
 | Fake timers | `shouldAdvanceTime: true` (waitFor/MSW compatibility) |
-| Full-suite floor | ≥ 19,118 tests passing across 1,234 test files (0 failed) — raised after Story 174.2-FE; a full `npm test -- --run` run must not regress this floor |
+| Full-suite floor | ≥ 19,436 tests passing / 0 failed — floor history: 19,118 after 174.2 dead-test deletion, +237 from the 174.3 window, +8 contract tests 174.4, +52 redact suite debt-FE-D9, +6 nonce-mint suite D-1/PB-1, +3 urgency-tier suite C15, +12 reactive-refresh suite D-2/PB-3 (see `CLAUDE.md`); a full `npm test -- --run` run must not regress this floor |
 
 ### Test setup (`src/test/`)
 Setup files run in explicit list order (`sequence.setupFiles: 'list'`) defined by `VITEST_SETUP_FILES` in `vitest.config.ts`. Order is load-bearing: the outbound network guard must install **before** any general setup or MSW import, or module-evaluation-time network attempts would escape the guard.
