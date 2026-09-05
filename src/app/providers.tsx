@@ -5,8 +5,11 @@ import * as React from 'react'
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 import { TooltipProvider } from '@/components/ui/tooltip'
 import { env } from '@/lib/env'
+import { shouldRetryMutation } from '@/lib/mutation-retry'
 
-function makeQueryClient() {
+// Exported for the FE-D1 wiring unit pin (mutation-retry.test.ts): reverting
+// the mutation retry policy below now fails a unit test.
+export function makeQueryClient() {
   return new QueryClient({
     defaultOptions: {
       queries: {
@@ -19,7 +22,8 @@ function makeQueryClient() {
         refetchOnReconnect: true,
       },
       mutations: {
-        retry: 1,
+        // FE-D1: retry once, but never 4xx (permanent client errors — e.g. WB-token PUT 400)
+        retry: shouldRetryMutation,
       },
     },
   })

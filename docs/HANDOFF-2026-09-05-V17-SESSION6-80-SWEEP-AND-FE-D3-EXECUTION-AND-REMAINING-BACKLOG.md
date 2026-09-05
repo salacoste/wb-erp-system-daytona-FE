@@ -29,7 +29,7 @@
 
 ### 3.0 P2-остаток (следующий кандидат; порядок по окну)
 
-1. **FE-D1**: mutation retry:1 ретраит 4xx — skip-4xx + e2e-пин update (`putAttempts===2` → 1) живым прогоном. Точка входа: TanStack mutation retry в `src/lib/api-client.ts` / query-конфиге; e2e-пин WB-token PUT. ⚠️ e2e-фаза = PM2 :3100 подмена (минимальное окно, восстановить сразу), свежий storageState (~1ч), троттл логина 5/ч, `domcontentloaded`, ≤2 прогона/час, handshake-гард не обходить. **Манифест-префлайт** (e2e-спеки SHA-пинятся — реген раннером).
+1. **FE-D1 — ✅ DONE (сессия-7, PR #413)**: `shouldRetryMutation` (skip-4xx) + корневой фикс — ApiError-preservation во всех 8 throw-ветках `api-wb-token-errors.ts` (плоский re-throw делал предикат мёртвым кодом — поймано живым e2e-ревью P2 REJECT). Живой e2e **6 passed** (PM2-свап протокол, окно ~2 мин). e2e-пины (1,2)+queue[403,401]. Витest 19464→**19492**. Остатки: мёртвый queryClient.ts + hardening-ноуты — реестр §11.
 2. **FE-D5**: cross-tab create duplication → Web Locks API (behavior; e2e по мере видимости).
 3. **fe-d3-family** (новый, реестр §10): 4 hook-локальных `getErrorMessage` (useCloseSupply:29 / useCreateSupply:27 / useGenerateStickers:30 / useDownloadDocument:30 — свои fallback-эха `apiError.message`) + ~128 .tsx echo-поверхностей — системное решение = санитизация на выходе apiClient ИЛИ реэкспорт `sanitizeFallbackMessage` (теперь экспортирован из `wb-token-form-helpers.ts` — кандидат на переезд в `src/lib/` при фемили-волне).
 4. **full-warn-on-warn/10 кластер** (4.24 <4.5 текст; из /80-sweep): WritebackSafetyAcknowledgement:42-55, AutoFillWarning:49, TaxWarningBanner:46, TokenHealthBanner:86-91, AutoFillBadge:97 — отдельная WCAG-волна.
