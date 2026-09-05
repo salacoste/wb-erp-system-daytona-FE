@@ -1582,22 +1582,23 @@ test.describe('Story 167.7 browser-owned evidence', () => {
     await page.getByRole('button', { name: /сохранить токен/i }).click()
 
     // Rejected state: locked destructive copy + recovery link, stays on route.
-    // The app-wide mutations retry:1 (providers.tsx) re-issues the failed PUT
-    // exactly once — pre-existing semantics, observed and preserved.
+    // FE-D1 (providers.tsx shouldRetryMutation): 4xx is never retried — one PUT
+    // per submit; second submit = user-driven, total 2.
     const rejectedAlertTitle = page.getByRole('main').getByText('Токен недействителен', {
       exact: true,
     })
     await expect(rejectedAlertTitle).toBeVisible({ timeout: 15000 })
     await expect(page.getByRole('link', { name: /получить новый токен/i })).toBeVisible()
-    await expect.poll(() => putAttempts, { timeout: 15000 }).toBe(2)
+    await expect.poll(() => putAttempts, { timeout: 15000 }).toBe(1)
 
-    // A genuine value edit clears the server error; one more submit retries
+    // A genuine value edit clears the server error; a user-driven re-submit
+    // issues exactly one more PUT
     const rejectedInput = page.getByLabel(/wb api токен/i)
     await rejectedInput.fill('')
     await expect(rejectedAlertTitle).toBeHidden()
     await rejectedInput.fill(SYNTHETIC_JWT)
     await page.getByRole('button', { name: /сохранить токен/i }).click()
-    await expect.poll(() => putAttempts, { timeout: 15000 }).toBe(4)
+    await expect.poll(() => putAttempts, { timeout: 15000 }).toBe(2)
     expect(new URL(page.url()).pathname.startsWith('/processing')).toBe(false)
 
     // Privacy scan: token value never rendered
@@ -1609,12 +1610,10 @@ test.describe('Story 167.7 browser-owned evidence', () => {
   }) => {
     test.slow()
     let putAttempts = 0
-    // App-wide mutations retry:1 (providers.tsx): each failed submit fires the
-    // PUT twice, so the queue serves each failure status twice.
+    // FE-D1 (providers.tsx shouldRetryMutation): 4xx is never retried — each
+    // failed submit fires exactly one PUT, one queue entry per failure status.
     const responses: Array<{ status: number; body: string }> = [
       { status: 403, body: JSON.stringify({ message: 'Forbidden: permission denied' }) },
-      { status: 403, body: JSON.stringify({ message: 'Forbidden: permission denied' }) },
-      { status: 401, body: JSON.stringify({ message: 'Unauthorized. Please log in again.' }) },
       { status: 401, body: JSON.stringify({ message: 'Unauthorized. Please log in again.' }) },
     ]
 
@@ -1643,6 +1642,8 @@ test.describe('Story 167.7 browser-owned evidence', () => {
     })
     expect(await page.getByRole('link', { name: /получить новый токен/i }).count()).toBe(0)
     expect(new URL(page.url()).pathname.startsWith('/processing')).toBe(false)
+    // FE-D1: 4xx (403) is never retried — exactly one PUT per submit
+    expect(putAttempts).toBe(1)
 
     // Expired session (401 mid-submit): fallback copy echoed, stays on route
     const permissionInput = page.getByLabel(/wb api токен/i)
@@ -1652,6 +1653,8 @@ test.describe('Story 167.7 browser-owned evidence', () => {
     await expect(
       page.getByRole('main').getByText('Ошибка сохранения токена', { exact: true })
     ).toBeVisible({ timeout: 15000 })
+    // FE-D1: 4xx (401) is never retried — user re-submit issued exactly one more PUT
+    expect(putAttempts).toBe(2)
     expect(new URL(page.url()).pathname.startsWith('/processing')).toBe(false)
     expect((await page.textContent('body')) ?? '').not.toContain(SYNTHETIC_JWT)
   })
