@@ -8,8 +8,10 @@ export const MARGIN_STATUS_CONFIG = {
   excellent: {
     label: 'Отлично',
     // P2 boundary wave-2 (2026-09-03): /15 tint measured 4.19:1 light — WCAG 1.4.3
-    // FAIL (the D-4 "both themes" note covered only the solid pairs); house rule → /5
-    // (4.80:1 light / 8.72:1 dark over card — PASS, same treatment as MarginBadge).
+    // FAIL (the D-4 "both themes" note covered only the solid pairs); house rule → /5.
+    // Pass-2 correction (review-pass-2, 2026-09-05): in-situ over the TwoLevelPricingDisplay
+    // gradient card (from-background to-muted/30) = 4.68 light / 8.18 dark — PASS
+    // (the earlier over-card 4.80 didn't model that layer; same treatment as MarginBadge).
     bgClass: 'bg-financial-positive/5',
     textClass: 'text-financial-positive',
   },

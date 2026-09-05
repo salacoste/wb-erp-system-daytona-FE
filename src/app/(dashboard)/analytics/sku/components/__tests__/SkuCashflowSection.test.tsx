@@ -95,16 +95,18 @@ describe('SkuCashflowSection', () => {
     expect(card.classList.contains('border-status-information/30')).toBe(true)
   })
 
-  it('168.9: ИТОГО row = status-warning /15 bg with nested /20 badge (visibility on tinted row)', () => {
+  it('168.9 + wave-3 pass-1: ИТОГО row /15 tint kept, row text foreground, nested badge SOLID warning pair', () => {
     renderWithProviders(<SkuCashflowSection cabinetExpenses={makeExpenses()} isLoading={false} />)
     const row = screen
       .getByText('ИТОГО общекабинетные расходы')
       .closest('div.flex.items-center.justify-between')
     expect(row!.classList.contains('bg-status-warning/15')).toBe(true)
     expect(row!.classList.contains('border-status-warning/40')).toBe(true)
+    // P2 wave-3 pass-1: the old /20 badge on the /15 row over the gradient card measured
+    // 2.79 light in-situ (ANCHOR-3) → solid warning-foreground chip (4.81/11.41 over any base).
     const badge = screen.getByText(/−9\.0%/)
-    expect(badge.classList.contains('bg-status-warning/20')).toBe(true)
-    expect(badge.classList.contains('text-status-warning')).toBe(true)
+    expect(badge.classList.contains('bg-status-warning')).toBe(true)
+    expect(badge.classList.contains('text-status-warning-foreground')).toBe(true)
   })
 
   it('168.9: empty-state text uses muted-foreground', () => {

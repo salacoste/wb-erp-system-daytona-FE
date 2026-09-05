@@ -101,7 +101,7 @@ describe('TwoLevelPriceHeader', () => {
         const { container } = render(<TwoLevelPriceHeader {...props} />)
 
         const indicator = container.querySelector('[data-testid="price-gap-indicator"]')
-        expect(indicator).toHaveClass('bg-financial-positive/10')
+        expect(indicator).toHaveClass('bg-financial-positive/5')
         expect(indicator).toHaveClass('text-financial-positive')
         expect(indicator).toHaveClass('border-financial-positive/30')
       })
@@ -114,9 +114,12 @@ describe('TwoLevelPriceHeader', () => {
         const { container } = render(<TwoLevelPriceHeader {...props} />)
 
         const indicator = container.querySelector('[data-testid="price-gap-indicator"]')
-        expect(indicator).toHaveClass('bg-status-warning/10')
-        expect(indicator).toHaveClass('text-status-warning')
-        expect(indicator).toHaveClass('border-status-warning/30')
+        // P2 wave-3 pass-1: solid warning pair (in-situ warn/5 over the muted-gradient
+        // parent card = 4.41 light FAIL → solid bg kills compositing, 4.81/11.41).
+        // Pass-2: border /30 → /40 (PR #384 canon parity with GrossProfitSection chip).
+        expect(indicator).toHaveClass('bg-status-warning')
+        expect(indicator).toHaveClass('text-status-warning-foreground')
+        expect(indicator).toHaveClass('border-status-warning/40')
       })
 
       it('uses the negative financial role when gap < 10%', () => {

@@ -156,7 +156,7 @@ describe('KeyMetricsSection — semantic card tokens (168.3)', () => {
 })
 
 describe('GrossProfitSection — coverage warning uses status-warning (168.3)', () => {
-  it('COGS-coverage warning block uses status-warning tokens', () => {
+  it('COGS-coverage warning block = SOLID status-warning pair (P2 wave-3 pass-1)', () => {
     const { container } = render(
       <TooltipProvider>
         <GrossProfitSection
@@ -171,7 +171,31 @@ describe('GrossProfitSection — coverage warning uses status-warning (168.3)', 
         />
       </TooltipProvider>
     )
-    expect(findByToken(container, 'bg-status-warning/10')).toBeDefined()
-    expect(findByToken(container, 'text-status-warning')).toBeDefined()
+    // Solid warning notice box (PR #384 canon) — solid bg kills parent compositing
+    // (4.81 light / 11.41 dark over any base); inner content pairs with warning-foreground.
+    expect(findByToken(container, 'bg-status-warning')).toBeDefined()
+    expect(findByToken(container, 'text-status-warning-foreground')).toBeDefined()
+  })
+
+  it('hasCogs margin chip warning branch = SOLID status-warning pair (P2 wave-3 pass-2 pin)', () => {
+    const { container } = render(
+      <TooltipProvider>
+        <GrossProfitSection
+          hasCogs
+          sellerPayout={70000}
+          cogsTotal={30000}
+          cogsPct={30}
+          grossProfit={40000}
+          // 15-25% band → chip warning branch: the solid pair at GrossProfitSection
+          // (in-situ warn/5 chip on the bg-muted/50 strip = 4.34 light FAIL → solid bg).
+          grossMarginPct={18}
+          profitToRevenuePct={40}
+          products={products}
+        />
+      </TooltipProvider>
+    )
+    expect(findByToken(container, 'bg-status-warning')).toBeDefined()
+    expect(findByToken(container, 'text-status-warning-foreground')).toBeDefined()
+    expect(findByToken(container, 'border-status-warning/40')).toBeDefined()
   })
 })

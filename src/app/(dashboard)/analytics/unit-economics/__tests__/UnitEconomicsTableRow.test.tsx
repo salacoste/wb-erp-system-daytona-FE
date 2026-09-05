@@ -154,15 +154,19 @@ describe('UnitEconomicsTableRow — token colors (168.11)', () => {
   })
 
   it.each([
-    ['good', 'bg-status-information/15 text-status-information'],
-    ['loss', 'bg-financial-negative/15 text-financial-negative'],
-    ['excellent', 'bg-financial-positive/15 text-financial-positive'],
-  ] as const)('profitability badge for %s uses the /15-chip token set', (status, expected) => {
-    renderRow(makeItem({ profitability_status: status }))
-    const label = status === 'good' ? 'Хорошо' : status === 'loss' ? 'Убыток' : 'Отлично'
-    const badge = screen.getByText(label)
-    expect(badge.className).toContain(expected)
-  })
+    ['good', 'Хорошо', 'bg-status-information/15 text-foreground'],
+    ['excellent', 'Отлично', 'bg-financial-positive/5 text-foreground'],
+    ['warning', 'Внимание', 'bg-status-warning/5 text-foreground'],
+    ['critical', 'Критично', 'bg-status-error/15 text-foreground'],
+    ['loss', 'Убыток', 'bg-financial-negative/5 text-financial-negative'],
+  ] as const)(
+    'profitability badge for %s uses the pass-2 AA token set (tints kept, fg-on-tint except loss)',
+    (status, label, expected) => {
+      renderRow(makeItem({ profitability_status: status }))
+      const badge = screen.getByText(label)
+      expect(badge.className).toContain(expected)
+    }
+  )
 
   it('badge carries no inline style color (token classes only, 168.11)', () => {
     renderRow(makeItem({ profitability_status: 'good' }))

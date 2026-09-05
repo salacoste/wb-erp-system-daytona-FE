@@ -134,9 +134,12 @@ function CashflowContent({ cabinetExpenses }: { cabinetExpenses: CabinetLevelExp
       {/* Gross Profit by SKU */}
       <GrossProfitRow grossProfitSku={cabinetExpenses.gross_profit_sku} pct={pct} />
 
-      {/* 168.9: amber deductions block → status-warning hierarchy; ИТОГО row /15 with nested badge /20. */}
+      {/* 168.9: amber deductions block → status-warning tint identity. P2 wave-3 pass-1:
+          text → text-foreground (fg-on-tint) — colored text composites over the gradient
+          card base and fails AA at any alpha (warn/15 row in-situ = 11.64 light / 9.98 dark as foreground;
+          text-status-warning here measured 2.79-4.2 light). Valence = tint + border. */}
       <div className="border-t-2 border-status-warning/40 my-2" />
-      <div className="text-sm font-medium text-status-warning px-2">
+      <div className="text-sm font-medium text-foreground px-2">
         Удержания из выплаты (общекабинетные расходы):
       </div>
 
@@ -145,18 +148,16 @@ function CashflowContent({ cabinetExpenses }: { cabinetExpenses: CabinetLevelExp
       {/* Total Cabinet Expenses */}
       <div className="flex items-center justify-between p-3 bg-status-warning/15 rounded-lg border border-status-warning/40">
         <div className="flex items-center gap-2">
-          <span className="text-status-warning font-bold text-lg">−</span>
-          <span className="text-sm font-medium text-status-warning">
-            ИТОГО общекабинетные расходы
-          </span>
-          {/* nested badge /20 on /15 row (168.9) — must stay visible on tinted row */}
-          <span className="ml-1 px-1.5 py-0.5 text-xs font-medium rounded bg-status-warning/20 text-status-warning">
+          <span className="text-foreground font-bold text-lg">−</span>
+          <span className="text-sm font-medium text-foreground">ИТОГО общекабинетные расходы</span>
+          {/* P2 wave-3 pass-1: SOLID warning chip (PR 384 canon) — the old /20 badge on the
+              /15 row over the gradient measured 2.79 light in-situ (ANCHOR-3); a solid
+              warning-foreground pair kills the compositing (4.81 light / 11.41 dark). */}
+          <span className="ml-1 px-1.5 py-0.5 text-xs font-medium rounded bg-status-warning text-status-warning-foreground">
             −{pct(cabinetExpenses.total)}%
           </span>
         </div>
-        <span className="text-lg font-bold text-status-warning">
-          {fmtRub(cabinetExpenses.total)}
-        </span>
+        <span className="text-lg font-bold text-foreground">{fmtRub(cabinetExpenses.total)}</span>
       </div>
 
       {/* Net Profit */}

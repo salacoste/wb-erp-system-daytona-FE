@@ -28,11 +28,27 @@ function getMarginZone(value: number): ZoneKey {
 
 /**
  * Badge styles by zone
+ *
+ * P2 wave-3 (2026-09-05): failing tints /10→/5 per house rule — measured <4.5:1 light
+ * (см. артефакт debt-p2-wave3-aa-quickwins / волна-2 canon). Borders (/30) — non-text
+ * 3:1, out of scope.
+ * Pass-2 correction (review-pass-2, 2026-09-05): base is NOT plain card — this slider
+ * renders inside the TargetMarginSection box (bg-primary/5, TargetMarginSection.tsx:33),
+ * so the true in-situ stack is card > primary/5 > badge tint; re-measured in situ:
+ * warn-on-warn/5 = 4.19 light FAIL, fin-pos-on-fin-pos/5 = 4.45 light FAIL → medium/high
+ * badge text is text-foreground (fg-on-tint = 14.02 / 13.98 light, ≥15.27 dark over
+ * primary/5); tints/borders kept — zone valence = tint + border. Retained: low keeps
+ * text-status-error — error-on-error/10 = 5.16 light / 8.49 dark over primary/5 PASS.
+ * Zone labels (:126-128) are bare spans SEPARATE from the badge chip (the badge carries
+ * current-zone identity; the /20 track segments directly above each label carry zone
+ * color) → labels are text-foreground (14.89 light / 16.95 dark over primary/5; measured
+ * bare warn label = 4.45 FAIL; bare fin-pos 4.74 / bare error 6.05 pass but the legend is
+ * kept uniform — solid mini-chips rejected: financial-positive has no -foreground token).
  */
 const badgeStyles: Record<ZoneKey, string> = {
   low: 'bg-status-error/10 text-status-error border-status-error/30',
-  medium: 'bg-status-warning/10 text-status-warning border-status-warning/30',
-  high: 'bg-financial-positive/10 text-financial-positive border-financial-positive/30',
+  medium: 'bg-status-warning/5 text-foreground border-status-warning/30',
+  high: 'bg-financial-positive/5 text-foreground border-financial-positive/30',
 }
 
 /**
@@ -114,11 +130,12 @@ export function MarginSlider<T extends FieldValues = FieldValues>({
               />
             </div>
 
-            {/* Zone labels */}
+            {/* Zone labels — text-foreground per badgeStyles comment (labels are a separate
+                legend from the badge chip; zone color lives in the track segments above) */}
             <div className="flex justify-between text-xs px-1">
-              <span className="text-status-error">Низкая</span>
-              <span className="text-status-warning">Средняя</span>
-              <span className="text-financial-positive">Высокая</span>
+              <span className="text-foreground">Низкая</span>
+              <span className="text-foreground">Средняя</span>
+              <span className="text-foreground">Высокая</span>
             </div>
 
             {/* Value input with colored badge */}
