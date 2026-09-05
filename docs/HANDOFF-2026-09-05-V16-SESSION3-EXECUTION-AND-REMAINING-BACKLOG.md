@@ -1,5 +1,7 @@
 # HANDOFF 2026-09-05 — Сессии-2/3 исполнены (P1 полностью, P2 волны 1-3) + полный оставшийся объём работ и технический долг
 
+> ⚠️ **Устарел как вход-точка (2026-09-05, сессия-5)**: новая вход-точка — [`HANDOFF-2026-09-05-V16-SESSION4-5-...`](HANDOFF-2026-09-05-V16-SESSION4-5-EXECUTION-AND-REMAINING-BACKLOG.md) (сессии-4/5 исполнены: волны 4-5, boundary-трек завершён до C5, остаток 118). Этот документ — исторический справочник волн 1-3 и каталогов сессии-3.
+
 > **Аудитория**: агент-команда, продолжающая разработку (сессия-4). Этот документ = вход-точка.
 > **Процесс-канон**: [`docs/ORCHESTRATOR-PROMPT-2026-09-03-V16-SESSION3-CONTINUATION-OMC.md`](ORCHESTRATOR-PROMPT-2026-09-03-V16-SESSION3-CONTINUATION-OMC.md) (петля §0, делегационная матрица §2, конвейер §5, стопы §8) — читать целиком.
 > **Цепочка справочников**: [`HANDOFF-2026-09-03-V15-SESSION2-...`](HANDOFF-2026-09-03-V15-SESSION2-EXECUTION-AND-REMAINING-BACKLOG.md) (§3-каталоги, BE-история) → [`HANDOFF-2026-09-02-V14-DEBT-SESSION1-...`](HANDOFF-2026-09-02-V14-DEBT-SESSION1-EXECUTION-AND-REMAINING-BACKLOG.md) → [`HANDOFF-2026-09-02-FINAL-94-94-...`](HANDOFF-2026-09-02-FINAL-94-94-PROGRAM-COMPLETE.md) §4/§8.
