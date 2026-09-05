@@ -107,8 +107,9 @@ export function AutoFillBadge({ status, source, onRestore, className }: AutoFill
           onClick={onRestore}
           className={cn(
             'h-6 px-2 text-xs font-normal',
-            'text-status-warning hover:text-status-warning/80',
-            'hover:bg-status-warning/10',
+            // p2-80-sweep: hover warn/80 on hover-bg warn/10 = 3.04:1 light (FAIL);
+            // no hover overrides → ghost accent pair (14.77/14.50 PASS).
+            'text-status-warning',
             'transition-colors duration-200'
           )}
           aria-label="Восстановить автозаполненные значения"

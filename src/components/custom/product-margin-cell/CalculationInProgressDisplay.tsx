@@ -53,10 +53,12 @@ export function CalculationInProgressDisplay({
       {/* Request #18: Show manual retry button if state persists > 5 minutes
           Story 23.10: Only show for Manager+ roles (Analyst gets 403 from backend) */}
       {shouldShowRetryButton(product.nm_id) && canTriggerRecalculation && (
+        // p2-80-sweep: hover warn/80 on row-hover>warn/10 = 2.95 FAIL;
+        // no hover overrides → ghost accent pair (14.77/14.50 PASS).
         <Button
           variant="ghost"
           size="sm"
-          className="h-6 text-xs text-status-warning hover:text-status-warning/80 hover:bg-status-warning/10 -ml-1"
+          className="h-6 text-xs text-status-warning -ml-1"
           onClick={e => {
             e.stopPropagation()
             const affectedWeeks = getAffectedWeeks(product.nm_id)

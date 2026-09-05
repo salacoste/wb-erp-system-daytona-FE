@@ -50,6 +50,8 @@ export function TaxWarningBanner({
         >
           Настроить
         </Link>
+        {/* p2-80-sweep: X icon (non-text ≥3): base warn on warn/10 = 4.24,
+            hover warn/80 = 3.04 — PASS, margin 0.04; raw button keeps its bg. */}
         <button
           onClick={handleDismiss}
           className="text-status-warning hover:text-status-warning/80"

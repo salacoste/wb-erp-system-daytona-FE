@@ -40,6 +40,8 @@ export function RankIndicator({ rank }: RankIndicatorProps) {
     case 3:
       return (
         <div className="flex items-center gap-1">
+          {/* p2-80-sweep: Medal icon (non-text ≥3): warn/80 = 3.33 light /
+              8.80 dark on card — PASS as-is. */}
           <Medal className="h-4 w-4 text-status-warning/80" aria-label="3 место" />
           <span className="text-sm font-medium">3</span>
         </div>

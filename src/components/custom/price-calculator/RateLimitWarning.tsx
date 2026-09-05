@@ -89,6 +89,9 @@ export function RateLimitWarning({
         {/* Countdown display with icon */}
         <div className="space-y-2">
           <div className="flex justify-between text-xs">
+            {/* p2-80-sweep: destructive/80 = 4.58:1 light on card (Alert
+                destructive has no bg) — PASS 4.5 text, margin 0.08; flip to
+                full destructive on next touch if the token lightens. */}
             <span className="text-destructive/80">До повторной попытки:</span>
             <span
               className="flex items-center gap-1 font-medium tabular-nums"

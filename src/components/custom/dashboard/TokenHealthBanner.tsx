@@ -100,6 +100,9 @@ export function TokenHealthBanner() {
             </Link>
           </AlertDescription>
         </div>
+        {/* p2-80-sweep: X icon (non-text ≥3): hover stack = ghost hover:bg-accent
+            over warn/10 > background → warn/80 = 3.13 PASS (hidden accent layer
+            measured); base warn on warn/10 = 4.24. */}
         <Button
           variant="ghost"
           size="sm"

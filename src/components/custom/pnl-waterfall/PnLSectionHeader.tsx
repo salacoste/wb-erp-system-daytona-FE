@@ -24,6 +24,8 @@ export const SectionHeader = ({ title, description, formula }: SectionHeaderProp
         <Tooltip>
           <TooltipTrigger asChild>
             <button type="button" className="inline-flex" aria-label={`Формула расчёта: ${title}`}>
+              {/* p2-80-sweep: Calculator icon (non-text ≥3): primary/80 hover
+                  = 4.13 light — PASS as-is. */}
               <Calculator className="h-4 w-4 text-primary hover:text-primary/80" />
             </button>
           </TooltipTrigger>

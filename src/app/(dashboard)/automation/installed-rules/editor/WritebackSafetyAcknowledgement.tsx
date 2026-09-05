@@ -67,7 +67,9 @@ export function WritebackSafetyAcknowledgement({
               </Label>
             </div>
           ) : (
-            <p className="text-xs text-status-warning/80" data-testid="writeback-safety-passive">
+            // p2-80-sweep: fg-on-tint — warn/80 AND full warn both fail 4.5:1
+            // light on background > status-warning/10 (3.04 / 4.24); fg = 14.18.
+            <p className="text-xs text-foreground" data-testid="writeback-safety-passive">
               Сейчас сохранение не приводит к немедленному изменению цен.
             </p>
           )}

@@ -60,7 +60,9 @@ export function AutoFillWarning({ type, message, dismissible = true }: AutoFillW
             variant="ghost"
             size="sm"
             onClick={() => setDismissed(true)}
-            className="h-6 w-6 min-h-11 min-w-11 p-0 text-status-warning hover:text-status-warning/80 hover:bg-status-warning/10 shrink-0"
+            // p2-80-sweep: hover pinned to FULL warn (icon on warn/10 > warn/10
+            // = 3.76:1 ≥3 PASS) — /80 measured 2.78:1 (FAIL).
+            className="h-6 w-6 min-h-11 min-w-11 p-0 text-status-warning hover:text-status-warning hover:bg-status-warning/10 shrink-0"
             aria-label="Закрыть предупреждение"
           >
             <X className="h-4 w-4" />
