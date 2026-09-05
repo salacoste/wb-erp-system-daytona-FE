@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "pageVersion": "sha256:d72ace7ee6f886b27fb94c956aa6ea3e59a49fd48e90fb9bc5904c6ed9eaac41",
+  "pageVersion": "sha256:2e859d2f7c7700c96c16c1604bc6c519725a5081efbca9b53f2efa763e51da9f",
   "claims": [
     {
       "id": "claim_9bfdc04061f14b3bb2bb441081e614c3",
@@ -114,11 +114,11 @@
     },
     {
       "id": "claim_623470991c7d4a788c440402b2057a8d",
-      "statement": "margin-status-helpers.ts defines the calculator margin tiers via MARGIN_STATUS_CONFIG (Russian labels; since D-4/2026-09-02 good and warning use solid pairs bg-status-success/text-status-success-foreground and bg-status-warning/text-status-warning-foreground, and since the P2 wave-2 pass of 2026-09-03 excellent and critical use /5 financial-token tints bg-financial-positive/5 and bg-financial-negative/5 after their /15 tints measured WCAG 1.4.3 light-mode fails) and getMarginStatus/getMarginColor thresholds: >=20% excellent, >=10% good, >=5% warning, else critical — distinct from the cabinet targetMarginPct and the analytics PROFITABILITY_STATUS_CONFIG tier systems.",
+      "statement": "margin-status-helpers.ts defines the calculator margin tiers via MARGIN_STATUS_CONFIG (Russian labels; since D-4/2026-09-02 good and warning use solid pairs bg-status-success/text-status-success-foreground and bg-status-warning/text-status-warning-foreground, and since the P2 wave-2 pass of 2026-09-03 excellent and critical use /5 financial-token tints bg-financial-positive/5 and bg-financial-negative/5 after their /15 tints measured WCAG 1.4.3 light-mode fails; the 2026-09-05 review pass-2 re-measured the /5 tints in situ over the TwoLevelPricingDisplay gradient card at 4.68 light / 8.18 dark, confirming PASS) and getMarginStatus/getMarginColor thresholds: >=20% excellent, >=10% good, >=5% warning, else critical — distinct from the cabinet targetMarginPct and the analytics PROFITABILITY_STATUS_CONFIG tier systems.",
       "evidence": [
         {
           "resource": "repo://src/components/custom/price-calculator/margin-status-helpers.ts#L7-L51",
-          "version": "repo-lines-v1:sha256:0ed6396e12933b4addea0b4a9c83940fa2e0c77264c5f8ade6797367c3e4199c:eyJzZWxlY3RlZExpbmVDb3VudCI6NDUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNlNDQ0NmMyOTRjZWY4YWZlNWM0ZmE0MjZkYjdmMmU1N2MxZDYxZjg0ZDg3MDYzNmEwYTM1MTQxYzA5OTE1MDIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjQ3Mjg4ZTljMGY1NDAyNDFhOWY5NzBmYzBkNWU3ODJiMWRhZDhkNDdiYmZhYzg5MGIzNjU3MWEwM2UzYjIyNzEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+          "version": "repo-lines-v1:sha256:04b876a7323d3f44486f4fe0fbc5e7362618970d1ffb0004685d5a2ecc468407:eyJzZWxlY3RlZExpbmVDb3VudCI6NDcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNlNDQ0NmMyOTRjZWY4YWZlNWM0ZmE0MjZkYjdmMmU1N2MxZDYxZjg0ZDg3MDYzNmEwYTM1MTQxYzA5OTE1MDIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjQ3Mjg4ZTljMGY1NDAyNDFhOWY5NzBmYzBkNWU3ODJiMWRhZDhkNDdiYmZhYzg5MGIzNjU3MWEwM2UzYjIyNzEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
         }
       ]
     },
@@ -347,6 +347,6 @@
   ],
   "verification": {
     "by": "openwiki/0.5.0",
-    "at": "2026-09-03T08:47:55.542Z"
+    "at": "2026-09-05T08:47:50.295Z"
   }
 }

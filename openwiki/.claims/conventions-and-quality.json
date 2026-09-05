@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "pageVersion": "sha256:7d47129528a75f92f3666c36b4bf2c2bc959bdd3934c7be4e0de2d468b4843c3",
+  "pageVersion": "sha256:4a8a51c77b387008ebb84f121eb71b853651d0d4631ae86c687eeb2d4c4af1c8",
   "claims": [
     {
       "id": "claim_47ae5092df88459d932915ee945c35e6",
@@ -8,7 +8,7 @@
       "evidence": [
         {
           "resource": "repo://CLAUDE.md#L141-L156",
-          "version": "repo-lines-v1:sha256:1852e8a78aacb05915593151c51d750d4242ff09672ae58f70318bd70f044034:eyJzZWxlY3RlZExpbmVDb3VudCI6MTYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjExZDM5NGRhNTdlOTRlYWQxY2M2ODg2ZDBjMmNiMTc1NDJlM2IyODZkYTVmYjg0MWE2OGVjZTEzOGI3MmJmZjIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjYzZGYyMzhjMDE0ZjM0NTNmNjVmZWM2MDIyZDI4MGExYjEzY2NlZWUwMzI4YTdhZTgxZWU1Y2QxYWM2NmQwMzciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjUwMzRiMjkwOGNlZjQzZmY5Y2MyYzUzNWViOGExNjkzYjMxMzExNGI3ZmEzNjhiMmY5M2FjOGFkMTYwODQ1NDIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImIxOTZjM2ExNGU2ZjMyMzVjNTVlMjNmN2ExMjU4ZmMyYjQ0MWZmMWI3OGE1N2U3NGZjNzFlOGY1NDI3NWZlYzMifQ"
+          "version": "repo-lines-v1:sha256:e1e009dd895609cb8fa808e92d6bbc6a792f737dae7eb3b9b9411d2e753fc87b:eyJzZWxlY3RlZExpbmVDb3VudCI6MTYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjExZDM5NGRhNTdlOTRlYWQxY2M2ODg2ZDBjMmNiMTc1NDJlM2IyODZkYTVmYjg0MWE2OGVjZTEzOGI3MmJmZjIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjYzZGYyMzhjMDE0ZjM0NTNmNjVmZWM2MDIyZDI4MGExYjEzY2NlZWUwMzI4YTdhZTgxZWU1Y2QxYWM2NmQwMzciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjUwMzRiMjkwOGNlZjQzZmY5Y2MyYzUzNWViOGExNjkzYjMxMzExNGI3ZmEzNjhiMmY5M2FjOGFkMTYwODQ1NDIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImIxOTZjM2ExNGU2ZjMyMzVjNTVlMjNmN2ExMjU4ZmMyYjQ0MWZmMWI3OGE1N2U3NGZjNzFlOGY1NDI3NWZlYzMifQ"
         }
       ]
     },
@@ -94,11 +94,11 @@
     },
     {
       "id": "claim_084d7128eb0942879160b2a48980d601",
-      "statement": "scripts/check-shadcn-ui-boundary.mjs (Story 174.2) is the repository-wide design-system boundary gate: it scans all production src/**/*.{ts,tsx} with the LEGACY_PALETTE and CONTEXTUAL_HEX canon regexes, suppresses files registered in BOUNDARY_EXCEPTIONS (currently three owner-accepted exceptions: the C5 waterfall categorical-hex config plus two historical #7C3AED chart marks — the FeedbackButtons F-10 exception was lifted 2026-09-02 by debt D-3/PB-4), and ratchets the active total against the single-integer baseline scripts/.shadcn-ui-boundary-baseline.txt, which stands at 372 per the CLAUDE.md accepted-baselines table.",
+      "statement": "scripts/check-shadcn-ui-boundary.mjs (Story 174.2) is the repository-wide design-system boundary gate: it scans all production src/**/*.{ts,tsx} with the LEGACY_PALETTE and CONTEXTUAL_HEX canon regexes, suppresses files registered in BOUNDARY_EXCEPTIONS (three owner-accepted exceptions: the C5 waterfall categorical-hex config plus two historical #7C3AED chart marks — the FeedbackButtons F-10 exception was lifted 2026-09-02 by debt D-3/PB-4), and ratchets the active total against the single-integer baseline scripts/.shadcn-ui-boundary-baseline.txt, which stands at 372 per the CLAUDE.md accepted-baselines table (↓29 Margin family wave-2 + D-4 /15→/5 fold-in, 2026-09-03 P2; was 401 after wave-1 ↓58).",
       "evidence": [
         {
           "resource": "repo://CLAUDE.md#L141-L156",
-          "version": "repo-lines-v1:sha256:1852e8a78aacb05915593151c51d750d4242ff09672ae58f70318bd70f044034:eyJzZWxlY3RlZExpbmVDb3VudCI6MTYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjExZDM5NGRhNTdlOTRlYWQxY2M2ODg2ZDBjMmNiMTc1NDJlM2IyODZkYTVmYjg0MWE2OGVjZTEzOGI3MmJmZjIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjYzZGYyMzhjMDE0ZjM0NTNmNjVmZWM2MDIyZDI4MGExYjEzY2NlZWUwMzI4YTdhZTgxZWU1Y2QxYWM2NmQwMzciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjUwMzRiMjkwOGNlZjQzZmY5Y2MyYzUzNWViOGExNjkzYjMxMzExNGI3ZmEzNjhiMmY5M2FjOGFkMTYwODQ1NDIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImIxOTZjM2ExNGU2ZjMyMzVjNTVlMjNmN2ExMjU4ZmMyYjQ0MWZmMWI3OGE1N2U3NGZjNzFlOGY1NDI3NWZlYzMifQ"
+          "version": "repo-lines-v1:sha256:e1e009dd895609cb8fa808e92d6bbc6a792f737dae7eb3b9b9411d2e753fc87b:eyJzZWxlY3RlZExpbmVDb3VudCI6MTYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjExZDM5NGRhNTdlOTRlYWQxY2M2ODg2ZDBjMmNiMTc1NDJlM2IyODZkYTVmYjg0MWE2OGVjZTEzOGI3MmJmZjIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjYzZGYyMzhjMDE0ZjM0NTNmNjVmZWM2MDIyZDI4MGExYjEzY2NlZWUwMzI4YTdhZTgxZWU1Y2QxYWM2NmQwMzciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjUwMzRiMjkwOGNlZjQzZmY5Y2MyYzUzNWViOGExNjkzYjMxMzExNGI3ZmEzNjhiMmY5M2FjOGFkMTYwODQ1NDIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImIxOTZjM2ExNGU2ZjMyMzVjNTVlMjNmN2ExMjU4ZmMyYjQ0MWZmMWI3OGE1N2U3NGZjNzFlOGY1NDI3NWZlYzMifQ"
         },
         {
           "resource": "repo://scripts/.shadcn-ui-boundary-baseline.txt",
@@ -168,11 +168,11 @@
     },
     {
       "id": "claim_7edbfecc3ad34e2aa8eb52c47a05d470",
-      "statement": "The accepted Vitest baseline is ≥ 19436 passing / 0 failed, with a hard floor of 19118 passing (lowered exactly by 756 proven-dead tests in Story 174.2-FE, then raised +237 from the 174.3 window, +8 contract tests 174.4, +52 redact suite D-9, +6 nonce-mint suite D-1/PB-1, +3 urgency-tier suite C15, and +12 reactive-refresh suite D-2/PB-3); additions are acceptable, regressions are not, and skipped counts are informational only.",
+      "statement": "The accepted Vitest baseline is ≥ 19439 passing / 0 failed, with a hard floor of 19118 passing (lowered exactly by 756 proven-dead tests in Story 174.2-FE, then raised +237 from the 174.3 window, +8 contract tests 174.4, +52 redact suite D-9, +6 nonce-mint suite D-1/PB-1, +3 urgency-tier suite C15, +12 reactive-refresh suite D-2/PB-3, and +3 wave-3 AA re-pins); additions are acceptable, regressions are not, and skipped counts are informational only.",
       "evidence": [
         {
           "resource": "repo://CLAUDE.md#L153-L156",
-          "version": "repo-lines-v1:sha256:baaa6d97c8b50e4e1ffd2917cff55f0091aa48de4192dbf4e4ff6217be7f85b1:eyJzZWxlY3RlZExpbmVDb3VudCI6NCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNTEzOWZlMjI4OWQ2NjhhODVmMGE1Y2I4ZmQ0YzA3ODkzOGYwMzJkYTNlMDA4OTE0YzAxYmQwYjE1OTFmYTE1NCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNjNkZjIzOGMwMTRmMzQ1M2Y2NWZlYzYwMjJkMjgwYTFiMTNjY2VlZTAzMjhhN2FlODFlZTVjZDFhYzY2ZDAzNyIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMTVkZTYyYmRkMWY3OTRiOTViMTI0MTcwMTY1NzYzNmE5YmIzYzIwMDU3NjQ5N2I4NmJlZTM0OTBhNzBhY2I4MCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiYjE5NmMzYTE0ZTZmMzIzNWM1NWUyM2Y3YTEyNThmYzJiNDQxZmYxYjc4YTU3ZTc0ZmM3MWU4ZjU0Mjc1ZmVjMyJ9"
+          "version": "repo-lines-v1:sha256:a3a98834d82495627e96ee08f06f8351265570ae4526b4e8f0116cb3c7c9858d:eyJzZWxlY3RlZExpbmVDb3VudCI6NCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMzczOGYzOGUxNGE2ZjU5NWM1ZGVjMzIwNzM5YmVkYWNmYjFiZmFlNzRlNWU5NzYxNzQwODNlYzkzMGEyNDBiMiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNjNkZjIzOGMwMTRmMzQ1M2Y2NWZlYzYwMjJkMjgwYTFiMTNjY2VlZTAzMjhhN2FlODFlZTVjZDFhYzY2ZDAzNyIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMTVkZTYyYmRkMWY3OTRiOTViMTI0MTcwMTY1NzYzNmE5YmIzYzIwMDU3NjQ5N2I4NmJlZTM0OTBhNzBhY2I4MCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiYjE5NmMzYTE0ZTZmMzIzNWM1NWUyM2Y3YTEyNThmYzJiNDQxZmYxYjc4YTU3ZTc0ZmM3MWU4ZjU0Mjc1ZmVjMyJ9"
         }
       ]
     },
@@ -277,6 +277,6 @@
   ],
   "verification": {
     "by": "openwiki/0.5.0",
-    "at": "2026-09-03T08:47:55.542Z"
+    "at": "2026-09-05T08:47:50.295Z"
   }
 }

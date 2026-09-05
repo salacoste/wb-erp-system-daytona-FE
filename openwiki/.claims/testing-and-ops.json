@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "pageVersion": "sha256:ca9e43801f8e71cdb9d1e45158ac98c1cab02724000049491b9819dc169de318",
+  "pageVersion": "sha256:dd81e4a26fd273573e12ae4b7ccf9100f1ad258ae43b8bf240cfbe901ff5da30",
   "claims": [
     {
       "id": "claim_34d4e9ec9e0249299eb57f3e06db8784",
@@ -18,11 +18,11 @@
     },
     {
       "id": "claim_6f40c953f4a54d4f9d1a5f2db9c186a0",
-      "statement": "The current accepted full Vitest baseline (CLAUDE.md accepted-baselines table, `npm test -- --run`) is ≥ 19,436 passing / 0 failed. That value is the 19,118 floor set by Story 174.2-FE (2026-08-31) — itself an exact −756 tests / −22 files from 19,874/1,256 by deletion of 65 proven-dead test files (import-closure proved, no live test deleted) — plus +237 tests from the 174.3 window, +8 contract tests from 174.4, +52 redact-suite tests from debt-FE-D9, +6 nonce-mint tests (D-1/PB-1), +3 urgency-tier tests (C15), and +12 reactive-refresh tests (D-2/PB-3). Earlier per-story peaks such as 19,874 are historical; the baseline is not a substitute for fresh per-story validation, and a story that legitimately moves it must update the table in the same PR.",
+      "statement": "The current accepted full Vitest baseline (CLAUDE.md accepted-baselines table, `npm test -- --run`) is ≥ 19,439 passing / 0 failed. That value is the 19,118 floor set by Story 174.2-FE (2026-08-31) — itself an exact −756 tests / −22 files from 19,874/1,256 by deletion of 65 proven-dead test files (import-closure proved, no live test deleted) — plus +237 tests from the 174.3 window, +8 contract tests from 174.4, +52 redact-suite tests from debt-FE-D9, +6 nonce-mint tests (D-1/PB-1), +3 urgency-tier tests (C15), +12 reactive-refresh tests (D-2/PB-3), and +3 wave-3 AA re-pins. Earlier per-story peaks such as 19,874 are historical; the baseline is not a substitute for fresh per-story validation, and a story that legitimately moves it must update the table in the same PR.",
       "evidence": [
         {
           "resource": "repo://CLAUDE.md#L152-L154",
-          "version": "repo-lines-v1:sha256:070858439a6b787c609283ab366265d93fbba781037023de6c74ce8fe89ea907:eyJzZWxlY3RlZExpbmVDb3VudCI6MywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMzA5YjZjYjdiYWIxNzE1YTU0YjU2MTI4ZjRhNmI4YmJmMTcxYzMzN2E3N2QwNDkzZTQwNzM3OTU5NTM0N2ExNSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiYmQ2ZmI0MjNjZmRiMDE2NmJmNWExZjAwMTcwMGVmNDZkMWE3M2IwOGIwOGMwMTE1M2FjMjY3YWIyM2E3Y2IwMyIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiYjI2MzVmN2RiNDE5YmEwN2NlYzQ2NDVkN2QyNTM0YmRjODcyOTViNGRhNDBkYTAyYzlkMzMxYzVmMGZlYjVkNiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNzczM2UzYTAyYTM4N2M1NzQzNGU1NDQ4OWVjMWI5OTI4NDE0NmQ4Y2YwMDA1NzFkZGRjYjBiYzVjYmQ5ZWI1ZSJ9"
+          "version": "repo-lines-v1:sha256:46d4ed8a423cfadf971598856bbc84c2e05b5c5c1422cde66d10f20660b11abe:eyJzZWxlY3RlZExpbmVDb3VudCI6MywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMzA5YjZjYjdiYWIxNzE1YTU0YjU2MTI4ZjRhNmI4YmJmMTcxYzMzN2E3N2QwNDkzZTQwNzM3OTU5NTM0N2ExNSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiYmQ2ZmI0MjNjZmRiMDE2NmJmNWExZjAwMTcwMGVmNDZkMWE3M2IwOGIwOGMwMTE1M2FjMjY3YWIyM2E3Y2IwMyIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiYjI2MzVmN2RiNDE5YmEwN2NlYzQ2NDVkN2QyNTM0YmRjODcyOTViNGRhNDBkYTAyYzlkMzMxYzVmMGZlYjVkNiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNzczM2UzYTAyYTM4N2M1NzQzNGU1NDQ4OWVjMWI5OTI4NDE0NmQ4Y2YwMDA1NzFkZGRjYjBiYzVjYmQ5ZWI1ZSJ9"
         }
       ]
     },
@@ -287,6 +287,6 @@
   ],
   "verification": {
     "by": "openwiki/0.5.0",
-    "at": "2026-09-03T08:47:55.542Z"
+    "at": "2026-09-05T08:47:50.295Z"
   }
 }

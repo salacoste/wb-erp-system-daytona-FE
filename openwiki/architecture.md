@@ -30,6 +30,10 @@ sources:
     resource: repo://src/app/providers.tsx
   - id: openwiki-source-681190a6193b7ecf4fbcde87
     resource: repo://src/components/auth/AuthProvider.tsx
+  - id: openwiki-source-6c189af241cb4add2ec4544b
+    resource: repo://src/config/features.ts
+  - id: openwiki-source-d0f167796fb3ea2e10db5b06
+    resource: repo://src/contexts/dashboard-period-context.tsx
   - id: openwiki-source-b663e3bb904518d34224b3f9
     resource: repo://src/hooks/useAuth.ts
   - id: openwiki-source-b3e9ea042734f0848c410d92
@@ -40,16 +44,24 @@ sources:
     resource: repo://src/lib/api.ts
   - id: openwiki-source-204fc5ae728b15ba9daed4a2
     resource: repo://src/lib/env.ts
+  - id: openwiki-source-0ba3f15e468d05b237f299de
+    resource: repo://src/lib/unit-economics-config.ts
+  - id: openwiki-source-6a8c327dcf0f71acb5042e8c
+    resource: repo://src/mocks/handlers/index.ts
+  - id: openwiki-source-24bcabb675e94257fc0db7c6
+    resource: repo://src/mocks/server.ts
   - id: openwiki-source-f34ac1e549d94dc3ac475ae4
     resource: repo://src/proxy.ts
+  - id: openwiki-source-a634a54b04d180befb7476e7
+    resource: repo://src/services/cabinets.service.ts
   - id: openwiki-source-e745bb5faf82e54620afb942
     resource: repo://src/stores/authStore.ts
   - id: openwiki-source-98d5ddb014a0fd4d678f6f2a
     resource: repo://tsconfig.json
-generated: { by: "openwiki/0.5.0", at: "2026-09-03T08:47:55.542Z" }
+generated: { by: "openwiki/0.5.0", at: "2026-09-05T08:47:50.295Z" }
 verified:
   - by: openwiki/0.5.0
-    at: 2026-09-03T08:47:55.542Z
+    at: 2026-09-05T08:47:50.295Z
 ---
 # Architecture
 
@@ -207,6 +219,33 @@ Separate from the JWT — a per-cabinet Wildberries API token configured during 
 
 Source: `src/stores/`
 
+### React contexts (`src/contexts/`)
+
+Beyond Zustand stores, one React context owns shared UI state: the **dashboard period** selection (`DashboardPeriodProvider` in `src/contexts/dashboard-period-context.tsx`). Its logic is split for size compliance — `dashboard-period-state.ts` (state machine), `dashboard-period-storage.ts` (localStorage persistence), `dashboard-period-types.ts` (contract). The provider manages period selection with URL sync and localStorage persistence; `useDashboardPeriod()` throws if consumed outside the provider. It backs the non-persisted `dashboardPeriodStore` role listed above — dashboard pages consume period state via the context, not duplicated per-page state.
+
+### Service layer (`src/services/`)
+
+`src/services/cabinets.service.ts` is the orchestration layer above raw API calls for cabinet creation (Story 167.9). `handleCreateCabinet(name, targetMarginPct)` captures an immutable `InitiatingSessionContext` (`accountId`, `sessionNonce`) from the auth store, performs the create + tax-settings calls, and then **conditionally settles** the new JWT/cabinet into global auth state — only when `evaluateCabinetSettlement()` proves the initiating session is still live. Settlement semantics:
+
+- `applied` — nonce matches live session (primary predicate; account id compared only as defense-in-depth when both sides are non-null) → committed cabinet view returned.
+- `stale` — no live token/user, nonce mismatch, or account mismatch → never mutates global auth state and never throws; logged quietly without secrets.
+- `indeterminate` — either nonce is null (pre-167.9 persisted session) → fail-safe, treated like stale for all UI effects.
+
+This is the reason token rotation must preserve `sessionNonce` (see D-2): a late cabinet-create result landing after a re-login must not overwrite the new session. Focused tests: `src/services/cabinets.service.test.ts`, `src/services/cabinets.service.settlement.test.ts`.
+
+## Feature Flags & Mock/Proxy Data
+
+`src/config/features.ts` is the feature-flag registry, read via `import { features } from '@/config/features'`:
+
+- `epic37MergedGroups` — `{ enabled, useRealApi, debug }` for the merged-group ("Склейки") table: gates rendering the Epic 37 UI and switches between mock data and the real backend API (`NEXT_PUBLIC_EPIC_37_USE_REAL_API`). Note the env comparisons use `=== 'true' || true`, so both flags effectively default to enabled regardless of the documented defaults.
+- `jamUrls` — subscription/info URLs used by `RequireJam` upgrade CTAs (`NEXT_PUBLIC_JAM_SUBSCRIPTION_URL` / `NEXT_PUBLIC_JAM_INFO_URL`, defaulting to `https://seller.wildberries.ru/jam`).
+
+MSW (Mock Service Worker) handlers under `src/mocks/handlers/` provide request-level mocks grouped by domain (advertising, communications, finances, liquidity, supply-planning, unit-economics — each split into `*-queries.ts` / `*-mutations.ts` modules re-exported through `index.ts`), wired by `src/mocks/server.ts` for tests. These are the proxy/mock data source behind the `useRealApi` switch.
+
+## Domain display configuration
+
+`src/lib/unit-economics-config.ts` centralizes unit-economics display config: `PROFITABILITY_STATUS_CONFIG` maps each `ProfitabilityStatus` (excellent / good / warning / critical / loss, by net-margin % thresholds from ≥25 down to <0) to localized labels, semantic CSS-variable colors, Tailwind tint classes, icons, and contrast-corrected text colors (P2 wave-3 accessibility pass), plus an `UNKNOWN_PROFITABILITY_CONFIG` sentinel for enum-drift defense (F-49). Details of the margin math live in [Domain Logic](domain-logic.md).
+
 ## Design System
 
 The presentation layer is migrating to a layered, semantic design system built on Tailwind v4 and shadcn/ui (Radix). The layers are built in order and consumed strictly downward — later route migrations reuse these foundations rather than restyling:
@@ -234,4 +273,5 @@ Local runtime truth: the Next.js dev/start servers bind to **port 3100** (`next 
 | `src/styles/globals.css` | Tailwind v4 CSS-first theme — semantic token palette (background, card, brand/primary, financial, status, availability, chart roles), typography/spacing/radius/shadow scales, light + dark themes. The JavaScript `tailwind.config.ts` was removed; see [Design System](design-system.md). |
 | `postcss.config.js` | `@tailwindcss/postcss` + autoprefixer (Tailwind v4 compiler contract) |
 | `components.json` | shadcn/ui CLI metadata aligned to Tailwind v4 (`config: ""`, CSS variables, new-york style) |
+| `src/config/features.ts` | Feature-flag registry — `epic37MergedGroups` (enabled / `useRealApi` mock-vs-real API switch / debug) and `jamUrls`; driven by `NEXT_PUBLIC_EPIC_37_*` and `NEXT_PUBLIC_JAM_*` variables |
 | `.env.example` | Environment variable names (see [Testing & Operations](testing-and-ops.md)) |

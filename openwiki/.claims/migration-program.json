@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "pageVersion": "sha256:e64a33ac1f16a5aff431bbaaf3a29a6989705faa0e0b0c269b780460485dc3d6",
+  "pageVersion": "sha256:524199b818cf81bc3e9a8675cf6bf2efdaee7d6b5f2b44a76761bf65991ee96e",
   "claims": [
     {
       "id": "claim_7146a57eacad4db2bf7552b903072ad9",
@@ -244,15 +244,19 @@
     },
     {
       "id": "claim_33570ad476ad42cb8e923f37ddfa608d",
-      "statement": "Debt session-2 (2026-09-02/03, orchestrator V15) landed 8 merged PRs (#390-#397) with 0/0/0 cleanup: D-1 PB-1 fix, the D-2/PB-3 BE-block then contract-ready pivot (request-backend #230), the /10-family ASB solid pairs, the C13+C15 quality wave, boundary waves 1-2 ratcheting the ui-boundary baseline 459→401→372 (wave-2 caught a hidden 4.19/4.42 AA failure masked by the D-4 attestation), and the BE handoff/contract-annex doc PRs; wave artifacts live under _bmad-output/implementation-artifacts/debt-*.md and carry the WCAG mapping + house-rule + harness canon.",
+      "statement": "Debt session-2 (2026-09-02/03, orchestrator V15) landed 8 merged PRs (#390-#397) with 0/0/0 cleanup: D-1 PB-1 fix, the D-2/PB-3 BE-block then contract-ready pivot (request-backend #230, later executed and live-verified 02:02Z), the /10-family ASB solid pairs, the C13+C15 quality wave, boundary waves 1-2 ratcheting the ui-boundary baseline 459→401→372 (wave-2 caught a hidden 4.19/4.42 AA failure masked by the D-4 attestation), and the BE handoff/contract-annex doc PRs. The wave-1/2 artifacts (WCAG mapping + house rule + harness canon) were subsequently superseded by the wave-3 layered-compositing canon in debt-p2-wave3-aa-quickwins.md.",
       "evidence": [
         {
           "resource": "repo://_bmad-output/implementation-artifacts/debt-p2-boundary-wave1-finsum.md",
-          "version": "repo-file-v1:sha256:04808be9e877a5495b06695e9fc6d9d4c530835d347086e79d2b633c5857b7e4"
+          "version": "repo-file-v1:sha256:ecb88b025e82216e6096cb6a3d256d39579b834ccf92c27169a00df957048229"
         },
         {
           "resource": "repo://_bmad-output/implementation-artifacts/debt-p2-boundary-wave2-margin.md",
-          "version": "repo-file-v1:sha256:bb27db12ac047bfe2712f1e1bf49b1e625da6e85bc4ca3567c5e9aea8aedd967"
+          "version": "repo-file-v1:sha256:87f0aed261578520a830d0e67e31c1609b043d03232dc083e097669f0a32a4c8"
+        },
+        {
+          "resource": "repo://_bmad-output/implementation-artifacts/debt-p2-wave3-aa-quickwins.md",
+          "version": "repo-file-v1:sha256:afe612e6399d7946156828f868bab7f3e859a814ca4bf10d89ded6ac3e4f7b9e"
         },
         {
           "resource": "repo://docs/HANDOFF-2026-09-03-V15-SESSION2-EXECUTION-AND-REMAINING-BACKLOG.md#L10-L31",
@@ -262,11 +266,19 @@
     },
     {
       "id": "claim_c6c0477b28b941bd8093982ec1808fc8",
-      "statement": "The V16 orchestrator prompt (2026-09-03) is the current session-3 entry point for continuing the debt backlog: an OMC sub-agent delegation matrix (explore/executor/debugger/verifier/code-reviewer/writer with explicit model tiers, reviewer ≠ author, sub-agents never commit), a per-item control loop ending in closeout artifact + registry flip + 0/0/0 cleanup, and a fixed work order (wave-3 AA quick-wins → D-2 follow-ups → boundary waves 4-5 over the 372 residue → /80-sweep → FE-D3/D1/D5 → P3), with live gate runs as the final authority over doc numbers.",
+      "statement": "The V16 orchestrator prompt (2026-09-03) remains the session-3 entry point — OMC sub-agent delegation matrix (explicit model tiers, reviewer ≠ author, sub-agents never commit), per-item control loop ending in closeout artifact + registry flip + 0/0/0 cleanup, live gate runs as final authority over doc numbers — but its work order has advanced: wave-3 AA quick-wins is DONE (2026-09-05, PR #404, 3 review passes, floor →19,439, boundary unchanged at 372; discovery: the over-card contrast model was falsified by real gradient/nested-tint DOM stacks, replaced by the layered-compositing canon with structural fg-on-tint/solid-pair remedies, and a WCAG 1.4.11 sub-3:1 valence-channel follow-up was registered) and the D-2 re-scope was executed (owner-approved, live-verified 02:02Z). Next items: boundary waves 4-5 over the 372 residue, the /80-sweep, FE-D3/D1/D5, then P3.",
       "evidence": [
         {
+          "resource": "repo://_bmad-output/implementation-artifacts/debt-p2-wave3-aa-quickwins.md",
+          "version": "repo-file-v1:sha256:afe612e6399d7946156828f868bab7f3e859a814ca4bf10d89ded6ac3e4f7b9e"
+        },
+        {
           "resource": "repo://docs/HANDOFF-2026-09-03-V15-SESSION2-EXECUTION-AND-REMAINING-BACKLOG.md#L34-L66",
-          "version": "repo-lines-v1:sha256:98a4864ba25f4b52ac8a8b3e392fabf1260d97836eade339ef62084c4be6a9b1:eyJzZWxlY3RlZExpbmVDb3VudCI6MzMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImVhNDNkNGU3NDJjZDY0MzI3MTRjZDRiZTRlMzFhYWIxNWU5MTNjMTMzZTliNjA1M2ZiN2JlOTQ3YzU0ODJiMTEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxZDU2YzllMjUyN2JmMDljMmVmYzcwZTBjNmJkN2ZmOTI4NjViMGY2NjQ1M2M0ZDdhNTViZDhmZDkyY2QyODMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjYzY2NlZWVkNGNjZGNiZDAyYmZmOTA5YjAzYjcwN2ZmOTAzZDViODk3YmQ1MDA5OWJjZjIzNTc4ZWQ0N2Q2MDYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjJlNzM3Zjc5M2E2MjlhNjhhYTMyYjM1MzJkNmE0YmFhYTQ2YzNiMjNjNDc4NTdjNDI4YWYxZTk4N2I1MWY0ZDMifQ"
+          "version": "repo-lines-v1:sha256:585ed92eef41bc9ab05923485f38e447bfbd4e762db49fdcd1626e48545dd470:eyJzZWxlY3RlZExpbmVDb3VudCI6MzMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImVhNDNkNGU3NDJjZDY0MzI3MTRjZDRiZTRlMzFhYWIxNWU5MTNjMTMzZTliNjA1M2ZiN2JlOTQ3YzU0ODJiMTEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxZDU2YzllMjUyN2JmMDljMmVmYzcwZTBjNmJkN2ZmOTI4NjViMGY2NjQ1M2M0ZDdhNTViZDhmZDkyY2QyODMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjYzY2NlZWVkNGNjZGNiZDAyYmZmOTA5YjAzYjcwN2ZmOTAzZDViODk3YmQ1MDA5OWJjZjIzNTc4ZWQ0N2Q2MDYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjJlNzM3Zjc5M2E2MjlhNjhhYTMyYjM1MzJkNmE0YmFhYTQ2YzNiMjNjNDc4NTdjNDI4YWYxZTk4N2I1MWY0ZDMifQ"
+        },
+        {
+          "resource": "repo://docs/HANDOFF-2026-09-03-V15-SESSION2-EXECUTION-AND-REMAINING-BACKLOG.md#L36-L51",
+          "version": "repo-lines-v1:sha256:f5e7b113988fdb1e407bde623f6a46d0a56dab824047db3512a59cd57b48dbac:eyJzZWxlY3RlZExpbmVDb3VudCI6MTYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjMyNDA1YzM0NzM4Y2NkZTZlMGI1NjZmMzZiNDg0OTUzYmNmOTk0N2I1M2E0MDg2NDU2N2E4NGFmMzE0YmYwNmIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjM4YWEzZTVjYmIwOTYyYmY0MzRmYzZlOTk1NzBhYzQyODgzYWYxYjYxZTRmMzdiMWE0YWMxYWFmMWFkYTMxMDMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjFkNjhmNjI4MGVjZGRiOGEyYjE2MTk5ZjQ5Zjg5YzYzMjEyOTA5NDUyNGViYTcwYWU2ZmYyNjc1ZTE0ZTM4NjIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjJmODdjY2U1MjE2YjQ0ZGU1MmZjZWM5OTRkMWYzN2EyZmRlZWFkMTBhM2Y3N2RkNjhjMzQ2NzhmODgxYTg3N2EifQ"
         },
         {
           "resource": "repo://docs/ORCHESTRATOR-PROMPT-2026-09-03-V16-SESSION3-CONTINUATION-OMC.md#L12-L23",
@@ -287,6 +299,6 @@
   ],
   "verification": {
     "by": "openwiki/0.5.0",
-    "at": "2026-09-03T08:47:55.542Z"
+    "at": "2026-09-05T08:47:50.295Z"
   }
 }

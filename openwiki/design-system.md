@@ -32,6 +32,7 @@ openwiki:
     - scripts/.shadcn-ui-boundary-baseline.txt
     - _bmad-output/implementation-artifacts/debt-p2-boundary-wave1-finsum.md
     - _bmad-output/implementation-artifacts/debt-p2-boundary-wave2-margin.md
+    - _bmad-output/implementation-artifacts/debt-p2-wave3-aa-quickwins.md
   symbols:
     - PageHeader
     - Breadcrumbs
@@ -83,6 +84,8 @@ sources:
     resource: repo://_bmad-output/implementation-artifacts/debt-p2-boundary-wave1-finsum.md
   - id: openwiki-source-54ef9539556b5103cebfee4c
     resource: repo://_bmad-output/implementation-artifacts/debt-p2-boundary-wave2-margin.md
+  - id: openwiki-source-bd7d4cadb47c08a8a3fdb98e
+    resource: repo://_bmad-output/implementation-artifacts/debt-p2-wave3-aa-quickwins.md
   - id: openwiki-source-963badef5db4ea717da0c93c
     resource: repo://_bmad-output/planning-artifacts/ux-design-specification.md
   - id: openwiki-source-61e0371a06d746820bb42371
@@ -119,8 +122,12 @@ sources:
     resource: repo://src/components/custom/MarginBadge.tsx
   - id: openwiki-source-413c2c0aa79efc6da6d470af
     resource: repo://src/components/custom/pnl-waterfall/__tests__/semantic-tokens.test.tsx
+  - id: openwiki-source-fa79953934019c29d7e70ab5
+    resource: repo://src/components/custom/pnl-waterfall/GrossProfitSection.tsx
   - id: openwiki-source-c4a70565d56a4d861147959a
     resource: repo://src/components/custom/price-calculator/margin-status-helpers.ts
+  - id: openwiki-source-98ba944cddaac641d6f7159c
+    resource: repo://src/components/custom/price-calculator/MarginSlider.tsx
   - id: openwiki-source-5fef53995cd8533694ed5234
     resource: repo://src/components/custom/sku-financials/__tests__/ProfitabilityBadge.test.tsx
   - id: openwiki-source-9a77cae6730eea6df8151a9c
@@ -149,10 +156,10 @@ sources:
     resource: repo://src/styles/__tests__/globals-token-contract.test.ts
   - id: openwiki-source-13697ff46e81b49dcb27ba68
     resource: repo://src/styles/globals.css
-generated: { by: "openwiki/0.5.0", at: "2026-09-03T08:47:55.542Z" }
+generated: { by: "openwiki/0.5.0", at: "2026-09-05T08:47:50.295Z" }
 verified:
   - by: openwiki/0.5.0
-    at: 2026-09-03T08:47:55.542Z
+    at: 2026-09-05T08:47:50.295Z
 ---
 
 # Design System
@@ -317,7 +324,7 @@ The dashboard financial-summary family, decomposed into focused sub-components (
 
 ### Margin family — `src/components/custom/Margin*` + `price-calculator/margin-status-helpers.ts`
 
-The margin presentation family token-migrated by P2 wave 2 (boundary 401→372). `MarginBadge` renders the compact chip: finite margins use financial valence (`bg-financial-*/5` + `text-financial-*` + `border-financial-*/20`, measured 4.80/5.20 light, 8.72/8.19 dark — the `/15` tints failed light at 4.19/4.42), zero renders muted, and null/NaN/Infinity never fabricate a zero — it renders a muted «—» chip with the missing-data reason as `title`. `MarginInfoCard` wraps it with period/sales stats on `bg-card` (wave-2 dark-mode fix). `MarginAggregatedTableHeader` is the shared sortable header for the margin-by-brand/category tables: active sort icons use `text-status-information` (5.75/8.53), idle/help icons `muted-foreground`, and every sortable `TableHead` carries `aria-sort`. `MARGIN_STATUS_CONFIG` in `margin-status-helpers.ts` tiers margins (≥20 excellent, ≥10 good, ≥5 warning, else critical): `excellent`/`critical` use the financial `/5` tint idiom, `good`/`warning` use the solid `bg-status-*` + `text-status-*-foreground` pairs (the D-4 fix), and `getMarginColor` returns the matching text-token class per tier.
+The margin presentation family token-migrated by P2 wave 2 (boundary 401→372). `MarginBadge` renders the compact chip: finite margins use financial valence (`bg-financial-*/5` + `text-financial-*` + `border-financial-*/20`), zero renders muted, and null/NaN/Infinity never fabricate a zero — it renders a muted «—» chip with the missing-data reason as `title`. `MarginInfoCard` wraps it with period/sales stats on `bg-card` (wave-2 dark-mode fix). `MarginAggregatedTableHeader` is the shared sortable header for the margin-by-brand/category tables: active sort icons use `text-status-information` (5.75/8.53), idle/help icons `muted-foreground`, and every sortable `TableHead` carries `aria-sort`. `MARGIN_STATUS_CONFIG` in `margin-status-helpers.ts` tiers margins (≥20 excellent, ≥10 good, ≥5 warning, else critical): `excellent`/`critical` use the financial `/5` tint idiom (wave-2 `/15`→`/5` after measured 4.19/4.42 light fails), `good`/`warning` use the solid `bg-status-*` + `text-status-*-foreground` pairs (the D-4 fix), and `getMarginColor` returns the matching text-token class per tier. P2 wave 3 re-measured the financial `/5` chips **in situ** over the `TwoLevelPricingDisplay` gradient card (`from-background to-muted/30`): 4.68 light / 8.18 dark — PASS, and corrected the wave-2 bare-card attestations (4.80/5.20 had not modeled that layer). Wave 3 also swept the price-calculator margin hosts: `MarginSlider` badge/label text on unfixable tinted bases (`bg-primary/5` box) went fg-on-tint, and `TwoLevelPriceHeader`'s warning box and `GrossProfitSection`'s coverage warning + margin chip moved to solid `bg-status-warning` + `text-status-warning-foreground` pairs.
 
 ### Settings — `src/components/custom/settings/*`
 
@@ -384,15 +391,16 @@ The automation domain (gallery + list + editor), the full COGS domain (single + 
 
 **Epic 174 (consolidation, 5 stories) is CLOSED 5/5 — the program ended here (2026-09-02)**: **174.1** (ledger reconciliation — feature PR #369 + closeout PR #370 + lifecycle PR #371) proved the schema-v3 ledger 94 = 94 stories and 76 = 76 = 76 route/ledger rows with all linked artifacts unique. **174.2** (legacy-removal and design-system boundary — feature PR #372 on base `fbdab2da`) is summarized in the boundary section below. **174.3** (inclusive accessibility/responsive/theme/visual verification, including the §3.3 tint-audit of `text-status-*` on `bg-*/10` pairs) executed the inclusive visual contract documented in [the Story 174.3 section below](#the-story-1743-inclusive-visual-contract) and closed after its three-APPROVE review gate. **174.4** (feature PR #375) ran the full functional/backend regression — 53 spec fixes plus the DrrSlider /15-tint→solid-pair and TaxRateInput overflow product fixes — and, on a live re-run, discovered the boundary total had dropped to 459 during the 174.3 merge window and correctly lowered the ratchet baseline same-commit. **174.5** (feature PR #379 on base `0d6225ac`) flipped all 76 route-ledger rows to `verified` with full evidence chains, re-pinned the parity validator's expected base SHA, and re-confirmed the remaining boundary exceptions as owner-accepted.
 
-### Post-program P2 owner-sweep waves (2026-09-02/03)
+### Post-program P2 owner-sweep waves (2026-09-02/05)
 
 After the program closed, the category-1 residue began its ratchet-driven owner-sweep in coherent family waves (canon: live pre-flight recount, measured WCAG contrast per replacement in both themes, baseline lowered in the same commit):
 
 - **Wave 1 — financial-summary** (PR #394; 11 files, 58 sites, 0 hex; boundary 459→401): the `src/components/custom/financial-summary/` family migrated to semantic tokens with a per-replacement contrast harness (HSL→sRGB, alpha tint blended over the **card** surface — card ≠ background in dark). Mapping canon: neutrals → `muted-foreground`/`border-border`; money-direction deltas → `text-financial-positive/negative` (returns arrows are direction, not error); tinted patterns by meaning with the `bg-status-*/10 + border-status-*/20` idiom; **house rule**: colored text on a tint must *measure* ≥4.5:1 light — on fail, either drop the tint to `/5` or switch the text to `foreground`/`muted` (a measured `/10` pass stays `/10`). Reviewers independently reproduced the contrast math twice (REJECT→fix→APPROVE→fix).
 - **Wave 2 — margin family** (PR #395; 29 live sites after the catalog's stale 58 was live-recounted; boundary 401→372): `MarginBadge`, `MarginAggregatedTableHeader`, and the D-4 fold-in in `margin-status-helpers.ts`. Margin chips use **financial valence** (`bg-financial-*/5 + text-financial-* + border-financial-*/20`, parity with `MarginDisplay`), sort-state accents use `status-information` (parity with the SkuFinancialsTable canon), `MarginInfoCard`'s literal `bg-white` → `bg-card` (dark-mode fix). The D-4 fold-in exposed that the earlier "≥4.5 both themes" attestation covered only the two solid pairs — `excellent`/`critical` on financial `/15` tints measured 4.19/4.42 light (WCAG 1.4.3 FAIL), independently confirmed by a reviewer's own calculator; corrected `/15`→`/5` with an append-only registry disclosure. Lesson canon: an attestation is valid only for measured pairs — retained neighbors of a fix inherit nothing.
 - **C13/C15 quality wave** (PR #393, 2026-09-02): C13 — `GapsTable` duplicated meaning between caption and scroll `aria-label` (resolved: aria-label → «Область прокрутки таблицы пропущенных дней», caption keeps identity); C15 — liquidity `URGENCY_CLASS` keyed by Cyrillic labels where a lib rename silently falls back (resolved: `ScenarioUrgencyTier` + `getScenarioUrgencyTier` single source, typed Record, exhaustive color switch).
+- **Wave 3 — AA quick wins + layered compositing model** (PR #404, 2026-09-05; 15 files, artifact `_bmad-output/implementation-artifacts/debt-p2-wave3-aa-quickwins.md`): the registered sub-AA `/15`,`/10` sites from waves 1–2 (3.97–4.49 light) plus their host files. Pass-1 **falsified the "over card" measurement model**: real DOM stacks contain gradient cards (`bg-gradient-to-br from-status-information/10 to-status-warning/10`), nested tints, and `muted/50` parents, so in-situ contrast was 2.79–4.41 FAIL where bare-card attestations said PASS. New canon (superset of waves 1–2): (1) contrast is measured over the **actual compositing stack** (sequential alpha layers above card; gradients at worst-end) — bare card is valid only with a verified mount chain; (2) **structural remedies** when tint-tuning cannot fix a tinted base: fg-on-tint (`text-foreground` on the tint; valence carried by tint+border+label+icon) or solid pairs (`bg-status-X` + `text-status-X-foreground`, which kill parent compositing) — financial tokens have no `-foreground`, so financial valence on unfixable bases goes fg-on-tint. Applied to `CashflowRowPrimitives`/`SkuCashflowSection` (the worst repo site at 2.79 → solid warning), `CashflowExpenseGrid`, `unit-economics-config` chips, `MarginSlider` (in-situ over `bg-primary/5`: 4.19/4.45 FAIL → fg-on-tint 13.98–14.89), `GrossProfitSection` (chip + coverage box → solid warning, 4.81/11.41), `TwoLevelPriceHeader` (warning box → solid), and `MarginSection`/`margin-status-helpers` (attestations re-measured in-situ at 4.68 over the gradient card). Boundary **unchanged at 372** (semantic tokens only); vitest floor 19,436→19,439. Lesson canon: trace a file's consumers, not just the file — each fix wave exposed another missed layer. Registered follow-ups: WCAG 1.4.11 valence channels (tint 1.07–1.21, border 1.52–1.89 < 3:1 need a ≥3:1 carrier), `TwoLevelPriceHeader.tsx` `text-primary/70` ₽ glyph, `PctBadge colorClass` escape-hatch, MarginSlider `/20` track segments (3.47 ≥ 3:1 non-text PASS, monitor).
 
-Remaining registered follow-ups: the colored-token-on-`/15` class outside the swept families (`unit-economics-config.ts`, `GrossProfitSection.tsx`, `CashflowRowPrimitives.tsx`), sub-AA `/10` pairs inside price-calculator (`TwoLevelPriceHeader`, `MarginSlider`, `MarginSection`), and waves 3–6 of the 372 residue (SourceBadge, RequireJam, lib residues).
+Remaining registered follow-ups: waves 4–6 of the 372 residue (SourceBadge, RequireJam, lib residues), plus the wave-3 follow-ups above — the wave-1/2 registered tint sites (`unit-economics-config.ts`, `GrossProfitSection.tsx`, `CashflowRowPrimitives.tsx`, `TwoLevelPriceHeader`, `MarginSlider`, `MarginSection`) were all addressed by wave 3.
 
 ## Route presentation source-contract guards (Epics 169–171 canon)
 
@@ -417,7 +425,7 @@ The 71-file mutable manifest migrated by 172.8 (from `AcceptanceStatusBadge` to 
 
 Story 174.2 (feature PR #372) converted the per-route guard canon into a **repository-wide, ratcheted boundary**:
 
-- **Validator**: `scripts/check-shadcn-ui-boundary.mjs` (Node stdlib only) scans all production `src/**/*.{ts,tsx}` (tests, `__tests__`, `.d.ts`, `src/test` excluded; enumeration is relative-first per the 171.8 anchor-safety canon) for two detection classes that form the superset regex canon — `LEGACY_PALETTE` (the monitoring-172.12/169.11 guard form extended with `ring-offset`, `shadow`/`inset-shadow`/`text-shadow` prefixes) and `CONTEXTUAL_HEX` (quote/backtick or `-[`-anchored hex with a trailing quote/backtick/`]`/`;` lookahead, plus rgba/hsl/hsla/oklch color functions whose first ~40 chars contain a digit or `#`). It reports per-file/per-route/total counts and ratchets against `scripts/.shadcn-ui-boundary-baseline.txt` — a single integer, currently **523**.
+- **Validator**: `scripts/check-shadcn-ui-boundary.mjs` (Node stdlib only) scans all production `src/**/*.{ts,tsx}` (tests, `__tests__`, `.d.ts`, `src/test` excluded; enumeration is relative-first per the 171.8 anchor-safety canon) for two detection classes that form the superset regex canon — `LEGACY_PALETTE` (the monitoring-172.12/169.11 guard form extended with `ring-offset`, `shadow`/`inset-shadow`/`text-shadow` prefixes) and `CONTEXTUAL_HEX` (quote/backtick or `-[`-anchored hex with a trailing quote/backtick/`]`/`;` lookahead, plus rgba/hsl/hsla/oklch color functions whose first ~40 chars contain a digit or `#`). It reports per-file/per-route/total counts and ratchets against `scripts/.shadcn-ui-boundary-baseline.txt` — a single integer, currently **372** (523 at 174.2 close → 459 by 174.4's live re-run → 401 by wave 1 → 372 by wave 2; the P2 wave-3 AA sweep used only semantic tokens, so the baseline held at 372).
 - **Ratchet semantics**: `node scripts/check-shadcn-ui-boundary.mjs` exits 0 at or below the baseline and exits 1 only when the total **increases**; any migration that lowers the count must lower the baseline in the same commit. There are no file-level waivers — suppression is only possible via the `BOUNDARY_EXCEPTIONS` map, which requires an owner/debt ID and a 1:1 mirror in category 5 of the classification manifest. Current exceptions (3 files, 22 suppressed matches): the C5 waterfall categorical hex and the two historical `#7C3AED` chart marks (pricing `PriceHistorySheet`, product `FunnelTab`); the F-10 FeedbackButtons exception was lifted 2026-09-02 when its legacy span moved to a solid AA-safe status pair.
 - **Self-suite**: `scripts/__tests__/check-shadcn-ui-boundary.test.mjs` runs 10 node:test cases proving the regexes fire on canonical violations and that enumeration/exclusion logic works, so the scanner itself cannot silently rot.
 - **Classification manifest**: `_bmad-output/planning-artifacts/shadcn-ui-boundary-classification-manifest.md` records every finding in six categories and was **arithmetic-closed at Story 174.2 close** against the original 523 baseline: category 1 (live legacy palette/literals) 514 + category 2 (route-owner-completed residue) 1 + category 6 (comment-only false positives) 8 = **523**. Its §7 update (2026-09-02) records: total 459 = baseline 459 PASS, the FeedbackButtons exception lifted (3 registered / 3 suppressing live matches = 22), self-suite 10/10; the post-program P2 waves 1–2 continued the ratchet-down to **372**. Category-1 residue is swept by the ratchet at the owning surface's next touch (C14 owner-sweep pattern, now executing in family waves); the remaining residue is the counted set carried as owner-sweep debt.
@@ -478,7 +486,7 @@ The consolidated runner (`e2e/support/story-174-3-runner-surfaces.ts`) executes 
 
 Below the e2e matrix sits a per-surface vitest layer, the `*.a11y.test.tsx` files across the analytics, dashboard, financial-summary, moysklad, and orders components — e.g. `UnitEconomicsWaterfall.a11y.test.tsx` (exact percentage/currency units, categories, values, precision), `LiquidityDistributionChart`, `PricingFilters`, `SupplyPlanningControls`, `MoyskladHealthBadge`, `ReconciliationSection`, `DailyBreakdownChart`, `StorageTrendsChart`. Most are DOM-level owner tests (the `tooltipOwnerTest`/`interactionOwnerTest` bindings cited by the inventories); the financial-summary pair (`FinancialSummaryTables.a11y.test.tsx`, `ExpensesSection.a11y.test.tsx`) is instead a source-contract pin — it reads the component sources and asserts each section table's stable sr-only `TableCaption` name and the expenses divider's identity value. Semantic-token honesty is additionally pinned by DOM-level tests using exact `classList.contains` matches (no substring false-passes):
 
-- `src/components/custom/pnl-waterfall/__tests__/semantic-tokens.test.tsx` pins `text-financial-positive`, the AA-contrast idiom (`bg-financial-positive/10` tint with **foreground** text), named help/formula tooltip buttons, and rejects the widened legacy-palette regex in the rendered DOM.
+- `src/components/custom/pnl-waterfall/__tests__/semantic-tokens.test.tsx` pins `text-financial-positive`, the AA-contrast idiom (`bg-financial-positive/10` tint with **foreground** text — `text-financial-positive` explicitly absent), named help/formula tooltip buttons, and rejects the widened legacy-palette regex in the rendered DOM; since P2 wave 3 it also pins `GrossProfitSection`'s **solid** `bg-status-warning` + `text-status-warning-foreground` pairs for both the COGS-coverage warning block (4.81 light / 11.41 dark over any base) and the 15–25% margin chip branch (the in-situ warn/5 chip over the `bg-muted/50` strip measured 4.34 light FAIL → solid).
 - `src/components/custom/sku-financials/__tests__/ProfitabilityBadge.test.tsx` pins the `/15` chip idiom (`bg-financial-positive/15` + `text-foreground`; the canonical `-100,0 %` loss uses `bg-financial-negative/15` + `text-foreground` and explicitly **not** `text-financial-negative`), Russian-locale margin formatting, and the no-fabricated-zero fallback to the status label when `marginPct` is null.
 
 ### Responsive chart frame
@@ -491,8 +499,8 @@ Per `_bmad-output/planning-artifacts/shadcn-migration-status-and-debt-registry.m
 
 | Debt | Owner / due |
 |------|-------------|
-| Boundary category-1 residue: the 459 counted violations registered in the classification manifest (mostly `src/lib` class-maps, financial-summary, and legacy chart widgets) — swept by the ratchet at the owning surface's next touch; category-2 `ScheduleVersionForm.tsx` residue reverified at next tariffs owner touch | Ratchet owner-sweep (C14), continuous |
-| Boundary ratchet semantics: "registered" = baseline-grandfathered (459, lowered from 523 by 174.4), exit-1 only on increase (locale-percent precedent); comment-only category-6 noise stays counted | Accepted exception, continuous |
+| Boundary category-1 residue: the counted violations registered in the classification manifest (372 after P2 waves 1–2; mostly `src/lib` class-maps and legacy chart widgets — waves 4–6 pending) — swept by the ratchet at the owning surface's next touch; category-2 `ScheduleVersionForm.tsx` residue reverified at next tariffs owner touch | Ratchet owner-sweep (C14), continuous |
+| Boundary ratchet semantics: "registered" = baseline-grandfathered (372, lowered from 523 by 174.4 and P2 waves 1–2; wave 3 held it unchanged), exit-1 only on increase (locale-percent precedent); comment-only category-6 noise stays counted | Accepted exception, continuous |
 | locale-percent ratchet at 4; docs check citation-state drift | Continuous ratchets, not blockers |
 
 ## When to consult this page
@@ -516,10 +524,4 @@ Token edits additionally require `npm run build` because the compiled CSS is wha
 ```bash
 node scripts/check-shadcn-ui-boundary.mjs                          # exit 1 only on increase past 372
 node --test scripts/__tests__/check-shadcn-ui-boundary.test.mjs   # scanner self-suite (10 cases)
-```
-e --test scripts/__tests__/check-shadcn-ui-boundary.test.mjs   # scanner self-suite (10 cases)
-```
-self-suite (10 cases)
-```
-e --test scripts/__tests__/check-shadcn-ui-boundary.test.mjs   # scanner self-suite (10 cases)
 ```

@@ -5,7 +5,7 @@ description: "API client singleton with auto-injected auth and cabinet headers, 
 tags: [api-client, boundary-normalizer, reactive-401-refresh, anti-pattern-8, paid-storage-import, csv-export, finances-documents]
 verified:
   - by: openwiki/0.5.0
-    at: 2026-09-03T08:47:55.542Z
+    at: 2026-09-05T08:47:50.295Z
 sources:
   - id: openwiki-source-3177abcefd75baab3663fb5b
     resource: repo://src/hooks/useSanityCheck.ts

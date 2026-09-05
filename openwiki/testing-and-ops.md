@@ -68,10 +68,10 @@ sources:
     resource: repo://test-utils/outbound-network-policy.ts
   - id: openwiki-source-fbadcd8591b65031efaaedce
     resource: repo://vitest.config.ts
-generated: { by: "openwiki/0.5.0", at: "2026-09-03T08:47:55.542Z" }
+generated: { by: "openwiki/0.5.0", at: "2026-09-05T08:47:50.295Z" }
 verified:
   - by: openwiki/0.5.0
-    at: 2026-09-03T08:47:55.542Z
+    at: 2026-09-05T08:47:50.295Z
 ---
 # Testing & Operations
 
@@ -115,7 +115,7 @@ Tests are co-located with source in `__tests__/` directories:
 ### Full-suite floor history
 The floor is a floor, not a substitute for fresh per-story validation. It moves down legitimately only when tests are provably deleted with their production owners:
 
-- **Current accepted baseline (CLAUDE.md, `npm test -- --run`): ≥ 19,436 passing / 0 failed.** That is the 19,118 floor established by Story 174.2-FE (2026-08-31) plus +237 tests from the Story 174.3 window, +8 contract tests from 174.4, +52 redact-suite tests from debt-FE-D9, +6 nonce-mint tests (D-1/PB-1), +3 urgency-tier tests (C15), and +12 reactive-refresh tests (D-2/PB-3). The 174.2 floor itself moved from 19,874/1,256 by an exact −756 tests / −22 files, entirely from 65 proven-dead test files deleted together with their dead production owners (import-closure proved per file, reviewer-verified) — no live test was deleted.
+- **Current accepted baseline (CLAUDE.md, `npm test -- --run`): ≥ 19,439 passing / 0 failed.** That is the 19,118 floor established by Story 174.2-FE (2026-08-31) plus +237 tests from the Story 174.3 window, +8 contract tests from 174.4, +52 redact-suite tests from debt-FE-D9, +6 nonce-mint tests (D-1/PB-1), +3 urgency-tier tests (C15), +12 reactive-refresh tests (D-2/PB-3), and +3 wave-3 AA re-pins. The 174.2 floor itself moved from 19,874/1,256 by an exact −756 tests / −22 files, entirely from 65 proven-dead test files deleted together with their dead production owners (import-closure proved per file, reviewer-verified) — no live test was deleted.
 - **Per-story peaks are historical**, not the current bar: e.g. the 19,874 peak observed after Story 173.13 was superseded by the legitimate 174.2 dead-test deletion, then by the 174.3/174.4/debt-FE-D9 additions. Record the current accepted baseline, not historical counts, when validating. When a story legitimately moves a baseline, update the CLAUDE.md table in the same PR.
 - `vitest.config.ts` excludes the two `node:test`-only self-suites (`scripts/__tests__/check-shadcn-migration-parity.test.mjs`, `scripts/__tests__/check-shadcn-ui-boundary.test.mjs`) from the Vitest run — they run under `node --test` from their own scripts instead.
 

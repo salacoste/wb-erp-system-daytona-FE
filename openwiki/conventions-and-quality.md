@@ -46,10 +46,10 @@ sources:
     resource: repo://src/components/custom/dashboard/__tests__/dashboard-widgets-presentation-source-contracts.test.ts
   - id: openwiki-source-fbadcd8591b65031efaaedce
     resource: repo://vitest.config.ts
-generated: { by: "openwiki/0.5.0", at: "2026-09-03T08:47:55.542Z" }
+generated: { by: "openwiki/0.5.0", at: "2026-09-05T08:47:50.295Z" }
 verified:
   - by: openwiki/0.5.0
-    at: 2026-09-03T08:47:55.542Z
+    at: 2026-09-05T08:47:50.295Z
 ---
 
 # Conventions & Quality Gates
@@ -212,7 +212,7 @@ Story 174.2-FE codifies the repository-wide UI boundary canon. The script scans 
 - `LEGACY_PALETTE` — the widest route-guard form (monitoring 172.12 / 169.11 canon) across ~20 color families and shades 50–950, including the `ring-offset`, `inset-shadow`, and `text-shadow` prefixes; semantic token vocabulary (`bg-status-error`, `text-financial-positive`, `text-chart-3`, `bg-popover`) must never match.
 - `CONTEXTUAL_HEX` — hex literals anchored to quote/backtick/arbitrary-value bracket/`;` contexts (3/4/6/8-digit) plus `rgb/rgba/hsl/hsla/oklch` color functions whose first ~40 chars contain a digit or `#`. Prose ticket numbers (`see ticket #197`) must not match.
 
-Scanned files listed in the exported `BOUNDARY_EXCEPTIONS` map are counted as suppressed rather than active; every entry must carry an owner/debt ID (F-10 WCAG contrast exception, C5 waterfall chart hex, two historical `#7C3AED` chart marks) (owner/debt IDs) and be mirrored 1:1 in `_bmad-output/planning-artifacts/shadcn-ui-boundary-classification-manifest.md`. After the 2026-09-02 FeedbackButtons fix (debt D-3 / PB-4 — the legacy `green-700` success span was replaced with a solid status pair that is AA-safe in both themes), the map holds exactly **three owner-accepted exceptions**: the C5 waterfall categorical-hex config (`waterfall-chart-config.ts`, pending the chart-palette owner's canon decision) and two historical `#7C3ED`-family `#7C3AED` chart marks (`PriceHistorySheet.tsx`, `FunnelTab.tsx` — 170.x carry-outs, classified not migrated). Violations are grouped per route (first `src/app` segment for app files, else first two path segments), totaled, and compared against the single-integer baseline `scripts/.shadcn-ui-boundary-baseline.txt`:
+Scanned files listed in the exported `BOUNDARY_EXCEPTIONS` map are counted as suppressed rather than active; every entry must carry an owner/debt ID (F-10 WCAG contrast exception, C5 waterfall chart hex, two historical `#7C3AED` chart marks) (owner/debt IDs) and be mirrored 1:1 in `_bmad-output/planning-artifacts/shadcn-ui-boundary-classification-manifest.md`. After the 2026-09-02 FeedbackButtons fix (debt D-3 / PB-4 — the legacy `green-700` success span was replaced with a solid status pair that is AA-safe in both themes), the map holds exactly **three owner-accepted exceptions**: the C5 waterfall categorical-hex config (`waterfall-chart-config.ts`, pending the chart-palette owner's canon decision) and two historical `#7C3AED` chart marks (`PriceHistorySheet.tsx`, `FunnelTab.tsx` — 170.x carry-outs, classified not migrated). Violations are grouped per route (first `src/app` segment for app files, else first two path segments), totaled, and compared against the single-integer baseline `scripts/.shadcn-ui-boundary-baseline.txt`:
 
 - `total > baseline` → exit 1 (fail) with offending files enumerated
 - `total < baseline` → pass with "ratchet down" — the baseline MUST be lowered in the same commit
@@ -293,3 +293,4 @@ This complements the [Two-Pass Review Discipline](#two-pass-review-discipline): 
 - **Error test pattern** — Always use `mockRejectedValueOnce` (not `mockRejectedValue`)
 - **Regex for locale assertions** — Use `/₽/`, `/\d+/` patterns in tests, not exact formatted strings
 - **No bare `TODO`** — covered above; `PENDING BACKEND:` / `FUTURE:` / ticket links only
+`TODO`** — covered above; `PENDING BACKEND:` / `FUTURE:` / ticket links only

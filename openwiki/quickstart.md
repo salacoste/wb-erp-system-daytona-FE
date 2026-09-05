@@ -18,16 +18,18 @@ sources:
     resource: repo://package.json
   - id: openwiki-source-23775c3de52f3ab95a13cb8b
     resource: repo://README.md
+  - id: openwiki-source-a6d59436db4440630eef1244
+    resource: repo://scripts/.shadcn-ui-boundary-baseline.txt
   - id: openwiki-source-02888236bcd9b1d1d663f151
     resource: repo://scripts/generate-story-174-3-scope-register.mjs
   - id: openwiki-source-8f2fb2dd82c28c75ce354113
     resource: repo://scripts/run-story-174-3-real-browser-zoom.mjs
   - id: openwiki-source-1bbe76f55f6efa9d2465f6c5
     resource: repo://scripts/run-story-174-3-state-evidence.mjs
-generated: { by: "openwiki/0.5.0", at: "2026-09-03T08:47:55.542Z" }
+generated: { by: "openwiki/0.5.0", at: "2026-09-05T08:47:50.295Z" }
 verified:
   - by: openwiki/0.5.0
-    at: 2026-09-03T08:47:55.542Z
+    at: 2026-09-05T08:47:50.295Z
 ---
 
 # WB ERP System — Frontend OpenWiki
@@ -62,11 +64,12 @@ For the full per-story status ledger, the route ledger, and the final-verificati
 After the 94/94 closeout, debt-session waves landed on main (`docs/HANDOFF-2026-09-03-V15-SESSION2-EXECUTION-AND-REMAINING-BACKLOG.md`):
 
 - **D-1 (PB-1, silent cabinet create)** — PR #390: initiation-mint `ensureSessionNonce`, indeterminate recovery-alert, `finishRecoveryOperation` release, and a two-tab nonce-nulling e2e. Test floor 19,363 → 19,421.
-- **D-2 (PB-3, reactive 401 refresh)** — backend contract agreed (request-backend #230: `POST /v1/auth/refresh`, sliding rotation, expired JWT never refreshes); frontend implemented on `debt/d2-pb3-reactive-refresh` — api-client interceptor (single-flight refresh, replay ×1), nonce-preserving `refreshToken` in the auth store. Live-verified locally 2026-09-03 (refresh 200 / revocation 401).
+- **D-2 (PB-3, reactive 401 refresh)** — backend contract agreed (request-backend #230: `POST /v1/auth/refresh`, sliding rotation, expired JWT never refreshes); frontend executed on `debt/d2-pb3-reactive-refresh` — api-client interceptor (single-flight refresh reading the token from the store, replay ×1), nonce-preserving `refreshToken` in the auth store. Live-verified locally 2026-09-03 (refresh 200 / revocation 401); remote BE publish is an open backend follow-up.
 - **Boundary waves 1-2** (PRs #394/#395): financial-summary (58 sites) and margin-family (29 sites) palette → semantic tokens; boundary ratchet **459 → 401 → 372** (current baseline in `scripts/.shadcn-ui-boundary-baseline.txt`; 3 owner-accepted exceptions — do not touch).
-- Quality wave (PR #392/#393): AcceptanceStatusBadge solid pairs, GapsTable SR dedup, `ScenarioUrgencyTier` single classification source. Vitest floor now **≥ 19,424 / 0**; lint 0/0, tsc 0, build 0.
+- Quality wave (PR #392/#393): AcceptanceStatusBadge solid pairs, GapsTable SR dedup, `ScenarioUrgencyTier` single classification source. Vitest floor 19,424; lint 0/0, tsc 0, build 0.
+- **P2 wave-3 "AA-quick-wins"** (2026-09-05, session-3): `/15→/5` and `/10→/5` solid-pair fixes across `unit-economics-config.ts`, CashflowRowPrimitives, pnl-waterfall, and the price-calculator family; Vitest floor **19,424 → ≥ 19,439**. The layered-compositing model was falsified (over-card); artifact `_bmad-output/implementation-artifacts/debt-p2-wave3-aa-quickwins.md` is the new canon.
 
-Remaining backlog (boundary waves 3-5 from a 372 residual, `/80` sweep, FE-D1/D3/D5, logger-redact) is prioritized in the session handoff above.
+Remaining backlog (boundary waves 4-5 from the 372 residual — chart-hex files gated on the C5 owner decision, `/80` sweep, FE-D1/D3/D5, logger-redact) is prioritized in the session handoff above (§3.2-3.5, live gate state §2: main `c5ca2669`).
 
 ## Overview
 

@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "pageVersion": "sha256:71364d3b5201368ec2937a57469cdfb5b96c5c651d0b6c6bf8d50862453f181d",
+  "pageVersion": "sha256:b9fba2a1348fca684ec97a76ef10fd00486c64e9115ff5c9bd8c1328c302d572",
   "claims": [
     {
       "id": "claim_2c9c1829b6b846cd913111aee59b6f27",
@@ -249,10 +249,64 @@
           "version": "repo-lines-v1:sha256:20bd284fe10e93e14a4700d8ae35a2e85eda4c4c75e8260136681fd17a9ecaf6:eyJzZWxlY3RlZExpbmVDb3VudCI6MzgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjBkZGVmYzhlZmU3ZDA0ZTQxNWFhMGUyNWVlZGI4ZGIzODYxYWQ1NDgxMDM0NjIzNTAzZTU2NjM4ZDhlYjg5MWYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjRmZGEzMTY2YjBlZDE1YzU2ZDlmMGEwMzM2ZDk2MmM5OWE0Y2Y1ODliN2Q1OTBjMWI1NWRkMzU3ZjExNzM2M2QiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImNmZTRlOWExNWNkNDlhMjNiNjdmYWM3ODA3ZDhjZjIzZTg2MmI0ZTIxNjg1ZGQ3ZDE5YTFmYjg4OWVkMTk5Y2UiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjVjY2MzYTEwZTEzNWNjMmI1YjEyMjg3NTQ3YzE2MTAzNjU2M2MxYzQ4OWZmYTZkMmVlNzZiNDQxZjEwYzRjZGIifQ"
         }
       ]
+    },
+    {
+      "id": "claim_cbc6848fcf7e4839a35f175d82fcf5f4",
+      "statement": "src/config/features.ts is the feature-flag registry consumed as `features`: `epic37MergedGroups` gates the merged-group (Склейки) UI and switches between mock data and the real backend API via `useRealApi` (NEXT_PUBLIC_EPIC_37_USE_REAL_API), and `jamUrls` supplies subscription/info URLs for RequireJam CTAs; because the env comparisons use `=== 'true' || true`, both epic37 flags are effectively enabled regardless of the documented defaults.",
+      "evidence": [
+        {
+          "resource": "repo://src/config/features.ts#L51-L76",
+          "version": "repo-lines-v1:sha256:59416cbd30d9011a4c6348bb094f72f73ec970a0ca642c142c4d6020c7992593:eyJzZWxlY3RlZExpbmVDb3VudCI6MjYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjRhOWQ5N2E1YTE1MGU1YjI0YzNlMTEwZTlhYTQzNmYxZTIxYjNlNzU1Y2Y0MjVlYjk0NDNhNTU2ZjQyZTdlNDciLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjgzNjZmMTU2YjM1YjhkYTk2ZTIzYzRhZjY3ZTg1NjhmODBkYzhiYjAxN2UwMDEwYTJiZjI4ZjkxMTliZTM2MDYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjdkY2Q5ZTkxMjJiN2UyYTc2N2Y5NmQ5YTk3NzVmZmUyZjZjNzEyZTNmNGU3ZDk5MDMzOGE0OGFmYmIyYzk0MWQifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_60f55f8f0b6f4c23bd243477792a057c",
+      "statement": "src/services/cabinets.service.ts conditionally settles cabinet creation into global auth state: `handleCreateCabinet` snapshots the initiating session (accountId, sessionNonce) and commits the new JWT/cabinet only when `evaluateCabinetSettlement` proves the sessionNonce still matches the live session (account id compared only as defense-in-depth); `stale` and `indeterminate` (null nonce) outcomes never mutate auth state and never throw.",
+      "evidence": [
+        {
+          "resource": "repo://src/services/cabinets.service.ts#L41-L100",
+          "version": "repo-lines-v1:sha256:b92b5788b4d094c4d25a933f0a0b9b7e948709046f137ed570812377ebb58ad3:eyJzZWxlY3RlZExpbmVDb3VudCI6NjAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImVhZjIyY2YwNzMyNTkyYzI0NzE0MWNiZTYxZWZhMTEwMTI2MTJmNWEzMTIyYjlhZjliYmFmNTJmNTcyNGQxOTQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjI3ZTU3ODhkNWQ5ZDczZDI0YTgxZGJjMGE1YTc0YmZhODJjOWMzYjNhZjk5ZTUyYWY3OTZlOTBiNDY4YThhM2QiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImRjMmNjOGZlMmZlODU3NGVkY2JkY2RmMDFlZTdjYzA5MGQ3MDMwZjYxZjY3NDkwMGFiMmQzMTk4ZjI3ZTVhNzEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjRjYzBlNzQwYzE1YWZjYjQwNDM0NGU0Njg4ZGQ1NmJmMWYwYjBiMGU2NThhN2QzNmMxNjUxMjRjOGY5MWFlZDUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_57f0669a4e1348d49b44c922109529fd",
+      "statement": "MSW handlers under src/mocks/handlers/ (advertising, communications, finances, liquidity, supply-planning, unit-economics — each split into *-queries.ts / *-mutations.ts re-exported via index.ts, wired by src/mocks/server.ts) provide the request-level mock/proxy data behind the `useRealApi` feature-flag switch.",
+      "evidence": [
+        {
+          "resource": "repo://src/mocks/handlers/index.ts",
+          "version": "repo-file-v1:sha256:0db0ecd29a446ff320edf0eb8245bc26c78a68fe97175ce3e96ea3681bc814da"
+        },
+        {
+          "resource": "repo://src/mocks/server.ts",
+          "version": "repo-file-v1:sha256:fadd3784377e09e2fa42e7239d635d5dce840aa38b6921516ff01da39f6bfbfd"
+        }
+      ]
+    },
+    {
+      "id": "claim_16a7129edc024892a06b3c99490a5e2b",
+      "statement": "Dashboard period selection is shared React context state (`DashboardPeriodProvider` in src/contexts/dashboard-period-context.tsx) with logic split across dashboard-period-state/storage/types modules; it provides URL sync and localStorage persistence, and `useDashboardPeriod()` throws when consumed outside the provider.",
+      "evidence": [
+        {
+          "resource": "repo://src/contexts/dashboard-period-context.tsx#L29-L54",
+          "version": "repo-lines-v1:sha256:1598ba13bae6a353aa4115ee82351f2f6e8d66118ee62b79b44b29ee9dc88251:eyJzZWxlY3RlZExpbmVDb3VudCI6MjYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImQ5NzRlNmQ5NGYxYWQ2ODg0MjYxMzA4ZDk1ODMwYWQ2NjAyNDM3NmM2MmFhNmEzZjU3MTcwNWM4YTllNjM1MDgiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjcyNjY3YzBiODMxYjRjOWVlZGQzNzNmZmY0Y2E1ZWU5ZmI1NDgyN2VlZmRlMDM3MGQ2ODBlZmE0Mzk2NTkwZTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_37ed8cbfdbee4aea98d678ee56028c6a",
+      "statement": "src/lib/unit-economics-config.ts centralizes unit-economics display configuration: PROFITABILITY_STATUS_CONFIG maps net-margin thresholds (≥25 excellent, 15–25 good, 5–15 warning, 0–5 critical, <0 loss) to labels, semantic CSS-variable colors, tint classes, and contrast-corrected text colors, with an UNKNOWN_PROFITABILITY_CONFIG sentinel as enum-drift defense (F-49).",
+      "evidence": [
+        {
+          "resource": "repo://src/lib/unit-economics-config.ts#L40-L100",
+          "version": "repo-lines-v1:sha256:a328cf0a9cd4fb428a20f341dc858ee621d7c093bee50703891de5bfd26c56b1:eyJzZWxlY3RlZExpbmVDb3VudCI6NjEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjYxNTI2M2M0YTdiYmMxZTlmNTlmZGFhZjA5Mzc1NTYzMTdmNjI3ZGFlMGU3YjQ0OTBmZDk4OTk4ZWNhMDUxMzgiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImUxMTJiYzg1MWJlYWZjY2MxMTI2NTJhOTY1MmM1NmQ4MTFmOTc2N2NmNDk5MzJmNjgwMTczY2ZhOGE4NGI4NjAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImZiMDRiNTQyZWI0MzdmMjM5NmZjYWE4Y2JlODRlNTE3NjMyYWQ3OTM4ZDExNWIyODhiOWI1ZmExNjg0YmY1NDYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImM3ZTUzNTIyZmM1YzI2MTU1ZGNkNzFkZmMyNjk5M2Y1NWYxZmJkMzVjYzE3ZDRmOWEzMmZiZDZjMjVmMjRhMDMifQ"
+        }
+      ]
     }
   ],
   "verification": {
     "by": "openwiki/0.5.0",
-    "at": "2026-09-03T08:47:55.542Z"
+    "at": "2026-09-05T08:47:50.295Z"
   }
 }

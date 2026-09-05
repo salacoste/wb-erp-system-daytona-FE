@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "pageVersion": "sha256:9cc2ec8d29db5c5ab254a353b3866b6eca9e81e6824ccd955dfe34b9ee99573a",
+  "pageVersion": "sha256:27e973e2c670d784e3606f254a97856cc71fc7d5504e1a0a8ba904150ca05464",
   "claims": [
     {
       "id": "claim_07e85bb249e745f69c550323b16664e1",
@@ -223,10 +223,44 @@
           "version": "repo-lines-v1:sha256:811e4977c15c51442cb0a76487309467d53951abb4c296399117f67a4aace67b:eyJzZWxlY3RlZExpbmVDb3VudCI6NSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZDY4ZjViYTNiYzBhNDg4MTA4NzVhYmVmODU1YzA5YTM3MmM3YjRiNTA5MzZhYzE5OTAzYTc2N2MxZDA1YTc0OSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiN2EwYjZlZDNjMTA3MDVkNTQxZDUyNjk3Y2FkMDk2ODAzY2I4OWE4YTA1MTcwYmZmOGE0MWM5YjQ5ZjQ5OTQ5YSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiOGU5ZmNjMzE5N2JjM2RhOTQ3NDliOWNiNGI1NWZlODVhNThmNDdhNTcwNGM3Mzg3MDRmNzRiM2RlODk2NzJlMSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNGMwNzY5YTRiMzdkMTRjNjUzZjFlNWMxYzMxMTRhOWQyMTY0NzVjMWJjMTcyODA4MzFmOTI5YzAzYWYyYjI2YSJ9"
         }
       ]
+    },
+    {
+      "id": "claim_51cdedd2b03444ebac83a7a798efa074",
+      "statement": "Post-program debt P2 wave-3 'AA-quick-wins' was executed on 2026-09-05 (session-3), applying /15→/5 and /10→/5 solid-pair fixes across unit-economics-config, CashflowRowPrimitives, pnl-waterfall, and the price-calculator family, raising the Vitest floor from 19,424 to at least 19,439, with debt-p2-wave3-aa-quickwins.md as the new canon.",
+      "evidence": [
+        {
+          "resource": "repo://docs/HANDOFF-2026-09-03-V15-SESSION2-EXECUTION-AND-REMAINING-BACKLOG.md#L36-L49",
+          "version": "repo-lines-v1:sha256:38c33f210a0b03a36566d31d0e75c505ea73bbb20ae95b970e4147642d7b53e9:eyJzZWxlY3RlZExpbmVDb3VudCI6MTQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjMyNDA1YzM0NzM4Y2NkZTZlMGI1NjZmMzZiNDg0OTUzYmNmOTk0N2I1M2E0MDg2NDU2N2E4NGFmMzE0YmYwNmIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjY1YTA4ZGY1YzIyMzU2NDEyMWNkZWZlNDA3NzZhOWNlMjlkYWZkZWM3ZTFmZWYzN2U5MThiOWY0NDZiYWU2ZDEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjFkNjhmNjI4MGVjZGRiOGEyYjE2MTk5ZjQ5Zjg5YzYzMjEyOTA5NDUyNGViYTcwYWU2ZmYyNjc1ZTE0ZTM4NjIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjM4NTFjZDMyZTY4ZmM4NTU2NjFlYjFhMTNkYmNhMDVkM2E0OWIxODg4NDJiNGEwNzVhMDA2NzczNWJmOWRjNzgifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_21680ff45b3843adac8b6252e10f67d5",
+      "statement": "D-2 (PB-3 reactive 401 refresh) is fully executed: api-client interceptor with single-flight refresh reading the token from the store and replay ×1, nonce-preserving refreshToken in the auth store, live-verified locally 2026-09-03 (refresh 200 / revocation 401); remote backend publish remains an open backend follow-up.",
+      "evidence": [
+        {
+          "resource": "repo://docs/HANDOFF-2026-09-03-V15-SESSION2-EXECUTION-AND-REMAINING-BACKLOG.md#L51-L59",
+          "version": "repo-lines-v1:sha256:ca7671130ec5d982a1a0b963cc2bfbc7de5478e6d999026f21969e2513213d52:eyJzZWxlY3RlZExpbmVDb3VudCI6OSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMzhhYTNlNWNiYjA5NjJiZjQzNGZjNmU5OTU3MGFjNDI4ODNhZjFiNjFlNGYzN2IxYTRhYzFhYWYxYWRhMzEwMyIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNTlmMzE5Y2Q3MDNhM2M5ODg0NTQ3MWViZTlhN2JkODRjNWIyM2I5NTA3MWNkNmE5ZmMwZjBjY2FkY2FlOTZhNSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZGY1ZmRkNTVhNjZlMGJlNzdmMWIxODc3NGY4MWZiY2YwYWNiMWVhMTUzMDEyMWM0ZDNmZDkwODMyMzgyMjA1NSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiOThlMjFkZmZmOWYxNTlhZWY2ZDgyYTk3YzA3MGE2YmZjODA4OGYwNzNiNGY3YzJhNWExOTFkMzczMTFmMjdmZiJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_2134510cae8d4eec9f8debc679151e77",
+      "statement": "After the debt sessions, the remaining backlog is boundary waves 4-5 against a 372 residual (chart-hex files gated on the C5 owner decision), the /80 sweep, FE-D1/D3/D5, and logger-redact, prioritized in the session handoff sections 3.2-3.5.",
+      "evidence": [
+        {
+          "resource": "repo://docs/HANDOFF-2026-09-03-V15-SESSION2-EXECUTION-AND-REMAINING-BACKLOG.md#L62-L76",
+          "version": "repo-lines-v1:sha256:b381eacea32b096b6fd72df43373e29b0a38d7bae99ee5f6fd417be716550e05:eyJzZWxlY3RlZExpbmVDb3VudCI6MTUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjdmMTkyOTBkOGJjNWQwYjI3OGI3ZWE2ZTM0ZDI2Y2E0MGMxMjg1MzYwMTVjZDc1NDM3YTk3ZjNkODlkOTE0YmMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImZlODIyMjJlZjc0ZjEyYWI2MWJlNDE0ZDU4MTZlNWIwZjZkZmJkMjk1YjE1Y2Q1ZWIyMTAwMTRmOTk0NWE3OTQiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImJjZGQ2MDIyNjI2ODA0ZmQ1ZjU1ODk2M2MyOGFjMWNkN2I0MDQwYWRmN2UwN2I0MGRiNmU5MDZiZDNkZDcyZGUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImM5NzUzNzNjOWI3MzBmNjNhYzAwNTQ0MjMxNjhiZTgxMjg2ODlhN2E2N2JhYjIzNmQ1MWJjNGM0ODZiZDM5YmQifQ"
+        },
+        {
+          "resource": "repo://scripts/.shadcn-ui-boundary-baseline.txt",
+          "version": "repo-file-v1:sha256:ed57abc02a4ca626324ba2533c1363a21e9c2852d4c42426879978942051a70a"
+        }
+      ]
     }
   ],
   "verification": {
     "by": "openwiki/0.5.0",
-    "at": "2026-09-03T08:47:55.542Z"
+    "at": "2026-09-05T08:47:50.295Z"
   }
 }

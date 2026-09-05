@@ -79,10 +79,10 @@ sources:
     resource: repo://src/types/analytics-returns.ts
   - id: openwiki-source-dbb29a8befd1ef6fd6b187fb
     resource: repo://src/types/sku-financials/core.ts
-generated: { by: "openwiki/0.5.0", at: "2026-09-03T08:47:55.542Z" }
+generated: { by: "openwiki/0.5.0", at: "2026-09-05T08:47:50.295Z" }
 verified:
   - by: openwiki/0.5.0
-    at: 2026-09-03T08:47:55.542Z
+    at: 2026-09-05T08:47:50.295Z
 ---
 # Domain Logic
 
@@ -339,7 +339,7 @@ The price calculator (`/cogs/price-calculator`, `src/components/custom/price-cal
 
 `margin-status-helpers.ts` is shared between `MarginSection` and related components:
 
-- `MARGIN_STATUS_CONFIG` — the four margin tiers with Russian labels and token-based badge classes: excellent «Отлично», good «Хорошо», warning «Низкая», critical «Критично». Since D-4 (2026-09-02), the **good** and **warning** tiers use solid pairs (`bg-status-success` + `text-status-success-foreground`, `bg-status-warning` + `text-status-warning-foreground`, per 173.12 canon) for WCAG 1.4.3 contrast in both themes. **excellent** and **critical** keep financial-token tints (no `-foreground` pairs exist for them), but the P2 boundary wave-2 pass (2026-09-03) corrected their opacity `/15` → `/5` (`bg-financial-positive/5` / `bg-financial-negative/5`) after measuring 4.19:1 / 4.42:1 light-mode contrast fails — `/5` passes in both themes.
+- `MARGIN_STATUS_CONFIG` — the four margin tiers with Russian labels and token-based badge classes: excellent «Отлично», good «Хорошо», warning «Низкая», critical «Критично». Since D-4 (2026-09-02), the **good** and **warning** tiers use solid pairs (`bg-status-success` + `text-status-success-foreground`, `bg-status-warning` + `text-status-warning-foreground`, per 173.12 canon) for WCAG 1.4.3 contrast in both themes. **excellent** and **critical** keep financial-token tints (no `-foreground` pairs exist for them), but the P2 boundary wave-2 pass (2026-09-03) corrected their opacity `/15` → `/5` (`bg-financial-positive/5` / `bg-financial-negative/5`) after measuring 4.19:1 / 4.42:1 light-mode contrast fails. The review pass-2 correction (2026-09-05) re-measured the `/5` tints in situ over the `TwoLevelPricingDisplay` gradient card (`from-background to-muted/30`) — 4.68 light / 8.18 dark — confirming the PASS (the earlier over-card 4.80 measurement had not modeled that layer; same treatment as `MarginBadge`).
 - `getMarginStatus(pct)` — threshold mapping: **≥ 20% excellent, ≥ 10% good, ≥ 5% warning, else critical**.
 - `getMarginColor(marginPct)` — the same thresholds mapped to text-color classes for inline health coloring (`text-financial-positive` / `text-status-success` / `text-status-warning` / `text-financial-negative`).
 

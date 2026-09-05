@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "pageVersion": "sha256:d22d50dfb39fd451f6da3778b775d823ed847943fc6f8b7de329dea0aea9f0b1",
+  "pageVersion": "sha256:6a67a5cb93534f4cd1b1c9cc2efafadd49917a86f2a5d60a26fabeae53e0dfcd",
   "claims": [
     {
       "id": "claim_633e3a28dfd14bdc90dc2ba40c9dfdd4",
@@ -112,11 +112,11 @@
       "evidence": [
         {
           "resource": "repo://_bmad-output/implementation-artifacts/debt-p2-boundary-wave1-finsum.md",
-          "version": "repo-file-v1:sha256:04808be9e877a5495b06695e9fc6d9d4c530835d347086e79d2b633c5857b7e4"
+          "version": "repo-file-v1:sha256:ecb88b025e82216e6096cb6a3d256d39579b834ccf92c27169a00df957048229"
         },
         {
           "resource": "repo://_bmad-output/implementation-artifacts/debt-p2-boundary-wave2-margin.md",
-          "version": "repo-file-v1:sha256:bb27db12ac047bfe2712f1e1bf49b1e625da6e85bc4ca3567c5e9aea8aedd967"
+          "version": "repo-file-v1:sha256:87f0aed261578520a830d0e67e31c1609b043d03232dc083e097669f0a32a4c8"
         },
         {
           "resource": "repo://scripts/.shadcn-ui-boundary-baseline.txt",
@@ -224,11 +224,15 @@
     },
     {
       "id": "claim_0b600166038d4e9aa256f15749b417dd",
-      "statement": "Semantic-token honesty is pinned by exact classList DOM tests: pnl-waterfall semantic-tokens.test.tsx pins text-financial-positive, the AA-contrast idiom of a bg-financial-positive/10 tint with foreground text, and named help/formula tooltip buttons while rejecting a widened legacy-palette regex; sku-financials ProfitabilityBadge.test.tsx pins the /15 chip idiom (bg-financial-negative/15 + text-foreground, explicitly not text-financial-negative), Russian-locale margin formatting, and a no-fabricated-zero fallback to the status label when marginPct is null.",
+      "statement": "Semantic-token honesty is pinned by exact classList DOM tests: pnl-waterfall semantic-tokens.test.tsx pins text-financial-positive, the AA-contrast idiom of a bg-financial-positive/10 tint with foreground text (text-financial-positive explicitly absent on the tinted row), named help/formula tooltip buttons, rejection of a widened legacy-palette regex, and — since P2 wave 3 — GrossProfitSection's solid bg-status-warning + text-status-warning-foreground pairs for both the COGS-coverage warning block and the 15-25% margin chip branch (border-status-warning/40); sku-financials ProfitabilityBadge.test.tsx pins the /15 chip idiom (bg-financial-negative/15 + text-foreground, explicitly not text-financial-negative), Russian-locale margin formatting, and a no-fabricated-zero fallback to the status label when marginPct is null.",
       "evidence": [
         {
-          "resource": "repo://src/components/custom/pnl-waterfall/__tests__/semantic-tokens.test.tsx",
-          "version": "repo-file-v1:sha256:3ce09aeeb1968cb5459f0047cf081636da788934214628bb407d2645e5e9af9c"
+          "resource": "repo://src/components/custom/pnl-waterfall/__tests__/semantic-tokens.test.tsx#L158-L200",
+          "version": "repo-lines-v1:sha256:e51a59471bf5ddd75bc1f7ecfbea88f09e01535960541c7ef759ef91c9eb6f9e:eyJzZWxlY3RlZExpbmVDb3VudCI6NDMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjRiOTQ1MGFmNDliYWU5YmU0ZTgzMGNhODRjZmUwODRlOWM5MzhkODEwNTAzZTgwODVmMTRlNTQ4NmUwNWUyNGYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImIyMzUyNTg5YzM0ZDNjNjA2ODU5MzFiNmVjYzRkNTA5OTFhN2M1NmM4ZmJhMjg5NDExNDY1NzY5MDI3MmNhYzMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjFlZjBiOWRjMmI1ZTFiOWFiZWNiZjJmMTAxNWE0NTIzY2IyYTc1MWVlZDgyNDQyYTBhNzA4ODBmZmNhZjliZmYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6Ijg1ODBiNzY1MThkYWU5NzlmYWViZDAyMzY3YTI5MjkyYTUwZDk3NjA5MjI1MWEzOGE2Y2UzMDg4MGJhNDI4MjUifQ"
+        },
+        {
+          "resource": "repo://src/components/custom/pnl-waterfall/__tests__/semantic-tokens.test.tsx#L87-L103",
+          "version": "repo-lines-v1:sha256:62b2dfb7ab75b33917026736c7d6621dd2df9668e6ea6a3081968299baad5aad:eyJzZWxlY3RlZExpbmVDb3VudCI6MTcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjM5OTBhNDVjNzJkYzI5YTg4OTY5YjFjOGM3MzIxMTBhODVkZTUzMjlhOTY0YjUyNWI1NTJjMmVjZDUyMjhkNTIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImIyMzUyNTg5YzM0ZDNjNjA2ODU5MzFiNmVjYzRkNTA5OTFhN2M1NmM4ZmJhMjg5NDExNDY1NzY5MDI3MmNhYzMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImEyYTc1YmUwMDhjOGQxZjI4OGMzZDkyZTFhMjlmZjgzY2Y2NjhmODgzYWZhOGRhYjZlYjliNmQyZTUyNDkyZTQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImE1ZGM4ZDk3YmExMjkwZmI0YTNiMzA1NzAwYTY3NjEzNDBjODI2YmI3OGExODc3OGY3ZGI2MTJlNzMzMWNhY2UifQ"
         },
         {
           "resource": "repo://src/components/custom/sku-financials/__tests__/ProfitabilityBadge.test.tsx",
@@ -252,7 +256,7 @@
       "evidence": [
         {
           "resource": "repo://_bmad-output/implementation-artifacts/debt-p2-boundary-wave1-finsum.md",
-          "version": "repo-file-v1:sha256:04808be9e877a5495b06695e9fc6d9d4c530835d347086e79d2b633c5857b7e4"
+          "version": "repo-file-v1:sha256:ecb88b025e82216e6096cb6a3d256d39579b834ccf92c27169a00df957048229"
         },
         {
           "resource": "repo://src/components/custom/financial-summary/FinancialSummaryTable.tsx",
@@ -266,29 +270,51 @@
     },
     {
       "id": "claim_789245ca498c4d789e7a44b91ec90335",
-      "statement": "P2 wave 2 token-migrated the margin family (29 live sites, boundary 401→372): MarginBadge chips use financial valence (bg-financial-*/5 + text-financial-* + border-financial-*/20, measured 4.80/5.20 light and 8.72/8.19 dark — the earlier /15 tints failed light at 4.19/4.42), zero renders muted, and null/NaN/Infinity never fabricate a zero (muted «—» chip with the missing-data reason as title); MarginAggregatedTableHeader uses text-status-information active sort icons with muted idle icons and aria-sort on sortable heads; MARGIN_STATUS_CONFIG tiers margins with excellent/critical on /5 financial tints and good/warning on solid status-foreground pairs (the D-4 fix), exposing that the earlier ≥4.5 attestation had covered only the solid pairs.",
+      "statement": "P2 wave 2 token-migrated the margin family (29 live sites, boundary 401→372): MarginBadge chips use financial valence (bg-financial-*/5 + text-financial-* + border-financial-*/20), zero renders muted, and null/NaN/Infinity never fabricate a zero (muted «—» chip with the missing-data reason as title); MarginAggregatedTableHeader uses text-status-information active sort icons with muted idle icons and aria-sort on sortable heads; MARGIN_STATUS_CONFIG tiers margins with excellent/critical on financial /5 tints and good/warning on solid status-foreground pairs (the D-4 fix). P2 wave 3 (2026-09-05) re-measured the excellent/critical /5 chips in situ over the TwoLevelPricingDisplay gradient card: 4.68 light / 8.18 dark — PASS, correcting the wave-2 bare-card numbers (4.80/5.20) that had not modeled that layer; wave 3 also moved GrossProfitSection's warning chip/box and TwoLevelPriceHeader's warning box to solid warning pairs and MarginSlider badge/label text to fg-on-tint.",
       "evidence": [
         {
           "resource": "repo://_bmad-output/implementation-artifacts/debt-p2-boundary-wave2-margin.md",
-          "version": "repo-file-v1:sha256:bb27db12ac047bfe2712f1e1bf49b1e625da6e85bc4ca3567c5e9aea8aedd967"
+          "version": "repo-file-v1:sha256:87f0aed261578520a830d0e67e31c1609b043d03232dc083e097669f0a32a4c8"
+        },
+        {
+          "resource": "repo://_bmad-output/implementation-artifacts/debt-p2-wave3-aa-quickwins.md",
+          "version": "repo-file-v1:sha256:afe612e6399d7946156828f868bab7f3e859a814ca4bf10d89ded6ac3e4f7b9e"
         },
         {
           "resource": "repo://src/components/custom/MarginAggregatedTableHeader.tsx",
           "version": "repo-file-v1:sha256:c1a997a268357eff8bb9c5ac3225dfd67dc1ef8ea293dd464f32ff971c4c0b97"
         },
         {
-          "resource": "repo://src/components/custom/MarginBadge.tsx",
-          "version": "repo-file-v1:sha256:de1ec452c0323d2bc9f60a0026e7bd703a43adbc90308dfdb291ec731cfcf542"
+          "resource": "repo://src/components/custom/MarginBadge.tsx#L24-L47",
+          "version": "repo-lines-v1:sha256:602cccfa757db8fc83c70096a35a16924b325992e4dc2de4d55cf3dd24f297ed:eyJzZWxlY3RlZExpbmVDb3VudCI6MjQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImNlZWQxYjdjMzRhMTcyNTA1M2I0ZGNhY2UxN2U2NjY0YWRjMGQzZWE5ZTdkYjZmZWNkZmY4MTE5MzJhYzQxZjIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjI1ODk1N2M3NDE3M2Q3MDQ1MDUxNmZkM2E3N2I2N2ViN2Y2NDA1NTViMmRkZDNmYTE2MTVkOWMxNTE4MTcwOTQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjY4YmVhNjIwN2Q1ZjBlZmM1NmU4NTJlMGNkODZjM2IzNDZiMWY0MjBlNGNlZDU2Y2MxMTZkYTFmZjg0YWYxMjEifQ"
         },
         {
-          "resource": "repo://src/components/custom/price-calculator/margin-status-helpers.ts",
-          "version": "repo-file-v1:sha256:3b5877f761070a8a61c970ae36b2a1585d8637bb7e33ddba95304ebd7182e89f"
+          "resource": "repo://src/components/custom/price-calculator/margin-status-helpers.ts#L7-L37",
+          "version": "repo-lines-v1:sha256:0f70e8fb3670f165feda54888d41fd28a5652e071d9526bc29e3db22c76ccd2b:eyJzZWxlY3RlZExpbmVDb3VudCI6MzEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNlNDQ0NmMyOTRjZWY4YWZlNWM0ZmE0MjZkYjdmMmU1N2MxZDYxZjg0ZDg3MDYzNmEwYTM1MTQxYzA5OTE1MDIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjM3NWVkOTUyNDE5OWNmY2RjMjIyM2Y4NTczN2Q2NmNhYmEyNGM2OWU4Y2U3OWEwMTY1NWE2ZjVkYmQ1ZDllNjYiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjQ3Mjg4ZTljMGY1NDAyNDFhOWY5NzBmYzBkNWU3ODJiMWRhZDhkNDdiYmZhYzg5MGIzNjU3MWEwM2UzYjIyNzEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImNkMjdmYzNmOGQwZDc1ZmI5NmI3NTExMTZmYjIwMWM1MjlhZDc2YjBlYzZlOGQxODQ1NzBkMzY5NDgzNDFmMmYifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_cb145a69060044059f51af3f18968e2b",
+      "statement": "P2 wave 3 (aa-quickwins, PR #404, 2026-09-05; 15 files) falsified the waves-1/2 'over card' contrast model: real DOM stacks contain gradient cards, nested tints, and muted/50 parents, so in-situ contrast measured 2.79–4.41 FAIL where bare-card attestations said PASS. The new canon measures contrast over the actual compositing stack (gradients at worst-end) and prescribes structural remedies — fg-on-tint (text-foreground on the tint, valence carried by tint+border+label+icon) or solid status pairs (financial tokens have no -foreground, so financial valence goes fg-on-tint on unfixable bases). It swept CashflowRowPrimitives/SkuCashflowSection (worst site 2.79 → solid warning), CashflowExpenseGrid, unit-economics-config chips, MarginSlider, GrossProfitSection, TwoLevelPriceHeader, and MarginSection/margin-status-helpers; the boundary baseline stayed 372 (semantic tokens only) and the vitest floor advanced 19,436→19,439. Registered follow-ups: WCAG 1.4.11 valence carriers (tint/border < 3:1), text-primary/70 ₽ glyph, PctBadge colorClass escape-hatch, MarginSlider track segments (monitor).",
+      "evidence": [
+        {
+          "resource": "repo://_bmad-output/implementation-artifacts/debt-p2-wave3-aa-quickwins.md",
+          "version": "repo-file-v1:sha256:afe612e6399d7946156828f868bab7f3e859a814ca4bf10d89ded6ac3e4f7b9e"
+        },
+        {
+          "resource": "repo://src/components/custom/pnl-waterfall/GrossProfitSection.tsx#L94-L142",
+          "version": "repo-lines-v1:sha256:cbf35a51080e5e8c77f05be7543bb489c5f9fc43971d6b0434ed31792c234ff4:eyJzZWxlY3RlZExpbmVDb3VudCI6NDksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjllMTk2OWQzMzFhMmJkOTkyNDY2ZTIxNzE4NDI3Y2ZjOGM0MDMzOTNkZWRkMzgzNjgwOWE3YTRiZTlmNTc4NjEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjkyYjhhZTk3NmNmMGRhMzA5NDdlNTY1MThiNzU3YmE3NDlkMWVhYzU0ZTMxMWQ3MzllMmVlMmRmZjY1NzdhYjIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImExYmNkNDk3ZjVhNThjOGM3MGRmMThkZTk2MmUzZGIxODhmMDYyNjMwMTZlODZmZDFmYWM0NDc3NDNjZDY2ZDYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjMxN2YxYzBhMzNmYTkxYmVmYmQzODEyZWNiODlkNTc0ZTA0NThkNzBjYjZlMTZjYjAyMTk2N2FjNzhhNzNhMmEifQ"
+        },
+        {
+          "resource": "repo://src/components/custom/price-calculator/MarginSlider.tsx#L30-L52",
+          "version": "repo-lines-v1:sha256:4204e6b5901b36bf6c176757cce3c8f5eafe2d138cff22aa6568fbd560edf6be:eyJzZWxlY3RlZExpbmVDb3VudCI6MjMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAzMmY5ZDJhMjdiZmE0NDZkM2JjNjdmODdhZmI5NzMxYzRlMTYyNzFhMzgzZjUzZjNkNTU5ZDllZjc3NzMzNWQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjM3OTI5ZTkxZTBmOTljM2U4MjVkZTY5YjQzNWZiNjQ4NGQxYjBhMWRmMmY0NjU2MWFiZjFhMjlmMDQxODhiODgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjlmNWVjYjQ5ZWRlZTdmMzYwZTljYmM2YjZhNDkwZjk3MWJlMTA4ZDBmMjkzMjkxYWM1ZjU4NjE0OWVmNTk4NTcifQ"
         }
       ]
     }
   ],
   "verification": {
     "by": "openwiki/0.5.0",
-    "at": "2026-09-03T08:47:55.542Z"
+    "at": "2026-09-05T08:47:50.295Z"
   }
 }
