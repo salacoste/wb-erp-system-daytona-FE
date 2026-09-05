@@ -44,7 +44,9 @@
 - Ratchet ↓ 372 → ожидаемо ~290-300; baseline + CLAUDE.md тем же коммитом
 - Consumer-тест-пины в свипе (44 тест-файла с legacy-пинами суммарно — идут со своими компонентами)
 
-### 3.1 P2 boundary волна-5: lib-residue (src/lib = 210)
+### 3.1 ✅ ИСПОЛНЕНО 2026-09-05 (сессия-5) — P2 boundary волна-5: lib-residue
+
+> **Update 2026-09-05 (сессия-5)**: волна-5 исполнена — 12 файлов / 149 palette-сайтов, boundary **267→118**, манифест 174.3 регенерирован раннером ×2 (манифест-source `CoefficientCalendar.test.tsx` — recon пропустил его пины). 2 ревью-прохода opus (2+2 находок, APPROVE-with-riders; триггеры эскалации не исполнены). Артефакт: `debt-p2-w5-lib-residue.md`; прецеденты: computed-key коллапс SOLID-тиров, ring-аффорданс актив-чипов, residue-строка CLAUDE.md = scope-контракт. Остаток 118 = 95 chart-hex + 23 legacy-класса (lib 61 + components 37 + app 17 + types 3) — **весь до C5-owner**. Ждут owner: C5 chart-palette · 1.4.11 valence. **Следующий item — §3.2 /80-sweep ИЛИ FE-D3.** Каталог ниже — исторический срез.
 
 `backfill-utils` 21 · `efficiency-filter-config` 20 · `efficiency-utils` 18 · `coefficient-types` 15 · `profitability-utils` 12 · `fbs-analytics-utils` 12 · `campaign-utils` 11 · `sync-status-config` 10 · `orders-status-config` 10 · `two-level-pricing` 9 · `dimension-types` 6 · `unit-economics-formatters` 5 · хвост. Это exported class-maps (как W2a/W2b 174.2 — канон monitoring-constants/supply-planning-config). Chart-hex в lib (chart-colors, seasonal-localization, unit-economics-config hex, fbs-analytics-formatters, liquidity-*) — **НЕ трогать до C5-owner**.
 
