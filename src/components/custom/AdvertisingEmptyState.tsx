@@ -65,20 +65,21 @@ export function AdvertisingEmptyState({
     <TooltipProvider>
       <Card className={cn('p-6', className)} data-testid="advertising-empty-state">
         <div className="flex items-start gap-3 mb-4">
-          <div className="flex h-10 w-10 items-center justify-center rounded-full bg-blue-50">
-            <Calendar className="h-5 w-5 text-blue-600" aria-hidden="true" />
+          {/* Wave-4 boundary sweep: semantic tokens (icon on info/10 = 4.98/7.32). */}
+          <div className="flex h-10 w-10 items-center justify-center rounded-full bg-status-information/10">
+            <Calendar className="h-5 w-5 text-status-information" aria-hidden="true" />
           </div>
           <div className="flex-1">
-            <h3 className="font-semibold text-gray-900">Нет данных за выбранный период</h3>
-            <p className="text-sm text-gray-600 mt-1">
+            <h3 className="font-semibold text-foreground">Нет данных за выбранный период</h3>
+            <p className="text-sm text-muted-foreground mt-1">
               Выберите другой период для просмотра рекламы
             </p>
           </div>
         </div>
 
         {availableRange && (
-          <div className="mb-4 flex items-center gap-2 text-sm text-gray-700">
-            <Megaphone className="h-4 w-4 text-gray-500" aria-hidden="true" />
+          <div className="mb-4 flex items-center gap-2 text-sm text-muted-foreground">
+            <Megaphone className="h-4 w-4 text-muted-foreground" aria-hidden="true" />
             <span>Данные {availableRangeText}</span>
             <Tooltip>
               <TooltipTrigger asChild>
@@ -87,16 +88,16 @@ export function AdvertisingEmptyState({
                   className="inline-flex items-center"
                   aria-label="Информация о данных рекламы"
                 >
-                  <Info className="h-4 w-4 text-gray-400 hover:text-gray-600" />
+                  <Info className="h-4 w-4 text-muted-foreground hover:text-foreground" />
                 </button>
               </TooltipTrigger>
               <TooltipContent side="top" className="max-w-xs">
                 <div className="space-y-2 text-sm">
                   <p className="font-medium">Данные о рекламных расходах обновляются ежедневно.</p>
-                  <p className="text-xs text-gray-600">
+                  <p className="text-xs text-muted-foreground">
                     Если вы запустили рекламу, но данные не отображаются:
                   </p>
-                  <ul className="list-disc list-inside text-xs text-gray-600 space-y-1">
+                  <ul className="list-disc list-inside text-xs text-muted-foreground space-y-1">
                     <li>Убедитесь, что кампании активны</li>
                     <li>Проверьте настройки интеграции с Wildberries</li>
                     <li>Данные могут появляться с задержкой до 24 часов</li>
@@ -109,7 +110,7 @@ export function AdvertisingEmptyState({
 
         {predefinedRanges.length > 0 && (
           <div className="space-y-2">
-            <label htmlFor="period-select" className="text-sm font-medium text-gray-700">
+            <label htmlFor="period-select" className="text-sm font-medium text-foreground">
               Выбрать период
             </label>
             <Select
@@ -128,7 +129,7 @@ export function AdvertisingEmptyState({
                 {predefinedRanges.map(option => (
                   <SelectItem key={option.value} value={option.value}>
                     <div className="flex items-center gap-2">
-                      <Calendar className="h-3.5 w-3.5 text-gray-500" aria-hidden="true" />
+                      <Calendar className="h-3.5 w-3.5 text-muted-foreground" aria-hidden="true" />
                       <span>{option.label}</span>
                       <Badge variant="outline" className="ml-2 text-xs">
                         {getPeriodLabel(option.value)}
@@ -142,7 +143,7 @@ export function AdvertisingEmptyState({
         )}
 
         {predefinedRanges.length === 0 && availableRange && (
-          <div className="text-sm text-gray-600">Нет доступных данных для отображения</div>
+          <div className="text-sm text-muted-foreground">Нет доступных данных для отображения</div>
         )}
       </Card>
     </TooltipProvider>

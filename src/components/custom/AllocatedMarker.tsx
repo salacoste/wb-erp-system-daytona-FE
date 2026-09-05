@@ -20,7 +20,7 @@ export function AllocatedMarker() {
     <Tooltip>
       <TooltipTrigger asChild>
         <AlertTriangle
-          className="ml-1 inline-block h-3.5 w-3.5 text-amber-500"
+          className="ml-1 inline-block h-3.5 w-3.5 text-status-warning"
           aria-label="Приблизительное значение"
         />
       </TooltipTrigger>
@@ -35,7 +35,7 @@ export function AllocatedHeaderMarker() {
     <Tooltip>
       <TooltipTrigger asChild>
         <AlertTriangle
-          className="ml-1 inline-block h-3.5 w-3.5 text-amber-500"
+          className="ml-1 inline-block h-3.5 w-3.5 text-status-warning"
           aria-label="Столбец содержит приблизительные значения"
         />
       </TooltipTrigger>

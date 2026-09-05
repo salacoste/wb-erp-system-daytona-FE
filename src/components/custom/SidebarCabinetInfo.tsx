@@ -11,11 +11,14 @@ import type { JamTier } from '@/types/cabinet'
 import { ROUTES } from '@/lib/routes'
 import { cn } from '@/lib/utils'
 
+// Wave-4 boundary sweep: semantic status tokens on the sidebar card base
+// (info/10 4.98/7.32, pending/10 7.87/6.83, warn/5 4.52/12.23 — all AA both themes).
+// Kept 1:1 with the RequireJam JAM_TIER_COLORS map for cross-surface consistency.
 const JAM_TIER_COLORS: Record<JamTier, string> = {
   none: 'bg-muted text-muted-foreground',
-  standard: 'bg-blue-100 text-blue-700',
-  advanced: 'bg-purple-100 text-purple-700',
-  unknown: 'bg-amber-100 text-amber-700', // indicate an unrecognised backend tier
+  standard: 'bg-status-information/10 text-status-information',
+  advanced: 'bg-status-pending/10 text-status-pending',
+  unknown: 'bg-status-warning/5 text-status-warning', // indicate an unrecognised backend tier
 }
 
 /**
@@ -58,7 +61,7 @@ export function SidebarCabinetInfo({ onNavigate }: SidebarCabinetInfoProps = {})
           {showWarning && (
             <Tooltip>
               <TooltipTrigger asChild>
-                <AlertTriangle className="h-3.5 w-3.5 shrink-0 text-yellow-500" />
+                <AlertTriangle className="h-3.5 w-3.5 shrink-0 text-status-warning" />
               </TooltipTrigger>
               <TooltipContent>
                 {(seller?.reason && SELLER_INFO_REASON_LABELS[seller.reason]) ?? 'Нет данных от WB'}

@@ -209,7 +209,8 @@ describe('SalesMetricCard', () => {
       )
 
       const badge = screen.getByTestId('comparison-badge')
-      expect(badge).toHaveClass(/gray|neutral/i)
+      // Wave-4: neutral badge = bg-muted text-muted-foreground (semantic tokens)
+      expect(badge).toHaveClass(/gray|neutral|muted/i)
     })
 
     it('hides comparison when previousSalesGross is null', () => {
@@ -250,8 +251,8 @@ describe('SalesMetricCard', () => {
 
       const trendIndicator = screen.getByTestId('trend-indicator')
       expect(trendIndicator).toBeInTheDocument()
-      // Should have green color for positive trend
-      expect(trendIndicator).toHaveClass(/green/)
+      // Should have green color for positive trend (Wave-4: financial-positive token)
+      expect(trendIndicator).toHaveClass(/financial-positive/)
     })
 
     it('shows downward trend arrow when sales decreased', () => {
@@ -260,7 +261,7 @@ describe('SalesMetricCard', () => {
       )
 
       const trendIndicator = screen.getByTestId('trend-indicator')
-      expect(trendIndicator).toHaveClass(/red/)
+      expect(trendIndicator).toHaveClass(/financial-negative/)
     })
   })
 

@@ -57,11 +57,14 @@ function LegendItem({ metric, label, color, isVisible, onToggle }: LegendItemPro
       aria-label={`${label}: ${isVisible ? 'показать' : 'скрыть'}`}
       data-metric={metric}
     >
-      {/* Color indicator */}
+      {/* Color indicator — Wave-4: hidden-state outline uses muted-foreground, not
+          border-border: the outline is the state indicator on the bg-muted button and must
+          hold >=3:1 non-text (muted-fg vs muted = 7.17/8.06; border-border vs muted =
+          1.47 light / 1.64 dark — fails as the state carrier). */}
       <span
         className={cn(
           'w-3 h-3 rounded-full border',
-          isVisible ? 'border-transparent' : 'border-gray-400'
+          isVisible ? 'border-transparent' : 'border-muted-foreground'
         )}
         style={{
           backgroundColor: isVisible ? color : 'transparent',

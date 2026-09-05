@@ -33,26 +33,38 @@ import type { BuyoutSource } from '@/types/analytics-buyout'
 // ---------------------------------------------------------------------------
 
 const SOURCE_CONFIG: Record<BuyoutSource, { label: string; className: string; tooltip: string }> = {
+  // Wave-4 boundary sweep (debt/p2-w4-component-families): legacy palette -> semantic
+  // tokens. Colored text on tint must measure >=4.5:1 light (house rule, wave-1 canon):
+  // success/10 = 4.49 and warning/10 = 4.24 FAIL -> /5 tints (4.80 and 4.52 light);
+  // information/10 = 4.98 passes and stays /10. Mounts: card (BuyoutSummaryWidget) and
+  // page background (ReconciliationTable — no Card host; dark information 7.85 there vs
+  // 7.32 on card, attested card number is the conservative one).
+  // Row-hover stack (card > muted/50 > tint > text, ui/table.tsx:57) per variant:
+  // information 4.78/6.50, success 4.61/7.80 — PASS; blended warn/5 was 4.34 light FAIL
+  // (= wave-3 ANCHOR-2 class, which wave-3 remedied, not allowlisted) -> pass-2 remedy:
+  // fg-on-tint for blended (text-foreground over warn/5 = 14.50/14.72 even on the hover
+  // stack; valence via tint+border+label, ComparisonBadge precedent). Neutral/unknown
+  // are opaque bg-muted — hover-immune. Harness /tmp/p2-w4-contrast.mjs.
   sdk_reconciliation: {
     label: 'SDK',
-    className: 'bg-indigo-100 text-indigo-700 border-indigo-300',
+    className: 'bg-status-information/10 text-status-information border-status-information/20',
     tooltip: 'Источник: SDK-сверка (наивысшая точность)',
   },
   weekly: {
     label: 'Недельный',
-    className: 'bg-gray-100 text-gray-700 border-gray-300',
+    className: 'bg-muted text-foreground border-border',
     tooltip: 'Источник: недельный отчёт WB',
   },
   realtime: {
     label: 'Realtime',
-    className: 'bg-green-100 text-green-700 border-green-300',
+    className: 'bg-status-success/5 text-status-success border-status-success/20',
     tooltip: 'Источник: данные в реальном времени',
   },
   // H-1 fix: unified label "Комбинированный" matches BuyoutPageContent.tsx dropdown (line 37).
   // Previously "Сводный" — inconsistent with the selector the user sees.
   blended: {
     label: 'Комбинированный',
-    className: 'bg-amber-100 text-amber-800 border-amber-300',
+    className: 'bg-status-warning/5 text-foreground border-status-warning/20',
     tooltip: 'Источник: комбинированный (смешанный)',
   },
   // M-3 fix: 'unknown' fallback for Story 96.14 parity with BuyoutReconciliationSource.
@@ -60,7 +72,7 @@ const SOURCE_CONFIG: Record<BuyoutSource, { label: string; className: string; to
   // Principle. AlertTriangle rendered inline when source === 'unknown'.
   unknown: {
     label: 'Неизвестен',
-    className: 'bg-gray-100 text-gray-600 border-gray-300',
+    className: 'bg-muted text-muted-foreground border-border',
     tooltip: 'Источник не распознан',
   },
 }
@@ -97,7 +109,7 @@ export const SourceBadge = memo(function SourceBadge({ source }: SourceBadgeProp
         >
           {/* M-3: AlertTriangle indicator for 'unknown' source (Defensive Frontend Principle). */}
           {source === 'unknown' && (
-            <AlertTriangle className="h-3 w-3 text-gray-500" aria-hidden="true" />
+            <AlertTriangle className="h-3 w-3 text-muted-foreground" aria-hidden="true" />
           )}
           {config.label}
         </span>

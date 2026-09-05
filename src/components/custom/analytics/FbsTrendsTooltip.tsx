@@ -51,9 +51,12 @@ export function FbsTrendsTooltip({ active, payload, visibility }: FbsTrendsToolt
   const dataPoint = payload[0].payload
 
   return (
-    <div className="rounded-lg border bg-white p-3 shadow-md min-w-[200px]">
+    // Wave-4 boundary sweep: own opaque panel bg-white -> bg-popover (dark mode: literal
+    // white panel -> popover surface). Text over popover: fg 16.10/17.18,
+    // muted-foreground 7.81/9.54 — AA both themes.
+    <div className="rounded-lg border bg-popover p-3 shadow-md min-w-[200px]">
       {/* Date header */}
-      <p className="font-semibold text-gray-900 mb-2 border-b pb-2">
+      <p className="font-semibold text-foreground mb-2 border-b pb-2">
         {formatTooltipDate(dataPoint.date)}
       </p>
 
@@ -67,7 +70,7 @@ export function FbsTrendsTooltip({ active, payload, visibility }: FbsTrendsToolt
                 className="w-3 h-3 rounded-full"
                 style={{ backgroundColor: CHART_LINE_COLORS.orders }}
               />
-              <span className="text-gray-600">{METRIC_LABELS.orders}:</span>
+              <span className="text-muted-foreground">{METRIC_LABELS.orders}:</span>
             </span>
             <span className="font-medium">{formatNumber(dataPoint.ordersCount)}</span>
           </div>
@@ -81,7 +84,7 @@ export function FbsTrendsTooltip({ active, payload, visibility }: FbsTrendsToolt
                 className="w-3 h-3 rounded-full"
                 style={{ backgroundColor: CHART_LINE_COLORS.revenue }}
               />
-              <span className="text-gray-600">{METRIC_LABELS.revenue}:</span>
+              <span className="text-muted-foreground">{METRIC_LABELS.revenue}:</span>
             </span>
             <span className="font-medium">{formatCurrency(dataPoint.revenue)}</span>
           </div>
@@ -95,7 +98,7 @@ export function FbsTrendsTooltip({ active, payload, visibility }: FbsTrendsToolt
                 className="w-3 h-3 rounded-full"
                 style={{ backgroundColor: CHART_LINE_COLORS.cancellations }}
               />
-              <span className="text-gray-600">{METRIC_LABELS.cancellations}:</span>
+              <span className="text-muted-foreground">{METRIC_LABELS.cancellations}:</span>
             </span>
             <span className="font-medium">{formatNumber(dataPoint.cancellations)}</span>
           </div>
@@ -105,13 +108,13 @@ export function FbsTrendsTooltip({ active, payload, visibility }: FbsTrendsToolt
       {/* Derived metrics separator */}
       <div className="mt-2 pt-2 border-t space-y-1">
         {/* Cancellation rate */}
-        <div className="flex items-center justify-between text-xs text-gray-500">
+        <div className="flex items-center justify-between text-xs text-muted-foreground">
           <span>Процент отмен:</span>
           <span>{formatPercentValue(dataPoint.cancellationRate)}</span>
         </div>
 
         {/* Average order value */}
-        <div className="flex items-center justify-between text-xs text-gray-500">
+        <div className="flex items-center justify-between text-xs text-muted-foreground">
           <span>Средний чек:</span>
           <span>{formatCurrency(dataPoint.avgOrderValue)}</span>
         </div>

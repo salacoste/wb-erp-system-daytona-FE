@@ -104,17 +104,17 @@ describe('DataSourceIndicator', () => {
       expect(screen.getByText('Реалтайм')).toBeInTheDocument()
     })
 
-    it('should apply green color styling (bg-green-100 text-green-800)', () => {
+    it('should apply green color styling (bg-status-success/5 text-status-success)', () => {
       const { container } = render(<DataSourceIndicator source="orders_fbs" />)
       const badge = container.querySelector('span')
-      expect(badge?.className).toContain('bg-green-100')
-      expect(badge?.className).toContain('text-green-800')
+      expect(badge?.className).toContain('bg-status-success/5')
+      expect(badge?.className).toContain('text-status-success')
     })
 
-    it('should include green border (border-green-200)', () => {
+    it('should include green border (border-status-success/20)', () => {
       const { container } = render(<DataSourceIndicator source="orders_fbs" />)
       const badge = container.querySelector('span')
-      expect(badge?.className).toContain('border-green-200')
+      expect(badge?.className).toContain('border-status-success/20')
     })
 
     it('should indicate 0-30 days data range via tooltip description', () => {
@@ -139,17 +139,17 @@ describe('DataSourceIndicator', () => {
       expect(screen.getByText('Ежедневно')).toBeInTheDocument()
     })
 
-    it('should apply blue color styling (bg-blue-100 text-blue-800)', () => {
+    it('should apply blue color styling (bg-status-information/10 text-status-information)', () => {
       const { container } = render(<DataSourceIndicator source="reports" />)
       const badge = container.querySelector('span')
-      expect(badge?.className).toContain('bg-blue-100')
-      expect(badge?.className).toContain('text-blue-800')
+      expect(badge?.className).toContain('bg-status-information/10')
+      expect(badge?.className).toContain('text-status-information')
     })
 
-    it('should include blue border (border-blue-200)', () => {
+    it('should include blue border (border-status-information/20)', () => {
       const { container } = render(<DataSourceIndicator source="reports" />)
       const badge = container.querySelector('span')
-      expect(badge?.className).toContain('border-blue-200')
+      expect(badge?.className).toContain('border-status-information/20')
     })
 
     it('should indicate 31-90 days data range via tooltip description', () => {
@@ -174,17 +174,17 @@ describe('DataSourceIndicator', () => {
       expect(screen.getByText('Еженедельно')).toBeInTheDocument()
     })
 
-    it('should apply purple color styling (bg-purple-100 text-purple-800)', () => {
+    it('should apply purple color styling (bg-status-pending/10 text-status-pending)', () => {
       const { container } = render(<DataSourceIndicator source="analytics" />)
       const badge = container.querySelector('span')
-      expect(badge?.className).toContain('bg-purple-100')
-      expect(badge?.className).toContain('text-purple-800')
+      expect(badge?.className).toContain('bg-status-pending/10')
+      expect(badge?.className).toContain('text-status-pending')
     })
 
-    it('should include purple border (border-purple-200)', () => {
+    it('should include purple border (border-status-pending/20)', () => {
       const { container } = render(<DataSourceIndicator source="analytics" />)
       const badge = container.querySelector('span')
-      expect(badge?.className).toContain('border-purple-200')
+      expect(badge?.className).toContain('border-status-pending/20')
     })
 
     it('should indicate 91-365 days data range via tooltip description', () => {

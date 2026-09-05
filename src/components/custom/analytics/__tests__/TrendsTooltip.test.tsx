@@ -344,7 +344,7 @@ describe('TrendsTooltip - Styling', () => {
         visibility={allVisible}
       />
     )
-    const tooltip = container.querySelector('.bg-white')
+    const tooltip = container.querySelector('.bg-popover')
     expect(tooltip).toBeInTheDocument()
   })
 
@@ -368,7 +368,7 @@ describe('TrendsTooltip - Styling', () => {
         visibility={allVisible}
       />
     )
-    const grayLabels = container.querySelectorAll('.text-gray-600')
+    const grayLabels = container.querySelectorAll('.text-muted-foreground')
     expect(grayLabels.length).toBeGreaterThan(0)
   })
 

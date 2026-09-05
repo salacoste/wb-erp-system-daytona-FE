@@ -31,12 +31,12 @@ describe('SourceBadge', () => {
       expect(screen.getByTestId('source-badge-sdk_reconciliation')).toHaveTextContent('SDK')
     })
 
-    it('applies indigo color classes', () => {
+    it('applies information color classes', () => {
       renderWithProviders(<SourceBadge source="sdk_reconciliation" />)
       const badge = screen.getByTestId('source-badge-sdk_reconciliation')
-      expect(badge.className).toContain('bg-indigo-100')
-      expect(badge.className).toContain('text-indigo-700')
-      expect(badge.className).toContain('border-indigo-300')
+      expect(badge.className).toContain('bg-status-information/10')
+      expect(badge.className).toContain('text-status-information')
+      expect(badge.className).toContain('border-status-information/20')
     })
 
     it('has correct aria-label', () => {
@@ -57,9 +57,9 @@ describe('SourceBadge', () => {
     it('applies gray color classes', () => {
       renderWithProviders(<SourceBadge source="weekly" />)
       const badge = screen.getByTestId('source-badge-weekly')
-      expect(badge.className).toContain('bg-gray-100')
-      expect(badge.className).toContain('text-gray-700')
-      expect(badge.className).toContain('border-gray-300')
+      expect(badge.className).toContain('bg-muted')
+      expect(badge.className).toContain('text-foreground')
+      expect(badge.className).toContain('border-border')
     })
 
     it('has correct aria-label', () => {
@@ -80,9 +80,9 @@ describe('SourceBadge', () => {
     it('applies green color classes', () => {
       renderWithProviders(<SourceBadge source="realtime" />)
       const badge = screen.getByTestId('source-badge-realtime')
-      expect(badge.className).toContain('bg-green-100')
-      expect(badge.className).toContain('text-green-700')
-      expect(badge.className).toContain('border-green-300')
+      expect(badge.className).toContain('bg-status-success/5')
+      expect(badge.className).toContain('text-status-success')
+      expect(badge.className).toContain('border-status-success/20')
     })
 
     it('has correct aria-label', () => {
@@ -101,12 +101,14 @@ describe('SourceBadge', () => {
       expect(screen.getByTestId('source-badge-blended')).toHaveTextContent('Комбинированный')
     })
 
-    it('applies amber color classes', () => {
+    it('applies warning color classes', () => {
       renderWithProviders(<SourceBadge source="blended" />)
       const badge = screen.getByTestId('source-badge-blended')
-      expect(badge.className).toContain('bg-amber-100')
-      expect(badge.className).toContain('text-amber-800')
-      expect(badge.className).toContain('border-amber-300')
+      // Pass-2 review remedy: fg-on-tint (text-foreground) — colored text on warn/5
+      // over the row-hover stack measured 4.34 light FAIL (wave-3 ANCHOR-2 class).
+      expect(badge.className).toContain('bg-status-warning/5')
+      expect(badge.className).toContain('text-foreground')
+      expect(badge.className).toContain('border-status-warning/20')
     })
 
     it('has correct aria-label', () => {
@@ -138,9 +140,9 @@ describe('SourceBadge', () => {
     it('applies neutral gray styling for unknown source', () => {
       renderWithProviders(<SourceBadge source="unknown" />)
       const badge = screen.getByTestId('source-badge-unknown')
-      expect(badge.className).toContain('bg-gray-100')
-      expect(badge.className).toContain('text-gray-600')
-      expect(badge.className).toContain('border-gray-300')
+      expect(badge.className).toContain('bg-muted')
+      expect(badge.className).toContain('text-muted-foreground')
+      expect(badge.className).toContain('border-border')
     })
 
     it('has correct aria-label for unknown source', () => {

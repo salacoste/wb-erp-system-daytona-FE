@@ -253,3 +253,7 @@ credentialed functional E2E — carry-out 174.4. Plan-status аудит 2026-08-
 - Ledger: docs/tech-debt/TECH-DEBT-2026-08-SESSION.md (Addendum-4 cont.1-25; каждая cont = закрытый item с уроками).
 - Дефект-паттерны 1-44 + идиомы волны: v8-промпт + W8 §4 + W9 §3 (lib-hex-каналы, chart-не-текст, PR-reopen).
 - W9 зафиксировала параллельную сессию, которая влила #209/#213 между нашими PR; boot-процесс должен сохранять fetch-детект и reopen-recovery после merge-гонки (W9 §2).
+
+## 7. APPEND 2026-09-05 (сессия-4, волна-4)
+
+- **P2 boundary волна-4 «компонентные семьи» — DONE** (артефакт `implementation-artifacts/debt-p2-w4-component-families.md`): 16 файлов / 105 сайтов → семантические токены; boundary **372 → 267** (baseline + CLAUDE.md тем же PR); chart-hex компонентов (TrendGraph 14, expense-chart-config 18, ExpenseChart 3, trend-graph-config 1, FbsTrendsChart 1 = 37) отложен до C5-owner. Манифест 174.3 регенерирован раннером `--owner-units` (ре-пин манифест-source `FbsTrendsChart.test.tsx`). 3 ревью-прохода (сходимость 5 ≤ 5). Новые канон-прецеденты: purple→`status-pending`; hover-слой таблиц (`ui/table hover:bg-muted/50`) — обязательный слой замера тинт-чипов таблицных бейджей (SourceBadge blended 4.34 FAIL → fg-on-tint 14.50/14.72); волна-3 ANCHOR-2 читается как «исправлено», не «allowlist». Следующий item: волна-5 lib-residue (210).

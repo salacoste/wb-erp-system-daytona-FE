@@ -30,10 +30,18 @@ const ICON_MAP: Record<TrendDirection, React.ComponentType<{ className?: string 
   neutral: Minus,
 }
 
-/** Semantic color classes by direction */
+/** Semantic color classes by direction.
+ * Wave-4 boundary sweep: money-direction icons -> financial tokens (wave-1 canon #2).
+ * Icon-only glyphs need >=3:1 (non-text); measured over the 2 real mounts (pass-1
+ * review: buyout-table-cells/SneakPreview/SupplyDetail carry same-name LOCAL
+ * components, not this one): plain card + highlighted gradient worst-end
+ * (from-status-success/10): finPos worst 4.49 light / 7.97 dark, finNeg worst
+ * 4.93 light / 7.45 dark — all pass. Latent branch (pass-2): BaseMetricCard
+ * sentimentBg mounts flat bg-status-error/10 (BaseMetricCardHelpers) — no production
+ * caller today; finNeg there = 4.77 light / 7.31 dark, still >=3:1 for icons. */
 const COLOR_MAP: Record<TrendDirection, string> = {
-  positive: 'text-green-600',
-  negative: 'text-red-500',
+  positive: 'text-financial-positive',
+  negative: 'text-financial-negative',
   neutral: 'text-muted-foreground',
 }
 

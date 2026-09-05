@@ -133,7 +133,7 @@ export function AdvertisingDashboardWidget({
       {/* Header with title and optional period selector */}
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-2">
-          <Megaphone className="h-5 w-5 text-blue-600" aria-hidden="true" />
+          <Megaphone className="h-5 w-5 text-status-information" aria-hidden="true" />
           <h3 className="font-semibold">Реклама</h3>
         </div>
         {/* Local selector only shown in standalone mode (AC1, AC4, AC5, AC6) */}

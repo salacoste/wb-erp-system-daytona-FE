@@ -124,7 +124,8 @@ export function ScheduleVersionForm({
           Минимум: завтра ({format(tomorrow, 'dd.MM.yyyy', { locale: ru })})
         </p>
         {form.formState.errors.effective_from && (
-          <p className="text-sm text-red-500">{form.formState.errors.effective_from.message}</p>
+          // Wave-4: semantic destructive token (6.54/11.66 on the dialog surface).
+          <p className="text-sm text-destructive">{form.formState.errors.effective_from.message}</p>
         )}
       </div>
 

@@ -98,7 +98,10 @@ export function SubcategoryTooltip({
             padding: '8px 12px',
             borderRadius: '6px',
             maxWidth: '350px',
-            boxShadow: '0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -1px rgba(0,0,0,0.06)',
+            // Wave-4: shared elevation token (globals.css --shadow-card-hover) replaces the
+            // inline rgba literal; chart-tooltip color vars above are contract-pinned and
+            // intentionally untouched (dashboard-widgets-presentation-source-contracts).
+            boxShadow: 'var(--shadow-card-hover)',
           }}
           onMouseEnter={show}
           onMouseLeave={hide}

@@ -252,7 +252,7 @@ describe('BaseMetricCard', () => {
       renderWithProviders(<BaseMetricCard {...props} />)
 
       const trend = screen.getByTestId('trend-indicator')
-      expect(trend).toHaveClass('text-green-600')
+      expect(trend).toHaveClass('text-financial-positive')
     })
 
     /** AC-65.15.2: negative trend shows red indicator */
@@ -261,7 +261,7 @@ describe('BaseMetricCard', () => {
       renderWithProviders(<BaseMetricCard {...props} />)
 
       const trend = screen.getByTestId('trend-indicator')
-      expect(trend).toHaveClass('text-red-500')
+      expect(trend).toHaveClass('text-financial-negative')
     })
 
     it('neutral trend shows muted indicator', () => {
@@ -279,7 +279,7 @@ describe('BaseMetricCard', () => {
       renderWithProviders(<BaseMetricCard {...props} />)
 
       const badge = screen.getByTestId('comparison-badge')
-      expect(badge).toHaveClass(/green/)
+      expect(badge).toHaveClass(/financial-positive/)
     })
 
     it('inverted metric: increase shows negative (red) direction', () => {
@@ -290,7 +290,7 @@ describe('BaseMetricCard', () => {
       renderWithProviders(<BaseMetricCard {...props} />)
 
       const badge = screen.getByTestId('comparison-badge')
-      expect(badge).toHaveClass(/red/)
+      expect(badge).toHaveClass(/financial-negative/)
     })
   })
 

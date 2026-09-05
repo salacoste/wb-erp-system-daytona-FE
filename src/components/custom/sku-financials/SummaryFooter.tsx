@@ -71,7 +71,7 @@ export function SummaryFooter({ totals }: { totals: Totals }) {
           </span>
         </div>
       </div>
-      {/* 168.9: COGS footnote = semantic warning (was text-amber-700) */}
+      {/* 168.9: COGS footnote = semantic warning (was legacy amber-700, migrated 168.9) */}
       {showCogsFootnote && (
         <p className="mt-2 text-xs text-status-warning">
           ⚠ COGS назначен для {totals.rowsWithCogs} из {totals.totalRows} товаров. Прибыль посчитана
