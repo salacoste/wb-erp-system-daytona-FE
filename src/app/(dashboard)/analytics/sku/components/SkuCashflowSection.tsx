@@ -136,7 +136,7 @@ function CashflowContent({ cabinetExpenses }: { cabinetExpenses: CabinetLevelExp
 
       {/* 168.9: amber deductions block → status-warning tint identity. P2 wave-3 pass-1:
           text → text-foreground (fg-on-tint) — colored text composites over the gradient
-          card base and fails AA at any alpha (warn/15 row in-situ = 11.64:1 as foreground;
+          card base and fails AA at any alpha (warn/15 row in-situ = 11.64 light / 9.98 dark as foreground;
           text-status-warning here measured 2.79-4.2 light). Valence = tint + border. */}
       <div className="border-t-2 border-status-warning/40 my-2" />
       <div className="text-sm font-medium text-foreground px-2">

@@ -20,7 +20,7 @@ export function fmtRub(value: number, maxFrac = 2) {
 // gradient end). The old over-card numbers (fin-pos/5 = 4.80 light) described a plain
 // bg-card base these rows never sit on. Remedy = the repo's own PnLRow.tsx:64 pattern:
 // rows/badges KEEP their tint identity (bg + border carry the valence), text becomes
-// text-foreground (11.2-13.4:1 in-situ over the gradient, both themes). Solid
+// text-foreground (9.98-13.4:1 in-situ over the gradient, both themes). Solid
 // warning-foreground chips (F3/F4 sites) measure 4.81/11.41 in-situ. bg-muted +
 // text-muted-foreground defaults unchanged (7.2:1 on muted, both themes).
 export function PctBadge({

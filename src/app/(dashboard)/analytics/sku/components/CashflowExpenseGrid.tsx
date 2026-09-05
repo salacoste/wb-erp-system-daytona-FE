@@ -43,7 +43,7 @@ function ExpenseItem({
   return (
     // 168.9 amber hierarchy, superseded P2 wave-3 pass-1: these cells sit on the gradient
     // cashflow card — text-status-warning (and worse, /80 alpha) failed AA in-situ, so ALL
-    // cell text is text-foreground (12.4:1 over warn/10 on the gradient, both themes);
+    // cell text is text-foreground (12.38 light / 11.46 dark over warn/10 on the gradient);
     // valence = the /10 tint + /30 border. (fg-on-tint, PnLRow.tsx:64 pattern.)
     <div className="text-center p-2 bg-status-warning/10 rounded border border-status-warning/30">
       <div className="text-xs text-foreground">{label}</div>
