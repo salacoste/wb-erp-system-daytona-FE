@@ -143,7 +143,7 @@ describe('Story 44.20: Two-Level Pricing Display', () => {
       render(<TwoLevelPricingDisplay {...defaultProps} result={lowGapResult} />)
 
       const gapIndicator = screen.getByTestId('price-gap-indicator')
-      expect(gapIndicator).toHaveClass('text-status-warning')
+      expect(gapIndicator).toHaveClass('text-status-warning-foreground')
     })
 
     it('should use the negative financial role for gap < 10%', () => {
@@ -618,7 +618,7 @@ describe('Price Gap Classification', () => {
     )
 
     const gapIndicator = screen.getByTestId('price-gap-indicator')
-    expect(gapIndicator).toHaveClass('text-status-warning')
+    expect(gapIndicator).toHaveClass('text-status-warning-foreground')
   })
 
   it('should classify 5-10% as low with the negative financial role', () => {

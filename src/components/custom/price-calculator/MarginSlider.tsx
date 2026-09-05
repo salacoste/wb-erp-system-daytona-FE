@@ -33,6 +33,8 @@ function getMarginZone(value: number): ZoneKey {
  * (см. артефакт debt-p2-wave3-aa-quickwins / волна-2 canon): warning/10 = 4.24 → /5 = 4.52
  * (12.23 dark); fin-pos/10 = 4.49 → /5 = 4.80 (8.72 dark). Retained /10 — measured PASS:
  * status-error/10 = 5.55 light / 9.26 dark. Borders (/30) — non-text 3:1, out of scope.
+ * Pass-1 note: plain-card base verified (review-pass-1) — this badge sits on a plain
+ * bg-card surface, so the over-card numbers above are the true in-situ values.
  */
 const badgeStyles: Record<ZoneKey, string> = {
   low: 'bg-status-error/10 text-status-error border-status-error/30',

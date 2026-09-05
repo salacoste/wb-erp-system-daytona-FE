@@ -9,10 +9,14 @@ import { AlertTriangle, TrendingUp } from 'lucide-react'
 /**
  * Get price gap styles and icon based on percentage
  *
- * P2 wave-3 (2026-09-05): failing tints /10→/5 per house rule — measured <4.5:1 light
- * (см. артефакт debt-p2-wave3-aa-quickwins / волна-2 canon): fin-pos/10 = 4.49 → /5 = 4.80
- * (8.72 dark); warning/10 = 4.24 → /5 = 4.52 (12.23 dark). Retained /10 — measured PASS:
- * fin-neg/10 = 4.80 light / 7.51 dark. Borders (/30) — non-text 3:1, out of scope.
+ * P2 wave-3 pass-1 (2026-09-05): this box renders inside the TwoLevelPricingDisplay card
+ * (bg-gradient-to-br from-background to-muted/30, TwoLevelPricingDisplay.tsx:64) — a
+ * compositing layer the over-card wave-2 numbers didn't model. In-situ (layered, worst
+ * gradient end) the warning /5 tint measured 4.41 light FAIL → warning branch is now a
+ * SOLID pair (PR 384 canon): bg-status-warning + text-status-warning-foreground = 4.81
+ * light / 11.41 dark over ANY parent (solid bg kills compositing). Retained tints —
+ * measured in-situ PASS: fin-neg/10 = 4.68 light / 7.00 dark; fin-pos/5 = 4.68 light / 8.18 dark.
+ * Borders (/30) — non-text 3:1, out of scope.
  */
 const getPriceGapStyles = (pct: number) => {
   if (pct > 20) {
@@ -25,7 +29,7 @@ const getPriceGapStyles = (pct: number) => {
   if (pct > 10) {
     return {
       container:
-        'p-3 rounded-lg bg-status-warning/5 text-status-warning border border-status-warning/30',
+        'p-3 rounded-lg bg-status-warning text-status-warning-foreground border border-status-warning/30',
       icon: TrendingUp,
     }
   }

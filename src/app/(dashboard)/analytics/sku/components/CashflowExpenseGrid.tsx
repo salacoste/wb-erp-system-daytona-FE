@@ -41,13 +41,16 @@ function ExpenseItem({
   pct: (v: number) => string
 }) {
   return (
-    // 168.9: amber 800>600>500 hierarchy → foreground > warning > warning/80.
+    // 168.9 amber hierarchy, superseded P2 wave-3 pass-1: these cells sit on the gradient
+    // cashflow card — text-status-warning (and worse, /80 alpha) failed AA in-situ, so ALL
+    // cell text is text-foreground (12.4:1 over warn/10 on the gradient, both themes);
+    // valence = the /10 tint + /30 border. (fg-on-tint, PnLRow.tsx:64 pattern.)
     <div className="text-center p-2 bg-status-warning/10 rounded border border-status-warning/30">
-      <div className="text-xs text-status-warning">{label}</div>
+      <div className="text-xs text-foreground">{label}</div>
       <div className="text-sm font-bold text-foreground">
         {value.toLocaleString('ru-RU', { maximumFractionDigits: 0 })} ₽
       </div>
-      <div className="text-xs text-status-warning/80">{pct(value)}%</div>
+      <div className="text-xs text-foreground">{pct(value)}%</div>
     </div>
   )
 }
@@ -70,6 +73,8 @@ function StorageExpenseItem({
 
   return (
     // 168.9: divergence state (/20 bg + /50 border) stays visually STRONGER than the normal /10-/30 cell.
+    // P2 wave-3 pass-1: text → text-foreground (fg-on-tint over the gradient card; /80 alpha
+    // removed — double violation). Valence = tint + border strength difference.
     <div
       className={`text-center p-2 rounded border ${
         hasDifference
@@ -77,11 +82,11 @@ function StorageExpenseItem({
           : 'bg-status-warning/10 border-status-warning/30'
       }`}
     >
-      <div className="text-xs text-status-warning">Хранение (API)</div>
+      <div className="text-xs text-foreground">Хранение (API)</div>
       <div className="text-sm font-bold text-foreground">
         {cabinetExpenses.storage.toLocaleString('ru-RU', { maximumFractionDigits: 0 })} ₽
       </div>
-      <div className="text-xs text-status-warning/80">{pct(cabinetExpenses.storage)}%</div>
+      <div className="text-xs text-foreground">{pct(cabinetExpenses.storage)}%</div>
       {/* Request #67: Show weekly report storage for comparison */}
       <div className="text-xs text-muted-foreground mt-1 border-t border-border pt-1">
         Отчёт:{' '}

@@ -139,6 +139,8 @@ function ProfitCards({
         // P2 wave-3 (2026-09-05): /10→/5 per house rule — measured <4.5:1 light
         // (см. артефакт debt-p2-wave3-aa-quickwins / волна-2 canon): fin-pos text on
         // fin-pos/10 = 4.49 → /5 = 4.80 light PASS (8.72 dark).
+        // Pass-1 note: plain-card base verified (review-pass-1) — over-card numbers above
+        // are the true in-situ values.
         <div className="ml-4 flex items-center justify-between rounded-lg bg-financial-positive/5 p-2">
           <div className="flex items-center gap-2">
             <div className="w-2 h-2 rounded-full bg-financial-positive" aria-hidden="true" />

@@ -23,6 +23,9 @@ import type {
  * measured PASS обеих тем: status-information/15 = 4.62 light / 6.64 dark; status-error/15 =
  * 5.10 light / 8.22 dark. Diverges from the sku-financials /15-chip idiom for the 3 changed
  * entries only (that config pairs tints with text-foreground — the safe pattern, untouched).
+ *
+ * Pass-1 note: plain-card base verified (review-pass-1) — these chips render on plain
+ * bg-card surfaces, so the over-card numbers above are the true in-situ values.
  */
 export const PROFITABILITY_STATUS_CONFIG: Record<ProfitabilityStatus, ProfitabilityStatusConfig> = {
   excellent: {
