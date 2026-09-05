@@ -32,7 +32,7 @@
 ### 3.0 P2-остаток (главный кандидат на следующую сессию; порядок внутри — по окну)
 
 - **/80-sweep — ✅ DONE (сессия-6, PR #410)**: 16 сайтов → 9 remediated + 6 PASS-as-is аттестовано + 1 owner-exception (OrganicTab → §3.3). Follow-ups: full-warn-on-warn/10 кластер, selected-row стеки, A3-маржа — реестр §9. Кандидат расширения boundary-сканера остаётся owner-вопросом
-- **FE-D3**: `getErrorMessage` эхо сырого error.message → bounded fallback + scrub + тесты (behavior; **tests-first**)
+- **FE-D3 — ✅ DONE (сессия-6, PR #411)**: `sanitizeFallbackMessage` (11 паттернов + truncate + generic; 4 ревью-прохода; манифест 174.3 реген — тест-файл SHA-пинится). Follow-ups: fe-d3-family (4 hook-локальных getErrorMessage + ~128 .tsx echo) + scrubber-residuals — реестр §10
 - **FE-D1**: mutation retry:1 ретраит 4xx (WB-token PUT ×2; e2e пинит `putAttempts===2`) — behavior + e2e-пин update
 - **FE-D5**: cross-tab create duplication → Web Locks API
 - **FE-D8**: `getCabinetCreationOperation` middle-path — ТОЛЬКО по UX-жалобе, fresh-ревью
