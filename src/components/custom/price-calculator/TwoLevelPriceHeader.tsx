@@ -29,7 +29,7 @@ const getPriceGapStyles = (pct: number) => {
   if (pct > 10) {
     return {
       container:
-        'p-3 rounded-lg bg-status-warning text-status-warning-foreground border border-status-warning/30',
+        'p-3 rounded-lg bg-status-warning text-status-warning-foreground border border-status-warning/40',
       icon: TrendingUp,
     }
   }

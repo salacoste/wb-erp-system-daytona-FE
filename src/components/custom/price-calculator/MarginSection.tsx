@@ -138,9 +138,11 @@ function ProfitCards({
       {showAfterTax && (
         // P2 wave-3 (2026-09-05): /10→/5 per house rule — measured <4.5:1 light
         // (см. артефакт debt-p2-wave3-aa-quickwins / волна-2 canon): fin-pos text on
-        // fin-pos/10 = 4.49 → /5 = 4.80 light PASS (8.72 dark).
-        // Pass-1 note: plain-card base verified (review-pass-1) — over-card numbers above
-        // are the true in-situ values.
+        // fin-pos/5 = 4.68 light / 8.18 dark — passes (4.68 ≥ 4.5).
+        // Pass-2 correction (review-pass-2, 2026-09-05): base is NOT plain card — this
+        // section renders inside the TwoLevelPricingDisplay card (bg-gradient-to-br
+        // from-background to-muted/30, TwoLevelPricingDisplay.tsx:64); 4.68 is the in-situ
+        // layered worst-end value (the wave-2 over-card 4.80 didn't model the gradient).
         <div className="ml-4 flex items-center justify-between rounded-lg bg-financial-positive/5 p-2">
           <div className="flex items-center gap-2">
             <div className="w-2 h-2 rounded-full bg-financial-positive" aria-hidden="true" />

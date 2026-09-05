@@ -95,13 +95,12 @@ function StorageExpenseItem({
         })}{' '}
         ₽
         {hasDifference && (
-          <span
-            className={`ml-1 font-medium ${
-              (cabinetExpenses.storage_difference ?? 0) > 0
-                ? 'text-financial-negative'
-                : 'text-financial-positive'
-            }`}
-          >
+          // Pass-2 (review-pass-2, 2026-09-05): the fin-neg/fin-pos span failed AA on this
+          // cell — fin-neg = 3.82 light / 4.20 dark, fin-pos = 3.48 light, over the true
+          // in-situ stack grad-cashflow-card > warn/20 (divergence cell tint) — so the span
+          // is text-foreground (fg-on-tint = 10.93 light / 8.67 dark); valence = the /20
+          // cell tint + the +/− sign prefix. Request #67 numbers/format unchanged.
+          <span className="ml-1 font-medium text-foreground">
             ({(cabinetExpenses.storage_difference ?? 0) > 0 ? '+' : ''}
             {(cabinetExpenses.storage_difference ?? 0).toLocaleString('ru-RU', {
               maximumFractionDigits: 0,
