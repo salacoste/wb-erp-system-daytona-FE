@@ -1,7 +1,7 @@
 # HANDOFF 2026-09-05 — Сессия-6: /80-sweep + FE-D3 исполнены (P2-остаток) + оставшийся объём работ и технический долг
 
 > **Аудитория**: агент-команда, продолжающая разработку (сессия-7). Этот документ = вход-точка.
-> **Процесс-канон**: [`docs/ORCHESTRATOR-PROMPT-2026-09-05-V17-SESSION6-P2-REMAINDER-OMC-SUBAGENTS.md`](ORCHESTRATOR-PROMPT-2026-09-05-V17-SESSION6-P2-REMAINDER-OMC-SUBAGENTS.md) (петля §0, делегационная матрица §2, конвейер A–J §5, стопы §8) — следующий оркестратор-промпт (V18) должен указывать на ЭТОТ handoff.
+> **Процесс-канон**: [`docs/ORCHESTRATOR-PROMPT-2026-09-05-V17-SESSION6-P2-REMAINDER-OMC-SUBAGENTS.md`](ORCHESTRATOR-PROMPT-2026-09-05-V17-SESSION6-P2-REMAINDER-OMC-SUBAGENTS.md) (петля §0, делегационная матрица §2, конвейер A–J §5, стопы §8) — следующий оркестратор-промпт (V18) должен указывать на ЭТОТ handoff. **V18 создан**: [`docs/ORCHESTRATOR-PROMPT-2026-09-06-V18-DEBT-CONTINUATION-OMC-SUBAGENTS.md`](ORCHESTRATOR-PROMPT-2026-09-06-V18-DEBT-CONTINUATION-OMC-SUBAGENTS.md) (сессия-8: FE-D5 → fe-d3-family → WCAG-кластеры; каноны сессий 6-7 включены).
 > **Цепочка справочников**: [`HANDOFF-2026-09-05-V16-SESSION4-5-...`](HANDOFF-2026-09-05-V16-SESSION4-5-EXECUTION-AND-REMAINING-BACKLOG.md) (сессии-4/5, boundary волны 4-5) → V15 (сессии-2/3, волны 1-3) → V14 (сессия-1) → FINAL-94-94 §4/§8.
 > **Приоритет при конфликте**: мини-план item'а > этот документ > V17-промпт > CLAUDE.md > предыдущие handoff'ы; **живые гейты — финальная инстанция** (числа в доках протухают — сверяй прогонами).
 
