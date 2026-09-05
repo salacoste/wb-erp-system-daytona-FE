@@ -44,15 +44,26 @@ export interface CoefficientImpact {
   percentDisplay: string
 }
 
-/** 5-level status config: base 0-1.0 (0=FREE), elevated 1.01-1.5, high 1.51-2.0, peak >2.0, unavailable <0 */
+/** 5-level status config: base 0-1.0 (0=FREE), elevated 1.01-1.5, high 1.51-2.0, peak >2.0, unavailable <0
+ *
+ * Semantic tokens (P2 wave-5, measured /tmp/p2-w5-contrast.mjs; cells mount on
+ * PriceCalculatorForm Card > DeliveryDatePicker bg-muted/20 panel):
+ * - base:       thin success tint + success text (4.72/8.36 worst-end)
+ * - elevated:   warning/15 + fg text — same-hue warn text fails at any usable
+ *               alpha on the muted/20 panel (warn/5 = 4.45), so fg-on-tint
+ *               (wave-4 hover-exposed-chip precedent) carries this tier
+ * - high:       SOLID warning (orange→warning collapse, Story 170.1) 4.81/11.41
+ * - peak:       SOLID error 6.54/9.48
+ * - unavailable: muted pair (gray→muted idiom)
+ */
 export const COEFFICIENT_STATUS_CONFIG: Record<CoefficientStatus, CoefficientStatusConfig> = {
   base: {
     status: 'base',
     label: 'Базовый',
     color: 'green',
-    bgColor: 'bg-green-100',
-    textColor: 'text-green-700',
-    borderColor: 'border-green-300',
+    bgColor: 'bg-status-success/5',
+    textColor: 'text-status-success',
+    borderColor: 'border-status-success/40',
     minValue: 0,
     maxValue: 1.0,
   },
@@ -60,9 +71,9 @@ export const COEFFICIENT_STATUS_CONFIG: Record<CoefficientStatus, CoefficientSta
     status: 'elevated',
     label: 'Повышенный',
     color: 'yellow',
-    bgColor: 'bg-yellow-100',
-    textColor: 'text-yellow-700',
-    borderColor: 'border-yellow-300',
+    bgColor: 'bg-status-warning/15',
+    textColor: 'text-foreground',
+    borderColor: 'border-status-warning/40',
     minValue: 1.01,
     maxValue: 1.5,
   },
@@ -70,9 +81,9 @@ export const COEFFICIENT_STATUS_CONFIG: Record<CoefficientStatus, CoefficientSta
     status: 'high',
     label: 'Высокий',
     color: 'orange',
-    bgColor: 'bg-orange-100',
-    textColor: 'text-orange-700',
-    borderColor: 'border-orange-300',
+    bgColor: 'bg-status-warning',
+    textColor: 'text-status-warning-foreground',
+    borderColor: 'border-status-warning',
     minValue: 1.51,
     maxValue: 2.0,
   },
@@ -80,9 +91,9 @@ export const COEFFICIENT_STATUS_CONFIG: Record<CoefficientStatus, CoefficientSta
     status: 'peak',
     label: 'Пиковый',
     color: 'red',
-    bgColor: 'bg-red-100',
-    textColor: 'text-red-700',
-    borderColor: 'border-red-300',
+    bgColor: 'bg-status-error',
+    textColor: 'text-status-error-foreground',
+    borderColor: 'border-status-error',
     minValue: 2.01,
     maxValue: Infinity,
   },
@@ -90,9 +101,9 @@ export const COEFFICIENT_STATUS_CONFIG: Record<CoefficientStatus, CoefficientSta
     status: 'unavailable',
     label: 'Недоступно',
     color: 'gray',
-    bgColor: 'bg-gray-100',
-    textColor: 'text-gray-400',
-    borderColor: 'border-gray-300',
+    bgColor: 'bg-muted',
+    textColor: 'text-muted-foreground',
+    borderColor: 'border-border',
     minValue: -Infinity,
     maxValue: -0.01,
   },

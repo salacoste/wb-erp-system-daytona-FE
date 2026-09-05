@@ -94,44 +94,49 @@ describe('CoefficientCalendar', () => {
   // ==========================================================================
 
   describe('color coding', () => {
-    it('applies green background for base coefficient (<=1.0)', () => {
+    // P2 wave-5: cells carry COEFFICIENT_STATUS_CONFIG semantic tokens (bgColor
+    // + textColor), per migrated coefficient-types.ts.
+    it('applies success tint background for base coefficient (<=1.0)', () => {
       render(<CoefficientCalendar {...defaultProps} />)
 
       const cells = screen.getAllByRole('gridcell')
       const baseCell = cells[0] // First cell is base (1.0)
-      expect(baseCell.className).toContain('green')
+      expect(baseCell.className).toContain('bg-status-success/5')
     })
 
-    it('applies yellow background for elevated coefficient (1.01-1.5)', () => {
+    it('applies warning tint background for elevated coefficient (1.01-1.5)', () => {
       render(<CoefficientCalendar {...defaultProps} />)
 
       const cells = screen.getAllByRole('gridcell')
       const elevatedCell = cells[1] // Second cell is elevated (1.25)
-      expect(elevatedCell.className).toContain('yellow')
+      expect(elevatedCell.className).toContain('bg-status-warning/15')
     })
 
-    it('applies orange background for high coefficient (1.51-2.0)', () => {
+    it('applies solid warning background for high coefficient (1.51-2.0)', () => {
       render(<CoefficientCalendar {...defaultProps} />)
 
       const cells = screen.getAllByRole('gridcell')
       const highCell = cells[4] // Fifth cell is high (1.75)
-      expect(highCell.className).toContain('orange')
+      expect(highCell.className).toContain('bg-status-warning')
+      // P2 wave-5 fix (finding 2): exact SOLID pin — toContain('bg-status-warning')
+      // alone is substring-satisfied by elevated's bg-status-warning/15 tint
+      expect(highCell.className).not.toContain('bg-status-warning/15')
     })
 
-    it('applies red background for peak coefficient (>2.0)', () => {
+    it('applies solid error background for peak coefficient (>2.0)', () => {
       render(<CoefficientCalendar {...defaultProps} />)
 
       const cells = screen.getAllByRole('gridcell')
       const peakCell = cells[8] // Ninth cell is peak (2.25)
-      expect(peakCell.className).toContain('red')
+      expect(peakCell.className).toContain('bg-status-error')
     })
 
-    it('applies gray background for unavailable (coefficient -1)', () => {
+    it('applies muted background for unavailable (coefficient -1)', () => {
       render(<CoefficientCalendar {...defaultProps} />)
 
       const cells = screen.getAllByRole('gridcell')
       const unavailableCell = cells[6] // Seventh cell is unavailable
-      expect(unavailableCell.className).toContain('gray')
+      expect(unavailableCell.className).toContain('bg-muted')
     })
   })
 

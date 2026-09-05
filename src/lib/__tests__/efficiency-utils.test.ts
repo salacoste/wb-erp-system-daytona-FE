@@ -64,21 +64,23 @@ describe('efficiencyConfig', () => {
   })
 
   it('should have appropriate color schemes', () => {
-    // Excellent/Good should be green variants
-    expect(efficiencyConfig.excellent.bgColor).toContain('green')
-    expect(efficiencyConfig.good.bgColor).toContain('emerald')
+    // P2 wave-5: exact semantic tokens from migrated efficiency-utils.ts
+    // (solid excellent/poor/loss; soft good/moderate fg-on-tint; muted unknown).
+    // Excellent/Good should be success variants
+    expect(efficiencyConfig.excellent.bgColor).toBe('bg-status-success')
+    expect(efficiencyConfig.good.bgColor).toBe('bg-status-success/15')
 
-    // Moderate should be yellow
-    expect(efficiencyConfig.moderate.bgColor).toContain('yellow')
+    // Moderate should be warning
+    expect(efficiencyConfig.moderate.bgColor).toBe('bg-status-warning/15')
 
-    // Poor should be orange
-    expect(efficiencyConfig.poor.bgColor).toContain('orange')
+    // Poor should be warning (solid)
+    expect(efficiencyConfig.poor.bgColor).toBe('bg-status-warning')
 
-    // Loss should be red
-    expect(efficiencyConfig.loss.bgColor).toContain('red')
+    // Loss should be error
+    expect(efficiencyConfig.loss.bgColor).toBe('bg-status-error')
 
-    // Unknown should be gray
-    expect(efficiencyConfig.unknown.bgColor).toContain('gray')
+    // Unknown should be muted
+    expect(efficiencyConfig.unknown.bgColor).toBe('bg-muted')
   })
 })
 

@@ -18,7 +18,7 @@ describe('efficiencyFilterConfig + FILTER_ORDER', () => {
   it('defines the 5 statuses with concrete labels', () => {
     expect(Object.keys(efficiencyFilterConfig).sort()).toEqual(FILTER_ORDER.slice().sort())
     expect(efficiencyFilterConfig.excellent.label).toBe('Отлично')
-    expect(efficiencyFilterConfig.excellent.color).toBe('text-green-700')
+    expect(efficiencyFilterConfig.excellent.color).toBe('text-status-success-foreground')
     expect(efficiencyFilterConfig.loss.label).toBe('Убыток')
   })
   it('FILTER_ORDER is best→worst', () => {

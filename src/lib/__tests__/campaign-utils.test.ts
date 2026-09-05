@@ -65,20 +65,21 @@ describe('campaignStatusConfig', () => {
   })
 
   it('should have appropriate color schemes', () => {
-    // Active - green
-    expect(campaignStatusConfig[STATUS_ACTIVE].dotColor).toContain('green')
+    // P2 wave-5: exact semantic tokens mirroring campaignStatusConfig (dot channel).
+    // Active - success
+    expect(campaignStatusConfig[STATUS_ACTIVE].dotColor).toBe('bg-status-success')
 
-    // Paused - yellow
-    expect(campaignStatusConfig[STATUS_PAUSED].dotColor).toContain('yellow')
+    // Paused - warning
+    expect(campaignStatusConfig[STATUS_PAUSED].dotColor).toBe('bg-status-warning')
 
-    // Ready - blue
-    expect(campaignStatusConfig[STATUS_READY].dotColor).toContain('blue')
+    // Ready - information
+    expect(campaignStatusConfig[STATUS_READY].dotColor).toBe('bg-status-information')
 
-    // Declined - red
-    expect(campaignStatusConfig[STATUS_DECLINED].dotColor).toContain('red')
+    // Declined - error
+    expect(campaignStatusConfig[STATUS_DECLINED].dotColor).toBe('bg-status-error')
 
-    // Ended - gray
-    expect(campaignStatusConfig[STATUS_ENDED].dotColor).toContain('gray')
+    // Ended - muted-foreground
+    expect(campaignStatusConfig[STATUS_ENDED].dotColor).toBe('bg-muted-foreground')
   })
 })
 
@@ -107,8 +108,8 @@ describe('getCampaignStatusDotColor', () => {
     expect(getCampaignStatusDotColor(STATUS_READY)).toContain('bg-')
   })
 
-  it('should return gray for unknown status', () => {
-    expect(getCampaignStatusDotColor(999)).toBe('bg-gray-400')
+  it('should return muted-foreground fallback for unknown status', () => {
+    expect(getCampaignStatusDotColor(999)).toBe('bg-muted-foreground')
   })
 })
 

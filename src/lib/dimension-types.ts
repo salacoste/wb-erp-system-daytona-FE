@@ -40,7 +40,14 @@ export interface VolumeTierConfig {
   maxVolume: number
 }
 
-/** Cargo type configurations */
+/** Cargo type configurations
+ *
+ * Semantic tokens (P2 wave-5, measured /tmp/p2-w5-contrast.mjs; outline Badge
+ * on PriceCalculatorForm Card, colored text also drives the currentColor
+ * border): per-hue highest-passing-alpha tints — success/5 (4.80/8.72),
+ * warning/5 (4.52/12.23), error/15 (5.10/8.22); same-hue text fails at /15
+ * for success/warning (4.19/3.97 light).
+ */
 export const CARGO_TYPE_CONFIG: Record<CargoType, CargoTypeConfig> = {
   MGT: {
     code: 'MGT',
@@ -48,8 +55,8 @@ export const CARGO_TYPE_CONFIG: Record<CargoType, CargoTypeConfig> = {
     labelFull: 'Малогабаритный товар (до 60 см)',
     maxDimension: 60,
     color: 'green',
-    bgColor: 'bg-green-100',
-    textColor: 'text-green-700',
+    bgColor: 'bg-status-success/5',
+    textColor: 'text-status-success',
     isError: false,
   },
   SGT: {
@@ -58,8 +65,8 @@ export const CARGO_TYPE_CONFIG: Record<CargoType, CargoTypeConfig> = {
     labelFull: 'Среднегабаритный товар (до 120 см)',
     maxDimension: 120,
     color: 'yellow',
-    bgColor: 'bg-yellow-100',
-    textColor: 'text-yellow-700',
+    bgColor: 'bg-status-warning/5',
+    textColor: 'text-status-warning',
     isError: false,
   },
   KGT: {
@@ -68,8 +75,8 @@ export const CARGO_TYPE_CONFIG: Record<CargoType, CargoTypeConfig> = {
     labelFull: 'Крупногабаритный товар (более 120 см)',
     maxDimension: Infinity,
     color: 'red',
-    bgColor: 'bg-red-100',
-    textColor: 'text-red-700',
+    bgColor: 'bg-status-error/15',
+    textColor: 'text-status-error',
     isError: true,
   },
 }

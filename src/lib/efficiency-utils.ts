@@ -50,12 +50,17 @@ export interface EfficiencyConfig {
 }
 
 export const efficiencyConfig: Record<EfficiencyStatus, EfficiencyConfig> = {
+  // P2 wave-5: legacy palette channels → semantic tokens. bgColor/textColor/
+  // borderColor have no live production reader (labels/icons only — Story
+  // 170.1); mapped with the same solid-vs-soft tier language as the measured
+  // efficiency-filter-config: dual-green collapse (excellent solid vs good
+  // soft), soft = /15 tint + fg text, orange→warning collapse, gray→muted.
   excellent: {
     label: 'Отлично',
     icon: TrendingUp,
-    bgColor: 'bg-green-100',
-    textColor: 'text-green-800',
-    borderColor: 'border-green-300',
+    bgColor: 'bg-status-success',
+    textColor: 'text-status-success-foreground',
+    borderColor: 'border-status-success',
     iconColor: 'text-status-success',
     description: 'ROAS ≥ 5.0, ROI ≥ 100%',
     recommendation: 'Увеличьте бюджет для масштабирования',
@@ -63,9 +68,9 @@ export const efficiencyConfig: Record<EfficiencyStatus, EfficiencyConfig> = {
   good: {
     label: 'Хорошо',
     icon: ThumbsUp,
-    bgColor: 'bg-emerald-100',
-    textColor: 'text-emerald-800',
-    borderColor: 'border-emerald-300',
+    bgColor: 'bg-status-success/15',
+    textColor: 'text-foreground',
+    borderColor: 'border-status-success/40',
     iconColor: 'text-status-success',
     description: 'ROAS 3.0–5.0, ROI 50–100%',
     recommendation: 'Оптимизируйте ставки для повышения эффективности',
@@ -73,9 +78,9 @@ export const efficiencyConfig: Record<EfficiencyStatus, EfficiencyConfig> = {
   moderate: {
     label: 'Умеренно',
     icon: AlertTriangle,
-    bgColor: 'bg-yellow-100',
-    textColor: 'text-yellow-800',
-    borderColor: 'border-yellow-300',
+    bgColor: 'bg-status-warning/15',
+    textColor: 'text-foreground',
+    borderColor: 'border-status-warning/40',
     iconColor: 'text-status-warning',
     description: 'ROAS 2.0–3.0, ROI 20–50%',
     recommendation: 'Проанализируйте ключевые слова и таргетинг',
@@ -83,9 +88,9 @@ export const efficiencyConfig: Record<EfficiencyStatus, EfficiencyConfig> = {
   poor: {
     label: 'Слабо',
     icon: TrendingDown,
-    bgColor: 'bg-orange-100',
-    textColor: 'text-orange-800',
-    borderColor: 'border-orange-300',
+    bgColor: 'bg-status-warning',
+    textColor: 'text-status-warning-foreground',
+    borderColor: 'border-status-warning',
     iconColor: 'text-status-warning',
     description: 'ROAS 1.0–2.0, ROI 0–20%',
     recommendation: 'Снизьте ставки или пересмотрите стратегию',
@@ -93,9 +98,9 @@ export const efficiencyConfig: Record<EfficiencyStatus, EfficiencyConfig> = {
   loss: {
     label: 'Убыток',
     icon: XCircle,
-    bgColor: 'bg-red-100',
-    textColor: 'text-red-800',
-    borderColor: 'border-red-300',
+    bgColor: 'bg-status-error',
+    textColor: 'text-status-error-foreground',
+    borderColor: 'border-status-error',
     iconColor: 'text-status-error',
     description: 'ROAS < 1.0, ROI < 0%',
     recommendation: 'Приостановите или полностью пересмотрите кампанию',
@@ -103,9 +108,9 @@ export const efficiencyConfig: Record<EfficiencyStatus, EfficiencyConfig> = {
   unknown: {
     label: 'Нет данных',
     icon: HelpCircle,
-    bgColor: 'bg-gray-100',
-    textColor: 'text-gray-600',
-    borderColor: 'border-gray-300',
+    bgColor: 'bg-muted',
+    textColor: 'text-muted-foreground',
+    borderColor: 'border-border',
     iconColor: 'text-muted-foreground',
     description: 'Нет данных о прибыли для расчёта эффективности',
     recommendation: 'Добавьте себестоимость для расчёта маржи',

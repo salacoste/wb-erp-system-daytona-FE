@@ -108,20 +108,23 @@ describe('EfficiencyFilterChips', () => {
       renderChips()
       const buttons = getChipButtons()
       // Skip "Все" (index 0), check status chips
+      // P2 wave-5 semantic tokens: solid tiers (excellent/poor/loss) carry
+      // *-foreground pairs; soft tiers (good/moderate) are fg-on-tint
+      // (text-foreground) per migrated efficiency-filter-config.ts.
       const excellentBtn = buttons.find(b => b.textContent?.includes('Отлично'))
-      expect(excellentBtn?.className).toContain('text-green-700')
+      expect(excellentBtn?.className).toContain('text-status-success-foreground')
 
       const goodBtn = buttons.find(b => b.textContent?.includes('Хорошо'))
-      expect(goodBtn?.className).toContain('text-lime-700')
+      expect(goodBtn?.className).toContain('text-foreground')
 
       const moderateBtn = buttons.find(b => b.textContent?.includes('Умеренно'))
-      expect(moderateBtn?.className).toContain('text-yellow-700')
+      expect(moderateBtn?.className).toContain('text-foreground')
 
       const poorBtn = buttons.find(b => b.textContent?.includes('Слабо'))
-      expect(poorBtn?.className).toContain('text-orange-700')
+      expect(poorBtn?.className).toContain('text-status-warning-foreground')
 
       const lossBtn = buttons.find(b => b.textContent?.includes('Убыток'))
-      expect(lossBtn?.className).toContain('text-red-700')
+      expect(lossBtn?.className).toContain('text-status-error-foreground')
     })
 
     it('active filter chip is visually highlighted with border', () => {
@@ -130,7 +133,7 @@ describe('EfficiencyFilterChips', () => {
       renderChips()
       const buttons = getChipButtons()
       const lossBtn = buttons.find(b => b.textContent?.includes('Убыток'))
-      expect(lossBtn?.className).toContain('border-red-500')
+      expect(lossBtn?.className).toContain('border-status-error')
     })
 
     it('"Все" option clears filter when clicked', async () => {
@@ -159,162 +162,180 @@ describe('EfficiencyFilterChips', () => {
 
   describe('AC2: Filter Chip Colors', () => {
     describe('excellent chip', () => {
-      it('has green text color (text-green-700)', () => {
+      it('has solid success text color (text-status-success-foreground)', () => {
         renderChips()
         const buttons = getChipButtons()
         const btn = buttons.find(b => b.textContent?.includes('Отлично'))
-        expect(btn?.className).toContain('text-green-700')
+        expect(btn?.className).toContain('text-status-success-foreground')
       })
 
-      it('has green background (bg-green-50)', () => {
+      it('has solid success background (bg-status-success)', () => {
         renderChips()
         const buttons = getChipButtons()
         const btn = buttons.find(b => b.textContent?.includes('Отлично'))
-        expect(btn?.className).toContain('bg-green-50')
+        expect(btn?.className).toContain('bg-status-success')
+        // P2 wave-5 fix (finding 2): inactive solid chip must NOT carry the
+        // active-state ring affordance (state discrimination, negative side)
+        expect(btn?.className).not.toContain('ring-2 ring-ring')
       })
 
-      it('has green active background (bg-green-100)', () => {
+      it('has solid success active background (bg-status-success)', () => {
         mockSearchParams.set('efficiency', 'excellent')
         renderChips()
         const buttons = getChipButtons()
         const btn = buttons.find(b => b.textContent?.includes('Отлично'))
-        expect(btn?.className).toContain('bg-green-100')
+        expect(btn?.className).toContain('bg-status-success')
+        // P2 wave-5 fix (finding 2): active solid chip DOES get the ring
+        // affordance (positive side of the state discrimination pair)
+        expect(btn?.className).toContain('ring-2 ring-ring')
       })
 
-      it('has green border when active (border-green-500)', () => {
+      it('has success border when active (border-status-success)', () => {
         mockSearchParams.set('efficiency', 'excellent')
         renderChips()
         const buttons = getChipButtons()
         const btn = buttons.find(b => b.textContent?.includes('Отлично'))
-        expect(btn?.className).toContain('border-green-500')
+        expect(btn?.className).toContain('border-status-success')
       })
     })
 
     describe('good chip', () => {
-      it('has lime text color (text-lime-700)', () => {
+      it('has soft success text color (text-foreground)', () => {
         renderChips()
         const buttons = getChipButtons()
         const btn = buttons.find(b => b.textContent?.includes('Хорошо'))
-        expect(btn?.className).toContain('text-lime-700')
+        expect(btn?.className).toContain('text-foreground')
       })
 
-      it('has lime background (bg-lime-50)', () => {
+      it('has soft success background (bg-status-success/5)', () => {
         renderChips()
         const buttons = getChipButtons()
         const btn = buttons.find(b => b.textContent?.includes('Хорошо'))
-        expect(btn?.className).toContain('bg-lime-50')
+        expect(btn?.className).toContain('bg-status-success/5')
       })
 
-      it('has lime active background (bg-lime-100)', () => {
+      it('has soft success active background (bg-status-success/15)', () => {
         mockSearchParams.set('efficiency', 'good')
         renderChips()
         const buttons = getChipButtons()
         const btn = buttons.find(b => b.textContent?.includes('Хорошо'))
-        expect(btn?.className).toContain('bg-lime-100')
+        expect(btn?.className).toContain('bg-status-success/15')
       })
 
-      it('has lime border when active (border-lime-500)', () => {
+      it('has success border when active (border-status-success)', () => {
         mockSearchParams.set('efficiency', 'good')
         renderChips()
         const buttons = getChipButtons()
         const btn = buttons.find(b => b.textContent?.includes('Хорошо'))
-        expect(btn?.className).toContain('border-lime-500')
+        expect(btn?.className).toContain('border-status-success')
       })
     })
 
     describe('moderate chip', () => {
-      it('has yellow text color (text-yellow-700)', () => {
+      it('has soft warning text color (text-foreground)', () => {
         renderChips()
         const buttons = getChipButtons()
         const btn = buttons.find(b => b.textContent?.includes('Умеренно'))
-        expect(btn?.className).toContain('text-yellow-700')
+        expect(btn?.className).toContain('text-foreground')
       })
 
-      it('has yellow background (bg-yellow-50)', () => {
+      it('has soft warning background (bg-status-warning/5)', () => {
         renderChips()
         const buttons = getChipButtons()
         const btn = buttons.find(b => b.textContent?.includes('Умеренно'))
-        expect(btn?.className).toContain('bg-yellow-50')
+        expect(btn?.className).toContain('bg-status-warning/5')
       })
 
-      it('has yellow active background (bg-yellow-100)', () => {
+      it('has soft warning active background (bg-status-warning/15)', () => {
         mockSearchParams.set('efficiency', 'moderate')
         renderChips()
         const buttons = getChipButtons()
         const btn = buttons.find(b => b.textContent?.includes('Умеренно'))
-        expect(btn?.className).toContain('bg-yellow-100')
+        expect(btn?.className).toContain('bg-status-warning/15')
       })
 
-      it('has yellow border when active (border-yellow-500)', () => {
+      it('has warning border when active (border-status-warning)', () => {
         mockSearchParams.set('efficiency', 'moderate')
         renderChips()
         const buttons = getChipButtons()
         const btn = buttons.find(b => b.textContent?.includes('Умеренно'))
-        expect(btn?.className).toContain('border-yellow-500')
+        expect(btn?.className).toContain('border-status-warning')
       })
     })
 
     describe('poor chip', () => {
-      it('has orange text color (text-orange-700)', () => {
+      it('has solid warning text color (text-status-warning-foreground)', () => {
         renderChips()
         const buttons = getChipButtons()
         const btn = buttons.find(b => b.textContent?.includes('Слабо'))
-        expect(btn?.className).toContain('text-orange-700')
+        expect(btn?.className).toContain('text-status-warning-foreground')
       })
 
-      it('has orange background (bg-orange-50)', () => {
+      it('has solid warning background (bg-status-warning)', () => {
         renderChips()
         const buttons = getChipButtons()
         const btn = buttons.find(b => b.textContent?.includes('Слабо'))
-        expect(btn?.className).toContain('bg-orange-50')
+        expect(btn?.className).toContain('bg-status-warning')
+        // P2 wave-5 fix (finding 2): inactive solid chip must NOT carry the
+        // active-state ring affordance (state discrimination, negative side)
+        expect(btn?.className).not.toContain('ring-2 ring-ring')
       })
 
-      it('has orange active background (bg-orange-100)', () => {
+      it('has solid warning active background (bg-status-warning)', () => {
         mockSearchParams.set('efficiency', 'poor')
         renderChips()
         const buttons = getChipButtons()
         const btn = buttons.find(b => b.textContent?.includes('Слабо'))
-        expect(btn?.className).toContain('bg-orange-100')
+        expect(btn?.className).toContain('bg-status-warning')
+        // P2 wave-5 fix (finding 2): active solid chip DOES get the ring
+        // affordance (positive side of the state discrimination pair)
+        expect(btn?.className).toContain('ring-2 ring-ring')
       })
 
-      it('has orange border when active (border-orange-500)', () => {
+      it('has warning border when active (border-status-warning)', () => {
         mockSearchParams.set('efficiency', 'poor')
         renderChips()
         const buttons = getChipButtons()
         const btn = buttons.find(b => b.textContent?.includes('Слабо'))
-        expect(btn?.className).toContain('border-orange-500')
+        expect(btn?.className).toContain('border-status-warning')
       })
     })
 
     describe('loss chip', () => {
-      it('has red text color (text-red-700)', () => {
+      it('has solid error text color (text-status-error-foreground)', () => {
         renderChips()
         const buttons = getChipButtons()
         const btn = buttons.find(b => b.textContent?.includes('Убыток'))
-        expect(btn?.className).toContain('text-red-700')
+        expect(btn?.className).toContain('text-status-error-foreground')
       })
 
-      it('has red background (bg-red-50)', () => {
+      it('has solid error background (bg-status-error)', () => {
         renderChips()
         const buttons = getChipButtons()
         const btn = buttons.find(b => b.textContent?.includes('Убыток'))
-        expect(btn?.className).toContain('bg-red-50')
+        expect(btn?.className).toContain('bg-status-error')
+        // P2 wave-5 fix (finding 2): inactive solid chip must NOT carry the
+        // active-state ring affordance (state discrimination, negative side)
+        expect(btn?.className).not.toContain('ring-2 ring-ring')
       })
 
-      it('has red active background (bg-red-100)', () => {
+      it('has solid error active background (bg-status-error)', () => {
         mockSearchParams.set('efficiency', 'loss')
         renderChips()
         const buttons = getChipButtons()
         const btn = buttons.find(b => b.textContent?.includes('Убыток'))
-        expect(btn?.className).toContain('bg-red-100')
+        expect(btn?.className).toContain('bg-status-error')
+        // P2 wave-5 fix (finding 2): active solid chip DOES get the ring
+        // affordance (positive side of the state discrimination pair)
+        expect(btn?.className).toContain('ring-2 ring-ring')
       })
 
-      it('has red border when active (border-red-500)', () => {
+      it('has error border when active (border-status-error)', () => {
         mockSearchParams.set('efficiency', 'loss')
         renderChips()
         const buttons = getChipButtons()
         const btn = buttons.find(b => b.textContent?.includes('Убыток'))
-        expect(btn?.className).toContain('border-red-500')
+        expect(btn?.className).toContain('border-status-error')
       })
     })
   })

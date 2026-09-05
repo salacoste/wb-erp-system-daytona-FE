@@ -175,44 +175,44 @@ describe('OrdersStatusBreakdown - Color Scheme', () => {
     it('should use green color (#22C55E) for complete', () => {
       expect(ORDER_STATUS_CONFIG.complete.color).toBe('#22C55E')
     })
-    it('should apply bg-green-500 background class', () => {
-      expect(ORDER_STATUS_CONFIG.complete.bgClass).toBe('bg-green-500')
+    it('should apply bg-status-success background class', () => {
+      expect(ORDER_STATUS_CONFIG.complete.bgClass).toBe('bg-status-success')
     })
-    it('should apply text-green-600 text class', () => {
-      expect(ORDER_STATUS_CONFIG.complete.textClass).toBe('text-green-600')
+    it('should apply text-status-success text class', () => {
+      expect(ORDER_STATUS_CONFIG.complete.textClass).toBe('text-status-success')
     })
   })
   describe('confirm status', () => {
     it('should use blue color (#3B82F6) for confirm', () => {
       expect(ORDER_STATUS_CONFIG.confirm.color).toBe('#3B82F6')
     })
-    it('should apply bg-blue-500 background class', () => {
-      expect(ORDER_STATUS_CONFIG.confirm.bgClass).toBe('bg-blue-500')
+    it('should apply bg-status-information background class', () => {
+      expect(ORDER_STATUS_CONFIG.confirm.bgClass).toBe('bg-status-information')
     })
-    it('should apply text-blue-600 text class', () => {
-      expect(ORDER_STATUS_CONFIG.confirm.textClass).toBe('text-blue-600')
+    it('should apply text-status-information text class', () => {
+      expect(ORDER_STATUS_CONFIG.confirm.textClass).toBe('text-status-information')
     })
   })
   describe('new status', () => {
     it('should use yellow color (#F59E0B) for new', () => {
       expect(ORDER_STATUS_CONFIG.new.color).toBe('#F59E0B')
     })
-    it('should apply bg-yellow-500 background class', () => {
-      expect(ORDER_STATUS_CONFIG.new.bgClass).toBe('bg-yellow-500')
+    it('should apply bg-status-warning background class', () => {
+      expect(ORDER_STATUS_CONFIG.new.bgClass).toBe('bg-status-warning')
     })
-    it('should apply text-yellow-600 text class', () => {
-      expect(ORDER_STATUS_CONFIG.new.textClass).toBe('text-yellow-600')
+    it('should apply text-status-warning text class', () => {
+      expect(ORDER_STATUS_CONFIG.new.textClass).toBe('text-status-warning')
     })
   })
   describe('cancel status', () => {
     it('should use red color (#EF4444) for cancel', () => {
       expect(ORDER_STATUS_CONFIG.cancel.color).toBe('#EF4444')
     })
-    it('should apply bg-red-500 background class', () => {
-      expect(ORDER_STATUS_CONFIG.cancel.bgClass).toBe('bg-red-500')
+    it('should apply bg-status-error background class', () => {
+      expect(ORDER_STATUS_CONFIG.cancel.bgClass).toBe('bg-status-error')
     })
-    it('should apply text-red-600 text class', () => {
-      expect(ORDER_STATUS_CONFIG.cancel.textClass).toBe('text-red-600')
+    it('should apply text-status-error text class', () => {
+      expect(ORDER_STATUS_CONFIG.cancel.textClass).toBe('text-status-error')
     })
   })
   describe('WCAG compliance', () => {

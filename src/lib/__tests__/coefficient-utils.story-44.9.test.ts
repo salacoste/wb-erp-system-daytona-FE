@@ -258,11 +258,11 @@ describe('getCoefficientStatusConfig', () => {
     expect(config.color).toBe('green')
   })
 
-  it('includes styling classes in config', () => {
+  it('includes semantic token styling classes in config (P2 wave-5)', () => {
     const config = getCoefficientStatusConfig(1.0)
-    expect(config.bgColor).toBe('bg-green-100')
-    expect(config.textColor).toBe('text-green-700')
-    expect(config.borderColor).toBe('border-green-300')
+    expect(config.bgColor).toBe('bg-status-success/5')
+    expect(config.textColor).toBe('text-status-success')
+    expect(config.borderColor).toBe('border-status-success/40')
   })
 })
 

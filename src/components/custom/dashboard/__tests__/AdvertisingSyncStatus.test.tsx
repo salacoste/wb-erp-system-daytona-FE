@@ -164,27 +164,45 @@ describe('AdvertisingSyncStatusBadge', () => {
   // ==========================================================================
 
   describe('AC2: Status Color Coding', () => {
+    // P2 wave-5: pins mirror migrated sync-status-config.ts (soft tiers =
+    // thin tint + same-hue text at the highest passing alpha; strongest tier
+    // solid; idle = muted pair).
     const statusTests: Array<{
       status: SyncTaskStatus
       bg: string
       color: string
       label: string
     }> = [
-      { status: 'idle', bg: 'bg-gray-100', color: 'text-gray-600', label: 'Ожидание' },
-      { status: 'syncing', bg: 'bg-blue-100', color: 'text-blue-600', label: 'Синхронизация...' },
+      {
+        status: 'idle',
+        bg: 'bg-muted',
+        color: 'text-muted-foreground',
+        label: 'Ожидание',
+      },
+      {
+        status: 'syncing',
+        bg: 'bg-status-information/15',
+        color: 'text-status-information',
+        label: 'Синхронизация...',
+      },
       {
         status: 'completed',
-        bg: 'bg-green-100',
-        color: 'text-green-600',
+        bg: 'bg-status-success/5',
+        color: 'text-status-success',
         label: 'Синхронизировано',
       },
       {
         status: 'partial_success',
-        bg: 'bg-yellow-100',
-        color: 'text-yellow-600',
+        bg: 'bg-status-warning/5',
+        color: 'text-status-warning',
         label: 'Частично',
       },
-      { status: 'failed', bg: 'bg-red-100', color: 'text-red-600', label: 'Ошибка' },
+      {
+        status: 'failed',
+        bg: 'bg-status-error',
+        color: 'text-status-error-foreground',
+        label: 'Ошибка',
+      },
     ]
 
     for (const { status, bg, color, label } of statusTests) {
@@ -475,11 +493,11 @@ describe('AdvertisingSyncStatusBadge', () => {
 
     it('WCAG 2.1 AA color contrast for all status colors', () => {
       const expectedColors: Record<SyncTaskStatus, string> = {
-        idle: 'text-gray-600',
-        syncing: 'text-blue-600',
-        completed: 'text-green-600',
-        partial_success: 'text-yellow-600',
-        failed: 'text-red-600',
+        idle: 'text-muted-foreground',
+        syncing: 'text-status-information',
+        completed: 'text-status-success',
+        partial_success: 'text-status-warning',
+        failed: 'text-status-error-foreground',
       }
       for (const status of Object.keys(expectedColors) as SyncTaskStatus[]) {
         mockStatusReturned({ status })
@@ -572,11 +590,15 @@ describe('AdvertisingSyncStatusBadge', () => {
   describe('TDD Verification', () => {
     it('has expected status configuration structure', () => {
       const expectedConfig = {
-        idle: { label: 'Ожидание', color: 'text-gray-600', bgColor: 'bg-gray-100' },
-        syncing: { label: 'Синхронизация...', color: 'text-blue-600', animate: true },
-        completed: { label: 'Синхронизировано', color: 'text-green-600' },
-        partial_success: { label: 'Частично', color: 'text-yellow-600' },
-        failed: { label: 'Ошибка', color: 'text-red-600' },
+        idle: { label: 'Ожидание', color: 'text-muted-foreground', bgColor: 'bg-muted' },
+        syncing: {
+          label: 'Синхронизация...',
+          color: 'text-status-information',
+          animate: true,
+        },
+        completed: { label: 'Синхронизировано', color: 'text-status-success' },
+        partial_success: { label: 'Частично', color: 'text-status-warning' },
+        failed: { label: 'Ошибка', color: 'text-status-error-foreground' },
       }
       expect(expectedConfig.idle.label).toBe('Ожидание')
       expect(expectedConfig.syncing.label).toBe('Синхронизация...')
