@@ -1,5 +1,7 @@
 # HANDOFF 2026-09-03 — V15 сессия-2 исполнена (P1 закрыт, P2 волны 1-2, BE-контракт) + полный оставшийся бэклог
 
+> 🔁 **СЕССИЯ-3 ИСПОЛНЕНА — новая вход-точка**: [`HANDOFF-2026-09-05-V16-SESSION3-EXECUTION-AND-REMAINING-BACKLOG.md`](HANDOFF-2026-09-05-V16-SESSION3-EXECUTION-AND-REMAINING-BACKLOG.md) (D-2 done #403 с live-верификацией; волна-3 done #404 — открытие слоистой композитинг-модели; флор 19439; boundary 372). Этот документ остаётся справочником; статусы строк обновлены сессией-3.
+
 > **Аудитория**: агент-команда, продолжающая разработку. Этот документ = вход-точка СЕССИИ-3.
 > **Процесс-канон**: [`docs/ORCHESTRATOR-PROMPT-2026-09-02-V14-DEBT-BACKLOG-EXECUTION-OMC.md`](ORCHESTRATOR-PROMPT-2026-09-02-V14-DEBT-BACKLOG-EXECUTION-OMC.md) (петля §0, порядок §7, стопы §8) + [`docs/ORCHESTRATOR-PROMPT-2026-09-02-V15-...`](ORCHESTRATOR-PROMPT-2026-09-02-V14-DEBT-BACKLOG-EXECUTION-OMC.md) — читать В15-промпт от этой даты.
 > **Долг-реестры**: [`HANDOFF-2026-09-02-FINAL-94-94-PROGRAM-COMPLETE.md`](HANDOFF-2026-09-02-FINAL-94-94-PROGRAM-COMPLETE.md) §4/§8 + [`HANDOFF-2026-09-02-V14-DEBT-SESSION1-...`](HANDOFF-2026-09-02-V14-DEBT-SESSION1-EXECUTION-AND-REMAINING-BACKLOG.md) §3 (статусы обновлены сессией-2) + [`_bmad-output/planning-artifacts/shadcn-migration-status-and-debt-registry.md`](../_bmad-output/planning-artifacts/shadcn-migration-status-and-debt-registry.md).
