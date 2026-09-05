@@ -12,6 +12,8 @@ sources:
     resource: repo://docs/HANDOFF-2026-09-02-FINAL-94-94-PROGRAM-COMPLETE.md
   - id: openwiki-source-5bfb8400b5daf58813b7ad6a
     resource: repo://docs/HANDOFF-2026-09-03-V15-SESSION2-EXECUTION-AND-REMAINING-BACKLOG.md
+  - id: openwiki-source-a1f3e2d5c9b70418f6a2b5c1
+    resource: repo://docs/HANDOFF-2026-09-05-V16-SESSION3-EXECUTION-AND-REMAINING-BACKLOG.md
   - id: openwiki-source-c66fd1b858bdd6d97345f065
     resource: repo://docs/request-backend/230-auth-refresh-endpoint-missing.md
   - id: openwiki-source-5b54a58d1b51cd490b0e7162
@@ -64,12 +66,12 @@ For the full per-story status ledger, the route ledger, and the final-verificati
 After the 94/94 closeout, debt-session waves landed on main (`docs/HANDOFF-2026-09-03-V15-SESSION2-EXECUTION-AND-REMAINING-BACKLOG.md`):
 
 - **D-1 (PB-1, silent cabinet create)** — PR #390: initiation-mint `ensureSessionNonce`, indeterminate recovery-alert, `finishRecoveryOperation` release, and a two-tab nonce-nulling e2e. Test floor 19,363 → 19,421.
-- **D-2 (PB-3, reactive 401 refresh)** — backend contract agreed (request-backend #230: `POST /v1/auth/refresh`, sliding rotation, expired JWT never refreshes); frontend executed on `debt/d2-pb3-reactive-refresh` — api-client interceptor (single-flight refresh reading the token from the store, replay ×1), nonce-preserving `refreshToken` in the auth store. Live-verified locally 2026-09-03 (refresh 200 / revocation 401); remote BE publish is an open backend follow-up.
+- **D-2 (PB-3, reactive 401 refresh)** — backend contract agreed (request-backend #230: `POST /v1/auth/refresh`, sliding rotation, expired JWT never refreshes); frontend merged as **PR #403** (`f772eee6`, 2026-09-05): api-client interceptor (single-flight refresh reading the token from the store, cascade gate, replay-once, 10s deadline), nonce-preserving `refreshToken` in the auth store, durable-op opt-outs ×3, G4=12 pins. The live chain was verified on `main` (refresh 200 / rotation / revocation 401 `TOKEN_REVOKED`; BE rebuilt locally, PR #401); remote BE publish is an open backend follow-up. Floor → 19,436.
 - **Boundary waves 1-2** (PRs #394/#395): financial-summary (58 sites) and margin-family (29 sites) palette → semantic tokens; boundary ratchet **459 → 401 → 372** (current baseline in `scripts/.shadcn-ui-boundary-baseline.txt`; 3 owner-accepted exceptions — do not touch).
 - Quality wave (PR #392/#393): AcceptanceStatusBadge solid pairs, GapsTable SR dedup, `ScenarioUrgencyTier` single classification source. Vitest floor 19,424; lint 0/0, tsc 0, build 0.
 - **P2 wave-3 "AA-quick-wins"** (2026-09-05, session-3): `/15→/5` and `/10→/5` solid-pair fixes across `unit-economics-config.ts`, CashflowRowPrimitives, pnl-waterfall, and the price-calculator family; Vitest floor **19,424 → ≥ 19,439**. The layered-compositing model was falsified (over-card); artifact `_bmad-output/implementation-artifacts/debt-p2-wave3-aa-quickwins.md` is the new canon.
 
-Remaining backlog (boundary waves 4-5 from the 372 residual — chart-hex files gated on the C5 owner decision, `/80` sweep, FE-D1/D3/D5, logger-redact) is prioritized in the session handoff above (§3.2-3.5, live gate state §2: main `c5ca2669`).
+The current entry point is `docs/HANDOFF-2026-09-05-V16-SESSION3-EXECUTION-AND-REMAINING-BACKLOG.md` (sessions-2/3 executed: P1 fully closed, P2 waves 1-3; live gate state at main `afb2915f`, 2026-09-05: Vitest ≥ 19,439 / 0, lint 0/0, tsc 0, build 0, boundary 372). **Next item: P2 boundary wave-4 "component families"** (live residual counts in §3.0; the 174.2 catalog drifts — always re-scan live), then wave-5 lib-residue, the `/80` sweep, FE-D1/D3/D5, logger-redact, and the owner-decision ledger (§3.5: C5 chart-palette, WCAG 1.4.11 valence channels). The session-2 handoff (`docs/HANDOFF-2026-09-03-V15-SESSION2-EXECUTION-AND-REMAINING-BACKLOG.md`) remains the reference for §3 catalogs and session-2 history.
 
 ## Overview
 
@@ -140,4 +142,9 @@ node scripts/generate-story-174-3-scope-register.mjs  # Story 174.3: regenerate 
 - **[Design System](design-system.md)** — Tailwind v4 semantic tokens, hardened shadcn primitives, composition families, enforced design-system boundary, and the Story 174.3 inclusive visual contract.
 - **[Domain Logic](domain-logic.md)** — financial-summary math, margin/liquidity calculations, cabinet creation/settlement, and task-role semantics.
 - **[Migration Program (Epics 166–174)](migration-program.md)** — per-epic/story status ledger, route ledger (76/76 verified), parity validation, Story 174.3 evidence pipeline, orchestration process, and the final 94/94 closeout.
+- **[Conventions & Quality Gates](conventions-and-quality.md)** and **[Testing & Operations](testing-and-ops.md)** — coding standards/gates and the testing strategy with the story-174-3 evidence runners.
+r (76/76 verified), parity validation, Story 174.3 evidence pipeline, orchestration process, and the final 94/94 closeout.
+- **[Conventions & Quality Gates](conventions-and-quality.md)** and **[Testing & Operations](testing-and-ops.md)** — coding standards/gates and the testing strategy with the story-174-3 evidence runners.
+rs.
+r (76/76 verified), parity validation, Story 174.3 evidence pipeline, orchestration process, and the final 94/94 closeout.
 - **[Conventions & Quality Gates](conventions-and-quality.md)** and **[Testing & Operations](testing-and-ops.md)** — coding standards/gates and the testing strategy with the story-174-3 evidence runners.
