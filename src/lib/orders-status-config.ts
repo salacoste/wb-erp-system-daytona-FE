@@ -32,32 +32,34 @@ export interface StatusConfig {
 
 /**
  * Order status configuration with Russian labels and colors
- * Colors meet WCAG 2.1 AA contrast requirements
+ * Hex `color` is the chart discriminator (out of wave-5 scope); bgClass/
+ * textClass palette → semantic status tokens (P2 wave-5, production-dead
+ * Tailwind channels). Fallbacks map to the muted idiom (canon #6).
  */
 export const ORDER_STATUS_CONFIG: Record<OrderStatus, StatusConfig> = {
   complete: {
     label: 'Выполнено',
     color: '#22C55E', // Green
-    bgClass: 'bg-green-500',
-    textClass: 'text-green-600',
+    bgClass: 'bg-status-success',
+    textClass: 'text-status-success',
   },
   confirm: {
     label: 'Подтверждено',
     color: '#3B82F6', // Blue
-    bgClass: 'bg-blue-500',
-    textClass: 'text-blue-600',
+    bgClass: 'bg-status-information',
+    textClass: 'text-status-information',
   },
   new: {
     label: 'Новый',
     color: '#F59E0B', // Yellow/Amber
-    bgClass: 'bg-yellow-500',
-    textClass: 'text-yellow-600',
+    bgClass: 'bg-status-warning',
+    textClass: 'text-status-warning',
   },
   cancel: {
     label: 'Отменено',
     color: '#EF4444', // Red
-    bgClass: 'bg-red-500',
-    textClass: 'text-red-600',
+    bgClass: 'bg-status-error',
+    textClass: 'text-status-error',
   },
 } as const
 
@@ -83,14 +85,14 @@ export function getStatusColor(status: OrderStatus): string {
  * Get background class for order status
  */
 export function getStatusBgClass(status: OrderStatus): string {
-  return ORDER_STATUS_CONFIG[status]?.bgClass ?? 'bg-gray-500'
+  return ORDER_STATUS_CONFIG[status]?.bgClass ?? 'bg-muted'
 }
 
 /**
  * Get text class for order status
  */
 export function getStatusTextClass(status: OrderStatus): string {
-  return ORDER_STATUS_CONFIG[status]?.textClass ?? 'text-gray-600'
+  return ORDER_STATUS_CONFIG[status]?.textClass ?? 'text-muted-foreground'
 }
 
 /**

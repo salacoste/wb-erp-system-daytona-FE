@@ -264,7 +264,9 @@ describe('DeliveryDatePicker', () => {
   // ==========================================================================
 
   describe('coefficient status colors', () => {
-    it('shows green for base coefficient (<=1.0)', async () => {
+    // P2 wave-5: cells carry COEFFICIENT_STATUS_CONFIG semantic tokens, per
+    // migrated coefficient-types.ts (calendar delegates to CoefficientCalendarCells).
+    it('shows success tint for base coefficient (<=1.0)', async () => {
       render(<DeliveryDatePicker {...defaultProps} selectedDate="2026-01-22" />)
 
       const trigger = screen.getByRole('button', { name: /выбрать дату/i })
@@ -273,11 +275,11 @@ describe('DeliveryDatePicker', () => {
       await waitFor(() => {
         const dateCells = screen.getAllByRole('gridcell')
         const baseCell = dateCells.find(cell => cell.textContent?.includes('22'))
-        expect(baseCell?.className).toContain('green')
+        expect(baseCell?.className).toContain('bg-status-success/5')
       })
     })
 
-    it('shows yellow for elevated coefficient (1.01-1.5)', async () => {
+    it('shows warning tint for elevated coefficient (1.01-1.5)', async () => {
       render(<DeliveryDatePicker {...defaultProps} selectedDate="2026-01-23" />)
 
       const trigger = screen.getByRole('button', { name: /выбрать дату/i })
@@ -286,11 +288,11 @@ describe('DeliveryDatePicker', () => {
       await waitFor(() => {
         const dateCells = screen.getAllByRole('gridcell')
         const elevatedCell = dateCells.find(cell => cell.textContent?.includes('23'))
-        expect(elevatedCell?.className).toContain('yellow')
+        expect(elevatedCell?.className).toContain('bg-status-warning/15')
       })
     })
 
-    it('shows gray for unavailable dates (coefficient -1)', async () => {
+    it('shows muted for unavailable dates (coefficient -1)', async () => {
       render(<DeliveryDatePicker {...defaultProps} />)
 
       const trigger = screen.getByRole('button', { name: /выбрать дату/i })
@@ -299,7 +301,7 @@ describe('DeliveryDatePicker', () => {
       await waitFor(() => {
         const dateCells = screen.getAllByRole('gridcell')
         const unavailableCell = dateCells.find(cell => cell.textContent?.includes('28'))
-        expect(unavailableCell?.className).toContain('gray')
+        expect(unavailableCell?.className).toContain('bg-muted')
       })
     })
   })

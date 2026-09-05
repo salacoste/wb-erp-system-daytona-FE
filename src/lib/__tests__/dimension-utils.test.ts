@@ -273,18 +273,18 @@ describe('getCargoTypeConfig', () => {
     expect(config.isError).toBe(true)
   })
 
-  it('should have correct Tailwind classes for styling', () => {
+  it('should have correct semantic token classes for styling (P2 wave-5)', () => {
     const mgtConfig = getCargoTypeConfig('MGT')
-    expect(mgtConfig.bgColor).toBe('bg-green-100')
-    expect(mgtConfig.textColor).toBe('text-green-700')
+    expect(mgtConfig.bgColor).toBe('bg-status-success/5')
+    expect(mgtConfig.textColor).toBe('text-status-success')
 
     const sgtConfig = getCargoTypeConfig('SGT')
-    expect(sgtConfig.bgColor).toBe('bg-yellow-100')
-    expect(sgtConfig.textColor).toBe('text-yellow-700')
+    expect(sgtConfig.bgColor).toBe('bg-status-warning/5')
+    expect(sgtConfig.textColor).toBe('text-status-warning')
 
     const kgtConfig = getCargoTypeConfig('KGT')
-    expect(kgtConfig.bgColor).toBe('bg-red-100')
-    expect(kgtConfig.textColor).toBe('text-red-700')
+    expect(kgtConfig.bgColor).toBe('bg-status-error/15')
+    expect(kgtConfig.textColor).toBe('text-status-error')
   })
 })
 

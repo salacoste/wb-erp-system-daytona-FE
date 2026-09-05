@@ -15,56 +15,60 @@ import type { EfficiencyStatus, AdvertisingItem } from '@/types/advertising-anal
 /**
  * Efficiency filter configuration for each status.
  *
- * Colors per spec:
- * - excellent: Green (#22C55E)
- * - good: Lime (#84CC16)
- * - moderate: Yellow (#EAB308)
- * - poor: Orange (#F97316)
- * - loss: Red (#EF4444)
+ * Semantic tokens (P2 wave-5, measured /tmp/p2-w5-contrast.mjs, chip on Card):
+ * - excellent: SOLID success chip (white on status-success — 5.13/8.00)
+ * - good:      SOFT success (fg-on-tint: fg text on success/5→/15 — 13.2+);
+ *              dual-green collapse per Story 170.1 (excellent solid vs good soft)
+ * - moderate:  SOFT warning (fg on warning/5→/15 — 13.28/12.88)
+ * - poor:      SOLID warning (white on status-warning — 4.81/11.41)
+ * - loss:      SOLID error (white on status-error — 6.54/9.48)
+ * Chip `color` spans inactive AND active states, so soft tiers use
+ * text-foreground (fg-on-tint, wave-4 hover-exposed-chip precedent) —
+ * same-hue text passes only at /5 and fails on the /15 active tint.
  */
 export const efficiencyFilterConfig: EfficiencyFilterConfigMap = {
   excellent: {
     label: 'Отлично',
-    color: 'text-green-700',
-    bgColor: 'bg-green-50',
-    bgColorActive: 'bg-green-100',
-    borderColor: 'border-green-500',
+    color: 'text-status-success-foreground',
+    bgColor: 'bg-status-success',
+    bgColorActive: 'bg-status-success',
+    borderColor: 'border-status-success',
     description: 'ROAS > 5, ROI > 100%',
     roasRange: 'ROAS > 5.0',
   },
   good: {
     label: 'Хорошо',
-    color: 'text-lime-700',
-    bgColor: 'bg-lime-50',
-    bgColorActive: 'bg-lime-100',
-    borderColor: 'border-lime-500',
+    color: 'text-foreground',
+    bgColor: 'bg-status-success/5',
+    bgColorActive: 'bg-status-success/15',
+    borderColor: 'border-status-success',
     description: 'ROAS 3-5, ROI 50-100%',
     roasRange: 'ROAS 3.0-5.0',
   },
   moderate: {
     label: 'Умеренно',
-    color: 'text-yellow-700',
-    bgColor: 'bg-yellow-50',
-    bgColorActive: 'bg-yellow-100',
-    borderColor: 'border-yellow-500',
+    color: 'text-foreground',
+    bgColor: 'bg-status-warning/5',
+    bgColorActive: 'bg-status-warning/15',
+    borderColor: 'border-status-warning',
     description: 'ROAS 2-3, ROI 20-50%',
     roasRange: 'ROAS 2.0-3.0',
   },
   poor: {
     label: 'Слабо',
-    color: 'text-orange-700',
-    bgColor: 'bg-orange-50',
-    bgColorActive: 'bg-orange-100',
-    borderColor: 'border-orange-500',
+    color: 'text-status-warning-foreground',
+    bgColor: 'bg-status-warning',
+    bgColorActive: 'bg-status-warning',
+    borderColor: 'border-status-warning',
     description: 'ROAS 1-2, ROI 0-20%',
     roasRange: 'ROAS 1.0-2.0',
   },
   loss: {
     label: 'Убыток',
-    color: 'text-red-700',
-    bgColor: 'bg-red-50',
-    bgColorActive: 'bg-red-100',
-    borderColor: 'border-red-500',
+    color: 'text-status-error-foreground',
+    bgColor: 'bg-status-error',
+    bgColorActive: 'bg-status-error',
+    borderColor: 'border-status-error',
     description: 'ROAS < 1, ROI < 0%',
     roasRange: 'ROAS < 1.0',
   },

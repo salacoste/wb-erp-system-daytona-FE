@@ -160,13 +160,15 @@ describe('ProfitabilityBadge - Rendering', () => {
 })
 
 describe('ProfitabilityBadge - Colors', () => {
+  // P2 wave-5: pins mirror migrated profitability-utils.ts EXTENDED_STATUS_CONFIG
+  // (solid pairs for strongest tiers; soft tiers fg-on-tint; muted pair for unknown).
   const statusColorCases: [ExtendedProfitabilityStatus, string, string][] = [
-    ['excellent', 'bg-green-100', 'text-green-800'],
-    ['good', 'bg-lime-100', 'text-lime-800'],
-    ['warning', 'bg-yellow-100', 'text-yellow-800'],
-    ['critical', 'bg-orange-100', 'text-orange-800'],
-    ['loss', 'bg-red-100', 'text-red-800'],
-    ['unknown', 'bg-gray-100', 'text-gray-600'],
+    ['excellent', 'bg-status-success', 'text-status-success-foreground'],
+    ['good', 'bg-status-success/15', 'text-foreground'],
+    ['warning', 'bg-status-warning/15', 'text-foreground'],
+    ['critical', 'bg-status-warning', 'text-status-warning-foreground'],
+    ['loss', 'bg-status-error', 'text-status-error-foreground'],
+    ['unknown', 'bg-muted', 'text-muted-foreground'],
   ]
   statusColorCases.forEach(([status, bgClass, textClass]) => {
     it(`should use ${bgClass} for ${status} status`, () => {

@@ -72,6 +72,9 @@ export function formatCompactNumber(value: number): string {
 
 /**
  * Format margin with sign and color hint
+ * P2 wave-5: legacy palette → status tokens via the deliberate 5→3 inline-text
+ * collapse (green/lime → success, yellow/orange → warning, red → error), the
+ * Story 170.1 getRoiTextClass precedent for inline money-direction text.
  */
 export function formatMargin(marginPct: number): { text: string; className: string } {
   const sign = marginPct > 0 ? '+' : ''
@@ -79,9 +82,9 @@ export function formatMargin(marginPct: number): { text: string; className: stri
   // Intl emits the minus for negatives, none for 0. Was the dot-locale toFixed-then-percent form.
   const text = `${sign}${formatPercentage(marginPct, 1)}`
 
-  if (marginPct >= 25) return { text, className: 'text-green-600' }
-  if (marginPct >= 15) return { text, className: 'text-lime-600' }
-  if (marginPct >= 5) return { text, className: 'text-yellow-600' }
-  if (marginPct >= 0) return { text, className: 'text-orange-600' }
-  return { text, className: 'text-red-600' }
+  if (marginPct >= 25) return { text, className: 'text-status-success' }
+  if (marginPct >= 15) return { text, className: 'text-status-success' }
+  if (marginPct >= 5) return { text, className: 'text-status-warning' }
+  if (marginPct >= 0) return { text, className: 'text-status-warning' }
+  return { text, className: 'text-status-error' }
 }

@@ -29,31 +29,34 @@ export interface CampaignStatusConfig {
   textColor: string
 }
 
+// P2 wave-5: dot/text channels → semantic tokens, mirroring the route-local
+// twin CAMPAIGN_STATUS_DOT_TOKENS in advertising-tokens.ts (Story 170.1) so
+// the production-dead lib map stays coherent with the live consumer.
 export const campaignStatusConfig: Record<number, CampaignStatusConfig> = {
   4: {
     label: 'Готова к запуску',
-    dotColor: 'bg-blue-500',
-    textColor: 'text-blue-700',
+    dotColor: 'bg-status-information',
+    textColor: 'text-status-information',
   },
   7: {
     label: 'Завершена',
-    dotColor: 'bg-gray-400',
-    textColor: 'text-gray-600',
+    dotColor: 'bg-muted-foreground',
+    textColor: 'text-muted-foreground',
   },
   8: {
     label: 'Отклонена',
-    dotColor: 'bg-red-500',
-    textColor: 'text-red-700',
+    dotColor: 'bg-status-error',
+    textColor: 'text-status-error',
   },
   9: {
     label: 'Активна',
-    dotColor: 'bg-green-500',
-    textColor: 'text-green-700',
+    dotColor: 'bg-status-success',
+    textColor: 'text-status-success',
   },
   11: {
     label: 'На паузе',
-    dotColor: 'bg-yellow-500',
-    textColor: 'text-yellow-700',
+    dotColor: 'bg-status-warning',
+    textColor: 'text-status-warning',
   },
 }
 
@@ -67,9 +70,10 @@ export function getCampaignStatusLabel(status: number, fallback?: string): strin
 
 /**
  * Get campaign status dot color class.
+ * Fallback = muted-foreground, mirroring getCampaignStatusDotToken (170.1).
  */
 export function getCampaignStatusDotColor(status: number): string {
-  return campaignStatusConfig[status]?.dotColor || 'bg-gray-400'
+  return campaignStatusConfig[status]?.dotColor || 'bg-muted-foreground'
 }
 
 // ============================================================================

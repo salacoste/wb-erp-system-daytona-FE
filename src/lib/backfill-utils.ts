@@ -91,54 +91,59 @@ const STATUS_CONFIG: Record<
   BackfillStatus,
   { label: string; color: string; bgColor: string; textColor: string; progressColor: string }
 > = {
+  // P2 wave-5: legacy palette → semantic tokens. Production-dead color
+  // channels (no importer of these exports) — mapped coherently with the
+  // wave canon: soft tint + same-hue text; solid pairs for strongest tiers;
+  // gray → muted idiom; orange collapses to warning (pending soft vs paused
+  // solid preserves the two-tier distinction, Story 170.1 pattern).
   idle: {
     label: 'Ожидает',
     color: 'gray',
-    bgColor: 'bg-gray-100',
-    textColor: 'text-gray-700',
-    progressColor: 'bg-gray-400',
+    bgColor: 'bg-muted',
+    textColor: 'text-muted-foreground',
+    progressColor: 'bg-muted-foreground',
   },
   not_started: {
     label: 'Не начат',
     color: 'gray',
-    bgColor: 'bg-gray-100',
-    textColor: 'text-gray-600',
-    progressColor: 'bg-gray-300',
+    bgColor: 'bg-muted',
+    textColor: 'text-muted-foreground',
+    progressColor: 'bg-muted-foreground',
   },
   pending: {
     label: 'В очереди',
     color: 'yellow',
-    bgColor: 'bg-yellow-100',
-    textColor: 'text-yellow-700',
-    progressColor: 'bg-yellow-500',
+    bgColor: 'bg-status-warning/15',
+    textColor: 'text-status-warning',
+    progressColor: 'bg-status-warning',
   },
   in_progress: {
     label: 'Выполняется',
     color: 'blue',
-    bgColor: 'bg-blue-100',
-    textColor: 'text-blue-700',
-    progressColor: 'bg-blue-500',
+    bgColor: 'bg-status-information/15',
+    textColor: 'text-status-information',
+    progressColor: 'bg-status-information',
   },
   completed: {
     label: 'Завершено',
     color: 'green',
-    bgColor: 'bg-green-100',
-    textColor: 'text-green-700',
-    progressColor: 'bg-green-500',
+    bgColor: 'bg-status-success/15',
+    textColor: 'text-status-success',
+    progressColor: 'bg-status-success',
   },
   failed: {
     label: 'Ошибка',
     color: 'red',
-    bgColor: 'bg-red-100',
-    textColor: 'text-red-700',
-    progressColor: 'bg-red-500',
+    bgColor: 'bg-status-error/15',
+    textColor: 'text-status-error',
+    progressColor: 'bg-status-error',
   },
   paused: {
     label: 'Приостановлено',
     color: 'orange',
-    bgColor: 'bg-orange-100',
-    textColor: 'text-orange-700',
-    progressColor: 'bg-orange-500',
+    bgColor: 'bg-status-warning',
+    textColor: 'text-status-warning-foreground',
+    progressColor: 'bg-status-warning',
   },
 }
 

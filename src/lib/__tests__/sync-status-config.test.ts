@@ -25,12 +25,12 @@ describe('syncStatusConfig', () => {
 
   it('has concrete label/color for each status', () => {
     expect(syncStatusConfig.idle.label).toBe('Ожидание')
-    expect(syncStatusConfig.idle.color).toBe('text-gray-600')
+    expect(syncStatusConfig.idle.color).toBe('text-muted-foreground')
     expect(syncStatusConfig.syncing.label).toBe('Синхронизация...')
-    expect(syncStatusConfig.completed.color).toBe('text-green-600')
+    expect(syncStatusConfig.completed.color).toBe('text-status-success')
     expect(syncStatusConfig.partial_success.label).toBe('Частично')
     expect(syncStatusConfig.failed.label).toBe('Ошибка')
-    expect(syncStatusConfig.failed.color).toBe('text-red-600')
+    expect(syncStatusConfig.failed.color).toBe('text-status-error-foreground')
   })
 
   it('every status carries label/color/bgColor/description', () => {

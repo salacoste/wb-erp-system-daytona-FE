@@ -282,34 +282,36 @@ describe('calculateTwoLevelPricing', () => {
 })
 
 describe('getPriceGapColor', () => {
-  it('should return green for gap > 20%', () => {
-    expect(getPriceGapColor(25)).toBe('text-green-600')
-    expect(getPriceGapColor(50)).toBe('text-green-600')
+  // P2 wave-5: gap percent = margin-buffer RISK signal → status tokens
+  // (success/warning/error), per migrated two-level-pricing.ts.
+  it('should return text-status-success for gap > 20%', () => {
+    expect(getPriceGapColor(25)).toBe('text-status-success')
+    expect(getPriceGapColor(50)).toBe('text-status-success')
   })
 
-  it('should return yellow for gap 10-20%', () => {
-    expect(getPriceGapColor(15)).toBe('text-yellow-600')
-    expect(getPriceGapColor(20)).toBe('text-yellow-600')
+  it('should return text-status-warning for gap 10-20%', () => {
+    expect(getPriceGapColor(15)).toBe('text-status-warning')
+    expect(getPriceGapColor(20)).toBe('text-status-warning')
   })
 
-  it('should return red for gap < 10%', () => {
-    expect(getPriceGapColor(5)).toBe('text-red-600')
-    expect(getPriceGapColor(9.9)).toBe('text-red-600')
-    expect(getPriceGapColor(0)).toBe('text-red-600')
+  it('should return text-status-error for gap < 10%', () => {
+    expect(getPriceGapColor(5)).toBe('text-status-error')
+    expect(getPriceGapColor(9.9)).toBe('text-status-error')
+    expect(getPriceGapColor(0)).toBe('text-status-error')
   })
 })
 
 describe('getPriceGapBgColor', () => {
-  it('should return green bg for gap > 20%', () => {
-    expect(getPriceGapBgColor(25)).toContain('green')
+  it('should return bg-status-success/5 for gap > 20%', () => {
+    expect(getPriceGapBgColor(25)).toContain('bg-status-success/5')
   })
 
-  it('should return yellow bg for gap 10-20%', () => {
-    expect(getPriceGapBgColor(15)).toContain('yellow')
+  it('should return bg-status-warning/5 for gap 10-20%', () => {
+    expect(getPriceGapBgColor(15)).toContain('bg-status-warning/5')
   })
 
-  it('should return red bg for gap < 10%', () => {
-    expect(getPriceGapBgColor(5)).toContain('red')
+  it('should return bg-status-error/5 for gap < 10%', () => {
+    expect(getPriceGapBgColor(5)).toContain('bg-status-error/5')
   })
 })
 

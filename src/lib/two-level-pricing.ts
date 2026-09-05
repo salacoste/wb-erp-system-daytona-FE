@@ -113,21 +113,26 @@ export function calculateTwoLevelPricing(
 
 /**
  * Get price gap status color based on margin safety
- * - Green: gap > 20% (healthy margin buffer)
- * - Yellow: gap 10-20% (moderate)
- * - Red: gap < 10% (tight margin, risk of losses)
+ * - success: gap > 20% (healthy margin buffer)
+ * - warning: gap 10-20% (moderate)
+ * - error:   gap < 10% (tight margin, risk of losses)
+ *
+ * P2 wave-5: status tokens chosen over the financial-* aliases — the gap
+ * percent signals margin-buffer RISK (status semantics), not a signed
+ * money-direction delta.
  */
 export function getPriceGapColor(gapPct: number): string {
-  if (gapPct > 20) return 'text-green-600'
-  if (gapPct > 10) return 'text-yellow-600'
-  return 'text-red-600'
+  if (gapPct > 20) return 'text-status-success'
+  if (gapPct > 10) return 'text-status-warning'
+  return 'text-status-error'
 }
 
-/** Get price gap background color for badges */
+/** Get price gap background color for badges (tints; tokens redefine
+ * per-theme — the legacy dark: halves are gone post-migration) */
 export function getPriceGapBgColor(gapPct: number): string {
-  if (gapPct > 20) return 'bg-green-50 dark:bg-green-950'
-  if (gapPct > 10) return 'bg-yellow-50 dark:bg-yellow-950'
-  return 'bg-red-50 dark:bg-red-950'
+  if (gapPct > 20) return 'bg-status-success/5'
+  if (gapPct > 10) return 'bg-status-warning/5'
+  return 'bg-status-error/5'
 }
 
 /** Check if margin is tight (risk warning threshold) */

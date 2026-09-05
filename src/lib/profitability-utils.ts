@@ -32,6 +32,17 @@ export interface ProfitabilityStatusDetails {
 
 /**
  * Complete status configuration
+ *
+ * Semantic tokens (P2 wave-5, measured /tmp/p2-w5-contrast.mjs). Badge mounts
+ * in UnitEconomicsTableRow (ui/table.tsx:57 hover:bg-muted/50) — soft pairs
+ * measured on BOTH static row (card) and hover row (card > muted/50):
+ * - excellent: SOLID success (5.13/8.00, compositing-immune)
+ * - good:      SOFT success tint + fg text — same-hue success text fails on
+ *              the hover stack (4.03), fg-on-tint passes (12.66/12.19)
+ * - warning:   SOFT warning tint + fg text (12.77/11.31)
+ * - critical:  SOLID warning (orange→warning collapse, Story 170.1)
+ * - loss:      SOLID error (6.54/9.48)
+ * - unknown:   muted pair (7.17/8.06)
  */
 export const EXTENDED_STATUS_CONFIG: Record<
   ExtendedProfitabilityStatus,
@@ -40,48 +51,48 @@ export const EXTENDED_STATUS_CONFIG: Record<
   excellent: {
     label: 'Отлично',
     color: '#22C55E',
-    bgClass: 'bg-green-100',
-    textClass: 'text-green-800',
+    bgClass: 'bg-status-success',
+    textClass: 'text-status-success-foreground',
     threshold: 'Маржа > 25%',
     recommendation: 'Поддерживайте текущую стратегию',
   },
   good: {
     label: 'Хорошо',
     color: '#84CC16',
-    bgClass: 'bg-lime-100',
-    textClass: 'text-lime-800',
+    bgClass: 'bg-status-success/15',
+    textClass: 'text-foreground',
     threshold: 'Маржа 15-25%',
     recommendation: 'Стабильная прибыльность',
   },
   warning: {
     label: 'Внимание',
     color: '#EAB308',
-    bgClass: 'bg-yellow-100',
-    textClass: 'text-yellow-800',
+    bgClass: 'bg-status-warning/15',
+    textClass: 'text-foreground',
     threshold: 'Маржа 5-15%',
     recommendation: 'Рассмотрите оптимизацию затрат',
   },
   critical: {
     label: 'Критично',
     color: '#F97316',
-    bgClass: 'bg-orange-100',
-    textClass: 'text-orange-800',
+    bgClass: 'bg-status-warning',
+    textClass: 'text-status-warning-foreground',
     threshold: 'Маржа 0-5%',
     recommendation: 'Срочно пересмотрите ценообразование',
   },
   loss: {
     label: 'Убыток',
     color: '#EF4444',
-    bgClass: 'bg-red-100',
-    textClass: 'text-red-800',
+    bgClass: 'bg-status-error',
+    textClass: 'text-status-error-foreground',
     threshold: 'Маржа < 0%',
     recommendation: 'Остановите продажи или измените стратегию',
   },
   unknown: {
     label: 'Нет данных',
     color: '#9CA3AF',
-    bgClass: 'bg-gray-100',
-    textClass: 'text-gray-600',
+    bgClass: 'bg-muted',
+    textClass: 'text-muted-foreground',
     threshold: 'COGS не назначен',
     recommendation: 'Добавьте себестоимость для расчёта маржи',
   },

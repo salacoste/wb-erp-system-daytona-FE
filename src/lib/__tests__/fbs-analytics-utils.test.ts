@@ -162,23 +162,24 @@ describe('getBackfillStatusLabel', () => {
 // =============================================================================
 
 describe('getBackfillStatusColor', () => {
+  // P2 wave-5: text halves of the migrated BACKFILL_STATUS_COLORS semantic tokens.
   it('returns CSS classes for pending', () => {
-    expect(getBackfillStatusColor('pending')).toContain('text-gray-500')
+    expect(getBackfillStatusColor('pending')).toContain('text-muted-foreground')
   })
 
   it('returns CSS classes for in_progress', () => {
-    expect(getBackfillStatusColor('in_progress')).toContain('text-blue-600')
+    expect(getBackfillStatusColor('in_progress')).toContain('text-status-information')
   })
 
   it('returns CSS classes for completed', () => {
-    expect(getBackfillStatusColor('completed')).toContain('text-green-600')
+    expect(getBackfillStatusColor('completed')).toContain('text-status-success')
   })
 
   it('returns CSS classes for failed', () => {
-    expect(getBackfillStatusColor('failed')).toContain('text-red-600')
+    expect(getBackfillStatusColor('failed')).toContain('text-status-error')
   })
 
   it('returns CSS classes for paused', () => {
-    expect(getBackfillStatusColor('paused')).toContain('text-yellow-600')
+    expect(getBackfillStatusColor('paused')).toContain('text-status-warning')
   })
 })

@@ -122,16 +122,17 @@ export function getBackfillStatusLabel(status: BackfillStatus): string {
   return BACKFILL_STATUS_LABELS[status] ?? status
 }
 
-/** Цвета для статусов бэкфилла (Tailwind classes) */
+/** Цвета для статусов бэкфилла (semantic tokens, P2 wave-5 — production-dead
+ * channel, zero callers; soft tint + same-hue text, gray → muted idiom) */
 const BACKFILL_STATUS_COLORS: Record<BackfillStatus, string> = {
-  pending: 'text-gray-500 bg-gray-100',
-  in_progress: 'text-blue-600 bg-blue-100',
-  completed: 'text-green-600 bg-green-100',
-  failed: 'text-red-600 bg-red-100',
-  paused: 'text-yellow-600 bg-yellow-100',
+  pending: 'text-muted-foreground bg-muted',
+  in_progress: 'text-status-information bg-status-information/15',
+  completed: 'text-status-success bg-status-success/15',
+  failed: 'text-status-error bg-status-error/15',
+  paused: 'text-status-warning bg-status-warning/15',
 }
 
 /** Получение CSS классов цвета для статуса бэкфилла */
 export function getBackfillStatusColor(status: BackfillStatus): string {
-  return BACKFILL_STATUS_COLORS[status] ?? 'text-gray-500 bg-gray-100'
+  return BACKFILL_STATUS_COLORS[status] ?? 'text-muted-foreground bg-muted'
 }

@@ -100,6 +100,15 @@ function FilterChip({
   disabled,
 }: FilterChipProps) {
   const isNeutral = variant === 'neutral'
+  // P2 wave-5 fix (review pass-1 finding 1): SOLID tiers keep bgColor ===
+  // bgColorActive, so an active solid chip is pixel-identical to its inactive
+  // state (border-status-X on bg-status-X is same-hue; only the <3:1 count
+  // badge differs). Restore the active affordance with the repo's
+  // selected-state ring idiom (CoefficientCalendarCells.tsx:58 isSelected
+  // pattern). Soft tiers already discriminate via bg tint + border, neutral
+  // via bg-muted + border-border — neither gets the ring.
+  const isSolidTier =
+    !!config && config.bgColor.length > 0 && config.bgColor === config.bgColorActive
 
   const chipClasses = cn(
     'inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-sm font-medium',
@@ -108,13 +117,21 @@ function FilterChip({
     {
       'bg-muted text-muted-foreground border-transparent': isNeutral && !isActive,
       'bg-muted text-foreground border-border': isNeutral && isActive,
-      [config?.bgColor ?? '']: !isNeutral && !isActive,
-      [config?.bgColorActive ?? '']: !isNeutral && isActive,
+      // Single computed bg key: P2 wave-5 solid tiers have bgColor === bgColorActive,
+      // and two computed keys with the SAME name collapse in the object literal
+      // (later `false` wins), silently dropping the inactive chip's background.
+      // That same equality flattens the solid tiers' two states into one look,
+      // so an active solid chip additionally carries the selected-state ring
+      // below (>=3:1 vs card, harness W5-G) as its state affordance.
+      [(isActive ? config?.bgColorActive : config?.bgColor) ?? '']: !isNeutral,
       [config?.color ?? '']: !isNeutral,
       'border-transparent': !isNeutral && !isActive,
       [config?.borderColor ?? '']: !isNeutral && isActive,
       'opacity-50 cursor-not-allowed': disabled,
-    }
+    },
+    // Solid-tier active affordance: variadic clsx arg (cond && 'class' is not
+    // valid inside the object literal above).
+    isSolidTier && isActive && 'ring-2 ring-ring ring-offset-1'
   )
 
   const ariaLabel = `${label}: ${count} элементов${isActive ? ', выбрано' : ''}`
