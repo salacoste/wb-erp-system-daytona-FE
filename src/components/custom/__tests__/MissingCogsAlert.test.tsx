@@ -458,7 +458,7 @@ describe('Story 42.3-FE: Accessibility', () => {
   })
 
   describe('color contrast', () => {
-    it('amber text on amber-50 background meets 4.5:1 ratio', () => {
+    it('alert renders with solid warning host (wave-4 semantic tokens)', () => {
       render(<MissingCogsAlert {...createMockProps()} />)
       const alert = screen.getByRole('alert')
       expect(alert).toBeInTheDocument()
@@ -497,18 +497,18 @@ describe('Story 42.3-FE: Styling', () => {
   })
 
   describe('color scheme', () => {
-    it('uses amber warning color scheme', () => {
+    it('uses warning status color scheme', () => {
       render(<MissingCogsAlert {...createMockProps()} />)
       const alert = screen.getByRole('alert')
       expect(alert.className).toContain('relative')
     })
 
-    it('badge uses amber outline variant', () => {
+    it('badge uses warning outline variant on solid alert host', () => {
       render(<MissingCogsAlert {...createMockProps()} />)
       const badge = screen.getByText('45 товаров')
-      expect(badge.className).toContain('border-yellow-500')
-      expect(badge.className).toContain('text-yellow-700')
-      expect(badge.className).toContain('bg-yellow-100')
+      expect(badge.className).toContain('border-status-warning/40')
+      expect(badge.className).toContain('text-status-warning')
+      expect(badge.className).toContain('bg-card')
     })
   })
 

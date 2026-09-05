@@ -164,7 +164,7 @@ describe('Story 60.3-FE: AC2 - Positive Comparison', () => {
         <MetricCardEnhanced {...createMockProps({ value: 110, previousValue: 100 })} />
       )
       const indicator = screen.getByTestId('trend-indicator')
-      expect(indicator).toHaveClass('text-green-600')
+      expect(indicator).toHaveClass('text-financial-positive')
     })
 
     it('shows up arrow for positive change', () => {
@@ -179,7 +179,7 @@ describe('Story 60.3-FE: AC2 - Positive Comparison', () => {
         <MetricCardEnhanced {...createMockProps({ value: 110, previousValue: 100 })} />
       )
       const badge = screen.getByTestId('comparison-badge')
-      expect(badge).toHaveClass('bg-green-100', 'text-green-700')
+      expect(badge).toHaveClass('bg-financial-positive/10', 'text-foreground')
     })
   })
 })
@@ -211,7 +211,7 @@ describe('Story 60.3-FE: AC2 - Negative Comparison', () => {
         <MetricCardEnhanced {...createMockProps({ value: 90, previousValue: 100 })} />
       )
       const indicator = screen.getByTestId('trend-indicator')
-      expect(indicator).toHaveClass('text-red-500')
+      expect(indicator).toHaveClass('text-financial-negative')
     })
 
     it('shows down arrow for negative change', () => {
@@ -226,7 +226,7 @@ describe('Story 60.3-FE: AC2 - Negative Comparison', () => {
         <MetricCardEnhanced {...createMockProps({ value: 90, previousValue: 100 })} />
       )
       const badge = screen.getByTestId('comparison-badge')
-      expect(badge).toHaveClass('bg-red-100', 'text-red-700')
+      expect(badge).toHaveClass('bg-financial-negative/10', 'text-foreground')
     })
   })
 })
@@ -266,7 +266,7 @@ describe('Story 60.3-FE: AC3 - Neutral Comparison', () => {
         <MetricCardEnhanced {...createMockProps({ value: 100, previousValue: 100 })} />
       )
       const badge = screen.getByTestId('comparison-badge')
-      expect(badge).toHaveClass('bg-gray-100', 'text-gray-600')
+      expect(badge).toHaveClass('bg-muted', 'text-muted-foreground')
     })
   })
 })
@@ -298,7 +298,7 @@ describe('Story 60.3-FE: AC10 - Inverted Comparison', () => {
       )
       // Lower expense is good = green
       const indicator = screen.getByTestId('trend-indicator')
-      expect(indicator).toHaveClass('text-green-600')
+      expect(indicator).toHaveClass('text-financial-positive')
     })
 
     it('shows red when expense increases (invertComparison=true)', () => {
@@ -313,7 +313,7 @@ describe('Story 60.3-FE: AC10 - Inverted Comparison', () => {
       )
       // Higher expense is bad = red
       const indicator = screen.getByTestId('trend-indicator')
-      expect(indicator).toHaveClass('text-red-500')
+      expect(indicator).toHaveClass('text-financial-negative')
     })
 
     it('shows green badge when expense decreases', () => {
@@ -327,7 +327,7 @@ describe('Story 60.3-FE: AC10 - Inverted Comparison', () => {
         />
       )
       const badge = screen.getByTestId('comparison-badge')
-      expect(badge).toHaveClass('bg-green-100')
+      expect(badge).toHaveClass('bg-financial-positive/10')
     })
   })
 })
@@ -572,12 +572,12 @@ describe('Story 60.3-FE: TrendIndicator Component', () => {
   describe('rendering', () => {
     it('applies correct color for positive', () => {
       render(<TrendIndicator direction="positive" />)
-      expect(screen.getByTestId('trend-indicator')).toHaveClass('text-green-600')
+      expect(screen.getByTestId('trend-indicator')).toHaveClass('text-financial-positive')
     })
 
     it('applies correct color for negative', () => {
       render(<TrendIndicator direction="negative" />)
-      expect(screen.getByTestId('trend-indicator')).toHaveClass('text-red-500')
+      expect(screen.getByTestId('trend-indicator')).toHaveClass('text-financial-negative')
     })
 
     it('applies correct color for neutral', () => {
@@ -638,17 +638,26 @@ describe('Story 60.3-FE: ComparisonBadge Component', () => {
   describe('badge colors', () => {
     it('has green background for positive direction', () => {
       renderWithTooltip(<ComparisonBadge percentageChange={10} direction="positive" />)
-      expect(screen.getByTestId('comparison-badge')).toHaveClass('bg-green-100', 'text-green-700')
+      expect(screen.getByTestId('comparison-badge')).toHaveClass(
+        'bg-financial-positive/10',
+        'text-foreground'
+      )
     })
 
     it('has red background for negative direction', () => {
       renderWithTooltip(<ComparisonBadge percentageChange={-10} direction="negative" />)
-      expect(screen.getByTestId('comparison-badge')).toHaveClass('bg-red-100', 'text-red-700')
+      expect(screen.getByTestId('comparison-badge')).toHaveClass(
+        'bg-financial-negative/10',
+        'text-foreground'
+      )
     })
 
     it('has gray background for neutral direction', () => {
       renderWithTooltip(<ComparisonBadge percentageChange={0} direction="neutral" />)
-      expect(screen.getByTestId('comparison-badge')).toHaveClass('bg-gray-100', 'text-gray-600')
+      expect(screen.getByTestId('comparison-badge')).toHaveClass(
+        'bg-muted',
+        'text-muted-foreground'
+      )
     })
   })
 

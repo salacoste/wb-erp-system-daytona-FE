@@ -22,20 +22,24 @@ interface DataSourceConfig {
   description: string
 }
 
+// Wave-4 boundary sweep (debt/p2-w4-component-families): semantic status tokens, W2a
+// pattern on card mount (FbsTrendsChart surface). Measured both themes over card
+// (harness /tmp/p2-w4-contrast.mjs): success/5 4.80/8.72 (success/10 = 4.49 light FAIL
+// -> /5 per house rule), information/10 4.98/7.32, pending/10 7.87/6.83 — all AA.
 const DATA_SOURCE_CONFIG: Record<DataSourceInfo['primary'], DataSourceConfig> = {
   orders_fbs: {
     label: 'Реалтайм',
-    colorClass: 'bg-green-100 text-green-800 border-green-200',
+    colorClass: 'bg-status-success/5 text-status-success border-status-success/20',
     description: 'Данные из API заказов FBS (последние 30 дней)',
   },
   reports: {
     label: 'Ежедневно',
-    colorClass: 'bg-blue-100 text-blue-800 border-blue-200',
+    colorClass: 'bg-status-information/10 text-status-information border-status-information/20',
     description: 'Ежедневные отчёты (31-90 дней)',
   },
   analytics: {
     label: 'Еженедельно',
-    colorClass: 'bg-purple-100 text-purple-800 border-purple-200',
+    colorClass: 'bg-status-pending/10 text-status-pending border-status-pending/20',
     description: 'Еженедельные агрегаты (91-365 дней)',
   },
 }

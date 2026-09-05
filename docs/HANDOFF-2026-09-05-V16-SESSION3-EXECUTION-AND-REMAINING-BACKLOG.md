@@ -35,7 +35,9 @@
 
 ## 3. Оставшийся объём работ — по приоритету
 
-### 3.0 ⏭ СЛЕДУЮЩИЙ ITEM — P2 boundary волна-4: «компонентные семьи» (live-counts 2026-09-05)
+### 3.0 ✅ ИСПОЛНЕНО 2026-09-05 (сессия-4) — P2 boundary волна-4: «компонентные семьи»
+
+> **Update 2026-09-05 (сессия-4)**: волна-4 исполнена — 16 файлов / 105 сайтов, boundary **372→267**, манифест 174.3 регенерирован раннером, 3 ревью-прохода (сходимость). Артефакт: `debt-p2-w4-component-families.md`; прецеденты: purple→status-pending, hover-стек таблиц, ANCHOR-2=remedy. Chart-hex компонентов (37) отложен до C5. **Следующий item — §3.1 волна-5 lib-residue.** Каталог ниже — исторический срез.
 
 Каталог-остаток после волн 1-3 (src/components = 142): `badges/SourceBadge.tsx` 16 · `jam/RequireJam.tsx` 13 · `AdvertisingEmptyState.tsx` 13 · `expense-chart-badge.tsx` 13 · `MissingCogsAlert.tsx` 12 · `ComparisonBadge.tsx` 6 · `analytics/FbsTrendsTooltip.tsx` 6 · `SidebarCabinetInfo.tsx` 7 · `ComparisonHelpers.tsx` 4 · `AllocatedMarker.tsx`/`TrendIndicator.tsx` ×2 · `DataSourceIndicator.tsx` 9 · `CogsSubRows`-хвосты... (полный live-скан: grep-команда в §5-точках входа; **каталог 174.2 дрейфует — всегда live-пересчёт**).
 - Канон: волны 1-2 (маппинг по смыслу) + **волна-3 (слоистая модель — ОБЯЗАТЕЛЬНА: трассировать цепочку монтирования каждого сайта; харнесс `/tmp/p2-w3-aa-contrast.mjs` паттерн — стеки + worst-end)**; structural-ремедии когда база тонирована

@@ -83,9 +83,13 @@ export function MissingCogsAlert({
           <TooltipProvider>
             <Tooltip>
               <TooltipTrigger asChild>
+                {/* Wave-4 boundary sweep: the host Alert variant="warning" is a SOLID pair
+                    (bg-status-warning + text-status-warning-foreground, ui/alert.tsx:14-15) in
+                    every mount context, so this counter-chip is measured over the solid base:
+                    bg-card chip + warn text = 4.81/13.38 (bg-tint-on-solid would not composite). */}
                 <Badge
                   variant="outline"
-                  className="cursor-help border-yellow-500 text-yellow-700 bg-yellow-100"
+                  className="cursor-help border-status-warning/40 bg-card text-status-warning"
                   tabIndex={0}
                 >
                   {missingCount} {pluralizeProduct(missingCount)}
@@ -98,11 +102,11 @@ export function MissingCogsAlert({
                     <li key={id}>• {id}</li>
                   ))}
                   {remainingInList > 0 && (
-                    <li className="text-gray-400">и ещё {remainingInList}...</li>
+                    <li className="text-muted-foreground">и ещё {remainingInList}...</li>
                   )}
                 </ul>
                 {showTotalNote && (
-                  <p className="text-xs text-gray-400 mt-1 pt-1 border-t border-gray-600">
+                  <p className="text-xs text-muted-foreground mt-1 pt-1 border-t border-border">
                     Всего: {missingCount} / показаны первые {missingProducts.length}
                   </p>
                 )}
@@ -113,7 +117,7 @@ export function MissingCogsAlert({
           // Aggregate-level usages (by-brand/by-category margin banner, dashboard) pass no
           // nmId list — render a bare count badge WITHOUT a tooltip, so keyboard users never
           // land on a help affordance that only said «Список недоступен».
-          <Badge variant="outline" className="border-yellow-500 text-yellow-700 bg-yellow-100">
+          <Badge variant="outline" className="border-status-warning/40 bg-card text-status-warning">
             {missingCount} {pluralizeProduct(missingCount)}
           </Badge>
         )}
@@ -135,11 +139,15 @@ export function MissingCogsAlert({
         )}
       </AlertDescription>
 
-      {/* Dismiss button - only show if onDismiss provided or always allow dismiss */}
+      {/* Dismiss button - only show if onDismiss provided or always allow dismiss.
+          Wave-4: on the SOLID warning alert the icon inherits the canonical solid-pair text
+          (status-warning-foreground, 4.81/11.41 vs solid warn); hover tint uses the same
+          foreground token so the shift is visible over both light (lighten) and dark
+          (darken) solid bases — hover-state icon contrast 3.99/9.48 (>=3:1 non-text). */}
       <Button
         variant="ghost"
         size="icon"
-        className="absolute top-2 right-2 h-8 w-8 min-h-[44px] min-w-[44px] text-yellow-700 hover:text-yellow-900 hover:bg-yellow-200"
+        className="absolute top-2 right-2 h-8 w-8 min-h-[44px] min-w-[44px] text-status-warning-foreground hover:bg-status-warning-foreground/10"
         onClick={handleDismiss}
         aria-label="Закрыть уведомление"
       >

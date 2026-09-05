@@ -25,11 +25,23 @@ export interface ComparisonBadgeProps {
   className?: string
 }
 
-/** Background and text color classes by direction */
+/** Background and text color classes by direction.
+ * Wave-4 boundary sweep: money-direction valence via financial tokens. This badge mounts
+ * BOTH on plain cards and on highlighted gradient cards (BaseMetricCard isHighlighted:
+ * from-status-success/10 to-card), so colored financial text on a tint fails worst-end
+ * (finPos/5 on gradient = 4.22 light; neg/5 = 4.57 marginal) -> structural remedy
+ * fg-on-tint (wave-3 canon), applied to both directions for symmetric valence:
+ * text-foreground on the valence tint; valence carried by tint + +/- label.
+ * Measured over the full real stack (card > gradient worst-end success/10 > badge
+ * fin/10 tint > fg — pass-1 review recalc): pos 12.45/12.60, neg 12.11/12.80; over
+ * plain card pos 14.11/15.36, neg 13.75/15.48; neutral opaque bg-muted 7.17/8.06.
+ * All AA both themes. fg-on-tint is hue-robust (pass-2): gradient hosts also carry
+ * warn/error ends (TheoreticalProfit/GrossProfit/Net/OperatingProfitCard) — fg
+ * measures >=11 on every end. */
 const COLOR_MAP: Record<TrendDirection, string> = {
-  positive: 'bg-green-100 text-green-700',
-  negative: 'bg-red-100 text-red-700',
-  neutral: 'bg-gray-100 text-gray-600',
+  positive: 'bg-financial-positive/10 text-foreground',
+  negative: 'bg-financial-negative/10 text-foreground',
+  neutral: 'bg-muted text-muted-foreground',
 }
 
 /**

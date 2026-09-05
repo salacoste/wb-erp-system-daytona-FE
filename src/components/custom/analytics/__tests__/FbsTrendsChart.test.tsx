@@ -483,7 +483,7 @@ describe('FbsTrendsChart - Data Source Integration', () => {
   it('renders badge with correct green styling for orders_fbs', () => {
     mockSuccessResponse(mockTrends30DaysResponse)
     renderChart()
-    expect(screen.getByText('Реалтайм').className).toContain('bg-green-100')
+    expect(screen.getByText('Реалтайм').className).toContain('bg-status-success/5')
   })
 })
 

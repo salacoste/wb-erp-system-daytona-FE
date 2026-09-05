@@ -16,11 +16,15 @@ import { isJamTierSufficient, JAM_TIER_LABELS } from '@/types/cabinet'
 import type { JamTier } from '@/types/cabinet'
 import { features } from '@/config/features'
 
+// Wave-4 boundary sweep (debt/p2-w4-component-families): semantic tokens. These chips
+// render over the gate overlay (bg-popover/60 below) on the page background — measured
+// over stack background > popover/60 (light 4.98-7.87 / dark 6.77-12.13, all AA;
+// warning/10 = 4.24 light FAIL -> /5 = 4.52). Same map as SidebarCabinetInfo JAM_TIER_COLORS.
 const JAM_TIER_COLORS: Record<JamTier, string> = {
-  none: 'bg-gray-100 text-gray-600',
-  standard: 'bg-blue-100 text-blue-700',
-  advanced: 'bg-purple-100 text-purple-700',
-  unknown: 'bg-amber-100 text-amber-700', // indicate an unrecognised backend tier
+  none: 'bg-muted text-muted-foreground',
+  standard: 'bg-status-information/10 text-status-information',
+  advanced: 'bg-status-pending/10 text-status-pending',
+  unknown: 'bg-status-warning/5 text-status-warning', // indicate an unrecognised backend tier
 }
 
 interface RequireJamProps {
@@ -66,8 +70,11 @@ export function RequireJam({ requiredTier, children, previewContent }: RequireJa
 
   // Slow/error/no data → fail closed with explicit state instead of indefinite shimmer.
   if (isError || !data) {
+    // Wave-4: fg-on-tint warning block on the page background (legacy yellow-900 text was
+    // already dark-on-tint semantics; warn-text on warn/10 = 4.24 light FAIL -> foreground,
+    // 14.18/15.89). Valence carried by tint + border.
     return (
-      <div className="rounded-lg border border-yellow-200 bg-yellow-50 p-4 text-sm text-yellow-900">
+      <div className="rounded-lg border border-status-warning/20 bg-status-warning/10 p-4 text-sm text-foreground">
         Статус подписки WB Джем недоступен или загружается дольше обычного. Доступ закрыт до
         подтверждения подписки.
       </div>
@@ -85,14 +92,23 @@ export function RequireJam({ requiredTier, children, previewContent }: RequireJa
       <div className="blur-[8px] opacity-40 pointer-events-none select-none" aria-hidden="true">
         {previewContent ?? <DefaultPreview />}
       </div>
+      {/* Wave-4 layer remedy: bg-white/60 -> bg-popover/60 (theme-aware glass). The literal
+          white overlay breaks theme-aware tokens in dark mode (foreground on white/60 dark =
+          2.60); popover/60 keeps the light look identical and gives dark mode a dark glass
+          (popover = tooltip/popover surface token). Measured: fg 16.10/17.98,
+          muted-foreground 7.81/9.99 over background > popover/60. Scope (pass-2):
+          attested for the default Skeleton preview (bg-primary/10 barely darkens the
+          base); a future custom previewContent with dense dark content is NOT covered
+          (illustrative worst-case probe, not a token stack: dark chips >=5.6, light
+          standard chip ~4.4 — re-measure before shipping custom previews). */}
       <div
-        className="absolute inset-0 bg-white/60 backdrop-blur-sm z-10 rounded-lg flex items-center justify-center"
+        className="absolute inset-0 bg-popover/60 backdrop-blur-sm z-10 rounded-lg flex items-center justify-center"
         role="region"
         aria-label="Требуется подписка WB Джем"
       >
         <div className="text-center px-6">
-          <Lock className="h-12 w-12 text-gray-400 mx-auto mb-3" />
-          <p className="text-lg font-medium text-gray-700 mb-2">Доступно с подпиской WB Джем</p>
+          <Lock className="h-12 w-12 text-muted-foreground mx-auto mb-3" />
+          <p className="text-lg font-medium text-foreground mb-2">Доступно с подпиской WB Джем</p>
           <span
             className={`inline-block px-2 py-0.5 rounded text-xs font-medium mb-4 ${JAM_TIER_COLORS[requiredTier]}`}
           >
