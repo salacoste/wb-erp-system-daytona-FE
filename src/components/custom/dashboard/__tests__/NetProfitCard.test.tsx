@@ -216,3 +216,25 @@ describe('NetProfitCard (Story 66.6-FE)', () => {
     expect(card).toHaveClass('my-custom-class')
   })
 })
+
+// =============================================================================
+// /80-sweep contrast pins (p2-80-sweep)
+// Measured hover (before): warn/80 icon on grad(error/10→card) = 2.96:1 (FAIL
+// WCAG 1.4.11 ≥3). Base full warn on the gradient = 4.09:1 / 11.14:1 (PASS).
+// =============================================================================
+describe('NetProfitCard — /80-sweep contrast pins', () => {
+  it('inconsistency icon keeps full warn text (no hover-darken)', () => {
+    // net (120k after-tax) > operating (100k) → inconsistent → icon renders
+    renderCard({
+      taxMetrics: createTaxMetrics({ net_profit_after_tax: 120000 }),
+      payoutTotal: 250000,
+      saleGrossTotal: 200000,
+      operatingProfit: 100000,
+    })
+    const iconBtn = screen.getByRole('button', {
+      name: /противоречит операционной прибыли/i,
+    })
+    expect(iconBtn).toHaveClass('text-status-warning')
+    expect(iconBtn.className).not.toContain('/80')
+  })
+})

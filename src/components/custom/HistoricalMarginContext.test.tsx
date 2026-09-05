@@ -9,8 +9,19 @@ import { HistoricalMarginContext } from './HistoricalMarginContext'
 
 // Mock next/link
 vi.mock('next/link', () => ({
-  default: ({ children, href }: { children: React.ReactNode; href: string }) => (
-    <a href={href}>{children}</a>
+  // p2-80-sweep: forward className so style pins can assert on the anchor
+  default: ({
+    children,
+    href,
+    className,
+  }: {
+    children: React.ReactNode
+    href: string
+    className?: string
+  }) => (
+    <a href={href} className={className}>
+      {children}
+    </a>
   ),
 }))
 
@@ -162,6 +173,18 @@ describe('HistoricalMarginContext', () => {
     it('handles null lastSalesQty by showing 0', () => {
       render(<HistoricalMarginContext {...defaultProps} lastSalesQty={null} />)
       expect(screen.getByText(/0 шт/)).toBeInTheDocument()
+    })
+  })
+
+  describe('/80-sweep contrast pins (p2-80-sweep)', () => {
+    it('history link keeps full text-primary + underline affordance (no hover:/80 darken)', () => {
+      // Measured: hover primary/80 on card > muted/50 = 4.01:1 light (FAIL 4.5);
+      // base primary = 5.39:1 / 7.51:1 (PASS). Underline is the hover affordance.
+      render(<HistoricalMarginContext {...defaultProps} />)
+      const link = screen.getByRole('link', { name: /История продаж/i })
+      expect(link).toHaveClass('text-primary')
+      expect(link).toHaveClass('hover:underline')
+      expect(link.className).not.toContain('/80')
     })
   })
 })

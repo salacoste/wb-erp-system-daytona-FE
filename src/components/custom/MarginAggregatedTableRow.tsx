@@ -180,6 +180,8 @@ export function MarginAggregatedTableRow({
       <MissingCogsCell item={item} />
       <TableCell>
         {onEntityClick && entityValue && (
+          // p2-80-sweep: ExternalLink icon (non-text ≥3): primary/80 hover
+          // on row-hover muted/50 = 4.01 — PASS as-is.
           <button
             onClick={e => {
               e.stopPropagation()

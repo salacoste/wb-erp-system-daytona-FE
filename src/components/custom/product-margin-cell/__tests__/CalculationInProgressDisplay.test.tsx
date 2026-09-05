@@ -99,4 +99,22 @@ describe('CalculationInProgressDisplay', () => {
     const button = screen.getByRole('button', { name: /Пересчитать/ })
     expect(button).toBeDisabled()
   })
+
+  it('retry button keeps full warn text, drops hover-darken (p2-80-sweep)', () => {
+    // Measured hover (before): warn/80 over row-hover > hover-bg warn/10
+    // = 2.95:1 light (FAIL 4.5). Remediation: ghost default accent pair on
+    // hover (accent-fg on accent = 14.77/14.50 PASS); base = 4.61/12.14 PASS.
+    mockIsCogsAfterLastCompletedWeek.mockReturnValue(false)
+    render(
+      <CalculationInProgressDisplay
+        product={baseProduct}
+        {...defaultProps}
+        shouldShowRetryButton={vi.fn(() => true)}
+      />
+    )
+    const button = screen.getByRole('button', { name: /Пересчитать/ })
+    expect(button).toHaveClass('text-status-warning')
+    expect(button.className).not.toContain('/80')
+    expect(button.className).not.toContain('hover:bg-status-warning')
+  })
 })

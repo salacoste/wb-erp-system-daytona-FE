@@ -155,7 +155,9 @@ export function NetProfitCard({
               <TooltipTrigger asChild>
                 <button
                   type="button"
-                  className="text-status-warning hover:text-status-warning/80"
+                  // p2-80-sweep: hover warn/80 on grad(error/10→card) = 2.96:1
+                  // (<3 icon FAIL); full warn = 4.09:1 / 11.14:1 PASS.
+                  className="text-status-warning"
                   aria-label="Значение чистой прибыли противоречит операционной прибыли"
                 >
                   <AlertTriangle className="h-4 w-4" />

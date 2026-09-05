@@ -31,7 +31,7 @@
 
 ### 3.0 P2-остаток (главный кандидат на следующую сессию; порядок внутри — по окну)
 
-- **/80-sweep**: repo-wide `text-*/80` (3.2-3.45:1 исторические) — замер слоистой моделью (волна-3 канон) → solid/exception; кандидат расширения boundary-сканера (owner-согласование)
+- **/80-sweep — ✅ DONE (сессия-6, PR #410)**: 16 сайтов → 9 remediated + 6 PASS-as-is аттестовано + 1 owner-exception (OrganicTab → §3.3). Follow-ups: full-warn-on-warn/10 кластер, selected-row стеки, A3-маржа — реестр §9. Кандидат расширения boundary-сканера остаётся owner-вопросом
 - **FE-D3**: `getErrorMessage` эхо сырого error.message → bounded fallback + scrub + тесты (behavior; **tests-first**)
 - **FE-D1**: mutation retry:1 ретраит 4xx (WB-token PUT ×2; e2e пинит `putAttempts===2`) — behavior + e2e-пин update
 - **FE-D5**: cross-tab create duplication → Web Locks API
@@ -54,6 +54,7 @@ harness restart-per-run раннер · FR-7 (reseed nmId 202867769 W26 ИЛИ r
 |---|---|
 | **C5 chart-palette** — теперь гейтит ВЕСЬ boundary-остаток: **118 = 95 hex + 23 legacy-класса** (components 37: TrendGraph/expense-chart-config/trend-graph-config/LiquiditySummaryBar/advertising-tokens; app 17: route-charts; lib 61: liquidity-*/seasonal/ue-config-hex/chart-colors/fbs-fmt + hex-поля profitability 6/orders 5; types 3: JSDoc-комментарии supply-planning-config) | ⏳ варианты: categorical token-set (рекомендовано) / расширенные exceptions / accept-118. До решения — boundary-волны невозможны |
 | **WCAG 1.4.11 valence-каналы** (tint 1.07-1.21 / border 1.52-1.89; волна-5 добавила border-status-*/40 = **1.71-2.03 light** на всех базах) | ⏳ дизайн-решение: ≥3:1-носитель (solid-бордер/иконка) или accept; волны 2-5 единогласно дают один и тот же профиль |
+| **A2 OrganicTab /80-тир** (сессия-6 /80-sweep): `text-financial-positive/80` = **3.51 light FAIL** — делибератная идиома тиров iROAS (168.3/168.6, тест-пины целы). Альфа-альтернативы НЕпроходны (/90=4.23, /85=3.85) | ⏳ варианты: структурное различение тиров (full token + opacity на иконке/бейдже — рекомендовано) / accept-exception. До решения — консервативно сохранена |
 | financial-foreground токены | отложить (fg-on-tint закрывает) |
 | logger-redact волна | после P2-остатка (§3.0) |
 | FR-7 / AT-матрица / Manager-creds / docs-95 / prettier-md / pm2-id5 | ⏳ P3 |

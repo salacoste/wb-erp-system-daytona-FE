@@ -79,4 +79,14 @@ describe('COGSNotAssignedContext', () => {
     render(<COGSNotAssignedContext product={product} enableMarginDisplay={true} />)
     expect(screen.getByText('25.5 %')).toBeInTheDocument()
   })
+
+  it('history link keeps full text-primary + underline affordance (p2-80-sweep)', () => {
+    // Measured: hover primary/80 on card > muted/50 = 4.01:1 light (FAIL 4.5);
+    // base primary = 5.39:1 / 7.51:1 (PASS). Underline is the hover affordance.
+    render(<COGSNotAssignedContext product={baseProduct} enableMarginDisplay={true} />)
+    const link = screen.getByRole('link', { name: /История продаж/ })
+    expect(link).toHaveClass('text-primary')
+    expect(link).toHaveClass('hover:underline')
+    expect(link.className).not.toContain('/80')
+  })
 })

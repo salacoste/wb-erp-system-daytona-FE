@@ -57,7 +57,8 @@ export function ProfitBreakdownPopover({
         label: 'НДС к уплате',
         value: taxMetrics.vat_payable,
         sign: '-',
-        color: 'text-status-warning/80',
+        // p2-80-sweep: /80 = 3.33:1 light on bg-popover (FAIL); full = 4.81:1 PASS.
+        color: 'text-status-warning',
       })
     }
   }

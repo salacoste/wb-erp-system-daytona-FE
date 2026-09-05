@@ -34,12 +34,13 @@ export function OrdersEmptyState({ hasFilters, onClearFilters }: OrdersEmptyStat
       </p>
       {hasFilters && onClearFilters && (
         // Story 172.14-FE: raw button → ui Button (link); h-auto/px-0 strip the
-        // h-9/px-4 defaults; hover stays color-shift (no underline) as before
+        // h-9/px-4 defaults. p2-80-sweep: hover:text-primary/80 = 4.13:1 light
+        // (FAIL 4.5) — variant-default hover:underline is the hover affordance.
         <Button
           type="button"
           variant="link"
           onClick={onClearFilters}
-          className="h-auto px-0 py-0 text-sm font-medium hover:no-underline hover:text-primary/80"
+          className="h-auto px-0 py-0 text-sm font-medium"
         >
           Сбросить фильтры
         </Button>

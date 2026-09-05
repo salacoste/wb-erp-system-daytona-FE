@@ -131,7 +131,9 @@ export function COGSNotAssignedContext({
         href={`/analytics/sku?nm_id=${product.nm_id}`}
         className={cn(
           'mt-2 inline-flex items-center gap-1.5 text-xs font-medium',
-          'text-primary hover:text-primary/80 hover:underline',
+          // p2-80-sweep: hover:/80 = 4.01:1 light on card > muted/50 (FAIL 4.5);
+          // hover keeps full primary (5.39 PASS) — underline carries affordance.
+          'text-primary hover:underline',
           'focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 rounded',
           'transition-colors duration-150 ease-in-out',
           'active:scale-[0.98]'
