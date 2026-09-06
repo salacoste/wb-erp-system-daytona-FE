@@ -1,6 +1,8 @@
 import { useEffect, useRef, useState, type RefObject } from 'react'
 import type { UseFormReturn } from 'react-hook-form'
 
+import { sweepSettledClaim } from '@/lib/cabinetCreationLock'
+
 import type { CabinetFormData } from './CabinetCreationFormPresentation'
 import {
   CREATE_PENDING_PHASE,
@@ -35,7 +37,8 @@ type RecoveryState = {
   recoveryError: string | null
   recoveryErrorRef: RefObject<HTMLDivElement | null>
   setPhase: React.Dispatch<React.SetStateAction<WorkflowPhase>>
-  setRecoveryError: React.Dispatch<React.SetStateAction<string | null>>
+  /** R2: `source` 'blocked' alerts persist across the reconcile fall-through. */
+  setRecoveryError: (message: string | null, source?: 'recovery' | 'blocked') => void
 }
 
 export function useCabinetCreationRecovery({
@@ -47,11 +50,23 @@ export function useCabinetCreationRecovery({
   localOperationIds,
 }: Args): RecoveryState {
   const [phase, setPhase] = useState<WorkflowPhase>('restoring')
-  const [recoveryError, setRecoveryError] = useState<string | null>(null)
+  const [recoveryError, setRecoveryErrorText] = useState<string | null>(null)
   const [markerRevision, setMarkerRevision] = useState(0)
   const [reconcileRevision, setReconcileRevision] = useState(0)
   const appliedReconcileRevision = useRef(0)
   const recoveryErrorRef = useRef<HTMLDivElement>(null)
+  // R2 (review pass 3): discriminate alerts by CAUSE, not by text — N2 made the
+  // tombstone copy byte-identical to TOKEN_RECOVERY_MESSAGE, so the fall-through
+  // text-based nulling self-erased blocked alerts. 'blocked'-cause alerts
+  // (FE-D5 lock refusals) persist; 'recovery'-cause alerts stay self-erasing.
+  const recoveryErrorSourceRef = useRef<'recovery' | 'blocked'>('recovery')
+  const setRecoveryError = (
+    message: string | null,
+    source: 'recovery' | 'blocked' = 'recovery'
+  ) => {
+    recoveryErrorSourceRef.current = source
+    setRecoveryErrorText(message)
+  }
 
   useEffect(() => {
     const handleMarkerChange = (event: Event) => {
@@ -69,6 +84,9 @@ export function useCabinetCreationRecovery({
       setPhase('restoring')
       return
     }
+    // FE-D5: a reconciled cabinet resolves the uncertain-settlement tombstone —
+    // the lock's cabinetId re-check independently blocks any blind re-POST.
+    if (activeCabinetId) sweepSettledClaim(currentUserId)
     const read = readRecoveryMarker(currentUserId)
     if (read.kind === 'indeterminate') {
       setRecoveryError(SAFE_RECONCILIATION_MESSAGE)
@@ -124,8 +142,13 @@ export function useCabinetCreationRecovery({
       setPhase(marker.phase === TOKEN_RECOVERY_PHASE ? TOKEN_RECOVERY_PHASE : 'recovery-blocked')
       return
     }
-    setRecoveryError(error =>
-      error === TOKEN_RECOVERY_MESSAGE || error === SAFE_RECONCILIATION_MESSAGE ? null : error
+    // Raw state setter: going through the wrapper would RESET the source ref
+    // to 'recovery' before React lazily invokes this updater.
+    setRecoveryErrorText(error =>
+      recoveryErrorSourceRef.current === 'recovery' &&
+      (error === TOKEN_RECOVERY_MESSAGE || error === SAFE_RECONCILIATION_MESSAGE)
+        ? null
+        : error
     )
     setPhase(currentPhase =>
       activeCabinetId && (currentPhase === 'creating' || currentPhase === 'margin-recovery')

@@ -36,8 +36,11 @@ export type CreateAttemptSnapshot = {
   token: string | null
 }
 
-export const TOKEN_RECOVERY_MESSAGE =
-  'Кабинет уже создан, но не удалось обновить авторизацию. Не создавайте его повторно. Выйдите из аккаунта и войдите снова: требуется безопасная повторная авторизация и сверка кабинета с сервером.'
+// N2 (review pass 2): TOKEN_RECOVERY_MESSAGE has ONE canonical definition —
+// CABINET_CREATE_TOMBSTONE_BLOCK_MESSAGE in @/lib/cabinetCreationLock (the
+// FE-D5 tombstone uses the same copy). Re-exported here so existing saga
+// consumers keep their import path; never redefine the text locally.
+export { CABINET_CREATE_TOMBSTONE_BLOCK_MESSAGE as TOKEN_RECOVERY_MESSAGE } from '@/lib/cabinetCreationLock'
 export const SAFE_RECONCILIATION_MESSAGE =
   'Не удалось безопасно подтвердить состояние операции с кабинетом. Не отправляйте форму повторно. Выйдите из аккаунта и войдите снова: требуется безопасная повторная авторизация и сверка кабинета с сервером.'
 export const MARGIN_RECOVERY_MESSAGE =

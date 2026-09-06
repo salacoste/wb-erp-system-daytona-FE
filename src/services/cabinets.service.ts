@@ -8,13 +8,18 @@
 
 import { createCabinet } from '@/lib/api'
 import { updateCabinetTaxSettings } from '@/lib/api/cabinet'
+import { runCabinetCreateExclusive } from '@/lib/cabinetCreationLock'
 import { useAuthStore } from '@/stores/authStore'
 import type { CreateCabinetResponse } from '@/types/cabinet'
 import { logger } from '@/lib/logger'
-import type { ApiRequestOptions } from '@/types/api'
+import { ApiError, type ApiRequestOptions } from '@/types/api'
 
-/** Story 167.9: typed settlement outcome of a cabinet creation attempt. */
-export type CabinetSettlementStatus = 'applied' | 'stale' | 'indeterminate'
+/**
+ * Story 167.9: typed settlement outcome of a cabinet creation attempt.
+ * FE-D5 `blocked`: the cross-tab lock refused the create (another tab
+ * in-flight / tombstone / cabinet already landed) — no POST was made.
+ */
+export type CabinetSettlementStatus = 'applied' | 'stale' | 'indeterminate' | 'blocked'
 
 export interface CabinetSettlementResult {
   status: CabinetSettlementStatus
@@ -30,6 +35,8 @@ export interface CabinetSettlementResult {
   productsSyncTasks?: CreateCabinetResponse['productsSyncTasks']
   /** Durable Story 167.8 operation id for the initiating account's reconciliation. */
   operationId?: string
+  /** FE-D5: user-facing RU copy for `blocked` (which re-check refused). */
+  blockMessage?: string
 }
 
 /** Immutable snapshot of the session that initiated the create. */
@@ -77,21 +84,79 @@ function logStaleSettlement(status: CabinetSettlementStatus, operationId?: strin
 }
 
 /**
- * Creates a cabinet and conditionally settles the new JWT/cabinet into the
- * auth store — ONLY when the initiating session is still the live session.
+ * Creates a cabinet under the FE-D5 cross-tab lock and conditionally settles
+ * the new JWT/cabinet into the auth store — ONLY when the initiating session
+ * is still the live session.
  * ⚠️ КРИТИЧНО: После создания кабинета backend возвращает новый JWT токен.
  * Этот токен обновляется в auth store только если сессия не была заменена
  * (Story 167.9: account-scoped conditional settlement).
  *
  * @param cabinetName - Название кабинета
  * @param targetMarginPct - Целевая маржа (%)
- * @returns Typed settlement result: applied | stale | indeterminate.
- *   Stale/indeterminate results never mutate global auth state and never throw.
+ * @returns Typed settlement result: applied | stale | indeterminate | blocked.
+ *   Stale/indeterminate results never mutate global auth state and never throw;
+ *   `blocked` (FE-D5) means the cross-tab lock refused the create — no POST.
  * @throws Error только если создание/оформление не удалось в ЖИВОЙ (та же самая) сессии.
  */
 export async function handleCreateCabinet(
   cabinetName: string,
   targetMarginPct: number
+): Promise<CabinetSettlementResult> {
+  // FE-D5: mutual exclusion per account across tabs. Claim disposition is
+  // settlement-aware (review pass 1, F1 + pass 2, N1): a fully-`applied`
+  // create is CLEAN (claim removed); a POST that landed WITHOUT a clean
+  // applied settlement is UNCERTAIN (settled-uncertain tombstone,
+  // CABINET-BROWSER-04); a rejection before any resolved POST is CLEAN only
+  // when the server ANSWERED (4xx ApiError) — otherwise wire-ambiguous ⇒
+  // tombstone (a retry would mint a FRESH key ⇒ duplicate cabinet).
+  let postLanded = false
+  const outcome = await runCabinetCreateExclusive<CabinetSettlementResult>(
+    useAuthStore.getState().user?.id ?? null,
+    idempotencyKey =>
+      createAndSettleCabinet(
+        cabinetName,
+        targetMarginPct,
+        idempotencyKey,
+        () => (postLanded = true)
+      ),
+    runnerOutcome => {
+      if (!runnerOutcome.ok) {
+        if (postLanded) return 'uncertain'
+        // R3 (review pass 3): the wire layer ALWAYS wraps throwables as
+        // ApiError (api-client.ts request catch ⇒ `new ApiError(msg, 0, e)`),
+        // so a NON-ApiError rejection is a LOCAL throw before any POST could
+        // land ⇒ 'clean' (claim removal is duplication-safe; no permanent
+        // false tombstone for e.g. the unauthenticated guard).
+        if (!(runnerOutcome.error instanceof ApiError)) return 'clean'
+        // Wave-4 mandate (BE replay semantics: durable operation, no TTL): a
+        // wire-ambiguous rejection (4xx = definitive refusal ⇒ 'clean';
+        // 0/5xx = server never answered cleanly ⇒ 'ambiguous') keeps the
+        // claim's key — the deliberate retry REUSES it and the BE either
+        // replays the landed ghost POST or creates exactly one operation.
+        const status = runnerOutcome.error.status
+        if (status >= 400 && status < 500) return 'clean'
+        return 'ambiguous'
+      }
+      if (!postLanded) return 'clean'
+      return runnerOutcome.value.status === 'applied' ? 'clean' : 'uncertain'
+    }
+  )
+  if (outcome.kind === 'blocked') {
+    return { status: 'blocked', blockMessage: outcome.message }
+  }
+  return outcome.value
+}
+
+/**
+ * Settles one create attempt — runs INSIDE the FE-D5 cross-tab lock, so the
+ * Idempotency-Key arrives as a parameter (crash-takeover may hand us a dead
+ * tab's key; the BE replays it into the same durable operation).
+ */
+async function createAndSettleCabinet(
+  cabinetName: string,
+  targetMarginPct: number,
+  idempotencyKey: string,
+  markPostLanded: () => void
 ): Promise<CabinetSettlementResult> {
   const { token, refreshToken: refreshTokenInStore, user } = useAuthStore.getState()
 
@@ -110,11 +175,11 @@ export async function handleCreateCabinet(
     accountId: user?.id ?? null,
     sessionNonce,
   }
-  const idempotencyKey = crypto.randomUUID()
 
   let response: CreateCabinetResponse
   try {
     response = await createCabinet({ name: cabinetName }, { token, idempotencyKey })
+    markPostLanded()
   } catch (error) {
     // Stale failure: the session that initiated this create is gone — the live
     // session must not see an error for work it did not start.

@@ -41,9 +41,13 @@ export function CabinetCreationForm() {
     isMarginDirty: Boolean(form.formState.dirtyFields.targetMarginPct),
     localOperationIds: localOperationIds.current,
   })
-  const showRecoveryError = (message: string, phase: WorkflowPhase) => {
+  const showRecoveryError = (
+    message: string,
+    phase: WorkflowPhase,
+    source: 'recovery' | 'blocked' = 'recovery'
+  ) => {
     recovery.setPhase(phase)
-    recovery.setRecoveryError(message)
+    recovery.setRecoveryError(message, source)
     toast.error(message)
   }
   const createMutation = useCabinetCreateMutation({
