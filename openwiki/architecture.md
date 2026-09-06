@@ -58,10 +58,10 @@ sources:
     resource: repo://src/stores/authStore.ts
   - id: openwiki-source-98d5ddb014a0fd4d678f6f2a
     resource: repo://tsconfig.json
-generated: { by: "openwiki/0.5.0", at: "2026-09-05T08:47:50.295Z" }
+generated: { by: "openwiki/0.5.0", at: "2026-09-06T08:47:51.668Z" }
 verified:
   - by: openwiki/0.5.0
-    at: 2026-09-05T08:47:50.295Z
+    at: 2026-09-06T08:47:51.668Z
 ---
 # Architecture
 
@@ -116,7 +116,7 @@ Page (client component)
                   └─ X-Cabinet-Id: <cabinetId>
 ```
 
-TanStack Query is configured with a browser-singleton `QueryClient` to avoid recreation on re-render. See `src/app/providers.tsx` and `src/lib/queryClient.ts`.
+TanStack Query is configured with a browser-singleton `QueryClient` (fresh client per render on the server, reused browser client) to avoid recreation on re-render and to survive React suspending during initial render. Defaults come from `makeQueryClient()` in `src/app/providers.tsx`: `staleTime` 60s, `gcTime` 5min, `retry: 1` for queries with refetch on window focus/reconnect, and — per policy FE-D1 — mutations retry via `shouldRetryMutation()` (one retry, never on 4xx permanent client errors), pinned by a unit test in `src/lib/mutation-retry.test.ts`.
 
 Query keys use structured factory patterns (e.g., `cabinetSummaryKeys.all` / `.byParams(params)`) for granular cache invalidation. Files are organized as `src/hooks/*-query-keys.ts`.
 

@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "pageVersion": "sha256:2e859d2f7c7700c96c16c1604bc6c519725a5081efbca9b53f2efa763e51da9f",
+  "pageVersion": "sha256:4cf463af37e6def4846c4ac43a4424e3156554c542fe61d95d7303cd7dcaa4b1",
   "claims": [
     {
       "id": "claim_9bfdc04061f14b3bb2bb441081e614c3",
@@ -243,12 +243,12 @@
       "statement": "Profitability uses a shared six-status taxonomy with fixed operating-margin thresholds: excellent >25%, good 15–25%, warning 5–15%, critical 0–5%, loss <0%, unknown = COGS not assigned — declared both in EXTENDED_STATUS_CONFIG (profitability-utils.ts, with colors/classes/recommendations) and ProfitabilityStatus/PROFITABILITY_COLORS/PROFITABILITY_LABELS (sku-financials/core.ts, 168.11 /15-chip token classes).",
       "evidence": [
         {
-          "resource": "repo://src/lib/profitability-utils.ts#L36-L88",
-          "version": "repo-lines-v1:sha256:d9d3c9e2f1c6c931b9e718e3c57b4dad21889e88442c653d904389006bd4c62b:eyJzZWxlY3RlZExpbmVDb3VudCI6NTMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImE5YmNhMmZiYTJiMTc5MDUzNDg1ZTE4YzFjMmVlOTUzNTc0MzYwNGJhZmZhYjk2MDBlYWI3MTNjOWZlNjU4ZDUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjZkOTFkOTc1NTdmMWVjMzNhZmY3Mzg2ZWU1MzlmYzJmMTNjMmQ0OWQ5NjA1MjMzYTAyNzk0NzM1Y2Q5ZTc5MWMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImViODY2Y2U2N2M1MGU4NTRmMGRjOWRiM2IyY2NkNDM1ODRhNDU3ZGUyNzJhYWM0ODdkNTZhNWE1Yzc3MTllZDIifQ"
+          "resource": "repo://src/lib/profitability-utils.ts#L47-L99",
+          "version": "repo-lines-v1:sha256:a91598e41c6782d118a835012d27515138f0451826134cd6d372afa565570237:eyJzZWxlY3RlZExpbmVDb3VudCI6NTMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImE5YmNhMmZiYTJiMTc5MDUzNDg1ZTE4YzFjMmVlOTUzNTc0MzYwNGJhZmZhYjk2MDBlYWI3MTNjOWZlNjU4ZDUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjgwZjRlNDFlN2VmYTYzMzQ0NDZhZDkyNzllZjUyZmE0MWI3ZDBhZWNjYTJkZTE3MDgwODliNTJhYzBmNzNiY2UiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImViODY2Y2U2N2M1MGU4NTRmMGRjOWRiM2IyY2NkNDM1ODRhNDU3ZGUyNzJhYWM0ODdkNTZhNWE1Yzc3MTllZDIifQ"
         },
         {
-          "resource": "repo://src/types/sku-financials/core.ts#L31-L70",
-          "version": "repo-lines-v1:sha256:a3c8c0e4f57f54d93a94f51aa1818deda7b45c42ebd5f912fa49df738f23d50f:eyJzZWxlY3RlZExpbmVDb3VudCI6NDAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAzZjdlNDhhMTZiODhkM2RkNjIyOGFlZjU5OTg0MmQwOGEyM2U2MWE4NDFkZTY0MGQ3YjljOTA5Y2IwYzVhMmIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjM3ODY5ZDUxMmY2ZTBkN2I3NzlhZDIwMzNlZmZkODQxNTZjNjMyNTRjNGNmZmI2NjYyY2MxYzMxYTQ0MmM1NGQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6Ijc4OWZiYzhiZjY4MjE2MjA1OGY2YTc4MDZhNDY2NzE3M2ZiOWU5ZjQ0MTE2ZjNjNWUwNGNkMDQ5MWUyM2JmYTYifQ"
+          "resource": "repo://src/types/sku-financials/core.ts#L44-L70",
+          "version": "repo-lines-v1:sha256:da467ce9b6a4a85ec7abdc4ca27fbf7637a0fbd5fcb26b3dd81038ab89af3cf3:eyJzZWxlY3RlZExpbmVDb3VudCI6MjcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjI5MWFiMDNjZTEyZTU1ZmEzYjhkMWFjMTY2NjU0MjY1YmEwY2UzNmIxOTJlOTJiOTQwOTNiOWIxZjUyMDM4ZTQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjdkNDJhZDZkMGY5YjVhYmU4YjI1ZmRmMmMyYmFmOTk2N2Q4NDc3ZDA4NDkxMWQ0ZTU5OGZmM2M1Y2I3YjZhMzgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6Ijc4OWZiYzhiZjY4MjE2MjA1OGY2YTc4MDZhNDY2NzE3M2ZiOWU5ZjQ0MTE2ZjNjNWUwNGNkMDQ5MWUyM2JmYTYifQ"
         }
       ]
     },
@@ -268,7 +268,7 @@
       "evidence": [
         {
           "resource": "repo://src/lib/efficiency-utils.ts",
-          "version": "repo-file-v1:sha256:992e37156b536924a4732cf00941e3359e74e82c2dfcb232e81460cdc3af8c93"
+          "version": "repo-file-v1:sha256:cdf6a6d7d5e504540040176a08b42f890c54d484ab2416725de1f077ecd11ed7"
         }
       ]
     },
@@ -329,8 +329,8 @@
           "version": "repo-lines-v1:sha256:d28ae7176de70ca308b0593a5c760074f03e64cbcdd9cb85237096489c560024:eyJzZWxlY3RlZExpbmVDb3VudCI6NjIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImEyZTIzZmVkYTkzNjBjNDlhOWUwZDk0ZDNiM2Q2YmM3YmQxODA2NDcyZjA4MjI3ZDdiNzA0NmEwMzI4YzAwM2MiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImIyMzUyNTg5YzM0ZDNjNjA2ODU5MzFiNmVjYzRkNTA5OTFhN2M1NmM4ZmJhMjg5NDExNDY1NzY5MDI3MmNhYzMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjNjM2E3MTAzM2FjYTkwMmQ3MDk4NzRmYTNkNGRlYWUzNDYwZTA0ZTA1Y2MzMGY4MWMyZGYyMTEyMjA1YjRmM2YiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImQ1ZTU4OGNlOGEzMDhlYzljODFjMjAyY2U4MGU0MWZmM2M5YzlhOTU1ZTQ5M2M0NzAyYWRjODlmYzcxYWE2MmIifQ"
         },
         {
-          "resource": "repo://src/components/custom/useCabinetCreationRecovery.ts#L56-L135",
-          "version": "repo-lines-v1:sha256:309df0bb1c04ec0936dfcc03114d22ddbd5d7b89f361b70b2d5d4edc11ae57c0:eyJzZWxlY3RlZExpbmVDb3VudCI6ODAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjU5NjZmYmZhODg5OThkYTc0NjU2YzUwMTk0OTU2YzI1ZjA4NDk0NTc2NjBjMDA5ZmU2M2QxZTlmYTlkYzkzMWMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjE0MDgyYTBhNTlmNWNkM2M3Mzg1YWQ1ZTFhMDBhNDYxZDBiYWE1YWRhZjcyODRmYWZlNTE5ZmVkODY0ZDM3NzciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImM1NGQwYzc3MDQwYTQwNjlmNGUxN2Q5MWY0MDllZjJlZDBlYjE4ZmUwZjJkYTkwMDA5NDY4Y2U4M2ZkMDcwOTciLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjIwYzZiNjFhNWFhYmU4NzJhZDdmZTg2NmUzYjBiN2I4NjRiOWUzNGIwNTY1YmEyMzE1NGFjZmZhM2ZiOTg0NTYifQ"
+          "resource": "repo://src/components/custom/useCabinetCreationRecovery.ts#L44-L158",
+          "version": "repo-lines-v1:sha256:0535aae7e878c41d13c65e8f6d4c07b74da1e63b33a62161b68522419e33e406:eyJzZWxlY3RlZExpbmVDb3VudCI6MTE1LCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiJlOGI1YmYxNjAxYWRmYmY4ZWVjMjM4NmEwYzExOGFjZWNjNjE5MGE0NmU0YzUyNjY1NTQyYzI0YmIxODAwNGY3IiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiIxNDA4MmEwYTU5ZjVjZDNjNzM4NWFkNWUxYTAwYTQ2MWQwYmFhNWFkYWY3Mjg0ZmFmZTUxOWZlZDg2NGQzNzc3IiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiIxZWI3MTIyNThjMjNjZGZhNDcyMGJhYjBkOTNiZDFlMzRkMWE1ZTVkNzExNGEwZmYwZTk4ZmNjZWNhNWM5OGQ2IiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MywiZm9sbG93aW5nQ29udGV4dEhhc2giOiIyMGM2YjYxYTVhYWJlODcyYWQ3ZmU4NjZlM2IwYjdiODY0YjllMzRiMDU2NWJhMjMxNTRhY2ZmYTNmYjk4NDU2In0"
         }
       ]
     },
@@ -343,10 +343,50 @@
           "version": "repo-lines-v1:sha256:76d1f0543db59666beb7288d5d2a8773115de095fd6ff41b9efbdd99d02eaa90:eyJzZWxlY3RlZExpbmVDb3VudCI6OTMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImQzYzdhMzhmYjI2NjU5NTJmNTJjNWEyYjk2MWUxOWMwNmFkYzY4NDU3MTNiNDJiZGY0MmZlZDU2NzMyYjdjYmMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjhkYjE3MzhiOTNmNjZhN2MwMTM0NzI2Y2YwYWYzNTA0MWQ3ZDdhODI5YjA1YjUyYjkxNGUxYjBiNzEwZWNiYmEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
         }
       ]
+    },
+    {
+      "id": "claim_df6a9cd1ebb245988c74a16d39c0f7e0",
+      "statement": "calculateTwoLevelPricing (src/lib/two-level-pricing.ts, arithmetic in two-level-pricing-helpers.ts) implements the two-level price concept: Level 1 minimum price = fixedCosts.total / (1 − commission+acquiring+income-tax+VAT rate) with no margin/DRR; Level 2 recommended price adds DRR and target-margin rates to the divisor; both fall back to 0 when the rate reaches 1.0; customer price = recommendedPrice × (1 − spp_pct/100); income tax joins the percentage divisor while VAT applies only when is_vat_payer.",
+      "evidence": [
+        {
+          "resource": "repo://src/lib/two-level-pricing.ts#L46-L100",
+          "version": "repo-lines-v1:sha256:9381447a6e586e78b8ae6f85df20d80318a0a8d8bfd8f933ab43f9dd4ef6acce:eyJzZWxlY3RlZExpbmVDb3VudCI6NTUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjBhNDAxZWE4MDE0YmVjMjI5MmRjNmZmYzRhOTU4YWU2YmMwOTM4NzVhYWU1MTU0YmYxNzRmOGQyNDkzOTNkOTQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImYxZmJjOGIzYzFiYTI0M2Q0MWFkYmY5N2U1MTgyZTYxYjI4MGIwMGRkZmEyYzFjYTcxMTc0MDFmN2UyYjMyNWMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjlhYmQyODhjZDg1OWY3ZjU1YWFhZmU1MjkyNjhmNTRkMWM3M2VlNmMzNjM3M2VmZDQyOWQ3YmNlZTVmZmFlNWIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjRiNjY3N2VkNWYwOTdmM2FlMWVlOTM5ZTc4ZWE2ZGNjMTM2MTczNTVkMTkwZWRjMzA5MjQ3NTk3Zjg4OTNhYjkifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_6d565ae3af3042cb97298a2c5e267d26",
+      "statement": "COEFFICIENT_STATUS_CONFIG (src/lib/coefficient-types.ts, Stories 44.9/44.26a) normalizes raw integer WB coefficients (100 = 1.0) into decimal NormalizedCoefficient values with a 5-level tier system — base 0–1.0 (coefficient=0 with isAvailable=true means a FREE slot), elevated 1.01–1.5, high 1.51–2.0, peak >2.0, unavailable — each with semantic-token Tailwind classes and Russian labels.",
+      "evidence": [
+        {
+          "resource": "repo://src/lib/coefficient-types.ts#L7-L100",
+          "version": "repo-lines-v1:sha256:33e8118902e68adf792e41d853f0a40791ed32c2886113cfb3ad81a6613a7789:eyJzZWxlY3RlZExpbmVDb3VudCI6OTQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijg3NGRlN2NlMzkxYTlkY2JjNGU5NDc4OTczMjk5ODBjODRlNTUwMTYxZjVhNTQyYzhiMWZlZDg3N2Y5ZDBjZDgiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImU1ZmQwNTAzMTYzYTg4NjQ4NGY3NmE0MGMwNWJiNDA5ODU0MmJjYWFlNzZhOTJjZWQ3Y2ZmNzU2MTk2Y2FjNDIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjdiYmU1YzEzNWRiOWYyMTBjYWQ3YThhYzRjNWY3NjdiOTNlZDFhYTFmNjgxNDY1NTIyZDE0OTY2Zjk1MTRkMDAiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjdlMTZjODMxOGFiZDZlOTZhNjY1NWJlN2Q1NGEyMmRjOTQ5OTU5YTMzOGMwZDYxODgyMGE3YzM4ODI2YmNhYWIifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_73ef16e46ab44b8da7c60787ea62a2ff",
+      "statement": "efficiency-filter-config.ts (Story 63.4-FE) drives the advertising-dashboard filter chips: efficiencyFilterConfig carries per-status chip styling with separate inactive/active backgrounds (bgColor vs bgColorActive), FILTER_ORDER fixes the best→worst chip order, and calculateEfficiencyCounts groups AdvertisingItem[] by efficiency_status into a counts summary for live chip counts.",
+      "evidence": [
+        {
+          "resource": "repo://src/lib/efficiency-filter-config.ts#L29-L103",
+          "version": "repo-lines-v1:sha256:d618cf6c5f59decc9cdf122c56ab31bc934465bb9912a4d40ee0731b953fa6ca:eyJzZWxlY3RlZExpbmVDb3VudCI6NzUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijk2ZGQ0NjE1Y2RmOGMzZjk0OGI3NjdjODcxYWRiODVkZjM2N2M3NDZjNTlkNDhkZDJiZmMzYWNlZWRmYjI1MGUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijk4NTBmOTAwNTFjZTYwNTg1ZDgxODg5YWVjZGMwYzUyNmI0MTU3OWRjNDYwZTYwYzQ1OGZiNDNjYjdkMzM1ZjIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImM2ZmE4MmQ0ZGEzNDhhNWFhZTg1MDAzMjBmMWVmYzE1NWJmZTA4MTZjODEzYjk0MTUyMGU0MjQxNjc0ODY2NmEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjBmNWU3NTk0MWVkZDVlN2M0M2RjMzg5NTE5N2YxMjUzOWI0NzdhYWFiMzllNmViYjNjMWRkZGE1ZGZkMGRmMzAifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_3dbc013249c046e69364a8566d9325be",
+      "statement": "The FE-D5 cross-tab cabinet-create guard (src/lib/cabinetCreationLock.ts) serializes the POST behind a per-user navigator.locks lock plus a localStorage claim re-check; the claim carries the Idempotency-Key and phase (in-flight/settled-uncertain/failed-ambiguous), a crashed claim is takeover-eligible after CLAIM_TTL_MS (90 s), and a takeover within CLAIM_REPLAY_WINDOW_MS (180 s) reuses the dead tab's Idempotency-Key so the backend replays the canonical result instead of duplicating the cabinet; without Web Locks support the fallback keeps a narrow absent-absent race and is deliberately not fail-closed.",
+      "evidence": [
+        {
+          "resource": "repo://src/lib/cabinetCreationLock.ts#L1-L100",
+          "version": "repo-lines-v1:sha256:bfcaaa2f72ac130fdf5518baf9172eda97c6a417e8a1510dbec887160491c27c:eyJzZWxlY3RlZExpbmVDb3VudCI6MTAwLCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiJlYWYyMmNmMDczMjU5MmMyNDcxNDFjYmU2MWVmYTExMDEyNjEyZjVhMzEyMmI5YWY5YmJhZjUyZjU3MjRkMTk0IiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiI3NzU2OTUyYzU0OTI0ZTU4NGE0ZTk4YWJlODYwYjBmNDgxMTNmMDkwODUxNGIxOGY3MTUwOWQ3OGE2MTVmZmMxIiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MCwicHJlY2VkaW5nQ29udGV4dEhhc2giOiJlM2IwYzQ0Mjk4ZmMxYzE0OWFmYmY0Yzg5OTZmYjkyNDI3YWU0MWU0NjQ5YjkzNGNhNDk1OTkxYjc4NTJiODU1IiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MywiZm9sbG93aW5nQ29udGV4dEhhc2giOiIwY2JhYjRlM2ZkZjczNWIwMzkwYzFkZWY3ZmJlMDNhMWViMDA3YzJhOTVlYmJkY2Q5Y2I4NmVjOTEwZWU4MTEyIn0"
+        }
+      ]
     }
   ],
   "verification": {
     "by": "openwiki/0.5.0",
-    "at": "2026-09-05T08:47:50.295Z"
+    "at": "2026-09-06T08:47:51.668Z"
   }
 }

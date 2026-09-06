@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "pageVersion": "sha256:6a67a5cb93534f4cd1b1c9cc2efafadd49917a86f2a5d60a26fabeae53e0dfcd",
+  "pageVersion": "sha256:47a8bfbff3e8eaafca1b3fd64a9f92ee7a9f3fac07809064cada8ff27570e419",
   "claims": [
     {
       "id": "claim_633e3a28dfd14bdc90dc2ba40c9dfdd4",
@@ -108,19 +108,23 @@
     },
     {
       "id": "claim_12cb3fbbcc314d0f97169faa64a63920",
-      "statement": "Story 174.2 enforces a repository-wide design-system boundary: scripts/check-shadcn-ui-boundary.mjs (Node stdlib) scans all production src/**/*.{ts,tsx} for LEGACY_PALETTE and CONTEXTUAL_HEX patterns and ratchets against scripts/.shadcn-ui-boundary-baseline.txt, whose current value is 372 (523 at 174.2 close → 459 by 174.4's live re-run → 401 by P2 wave 1 financial-summary → 372 by P2 wave 2 margin, each drop lowering the baseline same-commit); it exits 0 at-or-below the baseline and 1 only on increase, and suppression requires a BOUNDARY_EXCEPTIONS entry with an owner/debt ID mirrored in the classification manifest — 3 entries remain (C5 waterfall categorical hex and two historical #7C3AED chart marks, 22 suppressed matches) after the F-10 FeedbackButtons exception was lifted 2026-09-02; the scanner has a 10-case self-test suite.",
+      "statement": "Story 174.2 enforces a repository-wide design-system boundary: scripts/check-shadcn-ui-boundary.mjs (Node stdlib) scans all production src/**/*.{ts,tsx} for LEGACY_PALETTE and CONTEXTUAL_HEX patterns and ratchets against scripts/.shadcn-ui-boundary-baseline.txt, whose current value is 118 (523 at 174.2 close → 459 by 174.4's live re-run → 401 by P2 wave 1 financial-summary → 372 by wave 2 margin → 267 by wave 4 component-families (−105, PR #407) → 118 by wave 5 lib-residue (−149, PR #408, 2026-09-05), each drop lowering the baseline same-commit; waves 3/6 and the /80-sweep held it unchanged); it exits 0 at-or-below the baseline and 1 only on increase, and suppression requires a BOUNDARY_EXCEPTIONS entry with an owner/debt ID mirrored in the classification manifest — 3 entries remain (C5 waterfall categorical hex and two historical #7C3AED chart marks, 22 suppressed matches) after the F-10 FeedbackButtons exception was lifted 2026-09-02; the scanner has a 10-case self-test suite. The boundary track is complete: the entire 118 residue (95 chart-hex + 23 legacy-palette classes: lib 61 + components 37 + app 17 + types 3) is blocked on the C5 chart-palette owner decision — no further boundary wave is possible without it.",
       "evidence": [
         {
-          "resource": "repo://_bmad-output/implementation-artifacts/debt-p2-boundary-wave1-finsum.md",
-          "version": "repo-file-v1:sha256:ecb88b025e82216e6096cb6a3d256d39579b834ccf92c27169a00df957048229"
+          "resource": "repo://_bmad-output/implementation-artifacts/debt-p2-w4-component-families.md",
+          "version": "repo-file-v1:sha256:97e3023ae2f2e11f622ba0d92920313869eeb12615e246c772d80f356b4596ef"
         },
         {
-          "resource": "repo://_bmad-output/implementation-artifacts/debt-p2-boundary-wave2-margin.md",
-          "version": "repo-file-v1:sha256:87f0aed261578520a830d0e67e31c1609b043d03232dc083e097669f0a32a4c8"
+          "resource": "repo://_bmad-output/implementation-artifacts/debt-p2-w5-lib-residue.md",
+          "version": "repo-file-v1:sha256:e7c636a29211c07e6e7e57b91ca4985d13ad327fbfc87a5e22bf07371ca1323d"
+        },
+        {
+          "resource": "repo://docs/HANDOFF-2026-09-05-V16-SESSION4-5-EXECUTION-AND-REMAINING-BACKLOG.md",
+          "version": "repo-file-v1:sha256:d01998e8303a8985460ea2cc5268850f08653de14023cea9090f520b7a3f0fdb"
         },
         {
           "resource": "repo://scripts/.shadcn-ui-boundary-baseline.txt",
-          "version": "repo-file-v1:sha256:ed57abc02a4ca626324ba2533c1363a21e9c2852d4c42426879978942051a70a"
+          "version": "repo-file-v1:sha256:f10f7170eeb4986f69d764a4cb97c3f8e9337963222188a647fc4c0ac289d0e4"
         },
         {
           "resource": "repo://scripts/check-shadcn-ui-boundary.mjs#L33-L52",
@@ -315,6 +319,6 @@
   ],
   "verification": {
     "by": "openwiki/0.5.0",
-    "at": "2026-09-05T08:47:50.295Z"
+    "at": "2026-09-06T08:47:51.668Z"
   }
 }

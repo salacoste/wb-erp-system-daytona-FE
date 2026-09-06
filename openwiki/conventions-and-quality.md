@@ -42,14 +42,22 @@ sources:
     resource: repo://src/app/(dashboard)/shipments/sku-packaging/__tests__/sku-packaging-presentation-source-contracts.test.ts
   - id: openwiki-source-0dd07dd4cd88fda7bfc7679a
     resource: repo://src/app/(dashboard)/supplies/%5Bid%5D/__tests__/supply-detail-presentation-source-contracts.test.ts
+  - id: openwiki-source-8d0f263ceba491caec34db6c
+    resource: repo://src/app/providers.tsx
   - id: openwiki-source-9ce5e1562aa7550a904ae8e6
     resource: repo://src/components/custom/dashboard/__tests__/dashboard-widgets-presentation-source-contracts.test.ts
+  - id: openwiki-source-be0dd10095970e7048ebf130
+    resource: repo://src/hooks/__tests__/supply-sticker-document-error-fallback.test.ts
+  - id: openwiki-source-77df4b425c7f7d6e1bd76726
+    resource: repo://src/lib/mutation-retry.ts
+  - id: openwiki-source-3b4dbdbe8d2f4037d2dd4991
+    resource: repo://src/lib/sanitize-fallback-message.ts
   - id: openwiki-source-fbadcd8591b65031efaaedce
     resource: repo://vitest.config.ts
-generated: { by: "openwiki/0.5.0", at: "2026-09-05T08:47:50.295Z" }
+generated: { by: "openwiki/0.5.0", at: "2026-09-06T08:47:51.668Z" }
 verified:
   - by: openwiki/0.5.0
-    at: 2026-09-05T08:47:50.295Z
+    at: 2026-09-06T08:47:51.668Z
 ---
 
 # Conventions & Quality Gates
@@ -170,7 +178,7 @@ Each story closes only when every quality gate matches its accepted baseline (th
 | Dot-locale percent | `npm run check:locale-percent` | Ratchet ↓ — current count 4 in `scripts/.locale-percent-baseline.txt` (started at ~108); lower the baseline when migrating |
 | AP#8 normalizer | `npm run check:anti-pattern-8-normalizer` | Ratchet guard vs baseline (`scripts/.anti-pattern-8-normalizer-baseline.txt`) |
 | ESLint | `npm run lint` | 0 errors, 0 warnings (zero-warning policy, `--max-warnings 0` in `lint` + `lint:fix`, Story 164.4) |
-| Vitest | `npm test -- --run` | ≥ 19436 passing / 0 failed (floor: 19118 after 174.2 dead-test deletion; then +237 from the 174.3 window, +8 contract tests 174.4, +52 redact suite debt-FE-D9, +6 nonce-mint suite D-1/PB-1, +3 urgency-tier suite C15, +12 reactive-refresh suite D-2/PB-3; additions OK, regressions not; skipped informational) |
+| Vitest | `npm test -- --run` | ≥ 19559 passing / 0 failed (floor: 19118 after 174.2 dead-test deletion; then +237 from the 174.3 window, +8 contract tests 174.4, +52 redact suite debt-FE-D9, +6 nonce-mint suite D-1/PB-1, +3 urgency-tier suite C15, +12 reactive-refresh suite D-2/PB-3, +3 wave-3 AA re-pins, +9 /80-sweep style pins, +16 FE-D3 sanitizer pins, +28 FE-D1 retry/ApiError-preservation pins, +29 FE-D5 web-locks/claim suite, +16 fe-d3-family hook-fallback pins, +22 wave-6 WCAG style pins; additions OK, regressions not; skipped informational) |
 | E2E bare skips | `npm run check:e2e-bare-skips` + `scripts/check-e2e-bare-skips.test.mjs` | No bare `.skip` without reason in owned E2E specs |
 | Max-lines cross-check | `npm run check:max-lines` | Matches the ESLint `max-lines` caps (200 source / 800 test) |
 | Privacy console guard | `npm run check:privacy` | 0 forbidden `console.*` calls in PII-adjacent files (see [Testing & Operations](testing-and-ops.md#privacy-console-check)) |
@@ -179,7 +187,7 @@ Each story closes only when every quality gate matches its accepted baseline (th
 | Playwright static boundary | `npx vitest run src/test/playwright-static-boundary.test.ts` | No raw `@playwright/test` imports / dynamic code outside approved modules |
 | E2E vacuous assertions (AP#6) | `npm run check:e2e-assertions` + `src/test/e2e-vacuous-assertions.test.ts` | AST scanner finds tautological assertions (`>= 0`, `\|\| true`, always-true) in owned E2E specs; self-test under `npm test` |
 | E2E fixed waits (AP#7) | `npm run check:e2e-waits` + `src/test/e2e-fixed-waits.test.ts` | AST scanner finds `waitForTimeout`, raw `setTimeout`, and arbitrary wait helpers (`sleep`/`delay`/`pause`) in owned E2E specs; self-test under `npm test` |
-| shadcn UI boundary | `node scripts/check-shadcn-ui-boundary.mjs` | 459 = ratchet baseline in `scripts/.shadcn-ui-boundary-baseline.txt` (exit 1 only on increase; ↓64 from the original Story 174.2 baseline of 523 — drop discovered by 174.4's live re-run, from the 174.3 window) — see below |
+| shadcn UI boundary | `node scripts/check-shadcn-ui-boundary.mjs` | 118 = ratchet baseline in `scripts/.shadcn-ui-boundary-baseline.txt` (exit 1 only on increase; ↓149 lib-residue wave-5, 2026-09-05 P2; was 267 after wave-4 ↓105 component families; earlier 372 after wave-2 ↓29 Margin family; original Story 174.2 baseline 523; residue = 95 chart-hex + 23 legacy-palette classes: lib 61 + components 37 + app 17 + types 3, all deferred to the C5-owner) — see below |
 | shadcn migration parity | `node scripts/check-shadcn-migration-parity.mjs` | Schema-v3 model validates clean: 94 BMAD stories = 94 OMX plans, 76 source routes = 76 route-ledger rows, zero defect codes (Story 174.1-FE) — see below |
 
 ### Ratchet gate behavior
@@ -224,7 +232,7 @@ flowchart TD
     B -- no --> F["exit 1 self-test-failed"]
     B -- yes --> C["scan src production files with LEGACY_PALETTE + CONTEXTUAL_HEX"]
     C --> D["subtract BOUNDARY_EXCEPTIONS suppressed files"]
-    D --> E{"total vs baseline 372?"}
+    D --> E{"total vs baseline 118?"}
     E -- greater --> G["exit 1 FAIL"]
     E -- equal --> H["PASS"]
     E -- less --> I["PASS + ratchet down, lower baseline in same commit"]
@@ -246,6 +254,31 @@ The validator rejects duplicates (stories, plans, branches, worktrees, frontmatt
 Both scripts ship node:test self-suites under `scripts/__tests__/`: the boundary suite pins the canon regexes (positives/negatives, 1-based line reporting, scope exclusion via temp dirs, baseline comparison and `--init`), and the parity suite asserts the clean repository corpus validates with zero errors, then injects defects into a cloned model to prove each code fires (missing/orphan/duplicate identities, count drift, forward edges, cycles, git stubbing).
 
 See [Migration Program](migration-program.md) for the program these gates protect and [Design System](design-system.md) for the token canon the boundary script enforces.
+
+## Mutation-Retry and Fallback-Sanitization Patterns (Debts FE-D1 / FE-D3)
+
+Two small `src/lib` modules encode debt-driven quality invariants that span the whole app; both are pinned by dedicated unit suites counted in the Vitest baseline above.
+
+### `shouldRetryMutation` — global mutation retry policy (FE-D1)
+
+`src/lib/mutation-retry.ts` exports the single predicate wired into the global QueryClient defaults (`src/app/providers.tsx`, `mutations.retry`). It replaced the previous blind `retry: 1` default, which re-issued every failed mutation once — including permanent 4xx client errors (a rejected WB-token PUT was sent twice) and throttled login attempts (login is capped at 5/hour). Semantics:
+
+- `failureCount >= 1` → never retry (preserves the historical at-most-one-retry cap)
+- `ApiError` with status 400–499 → never retry (permanent client error)
+- everything else (5xx, network failures, opaque values) → retry once
+
+Network failures arrive as `ApiError` with status 0 (api-client wraps fetch throwables), so the bare-`TypeError` branch is defense-in-depth, not the primary contract. The predicate can only classify errors that keep their `ApiError` type — mapped re-throws (e.g. `api-wb-token-errors.ts`) must preserve the class and original status, pinned by their own test. 429 Retry-After UX belongs to the UI layer (`RateLimitWarning`), not to blind retries. `src/lib/mutation-retry.test.ts` pins the classification matrix and asserts the predicate is actually registered as the QueryClient `mutations.retry` default.
+
+### `sanitizeFallbackMessage` — fallback error-text scrubbing (FE-D3)
+
+`src/lib/sanitize-fallback-message.ts` is the canonical home (extracted byte-identically from `src/components/custom/wb-token-form-helpers.ts`, which re-exports it) of the rule that a fallback error branch must never echo raw `error.message` verbatim — a malicious/buggy server can embed tokens, stack frames, or internal paths, which `WbTokenForm` (and now the supply/sticker/document mutation hooks `useCreateSupply`, `useCloseSupply`, `useGenerateStickers`, `useDownloadDocument`) render as-is. The pure helper:
+
+1. bounds hostile input to 4096 chars before scrubbing (bounds worst-case regex backtracking),
+2. scrubs a fixed `SCRUB_PATTERNS` list — V8 stack frames and `stack:` markers, scheme-agnostic URLs, POSIX/Windows paths, verbal SQL fragments, Prisma internals, JWT sequences (both full `header.payload.signature` and bare `eyJ` prefixes), 32+ hex blobs, and 40+ base64-ish blobs — each with documented false-positive trade-offs,
+3. collapses whitespace, returns a fixed Russian generic message when nothing survives, and
+4. truncates to 200 code points (never splitting surrogate pairs) at the last word boundary with an ellipsis.
+
+`src/components/custom/wb-token-form-helpers.test.ts` pins the scrub matrix, and `src/hooks/__tests__/supply-sticker-document-error-fallback.test.ts` pins the end-to-end behavior that the hooks display exactly `sanitizeFallbackMessage(<hostile message>)`.
 
 ## Two-Pass Review Discipline
 
@@ -293,4 +326,3 @@ This complements the [Two-Pass Review Discipline](#two-pass-review-discipline): 
 - **Error test pattern** — Always use `mockRejectedValueOnce` (not `mockRejectedValue`)
 - **Regex for locale assertions** — Use `/₽/`, `/\d+/` patterns in tests, not exact formatted strings
 - **No bare `TODO`** — covered above; `PENDING BACKEND:` / `FUTURE:` / ticket links only
-`TODO`** — covered above; `PENDING BACKEND:` / `FUTURE:` / ticket links only

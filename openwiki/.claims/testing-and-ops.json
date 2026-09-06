@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "pageVersion": "sha256:dd81e4a26fd273573e12ae4b7ccf9100f1ad258ae43b8bf240cfbe901ff5da30",
+  "pageVersion": "sha256:7cce87444cac3b99b33c88852cde45ac0e87810d0640a8e8e534ed58dac2ec41",
   "claims": [
     {
       "id": "claim_34d4e9ec9e0249299eb57f3e06db8784",
@@ -18,11 +18,11 @@
     },
     {
       "id": "claim_6f40c953f4a54d4f9d1a5f2db9c186a0",
-      "statement": "The current accepted full Vitest baseline (CLAUDE.md accepted-baselines table, `npm test -- --run`) is ≥ 19,439 passing / 0 failed. That value is the 19,118 floor set by Story 174.2-FE (2026-08-31) — itself an exact −756 tests / −22 files from 19,874/1,256 by deletion of 65 proven-dead test files (import-closure proved, no live test deleted) — plus +237 tests from the 174.3 window, +8 contract tests from 174.4, +52 redact-suite tests from debt-FE-D9, +6 nonce-mint tests (D-1/PB-1), +3 urgency-tier tests (C15), +12 reactive-refresh tests (D-2/PB-3), and +3 wave-3 AA re-pins. Earlier per-story peaks such as 19,874 are historical; the baseline is not a substitute for fresh per-story validation, and a story that legitimately moves it must update the table in the same PR.",
+      "statement": "The current accepted full Vitest baseline (CLAUDE.md accepted-baselines table, `npm test -- --run`) is ≥ 19,559 passing / 0 failed. That value is the 19,118 floor set by Story 174.2-FE (2026-08-31) — itself an exact −756 tests / −22 files from 19,874/1,256 by deletion of 65 proven-dead test files (import-closure proved, no live test deleted) — plus +237 tests from the 174.3 window, +8 contract tests from 174.4, +52 redact-suite tests from debt-FE-D9, +6 nonce-mint tests (D-1/PB-1), +3 urgency-tier tests (C15), +12 reactive-refresh tests (D-2/PB-3), +3 wave-3 AA re-pins, +9 /80-sweep style pins, +16 FE-D3 sanitizer pins, +28 FE-D1 retry/ApiError-preservation pins, +29 FE-D5 web-locks/claim suite, +16 fe-d3-family hook-fallback pins, and +22 wave-6 WCAG style pins. Earlier per-story peaks such as 19,874 are historical; the baseline is not a substitute for fresh per-story validation, and a story that legitimately moves it must update the table in the same PR.",
       "evidence": [
         {
           "resource": "repo://CLAUDE.md#L152-L154",
-          "version": "repo-lines-v1:sha256:46d4ed8a423cfadf971598856bbc84c2e05b5c5c1422cde66d10f20660b11abe:eyJzZWxlY3RlZExpbmVDb3VudCI6MywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMzA5YjZjYjdiYWIxNzE1YTU0YjU2MTI4ZjRhNmI4YmJmMTcxYzMzN2E3N2QwNDkzZTQwNzM3OTU5NTM0N2ExNSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiYmQ2ZmI0MjNjZmRiMDE2NmJmNWExZjAwMTcwMGVmNDZkMWE3M2IwOGIwOGMwMTE1M2FjMjY3YWIyM2E3Y2IwMyIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiYjI2MzVmN2RiNDE5YmEwN2NlYzQ2NDVkN2QyNTM0YmRjODcyOTViNGRhNDBkYTAyYzlkMzMxYzVmMGZlYjVkNiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNzczM2UzYTAyYTM4N2M1NzQzNGU1NDQ4OWVjMWI5OTI4NDE0NmQ4Y2YwMDA1NzFkZGRjYjBiYzVjYmQ5ZWI1ZSJ9"
+          "version": "repo-lines-v1:sha256:f8e0c60918753ecdb623b1a68bce10f580854eebb6eb7c1d1ce4347fdc7d8cb3:eyJzZWxlY3RlZExpbmVDb3VudCI6MywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMzA5YjZjYjdiYWIxNzE1YTU0YjU2MTI4ZjRhNmI4YmJmMTcxYzMzN2E3N2QwNDkzZTQwNzM3OTU5NTM0N2ExNSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiYjQwMWE3YWRkOTg1YjY1MDVlZWUwYmFmMTFlNDk1NTlmZGIwYmMwYzdjNzQ4Mzk5YjgwYTU5OTUyNzBkYzg0ZSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiYjI2MzVmN2RiNDE5YmEwN2NlYzQ2NDVkN2QyNTM0YmRjODcyOTViNGRhNDBkYTAyYzlkMzMxYzVmMGZlYjVkNiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNzczM2UzYTAyYTM4N2M1NzQzNGU1NDQ4OWVjMWI5OTI4NDE0NmQ4Y2YwMDA1NzFkZGRjYjBiYzVjYmQ5ZWI1ZSJ9"
         }
       ]
     },
@@ -110,15 +110,15 @@
     },
     {
       "id": "claim_9ad59c57b01b44fcaf18f91c92f97884",
-      "statement": "scripts/check-shadcn-ui-boundary.mjs (Story 174.2, no npm alias — invoke with `node scripts/…`) scans production src/**/*.{ts,tsx} (tests, __tests__, .d.ts, src/test excluded; relative-first enumeration) for LEGACY_PALETTE and CONTEXTUAL_HEX violations using the superset regex canon, groups them per route, totals them, and ratchets against the single-integer baseline scripts/.shadcn-ui-boundary-baseline.txt (372; born at 523 in 174.2, lowered to 401 by the 174.4 re-run, then ↓58 in Margin-family wave-1 removals and ↓29 in wave-2 plus the D-4 /15→/5 fold-in, 2026-09-03): exit 0 at or below baseline, exit 1 only on increase, and any decrease must lower the baseline in the same commit. Suppression is only via the exported BOUNDARY_EXCEPTIONS map (3 files — the C5 waterfall categorical hex and two historical `#7C3AED` chart marks; the former F-10 WCAG-contrast exception was lifted 2026-09-02), each entry carrying an owner/debt ID and mirrored 1:1 in the classification manifest; the script runs its 10-case node:test self-suite first and fails fast if it fails.",
+      "statement": "scripts/check-shadcn-ui-boundary.mjs (Story 174.2, no npm alias — invoke with `node scripts/…`) scans production src/**/*.{ts,tsx} (tests, __tests__, .d.ts, src/test excluded; relative-first enumeration) for LEGACY_PALETTE and CONTEXTUAL_HEX violations using the superset regex canon, groups them per route, totals them, and ratchets against the single-integer baseline scripts/.shadcn-ui-boundary-baseline.txt (118 as of the 2026-09-05 wave-5 lib-residue sweep ↓149 from 267; history: born at 523 in 174.2, 401 after the 174.4 re-run, ↓58 wave-1 and ↓29 wave-2 plus the D-4 /15→/5 fold-in to 372, ↓105 wave-4 component families to 267; residue = 95 chart-hex + 23 legacy-palette classes across lib 61 / components 37 / app 17 / types 3, deferred to the C5 owner): exit 0 at or below baseline, exit 1 only on increase, and any decrease must lower the baseline in the same commit. Suppression is only via the exported BOUNDARY_EXCEPTIONS map (3 files — the C5 waterfall categorical hex and two historical `#7C3AED` chart marks; the former F-10 WCAG-contrast exception was lifted 2026-09-02), each entry carrying an owner/debt ID and mirrored 1:1 in the classification manifest; the script runs its 10-case node:test self-suite first and fails fast if it fails.",
       "evidence": [
         {
-          "resource": "repo://CLAUDE.md#L154-L154",
-          "version": "repo-lines-v1:sha256:bd6fb423cfdb0166bf5a1f001700ef46d1a73b08b08c01153ac267ab23a7cb03:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiYmQ2ZmI0MjNjZmRiMDE2NmJmNWExZjAwMTcwMGVmNDZkMWE3M2IwOGIwOGMwMTE1M2FjMjY3YWIyM2E3Y2IwMyIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiYmQ2ZmI0MjNjZmRiMDE2NmJmNWExZjAwMTcwMGVmNDZkMWE3M2IwOGIwOGMwMTE1M2FjMjY3YWIyM2E3Y2IwMyIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiOGJhNDU3NmY4MzllZmQ1ZDkzZjhiNTdhMjY2MzI2MzYxOTkwZmFlODFlMGM3NzUyMDI1MjdlZjc0MTBmZmU3NiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNzczM2UzYTAyYTM4N2M1NzQzNGU1NDQ4OWVjMWI5OTI4NDE0NmQ4Y2YwMDA1NzFkZGRjYjBiYzVjYmQ5ZWI1ZSJ9"
+          "resource": "repo://CLAUDE.md#L152-L156",
+          "version": "repo-lines-v1:sha256:cd63e0f6b6688dcaa60c01aedb2ae9bbe6d74fd89ab928a3446eecf776730f22:eyJzZWxlY3RlZExpbmVDb3VudCI6NSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMzA5YjZjYjdiYWIxNzE1YTU0YjU2MTI4ZjRhNmI4YmJmMTcxYzMzN2E3N2QwNDkzZTQwNzM3OTU5NTM0N2ExNSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNjNkZjIzOGMwMTRmMzQ1M2Y2NWZlYzYwMjJkMjgwYTFiMTNjY2VlZTAzMjhhN2FlODFlZTVjZDFhYzY2ZDAzNyIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiYjI2MzVmN2RiNDE5YmEwN2NlYzQ2NDVkN2QyNTM0YmRjODcyOTViNGRhNDBkYTAyYzlkMzMxYzVmMGZlYjVkNiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiYjE5NmMzYTE0ZTZmMzIzNWM1NWUyM2Y3YTEyNThmYzJiNDQxZmYxYjc4YTU3ZTc0ZmM3MWU4ZjU0Mjc1ZmVjMyJ9"
         },
         {
           "resource": "repo://scripts/.shadcn-ui-boundary-baseline.txt",
-          "version": "repo-file-v1:sha256:ed57abc02a4ca626324ba2533c1363a21e9c2852d4c42426879978942051a70a"
+          "version": "repo-file-v1:sha256:f10f7170eeb4986f69d764a4cb97c3f8e9337963222188a647fc4c0ac289d0e4"
         },
         {
           "resource": "repo://scripts/__tests__/check-shadcn-ui-boundary.test.mjs",
@@ -283,10 +283,20 @@
           "version": "repo-lines-v1:sha256:056d23b5d444a7c9f8c70d39f817c89667cee2e33f37eaccbae99422399f1724:eyJzZWxlY3RlZExpbmVDb3VudCI6OTAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImZiMWJlMWZiNjBlZDAzNTA4ODVhNjczMzlmYWU2YmJkYThkYmU0MjA3YjQ3NDAzZDM2Y2ZmYjk1NDFhY2RmZTEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjRjZmE3Yjk1MTYzYzZiYTkwODljZTdkNTQ4YTJlOWI5NGNmYjYzNmIxMzgwODY0NmI1ODg0NWMzMDMwMzRiMDIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjowLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6Ijk0Y2UyNWRjNWQzNGZmMTkyMWM1OWJlNjY3NmFkMDUzY2I2OTQwZjhkMjc2YTNkMTk2ZDk1M2YxNzkxZmJiZGMifQ"
         }
       ]
+    },
+    {
+      "id": "claim_d24311e4fd4d4c8996b0bf282fb5cda8",
+      "statement": "e2e/onboarding-cabinet-create-cross-tab.spec.ts (FE-D5) pins cross-tab cabinet-create duplicate prevention via Web Locks + claim: two tabs of the same browser context submit the create form simultaneously, tab A's POST /v1/cabinets is held open by a deferred route gate so it genuinely holds the create lock, and exactly one POST may reach the wire — tab B must end blocked with RU copy; on unfixed code tab B mints its own Idempotency-Key and the POST-count assertion fails.",
+      "evidence": [
+        {
+          "resource": "repo://e2e/onboarding-cabinet-create-cross-tab.spec.ts#L1-L44",
+          "version": "repo-lines-v1:sha256:b705b5d323cd2c5f0ccbddcee26d633efc0493b3562281fd78db2df447883d7b:eyJzZWxlY3RlZExpbmVDb3VudCI6NDQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImZiMWJlMWZiNjBlZDAzNTA4ODVhNjczMzlmYWU2YmJkYThkYmU0MjA3YjQ3NDAzZDM2Y2ZmYjk1NDFhY2RmZTEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjBhMjRmNjViYWNlYTM3YTBiOWVkOGNjZTVhNGY0OWQwNzQxYTg0MzlhYTA4YTZmOGU0MmExNWFlM2M2ODdlNDgiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjowLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImE0Mzk5NDI4NGViMGUzODc5ODJlNzdiYTU2ODYzNGYzZDNlYjJiOWFiYjE0Y2MwMjJjZjcxNDAwZWI5ZTg0NTYifQ"
+        }
+      ]
     }
   ],
   "verification": {
     "by": "openwiki/0.5.0",
-    "at": "2026-09-05T08:47:50.295Z"
+    "at": "2026-09-06T08:47:51.668Z"
   }
 }

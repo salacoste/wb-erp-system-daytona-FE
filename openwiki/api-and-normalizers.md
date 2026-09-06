@@ -1,27 +1,47 @@
 ---
 type: "Architecture Overview"
 title: "API Layer & Normalizers"
-description: "API client singleton with auto-injected auth and cabinet headers, D-2 single-flight reactive 401 refresh with one replay, the Boundary Normalizer Pattern that transforms backend responses into frontend-canonical shapes, the Epic 170/171 advertising and search normalizers with AP#8 null semantics, the Story 169.14 paid-storage import result contract and polling lifecycle, CSV export infrastructure, the NEW-7/172.10 finances documents flow, and the communications gated write-back with async 202 job polling."
-tags: [api-client, boundary-normalizer, reactive-401-refresh, anti-pattern-8, paid-storage-import, csv-export, finances-documents]
+description: "API client singleton with auto-injected auth and cabinet headers, D-2 single-flight reactive 401 refresh with one replay, the global mutation-retry policy that never retries 4xx, WB token error mapping and fallback-message sanitization, the Boundary Normalizer Pattern with AP#8 null semantics, the Story 169.14 paid-storage import result contract and polling lifecycle, CSV export infrastructure, the NEW-7/172.10 finances documents flow, and the communications gated write-back with async 202 job polling."
+tags: [api-client, boundary-normalizer, reactive-401-refresh, mutation-retry, anti-pattern-8, paid-storage-import, csv-export, finances-documents]
 verified:
   - by: openwiki/0.5.0
-    at: 2026-09-05T08:47:50.295Z
+    at: 2026-09-06T08:47:51.668Z
 sources:
+  - id: openwiki-source-8d0f263ceba491caec34db6c
+    resource: repo://src/app/providers.tsx
+  - id: openwiki-source-2c8624d7bc54216518aad6e6
+    resource: repo://src/components/custom/wb-token-form-helpers.ts
+  - id: openwiki-source-247f2948ae5a0063ab2a20e3
+    resource: repo://src/hooks/useDownloadDocument.ts
   - id: openwiki-source-3177abcefd75baab3663fb5b
     resource: repo://src/hooks/useSanityCheck.ts
+  - id: openwiki-source-e10bb3a45d5860b37b52d448
+    resource: repo://src/lib/__tests__/api-interceptors.test.ts
   - id: openwiki-source-b3e9ea042734f0848c410d92
     resource: repo://src/lib/api-client-refresh.ts
   - id: openwiki-source-a7c7d558f70edbb3171b87ab
     resource: repo://src/lib/api-client.ts
+  - id: openwiki-source-788c3e9b836f9b807e00c659
+    resource: repo://src/lib/api-interceptors.ts
+  - id: openwiki-source-a7a7ee96d9985ccc6d20217e
+    resource: repo://src/lib/api-wb-token-errors.test.ts
+  - id: openwiki-source-da1ab80751a0bdd4fc2e9d5c
+    resource: repo://src/lib/api-wb-token-errors.ts
   - id: openwiki-source-4a2c698892059013040d959c
     resource: repo://src/lib/api.ts
   - id: openwiki-source-63fbf19eac49b6e765e65f86
     resource: repo://src/lib/api/__tests__/tasks-enqueue-role-contract.test.ts
+  - id: openwiki-source-ab6f5375f26a893a94cb5b2c
+    resource: repo://src/lib/mutation-retry.test.ts
+  - id: openwiki-source-77df4b425c7f7d6e1bd76726
+    resource: repo://src/lib/mutation-retry.ts
+  - id: openwiki-source-3b4dbdbe8d2f4037d2dd4991
+    resource: repo://src/lib/sanitize-fallback-message.ts
   - id: openwiki-source-a634a54b04d180befb7476e7
     resource: repo://src/services/cabinets.service.ts
   - id: openwiki-source-57a6295c7260bc5f8b372d73
     resource: repo://src/types/api.ts
-generated: { by: "openwiki/0.5.0", at: "2026-09-03T08:47:55.542Z" }
+generated: { by: "openwiki/0.5.0", at: "2026-09-06T08:47:51.668Z" }
 ---
 # API Layer & Normalizers
 
@@ -78,9 +98,38 @@ There is no dedicated tasks API module — the real call sites (`useSanityCheck`
 ### Error tracking
 - `extractErrorMessage()` handles both `{ error: { message } }` and flat `{ message }` JSON shapes.
 - Telegram notification endpoint errors are routed to `TelegramMetrics` for observability (`trackTelegramApiError()`).
-- WB token 401s mentioning "WB API token" are expected errors — suppressed from error logging via `isExpectedWbTokenError()`.
+- WB token 401s mentioning "WB API token" are expected errors — suppressed from error logging via `isExpectedWbTokenError()` (`src/lib/api-interceptors.ts`: true only for status 401 **and** a case-sensitive "WB API token" substring; a plain 401 "Unauthorized" or a 403/500 still logs).
 
 Source: `src/lib/api-interceptors.ts`, `src/lib/error-utils.ts`, `src/lib/api-wb-token-errors.ts`
+
+### WB token update error mapping (`handleWbTokenUpdateError`)
+
+`src/lib/api-wb-token-errors.ts` (extracted from `src/lib/api.ts` for file-size compliance, Epic 74) is the single mapper for WB-token-update failures, called from the `updateWbToken` client in `src/lib/api.ts`. It maps HTTP status (400/403/404/401) and BE error `code`s (`INVALID_TOKEN`, `RATE_LIMITED`, `NETWORK_ERROR`, `TOKEN_VALIDATION_FAILED`) to stable user-facing messages — for 400 and `INVALID_TOKEN`/`TOKEN_VALIDATION_FAILED`, the BE's `details[0].recommendation` wins over the generic copy.
+
+**Critical contract (FE-D1)**: every mapped branch re-throws the `ApiError` **class** (`src/types/api`) carrying the original `status` and `data` — never a flat `Error`. A flat `Error` here would defeat the global mutation-retry predicate below and cause a duplicate 4xx PUT (the defect observed live as e2e WB-TOKEN-BROWSER-02 "Expected 1, Received 2"). Unrecognized errors are re-thrown untouched. UI copies stay stable because `getErrorMessage` maps by message content + `data.code`, both preserved verbatim. Pinned by `src/lib/api-wb-token-errors.test.ts`.
+
+### Mutation retry: 4xx is permanent (`shouldRetryMutation`)
+
+`src/lib/mutation-retry.ts` is registered as the global TanStack mutation retry policy (`QueryClient` defaults `mutations: { retry: shouldRetryMutation }` in `src/app/providers.tsx`). It replaces the old blind `retry: 1`, which re-issued every failed mutation once — including permanent 4xx client errors (a WB-token PUT rejected with 400 was sent twice), wasting traffic and accelerating BE throttling (login is capped at 5/hour).
+
+Semantics:
+
+- `failureCount >= 1` → never retry (keeps the historical retry:1 cap — at most ONE automatic retry).
+- `ApiError` with `status` in `[400, 500)` → **never retried** (client errors are permanent).
+- Everything else (5xx, network failures, unknown values) retries once. Network failures arrive as `ApiError` with `status 0` — `api-client.ts` wraps fetch throwables in its request catch (`throw new ApiError(msg, 0, error)`) — so a bare `TypeError` reaching the predicate is defense-in-depth, not the primary contract.
+- 429 `Retry-After` UX is owned by the UI layer (e.g. `RateLimitWarning`), not by blind retries.
+
+The predicate can only classify errors that **keep** the `ApiError` class — hence the re-throw contract in `handleWbTokenUpdateError` above. Focused tests: `src/lib/mutation-retry.test.ts` (per-status classification, opaque mapped failures, retry cap, and that the provider registers `shouldRetryMutation` as the policy).
+
+### Fallback-message sanitization (`sanitizeFallbackMessage`, FE-D3)
+
+`src/lib/sanitize-fallback-message.ts` (canonical home; `src/components/custom/wb-token-form-helpers.ts` re-exports it so existing imports keep resolving) is the guard that the fallback error branch never echoes raw `error.message` verbatim — a malicious/buggy server can embed tokens, stack frames, or internal paths in a message rendered as-is by forms. It scrubs a fixed `SCRUB_PATTERNS` list (V8 stack frames and `stack:` markers, scheme-agnostic URLs, POSIX/Windows absolute paths, verbal SQL fragments with accepted false-positive trade-offs, Prisma internals, JWTs and JWT-like `eyJ` sequences, ≥32-char hex blobs, ≥40-char base64-ish blobs), collapses whitespace, and falls back to a fixed RU generic message (`'Произошла неизвестная ошибка. Попробуйте снова.'`) when nothing survives. Input is pre-bounded at 4096 chars before scrubbing (bounds regex backtracking), and the output is code-point-sliced to 200 chars at a word boundary so surrogate pairs are never split.
+
+Consumers: `getWbTokenErrorMessage` (wb-token form helpers) and the mutation hooks `useCreateSupply`, `useCloseSupply`, `useGenerateStickers`, and `useDownloadDocument`, which pipe `apiError.message` through it for their fallback toasts. Pinned by `src/components/custom/wb-token-form-helpers.test.ts` and `src/hooks/__tests__/supply-sticker-document-error-fallback.test.ts`.
+
+### Endpoint mapping reference
+
+`docs/api-integration-guide.md` is the cross-reference catalog mapping each FE API client module to its BE endpoints, authoritative `.http` test files (`/test-api/*.http`), and the FE spec docs (`docs/request-backend/*.md`) — consult it when adding or verifying an API integration rather than re-deriving the contract from tests.
 
 ## Boundary Normalizer Pattern
 

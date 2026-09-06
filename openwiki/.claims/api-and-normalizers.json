@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "pageVersion": "sha256:0ed6a297de8d0427f51ea177d91dcac79a9968a960c4a56b0ca29d31c8e856b5",
+  "pageVersion": "sha256:fd8eb50810af8f83f5d8222045f11a55cb0bab2206a83eeb93e877488c319838",
   "claims": [
     {
       "id": "claim_f797db2a25ab4709beca6aff9f520299",
@@ -91,10 +91,78 @@
           "version": "repo-lines-v1:sha256:eb2f8216017a87e640ebd55bd4b48a5bcfff84af30631bd01a4429c920730956:eyJzZWxlY3RlZExpbmVDb3VudCI6MTYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImVhZjIyY2YwNzMyNTkyYzI0NzE0MWNiZTYxZWZhMTEwMTI2MTJmNWEzMTIyYjlhZjliYmFmNTJmNTcyNGQxOTQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijk3MmE0MjkzODJiMmUxNDcxOGUwZTM3YjA1NzBhOGExNzAyOTkxZmNkODQ5OGNkODQwNjBhOGJmNGYwNTAxN2IiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjowLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6Ijg5NmYwZWUzNDRmYmMwYjQ3ZmQ4YjE5MjI3ZTJiMzVkOWI4ZTUxY2Y3NGRhNjQ1ZjFiMzE4OTVkYjYyYmZlMTMifQ"
         }
       ]
+    },
+    {
+      "id": "claim_435037fde4fa44df924bbf4e68389e9b",
+      "statement": "shouldRetryMutation in src/lib/mutation-retry.ts is the global TanStack QueryClient mutation retry policy (registered in src/app/providers.tsx): it caps retries at one automatic retry (failureCount >= 1 returns false) and never retries an ApiError with status 400-499; 5xx, network failures (ApiError with status 0), and unknown values retry once.",
+      "evidence": [
+        {
+          "resource": "repo://src/app/providers.tsx#L8-L26",
+          "version": "repo-lines-v1:sha256:30478d87697c1f4001dcfcaeef56acc16ba1549580c8ac4e17132864dabbfcd6:eyJzZWxlY3RlZExpbmVDb3VudCI6MTksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijg2MDQ4MDBlNDUwMDJkOWEwOGEzZTNhZWI5MzE2ZjQyNGUwNjRiMzc4MmM2ZjgxMmMxZTgwYWFlMDU0YTY0ZTAiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjIxMjIyNzU0OGZmZDUwOTU5MWZkZjI0MmE2NTBjOWU2ODM5ZGVjZTY3NDEwYWE1ODMyNjc0OWE0YTM3ZGY0ZDYiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImM0NTFlZDY5NGMzNzM4NTUxYmRmMjJmMmYzZWRkNWE4YWQxMDExODc4YjRmYzQ3Njg2NzAxN2Q0NTBmNmM4OGUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjAzMGJkZTFkNzJkZjhkM2I3MTUzMDU1MDY1ZWQ3MDQ5ZTA0MDA2OThhMjliZTVkYThmOTljYTY4Mzc0MjdhNTMifQ"
+        },
+        {
+          "resource": "repo://src/lib/mutation-retry.test.ts",
+          "version": "repo-file-v1:sha256:95b729a0c47efe4ca85745df44e126147393c4d60b85518ebbf1adeb7bad2844"
+        },
+        {
+          "resource": "repo://src/lib/mutation-retry.ts#L27-L31",
+          "version": "repo-lines-v1:sha256:0055057e50c86b285d0d7eb202a1e512571b8530ebd61a8c23125efad8cf6f8f:eyJzZWxlY3RlZExpbmVDb3VudCI6NSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiOGU5NTE2ODk4MmYyMjk0OTQ0YTdhNTk5Mjc4ZmU3Yzc4YWYwMTQzNTYyN2RmMDBmYTBmNDcxMjM0ZTNiOWYwMyIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNDEyY2EzNDVjY2Y3NWJmOWMwODA2YmNlNjk1YmU4ZGU4MDhiNzk5ODQyNTFhN2E1NGQyMDJjZjYxMDFkZDQ1MSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZmJjYThjMDdmNDU4YjI3MzBmZTVkNzMyNGQ2ZTdlMzNmYzBlYWZiZTFlNGUzM2JhZjFlMWQ1ODRjMGFmMzM0NSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjAsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZTNiMGM0NDI5OGZjMWMxNDlhZmJmNGM4OTk2ZmI5MjQyN2FlNDFlNDY0OWI5MzRjYTQ5NTk5MWI3ODUyYjg1NSJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_d8db4fd308b64435abc1a04ab129b622",
+      "statement": "handleWbTokenUpdateError (src/lib/api-wb-token-errors.ts, called by updateWbToken in src/lib/api.ts) maps WB-token-update failures by HTTP status (400/401/403/404) and backend error codes to stable user-facing messages, and every mapped branch re-throws the ApiError class with the original status and data — a flat Error would cause the mutation-retry predicate to re-issue a permanent 4xx PUT.",
+      "evidence": [
+        {
+          "resource": "repo://src/lib/api-wb-token-errors.test.ts",
+          "version": "repo-file-v1:sha256:5c0137964702aaf1a0b37448220e4fa392340ea06dd9db736974373e350eb611"
+        },
+        {
+          "resource": "repo://src/lib/api-wb-token-errors.ts#L25-L88",
+          "version": "repo-lines-v1:sha256:40e5f4ad9ffa4f5657e1225161c1ef3313f8100251ce4a72148848918835d283:eyJzZWxlY3RlZExpbmVDb3VudCI6NjQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImNhNTZjZWI3NjJlZGFlMjQ3NzNlMjIyZDYwYjJhYjdhZjNiOTk2YzczZTRiMjhhMWVhNDEwZTAwZWU2OGEyMzEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImViZGQ3NTUxNzc5NDI4ZjYwZmEwOTNmZTI2MzY0MTFkOGY3OWE1NjRhZDZmYmNkNjQ3NDI2OTcxZWEzZGFjNDYiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjkzZTdlOTJiODRkNjM2ZWIwZWZlNTc1YThkODRlZDI2MjdjN2VmOGYyYWQ0MWRjZGQ0NjI1NzJkMjJhNjA5ZWEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEifQ"
+        },
+        {
+          "resource": "repo://src/lib/api.ts#L203-L216",
+          "version": "repo-lines-v1:sha256:e518d0ae6932608af82577077f8b15ee631a9e417711a4ee55f818786c66fa13:eyJzZWxlY3RlZExpbmVDb3VudCI6MTQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjZhNzk3NzJkNjkyYjIzODI4N2Q4Mjk4NDcwMTUyNDg5MmI1YWI4NmRmMmVkOGE5ZjdjMzRhZDljNzBhNTMxYTMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjY3NjZmNjUxMmIzZDljMjMwMzgxMWFjNTUxNDI3YmZkNjZlMGY5OGZmNTJlNmJmNjU1ZTdmMWE5ZTFmZGM3M2UiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjU0MjY3MTMzMWZiMzI4YTc1NzZiNDcyMDYxOTY2NzdiNDZkY2FmZDNhYTI4ZjBlNmU5OWRhMzg5ODg5MDM0YmEifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_3d9145abe0a545acb5b22313b74b173b",
+      "statement": "sanitizeFallbackMessage (canonical home src/lib/sanitize-fallback-message.ts, re-exported by src/components/custom/wb-token-form-helpers.ts) scrubs stack frames, URLs, filesystem paths, SQL fragments, Prisma internals, JWTs, and long hex/base64 blobs from raw fallback error messages, bounds input at 4096 chars before scrubbing and output at 200 code points at a word boundary, and returns a fixed Russian generic message when nothing survives; it is consumed by the wb-token form helper and the useCreateSupply/useCloseSupply/useGenerateStickers/useDownloadDocument hooks.",
+      "evidence": [
+        {
+          "resource": "repo://src/components/custom/wb-token-form-helpers.ts#L13-L14",
+          "version": "repo-lines-v1:sha256:4a136b5e5818ba34be94bba655dd724c46f689146445ba450807868036d137cb:eyJzZWxlY3RlZExpbmVDb3VudCI6MiwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZDkyMmVmN2JmZWEyNWYzNGY0ZDY4OTY2MDQwYTc0ZTAzMTYxZTllNWU0N2I0NDljZWZlN2FkYjY5ZmRhNzExZCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiZjk2NTMxOGM0YWEwOWM3OTkyMjU1NjE1YjE4NGMzZWNjZGRkNjc4NjFlOTBkMTM1YWVlM2Y5ZDlhM2I3YjIyYiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZmFmNGM0ODNhNjY0MDkzMzM1NTY2ZjA2Y2Y0NWQxOTQ4ODg1NDE1YzA5N2MyMzM2Njg1NjA3MmU3ZGFiNGNhNSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNTNlNzg3YzU2MDUzYmExZjhjODdiMzdjMGEzYTU2YTg4YzlkMzhhNmQ5MTYzM2Q1YjAxNGQ5NGFkNmVhYjQ4MSJ9"
+        },
+        {
+          "resource": "repo://src/hooks/useDownloadDocument.ts#L50-L50",
+          "version": "repo-lines-v1:sha256:745bbe56a0d7217d3077cef94606cd53364666f089efcf14e8fa683f2b5714f7:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNzQ1YmJlNTZhMGQ3MjE3ZDMwNzdjZWY5NDYwNmNkNTMzNjQ2NjZmMDg5ZWZjZjE0ZThmYTY4M2YyYjU3MTRmNyIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNzQ1YmJlNTZhMGQ3MjE3ZDMwNzdjZWY5NDYwNmNkNTMzNjQ2NjZmMDg5ZWZjZjE0ZThmYTY4M2YyYjU3MTRmNyIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMDc3ZjgwMmIyYTQ0MGYxN2U1ZTQ0MThkOGVjZmVmM2VjZGMyZjlhMDIyNWUxYzc2YmExNmU3MTMyYjNiMDU3MiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiYWNlNjY0ZDBlNDNlZTMyMGJlMDE2ZjM1MmY5N2VkY2M2ZTljNjRhMDc3ZDA0ZjA3NTZmZmI3M2EwNjZjNDcyZSJ9"
+        },
+        {
+          "resource": "repo://src/lib/sanitize-fallback-message.ts",
+          "version": "repo-file-v1:sha256:feae577e73391d6eca472d1c423ea6591b67056d714f8eb297255d279e03b9ec"
+        }
+      ]
+    },
+    {
+      "id": "claim_f9e9962a3b85455fb0313b76c62d2747",
+      "statement": "isExpectedWbTokenError (src/lib/api-interceptors.ts) suppresses WB-token 401s from error logging only when the status is exactly 401 and the message contains the case-sensitive substring 'WB API token'; other 401s and any 403/500 still log.",
+      "evidence": [
+        {
+          "resource": "repo://src/lib/__tests__/api-interceptors.test.ts#L295-L324",
+          "version": "repo-lines-v1:sha256:41a8507f2193e03aa420a6f4c0f0a5b95879d3e9d28171aff68e0c1ecd2c0c97:eyJzZWxlY3RlZExpbmVDb3VudCI6MzAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijg3MzM2NjEyNjUxYjY3ZmI4MDEwMzVlNTcxZGU4YmI4YmY2NmViZDY4NjFhNjg2YzkzY2Y1ZmE5OTMxNjM2OTgiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjExODIzMTNjYmY3YmQ3Y2U3ZTVhOWI2ZjRkZjdjMDJhN2E4ZjIwYmNlZTkwMDM1YTUwZmVjMTEwYmMxM2JlMTgiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImY5ZDVhOGZkZTRjMzAzMTRiZjA1ODliYjkwZDFkNzY2Y2YyNWM2ZDc0YmQ1ZTFiZWVmZjcyNzI2YWRhNzNiNGMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjFlZjBiOWRjMmI1ZTFiOWFiZWNiZjJmMTAxNWE0NTIzY2IyYTc1MWVlZDgyNDQyYTBhNzA4ODBmZmNhZjliZmYifQ"
+        },
+        {
+          "resource": "repo://src/lib/api-interceptors.ts#L100-L111",
+          "version": "repo-lines-v1:sha256:a12200699e1989e85d205cd12f208eb30922696184c4494cb9b292d478aacc35:eyJzZWxlY3RlZExpbmVDb3VudCI6MTIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjhiNGRjNzYyNzUyMGNlZWY2YTQ0OGU5ZGU2OWQxN2QzNTIxNWFjOTZlMWI3ZGQzN2U4Zjk4MWJjMTMxZjRiMDYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjhhNDhkNWY0Mzg0MzMwM2UyZjJjNTU2YjZmNWU4OTRkODAwMTZiNDY0OGY4ZTgyMDMyNzM4YTlkNmZkZDdmYjEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjQ4OTRlZDBmNDFlNTc1NWQ1Yzc3MTYwMzgwNzU0MGNmYWUzODI2MjMxNGU0OTM1NzRiZjE1ZGY2ODRiMDYyNjAiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjVkYWYwNzkxOGE2ODE0ODU3ZmU0NWU1MjljNmU1MTM2M2U1Y2ZmODM2NjcyMDI1YWYwY2FhODcwYTcxY2E4MzUifQ"
+        }
+      ]
     }
   ],
   "verification": {
     "by": "openwiki/0.5.0",
-    "at": "2026-09-05T08:47:50.295Z"
+    "at": "2026-09-06T08:47:51.668Z"
   }
 }

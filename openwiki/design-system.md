@@ -33,6 +33,9 @@ openwiki:
     - _bmad-output/implementation-artifacts/debt-p2-boundary-wave1-finsum.md
     - _bmad-output/implementation-artifacts/debt-p2-boundary-wave2-margin.md
     - _bmad-output/implementation-artifacts/debt-p2-wave3-aa-quickwins.md
+    - _bmad-output/implementation-artifacts/debt-p2-w4-component-families.md
+    - _bmad-output/implementation-artifacts/debt-p2-w5-lib-residue.md
+    - docs/HANDOFF-2026-09-05-V16-SESSION4-5-EXECUTION-AND-REMAINING-BACKLOG.md
   symbols:
     - PageHeader
     - Breadcrumbs
@@ -84,12 +87,18 @@ sources:
     resource: repo://_bmad-output/implementation-artifacts/debt-p2-boundary-wave1-finsum.md
   - id: openwiki-source-54ef9539556b5103cebfee4c
     resource: repo://_bmad-output/implementation-artifacts/debt-p2-boundary-wave2-margin.md
+  - id: openwiki-source-e2ed56eb52eef101706f70c1
+    resource: repo://_bmad-output/implementation-artifacts/debt-p2-w4-component-families.md
+  - id: openwiki-source-5de30f3007b2bc9d89c135fd
+    resource: repo://_bmad-output/implementation-artifacts/debt-p2-w5-lib-residue.md
   - id: openwiki-source-bd7d4cadb47c08a8a3fdb98e
     resource: repo://_bmad-output/implementation-artifacts/debt-p2-wave3-aa-quickwins.md
   - id: openwiki-source-963badef5db4ea717da0c93c
     resource: repo://_bmad-output/planning-artifacts/ux-design-specification.md
   - id: openwiki-source-61e0371a06d746820bb42371
     resource: repo://.omx/plans/174.3-complete-accessibility-responsive-theme-and-visual-verification.md
+  - id: openwiki-source-ff359a6c9fc43921192adbff
+    resource: repo://docs/HANDOFF-2026-09-05-V16-SESSION4-5-EXECUTION-AND-REMAINING-BACKLOG.md
   - id: openwiki-source-18c74d6f5373cdfcebe82221
     resource: repo://e2e/fixtures/story-174-3/chart-inventory.ts
   - id: openwiki-source-f2a4582a0a553ed13286aad6
@@ -156,10 +165,10 @@ sources:
     resource: repo://src/styles/__tests__/globals-token-contract.test.ts
   - id: openwiki-source-13697ff46e81b49dcb27ba68
     resource: repo://src/styles/globals.css
-generated: { by: "openwiki/0.5.0", at: "2026-09-05T08:47:50.295Z" }
+generated: { by: "openwiki/0.5.0", at: "2026-09-06T08:47:51.668Z" }
 verified:
   - by: openwiki/0.5.0
-    at: 2026-09-05T08:47:50.295Z
+    at: 2026-09-06T08:47:51.668Z
 ---
 
 # Design System
@@ -391,7 +400,7 @@ The automation domain (gallery + list + editor), the full COGS domain (single + 
 
 **Epic 174 (consolidation, 5 stories) is CLOSED 5/5 — the program ended here (2026-09-02)**: **174.1** (ledger reconciliation — feature PR #369 + closeout PR #370 + lifecycle PR #371) proved the schema-v3 ledger 94 = 94 stories and 76 = 76 = 76 route/ledger rows with all linked artifacts unique. **174.2** (legacy-removal and design-system boundary — feature PR #372 on base `fbdab2da`) is summarized in the boundary section below. **174.3** (inclusive accessibility/responsive/theme/visual verification, including the §3.3 tint-audit of `text-status-*` on `bg-*/10` pairs) executed the inclusive visual contract documented in [the Story 174.3 section below](#the-story-1743-inclusive-visual-contract) and closed after its three-APPROVE review gate. **174.4** (feature PR #375) ran the full functional/backend regression — 53 spec fixes plus the DrrSlider /15-tint→solid-pair and TaxRateInput overflow product fixes — and, on a live re-run, discovered the boundary total had dropped to 459 during the 174.3 merge window and correctly lowered the ratchet baseline same-commit. **174.5** (feature PR #379 on base `0d6225ac`) flipped all 76 route-ledger rows to `verified` with full evidence chains, re-pinned the parity validator's expected base SHA, and re-confirmed the remaining boundary exceptions as owner-accepted.
 
-### Post-program P2 owner-sweep waves (2026-09-02/05)
+### Post-program P2 owner-sweep waves (2026-09-02 → 2026-09-06)
 
 After the program closed, the category-1 residue began its ratchet-driven owner-sweep in coherent family waves (canon: live pre-flight recount, measured WCAG contrast per replacement in both themes, baseline lowered in the same commit):
 
@@ -400,7 +409,11 @@ After the program closed, the category-1 residue began its ratchet-driven owner-
 - **C13/C15 quality wave** (PR #393, 2026-09-02): C13 — `GapsTable` duplicated meaning between caption and scroll `aria-label` (resolved: aria-label → «Область прокрутки таблицы пропущенных дней», caption keeps identity); C15 — liquidity `URGENCY_CLASS` keyed by Cyrillic labels where a lib rename silently falls back (resolved: `ScenarioUrgencyTier` + `getScenarioUrgencyTier` single source, typed Record, exhaustive color switch).
 - **Wave 3 — AA quick wins + layered compositing model** (PR #404, 2026-09-05; 15 files, artifact `_bmad-output/implementation-artifacts/debt-p2-wave3-aa-quickwins.md`): the registered sub-AA `/15`,`/10` sites from waves 1–2 (3.97–4.49 light) plus their host files. Pass-1 **falsified the "over card" measurement model**: real DOM stacks contain gradient cards (`bg-gradient-to-br from-status-information/10 to-status-warning/10`), nested tints, and `muted/50` parents, so in-situ contrast was 2.79–4.41 FAIL where bare-card attestations said PASS. New canon (superset of waves 1–2): (1) contrast is measured over the **actual compositing stack** (sequential alpha layers above card; gradients at worst-end) — bare card is valid only with a verified mount chain; (2) **structural remedies** when tint-tuning cannot fix a tinted base: fg-on-tint (`text-foreground` on the tint; valence carried by tint+border+label+icon) or solid pairs (`bg-status-X` + `text-status-X-foreground`, which kill parent compositing) — financial tokens have no `-foreground`, so financial valence on unfixable bases goes fg-on-tint. Applied to `CashflowRowPrimitives`/`SkuCashflowSection` (the worst repo site at 2.79 → solid warning), `CashflowExpenseGrid`, `unit-economics-config` chips, `MarginSlider` (in-situ over `bg-primary/5`: 4.19/4.45 FAIL → fg-on-tint 13.98–14.89), `GrossProfitSection` (chip + coverage box → solid warning, 4.81/11.41), `TwoLevelPriceHeader` (warning box → solid), and `MarginSection`/`margin-status-helpers` (attestations re-measured in-situ at 4.68 over the gradient card). Boundary **unchanged at 372** (semantic tokens only); vitest floor 19,436→19,439. Lesson canon: trace a file's consumers, not just the file — each fix wave exposed another missed layer. Registered follow-ups: WCAG 1.4.11 valence channels (tint 1.07–1.21, border 1.52–1.89 < 3:1 need a ≥3:1 carrier), `TwoLevelPriceHeader.tsx` `text-primary/70` ₽ glyph, `PctBadge colorClass` escape-hatch, MarginSlider `/20` track segments (3.47 ≥ 3:1 non-text PASS, monitor).
 
-Remaining registered follow-ups: waves 4–6 of the 372 residue (SourceBadge, RequireJam, lib residues), plus the wave-3 follow-ups above — the wave-1/2 registered tint sites (`unit-economics-config.ts`, `GrossProfitSection.tsx`, `CashflowRowPrimitives.tsx`, `TwoLevelPriceHeader`, `MarginSlider`, `MarginSection`) were all addressed by wave 3.
+- **Wave 4 — component families** (PR #407, 2026-09-05; 16 files / 105 sites, artifact `debt-p2-w4-component-families.md`): a live pre-flight recount (the handoff catalog had drifted — `expense-chart-config` 18 and `TrendGraph` 14 were in the residue but not cataloged) re-classified 37 chart-hex sites as C5-deferred and swept the rest of `src/components` to semantic tokens under the wave-3 layered compositing model. New canon: **purple → `status-pending`** (the 277° token, "not-final source" semantics, for RequireJam/SidebarCabinetInfo tier chips and DataSourceIndicator); **the table hover layer (`ui/table.tsx` `hover:bg-muted/50`) is part of a badge's compositing stack** — tint chips in tables must measure on the hover stack too (SourceBadge warn/5 over hover = 4.34 light FAIL → fg-on-tint 14.50/14.72); a **solid host kills parent compositing** (MissingCogsAlert chip uniform at 4.81/13.38 on all mountings); orphan `boxShadow` rgba → `var(--shadow-card-hover)`. Boundary **372 → 267** (baseline + CLAUDE.md same commit); 3 review passes, ~50 consumer test re-pins, 174.3 manifest regenerated by the official runner.
+- **Wave 5 — lib residue** (PR #408, 2026-09-05; 12 files / 149 sites, artifact `debt-p2-w5-lib-residue.md`): the `src/lib/*.ts` class-map/formatter/config residues (backfill-utils, campaign-utils, coefficient-types, dimension-types, efficiency-filter-config, efficiency-utils, fbs-analytics-utils, orders-status-config, profitability-utils, sync-status-config, two-level-pricing, unit-economics-formatters) migrated to semantic tokens; 7 of the 12 files were production-dead channels (migrated coherently — only tests observe them). Boundary **267 → 118** (−149 exactly; baseline + CLAUDE.md same commit). New canon: **computed-key collapse** — SOLID-tier maps with `bgColor === bgColorActive` break the two-key computed-bg object literal in `cn()` (later `false` wins → inactive chips lose their background); fixed with a single computed key ternary (`EfficiencyFilterChips.tsx`), and **solid-chip active affordance** is `ring-2 ring-ring ring-offset-1` (a border in the chip's own color is invisible). The CLAUDE.md baseline row is a **scope contract** — the residue composition must be recomputed by a live run, not carried forward as prose.
+- **Wave 6 — warn-on-warn cluster + selected-row stacks** (PR #417, 2026-09-06; artifact `debt-p2-w6-warn-on-warn-cluster.md`): 12 text-contrast FAILs in 6 files (worst: `text-white` Link on solid warning at **1.41 dark**), remedied with fg-on-tint / solid-warning-foreground pairs; boundary unchanged at 118 (semantic tokens only). New canon: contrast pins are valid only for the exact tint+stack measured (bare-bg pins were invalid — 3.04 was really 2.95 on the real stack), and pins are icon-scoped regexes on the exact class, not vacuum color matches. Residual: chart-2 dark selHover 3.71 and warn/40 borders 2.66 → registered with the C5 / 1.4.11 owner riders.
+
+**Boundary track terminal state**: the P2 boundary track is **complete** — the remaining **118 = 95 chart-hex + 23 legacy-palette classes** (lib 61 + components 37 + app 17 + types 3, concentrated in liquidity-*/seasonal/unit-economics-config/chart-colors and hex fields of profitability/orders, plus route chart configs) is **entirely blocked on the owner decision C5 chart-palette** (options: categorical token set — recommended, expanded exceptions, or accept-118). No new boundary wave is possible without a C5 decision; the AA waves after wave 5 (`/80`-sweep, wave 6) all held the baseline at 118 because they moved text to semantic tokens, which sit outside `LEGACY_PALETTE`. The earlier wave-1/2 registered tint sites and the wave-3 follow-up cluster were all addressed by waves 3–6; still open with the owner besides C5: the WCAG 1.4.11 valence channels (tint 1.07–1.21, border 1.52–1.89 < 3:1), `TwoLevelPriceHeader.tsx` `text-primary/70` ₽ glyph, and the `PctBadge colorClass` escape-hatch.
 
 ## Route presentation source-contract guards (Epics 169–171 canon)
 
@@ -425,10 +438,10 @@ The 71-file mutable manifest migrated by 172.8 (from `AcceptanceStatusBadge` to 
 
 Story 174.2 (feature PR #372) converted the per-route guard canon into a **repository-wide, ratcheted boundary**:
 
-- **Validator**: `scripts/check-shadcn-ui-boundary.mjs` (Node stdlib only) scans all production `src/**/*.{ts,tsx}` (tests, `__tests__`, `.d.ts`, `src/test` excluded; enumeration is relative-first per the 171.8 anchor-safety canon) for two detection classes that form the superset regex canon — `LEGACY_PALETTE` (the monitoring-172.12/169.11 guard form extended with `ring-offset`, `shadow`/`inset-shadow`/`text-shadow` prefixes) and `CONTEXTUAL_HEX` (quote/backtick or `-[`-anchored hex with a trailing quote/backtick/`]`/`;` lookahead, plus rgba/hsl/hsla/oklch color functions whose first ~40 chars contain a digit or `#`). It reports per-file/per-route/total counts and ratchets against `scripts/.shadcn-ui-boundary-baseline.txt` — a single integer, currently **372** (523 at 174.2 close → 459 by 174.4's live re-run → 401 by wave 1 → 372 by wave 2; the P2 wave-3 AA sweep used only semantic tokens, so the baseline held at 372).
+- **Validator**: `scripts/check-shadcn-ui-boundary.mjs` (Node stdlib only) scans all production `src/**/*.{ts,tsx}` (tests, `__tests__`, `.d.ts`, `src/test` excluded; enumeration is relative-first per the 171.8 anchor-safety canon) for two detection classes that form the superset regex canon — `LEGACY_PALETTE` (the monitoring-172.12/169.11 guard form extended with `ring-offset`, `shadow`/`inset-shadow`/`text-shadow` prefixes) and `CONTEXTUAL_HEX` (quote/backtick or `-[`-anchored hex with a trailing quote/backtick/`]`/`;` lookahead, plus rgba/hsl/hsla/oklch color functions whose first ~40 chars contain a digit or `#`). It reports per-file/per-route/total counts and ratchets against `scripts/.shadcn-ui-boundary-baseline.txt` — a single integer, currently **118** (523 at 174.2 close → 459 by 174.4's live re-run → 401 by wave 1 → 372 by wave 2 → 267 by wave 4 → 118 by wave 5; waves 3, 6, and the `/80`-sweep used only semantic tokens, so the baseline held at 118 since 2026-09-05).
 - **Ratchet semantics**: `node scripts/check-shadcn-ui-boundary.mjs` exits 0 at or below the baseline and exits 1 only when the total **increases**; any migration that lowers the count must lower the baseline in the same commit. There are no file-level waivers — suppression is only possible via the `BOUNDARY_EXCEPTIONS` map, which requires an owner/debt ID and a 1:1 mirror in category 5 of the classification manifest. Current exceptions (3 files, 22 suppressed matches): the C5 waterfall categorical hex and the two historical `#7C3AED` chart marks (pricing `PriceHistorySheet`, product `FunnelTab`); the F-10 FeedbackButtons exception was lifted 2026-09-02 when its legacy span moved to a solid AA-safe status pair.
 - **Self-suite**: `scripts/__tests__/check-shadcn-ui-boundary.test.mjs` runs 10 node:test cases proving the regexes fire on canonical violations and that enumeration/exclusion logic works, so the scanner itself cannot silently rot.
-- **Classification manifest**: `_bmad-output/planning-artifacts/shadcn-ui-boundary-classification-manifest.md` records every finding in six categories and was **arithmetic-closed at Story 174.2 close** against the original 523 baseline: category 1 (live legacy palette/literals) 514 + category 2 (route-owner-completed residue) 1 + category 6 (comment-only false positives) 8 = **523**. Its §7 update (2026-09-02) records: total 459 = baseline 459 PASS, the FeedbackButtons exception lifted (3 registered / 3 suppressing live matches = 22), self-suite 10/10; the post-program P2 waves 1–2 continued the ratchet-down to **372**. Category-1 residue is swept by the ratchet at the owning surface's next touch (C14 owner-sweep pattern, now executing in family waves); the remaining residue is the counted set carried as owner-sweep debt.
+- **Classification manifest**: `_bmad-output/planning-artifacts/shadcn-ui-boundary-classification-manifest.md` records every finding in six categories and was **arithmetic-closed at Story 174.2 close** against the original 523 baseline: category 1 (live legacy palette/literals) 514 + category 2 (route-owner-completed residue) 1 + category 6 (comment-only false positives) 8 = **523**. Its §7 update (2026-09-02) records: total 459 = baseline 459 PASS, the FeedbackButtons exception lifted (3 registered / 3 suppressing live matches = 22), self-suite 10/10; the post-program P2 waves 1–5 continued the ratchet-down to **118**, where the boundary track terminated — the entire residue is now C5 chart-palette-owner-gated. Category-1 residue is swept by the ratchet at the owning surface's next touch (C14 owner-sweep pattern, executed in family waves through wave 5).
 - **174.2's own cleanup**: 65 proven-dead files deleted (import-closure reviewer-verified — including the legacy-twin `SUPPLY_STATUS_CONFIG`, `WbTokenBanner`, `KPICard`/`MetricCard`/`DeltaIndicator`/`MarginBySkuTable` families, and the seasonal/period-comparison analytics surfaces), the lib wave migrated `src/lib` class-maps to status tokens (wb-status trio → **solid pairs**, orders/liquidity/supply-planning/monitoring maps, `analytics-utils` `getDiscrepancyColor`, and a canonical dedupe of `getMarginColor` in `top-table-utils.ts`), and all five 171.9 carry-outs were executed (including removing `STATUS_BADGE_CONFIG.className` and the stale-helper-comment rewrites).
 
 ### 174.2 design calls
@@ -520,6 +533,12 @@ npx vitest run src/styles/__tests__ src/components/ui/__tests__ src/components/p
 ```
 
 Token edits additionally require `npm run build` because the compiled CSS is what the contrast test parses. Primitive hardening must preserve every existing export, variant, portal, and compatibility prop — check the four updated consumer modal tests when changing close-control or focus behavior. Composition-family changes must keep the family's discriminated-union props exhaustive (a new state kind has to extend the union and the tests together) and keep the family's source-contract manifest in sync with its file list. Any change that adds a legacy palette class or contextual hex/color literal to production source must either migrate it to semantic tokens or register it in `BOUNDARY_EXCEPTIONS` (owner/debt ID + manifest mirror) — otherwise the boundary gate fails:
+
+```bash
+node scripts/check-shadcn-ui-boundary.mjs                          # exit 1 only on increase past 372
+node --test scripts/__tests__/check-shadcn-ui-boundary.test.mjs   # scanner self-suite (10 cases)
+```
+e the boundary gate fails:
 
 ```bash
 node scripts/check-shadcn-ui-boundary.mjs                          # exit 1 only on increase past 372

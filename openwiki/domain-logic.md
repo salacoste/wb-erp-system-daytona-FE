@@ -1,7 +1,7 @@
 ---
 type: "Domain Reference"
 title: "Domain Logic"
-description: "Financial and business-logic pure functions in src/lib/ (theoretical profit, margin/COGS temporal logic, ROI/profit-per-unit and efficiency status tiers, profitability status, unit economics, liquidity with trends, account finances + document download, seller communications with gated write-back, backfill retry, ISO-week/Moscow-timezone handling, null/decimal helpers), the per-week financial series hook, returns-analytics and sku-financials type contracts, route-local monitor/monitoring domain helpers, and the price-calculator cost-breakdown and margin-status modules."
+description: "Financial and business-logic pure functions in src/lib/ (theoretical profit, margin/COGS temporal logic, ROI/profit-per-unit and efficiency status tiers + filter chips, profitability status, unit economics, liquidity with trends, coefficient status tiers, two-level pricing, account finances + document download, seller communications with gated write-back, backfill retry, ISO-week/Moscow-timezone handling, null/decimal helpers), the per-week financial series hook, the cabinet-creation cross-tab lock and account-scoped recovery state machine, returns-analytics and sku-financials type contracts, route-local monitor/monitoring domain helpers, and the price-calculator cost-breakdown and margin-status modules."
 sources:
   - id: openwiki-source-91faab5d81883f34499f73f4
     resource: repo://e2e/onboarding-cabinet-create-nonce-mint.spec.ts
@@ -47,8 +47,14 @@ sources:
     resource: repo://src/lib/api/liquidity.ts
   - id: openwiki-source-e840a46938b1c4cab850c627
     resource: repo://src/lib/api/pricing-basis.ts
+  - id: openwiki-source-6e229c8bc9d4b59262531ac9
+    resource: repo://src/lib/cabinetCreationLock.ts
+  - id: openwiki-source-dc16519f2d9daf502ffdc5a2
+    resource: repo://src/lib/coefficient-types.ts
   - id: openwiki-source-c5d12e34dea3a25c49823079
     resource: repo://src/lib/decimal-utils.ts
+  - id: openwiki-source-a49886edc3c1bceb383807f4
+    resource: repo://src/lib/efficiency-filter-config.ts
   - id: openwiki-source-cf5f1822276428503b195822
     resource: repo://src/lib/efficiency-utils.ts
   - id: openwiki-source-b9312fcbc31f54766055eb16
@@ -73,16 +79,18 @@ sources:
     resource: repo://src/lib/roi-profit-utils.ts
   - id: openwiki-source-d6b8b04abd546dc2eafc55e1
     resource: repo://src/lib/theoretical-profit.ts
+  - id: openwiki-source-450a81272fabe346d1708966
+    resource: repo://src/lib/two-level-pricing.ts
   - id: openwiki-source-a634a54b04d180befb7476e7
     resource: repo://src/services/cabinets.service.ts
   - id: openwiki-source-8882572a73a88650eca4e4b9
     resource: repo://src/types/analytics-returns.ts
   - id: openwiki-source-dbb29a8befd1ef6fd6b187fb
     resource: repo://src/types/sku-financials/core.ts
-generated: { by: "openwiki/0.5.0", at: "2026-09-05T08:47:50.295Z" }
+generated: { by: "openwiki/0.5.0", at: "2026-09-06T08:47:51.668Z" }
 verified:
   - by: openwiki/0.5.0
-    at: 2026-09-05T08:47:50.295Z
+    at: 2026-09-06T08:47:51.668Z
 ---
 # Domain Logic
 
@@ -138,7 +146,9 @@ The same six-status taxonomy and thresholds are declared in `ProfitabilityStatus
 
 ### Efficiency status (`src/lib/efficiency-utils.ts`, Story 33.4-FE)
 
-`efficiencyConfig` maps five advertising efficiency statuses (`excellent`/`good`/`moderate`/`poor`/`loss` plus boundary-honest `unknown`) to Russian labels, Lucide icons, Tailwind bg/text/border/icon-color classes, classification descriptions (ROAS/ROI ranges, e.g. excellent = ROAS ≥ 5.0 / ROI ≥ 100%), and recommendations. Alert dismissal state (`ALERT_DISMISS_KEY`, `get/set/clearAlertDismissState`, `shouldShowLossAlert`) is re-exported from the extracted `efficiency-alert-state.ts`; accessor helpers (`getEfficiencyColor`, `getRoasColorClass`, `isLossStatus`, …) live in `efficiency-accessors.ts` (file-size split). Focused tests: `src/lib/__tests__/efficiency-utils.test.ts`, `efficiency-alert-state.test.ts`, `efficiency-filter-config.test.ts`.
+`efficiencyConfig` maps five advertising efficiency statuses (`excellent`/`good`/`moderate`/`poor`/`loss` plus boundary-honest `unknown`) to Russian labels, Lucide icons, Tailwind bg/text/border/icon-color classes, classification descriptions (ROAS/ROI ranges, e.g. excellent = ROAS ≥ 5.0 / ROI ≥ 100%), and recommendations. Since the P2 wave-5 palette pass the color fields are semantic status tokens (not hex/legacy Tailwind channels); note the source itself documents that `bgColor`/`textColor`/`borderColor` currently have **no live production reader** (labels/icons only) — mapped with the same dual-green collapse (excellent solid vs good soft) as the filter config below. Alert dismissal state (`ALERT_DISMISS_KEY`, `get/set/clearAlertDismissState`, `shouldShowLossAlert`) is re-exported from the extracted `efficiency-alert-state.ts`; accessor helpers (`getEfficiencyColor`, `getRoasColorClass`, `isLossStatus`, …) live in `efficiency-accessors.ts` (file-size split). Focused tests: `src/lib/__tests__/efficiency-utils.test.ts`, `efficiency-alert-state.test.ts`, `efficiency-filter-config.test.ts`.
+
+`src/lib/efficiency-filter-config.ts` (Story 63.4-FE) is the sibling config for the **filter chips** on the advertising dashboard: `efficiencyFilterConfig` carries per-status chip styling with separate inactive/active backgrounds (`bgColor` vs `bgColorActive` — soft tiers darken on activation), `FILTER_ORDER` fixes the chip order best→worst, and `calculateEfficiencyCounts(items)` groups `AdvertisingItem[]` by `efficiency_status` into an `EfficiencyCountsSummary` so each chip shows its live count.
 
 ### Per-week financial series (`src/hooks/financial/useWeeklyFinancialSeries.ts`)
 
@@ -226,6 +236,7 @@ The durable recovery marker (`src/components/custom/cabinetCreationRecovery.ts`,
 - A marker in `post-create-margin-recovery` (or update-pending, via `markerAllowsUpdate`) surfaces the retry-only-margin flow.
 - **D-1 review fix (quiet guard)**: a form instance that itself dispatched the operation stays quiet once its liveness flag is released (`localOperationIds.has(marker.operationId)`), but normalizes `restoring` → `idle` so the pre-normalization phase cannot silently block the form after a same-tab logout+login.
 - Marker changes broadcast `RECOVERY_MARKER_EVENT`; a `reconcile: true` detail bumps a reconcile revision that force-resets the form from `existingCabinetData` (name + margin, 20% fallback) so a settled update is not clobbered by stale dirty values.
+- **FE-D5 cross-tab lock** (`src/lib/cabinetCreationLock.ts`): the POST itself is serialized behind a per-user `navigator.locks` lock **plus** a localStorage claim re-check (a lock alone would only serialize — tab B would POST after tab A releases). The claim (`CabinetCreateClaim`, keyed `wb:cabinet-creation:claim:v1:<userId|_anon>`) carries the Idempotency-Key and a phase (`in-flight` / `settled-uncertain` / `failed-ambiguous`); a crashed claim is takeover-eligible after `CLAIM_TTL_MS` (90 s), and a takeover within `CLAIM_REPLAY_WINDOW_MS` (180 s) **reuses the dead tab's Idempotency-Key** so the backend replays the canonical result instead of creating a second cabinet. Lock refusals surface the specific RU block messages via the `'blocked'` recovery-error source (which persists across the reconcile fall-through — R2). Known limitation: without Web Locks support the fallback has a µs-scale absent-absent race; it is narrowed by a pre-adoption re-read and deliberately not fail-closed so old browsers can still create.
 
 **Focused tests**: `src/components/custom/CabinetCreationForm.accountRecovery.test.tsx` — account-switch matrix: a held account-A submission keeps account B blocked from double-creating, a late A success cannot mutate B's marker/sessionStorage or fire toasts/navigation for B, and B's held PUT admission survives an A success and B remount; `src/services/cabinets.service.settlement.test.ts` (settlement statuses + nonce mint); `e2e/onboarding-cabinet-create-nonce-mint.spec.ts` (D-1 two-tab nonce-null pin + legacy-session regression).
 
@@ -324,6 +335,15 @@ The SKU analytics page (`/analytics/sku`, Story 128.27) exposes **historical SPP
 
 The price calculator (`/cogs/price-calculator`, `src/components/custom/price-calculator/`) has its business logic extracted into sibling non-component modules (a repeated "file size compliance" pattern), separate from the presentational components covered in [Design System](design-system.md).
 
+### Two-Level Pricing (`src/lib/two-level-pricing.ts`, Story 44.20-FE)
+
+`calculateTwoLevelPricing(formData, commissionPct)` is the core price-calculator domain function implementing the two-level pricing concept (ref. `PRICE-CALCULATOR-REQUIREMENTS.md` §5/§8), with arithmetic in the extracted `two-level-pricing-helpers.ts`:
+
+- **Level 1 — Minimum Price (floor)**: covers only fixed costs, **no margin, no DRR**. `minimumPrice = fixedCosts.total / (1 − minPctRate)` where `minPctRate = commission + acquiring + income-tax + VAT` rates.
+- **Level 2 — Recommended Price**: adds DRR and target-margin rates to the divisor (`totalPctRate = minPctRate + drrRate + marginRate`). Both prices fall back to `0` when the percentage rate reaches 1.0 (the divisor would be ≤ 0 — no finite price satisfies the rates).
+- **Customer price** = `recommendedPrice × (1 − spp_pct/100)` (SPP discount), and the result carries the percentage/variable cost breakdowns computed against the recommended price plus the `priceGap` between the two levels.
+- **Tax semantics**: `income` tax joins the percentage-rate divisor; VAT applies **only** when `is_vat_payer` (ОСН), with `vat_pct ?? 0` being a SEMANTIC zero (non-VAT payer is the RU default and the backend contract's null).
+
 ### Cost breakdown types & chart building
 
 `cost-breakdown-types.ts` defines the pure data contract for the recommended-price cost breakdown chart:
@@ -385,6 +405,7 @@ The liquidity page (`/analytics/liquidity`) renders a **trends section** (Дин
 | `tariff-system-utils.ts` / `tariff-extraction-utils.ts` | Tariff system parsing and validation |
 | `tariff-fallback-diagnostics.ts` | Bounded fallback-warning dedup for storage-tariff fallbacks (Story 164.3) — collapses N per-row fallback events within one calculation into a single aggregate diagnostic, and dedupes identical snapshots across renders via a bounded FIFO store; calculation results are unaffected |
 | `coefficient-utils.ts` / `coefficient-date-helpers.ts` | WB coefficient calculations (dimensional, etc.) |
+| `coefficient-types.ts` | WB storage/delivery coefficient domain types and the 5-level `COEFFICIENT_STATUS_CONFIG` (Stories 44.9/44.26a): raw integer coefficients (100 = 1.0) are normalized to decimals (`NormalizedCoefficient`), and tiers map to semantic-token styling — base 0–1.0 (`coefficient=0` with `isAvailable=true` means a FREE slot), elevated 1.01–1.5, high 1.51–2.0, peak > 2.0, unavailable otherwise. `CoefficientImpact` packages the absolute/percent cost increase of a coefficient change with prebuilt display strings. |
 
 ## ISO Week & Moscow Timezone
 

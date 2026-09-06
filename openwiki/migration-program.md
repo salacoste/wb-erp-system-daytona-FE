@@ -1,8 +1,10 @@
 ---
-type: migration-program
-title: Migration Program (Epics 166-174)
-description: Final state and history of the shadcn full-UI migration program (Epics 166-174, 94/94 stories, 76/76 verified routes, all epics CLOSED 2026-09-02), including the FULL/MINOR/born-clean story pipeline, the parity and ui-boundary scripts now serving as post-migration regression guards, and the owner-escalated post-migration debt registry.
-tags: [migration, shadcn, epics, orchestration, status-ledger, omc, debt-registry]
+type: "Reference"
+title: "Migration Program (Epics 166-174)"
+openwiki_generated: true
+verified:
+  - by: openwiki/0.5.0
+    at: 2026-09-06T08:47:51.668Z
 sources:
   - id: openwiki-source-9e7c9f2a75e8c54131fe45ec
     resource: repo://_bmad-output/implementation-artifacts/174-1-fe-prove-bmad-route-ledger-and-omx-plan-parity.md
@@ -16,10 +18,22 @@ sources:
     resource: repo://_bmad-output/implementation-artifacts/debt-d1-pb1-silent-cabinet-create.md
   - id: openwiki-source-534d0450c193054c5f1f3f2d
     resource: repo://_bmad-output/implementation-artifacts/debt-d2-pb3-reactive-refresh.md
+  - id: openwiki-source-ddc34d07a60e2581afb40b0b
+    resource: repo://_bmad-output/implementation-artifacts/debt-fe-d1-mutation-retry-skip-4xx.md
+  - id: openwiki-source-95e703944e80d6d0c91812fc
+    resource: repo://_bmad-output/implementation-artifacts/debt-fe-d3-family-hook-fallback-sanitization.md
+  - id: openwiki-source-32c5c26b4ff0222488c92d62
+    resource: repo://_bmad-output/implementation-artifacts/debt-p2-80-sweep.md
   - id: openwiki-source-608936d71cd48c100e032fd1
     resource: repo://_bmad-output/implementation-artifacts/debt-p2-boundary-wave1-finsum.md
   - id: openwiki-source-54ef9539556b5103cebfee4c
     resource: repo://_bmad-output/implementation-artifacts/debt-p2-boundary-wave2-margin.md
+  - id: openwiki-source-e2ed56eb52eef101706f70c1
+    resource: repo://_bmad-output/implementation-artifacts/debt-p2-w4-component-families.md
+  - id: openwiki-source-5de30f3007b2bc9d89c135fd
+    resource: repo://_bmad-output/implementation-artifacts/debt-p2-w5-lib-residue.md
+  - id: openwiki-source-fc328d58fb2d5e73cb4c589a
+    resource: repo://_bmad-output/implementation-artifacts/debt-p2-w6-warn-on-warn-cluster.md
   - id: openwiki-source-bd7d4cadb47c08a8a3fdb98e
     resource: repo://_bmad-output/implementation-artifacts/debt-p2-wave3-aa-quickwins.md
   - id: openwiki-source-a9bdeeac493ab84f5c393c26
@@ -28,18 +42,28 @@ sources:
     resource: repo://_bmad-output/implementation-artifacts/sprint-status.yaml
   - id: openwiki-source-4b2b1e6e74590c45f5b8abda
     resource: repo://_bmad-output/planning-artifacts/shadcn-migration-final-delivery-manifest.md
+  - id: openwiki-source-c278c3812722174099a1e7a5
+    resource: repo://_bmad-output/planning-artifacts/shadcn-migration-status-and-debt-registry.md
   - id: openwiki-source-3ff50b7610374b28cb2b4cf5
     resource: repo://_bmad-output/planning-artifacts/shadcn-route-ledger.md
   - id: openwiki-source-61e0371a06d746820bb42371
     resource: repo://.omx/plans/174.3-complete-accessibility-responsive-theme-and-visual-verification.md
   - id: openwiki-source-02284da49c2233d6ad8eee98
     resource: repo://.omx/plans/shadcn-full-ui-migration-master.md
+  - id: openwiki-source-a2371d6362e5db4bc834ad03
+    resource: repo://CLAUDE.md
   - id: openwiki-source-3ae3de7eae6af907f9e7299c
     resource: repo://docs/HANDOFF-2026-09-02-FINAL-94-94-PROGRAM-COMPLETE.md
   - id: openwiki-source-5bfb8400b5daf58813b7ad6a
     resource: repo://docs/HANDOFF-2026-09-03-V15-SESSION2-EXECUTION-AND-REMAINING-BACKLOG.md
+  - id: openwiki-source-851bbdfc3e22c35faaf59449
+    resource: repo://docs/HANDOFF-2026-09-05-V17-SESSION6-80-SWEEP-AND-FE-D3-EXECUTION-AND-REMAINING-BACKLOG.md
+  - id: openwiki-source-7825c41e82ca828e4e955736
+    resource: repo://docs/HANDOFF-2026-09-06-V18-SESSION8-FE-D5-FE-D3FAM-WCAG-W6-EXECUTED-AND-REMAINING-BACKLOG.md
   - id: openwiki-source-6a59e8092d7b89827f53ccb9
     resource: repo://docs/ORCHESTRATOR-PROMPT-2026-09-03-V16-SESSION3-CONTINUATION-OMC.md
+  - id: openwiki-source-20859f58573f4df9d80237de
+    resource: repo://docs/ORCHESTRATOR-PROMPT-2026-09-06-V18-DEBT-CONTINUATION-OMC-SUBAGENTS.md
   - id: openwiki-source-52f9f2aa17dde77e23385c81
     resource: repo://e2e/fixtures/story-174-3/execution-manifest.ts
   - id: openwiki-source-63d46e41978bcf9c4a46a1d7
@@ -50,15 +74,19 @@ sources:
     resource: repo://scripts/lib/story-174-3-execution-requirements.mjs
   - id: openwiki-source-11392b4e8de554e0126fdfd1
     resource: repo://scripts/lib/story-174-3-manifest.mjs
+  - id: openwiki-source-dc58f206f67bd8b3855c5565
+    resource: repo://src/hooks/useCloseSupply.ts
+  - id: openwiki-source-6e229c8bc9d4b59262531ac9
+    resource: repo://src/lib/cabinetCreationLock.ts
+  - id: openwiki-source-3b4dbdbe8d2f4037d2dd4991
+    resource: repo://src/lib/sanitize-fallback-message.ts
   - id: openwiki-source-64fe71a7ae47db511ff422d4
     resource: repo://src/test/story-174-3-state-contract.test.ts
   - id: openwiki-source-72aa0e35fae33f199ccac4c2
     resource: repo://src/test/story-174-3-surface-contract.test.ts
-generated: { by: "openwiki/0.5.0", at: "2026-09-05T08:47:50.295Z" }
-verified:
-  - by: openwiki/0.5.0
-    at: 2026-09-05T08:47:50.295Z
+generated: { by: "openwiki/0.5.0", at: "2026-09-06T08:47:51.668Z" }
 ---
+
 
 # Migration Program (Epics 166-174)
 
@@ -133,7 +161,7 @@ Epic 174 is sequential and started only after all 13 Epic 173 stories merged wit
 Two enforcement scripts were built during Epic 174 and now serve as **post-migration regression guards over a finished program** — they protect the completed migration against regressions on future changes; they gate no in-flight stories. Each has a committed plain-text baseline:
 
 - `scripts/check-shadcn-migration-parity.mjs` (Story 174.1) — BMAD/route-ledger/OMX plan parity; self-suite `scripts/__tests__/check-shadcn-migration-parity.test.mjs` (33/33). Now in **terminal state**: the corpus expectation was moved to `verified` and `EXPECTED_BASE_SHA` was re-pinned to the Story 174.5 base `0d6225ac`. Maintainer note: on `main` after merge it reports **base-sha-mismatch BY DESIGN** (precedent 174.1); re-check by running in a worktree based on the pinned SHA or re-pinning the constant to a new story base. Corpus-only mode: `STORY_174_1_SKIP_SELF_TESTS=1` (same pin).
-- `scripts/check-shadcn-ui-boundary.mjs` (Story 174.2, ratcheted down by 174.4 and the post-program boundary waves) — node-stdlib-only scanner over production `src/**/*.{ts,tsx}` (tests, d.ts, `src/test/**` excluded; relative-first enumeration so foreign worktree paths cannot re-enter), detecting the extended `LEGACY_PALETTE` regex and 3-branch `CONTEXTUAL_HEX` canon. Its ratchet baseline `scripts/.shadcn-ui-boundary-baseline.txt` was born at 523 in 174.2, lowered to **459** by 174.4, and is now **372** after debt session-2 boundary waves (459 → 401 via wave-1, the financial-summary family ×11 files / 58 sites → semantic tokens, PR #394; 401 → 372 via wave-2, the Margin family — whose live count had drifted 58→29, proving catalog drift — plus the D-4 fold-in catching a hidden 4.19/4.42 AA failure the D-4 attestation had masked, fixed /15→/5, PR #395). A plain run exits 0 at ≤ the baseline and fails only on increase ("registered" = baseline-grandfathered, locale-percent precedent). **3** suppressed matches in **3** files remain in the `BOUNDARY_EXCEPTIONS` register (single source of truth, mirrored 1:1 by the classification manifest): the C5 waterfall categorical hex (11 hex + 2 tokens across 13 series, awaiting a chart-palette owner decision) and two historical `#7C3AED` chart marks (PriceHistorySheet, FunnelTab — 170.x carry-outs). The former fourth exception (FeedbackButtons) was **lifted 2026-09-02** when PB-4 was fixed via a solid status pair (debt D-3). Self-suite 10/10. The remaining 372 violations are the cat-1 residue owned by a continuing owner-sweep through the same ratchet — never a mechanical replacement; live per-file counts drift, so recount with grep before each wave). The contrast canon for boundary waves 1–2 (mapping + house rule + harness, embedded in the wave-1/2 artifacts) is now superseded by the wave-3 layered-compositing canon (`debt-p2-wave3-aa-quickwins.md`): measure over the actual DOM compositing stack, and prefer structural remedies (fg-on-tint / solid pairs) over N-th alpha iterations.
+- `scripts/check-shadcn-ui-boundary.mjs` (Story 174.2, ratcheted down by 174.4 and the post-program boundary waves) — node-stdlib-only scanner over production `src/**/*.{ts,tsx}` (tests, d.ts, `src/test/**` excluded; relative-first enumeration so foreign worktree paths cannot re-enter), detecting the extended `LEGACY_PALETTE` regex and 3-branch `CONTEXTUAL_HEX` canon. Its ratchet baseline `scripts/.shadcn-ui-boundary-baseline.txt` was born at 523 in 174.2, lowered to **459** by 174.4, to **372** by debt session-2 boundary waves (459 → 401 via wave-1, the financial-summary family ×11 files / 58 sites → semantic tokens, PR #394; 401 → 372 via wave-2, the Margin family — whose live count had drifted 58→29, proving catalog drift — plus the D-4 fold-in catching a hidden 4.19/4.42 AA failure the D-4 attestation had masked, fixed /15→/5, PR #395), and to the current **118** by debt sessions-4/5 boundary waves 4–5 (W4 component families, artifact `debt-p2-w4-component-families.md`; W5 lib residue, artifact `debt-p2-w5-lib-residue.md`). A plain run exits 0 at ≤ the baseline and fails only on increase ("registered" = baseline-grandfathered, locale-percent precedent). **3** suppressed matches in **3** files remain in the `BOUNDARY_EXCEPTIONS` register (single source of truth, mirrored 1:1 by the classification manifest): the C5 waterfall categorical hex (11 hex + 2 tokens across 13 series, awaiting a chart-palette owner decision) and two historical `#7C3AED` chart marks (PriceHistorySheet, FunnelTab — 170.x carry-outs). The former fourth exception (FeedbackButtons) was **lifted 2026-09-02** when PB-4 was fixed via a solid status pair (debt D-3). Self-suite 10/10. The remaining 118 violations (95 chart-hex + 23 legacy; lib 61 / components 37 / app 17 / types 3) are **fully gated by the C5 chart-palette owner decision** — boundary waves are frozen until C5 resolves; the ratchet may be lowered only after that decision. Live per-file counts drift, so recount with grep before any wave. The contrast canon is layered and cumulative: wave-3 (`debt-p2-wave3-aa-quickwins.md`) established measuring over the actual DOM compositing stack with structural remedies (fg-on-tint / solid pairs) over N-th alpha iterations; the `/80`-sweep (session-6, `debt-p2-80-sweep.md`) added hover-layer and worst-end-gradient precedents; WCAG wave-6 (session-8, `debt-p2-w6-warn-on-warn-cluster.md`) added the mount-chain rule (page stacks sit on `bg-muted/50` from the root layout, so bare-bg pins are invalid) and per-tint/per-stack attestation numbers.
 - The docs-citation gate `check:docs` tracks its own historical baseline `scripts/.check-docs-baseline.txt` (95 committed entries, `--update-baseline` only with NEW/RESOLVED analysis in the commit message); a canonical-vs-archival split of that baseline is an open owner decision.
 
 Live per-story history: `_bmad-output/implementation-artifacts/sprint-status.yaml`. Consolidated per-epic slice: `_bmad-output/planning-artifacts/shadcn-migration-status-and-debt-registry.md` (final snapshot 2026-09-02, PROGRAM COMPLETE; treat the repo as truth on drift, corrected through a reviewable documentation lane).
@@ -211,8 +239,12 @@ Handoff lineage (each superseding the previous as the execution entry point; old
 5. `docs/HANDOFF-2026-09-01-TEAM-HANDOFF-174-5-FINAL-CLOSEOUT-AND-DEBT.md` — the 174.5 closeout brief; superseded.
 6. `docs/HANDOFF-2026-09-02-FINAL-94-94-PROGRAM-COMPLETE.md` — the final program handoff: program completion summary, final gates and how to re-run them (including the parity base-pin note), the complete **owner-escalated debt register** (§4, statuses updated in place by the debt sessions), an explicit owner-decision checklist (§5), maintainer entry points (§6), and the P0→P3 onboarding backlog (§8). The deep 08-29 §11 debt canon remains its reference vocabulary.
 7. `docs/HANDOFF-2026-09-02-V14-DEBT-SESSION1-EXECUTION-AND-REMAINING-BACKLOG.md` — session-1 debt execution + detailed backlog.
-8. `docs/HANDOFF-2026-09-03-V15-SESSION2-EXECUTION-AND-REMAINING-BACKLOG.md` — **the session-2 record and current backlog authority**: what session-2 shipped (8 PRs), live gate/environment state (main `c5ca2669`, floor ≥19,424 → 19,439 after wave-3, boundary 372), and the prioritized remaining backlog with implementation detail (§3.0 wave-3 — now executed and marked done in place; §3.1 D-2 — executed; §3.2 waves 4–5 live counts, §3.5 owner-decision ledger, §4 process canon + session-2 traps).
-9. `docs/ORCHESTRATOR-PROMPT-2026-09-03-V16-SESSION3-CONTINUATION-OMC.md` — **the current execution entry point for session-3**: OMC sub-agent orchestration (delegation matrix, model tiers, forbidden surfaces including the parity script, boundary exceptions, pinned scenarioIds), the per-item control loop, and the work order — whose first two items are already executed (P2 wave-3 "AA quick-wins", PR #404 on 2026-09-05, artifact `debt-p2-wave3-aa-quickwins.md` as the new contrast canon; and the D-2 re-scope tail). Next up: boundary waves 4–5 over the 372 residue, the `/80` sweep, FE-D3/D1/D5, then P3 items. Priority on conflict: item mini-plan > SESSION2 §3 > SESSION1 §3 > FINAL §4/§8 > CLAUDE.md > prompts — and **live gate runs are the final authority** because numbers in the docs drift.
+8. `docs/HANDOFF-2026-09-03-V15-SESSION2-EXECUTION-AND-REMAINING-BACKLOG.md` — session-2 record (8 PRs; boundary 459→401→372; floor →19,439). Superseded.
+9. `docs/ORCHESTRATOR-PROMPT-2026-09-03-V16-SESSION3-CONTINUATION-OMC.md` — the session-3 V16 continuation prompt (OMC sub-agent delegation matrix, per-item control loop, ordered backlog). P2 wave-3 "AA quick-wins" executed under it (2026-09-05, PR #404). Superseded.
+10. `docs/HANDOFF-2026-09-05-V16-SESSION4-5-EXECUTION-AND-REMAINING-BACKLOG.md` — sessions-4/5 record: boundary waves 4–5 executed, ratchet 372 → **118**; the residue is C5-blocked. Superseded.
+11. `docs/HANDOFF-2026-09-05-V17-SESSION6-80-SWEEP-AND-FE-D3-EXECUTION-AND-REMAINING-BACKLOG.md` — sessions-6/7 record: the `/80`-sweep (PR #410), FE-D3 `sanitizeFallbackMessage` error-scrub (PR #411, first 174.3-manifest test-file SHA-pin regen lesson), and FE-D1 mutation retry skip-4xx (PR #413). Superseded.
+12. `docs/ORCHESTRATOR-PROMPT-2026-09-06-V18-DEBT-CONTINUATION-OMC-SUBAGENTS.md` — the session-8 V18 process canon (§0 control loop with 105.2 + manifest preflights, §2 delegation matrix, A–J conveyor §5, stops §8); forbids boundary waves while the 118 residue is C5-blocked. The next orchestrator prompt (V19) must point at the session-8 handoff.
+13. `docs/HANDOFF-2026-09-06-V18-SESSION8-FE-D5-FE-D3FAM-WCAG-W6-EXECUTED-AND-REMAINING-BACKLOG.md` — **the current entry point and session baseline (V18, 2026-09-06)**: session-8 shipped 4 PRs, all merged with 0/0/0 cleanup (FE-D5 Web Locks #415, fe-d3-family #416, WCAG wave-6 #417, dead-`queryClient.ts` deletion #418). Live state on main `0b95e963`: Vitest **19,559/0** across 1,287 files, boundary 118 = baseline, 3 exceptions, docs 95, locale 4, lessons 0, privacy exit 0, 174.3 contracts green (manifest freshly regenerated in #415). Its §3 is the remaining backlog: P3 window items (prettier md ~1189 files, ~25 route guards, harness restart-per-run, FR-7/AT-matrix/Manager-creds test epics, docs-95 split, pm2 id-5 deletion, and the new CABINET-BROWSER-02 pre-existing red on main — bisect-verified 2026-09-06, likely interacting with FE-D1 retry semantics), the owner-decision ledger (§3.1: C5, WCAG 1.4.11 valence channels + new `warn/40` border 2.66 rider and chart-2 dark selHover 3.71 residual, A2 OrganicTab `/80`-tier, apiClient-egress sanitization over ~128 `.tsx` echo surfaces), and BE questions (§3.2: remote publish of the D-2 BE branch → request-backend #230 annex, FE-D3-residual NestJS pg/redis raw-error reachability). Priority on conflict: item mini-plan > session-8 handoff > V18 prompt > CLAUDE.md > earlier handoffs — and **live gate runs are the final authority** because numbers in the docs drift.
 
 Worktree hygiene, summarized:
 
@@ -225,17 +257,24 @@ Cross-team cautions: parallel teams/sessions are real (PRs #295/#296/#300/#301 l
 
 ## Post-migration debt registry and the debt-execution sessions
 
-With the program closed, nothing below blocks anything — every item is **owner-scoped**, registered with status, fix-canon, and evidence in the final handoff (`docs/HANDOFF-2026-09-02-FINAL-94-94-PROGRAM-COMPLETE.md` § Debt escalation, updated in place by the debt sessions; the 2026-08-29 §11 canon remains the status-dictionary vocabulary). Execution of the backlog began immediately after program close through orchestrator sessions (V14 → V15 → V16), each item = one branch/PR with a `debt-*` artifact, closeout registry flips, and 0/0/0 cleanup — the same A–J discipline as the story pipeline, extended past the program boundary.
+With the program closed, nothing below blocks anything — every item is **owner-scoped**, registered with status, fix-canon, and evidence in the final handoff (`docs/HANDOFF-2026-09-02-FINAL-94-94-PROGRAM-COMPLETE.md` § Debt escalation, updated in place by the debt sessions; the 2026-08-29 §11 canon remains the status-dictionary vocabulary). Execution of the backlog began immediately after program close through orchestrator sessions (V14 → V15 → V16 → V17 → V18), each item = one branch/PR with a `debt-*` artifact, closeout registry flips, and 0/0/0 cleanup — the same A–J discipline as the story pipeline, extended past the program boundary.
 
 ### Debt session history
 
 - **Session-1 (2026-09-02, V14)** — PRs #382–#386: FE-D9 `logApiError` redaction, SEC-DOC-1 credential redaction, D-3/D-4 WCAG solid pairs (PB-4, /15-family), D-5 PB-2 nested `<main>`, and the `.http` scanner follow-up.
 - **Session-2 (2026-09-02/03, V15 — 8 PRs, all merged, cleanup 0/0/0)** — see `docs/HANDOFF-2026-09-03-V15-SESSION2-EXECUTION-AND-REMAINING-BACKLOG.md` §1: D-1 fixed PB-1 (initiation-mint `ensureSessionNonce`, indeterminate recovery-alert, `finishRecoveryOperation` release; e2e true-pin failing on `main`, PR #390); D-2/PB-3 initially hit a BE blocker (no `/v1/auth/refresh` → request-backend #230, PR #391), then was executed on `debt/d2-pb3-reactive-refresh` after the owner approved the re-scope and the BE contract was agreed; the P2 /10-family ASB solid pairs (PR #392); C13+C15 quality wave (PR #393); boundary waves 1–2 (PRs #394/#395, ratchet 459→401→372); the BE handoff package and refresh-contract annex (PRs #396/#397). D-2 was **live-verified 2026-09-03 02:02Z** after a local BE rebuild (refresh 200, revocation 401); remote BE publish remains the open backend question.
-- **Session-3 (V16 continuation prompt)** — `docs/ORCHESTRATOR-PROMPT-2026-09-03-V16-SESSION3-CONTINUATION-OMC.md` is the current orchestration entry point: OMC sub-agent delegation (explore/executor/debugger/verifier/code-reviewer/writer with explicit model tiers), the control loop per item, and the ordered remaining backlog. Execution has begun: **P2 wave-3 "AA quick-wins" is done** (2026-09-05, PR #404, 3 review passes, floor 19,436 → **19,439**, boundary unchanged at 372 — semantic tokens only), and the D-2 re-scope tail was completed earlier (2026-09-03). Remaining order: boundary waves 4–5 over the 372 residue, the `/80` sweep, FE-D3/D1/D5, then P3 items.
+- **Session-3 (V16 continuation prompt)** — P2 wave-3 "AA quick-wins" executed (2026-09-05, PR #404, 3 review passes, floor 19,436 → **19,439**, boundary unchanged at 372 — semantic tokens only) plus the D-2 re-scope tail. The prompt established OMC sub-agent delegation (explore/executor/debugger/verifier/code-reviewer/writer with explicit model tiers) as the standing orchestration model.
+- **Sessions-4/5 (V16, 2026-09-05)** — boundary waves 4–5 over the 372 residue: W4 component families (`debt-p2-w4-component-families.md`) and W5 lib residue (`debt-p2-w5-lib-residue.md`), ratcheting the ui-boundary baseline 372 → **118**, which now equals the committed baseline. Everything remaining is C5-blocked. Record: `docs/HANDOFF-2026-09-05-V16-SESSION4-5-EXECUTION-AND-REMAINING-BACKLOG.md`.
+- **Sessions-6/7 (V17, 2026-09-05)** — three behavior PRs (record: `docs/HANDOFF-2026-09-05-V17-SESSION6-80-SWEEP-AND-FE-D3-EXECUTION-AND-REMAINING-BACKLOG.md`): the `/80`-sweep (PR #410 — 16 prod `text-*/80` sites: 9 remediated to 3.76+ text contrast, 6 PASS-as-is with attested comments, 1 owner-exception OrganicTab `/80`-tier; floor →19,448); **FE-D3** `getErrorMessage` raw-echo scrub (PR #411 — new exported `sanitizeFallbackMessage` with 11 scrub patterns, prebound 4096, code-point truncate ≤200, generic fallback; benign EN+RU pass-through contracts kept; 4 opus review passes; the 174.3 manifest had to be regenerated because it SHA-pins **test files** too — the standing manifest-preflight lesson; floor →19,464); and **FE-D1** mutation retry skip-4xx (session-7, PR #413 — global `shouldRetryMutation` predicate in `src/lib/mutation-retry.ts` (ApiError 4xx incl. 429 → no retry; 5xx/network → retry) **plus** the root fix: all 8 throw branches of `api-wb-token-errors.ts` now re-throw `ApiErrorClass` so the predicate is not dead code — the flat `new Error` re-throw was caught by a live-e2e review REJECT after 17/17 green units; live e2e 6 passed via the PM2-swap protocol; floor →19,492).
+- **Session-8 (V18, 2026-09-06) — the current baseline** — 4 PRs, all merged, cleanup 0/0/0 ×4 (record: `docs/HANDOFF-2026-09-06-V18-SESSION8-FE-D5-FE-D3FAM-WCAG-W6-EXECUTED-AND-REMAINING-BACKLOG.md`, process canon `docs/ORCHESTRATOR-PROMPT-2026-09-06-V18-DEBT-CONTINUATION-OMC-SUBAGENTS.md`):
+  - **FE-D5 cross-tab cabinet-create → Web Locks** (PR #415, merge `dd4ec115`): new `src/lib/cabinetCreationLock.ts` — `navigator.locks` (feature-detected, injectable) + localStorage cross-tab claim (write-verify CAS fallback) + in-lock shared re-checks (cabinetId live + persisted blob → tombstone → in-flight). The Idempotency-Key is minted **inside** the lock; a wire-ambiguous takeover reuses the dead tab's key (BE replay; `@@unique([userId, operationId])` verified in the backend repo makes key-reuse duplicate-safe). Three-pole reporter (clean / failed-ambiguous, immediately adoptable / uncertain-tombstone); `'blocked'` settlement surfaces through the recovery-alert machine and clears the CREATE_PENDING marker. Live cross-tab e2e green with a negative control failing on `main` ("Expected 1, Received 2"); 5 review passes; 174.3 manifest regenerated ×2; floor 19,492 → **19,521**. New registry item: CABINET-BROWSER-02 is a pre-existing red on `main` (bisect-verified 2026-09-06), likely interacting with FE-D1 retry semantics.
+  - **fe-d3-family** (PR #416, merge `d8743fd5`): `sanitizeFallbackMessage` moved byte-identically to its canonical home `src/lib/sanitize-fallback-message.ts`; `wb-token-form-helpers.ts` imports and re-exports it, so the SHA-pinned test was untouched and **no manifest regen was needed** (removing the re-export fails loudly — the move-without-regen precedent). The four hook-local `getErrorMessage` fallbacks (useCloseSupply, useCreateSupply, useGenerateStickers, useDownloadDocument) now sanitize instead of echoing raw `error.message`; rethrows untouched (FE-D1 pins intact). Floor 19,521 → **19,537**. Remaining: ~128 `.tsx` echo surfaces — owner decision on apiClient-egress sanitization.
+  - **WCAG wave-6** (PR #417, merge `e7666331`): the full warn-on-warn/10 cluster + selected-row stacks — 12 text failures (4 newly found, incl. a 1.41 dark `text-white`) remediated with fg-on-tint + `warning-foreground` + underline; post-remedy worst kept ratio 4.87; selected-row chips use fg-on-tint across all four row statuses (worst selHover 10.74/9.94). 3 review passes with an independent contrast calculator. Floor 19,537 → **19,559**. Residuals routed: chart-2 dark selHover 3.71 → C5; `warn/40` borders 2.66 → the 1.4.11 valence rider.
+  - **P3 quickwin** (PR #418, merge `0b95e963`): deletion-only removal of the dead `src/lib/queryClient.ts` (0 importers, stale `retry:1`), floor unchanged.
 
-### Wave-3 canon: layered compositing supersedes "over card"
+### Contrast canon: layered compositing (waves 3-6)
 
-Wave-3 (`debt-p2-wave3-aa-quickwins.md`, now the superset canon over the wave-1/2 artifacts) executed the registered `/15` and `/10` sub-AA sites but review pass-1 **falsified the "over card" measurement model**: real DOM stacks contain gradient cards (`bg-gradient-to-br from-status-information/10 to-status-warning/10`), nested tints, and `muted/50` parents, producing in-situ 2.79–4.41 failures behind "PASS" attestations (2.79 on a nested `/20`-on-`/15` badge was the worst repo site found). The updated rules: contrast must be measured over the **actual compositing stack** (sequential alpha layers over card; gradients at worst-end; a bare-card measurement is valid only with a verified mount chain), and when tint tuning cannot reach AA the remedy is structural — **fg-on-tint** (`text-foreground` on the tint; valence carried by tint+border+label+icon) or **solid pairs** (`bg-status-X text-status-X-foreground`); financial tokens have no `-foreground`, so fg-on-tint is the only option there. The wave touched 15 files (CashflowRowPrimitives family, SkuCashflowSection/CashflowExpenseGrid host fold-ins, unit-economics-config chips, MarginSlider, GrossProfitSection, TwoLevelPriceHeader, MarginSection/margin-status-helpers), re-pinned 8 test files, and registered a **WCAG 1.4.11 follow-up**: valence channels (tint 1.07–1.21:1, border 1.52–1.89:1) sit below the 3:1 non-text threshold and need a ≥3:1 carrier (solid border/icon) — an owner-scope design decision.
+**Wave-3** (`debt-p2-wave3-aa-quickwins.md`, the founding superset canon over the wave-1/2 artifacts) executed the registered `/15` and `/10` sub-AA sites but review pass-1 **falsified the "over card" measurement model**: real DOM stacks contain gradient cards (`bg-gradient-to-br from-status-information/10 to-status-warning/10`), nested tints, and `muted/50` parents, producing in-situ 2.79–4.41 failures behind "PASS" attestations (2.79 on a nested `/20`-on-`/15` badge was the worst repo site found). The updated rules: contrast must be measured over the **actual compositing stack** (sequential alpha layers over card; gradients at worst-end; a bare-card measurement is valid only with a verified mount chain), and when tint tuning cannot reach AA the remedy is structural — **fg-on-tint** (`text-foreground` on the tint; valence carried by tint+border+label+icon) or **solid pairs** (`bg-status-X text-status-X-foreground`); financial tokens have no `-foreground`, so fg-on-tint is the only option there. Wave-3 touched 15 files (CashflowRowPrimitives family, SkuCashflowSection/CashflowExpenseGrid host fold-ins, unit-economics-config chips, MarginSlider, GrossProfitSection, TwoLevelPriceHeader, MarginSection/margin-status-helpers), re-pinned 8 test files, and registered a **WCAG 1.4.11 follow-up**: valence channels (tint 1.07–1.21:1, border 1.52–1.89:1) sit below the 3:1 non-text threshold and need a ≥3:1 carrier (solid border/icon) — an owner-scope design decision. Later waves extended the canon without overturning it: the `/80`-sweep added hover-layer and worst-end precedents; wave-6 established that mount chains must be traced through the root layout (`bg-muted/50` at `layout.tsx`), invalidating bare-bg pins, and that attestation numbers are per-tint/per-stack.
 
 **Resolved (final window + debt sessions):**
 
@@ -249,16 +288,26 @@ Wave-3 (`debt-p2-wave3-aa-quickwins.md`, now the superset canon over the wave-1/
 - **FE-D9** — `logApiError` logged non-2xx bodies including secrets — `redactSensitive` redact layer in both branches (PR #382).
 - **SEC-DOC-1** — plaintext credentials in tracked docs — **closed fully**: FE literals redacted (PR #383), live credential rotated by the owner and verified (login 200), `.http` scanner executed (PR #386); canonical value now only in untracked `.env.e2e`. BE-repo stale hits (135) and git history remain explicit owner requests (recommendation: leave history alone).
 - **C6** (tabular-nums) resolved-by-migration, pinned by RTC tests; the 174.2-registered pre-existing liquidity e2e failures (×12) were resolved by 174.3 and the monitor weekly-chart failure (×1) fixed by 174.4.
+- **/80-sweep** — repo-wide `text-*/80` — **RESOLVED session-6** (PR #410): 16 prod sites → 9 remediated (worst 2.78 → 3.76+), 6 PASS-as-is with attested comments, 1 owner exception (A2 OrganicTab `/80`-tier).
+- **FE-D3** — raw `getErrorMessage` echo — **RESOLVED session-6** (PR #411, `sanitizeFallbackMessage`); its family follow-up **fe-d3-family** (4 hook-local fallbacks) **RESOLVED session-8** (PR #416). Residuals: ~128 `.tsx` echo surfaces (owner decision on apiClient-egress sanitization) and scrubber edge cases (short secrets <40, dashed UUIDs, scheme-less creds).
+- **FE-D1** — mutation `retry:1` retrying 4xx — **RESOLVED session-7** (PR #413): `shouldRetryMutation` skip-4xx predicate plus ApiError preservation across all re-throw sites; live e2e verified via the PM2-swap protocol.
+- **FE-D5** — cross-tab cabinet-create duplication — **RESOLVED session-8** (PR #415): `src/lib/cabinetCreationLock.ts` Web Locks + localStorage claim + in-lock re-checks; Idempotency-Key minted in the lock and reused on wire-ambiguous takeover (backend `@@unique([userId, operationId])` replay); tri-pole reporter; recovery-alert `'blocked'` settlement. Follow-up registry item: CABINET-BROWSER-02 pre-existing red on `main`.
+- **WCAG wave-6 cluster** (full warn-on-warn/10 + selected-row stacks) — **RESOLVED session-8** (PR #417); residuals chart-2 dark selHover 3.71 → C5 and `warn/40` borders 2.66 → the 1.4.11 valence rider.
+- **Dead `src/lib/queryClient.ts`** — **RESOLVED session-8** (PR #418, deletion-only, 0 importers).
 
-**Confirmed live, awaiting owner action:**
+**Confirmed live, awaiting owner action (per the V18 session-8 handoff §3):**
 
-- **/80-sweep** — repo-wide `text-*/80` (pricing/automation/cashflow/popover + hover variants) at historical 3.2–3.45:1; needs measure-then-replace-or-exception, a candidate for boundary-scanner extension.
-- **Boundary cat-1 residue** — 372 registered violations (live counts drift; top files include `backfill-utils.ts` 21, `efficiency-filter-config.ts` 20, `SourceBadge.tsx` 16); waves of 5–10 coherent family files, ratchet down in the same commit. **Chart-hex files must not be touched** before the C5 owner decision. Test-pin residual: 44 test files pin legacy classes / 17 pin wave-1/2 classes / 9 pin only `bg-*-50`; pinned scenarioIds ("error-colour badge" in MarginByBrand/Category tests) must not be renamed without manifest regeneration.
-- **C5** waterfall dual color authority (hex ↔ tokens) — awaiting the chart-palette owner decision (categorical token-set recommended vs. extended exceptions); gates the ~50-site chart-hex track.
+- **Boundary residue 118** — fully **C5-blocked** (95 chart-hex + 23 legacy; lib 61 / components 37 / app 17 / types 3); no boundary waves until the C5 owner decision. **Chart-hex files must not be touched** before that decision. Pinned scenarioIds ("error-colour badge" in MarginByBrand/Category tests) must not be renamed without manifest regeneration.
+- **C5** waterfall dual color authority (hex ↔ tokens) — awaiting the chart-palette owner decision (categorical token-set recommended vs. extended exceptions vs. accept-118); gates the entire 118 boundary residue and the chart-2 dark selHover 3.71 wave-6 residual.
+- **WCAG 1.4.11 valence channels** — tint/border carriers below the 3:1 non-text threshold; plus the `warn/40` borders 2.66 rider. Owner design decision.
+- **A2 OrganicTab `/80`-tier** — finPos/80 3.51 light FAIL; tier idiom, alpha non-viable; structural tier differentiation recommended.
+- **apiClient-egress sanitization** (~128 `.tsx` echo surfaces) — recommended systemic solution: sanitize at the apiClient boundary (fe-d3-family closed only the 4 hooks).
+- **CABINET-BROWSER-02 pre-existing red on `main`** — new (bisect-verified 2026-09-06), likely interacting with FE-D1 retry semantics in the gated-PUT flow; separate item with its own bisect run.
 - **C8** — `FunnelPageContent` at the 200-line cap; watch on any touch.
-- **FE-D1/D3/D5/D8** — mutation retry:1 retrying 4xx (e2e-pinned); raw `getErrorMessage` (bounded fallback + scrub); cross-tab create duplication (Web Locks API); `getCabinetCreationOperation` middle-path (UX-complaint-triggered only).
-- **logger-redact architecture** — ~84 `logger.error` calls outside `logApiError`; recommended as a separate wave after boundary (redact in `src/lib/logger.ts` would cover all, touching 131 files + 52 mocks).
+- **FE-D8** — `getCabinetCreationOperation` middle path; UX-complaint-triggered only.
+- **logger-redact architecture** — ~84 `logger.error` calls outside `logApiError`; separate wave after owner approval (redact in `src/lib/logger.ts`).
 - **financial-foreground tokens** — owner recommendation: do not add while the `/5` solid-pair pattern suffices.
+- **BE questions (monitor)** — remote publish of the D-2 backend branch (then live re-check + request-backend #230 annex); FE-D3-residual (whether NestJS filters leak raw pg/redis errors into the JSON envelope); competitive same-key writes verified safe (unique-index INSERT, noted in the lock module).
 
 **Environment/harness gaps and canons:**
 
@@ -266,9 +315,9 @@ Wave-3 (`debt-p2-wave3-aa-quickwins.md`, now the superset canon over the wave-1/
 - **Manager-creds** — Manager journeys skipped (22–23 optional skips).
 - **FR-7** — nmId 202867769 W26 FBS variants absent after a DB reseed; 2 e2e unrunnable until reseed or re-pin.
 - Harness canons: shared `next dev` degrades under repeated suite runs (restart-per-run, tmp-worktree pattern); BE login throttle 5/hr shared; storageState TTL ~1h with a preflight that treats stale sessions as fresh; Node 24.18.0 PATH-pinned (system Node 26 breaks webpack).
-- **P3 process leftovers** — `format:check` md debt (~1189, outside the npm gate); the docs-95 baseline canonical-vs-archival split; unifying ~25 route guards; deleting the stopped pm2 registration (id 5).
+- **P3 process leftovers (session-8 §3.0)** — prettier md debt (~1,189 files, outside the npm gate; run directory-by-directory, then the docs gate); unifying ~25 route guards (behavior class, mini-plan + opus executor, tests-first); harness restart-per-run (test infrastructure); the FR-7 / AT-matrix / Manager-creds test epics; the docs-95 baseline canonical-vs-archival split; deleting the stopped pm2 registration (id 5, verify the id against live neighbors first); and the CABINET-BROWSER-02 pre-existing red bisect item.
 
-The standing FE-debt table (FE-D1…FE-D9), wave carry-outs C1–C18, BE-debt, and contrast escalations remain catalogued in `_bmad-output/planning-artifacts/shadcn-migration-status-and-debt-registry.md` (final snapshot 2026-09-02), cross-referenced against the final handoff's escalation register.
+The standing FE-debt table (FE-D1…FE-D9), wave carry-outs C1–C18, BE-debt, and contrast escalations remain catalogued in `_bmad-output/planning-artifacts/shadcn-migration-status-and-debt-registry.md` (final program snapshot 2026-09-02, then extended in place by appended debt-session sections: §9 `/80`-sweep, §10 FE-D3 + follow-ups, §11 FE-D1, §12 FE-D5, §13 fe-d3-family, §14 WCAG wave-6, §15 dead queryClient), cross-referenced against the final handoff's escalation register. The debt-session Vitest floor trajectory: 19,363 (program close) → 19,439 (wave-3) → 19,448/19,464 (session-6) → 19,492 (FE-D1) → 19,521/19,537/19,559 (session-8; the current CLAUDE.md floor is **19,559/0**).
 
 ## The 169 paid-storage lane (cross-repository exception)
 

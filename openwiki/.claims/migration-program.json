@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "pageVersion": "sha256:524199b818cf81bc3e9a8675cf6bf2efdaee7d6b5f2b44a76761bf65991ee96e",
+  "pageVersion": "sha256:67c2b285f3f0ee57a717aa3bcf5b99169d0cb71a34776b07e81070dadcf53775",
   "claims": [
     {
       "id": "claim_7146a57eacad4db2bf7552b903072ad9",
@@ -295,10 +295,154 @@
           "version": "repo-lines-v1:sha256:1b6648e668bfda40ea2bd2ca4976776b1d5e2e2fa9a7884531b0eece6ee58414:eyJzZWxlY3RlZExpbmVDb3VudCI6NywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZDY4ZjViYTNiYzBhNDg4MTA4NzVhYmVmODU1YzA5YTM3MmM3YjRiNTA5MzZhYzE5OTAzYTc2N2MxZDA1YTc0OSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNzAwMTA5YjQ5ZDRmNDFmZjE5MzI0ZGJkZWYwOWViOWFiNjlmMjE3MDg0N2M0ZWFiOGQ5MzMyZjUwNTcxZmQ3OSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiOGU5ZmNjMzE5N2JjM2RhOTQ3NDliOWNiNGI1NWZlODVhNThmNDdhNTcwNGM3Mzg3MDRmNzRiM2RlODk2NzJlMSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiOTg2ZTlmZDU0OGU1MDAyMjkyOTBkMmQxMGRlZTNmNTZiMjY5NzNjODU0MTM2NDM3NzMxZjIwYmE4YTk5NjIzNCJ9"
         }
       ]
+    },
+    {
+      "id": "claim_a4cf70ffe9eb43369c05117007eabdc3",
+      "statement": "As of the V18 session-8 handoff (2026-09-06), main is at `0b95e963` with the full Vitest suite at 19,559 passed / 0 failed across 1,287 files, lint 0/0, tsc 0, webpack build clean, boundary 118 = baseline with 3 exceptions, docs 95, locale 4, lessons 0, and the 174.3 contract tests green; this is the current session baseline and entry point for the next (V19) orchestrator prompt.",
+      "evidence": [
+        {
+          "resource": "repo://docs/HANDOFF-2026-09-06-V18-SESSION8-FE-D5-FE-D3FAM-WCAG-W6-EXECUTED-AND-REMAINING-BACKLOG.md",
+          "version": "repo-file-v1:sha256:ef8e1855ea01f9100048832c8ff3d8ec5b3af7f790e9a11df3080f6629802aab"
+        }
+      ]
+    },
+    {
+      "id": "claim_50964c4617734605945a7a89e9b7552a",
+      "statement": "The ui-boundary ratchet baseline was lowered 372 → 118 by debt sessions-4/5 (P2 W4 component families and W5 lib residue), and the remaining 118 violations (95 chart-hex + 23 legacy; lib 61 / components 37 / app 17 / types 3) are entirely gated by the C5 chart-palette owner decision — boundary waves are frozen until C5 resolves.",
+      "evidence": [
+        {
+          "resource": "repo://_bmad-output/implementation-artifacts/debt-p2-w4-component-families.md",
+          "version": "repo-file-v1:sha256:97e3023ae2f2e11f622ba0d92920313869eeb12615e246c772d80f356b4596ef"
+        },
+        {
+          "resource": "repo://_bmad-output/implementation-artifacts/debt-p2-w5-lib-residue.md",
+          "version": "repo-file-v1:sha256:e7c636a29211c07e6e7e57b91ca4985d13ad327fbfc87a5e22bf07371ca1323d"
+        },
+        {
+          "resource": "repo://docs/ORCHESTRATOR-PROMPT-2026-09-06-V18-DEBT-CONTINUATION-OMC-SUBAGENTS.md",
+          "version": "repo-file-v1:sha256:bcfa3368cc9ae350a521be8c12ca1bd683b54b63cf95a89f7edc1c2b0b91088c"
+        }
+      ]
+    },
+    {
+      "id": "claim_5d121ea1d31b44a2b8bdc3ef0fa9418d",
+      "statement": "FE-D5 (cross-tab cabinet-create duplication) was resolved in session-8 (PR #415) by `src/lib/cabinetCreationLock.ts`: navigator.locks with feature detection, a localStorage cross-tab claim with write-verify CAS fallback, in-lock shared re-checks (cabinetId live + persisted blob → tombstone → in-flight), an Idempotency-Key minted inside the lock that a wire-ambiguous takeover reuses (safe via the backend `@@unique([userId, operationId])` durable constraint), a tri-pole reporter (clean / failed-ambiguous, immediately adoptable / uncertain-tombstone), and `'blocked'` settlement surfaced through the recovery-alert machine.",
+      "evidence": [
+        {
+          "resource": "repo://_bmad-output/planning-artifacts/shadcn-migration-status-and-debt-registry.md",
+          "version": "repo-file-v1:sha256:4ac3ea33d4cd9083662bd85b76a6473ab321a3004abfece0242c254f3da8503b"
+        },
+        {
+          "resource": "repo://docs/HANDOFF-2026-09-06-V18-SESSION8-FE-D5-FE-D3FAM-WCAG-W6-EXECUTED-AND-REMAINING-BACKLOG.md",
+          "version": "repo-file-v1:sha256:ef8e1855ea01f9100048832c8ff3d8ec5b3af7f790e9a11df3080f6629802aab"
+        },
+        {
+          "resource": "repo://src/lib/cabinetCreationLock.ts",
+          "version": "repo-file-v1:sha256:5d5d39ab8d5ffc09309954417485e5961ee81a1f653974aece54eb1519153181"
+        }
+      ]
+    },
+    {
+      "id": "claim_64ebcd3023134ee0be1292d5c89c0b03",
+      "statement": "FE-D3 (raw `getErrorMessage` echo) was resolved in session-6 (PR #411) with `sanitizeFallbackMessage` (11 scrub patterns, prebound 4096, code-point truncate ≤200, generic fallback), and its family follow-up fe-d3-family (session-8, PR #416) moved the function byte-identically to `src/lib/sanitize-fallback-message.ts` with a re-export from `wb-token-form-helpers.ts` preserving the SHA-pinned test (no manifest regen needed) and switched the four hook-local fallbacks (useCloseSupply, useCreateSupply, useGenerateStickers, useDownloadDocument) from raw `error.message` echo to sanitization; ~128 `.tsx` echo surfaces remain an owner decision (recommended: apiClient-egress sanitization).",
+      "evidence": [
+        {
+          "resource": "repo://_bmad-output/implementation-artifacts/debt-fe-d3-family-hook-fallback-sanitization.md",
+          "version": "repo-file-v1:sha256:8b72d78fdbccb497f48a04f936d1b8b2ea89515f2c2b90338ae059247ffcd53e"
+        },
+        {
+          "resource": "repo://src/hooks/useCloseSupply.ts",
+          "version": "repo-file-v1:sha256:682c5bba973abdbf98490bfb9c94cc1c86d1e956519624fd0b535cca8c1dc0b2"
+        },
+        {
+          "resource": "repo://src/lib/sanitize-fallback-message.ts",
+          "version": "repo-file-v1:sha256:feae577e73391d6eca472d1c423ea6591b67056d714f8eb297255d279e03b9ec"
+        }
+      ]
+    },
+    {
+      "id": "claim_68e5682f04a44e7eba4c84f275ddc867",
+      "statement": "FE-D1 (mutation `retry:1` retrying 4xx) was resolved in session-7 (PR #413) with a two-layer fix: the global `shouldRetryMutation` predicate in `src/lib/mutation-retry.ts` (ApiError 4xx incl. 429 → no retry; 5xx/network/unknown → retry) plus ApiError preservation across all 8 throw branches of `api-wb-token-errors.ts`, because flat `new Error` re-throws destroyed the ApiError class and made the predicate dead code on the motivating WB-token PUT 400 case.",
+      "evidence": [
+        {
+          "resource": "repo://_bmad-output/implementation-artifacts/debt-fe-d1-mutation-retry-skip-4xx.md",
+          "version": "repo-file-v1:sha256:77f9374385803a70f665e08272908f5d97dd76ca96e5a056ad3dfab77aca4fec"
+        },
+        {
+          "resource": "repo://_bmad-output/planning-artifacts/shadcn-migration-status-and-debt-registry.md",
+          "version": "repo-file-v1:sha256:4ac3ea33d4cd9083662bd85b76a6473ab321a3004abfece0242c254f3da8503b"
+        }
+      ]
+    },
+    {
+      "id": "claim_f16402306c2e4073a4747611e05388fc",
+      "statement": "The repo-wide `/80`-sweep (text-*/80 AA failures) was resolved in session-6 (PR #410): 16 prod sites — 9 remediated (worst 2.78 → 3.76+), 6 PASS-as-is with attested comments, 1 owner exception (A2 OrganicTab /80-tier, where alpha tuning is non-viable and structural tier differentiation is recommended).",
+      "evidence": [
+        {
+          "resource": "repo://_bmad-output/implementation-artifacts/debt-p2-80-sweep.md",
+          "version": "repo-file-v1:sha256:0da8faf5ae52d72ad83523b66af6ca9b1b613df7f37ba11d5305faa781ac9b05"
+        },
+        {
+          "resource": "repo://docs/HANDOFF-2026-09-05-V17-SESSION6-80-SWEEP-AND-FE-D3-EXECUTION-AND-REMAINING-BACKLOG.md",
+          "version": "repo-file-v1:sha256:72dc43bafb31cf122568701551eba3bc391a86179e9fded3d59763d0442a735e"
+        }
+      ]
+    },
+    {
+      "id": "claim_4edbc36aa1f347ec89f32e5cab61fcd9",
+      "statement": "WCAG wave-6 (session-8, PR #417) resolved the full warn-on-warn/10 cluster and selected-row stacks: 12 text failures (including a 1.41 dark text-white) remediated via fg-on-tint + warning-foreground + underline with post-remedy worst kept 4.87, and selected-row chips use fg-on-tint across all four row statuses; it also established the mount-chain contrast canon (page stacks sit on bg-muted/50 from the root layout, so bare-bg pins are invalid) and routed residuals to owners (chart-2 dark selHover 3.71 → C5; warn/40 borders 2.66 → the 1.4.11 valence rider).",
+      "evidence": [
+        {
+          "resource": "repo://_bmad-output/implementation-artifacts/debt-p2-w6-warn-on-warn-cluster.md",
+          "version": "repo-file-v1:sha256:c6ec5de44929705abae0651e39015217965ae5d7991d2125e5bb55d2adb4ae68"
+        },
+        {
+          "resource": "repo://docs/HANDOFF-2026-09-06-V18-SESSION8-FE-D5-FE-D3FAM-WCAG-W6-EXECUTED-AND-REMAINING-BACKLOG.md",
+          "version": "repo-file-v1:sha256:ef8e1855ea01f9100048832c8ff3d8ec5b3af7f790e9a11df3080f6629802aab"
+        }
+      ]
+    },
+    {
+      "id": "claim_9e15587703854548b44ec06d0ca74b23",
+      "statement": "The 174.3 execution manifest SHA-256-pins test files (not only e2e specs), so any item editing a manifest-pinned file must run the manifest-preflight grep and, when pins break, regenerate only via `node scripts/run-story-174-3-state-evidence.mjs --owner-units` (fail-closed, orchestrator-only); FE-D5 regenerated the manifest twice (CabinetCreationForm.test.tsx) while fe-d3-family avoided regeneration via byte-identical move plus re-export.",
+      "evidence": [
+        {
+          "resource": "repo://docs/HANDOFF-2026-09-06-V18-SESSION8-FE-D5-FE-D3FAM-WCAG-W6-EXECUTED-AND-REMAINING-BACKLOG.md",
+          "version": "repo-file-v1:sha256:ef8e1855ea01f9100048832c8ff3d8ec5b3af7f790e9a11df3080f6629802aab"
+        },
+        {
+          "resource": "repo://docs/ORCHESTRATOR-PROMPT-2026-09-06-V18-DEBT-CONTINUATION-OMC-SUBAGENTS.md",
+          "version": "repo-file-v1:sha256:bcfa3368cc9ae350a521be8c12ca1bd683b54b63cf95a89f7edc1c2b0b91088c"
+        }
+      ]
+    },
+    {
+      "id": "claim_43672677d15b4342a07b8eea3b5ff723",
+      "statement": "After session-8 the remaining backlog is: P3 window items (prettier md ~1,189 files, ~25 route guards, harness restart-per-run, FR-7/AT-matrix/Manager-creds test epics, docs-95 split, pm2 id-5 deletion, and the CABINET-BROWSER-02 pre-existing red on main — bisect-verified 2026-09-06 and likely interacting with FE-D1 retry semantics), the owner-decision ledger (C5 chart palette, WCAG 1.4.11 valence channels + warn/40 rider, A2 OrganicTab /80-tier, apiClient-egress sanitization), and BE questions (D-2 remote publish + request-backend #230 annex, NestJS raw pg/redis error reachability).",
+      "evidence": [
+        {
+          "resource": "repo://docs/HANDOFF-2026-09-06-V18-SESSION8-FE-D5-FE-D3FAM-WCAG-W6-EXECUTED-AND-REMAINING-BACKLOG.md",
+          "version": "repo-file-v1:sha256:ef8e1855ea01f9100048832c8ff3d8ec5b3af7f790e9a11df3080f6629802aab"
+        }
+      ]
+    },
+    {
+      "id": "claim_9a42274ef00c48a680e52db938b03cb3",
+      "statement": "The debt-session Vitest floor advanced monotonically 19,363 (program close) → 19,439 (wave-3) → 19,448/19,464 (session-6: /80-sweep +9, FE-D3 +16) → 19,492 (FE-D1 +28) → 19,521 (FE-D5 +29) → 19,537 (fe-d3-family +16) → 19,559 (wave-6 +22), with each increment shipped in the same PR that updates the CLAUDE.md Accepted Baselines floor.",
+      "evidence": [
+        {
+          "resource": "repo://CLAUDE.md",
+          "version": "repo-file-v1:sha256:c193a055815f4ab6e714d38b9962e639fbe473210cf30faba9b71b3aa567a5a6"
+        },
+        {
+          "resource": "repo://docs/HANDOFF-2026-09-06-V18-SESSION8-FE-D5-FE-D3FAM-WCAG-W6-EXECUTED-AND-REMAINING-BACKLOG.md",
+          "version": "repo-file-v1:sha256:ef8e1855ea01f9100048832c8ff3d8ec5b3af7f790e9a11df3080f6629802aab"
+        }
+      ]
     }
   ],
   "verification": {
     "by": "openwiki/0.5.0",
-    "at": "2026-09-05T08:47:50.295Z"
+    "at": "2026-09-06T08:47:51.668Z"
   }
 }

@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "pageVersion": "sha256:27e973e2c670d784e3606f254a97856cc71fc7d5504e1a0a8ba904150ca05464",
+  "pageVersion": "sha256:e0c3c63ed474c0730c2ddfb0fa30e099443d84ecfdd45e020d7f7c888c4240f2",
   "claims": [
     {
       "id": "claim_07e85bb249e745f69c550323b16664e1",
@@ -246,21 +246,21 @@
     },
     {
       "id": "claim_2134510cae8d4eec9f8debc679151e77",
-      "statement": "After the debt sessions, the remaining backlog is boundary waves 4-5 against a 372 residual (chart-hex files gated on the C5 owner decision), the /80 sweep, FE-D1/D3/D5, and logger-redact, prioritized in the session handoff sections 3.2-3.5.",
+      "statement": "After the debt sessions through 2026-09-06 (handoff chain ending in HANDOFF-2026-09-06-V18-SESSION8), the boundary track is complete: the whole 118 residual (95 chart-hex + 23 legacy classes) is gated on the C5 chart-palette owner decision, with boundary baseline 118 in scripts/.shadcn-ui-boundary-baseline.txt; the remaining backlog is P3-window work (prettier md, route guards, harness restart-per-run, FR-7/AT-matrix/Manager-creds, docs-95 split, pm2 delete 5, CABINET-BROWSER-02 red) plus the owner ledger, per session-8 handoff sections 3.0-3.2.",
       "evidence": [
         {
-          "resource": "repo://docs/HANDOFF-2026-09-03-V15-SESSION2-EXECUTION-AND-REMAINING-BACKLOG.md#L62-L76",
-          "version": "repo-lines-v1:sha256:b381eacea32b096b6fd72df43373e29b0a38d7bae99ee5f6fd417be716550e05:eyJzZWxlY3RlZExpbmVDb3VudCI6MTUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjdmMTkyOTBkOGJjNWQwYjI3OGI3ZWE2ZTM0ZDI2Y2E0MGMxMjg1MzYwMTVjZDc1NDM3YTk3ZjNkODlkOTE0YmMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImZlODIyMjJlZjc0ZjEyYWI2MWJlNDE0ZDU4MTZlNWIwZjZkZmJkMjk1YjE1Y2Q1ZWIyMTAwMTRmOTk0NWE3OTQiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImJjZGQ2MDIyNjI2ODA0ZmQ1ZjU1ODk2M2MyOGFjMWNkN2I0MDQwYWRmN2UwN2I0MGRiNmU5MDZiZDNkZDcyZGUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImM5NzUzNzNjOWI3MzBmNjNhYzAwNTQ0MjMxNjhiZTgxMjg2ODlhN2E2N2JhYjIzNmQ1MWJjNGM0ODZiZDM5YmQifQ"
+          "resource": "repo://docs/HANDOFF-2026-09-06-V18-SESSION8-FE-D5-FE-D3FAM-WCAG-W6-EXECUTED-AND-REMAINING-BACKLOG.md#L19-L52",
+          "version": "repo-lines-v1:sha256:604170c6b6876c40b7c40897d514976485c0064fc4ee06bc86ee56859c63bce6:eyJzZWxlY3RlZExpbmVDb3VudCI6MzQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjhkNmM1ZjU5ZGQ3NWM2MzA3ODk2OTg4ZjdjOGE4NWZjZjkyMzVhYjhmZmYzYWRkYjgzNDM3ZjgwOTI2YjhhYWMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImZhYWUzNDAwYTZjYzQ4MWU0ZjJhMDUwYzFkYzI5MTU4NjNlZGY0OTc0OGU3ZjZjZDViN2U0MGI4YWYyNTdhMzAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjZiZGFhMDdhNDJhYWIxZjA3MjRhZjI4NjRhNmE5NGI1YjEzMGZmMzk0YjBkYmI3ZTcxMTU2NDdkZmE2NGY1MDQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImFjNjhhNjhlZTdkMGQwZjM1NmMzNGExZTI1OTA5NzVlNmRmYTE4YWMxY2RiYmVjN2QzYjgwMTQ4NmQwYWEzNGIifQ"
         },
         {
           "resource": "repo://scripts/.shadcn-ui-boundary-baseline.txt",
-          "version": "repo-file-v1:sha256:ed57abc02a4ca626324ba2533c1363a21e9c2852d4c42426879978942051a70a"
+          "version": "repo-file-v1:sha256:f10f7170eeb4986f69d764a4cb97c3f8e9337963222188a647fc4c0ac289d0e4"
         }
       ]
     }
   ],
   "verification": {
     "by": "openwiki/0.5.0",
-    "at": "2026-09-05T08:47:50.295Z"
+    "at": "2026-09-06T08:47:51.668Z"
   }
 }

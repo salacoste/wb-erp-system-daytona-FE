@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "pageVersion": "sha256:b9fba2a1348fca684ec97a76ef10fd00486c64e9115ff5c9bd8c1328c302d572",
+  "pageVersion": "sha256:532faede32ddf1d75fcd83250a2e21f8de6be317e44b7948d6d48d191c8dcb22",
   "claims": [
     {
       "id": "claim_2c9c1829b6b846cd913111aee59b6f27",
@@ -17,8 +17,8 @@
       "statement": "Providers (src/app/providers.tsx, 'use client') creates the TanStack QueryClient via a browser-singleton accessor (fresh client per render on the server, reused browser client) with defaults staleTime 60s, gcTime 5min, retry 1, refetch on window focus/reconnect, and conditionally mounts ReactQueryDevtools when env.enableDevTools is true.",
       "evidence": [
         {
-          "resource": "repo://src/app/providers.tsx#L9-L58",
-          "version": "repo-lines-v1:sha256:41af7f267103153711489eaf192212d19a9c498642df31cc0557e3ea6f879598:eyJzZWxlY3RlZExpbmVDb3VudCI6NTAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImQ1MTFjNjUxYzljOWNlYzY2ZmI2NzEzYjljZGVjOGNmMTc4ODQ1YjIwNTVhN2JkMThiZWU3NDU2ZTBhMTE4OWMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjU2MjY3OTM1ZmM2MzM0NjVkODQ4YjQwYTRlZDY5NjdlN2I3YTMyM2Y4MWNkNTNjMTEwYWUyMTAyOTY4N2FhMTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjM4NTNhN2Q3MjMyMGVmNGE2MjM5MjI3NThkMTAwMjI1ZTMyMTYwYzY2ZjQyZDI3ZWFjZTBlNGVmZTFhYTI5OTciLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEifQ"
+          "resource": "repo://src/app/providers.tsx#L9-L63",
+          "version": "repo-lines-v1:sha256:67fd520482dd570fbbc4a07f7e5650791e51d234952b0636f2e209cf6fb532b9:eyJzZWxlY3RlZExpbmVDb3VudCI6NTUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjdiZDM0YThlNmUwN2NkZjAzMjIyMmM5MmFmNmU5YTQxMWMyMDUyZDJiYWJiNGExOTFkZDEzNWM3MDJmMGQ4Y2YiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
         }
       ]
     },
@@ -266,7 +266,7 @@
       "evidence": [
         {
           "resource": "repo://src/services/cabinets.service.ts#L41-L100",
-          "version": "repo-lines-v1:sha256:b92b5788b4d094c4d25a933f0a0b9b7e948709046f137ed570812377ebb58ad3:eyJzZWxlY3RlZExpbmVDb3VudCI6NjAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImVhZjIyY2YwNzMyNTkyYzI0NzE0MWNiZTYxZWZhMTEwMTI2MTJmNWEzMTIyYjlhZjliYmFmNTJmNTcyNGQxOTQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjI3ZTU3ODhkNWQ5ZDczZDI0YTgxZGJjMGE1YTc0YmZhODJjOWMzYjNhZjk5ZTUyYWY3OTZlOTBiNDY4YThhM2QiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImRjMmNjOGZlMmZlODU3NGVkY2JkY2RmMDFlZTdjYzA5MGQ3MDMwZjYxZjY3NDkwMGFiMmQzMTk4ZjI3ZTVhNzEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjRjYzBlNzQwYzE1YWZjYjQwNDM0NGU0Njg4ZGQ1NmJmMWYwYjBiMGU2NThhN2QzNmMxNjUxMjRjOGY5MWFlZDUifQ"
+          "version": "repo-lines-v1:sha256:543c31c1d611c1b0741c7802d7e344b62c1e61daa3507e24c764f772f46d9e49:eyJzZWxlY3RlZExpbmVDb3VudCI6MTE4LCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiJlYWYyMmNmMDczMjU5MmMyNDcxNDFjYmU2MWVmYTExMDEyNjEyZjVhMzEyMmI5YWY5YmJhZjUyZjU3MjRkMTk0IiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiIyN2U1Nzg4ZDVkOWQ3M2QyNGE4MWRiYzBhNWE3NGJmYTgyYzljM2IzYWY5OWU1MmFmNzk2ZTkwYjQ2OGE4YTNkIiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiJkYzJjYzhmZTJmZTg1NzRlZGNiZGNkZjAxZWU3Y2MwOTBkNzAzMGY2MWY2NzQ5MDBhYjJkMzE5OGYyN2U1YTcxIiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MywiZm9sbG93aW5nQ29udGV4dEhhc2giOiI0Y2MwZTc0MGMxNWFmY2I0MDQzNDRlNDY4OGRkNTZiZjFmMGIwYjBlNjU4YTdkMzZjMTY1MTI0YzhmOTFhZWQ1In0"
         }
       ]
     },
@@ -307,6 +307,6 @@
   ],
   "verification": {
     "by": "openwiki/0.5.0",
-    "at": "2026-09-05T08:47:50.295Z"
+    "at": "2026-09-06T08:47:51.668Z"
   }
 }

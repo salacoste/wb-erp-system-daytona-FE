@@ -12,6 +12,8 @@ sources:
     resource: repo://docs/HANDOFF-2026-09-02-FINAL-94-94-PROGRAM-COMPLETE.md
   - id: openwiki-source-5bfb8400b5daf58813b7ad6a
     resource: repo://docs/HANDOFF-2026-09-03-V15-SESSION2-EXECUTION-AND-REMAINING-BACKLOG.md
+  - id: openwiki-source-7825c41e82ca828e4e955736
+    resource: repo://docs/HANDOFF-2026-09-06-V18-SESSION8-FE-D5-FE-D3FAM-WCAG-W6-EXECUTED-AND-REMAINING-BACKLOG.md
   - id: openwiki-source-c66fd1b858bdd6d97345f065
     resource: repo://docs/request-backend/230-auth-refresh-endpoint-missing.md
   - id: openwiki-source-5b54a58d1b51cd490b0e7162
@@ -26,10 +28,10 @@ sources:
     resource: repo://scripts/run-story-174-3-real-browser-zoom.mjs
   - id: openwiki-source-1bbe76f55f6efa9d2465f6c5
     resource: repo://scripts/run-story-174-3-state-evidence.mjs
-generated: { by: "openwiki/0.5.0", at: "2026-09-05T08:47:50.295Z" }
+generated: { by: "openwiki/0.5.0", at: "2026-09-06T08:47:51.668Z" }
 verified:
   - by: openwiki/0.5.0
-    at: 2026-09-05T08:47:50.295Z
+    at: 2026-09-06T08:47:51.668Z
 ---
 
 # WB ERP System — Frontend OpenWiki
@@ -127,13 +129,21 @@ node scripts/generate-story-174-3-scope-register.mjs  # Story 174.3: regenerate 
 |------|-------|
 | Route migration work (Stories 166–174, route ledger, worktrees, handoffs), the Story 174.3 evidence pipeline (execution manifest, contract tests, scope register) | [Migration Program (Epics 166–174)](migration-program.md) |
 | Token / component / primitive work, design-system boundary canon (`LEGACY_PALETTE` / `CONTEXTUAL_HEX`), the WCAG 2.2 AA inclusive visual matrix, and the debt-session boundary waves / contrast sweeps (ratchet 372) | [Design System](design-system.md) |
-| App structure / route groups / auth store (including D-1 `ensureSessionNonce` cabinet-create semantics and D-2 nonce-preserving `refreshToken`) / environment & API configuration | [Architecture](architecture.md) |
-| api-client transport, error semantics, and the D-2 reactive 401 single-flight refresh interceptor | [API Client and Normalizers](api-and-normalizers.md) |
+| App structure / route groups / auth store (including D-1 `ensureSessionNonce`, D-2 nonce-preserving `refreshToken`, and FE-D5 `cabinetCreationLock` Web Locks) / environment & API configuration | [Architecture](architecture.md) |
+| api-client transport, error semantics, the D-2 reactive 401 single-flight refresh interceptor, and the FE-D3/fe-d3-family `sanitizeFallbackMessage` fallback sanitization | [API Client and Normalizers](api-and-normalizers.md) |
 | Financial summary math, margin/liquidity calculations, cabinet creation and settlement flows, task-role semantics (including the quality-wave `ScenarioUrgencyTier` work) | [Domain Logic](domain-logic.md) |
 | Gate / baseline / ratchet work, including `check-shadcn-ui-boundary.mjs` (current baseline 372, fails only on increase) and `check-shadcn-migration-parity.mjs` self-suites | [Conventions & Quality Gates](conventions-and-quality.md) |
 | Test / e2e / automation work, including the story-174-3 e2e runner tooling (`e2e/support/story-174-3-runner-*.ts`, real-browser-zoom and state-evidence runners, fixture corpus under `e2e/fixtures/story-174-3/`) and the D-1 two-tab nonce-nulling e2e | [Testing & Operations](testing-and-ops.md) |
 
 ## Wiki Map
+
+- **[Architecture](architecture.md)** — route groups, layout/provider hierarchy, client-side data fetching, the auth store, and the canonical configuration table.
+- **[API Client and Normalizers](api-and-normalizers.md)** — the typed API surface, transport, error semantics, and the null-money/ratio preservation rules.
+- **[Design System](design-system.md)** — Tailwind v4 semantic tokens, hardened shadcn primitives, composition families, enforced design-system boundary, and the Story 174.3 inclusive visual contract.
+- **[Domain Logic](domain-logic.md)** — financial-summary math, margin/liquidity calculations, cabinet creation/settlement, and task-role semantics.
+- **[Migration Program (Epics 166–174)](migration-program.md)** — per-epic/story status ledger, route ledger (76/76 verified), parity validation, Story 174.3 evidence pipeline, orchestration process, and the final 94/94 closeout.
+- **[Conventions & Quality Gates](conventions-and-quality.md)** and **[Testing & Operations](testing-and-ops.md)** — coding standards/gates and the testing strategy with the story-174-3 evidence runners.
+ki Map
 
 - **[Architecture](architecture.md)** — route groups, layout/provider hierarchy, client-side data fetching, the auth store, and the canonical configuration table.
 - **[API Client and Normalizers](api-and-normalizers.md)** — the typed API surface, transport, error semantics, and the null-money/ratio preservation rules.

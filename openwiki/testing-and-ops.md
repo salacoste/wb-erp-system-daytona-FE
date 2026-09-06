@@ -14,6 +14,8 @@ sources:
     resource: repo://e2e/fixtures/story-174-3/execution-manifest.ts
   - id: openwiki-source-5bbe945b709b541c065ab0e2
     resource: repo://e2e/fixtures/story-174-3/state-evidence.ts
+  - id: openwiki-source-1ff559a36ab968f434220c57
+    resource: repo://e2e/onboarding-cabinet-create-cross-tab.spec.ts
   - id: openwiki-source-91faab5d81883f34499f73f4
     resource: repo://e2e/onboarding-cabinet-create-nonce-mint.spec.ts
   - id: openwiki-source-f323b150aa81d8e8d0adb0eb
@@ -68,10 +70,10 @@ sources:
     resource: repo://test-utils/outbound-network-policy.ts
   - id: openwiki-source-fbadcd8591b65031efaaedce
     resource: repo://vitest.config.ts
-generated: { by: "openwiki/0.5.0", at: "2026-09-05T08:47:50.295Z" }
+generated: { by: "openwiki/0.5.0", at: "2026-09-06T08:47:51.668Z" }
 verified:
   - by: openwiki/0.5.0
-    at: 2026-09-05T08:47:50.295Z
+    at: 2026-09-06T08:47:51.668Z
 ---
 # Testing & Operations
 
@@ -115,7 +117,7 @@ Tests are co-located with source in `__tests__/` directories:
 ### Full-suite floor history
 The floor is a floor, not a substitute for fresh per-story validation. It moves down legitimately only when tests are provably deleted with their production owners:
 
-- **Current accepted baseline (CLAUDE.md, `npm test -- --run`): ≥ 19,439 passing / 0 failed.** That is the 19,118 floor established by Story 174.2-FE (2026-08-31) plus +237 tests from the Story 174.3 window, +8 contract tests from 174.4, +52 redact-suite tests from debt-FE-D9, +6 nonce-mint tests (D-1/PB-1), +3 urgency-tier tests (C15), +12 reactive-refresh tests (D-2/PB-3), and +3 wave-3 AA re-pins. The 174.2 floor itself moved from 19,874/1,256 by an exact −756 tests / −22 files, entirely from 65 proven-dead test files deleted together with their dead production owners (import-closure proved per file, reviewer-verified) — no live test was deleted.
+- **Current accepted baseline (CLAUDE.md, `npm test -- --run`): ≥ 19,559 passing / 0 failed.** That is the 19,118 floor established by Story 174.2-FE (2026-08-31) plus +237 tests from the Story 174.3 window, +8 contract tests from 174.4, +52 redact-suite tests from debt-FE-D9, +6 nonce-mint tests (D-1/PB-1), +3 urgency-tier tests (C15), +12 reactive-refresh tests (D-2/PB-3), +3 wave-3 AA re-pins, +9 `/80`-sweep style pins, +16 FE-D3 sanitizer pins, +28 FE-D1 retry/ApiError-preservation pins, +29 FE-D5 web-locks/claim suite, +16 fe-d3-family hook-fallback pins, and +22 wave-6 WCAG style pins. The 174.2 floor itself moved from 19,874/1,256 by an exact −756 tests / −22 files, entirely from 65 proven-dead test files deleted together with their dead production owners (import-closure proved per file, reviewer-verified) — no live test was deleted.
 - **Per-story peaks are historical**, not the current bar: e.g. the 19,874 peak observed after Story 173.13 was superseded by the legitimate 174.2 dead-test deletion, then by the 174.3/174.4/debt-FE-D9 additions. Record the current accepted baseline, not historical counts, when validating. When a story legitimately moves a baseline, update the CLAUDE.md table in the same PR.
 - `vitest.config.ts` excludes the two `node:test`-only self-suites (`scripts/__tests__/check-shadcn-migration-parity.test.mjs`, `scripts/__tests__/check-shadcn-ui-boundary.test.mjs`) from the Vitest run — they run under `node --test` from their own scripts instead.
 
@@ -215,6 +217,7 @@ Synthetic-seeding spec (Story 167.5 canon) covering cabinet creation from a lega
 - **[P0] — the true D-1 defect pin.** Seeds a *normal* nonce (Story 167.5 family), then nulls the live store's nonce **after** rehydration via the only supported path — a cross-tab `storage` event from a second page in the same context (a same-tab `setItem` does not fire it). With D-1's initiation mint (`authStore.ensureSessionNonce`, mint-before-capture in `handleCreateCabinet`), the create settles `applied` and the user reaches the WB-token step; without it the captured nonce is `null` → `indeterminate` → the create is silently swallowed and the spec fails (stays on `/cabinet`). The initiation mint is also pinned by `src/services/cabinets.service.settlement.test.ts`.
 - **[P1]** is a composite regression check of the nonce-less-session *class* (rehydrate mint + form usability), not a D-1 defect pin — the user-visible fix for legacy sessions was predominantly the Story 167.9 rehydrate mint already on main.
 - The same base64url JWT lesson applies: synthetic token payloads must be real base64url of the JSON, or `isTokenExpired()` fails-safe to true, the proactive refresh fires, and the session logs out mid-test. Init-script seeding omits the nonce key entirely for legacy sessions (Playwright serializes `undefined` init args to `null`, hence a truthiness check).
+- Its FE-D5 sibling `e2e/onboarding-cabinet-create-cross-tab.spec.ts` pins cross-tab cabinet-create duplicate prevention (Web Locks + claim): two tabs of the same context submit the create form simultaneously, tab A's `POST /v1/cabinets` is held open by a deferred route gate so it genuinely holds the lock, and exactly **one** POST may reach the wire — tab B must end blocked with RU copy instead of creating a duplicate multi-tenant cabinet. On unfixed code tab B mints its own `Idempotency-Key` and POSTs, failing the POST-count assertion. The broader onboarding wizard flow is covered by `e2e/onboarding.spec.ts`.
 
 
 
@@ -567,3 +570,4 @@ From `.env.example` (names only — never commit actual values):
 | `E2E_MANAGER_EMAIL` / `E2E_MANAGER_PASSWORD` | Optional Manager pair; set both or leave both blank |
 | `E2E_WB_TOKEN` | Optional token for legacy fixture integration scenarios |
 | `E2E_ENABLE_MUTATIONS` / `E2E_MUTATION_TARGET` / `E2E_MUTATION_ACK` | Three-part opt-in to un-gate `@mutating` specs (see [Local E2E Preflight](#local-e2e-preflight)) |
+ng` specs (see [Local E2E Preflight](#local-e2e-preflight)) |

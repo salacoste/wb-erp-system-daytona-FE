@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "pageVersion": "sha256:4a8a51c77b387008ebb84f121eb71b853651d0d4631ae86c687eeb2d4c4af1c8",
+  "pageVersion": "sha256:3d125ccef94e71fdcf1c6f1563ef90825c0522f8d86b7288d8dc9a63694cfe25",
   "claims": [
     {
       "id": "claim_47ae5092df88459d932915ee945c35e6",
@@ -8,7 +8,7 @@
       "evidence": [
         {
           "resource": "repo://CLAUDE.md#L141-L156",
-          "version": "repo-lines-v1:sha256:e1e009dd895609cb8fa808e92d6bbc6a792f737dae7eb3b9b9411d2e753fc87b:eyJzZWxlY3RlZExpbmVDb3VudCI6MTYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjExZDM5NGRhNTdlOTRlYWQxY2M2ODg2ZDBjMmNiMTc1NDJlM2IyODZkYTVmYjg0MWE2OGVjZTEzOGI3MmJmZjIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjYzZGYyMzhjMDE0ZjM0NTNmNjVmZWM2MDIyZDI4MGExYjEzY2NlZWUwMzI4YTdhZTgxZWU1Y2QxYWM2NmQwMzciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjUwMzRiMjkwOGNlZjQzZmY5Y2MyYzUzNWViOGExNjkzYjMxMzExNGI3ZmEzNjhiMmY5M2FjOGFkMTYwODQ1NDIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImIxOTZjM2ExNGU2ZjMyMzVjNTVlMjNmN2ExMjU4ZmMyYjQ0MWZmMWI3OGE1N2U3NGZjNzFlOGY1NDI3NWZlYzMifQ"
+          "version": "repo-lines-v1:sha256:7b6180fa1316bc153357c72631c3cb364f4d0f25a29ab5965ee5ce4ec3e5209b:eyJzZWxlY3RlZExpbmVDb3VudCI6MTYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjExZDM5NGRhNTdlOTRlYWQxY2M2ODg2ZDBjMmNiMTc1NDJlM2IyODZkYTVmYjg0MWE2OGVjZTEzOGI3MmJmZjIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjYzZGYyMzhjMDE0ZjM0NTNmNjVmZWM2MDIyZDI4MGExYjEzY2NlZWUwMzI4YTdhZTgxZWU1Y2QxYWM2NmQwMzciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjUwMzRiMjkwOGNlZjQzZmY5Y2MyYzUzNWViOGExNjkzYjMxMzExNGI3ZmEzNjhiMmY5M2FjOGFkMTYwODQ1NDIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImIxOTZjM2ExNGU2ZjMyMzVjNTVlMjNmN2ExMjU4ZmMyYjQ0MWZmMWI3OGE1N2U3NGZjNzFlOGY1NDI3NWZlYzMifQ"
         }
       ]
     },
@@ -94,15 +94,15 @@
     },
     {
       "id": "claim_084d7128eb0942879160b2a48980d601",
-      "statement": "scripts/check-shadcn-ui-boundary.mjs (Story 174.2) is the repository-wide design-system boundary gate: it scans all production src/**/*.{ts,tsx} with the LEGACY_PALETTE and CONTEXTUAL_HEX canon regexes, suppresses files registered in BOUNDARY_EXCEPTIONS (three owner-accepted exceptions: the C5 waterfall categorical-hex config plus two historical #7C3AED chart marks — the FeedbackButtons F-10 exception was lifted 2026-09-02 by debt D-3/PB-4), and ratchets the active total against the single-integer baseline scripts/.shadcn-ui-boundary-baseline.txt, which stands at 372 per the CLAUDE.md accepted-baselines table (↓29 Margin family wave-2 + D-4 /15→/5 fold-in, 2026-09-03 P2; was 401 after wave-1 ↓58).",
+      "statement": "scripts/check-shadcn-ui-boundary.mjs (Story 174.2) is the repository-wide design-system boundary gate: it scans all production src/**/*.{ts,tsx} with the LEGACY_PALETTE and CONTEXTUAL_HEX canon regexes, suppresses files registered in BOUNDARY_EXCEPTIONS (three owner-accepted exceptions: the C5 waterfall categorical-hex config plus two historical #7C3AED chart marks — the FeedbackButtons F-10 exception was lifted 2026-09-02 by debt D-3/PB-4), and ratchets the active total against the single-integer baseline scripts/.shadcn-ui-boundary-baseline.txt, which stands at 118 per the CLAUDE.md accepted-baselines table (↓149 lib-residue wave-5, 2026-09-05 P2; was 267 after wave-4 ↓105; earlier 372 after wave-2; original Story 174.2 baseline 523).",
       "evidence": [
         {
           "resource": "repo://CLAUDE.md#L141-L156",
-          "version": "repo-lines-v1:sha256:e1e009dd895609cb8fa808e92d6bbc6a792f737dae7eb3b9b9411d2e753fc87b:eyJzZWxlY3RlZExpbmVDb3VudCI6MTYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjExZDM5NGRhNTdlOTRlYWQxY2M2ODg2ZDBjMmNiMTc1NDJlM2IyODZkYTVmYjg0MWE2OGVjZTEzOGI3MmJmZjIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjYzZGYyMzhjMDE0ZjM0NTNmNjVmZWM2MDIyZDI4MGExYjEzY2NlZWUwMzI4YTdhZTgxZWU1Y2QxYWM2NmQwMzciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjUwMzRiMjkwOGNlZjQzZmY5Y2MyYzUzNWViOGExNjkzYjMxMzExNGI3ZmEzNjhiMmY5M2FjOGFkMTYwODQ1NDIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImIxOTZjM2ExNGU2ZjMyMzVjNTVlMjNmN2ExMjU4ZmMyYjQ0MWZmMWI3OGE1N2U3NGZjNzFlOGY1NDI3NWZlYzMifQ"
+          "version": "repo-lines-v1:sha256:7b6180fa1316bc153357c72631c3cb364f4d0f25a29ab5965ee5ce4ec3e5209b:eyJzZWxlY3RlZExpbmVDb3VudCI6MTYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjExZDM5NGRhNTdlOTRlYWQxY2M2ODg2ZDBjMmNiMTc1NDJlM2IyODZkYTVmYjg0MWE2OGVjZTEzOGI3MmJmZjIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjYzZGYyMzhjMDE0ZjM0NTNmNjVmZWM2MDIyZDI4MGExYjEzY2NlZWUwMzI4YTdhZTgxZWU1Y2QxYWM2NmQwMzciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjUwMzRiMjkwOGNlZjQzZmY5Y2MyYzUzNWViOGExNjkzYjMxMzExNGI3ZmEzNjhiMmY5M2FjOGFkMTYwODQ1NDIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImIxOTZjM2ExNGU2ZjMyMzVjNTVlMjNmN2ExMjU4ZmMyYjQ0MWZmMWI3OGE1N2U3NGZjNzFlOGY1NDI3NWZlYzMifQ"
         },
         {
           "resource": "repo://scripts/.shadcn-ui-boundary-baseline.txt",
-          "version": "repo-file-v1:sha256:ed57abc02a4ca626324ba2533c1363a21e9c2852d4c42426879978942051a70a"
+          "version": "repo-file-v1:sha256:f10f7170eeb4986f69d764a4cb97c3f8e9337963222188a647fc4c0ac289d0e4"
         },
         {
           "resource": "repo://scripts/check-shadcn-ui-boundary.mjs#L33-L52",
@@ -168,11 +168,11 @@
     },
     {
       "id": "claim_7edbfecc3ad34e2aa8eb52c47a05d470",
-      "statement": "The accepted Vitest baseline is ≥ 19439 passing / 0 failed, with a hard floor of 19118 passing (lowered exactly by 756 proven-dead tests in Story 174.2-FE, then raised +237 from the 174.3 window, +8 contract tests 174.4, +52 redact suite D-9, +6 nonce-mint suite D-1/PB-1, +3 urgency-tier suite C15, +12 reactive-refresh suite D-2/PB-3, and +3 wave-3 AA re-pins); additions are acceptable, regressions are not, and skipped counts are informational only.",
+      "statement": "The accepted Vitest baseline is ≥ 19559 passing / 0 failed, with a hard floor of 19118 passing (lowered exactly by 756 proven-dead tests in Story 174.2-FE, then raised incrementally through the 174.3 window, 174.4 contract tests, and the debt/backlog suites — redact D-9, nonce-mint D-1/PB-1, urgency-tier C15, reactive-refresh D-2/PB-3, AA re-pins, /80-sweep style pins, FE-D3 sanitizer pins, FE-D1 retry/ApiError-preservation pins, FE-D5 web-locks/claim suite, fe-d3-family hook-fallback pins, and wave-6 WCAG style pins); additions are acceptable, regressions are not, and skipped counts are informational only.",
       "evidence": [
         {
           "resource": "repo://CLAUDE.md#L153-L156",
-          "version": "repo-lines-v1:sha256:a3a98834d82495627e96ee08f06f8351265570ae4526b4e8f0116cb3c7c9858d:eyJzZWxlY3RlZExpbmVDb3VudCI6NCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMzczOGYzOGUxNGE2ZjU5NWM1ZGVjMzIwNzM5YmVkYWNmYjFiZmFlNzRlNWU5NzYxNzQwODNlYzkzMGEyNDBiMiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNjNkZjIzOGMwMTRmMzQ1M2Y2NWZlYzYwMjJkMjgwYTFiMTNjY2VlZTAzMjhhN2FlODFlZTVjZDFhYzY2ZDAzNyIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMTVkZTYyYmRkMWY3OTRiOTViMTI0MTcwMTY1NzYzNmE5YmIzYzIwMDU3NjQ5N2I4NmJlZTM0OTBhNzBhY2I4MCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiYjE5NmMzYTE0ZTZmMzIzNWM1NWUyM2Y3YTEyNThmYzJiNDQxZmYxYjc4YTU3ZTc0ZmM3MWU4ZjU0Mjc1ZmVjMyJ9"
+          "version": "repo-lines-v1:sha256:a9d165e708115092e931a699a98f443a807dd04f102e05ec3b9efa68a88a6ffe:eyJzZWxlY3RlZExpbmVDb3VudCI6NCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNzE1MWVmOWMzOTQxMmQxNjQzYmRmZTI5NTNiYjI3MzlhOWQzNDQ0N2M3YWQyYTJiZGUyNWFhOWJjZjA3ZjgwZCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNjNkZjIzOGMwMTRmMzQ1M2Y2NWZlYzYwMjJkMjgwYTFiMTNjY2VlZTAzMjhhN2FlODFlZTVjZDFhYzY2ZDAzNyIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMTVkZTYyYmRkMWY3OTRiOTViMTI0MTcwMTY1NzYzNmE5YmIzYzIwMDU3NjQ5N2I4NmJlZTM0OTBhNzBhY2I4MCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiYjE5NmMzYTE0ZTZmMzIzNWM1NWUyM2Y3YTEyNThmYzJiNDQxZmYxYjc4YTU3ZTc0ZmM3MWU4ZjU0Mjc1ZmVjMyJ9"
         }
       ]
     },
@@ -273,10 +273,38 @@
           "version": "repo-lines-v1:sha256:99c23b619f8382f24c5b8144a1122239acf044e6bb3dbcb9f635c45385a7552b:eyJzZWxlY3RlZExpbmVDb3VudCI6MTQ0LCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiI2NjBmZjliYzRkNDA1ZGM4NGJlZjVhMGEwNDFhNzdlYzkzMmQ1MmI0ZDRkMTEzOTY2ZGZmODZhNWM3OTVkNDMxIiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiI0MTJjYTM0NWNjZjc1YmY5YzA4MDZiY2U2OTViZThkZTgwOGI3OTk4NDI1MWE3YTU0ZDIwMmNmNjEwMWRkNDUxIiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiJiYjUxZGI4NjM2ZGY5MzZhZGI4NTJkM2ZlZjBhMzM0OWIwMTJjMDA3MzEzN2FmM2M2MGNmMjRjZjNkMWI4N2YwIiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MywiZm9sbG93aW5nQ29udGV4dEhhc2giOiI4ZWVmNjllZmUxODJjODk0NjVlMmFiMzhiNmQ5NjNlMmRhNDI1NzM3NzU5MjY4OTU0YWE2YTU3Yjc1NGVhMDhmIn0"
         }
       ]
+    },
+    {
+      "id": "claim_b42673d4f739426989469e118383ea54",
+      "statement": "The global TanStack Query mutation retry policy is the shouldRetryMutation predicate from src/lib/mutation-retry.ts, wired as mutations.retry in the QueryClient defaults in src/app/providers.tsx (debt FE-D1): it retries at most once (failureCount >= 1 stops), never retries 4xx ApiError client errors, and retries 5xx/network/opaque failures once — replacing the old blind retry:1 that re-issued permanent 4xx mutations.",
+      "evidence": [
+        {
+          "resource": "repo://src/app/providers.tsx#L8-L26",
+          "version": "repo-lines-v1:sha256:30478d87697c1f4001dcfcaeef56acc16ba1549580c8ac4e17132864dabbfcd6:eyJzZWxlY3RlZExpbmVDb3VudCI6MTksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijg2MDQ4MDBlNDUwMDJkOWEwOGEzZTNhZWI5MzE2ZjQyNGUwNjRiMzc4MmM2ZjgxMmMxZTgwYWFlMDU0YTY0ZTAiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjIxMjIyNzU0OGZmZDUwOTU5MWZkZjI0MmE2NTBjOWU2ODM5ZGVjZTY3NDEwYWE1ODMyNjc0OWE0YTM3ZGY0ZDYiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImM0NTFlZDY5NGMzNzM4NTUxYmRmMjJmMmYzZWRkNWE4YWQxMDExODc4YjRmYzQ3Njg2NzAxN2Q0NTBmNmM4OGUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjAzMGJkZTFkNzJkZjhkM2I3MTUzMDU1MDY1ZWQ3MDQ5ZTA0MDA2OThhMjliZTVkYThmOTljYTY4Mzc0MjdhNTMifQ"
+        },
+        {
+          "resource": "repo://src/lib/mutation-retry.ts#L27-L31",
+          "version": "repo-lines-v1:sha256:0055057e50c86b285d0d7eb202a1e512571b8530ebd61a8c23125efad8cf6f8f:eyJzZWxlY3RlZExpbmVDb3VudCI6NSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiOGU5NTE2ODk4MmYyMjk0OTQ0YTdhNTk5Mjc4ZmU3Yzc4YWYwMTQzNTYyN2RmMDBmYTBmNDcxMjM0ZTNiOWYwMyIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNDEyY2EzNDVjY2Y3NWJmOWMwODA2YmNlNjk1YmU4ZGU4MDhiNzk5ODQyNTFhN2E1NGQyMDJjZjYxMDFkZDQ1MSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZmJjYThjMDdmNDU4YjI3MzBmZTVkNzMyNGQ2ZTdlMzNmYzBlYWZiZTFlNGUzM2JhZjFlMWQ1ODRjMGFmMzM0NSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjAsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZTNiMGM0NDI5OGZjMWMxNDlhZmJmNGM4OTk2ZmI5MjQyN2FlNDFlNDY0OWI5MzRjYTQ5NTk5MWI3ODUyYjg1NSJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_ded596745ec84965b0eba84a7fdfe7bf",
+      "statement": "sanitizeFallbackMessage in src/lib/sanitize-fallback-message.ts (debt FE-D3) is the canonical scrub-and-bound helper that every user-facing mutation fallback path (WbTokenForm via wb-token-form-helpers re-export, plus useCreateSupply/useCloseSupply/useGenerateStickers/useDownloadDocument) applies to raw error.message before display: it pre-bounds input to 4096 chars, scrubs stack frames, URLs, paths, SQL, Prisma, JWT, hex and base64 blob patterns, returns a fixed Russian generic message when nothing survives, and truncates to 200 code points on a word boundary without splitting surrogate pairs.",
+      "evidence": [
+        {
+          "resource": "repo://src/hooks/__tests__/supply-sticker-document-error-fallback.test.ts#L27-L96",
+          "version": "repo-lines-v1:sha256:6707cdc201294dd297e15cc576878ab42b55b4dde2dae03503e6f2a662b64b03:eyJzZWxlY3RlZExpbmVDb3VudCI6NzAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImQ5MjJlZjdiZmVhMjVmMzRmNGQ2ODk2NjA0MGE3NGUwMzE2MWU5ZTVlNDdiNDQ5Y2VmZTdhZGI2OWZkYTcxMWQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImJiOGNhOTI0YzY3YzdiYzRiMWVlZTFlZTc0NTEyYzVlMmNiZmFjNzI1N2FlY2EzZDVlMWUxMGY5YTY1NDYxZTgiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImZlNGE4ZWRhMTdmYzE3MzZjOWVjM2VkOTUzZDFjM2M2OTk5ZTk4NTZkOWEwNGJkYjNkN2YyMDQ4ZjQwNDRjY2YiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjRiZjllM2MxZmE3NzZlYzVhNGZiMGYyODEyYzFjZGIyMjVjNTIwYjExYTE3NjRmODk5ODgyOGFmMjg0MWZlZDAifQ"
+        },
+        {
+          "resource": "repo://src/lib/sanitize-fallback-message.ts#L20-L59",
+          "version": "repo-lines-v1:sha256:e1c773dcf5c51353cc1b0d3a1e2c5b1b3386be2eff9d49e4df91a397c6d02b26:eyJzZWxlY3RlZExpbmVDb3VudCI6NDAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjE4NTY1Mjk5MTA0YjBmMGIxN2JiY2FjYmY5ZDIyOTVkYjhjZmEyYTZmMGM2NThlNDBkMjdkZjcwNzVjNzIwYWIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjkwYzFiMzA2MDVlNTZjOWM4YjU1MTE3YTczMjMxYTRhMmQyZGViYmMxZTk4YjJmOThmNzM4NWFkNjcxZDRlOWQiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjhkZDI1ZGExY2E5OTYyZTE0ODhkYTM1YTFkZGYwM2E0NjBiODY1NDIwZGMwMjYxZTNkZjY0ZTYwYTU4NjU4MDYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEifQ"
+        }
+      ]
     }
   ],
   "verification": {
     "by": "openwiki/0.5.0",
-    "at": "2026-09-05T08:47:50.295Z"
+    "at": "2026-09-06T08:47:51.668Z"
   }
 }
