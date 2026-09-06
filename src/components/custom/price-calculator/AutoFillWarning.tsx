@@ -45,8 +45,12 @@ export function AutoFillWarning({ type, message, dismissible = true }: AutoFillW
       aria-live="polite"
     >
       <div className="flex items-start gap-2">
+        {/* p2-wave-6: icon = non-text channel on warn/10 (card stack):
+            4.24/10.90 >= 3:1 (1.4.11) — valence carrier for fg-on-tint body. */}
         <AlertTriangle className="h-4 w-4 text-status-warning mt-0.5 shrink-0" aria-hidden="true" />
-        <AlertDescription className="flex-1 text-status-warning text-sm">
+        {/* p2-wave-6: fg-on-tint — full warn on warn/10 = 4.24/10.90 (FAIL
+            4.5); text-foreground = 14.18/14.73. Valence = tint + border + icon. */}
+        <AlertDescription className="flex-1 text-foreground text-sm">
           {displayMessage}
         </AlertDescription>
         {dismissible && (

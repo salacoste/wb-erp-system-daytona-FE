@@ -46,9 +46,12 @@ export function ProductMarginCell({
   // Story 4.8: Show polling status if product is being polled
   if (isPolling) {
     return (
+      // p2-wave-6: fg-on-tint — info text on info/10 over the selected-row
+      // stacks = 4.35 light (selected) / 3.78 (selected-hover) FAIL 4.5;
+      // text-foreground >= 10.59/10.48 on every row state. Valence = tint + border.
       <Badge
         variant="outline"
-        className="flex items-center gap-1.5 border-status-information/40 bg-status-information/10 text-status-information"
+        className="flex items-center gap-1.5 border-status-information/40 bg-status-information/10 text-foreground"
       >
         <Loader2 className="h-3 w-3 animate-spin" />
         <span className="text-xs">Расчёт...</span>
@@ -81,9 +84,12 @@ export function ProductMarginCell({
     typeof product.current_margin_pct === 'number' && Number.isFinite(product.current_margin_pct)
 
   if (hasValidMargin) {
+    // p2-wave-6: positive sign = fg-on-tint — success on the selected-row
+    // stacks = 4.44/3.82 light (FAIL 4.5), text-foreground >= 10.59/10.48 on
+    // every row state; negative keeps text-status-error (5.66/4.87 on selected).
     const marginColor =
       product.current_margin_pct! > 0
-        ? 'text-status-success'
+        ? 'text-foreground'
         : product.current_margin_pct! < 0
           ? 'text-status-error'
           : 'text-muted-foreground'

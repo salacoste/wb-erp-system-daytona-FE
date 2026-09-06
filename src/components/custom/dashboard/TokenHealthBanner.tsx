@@ -82,19 +82,24 @@ export function TokenHealthBanner() {
     <Alert className="mx-4 mt-2 border-status-warning/40 bg-status-warning/10">
       <div className="flex items-start justify-between gap-3">
         <div className="flex items-start gap-2">
+          {/* p2-wave-6: icon = non-text channel on warn/10 over background:
+              4.24/11.75 >= 3:1 (1.4.11) — valence carrier for fg-on-tint body. */}
           <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0 text-status-warning" />
-          <AlertDescription className="text-status-warning">
+          {/* p2-wave-6: fg-on-tint — full warn on warn/10 = 4.24/11.75 (FAIL
+              4.5); text-foreground = 14.18/15.89. Valence = tint+border+icon;
+              link keeps its underline affordance. */}
+          <AlertDescription className="text-foreground">
             <p className="font-medium">Проблема с WB API токеном</p>
             {data.recommendation && <p className="mt-1 text-sm">{data.recommendation}</p>}
             {data.lastError && (
-              <p className="mt-1 text-xs text-status-warning">
+              <p className="mt-1 text-xs">
                 Ошибка: {data.lastError}
                 {data.lastErrorAt && ` (${new Date(data.lastErrorAt).toLocaleString('ru-RU')})`}
               </p>
             )}
             <Link
               href={ROUTES.SETTINGS.CABINET}
-              className="mt-2 inline-block text-sm font-medium text-status-warning underline"
+              className="mt-2 inline-block text-sm font-medium text-foreground underline"
             >
               Настройки кабинета
             </Link>
@@ -108,6 +113,9 @@ export function TokenHealthBanner() {
           size="sm"
           onClick={handleDismiss}
           className="shrink-0 text-status-warning hover:text-status-warning/80"
+          // stack-dependent pin (3.13/7.38 >=3): valid ONLY on the bare-background
+          // mount (layout.tsx:110, OUTSIDE the bg-muted/50 main); moving this
+          // banner into main re-opens the measurement (TaxWarning X went 2.95).
           aria-label="Скрыть предупреждение"
         >
           <X className="h-4 w-4" />

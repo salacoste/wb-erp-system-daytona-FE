@@ -20,4 +20,16 @@ describe('AutoFillWarning — /80-sweep contrast pins', () => {
     expect(btn.className).not.toContain('/80')
     expect(btn).toHaveClass('hover:bg-status-warning/10')
   })
+
+  it('body text uses fg-on-tint (wave-6: warn on warn/10 = 4.24 light FAIL)', () => {
+    render(<AutoFillWarning type="dimensions" />)
+    const body = screen.getByText(/Габариты не указаны/i)
+    expect(body).toHaveClass('text-foreground')
+    expect(body.className).not.toContain('text-status-warning')
+  })
+
+  it('AlertTriangle icon keeps full warn (icon ≥3:1 channel)', () => {
+    render(<AutoFillWarning type="dimensions" />)
+    expect(screen.getByRole('alert').querySelector('svg')).toHaveClass('text-status-warning')
+  })
 })

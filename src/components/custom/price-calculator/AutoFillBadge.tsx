@@ -62,8 +62,12 @@ export function AutoFillBadge({ status, source, onRestore, className }: AutoFill
         variant={isAuto ? 'secondary' : 'outline'}
         className={cn(
           'text-xs font-normal transition-colors duration-200',
-          isAuto && 'bg-status-success/10 text-status-success border-status-success/30',
-          !isAuto && 'bg-status-warning/10 text-status-warning border-status-warning/30',
+          // p2-wave-6: fg-on-tint — success on success/10 = 4.49/7.97 and warn
+          // on warn/10 = 4.24/10.90 (FAIL 4.5); text-foreground per tint: warn/10 =
+          // 14.18/14.73, success/10 = 14.11/15.36.
+          // Valence = tint + border (wave-4 SourceBadge precedent).
+          isAuto && 'bg-status-success/10 text-foreground border-status-success/30',
+          !isAuto && 'bg-status-warning/10 text-foreground border-status-warning/30',
           className
         )}
         aria-live="polite"
@@ -92,8 +96,12 @@ export function AutoFillBadge({ status, source, onRestore, className }: AutoFill
         variant={isAuto ? 'secondary' : 'outline'}
         className={cn(
           'text-xs font-normal transition-colors duration-200',
-          isAuto && 'bg-status-success/10 text-status-success border-status-success/30',
-          isModified && 'bg-status-warning/10 text-status-warning border-status-warning/30'
+          // p2-wave-6: fg-on-tint (see legacy API above) — success on
+          // success/10 = 4.49/7.97, warn on warn/10 = 4.24/10.90 FAIL;
+          // text-foreground per tint: warn/10 = 14.18/14.73,
+          // success/10 = 14.11/15.36. Valence = tint + border.
+          isAuto && 'bg-status-success/10 text-foreground border-status-success/30',
+          isModified && 'bg-status-warning/10 text-foreground border-status-warning/30'
         )}
       >
         {isAuto ? 'Автозаполнено' : 'Изменено'}
@@ -107,9 +115,11 @@ export function AutoFillBadge({ status, source, onRestore, className }: AutoFill
           onClick={onRestore}
           className={cn(
             'h-6 px-2 text-xs font-normal',
-            // p2-80-sweep: hover warn/80 on hover-bg warn/10 = 3.04:1 light (FAIL);
-            // no hover overrides → ghost accent pair (14.77/14.50 PASS).
-            'text-status-warning',
+            // p2-80-sweep: /80 hover-darken removed. p2-wave-6: the ghost
+            // hover:bg-accent layer under warn text = 4.41 light (FAIL) →
+            // hover switches to fg-on-accent (14.77/14.50); rest warn on
+            // card = 4.81/13.38 PASS.
+            'text-status-warning hover:text-foreground',
             'transition-colors duration-200'
           )}
           aria-label="Восстановить автозаполненные значения"
