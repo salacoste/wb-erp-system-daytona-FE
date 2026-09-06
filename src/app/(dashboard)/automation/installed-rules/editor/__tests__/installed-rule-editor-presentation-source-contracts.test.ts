@@ -79,7 +79,11 @@ describe('Story 172.4 installed-rule-editor presentation source contracts', () =
     const safety = readFileSync(join(editorDirectory, 'WritebackSafetyAcknowledgement.tsx'), 'utf8')
     expect(safety).toMatch(/border-status-warning\/40/)
     expect(safety).toMatch(/bg-status-warning\/10/)
-    expect(safety).toMatch(/text-status-warning/)
+    // p2-wave-6: body regression is guarded by the sibling runtime style test
+    // (WritebackSafetyAcknowledgement.style.test); this contract pins the icon
+    // valence line (fg-on-tint body + warn icon).
+    expect(safety).toMatch(/text-foreground/)
+    expect(safety).toMatch(/className="mt-0\.5 h-5 w-5 shrink-0 text-status-warning"/)
   })
 
   it('back-affordance pin: editor back control is the Button primitive, no raw button anywhere', () => {

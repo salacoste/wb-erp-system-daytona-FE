@@ -38,16 +38,23 @@ export function WritebackSafetyAcknowledgement({
       data-testid="writeback-safety"
     >
       <div className="flex items-start gap-2">
+        {/* p2-wave-6: icon = non-text channel on warn/10 (real stack
+            bg>muted/50): 4.07/10.03 >= 3:1 (1.4.11) — full warn kept as the
+            valence carrier for the fg-on-tint body below. */}
         <AlertTriangle className="mt-0.5 h-5 w-5 shrink-0 text-status-warning" aria-hidden="true" />
-        <div className="space-y-2 text-sm text-status-warning">
+        {/* p2-wave-6: fg-on-tint — full warn on warn/10 = 4.07/10.03 (FAIL 4.5);
+            text-foreground = 13.34/12.41. Valence = tint + border + icon. */}
+        <div className="space-y-2 text-sm text-foreground">
           <h3 id={`${checkboxId}-title`} className="font-medium">
             Изменение цены (write-back)
           </h3>
           <p>
             Правило с действием «Изменение цены» меняет цены только когда включён отдельный
             рубильник кабинета{' '}
-            <code className="rounded bg-status-warning/20 px-1">PRICE_WRITEBACK_ENABLED</code>. Пока
-            рубильник выключен, правило остаётся неактивным даже после сохранения.
+            {/* p2-wave-6: compounding /20-on-/10 chip measured 3.15 light —
+                layer removed; code text inherits the fg-on-tint body. */}
+            <code className="rounded px-1">PRICE_WRITEBACK_ENABLED</code>. Пока рубильник выключен,
+            правило остаётся неактивным даже после сохранения.
           </p>
           <p>
             Включение такого правила и активация рубильника приведут к реальным изменениям цен на

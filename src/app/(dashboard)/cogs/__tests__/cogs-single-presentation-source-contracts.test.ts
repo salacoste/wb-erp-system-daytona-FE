@@ -110,9 +110,13 @@ describe('Story 172.5 single-COGS presentation source contracts', () => {
     expect(config).toMatch(/warning[\s\S]*?bg-status-warning\/10/)
   })
 
-  it('margin-valence pin: margin cell signs on status tokens', () => {
+  it('margin-valence pin: margin cell signs on status tokens (wave-6: positive = fg-on-tint)', () => {
     const cell = readFileSync(join(customRoot, 'ProductMarginCell.tsx'), 'utf8')
-    expect(cell).toMatch(/text-status-success/)
+    // wave-6 AA: text-status-success on the selected-row stack = 4.44/3.82
+    // light (FAIL 4.5) → positive sign is fg-on-tint (text-foreground, ≥10.59/10.48
+    // on every row state); negative sign keeps text-status-error (5.66/4.87).
+    expect(cell).toMatch(/'text-foreground'/)
+    expect(cell).not.toMatch(/text-status-success/)
     expect(cell).toMatch(/text-status-error/)
   })
 

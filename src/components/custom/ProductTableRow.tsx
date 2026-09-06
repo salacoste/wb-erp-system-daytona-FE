@@ -65,9 +65,13 @@ export function ProductTableRow({
             <TooltipProvider>
               <Tooltip>
                 <TooltipTrigger asChild>
+                  {/* p2-wave-6: fg-on-tint — warn text on warn/10 over the 4
+                      row states (card/muted-50/info-10/info-20) = 4.24/4.07/
+                      3.70/3.21 light (FAIL 4.5); text-foreground >= 10.74/9.94 on
+                      every state. Valence = tint + border. */}
                   <Badge
                     variant="outline"
-                    className="text-[10px] px-1 py-0 h-4 border-status-warning/40 bg-status-warning/10 text-status-warning"
+                    className="text-[10px] px-1 py-0 h-4 border-status-warning/40 bg-status-warning/10 text-foreground"
                   >
                     отчёт
                   </Badge>
