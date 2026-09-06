@@ -1,6 +1,9 @@
 'use client'
 
 import { logger } from '@/lib/logger'
+// fe-d3-family: the unmapped-status fallback must never echo raw error text
+// (scrub URLs/stacks/JWTs at the boundary) — same defect class as FE-D3.
+import { sanitizeFallbackMessage } from '@/lib/sanitize-fallback-message'
 /**
  * useDownloadDocument Mutation Hook
  * Story 53.6-FE: Close Supply & Stickers
@@ -44,7 +47,7 @@ function getErrorMessage(error: unknown): string {
       return 'Ошибка сервера. Попробуйте позже.'
     }
 
-    return apiError.message
+    return sanitizeFallbackMessage(apiError.message)
   }
 
   return 'Не удалось скачать документ'
