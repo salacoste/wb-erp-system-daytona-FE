@@ -10,6 +10,9 @@
  */
 
 import { logger } from '@/lib/logger'
+// fe-d3-family: the unmapped-status fallback must never echo raw error text
+// (scrub URLs/stacks/JWTs at the boundary) — same defect class as FE-D3.
+import { sanitizeFallbackMessage } from '@/lib/sanitize-fallback-message'
 
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { useRouter } from 'next/navigation'
@@ -47,7 +50,7 @@ function getErrorMessage(error: unknown): string {
       return 'Ошибка сервера. Попробуйте позже.'
     }
 
-    return apiError.message
+    return sanitizeFallbackMessage(apiError.message)
   }
 
   return 'Проверьте соединение и попробуйте снова'
