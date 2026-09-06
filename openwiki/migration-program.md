@@ -90,6 +90,8 @@ generated: { by: "openwiki/0.5.0", at: "2026-09-06T08:47:51.668Z" }
 
 # Migration Program (Epics 166-174)
 
+<!-- openwiki: broken internal link [/openwiki/conventions-and-quality.md] file "/openwiki/conventions-and-quality.md" does not exist. Fix the href or restore the target, then delete this comment. -->
+<!-- openwiki: broken internal link [/openwiki/design-system.md] file "/openwiki/design-system.md" does not exist. Fix the href or restore the target, then delete this comment. -->
 This page is the canonical wiki home for the shadcn full-UI migration **program**: the master plan, the story pipeline, the current status ledger, and the handoff/orchestration process. Per-story migration status lives here (not in `design-system.md` or `quickstart.md`) so status churn is isolated from stable conventions. See [/openwiki/conventions-and-quality.md](/openwiki/conventions-and-quality.md) for coding standards and [/openwiki/design-system.md](/openwiki/design-system.md) for the token/component layers this program delivers.
 
 ## Program goal and invariants
