@@ -33,7 +33,12 @@ type CreateVariables = {
 
 type Args = {
   router: { push: (href: string) => void }
-  showRecoveryError: (message: string, phase: WorkflowPhase) => void
+  /** R2: `source` 'blocked' marks FE-D5 lock refusals (alerts must persist). */
+  showRecoveryError: (
+    message: string,
+    phase: WorkflowPhase,
+    source?: 'recovery' | 'blocked'
+  ) => void
   setPhase: React.Dispatch<React.SetStateAction<WorkflowPhase>>
 }
 
@@ -87,6 +92,33 @@ export function useCabinetCreateMutation({ router, setPhase, showRecoveryError }
         // marker itself is intentionally NOT cleared here — reconciliation
         // belongs to the recovery effect after re-login.
         finishRecoveryOperation(marker)
+        // FE-D5: the cross-tab lock refused the create (another tab in-flight /
+        // tombstone / cabinet already landed) — surface the specific RU copy;
+        // nothing to reconcile (no operation was started from THIS tab).
+        if (result.status === 'blocked') {
+          // Review pass 1 (F2): the marker minted at admission guards an
+          // operation that never started in this tab — clear it (reconcile=true
+          // re-fires the recovery effect → phase back to idle) or resubmit
+          // would false-block on the stale CREATE_PENDING marker.
+          // N5 (review pass 2): a non-applied CAS result strands the marker
+          // silently — log it (privacy-safe: operation id only, Story 167.9
+          // privacy rule); safe re-auth remains the remedy, no extra UX.
+          const cleared = clearRecoveryMarker(marker, true)
+          if (cleared !== 'applied') {
+            logger.warn('FE-D5 blocked-branch marker clear did not apply', {
+              operationId: marker.operationId,
+              casResult: cleared,
+            })
+          }
+          if (isLiveOwner(marker)) {
+            showRecoveryError(
+              result.blockMessage ?? SAFE_RECONCILIATION_MESSAGE,
+              'recovery-blocked',
+              'blocked'
+            )
+          }
+          return
+        }
         void reconcileSettledOperation(result.operationId, attempt.token)
         // D-1 (PB-1): `indeterminate` means the initiator may still be the live
         // user (the cabinet exists server-side): indicate, never silently

@@ -11,6 +11,7 @@ import { useAuthStore } from '@/stores/authStore'
 import { toast } from 'sonner'
 
 import { CabinetCreationForm } from './CabinetCreationForm'
+import { RECOVERY_MARKER_EVENT } from './cabinetCreationRecovery'
 
 vi.mock('@/services/cabinets.service', () => ({ handleCreateCabinet: vi.fn() }))
 // Partial barrel mock (sibling accountRecovery pattern): the indeterminate
@@ -355,6 +356,156 @@ describe('CabinetCreationForm stale/indeterminate settlement (Story 167.9, porte
       expect(mockPush).not.toHaveBeenCalled()
       // Form is NOT reset — the live session's input must survive.
       expect(screen.getByLabelText(/название кабинета/i)).toHaveValue('Test Cabinet')
+    }
+  )
+
+  it(
+    'blocked settlement (FE-D5 cross-tab lock) surfaces the block alert without navigation',
+    { timeout: 10000 },
+    async () => {
+      // FE-D5: the in-lock shared re-check refused the create (another tab
+      // in-flight / tombstone / cabinet already landed) — the specific RU block
+      // copy must reach the live owner's UI, with no navigation and no toast.
+      const user = userEvent.setup()
+      vi.mocked(handleCreateCabinet).mockResolvedValue({
+        status: 'blocked',
+        blockMessage:
+          'Операция создания кабинета уже выполняется в другой вкладке. Не отправляйте форму повторно — обновите страницу, чтобы проверить состояние.',
+      })
+
+      render(
+        <QueryClientProvider client={queryClient}>
+          <CabinetCreationForm />
+        </QueryClientProvider>
+      )
+
+      const nameInput = screen.getByLabelText(/название кабинета/i)
+      await user.clear(nameInput)
+      await user.type(nameInput, 'Test Cabinet')
+      // F7: deterministic readiness — the gate leaves 'restoring' when the
+      // recovery effect resolves, which is exactly what enables the button.
+      await waitFor(() =>
+        expect(screen.getByRole('button', { name: /создать кабинет/i })).toBeEnabled()
+      )
+
+      await user.click(screen.getByRole('button', { name: /создать кабинет/i }))
+
+      const recovery = await screen.findByRole('alert', {}, { timeout: 5000 })
+      expect(recovery).toHaveTextContent(/уже выполняется в другой вкладке/)
+      expect(toast.success).not.toHaveBeenCalled()
+      expect(mockPush).not.toHaveBeenCalled()
+      // Form is NOT reset — the live session's input must survive.
+      expect(screen.getByLabelText(/название кабинета/i)).toHaveValue('Test Cabinet')
+
+      // F2: the blocked branch cleared the admission marker — resubmit must be
+      // ADMITTED (no false SAFE_RECONCILIATION persistent-block on the stale
+      // CREATE_PENDING marker).
+      vi.mocked(handleCreateCabinet).mockResolvedValue(createdCabinet(35))
+      await waitFor(() =>
+        expect(screen.getByRole('button', { name: /создать кабинет/i })).toBeEnabled()
+      )
+      await user.click(screen.getByRole('button', { name: /создать кабинет/i }))
+      await waitFor(() => expect(handleCreateCabinet).toHaveBeenCalledTimes(2))
+      await waitFor(() => expect(mockPush).toHaveBeenCalledWith('/wb-token'))
+      expect(toast.success).toHaveBeenCalledTimes(1)
+    }
+  )
+
+  it(
+    'tombstone-blocked alert SURVIVES a reconcile re-fire (R2: null-by-cause, not by text)',
+    { timeout: 10000 },
+    async () => {
+      // R2: N2 made the tombstone copy byte-identical to TOKEN_RECOVERY_MESSAGE,
+      // so the old TEXT-based fall-through nulling self-erased blocked alerts
+      // on every reconcile re-fire. The alert must persist (cause 'blocked').
+      const user = userEvent.setup()
+      vi.mocked(handleCreateCabinet).mockResolvedValue({
+        status: 'blocked',
+        blockMessage:
+          'Кабинет уже создан, но не удалось обновить авторизацию. Не создавайте его повторно. Выйдите из аккаунта и войдите снова: требуется безопасная повторная авторизация и сверка кабинета с сервером.',
+      })
+
+      render(
+        <QueryClientProvider client={queryClient}>
+          <CabinetCreationForm />
+        </QueryClientProvider>
+      )
+
+      const nameInput = screen.getByLabelText(/название кабинета/i)
+      await user.clear(nameInput)
+      await user.type(nameInput, 'Test Cabinet')
+      await waitFor(() =>
+        expect(screen.getByRole('button', { name: /создать кабинет/i })).toBeEnabled()
+      )
+      await user.click(screen.getByRole('button', { name: /создать кабинет/i }))
+
+      const recovery = await screen.findByRole('alert', {}, { timeout: 5000 })
+      expect(recovery).toHaveTextContent(/Не создавайте его повторно/)
+
+      // A reconcile re-fire with the marker already cleared re-runs the
+      // recovery effect → fall-through: MUST NOT erase a 'blocked'-cause alert.
+      act(() => {
+        window.dispatchEvent(
+          new CustomEvent(RECOVERY_MARKER_EVENT, { detail: { userId: 'user-b', reconcile: true } })
+        )
+      })
+      await waitFor(() =>
+        expect(screen.getByRole('alert')).toHaveTextContent(/Не создавайте его повторно/)
+      )
+      expect(mockPush).not.toHaveBeenCalled()
+    }
+  )
+
+  it(
+    'double-blocked sequence: TWO consecutive blocked settlements EACH render their alert (wave 4, e2e gap)',
+    { timeout: 10000 },
+    async () => {
+      // Live-run gap pin: the second consecutive blocked settlement must
+      // re-render the alert with the NEW block copy (not silently swallow it).
+      const user = userEvent.setup()
+      vi.mocked(handleCreateCabinet)
+        .mockResolvedValueOnce({
+          status: 'blocked',
+          blockMessage:
+            'Операция создания кабинета уже выполняется в другой вкладке. Не отправляйте форму повторно — обновите страницу, чтобы проверить состояние.',
+        })
+        .mockResolvedValueOnce({
+          status: 'blocked',
+          blockMessage:
+            'Кабинет уже создан в другой вкладке. Обновите страницу, чтобы продолжить работу с ним.',
+        })
+
+      render(
+        <QueryClientProvider client={queryClient}>
+          <CabinetCreationForm />
+        </QueryClientProvider>
+      )
+
+      const nameInput = screen.getByLabelText(/название кабинета/i)
+      await user.clear(nameInput)
+      await user.type(nameInput, 'Test Cabinet')
+      await waitFor(() =>
+        expect(screen.getByRole('button', { name: /создать кабинет/i })).toBeEnabled()
+      )
+
+      await user.click(screen.getByRole('button', { name: /создать кабинет/i }))
+      expect(await screen.findByRole('alert', {}, { timeout: 5000 })).toHaveTextContent(
+        /уже выполняется в другой вкладке/
+      )
+
+      // F2 semantics: the form re-enables between blocks — resubmit is admitted.
+      await waitFor(() =>
+        expect(screen.getByRole('button', { name: /создать кабинет/i })).toBeEnabled()
+      )
+      await user.click(screen.getByRole('button', { name: /создать кабинет/i }))
+
+      // SECOND blocked settlement: the alert must SWAP to the new copy.
+      await waitFor(() =>
+        expect(screen.getByRole('alert')).toHaveTextContent(/уже создан в другой вкладке/)
+      )
+      expect(handleCreateCabinet).toHaveBeenCalledTimes(2)
+      expect(mockPush).not.toHaveBeenCalled()
+      expect(toast.success).not.toHaveBeenCalled()
     }
   )
 })

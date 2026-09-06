@@ -72,6 +72,9 @@ function deferred<T>() {
 
 beforeEach(() => {
   vi.clearAllMocks()
+  // FE-D5: the cross-tab create claim lives in localStorage — clear it between
+  // tests so a tombstone from a prior uncertain test cannot fail-close the next.
+  window.localStorage.clear()
   useAuthStore.setState({
     user: null,
     token: null,
