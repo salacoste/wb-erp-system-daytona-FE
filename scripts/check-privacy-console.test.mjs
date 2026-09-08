@@ -6,7 +6,13 @@ import path from 'node:path'
 import test from 'node:test'
 import { promisify } from 'node:util'
 
-import { PRIVACY_SCAN_ROOTS, runPrivacyCheck, scanPrivacyFiles } from './check-privacy-console.mjs'
+import {
+  EXCLUDED_CHANGE_SET_PREFIXES,
+  PII_FILES,
+  PRIVACY_SCAN_ROOTS,
+  runPrivacyCheck,
+  scanPrivacyFiles,
+} from './check-privacy-console.mjs'
 
 const execFileAsync = promisify(execFile)
 
@@ -172,6 +178,135 @@ test('credential-looking test and dummy prefixes remain detected in unrelated Gi
     ])
     assert.equal(JSON.stringify(result).includes(testLikeValue), false)
     assert.equal(JSON.stringify(result).includes(dummyLikeValue), false)
+  })
+})
+
+test('excludes vendored BMAD knowledge dirs from Git change-set scanning only', async () => {
+  await withRoot(async root => {
+    await execFileAsync('git', ['init', '--quiet'], { cwd: root })
+    const excludedDirs = [...EXCLUDED_CHANGE_SET_PREFIXES].map(prefix => prefix.replace(/\/$/, ''))
+    assert.deepEqual([...excludedDirs].sort(), [
+      '.agent',
+      '.agents',
+      '.gemini',
+      '.opencode',
+      '_bmad',
+    ])
+    const value = ['wb_', "token = 'constructedCredential123'"].join('')
+    for (const dir of excludedDirs) {
+      await mkdir(path.join(root, dir), { recursive: true })
+      await writeFile(path.join(root, dir, 'template.md'), `${value}\n`)
+    }
+    await mkdir(path.join(root, 'outside'))
+    await writeFile(path.join(root, 'outside', 'changed.ts'), `${value}\n`)
+
+    const result = await scanPrivacyFiles({ root, scanRoots: ['fixtures'] })
+    assert.equal(result.valid, false)
+    assert.deepEqual(result.violations, [
+      { file: 'outside/changed.ts', line: 1, rule: 'token-value' },
+    ])
+    assert.equal(
+      result.scanned.some(file => excludedDirs.some(dir => file.startsWith(`${dir}/`))),
+      false
+    )
+    assert.equal(JSON.stringify(result).includes('constructedCredential123'), false)
+  })
+})
+
+test('HEAD diff-tree fallback also filters vendored BMAD knowledge dirs on a clean tree', async () => {
+  await withRoot(async root => {
+    await execFileAsync('git', ['init', '--quiet'], { cwd: root })
+    // PII_FILES are required-by-config: stub them sanitized so `missing` stays empty and the
+    // gate result isolates the change-set branch under test.
+    for (const piiPath of PII_FILES) {
+      await mkdir(path.dirname(path.join(root, piiPath)), { recursive: true })
+      await writeFile(path.join(root, piiPath), '')
+    }
+    await execFileAsync('git', ['add', '-A'], { cwd: root })
+    await execFileAsync(
+      'git',
+      [
+        '-c',
+        'user.name=Privacy Fixture',
+        '-c',
+        'user.email=fixture@example.invalid',
+        '-c',
+        'core.hooksPath=/dev/null',
+        'commit',
+        '--quiet',
+        '--no-gpg-sign',
+        '-m',
+        'sanitized baseline',
+      ],
+      { cwd: root }
+    )
+
+    const value = ['wb_', "token = 'constructedCredential123'"].join('')
+    await mkdir(path.join(root, '_bmad'), { recursive: true })
+    await writeFile(path.join(root, '_bmad', 'committed.md'), `${value}\n`)
+    await execFileAsync('git', ['add', '_bmad/committed.md'], { cwd: root })
+    await execFileAsync(
+      'git',
+      [
+        '-c',
+        'user.name=Privacy Fixture',
+        '-c',
+        'user.email=fixture@example.invalid',
+        '-c',
+        'core.hooksPath=/dev/null',
+        'commit',
+        '--quiet',
+        '--no-gpg-sign',
+        '-m',
+        'violating template',
+      ],
+      { cwd: root }
+    )
+
+    // Premise: the worktree is fully clean so only the HEAD fallback feeds the change set,
+    // and that fallback lists the violating path (non-root HEAD commit).
+    const headNames = await execFileAsync(
+      'git',
+      [
+        'diff-tree',
+        '--no-commit-id',
+        '--name-only',
+        '-r',
+        '-m',
+        '--diff-filter=ACMR',
+        '-z',
+        'HEAD',
+      ],
+      { cwd: root, encoding: 'buffer' }
+    )
+    assert.deepEqual(headNames.stdout.toString('utf8').split('\0').filter(Boolean), [
+      '_bmad/committed.md',
+    ])
+
+    const result = await scanPrivacyFiles({ root })
+    assert.equal(result.valid, true)
+    assert.deepEqual(result.violations, [])
+    assert.equal(result.scanned.includes('_bmad/committed.md'), false)
+    assert.deepEqual(result.scanned, [...PII_FILES].sort())
+    assert.equal(JSON.stringify(result).includes('constructedCredential123'), false)
+  })
+})
+
+test('scan-roots walk still scans vendored BMAD knowledge paths inside maintained roots', async () => {
+  await withRoot(async root => {
+    await mkdir(path.join(root, '_bmad'), { recursive: true })
+    const value = ['wb_', 'token', " = 'constructedCredential123'"].join('')
+    await writeFile(path.join(root, '_bmad', 'template.md'), `${value}\n`)
+
+    const result = await scanPrivacyFiles({
+      root,
+      scanRoots: ['_bmad'],
+      includeGitChanges: false,
+    })
+    assert.equal(result.valid, false)
+    assert.deepEqual(result.violations, [
+      { file: '_bmad/template.md', line: 1, rule: 'token-value' },
+    ])
   })
 })
 

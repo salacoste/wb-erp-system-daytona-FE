@@ -25,6 +25,23 @@ export const PRIVACY_SCAN_ROOTS = [
   '.omx/ultragoal/evidence',
 ]
 
+// Vendored BMAD framework knowledge dirs (owner decision 2026-09-08): excluded from the Git
+// change-set scan only. `npx bmad-method install` regenerates them (redactions would not
+// stick): `_bmad/` is tracked by the installer manifest `_bmad/_config/files-manifest.csv`;
+// the 4 IDE dirs are installer-generated integration output (inferred from content, no
+// manifest entry). They hold only template teaching examples and are not in
+// PRIVACY_SCAN_ROOTS. The scan-roots walk (IGNORED_DIRECTORIES) is deliberately unaffected.
+export const EXCLUDED_CHANGE_SET_PREFIXES = new Set([
+  '.gemini/',
+  '.agent/',
+  '.agents/',
+  '.opencode/',
+  '_bmad/',
+])
+
+// Allocated once at module scope instead of per-candidate spread inside the helper below.
+const EXCLUDED_CHANGE_SET_PREFIX_LIST = [...EXCLUDED_CHANGE_SET_PREFIXES]
+
 const ALLOWED_EXTENSIONS = new Set([
   '.ts',
   '.tsx',
@@ -293,6 +310,11 @@ async function gitFileNames(root, args) {
   return stdout.toString('utf8').split('\0').filter(Boolean)
 }
 
+function isExcludedFromChangeSet(candidate) {
+  const relative = normalizeRelativePath(candidate)
+  return EXCLUDED_CHANGE_SET_PREFIX_LIST.some(prefix => relative.startsWith(prefix))
+}
+
 async function collectGitChangeFiles(root, files, errors, missing) {
   try {
     const groups = await Promise.all([
@@ -300,8 +322,10 @@ async function collectGitChangeFiles(root, files, errors, missing) {
       gitFileNames(root, ['diff', '--cached', '--name-only', '-z', '--diff-filter=ACMR']),
       gitFileNames(root, ['ls-files', '--others', '--exclude-standard', '-z']),
     ])
+    // Fallback decision uses the raw change set so an excluded-only change set does not
+    // fall through to stale diff-tree HEAD candidates; both branches are then filtered.
     const changed = [...new Set(groups.flat())]
-    const candidates =
+    const candidates = (
       changed.length > 0
         ? changed
         : await gitFileNames(root, [
@@ -314,6 +338,7 @@ async function collectGitChangeFiles(root, files, errors, missing) {
             '-z',
             'HEAD',
           ])
+    ).filter(candidate => !isExcludedFromChangeSet(candidate))
     for (const candidate of candidates) {
       await collectFiles(candidate, root, files, errors, missing, false, true)
     }
