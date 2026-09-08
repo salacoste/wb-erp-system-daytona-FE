@@ -115,14 +115,14 @@ harness restart-per-run раннер · FR-7 (reseed nmId 202867769 W26 ИЛИ r
 
 ## 5. Точки входа мейнтейнера
 
-| Ресурс                      | Путь                                                                                                                                                         |
-| --------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| Процесс V14/V15             | `docs/ORCHESTRATOR-PROMPT-2026-09-02-*.md`                                                                                                                   |
-| Артефакты волн (канон WCAG) | `_bmad-output/implementation-artifacts/debt-p2-boundary-wave{1,2}-*.md`                                                                                      |
-| BE-контракт + хазарды       | `docs/request-backend/230-auth-refresh-endpoint-missing.md` (ANEX)                                                                                           |
-| BE-вход-док                 | `docs/request-backend/BE-TEAM-HANDOFF-2026-09-03.md`                                                                                                         |
-| Debt-registry               | `_bmad-output/planning-artifacts/shadcn-migration-status-and-debt-registry.md`                                                                               |
-| Гейты-базлайны              | `CLAUDE.md` Accepted Baselines · `scripts/.*-baseline.txt`                                                                                                   |
-| Каталог boundary            | `_bmad-output/planning-artifacts/shadcn-ui-boundary-classification-manifest.md` (+ live-скан: `grep -roE '<legacy-regex>' src --include=_.tsx --include=_.ts | grep -v test | cut -d: -f1 | sort | uniq -c | sort -rn`) |
+| Ресурс                      | Путь                                                                                                                                                                                                                         |
+| --------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Процесс V14/V15             | `docs/ORCHESTRATOR-PROMPT-2026-09-02-*.md`                                                                                                                                                                                   |
+| Артефакты волн (канон WCAG) | `_bmad-output/implementation-artifacts/debt-p2-boundary-wave{1,2}-*.md`                                                                                                                                                      |
+| BE-контракт + хазарды       | `docs/request-backend/230-auth-refresh-endpoint-missing.md` (ANEX)                                                                                                                                                           |
+| BE-вход-док                 | `docs/request-backend/BE-TEAM-HANDOFF-2026-09-03.md`                                                                                                                                                                         |
+| Debt-registry               | `_bmad-output/planning-artifacts/shadcn-migration-status-and-debt-registry.md`                                                                                                                                               |
+| Гейты-базлайны              | `CLAUDE.md` Accepted Baselines · `scripts/.*-baseline.txt`                                                                                                                                                                   |
+| Каталог boundary            | `_bmad-output/planning-artifacts/shadcn-ui-boundary-classification-manifest.md` (+ live-скан: `grep -roE '<legacy-regex>' src --include=*.tsx --include=*.ts \| grep -v test \| cut -d: -f1 \| sort \| uniq -c \| sort -rn`) |
 
 _Подготовлено оркестратором V15, сессия-2 (2026-09-02/03); факты сверены живыми прогонами на main `c5ca2669`._

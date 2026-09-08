@@ -166,7 +166,7 @@ src/components/custom/price-calculator/
 <FieldTooltip content="Стоимость доставки товара от склада WB до покупателя. Рассчитывается по формуле..." />
 ```
 
-#### 5. Test File Updates (**tests**/FixedCostsSection.test.tsx)
+#### 5. Test File Updates (\_\_tests\_\_/FixedCostsSection.test.tsx)
 
 ```typescript
 // Lines 77, 128, 149 - Update test assertions

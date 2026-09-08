@@ -109,7 +109,7 @@ analytics_events_rate_limited_total             // Rate limit hits
    - Error message truncation (500 chars max)
    - Priority categorization (CRITICAL, HIGH, NICE TO HAVE)
 
-3. ****tests**/analytics.test.ts** (227 lines)
+3. **\_\_tests\_\_/analytics.test.ts** (227 lines)
    - 100% test coverage (15/15 tests passing)
    - Unit tests for analytics service
    - Unit tests for TelegramMetrics helpers

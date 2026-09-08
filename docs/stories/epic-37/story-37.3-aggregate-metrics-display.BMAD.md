@@ -379,7 +379,7 @@ Claude Sonnet 4.5 (2025-12-29)
 ### Compliance Check
 
 - ✅ **Coding Standards**: TypeScript strict mode, no `any` types, consistent naming
-- ✅ **Project Structure**: Proper utils directory, **tests** subdirectory
+- ✅ **Project Structure**: Proper utils directory, \_\_tests\_\_ subdirectory
 - ✅ **Testing Strategy**: Comprehensive unit tests (≥90% coverage), edge case coverage
 - ✅ **All ACs Met**: 21/21 acceptance criteria fully implemented and validated
 
