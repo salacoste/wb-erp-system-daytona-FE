@@ -86,7 +86,7 @@ Example:
 
 ```bash
 curl -X GET "http://localhost:3000/v1/analytics/fulfillment/summary?from=2026-01-19&to=2026-01-25" \
-  -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..." \
+  -H "Authorization: Bearer eyJhbGci..." \
   -H "X-Cabinet-Id: cm123..."
 ```
 

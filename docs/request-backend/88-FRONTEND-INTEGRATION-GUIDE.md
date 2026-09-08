@@ -519,7 +519,7 @@ const newProducts = item.products; // Рекомендуется
 
 ```bash
 GET /v1/analytics/advertising/stats?groupBy=imtId&from=2025-12-01&to=2025-12-07
-Authorization: Bearer eyJhbGciOiJIUzI1NiIs...
+Authorization: Bearer eyJhbGci...
 X-Cabinet-Id: 550e8400-e29b-41d4-a716-446655440000
 ```
 
