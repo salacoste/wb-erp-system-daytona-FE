@@ -1054,7 +1054,15 @@ test.describe('Story 167.5 browser-owned evidence', () => {
     const wbTokenNavigation = page.waitForURL(/\/wb-token(?:\?|$)/)
     const updateRetry = page.getByRole('button', { name: 'Сохранить и продолжить', exact: true })
     await updateRetry.click()
-    await expect(recoveryAlert).toHaveCount(0)
+    // The update retry keeps the margin-recovery alert visible until the outcome
+    // settles (same semantics as the create resubmit above): onSubmit
+    // (useCabinetCreationSubmission.ts) never clears recoveryError, and the
+    // recovery effect quiet-returns for locally-dispatched operations. The alert
+    // unmounts with the next outcome — the PUT success that navigates to
+    // /wb-token below.
+    await expect(recoveryAlert).toHaveText(
+      'Кабинет создан, но целевая маржа не сохранилась. Исправьте ошибку и повторите попытку.'
+    )
     const pendingUpdate = page.getByRole('button', { name: 'Сохранение...', exact: true })
     await expect(pendingUpdate).toBeVisible()
     await expect(pendingUpdate).toBeDisabled()
