@@ -1,6 +1,6 @@
 # Debt P3: privacy-сканер × BMAD tool-директории — exclusion из change-set скана (сессия-9, V19)
 
-> **Status**: done · **PR**: pending (второй коммит) · **Branch**: `debt/bmad-knowledge-token-redaction` @ `5934c313` (worktree /private/tmp/bmad-token-redaction)
+> **Status**: done · **PR**: [#425](https://github.com/salacoste/wb-erp-system-daytona-FE/pull/425) · **Branch**: `debt/bmad-knowledge-token-redaction` @ `5934c313` (worktree /private/tmp/bmad-token-redaction)
 > **Источник**: реестр §18a (MEDIUM от ревью #423); исполнен оркестратором сессии-9 (2026-09-08/09)
 > **Класс**: behavior-change гейт-скрипта → обязательные 2 ревью-прохода (CLAUDE.md); **owner decision on record 2026-09-08** (AskUserQuestion: «Исключить 5 tool-дир из скана»)
 
