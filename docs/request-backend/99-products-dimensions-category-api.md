@@ -668,17 +668,17 @@ parentName = commission?.parentName || null;
 ```bash
 # Get specific product by nm_id with dimensions and category
 curl -X GET "http://localhost:3000/v1/products?include_dimensions=true&q=147205694" \
-  -H "Authorization: Bearer YOUR_JWT_TOKEN" \
+  -H "Authorization: Bearer YOUR_TOKEN" \
   -H "X-Cabinet-Id: YOUR_CABINET_ID"
 
 # Get product with dimensions, COGS, and storage data
 curl -X GET "http://localhost:3000/v1/products?include_dimensions=true&include_cogs=true&include_storage=true&q=147205694" \
-  -H "Authorization: Bearer YOUR_JWT_TOKEN" \
+  -H "Authorization: Bearer YOUR_TOKEN" \
   -H "X-Cabinet-Id: YOUR_CABINET_ID"
 
 # Force refresh from WB API (skip cache)
 curl -X GET "http://localhost:3000/v1/products?include_dimensions=true&skip_cache=true&q=147205694" \
-  -H "Authorization: Bearer YOUR_JWT_TOKEN" \
+  -H "Authorization: Bearer YOUR_TOKEN" \
   -H "X-Cabinet-Id: YOUR_CABINET_ID"
 ```
 

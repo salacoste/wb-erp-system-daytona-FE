@@ -462,7 +462,7 @@ else:
 
 ```bash
 curl -X POST https://api.example.com/v1/products/price-calculator \
-  -H "Authorization: Bearer YOUR_JWT_TOKEN" \
+  -H "Authorization: Bearer YOUR_TOKEN" \
   -H "X-Cabinet-Id: YOUR_CABINET_ID" \
   -H "Content-Type: application/json" \
   -d '{
@@ -482,7 +482,7 @@ curl -X POST https://api.example.com/v1/products/price-calculator \
 
 ```bash
 curl -X POST https://api.example.com/v1/products/price-calculator \
-  -H "Authorization: Bearer YOUR_JWT_TOKEN" \
+  -H "Authorization: Bearer YOUR_TOKEN" \
   -H "X-Cabinet-Id: YOUR_CABINET_ID" \
   -H "Content-Type: application/json" \
   -d '{
@@ -507,7 +507,7 @@ curl -X POST https://api.example.com/v1/products/price-calculator \
 
 ```bash
 curl -X POST https://api.example.com/v1/products/price-calculator \
-  -H "Authorization: Bearer YOUR_JWT_TOKEN" \
+  -H "Authorization: Bearer YOUR_TOKEN" \
   -H "X-Cabinet-Id: YOUR_CABINET_ID" \
   -H "Content-Type: application/json" \
   -d '{
@@ -535,7 +535,7 @@ curl -X POST https://api.example.com/v1/products/price-calculator \
 
 ```bash
 curl -X POST https://api.example.com/v1/products/price-calculator \
-  -H "Authorization: Bearer YOUR_JWT_TOKEN" \
+  -H "Authorization: Bearer YOUR_TOKEN" \
   -H "X-Cabinet-Id: YOUR_CABINET_ID" \
   -H "Content-Type: application/json" \
   -d '{
