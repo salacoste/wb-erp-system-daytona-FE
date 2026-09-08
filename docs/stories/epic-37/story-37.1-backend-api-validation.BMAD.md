@@ -44,18 +44,21 @@
 ## Tasks / Subtasks
 
 ### Task 1: Prepare Test Environment (AC: 1)
+
 - [ ] Ensure backend API is running locally or staging
 - [ ] Obtain valid JWT token for authentication
 - [ ] Identify cabinet_id with advertising data
 - [ ] Install HTTP client (Postman/Insomnia or use test-api.http)
 
 ### Task 2: Execute API Call & Capture Response (AC: 1-2)
+
 - [ ] Execute `GET /v1/analytics/advertising?group_by=imtId&cabinet_id=<id>`
 - [ ] Verify 200 status code
 - [ ] Save raw JSON response to `api-response-sample.json`
 - [ ] Document any errors or unexpected behavior
 
 ### Task 3: Validate Epic 36 Fields (AC: 3-4, 7-8)
+
 - [ ] Verify `imtId` field present in each group
 - [ ] Verify `mainProduct.nmId` matches a product in `products[]` array
 - [ ] Count main products per group (should be exactly 1)
@@ -63,6 +66,7 @@
 - [ ] Document any discrepancies
 
 ### Task 4: Validate Epic 35 Fields (AC: 5-6, 12-13)
+
 - [ ] Check aggregate level has: `totalSales`, `revenue`, `organicSales`, `organicContribution`
 - [ ] Check individual product level has: `totalSales`, `revenue`, `organicSales`, `organicContribution`
 - [ ] Verify `organicSales = totalSales - revenue` for 3 random products
@@ -71,6 +75,7 @@
 - [ ] Verify `roas = null` for child products (spend = 0)
 
 ### Task 5: Data Integrity Checks (AC: 9-11, 14)
+
 - [ ] For 3 random groups, calculate SUM(products[].totalSales)
 - [ ] Compare calculated sum to `aggregateMetrics.totalSales` (tolerance ±1₽)
 - [ ] Repeat for `revenue` and `spend` fields
@@ -78,6 +83,7 @@
 - [ ] Document any integrity violations
 
 ### Task 6: Edge Case Testing (AC: 15)
+
 - [ ] **PO DECISION**: Find group with min=2 products, verify handling
 - [ ] **PO DECISION**: Find group with max=50 products, verify no pagination
 - [ ] **PO DECISION**: Check for standalone products (imtId=null), verify included as single rows
@@ -94,6 +100,7 @@
 
 **Endpoint**: `GET /v1/analytics/advertising`
 **Query Parameters**:
+
 - `group_by=imtId` (REQUIRED - triggers merged group mode)
 - `cabinet_id=<uuid>` (REQUIRED via JWT or query param)
 
@@ -174,18 +181,22 @@ console.assert(
 ### PO Decisions Summary
 
 **Decision 1**: Group size limits
+
 - **Minimum**: 2 products (groups with 1 product = single row, no rowspan)
 - **Maximum**: 50 products per group
 - **Pagination**: NO - show all products in group (monitor performance)
 
 **Decision 2**: Product sorting within group
+
 - **Primary sort**: Main product first (`isMainProduct: true`)
 - **Secondary sort**: Children sorted by `totalSales` DESC
 
 **Decision 3**: Standalone products (imtId=null)
+
 - **Include**: YES - render as single rows (no grouping, no aggregate row)
 
 **Decision 4**: Edge case display
+
 - **Zero spend**: ROAS shows `null` → UI displays "—"
 - **Negative revenue**: Display in red color
 - **Missing fields**: Display "—" (null value)
@@ -193,6 +204,7 @@ console.assert(
 ### Integration with Epic 35 & Epic 36
 
 **Epic 35 Dependencies**: Total Sales & Organic Split
+
 - `totalSales` field from `wb_finance_raw` aggregation
 - `revenue` field (ad-attributed sales)
 - `organicSales = totalSales - revenue`
@@ -200,6 +212,7 @@ console.assert(
 - Status: ✅ COMPLETE (verified in Story 35.7)
 
 **Epic 36 Dependencies**: Product Card Linking
+
 - `imtId` field synced daily from WB Content API
 - `products` table has `imtId` column
 - Backend groups products by `imtId` when `group_by=imtId` parameter present
@@ -217,12 +230,14 @@ console.assert(
 **Testing Approach**: Manual API validation before component development
 
 **Tools**:
+
 - Postman/Insomnia for HTTP requests
 - VS Code REST Client extension (`test-api.http` file)
 - Browser DevTools Network tab
 - `jq` for JSON parsing in terminal
 
 **Test Data Requirements**:
+
 - Cabinet with advertising data
 - At least 3 merged groups (imtId with 2+ products)
 - At least 1 standalone product (imtId=null) for edge case testing
@@ -232,31 +247,35 @@ console.assert(
 
 ## Change Log
 
-| Date | Version | Description | Author |
-|------|---------|-------------|--------|
-| 2025-12-29 | 1.0 | Initial story draft | Sally (UX Expert) |
-| 2025-12-29 | 1.1 | PO decisions filled | Sarah (PO) |
-| 2025-12-29 | 2.0 | Converted to BMad template | Sarah (PO) |
+| Date       | Version | Description                | Author            |
+| ---------- | ------- | -------------------------- | ----------------- |
+| 2025-12-29 | 1.0     | Initial story draft        | Sally (UX Expert) |
+| 2025-12-29 | 1.1     | PO decisions filled        | Sarah (PO)        |
+| 2025-12-29 | 2.0     | Converted to BMad template | Sarah (PO)        |
 
 ---
 
 ## Dev Agent Record
 
-*To be populated during implementation.*
+_To be populated during implementation._
 
 ### Agent Model Used
-*Model and version*
+
+_Model and version_
 
 ### Debug Log References
-*Debug logs*
+
+_Debug logs_
 
 ### Completion Notes
+
 - API validation results: PASS / FAIL
 - Edge cases tested: ___
 - Data integrity checks: PASS / FAIL
 - Response sample saved: `api-response-sample.json`
 
 ### File List
+
 - `frontend/docs/stories/epic-37/api-response-sample.json` (created)
 - `frontend/docs/stories/epic-37/api-validation-report-37.1.md` (created)
 
@@ -286,18 +305,19 @@ Request #88 enhances the existing Epic 36 API endpoint `GET /v1/analytics/advert
 
 #### Acceptance Criteria Status
 
-| AC # | Requirement | Status | Evidence |
-|------|-------------|--------|----------|
-| AC1 | Response structure (nested) | ✅ PASS | `mainProduct`, `productCount`, `aggregateMetrics`, `products[]` present |
-| AC2 | Individual metrics (18 fields) | ✅ PASS | All 18 fields implemented in `MergedGroupProductDto` |
-| AC3 | Main product identification | ✅ PASS | Validation ensures exactly 1 main per group + unit tests |
-| AC4 | Sort order (main first, sales DESC) | ✅ PASS | `products.sort()` + validation logic + unit tests |
-| AC5 | Data integrity (aggregate = SUM) | ✅ PASS | Comprehensive validation with ±0.01 tolerance + tests |
-| AC6 | Epic 35 fields | ✅ PASS | `totalSales`, `organicSales`, `organicContribution` at both levels |
-| AC7 | ROAS/ROI null handling | ✅ PASS | Correct null for zero spend/clicks |
-| AC8 | Backward compatibility (LEGACY) | ✅ PASS | `mergedProducts[]` field preserved with deprecation note |
+| AC # | Requirement                         | Status  | Evidence                                                                |
+| ---- | ----------------------------------- | ------- | ----------------------------------------------------------------------- |
+| AC1  | Response structure (nested)         | ✅ PASS | `mainProduct`, `productCount`, `aggregateMetrics`, `products[]` present |
+| AC2  | Individual metrics (18 fields)      | ✅ PASS | All 18 fields implemented in `MergedGroupProductDto`                    |
+| AC3  | Main product identification         | ✅ PASS | Validation ensures exactly 1 main per group + unit tests                |
+| AC4  | Sort order (main first, sales DESC) | ✅ PASS | `products.sort()` + validation logic + unit tests                       |
+| AC5  | Data integrity (aggregate = SUM)    | ✅ PASS | Comprehensive validation with ±0.01 tolerance + tests                   |
+| AC6  | Epic 35 fields                      | ✅ PASS | `totalSales`, `organicSales`, `organicContribution` at both levels      |
+| AC7  | ROAS/ROI null handling              | ✅ PASS | Correct null for zero spend/clicks                                      |
+| AC8  | Backward compatibility (LEGACY)     | ✅ PASS | `mergedProducts[]` field preserved with deprecation note                |
 
 **Implementation Files**:
+
 - DTOs: `src/analytics/dto/response/advertising-response.dto.ts` (lines 76-363)
 - Service: `src/analytics/services/advertising-analytics.service.ts` (lines 587-642, 1790-1897)
 - Tests: `src/analytics/services/__tests__/advertising-analytics.service.spec.ts` (lines 1703+)
@@ -309,6 +329,7 @@ Request #88 enhances the existing Epic 36 API endpoint `GET /v1/analytics/advert
 **Overall Assessment**: Excellent implementation quality with comprehensive validation and testing.
 
 **Strengths**:
+
 1. **Data Integrity**: Comprehensive validation logic (`validateMergedGroupIntegrity()`) enforces AC3, AC4, AC5
 2. **Type Safety**: Strict TypeScript types prevent runtime errors
 3. **Documentation**: Excellent JSDoc comments with specific AC references (e.g., `[Request #88 AC5]`)
@@ -316,6 +337,7 @@ Request #88 enhances the existing Epic 36 API endpoint `GET /v1/analytics/advert
 5. **Development Experience**: Validation warnings only in NODE_ENV=development (prevents production log noise)
 
 **Code Architecture**:
+
 - Clear separation: DTOs (data contracts) → Service (business logic) → Validation (quality gates)
 - Nested structure design: `aggregateMetrics` object separate from individual `products[]` array
 - Maintainable: Each AC has traceable implementation + validation + tests
@@ -334,12 +356,14 @@ Request #88 enhances the existing Epic 36 API endpoint `GET /v1/analytics/advert
 ### Test Coverage Analysis
 
 **Coverage Report** (advertising-analytics.service.ts):
+
 - **Statement Coverage**: 85.52% ✅ (exceeds 80% target)
 - **Branch Coverage**: 80.61% ✅
 - **Function Coverage**: 93.93% ✅
 - **Line Coverage**: 85.61% ✅
 
 **Test Suite**: `validateMergedGroupIntegrity()` (6 test cases)
+
 1. ✅ Valid aggregates pass validation
 2. ✅ Invalid aggregates trigger warning (AC5)
 3. ✅ Multiple main products trigger warning (AC3)
@@ -354,24 +378,28 @@ Request #88 enhances the existing Epic 36 API endpoint `GET /v1/analytics/advert
 ### NFR Validation
 
 #### Security: ✅ PASS
+
 - Read-only API endpoint (no mutations)
 - JWT authentication inherited from Epic 33
 - Cabinet-based multi-tenancy enforced
 - No new sensitive data exposure
 
 #### Performance: ✅ PASS (with monitoring recommendation)
+
 - Response size increase: 5x (500 bytes → 2.5 KB per merged group)
 - Estimated overhead: +30-50ms
 - Target: p95 ≤ 150ms (acceptable for analytical endpoint)
 - **Recommendation**: Monitor production performance, consider pagination if groups >50 products become common
 
 #### Reliability: ✅ PASS
+
 - Comprehensive data integrity validation (AC5: aggregate = SUM ± 0.01)
 - Main product uniqueness validation (AC3)
 - Sort order validation (AC4)
 - Development-only warnings prevent production noise
 
 #### Maintainability: ✅ PASS
+
 - Excellent code structure and documentation
 - Clear LEGACY vs NEW field separation
 - TypeScript strict types
@@ -393,6 +421,7 @@ Request #88 enhances the existing Epic 36 API endpoint `GET /v1/analytics/advert
 ### Performance Considerations
 
 **Response Size Impact**:
+
 - Current (Epic 36): ~500 bytes per merged group
 - Enhanced (Request #88): ~2.5 KB per merged group (5x increase)
 - Typical response (10 groups): 5 KB → 25 KB
@@ -400,6 +429,7 @@ Request #88 enhances the existing Epic 36 API endpoint `GET /v1/analytics/advert
 **Mitigation**: Pagination already implemented (limit=100, offset=0)
 
 **Recommendations**:
+
 - ✅ Monitor production p95 response times (target ≤ 150ms)
 - ✅ Consider pagination for groups with >50 products (currently unbounded)
 - ✅ Load testing recommended before production deployment
@@ -426,6 +456,7 @@ Request #88 enhances the existing Epic 36 API endpoint `GET /v1/analytics/advert
 ### Files Modified During Review
 
 **No files modified during QA review.** All implementation was completed by backend team in commits:
+
 - `89d5298` - Phase 1: DTO types (1h)
 - `98e21ea` - Phase 2: Individual metrics enhancement (1.5h)
 - `6c07533` - AC4 fix: Sort order (8 min)
@@ -445,6 +476,7 @@ Request #88 enhances the existing Epic 36 API endpoint `GET /v1/analytics/advert
 **Quality Score**: 90/100 (Excellent)
 
 **Risk Level**: LOW
+
 - 0 critical risks
 - 0 high risks
 - 1 medium risk (performance scaling - requires monitoring)
@@ -457,6 +489,7 @@ Request #88 enhances the existing Epic 36 API endpoint `GET /v1/analytics/advert
 ✅ **Ready for Frontend Integration**
 
 **Next Steps**:
+
 1. ✅ Backend API available at `GET /v1/analytics/advertising/stats?groupBy=imtId`
 2. ✅ Frontend Epic 37 can proceed with Stories 37.2-37.5
 3. ⏳ Monitor production performance after deployment (target p95 ≤ 150ms)
@@ -481,6 +514,7 @@ Request #88 enhances the existing Epic 36 API endpoint `GET /v1/analytics/advert
 ---
 
 **QA Checklist** (Updated):
+
 - [x] All 8 backend acceptance criteria validated (Request #88)
 - [x] Epic 35 fields present and correct at both levels
 - [x] Epic 36 fields present and correct (imtId, mainProduct)

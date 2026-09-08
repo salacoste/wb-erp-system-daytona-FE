@@ -17,6 +17,7 @@
 **So that** the correct commission rate is automatically applied to my price calculation.
 
 **Non-goals**:
+
 - Auto-detect category from existing products (Phase 2, per Question #3)
 - Category favorites/recent selection
 - Category tree navigation (flat searchable list only)
@@ -29,6 +30,7 @@
 Wildberries has **7,346 product categories** with different commission rates.
 
 ### Category Data Structure (from Backend)
+
 ```json
 {
   "parentID": 123,             // Primary key for selection
@@ -43,17 +45,19 @@ Wildberries has **7,346 product categories** with different commission rates.
 ```
 
 ### Commission Rate Analysis (Backend Data)
-| Metric | Value |
-|--------|-------|
-| Total Categories | 7,346 |
-| FBO Range | 5% - 25% |
-| FBS Range | 8% - 28% |
-| FBS > FBO | 96.5% of categories |
-| Average FBS-FBO Diff | +3.38% |
-| Response Size | ~50KB (JSON compressed) |
-| Cache TTL | 24 hours |
+
+| Metric               | Value                   |
+| -------------------- | ----------------------- |
+| Total Categories     | 7,346                   |
+| FBO Range            | 5% - 25%                |
+| FBS Range            | 8% - 28%                |
+| FBS > FBO            | 96.5% of categories     |
+| Average FBS-FBO Diff | +3.38%                  |
+| Response Size        | ~50KB (JSON compressed) |
+| Cache TTL            | 24 hours                |
 
 ### Display Format
+
 - Combobox: "Одежда → Платья (25%)"
 - Badge: Commission % with fulfillment type indicator
 
@@ -62,6 +66,7 @@ Wildberries has **7,346 product categories** with different commission rates.
 ## Acceptance Criteria
 
 ### AC1: Category Combobox Component
+
 - [ ] Create searchable combobox for category selection
 - [ ] Display "parentName → subjectName" format in dropdown
 - [ ] Display commission % preview for each option
@@ -69,6 +74,7 @@ Wildberries has **7,346 product categories** with different commission rates.
 - [ ] Support up to 7,346 categories efficiently
 
 ### AC2: Search/Filter Functionality
+
 - [ ] Search by parent category name (partial match)
 - [ ] Search by sub-category name (partial match)
 - [ ] Case-insensitive search (Russian locale)
@@ -77,18 +83,21 @@ Wildberries has **7,346 product categories** with different commission rates.
 - [ ] Show max 50 results initially, load more on scroll
 
 ### AC3: Commission Preview
+
 - [ ] Show FBO commission % when FBO selected (Story 44.15)
 - [ ] Show FBS commission % when FBS selected
 - [ ] Format: "25%" in badge next to category name
 - [ ] Color-code high commission (>25%): yellow warning
 
 ### AC4: Selected State Display
+
 - [ ] Show selected category in trigger button
 - [ ] Format: "Одежда → Платья"
 - [ ] Show commission % badge next to selection
 - [ ] "×" button to clear selection
 
 ### AC5: Data Loading & Caching
+
 - [ ] Fetch categories on page load (parallel with other data)
 - [ ] Cache for 24 hours (per requirements)
 - [ ] Show loading skeleton while fetching
@@ -96,6 +105,7 @@ Wildberries has **7,346 product categories** with different commission rates.
 - [ ] ~50KB response, target <2s load time
 
 ### AC6: Form State Integration
+
 - [ ] Store `category_id` (parentID) in form state
 - [ ] Store category name for display
 - [ ] On selection, auto-fill commission % field
@@ -121,6 +131,7 @@ Wildberries has **7,346 product categories** with different commission rates.
 Fetches all 7,346 category commissions. Cached for 24 hours.
 
 **Request:**
+
 ```http
 GET /v1/tariffs/commissions
 Authorization: Bearer {JWT_TOKEN}
@@ -128,6 +139,7 @@ X-Cabinet-Id: {cabinet_id}
 ```
 
 **Response (200 OK):**
+
 ```json
 {
   "data": {
@@ -162,6 +174,7 @@ X-Cabinet-Id: {cabinet_id}
 Fetches commission for specific category with fulfillment type filter.
 
 **Request:**
+
 ```http
 GET /v1/tariffs/commissions/category/123?fulfillmentType=FBO
 Authorization: Bearer {JWT_TOKEN}
@@ -169,6 +182,7 @@ X-Cabinet-Id: {cabinet_id}
 ```
 
 **Response (200 OK):**
+
 ```json
 {
   "data": {
@@ -609,20 +623,20 @@ Dropdown open:
 
 ### Invariants & Edge Cases
 
-| Scenario | Handling |
-|----------|----------|
-| 7,346 categories | Client-side filtering, max 50 visible, scroll to load more |
-| No search results | Show "Категории не найдены" with suggestion to broaden search |
-| API loading (first load) | Show Skeleton button with "Загрузка категорий..." |
-| API error | Show error message with "Повторить" (Retry) button |
-| Rate limit exceeded | Show warning, use cached data if available |
-| Category selected → fulfillment type changed | Update commission % automatically |
-| Form reset | Clear category selection, reset commission to default |
-| Mobile viewport (< 640px) | Full-width dropdown, Sheet-style popover |
-| Duplicate parentID | Use `${parentID}-${subjectID}` as composite unique key |
-| Cyrillic search | Case-insensitive search with Russian locale support |
-| Category with high commission (>25%) | Show yellow warning badge |
-| Search with special characters | Sanitize input, escape regex characters |
+| Scenario                                     | Handling                                                      |
+| -------------------------------------------- | ------------------------------------------------------------- |
+| 7,346 categories                             | Client-side filtering, max 50 visible, scroll to load more    |
+| No search results                            | Show "Категории не найдены" with suggestion to broaden search |
+| API loading (first load)                     | Show Skeleton button with "Загрузка категорий..."             |
+| API error                                    | Show error message with "Повторить" (Retry) button            |
+| Rate limit exceeded                          | Show warning, use cached data if available                    |
+| Category selected → fulfillment type changed | Update commission % automatically                             |
+| Form reset                                   | Clear category selection, reset commission to default         |
+| Mobile viewport (< 640px)                    | Full-width dropdown, Sheet-style popover                      |
+| Duplicate parentID                           | Use `${parentID}-${subjectID}` as composite unique key        |
+| Cyrillic search                              | Case-insensitive search with Russian locale support           |
+| Category with high commission (>25%)         | Show yellow warning badge                                     |
+| Search with special characters               | Sanitize input, escape regex characters                       |
 
 ---
 
@@ -660,6 +674,7 @@ Dropdown open:
 ## Testing Requirements
 
 ### Unit Tests
+
 - [ ] CategorySelector renders with loading state
 - [ ] CategorySelector renders with categories
 - [ ] Search filters categories correctly
@@ -667,12 +682,14 @@ Dropdown open:
 - [ ] Commission % displays based on fulfillment type
 
 ### Integration Tests
+
 - [ ] Category selection updates form state
 - [ ] Fulfillment type change updates commission
 - [ ] Form reset clears category selection
 - [ ] Error state shows retry button
 
 ### E2E Tests
+
 - [ ] User can open category dropdown
 - [ ] User can search for category by name
 - [ ] User can select category from list
@@ -684,15 +701,17 @@ Dropdown open:
 ## Dev Agent Record
 
 ### File List
-| File | Change Type | Lines (Est.) | Description |
-|------|-------------|--------------|-------------|
-| `src/types/tariffs.ts` | CREATE | ~30 | Category commission types |
-| `src/lib/api/tariffs.ts` | CREATE | ~20 | API client for commissions |
-| `src/hooks/useCommissions.ts` | CREATE | ~20 | TanStack Query hook |
-| `src/components/custom/price-calculator/CategorySelector.tsx` | CREATE | ~150 | Combobox component |
-| `src/components/custom/price-calculator/PriceCalculatorForm.tsx` | UPDATE | +30 | Add category selector |
+
+| File                                                             | Change Type | Lines (Est.) | Description                |
+| ---------------------------------------------------------------- | ----------- | ------------ | -------------------------- |
+| `src/types/tariffs.ts`                                           | CREATE      | ~30          | Category commission types  |
+| `src/lib/api/tariffs.ts`                                         | CREATE      | ~20          | API client for commissions |
+| `src/hooks/useCommissions.ts`                                    | CREATE      | ~20          | TanStack Query hook        |
+| `src/components/custom/price-calculator/CategorySelector.tsx`    | CREATE      | ~150         | Combobox component         |
+| `src/components/custom/price-calculator/PriceCalculatorForm.tsx` | UPDATE      | +30          | Add category selector      |
 
 ### Change Log
+
 - 2026-01-21: Implementation verified - all components already exist
 - 2026-01-21: Added unit tests for CategorySelector (26 tests)
 - 2026-01-21: Added unit tests for useCommissions hook (10 tests)
@@ -700,7 +719,9 @@ Dropdown open:
 - 2026-01-21: All 36 tests passing, ESLint clean, TypeScript valid
 
 ### Implementation Notes
+
 **Pre-existing Implementation**: Story 44.16 was already implemented with:
+
 - `src/types/commissions.ts` - CategoryCommission interface (53 lines)
 - `src/lib/api/tariffs.ts` - getCommissions() API function (118 lines)
 - `src/hooks/useCommissions.ts` - TanStack Query hook with 24h cache (66 lines)
@@ -708,14 +729,17 @@ Dropdown open:
 - `src/components/custom/price-calculator/CategorySelectorStates.tsx` - Loading/Error states (50 lines)
 
 **Tests Added**:
+
 - `src/components/custom/price-calculator/__tests__/CategorySelector.test.tsx` (26 tests)
 - `src/hooks/__tests__/useCommissions.test.ts` (10 tests)
 
 **Bug Fix**: Fixed commission propagation in PriceCalculatorForm to correctly map:
+
 - FBO → paidStorageKgvp field
 - FBS → kgvpMarketplace field
 
 ### Review Follow-ups
+
 - Tests cover all acceptance criteria
 - Commission field mapping follows COMMISSION_FIELD_MAP pattern
 - 24h cache configured in useCommissions hook
@@ -729,21 +753,23 @@ Dropdown open:
 **Gate Decision**: ✅ PASS
 
 ### AC Verification
-| AC | Requirement | Status | Evidence |
-|----|-------------|--------|----------|
-| AC1 | Category Combobox Component | ✅ | CategorySelector.tsx uses shadcn Command (Combobox pattern) |
-| AC2 | Search/Filter Functionality | ✅ | Client-side filter with 300ms debounce, max 50 results |
-| AC3 | Commission Preview | ✅ | Badge shows % with FBO/FBS mapping, >25% shows destructive |
-| AC4 | Selected State Display | ✅ | "parentName → subjectName" format with commission badge |
-| AC5 | Data Loading & Caching | ✅ | 24h staleTime/gcTime in useCommissions hook |
-| AC6 | Form State Integration | ✅ | Integrated in PriceCalculatorForm with fulfillment-aware commission |
+
+| AC  | Requirement                 | Status | Evidence                                                            |
+| --- | --------------------------- | ------ | ------------------------------------------------------------------- |
+| AC1 | Category Combobox Component | ✅     | CategorySelector.tsx uses shadcn Command (Combobox pattern)         |
+| AC2 | Search/Filter Functionality | ✅     | Client-side filter with 300ms debounce, max 50 results              |
+| AC3 | Commission Preview          | ✅     | Badge shows % with FBO/FBS mapping, >25% shows destructive          |
+| AC4 | Selected State Display      | ✅     | "parentName → subjectName" format with commission badge             |
+| AC5 | Data Loading & Caching      | ✅     | 24h staleTime/gcTime in useCommissions hook                         |
+| AC6 | Form State Integration      | ✅     | Integrated in PriceCalculatorForm with fulfillment-aware commission |
 
 ### Performance Check
-| Metric | Target | Status |
-|--------|--------|--------|
-| Category load time | <2s | ✅ (API cached 24h, ~50KB) |
+
+| Metric             | Target | Status                            |
+| ------------------ | ------ | --------------------------------- |
+| Category load time | <2s    | ✅ (API cached 24h, ~50KB)        |
 | Search filter time | <100ms | ✅ (client-side filter, memoized) |
-| Selection update | <50ms | ✅ (immediate state update) |
+| Selection update   | <50ms  | ✅ (immediate state update)       |
 
 ---
 

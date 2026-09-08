@@ -214,11 +214,11 @@ e2e/
 
 ### Test File Details
 
-| File | Purpose | Lines Est. | Priority |
-|------|---------|------------|----------|
-| `supplies.spec.ts` | Full lifecycle E2E | ~200 | P0 |
-| `supplies-accessibility.spec.ts` | Accessibility audit | ~100 | P1 |
-| `supplies-mobile.spec.ts` | Mobile responsive tests | ~120 | P1 |
+| File                             | Purpose                 | Lines Est. | Priority |
+| -------------------------------- | ----------------------- | ---------- | -------- |
+| `supplies.spec.ts`               | Full lifecycle E2E      | ~200       | P0       |
+| `supplies-accessibility.spec.ts` | Accessibility audit     | ~100       | P1       |
+| `supplies-mobile.spec.ts`        | Mobile responsive tests | ~120       | P1       |
 
 ---
 
@@ -226,18 +226,18 @@ e2e/
 
 ### New Components
 
-| File | Purpose | Lines Est. |
-|------|---------|------------|
-| `SupplyNotFound.tsx` | 404 error page | ~50 |
-| `SupplyAccessDenied.tsx` | 403 error page | ~50 |
+| File                     | Purpose        | Lines Est. |
+| ------------------------ | -------------- | ---------- |
+| `SupplyNotFound.tsx`     | 404 error page | ~50        |
+| `SupplyAccessDenied.tsx` | 403 error page | ~50        |
 
 ### Components to Update
 
-| File | Changes | Notes |
-|------|---------|-------|
-| `supplies/[id]/page.tsx` | Add error boundary | Handle 404/403 |
-| `SuppliesLoadingSkeleton.tsx` | Verify layout match | Polish |
-| `OrderPickerSkeleton.tsx` | Verify layout match | Polish |
+| File                          | Changes             | Notes          |
+| ----------------------------- | ------------------- | -------------- |
+| `supplies/[id]/page.tsx`      | Add error boundary  | Handle 404/403 |
+| `SuppliesLoadingSkeleton.tsx` | Verify layout match | Polish         |
+| `OrderPickerSkeleton.tsx`     | Verify layout match | Polish         |
 
 ### Component Location
 
@@ -624,18 +624,18 @@ export default function SupplyError({
 
 ### Toast Messages Review
 
-| Action | Message | Type |
-|--------|---------|------|
-| Create supply | "Поставка создана" | Success |
-| Add orders | "Добавлено: N заказов" | Success |
+| Action             | Message                          | Type    |
+| ------------------ | -------------------------------- | ------- |
+| Create supply      | "Поставка создана"               | Success |
+| Add orders         | "Добавлено: N заказов"           | Success |
 | Add orders partial | "Не удалось добавить: N заказов" | Warning |
-| Close supply | "Поставка закрыта" | Success |
-| Generate stickers | "Стикеры сгенерированы" | Success |
-| Download stickers | "Стикеры скачаны" | Success |
-| Sync status | "Статусы обновлены" | Success |
-| Rate limit | "Слишком частые запросы" | Error |
-| Network error | "Проблемы с сетью" | Error |
-| Generic error | "Произошла ошибка" | Error |
+| Close supply       | "Поставка закрыта"               | Success |
+| Generate stickers  | "Стикеры сгенерированы"          | Success |
+| Download stickers  | "Стикеры скачаны"                | Success |
+| Sync status        | "Статусы обновлены"              | Success |
+| Rate limit         | "Слишком частые запросы"         | Error   |
+| Network error      | "Проблемы с сетью"               | Error   |
+| Generic error      | "Произошла ошибка"               | Error   |
 
 ### Keyboard Navigation Audit
 
@@ -745,17 +745,17 @@ export default function SupplyError({
 
 ### Required (Blocking)
 
-| Dependency | Story | Status | Notes |
-|------------|-------|--------|-------|
+| Dependency           | Story        | Status   | Notes           |
+| -------------------- | ------------ | -------- | --------------- |
 | All previous stories | 53.1-53.7-FE | Required | Complete module |
-| @axe-core/playwright | Package | Install | A11y testing |
+| @axe-core/playwright | Package      | Install  | A11y testing    |
 
 ### External
 
-| Package | Version | Purpose |
-|---------|---------|---------|
-| @playwright/test | ^1.40.x | E2E testing |
-| @axe-core/playwright | ^4.8.x | Accessibility |
+| Package              | Version | Purpose       |
+| -------------------- | ------- | ------------- |
+| @playwright/test     | ^1.40.x | E2E testing   |
+| @axe-core/playwright | ^4.8.x  | Accessibility |
 
 ---
 
@@ -806,6 +806,7 @@ jobs:
 ### Test Data Requirements
 
 For E2E tests to work, the backend must have:
+
 - Test user with valid credentials
 - Test cabinet with supplies
 - At least 100 eligible FBS orders
@@ -815,22 +816,22 @@ For E2E tests to work, the backend must have:
 
 ## Tasks Breakdown
 
-| # | Task | Est. Hours | Notes |
-|---|------|------------|-------|
-| 1 | Create E2E test structure | 1 | Setup folders, fixtures |
-| 2 | Install @axe-core/playwright | 0.5 | npm install |
-| 3 | Write supplies.spec.ts | 4 | Full lifecycle test |
-| 4 | Write supplies-accessibility.spec.ts | 2 | Axe tests |
-| 5 | Write supplies-mobile.spec.ts | 2 | Mobile viewport tests |
-| 6 | Create not-found.tsx | 1 | 404 page |
-| 7 | Create error.tsx | 1 | Error boundary |
-| 8 | Create SupplyAccessDenied.tsx | 0.5 | 403 component |
-| 9 | Polish loading skeletons | 1 | Verify layout match |
-| 10 | Review toast messages | 0.5 | Consistency check |
-| 11 | Keyboard navigation audit | 1 | Manual testing |
-| 12 | Console error cleanup | 1 | Fix any issues |
-| 13 | CI integration | 1 | GitHub Actions |
-| **Total** | | **16.5** | ~2 days |
+| #         | Task                                 | Est. Hours | Notes                   |
+| --------- | ------------------------------------ | ---------- | ----------------------- |
+| 1         | Create E2E test structure            | 1          | Setup folders, fixtures |
+| 2         | Install @axe-core/playwright         | 0.5        | npm install             |
+| 3         | Write supplies.spec.ts               | 4          | Full lifecycle test     |
+| 4         | Write supplies-accessibility.spec.ts | 2          | Axe tests               |
+| 5         | Write supplies-mobile.spec.ts        | 2          | Mobile viewport tests   |
+| 6         | Create not-found.tsx                 | 1          | 404 page                |
+| 7         | Create error.tsx                     | 1          | Error boundary          |
+| 8         | Create SupplyAccessDenied.tsx        | 0.5        | 403 component           |
+| 9         | Polish loading skeletons             | 1          | Verify layout match     |
+| 10        | Review toast messages                | 0.5        | Consistency check       |
+| 11        | Keyboard navigation audit            | 1          | Manual testing          |
+| 12        | Console error cleanup                | 1          | Fix any issues          |
+| 13        | CI integration                       | 1          | GitHub Actions          |
+| **Total** |                                      | **16.5**   | ~2 days                 |
 
 ---
 
@@ -845,9 +846,9 @@ For E2E tests to work, the backend must have:
 
 ## Change Log
 
-| Date | Version | Description | Author |
-|------|---------|-------------|--------|
-| 2026-01-29 | 1.0 | Initial story creation | Claude Code (PM Agent) |
+| Date       | Version | Description            | Author                 |
+| ---------- | ------- | ---------------------- | ---------------------- |
+| 2026-01-29 | 1.0     | Initial story creation | Claude Code (PM Agent) |
 
 ---
 

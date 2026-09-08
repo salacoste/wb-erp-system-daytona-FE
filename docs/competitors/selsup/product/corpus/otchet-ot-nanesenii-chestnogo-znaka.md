@@ -9,7 +9,7 @@ chars: 4204
 
 В этой статье:
 
-- 
+-
 - <a href="#chto-takoe-otchet-o-nanesenii" rel="nofollow">Что такое отчет о нанесении?</a>
 - <a href="#etapy-formirovaniya-otcheta-o-nanesenii" rel="nofollow">Этапы формирования отчета о нанесении</a>
 

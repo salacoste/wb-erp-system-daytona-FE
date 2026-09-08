@@ -21,6 +21,7 @@ Create a comprehensive historical trends section for the main dashboard that dis
 The section uses the `/v1/analytics/weekly/trends` endpoint to fetch time-series data and displays it using Recharts. It should be collapsible to save space on the dashboard and remember user preferences.
 
 **Key Features**:
+
 - Multi-line trend chart with selectable metrics
 - Time period selector (4, 8, 12 weeks)
 - Summary statistics panel (min, max, avg, trend %)
@@ -33,6 +34,7 @@ The section uses the `/v1/analytics/weekly/trends` endpoint to fetch time-series
 ## Acceptance Criteria
 
 ### Core Functionality
+
 - [ ] Display trend chart with multiple metrics
 - [ ] Support metric selection: revenue, profit, margin, logistics, storage
 - [ ] Time period selector: 4w, 8w, 12w (default: 8w)
@@ -41,6 +43,7 @@ The section uses the `/v1/analytics/weekly/trends` endpoint to fetch time-series
 - [ ] Persist collapsed state and preferences in localStorage
 
 ### Chart Features
+
 - [ ] Multi-line chart using Recharts
 - [ ] Interactive legend to toggle metric visibility
 - [ ] Tooltip showing values for all metrics at hover point
@@ -51,6 +54,7 @@ The section uses the `/v1/analytics/weekly/trends` endpoint to fetch time-series
 - [ ] Smooth line interpolation
 
 ### Summary Statistics
+
 - [ ] Minimum value with week label
 - [ ] Maximum value with week label
 - [ ] Average value for period
@@ -58,12 +62,14 @@ The section uses the `/v1/analytics/weekly/trends` endpoint to fetch time-series
 - [ ] Trend direction indicator (up/down/stable)
 
 ### States
+
 - [ ] Loading skeleton while fetching data
 - [ ] Error state with retry option
 - [ ] Empty state when no data available
 - [ ] Collapsed state showing only header
 
 ### Accessibility
+
 - [ ] WCAG 2.1 AA compliant
 - [ ] Keyboard-navigable controls
 - [ ] Screen reader announces chart data
@@ -147,6 +153,7 @@ GET /v1/analytics/weekly/trends?from=2025-W46&to=2026-W05&include_summary=true
 ### Section Layout
 
 **Expanded State**:
+
 ```
 +------------------------------------------------------------------+
 | Исторические тренды                              [4w|8w|12w] [-] |
@@ -172,6 +179,7 @@ GET /v1/analytics/weekly/trends?from=2025-W46&to=2026-W05&include_summary=true
 ```
 
 **Collapsed State**:
+
 ```
 +------------------------------------------------------------------+
 | Исторические тренды                              [4w|8w|12w] [+] |
@@ -208,33 +216,33 @@ const lineConfig = {
 
 ### Colors
 
-| Metric | Color | Hex | Tailwind |
-|--------|-------|-----|----------|
-| Revenue (Выручка) | Blue | `#3B82F6` | `text-blue-500` |
-| Profit (Прибыль) | Green | `#22C55E` | `text-green-500` |
-| Margin (Маржа) | Yellow | `#F59E0B` | `text-yellow-500` |
-| Logistics (Логистика) | Red | `#EF4444` | `text-red-500` |
-| Storage (Хранение) | Purple | `#7C4DFF` | `text-purple-500` |
+| Metric                | Color  | Hex       | Tailwind          |
+| --------------------- | ------ | --------- | ----------------- |
+| Revenue (Выручка)     | Blue   | `#3B82F6` | `text-blue-500`   |
+| Profit (Прибыль)      | Green  | `#22C55E` | `text-green-500`  |
+| Margin (Маржа)        | Yellow | `#F59E0B` | `text-yellow-500` |
+| Logistics (Логистика) | Red    | `#EF4444` | `text-red-500`    |
+| Storage (Хранение)    | Purple | `#7C4DFF` | `text-purple-500` |
 
 ### Typography
 
-| Element | Size | Weight |
-|---------|------|--------|
-| Section title | 18px | 600 (semibold) |
-| Period selector | 12px | 500 (medium) |
-| Legend labels | 12px | 400 (regular) |
-| Summary metric title | 12px | 500 (medium) |
-| Summary values | 14px | 600 (semibold) |
-| Axis labels | 11px | 400 (regular) |
+| Element              | Size | Weight         |
+| -------------------- | ---- | -------------- |
+| Section title        | 18px | 600 (semibold) |
+| Period selector      | 12px | 500 (medium)   |
+| Legend labels        | 12px | 400 (regular)  |
+| Summary metric title | 12px | 500 (medium)   |
+| Summary values       | 14px | 600 (semibold) |
+| Axis labels          | 11px | 400 (regular)  |
 
 ### Spacing
 
-| Element | Value | Tailwind |
-|---------|-------|----------|
-| Section padding | 16px | `p-4` |
-| Chart margin-top | 16px | `mt-4` |
-| Legend gap | 16px | `gap-4` |
-| Summary grid gap | 12px | `gap-3` |
+| Element             | Value | Tailwind       |
+| ------------------- | ----- | -------------- |
+| Section padding     | 16px  | `p-4`          |
+| Chart margin-top    | 16px  | `mt-4`         |
+| Legend gap          | 16px  | `gap-4`        |
+| Summary grid gap    | 12px  | `gap-3`        |
 | Collapse transition | 300ms | `duration-300` |
 
 ---
@@ -563,33 +571,33 @@ export function useTrendsData(options: UseTrendsDataOptions) {
 
 ## Files to Create/Modify
 
-| File | Action | Description |
-|------|--------|-------------|
-| `src/components/custom/dashboard/HistoricalTrendsSection.tsx` | CREATE | Main collapsible section |
-| `src/components/custom/dashboard/TrendsChart.tsx` | CREATE | Recharts multi-line chart |
-| `src/components/custom/dashboard/TrendsChartSkeleton.tsx` | CREATE | Loading skeleton |
-| `src/components/custom/dashboard/TrendsLegend.tsx` | CREATE | Interactive metric toggles |
-| `src/components/custom/dashboard/TrendsSummaryGrid.tsx` | CREATE | Summary statistics grid |
-| `src/components/custom/dashboard/TrendsSummaryCard.tsx` | CREATE | Individual summary card |
-| `src/components/custom/dashboard/TrendsPeriodSelector.tsx` | CREATE | 4w/8w/12w toggle |
-| `src/hooks/useTrendsData.ts` | CREATE | TanStack Query hook |
-| `src/components/custom/dashboard/index.ts` | MODIFY | Add exports |
+| File                                                          | Action | Description                |
+| ------------------------------------------------------------- | ------ | -------------------------- |
+| `src/components/custom/dashboard/HistoricalTrendsSection.tsx` | CREATE | Main collapsible section   |
+| `src/components/custom/dashboard/TrendsChart.tsx`             | CREATE | Recharts multi-line chart  |
+| `src/components/custom/dashboard/TrendsChartSkeleton.tsx`     | CREATE | Loading skeleton           |
+| `src/components/custom/dashboard/TrendsLegend.tsx`            | CREATE | Interactive metric toggles |
+| `src/components/custom/dashboard/TrendsSummaryGrid.tsx`       | CREATE | Summary statistics grid    |
+| `src/components/custom/dashboard/TrendsSummaryCard.tsx`       | CREATE | Individual summary card    |
+| `src/components/custom/dashboard/TrendsPeriodSelector.tsx`    | CREATE | 4w/8w/12w toggle           |
+| `src/hooks/useTrendsData.ts`                                  | CREATE | TanStack Query hook        |
+| `src/components/custom/dashboard/index.ts`                    | MODIFY | Add exports                |
 
 ---
 
 ## Dependencies
 
-| Dependency | Source | Purpose |
-|------------|--------|---------|
-| `recharts` | npm | Chart library |
-| `useQuery` | `@tanstack/react-query` | Data fetching |
-| `formatCurrency` | `@/lib/formatters` | Value formatting |
-| `formatPercentage` | `@/lib/formatters` | Percentage formatting |
-| `Card` | `@/components/ui/card` | Container |
-| `Button` | `@/components/ui/button` | Buttons |
-| `Collapsible` | `@/components/ui/collapsible` | Collapse animation |
-| `Skeleton` | `@/components/ui/skeleton` | Loading state |
-| `ChevronUp`, `ChevronDown` | `lucide-react` | Icons |
+| Dependency                 | Source                        | Purpose               |
+| -------------------------- | ----------------------------- | --------------------- |
+| `recharts`                 | npm                           | Chart library         |
+| `useQuery`                 | `@tanstack/react-query`       | Data fetching         |
+| `formatCurrency`           | `@/lib/formatters`            | Value formatting      |
+| `formatPercentage`         | `@/lib/formatters`            | Percentage formatting |
+| `Card`                     | `@/components/ui/card`        | Container             |
+| `Button`                   | `@/components/ui/button`      | Buttons               |
+| `Collapsible`              | `@/components/ui/collapsible` | Collapse animation    |
+| `Skeleton`                 | `@/components/ui/skeleton`    | Loading state         |
+| `ChevronUp`, `ChevronDown` | `lucide-react`                | Icons                 |
 
 ---
 
@@ -608,6 +616,7 @@ export function useTrendsData(options: UseTrendsDataOptions) {
 ## Testing Checklist
 
 ### Unit Tests
+
 - [ ] HistoricalTrendsSection renders correctly
 - [ ] Chart displays with mock data
 - [ ] Metric toggle shows/hides lines
@@ -617,12 +626,14 @@ export function useTrendsData(options: UseTrendsDataOptions) {
 - [ ] Error state renders with retry
 
 ### Integration Tests
+
 - [ ] useTrendsData hook fetches correct endpoint
 - [ ] Query params include selected metrics
 - [ ] Preferences persist in localStorage
 - [ ] Collapse state persists
 
 ### E2E Tests
+
 - [ ] Trends section visible on dashboard
 - [ ] Chart renders with real data
 - [ ] Toggle metrics works visually
@@ -631,6 +642,7 @@ export function useTrendsData(options: UseTrendsDataOptions) {
 - [ ] Accessibility audit passes
 
 ### Visual Tests
+
 - [ ] Chart colors match design spec
 - [ ] Responsive at all breakpoints
 - [ ] Tooltip displays correctly
@@ -660,15 +672,15 @@ export function useTrendsData(options: UseTrendsDataOptions) {
 
 ## Edge Cases
 
-| Scenario | Behavior |
-|----------|----------|
-| Single week of data | Display single point with no trend line |
+| Scenario               | Behavior                                         |
+| ---------------------- | ------------------------------------------------ |
+| Single week of data    | Display single point with no trend line          |
 | All metrics deselected | Show empty chart with "Выберите метрики" message |
-| API returns empty data | Show empty state: "Нет данных за период" |
-| Very large values | Use K/M abbreviations (e.g., "1.5M") |
-| Negative margin | Allow negative on Y-axis for margin_pct |
-| Network error | Show error with retry button |
-| Missing summary data | Calculate client-side from raw data |
+| API returns empty data | Show empty state: "Нет данных за период"         |
+| Very large values      | Use K/M abbreviations (e.g., "1.5M")             |
+| Negative margin        | Allow negative on Y-axis for margin_pct          |
+| Network error          | Show error with retry button                     |
+| Missing summary data   | Calculate client-side from raw data              |
 
 ---
 
@@ -702,6 +714,7 @@ export function useTrendsData(options: UseTrendsDataOptions) {
 ## Implementation
 
 **Components**:
+
 - `src/components/custom/dashboard/HistoricalTrendsSection.tsx` (155 lines) - Main collapsible section
 - `src/components/custom/dashboard/TrendsChart.tsx` - Recharts multi-line chart
 - `src/components/custom/dashboard/TrendsLegend.tsx` - Interactive metric toggles
@@ -710,6 +723,7 @@ export function useTrendsData(options: UseTrendsDataOptions) {
 - `src/hooks/useTrendsData.ts` - TanStack Query hook
 
 **Key Features**:
+
 - Multi-line chart with 5 selectable metrics (revenue, profit, margin, logistics, storage)
 - Time period selector (4, 8, 12 weeks)
 - Interactive legend to toggle metric visibility

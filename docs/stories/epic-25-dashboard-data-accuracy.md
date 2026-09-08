@@ -5,6 +5,7 @@
 **Problem Statement**: Dashboard показывает некорректные данные, не соответствующие метрикам WB Dashboard.
 
 **Root Cause Analysis**:
+
 1. Cabinet Summary Dashboard использует `weekly_margin_fact.revenue_net_rub` (SUM of net_for_pay) вместо WB-совместимых метрик
 2. Отсутствует комиссия WB (`total_commission_rub`) в расходах
 3. Нет секции COGS и расчёта чистой прибыли
@@ -18,11 +19,11 @@
 
 ### Источники данных
 
-| Таблица | Назначение | Ключевые поля |
-|---------|------------|---------------|
-| `weekly_payout_total` | WB-совместимые агрегаты | `sale_gross_total`, `sales_gross_total`, `returns_gross_total`, `total_commission_rub_total`, `payout_total` |
-| `weekly_payout_summary` | По report_type (основной/по выкупам) | То же, без `_total` суффикса |
-| `weekly_margin_fact` | Маржинальность по SKU | `revenue_net_rub`, `cogs_rub`, `gross_profit_rub` |
+| Таблица                 | Назначение                           | Ключевые поля                                                                                                |
+| ----------------------- | ------------------------------------ | ------------------------------------------------------------------------------------------------------------ |
+| `weekly_payout_total`   | WB-совместимые агрегаты              | `sale_gross_total`, `sales_gross_total`, `returns_gross_total`, `total_commission_rub_total`, `payout_total` |
+| `weekly_payout_summary` | По report_type (основной/по выкупам) | То же, без `_total` суффикса                                                                                 |
+| `weekly_margin_fact`    | Маржинальность по SKU                | `revenue_net_rub`, `cogs_rub`, `gross_profit_rub`                                                            |
 
 ### CFO-одобренная структура P&L
 
@@ -97,6 +98,7 @@
 **API Endpoint**: `GET /v1/analytics/weekly/cabinet-summary?weeks=N`
 
 **Acceptance Criteria**:
+
 - [x] AC1: KPI Card "Продажи" shows `sales_gross_total`
 - [x] AC2: KPI Card "Возвраты" shows `returns_gross_total` with negative indicator
 - [x] AC3: KPI Card "Чистые продажи" shows `sale_gross_total`
@@ -136,6 +138,7 @@
 **API Endpoint**: `GET /v1/analytics/weekly/finance-summary?week=YYYY-Www`
 
 **Acceptance Criteria**:
+
 - [x] AC1: New Card "Себестоимость" after "Итого к оплате"
 - [x] AC2: Shows `cogs_total` value
 - [x] AC3: Shows COGS coverage percentage (e.g., "92.5%")
@@ -173,6 +176,7 @@
 **API Endpoint**: `GET /v1/analytics/weekly/finance-summary?week=YYYY-Www`
 
 **Acceptance Criteria**:
+
 - [x] AC1: New row "Комиссия WB" in Expenses section
 - [x] AC2: Shows `total_commission_rub_total` value
 - [x] AC3: Position: first in expenses list (most significant)
@@ -182,12 +186,14 @@
 ### Story 25.4: Исправить Top Products / Top Brands ✅ COMPLETED
 
 **Files**:
+
 - `src/analytics/weekly-analytics.service.ts` (backend)
 
 **Status**: ✅ **COMPLETED** (2025-12-06)
 
 **Analysis**:
 After Story 25.5 fix, `revenue_net_rub` in `weekly_margin_fact` is now correctly calculated as:
+
 ```
 revenue_net_rub = SUM(net_for_pay for sales) - SUM(net_for_pay for returns)
 ```
@@ -195,12 +201,14 @@ revenue_net_rub = SUM(net_for_pay for sales) - SUM(net_for_pay for returns)
 This means the existing ranking logic is already correct - it ranks by `net_for_pay` per SKU.
 
 **Changes Applied**:
+
 - Added clarifying comments to `getTopProducts()` and `getTopBrands()` methods
 - Verified ranking is by `net_for_pay` (which is `revenue_net_rub` after Story 25.5 fix)
 
 **Note**: The field is named `revenue_net` in DTO for backward compatibility, but represents `net_for_pay` sum.
 
 **Acceptance Criteria**:
+
 - [x] AC1: Top Products sorted by `net_for_pay` descending (via `revenue_net_rub`)
 - [x] AC2: Top Brands aggregated by `net_for_pay` per brand (via `revenue_net_rub`)
 - [x] AC3: Contribution % calculated correctly (based on total `revenue_net`)
@@ -219,6 +227,7 @@ all `net_for_pay` values without considering `doc_type`, causing returns to INCR
 revenue instead of DECREASE it.
 
 **Evidence (W47 2025-11-17 to 2025-11-23)**:
+
 ```sql
 -- Raw data shows positive values for returns
 SELECT doc_type, SUM(net_for_pay) FROM wb_finance_raw WHERE week = '2025-W47';
@@ -233,6 +242,7 @@ SELECT doc_type, SUM(net_for_pay) FROM wb_finance_raw WHERE week = '2025-W47';
 ```
 
 **Fix Applied** (2025-12-06):
+
 ```typescript
 // BEFORE (WRONG):
 existing.revenueNetRub = existing.revenueNetRub.plus(tx.netForPay);
@@ -249,11 +259,13 @@ if (tx.docType === 'sale') {
 ```
 
 **Files Changed**:
+
 - `src/analytics/services/margin-calculation.service.ts` - Core fix
 - `src/analytics/services/__tests__/margin-calculation.service.spec.ts` - Updated test mocks
 - `scripts/recalculate-margin-facts.ts` - Recalculation script
 
 **Acceptance Criteria**:
+
 - [x] AC1: Document expected sign convention for all doc_types
 - [x] AC2: Verify `calculateRevenueBySku` handles returns correctly
 - [x] AC3: Add unit tests for edge cases (sales only, returns only, mixed)
@@ -261,6 +273,7 @@ if (tx.docType === 'sale') {
 
 **Post-Fix Action Required**:
 Run margin recalculation for all weeks to apply the fix to historical data:
+
 ```bash
 npx ts-node scripts/recalculate-margin-facts.ts
 ```

@@ -16,6 +16,7 @@
 ## Background
 
 Epic 36 backend adds support for grouping advertising analytics by `imtId` (WB merged card identifier). This requires extending existing TypeScript types from Epic 33 to support:
+
 - New grouping mode (`GroupByMode: 'sku' | 'imtId'`)
 - Merged product information (`MergedProduct[]`)
 - Item type discriminator (`'merged_group' | 'individual'`)
@@ -25,21 +26,25 @@ Epic 36 backend adds support for grouping advertising analytics by `imtId` (WB m
 ## Acceptance Criteria
 
 ### AC1: New Type Definitions
+
 - [ ] Add `GroupByMode` type: `'sku' | 'imtId'`
 - [ ] Add `MergedProduct` interface with `nmId` and `vendorCode` fields
 - [ ] TypeScript compilation passes with strict mode
 
 ### AC2: Extend Existing AdvertisingItem Interface
+
 - [ ] Add optional `type?: 'merged_group' | 'individual'` field
 - [ ] Add optional `imtId?: number | null` field
 - [ ] Add optional `mergedProducts?: MergedProduct[]` field
 - [ ] Maintain backward compatibility (all new fields optional)
 
 ### AC3: Extend Query Parameters
+
 - [ ] Add optional `group_by?: GroupByMode` to `AdvertisingAnalyticsParams`
 - [ ] Default behavior unchanged (`group_by=sku` implicit)
 
 ### AC4: Documentation
+
 - [ ] Add JSDoc comments for all new types
 - [ ] Reference Epic 36 API contract in comments
 - [ ] Include usage examples in JSDoc
@@ -47,23 +52,27 @@ Epic 36 backend adds support for grouping advertising analytics by `imtId` (WB m
 ## Tasks / Subtasks
 
 ### Phase 1: Type Definitions (30 min)
+
 - [ ] Open `src/types/advertising-analytics.ts`
 - [ ] Add `GroupByMode` type after `ViewByMode`
 - [ ] Add `MergedProduct` interface after enum types
 - [ ] Add JSDoc comments with Epic 36 references
 
 ### Phase 2: Extend AdvertisingItem Interface (20 min)
+
 - [ ] Locate `AdvertisingItem` interface (line ~118)
 - [ ] Add Epic 36 fields section with clear comment separator
 - [ ] Add `type`, `imtId`, `mergedProducts` fields
 - [ ] Update interface JSDoc with Epic 36 note
 
 ### Phase 3: Extend Query Parameters (10 min)
+
 - [ ] Locate `AdvertisingAnalyticsParams` interface (line ~338)
 - [ ] Add `group_by?: GroupByMode` field after `view_by`
 - [ ] Add JSDoc comment explaining default behavior
 
 ### Phase 4: Verification (10 min)
+
 - [ ] Run `npm run type-check` - must pass
 - [ ] Run `npm run lint` - must pass
 - [ ] Verify no breaking changes to existing Epic 33 types
@@ -196,6 +205,7 @@ export interface AdvertisingAnalyticsParams {
 ### Backward Compatibility
 
 ✅ **Full backward compatibility**:
+
 - All new fields are **optional** (`?`)
 - Default behavior unchanged (existing Epic 33 code works as-is)
 - No breaking changes to existing types
@@ -220,16 +230,19 @@ function isMergedGroup(item: AdvertisingItem): item is AdvertisingItem & {
 ## Testing Checklist
 
 ### Compilation Tests
+
 - [ ] `npm run type-check` passes
 - [ ] No TypeScript errors in VS Code
 - [ ] No linter warnings
 
 ### Integration Tests
+
 - [ ] Existing Epic 33 components still compile
 - [ ] No breaking changes to `useAdvertisingAnalytics` hook
 - [ ] `AdvertisingAnalyticsPage` compiles without errors
 
 ### Edge Cases
+
 - [ ] Optional fields can be undefined
 - [ ] `imtId` can be null (type: `number | null`)
 - [ ] `mergedProducts` can be empty array
@@ -268,6 +281,7 @@ Should `type` field be named `type` or `itemType` or `groupType`?
 ### Estimated Time
 
 **Total**: 70 minutes (1.2 hours)
+
 - Phase 1: 30 min
 - Phase 2: 20 min
 - Phase 3: 10 min
@@ -275,11 +289,11 @@ Should `type` field be named `type` or `itemType` or `groupType`?
 
 ### Risk Assessment
 
-| Risk | Probability | Impact | Mitigation |
-|------|-------------|--------|------------|
-| Breaking changes | Low | High | All fields optional |
-| Type conflicts | Low | Medium | Namespace with "Epic 36" comments |
-| Backend mismatch | Low | High | Follow API contract exactly |
+| Risk             | Probability | Impact | Mitigation                        |
+| ---------------- | ----------- | ------ | --------------------------------- |
+| Breaking changes | Low         | High   | All fields optional               |
+| Type conflicts   | Low         | Medium | Namespace with "Epic 36" comments |
+| Backend mismatch | Low         | High   | Follow API contract exactly       |
 
 ---
 

@@ -30,13 +30,13 @@ Implement Orders UI module with WB Native Status History integration. This epic 
 
 ## Dependencies
 
-| Type | Dependency | Status |
-|------|------------|--------|
-| Backend | Epic 40 Stories 40.1-40.9 | ✅ Complete |
-| Backend | `GET /v1/orders` endpoint | ⚠️ To verify |
-| Backend | `GET /v1/orders/:id/wb-history` | ✅ Complete |
-| Backend | `GET /v1/orders/:id/full-history` | ✅ Complete |
-| Frontend | None | - |
+| Type     | Dependency                        | Status       |
+| -------- | --------------------------------- | ------------ |
+| Backend  | Epic 40 Stories 40.1-40.9         | ✅ Complete  |
+| Backend  | `GET /v1/orders` endpoint         | ⚠️ To verify |
+| Backend  | `GET /v1/orders/:id/wb-history`   | ✅ Complete  |
+| Backend  | `GET /v1/orders/:id/full-history` | ✅ Complete  |
+| Frontend | None                              | -            |
 
 ---
 
@@ -44,16 +44,16 @@ Implement Orders UI module with WB Native Status History integration. This epic 
 
 ### New Endpoints (Story 40.9)
 
-| Method | Endpoint | Purpose |
-|--------|----------|---------|
-| GET | `/v1/orders` | List orders with filters |
-| GET | `/v1/orders/:orderId` | Order details |
-| GET | `/v1/orders/:orderId/history` | Local status history |
-| GET | `/v1/orders/:orderId/wb-history` | WB native history (40+ statuses) |
-| GET | `/v1/orders/:orderId/full-history` | Merged timeline |
-| GET | `/v1/analytics/orders/velocity` | Processing metrics |
-| GET | `/v1/analytics/orders/sla` | SLA compliance |
-| POST | `/v1/orders/sync` | Manual sync trigger |
+| Method | Endpoint                           | Purpose                          |
+| ------ | ---------------------------------- | -------------------------------- |
+| GET    | `/v1/orders`                       | List orders with filters         |
+| GET    | `/v1/orders/:orderId`              | Order details                    |
+| GET    | `/v1/orders/:orderId/history`      | Local status history             |
+| GET    | `/v1/orders/:orderId/wb-history`   | WB native history (40+ statuses) |
+| GET    | `/v1/orders/:orderId/full-history` | Merged timeline                  |
+| GET    | `/v1/analytics/orders/velocity`    | Processing metrics               |
+| GET    | `/v1/analytics/orders/sla`         | SLA compliance                   |
+| POST   | `/v1/orders/sync`                  | Manual sync trigger              |
 
 ### Key Response Types
 
@@ -76,20 +76,22 @@ interface FullHistoryEntry {
 
 ## New Routes
 
-| Route | Page | Description |
-|-------|------|-------------|
-| `/orders` | `OrdersPage` | Orders hub with analytics + list |
-| `/orders/list` | `OrdersListPage` | Full orders table (optional) |
+| Route          | Page             | Description                      |
+| -------------- | ---------------- | -------------------------------- |
+| `/orders`      | `OrdersPage`     | Orders hub with analytics + list |
+| `/orders/list` | `OrdersListPage` | Full orders table (optional)     |
 
 ---
 
 ## Components
 
 ### Pages (2)
+
 - `app/(dashboard)/orders/page.tsx`
 - `app/(dashboard)/orders/list/page.tsx` (optional)
 
 ### Containers (6)
+
 - `OrdersListContainer` - Data fetching for orders list
 - `OrderDetailsModal` - Modal with tabbed history
 - `OrderHistoryTimeline` - Full merged history
@@ -98,6 +100,7 @@ interface FullHistoryEntry {
 - `OrdersAnalyticsDashboard` - SLA/velocity widgets
 
 ### Presentational (12)
+
 - `OrdersTable` - Data table with sorting
 - `OrdersTableRow` - Single row
 - `OrdersFilters` - Filter controls
@@ -116,15 +119,18 @@ interface FullHistoryEntry {
 ## Stories
 
 ### Story 40.1-FE: Types & API Client Foundation
+
 **Estimate**: 3 SP
 
 **Scope**:
+
 - Create `src/types/orders.ts`
 - Create `src/types/orders-history.ts`
 - Create `src/lib/api/orders.ts`
 - Error messages (Russian)
 
 **Acceptance Criteria**:
+
 - [ ] TypeScript interfaces match backend spec
 - [ ] API client functions for 8+ endpoints
 - [ ] Type guards for discriminated unions
@@ -133,15 +139,18 @@ interface FullHistoryEntry {
 ---
 
 ### Story 40.2-FE: React Query Hooks
+
 **Estimate**: 3 SP
 
 **Scope**:
+
 - Create `src/hooks/useOrders.ts`
 - Create `src/hooks/useOrderHistory.ts`
 - Create `src/hooks/useOrdersAnalytics.ts`
 - Query keys factory
 
 **Acceptance Criteria**:
+
 - [ ] `useOrders()` - paginated list
 - [ ] `useOrderDetails()` - single order
 - [ ] `useLocalHistory()` / `useWbHistory()` / `useFullHistory()`
@@ -151,15 +160,18 @@ interface FullHistoryEntry {
 ---
 
 ### Story 40.3-FE: Orders List Page
+
 **Estimate**: 5 SP
 
 **Scope**:
+
 - Create `/orders` route
 - `OrdersListContainer`, `OrdersTable`, `OrdersFilters`
 - `OrdersPagination`, `OrderStatusBadge`
 - Sidebar navigation
 
 **Acceptance Criteria**:
+
 - [ ] Route `/orders` in sidebar
 - [ ] Table: Order ID, Product, Price, Status, Dates
 - [ ] Filters: date range, status, search
@@ -170,14 +182,17 @@ interface FullHistoryEntry {
 ---
 
 ### Story 40.4-FE: Order Details Modal
+
 **Estimate**: 3 SP
 
 **Scope**:
+
 - `OrderDetailsModal` with tabs
 - Header with order info
 - Tab navigation
 
 **Acceptance Criteria**:
+
 - [ ] Modal opens from table row
 - [ ] Header: product, order ID, price, status
 - [ ] Tabs: Полная история | WB История | Локальная
@@ -187,15 +202,18 @@ interface FullHistoryEntry {
 ---
 
 ### Story 40.5-FE: History Timeline Components
+
 **Estimate**: 5 SP
 
 **Scope**:
+
 - `OrderHistoryTimeline` (merged)
 - `WbHistoryTimeline` (WB-only)
 - `LocalHistoryTimeline` (local-only)
 - `HistoryEntryCard`, `HistorySourceBadge`, `DurationDisplay`
 
 **Acceptance Criteria**:
+
 - [ ] Merged view sorted by timestamp
 - [ ] Source badges (WB vs Local)
 - [ ] Duration formatting: "30 мин", "2 ч 15 мин"
@@ -206,14 +224,17 @@ interface FullHistoryEntry {
 ---
 
 ### Story 40.6-FE: Orders Analytics Dashboard
+
 **Estimate**: 5 SP
 
 **Scope**:
+
 - `OrdersAnalyticsDashboard`
 - `SlaComplianceWidget`, `VelocityMetricsWidget`
 - `AtRiskOrdersCard`, `OrderSyncStatus`
 
 **Acceptance Criteria**:
+
 - [ ] SLA % with color coding
 - [ ] Velocity: avg confirmation/completion times
 - [ ] At-risk orders with pagination
@@ -223,15 +244,18 @@ interface FullHistoryEntry {
 ---
 
 ### Story 40.7-FE: Integration & Polish
+
 **Estimate**: 2 SP
 
 **Scope**:
+
 - Integration testing
 - Error boundary
 - Lazy loading
 - Documentation update
 
 **Acceptance Criteria**:
+
 - [ ] All endpoints integrated
 - [ ] Error boundary
 - [ ] Lazy load timeline components
@@ -242,6 +266,7 @@ interface FullHistoryEntry {
 ## Technical Notes
 
 ### Caching Strategy
+
 ```typescript
 const HISTORY_CACHE_CONFIG = {
   staleTime: 30_000,      // 30 seconds
@@ -252,7 +277,9 @@ const HISTORY_CACHE_CONFIG = {
 ```
 
 ### On-Demand Fetching
+
 WB history fetched only when user opens order detail:
+
 ```typescript
 const { data } = useWbHistory(orderId, {
   enabled: activeTab === 'wb',
@@ -260,6 +287,7 @@ const { data } = useWbHistory(orderId, {
 ```
 
 ### Unknown Status Codes
+
 ```typescript
 function getWbStatusLabel(code: string): string {
   return WB_STATUS_CONFIG[code]?.label ?? code // Fallback to raw
@@ -309,17 +337,20 @@ src/
 **Completed**: 2026-01-29
 
 ### Sprint 1 (Feb 3-14) - Foundation
+
 - Story 40.1-FE: Types & API Client Foundation (3 SP) - ✅
 - Story 40.2-FE: React Query Hooks (3 SP) - ✅
 - Story 40.3-FE: Orders List Page (5 SP) - ✅
 - Story 40.4-FE: Order Details Modal (3 SP) - ✅
 
 ### Sprint 2 (Feb 17-28) - History & Analytics
+
 - Story 40.5-FE: History Timeline Components (5 SP) - ✅
 - Story 40.6-FE: Orders Analytics Dashboard (5 SP) - ✅
 - Story 40.7-FE: Integration & Polish (2 SP) - ✅
 
 ### Key Achievements
+
 - Complete Orders module with `/orders` route
 - 40+ WB native status codes mapped with Russian translations
 - Three timeline views: Full, WB-only, Local-only
@@ -331,6 +362,7 @@ src/
 - Error boundary implementation
 
 ### Files Created
+
 - `src/types/orders.ts`, `src/types/orders-history.ts`
 - `src/lib/api/orders.ts`
 - `src/hooks/useOrders.ts`, `src/hooks/useOrderHistory.ts`, `src/hooks/useOrdersAnalytics.ts`

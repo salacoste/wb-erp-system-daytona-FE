@@ -22,6 +22,7 @@ Backend team реализовал **Story 34.7** (Analytics Endpoint), и **fron
 ### API Endpoint
 
 **URL**: `POST /v1/analytics/events`
+
 - **Authentication**: None (anonymous tracking)
 - **Rate Limiting**: 60 req/min per IP (burst: 120)
 - **Batch Processing**: 1-50 events per request
@@ -61,6 +62,7 @@ analytics_events_rate_limited_total             // Rate limit hits
 **Dashboard URL**: http://localhost:3002/d/telegram-notifications-analytics
 
 **Panels**:
+
 1. Binding Funnel Success Rate (completion %)
 2. Events Timeline (all categories)
 3. Error Rate (last 1h, gauge 0-10%)
@@ -74,13 +76,13 @@ analytics_events_rate_limited_total             // Rate limit hits
 
 ### Alert Rules (5 rules)
 
-| Alert | Severity | Threshold | Duration | Action |
-|-------|----------|-----------|----------|--------|
-| High Error Rate | Critical | >5% | 5 min | Page on-call engineer |
-| Low Binding Completion Rate | Warning | <90% | 10 min | Investigate binding flow |
-| Slow Binding Duration | Warning | >60s avg | 5 min | Check API latency |
-| No Data Received | Warning | >15 min | 5 min | Verify analytics service |
-| High Batch Size | Info | >1000 events | 5 min | Review batching |
+| Alert                       | Severity | Threshold    | Duration | Action                   |
+| --------------------------- | -------- | ------------ | -------- | ------------------------ |
+| High Error Rate             | Critical | >5%          | 5 min    | Page on-call engineer    |
+| Low Binding Completion Rate | Warning  | <90%         | 10 min   | Investigate binding flow |
+| Slow Binding Duration       | Warning  | >60s avg     | 5 min    | Check API latency        |
+| No Data Received            | Warning  | >15 min      | 5 min    | Verify analytics service |
+| High Batch Size             | Info     | >1000 events | 5 min    | Review batching          |
 
 ---
 
@@ -93,6 +95,7 @@ analytics_events_rate_limited_total             // Rate limit hits
 ### Files Created
 
 **Core Analytics** (`src/lib/analytics/`):
+
 1. **analytics.service.ts** (185 lines)
    - Batch events every 30s
    - Auto-flush on page unload (beforeunload + visibilitychange)
@@ -106,7 +109,7 @@ analytics_events_rate_limited_total             // Rate limit hits
    - Error message truncation (500 chars max)
    - Priority categorization (CRITICAL, HIGH, NICE TO HAVE)
 
-3. **__tests__/analytics.test.ts** (227 lines)
+3. **\_\_tests\_\_/analytics.test.ts** (227 lines)
    - 100% test coverage (15/15 tests passing)
    - Unit tests for analytics service
    - Unit tests for TelegramMetrics helpers
@@ -116,10 +119,12 @@ analytics_events_rate_limited_total             // Rate limit hits
 ### Integration Points (4 components)
 
 **1. API Client** (`src/lib/api-client.ts`):
+
 - Line 88: Auto-track API errors
 - Line 165: Auto-track network errors
 
 **2. Binding Modal** (`src/components/notifications/TelegramBindingModal.tsx`):
+
 - Line 100: Track binding started
 - Line 113: Track binding failed
 - Line 139: Track binding expired
@@ -127,35 +132,37 @@ analytics_events_rate_limited_total             // Rate limit hits
 - Line 180: Track binding cancelled
 
 **3. Preferences Panel** (`src/components/notifications/NotificationPreferencesPanel.tsx`):
+
 - Line 98: Track event type toggles
 - Line 102: Track daily digest enabled
 - Line 119: Track language changes
 - Line 179: Track preferences saved
 
 **4. Page Component** (`src/app/(dashboard)/settings/notifications/page.tsx`):
+
 - Line 38: Track page views
 - Line 43: Track help clicks
 
 ### Event Types Coverage (16 events)
 
-| Category | Event Type | Helper Function | Status |
-|----------|-----------|-----------------|--------|
-| **binding** | `telegram_binding_started` | `bindingStarted()` | ✅ |
-| **binding** | `telegram_binding_completed` | `bindingCompleted(duration)` | ✅ |
-| **binding** | `telegram_binding_failed` | `bindingFailed(error)` | ✅ |
-| **binding** | `telegram_binding_expired` | `bindingExpired()` | ✅ |
-| **binding** | `telegram_binding_cancelled` | `bindingCancelled(elapsed)` | ✅ |
-| **binding** | `telegram_unbind_completed` | `unbindCompleted()` | ✅ |
-| **error** | `telegram_api_error` | `apiError(endpoint, status, error)` | ✅ |
-| **error** | `telegram_network_error` | `networkError(endpoint)` | ✅ |
-| **preferences** | `telegram_preferences_updated` | `preferencesUpdated(changes)` | ✅ |
-| **behavior** | `telegram_test_notification_sent` | `testNotificationSent(type)` | ✅ |
-| **behavior** | `telegram_page_viewed` | `pageViewed()` | ✅ |
-| **behavior** | `telegram_help_clicked` | `helpClicked()` | ✅ |
-| **behavior** | `telegram_event_type_toggled` | `eventTypeToggled(type, enabled)` | ✅ |
-| **behavior** | `telegram_language_changed` | `languageChanged(from, to)` | ✅ |
-| **behavior** | `telegram_daily_digest_enabled` | `dailyDigestEnabled()` | ✅ |
-| **behavior** | `telegram_quiet_hours_enabled` | `quietHoursEnabled()` | ✅ |
+| Category        | Event Type                        | Helper Function                     | Status |
+| --------------- | --------------------------------- | ----------------------------------- | ------ |
+| **binding**     | `telegram_binding_started`        | `bindingStarted()`                  | ✅     |
+| **binding**     | `telegram_binding_completed`      | `bindingCompleted(duration)`        | ✅     |
+| **binding**     | `telegram_binding_failed`         | `bindingFailed(error)`              | ✅     |
+| **binding**     | `telegram_binding_expired`        | `bindingExpired()`                  | ✅     |
+| **binding**     | `telegram_binding_cancelled`      | `bindingCancelled(elapsed)`         | ✅     |
+| **binding**     | `telegram_unbind_completed`       | `unbindCompleted()`                 | ✅     |
+| **error**       | `telegram_api_error`              | `apiError(endpoint, status, error)` | ✅     |
+| **error**       | `telegram_network_error`          | `networkError(endpoint)`            | ✅     |
+| **preferences** | `telegram_preferences_updated`    | `preferencesUpdated(changes)`       | ✅     |
+| **behavior**    | `telegram_test_notification_sent` | `testNotificationSent(type)`        | ✅     |
+| **behavior**    | `telegram_page_viewed`            | `pageViewed()`                      | ✅     |
+| **behavior**    | `telegram_help_clicked`           | `helpClicked()`                     | ✅     |
+| **behavior**    | `telegram_event_type_toggled`     | `eventTypeToggled(type, enabled)`   | ✅     |
+| **behavior**    | `telegram_language_changed`       | `languageChanged(from, to)`         | ✅     |
+| **behavior**    | `telegram_daily_digest_enabled`   | `dailyDigestEnabled()`              | ✅     |
+| **behavior**    | `telegram_quiet_hours_enabled`    | `quietHoursEnabled()`               | ✅     |
 
 ---
 
@@ -194,6 +201,7 @@ TelegramMetrics.apiError('/v1/notifications/bind', 500, 'Internal Server Error')
 ```
 
 ### What Happens:
+
 1. **Event tracked** → Queued in memory (max 50 events)
 2. **Every 30s** → Batch sent to backend `/v1/analytics/events`
 3. **Backend** → Validates, stores in Postgres, updates Prometheus metrics
@@ -223,6 +231,7 @@ TelegramMetrics.apiError('/v1/notifications/bind', 500, 'Internal Server Error')
 ### Verification Steps
 
 **1. Verify backend endpoint**:
+
 ```bash
 curl -X POST http://localhost:3000/v1/analytics/events \
   -H "Content-Type: application/json" \
@@ -239,6 +248,7 @@ curl -X POST http://localhost:3000/v1/analytics/events \
 ```
 
 **2. Verify frontend tracking**:
+
 ```bash
 # Open browser DevTools → Network tab
 # Navigate to /settings/notifications
@@ -248,6 +258,7 @@ curl -X POST http://localhost:3000/v1/analytics/events \
 ```
 
 **3. Verify Grafana dashboard**:
+
 ```bash
 # Open dashboard
 open http://localhost:3002/d/telegram-notifications-analytics
@@ -265,17 +276,20 @@ open http://localhost:3002/d/telegram-notifications-analytics
 ### Frontend Documentation
 
 ✅ **DEV-HANDOFF-EPIC-34-FE.md** (updated):
+
 - Section "🎯 Backend Story 34.7: Analytics Endpoint (COMPLETE)"
 - Section "✅ Frontend Integration Status (COMPLETE)"
 - Section "Development Guide for Analytics"
 
 ✅ **PRODUCTION-DEPLOYMENT-SUMMARY.md** (updated):
+
 - Section "📈 Grafana Analytics Dashboard (Story 34.7)"
 - Alert rules table
 - Prometheus metrics reference
 - Verification steps
 
 ✅ **ANALYTICS-INTEGRATION-SUMMARY.md** (new):
+
 - This document - complete integration status
 
 ### Backend Documentation (Reference)
@@ -300,11 +314,13 @@ open http://localhost:3002/d/telegram-notifications-analytics
 ### Post-Deployment
 
 1. **Import Grafana dashboard**:
+
    ```bash
    # Import from backend/docs/grafana/telegram-notifications-analytics.json
    ```
 
 2. **Configure alerts** (if not auto-imported):
+
    ```bash
    # Reference: backend/docs/grafana/alerts/story-34-7-analytics-alerts.md
    ```
@@ -324,14 +340,17 @@ open http://localhost:3002/d/telegram-notifications-analytics
 ## ❓ Questions?
 
 **Frontend integration questions**:
+
 - See: `frontend/docs/DEV-HANDOFF-EPIC-34-FE.md`
 - Contact: Frontend team
 
 **Backend analytics endpoint questions**:
+
 - See: `backend/docs/stories/epic-34/story-34.7-analytics-endpoint.md`
 - Contact: Backend team
 
 **Grafana dashboard questions**:
+
 - See: `backend/docs/grafana/telegram-notifications-analytics.json`
 - Contact: DevOps/SRE team
 

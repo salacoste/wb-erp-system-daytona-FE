@@ -18,6 +18,7 @@
 ## Business Context
 
 **Problem**: Frozen Capital Kills Growth
+
 ```
 Typical seller: 10-15% of inventory is "dead stock" (>90 day turnover)
 100,000₽ frozen could earn 20-30% elsewhere annually
@@ -25,6 +26,7 @@ Most sellers don't even know which products are illiquid
 ```
 
 **Solution**: Liquidity analytics endpoint that:
+
 - Calculates turnover days per SKU
 - Classifies into 4 tiers (Highly Liquid / Medium / Low / Illiquid)
 - Tracks total frozen capital
@@ -42,20 +44,20 @@ GET /v1/analytics/liquidity
 
 ### Headers (Required)
 
-| Header | Description |
-|--------|-------------|
+| Header          | Description      |
+| --------------- | ---------------- |
 | `Authorization` | Bearer JWT token |
-| `X-Cabinet-Id` | Cabinet UUID |
+| `X-Cabinet-Id`  | Cabinet UUID     |
 
 ### Query Parameters
 
-| Parameter | Type | Required | Default | Description |
-|-----------|------|----------|---------|-------------|
-| `category_filter` | enum | No | "all" | Filter: "highly_liquid" \| "medium_liquid" \| "low_liquid" \| "illiquid" \| "all" |
-| `sort_by` | string | No | "turnover_days" | Sort field |
-| `sort_order` | enum | No | "desc" | Sort order: "asc" \| "desc" |
-| `limit` | number | No | 100 | Max results (max: 500) |
-| `include_liquidation_scenarios` | boolean | No | true | Include 3 liquidation scenarios per illiquid SKU |
+| Parameter                       | Type    | Required | Default         | Description                                                                       |
+| ------------------------------- | ------- | -------- | --------------- | --------------------------------------------------------------------------------- |
+| `category_filter`               | enum    | No       | "all"           | Filter: "highly_liquid" \| "medium_liquid" \| "low_liquid" \| "illiquid" \| "all" |
+| `sort_by`                       | string  | No       | "turnover_days" | Sort field                                                                        |
+| `sort_order`                    | enum    | No       | "desc"          | Sort order: "asc" \| "desc"                                                       |
+| `limit`                         | number  | No       | 100             | Max results (max: 500)                                                            |
+| `include_liquidation_scenarios` | boolean | No       | true            | Include 3 liquidation scenarios per illiquid SKU                                  |
 
 ### Response Format
 
@@ -201,9 +203,11 @@ GET /v1/analytics/liquidity/trends
 ```
 
 **Query Parameters**:
+
 - `period` (optional, default: 90) - Days of history
 
 **Response**:
+
 ```json
 {
   "meta": {
@@ -421,6 +425,7 @@ WHERE cabinet_id = :cabinetId
 ```
 
 **Note**: If `inventory_snapshot` table doesn't exist, need to:
+
 - Option A: Use WB API `/stocks` for current stock only (less accurate)
 - Option B: Create daily snapshot job to populate table
 
@@ -524,25 +529,25 @@ CREATE INDEX idx_stock_value ON liquidity_analysis_view(stock_value DESC);
 
 ## Error Responses
 
-| Status | Code | Message | When |
-|--------|------|---------|------|
-| 400 | `VALIDATION_ERROR` | "Invalid category_filter" | Bad parameter |
-| 401 | `UNAUTHORIZED` | "Authentication required" | Missing/invalid JWT |
-| 403 | `FORBIDDEN` | "Access denied to cabinet" | Wrong cabinet |
-| 404 | `NOT_FOUND` | "No inventory data available" | No stock snapshots |
-| 500 | `INTERNAL_ERROR` | "Internal server error" | Server error |
-| 503 | `SERVICE_UNAVAILABLE` | "Stock data temporarily unavailable" | Data refresh in progress |
+| Status | Code                  | Message                              | When                     |
+| ------ | --------------------- | ------------------------------------ | ------------------------ |
+| 400    | `VALIDATION_ERROR`    | "Invalid category_filter"            | Bad parameter            |
+| 401    | `UNAUTHORIZED`        | "Authentication required"            | Missing/invalid JWT      |
+| 403    | `FORBIDDEN`           | "Access denied to cabinet"           | Wrong cabinet            |
+| 404    | `NOT_FOUND`           | "No inventory data available"        | No stock snapshots       |
+| 500    | `INTERNAL_ERROR`      | "Internal server error"              | Server error             |
+| 503    | `SERVICE_UNAVAILABLE` | "Stock data temporarily unavailable" | Data refresh in progress |
 
 ---
 
 ## Performance Requirements
 
-| Metric | Target | Notes |
-|--------|--------|-------|
-| Response time (100 SKUs) | <500ms | p95 |
-| Response time (500 SKUs) | <1200ms | p95 |
-| Trends endpoint | <300ms | p95 |
-| Materialized view refresh | <30s | Daily at midnight |
+| Metric                    | Target  | Notes             |
+| ------------------------- | ------- | ----------------- |
+| Response time (100 SKUs)  | <500ms  | p95               |
+| Response time (500 SKUs)  | <1200ms | p95               |
+| Trends endpoint           | <300ms  | p95               |
+| Materialized view refresh | <30s    | Daily at midnight |
 
 ---
 
@@ -609,9 +614,9 @@ src/analytics/
 
 ## Change Log
 
-| Date | Version | Description | Author |
-|------|---------|-------------|--------|
-| 2025-12-09 | 1.0 | Initial request | Sarah (PO) |
+| Date       | Version | Description     | Author     |
+| ---------- | ------- | --------------- | ---------- |
+| 2025-12-09 | 1.0     | Initial request | Sarah (PO) |
 
 ---
 

@@ -9,11 +9,13 @@
 ---
 
 ## Backend Team Response
+
 **Status**: RESOLVED
 **Resolution**: Request to add `applicable_cogs` field to Products API showing which COGS version is actually used for the current week's margin calculation, and which COGS will take effect in future weeks. This was a frontend request for backend implementation.
 **Frontend Action**: Awaiting backend implementation confirmation. See the full document for requested API changes.
 
 Добавить поле `applicable_cogs` в ответ Products API, чтобы фронтенд мог показать:
+
 1. Какой COGS **реально используется** для расчёта маржи текущей недели
 2. С какой недели **новый COGS** (если отличается) вступит в силу
 
@@ -46,6 +48,7 @@ UI показывает:
 **Endpoint**: `GET /v1/products` and `GET /v1/products/:nmId`
 
 **Current Response** (simplified):
+
 ```json
 {
   "nm_id": "173589742",
@@ -59,6 +62,7 @@ UI показывает:
 ```
 
 **Requested Response**:
+
 ```json
 {
   "nm_id": "173589742",
@@ -79,13 +83,13 @@ UI показывает:
 
 ### 2. New Fields Description
 
-| Field | Type | Description |
-|-------|------|-------------|
-| `applicable_cogs` | object \| null | COGS record used for last completed week margin |
-| `applicable_cogs.unit_cost_rub` | number | COGS value used for margin calculation |
-| `applicable_cogs.valid_from` | string (ISO date) | When this COGS became effective |
-| `applicable_cogs.applies_to_week` | string (ISO week) | Which week this COGS applies to (last completed) |
-| `applicable_cogs.is_same_as_current` | boolean | `true` if same as `cogs`, `false` if different |
+| Field                                | Type              | Description                                      |
+| ------------------------------------ | ----------------- | ------------------------------------------------ |
+| `applicable_cogs`                    | object \| null    | COGS record used for last completed week margin  |
+| `applicable_cogs.unit_cost_rub`      | number            | COGS value used for margin calculation           |
+| `applicable_cogs.valid_from`         | string (ISO date) | When this COGS became effective                  |
+| `applicable_cogs.applies_to_week`    | string (ISO week) | Which week this COGS applies to (last completed) |
+| `applicable_cogs.is_same_as_current` | boolean           | `true` if same as `cogs`, `false` if different   |
 
 ### 3. Logic for `applicable_cogs`
 
@@ -119,6 +123,7 @@ async function getApplicableCogs(nmId: string, week: string): Promise<Applicable
 ## Use Cases
 
 ### Case 1: Latest COGS = Applicable COGS
+
 ```json
 {
   "cogs": { "unit_cost_rub": 100, "valid_from": "2025-11-01" },
@@ -130,9 +135,11 @@ async function getApplicableCogs(nmId: string, week: string): Promise<Applicable
   }
 }
 ```
+
 **Frontend**: Shows only "100₽ с 01.11.2025" (no additional info needed)
 
 ### Case 2: Latest COGS ≠ Applicable COGS (Future COGS)
+
 ```json
 {
   "cogs": { "unit_cost_rub": 11, "valid_from": "2025-11-23" },
@@ -144,30 +151,37 @@ async function getApplicableCogs(nmId: string, week: string): Promise<Applicable
   }
 }
 ```
+
 **Frontend**: Shows:
+
 - "11₽ с 23.11.2025"
 - "ⓘ Для W46 используется: 121₽"
 - "ⓘ Новый COGS применится с W48"
 
 ### Case 3: No Applicable COGS (First COGS is Future)
+
 ```json
 {
   "cogs": { "unit_cost_rub": 777, "valid_from": "2025-11-23" },
   "applicable_cogs": null
 }
 ```
+
 **Frontend**: Shows:
+
 - "777₽ с 23.11.2025"
 - "(COGS с будущей даты)"
 - "ⓘ Нет предыдущих COGS для расчёта маржи"
 
 ### Case 4: No COGS at All
+
 ```json
 {
   "cogs": null,
   "applicable_cogs": null
 }
 ```
+
 **Frontend**: Shows "Не назначена"
 
 ---
@@ -185,11 +199,13 @@ async function getApplicableCogs(nmId: string, week: string): Promise<Applicable
 ## Files to Modify
 
 ### Backend
+
 1. `src/products/dto/product-response.dto.ts` - Add `applicable_cogs` field
 2. `src/products/products.service.ts` - Add `getApplicableCogs()` logic in `getMarginDataForProducts()`
 3. `src/cogs/services/cogs.service.ts` - Ensure `findCogsAtDate()` is reusable
 
 ### Frontend (after backend implementation)
+
 1. `src/components/custom/ProductMarginCell.tsx` - Display applicable COGS info
 2. `src/types/api.ts` - Add `applicable_cogs` type
 
@@ -218,6 +234,7 @@ async function getApplicableCogs(nmId: string, week: string): Promise<Applicable
 ## Timeline
 
 **Estimated Effort**: 4-6 hours
+
 - Backend DTO + Service: 2-3 hours
 - Testing: 1-2 hours
 - Frontend integration: 1-2 hours
@@ -230,14 +247,17 @@ async function getApplicableCogs(nmId: string, week: string): Promise<Applicable
 ## Implementation Summary
 
 ### Files Modified
+
 - `src/products/dto/product-response.dto.ts` - Added `ApplicableCogsDto` class and `applicable_cogs` field to `ProductResponseDto`
 - `src/products/products.service.ts` - Added `getApplicableCogsForProducts()` method and integrated into `getProductsList()` and `getProduct()`
 
 ### Key Implementation Details
+
 1. **Week Midpoint Strategy**: Uses `isoWeekService.getLastCompletedWeek()` and calculates midpoint (Thursday ~12:00)
 2. **Temporal Lookup**: Uses existing `cogsService.findCogsAtDate(nmId, midpoint)` for COGS lookup
 3. **Comparison Logic**: Compares applicable COGS with current COGS by `id` field to set `is_same_as_current`
 4. **Performance**: O(n) queries for n products (could be optimized with batch query if needed)
 
 ### API Test Examples
+
 See `test-api/08-products.http` for testing different COGS Assignment scenarios

@@ -10,6 +10,7 @@
 ### 1. Формат ответа от backend
 
 **Backend возвращает:**
+
 ```json
 {
   "data": [
@@ -22,11 +23,13 @@
 ### 2. Обработка в `api-client.ts`
 
 **Строка 105:**
+
 ```typescript
 return (data.data ?? data) as T
 ```
 
 **Логика:**
+
 - Backend вернул: `{ data: [...] }`
 - `data.data` = массив `[...]`
 - `apiClient.get()` вернет массив напрямую: `[{ week: "...", start_date: "..." }]`
@@ -34,12 +37,13 @@ return (data.data ?? data) as T
 ### 3. Обработка в hooks (`useDashboard.ts`, `useExpenses.ts`)
 
 **Текущая реализация:**
+
 ```typescript
 // Получаем ответ от apiClient (массив или объект)
 const weeksResponse = await apiClient.get<Array<{ week: string; start_date: string }> | { data: Array<{ week: string; start_date: string }> }>('/v1/analytics/weekly/available-weeks')
 
 // Обрабатываем оба формата
-const weeksArray = Array.isArray(weeksResponse) 
+const weeksArray = Array.isArray(weeksResponse)
   ? weeksResponse                    // Если массив (обычный случай после Story 2.7)
   : weeksResponse?.data || []        // Если объект (fallback)
 
@@ -48,6 +52,7 @@ const weeks = weeksArray.map((w) => w.week)
 ```
 
 **Проверка логики:**
+
 1. ✅ Backend возвращает `{ data: [...] }`
 2. ✅ `apiClient` извлекает `data.data` → возвращает массив `[...]`
 3. ✅ `Array.isArray(weeksResponse)` = `true`
@@ -63,6 +68,7 @@ const weeks = weeksArray.map((w) => w.week)
 ### Формат ответа от backend
 
 **Backend возвращает:**
+
 ```json
 {
   "summary_total": {
@@ -83,6 +89,7 @@ const weeks = weeksArray.map((w) => w.week)
 ### Обработка в hooks
 
 **Текущая реализация:**
+
 ```typescript
 const summaryResponse = await apiClient.get<{
   summary_total: FinanceSummary | null
@@ -100,6 +107,7 @@ const revenue = summary.sale_gross_total ?? summary.sale_gross
 ```
 
 **Проверка логики:**
+
 1. ✅ `apiClient` возвращает объект напрямую (не извлекает `data.data`, т.к. нет вложенного `data`)
 2. ✅ Используем `summary_total` (консолидированный) или fallback на `summary_rus`
 3. ✅ Поддержка полей с `_total` и без (legacy формат)
@@ -199,4 +207,3 @@ const revenue = summary.sale_gross_total ?? summary.sale_gross
 ---
 
 **Статус:** ✅ **ГОТОВО К ПРОВЕРКЕ** - Код корректно обрабатывает формат ответов от backend после Story 2.7
-

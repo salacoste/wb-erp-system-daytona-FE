@@ -14,6 +14,7 @@
 Frontend FinancialSummaryTable component on `/analytics` page needs COGS and profit data to display complete P&L information. Currently, the `/v1/analytics/weekly/finance-summary` endpoint returns only payout data from `weekly_payout_summary/total` tables, but does not include COGS/margin data from `weekly_margin_fact`.
 
 **Requested Enhancement**: Extend `finance-summary` endpoint response to include COGS section with:
+
 - COGS total amount
 - Product COGS coverage percentage
 - Gross profit (only when coverage = 100%)
@@ -25,6 +26,7 @@ Frontend FinancialSummaryTable component on `/analytics` page needs COGS and pro
 ### Endpoint: `GET /v1/analytics/weekly/finance-summary?week=2025-W47`
 
 **Current Response Structure** (simplified):
+
 ```json
 {
   "summary_total": {
@@ -47,6 +49,7 @@ Frontend FinancialSummaryTable component on `/analytics` page needs COGS and pro
 ```
 
 **Missing Fields**:
+
 - `cogs_total` - Total COGS amount for week
 - `cogs_coverage_pct` - Percentage of products with COGS
 - `products_with_cogs` - Count of products with COGS
@@ -73,6 +76,7 @@ interface FinanceSummaryTotal {
 ```
 
 ### Expected Response (with enhancement):
+
 ```json
 {
   "summary_total": {
@@ -105,6 +109,7 @@ interface FinanceSummaryTotal {
 ## Business Rules
 
 ### COGS Coverage Calculation
+
 ```sql
 -- From weekly_margin_fact for the week
 products_total = COUNT(DISTINCT nm_id) WHERE qty > 0
@@ -113,6 +118,7 @@ cogs_coverage_pct = (products_with_cogs / products_total) * 100
 ```
 
 ### Gross Profit Calculation
+
 ```typescript
 // Only calculate when coverage = 100%
 if (cogs_coverage_pct === 100) {
@@ -124,12 +130,12 @@ if (cogs_coverage_pct === 100) {
 
 ### Edge Cases
 
-| Scenario | Expected Response |
-|----------|-------------------|
-| No margin data for week | All COGS fields = `null` |
-| Zero products | `products_total = 0`, other COGS fields = `null` |
-| All products have COGS | `cogs_coverage_pct = 100`, `gross_profit` calculated |
-| Partial COGS coverage | `cogs_coverage_pct < 100`, `gross_profit = null` |
+| Scenario                | Expected Response                                    |
+| ----------------------- | ---------------------------------------------------- |
+| No margin data for week | All COGS fields = `null`                             |
+| Zero products           | `products_total = 0`, other COGS fields = `null`     |
+| All products have COGS  | `cogs_coverage_pct = 100`, `gross_profit` calculated |
+| Partial COGS coverage   | `cogs_coverage_pct < 100`, `gross_profit = null`     |
 
 ---
 
@@ -170,6 +176,7 @@ WHERE cabinet_id = $1::uuid
 ```
 
 **When COGS coverage = 100%**:
+
 ```
 ┌─────────────────────────────────────────────────────────────┐
 │  💎 ЧИСТАЯ ПРИБЫЛЬ                                          │
@@ -199,10 +206,12 @@ WHERE cabinet_id = $1::uuid
 ### Option A: Extend existing aggregation (Recommended)
 
 Modify `getFinanceSummary()` in `weekly-analytics.service.ts` to:
+
 1. Query `weekly_margin_fact` for COGS aggregates
 2. Add new fields to response DTO
 
 **Changes**:
+
 - `src/analytics/dto/weekly-payout-total.dto.ts` - Add COGS fields
 - `src/analytics/dto/weekly-payout-summary.dto.ts` - Add COGS fields
 - `src/analytics/weekly-analytics.service.ts` - Add COGS query in `getFinanceSummary()`
@@ -232,9 +241,11 @@ The `/v1/analytics/cabinet-summary` endpoint already has COGS aggregation logic 
 ## Status Updates
 
 ### 2025-12-06 - ✅ Backend Implementation Completed
+
 **Implemented by**: Backend Team (Story 25.2)
 
 **Files Modified**:
+
 - `src/analytics/dto/weekly-payout-total.dto.ts` - Added 5 COGS fields to `WeeklyPayoutTotalDto`
 - `src/analytics/dto/weekly-payout-summary.dto.ts` - Added 5 COGS fields to `WeeklyPayoutSummaryDto`
 - `src/analytics/weekly-analytics.service.ts`:
@@ -244,6 +255,7 @@ The `/v1/analytics/cabinet-summary` endpoint already has COGS aggregation logic 
   - Modified `mapSummaryToDto()` and `mapTotalToDto()` to include COGS fields
 
 **Implementation Details**:
+
 1. COGS data is fetched separately by `report_type` (total, основной, по выкупам)
 2. SQL uses PostgreSQL `COUNT(DISTINCT) FILTER (WHERE ...)` for efficient aggregation
 3. Coverage percentage calculated as `(products_with_cogs / products_total) * 100`
@@ -251,11 +263,13 @@ The `/v1/analytics/cabinet-summary` endpoint already has COGS aggregation logic 
 5. All fields return `null` when no margin data exists for the week
 
 **Testing**:
+
 - API endpoint available at: `GET /v1/analytics/weekly/finance-summary?week=YYYY-Www`
 - Test file: `test-api/05-analytics-basic.http`
 - Swagger documentation updated automatically via `@ApiProperty` decorators
 
 **Frontend Integration Ready**:
+
 - COGS section now included in all `summary_*` response objects
 - Type definitions match requested interface exactly
 
@@ -464,6 +478,7 @@ const calculateCogsDelta = (current: WeeklyPayoutTotalDto, previous: WeeklyPayou
 ---
 
 ### 2025-12-06 - Request Created
+
 - Documented need for COGS data in finance-summary endpoint
 - Specified new fields and business rules
 - Frontend implementation blocked until backend provides data

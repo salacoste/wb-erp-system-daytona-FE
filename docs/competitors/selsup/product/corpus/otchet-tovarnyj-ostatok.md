@@ -13,7 +13,7 @@ chars: 4081
 
 В этой статье:
 
-- 
+-
 - <a href="#zachem-nuzhen-dannyj-otchet" rel="nofollow">Зачем нужен данный отчет</a>
 - <a href="#filtry-i-poisk" rel="nofollow">Фильтры и поиск</a>
 - <a href="#interfejs-otcheta" rel="nofollow">Интерфейс отчета</a>
@@ -53,13 +53,14 @@ chars: 4081
 
 ![](../../out/selsup.ru/_kage/selsup.ru/wp-content/webp-express/webp-images/uploads/2022/09/screenshot_22-1.png.webp)\
 В скачанном файле Вы увидите:\
+
 - Информацию по товарам, которые попали в отчет;\
 - Сколько товаров находится в пути;\
 - Итоговый остаток по всем складам маркетплейса;\
 - Сколько остатков на том или ином складе.\
-![](../../out/selsup.ru/_kage/selsup.ru/wp-content/webp-express/webp-images/uploads/2022/09/ost-wb.png.webp)
+  ![](../../out/selsup.ru/_kage/selsup.ru/wp-content/webp-express/webp-images/uploads/2022/09/ost-wb.png.webp)
 
-------------------------------------------------------------------------
+---
 
 <a href="#tocmenu" class="kamatoc-gotop" rel="nofollow">Вверх <em></em></a>
 

@@ -16,11 +16,13 @@
 **Location**: `TelegramBindingModal.tsx:198`
 
 **Solution**:
+
 - Added `TELEGRAM_BOT_USERNAME` constant with env var fallback
 - Environment variable: `NEXT_PUBLIC_TELEGRAM_BOT_USERNAME`
 - Default fallback: `Kernel_crypto_bot` (for development)
 
 **Changes**:
+
 ```typescript
 // Before
 <p className="text-sm text-muted-foreground mb-4">
@@ -37,6 +39,7 @@ const TELEGRAM_BOT_USERNAME =
 ```
 
 **Benefits**:
+
 - ✅ Production-ready: can change bot without code changes
 - ✅ Environment-specific: different bots per deployment
 - ✅ Type-safe: constant prevents typos
@@ -48,14 +51,17 @@ const TELEGRAM_BOT_USERNAME =
 **Problem**: Binding code expiration time used magic number `600` without explanation
 
 **Locations**:
+
 - `TelegramBindingModal.tsx:60` - State initialization
 - `TelegramBindingModal.tsx:133` - Progress calculation
 
 **Solution**:
+
 - Added `BINDING_CODE_TTL_SECONDS` constant with JSDoc
 - Used constant in all calculations
 
 **Changes**:
+
 ```typescript
 // Before
 const [timeRemaining, setTimeRemaining] = useState(600); // 10 minutes in seconds
@@ -73,6 +79,7 @@ const progress = (timeRemaining / BINDING_CODE_TTL_SECONDS) * 100;
 ```
 
 **Benefits**:
+
 - ✅ Self-documenting: constant name explains purpose
 - ✅ Maintainability: single source of truth for TTL
 - ✅ Backend sync: JSDoc reminds to match backend config
@@ -88,6 +95,7 @@ const progress = (timeRemaining / BINDING_CODE_TTL_SECONDS) * 100;
 **Solution**: Added `NEXT_PUBLIC_TELEGRAM_BOT_USERNAME` with clear documentation
 
 **Changes**:
+
 ```bash
 # Before
 # Telegram Bot Configuration
@@ -109,6 +117,7 @@ TELEGRAM_BOT_TOKEN=your_telegram_bot_token_here
 ```
 
 **Benefits**:
+
 - ✅ Clear documentation for developers
 - ✅ Production deployment guide
 - ✅ Security note (NEXT_PUBLIC_ prefix explanation)
@@ -135,6 +144,7 @@ Route: /settings/notifications - 13.7 kB (187 kB First Load JS)
 ### Build Impact
 
 **Bundle Size**: No change
+
 - Before: 13.7 kB (route-specific)
 - After: 13.7 kB (route-specific)
 
@@ -151,6 +161,7 @@ Route: /settings/notifications - 13.7 kB (187 kB First Load JS)
 **Design Quality Assessment**:
 
 #### Status Indicator ✅ EXCELLENT
+
 - **Green "Подключен" badge**: Highly visible, positive color psychology
 - **Icon**: Telegram bell icon provides clear context
 - **Username**: `@salacoste` displayed prominently
@@ -159,6 +170,7 @@ Route: /settings/notifications - 13.7 kB (187 kB First Load JS)
 **Recommendation**: ✅ No changes needed - design exceeds expectations
 
 #### Disconnect Button ✅ GOOD
+
 - **Label**: "Отключить Telegram" - clear action verb
 - **Placement**: Below username, accessible but not prominent (prevents accidental clicks)
 - **Styling**: Standard button, not alarming red (appropriate - unbind is reversible)
@@ -168,12 +180,14 @@ Route: /settings/notifications - 13.7 kB (187 kB First Load JS)
 #### Preferences Panel ✅ EXCELLENT
 
 **Toggle Switches**: 4 notification types
+
 1. ✅ "Задача выполнена успешно" - Success notifications
 2. ✅ "Задача завершилась с ошибкой" - Error notifications
 3. ✅ "Задача зависла" - Stuck task alerts
 4. ✅ "Ежедневный дайджест" - Daily digest
 
 **Design Strengths**:
+
 - Clear hierarchy: Heading → Description → Toggle
 - Accessible: Switch role with proper ARIA labels
 - Descriptive: Each toggle has explanatory text
@@ -184,6 +198,7 @@ Route: /settings/notifications - 13.7 kB (187 kB First Load JS)
 #### Language Selection ✅ GOOD
 
 **Radio Buttons**: 🇷🇺 Русский / 🇬🇧 English
+
 - **Visual**: Flag emoji provides instant recognition
 - **Interaction**: Standard radio button behavior
 - **Layout**: Horizontal layout, clear grouping
@@ -195,6 +210,7 @@ Route: /settings/notifications - 13.7 kB (187 kB First Load JS)
 #### Quiet Hours Section ✅ GOOD
 
 **Toggle**: "Включить тихие часы"
+
 - **Description**: "Уведомления не будут отправляться в заданный период"
 - **State**: Currently disabled in screenshot
 
@@ -205,6 +221,7 @@ Route: /settings/notifications - 13.7 kB (187 kB First Load JS)
 #### Help Section ✅ EXCELLENT
 
 **Content**: "Нужна помощь с настройкой?"
+
 - **Link**: "Открыть руководство →" with arrow indicating external action
 - **Styling**: Light blue background, bulb icon (friendly, approachable)
 - **Placement**: Bottom of page (non-intrusive)
@@ -244,11 +261,13 @@ Route: /settings/notifications - 13.7 kB (187 kB First Load JS)
 ### Responsive Design ✅ VERIFIED
 
 **Desktop (1680×900)**: ✅ Optimal layout
+
 - Full-width content cards
 - Adequate whitespace
 - Clear visual hierarchy
 
 **Mobile (375×667)**: ✅ Tested in previous session
+
 - Stacked layout
 - Touch-friendly buttons (≥44px)
 - No horizontal scroll
@@ -258,6 +277,7 @@ Route: /settings/notifications - 13.7 kB (187 kB First Load JS)
 ### Visual Consistency ✅ EXCELLENT
 
 **Matches Application Design System**:
+
 - ✅ Card-based layout (same as other settings pages)
 - ✅ Color palette: Telegram blue (#0088CC), status green, neutral grays
 - ✅ Typography: Consistent font sizes, weights, and line heights
@@ -265,6 +285,7 @@ Route: /settings/notifications - 13.7 kB (187 kB First Load JS)
 - ✅ Button styles: Primary/ghost variants consistent with app
 
 **Comparison with Other Pages**:
+
 - ✅ Navigation: Same sidebar, breadcrumbs, header
 - ✅ Layout: Same main content area, card structure
 - ✅ Interactions: Same hover states, focus rings
@@ -300,11 +321,13 @@ None - all important UX patterns implemented well
 ## Code Quality Metrics
 
 ### Before Fixes
+
 - Magic numbers: 2 occurrences
 - Hardcoded strings: 1 occurrence
 - Env vars: 1 documented
 
 ### After Fixes
+
 - Magic numbers: 0 ✅
 - Hardcoded strings: 0 ✅
 - Env vars: 2 documented ✅
@@ -316,11 +339,13 @@ None - all important UX patterns implemented well
 ## Testing Summary
 
 ### Automated Tests ✅
+
 - TypeScript compilation: PASSED
 - ESLint validation: PASSED
 - Build generation: PASSED
 
 ### Manual Tests ✅
+
 - Bound state UI: PASSED
 - Unbound state UI: PASSED (from previous session)
 - Responsive layout: PASSED (from previous session)
@@ -330,10 +355,10 @@ None - all important UX patterns implemented well
 
 ## Files Modified
 
-| File | Lines Changed | Type |
-|------|---------------|------|
-| `src/components/notifications/TelegramBindingModal.tsx` | +15, -3 | Enhancement |
-| `.env.example` | +5, -2 | Documentation |
+| File                                                    | Lines Changed | Type          |
+| ------------------------------------------------------- | ------------- | ------------- |
+| `src/components/notifications/TelegramBindingModal.tsx` | +15, -3       | Enhancement   |
+| `.env.example`                                          | +5, -2        | Documentation |
 
 **Total**: 2 files, +20 lines (net +10)
 
@@ -342,6 +367,7 @@ None - all important UX patterns implemented well
 ## Deployment Checklist
 
 ### Pre-Deployment ✅
+
 - [x] Constants extracted and documented
 - [x] Environment variables documented in `.env.example`
 - [x] TypeScript compilation successful
@@ -349,6 +375,7 @@ None - all important UX patterns implemented well
 - [x] No new ESLint warnings
 
 ### Post-Deployment
+
 - [ ] Update `.env.local` with `NEXT_PUBLIC_TELEGRAM_BOT_USERNAME=Kernel_crypto_bot`
 - [ ] Verify bot username displays correctly in binding modal
 - [ ] Test binding flow with production bot
@@ -360,11 +387,13 @@ None - all important UX patterns implemented well
 **Status**: ✅ **PRODUCTION READY**
 
 All minor issues from refactoring session successfully fixed:
+
 - ✅ Bot username now configurable via environment variable
 - ✅ Magic numbers replaced with self-documenting constants
 - ✅ Environment configuration updated with clear documentation
 
 **Design Validation**: ✅ **EXCELLENT**
+
 - Bound state UI exceeds expectations
 - WCAG 2.1 AA compliance verified
 - Responsive design working correctly

@@ -25,12 +25,12 @@
 
 ## 1. Обзор бизнес-требований
 
-| Функция | Описание | API-решение |
-|---------|----------|-------------|
-| **Недельный вид** | Отображение данных по дням за выбранную неделю | `finance-summary?week=YYYY-Www` |
-| **Месячный вид** | Отображение данных по дням за выбранный месяц | `by-sku?weekStart=...&weekEnd=...` |
-| **Переключатель недель** | Список доступных недель для dropdown | `available-weeks` |
-| **Сравнение периодов** | % изменения текущий vs предыдущий период | `comparison?period1=...&period2=...` |
+| Функция                  | Описание                                       | API-решение                          |
+| ------------------------ | ---------------------------------------------- | ------------------------------------ |
+| **Недельный вид**        | Отображение данных по дням за выбранную неделю | `finance-summary?week=YYYY-Www`      |
+| **Месячный вид**         | Отображение данных по дням за выбранный месяц  | `by-sku?weekStart=...&weekEnd=...`   |
+| **Переключатель недель** | Список доступных недель для dropdown           | `available-weeks`                    |
+| **Сравнение периодов**   | % изменения текущий vs предыдущий период       | `comparison?period1=...&period2=...` |
 
 ---
 
@@ -51,17 +51,17 @@
 
 ### Сводная таблица эндпоинтов
 
-| Эндпоинт | Назначение | Параметры периода |
-|----------|------------|-------------------|
-| `GET /v1/analytics/weekly/available-weeks` | Список доступных недель | — |
-| `GET /v1/analytics/weekly/finance-summary` | Сводка за неделю | `week=YYYY-Www` |
-| `GET /v1/analytics/weekly/by-sku` | Аналитика по SKU | `week` или `weekStart`+`weekEnd` |
-| `GET /v1/analytics/weekly/by-brand` | Аналитика по брендам | `week` или `weekStart`+`weekEnd` |
-| `GET /v1/analytics/weekly/by-category` | Аналитика по категориям | `week` или `weekStart`+`weekEnd` |
-| `GET /v1/analytics/weekly/comparison` | Сравнение двух периодов | `period1`, `period2` |
-| `GET /v1/analytics/weekly/trends` | Тренды (временные ряды) | `from`, `to` |
-| `GET /v1/analytics/weekly/margin-trends` | Тренды маржинальности | `weekStart`+`weekEnd` или `weeks` |
-| `GET /v1/analytics/cabinet-summary` | Сводка по кабинету | `weeks` или `weekStart`+`weekEnd` |
+| Эндпоинт                                   | Назначение              | Параметры периода                 |
+| ------------------------------------------ | ----------------------- | --------------------------------- |
+| `GET /v1/analytics/weekly/available-weeks` | Список доступных недель | —                                 |
+| `GET /v1/analytics/weekly/finance-summary` | Сводка за неделю        | `week=YYYY-Www`                   |
+| `GET /v1/analytics/weekly/by-sku`          | Аналитика по SKU        | `week` или `weekStart`+`weekEnd`  |
+| `GET /v1/analytics/weekly/by-brand`        | Аналитика по брендам    | `week` или `weekStart`+`weekEnd`  |
+| `GET /v1/analytics/weekly/by-category`     | Аналитика по категориям | `week` или `weekStart`+`weekEnd`  |
+| `GET /v1/analytics/weekly/comparison`      | Сравнение двух периодов | `period1`, `period2`              |
+| `GET /v1/analytics/weekly/trends`          | Тренды (временные ряды) | `from`, `to`                      |
+| `GET /v1/analytics/weekly/margin-trends`   | Тренды маржинальности   | `weekStart`+`weekEnd` или `weeks` |
+| `GET /v1/analytics/cabinet-summary`        | Сводка по кабинету      | `weeks` или `weekStart`+`weekEnd` |
 
 ### Общие заголовки (обязательные)
 
@@ -96,9 +96,9 @@ GET /v1/analytics/weekly/available-weeks
 
 ### Поля ответа
 
-| Поле | Тип | Описание |
-|------|-----|----------|
-| `week` | string | ISO-неделя в формате `YYYY-Www` |
+| Поле         | Тип    | Описание                                          |
+| ------------ | ------ | ------------------------------------------------- |
+| `week`       | string | ISO-неделя в формате `YYYY-Www`                   |
 | `start_date` | string | Дата понедельника недели (ISO 8601: `YYYY-MM-DD`) |
 
 ### Бизнес-логика (Story 2.7)
@@ -134,9 +134,9 @@ GET /v1/analytics/weekly/finance-summary?week=2026-W04
 
 **Параметры:**
 
-| Параметр | Тип | Обязательный | Описание |
-|----------|-----|--------------|----------|
-| `week` | string | ✅ | ISO-неделя: `YYYY-Www` |
+| Параметр | Тип    | Обязательный | Описание               |
+| -------- | ------ | ------------ | ---------------------- |
+| `week`   | string | ✅           | ISO-неделя: `YYYY-Www` |
 
 **Ответ (200 OK):**
 
@@ -182,12 +182,12 @@ GET /v1/analytics/weekly/by-sku?week=2026-W04&includeCogs=true&limit=50
 
 **Параметры:**
 
-| Параметр | Тип | Обязательный | Default | Описание |
-|----------|-----|--------------|---------|----------|
-| `week` | string | ✅ (или диапазон) | — | ISO-неделя |
-| `includeCogs` | boolean | ❌ | false | Включить COGS и маржу |
-| `limit` | number | ❌ | 100 | Максимум записей |
-| `report_type` | string | ❌ | all | `основной`, `по выкупам`, `all` |
+| Параметр      | Тип     | Обязательный      | Default | Описание                        |
+| ------------- | ------- | ----------------- | ------- | ------------------------------- |
+| `week`        | string  | ✅ (или диапазон) | —       | ISO-неделя                      |
+| `includeCogs` | boolean | ❌                | false   | Включить COGS и маржу           |
+| `limit`       | number  | ❌                | 100     | Максимум записей                |
+| `report_type` | string  | ❌                | all     | `основной`, `по выкупам`, `all` |
 
 ---
 
@@ -201,12 +201,13 @@ GET /v1/analytics/weekly/by-sku?weekStart=2026-W01&weekEnd=2026-W04&includeCogs=
 
 **Параметры диапазона:**
 
-| Параметр | Тип | Описание |
-|----------|-----|----------|
+| Параметр    | Тип    | Описание                                    |
+| ----------- | ------ | ------------------------------------------- |
 | `weekStart` | string | Начальная неделя (включительно): `YYYY-Www` |
-| `weekEnd` | string | Конечная неделя (включительно): `YYYY-Www` |
+| `weekEnd`   | string | Конечная неделя (включительно): `YYYY-Www`  |
 
 **Важно:**
+
 - При использовании `weekStart`/`weekEnd` параметр `week` игнорируется
 - Данные агрегируются за весь диапазон
 - Максимальный диапазон: 52 недели
@@ -257,13 +258,13 @@ GET /v1/analytics/weekly/comparison
 
 ### Параметры
 
-| Параметр | Тип | Обязательный | Описание |
-|----------|-----|--------------|----------|
-| `period1` | string | ✅ | Первый период (текущий) |
-| `period2` | string | ✅ | Второй период (для сравнения) |
-| `groupBy` | enum | ❌ | `sku`, `brand`, `category`, `cabinet` (default) |
-| `includeCogs` | boolean | ❌ | Включить COGS (default: true) |
-| `limit` | number | ❌ | Лимит для breakdown (default: 20, max: 100) |
+| Параметр      | Тип     | Обязательный | Описание                                        |
+| ------------- | ------- | ------------ | ----------------------------------------------- |
+| `period1`     | string  | ✅           | Первый период (текущий)                         |
+| `period2`     | string  | ✅           | Второй период (для сравнения)                   |
+| `groupBy`     | enum    | ❌           | `sku`, `brand`, `category`, `cabinet` (default) |
+| `includeCogs` | boolean | ❌           | Включить COGS (default: true)                   |
+| `limit`       | number  | ❌           | Лимит для breakdown (default: 20, max: 100)     |
 
 ### Форматы периодов
 
@@ -357,6 +358,7 @@ delta.percent = ((period1 - period2) / period2) × 100
 ```
 
 **Важно:**
+
 - Положительный delta означает рост (period1 > period2)
 - Если `period2.value = 0`, то `delta.percent = null` (избегаем деления на ноль)
 
@@ -372,13 +374,13 @@ GET /v1/analytics/weekly/trends?from=2026-W01&to=2026-W04
 
 **Параметры:**
 
-| Параметр | Тип | Обязательный | Описание |
-|----------|-----|--------------|----------|
-| `from` | string | ✅ | Начальная неделя: `YYYY-Www` |
-| `to` | string | ✅ | Конечная неделя: `YYYY-Www` |
-| `metrics` | string | ❌ | Список метрик через запятую |
-| `report_type` | enum | ❌ | `rus`, `eaeu`, `total` |
-| `include_summary` | boolean | ❌ | Включить summary stats (default: true) |
+| Параметр          | Тип     | Обязательный | Описание                               |
+| ----------------- | ------- | ------------ | -------------------------------------- |
+| `from`            | string  | ✅           | Начальная неделя: `YYYY-Www`           |
+| `to`              | string  | ✅           | Конечная неделя: `YYYY-Www`            |
+| `metrics`         | string  | ❌           | Список метрик через запятую            |
+| `report_type`     | enum    | ❌           | `rus`, `eaeu`, `total`                 |
+| `include_summary` | boolean | ❌           | Включить summary stats (default: true) |
 
 **Пример с выбором метрик:**
 
@@ -398,10 +400,10 @@ GET /v1/analytics/weekly/margin-trends?weeks=12
 
 **Параметры:**
 
-| Параметр | Тип | Описание |
-|----------|-----|----------|
-| `weekStart` + `weekEnd` | string | Явный диапазон |
-| `weeks` | number | Последние N недель (max: 52) |
+| Параметр                | Тип    | Описание                     |
+| ----------------------- | ------ | ---------------------------- |
+| `weekStart` + `weekEnd` | string | Явный диапазон               |
+| `weeks`                 | number | Последние N недель (max: 52) |
 
 **Важно:** Нельзя использовать оба метода одновременно — вернется 400.
 
@@ -421,12 +423,12 @@ GET /v1/analytics/cabinet-summary?weekStart=2026-W01&weekEnd=2026-W04
 
 ### 8.1 ISO Week Format
 
-| Формат | Пример | Описание |
-|--------|--------|----------|
-| `YYYY-Www` | `2026-W04` | ISO-неделя (W с заглавной) |
-| `YYYY-MM-DD` | `2026-01-19` | Дата в ISO 8601 |
-| `YYYY-Www:Www` | `2026-W01:W04` | Диапазон (короткий) |
-| `YYYY-Www:YYYY-Www` | `2025-W52:2026-W04` | Диапазон (через год) |
+| Формат              | Пример              | Описание                   |
+| ------------------- | ------------------- | -------------------------- |
+| `YYYY-Www`          | `2026-W04`          | ISO-неделя (W с заглавной) |
+| `YYYY-MM-DD`        | `2026-01-19`        | Дата в ISO 8601            |
+| `YYYY-Www:Www`      | `2026-W01:W04`      | Диапазон (короткий)        |
+| `YYYY-Www:YYYY-Www` | `2025-W52:2026-W04` | Диапазон (через год)       |
 
 ### 8.2 Правила ISO-недель
 
@@ -474,13 +476,13 @@ dateToIsoWeek(new Date('2026-01-31')); // "2026-W05"
 
 ### 9.1 Типичные ошибки
 
-| HTTP Code | Код ошибки | Причина |
-|-----------|-----------|---------|
-| 400 | `INVALID_WEEK_FORMAT` | Неверный формат недели |
-| 400 | `RANGE_TOO_LARGE` | Диапазон > 52 недель |
-| 400 | `MISSING_REQUIRED_PARAM` | Отсутствует обязательный параметр |
-| 404 | `NO_DATA_FOR_WEEK` | Нет данных за указанную неделю |
-| 403 | `CABINET_ACCESS_DENIED` | Нет доступа к кабинету |
+| HTTP Code | Код ошибки               | Причина                           |
+| --------- | ------------------------ | --------------------------------- |
+| 400       | `INVALID_WEEK_FORMAT`    | Неверный формат недели            |
+| 400       | `RANGE_TOO_LARGE`        | Диапазон > 52 недель              |
+| 400       | `MISSING_REQUIRED_PARAM` | Отсутствует обязательный параметр |
+| 404       | `NO_DATA_FOR_WEEK`       | Нет данных за указанную неделю    |
+| 403       | `CABINET_ACCESS_DENIED`  | Нет доступа к кабинету            |
 
 ### 9.2 Пример ошибки 404
 
@@ -687,22 +689,22 @@ const { weekStart, weekEnd } = monthToWeekRange("2026-01");
 
 ## Дополнительные ресурсы
 
-| Ресурс | Путь |
-|--------|------|
-| **Test API файлы** | `test-api/05-analytics-basic.http`, `test-api/06-analytics-advanced.http` |
-| **API Reference** | `docs/API-PATHS-REFERENCE.md` |
-| **Story 2.7 (available-weeks fix)** | `docs/stories/epic-2/story-2.7-fix-available-weeks-data-source.md` |
-| **Story 6.2 (comparison)** | `docs/stories/epic-6/story-6.2-period-comparison.md` |
-| **Swagger UI** | `http://localhost:3000/api` |
-| **Frontend check-available-weeks.http** | `frontend/test-api/check-available-weeks.http` |
+| Ресурс                                  | Путь                                                                      |
+| --------------------------------------- | ------------------------------------------------------------------------- |
+| **Test API файлы**                      | `test-api/05-analytics-basic.http`, `test-api/06-analytics-advanced.http` |
+| **API Reference**                       | `docs/API-PATHS-REFERENCE.md`                                             |
+| **Story 2.7 (available-weeks fix)**     | `docs/stories/epic-2/story-2.7-fix-available-weeks-data-source.md`        |
+| **Story 6.2 (comparison)**              | `docs/stories/epic-6/story-6.2-period-comparison.md`                      |
+| **Swagger UI**                          | `http://localhost:3000/api`                                               |
+| **Frontend check-available-weeks.http** | `frontend/test-api/check-available-weeks.http`                            |
 
 ---
 
 ## Changelog
 
-| Дата | Версия | Изменения |
-|------|--------|-----------|
-| 2026-01-31 | 1.0 | Первоначальная версия документации |
+| Дата       | Версия | Изменения                          |
+| ---------- | ------ | ---------------------------------- |
+| 2026-01-31 | 1.0    | Первоначальная версия документации |
 
 ---
 

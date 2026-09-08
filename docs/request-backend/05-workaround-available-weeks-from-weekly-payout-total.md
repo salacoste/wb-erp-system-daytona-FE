@@ -17,10 +17,13 @@ Endpoint `/v1/analytics/weekly/available-weeks` возвращает пусто�
 Изучив `test-api/` (см. 05-analytics-basic.http), доступны следующие endpoints для работы с неделями:
 
 ### 1. Получение списка недель
+
 - **`GET /v1/analytics/weekly/available-weeks`** ❌ Возвращает пустой массив (проблема)
 
 ### 2. Получение данных по конкретной неделе
+
 Все эти endpoints требуют указания конкретной недели в query параметре:
+
 - `GET /v1/analytics/weekly/finance-summary?week=2025-W45`
 - `GET /v1/analytics/weekly/by-sku?week=2025-W45`
 - `GET /v1/analytics/weekly/by-brand?week=2025-W45`
@@ -38,12 +41,14 @@ Endpoint `/v1/analytics/weekly/available-weeks` возвращает пусто�
 **Описание:** Изменить реализацию endpoint `/v1/analytics/weekly/available-weeks`, чтобы он использовал таблицу `weekly_payout_total` вместо `imports`.
 
 **Преимущества:**
+
 - ✅ Исправляет проблему на уровне API
 - ✅ Не требует изменений на frontend
 - ✅ Более надежный источник данных (только готовые агрегированные данные)
 - ✅ Соответствует рекомендации Backend Team (см. документ `04-analytics-api-response-format-clarification.md`)
 
 **Реализация на Backend:**
+
 ```typescript
 // src/analytics/weekly-analytics.service.ts
 
@@ -71,6 +76,7 @@ async getAvailableWeeks(cabinetId: string): Promise<AvailableWeeksResponseDto> {
 ```
 
 **Альтернативный вариант (гибридный):**
+
 ```typescript
 // Использовать weekly_payout_total как основной источник, imports как fallback
 const weeksFromTotal = await this.prisma.weeklyPayoutTotal.findMany({
@@ -113,15 +119,18 @@ const weekStrings = Array.from(weekSet).sort().reverse();
 **Описание:** Создать новый endpoint `/v1/analytics/weekly/available-weeks-from-total`, который явно использует `weekly_payout_total`.
 
 **Преимущества:**
+
 - ✅ Не ломает существующий endpoint
 - ✅ Можно использовать параллельно со старым
 - ✅ Явно показывает источник данных
 
 **Недостатки:**
+
 - ❌ Дублирование функциональности
 - ❌ Требует изменений на frontend
 
 **Реализация:**
+
 ```typescript
 // src/analytics/weekly-analytics.controller.ts
 
@@ -143,43 +152,46 @@ async getAvailableWeeksFromTotal(
 **Описание:** На frontend попробовать запросить `finance-summary` для нескольких последних недель и определить, какие возвращают данные.
 
 **Преимущества:**
+
 - ✅ Не требует изменений на backend
 - ✅ Можно реализовать немедленно
 
 **Недостатки:**
+
 - ❌ Неэффективно (множественные запросы)
 - ❌ Неточное определение недель (может пропустить недели)
 - ❌ Увеличивает нагрузку на API
 - ❌ Не масштабируется (нельзя проверить все недели)
 
 **Пример реализации (НЕ РЕКОМЕНДУЕТСЯ):**
+
 ```typescript
 // ❌ НЕ РЕКОМЕНДУЕТСЯ - только как временный workaround
 async function getAvailableWeeksWorkaround(cabinetId: string): Promise<string[]> {
   const weeks: string[] = [];
   const currentDate = new Date();
-  
+
   // Попробовать последние 13 недель
   for (let i = 0; i < 13; i++) {
     const week = getISOWeek(currentDate);
     const weekString = `${currentDate.getFullYear()}-W${week.toString().padStart(2, '0')}`;
-    
+
     try {
       const response = await apiClient.get(
         `/v1/analytics/weekly/finance-summary?week=${weekString}`
       );
-      
+
       if (response.summary_total || response.summary_rus) {
         weeks.push(weekString);
       }
     } catch (error) {
       // Неделя не найдена, пропускаем
     }
-    
+
     // Перейти к предыдущей неделе
     currentDate.setDate(currentDate.getDate() - 7);
   }
-  
+
   return weeks;
 }
 ```
@@ -190,11 +202,11 @@ async function getAvailableWeeksWorkaround(cabinetId: string): Promise<string[]>
 
 ## 📊 Сравнение решений
 
-| Решение | Требует Backend | Требует Frontend | Эффективность | Рекомендация |
-|---------|----------------|------------------|---------------|--------------|
-| 1. Изменить `available-weeks` | ✅ Да | ❌ Нет | ⭐⭐⭐⭐⭐ | ✅ **РЕКОМЕНДУЕТСЯ** |
-| 2. Новый endpoint | ✅ Да | ✅ Да | ⭐⭐⭐⭐ | ⚠️ Альтернатива |
-| 3. Frontend workaround | ❌ Нет | ✅ Да | ⭐⭐ | ❌ Не рекомендуется |
+| Решение                       | Требует Backend | Требует Frontend | Эффективность | Рекомендация         |
+| ----------------------------- | --------------- | ---------------- | ------------- | -------------------- |
+| 1. Изменить `available-weeks` | ✅ Да           | ❌ Нет           | ⭐⭐⭐⭐⭐    | ✅ **РЕКОМЕНДУЕТСЯ** |
+| 2. Новый endpoint             | ✅ Да           | ✅ Да            | ⭐⭐⭐⭐      | ⚠️ Альтернатива      |
+| 3. Frontend workaround        | ❌ Нет          | ✅ Да            | ⭐⭐          | ❌ Не рекомендуется  |
 
 ---
 
@@ -203,6 +215,7 @@ async function getAvailableWeeksWorkaround(cabinetId: string): Promise<string[]>
 **✅ РЕКОМЕНДУЕТСЯ: Решение 1** - Изменить backend endpoint `available-weeks` для использования `weekly_payout_total`.
 
 **Обоснование:**
+
 1. Соответствует рекомендации Backend Team (см. документ `04-analytics-api-response-format-clarification.md`)
 2. Исправляет проблему на уровне источника данных
 3. Не требует изменений на frontend
@@ -210,6 +223,7 @@ async function getAvailableWeeksWorkaround(cabinetId: string): Promise<string[]>
 5. Показывает только недели с готовыми агрегированными данными
 
 **План действий:**
+
 1. Backend Team изменяет endpoint `/v1/analytics/weekly/available-weeks`
 2. Использует `weekly_payout_total` вместо `imports`
 3. Тестирует endpoint с реальными данными
@@ -236,6 +250,7 @@ async function getAvailableWeeksWorkaround(cabinetId: string): Promise<string[]>
    - Проверить формат ответа соответствует текущему
 
 **Backend Reference:**
+
 - Текущая реализация: `src/analytics/weekly-analytics.service.ts:100-141`
 - Таблица `weekly_payout_total`: `prisma/schema.prisma:337-366`
 - Таблица `imports`: `prisma/schema.prisma:106-156`
@@ -313,11 +328,13 @@ const totals = await this.prisma.weeklyPayoutTotal.findMany({
 ### ✅ Что изменилось после Story 2.7
 
 **До Story 2.7:**
+
 - ❌ Endpoint использовал таблицу `imports` (недели появлялись до завершения агрегации)
 - ❌ Race condition: неделя в списке, но данные еще не готовы → 404 ошибка
 - ❌ Нет гарантии доступности данных
 
 **После Story 2.7:**
+
 - ✅ Endpoint использует таблицу `weekly_payout_total` (только готовые данные)
 - ✅ **Гарантия**: Если неделя в списке → данные доступны через `finance-summary`
 - ✅ Нет race condition - недели появляются только после успешной агрегации
@@ -382,11 +399,11 @@ async function getFinanceSummaryForWeek(week: string) {
   // Предварительная проверка: неделя должна быть в available-weeks
   const availableWeeks = await getAvailableWeeks();
   const weekExists = availableWeeks.some(w => w.week === week);
-  
+
   if (!weekExists) {
     throw new Error(`Week ${week} is not available. Please select from available weeks.`);
   }
-  
+
   // ✅ Гарантия: finance-summary вернет данные (не будет 404)
   const summary = await apiClient.get(
     `/v1/analytics/weekly/finance-summary?week=${week}`,
@@ -397,7 +414,7 @@ async function getFinanceSummaryForWeek(week: string) {
       },
     }
   );
-  
+
   return summary;
 }
 ```
@@ -411,10 +428,10 @@ async function getFinanceSummaryForWeek(week: string) {
 async function handleImportComplete(importId: string) {
   // Ждем завершения агрегации (можно использовать WebSocket или polling)
   await waitForAggregation(importId);
-  
+
   // Обновляем список доступных недель
   const updatedWeeks = await getAvailableWeeks();
-  
+
   // Теперь новая неделя появится в списке (только после агрегации)
   return updatedWeeks;
 }
@@ -422,23 +439,23 @@ async function handleImportComplete(importId: string) {
 // Вспомогательная функция для ожидания агрегации
 async function waitForAggregation(importId: string, maxWaitTime = 60000) {
   const startTime = Date.now();
-  
+
   while (Date.now() - startTime < maxWaitTime) {
     // Проверяем статус задачи агрегации
     const taskStatus = await checkAggregationTaskStatus(importId);
-    
+
     if (taskStatus === 'completed') {
       return; // Агрегация завершена
     }
-    
+
     if (taskStatus === 'failed') {
       throw new Error('Aggregation failed');
     }
-    
+
     // Ждем перед следующей проверкой
     await new Promise(resolve => setTimeout(resolve, 2000));
   }
-  
+
   throw new Error('Aggregation timeout');
 }
 ```
@@ -454,7 +471,7 @@ async function getFinanceSummarySafely(week: string) {
     // 1. Проверяем, что неделя в списке доступных
     const availableWeeks = await getAvailableWeeks();
     const weekData = availableWeeks.find(w => w.week === week);
-    
+
     if (!weekData) {
       // Неделя не в списке - это нормально (данные еще не агрегированы)
       return {
@@ -462,7 +479,7 @@ async function getFinanceSummarySafely(week: string) {
         message: `Week ${week} is not yet available. Please wait for aggregation to complete.`,
       };
     }
-    
+
     // 2. Запрашиваем данные (гарантированно доступны после Story 2.7)
     const summary = await apiClient.get(
       `/v1/analytics/weekly/finance-summary?week=${week}`,
@@ -473,9 +490,9 @@ async function getFinanceSummarySafely(week: string) {
         },
       }
     );
-    
+
     return { data: summary };
-    
+
   } catch (error) {
     // После Story 2.7: 404 для недели из available-weeks НЕ должно происходить
     // Если это произошло - это баг, нужно логировать
@@ -486,7 +503,7 @@ async function getFinanceSummarySafely(week: string) {
       });
       // Отправить в систему мониторинга ошибок
     }
-    
+
     throw error;
   }
 }
@@ -497,6 +514,7 @@ async function getFinanceSummarySafely(week: string) {
 #### ✅ DO (Рекомендуется)
 
 1. **Использовать недели только из `available-weeks`:**
+
    ```typescript
    // ✅ DO: Всегда проверять список перед запросом данных
    const weeks = await getAvailableWeeks();
@@ -508,6 +526,7 @@ async function getFinanceSummarySafely(week: string) {
    ```
 
 2. **Обрабатывать пустой массив как нормальное состояние:**
+
    ```typescript
    // ✅ DO: Пустой массив = данные еще не агрегированы
    if (weeks.length === 0) {
@@ -516,6 +535,7 @@ async function getFinanceSummarySafely(week: string) {
    ```
 
 3. **Использовать `start_date` для UI:**
+
    ```typescript
    // ✅ DO: Использовать start_date для отображения в календаре/селекторе
    weeks.forEach(week => {
@@ -538,6 +558,7 @@ async function getFinanceSummarySafely(week: string) {
 #### ❌ DON'T (Не рекомендуется)
 
 1. **Не делать множественные запросы для проверки доступности:**
+
    ```typescript
    // ❌ DON'T: Не нужно проверять каждую неделю через finance-summary
    // После Story 2.7: если неделя в списке → данные доступны
@@ -551,6 +572,7 @@ async function getFinanceSummarySafely(week: string) {
    ```
 
 2. **Не игнорировать пустой массив:**
+
    ```typescript
    // ❌ DON'T: Не показывать ошибку при пустом массиве
    if (weeks.length === 0) {
@@ -668,16 +690,16 @@ class WeeklyAnalyticsService {
 // ✅ Рекомендуется: Логировать важные события
 async function getAvailableWeeksWithLogging() {
   const startTime = Date.now();
-  
+
   try {
     const weeks = await getAvailableWeeks();
-    
+
     console.log('Available weeks fetched:', {
       count: weeks.length,
       weeks: weeks.map(w => w.week),
       duration: Date.now() - startTime,
     });
-    
+
     return weeks;
   } catch (error) {
     console.error('Failed to fetch available weeks:', {
@@ -695,7 +717,7 @@ async function getAvailableWeeksWithLogging() {
 // ✅ Опционально: Проверка консистентности (для отладки)
 async function verifyDataConsistency() {
   const availableWeeks = await getAvailableWeeks();
-  
+
   // Проверяем, что все недели из списка имеют доступные данные
   const results = await Promise.allSettled(
     availableWeeks.map(async (week) => {
@@ -708,13 +730,13 @@ async function verifyDataConsistency() {
       }
     })
   );
-  
+
   const errors = results.filter(r => r.status === 'rejected' || r.value.status === 'error');
   if (errors.length > 0) {
     console.error('Data consistency check failed:', errors);
     // Отправить в систему мониторинга
   }
-  
+
   return results;
 }
 ```
@@ -749,4 +771,3 @@ async function verifyDataConsistency() {
 - **Resolution date**: 2025-11-22
 - **Summary**: The `available-weeks` endpoint was implemented as part of Epic 2 (Story 2.7). All weeks returned by the endpoint are guaranteed to have corresponding finance-summary data. Frontend should use only weeks from this list for finance-summary queries, eliminating the previous workaround of checking individual weeks.
 - **Remaining frontend action**: Consume the `available-weeks` endpoint as the single source of truth for week selection UI.
-

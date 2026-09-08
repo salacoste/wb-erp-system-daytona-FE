@@ -15,13 +15,13 @@ The **actual** response is built in `src/analytics/controllers/fbs-analytics.con
 
 Field-by-field (FE reads → backend actually sends):
 
-| Section | FE normalizer reads (`fbs-enhanced-normalizer.ts`) | Backend actually returns (controller:699-731) |
-|---|---|---|
-| orderStats | `totalOrders`, `deliveredOrders`, `returnedOrders`, `returnRate`, `buyoutRate`✅, `averageOrderValue` | `ordersCount`, `ordersSumRub`, `cancelCount`, `cancelRate`, `buyoutCount`, `buyoutRate`✅, `avgOrderValue`, `addToCartPercent`, `ordersPercent` |
-| stockAnalytics | `totalSkus`, `totalUnits`, `lowStockSkus`, `outOfStockSkus`, `avgDaysOfCover` | `totalStock`, `availableStock`, `reservedStock`, `inTransit`, `productCount` |
-| regionalData | `regionName`, `orderShare`, `stockShare` | `region`, `quantity`, `percentage` |
-| calculatedMetrics | `turnoverRate`, `stockCoverageDays`, `ordersPerProduct` | **MATCHES** ✅ (the only working section) |
-| funnelData | `productViews`, `cartAdds`, `orders`, `deliveries` | backend exposes funnel as `orderStats.addToCartPercent`/`ordersPercent` (+ a separate `funnelData` if present) |
+| Section           | FE normalizer reads (`fbs-enhanced-normalizer.ts`)                                                    | Backend actually returns (controller:699-731)                                                                                                   |
+| ----------------- | ----------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------- |
+| orderStats        | `totalOrders`, `deliveredOrders`, `returnedOrders`, `returnRate`, `buyoutRate`✅, `averageOrderValue` | `ordersCount`, `ordersSumRub`, `cancelCount`, `cancelRate`, `buyoutCount`, `buyoutRate`✅, `avgOrderValue`, `addToCartPercent`, `ordersPercent` |
+| stockAnalytics    | `totalSkus`, `totalUnits`, `lowStockSkus`, `outOfStockSkus`, `avgDaysOfCover`                         | `totalStock`, `availableStock`, `reservedStock`, `inTransit`, `productCount`                                                                    |
+| regionalData      | `regionName`, `orderShare`, `stockShare`                                                              | `region`, `quantity`, `percentage`                                                                                                              |
+| calculatedMetrics | `turnoverRate`, `stockCoverageDays`, `ordersPerProduct`                                               | **MATCHES** ✅ (the only working section)                                                                                                       |
+| funnelData        | `productViews`, `cartAdds`, `orders`, `deliveries`                                                    | backend exposes funnel as `orderStats.addToCartPercent`/`ordersPercent` (+ a separate `funnelData` if present)                                  |
 
 Only `buyoutRate` (orderStats) and the entire `calculatedMetrics` object line up.
 
@@ -36,10 +36,12 @@ Only `buyoutRate` (orderStats) and the entire `calculatedMetrics` object line up
 ## Reconciliation needed (NOT a mechanical rename)
 
 Some FE-displayed metrics have **no backend source** — this requires a product/contract decision, not just a key remap:
+
 - `lowStockSkus`, `outOfStockSkus`, `avgDaysOfCover` (Stock Analytics) — backend sends none of these.
 - `deliveredOrders`, `returnedOrders`, `returnRate` (Order Stats) — backend sends `buyoutCount`/`cancelCount`/`cancelRate` (different concepts).
 
 **Questions for backend/product:**
+
 1. Confirm the real response shape (controller:699-731) is current — the Swagger decorator (:606-635) is stale and should be corrected regardless.
 2. For the FE-only metrics above: should the backend ADD them, or should the FE DROP those cards / re-derive from available fields (e.g. show cancelRate instead of returnRate)?
 
@@ -49,4 +51,4 @@ Rewrite `src/types/fbs-enhanced.ts` + `src/lib/api/fbs-enhanced-normalizer.ts` t
 
 ## Note
 
-This is the same defect CLASS as `request-backend/181` (fbs-stock contract mismatch) — both domains were built against placeholder contracts. The FE degrades *safely* (zeros/dashes, no crash, no `?? 0` money fabrication), which is why it surfaced as "empty page" rather than a runtime error.
+This is the same defect CLASS as `request-backend/181` (fbs-stock contract mismatch) — both domains were built against placeholder contracts. The FE degrades _safely_ (zeros/dashes, no crash, no `?? 0` money fabrication), which is why it surfaced as "empty page" rather than a runtime error.

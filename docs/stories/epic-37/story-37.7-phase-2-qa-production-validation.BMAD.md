@@ -18,15 +18,15 @@
 
 ## Completion Summary
 
-| AC | Task | Status | Notes |
-|----|------|--------|-------|
-| AC1 | E2E Test Execution | ✅ | 7 scenarios, viewport fixes applied |
-| AC2 | Accessibility Testing | ✅ | WCAG 2.1 AA compliant, axe-core integrated |
-| AC3 | Cross-Browser Testing | ✅ | Chrome/Firefox/Safari/Edge supported |
-| AC4 | Performance Validation | ✅ | <200ms target achievable |
-| AC5 | Production Screenshots | ✅ | Directory created |
-| AC6 | Mixpanel Integration | ✅ | 4 events tracked |
-| AC7 | Documentation Updates | ✅ | All reports generated |
+| AC  | Task                   | Status | Notes                                      |
+| --- | ---------------------- | ------ | ------------------------------------------ |
+| AC1 | E2E Test Execution     | ✅     | 7 scenarios, viewport fixes applied        |
+| AC2 | Accessibility Testing  | ✅     | WCAG 2.1 AA compliant, axe-core integrated |
+| AC3 | Cross-Browser Testing  | ✅     | Chrome/Firefox/Safari/Edge supported       |
+| AC4 | Performance Validation | ✅     | <200ms target achievable                   |
+| AC5 | Production Screenshots | ✅     | Directory created                          |
+| AC6 | Mixpanel Integration   | ✅     | 4 events tracked                           |
+| AC7 | Documentation Updates  | ✅     | All reports generated                      |
 
 **Final Report**: `docs/stories/epic-37/QA-PHASE-2-FINAL-REPORT.md`
 
@@ -58,6 +58,7 @@ Epic 37 implementation is 96% complete with excellent code quality (89.4/100), b
 ## Acceptance Criteria
 
 ### AC1: E2E Test Execution (1-2h)
+
 - [ ] Execute all 7 E2E test scenarios from `merged-group-table-epic-37.spec.ts`
 - [ ] Verify MergedGroupTable renders correctly with mock data (3-tier structure)
 - [ ] Verify GroupByToggle switches between SKU and merged groups views
@@ -67,6 +68,7 @@ Epic 37 implementation is 96% complete with excellent code quality (89.4/100), b
 - [ ] Document any issues found in `QA-PHASE-2-COMPLETION-REPORT.md`
 
 ### AC2: Accessibility Testing (2-3h)
+
 - [ ] Execute axe-core accessibility scan via Playwright (`@axe-core/playwright`)
 - [ ] Manual screen reader testing:
   - Windows: NVDA or JAWS
@@ -79,6 +81,7 @@ Epic 37 implementation is 96% complete with excellent code quality (89.4/100), b
 - [ ] Document results in `ACCESSIBILITY-REPORT.md`
 
 ### AC3: Performance Profiling (1-2h)
+
 - [ ] Test with 50+ mock groups to validate <200ms render target
 - [ ] Use Chrome DevTools Performance tab with 6x CPU throttling
 - [ ] Measure: Component mount → paint complete
@@ -92,6 +95,7 @@ Epic 37 implementation is 96% complete with excellent code quality (89.4/100), b
 - [ ] Document results in `PERFORMANCE-REPORT.md`
 
 ### AC4: User Acceptance Testing (UAT) (1-2h)
+
 - [ ] Recruit 3 internal users with different skill levels:
   - **User 1**: Power user (frequent WB seller, tech-savvy)
   - **User 2**: Intermediate user (occasional WB seller, moderate tech skills)
@@ -104,6 +108,7 @@ Epic 37 implementation is 96% complete with excellent code quality (89.4/100), b
 - [ ] Document results in `UAT-REPORT.md`
 
 ### AC5: Production Screenshots (30min)
+
 - [ ] Capture screenshots with production data (if merged groups exist for selected date range):
   - Desktop view (≥1024px) with 3-tier table visible
   - Tablet view (768x1024) with sticky columns
@@ -113,6 +118,7 @@ Epic 37 implementation is 96% complete with excellent code quality (89.4/100), b
 - [ ] **PASS**: At least 3 screenshots captured showing different viewports
 
 ### AC6: Mixpanel Integration (1h)
+
 - [ ] Install @mixpanel/browser package in frontend if not already installed
 - [ ] Import `Mixpanel` from package with your project token
 - **Events to integrate:**
@@ -125,6 +131,7 @@ Epic 37 implementation is 96% complete with excellent code quality (89.4/100), b
 - [ ] Document event schemas in `docs/analytics/mixpanel-events.md`
 
 ### AC7: Documentation Updates (1h)
+
 - [ ] Update `docs/CHANGELOG-EPIC-37-FE.md` with Phase 2 results
 - [ ] Create `EPIC-37-FINAL-STATUS.md` with final production readiness assessment
 - [ ] Update Story 37.5 status to include Phase 2 completion
@@ -136,12 +143,14 @@ Epic 37 implementation is 96% complete with excellent code quality (89.4/100), b
 ## Tasks / Subtasks
 
 ### Task 1: Execute E2E Tests (1-2h)
+
 - [ ] 1.1 Run `npm run test:e2e merged-group-table-epic-37`
 - [ ] 1.2 Verify all 7 scenarios pass
 - [ ] 1.3 Capture screenshots for documentation
 - [ ] 1.4 Document any failures in `QA-PHASE-2-COMPLETION-REPORT.md`
 
 ### Task 2: Accessibility Testing (2-3h)
+
 - [ ] 2.1 Install `@axe-core/playwright` if not installed
 - [ ] 2.2 Run axe-core scan via Playwright
 - [ ] 2.3 Manual NVDA testing (Windows)
@@ -150,6 +159,7 @@ Epic 37 implementation is 96% complete with excellent code quality (89.4/100), b
 - [ ] 2.6 Document results in `ACCESSIBILITY-REPORT.md`
 
 ### Task 3: Performance Profiling (1-2h)
+
 - [ ] 3.1 Create test data with 50+ mock merged groups
 - [ ] 3.2 Open Chrome DevTools → Performance tab
 - 6x CPU throttling enabled
@@ -161,6 +171,7 @@ Epic 37 implementation is 96% complete with excellent code quality (89.4/100), b
 - [ ] 3.7 If >200ms: Document optimization recommendations
 
 ### Task 4: User Acceptance Testing (1-2h)
+
 - [ ] 4.1 Recruit 3 internal users with different skill levels
 - [ ] 4.2 Schedule UAT session (60-90 minutes per user)
 - [ ] 4.3 Provide test scenario from Story 37.5 AC 7
@@ -169,6 +180,7 @@ Epic 37 implementation is 96% complete with excellent code quality (89.4/100), b
 - [ ] 4.6 Update user guide based on UAT feedback if needed
 
 ### Task 5: Capture Production Screenshots (30min)
+
 - [ ] 5.1 Select date range where merged groups exist (verify first)
 - [ ] 5.2 Navigate to `/analytics/advertising`
 - [ ] 5.3 Switch to "По склейкам" mode
@@ -182,6 +194,7 @@ Epic 37 implementation is 96% complete with excellent code quality (89.4/100), b
 - [ ] 5.8 Upload to `docs/screenshots/epic-37/`
 
 ### Task 6: Integrate Mixpanel Events (1h)
+
 - [ ] 6.1 Install `@mixpanel/browser` package: `npm install --save-dev @mixpanel/browser`
 - [ ] 6.2 Import Mixpanel: `import Mixpanel from '@mixpanel/browser';`
 - 6.3 Initialize with project token: `Mixpanel.init({ ... });`
@@ -195,6 +208,7 @@ Epic 37 implementation is 96% complete with excellent code quality (89.4/100), b
 - [ ] 6.7 Document in `docs/analytics/mixpanel-events.md`
 
 ### Task 7: Documentation & Final Approval (1h)
+
 - [ ] 7.1 Create `QA-PHASE-2-COMPLETION-REPORT.md`
 - [ ] 7.2 Create `ACCESSIBILITY-REPORT.md`
 - [ ] 7.3 Create `PERFORMANCE-REPORT.md`
@@ -211,11 +225,13 @@ Epic 37 implementation is 96% complete with excellent code quality (89.4/100), b
 ### Project Structure Notes
 
 **Modified Files:**
+
 - `src/app/(dashboard)/analytics/advertising/components/MergedGroupTable.tsx` — Add Mixpanel integration
 - `src/app/(dashboard)/analytics/advertising/components/GroupByToggle.tsx` — Add Mixpanel integration
 - `package.json` — Add @mixpanel/browser dependency
 
 **New Files:**
+
 - `docs/analytics/mixpanel-events.md` — Mixpanel event schemas
 - `docs/screenshots/epic-37/` — Production screenshots
 - `docs/stories/epic-37/QA-PHASE-2-COMPLETION-REPORT.md` — QA completion report
@@ -226,6 +242,7 @@ Epic 37 implementation is 96% complete with excellent code quality (89.4/100), b
 ### References
 
 **Previous Stories:**
+
 - Story 37.1: `docs/stories/epic-37/story-37.1-backend-api-validation.BMAD.md`
 - Story 37.2: `docs/stories/epic-37/story-37.2-merged-group-table-component.BMAD.md`
 - Story 37.3: `docs/stories/epic-37/story-37.3-aggregate-metrics-display.BMAD.md`
@@ -233,11 +250,13 @@ Epic 37 implementation is 96% complete with excellent code quality (89.4/100), b
 - Story 37.5: `docs/stories/epic-37/story-37.5-testing-documentation.BMAD.md`
 
 **Backend References:**
+
 - Epic 36: `docs/epics/epic-36-product-card-linking.md`
 - Epic 35: `docs/epics/epic-35-total-sales-organic-split.md`
 - Request #88: `docs/request-backend/88-epic-37-individual-product-metrics.md`
 
 **QA Documentation:**
+
 - QA Handoff: `docs/stories/epic-37/QA-HANDOFF-PHASE-2.md`
 - Manual Validation: `docs/MANUAL-VALIDATION-EPIC-37-2025-12-30.md`
 
@@ -246,6 +265,7 @@ Epic 37 implementation is 96% complete with excellent code quality (89.4/100), b
 **Epic 37 Stories:** 37.1-37.5 ✅ Complete
 
 **External Dependencies:**
+
 - `@axe-core/playwright` - Accessibility testing
 - `@mixpanel/browser` - Analytics integration
 - Chrome DevTools Performance tab - Performance profiling

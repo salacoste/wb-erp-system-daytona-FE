@@ -24,10 +24,10 @@
 
 ### Обнаруженные категории
 
-| Категория | bonus_type_name Pattern | Записей | Сумма |
-|-----------|-------------------------|---------|-------|
-| **WB.Promotion** | `LIKE '%Продвижен%'` | 18 | **800,226₽** |
-| **Джем** | `LIKE '%Джем%'` | 4 | **72,162₽** |
+| Категория        | bonus_type_name Pattern | Записей | Сумма        |
+| ---------------- | ----------------------- | ------- | ------------ |
+| **WB.Promotion** | `LIKE '%Продвижен%'`    | 18      | **800,226₽** |
+| **Джем**         | `LIKE '%Джем%'`         | 4       | **72,162₽**  |
 
 ---
 
@@ -133,6 +133,7 @@ ORDER BY week DESC;
 **File**: `prisma/schema.prisma`
 
 Add to `WeeklyPayoutSummary` model:
+
 ```prisma
 // WB Services costs (Request #56)
 wbServicesCost      Decimal @default(0) @map("wb_services_cost") @db.Decimal(15, 2)
@@ -153,6 +154,7 @@ wbOtherServicesCost Decimal @default(0) @map("wb_other_services_cost") @db.Decim
 ### Phase 3: API Response DTOs
 
 **Files**:
+
 - `src/analytics/dto/response/finance-summary-response.dto.ts`
 - `src/analytics/dto/response/cabinet-summary-response.dto.ts`
 
@@ -239,6 +241,7 @@ wb_commission_adj:       2,153₽  (unchanged)
 ## Files to Modify
 
 ### Backend
+
 - `prisma/schema.prisma` - Add 4 new fields to WeeklyPayoutSummary + WeeklyPayoutTotal
 - `src/aggregation/weekly-payout-aggregator.service.ts` - Add SQL aggregation
 - `src/analytics/dto/response/finance-summary-response.dto.ts` - Add DTOs
@@ -246,11 +249,13 @@ wb_commission_adj:       2,153₽  (unchanged)
 - `src/analytics/weekly-analytics.service.ts` - Map new fields
 
 ### Documentation
+
 - `docs/API-PATHS-REFERENCE.md` - Document new fields
 - `docs/WB-DASHBOARD-METRICS.md` - Update metrics reference
 - `test-api/06-analytics-advanced.http` - Add test examples
 
 ### Frontend (after backend complete)
+
 - `src/hooks/useExpenses.ts` - Add "Сервисы WB" category
 - `src/components/custom/ExpenseChart.tsx` - New color/section
 - `src/components/custom/FinancialSummaryTable.tsx` - New row
@@ -284,10 +289,12 @@ wb_commission_adj:       2,153₽  (unchanged)
 ### Key Insight: Already in total_commission_rub ⚠️
 
 **НЕ ДОБАВЛЯТЬ в payout повторно**:
+
 - `reason='Продажа'` → `commission_other` = 67,064₽ (уже в total_commission_rub!)
 - `reason='Возврат'` → `commission_other` = 1,080₽ (уже в total_commission_rub!)
 
 **Добавить как новую видимость**:
+
 - `reason='Удержание'` + `corrections` = WB сервисы (Promotion, Джем, etc.)
 
 📖 **Full architecture**: `docs/architecture/adjustment-categorization-system.md`

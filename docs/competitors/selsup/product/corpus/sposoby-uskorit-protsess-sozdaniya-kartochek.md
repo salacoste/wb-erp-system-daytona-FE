@@ -13,7 +13,7 @@ chars: 5331
 
 В этой статье:
 
-- 
+-
 - <a href="#1-sposob---skopirovat-dannye-s-sushhestvuyushhej-kartochki" rel="nofollow">1 способ - скопировать данные с существующей карточки</a>
 - <a href="#2-sposob---skopirovat-dannye-s-kartochki-konkurenta" rel="nofollow">2 способ - скопировать данные с карточки конкурента</a>
 - <a href="#3-sposob---dobavit-parametry-dlya-kategorii" rel="nofollow">3 способ - добавить параметры для категории</a>

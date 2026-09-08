@@ -1,12 +1,12 @@
 # Story 70.1-FE: Fix summary_total vs summary_rus Fallback
 
-| Field | Value |
-|-------|-------|
-| Epic | 70-FE Validation Fixes |
-| Priority | P1 |
-| SP | 3 |
-| Status | 📋 Ready for Dev |
-| Group | A (D-1, D-2, D-4) |
+| Field    | Value                  |
+| -------- | ---------------------- |
+| Epic     | 70-FE Validation Fixes |
+| Priority | P1                     |
+| SP       | 3                      |
+| Status   | 📋 Ready for Dev       |
+| Group    | A (D-1, D-2, D-4)      |
 
 ## Description
 
@@ -21,11 +21,11 @@ Frontend использует паттерн fallback `summary_rus?.field ?? sum
 
 ### Affected Metrics (W08)
 
-| Metric | Screen (summary_total) | API summary_rus | Diff | D-ID |
-|--------|----------------------|-----------------|------|------|
-| Продажи gross | 194,314₽ | 180,202₽ | +14,112₽ | D-4 |
-| К перечислению | 75,950₽ | 68,127₽ | +7,823₽ | D-2 |
-| Логистика | 26,065₽ | 24,349₽ | +1,716₽ | D-1 |
+| Metric         | Screen (summary_total) | API summary_rus | Diff     | D-ID |
+| -------------- | ---------------------- | --------------- | -------- | ---- |
+| Продажи gross  | 194,314₽               | 180,202₽        | +14,112₽ | D-4  |
+| К перечислению | 75,950₽                | 68,127₽         | +7,823₽  | D-2  |
+| Логистика      | 26,065₽                | 24,349₽         | +1,716₽  | D-1  |
 
 ## Root Cause
 
@@ -56,6 +56,7 @@ Same pattern in `FinancialSummaryTable.tsx` and multi-week aggregation.
 ## Approach
 
 ### Option A: Always use summary_total (Recommended)
+
 Summary_total — consolidated view, включает все регионы. Это то что WB реально перечисляет.
 
 ```typescript
@@ -66,6 +67,7 @@ const summary = financialComparison.current?.summary_total
 ```
 
 ### Option B: Always use summary_rus (RUS-only)
+
 Если бизнес-требование — показывать только RUS без EAEU.
 
 ```typescript
@@ -75,12 +77,12 @@ const summary = financialComparison.current?.summary_rus ?? null
 
 ## Files to Modify
 
-| File | Change | Lines |
-|------|--------|-------|
-| `src/app/(dashboard)/dashboard/components/DashboardContent.tsx` | Unify source selection | ~145-200 |
-| `src/components/custom/FinancialSummaryTable.tsx` | Same pattern fix | ~290-320 |
-| `src/hooks-v1/financial/hooks.ts` | Multi-week source selection | ~307-313 |
-| `src/hooks-v1/financial/aggregation.ts` | Verify aggregation uses same source | ~45-70 |
+| File                                                            | Change                              | Lines    |
+| --------------------------------------------------------------- | ----------------------------------- | -------- |
+| `src/app/(dashboard)/dashboard/components/DashboardContent.tsx` | Unify source selection              | ~145-200 |
+| `src/components/custom/FinancialSummaryTable.tsx`               | Same pattern fix                    | ~290-320 |
+| `src/hooks-v1/financial/hooks.ts`                               | Multi-week source selection         | ~307-313 |
+| `src/hooks-v1/financial/aggregation.ts`                         | Verify aggregation uses same source | ~45-70   |
 
 ## Test Plan
 

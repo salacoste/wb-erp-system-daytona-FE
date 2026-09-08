@@ -57,16 +57,16 @@ The install creates a **real** `AutomationRule` via the same path as `POST /v1/a
 
 ## Template gallery (v1)
 
-| key | category | trigger → action | note |
-|---|---|---|---|
-| `low-stock-notify` | notify | STOCK_LEVEL (`<10`) → NOTIFY | SelSup «робот онлайн-остатков» parity |
-| `margin-below-notify` | notify | MARGIN_BELOW (`<10%`) → NOTIFY | margin-dumping early warning |
-| `price-gap-notify` | notify | PRICE_GAP (`>10%`) → NOTIFY | recommendation drift |
-| `ml-stockout-notify` | notify | ML_FORECAST (`stockout_risk>0.7`) → NOTIFY | ML-predicted OOS |
-| `low-stock-dry-run` | audit | STOCK_LEVEL (`<10`) → LOG_ONLY | tests the trigger w/o acting |
-| `slow-mover-notify` | notify | SLOW_MOVER (`recentBuyouts<3`) → NOTIFY | PR3 slow-mover early warning (неликвид) |
-| `slow-mover-markdown` | price | SLOW_MOVER (`recentBuyouts<2`) → WRITEBACK_PRICE (`-5%`) | PR3 auto-уценка, **enabledByDefault=false**, floor-protected (PR2), inert until `PRICE_WRITEBACK_ENABLED` |
-| `price-gap-markdown` | price | PRICE_GAP (`>15%`) → WRITEBACK_PRICE (`-5%`) | **enabledByDefault=false**, inert until `PRICE_WRITEBACK_ENABLED` |
+| key                   | category | trigger → action                                         | note                                                                                                      |
+| --------------------- | -------- | -------------------------------------------------------- | --------------------------------------------------------------------------------------------------------- |
+| `low-stock-notify`    | notify   | STOCK_LEVEL (`<10`) → NOTIFY                             | SelSup «робот онлайн-остатков» parity                                                                     |
+| `margin-below-notify` | notify   | MARGIN_BELOW (`<10%`) → NOTIFY                           | margin-dumping early warning                                                                              |
+| `price-gap-notify`    | notify   | PRICE_GAP (`>10%`) → NOTIFY                              | recommendation drift                                                                                      |
+| `ml-stockout-notify`  | notify   | ML_FORECAST (`stockout_risk>0.7`) → NOTIFY               | ML-predicted OOS                                                                                          |
+| `low-stock-dry-run`   | audit    | STOCK_LEVEL (`<10`) → LOG_ONLY                           | tests the trigger w/o acting                                                                              |
+| `slow-mover-notify`   | notify   | SLOW_MOVER (`recentBuyouts<3`) → NOTIFY                  | PR3 slow-mover early warning (неликвид)                                                                   |
+| `slow-mover-markdown` | price    | SLOW_MOVER (`recentBuyouts<2`) → WRITEBACK_PRICE (`-5%`) | PR3 auto-уценка, **enabledByDefault=false**, floor-protected (PR2), inert until `PRICE_WRITEBACK_ENABLED` |
+| `price-gap-markdown`  | price    | PRICE_GAP (`>15%`) → WRITEBACK_PRICE (`-5%`)             | **enabledByDefault=false**, inert until `PRICE_WRITEBACK_ENABLED`                                         |
 
 > **PR3 — `SLOW_MOVER` trigger:** fires when a SKU's trailing-14-day buyouts (`recentBuyoutCount`,
 > Σ `product_funnel_daily.buyout_count`) fall below the threshold — a slow seller / неликвид → markdown

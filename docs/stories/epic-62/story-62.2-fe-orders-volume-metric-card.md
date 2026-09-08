@@ -54,32 +54,32 @@ The card should clearly communicate that this is "potential" revenue, not actual
 
 ### Colors
 
-| Element | Color | Hex | Tailwind |
-|---------|-------|-----|----------|
-| Icon | Blue | `#3B82F6` | `text-blue-500` |
-| Main value | Blue | `#3B82F6` | `text-blue-500` |
-| Title | Gray | `#757575` | `text-muted-foreground` |
-| Positive comparison | Green | `#22C55E` | `bg-green-100 text-green-700` |
-| Negative comparison | Red | `#EF4444` | `bg-red-100 text-red-700` |
-| Subtitle | Light gray | `#9CA3AF` | `text-gray-400` |
+| Element             | Color      | Hex       | Tailwind                      |
+| ------------------- | ---------- | --------- | ----------------------------- |
+| Icon                | Blue       | `#3B82F6` | `text-blue-500`               |
+| Main value          | Blue       | `#3B82F6` | `text-blue-500`               |
+| Title               | Gray       | `#757575` | `text-muted-foreground`       |
+| Positive comparison | Green      | `#22C55E` | `bg-green-100 text-green-700` |
+| Negative comparison | Red        | `#EF4444` | `bg-red-100 text-red-700`     |
+| Subtitle            | Light gray | `#9CA3AF` | `text-gray-400`               |
 
 ### Typography
 
-| Element | Size | Weight | Line Height |
-|---------|------|--------|-------------|
-| Title | 14px | 500 (medium) | 1.5 |
-| Main value | 32px | 700 (bold) | 1.2 |
-| Comparison badge | 12px | 500 (medium) | 1.5 |
-| Subtitle | 12px | 400 (regular) | 1.5 |
+| Element          | Size | Weight        | Line Height |
+| ---------------- | ---- | ------------- | ----------- |
+| Title            | 14px | 500 (medium)  | 1.5         |
+| Main value       | 32px | 700 (bold)    | 1.2         |
+| Comparison badge | 12px | 500 (medium)  | 1.5         |
+| Subtitle         | 12px | 400 (regular) | 1.5         |
 
 ### Spacing
 
-| Element | Value | Tailwind |
-|---------|-------|----------|
-| Card padding | 16px | `p-4` |
-| Between title and value | 8px | `mt-2` |
-| Between value and comparison | 8px | `mt-2` |
-| Between comparison and subtitle | 4px | `mt-1` |
+| Element                         | Value | Tailwind |
+| ------------------------------- | ----- | -------- |
+| Card padding                    | 16px  | `p-4`    |
+| Between title and value         | 8px   | `mt-2`   |
+| Between value and comparison    | 8px   | `mt-2`   |
+| Between comparison and subtitle | 4px   | `mt-1`   |
 
 ---
 
@@ -139,23 +139,23 @@ function calculateComparison(
 
 ### Dependencies
 
-| Hook/Utility | Source | Purpose |
-|--------------|--------|---------|
-| `useOrdersVolume` | Story 61.3-FE | Orders volume data |
-| `formatCurrency` | `src/lib/formatters.ts` | Currency formatting |
-| `formatNumber` | `src/lib/formatters.ts` | Number formatting |
-| `ComparisonBadge` | Existing | Comparison indicator |
-| `Tooltip` | shadcn/ui | Info tooltip |
-| `ShoppingCart` | lucide-react | Card icon |
+| Hook/Utility      | Source                  | Purpose              |
+| ----------------- | ----------------------- | -------------------- |
+| `useOrdersVolume` | Story 61.3-FE           | Orders volume data   |
+| `formatCurrency`  | `src/lib/formatters.ts` | Currency formatting  |
+| `formatNumber`    | `src/lib/formatters.ts` | Number formatting    |
+| `ComparisonBadge` | Existing                | Comparison indicator |
+| `Tooltip`         | shadcn/ui               | Info tooltip         |
+| `ShoppingCart`    | lucide-react            | Card icon            |
 
 ---
 
 ## Files to Create/Modify
 
-| File | Action | Description |
-|------|--------|-------------|
+| File                                                   | Action | Description               |
+| ------------------------------------------------------ | ------ | ------------------------- |
 | `src/components/custom/dashboard/OrdersMetricCard.tsx` | CREATE | Orders volume metric card |
-| `src/components/custom/dashboard/index.ts` | MODIFY | Add export |
+| `src/components/custom/dashboard/index.ts`             | MODIFY | Add export                |
 
 ---
 

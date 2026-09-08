@@ -3,6 +3,7 @@
 ## 📋 Обзор
 
 При создании нового кабинета через `POST /v1/cabinets` backend автоматически:
+
 1. Создает кабинет
 2. Добавляет `cabinet_id` в массив `user.cabinet_ids` в базе данных
 3. **Генерирует новый JWT токен** с обновленным массивом `cabinet_ids`
@@ -17,6 +18,7 @@
 ### `POST /v1/cabinets`
 
 **Request:**
+
 ```typescript
 interface CreateCabinetRequest {
   name: string; // Название кабинета
@@ -24,6 +26,7 @@ interface CreateCabinetRequest {
 ```
 
 **Response (201 Created):**
+
 ```typescript
 interface CreateCabinetResponse {
   id: string;                    // UUID кабинета
@@ -42,6 +45,7 @@ interface CreateCabinetResponse {
 ```
 
 **Backend Reference:**
+
 - Controller: `src/cabinets/cabinets.controller.ts:44-62`
 - Service: `src/cabinets/cabinets.service.ts:40-223`
 - DTO: `src/cabinets/dto/cabinet-response.dto.ts:184-203`
@@ -268,6 +272,7 @@ if (!newPayload.cabinet_ids.includes(response.id)) {
 ### 1. Обновление токена обязательно
 
 **❌ НЕПРАВИЛЬНО:**
+
 ```typescript
 // Создали кабинет, но забыли обновить токен
 const response = await createCabinet({ name: 'My Cabinet' }, token);
@@ -275,6 +280,7 @@ const response = await createCabinet({ name: 'My Cabinet' }, token);
 ```
 
 **✅ ПРАВИЛЬНО:**
+
 ```typescript
 // Создали кабинет И обновили токен
 const response = await createCabinet({ name: 'My Cabinet' }, token);
@@ -286,6 +292,7 @@ refreshToken(response.newToken); // ⚠️ ОБЯЗАТЕЛЬНО!
 Не используйте асинхронное обновление токена, иначе последующие запросы могут использовать старый токен:
 
 **❌ НЕПРАВИЛЬНО:**
+
 ```typescript
 createCabinet(data, token).then((response) => {
   // Асинхронное обновление - может быть race condition
@@ -294,6 +301,7 @@ createCabinet(data, token).then((response) => {
 ```
 
 **✅ ПРАВИЛЬНО:**
+
 ```typescript
 const response = await createCabinet(data, token);
 refreshToken(response.newToken); // Синхронное обновление
@@ -306,7 +314,7 @@ refreshToken(response.newToken); // Синхронное обновление
 ```typescript
 try {
   const response = await createCabinet(data, token);
-  
+
   try {
     refreshToken(response.newToken);
   } catch (tokenError) {
@@ -406,4 +414,3 @@ describe('handleCreateCabinet', () => {
 - **Resolution date**: 2025-01-12
 - **Summary**: JWT token refresh on cabinet creation is fully implemented. The `POST /v1/cabinets` endpoint returns a new JWT token via the `newToken` field in the response. Frontend must call `refreshToken(response.newToken)` synchronously after successful creation.
 - **Remaining frontend action**: Implement the `createCabinet()` API function with synchronous token refresh and error handling as described in the checklist.
-

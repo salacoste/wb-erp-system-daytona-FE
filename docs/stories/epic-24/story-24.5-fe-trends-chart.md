@@ -16,27 +16,32 @@
 ## Acceptance Criteria
 
 ### AC1: Chart Display
+
 - [ ] Line/Area chart showing storage cost by week
 - [ ] X-axis: ISO weeks (W44, W45, W46, W47)
 - [ ] Y-axis: Storage cost in ₽
 - [ ] Hover tooltip with exact values
 
 ### AC2: Summary Stats
+
 - [ ] Show min, max, avg values
 - [ ] Show trend percentage (increase/decrease)
 - [ ] Color code trend: green (decrease), red (increase)
 
 ### AC3: Interactivity
+
 - [ ] Hover shows week + value tooltip
 - [ ] ~~Click week → filter tables~~ - **DEFERRED** (UX Decision Q11)
 - [ ] Smooth line with area fill
 
 ### AC4: Single Product Mode
+
 - [ ] Support filtering by nm_id
 - [ ] When nm_id provided, show that product's trend
 - [ ] Title changes: "Динамика хранения: {product_name}"
 
 ### AC5: Null Data Handling (UX Decision Q12)
+
 - [ ] Show **gaps** in chart for weeks with no data (don't interpolate)
 - [ ] Visual indicator for null data points
 - [ ] Tooltip explains: "Нет данных за эту неделю"
@@ -44,11 +49,13 @@
 ## Tasks / Subtasks
 
 ### Phase 1: Component Setup
+
 - [ ] Create `src/app/(dashboard)/analytics/storage/components/StorageTrendsChart.tsx`
 - [ ] Define component props interface
 - [ ] Set up data fetching with `useStorageTrends` hook
 
 ### Phase 2: Chart Implementation
+
 - [ ] Configure Recharts AreaChart
 - [ ] Set up X-axis with week formatter
 - [ ] Set up Y-axis with currency formatter
@@ -56,27 +63,32 @@
 - [ ] Handle null data points (gaps)
 
 ### Phase 3: Summary Stats
+
 - [ ] Create summary stats bar above chart
 - [ ] Display min, max, avg values
 - [ ] Display trend percentage with color
 - [ ] Add trend icon (TrendingUp/TrendingDown)
 
 ### Phase 4: Tooltip
+
 - [ ] Create custom tooltip component
 - [ ] Show week, storage cost, volume
 - [ ] Handle null values in tooltip
 
 ### Phase 5: Single Product Mode
+
 - [ ] Add nmId prop support
 - [ ] Update title when product filter active
 - [ ] Fetch product-specific trends
 
 ### Phase 6: Loading & Error States
+
 - [ ] Implement loading skeleton
 - [ ] Implement error state
 - [ ] Implement empty state
 
 ### Phase 7: Testing
+
 - [ ] Test chart renders with mock data
 - [ ] Test null data handling (gaps)
 - [ ] Test tooltip interactions
@@ -371,10 +383,10 @@ src/
 
 ### UX Decisions Applied
 
-| Question | Decision | Rationale |
-|----------|----------|-----------|
-| Q11: Click week → filter | DEFERRED | Adds complexity, not needed for MVP |
-| Q12: Null data | Show gaps (don't interpolate) | Data integrity, honest visualization |
+| Question                 | Decision                      | Rationale                            |
+| ------------------------ | ----------------------------- | ------------------------------------ |
+| Q11: Click week → filter | DEFERRED                      | Adds complexity, not needed for MVP  |
+| Q12: Null data           | Show gaps (don't interpolate) | Data integrity, honest visualization |
 
 ### Week Formatters
 
@@ -405,6 +417,7 @@ Per UX recommendations, using purple for storage costs to differentiate from exi
 ## Testing
 
 ### Framework & Location
+
 - **Framework**: Vitest + React Testing Library
 - **Test Location**: `src/app/(dashboard)/analytics/storage/components/__tests__/StorageTrendsChart.test.tsx`
 
@@ -425,6 +438,7 @@ Per UX recommendations, using purple for storage costs to differentiate from exi
 - [ ] Error state displays with retry button
 
 ### Coverage Target
+
 - Component: >80%
 - Helper components: >90%
 
@@ -460,11 +474,11 @@ Per UX recommendations, using purple for storage costs to differentiate from exi
 
 ## Change Log
 
-| Date | Author | Change |
-|------|--------|--------|
-| 2025-11-29 | PO (Sarah) | Initial draft |
+| Date       | Author            | Change                                                       |
+| ---------- | ----------------- | ------------------------------------------------------------ |
+| 2025-11-29 | PO (Sarah)        | Initial draft                                                |
 | 2025-11-29 | UX Expert (Sally) | Updated: deferred click interaction, show gaps for null data |
-| 2025-11-29 | UX Expert (Sally) | Added Tasks, Dev Notes, Testing sections with code examples |
+| 2025-11-29 | UX Expert (Sally) | Added Tasks, Dev Notes, Testing sections with code examples  |
 
 ---
 
@@ -494,11 +508,13 @@ Notes:
 ## QA Results
 
 ### Review Date: 2025-11-29
+
 ### Reviewed By: Quinn (Test Architect)
 
 **Gate: PASS** | **Score: 92/100** → `docs/qa/gates/24.5-fe-trends-chart.yml`
 
 **Strengths:**
+
 - Purple color scheme (#7C4DFF) for storage differentiation
 - Summary stats (min, max, avg) displayed
 - TrendBadge: red for increase (bad), green for decrease (good)

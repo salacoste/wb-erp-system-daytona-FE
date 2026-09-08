@@ -13,6 +13,7 @@
 Epic 24 добавляет **аналитику расходов на хранение по артикулам** — новую функциональность для анализа затрат на платное хранение товаров на складах Wildberries. Раньше система показывала только **агрегированные** расходы на хранение за неделю. Теперь продавцы могут видеть **по каждому товару** сколько стоит его хранение.
 
 **Ключевые возможности**:
+
 - 📊 Затраты на хранение **по каждому SKU**
 - 📈 Топ-N товаров по стоимости хранения
 - 📉 Тренды расходов на хранение по неделям
@@ -28,6 +29,7 @@ Epic 24 добавляет **аналитику расходов на хране
 **Назначение**: Получить стоимость хранения, агрегированную по SKU за период.
 
 **Авторизация**:
+
 ```http
 Authorization: Bearer <jwt_token>
 X-Cabinet-Id: <cabinet_uuid>
@@ -37,19 +39,20 @@ X-Cabinet-Id: <cabinet_uuid>
 
 **Query Parameters**:
 
-| Параметр | Тип | Обязат. | Описание |
-|----------|-----|---------|----------|
-| `weekStart` | string | ✅ | Начало периода (ISO week: `YYYY-Www`) |
-| `weekEnd` | string | ✅ | Конец периода (ISO week: `YYYY-Www`) |
-| `nm_id` | string | ❌ | Фильтр по артикулу WB |
-| `brand` | string | ❌ | Фильтр по бренду |
-| `warehouse` | string | ❌ | Фильтр по складу |
-| `sort_by` | string | ❌ | Сортировка: `storage_cost` (default), `volume`, `nm_id`, `days_stored` |
-| `sort_order` | string | ❌ | Порядок: `asc`, `desc` (default) |
-| `limit` | number | ❌ | Записей на страницу (default: 50, max: 200) |
-| `cursor` | string | ❌ | Курсор пагинации |
+| Параметр     | Тип    | Обязат. | Описание                                                               |
+| ------------ | ------ | ------- | ---------------------------------------------------------------------- |
+| `weekStart`  | string | ✅      | Начало периода (ISO week: `YYYY-Www`)                                  |
+| `weekEnd`    | string | ✅      | Конец периода (ISO week: `YYYY-Www`)                                   |
+| `nm_id`      | string | ❌      | Фильтр по артикулу WB                                                  |
+| `brand`      | string | ❌      | Фильтр по бренду                                                       |
+| `warehouse`  | string | ❌      | Фильтр по складу                                                       |
+| `sort_by`    | string | ❌      | Сортировка: `storage_cost` (default), `volume`, `nm_id`, `days_stored` |
+| `sort_order` | string | ❌      | Порядок: `asc`, `desc` (default)                                       |
+| `limit`      | number | ❌      | Записей на страницу (default: 50, max: 200)                            |
+| `cursor`     | string | ❌      | Курсор пагинации                                                       |
 
 **Пример запроса**:
+
 ```http
 GET /v1/analytics/storage/by-sku?weekStart=2025-W44&weekEnd=2025-W47&sort_by=storage_cost&limit=20
 Authorization: Bearer <token>
@@ -57,6 +60,7 @@ X-Cabinet-Id: abc123-def456
 ```
 
 **Пример ответа**:
+
 ```json
 {
   "period": {
@@ -103,26 +107,26 @@ X-Cabinet-Id: abc123-def456
 
 **Поля ответа**:
 
-| Поле | Тип | Описание |
-|------|-----|----------|
-| `period.from` | string | Начальная неделя |
-| `period.to` | string | Конечная неделя |
-| `period.days_count` | number | Количество дней в периоде |
-| `data[].nm_id` | string | Артикул WB |
-| `data[].vendor_code` | string \| null | Артикул продавца |
-| `data[].product_name` | string \| null | Название товара |
-| `data[].brand` | string \| null | Бренд |
-| `data[].storage_cost_total` | number | Общая стоимость хранения за период (₽) |
-| `data[].storage_cost_avg_daily` | number | Средняя стоимость хранения в день (₽) |
-| `data[].volume_avg` | number \| null | Средний объём товара (литры) |
-| `data[].warehouses` | string[] | Список складов |
-| `data[].days_stored` | number | Количество дней хранения |
-| `summary.total_storage_cost` | number | Общие расходы на хранение (₽) |
-| `summary.products_count` | number | Количество SKU |
-| `summary.avg_cost_per_product` | number | Средние расходы на один SKU (₽) |
-| `pagination.total` | number | Общее количество записей |
-| `pagination.cursor` | string \| null | Курсор для следующей страницы |
-| `pagination.has_more` | boolean | Есть ли ещё страницы |
+| Поле                            | Тип            | Описание                               |
+| ------------------------------- | -------------- | -------------------------------------- |
+| `period.from`                   | string         | Начальная неделя                       |
+| `period.to`                     | string         | Конечная неделя                        |
+| `period.days_count`             | number         | Количество дней в периоде              |
+| `data[].nm_id`                  | string         | Артикул WB                             |
+| `data[].vendor_code`            | string \| null | Артикул продавца                       |
+| `data[].product_name`           | string \| null | Название товара                        |
+| `data[].brand`                  | string \| null | Бренд                                  |
+| `data[].storage_cost_total`     | number         | Общая стоимость хранения за период (₽) |
+| `data[].storage_cost_avg_daily` | number         | Средняя стоимость хранения в день (₽)  |
+| `data[].volume_avg`             | number \| null | Средний объём товара (литры)           |
+| `data[].warehouses`             | string[]       | Список складов                         |
+| `data[].days_stored`            | number         | Количество дней хранения               |
+| `summary.total_storage_cost`    | number         | Общие расходы на хранение (₽)          |
+| `summary.products_count`        | number         | Количество SKU                         |
+| `summary.avg_cost_per_product`  | number         | Средние расходы на один SKU (₽)        |
+| `pagination.total`              | number         | Общее количество записей               |
+| `pagination.cursor`             | string \| null | Курсор для следующей страницы          |
+| `pagination.has_more`           | boolean        | Есть ли ещё страницы                   |
 
 ---
 
@@ -132,14 +136,15 @@ X-Cabinet-Id: abc123-def456
 
 **Query Parameters**:
 
-| Параметр | Тип | Обязат. | Описание |
-|----------|-----|---------|----------|
-| `weekStart` | string | ✅ | Начало периода |
-| `weekEnd` | string | ✅ | Конец периода |
-| `limit` | number | ❌ | Количество (default: 10, max: 100) |
-| `include_revenue` | boolean | ❌ | Включить данные о выручке для расчёта ratio |
+| Параметр          | Тип     | Обязат. | Описание                                    |
+| ----------------- | ------- | ------- | ------------------------------------------- |
+| `weekStart`       | string  | ✅      | Начало периода                              |
+| `weekEnd`         | string  | ✅      | Конец периода                               |
+| `limit`           | number  | ❌      | Количество (default: 10, max: 100)          |
+| `include_revenue` | boolean | ❌      | Включить данные о выручке для расчёта ratio |
 
 **Пример запроса**:
+
 ```http
 GET /v1/analytics/storage/top-consumers?weekStart=2025-W47&weekEnd=2025-W47&limit=5&include_revenue=true
 Authorization: Bearer <token>
@@ -147,6 +152,7 @@ X-Cabinet-Id: abc123-def456
 ```
 
 **Пример ответа**:
+
 ```json
 {
   "period": {
@@ -186,17 +192,18 @@ X-Cabinet-Id: abc123-def456
 
 **Поля ответа**:
 
-| Поле | Тип | Описание |
-|------|-----|----------|
-| `top_consumers[].rank` | number | Позиция в рейтинге (1 = самый дорогой) |
-| `top_consumers[].storage_cost` | number | Стоимость хранения за период (₽) |
-| `top_consumers[].percent_of_total` | number | % от общих расходов на хранение |
-| `top_consumers[].volume` | number \| null | Средний объём (л) |
-| `top_consumers[].revenue_net` | number | Выручка за период (если `include_revenue=true`) |
-| `top_consumers[].storage_to_revenue_ratio` | number \| null | Отношение хранение/выручка в % |
-| `total_storage_cost` | number | Общие расходы на хранение (₽) |
+| Поле                                       | Тип            | Описание                                        |
+| ------------------------------------------ | -------------- | ----------------------------------------------- |
+| `top_consumers[].rank`                     | number         | Позиция в рейтинге (1 = самый дорогой)          |
+| `top_consumers[].storage_cost`             | number         | Стоимость хранения за период (₽)                |
+| `top_consumers[].percent_of_total`         | number         | % от общих расходов на хранение                 |
+| `top_consumers[].volume`                   | number \| null | Средний объём (л)                               |
+| `top_consumers[].revenue_net`              | number         | Выручка за период (если `include_revenue=true`) |
+| `top_consumers[].storage_to_revenue_ratio` | number \| null | Отношение хранение/выручка в %                  |
+| `total_storage_cost`                       | number         | Общие расходы на хранение (₽)                   |
 
 **Use Cases**:
+
 1. **Выявление "дорогих" SKU** — товары с высокими расходами на хранение
 2. **Оптимизация складских запасов** — анализ `storage_to_revenue_ratio`
 3. **Принятие решений по ассортименту** — какие товары "съедают" бюджет
@@ -209,15 +216,16 @@ X-Cabinet-Id: abc123-def456
 
 **Query Parameters**:
 
-| Параметр | Тип | Обязат. | Описание |
-|----------|-----|---------|----------|
-| `weekStart` | string | ✅ | Начало периода |
-| `weekEnd` | string | ✅ | Конец периода |
-| `nm_id` | string | ❌ | Конкретный SKU (без = все товары кабинета) |
-| `metrics` | string | ❌ | Метрики: `storage_cost,volume` (default: все) |
-| `include_summary` | boolean | ❌ | Включить статистику (default: true) |
+| Параметр          | Тип     | Обязат. | Описание                                      |
+| ----------------- | ------- | ------- | --------------------------------------------- |
+| `weekStart`       | string  | ✅      | Начало периода                                |
+| `weekEnd`         | string  | ✅      | Конец периода                                 |
+| `nm_id`           | string  | ❌      | Конкретный SKU (без = все товары кабинета)    |
+| `metrics`         | string  | ❌      | Метрики: `storage_cost,volume` (default: все) |
+| `include_summary` | boolean | ❌      | Включить статистику (default: true)           |
 
 **Пример запроса**:
+
 ```http
 GET /v1/analytics/storage/trends?weekStart=2025-W40&weekEnd=2025-W47&nm_id=12345678
 Authorization: Bearer <token>
@@ -225,6 +233,7 @@ X-Cabinet-Id: abc123-def456
 ```
 
 **Пример ответа**:
+
 ```json
 {
   "period": {
@@ -262,16 +271,16 @@ X-Cabinet-Id: abc123-def456
 
 **Поля ответа**:
 
-| Поле | Тип | Описание |
-|------|-----|----------|
-| `nm_id` | string \| null | SKU (null если запрос по всем товарам) |
-| `data[].week` | string | ISO week |
-| `data[].storage_cost` | number \| null | Стоимость хранения за неделю |
-| `data[].volume` | number \| null | Средний объём |
-| `summary.storage_cost.min` | number | Минимум за период |
-| `summary.storage_cost.max` | number | Максимум за период |
-| `summary.storage_cost.avg` | number | Среднее за период |
-| `summary.storage_cost.trend` | number | Изменение в % (последняя неделя vs первая) |
+| Поле                         | Тип            | Описание                                   |
+| ---------------------------- | -------------- | ------------------------------------------ |
+| `nm_id`                      | string \| null | SKU (null если запрос по всем товарам)     |
+| `data[].week`                | string         | ISO week                                   |
+| `data[].storage_cost`        | number \| null | Стоимость хранения за неделю               |
+| `data[].volume`              | number \| null | Средний объём                              |
+| `summary.storage_cost.min`   | number         | Минимум за период                          |
+| `summary.storage_cost.max`   | number         | Максимум за период                         |
+| `summary.storage_cost.avg`   | number         | Среднее за период                          |
+| `summary.storage_cost.trend` | number         | Изменение в % (последняя неделя vs первая) |
 
 ---
 
@@ -282,6 +291,7 @@ X-Cabinet-Id: abc123-def456
 **Назначение**: Получить список товаров с данными о затратах на хранение в одном запросе.
 
 **Авторизация**:
+
 ```http
 Authorization: Bearer <jwt_token>
 X-Cabinet-Id: <cabinet_uuid>
@@ -291,14 +301,15 @@ X-Cabinet-Id: <cabinet_uuid>
 
 **Query Parameters**:
 
-| Параметр | Тип | Обязат. | Описание |
-|----------|-----|---------|----------|
-| `include_storage` | boolean | ❌ | Включить данные о хранении (default: false) |
-| `include_cogs` | boolean | ❌ | Включить данные о марже (можно комбинировать) |
-| `limit` | number | ❌ | Записей на страницу (default: 25, max: 100) |
-| `cursor` | string | ❌ | Курсор пагинации |
+| Параметр          | Тип     | Обязат. | Описание                                      |
+| ----------------- | ------- | ------- | --------------------------------------------- |
+| `include_storage` | boolean | ❌      | Включить данные о хранении (default: false)   |
+| `include_cogs`    | boolean | ❌      | Включить данные о марже (можно комбинировать) |
+| `limit`           | number  | ❌      | Записей на страницу (default: 25, max: 100)   |
+| `cursor`          | string  | ❌      | Курсор пагинации                              |
 
 **Примеры запросов**:
+
 ```http
 # Только данные о хранении (+50ms)
 GET /v1/products?include_storage=true&limit=25
@@ -311,6 +322,7 @@ X-Cabinet-Id: abc123-def456
 ```
 
 **Пример ответа**:
+
 ```json
 {
   "products": [
@@ -346,17 +358,19 @@ X-Cabinet-Id: abc123-def456
 
 **Storage Fields** (когда `include_storage=true`):
 
-| Поле | Тип | Описание |
-|------|-----|----------|
-| `storage_cost_daily_avg` | number \| null | Среднедневная стоимость хранения (₽/день) |
-| `storage_cost_weekly` | number \| null | Общая стоимость за последнюю завершённую неделю (₽) |
-| `storage_period` | string \| null | ISO-неделя для данных о хранении (напр. "2025-W47") |
+| Поле                     | Тип            | Описание                                            |
+| ------------------------ | -------------- | --------------------------------------------------- |
+| `storage_cost_daily_avg` | number \| null | Среднедневная стоимость хранения (₽/день)           |
+| `storage_cost_weekly`    | number \| null | Общая стоимость за последнюю завершённую неделю (₽) |
+| `storage_period`         | string \| null | ISO-неделя для данных о хранении (напр. "2025-W47") |
 
 **Null значения**:
+
 - Возвращает `null` если нет данных о хранении для товара за период
 - Грациозная деградация — если запрос к `paid_storage_daily` упадёт, поля будут `null`, но остальной ответ вернётся
 
 **Performance**:
+
 - `include_storage=true` только: +50ms (batch query)
 - `include_cogs=true` + `include_storage=true`: ~350ms total
 
@@ -364,6 +378,7 @@ X-Cabinet-Id: abc123-def456
 Используйте `include_storage=true` для отображения затрат на хранение в таблице товаров. Комбинируйте с `include_cogs=true` для полной картины прибыльности.
 
 **TypeScript Type**:
+
 ```typescript
 // Расширение ProductListItem
 interface ProductWithStorage {
@@ -418,12 +433,12 @@ const data = await sdk.reports.getTasksDownload3(taskId);
 
 ### Возможные статусы задачи
 
-| Статус | Описание | Действие |
-|--------|----------|----------|
-| `done` | Задача выполнена | Скачать данные |
-| `canceled` | Задача отменена | Ошибка |
-| `purged` | Данные удалены | Ошибка |
-| (другие) | В обработке | Продолжить поллинг |
+| Статус     | Описание         | Действие           |
+| ---------- | ---------------- | ------------------ |
+| `done`     | Задача выполнена | Скачать данные     |
+| `canceled` | Задача отменена  | Ошибка             |
+| `purged`   | Данные удалены   | Ошибка             |
+| (другие)   | В обработке      | Продолжить поллинг |
 
 📖 **Подробный гайд**: [`docs/STORAGE-API-GUIDE.md`](../../../docs/STORAGE-API-GUIDE.md)
 📖 **Документация импорта**: [`51-paid-storage-import-methods.md`](./51-paid-storage-import-methods.md)
@@ -437,6 +452,7 @@ const data = await sdk.reports.getTasksDownload3(taskId);
 **Назначение**: Запустить ручной импорт данных о платном хранении.
 
 **Авторизация**:
+
 ```http
 Authorization: Bearer <jwt_token>
 X-Cabinet-Id: <cabinet_uuid>
@@ -445,6 +461,7 @@ X-Cabinet-Id: <cabinet_uuid>
 **Роли**: Manager, Owner, Admin
 
 **Request Body**:
+
 ```json
 {
   "dateFrom": "2025-11-18",
@@ -453,12 +470,14 @@ X-Cabinet-Id: <cabinet_uuid>
 ```
 
 **Ограничения**:
+
 - Максимальный диапазон: **8 дней** (ограничение WB API)
 - Для периодов >8 дней: автоматическое разбиение на chunks с **65s задержкой** между запросами
 - Формат дат: `YYYY-MM-DD`
 - **Rate limit**: 1 req/min для создания report task (SDK compliance, 2025-12-14)
 
 **Пример ответа (202 Accepted)**:
+
 ```json
 {
   "import_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
@@ -477,6 +496,7 @@ X-Cabinet-Id: <cabinet_uuid>
 **Назначение**: Проверить статус импорта.
 
 **Пример ответа**:
+
 ```json
 {
   "import_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
@@ -491,12 +511,13 @@ X-Cabinet-Id: <cabinet_uuid>
 ```
 
 **Статусы импорта**:
-| Статус | Описание |
-|--------|----------|
-| `pending` | Задача в очереди |
-| `processing` | Импорт выполняется |
-| `completed` | Успешно завершён |
-| `failed` | Ошибка (см. `error` поле) |
+
+| Статус       | Описание                  |
+| ------------ | ------------------------- |
+| `pending`    | Задача в очереди          |
+| `processing` | Импорт выполняется        |
+| `completed`  | Успешно завершён          |
+| `failed`     | Ошибка (см. `error` поле) |
 
 ---
 
@@ -507,6 +528,7 @@ X-Cabinet-Id: <cabinet_uuid>
 **Расписание**: Каждый **вторник в 08:00 MSK**
 
 **Почему вторник?**:
+
 - WB обновляет данные о хранении в понедельник
 - Вторник 08:00 — безопасный момент когда данные уже готовы
 
@@ -515,6 +537,7 @@ X-Cabinet-Id: <cabinet_uuid>
 ### Schedules API
 
 **GET /v1/schedules** — просмотр расписаний
+
 ```http
 GET /v1/schedules?task_type=paid_storage_import
 Authorization: Bearer <token>
@@ -522,6 +545,7 @@ X-Cabinet-Id: <cabinet_uuid>
 ```
 
 **Ответ**:
+
 ```json
 {
   "schedules": [
@@ -540,6 +564,7 @@ X-Cabinet-Id: <cabinet_uuid>
 ```
 
 **PUT /v1/schedules/:id** — изменить расписание
+
 ```json
 {
   "cron_expression": "0 6 * * *",
@@ -548,6 +573,7 @@ X-Cabinet-Id: <cabinet_uuid>
 ```
 
 **POST /v1/schedules/:id/trigger** — ручной запуск
+
 ```http
 POST /v1/schedules/{schedule_id}/trigger
 Authorization: Bearer <token>
@@ -603,6 +629,7 @@ X-Cabinet-Id: <cabinet_uuid>
 ### 2. Интеграция с существующими компонентами
 
 **Добавить в карточку товара** (используя `include_storage=true`):
+
 ```
 ┌─────────────────────────────────────────┐
 │ Товар: Футболка хлопок (12345678)       │
@@ -614,6 +641,7 @@ X-Cabinet-Id: <cabinet_uuid>
 ```
 
 **Добавить в таблицу товаров** (колонка "Хранение"):
+
 ```
 ┌──────────┬───────────────┬────────┬───────────────┐
 │ Артикул  │ Название      │ Маржа  │ 📦 Хранение   │ ← Story 24.5
@@ -759,22 +787,23 @@ export function useStorageTrends(weekStart: string, weekEnd: string, options?: {
 
 ### Week Range Validation
 
-| Правило | Значение |
-|---------|----------|
-| `weekStart` ≤ `weekEnd` | Обязательно |
-| Макс. диапазон | 52 недели |
-| Формат | `YYYY-Www` (ISO 8601) |
+| Правило                 | Значение              |
+| ----------------------- | --------------------- |
+| `weekStart` ≤ `weekEnd` | Обязательно           |
+| Макс. диапазон          | 52 недели             |
+| Формат                  | `YYYY-Www` (ISO 8601) |
 
 ### Error Responses
 
-| HTTP | Код | Описание |
-|------|-----|----------|
-| 400 | `VALIDATION_ERROR` | Неверные параметры запроса |
-| 401 | `UNAUTHORIZED` | Отсутствует/невалидный JWT |
-| 403 | `FORBIDDEN` | Нет доступа к кабинету |
-| 404 | `NOT_FOUND` | Нет данных за период |
+| HTTP | Код                | Описание                   |
+| ---- | ------------------ | -------------------------- |
+| 400  | `VALIDATION_ERROR` | Неверные параметры запроса |
+| 401  | `UNAUTHORIZED`     | Отсутствует/невалидный JWT |
+| 403  | `FORBIDDEN`        | Нет доступа к кабинету     |
+| 404  | `NOT_FOUND`        | Нет данных за период       |
 
 **Пример ошибки**:
+
 ```json
 {
   "error": {
@@ -791,12 +820,12 @@ export function useStorageTrends(weekStart: string, weekEnd: string, options?: {
 
 ## Performance Targets
 
-| Операция | Target p95 |
-|----------|------------|
-| `/by-sku` (8 weeks) | < 500ms |
-| `/by-sku` (52 weeks) | < 1s |
-| `/top-consumers` | < 300ms |
-| `/trends` | < 400ms |
+| Операция             | Target p95 |
+| -------------------- | ---------- |
+| `/by-sku` (8 weeks)  | < 500ms    |
+| `/by-sku` (52 weeks) | < 1s       |
+| `/top-consumers`     | < 300ms    |
+| `/trends`            | < 400ms    |
 
 ---
 
@@ -805,6 +834,7 @@ export function useStorageTrends(weekStart: string, weekEnd: string, options?: {
 **Источник**: WB API Paid Storage Report (`/api/v1/paid_storage`)
 
 **Особенности**:
+
 - Данные доступны **на следующий день** после хранения
 - Максимальный запрос: **8 дней** за раз
 - **Rate limit**: 65s задержка между chunk-запросами для периодов >8 дней (2025-12-14)
@@ -815,6 +845,7 @@ export function useStorageTrends(weekStart: string, weekEnd: string, options?: {
 > См. `39-epic-24-storage-import-json-fix.md` для деталей.
 
 **Поля из WB API** (JSON формат):
+
 - `date` — дата (YYYY-MM-DD)
 - `nmId` — артикул WB (number)
 - `vendorCode` — артикул продавца
@@ -842,19 +873,20 @@ export function useStorageTrends(weekStart: string, weekEnd: string, options?: {
 
 ## Change Log
 
-| Date | Author | Change |
-|------|--------|--------|
-| 2025-11-29 | Backend Team | Epic 24 complete - All 5 stories implemented |
-| 2025-11-29 | Backend Team | SEC-001 fix - SQL injection protection added |
-| 2025-11-29 | Backend Team | Story 24.5 - Storage cost in Products API (`include_storage=true`) |
-| 2025-12-14 | Backend Team | Rate limit protection - 65s delay between chunks for >8 day imports |
-| 2025-12-04 | Backend Team | **CRITICAL FIX**: WB API returns JSON, not Excel - parser updated |
+| Date       | Author       | Change                                                                |
+| ---------- | ------------ | --------------------------------------------------------------------- |
+| 2025-11-29 | Backend Team | Epic 24 complete - All 5 stories implemented                          |
+| 2025-11-29 | Backend Team | SEC-001 fix - SQL injection protection added                          |
+| 2025-11-29 | Backend Team | Story 24.5 - Storage cost in Products API (`include_storage=true`)    |
+| 2025-12-14 | Backend Team | Rate limit protection - 65s delay between chunks for >8 day imports   |
+| 2025-12-04 | Backend Team | **CRITICAL FIX**: WB API returns JSON, not Excel - parser updated     |
 | 2025-12-15 | Backend Team | **SDK Workflow Docs**: Added 3-step task-based workflow documentation |
-| 2025-12-15 | Backend Team | Added W46 comparison results (0.67% match) - see #39 |
+| 2025-12-15 | Backend Team | Added W46 comparison results (0.67% match) - see #39                  |
 
 ---
 
 **Epic Status**: ✅ **COMPLETE** (2025-11-29)
+
 - ✅ Story 24.1: Database Schema (12 unit tests)
 - ✅ Story 24.2: Import Service (12 unit tests)
 - ✅ Story 24.3: API Endpoints (13 unit tests)

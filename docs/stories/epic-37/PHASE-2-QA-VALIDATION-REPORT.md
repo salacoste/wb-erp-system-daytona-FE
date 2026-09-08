@@ -22,12 +22,15 @@
 ### What Was Completed (AI-Automated Tasks)
 
 #### 1. Unit Tests for Metrics Calculator ✅
+
 **File**: `src/app/(dashboard)/analytics/advertising/utils/__tests__/metrics-calculator.test.ts`
+
 - **Tests**: 55 tests covering all 6 Epic 37 formulas
 - **Coverage**: 100% of Epic 35 + Epic 37 calculations
 - **Status**: ✅ All 55 tests PASSING (verified 2025-12-29)
 
 **Formulas Tested**:
+
 - totalSales (SUM of all product sales)
 - organicSales (totalSales - totalRevenue)
 - organicContribution (organicSales / totalSales × 100)
@@ -36,6 +39,7 @@
 - profitAfterAds (totalSales - spend - COGS)
 
 **Edge Cases Covered**:
+
 - Zero spend (ROAS/ROI return null)
 - Negative revenue (unprofitable campaigns)
 - Single-product groups (no aggregation needed)
@@ -44,18 +48,22 @@
 ---
 
 #### 2. Unit Tests for Formatters ✅
+
 **File**: `src/app/(dashboard)/analytics/advertising/utils/__tests__/formatters.test.ts`
+
 - **Tests**: 22 tests covering Russian locale formatting
 - **Coverage**: Currency, percentage, ROAS, numeric formatters
 - **Status**: ✅ All 22 tests PASSING (verified 2025-12-29)
 
 **Formatters Tested**:
+
 - `formatCurrency()` - Russian rubles with non-breaking spaces (U+00A0)
 - `formatPercentage()` - 1 decimal place precision
 - `formatROAS()` - Handles null correctly (displays "—")
 - `formatNumeric()` - Thousands separator with spaces
 
 **Precision Requirements**:
+
 - All tests use exact non-breaking space character (U+00A0)
 - Currency precision: 2 decimal places ("54\u00A0907,27\u00A0₽")
 - Percentage precision: 1 decimal place ("71.2%")
@@ -63,12 +71,15 @@
 ---
 
 #### 3. E2E Test Code for MergedGroupTable ✅
+
 **File**: `e2e/merged-group-table-epic-37.spec.ts`
+
 - **Tests**: 7 scenarios (table structure, interactions, responsive)
 - **Coverage**: Full user workflows for merged groups
 - **Status**: ✅ Code WRITTEN, **requires backend/dev server to run**
 
 **Scenarios Covered**:
+
 1. Switch to "По склейкам" mode (toggle button)
 2. Verify table structure (rowspan, aggregate row, detail rows)
 3. Crown icon display (main product identification)
@@ -78,6 +89,7 @@
 7. Empty state handling (no data message)
 
 **Prerequisites for Execution**:
+
 - ⚠️ Backend API must be running (`npm run dev` in backend/)
 - ⚠️ Frontend dev server must be running (`npm run dev`)
 - ⚠️ Test data must exist in database (at least 1 merged group)
@@ -85,12 +97,15 @@
 ---
 
 #### 4. Accessibility Test Code with axe-core ✅
+
 **File**: `e2e/accessibility-merged-groups-epic-37.spec.ts`
+
 - **Tests**: 7 WCAG 2.1 AA compliance scenarios
 - **Tools**: ✅ @axe-core/playwright installed (2025-12-29)
 - **Status**: ✅ Code ENABLED, **requires backend/dev server to run**
 
 **Scenarios Covered**:
+
 1. ✅ axe-core automated scan (WCAG 2.1 AA violations = 0)
 2. Color contrast validation (≥4.5:1 ratios)
 3. Keyboard navigation (Tab, Enter, Arrow keys)
@@ -100,6 +115,7 @@
 7. Mobile accessibility (touch targets, zoom support)
 
 **axe-core Integration** ✅:
+
 ```typescript
 // ✅ Installed and enabled (2025-12-29)
 import AxeBuilder from '@axe-core/playwright'
@@ -112,16 +128,20 @@ expect(accessibilityScanResults.violations).toEqual([])
 ```
 
 **Prerequisites for Execution**:
+
 - ⚠️ Same as E2E tests (backend + frontend running)
 
 ---
 
 #### 5. User Guide Documentation ✅
+
 **Files**:
+
 - `frontend/docs/stories/epic-37/USER-GUIDE.md` (comprehensive guide)
 - `frontend/README.md` (updated with Epic 37 section)
 
 **Contents**:
+
 - What are склейки (merged product cards)?
 - How to view merged groups (toggle button instructions)
 - Reading the 3-tier table structure
@@ -136,13 +156,13 @@ expect(accessibilityScanResults.violations).toEqual([])
 
 ### Phase 1 Summary: What QA Team Has
 
-| Deliverable | Status | Location |
-|-------------|--------|----------|
-| **Unit Tests** | ✅ 77 tests ready | `utils/__tests__/*.test.ts` |
-| **E2E Tests** | ✅ 7 scenarios ready | `e2e/merged-group-table-epic-37.spec.ts` |
+| Deliverable             | Status               | Location                                          |
+| ----------------------- | -------------------- | ------------------------------------------------- |
+| **Unit Tests**          | ✅ 77 tests ready    | `utils/__tests__/*.test.ts`                       |
+| **E2E Tests**           | ✅ 7 scenarios ready | `e2e/merged-group-table-epic-37.spec.ts`          |
 | **Accessibility Tests** | ✅ 7 scenarios ready | `e2e/accessibility-merged-groups-epic-37.spec.ts` |
-| **User Guide** | ✅ Complete | `docs/stories/epic-37/USER-GUIDE.md` |
-| **axe-core Setup** | ✅ Installed | `node_modules/@axe-core/playwright` |
+| **User Guide**          | ✅ Complete          | `docs/stories/epic-37/USER-GUIDE.md`              |
+| **axe-core Setup**      | ✅ Installed         | `node_modules/@axe-core/playwright`               |
 
 **Total Test Coverage**: 91 automated test scenarios ✅
 
@@ -153,6 +173,7 @@ expect(accessibilityScanResults.violations).toEqual([])
 ### Overview: What QA Team Must Do
 
 Phase 2 consists of **6 manual tasks** that require:
+
 - Human testers (UAT with 3 real users)
 - Real browsers and devices (cross-browser, mobile)
 - Screen reader testing (VoiceOver, NVDA, TalkBack)
@@ -169,11 +190,13 @@ Phase 2 consists of **6 manual tasks** that require:
 **Requirement**: ≥3 real users test merged groups feature, ≥90% satisfaction
 
 **Participants Needed**:
+
 1. **Power user** (frequent WB seller, tech-savvy)
 2. **Intermediate user** (occasional WB seller, moderate tech skills)
 3. **Novice user** (new to WB analytics, low tech skills)
 
 **Test Script** (7 tasks per user):
+
 1. Navigate to Analytics → Advertising
 2. Switch to "По склейкам" (merged groups) view
 3. Find the product group with the highest ROAS
@@ -183,12 +206,14 @@ Phase 2 consists of **6 manual tasks** that require:
 7. Determine how many child products are in that group
 
 **Follow-up Questions**:
+
 - Was the interface intuitive? (1-5 scale)
 - Were the metrics clear and understandable? (1-5 scale)
 - Did you encounter any confusing elements? (free text)
 - Would you use this feature regularly? (Yes/No/Maybe)
 
 **Success Criteria**:
+
 - ✅ Completion rate: All 7 tasks completed by ≥2/3 users
 - ✅ Satisfaction score: Average rating ≥4.5/5 (≥90%)
 - ✅ Error rate: ≤2 errors per user during tasks
@@ -202,6 +227,7 @@ Phase 2 consists of **6 manual tasks** that require:
 **Requirement**: Initial render <200ms, interactions smooth (60fps)
 
 **2.1 Initial Render Performance**
+
 - **Tool**: Chrome DevTools Performance tab
 - **Steps**:
   1. Record Performance profile
@@ -214,6 +240,7 @@ Phase 2 consists of **6 manual tasks** that require:
   - CLS (Cumulative Layout Shift): <0.1
 
 **2.2 Interaction Performance**
+
 - **Tool**: Chrome DevTools Performance Monitor
 - **Test Actions**:
   - Hover over detail rows
@@ -225,12 +252,14 @@ Phase 2 consists of **6 manual tasks** that require:
   - CPU usage: <30% average, <80% peak
 
 **2.3 Network Performance**
+
 - **Tool**: Chrome DevTools Network tab (Fast 3G throttling)
 - **Success Criteria**:
   - API response time: <500ms for `/v1/analytics/advertising?group_by=imtId`
   - Bundle size: <500KB initial JavaScript, <2MB total
 
 **2.4 Lighthouse Audit**
+
 - **Tool**: Chrome DevTools Lighthouse tab
 - **Success Criteria**:
   - Performance: ≥90/100
@@ -248,24 +277,29 @@ Phase 2 consists of **6 manual tasks** that require:
 **Required Screenshots** (10 total):
 
 #### Toggle Buttons (2 screenshots):
+
 1. "По артикулам" active (default state)
 2. "По склейкам" active (merged groups mode)
 
 #### Table Structure (3 screenshots):
+
 3. Full table view (3 tiers: rowspan → aggregate → details)
 4. Aggregate row closeup (6 metrics visible)
 5. Detail row with crown icon + tooltip
 
 #### Responsive Design (3 screenshots):
+
 6. Desktop view (1400px width)
 7. Tablet view (800px width, horizontal scroll)
 8. Mobile view (390px width, stacked layout)
 
 #### Interactions (2 screenshots):
+
 9. Detail row hover state (background change)
 10. Sorted table (ROAS descending, sort indicator)
 
 **Annotation Requirements**:
+
 - Red arrows pointing to key elements
 - Numbered labels for multi-tier structure
 - Captions explaining purpose
@@ -280,6 +314,7 @@ Phase 2 consists of **6 manual tasks** that require:
 **Requirement**: Screen reader compatibility (VoiceOver, NVDA, TalkBack)
 
 **4.1 macOS VoiceOver Testing** (1 hour):
+
 - Enable VoiceOver (Cmd+F5)
 - Navigate to `/analytics/advertising?group_by=imtId`
 - Test VoiceOver rotor (Cmd+U): Headings, Links, Form Controls, Tables
@@ -290,11 +325,13 @@ Phase 2 consists of **6 manual tasks** that require:
   - Rowspan cell announces group ID and product count
 
 **4.2 Windows NVDA Testing** (1 hour):
+
 - Install NVDA (free): https://www.nvaccess.org/download/
 - Navigate using table navigation (Ctrl+Alt+Arrow keys)
 - **Success Criteria**: Same as VoiceOver
 
 **4.3 Mobile Screen Reader Testing** (30-60 min):
+
 - iOS VoiceOver: Settings → Accessibility → VoiceOver
 - Android TalkBack: Settings → Accessibility → TalkBack
 - Test swipe navigation and double-tap activation
@@ -309,11 +346,13 @@ Phase 2 consists of **6 manual tasks** that require:
 **Requirement**: Track user interactions for product analytics
 
 **5.1 Install Mixpanel SDK** (30 min):
+
 ```bash
 npm install mixpanel-browser
 ```
 
 Create `src/lib/mixpanel.ts`:
+
 ```typescript
 import mixpanel from 'mixpanel-browser'
 
@@ -326,6 +365,7 @@ export default mixpanel
 ```
 
 Add to `.env.local`:
+
 ```
 NEXT_PUBLIC_MIXPANEL_TOKEN=your_project_token_here
 ```
@@ -333,18 +373,21 @@ NEXT_PUBLIC_MIXPANEL_TOKEN=your_project_token_here
 **5.2 Add Event Tracking** (30-60 min):
 
 **Events to track** (4 events):
+
 1. **Toggle Mode Switch**: Track when user switches "По артикулам" ↔ "По склейкам"
 2. **Table Sort**: Track column sorting (ROAS, Total Sales, etc.)
 3. **Row Click**: Track which products users click (detail rows)
 4. **Page View**: Track advertising analytics page views
 
 **Code locations** (see QA-HANDOFF-PHASE-2.md for full code snippets):
+
 - Toggle: In page component or MergedGroupTable
 - Sort: In MergedGroupTable sort handler
 - Row Click: In MergedGroupTable row click handler
 - Page View: In page component useEffect
 
 **5.3 Validation** (15-30 min):
+
 - Log in to Mixpanel dashboard
 - Perform actions in app
 - Verify events appear in real-time stream within 10 seconds
@@ -358,13 +401,16 @@ NEXT_PUBLIC_MIXPANEL_TOKEN=your_project_token_here
 **Requirement**: Execute automated accessibility tests with backend running
 
 **Steps**:
+
 1. **Start backend API**:
+
    ```bash
    cd ../backend
    npm run dev
    ```
 
 2. **Start frontend dev server**:
+
    ```bash
    npm run dev
    ```
@@ -375,6 +421,7 @@ NEXT_PUBLIC_MIXPANEL_TOKEN=your_project_token_here
    ```
 
 **Success Criteria**:
+
 - ✅ 0 axe-core violations (WCAG 2.1 AA)
 - ✅ All 7 test scenarios pass
 - ✅ Test execution time <30 seconds
@@ -385,15 +432,15 @@ NEXT_PUBLIC_MIXPANEL_TOKEN=your_project_token_here
 
 ## Phase 2 Task Summary
 
-| Task | Estimated Time | Assigned To | Deliverable File |
-|------|----------------|-------------|------------------|
-| **1. UAT (3 users)** | 2-3 hours | QA Lead + Users | UAT-RESULTS.md |
-| **2. Performance** | 1-2 hours | QA Engineer | PERFORMANCE-REPORT.md |
-| **3. Screenshots** | 1 hour | QA/Designer | SCREENSHOTS/README.md + 10 PNGs |
-| **4. Screen Readers** | 2-3 hours | Accessibility Specialist | SCREEN-READER-REPORT.md |
-| **5. Mixpanel** | 1-2 hours | Frontend Dev | MIXPANEL-SETUP.md |
-| **6. Axe-Core E2E** | 30 min | QA Engineer | ACCESSIBILITY-REPORT.md |
-| **TOTAL** | **7.5-11.5 hours** | **QA Team** | **6 documents** |
+| Task                  | Estimated Time     | Assigned To              | Deliverable File                |
+| --------------------- | ------------------ | ------------------------ | ------------------------------- |
+| **1. UAT (3 users)**  | 2-3 hours          | QA Lead + Users          | UAT-RESULTS.md                  |
+| **2. Performance**    | 1-2 hours          | QA Engineer              | PERFORMANCE-REPORT.md           |
+| **3. Screenshots**    | 1 hour             | QA/Designer              | SCREENSHOTS/README.md + 10 PNGs |
+| **4. Screen Readers** | 2-3 hours          | Accessibility Specialist | SCREEN-READER-REPORT.md         |
+| **5. Mixpanel**       | 1-2 hours          | Frontend Dev             | MIXPANEL-SETUP.md               |
+| **6. Axe-Core E2E**   | 30 min             | QA Engineer              | ACCESSIBILITY-REPORT.md         |
+| **TOTAL**             | **7.5-11.5 hours** | **QA Team**              | **6 documents**                 |
 
 ---
 
@@ -432,12 +479,14 @@ NEXT_PUBLIC_MIXPANEL_TOKEN=your_project_token_here
 **Story 37.5 is COMPLETE when**:
 
 ### Phase 1 ✅ (AI-Completed):
+
 - [x] Unit tests: 77 tests (55 metrics + 22 formatters)
 - [x] E2E test code: 7 scenarios
 - [x] Accessibility test code: 7 scenarios
 - [x] User guide: Complete
 
 ### Phase 2 🚧 (QA Team Tasks):
+
 - [ ] UAT: ≥3 users tested, ≥90% satisfaction
 - [ ] Performance: LCP <200ms, FPS ≥60
 - [ ] Screenshots: 10 annotated screenshots captured
@@ -446,6 +495,7 @@ NEXT_PUBLIC_MIXPANEL_TOKEN=your_project_token_here
 - [ ] Axe-core: 0 violations, all tests passing
 
 ### Documentation 📄 (QA Team Deliverables):
+
 - [ ] `UAT-RESULTS.md`
 - [ ] `PERFORMANCE-REPORT.md`
 - [ ] `SCREENSHOTS/README.md` + 10 PNGs
@@ -457,13 +507,13 @@ NEXT_PUBLIC_MIXPANEL_TOKEN=your_project_token_here
 
 ## Epic 37 Overall Status
 
-| Story | Status | Completion Date |
-|-------|--------|----------------|
-| **37.1** Backend API Validation | ✅ 100% | 2025-12-29 08:15 |
-| **37.2** MergedGroupTable Component | ✅ 100% | 2025-12-28 |
-| **37.3** Aggregate Metrics Display | ✅ 100% | 2025-12-28 |
-| **37.4** Detail Rows Toggle | ✅ 100% | 2025-12-28 |
-| **37.5** Testing & Documentation | 🚧 Phase 2 Pending | - |
+| Story                               | Status             | Completion Date  |
+| ----------------------------------- | ------------------ | ---------------- |
+| **37.1** Backend API Validation     | ✅ 100%            | 2025-12-29 08:15 |
+| **37.2** MergedGroupTable Component | ✅ 100%            | 2025-12-28       |
+| **37.3** Aggregate Metrics Display  | ✅ 100%            | 2025-12-28       |
+| **37.4** Detail Rows Toggle         | ✅ 100%            | 2025-12-28       |
+| **37.5** Testing & Documentation    | 🚧 Phase 2 Pending | -                |
 
 **Epic 37 Progress**: **96% COMPLETE** ⏳ Waiting for QA team to complete Phase 2 (7.5-11.5h)
 
@@ -472,6 +522,7 @@ NEXT_PUBLIC_MIXPANEL_TOKEN=your_project_token_here
 ## Next Steps & Recommendations
 
 ### For QA Team Lead:
+
 1. 📋 Review this validation report
 2. 👥 Assign Phase 2 tasks to team members (use table above for effort estimates)
 3. 📅 Schedule UAT sessions with 3 users (different experience levels)
@@ -480,16 +531,19 @@ NEXT_PUBLIC_MIXPANEL_TOKEN=your_project_token_here
 6. 📸 Capture screenshots early (Task 3) for parallel documentation work
 
 ### For Frontend Dev (if available):
+
 1. 🧪 Assist with Task 6 (axe-core E2E execution)
 2. 📈 Implement Mixpanel integration (Task 5, 1-2h)
 3. 🐛 Be available for bug fixes if UAT/E2E tests uncover issues
 
 ### For Product Owner:
+
 1. ✅ Review and approve Phase 1 deliverables (this report)
 2. ⏳ Confirm Phase 2 timeline (7.5-11.5h estimated)
 3. 📋 Decide if all 6 Phase 2 tasks are REQUIRED for MVP or can some be deferred (e.g., Mixpanel analytics)
 
 **Recommended Priority Order for Phase 2**:
+
 1. **Task 6** (axe-core E2E, 30 min) - Quick validation that setup works
 2. **Task 1** (UAT, 2-3h) - Critical for user acceptance
 3. **Task 2** (Performance, 1-2h) - Verify performance targets met
@@ -502,16 +556,19 @@ NEXT_PUBLIC_MIXPANEL_TOKEN=your_project_token_here
 ## References & Documentation
 
 ### Phase 1 Files (Ready to Execute):
+
 - **QA Handoff**: `docs/stories/epic-37/QA-HANDOFF-PHASE-2.md` (detailed task instructions)
 - **Story 37.5 Spec**: `docs/stories/epic-37/story-37.5-testing-documentation.BMAD.md`
 - **User Guide**: `docs/stories/epic-37/USER-GUIDE.md`
 
 ### Test Files (Code Ready):
+
 - **Unit Tests**: `src/app/(dashboard)/analytics/advertising/utils/__tests__/*.test.ts`
 - **E2E Tests**: `e2e/merged-group-table-epic-37.spec.ts`
 - **Accessibility Tests**: `e2e/accessibility-merged-groups-epic-37.spec.ts`
 
 ### Backend Integration:
+
 - **Request #88**: `frontend/docs/request-backend/88-FRONTEND-INTEGRATION-GUIDE.md`
 - **Story 37.1**: `docs/stories/epic-37/STORY-37.1-COMPLETION-REPORT.md`
 
@@ -520,14 +577,17 @@ NEXT_PUBLIC_MIXPANEL_TOKEN=your_project_token_here
 ## Contact & Support
 
 **Questions about Phase 2 tasks?**
+
 - Refer to **QA-HANDOFF-PHASE-2.md** for detailed instructions
 - Each task has code examples, success criteria, and deliverable templates
 
 **Technical issues during execution?**
+
 - Check Prerequisites section (backend/frontend running, test data exists)
 - Review error screenshots in `test-results/` directory (Playwright auto-generates)
 
 **Timeline or scope questions?**
+
 - Contact Product Owner for MVP vs post-MVP decisions
 
 ---
@@ -538,6 +598,6 @@ NEXT_PUBLIC_MIXPANEL_TOKEN=your_project_token_here
 
 ---
 
-*Report generated: 2025-12-29 08:30 MSK*
-*Prepared by: Claude Code (BMad Framework)*
-*For: WB Repricer System Frontend Team*
+_Report generated: 2025-12-29 08:30 MSK_
+_Prepared by: Claude Code (BMad Framework)_
+_For: WB Repricer System Frontend Team_

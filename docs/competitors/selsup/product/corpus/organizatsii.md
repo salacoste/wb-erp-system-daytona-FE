@@ -14,7 +14,7 @@ chars: 8154
 
 В этой статье:
 
-- 
+-
 - <a href="#kak-dobavit-organizatsiyu" rel="nofollow">Как добавить организацию</a>
 - <a href="#dobavlenie-magazina" rel="nofollow">Добавление магазина</a>
 - <a href="#obzor-interfejsa" rel="nofollow">Обзор интерфейса</a>

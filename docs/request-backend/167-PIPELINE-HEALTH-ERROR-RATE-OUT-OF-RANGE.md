@@ -12,6 +12,7 @@
 The `GET /v1/monitoring/pipeline-health-grid` endpoint returns `errorRate` as a proportion (0–1) per the API contract (Epic 91.3-FE). However, the frontend defensive guard in `MonitorPipelineHealth.tsx` (AC-9, Story 92.5) checks for `errorRate > 1` and renders an amber AlertTriangle if the value is out of range.
 
 If a bug in the backend calculation produces `errorRate > 1` (e.g., integer percentage sent instead of decimal proportion, or division miscalculation), the frontend will:
+
 - Render an amber warning indicator next to the pipeline row.
 - Log a `console.warn` with the pipeline ID and actual value.
 - Display tooltip: "Аномалия: показатель errorRate вне диапазона 0-1. Возможна ошибка данных."
@@ -36,6 +37,7 @@ The field **must** be in the range `[0, 1]`. Values > 1 are impossible per the b
 ## Root Cause (Hypothesis)
 
 Backend to confirm. Possible causes:
+
 1. **Percentage vs proportion bug**: Backend computes `errorCount / totalCount * 100` and stores the percentage (e.g., `15`) rather than the proportion (`0.15`).
 2. **Division error**: Edge case where `totalCount = 0` leads to a division-by-zero producing `Infinity` or `NaN`, which serializes unexpectedly.
 
@@ -46,8 +48,7 @@ Backend to confirm. Possible causes:
 **Status**: RESOLVED — Backend clamping implemented (commit `c9ba2187`, Story 93.1)
 **Resolution date**: 2026-04-30
 **Summary**: `pipeline-health-grid.service.ts:272-277` clamps errorRate to [0, 1] with logging. Frontend defensive guard retained per Defensive Frontend Principle (Story 89.4-FE). `PENDING BACKEND` marker removed in Story 95.1-FE.
-**Remaining frontend action**: Frontend amber AlertTriangle indicator already in place. Awaits backend-side validation.
-3. **Aggregation overflow**: A multi-period aggregation sums partial error rates without re-normalizing.
+**Remaining frontend action**: Frontend amber AlertTriangle indicator already in place. Awaits backend-side validation. 3. **Aggregation overflow**: A multi-period aggregation sums partial error rates without re-normalizing.
 
 ---
 

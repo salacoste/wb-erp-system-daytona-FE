@@ -25,6 +25,7 @@ GET /v1/orders/<uuid>/full-history   → 500   ❌     GET /v1/orders/<orderId>/
 ```
 
 Two distinct issues:
+
 1. **Identity inconsistency:** `:id` resolves UUID↔orderId for the base route but the three history sub-routes only resolve `orderId`. Consumers using the list's `id` (UUID) field for a sub-route get a 500.
 2. **Robustness:** an unrecognized/UUID path param yields **500**, not **404** — a bad-input request looks like a server fault.
 

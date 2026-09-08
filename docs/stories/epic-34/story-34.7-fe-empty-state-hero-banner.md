@@ -30,6 +30,7 @@ Implement a compelling hero banner for the empty state (when Telegram not bound)
 ### Problem Statement
 
 **Current Empty State** (Lines 94-113 in `TelegramBindingCard.tsx`):
+
 ```
 ┌─────────────────────────────────┐
 │ ℹ️ Telegram не подключен         │
@@ -41,6 +42,7 @@ Implement a compelling hero banner for the empty state (when Telegram not bound)
 ```
 
 **Issues**:
+
 - ❌ No visual prominence (small alert, gray background)
 - ❌ No value proposition (generic text)
 - ❌ No clear benefits (why should I connect?)
@@ -51,6 +53,7 @@ Implement a compelling hero banner for the empty state (when Telegram not bound)
 ### Desired Outcome
 
 **New Hero Banner**:
+
 ```
 ╔═════════════════════════════════════════╗
 ║  🚀 Получайте уведомления в Telegram     ║
@@ -74,6 +77,7 @@ Implement a compelling hero banner for the empty state (when Telegram not bound)
 ## ✅ Acceptance Criteria
 
 ### AC1: Hero Banner Visual Design
+
 - [ ] Gradient background: `from-telegram/5 via-white to-telegram/10`
 - [ ] Border: `2px solid` Telegram Blue (`#0088CC`)
 - [ ] Rounded corners: `rounded-lg` (8px)
@@ -83,6 +87,7 @@ Implement a compelling hero banner for the empty state (when Telegram not bound)
 - [ ] Description: "Мгновенные push-уведомления..." (16px, gray-700, centered)
 
 ### AC2: Benefits List
+
 - [ ] 3 benefits with green checkmarks (✓, 20px, green-600)
 - [ ] Benefit 1: "Быстрее email на 80%" (bold emphasis)
 - [ ] Benefit 2: "Не пропустите критичные ошибки" (bold emphasis)
@@ -91,6 +96,7 @@ Implement a compelling hero banner for the empty state (when Telegram not bound)
 - [ ] Bold keywords using `<strong>` tags
 
 ### AC3: Primary CTA Button
+
 - [ ] Button text: "Подключить Telegram" with 📱 icon (20px)
 - [ ] Background: Telegram Blue (`#0088CC`)
 - [ ] Hover state: Darker blue (`#006699`)
@@ -101,6 +107,7 @@ Implement a compelling hero banner for the empty state (when Telegram not bound)
 - [ ] Clicking opens `TelegramBindingModal` (existing behavior)
 
 ### AC4: Decorative Elements
+
 - [ ] Two decorative circles (blur effect):
   - Top-left: `-left-8 -top-8`, 128px diameter, `bg-telegram/10 blur-2xl`
   - Bottom-right: `-right-8 -bottom-8`, 128px diameter, `bg-telegram/10 blur-2xl`
@@ -108,18 +115,21 @@ Implement a compelling hero banner for the empty state (when Telegram not bound)
 - [ ] Absolute positioning within hero banner container
 
 ### AC5: Responsive Design
+
 - [ ] Desktop (≥1024px): Full banner with all elements visible
 - [ ] Tablet (768-1023px): Adjusted padding (p-6), slightly smaller icon (40px)
 - [ ] Mobile (<768px): Stacked layout, smaller icon (32px), reduced padding (p-4)
 - [ ] CTA button: Full-width on mobile, auto-width (centered) on desktop
 
 ### AC6: Conditional Rendering
+
 - [ ] Hero banner shows ONLY when `isBound === false`
 - [ ] Hero banner replaces current empty state (Alert + Button)
 - [ ] When `isBound === true`, shows existing bound state (green badge, username, unbind button)
 - [ ] No layout shift during transition (bound → unbound)
 
 ### AC7: Accessibility (WCAG 2.1 AA)
+
 - [ ] All icons have `aria-label` attributes
 - [ ] Rocket icon: `aria-label="Ракета"`
 - [ ] Checkmarks: `aria-label="Галочка"`
@@ -342,6 +352,7 @@ describe('TelegramBindingCard - Visual Regressions', () => {
 ### Manual Testing Checklist
 
 **Visual Testing**:
+
 - [ ] Hero banner displays correctly on desktop (1680px)
 - [ ] Hero banner displays correctly on tablet (768px)
 - [ ] Hero banner displays correctly on mobile (375px)
@@ -351,6 +362,7 @@ describe('TelegramBindingCard - Visual Regressions', () => {
 - [ ] CTA button stands out visually
 
 **Functional Testing**:
+
 - [ ] Clicking CTA button opens `TelegramBindingModal`
 - [ ] Modal opens correctly (no JS errors)
 - [ ] Hero banner disappears after successful binding
@@ -358,12 +370,14 @@ describe('TelegramBindingCard - Visual Regressions', () => {
 - [ ] No layout shift during binding state transition
 
 **Responsive Testing**:
+
 - [ ] Desktop: Hero banner centered, auto-width button
 - [ ] Tablet: Padding adjusted, smaller icon
 - [ ] Mobile: Full-width button, stacked layout
 - [ ] Breakpoints: Test 375px, 640px, 768px, 1024px, 1680px
 
 **Accessibility Testing**:
+
 - [ ] Run axe DevTools scan (0 violations expected)
 - [ ] Tab to CTA button (focus ring visible)
 - [ ] Enter key activates button (modal opens)
@@ -375,6 +389,7 @@ describe('TelegramBindingCard - Visual Regressions', () => {
   - CTA button (white on #0088CC): 4.8:1 ✅
 
 **Browser Compatibility**:
+
 - [ ] Chrome 120+ (primary)
 - [ ] Safari 17+ (macOS/iOS)
 - [ ] Firefox 121+
@@ -387,6 +402,7 @@ describe('TelegramBindingCard - Visual Regressions', () => {
 ### Baseline (Before Hero Banner)
 
 **Current Conversion Funnel** (from UX Expert analysis):
+
 ```
 100% users land on /settings/notifications
  40% click "Подключить Telegram" (small button, low visibility)
@@ -401,6 +417,7 @@ describe('TelegramBindingCard - Visual Regressions', () => {
 ### Target (After Hero Banner)
 
 **Expected Conversion Funnel**:
+
 ```
 100% users land on /settings/notifications
  80% click "Подключить Telegram" (hero banner CTA)
@@ -417,24 +434,27 @@ describe('TelegramBindingCard - Visual Regressions', () => {
 ### Monitoring Plan
 
 **Week 1 Post-Deployment**:
+
 - Track binding conversion rate (Mixpanel/Google Analytics)
 - Monitor CTA button click-through rate
 - Collect user feedback (support tickets, surveys)
 - Optional: A/B test (50% hero banner, 50% old design)
 
 **Week 2-4 Post-Deployment**:
+
 - Analyze support ticket volume ("How do I connect Telegram?")
 - Review user session recordings (Hotjar/FullStory)
 - Conduct usability testing with 3-5 users
 - Iterate based on feedback
 
 **Key Metrics to Track**:
-| Metric | Baseline | Target | Actual |
-|--------|----------|--------|--------|
-| CTA Click Rate | 40% | 80% | TBD |
-| Overall Conversion | 20% | 48% | TBD |
-| Time to First Click | ~15s | ~8s | TBD |
-| Support Tickets | 10/week | 4/week | TBD |
+
+| Metric              | Baseline | Target | Actual |
+| ------------------- | -------- | ------ | ------ |
+| CTA Click Rate      | 40%      | 80%    | TBD    |
+| Overall Conversion  | 20%      | 48%    | TBD    |
+| Time to First Click | ~15s     | ~8s    | TBD    |
+| Support Tickets     | 10/week  | 4/week | TBD    |
 
 ---
 
@@ -462,14 +482,17 @@ describe('TelegramBindingCard - Visual Regressions', () => {
 ## 📚 References
 
 **Epic Documentation**:
+
 - Epic 34-FE: `docs/epics/epic-34-fe-telegram-notifications-ui.md`
 - Story 34.2-FE: `docs/stories/epic-34/story-34.2-fe-telegram-binding-flow.md`
 
 **UX Analysis**:
+
 - UX Expert Review: `docs/code-review/UX-LIVE-REVIEW-EPIC-34-FE-2025-12-30.md` (Issue #1, lines 127-186)
 - Implementation Plan: `docs/implementation-plans/epic-34-fe-ux-improvements-plan.md` (Phase 1)
 
 **Component Files**:
+
 - TelegramBindingCard: `src/components/notifications/TelegramBindingCard.tsx`
 - Tailwind Config: `tailwind.config.ts`
 
@@ -478,12 +501,14 @@ describe('TelegramBindingCard - Visual Regressions', () => {
 ## 💬 Notes
 
 **Why Hero Banner is Critical**:
+
 1. **First Impression**: 73% of users decide to bind within first 5 seconds on page
 2. **Value Clarity**: Current empty state doesn't explain "why" (only "what")
 3. **Visual Hierarchy**: Small alert + button easily overlooked
 4. **Competitor Analysis**: Notion, Linear, Intercom all use hero banners for integrations
 
 **Design Rationale**:
+
 - **Gradient Background**: Creates depth, draws attention (Telegram brand)
 - **Rocket Icon**: Universal symbol for "launch" and "fast" (emotional trigger)
 - **3 Benefits**: Magic number 3 (scannable, memorable, not overwhelming)
@@ -491,6 +516,7 @@ describe('TelegramBindingCard - Visual Regressions', () => {
 - **Large CTA Button**: Increases click rate by 25-35% (Fitts's Law)
 
 **UX Expert Quote**:
+
 > "Without empty state hero banner, conversion is ~40%. With hero banner, conversion improves to ~80%. This is a **2.4x improvement** for ~2-3 hours of work. **Highest ROI task in the entire epic.**"
 
 ---

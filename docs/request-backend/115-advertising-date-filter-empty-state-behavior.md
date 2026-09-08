@@ -12,11 +12,13 @@
 **Finding**: NOT A BUG - Date filtering works correctly. Empty results for specific date ranges is expected behavior when no data exists for the requested period.
 
 **Question from FrontEnd**:
+
 - Endpoint: `GET /v1/analytics/advertising?from=2025-11-18&to=2025-11-24&limit=1`
 - Observation: Returns empty data for week 2025-W47
 - Expected: Data for that week
 
 **Answer**:
+
 - **Actual Data Range**: 2025-12-01 to 2026-01-28
 - **Requested Range**: 2025-11-18 to 2025-11-24
 - **Result**: Correctly returns empty because requested range is BEFORE available data
@@ -38,39 +40,45 @@ The advertising analytics API contains data from:
 **Summary**: Confirmed NOT A BUG - empty results for date ranges before available data is correct behavior. Data starts from 2025-12-01. Frontend should check available date range via `GET /v1/analytics/advertising/sync-status` before querying.
 **Remaining frontend action**: Use sync-status endpoint to validate date range before querying advertising data.
 
-| Metric | Value |
-|--------|-------|
-| **Data Start Date** | 2025-12-01 |
-| **Data End Date** | 2026-01-28 |
-| **Total Days** | ~59 days |
-| **Weeks Covered** | 2025-W49 to 2026-05 (partial) |
+| Metric              | Value                         |
+| ------------------- | ----------------------------- |
+| **Data Start Date** | 2025-12-01                    |
+| **Data End Date**   | 2026-01-28                    |
+| **Total Days**      | ~59 days                      |
+| **Weeks Covered**   | 2025-W49 to 2026-05 (partial) |
 
 ### Querying Outside Available Range
 
 When querying with `from`/`to` parameters that don't overlap with the available range:
 
 **Scenario 1: Before Data Starts**
+
 ```http
 GET /v1/analytics/advertising?from=2025-11-18&to=2025-11-24
 ```
+
 - **Requested**: 2025-11-18 to 2025-11-24 (Week 2025-W47)
 - **Available**: 2025-12-01 to 2026-01-28
 - **Overlap**: NONE
 - **Result**: `items: []` with `summary: { totalSpend: 0, ... }`
 
 **Scenario 2: After Data Ends**
+
 ```http
 GET /v1/analytics/advertising?from=2026-02-01&to=2026-02-07
 ```
+
 - **Requested**: 2026-02-01 to 2026-02-07
 - **Available**: 2025-12-01 to 2026-01-28
 - **Overlap**: NONE
 - **Result**: `items: []` with `summary: { totalSpend: 0, ... }`
 
 **Scenario 3: Partial Overlap**
+
 ```http
 GET /v1/analytics/advertising?from=2025-11-25&to=2025-12-05
 ```
+
 - **Requested**: 2025-11-25 to 2025-12-05
 - **Available**: 2025-12-01 to 2026-01-28
 - **Overlap**: 2025-12-01 to 2025-12-05 (5 days)
@@ -126,6 +134,7 @@ When no data exists for the requested date range:
 When `response.data.length === 0`:
 
 **Step 1: Check Date Range Overlap**
+
 ```typescript
 function hasDataOverlap(requestedFrom: string, requestedTo: string): boolean {
   const dataStart = new Date('2025-12-01');
@@ -145,6 +154,7 @@ if (!hasDataOverlap(from, to)) {
 ```
 
 **Step 2: Display Empty State Component**
+
 ```typescript
 interface AdvertisingEmptyStateProps {
   requestedFrom: string;
@@ -161,6 +171,7 @@ interface AdvertisingEmptyStateProps {
 ```
 
 **Step 3: Smart Date Picker**
+
 ```typescript
 <AdvertisingDatePicker
   minDate={new Date('2025-12-01')}  // Disable dates before data start
@@ -251,6 +262,7 @@ GET /v1/analytics/advertising/sync-status
 ```
 
 **Response**:
+
 ```json
 {
   "cabinet_id": "uuid",
@@ -420,6 +432,7 @@ export function AdvertisingEmptyState({
 ### 1. Always Check Available Date Range
 
 Before making API requests:
+
 - Fetch sync status to get available date range
 - Validate requested range against available range
 - Show appropriate warnings/errors
@@ -464,11 +477,13 @@ const validation = useMemo(
 ## Related Documentation
 
 ### Backend
+
 - **[Request #71](./71-advertising-analytics-epic-33.md)** - Advertising Analytics API (Epic 33)
 - **[Request #72](./72-advertising-sync-status-404-error-backend-response.md)** - Sync Status Endpoint
 - **[ADVERTISING-ANALYTICS-GUIDE.md](../../docs/ADVERTISING-ANALYTICS-GUIDE.md)** - Complete backend guide
 
 ### Frontend
+
 - **[Request #116](./116-advertising-date-range-frontend-guide.md)** - Frontend Quick Reference Guide
 - **[API Integration Guide](../api-integration-guide.md)** - Full API reference
 
@@ -476,13 +491,13 @@ const validation = useMemo(
 
 ## Summary
 
-| Question | Answer |
-|----------|--------|
-| **Is it a bug?** | No - working as designed |
-| **Why empty results?** | Requested date range has no data |
-| **Available data?** | 2025-12-01 to 2026-01-28 |
-| **HTTP status?** | 200 OK with empty array (NOT 404) |
-| **FrontEnd action?** | Display empty state, show available range |
+| Question               | Answer                                    |
+| ---------------------- | ----------------------------------------- |
+| **Is it a bug?**       | No - working as designed                  |
+| **Why empty results?** | Requested date range has no data          |
+| **Available data?**    | 2025-12-01 to 2026-01-28                  |
+| **HTTP status?**       | 200 OK with empty array (NOT 404)         |
+| **FrontEnd action?**   | Display empty state, show available range |
 
 ---
 

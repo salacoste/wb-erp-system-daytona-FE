@@ -23,19 +23,19 @@ Backend now provides dedicated fields for gross sales and returns:
 
 **In `summary_rus` and `summary_eaeu`:**
 
-| Field | Type | Description |
-|-------|------|-------------|
-| `sales_gross` | `number` | Gross sales only (doc_type='sale'), positive value |
-| `returns_gross` | `number` | Gross returns only (doc_type='return'), positive value |
-| `sale_gross` | `number` | NET = sales_gross - returns_gross (backward compatible) |
+| Field           | Type     | Description                                             |
+| --------------- | -------- | ------------------------------------------------------- |
+| `sales_gross`   | `number` | Gross sales only (doc_type='sale'), positive value      |
+| `returns_gross` | `number` | Gross returns only (doc_type='return'), positive value  |
+| `sale_gross`    | `number` | NET = sales_gross - returns_gross (backward compatible) |
 
 **In `summary_total`:**
 
-| Field | Type | Description |
-|-------|------|-------------|
-| `sales_gross_total` | `number` | Consolidated sales (RUS + EAEU) |
-| `returns_gross_total` | `number` | Consolidated returns (RUS + EAEU) |
-| `sale_gross_total` | `number` | Consolidated NET (backward compatible) |
+| Field                 | Type     | Description                            |
+| --------------------- | -------- | -------------------------------------- |
+| `sales_gross_total`   | `number` | Consolidated sales (RUS + EAEU)        |
+| `returns_gross_total` | `number` | Consolidated returns (RUS + EAEU)      |
+| `sale_gross_total`    | `number` | Consolidated NET (backward compatible) |
 
 ---
 
@@ -85,6 +85,7 @@ sale_gross_total = sales_gross_total - returns_gross_total
 ```
 
 **Example:**
+
 - sales_gross_total: 153,220.48₽
 - returns_gross_total: 7,954.00₽
 - sale_gross_total: 145,266.48₽ = 153,220.48 - 7,954.00 ✓
@@ -153,11 +154,11 @@ Consider updating dashboard to show separate metrics:
 
 ### Color Coding
 
-| Metric | Value Type | Trend Up | Trend Down |
-|--------|------------|----------|------------|
-| Продажи | Good | 🟢 Green | 🔴 Red |
-| Возвраты | Bad | 🔴 Red | 🟢 Green |
-| Чистые продажи | Good | 🟢 Green | 🔴 Red |
+| Metric         | Value Type | Trend Up | Trend Down |
+| -------------- | ---------- | -------- | ---------- |
+| Продажи        | Good       | 🟢 Green | 🔴 Red     |
+| Возвраты       | Bad        | 🔴 Red   | 🟢 Green   |
+| Чистые продажи | Good       | 🟢 Green | 🔴 Red     |
 
 ---
 
@@ -185,10 +186,10 @@ Consider updating dashboard to show separate metrics:
 
 Verified on all 13 weeks of data. Example Week W48:
 
-| Field | RUS | EAEU | Total |
-|-------|-----|------|-------|
-| sales_gross | 145,899.00 | 7,321.48 | 153,220.48 |
-| returns_gross | 7,954.00 | 0.00 | 7,954.00 |
+| Field            | RUS        | EAEU     | Total      |
+| ---------------- | ---------- | -------- | ---------- |
+| sales_gross      | 145,899.00 | 7,321.48 | 153,220.48 |
+| returns_gross    | 7,954.00   | 0.00     | 7,954.00   |
 | sale_gross (NET) | 137,945.00 | 7,321.48 | 145,266.48 |
 
 **Formula verification:** 145,266.48 = 153,220.48 - 7,954.00 ✓

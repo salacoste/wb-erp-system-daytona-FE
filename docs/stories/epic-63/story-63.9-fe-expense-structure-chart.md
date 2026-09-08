@@ -18,12 +18,14 @@
 ## Acceptance Criteria
 
 ### AC1: Pie Chart Display
+
 - [ ] Donut chart visualizes cost breakdown as % of total costs
 - [ ] Chart displays all expense categories with non-zero values
 - [ ] Center of donut shows total expenses amount
 - [ ] Chart renders responsively on mobile and desktop
 
 ### AC2: Cost Categories
+
 - [ ] **COGS** (Себестоимость) - Purple `#6366F1`
 - [ ] **Commission** (Комиссия WB) - Deep Purple `#8B5CF6`
 - [ ] **Logistics Delivery** (Доставка) - Pink `#EC4899`
@@ -34,22 +36,26 @@
 - [ ] **Other** (Прочие) - Gray `#6B7280`
 
 ### AC3: Interactive Segments
+
 - [ ] Click on segment shows detailed breakdown modal
 - [ ] Hover shows tooltip with category name, amount (₽), and percentage
 - [ ] Active segment highlights with increased radius
 - [ ] Keyboard navigation supported for accessibility
 
 ### AC4: Values Display
+
 - [ ] Show both percentage (%) and absolute value (₽) in legend
 - [ ] Legend is positioned below chart on mobile, right side on desktop
 - [ ] Zero-value categories are hidden from chart and legend
 
 ### AC5: Period Context
+
 - [ ] Chart displays data for selected week period
 - [ ] Week selector integration (uses dashboard period context)
 - [ ] Shows "Нет данных" empty state when no data available
 
 ### AC6: Accessibility (WCAG 2.1 AA)
+
 - [ ] Chart has accessible label describing purpose
 - [ ] Color is not the only indicator (patterns/labels available)
 - [ ] Tooltips accessible via keyboard focus
@@ -59,23 +65,27 @@
 ## Tasks / Subtasks
 
 ### Phase 1: Data Integration
+
 - [ ] Create `useExpenseStructure` hook for `/v1/analytics/unit-economics?view_by=total`
 - [ ] Define TypeScript types for expense structure response
 - [ ] Add query key to `expenseQueryKeys` in hooks file
 
 ### Phase 2: Chart Component
+
 - [ ] Create `ExpenseStructurePieChart.tsx` component
 - [ ] Implement Recharts PieChart with donut style
 - [ ] Add center total display
 - [ ] Implement responsive legend positioning
 
 ### Phase 3: Interactivity
+
 - [ ] Add segment click handler for drill-down
 - [ ] Create detail modal component
 - [ ] Implement hover state with tooltip
 - [ ] Add keyboard navigation support
 
 ### Phase 4: Styling & Polish
+
 - [ ] Apply color palette from design system
 - [ ] Add loading skeleton state
 - [ ] Add empty state illustration
@@ -459,6 +469,7 @@ src/
 ### Color Accessibility
 
 All colors meet WCAG AA contrast requirements:
+
 - Labels on white background ≥4.5:1
 - Segment colors distinguishable for color-blind users (use patterns as backup)
 
@@ -520,9 +531,9 @@ describe('ExpenseStructurePieChart', () => {
 
 ## Change Log
 
-| Date | Author | Change |
-|------|--------|--------|
-| 2026-01-31 | PM | Initial draft |
+| Date       | Author | Change        |
+| ---------- | ------ | ------------- |
+| 2026-01-31 | PM     | Initial draft |
 
 ---
 
@@ -540,6 +551,7 @@ describe('ExpenseStructurePieChart', () => {
 **Hook**: `src/hooks/useExpenseStructure.ts`
 **Lines**: 115
 **Key Features**:
+
 - Donut chart with 8 expense categories (COGS, commission, logistics, storage, etc.)
 - Center total display with formatted currency
 - Interactive segments with click handler for drill-down

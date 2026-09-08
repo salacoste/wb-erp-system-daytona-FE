@@ -45,6 +45,7 @@ Entrepreneurs selling on Wildberries face significant challenges in understandin
 ### Urgency and Importance
 
 The competitive nature of marketplace selling requires rapid decision-making. Delays in understanding profitability can result in:
+
 - Continued investment in unprofitable products
 - Missed opportunities to optimize profitable items
 - Inability to respond quickly to market changes
@@ -88,18 +89,21 @@ A comprehensive financial intelligence platform for marketplace sellers that tra
 ### Primary User Segment: Business Owners / Entrepreneurs
 
 **Demographic/Firmographic Profile:**
+
 - Small to medium-sized businesses selling on Wildberries
 - Typically manage 50-5000 SKUs
 - Monthly revenue range: 500K - 50M RUB
 - May have limited technical expertise but strong business acumen
 
 **Current Behaviors and Workflows:**
+
 - Manually download and process Wildberries financial reports weekly/monthly
 - Use spreadsheets (Excel/Google Sheets) for calculations
 - Spend significant time on data entry and basic analysis
 - Make pricing and inventory decisions based on intuition or basic calculations
 
 **Specific Needs and Pain Points:**
+
 - Need to quickly understand which products are profitable
 - Struggle with accurate margin calculations
 - Difficulty tracking COGS across product catalog
@@ -107,6 +111,7 @@ A comprehensive financial intelligence platform for marketplace sellers that tra
 - Need actionable insights for business decisions
 
 **Goals They're Trying to Achieve:**
+
 - Maximize profitability by identifying and focusing on high-margin products
 - Optimize pricing strategies based on real margin data
 - Reduce time spent on manual data processing
@@ -116,24 +121,28 @@ A comprehensive financial intelligence platform for marketplace sellers that tra
 ### Secondary User Segment: Financial Directors / CFOs
 
 **Demographic/Firmographic Profile:**
+
 - Financial professionals in organizations selling on Wildberries
 - Responsible for financial reporting and analysis
 - Need to provide insights to management and stakeholders
 - Typically work with larger product catalogs (1000+ SKUs)
 
 **Current Behaviors and Workflows:**
+
 - Generate financial reports for management
 - Analyze profitability across different business dimensions
 - Monitor key financial metrics and trends
 - Provide strategic recommendations based on financial data
 
 **Specific Needs and Pain Points:**
+
 - Need comprehensive financial overviews and summaries
 - Require detailed breakdowns by various dimensions (brand, category, time)
 - Want to track financial trends and identify anomalies
 - Need exportable data for further analysis or reporting
 
 **Goals They're Trying to Achieve:**
+
 - Provide accurate financial reporting to stakeholders
 - Identify financial risks and opportunities
 - Support strategic decision-making with data
@@ -180,41 +189,41 @@ A comprehensive financial intelligence platform for marketplace sellers that tra
   - Session management
   - JWT token handling
   - Logout functionality
-  - *Rationale: Foundation for all user-specific features and data security*
+  - _Rationale: Foundation for all user-specific features and data security_
 
 - **Onboarding Flow:**
   - Cabinet creation interface
   - WB token input and validation
   - Progress indicators for automatic data processing
   - Initial setup completion confirmation
-  - *Rationale: Critical first-time user experience that sets up the entire system*
+  - _Rationale: Critical first-time user experience that sets up the entire system_
 
 - **Main Dashboard (Business Owner View):**
   - Large metric cards: Total Payable, Revenue
   - Expense breakdown visualization
   - Trend graphs for key metrics
   - Quick access to detailed analytics
-  - *Rationale: Primary interface users will see daily, must provide immediate value*
+  - _Rationale: Primary interface users will see daily, must provide immediate value_
 
 - **COGS Management:**
   - Single product COGS assignment interface
   - Bulk COGS assignment capability
   - COGS input validation
   - Visual confirmation of assignments
-  - *Rationale: Critical workflow that enables margin calculation - core value proposition*
+  - _Rationale: Critical workflow that enables margin calculation - core value proposition_
 
 - **Basic Financial Summary:**
   - Overview of financial data
   - Key metrics display
   - Basic filtering capabilities
-  - *Rationale: Essential for understanding financial position*
+  - _Rationale: Essential for understanding financial position_
 
 - **API Integration:**
   - Complete integration with all 33+ backend endpoints
   - Proper authentication header handling (JWT + Cabinet ID)
   - Error handling and user feedback
   - Loading states and progress indicators
-  - *Rationale: Backend is ready, frontend must fully utilize available functionality*
+  - _Rationale: Backend is ready, frontend must fully utilize available functionality_
 
 ### Out of Scope for MVP
 
@@ -248,30 +257,35 @@ The MVP is considered successful when:
 ### Phase 2 Features
 
 **Enhanced Analytics:**
+
 - Advanced filtering and segmentation
 - Custom date range selection
 - Comparative analysis (period-over-period)
 - Drill-down capabilities from summary to detail
 
 **Product Management:**
+
 - Product catalog management interface
 - Bulk operations for product data
 - Product grouping and tagging
 - Custom product attributes
 
 **Reporting and Export:**
+
 - Generate and export financial reports (PDF, Excel)
 - Scheduled report generation
 - Custom report builder
 - Email report delivery
 
 **User Experience Enhancements:**
+
 - Personalized dashboard layouts
 - Saved views and filters
 - Keyboard shortcuts
 - Advanced search functionality
 
 **Collaboration Features:**
+
 - Multi-user access to cabinets
 - Role-based permissions
 - Activity logs and audit trails
@@ -280,23 +294,27 @@ The MVP is considered successful when:
 ### Long-Term Vision (1-2 Years)
 
 **Platform Expansion:**
+
 - Support for additional marketplaces (Ozon, Yandex Market)
 - Multi-marketplace unified dashboard
 - Cross-marketplace analytics
 
 **Intelligence and Automation:**
+
 - AI-powered pricing recommendations
 - Predictive analytics for sales forecasting
 - Automated anomaly detection
 - Smart alerts and notifications
 
 **Enterprise Features:**
+
 - Advanced user management and SSO
 - API access for enterprise integrations
 - White-label solutions
 - Custom branding options
 
 **Data Integration:**
+
 - Integration with accounting systems
 - CRM integrations
 - Warehouse management system connections
@@ -317,7 +335,7 @@ The MVP is considered successful when:
 ### Platform Requirements
 
 - **Target Platforms:** Web browsers (desktop and tablet primary, mobile responsive)
-- **Browser/OS Support:** 
+- **Browser/OS Support:**
   - Modern browsers: Chrome, Firefox, Safari, Edge (latest 2 versions)
   - Desktop: Windows 10+, macOS 10.15+, Linux (Ubuntu 20.04+)
   - Tablet: iPadOS 14+, Android 10+
@@ -330,15 +348,15 @@ The MVP is considered successful when:
 
 ### Technology Preferences
 
-- **Frontend:** 
+- **Frontend:**
   - Next.js (React framework) - chosen for SSR, routing, and performance
   - TypeScript - for type safety and developer experience
   - Modern ES+ syntax
-- **Backend:** 
+- **Backend:**
   - Already implemented and ready for integration
   - REST API with Swagger documentation
   - JWT authentication
-- **Database:** 
+- **Database:**
   - Managed by backend (not frontend concern)
 - **Local development infrastructure:**
   - Frontend runs on `http://localhost:3100`
@@ -347,16 +365,16 @@ The MVP is considered successful when:
 
 ### Architecture Considerations
 
-- **Repository Structure:** 
+- **Repository Structure:**
   - Modular component architecture
   - Feature-based folder organization
   - Shared utilities and hooks
   - API client layer separation
-- **Service Architecture:** 
+- **Service Architecture:**
   - API service layer for backend communication
   - State management (considering React Context, Zustand, or Redux)
   - Custom hooks for data fetching and business logic
-- **Integration Requirements:** 
+- **Integration Requirements:**
   - RESTful API integration with proper error handling
   - Authentication token management
   - Cabinet ID context management
@@ -366,7 +384,7 @@ The MVP is considered successful when:
   - This directory contains comprehensive API documentation, user flows, data visualization recommendations, and workflow specifications
   - **Critical for Development:** All frontend developers must reference this documentation when implementing API integrations
   - Documentation includes: API endpoint specifications, authentication requirements, data models, user flow diagrams, and business logic explanations
-- **Security/Compliance:** 
+- **Security/Compliance:**
   - Secure token storage (httpOnly cookies or secure localStorage)
   - XSS protection
   - CSRF protection
@@ -381,11 +399,11 @@ The MVP is considered successful when:
 
 - **Budget:** Development resources allocated for frontend implementation
 - **Timeline:** MVP delivery target to be determined based on scope and resources
-- **Resources:** 
+- **Resources:**
   - Development team size and composition
   - Backend API is ready and stable
   - Design resources availability
-- **Technical:** 
+- **Technical:**
   - Must work with existing backend API (33+ endpoints, specific authentication model)
   - TypeScript and Next.js are required technologies
   - File size constraints: All source files must be < 200 lines
@@ -409,22 +427,22 @@ The MVP is considered successful when:
 ### Key Risks
 
 - **Backend API Changes:** Risk that backend API might change during development, requiring frontend updates
-  - *Mitigation: Establish API versioning strategy, maintain close communication with backend team*
+  - _Mitigation: Establish API versioning strategy, maintain close communication with backend team_
 
 - **Performance with Large Datasets:** Risk that dashboard might be slow with users who have thousands of products
-  - *Mitigation: Implement pagination, lazy loading, and data virtualization strategies*
+  - _Mitigation: Implement pagination, lazy loading, and data virtualization strategies_
 
 - **User Adoption:** Risk that users might not complete onboarding or understand the value proposition
-  - *Mitigation: Invest in clear onboarding UX, provide tooltips and help documentation*
+  - _Mitigation: Invest in clear onboarding UX, provide tooltips and help documentation_
 
 - **COGS Workflow Complexity:** Risk that COGS assignment might be too complex or time-consuming for users
-  - *Mitigation: Design intuitive bulk assignment interface, provide templates and import options*
+  - _Mitigation: Design intuitive bulk assignment interface, provide templates and import options_
 
 - **Data Accuracy:** Risk that users might input incorrect COGS values, leading to wrong margin calculations
-  - *Mitigation: Implement validation, provide confirmation dialogs, allow corrections*
+  - _Mitigation: Implement validation, provide confirmation dialogs, allow corrections_
 
 - **Browser Compatibility:** Risk that application might not work consistently across all target browsers
-  - *Mitigation: Comprehensive testing across browser matrix, use progressive enhancement*
+  - _Mitigation: Comprehensive testing across browser matrix, use progressive enhancement_
 
 ### Open Questions
 
@@ -453,6 +471,7 @@ The MVP is considered successful when:
 ### A. Research Summary
 
 **Backend Functionality Analysis:**
+
 - Comprehensive backend API with 33+ REST endpoints
 - Full Swagger documentation available
 - Authentication via JWT tokens with cabinet-based access control
@@ -460,17 +479,20 @@ The MVP is considered successful when:
 - Margin calculation engine integrated in backend
 
 **User Flow Analysis:**
+
 - Critical onboarding flow: Registration → Cabinet Creation → WB Token → Auto Data Processing → COGS Assignment → Margin Calculation
 - Weekly processing workflow for new financial reports
 - Analysis workflows for different user personas (business owner vs. financial director)
 
 **Data Visualization Recommendations:**
+
 - Use Intl.NumberFormat for currency (RUB) and percentage formatting
 - Color coding: Green (positive), Red (negative), Blue (primary metrics)
 - Date formats: ISO weeks (YYYY-Www), dates (DD.MM.YYYY)
 - Dashboard should prioritize large, readable metric cards
 
 **Backend Team Documentation:**
+
 - **Location:** All backend team documentation is located in `../docs/frontend-po/` directory (relative to frontend project root)
 - **Purpose:** This documentation was created by the backend team specifically for frontend development
 - **Contents:** Complete API specifications, user flow documentation, data visualization guidelines, and workflow details
@@ -485,12 +507,14 @@ The MVP is considered successful when:
 ### B. Stakeholder Input
 
 **Development Team:**
+
 - Emphasis on using Context7 MCP server for best practices
 - TypeScript with ES+ syntax required
 - File size constraints (200 lines max) for AI context optimization
 - All code comments and logs in English
 
 **Product Requirements:**
+
 - MVP focus on core functionality: Authentication, Onboarding, Dashboard, COGS Management
 - Priority on user experience and intuitive workflows
 - Integration with existing backend is critical path
@@ -498,11 +522,13 @@ The MVP is considered successful when:
 ### C. References
 
 **Backend Team Documentation (Primary Source):**
+
 - **Documentation Location:** `../docs/frontend-po/` directory (relative to frontend project root)
 - **Important:** This is the authoritative source for all backend API information, user flows, and integration requirements
 - **Team Access:** All frontend team members must familiarize themselves with this documentation before starting development work
 
 **Key Documentation Files:**
+
 - [README.md](../docs/frontend-po/README.md) - Navigation and quick start guide
 - [00-EXECUTIVE-SUMMARY.md](../docs/frontend-po/00-EXECUTIVE-SUMMARY.md) - System overview and high-level architecture
 - [01-backend-functionality-analysis.md](../docs/frontend-po/01-backend-functionality-analysis.md) - Complete backend API analysis with all 33+ endpoints
@@ -513,6 +539,7 @@ The MVP is considered successful when:
 **Note for Developers:** When implementing any feature that requires backend integration, always start by reviewing the relevant documentation in `../docs/frontend-po/` to ensure proper understanding of API contracts, data structures, and business logic.
 
 **Technical Resources:**
+
 - Backend API Swagger UI: `http://localhost:3000/api`
 - Next.js Documentation: https://nextjs.org/docs
 - TypeScript Documentation: https://www.typescriptlang.org/docs/
@@ -565,6 +592,7 @@ The MVP is considered successful when:
 This Project Brief provides the full context for WB Repricer System - Frontend. Please start in 'PRD Generation Mode', review the brief thoroughly to work with the user to create the PRD section by section as the template indicates, asking for any necessary clarification or suggesting improvements.
 
 The brief establishes:
+
 - Clear problem statement and solution approach
 - Target user personas and their needs
 - MVP scope with must-have features
@@ -573,6 +601,7 @@ The brief establishes:
 - Post-MVP vision for future development
 
 Key areas requiring PM attention:
+
 - Detailed feature specifications for each MVP component
 - User story creation with specific acceptance criteria
 - Integration requirements with backend API

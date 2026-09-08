@@ -9,11 +9,11 @@ chars: 2584
 
 В данной статье мы расскажем вам, как редактировать комплекты в SelSup.
 
-#### 
+####
 
 В этой статье:
 
-- 
+-
 - <a href="#redaktirovanie-otdelnogo-komplekta" rel="nofollow">Редактирование отдельного комплекта</a>
 - <a href="#massovoe-redaktirovanie-komplektov" rel="nofollow">Массовое редактирование комплектов</a>
 

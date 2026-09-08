@@ -16,16 +16,16 @@ No product code was changed in this audit. Findings were logged as Backlog.md ta
 
 ### Static and unit/business checks
 
-| Check | Result | Evidence |
-|---|---:|---|
-| `npm run type-check` | Pass | `artifacts/.../type-check.log` |
-| `npm run lint` | Pass, 0 errors / 1 known warning | `artifacts/.../lint.log` |
-| `npm run check:eslint-rules` | Pass | `artifacts/.../check-eslint-rules.log` |
-| `npm run check:max-lines` | Pass | `artifacts/.../check-max-lines.log` |
-| `npm run check:next-params` | Pass | `artifacts/.../check-next-params.log` |
-| `npm run check:locale-percent` | Pass | `artifacts/.../check-locale-percent.log` |
-| `npm run check:docs` | Pass against baseline: 101 broken citations | `artifacts/.../check-docs.log` |
-| Targeted business/API normalizer unit suite | Pass: 123 files, 1937 tests | `artifacts/.../unit-business.log` |
+| Check                                       |                                      Result | Evidence                                 |
+| ------------------------------------------- | ------------------------------------------: | ---------------------------------------- |
+| `npm run type-check`                        |                                        Pass | `artifacts/.../type-check.log`           |
+| `npm run lint`                              |            Pass, 0 errors / 1 known warning | `artifacts/.../lint.log`                 |
+| `npm run check:eslint-rules`                |                                        Pass | `artifacts/.../check-eslint-rules.log`   |
+| `npm run check:max-lines`                   |                                        Pass | `artifacts/.../check-max-lines.log`      |
+| `npm run check:next-params`                 |                                        Pass | `artifacts/.../check-next-params.log`    |
+| `npm run check:locale-percent`              |                                        Pass | `artifacts/.../check-locale-percent.log` |
+| `npm run check:docs`                        | Pass against baseline: 101 broken citations | `artifacts/.../check-docs.log`           |
+| Targeted business/API normalizer unit suite |                 Pass: 123 files, 1937 tests | `artifacts/.../unit-business.log`        |
 
 ### Live backend/API readiness
 
@@ -62,16 +62,16 @@ Checked high-risk surfaces against browser/API evidence:
 
 ## Findings logged
 
-| ID | Severity | Type | Summary | Evidence | Backlog |
-|---|---|---|---|---|---|
-| F-01 | High | Frontend/backend contract | Funnel export fetch uses `limit=10000`, backend max is 500, causing 400 on `/analytics/funnel`. | `route-sweep.json`, `api-probes.json`, `src/app/(dashboard)/analytics/funnel/components/useFunnelExportData.ts` | `task-23` |
-| F-02 | High | Backend contract / dashboard | Dashboard processing-status hook calls `/v1/imports/historical?limit=5`, backend returns 404. | `console-detail.log`, `api-probes.json` | `task-24` |
-| F-03 | Medium | A11y/UX | Authenticated shell renders navbar `Dashboard` as H1, so every dashboard route has two H1 headings. | `route-sweep.md`, `src/components/custom/Navbar.tsx` | `task-25` |
-| F-04 | Medium | A11y/DOM semantics | Settings pages render nested `<main>` inside dashboard layout `<main>`; backfill E2E fails with strict-mode `locator('main')` violations. | `route-sweep.md`, `e2e-targeted-live.log`, `src/app/(dashboard)/settings/*` | `task-26` |
-| F-05 | High | React stability | `/dashboard` and `/analytics/storage` emit repeated duplicate-key warnings; dashboard also logs React static-flag internal error. | `console-detail.log`, `route-sweep.json` | `task-27` |
-| F-06 | Low | Data quality / observability | `/cogs/price-calculator` floods console with repeated `[StorageTariffs] baseLiterRub=0, applying fallback` warnings (~200 during route sweep). | `route-sweep.json`, `src/lib/tariff-extraction-utils.ts` | `task-28` |
-| F-07 | Low | Test reliability | Advertising Epic 36 E2E uses unscoped `page.locator('table')`; page now has two visible tables. Manual browser check confirms summary cards exist. | `e2e-advertising-single.log`, manual Playwright check | `task-29` |
-| F-08 | Medium | Chart responsiveness / console hygiene | Recharts emits width/height `-1` warnings on `/analytics/advertising`, `/analytics/buyout`, `/analytics/returns`, and `/analytics/unit-economics`. | `route-sweep.json`, `route-sweep.md` | `task-30` |
+| ID   | Severity | Type                                   | Summary                                                                                                                                            | Evidence                                                                                                        | Backlog   |
+| ---- | -------- | -------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------- | --------- |
+| F-01 | High     | Frontend/backend contract              | Funnel export fetch uses `limit=10000`, backend max is 500, causing 400 on `/analytics/funnel`.                                                    | `route-sweep.json`, `api-probes.json`, `src/app/(dashboard)/analytics/funnel/components/useFunnelExportData.ts` | `task-23` |
+| F-02 | High     | Backend contract / dashboard           | Dashboard processing-status hook calls `/v1/imports/historical?limit=5`, backend returns 404.                                                      | `console-detail.log`, `api-probes.json`                                                                         | `task-24` |
+| F-03 | Medium   | A11y/UX                                | Authenticated shell renders navbar `Dashboard` as H1, so every dashboard route has two H1 headings.                                                | `route-sweep.md`, `src/components/custom/Navbar.tsx`                                                            | `task-25` |
+| F-04 | Medium   | A11y/DOM semantics                     | Settings pages render nested `<main>` inside dashboard layout `<main>`; backfill E2E fails with strict-mode `locator('main')` violations.          | `route-sweep.md`, `e2e-targeted-live.log`, `src/app/(dashboard)/settings/*`                                     | `task-26` |
+| F-05 | High     | React stability                        | `/dashboard` and `/analytics/storage` emit repeated duplicate-key warnings; dashboard also logs React static-flag internal error.                  | `console-detail.log`, `route-sweep.json`                                                                        | `task-27` |
+| F-06 | Low      | Data quality / observability           | `/cogs/price-calculator` floods console with repeated `[StorageTariffs] baseLiterRub=0, applying fallback` warnings (~200 during route sweep).     | `route-sweep.json`, `src/lib/tariff-extraction-utils.ts`                                                        | `task-28` |
+| F-07 | Low      | Test reliability                       | Advertising Epic 36 E2E uses unscoped `page.locator('table')`; page now has two visible tables. Manual browser check confirms summary cards exist. | `e2e-advertising-single.log`, manual Playwright check                                                           | `task-29` |
+| F-08 | Medium   | Chart responsiveness / console hygiene | Recharts emits width/height `-1` warnings on `/analytics/advertising`, `/analytics/buyout`, `/analytics/returns`, and `/analytics/unit-economics`. | `route-sweep.json`, `route-sweep.md`                                                                            | `task-30` |
 
 ## Coverage gaps / notes
 

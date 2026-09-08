@@ -3,6 +3,7 @@
 ## Резюме проблемы
 
 Price Calculator показывает **Приёмка: 0 ₽** потому что:
+
 1. Базовые ставки приёмки НЕ загружаются из API
 2. Коэффициент приёмки из календаря НЕ применяется к расчёту
 3. Деление на units_per_package НЕ подключено (нечего делить)
@@ -10,22 +11,26 @@ Price Calculator показывает **Приёмка: 0 ₽** потому ч�
 ## Формулы расчёта
 
 ### Приёмка для коробов (box)
+
 ```
 acceptance_cost = volume_liters × acceptance_box_rate_per_liter × coefficient
 acceptance_per_unit = acceptance_cost / units_per_package
 ```
 
 **Пример**: 5L товар, ставка 1.7 ₽/л, коэффициент 1.2, 10 шт в коробе
+
 - acceptance_cost = 5 × 1.7 × 1.2 = **10.20 ₽** за короб
 - acceptance_per_unit = 10.20 / 10 = **1.02 ₽** за единицу
 
 ### Приёмка для паллет (pallet)
+
 ```
 acceptance_cost = acceptance_pallet_rate × coefficient
 acceptance_per_unit = acceptance_cost / units_per_package
 ```
 
 **Пример**: ставка 500 ₽, коэффициент 1.0, 100 шт на паллете
+
 - acceptance_cost = 500 × 1.0 = **500 ₽** за паллету
 - acceptance_per_unit = 500 / 100 = **5 ₽** за единицу
 
@@ -34,17 +39,22 @@ acceptance_per_unit = acceptance_cost / units_per_package
 ## Источники данных
 
 ### 1. Базовые ставки приёмки
+
 **Endpoint**: `GET /v1/tariffs/settings`
+
 ```typescript
 {
   acceptance_box_rate_per_liter: 1.7,  // ₽/литр
   acceptance_pallet_rate: 500.0,       // ₽/паллета
 }
 ```
+
 **Hook**: `useTariffSettings()` - УЖЕ СУЩЕСТВУЕТ, но НЕ ВЫЗЫВАЕТСЯ!
 
 ### 2. Коэффициент приёмки по дате
+
 **Endpoint**: `GET /v1/tariffs/acceptance/coefficients?warehouseId={id}`
+
 ```typescript
 {
   date: "2026-01-25",
@@ -52,12 +62,15 @@ acceptance_per_unit = acceptance_cost / units_per_package
   boxTypeId: 2,            // 2=boxes, 5=pallets
 }
 ```
+
 **Hook**: `useAcceptanceCoefficients()` - используется для календаря
 
 ### 3. Объём товара
+
 Уже рассчитывается: `volumeLiters = (L × W × H) / 1000`
 
 ### 4. Количество в упаковке
+
 Уже есть в форме: `units_per_package` (1-1000)
 
 ---
@@ -196,6 +209,7 @@ useEffect(() => {
 После реализации этапов 1-4, acceptance_cost будет заполняться корректно.
 
 **Дополнительно**: Показать breakdown если units_per_package > 1:
+
 ```
 └─ Приёмка                    10.20 ₽     2.4%
    (10 шт × 1.02 ₽/шт)
@@ -227,16 +241,16 @@ export const DEFAULT_BOX_TARIFFS: BoxDeliveryTariffs = {
 
 ## Порядок выполнения
 
-| # | Задача | Файлы | Сложность |
-|---|--------|-------|-----------|
-| 1 | Создать `acceptance-cost-utils.ts` | Новый файл | Низкая |
-| 2 | Добавить `useTariffSettings()` в форму | PriceCalculatorForm.tsx | Низкая |
-| 3 | Расширить `useWarehouseFormState` | useWarehouseFormState.ts | Средняя |
-| 4 | Подключить acceptance_coefficient | useWarehouseFormState.ts | Средняя |
-| 5 | Синхронизировать с формой | PriceCalculatorForm.tsx | Низкая |
-| 6 | Исправить DEFAULT_BOX_TARIFFS | logistics-tariff.ts | Низкая |
-| 7 | Добавить per-unit display | FixedCostsBreakdown.tsx | Низкая |
-| 8 | Тесты | Новые тесты | Средняя |
+| #   | Задача                                 | Файлы                    | Сложность |
+| --- | -------------------------------------- | ------------------------ | --------- |
+| 1   | Создать `acceptance-cost-utils.ts`     | Новый файл               | Низкая    |
+| 2   | Добавить `useTariffSettings()` в форму | PriceCalculatorForm.tsx  | Низкая    |
+| 3   | Расширить `useWarehouseFormState`      | useWarehouseFormState.ts | Средняя   |
+| 4   | Подключить acceptance_coefficient      | useWarehouseFormState.ts | Средняя   |
+| 5   | Синхронизировать с формой              | PriceCalculatorForm.tsx  | Низкая    |
+| 6   | Исправить DEFAULT_BOX_TARIFFS          | logistics-tariff.ts      | Низкая    |
+| 7   | Добавить per-unit display              | FixedCostsBreakdown.tsx  | Низкая    |
+| 8   | Тесты                                  | Новые тесты              | Средняя   |
 
 ---
 
@@ -262,6 +276,7 @@ export const DEFAULT_BOX_TARIFFS: BoxDeliveryTariffs = {
 ## Ожидаемый результат
 
 После реализации:
+
 - Приёмка рассчитывается: `volume × rate × coefficient`
 - Делится на units_per_package для стоимости за единицу
 - Отображается в детализации расходов
@@ -269,6 +284,7 @@ export const DEFAULT_BOX_TARIFFS: BoxDeliveryTariffs = {
 - Базовые ставки загружаются из API (не захардкожены)
 
 **Пример отображения** (5L товар, 10 шт в коробе, коэф 1.2):
+
 ```
 ФИКСИРОВАННЫЕ ЗАТРАТЫ                    235.62 ₽
 ├─ Себестоимость (COGS)               111.00 ₽    25.7%

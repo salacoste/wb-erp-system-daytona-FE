@@ -27,6 +27,7 @@ Implement quiet hours configuration allowing users to set time periods when noti
 ## ✅ Acceptance Criteria
 
 ### 1. Time Pickers (Q11 - Native HTML Input)
+
 - [ ] Two time pickers: "С" (from) and "До" (to)
 - [ ] Native `<input type="time">` for mobile compatibility
 - [ ] 24-hour format (HH:MM)
@@ -35,6 +36,7 @@ Implement quiet hours configuration allowing users to set time periods when noti
 - [ ] Disabled state when quiet hours toggle off
 
 ### 2. Timezone Dropdown (Q12 - Grouped)
+
 - [ ] Grouped dropdown: Europe, Asia regions
 - [ ] 10-15 popular Russian timezones
 - [ ] Format: "Москва (GMT+3)"
@@ -43,12 +45,14 @@ Implement quiet hours configuration allowing users to set time periods when noti
 - [ ] Auto-detect default timezone using `Intl.DateTimeFormat`
 
 ### 3. Current Time Preview (Q13 - Inline Text)
+
 - [ ] Always-visible text under timezone dropdown
 - [ ] Format: "Сейчас в Europe/Moscow: 14:32"
 - [ ] Updates every 60 seconds
 - [ ] Info icon (ℹ️) + Gray 600 text
 
 ### 4. Overnight Hours Visual (Q14 - Hint Text)
+
 - [ ] Conditional hint appears when overnight period detected
 - [ ] Text: "Тихие часы: 23:00 - 07:00 (период через полночь)"
 - [ ] Light Orange background (#FFF3E0), Orange border
@@ -56,6 +60,7 @@ Implement quiet hours configuration allowing users to set time periods when noti
 - [ ] Only shown when `from > to` (e.g., 23:00 > 07:00)
 
 ### 5. Active Quiet Hours Badge (Q15 - Moon Icon)
+
 - [ ] Badge appears when current time within quiet hours
 - [ ] Text: "🌙 Сейчас активны тихие часы"
 - [ ] Light Blue background (#E3F2FD), Blue border
@@ -64,6 +69,7 @@ Implement quiet hours configuration allowing users to set time periods when noti
 - [ ] Updates every 60 seconds
 
 ### 6. Accessibility (WCAG 2.1 AA)
+
 - [ ] aria-labels on all inputs
 - [ ] Keyboard navigation between elements
 - [ ] Screen reader announces active quiet hours status
@@ -80,6 +86,7 @@ Implement quiet hours configuration allowing users to set time periods when noti
 **Purpose**: Card for configuring quiet hours with timezone support
 
 #### Props
+
 ```typescript
 interface QuietHoursConfigurationProps {
   disabled?: boolean;  // Disable when Telegram not bound
@@ -87,6 +94,7 @@ interface QuietHoursConfigurationProps {
 ```
 
 #### Visual Mockup (Desktop)
+
 ```
 ┌──────────────────────────────────────────────────────────────┐
 │  🌙 Тихие часы                                                │
@@ -115,6 +123,7 @@ interface QuietHoursConfigurationProps {
 ```
 
 #### Code Structure
+
 ```typescript
 function QuietHoursConfiguration({ disabled = false }: Props) {
   const { quietHours, updateQuietHours, isUpdating, isQuietHoursActive } = useQuietHours();
@@ -327,6 +336,7 @@ function QuietHoursConfiguration({ disabled = false }: Props) {
 **Purpose**: Grouped timezone dropdown with popular Russian timezones
 
 #### Props
+
 ```typescript
 interface TimezoneSelectProps {
   value: string;
@@ -335,6 +345,7 @@ interface TimezoneSelectProps {
 ```
 
 #### Timezone Data Structure
+
 ```typescript
 const TIMEZONES = [
   {
@@ -362,6 +373,7 @@ const TIMEZONES = [
 ```
 
 #### Code Structure
+
 ```typescript
 function TimezoneSelect({ value, onChange }: Props) {
   return (
@@ -398,6 +410,7 @@ function TimezoneSelect({ value, onChange }: Props) {
 ## 🎨 Design Specifications
 
 ### Time Picker Styles
+
 ```typescript
 const timePickerStyles = {
   width: {
@@ -414,6 +427,7 @@ const timePickerStyles = {
 ```
 
 ### Timezone Dropdown Styles
+
 ```typescript
 const timezoneDropdownStyles = {
   triggerWidth: {
@@ -437,6 +451,7 @@ const timezoneDropdownStyles = {
 ```
 
 ### Overnight Hint Styles
+
 ```typescript
 const overnightHintStyles = {
   background: '#FFF3E0',  // Light Orange
@@ -453,6 +468,7 @@ const overnightHintStyles = {
 ```
 
 ### Active Badge Styles
+
 ```typescript
 const activeBadgeStyles = {
   background: '#E3F2FD',  // Light Blue
@@ -474,6 +490,7 @@ const activeBadgeStyles = {
 ## 🧪 Testing Requirements
 
 ### Unit Tests
+
 ```typescript
 describe('QuietHoursConfiguration', () => {
   it('shows time pickers when enabled', () => {
@@ -530,6 +547,7 @@ describe('QuietHoursConfiguration', () => {
 ```
 
 ### E2E Tests
+
 ```typescript
 test('quiet hours configuration flow', async ({ page }) => {
   await page.goto('/settings/notifications');
@@ -563,6 +581,7 @@ test('quiet hours configuration flow', async ({ page }) => {
 ## 📦 Dependencies
 
 **shadcn/ui Components**:
+
 ```bash
 npx shadcn-ui@latest add select
 npx shadcn-ui@latest add switch
@@ -570,6 +589,7 @@ npx shadcn-ui@latest add alert
 ```
 
 **Helper Libraries**:
+
 - Native browser `Intl.DateTimeFormat` API (no external library needed)
 
 ---
@@ -631,6 +651,7 @@ npx shadcn-ui@latest add alert
 ## 🎉 Implementation Complete
 
 ### Files Created
+
 1. **`/src/components/notifications/QuietHoursPanel.tsx`** (289 lines)
    - Main component with all AC#1-6 features
    - Native HTML time pickers (type="time", step="900")
@@ -652,6 +673,7 @@ npx shadcn-ui@latest add alert
 **Total**: 519 lines of production-ready TypeScript/React code
 
 ### Quality Checks Passed
+
 - ✅ TypeScript compilation (npm run type-check)
 - ✅ ESLint (npm run lint)
 - ✅ All imports resolved correctly
@@ -660,45 +682,54 @@ npx shadcn-ui@latest add alert
 ### Implementation Notes
 
 **AC#1 - Native Time Pickers**:
+
 - Used `<input type="time">` for mobile compatibility
 - Set `step="900"` for 15-minute intervals
 - Responsive width: 100% mobile, flex-1 desktop
 
 **AC#2 - Grouped Timezone Dropdown**:
+
 - 13 timezones: Europe (3), Asia (10)
 - Format: "City (GMT+X)"
 - shadcn/ui Select with SelectGroup
 
 **AC#3 - Current Time Preview**:
+
 - Uses `Intl.DateTimeFormat` with timezone support
 - Updates every 60 seconds via setInterval
 - Format: "Сейчас в {timezone}: {HH:MM}"
 
 **AC#4 - Overnight Period Hint**:
+
 - Detects when `from > to` (e.g., 23:00 > 07:00)
 - Light orange background (#FFF3E0), orange border
 - Lightbulb icon (💡) with explanatory text
 
 **AC#5 - Active Quiet Hours Badge**:
+
 - Uses `isQuietHoursActive` from hook
 - Light blue background (#E3F2FD), blue border
 - Moon icon (🌙) with status text
 - Updates every 60s (hook recalculates)
 
 **AC#6 - Accessibility**:
+
 - aria-labels on all inputs and controls
 - Keyboard navigation support
 - Screen reader announcements (role="status", aria-live="polite")
 - Focus indicators on all interactive elements
 
 ### Dependencies Used
+
 - ✅ `useQuietHours` hook (Story 34.1-FE)
 - ✅ `UpdatePreferencesRequestDto` types (Story 34.1-FE)
 - ✅ shadcn/ui: Card, Switch, Alert, Select (already installed)
 - ✅ Tailwind animation: `animate-slide-down` (already configured)
 
 ### Testing Instructions
+
 Run visual test component:
+
 ```bash
 # Create a test page at src/app/test/quiet-hours/page.tsx
 import { VisualTest } from '@/components/notifications/__tests__/QuietHoursPanel.visual';
@@ -711,4 +742,5 @@ export default function Page() {
 Navigate to `/test/quiet-hours` and verify all 6 scenarios.
 
 ### Integration Ready
+
 Component is ready to integrate into Story 34.5-FE (Settings Page Layout).

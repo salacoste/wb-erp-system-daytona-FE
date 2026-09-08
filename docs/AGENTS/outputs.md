@@ -11,3 +11,5 @@ Generate for pasting into gate file under `risk_summary`:
 - If no risks: totals all zeros, omit highest, keep recommendations arrays empty
 
 ```yaml
+
+```

@@ -243,12 +243,12 @@
 
 ### Local Quality & Product Completion (Epics 162-165)
 
-| Epic   | Title                                           | Stories                                    | Status      | Key Routes / Scope                          |
-| ------ | ----------------------------------------------- | ------------------------------------------ | ----------- | ------------------------------------------- |
-| 162-FE | Trustworthy Local Frontend Validation           | 10 done                                    | DONE        | localhost Playwright and validation gates   |
-| 163-FE | Accessible and Complete Operator Workflows      | 6 done                                     | DONE        | advertising, automation, analytics          |
-| 164-FE | Resilient Frontend Boundaries & Maintainability | 4 done                                     | DONE        | API errors, charts, tariffs, package policy |
-| 165-FE | Truthful Status & Backend-Ready Backlog         | 3 done + 2 deferred                        | DONE        | 165.3 completes on merge; 165.4/165.5 deferred |
+| Epic   | Title                                           | Stories             | Status | Key Routes / Scope                             |
+| ------ | ----------------------------------------------- | ------------------- | ------ | ---------------------------------------------- |
+| 162-FE | Trustworthy Local Frontend Validation           | 10 done             | DONE   | localhost Playwright and validation gates      |
+| 163-FE | Accessible and Complete Operator Workflows      | 6 done              | DONE   | advertising, automation, analytics             |
+| 164-FE | Resilient Frontend Boundaries & Maintainability | 4 done              | DONE   | API errors, charts, tariffs, package policy    |
+| 165-FE | Truthful Status & Backend-Ready Backlog         | 3 done + 2 deferred | DONE   | 165.3 completes on merge; 165.4/165.5 deferred |
 
 Canonical story definitions, dependencies, and acceptance criteria: `_bmad-output/planning-artifacts/epics-162-165-fe.md`. Each story has exactly one correlated execution plan under `.omx/plans/`.
 

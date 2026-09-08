@@ -298,42 +298,42 @@ src/
 
 ### Design Tokens
 
-| Element | Token | Value |
-|---------|-------|-------|
-| Card background | `bg-card` | #FFFFFF |
-| Card border | `border` | #EEEEEE |
-| Card shadow | `shadow-sm` | subtle |
-| Title | `text-sm text-muted-foreground` | #757575, 14px |
-| Value | `text-2xl font-bold` | 24px, 700 |
-| Positive trend | `text-green-600` | #22C55E |
-| Negative trend | `text-red-500` | #EF4444 |
-| Neutral trend | `text-muted-foreground` | #757575 |
-| Badge positive bg | `bg-green-100` | #DCFCE7 |
-| Badge positive text | `text-green-700` | #15803D |
-| Badge negative bg | `bg-red-100` | #FEE2E2 |
-| Badge negative text | `text-red-700` | #B91C1C |
-| Badge neutral bg | `bg-gray-100` | #F3F4F6 |
-| Badge neutral text | `text-gray-600` | #4B5563 |
-| Previous value | `text-sm text-muted-foreground` | #757575, 14px |
+| Element             | Token                           | Value         |
+| ------------------- | ------------------------------- | ------------- |
+| Card background     | `bg-card`                       | #FFFFFF       |
+| Card border         | `border`                        | #EEEEEE       |
+| Card shadow         | `shadow-sm`                     | subtle        |
+| Title               | `text-sm text-muted-foreground` | #757575, 14px |
+| Value               | `text-2xl font-bold`            | 24px, 700     |
+| Positive trend      | `text-green-600`                | #22C55E       |
+| Negative trend      | `text-red-500`                  | #EF4444       |
+| Neutral trend       | `text-muted-foreground`         | #757575       |
+| Badge positive bg   | `bg-green-100`                  | #DCFCE7       |
+| Badge positive text | `text-green-700`                | #15803D       |
+| Badge negative bg   | `bg-red-100`                    | #FEE2E2       |
+| Badge negative text | `text-red-700`                  | #B91C1C       |
+| Badge neutral bg    | `bg-gray-100`                   | #F3F4F6       |
+| Badge neutral text  | `text-gray-600`                 | #4B5563       |
+| Previous value      | `text-sm text-muted-foreground` | #757575, 14px |
 
 ### Spacing
 
-| Element | Spacing |
-|---------|---------|
-| Card padding | `p-4` |
-| Gap between title and value | `gap-2` (8px) |
-| Gap between value and comparison | `gap-1` (4px) |
-| Badge padding | `px-1.5 py-0.5` |
-| Trend arrow margin-right | `mr-1` |
+| Element                          | Spacing         |
+| -------------------------------- | --------------- |
+| Card padding                     | `p-4`           |
+| Gap between title and value      | `gap-2` (8px)   |
+| Gap between value and comparison | `gap-1` (4px)   |
+| Badge padding                    | `px-1.5 py-0.5` |
+| Trend arrow margin-right         | `mr-1`          |
 
 ### Typography
 
-| Element | Font |
-|---------|------|
-| Title | `text-sm font-medium` |
-| Value | `text-2xl font-bold` |
-| Badge | `text-xs font-medium` |
-| Previous value | `text-sm` |
+| Element        | Font                  |
+| -------------- | --------------------- |
+| Title          | `text-sm font-medium` |
+| Value          | `text-2xl font-bold`  |
+| Badge          | `text-xs font-medium` |
+| Previous value | `text-sm`             |
 
 ### Animation
 
@@ -345,14 +345,14 @@ src/
 
 ## Dependencies
 
-| Dependency | Type | Status |
-|------------|------|--------|
-| shadcn/ui `Card` | Component | ✅ Available |
-| shadcn/ui `Tooltip` | Component | ✅ Available |
-| shadcn/ui `Skeleton` | Component | ✅ Available |
-| `lucide-react` TrendingUp/Down | Icon | ✅ Available |
-| `formatCurrency` helper | Internal | ✅ Available (`src/lib/utils`) |
-| `formatPercentage` helper | Internal | ✅ Available (`src/lib/utils`) |
+| Dependency                     | Type      | Status                         |
+| ------------------------------ | --------- | ------------------------------ |
+| shadcn/ui `Card`               | Component | ✅ Available                   |
+| shadcn/ui `Tooltip`            | Component | ✅ Available                   |
+| shadcn/ui `Skeleton`           | Component | ✅ Available                   |
+| `lucide-react` TrendingUp/Down | Icon      | ✅ Available                   |
+| `formatCurrency` helper        | Internal  | ✅ Available (`src/lib/utils`) |
+| `formatPercentage` helper      | Internal  | ✅ Available (`src/lib/utils`) |
 
 ---
 
@@ -469,6 +469,7 @@ src/
 ### Phase 1: Comparison Helpers (30min)
 
 Create `src/lib/comparison-helpers.ts`:
+
 - `calculateComparison()` function
 - Handle edge cases (zero, null, negative)
 - Unit tests for all cases
@@ -476,6 +477,7 @@ Create `src/lib/comparison-helpers.ts`:
 ### Phase 2: TrendIndicator Component (30min)
 
 Create `src/components/custom/TrendIndicator.tsx`:
+
 - Three icons: TrendingUp, TrendingDown, Minus
 - Color based on direction
 - Size variants
@@ -483,6 +485,7 @@ Create `src/components/custom/TrendIndicator.tsx`:
 ### Phase 3: ComparisonBadge Component (30min)
 
 Create `src/components/custom/ComparisonBadge.tsx`:
+
 - Formatted percentage display
 - Semantic background colors
 - Hover tooltip for absolute difference
@@ -490,6 +493,7 @@ Create `src/components/custom/ComparisonBadge.tsx`:
 ### Phase 4: MetricCardEnhanced Component (1-1.5h)
 
 Create `src/components/custom/MetricCardEnhanced.tsx`:
+
 - Compose with TrendIndicator and ComparisonBadge
 - Handle all format types
 - Loading and error states

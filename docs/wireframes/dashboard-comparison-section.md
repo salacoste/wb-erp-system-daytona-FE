@@ -16,6 +16,7 @@ This wireframe specifies the Period Comparison Cards and Historical Trends secti
 **Target Audience**: Business owners and financial directors who need quick insight into performance changes and trend patterns.
 
 **Primary Goals**:
+
 - Quickly identify if metrics are improving or declining
 - Compare current period against previous period (WoW/MoM)
 - Visualize historical trends over 4-12 weeks
@@ -332,13 +333,13 @@ Lines:
 
 ### 4.5 Metric Colors
 
-| Metric | Color | Hex | Line Style |
-|--------|-------|-----|------------|
-| Выручка (Revenue) | Blue | #3B82F6 | Solid, dots |
-| К перечислению (Payout) | Green | #22C55E | Solid, dots |
-| Маржа (Margin %) | Yellow | #F59E0B | Double line |
-| Логистика (Logistics) | Red | #EF4444 | Solid, circles |
-| Хранение (Storage) | Purple | #7C4DFF | Solid, diamonds |
+| Metric                  | Color  | Hex     | Line Style      |
+| ----------------------- | ------ | ------- | --------------- |
+| Выручка (Revenue)       | Blue   | #3B82F6 | Solid, dots     |
+| К перечислению (Payout) | Green  | #22C55E | Solid, dots     |
+| Маржа (Margin %)        | Yellow | #F59E0B | Double line     |
+| Логистика (Logistics)   | Red    | #EF4444 | Solid, circles  |
+| Хранение (Storage)      | Purple | #7C4DFF | Solid, diamonds |
 
 ### 4.6 Interactive Legend
 
@@ -411,19 +412,19 @@ Card Styles:
 
 ### 5.1 Comparison Cards Grid
 
-| Breakpoint | Columns | Card Width |
-|------------|---------|------------|
-| <768px | 1 | 100% |
-| 768-1279px | 2 | ~50% |
-| >=1280px | 4 (top) + 2 (bottom) | ~25% / ~50% |
+| Breakpoint | Columns              | Card Width  |
+| ---------- | -------------------- | ----------- |
+| <768px     | 1                    | 100%        |
+| 768-1279px | 2                    | ~50%        |
+| >=1280px   | 4 (top) + 2 (bottom) | ~25% / ~50% |
 
 ### 5.2 Trends Section
 
-| Breakpoint | Chart Height | Legend | Summary Grid |
-|------------|--------------|--------|--------------|
-| <768px | 250px | Vertical stack | 1 column |
-| 768-1023px | 280px | 2 rows | 2 columns |
-| >=1024px | 300px | 1 row | 4 columns |
+| Breakpoint | Chart Height | Legend         | Summary Grid |
+| ---------- | ------------ | -------------- | ------------ |
+| <768px     | 250px        | Vertical stack | 1 column     |
+| 768-1023px | 280px        | 2 rows         | 2 columns    |
+| >=1024px   | 300px        | 1 row          | 4 columns    |
 
 ### 5.3 Tailwind Grid Classes
 
@@ -520,6 +521,7 @@ Trends Chart Loading:
 ### 7.1 Color Independence
 
 Delta indicators use BOTH color AND symbols:
+
 - Arrow direction (^/v/→) + percentage text
 - Badge background provides additional visual cue
 - Never rely on color alone
@@ -569,14 +571,14 @@ Delta indicators use BOTH color AND symbols:
 
 ### 7.3 Keyboard Navigation
 
-| Element | Key | Action |
-|---------|-----|--------|
-| Mode Toggle | Tab | Focus toggle group |
-| Mode Toggle | Arrow L/R | Switch between WoW/MoM |
-| Period Selector | Tab | Focus period buttons |
-| Period Selector | Arrow L/R | Change period (4w/8w/12w) |
-| Collapse Button | Enter/Space | Toggle expand/collapse |
-| Legend Checkbox | Enter/Space | Toggle metric visibility |
+| Element         | Key         | Action                    |
+| --------------- | ----------- | ------------------------- |
+| Mode Toggle     | Tab         | Focus toggle group        |
+| Mode Toggle     | Arrow L/R   | Switch between WoW/MoM    |
+| Period Selector | Tab         | Focus period buttons      |
+| Period Selector | Arrow L/R   | Change period (4w/8w/12w) |
+| Collapse Button | Enter/Space | Toggle expand/collapse    |
+| Legend Checkbox | Enter/Space | Toggle metric visibility  |
 
 ### 7.4 Focus Indicators
 
@@ -594,6 +596,7 @@ Delta indicators use BOTH color AND symbols:
 ### 8.1 Information Hierarchy
 
 **Priority Order (top to bottom)**:
+
 1. KPI Cards (existing) - Primary metrics
 2. Period Comparison - Trend direction at a glance
 3. Historical Trends - Deep dive into patterns
@@ -615,6 +618,7 @@ Delta indicators use BOTH color AND symbols:
 ### 8.4 Expense Metrics Clarity
 
 For Logistics and Storage (inverted logic):
+
 - Consider adding "(расходы)" label
 - Use warning icon to indicate expense category
 - Tooltip explains: "Для расходов: снижение = позитивно"
@@ -682,29 +686,29 @@ interface TrendsPeriodSelectorProps {
 
 ### Story 63.11 - Period Comparison Cards
 
-| Requirement | Status | Notes |
-|-------------|--------|-------|
-| 6-card grid layout | VALID | 4+2 layout on desktop matches spec |
-| WoW/MoM toggle | VALID | Toggle button group design specified |
-| Delta arrows (^/v/→) | VALID | Arrow + color + percentage |
-| Green/Red/Gray badges | VALID | Consistent with design system |
-| Card anatomy | VALID | Title, value, delta, previous |
-| Inverted expense logic | VALID | Added visual indicator recommendation |
-| Responsive breakpoints | VALID | 4/2/1 column layouts |
+| Requirement            | Status | Notes                                 |
+| ---------------------- | ------ | ------------------------------------- |
+| 6-card grid layout     | VALID  | 4+2 layout on desktop matches spec    |
+| WoW/MoM toggle         | VALID  | Toggle button group design specified  |
+| Delta arrows (^/v/→)   | VALID  | Arrow + color + percentage            |
+| Green/Red/Gray badges  | VALID  | Consistent with design system         |
+| Card anatomy           | VALID  | Title, value, delta, previous         |
+| Inverted expense logic | VALID  | Added visual indicator recommendation |
+| Responsive breakpoints | VALID  | 4/2/1 column layouts                  |
 
 ### Story 63.12 - Historical Trends Section
 
-| Requirement | Status | Notes |
-|-------------|--------|-------|
-| Multi-line chart | VALID | Recharts with 5 metrics |
-| Metric selector | VALID | Interactive legend with checkboxes |
-| Period presets (4w/8w/12w) | VALID | Toggle button group |
-| Dual Y-axis | VALID | Currency left, % right for margin |
-| Legend design | VALID | Horizontal with color-coded dots |
-| Tooltip design | VALID | Week label + all visible metric values |
-| Summary statistics | VALID | 4-card grid with min/max/avg/trend |
-| Collapsible section | VALID | Persists state in localStorage |
-| Empty/loading states | VALID | Skeleton and error states defined |
+| Requirement                | Status | Notes                                  |
+| -------------------------- | ------ | -------------------------------------- |
+| Multi-line chart           | VALID  | Recharts with 5 metrics                |
+| Metric selector            | VALID  | Interactive legend with checkboxes     |
+| Period presets (4w/8w/12w) | VALID  | Toggle button group                    |
+| Dual Y-axis                | VALID  | Currency left, % right for margin      |
+| Legend design              | VALID  | Horizontal with color-coded dots       |
+| Tooltip design             | VALID  | Week label + all visible metric values |
+| Summary statistics         | VALID  | 4-card grid with min/max/avg/trend     |
+| Collapsible section        | VALID  | Persists state in localStorage         |
+| Empty/loading states       | VALID  | Skeleton and error states defined      |
 
 ---
 

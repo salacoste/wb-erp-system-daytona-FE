@@ -32,6 +32,7 @@ wb_services_cost_total, wb_promotion_cost_total, wb_jam_cost_total, wb_other_ser
 ### Data Source
 
 Data is extracted from `wb_finance_raw.corrections` field where:
+
 - `reason = 'Удержание'`
 - `payload_json->>'bonus_type_name'` matches service patterns
 
@@ -139,11 +140,11 @@ curl -X POST http://localhost:3000/v1/test/aggregation/trigger \
 
 ## Example Data (W49)
 
-| Service | Amount (₽) | Pattern |
-|---------|------------|---------|
-| WB.Promotion | 32,073 | `Оказание услуг «WB Продвижение»` |
-| Джем | 18,990 | `Предоставление услуг по подписке «Джем»` |
-| **Total** | **51,063** | = other_adjustments_net |
+| Service      | Amount (₽) | Pattern                                   |
+| ------------ | ---------- | ----------------------------------------- |
+| WB.Promotion | 32,073     | `Оказание услуг «WB Продвижение»`         |
+| Джем         | 18,990     | `Предоставление услуг по подписке «Джем»` |
+| **Total**    | **51,063** | = other_adjustments_net                   |
 
 ## Backend Team Response
 

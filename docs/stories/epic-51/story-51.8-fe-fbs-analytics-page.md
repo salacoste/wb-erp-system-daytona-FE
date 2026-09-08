@@ -22,6 +22,7 @@
 ## Background
 
 This story implements the main FBS Orders Analytics page that integrates all previously built components into a cohesive experience. The page provides:
+
 - Tab navigation between three analytics views (Trends, Seasonal, Comparison)
 - Shared date range picker that applies to Trends and Seasonal tabs
 - URL synchronization for active tab state
@@ -184,14 +185,14 @@ src/app/(dashboard)/analytics/orders/
 
 ## Components to Create
 
-| File | Lines (Est.) | Description |
-|------|--------------|-------------|
-| `page.tsx` | ~100 | Main page with tabs and routing |
-| `loading.tsx` | ~30 | Page-level loading skeleton |
-| `AnalyticsPageHeader.tsx` | ~50 | Header with title and date picker |
-| `AnalyticsTabContent.tsx` | ~80 | Tab content switcher component |
-| `TrendsTabContent.tsx` | ~40 | Trends tab wrapper |
-| `SeasonalTabContent.tsx` | ~40 | Seasonal tab wrapper |
+| File                      | Lines (Est.) | Description                       |
+| ------------------------- | ------------ | --------------------------------- |
+| `page.tsx`                | ~100         | Main page with tabs and routing   |
+| `loading.tsx`             | ~30          | Page-level loading skeleton       |
+| `AnalyticsPageHeader.tsx` | ~50          | Header with title and date picker |
+| `AnalyticsTabContent.tsx` | ~80          | Tab content switcher component    |
+| `TrendsTabContent.tsx`    | ~40          | Trends tab wrapper                |
+| `SeasonalTabContent.tsx`  | ~40          | Seasonal tab wrapper              |
 
 **Total**: ~340 lines for new components (reuses ~1000 lines from Stories 51.3-51.7)
 
@@ -648,18 +649,18 @@ test.describe('FBS Orders Analytics Page', () => {
 
 ### Required (Blocking)
 
-| Dependency | Status | Notes |
-|------------|--------|-------|
-| Story 51.3-FE | Ready | `DateRangePickerExtended` component |
-| Story 51.4-FE | Ready | `FbsTrendsChart` component |
-| Story 51.5-FE | Ready | `TrendsSummaryCards` component |
-| Story 51.6-FE | Ready | `SeasonalPatternsChart`, `SeasonalInsightsCard` |
-| Story 51.7-FE | Ready | `PeriodComparisonPanel` component |
+| Dependency    | Status | Notes                                           |
+| ------------- | ------ | ----------------------------------------------- |
+| Story 51.3-FE | Ready  | `DateRangePickerExtended` component             |
+| Story 51.4-FE | Ready  | `FbsTrendsChart` component                      |
+| Story 51.5-FE | Ready  | `TrendsSummaryCards` component                  |
+| Story 51.6-FE | Ready  | `SeasonalPatternsChart`, `SeasonalInsightsCard` |
+| Story 51.7-FE | Ready  | `PeriodComparisonPanel` component               |
 
 ### Non-Blocking
 
-| Dependency | Status | Notes |
-|------------|--------|-------|
+| Dependency    | Status  | Notes                     |
+| ------------- | ------- | ------------------------- |
 | Story 51.9-FE | Pending | Analytics Hub integration |
 
 ---
@@ -700,6 +701,7 @@ The page will be accessible from the Analytics Hub via a navigation card:
 ### Sidebar Navigation
 
 Add to sidebar analytics section:
+
 - Label: "Заказы FBS"
 - Icon: ShoppingBag
 - Route: /analytics/orders
@@ -708,8 +710,8 @@ Add to sidebar analytics section:
 
 ## Change Log
 
-| Date | Author | Change |
-|------|--------|--------|
+| Date       | Author                 | Change                 |
+| ---------- | ---------------------- | ---------------------- |
 | 2026-01-29 | Claude Code (PM Agent) | Initial story creation |
 
 ---

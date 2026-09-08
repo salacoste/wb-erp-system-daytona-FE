@@ -5,14 +5,16 @@
 **Status**: ✅ **PRODUCTION READY** + 📋 **UX Improvements Awaiting PO Approval** (Updated 2025-12-30)
 **Priority**: Medium
 **Estimated Effort**: 8 stories, ~25 SP (~8-11 days frontend)
-  - Original: 6 stories, 21 SP ✅ COMPLETE
-  - UX Improvements: 2 stories, 4 SP 📋 AWAITING APPROVAL
-**Created**: 2025-12-29
-**Author**: Sarah (PO)
-**Related**: Epic 34 (Backend), Request #73
-**UX Review**: UX Expert Live Review (2025-12-30) - Score: 8.5/10 → 9.5/10 with improvements
+
+- Original: 6 stories, 21 SP ✅ COMPLETE
+- UX Improvements: 2 stories, 4 SP 📋 AWAITING APPROVAL
+  **Created**: 2025-12-29
+  **Author**: Sarah (PO)
+  **Related**: Epic 34 (Backend), Request #73
+  **UX Review**: UX Expert Live Review (2025-12-30) - Score: 8.5/10 → 9.5/10 with improvements
 
 **📄 Developer Handoff**: [DEV-HANDOFF-EPIC-34-FE.md](../DEV-HANDOFF-EPIC-34-FE.md)
+
 - [Bot Configuration Guide](../DEV-HANDOFF-EPIC-34-FE.md#-telegram-bot-configuration-urgent-action-required)
 - [Monitoring Implementation](../DEV-HANDOFF-EPIC-34-FE.md#-monitoring--analytics-implementation-recommended)
 - [Testing & Deployment](../DEV-HANDOFF-EPIC-34-FE.md#testing-status)
@@ -37,6 +39,7 @@
 ### Current State
 
 **Backend Status**: ✅ COMPLETE
+
 - Telegram bot integration implemented
 - REST API endpoints ready (`/v1/notifications/*`)
 - Message templates (ru/en) working
@@ -44,6 +47,7 @@
 - Rate limiting in place
 
 **Frontend Status**: ❌ MISSING
+
 - No UI for Telegram binding
 - No settings page for notification preferences
 - No visibility of binding status
@@ -53,6 +57,7 @@
 ### User Impact
 
 **Без UI пользователи НЕ МОГУТ**:
+
 1. Привязать свой Telegram-аккаунт к платформе
 2. Настроить, какие события будут отправлять уведомления
 3. Установить тихие часы (night mode)
@@ -62,13 +67,13 @@
 
 ### Business Value
 
-| Ценность | Описание |
-|----------|----------|
-| **Instant Awareness** | Мгновенные уведомления о состоянии импортов/синхронизаций |
-| **Reduced Manual Monitoring** | Не нужно постоянно проверять дашборд на наличие ошибок |
-| **Faster Issue Resolution** | Немедленное оповещение = быстрое реагирование |
-| **User Engagement** | Проактивная коммуникация повышает доверие к платформе |
-| **Mobile-First** | Telegram доступен на всех устройствах без установки доп. приложений |
+| Ценность                      | Описание                                                            |
+| ----------------------------- | ------------------------------------------------------------------- |
+| **Instant Awareness**         | Мгновенные уведомления о состоянии импортов/синхронизаций           |
+| **Reduced Manual Monitoring** | Не нужно постоянно проверять дашборд на наличие ошибок              |
+| **Faster Issue Resolution**   | Немедленное оповещение = быстрое реагирование                       |
+| **User Engagement**           | Проактивная коммуникация повышает доверие к платформе               |
+| **Mobile-First**              | Telegram доступен на всех устройствах без установки доп. приложений |
 
 ---
 
@@ -129,21 +134,21 @@
 
 ### Key Components
 
-| Component | Purpose | File |
-|-----------|---------|------|
-| `TelegramBindingCard` | Привязка/отвязка Telegram | `TelegramBindingCard.tsx` |
-| `NotificationPreferencesPanel` | Настройки событий, язык | `NotificationPreferencesPanel.tsx` |
-| `QuietHoursConfiguration` | Тихие часы, timezone | `QuietHoursConfiguration.tsx` |
-| `BindingStatusIndicator` | Индикатор статуса (header) | `BindingStatusIndicator.tsx` |
-| `TestNotificationButton` | Тестовое уведомление | `TestNotificationButton.tsx` |
+| Component                      | Purpose                    | File                               |
+| ------------------------------ | -------------------------- | ---------------------------------- |
+| `TelegramBindingCard`          | Привязка/отвязка Telegram  | `TelegramBindingCard.tsx`          |
+| `NotificationPreferencesPanel` | Настройки событий, язык    | `NotificationPreferencesPanel.tsx` |
+| `QuietHoursConfiguration`      | Тихие часы, timezone       | `QuietHoursConfiguration.tsx`      |
+| `BindingStatusIndicator`       | Индикатор статуса (header) | `BindingStatusIndicator.tsx`       |
+| `TestNotificationButton`       | Тестовое уведомление       | `TestNotificationButton.tsx`       |
 
 ### React Query Hooks
 
-| Hook | Purpose | File |
-|------|---------|------|
-| `useTelegramBinding` | Привязка/статус/отвязка | `useTelegramBinding.ts` |
-| `useNotificationPreferences` | CRUD preferences | `useNotificationPreferences.ts` |
-| `useTestNotification` | Тестовое уведомление | `useTestNotification.ts` |
+| Hook                         | Purpose                 | File                            |
+| ---------------------------- | ----------------------- | ------------------------------- |
+| `useTelegramBinding`         | Привязка/статус/отвязка | `useTelegramBinding.ts`         |
+| `useNotificationPreferences` | CRUD preferences        | `useNotificationPreferences.ts` |
+| `useTestNotification`        | Тестовое уведомление    | `useTestNotification.ts`        |
 
 ---
 
@@ -154,17 +159,20 @@
 **Goal**: Создать типобезопасную основу для работы с Telegram API.
 
 **Deliverables**:
+
 - ✅ TypeScript interfaces для всех DTO (Request #73)
 - ✅ API client functions в `lib/api/notifications.ts`
 - ✅ React Query hooks с правильными типами
 
 **Files**:
+
 - `src/types/notifications.ts` - TypeScript типы
 - `src/lib/api/notifications.ts` - API клиент
 - `src/hooks/useTelegramBinding.ts` - React Query хуки
 - `src/hooks/useNotificationPreferences.ts` - React Query хуки
 
 **Acceptance Criteria**:
+
 1. Все типы из Request #73 определены
 2. API client functions покрыты типами
 3. TypeScript strict mode без ошибок
@@ -173,6 +181,7 @@
 **Effort**: 2 SP (4-6 часов)
 
 **Technical Notes**:
+
 - Timezone validation через `Intl.DateTimeFormat().resolvedOptions().timeZone`
 - Time format validation: `/^([01]\d|2[0-3]):([0-5]\d)$/`
 - Language enum: `'ru' | 'en'`
@@ -184,6 +193,7 @@
 **Goal**: Реализовать процесс привязки Telegram-аккаунта с polling статуса.
 
 **Deliverables**:
+
 - ✅ Modal/Dialog с кодом привязки
 - ✅ Deep link кнопка (открывает Telegram)
 - ✅ Polling статуса каждые 3 секунды
@@ -192,6 +202,7 @@
 - ✅ Toast notifications для успеха/ошибок
 
 **User Flow**:
+
 ```
 1. User clicks "Подключить Telegram" button
 2. Modal opens with:
@@ -210,6 +221,7 @@
 **Component**: `TelegramBindingCard.tsx`
 
 **Props**:
+
 ```typescript
 interface TelegramBindingCardProps {
   // No props - uses internal state
@@ -217,11 +229,13 @@ interface TelegramBindingCardProps {
 ```
 
 **States**:
+
 - `not_bound` - Показываем кнопку "Подключить Telegram"
 - `binding_in_progress` - Modal открыт, показываем код, polling активен
 - `bound` - Показываем статус (@username) и кнопку "Отключить"
 
 **Acceptance Criteria**:
+
 1. Кнопка "Подключить Telegram" вызывает `POST /telegram/bind`
 2. Modal показывает binding code и deep link
 3. Deep link открывает Telegram с `/start <код>`
@@ -233,6 +247,7 @@ interface TelegramBindingCardProps {
 **Effort**: 5 SP (8-12 часов)
 
 **🎨 UX EXPERT INPUT NEEDED**:
+
 - [ ] **Binding Modal Design**: Layout, визуальная иерархия, цветовая схема
 - [ ] **Countdown Timer**: Формат отображения, стиль (прогресс-бар или текст?)
 - [ ] **Deep Link Button**: Стиль, иконка, расположение
@@ -246,6 +261,7 @@ interface TelegramBindingCardProps {
 **Goal**: Панель настроек типов событий, языка и дайджеста.
 
 **Deliverables**:
+
 - ✅ Toggles для event types (task_completed, task_failed, task_stalled, daily_digest)
 - ✅ Language switcher (ru/en) с флагами
 - ✅ Time picker для daily digest time
@@ -255,6 +271,7 @@ interface TelegramBindingCardProps {
 **Component**: `NotificationPreferencesPanel.tsx`
 
 **Props**:
+
 ```typescript
 interface NotificationPreferencesPanelProps {
   // No props - fetches data internally
@@ -262,6 +279,7 @@ interface NotificationPreferencesPanelProps {
 ```
 
 **Event Types Display**:
+
 ```
 ☑️ Задача выполнена успешно (task_completed)
    Уведомления при завершении импорта, синхронизации, расчёта маржи
@@ -278,11 +296,13 @@ interface NotificationPreferencesPanelProps {
 ```
 
 **Language Switcher**:
+
 ```
 [🇷🇺 Русский] [🇬🇧 English]
 ```
 
 **Acceptance Criteria**:
+
 1. Toggles работают (изменение state)
 2. Language switcher переключает язык
 3. Daily digest time picker (HH:MM format)
@@ -294,6 +314,7 @@ interface NotificationPreferencesPanelProps {
 **Effort**: 5 SP (8-12 часов)
 
 **🎨 UX EXPERT INPUT NEEDED**:
+
 - [ ] **Event Type Cards**: Визуальное оформление каждого типа события
 - [ ] **Toggle Style**: Switch или checkbox? Цветовая схема
 - [ ] **Language Switcher**: Кнопки, dropdown, или radio buttons?
@@ -308,6 +329,7 @@ interface NotificationPreferencesPanelProps {
 **Goal**: Настройка тихих часов с выбором timezone.
 
 **Deliverables**:
+
 - ✅ Toggle для включения quiet hours
 - ✅ Time pickers для "from" и "to"
 - ✅ Timezone selector (IANA timezones)
@@ -317,6 +339,7 @@ interface NotificationPreferencesPanelProps {
 **Component**: `QuietHoursConfiguration.tsx`
 
 **Props**:
+
 ```typescript
 interface QuietHoursConfigurationProps {
   // No props - part of preferences
@@ -324,6 +347,7 @@ interface QuietHoursConfigurationProps {
 ```
 
 **Layout**:
+
 ```
 ☑️ Тихие часы
    Уведомления не будут отправляться в заданный период
@@ -336,6 +360,7 @@ interface QuietHoursConfigurationProps {
 ```
 
 **Timezone Selector Options**:
+
 - Europe/Moscow (по умолчанию)
 - Europe/Kaliningrad
 - Europe/Samara
@@ -345,6 +370,7 @@ interface QuietHoursConfigurationProps {
 - (+ other popular timezones)
 
 **Acceptance Criteria**:
+
 1. Toggle включает/выключает quiet hours
 2. Time pickers работают (HH:MM format)
 3. Timezone dropdown с популярными зонами
@@ -355,6 +381,7 @@ interface QuietHoursConfigurationProps {
 **Effort**: 3 SP (5-7 часов)
 
 **🎨 UX EXPERT INPUT NEEDED**:
+
 - [ ] **Time Pickers**: Native HTML time input или custom component?
 - [ ] **Timezone Dropdown**: Группировка по регионам? Поиск?
 - [ ] **Current Time Preview**: Где разместить, формат отображения?
@@ -368,6 +395,7 @@ interface QuietHoursConfigurationProps {
 **Goal**: Интеграция всех компонентов на странице `/settings/notifications`.
 
 **Deliverables**:
+
 - ✅ Page `/settings/notifications`
 - ✅ Навигация в sidebar (Settings → Notifications)
 - ✅ Binding status indicator в header
@@ -376,6 +404,7 @@ interface QuietHoursConfigurationProps {
 - ✅ Responsive layout (mobile/tablet)
 
 **Page Layout**:
+
 ```
 ┌────────────────────────────────────────────────────────────┐
 │  Главная > Настройки > Уведомления                          │
@@ -409,12 +438,14 @@ interface QuietHoursConfigurationProps {
 ```
 
 **Binding Status Indicator** (Header/Sidebar):
+
 - 🔔 (green badge) - Telegram подключен
 - 🔕 (gray) - Telegram не подключен
 - Tooltip: "Telegram: подключен (@username)" или "Нажмите для подключения"
 - Click → redirect to `/settings/notifications`
 
 **Acceptance Criteria**:
+
 1. Page доступна по `/settings/notifications`
 2. Sidebar link "Уведомления" активна
 3. Breadcrumbs корректно отображаются
@@ -426,6 +457,7 @@ interface QuietHoursConfigurationProps {
 **Effort**: 3 SP (5-7 часов)
 
 **🎨 UX EXPERT INPUT NEEDED**:
+
 - [ ] **Page Layout**: Расположение компонентов, spacing, визуальная иерархия
 - [ ] **Card Design**: Как оформить каждую секцию (borders, shadows, backgrounds)?
 - [ ] **Status Indicator**: Иконка, цвет, размер, анимация?
@@ -439,6 +471,7 @@ interface QuietHoursConfigurationProps {
 **Goal**: Обеспечить качество и поддерживаемость кода.
 
 **Deliverables**:
+
 - ✅ Unit tests для hooks (useTelegramBinding, useNotificationPreferences)
 - ✅ Component tests для основных компонентов
 - ✅ E2E test для binding flow (Playwright)
@@ -446,6 +479,7 @@ interface QuietHoursConfigurationProps {
 - ✅ Storybook stories (опционально)
 
 **Test Coverage Goals**:
+
 - Unit Tests: 70%+
 - Integration Tests: 30%+
 - E2E Tests: Critical flows
@@ -453,6 +487,7 @@ interface QuietHoursConfigurationProps {
 **Test Scenarios**:
 
 **Unit Tests** (Vitest):
+
 ```typescript
 // useTelegramBinding.test.ts
 - Should call POST /telegram/bind on startBinding()
@@ -468,6 +503,7 @@ interface QuietHoursConfigurationProps {
 ```
 
 **E2E Tests** (Playwright):
+
 ```typescript
 // telegram-binding.spec.ts
 test('Full binding flow', async ({ page }) => {
@@ -483,12 +519,14 @@ test('Full binding flow', async ({ page }) => {
 ```
 
 **Documentation**:
+
 - README update с Telegram Notifications section
 - API integration guide
 - Component props documentation
 - Troubleshooting guide
 
 **Acceptance Criteria**:
+
 1. Unit tests passing (≥70% coverage)
 2. Component tests для всех основных компонентов
 3. E2E test для binding flow
@@ -507,6 +545,7 @@ test('Full binding flow', async ({ page }) => {
 **Business Impact**: **+140% conversion rate** (2.4x improvement)
 
 **Problem**:
+
 ```
 Current empty state (when not bound):
   ℹ️ Telegram не подключен
@@ -517,6 +556,7 @@ Result: Only 40% of users click → 20% overall conversion ⚠️
 ```
 
 **Solution**:
+
 ```
 Hero Banner (gradient background, rocket icon, benefits list):
 ╔═════════════════════════════════════════╗
@@ -533,6 +573,7 @@ Result: 80% of users click → 48% overall conversion ✅
 ```
 
 **Deliverables**:
+
 - Gradient background (`from-telegram/5 via-white to-telegram/10`)
 - Rocket icon 🚀 (48px, centered)
 - 3 benefits list with green checkmarks ✓
@@ -545,6 +586,7 @@ Result: 80% of users click → 48% overall conversion ✅
 **Tailwind Config Update**: Add Telegram brand colors (`#0088CC`, `#006699`)
 
 **Acceptance Criteria**:
+
 1. Hero banner shows when `isBound === false`
 2. Gradient background with border and decorative elements
 3. 3 benefits with bold keywords and checkmarks
@@ -556,6 +598,7 @@ Result: 80% of users click → 48% overall conversion ✅
 **Effort**: 3 SP (2-3 hours)
 
 **References**:
+
 - Story Doc: `docs/stories/epic-34/story-34.7-fe-empty-state-hero-banner.md`
 - UX Review: `docs/code-review/UX-LIVE-REVIEW-EPIC-34-FE-2025-12-30.md` (Issue #1)
 
@@ -569,6 +612,7 @@ Result: 80% of users click → 48% overall conversion ✅
 **Business Impact**: ~30% reduction in "When did I bind?" support tickets
 
 **Problem**:
+
 ```
 Current bound state:
   🔔 Подключен
@@ -582,6 +626,7 @@ Issues:
 ```
 
 **Solution**:
+
 ```
 Bound state with timestamp:
   🔔 Подключен
@@ -591,6 +636,7 @@ Bound state with timestamp:
 ```
 
 **Deliverables**:
+
 - Timestamp display below username (12px, gray-500)
 - Russian date formatting: "DD месяца YYYY, HH:MM"
 - `formatBindingDate` helper function using `Intl.DateTimeFormat`
@@ -604,6 +650,7 @@ Bound state with timestamp:
 **Backend Dependency**: ⚠️ Backend must provide `bound_at` field in `/v1/notifications/telegram/status`
 
 **Acceptance Criteria**:
+
 1. Timestamp shows when `bound_at` provided
 2. Format: "Подключено: DD месяца YYYY, HH:MM"
 3. Russian locale (`ru-RU`)
@@ -613,6 +660,7 @@ Bound state with timestamp:
 **Effort**: 1 SP (30-60 minutes)
 
 **References**:
+
 - Story Doc: `docs/stories/epic-34/story-34.8-fe-binding-timestamp-display.md`
 - UX Review: `docs/code-review/UX-LIVE-REVIEW-EPIC-34-FE-2025-12-30.md` (Issue #4)
 
@@ -625,6 +673,7 @@ Bound state with timestamp:
 **Route**: `/app/(dashboard)/settings/notifications/page.tsx`
 
 **Components Hierarchy**:
+
 ```
 page.tsx
   └─> SettingsLayout
@@ -640,6 +689,7 @@ page.tsx
 ### Sidebar Navigation
 
 **Add to Sidebar**:
+
 ```
 Settings
   └─> Уведомления 🔔
@@ -648,6 +698,7 @@ Settings
 ### Header Integration
 
 **Status Indicator**:
+
 ```typescript
 // In Header component
 <BindingStatusIndicator />
@@ -662,14 +713,14 @@ Settings
 
 ### Endpoints Summary
 
-| Endpoint | Method | Purpose | Hook |
-|----------|--------|---------|------|
-| `/v1/notifications/telegram/bind` | POST | Generate binding code | `useTelegramBinding.startBinding()` |
-| `/v1/notifications/telegram/status` | GET | Poll binding status | `useTelegramBinding.status` (auto-refetch) |
-| `/v1/notifications/telegram/unbind` | DELETE | Remove binding | `useTelegramBinding.unbind()` |
-| `/v1/notifications/preferences` | GET | Get preferences | `useNotificationPreferences.data` |
-| `/v1/notifications/preferences` | PUT | Update preferences | `useNotificationPreferences.update()` |
-| `/v1/notifications/test` | POST | Test notification | `useTestNotification.send()` |
+| Endpoint                            | Method | Purpose               | Hook                                       |
+| ----------------------------------- | ------ | --------------------- | ------------------------------------------ |
+| `/v1/notifications/telegram/bind`   | POST   | Generate binding code | `useTelegramBinding.startBinding()`        |
+| `/v1/notifications/telegram/status` | GET    | Poll binding status   | `useTelegramBinding.status` (auto-refetch) |
+| `/v1/notifications/telegram/unbind` | DELETE | Remove binding        | `useTelegramBinding.unbind()`              |
+| `/v1/notifications/preferences`     | GET    | Get preferences       | `useNotificationPreferences.data`          |
+| `/v1/notifications/preferences`     | PUT    | Update preferences    | `useNotificationPreferences.update()`      |
+| `/v1/notifications/test`            | POST   | Test notification     | `useTestNotification.send()`               |
 
 ### React Query Hooks Design
 
@@ -777,11 +828,13 @@ export function useTestNotification() {
 ### Color Scheme
 
 **Telegram Brand Colors**:
+
 - Primary Blue: `#0088CC` (Telegram brand)
 - Success Green: `#22C55E` (bound status)
 - Gray: `#9CA3AF` (not bound status)
 
 **Status Indicators**:
+
 - 🔔 Bound: Green badge
 - 🔕 Not Bound: Gray icon
 - ⏳ Binding in Progress: Blue spinner
@@ -803,16 +856,19 @@ export function useTestNotification() {
 ### Interactive Elements
 
 **Toggles**:
+
 - Use shadcn/ui Switch component
 - Blue when enabled, gray when disabled
 - Smooth animation (200ms)
 
 **Buttons**:
+
 - Primary: Blue background (Telegram brand)
 - Secondary: Gray outline
 - Danger: Red for unbind action
 
 **Time Pickers**:
+
 - Native HTML5 time input (mobile-friendly)
 - Fallback to custom component if needed
 
@@ -829,6 +885,7 @@ export function useTestNotification() {
 ## 🎨 UX EXPERT: Design Questions Checklist
 
 ### Story 34.2-FE: Binding Flow
+
 - [ ] **Q1**: Binding modal - центрированный overlay или side panel?
 - [ ] **Q2**: Countdown timer - прогресс-бар, текстовый счётчик, или оба?
 - [ ] **Q3**: Deep link button - стиль, иконка (Telegram logo?), расположение?
@@ -836,6 +893,7 @@ export function useTestNotification() {
 - [ ] **Q5**: Unbind confirmation - inline alert или отдельный dialog?
 
 ### Story 34.3-FE: Preferences Panel
+
 - [ ] **Q6**: Event type cards - как визуально отличить включенные от выключенных?
 - [ ] **Q7**: Descriptions - expandable sections, tooltips, или всегда видимы?
 - [ ] **Q8**: Language switcher - radio buttons, tabs, или dropdown?
@@ -843,6 +901,7 @@ export function useTestNotification() {
 - [ ] **Q10**: Save strategy - auto-save (debounced) или manual "Сохранить" button?
 
 ### Story 34.4-FE: Quiet Hours
+
 - [ ] **Q11**: Time pickers - native HTML или custom styled component?
 - [ ] **Q12**: Timezone dropdown - группировка по регионам? Поиск? Популярные сверху?
 - [ ] **Q13**: Current time preview - где показать (tooltip, inline text, отдельная строка)?
@@ -850,6 +909,7 @@ export function useTestNotification() {
 - [ ] **Q15**: Active quiet hours indicator - как показать, что СЕЙЧАС тихие часы?
 
 ### Story 34.5-FE: Page Layout
+
 - [ ] **Q16**: Card layout - вертикальный stack или grid (2 columns на desktop)?
 - [ ] **Q17**: Spacing - сколько пикселей между секциями?
 - [ ] **Q18**: Mobile layout - все карточки collapse или какие-то остаются expanded?
@@ -857,6 +917,7 @@ export function useTestNotification() {
 - [ ] **Q20**: Status indicator в header - размер иконки, цвет badge, анимация при hover?
 
 ### General Design
+
 - [ ] **Q21**: Локализация UI - где взять переводы для элементов (кнопки, labels)?
 - [ ] **Q22**: Error states - как показать ошибки (toast, inline alert, modal)?
 - [ ] **Q23**: Loading states - скелетоны, spinners, или disabled states?
@@ -869,27 +930,27 @@ export function useTestNotification() {
 
 ### Adoption Metrics
 
-| Metric | Target | Measurement |
-|--------|--------|-------------|
-| Binding rate | >30% of active users | Track `telegram_user_bindings` table |
-| Successful bindings | >95% success rate | Track binding attempts vs completed |
-| Settings changes | >50% users customize | Track `PUT /preferences` calls |
+| Metric              | Target               | Measurement                          |
+| ------------------- | -------------------- | ------------------------------------ |
+| Binding rate        | >30% of active users | Track `telegram_user_bindings` table |
+| Successful bindings | >95% success rate    | Track binding attempts vs completed  |
+| Settings changes    | >50% users customize | Track `PUT /preferences` calls       |
 
 ### Engagement Metrics
 
-| Metric | Target | Measurement |
-|--------|--------|-------------|
-| Page visits | >20% of active users/week | Track `/settings/notifications` pageviews |
-| Test notifications sent | >10% users test | Track `POST /test` calls |
-| Unbind rate | <5% | Track `DELETE /unbind` calls |
+| Metric                  | Target                    | Measurement                               |
+| ----------------------- | ------------------------- | ----------------------------------------- |
+| Page visits             | >20% of active users/week | Track `/settings/notifications` pageviews |
+| Test notifications sent | >10% users test           | Track `POST /test` calls                  |
+| Unbind rate             | <5%                       | Track `DELETE /unbind` calls              |
 
 ### Quality Metrics
 
-| Metric | Target | Measurement |
-|--------|--------|-------------|
-| Polling latency | <500ms p95 | Track API response times |
-| Binding completion time | <60s p95 | Track time from bind → status=bound |
-| Settings update success rate | >99% | Track failed PUT requests |
+| Metric                       | Target     | Measurement                         |
+| ---------------------------- | ---------- | ----------------------------------- |
+| Polling latency              | <500ms p95 | Track API response times            |
+| Binding completion time      | <60s p95   | Track time from bind → status=bound |
+| Settings update success rate | >99%       | Track failed PUT requests           |
 
 ---
 
@@ -912,17 +973,20 @@ export function useTestNotification() {
 ### Sprint Planning
 
 **Sprint 1 (10 SP)** - ✅ COMPLETE:
+
 - Story 34.1-FE (2 SP)
 - Story 34.2-FE (5 SP)
 - Story 34.3-FE (3 SP из 5 SP - base implementation)
 
 **Sprint 2 (11 SP)** - ✅ COMPLETE:
+
 - Story 34.3-FE (2 SP - polish & edge cases)
 - Story 34.4-FE (3 SP)
 - Story 34.5-FE (3 SP)
 - Story 34.6-FE (3 SP)
 
 **Sprint 3 (UX Improvements - 4 SP)** - 📋 PLANNED:
+
 - Story 34.7-FE (3 SP) - 🔴 **HIGH PRIORITY**: Hero banner (2.4x ROI)
 - Story 34.8-FE (1 SP) - 🔵 **LOW PRIORITY**: Timestamp display (polish)
 
@@ -931,6 +995,7 @@ export function useTestNotification() {
 **Overall Score**: 8.5/10 → **9.5/10** (with improvements)
 
 **UX Expert Findings**:
+
 - ✅ **Issue #2 (Save Feedback)**: ALREADY IMPLEMENTED (spinner + toast)
 - ✅ **Issue #3 (Unbind Confirmation)**: ALREADY IMPLEMENTED (AlertDialog)
 - ❌ **Issue #1 (Hero Banner)**: MISSING - 🔴 CRITICAL (Story 34.7-FE)
@@ -939,6 +1004,7 @@ export function useTestNotification() {
 **Business Impact**: Hero banner increases binding conversion from **20% → 48%** (+140% lift)
 
 **References**:
+
 - UX Review: `docs/code-review/UX-LIVE-REVIEW-EPIC-34-FE-2025-12-30.md`
 - Implementation Plan: `docs/implementation-plans/epic-34-fe-ux-improvements-plan.md`
 
@@ -947,17 +1013,20 @@ export function useTestNotification() {
 ## Dependencies
 
 ### Required Before Implementation
+
 - ✅ Epic 34 (Backend) - COMPLETE
 - ✅ Request #73 API documentation - COMPLETE
 - ⏳ UX Expert design review - PENDING
 - ⏳ Wireframes/mockups - PENDING
 
 ### External Dependencies
+
 - `telegraf` - Backend bot framework (уже установлен)
 - `@tanstack/react-query` - Frontend data fetching (уже используется)
 - shadcn/ui components: Switch, Dialog, Select, TimePicker
 
 ### Affected Files
+
 - `src/app/(dashboard)/settings/notifications/page.tsx` - NEW
 - `src/components/custom/TelegramBindingCard.tsx` - NEW
 - `src/components/custom/NotificationPreferencesPanel.tsx` - NEW
@@ -972,25 +1041,27 @@ export function useTestNotification() {
 
 ## Risk Assessment
 
-| Risk | Likelihood | Impact | Mitigation |
-|------|------------|--------|------------|
-| UX design delays | Medium | Medium | Start with basic UI, iterate based on feedback |
-| Polling performance impact | Low | Low | 3s interval is safe, stop after 10 min |
-| Timezone complexity | Medium | Low | Use Intl API, test popular timezones |
-| Mobile binding flow | Medium | Medium | Deep link works on mobile, test thoroughly |
-| User confusion on binding | Low | Medium | Clear instructions, video tutorial (optional) |
+| Risk                       | Likelihood | Impact | Mitigation                                     |
+| -------------------------- | ---------- | ------ | ---------------------------------------------- |
+| UX design delays           | Medium     | Medium | Start with basic UI, iterate based on feedback |
+| Polling performance impact | Low        | Low    | 3s interval is safe, stop after 10 min         |
+| Timezone complexity        | Medium     | Low    | Use Intl API, test popular timezones           |
+| Mobile binding flow        | Medium     | Medium | Deep link works on mobile, test thoroughly     |
+| User confusion on binding  | Low        | Medium | Clear instructions, video tutorial (optional)  |
 
 ---
 
 ## Security Considerations
 
 ### Data Privacy
+
 - No phone numbers stored (only telegram_id, chat_id)
 - Binding codes expire in 10 minutes
 - User can unbind anytime
 - Notification messages don't contain sensitive financial data
 
 ### Client-Side Security
+
 - No storage of binding codes after use
 - Polling stops after modal close
 - HTTPS-only for API calls
@@ -1001,11 +1072,13 @@ export function useTestNotification() {
 ## Related Documentation
 
 ### Backend
+
 - [TELEGRAM-NOTIFICATIONS-GUIDE.md](../../../docs/TELEGRAM-NOTIFICATIONS-GUIDE.md)
 - [Request #73: Telegram Notifications API](../request-backend/73-telegram-notifications-epic-34.md)
 - [Epic 34 (Backend)](../../../docs/epics/epic-34-telegram-notifications.md)
 
 ### Frontend Implementation (✅ COMPLETE)
+
 - **[Developer Handoff](../DEV-HANDOFF-EPIC-34-FE.md)** - Production readiness guide
   - [Bot Configuration](../DEV-HANDOFF-EPIC-34-FE.md#-telegram-bot-configuration-urgent-action-required) - Update bot username
   - [Monitoring Setup](../DEV-HANDOFF-EPIC-34-FE.md#-monitoring--analytics-implementation-recommended) - Analytics implementation
@@ -1018,6 +1091,7 @@ export function useTestNotification() {
 - [E2E Testing Guide](../qa/E2E-TESTING-GUIDE.md) - Playwright setup
 
 ### Architecture & Standards
+
 - [Frontend Architecture](../front-end-architecture.md)
 - [Component Standards](../front-end-spec.md)
 
@@ -1027,6 +1101,7 @@ export function useTestNotification() {
 **Status**: ✅ **PRODUCTION READY** - Awaiting bot config + monitoring
 **Author**: Sarah (PO)
 **Completed**:
+
 1. ✅ All 6 stories implemented (21 SP)
 2. ✅ Manual QA: 30/30 test cases passed
 3. ✅ E2E tests ready (Playwright)
@@ -1034,6 +1109,7 @@ export function useTestNotification() {
 5. ✅ Developer handoff document complete
 
 **Pending**:
+
 1. ⏳ Update Telegram bot username to `@Kernel_crypto_bot` (already done in code)
 2. ⏳ Implement monitoring system (2-3h, see [Handoff Guide](../DEV-HANDOFF-EPIC-34-FE.md#-monitoring--analytics-implementation-recommended))
 3. ⏳ Run E2E tests on staging (1h)

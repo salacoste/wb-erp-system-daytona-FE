@@ -27,9 +27,9 @@ This is **different** from current "Валовая прибыль" (Gross Profit
 
 ## Problem Statement
 
-| Metric | Formula | Purpose |
-|--------|---------|---------|
-| **Gross Profit** (current) | `revenue - COGS` | Margin on actual sales |
+| Metric                          | Formula                                     | Purpose                          |
+| ------------------------------- | ------------------------------------------- | -------------------------------- |
+| **Gross Profit** (current)      | `revenue - COGS`                            | Margin on actual sales           |
 | **Theoretical Profit** (needed) | `orders - COGS - ads - logistics - storage` | Potential profit from ALL orders |
 
 The theoretical profit shows **potential earnings** if all orders were fulfilled, accounting for all major costs.
@@ -312,10 +312,10 @@ function useDashboardTheoreticalProfit(period: string) {
 
 ## Files to Create
 
-| File | Description |
-|------|-------------|
-| `src/lib/theoretical-profit.ts` | Main calculation function |
-| `src/lib/__tests__/theoretical-profit.test.ts` | Unit tests |
+| File                                           | Description               |
+| ---------------------------------------------- | ------------------------- |
+| `src/lib/theoretical-profit.ts`                | Main calculation function |
+| `src/lib/__tests__/theoretical-profit.test.ts` | Unit tests                |
 
 ---
 

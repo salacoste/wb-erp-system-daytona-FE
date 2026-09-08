@@ -14,21 +14,21 @@
 
 ### ✅ ACTUALLY IMPLEMENTED (6 endpoints)
 
-| Endpoint | Status | Description |
-|----------|--------|-------------|
-| `GET /v1/tariffs/commissions` | ✅ | 7346 категорий с комиссиями FBO/FBS |
-| `GET /v1/tariffs/warehouses` | ✅ | Список складов (wrapped: `{data: {warehouses}}`) |
-| `GET /v1/tariffs/warehouses-with-tariffs` | ✅ | Склады + тарифы логистики/хранения |
-| `GET /v1/tariffs/acceptance/coefficients?warehouseId=X` | ✅ | Коэффициенты приёмки по складу |
-| `GET /v1/tariffs/acceptance/coefficients/all` | ✅ | Все коэффициенты всех складов |
-| `GET /v1/tariffs/settings` | ✅ | Глобальные настройки тарифов |
+| Endpoint                                                | Status | Description                                      |
+| ------------------------------------------------------- | ------ | ------------------------------------------------ |
+| `GET /v1/tariffs/commissions`                           | ✅     | 7346 категорий с комиссиями FBO/FBS              |
+| `GET /v1/tariffs/warehouses`                            | ✅     | Список складов (wrapped: `{data: {warehouses}}`) |
+| `GET /v1/tariffs/warehouses-with-tariffs`               | ✅     | Склады + тарифы логистики/хранения               |
+| `GET /v1/tariffs/acceptance/coefficients?warehouseId=X` | ✅     | Коэффициенты приёмки по складу                   |
+| `GET /v1/tariffs/acceptance/coefficients/all`           | ✅     | Все коэффициенты всех складов                    |
+| `GET /v1/tariffs/settings`                              | ✅     | Глобальные настройки тарифов                     |
 
 ### ❌ NOT IMPLEMENTED (wishlist - use alternatives)
 
-| Requested Endpoint | Status | Alternative |
-|-------------------|--------|-------------|
-| `GET /v1/tariffs/box` | ❌ | Use `/warehouses-with-tariffs` |
-| `GET /v1/tariffs/box/{warehouse_name}` | ❌ | Filter `/warehouses-with-tariffs` client-side |
+| Requested Endpoint                     | Status | Alternative                                   |
+| -------------------------------------- | ------ | --------------------------------------------- |
+| `GET /v1/tariffs/box`                  | ❌     | Use `/warehouses-with-tariffs`                |
+| `GET /v1/tariffs/box/{warehouse_name}` | ❌     | Filter `/warehouses-with-tariffs` client-side |
 
 **Actual API Reference**: `test-api/18-tariffs.http`, `test-api/15-tariffs-endpoints.http`
 
@@ -42,16 +42,17 @@
 
 ### Реализованные сервисы:
 
-| Сервис | Story | Описание |
-|--------|-------|----------|
-| TariffsService | 43.1 | Комиссии по категориям (FBO/FBS) |
-| WbTariffSettingsService | 43.8 | Глобальные настройки тарифов |
-| WarehousesTariffsService | 43.5 | Склады + тарифы логистики/хранения |
-| AcceptanceCoefficientsService | 43.9 | Коэффициенты приёмки FBO ✨ NEW |
+| Сервис                        | Story | Описание                           |
+| ----------------------------- | ----- | ---------------------------------- |
+| TariffsService                | 43.1  | Комиссии по категориям (FBO/FBS)   |
+| WbTariffSettingsService       | 43.8  | Глобальные настройки тарифов       |
+| WarehousesTariffsService      | 43.5  | Склады + тарифы логистики/хранения |
+| AcceptanceCoefficientsService | 43.9  | Коэффициенты приёмки FBO ✨ NEW    |
 
 ---
 
 ## Backend Team Response
+
 **Status**: RESOLVED
 **Resolution**: 6 tariff endpoints implemented (commissions, warehouses, warehouses-with-tariffs, acceptance coefficients by warehouse, all acceptance coefficients, settings). Two WB tariff systems documented: Inventory (actual costs) for financial reports and Supply (planning) for delivery forecasting.
 **Frontend Action**: No further action needed unless noted above.
@@ -152,6 +153,7 @@ interface ModelsWarehousePalletRates {
 **✅ IMPLEMENTED** - Story 43.10
 
 **Actual Response Format (Verified):**
+
 ```json
 {
   "data": {
@@ -177,6 +179,7 @@ interface ModelsWarehousePalletRates {
 ```
 
 **Field Mapping:**
+
 - `id` (number) - Warehouse ID
 - `name` (string) - Warehouse name
 - `address` (null) - Not available in simplified response
@@ -185,6 +188,7 @@ interface ModelsWarehousePalletRates {
 - `updated_at` (ISO string) - Response timestamp
 
 **Curl Example:**
+
 ```bash
 curl -X GET "http://localhost:3000/v1/tariffs/warehouses" \
   -H "Authorization: Bearer YOUR_TOKEN" \
@@ -213,6 +217,7 @@ curl -X GET "http://localhost:3000/v1/tariffs/warehouses" \
 **Описание:** Агрегированные данные: склады + тарифы логистики/хранения
 
 **Response:**
+
 ```json
 {
   "warehouses": [
@@ -239,6 +244,7 @@ curl -X GET "http://localhost:3000/v1/tariffs/warehouses" \
 ```
 
 **Frontend Usage:**
+
 ```typescript
 // src/lib/api/tariffs.ts - getBoxTariffs()
 // Transforms warehouses-with-tariffs response to BoxTariffItem[]
@@ -267,6 +273,7 @@ const tariffs = response.warehouses.map(w => ({
 **Вопрос:** Какой TTL для кэширования тарифов?
 
 **Предложение:**
+
 - Warehouses list: 24 часа (редко меняется)
 - Tariffs/coefficients: 1 час (могут меняться чаще)
 
@@ -281,6 +288,7 @@ const tariffs = response.warehouses.map(w => ({
 **Вопрос:** Какие тарифы использовать по умолчанию?
 
 **Варианты:**
+
 - FBO (склад WB) - `boxDeliveryBase/Liter`
 - FBS (склад продавца) - `boxDeliveryMarketplaceBase/Liter`
 
@@ -324,18 +332,18 @@ src/tariffs/
 
 ### Caching Strategy
 
-| Data | TTL | Redis Key Pattern |
-|------|-----|-------------------|
-| Warehouses list | 24h | `tariffs:warehouses:{cabinetId}` |
-| Box tariffs (all) | 1h | `tariffs:box:all:{cabinetId}` |
-| Box tariffs (single) | 1h | `tariffs:box:{warehouseName}:{cabinetId}` |
+| Data                 | TTL | Redis Key Pattern                         |
+| -------------------- | --- | ----------------------------------------- |
+| Warehouses list      | 24h | `tariffs:warehouses:{cabinetId}`          |
+| Box tariffs (all)    | 1h  | `tariffs:box:all:{cabinetId}`             |
+| Box tariffs (single) | 1h  | `tariffs:box:{warehouseName}:{cabinetId}` |
 
 ### Rate Limiting
 
-| Endpoint | Limit | Scope |
-|----------|-------|-------|
+| Endpoint                   | Limit  | Scope       |
+| -------------------------- | ------ | ----------- |
 | GET /v1/tariffs/warehouses | 10/min | per cabinet |
-| GET /v1/tariffs/box | 10/min | per cabinet |
+| GET /v1/tariffs/box        | 10/min | per cabinet |
 | GET /v1/tariffs/box/{name} | 30/min | per cabinet |
 
 ---
@@ -343,6 +351,7 @@ src/tariffs/
 ## Frontend Usage (Phase 3)
 
 ### Story 44.12: Warehouse Dropdown
+
 ```tsx
 // Component: WarehouseSelector.tsx
 const { data: warehouses } = useWarehouses()
@@ -357,6 +366,7 @@ const { data: warehouses } = useWarehouses()
 ```
 
 ### Story 44.13: Auto-fill Coefficients
+
 ```tsx
 // On warehouse selection
 const { data: tariffs } = useBoxTariffs(selectedWarehouse)
@@ -368,6 +378,7 @@ setValue('logistics_forward_rub', calculateLogistics(volume, tariffs))
 ```
 
 ### Story 44.14: Storage Calculation
+
 ```tsx
 // Storage cost per unit per day
 const storageCost = (volume * tariffs.storage.per_liter_per_day_rub)
@@ -379,11 +390,11 @@ const storageCost = (volume * tariffs.storage.per_liter_per_day_rub)
 
 ## Timeline
 
-| Phase | Description | ETA |
-|-------|-------------|-----|
-| Backend Response | Ответы на вопросы | Pending |
-| Backend Implementation | Warehouses + Box Tariffs API | TBD |
-| Frontend Stories | 44.12-44.14 | After Backend |
+| Phase                  | Description                  | ETA           |
+| ---------------------- | ---------------------------- | ------------- |
+| Backend Response       | Ответы на вопросы            | Pending       |
+| Backend Implementation | Warehouses + Box Tariffs API | TBD           |
+| Frontend Stories       | 44.12-44.14                  | After Backend |
 
 ---
 
@@ -407,11 +418,13 @@ const storageCost = (volume * tariffs.storage.per_liter_per_day_rub)
 ### Fixes Applied
 
 **Issue #1: Warehouse Response Format** - ✅ FIXED
+
 - **File**: `src/tariffs/tariffs.controller.ts:215-221`
 - **Change**: Response wrapped in `{data: {warehouses, updated_at}}`
 - **Impact**: Frontend can now correctly unwrap and display warehouses
 
 **Issue #2: Category Hierarchy** - ✅ FIXED
+
 - **File**: `src/products/products.service.ts:1815`
 - **Change**: Field reference `subjectName` → `category`
 - **Impact**: Category data now correctly populated in products endpoint
@@ -436,6 +449,7 @@ const { data } = useWarehouses();
 ### Response Format Examples
 
 **GET /v1/tariffs/warehouses:**
+
 ```json
 {
   "data": {
@@ -448,6 +462,7 @@ const { data } = useWarehouses();
 ```
 
 **GET /v1/products?include_dimensions=true:**
+
 ```json
 {
   "products": [
@@ -489,8 +504,8 @@ curl -X GET "http://localhost:3000/v1/products?include_dimensions=true&q=6867018
 
 ---
 
-*Status:* ✅ IMPLEMENTED
-*Last Updated:* 2026-01-24
+_Status:_ ✅ IMPLEMENTED
+_Last Updated:_ 2026-01-24
 
 ---
 

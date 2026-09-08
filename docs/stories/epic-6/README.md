@@ -22,6 +22,7 @@
 **So that** I can make data-driven decisions about pricing, inventory, and product strategy.
 
 **Key Capabilities**:
+
 - 📅 Analyze trends across custom date ranges (not just single weeks)
 - 📊 Compare periods to see growth/decline with visual indicators
 - 💰 View ROI and profit-per-unit metrics for investment decisions
@@ -72,13 +73,13 @@
 
 ## Stories
 
-| Story | Title | Priority | Points | Status | Dependency |
-|-------|-------|----------|--------|--------|------------|
-| [6.1-fe](story-6.1-fe-date-range-support.md) | Date Range Support | High | 5 | ✅ Done | None |
-| [6.2-fe](story-6.2-fe-period-comparison.md) | Period Comparison | Medium | 3 | ✅ Done | 6.1-fe ✅ |
-| [6.3-fe](story-6.3-fe-roi-profit-metrics.md) | ROI & Profit Metrics | Medium | 3 | ✅ Done | None |
-| [6.4-fe](story-6.4-fe-cabinet-summary.md) | Cabinet Summary Dashboard | High | 5 | ✅ Done | None |
-| [6.5-fe](story-6.5-fe-export-analytics.md) | Export Analytics UI | Medium | 5 | ✅ Done | 6.1-fe ✅ |
+| Story                                        | Title                     | Priority | Points | Status  | Dependency |
+| -------------------------------------------- | ------------------------- | -------- | ------ | ------- | ---------- |
+| [6.1-fe](story-6.1-fe-date-range-support.md) | Date Range Support        | High     | 5      | ✅ Done | None       |
+| [6.2-fe](story-6.2-fe-period-comparison.md)  | Period Comparison         | Medium   | 3      | ✅ Done | 6.1-fe ✅  |
+| [6.3-fe](story-6.3-fe-roi-profit-metrics.md) | ROI & Profit Metrics      | Medium   | 3      | ✅ Done | None       |
+| [6.4-fe](story-6.4-fe-cabinet-summary.md)    | Cabinet Summary Dashboard | High     | 5      | ✅ Done | None       |
+| [6.5-fe](story-6.5-fe-export-analytics.md)   | Export Analytics UI       | Medium   | 5      | ✅ Done | 6.1-fe ✅  |
 
 **Total**: 21 points | **Completed**: 5/5 (100%) | **Done**: 21 pts | **Remaining**: 0 pts
 
@@ -151,27 +152,27 @@ Cabinet Summary Dashboard (Independent)
 
 ## New Components
 
-| Component | Story | Description |
-|-----------|-------|-------------|
-| `DateRangePicker` | 6.1-fe | Week range selector with validation |
-| `DeltaIndicator` | 6.2-fe | ↑↓— with green/red color coding |
-| `ColumnVisibilityToggle` | 6.3-fe | Show/hide columns dropdown |
-| `KPICard` | 6.4-fe | Metric card with trend indicator |
-| `TopProductsTable` | 6.4-fe | Top 10 products by revenue |
-| `TopBrandsTable` | 6.4-fe | Top 5 brands by revenue |
-| `ExportDialog` | 6.5-fe | Export configuration modal |
-| `ExportStatusDisplay` | 6.5-fe | Progress/download UI |
+| Component                | Story  | Description                         |
+| ------------------------ | ------ | ----------------------------------- |
+| `DateRangePicker`        | 6.1-fe | Week range selector with validation |
+| `DeltaIndicator`         | 6.2-fe | ↑↓— with green/red color coding     |
+| `ColumnVisibilityToggle` | 6.3-fe | Show/hide columns dropdown          |
+| `KPICard`                | 6.4-fe | Metric card with trend indicator    |
+| `TopProductsTable`       | 6.4-fe | Top 10 products by revenue          |
+| `TopBrandsTable`         | 6.4-fe | Top 5 brands by revenue             |
+| `ExportDialog`           | 6.5-fe | Export configuration modal          |
+| `ExportStatusDisplay`    | 6.5-fe | Progress/download UI                |
 
 ---
 
 ## New Hooks
 
-| Hook | Story | Description |
-|------|-------|-------------|
-| `useMarginAnalytics` | 6.1-fe | UPDATE: Add weekStart/weekEnd support |
+| Hook                  | Story  | Description                            |
+| --------------------- | ------ | -------------------------------------- |
+| `useMarginAnalytics`  | 6.1-fe | UPDATE: Add weekStart/weekEnd support  |
 | `useColumnVisibility` | 6.3-fe | NEW: localStorage-persisted visibility |
-| `useCabinetSummary` | 6.4-fe | NEW: Cabinet summary API hook |
-| `useExportAnalytics` | 6.5-fe | NEW: Export mutation + polling |
+| `useCabinetSummary`   | 6.4-fe | NEW: Cabinet summary API hook          |
+| `useExportAnalytics`  | 6.5-fe | NEW: Export mutation + polling         |
 
 ---
 
@@ -179,15 +180,15 @@ Cabinet Summary Dashboard (Independent)
 
 All endpoints are **ready** (Backend Epic 6B complete):
 
-| Endpoint | Story | Purpose |
-|----------|-------|---------|
-| `GET /v1/analytics/weekly/by-sku?weekStart=&weekEnd=` | 6.1-fe | SKU analytics with date range |
-| `GET /v1/analytics/weekly/by-brand?weekStart=&weekEnd=` | 6.1-fe | Brand analytics with date range |
+| Endpoint                                                   | Story  | Purpose                            |
+| ---------------------------------------------------------- | ------ | ---------------------------------- |
+| `GET /v1/analytics/weekly/by-sku?weekStart=&weekEnd=`      | 6.1-fe | SKU analytics with date range      |
+| `GET /v1/analytics/weekly/by-brand?weekStart=&weekEnd=`    | 6.1-fe | Brand analytics with date range    |
 | `GET /v1/analytics/weekly/by-category?weekStart=&weekEnd=` | 6.1-fe | Category analytics with date range |
-| `GET /v1/analytics/weekly/by-sku?compare_to=` | 6.2-fe | Period comparison with deltas |
-| `GET /v1/analytics/cabinet-summary?weeks=` | 6.4-fe | Cabinet-level KPIs |
-| `POST /v1/exports/analytics` | 6.5-fe | Create export job |
-| `GET /v1/exports/:exportId` | 6.5-fe | Get export status/download |
+| `GET /v1/analytics/weekly/by-sku?compare_to=`              | 6.2-fe | Period comparison with deltas      |
+| `GET /v1/analytics/cabinet-summary?weeks=`                 | 6.4-fe | Cabinet-level KPIs                 |
+| `POST /v1/exports/analytics`                               | 6.5-fe | Create export job                  |
+| `GET /v1/exports/:exportId`                                | 6.5-fe | Get export status/download         |
 
 ---
 
@@ -331,13 +332,13 @@ Neutral:  — 0%      (gray-400)
 
 ### ROI Color Thresholds (6.3-fe)
 
-| ROI Range | Color | Meaning |
-|-----------|-------|---------|
-| ≥100% | green-600 | Excellent |
-| 50-99% | green-500 | Good |
-| 20-49% | yellow-600 | Average |
-| 0-19% | orange-500 | Low |
-| <0% | red-600 | Negative |
+| ROI Range | Color      | Meaning   |
+| --------- | ---------- | --------- |
+| ≥100%     | green-600  | Excellent |
+| 50-99%    | green-500  | Good      |
+| 20-49%    | yellow-600 | Average   |
+| 0-19%     | orange-500 | Low       |
+| <0%       | red-600    | Negative  |
 
 ---
 
@@ -353,34 +354,34 @@ Neutral:  — 0%      (gray-400)
 
 **Performance Targets**:
 
-| Metric | Target |
-|--------|--------|
+| Metric                    | Target        |
+| ------------------------- | ------------- |
 | Date range query response | < 500ms (p95) |
-| Dashboard load time | < 1s |
-| Export poll interval | 2 seconds |
-| Component render time | < 100ms |
+| Dashboard load time       | < 1s          |
+| Export poll interval      | 2 seconds     |
+| Component render time     | < 100ms       |
 
 ---
 
 ## Risk Assessment
 
-| Story | Risk | Primary Concern | Mitigation |
-|-------|------|-----------------|------------|
-| 6.1-fe | Low | Hook changes may break existing code | Backward compatibility via optional params |
-| 6.2-fe | Low | Delta calculation edge cases | Handle null, zero, division by zero |
-| 6.3-fe | Low | localStorage not available in SSR | useEffect for hydration |
-| 6.4-fe | Low | New page routing | Follow existing dashboard patterns |
-| 6.5-fe | Low | Popup blocker for downloads | Manual download button fallback |
+| Story  | Risk | Primary Concern                      | Mitigation                                 |
+| ------ | ---- | ------------------------------------ | ------------------------------------------ |
+| 6.1-fe | Low  | Hook changes may break existing code | Backward compatibility via optional params |
+| 6.2-fe | Low  | Delta calculation edge cases         | Handle null, zero, division by zero        |
+| 6.3-fe | Low  | localStorage not available in SSR    | useEffect for hydration                    |
+| 6.4-fe | Low  | New page routing                     | Follow existing dashboard patterns         |
+| 6.5-fe | Low  | Popup blocker for downloads          | Manual download button fallback            |
 
 ---
 
 ## Testing Strategy
 
-| Type | Framework | Coverage Target |
-|------|-----------|-----------------|
-| Unit Tests | Vitest + RTL | >80% hooks, >70% components |
-| Integration | Vitest | API mocking with MSW |
-| E2E | Playwright | Critical user flows |
+| Type        | Framework    | Coverage Target             |
+| ----------- | ------------ | --------------------------- |
+| Unit Tests  | Vitest + RTL | >80% hooks, >70% components |
+| Integration | Vitest       | API mocking with MSW        |
+| E2E         | Playwright   | Critical user flows         |
 
 **Test Location**: Colocated in `__tests__` folders
 
@@ -428,11 +429,11 @@ Neutral:  — 0%      (gray-400)
 
 ## Change Log
 
-| Date | Author | Change |
-|------|--------|--------|
-| 2025-11-29 | Claude Code (Opus 4.5) | Initial draft - 5 frontend stories created |
-| 2025-11-29 | Sarah (PO Agent) | PO Validation: Added Tasks/Subtasks, Dev Notes, Change Logs. All stories Ready for Dev |
-| 2025-12-05 | Sarah (PO Agent) | Enhanced README with solution overview, dependency graph, success criteria, risk assessment |
-| 2025-12-05 | Claude Code (Opus 4.5) | Stories 6.1, 6.2, 6.4 completed (13 pts) |
-| 2025-12-05 | Claude Code (Opus 4.5) | Story 6.3-fe completed: ROI & Profit Metrics Display (3 pts). Epic at 76% (16/21 pts) |
+| Date       | Author                 | Change                                                                                          |
+| ---------- | ---------------------- | ----------------------------------------------------------------------------------------------- |
+| 2025-11-29 | Claude Code (Opus 4.5) | Initial draft - 5 frontend stories created                                                      |
+| 2025-11-29 | Sarah (PO Agent)       | PO Validation: Added Tasks/Subtasks, Dev Notes, Change Logs. All stories Ready for Dev          |
+| 2025-12-05 | Sarah (PO Agent)       | Enhanced README with solution overview, dependency graph, success criteria, risk assessment     |
+| 2025-12-05 | Claude Code (Opus 4.5) | Stories 6.1, 6.2, 6.4 completed (13 pts)                                                        |
+| 2025-12-05 | Claude Code (Opus 4.5) | Story 6.3-fe completed: ROI & Profit Metrics Display (3 pts). Epic at 76% (16/21 pts)           |
 | 2025-12-05 | Claude Code (Opus 4.5) | Story 6.5-fe completed: Export Analytics UI (5 pts). **Epic 6-FE Complete at 100% (21/21 pts)** |

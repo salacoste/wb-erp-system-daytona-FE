@@ -13,7 +13,7 @@ chars: 2893
 
 В этой статье:
 
-- 
+-
 - <a href="#podklyuchenie-integratsii" rel="nofollow">Подключение интеграции</a>
 - <a href="#svyaz-tovarov-selsup-s-tovarami-uzum" rel="nofollow">Связь товаров SelSup с товарами Uzum</a>
 - <a href="#rabota-po-fbs" rel="nofollow">Работа по FBS</a>

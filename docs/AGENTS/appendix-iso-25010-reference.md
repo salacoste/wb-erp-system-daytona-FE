@@ -42,8 +42,11 @@ performance_deep_dive:
 ```
 
 ## Task: kb-mode-interaction
+
 Source: .bmad-core/tasks/kb-mode-interaction.md
+
 - How to use: "Use task kb-mode-interaction with the appropriate agent" and paste relevant parts as needed.
 
 ```md
 <!-- Powered by BMAD™ Core -->
+```

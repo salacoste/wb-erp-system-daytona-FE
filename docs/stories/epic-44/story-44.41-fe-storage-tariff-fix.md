@@ -6,6 +6,7 @@
 **Effort**: 3 SP
 **Created**: 2026-01-26
 **Depends On**:
+
 - Story 44.12 ✅ (Warehouse Selection)
 - Story 44.40 📋 (Two Tariff Systems Integration)
 - Story 44.14 ⛔ DEPRECATED (Storage Cost Calculation - superseded by 44.32)
@@ -19,6 +20,7 @@
 ### Evidence from Backend Documentation
 
 **Backend returns** (from `docs/request-backend/98-warehouses-tariffs-BACKEND-RESPONSE.md`):
+
 ```json
 {
   "warehouseId": 130744,
@@ -49,6 +51,7 @@
 **So that** I can trust the Price Calculator for accurate cost estimation.
 
 **Non-goals**:
+
 - Changing backend API structure
 - Historical storage rate lookup
 - Multi-warehouse storage comparison
@@ -306,14 +309,14 @@ function processStorageData(coefficients) {
 
 ## Invariants & Edge Cases
 
-| Scenario | Expected Behavior |
-|----------|-------------------|
-| API returns baseLiterRub = 0 | Apply fallback (0.11), show indicator |
-| API returns null storage object | Apply full fallback, show warning |
-| SUPPLY unavailable, INVENTORY used | Use INVENTORY rates (lower but valid) |
-| Coefficient = 0 | Treat as 1.0 (no coefficient shouldn't zero out rate) |
-| Pallets (additionalLiterRub = 0) | Valid case, calculate with 0 additional |
-| Network error | Show error state, offer manual input |
+| Scenario                           | Expected Behavior                                     |
+| ---------------------------------- | ----------------------------------------------------- |
+| API returns baseLiterRub = 0       | Apply fallback (0.11), show indicator                 |
+| API returns null storage object    | Apply full fallback, show warning                     |
+| SUPPLY unavailable, INVENTORY used | Use INVENTORY rates (lower but valid)                 |
+| Coefficient = 0                    | Treat as 1.0 (no coefficient shouldn't zero out rate) |
+| Pallets (additionalLiterRub = 0)   | Valid case, calculate with 0 additional               |
+| Network error                      | Show error state, offer manual input                  |
 
 ---
 
@@ -321,22 +324,22 @@ function processStorageData(coefficients) {
 
 ### Unit Tests
 
-| Test | Input | Expected |
-|------|-------|----------|
-| Extract SUPPLY format | `{baseLiterRub: 41.25, additionalLiterRub: 0, coefficient: 1.65}` | Same values, source='supply' |
-| Extract INVENTORY format | `{base_per_day_rub: 0.07, liter_per_day_rub: 0.05, coefficient: 1.0}` | Normalized to baseLiterRub=0.07 |
-| Fallback on zero | `{baseLiterRub: 0, coefficient: 1.5}` | baseLiterRub=0.11, usingFallback=true |
-| Fallback on null | `null` | Full default tariffs, usingFallback=true |
-| Pallets valid zero | `{baseLiterRub: 41.25, additionalLiterRub: 0}` | additionalLiterRub=0, usingFallback=false |
+| Test                     | Input                                                                 | Expected                                  |
+| ------------------------ | --------------------------------------------------------------------- | ----------------------------------------- |
+| Extract SUPPLY format    | `{baseLiterRub: 41.25, additionalLiterRub: 0, coefficient: 1.65}`     | Same values, source='supply'              |
+| Extract INVENTORY format | `{base_per_day_rub: 0.07, liter_per_day_rub: 0.05, coefficient: 1.0}` | Normalized to baseLiterRub=0.07           |
+| Fallback on zero         | `{baseLiterRub: 0, coefficient: 1.5}`                                 | baseLiterRub=0.11, usingFallback=true     |
+| Fallback on null         | `null`                                                                | Full default tariffs, usingFallback=true  |
+| Pallets valid zero       | `{baseLiterRub: 41.25, additionalLiterRub: 0}`                        | additionalLiterRub=0, usingFallback=false |
 
 ### Integration Tests
 
-| Test | Scenario | Expected |
-|------|----------|----------|
-| SUPPLY response | Select warehouse + future date | Storage from SUPPLY, coefficient applied |
-| INVENTORY fallback | Select warehouse, no date | Storage from INVENTORY (lower rate) |
-| Display verification | Краснодар Pallets, 1L | "68.06 ₽/день" (41.25 * 1.65) |
-| Fallback indicator | API returns 0 | "Используются стандартные тарифы" shown |
+| Test                 | Scenario                       | Expected                                 |
+| -------------------- | ------------------------------ | ---------------------------------------- |
+| SUPPLY response      | Select warehouse + future date | Storage from SUPPLY, coefficient applied |
+| INVENTORY fallback   | Select warehouse, no date      | Storage from INVENTORY (lower rate)      |
+| Display verification | Краснодар Pallets, 1L          | "68.06 ₽/день" (41.25 * 1.65)            |
+| Fallback indicator   | API returns 0                  | "Используются стандартные тарифы" shown  |
 
 ---
 

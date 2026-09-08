@@ -8,6 +8,7 @@
 ---
 
 ## Title (RU)
+
 Табличное представление метрик по дням
 
 ---
@@ -17,12 +18,14 @@
 Create a tabular view of daily metrics as an alternative to the chart visualization. This table provides a structured, sortable view of all 8 metrics for each day in the selected period.
 
 Business users often prefer table views for:
+
 - Precise value comparison across days
 - Quick scanning of specific metrics
 - Data export needs (future feature)
 - Accessibility (screen reader friendly)
 
 The table should:
+
 - Display one row per day with all 8 metrics as columns
 - Include a totals row at the bottom
 - Support column sorting
@@ -73,28 +76,28 @@ The table should:
 
 ### Column Configuration
 
-| Column | Key | Width | Align | Sortable | Format |
-|--------|-----|-------|-------|----------|--------|
-| День | date | 100px | left | yes | "Пн DD.MM" |
-| Заказы | orders | 110px | right | yes | currency |
-| COGS заказов | ordersCogs | 110px | right | yes | currency |
-| Выкупы | sales | 110px | right | yes | currency |
-| COGS выкупов | salesCogs | 110px | right | yes | currency |
-| Реклама | advertising | 100px | right | yes | -currency |
-| Логистика | logistics | 100px | right | yes | -currency |
-| Хранение | storage | 100px | right | yes | -currency |
-| Теор. прибыль | profit | 110px | right | yes | currency (color) |
+| Column        | Key         | Width | Align | Sortable | Format           |
+| ------------- | ----------- | ----- | ----- | -------- | ---------------- |
+| День          | date        | 100px | left  | yes      | "Пн DD.MM"       |
+| Заказы        | orders      | 110px | right | yes      | currency         |
+| COGS заказов  | ordersCogs  | 110px | right | yes      | currency         |
+| Выкупы        | sales       | 110px | right | yes      | currency         |
+| COGS выкупов  | salesCogs   | 110px | right | yes      | currency         |
+| Реклама       | advertising | 100px | right | yes      | -currency        |
+| Логистика     | logistics   | 100px | right | yes      | -currency        |
+| Хранение      | storage     | 100px | right | yes      | -currency        |
+| Теор. прибыль | profit      | 110px | right | yes      | currency (color) |
 
 ### Typography
 
-| Element | Size | Weight | Color |
-|---------|------|--------|-------|
-| Header | 13px | 600 | `#374151` (gray-700) |
-| Cell | 14px | 400 | `#1F2937` (gray-800) |
-| Totals Row | 14px | 600 | `#1F2937` (gray-800) |
-| Positive Profit | 14px | 500 | `#22C55E` (green) |
-| Negative Profit | 14px | 500 | `#EF4444` (red) |
-| Expense (negative) | 14px | 400 | `#6B7280` (gray-500) |
+| Element            | Size | Weight | Color                |
+| ------------------ | ---- | ------ | -------------------- |
+| Header             | 13px | 600    | `#374151` (gray-700) |
+| Cell               | 14px | 400    | `#1F2937` (gray-800) |
+| Totals Row         | 14px | 600    | `#1F2937` (gray-800) |
+| Positive Profit    | 14px | 500    | `#22C55E` (green)    |
+| Negative Profit    | 14px | 500    | `#EF4444` (red)      |
+| Expense (negative) | 14px | 400    | `#6B7280` (gray-500) |
 
 ### Styling
 
@@ -317,25 +320,25 @@ function calculateTotals(data: DailyMetrics[]): DailyMetrics {
 
 ## Files to Create/Modify
 
-| File | Action | Description |
-|------|--------|-------------|
-| `src/components/custom/dashboard/DailyMetricsTable.tsx` | CREATE | Table component |
-| `src/components/custom/dashboard/DailyMetricsTableHeader.tsx` | CREATE | Sortable header component |
-| `src/components/custom/dashboard/DailyMetricsTableRow.tsx` | CREATE | Table row component |
-| `src/hooks/useSortableTable.ts` | CREATE | Sorting hook |
-| `src/components/custom/dashboard/__tests__/DailyMetricsTable.test.tsx` | CREATE | Unit tests |
-| `src/components/custom/dashboard/index.ts` | MODIFY | Add barrel export |
+| File                                                                   | Action | Description               |
+| ---------------------------------------------------------------------- | ------ | ------------------------- |
+| `src/components/custom/dashboard/DailyMetricsTable.tsx`                | CREATE | Table component           |
+| `src/components/custom/dashboard/DailyMetricsTableHeader.tsx`          | CREATE | Sortable header component |
+| `src/components/custom/dashboard/DailyMetricsTableRow.tsx`             | CREATE | Table row component       |
+| `src/hooks/useSortableTable.ts`                                        | CREATE | Sorting hook              |
+| `src/components/custom/dashboard/__tests__/DailyMetricsTable.test.tsx` | CREATE | Unit tests                |
+| `src/components/custom/dashboard/index.ts`                             | MODIFY | Add barrel export         |
 
 ---
 
 ## Dependencies
 
-| Type | Dependency | Status |
-|------|------------|--------|
-| Component | `Table` from shadcn/ui | Available |
-| Hook | `useDailyMetrics` | From Story 61.9-FE |
-| Utility | `formatCurrency` | Available |
-| Story | 62.6-FE DailyBreakdownChart | Same sprint |
+| Type      | Dependency                  | Status             |
+| --------- | --------------------------- | ------------------ |
+| Component | `Table` from shadcn/ui      | Available          |
+| Hook      | `useDailyMetrics`           | From Story 61.9-FE |
+| Utility   | `formatCurrency`            | Available          |
+| Story     | 62.6-FE DailyBreakdownChart | Same sprint        |
 
 ---
 

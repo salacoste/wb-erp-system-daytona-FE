@@ -30,16 +30,16 @@ Give Jam-subscribed sellers visibility into **organic search performance** — w
 
 All stories are DONE per sprint-status (from the Q1 2026 Search Analytics push). Full retrospectives available:
 
-| Story | Title | Artifact |
-|---|---|---|
+| Story   | Title                                         | Artifact                                                                                       |
+| ------- | --------------------------------------------- | ---------------------------------------------------------------------------------------------- |
 | 71.1-FE | Fix Jam-tier naming + Search foundation types | `_bmad-output/implementation-artifacts/71.1-fe-fix-jam-tier-naming-search-foundation-types.md` |
-| 71.2-FE | Search analytics API client + hooks | `71.2-fe-search-analytics-api-client-hooks.md` |
-| 71.3-FE | `RequireJam` gating component | `71.3-fe-requirejam-gating-component.md` |
-| 71.4-FE | Search page scaffold + route registration | `71.4-fe-search-page-scaffold-route-registration.md` |
-| 71.5-FE | Search Orders tab | `71.5-fe-search-orders-tab.md` |
-| 71.6-FE | By-Product keyword explorer tab | `71.6-fe-by-product-keyword-explorer-tab.md` |
-| 71.7-FE | By-Query product ranking tab | `71.7-fe-by-query-product-ranking-tab.md` |
-| 71.8-FE | Tests + polish | `71.8-fe-search-analytics-tests-polish.md` |
+| 71.2-FE | Search analytics API client + hooks           | `71.2-fe-search-analytics-api-client-hooks.md`                                                 |
+| 71.3-FE | `RequireJam` gating component                 | `71.3-fe-requirejam-gating-component.md`                                                       |
+| 71.4-FE | Search page scaffold + route registration     | `71.4-fe-search-page-scaffold-route-registration.md`                                           |
+| 71.5-FE | Search Orders tab                             | `71.5-fe-search-orders-tab.md`                                                                 |
+| 71.6-FE | By-Product keyword explorer tab               | `71.6-fe-by-product-keyword-explorer-tab.md`                                                   |
+| 71.7-FE | By-Query product ranking tab                  | `71.7-fe-by-query-product-ranking-tab.md`                                                      |
+| 71.8-FE | Tests + polish                                | `71.8-fe-search-analytics-tests-polish.md`                                                     |
 
 Epic-71-FE retrospective: `epic-71-fe-retrospective` (done per sprint-status).
 
@@ -48,9 +48,11 @@ Epic-71-FE retrospective: `epic-71-fe-retrospective` (done per sprint-status).
 ## File List
 
 **Route / page**:
+
 - `src/app/(dashboard)/analytics/search/page.tsx` — thin entry, mounts `SearchPageContent`
 
 **Components** (`src/app/(dashboard)/analytics/search/components/`):
+
 - `SearchPageContent.tsx` — orchestrator with tab state
 - `SearchOrdersTab.tsx` + `SearchOrdersTable.tsx` — Orders tab (Story 71.5)
 - `SearchByProductTab.tsx` + `SearchByProductTable.tsx` — By-Product keyword explorer (Story 71.6)
@@ -59,16 +61,19 @@ Epic-71-FE retrospective: `epic-71-fe-retrospective` (done per sprint-status).
 - `SortButton.tsx` — table column sort control
 
 **State / data layer**:
+
 - `src/hooks/use-search-analytics.ts` — TanStack Query wrappers (3 queries)
 - `src/hooks/__tests__/use-search-analytics.test.ts` — hook tests
 - `src/lib/api/search-analytics.ts` — API client (3 endpoints, `searchQueryKeys` factory, `SEARCH_CACHE` config)
 - `src/types/search-analytics.ts` — request/response types for all 3 endpoints
 
 **Gating**:
+
 - `src/components/custom/RequireJam.tsx` (or equivalent) — Story 71.3 gating component
 - Jam-tier state: `src/stores/authStore.ts` (role + subscription tier)
 
 **Navigation**:
+
 - `src/lib/routes.ts` — `/analytics/search` registration (Story 71.4)
 - `src/components/custom/sidebar-navigation.ts` — sidebar entry gated on Jam
 
@@ -78,11 +83,11 @@ Epic-71-FE retrospective: `epic-71-fe-retrospective` (done per sprint-status).
 
 Task-139 (backend) delivered 3 endpoints:
 
-| Method | Endpoint | Cache TTL | Purpose |
-|---|---|---|---|
-| GET | `/v1/analytics/search/by-product` | 5 min | Queries driving traffic to a specific product |
-| GET | `/v1/analytics/search/by-query` | 5 min | Product ranking for a specific search query |
-| GET | `/v1/analytics/search/orders` | 5 min | Orders attributed to organic search |
+| Method | Endpoint                          | Cache TTL | Purpose                                       |
+| ------ | --------------------------------- | --------- | --------------------------------------------- |
+| GET    | `/v1/analytics/search/by-product` | 5 min     | Queries driving traffic to a specific product |
+| GET    | `/v1/analytics/search/by-query`   | 5 min     | Product ranking for a specific search query   |
+| GET    | `/v1/analytics/search/orders`     | 5 min     | Orders attributed to organic search           |
 
 Runnable examples: see `test-api/` folder (search-specific examples).
 

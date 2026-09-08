@@ -11,7 +11,7 @@ chars: 3333
 
 В этой статье:
 
-- 
+-
 - <a href="#elektronno-tsifrovaya-podpis" rel="nofollow">Электронно-цифровая подпись</a>
 - <a href="#vybor-operatora-elektronnogo-dokumentooborota" rel="nofollow">Выбор оператора электронного документооборота</a>
 - <a href="#podgotovka-k-rabote-s-etsp" rel="nofollow">Подготовка к работе с ЭЦП</a>
@@ -43,7 +43,7 @@ chars: 3333
 
 После установки проверьте, что дополнение Crypto Pro ЭЦП браузер плагин включено, в зависимости от вашего браузера.
 
-***Chrome***
+_**Chrome**_
 
 Нажмите на иконку с тремя точками, наведите курсор на пункт меню "Дополнительные инструменты" и нажмите пункт меню Расширения.
 
@@ -53,7 +53,7 @@ chars: 3333
 
 ![](../../out/selsup.ru/_kage/selsup.ru/wp-content/webp-express/webp-images/uploads/2021/10/snimok-ekrana-2021-12-08-v-09.43.31.png.webp)
 
-***Яндекс.Браузер***
+_**Яндекс.Браузер**_
 
 Выберите в меню пункт Дополнения
 

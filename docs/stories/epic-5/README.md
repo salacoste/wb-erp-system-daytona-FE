@@ -9,19 +9,19 @@ Frontend implementation for viewing, editing, and deleting COGS history records.
 
 ## Stories
 
-| Story | Title | Status | QA Score | Tests |
-|-------|-------|--------|----------|-------|
-| [5.1-fe](./story-5.1-fe-cogs-history-view.md) | COGS History View | ✅ Approved | 95/100 | 50 |
-| [5.2-fe](./story-5.2-fe-cogs-edit-dialog.md) | COGS Edit Dialog | ✅ Approved | 95/100 | 24 |
-| [5.3-fe](./story-5.3-fe-cogs-delete-dialog.md) | COGS Delete Confirmation | ✅ Approved | 95/100 | 18 |
+| Story                                          | Title                    | Status      | QA Score | Tests |
+| ---------------------------------------------- | ------------------------ | ----------- | -------- | ----- |
+| [5.1-fe](./story-5.1-fe-cogs-history-view.md)  | COGS History View        | ✅ Approved | 95/100   | 50    |
+| [5.2-fe](./story-5.2-fe-cogs-edit-dialog.md)   | COGS Edit Dialog         | ✅ Approved | 95/100   | 24    |
+| [5.3-fe](./story-5.3-fe-cogs-delete-dialog.md) | COGS Delete Confirmation | ✅ Approved | 95/100   | 18    |
 
 ## Backend API Endpoints
 
-| Story | Endpoint | Method | Backend Story |
-|-------|----------|--------|---------------|
-| 5.1-fe | `/v1/cogs/history` | GET | [5.1](../../../../docs/stories/epic-5/story-5.1-view-cogs-history.md) |
-| 5.2-fe | `/v1/cogs/:cogsId` | PATCH | [5.2](../../../../docs/stories/epic-5/story-5.2-edit-cogs.md) |
-| 5.3-fe | `/v1/cogs/:cogsId` | DELETE | [5.3](../../../../docs/stories/epic-5/story-5.3-delete-cogs.md) |
+| Story  | Endpoint           | Method | Backend Story                                                         |
+| ------ | ------------------ | ------ | --------------------------------------------------------------------- |
+| 5.1-fe | `/v1/cogs/history` | GET    | [5.1](../../../../docs/stories/epic-5/story-5.1-view-cogs-history.md) |
+| 5.2-fe | `/v1/cogs/:cogsId` | PATCH  | [5.2](../../../../docs/stories/epic-5/story-5.2-edit-cogs.md)         |
+| 5.3-fe | `/v1/cogs/:cogsId` | DELETE | [5.3](../../../../docs/stories/epic-5/story-5.3-delete-cogs.md)       |
 
 ## File Structure
 
@@ -49,32 +49,32 @@ src/
 
 ### Story 5.1-fe: COGS History View
 
-| # | Question | Decision | Rationale |
-|---|----------|----------|-----------|
-| 1 | affected_weeks | Collapsed "N недель" + expand | Чистота UI, детали по запросу |
-| 2 | source icons | ✏️📥⚙️ + tooltips | Интуитивно понятно с пояснениями |
-| 3 | nm_id в header | Мелкий текст под названием | Референс для WB, не перегружает |
-| 4 | Удалённые записи | Gray background + strikethrough | Сохраняет хронологию, очевидно |
-| 5 | Кнопки действий | Dropdown "⋮" | Экономия места, touch-friendly |
+| #   | Question         | Decision                        | Rationale                        |
+| --- | ---------------- | ------------------------------- | -------------------------------- |
+| 1   | affected_weeks   | Collapsed "N недель" + expand   | Чистота UI, детали по запросу    |
+| 2   | source icons     | ✏️📥⚙️ + tooltips               | Интуитивно понятно с пояснениями |
+| 3   | nm_id в header   | Мелкий текст под названием      | Референс для WB, не перегружает  |
+| 4   | Удалённые записи | Gray background + strikethrough | Сохраняет хронологию, очевидно   |
+| 5   | Кнопки действий  | Dropdown "⋮"                    | Экономия места, touch-friendly   |
 
 ### Story 5.2-fe: COGS Edit Dialog
 
-| # | Question | Decision | Rationale |
-|---|----------|----------|-----------|
-| 1 | Layout полей | Вертикальный стек | Простота, мобильность, 2 поля |
-| 2 | Warning о марже | Inline под полем | Контекстуально, не блокирует |
-| 3 | Счётчик символов | Показывать при >800 | Релевантно когда приближается к лимиту |
-| 4 | Margin recalculation | В toast notification | Достаточно информативно, не прерывает flow |
+| #   | Question             | Decision             | Rationale                                  |
+| --- | -------------------- | -------------------- | ------------------------------------------ |
+| 1   | Layout полей         | Вертикальный стек    | Простота, мобильность, 2 поля              |
+| 2   | Warning о марже      | Inline под полем     | Контекстуально, не блокирует               |
+| 3   | Счётчик символов     | Показывать при >800  | Релевантно когда приближается к лимиту     |
+| 4   | Margin recalculation | В toast notification | Достаточно информативно, не прерывает flow |
 
 ### Story 5.3-fe: COGS Delete Confirmation
 
-| # | Question | Decision | Rationale |
-|---|----------|----------|-----------|
-| 1 | Тон предупреждения | Детальный summary | Informed consent для деструктивных действий |
-| 2 | Version chain warning | Информативный текст с суммой | Понятно, конкретно, не пугает |
-| 3 | Единственная версия | Красный alert block | Критическая ситуация требует внимания |
-| 4 | Подтверждение | Кнопка + checkbox для единственной версии | Баланс UX и безопасности |
-| 5 | Undo опция | Нет (soft delete → admin recovery) | Технически сложно, есть альтернатива |
+| #   | Question              | Decision                                  | Rationale                                   |
+| --- | --------------------- | ----------------------------------------- | ------------------------------------------- |
+| 1   | Тон предупреждения    | Детальный summary                         | Informed consent для деструктивных действий |
+| 2   | Version chain warning | Информативный текст с суммой              | Понятно, конкретно, не пугает               |
+| 3   | Единственная версия   | Красный alert block                       | Критическая ситуация требует внимания       |
+| 4   | Подтверждение         | Кнопка + checkbox для единственной версии | Баланс UX и безопасности                    |
+| 5   | Undo опция            | Нет (soft delete → admin recovery)        | Технически сложно, есть альтернатива        |
 
 ## Dependencies
 
@@ -84,12 +84,12 @@ src/
 
 ## Authorization Matrix
 
-| Action | Analyst | Manager | Owner | Admin |
-|--------|---------|---------|-------|-------|
-| View History | ✅ | ✅ | ✅ | ✅ |
-| Edit COGS | ❌ | ✅ | ✅ | ✅ |
-| Delete COGS | ❌ | ✅ | ✅ | ✅ |
-| View Deleted | ❌ | ❌ | ✅ | ✅ |
+| Action       | Analyst | Manager | Owner | Admin |
+| ------------ | ------- | ------- | ----- | ----- |
+| View History | ✅      | ✅      | ✅    | ✅    |
+| Edit COGS    | ❌      | ✅      | ✅    | ✅    |
+| Delete COGS  | ❌      | ✅      | ✅    | ✅    |
+| View Deleted | ❌      | ❌      | ✅    | ✅    |
 
 ## Development Order
 
@@ -100,6 +100,7 @@ src/
 ## Key Technical Patterns
 
 ### Affected Weeks Collapsible
+
 ```tsx
 <Collapsible>
   <CollapsibleTrigger>5 недель <ChevronDown /></CollapsibleTrigger>
@@ -108,6 +109,7 @@ src/
 ```
 
 ### Source Icons with Tooltips
+
 ```tsx
 const sourceConfig = {
   manual: { icon: '✏️', label: 'Ручной ввод' },
@@ -117,6 +119,7 @@ const sourceConfig = {
 ```
 
 ### Version Chain Analysis
+
 ```typescript
 function analyzeVersionChain(record, history) {
   return {
@@ -129,12 +132,12 @@ function analyzeVersionChain(record, history) {
 
 ## Estimation
 
-| Story | Estimated Effort |
-|-------|------------------|
-| 5.1-fe | 3-4 days |
-| 5.2-fe | 1-2 days |
-| 5.3-fe | 1-2 days |
-| **Total** | **5-8 days** |
+| Story     | Estimated Effort |
+| --------- | ---------------- |
+| 5.1-fe    | 3-4 days         |
+| 5.2-fe    | 1-2 days         |
+| 5.3-fe    | 1-2 days         |
+| **Total** | **5-8 days**     |
 
 ---
 

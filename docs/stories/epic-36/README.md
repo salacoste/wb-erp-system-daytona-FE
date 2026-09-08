@@ -11,6 +11,7 @@ Frontend implementation for Epic 36 - Product Card Linking (Склейки). Bac
 ## Backend Status
 
 ✅ **100% Complete** (Story 36.6 done 2025-12-27)
+
 - Database: `products.imt_id` column populated via daily sync
 - API: `GET /v1/analytics/advertising?group_by=imtId` parameter supported
 - Aggregation: Merged groups with correct ROAS/ROI calculations
@@ -18,6 +19,7 @@ Frontend implementation for Epic 36 - Product Card Linking (Склейки). Bac
 - Observability: Prometheus metrics, Grafana dashboard
 
 📖 **Documentation**:
+
 - API Contract: `docs/request-backend/83-epic-36-api-contract.md`
 - Implementation Plan: `docs/implementation-plans/epic-36-frontend-integration.md`
 - UI Mockup: `docs/wireframes/epic-36-ui-mockup.md`
@@ -26,22 +28,22 @@ Frontend implementation for Epic 36 - Product Card Linking (Склейки). Bac
 
 ### MVP Stories (✅ COMPLETE)
 
-| Story | Title | Priority | Points | Status | Sprint |
-|-------|-------|----------|--------|--------|--------|
-| [36.1-fe](story-36.1-fe-types-update.md) | TypeScript Types Update | High | 3 | ✅ Done | 1 |
-| [36.2-fe](story-36.2-fe-api-client-hooks.md) | API Client & Hooks Update | High | 2 | ✅ Done | 1 |
-| [36.3-fe](story-36.3-fe-merged-badge-component.md) | MergedProductBadge Component | High | 3 | ✅ Done | 1 |
-| [36.4-fe](story-36.4-fe-page-layout-toggle.md) | Page Layout & Toggle UI | High | 5 | ✅ Done | 1 |
-| [36.5-fe](story-36.5-fe-testing-documentation.md) | Testing & Documentation | Medium | 3 | ✅ Done | 1 |
+| Story                                              | Title                        | Priority | Points | Status  | Sprint |
+| -------------------------------------------------- | ---------------------------- | -------- | ------ | ------- | ------ |
+| [36.1-fe](story-36.1-fe-types-update.md)           | TypeScript Types Update      | High     | 3      | ✅ Done | 1      |
+| [36.2-fe](story-36.2-fe-api-client-hooks.md)       | API Client & Hooks Update    | High     | 2      | ✅ Done | 1      |
+| [36.3-fe](story-36.3-fe-merged-badge-component.md) | MergedProductBadge Component | High     | 3      | ✅ Done | 1      |
+| [36.4-fe](story-36.4-fe-page-layout-toggle.md)     | Page Layout & Toggle UI      | High     | 5      | ✅ Done | 1      |
+| [36.5-fe](story-36.5-fe-testing-documentation.md)  | Testing & Documentation      | Medium   | 3      | ✅ Done | 1      |
 
 **MVP Points**: 16 | **Status**: ✅ **COMPLETE** (2025-12-28)
 **Test Coverage**: 91 tests (5 E2E + 21 Integration + 65 Unit)
 
 ## Sprint Plan (Proposed)
 
-| Sprint | Stories | Points | Focus |
-|--------|---------|--------|-------|
-| Sprint 1 | 36.1, 36.2, 36.3, 36.4, 36.5 | 16 | Full Epic 36 integration |
+| Sprint   | Stories                      | Points | Focus                    |
+| -------- | ---------------------------- | ------ | ------------------------ |
+| Sprint 1 | 36.1, 36.2, 36.3, 36.4, 36.5 | 16     | Full Epic 36 integration |
 
 **Rationale**: All stories are tightly coupled (single feature). Backend is ready, no blockers.
 
@@ -115,6 +117,7 @@ ter-13-1   11,337₽   31,464₽   2.8x    ✅ Рентабельно
 ```
 
 **Tooltip Content** (on hover):
+
 ```
 ┌─────────────────────────────────────┐
 │ Объединённая карточка #328632       │
@@ -141,6 +144,7 @@ ter-13-1   11,337₽   31,464₽   2.8x    ✅ Рентабельно
 **NEW Parameter**: `group_by: 'sku' | 'imtId'` (default: 'sku')
 
 **NEW Response Fields** (when `group_by=imtId`):
+
 ```typescript
 interface AdvertisingItem {
   // NEW Epic 36 fields:
@@ -157,21 +161,26 @@ interface AdvertisingItem {
 ### Component Structure
 
 **New Components**:
+
 1. `MergedProductBadge.tsx` - Badge with tooltip showing merged products
 2. `MergedProductBadge.test.tsx` - Unit tests
 
 **Modified Components**:
+
 1. `AdvertisingAnalyticsPage` - Add toggle state and UI
 2. `PerformanceMetricsTable` - Render merged group rows
 3. `AdvertisingFilters` (optional) - Add group_by filter
 
 **Modified Types**:
+
 1. `advertising-analytics.ts` - Add GroupByMode, MergedProduct, extend AdvertisingItem
 
 **Modified API Client**:
+
 1. `advertising-analytics.ts` - Support group_by parameter
 
 **Modified Hooks**:
+
 1. `useAdvertisingAnalytics.ts` - Add useAdvertisingMergedGroups hook
 
 ---
@@ -201,7 +210,9 @@ Epic 36 frontend integration is **COMPLETE**:
 ## PO Questions for Verification
 
 ### Question 1: Toggle Placement
+
 **Where should "По артикулам" / "По склейкам" toggle be placed?**
+
 - Option A: In filters panel (alongside View By mode)
 - Option B: Above table (separate toggle bar)
 - Option C: In page header (next to date range)
@@ -209,14 +220,18 @@ Epic 36 frontend integration is **COMPLETE**:
 **Recommendation**: Option A (filters panel) - consistent with existing View By toggle
 
 ### Question 2: Default Mode
+
 **What should be the default grouping mode?**
+
 - Option A: "По артикулам" (current behavior, familiar to users)
 - Option B: "По склейкам" (show merged groups by default)
 
 **Recommendation**: Option A (SKU) - less disruptive, users opt-in to new feature
 
 ### Question 3: Badge Style
+
 **How should merged group badge look?**
+
 - Option A: `🔗 Склейка (3)` (with link emoji)
 - Option B: `Склейка (3 товара)` (without emoji)
 - Option C: `3 товара` (minimal)
@@ -224,7 +239,9 @@ Epic 36 frontend integration is **COMPLETE**:
 **Recommendation**: Option A - visual indicator, compact, matches WB terminology
 
 ### Question 4: Tooltip Content
+
 **What information should the tooltip show?**
+
 - Option A: Just product list (nmId + vendorCode)
 - Option B: Product list + explanation about merged cards
 - Option C: Product list + individual metrics for each
@@ -232,7 +249,9 @@ Epic 36 frontend integration is **COMPLETE**:
 **Recommendation**: Option B - helps users understand the feature
 
 ### Question 5: Mobile Behavior
+
 **How should toggle work on mobile?**
+
 - Option A: Same toggle (two buttons)
 - Option B: Dropdown select
 - Option C: Hide toggle on mobile (SKU only)
@@ -243,13 +262,13 @@ Epic 36 frontend integration is **COMPLETE**:
 
 ## Risk Assessment
 
-| Risk | Probability | Impact | Mitigation |
-|------|-------------|--------|------------|
-| Backend API changes | Low | High | Backend is stable, no changes planned |
-| Performance degradation | Low | Medium | mergedProducts adds ~2KB per group (acceptable) |
-| User confusion | Medium | Low | Tooltip explanation + clear UI labels |
-| Regression in Epic 33 | Low | High | Full backward compatibility, comprehensive testing |
-| Scope creep | Medium | Medium | PO approval required for all stories |
+| Risk                    | Probability | Impact | Mitigation                                         |
+| ----------------------- | ----------- | ------ | -------------------------------------------------- |
+| Backend API changes     | Low         | High   | Backend is stable, no changes planned              |
+| Performance degradation | Low         | Medium | mergedProducts adds ~2KB per group (acceptable)    |
+| User confusion          | Medium      | Low    | Tooltip explanation + clear UI labels              |
+| Regression in Epic 33   | Low         | High   | Full backward compatibility, comprehensive testing |
+| Scope creep             | Medium      | Medium | PO approval required for all stories               |
 
 ---
 
@@ -273,6 +292,7 @@ Epic 36 frontend integration is **COMPLETE**:
 ## Related Documentation
 
 ### Backend Documentation
+
 - **Epic 36 Main**: `/docs/stories/epic-36/` (backend stories)
 - **API Contract**: `docs/request-backend/83-epic-36-api-contract.md`
 - **Implementation Plan**: `docs/implementation-plans/epic-36-frontend-integration.md`
@@ -280,6 +300,7 @@ Epic 36 frontend integration is **COMPLETE**:
 - **Request #82**: Card Linking Investigation (problem context)
 
 ### Frontend Documentation
+
 - **Epic 33**: `docs/stories/epic-33/` (baseline advertising analytics)
 - **README**: `frontend/README.md` (project overview)
 

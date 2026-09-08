@@ -13,6 +13,7 @@
 **Статус**: Частично интегрирован ✅
 
 **Текущий код**:
+
 - ✅ Компонент `MetricCardEnhanced` поддерживает отображение margin% (строка 148-155 в `DashboardContent.tsx`)
 - ✅ Используется `calculateMarginPercentage()` для расчёта из `gross_profit` и `sale_gross_total`
 - ✅ Поддержка `CogsMissingState` компонента для состояния отсутствия COGS
@@ -20,17 +21,20 @@
 - ✅ `DashboardContent` использует данные для карточки "Маржа %" (карточка #3)
 
 **Что работает**:
+
 - ✅ Fetch данных из `/v1/analytics/weekly/finance-summary`
 - ✅ Агрегация данных за месяц из недельных сводок
 - ✅ Отображение покрытия COGS (`cogsCoverage`)
 - ✅ Отображение `CogsMissingState` в `MetricCardEnhanced` при `value === null`
 
 **Что нужно улучшить**:
+
 - ⚠️ **Интеграция `CogsMissingState` не полная**: Компонент передан в `MetricCardEnhanced` как проп (`showCogsWarning`), но НЕ используется для карточки "Маржа %" в `DashboardContent`
 - ⚠️ Логика `calculateMarginPercentage()` возвращает `null` когда `gross_profit === null`, но компонент НЕ показывает `CogsMissingState` для этого случая
 - ⚠️ `MetricCardEnhanced` проверяет `showCogsWarning && value === null` (строка 121), но в `DashboardContent` `showCogsWarning` не передаётся
 
 **Файлы**:
+
 - `/src/app/(dashboard)/dashboard/components/DashboardContent.tsx` (строки 147-155)
 - `/src/components/custom/MetricCardEnhanced.tsx` (строки 119-127)
 - `/src/hooks/useFinancialSummary.ts`
@@ -43,6 +47,7 @@
 **Статус**: Полностью интегрирован ✅
 
 **Текущий код**:
+
 - ✅ Компонент `AdvertisingDashboardWidget` с поддержкой period selector
 - ✅ Hook `useAdvertisingAnalytics` для получения данных
 - ✅ Hook `useAdvertisingEmptyState` для определения пустого состояния
@@ -50,6 +55,7 @@
 - ✅ Интеграция с глобальным периодом (Story 60.6-FE)
 
 **Что работает**:
+
 - ✅ Fetch данных из `/v1/analytics/advertising?from=DATE&to=DATE`
 - ✅ Определение empty state: `total_sales === 0`
 - ✅ Отображение `AdvertisingEmptyState` с доступным диапазоном дат
@@ -57,6 +63,7 @@
 - ✅ Синхронизация с `DashboardPeriodContext` при передаче `dateRange` пропа
 
 **Файлы**:
+
 - `/src/components/custom/AdvertisingDashboardWidget.tsx`
 - `/src/hooks/useAdvertisingAnalytics.ts`
 - `/src/hooks/useAdvertisingEmptyState.ts`
@@ -72,6 +79,7 @@
 Карточка "Маржа %" показывает "—" когда `gross_profit === null`, но НЕ показывает `CogsMissingState` для информирования пользователя о необходимости назначения COGS.
 
 **Текущее поведение**:
+
 ```tsx
 // DashboardContent.tsx:147-155
 <MetricCardEnhanced
@@ -85,6 +93,7 @@
 ```
 
 **Проблема**:
+
 - `calculateMarginPercentage()` возвращает `null` когда `gross_profit === null`
 - `MetricCardEnhanced` показывает "—" для `null` значений
 - НО `showCogsWarning` prop НЕ передаётся, поэтому `CogsMissingState` НЕ рендерится
@@ -93,6 +102,7 @@
 Передать пропы `showCogsWarning`, `productsWithCogs`, `totalProducts`, `cogsCoverage`, `onAssignCogs` в `MetricCardEnhanced` для карточки "Маржа %".
 
 **Файлы**:
+
 - `/src/app/(dashboard)/dashboard/components/DashboardContent.tsx`
 
 ---
@@ -103,6 +113,7 @@
 `MetricCardEnhanced` проверяет `showCogsWarning && value === null`, но `showCogsWarning` - это внешний проп который нужно вычислять на основе данных API.
 
 **Текущее поведение**:
+
 ```tsx
 // MetricCardEnhanced.tsx:119-127
 {error ? (
@@ -120,6 +131,7 @@
 ```
 
 **Проблема**:
+
 - Компонент зависит от внешнего пропа `showCogsWarning`
 - Нет автоматического определения на основе данных
 
@@ -130,6 +142,7 @@
 **Рекомендация**: Вариант A для более явного контроля
 
 **Файлы**:
+
 - `/src/components/custom/MetricCardEnhanced.tsx`
 - `/src/app/(dashboard)/dashboard/components/DashboardContent.tsx`
 
@@ -141,6 +154,7 @@
 Бэкенд предоставляет `/v1/analytics/advertising/sync-status` с `dataAvailableFrom` и `dataAvailableTo`, но фронтенд НЕ использует этот эндпоинт.
 
 **Текущее поведение**:
+
 ```tsx
 // AdvertisingDashboardWidget.tsx:259-270
 // NO fetch of sync-status endpoint
@@ -148,12 +162,14 @@
 ```
 
 **Проблема**:
+
 - Доступный диапазон извлекается из `data.meta.date_range` ответа analytics
 - Если данных нет вообще, `availableRange` будет `undefined`
 - Нет отдельного эндпоинта для проверки доступности данных ПЕРЕД запросом
 
 **Решение**:
 Добавить hook `useAdvertisingSyncStatus` для получения доступного диапазона:
+
 ```tsx
 // Before fetching analytics, get sync status
 const { data: syncStatus } = useAdvertisingSyncStatus()
@@ -164,6 +180,7 @@ const availableRange = syncStatus ? {
 ```
 
 **Файлы**:
+
 - `/src/hooks/useAdvertisingAnalytics.ts`
 - `/src/components/custom/AdvertisingDashboardWidget.tsx`
 
@@ -175,6 +192,7 @@ const availableRange = syncStatus ? {
 Согласно Request #116, бэкенд рекомендует валидировать диапазон дат ПЕРЕД запросом к API, но фронтенд делает запрос напрямую.
 
 **Текущее поведение**:
+
 ```tsx
 // Direct request without validation
 const { data } = useAdvertisingAnalytics({
@@ -184,6 +202,7 @@ const { data } = useAdvertisingAnalytics({
 ```
 
 **Проблема**:
+
 - Если пользователь выберет даты вне доступного диапазона, API вернёт пустые данные
 - Нет preemptive валидации и предупреждения пользователю
 - Wasted API calls для заведомо пустых периодов
@@ -192,6 +211,7 @@ const { data } = useAdvertisingAnalytics({
 Добавить `validateAdvertisingDateRange()` функцию и использовать её для показа предупреждения ПЕРЕД запросом.
 
 **Файлы**:
+
 - `/src/lib/date-utils.ts` (новая функция)
 - `/src/hooks/useAdvertisingAnalytics.ts`
 - `/src/components/custom/DashboardPeriodSelector.tsx`
@@ -203,6 +223,7 @@ const { data } = useAdvertisingAnalytics({
 ### Приоритет 1: Исправить отображение CogsMissingState для Margin%
 
 **Задачи**:
+
 1. В `DashboardContent.tsx` для карточки "Маржа %" (строки 147-155):
    - Добавить `showCogsWarning={cogsCoverage < 100}`
    - Добавить `productsWithCogs={productsWithCogs}`
@@ -218,7 +239,9 @@ const { data } = useAdvertisingAnalytics({
 ### Приоритет 2: Добавить useAdvertisingSyncStatus hook
 
 **Задачи**:
+
 1. Создать `/src/hooks/useAdvertisingSyncStatus.ts`:
+
    ```tsx
    export function useAdvertisingSyncStatus() {
      return useQuery({
@@ -241,7 +264,9 @@ Empty state всегда будет показывать корректный д
 ### Приоритет 3: Добавить валидацию диапазона дат для Advertising
 
 **Задачи**:
+
 1. Добавить `/src/lib/advertising-utils.ts`:
+
    ```tsx
    export function validateAdvertisingDateRange(
      from: string,
@@ -264,7 +289,9 @@ Empty state всегда будет показывать корректный д
 ### Приоритет 4 (опциональный): Улучшить автоматическое определение CogsMissingState
 
 **Задачи**:
+
 1. В `MetricCardEnhanced` добавить автоматическое определение:
+
    ```tsx
    const shouldShowCogsWarning = showCogsWarning ||
      (value === null && cogsCoverage < 100 && coverage !== undefined)
@@ -316,6 +343,7 @@ AdvertisingDashboardWidget (component)
 **Текущий статус**: ✅ Полностью работает
 
 **Отсутствует**:
+
 - ❌ useAdvertisingSyncStatus hook
 - ❌ Валидация диапазона дат
 
@@ -324,12 +352,14 @@ AdvertisingDashboardWidget (component)
 ## Заключение
 
 **Margin% интеграция**:
+
 - ✅ Данные получаются корректно
 - ✅ Компоненты созданы и работают
 - ⚠️ НЕ показывается `CogsMissingState` для пользователей с неполным COGS покрытием
 - **Требуемые действия**: Передать пропы `showCogsWarning`, `productsWithCogs`, `totalProducts`, `cogsCoverage`, `onAssignCogs` в `MetricCardEnhanced` для карточки "Маржа %"
 
 **Advertising интеграция**:
+
 - ✅ Полностью функциональна
 - ✅ Empty state обрабатывается корректно
 - ⚠️ Можно улучшить добавив `useAdvertisingSyncStatus` и валидацию диапазона

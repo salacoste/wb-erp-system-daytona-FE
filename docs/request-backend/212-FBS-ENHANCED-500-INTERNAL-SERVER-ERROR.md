@@ -77,6 +77,7 @@ into **strings**). `?.toISOString()` guards null/undefined, not string → throw
 (cache miss returned a real `Date` → 200, masking the bug on first load).
 
 **Fix:**
+
 - `fbs-enhanced-analytics.controller.ts` — added `toIsoSafe(value, fallback?)` that coerces
   `string|Date|garbage` → ISO via `new Date(...)` + `isNaN(getTime())` guard, applied to both
   `cachedAt` and `sources[].recordedAt` (the latter falls back to `now`, never 500).

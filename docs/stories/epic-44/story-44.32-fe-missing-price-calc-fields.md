@@ -3,12 +3,14 @@
 > **Note (2026-01-24)**: This story implements the **unified turnover_days approach** for storage cost calculation.
 >
 > **Key Design Decision:**
+>
 > - `turnover_days` is the **SOLE** storage duration input (no separate `storage_days` field)
 > - Storage cost formula: `storage_rub = dailyStorageCost × turnover_days`
 > - `dailyStorageCost` comes from warehouse tariffs (Story 44.27)
 > - This approach supersedes the original Story 44.14 (StorageDaysInput/StorageCostCalculator)
 >
 > **Deleted Components (originally planned in Story 44.14):**
+>
 > - `StorageDaysInput.tsx` - NOT CREATED
 > - `StorageCostCalculator.tsx` - NOT CREATED
 > - `StorageCostBreakdown.tsx` - NOT CREATED
@@ -32,6 +34,7 @@
 **So that** the price calculator can accurately calculate costs based on actual WB tariff structures.
 
 **Non-goals**:
+
 - Pallet-specific tariff UI (complex tariff calculation remains backend)
 - ROI calculation and investment analysis (Phase 3)
 - Advanced expense tracking (Phase 2 MEDIUM priority fields)
@@ -54,6 +57,7 @@ Competitor analysis revealed 9 missing fields in Price Calculator V2. This story
 ## Acceptance Criteria
 
 ### AC1: Box Type Selection (FBO Only)
+
 - [x] Show radio buttons: "Короб" (Box) | "Монопаллета" (Pallet)
 - [x] Default: "Короб" selected
 - [x] Condition: Only shown when `fulfillment_type === 'FBO'`
@@ -62,6 +66,7 @@ Competitor analysis revealed 9 missing fields in Price Calculator V2. This story
 - [x] Visual indicator showing which type is selected
 
 ### AC2: Weight Threshold Checkbox
+
 - [x] Show checkbox: "Вес превышает 25 кг"
 - [x] Default: unchecked (false)
 - [x] Field: `weight_exceeds_25kg` (boolean)
@@ -70,6 +75,7 @@ Competitor analysis revealed 9 missing fields in Price Calculator V2. This story
 - [x] Show warning when checked: "Учтён повышенный тариф логистики для тяжеловесных грузов"
 
 ### AC3: Localization Index Input
+
 - [x] Show number input: "Индекс локализации (КТР)"
 - [x] Range: 0.5 - 3.0, step 0.1
 - [x] Default: 1.0 (auto-filled from warehouse selection)
@@ -79,6 +85,7 @@ Competitor analysis revealed 9 missing fields in Price Calculator V2. This story
 - [x] Show source indicator: "Авто: из коэффициента склада" or "Вручную"
 
 ### AC4: Turnover Days Input (FBO Only) - **PRIMARY STORAGE DURATION FIELD**
+
 - [x] Show number input: "Оборачиваемость, дней"
 - [x] Range: 1-365
 - [x] Default: 20 (typical WB inventory turnover)
@@ -94,6 +101,7 @@ Competitor analysis revealed 9 missing fields in Price Calculator V2. This story
 > `storage_days` field - the `turnover_days` approach handles all storage cost calculation.
 
 ### AC5: Form Integration
+
 - [x] All new fields integrate into existing `PriceCalculatorForm` component
 - [x] Form validation: `localization_index` between 0.5-3.0, `turnover_days` between 1-365
 - [x] Fields participate in form watch (real-time calculation updates)
@@ -101,18 +109,21 @@ Competitor analysis revealed 9 missing fields in Price Calculator V2. This story
 - [x] Values persist across form re-renders
 
 ### AC6: Conditional Display Logic
+
 - [x] `box_type` hidden when `fulfillment_type === 'FBS'`
 - [x] `turnover_days` hidden when `fulfillment_type === 'FBS'`
 - [x] Smooth transitions when switching FBO/FBS (fade in/out)
 - [x] No layout shift when fields appear/disappear
 
 ### AC7: Warehouse Auto-fill Integration
+
 - [x] On warehouse selection: auto-fill `localization_index` from `delivery.coefficient`
 - [x] Store original coefficient value before manual override
 - [x] Show "Изменён" badge when `localization_index` manually modified
 - [x] Reset to warehouse coefficient when warehouse changes (unless manually locked)
 
 ### AC8: Results Display Impact
+
 - [x] Two-Level Pricing (Story 44.20) shows updated calculations
 - [x] Cost breakdown shows individual components affected by new fields:
   - "Логистика WB" includes weight multiplier
@@ -122,12 +133,14 @@ Competitor analysis revealed 9 missing fields in Price Calculator V2. This story
 - [x] Visual indicators show which multipliers are active
 
 ### AC9: Tooltip Explanations
+
 - [x] All new fields have helper tooltips (Russian)
 - [x] Tooltips explain business impact on calculation
 - [x] Icons trigger tooltip on hover/click
 - [x] Tooltips are mobile-friendly (tap to show)
 
 ### AC10: Mobile Responsive
+
 - [x] All fields stack vertically on mobile (<640px)
 - [x] Radio buttons use full width on mobile
 - [x] Number inputs show +/- buttons on mobile
@@ -785,17 +798,17 @@ export function PriceCalculatorForm() {
 
 ## Invariants & Edge Cases
 
-| Scenario | Handling |
-|----------|----------|
-| FBS mode | Hide `box_type`, `turnover_days` (not applicable) |
-| `localization_index` < 0.5 | Show validation error, clamp to 0.5 |
-| `localization_index` > 3.0 | Show validation error, clamp to 3.0 |
-| `turnover_days` < 1 | Show validation error, clamp to 1 |
-| `turnover_days` > 365 | Show validation error, clamp to 365 |
-| Warehouse selection changes | Auto-fill `localization_index` unless manually locked |
-| User modifies auto-filled value | Show "Изменён" badge, preserve on warehouse change |
-| No warehouse selected | Use default `localization_index = 1.0` |
-| `storage_rub` = 0 | Hide total storage preview in `TurnoverDaysInput` |
+| Scenario                        | Handling                                                  |
+| ------------------------------- | --------------------------------------------------------- |
+| FBS mode                        | Hide `box_type`, `turnover_days` (not applicable)         |
+| `localization_index` < 0.5      | Show validation error, clamp to 0.5                       |
+| `localization_index` > 3.0      | Show validation error, clamp to 3.0                       |
+| `turnover_days` < 1             | Show validation error, clamp to 1                         |
+| `turnover_days` > 365           | Show validation error, clamp to 365                       |
+| Warehouse selection changes     | Auto-fill `localization_index` unless manually locked     |
+| User modifies auto-filled value | Show "Изменён" badge, preserve on warehouse change        |
+| No warehouse selected           | Use default `localization_index = 1.0`                    |
+| `storage_rub` = 0               | Hide total storage preview in `TurnoverDaysInput`         |
 | Very high `turnover_days` (>90) | Show warning: "Длительное хранение снизит маржинальность" |
 
 ---
@@ -830,6 +843,7 @@ export function PriceCalculatorForm() {
 ## Testing Requirements
 
 ### Unit Tests
+
 - [ ] `BoxTypeSelector` renders both options
 - [ ] `WeightThresholdCheckbox` shows warning when checked
 - [ ] `LocalizationIndexInput` validates range (0.5-3.0)
@@ -838,12 +852,14 @@ export function PriceCalculatorForm() {
 - [ ] FBS mode hides FBO-only fields
 
 ### Integration Tests
+
 - [ ] Form submission includes all new fields
 - [ ] Warehouse selection triggers auto-fill
 - [ ] FBO/FBS switch shows/hides correct fields
 - [ ] Real-time calculation updates on field change
 
 ### E2E Tests
+
 - [ ] User can select box type
 - [ ] User can check weight threshold
 - [ ] User can modify localization index
@@ -856,26 +872,29 @@ export function PriceCalculatorForm() {
 ## Dev Agent Record
 
 ### File List
-| File | Change Type | Lines (Est.) | Description |
-|------|-------------|--------------|-------------|
-| `src/components/custom/price-calculator/BoxTypeSelector.tsx` | CREATE | ~60 | Radio group for box/pallet selection |
-| `src/components/custom/price-calculator/WeightThresholdCheckbox.tsx` | CREATE | ~50 | Checkbox with warning alert |
-| `src/components/custom/price-calculator/LocalizationIndexInput.tsx` | CREATE | ~80 | Number input with auto-fill indicator |
-| `src/components/custom/price-calculator/TurnoverDaysInput.tsx` | CREATE | ~90 | Number input + slider + total preview |
-| `src/components/custom/price-calculator/FormFieldTooltip.tsx` | CREATE | ~30 | Reusable tooltip component |
-| `src/components/custom/price-calculator/PriceCalculatorForm.tsx` | UPDATE | +40 | Integrate new fields |
-| `src/hooks/useWarehouseCoefficients.ts` | UPDATE | +30 | Auto-fill logic for localization_index |
-| `src/types/price-calculator.ts` | UPDATE | +50 | New type definitions |
+
+| File                                                                 | Change Type | Lines (Est.) | Description                            |
+| -------------------------------------------------------------------- | ----------- | ------------ | -------------------------------------- |
+| `src/components/custom/price-calculator/BoxTypeSelector.tsx`         | CREATE      | ~60          | Radio group for box/pallet selection   |
+| `src/components/custom/price-calculator/WeightThresholdCheckbox.tsx` | CREATE      | ~50          | Checkbox with warning alert            |
+| `src/components/custom/price-calculator/LocalizationIndexInput.tsx`  | CREATE      | ~80          | Number input with auto-fill indicator  |
+| `src/components/custom/price-calculator/TurnoverDaysInput.tsx`       | CREATE      | ~90          | Number input + slider + total preview  |
+| `src/components/custom/price-calculator/FormFieldTooltip.tsx`        | CREATE      | ~30          | Reusable tooltip component             |
+| `src/components/custom/price-calculator/PriceCalculatorForm.tsx`     | UPDATE      | +40          | Integrate new fields                   |
+| `src/hooks/useWarehouseCoefficients.ts`                              | UPDATE      | +30          | Auto-fill logic for localization_index |
+| `src/types/price-calculator.ts`                                      | UPDATE      | +50          | New type definitions                   |
 
 ### Dependencies on Previous Stories
-| Story | Component/Type Used |
-|-------|---------------------|
-| 44.2 | `PriceCalculatorForm` (integration point) |
+
+| Story | Component/Type Used                              |
+| ----- | ------------------------------------------------ |
+| 44.2  | `PriceCalculatorForm` (integration point)        |
 | 44.15 | `fulfillment_type` (determines field visibility) |
-| 44.27 | Warehouse selection (auto-fill source) |
-| 44.20 | Two-Level Pricing (shows calculation impact) |
+| 44.27 | Warehouse selection (auto-fill source)           |
+| 44.20 | Two-Level Pricing (shows calculation impact)     |
 
 ### Change Log
+
 _(To be filled by Dev Agent during implementation)_
 
 ---
@@ -889,18 +908,19 @@ _(To be filled after implementation)_
 **Gate Decision**:
 
 ### AC Verification
-| AC | Requirement | Status | Evidence |
-|----|-------------|--------|----------|
-| AC1 | Box Type Selection | ⏳ | |
-| AC2 | Weight Threshold Checkbox | ⏳ | |
-| AC3 | Localization Index Input | ⏳ | |
-| AC4 | Turnover Days Input | ⏳ | |
-| AC5 | Form Integration | ⏳ | |
-| AC6 | Conditional Display Logic | ⏳ | |
-| AC7 | Warehouse Auto-fill Integration | ⏳ | |
-| AC8 | Results Display Impact | ⏳ | |
-| AC9 | Tooltip Explanations | ⏳ | |
-| AC10 | Mobile Responsive | ⏳ | |
+
+| AC   | Requirement                     | Status | Evidence |
+| ---- | ------------------------------- | ------ | -------- |
+| AC1  | Box Type Selection              | ⏳     |          |
+| AC2  | Weight Threshold Checkbox       | ⏳     |          |
+| AC3  | Localization Index Input        | ⏳     |          |
+| AC4  | Turnover Days Input             | ⏳     |          |
+| AC5  | Form Integration                | ⏳     |          |
+| AC6  | Conditional Display Logic       | ⏳     |          |
+| AC7  | Warehouse Auto-fill Integration | ⏳     |          |
+| AC8  | Results Display Impact          | ⏳     |          |
+| AC9  | Tooltip Explanations            | ⏳     |          |
+| AC10 | Mobile Responsive               | ⏳     |          |
 
 ---
 

@@ -13,7 +13,7 @@ chars: 3732
 
 В этой статье:
 
-- 
+-
 - <a href="#chem-polezen-sbor-spp" rel="nofollow">Чем полезен сбор СПП</a>
 - <a href="#chto-nuzhno-dlya-raboty" rel="nofollow">Что нужно для работы</a>
 - <a href="#kak-zapustit-sbor-spp" rel="nofollow">Как запустить сбор СПП</a>

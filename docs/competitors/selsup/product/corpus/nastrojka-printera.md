@@ -11,7 +11,7 @@ chars: 4579
 
 В этой статье:
 
-- 
+-
 - <a href="#preimushhestva-raboty-s-etiketkami-cherez-selsup" rel="nofollow">Преимущества работы с этикетками через SelSup</a>
 - <a href="#nastrojka-shablonnyh-etiketok" rel="nofollow">Настройка шаблонных этикеток</a>
 - <a href="#kak-sozdat-svoyu-etiketku" rel="nofollow">Как создать свою этикетку</a>

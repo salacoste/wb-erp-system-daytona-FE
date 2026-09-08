@@ -49,6 +49,7 @@
 ## Tasks / Subtasks
 
 ### Task 1: Create Component File and Prop Types (AC: 1, 17)
+
 - [ ] Create file: `frontend/src/app/(dashboard)/analytics/advertising/components/MergedGroupTable.tsx`
 - [ ] Define `MergedGroupTableProps` interface (see Dev Notes for full specification)
   - [ ] `groups: AdvertisingGroup[]` (required)
@@ -60,6 +61,7 @@
 - [ ] Import Lucide `Crown` icon: `import { Crown } from 'lucide-react'`
 
 ### Task 2: Implement Table Structure (AC: 2, 3, 4, 5)
+
 - [ ] Create table wrapper with responsive overflow: `<div className="overflow-x-auto">`
 - [ ] Implement `<table>` with `border-collapse` and `min-w-full` classes
 - [ ] Create `<TableHeader>` subcomponent with sortable column headers
@@ -68,6 +70,7 @@
 - [ ] Pass `onProductClick` callback down to row click handlers
 
 ### Task 3: Implement Tier 1 - Rowspan Cell (AC: 6, 7, 8, 9, 18)
+
 - [ ] Calculate `totalRows = group.products.length + 1` (aggregate + details)
 - [ ] Render `<td>` with `rowSpan={totalRows}` attribute
 - [ ] **Conditional logic**: If `group.productCount === 1`, skip rowspan cell entirely (PO decision #18)
@@ -83,6 +86,7 @@
   - [ ] Product count in `text-xs text-gray-500` span: `+ ${group.productCount - 1} товаров`
 
 ### Task 4: Implement Tier 2 - Aggregate Row (AC: 10, 11, 12)
+
 - [ ] Render as first `<tr>` within group with `className="aggregate-row bg-gray-100"`
 - [ ] First `<td>`: Display `ГРУППА #{group.imtId}`
 - [ ] Subsequent `<td>` cells for each metric:
@@ -94,6 +98,7 @@
 - [ ] Apply styling: `font-semibold text-[0.95rem] text-right` for metric cells
 
 ### Task 5: Implement Tier 3 - Detail Rows (AC: 13, 14, 15, 16, 19)
+
 - [ ] Map `group.products` array to render one `<tr>` per product
 - [ ] Apply styling: `className="detail-row hover:bg-gray-50 cursor-pointer"`
 - [ ] Add click handler: `onClick={() => onProductClick?.(product.nmId)}`
@@ -105,11 +110,13 @@
 - [ ] Apply styling: `text-sm font-normal text-gray-700 text-right`
 
 ### Task 6: Create Formatting Utility Functions (AC: 11)
+
 - [ ] Implement `formatCurrency(value: number): string` using `Intl.NumberFormat('ru-RU', ...)`
 - [ ] Implement `formatPercentage(value: number, decimals = 1): string` as `${value.toFixed(decimals)}%`
 - [ ] Implement `formatROAS(roas: number | null): string` returning `roas?.toFixed(2) ?? '—'`
 
 ### Task 7: Integrate with Page Component (AC: 1)
+
 - [ ] Open `frontend/src/app/(dashboard)/analytics/advertising/page.tsx`
 - [ ] Import `MergedGroupTable` component
 - [ ] Add conditional rendering logic:
@@ -127,6 +134,7 @@
 - [ ] Implement `handleProductClick` to navigate or trigger action (e.g., open product detail modal)
 
 ### Task 8: Testing (AC: All)
+
 - [ ] Manual browser test: Verify table renders with rowspan cells spanning correctly
 - [ ] Test crown icon appears only on main products
 - [ ] Test aggregate row styling (bold, gray background)
@@ -252,16 +260,19 @@ function MergedGroupRows({ group, onProductClick }) {
 ### Tailwind CSS Classes
 
 **Rowspan Cell**:
+
 ```typescript
 const rowspanClasses = 'px-4 py-4 text-center align-middle bg-gray-50 border-r-2 border-gray-200 text-sm font-medium text-gray-600';
 ```
 
 **Aggregate Row**:
+
 ```typescript
 const aggregateRowClasses = 'bg-gray-100 font-semibold text-[0.95rem]';
 ```
 
 **Detail Row**:
+
 ```typescript
 const detailRowClasses = 'hover:bg-gray-50 cursor-pointer text-sm font-normal';
 ```
@@ -278,11 +289,13 @@ const detailRowClasses = 'hover:bg-gray-50 cursor-pointer text-sm font-normal';
 **Testing Approach**: Manual browser testing + visual inspection
 
 **Test Data**: Use Story 37.1 validated API response with minimum 3 groups:
+
 1. Normal group (6 products): ter-09 + 5 children
 2. Single-product group: Standalone product for edge case
 3. Large group (20+ products): Stress test rowspan rendering
 
 **Test Scenarios**:
+
 1. **Rowspan Rendering**: Verify cell spans correct number of rows (aggregate + details)
 2. **Crown Icon**: Verify appears only on rows where `isMainProduct: true`
 3. **Aggregate Styling**: Verify bold text, gray background, 0.95rem font
@@ -294,31 +307,35 @@ const detailRowClasses = 'hover:bg-gray-50 cursor-pointer text-sm font-normal';
 
 ## Change Log
 
-| Date | Version | Description | Author |
-|------|---------|-------------|--------|
-| 2025-12-29 | 1.0 | Initial story draft | Sally (UX Expert) |
-| 2025-12-29 | 1.1 | PO decisions filled | Sarah (PO) |
-| 2025-12-29 | 2.0 | Converted to BMad template format | Sarah (PO) |
-| 2025-12-29 | 3.0 | ✅ COMPLETE - All 20 ACs implemented and tested | Frontend Dev |
+| Date       | Version | Description                                     | Author            |
+| ---------- | ------- | ----------------------------------------------- | ----------------- |
+| 2025-12-29 | 1.0     | Initial story draft                             | Sally (UX Expert) |
+| 2025-12-29 | 1.1     | PO decisions filled                             | Sarah (PO)        |
+| 2025-12-29 | 2.0     | Converted to BMad template format               | Sarah (PO)        |
+| 2025-12-29 | 3.0     | ✅ COMPLETE - All 20 ACs implemented and tested | Frontend Dev      |
 
 ---
 
 ## Dev Agent Record
 
 ### Agent Model Used
+
 Frontend Developer (Human)
 
 ### Debug Log References
+
 - Dev server: http://localhost:3003
 - Test URL: http://localhost:3003/analytics/advertising
 - Mock data: `src/mocks/data/epic-37-merged-groups.ts`
 
 ### Completion Notes
+
 **Implementation Date**: 2025-12-29
 **Time Spent**: ~3h (on target for 3-4h estimate)
 **Status**: ✅ COMPLETE - All 20 ACs PASS
 
 **Implemented Features**:
+
 - ✅ 3-tier rowspan table structure (Tier 1: rowspan cell, Tier 2: aggregate row, Tier 3: detail rows)
 - ✅ Crown icon (👑) for main products using Lucide `Crown` component
 - ✅ Sortable columns with onSort callback integration
@@ -333,6 +350,7 @@ Frontend Developer (Human)
   - Component API: Draft interface approved ✅
 
 **Visual Validation**:
+
 - ✅ Tier 1 rowspan cells span N+1 rows correctly
 - ✅ Tier 2 aggregate row bold + gray background (#F3F4F6)
 - ✅ Tier 3 detail rows white background + hover effect
@@ -340,15 +358,18 @@ Frontend Developer (Human)
 - ✅ Epic 35 organic contribution calculation correct (71.2% in test data)
 
 **Test Cases**:
+
 1. ✅ mockMergedGroup (6 products, imtId=328632) - Normal group renders correctly
 2. ✅ mockSmallGroup (2 products, imtId=456789) - Small group renders correctly
 3. ✅ mockStandaloneProduct (imtId=null) - Standalone renders without rowspan
 
 **Next Steps**:
+
 - Story 37.3: Implement aggregate metrics calculation formulas (currently using hardcoded mock values)
 - Story 37.1: Validate backend API when Request #88 complete (blocked)
 
 ### File List
+
 - `frontend/src/app/(dashboard)/analytics/advertising/components/MergedGroupTable.tsx` (created, 290 lines)
 - `frontend/src/types/advertising-analytics.ts` (updated, +130 lines Epic 37 types)
 - `frontend/src/app/(dashboard)/analytics/advertising/page.tsx` (updated, +35 lines integration)
@@ -377,6 +398,7 @@ Frontend Developer (Human)
 **Overall Assessment**: Excellent implementation quality with professional React patterns and comprehensive documentation.
 
 **Strengths**:
+
 1. **Clean Architecture**: Well-structured subcomponents (TableHeader, MergedGroupRows) with clear separation of concerns
 2. **TypeScript Excellence**: Strict mode compliance, comprehensive interfaces, proper prop typing
 3. **Documentation**: Outstanding JSDoc comments with Epic/Story references and business context
@@ -387,6 +409,7 @@ Frontend Developer (Human)
 8. **Code Style**: Consistent Tailwind classes, clear variable naming, readable logic
 
 **Code Architecture**:
+
 - Component hierarchy: MergedGroupTable → TableHeader + MergedGroupRows → Row elements
 - Props pattern: Optional callbacks (onSort?, onProductClick?) for flexible integration
 - State management: None needed (controlled component pattern)
@@ -406,12 +429,14 @@ Frontend Developer (Human)
 ### Test Coverage Analysis
 
 **Current Coverage**:
+
 - ✅ Utility functions: metrics-calculator.test.ts (55 tests), formatters.test.ts (22 tests)
 - ❌ Component tests: **MISSING** - No MergedGroupTable.test.tsx
 - ⏳ E2E tests: Created (merged-group-table-epic-37.spec.ts, 309 lines) but NOT executed
 - ⏳ Accessibility tests: Created (accessibility-merged-groups-epic-37.spec.ts, 400 lines) but NOT executed
 
 **Testing Gaps** (To be addressed in Story 37.5 Phase 2):
+
 1. NO unit tests for MergedGroupTable component rendering
 2. NO tests for rowspan cell logic (hasSingleProduct conditional)
 3. NO tests for Crown icon conditional rendering
@@ -425,22 +450,26 @@ Frontend Developer (Human)
 ### NFR Validation
 
 #### Security: ✅ PASS
+
 - Read-only display component (no mutations)
 - No sensitive data handling
 - Props validated via TypeScript
 - No XSS vulnerabilities (React escapes by default)
 
 #### Performance: ✅ PASS (with monitoring)
+
 - Estimated render time: <100ms for 50 groups
 - Bundle size: ~10KB (acceptable for analytical feature)
 - **Recommendation**: Validate with Story 37.5 performance tests (6x CPU throttling, <200ms target)
 
 #### Reliability: ✅ PASS
+
 - Null safety: Optional chaining for callbacks (onSort?., onProductClick?.)
 - Edge cases handled: Single products, missing main product (AC 18-19)
 - Conditional rowspan rendering prevents layout breaks
 
 #### Maintainability: ✅ PASS
+
 - Excellent code organization and subcomponent structure
 - Comprehensive JSDoc documentation with references
 - Clear inline comments for complex logic
@@ -462,16 +491,19 @@ Frontend Developer (Human)
 ### Performance Considerations
 
 **Current Performance** (Estimated):
+
 - Initial render: <50ms for 3 groups (observed during dev)
 - Large dataset (50 groups): <100ms (needs validation)
 - Bundle size impact: ~10KB gzipped
 
 **Optimization Opportunities** (Post-MVP):
+
 - React.memo() for TableHeader (static most of the time)
 - useMemo() for aggregateMetrics calculations (already implemented in line 159-164)
 - Virtual scrolling for >100 groups (defer to Story 37.6)
 
 **Recommendations**:
+
 - ✅ Execute Story 37.5 performance test (<200ms with 6x CPU throttling)
 - ⏳ Monitor production performance via RUM (Real User Monitoring)
 
@@ -480,6 +512,7 @@ Frontend Developer (Human)
 ### Improvements Checklist
 
 **Handled by Dev**:
+
 - [x] Component structure with 3-tier rowspan (AC 1-16)
 - [x] TypeScript types and interfaces (advertising-analytics.ts)
 - [x] Responsive design with sticky columns (AC 18-20, 25)
@@ -488,6 +521,7 @@ Frontend Developer (Human)
 - [x] Edge case handling (single products, standalone products)
 
 **Pending (Story 37.5 Phase 2)**:
+
 - [ ] **CRITICAL**: Create MergedGroupTable.test.tsx with ≥90% coverage
   - Test rowspan rendering logic (lines 182-191)
   - Test Crown icon conditional (lines 236-238)
@@ -498,6 +532,7 @@ Frontend Developer (Human)
 - [ ] Performance validation (<200ms with 6x CPU throttling)
 
 **Optional Future Enhancements**:
+
 - [ ] Add React.memo() optimization for TableHeader
 - [ ] Implement virtual scrolling for >100 groups (Story 37.6)
 - [ ] Add Storybook stories for design system integration (if adopted)
@@ -519,6 +554,7 @@ Frontend Developer (Human)
 **Quality Score**: 85/100 (Very Good)
 
 **Risk Level**: MEDIUM
+
 - 0 critical risks
 - 0 high risks
 - 2 medium risks (component unit tests missing, E2E tests not executed)
@@ -531,12 +567,14 @@ Frontend Developer (Human)
 ✅ **Ready for Story 37.3 (Proceed with Caution)**
 
 **Justification**:
+
 - Component implementation is excellent (20/20 ACs passed)
 - Code quality and architecture are production-ready
 - Testing gaps are known and scoped for Story 37.5 Phase 2
 - Risk is acceptable for MVP (component logic is straightforward)
 
 **Next Steps**:
+
 1. ✅ **PROCEED** to Story 37.3 (Aggregate Metrics Display)
 2. ⏳ **MUST COMPLETE** in Story 37.5 Phase 2:
    - Create component unit tests (MergedGroupTable.test.tsx)
@@ -558,6 +596,7 @@ Frontend Developer (Human)
 ---
 
 **QA Checklist** (Updated):
+
 - [x] All 20 acceptance criteria validated
 - [x] Component code reviewed (290 lines, excellent quality)
 - [x] TypeScript types validated (advertising-analytics.ts)

@@ -126,18 +126,21 @@ frontend/docs/epics/UX-EXPERT-REQUEST-EPIC-34-FE.md
 **Duration**: 30 minutes
 
 **Agenda**:
+
 1. Project overview (5 min)
 2. Walk through Epic 34-FE document (10 min)
 3. Q&A on 25 design questions (10 min)
 4. Timeline & deliverables confirmation (5 min)
 
 **Participants**:
+
 - Sarah (PO) - Required
 - [UX Expert Name] - Required
 - Frontend Team Lead - Optional
 
 **Preparation**:
 Please read before meeting:
+
 - frontend/docs/epics/epic-34-fe-telegram-notifications-ui.md
 - frontend/docs/epics/epic-34-fe-UX-REQUIREMENTS.md
 
@@ -146,6 +149,7 @@ Please read before meeting:
 ## Checklist Before Sending
 
 **Before sending email/message**:
+
 - [ ] Replace [UX Expert Name] with actual name
 - [ ] Replace [UX Expert Email] with actual email
 - [ ] Add your contact info (email, Slack)
@@ -155,6 +159,7 @@ Please read before meeting:
 - [ ] Offer clarification call option
 
 **After sending**:
+
 - [ ] Add to project tracker (Epic 34-FE status)
 - [ ] Set reminder to follow up in 2 days if no response
 - [ ] Prepare for kickoff meeting (if needed)

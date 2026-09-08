@@ -13,7 +13,7 @@ chars: 6991
 
 В этой статье:
 
-- 
+-
 - <a href="#pochemu-rabotat-s-komplektami-v-selsup-eto-vygodno" rel="nofollow">Почему работать с комплектами в SelSup — это выгодно?</a>
 - <a href="#sozdanie-i-redaktirovanie-komplektov" rel="nofollow">Создание и редактирование комплектов</a>
 - <a href="#umnyj-sklad-avtomaticheskij-raschet-ostatkov" rel="nofollow">Умный склад: автоматический расчет остатков</a>

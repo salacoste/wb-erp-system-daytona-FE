@@ -10,11 +10,13 @@
 ## Problem Statement
 
 **Current State**:
+
 - Product list endpoint `GET /v1/products` returns `ProductListItem[]` without margin data
 - Backend response includes: `nm_id`, `sa_name`, `brand`, `has_cogs`, `cogs`, `barcode`, `last_sale_date`, `total_sales_qty`
 - **Missing**: `current_margin_pct`, `current_margin_period`, `current_margin_sales_qty`, `current_margin_revenue`, `missing_data_reason`
 
 **User Experience Issue**:
+
 ```
 Product List UI:
 ┌─────────────┬──────────────────┬───────────────┬────────┐
@@ -28,6 +30,7 @@ User's mental model: "COGS is assigned, why no margin?"
 ```
 
 **Why This Happens**:
+
 - `ProductListItem` type intentionally excludes margin fields for performance (see `frontend/src/types/cogs.ts:62-74`)
 - Comment: "margin calculation disabled for performance"
 - Frontend shows "—" because `ProductList.tsx:296` receives `ProductListItem` without margin data
@@ -43,6 +46,7 @@ Add **optional** `includeCogs` query parameter to product list endpoint, followi
 **Endpoint**: `GET /v1/products`
 
 **New Query Parameter**:
+
 ```typescript
 @ApiPropertyOptional({
   description: 'Include margin calculation in response (from Epic 17 analytics)',
@@ -60,6 +64,7 @@ include_cogs?: boolean = false;
 ```
 
 **Behavior**:
+
 1. **`include_cogs=false`** (default) - Current behavior, no change
    - Response: `ProductListItem[]` (without margin fields)
    - Performance: Fast (no margin calculation overhead)
@@ -73,12 +78,14 @@ include_cogs?: boolean = false;
 ### Example Requests
 
 **Default (fast, no margin)**:
+
 ```bash
 GET /v1/products?has_cogs=true&limit=25
 # Response: ProductListItem[] (current behavior)
 ```
 
 **With margin data**:
+
 ```bash
 GET /v1/products?has_cogs=true&include_cogs=true&limit=25
 # Response: ProductWithCogs[] (includes current_margin_pct, etc.)
@@ -149,6 +156,7 @@ async findAll(cabinetId: string, query: QueryProductsDto) {
 ```
 
 **Performance Note**:
+
 - Reuses existing `getMarginForProduct()` method from Epic 18 Phase 1
 - Already has Epic 17 analytics integration + fallback strategy
 - Batching possible if performance becomes issue (use Promise.all)
@@ -158,12 +166,14 @@ async findAll(cabinetId: string, query: QueryProductsDto) {
 **File**: `src/products/dto/product-list-response.dto.ts`
 
 **Current**:
+
 ```typescript
 @ApiProperty({ type: [ProductResponseDto] })
 products: ProductResponseDto[];
 ```
 
 **New** (conditional type based on `include_cogs`):
+
 ```typescript
 // Keep as-is - ProductResponseDto already has optional margin fields (Epic 18)
 // When include_cogs=false, margin fields are undefined/null
@@ -177,18 +187,22 @@ products: ProductResponseDto[];
 ## Performance Considerations
 
 ### Baseline (Current)
+
 - `GET /v1/products?limit=25` → ~150ms (WB API + COGS lookup)
 
 ### With `include_cogs=true`
+
 - `GET /v1/products?include_cogs=true&limit=25` → ~2-3 seconds (25 products × 100ms margin lookup)
 
 ### Optimization Strategies
 
 **Option 1: Accept slower response** (2-3s is acceptable for COGS management UI)
+
 - Pros: Simple implementation, reuses existing code
 - Cons: Not suitable for high-frequency calls
 
 **Option 2: Batch margin lookup** (recommended if >10 products)
+
 ```typescript
 // Instead of 25 sequential calls to getMarginForProduct()
 // Make single Epic 17 analytics query with all nm_ids
@@ -212,6 +226,7 @@ products.forEach(product => {
 **Expected Performance**: ~200-300ms (single analytics query + O(1) lookup)
 
 **Option 3: Conditional pagination limit**
+
 - When `include_cogs=true`, enforce smaller `limit` (e.g., max 10 products)
 - Prevents accidental 100-product queries with margin enrichment
 
@@ -220,6 +235,7 @@ products.forEach(product => {
 ## Acceptance Criteria
 
 ### Functional Requirements
+
 - [ ] **AC1**: `GET /v1/products?include_cogs=true` returns margin data for all products
 - [ ] **AC2**: `GET /v1/products?include_cogs=false` maintains current behavior (backward compatible)
 - [ ] **AC3**: Default behavior (parameter omitted) remains unchanged
@@ -227,11 +243,13 @@ products.forEach(product => {
 - [ ] **AC5**: `missing_data_reason` field correctly indicates why margin is missing
 
 ### Non-Functional Requirements
+
 - [ ] **AC6**: Response time ≤3s for 25 products (or ≤500ms with batching optimization)
 - [ ] **AC7**: No N+1 query issues (use batched Epic 17 analytics query)
 - [ ] **AC8**: Swagger docs updated with `include_cogs` parameter documentation
 
 ### Testing Requirements
+
 - [ ] **AC9**: E2E test for `include_cogs=true` with margin data validation
 - [ ] **AC10**: E2E test for `include_cogs=false` (backward compatibility)
 - [ ] **AC11**: Performance test with 25 products (measure response time)
@@ -241,18 +259,23 @@ products.forEach(product => {
 ## Alternative Solutions Considered
 
 ### Alternative 1: Always Include Margin (No Parameter)
+
 **Rejected** - Breaks performance for existing clients who don't need margin data.
 
 ### Alternative 2: Separate Endpoint (`GET /v1/products/with-margins`)
+
 **Rejected** - Increases API surface area, less flexible than query parameter.
 
 ### Alternative 3: Client-Side Batch Fetch
+
 **Current Workaround**:
+
 ```typescript
 // Frontend makes additional request for each selected product
 const { data: product } = useProductDetail(selectedNmId);
 // product.current_margin_pct now available
 ```
+
 **Problem**: N+1 requests if user selects multiple products.
 
 ---
@@ -260,18 +283,21 @@ const { data: product } = useProductDetail(selectedNmId);
 ## Migration Strategy
 
 ### Phase 1: Backend Implementation (This Request)
+
 1. Add `include_cogs` parameter to `QueryProductsDto`
 2. Implement conditional margin enrichment in `ProductsService.findAll()`
 3. Add E2E tests
 4. Deploy to dev environment
 
 ### Phase 2: Frontend Adoption (Separate Story)
+
 1. Update `useProducts` hook to accept `includeMargin` option
 2. Update `ProductList` component to use margin data when available
 3. Add loading indicator for slower response with margin data
 4. Update UI to show margin when present
 
 ### Phase 3: Performance Optimization (If Needed)
+
 1. Implement batched Epic 17 analytics query (Option 2 above)
 2. Add Redis caching for frequently accessed weeks
 3. Consider pagination limit enforcement when `include_cogs=true`
@@ -356,15 +382,18 @@ export function ProductList({ enableMarginDisplay = false, ...props }) {
 ## References
 
 ### Related Implementation
+
 - **Story 17.2**: `includeCogs` parameter for analytics endpoints (pattern to follow)
   - File: `docs/stories/epic-17/story-17.2-api-includecogs-flag.md`
   - Implementation: `src/analytics/weekly-analytics.service.ts` (lines 357-399, 516-570, 718-780)
 
 ### Related Types
+
 - **ProductListItem**: `frontend/src/types/cogs.ts:64-74` (current response type)
 - **ProductWithCogs**: `frontend/src/types/cogs.ts:36-59` (target response type when `include_cogs=true`)
 
 ### Related Services
+
 - **Epic 18 Phase 1**: `getMarginForProduct()` method already exists
   - File: `src/products/products.service.ts:322-413`
   - Integration: Epic 17 analytics + fallback strategy + sales stats
@@ -386,12 +415,14 @@ export function ProductList({ enableMarginDisplay = false, ...props }) {
 ## Estimated Effort
 
 **Backend Implementation**: 4-6 hours
+
 - Add parameter: 30 min
 - Implement conditional enrichment: 2-3 hours
 - E2E tests: 1-2 hours
 - Performance testing: 1 hour
 
 **Frontend Adoption**: 2-3 hours (separate story)
+
 - Update hook: 30 min
 - Update component: 1 hour
 - Testing: 1 hour
@@ -403,10 +434,12 @@ export function ProductList({ enableMarginDisplay = false, ...props }) {
 ## Success Metrics
 
 **Before** (Current State):
+
 - Users see COGS but not margin in product list
 - Confusion: "Why is margin always '—'?"
 
 **After** (With Implementation):
+
 - Users can request margin data via `include_margin` flag
 - Margin displayed for products with COGS + recent sales
 - Clear `missing_data_reason` when margin unavailable

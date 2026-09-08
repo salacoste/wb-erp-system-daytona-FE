@@ -13,6 +13,7 @@
 ### 1. Проверка формата ответа `available-weeks`
 
 **Ожидаемый формат:**
+
 ```json
 {
   "data": [
@@ -24,10 +25,11 @@
 ```
 
 **Проверка в коде:**
+
 ```typescript
 // src/hooks/useDashboard.ts:48
-const weeksResponse = await apiClient.get<{ 
-  data: Array<{ week: string; start_date: string }> 
+const weeksResponse = await apiClient.get<{
+  data: Array<{ week: string; start_date: string }>
 }>('/v1/analytics/weekly/available-weeks')
 
 // Извлекаем week из объектов
@@ -41,10 +43,12 @@ const weeks = weeksResponse?.data?.map((w) => w.week) || []
 ### 2. Проверка обработки пустого массива
 
 **Ожидаемое поведение:**
+
 - Пустой массив `{ data: [] }` = нет агрегированных данных (нормальное состояние)
 - Не должно показываться как ошибка
 
 **Проверка в коде:**
+
 ```typescript
 // src/hooks/useDashboard.ts:54-56
 if (!weeks || weeks.length === 0) {
@@ -60,6 +64,7 @@ if (!weeks || weeks.length === 0) {
 ### 3. Проверка формата ответа `finance-summary`
 
 **Ожидаемый формат:**
+
 ```json
 {
   "summary_total": {
@@ -84,6 +89,7 @@ if (!weeks || weeks.length === 0) {
 ```
 
 **Проверка в коде:**
+
 ```typescript
 // src/hooks/useDashboard.ts:65-70
 const summaryResponse = await apiClient.get<{
@@ -104,10 +110,12 @@ const summary = summaryResponse.summary_total || summaryResponse.summary_rus
 ### 4. Проверка поддержки полей с `_total` и без
 
 **Ожидаемое поведение:**
+
 - Поддержка полей с суффиксом `_total` (из `summary_total`)
 - Поддержка полей без суффикса (из `summary_rus`/`summary_eaeu` - legacy)
 
 **Проверка в коде:**
+
 ```typescript
 // src/hooks/useDashboard.ts:92-93
 return {
@@ -123,10 +131,12 @@ return {
 ### 5. Проверка гарантии доступности данных (Story 2.7)
 
 **Ожидаемое поведение:**
+
 - Если неделя в списке `available-weeks` → данные гарантированно доступны
 - Ошибка 404 для недели из списка не должна происходить
 
 **Проверка в коде:**
+
 ```typescript
 // src/hooks/useDashboard.ts:75-83
 if (!summary) {
@@ -148,10 +158,12 @@ if (!summary) {
 ### 6. Проверка автоматического добавления заголовков
 
 **Ожидаемое поведение:**
+
 - `apiClient` автоматически добавляет `Authorization: Bearer {token}`
 - `apiClient` автоматически добавляет `X-Cabinet-Id: {cabinetId}`
 
 **Проверка в коде:**
+
 ```typescript
 // src/lib/api-client.ts:39-52
 const { token, cabinetId } = useAuthStore.getState()
@@ -180,6 +192,7 @@ if (!options.skipCabinetId && cabinetId) {
 ### Шаг 2: Проверьте логи
 
 **Ожидаемые логи при успешной загрузке:**
+
 ```
 [Dashboard Metrics] Fetching finance summary for week: 2025-W46
 [Dashboard Metrics] Finance summary received: { to_pay_goods: ..., sale_gross: ... }
@@ -188,6 +201,7 @@ if (!options.skipCabinetId && cabinetId) {
 ```
 
 **Ожидаемые логи при отсутствии данных:**
+
 ```
 [Dashboard Metrics] No available weeks found. Financial data may not be processed yet. This is normal - data will appear after aggregation completes.
 [Expenses] No available weeks found. Financial data may not be processed yet. This is normal - data will appear after aggregation completes.
@@ -201,11 +215,13 @@ if (!options.skipCabinetId && cabinetId) {
    - `GET /v1/analytics/weekly/finance-summary?week=...`
 
 **Проверьте:**
+
 - ✅ Status: `200 OK`
 - ✅ Request Headers: `Authorization: Bearer ...` и `X-Cabinet-Id: ...`
 - ✅ Response: JSON с корректным форматом
 
 **Пример успешного ответа `available-weeks`:**
+
 ```json
 {
   "data": [
@@ -216,6 +232,7 @@ if (!options.skipCabinetId && cabinetId) {
 ```
 
 **Пример успешного ответа `finance-summary`:**
+
 ```json
 {
   "summary_total": {
@@ -250,6 +267,7 @@ if (!options.skipCabinetId && cabinetId) {
 
 1. Откройте директорию `test-api/` и файл `00-variables.http`
 2. Убедитесь, что переменные настроены:
+
    ```http
    @baseUrl = http://localhost:3000
    @cabinetId = f75836f7-c0bc-4b2c-823c-a1f3508cce8e
@@ -265,6 +283,7 @@ if (!options.skipCabinetId && cabinetId) {
 ### Ожидаемые результаты
 
 **После Story 2.7:**
+
 - ✅ `available-weeks` возвращает недели из `weekly_payout_total`
 - ✅ Если неделя в списке → `finance-summary` гарантированно возвращает данные
 - ✅ Нет race condition между импортом и агрегацией
@@ -304,11 +323,13 @@ if (!options.skipCabinetId && cabinetId) {
 ### Проблема: Пустой массив `available-weeks`
 
 **Возможные причины:**
+
 1. Нет агрегированных данных в `weekly_payout_total`
 2. Backend еще не обновлен (Story 2.7 не реализована)
 3. Неправильный `cabinetId` в заголовке
 
 **Решение:**
+
 1. Проверить данные в БД: `SELECT week FROM weekly_payout_total WHERE cabinet_id = ?`
 2. Проверить, что backend обновлен
 3. Проверить заголовок `X-Cabinet-Id` в Network tab
@@ -316,10 +337,12 @@ if (!options.skipCabinetId && cabinetId) {
 ### Проблема: 404 для недели из списка
 
 **Возможные причины:**
+
 1. Баг в backend (не должно происходить после Story 2.7)
 2. Несоответствие данных между `weekly_payout_total` и `weekly_payout_summary`
 
 **Решение:**
+
 1. Проверить логи в консоли (должно быть `CRITICAL` сообщение)
 2. Отправить в систему мониторинга ошибок
 3. Сообщить Backend Team
@@ -327,11 +350,13 @@ if (!options.skipCabinetId && cabinetId) {
 ### Проблема: Данные не отображаются
 
 **Возможные причины:**
+
 1. Пустой массив `available-weeks`
 2. Ошибка при запросе `finance-summary`
 3. Неправильная обработка формата ответа
 
 **Решение:**
+
 1. Проверить логи в консоли браузера
 2. Проверить Network tab для ошибок
 3. Проверить, что `summary_total` или `summary_rus` не null
@@ -341,6 +366,7 @@ if (!options.skipCabinetId && cabinetId) {
 ## 📊 Примеры успешных ответов
 
 ### Успешный ответ `available-weeks`:
+
 ```json
 {
   "data": [
@@ -352,6 +378,7 @@ if (!options.skipCabinetId && cabinetId) {
 ```
 
 ### Успешный ответ `finance-summary`:
+
 ```json
 {
   "summary_total": {
@@ -380,4 +407,3 @@ if (!options.skipCabinetId && cabinetId) {
 **Дата создания:** 2025-11-21  
 **Последнее обновление:** 2025-11-21  
 **Автор:** Frontend Team (Auto - Dev Agent)
-

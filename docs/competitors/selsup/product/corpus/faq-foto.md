@@ -13,7 +13,7 @@ chars: 5766
 
 В этой статье:
 
-- 
+-
 - <a href="#kak-pomenyat-fotografii-na-tovar-v-selsup" rel="nofollow">Как поменять фотографии на товар в SelSup</a>
 - <a href="#kak-najti-tovary-u-kotoryh-davno-ne-obnovlyalis-fotografii" rel="nofollow">Как найти товары, у которых давно не обновлялись фотографии</a>
 - <a href="#upravlenie-znachkami-marketplejsov-pri-zagruzke-fotografij" rel="nofollow">Управление значками маркетплейсов при загрузке фотографий</a>
@@ -90,7 +90,6 @@ chars: 5766
 
 - Нажмите иконку **Ozon** в верхней части карточки товара → выберите **"Загрузить фотографии Ozon"**.\
   ![](../../out/selsup.ru/_kage/selsup.ru/wp-content/webp-express/webp-images/uploads/2022/09/screenshot_142.png.webp)\
-  
 
 - Либо загрузите фото и нажмите **"Сохранить"** с включённым переключателем **Ozon**.\
   ![](../../out/selsup.ru/_kage/selsup.ru/wp-content/webp-express/webp-images/uploads/2022/09/screenshot_143.png.webp)

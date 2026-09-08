@@ -6,6 +6,7 @@
 > правильно читать** нужный материал. Машинно-читаемый индекс: `manifest.json`.
 
 ## 0. TL;DR для агента
+
 - **Источник истины (сырые факты)** — `corpus/<slug>.md` (419 статей, чистый текст) + `INDEX.md` (оглавление с исходными URL).
 - **Анаитика (вторична, сгенерирована ИИ)** — `PRD/MVP_PRD/FEATURE_MAP/DATA_MODEL/INTEGRATIONS/WORKFLOWS/specs/*.md`. Каждый тезис помечен трассировкой `[файл §раздел]` — шли по ней к оригиналу для проверки.
 - **Реализация (код)** — `app/backend` (NestJS, 120 тестов) + `app/frontend` (React). Контракты стабильны.
@@ -61,6 +62,7 @@ product/
 ## 2. Форматы файлов
 
 ### 2.1 `corpus/<slug>.md` — статья базы знаний (ИСТОЧНИК ИСТИНЫ)
+
 ```markdown
 ---
 title: 'Заказы FBS в модуле 1С'
@@ -73,42 +75,47 @@ chars: 10020
 
 <чистый текст статьи: разделы, списки, таблицы; скриншоты как ![](../../out/...)>
 ```
+
 - **front-matter** (YAML): `title`, `slug` (id статьи/URL-slug), `source` (оригинальный URL), `chars` (длина).
 - Текст — чистый, без скриптов/навигации сайта. Изображения — локальные пути к зеркалу `out/selsup.ru/_kage/...`.
 - **419 файлов**, имена = slug статьи. Соответствие slug↔title↔URL — в `INDEX.md`.
 
 ### 2.2 Аналитические документы (`PRD/specs/...`)
+
 - Markdown с заголовками. **Каждый ключевой тезис помечен трассировкой** `[файл §раздел]`
   (напр. `[product-cards §Назначение]`, `[DATA_MODEL §Обзор п.3]`) — ведёт к источнику.
 - **`[SPIKE]`** — пометка неподтверждённого элемента (реальные API/лимиты WB/Ozon), требующего проверки на тестовом кабинете.
 - Роли RBAC — lowercase: `owner/admin/manager/operator`. Маркетплейсы — enum `WB|OZON`.
 
 ### 2.3 `INDEX.md`
+
 Таблица: `| # | Статья (title) | Символов | Файл (corpus/<slug>.md) |`, ссылка title → исходный URL.
 419 строк. Используй для поиска статьи по названию/теме.
 
 ## 3. Навигация по задаче (decision tree)
 
-| Задача агента | Куда смотреть (в порядке приоритета) |
-|---|---|
-| «Как именно SelSup делает X?» (факт/поведение) | `INDEX.md` (найти статью) → `corpus/<slug>.md` (оригинал). Доп.: `specs/<модуль>.md` §раздел. |
-| «Спроектировать фичу Y» | `MVP_PRD.md` (скоуп/фазы) → `specs/<модуль>.md` → `design/PHASE*.md` → `app/backend/src/<модуль>/` (реализация). |
-| «Модель данных / сущности» | `DATA_MODEL.md` → `app/backend/prisma/schema.prisma` (канон реализации). |
-| «Интеграция с WB/Ozon/1С» | `INTEGRATIONS.md` → `specs/integrations-*.md` → `app/backend/src/products/{wb,ozon}.adapter.ts`. |
-| «Воркфлоу / end-to-end процесс» | `WORKFLOWS.md` (найти по ключевым словам) → `specs/<модуль>.md §воркфлоу`. |
-| «Какой модуль за что отвечает» | `FEATURE_MAP.md` (карта 16 модулей + стат). |
-| «Что уже реализовано и как» | `BUILD_PROGRESS.md` (статус фаз) → `VALIDATION_PHASE<N>.md` → `app/`. |
-| «REST API эндпоинт» | `VALIDATION_PHASE<N>.md` (списки эндпоинтов по фазам) → `app/backend/src/<модуль>/<модуль>.controller.ts`. |
+| Задача агента                                  | Куда смотреть (в порядке приоритета)                                                                             |
+| ---------------------------------------------- | ---------------------------------------------------------------------------------------------------------------- |
+| «Как именно SelSup делает X?» (факт/поведение) | `INDEX.md` (найти статью) → `corpus/<slug>.md` (оригинал). Доп.: `specs/<модуль>.md` §раздел.                    |
+| «Спроектировать фичу Y»                        | `MVP_PRD.md` (скоуп/фазы) → `specs/<модуль>.md` → `design/PHASE*.md` → `app/backend/src/<модуль>/` (реализация). |
+| «Модель данных / сущности»                     | `DATA_MODEL.md` → `app/backend/prisma/schema.prisma` (канон реализации).                                         |
+| «Интеграция с WB/Ozon/1С»                      | `INTEGRATIONS.md` → `specs/integrations-*.md` → `app/backend/src/products/{wb,ozon}.adapter.ts`.                 |
+| «Воркфлоу / end-to-end процесс»                | `WORKFLOWS.md` (найти по ключевым словам) → `specs/<модуль>.md §воркфлоу`.                                       |
+| «Какой модуль за что отвечает»                 | `FEATURE_MAP.md` (карта 16 модулей + стат).                                                                      |
+| «Что уже реализовано и как»                    | `BUILD_PROGRESS.md` (статус фаз) → `VALIDATION_PHASE<N>.md` → `app/`.                                            |
+| «REST API эндпоинт»                            | `VALIDATION_PHASE<N>.md` (списки эндпоинтов по фазам) → `app/backend/src/<модуль>/<модуль>.controller.ts`.       |
 
 ## 4. Рекомендуемый порядок чтения
 
 **Для агента, отвечающего на вопросы о SelSup (RAG/answer):**
+
 1. `INDEX.md` — найти релевантные статьи по теме.
 2. `corpus/<slug>.md` — прочитать оригинал (источник истины).
 3. `specs/<модуль>.md` — структурированная выжимка по модулю.
 4. Отвечать с трассировкой `[corpus/<slug>.md]` / `[specs/<модуль> §раздел]`.
 
 **Для агента-разработчика (дорабатывать код):**
+
 1. `MVP_PRD.md` §8 (фазы) — понять, какая фаза/модуль.
 2. `design/PHASE0_FOUNDATION.md` + `PHASE1_PIM_MARKETPLACES.md` — архитектура/DDL/API.
 3. `app/backend/src/<модуль>/` — текущая реализация.
@@ -134,6 +141,7 @@ sed -n '/## Назначение/,/##/p' product/specs/product-cards.md
 ```
 
 ## 6. Реализация (`app/`) — что может читать агент
+
 - **backend** (`app/backend/src/`): модули `auth, rbac, prisma, crypto, sync, audit, organizations, products, stock, prices, orders, labels, analytics, debug, observability`.
   - **Схема БД (канон)**: `app/backend/prisma/schema.prisma` (Account, Organization, Product/Variant/Sku, StockItem, Price, Order/OrderItem/Supply/Label, MarketplaceOperation, SyncJob, AuditLog, Integration, Brand, Category…).
   - **REST API**: `src/<модуль>/<модуль>.controller.ts` (auth/organizations/products/stock/prices/orders/supplies/labels/analytics/brands/categories + debug/health/metrics).
@@ -142,6 +150,7 @@ sed -n '/## Назначение/,/##/p' product/specs/product-cards.md
 - **frontend** (`app/frontend/src/`): pages (Login, Products, CreateProduct, Import, Refs, Stock, Prices, Orders, Analytics) + `api.ts` (типы + эндпоинты) + `auth.tsx`.
 
 ## 7. Конвенции (важно для агента)
+
 - **Маркетплейсы**: `WB` (Wildberries), `OZON` (Ozon). В коде — enum.
 - **Схемы работы**: `FBS` (со своего склада), `FBO` (склад МП), `DBS`, `realFBS`, дропшиппинг, КГТ.
 - **Роли RBAC**: `owner, admin, manager, operator` (lowercase; разрешения в `prisma/seed.ts`).
@@ -149,10 +158,12 @@ sed -n '/## Назначение/,/##/p' product/specs/product-cards.md
 - **Единый PIM**: карточка создаётся один раз, публикуется на WB/Ozon «тумблерами» (marketplace_mappings). Модель Модель→Цвет→Размер; 1 SKU = общий остаток для связанных карточек.
 
 ## 8. Кейвы/ограничения
+
 - **Аналитика (`PRD/specs/...`) сгенерирована ИИ** — может ошибаться. Сверяй критичные тезисы с `corpus/` (оригинал).
 - **`[SPIKE]` элементы** (реальные эндпоинты/лимиты WB/Ozon API) не подтверждены — в коде используется `MockMarketplaceTransport`.
 - **Реализация — MVP (только WB+Ozon, FBS)**: другие МП/AI/1С/CRM/FBO-поставки/производство описаны в `specs/` и `PRD`, но не в `app/`.
 - Корпус — русскоязычный; ответы агенту тоже лучше давать на русском.
 
 ## 9. Машинно-читаемый индекс
+
 `product/manifest.json` — структурированный список всех артефактов (путь, тип, размер, описание, списки модулей/фаз). Агент может парсить его для программного обнаружения ресурсов.

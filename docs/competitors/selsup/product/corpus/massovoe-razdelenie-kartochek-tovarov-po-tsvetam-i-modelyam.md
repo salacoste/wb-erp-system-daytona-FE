@@ -13,7 +13,7 @@ chars: 4970
 
 В этой статье:
 
-- 
+-
 - <a href="#pochemu-kartochki-obedinyayutsya" rel="nofollow">Почему карточки объединяются?</a>
 - <a href="#zachem-nuzhno-razdelyat-kartochki" rel="nofollow">Зачем нужно разделять карточки?</a>
 - <a href="#poshagovaya-instruktsiya-po-razdeleniyu-kartochek" rel="nofollow">Пошаговая инструкция по разделению карточек</a>

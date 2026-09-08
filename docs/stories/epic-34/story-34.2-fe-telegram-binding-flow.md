@@ -26,6 +26,7 @@ Implement the complete Telegram binding flow with modal interface, verification 
 ## ✅ Acceptance Criteria
 
 ### 1. Binding Modal (Q1 - Centered Modal Overlay)
+
 - [ ] Centered modal overlay using shadcn/ui Dialog
 - [ ] 480-560px width on desktop, full-screen on mobile (<640px)
 - [ ] Backdrop with `backdrop-blur-sm` and `bg-black/50`
@@ -34,6 +35,7 @@ Implement the complete Telegram binding flow with modal interface, verification 
 - [ ] Modal title: "Подключение Telegram" (H2, 24px, semi-bold)
 
 ### 2. Countdown Timer (Q2 - Progress Bar + Text)
+
 - [ ] Linear progress bar showing time remaining
 - [ ] Text display: "Код действителен ещё: 9:45"
 - [ ] Progress bar changes color based on time:
@@ -44,6 +46,7 @@ Implement the complete Telegram binding flow with modal interface, verification 
 - [ ] Shows "Код истёк. Получите новый код." when expired
 
 ### 3. Deep Link Button (Q3 - Telegram Blue CTA)
+
 - [ ] Primary button with Telegram branding
 - [ ] Background: Telegram Blue (#0088CC)
 - [ ] Text: "Открыть в Telegram" with paper plane icon (20x20px)
@@ -52,21 +55,24 @@ Implement the complete Telegram binding flow with modal interface, verification 
 - [ ] Opens native Telegram app on mobile
 
 ### 4. Polling Indicator (Q4 - Spinner + Text)
+
 - [ ] Spinner (24x24px) with text "Ожидаем подтверждения..."
 - [ ] 3-second polling interval
 - [ ] Dynamic text updates:
   - 0-5s: "Ожидаем подтверждения..."
   - 5s+: "Всё ещё ожидаем... Проверьте Telegram."
-  - >60s: "Подтверждение занимает дольше обычного..."
+  - > 60s: "Подтверждение занимает дольше обычного..."
 - [ ] Stops polling when bound or code expired
 
 ### 5. Unbind Confirmation (Q5 - Separate Dialog)
+
 - [ ] Confirmation dialog with warning icon
 - [ ] Explains consequences (bullet points)
 - [ ] Two buttons: "Отменить" (secondary), "Отключить Telegram" (danger)
 - [ ] Success toast after unbind: "Telegram отключен"
 
 ### 6. Accessibility (WCAG 2.1 AA)
+
 - [ ] All interactive elements keyboard accessible
 - [ ] aria-labels on all icons and buttons
 - [ ] Focus trap within modal
@@ -83,6 +89,7 @@ Implement the complete Telegram binding flow with modal interface, verification 
 **Purpose**: Main card showing Telegram binding status and triggering bind/unbind flows
 
 #### Props
+
 ```typescript
 interface TelegramBindingCardProps {
   onBindingComplete?: () => void;
@@ -93,6 +100,7 @@ interface TelegramBindingCardProps {
 #### States
 
 **1. Not Bound (Empty State)**
+
 ```typescript
 <Card>
   <CardHeader>
@@ -112,6 +120,7 @@ interface TelegramBindingCardProps {
 ```
 
 **2. Bound (Connected State)**
+
 ```typescript
 <Card>
   <CardHeader>
@@ -142,6 +151,7 @@ interface TelegramBindingCardProps {
 **Purpose**: Modal dialog for binding flow with code display and polling
 
 #### Props
+
 ```typescript
 interface TelegramBindingModalProps {
   open: boolean;
@@ -151,6 +161,7 @@ interface TelegramBindingModalProps {
 ```
 
 #### Visual Mockup (Desktop)
+
 ```
 ┌──────────────────────────────────────────────────────────┐
 │  Подключение Telegram                                  [×]│
@@ -177,6 +188,7 @@ interface TelegramBindingModalProps {
 ```
 
 #### Code Structure
+
 ```typescript
 function TelegramBindingModal({ open, onOpenChange, onSuccess }: Props) {
   const [bindingCode, setBindingCode] = useState<string | null>(null);
@@ -327,6 +339,7 @@ function TelegramBindingModal({ open, onOpenChange, onSuccess }: Props) {
 **Purpose**: Confirmation dialog for removing Telegram binding
 
 #### Visual Mockup
+
 ```
 ┌──────────────────────────────────────────────────────────┐
 │  Отключить Telegram?                                   [×]│
@@ -348,6 +361,7 @@ function TelegramBindingModal({ open, onOpenChange, onSuccess }: Props) {
 ```
 
 #### Code Structure
+
 ```typescript
 interface UnbindConfirmationDialogProps {
   open: boolean;
@@ -429,6 +443,7 @@ function UnbindConfirmationDialog({ open, onOpenChange, onConfirm }: Props) {
 ## 🎨 Design Specifications
 
 ### Colors (Tailwind Classes)
+
 ```typescript
 const colors = {
   telegramBlue: 'bg-[#0088CC] hover:bg-[#0077B3]',
@@ -442,6 +457,7 @@ const colors = {
 ```
 
 ### Typography
+
 ```typescript
 const typography = {
   dialogTitle: 'text-2xl font-semibold',  // 24px
@@ -452,6 +468,7 @@ const typography = {
 ```
 
 ### Spacing
+
 ```typescript
 const spacing = {
   modalPadding: 'p-6',           // 24px
@@ -461,6 +478,7 @@ const spacing = {
 ```
 
 ### Animations
+
 ```css
 /* Countdown timer pulsation (when <30s) */
 @keyframes pulse-red {
@@ -485,6 +503,7 @@ const spacing = {
 ## 🧪 Testing Requirements
 
 ### Unit Tests
+
 ```typescript
 // TelegramBindingCard.test.tsx
 describe('TelegramBindingCard', () => {
@@ -530,6 +549,7 @@ describe('TelegramBindingModal', () => {
 ```
 
 ### E2E Tests (Playwright)
+
 ```typescript
 test('complete binding flow', async ({ page }) => {
   // Navigate to settings
@@ -564,6 +584,7 @@ test('complete binding flow', async ({ page }) => {
 ## 📦 Dependencies
 
 **shadcn/ui Components**:
+
 ```bash
 npx shadcn-ui@latest add dialog
 npx shadcn-ui@latest add button
@@ -572,6 +593,7 @@ npx shadcn-ui@latest add badge
 ```
 
 **Additional Utils**:
+
 - `react-hot-toast` or `sonner` for toast notifications
 - `lucide-react` for icons
 

@@ -13,12 +13,12 @@
 Comprehensive audit of all 4 marketing analytics API domains against backend implementation.
 Analyzed: test-api HTTP files, API-PATHS-REFERENCE.md, BUSINESS-LOGIC-REFERENCE.md, frontend source code.
 
-| Domain | Frontend Status | Backend Endpoints | Bugs Found | Gaps Found |
-|--------|----------------|-------------------|------------|------------|
-| Funnel (`/v1/analytics/funnel`) | Implemented (8 files) | 4 endpoints | 2 type mismatches | 4 UI gaps |
-| Advertising (`/v1/analytics/advertising`) | Implemented (20+ components) | 3 endpoints | 4 bugs | 3 gaps |
-| Search (`/v1/analytics/search`) | **NOT IMPLEMENTED** | 3 endpoints | 1 critical bug | Full build needed |
-| Buyout (`/v1/analytics/buyout`) | Implemented (10 files) | 2 endpoints | 4 backend bugs | 3 gaps |
+| Domain                                    | Frontend Status              | Backend Endpoints | Bugs Found        | Gaps Found        |
+| ----------------------------------------- | ---------------------------- | ----------------- | ----------------- | ----------------- |
+| Funnel (`/v1/analytics/funnel`)           | Implemented (8 files)        | 4 endpoints       | 2 type mismatches | 4 UI gaps         |
+| Advertising (`/v1/analytics/advertising`) | Implemented (20+ components) | 3 endpoints       | 4 bugs            | 3 gaps            |
+| Search (`/v1/analytics/search`)           | **NOT IMPLEMENTED**          | 3 endpoints       | 1 critical bug    | Full build needed |
+| Buyout (`/v1/analytics/buyout`)           | Implemented (10 files)       | 2 endpoints       | 4 backend bugs    | 3 gaps            |
 
 **Critical items**: 1 naming bug (Jam tier), 4 backend param bugs (buyout), 1 missing feature domain (search).
 
@@ -38,15 +38,16 @@ Analyzed: test-api HTTP files, API-PATHS-REFERENCE.md, BUSINESS-LOGIC-REFERENCE.
 **Remaining frontend action**: Build search analytics domain. Verify individual bug fixes listed in audit against current backend.
 **Problem**: Backend returns `'advanced'`, frontend type expects `'extended'`.
 
-| Source | Value |
-|--------|-------|
-| Backend DTO (`jam-status-response.dto.ts`) | `'none' \| 'standard' \| 'advanced'` |
-| Frontend type (`src/types/cabinet.ts:112`) | `'none' \| 'standard' \| 'extended'` |
-| Backend map (cabinets.controller.ts:322) | `{ none: 0, standard: 30, advanced: 100 }` |
+| Source                                     | Value                                      |
+| ------------------------------------------ | ------------------------------------------ |
+| Backend DTO (`jam-status-response.dto.ts`) | `'none' \| 'standard' \| 'advanced'`       |
+| Frontend type (`src/types/cabinet.ts:112`) | `'none' \| 'standard' \| 'extended'`       |
+| Backend map (cabinets.controller.ts:322)   | `{ none: 0, standard: 30, advanced: 100 }` |
 
 **Impact**: `JAM_TIER_LABELS['advanced']` returns `undefined`. Components `SidebarCabinetInfo` and `CabinetInfoCard` show "undefined" or crash for `advanced` tier users.
 
 **Fix scope**: Frontend only — change `'extended'` to `'advanced'` in:
+
 - `src/types/cabinet.ts` — `JamTier` type, `JAM_TIER_LABELS`, `JAM_TIER_STYLES` (in CabinetInfoCard)
 - `src/components/custom/SidebarCabinetInfo.tsx`
 - `src/components/custom/settings/CabinetInfoCard.tsx`
@@ -129,6 +130,7 @@ Analyzed: test-api HTTP files, API-PATHS-REFERENCE.md, BUSINESS-LOGIC-REFERENCE.
 **File**: `src/types/analytics-funnel.ts`
 
 **Missing fields** returned by backend:
+
 - `ordersSumRub: number` — orders value in RUB
 - `buyoutSumRub: number` — buyout value in RUB
 - `cancelSumRub: number` — cancel value in RUB
@@ -142,6 +144,7 @@ Analyzed: test-api HTTP files, API-PATHS-REFERENCE.md, BUSINESS-LOGIC-REFERENCE.
 **File**: `src/types/analytics-funnel.ts`
 
 **Missing fields** returned by backend (day-level rows):
+
 - `cartConversion: number`
 - `orderConversion: number`
 - `buyoutConversion: number`
@@ -205,13 +208,14 @@ Backend supports sorting by `profit_after_ads` but frontend omits it.
 
 **Backend ready** (Task-139 Complete): 3 endpoints, zero frontend code.
 
-| Endpoint | Purpose | Params |
-|----------|---------|--------|
-| `GET /v1/analytics/search/by-product` | Queries driving traffic to a product | `nmId` (required), `from`, `to`, `orderBy`, `limit` |
-| `GET /v1/analytics/search/by-query` | Products ranking for a search term | `query` (required, ILIKE), `from`, `to`, `limit` |
-| `GET /v1/analytics/search/orders` | Orders attributed to search | `from`, `to`, `groupBy` (query/product/day), `limit` |
+| Endpoint                              | Purpose                              | Params                                               |
+| ------------------------------------- | ------------------------------------ | ---------------------------------------------------- |
+| `GET /v1/analytics/search/by-product` | Queries driving traffic to a product | `nmId` (required), `from`, `to`, `orderBy`, `limit`  |
+| `GET /v1/analytics/search/by-query`   | Products ranking for a search term   | `query` (required, ILIKE), `from`, `to`, `limit`     |
+| `GET /v1/analytics/search/orders`     | Orders attributed to search          | `from`, `to`, `groupBy` (query/product/day), `limit` |
 
 **Files needed** (from Architecture doc — validated as accurate):
+
 - `src/types/search-analytics.ts` — types for all 3 endpoints
 - `src/lib/api/search-analytics.ts` — API client functions
 - `src/hooks/use-search-analytics.ts` — 3 TanStack Query hooks
@@ -319,6 +323,7 @@ WB over-attribution can make `organicSales` negative. Frontend shows tooltip but
 ### NEW-1: Three-Layer Ad Cost Discrepancy (P3)
 
 Backend has 3 layers of ad cost data:
+
 1. `adv_daily_stats.spend` — what platform reports
 2. `adv_daily_costs.upd_sum` — corrected daily costs
 3. `wb_finance_raw.corrections` — what WB actually deducted
@@ -330,6 +335,7 @@ Could show comparison: "Расход по рекламному кабинету"
 ### NEW-2: Search + Advertising Cross-Reference (P2)
 
 Combine `search/by-product` + `advertising/by-sku` for same nmId:
+
 - Which keywords are organic vs paid
 - Search position vs ad spend correlation
 - Organic traffic share: `organic_views = funnel.openCardCount - adv.views`
@@ -354,55 +360,56 @@ Overlay daily ad spend on funnel chart as secondary axis. Shows correlation betw
 
 ### P0 — Critical (Fix Before New Features)
 
-| ID | Task | Type | Effort |
-|----|------|------|--------|
-| BUG-1 | Fix Jam tier `extended` → `advanced` naming | Bug fix | 1 SP |
-| SEARCH-1 | Implement Search Analytics page (types + API + hooks + components) | New feature | 13 SP |
+| ID       | Task                                                               | Type        | Effort |
+| -------- | ------------------------------------------------------------------ | ----------- | ------ |
+| BUG-1    | Fix Jam tier `extended` → `advanced` naming                        | Bug fix     | 1 SP   |
+| SEARCH-1 | Implement Search Analytics page (types + API + hooks + components) | New feature | 13 SP  |
 
 ### P1 — High Priority
 
-| ID | Task | Type | Effort |
-|----|------|------|--------|
-| BACKEND-BUG-1 | Report: Buyout `sortOrder`/`sortDir` mismatch | Backend request | — |
-| BACKEND-BUG-2 | Report: Buyout `minSales` not consumed | Backend request | — |
-| BACKEND-BUG-3 | Report: Buyout `returnRate`/`trend` sort no-op | Backend request | — |
-| BACKEND-BUG-4 | Clarify: Search `totalRevenue` always 0 | Backend request | — |
-| TYPE-1 | Add sum fields to `FunnelProductItem` | Type fix | 0.5 SP |
-| TYPE-2 | Add conversion fields to `FunnelDayItem` | Type fix | 0.5 SP |
-| TYPE-3 | Add `trendPeriod` to `BySkuBuyoutItem` | Type fix | 0.5 SP |
-| TYPE-4 | Add `include_daily` to advertising params | Type fix + wiring | 2 SP |
-| TYPE-5 | Add `profit_after_ads` to advertising sort | Type fix | 0.5 SP |
-| ADV-GAP-1 | Wire `include_daily` + daily trend charts | Enhancement | 3 SP |
-| BUG-2 | Add profit multiplication disclaimer | UX fix | 1 SP |
+| ID            | Task                                           | Type              | Effort |
+| ------------- | ---------------------------------------------- | ----------------- | ------ |
+| BACKEND-BUG-1 | Report: Buyout `sortOrder`/`sortDir` mismatch  | Backend request   | —      |
+| BACKEND-BUG-2 | Report: Buyout `minSales` not consumed         | Backend request   | —      |
+| BACKEND-BUG-3 | Report: Buyout `returnRate`/`trend` sort no-op | Backend request   | —      |
+| BACKEND-BUG-4 | Clarify: Search `totalRevenue` always 0        | Backend request   | —      |
+| TYPE-1        | Add sum fields to `FunnelProductItem`          | Type fix          | 0.5 SP |
+| TYPE-2        | Add conversion fields to `FunnelDayItem`       | Type fix          | 0.5 SP |
+| TYPE-3        | Add `trendPeriod` to `BySkuBuyoutItem`         | Type fix          | 0.5 SP |
+| TYPE-4        | Add `include_daily` to advertising params      | Type fix + wiring | 2 SP   |
+| TYPE-5        | Add `profit_after_ads` to advertising sort     | Type fix          | 0.5 SP |
+| ADV-GAP-1     | Wire `include_daily` + daily trend charts      | Enhancement       | 3 SP   |
+| BUG-2         | Add profit multiplication disclaimer           | UX fix            | 1 SP   |
 
 ### P2 — Medium Priority
 
-| ID | Task | Type | Effort |
-|----|------|------|--------|
-| FUNNEL-GAP-1 | Add brandName column to FunnelTable | Enhancement | 1 SP |
-| FUNNEL-GAP-2 | Expand summary cards (4 → 8 metrics) | Enhancement | 2 SP |
-| FUNNEL-GAP-3 | Add period comparison (WoW) | Feature | 3 SP |
-| FUNNEL-GAP-4 | Add nmIds product filter | Enhancement | 2 SP |
-| BUYOUT-GAP-1 | Split BuyoutTable.tsx (>200 lines) | Refactor | 1 SP |
-| BUYOUT-GAP-3 | Fix product enrichment 200-cap | Bug fix | 1 SP |
-| ADV-GAP-2 | Visualize sync data gaps | Enhancement | 2 SP |
-| ADV-GAP-3 | Handle negative organicSales | Enhancement | 1 SP |
-| NEW-2 | Search + Advertising cross-reference | Feature | 5 SP |
-| NEW-3 | Funnel + Advertising chart overlay | Enhancement | 3 SP |
-| TYPE-6 | Remove or populate campaign_count fields | Cleanup | 0.5 SP |
+| ID           | Task                                     | Type        | Effort |
+| ------------ | ---------------------------------------- | ----------- | ------ |
+| FUNNEL-GAP-1 | Add brandName column to FunnelTable      | Enhancement | 1 SP   |
+| FUNNEL-GAP-2 | Expand summary cards (4 → 8 metrics)     | Enhancement | 2 SP   |
+| FUNNEL-GAP-3 | Add period comparison (WoW)              | Feature     | 3 SP   |
+| FUNNEL-GAP-4 | Add nmIds product filter                 | Enhancement | 2 SP   |
+| BUYOUT-GAP-1 | Split BuyoutTable.tsx (>200 lines)       | Refactor    | 1 SP   |
+| BUYOUT-GAP-3 | Fix product enrichment 200-cap           | Bug fix     | 1 SP   |
+| ADV-GAP-2    | Visualize sync data gaps                 | Enhancement | 2 SP   |
+| ADV-GAP-3    | Handle negative organicSales             | Enhancement | 1 SP   |
+| NEW-2        | Search + Advertising cross-reference     | Feature     | 5 SP   |
+| NEW-3        | Funnel + Advertising chart overlay       | Enhancement | 3 SP   |
+| TYPE-6       | Remove or populate campaign_count fields | Cleanup     | 0.5 SP |
 
 ### P3 — Low Priority
 
-| ID | Task | Type | Effort |
-|----|------|------|--------|
-| BUYOUT-GAP-2 | Move hook from hooks-v1/ to hooks/ | Refactor | 0.5 SP |
-| NEW-1 | Three-layer ad cost discrepancy view | Feature | 5 SP |
+| ID           | Task                                 | Type     | Effort |
+| ------------ | ------------------------------------ | -------- | ------ |
+| BUYOUT-GAP-2 | Move hook from hooks-v1/ to hooks/   | Refactor | 0.5 SP |
+| NEW-1        | Three-layer ad cost discrepancy view | Feature  | 5 SP   |
 
 ---
 
 ## Reference: Existing Frontend Files by Domain
 
 ### Funnel Analytics (Complete)
+
 - `src/types/analytics-funnel.ts` (79 lines)
 - `src/lib/api/funnel-analytics.ts` (65 lines)
 - `src/hooks/use-funnel-analytics.ts` (59 lines)
@@ -413,6 +420,7 @@ Overlay daily ad spend on funnel chart as secondary axis. Shows correlation betw
 - `src/app/(dashboard)/analytics/funnel/components/FunnelChart.tsx` (109 lines)
 
 ### Advertising Analytics (Complete)
+
 - `src/types/advertising-analytics.ts` (539 lines)
 - `src/types/advertising-sync-status.ts`
 - `src/types/efficiency-filter.ts`
@@ -423,11 +431,13 @@ Overlay daily ad spend on funnel chart as secondary axis. Shows correlation betw
 - `src/app/(dashboard)/analytics/advertising/` — 20+ component files
 
 ### Search Analytics (NOT IMPLEMENTED)
+
 - Zero frontend files
 - Backend: 3 endpoints fully functional (Task-139)
 - Jam gating: frontend-only (backend returns empty data, no 403)
 
 ### Buyout Analytics (6/7 Stories Complete)
+
 - `src/types/analytics-buyout.ts` (77 lines)
 - `src/lib/api/buyout-analytics.ts` (91 lines)
 - `src/lib/api/__tests__/buyout-analytics.test.ts` (253 lines)

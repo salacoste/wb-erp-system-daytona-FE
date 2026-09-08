@@ -11,7 +11,7 @@ chars: 3874
 
 В этой статье:
 
-- 
+-
 - <a href="#nastrojka-integratsii" rel="nofollow">Настройка интеграции</a>
 - <a href="#import-kartochek" rel="nofollow">Импорт карточек</a>
 - <a href="#import-ostatkov-i-zakupochnyh-tsen" rel="nofollow">Импорт остатков и закупочных цен</a>

@@ -16,21 +16,22 @@ inputDocuments:
 This document provides the complete epic and story breakdown for Shipment Cost Allocation frontend, implementing the UI for backend Epic 79 (fully implemented, 23 endpoints, 229 tests). The feature enables sellers to plan shipments to WB warehouses and calculate FCU (Final Cost per Unit) including delivery costs.
 
 **Two-epic structure:**
+
 - **Epic 75-FE**: Foundation, Types, API Client, Reference Data Screens (Box Types + SKU Packaging)
 - **Epic 76-FE**: Shipments List, Shipment Detail, Cost Calculation, Confirmation
 
 ## Key Decisions
 
-| # | Decision | Choice | Rationale |
-|---|----------|--------|-----------|
-| 1 | Epic structure | Two epics | Smaller PRs, reference data ships independently |
-| 2 | Shipment creation UX | Free-form | Experienced sellers know their shipments; contextual hints instead of wizard |
-| 3 | Pre-flight validation | Lightweight inline warnings | Non-blocking banners + hints for missing COGS/packaging |
-| 4 | Shipment detail layout | Full accordion | Collapse/expand per pallet, works for 1-10+ pallets |
-| 5 | Shipment API placement | Distribute across consuming 76.x stories | "Create when needed" principle; each story creates only the hooks it uses |
-| 6 | Dashboard integration | Defer to Epic 77 | FCU is self-contained in shipment detail; unit economics integration is separate scope |
-| 7 | Bulk input UX | CSV/tab textarea + preview table | Practical for paste workflows; file upload is overengineering for MVP |
-| 8 | Component extraction | Explicit sub-component lists in ACs | Prevents 200-line violations and `'use client'` issues from day one (Epic 74 lesson) |
+| #   | Decision               | Choice                                   | Rationale                                                                              |
+| --- | ---------------------- | ---------------------------------------- | -------------------------------------------------------------------------------------- |
+| 1   | Epic structure         | Two epics                                | Smaller PRs, reference data ships independently                                        |
+| 2   | Shipment creation UX   | Free-form                                | Experienced sellers know their shipments; contextual hints instead of wizard           |
+| 3   | Pre-flight validation  | Lightweight inline warnings              | Non-blocking banners + hints for missing COGS/packaging                                |
+| 4   | Shipment detail layout | Full accordion                           | Collapse/expand per pallet, works for 1-10+ pallets                                    |
+| 5   | Shipment API placement | Distribute across consuming 76.x stories | "Create when needed" principle; each story creates only the hooks it uses              |
+| 6   | Dashboard integration  | Defer to Epic 77                         | FCU is self-contained in shipment detail; unit economics integration is separate scope |
+| 7   | Bulk input UX          | CSV/tab textarea + preview table         | Practical for paste workflows; file upload is overengineering for MVP                  |
+| 8   | Component extraction   | Explicit sub-component lists in ACs      | Prevents 200-line violations and `'use client'` issues from day one (Epic 74 lesson)   |
 
 ## Requirements Inventory
 
@@ -78,6 +79,7 @@ NFR8: Server Components default — no `'use client'` unless file uses React hoo
 ### Backend API Reference
 
 **Base paths:**
+
 - `/v1/box-types` — 5 endpoints (CRUD + deactivate)
 - `/v1/sku-packaging` — 5 endpoints (CRUD + bulk)
 - `/v1/shipments` — 13 endpoints (CRUD + pallets + box-lines + calculate + confirm + recalculate)
@@ -90,22 +92,22 @@ NFR8: Server Components default — no `'use client'` unless file uses React hoo
 
 ### FR Coverage Map
 
-| FR | Epic | Description |
-|----|------|-------------|
-| FR1 | 75 | Box Type CRUD → Story 75.2 |
-| FR2 | 75 | SKU Packaging CRUD + bulk → Story 75.3 |
-| FR3 | 76 | Shipment CRUD (delivery modes, XOR) → Stories 76.1, 76.2 |
-| FR4 | 76 | Pallet management (add/remove, auto-number) → Story 76.2 |
-| FR5 | 76 | Box line management (per pallet) → Story 76.3 |
-| FR6 | 76 | Cost calculation (FCU, 7-step pipeline) → Story 76.4 |
-| FR7 | 76 | Shipment confirmation (DRAFT→CONFIRMED) → Story 76.5 |
-| FR8 | 76 | Recalculation (Manager+ role) → Story 76.5 |
-| FR9 | 76 | Status-based access control → Stories 76.1, 76.2, 76.5 |
-| FR10 | 76 | Collect-all validation (9 checks, affectedIds) → Story 76.4 |
+| FR   | Epic  | Description                                                                    |
+| ---- | ----- | ------------------------------------------------------------------------------ |
+| FR1  | 75    | Box Type CRUD → Story 75.2                                                     |
+| FR2  | 75    | SKU Packaging CRUD + bulk → Story 75.3                                         |
+| FR3  | 76    | Shipment CRUD (delivery modes, XOR) → Stories 76.1, 76.2                       |
+| FR4  | 76    | Pallet management (add/remove, auto-number) → Story 76.2                       |
+| FR5  | 76    | Box line management (per pallet) → Story 76.3                                  |
+| FR6  | 76    | Cost calculation (FCU, 7-step pipeline) → Story 76.4                           |
+| FR7  | 76    | Shipment confirmation (DRAFT→CONFIRMED) → Story 76.5                           |
+| FR8  | 76    | Recalculation (Manager+ role) → Story 76.5                                     |
+| FR9  | 76    | Status-based access control → Stories 76.1, 76.2, 76.5                         |
+| FR10 | 76    | Collect-all validation (9 checks, affectedIds) → Story 76.4                    |
 | FR11 | 75+76 | Decimal parsing (`parseDecimal()` utility) → Stories 75.1 (create), 76.2 (use) |
-| FR12 | 76 | Shipment list with pagination/filters → Story 76.1 |
-| FR13 | 76 | Pre-flight warnings (missing COGS/packaging) → Story 76.3 |
-| FR14 | 76 | Navigation from errors (links to /products, packaging) → Story 76.4 |
+| FR12 | 76    | Shipment list with pagination/filters → Story 76.1                             |
+| FR13 | 76    | Pre-flight warnings (missing COGS/packaging) → Story 76.3                      |
+| FR14 | 76    | Navigation from errors (links to /products, packaging) → Story 76.4            |
 
 **Coverage: 14/14 FRs mapped (100%)**
 
@@ -119,12 +121,12 @@ Sellers can manage box type dimensions and bind SKU-to-box packaging configurati
 
 **FRs covered:** FR1, FR2, FR11 (partial)
 
-| Story | Title | FRs | SP |
-|-------|-------|-----|-----|
-| 75.1 | Foundation: Types, API Client, Routes, Utilities | FR11 | 5 |
-| 75.2 | Box Types CRUD Page | FR1 | 3 |
-| 75.3 | SKU Packaging Page (single + bulk) | FR2 | 5 |
-| 75.4 | Tests & Polish | — | 3 |
+| Story | Title                                            | FRs  | SP  |
+| ----- | ------------------------------------------------ | ---- | --- |
+| 75.1  | Foundation: Types, API Client, Routes, Utilities | FR11 | 5   |
+| 75.2  | Box Types CRUD Page                              | FR1  | 3   |
+| 75.3  | SKU Packaging Page (single + bulk)               | FR2  | 5   |
+| 75.4  | Tests & Polish                                   | —    | 3   |
 
 **Standalone**: Yes — delivers complete reference data management. No dependency on Epic 76.
 
@@ -138,14 +140,14 @@ Sellers can create shipments, manage pallets and box lines, calculate FCU (deliv
 
 **FRs covered:** FR3, FR4, FR5, FR6, FR7, FR8, FR9, FR10, FR11 (complete), FR12, FR13, FR14
 
-| Story | Title | FRs | SP |
-|-------|-------|-----|-----|
-| 76.1 | Shipments List Page | FR3, FR9, FR12 | 3 |
-| 76.2 | Shipment Detail: Header + Pallet Accordion | FR3, FR4, FR9, FR11 | 5 |
-| 76.3 | Box Line Management + Pre-flight Warnings | FR5, FR13 | 5 |
-| 76.4 | Calculate + Validation Error Display | FR6, FR10, FR14 | 5 |
-| 76.5 | Confirm + Recalculate + Readonly View | FR7, FR8, FR9 | 3 |
-| 76.6 | Tests & Polish | — | 3 |
+| Story | Title                                      | FRs                 | SP  |
+| ----- | ------------------------------------------ | ------------------- | --- |
+| 76.1  | Shipments List Page                        | FR3, FR9, FR12      | 3   |
+| 76.2  | Shipment Detail: Header + Pallet Accordion | FR3, FR4, FR9, FR11 | 5   |
+| 76.3  | Box Line Management + Pre-flight Warnings  | FR5, FR13           | 5   |
+| 76.4  | Calculate + Validation Error Display       | FR6, FR10, FR14     | 5   |
+| 76.5  | Confirm + Recalculate + Readonly View      | FR7, FR8, FR9       | 3   |
+| 76.6  | Tests & Polish                             | —                   | 3   |
 
 **Dependency**: Requires Epic 75 (box types + SKU packaging data). Standalone once 75 is delivered.
 

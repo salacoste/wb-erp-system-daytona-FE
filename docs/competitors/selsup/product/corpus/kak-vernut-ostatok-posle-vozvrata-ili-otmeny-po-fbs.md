@@ -11,7 +11,7 @@ chars: 5440
 
 В этой статье:
 
-- 
+-
 - <a href="#avtomaticheskij-vozvrat-ostatka-na-sklad" rel="nofollow">Автоматический возврат остатка на склад</a>
 - <a href="#esli-zakaz-otmenil-prodavets" rel="nofollow">Если заказ отменил продавец</a>
 - <a href="#vozvrat-ostatka-cherez-priyomku-na-sklad" rel="nofollow">Возврат остатка через приёмку на склад</a>

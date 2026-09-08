@@ -77,10 +77,10 @@ Authorization: Bearer <admin-jwt>
 
 ### Components
 
-| Component | File | Purpose |
-|-----------|------|---------|
-| `VersionHistoryTable` | `VersionHistoryTable.tsx` | Main table component |
-| `VersionStatusBadge` | `VersionStatusBadge.tsx` | Status indicator badge |
+| Component             | File                      | Purpose                |
+| --------------------- | ------------------------- | ---------------------- |
+| `VersionHistoryTable` | `VersionHistoryTable.tsx` | Main table component   |
+| `VersionStatusBadge`  | `VersionStatusBadge.tsx`  | Status indicator badge |
 
 ### Hook
 
@@ -115,16 +115,16 @@ export interface TariffVersion {
 
 ### Table Columns
 
-| Column | Width | Format |
-|--------|-------|--------|
-| Дата начала | 120px | `DD.MM.YYYY` |
+| Column         | Width | Format              |
+| -------------- | ----- | ------------------- |
+| Дата начала    | 120px | `DD.MM.YYYY`        |
 | Дата окончания | 120px | `DD.MM.YYYY` or "—" |
-| Статус | 100px | Badge |
-| Источник | 80px | "manual" / "API" |
-| Заметки | flex | Text (truncated) |
-| Создано | 150px | `DD.MM.YYYY HH:mm` |
-| Автор | 150px | Email |
-| Действия | 80px | Delete button |
+| Статус         | 100px | Badge               |
+| Источник       | 80px  | "manual" / "API"    |
+| Заметки        | flex  | Text (truncated)    |
+| Создано        | 150px | `DD.MM.YYYY HH:mm`  |
+| Автор          | 150px | Email               |
+| Действия       | 80px  | Delete button       |
 
 ### Status Badge Colors
 
@@ -203,11 +203,13 @@ src/hooks/useTariffVersionHistory.ts
 **Status:** ✅ Complete
 
 ### Implemented Components
+
 - `VersionHistoryTable.tsx` (197 lines) - Main table component with loading/empty/error states
 - `VersionStatusBadge.tsx` - Status indicator badge with color coding
 - `__tests__/VersionHistoryTable.test.tsx` - Comprehensive test coverage
 
 ### Notes
+
 Component integrates with DeleteVersionDialog for scheduled version deletion. Uses useTariffVersionHistory hook for data fetching with React Query.
 
 ---

@@ -167,16 +167,16 @@ The flow uses optimistic updates for instant feedback and handles errors gracefu
 
 ### New Components
 
-| Component | File Path | Lines Est. | Purpose |
-|-----------|-----------|------------|---------|
-| `CreateSupplyModal` | `src/app/(dashboard)/supplies/components/CreateSupplyModal.tsx` | ~120 | Modal with form for creating supply |
-| `CreateSupplyButton` | `src/app/(dashboard)/supplies/components/CreateSupplyButton.tsx` | ~40 | Button that triggers modal open |
+| Component            | File Path                                                        | Lines Est. | Purpose                             |
+| -------------------- | ---------------------------------------------------------------- | ---------- | ----------------------------------- |
+| `CreateSupplyModal`  | `src/app/(dashboard)/supplies/components/CreateSupplyModal.tsx`  | ~120       | Modal with form for creating supply |
+| `CreateSupplyButton` | `src/app/(dashboard)/supplies/components/CreateSupplyButton.tsx` | ~40        | Button that triggers modal open     |
 
 ### Hooks
 
-| Hook | File Path | Lines Est. | Purpose |
-|------|-----------|------------|---------|
-| `useCreateSupply` | `src/hooks/useCreateSupply.ts` | ~60 | Mutation hook with optimistic updates |
+| Hook              | File Path                      | Lines Est. | Purpose                               |
+| ----------------- | ------------------------------ | ---------- | ------------------------------------- |
+| `useCreateSupply` | `src/hooks/useCreateSupply.ts` | ~60        | Mutation hook with optimistic updates |
 
 ### Reused Components
 
@@ -433,14 +433,14 @@ export function CreateSupplyModal({ open, onOpenChange }: CreateSupplyModalProps
 
 ## Error Handling
 
-| HTTP Status | Error Message (Russian) | Action |
-|-------------|-------------------------|--------|
-| 400 | "Неверные данные запроса" | Show toast, keep modal open |
-| 401 | "Сессия истекла. Войдите снова." | Redirect to login |
-| 403 | "Нет доступа к этому кабинету" | Show toast, close modal |
-| 429 | "Слишком много запросов. Подождите." | Show toast, keep modal open |
-| 500 | "Ошибка сервера. Попробуйте позже." | Show toast, keep modal open |
-| Network | "Проверьте соединение и попробуйте снова" | Show toast, keep modal open |
+| HTTP Status | Error Message (Russian)                   | Action                      |
+| ----------- | ----------------------------------------- | --------------------------- |
+| 400         | "Неверные данные запроса"                 | Show toast, keep modal open |
+| 401         | "Сессия истекла. Войдите снова."          | Redirect to login           |
+| 403         | "Нет доступа к этому кабинету"            | Show toast, close modal     |
+| 429         | "Слишком много запросов. Подождите."      | Show toast, keep modal open |
+| 500         | "Ошибка сервера. Попробуйте позже."       | Show toast, keep modal open |
+| Network     | "Проверьте соединение и попробуйте снова" | Show toast, keep modal open |
 
 ---
 
@@ -454,6 +454,7 @@ export function CreateSupplyModal({ open, onOpenChange }: CreateSupplyModalProps
 ### Test Cases
 
 #### Modal Behavior
+
 - [ ] Modal opens when button clicked
 - [ ] Modal closes on X button click
 - [ ] Modal closes on overlay click
@@ -462,11 +463,13 @@ export function CreateSupplyModal({ open, onOpenChange }: CreateSupplyModalProps
 - [ ] Initial focus on name input
 
 #### Form Validation
+
 - [ ] Empty name is valid (optional field)
 - [ ] Name with >100 characters shows error
 - [ ] Error message displayed in Russian
 
 #### Submission
+
 - [ ] Form submits on "Создать" click
 - [ ] Form submits on Enter key
 - [ ] Loading state shown during submission
@@ -474,18 +477,21 @@ export function CreateSupplyModal({ open, onOpenChange }: CreateSupplyModalProps
 - [ ] Input disabled during submission
 
 #### Success Flow
+
 - [ ] Modal closes on success
 - [ ] Navigates to `/supplies/{id}`
 - [ ] Optimistic update adds supply to list
 - [ ] Form resets on success
 
 #### Error Flow
+
 - [ ] Toast shown on error
 - [ ] Modal stays open on error
 - [ ] Optimistic update rolled back on error
 - [ ] Can retry after error
 
 #### Accessibility
+
 - [ ] Modal has proper ARIA attributes
 - [ ] Input has associated label
 - [ ] Focus returns to trigger on close
@@ -520,15 +526,15 @@ export function CreateSupplyModal({ open, onOpenChange }: CreateSupplyModalProps
 
 ### Required (Blocking)
 
-| Dependency | Story | Status | Notes |
-|------------|-------|--------|-------|
+| Dependency         | Story   | Status   | Notes                                  |
+| ------------------ | ------- | -------- | -------------------------------------- |
 | Types & API Client | 53.1-FE | Required | `Supply` type, `createSupply` function |
-| Supplies List Page | 53.2-FE | Required | Page where button is placed |
+| Supplies List Page | 53.2-FE | Required | Page where button is placed            |
 
 ### Backend
 
-| Dependency | Endpoint | Status |
-|------------|----------|--------|
+| Dependency    | Endpoint            | Status   |
+| ------------- | ------------------- | -------- |
 | Create Supply | `POST /v1/supplies` | Complete |
 
 ---
@@ -575,6 +581,7 @@ export default function SuppliesPage() {
 ### Design System Adherence
 
 Per Design Kit and README:
+
 - **Primary Button**: Red background `#E53935`
 - **Modal**: Use shadcn/ui Dialog
 - **Icons**: Lucide only (Plus, Loader2)
@@ -593,9 +600,9 @@ Per Design Kit and README:
 
 ## Change Log
 
-| Date | Version | Description | Author |
-|------|---------|-------------|--------|
-| 2026-01-29 | 1.0 | Initial story creation | Claude Code (PM Agent) |
+| Date       | Version | Description            | Author                 |
+| ---------- | ------- | ---------------------- | ---------------------- |
+| 2026-01-29 | 1.0     | Initial story creation | Claude Code (PM Agent) |
 
 ---
 

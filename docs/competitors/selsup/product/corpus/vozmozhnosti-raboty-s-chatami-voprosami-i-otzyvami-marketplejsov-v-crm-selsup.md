@@ -13,7 +13,7 @@ CRM SelSup помогает обрабатывать обращения поку
 
 В этой статье:
 
-- 
+-
 - <a href="#158dv4i" rel="nofollow">Что нужно для начала работы</a>
 - <a href="#cy8xuy" rel="nofollow">Шаблоны ответов</a>
 - <a href="#1xcpdgb" rel="nofollow">Чаты</a>

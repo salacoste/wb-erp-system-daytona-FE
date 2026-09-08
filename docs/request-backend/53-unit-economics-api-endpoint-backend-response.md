@@ -13,13 +13,13 @@ API endpoint для unit economics **полностью реализован и 
 
 ### Completed Stories
 
-| Story | Points | Description | Status |
-|-------|--------|-------------|--------|
-| 27.1 | 5 | Database & Service Layer | ✅ Complete |
-| 27.2 | 3 | API Controller & DTOs | ✅ Complete |
-| 27.3 | 2 | Caching (Redis, 1h TTL) | ✅ Complete |
-| 27.4 | 3 | Documentation | ✅ Complete |
-| **Total** | **13** | | ✅ |
+| Story     | Points | Description              | Status      |
+| --------- | ------ | ------------------------ | ----------- |
+| 27.1      | 5      | Database & Service Layer | ✅ Complete |
+| 27.2      | 3      | API Controller & DTOs    | ✅ Complete |
+| 27.3      | 2      | Caching (Redis, 1h TTL)  | ✅ Complete |
+| 27.4      | 3      | Documentation            | ✅ Complete |
+| **Total** | **13** |                          | ✅          |
 
 ---
 
@@ -31,24 +31,25 @@ GET /v1/analytics/unit-economics
 
 ### Headers (Required)
 
-| Header | Description |
-|--------|-------------|
+| Header          | Description      |
+| --------------- | ---------------- |
 | `Authorization` | Bearer JWT token |
-| `X-Cabinet-Id` | Cabinet UUID |
+| `X-Cabinet-Id`  | Cabinet UUID     |
 
 ### Query Parameters
 
-| Parameter | Type | Required | Default | Description |
-|-----------|------|----------|---------|-------------|
-| `week` | string | **Yes** | - | ISO week format (e.g., "2025-W47") |
-| `view_by` | enum | No | "sku" | Aggregation: "sku" \| "category" \| "brand" \| "total" |
-| `sort_by` | string | No | "revenue" | Sort: "revenue" \| "net_margin_pct" \| "cogs_pct" |
-| `sort_order` | enum | No | "desc" | "asc" \| "desc" |
-| `limit` | number | No | 100 | Max results (max: 500) |
+| Parameter    | Type   | Required | Default   | Description                                            |
+| ------------ | ------ | -------- | --------- | ------------------------------------------------------ |
+| `week`       | string | **Yes**  | -         | ISO week format (e.g., "2025-W47")                     |
+| `view_by`    | enum   | No       | "sku"     | Aggregation: "sku" \| "category" \| "brand" \| "total" |
+| `sort_by`    | string | No       | "revenue" | Sort: "revenue" \| "net_margin_pct" \| "cogs_pct"      |
+| `sort_order` | enum   | No       | "desc"    | "asc" \| "desc"                                        |
+| `limit`      | number | No       | 100       | Max results (max: 500)                                 |
 
 ---
 
 ## Backend Team Response
+
 **Status**: RESOLVED — this document IS the backend response. See the parent request file for the original frontend ask.
 
 ## Response Format
@@ -117,50 +118,54 @@ GET /v1/analytics/unit-economics
 
 ## Profitability Status Classification
 
-| Status | Net Margin % | Color (Frontend) | Description |
-|--------|--------------|------------------|-------------|
-| `excellent` | > 25% | Green (#22C55E) | Отличная маржинальность |
-| `good` | 15-25% | Light Green (#84CC16) | Хорошая маржинальность |
-| `warning` | 5-15% | Yellow (#EAB308) | Требует внимания |
-| `critical` | 0-5% | Orange (#F97316) | Критически низкая |
-| `loss` | < 0% | Red (#EF4444) | Убыточный товар |
-| `unknown` | N/A | Gray (#9CA3AF) | COGS не назначен |
+| Status      | Net Margin % | Color (Frontend)      | Description             |
+| ----------- | ------------ | --------------------- | ----------------------- |
+| `excellent` | > 25%        | Green (#22C55E)       | Отличная маржинальность |
+| `good`      | 15-25%       | Light Green (#84CC16) | Хорошая маржинальность  |
+| `warning`   | 5-15%        | Yellow (#EAB308)      | Требует внимания        |
+| `critical`  | 0-5%         | Orange (#F97316)      | Критически низкая       |
+| `loss`      | < 0%         | Red (#EF4444)         | Убыточный товар         |
+| `unknown`   | N/A          | Gray (#9CA3AF)        | COGS не назначен        |
 
 ---
 
 ## Cost Fields Mapping
 
-| Field | Source | Description |
-|-------|--------|-------------|
-| `cogs` | `weekly_margin_fact.cogs_rub` | Себестоимость (требует назначения COGS) |
-| `commission` | `total_commission_rub` | Комиссия WB |
-| `logistics_delivery` | 70% от `logistics_cost_rub` | Доставка (оценка) |
-| `logistics_return` | 30% от `logistics_cost_rub` | Возврат (оценка) |
-| `storage` | `storage_cost_rub` | Хранение |
-| `paid_acceptance` | `paid_acceptance_cost_rub` | Платная приёмка |
-| `penalties` | `penalties_rub` | Штрафы |
-| `other_deductions` | `other_adjustments_rub` | Прочие удержания |
-| `advertising` | - | Реклама (будущая функция, сейчас 0) |
+| Field                | Source                        | Description                             |
+| -------------------- | ----------------------------- | --------------------------------------- |
+| `cogs`               | `weekly_margin_fact.cogs_rub` | Себестоимость (требует назначения COGS) |
+| `commission`         | `total_commission_rub`        | Комиссия WB                             |
+| `logistics_delivery` | 70% от `logistics_cost_rub`   | Доставка (оценка)                       |
+| `logistics_return`   | 30% от `logistics_cost_rub`   | Возврат (оценка)                        |
+| `storage`            | `storage_cost_rub`            | Хранение                                |
+| `paid_acceptance`    | `paid_acceptance_cost_rub`    | Платная приёмка                         |
+| `penalties`          | `penalties_rub`               | Штрафы                                  |
+| `other_deductions`   | `other_adjustments_rub`       | Прочие удержания                        |
+| `advertising`        | -                             | Реклама (будущая функция, сейчас 0)     |
 
 ---
 
 ## View Aggregation (`view_by`)
 
 ### `view_by=sku` (default)
+
 - Отдельная строка для каждого SKU
 - Используется для детального анализа товаров
 
 ### `view_by=brand`
+
 - Группировка по брендам
 - Взвешенное среднее затрат по revenue
 - `sku_id` содержит название бренда
 
 ### `view_by=category`
+
 - Группировка по категориям
 - Взвешенное среднее затрат по revenue
 - `sku_id` содержит название категории
 
 ### `view_by=total`
+
 - Одна строка с итогами по всему портфелю
 - `sku_id` = "TOTAL"
 
@@ -190,23 +195,23 @@ GET /v1/analytics/unit-economics
 
 ## Error Responses
 
-| Status | Code | Message |
-|--------|------|---------|
-| 400 | `VALIDATION_ERROR` | "Week parameter is required" |
-| 400 | `VALIDATION_ERROR` | "Invalid week format. Expected: YYYY-Www" |
-| 401 | `UNAUTHORIZED` | "Authentication required" |
-| 403 | `FORBIDDEN` | "Access denied to cabinet" |
-| 404 | `NO_DATA_FOR_WEEK` | "No data for week 2025-W47" |
+| Status | Code               | Message                                   |
+| ------ | ------------------ | ----------------------------------------- |
+| 400    | `VALIDATION_ERROR` | "Week parameter is required"              |
+| 400    | `VALIDATION_ERROR` | "Invalid week format. Expected: YYYY-Www" |
+| 401    | `UNAUTHORIZED`     | "Authentication required"                 |
+| 403    | `FORBIDDEN`        | "Access denied to cabinet"                |
+| 404    | `NO_DATA_FOR_WEEK` | "No data for week 2025-W47"               |
 
 ---
 
 ## Performance
 
-| Metric | Target | Actual |
-|--------|--------|--------|
-| Response time (100 SKUs) | <500ms | ✅ ~50-100ms (cached) |
-| Response time (500 SKUs) | <1000ms | ✅ <500ms |
-| Caching | 1h TTL | ✅ Redis implemented |
+| Metric                   | Target  | Actual                |
+| ------------------------ | ------- | --------------------- |
+| Response time (100 SKUs) | <500ms  | ✅ ~50-100ms (cached) |
+| Response time (500 SKUs) | <1000ms | ✅ <500ms             |
+| Caching                  | 1h TTL  | ✅ Redis implemented  |
 
 **Cache Key Format**: `unit-economics:{cabinetId}:{week}:{viewBy}:{sortBy}:{sortOrder}:{limit}`
 
@@ -287,18 +292,19 @@ X-Cabinet-Id: {{cabinetId}}
 
 ## Implementation Files
 
-| File | Description |
-|------|-------------|
-| `src/analytics/controllers/unit-economics.controller.ts` | API Controller |
-| `src/analytics/services/unit-economics.service.ts` | Business Logic + Caching |
-| `src/analytics/dto/query/unit-economics-query.dto.ts` | Query DTO |
-| `src/analytics/dto/response/unit-economics-response.dto.ts` | Response DTO |
+| File                                                        | Description              |
+| ----------------------------------------------------------- | ------------------------ |
+| `src/analytics/controllers/unit-economics.controller.ts`    | API Controller           |
+| `src/analytics/services/unit-economics.service.ts`          | Business Logic + Caching |
+| `src/analytics/dto/query/unit-economics-query.dto.ts`       | Query DTO                |
+| `src/analytics/dto/response/unit-economics-response.dto.ts` | Response DTO             |
 
 ---
 
 ## Frontend Integration
 
 **Frontend Can Now Proceed With**:
+
 - Story 5.2: Unit Economics Page Structure
 - Story 5.3: Cost Breakdown Visualization (Waterfall Chart)
 - Story 5.4: Integration Testing
@@ -307,12 +313,12 @@ X-Cabinet-Id: {{cabinetId}}
 
 ## Resolved Questions
 
-| Question | Resolution |
-|----------|------------|
-| Logistics split? | MVP: 70/30 estimate. Phase 2: Extract from raw data |
+| Question               | Resolution                                             |
+| ---------------------- | ------------------------------------------------------ |
+| Logistics split?       | MVP: 70/30 estimate. Phase 2: Extract from raw data    |
 | Products without COGS? | Included with `missing_cogs: true`, status = `unknown` |
-| Empty week? | Returns 404 with `NO_DATA_FOR_WEEK` |
-| Insights generation? | Deferred to future release |
+| Empty week?            | Returns 404 with `NO_DATA_FOR_WEEK`                    |
+| Insights generation?   | Deferred to future release                             |
 
 ---
 

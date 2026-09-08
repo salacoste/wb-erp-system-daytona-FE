@@ -18,11 +18,13 @@
 ## Acceptance Criteria
 
 ### AC1: Export Button
+
 - [x] Add "Экспорт" button to analytics pages (SKU, Brand, Category)
 - [x] Button opens export dialog
 - [x] Disabled during active export
 
 ### AC2: Export Dialog
+
 - [x] Select export type: По товарам, По брендам, По категориям, Сводка
 - [x] Select date range (uses DateRangePicker from 6.1-fe)
 - [x] Select format: CSV or Excel (.xlsx)
@@ -30,18 +32,21 @@
 - [x] Optional filters: Brand, Category
 
 ### AC3: Export Processing
+
 - [x] Show progress indicator after submit
 - [x] Poll export status every 2 seconds
 - [x] Status display: "В очереди", "Обработка", "Готово", "Ошибка"
 - [x] Show estimated time if available
 
 ### AC4: Download
+
 - [x] Auto-download when export completes
 - [x] Show download button if auto-download blocked
 - [x] Display file size and row count
 - [x] Link expires warning (48 hours)
 
 ### AC5: Error Handling
+
 - [x] Display error message if export fails
 - [x] Retry button on failure
 - [x] Timeout handling (max 2 minutes)
@@ -265,6 +270,7 @@ function ExportStatusDisplay({ status, onRetry }: { status: ExportStatus; onRetr
 ## Tasks / Subtasks
 
 ### Task 1: Create useExportAnalytics Hook (AC3, AC4, AC5)
+
 - [x] 1.1 Create `src/hooks/useExportAnalytics.ts`
 - [x] 1.2 Implement `createExport` mutation (POST /v1/exports/analytics)
 - [x] 1.3 Implement status polling with useQuery (GET /v1/exports/:id)
@@ -275,6 +281,7 @@ function ExportStatusDisplay({ status, onRetry }: { status: ExportStatus; onRetr
 - [x] 1.8 Export hook and types
 
 ### Task 2: Create ExportStatusDisplay Component (AC3, AC4, AC5)
+
 - [x] 2.1 Create `src/components/custom/ExportStatusDisplay.tsx`
 - [x] 2.2 Show spinner for pending/processing states
 - [x] 2.3 Show checkmark for completed state
@@ -285,6 +292,7 @@ function ExportStatusDisplay({ status, onRetry }: { status: ExportStatus; onRetr
 - [x] 2.8 Add retry button on failure
 
 ### Task 3: Create ExportDialog Component (AC1, AC2)
+
 - [x] 3.1 Create `src/components/custom/ExportDialog.tsx`
 - [x] 3.2 Add export type selector (by-sku, by-brand, by-category, cabinet-summary)
 - [x] 3.3 Integrate DateRangePicker from 6.1-fe
@@ -295,33 +303,39 @@ function ExportStatusDisplay({ status, onRetry }: { status: ExportStatus; onRetr
 - [x] 3.8 Show ExportStatusDisplay when export in progress
 
 ### Task 4: Add Export Button to SKU Analytics Page (AC1)
+
 - [x] 4.1 Add "Экспорт" button to page header
 - [x] 4.2 Add ExportDialog with defaultType="by-sku"
 - [x] 4.3 Pass current weekStart/weekEnd as defaults
 - [x] 4.4 Disable button during active export
 
 ### Task 5: Add Export Button to Brand Analytics Page (AC1)
+
 - [x] 5.1 Add "Экспорт" button to page header
 - [x] 5.2 Add ExportDialog with defaultType="by-brand"
 - [x] 5.3 Pass current week range as defaults
 
 ### Task 6: Add Export Button to Category Analytics Page (AC1)
+
 - [x] 6.1 Add "Экспорт" button to page header
 - [x] 6.2 Add ExportDialog with defaultType="by-category"
 - [x] 6.3 Pass current week range as defaults
 
 ### Task 7: Implement Auto-Download (AC4)
+
 - [x] 7.1 Add useEffect to trigger download when completed
 - [x] 7.2 Use `window.open(download_url, '_blank')` for download
 - [x] 7.3 Show manual download button if popup blocked
 - [x] 7.4 Display success message after download
 
 ### Task 8: Add Response Types (AC1-AC5)
+
 - [x] 8.1 Add `ExportRequest` interface to types
 - [x] 8.2 Add `ExportStatus` interface to types
 - [x] 8.3 Add status enum: pending, processing, completed, failed
 
 ### Task 9: Testing (All ACs)
+
 - [x] 9.1 Unit tests for useExportAnalytics hook
 - [x] 9.2 Unit tests for ExportDialog component
 - [x] 9.3 Unit tests for ExportStatusDisplay component
@@ -380,10 +394,10 @@ src/
 
 ### Pages Getting Export Button
 
-| Page | Default Type | Notes |
-|------|--------------|-------|
-| `/analytics/sku` | `by-sku` | Product-level export |
-| `/analytics/brand` | `by-brand` | Brand-level export |
+| Page                  | Default Type  | Notes                 |
+| --------------------- | ------------- | --------------------- |
+| `/analytics/sku`      | `by-sku`      | Product-level export  |
+| `/analytics/brand`    | `by-brand`    | Brand-level export    |
 | `/analytics/category` | `by-category` | Category-level export |
 
 ### Testing Standards
@@ -427,8 +441,8 @@ src/
 
 ## Change Log
 
-| Date | Version | Description | Author |
-|------|---------|-------------|--------|
-| 2025-11-29 | 1.0 | Initial draft | Claude (Opus 4.5) |
-| 2025-11-29 | 1.1 | Added Tasks/Subtasks (9 tasks), Dev Notes with Source Tree, Export state machine, Timeout handling, Change Log | Sarah (PO Agent) |
-| 2025-12-05 | 1.2 | Story completed: All ACs implemented. Created useExportAnalytics hook, ExportDialog and ExportStatusDisplay components. Added Export button to SKU, Brand, and Category pages. Types added to analytics.ts. | Claude (Opus 4.5) |
+| Date       | Version | Description                                                                                                                                                                                                 | Author            |
+| ---------- | ------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------- |
+| 2025-11-29 | 1.0     | Initial draft                                                                                                                                                                                               | Claude (Opus 4.5) |
+| 2025-11-29 | 1.1     | Added Tasks/Subtasks (9 tasks), Dev Notes with Source Tree, Export state machine, Timeout handling, Change Log                                                                                              | Sarah (PO Agent)  |
+| 2025-12-05 | 1.2     | Story completed: All ACs implemented. Created useExportAnalytics hook, ExportDialog and ExportStatusDisplay components. Added Export button to SKU, Brand, and Category pages. Types added to analytics.ts. | Claude (Opus 4.5) |

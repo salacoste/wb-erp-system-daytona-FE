@@ -17,6 +17,7 @@
 **So that** I get an accurate recommended price that accounts for my specific tax regime.
 
 **Non-goals**:
+
 - Tax regime auto-detection from cabinet settings
 - Tax calculation/filing functionality
 - Multiple tax rate combinations
@@ -28,26 +29,28 @@
 
 ### Tax Regime Reference Table
 
-| Tax Regime | Russian Name | Rate | Type | Description |
-|------------|--------------|------|------|-------------|
-| USN Income | УСН Доходы | 6% | income | Tax on total revenue |
-| USN Profit | УСН Доходы-Расходы | 15% | profit | Tax on profit after expenses |
-| Self-Employed | Самозанятый (НПД) | 6% | income | Self-employed tax on revenue |
-| IP General | ИП на ОСН (НДФЛ) | 13% | profit | Individual on general system |
-| LLC General | ООО на ОСН | 20% | profit | Company profit tax |
-| VAT Standard | НДС 20% | 20% | vat | Standard VAT rate |
-| VAT Reduced | НДС 10% | 10% | vat | Reduced VAT (food, kids) |
-| No Tax | Без НДС | 0% | none | No tax applied |
+| Tax Regime    | Russian Name       | Rate | Type   | Description                  |
+| ------------- | ------------------ | ---- | ------ | ---------------------------- |
+| USN Income    | УСН Доходы         | 6%   | income | Tax on total revenue         |
+| USN Profit    | УСН Доходы-Расходы | 15%  | profit | Tax on profit after expenses |
+| Self-Employed | Самозанятый (НПД)  | 6%   | income | Self-employed tax on revenue |
+| IP General    | ИП на ОСН (НДФЛ)   | 13%  | profit | Individual on general system |
+| LLC General   | ООО на ОСН         | 20%  | profit | Company profit tax           |
+| VAT Standard  | НДС 20%            | 20%  | vat    | Standard VAT rate            |
+| VAT Reduced   | НДС 10%            | 10%  | vat    | Reduced VAT (food, kids)     |
+| No Tax        | Без НДС            | 0%   | none   | No tax applied               |
 
 ### Tax Calculation Impact
 
 **Income Tax (`tax_type: 'income'`):**
+
 - Tax calculated as % of total revenue (selling price)
 - Added to percentage costs in price formula
 - `tax_amount = recommended_price * tax_rate_pct / 100`
 - **Affects minimum price** (included in cost structure)
 
 **Profit Tax (`tax_type: 'profit'`):**
+
 - Tax calculated as % of profit after all expenses
 - **NOT included in main formula** (does not affect minimum/recommended price)
 - Calculated separately: `profit_tax = gross_margin * tax_rate_pct / 100`
@@ -55,21 +58,22 @@
 
 ### Backend `vat_pct` Mapping
 
-| Tax Regime | `vat_pct` Value | Frontend `tax_type` |
-|------------|-----------------|---------------------|
-| Без НДС | 0 | none |
-| УСН Доходы | 6 | income |
-| НПД | 6 | income |
-| НДС 10% | 10 | income |
-| НДФЛ | 13 | profit |
-| УСН Д-Р | 15 | profit |
-| НДС/Прибыль | 20 | income/profit |
+| Tax Regime  | `vat_pct` Value | Frontend `tax_type` |
+| ----------- | --------------- | ------------------- |
+| Без НДС     | 0               | none                |
+| УСН Доходы  | 6               | income              |
+| НПД         | 6               | income              |
+| НДС 10%     | 10              | income              |
+| НДФЛ        | 13              | profit              |
+| УСН Д-Р     | 15              | profit              |
+| НДС/Прибыль | 20              | income/profit       |
 
 ---
 
 ## Acceptance Criteria
 
 ### AC1: Tax Rate Input Field
+
 - [x] Input field for "Ставка налога" (Tax Rate)
 - [x] Numeric input with % suffix
 - [x] Range: 0-50%
@@ -78,6 +82,7 @@
 - [x] Quick preset buttons for common rates (6%, 13%, 15%, 20%)
 
 ### AC2: Tax Type Selection
+
 - [x] Select/Radio for "Тип налога" (Tax Type)
 - [x] Options:
   - `income` - "Налог с выручки" (Tax on revenue)
@@ -86,6 +91,7 @@
 - [x] Clear icons/indicators for each type
 
 ### AC3: Tax Regime Presets
+
 - [x] Collapsible section "Популярные налоговые режимы"
 - [x] Preset buttons:
   - УСН Доходы (6%, income)
@@ -97,17 +103,20 @@
 - [x] Visual indication of currently matching preset
 
 ### AC4: Tax Impact Preview
+
 - [x] Show tax impact on margin in real-time
 - [x] For income tax: "Налог с выручки: X ₽ (Y%)"
 - [x] For profit tax: "Налог с прибыли: X ₽ от маржи"
 - [x] Warning if tax rate > 20%: "Высокая ставка налога"
 
 ### AC5: Tooltip Explanations
+
 - [x] Tooltip for tax rate explaining range and impact
 - [x] Tooltip for tax type explaining the difference
 - [x] Link to tax regime guide (external, opens in new tab)
 
 ### AC6: Form State Integration
+
 - [x] Store `tax_rate_pct` in form state (number)
 - [x] Store `tax_type` in form state ('income' | 'profit')
 - [x] Include both in calculation request
@@ -129,6 +138,7 @@
 ### Backend Integration
 
 **Price Calculator Request** (`POST /v1/products/price-calculator`):
+
 ```json
 {
   "vat_pct": 6,                  // Tax rate: 0 | 6 | 10 | 13 | 15 | 20
@@ -139,6 +149,7 @@
 ```
 
 **Response includes tax in breakdown:**
+
 ```json
 {
   "result": {
@@ -156,6 +167,7 @@
 ```
 
 **Important:** Backend currently supports `vat_pct` only (0, 10, 20 are primary VAT rates). The `tax_type` field is a **frontend-only** concept for display and calculation mode:
+
 - `income` tax type → Tax calculated as % of revenue (УСН Доходы)
 - `profit` tax type → Tax calculated as % of profit (displayed separately, not in main formula)
 
@@ -518,18 +530,18 @@ if (tax_type === 'profit') {
 
 ### Invariants & Edge Cases
 
-| Scenario | Handling |
-|----------|----------|
-| Tax rate = 0% | Valid - no tax applied, hide tax impact preview |
-| Tax rate > 50% | Validation error: "Ставка налога не может превышать 50%" |
-| Tax rate negative | Validation error: "Ставка налога не может быть отрицательной" |
-| Tax rate decimal | Allow decimals (e.g., 6.5% for regional variations) |
-| Preset clicked | Both rate and type update simultaneously |
-| Type changed (income ↔ profit) | Recalculate immediately, update preview |
-| Form reset | Reset to defaults (6%, income - УСН Доходы) |
-| Profit tax selected | Show "Чистая прибыль" = gross_margin × (1 - tax_rate) |
-| Income tax selected | Tax included in percentage costs breakdown |
-| Both income + profit taxes | Frontend combines, backend receives `vat_pct` only |
+| Scenario                       | Handling                                                      |
+| ------------------------------ | ------------------------------------------------------------- |
+| Tax rate = 0%                  | Valid - no tax applied, hide tax impact preview               |
+| Tax rate > 50%                 | Validation error: "Ставка налога не может превышать 50%"      |
+| Tax rate negative              | Validation error: "Ставка налога не может быть отрицательной" |
+| Tax rate decimal               | Allow decimals (e.g., 6.5% for regional variations)           |
+| Preset clicked                 | Both rate and type update simultaneously                      |
+| Type changed (income ↔ profit) | Recalculate immediately, update preview                       |
+| Form reset                     | Reset to defaults (6%, income - УСН Доходы)                   |
+| Profit tax selected            | Show "Чистая прибыль" = gross_margin × (1 - tax_rate)         |
+| Income tax selected            | Tax included in percentage costs breakdown                    |
+| Both income + profit taxes     | Frontend combines, backend receives `vat_pct` only            |
 
 ---
 
@@ -564,6 +576,7 @@ if (tax_type === 'profit') {
 ## Testing Requirements
 
 ### Unit Tests
+
 - [x] TaxConfigurationSection renders with defaults
 - [x] Tax rate input accepts valid values
 - [x] Tax type selection toggles correctly
@@ -571,11 +584,13 @@ if (tax_type === 'profit') {
 - [x] High tax rate warning displays
 
 ### Integration Tests
+
 - [x] Tax configuration affects calculation
 - [x] Form reset clears to defaults
 - [x] Income vs profit calculation differs
 
 ### E2E Tests
+
 - [ ] User can enter custom tax rate
 - [ ] User can select tax type
 - [ ] User can use preset buttons
@@ -586,22 +601,25 @@ if (tax_type === 'profit') {
 ## Dev Agent Record
 
 ### File List
-| File | Change Type | Lines (Est.) | Description |
-|------|-------------|--------------|-------------|
-| `src/components/custom/price-calculator/TaxConfigurationSection.tsx` | CREATE | 204 | Tax configuration component |
-| `src/components/custom/price-calculator/TaxPresetGrid.tsx` | CREATE | 98 | Collapsible preset grid |
-| `src/components/custom/price-calculator/tax-presets.ts` | CREATE | 51 | Tax preset constants |
-| `src/components/custom/price-calculator/PriceCalculatorForm.tsx` | UPDATE | +20 | Add tax section |
-| `src/types/price-calculator.ts` | UPDATE | +48 | Add tax types (TaxType, TaxPreset, TaxConfiguration) |
-| `src/components/custom/price-calculator/__tests__/TaxConfigurationSection.test.tsx` | CREATE | 333 | Unit tests (20 tests) |
-| `src/components/custom/price-calculator/__tests__/TaxPresetGrid.test.tsx` | CREATE | 198 | Unit tests (12 tests) |
+
+| File                                                                                | Change Type | Lines (Est.) | Description                                          |
+| ----------------------------------------------------------------------------------- | ----------- | ------------ | ---------------------------------------------------- |
+| `src/components/custom/price-calculator/TaxConfigurationSection.tsx`                | CREATE      | 204          | Tax configuration component                          |
+| `src/components/custom/price-calculator/TaxPresetGrid.tsx`                          | CREATE      | 98           | Collapsible preset grid                              |
+| `src/components/custom/price-calculator/tax-presets.ts`                             | CREATE      | 51           | Tax preset constants                                 |
+| `src/components/custom/price-calculator/PriceCalculatorForm.tsx`                    | UPDATE      | +20          | Add tax section                                      |
+| `src/types/price-calculator.ts`                                                     | UPDATE      | +48          | Add tax types (TaxType, TaxPreset, TaxConfiguration) |
+| `src/components/custom/price-calculator/__tests__/TaxConfigurationSection.test.tsx` | CREATE      | 333          | Unit tests (20 tests)                                |
+| `src/components/custom/price-calculator/__tests__/TaxPresetGrid.test.tsx`           | CREATE      | 198          | Unit tests (12 tests)                                |
 
 ### Change Log
+
 - 2026-01-21: Verified implementation complete - all 6 AC met
 - 2026-01-21: Added TaxPresetGrid test file (12 tests)
 - 2026-01-21: Existing TaxConfigurationSection tests (20 tests) passing
 
 ### Implementation Notes
+
 - Component uses controlled props pattern (taxRate, taxType, onChange handlers)
 - State managed in parent PriceCalculatorForm.tsx via useState hooks
 - Tax presets extracted to separate file for maintainability
@@ -610,6 +628,7 @@ if (tax_type === 'profit') {
 - External link to nalog.gov.ru with proper rel="noopener noreferrer"
 
 ### Review Follow-ups
+
 - All acceptance criteria verified ✅
 - 32 unit tests passing
 - No ESLint errors
@@ -623,14 +642,15 @@ if (tax_type === 'profit') {
 **Gate Decision**: ✅ PASS
 
 ### AC Verification
-| AC | Requirement | Status | Evidence |
-|----|-------------|--------|----------|
-| AC1 | Tax Rate Input | ✅ | TaxConfigurationSection.tsx L94-105, test "should render tax rate input" |
-| AC2 | Tax Type Selection | ✅ | TaxConfigurationSection.tsx L142-165, test "should call onTaxTypeChange" |
-| AC3 | Tax Regime Presets | ✅ | TaxPresetGrid.tsx, tax-presets.ts, test "should render all 5 tax regime presets" |
-| AC4 | Tax Impact Preview | ✅ | TaxConfigurationSection.tsx L175-189, test "should show tax amount" |
-| AC5 | Tooltip Explanations | ✅ | TaxConfigurationSection.tsx L88-90, L138-139 using FieldTooltip |
-| AC6 | Form State Integration | ✅ | PriceCalculatorForm.tsx L53-54, L181-186 |
+
+| AC  | Requirement            | Status | Evidence                                                                         |
+| --- | ---------------------- | ------ | -------------------------------------------------------------------------------- |
+| AC1 | Tax Rate Input         | ✅     | TaxConfigurationSection.tsx L94-105, test "should render tax rate input"         |
+| AC2 | Tax Type Selection     | ✅     | TaxConfigurationSection.tsx L142-165, test "should call onTaxTypeChange"         |
+| AC3 | Tax Regime Presets     | ✅     | TaxPresetGrid.tsx, tax-presets.ts, test "should render all 5 tax regime presets" |
+| AC4 | Tax Impact Preview     | ✅     | TaxConfigurationSection.tsx L175-189, test "should show tax amount"              |
+| AC5 | Tooltip Explanations   | ✅     | TaxConfigurationSection.tsx L88-90, L138-139 using FieldTooltip                  |
+| AC6 | Form State Integration | ✅     | PriceCalculatorForm.tsx L53-54, L181-186                                         |
 
 ---
 

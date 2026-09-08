@@ -10,15 +10,15 @@
 
 ## 0. Executive snapshot — что делать следующей команде
 
-| # | Действие | План (authoritative) | Ветки/PR-прецеденты |
-|---|---|---|---|
-| 1 | ~~**Story 173.13 Supply Detail**~~ ✅ SHIPPED (PR #365/#366/#367) | [`.omx/plans/173.13-migrate-supply-detail.md`](../.omx/plans/173.13-migrate-supply-detail.md) | Артефакт-эталон: [`_bmad-output/implementation-artifacts/173-12-fe-migrate-supplies-list.md`] (owner-граница) |
-| 2 | ~~Эпик-173 flip~~ ✅ done 13/13 | sprint-status.yaml | Прецедент flip: PR #326 (эпик 172) |
-| 3 | ~~**174.1** Parity~~ ✅ SHIPPED (PR #369, merge `360c9cb9`; closeout #370) | [`.omx/plans/174.1-…`](../.omx/plans/174.1-prove-bmad-route-ledger-and-omx-plan-parity.md) | — |
-| 4 | ~~**174.2** Legacy removal + design-system boundary~~ ✅ SHIPPED (PR #372 на `fbdab2da`; 65 deletions, lib-wave, boundary-скрипт ratchet 523, классификационный манифест; артефакт `174-2-fe-*.md`) | [`.omx/plans/174.2-…`](../.omx/plans/174.2-remove-legacy-ui-and-enforce-the-design-system-boundary.md) | — |
-| 5 | **174.3** A11y/responsive/theme/visual (все отложенные visual-gap'ы + §3.3 tint-audit) | [`.omx/plans/174.3-…`](../.omx/plans/174.3-complete-accessibility-responsive-theme-and-visual-verification.md) | вход: boundary-манифест cat-1 (59 файлов) |
-| 6 | **174.4** Полная функциональная/контрактная регрессия (+ pre-existing liquidity/monitor e2e фейлы — bisect-доказаны, см. registry APPEND) | [`.omx/plans/174.4-…`](../.omx/plans/174.4-complete-full-local-functional-and-backend-contract-regression.md) | — |
-| 7 | **174.5** Финализация документации + cleanup → **94/94** | [`.omx/plans/174.5-…`](../.omx/plans/174.5-finalize-documentation-and-repository-cleanup.md) | — |
+| #   | Действие                                                                                                                                                                                            | План (authoritative)                                                                                           | Ветки/PR-прецеденты                                                                                           |
+| --- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------- |
+| 1   | ~~**Story 173.13 Supply Detail**~~ ✅ SHIPPED (PR #365/#366/#367)                                                                                                                                   | [`.omx/plans/173.13-migrate-supply-detail.md`](../.omx/plans/173.13-migrate-supply-detail.md)                  | Артефакт-эталон: [`_bmad-output/implementation-artifacts/173-12-fe-migrate-supplies-list.md`] (owner-граница) |
+| 2   | ~~Эпик-173 flip~~ ✅ done 13/13                                                                                                                                                                     | sprint-status.yaml                                                                                             | Прецедент flip: PR #326 (эпик 172)                                                                            |
+| 3   | ~~**174.1** Parity~~ ✅ SHIPPED (PR #369, merge `360c9cb9`; closeout #370)                                                                                                                          | [`.omx/plans/174.1-…`](../.omx/plans/174.1-prove-bmad-route-ledger-and-omx-plan-parity.md)                     | —                                                                                                             |
+| 4   | ~~**174.2** Legacy removal + design-system boundary~~ ✅ SHIPPED (PR #372 на `fbdab2da`; 65 deletions, lib-wave, boundary-скрипт ratchet 523, классификационный манифест; артефакт `174-2-fe-*.md`) | [`.omx/plans/174.2-…`](../.omx/plans/174.2-remove-legacy-ui-and-enforce-the-design-system-boundary.md)         | —                                                                                                             |
+| 5   | **174.3** A11y/responsive/theme/visual (все отложенные visual-gap'ы + §3.3 tint-audit)                                                                                                              | [`.omx/plans/174.3-…`](../.omx/plans/174.3-complete-accessibility-responsive-theme-and-visual-verification.md) | вход: boundary-манифест cat-1 (59 файлов)                                                                     |
+| 6   | **174.4** Полная функциональная/контрактная регрессия (+ pre-existing liquidity/monitor e2e фейлы — bisect-доказаны, см. registry APPEND)                                                           | [`.omx/plans/174.4-…`](../.omx/plans/174.4-complete-full-local-functional-and-backend-contract-regression.md)  | —                                                                                                             |
+| 7   | **174.5** Финализация документации + cleanup → **94/94**                                                                                                                                            | [`.omx/plans/174.5-…`](../.omx/plans/174.5-finalize-documentation-and-repository-cleanup.md)                   | —                                                                                                             |
 
 **DAG**: 173.13 → (эпик-flip) → 174.1 → 174.2 → 174.3 → 174.4 → 174.5. Полный мерmaid: [HANDOFF-173-174 §4](./HANDOFF-2026-08-29-EPIC-173-174-FULL-MIGRATION-AND-DEBT.md#4-execution-dag-6-stories-remaining).
 
@@ -27,7 +27,7 @@
 ## 1. Порядок чтения (authority hierarchy)
 
 1. **План стори** (`.omx/plans/<NEXT>.md`) — branch/worktree/surface/валидация/cleanup. Authoritative при любом конфликте.
-2. **[HANDOFF-2026-08-29-EPIC-173-174-FULL-MIGRATION-AND-DEBT.md](./HANDOFF-2026-08-29-EPIC-173-174-FULL-MIGRATION-AND-DEBT.md)** — главный процесс-канон (19 секций): lifecycle стори (§7), UX-контракты (§8), ownership/forbidden (§9), гейты (§10), **полный debt-регистр §11 (FE-D*, C1–C17, контраст-семьи, process-гочки)** — читать целиком.
+2. **[HANDOFF-2026-08-29-EPIC-173-174-FULL-MIGRATION-AND-DEBT.md](./HANDOFF-2026-08-29-EPIC-173-174-FULL-MIGRATION-AND-DEBT.md)** — главный процесс-канон (19 секций): lifecycle стори (§7), UX-контракты (§8), ownership/forbidden (§9), гейты (§10), _*полный debt-регистр §11 (FE-D*, C1–C17, контраст-семьи, process-гочки)_* — читать целиком.
 3. **Этот документ** — актуализация состояния + дополнение debt-регистра пунктами волн 172.10–172.17/173.12 (§3 ниже) + параллельный протокол (§5).
 4. [`CLAUDE.md`](../../CLAUDE.md) — baselines-таблица (floor **≥ 19 800**), анти-паттерны #1–10, двухпроходность, APPEND-ONLY.
 5. Реестры: [`_bmad-output/implementation-artifacts/sprint-status.yaml`] (статусы), [`shadcn-migration-status-and-debt-registry.md`] (NEXT + carry-outs).
@@ -49,13 +49,13 @@
 
 ### 2.2 Эпик 174 «Complete Migration Assurance and Legacy Removal» (5 стори, строго по DAG)
 
-| Стори | Суть | Ключевые входы |
-|---|---|---|
-| **174.1 Parity** | Доказать соответствие BMAD-артефакты ↔ route-ledger ↔ OMX-планы ↔ evidence; route-ledger статусы → verified-готовность | [`_bmad-output/planning-artifacts/shadcn-route-ledger.md`]; carry-out 174.2-строки из 171.9 (см. §3.2 ниже) |
-| **174.2 Legacy removal** | Удаление мёртвого legacy-UI, enforce design-system boundary — **сюда стекается большинство долга §3** | import-closure-доказательства обязательны; флагман: lib-wave (см. §3.1) |
-| **174.3 A11y/visual** | Консолидированная матрица: обе темы × ширины × zoom × reduced-motion × keyboard/axe/real-SR × charts/tables/overlays; + все `environment-gap` credentialed-browser долги | Находка 173.12 о tint-контрасте → программный аудит (§3.3) |
-| **174.4 Регрессия** | Credentialed E2E, критические джорни, контракты BE, полный локальный suite | «Discovered-but-not-executed» Playwright-наборы 173.x (§3.4) |
-| **174.5 Docs+cleanup** | Финальные переходы статусов, документация, репозиторий-cleanup → **94/94** | route-ledger final verified; OpenWiki-обновление автоматом |
+| Стори                    | Суть                                                                                                                                                                     | Ключевые входы                                                                                              |
+| ------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ----------------------------------------------------------------------------------------------------------- |
+| **174.1 Parity**         | Доказать соответствие BMAD-артефакты ↔ route-ledger ↔ OMX-планы ↔ evidence; route-ledger статусы → verified-готовность                                                   | [`_bmad-output/planning-artifacts/shadcn-route-ledger.md`]; carry-out 174.2-строки из 171.9 (см. §3.2 ниже) |
+| **174.2 Legacy removal** | Удаление мёртвого legacy-UI, enforce design-system boundary — **сюда стекается большинство долга §3**                                                                    | import-closure-доказательства обязательны; флагман: lib-wave (см. §3.1)                                     |
+| **174.3 A11y/visual**    | Консолидированная матрица: обе темы × ширины × zoom × reduced-motion × keyboard/axe/real-SR × charts/tables/overlays; + все `environment-gap` credentialed-browser долги | Находка 173.12 о tint-контрасте → программный аудит (§3.3)                                                  |
+| **174.4 Регрессия**      | Credentialed E2E, критические джорни, контракты BE, полный локальный suite                                                                                               | «Discovered-but-not-executed» Playwright-наборы 173.x (§3.4)                                                |
+| **174.5 Docs+cleanup**   | Финальные переходы статусов, документация, репозиторий-cleanup → **94/94**                                                                                               | route-ledger final verified; OpenWiki-обновление автоматом                                                  |
 
 ---
 
@@ -67,14 +67,14 @@
 
 Продуктовые компоненты мигрированы, но цвето-хелперы в запретной lib-зоне остались legacy и **протекают в UI** через импорты:
 
-| Источник в `src/lib/` | Что отдаёт | Живые потребители / пины |
-|---|---|---|
-| `monitoring-constants.ts` → `STATUS_COLORS` | `bg-green-500/bg-yellow-500/…` | `/monitoring` route (PipelineStatusGrid и др.) + `/monitor`; carry-out из 172.11→172.12 |
-| `wb-status-data-{core,delivery,returns}.ts` | `config.color/bgColor` legacy | `WbStatusBadge.test` — **31 ассерт** пинит легаси (172.14) |
-| `analytics-utils.ts` → `getSlaStatusColor` | `text-{green,yellow,red}-600` | `SlaComplianceWidget.test` — 6 пинов (172.14) |
-| `analytics-utils.ts` → `getConfirmationTimeColor`/`getCompletionTimeColor` | legacy | `VelocityMetricsWidget.test` — 14 пинов (компонент чист!) |
-| `analytics-utils.ts` → `getCountdownColor` | legacy | Тест импортирует реальную ф-цию (173.12-канон: зеркало→импорт) — при lib-миграции ассерты обновятся сами |
-| `orders-analytics-utils.ts` (через `analytics-utils` re-export) | legacy тройки | AtRiskOrdersCard.test |
+| Источник в `src/lib/`                                                      | Что отдаёт                     | Живые потребители / пины                                                                                 |
+| -------------------------------------------------------------------------- | ------------------------------ | -------------------------------------------------------------------------------------------------------- |
+| `monitoring-constants.ts` → `STATUS_COLORS`                                | `bg-green-500/bg-yellow-500/…` | `/monitoring` route (PipelineStatusGrid и др.) + `/monitor`; carry-out из 172.11→172.12                  |
+| `wb-status-data-{core,delivery,returns}.ts`                                | `config.color/bgColor` legacy  | `WbStatusBadge.test` — **31 ассерт** пинит легаси (172.14)                                               |
+| `analytics-utils.ts` → `getSlaStatusColor`                                 | `text-{green,yellow,red}-600`  | `SlaComplianceWidget.test` — 6 пинов (172.14)                                                            |
+| `analytics-utils.ts` → `getConfirmationTimeColor`/`getCompletionTimeColor` | legacy                         | `VelocityMetricsWidget.test` — 14 пинов (компонент чист!)                                                |
+| `analytics-utils.ts` → `getCountdownColor`                                 | legacy                         | Тест импортирует реальную ф-цию (173.12-канон: зеркало→импорт) — при lib-миграции ассерты обновятся сами |
+| `orders-analytics-utils.ts` (через `analytics-utils` re-export)            | legacy тройки                  | AtRiskOrdersCard.test                                                                                    |
 
 **Правило 174.2**: миграция lib-хелпера = обновление всех downstream-пинов одним коммитом; каждый удаляемый экспорт — с repo-wide import-closure доказательством (прецедент-эталон: carry-out `SUPPLY_STATUS_CONFIG` из 173.12).
 
@@ -93,16 +93,16 @@
 
 ### 3.4 Evidence-долг (discovered-not-executed) → **174.3/174.4**
 
-| Источник | Что обнаружено | Где зафиксировано |
-|---|---|---|
-| 173.5 | Playwright 40 тестов discovered, browser-gap | артефакт 173-5 |
-| 173.6 | 81 file-level (вкл. 20 tariff-сценариев) | артефакт 173-6 |
-| 173.7 | 99 file-level (вкл. 20 tax-сценариев) | артефакт 173-7 |
-| 173.8–173.10 | credentialed browser gaps ×3 | артефакты 173-8…10 |
-| 172.8 | dynamic-Playwright gap | артефакт 172-8 |
-| 172.15 | плановая `e2e/orders-fbo.spec.ts` **не существует** — dedicated FBO E2E отсутствует | артефакт 172-15 |
-| волна 172.4–172.13 | live light/dark скриншоты, 200% zoom, reduced-motion, real-SR — отложены на 174.3 | артефакты соответствующих стори (Gaps-секции) |
-| C17 | credentialed E2E corrective-journey 169.9 | §11.2 |
+| Источник           | Что обнаружено                                                                      | Где зафиксировано                             |
+| ------------------ | ----------------------------------------------------------------------------------- | --------------------------------------------- |
+| 173.5              | Playwright 40 тестов discovered, browser-gap                                        | артефакт 173-5                                |
+| 173.6              | 81 file-level (вкл. 20 tariff-сценариев)                                            | артефакт 173-6                                |
+| 173.7              | 99 file-level (вкл. 20 tax-сценариев)                                               | артефакт 173-7                                |
+| 173.8–173.10       | credentialed browser gaps ×3                                                        | артефакты 173-8…10                            |
+| 172.8              | dynamic-Playwright gap                                                              | артефакт 172-8                                |
+| 172.15             | плановая `e2e/orders-fbo.spec.ts` **не существует** — dedicated FBO E2E отсутствует | артефакт 172-15                               |
+| волна 172.4–172.13 | live light/dark скриншоты, 200% zoom, reduced-motion, real-SR — отложены на 174.3   | артефакты соответствующих стори (Gaps-секции) |
+| C17                | credentialed E2E corrective-journey 169.9                                           | §11.2                                         |
 
 ### 3.5 Мелкие продуктовые/UX carry-outs (next-touch, owner = касающийся файл)
 
@@ -159,20 +159,20 @@
 
 ## 8. Authoritative link index
 
-| Ресурс | Путь |
-|---|---|
-| Этот handoff | `docs/HANDOFF-2026-08-30-TEAM-HANDOFF-173.13-EPILOGUE-174-FULL-DEBT.md` |
-| Главный процесс-канон + deep debt §11 | [`docs/HANDOFF-2026-08-29-EPIC-173-174-FULL-MIGRATION-AND-DEBT.md`](./HANDOFF-2026-08-29-EPIC-173-174-FULL-MIGRATION-AND-DEBT.md) |
-| Handoff эпохи 172 (уроки 1–21) | [`docs/HANDOFF-2026-08-27-CROSS-TEAM-OMC-ORCHESTRATOR-172-8-CONTINUATION.md`](./HANDOFF-2026-08-27-CROSS-TEAM-OMC-ORCHESTRATOR-172-8-CONTINUATION.md) |
-| Оркестратор-промпт V11 | [`docs/ORCHESTRATOR-PROMPT-2026-08-28-V11-HANDOFF-SUPERVISOR-OMC.md`](./ORCHESTRATOR-PROMPT-2026-08-28-V11-HANDOFF-SUPERVISOR-OMC.md) |
-| Планы оставшихся стори | `.omx/plans/173.13-migrate-supply-detail.md`, `.omx/plans/174.{1..5}-*.md` |
-| Sprint-статусы | `_bmad-output/implementation-artifacts/sprint-status.yaml` |
-| Registry (NEXT/carry-outs/owner §5) | `_bmad-output/planning-artifacts/shadcn-migration-status-and-debt-registry.md` |
-| Route ledger | `_bmad-output/planning-artifacts/shadcn-route-ledger.md` |
-| Артефакты-эталоны конвейеров | `_bmad-output/implementation-artifacts/` — FULL: `172-1`, owner+boundary: `173-12`, born-clean: `172-7`/`172-15`, e2e-создание: `172-9`, WCAG-пивот: `173-12` |
-| Правила репо + baselines | [`CLAUDE.md`](../../CLAUDE.md), [`CLAUDE-PATTERNS.md`](../../CLAUDE-PATTERNS.md), [`CLAUDE-ANTI-PATTERNS.md`](../../CLAUDE-ANTI-PATTERNS.md) |
-| Тема/токены | `src/styles/globals.css`, `src/styles/__tests__/globals-compiled-contrast.test.ts` |
-| Гарды-эталоны | `dashboard/__tests__/…` (172.1), `finances/…` (172.10 caption), `monitor/…` (172.11), `monitoring/…` (172.12 legend-sync), `orders/…` (172.14 dual-root+fbo-exclusion), `supplies/__tests__/…` (173.12 DETAIL_EXCLUDED) |
+| Ресурс                                | Путь                                                                                                                                                                                                                    |
+| ------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Этот handoff                          | `docs/HANDOFF-2026-08-30-TEAM-HANDOFF-173.13-EPILOGUE-174-FULL-DEBT.md`                                                                                                                                                 |
+| Главный процесс-канон + deep debt §11 | [`docs/HANDOFF-2026-08-29-EPIC-173-174-FULL-MIGRATION-AND-DEBT.md`](./HANDOFF-2026-08-29-EPIC-173-174-FULL-MIGRATION-AND-DEBT.md)                                                                                       |
+| Handoff эпохи 172 (уроки 1–21)        | [`docs/HANDOFF-2026-08-27-CROSS-TEAM-OMC-ORCHESTRATOR-172-8-CONTINUATION.md`](./HANDOFF-2026-08-27-CROSS-TEAM-OMC-ORCHESTRATOR-172-8-CONTINUATION.md)                                                                   |
+| Оркестратор-промпт V11                | [`docs/ORCHESTRATOR-PROMPT-2026-08-28-V11-HANDOFF-SUPERVISOR-OMC.md`](./ORCHESTRATOR-PROMPT-2026-08-28-V11-HANDOFF-SUPERVISOR-OMC.md)                                                                                   |
+| Планы оставшихся стори                | `.omx/plans/173.13-migrate-supply-detail.md`, `.omx/plans/174.{1..5}-*.md`                                                                                                                                              |
+| Sprint-статусы                        | `_bmad-output/implementation-artifacts/sprint-status.yaml`                                                                                                                                                              |
+| Registry (NEXT/carry-outs/owner §5)   | `_bmad-output/planning-artifacts/shadcn-migration-status-and-debt-registry.md`                                                                                                                                          |
+| Route ledger                          | `_bmad-output/planning-artifacts/shadcn-route-ledger.md`                                                                                                                                                                |
+| Артефакты-эталоны конвейеров          | `_bmad-output/implementation-artifacts/` — FULL: `172-1`, owner+boundary: `173-12`, born-clean: `172-7`/`172-15`, e2e-создание: `172-9`, WCAG-пивот: `173-12`                                                           |
+| Правила репо + baselines              | [`CLAUDE.md`](../../CLAUDE.md), [`CLAUDE-PATTERNS.md`](../../CLAUDE-PATTERNS.md), [`CLAUDE-ANTI-PATTERNS.md`](../../CLAUDE-ANTI-PATTERNS.md)                                                                            |
+| Тема/токены                           | `src/styles/globals.css`, `src/styles/__tests__/globals-compiled-contrast.test.ts`                                                                                                                                      |
+| Гарды-эталоны                         | `dashboard/__tests__/…` (172.1), `finances/…` (172.10 caption), `monitor/…` (172.11), `monitoring/…` (172.12 legend-sync), `orders/…` (172.14 dual-root+fbo-exclusion), `supplies/__tests__/…` (173.12 DETAIL_EXCLUDED) |
 
 ---
 
@@ -180,4 +180,4 @@
 
 Обновляйте §0/§2 этого документа в closeout-PR каждой стори (APPEND-ONLY для §3-долга: новые пункты получают ID и статус по словарю §11.9 канонического handoff). При завершении 174.5 — замените этот документ финальным 94/94 handoff.
 
-*Подготовлено сессией-оркестратором волн 172.10–172.17 + 173.12; параллельная команда 173.1–173.11 завершила свою lane вливанием #363.*
+_Подготовлено сессией-оркестратором волн 172.10–172.17 + 173.12; параллельная команда 173.1–173.11 завершила свою lane вливанием #363._

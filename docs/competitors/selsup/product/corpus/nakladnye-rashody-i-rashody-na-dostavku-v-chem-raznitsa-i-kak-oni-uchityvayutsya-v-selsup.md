@@ -11,7 +11,7 @@ chars: 2132
 
 В этой статье:
 
-- 
+-
 - <a href="#1-nakladnye-rashody" rel="nofollow">Накладные расходы</a>
 - <a href="#rashody-na-dostavku" rel="nofollow">Расходы на доставку</a>
 - <a href="#primer-iz-praktiki" rel="nofollow">Пример из практики</a>

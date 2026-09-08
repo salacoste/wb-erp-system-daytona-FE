@@ -13,7 +13,7 @@ chars: 2746
 
 В этой статье:
 
-- 
+-
 - <a href="#kak-vypolnit-massovoe-obedinenie-ostatkov" rel="nofollow">Как выполнить массовое объединение остатков?</a>
 - <a href="#proverka-rezultata-obedineniya" rel="nofollow">Проверка результата объединения</a>
 

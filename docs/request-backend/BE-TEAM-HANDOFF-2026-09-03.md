@@ -14,11 +14,13 @@
 **Полный документ**: [`230-auth-refresh-endpoint-missing.md`](230-auth-refresh-endpoint-missing.md) (Problem / Root Cause / Impact / Fix Scope / Reproduction / Resolution)
 
 **Суть в 3 строках**:
+
 1. `AuthController` = ровно `register` / `login` / `logout` — refresh-маршрута **не существует ни по какому пути** (0 упоминаний в auth-модуле; в `test-api/01-auth*.http` тоже).
 2. FE-хук `useAuth.refreshTokenIfNeeded` (глобально в root layout) вызывает `POST /v1/auth/refresh` → **404 NOT_FOUND всегда** → любой протухший/непарсящийся access-токен = мгновенный тихий `logout()` + редирект на /login. Поймано e2e-сессией D-1 (curl-репродукция в доке).
 3. FE-задача D-2 (реактивный 401-interceptor: 401 → single-flight refresh → replay×1) **не может быть реализована** без целевого маршрута.
 
 **Что нужно от BE** (если решение = реализовать; открытые контрактные вопросы — § Fix Scope дока):
+
 - Механизм: dedicated refresh-token (выдача/ротация при login) ИЛИ продление самого access-JWT (слайдинг)? Текущий FE-вызов шлёт `Authorization: Bearer <access>` + пустое тело, т.е. FE-сторона исходно предполагала слайдинг.
 - Ответ: FE ожидает `RefreshTokenResponse = { token: string; user?: User }` (при наличии `user` FE делает полный ре-login с новой sessionNonce).
 - Безопасность: ротация/ревокация, TTL пары, троттл.
@@ -43,6 +45,7 @@
 ## Item 3 (статус-вопрос): degraded `queue: down`
 
 `GET /v1/health` с 2026-09-02 возвращает `{"status":"degraded","dependencies":{"database":"up","redis":"up","queue":"down"}}`. Для FE-разработки не блокер, но:
+
 - все BE-фоновые задачи (BullMQ: ingest/enrichment/aggregation) не исполняются?
 - влияет на e2e-сценарии с data-мутациями (FE e2e бежит в READ-ONLY mode при недоступной очереди).
 
@@ -52,10 +55,10 @@
 
 ## Справка: что FE уже сделало вокруг этих item'ов
 
-| PR | Что |
-|---|---|
-| #390 | D-1/PB-1 silent cabinet-create закрыт (nonce-mint + recovery alert) — попутно задокументирован битый `/v1/auth/refresh`-путь |
-| #391 | D-2 → BE-BLOCKED, реестры отражают; request #230 создан |
-| #383/#386/#387 | SEC-DOC-1: изъятие литералов FE-side + сканер + верификация ротации (login 200) |
+| PR             | Что                                                                                                                          |
+| -------------- | ---------------------------------------------------------------------------------------------------------------------------- |
+| #390           | D-1/PB-1 silent cabinet-create закрыт (nonce-mint + recovery alert) — попутно задокументирован битый `/v1/auth/refresh`-путь |
+| #391           | D-2 → BE-BLOCKED, реестры отражают; request #230 создан                                                                      |
+| #383/#386/#387 | SEC-DOC-1: изъятие литералов FE-side + сканер + верификация ротации (login 200)                                              |
 
 FE-оркестратор продолжает независимо: boundary-sweep волны (459→372), AA-quick-wins, /80-sweep — BE-вовлечения не требуют.

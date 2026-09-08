@@ -42,13 +42,14 @@ PostgreSQL ошибка `42803` — столбец `orders_fbs.created_at` ис�
 
 Эти два эндпоинта — **единственные** в системе, которые предоставляют дневные данные с revenue:
 
-| Эндпоинт | Дневные поля | Статус |
-|----------|-------------|--------|
-| `orders/trends?aggregation=day` | ordersCount, **revenue**, cancellations, returns, avgOrderValue | **FIXED — GROUP BY 1** |
-| `fulfillment/trends` | fbo/fbs: ordersCount, **ordersRevenue**, **salesRevenue**, returnsCount | **FIXED** |
-| `orders/volume` | dailyTrend: date, **count** (только количество, без сумм) | Работает |
+| Эндпоинт                        | Дневные поля                                                            | Статус                 |
+| ------------------------------- | ----------------------------------------------------------------------- | ---------------------- |
+| `orders/trends?aggregation=day` | ordersCount, **revenue**, cancellations, returns, avgOrderValue         | **FIXED — GROUP BY 1** |
+| `fulfillment/trends`            | fbo/fbs: ordersCount, **ordersRevenue**, **salesRevenue**, returnsCount | **FIXED**              |
+| `orders/volume`                 | dailyTrend: date, **count** (только количество, без сумм)               | Работает               |
 
 Без этих эндпоинтов фронтенд может показать только **количество заказов** (из orders/volume), но НЕ:
+
 - Дневную выручку (revenue/salesRevenue)
 - Дневные заказы FBO (только FBS из orders/volume)
 
@@ -100,11 +101,11 @@ pm2 logs wb-repricer --lines 10 --nostream | grep "GROUP BY"
 
 ### Влияние
 
-| Область | Влияние |
-|---------|---------|
-| Dashboard — карточка "Рекламные затраты" | Показывает 0 ₽ для W05, W06, W07 |
-| Dashboard — виджет рекламы | "Нет данных за выбранный период" для любой недели после W04 |
-| "Детализация по дням" — линия "Реклама" | Всегда 0 |
+| Область                                  | Влияние                                                     |
+| ---------------------------------------- | ----------------------------------------------------------- |
+| Dashboard — карточка "Рекламные затраты" | Показывает 0 ₽ для W05, W06, W07                            |
+| Dashboard — виджет рекламы               | "Нет данных за выбранный период" для любой недели после W04 |
+| "Детализация по дням" — линия "Реклама"  | Всегда 0                                                    |
 
 ### Воспроизведение
 
@@ -129,6 +130,7 @@ curl -s "http://localhost:3000/v1/analytics/advertising?from=2026-01-20&to=2026-
 ### Описание
 
 `GET /v1/analytics/weekly/finance-summary` принимает только `?week=YYYY-Www` и возвращает агрегат за неделю. Нет дневной разбивки для:
+
 - Логистика (logistics_cost) по дням
 - Хранение (storage_cost) по дням
 - COGS по дням
@@ -141,6 +143,7 @@ curl -s "http://localhost:3000/v1/analytics/advertising?from=2026-01-20&to=2026-
 ### Рекомендация
 
 Если `fulfillment/trends` будет исправлен (Проблема 1), фронтенд сможет показать хотя бы:
+
 - Дневную выручку (salesRevenue из fulfillment/trends)
 - Дневные заказы FBO + FBS раздельно
 
@@ -150,21 +153,21 @@ curl -s "http://localhost:3000/v1/analytics/advertising?from=2026-01-20&to=2026-
 
 ## Текущее состояние фронтенда (после фиксов)
 
-| Метрика на графике | Источник | Статус |
-|-------------------|----------|--------|
-| Заказы | orders/volume → dailyTrend.count | **Работает** (показывает кол-во FBS заказов) |
-| COGS заказов | — | Нет источника данных |
-| Выкупы | finance-summary | Нет дневной разбивки |
-| COGS выкупов | finance-summary | Нет дневной разбивки |
-| Реклама | advertising API | Нет данных после 30.01 + нет поля `daily` |
-| Логистика | finance-summary | Нет дневной разбивки |
-| Хранение | finance-summary | Нет дневной разбивки |
-| Теор. прибыль | Расчётная | Только заказы ≠ 0, остальные входные = 0 |
+| Метрика на графике | Источник                         | Статус                                       |
+| ------------------ | -------------------------------- | -------------------------------------------- |
+| Заказы             | orders/volume → dailyTrend.count | **Работает** (показывает кол-во FBS заказов) |
+| COGS заказов       | —                                | Нет источника данных                         |
+| Выкупы             | finance-summary                  | Нет дневной разбивки                         |
+| COGS выкупов       | finance-summary                  | Нет дневной разбивки                         |
+| Реклама            | advertising API                  | Нет данных после 30.01 + нет поля `daily`    |
+| Логистика          | finance-summary                  | Нет дневной разбивки                         |
+| Хранение           | finance-summary                  | Нет дневной разбивки                         |
+| Теор. прибыль      | Расчётная                        | Только заказы ≠ 0, остальные входные = 0     |
 
 ### Фронтенд-фиксы выполнены
 
-| Файл | Изменение |
-|------|-----------|
+| Файл                              | Изменение                                                       |
+| --------------------------------- | --------------------------------------------------------------- |
 | `src/lib/daily/aggregation.ts:67` | `total_amount` → `total_orders` (показывает количество заказов) |
 
 ---
@@ -174,11 +177,13 @@ curl -s "http://localhost:3000/v1/analytics/advertising?from=2026-01-20&to=2026-
 Все 3 проблемы решены бэкендом:
 
 ### Проблема 1: SQL баг — ИСПРАВЛЕНО
+
 - **Фикс**: Изменён `GROUP BY` на позиционную ссылку `GROUP BY 1` в `fbs-data-aggregation.service.ts:568`
 - `orders/trends?aggregation=day` → HTTP 200, возвращает: ordersCount, revenue, cancellations, returns, avgOrderValue
 - `fulfillment/trends` → HTTP 200, возвращает: fbo/fbs ordersCount, ordersRevenue, salesRevenue, returnsCount
 
 ### Проблема 2: Advertising sync — ИСПРАВЛЕНО
+
 - Разрыв данных закрыт, `dataAvailableTo` обновляется до актуальных дат
 - Добавлены 3 поля observability (Epic 50-51):
   - `dataLagDays` — дней отставания от текущей даты
@@ -187,6 +192,7 @@ curl -s "http://localhost:3000/v1/analytics/advertising?from=2026-01-20&to=2026-
 - Улучшения sync: binary split fallback, exponential backoff, campaign coverage 21% → 100%
 
 ### Проблема 3: Дневная разбивка финансов — ОЦЕНКА ЗАВЕРШЕНА
+
 - Создан feature request для будущей реализации
 - Workaround: `orders/trends` (после фикса SQL) предоставляет дневную выручку
 - Полная дневная разбивка (логистика, хранение, комиссии) требует нового эндпоинта

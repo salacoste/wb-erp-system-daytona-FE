@@ -12,6 +12,7 @@
 ### 1. Формат ответа `available-weeks`
 
 **Backend возвращает:**
+
 ```json
 {
   "data": [
@@ -22,6 +23,7 @@
 ```
 
 **Обработка в `api-client.ts`:**
+
 ```typescript
 // Строка 105: return (data.data ?? data) as T
 // Если ответ { data: [...] }, то:
@@ -30,10 +32,11 @@
 ```
 
 **Обработка в hooks:**
+
 ```typescript
 // useDashboard.ts:48
-const weeksResponse = await apiClient.get<{ 
-  data: Array<{ week: string; start_date: string }> 
+const weeksResponse = await apiClient.get<{
+  data: Array<{ week: string; start_date: string }>
 }>('/v1/analytics/weekly/available-weeks')
 
 // ⚠️ ПРОБЛЕМА: Если apiClient возвращает массив напрямую,
@@ -53,8 +56,8 @@ const weeksResponse = await apiClient.get<{
 
 ```typescript
 // Текущий код (НЕПРАВИЛЬНО):
-const weeksResponse = await apiClient.get<{ 
-  data: Array<{ week: string; start_date: string }> 
+const weeksResponse = await apiClient.get<{
+  data: Array<{ week: string; start_date: string }>
 }>('/v1/analytics/weekly/available-weeks')
 const weeks = weeksResponse?.data?.map((w) => w.week) || []
 
@@ -63,7 +66,7 @@ const weeksResponse = await apiClient.get<Array<{ week: string; start_date: stri
   '/v1/analytics/weekly/available-weeks'
 )
 // apiClient вернет массив напрямую, если backend возвращает { data: [...] }
-const weeks = Array.isArray(weeksResponse) 
+const weeks = Array.isArray(weeksResponse)
   ? weeksResponse.map((w) => w.week)
   : weeksResponse?.data?.map((w) => w.week) || []
 ```
@@ -71,6 +74,7 @@ const weeks = Array.isArray(weeksResponse)
 ### Вариант 2: Проверить фактический формат ответа
 
 Нужно проверить, что именно возвращает backend:
+
 - Если `{ data: [...] }` → `apiClient` вернет массив `[...]`
 - Если просто массив `[...]` → `apiClient` вернет массив `[...]`
 
@@ -90,15 +94,18 @@ const weeks = Array.isArray(weeksResponse)
 ### Шаг 2: Проверить логи в консоли
 
 **Ожидаемые логи при правильной работе:**
+
 ```
 [Dashboard Metrics] Fetching finance summary for week: 2025-W46
 [Dashboard Metrics] Finance summary received: { to_pay_goods: ..., sale_gross: ... }
 ```
 
 **Если видите ошибки:**
+
 ```
 [Dashboard Metrics] No available weeks found...
 ```
+
 → Проверить, что `weeksResponse` не undefined
 
 ---
@@ -112,4 +119,3 @@ const weeks = Array.isArray(weeksResponse)
 ---
 
 **Статус:** ⚠️ Требуется проверка фактического формата ответа
-

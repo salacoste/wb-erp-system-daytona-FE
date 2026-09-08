@@ -220,13 +220,13 @@ This story creates the state management foundation. UI components will be built 
 
 ## Dependencies
 
-| Dependency | Type | Status |
-|------------|------|--------|
-| `useAvailableWeeks` hook | Internal | ✅ Available |
-| `getLastCompletedWeek` helper | Internal | ✅ Available (`src/lib/margin-helpers.ts`) |
-| `date-fns` | External | ✅ Installed |
-| `nuqs` | External | ⚠️ May need install (`npm install nuqs`) |
-| Next.js `useSearchParams` | Framework | ✅ Available |
+| Dependency                    | Type      | Status                                     |
+| ----------------------------- | --------- | ------------------------------------------ |
+| `useAvailableWeeks` hook      | Internal  | ✅ Available                               |
+| `getLastCompletedWeek` helper | Internal  | ✅ Available (`src/lib/margin-helpers.ts`) |
+| `date-fns`                    | External  | ✅ Installed                               |
+| `nuqs`                        | External  | ⚠️ May need install (`npm install nuqs`)   |
+| Next.js `useSearchParams`     | Framework | ✅ Available                               |
 
 ---
 
@@ -317,6 +317,7 @@ This story creates the state management foundation. UI components will be built 
 ### Phase 1: Helper Functions (30min)
 
 Create `src/lib/period-helpers.ts`:
+
 - `getWeeksInMonth()`
 - `getMonthFromWeek()`
 - `getPreviousPeriod()`
@@ -325,6 +326,7 @@ Create `src/lib/period-helpers.ts`:
 ### Phase 2: Context + Provider (1-2h)
 
 Create `src/contexts/dashboard-period-context.tsx`:
+
 - Define types and interfaces
 - Create context with null default
 - Implement provider with useReducer
@@ -334,6 +336,7 @@ Create `src/contexts/dashboard-period-context.tsx`:
 ### Phase 3: Consumer Hook (30min)
 
 Create `src/hooks/useDashboardPeriod.ts`:
+
 - Re-export context hook
 - Add error handling for missing provider
 - Add TypeScript type narrowing
@@ -341,6 +344,7 @@ Create `src/hooks/useDashboardPeriod.ts`:
 ### Phase 4: Tests (1h)
 
 Create tests for:
+
 - Helper functions (pure unit tests)
 - Context provider (with React Testing Library)
 - URL sync behavior

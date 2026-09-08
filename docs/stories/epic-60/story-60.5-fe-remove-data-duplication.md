@@ -228,13 +228,13 @@ src/
 
 ## Dependencies
 
-| Dependency | Type | Status |
-|------------|------|--------|
-| Story 60.1-FE | Internal | Required - COGS coverage data from period context |
-| Story 60.3-FE | Internal | Required - `MetricCardEnhanced` for new cards |
-| Story 60.4-FE | Internal | Required - Dashboard data fetching with period |
-| `sonner` toast | Package | Already installed |
-| Backend finance-summary | API | Returns `cogs_coverage_pct`, `products_with_cogs` |
+| Dependency              | Type     | Status                                            |
+| ----------------------- | -------- | ------------------------------------------------- |
+| Story 60.1-FE           | Internal | Required - COGS coverage data from period context |
+| Story 60.3-FE           | Internal | Required - `MetricCardEnhanced` for new cards     |
+| Story 60.4-FE           | Internal | Required - Dashboard data fetching with period    |
+| `sonner` toast          | Package  | Already installed                                 |
+| Backend finance-summary | API      | Returns `cogs_coverage_pct`, `products_with_cogs` |
 
 ---
 
@@ -243,6 +243,7 @@ src/
 ### Unit Tests
 
 1. **InitialDataSummary renders CTA only when needed**
+
    ```typescript
    it('should render CTA when COGS coverage < 100%', () => {
      render(<InitialDataSummary cogsCoverage={50} totalProducts={100} />)
@@ -258,6 +259,7 @@ src/
    ```
 
 2. **COGS Coverage Card formatting**
+
    ```typescript
    it('should display "X iz Y" format', () => {
      render(<CogsCoverageMetricCard
@@ -271,6 +273,7 @@ src/
    ```
 
 3. **Product Count Card**
+
    ```typescript
    it('should display product count with locale formatting', () => {
      render(<ProductCountMetricCard count={1234} />)
@@ -296,6 +299,7 @@ src/
 ### Integration Tests
 
 1. **No duplicate metrics on dashboard**
+
    ```typescript
    it('should display K perechisleniyu only once', async () => {
      render(<DashboardPage />)

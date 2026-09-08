@@ -9,7 +9,7 @@ chars: 9656
 
 В этой статье:
 
-- 
+-
 - <a href="#obshhaya-instruktsiya-po-importu-tovarov" rel="nofollow">Общая инструкция по импорту товаров</a>
 - <a href="#obnovlenie-parametrov-selsup-pri-importe-s-marketplejsov" rel="nofollow">Обновление параметров SelSup при импорте с маркетплейсов</a>
 - <a href="#import-tovarov-po-brendu" rel="nofollow">Импорт товаров по бренду</a>

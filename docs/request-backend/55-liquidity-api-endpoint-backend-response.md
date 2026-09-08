@@ -13,14 +13,14 @@
 
 ### Current State Assessment
 
-| Requirement | Status | Notes |
-|-------------|--------|-------|
-| Stock snapshots | ❌ **MISSING** | Depends on Epic 28 |
-| Sales velocity | ⚠️ **PARTIAL** | Epic 28 will provide |
-| COGS data | ✅ **READY** | For frozen capital calculation |
-| Turnover calculation | ❌ **MISSING** | Need to implement |
-| Liquidation scenarios | ❌ **MISSING** | Need to implement |
-| Trends endpoint | ❌ **MISSING** | Need to implement |
+| Requirement           | Status         | Notes                          |
+| --------------------- | -------------- | ------------------------------ |
+| Stock snapshots       | ❌ **MISSING** | Depends on Epic 28             |
+| Sales velocity        | ⚠️ **PARTIAL** | Epic 28 will provide           |
+| COGS data             | ✅ **READY**   | For frozen capital calculation |
+| Turnover calculation  | ❌ **MISSING** | Need to implement              |
+| Liquidation scenarios | ❌ **MISSING** | Need to implement              |
+| Trends endpoint       | ❌ **MISSING** | Need to implement              |
 
 **Assessment**: ~10% of required infrastructure exists. Heavily dependent on Epic 28.
 
@@ -47,11 +47,12 @@ Epic 28 (Supply Planning)
 ### Epic 29: Liquidity Analysis API
 
 | Story | Points | Description | Status | Depends On |
-|-------|--------|-------------|--------|------------|
+| ----- | ------ | ----------- | ------ | ---------- |
 
 ---
 
 ## Backend Team Response
+
 **Status**: RESOLVED — this document IS the backend response. See the parent request file for the original frontend ask.
 | 29.1 | 5 | Liquidity Calculation Service | Planned | Epic 28 |
 | 29.2 | 3 | Liquidation Scenario Calculator | Planned | 29.1 |
@@ -66,25 +67,27 @@ Epic 28 (Supply Planning)
 ## API Contract Confirmation
 
 ### Endpoint 1: Main Liquidity Analysis
+
 ```
 GET /v1/analytics/liquidity
 ```
 
 ### Endpoint 2: Liquidity Trends
+
 ```
 GET /v1/analytics/liquidity/trends
 ```
 
 ### ✅ Confirmed Query Parameters (Main)
 
-| Parameter | Type | Default | Confirmed |
-|-----------|------|---------|-----------|
-| `week` | string | current | ✅ |
-| `turnover_weeks` | number | 4 | ✅ |
-| `view_by` | enum | "sku" | ✅ |
-| `liquidity_filter` | enum | "all" | ✅ |
-| `sort_by` | string | "frozen_capital" | ✅ |
-| `limit` | number | 100 | ✅ |
+| Parameter          | Type   | Default          | Confirmed |
+| ------------------ | ------ | ---------------- | --------- |
+| `week`             | string | current          | ✅        |
+| `turnover_weeks`   | number | 4                | ✅        |
+| `view_by`          | enum   | "sku"            | ✅        |
+| `liquidity_filter` | enum   | "all"            | ✅        |
+| `sort_by`          | string | "frozen_capital" | ✅        |
+| `limit`            | number | 100              | ✅        |
 
 ### ✅ Confirmed Response Structure
 
@@ -126,12 +129,12 @@ adjusted_daily_velocity = base_velocity × (1 + elasticity × discount_pct)
 
 ## Liquidity Classification
 
-| Status | Turnover Days | Color |
-|--------|---------------|-------|
-| `highly_liquid` | 0-14 days | Green (#22C55E) |
-| `medium` | 15-30 days | Light Green (#84CC16) |
-| `low` | 31-60 days | Yellow (#EAB308) |
-| `illiquid` | > 60 days | Red (#EF4444) |
+| Status          | Turnover Days | Color                 |
+| --------------- | ------------- | --------------------- |
+| `highly_liquid` | 0-14 days     | Green (#22C55E)       |
+| `medium`        | 15-30 days    | Light Green (#84CC16) |
+| `low`           | 31-60 days    | Yellow (#EAB308)      |
+| `illiquid`      | > 60 days     | Red (#EF4444)         |
 
 ---
 
@@ -140,6 +143,7 @@ adjusted_daily_velocity = base_velocity × (1 + elasticity × discount_pct)
 ### Products Without COGS
 
 For frozen capital calculation when COGS missing:
+
 1. Option A: Use average category COGS
 2. Option B: Flag as `frozen_capital: null, missing_cogs: true`
 3. **Decision**: Option B (more accurate, no assumptions)
@@ -147,17 +151,18 @@ For frozen capital calculation when COGS missing:
 ### Price Elasticity Model
 
 Default elasticity = 1.5 (configurable):
+
 - 20% discount → +30% velocity
 - 50% discount → +75% velocity
 
 ### Edge Cases
 
-| Case | Handling |
-|------|----------|
+| Case          | Handling                                          |
+| ------------- | ------------------------------------------------- |
 | Zero velocity | `turnover_days: null, liquidity_status: "frozen"` |
-| Zero stock | Exclude from results |
-| Missing COGS | Include with `frozen_capital: null` |
-| New products | `liquidity_status: "new", turnover_days: null` |
+| Zero stock    | Exclude from results                              |
+| Missing COGS  | Include with `frozen_capital: null`               |
+| New products  | `liquidity_status: "new", turnover_days: null`    |
 
 ---
 
@@ -180,11 +185,11 @@ Week 3: Story 29.5 (Caching) + 29.6 (Testing)
 
 ## Questions/Clarifications
 
-| Question | Resolution |
-|----------|------------|
-| Price elasticity configurable? | Yes, per-cabinet setting possible |
+| Question                         | Resolution                          |
+| -------------------------------- | ----------------------------------- |
+| Price elasticity configurable?   | Yes, per-cabinet setting possible   |
 | Historical liquidation tracking? | Phase 2 - `liquidation_plans` table |
-| Category-level COGS fallback? | No - flag as missing instead |
+| Category-level COGS fallback?    | No - flag as missing instead        |
 
 ---
 

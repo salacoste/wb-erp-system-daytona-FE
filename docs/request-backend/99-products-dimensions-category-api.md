@@ -72,8 +72,8 @@ GET /v1/products
 
 ### New Query Parameter
 
-| Parameter | Type | Default | Description |
-|-----------|------|---------|-------------|
+| Parameter            | Type    | Default | Description                          |
+| -------------------- | ------- | ------- | ------------------------------------ |
 | `include_dimensions` | boolean | `false` | Include dimensions and category data |
 
 ### New Response Fields
@@ -120,18 +120,18 @@ When `include_dimensions=true`:
 
 ### Existing Parameters (unchanged)
 
-| Parameter | Type | Description |
-|-----------|------|-------------|
-| `q` | string | Search by vendor_code or title |
-| `cursor` | string | Pagination cursor |
-| `limit` | number | Items per page (default: 25, max: 100) |
-| `has_cogs` | boolean | Filter by COGS presence |
-| `include_cogs` | boolean | Include COGS and margin data |
+| Parameter      | Type    | Description                            |
+| -------------- | ------- | -------------------------------------- |
+| `q`            | string  | Search by vendor_code or title         |
+| `cursor`       | string  | Pagination cursor                      |
+| `limit`        | number  | Items per page (default: 25, max: 100) |
+| `has_cogs`     | boolean | Filter by COGS presence                |
+| `include_cogs` | boolean | Include COGS and margin data           |
 
 ### New Parameter
 
-| Parameter | Type | Default | Description |
-|-----------|------|---------|-------------|
+| Parameter            | Type    | Default | Description                               |
+| -------------------- | ------- | ------- | ----------------------------------------- |
 | `include_dimensions` | boolean | `false` | Include dimensions and category hierarchy |
 
 ### Example Requests
@@ -153,23 +153,23 @@ GET /v1/products?include_dimensions=true&include_cogs=true&q=DRESS
 
 ### Dimensions Object
 
-| Field | Type | Unit | Description |
-|-------|------|------|-------------|
-| `length_mm` | number | mm | Product length in millimeters |
-| `width_mm` | number | mm | Product width in millimeters |
-| `height_mm` | number | mm | Product height in millimeters |
-| `volume_liters` | number | L | Pre-calculated volume `(L×W×H)/1000000` |
+| Field           | Type   | Unit | Description                             |
+| --------------- | ------ | ---- | --------------------------------------- |
+| `length_mm`     | number | mm   | Product length in millimeters           |
+| `width_mm`      | number | mm   | Product width in millimeters            |
+| `height_mm`     | number | mm   | Product height in millimeters           |
+| `volume_liters` | number | L    | Pre-calculated volume `(L×W×H)/1000000` |
 
 **Note:** WB Content API returns dimensions in millimeters. Backend pre-calculates volume in liters for frontend convenience.
 
 ### Category Object
 
-| Field | Type | Description |
-|-------|------|-------------|
-| `subject_id` | number | WB category ID (leaf level) |
-| `subject_name` | string | Category name (e.g., "Платья") |
-| `parent_id` | number | Parent category ID |
-| `parent_name` | string | Parent category name (e.g., "Женская одежда") |
+| Field          | Type   | Description                                   |
+| -------------- | ------ | --------------------------------------------- |
+| `subject_id`   | number | WB category ID (leaf level)                   |
+| `subject_name` | string | Category name (e.g., "Платья")                |
+| `parent_id`    | number | Parent category ID                            |
+| `parent_name`  | string | Parent category name (e.g., "Женская одежда") |
 
 **Note:** Category hierarchy is needed for commission auto-detection (integrates with existing TariffsService from Story 43.1).
 
@@ -351,6 +351,7 @@ Some products may not have dimensions in WB database:
 This request blocks Story 44.26-FE (Automated Logistics Calculation) which is a key feature of Price Calculator Phase 4.
 
 **Impact without this API:**
+
 - Users must manually enter dimensions for every product
 - No automatic cargo type detection (MGT/SGT/KGT)
 - No automatic commission lookup by category
@@ -362,26 +363,26 @@ This request blocks Story 44.26-FE (Automated Logistics Calculation) which is a 
 
 ### Frontend Stories (Epic 44-FE)
 
-| Story | Title | Dependency |
-|-------|-------|------------|
+| Story    | Title                           | Dependency                        |
+| -------- | ------------------------------- | --------------------------------- |
 | 44.26-FE | Automated Logistics Calculation | **BLOCKED** - requires dimensions |
-| 44.12-FE | Warehouse Dropdown | Uses category for filtering |
-| 44.11-FE | Commission Auto-fill | Uses category.subject_id |
+| 44.12-FE | Warehouse Dropdown              | Uses category for filtering       |
+| 44.11-FE | Commission Auto-fill            | Uses category.subject_id          |
 
 ### Backend Stories (Epic 43)
 
-| Story | Title | Relation |
-|-------|-------|----------|
-| 43.1 | TariffsService | Commission lookup by subject_id |
-| 43.7 | Dimension & Logistics | Volume calculation formula |
-| 43.6 | Autofill Integration | Overall autofill architecture |
+| Story | Title                 | Relation                        |
+| ----- | --------------------- | ------------------------------- |
+| 43.1  | TariffsService        | Commission lookup by subject_id |
+| 43.7  | Dimension & Logistics | Volume calculation formula      |
+| 43.6  | Autofill Integration  | Overall autofill architecture   |
 
 ### Related Requests
 
-| Request | Title | Relation |
-|---------|-------|----------|
-| #95 | Price Calculator API | Main calculator endpoint |
-| #98 | Warehouses & Tariffs | Logistics tariffs by warehouse |
+| Request | Title                | Relation                       |
+| ------- | -------------------- | ------------------------------ |
+| #95     | Price Calculator API | Main calculator endpoint       |
+| #98     | Warehouses & Tariffs | Logistics tariffs by warehouse |
 
 ---
 
@@ -400,9 +401,9 @@ src/products/
 
 ### Caching Strategy
 
-| Data | TTL | Redis Key Pattern |
-|------|-----|-------------------|
-| Product dimensions | 24h | `products:dimensions:{nmId}` |
+| Data               | TTL | Redis Key Pattern               |
+| ------------------ | --- | ------------------------------- |
+| Product dimensions | 24h | `products:dimensions:{nmId}`    |
 | Category hierarchy | 24h | `products:category:{subjectId}` |
 
 **Rationale:** Dimensions rarely change, 24h cache is safe.
@@ -463,6 +464,7 @@ ALTER TABLE products ADD COLUMN parent_subject_name VARCHAR(255);
 **Question:** Which WB API is best for dimensions?
 
 **Options:**
+
 - `sdk.content.getProductsCards()` - Content API
 - `sdk.cards.getCardsList()` - Cards API (characteristics)
 - `sdk.products.getProductInfo()` - Products API
@@ -489,11 +491,11 @@ ALTER TABLE products ADD COLUMN parent_subject_name VARCHAR(255);
 
 ## Timeline Estimate
 
-| Phase | Description | ETA |
-|-------|-------------|-----|
-| Backend Response | Answers to questions | 1-2 days |
-| Backend Implementation | Extend products endpoint | 2-3 days |
-| Frontend Integration | Story 44.26-FE | After backend |
+| Phase                  | Description              | ETA           |
+| ---------------------- | ------------------------ | ------------- |
+| Backend Response       | Answers to questions     | 1-2 days      |
+| Backend Implementation | Extend products endpoint | 2-3 days      |
+| Frontend Integration   | Story 44.26-FE           | After backend |
 
 ---
 
@@ -512,14 +514,17 @@ ALTER TABLE products ADD COLUMN parent_subject_name VARCHAR(255);
 ## Bug Fixes (2026-01-21)
 
 ### Bug #2: Dimensions/Category Field Mapping ✅ FIXED
+
 **Issue**: Category name (`subject_name`) was always NULL because code looked for `subjectName` field which is filtered out during WB API mapping.
 
 **Root Cause**:
+
 - `wb-products.service.ts:669` maps `card.subjectName` → `product.category`
 - `wb-products.service.ts:672` filters out `subjectName` from final Product object
 - `products.service.ts:1815` incorrectly tried to read from `subjectName` (undefined)
 
 **Fix Applied** (`products.service.ts:1815`):
+
 ```typescript
 // BEFORE (incorrect):
 const subjName = (wbProduct as { subjectName?: string }).subjectName;
@@ -529,19 +534,23 @@ const subjName = (wbProduct as { category?: string }).category;
 ```
 
 **Impact**:
+
 - ✅ `category_hierarchy.subject_name` now correctly populated from WB API
 - ✅ Full category hierarchy available: `subject_id`, `subject_name`, `parent_id`, `parent_name`
 - ✅ Price Calculator can auto-fill category data
 
 **Verification**:
+
 - ✅ Build passes (`npm run build`)
 - ✅ Manual verification confirms correct field extraction
 - ⚠️ Unit test failures expected (tests have incorrect mock data - include both `category` AND `subjectName`)
 
 ### Bug #2: Dimensions Transformation ✅ FIXED
+
 **Issue**: WB API returns dimensions in centimeters, but Epic 45 spec required millimeters. Volume calculation was also incorrect.
 
 **Fix Applied**:
+
 ```typescript
 // Unit conversion (cm → mm)
 const length_mm = dims.length * 10;
@@ -553,14 +562,17 @@ const volume_liters = Math.round((length_mm * width_mm * height_mm) / 1000) / 10
 ```
 
 **Validation**:
+
 - ✅ Unit conversion: `length_mm = 400, width_mm = 300, height_mm = 50` (from WB API: 40cm × 30cm × 5cm)
 - ✅ Volume: `(400 × 300 × 50) / 1,000,000 = 6.0` liters
 - ✅ Null handling: Returns `null` if any dimension is missing or zero
 
 ### Bug #3: Category Hierarchy Parent Data ✅ FIXED
+
 **Issue**: `parent_id` and `parent_name` were always `null` because WB API doesn't provide parent category data.
 
 **Fix Applied**:
+
 ```typescript
 // New method in TariffsService
 async getCommissionBySubjectId(cabinetId: string, subjectId: number): Promise<CommissionRate | null> {
@@ -582,25 +594,28 @@ parentName = commission?.parentName || null;
 
 ### CRITICAL: Differences from Original Request
 
-| Original Request | Actual Implementation | Frontend Action Required |
-|------------------|----------------------|--------------------------|
-| `nm_id: number` | `nm_id: string` | Use `string` type everywhere! |
-| `title` | `sa_name` | Rename field references |
-| `category` | `category_hierarchy` | Rename field references |
-| Volume calculated | `volume_liters` pre-calculated | Use backend value directly |
+| Original Request  | Actual Implementation          | Frontend Action Required      |
+| ----------------- | ------------------------------ | ----------------------------- |
+| `nm_id: number`   | `nm_id: string`                | Use `string` type everywhere! |
+| `title`           | `sa_name`                      | Rename field references       |
+| `category`        | `category_hierarchy`           | Rename field references       |
+| Volume calculated | `volume_liters` pre-calculated | Use backend value directly    |
 
 ### Backend References
+
 - **Backend Epic:** Epic 45 - Products Dimensions & Category API
 - **Test File:** `../test-api/45-products-dimensions.http`
 - **README Section:** `../test-api/README.md` (Epic 45)
 
 ### API Details
+
 - **Field Names:** `sa_name`, `category_hierarchy`, `dimensions.volume_liters`
 - **Caching:** Redis with 24h TTL, cache-first strategy
 - **Performance:** <500ms for 100 products, <50ms cached
 - **Additional Params:** `skip_cache=true`, `include_storage=true` (can combine)
 
 ### Actual Response Structure
+
 ```json
 {
   "products": [
@@ -640,13 +655,13 @@ parentName = commission?.parentName || null;
 
 ### Quick Reference
 
-| Parameter | Value |
-|-----------|-------|
-| **Endpoint** | `GET /v1/products` |
-| **Method** | GET |
-| **Authentication** | JWT token required |
-| **Headers** | `Authorization: Bearer {token}`<br>`X-Cabinet-Id: {cabinet_id}` |
-| **Query Parameters** | `include_dimensions=true&q={nmId}` |
+| Parameter            | Value                                                           |
+| -------------------- | --------------------------------------------------------------- |
+| **Endpoint**         | `GET /v1/products`                                              |
+| **Method**           | GET                                                             |
+| **Authentication**   | JWT token required                                              |
+| **Headers**          | `Authorization: Bearer {token}`<br>`X-Cabinet-Id: {cabinet_id}` |
+| **Query Parameters** | `include_dimensions=true&q={nmId}`                              |
 
 ### cURL Examples
 
@@ -761,11 +776,11 @@ const handleProductSelect = async (nmId: string) => {
 
 ⚠️ **Critical Field Differences**:
 
-| Original Request | Actual Implementation | ⚠️ WATCH OUT |
-|------------------|----------------------|--------------|
-| `nm_id: number` | `nm_id: string` | Use `string` type everywhere! |
-| `title` | `sa_name` | Use `sa_name` field |
-| `category` | `category_hierarchy` | Use `category_hierarchy` field |
+| Original Request | Actual Implementation | ⚠️ WATCH OUT                   |
+| ---------------- | --------------------- | ------------------------------ |
+| `nm_id: number`  | `nm_id: string`       | Use `string` type everywhere!  |
+| `title`          | `sa_name`             | Use `sa_name` field            |
+| `category`       | `category_hierarchy`  | Use `category_hierarchy` field |
 
 📊 **Performance Notes**:
 
@@ -831,12 +846,12 @@ X-Cabinet-Id: {{cabinetId}}
 
 ### Critical Changes from Original Request
 
-| Aspect | Original Request | Actual Implementation | Notes |
-|--------|------------------|----------------------|-------|
-| Field name | `category` | `category_hierarchy` | Use `category_hierarchy` in code |
-| parent fields | Always populated | Now populated from TariffsService | Bug #3 fix |
-| Dimensions units | mm (assumed) | mm (converted from cm) | Bug #2 fix |
-| Volume calculation | Backend formula | Correct formula applied | Bug #2 fix |
+| Aspect             | Original Request | Actual Implementation             | Notes                            |
+| ------------------ | ---------------- | --------------------------------- | -------------------------------- |
+| Field name         | `category`       | `category_hierarchy`              | Use `category_hierarchy` in code |
+| parent fields      | Always populated | Now populated from TariffsService | Bug #3 fix                       |
+| Dimensions units   | mm (assumed)     | mm (converted from cm)            | Bug #2 fix                       |
+| Volume calculation | Backend formula  | Correct formula applied           | Bug #2 fix                       |
 
 ### TypeScript Integration Example
 
@@ -879,13 +894,13 @@ const handleProductSelect = (product: ProductWithDimensions) => {
 
 ### Null Handling Behavior
 
-| Scenario | `dimensions` | `category_hierarchy` |
-|----------|-------------|----------------------|
-| WB has dimensions data | `{ length_mm, width_mm, height_mm, volume_liters }` | - |
-| WB missing dimensions | `null` | - |
-| WB has category + TariffsService has parent | - | `{ subject_id, subject_name, parent_id ✅, parent_name ✅ }` |
-| WB has category + TariffsService no parent | - | `{ subject_id, subject_name, parent_id null, parent_name null }` |
-| WB missing category | - | `null` |
+| Scenario                                    | `dimensions`                                        | `category_hierarchy`                                             |
+| ------------------------------------------- | --------------------------------------------------- | ---------------------------------------------------------------- |
+| WB has dimensions data                      | `{ length_mm, width_mm, height_mm, volume_liters }` | -                                                                |
+| WB missing dimensions                       | `null`                                              | -                                                                |
+| WB has category + TariffsService has parent | -                                                   | `{ subject_id, subject_name, parent_id ✅, parent_name ✅ }`     |
+| WB has category + TariffsService no parent  | -                                                   | `{ subject_id, subject_name, parent_id null, parent_name null }` |
+| WB missing category                         | -                                                   | `null`                                                           |
 
 ### Performance Notes
 

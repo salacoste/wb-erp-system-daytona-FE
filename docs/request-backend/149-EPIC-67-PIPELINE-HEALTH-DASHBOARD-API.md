@@ -36,6 +36,7 @@ const { data: dashboard } = useQuery({
 **Resolution date**: 2026-02-17
 **Summary**: Epic 67 complete with 154 unit tests. 3 endpoints implemented: `/v1/monitoring/dashboard` (lightweight summary), `/v1/monitoring/pipeline-health-grid` (heatmap with 14 pipelines), `/v1/monitoring/telegram-health` (bot status). Caching, gap detection, and health scoring included.
 **Remaining frontend action**: Integrate monitoring dashboard page using provided React Query patterns.
+
 ```typescript
 // Тяжёлый запрос — грузить только при переходе на вкладку heatmap
 const { data: grid } = useQuery({
@@ -62,11 +63,11 @@ const { data: telegram } = useQuery({
 
 ## Все API Эндпоинты (3 эндпоинта)
 
-| Метод | Эндпоинт | Описание | Cache TTL | Target p95 |
-|-------|----------|----------|-----------|------------|
-| GET | `/v1/monitoring/dashboard` | Сводка для начального рендера | 60s | < 200ms |
-| GET | `/v1/monitoring/pipeline-health-grid` | Heatmap с ячейками по часам/дням | 30-120s | < 500ms |
-| GET | `/v1/monitoring/telegram-health` | Здоровье Telegram-интеграции | 120s | < 300ms |
+| Метод | Эндпоинт                              | Описание                         | Cache TTL | Target p95 |
+| ----- | ------------------------------------- | -------------------------------- | --------- | ---------- |
+| GET   | `/v1/monitoring/dashboard`            | Сводка для начального рендера    | 60s       | < 200ms    |
+| GET   | `/v1/monitoring/pipeline-health-grid` | Heatmap с ячейками по часам/дням | 30-120s   | < 500ms    |
+| GET   | `/v1/monitoring/telegram-health`      | Здоровье Telegram-интеграции     | 120s      | < 300ms    |
 
 ### Авторизация (все эндпоинты)
 
@@ -77,6 +78,7 @@ Authorization: Bearer {{token}}
 **Важно:** Эти эндпоинты НЕ используют заголовок `X-Cabinet-Id`. Вместо этого `cabinetId` передаётся как query parameter.
 
 **Ошибки доступа:**
+
 - `401 Unauthorized` — отсутствует или невалидный JWT
 - `403 Forbidden` — пользователь не имеет доступа к указанному cabinet
 
@@ -97,10 +99,10 @@ Authorization: Bearer {{token}}
 
 **Query Parameters:**
 
-| Параметр | Тип | Обязательный | По умолчанию | Описание |
-|----------|-----|-------------|--------------|----------|
-| `cabinetId` | UUID | Да | — | ID кабинета |
-| `locale` | string | Нет | `ru` | Язык: `ru` или `en` (влияет на displayName) |
+| Параметр    | Тип    | Обязательный | По умолчанию | Описание                                    |
+| ----------- | ------ | ------------ | ------------ | ------------------------------------------- |
+| `cabinetId` | UUID   | Да           | —            | ID кабинета                                 |
+| `locale`    | string | Нет          | `ru`         | Язык: `ru` или `en` (влияет на displayName) |
 
 ### Ответ (200 OK)
 
@@ -157,14 +159,15 @@ interface DashboardResponse {
 healthScore = (pipelineAvg * 0.5 + completenessAvg * 0.3 + telegramRate * 0.1 + noAlerts * 0.1) * 100
 ```
 
-| Компонент | Вес | Описание |
-|-----------|-----|----------|
-| `pipelineAvg` | 50% | Среднее по статусам: healthy=1.0, warning=0.7, critical=0.3, stale=0.1, no_data=0.0 |
-| `completenessAvg` | 30% | Средний completenessRatio по таблицам |
-| `telegramRate` | 10% | deliveryRate7d (1.0 если telegram не настроен) |
-| `noAlerts` | 10% | 1.0 если activeAlerts === 0, иначе 0.0 |
+| Компонент         | Вес | Описание                                                                            |
+| ----------------- | --- | ----------------------------------------------------------------------------------- |
+| `pipelineAvg`     | 50% | Среднее по статусам: healthy=1.0, warning=0.7, critical=0.3, stale=0.1, no_data=0.0 |
+| `completenessAvg` | 30% | Средний completenessRatio по таблицам                                               |
+| `telegramRate`    | 10% | deliveryRate7d (1.0 если telegram не настроен)                                      |
+| `noAlerts`        | 10% | 1.0 если activeAlerts === 0, иначе 0.0                                              |
 
 **Пороги overallStatus:**
+
 - `healthy` — healthScore >= 80
 - `degraded` — healthScore 50-79
 - `critical` — healthScore < 50
@@ -173,13 +176,13 @@ healthScore = (pipelineAvg * 0.5 + completenessAvg * 0.3 + telegramRate * 0.1 + 
 
 ### Pipeline Status — логика определения
 
-| Статус | Условие | Цвет |
-|--------|---------|------|
-| `healthy` | dataLag <= 2x ожидаемый интервал | `green-500` |
-| `warning` | dataLag <= 4x интервал | `yellow-500` |
-| `critical` | dataLag > 8x интервал | `red-500` |
-| `stale` | dataLag <= 8x интервал | `gray-500` |
-| `no_data` | никогда не синхронизировался | `gray-300` |
+| Статус     | Условие                          | Цвет         |
+| ---------- | -------------------------------- | ------------ |
+| `healthy`  | dataLag <= 2x ожидаемый интервал | `green-500`  |
+| `warning`  | dataLag <= 4x интервал           | `yellow-500` |
+| `critical` | dataLag > 8x интервал            | `red-500`    |
+| `stale`    | dataLag <= 8x интервал           | `gray-500`   |
+| `no_data`  | никогда не синхронизировался     | `gray-300`   |
 
 ---
 
@@ -204,16 +207,17 @@ Authorization: Bearer {{token}}
 
 **Query Parameters:**
 
-| Параметр | Тип | Обязательный | По умолчанию | Описание |
-|----------|-----|-------------|--------------|----------|
-| `cabinetId` | UUID | Да | — | ID кабинета |
-| `from` | ISO8601 | Нет | now - 7d | Начало периода |
-| `to` | ISO8601 | Нет | now | Конец периода |
-| `resolution` | string | Нет | auto | `hour` или `day` (авто-определяется по категории) |
-| `pipelines` | string | Нет | все 11 | Запятая-разделённые pipelineId |
-| `locale` | string | Нет | `ru` | Язык: `ru` или `en` |
+| Параметр     | Тип     | Обязательный | По умолчанию | Описание                                          |
+| ------------ | ------- | ------------ | ------------ | ------------------------------------------------- |
+| `cabinetId`  | UUID    | Да           | —            | ID кабинета                                       |
+| `from`       | ISO8601 | Нет          | now - 7d     | Начало периода                                    |
+| `to`         | ISO8601 | Нет          | now          | Конец периода                                     |
+| `resolution` | string  | Нет          | auto         | `hour` или `day` (авто-определяется по категории) |
+| `pipelines`  | string  | Нет          | все 11       | Запятая-разделённые pipelineId                    |
+| `locale`     | string  | Нет          | `ru`         | Язык: `ru` или `en`                               |
 
 **Ограничения:**
+
 - Макс. период: **30 дней** (иначе 400 Bad Request)
 - `from` должен быть < `to` (иначе 400)
 - Hourly resolution авто-переключается на daily при периоде > 7 дней
@@ -297,39 +301,39 @@ type CellStatus = 'success' | 'partial' | 'failed' | 'missed' | 'no_data' | 'pen
 
 ### Cell Status — 7 статусов (цвета для heatmap)
 
-| Статус | Описание | Рекомендуемый цвет | Приоритет |
-|--------|----------|-------------------|-----------|
-| `pending` | Период ещё не завершён | `blue-500` (#3b82f6) | 1 (высший) |
-| `no_data` | Нет данных, период завершён | `gray-100` (#f3f4f6) | 2 |
-| `missed` | Ожидались выполнения, но 0 фактических | `gray-500` (#6b7280) | 3 |
-| `recovered` | Были ошибки, но автовосстановление | `emerald-500` (#10b981) | 4 |
-| `success` | Все выполнения успешны | `green-500` (#22c55e) | 5 |
-| `partial` | Частичный успех (rate >= 50%) | `amber-500` (#f59e0b) | 6 |
-| `failed` | Все выполнения провалились (rate < 50%) | `red-500` (#ef4444) | 7 (низший) |
+| Статус      | Описание                                | Рекомендуемый цвет      | Приоритет  |
+| ----------- | --------------------------------------- | ----------------------- | ---------- |
+| `pending`   | Период ещё не завершён                  | `blue-500` (#3b82f6)    | 1 (высший) |
+| `no_data`   | Нет данных, период завершён             | `gray-100` (#f3f4f6)    | 2          |
+| `missed`    | Ожидались выполнения, но 0 фактических  | `gray-500` (#6b7280)    | 3          |
+| `recovered` | Были ошибки, но автовосстановление      | `emerald-500` (#10b981) | 4          |
+| `success`   | Все выполнения успешны                  | `green-500` (#22c55e)   | 5          |
+| `partial`   | Частичный успех (rate >= 50%)           | `amber-500` (#f59e0b)   | 6          |
+| `failed`    | Все выполнения провалились (rate < 50%) | `red-500` (#ef4444)     | 7 (низший) |
 
 ### 11 Пайплайнов (Pipeline Registry)
 
-| pipelineId | displayName (ru) | Категория | Частота | dataTable |
-|------------|-----------------|-----------|---------|-----------|
-| `fbo_orders_sync` | FBO Заказы | high_frequency | каждые 15 мин | reports_orders |
-| `fbo_sales_sync` | FBO Продажи | high_frequency | каждые 15 мин | reports_sales |
-| `orders_fbs_sync` | FBS Заказы | high_frequency | каждые 5 мин | orders_fbs |
-| `supply_sync` | Поставки | high_frequency | каждые 15 мин | supplies |
-| `adv_sync` | Реклама | daily | ежедневно 07:00 MSK | adv_daily_stats |
-| `daily_sales_sync` | Ежедневные продажи | daily | ежедневно 06:00 MSK | daily_sales_raw |
-| `stocks_sync` | Остатки на складах | daily | ежедневно 06:00 MSK | inventory_snapshots |
-| `paid_storage_import` | Платное хранение | daily | ежедневно 06:00 MSK | paid_storage_daily |
-| `product_imt_sync` | Товары (IMT) | daily | ежедневно 06:00 MSK | — |
-| `finances_weekly_ingest` | Финансовый отчёт | weekly | понедельник | wb_finance_raw |
-| `daily_stocks_sync` | Покрытие остатков | daily | ежедневно 03:00 MSK | inventory_snapshots |
+| pipelineId               | displayName (ru)   | Категория      | Частота             | dataTable           |
+| ------------------------ | ------------------ | -------------- | ------------------- | ------------------- |
+| `fbo_orders_sync`        | FBO Заказы         | high_frequency | каждые 15 мин       | reports_orders      |
+| `fbo_sales_sync`         | FBO Продажи        | high_frequency | каждые 15 мин       | reports_sales       |
+| `orders_fbs_sync`        | FBS Заказы         | high_frequency | каждые 5 мин        | orders_fbs          |
+| `supply_sync`            | Поставки           | high_frequency | каждые 15 мин       | supplies            |
+| `adv_sync`               | Реклама            | daily          | ежедневно 07:00 MSK | adv_daily_stats     |
+| `daily_sales_sync`       | Ежедневные продажи | daily          | ежедневно 06:00 MSK | daily_sales_raw     |
+| `stocks_sync`            | Остатки на складах | daily          | ежедневно 06:00 MSK | inventory_snapshots |
+| `paid_storage_import`    | Платное хранение   | daily          | ежедневно 06:00 MSK | paid_storage_daily  |
+| `product_imt_sync`       | Товары (IMT)       | daily          | ежедневно 06:00 MSK | —                   |
+| `finances_weekly_ingest` | Финансовый отчёт   | weekly         | понедельник         | wb_finance_raw      |
+| `daily_stocks_sync`      | Покрытие остатков  | daily          | ежедневно 03:00 MSK | inventory_snapshots |
 
 ### Размер ответа (оценка)
 
-| Сценарий | Период | Примерный размер |
-|----------|--------|-----------------|
-| 7 дней, hourly, 4 HF пайплайна | 4 × 168 cells + 7 daily × 7 cells | ~25 KB |
-| 7 дней, daily only, все 11 | 11 × 7 cells | ~5 KB |
-| 30 дней, daily, все 11 | 11 × 30 cells | ~18 KB |
+| Сценарий                       | Период                            | Примерный размер |
+| ------------------------------ | --------------------------------- | ---------------- |
+| 7 дней, hourly, 4 HF пайплайна | 4 × 168 cells + 7 daily × 7 cells | ~25 KB           |
+| 7 дней, daily only, все 11     | 11 × 7 cells                      | ~5 KB            |
+| 30 дней, daily, все 11         | 11 × 30 cells                     | ~18 KB           |
 
 ---
 
@@ -348,10 +352,10 @@ Authorization: Bearer {{token}}
 
 **Query Parameters:**
 
-| Параметр | Тип | Обязательный | По умолчанию | Описание |
-|----------|-----|-------------|--------------|----------|
-| `cabinetId` | UUID | Да | — | ID кабинета |
-| `days` | number | Нет | `7` | Период статистики (макс. 30) |
+| Параметр    | Тип    | Обязательный | По умолчанию | Описание                     |
+| ----------- | ------ | ------------ | ------------ | ---------------------------- |
+| `cabinetId` | UUID   | Да           | —            | ID кабинета                  |
+| `days`      | number | Нет          | `7`          | Период статистики (макс. 30) |
 
 **Важно:** Этот эндпоинт также использует `userId` из JWT токена для поиска привязки Telegram. Поэтому данные binding-блока привязаны к конкретному пользователю.
 
@@ -420,12 +424,12 @@ interface TelegramHealthResponse {
 
 ### Bot Status — 4 состояния
 
-| Статус | Условие | UI |
-|--------|---------|-----|
-| `active` | Бот работает, привязка подтверждена, доставка ОК | Зелёный индикатор |
-| `degraded` | >50% ошибок доставки за последний час | Жёлтый индикатор |
-| `offline` | Telegram бот отключён в конфигурации | Красный индикатор |
-| `not_configured` | Бот включён, но нет подтверждённой привязки | Серый индикатор + CTA "Настроить" |
+| Статус           | Условие                                          | UI                                |
+| ---------------- | ------------------------------------------------ | --------------------------------- |
+| `active`         | Бот работает, привязка подтверждена, доставка ОК | Зелёный индикатор                 |
+| `degraded`       | >50% ошибок доставки за последний час            | Жёлтый индикатор                  |
+| `offline`        | Telegram бот отключён в конфигурации             | Красный индикатор                 |
+| `not_configured` | Бот включён, но нет подтверждённой привязки      | Серый индикатор + CTA "Настроить" |
 
 ---
 
@@ -478,11 +482,11 @@ function useGridData(cabinetId: string, from: string, to: string) {
 
 ### Коды ошибок
 
-| HTTP Code | Причина | Действие на Frontend |
-|-----------|---------|---------------------|
-| 400 | Невалидные параметры (период > 30 дней, from > to) | Показать validation error |
-| 401 | Невалидный/отсутствующий JWT | Redirect на login |
-| 403 | Нет доступа к кабинету | Показать "Доступ запрещён" |
+| HTTP Code | Причина                                            | Действие на Frontend       |
+| --------- | -------------------------------------------------- | -------------------------- |
+| 400       | Невалидные параметры (период > 30 дней, from > to) | Показать validation error  |
+| 401       | Невалидный/отсутствующий JWT                       | Redirect на login          |
+| 403       | Нет доступа к кабинету                             | Показать "Доступ запрещён" |
 
 ### Формат ошибок
 
@@ -563,27 +567,28 @@ monitoring/
 
 ### Backend References
 
-| Ресурс | Расположение | Описание |
-|--------|-------------|----------|
+| Ресурс                      | Расположение                                                                                                    | Описание                                            |
+| --------------------------- | --------------------------------------------------------------------------------------------------------------- | --------------------------------------------------- |
 | **Frontend Guide (полный)** | [`docs/PIPELINE-HEALTH-DASHBOARD-FRONTEND-GUIDE.md`](../../../docs/PIPELINE-HEALTH-DASHBOARD-FRONTEND-GUIDE.md) | UI rendering code, React компоненты, цвета, tooltip |
-| **API Paths Reference** | [`docs/API-PATHS-REFERENCE.md`](../../../docs/API-PATHS-REFERENCE.md) | Все эндпоинты backend |
-| **Test API** | [`test-api/17-monitoring.http`](../../../test-api/17-monitoring.http) | 34 HTTP теста для проверки |
-| **Swagger UI** | `http://localhost:3000/api` | Live API документация |
-| **DTO файлы** | `src/monitoring/dto/` | TypeScript интерфейсы backend |
-| **Pipeline Registry** | `src/monitoring/pipeline-registry.ts` | 11 пайплайнов: ID, cron, таблицы |
-| **Controller** | `src/monitoring/monitoring.controller.ts` | Все 3 эндпоинта |
+| **API Paths Reference**     | [`docs/API-PATHS-REFERENCE.md`](../../../docs/API-PATHS-REFERENCE.md)                                           | Все эндпоинты backend                               |
+| **Test API**                | [`test-api/17-monitoring.http`](../../../test-api/17-monitoring.http)                                           | 34 HTTP теста для проверки                          |
+| **Swagger UI**              | `http://localhost:3000/api`                                                                                     | Live API документация                               |
+| **DTO файлы**               | `src/monitoring/dto/`                                                                                           | TypeScript интерфейсы backend                       |
+| **Pipeline Registry**       | `src/monitoring/pipeline-registry.ts`                                                                           | 11 пайплайнов: ID, cron, таблицы                    |
+| **Controller**              | `src/monitoring/monitoring.controller.ts`                                                                       | Все 3 эндпоинта                                     |
 
 ### Frontend References
 
-| Ресурс | Расположение |
-|--------|-------------|
-| API Client | `src/lib/api-client.ts` |
-| Routes | `src/lib/routes.ts` |
+| Ресурс              | Расположение                                      |
+| ------------------- | ------------------------------------------------- |
+| API Client          | `src/lib/api-client.ts`                           |
+| Routes              | `src/lib/routes.ts`                               |
 | Query Hooks Pattern | `src/hooks/` (пример: `use-inventory-summary.ts`) |
 
 ### OpenMemory
 
 Все данные Epic 67 загружены в OpenMemory. Для поиска:
+
 ```bash
 # Через MCP tools
 search_memory("[API] Epic-67")         # 3 API эндпоинта

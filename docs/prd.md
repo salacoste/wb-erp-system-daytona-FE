@@ -26,9 +26,9 @@ This frontend application serves as the user interface layer for a fully functio
 
 ### Change Log
 
-| Date | Version | Description | Author |
-|------|---------|-------------|--------|
-| 2025-01-20 | 1.0 | Initial PRD creation based on Project Brief | John (PM) |
+| Date       | Version | Description                                 | Author    |
+| ---------- | ------- | ------------------------------------------- | --------- |
+| 2025-01-20 | 1.0     | Initial PRD creation based on Project Brief | John (PM) |
 
 ---
 
@@ -136,6 +136,7 @@ The application targets web browsers with responsive design, optimized primarily
 Based on analysis of target users and their workflows, the following key insights have been identified:
 
 **Primary User Segment: Business Owners / Entrepreneurs**
+
 - **Profile:** Small to medium-sized businesses selling on Wildberries, managing 50-5000 SKUs, monthly revenue 500K-50M RUB
 - **Current Pain Points:**
   - Manually download and process Wildberries financial reports weekly/monthly
@@ -150,6 +151,7 @@ Based on analysis of target users and their workflows, the following key insight
   - Make informed decisions about product portfolio management
 
 **Secondary User Segment: Financial Directors / CFOs**
+
 - **Profile:** Financial professionals in organizations selling on Wildberries, typically working with 1000+ SKUs
 - **Current Pain Points:**
   - Need comprehensive financial overviews and summaries
@@ -164,12 +166,14 @@ Based on analysis of target users and their workflows, the following key insight
 ### Competitive Analysis
 
 **Existing Solutions Fall Short Because:**
+
 - Generic financial tools don't understand Wildberries-specific data structures
 - Spreadsheet-based solutions are error-prone and don't scale
 - No integrated solution that combines data parsing, COGS management, and margin calculation
 - Existing tools lack the specific workflows needed for marketplace sellers
 
 **Key Differentiators:**
+
 - Marketplace-specific: Built specifically for Wildberries sellers
 - Automated workflows: Onboarding flow that automatically processes historical data
 - Real-time calculations: Automatic margin calculation triggered by COGS assignment
@@ -184,6 +188,7 @@ Based on analysis of target users and their workflows, the following key insight
 **Entry Point:** User lands on registration page after signing up or being invited
 
 **Primary Path:**
+
 1. **Registration** → User enters email and password
    - **Decision Point:** If email already exists → Show error, allow retry
    - **Exit Point:** Redirect to login page on success
@@ -204,6 +209,7 @@ Based on analysis of target users and their workflows, the following key insight
    - **Exit Point:** User proceeds to COGS assignment or explores dashboard
 
 **Alternative Paths:**
+
 - **Skip Token (if allowed):** User can skip WB token input and add it later
 - **Processing Timeout:** If processing takes > 10 minutes, allow user to navigate away and return later
 - **Error Recovery:** If any step fails, user can retry from that step without restarting
@@ -217,6 +223,7 @@ Based on analysis of target users and their workflows, the following key insight
 **Entry Point:** User navigates to COGS Management from dashboard or navigation menu
 
 **Primary Path:**
+
 1. **Product List View** → User sees list of products without COGS
    - **Decision Point:** If no products → Show empty state
    - **Decision Point:** If many products → Show search/filter options
@@ -235,6 +242,7 @@ Based on analysis of target users and their workflows, the following key insight
    - **Exit Point:** User can assign more COGS or navigate away
 
 **Alternative Paths:**
+
 - **Cancel:** User can cancel at any point before saving
 - **Bulk Assignment:** User can switch to bulk assignment mode
 - **Edit Existing:** User can edit previously assigned COGS values
@@ -248,6 +256,7 @@ Based on analysis of target users and their workflows, the following key insight
 **Entry Point:** User selects "Bulk Assignment" option in COGS Management
 
 **Primary Path:**
+
 1. **Product Selection Interface** → User sees product list with checkboxes
    - **Decision Point:** If no products → Show empty state
    - **Decision Point:** User can select all, select by filter, or manual selection
@@ -268,6 +277,7 @@ Based on analysis of target users and their workflows, the following key insight
    - **Exit Point:** User can retry failed items or navigate away
 
 **Alternative Paths:**
+
 - **Cancel:** User can cancel before confirmation
 - **Retry Failed:** User can retry failed assignments individually
 - **Switch to Single:** User can switch to single product mode
@@ -281,6 +291,7 @@ Based on analysis of target users and their workflows, the following key insight
 **Entry Point:** User logs in and lands on dashboard
 
 **Primary Path:**
+
 1. **Dashboard Load** → System loads key metrics (Total Payable, Revenue)
    - **Decision Point:** If data unavailable → Show loading state, then error or empty state
    - **Exit Point:** Dashboard displays with metrics
@@ -298,6 +309,7 @@ Based on analysis of target users and their workflows, the following key insight
    - **Exit Point:** Navigate to selected analytics view
 
 **Alternative Paths:**
+
 - **Quick COGS Assignment:** User can navigate directly to COGS management from dashboard
 - **Financial Summary:** User can navigate to financial summary view
 - **Settings:** User can access settings from navigation
@@ -399,6 +411,7 @@ Based on analysis of target users and their workflows, the following key insight
 ### Error Recovery Patterns
 
 **General Error Handling:**
+
 - All errors show user-friendly messages in Russian (UI language)
 - Technical error details logged in English for debugging
 - Retry mechanisms available where appropriate
@@ -413,13 +426,15 @@ Based on analysis of target users and their workflows, the following key insight
 ### Core Data Entities
 
 #### User Entity
+
 - **Properties:** id, email, password_hash, created_at, updated_at
-- **Relationships:** 
+- **Relationships:**
   - One-to-Many with Cabinet
   - One-to-Many with Session
 - **Frontend State:** Stored in authentication context/state
 
 #### Cabinet Entity
+
 - **Properties:** id, name, user_id, wb_token (encrypted), created_at, updated_at
 - **Relationships:**
   - Many-to-One with User
@@ -428,6 +443,7 @@ Based on analysis of target users and their workflows, the following key insight
 - **Frontend State:** Stored in user context, used in API headers (X-Cabinet-Id)
 
 #### Product Entity
+
 - **Properties:** id, cabinet_id, sku, name, brand, category, cogs, revenue, margin, created_at, updated_at
 - **Relationships:**
   - Many-to-One with Cabinet
@@ -435,6 +451,7 @@ Based on analysis of target users and their workflows, the following key insight
 - **Frontend State:** Fetched from API, cached in component state or global state
 
 #### FinancialReport Entity
+
 - **Properties:** id, cabinet_id, period_start, period_end, total_revenue, total_payable, status, created_at, updated_at
 - **Relationships:**
   - Many-to-One with Cabinet
@@ -442,12 +459,14 @@ Based on analysis of target users and their workflows, the following key insight
 - **Frontend State:** Fetched from API, displayed in dashboard and summary views
 
 #### COGS Assignment Entity (Frontend Model)
+
 - **Properties:** product_id, cogs_value, assigned_at, assigned_by (user_id)
 - **Relationships:**
   - Many-to-One with Product
 - **Frontend State:** Form state during assignment, then persisted via API
 
 #### Margin Calculation (Computed)
+
 - **Properties:** product_id, revenue, cogs, margin_percentage, margin_amount
 - **Relationships:**
   - Derived from Product (revenue, cogs)
@@ -456,22 +475,26 @@ Based on analysis of target users and their workflows, the following key insight
 ### Data Flow Patterns
 
 **Authentication Flow:**
+
 1. User credentials → API → JWT token → Frontend storage (httpOnly cookie or secure localStorage)
 2. Token included in all subsequent API requests
 3. Cabinet ID stored in user context after cabinet creation
 
 **Onboarding Data Flow:**
+
 1. Cabinet creation → API → Cabinet ID → Frontend state
 2. WB token → API → Validation → Processing trigger
 3. Processing status → Polling API → Status updates → Frontend display
 4. Processed data → API → Products, FinancialReports → Frontend state
 
 **COGS Assignment Flow:**
+
 1. Product list → API → Products without COGS → Frontend display
 2. COGS input → Form validation → API → Save → Backend calculation
 3. Margin calculation → Backend → Updated product data → Frontend refresh
 
 **Dashboard Data Flow:**
+
 1. Dashboard load → Multiple API calls (metrics, expenses, trends) → Parallel fetch
 2. Data aggregation → Frontend state → Component rendering
 3. Real-time updates → Polling or WebSocket (future) → State updates
@@ -479,6 +502,7 @@ Based on analysis of target users and their workflows, the following key insight
 ### Data Storage Strategy
 
 **Frontend State Management:**
+
 - **Authentication State:** React Context or Zustand store (to be determined in architecture)
 - **User/Cabinet Context:** Global state (Context or Zustand)
 - **Product Data:** Component-level state with API caching
@@ -486,12 +510,14 @@ Based on analysis of target users and their workflows, the following key insight
 - **Form State:** Local component state (COGS assignment forms)
 
 **Data Persistence:**
+
 - **JWT Token:** httpOnly cookie (preferred) or secure localStorage
 - **Cabinet ID:** Stored in user context/state, included in API headers
 - **No Local Database:** All data fetched from backend API
 - **Caching Strategy:** To be determined in architecture (React Query, SWR, or custom)
 
 **Data Validation:**
+
 - **Client-side:** Form validation for COGS inputs (numeric, positive)
 - **Server-side:** Backend validates all data, frontend displays validation errors
 - **Type Safety:** TypeScript interfaces for all data entities
@@ -511,6 +537,7 @@ The frontend follows a client-side application architecture built on Next.js, co
 ### Testing Requirements
 
 The project requires a full testing pyramid approach:
+
 - Unit tests for components, utilities, and business logic
 - Integration tests for API interactions and data flow
 - End-to-end tests for critical user workflows (onboarding, COGS assignment, dashboard interactions)
@@ -547,15 +574,19 @@ Given the financial data nature and critical workflows, comprehensive testing is
 ## Epic List
 
 ### Epic 1: Foundation & Authentication
+
 Establish project infrastructure, authentication system, and core routing to enable secure user access to the application.
 
 ### Epic 2: Onboarding & Initial Data Setup
+
 Enable new users to complete onboarding (cabinet creation, WB token setup) and view their initial processed data from the backend.
 
 ### Epic 3: Dashboard & Financial Overview
+
 Provide a main dashboard with key financial metrics, expense breakdowns, trend visualizations, and basic financial summary views for business decision-making.
 
 ### Epic 4: COGS Management & Margin Analysis
+
 Enable users to assign COGS to products (single and bulk) and view automatic margin calculations across multiple analytical dimensions.
 
 ---
@@ -574,6 +605,7 @@ Establish the foundational project infrastructure including Next.js setup, TypeS
 **so that** I have a solid foundation for building the application with proper code quality standards.
 
 **Acceptance Criteria:**
+
 1. Next.js project initialized with TypeScript configuration
 2. ESLint configured with max-lines-per-file rule set to 200
 3. Project structure follows modular component architecture with feature-based folder organization
@@ -592,6 +624,7 @@ Establish the foundational project infrastructure including Next.js setup, TypeS
 **so that** I can access the WB Repricer System.
 
 **Acceptance Criteria:**
+
 1. Registration form displays with email and password fields
 2. Form validates email format and password requirements
 3. Registration API endpoint is called with proper request format
@@ -608,6 +641,7 @@ Establish the foundational project infrastructure including Next.js setup, TypeS
 **so that** I can access my account and dashboard.
 
 **Acceptance Criteria:**
+
 1. Login form displays with email and password fields
 2. Form validates input before submission
 3. Login API endpoint is called with credentials
@@ -625,6 +659,7 @@ Establish the foundational project infrastructure including Next.js setup, TypeS
 **so that** my account remains secure and I can end my session when done.
 
 **Acceptance Criteria:**
+
 1. JWT token is validated on protected routes
 2. User is redirected to login if token is invalid or expired
 3. Logout functionality clears stored token and session data
@@ -641,6 +676,7 @@ Establish the foundational project infrastructure including Next.js setup, TypeS
 **so that** all API calls include proper JWT token and Cabinet ID headers without code duplication.
 
 **Acceptance Criteria:**
+
 1. API client service is created with centralized request handling
 2. JWT token is automatically included in Authorization header for all requests
 3. Cabinet ID is included in X-Cabinet-Id header when available (from user context)
@@ -666,6 +702,7 @@ Enable new users to complete the onboarding process by creating a cabinet, provi
 **so that** I can organize my Wildberries business data.
 
 **Acceptance Criteria:**
+
 1. Cabinet creation form displays with required fields (cabinet name at minimum)
 2. Form validates input before submission
 3. Cabinet creation API endpoint is called with proper request format
@@ -685,6 +722,7 @@ Enable new users to complete the onboarding process by creating a cabinet, provi
 **so that** the system can automatically fetch and process my financial data.
 
 **Acceptance Criteria:**
+
 1. WB token input form displays with clear instructions
 2. Token input field accepts the required token format
 3. Form validates token format before submission (if format validation is possible)
@@ -703,6 +741,7 @@ Enable new users to complete the onboarding process by creating a cabinet, provi
 **so that** I understand what the system is doing and when my data will be ready.
 
 **Acceptance Criteria:**
+
 1. Processing status screen displays after WB token is saved
 2. Status indicators show progress for: product parsing (3 months historical) and financial report loading
 3. Progress updates are displayed in real-time or via polling mechanism
@@ -721,6 +760,7 @@ Enable new users to complete the onboarding process by creating a cabinet, provi
 **so that** I can verify the system has successfully loaded my information.
 
 **Acceptance Criteria:**
+
 1. Dashboard or data summary displays after processing completes
 2. Product count is displayed showing number of products parsed
 3. Financial data summary shows key metrics (if available)
@@ -745,6 +785,7 @@ Provide users with a main dashboard featuring key financial metrics, expense bre
 **so that** I can access all major features of the application.
 
 **Acceptance Criteria:**
+
 1. Dashboard layout displays with navigation menu/sidebar
 2. Navigation includes links to: Dashboard, COGS Management, Analytics, Settings
 3. Layout is responsive and works on desktop, tablet, and mobile
@@ -761,6 +802,7 @@ Provide users with a main dashboard featuring key financial metrics, expense bre
 **so that** I can quickly understand my financial position at a glance.
 
 **Acceptance Criteria:**
+
 1. Large metric card displays "Total Payable" with formatted currency value (RUB)
 2. Large metric card displays "Revenue" with formatted currency value (RUB)
 3. Metric cards use appropriate color coding (Blue for primary metrics)
@@ -779,6 +821,7 @@ Provide users with a main dashboard featuring key financial metrics, expense bre
 **so that** I can understand where my money is being spent.
 
 **Acceptance Criteria:**
+
 1. Expense breakdown chart/graph displays on dashboard
 2. Visualization shows different expense categories
 3. Chart uses appropriate visualization type (bar chart, pie chart, or other as per design)
@@ -797,6 +840,7 @@ Provide users with a main dashboard featuring key financial metrics, expense bre
 **so that** I can identify patterns and trends in my business performance.
 
 **Acceptance Criteria:**
+
 1. Trend graph displays showing metric changes over time period
 2. Graph shows at least one key metric (Revenue, Total Payable, or both)
 3. Time period is displayed (weeks, months as available from backend)
@@ -815,6 +859,7 @@ Provide users with a main dashboard featuring key financial metrics, expense bre
 **so that** I can analyze the overall financial position.
 
 **Acceptance Criteria:**
+
 1. Financial summary page/section displays with overview of financial data
 2. Key metrics are displayed in organized format
 3. Basic filtering capabilities are available (by time period, category if applicable)
@@ -839,6 +884,7 @@ Enable COGS (Cost of Goods Sold) management functionality with both single and b
 **so that** I can set the cost basis for margin calculations.
 
 **Acceptance Criteria:**
+
 1. COGS assignment interface displays product list or search functionality
 2. User can select a product to assign COGS
 3. COGS input field accepts numeric values with decimal support
@@ -857,6 +903,7 @@ Enable COGS (Cost of Goods Sold) management functionality with both single and b
 **so that** I can efficiently set costs for my entire product catalog.
 
 **Acceptance Criteria:**
+
 1. Bulk COGS assignment interface allows selection of multiple products
 2. User can select products via checkboxes or multi-select
 3. Bulk COGS input field allows entering a single value or importing from file (file import out of scope for MVP - manual entry only)
@@ -875,6 +922,7 @@ Enable COGS (Cost of Goods Sold) management functionality with both single and b
 **so that** I can correct mistakes and ensure data accuracy.
 
 **Acceptance Criteria:**
+
 1. COGS input validates for numeric format (positive numbers, decimal support)
 2. Real-time validation feedback is provided as user types
 3. Clear error messages explain validation failures
@@ -891,6 +939,7 @@ Enable COGS (Cost of Goods Sold) management functionality with both single and b
 **so that** I can immediately understand product profitability.
 
 **Acceptance Criteria:**
+
 1. After COGS assignment, margin calculation is automatically triggered
 2. Margin values are displayed for products with assigned COGS
 3. Margin is calculated and displayed as percentage
@@ -909,6 +958,7 @@ Enable COGS (Cost of Goods Sold) management functionality with both single and b
 **so that** I can identify which specific products are most profitable.
 
 **Acceptance Criteria:**
+
 1. Margin analysis view displays products organized by SKU
 2. Each SKU shows: product name, COGS, revenue, margin percentage
 3. Data is sortable by margin percentage, revenue, or product name
@@ -925,6 +975,7 @@ Enable COGS (Cost of Goods Sold) management functionality with both single and b
 **so that** I can understand profitability at a higher level for strategic decisions.
 
 **Acceptance Criteria:**
+
 1. Margin analysis view provides brand-level aggregation
 2. Margin analysis view provides category-level aggregation
 3. Aggregated metrics show: total revenue, total COGS, average margin, product count
@@ -943,6 +994,7 @@ Enable COGS (Cost of Goods Sold) management functionality with both single and b
 **so that** I can track profitability changes and identify trends.
 
 **Acceptance Criteria:**
+
 1. Margin analysis view allows selection of time period (weeks, months)
 2. Time period data displays margin trends over selected period
 3. Visualization shows margin changes over time (line chart or similar)
@@ -961,85 +1013,108 @@ Enable COGS (Cost of Goods Sold) management functionality with both single and b
 ### Epic 1: Foundation & Authentication
 
 **Story 1.1** (Project Foundation) → **No dependencies** - Must be completed first
+
 - **Blocks:** All other stories in Epic 1 and all subsequent epics
 
 **Story 1.2** (Registration) → **Depends on:** Story 1.1
+
 - **Blocks:** Story 1.3 (Login requires registration to exist)
 
 **Story 1.3** (Login) → **Depends on:** Story 1.1, Story 1.2
+
 - **Blocks:** Story 1.4 (Session Management), Story 1.5 (API Client), Epic 2 (Onboarding)
 
 **Story 1.4** (Session Management) → **Depends on:** Story 1.1, Story 1.3
+
 - **Blocks:** All protected routes in subsequent epics
 
 **Story 1.5** (API Client) → **Depends on:** Story 1.1, Story 1.3
+
 - **Blocks:** All API-dependent stories in Epic 2, 3, and 4
 - **Note:** Can be developed in parallel with Story 1.4
 
 ### Epic 2: Onboarding & Initial Data Setup
 
 **Story 2.1** (Cabinet Creation) → **Depends on:** Epic 1 complete (authentication required)
+
 - **Blocks:** Story 2.2 (WB Token requires cabinet), Story 2.3 (Processing requires cabinet)
 
 **Story 2.2** (WB Token Input) → **Depends on:** Story 2.1
+
 - **Blocks:** Story 2.3 (Processing requires token)
 
 **Story 2.3** (Data Processing Status) → **Depends on:** Story 2.1, Story 2.2
+
 - **Blocks:** Story 2.4 (Initial Data Display)
 
 **Story 2.4** (Initial Data Display) → **Depends on:** Story 2.3
+
 - **Blocks:** Epic 3 (Dashboard requires data to display)
 
 ### Epic 3: Dashboard & Financial Overview
 
 **Story 3.1** (Dashboard Layout) → **Depends on:** Epic 1, Epic 2 (user must be onboarded)
+
 - **Blocks:** Stories 3.2, 3.3, 3.4, 3.5 (all require layout)
 
 **Story 3.2** (Key Metric Cards) → **Depends on:** Story 3.1, Story 1.5 (API Client)
+
 - **Can be developed in parallel with:** Stories 3.3, 3.4
 
 **Story 3.3** (Expense Breakdown) → **Depends on:** Story 3.1, Story 1.5 (API Client)
+
 - **Can be developed in parallel with:** Stories 3.2, 3.4
 
 **Story 3.4** (Trend Graphs) → **Depends on:** Story 3.1, Story 1.5 (API Client)
+
 - **Can be developed in parallel with:** Stories 3.2, 3.3
 
 **Story 3.5** (Financial Summary) → **Depends on:** Story 3.1, Story 1.5 (API Client)
+
 - **Can be developed in parallel with:** Stories 3.2, 3.3, 3.4
 
 ### Epic 4: COGS Management & Margin Analysis
 
 **Story 4.1** (Single COGS Assignment) → **Depends on:** Epic 1, Epic 2 (requires products from onboarding), Story 1.5 (API Client)
+
 - **Blocks:** Story 4.2 (Bulk builds on single), Story 4.4 (Margin requires COGS)
 
 **Story 4.2** (Bulk COGS Assignment) → **Depends on:** Story 4.1
+
 - **Blocks:** None (can be developed in parallel with Story 4.3)
 
 **Story 4.3** (COGS Validation) → **Depends on:** Story 4.1
+
 - **Can be developed in parallel with:** Story 4.2
 - **Note:** Validation logic should be shared between single and bulk
 
 **Story 4.4** (Margin Calculation Display) → **Depends on:** Story 4.1 (requires COGS to be assigned)
+
 - **Blocks:** Stories 4.5, 4.6, 4.7 (all margin analysis views)
 
 **Story 4.5** (Margin by SKU) → **Depends on:** Story 4.4, Story 1.5 (API Client)
+
 - **Can be developed in parallel with:** Stories 4.6, 4.7
 
 **Story 4.6** (Margin by Brand/Category) → **Depends on:** Story 4.4, Story 1.5 (API Client)
+
 - **Can be developed in parallel with:** Stories 4.5, 4.7
 
 **Story 4.7** (Margin by Time Period) → **Depends on:** Story 4.4, Story 1.5 (API Client)
+
 - **Can be developed in parallel with:** Stories 4.5, 4.6
 
 ### Critical Path Summary
 
 **Minimum Viable Path:**
+
 1. Story 1.1 → Story 1.2 → Story 1.3 → Story 1.5
 2. Story 2.1 → Story 2.2 → Story 2.3 → Story 2.4
 3. Story 3.1 → Story 3.2 (at minimum for basic dashboard)
 4. Story 4.1 → Story 4.4 (at minimum for core value proposition)
 
 **Parallel Development Opportunities:**
+
 - Stories 1.4 and 1.5 can be developed in parallel
 - Stories 3.2, 3.3, 3.4 can be developed in parallel
 - Stories 4.2 and 4.3 can be developed in parallel
@@ -1054,9 +1129,10 @@ Enable COGS (Cost of Goods Sold) management functionality with both single and b
 **Timeline:** 2-3 months post-MVP
 
 **Key Features:**
+
 - **Advanced Date Range Selection:** Custom date range pickers for all analytics views
 - **Comparative Analysis:** Compare performance across different time periods
-- **Export Functionality:** 
+- **Export Functionality:**
   - CSV export for all data tables
   - PDF reports for financial summaries
   - Excel export with formatted charts
@@ -1073,6 +1149,7 @@ Enable COGS (Cost of Goods Sold) management functionality with both single and b
 **Timeline:** 3-4 months post-MVP
 
 **Key Features:**
+
 - **Multi-Cabinet Support:** Users can manage multiple Wildberries cabinets from single account
 - **Cabinet Switching:** Quick switch between cabinets without re-authentication
 - **User Roles & Permissions:**
@@ -1091,6 +1168,7 @@ Enable COGS (Cost of Goods Sold) management functionality with both single and b
 **Timeline:** 4-6 months post-MVP
 
 **Key Features:**
+
 - **Automated COGS Suggestions:** AI-powered suggestions based on historical data and product categories
 - **Pricing Recommendations:** Automated pricing suggestions based on margin targets
 - **Anomaly Detection:** Automatic alerts for unusual patterns (sudden margin drops, revenue spikes)
@@ -1107,6 +1185,7 @@ Enable COGS (Cost of Goods Sold) management functionality with both single and b
 **Timeline:** 6+ months post-MVP
 
 **Key Features:**
+
 - **Native Mobile Apps:** iOS and Android applications
 - **Real-Time Notifications:** Push notifications for important events (processing complete, margin alerts)
 - **WebSocket Integration:** Real-time data updates without page refresh
@@ -1120,30 +1199,35 @@ Enable COGS (Cost of Goods Sold) management functionality with both single and b
 ### Future Enhancement Ideas (Backlog)
 
 **Analytics Enhancements:**
+
 - Heatmaps for margin visualization
 - Advanced chart types (waterfall, sankey diagrams)
 - Custom metric calculations
 - Benchmark comparisons (industry averages)
 
 **Workflow Improvements:**
+
 - Bulk COGS import from CSV/Excel
 - COGS templates for product categories
 - Automated COGS updates based on supplier data
 - Integration with accounting systems
 
 **User Experience:**
+
 - Dark mode
 - Customizable color schemes
 - Multi-language support (beyond Russian)
 - Accessibility enhancements (WCAG AAA)
 
 **Integration & Extensibility:**
+
 - Webhook support for external integrations
 - Zapier/Make.com integrations
 - Chrome extension for quick access
 - Browser bookmarklet for quick actions
 
 **Performance & Scale:**
+
 - Advanced caching strategies
 - CDN integration for static assets
 - Database query optimization
@@ -1166,32 +1250,35 @@ Enable COGS (Cost of Goods Sold) management functionality with both single and b
 
 ### Category Statuses
 
-| Category                         | Status  | Pass Rate | Critical Issues                                    |
-| -------------------------------- | ------- | --------- | --------------------------------------------------- |
-| 1. Problem Definition & Context  | PASS    | 90%       | User research findings not explicitly documented     |
-| 2. MVP Scope Definition          | PASS    | 95%       | Minor: Future enhancements section could be expanded |
-| 3. User Experience Requirements  | PASS    | 95%       | User journeys documented, edge cases covered        |
-| 4. Functional Requirements       | PASS    | 95%       | Well-defined and testable                          |
-| 5. Non-Functional Requirements   | PASS    | 100%      | Comprehensive coverage                              |
-| 6. Epic & Story Structure        | PASS    | 90%       | Stories well-sized, first epic includes setup       |
-| 7. Technical Guidance            | PASS    | 95%       | Clear constraints and assumptions                   |
-| 8. Cross-Functional Requirements | PASS    | 95%       | Data entities defined, relationships mapped         |
-| 9. Clarity & Communication       | PASS    | 90%       | Well-structured, clear language                     |
+| Category                         | Status | Pass Rate | Critical Issues                                      |
+| -------------------------------- | ------ | --------- | ---------------------------------------------------- |
+| 1. Problem Definition & Context  | PASS   | 90%       | User research findings not explicitly documented     |
+| 2. MVP Scope Definition          | PASS   | 95%       | Minor: Future enhancements section could be expanded |
+| 3. User Experience Requirements  | PASS   | 95%       | User journeys documented, edge cases covered         |
+| 4. Functional Requirements       | PASS   | 95%       | Well-defined and testable                            |
+| 5. Non-Functional Requirements   | PASS   | 100%      | Comprehensive coverage                               |
+| 6. Epic & Story Structure        | PASS   | 90%       | Stories well-sized, first epic includes setup        |
+| 7. Technical Guidance            | PASS   | 95%       | Clear constraints and assumptions                    |
+| 8. Cross-Functional Requirements | PASS   | 95%       | Data entities defined, relationships mapped          |
+| 9. Clarity & Communication       | PASS   | 90%       | Well-structured, clear language                      |
 
 ### Detailed Category Analysis
 
 #### 1. Problem Definition & Context (PASS - 90%)
 
 **Strengths:**
+
 - ✅ Clear problem statement in Background Context section
 - ✅ Target users identified (entrepreneurs, financial directors)
 - ✅ Business goals clearly defined with measurable metrics
 - ✅ Impact quantification included (75% time reduction, 80% onboarding completion)
 
 **Gaps:**
+
 - ⚠️ Market context could be more detailed (LOW priority)
 
 **Recommendations:**
+
 - ✅ User research findings section added
 - ✅ Competitive analysis included in User Research Findings
 - Market size/opportunity context can be added if needed (not critical for MVP)
@@ -1199,21 +1286,25 @@ Enable COGS (Cost of Goods Sold) management functionality with both single and b
 #### 2. MVP Scope Definition (PASS - 95%)
 
 **Strengths:**
+
 - ✅ Core functionality clearly distinguished (4 epics with focused scope)
 - ✅ Each epic ties to specific user needs
 - ✅ Features described from user perspective
 - ✅ Out-of-scope items mentioned (file import, export functionality)
 
 **Gaps:**
+
 - ⚠️ Rationale for scope decisions could be more explicit (LOW priority)
 
 **Recommendations:**
+
 - ✅ Post-MVP Vision section added with 5 phases
 - Rationale for deferred features documented in Post-MVP Vision (e.g., file import deferred to Phase 2)
 
 #### 3. User Experience Requirements (PASS - 95%)
 
 **Strengths:**
+
 - ✅ UX vision clearly articulated
 - ✅ Core screens and views identified
 - ✅ Interaction paradigms defined
@@ -1225,14 +1316,17 @@ Enable COGS (Cost of Goods Sold) management functionality with both single and b
 - ✅ Error recovery approaches detailed
 
 **Gaps:**
+
 - ⚠️ Visual diagrams not included (will be in UX specification)
 
 **Recommendations:**
+
 - Visual user flow diagrams will be created in UX specification phase
 
 #### 4. Functional Requirements (PASS - 95%)
 
 **Strengths:**
+
 - ✅ All MVP features documented (25 functional requirements)
 - ✅ Requirements are specific and testable
 - ✅ Requirements focus on WHAT not HOW
@@ -1240,15 +1334,18 @@ Enable COGS (Cost of Goods Sold) management functionality with both single and b
 - ✅ Complex features broken into manageable stories
 
 **Gaps:**
+
 - ⚠️ Feature priority/criticality not explicitly indicated (LOW priority - all requirements are MVP)
 
 **Recommendations:**
+
 - All functional requirements are MVP-critical (P0)
 - Chart types will be specified in UX specification (appropriate to defer)
 
 #### 5. Non-Functional Requirements (PASS - 100%)
 
 **Strengths:**
+
 - ✅ Comprehensive coverage of performance, security, reliability
 - ✅ Specific, measurable targets (3s load time, 2s dashboard load)
 - ✅ Technical constraints clearly documented
@@ -1256,14 +1353,17 @@ Enable COGS (Cost of Goods Sold) management functionality with both single and b
 - ✅ Code quality standards specified
 
 **Gaps:**
+
 - None identified
 
 **Recommendations:**
+
 - Excellent coverage, no changes needed
 
 #### 6. Epic & Story Structure (PASS - 90%)
 
 **Strengths:**
+
 - ✅ Epics represent cohesive functionality units
 - ✅ Epics focus on user/business value
 - ✅ Epic goals clearly articulated
@@ -1273,15 +1373,18 @@ Enable COGS (Cost of Goods Sold) management functionality with both single and b
 - ✅ Stories are independent where possible
 
 **Gaps:**
+
 - None identified
 
 **Recommendations:**
+
 - ✅ Story dependencies section added with complete mapping
 - ✅ Critical path and parallel development opportunities identified
 
 #### 7. Technical Guidance (PASS - 95%)
 
 **Strengths:**
+
 - ✅ Initial architecture direction provided (Next.js, TypeScript)
 - ✅ Technical constraints clearly communicated (200-line files, ESLint)
 - ✅ Integration points identified (backend API, 33+ endpoints)
@@ -1291,15 +1394,18 @@ Enable COGS (Cost of Goods Sold) management functionality with both single and b
 - ✅ Areas requiring architect investigation listed in Technical Assumptions
 
 **Gaps:**
+
 - ⚠️ Trade-offs for key technical decisions partially documented (Next.js rationale could be expanded)
 
 **Recommendations:**
+
 - Next.js rationale: Server-side rendering for performance, built-in routing, excellent TypeScript support, large ecosystem. Trade-offs will be detailed in Architecture document.
 - State management trade-offs documented in Technical Assumptions (Context vs Zustand vs Redux - to be determined)
 
 #### 8. Cross-Functional Requirements (PASS - 95%)
 
 **Strengths:**
+
 - ✅ Integration requirements well-documented (backend API, authentication)
 - ✅ API requirements specified (JWT, Cabinet ID header)
 - ✅ Data exchange formats specified (REST API, JSON)
@@ -1309,14 +1415,17 @@ Enable COGS (Cost of Goods Sold) management functionality with both single and b
 - ✅ Data persistence strategy clarified (JWT in httpOnly cookie, Cabinet ID in context, no local DB)
 
 **Gaps:**
+
 - ⚠️ Data retention policies not addressed (frontend doesn't persist data, backend handles retention)
 
 **Recommendations:**
+
 - Data retention is backend concern, frontend fetches fresh data from API
 
 #### 9. Clarity & Communication (PASS - 90%)
 
 **Strengths:**
+
 - ✅ Clear, consistent language throughout
 - ✅ Well-structured and organized
 - ✅ Technical terms defined where necessary
@@ -1324,29 +1433,35 @@ Enable COGS (Cost of Goods Sold) management functionality with both single and b
 - ✅ User flows documented in text format (visual diagrams will be in UX specification)
 
 **Gaps:**
+
 - ⚠️ Stakeholder alignment section not present (LOW priority)
 
 **Recommendations:**
+
 - Visual user flow diagrams will be created in UX specification phase
 - Stakeholder section can be added if needed for approval process (currently not required)
 
 ### Top Issues by Priority
 
 #### BLOCKERS (Must Fix Before Architect Can Proceed)
+
 - None identified
 
 #### HIGH (Should Fix for Quality) - ✅ ALL ADDRESSED
+
 1. ✅ **User Journey Flows** - Added detailed user journey maps for 4 critical workflows (Onboarding, Single COGS, Bulk COGS, Dashboard)
 2. ✅ **Data Requirements** - Defined data entities (User, Cabinet, Product, FinancialReport, COGS, Margin), relationships, and state management approach
 3. ✅ **Edge Cases** - Documented 16 key edge cases across authentication, onboarding, COGS assignment, and data display scenarios
 
 #### MEDIUM (Would Improve Clarity) - ✅ ALL ADDRESSED
+
 1. ✅ **User Research Findings** - Added comprehensive user research summary with pain points, needs, and competitive analysis
 2. ✅ **Story Dependencies** - Added complete dependency mapping for all stories across all epics with critical path identification
 3. ✅ **Technical Trade-offs** - Addressed (state management options documented, Next.js rationale noted - detailed trade-offs will be in Architecture document)
 4. ✅ **Future Enhancements** - Expanded post-MVP vision with 5 phases and detailed backlog
 
 #### LOW (Nice to Have) - Optional Enhancements
+
 1. ✅ **Competitive Analysis** - Added in User Research Findings section
 2. ⚠️ **Diagrams** - Visual diagrams will be created in UX specification phase (text flows documented in PRD)
 3. ⚠️ **Stakeholder Section** - Can be added if approval process requires it (currently not critical)
@@ -1356,19 +1471,23 @@ Enable COGS (Cost of Goods Sold) management functionality with both single and b
 **Scope Appropriateness:** Just Right
 
 **Features That Might Be Cut for True MVP:**
+
 - Story 4.6 & 4.7 (Brand/Category/Time Period Analysis) - Could be deferred to post-MVP
 - Story 3.5 (Financial Summary View) - Could be simplified or deferred
 - Advanced filtering in multiple views - Basic filtering may suffice
 
 **Missing Features That Are Essential:**
+
 - None identified - MVP scope appears complete
 
 **Complexity Concerns:**
+
 - Bulk COGS assignment (Story 4.2) - Moderate complexity, well-scoped
 - Real-time data processing status (Story 2.3) - Requires polling/WebSocket, manageable
 - Multiple margin analysis views (Stories 4.5-4.7) - Could be simplified for MVP
 
 **Timeline Realism:**
+
 - 4 epics with 19 stories total
 - Estimated 38-76 hours of development (2-4 hours per story)
 - Realistic for MVP timeline if team is properly resourced
@@ -1376,17 +1495,20 @@ Enable COGS (Cost of Goods Sold) management functionality with both single and b
 ### Technical Readiness
 
 **Clarity of Technical Constraints:** Excellent
+
 - 200-line file constraint clearly stated
 - TypeScript, Next.js requirements explicit
 - ESLint rules specified
 - Performance targets defined
 
 **Identified Technical Risks:**
+
 - State management approach not yet decided (to be determined in architecture)
 - Real-time data processing status may require WebSocket or polling strategy
 - Bulk operations may have performance implications
 
 **Areas Needing Architect Investigation:**
+
 1. State management solution selection (Context vs Zustand vs Redux)
 2. Real-time data update strategy (polling vs WebSocket)
 3. Data caching and persistence strategy
@@ -1396,18 +1518,21 @@ Enable COGS (Cost of Goods Sold) management functionality with both single and b
 ### Recommendations
 
 **Immediate Actions (Before Architecture Phase):**
+
 1. Add user journey flows for onboarding and COGS assignment workflows
 2. Define data entities and relationships section
 3. Document key edge cases and error scenarios
 4. Add explicit story dependency notes
 
 **Quality Improvements:**
+
 1. Expand post-MVP vision section
 2. Document technical decision trade-offs
 3. Add user research findings summary
 4. Include competitive positioning if available
 
 **Next Steps:**
+
 1. Address HIGH priority issues (user journeys, data requirements, edge cases)
 2. Proceed to UX Expert for front-end specification
 3. Proceed to Architect for technical architecture design
@@ -1418,6 +1543,7 @@ Enable COGS (Cost of Goods Sold) management functionality with both single and b
 **Status:** READY FOR ARCHITECT
 
 The PRD is comprehensive and well-structured, with clear requirements and appropriate MVP scope. All HIGH and MEDIUM priority gaps have been addressed:
+
 - ✅ User journey flows documented for critical workflows
 - ✅ Data entities and relationships defined
 - ✅ Edge cases and error scenarios documented

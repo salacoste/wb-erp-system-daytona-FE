@@ -8,13 +8,13 @@ chars: 5958
 # Упаковка FBO
 
 Задания [Упаковка FBO](https://selsup.ru/application/task/pack) и [Упаковка с добавлением в заказ FBO](../upakovka-s-dobavleniem-v-zakaz-fbo/index.html) — инструменты, которые помогут быстро упаковать товары на отгрузку в соответствии с заказом.\
-Посмотрите, как селлеры упаковывают свой товар с помощью SelSup. 
+Посмотрите, как селлеры упаковывают свой товар с помощью SelSup.
 
 Что-то сломалось, уже чиним Перезагрузите страницу или попробуйте позже
 
 В этой статье:
 
-- 
+-
 - <a href="#kak-pravilno-upakovat-tovar-dlya-otgruzki-na-marketplejs" rel="nofollow">Как правильно упаковать товар для отгрузки на маркетплейс</a>
 - <a href="#upakovka-fbo" rel="nofollow">Упаковка FBO</a>
 - <a href="#kak-skachat-fajl-s-shk-korobov" rel="nofollow">Как скачать файл с ШК коробов</a>

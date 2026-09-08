@@ -194,15 +194,15 @@ charts/page integration и тесты присутствуют в source.
 
 ## Оставшийся бэклог
 
-| Приоритет | Задача                            | Оценка | Статус                            |
-| --------- | --------------------------------- | ------ | --------------------------------- |
-| **P1**    | Local E2E reliability (Epic 162)  | epic   | 📋 1 done + 9 backlog             |
-| **P1**    | Operator workflows (Epic 163)     | epic   | 📋 6 backlog                      |
-| **P2**    | Boundary/maintenance debt (164)   | epic   | 📋 4 backlog                      |
-| **P2**    | OpenWiki regeneration (165.3)     | story  | ✅ Completes on merge             |
-| **P2**    | Liquidity daily trends (165.4)    | gated  | ⏸ Deferred: backend snapshots     |
-| **P2**    | Per-status backfill retry (165.5) | gated  | ⏸ Deferred: backend endpoints     |
-| **P4**    | Cache Timestamps Display          | 1h     | ℹ️ Optional                       |
+| Приоритет | Задача                            | Оценка | Статус                        |
+| --------- | --------------------------------- | ------ | ----------------------------- |
+| **P1**    | Local E2E reliability (Epic 162)  | epic   | 📋 1 done + 9 backlog         |
+| **P1**    | Operator workflows (Epic 163)     | epic   | 📋 6 backlog                  |
+| **P2**    | Boundary/maintenance debt (164)   | epic   | 📋 4 backlog                  |
+| **P2**    | OpenWiki regeneration (165.3)     | story  | ✅ Completes on merge         |
+| **P2**    | Liquidity daily trends (165.4)    | gated  | ⏸ Deferred: backend snapshots |
+| **P2**    | Per-status backfill retry (165.5) | gated  | ⏸ Deferred: backend endpoints |
+| **P4**    | Cache Timestamps Display          | 1h     | ℹ️ Optional                   |
 
 ---
 
@@ -227,37 +227,37 @@ charts/page integration и тесты присутствуют в source.
 
 ## Полная таблица эпиков
 
-| Epic   | Название                          |  SP | Статус         | Дата                  |
-| ------ | --------------------------------- | --: | -------------- | --------------------- |
-| 1-FE   | Foundation & Authentication       |   — | ✅ Complete    | —                     |
-| 2-FE   | Onboarding & Initial Data Setup   |   — | ✅ Complete    | —                     |
-| 3-FE   | Dashboard & Financial Overview    |   — | ✅ Complete    | —                     |
-| 4-FE   | COGS Management & Margin Analysis |   — | ✅ Complete    | —                     |
-| 5-FE   | COGS History Management           |   — | ✅ Complete    | —                     |
-| 6-FE   | Advanced Analytics & Reporting    |   — | ✅ Complete    | —                     |
-| 24-FE  | Paid Storage Analytics UI         |   — | ✅ Complete    | —                     |
-| 33-FE  | Advertising Analytics UI          |   — | ✅ Complete    | —                     |
-| 34-FE  | Telegram Notifications UI         |   — | ✅ Complete    | —                     |
-| 36-FE  | Product Card Linking UI           |   — | ✅ Complete    | —                     |
-| 37-FE  | Merged Group Table Display UI     |   — | ✅ Complete    | —                     |
-| 40-FE  | Orders UI & WB Status History     |  26 | ✅ Complete    | 2026-01-29            |
-| 42-FE  | Task Handlers Adaptation          |   — | ✅ Complete    | —                     |
-| 44-FE  | Price Calculator UI               |   — | ✅ Complete    | —                     |
-| 51-FE  | FBS Historical Analytics (365d)   |  39 | ✅ Complete    | 2026-02               |
-| 52-FE  | Tariff Settings Admin UI          |   — | ✅ Complete    | —                     |
-| 53-FE  | Supply Management UI              |  34 | ✅ Complete    | 2026-02               |
-| 61-FE  | Dashboard Data Integration        |  49 | ✅ Complete    | 2026-02-02            |
-| 62-FE  | Dashboard UI/UX Presentation      |  29 | ✅ Complete    | 2026-02-02            |
-| 63-FE  | Dashboard Business Logic          |  36 | ✅ Complete    | 2026-02-15            |
-| 65-FE  | Dashboard P&L Layout              |   — | ✅ Complete    | 2026-02-16            |
-| 66-FE  | Tax & VAT Accounting              |  35 | ✅ Complete    | 2026-02-26            |
-| 68-FE  | Monitoring Health Dashboard       |   — | ✅ Complete    | 2026-02-18            |
-| 69-FE  | Buyout Rate Analytics             |  28 | ✅ Complete    | 2026-02-27            |
-| 70-FE  | Validation Fixes                  |  13 | ✅ Complete    | 2026-02-27            |
-| 127-FE | Marketing Phase 3                 |   — | ✅ Complete    | 2026-08-03 reconciled |
-| 162-FE | Trustworthy Local Validation      |   — | 🚧 In progress | 2026-08-03            |
-| 163-FE | Complete Operator Workflows       |   — | 📋 Backlog     | 2026-08-03            |
-| 164-FE | Frontend Boundaries & Maintenance |   — | 📋 Backlog     | 2026-08-03            |
+| Epic   | Название                          |  SP | Статус                | Дата                  |
+| ------ | --------------------------------- | --: | --------------------- | --------------------- |
+| 1-FE   | Foundation & Authentication       |   — | ✅ Complete           | —                     |
+| 2-FE   | Onboarding & Initial Data Setup   |   — | ✅ Complete           | —                     |
+| 3-FE   | Dashboard & Financial Overview    |   — | ✅ Complete           | —                     |
+| 4-FE   | COGS Management & Margin Analysis |   — | ✅ Complete           | —                     |
+| 5-FE   | COGS History Management           |   — | ✅ Complete           | —                     |
+| 6-FE   | Advanced Analytics & Reporting    |   — | ✅ Complete           | —                     |
+| 24-FE  | Paid Storage Analytics UI         |   — | ✅ Complete           | —                     |
+| 33-FE  | Advertising Analytics UI          |   — | ✅ Complete           | —                     |
+| 34-FE  | Telegram Notifications UI         |   — | ✅ Complete           | —                     |
+| 36-FE  | Product Card Linking UI           |   — | ✅ Complete           | —                     |
+| 37-FE  | Merged Group Table Display UI     |   — | ✅ Complete           | —                     |
+| 40-FE  | Orders UI & WB Status History     |  26 | ✅ Complete           | 2026-01-29            |
+| 42-FE  | Task Handlers Adaptation          |   — | ✅ Complete           | —                     |
+| 44-FE  | Price Calculator UI               |   — | ✅ Complete           | —                     |
+| 51-FE  | FBS Historical Analytics (365d)   |  39 | ✅ Complete           | 2026-02               |
+| 52-FE  | Tariff Settings Admin UI          |   — | ✅ Complete           | —                     |
+| 53-FE  | Supply Management UI              |  34 | ✅ Complete           | 2026-02               |
+| 61-FE  | Dashboard Data Integration        |  49 | ✅ Complete           | 2026-02-02            |
+| 62-FE  | Dashboard UI/UX Presentation      |  29 | ✅ Complete           | 2026-02-02            |
+| 63-FE  | Dashboard Business Logic          |  36 | ✅ Complete           | 2026-02-15            |
+| 65-FE  | Dashboard P&L Layout              |   — | ✅ Complete           | 2026-02-16            |
+| 66-FE  | Tax & VAT Accounting              |  35 | ✅ Complete           | 2026-02-26            |
+| 68-FE  | Monitoring Health Dashboard       |   — | ✅ Complete           | 2026-02-18            |
+| 69-FE  | Buyout Rate Analytics             |  28 | ✅ Complete           | 2026-02-27            |
+| 70-FE  | Validation Fixes                  |  13 | ✅ Complete           | 2026-02-27            |
+| 127-FE | Marketing Phase 3                 |   — | ✅ Complete           | 2026-08-03 reconciled |
+| 162-FE | Trustworthy Local Validation      |   — | 🚧 In progress        | 2026-08-03            |
+| 163-FE | Complete Operator Workflows       |   — | 📋 Backlog            | 2026-08-03            |
+| 164-FE | Frontend Boundaries & Maintenance |   — | 📋 Backlog            | 2026-08-03            |
 | 165-FE | Truthful Status & Backend Backlog |   — | ✅ Completes on merge | 2026-08-05            |
 
 **Orders Integrity реализован и покрыт source/unit плюс dedicated local Playwright spec.**

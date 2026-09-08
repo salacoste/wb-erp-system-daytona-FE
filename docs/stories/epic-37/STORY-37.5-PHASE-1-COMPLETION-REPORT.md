@@ -29,6 +29,7 @@ Phase 1 of Story 37.5 is **complete**, delivering comprehensive automated testin
 **Coverage**: All 6 Epic 35 formulas + integration tests
 
 **Test Breakdown**:
+
 - `calculateTotalSales`: 4 tests (sum, empty array, single product, negative sales)
 - `calculateRevenue`: 3 tests (sum, empty array, zero revenue products)
 - `calculateOrganicSales`: 4 tests (subtraction, zero revenue, zero sales, negative result)
@@ -39,12 +40,14 @@ Phase 1 of Story 37.5 is **complete**, delivering comprehensive automated testin
 - **Integration**: 3 tests (all formulas together, zero spend group, single product)
 
 **Key Achievements**:
+
 - 100% formula coverage
 - Edge case testing (division by zero, NaN, negative values)
 - Integration testing validates formulas work together
 - Mock data from Story 37.2 (mockMergedGroup1)
 
 **Test Results**:
+
 ```bash
 ✓ 33 tests passing (3ms)
 ```
@@ -56,22 +59,26 @@ Phase 1 of Story 37.5 is **complete**, delivering comprehensive automated testin
 **Coverage**: All 4 formatting functions
 
 **Test Breakdown**:
+
 - `formatCurrency`: 6 tests (positive, zero, negative, large numbers, small values, no decimals)
 - `formatPercentage`: 5 tests (default 1 decimal, zero, 100%, custom decimals, very small)
 - `formatRevenueWithPercent`: 4 tests (inline format, zero revenue, 100% organic, large revenue)
 - `formatROAS`: 7 tests (2 decimals, null, undefined, zero, very small, >1.0, large)
 
 **Key Achievements**:
+
 - Russian locale formatting validated (non-breaking space `\u00A0`)
 - Edge cases covered (null, undefined, very large/small numbers)
 - Custom format validation (percentage, currency symbol, em dash)
 
 **Test Results**:
+
 ```bash
 ✓ 22 tests passing (12ms)
 ```
 
 **Combined Unit Test Coverage**:
+
 - **Total**: 77 tests (55 + 22)
 - **Pass Rate**: 100% (77/77)
 - **Execution Time**: 15ms total
@@ -86,6 +93,7 @@ Phase 1 of Story 37.5 is **complete**, delivering comprehensive automated testin
 **Test Scenarios**: 7 comprehensive scenarios
 
 **Scenarios**:
+
 1. **Rowspan Cell Display** (AC 1): Tests 3-tier table structure with rowspan spanning all products
 2. **Aggregate Row Metrics** (AC 2): Validates Epic 35 formulas in aggregate row
 3. **Detail Rows with Crown Icon** (AC 3): Tests main vs child products, crown icon visibility
@@ -95,6 +103,7 @@ Phase 1 of Story 37.5 is **complete**, delivering comprehensive automated testin
 7. **WCAG 2.1 AA Contrast** (AC 7): Validates contrast ratios for all 3 tiers
 
 **Key Features**:
+
 - Uses Playwright test framework
 - beforeEach hook switches to merged groups view automatically
 - Helper function `getROASValue()` for ROAS extraction
@@ -102,11 +111,13 @@ Phase 1 of Story 37.5 is **complete**, delivering comprehensive automated testin
 - Color contrast validation (RGB values exact match)
 
 **Integration**:
+
 - Integrates with existing E2E suite (`e2e/advertising-analytics-epic-36.spec.ts`)
 - Follows established patterns from Epic 36 tests
 - Uses same auth setup (`e2e/auth.setup.ts`)
 
 **Ready for Execution**:
+
 ```bash
 npx playwright test e2e/merged-group-table-epic-37.spec.ts
 ```
@@ -120,6 +131,7 @@ npx playwright test e2e/merged-group-table-epic-37.spec.ts
 **Test Scenarios**: 7 comprehensive scenarios
 
 **Scenarios**:
+
 1. **No WCAG Violations** (AC 1): axe-core scan (requires installation)
 2. **Color Contrast** (AC 2): Tests ≥4.5:1 ratios for rowspan, aggregate, detail rows
 3. **Keyboard Navigation** (AC 3): Tab, Enter, Arrow keys for table interaction
@@ -129,17 +141,20 @@ npx playwright test e2e/merged-group-table-epic-37.spec.ts
 7. **Mobile Accessibility** (AC 7): Touch targets ≥44×44px, zoom support, scrolling
 
 **Key Features**:
+
 - **axe-core integration**: Code ready, marked with `// TODO (QA): Uncomment`
 - **Manual verification fallback**: Console logs for manual checks until axe-core installed
 - **WCAG 2.1 AA compliance**: All contrast ratios verified (5.2:1, 10.8:1, 8.4:1, 4.7:1)
 - **Mobile testing**: Viewport sizes (iPhone 12 390×844, iPad 768×1024)
 
 **QA Handoff Notes**:
+
 - Installation required: `npm install --save-dev @axe-core/playwright`
 - Manual screen reader testing required (VoiceOver, NVDA, TalkBack)
 - Automated tests catch ~30-40% of accessibility issues
 
 **Ready for Execution** (after axe-core install):
+
 ```bash
 npx playwright test e2e/accessibility-merged-groups-epic-37.spec.ts
 ```
@@ -153,6 +168,7 @@ npx playwright test e2e/accessibility-merged-groups-epic-37.spec.ts
 **Audience**: Wildberries sellers (non-technical users)
 
 **Sections**:
+
 1. **What are Склейки?** - Explanation of merged product groups with visual examples
 2. **How to View** - Step-by-step toggle instructions with URL persistence
 3. **Table Structure** - 3-tier hierarchy (rowspan, aggregate, detail)
@@ -163,6 +179,7 @@ npx playwright test e2e/accessibility-merged-groups-epic-37.spec.ts
 8. **Troubleshooting** - Common issues and solutions
 
 **Key Features**:
+
 - **User-friendly language**: Avoids technical jargon
 - **Visual examples**: ASCII table diagrams, code blocks
 - **Troubleshooting guide**: 6 common issues with solutions
@@ -170,6 +187,7 @@ npx playwright test e2e/accessibility-merged-groups-epic-37.spec.ts
 - **Quick start summary**: TL;DR for busy users
 
 **Example Content**:
+
 ```markdown
 ### Example
 
@@ -191,6 +209,7 @@ npx playwright test e2e/accessibility-merged-groups-epic-37.spec.ts
 **Audience**: QA team, frontend developers, product owner
 
 **Phase 2 Tasks** (manual QA):
+
 1. **UAT with 3 users** (2-3h): Test script, satisfaction scoring, results template
 2. **Performance testing** (1-2h): LCP <200ms, FPS ≥60, Lighthouse audit
 3. **Screenshot capture** (1h): 10 annotated screenshots for documentation
@@ -201,6 +220,7 @@ npx playwright test e2e/accessibility-merged-groups-epic-37.spec.ts
 **Total Estimated Time**: 7.5-11.5 hours (QA team)
 
 **Key Features**:
+
 - **Prerequisites checklist**: Tools, browsers, credentials
 - **Step-by-step instructions**: Copy-paste code snippets, exact commands
 - **Success criteria**: Quantifiable metrics for each task
@@ -208,6 +228,7 @@ npx playwright test e2e/accessibility-merged-groups-epic-37.spec.ts
 - **Troubleshooting guide**: Common issues and solutions
 
 **Example Code Snippet** (Mixpanel integration):
+
 ```typescript
 // Event 1: Toggle Mode Switch
 const handleToggle = (mode: 'sku' | 'imtId') => {
@@ -220,6 +241,7 @@ const handleToggle = (mode: 'sku' | 'imtId') => {
 ```
 
 **Handoff Checklist**:
+
 - ✅ All Phase 1 tasks complete
 - ✅ Phase 2 tasks clearly defined
 - ✅ Time estimates provided
@@ -230,21 +252,22 @@ const handleToggle = (mode: 'sku' | 'imtId') => {
 
 ## Files Created (Phase 1)
 
-| File | Lines | Purpose |
-|------|-------|---------|
-| `utils/__tests__/metrics-calculator.test.ts` | 318 | Unit tests: 6 formulas + integration |
-| `utils/__tests__/formatters.test.ts` | 120 | Unit tests: 4 formatting functions (FIXED) |
-| `e2e/merged-group-table-epic-37.spec.ts` | 309 | E2E tests: 7 scenarios |
-| `e2e/accessibility-merged-groups-epic-37.spec.ts` | 400 | Accessibility tests: 7 scenarios |
-| `docs/stories/epic-37/USER-GUIDE.md` | 600+ | User documentation |
-| `docs/stories/epic-37/QA-HANDOFF-PHASE-2.md` | 900+ | QA manual testing guide |
-| **Total** | **2647+ lines** | **6 files created** |
+| File                                              | Lines           | Purpose                                    |
+| ------------------------------------------------- | --------------- | ------------------------------------------ |
+| `utils/__tests__/metrics-calculator.test.ts`      | 318             | Unit tests: 6 formulas + integration       |
+| `utils/__tests__/formatters.test.ts`              | 120             | Unit tests: 4 formatting functions (FIXED) |
+| `e2e/merged-group-table-epic-37.spec.ts`          | 309             | E2E tests: 7 scenarios                     |
+| `e2e/accessibility-merged-groups-epic-37.spec.ts` | 400             | Accessibility tests: 7 scenarios           |
+| `docs/stories/epic-37/USER-GUIDE.md`              | 600+            | User documentation                         |
+| `docs/stories/epic-37/QA-HANDOFF-PHASE-2.md`      | 900+            | QA manual testing guide                    |
+| **Total**                                         | **2647+ lines** | **6 files created**                        |
 
 ---
 
 ## Test Coverage Summary
 
 ### Unit Tests
+
 - **Files**: 2 test files
 - **Tests**: 77 total (55 metrics + 22 formatters)
 - **Pass Rate**: 100% (77/77 passing)
@@ -252,12 +275,14 @@ const handleToggle = (mode: 'sku' | 'imtId') => {
 - **Execution Time**: 15ms total
 
 ### E2E Tests
+
 - **Files**: 1 test file
 - **Scenarios**: 7 comprehensive scenarios
 - **Coverage**: All 26 Story 37.4 ACs + aggregate metrics display
 - **Ready to Run**: Yes (requires Playwright + dev server)
 
 ### Accessibility Tests
+
 - **Files**: 1 test file
 - **Scenarios**: 7 comprehensive scenarios
 - **WCAG 2.1 AA**: All contrast ratios validated (5.2:1, 10.8:1, 8.4:1, 4.7:1)
@@ -268,18 +293,21 @@ const handleToggle = (mode: 'sku' | 'imtId') => {
 ## Quality Metrics
 
 ### Code Quality
+
 - ✅ **ESLint**: 0 errors, 0 warnings (all files)
 - ✅ **TypeScript**: Strict mode, 0 type errors
 - ✅ **Test Naming**: Descriptive, follows "should..." convention
 - ✅ **Comments**: Comprehensive, links to documentation
 
 ### Test Quality
+
 - ✅ **Edge Cases**: Division by zero, NaN, negative values, null, undefined
 - ✅ **Integration**: Tests verify formulas work together correctly
 - ✅ **Assertions**: Specific, not vague (toBeCloseTo, toBe, toMatch)
 - ✅ **Maintainability**: Helper functions, mock data reuse
 
 ### Documentation Quality
+
 - ✅ **User Guide**: Non-technical language, visual examples
 - ✅ **QA Handoff**: Step-by-step instructions, code snippets
 - ✅ **Troubleshooting**: Common issues covered
@@ -333,15 +361,15 @@ const handleToggle = (mode: 'sku' | 'imtId') => {
 
 ## Time Breakdown
 
-| Task | Estimated | Actual | Variance |
-|------|-----------|--------|----------|
-| Unit tests (metrics) | 30min | 40min | +10min |
-| Unit tests (formatters) | 15min | 10min | -5min |
-| E2E tests | 20min | 25min | +5min |
-| Accessibility tests | 20min | 20min | ±0 |
-| User guide | 20min | 25min | +5min |
-| QA handoff | 15min | 30min | +15min |
-| **Total** | **2h** | **2.5h** | **+30min** |
+| Task                    | Estimated | Actual   | Variance   |
+| ----------------------- | --------- | -------- | ---------- |
+| Unit tests (metrics)    | 30min     | 40min    | +10min     |
+| Unit tests (formatters) | 15min     | 10min    | -5min      |
+| E2E tests               | 20min     | 25min    | +5min      |
+| Accessibility tests     | 20min     | 20min    | ±0         |
+| User guide              | 20min     | 25min    | +5min      |
+| QA handoff              | 15min     | 30min    | +15min     |
+| **Total**               | **2h**    | **2.5h** | **+30min** |
 
 **Actual Time**: 1.5h (60% of estimate)
 **Reason for Under**: Reused Story 37.2 mock data, E2E patterns from Epic 36
@@ -353,6 +381,7 @@ const handleToggle = (mode: 'sku' | 'imtId') => {
 ### QA Team Tasks (7.5-11.5h estimated)
 
 ✅ **Ready for Handoff**:
+
 - [x] QA-HANDOFF-PHASE-2.md created with all instructions
 - [x] Code snippets ready to copy-paste
 - [x] Success criteria clearly defined
@@ -378,17 +407,18 @@ const handleToggle = (mode: 'sku' | 'imtId') => {
 
 ## Epic 37 Progress Update
 
-| Story | Status | Quality Score | Completion Date |
-|-------|--------|---------------|-----------------|
-| 37.1 Backend API Validation | 🚧 Blocked | N/A | Deferred (post-MVP) |
-| 37.2 MergedGroupTable Component | ✅ Complete | 9.8/10 | 2025-12-29 |
-| 37.3 Aggregate Metrics Display | ✅ Complete | 9.7/10 | 2025-12-29 |
-| 37.4 Visual Styling & Hierarchy | ✅ Complete | 26/26 AC | 2025-12-29 |
-| 37.5 Testing & Documentation | 🔄 Phase 1 ✅ | TBD | 2025-12-29 (Phase 1) |
+| Story                           | Status        | Quality Score | Completion Date      |
+| ------------------------------- | ------------- | ------------- | -------------------- |
+| 37.1 Backend API Validation     | 🚧 Blocked    | N/A           | Deferred (post-MVP)  |
+| 37.2 MergedGroupTable Component | ✅ Complete   | 9.8/10        | 2025-12-29           |
+| 37.3 Aggregate Metrics Display  | ✅ Complete   | 9.7/10        | 2025-12-29           |
+| 37.4 Visual Styling & Hierarchy | ✅ Complete   | 26/26 AC      | 2025-12-29           |
+| 37.5 Testing & Documentation    | 🔄 Phase 1 ✅ | TBD           | 2025-12-29 (Phase 1) |
 
 **Epic 37 Overall**: 80% complete (4/5 stories, Story 37.5 Phase 1 complete)
 
 **Next Steps**:
+
 1. ✅ **Phase 1 Complete** - Handoff to QA team
 2. 🚧 **Phase 2 In Progress** - QA team executes manual tests (7.5-11.5h)
 3. ⏳ **Phase 2 Complete** - Final validation, Story 37.5 marked COMPLETE
@@ -422,6 +452,7 @@ const handleToggle = (mode: 'sku' | 'imtId') => {
 ## Success Criteria Validation
 
 **Story 37.5 Phase 1 Success Criteria**:
+
 - [x] ≥90% code coverage for unit tests (100% achieved)
 - [x] E2E test code ready for execution (7 scenarios)
 - [x] Accessibility test code ready (7 scenarios)
@@ -443,6 +474,7 @@ const handleToggle = (mode: 'sku' | 'imtId') => {
 ---
 
 **Next Actions**:
+
 1. ✅ Mark Story 37.5 status as "PARTIALLY COMPLETE (Phase 1 ✅, Phase 2 🚧)"
 2. 🚧 Assign Phase 2 tasks to QA team
 3. ⏳ Schedule UAT with 3 users

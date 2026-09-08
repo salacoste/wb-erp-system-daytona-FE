@@ -16,11 +16,13 @@
 ## Целевые персоны
 
 ### Владелец бизнеса (Primary)
+
 - Хочет быстро понять: "Всё ли ОК с моими данными?"
 - Нужны простые визуальные индикаторы (зелёный/жёлтый/красный)
 - Не хочет разбираться в технических деталях, если всё работает
 
 ### Финансовый директор (Secondary)
+
 - Нужно понимать полноту данных для отчётов
 - Хочет видеть историческую надёжность системы
 - Важно знать, все ли финансовые данные загружены
@@ -29,26 +31,27 @@
 
 ### Epic 67: Pipeline Health Dashboard (3 НОВЫХ эндпоинта)
 
-| Эндпоинт | Назначение | Cache | p95 |
-|----------|-----------|-------|-----|
-| `GET /v1/monitoring/dashboard` | Лёгкая сводка (~2KB) | 60s | <200ms |
-| `GET /v1/monitoring/pipeline-health-grid` | Heatmap (~5-25KB) | 30-120s | <500ms |
-| `GET /v1/monitoring/telegram-health` | Telegram детали | 120s | <300ms |
+| Эндпоинт                                  | Назначение           | Cache   | p95    |
+| ----------------------------------------- | -------------------- | ------- | ------ |
+| `GET /v1/monitoring/dashboard`            | Лёгкая сводка (~2KB) | 60s     | <200ms |
+| `GET /v1/monitoring/pipeline-health-grid` | Heatmap (~5-25KB)    | 30-120s | <500ms |
+| `GET /v1/monitoring/telegram-health`      | Telegram детали      | 120s    | <300ms |
 
 ### Epic 49: Task Monitoring (8 эндпоинтов)
 
-| Эндпоинт | Назначение |
-|----------|-----------|
-| `GET /v1/monitoring/task-execution` | Gap detection для 8 задач |
-| `GET /v1/monitoring/data-completeness` | Полнота 6 таблиц |
-| `GET /v1/monitoring/missing-dates` | Пропущенные даты |
-| `GET /v1/monitoring/health-report` | Ежедневный отчёт |
-| `GET /v1/monitoring/health-reports` | История отчётов |
-| `GET /v1/monitoring/recovery-status` | Статус восстановления |
-| `POST /v1/monitoring/recover` | Ручной recovery |
-| `POST /v1/monitoring/recover-data` | Восстановление дат |
+| Эндпоинт                               | Назначение                |
+| -------------------------------------- | ------------------------- |
+| `GET /v1/monitoring/task-execution`    | Gap detection для 8 задач |
+| `GET /v1/monitoring/data-completeness` | Полнота 6 таблиц          |
+| `GET /v1/monitoring/missing-dates`     | Пропущенные даты          |
+| `GET /v1/monitoring/health-report`     | Ежедневный отчёт          |
+| `GET /v1/monitoring/health-reports`    | История отчётов           |
+| `GET /v1/monitoring/recovery-status`   | Статус восстановления     |
+| `POST /v1/monitoring/recover`          | Ручной recovery           |
+| `POST /v1/monitoring/recover-data`     | Восстановление дат        |
 
 ### Важно: авторизация
+
 Все monitoring эндпоинты используют `cabinetId` как **query parameter**, НЕ заголовок `X-Cabinet-Id`.
 
 ## Стратегия загрузки данных
@@ -83,19 +86,19 @@ const MONITORING_QUERY_CONFIG = {
 
 ## 11 Пайплайнов
 
-| pipelineId | Название (ru) | Категория | Частота |
-|------------|--------------|-----------|---------|
-| `fbo_orders_sync` | FBO Заказы | high_frequency | каждые 15 мин |
-| `fbo_sales_sync` | FBO Продажи | high_frequency | каждые 15 мин |
-| `orders_fbs_sync` | FBS Заказы | high_frequency | каждые 5 мин |
-| `supply_sync` | Поставки | high_frequency | каждые 15 мин |
-| `adv_sync` | Реклама | daily | ежедневно |
-| `daily_sales_sync` | Ежедневные продажи | daily | ежедневно |
-| `stocks_sync` | Остатки на складах | daily | ежедневно |
-| `paid_storage_import` | Платное хранение | daily | ежедневно |
-| `product_imt_sync` | Товары (IMT) | daily | ежедневно |
-| `finances_weekly_ingest` | Финансовый отчёт | weekly | понедельник |
-| `daily_stocks_sync` | Покрытие остатков | daily | ежедневно |
+| pipelineId               | Название (ru)      | Категория      | Частота       |
+| ------------------------ | ------------------ | -------------- | ------------- |
+| `fbo_orders_sync`        | FBO Заказы         | high_frequency | каждые 15 мин |
+| `fbo_sales_sync`         | FBO Продажи        | high_frequency | каждые 15 мин |
+| `orders_fbs_sync`        | FBS Заказы         | high_frequency | каждые 5 мин  |
+| `supply_sync`            | Поставки           | high_frequency | каждые 15 мин |
+| `adv_sync`               | Реклама            | daily          | ежедневно     |
+| `daily_sales_sync`       | Ежедневные продажи | daily          | ежедневно     |
+| `stocks_sync`            | Остатки на складах | daily          | ежедневно     |
+| `paid_storage_import`    | Платное хранение   | daily          | ежедневно     |
+| `product_imt_sync`       | Товары (IMT)       | daily          | ежедневно     |
+| `finances_weekly_ingest` | Финансовый отчёт   | weekly         | понедельник   |
+| `daily_stocks_sync`      | Покрытие остатков  | daily          | ежедневно     |
 
 ## Структура файлов
 
@@ -132,9 +135,11 @@ src/app/(dashboard)/monitoring/
 **Оценка**: 3 SP
 
 ### Описание
+
 Как пользователь, я хочу видеть пункт "Мониторинг" в боковой навигации и перейти на страницу мониторинга, чтобы следить за здоровьем системы.
 
 ### Критерии приёмки
+
 - AC1: Маршрут `/monitoring` доступен из sidebar-навигации (иконка Activity)
 - AC2: Пункт меню: "Мониторинг" с иконкой `Activity` из lucide-react
 - AC3: Страница использует dashboard layout (`(dashboard)` group)
@@ -145,24 +150,27 @@ src/app/(dashboard)/monitoring/
 - AC8: Responsive: табы сворачиваются в dropdown на мобильных
 
 ### Технические детали
+
 - API: Пока не вызывается (только каркас)
 - Компоненты: `page.tsx`, `MonitoringPageContent.tsx`, `types/monitoring.ts`
 - Маршрут: `src/app/(dashboard)/monitoring/page.tsx`
 
 ### Файлы
-| Файл | Действие |
-|------|----------|
-| `src/app/(dashboard)/monitoring/page.tsx` | Создать |
-| `src/app/(dashboard)/monitoring/components/MonitoringPageContent.tsx` | Создать |
-| `src/app/(dashboard)/monitoring/types/monitoring.ts` | Создать |
-| `src/app/(dashboard)/monitoring/hooks/use-monitoring-dashboard.ts` | Создать |
-| `src/app/(dashboard)/monitoring/hooks/use-pipeline-grid.ts` | Создать |
-| `src/app/(dashboard)/monitoring/hooks/use-telegram-health.ts` | Создать |
-| `src/app/(dashboard)/monitoring/hooks/use-recovery.ts` | Создать |
-| `src/lib/routes.ts` | Изменить — добавить MONITORING route |
-| `src/components/custom/layout/Sidebar.tsx` (или аналог) | Изменить — добавить пункт меню |
+
+| Файл                                                                  | Действие                             |
+| --------------------------------------------------------------------- | ------------------------------------ |
+| `src/app/(dashboard)/monitoring/page.tsx`                             | Создать                              |
+| `src/app/(dashboard)/monitoring/components/MonitoringPageContent.tsx` | Создать                              |
+| `src/app/(dashboard)/monitoring/types/monitoring.ts`                  | Создать                              |
+| `src/app/(dashboard)/monitoring/hooks/use-monitoring-dashboard.ts`    | Создать                              |
+| `src/app/(dashboard)/monitoring/hooks/use-pipeline-grid.ts`           | Создать                              |
+| `src/app/(dashboard)/monitoring/hooks/use-telegram-health.ts`         | Создать                              |
+| `src/app/(dashboard)/monitoring/hooks/use-recovery.ts`                | Создать                              |
+| `src/lib/routes.ts`                                                   | Изменить — добавить MONITORING route |
+| `src/components/custom/layout/Sidebar.tsx` (или аналог)               | Изменить — добавить пункт меню       |
 
 ### Зависимости
+
 - Блокирует: 68.2, 68.3, 68.4, 68.5, 68.6, 68.7
 
 ---
@@ -173,9 +181,11 @@ src/app/(dashboard)/monitoring/
 **Оценка**: 5 SP
 
 ### Описание
+
 Как владелец бизнеса, я хочу видеть общий показатель здоровья системы (0-100) и статусы всех 11 пайплайнов, чтобы быстро понять, всё ли работает нормально.
 
 ### Критерии приёмки
+
 - AC1: Health Score отображается как круговой/полукруговой индикатор (0-100)
 - AC2: Цвет индикатора: зелёный (>=80), жёлтый (50-79), красный (<50)
 - AC3: overallStatus показан текстом: "Система работает" / "Есть проблемы" / "Критические проблемы"
@@ -189,11 +199,13 @@ src/app/(dashboard)/monitoring/
 - AC11: WCAG 2.1 AA — ARIA labels, keyboard navigation
 
 ### Технические детали
+
 - API: `GET /v1/monitoring/dashboard?cabinetId={cabinetId}&locale=ru`
 - Health Score формула: `pipelineAvg*0.5 + completenessAvg*0.3 + telegramRate*0.1 + noAlerts*0.1`
 - Вкладка: "Обзор" (default tab)
 
 ### UI/UX заметки
+
 ```
 ┌─────────────────────────────────────────────────────┐
 │  Health Score: 95        Система работает    [0 ⚠️]  │
@@ -218,12 +230,14 @@ src/app/(dashboard)/monitoring/
 ```
 
 ### Файлы
-| Файл | Действие |
-|------|----------|
-| `src/app/(dashboard)/monitoring/components/HealthScoreWidget.tsx` | Создать |
-| `src/app/(dashboard)/monitoring/components/PipelineStatusGrid.tsx` | Создать |
+
+| Файл                                                               | Действие |
+| ------------------------------------------------------------------ | -------- |
+| `src/app/(dashboard)/monitoring/components/HealthScoreWidget.tsx`  | Создать  |
+| `src/app/(dashboard)/monitoring/components/PipelineStatusGrid.tsx` | Создать  |
 
 ### Зависимости
+
 - Заблокировано: 68.1
 
 ---
@@ -234,9 +248,11 @@ src/app/(dashboard)/monitoring/
 **Оценка**: 8 SP
 
 ### Описание
+
 Как финансовый директор, я хочу видеть визуализацию работы пайплайнов во времени (как GitHub contributions heatmap), чтобы отслеживать паттерны и находить проблемные периоды.
 
 ### Критерии приёмки
+
 - AC1: GitHub-style heatmap сетка (строки = пайплайны, колонки = временные периоды)
 - AC2: Date range picker: выбор периода (макс. 30 дней), дефолт — 7 дней
 - AC3: Переключатель разрешения: "По часам" / "По дням"
@@ -251,12 +267,14 @@ src/app/(dashboard)/monitoring/
 - AC12: Responsive: горизонтальный скролл на мобильных
 
 ### Технические детали
+
 - API: `GET /v1/monitoring/pipeline-health-grid?cabinetId={cabinetId}&from=...&to=...&resolution=...&pipelines=...&locale=ru`
 - Макс. период: 30 дней (400 при превышении)
 - Размер: ~5-25KB в зависимости от параметров
 - Вкладка: "Heatmap"
 
 ### UI/UX заметки
+
 ```
 ┌─────────────────────────────────────────────────────────┐
 │  📊 Heatmap    [10.02 — 17.02 ▼]  [По часам|По дням]   │
@@ -287,13 +305,15 @@ Tooltip (hover на 🟨):
 ```
 
 ### Файлы
-| Файл | Действие |
-|------|----------|
-| `src/app/(dashboard)/monitoring/components/PipelineHeatmap.tsx` | Создать |
-| `src/app/(dashboard)/monitoring/components/HeatmapCell.tsx` | Создать |
-| `src/app/(dashboard)/monitoring/components/HeatmapTooltip.tsx` | Создать |
+
+| Файл                                                            | Действие |
+| --------------------------------------------------------------- | -------- |
+| `src/app/(dashboard)/monitoring/components/PipelineHeatmap.tsx` | Создать  |
+| `src/app/(dashboard)/monitoring/components/HeatmapCell.tsx`     | Создать  |
+| `src/app/(dashboard)/monitoring/components/HeatmapTooltip.tsx`  | Создать  |
 
 ### Зависимости
+
 - Заблокировано: 68.1
 
 ---
@@ -304,9 +324,11 @@ Tooltip (hover на 🟨):
 **Оценка**: 5 SP
 
 ### Описание
+
 Как финансовый директор, я хочу видеть полноту данных по каждому источнику, чтобы быть уверенным, что отчёты основаны на полных данных.
 
 ### Критерии приёмки
+
 - AC1: Таблица из 6 источников данных: daily_sales_raw, adv_daily_stats, paid_storage_daily, inventory_snapshots, wb_finance_raw, weekly_payout_summary
 - AC2: Каждая строка: displayName, completenessRatio (прогресс-бар), статус-бейдж (complete/incomplete/critical)
 - AC3: Общий индикатор полноты (overallHealth) вверху секции
@@ -316,11 +338,13 @@ Tooltip (hover на 🟨):
 - AC7: Данные из `dashboard.dataCompleteness` (основной рендер) + `GET /data-completeness` (детали при expand)
 
 ### Технические детали
+
 - API primary: `GET /v1/monitoring/dashboard` → `dataCompleteness` block
 - API detail: `GET /v1/monitoring/data-completeness?cabinetId={cabinetId}&days=30`
 - API missing: `GET /v1/monitoring/missing-dates?cabinetId={cabinetId}&table={table}`
 
 ### UI/UX заметки
+
 ```
 ┌────────────────────────────────────────────────┐
 │  Полнота данных: 🟢 Все данные загружены        │
@@ -338,11 +362,13 @@ Tooltip (hover на 🟨):
 ```
 
 ### Файлы
-| Файл | Действие |
-|------|----------|
-| `src/app/(dashboard)/monitoring/components/DataCompletenessTable.tsx` | Создать |
+
+| Файл                                                                  | Действие |
+| --------------------------------------------------------------------- | -------- |
+| `src/app/(dashboard)/monitoring/components/DataCompletenessTable.tsx` | Создать  |
 
 ### Зависимости
+
 - Заблокировано: 68.1
 
 ---
@@ -353,9 +379,11 @@ Tooltip (hover на 🟨):
 **Оценка**: 5 SP
 
 ### Описание
+
 Как пользователь, я хочу видеть статус Telegram-интеграции и статистику доставки уведомлений, чтобы быть уверенным, что уведомления работают.
 
 ### Критерии приёмки
+
 - AC1: Quick status на вкладке "Обзор": статус бота (4 состояния), deliveryRate7d, recentFailures
 - AC2: Детальная панель на вкладке "Telegram": bot status, binding info, delivery stats, event breakdown
 - AC3: Bot status: active=🟢, degraded=🟡, offline=🔴, not_configured=⚪ + CTA "Настроить"
@@ -368,11 +396,13 @@ Tooltip (hover на 🟨):
 - AC10: Polling каждые 120 секунд
 
 ### Технические детали
+
 - API quick: `GET /v1/monitoring/dashboard` → `telegram` block
 - API detail: `GET /v1/monitoring/telegram-health?cabinetId={cabinetId}&days=7`
 - Вкладка: "Telegram"
 
 ### UI/UX заметки
+
 ```
 ┌────────────────────────────────────────────────┐
 │  🟢 Telegram бот активен                        │
@@ -394,12 +424,14 @@ Tooltip (hover на 🟨):
 ```
 
 ### Файлы
-| Файл | Действие |
-|------|----------|
-| `src/app/(dashboard)/monitoring/components/TelegramStatusCard.tsx` | Создать |
-| `src/app/(dashboard)/monitoring/components/TelegramDetailPanel.tsx` | Создать |
+
+| Файл                                                                | Действие |
+| ------------------------------------------------------------------- | -------- |
+| `src/app/(dashboard)/monitoring/components/TelegramStatusCard.tsx`  | Создать  |
+| `src/app/(dashboard)/monitoring/components/TelegramDetailPanel.tsx` | Создать  |
 
 ### Зависимости
+
 - Заблокировано: 68.1
 
 ---
@@ -410,9 +442,11 @@ Tooltip (hover на 🟨):
 **Оценка**: 5 SP
 
 ### Описание
+
 Как владелец бизнеса, я хочу видеть статус восстановления задач и иметь возможность вручную запустить восстановление, чтобы устранить пропуски в данных.
 
 ### Критерии приёмки
+
 - AC1: Таблица recovery status: taskType, lastAttempt, totalAttempts, status (4 состояния), canRetry badge
 - AC2: Кнопка "Восстановить" для задач с canRetry=true
 - AC3: Кнопка "Принудительно" (forceRetry) для задач с canRetry=false (с подтверждением)
@@ -424,11 +458,13 @@ Tooltip (hover на 🟨):
 - AC9: Вкладка: "Восстановление"
 
 ### Технические детали
+
 - API read: `GET /v1/monitoring/recovery-status?cabinetId={cabinetId}`
 - API trigger: `POST /v1/monitoring/recover` (body: taskType, cabinetId, forceRetry?, dateRange?)
 - API data: `POST /v1/monitoring/recover-data` (body: cabinetId, table, dates?)
 
 ### UI/UX заметки
+
 ```
 ┌────────────────────────────────────────────────────┐
 │  Восстановление задач                               │
@@ -445,11 +481,13 @@ Tooltip (hover на 🟨):
 ```
 
 ### Файлы
-| Файл | Действие |
-|------|----------|
-| `src/app/(dashboard)/monitoring/components/RecoveryPanel.tsx` | Создать |
+
+| Файл                                                          | Действие |
+| ------------------------------------------------------------- | -------- |
+| `src/app/(dashboard)/monitoring/components/RecoveryPanel.tsx` | Создать  |
 
 ### Зависимости
+
 - Заблокировано: 68.1
 - Связано: 68.4 (кнопка "Восстановить данные" в таблице полноты)
 
@@ -461,9 +499,11 @@ Tooltip (hover на 🟨):
 **Оценка**: 3 SP
 
 ### Описание
+
 Как финансовый директор, я хочу видеть историю здоровья системы за последние 7-30 дней, чтобы отслеживать тренды и выявлять регулярные проблемы.
 
 ### Критерии приёмки
+
 - AC1: Визуализация истории: цветная лента / мини-heatmap (7-30 дней)
 - AC2: Каждый день: цветная ячейка (healthy=🟢, warning=🟡, critical=🔴)
 - AC3: При клике на день — modal/expand с полным отчётом: summary, taskExecution (success/failed/notRun), dataCompleteness, issues[], recommendations[]
@@ -473,10 +513,12 @@ Tooltip (hover на 🟨):
 - AC7: Вкладка: "История"
 
 ### Технические детали
+
 - API list: `GET /v1/monitoring/health-reports?cabinetId={cabinetId}&days=7`
 - API detail: `GET /v1/monitoring/health-report?cabinetId={cabinetId}&date=YYYY-MM-DD`
 
 ### UI/UX заметки
+
 ```
 ┌────────────────────────────────────────────────────┐
 │  История здоровья    [7 дней|14 дней|30 дней]       │
@@ -498,11 +540,13 @@ Tooltip (hover на 🟨):
 ```
 
 ### Файлы
-| Файл | Действие |
-|------|----------|
-| `src/app/(dashboard)/monitoring/components/HealthHistoryChart.tsx` | Создать |
+
+| Файл                                                               | Действие |
+| ------------------------------------------------------------------ | -------- |
+| `src/app/(dashboard)/monitoring/components/HealthHistoryChart.tsx` | Создать  |
 
 ### Зависимости
+
 - Заблокировано: 68.1
 
 ---
@@ -510,13 +554,15 @@ Tooltip (hover на 🟨):
 ## Общие требования для всех историй
 
 ### Обработка ошибок
-| HTTP Code | Действие |
-|-----------|----------|
-| 400 | Показать validation error (текст из message) |
-| 401 | Redirect на /login |
-| 403 | Показать "Доступ запрещён" |
+
+| HTTP Code | Действие                                     |
+| --------- | -------------------------------------------- |
+| 400       | Показать validation error (текст из message) |
+| 401       | Redirect на /login                           |
+| 403       | Показать "Доступ запрещён"                   |
 
 ### Empty State (новый кабинет)
+
 ```typescript
 function isNewCabinet(dashboard: DashboardResponse): boolean {
   return dashboard.system.healthScore === 0
@@ -528,7 +574,9 @@ function isNewCabinet(dashboard: DashboardResponse): boolean {
 ### Дизайн-система и UI-стандарты
 
 #### Design Kit (ui/)
+
 Все компоненты ДОЛЖНЫ соответствовать Design Kit проекта (`ui/` папка):
+
 - **Primary Button**: Красный фон (#E53935), белый текст, rounded — для основных действий (Recovery, Apply filter)
 - **Secondary Button**: Белый фон, красная рамка, красный текст — для второстепенных действий (Cancel, Reset)
 - **Text Button**: Красный текст без фона — для навигационных ссылок (View Details, Подробнее)
@@ -536,6 +584,7 @@ function isNewCabinet(dashboard: DashboardResponse): boolean {
 - **Navbar**: Белый, search bar, иконки уведомлений
 
 #### Цвета
+
 - **Primary**: #E53935 (red) — кнопки, ссылки, активные элементы
 - **Primary Dark**: #D32F2F — hover states
 - **Primary Light**: #FFCDD2 — hover backgrounds
@@ -547,39 +596,42 @@ function isNewCabinet(dashboard: DashboardResponse): boolean {
 
 **Обязательно**: При создании ЛЮБОГО UI-элемента использовать **shadcn MCP server** (`/llmstxt/ui_shadcn_llms_txt`) для получения актуальных паттернов и примеров. Стиль: `new-york`, иконки: `lucide`.
 
-| Monitoring компонент | shadcn/ui компоненты | Паттерн |
-|---------------------|---------------------|---------|
-| Health Score gauge | `Card`, `Progress` | Кастомный SVG полукруг внутри Card |
-| Pipeline status cards | `Card` + `Badge` + `Tooltip` | Паттерн `BaseMetricCard` (см. `dashboard/BaseMetricCard.tsx`) |
-| Pipeline card skeleton | `Card` + `Skeleton` | Паттерн `BaseMetricCardSkeleton` |
-| Pipeline card error | `Card` + retry button | Паттерн `BaseMetricCardError` |
-| Tabs навигация | `Tabs`, `TabsList`, `TabsTrigger`, `TabsContent` | Паттерн `OrderHistoryTabs` (on-demand fetch) |
-| Heatmap tooltip | `Tooltip`, `TooltipContent`, `TooltipTrigger` | shadcn tooltip с кастомным контентом |
-| Data completeness table | `Table`, `Progress`, `Badge`, `Collapsible` | Expandable rows через Collapsible |
-| Recovery confirmation | `AlertDialog` | AlertDialog для destructive actions |
-| Recovery toast | `sonner` (toast) | `toast.success()` / `toast.error()` |
-| Date range picker | `Popover` + `Calendar` | Двойной Calendar в Popover |
-| Filter chips | `Badge` (variant=outline) + `Button` | Removable badge-chips |
-| Period selector | `Button` group | Toggle buttons (7/14/30 дней) |
-| Empty state | `Card` с SVG-иллюстрацией | Центрированный контент |
-| Settings link (Telegram) | `Button` (variant=link) | Навигация через Next.js Link |
-| Slide-over panel (история) | `Sheet` (side=right) | Sheet для деталей дня |
-| Loading states | `Skeleton` | Повторяет layout загруженного компонента |
+| Monitoring компонент       | shadcn/ui компоненты                             | Паттерн                                                       |
+| -------------------------- | ------------------------------------------------ | ------------------------------------------------------------- |
+| Health Score gauge         | `Card`, `Progress`                               | Кастомный SVG полукруг внутри Card                            |
+| Pipeline status cards      | `Card` + `Badge` + `Tooltip`                     | Паттерн `BaseMetricCard` (см. `dashboard/BaseMetricCard.tsx`) |
+| Pipeline card skeleton     | `Card` + `Skeleton`                              | Паттерн `BaseMetricCardSkeleton`                              |
+| Pipeline card error        | `Card` + retry button                            | Паттерн `BaseMetricCardError`                                 |
+| Tabs навигация             | `Tabs`, `TabsList`, `TabsTrigger`, `TabsContent` | Паттерн `OrderHistoryTabs` (on-demand fetch)                  |
+| Heatmap tooltip            | `Tooltip`, `TooltipContent`, `TooltipTrigger`    | shadcn tooltip с кастомным контентом                          |
+| Data completeness table    | `Table`, `Progress`, `Badge`, `Collapsible`      | Expandable rows через Collapsible                             |
+| Recovery confirmation      | `AlertDialog`                                    | AlertDialog для destructive actions                           |
+| Recovery toast             | `sonner` (toast)                                 | `toast.success()` / `toast.error()`                           |
+| Date range picker          | `Popover` + `Calendar`                           | Двойной Calendar в Popover                                    |
+| Filter chips               | `Badge` (variant=outline) + `Button`             | Removable badge-chips                                         |
+| Period selector            | `Button` group                                   | Toggle buttons (7/14/30 дней)                                 |
+| Empty state                | `Card` с SVG-иллюстрацией                        | Центрированный контент                                        |
+| Settings link (Telegram)   | `Button` (variant=link)                          | Навигация через Next.js Link                                  |
+| Slide-over panel (история) | `Sheet` (side=right)                             | Sheet для деталей дня                                         |
+| Loading states             | `Skeleton`                                       | Повторяет layout загруженного компонента                      |
 
 #### Existing Project Patterns (обязательно следовать)
 
 **BaseMetricCard pattern** (`src/components/custom/dashboard/BaseMetricCard.tsx`):
+
 - Pipeline status cards ДОЛЖНЫ использовать аналогичную структуру: icon + title + value + trend
 - Skeleton state с `aria-busy="true"`
 - Error state с `role="alert"` и кнопкой "Повторить"
 - Variant: `standard` (text-2xl) / `highlighted` (text-4xl, border-2)
 
 **Tabs on-demand fetch** (`src/components/custom/orders/OrderHistoryTabs.tsx`):
+
 - `enabled: activeTab === 'heatmap'` — данные грузятся ТОЛЬКО для активной вкладки
 - `CACHE_CONFIG` объект для переиспользования staleTime/gcTime/retry
 - `useState<TabValue>` для типизированного состояния
 
 **Hook pattern** (TanStack Query v5):
+
 ```typescript
 // Query key factory — создать в src/lib/api/monitoring/query-keys.ts
 export const monitoringQueryKeys = {
@@ -604,6 +656,7 @@ export function useMonitoringDashboard(cabinetId: string, enabled = true) {
 ```
 
 **API client note**: Monitoring endpoints используют `cabinetId` как query parameter, НЕ через `X-Cabinet-Id`. API-функции должны передавать cabinetId явно:
+
 ```typescript
 export async function getMonitoringDashboard(cabinetId: string) {
   return apiClient.get(`/v1/monitoring/dashboard`, {
@@ -613,6 +666,7 @@ export async function getMonitoringDashboard(cabinetId: string) {
 ```
 
 ### Файл < 200 строк
+
 Все компоненты должны быть < 200 строк. При превышении — выделять подкомпоненты (паттерн: `BaseMetricCard` + `BaseMetricCardParts`).
 
 ---
@@ -620,40 +674,43 @@ export async function getMonitoringDashboard(cabinetId: string) {
 ## Дорожная карта спринтов
 
 ### Sprint 3, Week 1 (Feb 17-21)
-| Story | SP | Описание |
-|-------|---:|----------|
-| 68.1 | 3 | Каркас, маршрут, типы, хуки |
-| 68.2 | 5 | Health Score + Pipeline cards |
+
+| Story |  SP | Описание                      |
+| ----- | --: | ----------------------------- |
+| 68.1  |   3 | Каркас, маршрут, типы, хуки   |
+| 68.2  |   5 | Health Score + Pipeline cards |
 
 ### Sprint 3, Week 2 (Feb 24-28)
-| Story | SP | Описание |
-|-------|---:|----------|
-| 68.3 | 8 | Heatmap (самая сложная) |
-| 68.4 | 5 | Data Completeness |
+
+| Story |  SP | Описание                |
+| ----- | --: | ----------------------- |
+| 68.3  |   8 | Heatmap (самая сложная) |
+| 68.4  |   5 | Data Completeness       |
 
 ### Sprint 4, Week 1 (Mar 3-7)
-| Story | SP | Описание |
-|-------|---:|----------|
-| 68.5 | 5 | Telegram мониторинг |
-| 68.6 | 5 | Recovery панель |
-| 68.7 | 3 | История здоровья |
+
+| Story |  SP | Описание            |
+| ----- | --: | ------------------- |
+| 68.5  |   5 | Telegram мониторинг |
+| 68.6  |   5 | Recovery панель     |
+| 68.7  |   3 | История здоровья    |
 
 ---
 
 ## Ссылки
 
-| Ресурс | Расположение |
-|--------|-------------|
-| **Design Kit** | `ui/` — кнопки, sidebar, navbar, компоненты |
-| **UX Review** | `docs/epics/epic-68-fe-UX-REVIEW.md` — рекомендации UX-дизайнера |
-| **shadcn MCP** | `/llmstxt/ui_shadcn_llms_txt` — всегда использовать при создании компонентов |
+| Ресурс             | Расположение                                                                      |
+| ------------------ | --------------------------------------------------------------------------------- |
+| **Design Kit**     | `ui/` — кнопки, sidebar, navbar, компоненты                                       |
+| **UX Review**      | `docs/epics/epic-68-fe-UX-REVIEW.md` — рекомендации UX-дизайнера                  |
+| **shadcn MCP**     | `/llmstxt/ui_shadcn_llms_txt` — всегда использовать при создании компонентов      |
 | **BaseMetricCard** | `src/components/custom/dashboard/BaseMetricCard.tsx` — эталонный паттерн карточек |
-| **Tabs pattern** | `src/components/custom/orders/OrderHistoryTabs.tsx` — on-demand fetch по табам |
-| Backend API Guide | `docs/request-backend/149-EPIC-67-PIPELINE-HEALTH-DASHBOARD-API.md` |
-| Test API | `test-api/17-monitoring.http` (34 теста) |
-| Swagger | `http://localhost:3000/api` |
-| Pipeline Registry | Backend: `src/monitoring/pipeline-registry.ts` |
-| OpenMemory | `search_memory("[API] Epic-67")` |
+| **Tabs pattern**   | `src/components/custom/orders/OrderHistoryTabs.tsx` — on-demand fetch по табам    |
+| Backend API Guide  | `docs/request-backend/149-EPIC-67-PIPELINE-HEALTH-DASHBOARD-API.md`               |
+| Test API           | `test-api/17-monitoring.http` (34 теста)                                          |
+| Swagger            | `http://localhost:3000/api`                                                       |
+| Pipeline Registry  | Backend: `src/monitoring/pipeline-registry.ts`                                    |
+| OpenMemory         | `search_memory("[API] Epic-67")`                                                  |
 
 ---
 

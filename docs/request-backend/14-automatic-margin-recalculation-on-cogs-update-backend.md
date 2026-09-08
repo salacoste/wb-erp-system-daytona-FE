@@ -15,6 +15,7 @@
 **Request #14 полностью реализован!** Epic 20 успешно внедрён и готов к использованию.
 
 **Что реализовано:**
+
 - ✅ Автоматический расчёт маржи после назначения COGS (single product)
 - ✅ Автоматический расчёт маржи после bulk COGS assignment (500+ товаров)
 - ✅ Background worker для обработки задач расчёта маржи
@@ -22,6 +23,7 @@
 - ✅ Поддержка исторических дат (пересчёт всех затронутых недель)
 
 **Производительность:**
+
 - Single product: маржа доступна в течение **5-10 секунд** ✅
 - Historical (7 weeks): маржа доступна в течение **20-30 секунд** ✅
 - Bulk (500 products): маржа доступна в течение **56 секунд** ✅ (цель была ≤60s)
@@ -81,6 +83,7 @@
 ### User Flow 1: Назначение COGS одному товару
 
 **Frontend Action:**
+
 ```typescript
 // 1. Назначить COGS
 const response = await apiClient.post(`/v1/products/${nmId}/cogs`, {
@@ -100,11 +103,13 @@ const response = await apiClient.post(`/v1/products/${nmId}/cogs`, {
 ```
 
 **Что происходит на backend:**
+
 1. ✅ COGS создаётся в БД
 2. ✅ Автоматически ставится задача на расчёт маржи (background)
 3. ✅ Возвращается 201 Created с данными продукта
 
 **Frontend: Polling для обновления маржи**
+
 ```typescript
 // После назначения COGS
 toast.info('Себестоимость назначена. Расчёт маржи начат...');
@@ -115,18 +120,18 @@ const maxAttempts = 10;
 
 const pollInterval = setInterval(async () => {
   const product = await apiClient.get(`/v1/products/${nmId}?include_cogs=true`);
-  
+
   if (product.current_margin_pct !== null || attempts >= maxAttempts) {
     clearInterval(pollInterval);
     queryClient.invalidateQueries(['products']);
-    
+
     if (product.current_margin_pct !== null) {
       toast.success(`Маржа рассчитана: ${product.current_margin_pct.toFixed(2)}%`);
     } else {
       toast.warning('Расчёт маржи занимает больше времени. Обновите страницу через минуту.');
     }
   }
-  
+
   attempts++;
 }, 3000);
 ```
@@ -138,6 +143,7 @@ const pollInterval = setInterval(async () => {
 ### User Flow 2: Назначение COGS с исторической датой
 
 **Frontend Action:**
+
 ```typescript
 const response = await apiClient.post(`/v1/products/${nmId}/cogs`, {
   unit_cost_rub: 990,
@@ -147,11 +153,13 @@ const response = await apiClient.post(`/v1/products/${nmId}/cogs`, {
 ```
 
 **Что происходит на backend:**
+
 1. ✅ COGS создаётся с `valid_from = 2025-10-10`
 2. ✅ Автоматически рассчитываются **ВСЕ** затронутые недели: W41, W42, W43, W44, W45, W46, W47
 3. ✅ Одна задача обрабатывает все 7 недель последовательно
 
 **Frontend: Увеличенное время ожидания**
+
 ```typescript
 // Для исторических дат - больше времени ожидания
 const estimatedSeconds = calculateEstimatedTime(validFrom); // ~30 секунд для 7 недель
@@ -171,6 +179,7 @@ const pollInterval = setInterval(async () => {
 ### User Flow 3: Обновление существующей COGS
 
 **Frontend Action:**
+
 ```typescript
 // Обновление COGS (та же дата)
 const response = await apiClient.post(`/v1/products/${nmId}/cogs`, {
@@ -181,6 +190,7 @@ const response = await apiClient.post(`/v1/products/${nmId}/cogs`, {
 ```
 
 **Что происходит на backend:**
+
 1. ✅ Существующая COGS обновляется (не создаётся новая)
 2. ✅ Автоматически ставится задача на пересчёт маржи для затронутой недели
 3. ✅ Маржа пересчитывается с новым значением COGS
@@ -192,6 +202,7 @@ const response = await apiClient.post(`/v1/products/${nmId}/cogs`, {
 ### User Flow 4: Создание новой версии COGS (будущая дата)
 
 **Frontend Action:**
+
 ```typescript
 const response = await apiClient.post(`/v1/products/${nmId}/cogs`, {
   unit_cost_rub: 1050,
@@ -201,6 +212,7 @@ const response = await apiClient.post(`/v1/products/${nmId}/cogs`, {
 ```
 
 **Что происходит на backend:**
+
 1. ✅ Создаётся новая версия COGS с `valid_from = 2025-12-01`
 2. ✅ **НЕ ставится задача** на расчёт маржи (нет sales data для будущих недель)
 3. ✅ Когда неделя W48 начнётся, маржа будет рассчитана автоматически при следующем назначении COGS
@@ -212,6 +224,7 @@ const response = await apiClient.post(`/v1/products/${nmId}/cogs`, {
 ### User Flow 5: Bulk COGS Assignment (500+ товаров)
 
 **Frontend Action:**
+
 ```typescript
 const response = await apiClient.post(`/v1/products/cogs/bulk`, {
   items: [
@@ -231,12 +244,14 @@ const response = await apiClient.post(`/v1/products/cogs/bulk`, {
 ```
 
 **Что происходит на backend:**
+
 1. ✅ Все COGS создаются/обновляются
 2. ✅ **Агрегируются все затронутые недели** (Set deduplication)
 3. ✅ Ставится **ОДНА** batch задача для всех недель
 4. ✅ Worker обрабатывает все недели последовательно
 
 **Frontend: Длительное ожидание с прогрессом**
+
 ```typescript
 toast.info('Загружено 500 товаров. Расчёт маржи начат. Ожидаемое время: ~60 секунд');
 
@@ -245,13 +260,13 @@ const pollInterval = setInterval(async () => {
   // Проверяем несколько товаров из bulk upload
   const sampleProducts = await apiClient.get(`/v1/products?include_cogs=true&limit=10`);
   const productsWithMargin = sampleProducts.products.filter(p => p.current_margin_pct !== null);
-  
+
   if (productsWithMargin.length > 0 || attempts >= 20) {
     clearInterval(pollInterval);
     queryClient.invalidateQueries(['products']);
     toast.success(`Маржа рассчитана для ${productsWithMargin.length} товаров`);
   }
-  
+
   attempts++;
 }, 5000); // 5 секунд для bulk
 ```
@@ -265,12 +280,14 @@ const pollInterval = setInterval(async () => {
 ### User Flow 6: Просмотр списка товаров с маржой
 
 **Frontend Action:**
+
 ```typescript
 // Стандартный запрос (Request #15)
 const response = await apiClient.get(`/v1/products?include_cogs=true&limit=25`);
 ```
 
 **Response:**
+
 ```json
 {
   "products": [
@@ -293,6 +310,7 @@ const response = await apiClient.get(`/v1/products?include_cogs=true&limit=25`);
 ```
 
 **Что изменилось:**
+
 - ✅ После назначения COGS, маржа **автоматически** появляется в этом ответе
 - ✅ Не нужно вручную запускать расчёт маржи
 - ✅ `missing_data_reason` будет `null` если маржа рассчитана
@@ -308,10 +326,10 @@ const response = await apiClient.get(`/v1/products?include_cogs=true&limit=25`);
 const handleCogsAssign = async (nmId: string, cogsData: AssignCogsDto) => {
   // 1. Назначить COGS
   await apiClient.post(`/v1/products/${nmId}/cogs`, cogsData);
-  
+
   // 2. Показать уведомление
   toast.info('Себестоимость назначена. Расчёт маржи начат...');
-  
+
   // 3. Polling
   pollForMargin(nmId);
 };
@@ -319,19 +337,19 @@ const handleCogsAssign = async (nmId: string, cogsData: AssignCogsDto) => {
 const pollForMargin = async (nmId: string) => {
   let attempts = 0;
   const maxAttempts = 10;
-  
+
   const interval = setInterval(async () => {
     const product = await apiClient.get(`/v1/products/${nmId}?include_cogs=true`);
-    
+
     if (product.current_margin_pct !== null || attempts >= maxAttempts) {
       clearInterval(interval);
       queryClient.invalidateQueries(['products']);
-      
+
       if (product.current_margin_pct !== null) {
         toast.success(`Маржа: ${product.current_margin_pct.toFixed(2)}%`);
       }
     }
-    
+
     attempts++;
   }, 3000);
 };
@@ -362,19 +380,19 @@ setTimeout(() => {
 
 ### Реальные показатели производительности
 
-| Сценарий | Цель | Фактически | Статус |
-|----------|------|------------|--------|
-| Single product (current date) | ≤ 10s | **5-10s** | ✅ Met |
-| Historical (7 weeks) | ≤ 30s | **20-30s** | ✅ Met |
-| Bulk (500 products) | ≤ 60s | **56s** | ✅ **Exceeded** |
+| Сценарий                      | Цель  | Фактически | Статус          |
+| ----------------------------- | ----- | ---------- | --------------- |
+| Single product (current date) | ≤ 10s | **5-10s**  | ✅ Met          |
+| Historical (7 weeks)          | ≤ 30s | **20-30s** | ✅ Met          |
+| Bulk (500 products)           | ≤ 60s | **56s**    | ✅ **Exceeded** |
 
 ### Queue Efficiency Improvements
 
-| Метрика | До Epic 20 | После Epic 20 | Улучшение |
-|---------|------------|---------------|-----------|
-| Queue size (500 products) | 1MB | 2KB | **-99.8%** |
-| Processing time (500 products) | 41 min | 56s | **-98%** |
-| Duplicate calculations | 100+ | 0 | **-100%** |
+| Метрика                        | До Epic 20 | После Epic 20 | Улучшение  |
+| ------------------------------ | ---------- | ------------- | ---------- |
+| Queue size (500 products)      | 1MB        | 2KB           | **-99.8%** |
+| Processing time (500 products) | 41 min     | 56s           | **-98%**   |
+| Duplicate calculations         | 100+       | 0             | **-100%**  |
 
 ---
 
@@ -387,6 +405,7 @@ setTimeout(() => {
 При создании новой версии COGS с будущей датой, старая версия **автоматически закрывается** (`valid_to = new_valid_from`). Это происходит в `CogsService.createCogs()` (Epic 18 Story 18.1).
 
 **Пример:**
+
 ```typescript
 // Старая COGS: valid_from=2025-11-24, valid_to=null
 // Новая COGS: valid_from=2025-12-01
@@ -403,10 +422,12 @@ setTimeout(() => {
 **Ответ:** ✅ **Priority field в одной queue**
 
 Используется одна queue `margin-calculation` с priority field в job options:
+
 - **Normal priority (5):** Single product assignment
 - **Low priority (9):** Bulk operations
 
 **Преимущества:**
+
 - Проще управление
 - Меньше конфигурации
 - BullMQ автоматически обрабатывает приоритеты
@@ -418,11 +439,13 @@ setTimeout(() => {
 **Ответ:** ✅ **Метрики доступны через Prometheus**
 
 **Доступные метрики:**
+
 - `tasks_total{type="recalculate_weekly_margin", status="completed|failed"}` - количество задач
 - `task_duration_ms{type="recalculate_weekly_margin", p50|p95|p99}` - latency
 - `queue_depth{queue="margin-calculation"}` - глубина очереди
 
 **Рекомендации для мониторинга:**
+
 - Success rate: `completed / (completed + failed) > 99%`
 - Latency p95: `< 30s` для single product, `< 60s` для bulk
 - Queue depth: `< 100` pending tasks
@@ -434,11 +457,13 @@ setTimeout(() => {
 **Ответ:** ⚠️ **Текущая реализация: Graceful degradation**
 
 **Текущее поведение:**
+
 - Если расчёт маржи failed, COGS assignment **всё равно успешен** (202 Accepted)
 - Ошибки логируются в structured logs
 - Failed tasks автоматически retry (3 attempts)
 
 **Рекомендации для frontend:**
+
 1. **Polling с timeout:** Если маржа не появилась через 60 секунд → показать предупреждение
 2. **Error state в UI:** Показать "Расчёт маржи не удался. Попробуйте обновить страницу."
 3. **Manual retry:** Кнопка "Пересчитать маржу" для ручного запуска
@@ -452,6 +477,7 @@ setTimeout(() => {
 **Ответ:** ✅ **Не требуется (защита на уровне COGS API)**
 
 **Текущая защита:**
+
 - Rate limiting на уровне COGS API endpoints (600 req/min)
 - Idempotency через unique `jobId` (предотвращает дубликаты)
 - Queue depth monitoring (предупреждение если > 100 tasks)
@@ -469,6 +495,7 @@ setTimeout(() => {
 **Processor:** `MarginCalculationProcessor` (только в WORKER_MODE)
 
 **Job Options:**
+
 ```typescript
 {
   jobId: `margin-${cabinetId}-${weeks.join(',')}-${timestamp}`,  // Idempotency
@@ -497,12 +524,14 @@ interface MarginRecalculationPayload {
 ### Worker Processing
 
 **Single Product:**
+
 ```typescript
 // Task: { weeks: ["2025-W47"], nmIds: ["321678606"] }
 // Worker: Processes 1 week, 1 product → ~5 seconds
 ```
 
 **Bulk (500 products):**
+
 ```typescript
 // Task: { weeks: ["2025-W41", "W42", ..., "W47"], nmIds: undefined }
 // Worker: Processes 7 weeks, ALL products → ~56 seconds
@@ -660,6 +689,7 @@ GET /v1/products?include_cogs=true&nm_id=321678606
 ## 🔗 Связанная документация
 
 **Backend Documentation:**
+
 - Epic 20 Overview: `docs/stories/epic-20/EPIC-20-OVERVIEW.md`
 - Epic 20 Completion Summary: `docs/stories/epic-20/EPIC-20-COMPLETION-SUMMARY.md`
 - Story 20.1: `docs/stories/epic-20/story-20.1-affected-weeks-helper.md`
@@ -668,12 +698,14 @@ GET /v1/products?include_cogs=true&nm_id=321678606
 - Story 20.4: `docs/stories/epic-20/story-20.4-bulk-batch-processing.md`
 
 **QA Gates:**
+
 - Story 20.1: `docs/qa/gates/20.1-affected-weeks-helper.yml` (PASS)
 - Story 20.2: `docs/qa/gates/20.2-enqueue-single-product.yml` (PASS)
 - Story 20.3: `docs/qa/gates/20.3-background-worker.yml` (CONCERNS - missing tests)
 - Story 20.4: `docs/qa/gates/20.4-bulk-batch-processing.yml` (PASS)
 
 **API Documentation:**
+
 - REST API Spec: `docs/architecture/08-rest-api-spec.md`
 - Products API: `docs/stories/epic-12/story-12.2-products-api-endpoints.md`
 - Analytics API: `docs/stories/epic-17/` (margin data retrieval)
@@ -685,6 +717,7 @@ GET /v1/products?include_cogs=true&nm_id=321678606
 **Request #14 полностью реализован и готов к использованию!**
 
 **Что работает:**
+
 - ✅ Автоматический расчёт маржи после назначения COGS
 - ✅ Эффективная batch обработка для bulk operations
 - ✅ Поддержка исторических дат
@@ -692,6 +725,7 @@ GET /v1/products?include_cogs=true&nm_id=321678606
 - ✅ Production-ready качество (92.5/100)
 
 **Следующие шаги для Frontend:**
+
 1. Интегрировать polling или optimistic UI для real-time updates
 2. Протестировать все 7 user flows
 3. Добавить error handling и timeout логику
@@ -706,5 +740,5 @@ GET /v1/products?include_cogs=true&nm_id=321678606
 **Backend Team:** Epic 20 Implementation Complete
 
 ## Backend Team Response
-**Status**: RESOLVED — this document IS the backend response. See the parent request file for the original frontend ask.
 
+**Status**: RESOLVED — this document IS the backend response. See the parent request file for the original frontend ask.

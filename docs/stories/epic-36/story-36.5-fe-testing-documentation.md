@@ -16,6 +16,7 @@
 ## Background
 
 Epic 36 adds new functionality to the advertising analytics page. This story ensures:
+
 - **Quality**: E2E tests verify full user workflow
 - **Regression**: Integration tests ensure Epic 33 still works
 - **Maintainability**: Documentation helps future developers
@@ -26,6 +27,7 @@ Epic 36 adds new functionality to the advertising analytics page. This story ens
 ## Acceptance Criteria
 
 ### AC1: E2E Tests (Playwright)
+
 - [ ] Create `e2e/advertising-analytics-epic-36.spec.ts`
 - [ ] Test: Toggle switches between modes
 - [ ] Test: Merged groups display with badges
@@ -34,6 +36,7 @@ Epic 36 adds new functionality to the advertising analytics page. This story ens
 - [ ] Test: Epic 33 regression (filters, sorting still work)
 
 ### AC2: Integration Tests
+
 - [ ] Test: API client sends `group_by` parameter
 - [ ] Test: Response with merged groups parsed correctly
 - [ ] Test: Response with individuals parsed correctly
@@ -41,17 +44,20 @@ Epic 36 adds new functionality to the advertising analytics page. This story ens
 - [ ] Test: Error handling works
 
 ### AC3: Component Unit Tests
+
 - [ ] MergedProductBadge: 100% coverage
 - [ ] GroupByToggle: 100% coverage
 - [ ] Edge cases tested
 
 ### AC4: Documentation
+
 - [ ] Update `frontend/README.md` with Epic 36 section
 - [ ] Add usage examples
 - [ ] Add screenshots (optional)
 - [ ] Update CHANGELOG.md
 
 ### AC5: Frontend Metrics (Optional)
+
 - [ ] Track `group_by` mode usage (analytics event)
 - [ ] Track merged group badge clicks
 - [ ] Track tooltip open rate
@@ -59,6 +65,7 @@ Epic 36 adds new functionality to the advertising analytics page. This story ens
 ## Tasks / Subtasks
 
 ### Phase 1: E2E Tests (90 min)
+
 - [ ] Create `frontend/e2e/advertising-analytics-epic-36.spec.ts`
 - [ ] Setup: Navigate to `/analytics/advertising`
 - [ ] Test 1: Toggle between modes
@@ -68,6 +75,7 @@ Epic 36 adds new functionality to the advertising analytics page. This story ens
 - [ ] Test 5: Epic 33 regression suite
 
 ### Phase 2: Integration Tests (60 min)
+
 - [ ] Create `src/lib/api/__tests__/advertising-analytics-epic-36.test.ts`
 - [ ] Mock backend responses (merged groups, individuals, mixed)
 - [ ] Test API parameter handling
@@ -75,12 +83,14 @@ Epic 36 adds new functionality to the advertising analytics page. This story ens
 - [ ] Test error scenarios
 
 ### Phase 3: Component Unit Tests (40 min)
+
 - [ ] Complete MergedProductBadge tests (Story 36.3)
 - [ ] Create GroupByToggle tests
 - [ ] Test all props and edge cases
 - [ ] Verify 100% coverage
 
 ### Phase 4: Documentation (60 min)
+
 - [ ] Add Epic 36 section to `frontend/README.md`
 - [ ] Document toggle usage
 - [ ] Document merged groups concept
@@ -88,6 +98,7 @@ Epic 36 adds new functionality to the advertising analytics page. This story ens
 - [ ] Add troubleshooting tips
 
 ### Phase 5: Metrics (Optional, 30 min)
+
 - [ ] Add analytics tracking for toggle clicks
 - [ ] Add analytics for badge interactions
 - [ ] Add dashboard for Epic 36 usage
@@ -315,16 +326,20 @@ describe('getAdvertisingAnalytics - Epic 36', () => {
 
 **Example**:
 ```
+
 Before (По артикулам):
+
 - ter-09: spend=0₽, revenue=1,105₽ → ROAS=null ❌
 
 After (По склейкам):
+
 - Группа #328632 🔗 Склейка (3)
   - Products: ter-09, ter-10, ter-13-1
   - Total spend: 11,337₽
   - Total revenue: 34,058₽
   - ROAS: 3.0x ✅
-```
+
+````
 
 ### Technical Implementation
 
@@ -338,40 +353,39 @@ interface AdvertisingItem {
   mergedProducts?: MergedProduct[]
   // ... existing fields
 }
-```
+````
 
 **Components**:
+
 - `GroupByToggle.tsx` - Toggle UI component
 - `MergedProductBadge.tsx` - Badge with tooltip
 
 **Hooks**:
+
 - `useAdvertisingMergedGroups()` - Convenience hook for merged groups
 
 ### Files Modified
 
 **Types**:
+
 1. `src/types/advertising-analytics.ts` - Added GroupByMode, MergedProduct
 
-**API Client**:
-2. `src/lib/api/advertising-analytics.ts` - Added group_by parameter support
+**API Client**: 2. `src/lib/api/advertising-analytics.ts` - Added group_by parameter support
 
-**Hooks**:
-3. `src/hooks/useAdvertisingAnalytics.ts` - Added useAdvertisingMergedGroups
+**Hooks**: 3. `src/hooks/useAdvertisingAnalytics.ts` - Added useAdvertisingMergedGroups
 
-**Components**:
-4. `src/app/(dashboard)/analytics/advertising/page.tsx` - Added toggle state and UI
-5. `src/components/analytics/MergedProductBadge.tsx` - NEW
-6. `src/components/analytics/GroupByToggle.tsx` - NEW
-7. `src/app/(dashboard)/analytics/advertising/components/PerformanceMetricsTable.tsx` - Updated rendering
+**Components**: 4. `src/app/(dashboard)/analytics/advertising/page.tsx` - Added toggle state and UI 5. `src/components/analytics/MergedProductBadge.tsx` - NEW 6. `src/components/analytics/GroupByToggle.tsx` - NEW 7. `src/app/(dashboard)/analytics/advertising/components/PerformanceMetricsTable.tsx` - Updated rendering
 
 ### Documentation
 
 **Backend**:
+
 - API Contract: `docs/request-backend/83-epic-36-api-contract.md`
 - Implementation Plan: `docs/implementation-plans/epic-36-frontend-integration.md`
 - UI Mockup: `docs/wireframes/epic-36-ui-mockup.md`
 
 **Frontend**:
+
 - Epic Overview: `docs/stories/epic-36/README.md`
 - Stories: `docs/stories/epic-36/story-36.{1-5}-fe-*.md`
 
@@ -380,7 +394,8 @@ interface AdvertisingItem {
 ## Usage
 
 See: `frontend/README.md` - Epic 36 section for full usage guide
-```
+
+````
 
 **File**: `frontend/CHANGELOG.md`
 
@@ -394,17 +409,19 @@ See: `frontend/README.md` - Epic 36 section for full usage guide
   - Correct ROAS/ROI calculations for merged cards
   - GroupByToggle component for mode switching
   - Full backward compatibility with Epic 33
-```
+````
 
 ## Testing Checklist
 
 ### Unit Tests (Coverage: 100%)
+
 - [ ] MergedProductBadge.test.tsx (5 tests)
 - [ ] GroupByToggle.test.tsx (4 tests)
 - [ ] All tests pass
 - [ ] Coverage report shows 100%
 
 ### Integration Tests (6 scenarios)
+
 - [ ] API client sends group_by parameter
 - [ ] Response mapping includes Epic 36 fields
 - [ ] Hook useAdvertisingMergedGroups works
@@ -413,6 +430,7 @@ See: `frontend/README.md` - Epic 36 section for full usage guide
 - [ ] URL state management works
 
 ### E2E Tests (5 scenarios)
+
 - [ ] Toggle switches modes
 - [ ] Merged groups render
 - [ ] Tooltips show on hover
@@ -420,6 +438,7 @@ See: `frontend/README.md` - Epic 36 section for full usage guide
 - [ ] Epic 33 regression passed
 
 ### Manual Testing Checklist
+
 - [ ] Open `/analytics/advertising`
 - [ ] Default mode: "По артикулам" selected ✅
 - [ ] Click "По склейкам" → table updates ✅
@@ -432,6 +451,7 @@ See: `frontend/README.md` - Epic 36 section for full usage guide
 - [ ] No console errors ✅
 
 ### Regression Testing (Epic 33)
+
 - [ ] Date range picker works
 - [ ] View by mode (SKU/Campaign/Brand/Category) works
 - [ ] Efficiency filter works
@@ -460,11 +480,13 @@ See: `frontend/README.md` - Epic 36 section for full usage guide
 ### Test Coverage Requirements
 
 **Target Coverage**:
+
 - Unit tests: 100% (all new components)
 - Integration tests: 90% (API client changes)
 - E2E tests: Critical user paths (5 scenarios)
 
 **Total Test Count**: ~20 tests
+
 - Unit: 9 tests (MergedProductBadge: 5, GroupByToggle: 4)
 - Integration: 6 tests
 - E2E: 5 tests
@@ -472,6 +494,7 @@ See: `frontend/README.md` - Epic 36 section for full usage guide
 ### Performance Benchmarks
 
 **Acceptance Criteria**:
+
 - Page load time (group_by=imtId): < 500ms
 - Toggle switch time: < 100ms (React state update)
 - Tooltip open time: < 50ms
@@ -480,6 +503,7 @@ See: `frontend/README.md` - Epic 36 section for full usage guide
 ### Frontend Metrics (Optional)
 
 **Events to Track**:
+
 ```typescript
 // Toggle click
 analytics.track('epic36_toggle_clicked', {
@@ -503,6 +527,7 @@ analytics.track('epic36_merged_view_used', {
 ## Testing Checklist
 
 ### Automated Tests
+
 ```bash
 # Run all tests
 npm test
@@ -520,6 +545,7 @@ npm run test:coverage
 ### Manual Testing
 
 **Scenario 1: Toggle Between Modes**
+
 1. Open `/analytics/advertising`
 2. Default: "По артикулам" selected ✅
 3. Click "По склейкам" ✅
@@ -528,12 +554,14 @@ npm run test:coverage
 6. Table updates to show individual SKUs ✅
 
 **Scenario 2: Merged Group Display**
+
 1. Toggle to "По склейкам"
 2. Verify merged groups show "Группа #XXX" text ✅
 3. Verify badge displays "🔗 Склейка (N)" ✅
 4. Verify individual products show no badge ✅
 
 **Scenario 3: Tooltip Interaction**
+
 1. Hover over merged badge
 2. Tooltip appears with:
    - Header: "Объединённая карточка #XXX" ✅
@@ -541,12 +569,14 @@ npm run test:coverage
    - Explanation text ✅
 
 **Scenario 4: ROAS Validation**
+
 1. Toggle to "По склейкам"
 2. Find merged group (e.g., Группа #328632)
 3. Verify ROAS is numeric (not "—") ✅
 4. Calculate manually: revenue / spend ≈ displayed ROAS ✅
 
 **Scenario 5: Epic 33 Regression**
+
 1. Test all Epic 33 features (see checklist above)
 2. All features work identically ✅
 3. No visual changes to Epic 33 UI ✅
@@ -578,6 +608,7 @@ npm run test:coverage
 
 **Q1: Test Coverage Target**
 Should we aim for:
+
 - **Option A**: 100% coverage (all files)
 - **Option B**: 90% coverage (critical paths only)
 - **Option C**: 80% coverage (unit + E2E)
@@ -588,6 +619,7 @@ Should we aim for:
 
 **Q2: E2E Test Scope**
 Should E2E tests include:
+
 - **Option A**: 5 critical scenarios (proposed above)
 - **Option B**: 5 scenarios + full Epic 33 regression (15+ scenarios)
 - **Option C**: Only 3 happy path scenarios
@@ -598,6 +630,7 @@ Should E2E tests include:
 
 **Q3: Documentation Depth**
 Documentation should include:
+
 - **Option A**: Usage guide only (lightweight)
 - **Option B**: Usage + screenshots + troubleshooting (comprehensive)
 - **Option C**: Usage + video tutorial (extensive)
@@ -608,6 +641,7 @@ Documentation should include:
 
 **Q4: Frontend Metrics**
 Should we track Epic 36 usage?
+
 - **Option A**: Yes - track toggle clicks and feature adoption
 - **Option B**: No - keep it simple
 - **Option C**: Later - defer to post-MVP
@@ -619,6 +653,7 @@ Should we track Epic 36 usage?
 ### Estimated Time
 
 **Total**: 280 minutes (4.7 hours)
+
 - Phase 1: 90 min (E2E tests)
 - Phase 2: 60 min (integration tests)
 - Phase 3: 40 min (unit tests)
@@ -627,11 +662,11 @@ Should we track Epic 36 usage?
 
 ### Risk Assessment
 
-| Risk | Probability | Impact | Mitigation |
-|------|-------------|--------|------------|
-| Test flakiness | Medium | Low | Use proper waitFor, stable selectors |
-| Epic 33 regression | Low | High | Full regression suite in E2E |
-| Documentation outdated | Low | Low | Include screenshots with timestamps |
+| Risk                   | Probability | Impact | Mitigation                           |
+| ---------------------- | ----------- | ------ | ------------------------------------ |
+| Test flakiness         | Medium      | Low    | Use proper waitFor, stable selectors |
+| Epic 33 regression     | Low         | High   | Full regression suite in E2E         |
+| Documentation outdated | Low         | Low    | Include screenshots with timestamps  |
 
 ---
 

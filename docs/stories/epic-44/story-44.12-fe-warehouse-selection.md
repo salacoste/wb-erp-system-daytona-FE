@@ -16,6 +16,7 @@
 **So that** I can get accurate logistics costs and coefficients specific to the warehouse where I plan to ship my products.
 
 **Non-goals**:
+
 - Automatic warehouse recommendation based on product location
 - Warehouse availability/capacity indicators
 - Real-time warehouse status updates
@@ -27,6 +28,7 @@
 ## Backend API Status: READY (Request #98)
 
 Backend has implemented the warehouses API as documented in:
+
 - `docs/request-backend/98-warehouses-tariffs-BACKEND-RESPONSE.md`
 - `docs/stories/epic-44/SDK-WAREHOUSES-TARIFFS-REFERENCE.md`
 
@@ -69,6 +71,7 @@ Backend has implemented the warehouses API as documented in:
 ## Acceptance Criteria
 
 ### AC1: Warehouse List Fetching
+
 - [ ] Fetch warehouses from `GET /v1/tariffs/warehouses` on component mount
 - [ ] Show loading skeleton while fetching (~50 warehouses)
 - [ ] Cache response for 1 hour (`staleTime: 3600000`)
@@ -76,6 +79,7 @@ Backend has implemented the warehouses API as documented in:
 - [ ] Display warehouse count: "Найдено: 50 складов"
 
 ### AC2: Searchable Dropdown Component
+
 - [ ] Implement searchable ComboBox using shadcn/ui Command component
 - [ ] Search filters by warehouse name (case-insensitive, partial match)
 - [ ] Filter updates list in real-time (no API call for filter)
@@ -83,12 +87,14 @@ Backend has implemented the warehouses API as documented in:
 - [ ] Clear search on selection
 
 ### AC3: Dropdown Display Format
+
 - [ ] Each option shows: "[ID] Название" (e.g., "[507] Коледино")
 - [ ] Selected value shows: "Коледино" (name only)
 - [ ] Placeholder text: "Выберите склад..."
 - [ ] Warehouse icon (Warehouse from lucide-react)
 
 ### AC4: Popular Warehouses Section
+
 - [ ] Show "Популярные" section at top of list
 - [ ] Include top 5 warehouses by usage:
   - [507] Коледино
@@ -100,6 +106,7 @@ Backend has implemented the warehouses API as documented in:
 - [ ] Popular items always visible (not filtered by search)
 
 ### AC5: Form State Integration
+
 - [ ] Store selected warehouse ID in form state: `warehouseId: number | null`
 - [ ] Store selected warehouse name for display: `warehouseName: string | null`
 - [ ] Store full warehouse object for tariff extraction
@@ -108,6 +115,7 @@ Backend has implemented the warehouses API as documented in:
 - [ ] Form validates warehouse is selected before submission (optional)
 
 ### AC6: Warehouse Selection Triggers
+
 - [ ] When warehouse selected, trigger:
   - Parse box tariffs from `boxDeliveryBase` and `boxDeliveryLiter`
   - Fetch acceptance coefficients from `GET /v1/tariffs/acceptance/coefficients?warehouseId={id}`
@@ -126,6 +134,7 @@ Backend has implemented the warehouses API as documented in:
 **Endpoint**: `GET /v1/tariffs/warehouses`
 
 **Request**:
+
 ```http
 GET /v1/tariffs/warehouses
 Authorization: Bearer {token}
@@ -133,6 +142,7 @@ X-Cabinet-Id: {cabinet_id}
 ```
 
 **Response**:
+
 ```json
 {
   "data": {
@@ -158,6 +168,7 @@ X-Cabinet-Id: {cabinet_id}
 **Endpoint**: `GET /v1/tariffs/acceptance/coefficients?warehouseId={id}`
 
 **Request**:
+
 ```http
 GET /v1/tariffs/acceptance/coefficients?warehouseId=507
 Authorization: Bearer {token}
@@ -165,6 +176,7 @@ X-Cabinet-Id: {cabinet_id}
 ```
 
 **Response**:
+
 ```json
 {
   "data": {
@@ -637,16 +649,16 @@ Dropdown Open:
 
 ## Invariants & Edge Cases
 
-| Scenario | Expected Behavior |
-|----------|-------------------|
-| Loading state | Show skeleton with spinner, disable dropdown |
-| API error | Show error message with retry button |
-| No warehouses | Show "Нет доступных складов" |
-| Search no results | Show "Склад не найден" |
-| Clear selection | Reset all tariff fields to defaults |
-| Fast warehouse switching | Abort previous coefficient fetch (debounce) |
-| Very long warehouse name | Truncate with ellipsis in trigger |
-| Form reset | Clear warehouse selection and tariffs |
+| Scenario                 | Expected Behavior                            |
+| ------------------------ | -------------------------------------------- |
+| Loading state            | Show skeleton with spinner, disable dropdown |
+| API error                | Show error message with retry button         |
+| No warehouses            | Show "Нет доступных складов"                 |
+| Search no results        | Show "Склад не найден"                       |
+| Clear selection          | Reset all tariff fields to defaults          |
+| Fast warehouse switching | Abort previous coefficient fetch (debounce)  |
+| Very long warehouse name | Truncate with ellipsis in trigger            |
+| Form reset               | Clear warehouse selection and tariffs        |
 
 ---
 
@@ -682,30 +694,32 @@ Dropdown Open:
 ## Dev Agent Record
 
 ### File List
-| File | Change Type | Lines (Est.) | Description |
-|------|-------------|--------------|-------------|
-| `src/types/warehouse.ts` | CREATE | ~60 | Type definitions |
-| `src/lib/warehouse-utils.ts` | CREATE | ~50 | Tariff parsing & filtering |
-| `src/lib/api/tariffs.ts` | UPDATE | +15 | Add getWarehouses function |
-| `src/hooks/useWarehouses.ts` | CREATE | ~30 | TanStack Query hook |
-| `src/components/custom/price-calculator/WarehouseSelect.tsx` | CREATE | ~150 | Searchable dropdown |
-| `src/components/custom/price-calculator/PriceCalculatorForm.tsx` | UPDATE | +30 | Integrate warehouse select |
+
+| File                                                             | Change Type | Lines (Est.) | Description                |
+| ---------------------------------------------------------------- | ----------- | ------------ | -------------------------- |
+| `src/types/warehouse.ts`                                         | CREATE      | ~60          | Type definitions           |
+| `src/lib/warehouse-utils.ts`                                     | CREATE      | ~50          | Tariff parsing & filtering |
+| `src/lib/api/tariffs.ts`                                         | UPDATE      | +15          | Add getWarehouses function |
+| `src/hooks/useWarehouses.ts`                                     | CREATE      | ~30          | TanStack Query hook        |
+| `src/components/custom/price-calculator/WarehouseSelect.tsx`     | CREATE      | ~150         | Searchable dropdown        |
+| `src/components/custom/price-calculator/PriceCalculatorForm.tsx` | UPDATE      | +30          | Integrate warehouse select |
 
 ### Change Log
 
 **2026-01-21 - Implementation Complete**
 
-| File | Action | Lines | Description |
-|------|--------|-------|-------------|
-| `src/types/warehouse.ts` | VERIFIED | 78 | Type definitions (RawWarehouse, Warehouse, WarehouseTariffs, POPULAR_WAREHOUSE_IDS) |
-| `src/lib/warehouse-utils.ts` | VERIFIED | 113 | Tariff parsing (parseTariffExpression), warehouse transformation (parseWarehouse, parseWarehouses), filtering (filterWarehouses, separateWarehouses, isPopularWarehouse) |
-| `src/lib/api/tariffs.ts` | VERIFIED | 118 | getWarehouses() API function with proper logging |
-| `src/hooks/useWarehouses.ts` | VERIFIED | 59 | TanStack Query hook with 24hr cache, auto-parsing |
-| `src/components/custom/price-calculator/WarehouseSelect.tsx` | VERIFIED | 216 | Searchable dropdown with Command/Popover pattern, popular warehouses section |
-| `src/components/custom/price-calculator/WarehouseSection.tsx` | VERIFIED | 168 | Integration with WarehouseSelect, coefficients, storage |
-| `src/lib/__tests__/warehouse-utils.test.ts` | CREATE | 249 | Unit tests (30 tests) for all utility functions |
+| File                                                          | Action   | Lines | Description                                                                                                                                                              |
+| ------------------------------------------------------------- | -------- | ----- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `src/types/warehouse.ts`                                      | VERIFIED | 78    | Type definitions (RawWarehouse, Warehouse, WarehouseTariffs, POPULAR_WAREHOUSE_IDS)                                                                                      |
+| `src/lib/warehouse-utils.ts`                                  | VERIFIED | 113   | Tariff parsing (parseTariffExpression), warehouse transformation (parseWarehouse, parseWarehouses), filtering (filterWarehouses, separateWarehouses, isPopularWarehouse) |
+| `src/lib/api/tariffs.ts`                                      | VERIFIED | 118   | getWarehouses() API function with proper logging                                                                                                                         |
+| `src/hooks/useWarehouses.ts`                                  | VERIFIED | 59    | TanStack Query hook with 24hr cache, auto-parsing                                                                                                                        |
+| `src/components/custom/price-calculator/WarehouseSelect.tsx`  | VERIFIED | 216   | Searchable dropdown with Command/Popover pattern, popular warehouses section                                                                                             |
+| `src/components/custom/price-calculator/WarehouseSection.tsx` | VERIFIED | 168   | Integration with WarehouseSelect, coefficients, storage                                                                                                                  |
+| `src/lib/__tests__/warehouse-utils.test.ts`                   | CREATE   | 249   | Unit tests (30 tests) for all utility functions                                                                                                                          |
 
 **Tests Added:**
+
 - 30 unit tests for warehouse-utils.ts covering:
   - `parseTariffExpression`: 9 tests (valid expressions, edge cases, invalid inputs)
   - `parseWarehouse`: 3 tests (transformation, different tariffs, zero tariffs)
@@ -715,11 +729,13 @@ Dropdown Open:
   - `separateWarehouses`: 6 tests (separation logic, edge cases)
 
 **Build Status:**
+
 - ESLint: PASS (no errors or warnings)
 - Unit Tests: PASS (30/30)
 - Note: Pre-existing build issues with analytics/brand page unrelated to this story
 
 ### Review Follow-ups
+
 _(To be filled after code review)_
 
 ---
@@ -746,23 +762,25 @@ _(To be filled after code review)_
 ## QA Checklist
 
 ### Functional Verification
-| Test Case | Expected Result | Status |
-|-----------|-----------------|--------|
-| Load warehouses | List populated with ~50 items | [ ] |
-| Search "Казань" | Shows only Казань warehouse | [ ] |
-| Select warehouse | Updates form state, triggers tariff fetch | [ ] |
-| Clear selection | Resets to placeholder, clears tariffs | [ ] |
-| API error | Shows error with retry button | [ ] |
-| Popular section | Shows top 5 warehouses | [ ] |
-| Tariff parsing | "48*1" → 48, "5*x" → 5 | [ ] |
+
+| Test Case        | Expected Result                           | Status |
+| ---------------- | ----------------------------------------- | ------ |
+| Load warehouses  | List populated with ~50 items             | [ ]    |
+| Search "Казань"  | Shows only Казань warehouse               | [ ]    |
+| Select warehouse | Updates form state, triggers tariff fetch | [ ]    |
+| Clear selection  | Resets to placeholder, clears tariffs     | [ ]    |
+| API error        | Shows error with retry button             | [ ]    |
+| Popular section  | Shows top 5 warehouses                    | [ ]    |
+| Tariff parsing   | "48*1" → 48, "5*x" → 5                    | [ ]    |
 
 ### Accessibility Verification
-| Check | Status |
-|-------|--------|
-| Keyboard navigation | [ ] |
-| Screen reader | [ ] |
-| Focus management | [ ] |
-| Color contrast | [ ] |
+
+| Check               | Status |
+| ------------------- | ------ |
+| Keyboard navigation | [ ]    |
+| Screen reader       | [ ]    |
+| Focus management    | [ ]    |
+| Color contrast      | [ ]    |
 
 ---
 

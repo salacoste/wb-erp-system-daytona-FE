@@ -12,26 +12,26 @@
 
 ### Story 63.1-FE: Sales Metric Card (Vykypy)
 
-| Criteria | Status | Notes |
-|----------|--------|-------|
-| Card layout matches OrdersMetricCard | PASS | Same structure: header, value, comparison, subtitle |
-| Color usage follows design system | PASS | Green #22C55E for revenue metrics |
-| Typography hierarchy | PASS | 32px bold value, 14px title, 12px comparison |
-| Comparison badge placement | PASS | Below value, with TrendIndicator + ComparisonBadge |
-| Tooltip content clarity | PASS | Explains wb_sales_gross vs sales_gross distinction |
-| Mobile responsiveness | PASS | min-h-[120px], p-4 padding, responsive text |
+| Criteria                             | Status | Notes                                               |
+| ------------------------------------ | ------ | --------------------------------------------------- |
+| Card layout matches OrdersMetricCard | PASS   | Same structure: header, value, comparison, subtitle |
+| Color usage follows design system    | PASS   | Green #22C55E for revenue metrics                   |
+| Typography hierarchy                 | PASS   | 32px bold value, 14px title, 12px comparison        |
+| Comparison badge placement           | PASS   | Below value, with TrendIndicator + ComparisonBadge  |
+| Tooltip content clarity              | PASS   | Explains wb_sales_gross vs sales_gross distinction  |
+| Mobile responsiveness                | PASS   | min-h-[120px], p-4 padding, responsive text         |
 
 **Design System Compliance**: APPROVED
 
 ### Story 63.2-FE: Sales COGS Metric Card
 
-| Criteria | Status | Notes |
-|----------|--------|-------|
-| Pattern matches OrdersCogsMetricCard | PASS | Same three-state design (missing/incomplete/complete) |
-| COGS coverage indicator | PASS | Yellow warning for <100% coverage |
-| Margin display formatting | N/A | COGS card shows cost, not margin |
-| Inverted comparison (costs) | PASS | Lower costs = green (positive) |
-| Navigation to COGS page | PASS | Uses ROUTES.COGS.SINGLE |
+| Criteria                             | Status | Notes                                                 |
+| ------------------------------------ | ------ | ----------------------------------------------------- |
+| Pattern matches OrdersCogsMetricCard | PASS   | Same three-state design (missing/incomplete/complete) |
+| COGS coverage indicator              | PASS   | Yellow warning for <100% coverage                     |
+| Margin display formatting            | N/A    | COGS card shows cost, not margin                      |
+| Inverted comparison (costs)          | PASS   | Lower costs = green (positive)                        |
+| Navigation to COGS page              | PASS   | Uses ROUTES.COGS.SINGLE                               |
 
 **Design System Compliance**: APPROVED
 
@@ -65,22 +65,23 @@ Card Dimensions:
 
 #### Color Specification (Story 63.1)
 
-| Element | Color | Hex | Tailwind Class |
-|---------|-------|-----|----------------|
-| Icon | Green | #22C55E | `text-green-500` |
-| Main Value | Green | #22C55E | `text-green-500` |
-| Title | Muted Gray | #757575 | `text-muted-foreground` |
-| Positive Trend | Green | #22C55E | `text-green-600` |
-| Negative Trend | Red | #EF4444 | `text-red-500` |
-| Neutral Trend | Gray | #9CA3AF | `text-muted-foreground` |
-| Subtitle | Light Gray | #9CA3AF | `text-gray-400` |
-| Info Icon | Muted | #757575 | `text-muted-foreground` |
+| Element        | Color      | Hex     | Tailwind Class          |
+| -------------- | ---------- | ------- | ----------------------- |
+| Icon           | Green      | #22C55E | `text-green-500`        |
+| Main Value     | Green      | #22C55E | `text-green-500`        |
+| Title          | Muted Gray | #757575 | `text-muted-foreground` |
+| Positive Trend | Green      | #22C55E | `text-green-600`        |
+| Negative Trend | Red        | #EF4444 | `text-red-500`          |
+| Neutral Trend  | Gray       | #9CA3AF | `text-muted-foreground` |
+| Subtitle       | Light Gray | #9CA3AF | `text-gray-400`         |
+| Info Icon      | Muted      | #757575 | `text-muted-foreground` |
 
 #### Icon Selection
 
 Use `ShoppingBag` from lucide-react (not `ShoppingCart` which is used for Orders).
 
 **Rationale**:
+
 - ShoppingBag represents completed purchases/sales
 - ShoppingCart represents pending orders/potential revenue
 - This visual distinction helps users understand the metric difference
@@ -142,18 +143,18 @@ Use `ShoppingBag` from lucide-react (not `ShoppingCart` which is used for Orders
 
 #### Color Specification (Story 63.2)
 
-| Element | Color | Hex | Tailwind Class |
-|---------|-------|-----|----------------|
-| Icon | Gray | #757575 | `text-gray-500` |
-| Main Value | Gray | #6B7280 | `text-gray-500` |
-| Title | Muted | #757575 | `text-muted-foreground` |
-| Positive Trend (costs down) | Green | #22C55E | `text-green-600` |
-| Negative Trend (costs up) | Red | #EF4444 | `text-red-500` |
-| Warning Background | Yellow Light | #FEF3C7 | `bg-yellow-100` |
-| Warning Text | Yellow Dark | #CA8A04 | `text-yellow-600` |
-| Warning Icon | Yellow | #EAB308 | `text-yellow-500` |
-| Link Text | Primary Red | #E53935 | `text-primary` |
-| Coverage Text (complete) | Light Gray | #9CA3AF | `text-gray-400` |
+| Element                     | Color        | Hex     | Tailwind Class          |
+| --------------------------- | ------------ | ------- | ----------------------- |
+| Icon                        | Gray         | #757575 | `text-gray-500`         |
+| Main Value                  | Gray         | #6B7280 | `text-gray-500`         |
+| Title                       | Muted        | #757575 | `text-muted-foreground` |
+| Positive Trend (costs down) | Green        | #22C55E | `text-green-600`        |
+| Negative Trend (costs up)   | Red          | #EF4444 | `text-red-500`          |
+| Warning Background          | Yellow Light | #FEF3C7 | `bg-yellow-100`         |
+| Warning Text                | Yellow Dark  | #CA8A04 | `text-yellow-600`       |
+| Warning Icon                | Yellow       | #EAB308 | `text-yellow-500`       |
+| Link Text                   | Primary Red  | #E53935 | `text-primary`          |
+| Coverage Text (complete)    | Light Gray   | #9CA3AF | `text-gray-400`         |
 
 ---
 
@@ -181,6 +182,7 @@ Position mapping:
 ### Component Reuse
 
 Both new cards should reuse:
+
 1. `ComparisonBadge` - Percentage display with semantic colors
 2. `TrendIndicator` - Arrow icons with direction colors
 3. `StandardMetricSkeleton` - Loading state from MetricCardStates
@@ -216,20 +218,20 @@ Both new cards should reuse:
 
 ### Keyboard Navigation
 
-| Element | Action | Key |
-|---------|--------|-----|
-| Info icon | Show tooltip | Tab to focus, Enter/Space to open |
-| "Fill COGS" link | Navigate | Tab to focus, Enter to navigate |
-| Retry button | Retry fetch | Tab to focus, Enter to retry |
+| Element          | Action       | Key                               |
+| ---------------- | ------------ | --------------------------------- |
+| Info icon        | Show tooltip | Tab to focus, Enter/Space to open |
+| "Fill COGS" link | Navigate     | Tab to focus, Enter to navigate   |
+| Retry button     | Retry fetch  | Tab to focus, Enter to retry      |
 
 ### Color Contrast (WCAG AA)
 
-| Text | Background | Ratio | Status |
-|------|------------|-------|--------|
-| Green #22C55E | White #FFFFFF | 3.1:1 | PASS (large text) |
-| Gray #6B7280 | White #FFFFFF | 4.7:1 | PASS |
+| Text           | Background     | Ratio | Status            |
+| -------------- | -------------- | ----- | ----------------- |
+| Green #22C55E  | White #FFFFFF  | 3.1:1 | PASS (large text) |
+| Gray #6B7280   | White #FFFFFF  | 4.7:1 | PASS              |
 | Yellow #CA8A04 | Yellow #FEF3C7 | 3.4:1 | PASS (large text) |
-| Red #E53935 | White #FFFFFF | 4.5:1 | PASS |
+| Red #E53935    | White #FFFFFF  | 4.5:1 | PASS              |
 
 ---
 
@@ -273,6 +275,7 @@ Fill in COGS for all products to get accurate profit calculations.
 **Choice**: Use green (#22C55E) for Sales value, matching revenue semantic meaning.
 
 **Rationale**:
+
 - Green universally indicates positive financial outcomes
 - Aligns with existing design system color semantics
 - Creates visual distinction from Orders (blue) which is "potential" revenue
@@ -282,6 +285,7 @@ Fill in COGS for all products to get accurate profit calculations.
 **Choice**: Use gray (#757575) for COGS values, indicating expense/cost.
 
 **Rationale**:
+
 - Gray is neutral, appropriate for cost metrics
 - Not red (which would imply loss/error)
 - Consistent with OrdersCogsMetricCard pattern
@@ -291,6 +295,7 @@ Fill in COGS for all products to get accurate profit calculations.
 **Choice**: Lower COGS = green badge, Higher COGS = red badge.
 
 **Rationale**:
+
 - For expense metrics, lower is better
 - `calculateComparison(current, previous, true)` - invertComparison=true
 - Matches OrdersCogsMetricCard behavior
@@ -300,6 +305,7 @@ Fill in COGS for all products to get accurate profit calculations.
 **Choice**: Implement three distinct visual states for COGS coverage.
 
 **Rationale**:
+
 - 100% coverage: Normal display (no warning)
 - 1-99% coverage: Warning row with link
 - 0% coverage: Full warning panel (no value to display)
@@ -338,15 +344,15 @@ Fill in COGS for all products to get accurate profit calculations.
 
 ## 8. References
 
-| Resource | Location |
-|----------|----------|
-| Design System | `docs/front-end-spec.md` |
-| KPI Cards Wireframe | `docs/wireframes/dashboard-kpi-cards.md` |
-| OrdersMetricCard | `src/components/custom/dashboard/OrdersMetricCard.tsx` |
+| Resource             | Location                                                   |
+| -------------------- | ---------------------------------------------------------- |
+| Design System        | `docs/front-end-spec.md`                                   |
+| KPI Cards Wireframe  | `docs/wireframes/dashboard-kpi-cards.md`                   |
+| OrdersMetricCard     | `src/components/custom/dashboard/OrdersMetricCard.tsx`     |
 | OrdersCogsMetricCard | `src/components/custom/dashboard/OrdersCogsMetricCard.tsx` |
-| ComparisonBadge | `src/components/custom/ComparisonBadge.tsx` |
-| TrendIndicator | `src/components/custom/TrendIndicator.tsx` |
-| MetricCardStates | `src/components/custom/dashboard/MetricCardStates.tsx` |
+| ComparisonBadge      | `src/components/custom/ComparisonBadge.tsx`                |
+| TrendIndicator       | `src/components/custom/TrendIndicator.tsx`                 |
+| MetricCardStates     | `src/components/custom/dashboard/MetricCardStates.tsx`     |
 
 ---
 

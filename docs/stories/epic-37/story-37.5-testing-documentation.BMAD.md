@@ -16,6 +16,7 @@
 **Phase 2**: ✅ Manual validation complete - 10/10 checks passed (2025-12-30)
 
 **Manual Validation Results** (2025-12-30):
+
 - ✅ MergedGroupTable structure correct (0 rows expected - no склейки data for period)
 - ✅ WCAG 2.1 AA accessibility: 100%
 - ✅ Performance optimization verified (useCallback, useMemo)
@@ -68,6 +69,7 @@
 ## Tasks / Subtasks
 
 ### Task 1: Create Unit Test Suite (AC: 1-6)
+
 - [ ] Create file: `frontend/src/app/(dashboard)/analytics/advertising/components/MergedGroupTable.test.tsx`
 - [ ] Set up test environment: Import `@testing-library/react`, `@testing-library/user-event`
 - [ ] Create mock data helper: `createMockGroup({ productCount, mainProductId })` function
@@ -95,6 +97,7 @@
 - [ ] Verify coverage ≥90%: `npm run test:cov -- MergedGroupTable`
 
 ### Task 2: Create E2E Test Suite (AC: 7-12)
+
 - [ ] Create file: `frontend/e2e/advertising-analytics-merged-groups.spec.ts`
 - [ ] Set up Playwright test: `import { test, expect } from '@playwright/test'`
 - [ ] **Test: Switch to Склейки Mode**
@@ -120,6 +123,7 @@
 - [ ] Run E2E tests: `npm run test:e2e -- advertising-analytics-merged-groups`
 
 ### Task 3: Accessibility Testing (AC: 13-16)
+
 - [ ] Install axe-core: `npm install -D jest-axe` (if not present)
 - [ ] Add to unit tests:
   ```typescript
@@ -142,6 +146,7 @@
   - [ ] Verify no keyboard traps
 
 ### Task 4: Performance Testing (AC: 21)
+
 - [ ] Create test data: Generate 50 groups with varying product counts
 - [ ] Open Chrome DevTools → Performance tab
 - [ ] Set CPU throttling to 6x slowdown
@@ -152,6 +157,7 @@
 - [ ] Document results in this story file
 
 ### Task 5: Implement Analytics Tracking (AC: 23)
+
 - [ ] Install Mixpanel: `npm install mixpanel-browser` (if not present)
 - [ ] Add event on mode switch:
   ```typescript
@@ -178,6 +184,7 @@
 - [ ] Test events fire in Mixpanel debug mode
 
 ### Task 6: User Acceptance Testing (AC: 22)
+
 - [ ] Recruit 3 internal finance team users
 - [ ] Create UAT script with 5 tasks:
   - [ ] Task 1: Switch to "По склейкам" mode
@@ -192,6 +199,7 @@
 - [ ] Document UAT results in Story 37.5
 
 ### Task 7: Write User Guide (AC: 17, 20)
+
 - [ ] Open `frontend/README.md`
 - [ ] Add new section: "### Склейки (Merged Product Cards) Analytics"
 - [ ] Include subsections:
@@ -204,6 +212,7 @@
 - [ ] Use template from original Story 37.5 (lines 280-317)
 
 ### Task 8: Capture Documentation Assets (AC: 18, 19)
+
 - [ ] Save API response from Story 37.1 validation to `docs/stories/epic-37/api-response-sample.json`
 - [ ] Create screenshots directory: `mkdir -p docs/stories/epic-37/screenshots`
 - [ ] Capture screenshots (1400px viewport):
@@ -325,18 +334,23 @@ Wildberries groups related products into "склейки" (merged cards) sharing
 ### UAT Script Template
 
 **Task 1**: "Please switch the table to show merged product groups (склейки)."
+
 - **Success**: User clicks "По склейкам" toggle within 30 seconds
 
 **Task 2**: "In the first group, identify which product is the main product receiving ad budget."
+
 - **Success**: User points to product with crown icon
 
 **Task 3**: "Explain what the 'ROAS' column means in your own words."
+
 - **Success**: User mentions "return on ad spend" or "revenue per ruble spent"
 
 **Task 4**: "Find the group with the highest percentage of organic sales."
+
 - **Success**: User identifies group with highest % in Органика column
 
 **Task 5**: "How would you use this table to decide where to increase ad budget?"
+
 - **Success**: User explains analyzing ROAS or organic contribution
 
 ### Performance Profiling Steps
@@ -361,6 +375,7 @@ Wildberries groups related products into "склейки" (merged cards) sharing
 ### Testing
 
 **Test Execution Order**:
+
 1. Unit tests (fastest, run first)
 2. Accessibility tests (automated)
 3. E2E tests (slower, run after unit tests pass)
@@ -368,6 +383,7 @@ Wildberries groups related products into "склейки" (merged cards) sharing
 5. UAT (final validation with real users)
 
 **Minimum Coverage**:
+
 - Unit tests: ≥90% code coverage
 - E2E tests: All critical user flows
 - Accessibility: Zero WCAG 2.1 AA violations
@@ -376,23 +392,25 @@ Wildberries groups related products into "склейки" (merged cards) sharing
 
 ## Change Log
 
-| Date | Version | Description | Author |
-|------|---------|-------------|--------|
-| 2025-12-29 | 1.0 | Initial story draft | Sally (UX Expert) |
-| 2025-12-29 | 1.1 | PO decisions filled | Sarah (PO) |
-| 2025-12-29 | 2.0 | Converted to BMad template | Sarah (PO) |
+| Date       | Version | Description                | Author            |
+| ---------- | ------- | -------------------------- | ----------------- |
+| 2025-12-29 | 1.0     | Initial story draft        | Sally (UX Expert) |
+| 2025-12-29 | 1.1     | PO decisions filled        | Sarah (PO)        |
+| 2025-12-29 | 2.0     | Converted to BMad template | Sarah (PO)        |
 
 ---
 
 ## Dev Agent Record
 
-*To be populated during implementation.*
+_To be populated during implementation._
 
 ### Agent Model Used
-*Model and version*
+
+_Model and version_
 
 ### Debug Log References
-*Debug logs*
+
+_Debug logs_
 
 ### Completion Notes (Phase 1)
 
@@ -400,6 +418,7 @@ Wildberries groups related products into "склейки" (merged cards) sharing
 **Status**: ✅ PHASE 1 COMPLETE - All automated testing and documentation delivered
 
 **Implemented Features**:
+
 - ✅ Unit tests: 77 tests (55 metrics + 22 formatters), 100% pass rate
 - ✅ E2E test code: 7 scenarios (merged-group-table-epic-37.spec.ts, 309 lines)
 - ✅ Accessibility test code: 7 scenarios (accessibility-merged-groups-epic-37.spec.ts, 400 lines)
@@ -407,18 +426,21 @@ Wildberries groups related products into "склейки" (merged cards) sharing
 - ✅ QA handoff: Comprehensive 900+ line Phase 2 guide (QA-HANDOFF-PHASE-2.md)
 
 **Test Results**:
+
 - **metrics-calculator.test.ts**: 33/33 passed ✅ (3ms)
 - **formatters.test.ts**: 22/22 passed ✅ (12ms)
 - **Total**: 77/77 unit tests passing (100% pass rate)
 - **Coverage**: ≥90% for all 10 functions (6 calculators + 4 formatters)
 
 **Issues Fixed**:
+
 - Non-breaking space mismatch in formatters (22 tests fixed)
 - TypeScript error: imtId type changed to `number | null`
 - Incomplete metrics tests: expanded from 4 to 55 tests
 - toBeCloseTo precision: adjusted from 71.237 to 71.229
 
 **Phase 2 Handoff**:
+
 - UAT with 3 users (2-3h)
 - Performance testing (1-2h)
 - Screenshot capture (1h)
@@ -428,6 +450,7 @@ Wildberries groups related products into "склейки" (merged cards) sharing
 - **Total**: 7.5-11.5h estimated for QA team
 
 ### File List (Phase 1)
+
 - `frontend/src/app/(dashboard)/analytics/advertising/utils/__tests__/metrics-calculator.test.ts` (completed, 318 lines)
 - `frontend/src/app/(dashboard)/analytics/advertising/utils/__tests__/formatters.test.ts` (fixed, 120 lines)
 - `frontend/e2e/merged-group-table-epic-37.spec.ts` (created, 309 lines)
@@ -448,6 +471,7 @@ Wildberries groups related products into "склейки" (merged cards) sharing
 **Status**: ✅ **COMPONENT TESTS FIXED** - All 17 unit tests passing, E2E tests investigated
 
 **Work Completed**:
+
 1. ✅ **Component Unit Tests Fixed**: MergedGroupTable.test.tsx (17/17 passing)
    - Fixed "multiple elements" error: `getByText()` → `getAllByText()` for MAIN-001
    - Fixed Vitest compatibility: `jest.fn()` → `vi.fn()` (3 occurrences)
@@ -479,6 +503,7 @@ Wildberries groups related products into "склейки" (merged cards) sharing
    - Test fixtures (test-data.ts) configured ✅
 
 **Test Results (Updated)**:
+
 - **Component Tests**: 17/17 passed ✅ (85ms)
   - Rendering: 3/3 passed
   - Aggregate Row: 3/3 passed
@@ -493,16 +518,19 @@ Wildberries groups related products into "склейки" (merged cards) sharing
 - **Accessibility Tests**: 7 created, environmental debugging needed (Phase 2)
 
 **Issues Fixed**:
+
 - ❌ **Before**: Component tests failing (5/17 failures) - "multiple elements" + jest.fn() errors
 - ✅ **After**: Component tests passing (17/17 success) - getAllByText + vi.fn() fixes
 - ❌ **Before**: Frontend Module not found error - @/lib/stores/auth import
 - ✅ **After**: Frontend loading correctly - @/stores/authStore import
 
 **Files Modified (This Session)**:
+
 1. `frontend/src/app/(dashboard)/analytics/advertising/components/__tests__/MergedGroupTable.test.tsx` (3 fixes)
 2. `frontend/src/lib/analytics/telegram-metrics.ts` (1 import fix)
 
 **Phase 2 Handoff (Updated)**:
+
 - ✅ Component unit tests: ALL 17 PASSING (ready for production)
 - ⏳ E2E tests: Code complete, need button selector debugging (<1h)
 - ⏳ Accessibility tests: Code complete, need button selector debugging (<1h)
@@ -514,6 +542,7 @@ Wildberries groups related products into "склейки" (merged cards) sharing
 - **Total**: 9.5-13.5h estimated for QA team (reduced from 11.5h due to component test completion)
 
 **Recommendations for Phase 2**:
+
 1. **E2E/Accessibility Test Debugging** (priority 1):
    - Issue: `page.getByRole('button', { name: /По склейкам/i })` not finding button
    - Suggested fixes:
@@ -534,6 +563,7 @@ Wildberries groups related products into "склейки" (merged cards) sharing
    - Execute accessibility tests (same fix)
 
 **Epic 37 Final Status**: 96% → 98% complete (component tests now 100%)
+
 - ✅ Story 37.1: Architecture complete
 - ✅ Story 37.2: Component complete (QA 85/100)
 - ✅ Story 37.3: Metrics complete (QA 95/100)
@@ -563,6 +593,7 @@ Wildberries groups related products into "склейки" (merged cards) sharing
 **Overall Assessment**: Phase 1 delivers exceptional automated testing and documentation quality. Phase 2 requires manual QA team execution.
 
 **Phase 1 Strengths** (AI-Completed):
+
 1. **Unit Tests**: 77 tests (55 metrics + 22 formatters), 100% pass rate, 15ms execution
 2. **Test Coverage**: ≥90% for all 10 functions (calculators + formatters)
 3. **E2E Test Code**: 7 scenarios (309 lines), comprehensive workflow coverage
@@ -573,6 +604,7 @@ Wildberries groups related products into "склейки" (merged cards) sharing
 8. **Code Quality**: 0 ESLint errors, 0 TypeScript errors, 2.5s build time
 
 **Phase 2 Gaps** (Manual QA Required):
+
 1. ⏳ E2E tests created but NOT executed (Playwright installation + run needed)
 2. ⏳ Accessibility tests created but NOT executed (axe-core installation needed)
 3. ⏳ UAT not conducted (3 users, ≥90% satisfaction target)
@@ -586,7 +618,7 @@ Wildberries groups related products into "склейки" (merged cards) sharing
 ### Compliance Check
 
 - ✅ **Coding Standards**: TypeScript strict mode, 0 lint errors, excellent JSDoc
-- ✅ **Project Structure**: Proper __tests__ directories, e2e/ folder structure
+- ✅ **Project Structure**: Proper \_\_tests\_\_ directories, e2e/ folder structure
 - ⚠️ **Testing Strategy**: Automated tests created but NOT executed (Phase 2 pending)
 - ✅ **Phase 1 ACs Met**: All automated testing ACs delivered (AC 1-6, 17-19)
 
@@ -595,6 +627,7 @@ Wildberries groups related products into "склейки" (merged cards) sharing
 ### Test Coverage Analysis
 
 **Phase 1 Coverage**: ✅ **EXCELLENT**
+
 - ✅ metrics-calculator.test.ts: 55 tests (3ms execution)
   - All 6 formulas tested (totalSales, revenue, organicSales, organicContribution, spend, ROAS)
   - Edge cases: division by zero, NaN, negative values, null
@@ -605,6 +638,7 @@ Wildberries groups related products into "склейки" (merged cards) sharing
   - Edge cases: null, undefined, very large/small numbers
 
 **Phase 2 Coverage**: ⏳ **PENDING**
+
 - ⏳ E2E tests: 7 scenarios created, NOT executed
 - ⏳ Accessibility tests: 7 scenarios created, NOT executed
 - ⏳ Performance: Test plan created, NOT executed
@@ -617,21 +651,25 @@ Wildberries groups related products into "склейки" (merged cards) sharing
 ### NFR Validation
 
 #### Security: ✅ PASS
+
 - Test code has no security vulnerabilities
 - User guide contains no sensitive data
 - Documentation follows best practices
 
 #### Performance: ⏳ PENDING VALIDATION
+
 - Target: <200ms render time with 6x CPU throttling
 - Current: Not measured (Phase 2 task)
 - **Recommendation**: Execute performance test before production
 
 #### Reliability: ✅ PASS (Phase 1)
+
 - Unit tests comprehensive and stable (100% pass rate)
 - Test execution fast (15ms total)
 - No flaky tests observed
 
 #### Maintainability: ✅ PASS
+
 - Excellent test documentation
 - User guide comprehensive and clear
 - QA handoff provides step-by-step instructions
@@ -642,6 +680,7 @@ Wildberries groups related products into "склейки" (merged cards) sharing
 ### Improvements Checklist
 
 **Phase 1 - Handled by Dev** ✅:
+
 - [x] Unit tests created (metrics-calculator.test.ts, formatters.test.ts)
 - [x] Unit tests pass (77/77, 100% pass rate)
 - [x] E2E test code created (merged-group-table-epic-37.spec.ts, 309 lines)
@@ -652,6 +691,7 @@ Wildberries groups related products into "склейки" (merged cards) sharing
 - [x] Code quality verified (0 lint errors, 0 TypeScript errors)
 
 **Phase 2 - Pending QA Team** ⏳:
+
 - [ ] **CRITICAL**: Install @axe-core/playwright (`npm install --save-dev @axe-core/playwright`)
 - [ ] **CRITICAL**: Execute E2E tests (`npx playwright test e2e/merged-group-table-epic-37.spec.ts`)
 - [ ] **CRITICAL**: Execute accessibility tests (uncomment axe-core code first)
@@ -674,6 +714,7 @@ Wildberries groups related products into "склейки" (merged cards) sharing
 **Quality Score**: 85/100 (Very Good for Phase 1, incomplete overall)
 
 **Risk Level**: MEDIUM
+
 - 0 critical risks
 - 0 high risks
 - 3 medium risks (E2E not executed, accessibility not executed, performance not validated)
@@ -686,12 +727,14 @@ Wildberries groups related products into "склейки" (merged cards) sharing
 ⚠️ **Phase 1 COMPLETE - Continue to Phase 2**
 
 **Justification**:
+
 - Phase 1 automated tasks delivered exceptionally (77 tests, 100% pass)
 - Comprehensive documentation created (user guide, QA handoff, completion report)
 - Code quality excellent (0 errors, 2.5s build)
 - Phase 2 manual tasks clearly scoped and ready for QA team
 
 **Next Steps**:
+
 1. ✅ **Phase 1**: Complete (can proceed to Phase 2)
 2. ⏳ **Phase 2**: QA team must execute manual tasks (7.5-11.5h)
 3. ⏳ **BEFORE PRODUCTION**: All Phase 2 tasks must pass
@@ -709,6 +752,7 @@ Wildberries groups related products into "склейки" (merged cards) sharing
 ---
 
 **QA Checklist** (Updated):
+
 - [x] Phase 1 automated testing complete (77 tests, 100% pass)
 - [x] E2E test code created (7 scenarios, 309 lines)
 - [x] Accessibility test code created (7 scenarios, 400 lines)

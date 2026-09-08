@@ -9,4 +9,7 @@
 ## Gate Status
 
 Gate: CONCERNS → qa.qaLocation/gates/{epic}.{story}-{slug}.yml
+
+```
+
 ```

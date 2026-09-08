@@ -9,7 +9,8 @@ Please provide:
 5. Whether to include hidden files/folders (starting with `.`)
 
 Would you like to proceed with documentation indexing? Please provide the required input above.
-```
+
+````
 
 ## Task: generate-ai-frontend-prompt
 Source: .bmad-core/tasks/generate-ai-frontend-prompt.md
@@ -17,3 +18,4 @@ Source: .bmad-core/tasks/generate-ai-frontend-prompt.md
 
 ```md
 <!-- Powered by BMAD™ Core -->
+````

@@ -23,6 +23,7 @@ NEXT_PUBLIC_MIXPANEL_TOKEN=your_mixpanel_project_token
 ```
 
 **To get token**:
+
 1. Log in to [Mixpanel](https://mixpanel.com)
 2. Go to Settings → Project Settings
 3. Copy the "Token" value
@@ -40,10 +41,11 @@ NEXT_PUBLIC_MIXPANEL_TOKEN=your_mixpanel_project_token
 **Triggered**: When user navigates to advertising page or changes view mode
 
 **Properties**:
-| Property | Type | Description |
-|----------|------|-------------|
+
+| Property    | Type               | Description           |
+| ----------- | ------------------ | --------------------- |
 | `view_mode` | `'sku' \| 'imtId'` | Current grouping mode |
-| `timestamp` | `string` | ISO 8601 timestamp |
+| `timestamp` | `string`           | ISO 8601 timestamp    |
 
 ---
 
@@ -54,11 +56,12 @@ NEXT_PUBLIC_MIXPANEL_TOKEN=your_mixpanel_project_token
 **Triggered**: When user switches between SKU and Merged Groups view
 
 **Properties**:
-| Property | Type | Description |
-|----------|------|-------------|
-| `mode` | `'sku' \| 'imtId'` | New mode |
-| `previous_mode` | `'sku' \| 'imtId'` | Previous mode |
-| `timestamp` | `string` | ISO 8601 timestamp |
+
+| Property        | Type               | Description        |
+| --------------- | ------------------ | ------------------ |
+| `mode`          | `'sku' \| 'imtId'` | New mode           |
+| `previous_mode` | `'sku' \| 'imtId'` | Previous mode      |
+| `timestamp`     | `string`           | ISO 8601 timestamp |
 
 ---
 
@@ -69,12 +72,13 @@ NEXT_PUBLIC_MIXPANEL_TOKEN=your_mixpanel_project_token
 **Triggered**: When user clicks column header to sort
 
 **Properties**:
-| Property | Type | Description |
-|----------|------|-------------|
-| `column` | `string` | Column being sorted (e.g., 'spend', 'roas') |
-| `direction` | `'asc' \| 'desc'` | Sort direction |
-| `view_mode` | `'sku' \| 'imtId'` | Current view mode |
-| `timestamp` | `string` | ISO 8601 timestamp |
+
+| Property    | Type               | Description                                 |
+| ----------- | ------------------ | ------------------------------------------- |
+| `column`    | `string`           | Column being sorted (e.g., 'spend', 'roas') |
+| `direction` | `'asc' \| 'desc'`  | Sort direction                              |
+| `view_mode` | `'sku' \| 'imtId'` | Current view mode                           |
+| `timestamp` | `string`           | ISO 8601 timestamp                          |
 
 ---
 
@@ -85,23 +89,24 @@ NEXT_PUBLIC_MIXPANEL_TOKEN=your_mixpanel_project_token
 **Triggered**: When user clicks on a product row
 
 **Properties**:
-| Property | Type | Description |
-|----------|------|-------------|
-| `nmId` | `number` | Product article number |
-| `groupId` | `number \| null` | IMT ID if in merged view |
-| `is_main_product` | `boolean` | Whether clicked row is main product |
-| `view_mode` | `'sku' \| 'imtId'` | Current view mode |
-| `timestamp` | `string` | ISO 8601 timestamp |
+
+| Property          | Type               | Description                         |
+| ----------------- | ------------------ | ----------------------------------- |
+| `nmId`            | `number`           | Product article number              |
+| `groupId`         | `number \| null`   | IMT ID if in merged view            |
+| `is_main_product` | `boolean`          | Whether clicked row is main product |
+| `view_mode`       | `'sku' \| 'imtId'` | Current view mode                   |
+| `timestamp`       | `string`           | ISO 8601 timestamp                  |
 
 ---
 
 ## Files
 
-| File | Purpose |
-|------|---------|
-| `src/lib/mixpanel.ts` | Mixpanel initialization and safe wrapper |
-| `src/lib/analytics-events.ts` | Type-safe event tracking functions |
-| `src/app/(dashboard)/analytics/advertising/page.tsx` | Event tracking integration |
+| File                                                 | Purpose                                  |
+| ---------------------------------------------------- | ---------------------------------------- |
+| `src/lib/mixpanel.ts`                                | Mixpanel initialization and safe wrapper |
+| `src/lib/analytics-events.ts`                        | Type-safe event tracking functions       |
+| `src/app/(dashboard)/analytics/advertising/page.tsx` | Event tracking integration               |
 
 ---
 

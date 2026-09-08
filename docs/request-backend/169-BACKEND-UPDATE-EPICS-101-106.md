@@ -18,11 +18,11 @@
 
 3 endpoints for WB acquiring cost reports.
 
-| Method | Path | Description |
-|--------|------|-------------|
-| GET | `/v1/analytics/acquiring/reports?from=&to=` | List acquiring reports for date range |
-| GET | `/v1/analytics/acquiring/reports/:id/detail` | Per-transaction detail for a report |
-| GET | `/v1/analytics/acquiring/detail?from=&to=` | Cross-report detail for date range |
+| Method | Path                                         | Description                           |
+| ------ | -------------------------------------------- | ------------------------------------- |
+| GET    | `/v1/analytics/acquiring/reports?from=&to=`  | List acquiring reports for date range |
+| GET    | `/v1/analytics/acquiring/reports/:id/detail` | Per-transaction detail for a report   |
+| GET    | `/v1/analytics/acquiring/detail?from=&to=`   | Cross-report detail for date range    |
 
 **Auth**: JWT + CabinetGuard. **Cache**: 30 min. **Rate limit resilience**: Returns `503` + `Retry-After` header when WB rate-limits.
 
@@ -38,19 +38,20 @@
 **Remaining frontend action**: Integrate new endpoints per Epic 96-FE planning. See #170-FE-CLARIFICATIONS for questions about specific endpoints.
 7 endpoints — services had 60+ tests but zero REST exposure. Now fully wired.
 
-| Method | Path | Description |
-|--------|------|-------------|
-| GET | `/v1/analytics/fbs/stock/groups?from=&to=` | Stock breakdown by product groups |
-| GET | `/v1/analytics/fbs/stock/sizes?from=&to=&nm_id=` | Stock breakdown by sizes |
-| GET | `/v1/analytics/fbs/stock/regions` | Regional stock breakdown by WB offices |
-| POST | `/v1/analytics/fbs/stock/export` | Create async CSV export (rate-limited 1/min) |
-| GET | `/v1/analytics/fbs/stock/export/:exportId` | Poll export status |
-| GET | `/v1/analytics/fbs/stock/export/:exportId/download` | Download CSV when ready |
-| GET | `/v1/analytics/fbs/enhanced?from=&to=` | Aggregated FBS analytics (orders + stock + regional + calculated metrics) |
+| Method | Path                                                | Description                                                               |
+| ------ | --------------------------------------------------- | ------------------------------------------------------------------------- |
+| GET    | `/v1/analytics/fbs/stock/groups?from=&to=`          | Stock breakdown by product groups                                         |
+| GET    | `/v1/analytics/fbs/stock/sizes?from=&to=&nm_id=`    | Stock breakdown by sizes                                                  |
+| GET    | `/v1/analytics/fbs/stock/regions`                   | Regional stock breakdown by WB offices                                    |
+| POST   | `/v1/analytics/fbs/stock/export`                    | Create async CSV export (rate-limited 1/min)                              |
+| GET    | `/v1/analytics/fbs/stock/export/:exportId`          | Poll export status                                                        |
+| GET    | `/v1/analytics/fbs/stock/export/:exportId/download` | Download CSV when ready                                                   |
+| GET    | `/v1/analytics/fbs/enhanced?from=&to=`              | Aggregated FBS analytics (orders + stock + regional + calculated metrics) |
 
 **Auth**: JWT + CabinetGuard. **Cache**: 1h for stock endpoints, 15min for enhanced.
 
 The `enhanced` endpoint returns:
+
 ```json
 {
   "orderStats": { ... },
@@ -67,18 +68,18 @@ The `enhanced` endpoint returns:
 
 ### 1.3 Buyout Reconciliation (Epic 106)
 
-| Method | Path | Description |
-|--------|------|-------------|
-| GET | `/v1/analytics/buyout/reconciliation?from=&to=&nmId=` | Per-SKU reconciliation with anomaly flags |
+| Method | Path                                                  | Description                               |
+| ------ | ----------------------------------------------------- | ----------------------------------------- |
+| GET    | `/v1/analytics/buyout/reconciliation?from=&to=&nmId=` | Per-SKU reconciliation with anomaly flags |
 
 Returns anomaly types: `return_without_buyout`, `orphan_buyout`, `return_quantity_mismatch`. Data refreshed daily at 07:00 MSK.
 
 ### 1.4 Test-Only Seeding (Epic 103)
 
-| Method | Path | Description |
-|--------|------|-------------|
-| POST | `/v1/test/seed/dbw-order` | Seed DBW orders with mock client info |
-| DELETE | `/v1/test/seed/dbw-order/:orderId` | Clean up seeded orders |
+| Method | Path                               | Description                           |
+| ------ | ---------------------------------- | ------------------------------------- |
+| POST   | `/v1/test/seed/dbw-order`          | Seed DBW orders with mock client info |
+| DELETE | `/v1/test/seed/dbw-order/:orderId` | Clean up seeded orders                |
 
 **Only available when** `NODE_ENV=development`. Supports `count` param (max 20). Use for E2E tests.
 
@@ -146,13 +147,14 @@ Extracted from `corrections` in `wb_finance_raw` using `bonus_type_name` pattern
 
 New fields in response:
 
-| Field | Type | Description |
-|-------|------|-------------|
+| Field                   | Type             | Description                                            |
+| ----------------------- | ---------------- | ------------------------------------------------------ |
 | `delivery_to_warehouse` | `number \| null` | 10th cost category — actual delivery-to-warehouse cost |
-| `latest_fcu` | `number \| null` | Final Cost per Unit from latest confirmed shipment |
-| `latest_dcu` | `number \| null` | Delivery Cost per Unit from latest confirmed shipment |
+| `latest_fcu`            | `number \| null` | Final Cost per Unit from latest confirmed shipment     |
+| `latest_dcu`            | `number \| null` | Delivery Cost per Unit from latest confirmed shipment  |
 
 **Updated waterfall ordering** (`cost_category_order`):
+
 ```
 cogs -> delivery_to_warehouse -> commission -> logistics_delivery -> logistics_return
 -> storage -> paid_acceptance -> penalties -> other_deductions -> advertising
@@ -179,6 +181,7 @@ cogs -> delivery_to_warehouse -> commission -> logistics_delivery -> logistics_r
 ### 3.3 Return Classification — FBO Returns Now Classified (Epic 106, Request #153)
 
 **Endpoints affected**:
+
 - `GET /v1/analytics/returns/reasons`
 - `GET /v1/analytics/returns/reasons/by-sku`
 
@@ -187,6 +190,7 @@ FBO returns were previously `classified=0` (63% of all returns unclassified). No
 ### 3.4 Buyout Analytics — SDK Reconciliation Overlay (Epic 106, Request #154)
 
 **Endpoints affected**:
+
 - `GET /v1/analytics/buyout/by-sku`
 - `GET /v1/analytics/buyout/summary`
 
@@ -198,10 +202,10 @@ FBO returns were previously `classified=0` (63% of all returns unclassified). No
 
 2 new pipeline rows in `GET /v1/monitoring/pipeline-health-grid`:
 
-| Pipeline | Schedule | Description |
-|----------|----------|-------------|
+| Pipeline                         | Schedule        | Description                              |
+| -------------------------------- | --------------- | ---------------------------------------- |
 | `fbo_return_classification_sync` | 06:30 MSK daily | Classifies FBO returns with reason codes |
-| `buyout_reconciliation_sync` | 07:00 MSK daily | SDK reconciliation of buyouts vs returns |
+| `buyout_reconciliation_sync`     | 07:00 MSK daily | SDK reconciliation of buyouts vs returns |
 
 Total pipeline count: **17** (was 16, then 18, consolidated to 17 in Story 108.3).
 
@@ -211,13 +215,13 @@ Total pipeline count: **17** (was 16, then 18, consolidated to 17 in Story 108.3
 
 Resolution status of frontend requests mentioned in this report:
 
-| Request # | Title | Priority | Status |
-|-----------|-------|----------|--------|
-| #148 | Fulfillment returns count always 0 | MEDIUM | FIXED — Epic 106 unified return pipeline + verified by Story 107.8 |
-| #157 | Daily finance breakdown endpoint | HIGH | IMPLEMENTED — Epic 88, Stories 88.1 + 88.2 |
-| #159 | Preliminary tax for incomplete weeks | LOW | PENDING — real-time tax for current week |
-| #165 | Orders price/salePrice inversion | MEDIUM | CLOSED 2026-04-30 — Story 103.1 sanity check deployed, frontend guard retained |
-| #150 | Monitoring false alarms | LOW | RESOLVED — Story 107.9, all 18 registries in sync |
+| Request # | Title                                | Priority | Status                                                                         |
+| --------- | ------------------------------------ | -------- | ------------------------------------------------------------------------------ |
+| #148      | Fulfillment returns count always 0   | MEDIUM   | FIXED — Epic 106 unified return pipeline + verified by Story 107.8             |
+| #157      | Daily finance breakdown endpoint     | HIGH     | IMPLEMENTED — Epic 88, Stories 88.1 + 88.2                                     |
+| #159      | Preliminary tax for incomplete weeks | LOW      | PENDING — real-time tax for current week                                       |
+| #165      | Orders price/salePrice inversion     | MEDIUM   | CLOSED 2026-04-30 — Story 103.1 sanity check deployed, frontend guard retained |
+| #150      | Monitoring false alarms              | LOW      | RESOLVED — Story 107.9, all 18 registries in sync                              |
 
 ---
 
@@ -225,16 +229,16 @@ Resolution status of frontend requests mentioned in this report:
 
 All periodic WB API data tables have been backfilled to 100% coverage (Apr 1 - May 2, 2026):
 
-| Table | Coverage | Rows |
-|-------|----------|------|
-| daily_sales_raw | 32/32 days | 12,402 |
-| adv_daily_stats | 32/32 days | 1,034 |
-| inventory_snapshots | 32/32 days | 1,133 |
-| paid_storage_daily | 32/32 days | 4,789 |
-| product_funnel_daily | 32/32 days | 1,183 |
-| fbo_fbs_analytics_daily | 32/32 days | 32 |
-| reports_orders | 32/32 days | 2,387 |
-| wb_finance_raw | Apr 1-26 (W18 pending WB publication) | 9,831 |
+| Table                   | Coverage                              | Rows   |
+| ----------------------- | ------------------------------------- | ------ |
+| daily_sales_raw         | 32/32 days                            | 12,402 |
+| adv_daily_stats         | 32/32 days                            | 1,034  |
+| inventory_snapshots     | 32/32 days                            | 1,133  |
+| paid_storage_daily      | 32/32 days                            | 4,789  |
+| product_funnel_daily    | 32/32 days                            | 1,183  |
+| fbo_fbs_analytics_daily | 32/32 days                            | 32     |
+| reports_orders          | 32/32 days                            | 2,387  |
+| wb_finance_raw          | Apr 1-26 (W18 pending WB publication) | 9,831  |
 
 Data should now be consistent across all dashboards. No more "empty" or "zero" gaps for the April-May period.
 
@@ -242,16 +246,16 @@ Data should now be consistent across all dashboards. No more "empty" or "zero" g
 
 ## 7. Quick Reference — Changed Files (for Swagger/Type Generation)
 
-| Area | File | Changes |
-|------|------|---------|
-| Acquiring API | `src/analytics/controllers/acquiring-analytics.controller.ts` | 3 endpoints |
-| FBS Analytics API | `src/analytics/controllers/fbs-analytics.controller.ts` | 7 endpoints |
-| Buyout Reconciliation | `src/analytics/controllers/buyout-analytics.controller.ts` | 1 endpoint + overlay on 2 existing |
-| Finance Summary DTOs | `src/analytics/dto/weekly-payout-summary.dto.ts` | `acquiring_total`, `retail_price_total` |
-| Finance Total DTOs | `src/analytics/dto/weekly-payout-total.dto.ts` | `acquiring_total`, `retail_price_total_combined` |
-| Cabinet Summary DTOs | `src/analytics/dto/response/cabinet-summary-response.dto.ts` | `commission_other` |
-| Unit Economics DTOs | `src/analytics/dto/response/unit-economics-response.dto.ts` | `delivery_to_warehouse`, `latest_fcu`, `latest_dcu` |
-| Pipeline Registry | `src/monitoring/pipeline-registry.ts` | 2 new pipelines |
-| Test Seeding | `src/test-utils/test.controller.ts` | 2 endpoints (dev-only) |
+| Area                  | File                                                          | Changes                                             |
+| --------------------- | ------------------------------------------------------------- | --------------------------------------------------- |
+| Acquiring API         | `src/analytics/controllers/acquiring-analytics.controller.ts` | 3 endpoints                                         |
+| FBS Analytics API     | `src/analytics/controllers/fbs-analytics.controller.ts`       | 7 endpoints                                         |
+| Buyout Reconciliation | `src/analytics/controllers/buyout-analytics.controller.ts`    | 1 endpoint + overlay on 2 existing                  |
+| Finance Summary DTOs  | `src/analytics/dto/weekly-payout-summary.dto.ts`              | `acquiring_total`, `retail_price_total`             |
+| Finance Total DTOs    | `src/analytics/dto/weekly-payout-total.dto.ts`                | `acquiring_total`, `retail_price_total_combined`    |
+| Cabinet Summary DTOs  | `src/analytics/dto/response/cabinet-summary-response.dto.ts`  | `commission_other`                                  |
+| Unit Economics DTOs   | `src/analytics/dto/response/unit-economics-response.dto.ts`   | `delivery_to_warehouse`, `latest_fcu`, `latest_dcu` |
+| Pipeline Registry     | `src/monitoring/pipeline-registry.ts`                         | 2 new pipelines                                     |
+| Test Seeding          | `src/test-utils/test.controller.ts`                           | 2 endpoints (dev-only)                              |
 
 Run `npm run docs:generate` or check Swagger UI at `http://localhost:3000/api` for the latest OpenAPI schema.

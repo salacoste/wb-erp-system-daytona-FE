@@ -8,6 +8,7 @@
 ---
 
 ## Title (RU)
+
 Интерактивная легенда графика
 
 ---
@@ -17,6 +18,7 @@
 Create an interactive legend component that allows users to toggle visibility of individual metric series on the Daily Breakdown chart. Users can click on legend items to show/hide specific metrics, making it easier to focus on metrics they care about.
 
 The legend should:
+
 - Display all 8 metrics with color indicators
 - Support click-to-toggle functionality
 - Provide "Show All" / "Hide All" bulk actions
@@ -54,20 +56,21 @@ The legend should:
 
 ### Metric Items
 
-| Metric Key | Label (RU) | Default Color | Default Visible |
-|------------|------------|---------------|-----------------|
-| orders | Заказы | `#3B82F6` | true |
-| ordersCogs | COGS заказов | `#F97316` | false |
-| sales | Выкупы | `#22C55E` | true |
-| salesCogs | COGS выкупов | `#FB923C` | false |
-| advertising | Реклама | `#7C3AED` | true |
-| logistics | Логистика | `#06B6D4` | false |
-| storage | Хранение | `#EC4899` | false |
-| profit | Теор. прибыль | `#E53935` | true |
+| Metric Key  | Label (RU)    | Default Color | Default Visible |
+| ----------- | ------------- | ------------- | --------------- |
+| orders      | Заказы        | `#3B82F6`     | true            |
+| ordersCogs  | COGS заказов  | `#F97316`     | false           |
+| sales       | Выкупы        | `#22C55E`     | true            |
+| salesCogs   | COGS выкупов  | `#FB923C`     | false           |
+| advertising | Реклама       | `#7C3AED`     | true            |
+| logistics   | Логистика     | `#06B6D4`     | false           |
+| storage     | Хранение      | `#EC4899`     | false           |
+| profit      | Теор. прибыль | `#E53935`     | true            |
 
 ### Visual States
 
 **Active (Visible) State:**
+
 ```css
 .legend-item-active {
   display: flex;
@@ -90,6 +93,7 @@ The legend should:
 ```
 
 **Hidden State:**
+
 ```css
 .legend-item-hidden {
   opacity: 0.6;
@@ -106,6 +110,7 @@ The legend should:
 ```
 
 **Hover State:**
+
 ```css
 .legend-item:hover .legend-text {
   text-decoration: underline;
@@ -113,6 +118,7 @@ The legend should:
 ```
 
 **Focus State:**
+
 ```css
 .legend-item:focus-visible {
   outline: 2px solid #E53935;
@@ -144,15 +150,18 @@ The legend should:
 ### Responsive Behavior
 
 **Desktop (>= 1024px):**
+
 - Horizontal layout with flex-wrap
 - All items visible in single row
 - Action buttons at right end
 
 **Tablet (768-1023px):**
+
 - Horizontal layout, may wrap to 2 rows
 - Slight reduction in gap spacing
 
 **Mobile (< 768px):**
+
 - Horizontal scroll container
 - Gradient fade on edges to indicate scroll
 - Action buttons in separate row below
@@ -300,22 +309,22 @@ export function MetricLegend({
 
 ## Files to Create/Modify
 
-| File | Action | Description |
-|------|--------|-------------|
-| `src/components/custom/dashboard/MetricLegend.tsx` | CREATE | Legend component |
-| `src/hooks/useLegendPreferences.ts` | CREATE | Legend state management hook |
-| `src/components/custom/dashboard/__tests__/MetricLegend.test.tsx` | CREATE | Unit tests |
-| `src/components/custom/dashboard/index.ts` | MODIFY | Add barrel export |
+| File                                                              | Action | Description                  |
+| ----------------------------------------------------------------- | ------ | ---------------------------- |
+| `src/components/custom/dashboard/MetricLegend.tsx`                | CREATE | Legend component             |
+| `src/hooks/useLegendPreferences.ts`                               | CREATE | Legend state management hook |
+| `src/components/custom/dashboard/__tests__/MetricLegend.test.tsx` | CREATE | Unit tests                   |
+| `src/components/custom/dashboard/index.ts`                        | MODIFY | Add barrel export            |
 
 ---
 
 ## Dependencies
 
-| Type | Dependency | Status |
-|------|------------|--------|
-| Component | `Button` from shadcn/ui | Available |
-| Utility | `cn` from `src/lib/utils` | Available |
-| Story | 62.6-FE DailyBreakdownChart | Same sprint |
+| Type      | Dependency                  | Status      |
+| --------- | --------------------------- | ----------- |
+| Component | `Button` from shadcn/ui     | Available   |
+| Utility   | `cn` from `src/lib/utils`   | Available   |
+| Story     | 62.6-FE DailyBreakdownChart | Same sprint |
 
 ---
 

@@ -12,14 +12,18 @@
 ## Bug Report
 
 ### Symptom
+
 User selects product with known dimensions and category from WB catalog, but Price Calculator shows warnings:
+
 - "Габариты не указаны в карточке WB"
 - "Категория не указана в карточке WB"
 
 ### Evidence
+
 **Screenshot context**: Product "Эпоксидная смола для творчества 5 кг руко..." (nmId: 686701815) selected from search, but dimensions and category warnings appear despite product having this data in WB.
 
 ### User Impact
+
 - Auto-fill dimensions feature does not work
 - Auto-fill category feature does not work
 - Users must enter all data manually despite selecting product
@@ -29,6 +33,7 @@ User selects product with known dimensions and category from WB catalog, but Pri
 ## Root Cause Analysis
 
 ### Data Flow Trace
+
 ```
 WB API (ProductCard)
   → mapCardToProduct() [wb-products.service.ts:660-675]
@@ -41,6 +46,7 @@ WB API (ProductCard)
 ### Field Mapping Analysis
 
 **WB API ProductCard** (original):
+
 ```typescript
 {
   nmID: number,              // Product ID
@@ -55,6 +61,7 @@ WB API (ProductCard)
 ```
 
 **After mapCardToProduct()** (transformed):
+
 ```typescript
 {
   nmId: string,              // Converted from nmID
@@ -68,11 +75,13 @@ WB API (ProductCard)
 ```
 
 ### Bug Location
+
 **File**: `src/products/products.service.ts`
 **Method**: `fetchDimensionsFromCacheOrWbApi()`
 **Lines**: 1814-1815
 
 **Current Code (WRONG)**:
+
 ```typescript
 const subjId = (wbProduct as { subjectID?: number }).subjectID;
 const subjName = (wbProduct as { subjectName?: string }).subjectName;
@@ -81,12 +90,14 @@ const subjName = (wbProduct as { subjectName?: string }).subjectName;
 ```
 
 **Why It Fails**:
+
 - `mapCardToProduct()` explicitly filters out `subjectName` in spread operator
 - `subjectName` is moved to `category` field
 - Code looks for `subjectName` → gets `undefined`
 - `category_hierarchy` becomes `null` even when data exists
 
 ### Additional Issue: dimensions Field Access
+
 The `dimensions` field IS preserved through spread, but there may be edge cases where it's not properly accessed due to similar type assertion issues.
 
 ---
@@ -94,6 +105,7 @@ The `dimensions` field IS preserved through spread, but there may be edge cases 
 ## Fix Strategy
 
 ### Option 1: Backend Fix (Recommended)
+
 Fix field access in `fetchDimensionsFromCacheOrWbApi()` to use correct field names:
 
 ```typescript
@@ -104,6 +116,7 @@ const subjName = (wbProduct as { category?: string }).category;  // ← Changed 
 ```
 
 ### Option 2: Alternative - Update mapCardToProduct
+
 Keep `subjectName` in addition to `category`:
 
 ```typescript
@@ -128,9 +141,11 @@ return {
 ## Acceptance Criteria
 
 ### AC1: Category Data Extraction
+
 **Given**: Product with WB category data (subjectID + subjectName)
 **When**: `include_dimensions=true` query parameter used
 **Then**: `category_hierarchy` populated correctly:
+
 ```json
 {
   "category_hierarchy": {
@@ -143,9 +158,11 @@ return {
 ```
 
 ### AC2: Dimensions Data Extraction
+
 **Given**: Product with WB dimensions data
 **When**: `include_dimensions=true` query parameter used
 **Then**: `dimensions` populated correctly:
+
 ```json
 {
   "dimensions": {
@@ -158,10 +175,12 @@ return {
 ```
 
 ### AC3: Test With Known Product
+
 **Test Product**: nmId: `686701815` (Эпоксидная смола для творчества 5 кг)
 **Expected**: Both `dimensions` and `category_hierarchy` should be populated (not null)
 
 ### AC4: Frontend Auto-fill Works
+
 **Given**: Fix deployed to backend
 **When**: User selects product in Price Calculator
 **Then**: No warning alerts displayed, dimensions auto-filled, category auto-selected
@@ -173,6 +192,7 @@ return {
 ### Files to Modify
 
 1. **`src/products/products.service.ts`** (line ~1815):
+
    ```typescript
    // Change this:
    const subjName = (wbProduct as { subjectName?: string }).subjectName;
@@ -193,11 +213,13 @@ return {
 ### Testing Steps
 
 1. **Unit Test**:
+
    ```bash
    cd backend && npm test -- products.service.spec --grep "fetchDimensionsFromCacheOrWbApi"
    ```
 
 2. **Integration Test**:
+
    ```bash
    # Using test-api/45-products-dimensions.http
    GET /v1/products?include_dimensions=true&q=686701815
@@ -210,6 +232,7 @@ return {
    ```
 
 ### Validation Query
+
 ```bash
 curl -H "Authorization: Bearer $TOKEN" \
      -H "X-Cabinet-Id: $CABINET_ID" \
@@ -217,6 +240,7 @@ curl -H "Authorization: Bearer $TOKEN" \
 ```
 
 **Expected**:
+
 ```json
 {
   "dimensions": { "length_mm": ..., "width_mm": ..., "height_mm": ..., "volume_liters": ... },
@@ -228,13 +252,13 @@ curl -H "Authorization: Bearer $TOKEN" \
 
 ## Impact Assessment
 
-| Area | Impact |
-|------|--------|
-| Price Calculator | HIGH - Auto-fill feature broken |
-| Product List | LOW - dimensions/category_hierarchy optional |
-| Backend Performance | NONE - No perf impact |
-| Database | NONE - No schema changes |
-| Cache | NONE - Cache invalidation not required |
+| Area                | Impact                                       |
+| ------------------- | -------------------------------------------- |
+| Price Calculator    | HIGH - Auto-fill feature broken              |
+| Product List        | LOW - dimensions/category_hierarchy optional |
+| Backend Performance | NONE - No perf impact                        |
+| Database            | NONE - No schema changes                     |
+| Cache               | NONE - Cache invalidation not required       |
 
 ---
 

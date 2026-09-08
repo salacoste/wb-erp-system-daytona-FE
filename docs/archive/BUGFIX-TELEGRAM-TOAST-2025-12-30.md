@@ -16,6 +16,7 @@
 Toast должен показываться **только один раз** в момент фактического подключения Telegram через модальное окно.
 
 **User Impact**:
+
 - Раздражающее повторяющееся уведомление при каждой загрузке страницы
 - Снижение доверия к системе уведомлений
 - Confusion - пользователь думает, что произошло новое событие
@@ -43,12 +44,14 @@ useEffect(() => {
 ```
 
 **Problem**:
+
 1. `TelegramBindingModal` компонент рендерится на странице даже когда закрыт (`open={false}`)
 2. При первом рендере компонента `isBound` получает значение `true` из API (если Telegram уже подключен)
 3. useEffect срабатывает и показывает toast
 
 **Why Previous Fix Didn't Work**:
 Первая попытка исправления добавила проверку `open && isBound && !previousIsBoundRef.current`, но это не решило проблему, потому что:
+
 - При первом рендере `previousIsBoundRef.current = false`
 - `isBound` приходит `true` из API
 - Условие `!previousIsBoundRef.current` срабатывает → toast показывается
@@ -85,16 +88,19 @@ useEffect(() => {
 ### Key Changes
 
 **Added `bindingCode` check**:
+
 - `bindingCode` is set **only when modal is opened and binding flow starts**
 - On page reload with already-bound Telegram: `bindingCode = null`
 - This prevents toast from showing because condition requires `bindingCode` to be truthy
 
 **Three-Condition Gate**:
+
 1. ✅ `open` - Modal must be actively open
 2. ✅ `bindingCode` - Binding flow must have started in this session
 3. ✅ `isBound && !previousIsBoundRef.current` - Status transition from false to true
 
 **Dependencies Updated**:
+
 - Added `bindingCode` to dependency array: `[open, bindingCode, isBound, onSuccess]`
 
 ---
@@ -102,28 +108,35 @@ useEffect(() => {
 ## Validation
 
 ### Test Scenario 1: Page Reload (Already Bound)
+
 **Steps**:
+
 1. Navigate to `/settings/notifications` with Telegram already connected
 2. Refresh page (F5)
 3. Wait 3 seconds
 
 **Before Fix**:
+
 - ❌ Toast "Telegram успешно подключен!" appears on every reload
 
 **After Fix**:
+
 - ✅ No toast appears
 - ✅ Page loads silently
 
 **Validation**: ✅ PASSED (verified via browser automation)
 
 ### Test Scenario 2: New Binding Flow
+
 **Steps**:
+
 1. User clicks "Подключить Telegram" button
 2. Modal opens, binding code generated
 3. User sends code to bot in Telegram
 4. Status polls and becomes `isBound=true`
 
 **Expected**:
+
 - ✅ Toast "Telegram успешно подключен!" shows ONCE
 - ✅ Modal closes
 - ✅ Analytics tracked
@@ -131,11 +144,14 @@ useEffect(() => {
 **Validation**: ✅ Expected to work (logic flow preserved)
 
 ### Test Scenario 3: Multiple Page Refreshes
+
 **Steps**:
+
 1. Refresh page 3 times in a row
 2. Navigate away and back to `/settings/notifications`
 
 **After Fix**:
+
 - ✅ No toast appears on any refresh
 - ✅ No toast appears on navigation
 
@@ -148,6 +164,7 @@ useEffect(() => {
 ### State Management Flow
 
 **Page Load (Already Bound)**:
+
 ```
 1. Component mounts: open=false, bindingCode=null, isBound=false (initial)
 2. React Query fetches status: isBound=true
@@ -156,6 +173,7 @@ useEffect(() => {
 ```
 
 **Binding Flow (New Connection)**:
+
 ```
 1. User clicks button: open=true
 2. startBinding() called: bindingCode="ABC123"
@@ -167,6 +185,7 @@ useEffect(() => {
 ```
 
 **Subsequent Reloads**:
+
 ```
 1. Component mounts: open=false, bindingCode=null, isBound=true
 2. useEffect evaluates: open=false → condition fails ✅
@@ -178,6 +197,7 @@ useEffect(() => {
 ## Files Changed
 
 **Modified**:
+
 1. `src/components/notifications/TelegramBindingModal.tsx`
    - Line 90: Added `previousIsBoundRef` for state tracking
    - Lines 153-172: Updated success handler with 3-condition gate
@@ -199,6 +219,7 @@ useEffect(() => {
 ## Prevention Measures
 
 **Code Review Checklist for Toast Notifications**:
+
 - [ ] Toast only shown on **actual events**, not state reads
 - [ ] Use refs to track **previous state** for transition detection
 - [ ] Verify **session-specific** indicators (e.g., bindingCode)
@@ -206,6 +227,7 @@ useEffect(() => {
 - [ ] Test navigation scenarios (forward/back)
 
 **Pattern to Follow**:
+
 ```typescript
 // ✅ GOOD: State transition + session indicator
 if (open && sessionIndicator && newState && !prevStateRef.current) {

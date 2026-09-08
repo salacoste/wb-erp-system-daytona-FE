@@ -12,6 +12,7 @@
 ### Symptom: Margin Fields Return Null
 
 **API Response**:
+
 ```json
 {
   "sale_gross_total": 305778.32,
@@ -37,9 +38,11 @@
 **Resolution date**: 2026-01-30
 **Summary**: Quick troubleshooting guide for margin null states. Documented that null margins result from empty `weekly_margin_fact` table. Root cause was fixed in Request #120 - auto-trigger margin recalculation on COGS bulk upload.
 **Remaining frontend action**: None - use as quick reference when debugging null margin fields.
+
 ### Scenario 1: No Margin Data Available
 
 **Response**:
+
 ```json
 {
   "week": "2026-W04",
@@ -52,6 +55,7 @@
 ```
 
 **FrontEnd Action**:
+
 ```tsx
 {data.cogs_total === null && (
   <CogsMissingState
@@ -66,6 +70,7 @@
 ### Scenario 2: Margin Data Available
 
 **Response**:
+
 ```json
 {
   "week": "2026-W04",
@@ -78,6 +83,7 @@
 ```
 
 **FrontEnd Action**:
+
 ```tsx
 {data.cogs_total !== null && (
   <>
@@ -93,6 +99,7 @@
 ### Scenario 3: Partial COGS Coverage
 
 **Response**:
+
 ```json
 {
   "week": "2026-W04",
@@ -105,6 +112,7 @@
 ```
 
 **FrontEnd Action**:
+
 ```tsx
 <div className="space-y-4">
   <WarningBadge>
@@ -124,11 +132,13 @@
 ### Component Reference
 
 **Existing Components**:
+
 - `MissingCogsAlert` - Displays warning with CTA
 - `CogsMissingState` - Full empty state component
 - `MetricCardEnhanced` - Metric card with empty state support
 
 **File Locations**:
+
 - `frontend/src/components/custom/MissingCogsAlert.tsx`
 - `frontend/src/components/custom/CogsMissingState.tsx`
 - `frontend/src/components/custom/MetricCardEnhanced.tsx`
@@ -204,15 +214,18 @@ export function FinanceSummaryMargin({ week }: { week: string }) {
 ### Scenario 1: New Cabinet (No COGS Assigned)
 
 **Symptoms**:
+
 - All margin fields return `null`
 - `cogs_coverage_pct: 0`
 
 **User Action Required**:
+
 1. Navigate to Products page
 2. Assign COGS to products
 3. Margin calculation will run automatically
 
 **FrontEnd Display**:
+
 ```tsx
 <EmptyState
   icon="📦"
@@ -230,14 +243,17 @@ export function FinanceSummaryMargin({ week }: { week: string }) {
 ### Scenario 2: Partial COGS Coverage
 
 **Symptoms**:
+
 - Some margin fields have values
 - `cogs_coverage_pct: 50` (or other percentage < 100)
 
 **User Action Required**:
+
 1. Assign COGS to remaining products
 2. Margin will automatically recalculate
 
 **FrontEnd Display**:
+
 ```tsx
 <WarningBanner>
   <Text>
@@ -255,19 +271,23 @@ export function FinanceSummaryMargin({ week }: { week: string }) {
 ### Scenario 3: Margin Calculation in Progress
 
 **Symptoms**:
+
 - COGS recently assigned
 - Margin fields still show `null`
 
 **Background Process**:
+
 - Margin calculation is running in background queue
 - Takes 5-30 seconds depending on data volume
 
 **FrontEnd Action**:
+
 - Poll `GET /v1/products/:nmId/margin-status` endpoint
 - Display progress indicator
 - Refresh data when status is `completed`
 
 **Implementation**:
+
 ```tsx
 // After COGS assignment
 const { data: status } = useMarginStatus(nmId);
@@ -295,6 +315,7 @@ And: Provide CTA to assign COGS
 ```
 
 **Test Code**:
+
 ```tsx
 test('displays empty state when margin data is null', () => {
   const mockData = {
@@ -329,6 +350,7 @@ And: Calculate margin_pct correctly
 ```
 
 **Test Code**:
+
 ```tsx
 test('displays margin data when available', () => {
   const mockData = {
@@ -365,6 +387,7 @@ And: Provide CTA to assign remaining COGS
 ```
 
 **Test Code**:
+
 ```tsx
 test('displays partial coverage warning', () => {
   const mockData = {
@@ -394,26 +417,27 @@ test('displays partial coverage warning', () => {
 
 ### Null Value Handling
 
-| Field | When Null | FrontEnd Action |
-|-------|-----------|-----------------|
-| `cogs_total` | No COGS data | Display empty state |
-| `gross_profit` | No margin calculation | Display empty state |
-| `margin_pct` | Cannot calculate | Display empty state |
-| `cogs_coverage_pct` | No products with COGS | Show 0% coverage |
+| Field               | When Null             | FrontEnd Action     |
+| ------------------- | --------------------- | ------------------- |
+| `cogs_total`        | No COGS data          | Display empty state |
+| `gross_profit`      | No margin calculation | Display empty state |
+| `margin_pct`        | Cannot calculate      | Display empty state |
+| `cogs_coverage_pct` | No products with COGS | Show 0% coverage    |
 
 ### Coverage Percentage Thresholds
 
-| Coverage | Display | Action |
-|----------|---------|--------|
-| 0% | Empty state | Assign COGS to all products |
-| 1-99% | Warning banner | Assign COGS to remaining products |
-| 100% | Full metrics | No action needed |
+| Coverage | Display        | Action                            |
+| -------- | -------------- | --------------------------------- |
+| 0%       | Empty state    | Assign COGS to all products       |
+| 1-99%    | Warning banner | Assign COGS to remaining products |
+| 100%     | Full metrics   | No action needed                  |
 
 ### Status Checking
 
 **Endpoint**: `GET /v1/products/:nmId/margin-status`
 
 **Status Values**:
+
 - `pending` - Task queued, show "Расчёт маржи..."
 - `in_progress` - Task processing, show progress
 - `completed` - Calculation finished, refresh data
@@ -445,6 +469,7 @@ interface CogsMissingStateProps {
 ```
 
 **Usage**:
+
 ```tsx
 <CogsMissingState
   coveragePercentage={data.cogs_coverage_pct ?? 0}
@@ -466,6 +491,7 @@ interface MissingCogsAlertProps {
 ```
 
 **Usage**:
+
 ```tsx
 <MissingCogsAlert
   coveragePercentage={data.cogs_coverage_pct ?? 0}
@@ -489,6 +515,7 @@ interface MetricCardEnhancedProps {
 ```
 
 **Usage**:
+
 ```tsx
 <MetricCardEnhanced
   label="Себестоимость"

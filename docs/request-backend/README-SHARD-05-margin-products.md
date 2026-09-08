@@ -18,13 +18,16 @@ This shard contains resolved requests for margin calculation, products API, hist
 **Issue**: Frontend displayed "If no sales, last 4 weeks will be analyzed" which was misleading about actual backend behavior.
 
 **Solution**: Updated text in two files:
+
 - `frontend/src/app/(dashboard)/cogs/page.tsx` - Alert banner
 - `frontend/src/components/custom/SingleCogsForm.tsx` - Tip text
 
 **New Text**:
+
 > "After assigning cost, margin will be calculated automatically based on sales data from the last completed week. For products without sales in this period, historical context for the last 12 weeks will be shown."
 
 **Documentation**:
+
 - [Clarification Details](./26-margin-calculation-text-clarification.md)
 
 ---
@@ -41,12 +44,13 @@ This shard contains resolved requests for margin calculation, products API, hist
 
 **Solution**: Backend implemented both UX recommendations from Frontend:
 
-| Story | Endpoint | Frontend Use |
-|-------|----------|--------------|
+| Story    | Endpoint                                            | Frontend Use                  |
+| -------- | --------------------------------------------------- | ----------------------------- |
 | **23.9** | `GET /v1/products?include_cogs=true` + 4 new fields | Inline context in ProductList |
-| **23.8** | `GET /v1/analytics/weekly/product-weeks?nm_id=...` | "Sales History" detail page |
+| **23.8** | `GET /v1/analytics/weekly/product-weeks?nm_id=...`  | "Sales History" detail page   |
 
 **New Fields (Story 23.9)**:
+
 - `last_sales_week` (string | null) - ISO week of last sale (e.g., "2025-W44")
 - `last_sales_margin_pct` (number | null) - Margin % from that week
 - `last_sales_qty` (number | null) - Units sold
@@ -55,6 +59,7 @@ This shard contains resolved requests for margin calculation, products API, hist
 **UX Result**: Users see "Last: W44 (92.32%, 5 units, 3 weeks ago)" directly in product list!
 
 **Documentation**:
+
 - [Request Details](./25-historical-margin-discovery-endpoint.md)
 - [Backend Response & Code Examples](./25-historical-margin-discovery-endpoint-backend.md) - START HERE
 - [Story 4.9](../stories/4.9.historical-margin-discovery.md)
@@ -72,6 +77,7 @@ This shard contains resolved requests for margin calculation, products API, hist
 **Solution**: Backend implemented lightweight status endpoint `GET /v1/products/:nmId/margin-status` to solve frontend polling inefficiency. Endpoint provides real-time margin calculation task status without requiring full product data fetch.
 
 **Features**:
+
 - Checks BullMQ queue for pending/active/failed jobs
 - Verifies margin data existence in database
 - Returns status: `pending`, `in_progress`, `completed`, `not_found`, `failed`
@@ -82,6 +88,7 @@ This shard contains resolved requests for margin calculation, products API, hist
 **QA Status**: PASS - All tests passing, production-ready
 
 **Documentation**:
+
 - [Backend Response & API Guide](./21-margin-calculation-status-endpoint-backend.md) - START HERE
 - [Original Request](./20-frontend-polling-implementation-issues.md)
 - [Epic 22: Status Endpoint Solution](../../../docs/epics/epic-22-margin-calculation-status-endpoint.md)
@@ -98,6 +105,7 @@ This shard contains resolved requests for margin calculation, products API, hist
 **Related**: Request #14 (Epic 20), Request #18 (Missing Margin Scenarios), Request #21 (Solution)
 
 **Problem**: Frontend team was implementing polling mechanism for margin calculation status updates but encountering issues:
+
 1. Polling hook not restarting after COGS assignment
 2. Infinite re-render loop in pending products detection
 3. No efficient way to check if margin calculation task is queued/processing
@@ -105,6 +113,7 @@ This shard contains resolved requests for margin calculation, products API, hist
 **Solution**: Backend created Epic 22 and implemented `GET /v1/products/:nmId/margin-status` endpoint (see Request #21).
 
 **Documentation**:
+
 - [Request Details](./20-frontend-polling-implementation-issues.md)
 - [Backend Response & Solution](./21-margin-calculation-status-endpoint-backend.md) - SOLUTION
 - [Epic 22: Status Endpoint Solution](../../../docs/epics/epic-22-margin-calculation-status-endpoint.md)
@@ -123,6 +132,7 @@ This shard contains resolved requests for margin calculation, products API, hist
 **Solution**: Added COGS validation in `ProductsService.getMarginDataForProducts()`. If `margin_pct` exists but COGS is missing, backend now sets `margin_pct = null` and `missing_reason = 'COGS_NOT_ASSIGNED'`.
 
 **Documentation**:
+
 - [Request Details](./19-margin-returned-without-cogs.md)
 - [Backend Response & Fix](./19-margin-returned-without-cogs-backend.md) - START HERE
 
@@ -140,6 +150,7 @@ This shard contains resolved requests for margin calculation, products API, hist
 **Answer**: Yes, this is expected behavior. `missing_data_reason: null` when `current_margin_pct: null` and COGS exists means "margin calculation in progress" (Epic 20 design). Frontend should show "(calculating margin...)" in this case.
 
 **Documentation**:
+
 - [Request Details](./18-missing-margin-and-missing-data-reason-scenarios.md)
 - [Backend Response & Guidance](./18-missing-margin-and-missing-data-reason-scenarios-backend.md) - START HERE
 
@@ -157,6 +168,7 @@ This shard contains resolved requests for margin calculation, products API, hist
 **Solution**: Documented behavior and manual recalculation workaround via `POST /v1/tasks/enqueue`.
 
 **Documentation**:
+
 - [Backend Response & Guide](./17-cogs-assigned-after-completed-week-recalculation.md)
 
 ---
@@ -173,6 +185,7 @@ This shard contains resolved requests for margin calculation, products API, hist
 **Solution**: Comprehensive API guide with endpoints, examples, and data structure explanations for COGS history queries and margin analytics.
 
 **Documentation**:
+
 - [Backend Response & Guide](./16-cogs-history-and-margin-data-structure.md) - START HERE (Contains up-to-date `missing_data_reason` values and margin data structure)
 
 ---
@@ -189,6 +202,7 @@ This shard contains resolved requests for margin calculation, products API, hist
 **Solution**: Added `include_cogs=true` parameter with batch analytics query optimization.
 
 **Documentation**:
+
 - [Original Request](./15-add-includecogs-to-product-list-endpoint.md)
 - [Implementation Plan](./15-add-includecogs-to-product-list-endpoint-implementation-plan.md)
 - [Completion Summary](./15-add-includecogs-to-product-list-endpoint-completion-summary.md)
@@ -207,6 +221,7 @@ This shard contains resolved requests for margin calculation, products API, hist
 **Solution**: Implemented automatic background margin recalculation triggered after COGS assignment/update using BullMQ queue processing.
 
 **Documentation**:
+
 - [Original Request](./14-automatic-margin-recalculation-on-cogs-update.md)
 - [Backend Response & Integration Guide](./14-automatic-margin-recalculation-on-cogs-update-backend.md) - START HERE
 - [Backend Implementation Checklist](./14-automatic-margin-recalculation-on-cogs-update-checklist.md)
@@ -225,6 +240,7 @@ This shard contains resolved requests for margin calculation, products API, hist
 **Solution**: Implemented client-side filtering for partial article matching when WB API textSearch doesn't support it.
 
 **Documentation**:
+
 - [Backend Response](./134-search-by-partial-article-not-working.md)
 
 ---
@@ -241,6 +257,7 @@ This shard contains resolved requests for margin calculation, products API, hist
 **Solution**: Client-side pagination workaround (getAllProductsList + findIndex + slice, Redis cache).
 
 **Documentation**:
+
 - [Original Request](./13-products-pagination-wb-sdk-issue.md)
 - [Backend Response](./13-products-pagination-wb-sdk-issue-backend.md)
 - [Final Completion Summary](./13-products-pagination-wb-sdk-issue-final-completion.md)
@@ -259,6 +276,7 @@ This shard contains resolved requests for margin calculation, products API, hist
 **Solution**: Modified `createCogs()` to UPDATE existing records instead of throwing ConflictException.
 
 **Documentation**:
+
 - [Original Request](./12-cogs-update-conflict-409-error.md)
 - [Backend Response](./12-cogs-update-conflict-409-error-backend.md)
 - [Validation Summary](./12-cogs-update-conflict-409-error-validation-summary.md)
@@ -277,6 +295,7 @@ This shard contains resolved requests for margin calculation, products API, hist
 **Solution**: Changed return type from `AssignCogsResponseDto` to `ProductResponseDto` (calls `getProduct()` after COGS creation).
 
 **Documentation**:
+
 - [Original Request](./11-undefined-fields-in-cogs-assignment-response.md)
 - [Backend Response](./11-undefined-fields-in-cogs-assignment-response-backend.md)
 
@@ -291,13 +310,15 @@ This shard contains resolved requests for margin calculation, products API, hist
 **Endpoint**: `GET /v1/analytics/weekly/margin-trends?weeks=12`
 
 **Bugfixes Applied (2025-12-04)**:
-| # | Error | Fix |
-|---|-------|-----|
-| 1 | `column "qty" does not exist` | `SUM(qty)` -> `SUM(quantity_sold)` |
-| 2 | `uuid = text` type mismatch | Added `::uuid` PostgreSQL cast |
-| 3 | `Cannot mix BigInt and other types` | Added `Number()` conversion |
+
+| #   | Error                               | Fix                                |
+| --- | ----------------------------------- | ---------------------------------- |
+| 1   | `column "qty" does not exist`       | `SUM(qty)` -> `SUM(quantity_sold)` |
+| 2   | `uuid = text` type mismatch         | Added `::uuid` PostgreSQL cast     |
+| 3   | `Cannot mix BigInt and other types` | Added `Number()` conversion        |
 
 **Files Changed**:
+
 - `src/analytics/weekly-analytics.service.ts` - 3 fixes in `getMarginTrends()` method
 - `test-api/06-analytics-advanced.http` - Margin Trends examples
 
@@ -316,6 +337,7 @@ This shard contains resolved requests for margin calculation, products API, hist
 **Component**: Backend API - Products Module + COGS Module
 
 **Documentation**:
+
 - [Original Request](./09-epic-18-cogs-management-api-backend.md)
 
 ---

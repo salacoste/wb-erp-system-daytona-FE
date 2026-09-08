@@ -18,6 +18,7 @@
 **So that** I understand the price floor and can make informed pricing decisions.
 
 **Non-goals**:
+
 - Price history tracking
 - Competitor price comparison
 - Dynamic price recommendations
@@ -30,12 +31,14 @@
 ### Pricing Levels
 
 **Level 1: Minimum Price (Минимальная цена)** - "Price Floor"
+
 - Covers ONLY fixed costs (COGS, logistics, storage, acceptance)
 - NO margin, NO DRR (advertising)
 - **Formula**: `minimum_price = fixed_costs / (1 - commission_rate - acquiring_rate - tax_rate)`
 - **Purpose**: Below this price, seller loses money
 
 **Level 2: Recommended Price (Рекомендуемая цена)** - "Target Price"
+
 - Includes fixed costs + DRR + target margin
 - **Formula**: `recommended_price = fixed_costs / (1 - total_pct_rate)`
 - **Purpose**: Achieves seller's target profit margin
@@ -43,6 +46,7 @@
 ### Cost Categories
 
 **Fixed Costs (Фиксированные расходы):**
+
 - Себестоимость (COGS)
 - Логистика прямая
 - Логистика возвратная (эффективная)
@@ -50,6 +54,7 @@
 - Приёмка (FBO only)
 
 **Percentage Costs (Процентные расходы):**
+
 - Комиссия WB
 - Эквайринг
 - Налог с выручки (if income tax)
@@ -61,6 +66,7 @@
 ## Acceptance Criteria
 
 ### AC1: Two-Level Price Display Header
+
 - [x] Show minimum price prominently: "МИНИМАЛЬНАЯ ЦЕНА: X ₽"
 - [x] Label: "покрывает фиксированные расходы"
 - [x] Show recommended price: "РЕКОМЕНДУЕМАЯ ЦЕНА: Y ₽"
@@ -69,6 +75,7 @@
 - [x] Visual hierarchy: recommended > minimum > customer
 
 ### AC2: Price Comparison Visual
+
 - [x] Show price gap between minimum and recommended
 - [x] Format: "Запас прибыльности: X ₽ (+Y%)"
 - [x] Color-coded indicator:
@@ -78,6 +85,7 @@
 - [x] Warning if recommended ≈ minimum (tight margin)
 
 ### AC3: Fixed Costs Breakdown Section
+
 - [x] Section header: "ФИКСИРОВАННЫЕ ЗАТРАТЫ: X ₽"
 - [ ] Line items:
   - Себестоимость (COGS): X ₽
@@ -88,6 +96,7 @@
 - [ ] Total fixed costs subtotal
 
 ### AC4: Percentage Costs Breakdown Section
+
 - [ ] Section header: "ПРОЦЕНТНЫЕ ЗАТРАТЫ: X ₽"
 - [ ] Line items (each with % and ₽):
   - Комиссия WB (X%): Y ₽
@@ -96,16 +105,19 @@
 - [ ] Subtotal of percentage costs
 
 ### AC5: Variable Costs Breakdown (DRR)
+
 - [ ] Section header: "ПЕРЕМЕННЫЕ ЗАТРАТЫ: X ₽"
 - [ ] Line item: DRR Реклама (X%): Y ₽
 - [ ] Note: "Не включено в минимальную цену"
 
 ### AC6: Margin Section
+
 - [ ] Section header: "МАРЖА (X%): Y ₽"
 - [ ] For profit tax: show "Чистая прибыль после налога: Z ₽"
 - [ ] Visual margin indicator (progress bar or gauge)
 
 ### AC7: Summary Footer
+
 - [ ] Three-line summary:
   ```
   МИНИМАЛЬНАЯ ЦЕНА (пол)          X ₽
@@ -115,6 +127,7 @@
 - [ ] Copy buttons for each price
 
 ### AC8: Responsive Layout
+
 - [ ] Desktop: side-by-side minimum/recommended
 - [ ] Mobile: stacked vertical layout
 - [ ] Collapsible breakdown sections on mobile
@@ -139,6 +152,7 @@
 ### Backend Response Structure
 
 **POST /v1/products/price-calculator Response:**
+
 ```json
 {
   "result": {
@@ -717,30 +731,30 @@ export function getPriceGapStatus(gapPct: number): {
 
 ### Invariants & Edge Cases
 
-| Scenario | Handling |
-|----------|----------|
-| Minimum ≈ Recommended (gap < 5%) | Show tight margin warning (red) |
-| Minimum > Recommended | Invalid state: Show error "Ошибка расчёта: маржа отрицательная" |
-| SPP = 0% | Don't show customer price row (hide section) |
-| DRR = 0% | Don't show variable costs section (all zeros) |
-| FBS mode | Don't show storage/acceptance lines (0 values) |
-| Profit tax | Show "Чистая прибыль после налога" with calculated value |
-| Income tax | Include tax in percentage costs breakdown |
-| All zero inputs | Show placeholder: "Заполните данные для расчёта" |
-| API error | Show error state with retry button |
-| Very high margin (>50%) | Show info message about competitiveness |
-| Negative actual margin | Show error highlighting, prevent copy |
-| Mobile viewport (<640px) | Vertical stack, collapsible sections |
+| Scenario                         | Handling                                                        |
+| -------------------------------- | --------------------------------------------------------------- |
+| Minimum ≈ Recommended (gap < 5%) | Show tight margin warning (red)                                 |
+| Minimum > Recommended            | Invalid state: Show error "Ошибка расчёта: маржа отрицательная" |
+| SPP = 0%                         | Don't show customer price row (hide section)                    |
+| DRR = 0%                         | Don't show variable costs section (all zeros)                   |
+| FBS mode                         | Don't show storage/acceptance lines (0 values)                  |
+| Profit tax                       | Show "Чистая прибыль после налога" with calculated value        |
+| Income tax                       | Include tax in percentage costs breakdown                       |
+| All zero inputs                  | Show placeholder: "Заполните данные для расчёта"                |
+| API error                        | Show error state with retry button                              |
+| Very high margin (>50%)          | Show info message about competitiveness                         |
+| Negative actual margin           | Show error highlighting, prevent copy                           |
+| Mobile viewport (<640px)         | Vertical stack, collapsible sections                            |
 
 ### Price Gap Classification
 
-| Gap % | Status | Color | Message |
-|-------|--------|-------|---------|
-| > 30% | Отлично | Green | "Высокий запас прибыльности" |
-| 20-30% | Хорошо | Green | "Хороший запас прибыльности" |
-| 10-20% | Норма | Yellow | "Умеренный запас прибыльности" |
-| 5-10% | Низкий | Orange | "Низкий запас прибыльности" |
-| < 5% | Критический | Red | "⚠️ Критически низкий запас — риск убытков" |
+| Gap %  | Status      | Color  | Message                                     |
+| ------ | ----------- | ------ | ------------------------------------------- |
+| > 30%  | Отлично     | Green  | "Высокий запас прибыльности"                |
+| 20-30% | Хорошо      | Green  | "Хороший запас прибыльности"                |
+| 10-20% | Норма       | Yellow | "Умеренный запас прибыльности"              |
+| 5-10%  | Низкий      | Orange | "Низкий запас прибыльности"                 |
+| < 5%   | Критический | Red    | "⚠️ Критически низкий запас — риск убытков" |
 
 ---
 
@@ -774,6 +788,7 @@ export function getPriceGapStatus(gapPct: number): {
 ## Testing Requirements
 
 ### Unit Tests
+
 - [ ] TwoLevelPriceHeader renders both prices
 - [ ] FixedCostsBreakdown shows FBO-only items
 - [ ] PercentageCostsBreakdown handles income/profit tax
@@ -782,12 +797,14 @@ export function getPriceGapStatus(gapPct: number): {
 - [ ] calculateTwoLevelPricing formulas correct
 
 ### Integration Tests
+
 - [ ] Full breakdown updates on form change
 - [ ] FBO/FBS switch updates breakdown
 - [ ] Tax type change updates breakdown
 - [ ] Copy buttons work for all prices
 
 ### E2E Tests
+
 - [ ] User sees minimum and recommended prices
 - [ ] User can copy each price
 - [ ] Breakdown sections collapsible on mobile
@@ -798,30 +815,33 @@ export function getPriceGapStatus(gapPct: number): {
 ## Dev Agent Record
 
 ### File List
-| File | Change Type | Lines (Est.) | Description |
-|------|-------------|--------------|-------------|
-| `src/components/custom/price-calculator/TwoLevelPriceHeader.tsx` | CREATE | ~100 | Price header with min/rec/customer prices |
-| `src/components/custom/price-calculator/TwoLevelPricingDisplay.tsx` | CREATE | ~80 | Main container for two-level display |
-| `src/components/custom/price-calculator/FixedCostsSection.tsx` | CREATE | ~60 | Fixed costs breakdown (COGS, logistics, storage) |
-| `src/components/custom/price-calculator/PercentageCostsSection.tsx` | CREATE | ~60 | Percentage costs (commission, acquiring, tax) |
-| `src/components/custom/price-calculator/VariableCostsSection.tsx` | CREATE | ~40 | Variable costs (DRR) |
-| `src/components/custom/price-calculator/MarginSection.tsx` | CREATE | ~50 | Margin display with profit tax |
-| `src/components/custom/price-calculator/PriceSummaryFooter.tsx` | CREATE | ~70 | Summary footer with copy buttons |
-| `src/components/custom/price-calculator/PriceGapIndicator.tsx` | CREATE | ~40 | Price gap status indicator |
-| `src/components/custom/price-calculator/PriceCalculatorResults.tsx` | UPDATE | +30 | Integrate TwoLevelPricingDisplay |
-| `src/lib/two-level-pricing.ts` | CREATE | ~120 | Calculation helpers + gap status |
-| `src/types/price-calculator.ts` | UPDATE | +40 | TwoLevelPricingResult, PriceGapStatus types |
+
+| File                                                                | Change Type | Lines (Est.) | Description                                      |
+| ------------------------------------------------------------------- | ----------- | ------------ | ------------------------------------------------ |
+| `src/components/custom/price-calculator/TwoLevelPriceHeader.tsx`    | CREATE      | ~100         | Price header with min/rec/customer prices        |
+| `src/components/custom/price-calculator/TwoLevelPricingDisplay.tsx` | CREATE      | ~80          | Main container for two-level display             |
+| `src/components/custom/price-calculator/FixedCostsSection.tsx`      | CREATE      | ~60          | Fixed costs breakdown (COGS, logistics, storage) |
+| `src/components/custom/price-calculator/PercentageCostsSection.tsx` | CREATE      | ~60          | Percentage costs (commission, acquiring, tax)    |
+| `src/components/custom/price-calculator/VariableCostsSection.tsx`   | CREATE      | ~40          | Variable costs (DRR)                             |
+| `src/components/custom/price-calculator/MarginSection.tsx`          | CREATE      | ~50          | Margin display with profit tax                   |
+| `src/components/custom/price-calculator/PriceSummaryFooter.tsx`     | CREATE      | ~70          | Summary footer with copy buttons                 |
+| `src/components/custom/price-calculator/PriceGapIndicator.tsx`      | CREATE      | ~40          | Price gap status indicator                       |
+| `src/components/custom/price-calculator/PriceCalculatorResults.tsx` | UPDATE      | +30          | Integrate TwoLevelPricingDisplay                 |
+| `src/lib/two-level-pricing.ts`                                      | CREATE      | ~120         | Calculation helpers + gap status                 |
+| `src/types/price-calculator.ts`                                     | UPDATE      | +40          | TwoLevelPricingResult, PriceGapStatus types      |
 
 ### Dependencies on Previous Stories
-| Story | Component/Type Used |
-|-------|---------------------|
+
+| Story | Component/Type Used                                                  |
+| ----- | -------------------------------------------------------------------- |
 | 44.15 | `FulfillmentType` for conditional rendering (FBO storage/acceptance) |
-| 44.16 | `commissionPct` from category selection |
-| 44.17 | `tax_type`, `tax_rate_pct` for tax breakdown |
-| 44.18 | `advertising_pct` (DRR) for variable costs |
-| 44.19 | `spp_pct` for customer price calculation |
+| 44.16 | `commissionPct` from category selection                              |
+| 44.17 | `tax_type`, `tax_rate_pct` for tax breakdown                         |
+| 44.18 | `advertising_pct` (DRR) for variable costs                           |
+| 44.19 | `spp_pct` for customer price calculation                             |
 
 ### Change Log
+
 _(To be filled by Dev Agent during implementation)_
 
 ---
@@ -835,16 +855,17 @@ _(To be filled after implementation)_
 **Gate Decision**:
 
 ### AC Verification
-| AC | Requirement | Status | Evidence |
-|----|-------------|--------|----------|
-| AC1 | Two-Level Price Display Header | ⏳ | |
-| AC2 | Price Comparison Visual | ⏳ | |
-| AC3 | Fixed Costs Breakdown | ⏳ | |
-| AC4 | Percentage Costs Breakdown | ⏳ | |
-| AC5 | Variable Costs (DRR) | ⏳ | |
-| AC6 | Margin Section | ⏳ | |
-| AC7 | Summary Footer | ⏳ | |
-| AC8 | Responsive Layout | ⏳ | |
+
+| AC  | Requirement                    | Status | Evidence |
+| --- | ------------------------------ | ------ | -------- |
+| AC1 | Two-Level Price Display Header | ⏳     |          |
+| AC2 | Price Comparison Visual        | ⏳     |          |
+| AC3 | Fixed Costs Breakdown          | ⏳     |          |
+| AC4 | Percentage Costs Breakdown     | ⏳     |          |
+| AC5 | Variable Costs (DRR)           | ⏳     |          |
+| AC6 | Margin Section                 | ⏳     |          |
+| AC7 | Summary Footer                 | ⏳     |          |
+| AC8 | Responsive Layout              | ⏳     |          |
 
 ---
 

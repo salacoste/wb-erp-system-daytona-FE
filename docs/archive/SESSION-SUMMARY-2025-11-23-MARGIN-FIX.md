@@ -14,6 +14,7 @@ This session addressed a user-reported issue where the margin column in the prod
 
 **Screenshot Evidence**:
 Product with article 147205694 shows:
+
 - ✅ COGS assigned: 22,00 ₽ (since 23.11.2025)
 - ❌ Margin: "—" (empty dash)
 
@@ -69,11 +70,13 @@ Single Product View (Detailed):
 ```
 
 **Calculation Cost**:
+
 - Each product margin: 100ms (Epic 17 analytics query)
 - Product list with 25 items: 2.5 seconds if sequential
 - Batching optimization: ~500ms (still significant)
 
 **Design Trade-off**:
+
 - ✅ Fast product list loading (150ms)
 - ❌ No margin visibility in list view
 - ✅ Full margin details in single product view
@@ -87,10 +90,12 @@ Single Product View (Detailed):
 **File Modified**: `frontend/src/components/custom/ProductList.tsx`
 
 **Changes**:
+
 1. Removed unused `MarginBadge` import (line 17)
 2. Updated margin column to show helpful hint (lines 294-307)
 
 **Before**:
+
 ```typescript
 <TableCell>
   <MarginBadge
@@ -101,6 +106,7 @@ Single Product View (Detailed):
 ```
 
 **After**:
+
 ```typescript
 <TableCell>
   {/* Note: Margin calculation disabled for performance in list view
@@ -117,6 +123,7 @@ Single Product View (Detailed):
 ```
 
 **User Experience Improvement**:
+
 ```
 Before: "—"                      ← Confusing (COGS is shown, why no margin?)
 After:  "— (в карточке)"        ← Helpful (explains where to find margin)
@@ -124,12 +131,14 @@ Tooltip: "Маржа рассчитывается в карточке товар
 ```
 
 **Benefits**:
+
 - ✅ Reduces user confusion
 - ✅ Hints where margin is available (single product view)
 - ✅ No performance impact
 - ✅ Maintains existing fast loading
 
 **Limitations**:
+
 - ⚠️ Still doesn't show margin in list (by design)
 - ⚠️ Requires navigation to product detail
 
@@ -156,10 +165,12 @@ Response: ProductWithCogs[] (with margin data, 2-3s or 500ms with batching)
 **Implementation Strategy**:
 
 **Option 1**: Accept slower response (2-3s)
+
 - Simple implementation, reuses existing `getMarginForProduct()` method
 - Acceptable for COGS management UI workflows
 
 **Option 2**: Batch Epic 17 analytics query (500ms target)
+
 ```typescript
 // Single query for all products in list
 const lastWeek = this.isoWeekService.getIsoWeek(lastWeekDate);
@@ -179,15 +190,18 @@ products.forEach(product => {
 ```
 
 **Option 3**: Enforce pagination limit when `include_cogs=true`
+
 - Max 10 products instead of 1000
 - Prevents accidental expensive queries
 
 **Estimated Effort**:
+
 - Backend: 4-6 hours (add parameter, conditional logic, tests)
 - Frontend: 2-3 hours (update hook and component)
 - Total: 6-9 hours
 
 **Success Criteria**:
+
 - [ ] `include_cogs=true` returns margin data
 - [ ] Backward compatible (default unchanged)
 - [ ] Response time ≤3s for 25 products
@@ -200,6 +214,7 @@ products.forEach(product => {
 Until backend enhancement is implemented, users can view margin in single product detail:
 
 **Steps**:
+
 1. Navigate to COGS management page (`/cogs`)
 2. Search for product (e.g., article 147205694)
 3. Select product from list
@@ -210,6 +225,7 @@ Until backend enhancement is implemented, users can view margin in single produc
    - Missing data reason (if applicable)
 
 **Technical Details**:
+
 - Endpoint used: `GET /v1/products/:nmId`
 - Response type: `ProductWithCogs` (includes margin fields)
 - Performance: ~250ms (acceptable for single product)
@@ -221,28 +237,29 @@ Until backend enhancement is implemented, users can view margin in single produc
 ### Frontend Changes
 
 **Modified**:
+
 1. ✅ `frontend/src/components/custom/ProductList.tsx`
    - Removed unused `MarginBadge` import
    - Updated margin column with helpful hint
    - Added code comments referencing backend request
 
-**Created**:
-2. ✅ `frontend/docs/BUG-FIX-MARGIN-NOT-DISPLAYED.md`
-   - Complete root cause analysis
-   - Temporary fix documentation
-   - Long-term solution proposal
+**Created**: 2. ✅ `frontend/docs/BUG-FIX-MARGIN-NOT-DISPLAYED.md`
+
+- Complete root cause analysis
+- Temporary fix documentation
+- Long-term solution proposal
 
 3. ✅ `frontend/docs/SESSION-SUMMARY-2025-11-23-MARGIN-FIX.md` (this file)
    - Session overview and outcomes
 
 ### Backend Request
 
-**Created**:
-4. ✅ `docs/request-backend/15-add-includecogs-to-product-list-endpoint.md`
-   - Complete API enhancement proposal
-   - Performance optimization strategies
-   - Implementation pattern (Epic 17 Story 17.2 reference)
-   - Acceptance criteria and testing requirements
+**Created**: 4. ✅ `docs/request-backend/15-add-includecogs-to-product-list-endpoint.md`
+
+- Complete API enhancement proposal
+- Performance optimization strategies
+- Implementation pattern (Epic 17 Story 17.2 reference)
+- Acceptance criteria and testing requirements
 
 ---
 
@@ -258,12 +275,14 @@ npm run lint
 **Result**: ✅ **PASS** - No errors
 
 **Previous Issue Fixed**:
+
 - ❌ Before: `'MarginBadge' is defined but never used`
 - ✅ After: Import removed, no lint errors
 
 ### Manual Testing
 
 **Test Case 1**: Verify hint text displays
+
 1. Navigate to `/cogs` page
 2. Search for product with COGS
 3. Observe margin column: Should show "— (в карточке)"
@@ -272,6 +291,7 @@ npm run lint
 **Expected Result**: ✅ User sees helpful hint instead of empty dash
 
 **Test Case 2**: Verify margin in single product view
+
 1. Click product from list
 2. View product detail panel
 3. Margin data should display (if available)
@@ -287,6 +307,7 @@ npm run lint
 The proposed backend enhancement follows the same pattern successfully implemented in Epic 17:
 
 **Analytics Endpoints**:
+
 ```typescript
 // Story 17.2: includeCogs parameter for analytics
 GET /v1/analytics/weekly/by-sku?include_cogs=false  // Fast, no COGS
@@ -309,6 +330,7 @@ if (includeCogs === true) {
 ```
 
 **Success Metrics**:
+
 - ✅ Deployed and functional
 - ✅ Backward compatible
 - ✅ Performance acceptable (~250ms with margin data)
@@ -319,12 +341,14 @@ if (includeCogs === true) {
 Epic 18 already implemented margin calculation for single products:
 
 **Single Product Endpoint**:
+
 - `GET /v1/products/:nmId` returns `ProductWithCogs`
 - Includes 9 new fields: `barcode`, `current_margin_pct`, `current_margin_period`, etc.
 - Uses Epic 17 analytics with fallback strategy
 - Method: `getMarginForProduct()` (lines 322-413)
 
 **What's Missing**:
+
 - List endpoint doesn't have `includeCogs` parameter
 - Performance design decision to exclude margin from list
 - Backend Request #15 proposes adding opt-in parameter
@@ -334,23 +358,27 @@ Epic 18 already implemented margin calculation for single products:
 ## Next Steps
 
 ### Immediate (Complete)
+
 - ✅ Temporary UI fix applied and tested
 - ✅ Documentation created
 - ✅ Backend request drafted
 
 ### Short-Term (Pending Backend Team Review)
+
 - [ ] Backend team reviews Request #15
 - [ ] Decide on performance strategy (Option 1, 2, or 3)
 - [ ] Estimate implementation effort
 - [ ] Add to backlog if approved
 
 ### Medium-Term (If Request Approved)
+
 - [ ] Backend implements `includeCogs` parameter
 - [ ] Frontend updates to use new parameter
 - [ ] E2E tests validate margin data
 - [ ] Deploy to production
 
 ### Alternative (If Request Rejected)
+
 - Keep current workaround (single product detail view)
 - Update user documentation with clearer instructions
 - Consider removing margin column from list view entirely
@@ -360,6 +388,7 @@ Epic 18 already implemented margin calculation for single products:
 ## Success Criteria
 
 ### Immediate Goals (Complete)
+
 - ✅ User confusion reduced with helpful hint
 - ✅ Root cause documented and understood
 - ✅ Long-term solution proposed with implementation details
@@ -368,6 +397,7 @@ Epic 18 already implemented margin calculation for single products:
 - ✅ Lint errors resolved
 
 ### Long-Term Goals (Pending)
+
 - [ ] Backend enhancement implemented
 - [ ] Margin data available in list view (opt-in)
 - [ ] Performance acceptable (≤3s for 25 products)
@@ -378,17 +408,20 @@ Epic 18 already implemented margin calculation for single products:
 ## Lessons Learned
 
 ### Design Trade-offs
+
 - Performance optimizations sometimes create UX confusion
 - Clear communication (hints/tooltips) can bridge the gap temporarily
 - Following established patterns (Epic 17 Story 17.2) reduces implementation risk
 
 ### Investigation Process
+
 - ✅ Checked component logic first (MarginDisplay.tsx)
 - ✅ Traced data flow through types (ProductListItem vs ProductWithCogs)
 - ✅ Identified API contract differences (list vs single endpoints)
 - ✅ Found performance justification in documentation
 
 ### Documentation Value
+
 - Type comments like "margin calculation disabled for performance" were critical
 - Epic 17 Story 17.2 provided implementation blueprint
 - Backend requests should include detailed implementation patterns
@@ -398,18 +431,21 @@ Epic 18 already implemented margin calculation for single products:
 ## References
 
 ### Code Files
+
 - `frontend/src/components/custom/ProductList.tsx` (margin column UI)
 - `frontend/src/components/custom/MarginDisplay.tsx` (margin display component)
 - `frontend/src/types/cogs.ts` (ProductListItem vs ProductWithCogs types)
 - `src/products/products.service.ts` (backend product service)
 
 ### Documentation
+
 - `frontend/docs/BUG-FIX-MARGIN-NOT-DISPLAYED.md` (detailed analysis)
 - `docs/request-backend/15-add-includecogs-to-product-list-endpoint.md` (enhancement proposal)
 - `docs/stories/epic-17/story-17.2-api-includecogs-flag.md` (pattern reference)
 - `docs/backend-response-09-epic-18-products-api-enhancement.md` (Epic 18 context)
 
 ### Related Stories
+
 - Epic 17 Story 17.2: `includeCogs` flag for analytics endpoints
 - Epic 18 Phase 1: Single product margin calculation
 - Stories 4.5, 4.6, 4.7: Margin analytics features

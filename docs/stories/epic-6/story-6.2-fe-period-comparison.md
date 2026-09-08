@@ -17,17 +17,20 @@
 ## Acceptance Criteria
 
 ### AC1: Enhanced Comparison Mode
+
 - [x] Update comparison to support date ranges (not just single weeks)
 - [x] Show "Период 1 vs Период 2" header
 - [x] Display delta values (absolute and percentage)
 
 ### AC2: Delta Visualization
+
 - [x] Show green arrow for positive deltas (growth)
 - [x] Show red arrow for negative deltas (decline)
 - [x] Show gray dash for no change
 - [x] Tooltip with exact delta values
 
 ### AC3: API Integration
+
 - [x] Use `compare_to` parameter for period comparison
 - [x] Handle `delta` fields in response:
   - `revenue_delta`, `revenue_delta_pct`
@@ -35,6 +38,7 @@
   - `margin_delta_pct`
 
 ### AC4: UI/UX
+
 - [x] Side-by-side tables for two periods
 - [x] Delta column between values
 - [x] Summary row with totals comparison (ComparisonSummary component)
@@ -114,6 +118,7 @@ function DeltaIndicator({ value, type, inverse = false }: DeltaIndicatorProps) {
 ## Tasks / Subtasks
 
 ### Task 1: Create DeltaIndicator Component (AC2) ✅
+
 - [x] 1.1 Create `src/components/custom/DeltaIndicator.tsx`
 - [x] 1.2 Implement color logic: green (positive), red (negative), gray (zero)
 - [x] 1.3 Add `inverse` prop for metrics where negative is good (e.g., costs)
@@ -122,30 +127,36 @@ function DeltaIndicator({ value, type, inverse = false }: DeltaIndicatorProps) {
 - [x] 1.6 Export component and types
 
 ### Task 2: Update useMarginAnalytics Hook (AC3) ✅
+
 - [x] 2.1 Add `compareTo` param to `MarginAnalyticsFilters` interface
 - [x] 2.2 Pass `compare_to` query parameter when set
 - [x] 2.3 Update response types to include delta fields
 - [x] 2.4 Update queryKey to include comparison period
 
 ### Task 3: Update Analytics SKU Page for Comparison (AC1, AC4) ✅
+
 - [x] 3.1 Add comparison period selector (ComparisonPeriodSelector component)
 - [x] 3.2 Add "Сравнить с периодом" toggle/checkbox
 - [x] 3.3 Update table to show comparison columns when enabled
 - [x] 3.4 Add delta column between current and comparison values
 
 ### Task 4: Update Analytics Brand Page for Comparison (AC1) ✅
+
 - [x] 4.1 Add comparison mode support
 - [x] 4.2 Display delta indicators
 
 ### Task 5: Update Analytics Category Page for Comparison (AC1) ✅
+
 - [x] 5.1 Add comparison mode support
 - [x] 5.2 Display delta indicators
 
 ### Task 6: Summary Row with Totals Comparison (AC4) ✅
+
 - [x] 6.1 Add summary/totals row at bottom of comparison tables (ComparisonSummary component)
 - [x] 6.2 Show aggregated deltas for all metrics (ComparisonSummary shows revenue/profit/margin deltas)
 
 ### Task 7: Testing (All ACs) ✅
+
 - [x] 7.1 Unit tests for DeltaIndicator component (21 tests)
 - [x] 7.2 Unit tests for delta calculation edge cases (zero, null)
 - [x] 7.3 Unit tests for ComparisonPeriodSelector (12 tests)
@@ -213,9 +224,9 @@ src/
 
 ## Change Log
 
-| Date | Version | Description | Author |
-|------|---------|-------------|--------|
-| 2025-11-29 | 1.0 | Initial draft | Claude (Opus 4.5) |
-| 2025-11-29 | 1.1 | Added Tasks/Subtasks (7 tasks), Dev Notes with Source Tree, Change Log | Sarah (PO Agent) |
-| 2025-12-05 | 1.2 | Implementation complete: DeltaIndicator (21 tests), ComparisonPeriodSelector (12 tests), SKU/Brand/Category pages updated with comparison mode. Summary row deferred. | Claude (Opus 4.5) |
-| 2025-12-05 | 1.3 | DEFER-002 resolved: Added ComparisonSummary component for table summary rows with comparison deltas | Claude (Opus 4.5) |
+| Date       | Version | Description                                                                                                                                                           | Author            |
+| ---------- | ------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------- |
+| 2025-11-29 | 1.0     | Initial draft                                                                                                                                                         | Claude (Opus 4.5) |
+| 2025-11-29 | 1.1     | Added Tasks/Subtasks (7 tasks), Dev Notes with Source Tree, Change Log                                                                                                | Sarah (PO Agent)  |
+| 2025-12-05 | 1.2     | Implementation complete: DeltaIndicator (21 tests), ComparisonPeriodSelector (12 tests), SKU/Brand/Category pages updated with comparison mode. Summary row deferred. | Claude (Opus 4.5) |
+| 2025-12-05 | 1.3     | DEFER-002 resolved: Added ComparisonSummary component for table summary rows with comparison deltas                                                                   | Claude (Opus 4.5) |

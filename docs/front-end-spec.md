@@ -63,7 +63,7 @@ The specification is based on the Product Requirements Document (PRD), Project B
   - Hard to tell "no sales yet" from a real performance problem in a category
 - **Usage Patterns:** Daily, operational — opening the dashboard to triage what is broken or at-risk (stock, fulfillment, returns, storage) before any financial deep-dive
 
-> **Role → persona mapping note:** Personas are a *lens* over the same data, not a 1:1 of system roles. Default mapping is `Owner`/`Manager` → Owner, `Analyst` → CFO, `Service` → CFO; the **Operations Manager** lens aligns with the operational dashboards (stock health, fulfillment, returns, storage, inventory) and is selectable by any role via the persona selector.
+> **Role → persona mapping note:** Personas are a _lens_ over the same data, not a 1:1 of system roles. Default mapping is `Owner`/`Manager` → Owner, `Analyst` → CFO, `Service` → CFO; the **Operations Manager** lens aligns with the operational dashboards (stock health, fulfillment, returns, storage, inventory) and is selectable by any role via the persona selector.
 
 ### Usability Goals
 
@@ -87,9 +87,9 @@ The specification is based on the Product Requirements Document (PRD), Project B
 
 ### Change Log
 
-| Date | Version | Description | Author |
-|------|---------|-------------|--------|
-| 2025-01-20 | 1.0 | Initial front-end specification creation | Sally (UX Expert) |
+| Date       | Version | Description                              | Author            |
+| ---------- | ------- | ---------------------------------------- | ----------------- |
+| 2025-01-20 | 1.0     | Initial front-end specification creation | Sally (UX Expert) |
 
 ---
 
@@ -109,26 +109,26 @@ graph TD
     D1 --> D2[WB Token Input]
     D2 --> D3[Data Processing Status]
     D3 --> E[Main Application]
-    
+
     E --> F[Dashboard]
     E --> G[COGS Management]
     E --> H[Analytics]
     E --> I[Settings]
-    
+
     F --> F1[Key Metrics View]
     F --> F2[Expense Breakdown]
     F --> F3[Trend Graphs]
-    
+
     G --> G1[Single Product COGS]
     G --> G2[Bulk COGS Assignment]
     G --> G3[Product List View]
-    
+
     H --> H1[Margin by SKU]
     H --> H2[Margin by Brand]
     H --> H3[Margin by Category]
     H --> H4[Margin by Time Period]
     H --> H5[Financial Summary]
-    
+
     I --> I1[Profile Settings]
     I --> I2[Cabinet Settings]
     I --> I3[Logout]
@@ -137,6 +137,7 @@ graph TD
 **Screen Inventory:**
 
 **Authentication & Onboarding:**
+
 - Login Page
 - Registration Page
 - Cabinet Creation (Onboarding Step 1)
@@ -145,6 +146,7 @@ graph TD
 - Initial Data Display (Post-Onboarding)
 
 **Main Application (Protected Routes):**
+
 - Dashboard (Home/Default View)
 - COGS Management - Single Assignment
 - COGS Management - Bulk Assignment
@@ -157,6 +159,7 @@ graph TD
 - Settings/Profile
 
 **Shared Components:**
+
 - Sidebar Navigation (persistent)
 - Top Navbar (persistent)
 - Error Pages (404, 500, etc.)
@@ -168,23 +171,25 @@ graph TD
 **Primary Navigation: Sidebar (Left)**
 
 The sidebar navigation follows the design kit pattern with:
+
 - Vertical menu items with icons
 - Active state highlighting (red background with white text, as shown in design)
 - Collapsible sub-items for nested navigation
 - Persistent across all main application screens
 
 **Navigation Items:**
+
 1. **Dashboard** (Home icon)
    - Default landing page after login
    - Active state: Red background (#E53935 or #D32F2F) with white text
-   
+
 2. **COGS Management** (Product icon)
    - Sub-items:
      - Single Assignment
      - Bulk Assignment
      - Product List
    - Expandable/collapsible section
-   
+
 3. **Analytics** (Chart icon)
    - Sub-items:
      - Margin by SKU
@@ -193,7 +198,7 @@ The sidebar navigation follows the design kit pattern with:
      - Margin by Time Period
      - Financial Summary
    - Expandable/collapsible section
-   
+
 4. **Settings** (Gear icon)
    - Sub-items:
      - Profile
@@ -208,9 +213,10 @@ The sidebar navigation follows the design kit pattern with:
 **Secondary Navigation: Top Navbar**
 
 The top navbar (as shown in design kit) includes:
+
 - **Left Side:**
   - Application title/logo: "WB Repricer" or "Dashboard"
-  
+
 - **Right Side:**
   - Search bar (with magnifying glass icon)
   - Notification icon (bell)
@@ -225,11 +231,13 @@ Breadcrumbs are used for deep navigation within Analytics and COGS Management se
 **Pattern:** Home > Section > Sub-section > Detail
 
 **Examples:**
+
 - Dashboard > Analytics > Margin by SKU
 - Dashboard > COGS Management > Bulk Assignment
 - Dashboard > Analytics > Margin by Brand > [Brand Name]
 
 **Breadcrumb Design:**
+
 - Text color: Gray (#BDBDBD for inactive, black for active)
 - Separator: "/" or ">"
 - Last item: Bold or different color to indicate current location
@@ -251,11 +259,13 @@ Breadcrumbs are used for deep navigation within Analytics and COGS Management se
 **User Goal:** Complete initial setup to access financial data and begin using the system
 
 **Entry Points:**
+
 - User lands on registration page after signing up
 - User completes registration and is redirected to login
 - User logs in for the first time (no cabinet exists)
 
 **Success Criteria:**
+
 - User completes all onboarding steps (cabinet creation, WB token, data processing)
 - User sees their processed financial data on dashboard
 - User understands next steps (COGS assignment)
@@ -324,6 +334,7 @@ graph TD
 - **Network Interruption:** Show network error, allow retry without losing form data (if secure)
 
 **Notes:**
+
 - Onboarding should feel guided but not restrictive - users should understand they can return to complete steps later
 - Progress indicators are critical during data processing to set expectations
 - Error messages should be actionable with clear next steps
@@ -336,11 +347,13 @@ graph TD
 **User Goal:** Assign Cost of Goods Sold to an individual product and see the calculated margin
 
 **Entry Points:**
+
 - User navigates from Dashboard to COGS Management
 - User clicks on a product in the product list
 - User searches for a specific product to assign COGS
 
 **Success Criteria:**
+
 - COGS value is successfully saved
 - Margin calculation is automatically displayed
 - User sees visual confirmation of successful assignment
@@ -407,6 +420,7 @@ graph TD
 - **Session Expired:** Detect expired token, show message, redirect to login, preserve form state if possible
 
 **Notes:**
+
 - COGS input should support decimal values (e.g., 123.45 RUB)
 - Visual feedback is critical - users need immediate confirmation that their financial data was saved
 - Margin calculation happens automatically but may have a slight delay - show appropriate loading states
@@ -419,11 +433,13 @@ graph TD
 **User Goal:** Efficiently assign the same COGS value to multiple products at once
 
 **Entry Points:**
+
 - User selects "Bulk Assignment" from COGS Management menu
 - User navigates from single assignment view to bulk mode
 - User wants to assign COGS to many products with same value
 
 **Success Criteria:**
+
 - Selected products have COGS assigned
 - Margins are calculated for all updated products
 - User sees summary of successful and failed assignments
@@ -500,6 +516,7 @@ graph TD
 - **Margin Calculation Delayed:** Show: "COGS assignments saved. Margin calculations in progress..." with refresh option
 
 **Notes:**
+
 - Bulk operations should feel powerful but safe - preview and confirmation are essential
 - Progress indicators are critical for large batches
 - Failed items should be clearly identified with actionable retry options
@@ -512,11 +529,13 @@ graph TD
 **User Goal:** Quickly understand financial position and navigate to detailed analysis views
 
 **Entry Points:**
+
 - User logs in and lands on dashboard (default view)
 - User navigates to dashboard from any section
 - User returns to dashboard after completing a task
 
 **Success Criteria:**
+
 - User can see key metrics at a glance (Total Payable, Revenue)
 - User can understand expense breakdown
 - User can identify trends in financial data
@@ -577,6 +596,7 @@ graph TD
 - **Multiple Cabinets (Future):** Show cabinet selector if user has multiple cabinets
 
 **Notes:**
+
 - Dashboard is the "home" - it should load quickly (< 2 seconds per NFR)
 - Progressive loading: Show metrics first, then charts, then detailed data
 - Interactive elements (tooltips, hover states) enhance data exploration without cluttering
@@ -590,12 +610,14 @@ graph TD
 ### Primary Design Files
 
 **Design System Reference:** Design Kit screenshots provided show comprehensive component library including:
+
 - Button components (Primary, Secondary, Text) with all states
 - Sidebar navigation with active states
 - Navbar with search and action icons
 - Dropdown menu components
 
 **Design Tool:** Design specifications are provided via screenshots. For detailed implementation, developers should reference:
+
 - Design Kit: Buttons, Sidebar, Navbar, Dropdown (screenshots provided)
 - Color specifications: Red primary (#E53935, #D32F2F), white backgrounds, gray accents
 - Component states: Default, Hover, Pressed, Disabled
@@ -609,6 +631,7 @@ graph TD
 **Purpose:** Authenticate users and provide entry point to the application
 
 **Key Elements:**
+
 - Centered login form with email and password fields
 - "Remember me" checkbox (optional)
 - "Forgot password?" link (future feature - disabled for MVP)
@@ -617,6 +640,7 @@ graph TD
 - Error message display area below form
 
 **Interaction Notes:**
+
 - Form validation on blur and submit
 - Loading state on submit button during authentication
 - Clear error messages for invalid credentials
@@ -626,6 +650,7 @@ graph TD
 **Design File Reference:** To be created in Figma - follow design kit button styles (Primary button for "Login", Text button for "Register")
 
 **Layout Structure:**
+
 ```
 ┌─────────────────────────────────┐
 │        [Logo/Branding]          │
@@ -653,6 +678,7 @@ graph TD
 **Purpose:** Allow new users to create accounts
 
 **Key Elements:**
+
 - Registration form with email and password fields
 - Password confirmation field
 - Password strength indicator (optional for MVP)
@@ -661,6 +687,7 @@ graph TD
 - Application logo/branding
 
 **Interaction Notes:**
+
 - Real-time email format validation
 - Password requirements displayed (min length, complexity if required)
 - Password confirmation must match
@@ -677,6 +704,7 @@ graph TD
 **Purpose:** First step of onboarding - create a cabinet to organize business data
 
 **Key Elements:**
+
 - Progress indicator (Step 1 of 3)
 - Cabinet name input field
 - Optional: Cabinet description field
@@ -685,6 +713,7 @@ graph TD
 - Help text explaining what a cabinet is
 
 **Interaction Notes:**
+
 - Cabinet name validation (required, min/max length)
 - Real-time validation feedback
 - Loading state on submit
@@ -700,6 +729,7 @@ graph TD
 **Purpose:** Collect Wildberries API token for automatic data processing
 
 **Key Elements:**
+
 - Progress indicator (Step 2 of 3)
 - Token input field (masked for security)
 - Help text with instructions on how to obtain token
@@ -709,6 +739,7 @@ graph TD
 - "Back" button to return to previous step
 
 **Interaction Notes:**
+
 - Token format validation (if format is known)
 - Token validation via API on submit
 - Loading state during validation
@@ -725,6 +756,7 @@ graph TD
 **Purpose:** Show progress of automatic data processing (product parsing, financial report loading)
 
 **Key Elements:**
+
 - Progress indicator (Step 3 of 3)
 - Processing status cards:
   - Product Parsing: [Progress bar] "Processing 3 months of historical data..."
@@ -735,6 +767,7 @@ graph TD
 - Error state: Error message with retry button
 
 **Interaction Notes:**
+
 - Real-time progress updates via polling or WebSocket
 - User can navigate away and return to check status
 - Auto-redirect to dashboard when complete
@@ -750,39 +783,41 @@ graph TD
 **Purpose:** Primary interface showing key financial metrics and quick navigation
 
 **Key Elements:**
+
 - **Sidebar Navigation** (left, persistent):
   - Dashboard (active - red background)
   - COGS Management (with sub-items)
   - Analytics (with sub-items)
   - Settings (with sub-items)
   - Logout (bottom, red text)
-  
+
 - **Top Navbar** (persistent):
   - Left: "WB Repricer" or "Dashboard" title
   - Right: Search bar, Notification icon, Messages icon, User profile icon
-  
+
 - **Main Content Area:**
   - **Large Metric Cards** (prominent):
     - Total Payable card (large, blue accent)
     - Revenue card (large, blue accent)
     - Values formatted as currency (RUB) with Intl.NumberFormat
-  
+
   - **Expense Breakdown Chart:**
     - Bar chart or pie chart showing expense categories
     - Interactive tooltips on hover
     - Color-coded (Green for positive, Red for negative)
-  
+
   - **Trend Graphs:**
     - Line chart showing revenue/payable trends over time
     - Time period selector (weeks/months)
     - Interactive tooltips
-  
+
   - **Quick Action Links:**
     - "Assign COGS" button (Primary)
     - "View Analytics" link
     - "Financial Summary" link
 
 **Interaction Notes:**
+
 - Dashboard loads progressively (metrics first, then charts)
 - All charts are interactive with hover states
 - Clicking metric cards may drill down (future feature)
@@ -793,6 +828,7 @@ graph TD
 **Design File Reference:** Design kit provides sidebar and navbar patterns. Dashboard layout to be created in Figma following these patterns.
 
 **Layout Structure:**
+
 ```
 ┌──────┬────────────────────────────────────────────┐
 │      │ [WB Repricer]    [Search] [🔔] [💬] [👤] │
@@ -824,6 +860,7 @@ graph TD
 **Purpose:** Assign COGS to individual products
 
 **Key Elements:**
+
 - **Sidebar & Navbar** (persistent, same as dashboard)
 - **Main Content:**
   - Product list/search interface
@@ -839,6 +876,7 @@ graph TD
   - Updated margin display after save
 
 **Interaction Notes:**
+
 - Product list supports search and filtering
 - Clicking product opens COGS input (inline or modal)
 - Real-time validation (positive numbers, decimal support)
@@ -856,6 +894,7 @@ graph TD
 **Purpose:** Assign same COGS value to multiple products efficiently
 
 **Key Elements:**
+
 - **Sidebar & Navbar** (persistent)
 - **Main Content:**
   - Product list with checkboxes
@@ -870,6 +909,7 @@ graph TD
   - Results summary: "X succeeded, Y failed" with details
 
 **Interaction Notes:**
+
 - Checkbox selection with visual feedback
 - Bulk COGS input with validation
 - Preview before confirmation (especially for >100 products)
@@ -886,6 +926,7 @@ graph TD
 **Purpose:** View margin analysis organized by individual product SKU
 
 **Key Elements:**
+
 - **Sidebar & Navbar** (persistent)
 - **Breadcrumb:** Dashboard > Analytics > Margin by SKU
 - **Main Content:**
@@ -902,6 +943,7 @@ graph TD
   - Export option (future - disabled for MVP)
 
 **Interaction Notes:**
+
 - Table is sortable by any column
 - Margin percentages use color coding
 - Clicking row may show product detail (future)
@@ -917,6 +959,7 @@ graph TD
 **Purpose:** Comprehensive financial overview for financial directors
 
 **Key Elements:**
+
 - **Sidebar & Navbar** (persistent)
 - **Breadcrumb:** Dashboard > Analytics > Financial Summary
 - **Main Content:**
@@ -927,6 +970,7 @@ graph TD
   - Links to detailed analytics views
 
 **Interaction Notes:**
+
 - Filter controls at top
 - Data updates based on filters
 - Clear indication of filtered vs. unfiltered data
@@ -941,6 +985,7 @@ graph TD
 ### Design System Approach
 
 **Foundation:** The design system is based on the provided Design Kit screenshots which establish:
+
 - Red primary color scheme (#E53935, #D32F2F)
 - White backgrounds for clean, professional appearance
 - Gray accents for neutral elements (#EEEEEE, #BDBDBD)
@@ -949,6 +994,7 @@ graph TD
 **Component Library Base: shadcn/ui**
 
 We will use **shadcn/ui** as the foundation component library, which provides:
+
 - High-quality, accessible components built on Radix UI primitives
 - Tailwind CSS for styling (allows easy customization)
 - Copy-paste component architecture (components live in your codebase, not as dependencies)
@@ -972,12 +1018,14 @@ We will use **shadcn/ui** as the foundation component library, which provides:
    - Data Tables (based on shadcn/ui Table component)
 
 **Component Philosophy:**
+
 - **Reusability:** Components are designed to be reused across all screens
 - **Consistency:** All components follow the same visual language and interaction patterns
 - **Accessibility:** All components meet WCAG AA standards (inherited from shadcn/ui + Radix UI)
 - **Responsive:** Components adapt gracefully across device sizes (Tailwind responsive utilities)
 
 **Implementation Notes:**
+
 - Components will be based on shadcn/ui, customized to match our red/white design system
 - Each component should be in its own file (< 200 lines per file constraint)
 - Component library structure: `src/components/ui/` for shadcn/ui components
@@ -986,6 +1034,7 @@ We will use **shadcn/ui** as the foundation component library, which provides:
 - Use shadcn/ui's `cn()` utility for conditional class merging
 
 **shadcn/ui Components to Use:**
+
 - `Button` - Customized with red primary variant
 - `Input` - Customized with red focus border
 - `Select` / `Dropdown` - Customized with red accent
@@ -1006,6 +1055,7 @@ We will use **shadcn/ui** as the foundation component library, which provides:
 **Purpose:** Primary call-to-action buttons for main user actions (Save, Continue, Confirm, Login, etc.)
 
 **Implementation:**
+
 - Copy shadcn/ui Button component: `npx shadcn-ui@latest add button`
 - Customize in `src/components/ui/button.tsx`:
   - Add custom `variant="primary"` with red background (#E53935)
@@ -1013,11 +1063,13 @@ We will use **shadcn/ui** as the foundation component library, which provides:
   - Maintain shadcn/ui's built-in variants (default, destructive, outline, ghost, link) but add our custom red primary
 
 **Variants:**
+
 - **Primary (Custom):** Solid red background (#E53935), white text, rounded corners
 - **Alternative Primary:** Slightly darker red (#D32F2F) for destructive or distinct actions
 - **Disabled State:** Light pink background (#FFCDD2), light gray text (#BDBDBD), not clickable
 
 **States:**
+
 - **Default:** Solid red (#E53935), white text, cursor pointer
 - **Hover:** Slightly darker red (#D32F2F), subtle shadow (optional)
 - **Pressed/Active:** Darker red (#D32F2F), slight scale down (optional)
@@ -1025,6 +1077,7 @@ We will use **shadcn/ui** as the foundation component library, which provides:
 - **Loading:** Use shadcn/ui's built-in loading state or add spinner, disable interaction, maintain red background
 
 **Usage Guidelines:**
+
 - Use for primary actions: "Save", "Continue", "Login", "Confirm", "Assign COGS"
 - One primary button per screen/section (visual hierarchy)
 - Button text should be action-oriented and clear ("Save COGS" not "Submit")
@@ -1032,6 +1085,7 @@ We will use **shadcn/ui** as the foundation component library, which provides:
 - Full width on mobile, auto-width on desktop (with min-width)
 
 **Tailwind Customization:**
+
 ```typescript
 // tailwind.config.ts
 theme: {
@@ -1048,6 +1102,7 @@ theme: {
 ```
 
 **Design Specifications:**
+
 - **Height:** 40-48px (desktop), 44px minimum (mobile) - configured via Tailwind classes
 - **Padding:** 12px 24px (horizontal, vertical) - `px-6 py-3`
 - **Border Radius:** 4-8px (slightly rounded corners) - `rounded-md` or `rounded-lg`
@@ -1066,36 +1121,42 @@ theme: {
 **Purpose:** Secondary actions, cancel operations, alternative choices (Cancel, Back, Skip)
 
 **Implementation:**
+
 - Use shadcn/ui Button with `variant="outline"` as base
 - Customize in `src/components/ui/button.tsx`:
   - Override outline variant colors to use red border (#E53935) instead of default
   - Add hover state with light pink background (#FFCDD2)
 
 **Variants:**
+
 - **Default State:** White background, thin red border (#E53935), red text (#E53935)
 - **Hover State:** Light pink background (#FFCDD2), red border, red text
 - **Pressed State:** Solid light red background, red border, white text
 - **Disabled State:** White background, light gray border (#BDBDBD), light gray text (#BDBDBD)
 
 **States:**
+
 - **Default:** White background, red border 1-2px, red text, cursor pointer
 - **Hover:** Light pink background (#FFCDD2), red border, red text
 - **Pressed:** Light red background, red border, white text
 - **Disabled:** White background, gray border (#BDBDBD), gray text (#BDBDBD), cursor not-allowed
 
 **Usage Guidelines:**
+
 - Use for secondary actions: "Cancel", "Back", "Skip", "Edit"
 - Often paired with Primary button (e.g., "Cancel" + "Save")
 - Provides visual hierarchy - less prominent than Primary
 - Same size specifications as Primary button for consistency
 
 **Tailwind Customization:**
+
 ```typescript
 // In button.tsx, customize outline variant:
 outline: "border-primary text-primary hover:bg-primary-light hover:text-primary",
 ```
 
 **Design Specifications:**
+
 - **Height:** 40-48px (matches Primary) - same Tailwind classes
 - **Padding:** 12px 24px - `px-6 py-3`
 - **Border Radius:** 4-8px (matches Primary) - `rounded-md` or `rounded-lg`
@@ -1112,23 +1173,27 @@ outline: "border-primary text-primary hover:bg-primary-light hover:text-primary"
 **Purpose:** Tertiary actions, links that look like buttons, less prominent actions (View Details, Learn More)
 
 **Variants:**
+
 - **Default State:** Red text (#E53935), no background, no border
 - **Hover/Pressed State:** Red text with underline, or light gray text (#BDBDBD) with underline
 - **Disabled State:** Light gray text (#BDBDBD), no underline, not clickable
 
 **States:**
+
 - **Default:** Red text (#E53935), no decoration, cursor pointer
 - **Hover:** Red text with underline, or gray text (#BDBDBD) with underline
 - **Pressed:** Same as hover (visual feedback)
 - **Disabled:** Gray text (#BDBDBD), cursor not-allowed
 
 **Usage Guidelines:**
+
 - Use for less critical actions: "View Details", "Skip for now", "Learn more"
 - Can be used inline with text
 - Minimal visual weight - doesn't compete with Primary/Secondary buttons
 - Often used in navigation or as links
 
 **Design Specifications:**
+
 - **Height:** Auto (text height)
 - **Padding:** 4-8px (minimal, for touch target)
 - **Text Color:** #E53935 (default), #BDBDBD (disabled)
@@ -1142,12 +1207,14 @@ outline: "border-primary text-primary hover:bg-primary-light hover:text-primary"
 **Purpose:** Primary navigation menu, persistent across all main application screens
 
 **Variants:**
+
 - **Default Menu Item:** White background, black text, icon on left
 - **Active Menu Item:** Red background (#E53935 or #D32F2F), white text, white icon
 - **Hover State:** Light pink background (#FFCDD2), red text
 - **Sub-items:** Indented, smaller text, shown when parent is expanded
 
 **States:**
+
 - **Default:** White background, black text, icon visible
 - **Hover:** Light pink background (#FFCDD2), red text
 - **Active/Selected:** Red background (#E53935), white text, white icon
@@ -1155,6 +1222,7 @@ outline: "border-primary text-primary hover:bg-primary-light hover:text-primary"
 - **Collapsed:** Sub-items hidden, parent shows expand icon
 
 **Usage Guidelines:**
+
 - Always visible on left side of main application screens
 - Top-level items: Dashboard, COGS Management, Analytics, Settings
 - Sub-items shown when parent is clicked/expanded
@@ -1163,6 +1231,7 @@ outline: "border-primary text-primary hover:bg-primary-light hover:text-primary"
 - Collapsible on mobile (hamburger menu)
 
 **Design Specifications:**
+
 - **Width:** 240-280px (desktop), full width when expanded on mobile
 - **Background:** White (#FFFFFF)
 - **Active Background:** #E53935 or #D32F2F
@@ -1180,17 +1249,20 @@ outline: "border-primary text-primary hover:bg-primary-light hover:text-primary"
 **Purpose:** Global navigation bar with search, notifications, and user profile access
 
 **Variants:**
+
 - **Default:** White background, black title text, red outline icons
 - **Search Bar:** Light gray border (#EEEEEE or #BDBDBD), placeholder text
 - **Icons:** Red outline (#E53935), hover state with fill or darker red
 
 **States:**
+
 - **Default:** White background, all elements visible
 - **Search Focused:** Search bar border becomes red (#E53935), active state
 - **Icon Hover:** Icon color darkens or fills, subtle background
 - **User Menu Open:** Dropdown appears below user icon
 
 **Usage Guidelines:**
+
 - Persistent across all screens (except auth pages)
 - Left side: Application title/logo
 - Right side: Search, Notifications, Messages, User Profile (in order)
@@ -1199,6 +1271,7 @@ outline: "border-primary text-primary hover:bg-primary-light hover:text-primary"
 - User profile icon opens dropdown menu (Settings, Logout)
 
 **Design Specifications:**
+
 - **Height:** 64-72px
 - **Background:** White (#FFFFFF)
 - **Border Bottom:** 1px solid #EEEEEE (subtle separation)
@@ -1217,6 +1290,7 @@ outline: "border-primary text-primary hover:bg-primary-light hover:text-primary"
 **Purpose:** Select options from a list, filter selections, menu dropdowns
 
 **Implementation:**
+
 - Copy shadcn/ui Select component: `npx shadcn-ui@latest add select`
 - Customize in `src/components/ui/select.tsx`:
   - Override trigger border color to red (#E53935)
@@ -1224,11 +1298,13 @@ outline: "border-primary text-primary hover:bg-primary-light hover:text-primary"
   - Maintain Radix UI accessibility features
 
 **Variants:**
+
 - **Closed State:** White background, thin red border (#E53935), black text "Select Option", red caret icon
 - **Open State:** White panel below button, list of options (Option 1, Option 2, Option 3)
 - **Selected Option:** Highlighted (light pink background or red text)
 
 **States:**
+
 - **Closed:** Button appearance, shows selected value or placeholder
 - **Open:** Dropdown panel appears below, shows options list (Radix UI handles this)
 - **Hover (Option):** Light pink background (#FFCDD2) or red text
@@ -1236,12 +1312,14 @@ outline: "border-primary text-primary hover:bg-primary-light hover:text-primary"
 - **Disabled:** Gray background, gray text, not clickable
 
 **Usage Guidelines:**
+
 - Use for selecting from predefined options
 - Can be used in filters, form selects, navigation menus
 - Radix UI handles: closing on outside click, keyboard navigation (Arrow keys, Enter, Escape)
 - Accessible: Built-in ARIA labels and keyboard support from Radix UI
 
 **Tailwind Customization:**
+
 ```typescript
 // In select.tsx, customize trigger:
 trigger: "flex h-10 w-full items-center justify-between rounded-md border border-primary bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary",
@@ -1252,6 +1330,7 @@ item: "hover:bg-primary-light hover:text-primary",
 ```
 
 **Design Specifications:**
+
 - **Button Height:** 40px (matches input fields) - `h-10`
 - **Border:** 1px solid #E53935 - `border border-primary`
 - **Border Radius:** 4px - `rounded-md`
@@ -1272,6 +1351,7 @@ item: "hover:bg-primary-light hover:text-primary",
 **Purpose:** Text input, numeric input, password input, search input
 
 **Implementation:**
+
 - Copy shadcn/ui Input component: `npx shadcn-ui@latest add input`
 - Customize in `src/components/ui/input.tsx`:
   - Override focus ring color to red (#E53935)
@@ -1279,12 +1359,14 @@ item: "hover:bg-primary-light hover:text-primary",
   - Maintain shadcn/ui's accessibility features
 
 **Variants:**
+
 - **Default:** White background, light gray border (#EEEEEE or #BDBDBD), black text
 - **Focused:** Red border (#E53935), active state with red focus ring
 - **Error:** Red border (#E53935 or #D32F2F), error message below (use shadcn/ui Form components)
 - **Disabled:** Light gray background (#EEEEEE), gray text (#BDBDBD), gray border
 
 **States:**
+
 - **Default:** White background, gray border, black text
 - **Focus:** Red border (#E53935), red focus ring (Tailwind `focus:ring-primary`)
 - **Error:** Red border, red error message text below field (use shadcn/ui Form + Label)
@@ -1292,6 +1374,7 @@ item: "hover:bg-primary-light hover:text-primary",
 - **Loading:** Show spinner icon (for async validation) - custom addition
 
 **Usage Guidelines:**
+
 - Use for all text/numeric inputs (email, password, COGS, search)
 - Use shadcn/ui `Label` component for labels
 - Use shadcn/ui `Form` components for validation and error messages
@@ -1300,6 +1383,7 @@ item: "hover:bg-primary-light hover:text-primary",
 - Numeric inputs (COGS): Use `type="number"` or `inputMode="decimal"` with validation
 
 **Tailwind Customization:**
+
 ```typescript
 // In input.tsx, customize focus ring:
 className={cn(
@@ -1312,6 +1396,7 @@ className={cn(
 ```
 
 **Design Specifications:**
+
 - **Height:** 40-48px - `h-10` or `h-12`
 - **Padding:** 12px 16px - `px-4 py-3`
 - **Border:** 1px solid #EEEEEE (default), #E53935 (focused/error) - `border border-gray-300 focus:border-primary`
@@ -1331,6 +1416,7 @@ className={cn(
 **Purpose:** Display key financial metrics prominently on dashboard
 
 **Implementation:**
+
 - Copy shadcn/ui Card component: `npx shadcn-ui@latest add card`
 - Create custom `MetricCard` component in `src/components/custom/MetricCard.tsx`:
   - Use shadcn/ui Card as base structure
@@ -1339,17 +1425,20 @@ className={cn(
   - Use shadcn/ui Skeleton for loading states
 
 **Variants:**
+
 - **Large Metric Card:** Primary metrics (Total Payable, Revenue) - extra large, prominent
 - **Standard Metric Card:** Secondary metrics - standard size
 - **Small Metric Card:** Tertiary metrics - compact size
 
 **States:**
+
 - **Default:** White background, border or shadow, metric value displayed
 - **Loading:** Use shadcn/ui Skeleton component for loading state
 - **Error:** Error message or "N/A" display
 - **Empty:** Placeholder text or empty state message
 
 **Usage Guidelines:**
+
 - Large cards for primary metrics (Total Payable, Revenue)
 - Use blue accent color for primary metrics (per PRD color coding)
 - Values formatted as currency (RUB) using Intl.NumberFormat
@@ -1358,6 +1447,7 @@ className={cn(
 - Clickable for drill-down (future feature)
 
 **Implementation Example:**
+
 ```typescript
 // src/components/custom/MetricCard.tsx
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
@@ -1376,7 +1466,7 @@ export function MetricCard({ title, value, isLoading, variant = "standard" }: Me
     standard: "min-h-[100px] p-5",
     small: "min-h-[80px] p-4",
   }
-  
+
   return (
     <Card className={sizeClasses[variant]}>
       <CardHeader>
@@ -1395,6 +1485,7 @@ export function MetricCard({ title, value, isLoading, variant = "standard" }: Me
 ```
 
 **Design Specifications:**
+
 - **Large Card:** Min-height 120-160px, padding 24px - `min-h-[160px] p-6`
 - **Standard Card:** Min-height 100px, padding 20px - `min-h-[100px] p-5`
 - **Background:** White (#FFFFFF) - shadcn/ui Card default
@@ -1413,6 +1504,7 @@ export function MetricCard({ title, value, isLoading, variant = "standard" }: Me
 **Purpose:** Display tabular data (products, analytics, financial data)
 
 **Implementation:**
+
 - Copy shadcn/ui Table component: `npx shadcn-ui@latest add table`
 - Use shadcn/ui Table structure (Table, TableHeader, TableBody, TableRow, TableHead, TableCell)
 - Customize styling for alternating rows and hover states
@@ -1420,12 +1512,14 @@ export function MetricCard({ title, value, isLoading, variant = "standard" }: Me
 - Use shadcn/ui Checkbox for selectable rows
 
 **Variants:**
+
 - **Default Table:** White background, alternating row colors for readability
 - **Sortable Header:** Clickable column headers with sort indicators (custom implementation)
 - **Selectable Rows:** Use shadcn/ui Checkbox for bulk operations
 - **Hover State:** Row highlight on hover
 
 **States:**
+
 - **Default Row:** White or light gray background (#F9F9F9)
 - **Hover Row:** Light pink background (#FFCDD2) or light gray
 - **Selected Row:** Light red background or border highlight
@@ -1433,6 +1527,7 @@ export function MetricCard({ title, value, isLoading, variant = "standard" }: Me
 - **Empty:** Empty state message (custom component)
 
 **Usage Guidelines:**
+
 - Use for product lists, analytics tables, financial data
 - Sortable columns indicated by arrow icons (custom implementation)
 - Color-code important columns (e.g., margin %: Green positive, Red negative)
@@ -1441,6 +1536,7 @@ export function MetricCard({ title, value, isLoading, variant = "standard" }: Me
 - Search/filter above table (use shadcn/ui Input)
 
 **Tailwind Customization:**
+
 ```typescript
 // Customize table rows in your component:
 <TableRow className="hover:bg-primary-light even:bg-gray-50">
@@ -1452,6 +1548,7 @@ export function MetricCard({ title, value, isLoading, variant = "standard" }: Me
 ```
 
 **Design Specifications:**
+
 - **Header Background:** Light gray (#F5F5F5) or white - `bg-gray-100` or `bg-white`
 - **Header Text:** 14px, weight: 600, color: black - `text-sm font-semibold`
 - **Row Height:** 48-56px - `h-12` or `h-14`
@@ -1470,6 +1567,7 @@ export function MetricCard({ title, value, isLoading, variant = "standard" }: Me
 **Purpose:** Confirmation dialogs, form modals, important messages
 
 **Implementation:**
+
 - Copy shadcn/ui Dialog component: `npx shadcn-ui@latest add dialog`
 - Customize in `src/components/ui/dialog.tsx`:
   - Maintain Radix UI's built-in features (backdrop, focus trap, keyboard handling)
@@ -1477,16 +1575,19 @@ export function MetricCard({ title, value, isLoading, variant = "standard" }: Me
   - Use shadcn/ui Button components for footer actions
 
 **Variants:**
+
 - **Confirmation Dialog:** "Are you sure?" type dialogs with Cancel/Confirm buttons
 - **Form Modal:** Larger modal for forms (COGS assignment, etc.)
 - **Alert Modal:** Error or success messages (can use shadcn/ui Alert component inside Dialog)
 
 **States:**
+
 - **Open:** Modal visible with backdrop overlay (Radix UI handles this)
 - **Closing:** Fade out animation (Radix UI animation)
 - **Backdrop:** Semi-transparent dark overlay (Radix UI Overlay component)
 
 **Usage Guidelines:**
+
 - Use for important confirmations (bulk operations, destructive actions)
 - Use for focused forms that shouldn't navigate away
 - Modal is centered on screen (Radix UI default)
@@ -1496,6 +1597,7 @@ export function MetricCard({ title, value, isLoading, variant = "standard" }: Me
 - Accessible: Built-in ARIA labels and focus management from Radix UI
 
 **Tailwind Customization:**
+
 ```typescript
 // In dialog.tsx, customize overlay (backdrop):
 overlay: "fixed inset-0 z-50 bg-black/50",
@@ -1507,6 +1609,7 @@ footer: "flex flex-col-reverse sm:flex-row sm:justify-end sm:space-x-2",
 ```
 
 **Design Specifications:**
+
 - **Width:** 400-600px (standard), up to 800px (large forms) - `max-w-lg` or `max-w-2xl`
 - **Max Width:** 90vw (responsive) - `max-w-[90vw]`
 - **Background:** White (#FFFFFF) - `bg-white`
@@ -1522,6 +1625,7 @@ footer: "flex flex-col-reverse sm:flex-row sm:justify-end sm:space-x-2",
 ### Additional shadcn/ui Components
 
 **Components to Install:**
+
 - `Card` - For Metric Cards and content containers
 - `Table` - For data tables (product lists, analytics)
 - `Label` - For form labels
@@ -1534,6 +1638,7 @@ footer: "flex flex-col-reverse sm:flex-row sm:justify-end sm:space-x-2",
 - `Badge` - For status indicators
 
 **Custom Components (Not from shadcn/ui):**
+
 - **Sidebar Navigation** - Custom component using shadcn/ui patterns and Tailwind styling
 - **Top Navbar** - Custom component with search, icons, user menu
 - **Metric Card** - Custom component based on shadcn/ui Card, customized for financial metrics
@@ -1545,6 +1650,7 @@ footer: "flex flex-col-reverse sm:flex-row sm:justify-end sm:space-x-2",
 **Setup Instructions:**
 
 1. **Install Tailwind CSS** (if not already installed):
+
    ```bash
    npm install -D tailwindcss postcss autoprefixer
    npx tailwindcss init -p
@@ -1623,9 +1729,11 @@ export default config
 ```
 
 4. **Install shadcn/ui**:
+
    ```bash
    npx shadcn-ui@latest init
    ```
+
    Follow the setup wizard, selecting:
    - TypeScript: Yes
    - Style: Default
@@ -1633,6 +1741,7 @@ export default config
    - CSS variables: Yes
 
 5. **Install Required Components**:
+
    ```bash
    npx shadcn-ui@latest add button
    npx shadcn-ui@latest add input
@@ -1699,12 +1808,12 @@ The application uses a red-based primary color scheme derived from the design ki
   - Focus rings and active states
   - Error messages and destructive actions
   - Icons and accents
-  
+
 - **Primary Dark (#D32F2F):** Darker variant for:
   - Hover states on primary buttons
   - Pressed/active button states
   - Alternative primary actions
-  
+
 - **Primary Light (#FFCDD2):** Light pink for:
   - Hover backgrounds (sidebar items, table rows)
   - Disabled button backgrounds
@@ -1735,17 +1844,17 @@ The application uses a red-based primary color scheme derived from the design ki
   - Positive margin percentages
   - Success messages and confirmations
   - Positive financial indicators
-  
+
 - **Error Red (#E53935):** Used for:
   - Error messages and validation failures
   - Negative margin percentages
   - Destructive actions (when not using primary red)
-  
+
 - **Warning Orange (#FF9800):** Used for:
   - Warning messages
   - Caution indicators
   - Important notices
-  
+
 - **Info Blue (#2196F3):** Used for:
   - Informational messages
   - Primary metric cards (Total Payable, Revenue) - per PRD requirement
@@ -1776,35 +1885,35 @@ font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica N
 - **H1 (Page Title):** 32-36px, weight: 700 (bold)
   - Used for: Main page titles, dashboard headers
   - Tailwind: `text-3xl font-bold` or `text-4xl font-bold`
-  
+
 - **H2 (Section Title):** 24-28px, weight: 600-700 (semi-bold to bold)
   - Used for: Section headers, card titles, modal titles
   - Tailwind: `text-2xl font-semibold` or `text-2xl font-bold`
-  
+
 - **H3 (Subsection Title):** 20-24px, weight: 600 (semi-bold)
   - Used for: Subsection headers, form section titles
   - Tailwind: `text-xl font-semibold`
-  
+
 - **H4 (Card Title):** 18px, weight: 600 (semi-bold)
   - Used for: Card headers, metric labels
   - Tailwind: `text-lg font-semibold`
-  
+
 - **Body Large:** 16px, weight: 400 (regular)
   - Used for: Important body text, descriptions
   - Tailwind: `text-base`
-  
+
 - **Body (Default):** 14-16px, weight: 400 (regular)
   - Used for: Standard body text, form labels, table content
   - Tailwind: `text-sm` or `text-base`
-  
+
 - **Body Small:** 12-14px, weight: 400 (regular)
   - Used for: Secondary information, helper text, captions
   - Tailwind: `text-xs` or `text-sm`
-  
+
 - **Metric Value (Large):** 32-48px, weight: 600-700 (semi-bold to bold)
   - Used for: Primary metric cards (Total Payable, Revenue)
   - Tailwind: `text-3xl font-bold` or `text-4xl font-bold`
-  
+
 - **Metric Value (Standard):** 24-32px, weight: 600-700
   - Used for: Secondary metric cards
   - Tailwind: `text-2xl font-bold` or `text-3xl font-bold`
@@ -1874,11 +1983,11 @@ Based on 4px base unit (Tailwind default):
 - **Small (sm):** Subtle elevation - `shadow-sm`
   - Used for: Input fields, buttons (subtle)
   - CSS: `box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05)`
-  
+
 - **Medium (md):** Standard elevation - `shadow-md`
   - Used for: Cards, dropdowns, modals
   - CSS: `box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)`
-  
+
 - **Large (lg):** Prominent elevation - `shadow-lg`
   - Used for: Modals, important cards, floating elements
   - CSS: `box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)`
@@ -1898,7 +2007,7 @@ Based on 4px base unit (Tailwind default):
 
 - **Icon Library:** Use a consistent icon library (e.g., Lucide React, Heroicons, or similar)
 - **Icon Size:** Standard sizes: 16px, 20px, 24px
-- **Icon Color:** 
+- **Icon Color:**
   - Default: Gray 600 (#757575) for neutral icons
   - Primary: Red (#E53935) for active states and primary actions
   - White: For icons on red backgrounds (active sidebar items)
@@ -1951,22 +2060,22 @@ The application uses Tailwind CSS default breakpoints:
   - Stacked components
   - Full-width elements
   - Collapsed sidebar (hamburger menu)
-  
+
 - **Tablet (sm):** 640px - 768px
   - 2-column layouts where appropriate
   - Sidebar can be collapsible or persistent
   - Optimized spacing and sizing
-  
+
 - **Desktop (md):** 768px - 1024px
   - Multi-column layouts
   - Persistent sidebar
   - Standard spacing and component sizes
-  
+
 - **Large Desktop (lg):** 1024px - 1280px
   - Full layout with sidebar and navbar
   - Maximum content width: 1280px
   - Optimal spacing and readability
-  
+
 - **Extra Large (xl):** 1280px+
   - Centered content with max-width constraints
   - Maintains readability (doesn't stretch too wide)
@@ -1984,17 +2093,20 @@ The application uses Tailwind CSS default breakpoints:
 #### Sidebar Navigation
 
 **Desktop (≥768px):**
+
 - Persistent sidebar on left (240-280px width)
 - Always visible
 - Full menu items with icons and text
 - Sub-items expandable inline
 
 **Tablet (640px - 768px):**
+
 - Sidebar can be persistent or collapsible
 - Hamburger menu option available
 - Overlay sidebar when collapsed
 
 **Mobile (<640px):**
+
 - Sidebar hidden by default
 - Hamburger menu in navbar toggles sidebar
 - Sidebar appears as overlay/drawer from left
@@ -2003,6 +2115,7 @@ The application uses Tailwind CSS default breakpoints:
 - Close on outside click or navigation
 
 **Implementation:**
+
 ```typescript
 // Use Tailwind responsive classes
 <div className="hidden md:flex md:w-64 md:flex-col">
@@ -2020,6 +2133,7 @@ The application uses Tailwind CSS default breakpoints:
 #### Top Navbar
 
 **Desktop (≥768px):**
+
 - Full navbar with all elements:
   - Left: Application title/logo
   - Right: Search bar, Notification icon, Messages icon, User profile icon
@@ -2027,11 +2141,13 @@ The application uses Tailwind CSS default breakpoints:
 - Search bar: 200-300px width
 
 **Tablet (640px - 768px):**
+
 - Compact navbar
 - Search bar: 150-200px width
 - All icons visible but slightly smaller
 
 **Mobile (<640px):**
+
 - Hamburger menu icon (left) replaces or accompanies logo
 - Search bar: Collapsed to icon, expands on click
 - Essential icons only (Notifications, User profile)
@@ -2043,23 +2159,27 @@ The application uses Tailwind CSS default breakpoints:
 #### Dashboard Layout
 
 **Desktop (≥1024px):**
+
 - 2-column grid for metric cards
 - Full-width charts below metrics
 - Sidebar + main content area
 - Optimal spacing: 24-32px between sections
 
 **Tablet (768px - 1024px):**
+
 - 2-column grid for metric cards (slightly narrower)
 - Full-width charts
 - Reduced spacing: 20-24px between sections
 
 **Mobile (<768px):**
+
 - Single column for metric cards (stacked)
 - Full-width charts
 - Reduced spacing: 16-20px between sections
 - Cards take full width with padding
 
 **Implementation:**
+
 ```typescript
 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6 lg:gap-8">
   <MetricCard />
@@ -2072,17 +2192,20 @@ The application uses Tailwind CSS default breakpoints:
 #### Forms
 
 **Desktop (≥768px):**
+
 - 2-column layout for related fields (when appropriate)
 - Standard field widths
 - Labels above inputs
 - Button groups: Horizontal layout
 
 **Tablet (640px - 768px):**
+
 - Single or 2-column layout (depending on form complexity)
 - Standard field widths
 - Labels above inputs
 
 **Mobile (<640px):**
+
 - Single column layout (all fields stacked)
 - Full-width inputs
 - Labels above inputs
@@ -2090,6 +2213,7 @@ The application uses Tailwind CSS default breakpoints:
 - Reduced padding: 16px instead of 24px
 
 **Implementation:**
+
 ```typescript
 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
   <Input label="Field 1" />
@@ -2102,18 +2226,21 @@ The application uses Tailwind CSS default breakpoints:
 #### Data Tables
 
 **Desktop (≥1024px):**
+
 - Full table with all columns visible
 - Horizontal scroll only if necessary
 - Standard row height: 48-56px
 - Pagination controls: Full set (First, Prev, Page numbers, Next, Last)
 
 **Tablet (768px - 1024px):**
+
 - Full table with all columns
 - Horizontal scroll if table is wide
 - Standard row height: 48px
 - Pagination controls: Simplified (Prev, Page numbers, Next)
 
 **Mobile (<768px):**
+
 - **Option 1:** Horizontal scroll with sticky first column
 - **Option 2:** Card-based layout (each row as a card)
 - **Option 3:** Stacked columns (label: value format)
@@ -2122,6 +2249,7 @@ The application uses Tailwind CSS default breakpoints:
 - Search/filter: Full-width, prominent
 
 **Implementation:**
+
 ```typescript
 // Mobile: Card layout
 <div className="md:hidden space-y-4">
@@ -2147,16 +2275,19 @@ The application uses Tailwind CSS default breakpoints:
 #### Modals/Dialogs
 
 **Desktop (≥768px):**
+
 - Centered modal
 - Width: 400-600px (standard), up to 800px (large forms)
 - Standard padding: 24-32px
 
 **Tablet (640px - 768px):**
+
 - Centered modal
 - Width: 90% max-width (600px)
 - Standard padding: 24px
 
 **Mobile (<640px):**
+
 - Full-screen or nearly full-screen modal
 - Width: 100vw (minus small margins: 16px)
 - Reduced padding: 20px
@@ -2164,6 +2295,7 @@ The application uses Tailwind CSS default breakpoints:
 - Footer buttons: Stacked vertically, full-width
 
 **Implementation:**
+
 ```typescript
 <DialogContent className="w-[90vw] max-w-md md:max-w-lg p-4 md:p-6">
   {/* Modal content */}
@@ -2397,10 +2529,10 @@ All text and UI elements must meet these contrast ratios:
   - Black text on white: ✓ (21:1)
   - Gray 600 on white: ✓ (7:1)
   - Red (#E53935) on white: ✗ (3.2:1) - Use only for large text or with sufficient weight
-  
+
 - **Large Text (18px+ or 14px+ bold):** 3:1 minimum
   - Red (#E53935) on white: ✓ (3.2:1) - Acceptable for large/bold text
-  
+
 - **UI Components:** 3:1 minimum
   - Red button (#E53935) with white text: ✓ (4.5:1)
   - Gray borders: Ensure sufficient contrast
@@ -2657,6 +2789,7 @@ className="transition-transform duration-300 ease-out"
 **Framer Motion (Optional):**
 
 For complex animations, consider Framer Motion:
+
 - Modal transitions
 - Page transitions
 - Complex chart animations
@@ -2712,22 +2845,26 @@ src/
 ### Key Dependencies
 
 **Core:**
+
 - Next.js 14+ (App Router)
 - React 18+
 - TypeScript
 - Tailwind CSS
 
 **UI Components:**
+
 - shadcn/ui (component library)
 - Radix UI (primitives, via shadcn/ui)
 - Lucide React (icons)
 
 **State Management:**
+
 - React Query or SWR (data fetching)
 - React Hook Form (form management)
 - Zustand or Context API (global state, if needed)
 
 **Utilities:**
+
 - clsx / tailwind-merge (className utilities)
 - date-fns (date formatting)
 - Intl.NumberFormat (currency formatting)
@@ -2782,10 +2919,10 @@ formatPercentage(15.5); // "15,5 %"
 
 ## Document Change Log
 
-| Date | Version | Description | Author |
-|------|---------|-------------|--------|
-| 2025-01-20 | 1.0 | Initial front-end specification creation | Sally (UX Expert) |
-| 2026-06-26 | 1.1 | Add Operations Manager (3rd) persona + role→persona mapping note (TZ-0) | UX implementation loop |
+| Date       | Version | Description                                                             | Author                 |
+| ---------- | ------- | ----------------------------------------------------------------------- | ---------------------- |
+| 2025-01-20 | 1.0     | Initial front-end specification creation                                | Sally (UX Expert)      |
+| 2026-06-26 | 1.1     | Add Operations Manager (3rd) persona + role→persona mapping note (TZ-0) | UX implementation loop |
 
 ---
 
@@ -2801,4 +2938,3 @@ formatPercentage(15.5); // "15,5 %"
 ---
 
 **End of Document**
-

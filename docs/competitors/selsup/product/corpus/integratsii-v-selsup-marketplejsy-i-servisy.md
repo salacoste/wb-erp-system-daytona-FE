@@ -25,7 +25,7 @@ SelSup помогает селлерам управлять продажами �
 
 В этой статье:
 
-- 
+-
 - <a href="#integratsiya-bez-dopolnitelnyh-uslovij" rel="nofollow">Интеграция без дополнительных условий</a>
 - <a href="#marketplejsy" rel="nofollow">Маркетплейсы</a>
 - <a href="#internet-magaziny-i-sajty" rel="nofollow">Интернет-магазины и сайты</a>

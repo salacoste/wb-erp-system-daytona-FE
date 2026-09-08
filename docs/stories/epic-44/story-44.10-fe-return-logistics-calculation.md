@@ -11,6 +11,7 @@
 ## ⚠️ CRITICAL: Reverse Logistics = MANUAL ONLY
 
 **IMPORTANT NOTE FROM BACKEND TEAM**:
+
 - **Forward logistics**: Auto-fill supported (when warehouse + volume/dimensions provided)
 - **Reverse logistics**: MANUAL ONLY! User must manually enter `logistics_reverse_rub`
 - **Cargo type classification affects input requirements**:
@@ -28,6 +29,7 @@
 **So that** I understand the true logistics impact of returns adjusted for customer retention.
 
 **Non-goals**:
+
 - Auto-fill reverse logistics (must be entered manually by user)
 - Separate return logistics coefficient (WB uses same coefficient as forward)
 - Backend API changes (frontend displays effective, backend calculates it)
@@ -44,9 +46,11 @@
    - Cargo type classification affects validation (see below)
 
 2. **Effective Return Formula** (Backend calculates):
+
    ```
    reverse_effective = reverse × (1 - buyback_pct / 100)
    ```
+
    Where:
    - `reverse` = User-entered return logistics cost (₽)
    - `buyback_pct` = Percentage of items NOT returned (customer retention)
@@ -59,27 +63,30 @@
 
 ### Cargo Type Classification (Affects Reverse Logistics Input)
 
-| Classification | Size Limit | Reverse Logistics | Notes |
-|---|---|---|---|
-| **MGT** | ≤60cm | Manual input accepted | Standard reverse logistics |
-| **SGT** | ≤120cm | Manual input accepted | Standard reverse logistics |
-| **KGT** | >120cm | **REQUIRED ENTRY** | Must enter value + show error if missing |
+| Classification | Size Limit | Reverse Logistics     | Notes                                    |
+| -------------- | ---------- | --------------------- | ---------------------------------------- |
+| **MGT**        | ≤60cm      | Manual input accepted | Standard reverse logistics               |
+| **SGT**        | ≤120cm     | Manual input accepted | Standard reverse logistics               |
+| **KGT**        | >120cm     | **REQUIRED ENTRY**    | Must enter value + show error if missing |
 
 ### Example Calculations
 
 **Example 1: Typical Product (SGT, Buyback 98%)**
+
 - User enters reverse logistics: 72.50 ₽
 - Buyback: 98% (customers keep items)
 - Return rate: 100 - 98 = 2%
 - **Effective return**: 72.50 × (1 - 0.98) = 72.50 × 0.02 = **1.45 ₽**
 
 **Example 2: High-Value Item (KGT, Buyback 95%)**
+
 - User enters reverse logistics: 150.00 ₽ (required for KGT)
 - Buyback: 95% (customers keep items)
 - Return rate: 100 - 95 = 5%
 - **Effective return**: 150.00 × (1 - 0.95) = 150.00 × 0.05 = **7.50 ₽**
 
 **Example 3: High Return Rate (MGT, Buyback 70%)**
+
 - User enters reverse logistics: 45.00 ₽
 - Buyback: 70% (customers keep items)
 - Return rate: 100 - 70 = 30%
@@ -114,6 +121,7 @@
 ## Acceptance Criteria
 
 ### AC1: Manual Entry of Return Logistics Cost
+
 - [ ] Input field: "Логистика обратная (обязательно), ₽"
 - [ ] Required field - form cannot submit without value
 - [ ] Input accepts decimal values (0.01 minimum)
@@ -122,6 +130,7 @@
 - [ ] Help text: "Введите стоимость доставки возврата товара"
 
 ### AC2: KGT Cargo Type Validation
+
 - [ ] If cargo type = KGT (>120cm), add **required** indicator
 - [ ] If KGT without value entered, show error: "Для карго KGT требуется ввести стоимость возврата"
 - [ ] Validation runs before form submission
@@ -129,6 +138,7 @@
 - [ ] MGT/SGT types: field is required but no special validation
 
 ### AC3: Effective Return Cost Calculation
+
 - [ ] Formula: `effective_return = logistics_reverse_rub × (1 - buyback_pct / 100)`
 - [ ] If buyback = 100%, effective return = 0 ₽
 - [ ] If buyback = 98%, effective return = 2% of entered reverse cost
@@ -138,6 +148,7 @@
 - [ ] Backend performs actual calculation; frontend shows preview only
 
 ### AC4: Return Logistics Breakdown Display
+
 - [ ] Show 4-step breakdown:
   1. "Стоимость возврата (введено): X ₽" (user entry)
   2. "Buyback (выкуп): Y%" (percentage of items kept)
@@ -148,6 +159,7 @@
 - [ ] Show calculation formula inline for transparency
 
 ### AC5: Form Integration
+
 - [ ] Display effective return in form summary section
 - [ ] Pass `logistics_reverse_rub = <user_entered_value>` to API
 - [ ] Backend calculates `logistics_reverse_effective` based on buyback_pct
@@ -156,6 +168,7 @@
 - [ ] Proper error handling for invalid entries
 
 ### AC6: UI Display Integration
+
 - [ ] Show in cost breakdown summary:
   - "Логистика прямая: 72,50 ₽"
   - "Логистика обратная (эфф.): 1,45 ₽"
@@ -165,6 +178,7 @@
 - [ ] Help icon with explanation: "Стоимость доставки товара в обратном направлении (от покупателя к Wildberries)"
 
 ### AC7: Buyback Formula Documentation
+
 - [ ] Display formula clearly in breakdown: `effective = reverse × (1 - buyback% ÷ 100)`
 - [ ] Example shown: "72,50 × (1 - 0,98) = 1,45"
 - [ ] Help text explains buyback: "Процент товаров, оставленных покупателями"
@@ -175,6 +189,7 @@
 ## API Contract (Backend Story 43)
 
 ### Request
+
 ```http
 POST /v1/products/price-calculator
 Authorization: Bearer {token}
@@ -193,6 +208,7 @@ Content-Type: application/json
 ```
 
 ### Response
+
 ```json
 {
   "cost_breakdown": {
@@ -554,29 +570,29 @@ export function ReturnLogisticsBreakdown({ result }: ReturnLogisticsBreakdownPro
 
 ## Invariants & Edge Cases
 
-| Scenario | Expected Behavior |
-|----------|-------------------|
-| Reverse logistics = 0 | User must enter value (required field) |
-| Buyback = 100% | Effective return = 0 ₽ |
-| Buyback = 0% | Effective return = 100% of entered reverse |
-| Buyback = 98% (typical) | Effective return = 2% of entered reverse |
-| Cargo type = KGT | Error if reverse logistics not entered (validation) |
-| Cargo type = MGT/SGT | Reverse logistics required but no special validation |
-| Negative values | Validation prevents (min: 0) |
-| Reverse logistics changed | Recalculate effective return immediately |
-| Empty field on KGT | Error shown: "Для карго KGT (>120см) требуется ввод..." |
+| Scenario                  | Expected Behavior                                       |
+| ------------------------- | ------------------------------------------------------- |
+| Reverse logistics = 0     | User must enter value (required field)                  |
+| Buyback = 100%            | Effective return = 0 ₽                                  |
+| Buyback = 0%              | Effective return = 100% of entered reverse              |
+| Buyback = 98% (typical)   | Effective return = 2% of entered reverse                |
+| Cargo type = KGT          | Error if reverse logistics not entered (validation)     |
+| Cargo type = MGT/SGT      | Reverse logistics required but no special validation    |
+| Negative values           | Validation prevents (min: 0)                            |
+| Reverse logistics changed | Recalculate effective return immediately                |
+| Empty field on KGT        | Error shown: "Для карго KGT (>120см) требуется ввод..." |
 
 ### Test Scenarios
 
-| Reverse (₽) | Buyback (%) | Cargo Type | Effective Return (₽) | Status |
-|---|---|---|---|---|
-| 72.50 | 98 | SGT | 1.45 | ✅ Valid |
-| 72.50 | 100 | MGT | 0.00 | ✅ Valid |
-| 72.50 | 0 | MGT | 72.50 | ✅ Valid |
-| 72.50 | 50 | SGT | 36.25 | ✅ Valid |
-| 150.00 | 95 | KGT | 7.50 | ✅ Valid (KGT required) |
-| 0 | 98 | KGT | 0.00 | ❌ Error (KGT requires entry) |
-| -5.00 | 98 | MGT | - | ❌ Invalid (negative) |
+| Reverse (₽) | Buyback (%) | Cargo Type | Effective Return (₽) | Status                        |
+| ----------- | ----------- | ---------- | -------------------- | ----------------------------- |
+| 72.50       | 98          | SGT        | 1.45                 | ✅ Valid                      |
+| 72.50       | 100         | MGT        | 0.00                 | ✅ Valid                      |
+| 72.50       | 0           | MGT        | 72.50                | ✅ Valid                      |
+| 72.50       | 50          | SGT        | 36.25                | ✅ Valid                      |
+| 150.00      | 95          | KGT        | 7.50                 | ✅ Valid (KGT required)       |
+| 0           | 98          | KGT        | 0.00                 | ❌ Error (KGT requires entry) |
+| -5.00       | 98          | MGT        | -                    | ❌ Invalid (negative)         |
 
 ---
 
@@ -611,18 +627,21 @@ export function ReturnLogisticsBreakdown({ result }: ReturnLogisticsBreakdownPro
 ## Dev Agent Record
 
 ### File List
-| File | Change Type | Lines (Est.) | Description |
-|------|-------------|--------------|-------------|
-| `src/lib/return-logistics-utils.ts` | CREATE | ~60 | Calculation functions |
-| `src/components/custom/price-calculator/ReturnLogisticsCalculator.tsx` | CREATE | ~90 | Auto-calc component |
-| `src/components/custom/price-calculator/ReturnLogisticsBreakdown.tsx` | CREATE | ~50 | Breakdown display |
-| `src/components/custom/price-calculator/PriceCalculatorForm.tsx` | UPDATE | +30 | Integrate return calc |
-| `src/lib/__tests__/return-logistics-utils.test.ts` | CREATE | ~80 | Unit tests |
+
+| File                                                                   | Change Type | Lines (Est.) | Description           |
+| ---------------------------------------------------------------------- | ----------- | ------------ | --------------------- |
+| `src/lib/return-logistics-utils.ts`                                    | CREATE      | ~60          | Calculation functions |
+| `src/components/custom/price-calculator/ReturnLogisticsCalculator.tsx` | CREATE      | ~90          | Auto-calc component   |
+| `src/components/custom/price-calculator/ReturnLogisticsBreakdown.tsx`  | CREATE      | ~50          | Breakdown display     |
+| `src/components/custom/price-calculator/PriceCalculatorForm.tsx`       | UPDATE      | +30          | Integrate return calc |
+| `src/lib/__tests__/return-logistics-utils.test.ts`                     | CREATE      | ~80          | Unit tests            |
 
 ### Change Log
+
 _(To be filled during implementation)_
 
 ### Review Follow-ups
+
 _(To be filled after code review)_
 
 ---
@@ -654,23 +673,25 @@ _(To be filled after code review)_
 **Gate Decision**: _(To be filled)_
 
 ### AC Verification
-| AC | Requirement | Status | Evidence |
-|----|-------------|--------|----------|
-| AC1 | Auto-calculate from forward | ⏳ | |
-| AC2 | Calculate effective with buyback | ⏳ | |
-| AC3 | Breakdown display | ⏳ | |
-| AC4 | Manual override option | ⏳ | |
-| AC5 | Form integration | ⏳ | |
-| AC6 | UI display integration | ⏳ | |
+
+| AC  | Requirement                      | Status | Evidence |
+| --- | -------------------------------- | ------ | -------- |
+| AC1 | Auto-calculate from forward      | ⏳     |          |
+| AC2 | Calculate effective with buyback | ⏳     |          |
+| AC3 | Breakdown display                | ⏳     |          |
+| AC4 | Manual override option           | ⏳     |          |
+| AC5 | Form integration                 | ⏳     |          |
+| AC6 | UI display integration           | ⏳     |          |
 
 ### Accessibility Check
-| Check | Status | Evidence |
-|-------|--------|----------|
-| Toggle label | ⏳ | |
-| Collapsible announcement | ⏳ | |
-| Warning alerts | ⏳ | |
-| Color contrast | ⏳ | |
-| Focus management | ⏳ | |
+
+| Check                    | Status | Evidence |
+| ------------------------ | ------ | -------- |
+| Toggle label             | ⏳     |          |
+| Collapsible announcement | ⏳     |          |
+| Warning alerts           | ⏳     |          |
+| Color contrast           | ⏳     |          |
+| Focus management         | ⏳     |          |
 
 ---
 

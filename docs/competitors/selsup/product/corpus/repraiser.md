@@ -13,7 +13,7 @@ chars: 3832
 
 В этой статье:
 
-- 
+-
 - <a href="#kontrol-minimalnoj-roznichnoj-tseny-mrts" rel="nofollow">Контроль Минимальной Розничной Цены (МРЦ)</a>
 - <a href="#nochnoj-reprajser" rel="nofollow">Ночной репрайсер</a>
 - <a href="#vazhnye-osobennosti" rel="nofollow">Важные особенности</a>

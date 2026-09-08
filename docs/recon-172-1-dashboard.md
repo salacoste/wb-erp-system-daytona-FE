@@ -5,13 +5,13 @@
 
 ## Вердикт: FULL-цикл (крупнейшая стори миграции)
 
-| Метрика | Значение |
-|---|---|
-| Owned surface | `src/app/(dashboard)/dashboard/**` (25 файлов: 15 prod + 10 тестов, ~3 100 строк) + `src/components/custom/dashboard/**` (146 prod + ~60 тестов) |
-| **Palette-сайты** | **339 строк в 92 файлах** (route-tree: 3 файла / 19 строк — DashboardAlerts 6, DashboardStatusStrip 8, ReportPendingBanner 5; custom: 89 файлов / 320 строк) |
-| **Hex-сайты** | **78 строк в 31 файле** custom/dashboard (концентрация: `chart-config.ts`, `trends-config.ts`, `expense-chart-config.ts`, `index-metrics.ts`, `sales-price-level.ts` + карточки-графики; в route-tree 0) |
-| Топ по палитре | DataAvailabilityBadge 13, GrossMarginCard 12, MarginCard 12, SeasonalInsightsCard 12, NetProfitCard 9, ProfitBreakdownPopover 8, DashboardStatusStrip 8, SalesCogsMetricCard 7, TheoreticalProfitCard 7 |
-| Полный список файлов | `rg -l '<PALETTE-REGEX>' src/app/\(dashboard\)/dashboard src/components/custom/dashboard --glob '!**/__tests__/**' --glob '!**/*.test.*'` (см. регекс внизу) |
+| Метрика              | Значение                                                                                                                                                                                                 |
+| -------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Owned surface        | `src/app/(dashboard)/dashboard/**` (25 файлов: 15 prod + 10 тестов, ~3 100 строк) + `src/components/custom/dashboard/**` (146 prod + ~60 тестов)                                                         |
+| **Palette-сайты**    | **339 строк в 92 файлах** (route-tree: 3 файла / 19 строк — DashboardAlerts 6, DashboardStatusStrip 8, ReportPendingBanner 5; custom: 89 файлов / 320 строк)                                             |
+| **Hex-сайты**        | **78 строк в 31 файле** custom/dashboard (концентрация: `chart-config.ts`, `trends-config.ts`, `expense-chart-config.ts`, `index-metrics.ts`, `sales-price-level.ts` + карточки-графики; в route-tree 0) |
+| Топ по палитре       | DataAvailabilityBadge 13, GrossMarginCard 12, MarginCard 12, SeasonalInsightsCard 12, NetProfitCard 9, ProfitBreakdownPopover 8, DashboardStatusStrip 8, SalesCogsMetricCard 7, TheoreticalProfitCard 7  |
+| Полный список файлов | `rg -l '<PALETTE-REGEX>' src/app/\(dashboard\)/dashboard src/components/custom/dashboard --glob '!**/__tests__/**' --glob '!**/*.test.*'` (см. регекс внизу)                                             |
 
 ## Канон соответствий (171.4-171.9, hue-preserving)
 

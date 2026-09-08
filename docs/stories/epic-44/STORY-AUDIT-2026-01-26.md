@@ -18,55 +18,61 @@ Epic 44-FE was marked as **100% Complete (27/27 stories)** in the Stories Status
 ## Section 1: Existing Stories Status
 
 ### Phase 1: Core Calculator (6/6 Complete)
-| Story | Title | Status | Notes |
-|-------|-------|--------|-------|
-| 44.1-FE | TypeScript Types & API Client | Done | No revision needed |
-| 44.2-FE | Input Form Component | Done | No revision needed |
-| 44.3-FE | Results Display Component | Done | No revision needed |
-| 44.4-FE | Page Layout & Integration | Done | No revision needed |
-| 44.5-FE | Real-time Calculation & UX | Done | No revision needed |
-| 44.6-FE | Testing & Documentation | Done | No revision needed |
+
+| Story   | Title                         | Status | Notes              |
+| ------- | ----------------------------- | ------ | ------------------ |
+| 44.1-FE | TypeScript Types & API Client | Done   | No revision needed |
+| 44.2-FE | Input Form Component          | Done   | No revision needed |
+| 44.3-FE | Results Display Component     | Done   | No revision needed |
+| 44.4-FE | Page Layout & Integration     | Done   | No revision needed |
+| 44.5-FE | Real-time Calculation & UX    | Done   | No revision needed |
+| 44.6-FE | Testing & Documentation       | Done   | No revision needed |
 
 ### Phase 2: Enhanced Logistics (4/4 Complete)
-| Story | Title | Status | Notes |
-|-------|-------|--------|-------|
-| 44.7-FE | Dimension-Based Volume Calculation | Done | No revision needed |
-| 44.8-FE | Logistics Tariff Calculation | Done | **NEEDS REVIEW** - May need updates for SUPPLY tariffs |
-| 44.9-FE | Logistics Coefficients UI | Done | **NEEDS REVIEW** - Affected by Two Tariff Systems |
-| 44.10-FE | Return Logistics Calculation | Done | No revision needed |
+
+| Story    | Title                              | Status | Notes                                                  |
+| -------- | ---------------------------------- | ------ | ------------------------------------------------------ |
+| 44.7-FE  | Dimension-Based Volume Calculation | Done   | No revision needed                                     |
+| 44.8-FE  | Logistics Tariff Calculation       | Done   | **NEEDS REVIEW** - May need updates for SUPPLY tariffs |
+| 44.9-FE  | Logistics Coefficients UI          | Done   | **NEEDS REVIEW** - Affected by Two Tariff Systems      |
+| 44.10-FE | Return Logistics Calculation       | Done   | No revision needed                                     |
 
 ### Phase 3: Warehouse & Tariffs (5/5 Complete)
-| Story | Title | Status | Notes |
-|-------|-------|--------|-------|
-| 44.12-FE | Warehouse Selection Dropdown | Done | **NEEDS REVISION** - Box Type ID not handled |
-| 44.13-FE | Auto-fill Coefficients | Done | **NEEDS REVISION** - Must support SUPPLY system |
-| 44.14-FE | Storage Cost Calculation | Done (DEPRECATED) | Superseded by 44.32 |
-| 44.27-FE | Warehouse & Coefficients Integration | Done | **AC8 INCOMPLETE** - SUPPLY system not integrated |
+
+| Story    | Title                                | Status            | Notes                                             |
+| -------- | ------------------------------------ | ----------------- | ------------------------------------------------- |
+| 44.12-FE | Warehouse Selection Dropdown         | Done              | **NEEDS REVISION** - Box Type ID not handled      |
+| 44.13-FE | Auto-fill Coefficients               | Done              | **NEEDS REVISION** - Must support SUPPLY system   |
+| 44.14-FE | Storage Cost Calculation             | Done (DEPRECATED) | Superseded by 44.32                               |
+| 44.27-FE | Warehouse & Coefficients Integration | Done              | **AC8 INCOMPLETE** - SUPPLY system not integrated |
 
 ### Phase 4: V2 Enhancements (6/6 Complete)
-| Story | Title | Status | Notes |
-|-------|-------|--------|-------|
-| 44.15-FE | FBO/FBS Fulfillment Type Selection | Done | No revision needed |
-| 44.16-FE | Category Selection with Search | Done | No revision needed |
-| 44.17-FE | Tax Configuration | Done | No revision needed |
-| 44.18-FE | DRR Input (Advertising %) | Done | No revision needed |
-| 44.19-FE | SPP Display (Customer Price) | Done | No revision needed |
-| 44.20-FE | Two-Level Pricing Display | Done | No revision needed |
+
+| Story    | Title                              | Status | Notes              |
+| -------- | ---------------------------------- | ------ | ------------------ |
+| 44.15-FE | FBO/FBS Fulfillment Type Selection | Done   | No revision needed |
+| 44.16-FE | Category Selection with Search     | Done   | No revision needed |
+| 44.17-FE | Tax Configuration                  | Done   | No revision needed |
+| 44.18-FE | DRR Input (Advertising %)          | Done   | No revision needed |
+| 44.19-FE | SPP Display (Customer Price)       | Done   | No revision needed |
+| 44.20-FE | Two-Level Pricing Display          | Done   | No revision needed |
 
 ### Phase 5: Bug Fixes & Improvements (7/7 Complete)
-| Story | Title | Status | Notes |
-|-------|-------|--------|-------|
-| 44.32-FE | Missing Price Calculator Fields | Done | Box Type implemented but not integrated with backend properly |
-| 44.33-FE | Type Mismatch & Field Name Fixes | Done | No revision needed |
-| 44.34-FE | Debounce Warehouse Selection | Done | No revision needed |
-| 44.35-FE | FBO/FBS Toggle Crash Fix | Done | No revision needed |
-| 44.36-FE | API Field Mismatch | Done | Removed invalid fields |
-| 44.37-FE | API Field Mismatch Warehouse | Done | Removed invalid fields |
-| 44.38-FE | Units Per Package | Done | No revision needed |
+
+| Story    | Title                            | Status | Notes                                                         |
+| -------- | -------------------------------- | ------ | ------------------------------------------------------------- |
+| 44.32-FE | Missing Price Calculator Fields  | Done   | Box Type implemented but not integrated with backend properly |
+| 44.33-FE | Type Mismatch & Field Name Fixes | Done   | No revision needed                                            |
+| 44.34-FE | Debounce Warehouse Selection     | Done   | No revision needed                                            |
+| 44.35-FE | FBO/FBS Toggle Crash Fix         | Done   | No revision needed                                            |
+| 44.36-FE | API Field Mismatch               | Done   | Removed invalid fields                                        |
+| 44.37-FE | API Field Mismatch Warehouse     | Done   | Removed invalid fields                                        |
+| 44.38-FE | Units Per Package                | Done   | No revision needed                                            |
 
 ### Phase 6: Two Tariff Systems (0/1 Ready)
-| Story | Title | Status | Notes |
-|-------|-------|--------|-------|
+
+| Story        | Title                              | Status            | Notes                        |
+| ------------ | ---------------------------------- | ----------------- | ---------------------------- |
 | **44.40-FE** | **Two Tariff Systems Integration** | **READY FOR DEV** | **NEW** - Created 2026-01-26 |
 
 ---
@@ -76,6 +82,7 @@ Epic 44-FE was marked as **100% Complete (27/27 stories)** in the Stories Status
 ### Issue 1: Storage Tariffs Showing 0 RUB (CRITICAL)
 
 **Symptoms**:
+
 - UI shows "0.00 RUB/day" for storage cost
 - Backend API returns `storage.baseLiterRub: 0` for some warehouse configurations
 
@@ -89,11 +96,13 @@ Epic 44-FE was marked as **100% Complete (27/27 stories)** in the Stories Status
 2. **SUPPLY System Returns Real Tariffs**: Backend test shows SUPPLY system returns `storage.baseLiterRub: 41.25` for Pallets, while we may be seeing 0 from INVENTORY system or wrong boxTypeId.
 
 **Covered by Existing Stories**: PARTIALLY
+
 - Story 44.32-FE implemented `BoxTypeSelector` component
 - Story 44.40-FE addresses SUPPLY vs INVENTORY tariff source
 - **GAP**: No story handles the boxTypeId → backend tariff mapping
 
 **Recommendation**:
+
 - Add acceptance criteria to Story 44.40-FE: "AC10: When fetching tariffs, pass boxTypeId to filter by correct cargo type"
 - OR create new Story 44.41-FE: "Box Type Tariff Integration"
 
@@ -102,16 +111,19 @@ Epic 44-FE was marked as **100% Complete (27/27 stories)** in the Stories Status
 ### Issue 2: Box Type (boxTypeId) Not Handled in API Requests (HIGH)
 
 **Symptoms**:
+
 - User selects "Korab" (Box) or "Monopaleta" (Pallet) in UI
 - This selection is NOT sent to backend API
 - Backend cannot return correct tariffs for the selected box type
 
 **Root Cause**:
+
 - Story 44.36-FE and 44.37-FE **removed** `box_type` from API request as unsupported
 - Backend API was not ready to receive this field at the time
 - Backend has since been updated with `boxTypeId` support in SUPPLY system
 
 **Covered by Existing Stories**: NO
+
 - Story 44.32-FE creates UI component only
 - Story 44.36-FE explicitly removes the field from API request
 - No story re-enables sending boxTypeId to backend
@@ -125,6 +137,7 @@ Epic 44-FE was marked as **100% Complete (27/27 stories)** in the Stories Status
 **Symptoms**: Warehouse ID for "Krasnodar" differed between INVENTORY and SUPPLY systems
 
 **Status**: ALREADY FIXED in Story 44.27-FE
+
 - Frontend now uses SUPPLY warehouses exclusively
 - Example: Krasnodar uses SUPPLY ID 130744 (not INVENTORY ID 507)
 
@@ -137,16 +150,19 @@ Epic 44-FE was marked as **100% Complete (27/27 stories)** in the Stories Status
 **Symptoms**: Potential discrepancy in storage cost calculation formulas
 
 **Current Formula** (Story 44.14):
+
 ```typescript
 daily_cost = (base_per_day + (volume - 1) * per_liter_per_day) * coefficient
 ```
 
 **Backend Formula**:
+
 ```typescript
 dailyStorage = (baseLiterRub + max(0, volume-1) * additionalLiterRub) * storageCoef
 ```
 
 **Analysis**:
+
 - Formula structure is correct
 - `max(0, volume-1)` ensures no negative additional liters
 - Frontend uses `Math.max(0, volumeLiters - 1)` in existing code
@@ -158,6 +174,7 @@ dailyStorage = (baseLiterRub + max(0, volume-1) * additionalLiterRub) * storageC
 ### Issue 5: Two Tariff Systems (CRITICAL - ADDRESSED)
 
 **Symptoms**:
+
 - Calculator uses INVENTORY tariffs statically
 - Future delivery dates require SUPPLY tariffs
 - Cost estimates for future deliveries are inaccurate
@@ -170,20 +187,20 @@ dailyStorage = (baseLiterRub + max(0, volume-1) * additionalLiterRub) * storageC
 
 ### Gaps NOT Covered by Existing Stories
 
-| Gap ID | Description | Impact | Recommended Action |
-|--------|-------------|--------|-------------------|
-| **GAP-1** | boxTypeId not sent in API request | HIGH - Causes 0 RUB storage tariffs | New story or update 44.40-FE |
-| **GAP-2** | No boxTypeId filter when fetching SUPPLY tariffs | HIGH - Returns wrong tariff data | Add to 44.40-FE AC |
-| **GAP-3** | Acceptance coefficient not used in calculations | MEDIUM - Coefficient value -1/0/>=1 not factored | Add note to README |
+| Gap ID    | Description                                      | Impact                                           | Recommended Action           |
+| --------- | ------------------------------------------------ | ------------------------------------------------ | ---------------------------- |
+| **GAP-1** | boxTypeId not sent in API request                | HIGH - Causes 0 RUB storage tariffs              | New story or update 44.40-FE |
+| **GAP-2** | No boxTypeId filter when fetching SUPPLY tariffs | HIGH - Returns wrong tariff data                 | Add to 44.40-FE AC           |
+| **GAP-3** | Acceptance coefficient not used in calculations  | MEDIUM - Coefficient value -1/0/>=1 not factored | Add note to README           |
 
 ### Existing Stories Needing Revision
 
-| Story | Revision Needed | Priority |
-|-------|-----------------|----------|
-| **44.40-FE** | Add AC for boxTypeId handling | P0 |
-| 44.12-FE | Document boxTypeId flow | P2 |
-| 44.27-FE | Complete AC8 (SUPPLY integration) | P0 |
-| 44.13-FE | Update for SUPPLY system support | P1 |
+| Story        | Revision Needed                   | Priority |
+| ------------ | --------------------------------- | -------- |
+| **44.40-FE** | Add AC for boxTypeId handling     | P0       |
+| 44.12-FE     | Document boxTypeId flow           | P2       |
+| 44.27-FE     | Complete AC8 (SUPPLY integration) | P0       |
+| 44.13-FE     | Update for SUPPLY system support  | P1       |
 
 ---
 
@@ -223,22 +240,22 @@ dailyStorage = (baseLiterRub + max(0, volume-1) * additionalLiterRub) * storageC
 
 ### Current Epic Status
 
-| Metric | Value |
-|--------|-------|
-| Total Stories | 28 |
-| Completed | 27 (96%) |
-| Ready for Dev | 1 (Story 44.40-FE) |
-| Needs Revision | 3-4 stories |
+| Metric               | Value                           |
+| -------------------- | ------------------------------- |
+| Total Stories        | 28                              |
+| Completed            | 27 (96%)                        |
+| Ready for Dev        | 1 (Story 44.40-FE)              |
+| Needs Revision       | 3-4 stories                     |
 | New Stories Required | 0-1 (depends on 44.40-FE scope) |
 
 ### Stories Requiring Attention
 
-| Story | Current Status | Action Required |
-|-------|----------------|-----------------|
-| **44.40-FE** | Ready for Dev | Add boxTypeId ACs, then implement |
-| 44.27-FE | Done | Mark AC8 incomplete, complete in 44.40-FE |
-| 44.13-FE | Done | Review after 44.40-FE implementation |
-| 44.12-FE | Done | Documentation update only |
+| Story        | Current Status | Action Required                           |
+| ------------ | -------------- | ----------------------------------------- |
+| **44.40-FE** | Ready for Dev  | Add boxTypeId ACs, then implement         |
+| 44.27-FE     | Done           | Mark AC8 incomplete, complete in 44.40-FE |
+| 44.13-FE     | Done           | Review after 44.40-FE implementation      |
+| 44.12-FE     | Done           | Documentation update only                 |
 
 ---
 

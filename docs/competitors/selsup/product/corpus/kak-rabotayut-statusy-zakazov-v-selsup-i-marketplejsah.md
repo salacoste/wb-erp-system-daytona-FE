@@ -9,7 +9,7 @@ chars: 6824
 
 В этой статье:
 
-- 
+-
 - <a href="#osnovnye-principy-raboty-so-statusami" rel="nofollow">Основные принципы работы со статусами:</a>
 - <a href="#primery-sootvetstviya-statusov" rel="nofollow">Примеры соответствия статусов:</a>
 - <a href="#rasshirennoe-sootvetstvie-statusov-selsup-i-marketplejsov" rel="nofollow">Расширенное соответствие статусов SelSup и маркетплейсов</a>

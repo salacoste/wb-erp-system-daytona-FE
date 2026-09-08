@@ -3,6 +3,7 @@
 ## Обзор
 
 API для валидации и проверки целостности данных. Включает:
+
 - **Story 4.1**: Финансовая санитарная валидация (4 проверки)
 - **Epic 48**: Проверка целостности заказов FBS и сверка с WB Dashboard
 
@@ -19,18 +20,21 @@ API для валидации и проверки целостности дан�
 **URL**: `POST /v1/validation/{cabinetId}/validate/{week}`
 
 **Headers**:
+
 ```
 Authorization: Bearer {token}
 Content-Type: application/json
 ```
 
 **Path Parameters**:
-| Параметр | Тип | Описание | Пример |
-|----------|-----|----------|--------|
-| cabinetId | UUID | ID кабинета | `550e8400-e29b-41d4-a716-446655440000` |
-| week | string | ISO неделя | `2025-W05` |
+
+| Параметр  | Тип    | Описание    | Пример                                 |
+| --------- | ------ | ----------- | -------------------------------------- |
+| cabinetId | UUID   | ID кабинета | `550e8400-e29b-41d4-a716-446655440000` |
+| week      | string | ISO неделя  | `2025-W05`                             |
 
 **Response (200 OK)**:
+
 ```json
 
 ---
@@ -75,6 +79,7 @@ Content-Type: application/json
 **URL**: `GET /v1/validation/{cabinetId}/results/{week}`
 
 **Headers**:
+
 ```
 Authorization: Bearer {token}
 ```
@@ -82,6 +87,7 @@ Authorization: Bearer {token}
 **Response (200 OK)**: Аналогично POST validate
 
 **Response (200 OK - нет данных)**:
+
 ```json
 {
   "data": null,
@@ -101,11 +107,13 @@ Authorization: Bearer {token}
 **URL**: `GET /v1/validation/{cabinetId}/summary`
 
 **Query Parameters**:
-| Параметр | Тип | Обязательный | Описание |
-|----------|-----|--------------|----------|
-| weeks | string | Нет | Список недель через запятую: `2025-W01,2025-W02` |
+
+| Параметр | Тип    | Обязательный | Описание                                         |
+| -------- | ------ | ------------ | ------------------------------------------------ |
+| weeks    | string | Нет          | Список недель через запятую: `2025-W01,2025-W02` |
 
 **Response (200 OK)**:
+
 ```json
 {
   "data": [
@@ -140,16 +148,19 @@ Authorization: Bearer {token}
 **URL**: `GET /health/orders-integrity`
 
 **Headers**:
+
 ```
 Authorization: Bearer {token}
 ```
 
 **Query Parameters**:
-| Параметр | Тип | Обязательный | Описание |
-|----------|-----|--------------|----------|
-| cabinet_id | UUID | Да | ID кабинета |
+
+| Параметр   | Тип  | Обязательный | Описание    |
+| ---------- | ---- | ------------ | ----------- |
+| cabinet_id | UUID | Да           | ID кабинета |
 
 **Response (200 OK)**:
+
 ```json
 {
   "status": "healthy",
@@ -167,11 +178,12 @@ Authorization: Bearer {token}
 ```
 
 **Статусы**:
-| status | Описание | Цвет |
-|--------|----------|------|
-| `healthy` | Все проверки пройдены | Зеленый |
-| `warning` | Есть незначительные проблемы | Желтый |
-| `unhealthy` | Критические проблемы | Красный |
+
+| status      | Описание                     | Цвет    |
+| ----------- | ---------------------------- | ------- |
+| `healthy`   | Все проверки пройдены        | Зеленый |
+| `warning`   | Есть незначительные проблемы | Желтый  |
+| `unhealthy` | Критические проблемы         | Красный |
 
 ---
 
@@ -182,19 +194,22 @@ Authorization: Bearer {token}
 **URL**: `GET /v1/orders/reconciliation`
 
 **Headers**:
+
 ```
 Authorization: Bearer {token}
 ```
 
 **Query Parameters**:
-| Параметр | Тип | Обязательный | Описание |
-|----------|-----|--------------|----------|
-| cabinet_id | UUID | Да | ID кабинета |
-| from | string | Да | Дата начала (YYYY-MM-DD) |
-| to | string | Да | Дата окончания (YYYY-MM-DD) |
-| expected_count | number | Нет | Ожидаемое кол-во из WB Dashboard |
+
+| Параметр       | Тип    | Обязательный | Описание                         |
+| -------------- | ------ | ------------ | -------------------------------- |
+| cabinet_id     | UUID   | Да           | ID кабинета                      |
+| from           | string | Да           | Дата начала (YYYY-MM-DD)         |
+| to             | string | Да           | Дата окончания (YYYY-MM-DD)      |
+| expected_count | number | Нет          | Ожидаемое кол-во из WB Dashboard |
 
 **Response (200 OK)**:
+
 ```json
 {
   "data": {
@@ -225,9 +240,10 @@ Authorization: Bearer {token}
 ```
 
 **variance_status**:
-| Значение | Описание |
-|----------|----------|
-| `within_threshold` | Расхождение < 1% (норма) |
+
+| Значение            | Описание                             |
+| ------------------- | ------------------------------------ |
+| `within_threshold`  | Расхождение < 1% (норма)             |
 | `exceeds_threshold` | Расхождение >= 1% (требует внимания) |
 
 ---
@@ -364,15 +380,16 @@ interface ReconciliationResponse {
 
 ## Коды ошибок
 
-| HTTP | Code | Описание |
-|------|------|----------|
-| 400 | `MISSING_PARAMETERS` | Не указаны обязательные параметры |
-| 400 | `INVALID_DATE_FORMAT` | Неверный формат даты (нужен YYYY-MM-DD) |
-| 400 | `CABINET_ID_REQUIRED` | Не указан cabinet_id |
-| 401 | - | Unauthorized - невалидный токен |
-| 403 | `CABINET_ACCESS_DENIED` | Нет доступа к кабинету |
+| HTTP | Code                    | Описание                                |
+| ---- | ----------------------- | --------------------------------------- |
+| 400  | `MISSING_PARAMETERS`    | Не указаны обязательные параметры       |
+| 400  | `INVALID_DATE_FORMAT`   | Неверный формат даты (нужен YYYY-MM-DD) |
+| 400  | `CABINET_ID_REQUIRED`   | Не указан cabinet_id                    |
+| 401  | -                       | Unauthorized - невалидный токен         |
+| 403  | `CABINET_ACCESS_DENIED` | Нет доступа к кабинету                  |
 
 **Пример ошибки 403**:
+
 ```json
 {
   "code": "CABINET_ACCESS_DENIED",
@@ -394,13 +411,13 @@ interface ReconciliationResponse {
 
 ### Когда вызывать эндпоинты
 
-| Эндпоинт | Когда вызывать |
-|----------|----------------|
-| `POST validate/:week` | При ручном запуске валидации |
-| `GET results/:week` | При загрузке страницы недели |
-| `GET summary` | Для дашборда/списка недель |
+| Эндпоинт               | Когда вызывать                             |
+| ---------------------- | ------------------------------------------ |
+| `POST validate/:week`  | При ручном запуске валидации               |
+| `GET results/:week`    | При загрузке страницы недели               |
+| `GET summary`          | Для дашборда/списка недель                 |
 | `GET orders-integrity` | Polling каждые 5 минут на странице заказов |
-| `GET reconciliation` | При сверке с WB Dashboard |
+| `GET reconciliation`   | При сверке с WB Dashboard                  |
 
 ### Рекомендации по polling
 

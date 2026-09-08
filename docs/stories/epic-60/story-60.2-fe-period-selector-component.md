@@ -190,27 +190,27 @@ src/
 
 ### Design Tokens
 
-| Element | Token | Value |
-|---------|-------|-------|
-| Tabs active indicator | `bg-primary` | #E53935 |
-| Tabs inactive text | `text-muted-foreground` | #757575 |
-| Select border | `border-input` | #EEEEEE |
-| Select focus ring | `ring-primary` | #E53935 |
-| Refresh icon | `text-muted-foreground` | #757575 |
-| Refresh icon hover | `text-primary` | #E53935 |
-| Last update text | `text-muted-foreground text-sm` | #757575, 14px |
-| Dropdown item hover | `bg-accent` | #F5F5F5 |
-| Selected item check | `text-primary` | #E53935 |
+| Element               | Token                           | Value         |
+| --------------------- | ------------------------------- | ------------- |
+| Tabs active indicator | `bg-primary`                    | #E53935       |
+| Tabs inactive text    | `text-muted-foreground`         | #757575       |
+| Select border         | `border-input`                  | #EEEEEE       |
+| Select focus ring     | `ring-primary`                  | #E53935       |
+| Refresh icon          | `text-muted-foreground`         | #757575       |
+| Refresh icon hover    | `text-primary`                  | #E53935       |
+| Last update text      | `text-muted-foreground text-sm` | #757575, 14px |
+| Dropdown item hover   | `bg-accent`                     | #F5F5F5       |
+| Selected item check   | `text-primary`                  | #E53935       |
 
 ### Spacing
 
-| Element | Spacing |
-|---------|---------|
-| Container padding | `p-0` (no padding, parent handles) |
-| Gap between Tabs and Select | `gap-4` (16px) |
-| Gap between Select and Refresh | `gap-2` (8px) |
-| Refresh icon size | `h-9 w-9` (36x36px) |
-| Dropdown max height | `max-h-[300px]` |
+| Element                        | Spacing                            |
+| ------------------------------ | ---------------------------------- |
+| Container padding              | `p-0` (no padding, parent handles) |
+| Gap between Tabs and Select    | `gap-4` (16px)                     |
+| Gap between Select and Refresh | `gap-2` (8px)                      |
+| Refresh icon size              | `h-9 w-9` (36x36px)                |
+| Dropdown max height            | `max-h-[300px]`                    |
 
 ### Animation
 
@@ -223,14 +223,14 @@ src/
 
 ## Dependencies
 
-| Dependency | Type | Status |
-|------------|------|--------|
-| Story 60.1-FE (Period State) | Internal | Prerequisite |
-| `useDashboardPeriod` hook | Internal | From Story 60.1 |
-| shadcn/ui `Tabs` | Component | ✅ Available |
-| shadcn/ui `Select` | Component | ✅ Available |
-| `lucide-react` RefreshCw | Icon | ✅ Available |
-| `date-fns` | External | ✅ Installed |
+| Dependency                   | Type      | Status          |
+| ---------------------------- | --------- | --------------- |
+| Story 60.1-FE (Period State) | Internal  | Prerequisite    |
+| `useDashboardPeriod` hook    | Internal  | From Story 60.1 |
+| shadcn/ui `Tabs`             | Component | ✅ Available    |
+| shadcn/ui `Select`           | Component | ✅ Available    |
+| `lucide-react` RefreshCw     | Icon      | ✅ Available    |
+| `date-fns`                   | External  | ✅ Installed    |
 
 ---
 
@@ -321,6 +321,7 @@ src/
 ### Phase 1: Basic Structure (30min)
 
 Create component shell with:
+
 - Props interface
 - Basic layout (Tabs + Select + Button)
 - Connect to `useDashboardPeriod` hook
@@ -328,6 +329,7 @@ Create component shell with:
 ### Phase 2: Tabs Implementation (30min)
 
 Implement period type toggle:
+
 - Use shadcn/ui Tabs component
 - "Неделя" and "Месяц" tabs
 - Active tab indicator styling
@@ -335,6 +337,7 @@ Implement period type toggle:
 ### Phase 3: Dropdown Implementation (1h)
 
 Implement period dropdown:
+
 - Generate week/month options from available weeks
 - Format labels with Russian locale
 - Disable future periods
@@ -343,6 +346,7 @@ Implement period dropdown:
 ### Phase 4: Refresh Button (30min)
 
 Implement refresh functionality:
+
 - RefreshCw icon button
 - Loading spinner animation
 - Last update relative time display

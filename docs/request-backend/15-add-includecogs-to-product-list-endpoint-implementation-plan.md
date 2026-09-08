@@ -11,6 +11,7 @@
 **Frontend Request**: Add `include_cogs=true` parameter to return margin data in product list
 
 **Backend Recommendation**: ✅ **APPROVE with batching optimization**
+
 - Estimated effort: **5-7 hours** (includes batching from start)
 - Performance target: **<500ms for 25 products** (vs 2.5s without batching)
 - Pattern: Follow Epic 17 Story 17.2 (`includeCogs` for analytics)
@@ -24,6 +25,7 @@
 **File**: `src/products/dto/query-products.dto.ts`
 
 **Add parameter**:
+
 ```typescript
 @ApiPropertyOptional({
   description: 'Include COGS and margin data in response (uses Epic 17 analytics)',
@@ -158,10 +160,12 @@ private async getMarginDataForProducts(
 ```
 
 **Dependencies needed**:
+
 - Inject `WeeklyAnalyticsService` (from Epic 17)
 - Inject `IsoWeekService` (from Epic 17)
 
 **Update constructor** (line 61):
+
 ```typescript
 constructor(
   private readonly wbProductsService: WbProductsService,
@@ -182,6 +186,7 @@ constructor(
 **Modify `getProductsList()` method** (lines 68-160):
 
 **Add at the beginning** (after line 68):
+
 ```typescript
 async getProductsList(cabinetId: string, query: QueryProductsDto): Promise<ProductListResponseDto> {
   this.logger.log(`Getting products list for cabinet ${cabinetId} with filters: ${JSON.stringify(query)}`);
@@ -241,6 +246,7 @@ async getProductsList(cabinetId: string, query: QueryProductsDto): Promise<Produ
 **File**: `src/products/dto/product-response.dto.ts`
 
 **Check if margin fields already exist**:
+
 ```typescript
 @ApiPropertyOptional({ description: 'Current margin percentage (from Epic 17 analytics)' })
 current_margin_pct?: number | null;
@@ -267,6 +273,7 @@ missing_data_reason?: string;
 **File**: `src/products/products.module.ts`
 
 **Add Epic 17 imports**:
+
 ```typescript
 import { WeeklyAnalyticsModule } from '../analytics/weekly-analytics.module';
 import { IsoWeekModule } from '../shared/iso-week/iso-week.module';
@@ -427,6 +434,7 @@ async getProductsList(
 ## Expected Performance
 
 ### Before (Current)
+
 ```
 GET /v1/products?limit=25
 Response time: ~150ms
@@ -434,6 +442,7 @@ Includes: nm_id, sa_name, brand, has_cogs, cogs
 ```
 
 ### After (with include_cogs=true)
+
 ```
 GET /v1/products?limit=25&include_cogs=true
 Response time: ~300ms (+150ms for batch analytics query)
@@ -441,6 +450,7 @@ Includes: All above + margin fields (current_margin_pct, etc.)
 ```
 
 **Performance Breakdown**:
+
 - WB API + COGS lookup: ~150ms (unchanged)
 - Epic 17 analytics batch query: +150ms (1 query for all 25 products)
 - **Total**: ~300ms ✅ (vs 2.5s without batching)
@@ -467,6 +477,7 @@ Includes: All above + margin fields (current_margin_pct, etc.)
 ## Breaking Changes
 
 **None** - Fully backward compatible:
+
 - Default behavior unchanged (`include_cogs=false`)
 - Margin fields optional in `ProductResponseDto`
 - Existing clients unaffected
@@ -476,25 +487,33 @@ Includes: All above + margin fields (current_margin_pct, etc.)
 ## Answers to Frontend Team Questions
 
 ### Q1: Is 2-3s acceptable for 25 products?
+
 **A**: ❌ **NO** - We recommend implementing batching from the start (Option 2).
+
 - Target: <500ms for 25 products
 - Implementation effort: +1-2 hours vs simple approach
 - User experience: 6x faster (300ms vs 2500ms)
 
 ### Q2: Should we enforce smaller limit when include_cogs=true?
+
 **A**: ⚠️ **NOT NECESSARY with batching** - But recommend soft limit in docs:
+
 - Batching handles 25 products in ~300ms
 - 100 products: ~500ms (still acceptable)
 - Document recommended limit: 25-50 products for optimal UX
 
 ### Q3: Should we add Redis caching for margin data?
+
 **A**: ⏸️ **DEFER to Phase 2** - Start without caching:
+
 - Epic 17 analytics already has internal caching
 - Monitor cache hit rate after deployment
 - Add Redis caching if p95 >500ms observed in production
 
 ### Q4: Backward compatibility guaranteed?
+
 **A**: ✅ **YES** - Fully backward compatible:
+
 - `include_cogs` defaults to `false` (no behavior change)
 - Margin fields optional in DTO (undefined when not requested)
 - No breaking changes to existing API contract
@@ -504,11 +523,13 @@ Includes: All above + margin fields (current_margin_pct, etc.)
 ## Success Metrics
 
 **Before** (Current State):
+
 - Product list shows COGS but not margin
 - User confusion: "Why is margin always '—'?"
 - Workaround: Click each product individually to see margin
 
 **After** (With Implementation):
+
 - Product list can show margin via `include_cogs=true` flag
 - Response time: <500ms for 25 products
 - Clear `missing_data_reason` when margin unavailable

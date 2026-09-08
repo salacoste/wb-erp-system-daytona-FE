@@ -17,6 +17,7 @@ The WB Repricer System Frontend team lacks a formal process for documenting UI/U
 4. **Reversibility**: Document rollback plans for significant UI changes
 
 Current state:
+
 - Frontend documentation exists in `docs/`
 - Story docs contain implementation decisions
 - No dedicated ADR process for frontend-specific decisions
@@ -26,12 +27,14 @@ Current state:
 ## Decision
 
 Establish a Frontend Architecture Decision Record (ADR) process using:
+
 - **Location**: `frontend/docs/adr/`
 - **Format**: Markdown with numbered sequence
 - **Template**: Standard structure (Context → Decision → Consequences)
 - **Status workflow**: Proposed → Accepted → Deprecated | Superseded
 
 **Key principles**:
+
 - **UI/UX-focused**: Document component patterns, state management, routing
 - **Lightweight**: Don't document trivial styling or minor tweaks
 - **Traceable**: Link to Stories, UX Design, Backend API
@@ -72,6 +75,7 @@ Establish a Frontend Architecture Decision Record (ADR) process using:
 - **Component hierarchy**: N/A (documentation only)
 
 **Created files**:
+
 - `frontend/docs/adr/README.md` - Process documentation and template
 - `frontend/docs/adr/adr-001-adr-process-initiation.md` - This ADR
 
@@ -79,11 +83,11 @@ Establish a Frontend Architecture Decision Record (ADR) process using:
 
 ## Alternatives Considered
 
-| Alternative | Description | Rejected Because |
-|-------------|-------------|------------------|
-| No ADR process | Continue with current approach | No historical traceability for UI decisions |
-| ADR in story docs | Embed decisions in story files | Harder to find, stories are implementation-focused not decision-focused |
-| Share backend ADRs | Use `../../docs/adr/` for frontend | Frontend has different concerns (UI vs API/DB) |
+| Alternative        | Description                        | Rejected Because                                                        |
+| ------------------ | ---------------------------------- | ----------------------------------------------------------------------- |
+| No ADR process     | Continue with current approach     | No historical traceability for UI decisions                             |
+| ADR in story docs  | Embed decisions in story files     | Harder to find, stories are implementation-focused not decision-focused |
+| Share backend ADRs | Use `../../docs/adr/` for frontend | Frontend has different concerns (UI vs API/DB)                          |
 
 ---
 
@@ -95,4 +99,4 @@ Establish a Frontend Architecture Decision Record (ADR) process using:
 
 ---
 
-*Next frontend ADR number: 002*
+_Next frontend ADR number: 002_

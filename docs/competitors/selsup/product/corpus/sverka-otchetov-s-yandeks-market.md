@@ -13,7 +13,7 @@ chars: 13128
 
 В этой статье:
 
-- 
+-
 - <a href="#rekomendatsii-pered-nachalom-sverki" rel="nofollow">Шаг 1. Рекомендации перед началом сверки</a>
 - <a href="#shag-2-skachajte-otchet-o-platezhah-v-yandeks-market" rel="nofollow">Шаг 2. Скачайте отчет о платежах в Яндекс.Маркет</a>
 - <a href="#shag-3-podgotovte-otchet-yandeks-market" rel="nofollow">Шаг 3. Подготовьте отчет Яндекс.Маркет</a>
@@ -271,6 +271,6 @@ chars: 13128
 
 ![](../../out/selsup.ru/_kage/selsup.ru/wp-content/webp-express/webp-images/uploads/2024/06/2026.06.22_chrome_oifo.png.webp)
 
-------------------------------------------------------------------------
+---
 
 Подробнее про аналитику Яндекс Маркета в SelSup читайте [в отдельной статье](../analitika-yandex-market-v-selsup/index.html).

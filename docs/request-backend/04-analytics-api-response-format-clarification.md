@@ -6,7 +6,8 @@
 
 **⚠️ КРИТИЧЕСКАЯ ПРОБЛЕМА:** Endpoint `/v1/analytics/weekly/available-weeks` возвращает пустой массив, хотя данные присутствуют в БД. Проблема в том, что endpoint использует таблицу `imports` для получения недель, но поля `week` и `weeks_included` не заполняются при импорте.
 
-**Статус:** 
+**Статус:**
+
 - ✅ Frontend исправлен для работы с текущим форматом backend
 - ❌ **БЛОКЕР:** Endpoint `available-weeks` не возвращает данные из-за пустых полей в таблице `imports`
 
@@ -21,26 +22,28 @@
 Endpoint `/v1/analytics/weekly/available-weeks` возвращает пустой массив `{ data: [] }`, хотя в БД есть данные в таблице `weekly_payout_total`.
 
 **Диагностика:**
+
 ```sql
 -- В таблице weekly_payout_total есть данные:
-SELECT week FROM weekly_payout_total 
-WHERE cabinet_id = 'f75836f7-c0bc-4b2c-823c-a1f3508cce8e' 
+SELECT week FROM weekly_payout_total
+WHERE cabinet_id = 'f75836f7-c0bc-4b2c-823c-a1f3508cce8e'
 ORDER BY week DESC;
 -- Результат: 2025-W46, 2025-W45, 2025-W44, 2025-W43, 2025-W42, ...
 
 -- НО в таблице imports поля week и weeks_included пустые:
-SELECT status, COUNT(*) as total, 
+SELECT status, COUNT(*) as total,
        COUNT(CASE WHEN week IS NOT NULL THEN 1 END) as with_week,
        COUNT(CASE WHEN weeks_included IS NOT NULL AND array_length(weeks_included, 1) > 0 THEN 1 END) as with_weeks_included
-FROM imports 
+FROM imports
 WHERE cabinet_id = 'f75836f7-c0bc-4b2c-823c-a1f3508cce8e'
 GROUP BY status;
--- Результат: 
+-- Результат:
 -- completed: 17 записей, но with_week = 0, with_weeks_included = 0
 ```
 
 **Причина:**
 Endpoint использует таблицу `imports` для получения доступных недель:
+
 ```typescript
 // src/analytics/weekly-analytics.service.ts:105-114
 const imports = await this.prisma.import.findMany({
@@ -60,6 +63,7 @@ const imports = await this.prisma.import.findMany({
 ### Решение
 
 **Вариант 1 (Рекомендуемый):** Изменить endpoint, чтобы он использовал `weekly_payout_total` для получения доступных недель:
+
 ```typescript
 // Вместо imports использовать weekly_payout_total
 const weeks = await this.prisma.weeklyPayoutTotal.findMany({
@@ -77,6 +81,7 @@ const weeks = await this.prisma.weeklyPayoutTotal.findMany({
 ### Временное решение Frontend
 
 Frontend обрабатывает пустой массив gracefully:
+
 ```typescript
 if (!weeks || weeks.length === 0) {
   console.info('[Dashboard Metrics] No available weeks found. Financial data may not be processed yet.')
@@ -93,6 +98,7 @@ if (!weeks || weeks.length === 0) {
 ### Текущий формат Backend
 
 Backend возвращает:
+
 ```typescript
 {
   data: [
@@ -104,6 +110,7 @@ Backend возвращает:
 ```
 
 **Backend Reference:**
+
 - Controller: `src/analytics/weekly-analytics.controller.ts:199-251`
 - Service: `src/analytics/weekly-analytics.service.ts:100-141`
 - DTO: `src/analytics/dto/available-weeks-response.dto.ts`
@@ -111,6 +118,7 @@ Backend возвращает:
 ### Ожидаемый формат Frontend (изначально)
 
 Frontend изначально ожидал:
+
 ```typescript
 {
   data: ["2025-W46", "2025-W45", "2025-W43", ...] // Просто массив строк
@@ -120,10 +128,11 @@ Frontend изначально ожидал:
 ### Решение
 
 Frontend был обновлен для работы с текущим форматом backend:
+
 ```typescript
 // src/hooks/useDashboard.ts, src/hooks/useExpenses.ts
-const weeksResponse = await apiClient.get<{ 
-  data: Array<{ week: string; start_date: string }> 
+const weeksResponse = await apiClient.get<{
+  data: Array<{ week: string; start_date: string }>
 }>('/v1/analytics/weekly/available-weeks')
 
 // Извлекаем только week из объектов
@@ -137,6 +146,7 @@ const weeks = weeksResponse?.data?.map((w) => w.week) || []
 ### Текущий формат Backend
 
 Backend возвращает структуру с тремя summary объектами:
+
 ```typescript
 {
   summary_total: {
@@ -174,6 +184,7 @@ Backend возвращает структуру с тремя summary объек
 ```
 
 **Backend Reference:**
+
 - Controller: `src/analytics/weekly-analytics.controller.ts:42-197`
 - Service: `src/analytics/weekly-analytics.service.ts:30-93`
 - DTO: `src/analytics/dto/finance-summary-response.dto.ts`
@@ -183,6 +194,7 @@ Backend возвращает структуру с тремя summary объек
 ### Ожидаемый формат Frontend (изначально)
 
 Frontend изначально ожидал прямой объект:
+
 ```typescript
 {
   week: "2025-W46",
@@ -199,6 +211,7 @@ Frontend изначально ожидал прямой объект:
 ### Решение
 
 Frontend был обновлен для работы с текущим форматом backend:
+
 ```typescript
 // src/hooks/useDashboard.ts, src/hooks/useExpenses.ts
 const summaryResponse = await apiClient.get<{
@@ -225,11 +238,13 @@ const revenue = summary.sale_gross_total ?? summary.sale_gross
 **Вопрос:** Почему endpoint `/v1/analytics/weekly/available-weeks` возвращает пустой массив, хотя данные есть в `weekly_payout_total`?
 
 **Контекст:**
+
 - В таблице `weekly_payout_total` есть данные для недель: 2025-W46, W45, W44, и т.д.
 - В таблице `imports` есть записи со статусом `completed`, но поля `week` и `weeks_included` пустые
 - Endpoint использует таблицу `imports` для получения недель, поэтому возвращает пустой массив
 
 **Рекомендация Frontend:**
+
 - Изменить endpoint, чтобы он использовал `weekly_payout_total` для получения доступных недель
 - Или заполнять поля `week`/`weeks_included` в таблице `imports` при импорте
 
@@ -242,11 +257,13 @@ const revenue = summary.sale_gross_total ?? summary.sale_gross
 **Вопрос:** Является ли текущий формат `{ data: [{ week, start_date }] }` финальным и стабильным?
 
 **Контекст:**
+
 - Frontend использует только поле `week`, поле `start_date` не используется
 - Если `start_date` нужен для будущего функционала (например, WeekSelector компонент), то формат корректен
 - Если `start_date` не планируется использовать, можно упростить до массива строк
 
 **Рекомендация Frontend:**
+
 - Если `start_date` будет использоваться в будущем (например, для WeekSelector) → оставить текущий формат ✅
 - Если `start_date` не нужен → упростить до `{ data: string[] }` для меньшего payload
 
@@ -257,12 +274,14 @@ const revenue = summary.sale_gross_total ?? summary.sale_gross
 **Вопрос 1:** Почему `summary_total` использует поля с суффиксом `_total`, а `summary_rus`/`summary_eaeu` без суффикса?
 
 **Контекст:**
+
 - Это создает необходимость поддерживать два формата полей в frontend
 - Усложняет типизацию TypeScript
 
 **Вопрос 2:** Какой summary должен использоваться по умолчанию для dashboard метрик?
 
 **Текущее решение Frontend:**
+
 ```typescript
 // Используем summary_total (консолидированный) или fallback на summary_rus
 const summary = summaryResponse.summary_total || summaryResponse.summary_rus
@@ -271,6 +290,7 @@ const summary = summaryResponse.summary_total || summaryResponse.summary_rus
 **Вопрос 3:** Параметр `report_type=total` в query string влияет на формат ответа или только на логику backend?
 
 **Контекст:**
+
 - Frontend всегда передает `report_type=total`
 - Неясно, влияет ли это на структуру ответа или только на выбор данных
 
@@ -281,11 +301,13 @@ const summary = summaryResponse.summary_total || summaryResponse.summary_rus
 **Вопрос:** Где находится актуальная документация форматов ответов?
 
 **Текущие источники:**
+
 - Swagger/OpenAPI документация (если доступна)
 - DTO файлы в backend (`src/analytics/dto/`)
 - Frontend API Integration Guide (`frontend/docs/api-integration-guide.md`)
 
 **Рекомендация:**
+
 - Обновить `frontend/docs/api-integration-guide.md` с актуальными форматами ответов
 - Или предоставить ссылку на Swagger документацию
 
@@ -346,6 +368,7 @@ export interface FinanceSummary {
 ### Проверка работы с текущим форматом
 
 1. **Проверка `available-weeks`:**
+
    ```typescript
    // Должен корректно извлекать week из объектов
    const weeks = weeksResponse?.data?.map((w) => w.week) || []
@@ -363,6 +386,7 @@ export interface FinanceSummary {
 ### Логирование для диагностики
 
 Добавлено логирование в консоль браузера:
+
 - `[Dashboard Metrics] Fetching finance summary for week: ...`
 - `[Dashboard Metrics] Finance summary received: ...`
 - `[Expenses] Fetching finance summary for week: ...`
@@ -439,15 +463,18 @@ export interface FinanceSummary {
 ### ✅ Ответ 0: 🚨 КРИТИЧНО - Пустые недели в `available-weeks`
 
 **Проблема:** Endpoint `available-weeks` возвращает пустой массив, если:
+
 - Нет завершенных импортов (`status = 'completed'`)
 - Импорты не имеют заполненных полей `weeksIncluded[]` или `week` (legacy)
 
 **Текущая реализация:**
+
 - Endpoint использует таблицу `imports` для получения списка недель
 - Запрос: `SELECT weeksIncluded, week FROM imports WHERE cabinetId = ? AND status = 'completed'`
 - Агрегирует уникальные недели из массива `weeksIncluded[]` или поля `week`
 
 **Почему это может быть проблемой:**
+
 1. Если импорт еще не завершен → неделя не появится в списке
 2. Если поля `weeksIncluded`/`week` не заполнены при импорте → неделя не появится
 3. Если импорт завершен, но агрегация еще не выполнена → неделя есть в `imports`, но данных в `weekly_payout_total` еще нет
@@ -457,11 +484,13 @@ export interface FinanceSummary {
 ✅ **Использовать `weekly_payout_total` как источник данных** (более надежный подход):
 
 **Преимущества:**
+
 - `weekly_payout_total` содержит только те недели, для которых есть **готовые агрегированные данные**
 - Это означает, что данные уже обработаны и готовы к отображению в UI
 - Не зависит от статуса импорта или заполнения полей в `imports`
 
 **Предлагаемое изменение:**
+
 ```typescript
 // Вместо запроса к imports, использовать weekly_payout_total:
 const weeks = await this.prisma.weeklyPayoutTotal.findMany({
@@ -481,15 +510,18 @@ const weeks = await this.prisma.weeklyPayoutSummary.findMany({
 ```
 
 **Альтернативный подход (гибридный):**
+
 - Использовать `weekly_payout_total` как основной источник
 - Добавить fallback на `imports` для недель, которые импортированы, но еще не агрегированы
 - Это покажет пользователю, что данные есть, но еще обрабатываются
 
-**Статус:** 
+**Статус:**
+
 - ⚠️ **Требуется изменение backend** для использования `weekly_payout_total` вместо `imports`
 - 📝 **Создать задачу** для рефакторинга endpoint `available-weeks`
 
 **Backend Reference:**
+
 - Текущая реализация: `src/analytics/weekly-analytics.service.ts:100-141`
 - Таблица `weekly_payout_total`: `prisma/schema.prisma:337-366`
 - Таблица `imports`: `prisma/schema.prisma:106-156`
@@ -501,17 +533,20 @@ const weeks = await this.prisma.weeklyPayoutSummary.findMany({
 **Статус:** Формат `{ data: [{ week, start_date }] }` является **финальным и стабильным**.
 
 **Обоснование:**
+
 - Поле `start_date` было добавлено по запросу Frontend Team (Request #012) для компонента WeekSelector
 - Формат позволяет frontend отображать как ISO week (`2025-W45`), так и читаемую дату начала недели (`2025-11-03`)
 - Расчет `start_date` выполняется автоматически на backend через метод `calculateWeekStartDate()` (понедельник недели в формате YYYY-MM-DD, timezone Europe/Moscow)
 - Формат соответствует бизнес-логике: неделя определяется как ISO week (Пн-Вс), а `start_date` - это понедельник этой недели
 
 **Рекомендация Backend:**
+
 - ✅ Оставить текущий формат - он оптимален для UI компонентов
 - ✅ Использовать `start_date` для отображения в WeekSelector и других date pickers
 - ✅ Поле `week` остается основным идентификатором для API запросов
 
 **Backend Reference:**
+
 - Service: `src/analytics/weekly-analytics.service.ts:100-141`
 - DTO: `src/analytics/dto/available-weeks-response.dto.ts:7-19`
 - Комментарий в коде: `// Request #012: Calculate start_date for each week (Monday in YYYY-MM-DD format)`
@@ -538,6 +573,7 @@ const weeks = await this.prisma.weeklyPayoutSummary.findMany({
    - Это предотвращает путаницу: `sale_gross` (RUS) vs `sale_gross_total` (RUS + EAEU)
 
 **Backend Reference:**
+
 - Schema: `prisma/schema.prisma:282-334` (WeeklyPayoutSummary), `337-366` (WeeklyPayoutTotal)
 - Service mapping: `src/analytics/weekly-analytics.service.ts:143-237`
 - DTOs:
@@ -545,6 +581,7 @@ const weeks = await this.prisma.weeklyPayoutSummary.findMany({
   - `src/analytics/dto/weekly-payout-total.dto.ts` (поля с `_total`)
 
 **Рекомендация Backend:**
+
 - ✅ Текущий формат является **финальным и стабильным**
 - ✅ Frontend должен поддерживать оба формата (как сейчас реализовано)
 - ⚠️ **Не рекомендуется** унифицировать формат, так как это потребует миграции БД и изменения бизнес-логики
@@ -570,6 +607,7 @@ const weeks = await this.prisma.weeklyPayoutSummary.findMany({
    - ✅ Если `summary_total` отсутствует → fallback на `summary_rus` (для обратной совместимости)
 
 **Backend Reference:**
+
 - Controller: `src/analytics/weekly-analytics.controller.ts:42-197`
 - Service: `src/analytics/weekly-analytics.service.ts:30-93`
 - Логика: `summary_total = summary_rus + summary_eaeu` для всех полей
@@ -579,6 +617,7 @@ const weeks = await this.prisma.weeklyPayoutSummary.findMany({
 **Ответ:** ❌ **НЕТ**, параметр `report_type` **НЕ используется** в endpoint `/v1/analytics/weekly/finance-summary`.
 
 **Обоснование:**
+
 1. **Query DTO не содержит `report_type`:**
    - `FinanceSummaryQueryDto` содержит только `week` (см. `src/analytics/dto/finance-summary-query.dto.ts`)
    - Endpoint всегда возвращает все три summary: `summary_rus`, `summary_eaeu`, `summary_total`
@@ -595,11 +634,13 @@ const weeks = await this.prisma.weeklyPayoutSummary.findMany({
    - Backend игнорирует этот параметр (не валидирует и не использует)
 
 **Рекомендация Backend:**
+
 - ✅ Frontend может **убрать** параметр `report_type=total` из запросов к `/v1/analytics/weekly/finance-summary`
 - ✅ Это не повлияет на работу API (параметр игнорируется)
 - ✅ Упростит код frontend и уменьшит путаницу
 
 **Backend Reference:**
+
 - Controller: `src/analytics/weekly-analytics.controller.ts:149-197`
 - Query DTO: `src/analytics/dto/finance-summary-query.dto.ts:4-15`
 - Service: `src/analytics/weekly-analytics.service.ts:30-93` (не использует `report_type`)
@@ -629,11 +670,13 @@ const weeks = await this.prisma.weeklyPayoutSummary.findMany({
    - `docs/stories/epic-2/story-2.5-analytics-api.md` - описание Analytics API endpoints
 
 **Рекомендация Backend:**
+
 - ✅ Обновить `frontend/docs/api-integration-guide.md` с актуальными форматами ответов
 - ✅ Добавить примеры использования для обоих форматов полей (с `_total` и без)
 - ✅ Указать, что `report_type` не используется в `finance-summary` endpoint
 
 **План обновления документации:**
+
 1. Добавить раздел "Analytics API Response Formats" в `frontend/docs/api-integration-guide.md`
 2. Описать формат `available-weeks` с примером использования `start_date`
 3. Описать формат `finance-summary` с объяснением различий между `summary_total` и `summary_rus`/`summary_eaeu`
@@ -670,7 +713,7 @@ const weeks = await this.prisma.weeklyPayoutSummary.findMany({
 **Статус:** ✅ Все вопросы Backend Team закрыты, рекомендации предоставлены
 
 ## Backend Team Response
+
 **Status**: RESOLVED
 **Resolution**: Backend clarified the analytics API response formats (available-weeks uses object arrays, finance-summary has three summary sections with different field naming). Recommended using `weekly_payout_total` instead of `imports` for available-weeks endpoint, confirmed `report_type` is unused on finance-summary, and documented that the current formats are stable and final.
 **Frontend Action**: No further action needed unless noted above.
-

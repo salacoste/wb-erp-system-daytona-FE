@@ -5,9 +5,11 @@ This section contains general frontend integration analysis and architecture doc
 ## Key Documents
 
 ### [General Frontend Integration Analysis](../GENERAL-FRONTEND-INTEGRATION-ANALYSIS.md)
+
 Overall frontend architecture, integration patterns, and system design.
 
 **Contents:**
+
 - Frontend architecture overview
 - Integration patterns with backend
 - State management strategy
@@ -17,9 +19,11 @@ Overall frontend architecture, integration patterns, and system design.
 - Testing strategy
 
 ### [Backend Integration Analysis](../BACKEND-INTEGRATION-ANALYSIS.md)
+
 Backend API integration details and patterns.
 
 **Contents:**
+
 - API endpoint structure
 - Request/response formats
 - Authentication headers
@@ -30,11 +34,13 @@ Backend API integration details and patterns.
 ## Cross-Page Topics
 
 ### State Management
+
 - **TanStack Query v5** - Server state management
 - **Zustand** - Client state (auth, margin polling)
 - **React Context** - Period context, theme context
 
 ### API Client
+
 - **Location:** `src/lib/api-client.ts`
 - **Features:**
   - Auto-injects `Authorization: Bearer {token}`
@@ -43,11 +49,13 @@ Backend API integration details and patterns.
   - Centralized error handling
 
 ### Authentication
+
 - **JWT Tokens** - Access and refresh token flow
 - **Cabinet Context** - Multi-tenancy support
 - **Role-Based Access** - Owner, Manager, Analyst, Service
 
 ### Formatters
+
 All formatters use Russian locale (`ru-RU`):
 
 ```typescript
@@ -58,12 +66,14 @@ formatIsoWeek(date)         // "2025-W03"
 ```
 
 ### Date/Time Handling
+
 - **Timezone:** `Europe/Moscow`
 - **Week Format:** ISO week `YYYY-Www`
 - **Week Start:** Monday
 - **Date-fns** - Date manipulation library
 
 ### Testing
+
 - **Unit Tests:** Vitest
 - **E2E Tests:** Playwright
 - **Coverage Goal:** 60%+ unit, 10%+ E2E
@@ -71,6 +81,7 @@ formatIsoWeek(date)         // "2025-W03"
 ## Common Patterns
 
 ### Data Fetching Pattern
+
 ```typescript
 export function useFeature(params) {
   return useQuery({
@@ -82,6 +93,7 @@ export function useFeature(params) {
 ```
 
 ### Mutation Pattern
+
 ```typescript
 const mutation = useMutation({
   mutationFn: (data) => createItem(data),
@@ -92,6 +104,7 @@ const mutation = useMutation({
 ```
 
 ### Error Handling Pattern
+
 ```typescript
 try {
   await mutation.mutateAsync(data)
@@ -104,6 +117,7 @@ try {
 ## Design System
 
 ### Colors
+
 - Primary Red: `#E53935`
 - Green: `#22C55E` (positive)
 - Red: `#EF4444` (negative)
@@ -111,23 +125,25 @@ try {
 - Yellow: `#F59E0B` (warning)
 
 ### Typography
+
 - H1: 32px, bold
 - H2: 24px, semi-bold
 - Body: 14-16px, regular
 
 ### Spacing
+
 - Base unit: 4px
 - Scale: 4, 8, 12, 16, 20, 24, 32, 40, 48, 64, 80, 96
 
 ## Performance Targets
 
-| Metric | Target |
-|--------|--------|
-| Initial page load | <3s |
-| Time to interactive | <5s |
-| Dashboard data load | <2s |
-| API response (p95) | <500ms |
-| Error rate | <1% |
+| Metric              | Target |
+| ------------------- | ------ |
+| Initial page load   | <3s    |
+| Time to interactive | <5s    |
+| Dashboard data load | <2s    |
+| API response (p95)  | <500ms |
+| Error rate          | <1%    |
 
 ## Accessibility (WCAG 2.1 AA)
 

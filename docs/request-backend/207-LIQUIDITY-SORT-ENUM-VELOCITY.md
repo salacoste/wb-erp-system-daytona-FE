@@ -29,15 +29,17 @@ The page no longer 400s. No backend change is strictly required for correctness.
 
 Add **`velocity_per_day`** (sort by `avg_daily_sales`) to `LiquiditySortByEnum` and `applySort`.
 
-**Why**: the page caps results at `limit: 200` (not paginated). For sellers with **>200 SKUs**, client-side velocity sort only orders the 200 items the backend selected by *turnover* — the globally highest-velocity SKUs may not be in that page at all. A backend `velocity_per_day` sort would let the backend select the top-200 *by velocity*, eliminating the truncation gap. The FE would then drop its client-side velocity special-case and send `sort_by=velocity_per_day` directly.
+**Why**: the page caps results at `limit: 200` (not paginated). For sellers with **>200 SKUs**, client-side velocity sort only orders the 200 items the backend selected by _turnover_ — the globally highest-velocity SKUs may not be in that page at all. A backend `velocity_per_day` sort would let the backend select the top-200 _by velocity_, eliminating the truncation gap. The FE would then drop its client-side velocity special-case and send `sort_by=velocity_per_day` directly.
 
 **Scope**: one enum member + one `ORDER BY avg_daily_sales` branch in the liquidity sort. Low effort.
 
 ## Not requested
+
 - `stock_value` does NOT need adding — it equals `frozen_capital`, already supported.
 - `current_stock` / `product_name` are already in the enum (the FE could expose them as columns later).
 
 ## Affected files (FE, for reference)
+
 - `frontend/src/lib/liquidity-sort.ts` (mapping + client sort)
 - `frontend/src/types/liquidity.ts` (tightened `sort_by`)
 - `frontend/src/app/(dashboard)/analytics/liquidity/page.tsx`

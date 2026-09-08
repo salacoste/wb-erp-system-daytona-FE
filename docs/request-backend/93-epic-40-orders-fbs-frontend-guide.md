@@ -25,11 +25,11 @@
 
 ### Story 40.6 Enhancements - Task 3: At-Risk Pagination
 
-| Изменение | Endpoint | Описание |
-|-----------|----------|----------|
+| Изменение              | Endpoint                       | Описание                                      |
+| ---------------------- | ------------------------------ | --------------------------------------------- |
 | **At-Risk Pagination** | `GET /v1/analytics/orders/sla` | Новые параметры `atRiskLimit`, `atRiskOffset` |
-| **atRiskTotal field** | `GET /v1/analytics/orders/sla` | Общее кол-во at-risk до пагинации |
-| **cachedAt field** | All analytics endpoints | Время кеширования ответа |
+| **atRiskTotal field**  | `GET /v1/analytics/orders/sla` | Общее кол-во at-risk до пагинации             |
+| **cachedAt field**     | All analytics endpoints        | Время кеширования ответа                      |
 
 **Breaking Changes**: Нет. Все изменения обратно совместимы.
 
@@ -37,12 +37,12 @@
 
 Backend теперь отслеживает метрики для всех analytics endpoints:
 
-| Метрика | Тип | Описание |
-|---------|-----|----------|
-| `orders_analytics_query_duration_ms` | Histogram | Латентность запросов |
-| `orders_analytics_queries_total` | Counter | Общее кол-во запросов (success/error) |
-| `orders_analytics_cache_hits_total` | Counter | Попадания в Redis cache |
-| `orders_analytics_cache_misses_total` | Counter | Промахи cache |
+| Метрика                               | Тип       | Описание                              |
+| ------------------------------------- | --------- | ------------------------------------- |
+| `orders_analytics_query_duration_ms`  | Histogram | Латентность запросов                  |
+| `orders_analytics_queries_total`      | Counter   | Общее кол-во запросов (success/error) |
+| `orders_analytics_cache_hits_total`   | Counter   | Попадания в Redis cache               |
+| `orders_analytics_cache_misses_total` | Counter   | Промахи cache                         |
 
 > **Для фронтенда**: Эти метрики доступны в Grafana для мониторинга производительности API.
 
@@ -51,9 +51,11 @@ Backend теперь отслеживает метрики для всех analy
 ---
 
 ## Backend Team Response
+
 **Status**: RESOLVED — this document IS the backend response. See the parent request file for the original frontend ask.
 
 Backend имеет integration tests для сложных запросов. Запуск:
+
 ```bash
 RUN_INTEGRATION_TESTS=1 npm run test:integration -- --testPathPattern=orders-analytics
 ```
@@ -76,12 +78,12 @@ Epic 40 добавляет полноценную систему отслежи�
 
 ## Документация
 
-| Документ | Описание |
-|----------|----------|
-| [ORDERS-FBS-SYNC-GUIDE.md](../../../docs/ORDERS-FBS-SYNC-GUIDE.md) | Полное руководство по Epic 40 |
-| [API-PATHS-REFERENCE.md](../../../docs/API-PATHS-REFERENCE.md) | Справочник всех API endpoints |
-| [test-api/14-orders.http](../../../test-api/14-orders.http) | HTTP-примеры запросов |
-| [test-api/40.7-orders-notifications.http](../../../test-api/40.7-orders-notifications.http) | Примеры для уведомлений |
+| Документ                                                                                    | Описание                      |
+| ------------------------------------------------------------------------------------------- | ----------------------------- |
+| [ORDERS-FBS-SYNC-GUIDE.md](../../../docs/ORDERS-FBS-SYNC-GUIDE.md)                          | Полное руководство по Epic 40 |
+| [API-PATHS-REFERENCE.md](../../../docs/API-PATHS-REFERENCE.md)                              | Справочник всех API endpoints |
+| [test-api/14-orders.http](../../../test-api/14-orders.http)                                 | HTTP-примеры запросов         |
+| [test-api/40.7-orders-notifications.http](../../../test-api/40.7-orders-notifications.http) | Примеры для уведомлений       |
 
 ---
 
@@ -96,19 +98,21 @@ X-Cabinet-Id: {cabinetId}
 ```
 
 **Query Parameters:**
-| Параметр | Тип | По умолчанию | Описание |
-|----------|-----|--------------|----------|
-| `from` | ISO date | null | Начало периода |
-| `to` | ISO date | null | Конец периода |
-| `supplier_status` | enum | all | `new`, `confirm`, `complete`, `cancel` |
-| `wb_status` | enum | all | `waiting`, `sorted`, `sold`, `canceled` |
-| `nm_id` | number | null | Фильтр по артикулу WB |
-| `sort_by` | string | `created_at` | `created_at`, `status_updated_at`, `price`, `sale_price` |
-| `sort_order` | string | `desc` | `asc`, `desc` |
-| `limit` | number | 100 | 1-1000 |
-| `offset` | number | 0 | Пагинация |
+
+| Параметр          | Тип      | По умолчанию | Описание                                                 |
+| ----------------- | -------- | ------------ | -------------------------------------------------------- |
+| `from`            | ISO date | null         | Начало периода                                           |
+| `to`              | ISO date | null         | Конец периода                                            |
+| `supplier_status` | enum     | all          | `new`, `confirm`, `complete`, `cancel`                   |
+| `wb_status`       | enum     | all          | `waiting`, `sorted`, `sold`, `canceled`                  |
+| `nm_id`           | number   | null         | Фильтр по артикулу WB                                    |
+| `sort_by`         | string   | `created_at` | `created_at`, `status_updated_at`, `price`, `sale_price` |
+| `sort_order`      | string   | `desc`       | `asc`, `desc`                                            |
+| `limit`           | number   | 100          | 1-1000                                                   |
+| `offset`          | number   | 0            | Пагинация                                                |
 
 **Response:**
+
 ```json
 {
   "items": [
@@ -153,6 +157,7 @@ X-Cabinet-Id: {cabinetId}
 ```
 
 **Response:** Расширенная информация с историей статусов:
+
 ```json
 {
   "orderId": "1234567890",
@@ -198,6 +203,7 @@ X-Cabinet-Id: {cabinetId}
 **Cache:** 5 минут | **Лимит периода:** 90 дней
 
 **Response:**
+
 ```json
 {
   "avgConfirmationTimeMinutes": 35.5,
@@ -220,6 +226,7 @@ X-Cabinet-Id: {cabinetId}
 ```
 
 **Применение в UI:**
+
 - Виджет "Средняя скорость обработки"
 - График перцентилей (p50/p95/p99)
 - Breakdown по складам
@@ -238,16 +245,18 @@ X-Cabinet-Id: {cabinetId}
 **Cache:** 1 минута (real-time dashboard)
 
 **Query Parameters:**
-| Параметр | Тип | По умолчанию | Описание |
-|----------|-----|--------------|----------|
-| `confirmationSlaHours` | number | 2 | SLA подтверждения (часы) |
-| `completionSlaHours` | number | 24 | SLA сборки (часы) |
-| `atRiskLimit` | number | 20 | Макс. кол-во at-risk заказов (1-100) |
-| `atRiskOffset` | number | 0 | Смещение для пагинации at-risk |
+
+| Параметр               | Тип    | По умолчанию | Описание                             |
+| ---------------------- | ------ | ------------ | ------------------------------------ |
+| `confirmationSlaHours` | number | 2            | SLA подтверждения (часы)             |
+| `completionSlaHours`   | number | 24           | SLA сборки (часы)                    |
+| `atRiskLimit`          | number | 20           | Макс. кол-во at-risk заказов (1-100) |
+| `atRiskOffset`         | number | 0            | Смещение для пагинации at-risk       |
 
 > **Story 40.6 Enhancement**: Добавлена пагинация для at-risk orders. При большом количестве проблемных заказов используйте `atRiskLimit` и `atRiskOffset` для постраничной загрузки.
 
 **Response:**
+
 ```json
 {
   "confirmationSlaHours": 2,
@@ -272,14 +281,16 @@ X-Cabinet-Id: {cabinetId}
 ```
 
 **Поля ответа:**
-| Поле | Тип | Описание |
-|------|-----|----------|
-| `atRiskTotal` | number | **Общее** кол-во at-risk заказов (до пагинации) |
-| `atRiskOrders` | array | Пагинированный список (max `atRiskLimit`) |
-| `breachedCount` | number | Количество уже просроченных заказов |
-| `cachedAt` | string | Время кеширования ответа |
+
+| Поле            | Тип    | Описание                                        |
+| --------------- | ------ | ----------------------------------------------- |
+| `atRiskTotal`   | number | **Общее** кол-во at-risk заказов (до пагинации) |
+| `atRiskOrders`  | array  | Пагинированный список (max `atRiskLimit`)       |
+| `breachedCount` | number | Количество уже просроченных заказов             |
+| `cachedAt`      | string | Время кеширования ответа                        |
 
 **Пример пагинации:**
+
 ```typescript
 // Первая страница
 GET /v1/analytics/orders/sla?atRiskLimit=10&atRiskOffset=0
@@ -291,6 +302,7 @@ GET /v1/analytics/orders/sla?atRiskLimit=10&atRiskOffset=10
 ```
 
 **Применение в UI:**
+
 - Виджет "SLA Compliance" с процентами
 - Список заказов "под угрозой" (atRiskOrders) с пагинацией
 - Счётчик просроченных (breachedCount)
@@ -310,6 +322,7 @@ X-Cabinet-Id: {cabinetId}
 **Cache:** 5 минут | **Лимит периода:** 90 дней
 
 **Response:**
+
 ```json
 {
   "hourlyTrend": [
@@ -334,6 +347,7 @@ X-Cabinet-Id: {cabinetId}
 ```
 
 **Применение в UI:**
+
 - График почасового распределения (heatmap)
 - График дневных трендов (line chart)
 - Виджет "Пиковые часы"
@@ -353,6 +367,7 @@ X-Cabinet-Id: {cabinetId}
 ```
 
 **Response:**
+
 ```json
 {
   "cabinetId": "550e8400-e29b-41d4-a716-446655440000",
@@ -388,16 +403,17 @@ Content-Type: application/json
 ```
 
 **Поля настроек:**
-| Поле | Тип | Описание |
-|------|-----|----------|
-| `newOrderEnabled` | boolean | Уведомления о новых заказах |
-| `slaWarningEnabled` | boolean | Предупреждения о приближении SLA |
-| `dailySummaryEnabled` | boolean | Ежедневная сводка |
-| `dailySummaryHour` | number (0-23) | Час отправки сводки (MSK) |
-| `quietHoursStart` | number (0-23) | Начало тихих часов |
-| `quietHoursEnd` | number (0-23) | Конец тихих часов |
-| `confirmationSlaWarningMinutes` | number | За сколько минут до SLA подтверждения предупреждать |
-| `completionSlaWarningMinutes` | number | За сколько минут до SLA сборки предупреждать |
+
+| Поле                            | Тип           | Описание                                            |
+| ------------------------------- | ------------- | --------------------------------------------------- |
+| `newOrderEnabled`               | boolean       | Уведомления о новых заказах                         |
+| `slaWarningEnabled`             | boolean       | Предупреждения о приближении SLA                    |
+| `dailySummaryEnabled`           | boolean       | Ежедневная сводка                                   |
+| `dailySummaryHour`              | number (0-23) | Час отправки сводки (MSK)                           |
+| `quietHoursStart`               | number (0-23) | Начало тихих часов                                  |
+| `quietHoursEnd`                 | number (0-23) | Конец тихих часов                                   |
+| `confirmationSlaWarningMinutes` | number        | За сколько минут до SLA подтверждения предупреждать |
+| `completionSlaWarningMinutes`   | number        | За сколько минут до SLA сборки предупреждать        |
 
 ---
 
@@ -412,6 +428,7 @@ X-Cabinet-Id: {cabinetId}
 ```
 
 **Response:**
+
 ```json
 {
   "jobId": "orders-fbs-sync:f75836f7-c0bc-4b2c-823c-a1f3508cce8e:1704387600000",
@@ -428,6 +445,7 @@ X-Cabinet-Id: {cabinetId}
 ```
 
 **Response:**
+
 ```json
 {
   "enabled": true,
@@ -756,17 +774,18 @@ orders_analytics_cache_misses_total{endpoint="velocity|sla|volume"}
 ### Grafana Dashboard
 
 Рекомендуемые панели для мониторинга:
+
 - **Query Latency p95**: `histogram_quantile(0.95, orders_analytics_query_duration_ms)`
 - **Cache Hit Rate**: `rate(cache_hits) / (rate(cache_hits) + rate(cache_misses))`
 - **Error Rate**: `rate(queries_total{status="error"}) / rate(queries_total)`
 
 ### SLO (Service Level Objectives)
 
-| Метрика | Target | Alert Threshold |
-|---------|--------|-----------------|
+| Метрика         | Target  | Alert Threshold   |
+| --------------- | ------- | ----------------- |
 | API p95 latency | < 500ms | > 500ms for 5 min |
-| Error rate | < 1% | > 2% for 5 min |
-| Cache hit rate | > 80% | < 60% for 10 min |
+| Error rate      | < 1%    | > 2% for 5 min    |
+| Cache hit rate  | > 80%   | < 60% for 10 min  |
 
 ---
 
@@ -812,10 +831,12 @@ orders_analytics_cache_misses_total{endpoint="velocity|sla|volume"}
 ## Требования к Telegram
 
 Для работы уведомлений пользователю необходимо:
+
 1. Подключить Telegram бота (существующий функционал из Epic 34)
 2. Включить нужные типы уведомлений в настройках
 
 Система автоматически:
+
 - Проверяет SLA каждую минуту (cron)
 - Отправляет daily summary в указанный час
 - Соблюдает тихие часы
@@ -825,6 +846,7 @@ orders_analytics_cache_misses_total{endpoint="velocity|sla|volume"}
 ## Миграция данных
 
 Синхронизация заказов запускается автоматически:
+
 - **Каждые 5 минут** для всех активных кабинетов
 - **Сразу при добавлении WB ключа** - первичная загрузка
 
@@ -834,16 +856,17 @@ orders_analytics_cache_misses_total{endpoint="velocity|sla|volume"}
 
 ## Связанные эпики
 
-| Epic | Описание | Связь |
-|------|----------|-------|
+| Epic                                              | Описание               | Связь                       |
+| ------------------------------------------------- | ---------------------- | --------------------------- |
 | [Epic 34](./73-telegram-notifications-epic-34.md) | Telegram Notifications | Базовая интеграция Telegram |
-| [Epic 33](./71-advertising-analytics-epic-33.md) | Advertising Analytics | Аналогичная структура sync |
-| [Epic 35](./139-total-sales-organic-ad-split.md) | Total Sales & Organic | Daily sales sync |
+| [Epic 33](./71-advertising-analytics-epic-33.md)  | Advertising Analytics  | Аналогичная структура sync  |
+| [Epic 35](./139-total-sales-organic-ad-split.md)  | Total Sales & Organic  | Daily sales sync            |
 
 ---
 
 ## Контакты
 
 При вопросах по API обращайтесь к backend-команде или смотрите:
+
 - Swagger UI: `http://localhost:3000/api`
 - Test API файлы: `test-api/14-orders.http`

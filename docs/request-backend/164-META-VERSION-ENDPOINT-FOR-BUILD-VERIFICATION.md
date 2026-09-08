@@ -45,13 +45,13 @@ This doc fixes the awareness gap. It lives in `frontend/docs/request-backend/` (
 
 ## When to use it
 
-| Scenario | Use it like this |
-|----------|-----------------|
-| You ran `npm run build && pm2 restart wb-repricer` and want to confirm the new build is actually running | `curl http://localhost:3000/v1/meta/version` and check `build_timestamp` is fresh |
-| You're debugging a "the change should be live but isn't" issue | Compare the live `build_timestamp` against your last build time |
-| You're writing an E2E spec that needs to know which backend version it's running against | `fetch('/v1/meta/version').then(r => r.json())` — no auth needed |
-| You want to confirm a deploy went out in CI | curl the endpoint after deploy and assert `commit_sha` matches the expected commit |
-| You're onboarding a new dev and they ask "how do I know my changes are running?" | Point them at this endpoint instead of `ls -la dist/` |
+| Scenario                                                                                                 | Use it like this                                                                   |
+| -------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------- |
+| You ran `npm run build && pm2 restart wb-repricer` and want to confirm the new build is actually running | `curl http://localhost:3000/v1/meta/version` and check `build_timestamp` is fresh  |
+| You're debugging a "the change should be live but isn't" issue                                           | Compare the live `build_timestamp` against your last build time                    |
+| You're writing an E2E spec that needs to know which backend version it's running against                 | `fetch('/v1/meta/version').then(r => r.json())` — no auth needed                   |
+| You want to confirm a deploy went out in CI                                                              | curl the endpoint after deploy and assert `commit_sha` matches the expected commit |
+| You're onboarding a new dev and they ask "how do I know my changes are running?"                         | Point them at this endpoint instead of `ls -la dist/`                              |
 
 ---
 
@@ -61,16 +61,16 @@ This doc fixes the awareness gap. It lives in `frontend/docs/request-backend/` (
 GET /v1/meta/version
 ```
 
-| Property | Value |
-|----------|-------|
-| Method | `GET` |
-| Path | `/v1/meta/version` |
-| Auth | **None** — `@Public()`, no JWT required, no `X-Cabinet-Id` header |
-| Rate limit | None (it's a static metadata response) |
-| CORS | Allowed from frontend origin |
-| Source | `src/health/health.controller.ts:131-148` |
-| DTO | `src/health/dto/version-response.dto.ts` (`VersionResponseDto`) |
-| Tag | `Health` (Swagger UI) |
+| Property   | Value                                                             |
+| ---------- | ----------------------------------------------------------------- |
+| Method     | `GET`                                                             |
+| Path       | `/v1/meta/version`                                                |
+| Auth       | **None** — `@Public()`, no JWT required, no `X-Cabinet-Id` header |
+| Rate limit | None (it's a static metadata response)                            |
+| CORS       | Allowed from frontend origin                                      |
+| Source     | `src/health/health.controller.ts:131-148`                         |
+| DTO        | `src/health/dto/version-response.dto.ts` (`VersionResponseDto`)   |
+| Tag        | `Health` (Swagger UI)                                             |
 
 ### Response shape
 
@@ -85,8 +85,8 @@ interface VersionResponse {
 
 ### Status codes
 
-| Code | Meaning |
-|------|---------|
+| Code     | Meaning                                                  |
+| -------- | -------------------------------------------------------- |
 | `200 OK` | Always — the endpoint cannot fail under normal operation |
 
 There is no `404`, `401`, `403`, or `500` path. If you get a 5xx, the backend itself is broken (try `GET /v1/health` next).
@@ -142,19 +142,20 @@ const { data: version } = useQuery({
 
 This endpoint is documented in **3 backend reference surfaces** — this doc just adds the frontend awareness layer:
 
-| Where | Reference |
-|-------|-----------|
-| Manual test-api file | [`../../../test-api/02-health.http:31-35`](../../../test-api/02-health.http) — `### 3. Service Version & Build Metadata (Story 5.1)` block + response example at lines 193-202 |
-| Auto-generated test-api file | [`../../../test-api/17-health.http:131-176`](../../../test-api/17-health.http) — refreshed by `npm run docs:generate` (Stories 86.1 + 86.2) |
-| Architecture index | [`../../../CLAUDE-API.md:49`](../../../CLAUDE-API.md) — listed in the public-endpoints table |
-| Live Swagger UI | http://localhost:3000/api → Health tag → `GET /v1/meta/version` |
-| OpenAPI spec | `curl http://localhost:3000/api-json | jq '.paths."/v1/meta/version"'` |
+| Where                        | Reference                                                                                                                                                                      |
+| ---------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Manual test-api file         | [`../../../test-api/02-health.http:31-35`](../../../test-api/02-health.http) — `### 3. Service Version & Build Metadata (Story 5.1)` block + response example at lines 193-202 |
+| Auto-generated test-api file | [`../../../test-api/17-health.http:131-176`](../../../test-api/17-health.http) — refreshed by `npm run docs:generate` (Stories 86.1 + 86.2)                                    |
+| Architecture index           | [`../../../CLAUDE-API.md:49`](../../../CLAUDE-API.md) — listed in the public-endpoints table                                                                                   |
+| Live Swagger UI              | http://localhost:3000/api → Health tag → `GET /v1/meta/version`                                                                                                                |
+| OpenAPI spec                 | `curl http://localhost:3000/api-json                                                                                                                                           | jq '.paths."/v1/meta/version"'` |
 
 ---
 
 ## Historical context
 
 > **Glossary** for readers without backend BMad context:
+>
 > - **"Story 5.1"** = the original BMad backend story (~2025) that introduced this endpoint. Just a historical pointer.
 > - **`@Public()`** = a NestJS decorator on the backend route that disables the global JWT auth guard for that endpoint. Means "no Authorization header required".
 > - **`task-NNN`** = Backlog.md task tracker entries living in `backlog/tasks/` at the project root. Equivalent to issues.

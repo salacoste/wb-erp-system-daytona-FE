@@ -21,6 +21,7 @@
 ## 🎨 Design System Context (Краткая справка)
 
 **Используемые цвета:**
+
 - **Primary Red**: `#E53935` (основной бренд WB Repricer)
 - **Telegram Blue**: `#0088CC` (для Telegram-специфичных элементов)
 - **Success Green**: `#4CAF50`
@@ -29,19 +30,23 @@
 - **Gray Scale**: #F5F5F5 (backgrounds) → #212121 (dark text)
 
 **Типографика:**
+
 - H2 (Section Headers): 24-28px, semi-bold/bold
 - Body: 14-16px, regular
 - Labels: 14px, medium
 
 **Spacing:**
+
 - Card padding: 20-24px
 - Section spacing: 32-48px
 - Form field spacing: 16-20px
 
 **Компоненты:**
+
 - **shadcn/ui**: Switch, Dialog, Select, Button, Alert, Badge
 
 **Breakpoints:**
+
 - Mobile: <640px
 - Tablet: 640-1024px
 - Desktop: >1024px
@@ -57,24 +62,28 @@
 **Ответ**: **A) Центрированный modal overlay (стандартный Dialog)**
 
 **Обоснование:**
+
 - ✅ **Согласованность**: В проекте уже используются модальные окна (см. `Component 10: Modal/Dialog` в `front-end-spec.md`)
 - ✅ **Фокус внимания**: Центрированный modal привлекает внимание к критическому процессу привязки
 - ✅ **Mobile-friendly**: Modal overlay адаптируется на мобильных (занимает почти весь экран)
 - ✅ **Знакомый паттерн**: Большинство пользователей ожидают modal для такого важного действия
 
 **Технические детали:**
+
 - Компонент: `shadcn/ui Dialog`
 - Размер: 480-560px ширина на desktop, full-screen на mobile (<640px)
 - Backdrop: Overlay с `backdrop-blur-sm` и `bg-black/50`
 - Animation: Fade-in + scale transform (200ms)
 
 **UX рекомендации:**
+
 - Кнопка закрытия (X) в правом верхнем углу
 - Закрытие по клику на backdrop (с подтверждением, если процесс начат)
 - ESC key для закрытия
 - Заголовок modal: "Подключение Telegram" (H2, 24px, semi-bold)
 
 **Альтернативы отклонены:**
+
 - ❌ **Side panel**: Менее заметен, больше подходит для secondary actions
 - ❌ **Full-page overlay**: Слишком тяжеловесно для этой задачи
 
@@ -87,11 +96,13 @@
 **Ответ**: **D) Комбинация: Линейный прогресс-бар + текст**
 
 **Обоснование:**
+
 - ✅ **Двойной feedback**: Текст для точности ("9:45 осталось"), прогресс-бар для визуальной динамики
 - ✅ **Читаемость**: Текст понятен сразу, прогресс-бар показывает общую картину
 - ✅ **Urgency indicator**: Когда остается <2 минут, можно менять цвет прогресс-бара на Warning Orange (#FF9800)
 
 **Визуальный дизайн:**
+
 ```
 ┌─────────────────────────────────────────────┐
 │  Код действителен ещё: 9:45                 │
@@ -100,6 +111,7 @@
 ```
 
 **Технические детали:**
+
 - **Текст**: 14px, medium weight, Gray 700 (#616161)
 - **Прогресс-бар**:
   - Высота: 8px
@@ -109,12 +121,14 @@
 - **Update interval**: Каждую секунду обновлять текст и прогресс
 
 **Состояния:**
+
 1. **Normal** (10:00 - 2:01): Blue прогресс-бар
 2. **Warning** (2:00 - 0:31): Orange прогресс-бар
 3. **Critical** (0:30 - 0:00): Red прогресс-бар, пульсация
 4. **Expired** (0:00): Показать "Код истёк. Получите новый код."
 
 **Accessibility:**
+
 - aria-label="Код действителен ещё 9 минут 45 секунд"
 - role="timer" на прогресс-баре
 
@@ -127,6 +141,7 @@
 **Ответ**: **Primary CTA с Telegram logo и специфичным стилем**
 
 **Дизайн кнопки:**
+
 - **Background**: Telegram Blue (#0088CC) — специфичный цвет для Telegram-действий
 - **Text**: "Открыть в Telegram" — ясно и конкретно
 - **Icon**: Telegram paper plane logo слева от текста (20x20px)
@@ -136,11 +151,13 @@
 - **Width**: Full-width на mobile, auto на desktop (центрировано)
 
 **Hover/Active states:**
+
 - **Hover**: Background #0077B3 (darker blue)
 - **Active/Pressed**: Background #006699
 - **Focus ring**: 2px outline, Telegram Blue with offset
 
 **Расположение в modal:**
+
 ```
 ┌──────────────────────────────────────────┐
 │  Подключение Telegram                  [×]│
@@ -165,12 +182,14 @@
 ```
 
 **Технические детали:**
+
 - Deep link: `https://t.me/Kernel_crypto_bot?start=A1B2C3D4`
 - На mobile: Откроет приложение Telegram автоматически
 - На desktop: Откроет Telegram Web или предложит скачать приложение
 - Fallback: Если deep link не работает, показать инструкцию с копированием команды
 
 **Accessibility:**
+
 - aria-label="Открыть бота WB Repricer в приложении Telegram"
 - Keyboard accessible (Tab to focus, Enter to activate)
 
@@ -183,6 +202,7 @@
 **Ответ**: **A) Spinner + текст "Ожидаем подтверждения..."**
 
 **Визуальный дизайн:**
+
 ```
 ┌──────────────────────────────────────────┐
 │  ⏳ Ожидаем подтверждения...              │
@@ -191,22 +211,26 @@
 ```
 
 **Технические детали:**
+
 - **Spinner**: 24x24px, Telegram Blue (#0088CC), 1.5s rotation
 - **Text**: 14px, regular, Gray 600 (#757575)
 - **Layout**: Flexbox, center-aligned, gap 8px между spinner и текстом
 - **Position**: Под прогресс-баром, над кнопкой закрытия modal
 
 **Состояния polling:**
+
 1. **Initial** (0-5s): "Ожидаем подтверждения..."
 2. **In Progress** (5s+): "Всё ещё ожидаем... Проверьте Telegram."
 3. **Long Wait** (>60s): "Подтверждение занимает дольше обычного. Убедитесь, что вы отправили команду боту."
 
 **Accessibility:**
+
 - role="status" на контейнере
 - aria-live="polite" для динамического текста
 - aria-busy="true" пока polling активен
 
 **UX рекомендации:**
+
 - Polling interval: 3 секунды (как указано в требованиях)
 - Max polling duration: 10 минут (совпадает с временем жизни кода)
 - После 10 минут: Показать "Код истёк. Пожалуйста, закройте окно и попробуйте снова."
@@ -220,12 +244,14 @@
 **Ответ**: **B) Отдельный confirmation dialog**
 
 **Обоснование:**
+
 - ✅ **Критичность действия**: Отключение — необратимое действие, требует явного подтверждения
 - ✅ **Фокус внимания**: Отдельный dialog привлекает внимание к серьёзности действия
 - ✅ **Ясность**: Пользователь точно понимает, что произойдёт
 - ✅ **Стандартный паттерн**: Используется в проекте для destructive actions
 
 **Визуальный дизайн:**
+
 ```
 ┌──────────────────────────────────────────┐
 │  Отключить Telegram?                   [×]│
@@ -249,12 +275,14 @@
 ```
 
 **Технические детали:**
+
 - **Title**: "Отключить Telegram?" (H3, 20px, semi-bold)
 - **Warning icon**: ⚠️ (Warning Orange #FF9800, 24x24px)
 - **Body text**: 14px, regular, Gray 700 (#616161)
 - **Bullet points**: Ясно объясняют последствия
 
 **Кнопки:**
+
 1. **Отменить** (Secondary button):
    - Background: White
    - Border: 1px solid Gray 300 (#E0E0E0)
@@ -268,14 +296,17 @@
    - Focus ring: 2px Red outline
 
 **Button order:**
+
 - **Desktop**: [Отменить] слева, [Отключить] справа (стандартный паттерн)
 - **Mobile**: Vertical stack, [Отключить] сверху (более заметная кнопка), [Отменить] снизу
 
 **Поведение:**
+
 - Клик на "Отменить" → закрывает dialog, ничего не происходит
 - Клик на "Отключить Telegram" → вызывает `DELETE /telegram/unbind`, показывает loading spinner, закрывает dialog после успеха, показывает toast "Telegram отключен"
 
 **Accessibility:**
+
 - role="alertdialog" на modal
 - aria-labelledby="dialog-title"
 - aria-describedby="dialog-description"
@@ -292,6 +323,7 @@
 **Ответ**: **B) Border highlight для включенных + цветовое изменение toggle**
 
 **Обоснование:**
+
 - ✅ **Accessibility**: Не полагаемся только на цвет (border + toggle state)
 - ✅ **Консистентность**: Соответствует дизайн-системе проекта (borders, не background changes)
 - ✅ **Читаемость**: Белый background всегда, легко читать текст
@@ -299,6 +331,7 @@
 **Визуальный дизайн:**
 
 **Enabled Event Type:**
+
 ```
 ┌─────────────────────────────────────────┐ ← Border: 2px Telegram Blue (#0088CC)
 │  ☑️ Задача выполнена успешно         [●]│ ← Toggle: Blue, ON
@@ -310,6 +343,7 @@
 ```
 
 **Disabled Event Type:**
+
 ```
 ┌─────────────────────────────────────────┐ ← Border: 1px Gray 300 (#E0E0E0)
 │  ☐ Задача зависла                    [○]│ ← Toggle: Gray, OFF
@@ -323,6 +357,7 @@
 **Технические детали:**
 
 **Card (Enabled state):**
+
 - Border: 2px solid Telegram Blue (#0088CC)
 - Background: White (#FFFFFF)
 - Shadow: shadow-sm (subtle elevation)
@@ -330,6 +365,7 @@
 - Border-radius: 8px
 
 **Card (Disabled state):**
+
 - Border: 1px solid Gray 300 (#E0E0E0)
 - Background: White (#FFFFFF)
 - Shadow: none
@@ -338,16 +374,19 @@
 - Text color: Gray 600 (#757575) для description (slightly muted)
 
 **Toggle Switch** (shadcn/ui Switch):
+
 - **ON state**: Background Telegram Blue (#0088CC), white circle
 - **OFF state**: Background Gray 300 (#E0E0E0), white circle
 - **Size**: 44x24px (track), 20x20px (thumb)
 - **Animation**: 200ms ease-in-out transition
 
 **Icon:**
+
 - Checkmark (☑️) для enabled: Telegram Blue (#0088CC), 20x20px
 - Empty checkbox (☐) для disabled: Gray 400 (#BDBDBD), 20x20px
 
 **Layout:**
+
 ```
 ┌──────────────────────────────────────────┐
 │  [Icon] Название события         [Toggle]│ ← Flexbox, space-between
@@ -358,11 +397,13 @@
 ```
 
 **Accessibility:**
+
 - aria-checked="true|false" на toggle
 - aria-label="Включить уведомления о завершении задач" на toggle
 - role="switch" на toggle element
 
 **UX рекомендации:**
+
 - Клик на ВСЕЙ карточке toggles switch (не только на самом switch)
 - Визуальный feedback: border меняется instantly после toggle
 - No confirmation dialog — изменения сохраняются через "Сохранить настройки" button внизу
@@ -376,12 +417,14 @@
 **Ответ**: **A) Всегда видимые (текст под заголовком)**
 
 **Обоснование:**
+
 - ✅ **Mobile-friendly**: Tooltips не работают на touch devices
 - ✅ **No hidden information**: Пользователь сразу понимает, что делает каждая опция
 - ✅ **Accessibility**: Screen readers читают описание вместе с названием
 - ✅ **Reduces cognitive load**: Не нужно hover/click для понимания опции
 
 **Визуальный дизайн:**
+
 ```
 ┌─────────────────────────────────────────┐
 │  ☑️ Задача выполнена успешно         [●]│ ← Title: 16px, medium
@@ -393,6 +436,7 @@
 ```
 
 **Технические детали:**
+
 - **Title**: 16px, medium weight, Gray 800 (#424242)
 - **Description**: 14px, regular, Gray 600 (#757575)
 - **Line height**: 1.5 (для читаемости)
@@ -401,17 +445,20 @@
 
 **Content guidelines:**
 Описания должны быть:
+
 1. **Конкретными**: "Уведомления при завершении импорта" вместо "Когда задачи завершены"
 2. **Краткими**: Максимум 2 строки (на desktop ~80 символов)
 3. **Actionable**: Объясняют, КОГДА придёт уведомление
 
 **Примеры описаний:**
+
 - **task_completed**: "Уведомления при завершении импорта, синхронизации, расчёта маржи"
 - **task_failed**: "Уведомления при ошибках после всех попыток retry"
 - **task_stalled**: "Уведомления когда задача выполняется более 30 минут"
 - **daily_digest**: "Сводка за день: успешные задачи, ошибки, задачи в очереди"
 
 **Accessibility:**
+
 - aria-describedby связывает title с description
 - Description читается screen reader'ом автоматически
 
@@ -424,12 +471,14 @@
 **Ответ**: **A) Radio buttons с флагами: [🇷🇺 Русский] [🇬🇧 English]**
 
 **Обоснование:**
+
 - ✅ **Ясность**: Сразу видны ОБА варианта (не спрятаны в dropdown)
 - ✅ **Quick toggle**: Один клик для смены языка
 - ✅ **Visual**: Флаги помогают быстро идентифицировать язык
 - ✅ **Accessibility**: Radio buttons лучше поддерживаются screen readers
 
 **Визуальный дизайн:**
+
 ```
 ┌──────────────────────────────────────────┐
 │  Язык уведомлений:                        │ ← Label: 16px, medium
@@ -442,6 +491,7 @@
 **Технические детали:**
 
 **Radio Button (Selected):**
+
 - Border: 2px solid Telegram Blue (#0088CC)
 - Background: Light Blue (#E3F2FD) — subtle highlight
 - Inner circle: Telegram Blue (#0088CC)
@@ -450,6 +500,7 @@
 - Border-radius: 8px
 
 **Radio Button (Unselected):**
+
 - Border: 1px solid Gray 300 (#E0E0E0)
 - Background: White (#FFFFFF)
 - Inner circle: Empty (just border)
@@ -458,15 +509,18 @@
 - Border-radius: 8px
 
 **Flag icons:**
+
 - Size: 20x20px
 - Position: Left of text, 8px spacing
 - Use Unicode emoji или SVG flags
 
 **Layout:**
+
 - **Desktop**: Horizontal (side-by-side), gap 16px
 - **Mobile**: Horizontal (если помещаются) или vertical stack
 
 **HTML structure:**
+
 ```html
 <fieldset>
   <legend>Язык уведомлений:</legend>
@@ -484,11 +538,13 @@
 ```
 
 **Accessibility:**
+
 - role="radiogroup" на контейнере
 - aria-label="Выберите язык уведомлений"
 - Keyboard navigation: Arrow keys для переключения между options
 
 **UX примечание:**
+
 - Ясно указать: "Это язык Telegram-сообщений, а не интерфейса платформы"
 - Hint text под switcher: "Язык интерфейса платформы настраивается отдельно в Профиле"
 
@@ -501,6 +557,7 @@
 **Ответ**: **B) Inline с другими event types, но time picker показывается conditionally**
 
 **Обоснование:**
+
 - ✅ **Консистентность**: Daily digest — это тоже event type, логично в одном списке
 - ✅ **Простота**: Не нужна отдельная карточка для одной опции
 - ✅ **Progressive disclosure**: Time picker появляется только когда digest включен
@@ -508,6 +565,7 @@
 **Визуальный дизайн:**
 
 **Daily Digest DISABLED:**
+
 ```
 ┌─────────────────────────────────────────┐
 │  ☐ Ежедневный дайджест               [○]│
@@ -519,6 +577,7 @@
 ```
 
 **Daily Digest ENABLED:**
+
 ```
 ┌─────────────────────────────────────────┐ ← Border: 2px Blue
 │  ☑️ Ежедневный дайджест              [●]│
@@ -534,12 +593,14 @@
 **Технические детали:**
 
 **Time Picker (conditional render):**
+
 - **Visibility**: `display: none` when digest OFF, `display: block` when digest ON
 - **Animation**: Slide-down animation (200ms ease) when appearing
 - **Component**: Native HTML `<input type="time">` OR shadcn/ui Select with time options
 - **Default value**: "08:00" (8 AM)
 
 **Layout:**
+
 ```
 ┌──────────────────────────────────────────┐
 │  [Checkbox] Название                [Toggle]│ ← Standard event card
@@ -554,6 +615,7 @@
 ```
 
 **Time Picker Design:**
+
 - **Label**: "Время отправки:" (14px, medium, Gray 700)
 - **Icon**: 🕐 clock icon (16x16px, Gray 600)
 - **Dropdown/Input**: 120px width, 40px height
@@ -562,15 +624,18 @@
 - **Focus state**: 2px Telegram Blue outline
 
 **Spacing:**
+
 - 12px margin-top от description до time picker
 - Time picker внутри card padding (не отдельная секция)
 
 **Accessibility:**
+
 - aria-hidden="true|false" на time picker section (в зависимости от toggle state)
 - aria-label="Выберите время отправки дайджеста" на time picker
 - Announce change via screen reader: "Ежедневный дайджест включен. Выберите время отправки."
 
 **UX рекомендации:**
+
 - Когда toggle OFF → ON: Автоматически focus на time picker
 - Default time: 08:00 (логичное утреннее время)
 - Hint text: "Дайджест отправляется в указанное время по вашему часовому поясу"
@@ -584,6 +649,7 @@
 **Ответ**: **B) Manual save button внизу страницы "Сохранить настройки"**
 
 **Обоснование:**
+
 - ✅ **User control**: Пользователь явно контролирует, когда изменения применяются
 - ✅ **Error prevention**: Можно отменить случайные изменения (не сохранять)
 - ✅ **Consistency**: В проекте используется manual save для COGS и других форм
@@ -592,6 +658,7 @@
 **Визуальный дизайн:**
 
 **Save button placement:**
+
 ```
 ┌──────────────────────────────────────────┐
 │  NotificationPreferencesPanel             │
@@ -612,6 +679,7 @@
 **Button Design:**
 
 **"Сохранить настройки" (Primary button):**
+
 - Background: Primary Red (#E53935) — стандартный primary action в проекте
 - Text: White, 14px, semi-bold
 - Icon: ✓ checkmark слева (16x16px)
@@ -620,12 +688,14 @@
 - Width: Auto на desktop, full-width на mobile
 
 **Hover/States:**
+
 - Hover: Background #D32F2F (darker red)
 - Active: Background #C62828
 - Disabled: Background Gray 300 (#E0E0E0), Gray 600 text (когда нет изменений)
 - Loading: Spinner + "Сохранение..." text
 
 **"Отменить" (Secondary button):**
+
 - Background: White
 - Border: 1px solid Gray 300 (#E0E0E0)
 - Text: Gray 700 (#616161), 14px, medium
@@ -633,6 +703,7 @@
 - **Функция**: Сбросить все изменения к последнему сохранённому состоянию
 
 **Dirty State Detection:**
+
 ```typescript
 // Показать индикатор unsaved changes
 const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
@@ -647,6 +718,7 @@ const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
 ```
 
 **Unsaved Changes Indicator:**
+
 ```
 ┌──────────────────────────────────────────┐
 │  ⚠️ У вас есть несохранённые изменения    │ ← Warning banner (появляется когда dirty)
@@ -655,27 +727,32 @@ const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
 ```
 
 **Navigation Prevention:**
+
 - Если `hasUnsavedChanges === true` и пользователь пытается уйти со страницы:
   - Показать confirmation dialog: "У вас есть несохранённые изменения. Покинуть страницу без сохранения?"
   - [Отменить] | [Покинуть без сохранения]
 
 **Success Feedback:**
 После успешного сохранения:
+
 - Toast notification: "Настройки сохранены" (Success Green, 3s auto-dismiss)
 - Кнопка "Сохранить настройки" становится disabled
 - Unsaved changes banner исчезает
 
 **Error Handling:**
 Если сохранение fails:
+
 - Toast notification: "Не удалось сохранить настройки. Попробуйте ещё раз." (Error Red)
 - Кнопка "Сохранить настройки" остаётся active
 - Allow retry
 
 **Accessibility:**
+
 - aria-live="polite" на unsaved changes banner
 - aria-busy="true" на save button во время loading
 
 **Альтернатива (отклонена):**
+
 - ❌ **Auto-save**: Может приводить к случайным изменениям, менее predictable, не согласуется с остальной системой
 
 ---
@@ -689,12 +766,14 @@ const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
 **Ответ**: **A) Native HTML `<input type="time">` (работает на мобильных)**
 
 **Обоснование:**
+
 - ✅ **Mobile-friendly**: Открывает native time picker на iOS/Android (оптимизировано для touch)
 - ✅ **Accessibility**: Встроенная поддержка keyboard navigation и screen readers
 - ✅ **Performance**: Не требует дополнительных библиотек
 - ✅ **Consistency**: Пользователи знакомы с native pickers своей ОС
 
 **Визуальный дизайн:**
+
 ```
 ┌──────────────────────────────────────────┐
 │  С:  [23:00 ▼]   До:  [07:00 ▼]         │
@@ -706,6 +785,7 @@ const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
 **Технические детали:**
 
 **HTML:**
+
 ```html
 <label>
   С:
@@ -719,6 +799,7 @@ const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
 ```
 
 **CSS Styling:**
+
 ```css
 .time-picker {
   width: 120px;
@@ -743,19 +824,23 @@ const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
 ```
 
 **Format:**
+
 - **24-hour format**: "23:00" (easier для русскоязычных пользователей)
 - **Step interval**: 15 минут (00:00, 00:15, 00:30, 00:45, 01:00, ...)
 - **Validation**: Автоматическая через browser (не позволяет вводить invalid time)
 
 **Desktop Enhancement (optional):**
+
 - Можно добавить custom styled dropdown для desktop (shadcn/ui Select)
 - Но на mobile ВСЕГДА использовать native `<input type="time">`
 
 **Browser Support:**
+
 - Modern browsers: Полная поддержка
 - Fallback (старые browsers): Текстовое поле с placeholder "HH:MM", validation через JavaScript
 
 **Accessibility:**
+
 - aria-label="Начало тихих часов" на "from" picker
 - aria-label="Конец тихих часов" на "to" picker
 - Keyboard navigation: Tab между pickers, Arrow keys для изменения времени
@@ -769,11 +854,13 @@ const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
 **Ответ**: **B) Grouped dropdown (Europe, Asia, etc.)**
 
 **Обоснование:**
+
 - ✅ **Organization**: Группировка по регионам помогает быстро найти нужную зону
 - ✅ **Scalability**: 10-15 популярных timezones легко организовать
 - ✅ **User-friendly**: Не перегружаем пользователя всеми 400+ IANA timezones
 
 **Визуальный дизайн:**
+
 ```
 ┌──────────────────────────────────────────┐
 │  Часовой пояс:                            │
@@ -803,6 +890,7 @@ Dropdown открыт:
 **Component**: shadcn/ui Select (or custom dropdown)
 
 **Группы timezones:**
+
 ```javascript
 const timezones = [
   {
@@ -830,6 +918,7 @@ const timezones = [
 ```
 
 **Dropdown Design:**
+
 - **Trigger**: 240px width (desktop), full-width (mobile)
 - **Trigger height**: 44px
 - **Border**: 1px Gray 300 (#E0E0E0), border-radius 6px
@@ -839,6 +928,7 @@ const timezones = [
 - **Selected option**: Checkmark ✓, Telegram Blue background tint
 
 **Current Time Preview:**
+
 - Position: Below dropdown, 8px spacing
 - Icon: ℹ️ info icon (16x16px, Info Blue #2196F3)
 - Text: 14px, regular, Gray 600 (#757575)
@@ -846,12 +936,14 @@ const timezones = [
 - Update: Real-time (каждую минуту)
 
 **Accessibility:**
+
 - aria-label="Выберите часовой пояс"
 - role="combobox" на trigger
 - role="option" на каждом item
 - Keyboard navigation: Arrow keys, Enter to select
 
 **UX рекомендации:**
+
 - Default value: Определить автоматически через `Intl.DateTimeFormat().resolvedOptions().timeZone`
 - Если автоматическое определение не сработало → default "Europe/Moscow"
 
@@ -864,11 +956,13 @@ const timezones = [
 **Ответ**: **A) Inline text под timezone dropdown**
 
 **Обоснование:**
+
 - ✅ **Always visible**: Пользователь всегда видит, какое сейчас время в выбранной зоне
 - ✅ **Contextual**: Помогает понять, правильно ли выбран timezone
 - ✅ **No interaction needed**: Не требует hover/click
 
 **Визуальный дизайн:**
+
 ```
 ┌──────────────────────────────────────────┐
 │  Часовой пояс:                            │
@@ -880,6 +974,7 @@ const timezones = [
 ```
 
 **Технические детали:**
+
 - **Icon**: ℹ️ info icon (16x16px, Info Blue #2196F3)
 - **Text**: 14px, regular, Gray 600 (#757575)
 - **Format**: "Сейчас в {timezone}: {HH:MM}"
@@ -887,6 +982,7 @@ const timezones = [
 - **Layout**: Flexbox, gap 8px между icon и text
 
 **JavaScript Implementation:**
+
 ```javascript
 const getCurrentTimeInTimezone = (timezone) => {
   const formatter = new Intl.DateTimeFormat('ru-RU', {
@@ -912,10 +1008,12 @@ useEffect(() => {
 ```
 
 **Accessibility:**
+
 - aria-live="polite" (announces time updates to screen readers)
 - role="status"
 
 **UX Enhancement:**
+
 - Когда пользователь меняет timezone → preview обновляется instantly
 - Highlight preview с subtle animation (fade-in) при изменении timezone
 
@@ -928,11 +1026,13 @@ useEffect(() => {
 **Ответ**: **B) Добавить hint: "Тихие часы: 23:00 - 07:00 (через полночь)"**
 
 **Обоснование:**
+
 - ✅ **Clarity**: Ясно объясняет, что период пересекает полночь
 - ✅ **Simple**: Не требует сложной визуализации (timeline)
 - ✅ **Accessibility**: Текстовая подсказка доступна для screen readers
 
 **Визуальный дизайн:**
+
 ```
 ┌──────────────────────────────────────────┐
 │  ☑️ Включить тихие часы                   │
@@ -950,6 +1050,7 @@ useEffect(() => {
 **Технические детали:**
 
 **Hint Display Logic:**
+
 ```javascript
 const isOvernightPeriod = (fromTime, toTime) => {
   const from = parseInt(fromTime.split(':')[0]);
@@ -966,6 +1067,7 @@ const isOvernightPeriod = (fromTime, toTime) => {
 ```
 
 **Hint Design:**
+
 - **Icon**: 💡 lightbulb (20x20px, Warning Orange #FF9800) — привлекает внимание
 - **Background**: Light Orange (#FFF3E0) — subtle highlight
 - **Border**: 1px solid Warning Orange (#FF9800)
@@ -975,14 +1077,17 @@ const isOvernightPeriod = (fromTime, toTime) => {
 - **Position**: Below time pickers, 12px margin-top
 
 **Alternative Wording:**
+
 - "Период пересекает полночь: 23:00 сегодня - 07:00 завтра"
 - "Тихие часы с 23:00 вечера до 07:00 утра (8 часов)"
 
 **Accessibility:**
+
 - role="note" на hint container
 - aria-live="polite" (announces когда hint появляется)
 
 **UX рекомендации:**
+
 - Hint появляется **только** когда overnight period detected
 - Не показывать hint для нормальных периодов (08:00 - 22:00)
 - Можно добавить duration: "Тихие часы: 23:00 - 07:00 (8 часов)"
@@ -996,11 +1101,13 @@ const isOvernightPeriod = (fromTime, toTime) => {
 **Ответ**: **A) Badge "Сейчас активны тихие часы" с иконкой 🌙**
 
 **Обоснование:**
+
 - ✅ **Immediate visibility**: Пользователь сразу видит, что сейчас тихий период
 - ✅ **Contextual**: Появляется только когда текущее время попадает в quiet hours
 - ✅ **Clear communication**: Текст + иконка = ясное сообщение
 
 **Визуальный дизайн:**
+
 ```
 ┌──────────────────────────────────────────┐
 │  ☑️ Включить тихие часы                   │
@@ -1016,6 +1123,7 @@ const isOvernightPeriod = (fromTime, toTime) => {
 ```
 
 **Badge Design:**
+
 - **Background**: Info Blue (#E3F2FD) — subtle blue tint
 - **Border**: 1px solid Info Blue (#2196F3)
 - **Icon**: 🌙 moon icon (20x20px)
@@ -1025,6 +1133,7 @@ const isOvernightPeriod = (fromTime, toTime) => {
 - **Position**: Below time pickers, 12px margin-top
 
 **Display Logic:**
+
 ```javascript
 const isQuietHoursActive = (from, to, timezone) => {
   const now = new Date();
@@ -1057,15 +1166,18 @@ const isQuietHoursActive = (from, to, timezone) => {
 ```
 
 **Badge States:**
+
 - **Active** (current time in quiet hours): Blue badge shown
 - **Inactive** (current time outside quiet hours): Badge hidden
 
 **Accessibility:**
+
 - role="status"
 - aria-live="polite" (announces когда badge appears/disappears)
 - aria-label="Тихие часы сейчас активны. Уведомления не отправляются."
 
 **UX рекомендации:**
+
 - Badge автоматически исчезает когда quiet hours period ends
 - Update badge каждые 60 секунд (проверять, всё ещё active?)
 - Если пользователь меняет time pickers → instant recheck
@@ -1081,6 +1193,7 @@ const isQuietHoursActive = (from, to, timezone) => {
 **Ответ**: **A) Вертикальный stack (один под другим)**
 
 **Обоснование:**
+
 - ✅ **Mobile-first**: Вертикальный stack идеально работает на всех размерах экранов
 - ✅ **Consistency**: В проекте используется vertical stacking для dashboard cards
 - ✅ **Readability**: Естественный flow сверху вниз, легко читать и понимать структуру
@@ -1089,6 +1202,7 @@ const isQuietHoursActive = (from, to, timezone) => {
 **Визуальный дизайн:**
 
 **Desktop (>1024px):**
+
 ```
 ┌────────────────────────────────────────────────────────┐
 │  Главная > Настройки > Уведомления                      │ ← Breadcrumbs
@@ -1126,6 +1240,7 @@ const isQuietHoursActive = (from, to, timezone) => {
 ```
 
 **Mobile (<640px):**
+
 - Same vertical stack
 - Cards full-width
 - Reduced spacing (16-20px между cards)
@@ -1134,11 +1249,13 @@ const isQuietHoursActive = (from, to, timezone) => {
 **Технические детали:**
 
 **Page Container:**
+
 - Max-width: 1024px (centered on large screens)
 - Padding: 24px (desktop), 16px (mobile)
 - Background: White (#FFFFFF)
 
 **Card Design:**
+
 - Border: 1px solid Gray 300 (#E0E0E0)
 - Border-radius: 8px
 - Shadow: shadow-md (стандарт для cards в проекте)
@@ -1146,16 +1263,19 @@ const isQuietHoursActive = (from, to, timezone) => {
 - Background: White (#FFFFFF)
 
 **Card Spacing:**
+
 - Between cards: 24px (desktop), 20px (tablet), 16px (mobile)
 - Before action bar: 32px (визуальное разделение)
 
 **Card Headers:**
+
 - Icon + Title layout (Flexbox, gap 12px)
 - Icon: 24x24px
 - Title: H2 (24px, semi-bold, Gray 800)
 - Divider below header: 1px Gray 200, 16px margin-bottom
 
 **Responsive Behavior:**
+
 ```css
 .settings-page {
   max-width: 1024px;
@@ -1175,11 +1295,13 @@ const isQuietHoursActive = (from, to, timezone) => {
 ```
 
 **Accessibility:**
+
 - Logical heading hierarchy (H1 → H2 → H3)
 - Landmark regions: `<main>` для page content
 - Skip link для keyboard users
 
 **Альтернатива (отклонена):**
+
 - ❌ **Grid 2 columns**: Сложнее на mobile, не согласуется с остальными страницами проекта
 
 ---
@@ -1191,32 +1313,38 @@ const isQuietHoursActive = (from, to, timezone) => {
 **Ответ**: **Используем spacing scale из проекта (16px, 24px, 32px)**
 
 **Обоснование:**
+
 - ✅ **Consistency**: Соответствует существующей spacing system проекта
 - ✅ **Visual hierarchy**: Разные уровни spacing для разных типов контента
 
 **Spacing Guidelines:**
 
 **Page-level:**
+
 - Page padding: **24px** (desktop), **16px** (mobile/tablet)
 - Container max-width: **1024px**
 
 **Card-level:**
+
 - Card padding: **24px** (desktop), **20px** (mobile)
 - Card spacing (between cards): **24px** (desktop), **20px** (tablet), **16px** (mobile)
 - Card border-radius: **8px**
 
 **Section-level:**
+
 - Section spacing (перед action bar): **32px**
 - Between major sections within card: **20px**
 - Between related elements (e.g., label + input): **8px**
 
 **Component-level:**
+
 - Between form fields: **16px**
 - Between event type cards: **12px**
 - Between toggle and description: **8px**
 - Between icon and text: **8px**
 
 **Visual Reference:**
+
 ```
 Page padding: 24px
 │
@@ -1242,6 +1370,7 @@ Page padding: 24px
 ```
 
 **Tailwind CSS Classes:**
+
 - `gap-2` (8px)
 - `gap-3` (12px)
 - `gap-4` (16px)
@@ -1250,6 +1379,7 @@ Page padding: 24px
 - `gap-8` (32px)
 
 **Responsive Adjustments:**
+
 ```css
 /* Desktop */
 .card-spacing { gap: 24px; }
@@ -1274,6 +1404,7 @@ Page padding: 24px
 **Ответ**: **B) Все карточки expanded (scroll вниз)**
 
 **Обоснование:**
+
 - ✅ **No hidden content**: Всё доступно без дополнительных кликов
 - ✅ **Simpler interaction**: Не нужно expand/collapse, просто scroll
 - ✅ **Consistency**: Соответствует mobile-first approach проекта
@@ -1282,40 +1413,49 @@ Page padding: 24px
 **Mobile Layout Adaptations:**
 
 **1. Card Layout:**
+
 - Full-width cards
 - Reduced padding: 20px → 16px
 - Smaller spacing: 24px → 16px between cards
 
 **2. Telegram Binding Card:**
+
 - Status и username: Vertical stack
 - "Отключить" button: Full-width
 
 **3. Event Type Cards:**
+
 - Toggle остаётся справа (не переносится)
 - Description может wrap на 3-4 lines (instead of 2)
 
 **4. Language Switcher:**
+
 - Если не помещается horizontal → vertical stack
 - Full-width radio buttons
 
 **5. Time Pickers:**
+
 - Full-width inputs (не fixed 120px)
 - Vertical stack для "С" и "До" labels
 
 **6. Timezone Dropdown:**
+
 - Full-width dropdown (не 240px)
 
 **7. Action Bar:**
+
 - Vertical stack buttons
 - "Сохранить настройки" сверху (more prominent)
 - "Отменить" снизу
 - Both full-width
 
 **8. Breadcrumbs:**
+
 - Скрыть intermediate levels, показать только: "← Настройки"
 - Back button слева
 
 **Visual Reference (Mobile):**
+
 ```
 ┌──────────────────────────────┐
 │  ← Настройки                  │ ← Back link
@@ -1357,6 +1497,7 @@ Page padding: 24px
 ```
 
 **Responsive CSS:**
+
 ```css
 /* Mobile adjustments */
 @media (max-width: 640px) {
@@ -1381,12 +1522,14 @@ Page padding: 24px
 ```
 
 **Touch Target Optimization:**
+
 - Minimum 44x44px для всех interactive elements
 - Buttons: height 44px minimum
 - Toggles: 44x24px track (already compliant)
 - Time pickers: height 44px
 
 **Accessibility:**
+
 - Scroll behavior: smooth
 - Focus management: сохраняется при scroll
 - Screen reader: логический порядок чтения (top to bottom)
@@ -1400,12 +1543,14 @@ Page padding: 24px
 **Ответ**: **A) Hero banner с CTA "Подключить Telegram" + пояснение зачем**
 
 **Обоснование:**
+
 - ✅ **High visibility**: Hero banner привлекает внимание к главной задаче
 - ✅ **Educational**: Объясняет ценность фичи (зачем нужны уведомления)
 - ✅ **Clear CTA**: Одна primary action, ясно что делать дальше
 - ✅ **Onboarding**: Помогает пользователям понять feature при первом визите
 
 **Визуальный дизайн (Empty State):**
+
 ```
 ┌────────────────────────────────────────────────────────┐
 │  Главная > Настройки > Уведомления                      │
@@ -1439,6 +1584,7 @@ Page padding: 24px
 ```
 
 **Hero Banner Design:**
+
 - **Background**: Light Blue gradient (#E3F2FD → #BBDEFB)
 - **Border**: 2px solid Telegram Blue (#0088CC)
 - **Border-radius**: 12px (slightly larger для hero)
@@ -1446,6 +1592,7 @@ Page padding: 24px
 - **Shadow**: shadow-lg (prominent elevation)
 
 **Content Layout:**
+
 - **Icon**: 📱 large telegram icon (48x48px) centered
 - **Heading**: "Получайте уведомления в Telegram" (H2, 24px, semi-bold, Gray 800)
 - **Description**: 16px, regular, Gray 700, centered, max-width 480px
@@ -1453,6 +1600,7 @@ Page padding: 24px
 - **CTA Button**: Primary Telegram Blue button, centered, 44px height
 
 **Feature List:**
+
 ```
 ✅ Импорт завершён — Узнавайте о готовности данных
 ⚠️ Ошибка синхронизации — Реагируйте на проблемы мгновенно
@@ -1460,6 +1608,7 @@ Page padding: 24px
 ```
 
 **CTA Button:**
+
 - Background: Telegram Blue (#0088CC)
 - Text: "Подключить Telegram" (16px, semi-bold, white)
 - Icon: 📱 Telegram logo (20x20px)
@@ -1468,15 +1617,18 @@ Page padding: 24px
 
 **Disabled State (Other Cards):**
 Когда Telegram не подключен:
+
 - **NotificationPreferencesPanel**: Показать lock icon + message
   - "🔒 Подключите Telegram, чтобы настроить уведомления"
 - **QuietHoursConfiguration**: Скрыть полностью (не показывать disabled)
 
 **Behavior:**
+
 - Клик на CTA → открывает Telegram Binding Modal (см. Q1)
 - После успешного binding → hero banner исчезает, показываются active cards
 
 **Accessibility:**
+
 - role="region" на hero banner
 - aria-label="Онбординг Telegram уведомлений"
 - Heading hierarchy: H1 (page) → H2 (hero) → H3 (card titles)
@@ -1490,6 +1642,7 @@ Page padding: 24px
 **Ответ**: **A) Иконка 🔔 (bound) / 🔕 (not bound) с badge**
 
 **Обоснование:**
+
 - ✅ **Universal icon**: Bell = notifications (общепринятый символ)
 - ✅ **At-a-glance status**: Цвет badge показывает состояние без клика
 - ✅ **Space-efficient**: Компактно вписывается в header/sidebar
@@ -1498,6 +1651,7 @@ Page padding: 24px
 **Визуальный дизайн:**
 
 **Header Placement (Desktop):**
+
 ```
 ┌────────────────────────────────────────────────────────┐
 │  WB Repricer          [🔍] [🔔] [💬] [@user]          │ ← Top Navbar
@@ -1509,6 +1663,7 @@ Page padding: 24px
 **Indicator States:**
 
 **1. Telegram Bound (Connected):**
+
 ```
   🔔 ← Bell icon (24x24px, Telegram Blue #0088CC)
   ●  ← Green badge (8x8px circle, Success Green #4CAF50)
@@ -1516,6 +1671,7 @@ Page padding: 24px
 ```
 
 **2. Telegram Not Bound:**
+
 ```
   🔕 ← Muted bell icon (24x24px, Gray 400 #BDBDBD)
   ●  ← Gray badge (8x8px circle, Gray 400 #BDBDBD)
@@ -1524,12 +1680,14 @@ Page padding: 24px
 **Технические детали:**
 
 **Icon Design:**
+
 - **Size**: 24x24px (consistent с другими header icons)
 - **Color (bound)**: Telegram Blue (#0088CC)
 - **Color (not bound)**: Gray 400 (#BDBDBD)
 - **Badge**: 8x8px circle, absolute position top-right
 
 **Badge Position:**
+
 ```css
 .notification-icon {
   position: relative;
@@ -1557,6 +1715,7 @@ Page padding: 24px
 ```
 
 **Tooltip:**
+
 - **Hover (bound)**: "Telegram подключен (@username). Нажмите для настройки."
 - **Hover (not bound)**: "Telegram не подключен. Нажмите для подключения."
 - **Position**: Below icon
@@ -1564,11 +1723,13 @@ Page padding: 24px
 - **Delay**: 300ms (не показывать мгновенно)
 
 **Click Behavior:**
+
 - Click → navigate to `/settings/notifications`
 - Если not bound → показать hero banner с CTA
 - Если bound → показать settings page
 
 **Sidebar Alternative (если нужен):**
+
 ```
 ┌─────────────────────────┐
 │  Dashboard              │
@@ -1582,11 +1743,13 @@ Page padding: 24px
 ```
 
 **Responsive Behavior:**
+
 - **Desktop**: Header navbar (right side)
 - **Tablet**: Header navbar (icons may be slightly smaller)
 - **Mobile**: Может быть спрятан в hamburger menu или показан в collapsed navbar
 
 **Accessibility:**
+
 - aria-label="Telegram notifications status: connected" или "...not connected"
 - role="button"
 - aria-describedby="notification-tooltip"
@@ -1603,6 +1766,7 @@ Page padding: 24px
 **Ответ**: **Пока только русский, английские переводы добавим позже**
 
 **Обоснование:**
+
 - ✅ **Target audience**: Основная аудитория — русскоязычные продавцы на Wildberries
 - ✅ **Simplicity**: Не усложняем первую версию, focus на функциональность
 - ✅ **Future-ready**: Можно добавить i18n позже, когда появится demand
@@ -1610,11 +1774,13 @@ Page padding: 24px
 **Approach:**
 
 **Сейчас (v1):**
+
 - Все UI элементы на русском языке
 - Hardcoded strings в компонентах
 - Комментарии в коде: `// TODO: i18n - extract to translations`
 
 **В будущем (v2):**
+
 - Добавить i18n library (например, `next-intl` или `react-i18next`)
 - Создать translation files:
   - `ru.json` (русский, default)
@@ -1622,6 +1788,7 @@ Page padding: 24px
 - Извлечь все строки из компонентов в translation keys
 
 **Примеры строк для перевода:**
+
 ```javascript
 // Current (v1 - hardcoded Russian)
 <Button>Подключить Telegram</Button>
@@ -1635,6 +1802,7 @@ Page padding: 24px
 ```
 
 **Translation Keys Structure (для будущего):**
+
 ```json
 {
   "telegram": {
@@ -1657,6 +1825,7 @@ Page padding: 24px
 ```
 
 **Note:**
+
 - Язык уведомлений (ru/en) — это ОТДЕЛЬНАЯ настройка (для Telegram-сообщений)
 - Язык UI — это будущая фича (сейчас только русский)
 
@@ -1669,6 +1838,7 @@ Page padding: 24px
 **Ответ**: **C) Both: toast для API errors, inline для validation**
 
 **Обоснование:**
+
 - ✅ **Context-appropriate**: Разные типы ошибок требуют разного feedback
 - ✅ **Immediate feedback**: Validation errors показываются сразу при вводе
 - ✅ **Non-blocking**: Toast для API errors не блокирует UI
@@ -1676,6 +1846,7 @@ Page padding: 24px
 **Error Types & Display:**
 
 **1. Validation Errors (Inline)**
+
 ```
 ┌──────────────────────────────────────────┐
 │  С:  [99:99 ▼]  ← Invalid input           │
@@ -1685,12 +1856,14 @@ Page padding: 24px
 ```
 
 **Inline Error Design:**
+
 - **Icon**: ⚠️ warning (16x16px, Error Red #E53935)
 - **Text**: 14px, regular, Error Red (#E53935)
 - **Position**: Below invalid field, 4px margin-top
 - **Background**: None (just red text)
 
 **2. API Errors (Toast Notification)**
+
 ```
 ┌──────────────────────────────────────────┐
 │  ❌ Не удалось сохранить настройки        │ ← Toast (top-right corner)
@@ -1701,6 +1874,7 @@ Page padding: 24px
 ```
 
 **Toast Design:**
+
 - **Background**: Error Red (#E53935)
 - **Text**: White, 14px, medium
 - **Icon**: ❌ cross mark (20x20px, white)
@@ -1713,6 +1887,7 @@ Page padding: 24px
 - **Close button**: X icon (16x16px, white)
 
 **3. Network Errors (Toast + Retry)**
+
 ```
 ┌──────────────────────────────────────────┐
 │  🌐 Ошибка сети                           │
@@ -1723,6 +1898,7 @@ Page padding: 24px
 ```
 
 **4. Session Expired (Modal)**
+
 ```
 ┌──────────────────────────────────────────┐
 │  Сессия истекла                        [×]│
@@ -1739,20 +1915,24 @@ Page padding: 24px
 **Error Messages (Examples):**
 
 **Validation:**
+
 - "Неверный формат времени (используйте HH:MM)"
 - "Начало тихих часов должно отличаться от конца"
 - "Пожалуйста, выберите хотя бы один тип события"
 
 **API:**
+
 - "Не удалось сохранить настройки. Попробуйте ещё раз."
 - "Telegram уже подключен к другому аккаунту"
 - "Код верификации истёк. Пожалуйста, получите новый код."
 
 **Network:**
+
 - "Ошибка сети. Проверьте подключение к интернету."
 - "Сервер не отвечает. Попробуйте позже."
 
 **Accessibility:**
+
 - role="alert" на toast notifications
 - aria-live="assertive" для критичных ошибок
 - aria-describedby связывает поле с inline error
@@ -1766,6 +1946,7 @@ Page padding: 24px
 **Ответ**: **B) Spinners на кнопках (при сохранении) + Skeleton для initial load**
 
 **Обоснование:**
+
 - ✅ **Context-specific**: Показывает, ЧТО именно загружается
 - ✅ **Non-blocking**: Skeleton позволяет видеть структуру страницы
 - ✅ **User control**: Button spinners показывают, что action в процессе
@@ -1773,6 +1954,7 @@ Page padding: 24px
 **Loading State Types:**
 
 **1. Initial Page Load (Skeleton Loaders)**
+
 ```
 ┌──────────────────────────────────────────┐
 │  ████████████████░░░░░░░░░░░░░░░░░░░░░   │ ← Title skeleton
@@ -1788,12 +1970,14 @@ Page padding: 24px
 ```
 
 **Skeleton Design:**
+
 - **Background**: Gray 200 (#EEEEEE)
 - **Animation**: Shimmer effect (gradient moving left-to-right)
 - **Shape**: Matches actual content (text lines, buttons, cards)
 - **Duration**: Показывается пока `isLoading === true`
 
 **2. Button Loading (Spinners)**
+
 ```
 ┌──────────────────────────────────────────┐
 │  [⏳ Сохранение...]                       │ ← Button with spinner
@@ -1804,6 +1988,7 @@ Page padding: 24px
 **Button Loading States:**
 
 **"Сохранить настройки" (loading):**
+
 - Background: Primary Red (#E53935) — same color, NOT disabled gray
 - Text: "Сохранение..." (white, 14px)
 - Icon: Spinner animation (16x16px, white, 1s rotation)
@@ -1811,11 +1996,13 @@ Page padding: 24px
 - Width: Fixed width (не меняется при изменении текста)
 
 **"Подключить Telegram" (loading):**
+
 - Background: Telegram Blue (#0088CC)
 - Text: "Подключение..."
 - Icon: Spinner (16x16px, white)
 
 **3. Polling Indicator (Binding Process)**
+
 ```
 ┌──────────────────────────────────────────┐
 │  ⏳ Ожидаем подтверждения...              │ ← Spinner + text
@@ -1824,10 +2011,12 @@ Page padding: 24px
 ```
 
 **4. Time Picker Loading (Fetching Preferences)**
+
 - Time picker: Disabled state (gray background) + skeleton value
 - Spinner: Small (12x12px) внутри input field (right side)
 
 **Spinner Design:**
+
 ```css
 .spinner {
   width: 16px;
@@ -1844,11 +2033,13 @@ Page padding: 24px
 ```
 
 **Loading State Priorities:**
+
 1. **Critical**: Button actions (save, connect) — показать сразу
 2. **Important**: Initial page load — skeleton loaders
 3. **Secondary**: Polling indicators — subtle, non-blocking
 
 **Accessibility:**
+
 - aria-busy="true" на loading elements
 - aria-label="Сохранение настроек..." на button spinner
 - Screen reader announcement: "Загрузка страницы настроек..."
@@ -1862,6 +2053,7 @@ Page padding: 24px
 **Ответ**: **B) Toast + checkmark animation на кнопке**
 
 **Обоснование:**
+
 - ✅ **Double feedback**: Toast для visibility, checkmark для direct feedback
 - ✅ **Clear confirmation**: Пользователь точно знает, что действие успешно
 - ✅ **Satisfying**: Checkmark animation даёт ощущение "завершённости"
@@ -1869,22 +2061,26 @@ Page padding: 24px
 **Success Feedback Flow:**
 
 **1. User clicks "Сохранить настройки"**
+
 ```
 [Сохранить настройки] → Click
 ```
 
 **2. Button loading state (200ms)**
+
 ```
 [⏳ Сохранение...] ← Spinner + text
 ```
 
 **3. Success response received**
+
 ```
 [✓ Сохранено] ← Checkmark animation (500ms)
   ↑ Checkmark fades in + slight scale animation
 ```
 
 **4. Button returns to normal + Toast appears**
+
 ```
 [Сохранить настройки] ← Disabled (no changes)
 
@@ -1895,6 +2091,7 @@ Page padding: 24px
 ```
 
 **Success Toast Design:**
+
 - **Background**: Success Green (#4CAF50)
 - **Text**: White, 14px, medium
 - **Icon**: ✅ checkmark (20x20px, white)
@@ -1907,6 +2104,7 @@ Page padding: 24px
 - **Animation**: Slide-in from right (200ms ease-out)
 
 **Button Checkmark Animation:**
+
 ```css
 /* Checkmark appears */
 .checkmark-icon {
@@ -1929,12 +2127,14 @@ Page padding: 24px
 ```
 
 **Timeline:**
+
 1. Click → 0ms: Button loading state
 2. API response → 200ms: Checkmark animation starts
 3. Checkmark visible → 500ms: Toast appears
 4. Toast auto-dismiss → 3500ms: Toast fades out
 
 **Success Messages (Examples):**
+
 - "Настройки сохранены"
 - "Telegram подключен"
 - "Тестовое уведомление отправлено"
@@ -1943,6 +2143,7 @@ Page padding: 24px
 **Alternative Success Indicators:**
 
 **For Test Notification:**
+
 ```
 ┌──────────────────────────────────────────┐
 │  ✅ Тестовое уведомление отправлено       │
@@ -1951,6 +2152,7 @@ Page padding: 24px
 ```
 
 **For Telegram Connected:**
+
 ```
 ┌──────────────────────────────────────────┐
 │  ✅ Telegram подключен                    │
@@ -1959,6 +2161,7 @@ Page padding: 24px
 ```
 
 **Accessibility:**
+
 - role="status" на toast
 - aria-live="polite" (не перебивает screen reader)
 - aria-label="Настройки успешно сохранены" на checkmark
@@ -1972,11 +2175,13 @@ Page padding: 24px
 **Ответ**: **Используем стандартные Tailwind breakpoints проекта**
 
 **Breakpoints:**
+
 - **Mobile**: `<640px` (default, no prefix)
 - **Tablet**: `640px - 1024px` (sm: and md:)
 - **Desktop**: `>1024px` (lg: and xl:)
 
 **Обоснование:**
+
 - ✅ **Consistency**: Соответствует всему проекту (см. `front-end-spec.md`)
 - ✅ **Tailwind default**: Не нужно переопределять breakpoints
 - ✅ **Well-tested**: Проверенные значения для большинства устройств
@@ -1984,31 +2189,37 @@ Page padding: 24px
 **Responsive Behavior by Component:**
 
 ### **Telegram Binding Modal**
+
 - **Desktop (>1024px)**: 480-560px width, centered
 - **Tablet (640-1024px)**: 90% screen width, centered
 - **Mobile (<640px)**: Full-screen modal (100% width, 100% height)
 
 ### **Event Type Cards**
+
 - **Desktop**: Grid 1 column, full-width cards
 - **Tablet**: Same as desktop
 - **Mobile**: Same layout, reduced padding (20px → 16px)
 
 ### **Language Switcher**
+
 - **Desktop**: Horizontal radio buttons (side-by-side)
 - **Tablet**: Horizontal (если помещается)
 - **Mobile**: Vertical stack (full-width buttons) если не помещается
 
 ### **Time Pickers**
+
 - **Desktop**: Fixed width 120px
 - **Tablet**: Fixed width 120px
 - **Mobile**: Full-width inputs
 
 ### **Timezone Dropdown**
+
 - **Desktop**: 240px width
 - **Tablet**: 200px width
 - **Mobile**: Full-width
 
 ### **Action Bar (Save buttons)**
+
 - **Desktop**: Horizontal layout, right-aligned
   ```
   [Отменить]              [Сохранить настройки]
@@ -2021,6 +2232,7 @@ Page padding: 24px
   ```
 
 **Tailwind CSS Examples:**
+
 ```jsx
 // Mobile-first approach
 <div className="
@@ -2038,6 +2250,7 @@ Page padding: 24px
 ```
 
 **Typography Scaling:**
+
 - **H1 (Page Title)**:
   - Mobile: 28px
   - Tablet: 32px
@@ -2052,6 +2265,7 @@ Page padding: 24px
   - Desktop: 16px
 
 **Spacing Scaling:**
+
 - **Page padding**:
   - Mobile: 16px
   - Tablet: 20px
@@ -2066,6 +2280,7 @@ Page padding: 24px
   - Desktop: 24px
 
 **Touch Target Sizes (Mobile):**
+
 - Buttons: Minimum 44x44px
 - Toggles: 44x24px track
 - Radio buttons: 44x44px hit area
@@ -2073,6 +2288,7 @@ Page padding: 24px
 - Dropdown triggers: 44px height
 
 **Testing Strategy:**
+
 - Test on physical devices: iPhone SE (375px), iPad (768px), Desktop (1280px)
 - Chrome DevTools: Responsive mode
 - Safari iOS: Real device testing
@@ -2083,14 +2299,14 @@ Page padding: 24px
 
 Вот **ключевые решения**, которые блокируют разработку (требуют немедленного approval):
 
-| Question | Decision | Rationale |
-|----------|----------|-----------|
-| **Q1: Modal Layout** | ✅ Центрированный modal overlay | Согласованность с проектом, mobile-friendly |
-| **Q2: Countdown Timer** | ✅ Линейный прогресс-бар + текст | Двойной feedback (точность + визуал) |
-| **Q10: Save Strategy** | ✅ Manual save button | User control, consistency, error prevention |
-| **Q16: Card Layout** | ✅ Вертикальный stack | Mobile-first, consistency, simplicity |
-| **Q19: Empty State** | ✅ Hero banner с CTA | High visibility, educational, clear CTA |
-| **Q20: Status Indicator** | ✅ Bell icon 🔔 с badge | Universal, at-a-glance, space-efficient |
+| Question                  | Decision                         | Rationale                                   |
+| ------------------------- | -------------------------------- | ------------------------------------------- |
+| **Q1: Modal Layout**      | ✅ Центрированный modal overlay  | Согласованность с проектом, mobile-friendly |
+| **Q2: Countdown Timer**   | ✅ Линейный прогресс-бар + текст | Двойной feedback (точность + визуал)        |
+| **Q10: Save Strategy**    | ✅ Manual save button            | User control, consistency, error prevention |
+| **Q16: Card Layout**      | ✅ Вертикальный stack            | Mobile-first, consistency, simplicity       |
+| **Q19: Empty State**      | ✅ Hero banner с CTA             | High visibility, educational, clear CTA     |
+| **Q20: Status Indicator** | ✅ Bell icon 🔔 с badge          | Universal, at-a-glance, space-efficient     |
 
 ---
 

@@ -30,6 +30,7 @@ Add timestamp display showing when Telegram was connected to provide context for
 ### Problem Statement
 
 **Current Bound State** (Lines 116-145 in `TelegramBindingCard.tsx`):
+
 ```
 ┌─────────────────────────────┐
 │ 🔔 Подключен                │
@@ -39,6 +40,7 @@ Add timestamp display showing when Telegram was connected to provide context for
 ```
 
 **Issues**:
+
 - ❌ No timestamp showing when binding occurred
 - ❌ Users ask "When did I connect?" (support tickets)
 - ❌ Missing context for troubleshooting ("Was binding recent?")
@@ -46,6 +48,7 @@ Add timestamp display showing when Telegram was connected to provide context for
 ### Desired Outcome
 
 **New Bound State with Timestamp**:
+
 ```
 ┌─────────────────────────────────────┐
 │ 🔔 Подключен                        │
@@ -56,6 +59,7 @@ Add timestamp display showing when Telegram was connected to provide context for
 ```
 
 **Benefits**:
+
 - ✅ Transparency about account state (builds trust)
 - ✅ Context for troubleshooting (recency indicator)
 - ✅ Reduces support tickets (~10-15% reduction)
@@ -66,6 +70,7 @@ Add timestamp display showing when Telegram was connected to provide context for
 ## ✅ Acceptance Criteria
 
 ### AC1: Timestamp Display
+
 - [ ] Timestamp shows below username in bound state
 - [ ] Format: "Подключено: DD месяца YYYY, HH:MM"
 - [ ] Example: "Подключено: 29 декабря 2025, 14:30"
@@ -74,6 +79,7 @@ Add timestamp display showing when Telegram was connected to provide context for
 - [ ] Spacing: `4px` gap above username
 
 ### AC2: Date Formatting
+
 - [ ] Use `Intl.DateTimeFormat` with Russian locale (`ru-RU`)
 - [ ] Date parts: day (numeric), month (long), year (numeric)
 - [ ] Time parts: hour (2-digit), minute (2-digit), 24-hour format
@@ -81,11 +87,13 @@ Add timestamp display showing when Telegram was connected to provide context for
 - [ ] Handles invalid timestamps gracefully (shows "Дата неизвестна")
 
 ### AC3: Conditional Rendering
+
 - [ ] Timestamp shows ONLY when `status.bound_at` exists
 - [ ] If `bound_at` is null/undefined, timestamp not displayed
 - [ ] No layout shift when timestamp missing
 
 ### AC4: Backend Integration
+
 - [ ] If backend provides `bound_at` field in `/v1/notifications/telegram/status`:
   - [ ] Use `bound_at` directly (ISO 8601 timestamp)
 - [ ] If backend does NOT provide `bound_at`:
@@ -94,6 +102,7 @@ Add timestamp display showing when Telegram was connected to provide context for
   - [ ] OR skip this story (wait for backend support)
 
 ### AC5: Accessibility
+
 - [ ] Timestamp text has sufficient contrast (≥4.5:1)
 - [ ] Color: gray-500 (#6B7280) on white background = 4.6:1 ✅
 - [ ] Screen reader announces timestamp correctly
@@ -335,6 +344,7 @@ describe('formatBindingDate helper', () => {
 ### Manual Testing Checklist
 
 **Visual Testing**:
+
 - [ ] Timestamp displays below username
 - [ ] Font size smaller than username (12px vs 14px)
 - [ ] Gray color lighter than username (#6B7280 vs #4B5563)
@@ -342,6 +352,7 @@ describe('formatBindingDate helper', () => {
 - [ ] Proper spacing (4px gap)
 
 **Functional Testing**:
+
 - [ ] Timestamp shows correct date/time after binding
 - [ ] Timestamp updates if user unbinds and rebinds
 - [ ] Timestamp handles various timezones correctly (UTC → local)
@@ -349,16 +360,19 @@ describe('formatBindingDate helper', () => {
 - [ ] Missing `bound_at` field doesn't break layout
 
 **Responsive Testing**:
+
 - [ ] Desktop (1680px): Timestamp readable
 - [ ] Tablet (768px): Timestamp readable
 - [ ] Mobile (375px): Timestamp wraps correctly if needed
 
 **Accessibility Testing**:
+
 - [ ] Color contrast ≥4.5:1 (gray-500 on white = 4.6:1 ✅)
 - [ ] Screen reader announces timestamp correctly
 - [ ] Text doesn't overlap with other elements
 
 **Browser Compatibility**:
+
 - [ ] Chrome 120+ (Intl.DateTimeFormat support)
 - [ ] Safari 17+ (Intl.DateTimeFormat support)
 - [ ] Firefox 121+ (Intl.DateTimeFormat support)
@@ -371,19 +385,23 @@ describe('formatBindingDate helper', () => {
 ### Primary Metrics
 
 **Support Ticket Reduction**:
+
 - **Baseline**: ~10 "When did I connect Telegram?" tickets per month
 - **Target**: ~6-7 tickets per month (-30-40% reduction)
 
 **User Satisfaction**:
+
 - **Baseline**: Unknown (no current timestamp)
 - **Target**: Positive feedback in post-launch survey ("helpful context")
 
 ### Secondary Metrics
 
 **Completion Rate** (optional A/B test):
+
 - Timestamp presence may correlate with higher trust → slight increase in binding completion (~2-3%)
 
 **Troubleshooting Efficiency**:
+
 - Support agents can see binding date in user screenshots → faster resolution
 
 ---
@@ -414,6 +432,7 @@ describe('formatBindingDate helper', () => {
 **Action**: ✅ No backend changes needed, proceed with implementation
 
 **Verification**:
+
 ```bash
 # Test API endpoint
 curl -H "Authorization: Bearer <token>" \
@@ -434,6 +453,7 @@ curl -H "Authorization: Bearer <token>" \
 **Action**: Coordinate with backend team to add field
 
 **Backend Changes Required**:
+
 1. Add `bound_at` column to `notifications_telegram_bindings` table (timestamp)
 2. Set `bound_at = NOW()` when binding completes
 3. Include `bound_at` in `/v1/notifications/telegram/status` response DTO
@@ -441,6 +461,7 @@ curl -H "Authorization: Bearer <token>" \
 **Estimated Backend Effort**: 30 minutes (1 migration + 1 DTO update)
 
 **Frontend Fallback Options**:
+
 - **Option A**: Use `binding_expires_at - 10 minutes` as proxy (inaccurate)
 - **Option B**: Skip this story until backend provides `bound_at` (recommended)
 - **Option C**: Store `bound_at` in frontend localStorage (not recommended, inconsistent)
@@ -452,18 +473,22 @@ curl -H "Authorization: Bearer <token>" \
 ## 📚 References
 
 **Epic Documentation**:
+
 - Epic 34-FE: `docs/epics/epic-34-fe-telegram-notifications-ui.md`
 - Story 34.2-FE: `docs/stories/epic-34/story-34.2-fe-telegram-binding-flow.md`
 
 **UX Analysis**:
+
 - UX Expert Review: `docs/code-review/UX-LIVE-REVIEW-EPIC-34-FE-2025-12-30.md` (Issue #4, lines 97-123)
 - Implementation Plan: `docs/implementation-plans/epic-34-fe-ux-improvements-plan.md` (Phase 2)
 
 **Component Files**:
+
 - TelegramBindingCard: `src/components/notifications/TelegramBindingCard.tsx`
 - Types: `src/types/notifications.ts`
 
 **Backend API**:
+
 - Status Endpoint: `GET /v1/notifications/telegram/status`
 
 ---
@@ -471,21 +496,25 @@ curl -H "Authorization: Bearer <token>" \
 ## 💬 Notes
 
 **Why Timestamp is Nice-to-Have (Not Critical)**:
+
 - **Low Impact**: Only reduces ~3-4 support tickets/month (minor)
 - **Low Visibility**: Most users don't actively look for this detail
 - **Workaround Exists**: Support can check backend logs if needed
 
 **When to Prioritize This Story**:
+
 - ✅ After Story 34.7-FE (Hero Banner) is complete (higher ROI)
 - ✅ When backend provides `bound_at` field (no coordination overhead)
 - ✅ During "polish sprint" (low-hanging fruit for completeness)
 
 **When to Skip This Story**:
+
 - ❌ If backend doesn't provide `bound_at` (not worth backend changes)
 - ❌ If time-constrained (focus on critical features)
 - ❌ If zero support tickets about binding date (no user demand)
 
 **UX Expert Quote**:
+
 > "Missing timestamp is a **minor polish gap**, not a blocker. Expected ROI: **~5% reduction in support tickets**. Fix effort: **30 minutes**. **Low priority** compared to hero banner (+140% conversion)."
 
 ---

@@ -101,16 +101,16 @@ Content-Type: application/json
 
 ### Components (8 total, each < 200 lines)
 
-| Component | File | Purpose |
-|-----------|------|---------|
-| `TariffSettingsForm` | `TariffSettingsForm.tsx` | Main form container |
-| `AcceptanceRatesSection` | `AcceptanceRatesSection.tsx` | Acceptance fields |
-| `LogisticsRatesSection` | `LogisticsRatesSection.tsx` | Logistics fields |
-| `CommissionRatesSection` | `CommissionRatesSection.tsx` | Commission fields |
-| `StorageSettingsSection` | `StorageSettingsSection.tsx` | Storage fields |
-| `FbsSettingsSection` | `FbsSettingsSection.tsx` | FBS-specific fields |
-| `LogisticsTiersEditor` | `LogisticsTiersEditor.tsx` | Volume tiers array |
-| `TariffFieldInput` | `TariffFieldInput.tsx` | Reusable field input |
+| Component                | File                         | Purpose              |
+| ------------------------ | ---------------------------- | -------------------- |
+| `TariffSettingsForm`     | `TariffSettingsForm.tsx`     | Main form container  |
+| `AcceptanceRatesSection` | `AcceptanceRatesSection.tsx` | Acceptance fields    |
+| `LogisticsRatesSection`  | `LogisticsRatesSection.tsx`  | Logistics fields     |
+| `CommissionRatesSection` | `CommissionRatesSection.tsx` | Commission fields    |
+| `StorageSettingsSection` | `StorageSettingsSection.tsx` | Storage fields       |
+| `FbsSettingsSection`     | `FbsSettingsSection.tsx`     | FBS-specific fields  |
+| `LogisticsTiersEditor`   | `LogisticsTiersEditor.tsx`   | Volume tiers array   |
+| `TariffFieldInput`       | `TariffFieldInput.tsx`       | Reusable field input |
 
 ### Hook
 
@@ -228,14 +228,14 @@ const tariffSettingsSchema = z.object({
 
 ### Field Groups
 
-| Section | Fields | Labels (RU) |
-|---------|--------|-------------|
-| **Приёмка** | `acceptanceBoxRatePerLiter`, `acceptancePalletRate` | Тариф приёмки (₽/литр), Тариф паллеты (₽) |
-| **Логистика** | `logisticsLargeFirstLiterRate`, `logisticsLargeAdditionalLiterRate`, `logisticsVolumeTiers` | Крупногабарит 1-й литр, Крупногабарит доп., Тарифные уровни |
-| **Возвраты** | `returnLogisticsFboRate`, `returnLogisticsFbsRate` | Возврат FBO (₽), Возврат FBS (₽) |
-| **Комиссии** | `defaultCommissionFboPct`, `defaultCommissionFbsPct` | Комиссия FBO (%), Комиссия FBS (%) |
-| **Хранение** | `storageFreeDays`, `fixationClothingDays`, `fixationOtherDays` | Бесплатные дни, Фиксация одежда (дней), Фиксация прочее (дней) |
-| **FBS** | `fbsUsesFboLogisticsRates`, `logisticsFbsVolumeTiers`, etc. | Использовать тарифы FBO, Тарифы FBS |
+| Section       | Fields                                                                                      | Labels (RU)                                                    |
+| ------------- | ------------------------------------------------------------------------------------------- | -------------------------------------------------------------- |
+| **Приёмка**   | `acceptanceBoxRatePerLiter`, `acceptancePalletRate`                                         | Тариф приёмки (₽/литр), Тариф паллеты (₽)                      |
+| **Логистика** | `logisticsLargeFirstLiterRate`, `logisticsLargeAdditionalLiterRate`, `logisticsVolumeTiers` | Крупногабарит 1-й литр, Крупногабарит доп., Тарифные уровни    |
+| **Возвраты**  | `returnLogisticsFboRate`, `returnLogisticsFbsRate`                                          | Возврат FBO (₽), Возврат FBS (₽)                               |
+| **Комиссии**  | `defaultCommissionFboPct`, `defaultCommissionFbsPct`                                        | Комиссия FBO (%), Комиссия FBS (%)                             |
+| **Хранение**  | `storageFreeDays`, `fixationClothingDays`, `fixationOtherDays`                              | Бесплатные дни, Фиксация одежда (дней), Фиксация прочее (дней) |
+| **FBS**       | `fbsUsesFboLogisticsRates`, `logisticsFbsVolumeTiers`, etc.                                 | Использовать тарифы FBO, Тарифы FBS                            |
 
 ---
 
@@ -302,6 +302,7 @@ src/hooks/useUpdateTariffSettings.ts
 **Status:** ✅ Complete
 
 ### Implemented Components
+
 - `TariffSettingsForm.tsx` (327 lines) - Main form container with state management
 - `AcceptanceRatesSection.tsx` - Acceptance rate input fields
 - `LogisticsRatesSection.tsx` - Logistics rates with volume tiers integration
@@ -318,6 +319,7 @@ src/hooks/useUpdateTariffSettings.ts
 - `__tests__/TariffSettingsForm.integration.test.tsx` - Integration tests
 
 ### Notes
+
 Form uses react-hook-form with zod validation. Supports both PUT (full replace) and PATCH (partial update) based on number of changed fields. All sections are collapsible with first two open by default.
 
 ---

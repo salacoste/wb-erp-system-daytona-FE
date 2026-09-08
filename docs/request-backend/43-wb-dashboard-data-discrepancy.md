@@ -11,13 +11,13 @@
 
 The discrepancy is **NOT a bug** but a **semantic difference** in how metrics are defined:
 
-| Метрика | WB Dashboard | Наша система | Причина различия |
-|---------|-------------|--------------|------------------|
-| **Продажи** | `retail_price_with_discount` | `gross` | Разные поля! |
-| **Комиссия** | `retail_price - gross` | `commission_sales + acquiring_fee` | Разные расчёты! |
-| **Логистика** | ✅ Совпадает | ✅ Совпадает | `logistics_delivery` |
-| **Хранение** | ✅ Совпадает | ✅ Совпадает | `storage` |
-| **Удержания** | ✅ Совпадает | ✅ Совпадает | `corrections` |
+| Метрика       | WB Dashboard                 | Наша система                       | Причина различия     |
+| ------------- | ---------------------------- | ---------------------------------- | -------------------- |
+| **Продажи**   | `retail_price_with_discount` | `gross`                            | Разные поля!         |
+| **Комиссия**  | `retail_price - gross`       | `commission_sales + acquiring_fee` | Разные расчёты!      |
+| **Логистика** | ✅ Совпадает                 | ✅ Совпадает                       | `logistics_delivery` |
+| **Хранение**  | ✅ Совпадает                 | ✅ Совпадает                       | `storage`            |
+| **Удержания** | ✅ Совпадает                 | ✅ Совпадает                       | `corrections`        |
 
 ---
 
@@ -55,6 +55,7 @@ W47 Verification:
 ### 3. "Итого к перечислению" Formula
 
 **WB Dashboard формула**:
+
 ```
 Итого = Продажи - Комиссия - Логистика - Хранение - Удержания
       = 305,778 - 95,726 - 36,424 - 1,763 - 32,883
@@ -62,6 +63,7 @@ W47 Verification:
 ```
 
 **Наша формула** (`payout-total.formula.ts`):
+
 ```typescript
 payout_total = to_pay_goods
   - logistics_cost - storage_cost - paid_acceptance_cost - penalties_total
@@ -79,10 +81,10 @@ payout_total = to_pay_goods
 
 ### Two Different "Views" of the Same Data
 
-| Perspective | WB Dashboard | Our System |
-|-------------|--------------|------------|
-| **Sales metric** | Customer-facing retail price | Seller's gross after WB margin |
-| **Commission** | Total WB margin (implicit) | Explicit commission fields |
+| Perspective       | WB Dashboard                 | Our System                     |
+| ----------------- | ---------------------------- | ------------------------------ |
+| **Sales metric**  | Customer-facing retail price | Seller's gross after WB margin |
+| **Commission**    | Total WB margin (implicit)   | Explicit commission fields     |
 | **Base for calc** | `retail_price_with_discount` | `net_for_pay` (К перечислению) |
 
 ### Data Flow
@@ -101,11 +103,11 @@ Seller receives: gross ≈ 213,810₽ (before logistics/storage)
 
 ## Metrics That Match Exactly ✅
 
-| Metric | WB Dashboard | Our DB | Match |
-|--------|-------------|--------|-------|
-| Логистика | 36,424.48₽ | 36,424.48₽ | ✅ 100% |
-| Хранение | 1,763.35₽ | 1,763.35₽ | ✅ 100% |
-| Удержания | 32,883.00₽ | 32,883.00₽ | ✅ 100% |
+| Metric    | WB Dashboard | Our DB     | Match   |
+| --------- | ------------ | ---------- | ------- |
+| Логистика | 36,424.48₽   | 36,424.48₽ | ✅ 100% |
+| Хранение  | 1,763.35₽    | 1,763.35₽  | ✅ 100% |
+| Удержания | 32,883.00₽   | 32,883.00₽ | ✅ 100% |
 
 ---
 
@@ -114,6 +116,7 @@ Seller receives: gross ≈ 213,810₽ (before logistics/storage)
 ### Option A: Display Both Metrics (Recommended)
 
 Add new fields to `weekly_payout_summary`:
+
 - `retail_sales_gross` = SUM(`retail_price_with_discount`) WHERE doc_type='sale'
 - `retail_sales_net` = retail_sales_gross - returns
 - `wb_commission_implicit` = retail_sales_net - gross_sales
@@ -154,11 +157,11 @@ return   |     3 |    0.07%
 
 ### Transaction Count Difference
 
-| Source | Count |
-|--------|-------|
-| WB Dashboard "Кол-во продаж" | 344 |
-| Our product_transactions | 350 |
-| Difference | +6 (likely returns counted separately) |
+| Source                       | Count                                  |
+| ---------------------------- | -------------------------------------- |
+| WB Dashboard "Кол-во продаж" | 344                                    |
+| Our product_transactions     | 350                                    |
+| Difference                   | +6 (likely returns counted separately) |
 
 ### Affected Files
 
@@ -243,40 +246,43 @@ END) as total_commission_rub
 #### 2. Payout Formula Updated (`payout-total.formula.ts`)
 
 **New Formula (WB Dashboard Compatible)**:
+
 ```
 payout_total = sale_gross - total_commission_rub - logistics_cost - storage_cost
              - paid_acceptance_cost - penalties_total - other_adjustments_net
 ```
 
 **Key Changes**:
+
 - Uses `sale_gross` (retail_price_with_discount NET) instead of `to_pay_goods`
 - Uses `total_commission_rub` (implicit commission) instead of explicit commission fields
 - `other_adjustments_net` now SUBTRACTED (was incorrectly added before)
 
 #### 3. Updated Files
 
-| File | Changes |
-|------|---------|
-| `src/aggregation/weekly-payout-aggregator.service.ts` | SQL aggregation uses retail_price_with_discount |
-| `src/aggregation/formulas/payout-total.formula.ts` | New WB Dashboard compatible formula |
-| `src/aggregation/formulas/payout-total.formula.spec.ts` | Tests with W47 real data |
-| `src/validation/services/payout-total-validation.service.ts` | Updated to use new fields |
-| `CLAUDE.md` | Documentation updated |
+| File                                                         | Changes                                         |
+| ------------------------------------------------------------ | ----------------------------------------------- |
+| `src/aggregation/weekly-payout-aggregator.service.ts`        | SQL aggregation uses retail_price_with_discount |
+| `src/aggregation/formulas/payout-total.formula.ts`           | New WB Dashboard compatible formula             |
+| `src/aggregation/formulas/payout-total.formula.spec.ts`      | Tests with W47 real data                        |
+| `src/validation/services/payout-total-validation.service.ts` | Updated to use new fields                       |
+| `CLAUDE.md`                                                  | Documentation updated                           |
 
 ### Expected Results After Re-aggregation
 
-| Metric | WB Dashboard | Our System (Expected) |
-|--------|-------------|----------------------|
-| Продажи | 305,778.32₽ | 305,778.32₽ ✅ |
-| Комиссия WB | 95,725.81₽ | ~95,726₽ ✅ |
-| Логистика | 36,424.48₽ | 36,424.48₽ ✅ |
-| Хранение | 1,763.35₽ | 1,763.35₽ ✅ |
-| Удержания | 32,883.00₽ | 32,883.00₽ ✅ |
-| **Итого** | **138,981.68₽** | **~138,982₽** ✅ |
+| Metric      | WB Dashboard    | Our System (Expected) |
+| ----------- | --------------- | --------------------- |
+| Продажи     | 305,778.32₽     | 305,778.32₽ ✅        |
+| Комиссия WB | 95,725.81₽      | ~95,726₽ ✅           |
+| Логистика   | 36,424.48₽      | 36,424.48₽ ✅         |
+| Хранение    | 1,763.35₽       | 1,763.35₽ ✅          |
+| Удержания   | 32,883.00₽      | 32,883.00₽ ✅         |
+| **Итого**   | **138,981.68₽** | **~138,982₽** ✅      |
 
 ### Re-aggregation Required
 
 To apply changes to existing data, run re-aggregation:
+
 ```bash
 # Via API
 curl -X POST http://localhost:3000/v1/analytics/weekly/reaggregate?week=2025-W47&cabinetId=<UUID>

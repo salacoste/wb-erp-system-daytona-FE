@@ -15,7 +15,7 @@ chars: 4565
 
 В этой статье:
 
-- 
+-
 - <a href="#kak-ukazat-edinitsy-izmereniya" rel="nofollow">Как указать единицы измерения</a>
 - <a href="#kak-zapolnit-edinitsy-izmereniya-massovo" rel="nofollow">Как заполнить единицы измерения массово</a>
 - <a href="#kak-pereschitat-analitiku" rel="nofollow">Как пересчитать аналитику</a>

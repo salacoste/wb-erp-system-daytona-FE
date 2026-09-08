@@ -9,6 +9,7 @@
 ## Problem
 
 SKU page and Category page show **dramatically different** operating margins for the same period (W50):
+
 - **SKU page**: 46.8% operating margin
 - **Category page**: 21.82% operating margin
 
@@ -18,14 +19,15 @@ This is a **25 percentage point discrepancy** for the same data.
 
 ### API Comparison
 
-| Endpoint | operating_profit | other_adjustments | Formula |
-|----------|------------------|-------------------|---------|
-| `/v1/analytics/sku-financials` | 71,739₽ | **NOT included** | gross - (logistics + storage + penalties + paid_acceptance) |
-| `/v1/analytics/weekly/by-category` | 33,427₽ | **38,469₽ included** | gross - (logistics + storage + penalties + paid_acceptance + other_adjustments) |
+| Endpoint                           | operating_profit | other_adjustments    | Formula                                                                         |
+| ---------------------------------- | ---------------- | -------------------- | ------------------------------------------------------------------------------- |
+| `/v1/analytics/sku-financials`     | 71,739₽          | **NOT included**     | gross - (logistics + storage + penalties + paid_acceptance)                     |
+| `/v1/analytics/weekly/by-category` | 33,427₽          | **38,469₽ included** | gross - (logistics + storage + penalties + paid_acceptance + other_adjustments) |
 
 ### Detailed Breakdown
 
 **SKU Financials API (`/v1/analytics/sku-financials`)**:
+
 ```json
 {
   "totals": {
@@ -39,6 +41,7 @@ This is a **25 percentage point discrepancy** for the same data.
 ```
 
 **Category API (`/v1/analytics/weekly/by-category`)**:
+
 ```
 total_revenue_net: 155,595.43
 total_operating_profit: 33,426.92
@@ -49,6 +52,7 @@ calculated_margin: 21.48%
 ### Formula Inconsistency
 
 The `other_adjustments` field (~38,469₽ for W50) represents "Прочие удержания" from WB:
+
 - Corrections
 - Other adjustments
 - Various WB deductions
@@ -62,6 +66,7 @@ Both endpoints should use the **same formula**:
 ---
 
 ## Backend Team Response
+
 **Status**: RESOLVED
 **Resolution**: Added `other_adjustments` to the SKU Financials API (`/v1/analytics/sku-financials`) operating profit calculation, aligning it with the Category/Brand API formula. Both views now subtract all operating expenses (logistics, storage, penalties, paid_acceptance, other_adjustments) consistently.
 **Frontend Action**: No further action needed unless noted above.
@@ -71,6 +76,7 @@ operating_profit = revenue_net - cogs - logistics - storage - penalties - paid_a
 ```
 
 Or equivalently:
+
 ```
 operating_profit = gross_profit - total_operating_expenses
 where:
@@ -100,16 +106,19 @@ total_operating_expenses = logistics_cost + storage_cost + penalties + paid_acce
 ### Backend Changes
 
 **1. Response DTO** (`src/analytics/dto/response/sku-financials-response.dto.ts`):
+
 - Added `other_adjustments` field to `ExpensesDto` (per-SKU)
 - Added `other_adjustments` field to `SkuFinancialsTotalsDto` (totals)
 
 **2. Service** (`src/analytics/services/sku-financials.service.ts`):
+
 - Added `getCabinetLevelOtherAdjustments()` - fetches total from `weekly_payout_summary`
 - Added `distributeOtherAdjustments()` - distributes proportionally by SKU revenue
 - Updated `calculateSkuFinancials()` - includes `other_adjustments` in operating expenses
 - Updated `calculateTotals()` - sums distributed `other_adjustments`
 
 **Distribution Algorithm**:
+
 ```typescript
 // Proportional distribution by revenue (same as margin-calculation.service.ts)
 const totalRevenue = transactions.reduce((sum, tx) => sum + Math.abs(tx.net_for_pay), 0);
@@ -119,10 +128,12 @@ const otherAdjustments = (Math.abs(tx.net_for_pay) / totalRevenue) * cabinetOthe
 ### Frontend Changes
 
 **1. Types** (`frontend/src/types/sku-financials.ts`):
+
 - Added `otherAdjustments: number` to `SkuFinancialCosts` interface
 - Updated `getTotalOperatingExpenses()` helper to include `otherAdjustments`
 
 **2. Hook** (`frontend/src/hooks/useSkuFinancials.ts`):
+
 - Added `other_adjustments` to `BackendExpenses` interface
 - Updated transformation to map `other_adjustments` → `otherAdjustments`
 
@@ -137,6 +148,7 @@ operating_margin_pct = (operating_profit / revenue_net) * 100
 ## Verification
 
 After fix:
+
 - SKU page margin ≈ Category page margin (for same period)
 - Both should show ~21-22% for W50
 - Difference attributable only to rounding and SKU-level COGS availability

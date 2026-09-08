@@ -13,7 +13,7 @@ chars: 5906
 
 В этой статье:
 
-- 
+-
 - <a href="#polza" rel="nofollow">Польза</a>
 - <a href="#s-kakih-marketplejsov-mozhno-kopirovat-kartochki" rel="nofollow">С каких маркетплейсов можно копировать карточки</a>
 - <a href="#kratkaya-instruktsiya" rel="nofollow">Краткая инструкция</a>

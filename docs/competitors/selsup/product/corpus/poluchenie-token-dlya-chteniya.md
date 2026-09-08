@@ -9,7 +9,7 @@ chars: 1999
 
 В этой статье:
 
-- 
+-
 - <a href="#poluchenie-tokena-wildberries" rel="nofollow">Получение токена Wildberries</a>
 - <a href="#poluchenie-tokena-ozon" rel="nofollow">Получение токена Ozon</a>
 

@@ -9,7 +9,7 @@ chars: 2369
 
 В этой статье:
 
-- 
+-
 - <a href="#dlya-chego" rel="nofollow">Для чего</a>
 
 ## Для чего

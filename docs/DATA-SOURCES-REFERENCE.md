@@ -28,13 +28,13 @@ This document explains expected data differences between WB APIs and why they ar
 
 #### Why the numbers differ
 
-| Factor | Advertising ROAS | Finance ROAS |
-|--------|-----------------|--------------|
-| **Numerator** | `order_sum` = gross orders attributed to ads | `sale_gross` = net sales (all channels, after returns) |
-| **Denominator** | `ad_spend` from campaign budgets (PromotionAPI) | `wb_promotion` from weekly report deductions |
-| **Data source** | `adv_daily_stats` table | `wb_finance_raw` table |
-| **Update frequency** | Daily (real-time campaign data) | Weekly (at report close) |
-| **Business question** | "How much revenue does each ad ruble generate?" | "What's the ratio of total sales to promotion costs?" |
+| Factor                | Advertising ROAS                                | Finance ROAS                                           |
+| --------------------- | ----------------------------------------------- | ------------------------------------------------------ |
+| **Numerator**         | `order_sum` = gross orders attributed to ads    | `sale_gross` = net sales (all channels, after returns) |
+| **Denominator**       | `ad_spend` from campaign budgets (PromotionAPI) | `wb_promotion` from weekly report deductions           |
+| **Data source**       | `adv_daily_stats` table                         | `wb_finance_raw` table                                 |
+| **Update frequency**  | Daily (real-time campaign data)                 | Weekly (at report close)                               |
+| **Business question** | "How much revenue does each ad ruble generate?" | "What's the ratio of total sales to promotion costs?"  |
 
 **Key insight**: `order_sum` (87,120) can be LARGER than `sale_gross` (78,891) — this is NOT a paradox. `order_sum` is gross orders (before returns/cancellations), while `sale_gross` is net sales (after returns, across ALL channels).
 
@@ -51,6 +51,7 @@ Backend guarantees separation: `advertising-analytics.service.ts` uses ONLY data
 ### Multi-Campaign SKU Deduplication (Story 35.3)
 
 When one product (nmId) is in multiple campaigns simultaneously, profit is deduplicated:
+
 - Profit is taken ONCE from `weekly_margin_fact`
 - Ad spend is summed across all campaigns for that SKU
 - `actual_roi = (profit - total_spend) / total_spend` — no double-counting
@@ -81,12 +82,12 @@ When one product (nmId) is in multiple campaigns simultaneously, profit is dedup
 
 #### Why values differ (~1-3%)
 
-| Factor | Paid Storage API | Weekly Report |
-|--------|-----------------|---------------|
-| **Rounding** | Per SKU/day level | Aggregate for entire week |
-| **Adjustments** | No final adjustments | WB final corrections at period close |
-| **Tariff recalculations** | Current tariffs at time of recording | Final tariffs at report close date |
-| **Data staleness** | Updated daily with ~1-2 day delay | Finalized once per week |
+| Factor                    | Paid Storage API                     | Weekly Report                        |
+| ------------------------- | ------------------------------------ | ------------------------------------ |
+| **Rounding**              | Per SKU/day level                    | Aggregate for entire week            |
+| **Adjustments**           | No final adjustments                 | WB final corrections at period close |
+| **Tariff recalculations** | Current tariffs at time of recording | Final tariffs at report close date   |
+| **Data staleness**        | Updated daily with ~1-2 day delay    | Finalized once per week              |
 
 #### Validation threshold
 
@@ -97,6 +98,7 @@ When one product (nmId) is in multiple campaigns simultaneously, profit is dedup
 #### Backend cross-reference
 
 The `cabinet-expenses` endpoint provides both sources for comparison:
+
 - `storage` — from Paid Storage API
 - `storage_weekly_report` — from weekly report
 - `storage_difference` — calculated difference between the two
@@ -123,12 +125,14 @@ END) as wb_promotion_cost
 ```
 
 **Covers** (case-insensitive regex `~* 'продвижен'`):
+
 - `WB.Продвижение` — old format (before 2025)
 - `ВБ.Продвижение` — new format (after WB → ВБ rebrand)
 - `Продвижение товаров` — alternative WB format
 - Any case: `ПРОДВИЖЕНИЕ`, `продвижение`, etc.
 
 **Separate categories** (NOT included in wb_promotion):
+
 - `~* 'джем'` → `wb_jam_cost` (subscription "Джем")
 - `~* 'минимальн'` → `wb_min_payment_cost` (minimum payment fee)
 - Everything else → `wb_other_services_cost` (utilization, compensations, etc.)
@@ -139,19 +143,19 @@ END) as wb_promotion_cost
 
 ## Validation Summary
 
-| Check | Result |
-|-------|--------|
-| `ad_spend` and `wb_promotion` from different tables? | `adv_daily_stats` vs `wb_finance_raw` |
-| Revenue for ROAS strictly from advertising API? | Request #75 confirmed |
-| No double-counting of spend across campaigns? | Story 35.3 deduplication |
-| No double-counting of profit? | Story 35.3 deduplication |
-| Pattern matching covers all WB formats? | Case-insensitive regex on Russian word |
-| Data sources never mixed? | Full grep across codebase confirmed |
+| Check                                                | Result                                 |
+| ---------------------------------------------------- | -------------------------------------- |
+| `ad_spend` and `wb_promotion` from different tables? | `adv_daily_stats` vs `wb_finance_raw`  |
+| Revenue for ROAS strictly from advertising API?      | Request #75 confirmed                  |
+| No double-counting of spend across campaigns?        | Story 35.3 deduplication               |
+| No double-counting of profit?                        | Story 35.3 deduplication               |
+| Pattern matching covers all WB formats?              | Case-insensitive regex on Russian word |
+| Data sources never mixed?                            | Full grep across codebase confirmed    |
 
 ---
 
 ## Change Log
 
-| Date | Author | Change |
-|------|--------|--------|
+| Date       | Author                | Change                                                      |
+| ---------- | --------------------- | ----------------------------------------------------------- |
 | 2026-02-23 | Claude + Backend team | Initial document — ROAS, Storage, wb_promotion explanations |

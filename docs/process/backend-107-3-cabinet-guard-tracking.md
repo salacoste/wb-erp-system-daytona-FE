@@ -14,6 +14,7 @@ Epic 96-FE Story 96.17 was originally framed with an **E5 hard drop-trigger**: b
 **Pre-flight discovery during Story 96.17 authoring (2026-05-10) revealed the entire deliverable was ALREADY SHIPPED by Story 86.2** — `e2e/fixtures/dbw-order-seed.ts` already integrates `POST /v1/test/seed/dbw-order` + `DELETE /v1/test/seed/dbw-order/:orderId` with 1 existing consumer at `e2e/orders-client-info.spec.ts`.
 
 This decouples two concerns the original E5 framing conflated:
+
 1. **Endpoint EXISTS + frontend integration shipped**: ✅ Done (Story 86.2).
 2. **Endpoint is MULTI-TENANT-SAFE (CabinetGuard verification)**: ⚠️ Open backend security audit (Story 107.3).
 
@@ -30,6 +31,7 @@ Therefore: Story 96.17 closes per Disposition A; this memo tracks concern (2) in
 `/v1/test/seed/dbw-order` endpoints (POST + DELETE) seed test orders with mock client PII. The endpoints are guarded by `NODE_ENV=development` (404 in production-like envs) per backend implementation. **Open question**: do these endpoints also enforce `CabinetGuard` (cabinet-isolation) so a developer in cabinet A cannot seed orders in cabinet B?
 
 If `CabinetGuard` is NOT enforced:
+
 - **Risk**: in shared dev environments (e.g., team-shared dev DB), one developer's E2E test could seed orders affecting another developer's cabinet.
 - **Severity**: Low (dev-only endpoints, 404 in production, NO real PII data exposure since the mock data is intentionally short + masked per `e2e/fixtures/dbw-order-seed.ts:35` `SEED_CLIENT` constant).
 - **Mitigation if confirmed missing**: backend adds `CabinetGuard` middleware to the `/v1/test/seed/*` route group. NO frontend changes needed regardless of outcome.
@@ -42,6 +44,7 @@ If `CabinetGuard` is NOT enforced:
 - Epic 96-FE retro § A-8 (filed 2026-05-09).
 
 **Actionable verification protocol**:
+
 1. **First**: confirm with backend coordinator whether Story 107.3 has been formally filed as a backend ticket. Frontend cannot independently verify.
 2. **If not yet filed**: this memo is **speculative tracking** — file backend ticket as a prerequisite to verification (action item for backend team or frontend coordinator with backend-write access).
 3. **If filed**: update this memo with the authoritative ticket location (backend repo path, URL, or `docs/request-backend/107-...md` if filed in this repo).

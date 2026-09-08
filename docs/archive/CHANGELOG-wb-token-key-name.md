@@ -49,6 +49,7 @@ Updated all frontend code to use `'wb_api_token'` consistently:
 ## Migration Notes
 
 If you have existing tokens saved with `'wb_standard_token'`:
+
 1. They will not be found by backend services
 2. Users need to re-save their WB API token through the onboarding form
 3. New tokens will be saved with correct key name `'wb_api_token'`
@@ -58,4 +59,3 @@ If you have existing tokens saved with `'wb_standard_token'`:
 - Backend: `src/shared/wb-api/wb-products.service.ts` (line 78)
 - Backend: `src/shared/wb-api/wb-finances.service.ts` (line ~similar)
 - Frontend: All token save/update operations now use `'wb_api_token'`
-

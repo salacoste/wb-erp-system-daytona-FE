@@ -12,6 +12,7 @@
 **Answer: (b) — The endpoints were ALWAYS at `/v1/analytics/acquiring/*`. There is NO old `/v1/acquiring/*` path.**
 
 Evidence:
+
 - Git history shows the acquiring controller was introduced in commit `52827a8a` (Epic 92) with `@Controller('v1/analytics/acquiring')` — this route has never changed.
 - `grep` for `v1/acquiring` (not `v1/analytics/acquiring`) returns **zero results** in any `.ts` source file.
 - No acquiring file was ever renamed (`git log --diff-filter=R` confirms).
@@ -34,19 +35,21 @@ Evidence:
 
 **Answer: Consistency is NOT guaranteed. The two values come from different data sources.**
 
-| Metric | Source | Calculation |
-|--------|--------|-------------|
-| `acquiring_total` (finance-summary) | Live WB v1 Acquiring API (`getAcquiringReportsDetailed`) | `reduce(sum, r.acquiring_fee ?? 0)` in TypeScript |
-| `acquiring_fee_sum` (per-report from list endpoint) | Live WB v1 Acquiring API (`getAcquiringReportsList`) | Pre-aggregated by WB per report |
-| `acquiring_fee_total` (finance-summary) | `wb_finance_raw` DB table | `SUM(ABS(acquiring_fee))` SQL |
+| Metric                                              | Source                                                   | Calculation                                       |
+| --------------------------------------------------- | -------------------------------------------------------- | ------------------------------------------------- |
+| `acquiring_total` (finance-summary)                 | Live WB v1 Acquiring API (`getAcquiringReportsDetailed`) | `reduce(sum, r.acquiring_fee ?? 0)` in TypeScript |
+| `acquiring_fee_sum` (per-report from list endpoint) | Live WB v1 Acquiring API (`getAcquiringReportsList`)     | Pre-aggregated by WB per report                   |
+| `acquiring_fee_total` (finance-summary)             | `wb_finance_raw` DB table                                | `SUM(ABS(acquiring_fee))` SQL                     |
 
 Discrepancy sources:
+
 1. **Different data sources**: `acquiring_total` = live WB API call; `acquiring_fee_total` = DB aggregation of weekly report data
 2. **Independent cache layers**: acquiring API (30min) + finance-summary (15min) = stale reads possible
 3. **Date boundary mismatch**: ISO week bounds vs WB reporting period boundaries may differ
 4. **Null handling**: acquiring API returns `null` for pending fees → treated as 0 → sum changes when fees settle
 
 **Recommendation for FE**:
+
 - Do NOT cross-validate `acquiring_total` against report-level sums as a hard check
 - If displaying both, treat ≥5% discrepancy as advisory (amber indicator, not blocking)
 - Use `acquiring_fee_total` (from `wb_finance_raw`) as the "source of truth" for weekly P&L — it's the static, auditable DB value
@@ -66,6 +69,7 @@ WB_discount_total = retail_price_total - sales_gross
 ```
 
 Source columns in `wb_finance_raw`:
+
 - `retail_price` → your listed price
 - `retail_price_with_discount` → what customer actually paid after SPP + other WB discounts
 
@@ -96,6 +100,7 @@ The aggregation SQL groups by `report_type` (which produces both RUS `"осно�
 **⚠️ CRITICAL CORRECTION: The #169 report's description of `commission_other` was INACCURATE.**
 
 ### What the report claimed (Section 2.3):
+
 > `"commission_other": 872000.00 // NEW — "Dop. servisy WB" (WB.Promotion ~800K + Dzham ~72K)`
 > "Previously hidden in `corrections`."
 
@@ -113,17 +118,18 @@ commission_other: commission ? Math.round(commission * 100) / 100 : null,
 
 ### The actual situation:
 
-| Field | Source | Contains WB.Promotion+Dzham? |
-|-------|--------|------------------------------|
-| `commission_other` (cabinet-summary) | `weekly_margin_fact.commission_rub` | **NO** — this is ppvzReward/additionalPayment |
-| `corrections` (raw data) | `wb_finance_raw.corrections` | **YES** — but lumped with other deductions |
-| `other_adjustments` (cabinet-summary) | Aggregation of `corrections + other_adjustments` | **YES** — but mixed in, not separated |
+| Field                                 | Source                                           | Contains WB.Promotion+Dzham?                  |
+| ------------------------------------- | ------------------------------------------------ | --------------------------------------------- |
+| `commission_other` (cabinet-summary)  | `weekly_margin_fact.commission_rub`              | **NO** — this is ppvzReward/additionalPayment |
+| `corrections` (raw data)              | `wb_finance_raw.corrections`                     | **YES** — but lumped with other deductions    |
+| `other_adjustments` (cabinet-summary) | Aggregation of `corrections + other_adjustments` | **YES** — but mixed in, not separated         |
 
 **The `corrections` field is NOT zeroed out** — it still contains the original legacy data including WB.Promotion and Dzham costs.
 
 ### Backend fix needed (NEW STORY — Epic 107 candidate):
 
 We need to properly extract WB.Promotion + Dzham from `corrections` and surface it as `commission_other` in the cabinet-summary. The work involves:
+
 1. Update `trends-analytics.service.ts` to compute `commission_other` from `corrections` breakdown (using `bonus_type_name` pattern matching from `CabinetExpensesService`)
 2. Ensure `total_commission_rub` still includes this amount (it already does via `corrections`)
 3. Backfill: since this is computed at query-time from raw data, no historical migration needed — all periods with raw `wb_finance_raw` data will automatically get the correct value
@@ -131,6 +137,7 @@ We need to properly extract WB.Promotion + Dzham from `corrections` and surface 
 ### Recommended FE strategy (interim):
 
 **Option A — Dual-lookup is the right approach** for now:
+
 - Use `other_adjustments` (which includes WB.Promotion+Dzham) as a proxy
 - When the backend fix ships, switch to `commission_other`
 - Mark the PnLWaterfall row with `// PENDING BACKEND: proper commission_other extraction from corrections`
@@ -176,6 +183,7 @@ When `viewBy` is `'brand'`, `'category'`, or `'total'` (not `'sku'`), both field
 **Yes — genuinely NEW. The services pre-existed with 60+ tests but had ZERO REST exposure before Epic 105 (Story 57.5).**
 
 Chronology:
+
 - 2026-01-29: `FbsDataAggregationService` created (reads from DB table) → exposed via `HistoricalAnalyticsController`
 - 2026-01-30: `FbsAnalyticsAggregationService`, `RegionalStockService`, `WarehouseRemainsService` created (call WB SDK directly) → NO controller
 - 2026-01-31: `FbsAnalyticsController` created with all 7 endpoints
@@ -184,10 +192,10 @@ Chronology:
 
 **No — they are different endpoints on a different controller.**
 
-| Controller | Route Prefix | Data Source | Created By |
-|------------|-------------|-------------|------------|
+| Controller                      | Route Prefix             | Data Source                      | Created By           |
+| ------------------------------- | ------------------------ | -------------------------------- | -------------------- |
 | `HistoricalAnalyticsController` | `/v1/analytics/orders/*` | DB table `FbsAnalyticsAggregate` | Epic 51 (Story 51.4) |
-| `FbsAnalyticsController` | `/v1/analytics/fbs/*` | Live WB SDK API calls | Epic 57 (Story 57.5) |
+| `FbsAnalyticsController`        | `/v1/analytics/fbs/*`    | Live WB SDK API calls            | Epic 57 (Story 57.5) |
 
 Both controllers remain active and serve different purposes.
 
@@ -197,11 +205,11 @@ Both controllers remain active and serve different purposes.
 
 The actual frontend hooks consume the `HistoricalAnalyticsController` endpoints:
 
-| Frontend Hook | Backend Endpoint | Controller |
-|---------------|-----------------|------------|
-| `useFbsTrends` | `GET /v1/analytics/orders/trends` | HistoricalAnalyticsController |
+| Frontend Hook    | Backend Endpoint                    | Controller                    |
+| ---------------- | ----------------------------------- | ----------------------------- |
+| `useFbsTrends`   | `GET /v1/analytics/orders/trends`   | HistoricalAnalyticsController |
 | `useFbsSeasonal` | `GET /v1/analytics/orders/seasonal` | HistoricalAnalyticsController |
-| `useFbsCompare` | `GET /v1/analytics/orders/compare` | HistoricalAnalyticsController |
+| `useFbsCompare`  | `GET /v1/analytics/orders/compare`  | HistoricalAnalyticsController |
 
 **No frontend code currently consumes any of the 7 new FBS analytics controller endpoints.**
 
@@ -225,6 +233,7 @@ If `NODE_ENV !== 'development'`, the entire `TestUtilsModule` (and therefore `Te
 ### Q7.2: Secondary guard if NODE_ENV=development is accidentally set in production?
 
 **No effective secondary guard.** Full inventory:
+
 1. Constructor warning log — only fires when controller loads in non-dev mode (which can't happen due to the module guard). **It never warns when NODE_ENV=development is set incorrectly in production.**
 2. No IP allowlist
 3. No environment validation middleware
@@ -236,10 +245,10 @@ If `NODE_ENV !== 'development'`, the entire `TestUtilsModule` (and therefore `Te
 
 Endpoints require `JwtAuthGuard` + `RolesGuard` but **NOT `CabinetGuard`**.
 
-| Endpoint | Required Role | CabinetGuard? |
-|----------|--------------|---------------|
-| `POST /v1/test/seed/dbw-order` | `Owner` | **No** |
-| `DELETE /v1/test/seed/dbw-order/:orderId` | `Owner` | **No** |
+| Endpoint                                  | Required Role | CabinetGuard? |
+| ----------------------------------------- | ------------- | ------------- |
+| `POST /v1/test/seed/dbw-order`            | `Owner`       | **No**        |
+| `DELETE /v1/test/seed/dbw-order/:orderId` | `Owner`       | **No**        |
 
 **Gap**: The `x-cabinet-id` header is read as an untrusted parameter. Any authenticated `Owner` can seed/delete orders for **any** cabinet, not just cabinets they own.
 
@@ -264,6 +273,7 @@ The `#169` report omitted this because Epic 88 shipped before the reporting wind
 The 3/4 pipelines showing false `critical`/`no_data` are **separate from** the 2 new pipelines from Epic 106. The new pipelines (`fbo_return_classification_sync` and `buyout_reconciliation_sync`) were registered after the false alarm issue was reported.
 
 The false alarms are likely caused by:
+
 1. Pipeline registry entries without matching `SCHEDULED_TASKS` entries (or vice versa)
 2. Cron schedule parsing issues with `calculateExpectedExecutions()` for certain schedule formats
 3. Stale data in the monitoring tables from before the completeness fixes
@@ -278,39 +288,40 @@ Based on the findings above, the following backend work is needed:
 
 ### CRITICAL (blocks frontend Story 96.4)
 
-| # | Story | Description | Effort |
-|---|-------|-------------|--------|
-| 1 | **107.1** | Fix `commission_other` in cabinet-summary to properly extract WB.Promotion + Dzham from `corrections` breakdown | M |
-| 2 | **107.2** | Verify historical data coverage — confirm extraction works for W01-W17 (query-time, no migration) | S |
+| #   | Story     | Description                                                                                                     | Effort |
+| --- | --------- | --------------------------------------------------------------------------------------------------------------- | ------ |
+| 1   | **107.1** | Fix `commission_other` in cabinet-summary to properly extract WB.Promotion + Dzham from `corrections` breakdown | M      |
+| 2   | **107.2** | Verify historical data coverage — confirm extraction works for W01-W17 (query-time, no migration)               | S      |
 
 ### HIGH (security + developer experience)
 
-| # | Story | Description | Effort |
-|---|-------|-------------|--------|
-| 3 | **107.3** | Add `CabinetGuard` to test controller endpoints | S |
-| 4 | **107.4** | Fix constructor warning logic (currently backwards) | XS |
-| 5 | **107.5** | Consider adding `wb_discount_total` as explicit field to reduce frontend delta-computation risk | S |
+| #   | Story     | Description                                                                                     | Effort |
+| --- | --------- | ----------------------------------------------------------------------------------------------- | ------ |
+| 3   | **107.3** | Add `CabinetGuard` to test controller endpoints                                                 | S      |
+| 4   | **107.4** | Fix constructor warning logic (currently backwards)                                             | XS     |
+| 5   | **107.5** | Consider adding `wb_discount_total` as explicit field to reduce frontend delta-computation risk | S      |
 
 ### MEDIUM (documentation + minor improvements)
 
-| # | Story | Description | Effort |
-|---|-------|-------------|--------|
-| 6 | **107.6** | Document `latest_fcu`/`latest_dcu` scoping semantics in Swagger/OpenAPI | S |
-| 7 | **107.7** | Add secondary security guard for test endpoints (e.g., API key or startup validation) | S |
-| 8 | **107.8** | Investigate #148 fulfillment returns with fresh data from Epic 106 | M |
+| #   | Story     | Description                                                                           | Effort |
+| --- | --------- | ------------------------------------------------------------------------------------- | ------ |
+| 6   | **107.6** | Document `latest_fcu`/`latest_dcu` scoping semantics in Swagger/OpenAPI               | S      |
+| 7   | **107.7** | Add secondary security guard for test endpoints (e.g., API key or startup validation) | S      |
+| 8   | **107.8** | Investigate #148 fulfillment returns with fresh data from Epic 106                    | M      |
 
 ### LOW (informational)
 
-| # | Story | Description | Effort |
-|---|-------|-------------|--------|
-| 9 | **107.9** | Reassess #150 monitoring false alarms after 1 week of new pipeline data | S |
-| 10 | — | Correct #169 report section 2.3 (commission_other description) in documentation | XS |
+| #   | Story     | Description                                                                     | Effort |
+| --- | --------- | ------------------------------------------------------------------------------- | ------ |
+| 9   | **107.9** | Reassess #150 monitoring false alarms after 1 week of new pipeline data         | S      |
+| 10  | —         | Correct #169 report section 2.3 (commission_other description) in documentation | XS     |
 
 ---
 
 ## Summary for Frontend
 
 **Can proceed immediately (no blockers)**:
+
 - Q1: Acquiring endpoints — already at correct paths, no migration
 - Q3: retail_price_total — formula clear, eaeu covered, compute WB discount as delta
 - Q5: latest_fcu/dcu — scoped to request week, null for missing shipments
@@ -318,9 +329,11 @@ Based on the findings above, the following backend work is needed:
 - Q8.1: Daily finance endpoint (#157) — already implemented in Epic 88
 
 **Blocked pending backend fix**:
+
 - Q4: commission_other — **backend must fix first** (Story 107.1). Use `other_adjustments` as interim proxy
 
 **Advisory (no blocker, but be aware)**:
+
 - Q2: acquiring consistency — not guaranteed, use `acquiring_fee_total` as P&L source of truth
 - Q7: test endpoint security — safe for E2E in dev, but add to security review backlog
 - Q8.2: fulfillment returns — still investigating, no ETA

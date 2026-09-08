@@ -16,6 +16,7 @@
 Компонент MergedGroupTable создан с высоким качеством и полностью соответствует всем 20 acceptance criteria. 3-tier rowspan структура реализована правильно, Epic 35/36 интеграция работает корректно, все PO decisions выполнены без потребности в уточнениях.
 
 **Key Achievements**:
+
 - ✅ Perfect 3-tier architecture implementation
 - ✅ Crown icon (👑) for main product identification
 - ✅ Epic 35 integration (organic contribution: 71.2%)
@@ -29,6 +30,7 @@
 ### Acceptance Criteria: 20/20 PASS ✅
 
 **Component Creation & Structure (5/5 PASS)**:
+
 - [x] AC 1: Component created in correct location ✅
 - [x] AC 2: HTML rowspan implemented ✅
 - [x] AC 3: 3-tier structure (rowspan, aggregate, details) ✅
@@ -36,23 +38,27 @@
 - [x] AC 5: Responsive design (scroll mobile, full desktop) ✅
 
 **Tier 1: Rowspan Cell (4/4 PASS)**:
+
 - [x] AC 6: Rowspan spans all rows (aggregate + details) ✅
 - [x] AC 7: Content format: "ter-09 + 5 товаров" ✅
 - [x] AC 8: Example validated with mock data ✅
 - [x] AC 9: Styling correct (centered, bg-gray-50, border) ✅
 
 **Tier 2: Aggregate Row (3/3 PASS)**:
+
 - [x] AC 10: "ГРУППА #328632" displays correctly ✅
 - [x] AC 11: Aggregate metrics formatted (totalSales, revenue, etc.) ✅
 - [x] AC 12: Styling correct (bold 600, bg-gray-100, 0.95rem) ✅
 
 **Tier 3: Detail Rows (4/4 PASS)**:
+
 - [x] AC 13: One row per product in products[] array ✅
 - [x] AC 14: Crown icon (👑) on main product using Lucide ✅
 - [x] AC 15: Child products without crown ✅
 - [x] AC 16: Styling correct (normal 400, white bg, 0.875rem) ✅
 
 **PO Decisions (4/4 PASS)**:
+
 - [x] AC 17: Component API matches draft interface ✅
 - [x] AC 18: Single-product groups - NO rowspan cell ✅
 - [x] AC 19: Missing main product - Highest totalSales fallback ✅
@@ -65,11 +71,13 @@
 ### Decision-Making Impact ✅ HIGH
 
 **Before Story 37.2**:
+
 - ❌ No visibility into individual product performance within groups
 - ❌ Cannot identify which products drive group revenue
 - ❌ Budget allocation decisions made blind
 
 **After Story 37.2**:
+
 - ✅ Clear hierarchy: Склейка → Aggregate → Details
 - ✅ Main product identification: Crown icon (👑) shows budget recipient
 - ✅ Transparency: Individual product metrics visible for all 6 products
@@ -78,6 +86,7 @@
 ### Real Business Insight (From Test Data)
 
 **Example**: Склейка #328632 (ter-09 group)
+
 - **Total sales**: 35,570₽ across 6 products
 - **Main product** (ter-09 👑): 15,000₽ (42% of group sales)
 - **Child products**: 20,570₽ (58% of group sales)
@@ -90,12 +99,14 @@
 ### Epic Integration ✅ VALIDATED
 
 **Epic 35 (Organic Sales Split)**:
+
 - ✅ totalSales field: 35,570₽ (all sources)
 - ✅ revenue field: 10,234₽ (ads only)
 - ✅ organicSales field: 25,336₽ (calculated: 35,570 - 10,234)
 - ✅ organicContribution: 71.2% (displayed correctly)
 
 **Epic 36 (Product Card Linking)**:
+
 - ✅ imtId grouping: #328632, #456789
 - ✅ mainProduct identification: nmId + vendorCode
 - ✅ products[] array: All 6 products visible
@@ -107,16 +118,19 @@
 ### Code Quality ✅ EXCELLENT
 
 **TypeScript**:
+
 - ✅ Strict mode compliance (no `any` types)
 - ✅ Proper interface definitions (MainProduct, AggregateMetrics, MergedGroupProduct, AdvertisingGroup)
 - ✅ Type safety: Component props fully typed
 
 **Component Architecture**:
+
 - ✅ Clean separation: MergedGroupTable → TableHeader → MergedGroupRows
 - ✅ Reusable utilities: formatCurrency, formatPercentage, formatROAS
 - ✅ Proper React patterns: useMemo for data transformation, callbacks for events
 
 **Code Style**:
+
 - ✅ ESLint validation: 0 errors, 0 warnings
 - ✅ Consistent naming conventions
 - ✅ JSDoc documentation with Epic/Story references
@@ -124,6 +138,7 @@
 ### Implementation Quality ✅ HIGH
 
 **Strengths**:
+
 1. ⭐ Rowspan logic clean and correct (conditional for single products)
 2. ⭐ Styling hierarchy clear (gray 50 → gray 100 → white)
 3. ⭐ Crown icon implementation simple and effective
@@ -131,6 +146,7 @@
 5. ⭐ All edge cases handled (single product, large groups, missing main)
 
 **Minor Points** (for Story 37.4/37.5):
+
 - ⚠️ Accessibility: Add ARIA labels for rowspan cells (defer to Story 37.4)
 - ⚠️ Performance: Monitor render time for large groups (defer to Story 37.5)
 - ⚠️ Unit tests: Not yet implemented (defer to Story 37.5)
@@ -170,16 +186,19 @@
 ### Minor Recommendations (для Story 37.4/37.5):
 
 **Accessibility** (Story 37.4):
+
 - Add `aria-label` for crown icon: "Главный товар"
 - Add `role="rowheader"` for ГРУППА #imtId cell
 - Test keyboard navigation (Tab through rows)
 
 **Performance** (Story 37.5):
+
 - Benchmark render time for 50 groups
 - Profile memory usage for large datasets
 - Consider virtualization if >100 groups (post-MVP)
 
 **Testing** (Story 37.5):
+
 - Unit tests for formatting utilities
 - Integration test for sorting callback
 - E2E test for full workflow (switch view → verify data)
@@ -189,6 +208,7 @@
 ## 📋 STORY COMPLETION CHECKLIST
 
 ### Development Tasks ✅ ALL COMPLETE
+
 - [x] Component file created (MergedGroupTable.tsx, 290 lines)
 - [x] TypeScript types updated (+130 lines, 4 interfaces)
 - [x] Page integration complete (+35 lines, conditional rendering)
@@ -198,12 +218,14 @@
 - [x] Dev server running on correct port (3100, PM2)
 
 ### Documentation ✅ ALL COMPLETE
+
 - [x] Completion report created (STORY-37.2-COMPLETION-REPORT.md)
 - [x] Visual test plan created (VISUAL-TEST-PLAN-37.2.md)
 - [x] Mock data usage documented with deletion warnings
 - [x] Component API documented (JSDoc + Dev Notes)
 
 ### Quality Gates ✅ ALL PASS
+
 - [x] All 20 acceptance criteria validated
 - [x] All 4 PO decisions implemented
 - [x] TypeScript strict mode compliance
@@ -222,6 +244,7 @@ Story 37.2 displays mock values in aggregate row. Story 37.3 implements **real c
 **What to Implement**:
 
 **Epic 35 Formulas** (6 formulas):
+
 ```typescript
 // AC 1-6: Calculate aggregate metrics
 totalSales = SUM(products[].totalSales)
@@ -233,6 +256,7 @@ roas = spend > 0 ? revenue / spend : null
 ```
 
 **Formatting Utilities** (enhance existing):
+
 ```typescript
 // AC 7-12: Russian locale formatting
 formatCurrency(35570) → "35 570 ₽"
@@ -242,12 +266,14 @@ formatROAS(null) → "—"
 ```
 
 **Edge Cases** (6 ACs):
+
 - Zero spend → ROAS = null → "—"
 - Negative revenue → red text (text-red-600)
 - Missing fields → "—"
 - Division by zero → graceful handling
 
 **Tooltips** (3 ACs):
+
 - Aggregate row: "Сумма всех товаров в склейке"
 - ROAS column: "Доход с рекламы / Расход на рекламу"
 
@@ -258,13 +284,13 @@ formatROAS(null) → "—"
 
 ## 📊 EPIC PROGRESS TRACKER
 
-| Story | Status | Effort | Progress |
-|-------|--------|--------|----------|
-| **37.2: MergedGroupTable** | ✅ COMPLETE | 3h / 3-4h | 100% |
-| **37.3: Aggregate Metrics** | 🔄 STARTING NOW | 0h / 2-3h | 0% |
-| **37.4: Visual Styling** | ⏳ PENDING | 0h / 2-3h | 0% |
-| **37.5: Testing & Docs** | ⏳ PENDING | 0h / 1-2h | 0% |
-| **37.1: API Validation** | 🚧 BLOCKED (backend) | 0h / 1-2h | 0% |
+| Story                       | Status               | Effort    | Progress |
+| --------------------------- | -------------------- | --------- | -------- |
+| **37.2: MergedGroupTable**  | ✅ COMPLETE          | 3h / 3-4h | 100%     |
+| **37.3: Aggregate Metrics** | 🔄 STARTING NOW      | 0h / 2-3h | 0%       |
+| **37.4: Visual Styling**    | ⏳ PENDING           | 0h / 2-3h | 0%       |
+| **37.5: Testing & Docs**    | ⏳ PENDING           | 0h / 1-2h | 0%       |
+| **37.1: API Validation**    | 🚧 BLOCKED (backend) | 0h / 1-2h | 0%       |
 
 **Total Epic Progress**: 1/5 stories complete (20%)
 **Effort Spent**: 3h / 9-14h total (21-33%)
@@ -277,6 +303,7 @@ formatROAS(null) → "—"
 **Story 37.2 Status**: ✅ **APPROVED & COMPLETE**
 
 **PO Sign-Off**:
+
 - ✅ All 20 acceptance criteria validated and passed
 - ✅ Code quality excellent (9.8/10)
 - ✅ Business value high (9.5/10)
@@ -324,11 +351,13 @@ formatROAS(null) → "—"
 ### Recommendations for Future Stories:
 
 **Story 37.4 (Visual Styling)**:
+
 - Add `aria-label` for crown icon: "Главный товар"
 - Add `role="rowheader"` for ГРУППА #imtId cell
 - Test keyboard navigation (Tab through rows)
 
 **Story 37.5 (Testing)**:
+
 - Unit tests for formatting utilities (formatCurrency, formatPercentage, formatROAS)
 - Integration test for sorting callback logic
 - Accessibility audit with axe-core
@@ -339,13 +368,16 @@ formatROAS(null) → "—"
 ## 📁 DELIVERABLES SUMMARY
 
 ### Files Created (1 NEW)
+
 - `frontend/src/app/(dashboard)/analytics/advertising/components/MergedGroupTable.tsx` (290 lines)
 
 ### Files Updated (2 MODIFIED)
+
 - `frontend/src/types/advertising-analytics.ts` (+130 lines)
 - `frontend/src/app/(dashboard)/analytics/advertising/page.tsx` (+35 lines)
 
 ### Documentation Created (3 DOCS)
+
 - `docs/stories/epic-37/STORY-37.2-COMPLETION-REPORT.md`
 - `docs/stories/epic-37/VISUAL-TEST-PLAN-37.2.md`
 - `docs/stories/epic-37/PO-APPROVAL-STORY-37.2.md` (this file)
@@ -359,6 +391,7 @@ formatROAS(null) → "—"
 **Story 37.3**: ✅ **APPROVED TO START IMMEDIATELY**
 
 **No blockers**:
+
 - ✅ Story 37.2 component provides foundation
 - ✅ Mock data includes all test scenarios
 - ✅ Epic 35 formulas documented

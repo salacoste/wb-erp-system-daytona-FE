@@ -11,7 +11,7 @@ chars: 5733
 
 В этой статье:
 
-- 
+-
 - <a href="#chto-takoe-fifo-po-partijnyj-uchet" rel="nofollow">Что такое FIFO (по партийный учет)</a>
 - <a href="#fifo-v-selsup" rel="nofollow">FIFO в SelSup</a>
 - <a href="#kak-upravlyat-metodom-fifo-v-selsup" rel="nofollow">Как управлять методом FIFO в SelSup</a>
@@ -53,7 +53,7 @@ FIFO (first-in-first-out) или «первый пришел — первый у
 
 Важно! Если Фифо выключено - себестоимость считается по последней себестоимости.
 
-**FIFO при работе с остатками в SelSup\**
+*_FIFO при работе с остатками в SelSup\*_
 
 **FBS**
 

@@ -13,7 +13,7 @@ chars: 5656
 
 В этой статье:
 
-- 
+-
 - <a href="#podklyuchenie-integratsii" rel="nofollow">Подключение интеграции</a>
 - <a href="#vygruzka-kataloga-tovarov" rel="nofollow">Выгрузка каталога товаров</a>
 - <a href="#chto-vazhno-uchityvat-pri-vygruzke-tovarov" rel="nofollow">Что важно учитывать при выгрузке товаров</a>

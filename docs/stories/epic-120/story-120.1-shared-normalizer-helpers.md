@@ -24,12 +24,14 @@ Extract duplicated normalizer helper functions (`toCount`, `toNullableNumber`, `
 ## Files
 
 ### Create
+
 - `src/lib/api/normalizer-helpers.ts`
 - `src/lib/string-utils.ts`
 - `src/lib/api/__tests__/normalizer-helpers.test.ts`
 - `src/lib/__tests__/string-utils.test.ts`
 
 ### Modify (migrate imports)
+
 - `src/lib/api/search-analytics-normalizer.ts`
 - `src/lib/api/monitor-summary-normalizer.ts`
 - `src/lib/api/acquiring-normalizer.ts`
@@ -46,7 +48,7 @@ Extract duplicated normalizer helper functions (`toCount`, `toNullableNumber`, `
 
 ## Change Log
 
-| Date | Status | Notes |
-|------|--------|-------|
-| 2026-06-04 | done | Shared helpers extracted, 11 normalizers migrated, 8,648 tests passing |
+| Date                                                                                                                                                                                                                                                                        | Status | Notes                                                                  |
+| --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------ | ---------------------------------------------------------------------- |
+| 2026-06-04                                                                                                                                                                                                                                                                  | done   | Shared helpers extracted, 11 normalizers migrated, 8,648 tests passing |
 | **Lessons:** (1) toCount(-0) preserves -0 (Number.isFinite passes it) — don't test withtoBe (2) asRecord on arrays returns indexed Record, not {} — test property access not deep equality (3) cabinet-normalizer had no matching private helpers — verify before migrating |

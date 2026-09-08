@@ -26,6 +26,7 @@ Implement notification preferences panel allowing users to configure event types
 ## ✅ Acceptance Criteria
 
 ### 1. Event Type Cards (Q6 - Border Highlight)
+
 - [ ] 4 event type cards: task_completed, task_failed, task_stalled, daily_digest
 - [ ] Enabled state: 2px Telegram Blue border, checkmark icon
 - [ ] Disabled state: 1px Gray 300 border, empty checkbox icon
@@ -33,18 +34,21 @@ Implement notification preferences panel allowing users to configure event types
 - [ ] Click anywhere on card to toggle switch
 
 ### 2. Event Descriptions (Q7 - Always Visible)
+
 - [ ] Description text visible under each event title
 - [ ] Max 2 lines with truncation (line-clamp-2)
 - [ ] Clear, specific explanations of when notifications sent
 - [ ] 14px regular font, Gray 600 color
 
 ### 3. Language Switcher (Q8 - Radio Buttons)
+
 - [ ] Two radio buttons: 🇷🇺 Русский | 🇬🇧 English
 - [ ] Horizontal layout (side-by-side)
 - [ ] Selected state: Telegram Blue border, light blue background
 - [ ] Unselected state: Gray 300 border, white background
 
 ### 4. Daily Digest Section (Q9 - Conditional Time Picker)
+
 - [ ] Daily digest as standard event type card
 - [ ] Time picker appears ONLY when digest enabled
 - [ ] Slide-down animation (200ms) when showing/hiding
@@ -52,6 +56,7 @@ Implement notification preferences panel allowing users to configure event types
 - [ ] Time picker uses native `<input type="time">` (mobile-friendly)
 
 ### 5. Save Strategy (Q10 - Manual Save Button) ⭐ CRITICAL
+
 - [ ] "Сохранить настройки" button at bottom (Primary Red #E53935)
 - [ ] "Отменить" button (secondary, resets to last saved state)
 - [ ] Dirty state detection (unsaved changes warning)
@@ -60,6 +65,7 @@ Implement notification preferences panel allowing users to configure event types
 - [ ] Button disabled when no changes made
 
 ### 6. Accessibility (WCAG 2.1 AA)
+
 - [ ] Keyboard navigation between all interactive elements
 - [ ] aria-labels on all toggles and buttons
 - [ ] aria-describedby linking titles to descriptions
@@ -76,6 +82,7 @@ Implement notification preferences panel allowing users to configure event types
 **Purpose**: Main preferences panel with event types, language, and save logic
 
 #### Props
+
 ```typescript
 interface NotificationPreferencesPanelProps {
   disabled?: boolean;  // Disable when Telegram not bound
@@ -83,6 +90,7 @@ interface NotificationPreferencesPanelProps {
 ```
 
 #### Visual Mockup (Desktop)
+
 ```
 ┌──────────────────────────────────────────────────────────────┐
 │  ⚙️ Настройки уведомлений                                     │
@@ -130,6 +138,7 @@ interface NotificationPreferencesPanelProps {
 ```
 
 #### Code Structure
+
 ```typescript
 function NotificationPreferencesPanel({ disabled = false }: Props) {
   const { preferences, updatePreferences, isUpdating } = useNotificationPreferences();
@@ -350,6 +359,7 @@ function NotificationPreferencesPanel({ disabled = false }: Props) {
 **Purpose**: Reusable card for each notification event type
 
 #### Props
+
 ```typescript
 interface EventTypeCardProps {
   title: string;
@@ -361,6 +371,7 @@ interface EventTypeCardProps {
 ```
 
 #### Code Structure
+
 ```typescript
 function EventTypeCard({ title, description, enabled, onToggle, children }: Props) {
   return (
@@ -420,6 +431,7 @@ function EventTypeCard({ title, description, enabled, onToggle, children }: Prop
 **Purpose**: Custom radio button for language selection
 
 #### Props
+
 ```typescript
 interface LanguageRadioProps {
   value: 'ru' | 'en';
@@ -430,6 +442,7 @@ interface LanguageRadioProps {
 ```
 
 #### Code Structure
+
 ```typescript
 function LanguageRadio({ value, label, selected, onSelect }: Props) {
   return (
@@ -474,6 +487,7 @@ function LanguageRadio({ value, label, selected, onSelect }: Props) {
 ## 🎨 Design Specifications
 
 ### Event Type Card States
+
 ```typescript
 // Enabled state
 const enabledCardStyles = {
@@ -496,6 +510,7 @@ const disabledCardStyles = {
 ```
 
 ### Language Switcher States
+
 ```typescript
 // Selected state
 const selectedLanguageStyles = {
@@ -515,6 +530,7 @@ const unselectedLanguageStyles = {
 ```
 
 ### Save Button States
+
 ```typescript
 // Primary button (enabled)
 const saveButtonEnabled = {
@@ -540,6 +556,7 @@ const saveButtonLoading = {
 ```
 
 ### Spacing & Layout
+
 ```typescript
 const spacing = {
   cardGap: 'space-y-3',          // 12px between event cards
@@ -550,6 +567,7 @@ const spacing = {
 ```
 
 ### Animations
+
 ```css
 /* Slide-down animation for time picker */
 @keyframes slide-down {
@@ -573,6 +591,7 @@ const spacing = {
 ## 🧪 Testing Requirements
 
 ### Unit Tests
+
 ```typescript
 describe('NotificationPreferencesPanel', () => {
   it('toggles event type on card click', () => {
@@ -642,6 +661,7 @@ describe('NotificationPreferencesPanel', () => {
 ## 📦 Dependencies
 
 **shadcn/ui Components**:
+
 ```bash
 npx shadcn-ui@latest add card
 npx shadcn-ui@latest add switch
@@ -650,6 +670,7 @@ npx shadcn-ui@latest add alert
 ```
 
 **Additional Utils**:
+
 - `react-hot-toast` for notifications
 - `clsx` or `cn` utility for conditional classes
 

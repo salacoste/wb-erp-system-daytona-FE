@@ -13,6 +13,7 @@
 **Endpoint**: `GET /v1/tariffs/warehouses`
 
 **Response Format**:
+
 ```json
 {
   "data": {
@@ -31,6 +32,7 @@
 ```
 
 **Field Types**:
+
 - `id`: `number` - Warehouse ID
 - `name`: `string` - Warehouse name
 - `address`: `null` - Always null in simplified response
@@ -39,6 +41,7 @@
 - `updated_at`: `string` - ISO timestamp
 
 **Frontend Usage**:
+
 ```typescript
 // src/hooks/useWarehouses.ts
 import { useQuery } from '@tanstack/react-query';
@@ -61,6 +64,7 @@ export function useWarehouses() {
 ```
 
 **TypeScript Types**:
+
 ```typescript
 // src/types/tariffs.ts
 export interface Warehouse {
@@ -78,6 +82,7 @@ export interface WarehousesResponse {
 ```
 
 **Curl Test**:
+
 ```bash
 curl -X GET "http://localhost:3000/v1/tariffs/warehouses" \
   -H "Authorization: Bearer YOUR_TOKEN" \
@@ -94,6 +99,7 @@ curl -X GET "http://localhost:3000/v1/tariffs/warehouses" \
 **Endpoint**: `GET /v1/products?include_dimensions=true`
 
 **Response Format**:
+
 ```json
 {
   "products": [
@@ -119,11 +125,13 @@ curl -X GET "http://localhost:3000/v1/tariffs/warehouses" \
 ```
 
 **Critical Field Names**:
+
 - ✅ `nm_id` is **string** (NOT number)
 - ✅ `sa_name` is product name (NOT `title`)
 - ✅ `category_hierarchy` (NOT `category`)
 
 **Frontend Usage**:
+
 ```typescript
 // src/hooks/useProducts.ts
 export function useProductWithDimensions(nmId: string) {
@@ -138,6 +146,7 @@ export function useProductWithDimensions(nmId: string) {
 ```
 
 **TypeScript Types**:
+
 ```typescript
 // src/types/products.ts
 export interface ProductDimensions {
@@ -164,6 +173,7 @@ export interface Product {
 ```
 
 **Curl Test**:
+
 ```bash
 curl -X GET "http://localhost:3000/v1/products?include_dimensions=true&q=686701815" \
   -H "Authorization: Bearer YOUR_TOKEN" \
@@ -293,6 +303,7 @@ export function handleApiError(error: unknown) {
 ## Testing Checklist
 
 ### Warehouse Endpoint
+
 - [ ] Returns 45-50 warehouses
 - [ ] Each warehouse has `id`, `name`, `city`
 - [ ] Search filters by name (case-insensitive)
@@ -301,6 +312,7 @@ export function handleApiError(error: unknown) {
 - [ ] Response wrapped in `{data: {...}}`
 
 ### Products with Dimensions
+
 - [ ] Returns product with `nm_id` as string
 - [ ] Product has `sa_name` (not `title`)
 - [ ] `dimensions` object has all 4 fields
@@ -308,6 +320,7 @@ export function handleApiError(error: unknown) {
 - [ ] `subject_name` is not null (Bug #2 fix verified)
 
 ### Frontend Integration
+
 - [ ] `useWarehouses` hook returns data
 - [ ] Warehouse dropdown shows all warehouses
 - [ ] Search filters warehouses correctly
@@ -320,13 +333,13 @@ export function handleApiError(error: unknown) {
 
 ## Related Documentation
 
-| Document | Location |
-|----------|----------|
-| Request #98 | `frontend/docs/request-backend/98-warehouses-tariffs-coefficients-api.md` |
-| Backend Response | `frontend/docs/request-backend/98-warehouses-tariffs-BACKEND-RESPONSE.md` |
-| Issue Report | `frontend/docs/request-backend/100-epic-44-open-issues-consolidated.md` |
-| API Test Collection | `test-api/18-tariffs.http` |
-| Swagger UI | `http://localhost:3000/api` |
+| Document            | Location                                                                  |
+| ------------------- | ------------------------------------------------------------------------- |
+| Request #98         | `frontend/docs/request-backend/98-warehouses-tariffs-coefficients-api.md` |
+| Backend Response    | `frontend/docs/request-backend/98-warehouses-tariffs-BACKEND-RESPONSE.md` |
+| Issue Report        | `frontend/docs/request-backend/100-epic-44-open-issues-consolidated.md`   |
+| API Test Collection | `test-api/18-tariffs.http`                                                |
+| Swagger UI          | `http://localhost:3000/api`                                               |
 
 ---
 
@@ -338,5 +351,5 @@ export function handleApiError(error: unknown) {
 
 ---
 
-*Last Updated: 2026-01-21*
-*All API endpoints verified working*
+_Last Updated: 2026-01-21_
+_All API endpoints verified working_

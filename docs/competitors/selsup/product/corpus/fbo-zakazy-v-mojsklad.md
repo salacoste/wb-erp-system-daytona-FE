@@ -11,7 +11,7 @@ chars: 5170
 
 В этой статье:
 
-- 
+-
 - <a href="#kak-sozdat-peremeshhenie-fbo" rel="nofollow">Как создать перемещение FBO</a>
 - <a href="#avtomaticheskoe-sozdanie-zakazov-fbo-v-mojsklad" rel="nofollow">Автоматическое создание заказов FBO в МойСклад</a>
 - <a href="#kak-pravilno-vesti-ostatki-fbo-v-mojsklad" rel="nofollow">Как правильно вести остатки FBO в «МойСклад»</a>

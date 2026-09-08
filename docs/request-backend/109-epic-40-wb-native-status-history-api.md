@@ -17,12 +17,12 @@ Story 40.9 добавляет два новых эндпоинта для пол
 
 ### Ключевые особенности
 
-| Возможность | Описание |
-|-------------|----------|
-| 40+ статус-кодов | Детальные статусы WB (created, assembling, sorted_by_wh, и т.д.) |
-| Расчёт длительности | Время в каждом статусе (в минутах) |
-| Хронологическая сортировка | Все записи отсортированы по timestamp (oldest first) |
-| Объединённая timeline | Merge локальной и WB истории в единый поток |
+| Возможность                | Описание                                                         |
+| -------------------------- | ---------------------------------------------------------------- |
+| 40+ статус-кодов           | Детальные статусы WB (created, assembling, sorted_by_wh, и т.д.) |
+| Расчёт длительности        | Время в каждом статусе (в минутах)                               |
+| Хронологическая сортировка | Все записи отсортированы по timestamp (oldest first)             |
+| Объединённая timeline      | Merge локальной и WB истории в единый поток                      |
 
 ---
 
@@ -43,16 +43,16 @@ Story 40.9 добавляет два новых эндпоинта для пол
 
 **Headers:**
 
-| Header | Значение | Обязательный |
-|--------|----------|--------------|
-| `Authorization` | `Bearer {{token}}` | Да |
-| `X-Cabinet-Id` | `{{cabinetId}}` | Да |
+| Header          | Значение           | Обязательный |
+| --------------- | ------------------ | ------------ |
+| `Authorization` | `Bearer {{token}}` | Да           |
+| `X-Cabinet-Id`  | `{{cabinetId}}`    | Да           |
 
 **Path Parameters:**
 
-| Параметр | Тип | Обязательный | Описание |
-|----------|-----|--------------|----------|
-| `orderId` | string | Да | WB Order ID (числовая строка, например "1234567890") |
+| Параметр  | Тип    | Обязательный | Описание                                             |
+| --------- | ------ | ------------ | ---------------------------------------------------- |
+| `orderId` | string | Да           | WB Order ID (числовая строка, например "1234567890") |
 
 **Response 200:**
 
@@ -98,29 +98,29 @@ Story 40.9 добавляет два новых эндпоинта для пол
 
 **Поля ответа:**
 
-| Поле | Тип | Описание |
-|------|-----|----------|
-| `orderId` | string | WB Order ID |
-| `orderUid` | string | Order grouping UID |
-| `wbHistory` | array | Хронологический список статусов (oldest first) |
-| `wbHistory[].id` | string | UUID записи истории |
-| `wbHistory[].wbStatusCode` | string | WB native статус-код (40+ значений) |
-| `wbHistory[].wbStatusChangedAt` | string | Timestamp изменения (ISO 8601) |
-| `wbHistory[].durationMinutes` | number \| null | Время в этом статусе (null для первой записи) |
-| `summary.totalTransitions` | number | Общее количество переходов |
-| `summary.totalDurationMinutes` | number \| null | Общая длительность от первого до последнего статуса |
-| `summary.currentWbStatus` | string | Текущий WB статус-код |
-| `summary.createdAt` | string | Timestamp первого статуса (ISO 8601) |
-| `summary.lastUpdatedAt` | string | Timestamp последнего изменения (ISO 8601) |
+| Поле                            | Тип            | Описание                                            |
+| ------------------------------- | -------------- | --------------------------------------------------- |
+| `orderId`                       | string         | WB Order ID                                         |
+| `orderUid`                      | string         | Order grouping UID                                  |
+| `wbHistory`                     | array          | Хронологический список статусов (oldest first)      |
+| `wbHistory[].id`                | string         | UUID записи истории                                 |
+| `wbHistory[].wbStatusCode`      | string         | WB native статус-код (40+ значений)                 |
+| `wbHistory[].wbStatusChangedAt` | string         | Timestamp изменения (ISO 8601)                      |
+| `wbHistory[].durationMinutes`   | number \| null | Время в этом статусе (null для первой записи)       |
+| `summary.totalTransitions`      | number         | Общее количество переходов                          |
+| `summary.totalDurationMinutes`  | number \| null | Общая длительность от первого до последнего статуса |
+| `summary.currentWbStatus`       | string         | Текущий WB статус-код                               |
+| `summary.createdAt`             | string         | Timestamp первого статуса (ISO 8601)                |
+| `summary.lastUpdatedAt`         | string         | Timestamp последнего изменения (ISO 8601)           |
 
 **Коды ошибок:**
 
-| Код | Описание |
-|-----|----------|
-| 400 | Невалидный формат orderId |
-| 401 | Не авторизован (отсутствует или невалидный JWT) |
+| Код | Описание                                                    |
+| --- | ----------------------------------------------------------- |
+| 400 | Невалидный формат orderId                                   |
+| 401 | Не авторизован (отсутствует или невалидный JWT)             |
 | 403 | Нет доступа к кабинету (заказ принадлежит другому кабинету) |
-| 404 | Заказ не найден |
+| 404 | Заказ не найден                                             |
 
 ---
 
@@ -130,16 +130,16 @@ Story 40.9 добавляет два новых эндпоинта для пол
 
 **Headers:**
 
-| Header | Значение | Обязательный |
-|--------|----------|--------------|
-| `Authorization` | `Bearer {{token}}` | Да |
-| `X-Cabinet-Id` | `{{cabinetId}}` | Да |
+| Header          | Значение           | Обязательный |
+| --------------- | ------------------ | ------------ |
+| `Authorization` | `Bearer {{token}}` | Да           |
+| `X-Cabinet-Id`  | `{{cabinetId}}`    | Да           |
 
 **Path Parameters:**
 
-| Параметр | Тип | Обязательный | Описание |
-|----------|-----|--------------|----------|
-| `orderId` | string | Да | WB Order ID (числовая строка) |
+| Параметр  | Тип    | Обязательный | Описание                      |
+| --------- | ------ | ------------ | ----------------------------- |
+| `orderId` | string | Да           | WB Order ID (числовая строка) |
 
 **Response 200:**
 
@@ -190,39 +190,39 @@ Story 40.9 добавляет два новых эндпоинта для пол
 
 **Поля ответа - fullHistory (local):**
 
-| Поле | Тип | Описание |
-|------|-----|----------|
-| `source` | `"local"` | Источник записи |
+| Поле                | Тип            | Описание                                            |
+| ------------------- | -------------- | --------------------------------------------------- |
+| `source`            | `"local"`      | Источник записи                                     |
 | `oldSupplierStatus` | string \| null | Предыдущий supplier_status (null для первой записи) |
-| `newSupplierStatus` | string | Новый supplier_status |
-| `oldWbStatus` | string \| null | Предыдущий wb_status (null для первой записи) |
-| `newWbStatus` | string | Новый wb_status |
-| `timestamp` | string | Время изменения (ISO 8601) |
+| `newSupplierStatus` | string         | Новый supplier_status                               |
+| `oldWbStatus`       | string \| null | Предыдущий wb_status (null для первой записи)       |
+| `newWbStatus`       | string         | Новый wb_status                                     |
+| `timestamp`         | string         | Время изменения (ISO 8601)                          |
 
 **Поля ответа - fullHistory (wb_native):**
 
-| Поле | Тип | Описание |
-|------|-----|----------|
-| `source` | `"wb_native"` | Источник записи |
-| `wbStatusCode` | string | WB native статус-код |
-| `timestamp` | string | Время изменения (ISO 8601) |
+| Поле           | Тип           | Описание                   |
+| -------------- | ------------- | -------------------------- |
+| `source`       | `"wb_native"` | Источник записи            |
+| `wbStatusCode` | string        | WB native статус-код       |
+| `timestamp`    | string        | Время изменения (ISO 8601) |
 
 **Поля ответа - summary:**
 
-| Поле | Тип | Описание |
-|------|-----|----------|
-| `localEntriesCount` | number | Количество записей из локального отслеживания |
-| `wbNativeEntriesCount` | number | Количество записей из WB API |
-| `totalEntriesCount` | number | Общее количество записей |
+| Поле                   | Тип    | Описание                                      |
+| ---------------------- | ------ | --------------------------------------------- |
+| `localEntriesCount`    | number | Количество записей из локального отслеживания |
+| `wbNativeEntriesCount` | number | Количество записей из WB API                  |
+| `totalEntriesCount`    | number | Общее количество записей                      |
 
 **Коды ошибок:**
 
-| Код | Описание |
-|-----|----------|
+| Код | Описание                  |
+| --- | ------------------------- |
 | 400 | Невалидный формат orderId |
-| 401 | Не авторизован |
-| 403 | Нет доступа к кабинету |
-| 404 | Заказ не найден |
+| 401 | Не авторизован            |
+| 403 | Нет доступа к кабинету    |
+| 404 | Заказ не найден           |
 
 ---
 
@@ -549,21 +549,21 @@ export function OrderHistoryTimeline({ orderId }: OrderHistoryTimelineProps) {
 
 Полный список возможных значений `wbStatusCode`:
 
-| Код | Описание |
-|-----|----------|
-| `created` | Заказ создан |
-| `assembling` | Сборка заказа |
-| `assembled` | Заказ собран |
-| `sorted_by_wh` | Отсортирован на складе |
-| `on_delivery_to_client` | В доставке клиенту |
-| `delivered` | Доставлен |
-| `received_by_client` | Получен клиентом |
+| Код                       | Описание                |
+| ------------------------- | ----------------------- |
+| `created`                 | Заказ создан            |
+| `assembling`              | Сборка заказа           |
+| `assembled`               | Заказ собран            |
+| `sorted_by_wh`            | Отсортирован на складе  |
+| `on_delivery_to_client`   | В доставке клиенту      |
+| `delivered`               | Доставлен               |
+| `received_by_client`      | Получен клиентом        |
 | `waiting_at_pickup_point` | Ожидает в пункте выдачи |
-| `canceled` | Отменён |
-| `canceled_by_client` | Отменён клиентом |
-| `returned` | Возвращён |
-| `return_in_progress` | Возврат в процессе |
-| ... | и другие |
+| `canceled`                | Отменён                 |
+| `canceled_by_client`      | Отменён клиентом        |
+| `returned`                | Возвращён               |
+| `return_in_progress`      | Возврат в процессе      |
+| ...                       | и другие                |
 
 **Примечание:** Полный список статусов может расширяться WB API. Фронтенд должен корректно обрабатывать неизвестные статус-коды.
 
@@ -595,10 +595,10 @@ export function OrderHistoryTimeline({ orderId }: OrderHistoryTimelineProps) {
 
 ## Связанные документы
 
-| Документ | Описание |
-|----------|----------|
-| [Epic 40 Frontend Guide](93-epic-40-orders-fbs-frontend-guide.md) | Основной гайд по Epic 40 |
-| [test-api/14-orders.http](../../../test-api/14-orders.http) | HTTP тесты для Orders API |
+| Документ                                                                                       | Описание                   |
+| ---------------------------------------------------------------------------------------------- | -------------------------- |
+| [Epic 40 Frontend Guide](93-epic-40-orders-fbs-frontend-guide.md)                              | Основной гайд по Epic 40   |
+| [test-api/14-orders.http](../../../test-api/14-orders.http)                                    | HTTP тесты для Orders API  |
 | [Story 40.8 - Local History](../../../docs/stories/epic-40/story-40.8-local-status-history.md) | Локальная история статусов |
 
 ---

@@ -9,7 +9,7 @@ chars: 4897
 
 В этой статье:
 
-- 
+-
 - <a href="#pochemu-zakazy-v-liste-sborki-i-v-razdele-zakazy-na-otgruzku-mogut-otl" rel="nofollow"><strong>Почему заказы в листе сборки и  в разделе Заказы на отгрузку могут отличаться количеством?</strong></a>
 - <a href="#v-selsup-oprihodovalis-na-sklad-ostatki-ne-na-vse-pozitsii-importirova" rel="nofollow"><strong>В SelSup оприходовались на склад остатки не на все позиции импортированных товаров, почему?</strong></a>
 - <a href="#na-stranitse-zakazy-na-otgruzku---so-svoego-sklada-otobrazhaetsya-oshi" rel="nofollow"><strong>На странице Заказы на отгрузку - Со своего склада  отображается ошибка: <em>"Для заказов "123..." не загружены этикетки.</em></strong></a>
@@ -29,12 +29,12 @@ chars: 4897
 
 <a href="#tocmenu" class="kamatoc-gotop" rel="nofollow">Вверх <em></em></a>
 
-#### **На странице [Заказы на отгрузку - Со своего склада  ](https://selsup.ru/application/fbsOrders/)отображается ошибка: *"Для заказов "123..." не загружены этикетки.***
+#### **На странице [Заказы на отгрузку - Со своего склада  ](https://selsup.ru/application/fbsOrders/)отображается ошибка: _"Для заказов "123..." не загружены этикетки._**
 
-***Отфильтруйте заказы с фильтром Без этикетки и нажмите кнопку "Загрузить этикетки", пока в таблице не останется заказов. После запустите скачивание ленты еще раз."* Но этикетка для этих заказов уже получена, а заказ собран / в пути. Почему такое произошло, как убрать отображение ошибки?\
-![](../../out/selsup.ru/_kage/selsup.ru/wp-content/webp-express/webp-images/uploads/2022/12/oshibka.jpg.webp)\**
-У заказов в пути загрузить этикетку нельзя, но чтобы убрать отображение ошибки, выберете любой заказ с этикеткой и нажмите кнопку ***"Загрузить этикетки".\
-![](../../out/selsup.ru/_kage/selsup.ru/wp-content/webp-express/webp-images/uploads/2022/12/zagruzit-etiketki.png.webp)***
+*\_*Отфильтруйте заказы с фильтром Без этикетки и нажмите кнопку "Загрузить этикетки", пока в таблице не останется заказов. После запустите скачивание ленты еще раз."* Но этикетка для этих заказов уже получена, а заказ собран / в пути. Почему такое произошло, как убрать отображение ошибки?\
+![](../../out/selsup.ru/_kage/selsup.ru/wp-content/webp-express/webp-images/uploads/2022/12/oshibka.jpg.webp)\*_
+У заказов в пути загрузить этикетку нельзя, но чтобы убрать отображение ошибки, выберете любой заказ с этикеткой и нажмите кнопку _**"Загрузить этикетки".\
+![](../../out/selsup.ru/_kage/selsup.ru/wp-content/webp-express/webp-images/uploads/2022/12/zagruzit-etiketki.png.webp)**_
 
 <a href="#tocmenu" class="kamatoc-gotop" rel="nofollow">Вверх <em></em></a>
 

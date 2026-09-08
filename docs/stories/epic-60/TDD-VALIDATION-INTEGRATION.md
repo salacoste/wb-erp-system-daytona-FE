@@ -11,9 +11,11 @@
 ## Задача 1: Интеграция CogsMissingState → MetricCardEnhanced
 
 ### Контекст
+
 Интегрировать компонент `CogsMissingState` в `MetricCardEnhanced` для отображения предупреждения когда COGS не назначены и маржа не может быть рассчитана.
 
 **Файлы:**
+
 - Целевой: `/src/components/custom/MetricCardEnhanced.tsx`
 - Новый компонент: `/src/components/custom/CogsMissingState.tsx`
 - Использование: `/src/app/(dashboard)/dashboard/components/DashboardContent.tsx:148-155`
@@ -77,19 +79,20 @@ describe('Story 60.3-FE: COGS Integration', () => {
 
 **Что упадет ПЕРЕД интеграцией:**
 
-| Тест | Ожидаемая ошибка | Причина |
-|------|------------------|---------|
-| Тест 1 | `Property 'showCogsWarning' does not exist` | Проп尚未 добавлен в интерфейс |
-| Тест 2 | `Property 'showCogsWarning' does not exist` | Проп尚未 добавлен в интерфейс |
-| Тест 3 | `Property 'cogsCoverage' does not exist` | Пропы COGS尚未 добавлены |
-| Тест 4 | `Property 'cogsCoverage' does not exist` | Пропы COGS尚未 добавлены |
-| Тест 5 | Компонент не существует | CogsMissingState еще не импортирован |
-| Тест 6 | Логика не реализована | Условный рендеринг отсутствует |
-| Тест 7 | Логика не реализована | Значение null обрабатывается по старому |
-| Тест 8 | Логика не реализована | Значение показывается всегда |
-| Тест 9+ | TypeScript errors | Интерфейс не расширен |
+| Тест    | Ожидаемая ошибка                            | Причина                                 |
+| ------- | ------------------------------------------- | --------------------------------------- |
+| Тест 1  | `Property 'showCogsWarning' does not exist` | Проп尚未 добавлен в интерфейс           |
+| Тест 2  | `Property 'showCogsWarning' does not exist` | Проп尚未 добавлен в интерфейс           |
+| Тест 3  | `Property 'cogsCoverage' does not exist`    | Пропы COGS尚未 добавлены                |
+| Тест 4  | `Property 'cogsCoverage' does not exist`    | Пропы COGS尚未 добавлены                |
+| Тест 5  | Компонент не существует                     | CogsMissingState еще не импортирован    |
+| Тест 6  | Логика не реализована                       | Условный рендеринг отсутствует          |
+| Тест 7  | Логика не реализована                       | Значение null обрабатывается по старому |
+| Тест 8  | Логика не реализована                       | Значение показывается всегда            |
+| Тест 9+ | TypeScript errors                           | Интерфейс не расширен                   |
 
 **Запуск тестов:**
+
 ```bash
 npm test -- MetricCardEnhanced.cogs-integration.test.tsx
 ```
@@ -101,6 +104,7 @@ npm test -- MetricCardEnhanced.cogs-integration.test.tsx
 ### Green Phase (implementation)
 
 **Шаг 1: Расширить интерфейс**
+
 ```typescript
 // src/components/custom/MetricCardEnhanced.tsx
 
@@ -127,11 +131,13 @@ export interface MetricCardEnhancedProps {
 ```
 
 **Шаг 2: Добавить импорт**
+
 ```typescript
 import { CogsMissingState } from './CogsMissingState'
 ```
 
 **Шаг 3: Реализовать условный рендеринг**
+
 ```typescript
 export function MetricCardEnhanced(props: MetricCardEnhancedProps): React.ReactElement {
   const {
@@ -171,6 +177,7 @@ export function MetricCardEnhanced(props: MetricCardEnhancedProps): React.ReactE
 ```
 
 **Шаг 4: Обработать приоритеты состояний**
+
 ```typescript
 // Priority order:
 // 1. Loading (highest)
@@ -180,6 +187,7 @@ export function MetricCardEnhanced(props: MetricCardEnhancedProps): React.ReactE
 ```
 
 **Запуск тестов после реализации:**
+
 ```bash
 npm test -- MetricCardEnhanced.cogs-integration.test.tsx
 ```
@@ -193,6 +201,7 @@ npm test -- MetricCardEnhanced.cogs-integration.test.tsx
 **Возможные улучшения:**
 
 1. **Extract component** - Вынести логику warning в отдельный компонент:
+
    ```typescript
    function MetricCardWithWarning({ value, showWarning, warningComponent, children }) {
      if (showWarning && value === null) {
@@ -203,6 +212,7 @@ npm test -- MetricCardEnhanced.cogs-integration.test.tsx
    ```
 
 2. **Simplify conditions** - Использовать единый объект для COGS пропсов:
+
    ```typescript
    interface CogsWarningProps {
      enabled: boolean
@@ -222,9 +232,11 @@ npm test -- MetricCardEnhanced.cogs-integration.test.tsx
 ## Задача 2: Интеграция AdvertisingEmptyState → AdvertisingDashboardWidget
 
 ### Контекст
+
 Интегрировать `AdvertisingEmptyState` в `AdvertisingDashboardWidget` для отображения состояния когда нет данных рекламы за выбранный период.
 
 **Файлы:**
+
 - Целевой: `/src/components/custom/AdvertisingDashboardWidget.tsx`
 - Новый компонент: `/src/components/custom/AdvertisingEmptyState.tsx`
 - Хук: `/src/hooks/useAdvertisingAnalytics.ts`
@@ -328,24 +340,25 @@ test.describe('Story 60.6-FE: E2E Empty State Flow', () => {
 
 **Что упадет ПЕРЕД интеграцией:**
 
-| Тест | Ожидаемая ошибка | Причина |
-|------|------------------|---------|
-| Тест 1 | Component not found | AdvertisingEmptyState не импортирован |
-| Тест 2 | Component not found | Логика не реализована |
-| Тест 3 | Component should not exist | Условный рендеринг отсутствует |
-| Тест 4 | Props not passed | Пропы не передаются |
-| Тест 5 | Props not passed | Пропы не передаются |
-| Тест 6 | Callback not wired | Обработчик не подключен |
-| Тест 7 | Refetch not triggered | Логика отсутствует |
-| Тест 8 | Loading state not shown | Логика отсутствует |
-| Тест 9 | Error prioritization missing | Логика отсутствует |
-| Тест 10 | Error prioritization missing | Логика отсутствует |
-| Тест 11 | Mock data structure | API response не обработан |
-| Тест 12 | Range extraction | Логика отсутствует |
-| Тест 13 | Full flow | Полная интеграция отсутствует |
-| Тест 14 | E2E flow | Функциональность не реализована |
+| Тест    | Ожидаемая ошибка             | Причина                               |
+| ------- | ---------------------------- | ------------------------------------- |
+| Тест 1  | Component not found          | AdvertisingEmptyState не импортирован |
+| Тест 2  | Component not found          | Логика не реализована                 |
+| Тест 3  | Component should not exist   | Условный рендеринг отсутствует        |
+| Тест 4  | Props not passed             | Пропы не передаются                   |
+| Тест 5  | Props not passed             | Пропы не передаются                   |
+| Тест 6  | Callback not wired           | Обработчик не подключен               |
+| Тест 7  | Refetch not triggered        | Логика отсутствует                    |
+| Тест 8  | Loading state not shown      | Логика отсутствует                    |
+| Тест 9  | Error prioritization missing | Логика отсутствует                    |
+| Тест 10 | Error prioritization missing | Логика отсутствует                    |
+| Тест 11 | Mock data structure          | API response не обработан             |
+| Тест 12 | Range extraction             | Логика отсутствует                    |
+| Тест 13 | Full flow                    | Полная интеграция отсутствует         |
+| Тест 14 | E2E flow                     | Функциональность не реализована       |
 
 **Запуск тестов:**
+
 ```bash
 # Unit
 npm test -- AdvertisingDashboardWidget.empty-state.test.tsx
@@ -364,6 +377,7 @@ npm run test:e2e -- advertising-empty-state
 ### Green Phase (implementation)
 
 **Шаг 1: Добавить импорт**
+
 ```typescript
 // src/components/custom/AdvertisingDashboardWidget.tsx
 
@@ -372,6 +386,7 @@ import type { DateRange } from './AdvertisingEmptyState'
 ```
 
 **Шаг 2: Добавить проп в интерфейс**
+
 ```typescript
 interface AdvertisingDashboardWidgetProps {
   className?: string
@@ -385,6 +400,7 @@ interface AdvertisingDashboardWidgetProps {
 ```
 
 **Шаг 3: Реализовать определение empty state**
+
 ```typescript
 export function AdvertisingDashboardWidget(props: AdvertisingDashboardWidgetProps) {
   const { data, isLoading, error, refetch } = useAdvertisingAnalytics(...)
@@ -428,6 +444,7 @@ export function AdvertisingDashboardWidget(props: AdvertisingDashboardWidgetProp
 ```
 
 **Шаг 4: Обработать изменение периода**
+
 ```typescript
 const handlePeriodChange = (range: DateRange) => {
   if (onDateRangeChange) {
@@ -439,6 +456,7 @@ const handlePeriodChange = (range: DateRange) => {
 ```
 
 **Шаг 5: Mock данные для тестов**
+
 ```typescript
 // src/test/fixtures/advertising-analytics.ts
 
@@ -464,6 +482,7 @@ export const mockAdvertisingResponse = {
 ```
 
 **Запуск тестов после реализации:**
+
 ```bash
 npm test -- AdvertisingDashboardWidget.empty-state.test.tsx
 npm test -- AdvertisingDashboardWidget.integration.test.tsx
@@ -479,6 +498,7 @@ npm run test:e2e -- advertising-empty-state
 **Возможные улучшения:**
 
 1. **Extract hook** - Вынести логику определения empty state:
+
    ```typescript
    function useAdvertisingEmptyState(data, isLoading, error) {
      const isEmpty = !data || !data.summary || data.summary.total_sales === 0
@@ -489,6 +509,7 @@ npm run test:e2e -- advertising-empty-state
    ```
 
 2. **Component composition** - Использовать render props:
+
    ```typescript
    <AdvertisingDashboardWidget
      emptyStateComponent={(props) => <AdvertisingEmptyState {...props} />}
@@ -509,6 +530,7 @@ npm run test:e2e -- advertising-empty-state
 ## Задача 3: Обновление логики Margin %
 
 ### Контекст
+
 Исправить баг с falsy check для margin = 0%. Текущий код использует `grossProfit == null` что правильно, но нужно убедиться что margin = 0% корректно обрабатывается.
 
 **Файл:** `/src/app/(dashboard)/dashboard/components/DashboardContent.tsx:213`
@@ -609,6 +631,7 @@ function calculateMarginPercentage(
 ```
 
 **Проблема:** Используется `grossProfit == null` что включает проверку на `undefined`, НО:
+
 - `grossProfit == null` возвращает `true` для `null` И `undefined` ✅
 - `revenue === 0` проверяет точное равенство нулю ✅
 
@@ -616,12 +639,13 @@ function calculateMarginPercentage(
 
 **Что упадет ПЕРЕД добавлением тестов:**
 
-| Тест | Ожидаемая ошибка | Причина |
-|------|------------------|---------|
-| Тест 1-10 | Test file not found | Тесты еще не созданы |
+| Тест       | Ожидаемая ошибка         | Причина              |
+| ---------- | ------------------------ | -------------------- |
+| Тест 1-10  | Test file not found      | Тесты еще не созданы |
 | Тест 11-14 | Integration test missing | Тесты еще не созданы |
 
 **Запуск тестов:**
+
 ```bash
 npm test -- DashboardContent.margin.test.tsx
 ```
@@ -635,6 +659,7 @@ npm test -- DashboardContent.margin.test.tsx
 **Шаг 1: Создать тестовый файл**
 
 **Шаг 2: Экспортировать функцию для тестирования**
+
 ```typescript
 // src/app/(dashboard)/dashboard/components/DashboardContent.tsx
 
@@ -648,6 +673,7 @@ export function calculateMarginPercentage(
 ```
 
 **Шаг 3: Запустить тесты**
+
 ```bash
 npm test -- DashboardContent.margin.test.tsx
 ```
@@ -655,6 +681,7 @@ npm test -- DashboardContent.margin.test.tsx
 **Ожидаемый результат:** All tests pass ✅ (код уже правильный!)
 
 **Если тесты упадут:**
+
 ```typescript
 // Исправленная версия (если нужна)
 export function calculateMarginPercentage(
@@ -677,6 +704,7 @@ export function calculateMarginPercentage(
 **Возможные улучшения:**
 
 1. **Add JSDoc** - Документация функции:
+
    ```typescript
    /**
     * Calculate margin percentage from gross profit and revenue.
@@ -693,6 +721,7 @@ export function calculateMarginPercentage(
    ```
 
 2. **Extract to utils** - Перенести в `/src/lib/margin-utils.ts`:
+
    ```typescript
    // src/lib/margin-utils.ts
    export function calculateMarginPercentage(...)
@@ -748,6 +777,7 @@ npm run test:e2e -- --ui
 ### Метрики
 
 **Целевые показатели покрытия:**
+
 - Unit тесты: >80%
 - Integration тесты: >60%
 - E2E тесты: >40%
@@ -758,11 +788,13 @@ npm run test:e2e -- --ui
 ## Чеклист валидации
 
 ### Перед началом работы
+
 - [ ] Созданы все тестовые файлы
 - [ ] Тесты падают (Red phase подтвержден)
 - [ ] Документированы ожидаемые failures
 
 ### После реализации
+
 - [ ] Все unit тесты проходят
 - [ ] Все integration тесты проходят
 - [ ] E2E тесты проходят
@@ -771,6 +803,7 @@ npm run test:e2e -- --ui
 - [ ] Документация обновлена
 
 ### Перед деплоем
+
 - [ ] Линтинг проходит (`npm run lint`)
 - [ ] Типизация проходит (`npm run type-check`)
 - [ ] Форматирование проходит (`npm run format:check`)
@@ -790,6 +823,7 @@ npm run test:e2e -- --ui
 4. **Качество** - Высокий coverage и метрики
 
 **Следующие шаги:**
+
 1. Создать тестовые файлы по спецификации
 2. Запустить Red phase и зафиксировать failures
 3. Реализовать функциональность (Green phase)

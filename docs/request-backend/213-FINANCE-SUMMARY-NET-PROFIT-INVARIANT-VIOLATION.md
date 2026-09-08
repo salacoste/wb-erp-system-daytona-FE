@@ -66,17 +66,18 @@ time (COGS assigned post-import), so the fix lives in the mapper, not persistenc
 **Live verification** — `GET /v1/analytics/weekly/finance-summary?week=2026-W25`, cabinet
 `f75836f7-…`, after `npm run rebuild`:
 
-| Field | Before (bug) | After (fixed) |
-|-------|-------------|---------------|
-| `tax.net_profit_after_all_tax` | +445 588,51 | **−77 320,98** |
-| `tax.net_profit_after_tax` | +303 878,81 | **−47 440,95** |
-| `operating_profit_analytical` | −11 584,91 | −11 584,91 |
+| Field                          | Before (bug) | After (fixed)  |
+| ------------------------------ | ------------ | -------------- |
+| `tax.net_profit_after_all_tax` | +445 588,51  | **−77 320,98** |
+| `tax.net_profit_after_tax`     | +303 878,81  | **−47 440,95** |
+| `operating_profit_analytical`  | −11 584,91   | −11 584,91     |
 
 Invariant `net_after_all_tax ≤ net_after_tax ≤ operating_profit`: **holds**. Stable across
 two captures ~20s apart (incidentally sidesteps BE-4 drift for these fields — recomputed
 fresh per request).
 
 **Changed code:**
+
 - `src/analytics/services/margin-calculation.types.ts` — new pure `computeNetProfitAfterTaxes(operating, incomeTax, vatPayable)`.
 - `src/analytics/services/finance-mapping.service.ts` — `mapTotalToDto()` recomputes both fields (top-level + `tax` block) from `operating_profit_analytical`; null-operating → persisted legacy fallback.
 - Tests: `margin-calculation.types.spec.ts` (invariant regression with the exact #213 figures) + `finance-mapping.service.spec.ts` (VAT / non-VAT / null-operating mapper cases).
@@ -84,6 +85,7 @@ fresh per request).
 **QA gate:** tsc clean; ESLint clean; analytics+tax+aggregation sweep 142 suites / 2946 tests green; 2-pass adversarial review (fresh contexts) APPROVE.
 
 **Follow-up (out of scope here — separate ticket):**
+
 1. **Persistence / root cause** — `tax-calculation.service.ts` (`sumExpenses` omits commission/acquiring/loyalty/wb-services; `cogs:0`) still WRITES the buggy narrow-base value to `weekly_payout_total`. Fixing it at the source makes every consumer correct; note it also changes the USN-15 tax base ⇒ needs accounting sign-off.
 2. **Sibling consumers still reading persisted value:**
    - ✅ `comparison-analytics.service.ts` (`GET /v1/analytics/weekly/comparison`) — **DONE (2026-06-24):** now sums `operating_profit_rub` and recomputes `net_profit_after_tax` via `computeNetProfitAfterTaxes`, gated to single-week periods (`start === end`; multi-week falls back to persisted because the tax fetch is single-week-scoped). Verified live (W25 net_after_tax −47 440,95 ≤ operating).

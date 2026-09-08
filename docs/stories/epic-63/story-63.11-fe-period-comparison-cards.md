@@ -19,6 +19,7 @@
 Create a comprehensive period comparison component that displays key business metrics with delta indicators comparing current period to previous period. Users can toggle between Week-over-Week (WoW) and Month-over-Month (MoM) comparisons to understand business performance trends.
 
 The component uses the existing `/v1/analytics/weekly/comparison` endpoint and `useAnalyticsComparison` hook to fetch comparison data. It displays:
+
 - Revenue (Выручка)
 - Profit (Прибыль)
 - Margin % (Маржа)
@@ -33,6 +34,7 @@ Each metric shows the current value, previous value, and delta indicator with vi
 ## Acceptance Criteria
 
 ### Core Functionality
+
 - [ ] Display 6 comparison metrics in a grid layout
 - [ ] Support WoW (week-over-week) comparison mode
 - [ ] Support MoM (month-over-month) comparison mode using week ranges
@@ -40,6 +42,7 @@ Each metric shows the current value, previous value, and delta indicator with vi
 - [ ] Persist selected mode in localStorage
 
 ### Delta Indicators
+
 - [ ] Positive change: Green color with upward arrow
 - [ ] Negative change: Red color with downward arrow
 - [ ] Neutral/no change: Gray color with horizontal arrow
@@ -47,6 +50,7 @@ Each metric shows the current value, previous value, and delta indicator with vi
 - [ ] Expense metrics (logistics, storage) use inverted logic (decrease = good)
 
 ### Data Display
+
 - [ ] Current period value (large, prominent)
 - [ ] Previous period value (smaller, secondary)
 - [ ] Absolute change value
@@ -54,12 +58,14 @@ Each metric shows the current value, previous value, and delta indicator with vi
 - [ ] Period labels (e.g., "W05" vs "W04" or "Янв" vs "Дек")
 
 ### States
+
 - [ ] Loading skeleton while fetching data
 - [ ] Error state with retry option
 - [ ] Empty state when no comparison data available
 - [ ] Handle null/undefined values gracefully
 
 ### Accessibility
+
 - [ ] WCAG 2.1 AA compliant
 - [ ] Keyboard-navigable toggle
 - [ ] Screen reader announces changes correctly
@@ -135,6 +141,7 @@ GET /v1/analytics/weekly/comparison?period1=2026-W01:W05&period2=2025-W49:W52
 ### Layout
 
 **Desktop (4 columns, >=1280px)**:
+
 ```
 +-------------+-------------+-------------+-------------+
 |   Выручка   |   Прибыль   |    Маржа    |   Заказы    |
@@ -145,6 +152,7 @@ GET /v1/analytics/weekly/comparison?period1=2026-W01:W05&period2=2025-W49:W52
 ```
 
 **Tablet (2 columns, 768px-1279px)**:
+
 ```
 +--------------------+--------------------+
 |      Выручка       |      Прибыль       |
@@ -156,6 +164,7 @@ GET /v1/analytics/weekly/comparison?period1=2026-W01:W05&period2=2025-W49:W52
 ```
 
 **Mobile (1 column, <768px)**:
+
 ```
 +--------------------+
 |      Выручка       |
@@ -190,35 +199,35 @@ GET /v1/analytics/weekly/comparison?period1=2026-W01:W05&period2=2025-W49:W52
 
 ### Colors
 
-| Element | Condition | Color | Tailwind |
-|---------|-----------|-------|----------|
-| Positive delta | Revenue/profit/margin/orders up | Green | `text-green-600 bg-green-100` |
-| Negative delta | Revenue/profit/margin/orders down | Red | `text-red-600 bg-red-100` |
-| Neutral delta | No change (<0.1%) | Gray | `text-gray-500 bg-gray-100` |
-| Expense decrease | Logistics/storage down | Green | `text-green-600` (good) |
-| Expense increase | Logistics/storage up | Red | `text-red-600` (bad) |
-| Current value | All | Default | `text-foreground` |
-| Previous value | All | Muted | `text-muted-foreground` |
-| Period label | All | Muted | `text-muted-foreground` |
+| Element          | Condition                         | Color   | Tailwind                      |
+| ---------------- | --------------------------------- | ------- | ----------------------------- |
+| Positive delta   | Revenue/profit/margin/orders up   | Green   | `text-green-600 bg-green-100` |
+| Negative delta   | Revenue/profit/margin/orders down | Red     | `text-red-600 bg-red-100`     |
+| Neutral delta    | No change (<0.1%)                 | Gray    | `text-gray-500 bg-gray-100`   |
+| Expense decrease | Logistics/storage down            | Green   | `text-green-600` (good)       |
+| Expense increase | Logistics/storage up              | Red     | `text-red-600` (bad)          |
+| Current value    | All                               | Default | `text-foreground`             |
+| Previous value   | All                               | Muted   | `text-muted-foreground`       |
+| Period label     | All                               | Muted   | `text-muted-foreground`       |
 
 ### Typography
 
-| Element | Size | Weight |
-|---------|------|--------|
-| Card title | 14px | 500 (medium) |
-| Current value | 24px | 700 (bold) |
-| Delta badge | 12px | 600 (semibold) |
-| Previous value | 12px | 400 (regular) |
-| Period label | 12px | 400 (regular) |
+| Element        | Size | Weight         |
+| -------------- | ---- | -------------- |
+| Card title     | 14px | 500 (medium)   |
+| Current value  | 24px | 700 (bold)     |
+| Delta badge    | 12px | 600 (semibold) |
+| Previous value | 12px | 400 (regular)  |
+| Period label   | 12px | 400 (regular)  |
 
 ### Spacing
 
-| Element | Value | Tailwind |
-|---------|-------|----------|
-| Grid gap | 16px | `gap-4` |
-| Card padding | 16px | `p-4` |
-| Value margin-top | 8px | `mt-2` |
-| Delta margin-top | 4px | `mt-1` |
+| Element          | Value | Tailwind |
+| ---------------- | ----- | -------- |
+| Grid gap         | 16px  | `gap-4`  |
+| Card padding     | 16px  | `p-4`    |
+| Value margin-top | 8px   | `mt-2`   |
+| Delta margin-top | 4px   | `mt-1`   |
 
 ---
 
@@ -408,28 +417,28 @@ function DeltaIndicator({ delta, invertDirection = false }: DeltaDisplayProps) {
 
 ## Files to Create/Modify
 
-| File | Action | Description |
-|------|--------|-------------|
-| `src/components/custom/dashboard/PeriodComparisonSection.tsx` | CREATE | Main section component |
-| `src/components/custom/dashboard/PeriodComparisonCard.tsx` | CREATE | Individual metric card |
-| `src/components/custom/dashboard/PeriodComparisonSkeleton.tsx` | CREATE | Loading skeleton |
-| `src/components/custom/dashboard/ComparisonModeToggle.tsx` | CREATE | WoW/MoM toggle |
-| `src/lib/comparison-helpers.ts` | CREATE | Period calculation utilities |
-| `src/components/custom/dashboard/index.ts` | MODIFY | Add exports |
+| File                                                           | Action | Description                  |
+| -------------------------------------------------------------- | ------ | ---------------------------- |
+| `src/components/custom/dashboard/PeriodComparisonSection.tsx`  | CREATE | Main section component       |
+| `src/components/custom/dashboard/PeriodComparisonCard.tsx`     | CREATE | Individual metric card       |
+| `src/components/custom/dashboard/PeriodComparisonSkeleton.tsx` | CREATE | Loading skeleton             |
+| `src/components/custom/dashboard/ComparisonModeToggle.tsx`     | CREATE | WoW/MoM toggle               |
+| `src/lib/comparison-helpers.ts`                                | CREATE | Period calculation utilities |
+| `src/components/custom/dashboard/index.ts`                     | MODIFY | Add exports                  |
 
 ---
 
 ## Dependencies
 
-| Dependency | Source | Purpose |
-|------------|--------|---------|
-| `useAnalyticsComparison` | `@/hooks/comparison` | Fetch comparison data |
-| `formatCurrency` | `@/lib/formatters` | Currency formatting |
-| `formatPercentage` | `@/lib/formatters` | Percentage formatting |
-| `getPreviousIsoWeek` | `@/lib/iso-week-utils` | Week calculation |
-| `Button` | `@/components/ui/button` | Toggle component |
-| `Card` | `@/components/ui/card` | Card container |
-| `Skeleton` | `@/components/ui/skeleton` | Loading state |
+| Dependency               | Source                     | Purpose               |
+| ------------------------ | -------------------------- | --------------------- |
+| `useAnalyticsComparison` | `@/hooks/comparison`       | Fetch comparison data |
+| `formatCurrency`         | `@/lib/formatters`         | Currency formatting   |
+| `formatPercentage`       | `@/lib/formatters`         | Percentage formatting |
+| `getPreviousIsoWeek`     | `@/lib/iso-week-utils`     | Week calculation      |
+| `Button`                 | `@/components/ui/button`   | Toggle component      |
+| `Card`                   | `@/components/ui/card`     | Card container        |
+| `Skeleton`               | `@/components/ui/skeleton` | Loading state         |
 
 ---
 
@@ -447,6 +456,7 @@ function DeltaIndicator({ delta, invertDirection = false }: DeltaDisplayProps) {
 ## Testing Checklist
 
 ### Unit Tests
+
 - [ ] PeriodComparisonCard renders with all props
 - [ ] Delta indicator shows correct direction and color
 - [ ] Inverted direction works for expense metrics
@@ -455,6 +465,7 @@ function DeltaIndicator({ delta, invertDirection = false }: DeltaDisplayProps) {
 - [ ] Error state renders with retry button
 
 ### Integration Tests
+
 - [ ] useAnalyticsComparison hook called with correct params
 - [ ] WoW mode uses single weeks
 - [ ] MoM mode uses week ranges
@@ -462,6 +473,7 @@ function DeltaIndicator({ delta, invertDirection = false }: DeltaDisplayProps) {
 - [ ] Toggle switches modes correctly
 
 ### E2E Tests
+
 - [ ] Comparison cards visible on dashboard
 - [ ] Toggle between WoW and MoM works
 - [ ] Data updates when period changes
@@ -488,13 +500,13 @@ function DeltaIndicator({ delta, invertDirection = false }: DeltaDisplayProps) {
 
 ## Edge Cases
 
-| Scenario | Behavior |
-|----------|----------|
-| No previous period data | Show current value only, hide comparison |
-| Zero previous value | Show absolute change, skip percentage |
-| Very large changes (>1000%) | Cap display at "999+%" |
-| Null current value | Show "—" placeholder |
-| First week of data | Disable comparison, show info message |
+| Scenario                    | Behavior                                 |
+| --------------------------- | ---------------------------------------- |
+| No previous period data     | Show current value only, hide comparison |
+| Zero previous value         | Show absolute change, skip percentage    |
+| Very large changes (>1000%) | Cap display at "999+%"                   |
+| Null current value          | Show "—" placeholder                     |
+| First week of data          | Disable comparison, show info message    |
 
 ---
 
@@ -517,12 +529,14 @@ function DeltaIndicator({ delta, invertDirection = false }: DeltaDisplayProps) {
 ## Implementation
 
 **Components**:
+
 - `src/components/custom/dashboard/PeriodComparisonSection.tsx` (170 lines) - Main section with toggle
 - `src/components/custom/dashboard/PeriodComparisonCard.tsx` - Individual metric card
 - `src/components/custom/dashboard/ComparisonModeToggle.tsx` - WoW/MoM toggle
 - `src/lib/period-comparison-helpers.ts` - Period calculation utilities
 
 **Key Features**:
+
 - 6 comparison cards (Revenue, Profit, Margin, Orders, Logistics, Storage)
 - WoW/MoM toggle with localStorage persistence
 - Delta indicators with color-coded arrows (green=growth, red=decline)

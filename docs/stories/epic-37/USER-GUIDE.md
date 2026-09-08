@@ -106,6 +106,7 @@ The merged groups table has **3 tiers** (levels) of information:
 - **Background**: Light gray (#F3F4F6)
 
 **Metrics Shown**:
+
 - Total Sales (all products combined)
 - Revenue (advertising attribution)
 - Organic Sales (sales without ads)
@@ -136,14 +137,14 @@ The merged groups table has **3 tiers** (levels) of information:
 
 ### Aggregate Row Metrics (Group-Level)
 
-| Column | Meaning | Formula | Example |
-|--------|---------|---------|---------|
-| **Total Sales** | Gross sales for all products in group | SUM(each product's totalSales) | 35 570 ₽ |
-| **Revenue** | Sales attributed to advertising | SUM(each product's revenue) | 10 234 ₽ |
-| **Organic Sales** | Sales without advertising | totalSales - revenue | 25 336 ₽ |
-| **Organic %** | Percent of sales that are organic | (organicSales / totalSales) × 100 | 71.2% |
-| **Spend** | Total advertising spend for group | SUM(main product spend only) | 11 337 ₽ |
-| **ROAS** | Return on ad spend | revenue / spend | 0.90 |
+| Column            | Meaning                               | Formula                           | Example  |
+| ----------------- | ------------------------------------- | --------------------------------- | -------- |
+| **Total Sales**   | Gross sales for all products in group | SUM(each product's totalSales)    | 35 570 ₽ |
+| **Revenue**       | Sales attributed to advertising       | SUM(each product's revenue)       | 10 234 ₽ |
+| **Organic Sales** | Sales without advertising             | totalSales - revenue              | 25 336 ₽ |
+| **Organic %**     | Percent of sales that are organic     | (organicSales / totalSales) × 100 | 71.2%    |
+| **Spend**         | Total advertising spend for group     | SUM(main product spend only)      | 11 337 ₽ |
+| **ROAS**          | Return on ad spend                    | revenue / spend                   | 0.90     |
 
 ### Detail Row Metrics (Individual Products)
 
@@ -181,11 +182,13 @@ The merged groups table has **3 tiers** (levels) of information:
 ### Why Does This Matter?
 
 **Main Product**:
+
 - Receives **direct advertising budget**
 - WB attributes **all group revenue** to this product's ads
 - Appears first in Wildberries search results
 
 **Child Products**:
+
 - **No direct advertising spend**
 - Benefit from **main product's visibility**
 - Sales counted as **organic** (even if driven by group ads)
@@ -250,6 +253,7 @@ The merged groups table is **fully responsive** on mobile devices:
 **Cause**: Your products may not have merged cards set up in Wildberries Content API.
 
 **Solution**:
+
 1. Check Wildberries Seller Portal → Content → Merged Cards
 2. Verify you've created merged groups (склейки)
 3. Wait 24 hours for daily sync to complete
@@ -260,6 +264,7 @@ The merged groups table is **fully responsive** on mobile devices:
 **Cause**: Child products always show "—" because they have no direct ad spend.
 
 **Solution**: This is **expected behavior**. Look at:
+
 - **Main product** (👑) for individual ROAS
 - **Aggregate row** for group-level ROAS
 
@@ -268,6 +273,7 @@ The merged groups table is **fully responsive** on mobile devices:
 **Cause**: Table has 6+ columns and doesn't fit on small screens.
 
 **Solution**:
+
 1. Use **horizontal scrolling** (swipe left/right)
 2. Group ID column stays **sticky** (visible while scrolling)
 3. Rotate to **landscape mode** for better visibility
@@ -277,6 +283,7 @@ The merged groups table is **fully responsive** on mobile devices:
 **Cause**: You may be viewing filtered data or sorting has changed visible products.
 
 **Solution**:
+
 1. Clear all filters (if any)
 2. Verify you're viewing the **complete group** (all child products visible)
 3. Check console for calculation errors (should be none)
@@ -286,6 +293,7 @@ The merged groups table is **fully responsive** on mobile devices:
 **Cause**: Browser may not support URL state persistence.
 
 **Solution**:
+
 1. **Bookmark the URL** after switching to "По склейкам"
 2. URL should contain `?group_by=imtId`
 3. Use modern browsers (Chrome 90+, Firefox 88+, Safari 14+)
@@ -294,12 +302,12 @@ The merged groups table is **fully responsive** on mobile devices:
 
 ## Keyboard Shortcuts (Accessibility)
 
-| Key | Action |
-|-----|--------|
-| `Tab` | Navigate between toggle buttons |
-| `Enter` / `Space` | Activate focused button |
-| `↑` `↓` | Navigate table rows (if enabled) |
-| `Ctrl` + Click | Sort column (some browsers) |
+| Key               | Action                           |
+| ----------------- | -------------------------------- |
+| `Tab`             | Navigate between toggle buttons  |
+| `Enter` / `Space` | Activate focused button          |
+| `↑` `↓`           | Navigate table rows (if enabled) |
+| `Ctrl` + Click    | Sort column (some browsers)      |
 
 ---
 

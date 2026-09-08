@@ -92,10 +92,10 @@ Content-Type: application/json
 
 ### Components
 
-| Component | File | Purpose |
-|-----------|------|---------|
-| `ScheduleVersionModal` | `ScheduleVersionModal.tsx` | Modal container |
-| `ScheduleVersionForm` | `ScheduleVersionForm.tsx` | Form with date picker + tariff fields |
+| Component              | File                       | Purpose                               |
+| ---------------------- | -------------------------- | ------------------------------------- |
+| `ScheduleVersionModal` | `ScheduleVersionModal.tsx` | Modal container                       |
+| `ScheduleVersionForm`  | `ScheduleVersionForm.tsx`  | Form with date picker + tariff fields |
 
 ### Hook
 
@@ -187,12 +187,12 @@ const scheduleVersionSchema = tariffSettingsSchema.extend({
 
 ### Button States
 
-| State | Button Text | Enabled |
-|-------|-------------|---------|
-| Initial | Запланировать | No (date required) |
-| Date selected | Запланировать | Yes |
-| Submitting | Сохранение... | No (loading) |
-| Success | - | Modal closes |
+| State         | Button Text   | Enabled            |
+| ------------- | ------------- | ------------------ |
+| Initial       | Запланировать | No (date required) |
+| Date selected | Запланировать | Yes                |
+| Submitting    | Сохранение... | No (loading)       |
+| Success       | -             | Modal closes       |
 
 ---
 

@@ -10,13 +10,13 @@
 
 **5 последних frontend эпиков** (в хронологическом порядке):
 
-| Epic | Название | Статус | % | Stories | Приоритет |
-|------|----------|--------|---|---------|-----------|
-| **Epic 37** | Merged Group Table Display (Склейки) | ⏳ **98% COMPLETE** | 98% | 5/5 | 🔴 P1 |
-| **Epic 36-FE** | Product Card Linking Integration | ✅ **COMPLETE** | 100% | 5/5 | 🔴 P0 |
-| **Epic 34-FE** | Telegram Notifications UI | ✅ **PRODUCTION READY** | 100% | 6/6 | 🟠 P1 |
-| **Epic 33-FE** | Advertising Analytics | ✅ **COMPLETE** | 100% | 8/8 | 🔴 P0 |
-| **Epic 24-FE** | Paid Storage Analytics | ✅ **COMPLETE** | 100% | 8/8 | 🟠 P1 |
+| Epic           | Название                             | Статус                  | %    | Stories | Приоритет |
+| -------------- | ------------------------------------ | ----------------------- | ---- | ------- | --------- |
+| **Epic 37**    | Merged Group Table Display (Склейки) | ⏳ **98% COMPLETE**     | 98%  | 5/5     | 🔴 P1     |
+| **Epic 36-FE** | Product Card Linking Integration     | ✅ **COMPLETE**         | 100% | 5/5     | 🔴 P0     |
+| **Epic 34-FE** | Telegram Notifications UI            | ✅ **PRODUCTION READY** | 100% | 6/6     | 🟠 P1     |
+| **Epic 33-FE** | Advertising Analytics                | ✅ **COMPLETE**         | 100% | 8/8     | 🔴 P0     |
+| **Epic 24-FE** | Paid Storage Analytics               | ✅ **COMPLETE**         | 100% | 8/8     | 🟠 P1     |
 
 **Общий прогресс**: 4.98/5 эпиков завершены (99.6%)
 
@@ -34,12 +34,14 @@
 ### Проблема
 
 **После Epic 36-FE**:
+
 - ✅ Система имеет данные о склейках (`imtId`)
 - ✅ API возвращает групповые метрики
 - ❌ НО: UI показывает только агрегированные метрики группы
 - ❌ Нет детализации по отдельным продуктам внутри группы
 
 **User Story**:
+
 > "Я вижу ROAS группы = 3.14, но не знаю, какой продукт приносит органические продажи,
 > а какой зависит от рекламы. Мне нужна детализация!"
 
@@ -67,6 +69,7 @@
 ```
 
 **Visual Hierarchy**:
+
 - **Tier 1 (Rowspan Cell)**: Идентификатор группы, главный продукт 👑, количество товаров, `bg-gray-50`
 - **Tier 2 (Aggregate Row)**: Групповые метрики (сумма всех продуктов), `bg-gray-100`, жирный шрифт
 - **Tier 3 (Detail Rows)**: Метрики отдельных продуктов, белый фон, hover effect
@@ -74,6 +77,7 @@
 ### Stories Status
 
 **Development Complete** (100% ✅):
+
 - ✅ **Story 37.1**: Backend API Validation (100%) - TypeScript 0 errors
 - ✅ **Story 37.2**: MergedGroupTable Component (100%) - PO: 9.8/10 ⭐
 - ✅ **Story 37.3**: Epic 35 Metrics Integration (100%) - PO: 9.7/10 ⭐
@@ -81,6 +85,7 @@
 - ✅ **Story 37.5**: Testing & Documentation Phase 1 (100%) - 77 tests, 100% pass
 
 **Phase 2 QA Tasks** (⏳ pending, 9.5-13.5h):
+
 - ⏳ E2E test debugging (<2h) - button selector timing issue
 - ⏳ UAT with 3 users (2-3h)
 - ⏳ Performance testing (1-2h)
@@ -91,6 +96,7 @@
 ### Test Coverage
 
 **Automated Tests** (72/72 passing ✅):
+
 - ✅ Component tests: **17/17 passing** (79ms)
   - Rendering: 3 tests
   - Aggregate Row: 3 tests
@@ -105,6 +111,7 @@
 - ✅ Accessibility test **CODE**: 7 scenarios (400 lines) - execution needs test data
 
 **Recent Fixes** (2025-12-30):
+
 - ✅ Fixed component test failures: 17/17 passing (was 5/17 failing)
   - `getAllByText('MAIN-001')` для multiple elements
   - `vi.fn()` вместо `jest.fn()` (Vitest compatibility)
@@ -113,14 +120,17 @@
 ### Files Delivered
 
 **Components**:
+
 - `src/app/(dashboard)/analytics/advertising/components/MergedGroupTable.tsx` (520 lines)
 - `src/app/(dashboard)/analytics/advertising/components/GroupByToggle.tsx` (45 lines)
 
 **Utils**:
+
 - `src/app/(dashboard)/analytics/advertising/utils/metrics-calculator.ts` (220 lines)
 - `src/app/(dashboard)/analytics/advertising/utils/formatters.ts` (90 lines)
 
 **Tests**:
+
 - `components/__tests__/MergedGroupTable.test.tsx` (349 lines, 17 tests)
 - `utils/__tests__/metrics-calculator.test.ts` (318 lines, 55 tests)
 - `utils/__tests__/formatters.test.ts` (120 lines, 22 tests)
@@ -128,6 +138,7 @@
 - `e2e/accessibility-merged-groups-epic-37.spec.ts` (400 lines, 7 scenarios)
 
 **Documentation**:
+
 - `docs/stories/epic-37/USER-GUIDE.md` (600+ lines)
 - `docs/stories/epic-37/QA-HANDOFF-PHASE-2.md` (900+ lines)
 - `docs/stories/epic-37/STORY-37.5-PHASE-1-COMPLETION-REPORT.md` (700+ lines)
@@ -138,6 +149,7 @@
 ### Бизнес-метрики
 
 **Целевые показатели**:
+
 - ≥70% пользователей переключаются на режим "По склейкам" еженедельно
 - UAT score ≥9/10 (3 пользователя финансового отдела)
 - p95 render time <200ms для 50 групп (6x CPU throttling)
@@ -159,6 +171,7 @@
 ### Проблема
 
 **До внедрения**:
+
 - Advertising analytics показывал только `groupBy=sku` режим
 - Нет способа увидеть merged groups (склейки)
 - Пользователи не знают, какие продукты связаны в склейки
@@ -167,6 +180,7 @@
 ### Решение
 
 **Toggle между SKU и imtId группировкой**:
+
 - Кнопка переключения "По артикулам" ↔ "По склейкам"
 - URL state persistence (`?group_by=imtId`)
 - Merged product badge (`🔗 Склейка (3)`) с tooltip
@@ -175,6 +189,7 @@
 ### Stories Status
 
 **All Complete** (100% ✅):
+
 - ✅ **Story 36.1**: TypeScript Types Update (15min)
 - ✅ **Story 36.2**: API Client & React Query Hooks (15min)
 - ✅ **Story 36.3**: MergedProductBadge Component (20min)
@@ -184,6 +199,7 @@
 ### Технические детали
 
 **API Integration**:
+
 ```typescript
 // API Client
 getAdvertisingAnalytics({
@@ -204,10 +220,12 @@ getAdvertisingAnalytics({
 ```
 
 **Components**:
+
 - `src/app/(dashboard)/analytics/advertising/components/GroupByToggle.tsx`
 - `src/app/(dashboard)/analytics/advertising/components/MergedProductBadge.tsx`
 
 **Test Coverage**: 91 tests
+
 - 5 E2E scenarios (Playwright)
 - 21 integration tests
 - 65 unit tests
@@ -231,6 +249,7 @@ getAdvertisingAnalytics({
 ### Проблема
 
 **Backend готов, но UI отсутствует**:
+
 - ✅ Telegram bot работает (@Kernel_crypto_bot)
 - ✅ REST API endpoints готовы (`/v1/notifications/*`)
 - ❌ Нет UI для привязки Telegram
@@ -238,6 +257,7 @@ getAdvertisingAnalytics({
 - ❌ Пользователи не могут настроить тихие часы, язык, типы событий
 
 **User Impact**:
+
 > "Бэкенд отправляет уведомления, но я не могу подключить Telegram через интерфейс!"
 
 ### Решение
@@ -245,6 +265,7 @@ getAdvertisingAnalytics({
 **Comprehensive Telegram settings page**: `/settings/notifications`
 
 **Компоненты**:
+
 1. **TelegramBindingCard** - статус привязки, binding flow modal
 2. **NotificationPreferencesPanel** - настройка типов событий (5 toggles)
 3. **QuietHoursSection** - тихие часы (from/to time pickers)
@@ -254,6 +275,7 @@ getAdvertisingAnalytics({
 ### Stories Status
 
 **All Complete** (100% ✅):
+
 - ✅ **Story 34.1**: TypeScript Types & API Client
 - ✅ **Story 34.2**: Telegram Binding Flow (modal, polling, deep link)
 - ✅ **Story 34.3**: Notification Preferences Panel (5 event toggles)
@@ -264,6 +286,7 @@ getAdvertisingAnalytics({
 ### Ключевые фичи
 
 **Telegram Binding Flow**:
+
 ```
 1. User clicks "Подключить Telegram"
    ↓
@@ -284,6 +307,7 @@ getAdvertisingAnalytics({
 ```
 
 **Event Types** (5 toggles):
+
 - ✅ Finance Import Completed
 - ✅ Finance Import Failed
 - ✅ COGS Assigned
@@ -291,6 +315,7 @@ getAdvertisingAnalytics({
 - ✅ Storage Import Completed
 
 **Quiet Hours**:
+
 - Toggle on/off
 - Time pickers: from/to (00:00 - 23:59)
 - Timezone selection (Europe/Moscow default)
@@ -298,6 +323,7 @@ getAdvertisingAnalytics({
 ### Технические детали
 
 **Architecture**:
+
 - **State Management**: Zustand store (`notificationPreferencesStore`)
 - **Data Fetching**: React Query hooks
 - **UI Components**: shadcn/ui (Dialog, Badge, Switch, TimePicker, Tooltip)
@@ -305,6 +331,7 @@ getAdvertisingAnalytics({
 - **API Integration**: `/v1/notifications/*` endpoints
 
 **API Endpoints**:
+
 ```http
 GET    /v1/notifications/preferences/{userId}
 PUT    /v1/notifications/preferences/{userId}
@@ -315,12 +342,14 @@ POST   /v1/notifications/test
 ```
 
 **Component Files**:
+
 - `src/components/notifications/TelegramBindingCard.tsx` (280 lines)
 - `src/components/notifications/TelegramBindingModal.tsx` (450 lines)
 - `src/components/notifications/NotificationPreferencesPanel.tsx` (320 lines)
 - `src/components/notifications/QuietHoursSection.tsx` (180 lines)
 
 **Hooks**:
+
 - `src/hooks/useTelegramBinding.ts`
 - `src/hooks/useNotificationPreferences.ts`
 - `src/hooks/useQuietHours.ts`
@@ -330,6 +359,7 @@ POST   /v1/notifications/test
 **Test Coverage**: 87%
 **WCAG Compliance**: 2.1 AA ✅
 **Accessibility**:
+
 - Semantic HTML
 - ARIA labels
 - Keyboard navigation
@@ -338,14 +368,17 @@ POST   /v1/notifications/test
 ### Documentation
 
 **Developer Handoff**:
+
 - `docs/DEV-HANDOFF-EPIC-34-FE.md` (comprehensive integration guide)
 - `docs/API-INTEGRATION-GUIDE-EPIC-34-FE.md`
 
 **UX Documentation**:
+
 - `docs/epics/epic-34-fe-UX-REQUIREMENTS.md`
 - `docs/epics/UX-ANSWERS-EPIC-34-FE.md` (92KB, comprehensive UX Q&A)
 
 **PO Approval**:
+
 - `docs/epics/PO-APPROVAL-EPIC-34-FE.md` ✅ Ready for Production Release
 
 ---
@@ -360,6 +393,7 @@ POST   /v1/notifications/test
 ### Проблема
 
 **До внедрения**:
+
 - Нет UI для просмотра рекламной аналитики
 - Sellers не могут анализировать ROAS/ROI кампаний
 - Нет visibility в эффективность рекламных затрат
@@ -370,6 +404,7 @@ POST   /v1/notifications/test
 **Advertising Analytics Page**: `/analytics/advertising`
 
 **Ключевые компоненты**:
+
 1. **Performance Metrics Table** - основная таблица с ROAS/ROI
 2. **Efficiency Status Indicators** - цветовые индикаторы эффективности
 3. **Campaign List & Filtering** - список кампаний с фильтрами
@@ -380,6 +415,7 @@ POST   /v1/notifications/test
 ### Stories Status
 
 **All Complete** (8/8 ✅):
+
 - ✅ Story 33.1: TypeScript Types & API Client
 - ✅ Story 33.2: Advertising Analytics Page Layout
 - ✅ Story 33.3: Performance Metrics Table
@@ -392,6 +428,7 @@ POST   /v1/notifications/test
 ### Технические детали
 
 **Efficiency Indicators** (Story 33.4):
+
 ```typescript
 // Color-coded badges
 🟢 Excellent: ROAS ≥ 3.0, ROI ≥ 200%
@@ -401,6 +438,7 @@ POST   /v1/notifications/test
 ```
 
 **Metrics Displayed**:
+
 - Total Sales (Всего продаж)
 - Ad Revenue (Из рекламы)
 - Organic Sales (Органика)
@@ -409,6 +447,7 @@ POST   /v1/notifications/test
 - ROI (Return on Investment %)
 
 **API Integration**:
+
 ```http
 GET /v1/analytics/advertising
   ?date_from=2024-12-16
@@ -418,18 +457,19 @@ GET /v1/analytics/advertising
 
 ### PO Decisions
 
-| Decision | Choice | Rationale |
-|----------|--------|-----------|
-| Default View Mode | **SKU** | Наиболее гранулярный, фокус на продукт |
-| Default Sort Order | **Spend DESC** | "Где я трачу больше всего?" |
-| Default Date Range | **14 days** | Стандартный двухнедельный период |
-| Dashboard Widget | ✅ **YES** | 3 points, high value, API ready |
-| Export CSV/Excel | ❌ DEFER | Post-MVP enhancement |
-| Campaign Actions | ❌ DEFER | Требует новых API, risky |
+| Decision           | Choice         | Rationale                              |
+| ------------------ | -------------- | -------------------------------------- |
+| Default View Mode  | **SKU**        | Наиболее гранулярный, фокус на продукт |
+| Default Sort Order | **Spend DESC** | "Где я трачу больше всего?"            |
+| Default Date Range | **14 days**    | Стандартный двухнедельный период       |
+| Dashboard Widget   | ✅ **YES**     | 3 points, high value, API ready        |
+| Export CSV/Excel   | ❌ DEFER       | Post-MVP enhancement                   |
+| Campaign Actions   | ❌ DEFER       | Требует новых API, risky               |
 
 ### Integration с Epic 36-FE
 
 Epic 33 был расширен Epic 36-FE для поддержки `groupBy=imtId`:
+
 - Toggle между "По артикулам" и "По склейкам"
 - Merged product badge с tooltip
 - URL state persistence
@@ -447,6 +487,7 @@ Epic 33 был расширен Epic 36-FE для поддержки `groupBy=im
 ### Проблема
 
 **До внедрения**:
+
 - Нет UI для анализа затрат на платное хранение
 - Sellers не могут идентифицировать дорогостоящие SKU
 - Нет visibility в тренды storage costs
@@ -457,6 +498,7 @@ Epic 33 был расширен Epic 36-FE для поддержки `groupBy=im
 **Storage Analytics Page**: `/analytics/storage`
 
 **Ключевые компоненты**:
+
 1. **Storage by SKU Table** - детализация по артикулам
 2. **Top Consumers Widget** - топ-5 дорогостоящих товаров
 3. **Storage Trends Chart** - динамика расходов по неделям
@@ -467,6 +509,7 @@ Epic 33 был расширен Epic 36-FE для поддержки `groupBy=im
 ### Stories Status
 
 **MVP Complete** (8/8 ✅):
+
 - ✅ Story 24.1: TypeScript Types & API Client (QA: 85/100)
 - ✅ Story 24.2: Storage Analytics Page Layout (QA: 80/100)
 - ✅ Story 24.3: Storage by SKU Table (QA: 85/100)
@@ -477,6 +520,7 @@ Epic 33 был расширен Epic 36-FE для поддержки `groupBy=im
 - ✅ Story 24.8: High Storage Ratio Alert (QA: 92/100)
 
 **Enhancement Stories** (📋 Ready for Dev):
+
 - 📋 Story 24.9: Multi-select Brand & Warehouse Filters (5 points)
 - 📋 Story 24.10: Chart Click-to-Filter Interaction (3 points)
 - 📋 Story 24.11: Unit Tests for Storage Analytics (5 points)
@@ -484,6 +528,7 @@ Epic 33 был расширен Epic 36-FE для поддержки `groupBy=im
 ### Технические детали
 
 **Page Structure**:
+
 ```
 /analytics/storage
 ├── Header: "Аналитика расходов на хранение"
@@ -505,6 +550,7 @@ Epic 33 был расширен Epic 36-FE для поддержки `groupBy=im
 ```
 
 **API Integration**:
+
 ```http
 GET /v1/analytics/storage/by-sku
   ?week_from=W48
@@ -514,6 +560,7 @@ GET /v1/analytics/storage/by-sku
 ```
 
 **High Ratio Alert**:
+
 - Threshold: storage_cost / revenue > 15%
 - Color: Orange warning banner
 - Position: Above table
@@ -540,6 +587,7 @@ GET /v1/analytics/storage/by-sku
 ### Проблема
 
 **До внедрения**:
+
 - Нет UI для просмотра истории изменений COGS
 - Sellers не могут редактировать/удалять старые записи COGS
 - Нет visibility, какие недели затронуты изменением COGS
@@ -550,6 +598,7 @@ GET /v1/analytics/storage/by-sku
 **COGS History Management**: `/cogs/history`
 
 **Ключевые компоненты**:
+
 1. **CogsHistoryTable** - таблица истории с actions dropdown
 2. **CogsHistoryMeta** - метаинформация (total records, date range)
 3. **CogsHistoryPagination** - пагинация
@@ -560,6 +609,7 @@ GET /v1/analytics/storage/by-sku
 ### Stories Status
 
 **All Complete** (3/3 ✅):
+
 - ✅ **Story 5.1**: COGS History View (QA: 95/100, 50 tests)
 - ✅ **Story 5.2**: COGS Edit Dialog (QA: 95/100, 24 tests)
 - ✅ **Story 5.3**: COGS Delete Confirmation (QA: 95/100, 18 tests)
@@ -567,11 +617,13 @@ GET /v1/analytics/storage/by-sku
 ### Технические детали
 
 **Source Icons**:
+
 - ✏️ Manual (user assigned)
 - 📥 Import (bulk upload)
 - ⚙️ API (automatic sync)
 
 **Affected Weeks Display**:
+
 ```
 "N недель" (collapsed)
   ↓ (click to expand)
@@ -579,11 +631,13 @@ GET /v1/analytics/storage/by-sku
 ```
 
 **Delete Status**:
+
 - Gray background + strikethrough
 - Preserves chronology
 - "Удалено" badge
 
 **Actions Dropdown** (⋮):
+
 - ✏️ Редактировать
 - 🗑️ Удалить
 - Touch-friendly (48px tap target)
@@ -629,6 +683,7 @@ DELETE /v1/cogs/:cogsId
 ### Проблема
 
 **До внедрения**:
+
 - Analytics показывают только single week данные
 - Нет сравнения периодов (week-over-week, month-over-month)
 - Нет ROI и profit-per-unit метрик
@@ -669,6 +724,7 @@ DELETE /v1/cogs/:cogsId
 ### Stories Status
 
 **All Complete** (5/5 ✅):
+
 - ✅ Story 6.1: Date Range Support
 - ✅ Story 6.2: Period Comparison
 - ✅ Story 6.3: ROI & Profit/Unit Metrics
@@ -678,12 +734,14 @@ DELETE /v1/cogs/:cogsId
 ### Технические детали
 
 **Components**:
+
 - `src/components/analytics/DateRangePicker.tsx`
 - `src/components/analytics/DeltaIndicator.tsx`
 - `src/components/analytics/ExportDialog.tsx`
 - `src/app/(dashboard)/analytics/dashboard/page.tsx`
 
 **Export Flow**:
+
 ```
 1. User clicks "Экспорт" button
    ↓
@@ -704,6 +762,7 @@ DELETE /v1/cogs/:cogsId
 ```
 
 **KPI Cards** (Dashboard):
+
 - Total Revenue (текущий период)
 - Net Profit (revenue - cogs - expenses)
 - Average Margin % (profit / revenue × 100)
@@ -716,6 +775,7 @@ DELETE /v1/cogs/:cogsId
 ### Общая статистика
 
 **Completed Epics**: 4/5 (80%)
+
 - ✅ Epic 6-FE: Advanced Analytics (100%)
 - ✅ Epic 5-FE: COGS History (100%)
 - ✅ Epic 24-FE: Paid Storage (100% MVP, enhancements pending)
@@ -731,21 +791,22 @@ DELETE /v1/cogs/:cogsId
 
 ### Quality Metrics
 
-| Epic | QA Score | Test Coverage | Status |
-|------|----------|---------------|--------|
-| Epic 37 | 89.4/100 | 72/72 tests passing | ⏳ 98% |
-| Epic 36 | N/A | 91 tests | ✅ 100% |
-| Epic 34 | Production Ready | 87% | ✅ 100% |
-| Epic 33 | N/A | Integration tests | ✅ 100% |
-| Epic 24 | 88/100 | Integration + E2E | ✅ 100% |
-| Epic 6 | N/A | Complete | ✅ 100% |
-| Epic 5 | 95/100 | 92 tests | ✅ 100% |
+| Epic    | QA Score         | Test Coverage       | Status  |
+| ------- | ---------------- | ------------------- | ------- |
+| Epic 37 | 89.4/100         | 72/72 tests passing | ⏳ 98%  |
+| Epic 36 | N/A              | 91 tests            | ✅ 100% |
+| Epic 34 | Production Ready | 87%                 | ✅ 100% |
+| Epic 33 | N/A              | Integration tests   | ✅ 100% |
+| Epic 24 | 88/100           | Integration + E2E   | ✅ 100% |
+| Epic 6  | N/A              | Complete            | ✅ 100% |
+| Epic 5  | 95/100           | 92 tests            | ✅ 100% |
 
 **Average**: 90.8/100 (Excellent) 🏆
 
 ### Deployment Status
 
 **Production Deployed**:
+
 - ✅ Epic 5-FE: COGS History Management
 - ✅ Epic 6-FE: Advanced Analytics UI
 - ✅ Epic 24-FE: Paid Storage Analytics
@@ -754,6 +815,7 @@ DELETE /v1/cogs/:cogsId
 - ✅ Epic 36-FE: Product Card Linking Integration
 
 **Pending Deployment**:
+
 - ⏳ Epic 37-FE: Merged Group Table (Phase 2 QA, 9.5-13.5h)
 
 ### Технологический стек (Unified)
@@ -769,6 +831,7 @@ DELETE /v1/cogs/:cogsId
 ### Архитектурные паттерны
 
 **Consistent Patterns Across All Epics**:
+
 1. **API Layer**: `src/lib/api/{domain}.ts` - fetch functions
 2. **React Query Hooks**: `src/hooks/use{Domain}.ts` - data fetching
 3. **Type Safety**: `src/types/{domain}.ts` - TypeScript interfaces
@@ -784,6 +847,7 @@ DELETE /v1/cogs/:cogsId
 ### Immediate Actions (Days 1-3)
 
 **Priority 1: Epic 37-FE Phase 2 Completion**:
+
 - ⏳ E2E/Accessibility test debugging (<2h)
   - Fix button selector timing issue
   - Add test data for `test@test.com` with imtId groups
@@ -798,6 +862,7 @@ DELETE /v1/cogs/:cogsId
 ### Short-term (Week 1-2)
 
 **Epic 24-FE Enhancements** (13 SP):
+
 - Story 24.9: Multi-select Brand & Warehouse Filters (5 points)
 - Story 24.10: Chart Click-to-Filter Interaction (3 points)
 - Story 24.11: Unit Tests for Storage Analytics (5 points)
@@ -805,6 +870,7 @@ DELETE /v1/cogs/:cogsId
 ### Medium-term (Month 1-2)
 
 **Future Epics** (если одобрены PO):
+
 - Epic 37-BE: Grafana Business Dashboards (backend draft exists)
 - Epic 38: API Documentation Automation (draft, Q1 2026)
 
@@ -814,19 +880,20 @@ DELETE /v1/cogs/:cogsId
 
 ### Time Estimates vs Actual
 
-| Epic | Estimated | Actual | Variance | Performance |
-|------|-----------|--------|----------|-------------|
-| Epic 37 | 9-14h | ~12h (Phase 1) | On target | ✅ 100% |
-| Epic 36 | 6-9h | ~7h | On target | ✅ 100% |
-| Epic 34 | 7-10 days | N/A | N/A | ✅ Complete |
-| Epic 33 | 26 SP | N/A | N/A | ✅ Complete |
-| Epic 24 | 26 SP | N/A | N/A | ✅ Complete |
+| Epic    | Estimated | Actual         | Variance  | Performance |
+| ------- | --------- | -------------- | --------- | ----------- |
+| Epic 37 | 9-14h     | ~12h (Phase 1) | On target | ✅ 100%     |
+| Epic 36 | 6-9h      | ~7h            | On target | ✅ 100%     |
+| Epic 34 | 7-10 days | N/A            | N/A       | ✅ Complete |
+| Epic 33 | 26 SP     | N/A            | N/A       | ✅ Complete |
+| Epic 24 | 26 SP     | N/A            | N/A       | ✅ Complete |
 
 **Average**: On target or faster ✅
 
 ### Quality Trends
 
 **Test Coverage Evolution**:
+
 - Epic 5: 92 tests (95/100 QA)
 - Epic 24: Integration + E2E (88/100 QA)
 - Epic 34: 87% coverage (Production Ready)
@@ -842,11 +909,13 @@ DELETE /v1/cogs/:cogsId
 ### Business Impact
 
 **Coverage Expansion**:
+
 - Epic 33 → Epic 36 → Epic 37: **100% advertising analytics coverage** (было 67%)
 - Epic 24: **Single source of truth** для storage costs (Request #66)
 - Epic 34: **Real-time notifications** вместо manual polling
 
 **User Experience**:
+
 - Epic 37: **3-tier visual hierarchy** для merged groups
 - Epic 34: **30-second binding flow** для Telegram
 - Epic 24: **Visual trends** для storage costs
@@ -855,6 +924,7 @@ DELETE /v1/cogs/:cogsId
 ### Technical Excellence
 
 **Architecture**:
+
 - ✅ Unified React Query + Zustand pattern
 - ✅ shadcn/ui component consistency
 - ✅ TypeScript strict mode (0 errors)
@@ -862,11 +932,13 @@ DELETE /v1/cogs/:cogsId
 - ✅ Comprehensive test coverage (85-95%)
 
 **Performance**:
+
 - Epic 37: Target <200ms render for 50 groups
 - Epic 34: 3s polling interval (optimized)
 - Epic 24: Auto-refresh trends chart
 
 **Documentation**:
+
 - Epic 37: 3,447+ lines documentation (Phase 1)
 - Epic 34: Developer handoff docs + UX guides (100KB+)
 - Epic 36: Complete integration guides
@@ -876,17 +948,20 @@ DELETE /v1/cogs/:cogsId
 ## 📋 Backlog & Future Work
 
 ### Epic 37 Phase 2 (⏳ In Progress)
+
 - UAT + Performance + Screenshots + Screen Reader + Mixpanel
 - **Effort**: 9.5-13.5h
 - **Target**: 2026-01-03
 
 ### Epic 24 Enhancements (📋 Ready)
+
 - Multi-select filters
 - Chart interactions
 - Additional unit tests
 - **Effort**: 13 SP
 
 ### Future Considerations
+
 - Epic 37-BE: Grafana Dashboards (если одобрено)
 - Epic 38: API Documentation Automation (Q1 2026)
 - Post-MVP enhancements для completed epics
@@ -898,6 +973,7 @@ DELETE /v1/cogs/:cogsId
 **Frontend Development Status**: ✅ **EXCELLENT**
 
 **Key Metrics**:
+
 - **Completion Rate**: 99.6% (4.98/5 epics)
 - **Quality Score**: 90.2/100 average
 - **Test Coverage**: 85-95% across all epics
@@ -905,6 +981,7 @@ DELETE /v1/cogs/:cogsId
 - **Code Quality**: 0 TypeScript errors, WCAG 2.1 AA
 
 **Recommendation**:
+
 1. Complete Epic 37 Phase 2 (9.5-13.5h)
 2. Consider Epic 24 enhancements (13 SP)
 3. Review Epic 37-BE and Epic 38 drafts for PO approval
@@ -920,6 +997,7 @@ DELETE /v1/cogs/:cogsId
 ## Приложение: Quick Reference Links
 
 ### Epic 37 (98% Complete)
+
 - **Main**: `docs/epics/epic-37-merged-group-table-display.md`
 - **Stories**: `docs/stories/epic-37/*.BMAD.md` (5 stories)
 - **User Guide**: `docs/stories/epic-37/USER-GUIDE.md`
@@ -927,30 +1005,36 @@ DELETE /v1/cogs/:cogsId
 - **Validation**: `docs/stories/epic-37/STORY-37.5-VALIDATION-REPORT.md`
 
 ### Epic 36-FE (Complete)
+
 - **Changelog**: `docs/CHANGELOG-EPIC-36-FE.md`
 - **Stories**: `docs/stories/epic-36/*.md` (5 stories)
 - **Start Here**: `docs/EPIC-36-START-HERE.md`
 
 ### Epic 34-FE (Production Ready)
+
 - **Main**: `docs/epics/epic-34-fe-telegram-notifications-ui.md`
 - **Handoff**: `docs/DEV-HANDOFF-EPIC-34-FE.md`
 - **PO Approval**: `docs/epics/PO-APPROVAL-EPIC-34-FE.md`
 - **Stories**: `docs/stories/epic-34/*.md` (6 stories)
 
 ### Epic 33-FE (Complete)
+
 - **Main**: `docs/stories/epic-33/README.md`
 - **Stories**: `docs/stories/epic-33/*.md` (8 stories)
 
 ### Epic 24-FE (Complete)
+
 - **Main**: `docs/stories/epic-24/README.md`
 - **Spec**: `docs/front-end-spec-epic-24.md`
 - **Stories**: `docs/stories/epic-24/*.md` (8 MVP + 3 enhancements)
 
 ### Epic 5-FE (Complete)
+
 - **Main**: `docs/stories/epic-5/README.md`
 - **Stories**: `docs/stories/epic-5/*.md` (3 stories)
 
 ### Epic 6-FE (Complete)
+
 - **Main**: `docs/stories/epic-6/README.md`
 - **Changelog**: `docs/CHANGELOG-EPIC-6-FE.md`
 - **Stories**: `docs/stories/epic-6/*.md` (5 stories)

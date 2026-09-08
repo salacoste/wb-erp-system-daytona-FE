@@ -31,10 +31,10 @@ Implement complete FBS Supply Management functionality with full lifecycle suppo
 
 ## Dependencies
 
-| Type | Dependency | Status |
-|------|------------|--------|
-| Backend | Epic 53 (6 stories, 26 SP) | ✅ Complete |
-| Backend | 9 supply endpoints | ✅ Complete |
+| Type     | Dependency                        | Status      |
+| -------- | --------------------------------- | ----------- |
+| Backend  | Epic 53 (6 stories, 26 SP)        | ✅ Complete |
+| Backend  | 9 supply endpoints                | ✅ Complete |
 | Frontend | **Epic 40.9-FE** (useOrders hook) | ⚠️ Required |
 
 **Critical**: Epic 53-FE requires `useOrders` hook from Epic 40.9-FE for Order Picker functionality.
@@ -43,17 +43,17 @@ Implement complete FBS Supply Management functionality with full lifecycle suppo
 
 ## API Endpoints
 
-| # | Method | Endpoint | Purpose |
-|---|--------|----------|---------|
-| 1 | GET | `/v1/supplies` | List supplies |
-| 2 | POST | `/v1/supplies` | Create supply |
-| 3 | GET | `/v1/supplies/:id` | Get details |
-| 4 | POST | `/v1/supplies/:id/orders` | Add orders (batch) |
-| 5 | DELETE | `/v1/supplies/:id/orders` | Remove orders |
-| 6 | POST | `/v1/supplies/:id/close` | Close supply |
-| 7 | POST | `/v1/supplies/:id/stickers` | Generate stickers |
-| 8 | GET | `/v1/supplies/:id/documents/:type` | Download document |
-| 9 | POST | `/v1/supplies/sync` | Manual sync |
+| #   | Method | Endpoint                           | Purpose            |
+| --- | ------ | ---------------------------------- | ------------------ |
+| 1   | GET    | `/v1/supplies`                     | List supplies      |
+| 2   | POST   | `/v1/supplies`                     | Create supply      |
+| 3   | GET    | `/v1/supplies/:id`                 | Get details        |
+| 4   | POST   | `/v1/supplies/:id/orders`          | Add orders (batch) |
+| 5   | DELETE | `/v1/supplies/:id/orders`          | Remove orders      |
+| 6   | POST   | `/v1/supplies/:id/close`           | Close supply       |
+| 7   | POST   | `/v1/supplies/:id/stickers`        | Generate stickers  |
+| 8   | GET    | `/v1/supplies/:id/documents/:type` | Download document  |
+| 9   | POST   | `/v1/supplies/sync`                | Manual sync        |
 
 ### Key Types
 
@@ -100,21 +100,21 @@ enum StickerFormat {
 
 ### Status UI Configuration
 
-| Status | Color | Icon | Actions |
-|--------|-------|------|---------|
-| OPEN | Blue `#3B82F6` | `PackageOpen` | Add/remove, Close |
-| CLOSED | Orange `#F59E0B` | `PackageCheck` | Stickers, Download |
-| DELIVERING | Purple `#7C4DFF` | `Truck` | View only |
-| DELIVERED | Green `#22C55E` | `CheckCircle` | View only |
-| CANCELLED | Red `#EF4444` | `XCircle` | View only |
+| Status     | Color            | Icon           | Actions            |
+| ---------- | ---------------- | -------------- | ------------------ |
+| OPEN       | Blue `#3B82F6`   | `PackageOpen`  | Add/remove, Close  |
+| CLOSED     | Orange `#F59E0B` | `PackageCheck` | Stickers, Download |
+| DELIVERING | Purple `#7C4DFF` | `Truck`        | View only          |
+| DELIVERED  | Green `#22C55E`  | `CheckCircle`  | View only          |
+| CANCELLED  | Red `#EF4444`    | `XCircle`      | View only          |
 
 ---
 
 ## New Routes
 
-| Route | Page | Description |
-|-------|------|-------------|
-| `/supplies` | `SuppliesListPage` | List with filters |
+| Route            | Page               | Description        |
+| ---------------- | ------------------ | ------------------ |
+| `/supplies`      | `SuppliesListPage` | List with filters  |
 | `/supplies/[id]` | `SupplyDetailPage` | Detail with orders |
 
 ---
@@ -122,6 +122,7 @@ enum StickerFormat {
 ## Components
 
 ### List Components (7)
+
 - `SuppliesTable` - Main table
 - `SupplyStatusBadge` - Status indicator
 - `SupplyFilters` - Filter controls
@@ -131,6 +132,7 @@ enum StickerFormat {
 - `CreateSupplyModal` - Create dialog
 
 ### Detail Components (10)
+
 - `SupplyHeader` - Info + status
 - `SupplyStatusStepper` - Lifecycle progress
 - `SupplyOrdersTable` - Orders in supply
@@ -148,14 +150,17 @@ enum StickerFormat {
 ## Stories
 
 ### Story 53.1-FE: Types & API Client
+
 **Estimate**: 2 SP
 
 **Scope**:
+
 - `src/types/supplies.ts`
 - `src/lib/api/supplies.ts`
 - Query keys factory
 
 **Acceptance Criteria**:
+
 - [ ] All TypeScript interfaces
 - [ ] API functions for 9 endpoints
 - [ ] Error handling
@@ -163,15 +168,18 @@ enum StickerFormat {
 ---
 
 ### Story 53.2-FE: Supplies List Page
+
 **Estimate**: 5 SP
 
 **Scope**:
+
 - `/supplies` route
 - Sidebar navigation
 - `SuppliesTable`, `SupplyFilters`
 - Pagination, empty state
 
 **Acceptance Criteria**:
+
 - [ ] Route in sidebar ("Поставки")
 - [ ] Table with status badges
 - [ ] Filters: status, date
@@ -181,14 +189,17 @@ enum StickerFormat {
 ---
 
 ### Story 53.3-FE: Create Supply Flow
+
 **Estimate**: 3 SP
 
 **Scope**:
+
 - `CreateSupplyModal`
 - `useCreateSupply` mutation
 - Redirect to detail
 
 **Acceptance Criteria**:
+
 - [ ] "Создать поставку" button
 - [ ] Optional name input
 - [ ] Optimistic update
@@ -197,14 +208,17 @@ enum StickerFormat {
 ---
 
 ### Story 53.4-FE: Supply Detail Page
+
 **Estimate**: 5 SP
 
 **Scope**:
+
 - `/supplies/[id]` page
 - `SupplyHeader`, `SupplyStatusStepper`
 - `SupplyOrdersTable`, `SupplyDocumentsList`
 
 **Acceptance Criteria**:
+
 - [ ] Dynamic route
 - [ ] Header with status badge
 - [ ] Stepper showing lifecycle
@@ -214,15 +228,18 @@ enum StickerFormat {
 ---
 
 ### Story 53.5-FE: Order Picker Drawer
+
 **Estimate**: 8 SP ⚡ **Most Complex**
 
 **Scope**:
+
 - `OrderPickerDrawer` (full-screen)
 - `OrderPickerTable` (virtualized, 1000+ rows)
 - `OrderPickerFilters`
 - Multi-select with batch add
 
 **Acceptance Criteria**:
+
 - [ ] Full-screen drawer
 - [ ] Virtualized list (`react-window`)
 - [ ] Multi-select checkboxes
@@ -233,6 +250,7 @@ enum StickerFormat {
 - [ ] Partial success handling
 
 **Technical Notes**:
+
 - Requires `useOrders` hook from Epic 40.9-FE
 - Filter: `supplier_status=confirm,complete`
 - Max 1000 orders per batch
@@ -240,15 +258,18 @@ enum StickerFormat {
 ---
 
 ### Story 53.6-FE: Close Supply & Stickers
+
 **Estimate**: 5 SP
 
 **Scope**:
+
 - `CloseSupplyDialog`
 - `StickerFormatSelector`
 - `StickerPreview`
 - Download functionality
 
 **Acceptance Criteria**:
+
 - [ ] Close button (OPEN only)
 - [ ] Confirmation dialog
 - [ ] Cannot close empty supply
@@ -260,15 +281,18 @@ enum StickerFormat {
 ---
 
 ### Story 53.7-FE: Status Polling & Sync
+
 **Estimate**: 3 SP
 
 **Scope**:
+
 - Auto-polling for CLOSED/DELIVERING
 - `SyncStatusIndicator`
 - Manual sync button
 - Rate limit handling
 
 **Acceptance Criteria**:
+
 - [ ] Poll every 30s while CLOSED/DELIVERING
 - [ ] Stop polling on DELIVERED/CANCELLED
 - [ ] "Обновить статусы" button
@@ -278,15 +302,18 @@ enum StickerFormat {
 ---
 
 ### Story 53.8-FE: E2E Tests & Polish
+
 **Estimate**: 3 SP
 
 **Scope**:
+
 - Playwright E2E tests
 - Accessibility audit
 - Error states
 - Mobile responsive
 
 **Acceptance Criteria**:
+
 - [ ] Full lifecycle test
 - [ ] WCAG 2.1 AA
 - [ ] 404/403 error states

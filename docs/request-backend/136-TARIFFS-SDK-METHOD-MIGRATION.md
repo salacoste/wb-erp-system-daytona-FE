@@ -11,9 +11,9 @@
 
 При обращении к двум эндпоинтам тарифов бэкенд возвращает ошибки:
 
-| Эндпоинт | Код | Ошибка |
-|----------|-----|--------|
-| `GET /v1/tariffs/acceptance/coefficients/all` | **500** | `sdk.ordersFBW.getAcceptanceCoefficients is not a function` |
+| Эндпоинт                                                  | Код     | Ошибка                                                                                      |
+| --------------------------------------------------------- | ------- | ------------------------------------------------------------------------------------------- |
+| `GET /v1/tariffs/acceptance/coefficients/all`             | **500** | `sdk.ordersFBW.getAcceptanceCoefficients is not a function`                                 |
 | `GET /v1/tariffs/warehouses-with-tariffs?date=2026-02-10` | **400** | `WB API bad request: parameter "date" in query has an error: value is required but missing` |
 
 ---
@@ -36,6 +36,7 @@
 **Resolution date**: 2026-02-10
 **Summary**: Fixed two tariff endpoint errors caused by SDK v3.1.0 API changes. (1) `getAcceptanceCoefficients` migrated from `ordersFBW` to `tariffs` module. (2) `getTariffsBox` date parameter handling fixed. Same pattern as #135 products SDK rename.
 **Remaining frontend action**: None - both tariff endpoints now return 200 OK.
+
 ```typescript
 // СЛОМАНО (строка 118):
 const sdk = this.getSDKClient(token);
@@ -46,6 +47,7 @@ rawCoefficients = await (sdk.tariffs as unknown as TariffsModuleMethods).getAcce
 ```
 
 Также нужно:
+
 1. Обновить интерфейс `OrdersFBWModuleMethods` (строка 31-35) — перенести метод в `TariffsModuleMethods` или создать новый интерфейс
 2. Обновить все вызовы `sdk.ordersFBW.getAcceptanceCoefficients` на `sdk.tariffs.getAcceptanceCoefficients`
 3. Обновить вызов с warehouseIDs (строка 212-214):
@@ -62,6 +64,7 @@ rawCoefficients = await (sdk.tariffs as unknown as TariffsModuleMethods).getAcce
    ```
 
 **Подтверждение из SDK** (`node_modules/daytona-wildberries-typescript-sdk/dist/esm/modules/tariffs/index.d.ts`):
+
 ```typescript
 // SDK TariffsModule теперь содержит:
 getAcceptanceCoefficients(options?: {
@@ -88,6 +91,7 @@ const response = await (sdk.tariffs as unknown as TariffsModuleMethods).getTarif
 ```
 
 Также нужно обновить интерфейс `TariffsModuleMethods` (строка 101-103):
+
 ```typescript
 // СЛОМАНО:
 interface TariffsModuleMethods {
@@ -101,6 +105,7 @@ interface TariffsModuleMethods {
 ```
 
 **Подтверждение из SDK** (`modules/tariffs/index.d.ts`):
+
 ```typescript
 // SDK TariffsModule:
 getTariffsBox(date: string): Promise<TariffsBoxResponse>;
@@ -123,26 +128,26 @@ getTariffsBox(date: string): Promise<TariffsBoxResponse>;
 
 ## Влияние на фронтенд
 
-| Область | Влияние |
-|---------|---------|
+| Область                            | Влияние                            |
+| ---------------------------------- | ---------------------------------- |
 | Калькулятор цен (Price Calculator) | Страница **полностью не работает** |
-| Список складов с тарифами | Не загружается — 400 от бэкенда |
-| Коэффициенты приёмки | Не загружаются — 500 от бэкенда |
-| Выбор склада для расчёта | Невозможен |
-| Расчёт стоимости логистики | Невозможен |
+| Список складов с тарифами          | Не загружается — 400 от бэкенда    |
+| Коэффициенты приёмки               | Не загружаются — 500 от бэкенда    |
+| Выбор склада для расчёта           | Невозможен                         |
+| Расчёт стоимости логистики         | Невозможен                         |
 
 ---
 
 ## Объём исправлений
 
-| Файл | Строка | Изменение |
-|-------|--------|-----------|
-| `src/tariffs/acceptance-coefficients.service.ts` | 31-35 | Интерфейс: перенести `getAcceptanceCoefficients` или создать новый |
-| `src/tariffs/acceptance-coefficients.service.ts` | 118 | Вызов: `sdk.ordersFBW` → `sdk.tariffs` |
-| `src/tariffs/acceptance-coefficients.service.ts` | 212-214 | Вызов с warehouseIDs: `sdk.ordersFBW` → `sdk.tariffs` |
-| `src/tariffs/warehouses-tariffs.service.ts` | 101-103 | Интерфейс: `{ date?: string }` → `date: string` |
-| `src/tariffs/warehouses-tariffs.service.ts` | 216-218 | Вызов: `getTariffsBox({ date: effectiveDate })` → `getTariffsBox(effectiveDate)` |
-| `src/tariffs/acceptance-coefficients.service.spec.ts` | 23-29 | Мок: обновить на `sdk.tariffs` |
+| Файл                                                  | Строка  | Изменение                                                                        |
+| ----------------------------------------------------- | ------- | -------------------------------------------------------------------------------- |
+| `src/tariffs/acceptance-coefficients.service.ts`      | 31-35   | Интерфейс: перенести `getAcceptanceCoefficients` или создать новый               |
+| `src/tariffs/acceptance-coefficients.service.ts`      | 118     | Вызов: `sdk.ordersFBW` → `sdk.tariffs`                                           |
+| `src/tariffs/acceptance-coefficients.service.ts`      | 212-214 | Вызов с warehouseIDs: `sdk.ordersFBW` → `sdk.tariffs`                            |
+| `src/tariffs/warehouses-tariffs.service.ts`           | 101-103 | Интерфейс: `{ date?: string }` → `date: string`                                  |
+| `src/tariffs/warehouses-tariffs.service.ts`           | 216-218 | Вызов: `getTariffsBox({ date: effectiveDate })` → `getTariffsBox(effectiveDate)` |
+| `src/tariffs/acceptance-coefficients.service.spec.ts` | 23-29   | Мок: обновить на `sdk.tariffs`                                                   |
 
 **Совместимость**: Оба метода в новом SDK принимают те же данные, изменилась только сигнатура/расположение.
 
@@ -150,8 +155,8 @@ getTariffsBox(date: string): Promise<TariffsBoxResponse>;
 
 ## Фронтенд исправления (уже выполнены)
 
-| Файл | Изменение |
-|------|-----------|
+| Файл                              | Изменение                                                                                  |
+| --------------------------------- | ------------------------------------------------------------------------------------------ |
 | `frontend/src/lib/api/tariffs.ts` | `getWarehousesWithTariffs()` теперь отправляет `?date=YYYY-MM-DD` (по умолчанию — сегодня) |
 
 ---
@@ -201,19 +206,20 @@ pm2 logs wb-repricer --lines 10 --nostream | grep -E "getAcceptanceCoefficients|
 
 ### Бэкенд
 
-| Файл | Изменение |
-|------|-----------|
-| `src/tariffs/acceptance-coefficients.service.ts` | Интерфейс `OrdersFBWModuleMethods` → `TariffsAcceptanceMethods`, вызовы `sdk.ordersFBW` → `sdk.tariffs` (строки 33, 118, 214), лог-сообщения |
-| `src/tariffs/warehouses-tariffs.service.ts` | Интерфейс `getTariffsBox({ date?: string })` → `getTariffsBox(date: string)`, вызов `getTariffsBox({ date: effectiveDate })` → `getTariffsBox(effectiveDate)` |
-| `src/tariffs/acceptance-coefficients.service.spec.ts` | Мок `sdk.ordersFBW` → `sdk.tariffs` |
+| Файл                                                  | Изменение                                                                                                                                                     |
+| ----------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `src/tariffs/acceptance-coefficients.service.ts`      | Интерфейс `OrdersFBWModuleMethods` → `TariffsAcceptanceMethods`, вызовы `sdk.ordersFBW` → `sdk.tariffs` (строки 33, 118, 214), лог-сообщения                  |
+| `src/tariffs/warehouses-tariffs.service.ts`           | Интерфейс `getTariffsBox({ date?: string })` → `getTariffsBox(date: string)`, вызов `getTariffsBox({ date: effectiveDate })` → `getTariffsBox(effectiveDate)` |
+| `src/tariffs/acceptance-coefficients.service.spec.ts` | Мок `sdk.ordersFBW` → `sdk.tariffs`                                                                                                                           |
 
 ### Фронтенд
 
-| Файл | Изменение |
-|------|-----------|
+| Файл                              | Изменение                                                         |
+| --------------------------------- | ----------------------------------------------------------------- |
 | `frontend/src/lib/api/tariffs.ts` | `getWarehousesWithTariffs()` теперь отправляет `?date=YYYY-MM-DD` |
 
 **Верификация**:
+
 - `acceptance/coefficients/all` → HTTP 200, 6345 коэффициентов (750 available, 5595 unavailable)
 - `warehouses-with-tariffs?date=2026-02-10` → HTTP 200, 82 склада с тарифами
 - Калькулятор цен загружается без ошибок в консоли

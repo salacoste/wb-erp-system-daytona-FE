@@ -9,7 +9,7 @@ chars: 7444
 
 В этой статье:
 
-- 
+-
 - <a href="#obshhaya-informatsiya-po-uchetu-analitiki-po-api" rel="nofollow">Общая информация по учету аналитики по API</a>
 - <a href="#sroki-podgruzki-analitiki" rel="nofollow">Сроки подгрузки аналитики</a>
 - <a href="#za-kakie-periody-dostupny-dannye" rel="nofollow">За какие периоды доступны данные?</a>

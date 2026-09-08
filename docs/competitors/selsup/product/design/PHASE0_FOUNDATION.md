@@ -28,22 +28,22 @@
 
 1. **Мультиарендный каркас** `Account → Organization → Warehouse` через
    row-level изоляцию по `account_id`/`organization_id` `[DATA_MODEL §Обзор п.1,
-   NFR-1]`.
+NFR-1]`.
 2. **AuthN** — регистрация по телефону+email, вход логин/пароль, сброс пароля,
    лимит сессий = 2 устройства, (готовность) 2FA `[FR-O1, FR-O6, onboarding
-   §cap 1,11,12,13]`.
+§cap 1,11,12,13]`.
 3. **AuthZ (RBAC)** — 4 предустановленные роли MVP (Администратор, Менеджер
    товаров, Сотрудник склада, Управление ценами) + матрица прав роль×ресурс×
    действие + тонкие пермиссии (ограничение по организациям/брендам, флаги
    «можно публиковать карточки»/«собирать без сканирования») `[FR-O4, onboarding
-   §cap 23,24,25]`.
+§cap 23,24,25]`.
 4. **Единая очередь синхронизации** `sync_jobs` с retry/экспоненциальным
    backoff, идемпотентностью, dead-letter, per-MP throttling, приоритетами —
    **ключевой риск №1 продукта**; весь обмен с WB/Ozon идёт только через неё
    `[NFR-2, MVP_PRD §1 цель 4, §10.1 риск 1, DATA_MODEL §Обзор п.6, §примечания 4]`.
 5. **Хранилище секретов** — шифрование API-ключей WB/Ozon at rest (envelope
    encryption, AES-256, ротация master key) `[NFR-3, FR-I1, onboarding §cap 37,
-   DATA_MODEL §примечания 14]`.
+DATA_MODEL §примечания 14]`.
 6. **Аудит-лог** — append-only журнал «кто/когда/что» для критичных операций
    `[FR-O5, DATA_MODEL §Обзор п.6, §примечания 17]`.
 7. **Наблюдаемость** — structured logging, метрики очереди (длина, % ошибок
@@ -52,17 +52,17 @@
 
 ### 1.2. Что НЕ входит в Фазу 0 (явные границы)
 
-| Что | Куда | Обоснование |
-|---|---|---|
-| Карточки товаров, адаптеры WB/Ozon, матчинг | Фаза 1 | `[MVP_PRD §8 Фаза 1]`; Фаза 0 даёт очередь `sync_jobs.op` (расширяемое множество) и `integrations` (где хранятся зашифрованные токены), но сами адаптеры — Фаза 1 |
-| Склад FBS, остатки, синхронизация остатков/цен | Фаза 2 | `[MVP_PRD §8 Фаза 2]`; очередь `sync_jobs` готова принять `op=update_stock`/`update_price` |
-| Заказы, импорт/сборка FBS | Фаза 3 | `[MVP_PRD §8 Фаза 3]`; очередь готова принять `op=import_orders` |
-| Этикетки, маркировка, Честный Знак | Фаза 4 / post-MVP | `[MVP_PRD §8 Фаза 4, §10.3]` |
-| Тарифы/оплата/партнёрка (биллинг) | post-MVP | `[MVP_PRD §3.2]`; на Фазе 0 — единый внутренний тариф/фри-триал, в схеме `subscriptions` (опционально) как placeholder |
-| Браузерное расширение, мобильные приложения, ТСД | post-MVP | `[onboarding §cap 34]`; auth — только web/SPA |
-| Реальные вызовы WB/Ozon API (адаптеры) | Фаза 1 | В Фазе 0 — stub-адаптер (`EchoAdapter`) для тестирования очереди/throttling без реального МП `[PHASE1 §5]` |
-| Связанные аккаунты клиентов (B2B-делегирование) | post-MVP | `[onboarding §cap 15, DATA_MODEL §ClientAccountLink]`; точка интеграции `client_account_links` зарезервирована |
-| 2FA (полная реализация) | Фаза 0+, soft-blocker | Поле `two_factor_enabled` + таблица `totp_secrets` в схеме; полная реализация TOTP/SMS — best-effort в Фазе 0, но не блокирует exit criteria `[onboarding §cap 12, §открытые вопросы "Процедура 2FA"]` |
+| Что                                              | Куда                  | Обоснование                                                                                                                                                                                            |
+| ------------------------------------------------ | --------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Карточки товаров, адаптеры WB/Ozon, матчинг      | Фаза 1                | `[MVP_PRD §8 Фаза 1]`; Фаза 0 даёт очередь `sync_jobs.op` (расширяемое множество) и `integrations` (где хранятся зашифрованные токены), но сами адаптеры — Фаза 1                                      |
+| Склад FBS, остатки, синхронизация остатков/цен   | Фаза 2                | `[MVP_PRD §8 Фаза 2]`; очередь `sync_jobs` готова принять `op=update_stock`/`update_price`                                                                                                             |
+| Заказы, импорт/сборка FBS                        | Фаза 3                | `[MVP_PRD §8 Фаза 3]`; очередь готова принять `op=import_orders`                                                                                                                                       |
+| Этикетки, маркировка, Честный Знак               | Фаза 4 / post-MVP     | `[MVP_PRD §8 Фаза 4, §10.3]`                                                                                                                                                                           |
+| Тарифы/оплата/партнёрка (биллинг)                | post-MVP              | `[MVP_PRD §3.2]`; на Фазе 0 — единый внутренний тариф/фри-триал, в схеме `subscriptions` (опционально) как placeholder                                                                                 |
+| Браузерное расширение, мобильные приложения, ТСД | post-MVP              | `[onboarding §cap 34]`; auth — только web/SPA                                                                                                                                                          |
+| Реальные вызовы WB/Ozon API (адаптеры)           | Фаза 1                | В Фазе 0 — stub-адаптер (`EchoAdapter`) для тестирования очереди/throttling без реального МП `[PHASE1 §5]`                                                                                             |
+| Связанные аккаунты клиентов (B2B-делегирование)  | post-MVP              | `[onboarding §cap 15, DATA_MODEL §ClientAccountLink]`; точка интеграции `client_account_links` зарезервирована                                                                                         |
+| 2FA (полная реализация)                          | Фаза 0+, soft-blocker | Поле `two_factor_enabled` + таблица `totp_secrets` в схеме; полная реализация TOTP/SMS — best-effort в Фазе 0, но не блокирует exit criteria `[onboarding §cap 12, §открытые вопросы "Процедура 2FA"]` |
 
 ### 1.3. Exit criteria Фазы 0 (из `[MVP_PRD §8 Фаза 0]`)
 
@@ -176,10 +176,10 @@ data-key на время выполнения задачи
 
 - **Регистрация/вход:** Frontend → `POST /auth/register` → AuthSvc создаёт
   `accounts` (email=логин), сессию, выдаёт access+refresh JWT → `audit_log
-  (action='signup')` `[FR-O1]`.
+(action='signup')` `[FR-O1]`.
 - **Создание организации по ИНН:** `POST /organizations {inn}` → OrgSvc
   заполняет поля (справочник ИНН/дачные-сервисы — best-effort), `audit_log
-  (action='org_create')` `[FR-O3, W11]`.
+(action='org_create')` `[FR-O3, W11]`.
 - **Сохранение ключа WB/Ozon:** `PUT /integrations/{orgId}/{service}` →
   IntegrationSvc шифрует (envelope AES-256) → `integrations.credentials_enc` +
   `credentials_kid` → `probeToken()` через stub/адаптер → статус
@@ -194,17 +194,17 @@ data-key на время выполнения задачи
 
 ### 2.4. Рекомендуемый стек (с обоснованием и stack-agnostic оговоркой)
 
-| Слой | Рекомендация (дефолт) | Обоснование | Альтернатива (stack-agnostic) |
-|---|---|---|---|
-| **БД (основа)** | **PostgreSQL 15+** | Реляционная модель + jsonb для вариативных полей (`Role.permissions`, `sync_jobs.payload`, `Organization.flags`); `SELECT … FOR UPDATE SKIP LOCKED` — нативная очередь без внешнего брокера; row-level изоляция по `account_id` `[DATA_MODEL §примечания 1,2]` | Любая SQL-СУБД с RR-изоляцией и advisory-locks (MySQL — хуже для SKIP LOCKED; CockroachDB — если нужен multi-region) |
-| **App-слой** | **Go (chi/gin) ИЛИ Node.js (NestJS/Fastify) + TypeScript** | Go: статическая типизация, низкий overhead воркеров, отличный story для конкурентных pull-воркеров; Node: быстрая разработка, общий язык с фронтендом, зрелая экосистема. Выбор — за командой | Python (FastAPI), Rust (axum) — если есть экспертиза; контракты (DTO/DTO-validation) — через OpenAPI, чтобы язык не mattered |
-| **Очередь/воркеры** | **DB-очередь на `sync_jobs` + пул pull-воркеров** (дефолт для Фазы 0) | Один источник правды (транзакционность с бизнес-данными: создание `sync_job` коммитится вместе с `marketplace_mappings`/`audit_log` — нет рассинхрона outbox-паттерна вручную); `SKIP LOCKED` даёт безопасную конкуренцию; трассируемость задач в той же БД. Для MVP-нагрузки (см. §5.2) достаточно `[DATA_MODEL §примечания 4]` | Redis Streams / RabbitMQ — если нагрузка превысит ~десятки тысяч задач/мин (см. спайк §13.1); или внешний worker-pool (Temporal) — overkill для Фазы 0 |
-| **Кэш/throttle/сессии** | **Redis** | Token-bucket throttling per-MP (атомарные Lua-скрипты); rate-limit windows API; distributed locks для единственного исполнителя задачи; (опц.) хранилище refresh-сессий | in-DB таблица `rate_limits` (медленнее, но без Redis); Memcached — без persist |
-| **KMS/секреты** | **HashiCorp Vault (transit secret engine)** или обл. KMS (Yandex KMS/aws-kms-compatible) | Envelope encryption: master key не покидает KMS; воркеры получают data-key на время задачи; аудит доступа к ключам `[NFR-3, DATA_MODEL §примечания 14]` | DB-level pgcrypto (хуже: ключ в БД); внешняя `sops`+age (op-сложность) |
-| **Object storage** | **S3-совместимое** (MinIO локально / обл. S3) | Медиа Фазы 1, печать/подпись организации, экспорт аудита `[DATA_MODEL §примечания 19]` | Файловая система (не для прод-мультиаренды) |
-| **AuthN** | **JWT RS256 (access ~15 мин) + refresh (rotation, reuse-detection) + opaque session-id в БД для лимита 2 устройства** | Stateless access для горизонтального масштабирования API; refresh в БД позволяет enforce «не более 2 сессий» и отзыв `[FR-O6, onboarding §cap 13]` | Paseto; или полностью server-side sessions (opaque) — строже для отзыва, но stateful |
-| **Observability** | **OpenTelemetry + Prometheus + Loki/ELK** | Сквозной correlation-id; метрики очереди из коробки; structured logs | Datadog/Grafana Cloud; или минимум — JSON-логи + alertmanager |
-| **Деплой** | **Docker Compose (dev) → Kubernetes (prod)** или bare-metal + systemd | Мультиарендный SaaS требует изоляции воркеров и горизонтального масштабирования под нагрузку | Любой orchestrator |
+| Слой                    | Рекомендация (дефолт)                                                                                                 | Обоснование                                                                                                                                                                                                                                                                                                                      | Альтернатива (stack-agnostic)                                                                                                                          |
+| ----------------------- | --------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| **БД (основа)**         | **PostgreSQL 15+**                                                                                                    | Реляционная модель + jsonb для вариативных полей (`Role.permissions`, `sync_jobs.payload`, `Organization.flags`); `SELECT … FOR UPDATE SKIP LOCKED` — нативная очередь без внешнего брокера; row-level изоляция по `account_id` `[DATA_MODEL §примечания 1,2]`                                                                   | Любая SQL-СУБД с RR-изоляцией и advisory-locks (MySQL — хуже для SKIP LOCKED; CockroachDB — если нужен multi-region)                                   |
+| **App-слой**            | **Go (chi/gin) ИЛИ Node.js (NestJS/Fastify) + TypeScript**                                                            | Go: статическая типизация, низкий overhead воркеров, отличный story для конкурентных pull-воркеров; Node: быстрая разработка, общий язык с фронтендом, зрелая экосистема. Выбор — за командой                                                                                                                                    | Python (FastAPI), Rust (axum) — если есть экспертиза; контракты (DTO/DTO-validation) — через OpenAPI, чтобы язык не mattered                           |
+| **Очередь/воркеры**     | **DB-очередь на `sync_jobs` + пул pull-воркеров** (дефолт для Фазы 0)                                                 | Один источник правды (транзакционность с бизнес-данными: создание `sync_job` коммитится вместе с `marketplace_mappings`/`audit_log` — нет рассинхрона outbox-паттерна вручную); `SKIP LOCKED` даёт безопасную конкуренцию; трассируемость задач в той же БД. Для MVP-нагрузки (см. §5.2) достаточно `[DATA_MODEL §примечания 4]` | Redis Streams / RabbitMQ — если нагрузка превысит ~десятки тысяч задач/мин (см. спайк §13.1); или внешний worker-pool (Temporal) — overkill для Фазы 0 |
+| **Кэш/throttle/сессии** | **Redis**                                                                                                             | Token-bucket throttling per-MP (атомарные Lua-скрипты); rate-limit windows API; distributed locks для единственного исполнителя задачи; (опц.) хранилище refresh-сессий                                                                                                                                                          | in-DB таблица `rate_limits` (медленнее, но без Redis); Memcached — без persist                                                                         |
+| **KMS/секреты**         | **HashiCorp Vault (transit secret engine)** или обл. KMS (Yandex KMS/aws-kms-compatible)                              | Envelope encryption: master key не покидает KMS; воркеры получают data-key на время задачи; аудит доступа к ключам `[NFR-3, DATA_MODEL §примечания 14]`                                                                                                                                                                          | DB-level pgcrypto (хуже: ключ в БД); внешняя `sops`+age (op-сложность)                                                                                 |
+| **Object storage**      | **S3-совместимое** (MinIO локально / обл. S3)                                                                         | Медиа Фазы 1, печать/подпись организации, экспорт аудита `[DATA_MODEL §примечания 19]`                                                                                                                                                                                                                                           | Файловая система (не для прод-мультиаренды)                                                                                                            |
+| **AuthN**               | **JWT RS256 (access ~15 мин) + refresh (rotation, reuse-detection) + opaque session-id в БД для лимита 2 устройства** | Stateless access для горизонтального масштабирования API; refresh в БД позволяет enforce «не более 2 сессий» и отзыв `[FR-O6, onboarding §cap 13]`                                                                                                                                                                               | Paseto; или полностью server-side sessions (opaque) — строже для отзыва, но stateful                                                                   |
+| **Observability**       | **OpenTelemetry + Prometheus + Loki/ELK**                                                                             | Сквозной correlation-id; метрики очереди из коробки; structured logs                                                                                                                                                                                                                                                             | Datadog/Grafana Cloud; или минимум — JSON-логи + alertmanager                                                                                          |
+| **Деплой**              | **Docker Compose (dev) → Kubernetes (prod)** или bare-metal + systemd                                                 | Мультиарендный SaaS требует изоляции воркеров и горизонтального масштабирования под нагрузку                                                                                                                                                                                                                                     | Любой orchestrator                                                                                                                                     |
 
 > **Stack-agnostic оговорка.** На уровне интерфейсов Фаза 0 фиксирует:
 > контракт `MarketplaceAdapter` (`PHASE1 §5`), контракт `JobQueue`
@@ -212,7 +212,6 @@ data-key на время выполнения задачи
 > (encrypt/decrypt/rotate-key — §6), `PermissionService` (can(role,action,
 > resource) — §4). Конкретный язык/брокер/KMS подключаются как implementation.
 > Смена любого из них = замена adapter-класса, модель данных и RBAC не меняются.
-
 
 ---
 
@@ -226,19 +225,20 @@ data-key на время выполнения задачи
 - **Пользователь (`User`)** привязан к `account_id` с ролевым доступом и
   ограничениями по организациям/брендам `[onboarding §cap 23,25]`.
 - **Иерархия:** `Account (1) — (N) Organization (1) — (N) Warehouse /
-  Integration / Product / Order / …`. Все tenant-данные несут `account_id`
+Integration / Product / Order / …`. Все tenant-данные несут `account_id`
   (обязательный) и (где применимо) `organization_id` `[DATA_MODEL
-  §примечания 1]`.
+§примечания 1]`.
 
 ### 3.2. Стратегия изоляции: shared schema + `account_id` (row-level)
 
-| Вариант | Выбор | Обоснование |
-|---|---|---|
-| Database-per-tenant | ❌ | Слишком дорого для SaaS с тысячами мелких селлеров; миграции N баз |
-| Schema-per-tenant | ❌ | То же; PostgreSQL limit на schema count |
+| Вариант                          | Выбор         | Обоснование                                                                                                    |
+| -------------------------------- | ------------- | -------------------------------------------------------------------------------------------------------------- |
+| Database-per-tenant              | ❌            | Слишком дорого для SaaS с тысячами мелких селлеров; миграции N баз                                             |
+| Schema-per-tenant                | ❌            | То же; PostgreSQL limit на schema count                                                                        |
 | **Shared schema + `account_id`** | ✅ **Дефолт** | Один источник правды, простые миграции, индекс `(account_id, ...)`; соответствует `[DATA_MODEL §примечания 1]` |
 
 **Инварианты изоляции (на уровне БД и кода):**
+
 1. Каждая tenant-таблица имеет `account_id uuid NOT NULL REFERENCES accounts(id)`
    и индекс как минимум `(account_id, ...)`; на hot-путях — композитные с
    фильтрующим полем (`WHERE deleted_at IS NULL`, `WHERE status='active'`)
@@ -273,22 +273,22 @@ data-key на время выполнения задачи
   ```
 - На каждый запрос resolver проверяет: `organization_id ∈ org_scope` пользователя
   (нельзя обратиться к чужой org) `[onboarding §cap 25 "ограничение по
-  организации"]`.
+организации"]`.
 - Все репозитории принимают `TenantContext` и **всегда** фильтруют по
   `account_id` (и `organization_id` где релевантно); отсутствие фильтра —
- 	fail-fast в dev/test (assertion), чтобы исключить утечку `[AC-17 из PHASE1]`.
+  fail-fast в dev/test (assertion), чтобы исключить утечку `[AC-17 из PHASE1]`.
 
 ### 3.4. Скоупирование сущностей `[DATA_MODEL §сущности]`
 
-| Сущность | Скоуп | Примечание |
-|---|---|---|
-| `accounts` | global (tenant root) | 1 строка = 1 теннант |
-| `organizations` | per-account | `UNIQUE(account_id, inn)` `[FR-O3]` |
-| `integrations` | per-organization | `UNIQUE(organization_id, service)` → «1 org = 1 ключ API МП» `[FR-O3, INTEGRATIONS §13]` |
-| `users` / `memberships` | per-account | пользователь принадлежит аккаунту; membership даёт роль в (org | all) |
-| `sync_jobs` | per-account + per-org | `account_id`, `organization_id` — для изоляции и диспетчеризации `[PHASE1 §3.2]` |
-| `audit_log` | per-account | `account_id` обязателен; `organization_id` где применимо |
-| `notifications` | per-account | `account_id`, `organization_id` |
+| Сущность                | Скоуп                 | Примечание                                                                               |
+| ----------------------- | --------------------- | ---------------------------------------------------------------------------------------- |
+| `accounts`              | global (tenant root)  | 1 строка = 1 теннант                                                                     |
+| `organizations`         | per-account           | `UNIQUE(account_id, inn)` `[FR-O3]`                                                      |
+| `integrations`          | per-organization      | `UNIQUE(organization_id, service)` → «1 org = 1 ключ API МП» `[FR-O3, INTEGRATIONS §13]` |
+| `users` / `memberships` | per-account           | пользователь принадлежит аккаунту; membership даёт роль в (org                           | all) |
+| `sync_jobs`             | per-account + per-org | `account_id`, `organization_id` — для изоляции и диспетчеризации `[PHASE1 §3.2]`         |
+| `audit_log`             | per-account           | `account_id` обязателен; `organization_id` где применимо                                 |
+| `notifications`         | per-account           | `account_id`, `organization_id`                                                          |
 
 ### 3.5. «Один магазин — один аккаунт» `[INTEGRATIONS §13]`
 
@@ -303,8 +303,7 @@ data-key на время выполнения задачи
       WHERE store_fingerprint IS NOT NULL AND deleted_at IS NULL;
   ```
   Конфликт → `409 store_already_linked` с понятным сообщением `[INTEGRATIONS
-  §13 "удаление ключа из кабинета не освобождает его"]`.
-
+§13 "удаление ключа из кабинета не освобождает его"]`.
 
 ---
 
@@ -320,11 +319,11 @@ data-key на время выполнения задачи
   сессии (см. 4.2) → выдача пары токенов.
 - **Сброс пароля:** `POST /auth/password/reset {email}` → email со ссылкой с
   одноразовым токеном (TTL 30 мин, привязка к `account_id`) → `POST
-  /auth/password/reset/confirm {token, new_password}` `[W7]`.
+/auth/password/reset/confirm {token, new_password}` `[W7]`.
 - **2FA (готовность):** поле `accounts.two_factor_enabled` + таблица
   `totp_secrets` (шифруется, как секреты — §6). Полная реализация TOTP —
   best-effort в Фазе 0; не блокирует exit criteria `[onboarding §cap 12, §открытые
-  вопросы "Процедура 2FA"]`.
+вопросы "Процедура 2FA"]`.
 - **Удаление организации — только админом** (основной аккаунт регистрации) с
   подтверждением кодом из email `[onboarding §бизправила, W13]` → в `audit_log`
   `action='org_delete'`.
@@ -340,7 +339,7 @@ data-key на время выполнения задачи
 - **Лимит сессий = 2:** при логине, если у аккаунта уже 2 активные сессии,
   **самая старая принудительно закрывается** (`sessions.active=false`,
   refresh-инвалидация) `[onboarding §cap 13 "система выбивает предыдущие
-  сессии"]`. Реализуется атомарно:
+сессии"]`. Реализуется атомарно:
   ```text
   BEGIN;
     INSERT INTO sessions(account_id, ...) VALUES(...);
@@ -367,18 +366,18 @@ SelSup определяет 10 предустановленных ролей `[o
 Role]`. **MVP (Фаза 0) реализует 4** (из `[FR-O4, MVP_PRD §8 Фаза 0]`), остальные
 — stub с полными `permissions` jsonb, чтобы UI Фазы 1+ мог их показывать:
 
-| Роль (code) | Имя | В MVP | Краткое описание (из онбординга) |
-|---|---|---|---|
-| `admin` | Администратор | ✅ | Полный доступ (основной аккаунт) `[onboarding §Role]` |
-| `product_manager` | Менеджер товаров | ✅ | Отгрузки, карточки, заказы; без аналитики, финансов, закупочных цен |
-| `warehouse_staff` | Сотрудник склада | ✅ | Отгрузки, заказы, приёмка `[onboarding §Role]` |
-| `price_manager` | Управление ценами | ✅ | Цены и акции `[onboarding §Role]` |
-| `operator` | Оператор | stub | Только задания, без основного меню и товаров |
-| `ads_analyst` | Рекламщик/аналитик | stub | Только аналитика и статистика |
-| `buyer` | Закупщик | stub | Закупки, закупочные цены |
-| `content_manager` | Контент-менеджер | stub | Создание карточек |
-| `card_viewer` | Просмотр карточек | stub | Только просмотр «Товары» |
-| `consultant` | Консультант | stub | Чаты, вопросы, отзывы (post-MVP CRM) |
+| Роль (code)       | Имя                | В MVP | Краткое описание (из онбординга)                                    |
+| ----------------- | ------------------ | ----- | ------------------------------------------------------------------- |
+| `admin`           | Администратор      | ✅    | Полный доступ (основной аккаунт) `[onboarding §Role]`               |
+| `product_manager` | Менеджер товаров   | ✅    | Отгрузки, карточки, заказы; без аналитики, финансов, закупочных цен |
+| `warehouse_staff` | Сотрудник склада   | ✅    | Отгрузки, заказы, приёмка `[onboarding §Role]`                      |
+| `price_manager`   | Управление ценами  | ✅    | Цены и акции `[onboarding §Role]`                                   |
+| `operator`        | Оператор           | stub  | Только задания, без основного меню и товаров                        |
+| `ads_analyst`     | Рекламщик/аналитик | stub  | Только аналитика и статистика                                       |
+| `buyer`           | Закупщик           | stub  | Закупки, закупочные цены                                            |
+| `content_manager` | Контент-менеджер   | stub  | Создание карточек                                                   |
+| `card_viewer`     | Просмотр карточек  | stub  | Только просмотр «Товары»                                            |
+| `consultant`      | Консультант        | stub  | Чаты, вопросы, отзывы (post-MVP CRM)                                |
 
 > **[SPIKE] Точная матрица прав.** В комплекте `onboarding §открытые вопросы`
 > явно указано: «Точная матрица ролей × разрешений не приведена — описаны только
@@ -393,36 +392,37 @@ Role]`. **MVP (Фаза 0) реализует 4** (из `[FR-O4, MVP_PRD §8 Ф�
 **(v)** = view-only. Ограничения scope (по org/брендам, флаги) применяются
 поверх — см. 4.3.3.
 
-| Ресурс (модуль) | admin | product_manager | warehouse_staff | price_manager |
-|---|---|---|---|---|
-| **organizations** (view/create/update/delete) | X | (v) | — | — |
-| **users & roles** (invite/assign/edit/delete) | X | — | — | — |
-| **integrations** (save token, probe) | X | — | — | — |
-| **products** (cards: view/create/update/delete) | X | X | (v) | (v) |
-| **product publish** (тумблеры WB/Ozon) | X | X* | — | — |
-| **import cards** (WB/Ozon/Excel) | X | X | — | — |
-| **brands / manufacturers / categories** | X | X | — | — |
-| **warehouses** (create/link FBS) | X | X | (v) | — |
-| **stocks** (view/adjust/move/write-off) | X | X | X | — |
-| **stock sync toggle** (org flag) | X | — | — | — |
-| **prices** (view/update/min-price) | X | (v) | — | X |
-| **orders** (view/import/assemble/close) | X | X | X | — |
-| **labels** (order/product print) | X | X | X | — |
-| **analytics / finance** (P&L, unit-econ) | X | — | — | (v) |
-| **purchase price** (себестоимость) | X | — | — | — |
-| **audit_log** (view) | X | — | — | — |
-| **sync_jobs** (monitor queue) | X | — | — | — |
+| Ресурс (модуль)                                 | admin | product_manager | warehouse_staff | price_manager |
+| ----------------------------------------------- | ----- | --------------- | --------------- | ------------- |
+| **organizations** (view/create/update/delete)   | X     | (v)             | —               | —             |
+| **users & roles** (invite/assign/edit/delete)   | X     | —               | —               | —             |
+| **integrations** (save token, probe)            | X     | —               | —               | —             |
+| **products** (cards: view/create/update/delete) | X     | X               | (v)             | (v)           |
+| **product publish** (тумблеры WB/Ozon)          | X     | X*              | —               | —             |
+| **import cards** (WB/Ozon/Excel)                | X     | X               | —               | —             |
+| **brands / manufacturers / categories**         | X     | X               | —               | —             |
+| **warehouses** (create/link FBS)                | X     | X               | (v)             | —             |
+| **stocks** (view/adjust/move/write-off)         | X     | X               | X               | —             |
+| **stock sync toggle** (org flag)                | X     | —               | —               | —             |
+| **prices** (view/update/min-price)              | X     | (v)             | —               | X             |
+| **orders** (view/import/assemble/close)         | X     | X               | X               | —             |
+| **labels** (order/product print)                | X     | X               | X               | —             |
+| **analytics / finance** (P&L, unit-econ)        | X     | —               | —               | (v)           |
+| **purchase price** (себестоимость)              | X     | —               | —               | —             |
+| **audit_log** (view)                            | X     | —               | —               | —             |
+| **sync_jobs** (monitor queue)                   | X     | —               | —               | —             |
 
 `*` product_manager может публиковать только если установлен флаг
 `flag_can_publish_cards` `[onboarding §cap 25]`.
 
 > Эта матрица — **отправная точка**; продукт должен подтвердить/уточнить до
 > кодинга (спайк D9). Хранится как `Role.permissions jsonb` `[DATA_MODEL
-> §Role]`, так что корректировка = миграция данных, не схемы.
+§Role]`, так что корректировка = миграция данных, не схемы.
 
 #### 4.3.3. Тонкие пермиссии (scope + флаги) `[onboarding §cap 25]`
 
 Поверх роли действуют:
+
 - **Ограничение по организациям:** `memberships.org_scope` (`'all'` или массив
   `organization_id`) — пользователь видит только разрешённые org
   `[onboarding §cap 25]`.
@@ -461,16 +461,16 @@ middleware/decorator); guard вызывает `PermissionService.can(...)` и в
 
 ### 4.5. Эндпоинты auth (кратко, см. §10)
 
-| Метод | Путь | Описание |
-|---|---|---|
-| `POST` | `/auth/register` | `{email, phone, password}` → `{access, refresh}` `[FR-O1]` |
-| `POST` | `/auth/login` | `{email, password}` → `{access, refresh}`; лимит 2 сессии `[FR-O6]` |
-| `POST` | `/auth/refresh` | `{refresh}` → `{access, refresh}` (rotation + reuse-detection) |
-| `POST` | `/auth/logout` | отзыв текущей сессии |
-| `POST` | `/auth/password/reset` | `{email}` → email со ссылкой `[W7]` |
-| `POST` | `/auth/password/reset/confirm` | `{token, new_password}` |
-| `GET` | `/me` | профиль + активная org + роль |
-| `GET/POST/PATCH/DELETE` | `/organizations/{orgId}/members` | сотрудники/роли (admin) `[FR-O4]` |
+| Метод                   | Путь                             | Описание                                                            |
+| ----------------------- | -------------------------------- | ------------------------------------------------------------------- |
+| `POST`                  | `/auth/register`                 | `{email, phone, password}` → `{access, refresh}` `[FR-O1]`          |
+| `POST`                  | `/auth/login`                    | `{email, password}` → `{access, refresh}`; лимит 2 сессии `[FR-O6]` |
+| `POST`                  | `/auth/refresh`                  | `{refresh}` → `{access, refresh}` (rotation + reuse-detection)      |
+| `POST`                  | `/auth/logout`                   | отзыв текущей сессии                                                |
+| `POST`                  | `/auth/password/reset`           | `{email}` → email со ссылкой `[W7]`                                 |
+| `POST`                  | `/auth/password/reset/confirm`   | `{token, new_password}`                                             |
+| `GET`                   | `/me`                            | профиль + активная org + роль                                       |
+| `GET/POST/PATCH/DELETE` | `/organizations/{orgId}/members` | сотрудники/роли (admin) `[FR-O4]`                                   |
 
 ---
 
@@ -491,45 +491,46 @@ middleware/decorator); guard вызывает `PermissionService.can(...)` и в
 
 ### 5.2. Нагрузка на очередь (из частот обмена) `[MVP_PRD §7.4]`
 
-| Поток | Направление | Частота | Нагрузка на очередь |
-|---|---|---|---|
-| Заказы FBS | WB/Ozon → система | автоимпорт ~раз в 2 мин `[integrations §cap 4]` | ~30 poll-задач/org/час → `op=import_orders` (Фаза 3) |
-| Остатки FBS | система → WB/Ozon | при заказе/изменении + ночной импорт 00:00 МСК | всплески при массовом изменении; SLA отправки ≤ 1 мин `[FR-S4, §9.2]` |
-| Цены | система → WB/Ozon | ежеминутно + после ручных изменений `[MVP_PRD §7.4]` | ~1 cron-задача/org/мин + on-demand |
-| Карточки (публикация) | система → WB/Ozon | по событию (тумблер) | всплески; **лимит WB 1000 новых/день** `[PHASE1 §5.2]` |
-| Медиа | система → WB | после publish_card | всплески; отдельная «подочередь» по `op` `[PHASE1 §5.2]` |
-| Финансы | WB/Ozon → система | WB еженед./ежедневно; Ozon раз в месяц | низкая частота, тяжёлые payload |
+| Поток                 | Направление       | Частота                                              | Нагрузка на очередь                                                   |
+| --------------------- | ----------------- | ---------------------------------------------------- | --------------------------------------------------------------------- |
+| Заказы FBS            | WB/Ozon → система | автоимпорт ~раз в 2 мин `[integrations §cap 4]`      | ~30 poll-задач/org/час → `op=import_orders` (Фаза 3)                  |
+| Остатки FBS           | система → WB/Ozon | при заказе/изменении + ночной импорт 00:00 МСК       | всплески при массовом изменении; SLA отправки ≤ 1 мин `[FR-S4, §9.2]` |
+| Цены                  | система → WB/Ozon | ежеминутно + после ручных изменений `[MVP_PRD §7.4]` | ~1 cron-задача/org/мин + on-demand                                    |
+| Карточки (публикация) | система → WB/Ozon | по событию (тумблер)                                 | всплески; **лимит WB 1000 новых/день** `[PHASE1 §5.2]`                |
+| Медиа                 | система → WB      | после publish_card                                   | всплески; отдельная «подочередь» по `op` `[PHASE1 §5.2]`              |
+| Финансы               | WB/Ozon → система | WB еженед./ежедневно; Ozon раз в месяц               | низкая частота, тяжёлые payload                                       |
 
 > **Вывод для ёмкости:** на Фазу 0/MVP при ~десятках пилотных селлеров нагрузка
-  невелика (порядка сотен задач/мин). **DB-очередь на `sync_jobs` (дефолт) —
-  достаточно.** Переход на внешний брокер (Redis Streams/RabbitMQ) — когда
-  нагрузка превысит ~10⁴ задач/мин или появится потребность в fan-out
-  (см. спайк §13.1) `[§2.4]`.
+> невелика (порядка сотен задач/мин). **DB-очередь на `sync_jobs` (дефолт) —
+> достаточно.** Переход на внешний брокер (Redis Streams/RabbitMQ) — когда
+> нагрузка превысит ~10⁴ задач/мин или появится потребность в fan-out
+> (см. спайк §13.1) `[§2.4]`.
 
 ### 5.3. Модель `sync_jobs` `[PHASE1 §3.2, DATA_MODEL §BackgroundTask]`
 
 Согласовано с Фазой 1 один-в-один `[AC-PH1]`. Ключевые поля:
 
-| Поле | Тип | Назначение |
-|---|---|---|
-| `id` | uuid PK | идентификатор задачи |
-| `account_id`, `organization_id` | uuid FK | изоляция теннанта + диспетчеризация per-org |
-| `marketplace` | enum `wildberries`/`ozon` | целевой МП (расширяется в post-MVP) |
-| `op` | enum | тип операции (`publish_card`, `unpublish_card`, `upload_media`, `import_cards`, `update_attrs` — Фаза 1; `update_stock`, `update_price`, `import_orders` — добавят Фазы 2/3) |
-| `target_type`, `target_id` | enum + uuid | полиморфная цель (`product_sku`, `product`, `media`, `import_job`) |
-| `idempotency_key` | text **UNIQUE** | `sha256(op + marketplace + target_id + hash(payload))` — защита от дублей `[DATA_MODEL §примечания 15]` |
-| `payload` | jsonb | данные для адаптера |
-| `status` | enum | `queued`/`running`/`completed`/`failed`/`cancelled` |
-| `priority` | int (1..10, 1=высш) | см. 5.5 |
-| `attempts`, `max_attempts` | int | счётчик попыток / потолок (дефолт 5) |
-| `last_error` | jsonb | `{http_status, kind, code, message, field?, retry_after?, retryable, raw?}` `[PHASE1 §5.1 MpError]` |
-| `next_attempt_at` | timestamptz | когда воркер может забрать (backoff); дефолт `now()` |
-| `started_at`, `finished_at` | timestamptz | время исполнения |
-| `initiated_by` | uuid → users | NULL = system/robot (cron) |
-| `created_at` | timestamptz | — |
-| `throttle_key` | text | композитный ключ троттлинга (`mp:org` или `mp:org:bucket`), см. 5.6 |
+| Поле                            | Тип                       | Назначение                                                                                                                                                                   |
+| ------------------------------- | ------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `id`                            | uuid PK                   | идентификатор задачи                                                                                                                                                         |
+| `account_id`, `organization_id` | uuid FK                   | изоляция теннанта + диспетчеризация per-org                                                                                                                                  |
+| `marketplace`                   | enum `wildberries`/`ozon` | целевой МП (расширяется в post-MVP)                                                                                                                                          |
+| `op`                            | enum                      | тип операции (`publish_card`, `unpublish_card`, `upload_media`, `import_cards`, `update_attrs` — Фаза 1; `update_stock`, `update_price`, `import_orders` — добавят Фазы 2/3) |
+| `target_type`, `target_id`      | enum + uuid               | полиморфная цель (`product_sku`, `product`, `media`, `import_job`)                                                                                                           |
+| `idempotency_key`               | text **UNIQUE**           | `sha256(op + marketplace + target_id + hash(payload))` — защита от дублей `[DATA_MODEL §примечания 15]`                                                                      |
+| `payload`                       | jsonb                     | данные для адаптера                                                                                                                                                          |
+| `status`                        | enum                      | `queued`/`running`/`completed`/`failed`/`cancelled`                                                                                                                          |
+| `priority`                      | int (1..10, 1=высш)       | см. 5.5                                                                                                                                                                      |
+| `attempts`, `max_attempts`      | int                       | счётчик попыток / потолок (дефолт 5)                                                                                                                                         |
+| `last_error`                    | jsonb                     | `{http_status, kind, code, message, field?, retry_after?, retryable, raw?}` `[PHASE1 §5.1 MpError]`                                                                          |
+| `next_attempt_at`               | timestamptz               | когда воркер может забрать (backoff); дефолт `now()`                                                                                                                         |
+| `started_at`, `finished_at`     | timestamptz               | время исполнения                                                                                                                                                             |
+| `initiated_by`                  | uuid → users              | NULL = system/robot (cron)                                                                                                                                                   |
+| `created_at`                    | timestamptz               | —                                                                                                                                                                            |
+| `throttle_key`                  | text                      | композитный ключ троттлинга (`mp:org` или `mp:org:bucket`), см. 5.6                                                                                                          |
 
 Индексы (критичны для производительности диспетчера):
+
 ```sql
 -- основной диспетчерский индекс
 CREATE INDEX idx_syncjobs_dispatch
@@ -567,16 +568,16 @@ COMMIT;
 
 ### 5.5. Приоритеты `[PHASE1 §7.3, AC-PH1]`
 
-| op | priority | Обоснование |
-|---|---|---|
-| `import_orders` (Фаза 3) | **1** | автоимпорт FBS-заказов — SLA ≤ 2 мин `[MVP_PRD §9.2]`, выше всего |
-| `update_stock` (Фаза 2) | **2** | отправка остатков — SLA ≤ 1 мин `[§9.2]` |
-| `publish_card` | **3** | публикация по тумблеру — пользователь ждёт `[PHASE1 §7.3]` |
-| `upload_media` | **4** | после publish_card `[PHASE1 §7.3]` |
-| `update_price` (Фаза 2) | **5** | отправка цен `[PHASE1 §7.3]` |
-| `update_attrs` | **5** | обновление параметров МП `[PHASE1 §7.3]` |
-| `import_cards` | **7** | фоновый импорт (менее приоритетен) `[PHASE1 §7.3]` |
-| `fetch_finance` (Фаза 5) | **8** | низкочастотный тяжёлый |
+| op                       | priority | Обоснование                                                       |
+| ------------------------ | -------- | ----------------------------------------------------------------- |
+| `import_orders` (Фаза 3) | **1**    | автоимпорт FBS-заказов — SLA ≤ 2 мин `[MVP_PRD §9.2]`, выше всего |
+| `update_stock` (Фаза 2)  | **2**    | отправка остатков — SLA ≤ 1 мин `[§9.2]`                          |
+| `publish_card`           | **3**    | публикация по тумблеру — пользователь ждёт `[PHASE1 §7.3]`        |
+| `upload_media`           | **4**    | после publish_card `[PHASE1 §7.3]`                                |
+| `update_price` (Фаза 2)  | **5**    | отправка цен `[PHASE1 §7.3]`                                      |
+| `update_attrs`           | **5**    | обновление параметров МП `[PHASE1 §7.3]`                          |
+| `import_cards`           | **7**    | фоновый импорт (менее приоритетен) `[PHASE1 §7.3]`                |
+| `fetch_finance` (Фаза 5) | **8**    | низкочастотный тяжёлый                                            |
 
 ### 5.6. Throttling per-MP (учёт лимитов WB/Ozon API) `[MVP_PRD §10.1 митигация, риск 1]`
 
@@ -605,14 +606,15 @@ COMMIT;
 
 Политика по `MpError.kind` (контракт ошибок из `[PHASE1 §5.1]`):
 
-| kind | HTTP | Поведение |
-|---|---|---|
-| `auth` | 401/403 | **НЕ retry.** `integrations.status='invalid_token'` + `notifications`; **отмена всех** `sync_jobs` этого МП/org (`status='cancelled'`, отдельная транзакция). `mapping`-статусы не сбрасываются `[PHASE1 §7.3, E7]` |
-| `validation` | 422 | **НЕ retry.** Целевая сущность → `status='error'`, `last_error.field`; `sync_jobs.status='failed'` `[PHASE1 §7.3, E1]` |
-| `rate_limit` | 429 | **Retry** с `retry_after_ms`; `attempts++`; до `max_attempts` `[PHASE1 §7.3]` |
-| `server` / `network` | 5xx / timeout | **Экспоненциальный backoff** с jitter; до `max_attempts` |
+| kind                 | HTTP          | Поведение                                                                                                                                                                                                           |
+| -------------------- | ------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `auth`               | 401/403       | **НЕ retry.** `integrations.status='invalid_token'` + `notifications`; **отмена всех** `sync_jobs` этого МП/org (`status='cancelled'`, отдельная транзакция). `mapping`-статусы не сбрасываются `[PHASE1 §7.3, E7]` |
+| `validation`         | 422           | **НЕ retry.** Целевая сущность → `status='error'`, `last_error.field`; `sync_jobs.status='failed'` `[PHASE1 §7.3, E1]`                                                                                              |
+| `rate_limit`         | 429           | **Retry** с `retry_after_ms`; `attempts++`; до `max_attempts` `[PHASE1 §7.3]`                                                                                                                                       |
+| `server` / `network` | 5xx / timeout | **Экспоненциальный backoff** с jitter; до `max_attempts`                                                                                                                                                            |
 
 **Формула backoff** (для server/network; для rate_limit — `retry_after`):
+
 ```text
 base      = 1s
 factor    = 2
@@ -626,14 +628,14 @@ max_attempts = 5 (default; per-op настраивается: import_orders=8)
 ### 5.8. Идемпотентность (не дублировать публикацию/обновление) `[DATA_MODEL §примечания 15]`
 
 1. **Уровень задачи:** `sync_jobs.idempotency_key = sha256(op + marketplace +
-   target_id + hash(payload))`, UNIQUE. Повторное создание той же задачи (двойной
+target_id + hash(payload))`, UNIQUE. Повторное создание той же задачи (двойной
    клик, ретрай запроса) → catch conflict → вернуть существующую, новую не
    создавать `[PHASE1 §7.2]`.
 2. **Уровень адаптера:** повторная публикация существующей карточки = обновление
    (WB `cards/upload` с `nmID`; Ozon `product/update`) — идемпотентно по
    `remote_id`/`remote_article` `[PHASE1 §7.2]`.
 3. **Уровень сущности (бизнес-ключ):** напр. заказы — `UNIQUE(organization_id,
-   marketplace, external_number)` → повторный импорт не создаёт дубль заказа
+marketplace, external_number)` → повторный импорт не создаёт дубль заказа
    `[DATA_MODEL §примечания 15]`.
 4. **Гарант единственного исполнителя:** `SELECT … FOR UPDATE SKIP LOCKED` +
    переход в `running` — две задачи с одним `target_id+mp` не исполняются
@@ -725,7 +727,6 @@ function processJob(job):
 > `validation(422)` / `server(500)` / `auth(401)` — конфигурируемо per-op.
 > Позволяет **тестировать retry/backoff/throttle/quota/dead-letter без реального
 > МП** (см. AC-4..AC-8 в §12).
-
 
 ---
 
@@ -831,7 +832,7 @@ audit_log(account_id, user_id, organization_id, entity_type, entity_id,
 ### 8.1. Structured logging
 
 - JSON-логи на stdout: `ts, level, service, correlation_id, account_id?,
-  organization_id?, user_id?, sync_job_id?, mp?, op?, msg, fields...`.
+organization_id?, user_id?, sync_job_id?, mp?, op?, msg, fields...`.
 - **Redaction** секретов/PII (`api_token`, `api_key`, `password`,
   `Authorization`, `phone` частично) — на уровне log-pipeline `[§6.3]`.
 - Уровни: `ERROR` (fail задачи, 5xx), `WARN` (retry, throttle, invalid_token),
@@ -839,18 +840,18 @@ audit_log(account_id, user_id, organization_id, entity_type, entity_id,
 
 ### 8.2. Метрики (Prometheus-совместимые)
 
-| Метрика | Тип | Порог алерта |
-|---|---|---|
-| `sync_queue_depth{mp,status}` | gauge | `queued` растёт монотонно > N мин → warn |
-| `sync_jobs_total{op,mp,status}` | counter | `failed`/total > 1% за час → `[§9.2]` |
-| `sync_job_duration_seconds{op,mp}` | histogram | p95 > SLA (2 мин orders / 1 мин stock) → page |
-| `sync_throttle_waits_total{mp}` | counter | всплеск → warn (узкое место RPS) |
-| `sync_retry_total{op,mp,kind}` | counter | `rate_limit`-retry рост → квоты |
-| `sync_dlq_total{op,mp}` (dead-letter) | counter | любой рост > N/час → page |
-| `sync_invalid_token{mp}` | gauge | >0 → warn (требует внимания селлера) |
-| `http_request_duration_seconds{route,status}` | histogram | p95 > 2с (`/products`) → `[§9.2]` |
-| `auth_login_total{result}` | counter | `failed` всплеск → brute-force alert |
-| `kms_decrypt_total{kid,result}` | counter | error → page |
+| Метрика                                       | Тип       | Порог алерта                                  |
+| --------------------------------------------- | --------- | --------------------------------------------- |
+| `sync_queue_depth{mp,status}`                 | gauge     | `queued` растёт монотонно > N мин → warn      |
+| `sync_jobs_total{op,mp,status}`               | counter   | `failed`/total > 1% за час → `[§9.2]`         |
+| `sync_job_duration_seconds{op,mp}`            | histogram | p95 > SLA (2 мин orders / 1 мин stock) → page |
+| `sync_throttle_waits_total{mp}`               | counter   | всплеск → warn (узкое место RPS)              |
+| `sync_retry_total{op,mp,kind}`                | counter   | `rate_limit`-retry рост → квоты               |
+| `sync_dlq_total{op,mp}` (dead-letter)         | counter   | любой рост > N/час → page                     |
+| `sync_invalid_token{mp}`                      | gauge     | >0 → warn (требует внимания селлера)          |
+| `http_request_duration_seconds{route,status}` | histogram | p95 > 2с (`/products`) → `[§9.2]`             |
+| `auth_login_total{result}`                    | counter   | `failed` всплеск → brute-force alert          |
+| `kms_decrypt_total{kid,result}`               | counter   | error → page                                  |
 
 ### 8.3. Tracing
 
@@ -1152,7 +1153,6 @@ CREATE INDEX idx_outbox_unpublished ON outbox(published, created_at) WHERE publi
 - `audit_log` append-only + партиционирование + retention 1 год / 3 мес
   (история отправки остатков) `[§7.4]`.
 
-
 ---
 
 ## 10. Внутренний API scaffold
@@ -1164,87 +1164,87 @@ JWT/`X-Organization-Id`; единый error-envelope
 
 ### 10.1. Auth `[FR-O1, FR-O6]`
 
-| Метод | Путь | Описание |
-|---|---|---|
-| `POST` | `/auth/register` | `{email, phone, password}` → `201 {access, refresh, account}`. SLA ≤ 30с `[FR-O1]`. `409` если email занят. |
-| `POST` | `/auth/login` | `{email, password}` → `200 {access, refresh}`; enforce лимит 2 сессии. `401` неверные данные. `429` brute-force rate-limit. |
-| `POST` | `/auth/refresh` | `{refresh}` → `200 {access, refresh}` (rotation + reuse-detection). `401` при reuse → инвалидация цепочки. |
-| `POST` | `/auth/logout` | → `204`; отзыв сессии. |
-| `POST` | `/auth/password/reset` | `{email}` → `202` (email со ссылкой, TTL 30 мин). `[W7]` |
-| `POST` | `/auth/password/reset/confirm` | `{token, new_password}` → `204`. |
-| `POST` | `/auth/2fa/enable` | (best-effort) включает TOTP, возвращает QR + recovery codes. `[onboarding §cap 12]` |
-| `POST` | `/auth/2fa/verify` | `{code}` → подтверждение. |
-| `GET` | `/me` | → `200 {account, active_org, memberships, flags}`. |
+| Метод  | Путь                           | Описание                                                                                                                    |
+| ------ | ------------------------------ | --------------------------------------------------------------------------------------------------------------------------- |
+| `POST` | `/auth/register`               | `{email, phone, password}` → `201 {access, refresh, account}`. SLA ≤ 30с `[FR-O1]`. `409` если email занят.                 |
+| `POST` | `/auth/login`                  | `{email, password}` → `200 {access, refresh}`; enforce лимит 2 сессии. `401` неверные данные. `429` brute-force rate-limit. |
+| `POST` | `/auth/refresh`                | `{refresh}` → `200 {access, refresh}` (rotation + reuse-detection). `401` при reuse → инвалидация цепочки.                  |
+| `POST` | `/auth/logout`                 | → `204`; отзыв сессии.                                                                                                      |
+| `POST` | `/auth/password/reset`         | `{email}` → `202` (email со ссылкой, TTL 30 мин). `[W7]`                                                                    |
+| `POST` | `/auth/password/reset/confirm` | `{token, new_password}` → `204`.                                                                                            |
+| `POST` | `/auth/2fa/enable`             | (best-effort) включает TOTP, возвращает QR + recovery codes. `[onboarding §cap 12]`                                         |
+| `POST` | `/auth/2fa/verify`             | `{code}` → подтверждение.                                                                                                   |
+| `GET`  | `/me`                          | → `200 {account, active_org, memberships, flags}`.                                                                          |
 
 ### 10.2. Организации `[FR-O3, onboarding W11/W13]`
 
-| Метод | Путь | RBAC | Описание |
-|---|---|---|---|
-| `POST` | `/organizations` | `admin` | `{inn, ...}` → `201 {organization}`; автозаполнение по ИНН. `[W11]` |
-| `GET` | `/organizations` | role-scope | список (+ архивные по флагу). |
-| `GET` | `/organizations/{id}` | scope-check | детали. |
-| `PATCH` | `/organizations/{id}` | `admin` | обновление полей/тумблеров `flags`. `[FR-I4]` |
-| `DELETE` | `/organizations/{id}` | `admin` | мягкое удаление с подтверждением кодом из email (`X-Confirm-Code`). `[W13]` |
-| `POST` | `/organizations/{id}/restore` | `admin` | восстановление мягко удалённой. `[W14]` |
+| Метод    | Путь                          | RBAC        | Описание                                                                    |
+| -------- | ----------------------------- | ----------- | --------------------------------------------------------------------------- |
+| `POST`   | `/organizations`              | `admin`     | `{inn, ...}` → `201 {organization}`; автозаполнение по ИНН. `[W11]`         |
+| `GET`    | `/organizations`              | role-scope  | список (+ архивные по флагу).                                               |
+| `GET`    | `/organizations/{id}`         | scope-check | детали.                                                                     |
+| `PATCH`  | `/organizations/{id}`         | `admin`     | обновление полей/тумблеров `flags`. `[FR-I4]`                               |
+| `DELETE` | `/organizations/{id}`         | `admin`     | мягкое удаление с подтверждением кодом из email (`X-Confirm-Code`). `[W13]` |
+| `POST`   | `/organizations/{id}/restore` | `admin`     | восстановление мягко удалённой. `[W14]`                                     |
 
 ### 10.3. Сотрудники и роли `[FR-O4, onboarding W17]`
 
-| Метод | Путь | RBAC | Описание |
-|---|---|---|---|
-| `GET` | `/organizations/{id}/members` | `admin` | список сотрудников в org. |
-| `POST` | `/organizations/{id}/members` | `admin` | invite: `{full_name, login, password, role_code, org_scope, brand_scope, flags}`. `[W17]` |
-| `PATCH` | `/organizations/{id}/members/{uid}` | `admin` | смена роли/scope/флагов. `[W18]` |
-| `DELETE` | `/organizations/{id}/members/{uid}` | `admin` | удалить сотрудника. `[W18]` |
-| `GET` | `/roles` | any | справочник ролей + `permissions`. |
+| Метод    | Путь                                | RBAC    | Описание                                                                                  |
+| -------- | ----------------------------------- | ------- | ----------------------------------------------------------------------------------------- |
+| `GET`    | `/organizations/{id}/members`       | `admin` | список сотрудников в org.                                                                 |
+| `POST`   | `/organizations/{id}/members`       | `admin` | invite: `{full_name, login, password, role_code, org_scope, brand_scope, flags}`. `[W17]` |
+| `PATCH`  | `/organizations/{id}/members/{uid}` | `admin` | смена роли/scope/флагов. `[W18]`                                                          |
+| `DELETE` | `/organizations/{id}/members/{uid}` | `admin` | удалить сотрудника. `[W18]`                                                               |
+| `GET`    | `/roles`                            | any     | справочник ролей + `permissions`.                                                         |
 
 ### 10.4. Интеграции `[FR-I1, FR-I2, FR-I3]`
 
-| Метод | Путь | RBAC | Описание |
-|---|---|---|---|
-| `GET` | `/integrations` | role-scope | статусы интеграций по org `[§cap 3]`. |
-| `PUT` | `/integrations/{orgId}/{service}` | `admin` | `{api_token? | {client_id, api_key}, scheme?}` → шифрование + `probeToken()` → `200 {integration:{status}}`. `409 store_already_linked`. |
-| `POST` | `/integrations/{orgId}/{service}/probe` | `admin` | принудительная проверка токена. |
-| `GET` | `/notifications` | any | уведомления (невалидный токен). `[FR-I3]` |
-| `PATCH` | `/notifications/{id}/read` | any | пометить прочитанным. |
+| Метод   | Путь                                    | RBAC       | Описание                                  |
+| ------- | --------------------------------------- | ---------- | ----------------------------------------- |
+| `GET`   | `/integrations`                         | role-scope | статусы интеграций по org `[§cap 3]`.     |
+| `PUT`   | `/integrations/{orgId}/{service}`       | `admin`    | `{api_token?                              | {client_id, api_key}, scheme?}`→ шифрование +`probeToken()`→`200 {integration:{status}}`. `409 store_already_linked`. |
+| `POST`  | `/integrations/{orgId}/{service}/probe` | `admin`    | принудительная проверка токена.           |
+| `GET`   | `/notifications`                        | any        | уведомления (невалидный токен). `[FR-I3]` |
+| `PATCH` | `/notifications/{id}/read`              | any        | пометить прочитанным.                     |
 
 ### 10.5. Очередь синхронизации (мониторинг/отладка) `[FR-O5, §5]`
 
-| Метод | Путь | RBAC | Описание |
-|---|---|---|---|
-| `GET` | `/sync-jobs` | `admin` | query: `organization_id, marketplace, status, op, page` → список. |
-| `GET` | `/sync-jobs/{id}` | `admin` | детали + `sync_job_attempts`. |
-| `POST` | `/sync-jobs/{id}/retry` | `admin` | перезапуск failed (сброс attempts). `[§5.9]` |
+| Метод  | Путь                      | RBAC       | Описание                                                                                     |
+| ------ | ------------------------- | ---------- | -------------------------------------------------------------------------------------------- |
+| `GET`  | `/sync-jobs`              | `admin`    | query: `organization_id, marketplace, status, op, page` → список.                            |
+| `GET`  | `/sync-jobs/{id}`         | `admin`    | детали + `sync_job_attempts`.                                                                |
+| `POST` | `/sync-jobs/{id}/retry`   | `admin`    | перезапуск failed (сброс attempts). `[§5.9]`                                                 |
 | `POST` | `/sync-jobs/stub/enqueue` | (dev/test) | тестовый эндпоинт для постановки stub-задачи (EchoAdapter) — для AC Фазы 0 без реального МП. |
 
 ### 10.6. Аудит `[FR-O5]`
 
-| Метод | Путь | RBAC | Описание |
-|---|---|---|---|
+| Метод | Путь     | RBAC    | Описание                                                                     |
+| ----- | -------- | ------- | ---------------------------------------------------------------------------- |
 | `GET` | `/audit` | `admin` | query: `entity_type, entity_id, action, from, to, page` → история. `[FR-O5]` |
 
 ### 10.7. Health/readiness
 
-| Метод | Путь | Описание |
-|---|---|---|
-| `GET` | `/health` | liveness: `200 {status:'ok'}`. |
-| `GET` | `/ready` | readiness: проверка БД/Redis/KMS; `503` если зависимость down (для LB). |
-| `GET` | `/metrics` | Prometheus (если не отдельный порт). |
+| Метод | Путь       | Описание                                                                |
+| ----- | ---------- | ----------------------------------------------------------------------- |
+| `GET` | `/health`  | liveness: `200 {status:'ok'}`.                                          |
+| `GET` | `/ready`   | readiness: проверка БД/Redis/KMS; `503` если зависимость down (для LB). |
+| `GET` | `/metrics` | Prometheus (если не отдельный порт).                                    |
 
 ---
 
 ## 11. Security baseline (OWASP top-10 минимум)
 
-| Угроза (OWASP) | Митигация в Фазе 0 |
-|---|---|
-| **A01 Broken Access Control** | RBAC-guard на каждом эндпоинте (`PermissionService.can`); tenant-resolver; RLS как defence-in-depth; проверка `organization_id ∈ org_scope` `[§3.3, §4.4]` |
-| **A02 Cryptographic Failures** | AES-256-GCM envelope для ключей МП `[§6]`; Argon2id для паролей; TLS 1.2+ everywhere; HSTS; redaction секретов в логах `[§8.1]` |
-| **A03 Injection** | parameterized queries (никакой конкатенации SQL); ORM/query-builder; валидация входов (OpenAPI schema / class-validator) |
-| **A04 Insecure Design** | threat-modeling на ключевые потоки (auth, queue, secret-store); principle of least privilege для сервисных аккаунтов KMS |
-| **A05 Security Misconfiguration** | секреты в Vault/env, не в коде/репо; `REVOKE UPDATE,DELETE ON audit_log`; disabled default credentials; security headers (CSP, X-Frame-Options) |
-| **A07 Auth Failures** | rate-limit на login (`429` + экспоненциальный backoff + CAPTCHA при повторных); rotation + reuse-detection refresh; лимит 2 сессии `[§4.2]`; 2FA (готовность) |
-| **A08 Data Integrity Failures** | подпись JWT (RS256); проверка `aud`/`iss`/`exp`; неприоритетных Claims отклоняются |
-| **A09 Logging/Monitoring Failures** | structured audit + sync metrics + alerts `[§7, §8]` |
-| **A10 SSRF** | исходящие вызовы только к whitelist доменов WB/Ozon (в адаптерах Фазы 1); нет пользовательских URL в server-side fetch на Фазе 0 |
+| Угроза (OWASP)                      | Митигация в Фазе 0                                                                                                                                            |
+| ----------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **A01 Broken Access Control**       | RBAC-guard на каждом эндпоинте (`PermissionService.can`); tenant-resolver; RLS как defence-in-depth; проверка `organization_id ∈ org_scope` `[§3.3, §4.4]`    |
+| **A02 Cryptographic Failures**      | AES-256-GCM envelope для ключей МП `[§6]`; Argon2id для паролей; TLS 1.2+ everywhere; HSTS; redaction секретов в логах `[§8.1]`                               |
+| **A03 Injection**                   | parameterized queries (никакой конкатенации SQL); ORM/query-builder; валидация входов (OpenAPI schema / class-validator)                                      |
+| **A04 Insecure Design**             | threat-modeling на ключевые потоки (auth, queue, secret-store); principle of least privilege для сервисных аккаунтов KMS                                      |
+| **A05 Security Misconfiguration**   | секреты в Vault/env, не в коде/репо; `REVOKE UPDATE,DELETE ON audit_log`; disabled default credentials; security headers (CSP, X-Frame-Options)               |
+| **A07 Auth Failures**               | rate-limit на login (`429` + экспоненциальный backoff + CAPTCHA при повторных); rotation + reuse-detection refresh; лимит 2 сессии `[§4.2]`; 2FA (готовность) |
+| **A08 Data Integrity Failures**     | подпись JWT (RS256); проверка `aud`/`iss`/`exp`; неприоритетных Claims отклоняются                                                                            |
+| **A09 Logging/Monitoring Failures** | structured audit + sync metrics + alerts `[§7, §8]`                                                                                                           |
+| **A10 SSRF**                        | исходящие вызовы только к whitelist доменов WB/Ozon (в адаптерах Фазы 1); нет пользовательских URL в server-side fetch на Фазе 0                              |
 
 - **Rate limiting:** per-IP (напр. 100 req/мин) + per-account (напр. 600/мин);
   burst-token-bucket в Redis; `429` с `Retry-After`.
@@ -1402,7 +1402,7 @@ JWT/`X-Organization-Id`; единый error-envelope
 ### 13.3. Явно отложенное (точки интеграции зарезервированы в схеме)
 
 - Реальные адаптеры WB/Ozon + верификация эндпоинтов — **Фаза 1** (`[PHASE1
-  §SPIKE-1,2]`); контракт адаптера уже зафиксирован, Фаза 0 даёт stub.
+§SPIKE-1,2]`); контракт адаптера уже зафиксирован, Фаза 0 даёт stub.
 - Связанные аккаунты клиентов (B2B-делегирование) — post-MVP; таблица
   `client_account_links` (как `[DATA_MODEL §ClientAccountLink]`) зарезервирована.
 - Браузерное расширение, мобильные приложения — post-MVP; auth-only web в Фазе 0.
@@ -1412,21 +1412,20 @@ JWT/`X-Organization-Id`; единый error-envelope
 
 ## Приложение A. Трассировка решений к источникам (summary)
 
-| Решение | Источник |
-|---|---|
-| Мультиарендность Account→Org→Warehouse, shared schema + `account_id` | `[NFR-1]`, `[DATA_MODEL §Обзор п.1, §примечания 1]` |
-| JWT(access)+refresh(rotation,reuse-detection); лимит сессий 2 | `[FR-O6]`, `[onboarding §cap 13]`, `[DATA_MODEL §Account/UserSession]` |
-| 4 роли MVP + матрица прав (проекция) | `[FR-O4]`, `[onboarding §cap 23-25, §открытые вопросы]` |
-| Единая очередь `sync_jobs` с retry/backoff/throttle (риск №1) | `[NFR-2]`, `[MVP_PRD §1,§10.1]`, `[DATA_MODEL §примечания 4]`, `[PHASE1 §3.2,§7.3]` |
-| Идемпотентность `idempotency_key` + бизнес-ключи | `[DATA_MODEL §примечания 15]`, `[PHASE1 §7.2]` |
-| Приоритеты: orders(1) > stock(2) > publish(3) > media(4) > price/attrs(5) > import(7) | `[PHASE1 §7.3]`, `[MVP_PRD §9.2]` |
-| Дневная квота WB 1000 новых/день/org | `[PHASE1 §5.2, §бизправила 15]` |
-| Envelope encryption AES-256 + ротация master key | `[NFR-3]`, `[FR-I1]`, `[DATA_MODEL §примечания 14]`, `[onboarding §cap 37]` |
-| Аудит append-only + партиционирование + retention | `[FR-O5]`, `[DATA_MODEL §примечания 17]` |
-| «Один магазин — один аккаунт» (store_fingerprint) | `[INTEGRATIONS §13]` |
-| «1 организация = 1 ключ API МП» | `[FR-O3]`, `[INTEGRATIONS §принципы]` |
-| Удаление org только админом с кодом из email; мягкое удаление | `[onboarding §бизправила, W13/W14]`, `[DATA_MODEL §примечания 18]` |
-| Согласование имён/схемы очереди с Фазой 1 | `[PHASE1 §3.2, §7.3]` — AC-PH1 (расхождений нет) |
-| Частоты обмена → нагрузка на очередь | `[MVP_PRD §7.4]`, `[integrations-marketplaces §cap 4]` |
-| SLA: автоимпорт FBS ≤ 2 мин; отправка stock/price ≤ 1 мин; ≥99% доставки | `[MVP_PRD §9.2]` |
-
+| Решение                                                                               | Источник                                                                            |
+| ------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------- |
+| Мультиарендность Account→Org→Warehouse, shared schema + `account_id`                  | `[NFR-1]`, `[DATA_MODEL §Обзор п.1, §примечания 1]`                                 |
+| JWT(access)+refresh(rotation,reuse-detection); лимит сессий 2                         | `[FR-O6]`, `[onboarding §cap 13]`, `[DATA_MODEL §Account/UserSession]`              |
+| 4 роли MVP + матрица прав (проекция)                                                  | `[FR-O4]`, `[onboarding §cap 23-25, §открытые вопросы]`                             |
+| Единая очередь `sync_jobs` с retry/backoff/throttle (риск №1)                         | `[NFR-2]`, `[MVP_PRD §1,§10.1]`, `[DATA_MODEL §примечания 4]`, `[PHASE1 §3.2,§7.3]` |
+| Идемпотентность `idempotency_key` + бизнес-ключи                                      | `[DATA_MODEL §примечания 15]`, `[PHASE1 §7.2]`                                      |
+| Приоритеты: orders(1) > stock(2) > publish(3) > media(4) > price/attrs(5) > import(7) | `[PHASE1 §7.3]`, `[MVP_PRD §9.2]`                                                   |
+| Дневная квота WB 1000 новых/день/org                                                  | `[PHASE1 §5.2, §бизправила 15]`                                                     |
+| Envelope encryption AES-256 + ротация master key                                      | `[NFR-3]`, `[FR-I1]`, `[DATA_MODEL §примечания 14]`, `[onboarding §cap 37]`         |
+| Аудит append-only + партиционирование + retention                                     | `[FR-O5]`, `[DATA_MODEL §примечания 17]`                                            |
+| «Один магазин — один аккаунт» (store_fingerprint)                                     | `[INTEGRATIONS §13]`                                                                |
+| «1 организация = 1 ключ API МП»                                                       | `[FR-O3]`, `[INTEGRATIONS §принципы]`                                               |
+| Удаление org только админом с кодом из email; мягкое удаление                         | `[onboarding §бизправила, W13/W14]`, `[DATA_MODEL §примечания 18]`                  |
+| Согласование имён/схемы очереди с Фазой 1                                             | `[PHASE1 §3.2, §7.3]` — AC-PH1 (расхождений нет)                                    |
+| Частоты обмена → нагрузка на очередь                                                  | `[MVP_PRD §7.4]`, `[integrations-marketplaces §cap 4]`                              |
+| SLA: автоимпорт FBS ≤ 2 мин; отправка stock/price ≤ 1 мин; ≥99% доставки              | `[MVP_PRD §9.2]`                                                                    |

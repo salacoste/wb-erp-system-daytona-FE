@@ -14,10 +14,13 @@
 Two issues:
 
 ### 1. Flat `currentMape` vs nested `metrics.mape` (contract mismatch)
+
 The FE shares `normalizeAiModel` (used by `/v1/ai/models` too), which reads `raw.metrics?.mape`. The admin endpoint has no `metrics` object → the FE always reads `null` → MAPE column is `—` for every admin model. The two endpoints (`/ai/models` nested vs `/ai/admin/models` flat) expose MAPE differently.
 
 ### 2. `currentMape: 0` is a misleading placeholder, not a real 0% MAPE
+
 Live: all 15 models return `currentMape: 0`. But the training engines **hardcode** `metrics: { mape: 0 }` at train time:
+
 - `prophet.adapter.ts:136` — `metrics: { mape: 0, dataPoints: … }`
 - `mindsdb.adapter.ts:95` — `metrics: { mape: 0, dataPoints: 0 }` // "MindsDB doesn't expose metrics via REST"
 
@@ -35,6 +38,7 @@ Surfacing `currentMape` with the current 0-placeholder would render misleading "
 Once (1)+(2) land, the FE reads `currentMape` (or `metrics.mape`) and renders real MAPE for evaluated models + `—` for null.
 
 ## Evidence
+
 - Live: 15 admin models, all `currentMape: 0` (un-evaluated), no `metrics` object.
 - `src/ai/dto/admin-model-health.dto.ts:75-76` (`currentMape!: number | null`, example 12.5).
 - `src/ai/engines/{prophet,mindsdb}.adapter.ts` (mape:0 placeholder).

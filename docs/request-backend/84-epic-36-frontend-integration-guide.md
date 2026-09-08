@@ -25,6 +25,7 @@
 ## 🎯 Что получит пользователь
 
 ### Проблема (сейчас)
+
 ```
 ter-09:   Расходы: 0₽,    Продажи: 1,105₽  →  ROAS: —      Статус: 🔵 Нет данных ❌
 ter-10:   Расходы: 0₽,    Продажи: 1,489₽  →  ROAS: —      Статус: 🔵 Нет данных ❌
@@ -34,6 +35,7 @@ ter-13-1: Расходы: 11,337₽, Продажи: 31,464₽ →  ROAS: 2.78  
 **Почему так?** WB объединяет карточки товаров (склейки), но рекламный бюджет тратится только на основную карточку. Остальные товары получают продажи от этой рекламы, но без прямых затрат.
 
 ### Решение (после Epic 36)
+
 ```
 Группа #328632 🔗 Склейка (3):
   Товары: ter-09, ter-10, ter-13-1
@@ -52,12 +54,15 @@ ter-13-1: Расходы: 11,337₽, Продажи: 31,464₽ →  ROAS: 2.78  
 ---
 
 ## Backend Team Response
+
 **Status**: RESOLVED — this document IS the backend response. See the parent request file for the original frontend ask.
 
 ### 1. **API Contract** (обязательно к прочтению!)
+
 **Файл**: [`83-epic-36-api-contract.md`](./83-epic-36-api-contract.md)
 
 **Что внутри**:
+
 - ✅ TypeScript интерфейсы (`GroupByMode`, `MergedProduct`, расширенный `AdvertisingItem`)
 - ✅ Примеры API request/response (merged groups, individual products, mixed)
 - ✅ Edge cases (single product with imtId, NULL imtId, spend=0)
@@ -65,6 +70,7 @@ ter-13-1: Расходы: 11,337₽, Продажи: 31,464₽ →  ROAS: 2.78  
 - ✅ Acceptance criteria checklist
 
 **Ключевые типы**:
+
 ```typescript
 export type GroupByMode = 'sku' | 'imtId';
 
@@ -86,9 +92,11 @@ export interface AdvertisingItem {
 ---
 
 ### 2. **Implementation Plan** (пошаговый план)
+
 **Файл**: [`../implementation-plans/epic-36-frontend-integration.md`](../implementation-plans/epic-36-frontend-integration.md)
 
 **Что внутри**:
+
 - ✅ **Step 1**: Update TypeScript Types (15 min)
 - ✅ **Step 2**: Update API Client (10 min)
 - ✅ **Step 3**: Update React Query Hooks (5 min)
@@ -97,6 +105,7 @@ export interface AdvertisingItem {
 - ✅ **Step 6**: Update Filters Component (15 min)
 
 **Каждый шаг содержит**:
+
 - Точный файл для изменения
 - Code snippets (copy-paste ready)
 - Testing checklist
@@ -105,9 +114,11 @@ export interface AdvertisingItem {
 ---
 
 ### 3. **UI Mockup** (визуальный дизайн)
+
 **Файл**: [`../wireframes/epic-36-ui-mockup.md`](../wireframes/epic-36-ui-mockup.md)
 
 **Что внутри**:
+
 - ✅ Before/After UI сравнение
 - ✅ Toggle для группировки: `[По артикулам] [По склейкам]`
 - ✅ Badge дизайн: `🔗 Склейка (3) ⓘ`
@@ -119,9 +130,11 @@ export interface AdvertisingItem {
 ---
 
 ### 4. **Request #82** (предыстория проблемы)
+
 **Файл**: [`82-card-linking-product-bundles.md`](./82-card-linking-product-bundles.md)
 
 **Что внутри**:
+
 - ❓ Исходный вопрос от Frontend Team: "Почему у некоторых товаров spend=0 но revenue>0?"
 - ✅ Объяснение механизма склеек WB
 - ✅ Бизнес-контекст проблемы
@@ -219,6 +232,7 @@ export interface AdvertisingAnalyticsParams {
 ```
 
 **Проверка**:
+
 ```bash
 npm run type-check  # TypeScript compilation should pass
 ```
@@ -228,6 +242,7 @@ npm run type-check  # TypeScript compilation should pass
 Открыть [`../implementation-plans/epic-36-frontend-integration.md`](../implementation-plans/epic-36-frontend-integration.md) и следовать шагам 2-6.
 
 **Каждый шаг содержит**:
+
 - ✅ Точный код для вставки
 - ✅ Файл и строки для изменения
 - ✅ Testing checklist
@@ -238,11 +253,13 @@ npm run type-check  # TypeScript compilation should pass
 ## 📊 Backend API Reference
 
 ### Endpoint (unchanged)
+
 ```
 GET /v1/analytics/advertising
 ```
 
 ### NEW Parameter (Epic 36)
+
 ```
 group_by: 'sku' | 'imtId'  (default: 'sku')
 ```
@@ -250,6 +267,7 @@ group_by: 'sku' | 'imtId'  (default: 'sku')
 ### Response Format
 
 **Grouped by imtId** (`group_by=imtId`):
+
 ```json
 {
   "items": [
@@ -281,6 +299,7 @@ group_by: 'sku' | 'imtId'  (default: 'sku')
 ```
 
 **Backward compatible** (`group_by=sku` or omit):
+
 - Точно такой же формат как Epic 33 (без изменений)
 - Поля `type`, `imtId`, `mergedProducts` отсутствуют
 
@@ -303,6 +322,7 @@ describe('MergedProductBadge', () => {
 ### Integration Tests
 
 **Тест сценарии**:
+
 - ✅ Toggle switches between SKU and imtId modes
 - ✅ API client sends correct `group_by` parameter
 - ✅ Merged groups display with badge and tooltip
@@ -329,6 +349,7 @@ test('should show merged product tooltip on hover', async ({ page }) => {
 ```
 
 **Запуск**:
+
 ```bash
 npm run test:e2e
 ```
@@ -338,6 +359,7 @@ npm run test:e2e
 ## ⚠️ Edge Cases & Error Handling
 
 ### Edge Case 1: Single Product with imtId
+
 **Backend**: `type='merged_group'`, `mergedProducts=[{ nmId: 123 }]` (1 item)
 **Frontend**: Display as individual product (no badge)
 
@@ -349,10 +371,12 @@ if (mergedProducts.length === 1) {
 ```
 
 ### Edge Case 2: All Products NULL imtId
+
 **Backend**: All items have `type='individual'`, `imtId=null`
 **Frontend**: Same as `group_by=sku` (no changes to UI)
 
 ### Edge Case 3: API Error
+
 **Frontend**: Show error alert with Russian message
 
 ```typescript
@@ -395,22 +419,26 @@ Epic 36 frontend integration **DONE** когда:
 ## 📞 Support & Questions
 
 ### Документация
+
 - **API Contract**: [`83-epic-36-api-contract.md`](./83-epic-36-api-contract.md)
 - **Implementation Plan**: [`../implementation-plans/epic-36-frontend-integration.md`](../implementation-plans/epic-36-frontend-integration.md)
 - **UI Mockup**: [`../wireframes/epic-36-ui-mockup.md`](../wireframes/epic-36-ui-mockup.md)
 
 ### Backend Resources
+
 - **API Reference**: `/docs/API-PATHS-REFERENCE.md` (lines 986-1102)
 - **Epic 36 Main**: `/docs/stories/epic-36/`
 - **Grafana Dashboard**: `/monitoring/grafana/dashboards/epic-36-product-card-linking.json`
 - **Prometheus Metrics**: `GET /metrics` (product_imt_sync_total, product_merged_groups_count)
 
 ### Related Issues
+
 - **Request #82**: Card Linking Investigation (предыстория)
 - **Epic 33**: Advertising Analytics (baseline implementation)
 - **Story 36.6**: Backend Testing & Observability (✅ complete)
 
 ### Контакты
+
 - **Backend Team Lead**: Epic 36 backend полностью готов, API 100% stable
 - **Slack**: #epic-36-product-linking
 - **Questions**: См. документацию выше, все ответы есть там
@@ -429,13 +457,13 @@ Epic 36 frontend integration **DONE** когда:
 
 ## 🔗 Quick Links
 
-| Document | Path | Purpose |
-|----------|------|---------|
-| **API Contract** | `83-epic-36-api-contract.md` | TypeScript types, API examples |
-| **Implementation Plan** | `../implementation-plans/epic-36-frontend-integration.md` | Step-by-step guide |
-| **UI Mockup** | `../wireframes/epic-36-ui-mockup.md` | Visual design, components |
-| **Request #82** | `82-card-linking-product-bundles.md` | Problem context |
-| **Backend Docs** | `/docs/stories/epic-36/` | Backend implementation details |
+| Document                | Path                                                      | Purpose                        |
+| ----------------------- | --------------------------------------------------------- | ------------------------------ |
+| **API Contract**        | `83-epic-36-api-contract.md`                              | TypeScript types, API examples |
+| **Implementation Plan** | `../implementation-plans/epic-36-frontend-integration.md` | Step-by-step guide             |
+| **UI Mockup**           | `../wireframes/epic-36-ui-mockup.md`                      | Visual design, components      |
+| **Request #82**         | `82-card-linking-product-bundles.md`                      | Problem context                |
+| **Backend Docs**        | `/docs/stories/epic-36/`                                  | Backend implementation details |
 
 ---
 
@@ -449,6 +477,7 @@ Epic 36 frontend integration **DONE** когда:
 ## 📝 Change Log
 
 ### 2025-12-27 - Initial Release
+
 - ✅ Created API contract (Request #83)
 - ✅ Created implementation plan
 - ✅ Created UI mockup

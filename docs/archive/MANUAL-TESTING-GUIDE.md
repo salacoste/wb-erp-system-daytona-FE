@@ -12,6 +12,7 @@
 ### ✅ Epic 1: Authentication & Infrastructure (100% Complete)
 
 #### Story 1.1: Project Foundation ✅ **Done**
+
 - Next.js 15 с TypeScript
 - ESLint с правилом max-lines-per-file: 200
 - Структура проекта настроена
@@ -20,6 +21,7 @@
 - Все билды проходят успешно
 
 #### Story 1.2: User Registration ✅ **Done**
+
 - Форма регистрации с валидацией email и пароля
 - API интеграция: `POST /v1/auth/register`
 - Успешная регистрация → редирект на login
@@ -28,6 +30,7 @@
 - **Тесты:** 8/8 passing
 
 #### Story 1.3: User Login ✅ **Done**
+
 - Форма входа с валидацией
 - API интеграция: `POST /v1/auth/login`
 - JWT token сохраняется в localStorage (Zustand persist)
@@ -36,6 +39,7 @@
 - **Тесты:** 9/9 passing
 
 #### Story 1.4: Session Management & Logout ✅ **Done**
+
 - Middleware для защищенных роутов (`src/middleware.ts`)
 - Автоматическая проверка токена на защищенных страницах
 - Редирект на login при истечении токена
@@ -44,6 +48,7 @@
 - Синхронизация сессии между вкладками
 
 #### Story 1.5: API Client Layer ✅ **Done**
+
 - Централизованный API клиент (`src/lib/api-client.ts`)
 - Автоматическое добавление `Authorization: Bearer {token}`
 - Автоматическое добавление `X-Cabinet-Id` header
@@ -53,6 +58,7 @@
 ### ✅ Epic 2: Onboarding Flow (100% Complete, Ready for Review)
 
 #### Story 2.1: Cabinet Creation ✅ **Ready for Review**
+
 - Форма создания кабинета (шаг 1 из 3)
 - Валидация: минимум 2, максимум 100 символов
 - API интеграция: `POST /v1/cabinets`
@@ -62,6 +68,7 @@
 - **Тесты:** 7/7 passing
 
 #### Story 2.2: WB Token Input ✅ **Ready for Review**
+
 - Форма ввода WB токена (шаг 2 из 3)
 - Валидация JWT формата (3 части, минимум 50 символов)
 - Маскирование токена (password type)
@@ -72,6 +79,7 @@
 - **Тесты:** 9/9 passing
 
 #### Story 2.3: Data Processing Status ✅ **Ready for Review**
+
 - Страница статуса обработки (шаг 3 из 3)
 - Polling каждые 5 секунд через `useProcessingStatus` hook
 - Отображение прогресса для:
@@ -82,6 +90,7 @@
 - Обработка ошибок обработки
 
 #### Story 2.4: Initial Data Display ✅ **Ready for Review**
+
 - Компонент `InitialDataSummary` с отображением:
   - Количество продуктов (из `GET /v1/products?limit=1`)
   - Ключевые метрики (из `GET /v1/analytics/weekly/finance-summary`)
@@ -367,6 +376,7 @@ pm2 info wb-repricer-frontend
   - Шаг 3 (Обработка данных): `http://localhost:3100/onboarding/processing`
 
 **Backend API:** `http://localhost:3000` (если backend запущен на порту 3000)
+
 # Примечание: API endpoints начинаются с /v1/, например: /v1/auth/login
 
 ---
@@ -385,9 +395,11 @@ Password: <E2E_TEST_PASSWORD>
 ### Тестовый WB токен
 
 Для тестирования можно использовать любой валидный JWT токен формата:
+
 ```
 xxx.yyy.zzz
 ```
+
 Где каждая часть минимум 10 символов, общая длина минимум 50 символов.
 
 ---
@@ -453,6 +465,7 @@ xxx.yyy.zzz
 ### Проблема: Приложение не запускается в PM2
 
 **Решение:**
+
 ```bash
 # Проверить логи
 pm2 logs wb-repricer-frontend --lines 100
@@ -468,16 +481,19 @@ pm2 restart wb-repricer-frontend
 ### Проблема: CORS ошибка - "Access-Control-Allow-Origin"
 
 **Симптомы:**
+
 - В консоли браузера ошибка: `has been blocked by CORS policy`
 - `Access-Control-Allow-Origin` header имеет значение `http://localhost:5173`, но frontend на `http://localhost:3100`
 
 **Решение:**
+
 1. **КРИТИЧНО:** Backend должен разрешить запросы с `http://localhost:3100`
 2. См. детальные инструкции: `docs/request-backend/03-fix-cors-for-frontend-port-3100.md`
 3. После исправления на backend перезапустить: `pm2 restart wb-repricer-api`
 4. Очистить кеш браузера (Ctrl+Shift+R)
 
 **Быстрая проверка:**
+
 - Открыть Network tab в DevTools
 - Найти OPTIONS или POST запрос к `/v1/auth/login`
 - Проверить Response Headers: должно быть `Access-Control-Allow-Origin: http://localhost:3100`
@@ -485,6 +501,7 @@ pm2 restart wb-repricer-frontend
 ### Проблема: API запросы не работают
 
 **Решение:**
+
 1. Проверить `NEXT_PUBLIC_API_URL` в `.env.local` (должно быть `http://localhost:3000` без `/api`)
 2. Проверить что backend запущен и доступен: `pm2 status`
 3. Проверить CORS настройки на backend (см. выше)
@@ -494,6 +511,7 @@ pm2 restart wb-repricer-frontend
 ### Проблема: Токен не сохраняется
 
 **Решение:**
+
 1. Проверить что localStorage доступен (не в приватном режиме)
 2. Проверить DevTools → Application → Local Storage → `auth-storage`
 3. Проверить что Zustand persist middleware работает
@@ -502,4 +520,3 @@ pm2 restart wb-repricer-frontend
 
 **Последнее обновление:** 2025-01-20  
 **Версия документа:** 1.0.0
-

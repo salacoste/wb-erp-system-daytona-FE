@@ -12,16 +12,16 @@
 
 ## 0. Верифицированное состояние (26.08 поздно, после PR #273)
 
-| Метрика | Значение |
-|---|---|
-| `main` | `da3e9078` (PR #293), дерево чистое, сессионные ветки/worktrees 172.1-172.7 = **0/0/0** |
-| Прогресс миграции 166-174 | **61/94** канонических стори |
-| Эпики | 166 ✅ · 167 ✅ · 168 ✅ · 170 ✅ (7/7) · 171 ✅ (9/9) · **172 IN PROGRESS (7/17)** · 169 in-progress (чужая lane, §2.4) · 173/174 backlog |
-| Полный пол (vitest) | **19 343 / 0** (… → 19 334 → 19 343 [+9: гард+caption-тесты 172.7]) |
-| Линтер/типы | lint 0/0 (zero-warning), tsc 0, max-lines OK, check:docs = baseline (97 entries, exit 0), check:locale-percent ratchet = **4** |
-| PR вечерней сессии | #266–#273 (3 стори × impl+closeout + эпик-flip внутри #271 + handoff + recon) |
-| pm2 | `wb-repricer-frontend-dev` online на :3100; BE на :3000 |
-| **NEXT** | **172.8-FE Price Calculator** (план `.omx/plans/172.8-*.md`; /cogs/price-calculator); 172.1-172.7 ✅ (COGS-домен целиком). ENV: node-26 (PATH-префикс node@24); BE login-троттл 5/hr; zsh word-split — явные пути; depth-N = N×'..' в гард-резолве; e2e cold-flake: прогрев dev кури НЕ компилируют (307) — ретрай тёплым |
+| Метрика                   | Значение                                                                                                                                                                                                                                                                                                                  |
+| ------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `main`                    | `da3e9078` (PR #293), дерево чистое, сессионные ветки/worktrees 172.1-172.7 = **0/0/0**                                                                                                                                                                                                                                   |
+| Прогресс миграции 166-174 | **61/94** канонических стори                                                                                                                                                                                                                                                                                              |
+| Эпики                     | 166 ✅ · 167 ✅ · 168 ✅ · 170 ✅ (7/7) · 171 ✅ (9/9) · **172 IN PROGRESS (7/17)** · 169 in-progress (чужая lane, §2.4) · 173/174 backlog                                                                                                                                                                                |
+| Полный пол (vitest)       | **19 343 / 0** (… → 19 334 → 19 343 [+9: гард+caption-тесты 172.7])                                                                                                                                                                                                                                                       |
+| Линтер/типы               | lint 0/0 (zero-warning), tsc 0, max-lines OK, check:docs = baseline (97 entries, exit 0), check:locale-percent ratchet = **4**                                                                                                                                                                                            |
+| PR вечерней сессии        | #266–#273 (3 стори × impl+closeout + эпик-flip внутри #271 + handoff + recon)                                                                                                                                                                                                                                             |
+| pm2                       | `wb-repricer-frontend-dev` online на :3100; BE на :3000                                                                                                                                                                                                                                                                   |
+| **NEXT**                  | **172.8-FE Price Calculator** (план `.omx/plans/172.8-*.md`; /cogs/price-calculator); 172.1-172.7 ✅ (COGS-домен целиком). ENV: node-26 (PATH-префикс node@24); BE login-троттл 5/hr; zsh word-split — явные пути; depth-N = N×'..' в гард-резолве; e2e cold-flake: прогрев dev кури НЕ компилируют (307) — ретрай тёплым |
 
 ---
 
@@ -29,11 +29,11 @@
 
 ### 1.1 Сводка стори
 
-| Стори | Роут | Вердикт | Diff | Owned тесты | Ревью |
-|---|---|---|---|---|---|
-| 171.7 Evaluations List | `/analytics/models/[id]/evaluations` | MINOR-GAP (born-clean) | 7 файлов, +172/−11 | 55/3 → 65/4 | 1×opus APPROVE-WITH-NOTES |
-| 171.8 SKU Accuracy Detail | `…/sku-accuracy` | MINOR-GAP (born-clean) | 9 файлов, +164/−25 | 63/4 → 71/5 | 1×opus APPROVE-WITH-NOTES (0 дефектов) |
-| 171.9 Performance Detail | `…/performance` | MINOR-GAP-plus (палитра+hex) | 7 файлов, +218/−42 | 41/1 → 51/2 | 1×opus **APPROVE** (0 дефектов, 0 правок) |
+| Стори                     | Роут                                 | Вердикт                      | Diff               | Owned тесты | Ревью                                     |
+| ------------------------- | ------------------------------------ | ---------------------------- | ------------------ | ----------- | ----------------------------------------- |
+| 171.7 Evaluations List    | `/analytics/models/[id]/evaluations` | MINOR-GAP (born-clean)       | 7 файлов, +172/−11 | 55/3 → 65/4 | 1×opus APPROVE-WITH-NOTES                 |
+| 171.8 SKU Accuracy Detail | `…/sku-accuracy`                     | MINOR-GAP (born-clean)       | 9 файлов, +164/−25 | 63/4 → 71/5 | 1×opus APPROVE-WITH-NOTES (0 дефектов)    |
+| 171.9 Performance Detail  | `…/performance`                      | MINOR-GAP-plus (палитра+hex) | 7 файлов, +218/−42 | 41/1 → 51/2 | 1×opus **APPROVE** (0 дефектов, 0 правок) |
 
 Все — полный цикл §4→§7: гард-тесты (8/6/9), caption+tabular+padding+provenance, e2e на ветке 13✓/1↓/0 каждый, light+dark visual (a11y caption-узлы подтверждены), cleanup 0/0/0.
 
@@ -93,11 +93,11 @@
 
 ### 3.4 Процесс-/инфра-долги: НОВЫЕ (P9-P11) + прежние P1-P8 (см. старый handoff §3.4)
 
-| # | Долг | Канон |
-|---|---|---|
-| P9 | **Гард × имя worktree**: substring-фильтры на абсолютных путях матчят имя чекаута | memory `reference_guard_worktree_name_substring_collision`; relative-first канон в гардах 171.7-171.9 |
-| P10 | **tsc-фантом от concurrent-сессии** (`_tmp_`-файл создан/удалён mid-scan, TS6053) — гонка, не source-баг; лечится перепрогоном | артефакт 171.8 |
-| P11 | **`.next/dev` truncated-генерат убитого dev** → tsc TS1128/TS1109; `rm -rf .next/dev` перед type-check после pkill | артефакт 171.7 |
+| #   | Долг                                                                                                                           | Канон                                                                                                 |
+| --- | ------------------------------------------------------------------------------------------------------------------------------ | ----------------------------------------------------------------------------------------------------- |
+| P9  | **Гард × имя worktree**: substring-фильтры на абсолютных путях матчят имя чекаута                                              | memory `reference_guard_worktree_name_substring_collision`; relative-first канон в гардах 171.7-171.9 |
+| P10 | **tsc-фантом от concurrent-сессии** (`_tmp_`-файл создан/удалён mid-scan, TS6053) — гонка, не source-баг; лечится перепрогоном | артефакт 171.8                                                                                        |
+| P11 | **`.next/dev` truncated-генерат убитого dev** → tsc TS1128/TS1109; `rm -rf .next/dev` перед type-check после pkill             | артефакт 171.7                                                                                        |
 
 ### 3.5 BE-блокеры (без изменений, мы — не исполнители): B1 fbs-enhanced 500 (#212) · B2 orders-detail UUID (#229) · B3 per-order COGS (#138) · B4 CORS Retry-After (#206)
 
@@ -107,18 +107,18 @@
 
 ## 4. Канонические ссылки
 
-| Что | Где |
-|---|---|
-| **Оркестратор-промпт V10 (операционный, OMC-делегирование)** | [`docs/ORCHESTRATOR-PROMPT-2026-08-26-V10-OMC-SUBAGENT-ORCHESTRATION.md`](ORCHESTRATOR-PROMPT-2026-08-26-V10-OMC-SUBAGENT-ORCHESTRATION.md) |
-| Оркестратор-промпт V9 (справочник цикла/гейтов/ловушек) | [`docs/ORCHESTRATOR-PROMPT-2026-08-26-V9-FE-CONTINUATION.md`](ORCHESTRATOR-PROMPT-2026-08-26-V9-FE-CONTINUATION.md) |
-| Мастер-план миграции | [`.omx/plans/shadcn-full-ui-migration-master.md`](../.omx/plans/shadcn-full-ui-migration-master.md) |
-| **Recon 172.1 (разведка готова)** | [`docs/recon-172-1-dashboard.md`](recon-172-1-dashboard.md) |
-| Артефакты сессии | [`_bmad-output/implementation-artifacts/171-{7,8,9}-fe-*.md`](../_bmad-output/implementation-artifacts/) |
-| Sprint-статусы (epic-171 done) | [`_bmad-output/implementation-artifacts/sprint-status.yaml`](../_bmad-output/implementation-artifacts/sprint-status.yaml) |
-| Debt-registry (живой, NEXT=172.1) | [`_bmad-output/planning-artifacts/shadcn-migration-status-and-debt-registry.md`](../_bmad-output/planning-artifacts/shadcn-migration-status-and-debt-registry.md) |
-| Гарды-эталоны | 171.5 `accuracy-presentation…` · 171.6 (с [id]-exclusion) · 171.7/171.8 (anchor-safe) · 171.9 (chart-var pins) |
-| E2E models-дерева | [`e2e/analytics/ai-models.spec.ts`](../e2e/analytics/ai-models.spec.ts) |
-| Chart-канон (живой) | [`src/app/(dashboard)/analytics/forecast/components/ForecastChart.tsx`](../src/app/(dashboard)/analytics/forecast/components/ForecastChart.tsx) |
+| Что                                                          | Где                                                                                                                                                               |
+| ------------------------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Оркестратор-промпт V10 (операционный, OMC-делегирование)** | [`docs/ORCHESTRATOR-PROMPT-2026-08-26-V10-OMC-SUBAGENT-ORCHESTRATION.md`](ORCHESTRATOR-PROMPT-2026-08-26-V10-OMC-SUBAGENT-ORCHESTRATION.md)                       |
+| Оркестратор-промпт V9 (справочник цикла/гейтов/ловушек)      | [`docs/ORCHESTRATOR-PROMPT-2026-08-26-V9-FE-CONTINUATION.md`](ORCHESTRATOR-PROMPT-2026-08-26-V9-FE-CONTINUATION.md)                                               |
+| Мастер-план миграции                                         | [`.omx/plans/shadcn-full-ui-migration-master.md`](../.omx/plans/shadcn-full-ui-migration-master.md)                                                               |
+| **Recon 172.1 (разведка готова)**                            | [`docs/recon-172-1-dashboard.md`](recon-172-1-dashboard.md)                                                                                                       |
+| Артефакты сессии                                             | [`_bmad-output/implementation-artifacts/171-{7,8,9}-fe-*.md`](../_bmad-output/implementation-artifacts/)                                                          |
+| Sprint-статусы (epic-171 done)                               | [`_bmad-output/implementation-artifacts/sprint-status.yaml`](../_bmad-output/implementation-artifacts/sprint-status.yaml)                                         |
+| Debt-registry (живой, NEXT=172.1)                            | [`_bmad-output/planning-artifacts/shadcn-migration-status-and-debt-registry.md`](../_bmad-output/planning-artifacts/shadcn-migration-status-and-debt-registry.md) |
+| Гарды-эталоны                                                | 171.5 `accuracy-presentation…` · 171.6 (с [id]-exclusion) · 171.7/171.8 (anchor-safe) · 171.9 (chart-var pins)                                                    |
+| E2E models-дерева                                            | [`e2e/analytics/ai-models.spec.ts`](../e2e/analytics/ai-models.spec.ts)                                                                                           |
+| Chart-канон (живой)                                          | [`src/app/(dashboard)/analytics/forecast/components/ForecastChart.tsx`](<../src/app/(dashboard)/analytics/forecast/components/ForecastChart.tsx>)                 |
 
 ## 5. Как продолжать
 

@@ -28,4 +28,4 @@ Fixed together with Story 64.4 in `aggregation.ts`.
 
 See Story 64.4. Margin tooltip updated from "Валовая маржа" to "Операционная маржа" in `MarginCard.tsx`.
 
-*Created: 2026-02-21*
+_Created: 2026-02-21_

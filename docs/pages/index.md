@@ -5,6 +5,7 @@ This section contains documentation organized by application pages for easier ma
 ## Overview
 
 Each page folder contains:
+
 - Page description and features
 - Related stories and implementation details
 - Integration analysis and API documentation
@@ -13,9 +14,11 @@ Each page folder contains:
 ## Available Pages
 
 ### [Dashboard](./dashboard/)
+
 Financial analytics dashboard with period selection, key metrics, and trend analysis.
 
 **Key Features:**
+
 - Period selector (day/week/month/custom)
 - Real-time metrics (revenue, margin, ROAS, orders)
 - Trend graphs and visualizations
@@ -23,6 +26,7 @@ Financial analytics dashboard with period selection, key metrics, and trend anal
 - E2E tests for critical flows
 
 **Documentation:**
+
 - Epic 60 stories and implementation plans
 - Integration validation reports
 - Period selector component docs
@@ -31,9 +35,11 @@ Financial analytics dashboard with period selection, key metrics, and trend anal
 ---
 
 ### [Products](./products/)
+
 Product catalog management with COGS assignment and margin calculation.
 
 **Key Features:**
+
 - Product list with search and filters
 - Bulk COGS upload (Excel/CSV)
 - Single and bulk COGS assignment
@@ -41,6 +47,7 @@ Product catalog management with COGS assignment and margin calculation.
 - Historical COGS versions
 
 **Documentation:**
+
 - Margin integration analysis
 - COGS temporal logic guide
 - Backend integration patterns
@@ -49,15 +56,18 @@ Product catalog management with COGS assignment and margin calculation.
 ---
 
 ### [Analytics](./analytics/)
+
 Advanced analytics pages for financial insights and advertising performance.
 
 **Key Features:**
+
 - Weekly financial analytics
 - Advertising campaign analysis
 - ROI and ROAS tracking
 - Time-series data visualization
 
 **Documentation:**
+
 - Advertising integration analysis
 - API response format guides
 - Empty state handling
@@ -66,15 +76,18 @@ Advanced analytics pages for financial insights and advertising performance.
 ---
 
 ### [Orders](./orders/)
+
 Orders management and FBS integration.
 
 **Key Features:**
+
 - Order list with filters
 - FBS status tracking
 - Order details view
 - Historical analytics
 
 **Documentation:**
+
 - Orders FBS integration guide
 - API endpoint references
 - Status tracking patterns
@@ -82,15 +95,18 @@ Orders management and FBS integration.
 ---
 
 ### [Supplies](./supplies/)
+
 Supply planning and inventory management.
 
 **Key Features:**
+
 - Stockout risk analysis
 - Reorder quantity calculations
 - Supply planning tools
 - Storage analytics
 
 **Documentation:**
+
 - Supply planning API guide
 - Storage integration analysis
 - Liquidity and turnover metrics

@@ -23,7 +23,7 @@ chars: 3665
 
 В этой статье:
 
-- 
+-
 - <a href="#gde-najti-otchet" rel="nofollow">Где найти отчет</a>
 - <a href="#kakie-filtry-dostupny" rel="nofollow">Какие фильтры доступны</a>
 - <a href="#chto-soderzhit-otchet" rel="nofollow">Что содержит отчет</a>

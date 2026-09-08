@@ -26,10 +26,11 @@ When the funnel endpoint is queried with `groupBy=day`, **every day in the range
 ## Secondary finding (MED, same endpoint)
 
 `buyoutConversion` does **not** match its documented formula `buyoutCount / ordersCount * 100`:
+
 - per-SKU nmId 887604577: backend `buyoutConversion = 94`, but `1423/1820 = 78.19%`.
 - summary: backend `75.36`, but `3126/3920 = 79.74%`.
 - day-row reports `93.57` (= `131/140`, matches the formula) — so the definition is **inconsistent between aggregation levels**.
-All OTHER conversion fields (cart/order/total/cancelRate) match their formulas exactly. Not currently rendered in summary cards/table (only a sort key), so low visual impact — but the definition should be reconciled.
+  All OTHER conversion fields (cart/order/total/cancelRate) match their formulas exactly. Not currently rendered in summary cards/table (only a sort key), so low visual impact — but the definition should be reconciled.
 
 ## Requested fix (backend)
 

@@ -107,11 +107,13 @@ function DashboardContent() {
 ### Implementation Notes
 
 1. **Query Key Strategy**: Include week in query key for proper cache isolation
+
    ```typescript
    queryKey: ['dashboard', 'metrics', week]
    ```
 
 2. **Parallel Fetching**: Use `useQueries` from TanStack Query for current + previous
+
    ```typescript
    const results = useQueries({
      queries: [
@@ -216,13 +218,13 @@ export function useDashboardMetrics(options?: UseDashboardMetricsOptions) {
 
 ## Dependencies
 
-| Dependency | Type | Status |
-|------------|------|--------|
-| Story 60.1-FE | Internal | Required - Provides `DashboardPeriodProvider` and `useDashboardPeriod` |
-| Story 60.2-FE | Internal | Required - Provides `DashboardPeriodSelector` component |
-| Story 60.3-FE | Internal | Required - Provides `MetricCardEnhanced` with comparison display |
-| `useAvailableWeeks` hook | Existing | Available |
-| Backend `/v1/analytics/weekly/finance-summary?week=` | API | Supports week param |
+| Dependency                                           | Type     | Status                                                                 |
+| ---------------------------------------------------- | -------- | ---------------------------------------------------------------------- |
+| Story 60.1-FE                                        | Internal | Required - Provides `DashboardPeriodProvider` and `useDashboardPeriod` |
+| Story 60.2-FE                                        | Internal | Required - Provides `DashboardPeriodSelector` component                |
+| Story 60.3-FE                                        | Internal | Required - Provides `MetricCardEnhanced` with comparison display       |
+| `useAvailableWeeks` hook                             | Existing | Available                                                              |
+| Backend `/v1/analytics/weekly/finance-summary?week=` | API      | Supports week param                                                    |
 
 ---
 
@@ -231,6 +233,7 @@ export function useDashboardMetrics(options?: UseDashboardMetricsOptions) {
 ### Unit Tests
 
 1. **`useDashboardMetrics` with week param**
+
    ```typescript
    it('should include week in query key', () => {
      const { result } = renderHook(() =>
@@ -249,6 +252,7 @@ export function useDashboardMetrics(options?: UseDashboardMetricsOptions) {
    ```
 
 2. **`useDashboardMetricsWithComparison` parallel fetching**
+
    ```typescript
    it('should fetch both current and previous periods', () => {
      const { result } = renderHook(() =>
@@ -273,6 +277,7 @@ export function useDashboardMetrics(options?: UseDashboardMetricsOptions) {
 ### Integration Tests
 
 1. **Period switch triggers refetch**
+
    ```typescript
    it('should refetch metrics when period changes', async () => {
      render(<DashboardPage />)

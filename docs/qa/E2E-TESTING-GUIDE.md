@@ -12,18 +12,18 @@
 
 **Total Test Cases**: 10 E2E scenarios
 
-| TC ID | Test Name | Coverage | Priority |
-|-------|-----------|----------|----------|
-| TC-E2E-001 | Empty State & Hero Banner | Story 34.5-FE | 🔴 Critical |
-| TC-E2E-002 | Complete Binding Flow | Stories 34.2-FE, 34.5-FE | 🔴 Critical |
-| TC-E2E-003 | Notification Preferences Configuration | Story 34.3-FE | 🔴 Critical |
-| TC-E2E-004 | Quiet Hours with Timezone | Story 34.4-FE | 🔴 Critical |
-| TC-E2E-005 | Unbind Flow | Story 34.2-FE | 🔴 Critical |
-| TC-E2E-006 | Mobile Responsive Layouts | Story 34.5-FE | 🟡 High |
-| TC-E2E-007 | Accessibility Compliance (WCAG 2.1 AA) | All stories | 🟡 High |
-| TC-E2E-008 | Language Switcher | Story 34.3-FE | 🟢 Medium |
-| TC-E2E-009 | Daily Digest Conditional Time Picker | Story 34.3-FE | 🟢 Medium |
-| TC-E2E-010 | Cancel Button Resets Changes | Story 34.3-FE | 🟢 Medium |
+| TC ID      | Test Name                              | Coverage                 | Priority    |
+| ---------- | -------------------------------------- | ------------------------ | ----------- |
+| TC-E2E-001 | Empty State & Hero Banner              | Story 34.5-FE            | 🔴 Critical |
+| TC-E2E-002 | Complete Binding Flow                  | Stories 34.2-FE, 34.5-FE | 🔴 Critical |
+| TC-E2E-003 | Notification Preferences Configuration | Story 34.3-FE            | 🔴 Critical |
+| TC-E2E-004 | Quiet Hours with Timezone              | Story 34.4-FE            | 🔴 Critical |
+| TC-E2E-005 | Unbind Flow                            | Story 34.2-FE            | 🔴 Critical |
+| TC-E2E-006 | Mobile Responsive Layouts              | Story 34.5-FE            | 🟡 High     |
+| TC-E2E-007 | Accessibility Compliance (WCAG 2.1 AA) | All stories              | 🟡 High     |
+| TC-E2E-008 | Language Switcher                      | Story 34.3-FE            | 🟢 Medium   |
+| TC-E2E-009 | Daily Digest Conditional Time Picker   | Story 34.3-FE            | 🟢 Medium   |
+| TC-E2E-010 | Cancel Button Resets Changes           | Story 34.3-FE            | 🟢 Medium   |
 
 ---
 
@@ -92,12 +92,12 @@ npx playwright show-report
 
 ### Browser Coverage
 
-| Browser | Version | Status |
-|---------|---------|--------|
-| Chrome | Latest | ✅ Primary |
-| Firefox | Latest | ✅ Supported |
-| Safari | Latest | ✅ Supported |
-| Edge | Latest | ⚠️ Optional |
+| Browser | Version | Status       |
+| ------- | ------- | ------------ |
+| Chrome  | Latest  | ✅ Primary   |
+| Firefox | Latest  | ✅ Supported |
+| Safari  | Latest  | ✅ Supported |
+| Edge    | Latest  | ⚠️ Optional  |
 
 Run tests on all browsers:
 
@@ -160,6 +160,7 @@ npx playwright show-trace trace.zip
 **Purpose**: Verify hero banner displays when Telegram not bound
 
 **Critical Checks**:
+
 - Hero banner visible with light blue gradient
 - 3 feature bullets present
 - "Подключить Telegram" CTA button (Telegram Blue)
@@ -174,6 +175,7 @@ npx playwright show-trace trace.zip
 **Purpose**: Verify full Telegram binding flow works end-to-end
 
 **Critical Checks**:
+
 1. Modal opens on CTA click
 2. Binding code displays (`/start ABC123XY`)
 3. Countdown timer animates correctly
@@ -193,6 +195,7 @@ npx playwright show-trace trace.zip
 **Purpose**: Verify preferences can be changed and saved
 
 **Critical Checks**:
+
 1. Preferences panel enabled when bound
 2. Event type toggles work (click card or switch)
 3. Border changes (Gray → Telegram Blue)
@@ -212,6 +215,7 @@ npx playwright show-trace trace.zip
 **Purpose**: Verify quiet hours configuration with timezone support
 
 **Critical Checks**:
+
 1. Quiet hours toggle enables time pickers
 2. Native `<input type="time">` works
 3. Overnight hint appears when `from > to`
@@ -228,6 +232,7 @@ npx playwright show-trace trace.zip
 **Purpose**: Verify Telegram can be unbound safely
 
 **Critical Checks**:
+
 1. "Отключить Telegram" button visible when bound
 2. Confirmation dialog opens with warning
 3. Cancel button closes dialog without unbinding
@@ -244,6 +249,7 @@ npx playwright show-trace trace.zip
 **Purpose**: Verify UI adapts to mobile viewports
 
 **Critical Checks**:
+
 1. H1 title smaller on mobile (28px vs 36px)
 2. Cards full-width
 3. CTA button full-width
@@ -259,6 +265,7 @@ npx playwright show-trace trace.zip
 **Purpose**: Verify UI meets WCAG 2.1 AA standards
 
 **Critical Checks**:
+
 1. Only one H1 per page
 2. All buttons have accessible names
 3. Form inputs have labels
@@ -276,6 +283,7 @@ npx playwright show-trace trace.zip
 **Purpose**: Verify language can be changed
 
 **Critical Checks**:
+
 1. Russian selected by default
 2. Click English changes selection
 3. Dirty state warning appears
@@ -288,6 +296,7 @@ npx playwright show-trace trace.zip
 **Purpose**: Verify time picker shows/hides based on digest toggle
 
 **Critical Checks**:
+
 1. Time picker visible when digest enabled
 2. Default time 08:00
 3. Toggle digest OFF → time picker slides up
@@ -302,6 +311,7 @@ npx playwright show-trace trace.zip
 **Purpose**: Verify cancel button reverts unsaved changes
 
 **Critical Checks**:
+
 1. Make changes → dirty warning appears
 2. Click "Отменить" → changes revert
 3. Dirty warning disappears
@@ -323,12 +333,12 @@ npx playwright show-trace trace.zip
 
 ### Performance Benchmarks
 
-| Metric | Target | Acceptable |
-|--------|--------|------------|
-| Total test suite duration | <2 min | <3 min |
-| Single test duration | <10s | <15s |
-| Modal open/close | <500ms | <1s |
-| API response time (mocked) | <100ms | <200ms |
+| Metric                     | Target | Acceptable |
+| -------------------------- | ------ | ---------- |
+| Total test suite duration  | <2 min | <3 min     |
+| Single test duration       | <10s   | <15s       |
+| Modal open/close           | <500ms | <1s        |
+| API response time (mocked) | <100ms | <200ms     |
 
 ---
 
@@ -337,33 +347,41 @@ npx playwright show-trace trace.zip
 ### Common Issues
 
 **Issue 1: "Dev server not running"**
+
 ```
 Error: page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:3100
 ```
+
 **Solution**: Start dev server in separate terminal: `npm run dev`
 
 ---
 
 **Issue 2: "Element not found"**
+
 ```
 Error: locator.click: Timeout 30000ms exceeded
 ```
+
 **Solution**: Check `data-testid` attributes are present in components
 
 ---
 
 **Issue 3: "Modal not opening"**
+
 ```
 Error: expect(modal).toBeVisible() - Expected visible, got hidden
 ```
+
 **Solution**: Verify button selector is correct, check for loading states
 
 ---
 
 **Issue 4: "Tests pass locally but fail in CI"**
+
 ```
 Error: Inconsistent behavior in CI environment
 ```
+
 **Solution**: Add `await page.waitForLoadState('networkidle')` before assertions
 
 ---
@@ -373,6 +391,7 @@ Error: Inconsistent behavior in CI environment
 **Location**: `playwright.config.ts`
 
 **Key Settings**:
+
 ```typescript
 export default defineConfig({
   testDir: './tests/e2e',

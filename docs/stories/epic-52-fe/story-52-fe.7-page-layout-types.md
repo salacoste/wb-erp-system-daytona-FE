@@ -464,6 +464,7 @@ src/components/layout/Sidebar.tsx (add tariffs link for admin)
 **Status:** ✅ Complete
 
 ### Implemented Files
+
 - `src/app/(dashboard)/settings/tariffs/page.tsx` (146 lines) - Main page with tabs and admin check
 - `src/types/tariffs-admin.ts` (179 lines) - All 21 field types, DTOs, tracked fields constant
 - `src/lib/api/tariffs-admin.ts` - API client functions for all 7 endpoints
@@ -473,6 +474,7 @@ src/components/layout/Sidebar.tsx (add tariffs link for admin)
 - `__tests__/page.test.tsx` - Page-level tests
 
 ### Notes
+
 Page uses useAuth for role check (Owner only). Tabs use shadcn/ui Tabs component. Loading skeleton displayed during auth loading. Breadcrumb navigation implemented with links.
 
 ---

@@ -10,18 +10,19 @@
 
 Operating margin calculation uses different revenue bases across analytics pages:
 
-| Page | Revenue Base | Formula | Result |
-|------|--------------|---------|--------|
-| **SKU** | `revenue.gross` | profit / gross_revenue | ~15% |
-| **Category** | `revenue_net` | profit / net_revenue | ~21% |
-| **Brand** | `revenue_net` | profit / net_revenue | ~21% |
-| **Cashflow** | `sales_gross` | profit / sales_gross | ~15% |
+| Page         | Revenue Base    | Formula                | Result |
+| ------------ | --------------- | ---------------------- | ------ |
+| **SKU**      | `revenue.gross` | profit / gross_revenue | ~15%   |
+| **Category** | `revenue_net`   | profit / net_revenue   | ~21%   |
+| **Brand**    | `revenue_net`   | profit / net_revenue   | ~21%   |
+| **Cashflow** | `sales_gross`   | profit / sales_gross   | ~15%   |
 
 This causes **user confusion** when comparing margins across different views.
 
 ## Business Requirement
 
 User specified:
+
 > "маржа должна считаться за сумму от цены продажи до комиссий маркетплейса и эквайринга"
 
 Translation: Margin should be calculated from the sale price **BEFORE** marketplace commission and acquiring fees.
@@ -29,20 +30,26 @@ Translation: Margin should be calculated from the sale price **BEFORE** marketpl
 ## Current State
 
 ### SKU Financials API (`/v1/analytics/sku-financials`)
+
 ✅ Returns both:
+
 - `sales.revenue_gross` - gross revenue (retail_price_with_discount)
 - `sales.revenue_net` - net revenue (net_for_pay, after commission)
 
 Frontend updated to use `revenue.gross` for margin calculation.
 
 ### Category API (`/v1/analytics/weekly/by-category`)
+
 ❌ Only returns:
+
 - `revenue_net` - net revenue per category
 
 Missing: `revenue_gross`
 
 ### Brand API (`/v1/analytics/weekly/by-brand`)
+
 ❌ Only returns:
+
 - `revenue_net` - net revenue per brand
 
 Missing: `revenue_gross`
@@ -69,6 +76,7 @@ interface CategoryAnalyticsItem {
 ---
 
 ## Backend Team Response
+
 **Status**: RESOLVED
 **Resolution**: Added `revenue_gross` field to Category and Brand analytics API endpoints (`/v1/analytics/weekly/by-category` and `/v1/analytics/weekly/by-brand`), enabling consistent operating margin calculation using gross revenue (before marketplace commissions) across all analytics views.
 **Frontend Action**: No further action needed unless noted above.
@@ -117,6 +125,7 @@ GROUP BY category
 ## Expected Result
 
 After implementation:
+
 - **SKU page**: ~15% margin (profit / revenue_gross)
 - **Category page**: ~15% margin (same formula)
 - **Brand page**: ~15% margin (same formula)
@@ -134,6 +143,7 @@ All views show **consistent margin** based on gross revenue (before commissions)
 4. **SKU page** (`analytics/sku/page.tsx`): Updated `avgMargin` to use `revenue.gross`
 
 All pages now use consistent margin formula:
+
 ```
 operating_margin = operating_profit / revenue_gross * 100
 ```

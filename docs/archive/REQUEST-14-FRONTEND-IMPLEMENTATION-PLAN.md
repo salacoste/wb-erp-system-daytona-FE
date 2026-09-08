@@ -23,12 +23,14 @@
 ### Current State
 
 **What Works:**
+
 - ✅ COGS assignment via `POST /v1/products/:nmId/cogs`
 - ✅ Backend automatically triggers margin calculation (Epic 20)
 - ✅ Query invalidation refreshes product data
 - ✅ Margin display components (MarginDisplay, MarginBadge)
 
 **What's Missing:**
+
 - ❌ No feedback about calculation progress
 - ❌ No automatic polling to check margin availability
 - ❌ User must manually refresh to see calculated margin
@@ -37,6 +39,7 @@
 ### Target State
 
 **After Implementation:**
+
 - ✅ User sees "Расчёт маржи начат..." notification
 - ✅ Frontend polls backend every 3-5 seconds
 - ✅ UI automatically updates when margin appears
@@ -100,6 +103,7 @@ Timeout → Show warning → Offer manual refresh
 **File:** `src/lib/margin-helpers.ts`
 
 **Functions:**
+
 1. `calculateAffectedWeeks(validFrom: string): string[]`
    - Calculate weeks from `valid_from` to current week
    - Return ISO week strings: ["2025-W41", "2025-W42", ...]
@@ -115,6 +119,7 @@ Timeout → Show warning → Offer manual refresh
    - Bulk: 5s interval, 20 attempts (100s)
 
 **Implementation:**
+
 ```typescript
 // src/lib/margin-helpers.ts
 export interface PollingConfig {
@@ -147,6 +152,7 @@ export function getPollingStrategy(
 **File:** `src/hooks/useMarginPolling.ts`
 
 **Interface:**
+
 ```typescript
 interface UseMarginPollingOptions {
   nmId: string
@@ -165,6 +171,7 @@ interface UseMarginPollingResult {
 ```
 
 **Implementation:**
+
 - Use `setInterval` for polling
 - Fetch `GET /v1/products/:nmId?include_cogs=true`
 - Check `current_margin_pct !== null`
@@ -172,6 +179,7 @@ interface UseMarginPollingResult {
 - Handle timeout scenarios
 
 **Key Features:**
+
 - Automatic cleanup
 - Configurable interval and max attempts
 - Success/timeout callbacks
@@ -184,6 +192,7 @@ interface UseMarginPollingResult {
 **File:** `src/hooks/useSingleCogsAssignment.ts`
 
 **Changes:**
+
 1. After successful COGS assignment, calculate affected weeks
 2. Determine polling strategy based on `valid_from` date
 3. Start polling with appropriate configuration
@@ -192,20 +201,21 @@ interface UseMarginPollingResult {
 6. On timeout: Show warning with manual refresh option
 
 **Integration Point:**
+
 ```typescript
 onSuccess: (data, variables) => {
   // Existing: Invalidate queries
   queryClient.invalidateQueries({ queryKey: ['products'] })
-  
+
   // NEW: Start polling if margin not available
   if (data.current_margin_pct === null && data.has_cogs) {
     const weeks = calculateAffectedWeeks(variables.cogs.valid_from)
     const strategy = getPollingStrategy(variables.cogs.valid_from, false)
-    
+
     toast.info('Расчёт маржи начат...', {
       description: `Ожидаемое время: ~${strategy.estimatedTime / 1000}с`
     })
-    
+
     startPolling({
       nmId: variables.nmId,
       strategy,
@@ -226,24 +236,26 @@ onSuccess: (data, variables) => {
 **File:** `src/hooks/useBulkCogsAssignment.ts`
 
 **Changes:**
+
 1. After successful bulk assignment, use bulk polling strategy
 2. Poll sample products (first 10 from bulk upload)
 3. Show progress indicator for bulk operations
 4. Handle timeout with appropriate message
 
 **Integration Point:**
+
 ```typescript
 onSuccess: (data, variables) => {
   // Existing: Invalidate queries
-  
+
   // NEW: Start bulk polling
   if (data.data.succeeded > 0) {
     const strategy = getPollingStrategy(new Date().toISOString(), true)
-    
+
     toast.info(`Расчёт маржи для ${data.data.succeeded} товаров начат...`, {
       description: `Ожидаемое время: ~${strategy.estimatedTime / 1000}с`
     })
-    
+
     startBulkPolling({
       sampleNmIds: variables.items.slice(0, 10).map(i => i.nm_id),
       strategy,
@@ -266,6 +278,7 @@ onSuccess: (data, variables) => {
 **File:** `src/components/custom/MarginCalculationStatus.tsx`
 
 **Props:**
+
 ```typescript
 interface MarginCalculationStatusProps {
   isPolling: boolean
@@ -278,6 +291,7 @@ interface MarginCalculationStatusProps {
 ```
 
 **Features:**
+
 - Show "Расчёт..." indicator with spinner
 - Display progress for bulk operations
 - Use shadcn/ui Progress or Skeleton component
@@ -288,6 +302,7 @@ interface MarginCalculationStatusProps {
 **File:** `src/components/custom/SingleCogsForm.tsx`
 
 **Changes:**
+
 1. Show polling state during margin calculation
 2. Disable form inputs during polling
 3. Display "Ожидание расчёта маржи..." message
@@ -298,6 +313,7 @@ interface MarginCalculationStatusProps {
 **File:** `src/components/custom/ProductList.tsx`
 
 **Changes:**
+
 1. Show "Расчёт..." badge for products being calculated
 2. Update margin display when polling completes
 3. Use optimistic UI pattern
@@ -309,6 +325,7 @@ interface MarginCalculationStatusProps {
 ### Strategy 1: Single Product (Current Date)
 
 **Configuration:**
+
 - Interval: 3 seconds
 - Max Attempts: 10
 - Total Time: 30 seconds
@@ -319,6 +336,7 @@ interface MarginCalculationStatusProps {
 ### Strategy 2: Single Product (Historical Date)
 
 **Configuration:**
+
 - Interval: 5 seconds
 - Max Attempts: 10
 - Total Time: 50 seconds
@@ -329,6 +347,7 @@ interface MarginCalculationStatusProps {
 ### Strategy 3: Bulk Assignment
 
 **Configuration:**
+
 - Interval: 5 seconds
 - Max Attempts: 20
 - Total Time: 100 seconds
@@ -343,12 +362,14 @@ interface MarginCalculationStatusProps {
 ### Unit Tests
 
 **File:** `src/hooks/useMarginPolling.test.ts`
+
 - Test polling with different strategies
 - Test cleanup on unmount
 - Test timeout handling
 - Test success/timeout callbacks
 
 **File:** `src/lib/margin-helpers.test.ts`
+
 - Test `calculateAffectedWeeks()` with various dates
 - Test `estimateCalculationTime()` with different week counts
 - Test `getPollingStrategy()` for all scenarios
@@ -356,11 +377,13 @@ interface MarginCalculationStatusProps {
 ### Integration Tests
 
 **File:** `src/hooks/useSingleCogsAssignment.test.ts` (update)
+
 - Test polling integration after COGS assignment
 - Test toast notifications
 - Test query invalidation after polling success
 
 **File:** `src/hooks/useBulkCogsAssignment.test.ts` (update)
+
 - Test bulk polling integration
 - Test progress indicators
 - Test timeout handling for bulk operations
@@ -368,6 +391,7 @@ interface MarginCalculationStatusProps {
 ### E2E Tests
 
 **File:** `e2e/margin-recalculation-polling.spec.ts` (new)
+
 - Test single product polling flow
 - Test historical date polling flow
 - Test bulk assignment polling flow
@@ -378,24 +402,28 @@ interface MarginCalculationStatusProps {
 ## 📝 Implementation Checklist
 
 ### Phase 1: Core Infrastructure
+
 - [ ] Create `src/lib/margin-helpers.ts` with helper functions
 - [ ] Create `src/hooks/useMarginPolling.ts` with polling logic
 - [ ] Add unit tests for helpers and polling hook
 - [ ] Test polling with different strategies
 
 ### Phase 2: Integration
+
 - [ ] Update `useSingleCogsAssignment.ts` to trigger polling
 - [ ] Update `useBulkCogsAssignment.ts` to trigger polling
 - [ ] Add toast notifications for status updates
 - [ ] Test integration with COGS assignment flows
 
 ### Phase 3: UI Components
+
 - [ ] Create `MarginCalculationStatus.tsx` component
 - [ ] Update `SingleCogsForm.tsx` to show polling state
 - [ ] Update `ProductList.tsx` to show polling status
 - [ ] Test UI updates during polling
 
 ### Phase 4: Testing & Polish
+
 - [ ] Add integration tests
 - [ ] Add E2E tests
 - [ ] Test timeout scenarios
@@ -486,26 +514,27 @@ interface MarginCalculationStatusProps {
 ### Polling Implementation
 
 **Hook Structure:**
+
 ```typescript
 export function useMarginPolling(options: UseMarginPollingOptions) {
   const [isPolling, setIsPolling] = useState(false)
   const [attempts, setAttempts] = useState(0)
   const [timeout, setTimeout] = useState(false)
   const [margin, setMargin] = useState<number | null>(null)
-  
+
   useEffect(() => {
     if (!options.enabled) return
-    
+
     setIsPolling(true)
     let attemptCount = 0
-    
+
     const interval = setInterval(async () => {
       attemptCount++
       setAttempts(attemptCount)
-      
+
       // Fetch product data
       const product = await apiClient.get(`/v1/products/${options.nmId}?include_cogs=true`)
-      
+
       if (product.current_margin_pct !== null) {
         // Success: Margin available
         clearInterval(interval)
@@ -520,11 +549,11 @@ export function useMarginPolling(options: UseMarginPollingOptions) {
         options.onTimeout?.()
       }
     }, options.strategy.interval)
-    
+
     // Cleanup on unmount
     return () => clearInterval(interval)
   }, [options.enabled, options.nmId, options.strategy])
-  
+
   return { isPolling, attempts, timeout, margin }
 }
 ```
@@ -532,6 +561,7 @@ export function useMarginPolling(options: UseMarginPollingOptions) {
 ### Error Handling
 
 **Scenarios:**
+
 1. **Network Error:** Retry with exponential backoff
 2. **API Error (500):** Show error toast, stop polling
 3. **Timeout:** Show warning, offer manual refresh
@@ -540,12 +570,14 @@ export function useMarginPolling(options: UseMarginPollingOptions) {
 ### Performance Considerations
 
 **Optimizations:**
+
 - Polling interval: 3-5 seconds (not too frequent)
 - Max attempts: 10-20 (prevent infinite polling)
 - Cleanup on unmount (prevent memory leaks)
 - Single API call per poll (efficient)
 
 **Backend Load:**
+
 - Polling frequency: 1 request per 3-5 seconds
 - Max duration: 30-100 seconds
 - Total requests: 10-20 per COGS assignment
@@ -555,35 +587,38 @@ export function useMarginPolling(options: UseMarginPollingOptions) {
 
 ## ✅ Acceptance Criteria Mapping
 
-| AC | Implementation | File |
-|----|----------------|------|
-| 1. Notification "Расчёт маржи начат..." | Toast in COGS hooks | `useSingleCogsAssignment.ts`, `useBulkCogsAssignment.ts` |
-| 2. Polling every 3-5 seconds | `useMarginPolling` hook | `useMarginPolling.ts` |
-| 3. Auto-update UI when margin ready | Query invalidation + polling success | `useMarginPolling.ts` |
-| 4. Success notification with margin | Toast in polling success callback | `useMarginPolling.ts` |
-| 5. Polling stops after margin or timeout | Cleanup logic in hook | `useMarginPolling.ts` |
-| 6. Different strategies (single/historical/bulk) | `getPollingStrategy()` helper | `margin-helpers.ts` |
-| 7. Error handling with timeout warning | Timeout callback + toast | `useMarginPolling.ts` |
-| 8. Optimistic UI "Расчёт..." indicator | `MarginCalculationStatus` component | `MarginCalculationStatus.tsx` |
-| 9. Disable form during polling | Form state management | `SingleCogsForm.tsx` |
-| 10. Query invalidation after success | Invalidate in polling success | `useMarginPolling.ts` |
+| AC                                               | Implementation                       | File                                                     |
+| ------------------------------------------------ | ------------------------------------ | -------------------------------------------------------- |
+| 1. Notification "Расчёт маржи начат..."          | Toast in COGS hooks                  | `useSingleCogsAssignment.ts`, `useBulkCogsAssignment.ts` |
+| 2. Polling every 3-5 seconds                     | `useMarginPolling` hook              | `useMarginPolling.ts`                                    |
+| 3. Auto-update UI when margin ready              | Query invalidation + polling success | `useMarginPolling.ts`                                    |
+| 4. Success notification with margin              | Toast in polling success callback    | `useMarginPolling.ts`                                    |
+| 5. Polling stops after margin or timeout         | Cleanup logic in hook                | `useMarginPolling.ts`                                    |
+| 6. Different strategies (single/historical/bulk) | `getPollingStrategy()` helper        | `margin-helpers.ts`                                      |
+| 7. Error handling with timeout warning           | Timeout callback + toast             | `useMarginPolling.ts`                                    |
+| 8. Optimistic UI "Расчёт..." indicator           | `MarginCalculationStatus` component  | `MarginCalculationStatus.tsx`                            |
+| 9. Disable form during polling                   | Form state management                | `SingleCogsForm.tsx`                                     |
+| 10. Query invalidation after success             | Invalidate in polling success        | `useMarginPolling.ts`                                    |
 
 ---
 
 ## 📚 Related Documentation
 
 **Backend:**
+
 - Request #14: `docs/request-backend/14-automatic-margin-recalculation-on-cogs-update.md`
 - Backend Response: `docs/request-backend/REQUEST-14-BACKEND-RESPONSE.md`
 - Epic 20 Completion: Backend Epic 20 (2025-01-26)
 
 **Frontend:**
+
 - Story 4.1: `docs/stories/4.1.single-product-cogs-assignment.md`
 - Story 4.2: `docs/stories/4.2.bulk-cogs-assignment.md`
 - Story 4.4: `docs/stories/4.4.automatic-margin-calculation-display.md`
 - Story 4.8: `docs/stories/4.8.margin-recalculation-polling.md` (this story)
 
 **Architecture:**
+
 - Frontend Architecture: `docs/front-end-architecture.md`
 - API Integration Guide: `docs/api-integration-guide.md`
 
@@ -615,4 +650,3 @@ export function useMarginPolling(options: UseMarginPollingOptions) {
 **Plan Created:** 2025-01-26  
 **Status:** ✅ **READY FOR IMPLEMENTATION**  
 **Story:** 4.8.margin-recalculation-polling.md
-

@@ -17,6 +17,7 @@
 ## Background
 
 After adding orders to a supply, sellers need to:
+
 1. **Close the supply** - Finalizes the supply, preventing further order changes and triggering WB to generate a supply number
 2. **Generate stickers** - Create printable labels in various formats for different printer types
 
@@ -182,13 +183,13 @@ This story implements both workflows with appropriate UI components and validati
 
 ## Components to Create
 
-| File | Purpose | Lines Est. |
-|------|---------|------------|
-| `CloseSupplyDialog.tsx` | Confirmation dialog for closing supply | ~80 |
-| `GenerateStickersModal.tsx` | Modal with format selection and preview | ~120 |
-| `StickerFormatSelector.tsx` | Radio button group for format selection | ~60 |
-| `StickerPreview.tsx` | Image preview for PNG/SVG formats | ~100 |
-| `DownloadButton.tsx` | Reusable download trigger button | ~40 |
+| File                        | Purpose                                 | Lines Est. |
+| --------------------------- | --------------------------------------- | ---------- |
+| `CloseSupplyDialog.tsx`     | Confirmation dialog for closing supply  | ~80        |
+| `GenerateStickersModal.tsx` | Modal with format selection and preview | ~120       |
+| `StickerFormatSelector.tsx` | Radio button group for format selection | ~60        |
+| `StickerPreview.tsx`        | Image preview for PNG/SVG formats       | ~100       |
+| `DownloadButton.tsx`        | Reusable download trigger button        | ~40        |
 
 ### Component Location
 
@@ -205,11 +206,11 @@ src/app/(dashboard)/supplies/[id]/components/
 
 ## Hooks to Create
 
-| Hook | File Path | Purpose |
-|------|-----------|---------|
-| `useCloseSupply` | `src/hooks/useCloseSupply.ts` | Close supply mutation |
+| Hook                  | File Path                          | Purpose                    |
+| --------------------- | ---------------------------------- | -------------------------- |
+| `useCloseSupply`      | `src/hooks/useCloseSupply.ts`      | Close supply mutation      |
 | `useGenerateStickers` | `src/hooks/useGenerateStickers.ts` | Generate stickers mutation |
-| `useStickerPreview` | `src/hooks/useStickerPreview.ts` | Fetch sticker preview |
+| `useStickerPreview`   | `src/hooks/useStickerPreview.ts`   | Fetch sticker preview      |
 
 **Note**: `useDownloadDocument` hook already exists from Story 53.4-FE.
 
@@ -501,26 +502,26 @@ export function StickerFormatSelector({
 
 ## Sticker Format Reference
 
-| Format | MIME Type | Extension | Preview | Use Case |
-|--------|-----------|-----------|---------|----------|
-| PNG | `image/png` | `.png` | Yes | Standard inkjet/laser printers |
-| SVG | `image/svg+xml` | `.svg` | Yes | High quality, scalable printing |
-| ZPL | `application/octet-stream` | `.zpl` | No | Zebra thermal label printers |
+| Format | MIME Type                  | Extension | Preview | Use Case                        |
+| ------ | -------------------------- | --------- | ------- | ------------------------------- |
+| PNG    | `image/png`                | `.png`    | Yes     | Standard inkjet/laser printers  |
+| SVG    | `image/svg+xml`            | `.svg`    | Yes     | High quality, scalable printing |
+| ZPL    | `application/octet-stream` | `.zpl`    | No      | Zebra thermal label printers    |
 
 ---
 
 ## Error Handling
 
-| HTTP Status | Error Code | Message (Russian) | Action |
-|-------------|------------|-------------------|--------|
-| 400 | EMPTY_SUPPLY | "Невозможно закрыть пустую поставку" | Toast error |
-| 400 | INVALID_FORMAT | "Неверный формат стикера" | Toast error |
-| 401 | UNAUTHORIZED | "Сессия истекла" | Redirect to login |
-| 403 | FORBIDDEN | "Нет доступа к этой поставке" | Toast error |
-| 404 | NOT_FOUND | "Поставка не найдена" | Toast error |
-| 409 | ALREADY_CLOSED | "Поставка уже закрыта" | Toast error |
-| 409 | WRONG_STATUS | "Стикеры доступны только для закрытых поставок" | Toast error |
-| 500 | SERVER_ERROR | "Ошибка сервера" | Toast error, retry |
+| HTTP Status | Error Code     | Message (Russian)                               | Action             |
+| ----------- | -------------- | ----------------------------------------------- | ------------------ |
+| 400         | EMPTY_SUPPLY   | "Невозможно закрыть пустую поставку"            | Toast error        |
+| 400         | INVALID_FORMAT | "Неверный формат стикера"                       | Toast error        |
+| 401         | UNAUTHORIZED   | "Сессия истекла"                                | Redirect to login  |
+| 403         | FORBIDDEN      | "Нет доступа к этой поставке"                   | Toast error        |
+| 404         | NOT_FOUND      | "Поставка не найдена"                           | Toast error        |
+| 409         | ALREADY_CLOSED | "Поставка уже закрыта"                          | Toast error        |
+| 409         | WRONG_STATUS   | "Стикеры доступны только для закрытых поставок" | Toast error        |
+| 500         | SERVER_ERROR   | "Ошибка сервера"                                | Toast error, retry |
 
 ---
 
@@ -534,6 +535,7 @@ export function StickerFormatSelector({
 ### Test Cases
 
 #### CloseSupplyDialog
+
 - [ ] Dialog opens when `open={true}`
 - [ ] Shows orders count correctly
 - [ ] Cancel button closes dialog
@@ -543,18 +545,21 @@ export function StickerFormatSelector({
 - [ ] Error toast on failure
 
 #### StickerFormatSelector
+
 - [ ] All 3 formats rendered
 - [ ] PNG selected by default
 - [ ] Selection change triggers onChange
 - [ ] Disabled state works
 
 #### StickerPreview
+
 - [ ] Shows loading skeleton initially
 - [ ] Displays image for PNG/SVG
 - [ ] Shows info message for ZPL
 - [ ] Error state with retry button
 
 #### GenerateStickersModal
+
 - [ ] Modal opens correctly
 - [ ] Format selection works
 - [ ] Preview updates on format change
@@ -563,12 +568,14 @@ export function StickerFormatSelector({
 - [ ] Cancel button closes modal
 
 #### useCloseSupply Hook
+
 - [ ] Calls correct endpoint
 - [ ] Updates cache on success
 - [ ] Shows correct error messages
 - [ ] Invalidates queries
 
 #### useGenerateStickers Hook
+
 - [ ] Calls endpoint with format
 - [ ] Invalidates detail query on success
 - [ ] Handles errors correctly
@@ -609,18 +616,18 @@ export function StickerFormatSelector({
 
 ### Required (Blocking)
 
-| Dependency | Story | Status | Notes |
-|------------|-------|--------|-------|
-| Types & API Client | 53.1-FE | Required | StickerFormat type |
-| Supply Detail Page | 53.4-FE | Required | Integration point |
-| useDownloadDocument | 53.4-FE | Required | Download hook |
+| Dependency          | Story   | Status   | Notes              |
+| ------------------- | ------- | -------- | ------------------ |
+| Types & API Client  | 53.1-FE | Required | StickerFormat type |
+| Supply Detail Page  | 53.4-FE | Required | Integration point  |
+| useDownloadDocument | 53.4-FE | Required | Download hook      |
 
 ### Backend
 
-| Dependency | Endpoint | Status |
-|------------|----------|--------|
-| Close Supply | `POST /v1/supplies/:id/close` | Complete |
-| Generate Stickers | `POST /v1/supplies/:id/stickers` | Complete |
+| Dependency        | Endpoint                               | Status   |
+| ----------------- | -------------------------------------- | -------- |
+| Close Supply      | `POST /v1/supplies/:id/close`          | Complete |
+| Generate Stickers | `POST /v1/supplies/:id/stickers`       | Complete |
 | Download Document | `GET /v1/supplies/:id/documents/:type` | Complete |
 
 ---
@@ -699,9 +706,9 @@ src/
 
 ## Change Log
 
-| Date | Version | Description | Author |
-|------|---------|-------------|--------|
-| 2026-01-29 | 1.0 | Initial story creation | Claude Code (PM Agent) |
+| Date       | Version | Description            | Author                 |
+| ---------- | ------- | ---------------------- | ---------------------- |
+| 2026-01-29 | 1.0     | Initial story creation | Claude Code (PM Agent) |
 
 ---
 

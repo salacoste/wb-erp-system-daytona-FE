@@ -11,7 +11,7 @@ chars: 1731
 
 В этой статье:
 
-- 
+-
 - <a href="#poisk" rel="nofollow">Поиск</a>
 - <a href="#poryadok-i-otobrazhenie-stolbtsov" rel="nofollow">Порядок и отображение столбцов</a>
 - <a href="#filtry" rel="nofollow">Фильтры</a>

@@ -18,6 +18,7 @@
 **So that** I can safely integrate with the backend Supplies API endpoints.
 
 **Non-goals**:
+
 - React Query hooks (separate story)
 - UI components (stories 53.2-53.8)
 
@@ -98,10 +99,10 @@
 
 ### Files to Create
 
-| File | Lines (Est.) | Description |
-|------|--------------|-------------|
-| `src/types/supplies.ts` | ~180 | Supply types, status config |
-| `src/lib/api/supplies.ts` | ~150 | Supplies API client |
+| File                      | Lines (Est.) | Description                 |
+| ------------------------- | ------------ | --------------------------- |
+| `src/types/supplies.ts`   | ~180         | Supply types, status config |
+| `src/lib/api/supplies.ts` | ~150         | Supplies API client         |
 
 ### TypeScript Interfaces
 
@@ -866,15 +867,15 @@ const handleDownload = async (docType: DocumentType) => {
 
 ### Required (Blocking)
 
-| Dependency | Status | Notes |
-|------------|--------|-------|
-| Backend Epic 53 | ✅ Complete | Supply Management API |
-| `src/lib/api-client.ts` | ✅ Exists | Centralized API client |
+| Dependency              | Status      | Notes                  |
+| ----------------------- | ----------- | ---------------------- |
+| Backend Epic 53         | ✅ Complete | Supply Management API  |
+| `src/lib/api-client.ts` | ✅ Exists   | Centralized API client |
 
 ### Non-Blocking
 
-| Dependency | Status | Notes |
-|------------|--------|-------|
+| Dependency    | Status  | Notes                                 |
+| ------------- | ------- | ------------------------------------- |
 | Story 53.2-FE | Pending | Supplies List Page (uses these types) |
 | Story 53.4-FE | Pending | Supply Detail Page (uses these types) |
 
@@ -891,8 +892,8 @@ const handleDownload = async (docType: DocumentType) => {
 
 ## Change Log
 
-| Date | Author | Change |
-|------|--------|--------|
+| Date       | Author                 | Change        |
+| ---------- | ---------------------- | ------------- |
 | 2026-01-29 | Claude Code (PM Agent) | Initial draft |
 
 ---

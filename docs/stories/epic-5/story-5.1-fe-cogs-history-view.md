@@ -1,6 +1,7 @@
 # Story 5.1-fe: COGS History View
 
 ## Status
+
 Approved
 
 ## Story
@@ -12,11 +13,13 @@ Approved
 ## Acceptance Criteria
 
 ### Page & Navigation
+
 1. Доступна страница истории COGS по маршруту `/cogs/history?nmId={nmId}` или через кнопку "История" в product detail
 2. Заголовок страницы показывает название товара и текущий COGS
 3. Breadcrumb навигация: Главная → COGS → История → {Product Name}
 
 ### Table Display
+
 4. Таблица отображает все версии COGS с колонками:
    - Дата начала действия (`valid_from`)
    - Дата окончания (`valid_to`) или "Текущий"
@@ -36,6 +39,7 @@ Approved
    - ⚙️ system → tooltip "Системный пересчёт"
 
 ### Meta Information
+
 9. Карточка/header с meta информацией:
    - Название товара (`product_name`)
    - Текущий COGS (`current_cogs.unit_cost_rub`)
@@ -49,11 +53,13 @@ Approved
     ```
 
 ### Loading & Error States
+
 11. Skeleton loader во время загрузки данных
 12. Empty state если история пуста: "История изменений COGS пуста. Назначьте COGS товару для начала."
 13. Error state при ошибке API с кнопкой "Повторить"
 
 ### Soft-deleted Records (Admin/Owner)
+
 14. Checkbox "Показать удалённые" доступен для Owner/Admin
 15. **Удалённые записи стиль**: Серый фон + strikethrough текст
     - Сохраняет хронологический порядок (критично для аудита)
@@ -70,6 +76,7 @@ Approved
 16. Удалённые записи без кнопок действий
 
 ### Actions
+
 17. **Кнопки действий**: Dropdown menu "⋮" справа
     - Экономит горизонтальное пространство
     - Работает на touch-устройствах
@@ -135,20 +142,24 @@ Approved
 ### API Integration
 
 **Backend Endpoint:** `GET /v1/cogs/history`
+
 - Backend Story: `docs/stories/epic-5/story-5.1-view-cogs-history.md`
 - Backend Status: ✅ Done (QA PASSED 90/100)
 
 **Query params:**
+
 - `nm_id` (required) — Product ID
 - `limit` (optional, default 50, max 100)
 - `cursor` (optional) — pagination cursor
 - `include_deleted` (optional, boolean, default false)
 
 **Headers:**
+
 - `Authorization: Bearer <token>`
 - `X-Cabinet-Id: <uuid>`
 
 **Response:**
+
 ```typescript
 interface CogsHistoryResponse {
   data: CogsHistoryItem[];
@@ -185,6 +196,7 @@ interface CogsHistoryItem {
 ### Relevant Source Tree
 
 **New Files:**
+
 ```
 src/
 ├── app/(dashboard)/cogs/
@@ -204,6 +216,7 @@ src/
 ### Component Patterns
 
 **Affected Weeks Collapsible (UX Decision):**
+
 ```tsx
 function AffectedWeeksCell({ weeks }: { weeks: string[] }) {
   const [expanded, setExpanded] = useState(false);
@@ -225,6 +238,7 @@ function AffectedWeeksCell({ weeks }: { weeks: string[] }) {
 ```
 
 **Source Icon with Tooltip (UX Decision):**
+
 ```tsx
 const sourceConfig = {
   manual: { icon: '✏️', label: 'Ручной ввод' },
@@ -246,6 +260,7 @@ function SourceCell({ source }: { source: 'manual' | 'import' | 'system' }) {
 ```
 
 **Dropdown Actions (UX Decision):**
+
 ```tsx
 <DropdownMenu>
   <DropdownMenuTrigger asChild>
@@ -270,6 +285,7 @@ function SourceCell({ source }: { source: 'manual' | 'import' | 'system' }) {
 ```
 
 **Deleted Row Styling (UX Decision):**
+
 ```tsx
 <TableRow
   className={cn(
@@ -289,10 +305,12 @@ function SourceCell({ source }: { source: 'manual' | 'import' | 'system' }) {
 ### Testing
 
 **Test files:**
+
 - `src/hooks/useCogsHistory.test.ts`
 - `src/components/custom/CogsHistoryTable.test.tsx`
 
 **Test scenarios:**
+
 - History loads with multiple versions
 - Pagination works (cursor-based)
 - Empty history state displays correctly
@@ -314,34 +332,37 @@ function SourceCell({ source }: { source: 'manual' | 'import' | 'system' }) {
 
 ## UX Decisions (Resolved 2025-11-28)
 
-| # | Question | Decision | Rationale |
-|---|----------|----------|-----------|
-| 1 | affected_weeks | Collapsed "N недель" + expand | Чистота UI, детали по запросу |
-| 2 | source icons | ✏️📥⚙️ + tooltips | Интуитивно понятно с пояснениями |
-| 3 | nm_id в header | Мелкий текст под названием | Референс для WB, не перегружает |
-| 4 | Удалённые записи | Gray background + strikethrough | Сохраняет хронологию, очевидно |
-| 5 | Кнопки действий | Dropdown "⋮" | Экономия места, touch-friendly |
+| #   | Question         | Decision                        | Rationale                        |
+| --- | ---------------- | ------------------------------- | -------------------------------- |
+| 1   | affected_weeks   | Collapsed "N недель" + expand   | Чистота UI, детали по запросу    |
+| 2   | source icons     | ✏️📥⚙️ + tooltips               | Интуитивно понятно с пояснениями |
+| 3   | nm_id в header   | Мелкий текст под названием      | Референс для WB, не перегружает  |
+| 4   | Удалённые записи | Gray background + strikethrough | Сохраняет хронологию, очевидно   |
+| 5   | Кнопки действий  | Dropdown "⋮"                    | Экономия места, touch-friendly   |
 
 ## Change Log
 
-| Date | Version | Description | Author |
-|------|---------|-------------|--------|
-| 2025-11-28 | 1.0 | Initial story creation | Sarah (PO) |
-| 2025-11-28 | 1.1 | UX decisions applied, status → Approved | Sarah (PO) |
-| 2025-11-28 | 1.2 | Implementation complete, 50 tests passing, status → Dev Complete | James (Dev Agent) |
-| 2025-11-28 | 1.3 | QA PASS (95/100), status → Approved | Quinn (QA) |
+| Date       | Version | Description                                                      | Author            |
+| ---------- | ------- | ---------------------------------------------------------------- | ----------------- |
+| 2025-11-28 | 1.0     | Initial story creation                                           | Sarah (PO)        |
+| 2025-11-28 | 1.1     | UX decisions applied, status → Approved                          | Sarah (PO)        |
+| 2025-11-28 | 1.2     | Implementation complete, 50 tests passing, status → Dev Complete | James (Dev Agent) |
+| 2025-11-28 | 1.3     | QA PASS (95/100), status → Approved                              | Quinn (QA)        |
 
 ## Dev Agent Record
 
 ### Agent Model Used
+
 Claude Opus 4.5 (claude-opus-4-5-20251101)
 
 ### Debug Log References
+
 - Initial implementation: Tasks 1-7 completed successfully
 - Test fix: Rewrote tests from MSW-based to simple unit tests for Vitest compatibility
 - Hook enhancement: Added exported helper functions for testability
 
 ### Completion Notes List
+
 1. Created new hook `useCogsHistoryFull.ts` instead of using existing `useCogsHistory.ts` because the new `/v1/cogs/history` endpoint has different response shape (includes `meta`, `pagination`, `affected_weeks`)
 2. Installed shadcn components: `tooltip`, `collapsible`, `dropdown-menu`, `alert-dialog` (required for UX decisions)
 3. Extended `src/types/cogs.ts` with `CogsHistoryItem`, `CogsHistoryResponse`, `VersionChainInfo` interfaces
@@ -350,7 +371,9 @@ Claude Opus 4.5 (claude-opus-4-5-20251101)
 6. Also created placeholder implementations for Story 5.2-fe (`CogsEditDialog`) and Story 5.3-fe (`CogsDeleteDialog`) to allow CogsHistoryTable to compile with working actions
 
 ### File List
+
 **New Files Created:**
+
 ```
 src/app/(dashboard)/cogs/history/page.tsx              # COGS History page
 src/hooks/useCogsHistoryFull.ts                        # TanStack Query hook + helpers
@@ -369,11 +392,13 @@ src/components/ui/alert-dialog.tsx                     # shadcn component
 ```
 
 **Modified Files:**
+
 ```
 src/types/cogs.ts                                      # Added history types
 ```
 
 ### Test Results
+
 - `useCogsHistoryFull.test.ts`: 37 tests passed ✅
 - `CogsHistoryTable.test.tsx`: 13 tests passed ✅
 - Total: 50 tests passed
@@ -385,26 +410,31 @@ src/types/cogs.ts                                      # Added history types
 **Date**: 2025-11-28
 
 ### Summary
+
 Complete implementation with all 20 ACs met, 50 unit tests passing, excellent code organization with exported helper functions for testability.
 
 ### NFR Validation
-| NFR | Status | Notes |
-|-----|--------|-------|
-| Security | ✅ PASS | Role-based access control (Analyst=view only, Manager+=edit/delete, Owner/Admin=view deleted) |
-| Performance | ✅ PASS | TanStack Query with staleTime=1min/gcTime=5min, cursor-based pagination (25/page) |
-| Reliability | ✅ PASS | Comprehensive loading/error/empty states, retry button on errors |
-| Maintainability | ✅ PASS | Clean separation: hook (helpers) + component (UI), exported functions for testing |
-| Accessibility | ✅ PASS | WCAG AA compliant, proper ARIA labels, keyboard navigable dropdowns |
+
+| NFR             | Status  | Notes                                                                                         |
+| --------------- | ------- | --------------------------------------------------------------------------------------------- |
+| Security        | ✅ PASS | Role-based access control (Analyst=view only, Manager+=edit/delete, Owner/Admin=view deleted) |
+| Performance     | ✅ PASS | TanStack Query with staleTime=1min/gcTime=5min, cursor-based pagination (25/page)             |
+| Reliability     | ✅ PASS | Comprehensive loading/error/empty states, retry button on errors                              |
+| Maintainability | ✅ PASS | Clean separation: hook (helpers) + component (UI), exported functions for testing             |
+| Accessibility   | ✅ PASS | WCAG AA compliant, proper ARIA labels, keyboard navigable dropdowns                           |
 
 ### Test Coverage
+
 - **50 unit tests** (37 hook + 13 component)
 - All 20 acceptance criteria verified
 - Russian locale formatting tested
 
 ### Risks Identified
+
 None
 
 ### Recommendations
+
 - Future: Consider E2E tests for full history navigation workflow
 - Future: Consider visual regression tests for deleted row styling
 

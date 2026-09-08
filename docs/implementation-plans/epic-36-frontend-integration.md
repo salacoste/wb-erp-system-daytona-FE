@@ -13,6 +13,7 @@
 Epic 36 backend is **complete** and ready for frontend integration. This document provides a **step-by-step implementation plan** for frontend developers to add "Product Card Linking" (склейки) support to the advertising analytics page.
 
 **What We're Building**:
+
 - Toggle between "По артикулам" (individual SKUs) and "По склейкам" (merged groups)
 - Display merged product badges with tooltips showing all products in group
 - Proper ROAS/ROI calculations for merged groups (solves spend=0 but revenue>0 problem)
@@ -31,6 +32,7 @@ Epic 36 backend is **complete** and ready for frontend integration. This documen
 **Problem Solved**: Currently, products with `spend=0` but `revenue>0` show "🔵 Нет данных" status because WB attributes sales to merged cards without showing direct spend. Epic 36 groups all products with the same `imtId` to show correct aggregated metrics.
 
 **Example**:
+
 ```
 BEFORE (Epic 33 - individual SKUs):
 - ter-09: spend=0₽, revenue=1,105₽ → ROAS=null, status="unknown" ❌
@@ -227,6 +229,7 @@ export interface AdvertisingAnalyticsParams {
 ```
 
 **Testing**:
+
 ```bash
 cd frontend
 npm run type-check  # Verify TypeScript compilation
@@ -312,6 +315,7 @@ export async function getAdvertisingAnalytics(
 ```
 
 **Testing**:
+
 ```bash
 cd frontend
 npm run lint  # Verify ESLint passes
@@ -654,6 +658,7 @@ describe('MergedProductBadge', () => {
 ### Integration Tests
 
 **Test Scenarios**:
+
 1. ✅ Toggle switches between SKU and imtId modes
 2. ✅ API client sends correct `group_by` parameter
 3. ✅ Merged groups display with badge and tooltip
@@ -722,9 +727,11 @@ test.describe('Epic 36: Product Card Linking', () => {
 ### API Response Size
 
 **Before (group_by=sku)**:
+
 - 100 individual products → ~50KB response
 
 **After (group_by=imtId)**:
+
 - 20 merged groups + 30 individuals → ~35KB response (30% reduction)
 - `mergedProducts` array adds ~2KB per group (acceptable)
 
@@ -733,6 +740,7 @@ test.describe('Epic 36: Product Card Linking', () => {
 ### React Re-renders
 
 **State Updates**:
+
 - Toggling `groupBy` triggers full data refetch (expected)
 - React Query caches both `group_by=sku` and `group_by=imtId` responses separately
 - No unnecessary re-renders (memoized components)
@@ -748,6 +756,7 @@ test.describe('Epic 36: Product Card Linking', () => {
 **Scenario**: Product has `imtId=328632` but NO other products share this imtId.
 
 **Backend Response**:
+
 ```json
 {
   "type": "merged_group",
@@ -757,6 +766,7 @@ test.describe('Epic 36: Product Card Linking', () => {
 ```
 
 **Frontend Handling**:
+
 ```typescript
 // In MergedProductBadge.tsx
 if (mergedProducts.length === 1) {
@@ -771,6 +781,7 @@ if (mergedProducts.length === 1) {
 **Backend Response**: All products return `type='individual'`, `imtId=null`.
 
 **Frontend Behavior**:
+
 - No merged groups displayed
 - UI toggle still works (but shows same data as `group_by=sku`)
 - No errors, graceful degradation
@@ -780,6 +791,7 @@ if (mergedProducts.length === 1) {
 **Scenario**: API request fails due to network issues.
 
 **Frontend Handling**:
+
 ```typescript
 const { data, isLoading, error } = useAdvertisingAnalytics({
   ...dateRange,
@@ -851,17 +863,20 @@ Epic 36 frontend integration is **complete** when:
 ## 🔗 Resources
 
 ### Backend Documentation
+
 - **API Contract**: `frontend/docs/request-backend/83-epic-36-api-contract.md`
 - **API Reference**: `docs/API-PATHS-REFERENCE.md:986-1102`
 - **Epic 36 Main**: `docs/stories/epic-36/`
 - **Grafana Dashboard**: `monitoring/grafana/dashboards/epic-36-product-card-linking.json`
 
 ### Frontend Resources
+
 - **shadcn/ui Badge**: https://ui.shadcn.com/docs/components/badge
 - **shadcn/ui Tooltip**: https://ui.shadcn.com/docs/components/tooltip
 - **TanStack Query**: https://tanstack.com/query/latest/docs/react/overview
 
 ### Related Issues
+
 - **Request #82**: Card Linking Investigation (predecessor)
 - **Epic 33**: Advertising Analytics (baseline)
 - **Story 36.6**: Backend Testing & Observability (complete)
@@ -871,6 +886,7 @@ Epic 36 frontend integration is **complete** when:
 ## 📞 Support
 
 **For Questions**:
+
 - Backend API: See `frontend/docs/request-backend/83-epic-36-api-contract.md`
 - Frontend Implementation: This document
 - Slack: #epic-36-product-linking

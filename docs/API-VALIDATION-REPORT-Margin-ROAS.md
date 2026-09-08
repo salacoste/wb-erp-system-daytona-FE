@@ -10,11 +10,13 @@
 ## Executive Summary
 
 ### ✅ Finance Data: PRESENT
+
 - Weekly finance summaries are available for weeks 2025-W45 through 2025-W49
 - Sales revenue data is present (200K-300K RUB per week)
 - **Issue:** COGS data is NULL → Margin % cannot be calculated
 
 ### ✅ Advertising Data: PRESENT
+
 - 21 advertising campaigns found in database
 - Total spend: 48,491.68 RUB
 - Total revenue: 278,634 RUB
@@ -28,6 +30,7 @@
 ### 1. Finance Summary Data
 
 #### Available Weeks (Last 5 Weeks)
+
 ```
 Week       | Sale Gross Total | COGS Total | Gross Profit
 -----------|------------------|------------|-------------
@@ -39,6 +42,7 @@ Week       | Sale Gross Total | COGS Total | Gross Profit
 ```
 
 #### Key Fields Present (Week 2025-W47 Example)
+
 ```json
 {
   "sale_gross_total": 305778.32,
@@ -55,6 +59,7 @@ Week       | Sale Gross Total | COGS Total | Gross Profit
 **Issue:** `cogs_total` is NULL across all weeks → **Margin % cannot be calculated**
 
 **Margin % Formula:**
+
 ```javascript
 margin_pct = (gross_profit / sale_gross_total) * 100
 gross_profit = sale_gross_total - cogs_total
@@ -65,6 +70,7 @@ Since `cogs_total` is NULL, `gross_profit` is NULL, and therefore `margin_pct` c
 ### 2. Advertising Analytics Data
 
 #### Overall Statistics (Year 2025)
+
 ```json
 {
   "totalSpend": 48491.68,
@@ -82,11 +88,13 @@ Since `cogs_total` is NULL, `gross_profit` is NULL, and therefore `margin_pct` c
 ```
 
 #### Campaign Count
+
 - **Total campaigns:** 21
 - **Total spend:** 48,491.68 RUB
 - **Average ROAS:** 5.75 (excellent efficiency)
 
 #### Issue: Empty Response for Specific Date Ranges
+
 ```bash
 # Request: Week 2025-W47 (Nov 18-24, 2025)
 GET /v1/analytics/advertising?from=2025-11-18&to=2025-11-24&limit=1
@@ -107,10 +115,12 @@ Response:
 ### 3. Product Analytics Data
 
 #### Products Table
+
 - **Total products:** 57
 - **Items returned:** 0 (pagination issue or data structure problem)
 
 #### By-SKU Analytics (Week 2025-W47)
+
 ```bash
 GET /v1/analytics/weekly/by-sku?week=2025-W47&includeCogs=true
 Response:
@@ -129,9 +139,11 @@ Response:
 ## Root Cause Analysis
 
 ### Issue 1: Margin % Not Showing
+
 **Status:** ❌ **Backend Data Missing**
 
 **Root Cause:**
+
 1. COGS (Cost of Goods Sold) data has NOT been assigned to products
 2. Without COGS, the backend cannot calculate:
    - `gross_profit` (sale_gross_total - cogs_total)
@@ -140,14 +152,17 @@ Response:
 **Impact:** Dashboard cannot display Margin % metric
 
 **Solution Required:**
+
 1. Assign COGS to products via the COGS management UI
 2. Trigger margin recalculation after COGS assignment
 3. Backend will then populate `cogs_total` and `gross_profit` fields
 
 ### Issue 2: ROAS Showing "Нет данных за предыдущий период"
+
 **Status:** ⚠️ **Backend Data Present, Query Issue**
 
 **Root Cause:**
+
 1. Advertising data EXISTS in the database (21 campaigns, 48K spend)
 2. Advertising analytics endpoint returns empty arrays for specific date ranges
 3. Possible causes:
@@ -158,6 +173,7 @@ Response:
 **Impact:** Dashboard cannot display ROAS for the selected period
 
 **Solution Required:**
+
 1. Investigate advertising analytics endpoint query logic
 2. Check date range filtering in `/v1/analytics/advertising`
 3. Verify campaign status filtering (active vs all)
@@ -168,12 +184,14 @@ Response:
 ## Recommendations
 
 ### For Margin % Issue
+
 1. **Immediate:** Assign COGS to at least some products via COGS management UI
 2. **Verification:** Re-query `/v1/analytics/weekly/finance-summary?week=2025-W47`
 3. **Expected Result:** `cogs_total` should have a value, `gross_profit` should be calculated
 4. **Dashboard:** Margin % should then appear on the dashboard
 
 ### For ROAS Issue
+
 1. **Immediate:** Check advertising stats table for data by week
 2. **Debug:** Test `/v1/analytics/advertising` with different date ranges
 3. **Verify:** Confirm campaign date ranges align with queried weeks
@@ -211,20 +229,22 @@ X-Cabinet-Id: {cabinet_id}
 
 ### Data Status on Backend
 
-| Metric | Data Present | Issue | Action Required |
-|--------|--------------|-------|-----------------|
-| **Sales Revenue** | ✅ Yes | None | - |
-| **COGS** | ❌ No | Not assigned to products | Assign COGS via UI |
-| **Margin %** | ❌ No | Requires COGS | Assign COGS first |
-| **Advertising Spend** | ✅ Yes | 48K spend across 21 campaigns | - |
-| **ROAS (overall)** | ✅ Yes | 5.75 average | - |
-| **ROAS (per week)** | ⚠️ Query Issue | Empty response for specific weeks | Fix backend query |
+| Metric                | Data Present   | Issue                             | Action Required    |
+| --------------------- | -------------- | --------------------------------- | ------------------ |
+| **Sales Revenue**     | ✅ Yes         | None                              | -                  |
+| **COGS**              | ❌ No          | Not assigned to products          | Assign COGS via UI |
+| **Margin %**          | ❌ No          | Requires COGS                     | Assign COGS first  |
+| **Advertising Spend** | ✅ Yes         | 48K spend across 21 campaigns     | -                  |
+| **ROAS (overall)**    | ✅ Yes         | 5.75 average                      | -                  |
+| **ROAS (per week)**   | ⚠️ Query Issue | Empty response for specific weeks | Fix backend query  |
 
 **Summary:**
+
 - **Margin %:** Cannot be calculated because COGS data is missing from the database
 - **ROAS:** Data exists but backend query is not returning results for specific date ranges
 
 **Next Steps:**
+
 1. Assign COGS to products to enable Margin % calculation
 2. Debug advertising analytics endpoint for weekly ROAS display
 3. Verify frontend is handling null/empty responses correctly

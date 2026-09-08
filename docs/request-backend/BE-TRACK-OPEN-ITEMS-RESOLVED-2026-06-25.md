@@ -16,7 +16,7 @@
 
 `tax_amount` / `tax_base` / `effective_tax_rate` are set by the **tax engine** (`calculateTaxFields` → `taxResult`) in the main upsert — **always, regardless of the flag**. The reconcile then recomputes `net_profit = operating_profit − tax_amount` using that **existing, unchanged** `tax_amount`.
 
-**Conclusion:** Enabling `FEATURE_NET_PROFIT_RECONCILE` is **accounting-safe for ALL tax systems** (USN-6 and USN-15) — it never alters the tax owed, only corrects the net-profit-after-tax display. The "accounting sign-off" concern applied to a *deeper, separate* fix (widening `sumExpenses` in `tax-calculation.service.ts`, which would change the USN-15 tax base) — **that fix was deliberately NOT done** and remains the only true accounting-gated item.
+**Conclusion:** Enabling `FEATURE_NET_PROFIT_RECONCILE` is **accounting-safe for ALL tax systems** (USN-6 and USN-15) — it never alters the tax owed, only corrects the net-profit-after-tax display. The "accounting sign-off" concern applied to a _deeper, separate_ fix (widening `sumExpenses` in `tax-calculation.service.ts`, which would change the USN-15 tax base) — **that fix was deliberately NOT done** and remains the only true accounting-gated item.
 
 **Action:** Flag may be enabled globally. (Currently ON in dev for the USN-6 cabinet; safe for any USN-15 cabinet.)
 

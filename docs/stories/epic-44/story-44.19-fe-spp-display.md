@@ -17,6 +17,7 @@
 **So that** I understand what price my customers will actually see on WB.
 
 **Non-goals**:
+
 - SPP auto-detection from WB API
 - SPP history tracking
 - SPP per-product configuration
@@ -29,12 +30,14 @@
 **SPP** = Скидка Постоянного Покупателя (Permanent Buyer Discount)
 
 ### How SPP Works
+
 - WB provides this discount **at their expense**
 - Applied AFTER seller sets their price
 - Does NOT affect seller's revenue
 - Customers see the discounted price
 
 ### Formula
+
 ```typescript
 customer_price = recommended_price * (1 - spp_pct / 100)
 
@@ -45,6 +48,7 @@ customer_price = recommended_price * (1 - spp_pct / 100)
 ```
 
 ### Important Notes
+
 - **Seller receives full `recommended_price`** - SPP does not reduce seller revenue
 - SPP is provided by WB at their expense (WB subsidizes the discount)
 - SPP is informational - helps seller understand market positioning
@@ -52,7 +56,9 @@ customer_price = recommended_price * (1 - spp_pct / 100)
 - Common SPP values: 0% (new buyers), 5-10% (regular buyers), 15-30% (loyal buyers)
 
 ### WB Customer Price Display
+
 On Wildberries, customers see:
+
 ```
 Цена: ₽3,652.08 (was ₽4,057.87)
 Скидка: 10%
@@ -65,6 +71,7 @@ The seller sets ₽4,057.87 and receives ₽4,057.87 regardless of SPP.
 ## Acceptance Criteria
 
 ### AC1: SPP Input Field
+
 - [x] Input field for "СПП" (SPP percentage)
 - [x] Numeric input with % suffix
 - [x] Range: 0-30%
@@ -73,6 +80,7 @@ The seller sets ₽4,057.87 and receives ₽4,057.87 regardless of SPP.
 - [x] Slider + input for better UX (enhanced from spec)
 
 ### AC2: SPP Explanation
+
 - [x] Label: "СПП (Скидка постоянного покупателя)"
 - [x] Tooltip explaining:
   - SPP is provided by WB at their expense
@@ -80,12 +88,14 @@ The seller sets ₽4,057.87 and receives ₽4,057.87 regardless of SPP.
   - Shows what customer sees
 
 ### AC3: Customer Price Display
+
 - [x] Show calculated customer price in results section
 - [x] Format: "Цена для покупателя: X ₽"
 - [x] Badge showing SPP percentage (e.g., "СПП -10%")
 - [x] Only display if SPP > 0
 
 ### AC4: Price Comparison
+
 - [x] Show both prices side-by-side when SPP > 0:
   - "Ваша цена: X ₽"
   - "Цена для покупателя: Y ₽"
@@ -93,6 +103,7 @@ The seller sets ₽4,057.87 and receives ₽4,057.87 regardless of SPP.
 - [x] Difference amount: "Скидка WB: Z ₽"
 
 ### AC5: Form State Integration
+
 - [x] Store `spp_pct` in form state
 - [x] Customer price calculated client-side (not sent to API)
 - [x] SPP propagated to parent via callback for results display
@@ -127,6 +138,7 @@ const discountAmount = recommendedPrice - customerPrice
 ```
 
 **Why not backend:**
+
 - SPP does not affect seller revenue
 - SPP varies by customer loyalty level (0-30%)
 - It's purely informational for the seller
@@ -376,16 +388,16 @@ Results Section (when SPP > 0):
 
 ### Invariants & Edge Cases
 
-| Scenario | Handling |
-|----------|----------|
-| SPP = 0% | Don't show customer price section (seller price = customer price) |
-| SPP = 30% | Maximum value (show warning that real SPP varies) |
-| SPP > 30% | Validation error: "СПП не может превышать 30%" |
-| SPP negative | Validation error: "СПП не может быть отрицательным" |
-| No calculation result | Don't show customer price (nothing to calculate from) |
-| Form reset | Reset SPP to 0% (default) |
-| SPP decimal values | Allow (e.g., 10.5% for precision) |
-| Mobile viewport | Stack seller and customer prices vertically |
+| Scenario              | Handling                                                          |
+| --------------------- | ----------------------------------------------------------------- |
+| SPP = 0%              | Don't show customer price section (seller price = customer price) |
+| SPP = 30%             | Maximum value (show warning that real SPP varies)                 |
+| SPP > 30%             | Validation error: "СПП не может превышать 30%"                    |
+| SPP negative          | Validation error: "СПП не может быть отрицательным"               |
+| No calculation result | Don't show customer price (nothing to calculate from)             |
+| Form reset            | Reset SPP to 0% (default)                                         |
+| SPP decimal values    | Allow (e.g., 10.5% for precision)                                 |
+| Mobile viewport       | Stack seller and customer prices vertically                       |
 
 ---
 
@@ -419,6 +431,7 @@ Results Section (when SPP > 0):
 ## Testing Requirements
 
 ### Unit Tests
+
 - [ ] SppInput renders with default value
 - [ ] SppInput validates range (0-30%)
 - [ ] CustomerPriceDisplay shows when SPP > 0
@@ -426,6 +439,7 @@ Results Section (when SPP > 0):
 - [ ] Customer price calculated correctly
 
 ### Integration Tests
+
 - [ ] SPP input updates results display
 - [ ] Form reset clears SPP to 0
 - [ ] Customer price shows in results
@@ -435,19 +449,21 @@ Results Section (when SPP > 0):
 ## Dev Agent Record
 
 ### File List
-| File | Change Type | Lines (Est.) | Description |
-|------|-------------|--------------|-------------|
-| `src/components/custom/price-calculator/SppInput.tsx` | CREATE | ~60 | SPP input component |
-| `src/components/custom/price-calculator/CustomerPriceDisplay.tsx` | CREATE | ~70 | Customer price display |
-| `src/components/custom/price-calculator/PriceCalculatorForm.tsx` | UPDATE | +10 | Add SPP input |
-| `src/components/custom/price-calculator/PriceCalculatorResults.tsx` | UPDATE | +10 | Add customer price |
+
+| File                                                                | Change Type | Lines (Est.) | Description            |
+| ------------------------------------------------------------------- | ----------- | ------------ | ---------------------- |
+| `src/components/custom/price-calculator/SppInput.tsx`               | CREATE      | ~60          | SPP input component    |
+| `src/components/custom/price-calculator/CustomerPriceDisplay.tsx`   | CREATE      | ~70          | Customer price display |
+| `src/components/custom/price-calculator/PriceCalculatorForm.tsx`    | UPDATE      | +10          | Add SPP input          |
+| `src/components/custom/price-calculator/PriceCalculatorResults.tsx` | UPDATE      | +10          | Add customer price     |
 
 ### Change Log
-| Date | Agent | Change |
-|------|-------|--------|
+
+| Date       | Agent        | Change                                                                             |
+| ---------- | ------------ | ---------------------------------------------------------------------------------- |
 | 2026-01-21 | Dev Agent #5 | Components already existed - fixed SPP callback propagation in PriceCalculatorForm |
-| 2026-01-21 | Dev Agent #5 | Added unit tests for SppInput (18 tests) and CustomerPriceDisplay (19 tests) |
-| 2026-01-21 | Dev Agent #5 | Fixed commission propagation to use correct fields based on fulfillment type |
+| 2026-01-21 | Dev Agent #5 | Added unit tests for SppInput (18 tests) and CustomerPriceDisplay (19 tests)       |
+| 2026-01-21 | Dev Agent #5 | Fixed commission propagation to use correct fields based on fulfillment type       |
 
 ---
 
@@ -458,13 +474,14 @@ Results Section (when SPP > 0):
 **Gate Decision**: PASS
 
 ### AC Verification
-| AC | Requirement | Status | Evidence |
-|----|-------------|--------|----------|
-| AC1 | SPP Input Field | ✅ | SppInput.tsx with slider (0-30%, step 1%, default 0%) |
-| AC2 | SPP Explanation | ✅ | Tooltip with Russian text explaining SPP |
-| AC3 | Customer Price Display | ✅ | CustomerPriceDisplay.tsx, TwoLevelPriceHeader.tsx |
-| AC4 | Price Comparison | ✅ | Shows seller price vs customer price with WB discount |
-| AC5 | Form State Integration | ✅ | PriceCalculatorForm.tsx propagates SPP to parent |
+
+| AC  | Requirement            | Status | Evidence                                              |
+| --- | ---------------------- | ------ | ----------------------------------------------------- |
+| AC1 | SPP Input Field        | ✅     | SppInput.tsx with slider (0-30%, step 1%, default 0%) |
+| AC2 | SPP Explanation        | ✅     | Tooltip with Russian text explaining SPP              |
+| AC3 | Customer Price Display | ✅     | CustomerPriceDisplay.tsx, TwoLevelPriceHeader.tsx     |
+| AC4 | Price Comparison       | ✅     | Shows seller price vs customer price with WB discount |
+| AC5 | Form State Integration | ✅     | PriceCalculatorForm.tsx propagates SPP to parent      |
 
 ---
 

@@ -5,6 +5,7 @@
 **Status**: ✅ **AVAILABLE** (Epic 17 - COGS & Margin Feature Integration)
 **Component**: Backend API - Analytics Module
 **Endpoints**:
+
 - `GET /v1/analytics/weekly/by-sku`
 - `GET /v1/analytics/weekly/by-brand`
 - `GET /v1/analytics/weekly/by-category`
@@ -17,6 +18,7 @@
 ## Feature Description
 
 Backend теперь поддерживает **профитабельность и маржинальность** в аналитике через новый query parameter `includeCogs`. Когда `includeCogs=true`, API возвращает дополнительные поля:
+
 - **COGS** (Cost of Goods Sold) - себестоимость товаров
 - **Gross Profit** - валовая прибыль (выручка - себестоимость)
 - **Margin %** - процент маржи
@@ -74,6 +76,7 @@ interface SkuAnalyticsDto {
 ```
 
 **Formula Clarification** (Story 17.4):
+
 - **Gross Profit**: `revenue_net - cogs` (NOT `revenue - expenses`)
 - **Margin %**: `(gross_profit / |revenue_net|) × 100%`
 - **Markup %**: `(gross_profit / |cogs|) × 100%`
@@ -135,12 +138,14 @@ interface CategoryAnalyticsDto {
 ### Example 1: SKU Analytics WITHOUT COGS (Default Behavior)
 
 **Request**:
+
 ```bash
 GET /v1/analytics/weekly/by-sku?week=2025-W03
 X-Cabinet-Id: cab-123
 ```
 
 **Response** (backward compatible):
+
 ```json
 {
   "items": [
@@ -166,12 +171,14 @@ X-Cabinet-Id: cab-123
 ### Example 2: SKU Analytics WITH COGS
 
 **Request**:
+
 ```bash
 GET /v1/analytics/weekly/by-sku?week=2025-W03&includeCogs=true
 X-Cabinet-Id: cab-123
 ```
 
 **Response**:
+
 ```json
 {
   "items": [
@@ -217,12 +224,14 @@ X-Cabinet-Id: cab-123
 ### Example 3: Brand Analytics WITH COGS
 
 **Request**:
+
 ```bash
 GET /v1/analytics/weekly/by-brand?week=2025-W03&includeCogs=true
 X-Cabinet-Id: cab-123
 ```
 
 **Response**:
+
 ```json
 {
   "items": [
@@ -252,22 +261,26 @@ X-Cabinet-Id: cab-123
 ### Backend Architecture (Epic 17)
 
 **Story 17.1**: Import Pipeline Integration
+
 - Margin calculation automatically triggered after weekly aggregation
 - Data stored in `weekly_margin_fact` table
 - Graceful error handling (import never fails due to margin calc errors)
 
 **Story 17.2**: API includeCogs Flag
+
 - Query parameter `includeCogs` added to all 3 analytics endpoints
 - Backward compatible (default: `false`)
 - Single additional DB query when `includeCogs=true` (no N+1 issues)
 - HashMap-based O(1) lookup for merging margin data
 
 **Story 17.3**: Background Job for Recalculation
+
 - Manual trigger via `/v1/tasks/enqueue` for historical data backfill
 - Supports batch processing of multiple weeks
 - Idempotent (safe to re-run)
 
 **Story 17.4**: Documentation Accuracy
+
 - Fixed misleading DTO comments
 - Corrected formulas in Swagger documentation
 - Added references to PO documentation
@@ -423,6 +436,7 @@ function ProfitabilityDashboard() {
 ### Breaking Changes
 
 ❌ **None** - Fully backward compatible
+
 - Parameter `includeCogs` is optional (default: `false`)
 - Existing API calls work without any changes
 - New fields only present when explicitly requested
@@ -458,6 +472,7 @@ X-Cabinet-Id: cab-123
 ### Missing COGS Handling
 
 When COGS data is unavailable for a SKU:
+
 - `cogs`, `profit`, `margin_pct`, `markup_percent` return `null`
 - `missing_cogs_flag` returns `true`
 - Frontend should show appropriate UI (e.g., "No COGS data available")

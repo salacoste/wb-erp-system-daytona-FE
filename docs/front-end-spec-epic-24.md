@@ -10,14 +10,17 @@
 ## 1. Overview
 
 ### 1.1 Purpose
+
 This specification defines the UI/UX requirements for the Paid Storage Analytics feature, enabling sellers to analyze storage costs by SKU, identify expensive products, and optimize warehouse strategy.
 
 ### 1.2 Scope
+
 - New analytics page: `/analytics/storage`
 - 6 main components (Stories 24.1-fe to 24.6-fe)
 - Integration with existing design system
 
 ### 1.3 Business Goals
+
 1. **Cost Visibility**: Show per-product storage costs
 2. **Trend Analysis**: Visualize cost changes over time
 3. **Optimization**: Identify products with high storage-to-revenue ratio
@@ -31,19 +34,20 @@ This specification defines the UI/UX requirements for the Paid Storage Analytics
 
 All icons must use Lucide React for consistency with the existing design system.
 
-| Context | Icon | Size | Color |
-|---------|------|------|-------|
-| Page header | `Warehouse` | 24px | `text-muted-foreground` |
-| Trends section | `TrendingUp` / `TrendingDown` | 20px | Contextual (red/green) |
-| Top consumers | `Trophy`, `Medal` | 16px | Gold/Silver/Bronze |
-| Table section | `List` | 20px | `text-muted-foreground` |
-| Import | `Upload` | 16px | Primary |
-| Search | `Search` | 16px | `text-muted-foreground` |
-| Scheduler | `Clock` | 16px | `text-muted-foreground` |
+| Context        | Icon                          | Size | Color                   |
+| -------------- | ----------------------------- | ---- | ----------------------- |
+| Page header    | `Warehouse`                   | 24px | `text-muted-foreground` |
+| Trends section | `TrendingUp` / `TrendingDown` | 20px | Contextual (red/green)  |
+| Top consumers  | `Trophy`, `Medal`             | 16px | Gold/Silver/Bronze      |
+| Table section  | `List`                        | 20px | `text-muted-foreground` |
+| Import         | `Upload`                      | 16px | Primary                 |
+| Search         | `Search`                      | 16px | `text-muted-foreground` |
+| Scheduler      | `Clock`                       | 16px | `text-muted-foreground` |
 
 ### 2.2 Color Palette
 
 #### Primary Colors (from Design Kit)
+
 ```css
 --primary: #E53935;        /* Primary Red */
 --primary-dark: #D32F2F;   /* Hover states */
@@ -51,6 +55,7 @@ All icons must use Lucide React for consistency with the existing design system.
 ```
 
 #### Storage Analytics Colors (New)
+
 ```css
 --storage-purple: #7C4DFF;      /* Storage metrics, charts */
 --storage-purple-light: rgba(124, 77, 255, 0.1);  /* Backgrounds */
@@ -68,15 +73,15 @@ All icons must use Lucide React for consistency with the existing design system.
 
 ### 2.3 Typography
 
-| Element | Size | Weight | Line Height |
-|---------|------|--------|-------------|
-| Page title | 24px | 600 (semibold) | 32px |
-| Section header | 18px | 600 (semibold) | 24px |
-| Card metric value | 32px | 700 (bold) | 40px |
-| Card metric label | 14px | 400 (regular) | 20px |
-| Table header | 14px | 500 (medium) | 20px |
-| Table cell | 14px | 400 (regular) | 20px |
-| Badge text | 12px | 500 (medium) | 16px |
+| Element           | Size | Weight         | Line Height |
+| ----------------- | ---- | -------------- | ----------- |
+| Page title        | 24px | 600 (semibold) | 32px        |
+| Section header    | 18px | 600 (semibold) | 24px        |
+| Card metric value | 32px | 700 (bold)     | 40px        |
+| Card metric label | 14px | 400 (regular)  | 20px        |
+| Table header      | 14px | 500 (medium)   | 20px        |
+| Table cell        | 14px | 400 (regular)  | 20px        |
+| Badge text        | 12px | 500 (medium)   | 16px        |
 
 ### 2.4 Spacing
 
@@ -123,11 +128,11 @@ All icons must use Lucide React for consistency with the existing design system.
 
 ### 3.2 Responsive Breakpoints
 
-| Breakpoint | Width | Layout Changes |
-|------------|-------|----------------|
-| Desktop | ≥1280px | Full layout, 4 cards in row |
-| Tablet | 768-1279px | 2 cards per row, full-width sections |
-| Mobile | <768px | 1 card per row, horizontal scroll for table |
+| Breakpoint | Width      | Layout Changes                              |
+| ---------- | ---------- | ------------------------------------------- |
+| Desktop    | ≥1280px    | Full layout, 4 cards in row                 |
+| Tablet     | 768-1279px | 2 cards per row, full-width sections        |
+| Mobile     | <768px     | 1 card per row, horizontal scroll for table |
 
 ### 3.3 Grid System
 
@@ -165,12 +170,14 @@ All icons must use Lucide React for consistency with the existing design system.
 ```
 
 **States**:
+
 - Links: `text-muted-foreground`, hover: `text-foreground`
 - Current page: `text-foreground`, no link
 
 ### 4.2 Page Header
 
 **Layout**:
+
 ```
 ┌─────────────────────────────────────────────────────────────────┐
 │ <Warehouse/> Аналитика расходов на хранение    [Импорт данных]  │
@@ -178,6 +185,7 @@ All icons must use Lucide React for consistency with the existing design system.
 ```
 
 **Specifications**:
+
 - Icon: `Warehouse` (24px, `text-muted-foreground`)
 - Title: 24px semibold
 - Import button: Primary variant, visible only for Manager/Owner roles
@@ -185,6 +193,7 @@ All icons must use Lucide React for consistency with the existing design system.
 ### 4.3 Filters Row
 
 **Layout**:
+
 ```
 ┌─────────────────────────────────────────────────────────────────┐
 │ Период: [W44 ▼] - [W47 ▼]   Бренды: [Все ▼]   Склады: [Все ▼]  │
@@ -192,18 +201,21 @@ All icons must use Lucide React for consistency with the existing design system.
 ```
 
 **Week Range Picker**:
+
 - Two dropdowns: Start week, End week
 - Format: `Wxx` (e.g., W44)
 - Default: Last 4 weeks to last completed week
 - Validation: Start ≤ End
 
 **Brand Multi-Select**:
+
 - Default: "Все бренды" (all selected)
 - Chip display for selected items
 - Clear all button
 - Search within dropdown
 
 **Warehouse Multi-Select**:
+
 - Same pattern as Brand filter
 - Default: "Все склады"
 
@@ -211,14 +223,15 @@ All icons must use Lucide React for consistency with the existing design system.
 
 **Card Grid (4 cards)**:
 
-| Card | Metric | Format | Icon |
-|------|--------|--------|------|
-| Total | `total_storage_cost` | `125,000 ₽` | None |
-| Products | `products_count` | `150` | None |
-| Average | `avg_cost_per_product` | `833 ₽` | None |
-| Period | `period.days_count` | `28 дней` | None |
+| Card     | Metric                 | Format      | Icon |
+| -------- | ---------------------- | ----------- | ---- |
+| Total    | `total_storage_cost`   | `125,000 ₽` | None |
+| Products | `products_count`       | `150`       | None |
+| Average  | `avg_cost_per_product` | `833 ₽`     | None |
+| Period   | `period.days_count`    | `28 дней`   | None |
 
 **Card Design**:
+
 ```
 ┌─────────────────┐
 │   125,000 ₽     │  ← 32px bold, text-foreground
@@ -227,6 +240,7 @@ All icons must use Lucide React for consistency with the existing design system.
 ```
 
 **States**:
+
 - Loading: Skeleton animation
 - Error: "-" with tooltip
 - Zero: "0 ₽" (not dash)
@@ -236,6 +250,7 @@ All icons must use Lucide React for consistency with the existing design system.
 **Component**: `AreaChart` (Recharts)
 
 **Specifications**:
+
 - Height: 300px
 - X-axis: Week labels (W44, W45, etc.)
 - Y-axis: Currency values (abbreviated: 28k, 30k)
@@ -244,21 +259,25 @@ All icons must use Lucide React for consistency with the existing design system.
 - Dots: 8px circles, white stroke
 
 **Header**:
+
 ```
 <TrendingUp/> Динамика расходов на хранение     Тренд: +5.2%
 ```
 
 **Summary Stats Bar**:
+
 ```
 Мин: 28,000 ₽  |  Макс: 32,000 ₽  |  Среднее: 30,250 ₽
 ```
 
 **Trend Badge Colors**:
+
 - Increasing (bad): Red background, TrendingUp icon
 - Decreasing (good): Green background, TrendingDown icon
 - Neutral (0%): Gray background, no icon
 
 **Null Data Handling**:
+
 - Show gaps in line (don't interpolate)
 - Dashed circle marker for null points
 - Tooltip: "Нет данных за эту неделю"
@@ -267,23 +286,26 @@ All icons must use Lucide React for consistency with the existing design system.
 
 **Table (5 rows)**:
 
-| # | Товар | Хранение | % общих | Хран/Выр % |
-|---|-------|----------|---------|------------|
-| 🏆 1 | Пальто зимнее XL | 3,500 ₽ | 12.5% | 23.3% ● |
+| #    | Товар            | Хранение | % общих | Хран/Выр % |
+| ---- | ---------------- | -------- | ------- | ---------- |
+| 🏆 1 | Пальто зимнее XL | 3,500 ₽  | 12.5%   | 23.3% ●    |
 
 **Rank Indicators**:
+
 - Rank 1: `Trophy` icon (gold/yellow-500)
 - Rank 2: `Medal` icon (silver/gray-400)
 - Rank 3: `Medal` icon (bronze/amber-600)
 - Ranks 4-5: Number only (gray text)
 
 **Storage-to-Revenue Ratio Colors**:
-- >20%: Red dot + bold red text
+
+- > 20%: Red dot + bold red text
 - 10-20%: Yellow dot
 - <10%: Green dot
 - null: Gray dot
 
 **Tooltip for Ratio**:
+
 ```
 Отношение расходов на хранение к выручке.
 Высокое значение (>20%) означает, что товар
@@ -292,59 +314,69 @@ All icons must use Lucide React for consistency with the existing design system.
 ```
 
 **Footer**:
+
 ```
 [Показать все →]
 ```
+
 - Links to/scrolls to full table section
 
 ### 4.7 Storage by SKU Table
 
 **Columns**:
 
-| Column | Width | Sortable | Format |
-|--------|-------|----------|--------|
-| Артикул | 100px | No | Link |
-| Название | 250px | No | Truncate 45 chars + tooltip |
-| Бренд | 120px | No | Text |
-| Хранение | 100px | Yes ↓ | Currency |
-| ₽/день | 80px | Yes | Currency |
-| Объём | 70px | Yes | Number + "л" |
-| Склады | 150px | No | Badges |
-| Дней | 60px | Yes | Number |
+| Column   | Width | Sortable | Format                      |
+| -------- | ----- | -------- | --------------------------- |
+| Артикул  | 100px | No       | Link                        |
+| Название | 250px | No       | Truncate 45 chars + tooltip |
+| Бренд    | 120px | No       | Text                        |
+| Хранение | 100px | Yes ↓    | Currency                    |
+| ₽/день   | 80px  | Yes      | Currency                    |
+| Объём    | 70px  | Yes      | Number + "л"                |
+| Склады   | 150px | No       | Badges                      |
+| Дней     | 60px  | Yes      | Number                      |
 
 **Warehouse Badges**:
+
 ```
 [Коледино] [Подольск] [+3]
                        ↑ Tooltip with full list
 ```
+
 - Max 2 visible badges
 - Overflow: "+N" secondary badge with tooltip
 
 **Product Name Truncation**:
+
 ```
 Футболка хлопок мужская с принтом...
                                  ↑ Tooltip with full name
 ```
+
 - Max 45 characters
 - Ellipsis + tooltip for longer names
 
 **Search**:
+
 - Debounced input (500ms)
 - Searches: nm_id, vendor_code
 - Placeholder: "Поиск по артикулу"
 
 **Pagination**:
+
 - Cursor-based
 - 20 items per page
 - Controls: [← Пред] [1] [2] [3] [След →]
 - Counter: "Показано 1-20 из 150"
 
 **Row Hover**:
+
 - Background: `bg-muted/50`
 - Cursor: pointer
 - Click: Navigate to `/analytics/sku?nm_id={nm_id}`
 
 **Empty State**:
+
 ```
 ┌─────────────────────────────────────────┐
 │         📦                               │
@@ -360,6 +392,7 @@ All icons must use Lucide React for consistency with the existing design system.
 **States**:
 
 #### Initial State
+
 ```
 ┌─────────────────────────────────────────────────────────────┐
 │ <Upload/> Импорт данных о хранении                    [X]   │
@@ -381,6 +414,7 @@ All icons must use Lucide React for consistency with the existing design system.
 ```
 
 #### Processing State
+
 ```
 ┌─────────────────────────────────────────────────────────────┐
 │ <Upload/> Импорт данных о хранении                    [X]   │
@@ -397,6 +431,7 @@ All icons must use Lucide React for consistency with the existing design system.
 ```
 
 #### Close Confirmation (AlertDialog)
+
 ```
 ┌─────────────────────────────────────────────────────────────┐
 │  Прервать импорт?                                           │
@@ -411,6 +446,7 @@ All icons must use Lucide React for consistency with the existing design system.
 ```
 
 #### Success State
+
 ```
 ┌─────────────────────────────────────────────────────────────┐
 │ <Upload/> Импорт данных о хранении                    [X]   │
@@ -427,6 +463,7 @@ All icons must use Lucide React for consistency with the existing design system.
 ```
 
 #### Error State
+
 ```
 ┌─────────────────────────────────────────────────────────────┐
 │ <Upload/> Импорт данных о хранении                    [X]   │
@@ -443,6 +480,7 @@ All icons must use Lucide React for consistency with the existing design system.
 ```
 
 **Date Validation**:
+
 - Max range: 8 days
 - No future dates
 - From ≤ To
@@ -455,6 +493,7 @@ All icons must use Lucide React for consistency with the existing design system.
 ### 5.1 Loading Skeletons
 
 **Summary Cards**:
+
 ```
 ┌─────────────────┐
 │ ████████████    │  ← Skeleton pulse animation
@@ -463,15 +502,18 @@ All icons must use Lucide React for consistency with the existing design system.
 ```
 
 **Table**:
+
 - Header: Static
 - Rows: 5 skeleton rows with pulsing cells
 
 **Chart**:
+
 - Full-height skeleton with pulse
 
 ### 5.2 Error States
 
 **Page-Level Error**:
+
 ```
 ┌─────────────────────────────────────────────────────────────┐
 │                          ⚠️                                  │
@@ -482,6 +524,7 @@ All icons must use Lucide React for consistency with the existing design system.
 ```
 
 **Section-Level Error**:
+
 - Show error message in place of content
 - Retry button
 - Other sections continue to work
@@ -489,6 +532,7 @@ All icons must use Lucide React for consistency with the existing design system.
 ### 5.3 Empty States
 
 **No Data for Period**:
+
 ```
 ┌─────────────────────────────────────────────────────────────┐
 │                          📦                                  │
@@ -506,13 +550,13 @@ All icons must use Lucide React for consistency with the existing design system.
 
 ### 6.1 Keyboard Navigation
 
-| Component | Keys | Action |
-|-----------|------|--------|
-| Filters | Tab | Move between filters |
-| Table | Tab, Arrow keys | Navigate rows |
-| Table row | Enter, Space | Select/activate row |
-| Dialog | Escape | Close dialog |
-| Dialog | Tab | Move between elements |
+| Component | Keys            | Action                |
+| --------- | --------------- | --------------------- |
+| Filters   | Tab             | Move between filters  |
+| Table     | Tab, Arrow keys | Navigate rows         |
+| Table row | Enter, Space    | Select/activate row   |
+| Dialog    | Escape          | Close dialog          |
+| Dialog    | Tab             | Move between elements |
 
 ### 6.2 Screen Reader Support
 
@@ -525,6 +569,7 @@ All icons must use Lucide React for consistency with the existing design system.
 ### 6.3 Color Contrast
 
 All text meets WCAG AA standards:
+
 - Normal text: 4.5:1 minimum
 - Large text: 3:1 minimum
 - Interactive elements: 3:1 minimum
@@ -541,12 +586,12 @@ All text meets WCAG AA standards:
 
 ### 7.1 Load Times
 
-| Metric | Target | Measurement |
-|--------|--------|-------------|
-| First Contentful Paint | <1s | Lighthouse |
-| Time to Interactive | <2s | Lighthouse |
-| API Response (p95) | <500ms | Backend |
-| Chart Render | <200ms | Performance API |
+| Metric                 | Target | Measurement     |
+| ---------------------- | ------ | --------------- |
+| First Contentful Paint | <1s    | Lighthouse      |
+| Time to Interactive    | <2s    | Lighthouse      |
+| API Response (p95)     | <500ms | Backend         |
+| Chart Render           | <200ms | Performance API |
 
 ### 7.2 Bundle Size
 
@@ -566,11 +611,11 @@ All text meets WCAG AA standards:
 
 ### 8.1 Unit Tests
 
-| Component | Coverage Target |
-|-----------|-----------------|
-| Hooks | >80% |
-| Helper functions | >90% |
-| Components | >70% |
+| Component        | Coverage Target |
+| ---------------- | --------------- |
+| Hooks            | >80%            |
+| Helper functions | >90%            |
+| Components       | >70%            |
 
 ### 8.2 Integration Tests
 
@@ -666,6 +711,6 @@ The following features are explicitly out of scope for MVP:
 
 **Document Control**
 
-| Version | Date | Author | Changes |
-|---------|------|--------|---------|
-| 1.0 | 2025-11-29 | Sally (UX Expert) | Initial specification |
+| Version | Date       | Author            | Changes               |
+| ------- | ---------- | ----------------- | --------------------- |
+| 1.0     | 2025-11-29 | Sally (UX Expert) | Initial specification |

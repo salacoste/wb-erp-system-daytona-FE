@@ -6,6 +6,7 @@
 **Component**: Backend API — Analytics (by-SKU)
 **Requester**: Frontend Team (competitor-parity program)
 **Related**:
+
 - Competitor parity spec: `docs/competitor-analysis/competitor-financial-report-parity.md` (FR-5, §3-B/D fields O/Z/AO)
 - FE price calculator (has СПП): `src/app/(dashboard)/.../price-calculator`
 - FE orders (has cancellations): `src/lib/api/orders`
@@ -32,10 +33,10 @@ Closes fields Z, O, AO of the parity matrix.
 
 ## Current state (what we have)
 
-| Field | Where it exists today | In by-SKU analytics? |
-|---|---|---|
-| СПП (₽) | orders / price-calculator | ❌ not in `MarginAnalyticsSku` |
-| Отмены (шт) | orders data | ❌ not in finance model |
+| Field            | Where it exists today      | In by-SKU analytics?                               |
+| ---------------- | -------------------------- | -------------------------------------------------- |
+| СПП (₽)          | orders / price-calculator  | ❌ not in `MarginAnalyticsSku`                     |
+| Отмены (шт)      | orders data                | ❌ not in finance model                            |
 | Доп. расходы (₽) | partially in WB deductions | ⚠️ `other_adjustments` (cabinet), not per-SKU sold |
 
 The data exists in adjacent tables — this is a wiring/aggregation task, not new data collection.
@@ -70,6 +71,7 @@ interface MarginAnalyticsSkuOpsFields {
 ## Acceptance (FE side)
 
 When per-SKU СПП / cancellations / extra-costs land:
+
 - FE adds "СПП", "Отмены", "Доп. расходы" columns to `SkuFinancialsTable` (+ aggregates), currency-formatted, consistent with sibling cost columns.
 - Optional: "средняя цена продажи" (AX) recalculated net of СПП (currently `gross/qty`).
 

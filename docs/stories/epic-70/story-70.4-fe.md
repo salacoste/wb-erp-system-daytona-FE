@@ -1,12 +1,12 @@
 # Story 70.4-FE: Fix NaN Guard in Supply Planning Formatter
 
-| Field | Value |
-|-------|-------|
-| Epic | 70-FE Validation Fixes |
-| Priority | P2 |
-| SP | 1 |
-| Status | 📋 Ready for Dev |
-| Group | D (D-13) |
+| Field    | Value                  |
+| -------- | ---------------------- |
+| Epic     | 70-FE Validation Fixes |
+| Priority | P2                     |
+| SP       | 1                      |
+| Status   | 📋 Ready for Dev       |
+| Group    | D (D-13)               |
 
 ## Description
 
@@ -72,9 +72,9 @@ One-line change: `if (value === 0)` → `if (!Number.isFinite(value) || value ==
 
 ## Files to Modify
 
-| File | Change | Lines |
-|------|--------|-------|
-| `src/lib/supply-planning-utils.ts` | Add `Number.isFinite` guard | 266 |
+| File                               | Change                      | Lines |
+| ---------------------------------- | --------------------------- | ----- |
+| `src/lib/supply-planning-utils.ts` | Add `Number.isFinite` guard | 266   |
 
 ## Test Plan
 

@@ -13,6 +13,7 @@
 Implement the Sales COGS Metric Card component that displays the Cost of Goods Sold (COGS) for actual sales (vykypy/redemptions) on the main dashboard. This is distinct from "COGS by Orders" which calculates COGS for all orders including cancelled/unredeemed items.
 
 **Key Distinction**:
+
 - **COGS by Orders**: Calculated for ALL orders placed (potential inventory commitment)
 - **COGS by Sales (this card)**: Calculated only for ACTUAL completed sales (vykypy)
 
@@ -46,6 +47,7 @@ The card must also show COGS coverage percentage and provide a warning when cove
 **Alternative (recommended for totals)**: `/v1/analytics/cabinet-summary?weeks=1`
 
 **Response Fields Used (by-sku)**:
+
 ```typescript
 interface BySkuItem {
   nm_id: string;
@@ -75,6 +77,7 @@ const cogsCoverage = productsTotal > 0 ? (productsWithCogs / productsTotal) * 10
 ```
 
 **Alternative Response (cabinet-summary)**:
+
 ```typescript
 interface CabinetSummaryResponse {
   summary: {
@@ -228,16 +231,16 @@ export function useCabinetSummary(weeks: number = 1) {
 
 ### Colors
 
-| Element | Color | Hex |
-|---------|-------|-----|
-| Icon | Gray | `#757575` |
-| Main Value | Gray | `#6B7280` (text-gray-500) |
-| Positive Trend (costs down) | Green | `#22C55E` |
-| Negative Trend (costs up) | Red | `#EF4444` |
-| Warning Background | Yellow Light | `#FEF3C7` (yellow-100) |
-| Warning Text | Yellow Dark | `#CA8A04` (yellow-600) |
-| Warning Icon | Yellow | `#EAB308` (yellow-500) |
-| Link Text | Primary Red | `#E53935` |
+| Element                     | Color        | Hex                       |
+| --------------------------- | ------------ | ------------------------- |
+| Icon                        | Gray         | `#757575`                 |
+| Main Value                  | Gray         | `#6B7280` (text-gray-500) |
+| Positive Trend (costs down) | Green        | `#22C55E`                 |
+| Negative Trend (costs up)   | Red          | `#EF4444`                 |
+| Warning Background          | Yellow Light | `#FEF3C7` (yellow-100)    |
+| Warning Text                | Yellow Dark  | `#CA8A04` (yellow-600)    |
+| Warning Icon                | Yellow       | `#EAB308` (yellow-500)    |
+| Link Text                   | Primary Red  | `#E53935`                 |
 
 ### Dimensions
 
@@ -259,29 +262,29 @@ export function useCabinetSummary(weeks: number = 1) {
 
 ## Files to Create/Modify
 
-| File | Action | Description |
-|------|--------|-------------|
-| `src/components/custom/dashboard/SalesCogsMetricCard.tsx` | Create | Main COGS metric card component |
-| `src/components/custom/dashboard/index.ts` | Modify | Add SalesCogsMetricCard export |
-| `src/components/custom/dashboard/__tests__/SalesCogsMetricCard.test.tsx` | Create | Unit tests |
-| `src/hooks/useSalesCogsMetrics.ts` | Create | Optional: Dedicated aggregation hook |
+| File                                                                     | Action | Description                          |
+| ------------------------------------------------------------------------ | ------ | ------------------------------------ |
+| `src/components/custom/dashboard/SalesCogsMetricCard.tsx`                | Create | Main COGS metric card component      |
+| `src/components/custom/dashboard/index.ts`                               | Modify | Add SalesCogsMetricCard export       |
+| `src/components/custom/dashboard/__tests__/SalesCogsMetricCard.test.tsx` | Create | Unit tests                           |
+| `src/hooks/useSalesCogsMetrics.ts`                                       | Create | Optional: Dedicated aggregation hook |
 
 ---
 
 ## Dependencies
 
-| Type | Dependency | Status |
-|------|------------|--------|
-| API | `/v1/analytics/weekly/by-sku?includeCogs=true` | Available |
-| API | `/v1/analytics/cabinet-summary` | Available |
-| Component | `ComparisonBadge` | Exists |
-| Component | `TrendIndicator` | Exists |
-| Component | `StandardMetricSkeleton` | Exists |
-| Component | `MetricCardError` | Exists |
-| Utility | `formatCurrency` | Exists |
-| Utility | `calculateComparison` | Exists |
-| Route | `ROUTES.COGS.SINGLE` | Exists in `@/lib/routes` |
-| Pattern | `OrdersCogsMetricCard` | Reference implementation |
+| Type      | Dependency                                     | Status                   |
+| --------- | ---------------------------------------------- | ------------------------ |
+| API       | `/v1/analytics/weekly/by-sku?includeCogs=true` | Available                |
+| API       | `/v1/analytics/cabinet-summary`                | Available                |
+| Component | `ComparisonBadge`                              | Exists                   |
+| Component | `TrendIndicator`                               | Exists                   |
+| Component | `StandardMetricSkeleton`                       | Exists                   |
+| Component | `MetricCardError`                              | Exists                   |
+| Utility   | `formatCurrency`                               | Exists                   |
+| Utility   | `calculateComparison`                          | Exists                   |
+| Route     | `ROUTES.COGS.SINGLE`                           | Exists in `@/lib/routes` |
+| Pattern   | `OrdersCogsMetricCard`                         | Reference implementation |
 
 ---
 
@@ -441,9 +444,9 @@ Fill in COGS for all products to get accurate profit calculations.
 
 ## Change Log
 
-| Date | Author | Change |
-|------|--------|--------|
-| 2026-01-31 | PM | Initial story creation |
+| Date       | Author | Change                 |
+| ---------- | ------ | ---------------------- |
+| 2026-01-31 | PM     | Initial story creation |
 
 ---
 
@@ -452,6 +455,7 @@ Fill in COGS for all products to get accurate profit calculations.
 **Component**: `src/components/custom/dashboard/SalesCogsMetricCard.tsx`
 **Lines**: 167
 **Key Features**:
+
 - Displays aggregated COGS total for completed sales
 - COGS coverage percentage with warning state (<100%)
 - "COGS not filled" state when coverage = 0%

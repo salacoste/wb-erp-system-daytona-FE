@@ -36,6 +36,7 @@
 **Resolution date**: 2026-02-14
 **Summary**: Added missing COGS fields to `GET /v1/analytics/orders/volume` response. Endpoint now returns `by_day_with_cogs[]` array with COGS data alongside order volume data. Frontend card "COGS по заказам" can now display correct amounts.
 **Remaining frontend action**: None - COGS fields now available in orders/volume response.
+
 ```json
 {
   "total_orders": 25,
@@ -68,11 +69,11 @@ interface OrdersVolumeWithCogsResponse extends OrdersVolumeResponse {
 
 ## Влияние
 
-| Элемент UI | Ожидание | Факт |
-|------------|----------|------|
-| Карточка "COGS по заказам" | ~45 000 ₽ | **0 ₽** |
-| Маржинальность заказов | ~96% | Не показывается |
-| Покрытие COGS (заказы) | 80% | 0% |
+| Элемент UI                 | Ожидание    | Факт               |
+| -------------------------- | ----------- | ------------------ |
+| Карточка "COGS по заказам" | ~45 000 ₽   | **0 ₽**            |
+| Маржинальность заказов     | ~96%        | Не показывается    |
+| Покрытие COGS (заказы)     | 80%         | 0%                 |
 | Теор. прибыль → ordersCogs | Учитывается | **Не учитывается** |
 
 ---
@@ -80,6 +81,7 @@ interface OrdersVolumeWithCogsResponse extends OrdersVolumeResponse {
 ## Ожидаемая логика расчёта
 
 Для каждого заказа за период `from`–`to`:
+
 1. Найти `product_id` из заказа
 2. Найти действующий COGS на дату заказа (`valid_from <= order_date`)
 3. `order_cogs = order_quantity × product_cogs`
@@ -89,10 +91,10 @@ interface OrdersVolumeWithCogsResponse extends OrdersVolumeResponse {
 
 ## Разница COGS выкупов vs COGS заказов
 
-| Метрика | Источник | Описание |
-|---------|---------|----------|
-| **COGS выкупов** | `finance-summary.cogs_total` | COGS по **фактическим выкупам** (товар продан и оплачен WB) |
-| **COGS по заказам** | `orders/volume.cogs_total` | COGS по **всем заказам** (включая pending, confirm, cancel) |
+| Метрика             | Источник                     | Описание                                                    |
+| ------------------- | ---------------------------- | ----------------------------------------------------------- |
+| **COGS выкупов**    | `finance-summary.cogs_total` | COGS по **фактическим выкупам** (товар продан и оплачен WB) |
+| **COGS по заказам** | `orders/volume.cogs_total`   | COGS по **всем заказам** (включая pending, confirm, cancel) |
 
 Обе метрики нужны — заказы показывают ожидаемую себестоимость, выкупы — фактическую.
 
@@ -141,38 +143,44 @@ print('summary_rus.cogs_total:', d.get('summary_rus',{}).get('cogs_total'))
 
 ### Новые COGS-поля (при `include_cogs=true`)
 
-| Поле | Тип | Описание |
-|------|-----|----------|
-| `cogs_total` | number | Сумма себестоимости заказов с COGS (₽) |
-| `gross_profit` | number | `total_amount - cogs_total` (₽) |
-| `margin_pct` | number | `(gross_profit / total_amount) * 100` |
-| `orders_with_cogs` | number | Кол-во заказов с привязанным COGS |
-| `cogs_coverage_pct` | number | `(orders_with_cogs / totalOrders) * 100` |
-| `avg_cogs_per_order` | number | `cogs_total / orders_with_cogs` (₽) |
-| `by_day_with_cogs` | Array | Дневная разбивка: `{date, count, amount, cogs, profit}` |
+| Поле                 | Тип    | Описание                                                |
+| -------------------- | ------ | ------------------------------------------------------- |
+| `cogs_total`         | number | Сумма себестоимости заказов с COGS (₽)                  |
+| `gross_profit`       | number | `total_amount - cogs_total` (₽)                         |
+| `margin_pct`         | number | `(gross_profit / total_amount) * 100`                   |
+| `orders_with_cogs`   | number | Кол-во заказов с привязанным COGS                       |
+| `cogs_coverage_pct`  | number | `(orders_with_cogs / totalOrders) * 100`                |
+| `avg_cogs_per_order` | number | `cogs_total / orders_with_cogs` (₽)                     |
+| `by_day_with_cogs`   | Array  | Дневная разбивка: `{date, count, amount, cogs, profit}` |
 
 ### COGS Temporal Matching
+
 - `LEFT JOIN LATERAL` с условиями: `valid_from <= order_date AND (valid_to IS NULL OR valid_to > order_date) AND is_active = true`
 - Type cast: `orders_fbs.nm_id::text` → `cogs.nm_id` (varchar)
 
 ### Edge Case (нет COGS данных)
+
 Поля присутствуют но с нулевыми значениями: `cogs_total=0`, `margin_pct=100`, `by_day_with_cogs=[]`
 
 ### Обратная совместимость
-| Сценарий | Результат |
-|----------|-----------|
-| `include_cogs=true` + данные COGS | Все 7 полей заполнены |
-| `include_cogs=true` + нет COGS | Поля с нулями/пустыми |
+
+| Сценарий                             | Результат                         |
+| ------------------------------------ | --------------------------------- |
+| `include_cogs=true` + данные COGS    | Все 7 полей заполнены             |
+| `include_cogs=true` + нет COGS       | Поля с нулями/пустыми             |
 | `include_cogs=false` или отсутствует | Стандартный ответ, БЕЗ COGS полей |
 
 ### Тесты
+
 4 новых тест-кейса в `test-api/14-orders.http`:
+
 1. Happy path — include_cogs=true с данными
 2. Default — без параметра (обратная совместимость)
 3. Explicit false — include_cogs=false
 4. No data — include_cogs=true без COGS записей
 
 ### Фронтенд-интеграция
+
 - `useOrdersCogs.ts` уже отправляет `include_cogs=true` — теперь бэкенд возвращает данные
 - `transformToCogsMetrics()` получит реальные значения вместо 0
 - Карточка "COGS по заказам" покажет актуальную себестоимость

@@ -24,6 +24,7 @@
 This story implements seasonal pattern visualization for FBS Historical Analytics. The component displays aggregated patterns across different time dimensions (monthly, weekly, quarterly) to help sellers identify recurring demand patterns and optimize their business operations.
 
 Key features:
+
 - Tab navigation between pattern types
 - Bar charts showing average orders per period
 - Seasonality index highlighting peaks and lows
@@ -154,14 +155,14 @@ Mobile (stacked):
 
 ## Components to Create
 
-| File | Lines (Est.) | Description |
-|------|--------------|-------------|
-| `SeasonalPatternsChart.tsx` | ~120 | Main container with tabs |
-| `MonthlyPatternChart.tsx` | ~80 | 12-month bar chart |
-| `WeekdayPatternChart.tsx` | ~70 | 7-day bar chart |
-| `QuarterlyPatternChart.tsx` | ~60 | 4-quarter bar chart |
-| `SeasonalInsightsCard.tsx` | ~60 | Peak/low insights display |
-| `PatternBar.tsx` | ~50 | Individual bar with tooltip |
+| File                        | Lines (Est.) | Description                 |
+| --------------------------- | ------------ | --------------------------- |
+| `SeasonalPatternsChart.tsx` | ~120         | Main container with tabs    |
+| `MonthlyPatternChart.tsx`   | ~80          | 12-month bar chart          |
+| `WeekdayPatternChart.tsx`   | ~70          | 7-day bar chart             |
+| `QuarterlyPatternChart.tsx` | ~60          | 4-quarter bar chart         |
+| `SeasonalInsightsCard.tsx`  | ~60          | Peak/low insights display   |
+| `PatternBar.tsx`            | ~50          | Individual bar with tooltip |
 
 **Total**: ~440 lines across 6 files
 
@@ -755,17 +756,17 @@ test('Insights card displays correctly', async ({ page }) => {
 
 ### Required (Blocking)
 
-| Dependency | Status | Notes |
-|------------|--------|-------|
-| Story 51.1-FE | Complete | Seasonal types |
-| Story 51.2-FE | Complete | `useFbsSeasonal` hook |
-| shadcn/ui Tabs | Installed | Tab component |
-| shadcn/ui Tooltip | Installed | Tooltip component |
+| Dependency        | Status    | Notes                 |
+| ----------------- | --------- | --------------------- |
+| Story 51.1-FE     | Complete  | Seasonal types        |
+| Story 51.2-FE     | Complete  | `useFbsSeasonal` hook |
+| shadcn/ui Tabs    | Installed | Tab component         |
+| shadcn/ui Tooltip | Installed | Tooltip component     |
 
 ### Non-Blocking
 
-| Dependency | Status | Notes |
-|------------|--------|-------|
+| Dependency    | Status  | Notes              |
+| ------------- | ------- | ------------------ |
 | Story 51.8-FE | Pending | FBS Analytics Page |
 
 ---
@@ -811,20 +812,20 @@ const WEEKDAY_LABELS = ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс']
 
 ### Color Reference
 
-| Condition | Color | Tailwind |
-|-----------|-------|----------|
-| Peak (highest) | Green | `bg-green-500` |
-| High season (>1.2x) | Light green | `bg-green-400` |
-| Normal (0.8-1.2x) | Blue | `bg-blue-400` |
-| Low season (<0.8x) | Light orange | `bg-orange-300` |
-| Lowest | Orange | `bg-orange-400` |
+| Condition           | Color        | Tailwind        |
+| ------------------- | ------------ | --------------- |
+| Peak (highest)      | Green        | `bg-green-500`  |
+| High season (>1.2x) | Light green  | `bg-green-400`  |
+| Normal (0.8-1.2x)   | Blue         | `bg-blue-400`   |
+| Low season (<0.8x)  | Light orange | `bg-orange-300` |
+| Lowest              | Orange       | `bg-orange-400` |
 
 ---
 
 ## Change Log
 
-| Date | Author | Change |
-|------|--------|--------|
+| Date       | Author                 | Change                 |
+| ---------- | ---------------------- | ---------------------- |
 | 2026-01-29 | Claude Code (PM Agent) | Initial story creation |
 
 ---

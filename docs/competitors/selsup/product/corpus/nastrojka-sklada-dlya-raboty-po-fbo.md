@@ -15,7 +15,7 @@ chars: 6961
 
 В этой статье:
 
-- 
+-
 - <a href="#dlya-kogo-i-zachem" rel="nofollow">Для кого и зачем?</a>
 - <a href="#nastrojka-virtualnogo-sklada-fbo" rel="nofollow">Настройка виртуального склада FBO</a>
 - <a href="#priemka-ostatkov" rel="nofollow">Приемка остатков</a>
@@ -68,6 +68,7 @@ chars: 6961
 ![](../../out/selsup.ru/_kage/selsup.ru/wp-content/webp-express/webp-images/uploads/2024/05/screenshot_4.png.webp)
 
 Таким образом по API подтянутся остатки товаров по FBO:\
+
 - В информацию по товарам — столбец **Остатки FBO** в разделе ["Товары"](https://selsup.ru/application/products);\
 - В отчеты.
 
@@ -95,6 +96,7 @@ chars: 6961
 ## Отличия остатков FBO и FBS
 
 [В этой статье](../razlichiya-ostatkov/index.html) подробно рассказали:\
+
 - Чем остатки FBO отличаются от остатков FBS;\
 - В чем различия виртуального склада, виртуальных остатков по FBO и остатков передающихся по API.
 

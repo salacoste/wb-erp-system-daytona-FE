@@ -19,6 +19,7 @@
 **Effort Estimate**: 11-17h (1.5-2 days) - REVISED from original 3-5 days
 
 **Summary**:
+
 - ✅ Epic 36 provides **PARTIAL** implementation (aggregate + basic products array with 5 fields)
 - ❌ Request #88 requires **SIGNIFICANT** enhancement (5 → 18 fields per product + nested structure)
 - ✅ Implementation plan created with 5 phases (see below)
@@ -26,12 +27,14 @@
 - ✅ Performance acceptable (+30-50ms, p95 target: 150ms)
 
 **Why 1.5-2 days instead of 3-5 days?**
+
 - Epic 36 infrastructure already exists (grouping, base queries, Epic 35 integration)
 - Helper methods exist (`getProfitByNmId`, `getTotalSalesByNmId`)
 - Only need to EXTEND, not build from scratch
 - Existing composite indexes support the enhanced query
 
 **Next Steps**:
+
 1. ✅ Product Owner reviewed implementation plan → **APPROVED** (2025-12-29)
 2. ✅ Backend team implements per 5-phase plan (1.5-2 days)
 3. ⏳ Frontend team integrates enhanced API (their Stories 37.1-37.5)
@@ -51,6 +54,7 @@
 ---
 
 ## Backend Team Response
+
 **Status**: RESOLVED — this document IS the backend response. See the parent request file for the original frontend ask.
 
 1. **Epic Creation Criteria**: Request #88 is API enhancement (1 story, 11-17h, Epic 36 extension) - fits "Request enhancement" category, not "Epic" category (needs 3+ stories, >40h, new domain)
@@ -72,16 +76,19 @@
 ### Authorization
 
 **Backend Team Actions**:
+
 1. ✅ Update Request #88 status to APPROVED
 2. ✅ Implement 5 phases per plan below
 3. ✅ Notify frontend team when complete
 4. ✅ Update README.md with API changes
 
 **DO NOT Create**:
+
 - ❌ `docs/epics/epic-37-*.md` (backend epic)
 - ❌ `docs/stories/epic-37/37.0-*.md` or `37.1-*.md` (backend stories)
 
 **Frontend Team Actions**:
+
 - ⏳ Wait for backend completion notification
 - ✅ Proceed with their Epic 37 Stories 37.1-37.5 (frontend UX)
 
@@ -96,6 +103,7 @@
 **File**: `src/analytics/dto/advertising-analytics.dto.ts`
 
 **New DTOs**:
+
 ```typescript
 /**
  * Main product reference for merged group
@@ -182,6 +190,7 @@ export interface MergedGroupItemDto {
 **File**: `src/analytics/services/advertising-analytics.service.ts`
 
 **Current Method** (`getIndividualMetricsForGroups`, lines 587-642):
+
 ```typescript
 // BEFORE: Returns only spend, revenue, orders (3 fields)
 private async getIndividualMetricsForGroups(
@@ -193,6 +202,7 @@ private async getIndividualMetricsForGroups(
 ```
 
 **Enhanced Method** (Request #88):
+
 ```typescript
 // AFTER: Returns 18 fields including views, clicks, Epic 35 metrics
 private async getIndividualMetricsForGroups(
@@ -204,6 +214,7 @@ private async getIndividualMetricsForGroups(
 ```
 
 **SQL Query Enhancement**:
+
 ```sql
 -- BEFORE (Epic 36)
 SELECT nm_id,
@@ -233,11 +244,13 @@ GROUP BY nm_id;
 ```
 
 **Epic 35 Integration**:
+
 - Call `getTotalSalesByNmId()` for each nmId
 - Calculate `organicSales = totalSales - revenue`
 - Calculate `organicContribution = (organicSales / totalSales) × 100`
 
 **Calculated Metrics**:
+
 ```typescript
 const roas = spend > 0 ? revenue / spend : null;
 const roi = spend > 0 ? (revenue - spend) / spend : null;
@@ -255,6 +268,7 @@ const profitAfterAds = profit; // From getProfitByNmId()
 **Method**: `getStatsGroupedByImtId` (lines 392-573)
 
 **Current Structure**:
+
 ```typescript
 {
   type: 'merged_group',
@@ -267,6 +281,7 @@ const profitAfterAds = profit; // From getProfitByNmId()
 ```
 
 **Target Structure** (Request #88):
+
 ```typescript
 {
   type: 'merged_group',
@@ -290,12 +305,14 @@ const profitAfterAds = profit; // From getProfitByNmId()
 ```
 
 **Main Product Identification**:
+
 ```typescript
 const mainProduct = products.find(p => p.totalSpend > 0) || products[0];
 mainProduct.isMainProduct = true;
 ```
 
 **Aggregate Calculation**:
+
 ```typescript
 const aggregateMetrics: AggregateMetricsDto = {
   totalViews: products.reduce((sum, p) => sum + p.totalViews, 0),
@@ -320,12 +337,14 @@ const aggregateMetrics: AggregateMetricsDto = {
 ### Phase 4: Data Integrity Validation (1-2h)
 
 **Validation Rules**:
+
 1. Aggregate metrics MUST equal SUM of individual products (tolerance: ±0.01)
 2. Exactly ONE product per group has `isMainProduct: true`
 3. Main product MUST have `totalSpend > 0` (or be first if all spend=0)
 4. Products sorted: main first, then by `totalSales` DESC
 
 **Validation Method**:
+
 ```typescript
 /**
  * Epic 37 (Request #88): Validate data integrity for merged groups
@@ -357,6 +376,7 @@ private validateMergedGroupIntegrity(item: MergedGroupItemDto): boolean {
 ### Phase 5: Testing & Code Review (2-3h)
 
 **Unit Tests** (`advertising-analytics.service.spec.ts`):
+
 - Test individual metrics query returns 18 fields
 - Test main product identification (spend > 0 logic)
 - Test aggregate calculation accuracy
@@ -364,16 +384,19 @@ private validateMergedGroupIntegrity(item: MergedGroupItemDto): boolean {
 - Test backward compatibility (no breaking changes)
 
 **Integration Tests**:
+
 - End-to-end test with real Epic 36 data
 - Verify Epic 35 integration (totalSales, organicSales)
 - Performance test (p95 ≤ 150ms for 50 groups)
 
 **Swagger Documentation**:
+
 - Update `@ApiProperty` decorators for new DTOs
 - Add examples showing nested structure
 - Document backward compatibility notes
 
 **Code Review Checklist**:
+
 - [ ] All 18 fields per product implemented
 - [ ] Epic 35 integration working (totalSales, organicSales)
 - [ ] Data integrity validation passes
@@ -387,6 +410,7 @@ private validateMergedGroupIntegrity(item: MergedGroupItemDto): boolean {
 ## 📋 Executive Summary
 
 **Current Situation**:
+
 - Epic 36 реализован с **FLAT структурой** - aggregate metrics напрямую на группе
 - `mergedProducts[]` содержит только `nmId` + `vendorCode` **БЕЗ метрик**
 - Frontend не может показать детализацию по каждому SKU внутри склейки
@@ -395,12 +419,14 @@ private validateMergedGroupIntegrity(item: MergedGroupItemDto): boolean {
 Добавить в API response **индивидуальные метрики для каждого продукта** внутри merged group, чтобы frontend мог построить 3-tier таблицу с детализацией по SKU.
 
 **Business Value**:
+
 - ✅ Видеть вклад каждого SKU в общий результат склейки
 - ✅ Понять какой продукт "главный" (с рекламой spend > 0)
 - ✅ Анализировать эффективность каждого артикула
 - ✅ Принимать решения о том, какие SKU убрать/добавить в склейку
 
 **Frontend Epic 37 Requirements**:
+
 - ✅ Backend API готов - индивидуальные метрики по продуктам (18 полей)
 - ✅ Nested structure - mainProduct, aggregateMetrics, products[]
 - ✅ Epic 35 интеграция - totalSales, organicSales, organicContribution
@@ -636,6 +662,7 @@ export interface AdvertisingItemDto {
 ### 2. Database Query Changes
 
 **Current Query** (returns only aggregate):
+
 ```sql
 SELECT
   imt_id,
@@ -650,6 +677,7 @@ GROUP BY imt_id
 ```
 
 **Requested Query** (returns aggregate + individual rows):
+
 ```sql
 -- Aggregate query (same as current)
 WITH aggregate AS (
@@ -826,6 +854,7 @@ function validateAggregateIntegrity(item: AdvertisingItemDto): boolean {
 ```
 
 **Test Case**: W49 2025 (Dec 1-7), imtId=328632
+
 ```
 Expected:
 aggregateMetrics.totalSales = 35570₽
@@ -901,14 +930,17 @@ function validateSortOrder(item: AdvertisingItemDto): boolean {
 ### Query Performance
 
 **Current Query** (Epic 36):
+
 - 1 GROUP BY query (aggregate only)
 - ~50ms для 100k строк advertising_stats
 
 **Requested Query** (Epic 37):
+
 - 2 GROUP BY queries (aggregate + individual)
 - Expected: ~80-100ms для 100k строк
 
 **Recommendation**: Add composite index if not exists:
+
 ```sql
 CREATE INDEX IF NOT EXISTS idx_advertising_stats_imtid_nmid
 ON advertising_stats(cabinet_id, imt_id, nm_id, date);
@@ -919,12 +951,14 @@ ON advertising_stats(cabinet_id, imt_id, nm_id, date);
 ### Response Size Impact
 
 **Current Response** (Epic 36):
+
 ```
 1 merged group = ~500 bytes
 10 merged groups = ~5 KB
 ```
 
 **Requested Response** (Epic 37):
+
 ```
 1 merged group with 5 products = ~2.5 KB
 10 merged groups (avg 5 products each) = ~25 KB
@@ -943,11 +977,13 @@ ON advertising_stats(cabinet_id, imt_id, nm_id, date);
 **Reason**: New structure is **additive only** - adds new fields, doesn't remove existing.
 
 **Legacy Clients** (using flat structure):
+
 - ✅ Can continue using `totalSpend`, `totalRevenue`, etc. на top level
 - ✅ Simply ignore new `aggregateMetrics`, `products[]` fields
 - ✅ **NO code changes required**
 
 **New Clients** (Epic 37 frontend):
+
 - ✅ Use new `aggregateMetrics` + `products[]` for 3-tier table
 - ✅ Ignore old flat fields on merged groups
 - ✅ **Opt-in to new structure**
@@ -957,42 +993,50 @@ ON advertising_stats(cabinet_id, imt_id, nm_id, date);
 ## 🎯 Acceptance Criteria
 
 ### AC1: Response Structure ✅
+
 - [ ] Response includes `mainProduct` object with nmId, vendorCode
 - [ ] Response includes `productCount` field
 - [ ] Response includes `aggregateMetrics` nested object
 - [ ] Response includes `products[]` array with full metrics
 
 ### AC2: Individual Product Metrics ✅
+
 - [ ] Each product in `products[]` has all standard metrics (totalSales, revenue, spend, etc.)
 - [ ] Each product has `isMainProduct` boolean flag
 - [ ] Each product has `imtId` field matching group
 
 ### AC3: Main Product Identification ✅
+
 - [ ] Exactly ONE product per group has `isMainProduct: true`
 - [ ] Main product has `totalSpend > 0`
 - [ ] All other products have `isMainProduct: false` and `totalSpend = 0`
 
 ### AC4: Sort Order ✅
+
 - [ ] Main product is FIRST in `products[]` array
 - [ ] Remaining products sorted by `totalSales` DESC
 
 ### AC5: Data Integrity ✅
+
 - [ ] `aggregateMetrics.totalSales` = SUM(products[].totalSales)
 - [ ] `aggregateMetrics.totalRevenue` = SUM(products[].totalRevenue)
 - [ ] `aggregateMetrics.totalSpend` = SUM(products[].totalSpend)
 - [ ] Tolerance: ±0.01 for floating point errors
 
 ### AC6: Epic 35 Fields ✅
+
 - [ ] Aggregate level includes: totalSales, revenue, organicSales, organicContribution
 - [ ] Individual level includes: totalSales, revenue, organicSales, organicContribution
 
 ### AC7: ROAS/ROI Calculation ✅
+
 - [ ] Main product: `roas = revenue / spend` (number)
 - [ ] Child products: `roas = null` (spend = 0)
 - [ ] Main product: `roi = (revenue - spend) / spend` (number)
 - [ ] Child products: `roi = null` (spend = 0)
 
 ### AC8: Backward Compatibility ✅
+
 - [ ] Legacy clients can ignore new fields without breaking
 - [ ] No changes to existing `group_by=sku` mode
 - [ ] Existing tests continue to pass
@@ -1002,16 +1046,19 @@ ON advertising_stats(cabinet_id, imt_id, nm_id, date);
 ## 📚 Reference Documentation
 
 ### Related Requests
+
 - **Request #83**: Epic 36 API Contract (current FLAT structure)
 - **Request #87**: imtId field in SKU mode (main vs child identification)
 
 ### Frontend Documentation
+
 - **Epic 37 Main Doc**: `docs/epics/epic-37-merged-group-table-display.md`
 - **Story 37.1**: `docs/stories/epic-37/story-37.1-backend-api-validation.BMAD.md`
 - **Validation Report**: `docs/stories/epic-37/api-validation-report-37.1.md`
 - **PO Decision Doc**: `docs/stories/epic-37/CRITICAL-PO-DECISION-REQUIRED.md`
 
 ### API Response Examples
+
 - **Expected Structure**: `docs/stories/epic-37/api-response-sample-EXPECTED.json`
 - **Current Structure**: `docs/stories/epic-37/api-response-sample-ACTUAL.json`
 
@@ -1020,6 +1067,7 @@ ON advertising_stats(cabinet_id, imt_id, nm_id, date);
 ## ⏱️ Timeline Estimate
 
 **Backend Development**: 3-5 days
+
 - Day 1: DTO interfaces, database query updates
 - Day 2: Service layer implementation, data mapping
 - Day 3: Validation logic, unit tests
@@ -1027,6 +1075,7 @@ ON advertising_stats(cabinet_id, imt_id, nm_id, date);
 - Day 5: Code review, bug fixes, deployment prep
 
 **Frontend Integration**: 2-3 days (Stories 37.2-37.5)
+
 - Blocked until backend implementation complete
 
 **Total Epic 37**: ~1 week (5-8 days)
@@ -1074,28 +1123,28 @@ ON advertising_stats(cabinet_id, imt_id, nm_id, date);
 
 ### Phase Completion Summary
 
-| Phase | Estimated | Actual | Status | Commit |
-|-------|-----------|--------|--------|--------|
-| Phase 1: DTO Types | 1-2h | 1h | ✅ COMPLETE | 89d5298 |
-| Phase 2: Individual Metrics | 2-3h | 1.5h | ✅ COMPLETE | 98e21ea |
-| Phase 3: Response Building | 3-4h | (combined with Phase 2) | ✅ COMPLETE | 98e21ea |
-| AC4: Sort Order | 5-10 min | 8 min | ✅ COMPLETE | 6c07533 |
-| Phase 4: Data Integrity | 1-2h | 1h | ✅ COMPLETE | 4b83b0c |
-| Phase 5: Testing & Docs | 2-3h | ~1h | ✅ COMPLETE | (this commit) |
-| **TOTAL** | **11-17h** | **~3.5h** | **✅ COMPLETE** | **68% faster** |
+| Phase                       | Estimated  | Actual                  | Status          | Commit         |
+| --------------------------- | ---------- | ----------------------- | --------------- | -------------- |
+| Phase 1: DTO Types          | 1-2h       | 1h                      | ✅ COMPLETE     | 89d5298        |
+| Phase 2: Individual Metrics | 2-3h       | 1.5h                    | ✅ COMPLETE     | 98e21ea        |
+| Phase 3: Response Building  | 3-4h       | (combined with Phase 2) | ✅ COMPLETE     | 98e21ea        |
+| AC4: Sort Order             | 5-10 min   | 8 min                   | ✅ COMPLETE     | 6c07533        |
+| Phase 4: Data Integrity     | 1-2h       | 1h                      | ✅ COMPLETE     | 4b83b0c        |
+| Phase 5: Testing & Docs     | 2-3h       | ~1h                     | ✅ COMPLETE     | (this commit)  |
+| **TOTAL**                   | **11-17h** | **~3.5h**               | **✅ COMPLETE** | **68% faster** |
 
 ### Acceptance Criteria Status
 
-| AC # | Requirement | Status | Implementation |
-|------|-------------|--------|----------------|
-| AC1 | Response structure (nested) | ✅ COMPLETE | Phase 1 + 3 |
-| AC2 | Individual metrics (18 fields) | ✅ COMPLETE | Phase 1 + 2 |
-| AC3 | Main product identification | ✅ COMPLETE | Phase 3 + 4 |
-| AC4 | Sort order (main first, sales DESC) | ✅ COMPLETE | AC4 Fix + Phase 4 |
-| AC5 | Data integrity validation | ✅ COMPLETE | Phase 4 |
-| AC6 | Epic 35 fields (totalSales, organic) | ✅ COMPLETE | Phase 2 |
-| AC7 | ROAS/ROI calculation | ✅ COMPLETE | Phase 2 |
-| AC8 | Backward compatibility (LEGACY) | ✅ COMPLETE | Phase 3 |
+| AC # | Requirement                          | Status      | Implementation    |
+| ---- | ------------------------------------ | ----------- | ----------------- |
+| AC1  | Response structure (nested)          | ✅ COMPLETE | Phase 1 + 3       |
+| AC2  | Individual metrics (18 fields)       | ✅ COMPLETE | Phase 1 + 2       |
+| AC3  | Main product identification          | ✅ COMPLETE | Phase 3 + 4       |
+| AC4  | Sort order (main first, sales DESC)  | ✅ COMPLETE | AC4 Fix + Phase 4 |
+| AC5  | Data integrity validation            | ✅ COMPLETE | Phase 4           |
+| AC6  | Epic 35 fields (totalSales, organic) | ✅ COMPLETE | Phase 2           |
+| AC7  | ROAS/ROI calculation                 | ✅ COMPLETE | Phase 2           |
+| AC8  | Backward compatibility (LEGACY)      | ✅ COMPLETE | Phase 3           |
 
 **All 8 ACs**: ✅ **100% COMPLETE**
 
@@ -1127,6 +1176,7 @@ ON advertising_stats(cabinet_id, imt_id, nm_id, date);
 **API Endpoint**: `GET /v1/analytics/advertising/stats?groupBy=imtId`
 
 **Response Structure**:
+
 ```json
 {
   "type": "merged_group",
@@ -1180,6 +1230,7 @@ ON advertising_stats(cabinet_id, imt_id, nm_id, date);
 ### Technical Debt Notes
 
 **Minor** (for future API V2):
+
 - Consider separate types for "Epic 36 product" vs "Request #88 product" (currently using optional fields)
 - Impact: Low - current approach works fine, just slightly less type-safe than ideal
 

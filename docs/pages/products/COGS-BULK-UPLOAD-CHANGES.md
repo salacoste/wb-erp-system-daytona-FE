@@ -12,6 +12,7 @@
 Backend team has **fixed COGS bulk upload to automatically trigger margin recalculation**. This eliminates the need for manual margin calculation triggers after bulk COGS assignments.
 
 **Key Changes**:
+
 - `POST /v1/cogs/bulk-upload` now returns `marginRecalculation` field
 - Margin recalculation is **automatically enqueued** on bulk upload
 - No more manual `/v1/tasks/enqueue` calls needed
@@ -28,6 +29,7 @@ Backend team has **fixed COGS bulk upload to automatically trigger margin recalc
 **Backend File**: `src/cogs/services/cogs.service.ts`
 
 **Changes**:
+
 1. Added `marginRecalculation` field to `BulkUploadResult` interface
 2. `bulkUpload()` method now automatically triggers margin recalculation
 3. Added `enqueueMarginRecalculationForBulk()` method
@@ -36,11 +38,13 @@ Backend team has **fixed COGS bulk upload to automatically trigger margin recalc
 ### 2. Data Verification
 
 **Filled Data**: Weeks 2025-W47 to 2026-W04
+
 - **834 COGS records** created
 - **Total cogs_total**: 1,667,748 ₽
 - **100% COGS coverage**
 
 **API Verified**:
+
 ```json
 // 2026-W03
 {
@@ -95,6 +99,7 @@ Backend team has **fixed COGS bulk upload to automatically trigger margin recalc
 ### Response Examples
 
 **Example 1: Successful Bulk Upload with Margin Recalculation**
+
 ```json
 {
   "createdItems": 50,
@@ -109,6 +114,7 @@ Backend team has **fixed COGS bulk upload to automatically trigger margin recalc
 ```
 
 **Example 2: Partial Success with Errors**
+
 ```json
 {
   "createdItems": 45,
@@ -126,6 +132,7 @@ Backend team has **fixed COGS bulk upload to automatically trigger margin recalc
 ```
 
 **Example 3: No Margin Recalculation (No Sales Data)**
+
 ```json
 {
   "createdItems": 10,
@@ -144,6 +151,7 @@ Backend team has **fixed COGS bulk upload to automatically trigger margin recalc
 **Purpose**: Add new `marginRecalculation` type definition
 
 **Changes**:
+
 ```typescript
 // Add new type after BulkCogsUploadResponse (line ~316)
 
@@ -184,6 +192,7 @@ export interface BulkCogsUploadResponse {
 **Purpose**: Update hook to handle new `marginRecalculation` field
 
 **Changes**:
+
 ```typescript
 // In onSuccess callback (line ~83), extract marginRecalculation info
 
@@ -216,6 +225,7 @@ onSuccess: (data, variables) => {
 **Purpose**: Update polling hook to use `marginRecalculation.weeks` info
 
 **Changes**:
+
 ```typescript
 // In mutate function onSuccess callback (line ~172), update polling logic
 
@@ -276,6 +286,7 @@ onSuccess: (response) => {
 **Purpose**: Display margin recalculation status in results dialog
 
 **Changes**:
+
 ```typescript
 // In Results Dialog (line ~627), add margin recalculation section
 
@@ -375,6 +386,7 @@ function getStatusText(status: string): string {
 2. Log margin recalculation status to console
 
 **Testing**:
+
 - Run bulk COGS upload
 - Check console logs for margin recalculation info
 - Verify TypeScript compilation
@@ -390,6 +402,7 @@ function getStatusText(status: string): string {
 3. Handle case where margin recalculation is NOT triggered (no sales data)
 
 **Testing**:
+
 - Test bulk upload with sales data (should show weeks info)
 - Test bulk upload without sales data (should show "no recalculation" message)
 
@@ -404,6 +417,7 @@ function getStatusText(status: string): string {
 3. Add status text translation helper
 
 **Testing**:
+
 - Visual verification of results dialog
 - Check status display for different scenarios
 - Verify accessibility (ARIA labels, keyboard navigation)
@@ -533,6 +547,7 @@ describe('BulkCogsForm - margin recalculation UI', () => {
 **Scenario 1**: New response format breaks existing functionality
 
 **Rollback Steps**:
+
 1. Revert frontend changes to files:
    - `src/types/cogs.ts` (remove `MarginRecalculationStatus`)
    - `src/hooks/useBulkCogsAssignment.ts` (remove `marginRecalculation` extraction)
@@ -540,6 +555,7 @@ describe('BulkCogsForm - margin recalculation UI', () => {
    - `src/components/custom/BulkCogsForm.tsx` (remove status display)
 
 2. Use feature flag to disable new UI:
+
    ```typescript
    const showMarginRecalculation = false // Set via environment variable
    ```
@@ -552,6 +568,7 @@ describe('BulkCogsForm - margin recalculation UI', () => {
 **Scenario 2**: Polling logic breaks after changes
 
 **Rollback Steps**:
+
 1. Keep type definitions (backward compatible)
 2. Revert polling hook changes only
 3. Keep existing polling logic (sample product checking)
@@ -569,6 +586,7 @@ The new `marginRecalculation` field is **optional** in the response.
 **New Behavior**: Frontend uses `marginRecalculation.weeks` info for better UX
 
 **Compatibility**: Frontend code checks for `marginRecalculation` existence:
+
 ```typescript
 if (marginRecalculation) {
   // Use new weeks info
@@ -580,6 +598,7 @@ if (marginRecalculation) {
 ### Database State
 
 **Current Data**: Weeks 2025-W47 to 2026-W04 have COGS data filled
+
 - 834 COGS records
 - 1,667,748 ₽ total cogs
 - 100% coverage
@@ -610,6 +629,7 @@ if (marginRecalculation) {
 ## Success Criteria
 
 **Integration Complete When**:
+
 - [ ] All 4 frontend files updated
 - [ ] TypeScript compilation passes
 - [ ] Unit tests pass (new tests added)

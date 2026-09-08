@@ -16,6 +16,7 @@
 ## Business Requirement
 
 From stakeholder diagram:
+
 - **Заказы** - First metric in the list
 - Shows potential revenue from all orders (not just fulfilled sales)
 
@@ -23,11 +24,11 @@ From stakeholder diagram:
 
 ## Problem Statement
 
-| Current State | Required State |
-|---------------|----------------|
-| Dashboard shows only "Выкупы" (sales) | Dashboard needs "Заказы" (orders) |
-| No Orders Volume API integration | Full integration with `/v1/analytics/orders/volume` |
-| Can't calculate theoretical profit | Orders amount needed for formula |
+| Current State                         | Required State                                      |
+| ------------------------------------- | --------------------------------------------------- |
+| Dashboard shows only "Выкупы" (sales) | Dashboard needs "Заказы" (orders)                   |
+| No Orders Volume API integration      | Full integration with `/v1/analytics/orders/volume` |
+| Can't calculate theoretical profit    | Orders amount needed for formula                    |
 
 **Backend endpoint exists but is NOT used on dashboard**.
 
@@ -38,13 +39,15 @@ From stakeholder diagram:
 **Endpoint**: `GET /v1/analytics/orders/volume`
 
 **Parameters**:
-| Param | Type | Required | Description |
-|-------|------|----------|-------------|
-| `from` | string | Yes | Start date (YYYY-MM-DD) |
-| `to` | string | Yes | End date (YYYY-MM-DD) |
-| `aggregation` | string | No | `day` or `hour` (default: total) |
+
+| Param         | Type   | Required | Description                      |
+| ------------- | ------ | -------- | -------------------------------- |
+| `from`        | string | Yes      | Start date (YYYY-MM-DD)          |
+| `to`          | string | Yes      | End date (YYYY-MM-DD)            |
+| `aggregation` | string | No       | `day` or `hour` (default: total) |
 
 **Response**:
+
 ```typescript
 interface OrdersVolumeResponse {
   total_orders: number;        // Total order count
@@ -335,17 +338,17 @@ function DashboardOrdersMetric() {
 
 ## Files to Create
 
-| File | Description |
-|------|-------------|
-| `src/types/orders-volume.ts` | TypeScript interfaces |
-| `src/lib/api/orders-volume.ts` | API client functions |
-| `src/hooks/useOrdersVolume.ts` | React Query hook |
+| File                           | Description           |
+| ------------------------------ | --------------------- |
+| `src/types/orders-volume.ts`   | TypeScript interfaces |
+| `src/lib/api/orders-volume.ts` | API client functions  |
+| `src/hooks/useOrdersVolume.ts` | React Query hook      |
 
 ## Files to Modify
 
-| File | Change |
-|------|--------|
-| `src/hooks/index.ts` | Export new hook |
+| File                 | Change           |
+| -------------------- | ---------------- |
+| `src/hooks/index.ts` | Export new hook  |
 | `src/types/index.ts` | Export new types |
 
 ---

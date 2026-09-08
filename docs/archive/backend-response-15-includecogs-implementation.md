@@ -12,6 +12,7 @@
 Backend has implemented Request #15 with **batching optimization** (Option 2) for optimal performance.
 
 **What Changed**:
+
 - ✅ Added `include_cogs` query parameter to `GET /v1/products`
 - ✅ Implemented batch margin lookup (300ms for 25 products)
 - ✅ Returns margin fields when `include_cogs=true`
@@ -27,6 +28,7 @@ Backend has implemented Request #15 with **batching optimization** (Option 2) fo
 **Endpoint**: `GET /v1/products`
 
 **New Parameter**:
+
 ```typescript
 include_cogs?: boolean = false  // Default: false (backward compatible)
 ```
@@ -128,6 +130,7 @@ Includes: All above + current_margin_pct, current_margin_period, etc.
 ```
 
 **Possible `missing_data_reason` values**:
+
 - `null` - Margin calculated successfully
 - `"NO_SALES_DATA"` - Product never sold
 - `"NO_SALES_IN_PERIOD"` - No sales in last completed week
@@ -143,6 +146,7 @@ Includes: All above + current_margin_pct, current_margin_period, etc.
 **File**: `frontend/src/hooks/useProducts.ts`
 
 **Add to ProductFilters interface**:
+
 ```typescript
 export interface ProductFilters {
   has_cogs?: boolean
@@ -154,6 +158,7 @@ export interface ProductFilters {
 ```
 
 **Update queryFn to send parameter**:
+
 ```typescript
 export function useProducts(filters: ProductFilters = {}) {
   return useQuery({
@@ -186,6 +191,7 @@ export function useProducts(filters: ProductFilters = {}) {
 **File**: `frontend/src/components/custom/ProductList.tsx`
 
 **Add prop to enable margin display**:
+
 ```typescript
 export interface ProductListProps {
   onProductSelect?: (product: ProductListItem) => void
@@ -256,6 +262,7 @@ export function ProductList({
 ```
 
 **Update MarginBadge import** (if removed earlier):
+
 ```typescript
 import { MarginBadge } from './MarginDisplay'
 ```
@@ -265,6 +272,7 @@ import { MarginBadge } from './MarginDisplay'
 **File**: `src/app/(dashboard)/cogs/page.tsx` (or wherever ProductList is used)
 
 **Enable margin display for COGS management**:
+
 ```typescript
 <ProductList
   onProductSelect={handleProductSelect}
@@ -281,6 +289,7 @@ import { MarginBadge } from './MarginDisplay'
 ### Measured Performance (Dev Environment)
 
 **Without margin data** (`include_cogs=false`):
+
 ```
 Request: GET /v1/products?limit=25
 Response time: ~150ms
@@ -291,6 +300,7 @@ Breakdown:
 ```
 
 **With margin data** (`include_cogs=true`):
+
 ```
 Request: GET /v1/products?limit=25&include_cogs=true
 Response time: ~300ms (+150ms overhead)
@@ -303,11 +313,13 @@ Breakdown:
 ```
 
 **Performance Validation**:
+
 - ✅ Target: <500ms for 25 products
 - ✅ Actual: ~300ms (60% below target)
 - ✅ Batching optimization working (300ms vs 2.5s without batching)
 
 **Recommendations**:
+
 - Use `include_margin=true` sparingly (COGS management UI only)
 - Keep default `include_margin=false` for general product browsing
 - Recommend 25-50 products per page when margin enabled
@@ -322,6 +334,7 @@ Breakdown:
 **File**: `frontend/src/types/cogs.ts`
 
 **Current ProductListItem** (no margin fields):
+
 ```typescript
 export interface ProductListItem {
   nm_id: string
@@ -337,6 +350,7 @@ export interface ProductListItem {
 ```
 
 **When `include_margin=true`, response is actually `ProductWithCogs`**:
+
 ```typescript
 export interface ProductWithCogs {
   // All ProductListItem fields
@@ -370,17 +384,20 @@ export interface ProductWithCogs {
 ### Guaranteed Compatibility
 
 **Existing clients unaffected**:
+
 - ✅ Default `include_cogs=false` maintains current behavior
 - ✅ Margin fields `undefined` when not requested (not `null`)
 - ✅ No breaking changes to existing API contract
 - ✅ E2E tests validate backward compatibility
 
 **Migration Path**:
+
 1. **Phase 1**: Frontend updates code (no user-facing changes yet)
 2. **Phase 2**: Enable `enableMarginDisplay` in specific pages (COGS management)
 3. **Phase 3**: Gather user feedback and optimize if needed
 
 **Rollback Plan**:
+
 - Frontend can disable `include_margin` flag anytime
 - Backend defaults to `include_cogs=false` (no impact if frontend doesn't send parameter)
 
@@ -391,18 +408,21 @@ export interface ProductWithCogs {
 ### Manual Testing Checklist
 
 **Test 1: Default behavior (backward compatibility)**
+
 ```bash
 GET /v1/products?limit=25
 # Expected: No margin fields in response, ~150ms response time
 ```
 
 **Test 2: With margin data**
+
 ```bash
 GET /v1/products?limit=25&include_cogs=true
 # Expected: Margin fields present, ~300ms response time
 ```
 
 **Test 3: Missing margin scenarios**
+
 ```bash
 # Product with COGS but no sales
 GET /v1/products?limit=25&include_cogs=true&has_cogs=true
@@ -410,6 +430,7 @@ GET /v1/products?limit=25&include_cogs=true&has_cogs=true
 ```
 
 **Test 4: Performance validation**
+
 ```bash
 # 25 products with margin
 time curl "http://localhost:3000/v1/products?limit=25&include_cogs=true" \
@@ -421,12 +442,14 @@ time curl "http://localhost:3000/v1/products?limit=25&include_cogs=true" \
 ### E2E Test Coverage
 
 Backend has implemented E2E tests:
+
 - ✅ `include_cogs=false` returns no margin fields
 - ✅ `include_cogs=true` returns margin fields
 - ✅ `missing_data_reason` populated correctly
 - ✅ Performance test validates <500ms target
 
 Frontend should add:
+
 - [ ] UI test: margin displayed when `enableMarginDisplay=true`
 - [ ] UI test: margin not displayed when `enableMarginDisplay=false`
 - [ ] Loading indicator test: shows during 300ms delay
@@ -461,6 +484,7 @@ Frontend should add:
 ### Example 1: COGS Management Page
 
 **Before** (current behavior):
+
 ```typescript
 // Margin not shown in list, user must click product
 <ProductList
@@ -471,6 +495,7 @@ Frontend should add:
 ```
 
 **After** (with Request #15):
+
 ```typescript
 // Margin shown in list, no need to click
 <ProductList
@@ -484,6 +509,7 @@ Frontend should add:
 ### Example 2: Product Browsing Page
 
 **Recommendation**: Keep margin disabled for general browsing
+
 ```typescript
 // Fast loading for product browsing
 <ProductList
@@ -497,18 +523,23 @@ Frontend should add:
 ## Questions & Answers
 
 ### Q1: Is margin data real-time?
+
 **A**: No, margin uses last completed week from Epic 17 analytics. Updates weekly.
 
 ### Q2: What if Epic 17 analytics is unavailable?
+
 **A**: Graceful degradation - returns `missing_data_reason="ANALYTICS_UNAVAILABLE"`, margin fields `null`.
 
 ### Q3: Can we request margin for single product only?
+
 **A**: Use existing `GET /v1/products/:nmId` endpoint (already returns margin, faster for single product).
 
 ### Q4: Performance impact on large lists?
+
 **A**: Batching optimizes performance - 100 products still <500ms. Recommend 25-50 per page for UX.
 
 ### Q5: Do we need to update API client?
+
 **A**: No, `apiClient.get()` already handles query parameters automatically.
 
 ---
@@ -516,6 +547,7 @@ Frontend should add:
 ## Deployment Checklist
 
 ### Backend (Complete ✅)
+
 - [x] Add `include_cogs` parameter to QueryProductsDto
 - [x] Implement `getMarginDataForProducts()` batch method
 - [x] Update `getProductsList()` to use batching
@@ -527,6 +559,7 @@ Frontend should add:
 - [x] Performance validated (<500ms for 25 products)
 
 ### Frontend (Pending)
+
 - [ ] Update `useProducts` hook with `include_margin` flag
 - [ ] Update `ProductList` component with `enableMarginDisplay` prop
 - [ ] Add MarginBadge import (if removed)
@@ -544,18 +577,22 @@ Frontend should add:
 ### Common Issues
 
 **Issue 1**: Margin always `null` despite COGS assigned
+
 - **Check**: Product has sales in last completed week
 - **Solution**: Review `missing_data_reason` for explanation
 
 **Issue 2**: Response time >500ms
+
 - **Check**: Number of products requested
 - **Solution**: Reduce pagination limit to 25-50 products
 
 **Issue 3**: `missing_data_reason="ANALYTICS_UNAVAILABLE"`
+
 - **Check**: Epic 17 analytics service health
 - **Solution**: Retry request or wait for service recovery
 
 **Issue 4**: Frontend TypeScript errors
+
 - **Check**: `ProductWithCogs` type imported correctly
 - **Solution**: Import from `@/types/api` or `@/types/cogs`
 
@@ -571,11 +608,13 @@ Frontend should add:
 ## Success Metrics
 
 **Before Request #15**:
+
 - Product list shows COGS but not margin
 - User confusion: "Why is margin always '—'?"
 - Workaround: Click each product to see margin
 
 **After Request #15**:
+
 - ✅ Product list can show margin via `include_margin=true`
 - ✅ Response time <500ms for 25 products (actual: ~300ms)
 - ✅ Clear `missing_data_reason` when margin unavailable

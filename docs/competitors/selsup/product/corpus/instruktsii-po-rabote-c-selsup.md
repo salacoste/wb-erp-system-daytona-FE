@@ -20,7 +20,7 @@ chars: 8469
 
 В этой статье:
 
-- 
+-
 - <a href="#gde-mozhno-otkryt-selsup" rel="nofollow">Где можно открыть SelSup</a>
 - <a href="#rabochij-stol-selsup" rel="nofollow">Рабочий стол SelSup</a>
 - <a href="#navigatsiya-mezhdu-servisami" rel="nofollow">Навигация между сервисами</a>

@@ -2,14 +2,14 @@
 
 ## Overview
 
-| Field | Value |
-|-------|-------|
-| **Story ID** | 44.36-FE |
-| **Epic** | Epic 44 - Price Calculator UI |
-| **Type** | Bugfix |
-| **Priority** | P0 - Critical |
-| **Story Points** | 2 SP |
-| **Status** | Ready for Dev |
+| Field            | Value                         |
+| ---------------- | ----------------------------- |
+| **Story ID**     | 44.36-FE                      |
+| **Epic**         | Epic 44 - Price Calculator UI |
+| **Type**         | Bugfix                        |
+| **Priority**     | P0 - Critical                 |
+| **Story Points** | 2 SP                          |
+| **Status**       | Ready for Dev                 |
 
 ## Description
 
@@ -18,6 +18,7 @@ All Price Calculator API calls fail with 400 Bad Request because the frontend se
 ## Bug Report
 
 ### Reproduction Steps
+
 1. Navigate to `/cogs/price-calculator`
 2. Fill out the Price Calculator form with valid data:
    - Target margin: 20%
@@ -28,16 +29,19 @@ All Price Calculator API calls fail with 400 Bad Request because the frontend se
 3. Click "Calculate" button
 
 ### Expected Behavior
+
 - API call succeeds
 - Price calculation results are displayed
 - Cost breakdown shows recommended price
 
 ### Actual Behavior
+
 - API call fails with 400 Bad Request
 - Error message displayed to user
 - No calculation results
 
 ### Error Details
+
 ```json
 {
   "error": {
@@ -63,7 +67,9 @@ All Price Calculator API calls fail with 400 Bad Request because the frontend se
 ```
 
 ### Network Request Analysis
+
 **Request sent by frontend:**
+
 ```json
 {
   "target_margin_pct": 20,
@@ -81,6 +87,7 @@ All Price Calculator API calls fail with 400 Bad Request because the frontend se
 ```
 
 ### Severity Assessment
+
 - **User Impact**: CRITICAL - No price calculations can be performed
 - **Frequency**: 100% of all API calls fail
 - **Workaround**: None - feature is completely broken
@@ -88,25 +95,27 @@ All Price Calculator API calls fail with 400 Bad Request because the frontend se
 ## Technical Analysis
 
 ### Root Cause
+
 Story 44.32 added `box_type` and `turnover_days` fields to the frontend types and form, but these fields were not part of the agreed backend API contract. The backend DTO validation rejects unknown properties.
 
 ### Frontend/Backend Contract Mismatch
 
-| Field | Frontend Type | Frontend Code | Backend Status |
-|-------|---------------|---------------|----------------|
-| `box_type` | `BoxType` ('box' \| 'pallet') | Sent in request | NOT ACCEPTED |
-| `turnover_days` | `number` | Sent in request | NOT ACCEPTED |
+| Field           | Frontend Type                 | Frontend Code   | Backend Status |
+| --------------- | ----------------------------- | --------------- | -------------- |
+| `box_type`      | `BoxType` ('box' \| 'pallet') | Sent in request | NOT ACCEPTED   |
+| `turnover_days` | `number`                      | Sent in request | NOT ACCEPTED   |
 
 ### Affected Files
 
-| File | Line(s) | Issue |
-|------|---------|-------|
-| `src/components/custom/price-calculator/priceCalculatorUtils.ts` | 80-82 | Includes `box_type` and `turnover_days` in API request |
-| `src/types/price-calculator.ts` | 157, 172 | Defines `box_type` and `turnover_days` in `PriceCalculatorRequest` |
+| File                                                             | Line(s)  | Issue                                                              |
+| ---------------------------------------------------------------- | -------- | ------------------------------------------------------------------ |
+| `src/components/custom/price-calculator/priceCalculatorUtils.ts` | 80-82    | Includes `box_type` and `turnover_days` in API request             |
+| `src/types/price-calculator.ts`                                  | 157, 172 | Defines `box_type` and `turnover_days` in `PriceCalculatorRequest` |
 
 ### Code Analysis
 
 **priceCalculatorUtils.ts (lines 77-82):**
+
 ```typescript
 // Story 44.32: Phase 1 HIGH priority fields
 // Only send box_type and turnover_days for FBO
@@ -117,6 +126,7 @@ if (data.fulfillment_type === 'FBO') {
 ```
 
 **price-calculator.ts (lines 153-172):**
+
 ```typescript
 export interface PriceCalculatorRequest {
   // ... other fields ...
@@ -144,6 +154,7 @@ export interface PriceCalculatorRequest {
 Remove `box_type` and `turnover_days` from the API request until the backend implements support. Keep the fields in the form for UI purposes (future-proofing), but don't send them to the API.
 
 **Changes to `priceCalculatorUtils.ts`:**
+
 ```typescript
 export function toApiRequest(data: FormData): PriceCalculatorRequest {
   const baseRequest: PriceCalculatorRequest = {
@@ -212,6 +223,7 @@ Remove `box_type` and `turnover_days` from both types and UI components. This is
 3. **Keep UI components**: BoxTypeSelector and TurnoverDaysInput remain for frontend use
 
 This allows:
+
 - Immediate unblocking of Price Calculator functionality
 - Preserving user-facing features for later backend integration
 - Clean upgrade path when backend adds support
@@ -258,6 +270,7 @@ This allows:
 ### Manual Testing
 
 #### Test Case 1: Basic API Call
+
 1. Navigate to `/cogs/price-calculator`
 2. Enter:
    - Target margin: 20%
@@ -269,6 +282,7 @@ This allows:
 4. **Verify**: Results are displayed (no 400 error)
 
 #### Test Case 2: Network Request Verification
+
 1. Open DevTools Network tab
 2. Submit Price Calculator form
 3. Click on the `/v1/products/price-calculator` request
@@ -278,6 +292,7 @@ This allows:
 7. **Verify**: Other fields (cogs_rub, logistics, etc.) ARE in payload
 
 #### Test Case 3: FBO with All Fields
+
 1. Set fulfillment type to FBO
 2. Select box type: "Monopallet"
 3. Set turnover days: 45
@@ -287,6 +302,7 @@ This allows:
 7. **Verify**: Network request does not contain box_type/turnover_days
 
 #### Test Case 4: Warehouse Fields Still Work
+
 1. Set warehouse from dropdown
 2. Verify coefficient fields populate
 3. Submit calculation
@@ -296,6 +312,7 @@ This allows:
 ### Automated Testing
 
 - [ ] **Unit Test**: `priceCalculatorUtils.test.ts`
+
   ```typescript
   describe('toApiRequest', () => {
     it('should NOT include box_type in API request', () => {
@@ -351,6 +368,7 @@ This allows:
   ```
 
 - [ ] **Integration Test**: `usePriceCalculator.test.ts`
+
   ```typescript
   it('should successfully call API without invalid fields', async () => {
     // Mock successful response
@@ -403,6 +421,7 @@ This allows:
 ## Technical Tasks
 
 ### Task 1: Remove Fields from API Request
+
 **File:** `src/components/custom/price-calculator/priceCalculatorUtils.ts`
 **Effort:** 0.5 SP
 
@@ -411,6 +430,7 @@ This allows:
 3. Keep weight_exceeds_25kg and localization_index (verify backend support)
 
 **Before:**
+
 ```typescript
 // Story 44.32: Phase 1 HIGH priority fields
 // Only send box_type and turnover_days for FBO
@@ -421,6 +441,7 @@ if (data.fulfillment_type === 'FBO') {
 ```
 
 **After:**
+
 ```typescript
 // Story 44.36: REMOVED box_type and turnover_days from API request
 // These fields are not yet supported by backend API (Epic 43)
@@ -433,6 +454,7 @@ if (data.fulfillment_type === 'FBO') {
 ```
 
 ### Task 2: Update Type Comments
+
 **File:** `src/types/price-calculator.ts`
 **Effort:** 0.5 SP
 
@@ -440,6 +462,7 @@ if (data.fulfillment_type === 'FBO') {
 2. Add `@internal` or `@frontend-only` annotation
 
 **Example:**
+
 ```typescript
 /**
  * Story 44.32: Box type for FBO (default: 'box')
@@ -452,6 +475,7 @@ box_type?: BoxType
 ```
 
 ### Task 3: Add Unit Tests
+
 **File:** `src/components/custom/price-calculator/__tests__/priceCalculatorUtils.test.ts`
 **Effort:** 0.5 SP
 
@@ -460,6 +484,7 @@ box_type?: BoxType
 3. Add tests verifying other fields still work
 
 ### Task 4: Update E2E Tests
+
 **File:** `e2e/price-calculator.spec.ts`
 **Effort:** 0.5 SP
 
@@ -468,12 +493,12 @@ box_type?: BoxType
 
 ## Files to Modify
 
-| File | Changes |
-|------|---------|
-| `src/components/custom/price-calculator/priceCalculatorUtils.ts` | Remove box_type/turnover_days from toApiRequest |
-| `src/types/price-calculator.ts` | Update JSDoc comments for frontend-only fields |
-| `src/components/custom/price-calculator/__tests__/priceCalculatorUtils.test.ts` | Add tests for excluded fields |
-| `e2e/price-calculator.spec.ts` | Add API success test |
+| File                                                                            | Changes                                         |
+| ------------------------------------------------------------------------------- | ----------------------------------------------- |
+| `src/components/custom/price-calculator/priceCalculatorUtils.ts`                | Remove box_type/turnover_days from toApiRequest |
+| `src/types/price-calculator.ts`                                                 | Update JSDoc comments for frontend-only fields  |
+| `src/components/custom/price-calculator/__tests__/priceCalculatorUtils.test.ts` | Add tests for excluded fields                   |
+| `e2e/price-calculator.spec.ts`                                                  | Add API success test                            |
 
 ## Definition of Done
 
@@ -495,11 +520,13 @@ box_type?: BoxType
 ## Backend Request
 
 ### Future Work Required
+
 When backend support is needed, create request document:
 
 **File:** `docs/request-backend/101-price-calculator-additional-fields.md`
 
 **Content:**
+
 ```markdown
 # Request: Add box_type and turnover_days to Price Calculator API
 
@@ -523,18 +550,23 @@ Medium - Frontend has workaround (fields used for frontend calculations only)
 ## Notes
 
 ### Why Not Remove UI Components?
+
 The BoxTypeSelector and TurnoverDaysInput provide value for:
+
 1. User awareness of cost factors
 2. Future backend integration
 3. Frontend-side calculations for two-level pricing
 
 ### Graceful Degradation
+
 By removing fields from API but keeping in UI:
+
 - Users see complete cost picture
 - Frontend calculations can use values
 - Easy to re-enable when backend supports
 
 ### Weight and Localization Fields
+
 The fix KEEPS `weight_exceeds_25kg` and `localization_index` in the request. Verify with backend if these are supported. If they also cause 400 errors, remove them too.
 
 ## References

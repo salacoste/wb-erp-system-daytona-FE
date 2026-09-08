@@ -16,6 +16,7 @@
 ## Acceptance Criteria
 
 ### AC1: TypeScript Types
+
 - [ ] Create `types/advertising-analytics.ts` with all response types
 - [ ] Types match backend API response structure (Request #71)
 - [ ] Proper nullability handling (`| null` where applicable)
@@ -23,17 +24,20 @@
 - [ ] **Handle partial responses**: Optional fields (sku_id, campaign_id, brand, category) are `undefined` based on `view_by` mode
 
 ### AC2: API Client Functions
+
 - [ ] `getAdvertisingAnalytics(params)` - GET /v1/analytics/advertising
 - [ ] `getAdvertisingCampaigns(params)` - GET /v1/analytics/advertising/campaigns
 - [ ] `getAdvertisingSyncStatus()` - GET /v1/analytics/advertising/sync-status
 
 ### AC3: React Query Hooks
+
 - [ ] `useAdvertisingAnalytics(params)` with proper caching
 - [ ] `useAdvertisingCampaigns(params)` with offset-based pagination
 - [ ] `useAdvertisingSyncStatus()` with auto-refresh (60s interval)
 - [ ] Proper error handling for all hooks
 
 ### AC4: Error Handling (Localized)
+
 - [ ] Error messages in Russian
 - [ ] 400: "Неверные параметры запроса"
 - [ ] 401: "Требуется авторизация"
@@ -44,6 +48,7 @@
 ## Tasks / Subtasks
 
 ### Phase 1: Types Definition
+
 - [ ] Create `src/types/advertising-analytics.ts`
 - [ ] Define `EfficiencyStatus` type (union of 6 values)
 - [ ] Define `ViewByMode` type ('sku' | 'campaign' | 'brand' | 'category')
@@ -58,6 +63,7 @@
 - [ ] Define query params interfaces
 
 ### Phase 2: API Client Functions
+
 - [ ] Create `src/lib/api/advertising-analytics.ts`
 - [ ] Implement `getAdvertisingAnalytics(params)`
 - [ ] Implement `getAdvertisingCampaigns(params)`
@@ -65,6 +71,7 @@
 - [ ] Add proper error handling for 400/401/403/404/500
 
 ### Phase 3: React Query Hooks
+
 - [ ] Create `src/hooks/useAdvertisingAnalytics.ts`
 - [ ] Implement `useAdvertisingAnalytics` hook
 - [ ] Implement `useAdvertisingCampaigns` hook
@@ -288,9 +295,9 @@ useAdvertisingSyncStatus({
 
 ## Change Log
 
-| Date | Author | Change |
-|------|--------|--------|
-| 2025-12-22 | James (Dev Agent) | Initial draft |
+| Date       | Author            | Change                                                             |
+| ---------- | ----------------- | ------------------------------------------------------------------ |
+| 2025-12-22 | James (Dev Agent) | Initial draft                                                      |
 | 2025-12-22 | James (Dev Agent) | PO Review: Added AC4 (localized errors), partial response handling |
 
 ---

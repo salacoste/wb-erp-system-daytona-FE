@@ -13,7 +13,7 @@ chars: 4855
 
 В этой статье:
 
-- 
+-
 - <a href="#ig4387" rel="nofollow">Чем полезна функция «Запустить все»</a>
 - <a href="#tg9tr7" rel="nofollow">Что нужно для работы</a>
 - <a href="#sawps4" rel="nofollow">Как запустить все процессы</a>

@@ -11,7 +11,7 @@ chars: 1845
 
 В этой статье:
 
-- 
+-
 - <a href="#wildberries" rel="nofollow">Wildberries</a>
 - <a href="#ozon" rel="nofollow">Ozon</a>
 - <a href="#kopirovanie-kartochek-konkurentov" rel="nofollow">Копирование карточек конкурентов</a>

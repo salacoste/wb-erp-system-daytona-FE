@@ -13,15 +13,18 @@
 ### Проблема 1: Обработка формата ответа `available-weeks`
 
 **Проблема:**
+
 - `api-client.ts` извлекает `data.data` из ответа (строка 105: `return (data.data ?? data) as T`)
 - Если backend возвращает `{ data: [...] }`, то `apiClient` вернет массив напрямую
 - В hooks мы ожидали объект `{ data: [...] }`, но получали массив
 
 **Исправление:**
+
 - Добавлена поддержка обоих форматов (массив и объект)
 - Код теперь корректно обрабатывает оба случая
 
 **Файлы изменены:**
+
 - ✅ `src/hooks/useDashboard.ts` - исправлена обработка `available-weeks`
 - ✅ `src/hooks/useExpenses.ts` - исправлена обработка `available-weeks`
 
@@ -32,6 +35,7 @@
 ### 1. Формат ответа `available-weeks`
 
 **Backend возвращает:**
+
 ```json
 {
   "data": [
@@ -42,13 +46,14 @@
 ```
 
 **Обработка в hooks (ИСПРАВЛЕНО):**
+
 ```typescript
 // Поддержка обоих форматов: массив или объект { data: [...] }
 const weeksResponse = await apiClient.get<Array<{ week: string; start_date: string }> | { data: Array<{ week: string; start_date: string }> }>('/v1/analytics/weekly/available-weeks')
 
 // Извлекаем массив недель (обрабатываем оба формата)
-const weeksArray = Array.isArray(weeksResponse) 
-  ? weeksResponse 
+const weeksArray = Array.isArray(weeksResponse)
+  ? weeksResponse
   : weeksResponse?.data || []
 const weeks = weeksArray.map((w) => w.week)
 ```
@@ -60,10 +65,12 @@ const weeks = weeksArray.map((w) => w.week)
 ### 2. Обработка пустого массива
 
 **Ожидаемое поведение:**
+
 - Пустой массив = нет агрегированных данных (нормальное состояние)
 - Не должно показываться как ошибка
 
 **Проверка в коде:**
+
 ```typescript
 // Story 2.7: Empty array = no aggregated data yet (normal state, not an error)
 if (!weeks || weeks.length === 0) {
@@ -79,6 +86,7 @@ if (!weeks || weeks.length === 0) {
 ### 3. Формат ответа `finance-summary`
 
 **Backend возвращает:**
+
 ```json
 {
   "summary_total": { ... },
@@ -89,6 +97,7 @@ if (!weeks || weeks.length === 0) {
 ```
 
 **Обработка в hooks:**
+
 ```typescript
 const summaryResponse = await apiClient.get<{
   summary_total: FinanceSummary | null
@@ -108,10 +117,12 @@ const summary = summaryResponse.summary_total || summaryResponse.summary_rus
 ### 4. Поддержка полей с `_total` и без
 
 **Ожидаемое поведение:**
+
 - Поддержка полей с суффиксом `_total` (из `summary_total`)
 - Поддержка полей без суффикса (из `summary_rus`/`summary_eaeu` - legacy)
 
 **Проверка в коде:**
+
 ```typescript
 return {
   totalPayable: summary.to_pay_goods_total ?? summary.to_pay_goods,
@@ -126,10 +137,12 @@ return {
 ### 5. Автоматическое добавление заголовков
 
 **Ожидаемое поведение:**
+
 - `apiClient` автоматически добавляет `Authorization: Bearer {token}`
 - `apiClient` автоматически добавляет `X-Cabinet-Id: {cabinetId}`
 
 **Проверка в коде:**
+
 ```typescript
 // src/lib/api-client.ts:39-52
 const { token, cabinetId } = useAuthStore.getState()
@@ -150,6 +163,7 @@ if (!options.skipCabinetId && cabinetId) {
 ### 6. Логирование и мониторинг
 
 **Добавлено:**
+
 - ✅ Логирование пустого массива как нормального состояния
 - ✅ Логирование критических ошибок (404 для недели из списка)
 - ✅ Логирование отсутствия данных для недели из списка
@@ -169,6 +183,7 @@ if (!options.skipCabinetId && cabinetId) {
 ### Шаг 2: Проверьте логи
 
 **Ожидаемые логи при успешной загрузке:**
+
 ```
 [Dashboard Metrics] Fetching finance summary for week: 2025-W46
 [Dashboard Metrics] Finance summary received: { to_pay_goods: ..., sale_gross: ... }
@@ -177,6 +192,7 @@ if (!options.skipCabinetId && cabinetId) {
 ```
 
 **Ожидаемые логи при отсутствии данных:**
+
 ```
 [Dashboard Metrics] No available weeks found. Financial data may not be processed yet. This is normal - data will appear after aggregation completes.
 ```
@@ -189,6 +205,7 @@ if (!options.skipCabinetId && cabinetId) {
    - `GET /v1/analytics/weekly/finance-summary?week=...`
 
 **Проверьте:**
+
 - ✅ Status: `200 OK`
 - ✅ Request Headers: `Authorization: Bearer ...` и `X-Cabinet-Id: ...`
 - ✅ Response: JSON с корректным форматом
@@ -255,13 +272,14 @@ if (!options.skipCabinetId && cabinetId) {
 **Дата деплоя:** 2025-11-21
 
 После деплоя Story 2.7 на backend:
+
 - ✅ Endpoint `/v1/analytics/weekly/available-weeks` теперь использует таблицу `weekly_payout_total`
 - ✅ Недели возвращаются только после успешной агрегации данных
 - ✅ Гарантия: если неделя в списке → данные доступны через `finance-summary`
 - ✅ Нет race condition между импортом и агрегацией
 
 **Рекомендации:**
+
 1. Протестировать endpoint с реальными данными после деплоя
 2. Проверить, что данные корректно отображаются на dashboard
 3. Убедиться, что нет ошибок в консоли браузера
-

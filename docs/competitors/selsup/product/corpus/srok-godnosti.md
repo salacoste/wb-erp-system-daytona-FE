@@ -11,7 +11,7 @@ chars: 5905
 
 В этой статье:
 
-- 
+-
 - <a href="#kak-vnesti-srok-godnosti-tovara" rel="nofollow">Как внести срок годности товара</a>
 - <a href="#kak-massovo-zapolnit-srok-godnosti" rel="nofollow">Как массово заполнить срок годности</a>
 - <a href="#sohranenie-sroka-godnosti-v-markirovke" rel="nofollow">Сохранение срока годности в маркировке</a>

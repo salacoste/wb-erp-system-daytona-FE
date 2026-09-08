@@ -11,7 +11,7 @@ chars: 6388
 
 В этой статье:
 
-- 
+-
 - <a href="#kak-uznat-svoj-tarif" rel="nofollow">Как узнать свой тариф</a>
 - <a href="#izmenenie-tekushhego-tarifa" rel="nofollow">Изменение текущего тарифа</a>
 - <a href="#perehod-na-novyj-tarif" rel="nofollow">Переход на новый тариф</a>
@@ -130,7 +130,7 @@ chars: 6388
 Проверить объем хранилища Вы можете в разделе [Тарифы](https://selsup.ru/application/tariffs/) в параметре "Объем хранилища".\
 ![](../../out/selsup.ru/_kage/selsup.ru/wp-content/webp-express/webp-images/uploads/2023/03/screenshot_336.png.webp)
 
-------------------------------------------------------------------------
+---
 
 Программа для маркетплейсов SelSup постоянно совершенствуется. Еженедельно появляются новые функции и возможности для наших пользователей. Свежие новости публикуем [в блоге](https://selsup.ru/news/) и в [Telegram - канале.](https://t.me/SelSup_ru)
 

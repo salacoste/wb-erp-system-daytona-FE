@@ -15,7 +15,7 @@ SelSup помогает не разбираться с каждой схемой
 
 В этой статье:
 
-- 
+-
 - <a href="#kakie-tipy-zakazov-podderzhivaet-selsup" rel="nofollow">Какие типы заказов поддерживает SelSup</a>
 - <a href="#pochemu-shemy-zakazov-udobno-vesti-v-selsup" rel="nofollow">Почему схемы заказов удобно вести в SelSup</a>
 - <a href="#shema-fbo" rel="nofollow">Схема FBO</a>

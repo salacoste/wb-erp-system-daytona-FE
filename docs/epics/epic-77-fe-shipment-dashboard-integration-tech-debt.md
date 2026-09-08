@@ -15,6 +15,7 @@ inputDocuments:
 ## Overview
 
 This epic combines two scopes:
+
 1. **Tech Debt Cleanup** (Stories 77.1-77.2) — HIGH-priority items carried across 74→75→76 retros, no backend dependency
 2. **Shipment Cost Dashboard Integration** (Stories 77.3-77.6) — Deferred from Epic 76-FE Decision #6: integrate FCU (Final Cost per Unit) into unit economics dashboard
 
@@ -22,14 +23,14 @@ This epic combines two scopes:
 
 ## Key Decisions
 
-| # | Decision | Choice | Rationale |
-|---|----------|--------|-----------|
-| 1 | Epic scope | Combined tech debt + dashboard integration | Tech debt items are quick wins that unblock quality; dashboard integration is the next logical feature after 76-FE |
-| 2 | Hooks symlink resolution | Rename `hooks-v1/` → `hooks/` (remove symlink) | 256 files import via `@/hooks/`; renaming the real directory preserves all imports and eliminates the symlink |
-| 3 | jsx-a11y config | Add `plugin:jsx-a11y/recommended` to ESLint extends | Plugin already installed transitively via eslint-config-next; explicit config activates full WCAG rules |
-| 4 | FCU aggregation | Backend request for new endpoint | Frontend-only aggregation across shipments is fragile and slow; backend should provide per-SKU FCU summary |
-| 5 | Dashboard integration approach | New cost category `delivery_to_warehouse` in unit economics | Seller's shipment cost is distinct from WB's logistics_delivery; separate category preserves accounting clarity |
-| 6 | E2E test scope | Shipment CRUD + calculate + confirm flow | Mirrors e2e/supplies/ pattern (4 specs: list, detail, lifecycle, a11y) |
+| #   | Decision                       | Choice                                                      | Rationale                                                                                                          |
+| --- | ------------------------------ | ----------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------ |
+| 1   | Epic scope                     | Combined tech debt + dashboard integration                  | Tech debt items are quick wins that unblock quality; dashboard integration is the next logical feature after 76-FE |
+| 2   | Hooks symlink resolution       | Rename `hooks-v1/` → `hooks/` (remove symlink)              | 256 files import via `@/hooks/`; renaming the real directory preserves all imports and eliminates the symlink      |
+| 3   | jsx-a11y config                | Add `plugin:jsx-a11y/recommended` to ESLint extends         | Plugin already installed transitively via eslint-config-next; explicit config activates full WCAG rules            |
+| 4   | FCU aggregation                | Backend request for new endpoint                            | Frontend-only aggregation across shipments is fragile and slow; backend should provide per-SKU FCU summary         |
+| 5   | Dashboard integration approach | New cost category `delivery_to_warehouse` in unit economics | Seller's shipment cost is distinct from WB's logistics_delivery; separate category preserves accounting clarity    |
+| 6   | E2E test scope                 | Shipment CRUD + calculate + confirm flow                    | Mirrors e2e/supplies/ pattern (4 specs: list, detail, lifecycle, a11y)                                             |
 
 ## Requirements Inventory
 
@@ -47,6 +48,7 @@ FR8: Tests and polish for all new integration code
 ### Non-Functional Requirements
 
 Same as Epic 76-FE (NFR1-NFR8). Additionally:
+
 - NFR9: All new ESLint jsx-a11y violations from enabling the plugin must be fixed before merging 77.1
 - NFR10: E2E tests must run in CI with Playwright (existing infrastructure)
 
@@ -59,6 +61,7 @@ Same as Epic 76-FE (NFR1-NFR8). Additionally:
 **So that** ESLint noise is eliminated and ARIA violations are caught at lint time.
 
 **Acceptance Criteria:**
+
 1. `src/hooks-v1/` renamed to `src/hooks/` (real directory, not symlink)
 2. Symlink `src/hooks` removed (replaced by the actual directory)
 3. All 256+ imports via `@/hooks/` continue to work unchanged
@@ -70,6 +73,7 @@ Same as Epic 76-FE (NFR1-NFR8). Additionally:
 9. All existing tests pass (no regressions from directory rename)
 
 **Tasks:**
+
 - Task 1: Remove symlink, rename `hooks-v1/` to `hooks/`
 - Task 2: Fix direct `hooks-v1` import in `shipments/page.tsx`
 - Task 3: Add `eslint-plugin-jsx-a11y` to devDependencies, update `.eslintrc.json`
@@ -77,6 +81,7 @@ Same as Epic 76-FE (NFR1-NFR8). Additionally:
 - Task 5: Verify full test suite passes
 
 **Dev Notes:**
+
 - `git mv` may not handle symlink→directory rename cleanly — may need: remove symlink, rename directory, stage both changes
 - The symlink is relative (`hooks -> hooks-v1`), so only the frontend workspace is affected
 - `next/core-web-vitals` already enables a SUBSET of jsx-a11y rules; adding `recommended` enables the full set
@@ -91,6 +96,7 @@ Same as Epic 76-FE (NFR1-NFR8). Additionally:
 **So that** the full CRUD + calculate + confirm flow is validated against a real browser.
 
 **Acceptance Criteria:**
+
 1. `e2e/shipments/shipments-list.spec.ts` — list page loads, status filter works, pagination works, create dialog opens
 2. `e2e/shipments/shipments-detail.spec.ts` — detail page loads, pallet accordion expands, box line table renders, calculate button triggers calculation
 3. `e2e/shipments/shipments-lifecycle.spec.ts` — create → add pallets → add box lines → calculate → confirm → verify readonly state → delete
@@ -99,6 +105,7 @@ Same as Epic 76-FE (NFR1-NFR8). Additionally:
 6. Test patterns follow existing `e2e/supplies/` spec structure
 
 **Tasks:**
+
 - Task 1: Create `e2e/shipments/` directory with 4 spec files
 - Task 2: Implement list page E2E (navigation, filter, pagination)
 - Task 3: Implement detail page E2E (accordion, box lines, calculation results)
@@ -107,6 +114,7 @@ Same as Epic 76-FE (NFR1-NFR8). Additionally:
 - Task 6: Verify all specs pass locally and in CI
 
 **Dev Notes:**
+
 - Follow `e2e/supplies/` as the template — 4 specs covering list/detail/lifecycle/a11y
 - Backend must be running with seeded data for E2E to work
 - Use `page.waitForSelector` for async content (calculation results, validation errors)
@@ -122,6 +130,7 @@ Same as Epic 76-FE (NFR1-NFR8). Additionally:
 **So that** the backend team can implement the API before dashboard integration begins.
 
 **Acceptance Criteria:**
+
 1. `docs/request-backend/162-FCU-AGGREGATION-ENDPOINT.md` created with full specification
 2. Endpoint spec: `GET /v1/shipment-cost/by-sku` with query params: `week` (ISO week), `cabinetId` (from JWT)
 3. Response spec: array of `{ nmId, productName, latestFcu, latestDcu, latestPcu, shipmentId, confirmedAt }`
@@ -131,10 +140,12 @@ Same as Epic 76-FE (NFR1-NFR8). Additionally:
 7. Story marked done when request doc is written (backend implementation is separate)
 
 **Tasks:**
+
 - Task 1: Write the request document following existing format in `docs/request-backend/`
 - Task 2: Include SQL sketch for the aggregation query (JOIN shipments + pallets + box_lines, WHERE status = CONFIRMED, latest per nmId)
 
 **Dev Notes:**
+
 - This is a documentation-only story — no code changes
 - Backend may choose to implement this as a materialized view or a query with `DISTINCT ON (nm_id) ORDER BY confirmed_at DESC`
 - The response shape should be compatible with `CalculationResultItem` type from Epic 76-FE
@@ -149,6 +160,7 @@ Same as Epic 76-FE (NFR1-NFR8). Additionally:
 **So that** I can understand the true total cost per unit including logistics.
 
 **Acceptance Criteria:**
+
 1. `CostsPct` and `CostsRub` types in `src/types/unit-economics.ts` have new `delivery_to_warehouse` field (optional, for backward compat)
 2. `COST_CATEGORIES` in `src/lib/unit-economics-config.ts` includes new `delivery_to_warehouse` category (label: "Доставка на склад", color: teal/cyan)
 3. `transformToWaterfallData()` in `src/lib/unit-economics-utils.ts` handles the new category
@@ -159,6 +171,7 @@ Same as Epic 76-FE (NFR1-NFR8). Additionally:
 8. Unit tests for new waterfall category, type extensions, and hook
 
 **Tasks:**
+
 - Task 1: Extend `CostsPct` and `CostsRub` types with `delivery_to_warehouse?: number`
 - Task 2: Add category to `COST_CATEGORIES` config
 - Task 3: Update `transformToWaterfallData()` to include new category
@@ -168,6 +181,7 @@ Same as Epic 76-FE (NFR1-NFR8). Additionally:
 - Task 7: Unit tests for types, waterfall, API, hook
 
 **Dev Notes:**
+
 - `delivery_to_warehouse` is the seller's cost to ship TO the WB warehouse — distinct from `logistics_delivery` (WB's cost to ship FROM warehouse to customer)
 - Making the field optional ensures backward compatibility — pages that don't have FCU data won't break
 - Color: use teal/cyan (#06B6D4) to distinguish from existing cost categories (green=positive, red=negative, blue=info, purple=storage)
@@ -184,6 +198,7 @@ Same as Epic 76-FE (NFR1-NFR8). Additionally:
 **So that** I can compare FCU across SKUs and identify expensive-to-ship products.
 
 **Acceptance Criteria:**
+
 1. `UnitEconomicsTable.tsx` has new "Доставка" column showing DCU (delivery cost per unit) from FCU data
 2. `UnitEconomicsTableRow.tsx` renders DCU value with `formatCurrency()`, or "—" if no confirmed shipment
 3. Column is sortable (ascending/descending by DCU)
@@ -194,6 +209,7 @@ Same as Epic 76-FE (NFR1-NFR8). Additionally:
 8. Unit tests for new column, sort, summary card, health score update
 
 **Tasks:**
+
 - Task 1: Add DCU column to UnitEconomicsTable + row component
 - Task 2: Add sort capability for DCU column
 - Task 3: Add "Ср. доставка" summary card
@@ -202,6 +218,7 @@ Same as Epic 76-FE (NFR1-NFR8). Additionally:
 - Task 6: Unit tests
 
 **Dev Notes:**
+
 - Match existing column patterns in UnitEconomicsTable (sticky header, responsive widths)
 - DCU sort: null values (no shipment data) sort last
 - Health score change is additive — existing score calculation unchanged, delivery cost coverage adds 0-5 bonus points
@@ -218,6 +235,7 @@ Same as Epic 76-FE (NFR1-NFR8). Additionally:
 **So that** FCU data displays correctly across all unit economics views.
 
 **Acceptance Criteria:**
+
 1. Unit tests for `fcu-aggregation-api.ts` (CRUD + error handling)
 2. Unit tests for `use-fcu-aggregation.ts` hook (query, error propagation, cache invalidation)
 3. Component tests for updated waterfall chart with delivery_to_warehouse category
@@ -228,6 +246,7 @@ Same as Epic 76-FE (NFR1-NFR8). Additionally:
 8. No unexpected console warnings in test output
 
 **Tasks:**
+
 - Task 1: API client tests for FCU aggregation endpoint
 - Task 2: Hook tests with error propagation + cache invalidation
 - Task 3: Waterfall chart tests with new category
@@ -236,6 +255,7 @@ Same as Epic 76-FE (NFR1-NFR8). Additionally:
 - Task 6: Quality gates (lint, type-check, build)
 
 **Dev Notes:**
+
 - Follow 76.6 test patterns: `createTestQueryClient`, `createQueryWrapper`, `mockRejectedValueOnce` (not `mockRejectedValue`)
 - Mock FCU API responses for component tests — don't depend on backend availability
 - Test null/undefined FCU gracefully — many SKUs won't have shipment data
@@ -257,22 +277,22 @@ Same as Epic 76-FE (NFR1-NFR8). Additionally:
 
 ## SP Summary
 
-| Story | SP | Scope |
-|-------|-----|-------|
-| 77.1 | 2 | Tech debt: hooks symlink + jsx-a11y |
-| 77.2 | 3 | Tech debt: E2E tests |
-| 77.3 | 1 | Backend request doc |
-| 77.4 | 3 | Types + waterfall integration |
-| 77.5 | 3 | Dashboard table + summary |
-| 77.6 | 3 | Tests + polish |
-| **Total** | **15** | |
+| Story     | SP     | Scope                               |
+| --------- | ------ | ----------------------------------- |
+| 77.1      | 2      | Tech debt: hooks symlink + jsx-a11y |
+| 77.2      | 3      | Tech debt: E2E tests                |
+| 77.3      | 1      | Backend request doc                 |
+| 77.4      | 3      | Types + waterfall integration       |
+| 77.5      | 3      | Dashboard table + summary           |
+| 77.6      | 3      | Tests + polish                      |
+| **Total** | **15** |                                     |
 
 ## Risk Assessment
 
-| Risk | Likelihood | Impact | Mitigation |
-|------|-----------|--------|------------|
-| Backend FCU endpoint delayed | MEDIUM | HIGH — blocks 77.4-77.6 | Start 77.4 with mock data; FCU hook uses `enabled: !!endpoint` guard |
-| jsx-a11y enables many new violations | LOW | MEDIUM — could bloat 77.1 scope | `next/core-web-vitals` already covers most rules; 75-FE/76-FE added aria-labels proactively |
-| git rename of hooks directory breaks history | LOW | LOW — history preserved with `git mv` | Use `git mv src/hooks-v1 src/hooks` after removing symlink |
-| Unit economics table exceeds 200 lines | MEDIUM | LOW — extraction pattern is well-established | Proactive extraction at 150 lines per 76-FE lesson |
-| E2E tests flaky due to backend timing | MEDIUM | MEDIUM | Use `page.waitForResponse` for calculate endpoint; increase timeouts for cost calculation |
+| Risk                                         | Likelihood | Impact                                       | Mitigation                                                                                  |
+| -------------------------------------------- | ---------- | -------------------------------------------- | ------------------------------------------------------------------------------------------- |
+| Backend FCU endpoint delayed                 | MEDIUM     | HIGH — blocks 77.4-77.6                      | Start 77.4 with mock data; FCU hook uses `enabled: !!endpoint` guard                        |
+| jsx-a11y enables many new violations         | LOW        | MEDIUM — could bloat 77.1 scope              | `next/core-web-vitals` already covers most rules; 75-FE/76-FE added aria-labels proactively |
+| git rename of hooks directory breaks history | LOW        | LOW — history preserved with `git mv`        | Use `git mv src/hooks-v1 src/hooks` after removing symlink                                  |
+| Unit economics table exceeds 200 lines       | MEDIUM     | LOW — extraction pattern is well-established | Proactive extraction at 150 lines per 76-FE lesson                                          |
+| E2E tests flaky due to backend timing        | MEDIUM     | MEDIUM                                       | Use `page.waitForResponse` for calculate endpoint; increase timeouts for cost calculation   |

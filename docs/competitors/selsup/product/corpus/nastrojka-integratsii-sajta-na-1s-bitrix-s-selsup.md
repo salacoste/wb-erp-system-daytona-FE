@@ -13,7 +13,7 @@ chars: 9075
 
 В этой статье:
 
-- 
+-
 - <a href="#chto-vazhno-znat-pered-nastrojkoj" rel="nofollow">Что важно знать перед настройкой</a>
 - <a href="#sozdanie-gruppy-i-polzovatelya-v-1s-bitriks" rel="nofollow">Создание группы и пользователя в 1С-Битрикс</a>
 - <a href="#nastrojka-integratsii-v-selsup" rel="nofollow">Настройка интеграции в SelSup</a>
@@ -170,7 +170,7 @@ chars: 9075
 
 Вставьте и нажмите выполнить следующий код:
 
-> COption::SetOptionString("catalog", "DEFAULT_SKIP_SOURCE_CHECK", "Y"); 
->     COption::SetOptionString("sale", "secure_1c_exchange", "N");
+> COption::SetOptionString("catalog", "DEFAULT_SKIP_SOURCE_CHECK", "Y");
+> COption::SetOptionString("sale", "secure_1c_exchange", "N");
 
 ![](../../out/selsup.ru/_kage/selsup.ru/wp-content/webp-express/webp-images/uploads/2023/06/snimok-ekrana-2023-06-23-v-09.05.38.png.webp)

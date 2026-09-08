@@ -5,12 +5,14 @@
 > This story has been superseded by the **turnover_days** approach implemented in Story 44.32.
 >
 > **Changes:**
+>
 > - `StorageDaysInput` component: **DELETED**
 > - `StorageCostCalculator` component: **DELETED**
 > - `StorageCostBreakdown` component: **DELETED**
 > - `storage-cost-utils.ts`: **NOT CREATED** (functionality integrated into TurnoverDaysInput)
 >
 > **Current Implementation:**
+>
 > - Storage cost is calculated as: `dailyStorageCost × turnover_days`
 > - `TurnoverDaysInput` component (Story 44.32) handles storage duration input
 > - Daily storage cost comes from warehouse tariffs (Story 44.27)
@@ -34,6 +36,7 @@
 **So that** I can accurately factor storage expenses into my price calculations and avoid underestimating costs for slow-moving inventory.
 
 **Non-goals**:
+
 - Real-time storage tariff fetching from WB API (depends on Request #98)
 - Historical storage cost analysis
 - Storage optimization recommendations
@@ -44,6 +47,7 @@
 ## Backend API Status: READY (Request #98)
 
 Backend has implemented storage tariffs as part of the warehouse API:
+
 - `docs/request-backend/98-warehouses-tariffs-BACKEND-RESPONSE.md`
 - `docs/stories/epic-44/SDK-WAREHOUSES-TARIFFS-REFERENCE.md`
 
@@ -59,12 +63,14 @@ Backend has implemented storage tariffs as part of the warehouse API:
 ```
 
 **Tariff Parsing**:
+
 ```typescript
 const baseLiterRub = parseTariffExpression("1*1") // → 1
 const perLiterRub = parseTariffExpression("1*x")  // → 1
 ```
 
 **Key Points**:
+
 1. Storage tariffs come from warehouse data (Story 44.12)
 2. Coefficient is 1.0 by default (no storage coefficient in API)
 3. Formula matches logistics pattern: `(base + (volume-1) × per_liter) × coefficient`
@@ -74,6 +80,7 @@ const perLiterRub = parseTariffExpression("1*x")  // → 1
 ## Backend Clarifications (2026-01-24)
 
 ### 60-Day Free Storage Grace Period (NEW - Backend Update)
+
 **Source**: Backend team confirmation
 **Implementation Date**: 2026-01-24
 
@@ -85,12 +92,14 @@ total_storage_cost = daily_cost × billable_days  (NOT × full turnover_days)
 ```
 
 **Key Impact on Frontend**:
+
 1. **Formula Update**: Use `billable_days` instead of `turnover_days` in final calculation
 2. **UI Change**: Show "БЕСПЛАТНО (60 дней)" when `turnover_days ≤ 60`
 3. **Breakdown**: Display both free period and billable days in calculation details
 4. **Warnings**: Adjust thresholds (now 90+ days warning, 120+ days critical instead of 30/60)
 
 **Examples**:
+
 - 45-day turnover → 0 billable days → Cost = 0 (FREE)
 - 60-day turnover → 0 billable days → Cost = 0 (FREE)
 - 61-day turnover → 1 billable day → Cost = daily_rate × 1
@@ -155,6 +164,7 @@ total_storage = daily_storage * billable_days
 ```
 
 **Example Calculation - Within Free Period (< 60 days)**:
+
 - Dimensions: 10cm × 10cm × 15cm
 - Volume: (10 × 10 × 15) / 1000 = 1.5 liters
 - Base rate: 0.07 RUB/day
@@ -178,6 +188,7 @@ total = 0.095 * 0 = 0.00 RUB  ← FREE! (within 60-day grace period)
 ```
 
 **Example Calculation - Beyond Free Period (> 60 days)**:
+
 - Same product as above
 - Turnover days: 90 days (estimated)
 
@@ -197,6 +208,7 @@ total = 0.095 * 30 = 2.85 RUB  ← Charged only for days 61-90
 ## Acceptance Criteria
 
 ### AC1: Storage Days Input Field
+
 - [ ] Add numeric input "Срок хранения (дней)" (Storage duration in days)
 - [ ] Default value: 14 days (typical WB inventory turnover)
 - [ ] Minimum: 1 day
@@ -205,12 +217,14 @@ total = 0.095 * 30 = 2.85 RUB  ← Charged only for days 61-90
 - [ ] Quick presets: 7, 14, 30, 60, 90 days (clickable chips)
 
 ### AC2: Daily Storage Cost Calculation
+
 - [ ] Calculate daily storage cost per unit using WB formula
 - [ ] Display daily rate: "X,XX ₽/день" (X.XX RUB/day)
 - [ ] Update in real-time as volume or coefficient changes
 - [ ] Show "0,00 ₽/день" when volume is 0
 
 ### AC3: Total Storage Cost Calculation (With 60-Day Grace Period)
+
 - [ ] Calculate billable days: `billable_days = max(0, turnover_days - 60)`
 - [ ] Calculate total storage: `daily_cost * billable_days` (NOT full turnover days)
 - [ ] Display prominently: "Итого хранение: X,XX ₽" (Total storage: X.XX RUB)
@@ -219,37 +233,37 @@ total = 0.095 * 30 = 2.85 RUB  ← Charged only for days 61-90
 - [ ] Auto-fill `storage_rub` field in main calculator form
 
 ### AC3a: Auto-Fill Indicators (2026-01-24 Backend Clarification)
+
 - [ ] **Can auto-fill if**: warehouse_name provided AND (volume_liters provided OR dimensions L×W×H provided)
 - [ ] **Cannot auto-fill if**: Missing either warehouse_name OR both volume AND dimensions
 - [ ] Show lock icon 🔒 when auto-fill not possible (manual entry required)
 - [ ] Show info icon ℹ️ when auto-fill is active (warehouse tariff applied)
 
 ### AC4: Calculation Breakdown Display (With 60-Day Free Period)
+
 - [ ] Show expandable breakdown section
 - [ ] Display volume calculation step:
   1. "Объём (L × W × H / 1000): X,XX л" (Volume: dimensions calculation)
-- [ ] Display 3-step daily cost calculation:
-  2. "Базовая ставка: X,XX ₽/день" (Base: first liter rate)
-  3. "Доп. литры (Y л): Z,ZZ ₽/день" (Additional liters rate)
-  4. "Коэффициент склада: ×K" (Warehouse coefficient)
-- [ ] **NEW (2026-01-24)**: Show free period calculation:
-  5. "60 дней бесплатно" (60 days free storage)
-  6. "Платные дни: max(0, N - 60) = M дней" (Billable days calculation)
+- [ ] Display 3-step daily cost calculation: 2. "Базовая ставка: X,XX ₽/день" (Base: first liter rate) 3. "Доп. литры (Y л): Z,ZZ ₽/день" (Additional liters rate) 4. "Коэффициент склада: ×K" (Warehouse coefficient)
+- [ ] **NEW (2026-01-24)**: Show free period calculation: 5. "60 дней бесплатно" (60 days free storage) 6. "Платные дни: max(0, N - 60) = M дней" (Billable days calculation)
 - [ ] Show final: "Итого за M платных дней: X,XX ₽"
 
 ### AC5: Long Storage Warning
+
 - [ ] Show warning alert when storage > 30 days
 - [ ] Warning text: "Хранение более 30 дней значительно увеличивает расходы. Рассмотрите оптимизацию запасов."
 - [ ] Warning severity: amber/yellow
 - [ ] Critical warning when storage > 60 days (red)
 
 ### AC6: Form Integration
+
 - [ ] Auto-fill `storage_rub` field in PriceCalculatorForm
 - [ ] Pass calculated storage cost to API request
 - [ ] Validate storage_rub >= 0
 - [ ] Handle edge case: missing tariff data (show manual input option)
 
 ### AC7: Fallback Mode (While Backend Pending)
+
 - [ ] If tariff API unavailable, show manual input fields:
   - "Базовая ставка (₽/день)" (Base rate per day)
   - "Ставка за литр (₽/день/л)" (Per-liter rate per day)
@@ -687,6 +701,7 @@ export function StorageCostBreakdown({ result }: StorageCostBreakdownProps) {
 ### UI Layout (2026-01-24: Updated with 60-day grace period)
 
 **Example 1: Within Free Period (45 days turnover)**:
+
 ```
 ┌─────────────────────────────────────────────────────────────┐
 │ Расчёт хранения                                      [?]    │
@@ -717,6 +732,7 @@ export function StorageCostBreakdown({ result }: StorageCostBreakdownProps) {
 ```
 
 **Example 2: Beyond Free Period (90 days turnover)**:
+
 ```
 ┌─────────────────────────────────────────────────────────────┐
 │ Расчёт хранения                                      [?]    │
@@ -752,20 +768,20 @@ export function StorageCostBreakdown({ result }: StorageCostBreakdownProps) {
 
 ## Invariants & Edge Cases
 
-| Case | Handling |
-|------|----------|
-| Volume = 0 | Storage cost = 0, show "Введите габариты товара" |
-| Turnover days ≤ 60 | Show "БЕСПЛАТНО (60 дней)" in green, total_cost = 0 |
-| Turnover days = 61 | billable_days = 1, charge for 1 day only |
-| Turnover days > 365 | Show validation error, cap at 365 |
-| Tariff API unavailable | Use DEFAULT_STORAGE_TARIFF fallback |
-| Coefficient = 0 | Treat as 1.0 (no adjustment) |
-| Very large volume (>100L) | Allow calculation, consider warning |
-| Negative inputs | Validation prevents (min: 0/1) |
-| Dimensions smaller than 1L | Round up to minimum 1 liter |
-| warehouse_name missing | Cannot auto-fill tariff, show manual entry option |
-| warehouse_name + dimensions | Can auto-fill volume, look up tariff from warehouse |
-| warehouse_name + volume_liters | Can auto-fill tariff from warehouse |
+| Case                           | Handling                                            |
+| ------------------------------ | --------------------------------------------------- |
+| Volume = 0                     | Storage cost = 0, show "Введите габариты товара"    |
+| Turnover days ≤ 60             | Show "БЕСПЛАТНО (60 дней)" in green, total_cost = 0 |
+| Turnover days = 61             | billable_days = 1, charge for 1 day only            |
+| Turnover days > 365            | Show validation error, cap at 365                   |
+| Tariff API unavailable         | Use DEFAULT_STORAGE_TARIFF fallback                 |
+| Coefficient = 0                | Treat as 1.0 (no adjustment)                        |
+| Very large volume (>100L)      | Allow calculation, consider warning                 |
+| Negative inputs                | Validation prevents (min: 0/1)                      |
+| Dimensions smaller than 1L     | Round up to minimum 1 liter                         |
+| warehouse_name missing         | Cannot auto-fill tariff, show manual entry option   |
+| warehouse_name + dimensions    | Can auto-fill volume, look up tariff from warehouse |
+| warehouse_name + volume_liters | Can auto-fill tariff from warehouse                 |
 
 ---
 
@@ -801,54 +817,57 @@ export function StorageCostBreakdown({ result }: StorageCostBreakdownProps) {
 
 ### Unit Tests (storage-cost-utils.ts)
 
-| Test | Input | Expected Output |
-|------|-------|-----------------|
-| Daily cost - 1 liter | vol=1, base=0.07, per_liter=0.05, coef=1.0 | daily=0.07 |
-| Daily cost - 3 liters | vol=3, base=0.07, per_liter=0.05, coef=1.0 | daily=0.17 |
-| Daily cost with coefficient | vol=2, base=0.07, per_liter=0.05, coef=1.5 | daily=0.18 |
-| Billable days - within free period | turnover=45 | billable=0 |
-| Billable days - beyond free period | turnover=90 | billable=30 |
-| Total cost - free period | vol=3, turnover=45, daily=0.17 | total=0.00 |
-| Total cost - partial charge | vol=3, turnover=90, daily=0.17 | total=5.10 |
-| Volume = 0 | vol=0 | daily=0, total=0 |
-| is_free_period flag - 45 days | turnover=45 | is_free_period=true |
-| is_free_period flag - 61 days | turnover=61 | is_free_period=false |
-| Warning level 45 days | turnover=45 | 'none' |
-| Warning level 95 days | turnover=95 | 'warning' |
-| Warning level 121 days | turnover=121 | 'critical' |
+| Test                               | Input                                      | Expected Output      |
+| ---------------------------------- | ------------------------------------------ | -------------------- |
+| Daily cost - 1 liter               | vol=1, base=0.07, per_liter=0.05, coef=1.0 | daily=0.07           |
+| Daily cost - 3 liters              | vol=3, base=0.07, per_liter=0.05, coef=1.0 | daily=0.17           |
+| Daily cost with coefficient        | vol=2, base=0.07, per_liter=0.05, coef=1.5 | daily=0.18           |
+| Billable days - within free period | turnover=45                                | billable=0           |
+| Billable days - beyond free period | turnover=90                                | billable=30          |
+| Total cost - free period           | vol=3, turnover=45, daily=0.17             | total=0.00           |
+| Total cost - partial charge        | vol=3, turnover=90, daily=0.17             | total=5.10           |
+| Volume = 0                         | vol=0                                      | daily=0, total=0     |
+| is_free_period flag - 45 days      | turnover=45                                | is_free_period=true  |
+| is_free_period flag - 61 days      | turnover=61                                | is_free_period=false |
+| Warning level 45 days              | turnover=45                                | 'none'               |
+| Warning level 95 days              | turnover=95                                | 'warning'            |
+| Warning level 121 days             | turnover=121                               | 'critical'           |
 
 ### Component Tests
 
-| Test | Scenario | Expected |
-|------|----------|----------|
-| Default render | Mount with default props | Shows 14 days, calculates cost |
-| Preset selection | Click "30" preset | Days updates to 30, cost recalculates |
-| Custom input | Enter 45 in input | Days updates, warning shown |
-| Fallback notice | tariff=null | Shows info alert about fallback |
-| Warning display | days=35 | Shows amber warning |
-| Critical warning | days=70 | Shows red critical warning |
-| Breakdown expand | Click "Показать расчёт" | Shows 3-step breakdown |
-| Form integration | Change days | storage_rub field updates |
+| Test             | Scenario                 | Expected                              |
+| ---------------- | ------------------------ | ------------------------------------- |
+| Default render   | Mount with default props | Shows 14 days, calculates cost        |
+| Preset selection | Click "30" preset        | Days updates to 30, cost recalculates |
+| Custom input     | Enter 45 in input        | Days updates, warning shown           |
+| Fallback notice  | tariff=null              | Shows info alert about fallback       |
+| Warning display  | days=35                  | Shows amber warning                   |
+| Critical warning | days=70                  | Shows red critical warning            |
+| Breakdown expand | Click "Показать расчёт"  | Shows 3-step breakdown                |
+| Form integration | Change days              | storage_rub field updates             |
 
 ---
 
 ## Dev Agent Record
 
 ### File List
-| File | Change Type | Lines (Est.) | Description |
-|------|-------------|--------------|-------------|
-| `src/lib/storage-cost-utils.ts` | CREATE | ~80 | Storage calculation functions |
-| `src/types/price-calculator.ts` | UPDATE | +20 | Add storage types |
-| `src/components/custom/price-calculator/StorageCostCalculator.tsx` | CREATE | ~100 | Main storage component |
-| `src/components/custom/price-calculator/StorageDaysInput.tsx` | CREATE | ~50 | Days input with presets |
-| `src/components/custom/price-calculator/StorageCostBreakdown.tsx` | CREATE | ~70 | Breakdown display |
-| `src/components/custom/price-calculator/PriceCalculatorForm.tsx` | UPDATE | +20 | Integrate storage calculator |
-| `src/lib/__tests__/storage-cost-utils.test.ts` | CREATE | ~100 | Unit tests |
+
+| File                                                               | Change Type | Lines (Est.) | Description                   |
+| ------------------------------------------------------------------ | ----------- | ------------ | ----------------------------- |
+| `src/lib/storage-cost-utils.ts`                                    | CREATE      | ~80          | Storage calculation functions |
+| `src/types/price-calculator.ts`                                    | UPDATE      | +20          | Add storage types             |
+| `src/components/custom/price-calculator/StorageCostCalculator.tsx` | CREATE      | ~100         | Main storage component        |
+| `src/components/custom/price-calculator/StorageDaysInput.tsx`      | CREATE      | ~50          | Days input with presets       |
+| `src/components/custom/price-calculator/StorageCostBreakdown.tsx`  | CREATE      | ~70          | Breakdown display             |
+| `src/components/custom/price-calculator/PriceCalculatorForm.tsx`   | UPDATE      | +20          | Integrate storage calculator  |
+| `src/lib/__tests__/storage-cost-utils.test.ts`                     | CREATE      | ~100         | Unit tests                    |
 
 ### Change Log
+
 _(To be filled during implementation)_
 
 ### Review Follow-ups
+
 _(To be filled after code review)_
 
 ---
@@ -860,25 +879,27 @@ _(To be filled after code review)_
 **Gate Decision**: (To be filled)
 
 ### AC Verification
-| AC | Requirement | Status | Evidence |
-|----|-------------|--------|----------|
-| AC1 | Storage days input field | ⏳ | |
-| AC2 | Daily storage cost calculation | ⏳ | |
-| AC3 | Total storage cost calculation | ⏳ | |
-| AC4 | Calculation breakdown display | ⏳ | |
-| AC5 | Long storage warning | ⏳ | |
-| AC6 | Form integration | ⏳ | |
-| AC7 | Fallback mode | ⏳ | |
+
+| AC  | Requirement                    | Status | Evidence |
+| --- | ------------------------------ | ------ | -------- |
+| AC1 | Storage days input field       | ⏳     |          |
+| AC2 | Daily storage cost calculation | ⏳     |          |
+| AC3 | Total storage cost calculation | ⏳     |          |
+| AC4 | Calculation breakdown display  | ⏳     |          |
+| AC5 | Long storage warning           | ⏳     |          |
+| AC6 | Form integration               | ⏳     |          |
+| AC7 | Fallback mode                  | ⏳     |          |
 
 ### Accessibility Check
-| Check | Status | Evidence |
-|-------|--------|----------|
-| Input labels | ⏳ | |
-| Preset button states | ⏳ | |
-| Warning alerts | ⏳ | |
-| Collapsible section | ⏳ | |
-| Color contrast | ⏳ | |
-| Focus management | ⏳ | |
+
+| Check                | Status | Evidence |
+| -------------------- | ------ | -------- |
+| Input labels         | ⏳     |          |
+| Preset button states | ⏳     |          |
+| Warning alerts       | ⏳     |          |
+| Collapsible section  | ⏳     |          |
+| Color contrast       | ⏳     |          |
+| Focus management     | ⏳     |          |
 
 ---
 

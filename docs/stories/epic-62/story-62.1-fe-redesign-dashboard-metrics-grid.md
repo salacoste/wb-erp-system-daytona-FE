@@ -18,6 +18,7 @@
 Redesign the dashboard layout from the current 6-card grid to an 8-card grid displaying all required business metrics. This component serves as the container for all metric cards and handles responsive grid layout, loading states, and proper card ordering based on business priority.
 
 The grid must accommodate all 8 business metrics:
+
 1. Заказы (Orders volume)
 2. COGS по заказам (COGS for orders)
 3. Выкупы (Sales/Redemptions)
@@ -48,6 +49,7 @@ The grid must accommodate all 8 business metrics:
 ### Grid Layout
 
 **Desktop (xl: 4 columns, >=1280px)**:
+
 ```
 +-------------+-------------+-------------+-------------+
 |   Заказы    |COGS заказов |   Выкупы    |COGS выкупов |
@@ -58,6 +60,7 @@ The grid must accommodate all 8 business metrics:
 ```
 
 **Tablet (md: 2 columns, 768px-1279px)**:
+
 ```
 +--------------------+--------------------+
 |      Заказы        |   COGS заказов     |
@@ -71,6 +74,7 @@ The grid must accommodate all 8 business metrics:
 ```
 
 **Mobile (sm: 1 column, <768px)**:
+
 ```
 +--------------------+
 |      Заказы        |
@@ -93,28 +97,28 @@ The grid must accommodate all 8 business metrics:
 
 ### Spacing
 
-| Element | Value | Tailwind Class |
-|---------|-------|----------------|
-| Grid gap | 16px | `gap-4` |
-| Card padding | 16px | `p-4` |
-| Section margin | 24px | `mb-6` |
+| Element        | Value | Tailwind Class |
+| -------------- | ----- | -------------- |
+| Grid gap       | 16px  | `gap-4`        |
+| Card padding   | 16px  | `p-4`          |
+| Section margin | 24px  | `mb-6`         |
 
 ### Colors
 
-| Element | Color | Hex |
-|---------|-------|-----|
-| Card background | White | `#FFFFFF` |
-| Card border | Light gray | `#EEEEEE` |
-| Card hover border | Primary | `#E53935` |
+| Element            | Color                            | Hex                   |
+| ------------------ | -------------------------------- | --------------------- |
+| Card background    | White                            | `#FFFFFF`             |
+| Card border        | Light gray                       | `#EEEEEE`             |
+| Card hover border  | Primary                          | `#E53935`             |
 | Profit card border | Blue (positive) / Red (negative) | `#3B82F6` / `#EF4444` |
-| Skeleton | Light gray | `#F5F5F5` |
+| Skeleton           | Light gray                       | `#F5F5F5`             |
 
 ### Typography
 
-| Element | Size | Weight |
-|---------|------|--------|
+| Element                | Size | Weight |
+| ---------------------- | ---- | ------ |
 | Loading skeleton title | 14px | Medium |
-| Loading skeleton value | 32px | Bold |
+| Loading skeleton value | 32px | Bold   |
 
 ---
 
@@ -176,14 +180,14 @@ const gridClasses = cn(
 
 ### Dependencies
 
-| Hook | Source | Purpose |
-|------|--------|---------|
-| `useOrdersVolume` | Story 61.3-FE | Orders volume data |
-| `useOrdersCogs` | Story 61.4-FE | COGS for orders |
-| `useFinancialSummary` | Existing (modified 61.2) | Sales, expenses |
-| `useAdvertisingAnalytics` | Existing (modified 61.8) | Ad spend |
-| `calculateTheoreticalProfit` | Story 61.10-FE | Profit calculation |
-| `useAnalyticsComparison` | Story 61.5-FE | Period comparison |
+| Hook                         | Source                   | Purpose            |
+| ---------------------------- | ------------------------ | ------------------ |
+| `useOrdersVolume`            | Story 61.3-FE            | Orders volume data |
+| `useOrdersCogs`              | Story 61.4-FE            | COGS for orders    |
+| `useFinancialSummary`        | Existing (modified 61.2) | Sales, expenses    |
+| `useAdvertisingAnalytics`    | Existing (modified 61.8) | Ad spend           |
+| `calculateTheoreticalProfit` | Story 61.10-FE           | Profit calculation |
+| `useAnalyticsComparison`     | Story 61.5-FE            | Period comparison  |
 
 ### Skeleton Component
 
@@ -203,12 +207,12 @@ function DashboardMetricsGridSkeleton() {
 
 ## Files to Create/Modify
 
-| File | Action | Description |
-|------|--------|-------------|
-| `src/components/custom/dashboard/DashboardMetricsGrid.tsx` | CREATE | Main grid container component |
-| `src/components/custom/dashboard/DashboardMetricsGridSkeleton.tsx` | CREATE | Loading skeleton for grid |
-| `src/components/custom/dashboard/index.ts` | CREATE | Barrel export for dashboard components |
-| `src/app/(dashboard)/dashboard/components/DashboardContent.tsx` | MODIFY | Replace 6-card grid with DashboardMetricsGrid |
+| File                                                               | Action | Description                                   |
+| ------------------------------------------------------------------ | ------ | --------------------------------------------- |
+| `src/components/custom/dashboard/DashboardMetricsGrid.tsx`         | CREATE | Main grid container component                 |
+| `src/components/custom/dashboard/DashboardMetricsGridSkeleton.tsx` | CREATE | Loading skeleton for grid                     |
+| `src/components/custom/dashboard/index.ts`                         | CREATE | Barrel export for dashboard components        |
+| `src/app/(dashboard)/dashboard/components/DashboardContent.tsx`    | MODIFY | Replace 6-card grid with DashboardMetricsGrid |
 
 ---
 

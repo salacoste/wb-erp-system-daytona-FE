@@ -11,7 +11,7 @@ chars: 50290
 
 В этой статье:
 
-- 
+-
 - <a href="#vse-formuly-prozrachny" rel="nofollow">Все формулы — прозрачны</a>
 - <a href="#terminy-razdela-tseny" rel="nofollow">Термины раздела Цены</a>
 - <a href="#terminy-otcheta-pnl" rel="nofollow">Термины отчета PnL</a>

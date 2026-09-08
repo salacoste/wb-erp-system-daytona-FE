@@ -41,6 +41,7 @@ X-RateLimit-Reset: 1705932000
 ```
 
 **Affected endpoints** (10 req/min shared limit):
+
 - `PUT /v1/tariffs/settings`
 - `PATCH /v1/tariffs/settings`
 - `POST /v1/tariffs/settings/schedule`
@@ -51,10 +52,10 @@ X-RateLimit-Reset: 1705932000
 
 ### Components
 
-| Component | File | Purpose |
-|-----------|------|---------|
+| Component            | File                     | Purpose                  |
+| -------------------- | ------------------------ | ------------------------ |
 | `RateLimitIndicator` | `RateLimitIndicator.tsx` | Shows remaining requests |
-| `RateLimitContext` | `RateLimitContext.tsx` | Tracks rate limit state |
+| `RateLimitContext`   | `RateLimitContext.tsx`   | Tracks rate limit state  |
 
 ### Rate Limit Store (Zustand)
 
@@ -158,6 +159,7 @@ export function handleTariffApiError(error: ApiError, router: NextRouter) {
 ```
 
 **Visual states**:
+
 - **Green** (7-10 remaining): Normal
 - **Yellow** (4-6 remaining): Caution
 - **Red** (0-3 remaining): Warning
@@ -203,14 +205,14 @@ export function RateLimitIndicator() {
 
 ### Error Messages (Russian)
 
-| Error | Message |
-|-------|---------|
-| 400 Validation | Inline field errors |
-| 403 Forbidden | "Требуется роль Admin" + redirect |
-| 409 Conflict | "Версия на эту дату уже существует" |
-| 429 Rate Limit | "Превышен лимит запросов. Попробуйте через {time}." |
-| Network Error | "Ошибка сети. Попробуйте позже." |
-| 500 Server Error | "Ошибка сервера. Попробуйте позже." |
+| Error            | Message                                             |
+| ---------------- | --------------------------------------------------- |
+| 400 Validation   | Inline field errors                                 |
+| 403 Forbidden    | "Требуется роль Admin" + redirect                   |
+| 409 Conflict     | "Версия на эту дату уже существует"                 |
+| 429 Rate Limit   | "Превышен лимит запросов. Попробуйте через {time}." |
+| Network Error    | "Ошибка сети. Попробуйте позже."                    |
+| 500 Server Error | "Ошибка сервера. Попробуйте позже."                 |
 
 ### 429 Countdown Toast
 

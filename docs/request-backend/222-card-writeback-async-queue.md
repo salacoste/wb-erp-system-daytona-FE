@@ -8,13 +8,13 @@
 
 ## What changed
 
-| Aspect | Before (phase-1) | After (IE1 HIGH-2) |
-|---|---|---|
-| `POST /upload`, `/update`, `/move-nm` | Synchronous — blocked up to minutes, returned the WB result | **Async** — enqueues a BullMQ job, returns `202 { jobId, status }` immediately |
-| Result delivery | Inline in the POST response | **Poll** `GET /jobs/:jobId` |
-| Idempotency | None (double-submit = double WB write) | **jobId dedup** — identical request fingerprint → same `jobId` (BullMQ returns the existing job, no duplicate WB write) |
-| HTTP status on POST | `200 OK` | **`202 Accepted`** |
-| Gateway-timeout risk | High (mass ops ran inline) | None (enqueue is instant) |
+| Aspect                                | Before (phase-1)                                            | After (IE1 HIGH-2)                                                                                                      |
+| ------------------------------------- | ----------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------- |
+| `POST /upload`, `/update`, `/move-nm` | Synchronous — blocked up to minutes, returned the WB result | **Async** — enqueues a BullMQ job, returns `202 { jobId, status }` immediately                                          |
+| Result delivery                       | Inline in the POST response                                 | **Poll** `GET /jobs/:jobId`                                                                                             |
+| Idempotency                           | None (double-submit = double WB write)                      | **jobId dedup** — identical request fingerprint → same `jobId` (BullMQ returns the existing job, no duplicate WB write) |
+| HTTP status on POST                   | `200 OK`                                                    | **`202 Accepted`**                                                                                                      |
+| Gateway-timeout risk                  | High (mass ops ran inline)                                  | None (enqueue is instant)                                                                                               |
 
 ## Endpoints
 
@@ -26,6 +26,7 @@ Request bodies are **unchanged** (`UploadCardsDto` / `UpdateCardsDto` / `MoveNmD
 with the per-action `confirmationToken`, D44).
 
 **Response — `202 Accepted`** (was `200`):
+
 ```json
 {
   "jobId": "2c3f...e1a0",   // SHA256 hex — poll with this id
@@ -34,16 +35,18 @@ with the per-action `confirmationToken`, D44).
 ```
 
 **Gates (unchanged, checked BEFORE enqueue — fail fast, never queues):**
+
 - `CARD_WRITEBACK_ENABLED=false` → `403 Forbidden` (write-back is OFF).
 - Missing `confirmationToken` → `403 Forbidden` (D44).
 
-### GET `/v1/products/cards/jobs/:jobId`  *(new — poll here)*
+### GET `/v1/products/cards/jobs/:jobId` _(new — poll here)_
 
 Returns the BullMQ job state + result/error. Scoped to the caller's cabinet —
 a `jobId` encoding a different cabinet returns `403`; an unknown/expired id
 returns `404`.
 
 **`200 OK`**
+
 ```json
 {
   "jobId": "2c3f...e1a0",
@@ -59,6 +62,7 @@ returns `404`.
 ```
 
 Failed job example:
+
 ```json
 { "jobId": "2c3f...e1a0", "status": "failed", "result": null, "error": "WB rejected payload: invalid subject" }
 ```
@@ -81,10 +85,10 @@ different `jobId` and runs as a separate job.
 
 ## Error semantics (status endpoint)
 
-| WB error class | Processor behaviour | `status` |
-|---|---|---|
-| Terminal (400 / 401 / 403, or the service's fail-closed `ServiceUnavailableException` from the match-before-create lookup) | `UnrecoverableError` — fails immediately, **no retry** | `failed` |
-| Transient (429 / 5xx / network) | BullMQ retries (5 attempts, exponential backoff); the service's internal retry handles most of these first | `active`/`waiting` → `completed`/`failed` |
+| WB error class                                                                                                             | Processor behaviour                                                                                        | `status`                                  |
+| -------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------- | ----------------------------------------- |
+| Terminal (400 / 401 / 403, or the service's fail-closed `ServiceUnavailableException` from the match-before-create lookup) | `UnrecoverableError` — fails immediately, **no retry**                                                     | `failed`                                  |
+| Transient (429 / 5xx / network)                                                                                            | BullMQ retries (5 attempts, exponential backoff); the service's internal retry handles most of these first | `active`/`waiting` → `completed`/`failed` |
 
 The match-before-create idempotency (CRITICAL-1), fail-closed lookup, and the
 `CARD_WRITEBACK_ENABLED` + D44 gates are **all preserved** — they live in

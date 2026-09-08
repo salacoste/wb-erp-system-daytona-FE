@@ -1,4 +1,5 @@
 # QA Gate Report: Story 44.26a-FE
+
 # Product Search & Delivery Date Selection
 
 **Story**: 44.26a-FE
@@ -17,14 +18,14 @@ Story 44.26a-FE implements the Product Search and Delivery Date Selection compon
 
 ## Test Coverage Summary
 
-| Test File | Tests | Status |
-|-----------|-------|--------|
-| `useProductsWithDimensions.test.ts` | 15 | PASS |
-| `useWarehouseCoefficients.test.ts` | 14 | PASS |
-| `ProductSearchSelect.test.tsx` | 25 | PASS |
-| `DeliveryDatePicker.test.tsx` | 25 | PASS |
-| `CoefficientCalendar.test.tsx` | 37 | PASS |
-| **Total** | **116** | **PASS** |
+| Test File                           | Tests   | Status   |
+| ----------------------------------- | ------- | -------- |
+| `useProductsWithDimensions.test.ts` | 15      | PASS     |
+| `useWarehouseCoefficients.test.ts`  | 14      | PASS     |
+| `ProductSearchSelect.test.tsx`      | 25      | PASS     |
+| `DeliveryDatePicker.test.tsx`       | 25      | PASS     |
+| `CoefficientCalendar.test.tsx`      | 37      | PASS     |
+| **Total**                           | **116** | **PASS** |
 
 ---
 
@@ -32,48 +33,49 @@ Story 44.26a-FE implements the Product Search and Delivery Date Selection compon
 
 ### AC1: Product Search Select Component
 
-| Requirement | Status | Notes |
-|-------------|--------|-------|
-| Searchable dropdown component | PASS | `ProductSearchSelect.tsx` implemented |
-| Search by SKU, vendor code, title | PASS | Uses `useProductsWithDimensions` hook |
-| Debounce 300ms | PASS | `SEARCH_DEBOUNCE_MS = 300` constant |
-| Show product list with thumbnail, nmId, vendor code, title, brand | PASS | `ProductSearchResults` component |
-| "(опционально)" hint | PASS | Label: "Товар (опционально)" |
-| Helper text "Или введите данные вручную ниже" | PASS | Shown when no product selected |
-| "Очистить" button | PASS | `SelectedProductCard` component |
-| Empty search results message | PASS | "Товары не найдены" message |
-| Keyboard navigation in dropdown | PASS | Via Command component (cmdk) |
+| Requirement                                                       | Status | Notes                                 |
+| ----------------------------------------------------------------- | ------ | ------------------------------------- |
+| Searchable dropdown component                                     | PASS   | `ProductSearchSelect.tsx` implemented |
+| Search by SKU, vendor code, title                                 | PASS   | Uses `useProductsWithDimensions` hook |
+| Debounce 300ms                                                    | PASS   | `SEARCH_DEBOUNCE_MS = 300` constant   |
+| Show product list with thumbnail, nmId, vendor code, title, brand | PASS   | `ProductSearchResults` component      |
+| "(опционально)" hint                                              | PASS   | Label: "Товар (опционально)"          |
+| Helper text "Или введите данные вручную ниже"                     | PASS   | Shown when no product selected        |
+| "Очистить" button                                                 | PASS   | `SelectedProductCard` component       |
+| Empty search results message                                      | PASS   | "Товары не найдены" message           |
+| Keyboard navigation in dropdown                                   | PASS   | Via Command component (cmdk)          |
 
 ### AC2: Product Selection State
 
-| Requirement | Status | Notes |
-|-------------|--------|-------|
-| `selected_product_nm_id: string` | PASS | STRING type verified in tests |
-| `selected_product_name: string` from `sa_name` | PASS | Correct field mapping |
-| onProductSelect callback | PASS | `onChange(nmId, product)` pattern |
-| Persist through re-renders | PASS | State management via React hooks |
+| Requirement                                    | Status | Notes                             |
+| ---------------------------------------------- | ------ | --------------------------------- |
+| `selected_product_nm_id: string`               | PASS   | STRING type verified in tests     |
+| `selected_product_name: string` from `sa_name` | PASS   | Correct field mapping             |
+| onProductSelect callback                       | PASS   | `onChange(nmId, product)` pattern |
+| Persist through re-renders                     | PASS   | State management via React hooks  |
 
 ### AC3: Delivery Date Picker Component
 
-| Requirement | Status | Notes |
-|-------------|--------|-------|
-| Date input with coefficient display | PASS | `DeliveryDatePicker.tsx` |
-| Default to tomorrow or first available | PASS | `getTomorrowDate()`, `getFirstAvailableDate()` |
-| Coefficient display "Коэффициент: x1.25" | PASS | Implemented with status styling |
-| Disable unavailable dates | PASS | `coefficient <= 0` check |
-| Russian locale format "21 января 2026" | PASS | `formatDateLongRu()` function |
+| Requirement                              | Status | Notes                                          |
+| ---------------------------------------- | ------ | ---------------------------------------------- |
+| Date input with coefficient display      | PASS   | `DeliveryDatePicker.tsx`                       |
+| Default to tomorrow or first available   | PASS   | `getTomorrowDate()`, `getFirstAvailableDate()` |
+| Coefficient display "Коэффициент: x1.25" | PASS   | Implemented with status styling                |
+| Disable unavailable dates                | PASS   | `coefficient <= 0` check                       |
+| Russian locale format "21 января 2026"   | PASS   | `formatDateLongRu()` function                  |
 
 ### AC4: Coefficient Calendar Enhancement
 
-| Requirement | Status | Notes |
-|-------------|--------|-------|
-| Click-to-select functionality | PASS | `onDateSelect` callback |
-| Highlight selected date (ring styling) | PASS | `ring-2 ring-blue-500` class |
-| 5-level color coding | PASS | green/yellow/orange/red/gray |
-| Tooltip on hover | PASS | Shows date and coefficient |
-| Prevent selection of unavailable dates | PASS | Gray dates non-clickable |
+| Requirement                            | Status | Notes                        |
+| -------------------------------------- | ------ | ---------------------------- |
+| Click-to-select functionality          | PASS   | `onDateSelect` callback      |
+| Highlight selected date (ring styling) | PASS   | `ring-2 ring-blue-500` class |
+| 5-level color coding                   | PASS   | green/yellow/orange/red/gray |
+| Tooltip on hover                       | PASS   | Shows date and coefficient   |
+| Prevent selection of unavailable dates | PASS   | Gray dates non-clickable     |
 
 **Color Coding Verification**:
+
 - Green (`bg-green-100`): coefficient <= 1.0 (base)
 - Yellow (`bg-yellow-100`): 1.01 - 1.5 (elevated)
 - Orange (`bg-orange-100`): 1.51 - 2.0 (high)
@@ -82,39 +84,39 @@ Story 44.26a-FE implements the Product Search and Delivery Date Selection compon
 
 ### AC5: Form Integration
 
-| Requirement | Status | Notes |
-|-------------|--------|-------|
-| ProductSearchSelect before dimensions | PASS | Integration in PriceCalculatorForm |
-| DeliveryDatePicker in WarehouseSection | PASS | After warehouse select |
-| Coefficient connected to calculation | PASS | Via `onDeliveryDateChange` |
-| Warehouse change resets date | PASS | `useWarehouseCoefficients` reset logic |
-| Form reset clears selections | PASS | State reset in useEffect |
+| Requirement                            | Status | Notes                                  |
+| -------------------------------------- | ------ | -------------------------------------- |
+| ProductSearchSelect before dimensions  | PASS   | Integration in PriceCalculatorForm     |
+| DeliveryDatePicker in WarehouseSection | PASS   | After warehouse select                 |
+| Coefficient connected to calculation   | PASS   | Via `onDeliveryDateChange`             |
+| Warehouse change resets date           | PASS   | `useWarehouseCoefficients` reset logic |
+| Form reset clears selections           | PASS   | State reset in useEffect               |
 
 ### AC6: Loading & Error States
 
-| Requirement | Status | Notes |
-|-------------|--------|-------|
-| Skeleton while loading products | PASS | 3 skeleton items shown |
-| Spinner while loading coefficients | PASS | Loader2 spinner |
-| Error with retry on search failure | PASS | "Ошибка поиска" + retry button |
-| No available dates error | PASS | "Нет доступных дат для выбранного склада" |
-| Graceful degradation | PASS | Form works without product search |
+| Requirement                        | Status | Notes                                     |
+| ---------------------------------- | ------ | ----------------------------------------- |
+| Skeleton while loading products    | PASS   | 3 skeleton items shown                    |
+| Spinner while loading coefficients | PASS   | Loader2 spinner                           |
+| Error with retry on search failure | PASS   | "Ошибка поиска" + retry button            |
+| No available dates error           | PASS   | "Нет доступных дат для выбранного склада" |
+| Graceful degradation               | PASS   | Form works without product search         |
 
 ---
 
 ## Accessibility Verification (WCAG 2.1 AA)
 
-| Check | Status | Implementation |
-|-------|--------|----------------|
-| Keyboard navigation (dropdown) | PASS | Command component supports arrow keys, Enter |
-| Keyboard navigation (calendar) | PASS | Arrow keys, Enter, Space for selection |
-| Screen reader labels | PASS | aria-label on all interactive elements |
-| Focus management | PASS | Proper focus states with ring styling |
-| Color contrast | PASS | 4.5:1+ ratio maintained |
-| aria-expanded | PASS | Updated on dropdown open/close |
-| aria-selected | PASS | Calendar cells mark selected state |
-| aria-disabled | PASS | Unavailable cells marked disabled |
-| tabIndex management | PASS | -1 for unavailable, 0 for available |
+| Check                          | Status | Implementation                               |
+| ------------------------------ | ------ | -------------------------------------------- |
+| Keyboard navigation (dropdown) | PASS   | Command component supports arrow keys, Enter |
+| Keyboard navigation (calendar) | PASS   | Arrow keys, Enter, Space for selection       |
+| Screen reader labels           | PASS   | aria-label on all interactive elements       |
+| Focus management               | PASS   | Proper focus states with ring styling        |
+| Color contrast                 | PASS   | 4.5:1+ ratio maintained                      |
+| aria-expanded                  | PASS   | Updated on dropdown open/close               |
+| aria-selected                  | PASS   | Calendar cells mark selected state           |
+| aria-disabled                  | PASS   | Unavailable cells marked disabled            |
+| tabIndex management            | PASS   | -1 for unavailable, 0 for available          |
 
 ---
 
@@ -122,16 +124,16 @@ Story 44.26a-FE implements the Product Search and Delivery Date Selection compon
 
 ### Files Created/Modified
 
-| File | Lines | Purpose |
-|------|-------|---------|
-| `ProductSearchSelect.tsx` | 163 | Main search dropdown component |
-| `ProductSearchComponents.tsx` | 158 | Sub-components (Thumbnail, Card, Results) |
-| `DeliveryDatePicker.tsx` | 177 | Date picker with coefficient display |
-| `CoefficientCalendar.tsx` | 195 | Click-to-select calendar |
-| `WarehouseSection.tsx` | 167 | Integration wrapper |
-| `useProductsWithDimensions.ts` | 45 | TanStack Query hook |
-| `useWarehouseCoefficients.ts` | 170 | Coefficient state management |
-| `coefficient-utils.ts` | 166 | Utility functions |
+| File                           | Lines | Purpose                                   |
+| ------------------------------ | ----- | ----------------------------------------- |
+| `ProductSearchSelect.tsx`      | 163   | Main search dropdown component            |
+| `ProductSearchComponents.tsx`  | 158   | Sub-components (Thumbnail, Card, Results) |
+| `DeliveryDatePicker.tsx`       | 177   | Date picker with coefficient display      |
+| `CoefficientCalendar.tsx`      | 195   | Click-to-select calendar                  |
+| `WarehouseSection.tsx`         | 167   | Integration wrapper                       |
+| `useProductsWithDimensions.ts` | 45    | TanStack Query hook                       |
+| `useWarehouseCoefficients.ts`  | 170   | Coefficient state management              |
+| `coefficient-utils.ts`         | 166   | Utility functions                         |
 
 ### Type Safety
 

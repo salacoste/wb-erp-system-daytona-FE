@@ -18,6 +18,7 @@ Epic 42 resolves technical debt in task queue handlers. **Key change**: `enrich_
 ### `enrich_cogs` Task - DEPRECATED
 
 **Old approach** (deprecated):
+
 ```typescript
 // DON'T USE THIS - will still work but is deprecated
 POST /v1/tasks/enqueue
@@ -28,6 +29,7 @@ POST /v1/tasks/enqueue
 ```
 
 **New approach** (recommended):
+
 ```typescript
 // USE THIS INSTEAD
 POST /v1/tasks/enqueue
@@ -38,12 +40,14 @@ POST /v1/tasks/enqueue
 ```
 
 **Why deprecated?**
+
 - Original intent (update `wb_finance_raw.unit_cost_rub`) not possible - column doesn't exist
 - COGS is stored in separate `cogs` table and joined at query time
 - Story 23.3 already auto-triggers margin recalculation after import
 - `recalculate_weekly_margin` task already exists and works correctly
 
 **Backwards compatibility**: `enrich_cogs` still works but:
+
 - Returns `deprecated: true` in response
 - Logs deprecation warning
 - Internally calls margin recalculation
@@ -51,6 +55,7 @@ POST /v1/tasks/enqueue
 ---
 
 ## Backend Team Response
+
 **Status**: RESOLVED
 **Resolution**: Epic 42 technical debt resolved. The `enrich_cogs` task is deprecated in favor of `recalculate_weekly_margin`. Frontend should use the new task type for all manual margin recalculation triggers. Backward compatibility maintained.
 **Frontend Action**: No further action needed unless noted above.
@@ -67,14 +72,15 @@ Standalone weekly payout re-aggregation. Use when you need to re-aggregate weekl
 
 **4 Modes**:
 
-| Mode | Payload | Use Case |
-|------|---------|----------|
-| Single week | `{ "week": "2025-W49" }` | Re-aggregate specific week |
-| Multiple weeks | `{ "weeks": ["2025-W48", "2025-W49"] }` | Re-aggregate several weeks |
-| Date range | `{ "dateFrom": "2025-12-01", "dateTo": "2025-12-31" }` | Re-aggregate all weeks in range |
-| All weeks | `{}` | Re-aggregate entire cabinet (use with caution) |
+| Mode           | Payload                                                | Use Case                                       |
+| -------------- | ------------------------------------------------------ | ---------------------------------------------- |
+| Single week    | `{ "week": "2025-W49" }`                               | Re-aggregate specific week                     |
+| Multiple weeks | `{ "weeks": ["2025-W48", "2025-W49"] }`                | Re-aggregate several weeks                     |
+| Date range     | `{ "dateFrom": "2025-12-01", "dateTo": "2025-12-31" }` | Re-aggregate all weeks in range                |
+| All weeks      | `{}`                                                   | Re-aggregate entire cabinet (use with caution) |
 
 **Request**:
+
 ```typescript
 const response = await fetch('/v1/tasks/enqueue', {
   method: 'POST',
@@ -92,6 +98,7 @@ const response = await fetch('/v1/tasks/enqueue', {
 ```
 
 **Response** (task status):
+
 ```typescript
 interface WeeklyAggregateResult {
   status: 'completed';
@@ -112,12 +119,13 @@ Data integrity validation. Use to validate financial data and identify products 
 
 **2 Modes**:
 
-| Mode | Payload | Use Case |
-|------|---------|----------|
-| Specific week | `{ "week": "2025-W49" }` | Validate single week |
-| All weeks | `{}` | Validate all weeks with data |
+| Mode          | Payload                  | Use Case                     |
+| ------------- | ------------------------ | ---------------------------- |
+| Specific week | `{ "week": "2025-W49" }` | Validate single week         |
+| All weeks     | `{}`                     | Validate all weeks with data |
 
 **Request**:
+
 ```typescript
 const response = await fetch('/v1/tasks/enqueue', {
   method: 'POST',
@@ -135,6 +143,7 @@ const response = await fetch('/v1/tasks/enqueue', {
 ```
 
 **Response** (task status):
+
 ```typescript
 interface SanityCheckResult {
   status: 'completed';
@@ -149,6 +158,7 @@ interface SanityCheckResult {
 ```
 
 **Validation Checks Performed**:
+
 1. **Row Balance** - gross - fees ≈ net_for_pay (±1% tolerance)
 2. **Alternative Reconstruction** - WB formula validation (±0.1%)
 3. **Storno Control** - storno ≤ 5% of original amounts
@@ -164,6 +174,7 @@ Use this instead of `enrich_cogs` for margin recalculation.
 **Endpoint**: `POST /v1/tasks/enqueue`
 
 **Request**:
+
 ```typescript
 const response = await fetch('/v1/tasks/enqueue', {
   method: 'POST',
@@ -181,6 +192,7 @@ const response = await fetch('/v1/tasks/enqueue', {
 ```
 
 **Response** (task status):
+
 ```typescript
 interface MarginRecalcResult {
   status: 'completed';
@@ -221,6 +233,7 @@ const taskStatus = await statusResponse.json();
 ### Required Changes
 
 1. **Replace `enrich_cogs`** calls with `recalculate_weekly_margin`:
+
    ```typescript
    // Before (deprecated)
    task_type: 'enrich_cogs'
@@ -252,12 +265,12 @@ const taskStatus = await statusResponse.json();
 
 ## API Reference
 
-| Task Type | Status | Payload | Use Case |
-|-----------|--------|---------|----------|
-| `recalculate_weekly_margin` | ✅ Active | `{ weeks: string[] }` | Margin recalculation |
-| `weekly_margin_aggregate` | ✅ New | `{ week?, weeks?, dateFrom?, dateTo? }` | Re-aggregate summaries |
-| `weekly_sanity_check` | ✅ New | `{ week? }` | Data validation |
-| `enrich_cogs` | ⚠️ **DEPRECATED** | `{ week?, weeks? }` | Use `recalculate_weekly_margin` |
+| Task Type                   | Status            | Payload                                 | Use Case                        |
+| --------------------------- | ----------------- | --------------------------------------- | ------------------------------- |
+| `recalculate_weekly_margin` | ✅ Active         | `{ weeks: string[] }`                   | Margin recalculation            |
+| `weekly_margin_aggregate`   | ✅ New            | `{ week?, weeks?, dateFrom?, dateTo? }` | Re-aggregate summaries          |
+| `weekly_sanity_check`       | ✅ New            | `{ week? }`                             | Data validation                 |
+| `enrich_cogs`               | ⚠️ **DEPRECATED** | `{ week?, weeks? }`                     | Use `recalculate_weekly_margin` |
 
 ---
 
@@ -275,6 +288,7 @@ const taskStatus = await statusResponse.json();
 ## Questions?
 
 Contact backend team if you need:
+
 - Clarification on task types
 - Additional response fields
 - New task functionality

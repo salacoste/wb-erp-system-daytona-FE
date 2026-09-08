@@ -17,10 +17,12 @@ Create TanStack Query hooks for reading and mutating cabinet tax + VAT settings.
 ## Acceptance Criteria
 
 ### AC1: Query Key Factory
+
 - [ ] `cabinetTaxKeys` with `all`, `byId(cabinetId)` factories
 - [ ] Follows existing project pattern (see `src/hooks/` examples)
 
 ### AC2: Query Hook
+
 - [ ] `useCabinetTaxSettings(cabinetId: string)` hook
 - [ ] Returns `{ taxSystem, taxRate, vatPayer, vatRate }` from cabinet data
 - [ ] `enabled: !!cabinetId`
@@ -28,12 +30,14 @@ Create TanStack Query hooks for reading and mutating cabinet tax + VAT settings.
 - [ ] Loading and error states handled
 
 ### AC3: Mutation Hook
+
 - [ ] `useUpdateTaxSettings(cabinetId: string)` mutation hook
 - [ ] Accepts `UpdateCabinetTaxRequest` as input
 - [ ] On success: invalidates `cabinetTaxKeys.byId(cabinetId)` AND finance-summary queries
 - [ ] On 400 error: returns validation error message
 
 ### AC4: Cache Invalidation
+
 - [ ] Finance-summary queries invalidated on tax settings change (backend recalculates)
 - [ ] Cabinet queries invalidated to reflect new settings
 
@@ -42,9 +46,11 @@ Create TanStack Query hooks for reading and mutating cabinet tax + VAT settings.
 ## Technical Implementation
 
 ### Files to Create
+
 - `src/hooks/useCabinetTaxSettings.ts`
 
 ### Integration Points
+
 - Uses `getCabinetTaxSettings()` and `updateCabinetTaxSettings()` from `lib/api/cabinet.ts`
 - Invalidates finance-summary query keys from `hooks-v1/financial/hooks.ts`
 
@@ -60,7 +66,7 @@ Create TanStack Query hooks for reading and mutating cabinet tax + VAT settings.
 
 ## Change Log
 
-| Date | Author | Change |
-|------|--------|--------|
-| 2026-02-22 | BMad Master | Initial story creation |
-| 2026-02-23 | Claude | No scope changes — mutation already handles full body including VAT fields |
+| Date       | Author      | Change                                                                     |
+| ---------- | ----------- | -------------------------------------------------------------------------- |
+| 2026-02-22 | BMad Master | Initial story creation                                                     |
+| 2026-02-23 | Claude      | No scope changes — mutation already handles full body including VAT fields |

@@ -16,6 +16,7 @@
 ## Acceptance Criteria
 
 ### AC1: Health Status Indicator
+
 - [ ] Show colored dot for health_status
 - [ ] Healthy: Green dot
 - [ ] Degraded: Yellow dot
@@ -23,38 +24,45 @@
 - [ ] Stale: Orange dot
 
 ### AC2: Status Information
+
 - [ ] Last sync timestamp (relative time)
 - [ ] Next scheduled sync time
 - [ ] Error count in last 24h
 
 ### AC3: Tooltip Details
+
 - [ ] Campaigns synced count
 - [ ] Stats records synced count
 - [ ] Cost records synced count
 - [ ] Sync duration
 
 ### AC4: Auto-Refresh
+
 - [ ] Poll sync status every 60 seconds
 - [ ] Update indicator without page refresh
 
 ### AC5: Accessibility
+
 - [ ] Status indicator has aria-label
 - [ ] Tooltip accessible via keyboard focus
 - [ ] Color is supplemented with text label
 
 ### Note: 26-hour Stale Threshold
+
 Backend marks sync as "stale" after 26 hours (not 24h).
 **Rationale**: 24h daily sync schedule + 2h buffer for network delays and retry attempts.
 
 ## Tasks / Subtasks
 
 ### Phase 1: Indicator Component
+
 - [ ] Create `components/SyncStatusIndicator.tsx`
 - [ ] Implement health status dot
 - [ ] Add relative time display
 - [ ] Add tooltip with details
 
 ### Phase 2: Integration
+
 - [ ] Connect to `useAdvertisingSyncStatus` hook
 - [ ] Set up 60s polling interval
 - [ ] Handle loading/error states
@@ -235,9 +243,9 @@ src/app/(dashboard)/analytics/advertising/components/
 
 ## Change Log
 
-| Date | Author | Change |
-|------|--------|--------|
-| 2025-12-22 | James (Dev Agent) | Initial draft |
+| Date       | Author            | Change                                                            |
+| ---------- | ----------------- | ----------------------------------------------------------------- |
+| 2025-12-22 | James (Dev Agent) | Initial draft                                                     |
 | 2025-12-22 | James (Dev Agent) | PO Review: Added 26h rationale documentation, AC5 (accessibility) |
 
 ---

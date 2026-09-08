@@ -15,8 +15,8 @@
 GET /v1/products/dictionaries?includeDiscontinued=false
 ```
 
-| Param | Type | Default | Notes |
-|---|---|---|---|
+| Param                 | Type                          | Default | Notes                                           |
+| --------------------- | ----------------------------- | ------- | ----------------------------------------------- |
 | `includeDiscontinued` | `boolean` (string `true`/`1`) | `false` | When `true`, discontinued SKUs are counted too. |
 
 Returns distinct values **with product counts** for the cabinet — one round-trip for all filter dropdowns.

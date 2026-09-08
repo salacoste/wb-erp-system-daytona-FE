@@ -11,7 +11,7 @@ chars: 5224
 
 В этой статье:
 
-- 
+-
 - <a href="#vidy-uchyota-sebestoimosti-v-selsup" rel="nofollow">Виды учёта себестоимости в SelSup</a>
 - <a href="#1-klassicheskij-fifo-fifo-vklyuchyon-vedyote-priyomki-na-sklad" rel="nofollow">1) Классический FIFO (FIFO включён + ведёте приёмки на склад)</a>
 - <a href="#2-uproshhennyj-fifo-fifo-vklyuchyon-no-ne-vedyote-skladskoj-uchyot" rel="nofollow">2) Упрощенный FIFO (FIFO включён, но не ведёте складской учёт)</a>

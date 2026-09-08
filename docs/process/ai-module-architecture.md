@@ -21,16 +21,16 @@ The module operates in three readiness states (collecting / sneak_preview / read
 
 7 files. All canonical frontend types live here. **Never import raw backend shapes into components.**
 
-| File | Domain | Key exports |
-|------|--------|-------------|
-| `index.ts` | Barrel re-export | Re-exports all types below + backward-compat for pre-108 consumers |
-| `forecast.ts` | Forecast response + model types | `ForecastEntry`, `ModelType`, `MODEL_TYPES`, `MODEL_TYPE_LABELS` |
-| `status.ts` | Readiness state + status response | `AiReadinessLevel`, `AiStatusResponse` |
-| `system.ts` | Health + global system info | `AiHealthResponse`, `AiSystemInfo` |
-| `models.ts` | Model list + detail | `AiModel`, `AiModelsResponse` |
-| `trends-sneak.ts` | Trends + sneak-preview data | `AiTrendsResponse`, `AiSneakPreviewResponse` |
-| `evaluations.ts` | Evaluations + feedback (stub) | `AiEvaluation`, `AiFeedback` — stubs for Epic 110 [[108.1-FE]] |
-| `admin.ts` | Admin-only types (stub) | `AiAdminConfig` — stubs for Epic 111 [[108.1-FE]] |
+| File              | Domain                            | Key exports                                                        |
+| ----------------- | --------------------------------- | ------------------------------------------------------------------ |
+| `index.ts`        | Barrel re-export                  | Re-exports all types below + backward-compat for pre-108 consumers |
+| `forecast.ts`     | Forecast response + model types   | `ForecastEntry`, `ModelType`, `MODEL_TYPES`, `MODEL_TYPE_LABELS`   |
+| `status.ts`       | Readiness state + status response | `AiReadinessLevel`, `AiStatusResponse`                             |
+| `system.ts`       | Health + global system info       | `AiHealthResponse`, `AiSystemInfo`                                 |
+| `models.ts`       | Model list + detail               | `AiModel`, `AiModelsResponse`                                      |
+| `trends-sneak.ts` | Trends + sneak-preview data       | `AiTrendsResponse`, `AiSneakPreviewResponse`                       |
+| `evaluations.ts`  | Evaluations + feedback (stub)     | `AiEvaluation`, `AiFeedback` — stubs for Epic 110 [[108.1-FE]]     |
+| `admin.ts`        | Admin-only types (stub)           | `AiAdminConfig` — stubs for Epic 111 [[108.1-FE]]                  |
 
 **Backward-compat barrel**: `src/types/ai-forecast.ts` (pre-Epic 108 path) re-exports from `src/types/ai/index.ts`. Epic 103/104 consumers continue working without change.
 
@@ -38,16 +38,16 @@ The module operates in three readiness states (collecting / sneak_preview / read
 
 7 files mirroring the types directory. Each file contains fetcher functions + `normalize*` boundary normalizers.
 
-| File | Endpoints | Normalizers |
-|------|-----------|-------------|
-| `index.ts` | Barrel re-export | — |
-| `forecast.ts` | `GET /v1/ai/forecast` | `normalizeForecastEntry` — maps `predictedUnits` → `predictedSales` |
-| `status.ts` | `GET /v1/ai/status` | `normalizeAiStatus` — defaults unknown readinessLevel to `'collecting'` |
-| `system.ts` | `GET /v1/ai/health`, `GET /v1/ai/system` | `normalizeAiHealth` |
-| `models.ts` | `GET /v1/ai/models`, `GET /v1/ai/models/:id`, `POST /v1/ai/models/:id/train` | `normalizeAiModel` |
-| `trends-sneak.ts` | `GET /v1/ai/trends`, `GET /v1/ai/sneak-preview` | `normalizeAiTrends`, `normalizeAiSneakPreview` |
-| `evaluations.ts` | `GET /v1/ai/evaluations`, `POST /v1/ai/feedback` (stubs) | — |
-| `admin.ts` | Admin endpoints (stubs) | — |
+| File              | Endpoints                                                                    | Normalizers                                                             |
+| ----------------- | ---------------------------------------------------------------------------- | ----------------------------------------------------------------------- |
+| `index.ts`        | Barrel re-export                                                             | —                                                                       |
+| `forecast.ts`     | `GET /v1/ai/forecast`                                                        | `normalizeForecastEntry` — maps `predictedUnits` → `predictedSales`     |
+| `status.ts`       | `GET /v1/ai/status`                                                          | `normalizeAiStatus` — defaults unknown readinessLevel to `'collecting'` |
+| `system.ts`       | `GET /v1/ai/health`, `GET /v1/ai/system`                                     | `normalizeAiHealth`                                                     |
+| `models.ts`       | `GET /v1/ai/models`, `GET /v1/ai/models/:id`, `POST /v1/ai/models/:id/train` | `normalizeAiModel`                                                      |
+| `trends-sneak.ts` | `GET /v1/ai/trends`, `GET /v1/ai/sneak-preview`                              | `normalizeAiTrends`, `normalizeAiSneakPreview`                          |
+| `evaluations.ts`  | `GET /v1/ai/evaluations`, `POST /v1/ai/feedback` (stubs)                     | —                                                                       |
+| `admin.ts`        | Admin endpoints (stubs)                                                      | —                                                                       |
 
 **Backward-compat barrel**: `src/lib/api/ai-forecast-api.ts` re-exports from `src/lib/api/ai/index.ts`.
 
@@ -180,12 +180,12 @@ the full models list) is acceptable when documented with a comment explaining th
 
 ### Polling Intervals
 
-| Hook | Interval | Stop condition | Story |
-|------|----------|----------------|-------|
-| `useAiHealth` | 30 000 ms | Never (always poll) | [[108.2-FE]] |
-| `useAiStatus` | 60 000 ms | `readinessLevel === 'ready'` | [[108.3-FE]] |
-| `useTrainAiModel` training-trigger | 5 000 ms | `status === 'trained'` \| error | [[109.4-FE]] |
-| All other hooks | No polling | — | — |
+| Hook                               | Interval   | Stop condition                  | Story        |
+| ---------------------------------- | ---------- | ------------------------------- | ------------ |
+| `useAiHealth`                      | 30 000 ms  | Never (always poll)             | [[108.2-FE]] |
+| `useAiStatus`                      | 60 000 ms  | `readinessLevel === 'ready'`    | [[108.3-FE]] |
+| `useTrainAiModel` training-trigger | 5 000 ms   | `status === 'trained'` \| error | [[109.4-FE]] |
+| All other hooks                    | No polling | —                               | —            |
 
 Polling is implemented via TanStack Query `refetchInterval` callback (not `useRef`/`setInterval`). The callback receives the query object and returns `false` to stop or an interval in ms.
 
@@ -201,11 +201,13 @@ refetchInterval: (query) => query.state.data?.readinessLevel === 'ready' ? false
 ### `enabled` Gates
 
 All hooks that need `cabinetId` use:
+
 ```typescript
 enabled: !!cabinetId
 ```
 
 Hooks that are AI-preference-gated additionally check:
+
 ```typescript
 enabled: !!cabinetId && aiEnabled === true
 ```
@@ -214,11 +216,11 @@ enabled: !!cabinetId && aiEnabled === true
 
 ### Default Query Config
 
-| Setting | Value | Rationale |
-|---------|-------|-----------|
-| `staleTime` | 60 000 ms | Matches poll interval; prevents double-fetch |
-| `gcTime` | 300 000 ms (5 min) | Standard project default |
-| `retry` | 1 | One retry on failure; prevents cascade on backend restart |
+| Setting     | Value              | Rationale                                                 |
+| ----------- | ------------------ | --------------------------------------------------------- |
+| `staleTime` | 60 000 ms          | Matches poll interval; prevents double-fetch              |
+| `gcTime`    | 300 000 ms (5 min) | Standard project default                                  |
+| `retry`     | 1                  | One retry on failure; prevents cascade on backend restart |
 
 ---
 
@@ -228,11 +230,11 @@ enabled: !!cabinetId && aiEnabled === true
 
 The backend's `readinessLevel` field drives all UI branching:
 
-| State | Meaning | Weeks of data | UI component |
-|-------|---------|---------------|--------------|
-| `collecting` | Not enough data yet | < 6 | `CollectingProgressTracker` |
-| `sneak_preview` | Preliminary data | 6–11 | `SneakPreviewSection` |
-| `ready` | Full AI enabled | 12+ | `ForecastTable` + `ForecastChart` + `ForecastMetrics` |
+| State           | Meaning             | Weeks of data | UI component                                          |
+| --------------- | ------------------- | ------------- | ----------------------------------------------------- |
+| `collecting`    | Not enough data yet | < 6           | `CollectingProgressTracker`                           |
+| `sneak_preview` | Preliminary data    | 6–11          | `SneakPreviewSection`                                 |
+| `ready`         | Full AI enabled     | 12+           | `ForecastTable` + `ForecastChart` + `ForecastMetrics` |
 
 ### State Machine — `resolveReadinessRoute` [[108.3-FE]]
 
@@ -275,40 +277,46 @@ ForecastPageContent
 ```
 
 Route helpers (never inline templates):
+
 - `buildModelPerformanceRoute(id)` in `src/lib/routes.ts` [[109.5-FE]]
 
 ### Locked Decisions (Epic 109 Spec)
 
 These decisions are closed — do not revisit without an explicit retro action item:
 
-| ID | Decision | Rationale |
-|----|----------|-----------|
-| Q1 | Separate `/analytics/models` route (not embedded in forecast page) | Avoids page-size violation; models page has its own data contract |
-| Q2 | `spread = max(0.10, 1 − confidence) × predictedSales` for confidence band | Matches backend guide formula; preserves minimum visible band |
-| Q3 | Visual UAT deferred until test cabinet reaches `ready` state | `collecting` state is the only observable state in test environment |
-| Q4 | Per-row Train button (not page-level) | Each model trains independently; page-level button misleads users |
+| ID  | Decision                                                                  | Rationale                                                           |
+| --- | ------------------------------------------------------------------------- | ------------------------------------------------------------------- |
+| Q1  | Separate `/analytics/models` route (not embedded in forecast page)        | Avoids page-size violation; models page has its own data contract   |
+| Q2  | `spread = max(0.10, 1 − confidence) × predictedSales` for confidence band | Matches backend guide formula; preserves minimum visible band       |
+| Q3  | Visual UAT deferred until test cabinet reaches `ready` state              | `collecting` state is the only observable state in test environment |
+| Q4  | Per-row Train button (not page-level)                                     | Each model trains independently; page-level button misleads users   |
 
 ---
 
 ## Extension Points for Epic 110-FE (Evaluations + Feedback + CSV Export)
 
 Story 108.1 pre-created stub files for all Epic 110 domain objects [[108.1-FE]]:
+
 - `src/types/ai/evaluations.ts` — `AiEvaluation`, `AiFeedback` types
 - `src/lib/api/ai/evaluations.ts` — fetcher stubs for `GET /v1/ai/evaluations` and `POST /v1/ai/feedback`
 
 ### Adding Evaluations List
+
 1. Implement `normalizeAiEvaluation` in `src/lib/api/ai/evaluations.ts`.
 2. Create `useAiEvaluations` hook in `src/hooks/useAiEvaluations.ts` — scope queryKey by `cabinetId` (per-cabinet data).
 3. Add `EvaluationsSection` component under `src/app/(dashboard)/analytics/models/components/`.
 4. Register route in `src/lib/routes.ts` using `buildXxxRoute` pattern [[109.5-FE]].
 
 ### Adding Feedback (POST mutation)
+
 Follow the `useTrainAiModel` pattern [[109.4-FE]]:
+
 - `useMutation` with `mutationFn` calling `postAiFeedback`.
 - Optimistic update: `onMutate` → cache update → `onError` rollback.
 - Invalidate `aiEvaluationsKeys.byCabinet(cabinetId)` on `onSuccess`.
 
 ### CSV Export
+
 - Add export button to `ModelListSection` or `ModelPerformanceDetail`.
 - Client-side CSV generation using existing `formatCurrency`/`formatPercentage` formatters (Russian locale).
 - No new backend endpoint needed if data is already in the query cache.
@@ -320,12 +328,14 @@ Follow the `useTrainAiModel` pattern [[109.4-FE]]:
 ### Admin Role-Gating Pattern [[109.3-FE]]
 
 The `isAdmin` check is performed via the auth store:
+
 ```typescript
 // Sidebar.tsx:29 (Story 109.3 precedent)
 const isAdmin = user?.role === 'owner' || user?.role === 'manager'
 ```
 
 Admin-only components should follow this pattern:
+
 ```typescript
 const { user } = useAuthStore()
 const canAccess = user?.role === 'owner'
@@ -333,11 +343,13 @@ if (!canAccess) return null  // or redirect to /dashboard
 ```
 
 ### Registering Admin-Only Routes
+
 1. Add route constant in `src/lib/routes.ts` with `ADMIN_` prefix.
 2. Register in Next.js `app/(dashboard)/analytics/admin/page.tsx`.
 3. Guard in `Sidebar.tsx` conditional render (existing pattern: `{isAdmin && <NavItem />}`).
 
 ### Model Rollback Flow
+
 - Add `POST /v1/ai/models/:id/rollback` fetcher in `src/lib/api/ai/models.ts`.
 - Add `useRollbackAiModel` hook mirroring `useTrainAiModel`.
 - Surface in `ModelPerformanceDetail` with the same `disabled-while-pending` pattern used by `TrainModelButton`.
@@ -425,13 +437,13 @@ Per CLAUDE.md § Two-pass review discipline: every behavior-changing source chan
 
 Stories where 2-pass review caught HIGH or CRITICAL defects in this module:
 
-| Story | Severity | What was caught |
-|-------|----------|-----------------|
-| 108.1-FE | HIGH | Confidence scale 0-100 vs 0-1 ambiguity |
-| 108.2-FE | HIGH | `useMutation` 4th generic missing → unsafe cast |
-| 108.3-FE | HIGH | Unconditional polling when AI disabled |
-| 108.5-FE | HIGH | TrendIcon missing aria-label + Russian text (WCAG) |
-| 109.4-FE | HIGH | `useRef` polling instead of `refetchInterval` |
+| Story    | Severity | What was caught                                      |
+| -------- | -------- | ---------------------------------------------------- |
+| 108.1-FE | HIGH     | Confidence scale 0-100 vs 0-1 ambiguity              |
+| 108.2-FE | HIGH     | `useMutation` 4th generic missing → unsafe cast      |
+| 108.3-FE | HIGH     | Unconditional polling when AI disabled               |
+| 108.5-FE | HIGH     | TrendIcon missing aria-label + Russian text (WCAG)   |
+| 109.4-FE | HIGH     | `useRef` polling instead of `refetchInterval`        |
 | 109.5-FE | CRITICAL | Raw English status string instead of Badge component |
 
 ---

@@ -30,6 +30,7 @@ The `dev-story` workflow (`bmad-dev-story` skill) has a Step 8 that says to upda
 ### Concrete example from production
 
 Story 86.1 (`86-1-bid-recommendations-ui`) was committed with:
+
 - `Status: ready-for-dev` (should be `review`)
 - All `Tasks/Subtasks` boxes unchecked `[ ]`
 - `Dev Agent Record → Completion Notes List` empty
@@ -113,10 +114,12 @@ When implementing a story that touches a new backend API endpoint, the workflow 
 ### Concrete example from production
 
 Story 86.2 (Client Info PII) was planned with this estimated contract:
+
 - `POST /v1/cabinets/:id/orders/client-info` with JSON body
 - Response: `{ items: [{ orderId, name, phone }] }`
 
 The actual backend contract (verified by reading `src/cabinets/cabinets.controller.ts` and `test-api/03-cabinets.http` BEFORE implementation):
+
 - `GET /v1/cabinets/:id/orders/client-info?orderIds=123,456` (comma-separated query string)
 - Response: bare array `[{ orderId: number, clientName?: string, clientPhone?: string }]`
 - `orderId` is JSON `number`, but frontend `OrderFbsItem.orderId` is `string` (BigInt safety)
@@ -162,6 +165,7 @@ The current `code-review` workflow says "find at least 3-10 specific issues". Th
 ### Concrete example from production
 
 Story 86.1 had ALREADY been code-reviewed once. Review #1 found 4 issues. A second adversarial review (different LLM context) found **12 additional issues** including HIGH severity ones:
+
 - Story file completely unupdated
 - Task 5 (navigation) not implemented
 - Hook had no test file at all
@@ -245,6 +249,7 @@ When all child stories of an epic are marked `done` in `sprint-status.yaml`, the
 ### Concrete example from production
 
 After completing Story 86.2 (`86-2-client-info-pii: done`), Story 86.1 (`86-1-bid-recommendations-ui: done`), AND `epic-86-fe-retrospective: done`, the epic itself was still:
+
 ```yaml
 epic-86-fe: in-progress
 ```
@@ -279,6 +284,7 @@ Action item #6 from Epic 86-FE retrospective.
 ## How to file these
 
 Option A — via GitHub web UI:
+
 1. Go to https://github.com/bmad-code-org/BMAD-METHOD/issues/new/choose
 2. Select "Bug report" or "Feature request" template
 3. Copy/paste each issue title and body above

@@ -16,15 +16,15 @@ Epic 28 is **FULLY IMPLEMENTED** and deployed. All 7 stories completed.
 
 ### What's Available
 
-| Component | Status | Description |
-|-----------|--------|-------------|
-| Stock levels | ✅ **READY** | WB Stocks API integrated via SDK analytics module |
-| Stock snapshots table | ✅ **READY** | `inventory_snapshots` table with daily data |
-| In-transit shipments | ✅ **READY** | `in_transit_shipments` table |
-| Sales velocity | ✅ **READY** | Calculated from `wb_finance_raw` (1-13 weeks) |
-| Daily sync job | ✅ **READY** | Cron at 06:00 MSK for all cabinets |
-| API endpoint | ✅ **READY** | `GET /v1/analytics/supply-planning` |
-| Caching | ✅ **READY** | Redis 15min TTL |
+| Component             | Status       | Description                                       |
+| --------------------- | ------------ | ------------------------------------------------- |
+| Stock levels          | ✅ **READY** | WB Stocks API integrated via SDK analytics module |
+| Stock snapshots table | ✅ **READY** | `inventory_snapshots` table with daily data       |
+| In-transit shipments  | ✅ **READY** | `in_transit_shipments` table                      |
+| Sales velocity        | ✅ **READY** | Calculated from `wb_finance_raw` (1-13 weeks)     |
+| Daily sync job        | ✅ **READY** | Cron at 06:00 MSK for all cabinets                |
+| API endpoint          | ✅ **READY** | `GET /v1/analytics/supply-planning`               |
+| Caching               | ✅ **READY** | Redis 15min TTL                                   |
 
 ---
 
@@ -36,21 +36,22 @@ GET /v1/analytics/supply-planning
 
 ### Query Parameters
 
-| Parameter | Type | Default | Description |
-|-----------|------|---------|-------------|
-| `velocity_weeks` | number | 4 | Weeks for velocity calculation (1-13) |
-| `safety_stock_days` | number | 14 | Target safety stock days (7-60) |
-| `view_by` | enum | "sku" | "sku" \| "brand" \| "category" |
-| `show_only` | enum | "all" | "all" \| "stockout_risk" \| "reorder_needed" |
-| `sort_by` | string | "days_until_stockout" | Sort field |
-| `sort_order` | string | "asc" | "asc" \| "desc" |
-| `limit` | number | 100 | Max results (1-500) |
+| Parameter           | Type   | Default               | Description                                  |
+| ------------------- | ------ | --------------------- | -------------------------------------------- |
+| `velocity_weeks`    | number | 4                     | Weeks for velocity calculation (1-13)        |
+| `safety_stock_days` | number | 14                    | Target safety stock days (7-60)              |
+| `view_by`           | enum   | "sku"                 | "sku" \| "brand" \| "category"               |
+| `show_only`         | enum   | "all"                 | "all" \| "stockout_risk" \| "reorder_needed" |
+| `sort_by`           | string | "days_until_stockout" | Sort field                                   |
+| `sort_order`        | string | "asc"                 | "asc" \| "desc"                              |
+| `limit`             | number | 100                   | Max results (1-500)                          |
 
 ### Response Structure
 
 ---
 
 ## Backend Team Response
+
 **Status**: RESOLVED — this document IS the backend response. See the parent request file for the original frontend ask.
 
 ```json
@@ -112,13 +113,13 @@ GET /v1/analytics/supply-planning
 
 ## Risk Classification
 
-| Risk | Days Until Stockout | Color | Condition |
-|------|---------------------|-------|-----------|
-| `out_of_stock` | N/A | Black | current_stock = 0 |
-| `critical` | 0-7 days | Red | stock > 0, immediate action |
-| `warning` | 7-14 days | Orange | Plan order this week |
-| `low` | 14-30 days | Yellow | Monitor, order soon |
-| `healthy` | >30 days | Green | Stock sufficient |
+| Risk           | Days Until Stockout | Color  | Condition                   |
+| -------------- | ------------------- | ------ | --------------------------- |
+| `out_of_stock` | N/A                 | Black  | current_stock = 0           |
+| `critical`     | 0-7 days            | Red    | stock > 0, immediate action |
+| `warning`      | 7-14 days           | Orange | Plan order this week        |
+| `low`          | 14-30 days          | Yellow | Monitor, order soon         |
+| `healthy`      | >30 days            | Green  | Stock sufficient            |
 
 > **Request #54 Clarification (2025-12-12)**: Added `out_of_stock` status for zero inventory SKUs.
 
@@ -126,22 +127,22 @@ GET /v1/analytics/supply-planning
 
 ## Reorder Status
 
-| Status | Condition |
-|--------|-----------|
-| `urgent` | days_until_stockout < 7 |
-| `soon` | days_until_stockout < safety_stock_days |
-| `ok` | days_until_stockout >= safety_stock_days |
+| Status   | Condition                                |
+| -------- | ---------------------------------------- |
+| `urgent` | days_until_stockout < 7                  |
+| `soon`   | days_until_stockout < safety_stock_days  |
+| `ok`     | days_until_stockout >= safety_stock_days |
 
 ---
 
 ## Velocity Trend
 
-| Trend | Condition |
-|-------|-----------|
-| `growing` | change > +10% |
-| `stable` | change ±10% |
-| `declining` | change < -10% |
-| `no_data` | No sales history |
+| Trend       | Condition        |
+| ----------- | ---------------- |
+| `growing`   | change > +10%    |
+| `stable`    | change ±10%      |
+| `declining` | change < -10%    |
+| `no_data`   | No sales history |
 
 ---
 
@@ -151,16 +152,16 @@ The following enhancements were implemented based on frontend clarification:
 
 ### New Fields Added
 
-| Field | Location | Description |
-|-------|----------|-------------|
-| `out_of_stock_count` | summary | Count of SKUs with zero inventory |
-| `cogs_per_unit` | data[] | COGS per unit (₽), null if no COGS |
-| `has_cogs` | data[] | Boolean flag indicating COGS availability |
+| Field                | Location | Description                               |
+| -------------------- | -------- | ----------------------------------------- |
+| `out_of_stock_count` | summary  | Count of SKUs with zero inventory         |
+| `cogs_per_unit`      | data[]   | COGS per unit (₽), null if no COGS        |
+| `has_cogs`           | data[]   | Boolean flag indicating COGS availability |
 
 ### New Status Value
 
-| Status | Description |
-|--------|-------------|
+| Status         | Description                                                  |
+| -------------- | ------------------------------------------------------------ |
 | `out_of_stock` | SKU has zero current stock (higher priority than `critical`) |
 
 ---
@@ -193,16 +194,16 @@ reorder_value = reorder_quantity × cogs_per_unit
 
 ## Completed Stories
 
-| Story | Points | Description | Status |
-|-------|--------|-------------|--------|
-| 28.1 | 5 | WB Stocks API Integration | ✅ Done |
-| 28.2 | 3 | Database Schema & Migration | ✅ Done |
-| 28.3 | 3 | Daily Stocks Sync Job | ✅ Done |
-| 28.4 | 3 | Sales Velocity Calculation | ✅ Done |
-| 28.5 | 5 | Supply Planning Service | ✅ Done |
-| 28.6 | 3 | API Controller & DTOs | ✅ Done |
-| 28.7 | 3 | Testing & Documentation | ✅ Done |
-| **Total** | **25** | | **100%** |
+| Story     | Points | Description                 | Status   |
+| --------- | ------ | --------------------------- | -------- |
+| 28.1      | 5      | WB Stocks API Integration   | ✅ Done  |
+| 28.2      | 3      | Database Schema & Migration | ✅ Done  |
+| 28.3      | 3      | Daily Stocks Sync Job       | ✅ Done  |
+| 28.4      | 3      | Sales Velocity Calculation  | ✅ Done  |
+| 28.5      | 5      | Supply Planning Service     | ✅ Done  |
+| 28.6      | 3      | API Controller & DTOs       | ✅ Done  |
+| 28.7      | 3      | Testing & Documentation     | ✅ Done  |
+| **Total** | **25** |                             | **100%** |
 
 ---
 

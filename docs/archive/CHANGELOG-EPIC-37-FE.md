@@ -13,6 +13,7 @@
 Epic 37 introduces a **3-tier rowspan table display** for merged product groups (склейки) in advertising analytics. This feature allows users to view and analyze advertising performance for product groups linked by WB's `imtId` field (Epic 36), enabling comprehensive ROAS/ROI analysis at both group and individual product levels.
 
 **Business Value**:
+
 - **100% advertising coverage** - No more "No data" for products with spend=0 but revenue>0
 - **Group-level ROAS** - Understand performance of entire product card mergers
 - **Visual clarity** - Crown icon (👑) identifies main products receiving ad budget
@@ -44,21 +45,22 @@ Epic 37 introduces a **3-tier rowspan table display** for merged product groups 
 
 ### Column Definitions
 
-| Column | Description | Source |
-|--------|-------------|--------|
-| **Склейка** | Rowspan cell with main product info | Epic 36: `imtId`, `main_product` |
-| **Артикул** | Product nmId with crown icon for main | Epic 35: `nmId`, `isMainProduct` |
-| **Всего продаж** | Total revenue (organic + ad) | Epic 35: `totalSales` |
-| **Из рекламы** | Ad-attributed revenue + percentage | Epic 35: `revenue`, `organicContribution` |
-| **Органика** | Non-ad revenue | Epic 35: `organicSales` |
-| **Расход** | Ad spend (only main product has >0) | Epic 35: `spend` |
-| **ROAS** | Revenue / Spend (can be null if spend=0) | Epic 35: `roas` |
+| Column           | Description                              | Source                                    |
+| ---------------- | ---------------------------------------- | ----------------------------------------- |
+| **Склейка**      | Rowspan cell with main product info      | Epic 36: `imtId`, `main_product`          |
+| **Артикул**      | Product nmId with crown icon for main    | Epic 35: `nmId`, `isMainProduct`          |
+| **Всего продаж** | Total revenue (organic + ad)             | Epic 35: `totalSales`                     |
+| **Из рекламы**   | Ad-attributed revenue + percentage       | Epic 35: `revenue`, `organicContribution` |
+| **Органика**     | Non-ad revenue                           | Epic 35: `organicSales`                   |
+| **Расход**       | Ad spend (only main product has >0)      | Epic 35: `spend`                          |
+| **ROAS**         | Revenue / Spend (can be null if spend=0) | Epic 35: `roas`                           |
 
 ---
 
 ## Stories Breakdown
 
 ### Story 37.1: Backend API Validation (1-2h) ✅ READY
+
 **File**: `story-37.1-backend-api-validation.BMAD.md`
 **Acceptance Criteria**: 15 (includes 4 PO decisions)
 **Tasks**: 6 validation tasks
@@ -66,6 +68,7 @@ Epic 37 introduces a **3-tier rowspan table display** for merged product groups 
 **Purpose**: Validate backend API structure before component development.
 
 **Key Validations**:
+
 - ✅ API endpoint `/v1/analytics/advertising?group_by=imtId` returns 200
 - ✅ Epic 36 `imtId` field present in all products
 - ✅ Epic 35 aggregate metrics (totalSales, revenue, organicSales, ROAS) correct
@@ -73,6 +76,7 @@ Epic 37 introduces a **3-tier rowspan table display** for merged product groups 
 - ✅ Edge cases handled (zero spend, negative revenue, single-product groups)
 
 **PO Decisions**:
+
 - Group size: Min 2, Max 50 products (no pagination)
 - Sort within group: Main first, children by totalSales DESC
 - Standalone products (imtId=null): Include as single rows
@@ -81,6 +85,7 @@ Epic 37 introduces a **3-tier rowspan table display** for merged product groups 
 ---
 
 ### Story 37.2: MergedGroupTable Component (3-4h) ✅ READY
+
 **File**: `story-37.2-merged-group-table-component.BMAD.md`
 **Acceptance Criteria**: 20 (includes 4 PO decisions)
 **Tasks**: 8 component creation tasks
@@ -88,6 +93,7 @@ Epic 37 introduces a **3-tier rowspan table display** for merged product groups 
 **Purpose**: Create core React component with 3-tier rowspan architecture.
 
 **Component API**:
+
 ```typescript
 interface MergedGroupTableProps {
   groups: AdvertisingGroup[];
@@ -98,6 +104,7 @@ interface MergedGroupTableProps {
 ```
 
 **PO Decisions**:
+
 - Component API: Draft interface approved (see above)
 - Single-product groups: NO rowspan cell (renders as standard row)
 - Missing main product: Use highest totalSales fallback
@@ -106,6 +113,7 @@ interface MergedGroupTableProps {
 ---
 
 ### Story 37.3: Aggregate Metrics Display (2-3h) ✅ READY
+
 **File**: `story-37.3-aggregate-metrics-display.BMAD.md`
 **Acceptance Criteria**: 21 (includes 3 PO decisions)
 **Tasks**: 6 calculation & formatting tasks
@@ -113,6 +121,7 @@ interface MergedGroupTableProps {
 **Purpose**: Implement Epic 35 calculation formulas for aggregate metrics.
 
 **Key Formulas**:
+
 ```typescript
 const totalSales = products.reduce((sum, p) => sum + p.totalSales, 0);
 const revenue = products.reduce((sum, p) => sum + p.revenue, 0);
@@ -123,6 +132,7 @@ const roas = spend > 0 ? revenue / spend : null;
 ```
 
 **PO Decisions**:
+
 - Rounding: Math.round() (banker's rounding), NO abbreviations for large numbers
 - Tooltips: Aggregate "Сумма всех товаров", ROAS "Доход с рекламы / Расход"
 - Color-coding for ROAS: Deferred to post-MVP (Story 37.6)
@@ -130,6 +140,7 @@ const roas = spend > 0 ? revenue / spend : null;
 ---
 
 ### Story 37.4: Visual Styling & Hierarchy (2-3h) ✅ READY
+
 **File**: `story-37.4-visual-styling-hierarchy.BMAD.md`
 **Acceptance Criteria**: 26 (includes 5 PO decisions)
 **Tasks**: 7 styling & responsive design tasks
@@ -137,6 +148,7 @@ const roas = spend > 0 ? revenue / spend : null;
 **Purpose**: Define visual design tokens and responsive behavior.
 
 **Design Tokens (Tailwind CSS)**:
+
 ```typescript
 const designTokens = {
   rowspan: {
@@ -161,6 +173,7 @@ const designTokens = {
 ```
 
 **PO Decisions**:
+
 - Aggregate row hover: NO effect (not clickable in MVP)
 - Detail rows: YES hover (bg-gray-50 + cursor-pointer)
 - No active/selected state needed for MVP
@@ -171,6 +184,7 @@ const designTokens = {
 ---
 
 ### Story 37.5: Testing & Documentation (1-2h) ✅ READY
+
 **File**: `story-37.5-testing-documentation.BMAD.md`
 **Acceptance Criteria**: 25 (includes 6 PO decisions)
 **Tasks**: 8 testing & documentation tasks
@@ -178,6 +192,7 @@ const designTokens = {
 **Purpose**: Comprehensive testing strategy and user documentation.
 
 **Test Coverage Requirements**:
+
 - **Unit tests**: ≥90% code coverage
 - **E2E tests**: Playwright - all critical user flows
 - **Accessibility**: Zero WCAG 2.1 AA violations (axe-core)
@@ -185,6 +200,7 @@ const designTokens = {
 - **UAT**: 3 internal users, ≥90% satisfaction, <5 interpretation questions
 
 **PO Decisions**:
+
 - User guide: Template approved (What are склейки, How to view, Reading table)
 - Performance test: REQUIRED (<200ms for 50 groups)
 - UAT: REQUIRED (3 users, ≥90% satisfaction)
@@ -197,23 +213,27 @@ const designTokens = {
 ## Technical Specifications
 
 ### Framework & Libraries
+
 - **React 18** - Server components by default, client components where needed
 - **TypeScript** - Strict mode, no `any` types
 - **Tailwind CSS** - Design tokens from Story 37.4
 - **Lucide Icons** - Crown icon for main products
 
 ### Testing Stack
+
 - **Jest** - Unit tests with React Testing Library
 - **Playwright** - E2E tests for user workflows
 - **axe-core** - Accessibility testing (WCAG 2.1 AA)
 - **Chrome DevTools** - Performance testing with 6x CPU throttling
 
 ### Analytics Integration
+
 - **Mixpanel** - Track user interactions:
   - `advertising_group_view` - When user clicks "По склейкам" toggle
   - `advertising_product_clicked` - When user clicks detail row
 
 ### Performance Budgets
+
 - **Render Time**: <200ms for 50 groups (6x CPU slowdown)
 - **Bundle Size**: Defer to global project limits
 - **Memory**: Monitor for large groups (>20 products)
@@ -223,6 +243,7 @@ const designTokens = {
 ## Quality Gates
 
 ### Definition of Done (All Stories)
+
 - ✅ All acceptance criteria met
 - ✅ Unit tests pass with ≥90% coverage
 - ✅ E2E tests pass (all scenarios)
@@ -233,6 +254,7 @@ const designTokens = {
 - ✅ Analytics events tracking
 
 ### UAT Criteria (Story 37.5)
+
 - ✅ 3 internal finance users complete UAT
 - ✅ Average satisfaction ≥9/10
 - ✅ Total interpretation questions <5
@@ -243,6 +265,7 @@ const designTokens = {
 ## Dependencies
 
 ### Backend Dependencies (✅ All Complete)
+
 - **Epic 36**: Product Card Linking (imtId field in products table) ✅ COMPLETE
   - Backend production ready (2025-12-28)
   - Daily sync of imtID from WB Content API (06:00 MSK)
@@ -252,6 +275,7 @@ const designTokens = {
   - Fields: totalSales, revenue, organicSales, ROAS
 
 ### Frontend Prerequisites
+
 - React 18, TypeScript, Tailwind CSS (all present)
 - Lucide Icons library (installed)
 - Jest + React Testing Library (configured)
@@ -297,6 +321,7 @@ frontend/src/
 ## Development Workflow (Recommended)
 
 ### Phase 1: API Validation (Story 37.1) - 1-2h
+
 1. Validate backend API endpoint structure
 2. Verify Epic 36 imtId field presence
 3. Verify Epic 35 aggregate metrics
@@ -304,6 +329,7 @@ frontend/src/
 5. Create API response sample JSON
 
 ### Phase 2: Component Development (Stories 37.2-37.4) - 7-10h
+
 1. **Story 37.2**: Build MergedGroupTable component (3-4h)
    - Implement 3-tier rowspan logic
    - Create sub-components (MergedGroupRows, ProductRowBadge)
@@ -318,6 +344,7 @@ frontend/src/
    - Sticky columns for mobile/tablet
 
 ### Phase 3: Testing & Documentation (Story 37.5) - 1-2h
+
 1. Write unit tests (≥90% coverage)
 2. Write E2E tests (Playwright)
 3. Run accessibility tests (axe-core)
@@ -331,7 +358,9 @@ frontend/src/
 ## Known Limitations & Future Enhancements (Post-MVP)
 
 ### Story 37.6: Post-MVP Enhancements (Backlog)
+
 **8 features deferred to future sprints**:
+
 1. Color-coding for ROAS tiers (green/yellow/red)
 2. Expandable/collapsible groups (progressive disclosure)
 3. Dark mode support
@@ -346,15 +375,18 @@ frontend/src/
 ## References
 
 ### Documentation
+
 - **Epic Overview**: `docs/epics/epic-37-merged-group-table-display.md`
 - **PO Validation Report**: `docs/stories/epic-37/PO-VALIDATION-REPORT-EPIC-37.md`
 - **Conversion Notes**: `docs/stories/epic-37/CONVERSION-COMPLETE.md`
 
 ### Dependencies
+
 - **Epic 36**: `docs/epics/epic-36-product-card-linking.md`
 - **Epic 35**: `docs/stories/epic-35/` (Stories 35.1-35.7)
 
 ### Backend API
+
 - Endpoint: `GET /v1/analytics/advertising?group_by=imtId`
 - Response format documented in Story 37.1
 
@@ -367,6 +399,7 @@ frontend/src/
 **Template Compliance**: 10/10
 
 All 5 stories follow BMad template structure:
+
 - ✅ Status field
 - ✅ User story format (As a... I want... so that...)
 - ✅ Numbered acceptance criteria with PO decisions
@@ -381,6 +414,7 @@ All 5 stories follow BMad template structure:
 ## Next Steps
 
 ### Immediate (PO Tasks)
+
 1. ✅ **COMPLETE**: Epic validated and converted to BMad format
 2. ✅ **COMPLETE**: All 26 PO decisions filled
 3. ✅ **COMPLETE**: Stories converted to BMad template
@@ -389,6 +423,7 @@ All 5 stories follow BMad template structure:
 6. 📋 **TODO**: Share PO validation report with team
 
 ### Developer Tasks (Once Assigned)
+
 1. Read Epic 37 main document
 2. Read Stories 37.1-37.5 in sequence (.BMAD.md files)
 3. Start Story 37.1 (Backend API Validation) - 1-2h
@@ -397,6 +432,7 @@ All 5 stories follow BMad template structure:
 6. Mark todo items in tasks as complete
 
 ### QA Tasks (After Each Story)
+
 1. Validate story completion (all ACs passed)
 2. Fill QA Results section
 3. Update story status: Draft → InProgress → Review → Done

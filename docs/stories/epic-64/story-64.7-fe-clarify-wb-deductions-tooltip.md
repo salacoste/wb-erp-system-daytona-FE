@@ -33,7 +33,8 @@
 ---
 
 ## Definition of Done
+
 - [x] Tooltip clarifies excluded items
 - [x] No code changes beyond tooltip text
 
-*Created: 2026-02-21*
+_Created: 2026-02-21_

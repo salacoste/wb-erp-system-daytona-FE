@@ -8,6 +8,7 @@
 ## Problem
 
 The buyout table (`/analytics/buyout`) shows contradictory data for some SKUs:
+
 - **Выкуп %**: 100.0% (from `PerSkuBuyoutService`)
 - **Возвраты**: 0 (from `wb_finance_raw`, `doc_type = 'return'`)
 - **Отказ ПВЗ**: 3 (from `return_classifications` table)
@@ -18,10 +19,10 @@ Example: nmId `664280874` — shows 100% buyout and 0 financial returns, but 3 P
 
 Two independent data sources with different timing and semantics:
 
-| Metric | Source | Timing |
-|--------|--------|--------|
-| `buyoutRatePct`, `returnsCount` | `wb_finance_raw` (`doc_type = 'sale'` vs `'return'`) | Weekly WB financial report (delayed) |
-| `returnBreakdown` (Story 69.8) | `return_classifications` (FBS order statuses) | Near-realtime from order status changes |
+| Metric                          | Source                                               | Timing                                  |
+| ------------------------------- | ---------------------------------------------------- | --------------------------------------- |
+| `buyoutRatePct`, `returnsCount` | `wb_finance_raw` (`doc_type = 'sale'` vs `'return'`) | Weekly WB financial report (delayed)    |
+| `returnBreakdown` (Story 69.8)  | `return_classifications` (FBS order statuses)        | Near-realtime from order status changes |
 
 Financial returns appear in `wb_finance_raw` only when WB processes the weekly report. Logistics returns (PVZ refusals) are classified immediately from order status changes. This creates a temporal gap where a SKU can show 0 financial returns but multiple logistics refusals.
 
@@ -33,10 +34,13 @@ Financial returns appear in `wb_finance_raw` only when WB processes the weekly r
 ## Suggested Fix (Backend)
 
 ### Option A: Unified return count (Recommended)
+
 Compute `returnsCount` as `MAX(financial_returns, classified_returns)` to show the most up-to-date picture. Recalculate `buyoutRatePct` accordingly.
 
 ### Option B: Tooltip/label differentiation
+
 Keep separate sources but clearly label them:
+
 - "Финансовые возвраты" (from weekly report)
 
 ---
@@ -47,9 +51,11 @@ Keep separate sources but clearly label them:
 **Resolution date**: 2026-05-06 (confirmed in #170 backend update)
 **Summary**: Fixed in Epic 109. `sdk.returns.getReturns()` unifies data from FBO + FBS + finance sources. `BuyoutReconciliationService` handles anomaly detection (return_without_buyout, orphan_buyout, return_quantity_mismatch). Temporal gap between financial and logistics returns now resolved through unified sync processor.
 **Remaining frontend action**: None - buyout and return data now consistent across endpoints.
+
 - "Логистические возвраты" (from FBS statuses, realtime)
 
 ### Option C: Cross-reference adjustment
+
 When `return_classifications` has records but `wb_finance_raw` does not, adjust `returnsCount` and `buyoutRatePct` to include classified returns as pending financial returns.
 
 ## Reproduction

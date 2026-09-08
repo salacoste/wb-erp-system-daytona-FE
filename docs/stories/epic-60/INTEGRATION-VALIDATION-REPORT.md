@@ -1,4 +1,5 @@
 # Integration Validation Report
+
 ## Epic 60-FE: Dashboard & Analytics UX Improvements - Wave 4 Bug Fixes
 
 **Date**: 2026-01-29
@@ -11,12 +12,14 @@
 ## Executive Summary
 
 This report validates the integration of two bug fixes:
+
 1. **Agent 1**: Period switching updates ALL metrics (week ↔ month)
 2. **Agent 2**: Margin % and ROAS display actual values
 
 **Integration Status**: ❌ **FAIL**
 
 Both agents' work has not been completed. The codebase shows:
+
 - Period switching infrastructure exists but has critical bugs
 - Margin % calculation is incomplete
 - ROAS is hardcoded to `null`
@@ -31,6 +34,7 @@ Both agents' work has not been completed. The codebase shows:
 **Status**: ⚠️ **PARTIALLY IMPLEMENTED - BUGS FOUND**
 
 **What Works**:
+
 - ✅ `DashboardPeriodContext` provides week/month state management
 - ✅ `DashboardPeriodSelector` has week/month toggle UI
 - ✅ URL sync works (`?type=week&week=2025-W03` ↔ `?type=month&month=2025-01`)
@@ -38,6 +42,7 @@ Both agents' work has not been completed. The codebase shows:
 **Critical Issues**:
 
 #### Issue 1.1: Month API Not Implemented
+
 **File**: `src/hooks/useDashboardMetricsWithPeriod.ts:32-49`
 
 ```typescript
@@ -56,6 +61,7 @@ async function fetchDashboardMetrics(week: string): Promise<DashboardMetrics> {
 **Impact**: Month period shows week data or fails entirely.
 
 **Required Fix**: Add month API endpoint:
+
 ```typescript
 // ✅ Should be:
 async function fetchDashboardMetrics(period: string, periodType: PeriodType): Promise<DashboardMetrics> {
@@ -67,6 +73,7 @@ async function fetchDashboardMetrics(period: string, periodType: PeriodType): Pr
 ```
 
 #### Issue 1.2: Query Keys Don't Include Period Type
+
 **File**: `src/hooks/useDashboardMetricsWithPeriod.ts:64-76`
 
 ```typescript
@@ -77,17 +84,20 @@ queryKey: dashboardQueryKeys.metrics(selectedWeek),  // Only uses week!
 **Problem**: Week and month data overwrite each other in cache because they use the same query key.
 
 **Impact**:
+
 - Switching week → month shows cached week data
 - Switching month → week shows cached month data
 - No parallel caching of both periods
 
 **Required Fix**: Include period type in query key:
+
 ```typescript
 // ✅ Should be:
 queryKey: [...dashboardQueryKeys.metrics(periodType), period],
 ```
 
 #### Issue 1.3: Context Only Provides Week/Month, Not Selected Period
+
 **File**: `src/hooks/useDashboardMetricsWithPeriod.ts:59`
 
 ```typescript
@@ -100,6 +110,7 @@ const { selectedWeek, previousWeek } = useDashboardPeriod()
 **Impact**: Month period data never fetched.
 
 **Required Fix**: Use period type and appropriate period value:
+
 ```typescript
 // ✅ Should be:
 const { periodType, selectedWeek, selectedMonth, previousWeek, previousMonth } = useDashboardPeriod()
@@ -115,6 +126,7 @@ const previousPeriod = periodType === 'week' ? previousWeek : previousMonth
 **Status**: ❌ **NOT IMPLEMENTED**
 
 #### Issue 2.1: Margin % Calculation Uses Week Data Only
+
 **File**: `src/app/(dashboard)/dashboard/components/DashboardContent.tsx:52-53,134-139`
 
 ```typescript
@@ -134,6 +146,7 @@ const { data: financeSummary, isLoading: summaryLoading } = useFinancialSummary(
 **Impact**: Month period shows week margin data.
 
 **Required Fix**: Pass period type to finance summary hook:
+
 ```typescript
 // ✅ Should be:
 const { data: financeSummary, isLoading: summaryLoading } = useFinancialSummary(
@@ -143,6 +156,7 @@ const { data: financeSummary, isLoading: summaryLoading } = useFinancialSummary(
 ```
 
 #### Issue 2.2: ROAS Hardcoded to Null
+
 **File**: `src/app/(dashboard)/dashboard/components/DashboardContent.tsx`
 
 ```typescript
@@ -161,6 +175,7 @@ const { data: financeSummary, isLoading: summaryLoading } = useFinancialSummary(
 **Impact**: ROAS always shows "—" regardless of data availability.
 
 **Required Fix**: Fetch ROAS from advertising widget data or backend:
+
 ```typescript
 // ✅ Should be:
 const { data: advertisingData } = useAdvertisingData(
@@ -182,16 +197,19 @@ const { data: advertisingData } = useAdvertisingData(
 ## Integration Conflicts
 
 ### Conflict 1: Hook Reusability
+
 **Problem**: `useDashboardMetricsWithComparison` is hardcoded for weeks only.
 **Impact**: Cannot be used for month periods without breaking changes.
 **Resolution Required**: Refactor hook signature to accept `(period, periodType)`
 
 ### Conflict 2: API Availability
+
 **Problem**: Backend may not have `/v1/analytics/monthly/finance-summary` endpoint.
 **Impact**: Month period feature cannot work without backend support.
 **Resolution Required**: Confirm backend API availability or implement aggregation on frontend.
 
 ### Conflict 3: Data Consistency
+
 **Problem**: Week data comes from `useDashboardMetricsWithComparison`, month data doesn't exist.
 **Impact**: Inconsistent data fetching patterns between periods.
 **Resolution Required**: Unify data fetching for both period types.
@@ -201,11 +219,13 @@ const { data: advertisingData } = useAdvertisingData(
 ## TypeScript & ESLint Validation
 
 ### TypeScript Check
+
 ```bash
 npm run type-check
 ```
 
 **Result**: ❌ **1 ERROR**
+
 ```
 src/hooks/useFinancialSummary.ts(72,45): error TS7006: Parameter 'week' implicitly has an 'any' type.
 ```
@@ -213,6 +233,7 @@ src/hooks/useFinancialSummary.ts(72,45): error TS7006: Parameter 'week' implicit
 **Fix Required**: Add type annotation to `week` parameter.
 
 ### ESLint Check
+
 ```bash
 npm run lint
 ```
@@ -226,31 +247,42 @@ npm run lint
 ## Acceptance Criteria Validation
 
 ### AC1: Period switching (week → month) updates ALL metrics
+
 **Status**: ❌ **FAIL**
+
 - Period selector UI works
 - URL updates correctly
 - **BUT data doesn't update** (still shows week data)
 
 ### AC2: Period switching (month → week) updates ALL metrics
+
 **Status**: ❌ **FAIL**
+
 - Period selector UI works
 - URL updates correctly
 - **BUT data doesn't update** (cached month data)
 
 ### AC3: Margin % displays for both week and month
+
 **Status**: ⚠️ **PARTIAL**
+
 - Margin displays for week
 - **BUT shows week data when in month mode**
 
 ### AC4: ROAS displays actual value (not null)
+
 **Status**: ❌ **FAIL**
+
 - **Hardcoded to `null` in DashboardContent.tsx line 158**
 
 ### AC5: URL updates correctly on period change
+
 **Status**: ✅ **PASS**
+
 - URL sync works correctly
 
 ### AC6: No console errors
+
 **Status**: ✅ **PASS** (assuming no runtime errors)
 
 ---
@@ -258,18 +290,24 @@ npm run lint
 ## Regression Analysis
 
 ### Existing Week Functionality
+
 **Status**: ✅ **NO REGRESSIONS DETECTED**
+
 - Week period selection works
 - Week data fetching works
 - Week URL sync works
 
 ### Performance
+
 **Status**: ⚠️ **POTENTIAL ISSUE**
+
 - Parallel fetching implemented correctly
 - **BUT query key conflicts cause unnecessary refetches**
 
 ### User Experience
+
 **Status**: ⚠️ **DEGRADED**
+
 - Period switching appears to work (UI updates)
 - **BUT shows wrong data** (silent failure - very bad UX)
 
@@ -277,13 +315,13 @@ npm run lint
 
 ## Critical Bugs Summary
 
-| Bug | Severity | Impact | Fix Complexity |
-|-----|----------|--------|----------------|
-| Month API not implemented | 🔴 Critical | Month period non-functional | High (requires backend) |
-| Query keys don't include period type | 🔴 Critical | Cache corruption | Medium |
-| Margin uses week data only | 🔴 Critical | Wrong margin displayed | Low |
-| ROAS hardcoded to null | 🟠 High | Missing metric | Medium |
-| TypeScript implicit any | 🟡 Medium | Type safety | Low |
+| Bug                                  | Severity    | Impact                      | Fix Complexity          |
+| ------------------------------------ | ----------- | --------------------------- | ----------------------- |
+| Month API not implemented            | 🔴 Critical | Month period non-functional | High (requires backend) |
+| Query keys don't include period type | 🔴 Critical | Cache corruption            | Medium                  |
+| Margin uses week data only           | 🔴 Critical | Wrong margin displayed      | Low                     |
+| ROAS hardcoded to null               | 🟠 High     | Missing metric              | Medium                  |
+| TypeScript implicit any              | 🟡 Medium   | Type safety                 | Low                     |
 
 ---
 
@@ -331,9 +369,11 @@ npm run lint
 ## Test Coverage
 
 ### E2E Test Created
+
 **File**: `e2e/integration-validation.spec.ts`
 
 **Tests**:
+
 1. ✅ Period switching (week → month) updates ALL metrics
 2. ✅ Period switching (month → week) updates ALL metrics
 3. ✅ Margin % displays for both week and month

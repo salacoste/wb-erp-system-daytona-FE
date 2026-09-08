@@ -12,35 +12,37 @@
 
 ### Story 63.5-FE: Storage Top Consumers Widget
 
-| Criterion | Status | Notes |
-|-----------|--------|-------|
-| 8-card grid pattern | PASS | Widget fits in expenses section below main 8-card grid |
-| Purple color scheme (#7C4DFF) | PASS | Consistent with Epic 24 storage analytics |
-| WCAG 2.1 AA contrast | PASS | Purple #7C4DFF on white = 4.6:1 ratio |
-| Touch targets >= 44px | PASS | Table rows have adequate click area |
-| Existing storage page consistency | PASS | Reuses TopConsumersWidget pattern from Epic 24 |
-| Rank indicators (Trophy/Medal) | PASS | Uses Lucide icons with aria-labels |
-| Storage-to-revenue color coding | PASS | Red >20%, Yellow 10-20%, Green <10% |
-| Warning badge placement | PASS | AlertTriangle icon + colored dot |
+| Criterion                         | Status | Notes                                                  |
+| --------------------------------- | ------ | ------------------------------------------------------ |
+| 8-card grid pattern               | PASS   | Widget fits in expenses section below main 8-card grid |
+| Purple color scheme (#7C4DFF)     | PASS   | Consistent with Epic 24 storage analytics              |
+| WCAG 2.1 AA contrast              | PASS   | Purple #7C4DFF on white = 4.6:1 ratio                  |
+| Touch targets >= 44px             | PASS   | Table rows have adequate click area                    |
+| Existing storage page consistency | PASS   | Reuses TopConsumersWidget pattern from Epic 24         |
+| Rank indicators (Trophy/Medal)    | PASS   | Uses Lucide icons with aria-labels                     |
+| Storage-to-revenue color coding   | PASS   | Red >20%, Yellow 10-20%, Green <10%                    |
+| Warning badge placement           | PASS   | AlertTriangle icon + colored dot                       |
 
 **Recommendations**:
+
 1. Ensure widget card uses same Card component as other dashboard widgets
 2. "Смотреть все" link should be positioned in card header, right-aligned
 3. Consider adding Package icon in card title for visual consistency
 
 ### Story 63.6-FE: Storage Trends Chart
 
-| Criterion | Status | Notes |
-|-----------|--------|-------|
-| Chart type (Area/Line) | PASS | Area chart with purple gradient matches Epic 24 |
-| Axis labels formatting | PASS | X: W01-W05, Y: 5k/10k format |
-| Legend placement | N/A | Single metric, no legend needed |
-| Tooltip design | PASS | Custom tooltip with week label and currency |
-| Responsive behavior | PASS | ResponsiveContainer handles resize |
-| Null data handling | PASS | connectNulls={false} shows gaps |
-| Trend badge semantics | PASS | Red=increase (bad), Green=decrease (good) |
+| Criterion              | Status | Notes                                           |
+| ---------------------- | ------ | ----------------------------------------------- |
+| Chart type (Area/Line) | PASS   | Area chart with purple gradient matches Epic 24 |
+| Axis labels formatting | PASS   | X: W01-W05, Y: 5k/10k format                    |
+| Legend placement       | N/A    | Single metric, no legend needed                 |
+| Tooltip design         | PASS   | Custom tooltip with week label and currency     |
+| Responsive behavior    | PASS   | ResponsiveContainer handles resize              |
+| Null data handling     | PASS   | connectNulls={false} shows gaps                 |
+| Trend badge semantics  | PASS   | Red=increase (bad), Green=decrease (good)       |
 
 **Recommendations**:
+
 1. Add dashed circle visual for null data points (currently in spec)
 2. Summary stats bar should have subtle background (bg-muted/30)
 3. Ensure chart height is compact (250px) for dashboard widget context
@@ -50,6 +52,7 @@
 ## Dashboard Layout Integration
 
 ### Current Dashboard Structure
+
 ```
 ┌─────────────────────────────────────────────────────────────────────────────┐
 │ Header: "Главная страница" + PeriodContextLabel    [Period Selector]        │
@@ -101,11 +104,13 @@
 ### Proposed Storage Widgets Position
 
 **Option A (Recommended)**: Side-by-side below Expense Chart
+
 - Visual balance: Table on left, Chart on right
 - Maintains information hierarchy
 - Purple theme creates visual cohesion
 
 **Option B**: Stacked within Expense section
+
 - Top Consumers above Trends Chart
 - More vertical space usage
 - Better for narrower screens
@@ -117,6 +122,7 @@
 ### Story 63.5-FE: Storage Top Consumers Widget
 
 #### Desktop Layout (>= 768px)
+
 ```
 ┌──────────────────────────────────────────────────────────────────────────┐
 │ <Package/> Топ по расходам на хранение                 [Смотреть все →] │
@@ -142,6 +148,7 @@
 ```
 
 #### Mobile Layout (< 768px)
+
 ```
 ┌────────────────────────────────────────┐
 │ <Package/> Топ хранение  [Все →]       │
@@ -166,6 +173,7 @@
 #### Interaction States
 
 **Row Hover**:
+
 ```
 ┌─────┬───────────────────────┬────────────┬──────────┬───────────────────┐
 │ 🥈2 │ Диван угловой         │   2 800 ₽  │  10,0%   │  6,2%   ●(green)  │
@@ -175,6 +183,7 @@
 ```
 
 **Ratio Tooltip (on hover over ratio/dot)**:
+
 ```
            ┌──────────────────────────────────┐
            │ Высокие затраты                  │
@@ -188,6 +197,7 @@
 ```
 
 #### Loading State
+
 ```
 ┌──────────────────────────────────────────────────────────────────────────┐
 │ <Package/> Топ по расходам на хранение                 [Смотреть все →] │
@@ -202,6 +212,7 @@
 ```
 
 #### Empty State
+
 ```
 ┌──────────────────────────────────────────────────────────────────────────┐
 │ <Package/> Топ по расходам на хранение                                   │
@@ -215,6 +226,7 @@
 ```
 
 #### Error State
+
 ```
 ┌──────────────────────────────────────────────────────────────────────────┐
 │ <Package/> Топ по расходам на хранение                                   │
@@ -234,6 +246,7 @@
 ### Story 63.6-FE: Storage Trends Chart Widget
 
 #### Desktop Layout (>= 768px)
+
 ```
 ┌──────────────────────────────────────────────────────────────────────────┐
 │ <TrendingUp/> Динамика расходов на хранение         Тренд: +10,0% ↑     │
@@ -258,6 +271,7 @@
 ```
 
 #### Chart Tooltip (on hover over data point)
+
 ```
                     ┌────────────────────┐
                     │ Неделя 03          │
@@ -270,6 +284,7 @@
 ```
 
 #### Null Data Tooltip
+
 ```
                     ┌────────────────────┐
                     │ Неделя 03          │
@@ -285,6 +300,7 @@
 #### Trend Badge Variants
 
 **Cost Increase (Bad)**:
+
 ```
 ┌───────────────────────┐
 │ ↑ Тренд: +10,0%       │  bg-red-50, text-red-600, border-red-200
@@ -292,6 +308,7 @@
 ```
 
 **Cost Decrease (Good)**:
+
 ```
 ┌───────────────────────┐
 │ ↓ Тренд: -5,2%        │  bg-green-50, text-green-600, border-green-200
@@ -299,6 +316,7 @@
 ```
 
 **No Change (Neutral)**:
+
 ```
 ┌───────────────────────┐
 │ ─ Тренд: 0,0%         │  bg-gray-50, text-gray-600, border-gray-200
@@ -306,6 +324,7 @@
 ```
 
 #### Mobile Layout (< 768px)
+
 ```
 ┌────────────────────────────────────────┐
 │ <TrendingUp/> Динамика хранения        │
@@ -327,6 +346,7 @@
 ```
 
 #### Loading State
+
 ```
 ┌──────────────────────────────────────────────────────────────────────────┐
 │ <TrendingUp/> Динамика расходов на хранение              ████████████   │
@@ -342,6 +362,7 @@
 ```
 
 #### Empty State
+
 ```
 ┌──────────────────────────────────────────────────────────────────────────┐
 │ <TrendingUp/> Динамика расходов на хранение                              │
@@ -358,6 +379,7 @@
 ```
 
 #### Error State
+
 ```
 ┌──────────────────────────────────────────────────────────────────────────┐
 │ <TrendingUp/> Динамика расходов на хранение                              │
@@ -378,12 +400,12 @@
 
 ### Breakpoints (Tailwind Default)
 
-| Breakpoint | Width | Layout |
-|------------|-------|--------|
-| sm | < 640px | Single column, stacked widgets |
-| md | >= 640px | Single column, compact table |
-| lg | >= 1024px | Two-column widget layout |
-| xl | >= 1280px | Full desktop with expanded columns |
+| Breakpoint | Width     | Layout                             |
+| ---------- | --------- | ---------------------------------- |
+| sm         | < 640px   | Single column, stacked widgets     |
+| md         | >= 640px  | Single column, compact table       |
+| lg         | >= 1024px | Two-column widget layout           |
+| xl         | >= 1280px | Full desktop with expanded columns |
 
 ### Widget Grid on Dashboard
 
@@ -408,27 +430,30 @@
 ## Color Reference
 
 ### Storage Theme (Purple)
-| Usage | Color | Hex | Tailwind |
-|-------|-------|-----|----------|
-| Primary | Purple | #7C4DFF | `text-[#7C4DFF]` |
-| Background | Purple Light | rgba(124, 77, 255, 0.1) | `bg-purple-500/10` |
-| Gradient Start | Purple 30% | rgba(124, 77, 255, 0.3) | - |
-| Gradient End | Purple 5% | rgba(124, 77, 255, 0.05) | - |
+
+| Usage          | Color        | Hex                      | Tailwind           |
+| -------------- | ------------ | ------------------------ | ------------------ |
+| Primary        | Purple       | #7C4DFF                  | `text-[#7C4DFF]`   |
+| Background     | Purple Light | rgba(124, 77, 255, 0.1)  | `bg-purple-500/10` |
+| Gradient Start | Purple 30%   | rgba(124, 77, 255, 0.3)  | -                  |
+| Gradient End   | Purple 5%    | rgba(124, 77, 255, 0.05) | -                  |
 
 ### Ratio Severity Colors
-| Severity | Threshold | Color | Hex | Tailwind |
-|----------|-----------|-------|-----|----------|
-| High (Bad) | >20% | Red | #EF4444 | `text-red-500` |
-| Medium | 10-20% | Yellow | #F59E0B | `text-yellow-500` |
-| Low (Good) | <10% | Green | #22C55E | `text-green-500` |
-| Unknown | null | Gray | #9CA3AF | `text-gray-400` |
+
+| Severity   | Threshold | Color  | Hex     | Tailwind          |
+| ---------- | --------- | ------ | ------- | ----------------- |
+| High (Bad) | >20%      | Red    | #EF4444 | `text-red-500`    |
+| Medium     | 10-20%    | Yellow | #F59E0B | `text-yellow-500` |
+| Low (Good) | <10%      | Green  | #22C55E | `text-green-500`  |
+| Unknown    | null      | Gray   | #9CA3AF | `text-gray-400`   |
 
 ### Trend Badge Colors
-| Trend | Storage Context | Color | Background |
-|-------|-----------------|-------|------------|
-| Increase (+) | Bad (costs up) | Red | bg-red-50 |
+
+| Trend        | Storage Context   | Color | Background  |
+| ------------ | ----------------- | ----- | ----------- |
+| Increase (+) | Bad (costs up)    | Red   | bg-red-50   |
 | Decrease (-) | Good (costs down) | Green | bg-green-50 |
-| Neutral (0) | Stable | Gray | bg-gray-50 |
+| Neutral (0)  | Stable            | Gray  | bg-gray-50  |
 
 ---
 
@@ -483,6 +508,7 @@ src/components/custom/dashboard/
 ### Dashboard Integration Point
 
 In `DashboardContent.tsx`, add after ExpenseChart:
+
 ```tsx
 {/* Storage Widgets Section - Epic 63-FE */}
 <div className="grid gap-4 lg:grid-cols-2">
@@ -505,9 +531,9 @@ In `DashboardContent.tsx`, add after ExpenseChart:
 
 ## Change Log
 
-| Date | Version | Description | Author |
-|------|---------|-------------|--------|
-| 2026-01-31 | 1.0 | Initial wireframe and design validation | UX Validation (Claude) |
+| Date       | Version | Description                             | Author                 |
+| ---------- | ------- | --------------------------------------- | ---------------------- |
+| 2026-01-31 | 1.0     | Initial wireframe and design validation | UX Validation (Claude) |
 
 ---
 

@@ -11,7 +11,7 @@ chars: 3875
 
 В этой статье:
 
-- 
+-
 - <a href="#skachivanie-upd" rel="nofollow">Скачивание УПД</a>
 - <a href="#diadok" rel="nofollow">Диадок</a>
 - <a href="#edo-lajt" rel="nofollow">ЭДО Лайт</a>

@@ -11,7 +11,7 @@ chars: 3248
 
 В этой статье:
 
-- 
+-
 - <a href="#chto-takoe-zadaniya" rel="nofollow">Что такое задания</a>
 - <a href="#kak-dobavit-zadanie" rel="nofollow">Как добавить задание</a>
 

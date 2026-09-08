@@ -13,7 +13,7 @@ chars: 5163
 
 В этой статье:
 
-- 
+-
 - <a href="#gde-nahodyatsya-shablony-pisem" rel="nofollow">Где находятся шаблоны писем</a>
 - <a href="#sozdanie-shablona-pisma" rel="nofollow">Создание шаблона письма</a>
 - <a href="#redaktirovanie-i-udalenie-shablonov" rel="nofollow">Редактирование и удаление шаблонов</a>

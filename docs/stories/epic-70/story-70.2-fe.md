@@ -1,12 +1,12 @@
 # Story 70.2-FE: Clarify Profit Definitions and Tooltips
 
-| Field | Value |
-|-------|-------|
-| Epic | 70-FE Validation Fixes |
-| Priority | P1 |
-| SP | 3 |
-| Status | 📋 Ready for Dev |
-| Group | B (D-5, D-16) |
+| Field    | Value                  |
+| -------- | ---------------------- |
+| Epic     | 70-FE Validation Fixes |
+| Priority | P1                     |
+| SP       | 3                      |
+| Status   | 📋 Ready for Dev       |
+| Group    | B (D-5, D-16)          |
 
 ## Description
 
@@ -21,20 +21,20 @@
 
 ### D-5: Dashboard "Чистая прибыль" vs Analytics "Опер. прибыль"
 
-| Page | Metric | Value (W08) | Formula | API Field |
-|------|--------|-------------|---------|-----------|
-| Dashboard | Чистая прибыль | 7,749₽ | payout_total (после удержаний WB) | `payout_total` |
-| Analytics/SKU | Опер. прибыль | 17,476₽ | revenue_net - cogs - expenses | `operating_profit_analytical` |
+| Page          | Metric         | Value (W08) | Formula                           | API Field                     |
+| ------------- | -------------- | ----------- | --------------------------------- | ----------------------------- |
+| Dashboard     | Чистая прибыль | 7,749₽      | payout_total (после удержаний WB) | `payout_total`                |
+| Analytics/SKU | Опер. прибыль  | 17,476₽     | revenue_net - cogs - expenses     | `operating_profit_analytical` |
 
 **Причина**: Разные метрики с разным бизнес-смыслом, но обе называются "прибыль".
 
 ### D-16: ROI/PPU vs "Валовая прибыль" на Cabinet Summary
 
-| Metric | Displayed | Formula Used | Expected from displayed "Валовая прибыль" |
-|--------|-----------|--------------|------------------------------------------|
-| Валовая прибыль | 54,091₽ | payout - cogs | — |
-| ROI | 130% | (revenue_net - cogs) / cogs | Would be 26% if from 54,091₽ |
-| Прибыль/ед. | 374₽ | (revenue_net - cogs) / qty | Would be 75₽ if from 54,091₽ |
+| Metric          | Displayed | Formula Used                | Expected from displayed "Валовая прибыль" |
+| --------------- | --------- | --------------------------- | ----------------------------------------- |
+| Валовая прибыль | 54,091₽   | payout - cogs               | —                                         |
+| ROI             | 130%      | (revenue_net - cogs) / cogs | Would be 26% if from 54,091₽              |
+| Прибыль/ед.     | 374₽      | (revenue_net - cogs) / qty  | Would be 75₽ if from 54,091₽              |
 
 **Причина**: ROI tooltip: "ROI = (Валовая прибыль ÷ COGS) × 100%" — но `profit` в формуле
 = `revenue_net - cogs` (269K₽), а не displayed "Валовая прибыль" (54K₽).
@@ -42,12 +42,16 @@
 ## Root Cause
 
 ### NetProfitCard
+
 **File**: `src/components/custom/dashboard/NetProfitCard.tsx`
+
 - Shows `payout_total` as "Чистая прибыль" — should be "К перечислению (после удержаний WB)"
 - Uses `getNetProfit()` from `tax-display-helpers.ts` with cascading priority
 
 ### PnLWaterfall ROI/PPU
+
 **File**: `src/components/custom/PnLWaterfall.tsx`
+
 - Lines 748-749: ROI uses `data.roi` from API (= `(revenue_net - cogs) / cogs × 100`)
 - Lines 762-764: Tooltip says "ROI = (Валовая прибыль ÷ COGS)" — **incorrect reference**
 - Lines 774, 788: PPU uses `data.profit_per_unit` from API, tooltip similarly misleading
@@ -64,11 +68,11 @@
 
 ## Files to Modify
 
-| File | Change |
-|------|--------|
-| `src/components/custom/PnLWaterfall.tsx` | Fix tooltip text lines ~762-764, ~788 |
-| `src/components/custom/dashboard/NetProfitCard.tsx` | Clarify label/tooltip |
-| `src/lib/tax-display-helpers.ts` | Update label strings if needed |
+| File                                                | Change                                |
+| --------------------------------------------------- | ------------------------------------- |
+| `src/components/custom/PnLWaterfall.tsx`            | Fix tooltip text lines ~762-764, ~788 |
+| `src/components/custom/dashboard/NetProfitCard.tsx` | Clarify label/tooltip                 |
+| `src/lib/tax-display-helpers.ts`                    | Update label strings if needed        |
 
 ## Approach
 

@@ -17,7 +17,7 @@ chars: 6501
 
 В этой статье:
 
-- 
+-
 - <a href="#kak-rabotaet-generatsiya-opisanij" rel="nofollow">Как работает генерация описаний?</a>
 - <a href="#kak-podobrat-klyuchevye-slova" rel="nofollow">Как подобрать ключевые слова</a>
 - <a href="#kak-sformirovat-seo-opisanie-tovara" rel="nofollow">Как сформировать SEO описание товара</a>

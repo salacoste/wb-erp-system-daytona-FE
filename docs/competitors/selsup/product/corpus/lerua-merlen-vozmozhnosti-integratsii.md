@@ -11,7 +11,7 @@ chars: 4879
 
 В этой статье:
 
-- 
+-
 - <a href="#nastrojki-integratsii" rel="nofollow">Настройка интеграции</a>
 - <a href="#import-kartochek" rel="nofollow">Импорт карточек</a>
 - <a href="#upravlenie-tsenami-i-analitika" rel="nofollow">Управление ценами</a>
@@ -66,7 +66,7 @@ SelSup предлагает удобное и безопасное управл�
 
 Через SelSup Вы также можете работать с DBS заказами из ЛеманаПро, если настроена интеграция с сервисами доставки: [CDEK](../sdek/index.html) или [Почта России](../vozmozhnosti-integratsii-s-pochtoj-rossii/index.html).\
 Подробнее про работу с DBS заказами рассказали [тут](../rabota-s-zakazami-dbs-iz-selsup/index.html).\
-*Важно! При работе с DBS заказами из ЛеманаПро SelSup не передает информацию о трек - номере заказа.*
+_Важно! При работе с DBS заказами из ЛеманаПро SelSup не передает информацию о трек - номере заказа._
 
 <a href="#tocmenu" class="kamatoc-gotop" rel="nofollow">Вверх <em></em></a>
 

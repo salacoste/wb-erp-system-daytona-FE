@@ -13,12 +13,14 @@
 **Problem Resolved**: Stats sync was failing with "nmId: undefined" errors in advertising_stats table.
 
 **Root Causes Fixed**:
+
 1. ✅ Missing ADV_SYNC queue routing in queue.service.ts
 2. ✅ Wrong WB API parameters (v2 format instead of v3)
 3. ✅ Optional chaining hiding API errors
 4. ✅ Parser not handling nested response structure: `stats[].days[].apps[].nms[].nmId`
 
 **Changes**:
+
 - **SDK**: Upgraded from v2.3.0 to v2.3.1 (proper TypeScript types for nested responses)
 - **WB API**: Fixed fullstats endpoint parameters `{ids, beginDate, endDate}` (batch up to 100 campaigns)
 - **Queue**: Added ADV_SYNC queue injection and routing
@@ -26,11 +28,13 @@
 - **Rate Limits**: 3 req/min (20s interval) for fullstats endpoint
 
 **Verification Results**:
+
 - ✅ 54 stats records successfully synced
 - ✅ 10 unique SKUs tracked
 - ✅ Zero "nmId: undefined" errors
 
 **Backend Commits**:
+
 - `4c37521` - SDK upgrade and stats parser fix
 - `180fd13` - Documentation updates
 - `716ab52` - Test-API documentation updates
@@ -48,6 +52,7 @@
 ---
 
 ## Backend Team Response
+
 **Status**: RESOLVED — this document IS the backend response. See the parent request file for the original frontend ask.
 
 ### 1. Advertising Performance Metrics
@@ -60,18 +65,18 @@ X-Cabinet-Id: <cabinet-uuid>
 
 **Query Parameters**:
 
-| Параметр | Тип | Обязат. | По умолч. | Описание |
-|----------|-----|---------|-----------|----------|
-| `from` | string | ✅ | - | Дата начала (YYYY-MM-DD) |
-| `to` | string | ✅ | - | Дата окончания (YYYY-MM-DD) |
-| `view_by` | enum | ❌ | `sku` | Агрегация: `sku`, `campaign`, `brand`, `category` |
-| `efficiency_filter` | enum | ❌ | `all` | Фильтр: `all`, `excellent`, `good`, `moderate`, `poor`, `loss`, `unknown` |
-| `campaign_ids` | string | ❌ | - | Фильтр по ID кампаний (через запятую) |
-| `sku_ids` | string | ❌ | - | Фильтр по ID товаров (через запятую) |
-| `sort_by` | string | ❌ | `spend` | Сортировка: `spend`, `roas`, `roi`, `conversions` |
-| `sort_order` | enum | ❌ | `desc` | Порядок: `asc`, `desc` |
-| `limit` | number | ❌ | 100 | Лимит (1-500) |
-| `offset` | number | ❌ | 0 | Смещение |
+| Параметр            | Тип    | Обязат. | По умолч. | Описание                                                                  |
+| ------------------- | ------ | ------- | --------- | ------------------------------------------------------------------------- |
+| `from`              | string | ✅      | -         | Дата начала (YYYY-MM-DD)                                                  |
+| `to`                | string | ✅      | -         | Дата окончания (YYYY-MM-DD)                                               |
+| `view_by`           | enum   | ❌      | `sku`     | Агрегация: `sku`, `campaign`, `brand`, `category`                         |
+| `efficiency_filter` | enum   | ❌      | `all`     | Фильтр: `all`, `excellent`, `good`, `moderate`, `poor`, `loss`, `unknown` |
+| `campaign_ids`      | string | ❌      | -         | Фильтр по ID кампаний (через запятую)                                     |
+| `sku_ids`           | string | ❌      | -         | Фильтр по ID товаров (через запятую)                                      |
+| `sort_by`           | string | ❌      | `spend`   | Сортировка: `spend`, `roas`, `roi`, `conversions`                         |
+| `sort_order`        | enum   | ❌      | `desc`    | Порядок: `asc`, `desc`                                                    |
+| `limit`             | number | ❌      | 100       | Лимит (1-500)                                                             |
+| `offset`            | number | ❌      | 0         | Смещение                                                                  |
 
 **Response**:
 
@@ -146,13 +151,13 @@ X-Cabinet-Id: <cabinet-uuid>
 
 **Query Parameters**:
 
-| Параметр | Тип | По умолч. | Описание |
-|----------|-----|-----------|----------|
-| `status` | string | all | Фильтр по статусам (через запятую): `9` (active), `11` (paused) |
-| `type` | number | all | Фильтр по типу: `8` (auto), `9` (unified/auction) |
-| `search` | string | - | Поиск по названию |
-| `limit` | number | 100 | Лимит |
-| `offset` | number | 0 | Смещение |
+| Параметр | Тип    | По умолч. | Описание                                                        |
+| -------- | ------ | --------- | --------------------------------------------------------------- |
+| `status` | string | all       | Фильтр по статусам (через запятую): `9` (active), `11` (paused) |
+| `type`   | number | all       | Фильтр по типу: `8` (auto), `9` (unified/auction)               |
+| `search` | string | -         | Поиск по названию                                               |
+| `limit`  | number | 100       | Лимит                                                           |
+| `offset` | number | 0         | Смещение                                                        |
 
 **Response**:
 
@@ -184,24 +189,24 @@ interface Campaign {
 
 **WB Campaign Statuses**:
 
-| Код | Название | Описание |
-|-----|----------|----------|
-| 4 | ready_for_start | Готова к запуску |
-| 7 | ended | Завершена |
-| 8 | declined | Отклонена |
-| 9 | active | Активна |
-| 11 | paused | На паузе |
+| Код | Название        | Описание         |
+| --- | --------------- | ---------------- |
+| 4   | ready_for_start | Готова к запуску |
+| 7   | ended           | Завершена        |
+| 8   | declined        | Отклонена        |
+| 9   | active          | Активна          |
+| 11  | paused          | На паузе         |
 
 **WB Campaign Types**:
 
-| Код | Название | Описание |
-|-----|----------|----------|
-| 4 | carousel | Карусель |
-| 5 | card | Карточка товара |
-| 6 | catalog | Каталог |
-| 7 | search | Поиск |
-| 8 | auto | Автоматическая |
-| 9 | unified | Аукцион (unified) |
+| Код | Название | Описание          |
+| --- | -------- | ----------------- |
+| 4   | carousel | Карусель          |
+| 5   | card     | Карточка товара   |
+| 6   | catalog  | Каталог           |
+| 7   | search   | Поиск             |
+| 8   | auto     | Автоматическая    |
+| 9   | unified  | Аукцион (unified) |
 
 ### 3. Sync Status
 
@@ -238,27 +243,27 @@ type HealthStatus =
 
 ## Формулы метрик
 
-| Метрика | Формула | Пример |
-|---------|---------|--------|
-| **ROAS** | `revenue / spend` | 3.6 = 360₽ дохода на 100₽ затрат |
-| **ROI** | `(profit - spend) / spend` | 0.46 = 46% возврата инвестиций |
-| **CTR** | `(clicks / views) × 100` | 3.0% = 3 клика на 100 показов |
-| **CPC** | `spend / clicks` | 18.89₽ за клик |
-| **Conversion Rate** | `(orders / clicks) × 100` | 4.89% = 4.89 заказов на 100 кликов |
-| **Profit After Ads** | `profit - spend` | Чистая прибыль после рекламы |
+| Метрика              | Формула                    | Пример                             |
+| -------------------- | -------------------------- | ---------------------------------- |
+| **ROAS**             | `revenue / spend`          | 3.6 = 360₽ дохода на 100₽ затрат   |
+| **ROI**              | `(profit - spend) / spend` | 0.46 = 46% возврата инвестиций     |
+| **CTR**              | `(clicks / views) × 100`   | 3.0% = 3 клика на 100 показов      |
+| **CPC**              | `spend / clicks`           | 18.89₽ за клик                     |
+| **Conversion Rate**  | `(orders / clicks) × 100`  | 4.89% = 4.89 заказов на 100 кликов |
+| **Profit After Ads** | `profit - spend`           | Чистая прибыль после рекламы       |
 
 ---
 
 ## Классификация эффективности
 
-| Статус | ROAS | ROI | Цвет | Рекомендация |
-|--------|------|-----|------|--------------|
-| `excellent` | ≥ 5.0 | ≥ 1.0 | 🟢 Green | Масштабировать бюджет |
-| `good` | 3.0 - 5.0 | 0.5 - 1.0 | 🟢 Light Green | Поддерживать |
-| `moderate` | 2.0 - 3.0 | 0.2 - 0.5 | 🟡 Yellow | Оптимизировать |
-| `poor` | 1.0 - 2.0 | 0 - 0.2 | 🟠 Orange | Пересмотреть стратегию |
-| `loss` | < 1.0 | < 0 | 🔴 Red | Остановить или изменить |
-| `unknown` | N/A | N/A | ⚪ Gray | Нет данных о прибыли |
+| Статус      | ROAS      | ROI       | Цвет           | Рекомендация            |
+| ----------- | --------- | --------- | -------------- | ----------------------- |
+| `excellent` | ≥ 5.0     | ≥ 1.0     | 🟢 Green       | Масштабировать бюджет   |
+| `good`      | 3.0 - 5.0 | 0.5 - 1.0 | 🟢 Light Green | Поддерживать            |
+| `moderate`  | 2.0 - 3.0 | 0.2 - 0.5 | 🟡 Yellow      | Оптимизировать          |
+| `poor`      | 1.0 - 2.0 | 0 - 0.2   | 🟠 Orange      | Пересмотреть стратегию  |
+| `loss`      | < 1.0     | < 0       | 🔴 Red         | Остановить или изменить |
+| `unknown`   | N/A       | N/A       | ⚪ Gray        | Нет данных о прибыли    |
 
 ---
 
@@ -346,13 +351,13 @@ function getSyncHealthColor(status: HealthStatus): string {
 
 ## Обработка ошибок
 
-| Код | Ситуация | Действие |
-|-----|----------|----------|
-| 400 | Невалидные параметры | Показать ошибку валидации |
-| 401 | Нет авторизации | Редирект на логин |
-| 403 | Нет доступа к кабинету | Показать ошибку доступа |
-| 404 | Нет данных | Показать "Нет данных за период" |
-| 500 | Ошибка сервера | Показать "Попробуйте позже" |
+| Код | Ситуация               | Действие                        |
+| --- | ---------------------- | ------------------------------- |
+| 400 | Невалидные параметры   | Показать ошибку валидации       |
+| 401 | Нет авторизации        | Редирект на логин               |
+| 403 | Нет доступа к кабинету | Показать ошибку доступа         |
+| 404 | Нет данных             | Показать "Нет данных за период" |
+| 500 | Ошибка сервера         | Показать "Попробуйте позже"     |
 
 ---
 
@@ -367,16 +372,16 @@ function getSyncHealthColor(status: HealthStatus): string {
 
 ### Stories
 
-| Story | Описание | Статус |
-|-------|----------|--------|
-| 33.1 | Database Schema | ✅ |
-| 33.2 | WB Promotion SDK Integration | ✅ |
-| 33.3 | BullMQ Sync Job | ✅ |
-| 33.4 | Campaign Service | ✅ |
-| 33.5 | ROAS/ROI Analytics Service | ✅ |
-| 33.6 | REST API Controller | ✅ |
-| 33.7 | Materialized Views & Performance | ✅ |
-| 33.8 | Testing & Observability | ✅ |
+| Story | Описание                         | Статус |
+| ----- | -------------------------------- | ------ |
+| 33.1  | Database Schema                  | ✅     |
+| 33.2  | WB Promotion SDK Integration     | ✅     |
+| 33.3  | BullMQ Sync Job                  | ✅     |
+| 33.4  | Campaign Service                 | ✅     |
+| 33.5  | ROAS/ROI Analytics Service       | ✅     |
+| 33.6  | REST API Controller              | ✅     |
+| 33.7  | Materialized Views & Performance | ✅     |
+| 33.8  | Testing & Observability          | ✅     |
 
 ---
 
@@ -458,14 +463,15 @@ if (day.apps && Array.isArray(day.apps)) {
 
 ### Rate Limits & Batch Processing
 
-| Parameter | Value | Notes |
-|-----------|-------|-------|
-| **Endpoint** | GET /adv/v3/fullstats | WB Promotion API v3 |
-| **Rate Limit** | 3 req/min | 20s interval between requests |
-| **Batch Size** | Up to 100 campaign IDs | Comma-separated in `ids` param |
-| **Date Format** | YYYY-MM-DD | `beginDate`, `endDate` params |
+| Parameter       | Value                  | Notes                          |
+| --------------- | ---------------------- | ------------------------------ |
+| **Endpoint**    | GET /adv/v3/fullstats  | WB Promotion API v3            |
+| **Rate Limit**  | 3 req/min              | 20s interval between requests  |
+| **Batch Size**  | Up to 100 campaign IDs | Comma-separated in `ids` param |
+| **Date Format** | YYYY-MM-DD             | `beginDate`, `endDate` params  |
 
 **Example Request**:
+
 ```http
 GET /adv/v3/fullstats?ids=12345,67890,11111&beginDate=2025-12-01&endDate=2025-12-21
 Authorization: Bearer <wb-token>
@@ -476,6 +482,7 @@ Authorization: Bearer <wb-token>
 **No Breaking Changes** - API response format unchanged (camelCase fields as before).
 
 **Improved Reliability**:
+
 - Stats sync now succeeds for all campaigns
 - No missing nmId values in response
 - Accurate SKU-level attribution for ROAS/ROI calculations
@@ -493,6 +500,7 @@ The advertising analytics API contains data from **2025-12-01 to 2026-01-28**.
 ### Querying Outside Available Range
 
 When querying with `from`/`to` parameters that don't overlap with this range:
+
 - The API correctly returns empty results
 - `items: []` and `summary: { totalSpend: 0, ... }`
 - This is expected behavior - no data exists for requested period
@@ -507,12 +515,14 @@ When querying with `from`/`to` parameters that don't overlap with this range:
 ### Frontend Integration
 
 **Empty State Handling**:
+
 1. Check if requested date range overlaps with available data
 2. Display empty state component when no overlap
 3. Show available date range to user
 4. Provide smart date picker with unavailable dates disabled
 
 **Component Reference**:
+
 - `AdvertisingEmptyState` - Empty state component
 - Smart date picker - Calendar with unavailable dates disabled
 
@@ -531,22 +541,22 @@ When querying with `from`/`to` parameters that don't overlap with this range:
 
 ### Stories
 
-| Story | Описание | Статус |
-|-------|----------|--------|
-| 33.1 | Database Schema | ✅ |
-| 33.2 | **WB Promotion SDK Integration** | ✅ **Fixed 2025-12-24** |
-| 33.3 | BullMQ Sync Job | ✅ |
-| 33.4 | Campaign Service | ✅ |
-| 33.5 | ROAS/ROI Analytics Service | ✅ |
-| 33.6 | REST API Controller | ✅ |
-| 33.7 | Materialized Views & Performance | ✅ |
-| 33.8 | Testing & Observability | ✅ |
+| Story | Описание                         | Статус                  |
+| ----- | -------------------------------- | ----------------------- |
+| 33.1  | Database Schema                  | ✅                      |
+| 33.2  | **WB Promotion SDK Integration** | ✅ **Fixed 2025-12-24** |
+| 33.3  | BullMQ Sync Job                  | ✅                      |
+| 33.4  | Campaign Service                 | ✅                      |
+| 33.5  | ROAS/ROI Analytics Service       | ✅                      |
+| 33.6  | REST API Controller              | ✅                      |
+| 33.7  | Materialized Views & Performance | ✅                      |
+| 33.8  | Testing & Observability          | ✅                      |
 
 ---
 
-*Дата создания: 2025-12-22*
-*Последнее обновление: 2026-01-30*
-*SDK Version: daytona-wildberries-typescript-sdk v2.3.1+*
+_Дата создания: 2025-12-22_
+_Последнее обновление: 2026-01-30_
+_SDK Version: daytona-wildberries-typescript-sdk v2.3.1+_
 
 ## Backend Team Response
 

@@ -21,16 +21,16 @@ This document specifies the layout and design for 8 KPI metric cards on the main
 
 ## 2. KPI Metrics Definition
 
-| # | Metric (RU) | Description | API Field | Type | Priority |
-|---|-------------|-------------|-----------|------|----------|
-| 1 | **Заказы** | Potential revenue from all orders | `orders_value` | Currency | High |
-| 2 | **COGS по заказам** | Cost of goods for orders | `orders_cogs` | Currency | High |
-| 3 | **Выкупы** | Actual sales (redeemed orders) | `sales_value` | Currency | High |
-| 4 | **COGS по выкупам** | Cost of goods sold | `sales_cogs` | Currency | High |
-| 5 | **Рекламные затраты** | Advertising expenses | `advert_spend` | Currency | Medium |
-| 6 | **Логистика** | Delivery expenses | `logistics_cost` | Currency | Medium |
-| 7 | **Хранение** | Storage warehouse expenses | `storage_cost` | Currency | Medium |
-| 8 | **Теор. прибыль** | Theoretical profit (calculated) | `theoretical_profit` | Currency | **Critical** |
+| #   | Metric (RU)           | Description                       | API Field            | Type     | Priority     |
+| --- | --------------------- | --------------------------------- | -------------------- | -------- | ------------ |
+| 1   | **Заказы**            | Potential revenue from all orders | `orders_value`       | Currency | High         |
+| 2   | **COGS по заказам**   | Cost of goods for orders          | `orders_cogs`        | Currency | High         |
+| 3   | **Выкупы**            | Actual sales (redeemed orders)    | `sales_value`        | Currency | High         |
+| 4   | **COGS по выкупам**   | Cost of goods sold                | `sales_cogs`         | Currency | High         |
+| 5   | **Рекламные затраты** | Advertising expenses              | `advert_spend`       | Currency | Medium       |
+| 6   | **Логистика**         | Delivery expenses                 | `logistics_cost`     | Currency | Medium       |
+| 7   | **Хранение**          | Storage warehouse expenses        | `storage_cost`       | Currency | Medium       |
+| 8   | **Теор. прибыль**     | Theoretical profit (calculated)   | `theoretical_profit` | Currency | **Critical** |
 
 ### Profit Formula
 
@@ -310,45 +310,45 @@ Negative Profit Styles:
 
 ### 7.1 Value Colors
 
-| Condition | Color | Hex | Tailwind |
-|-----------|-------|-----|----------|
-| Positive value | Green | #22C55E | `text-green-500` |
-| Negative value | Red | #EF4444 | `text-red-500` |
-| Zero/Neutral | Gray | #757575 | `text-gray-500` |
-| Title | Muted | #757575 | `text-muted-foreground` |
-| Main value | Black | #1F2937 | `text-gray-900` |
+| Condition      | Color | Hex     | Tailwind                |
+| -------------- | ----- | ------- | ----------------------- |
+| Positive value | Green | #22C55E | `text-green-500`        |
+| Negative value | Red   | #EF4444 | `text-red-500`          |
+| Zero/Neutral   | Gray  | #757575 | `text-gray-500`         |
+| Title          | Muted | #757575 | `text-muted-foreground` |
+| Main value     | Black | #1F2937 | `text-gray-900`         |
 
 ### 7.2 Comparison Badge Colors
 
-| Direction | Background | Text | Tailwind |
-|-----------|------------|------|----------|
-| Positive (↑) | #DCFCE7 | #166534 | `bg-green-100 text-green-700` |
-| Negative (↓) | #FEE2E2 | #991B1B | `bg-red-100 text-red-700` |
-| Neutral (—) | #F3F4F6 | #4B5563 | `bg-gray-100 text-gray-600` |
+| Direction    | Background | Text    | Tailwind                      |
+| ------------ | ---------- | ------- | ----------------------------- |
+| Positive (↑) | #DCFCE7    | #166534 | `bg-green-100 text-green-700` |
+| Negative (↓) | #FEE2E2    | #991B1B | `bg-red-100 text-red-700`     |
+| Neutral (—)  | #F3F4F6    | #4B5563 | `bg-gray-100 text-gray-600`   |
 
 ### 7.3 Card Colors
 
-| Element | Color | Hex | Tailwind |
-|---------|-------|-----|----------|
-| Background | White | #FFFFFF | `bg-white` |
-| Border | Light gray | #EEEEEE | `border-gray-200` |
-| Hover border | Primary | #E53935 | `hover:border-primary` |
-| Shadow | — | — | `shadow-sm` |
-| Profit card border | Blue | #3B82F6 | `border-blue-500` |
-| Profit card (negative) | Red | #EF4444 | `border-red-500` |
+| Element                | Color      | Hex     | Tailwind               |
+| ---------------------- | ---------- | ------- | ---------------------- |
+| Background             | White      | #FFFFFF | `bg-white`             |
+| Border                 | Light gray | #EEEEEE | `border-gray-200`      |
+| Hover border           | Primary    | #E53935 | `hover:border-primary` |
+| Shadow                 | —          | —       | `shadow-sm`            |
+| Profit card border     | Blue       | #3B82F6 | `border-blue-500`      |
+| Profit card (negative) | Red        | #EF4444 | `border-red-500`       |
 
 ---
 
 ## 8. Typography Specification
 
-| Element | Size | Weight | Line Height | Font |
-|---------|------|--------|-------------|------|
-| Card title | 14px | 500 (medium) | 1.5 | Inter |
-| Main value (default) | 32px | 700 (bold) | 1.2 | Inter |
-| Main value (profit) | 48px | 700 (bold) | 1.1 | Inter |
-| Comparison badge | 12px | 500 (medium) | 1.5 | Inter |
-| Previous value | 12px | 400 (regular) | 1.5 | Inter |
-| Tooltip content | 14px | 400 (regular) | 1.5 | Inter |
+| Element              | Size | Weight        | Line Height | Font  |
+| -------------------- | ---- | ------------- | ----------- | ----- |
+| Card title           | 14px | 500 (medium)  | 1.5         | Inter |
+| Main value (default) | 32px | 700 (bold)    | 1.2         | Inter |
+| Main value (profit)  | 48px | 700 (bold)    | 1.1         | Inter |
+| Comparison badge     | 12px | 500 (medium)  | 1.5         | Inter |
+| Previous value       | 12px | 400 (regular) | 1.5         | Inter |
+| Tooltip content      | 14px | 400 (regular) | 1.5         | Inter |
 
 ### Currency Formatting (Russian Locale)
 
@@ -367,13 +367,13 @@ formatCurrency(1234567.89)
 
 ## 9. Responsive Breakpoints
 
-| Breakpoint | Layout | Card Width | Grid |
-|------------|--------|------------|------|
-| < 640px (sm) | Stack | 100% | 1 column |
-| 640-767px (sm-md) | Stack | 100% | 1 column |
-| 768-1023px (md) | 2 columns | 50% - gap | 2x4 |
-| 1024-1279px (lg) | 2 columns | 50% - gap | 2x4 |
-| >= 1280px (xl) | 4 columns | 25% - gap | 4x2 |
+| Breakpoint        | Layout    | Card Width | Grid     |
+| ----------------- | --------- | ---------- | -------- |
+| < 640px (sm)      | Stack     | 100%       | 1 column |
+| 640-767px (sm-md) | Stack     | 100%       | 1 column |
+| 768-1023px (md)   | 2 columns | 50% - gap  | 2x4      |
+| 1024-1279px (lg)  | 2 columns | 50% - gap  | 2x4      |
+| >= 1280px (xl)    | 4 columns | 25% - gap  | 4x2      |
 
 ### Grid Configuration
 
@@ -393,13 +393,13 @@ formatCurrency(1234567.89)
 
 ### 10.1 Requirements Checklist
 
-| Requirement | Implementation |
-|-------------|----------------|
+| Requirement    | Implementation                         |
+| -------------- | -------------------------------------- |
 | Color contrast | >=4.5:1 for text, >=3:1 for large text |
-| Focus visible | 2px ring with `ring-primary` on focus |
-| Screen reader | ARIA labels in Russian |
-| Keyboard nav | Tab order, Enter/Space for actions |
-| Reduced motion | Respect `prefers-reduced-motion` |
+| Focus visible  | 2px ring with `ring-primary` on focus  |
+| Screen reader  | ARIA labels in Russian                 |
+| Keyboard nav   | Tab order, Enter/Space for actions     |
+| Reduced motion | Respect `prefers-reduced-motion`       |
 
 ### 10.2 ARIA Attributes
 
@@ -427,16 +427,16 @@ formatCurrency(1234567.89)
 
 ### 10.3 Tooltip Content (Russian)
 
-| Metric | Tooltip Text |
-|--------|--------------|
-| Заказы | Сумма всех заказов за выбранный период. Включает отменённые и невыкупленные заказы. |
-| COGS по заказам | Себестоимость товаров для всех заказов, рассчитанная по COGS на момент заказа. |
-| Выкупы | Сумма фактических продаж (выкупленные заказы) за выбранный период. |
-| COGS по выкупам | Себестоимость проданных товаров. Рассчитывается по COGS, действовавшему в момент продажи. |
-| Рекламные затраты | Общие расходы на рекламу в Wildberries за выбранный период. |
-| Логистика | Расходы на доставку товаров покупателям и возвраты. |
-| Хранение | Расходы на хранение товаров на складах Wildberries. |
-| Теор. прибыль | Теоретическая прибыль = Заказы - COGS - Реклама - Логистика - Хранение. Показывает потенциальную прибыль до вычета комиссий и других расходов. |
+| Metric            | Tooltip Text                                                                                                                                   |
+| ----------------- | ---------------------------------------------------------------------------------------------------------------------------------------------- |
+| Заказы            | Сумма всех заказов за выбранный период. Включает отменённые и невыкупленные заказы.                                                            |
+| COGS по заказам   | Себестоимость товаров для всех заказов, рассчитанная по COGS на момент заказа.                                                                 |
+| Выкупы            | Сумма фактических продаж (выкупленные заказы) за выбранный период.                                                                             |
+| COGS по выкупам   | Себестоимость проданных товаров. Рассчитывается по COGS, действовавшему в момент продажи.                                                      |
+| Рекламные затраты | Общие расходы на рекламу в Wildberries за выбранный период.                                                                                    |
+| Логистика         | Расходы на доставку товаров покупателям и возвраты.                                                                                            |
+| Хранение          | Расходы на хранение товаров на складах Wildberries.                                                                                            |
+| Теор. прибыль     | Теоретическая прибыль = Заказы - COGS - Реклама - Логистика - Хранение. Показывает потенциальную прибыль до вычета комиссий и других расходов. |
 
 ---
 

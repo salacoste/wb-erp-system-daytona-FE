@@ -16,6 +16,7 @@
 ## Acceptance Criteria
 
 ### AC1: Table Columns (SKU View)
+
 - [ ] SKU ID (clickable link to internal product page: `/products/:nmId`)
 - [ ] Product Name (truncated 45 chars + tooltip)
 - [ ] Spend (₽)
@@ -27,23 +28,27 @@
 - [ ] Efficiency Status (badge)
 
 ### AC2: Dynamic Columns by View Mode
+
 - [ ] SKU view: SKU ID, Product Name
 - [ ] Campaign view: Campaign ID, Campaign Name
 - [ ] Brand view: Brand
 - [ ] Category view: Category
 
 ### AC3: Sorting
+
 - [ ] Sort by: Spend, ROAS, ROI, Conversions
 - [ ] Sort order: asc/desc
 - [ ] Default: Spend desc (highest spenders first)
 - [ ] Visual indicator on sorted column
 
 ### AC4: Filtering
+
 - [ ] Filter by efficiency status dropdown
 - [ ] Options: All, Excellent, Good, Moderate, Poor, Loss, **Unknown**
 - [ ] Filter updates URL query params
 
 ### AC5: Pagination
+
 - [ ] **Offset-based pagination** (not cursor-based, per backend API)
 - [ ] 25 rows per page
 - [ ] "Назад" / "Вперёд" buttons
@@ -51,11 +56,13 @@
 - [ ] Total count display
 
 ### AC6: Empty & Error States
+
 - [ ] Empty state: "Нет данных за выбранный период"
 - [ ] Error state with retry button
 - [ ] Loading skeleton (10 rows)
 
 ### AC7: 'Unknown' Status Handling
+
 - [ ] When `efficiency_status === 'unknown'`:
   - Show "—" (dash) for ROAS, ROI, Profit columns
   - Show gray badge "Нет данных"
@@ -63,6 +70,7 @@
 - [ ] Tooltip: "Нет данных о прибыли для расчёта эффективности"
 
 ### AC8: Accessibility
+
 - [ ] Keyboard navigation for sorting and pagination
 - [ ] Focus states visible on all interactive elements
 - [ ] Table headers use `<th scope="col">`
@@ -71,22 +79,26 @@
 ## Tasks / Subtasks
 
 ### Phase 1: Table Component
+
 - [ ] Create `components/PerformanceMetricsTable.tsx`
 - [ ] Define column configurations for each view mode
 - [ ] Implement column header with sort controls
 - [ ] Implement row rendering with proper formatting
 
 ### Phase 2: Efficiency Badge
+
 - [ ] Create `components/EfficiencyBadge.tsx` (reused from 33.4-fe)
 - [ ] Color-coded by efficiency_status
 - [ ] Tooltip with classification criteria
 
 ### Phase 3: Sorting & Filtering
+
 - [ ] Implement sort state management
 - [ ] Implement filter dropdown
 - [ ] Sync with URL query params
 
 ### Phase 4: Pagination
+
 - [ ] Implement pagination controls
 - [ ] Integrate with API offset/limit params
 - [ ] Handle page navigation
@@ -231,9 +243,9 @@ src/app/(dashboard)/analytics/advertising/components/
 
 ## Change Log
 
-| Date | Author | Change |
-|------|--------|--------|
-| 2025-12-22 | James (Dev Agent) | Initial draft |
+| Date       | Author            | Change                                                                                              |
+| ---------- | ----------------- | --------------------------------------------------------------------------------------------------- |
+| 2025-12-22 | James (Dev Agent) | Initial draft                                                                                       |
 | 2025-12-22 | James (Dev Agent) | PO Review: Offset-based pagination (BLOCKER #2), AC7 unknown handling, AC8 a11y, SKU link clarified |
 
 ---

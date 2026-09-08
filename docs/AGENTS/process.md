@@ -66,3 +66,5 @@ CRITICAL: collaborate with the user to develop specific, actionable research que
 **Research Prompt Template:**
 
 ```markdown
+
+```

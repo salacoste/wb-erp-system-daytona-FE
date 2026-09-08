@@ -20,7 +20,7 @@ AI Редактор SelSup — инструмент для селлеров: п�
 
 В этой статье:
 
-- 
+-
 - <a href="#kak-otkryt-redaktor" rel="nofollow">Как открыть редактор</a>
 - <a href="#ai-redaktor" rel="nofollow">AI Редактор</a>
 - <a href="#ai-fotosessii" rel="nofollow">AI Фотосессии</a>

@@ -17,7 +17,7 @@ SelSup обращается к указанному URL, получает фай
 
 В этой статье:
 
-- 
+-
 - <a href="#bdfen8" rel="nofollow">Как создать обмен через YML</a>
 - <a href="#10zpand" rel="nofollow">Какие данные нужно указать</a>
 - <a href="#m1us6o" rel="nofollow">Как SelSup сопоставляет товары</a>
@@ -83,7 +83,7 @@ SelSup обращается к указанному URL, получает фай
 
 Пример структуры:
 
-``` cm-content
+```cm-content
 
   5
 ```
@@ -96,11 +96,11 @@ SelSup обращается к указанному URL, получает фай
 
 Например, если остаток передаётся так:
 
-``` cm-content
+```cm-content
 
-  
+
     5
-  
+
 ```
 
 В поле с Н**азванием колонки для остатка** укажите: outlets/count
@@ -115,11 +115,11 @@ SelSup обращается к указанному URL, получает фай
 
 Например:
 
-``` cm-content
+```cm-content
 
-  
+
     5
-  
+
 ```
 
 Для извлечения значения укажите: count/quantity
@@ -148,7 +148,7 @@ name="name"\>value
 
 Если артикул передаётся в другом теге, можно указать его название, например:
 
-``` cm-content
+```cm-content
 vendorCode или article
 ```
 
@@ -172,7 +172,7 @@ vendorCode или article
 
 То есть, если в YML-файле остаток передаётся так:
 
-``` cm-content
+```cm-content
  id="123">
   5
 ```
@@ -183,11 +183,11 @@ vendorCode или article
 
 Пример структуры:
 
-``` cm-content
+```cm-content
  id="123">
-  
+
      id="34" instock="5"/>
-  
+
 ```
 
 <a href="#tocmenu" class="kamatoc-gotop" rel="nofollow">Вверх <em></em></a>

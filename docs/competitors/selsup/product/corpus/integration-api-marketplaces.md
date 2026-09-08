@@ -13,7 +13,7 @@ SelSup - это ультрасовременное программное обе
 
 В этой статье:
 
-- 
+-
 - <a href="#bezopasnost" rel="nofollow">Безопасность</a>
 - <a href="#zashhita-ot-oshibok-i-poteri-biznesa" rel="nofollow">Защита от ошибок и потери бизнеса</a>
 - <a href="#chetkaya-kartina-biznesa-i-pribyli" rel="nofollow">Четкая картина бизнеса и прибыли</a>

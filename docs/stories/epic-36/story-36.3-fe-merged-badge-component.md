@@ -16,10 +16,12 @@
 ## Background
 
 When viewing advertising analytics with `group_by=imtId`, some items represent merged groups of products. We need a clear visual indicator:
+
 - **Badge**: Shows group size (e.g., "🔗 Склейка (3)")
 - **Tooltip**: Lists all products in the group with nmId and vendorCode
 
 **User Scenario**:
+
 1. User toggles to "По склейкам" view
 2. Table shows merged groups with badge
 3. User hovers over badge
@@ -30,23 +32,27 @@ When viewing advertising analytics with `group_by=imtId`, some items represent m
 ## Acceptance Criteria
 
 ### AC1: Badge Display
+
 - [ ] Badge shows for `type='merged_group'` items only
 - [ ] Badge text: "🔗 Склейка (N)" where N = product count
 - [ ] Badge uses `variant="secondary"` (gray background)
 - [ ] Badge has `cursor-help` CSS class
 
 ### AC2: Tooltip Content
+
 - [ ] Tooltip header shows imtId: "Объединённая карточка #328632"
 - [ ] Tooltip lists all products: "ter-09 (#173588306)"
 - [ ] Tooltip includes explanation (💡 icon with text)
 - [ ] Tooltip has max-width constraint (max-w-xs)
 
 ### AC3: Edge Case Handling
+
 - [ ] Single product with imtId returns `null` (no badge)
 - [ ] Empty `mergedProducts` array handled gracefully
 - [ ] Component doesn't crash if `imtId` is null
 
 ### AC4: Accessibility
+
 - [ ] Tooltip has proper ARIA labels
 - [ ] Keyboard navigation supported (focus + Enter)
 - [ ] Screen reader announces group size
@@ -54,6 +60,7 @@ When viewing advertising analytics with `group_by=imtId`, some items represent m
 ## Tasks / Subtasks
 
 ### Phase 1: Create Component File (40 min)
+
 - [ ] Create `src/components/analytics/MergedProductBadge.tsx`
 - [ ] Import Badge, Tooltip from shadcn/ui
 - [ ] Define props interface
@@ -61,12 +68,14 @@ When viewing advertising analytics with `group_by=imtId`, some items represent m
 - [ ] Add JSDoc comments
 
 ### Phase 2: Implement Badge Logic (20 min)
+
 - [ ] Check product count (return null if === 1)
 - [ ] Render Badge with link emoji and count
 - [ ] Apply cursor-help class
 - [ ] Handle undefined mergedProducts
 
 ### Phase 3: Implement Tooltip (30 min)
+
 - [ ] Wrap Badge in TooltipProvider
 - [ ] Create TooltipContent with header
 - [ ] Map mergedProducts to list items
@@ -74,6 +83,7 @@ When viewing advertising analytics with `group_by=imtId`, some items represent m
 - [ ] Style with max-width and spacing
 
 ### Phase 4: Unit Tests (40 min)
+
 - [ ] Create `src/components/analytics/MergedProductBadge.test.tsx`
 - [ ] Test: renders badge with correct count
 - [ ] Test: returns null for single product
@@ -81,6 +91,7 @@ When viewing advertising analytics with `group_by=imtId`, some items represent m
 - [ ] Test: handles edge cases
 
 ### Phase 5: Storybook (Optional, 20 min)
+
 - [ ] Create Storybook story for component
 - [ ] Add examples: 2 products, 3 products, 5 products
 - [ ] Add edge case examples
@@ -289,6 +300,7 @@ import { MergedProductBadge } from '@/components/analytics/MergedProductBadge'
 ## Testing Checklist
 
 ### Unit Tests
+
 - [ ] Badge renders with correct count
 - [ ] Badge returns null for single product
 - [ ] Tooltip shows on hover
@@ -297,17 +309,20 @@ import { MergedProductBadge } from '@/components/analytics/MergedProductBadge'
 - [ ] Edge cases handled
 
 ### Integration Tests
+
 - [ ] Component works in PerformanceMetricsTable
 - [ ] Tooltip doesn't break table layout
 - [ ] Badge styles match design system
 
 ### Visual Tests
+
 - [ ] Badge color matches secondary variant
 - [ ] Link emoji (🔗) visible
 - [ ] Tooltip max-width prevents overflow
 - [ ] Tooltip positioned correctly (side="right")
 
 ### Accessibility Tests
+
 - [ ] Keyboard navigation works (Tab + Enter)
 - [ ] Screen reader announces "Склейка (3)"
 - [ ] Tooltip has proper ARIA attributes
@@ -337,6 +352,7 @@ import { MergedProductBadge } from '@/components/analytics/MergedProductBadge'
 
 **Q1: Badge Icon**
 Should we use:
+
 - Option A: 🔗 (link emoji) - current proposal
 - Option B: 📦 (package emoji)
 - Option C: 🏷️ (label emoji)
@@ -348,6 +364,7 @@ Should we use:
 
 **Q2: Badge Color**
 Should merged group badge be:
+
 - Option A: `variant="secondary"` (gray) - current proposal
 - Option B: `variant="default"` (red primary)
 - Option C: `variant="outline"` (transparent with border)
@@ -358,9 +375,11 @@ Should merged group badge be:
 
 **Q3: Tooltip Explanation Text**
 Is this text clear and helpful?
+
 > "💡 Рекламные затраты основной карточки распределены между всеми товарами группы"
 
 Alternative:
+
 > "💡 Все товары в группе используют один рекламный бюджет"
 
 **Recommendation**: Current text - more technically accurate
@@ -369,6 +388,7 @@ Alternative:
 
 **Q4: Mobile Behavior**
 On mobile (small screens), should tooltip:
+
 - Option A: Show on tap (current shadcn/ui behavior)
 - Option B: Show inline below badge (no tooltip)
 - Option C: Hide badge completely on mobile
@@ -380,6 +400,7 @@ On mobile (small screens), should tooltip:
 ### Estimated Time
 
 **Total**: 150 minutes (2.5 hours)
+
 - Phase 1: 40 min (component)
 - Phase 2: 20 min (badge logic)
 - Phase 3: 30 min (tooltip)
@@ -388,11 +409,11 @@ On mobile (small screens), should tooltip:
 
 ### Risk Assessment
 
-| Risk | Probability | Impact | Mitigation |
-|------|-------------|--------|------------|
-| Tooltip overflow | Medium | Low | max-w-xs class prevents overflow |
-| Long product lists | Medium | Low | Scrollable content if needed |
-| Mobile usability | Low | Medium | Tap to show tooltip (native behavior) |
+| Risk               | Probability | Impact | Mitigation                            |
+| ------------------ | ----------- | ------ | ------------------------------------- |
+| Tooltip overflow   | Medium      | Low    | max-w-xs class prevents overflow      |
+| Long product lists | Medium      | Low    | Scrollable content if needed          |
+| Mobile usability   | Low         | Medium | Tap to show tooltip (native behavior) |
 
 ---
 

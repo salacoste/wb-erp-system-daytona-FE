@@ -4,7 +4,8 @@
 - [Section Name 2](./section-name-2.md)
 - [Section Name 3](./section-name-3.md)
   ...
-```
+
+````
 
 ## 5. Preserve Special Content
 
@@ -12,7 +13,7 @@
 
    ```language
    content
-   ```
+````
 
 2. **Mermaid diagrams**: Preserve complete syntax:
 

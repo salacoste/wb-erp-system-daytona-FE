@@ -11,7 +11,7 @@ chars: 4713
 
 В этой статье:
 
-- 
+-
 - <a href="#gde-nastroit-list-sborki" rel="nofollow">Где настроить лист сборки</a>
 - <a href="#kak-dobavit-kolonku-v-list-sborki" rel="nofollow">Как добавить колонку в лист сборки</a>
 - <a href="#kak-izmenit-poryadok-kolonok" rel="nofollow">Как изменить порядок колонок</a>

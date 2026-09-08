@@ -22,6 +22,7 @@
 Backend Epic 42 deprecated `enrich_cogs` task type and introduced `recalculate_weekly_margin` as the replacement.
 
 **Current state of `src/types/api.ts` Task.type union (lines 40-46):**
+
 - `finances_weekly_ingest` ✓
 - `products_sync` ✓
 - `enrich_cogs` ✓ (needs @deprecated JSDoc)
@@ -37,6 +38,7 @@ Backend Epic 42 deprecated `enrich_cogs` task type and introduced `recalculate_w
 ## Acceptance Criteria
 
 ### AC1: Task Type Union Updated
+
 ```gherkin
 Given the Task interface in api.ts (lines 38-53)
 When I review the type union
@@ -47,6 +49,7 @@ Then it should include:
 ```
 
 ### AC2: Deprecation JSDoc
+
 ```gherkin
 Given the Task.type union
 When 'enrich_cogs' is used
@@ -55,6 +58,7 @@ And suggest using 'recalculate_weekly_margin' instead
 ```
 
 ### AC3: New Response Types
+
 ```gherkin
 Given new task types
 When tasks complete
@@ -71,6 +75,7 @@ Then proper response types should be available:
 ### File: `src/types/api.ts`
 
 **Current** (lines 38-53):
+
 ```typescript
 export interface Task {
   uuid: string
@@ -87,10 +92,12 @@ export interface Task {
 ```
 
 **Changes Required**:
+
 1. Add `recalculate_weekly_margin` to the union (fixes type gap with useManualMarginRecalculation)
 2. Add `@deprecated` JSDoc comment to `enrich_cogs`
 
 **Updated** (replace lines 38-53):
+
 ```typescript
 /**
  * Task types for processing status
@@ -254,11 +261,13 @@ export interface EnqueueTaskResponse {
 ## Testing
 
 ### Manual Verification
+
 1. Run `npm run type-check` - no errors
 2. Run `npm run lint` - no warnings on new types
 3. IDE shows deprecation warning when using `enrich_cogs`
 
 ### Automated
+
 - No new tests required (type-only changes)
 - Existing tests should pass
 
@@ -289,12 +298,12 @@ export interface EnqueueTaskResponse {
 
 ## Files to Modify
 
-| File | Change |
-|------|--------|
-| `src/types/api.ts` | Update Task.type union (lines 38-53) |
+| File                 | Change                                         |
+| -------------------- | ---------------------------------------------- |
+| `src/types/api.ts`   | Update Task.type union (lines 38-53)           |
 | `src/types/tasks.ts` | **CREATE** - New file with task-specific types |
 
 ---
 
-*Created: 2026-01-06*
-*Updated: 2026-01-29 - Corrected current state analysis, added implementation steps*
+_Created: 2026-01-06_
+_Updated: 2026-01-29 - Corrected current state analysis, added implementation steps_

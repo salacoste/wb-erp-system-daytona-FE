@@ -6,6 +6,7 @@
 **Effort**: 5 SP
 **Created**: 2026-01-26
 **Depends On**:
+
 - Story 44.12 ✅ (Warehouse Selection)
 - Story 44.13 ✅ (Auto-fill Coefficients)
 - Story 44.26a 📋 (Delivery Date Selection)
@@ -17,14 +18,15 @@
 
 **CRITICAL DISCOVERY**: Wildberries has TWO different tariff systems:
 
-| System | Purpose | Endpoint | Use Case |
-|--------|---------|----------|----------|
-| **INVENTORY** | Current actual costs | `/v1/tariffs/warehouses-with-tariffs` | Financial reports, margin calculation |
-| **SUPPLY** | 14-day forward planning | `/v1/tariffs/acceptance/coefficients/all` | Delivery planning, cost estimation |
+| System        | Purpose                 | Endpoint                                  | Use Case                              |
+| ------------- | ----------------------- | ----------------------------------------- | ------------------------------------- |
+| **INVENTORY** | Current actual costs    | `/v1/tariffs/warehouses-with-tariffs`     | Financial reports, margin calculation |
+| **SUPPLY**    | 14-day forward planning | `/v1/tariffs/acceptance/coefficients/all` | Delivery planning, cost estimation    |
 
 **Current Problem**: The Price Calculator currently uses INVENTORY system tariffs statically, but when a user selects a **FUTURE delivery date**, ALL tariffs (baseLiterRub, additionalLiterRub, coefficients) MUST come from the **SUPPLY system** for that specific date.
 
 **Why This Matters**:
+
 - Supply tariffs are typically HIGHER than Inventory tariffs (conservative estimates)
 - Marketplace UI shows Supply rates; our calculator shows Inventory rates
 - Without this fix, cost estimates for future deliveries are INACCURATE
@@ -38,6 +40,7 @@
 **So that** I get accurate cost estimates - current costs for today, or planning rates for future deliveries.
 
 **Non-goals**:
+
 - Historical tariff lookup (out of scope)
 - Tariff comparison UI (future enhancement)
 - Automatic tariff system selection guidance
@@ -162,11 +165,13 @@
 **Endpoint**: `GET /v1/tariffs/warehouses-with-tariffs`
 
 **When to use**:
+
 - No delivery date selected
 - Delivery date is TODAY
 - Financial reporting / margin calculation
 
 **Response Structure**:
+
 ```json
 {
   "data": {
@@ -195,11 +200,13 @@
 **Endpoint**: `GET /v1/tariffs/acceptance/coefficients/all`
 
 **When to use**:
+
 - Delivery date is TOMORROW or later (14-day window)
 - Supply planning
 - Cost estimation for future deliveries
 
 **Response Structure**:
+
 ```json
 {
   "coefficients": [{
@@ -225,10 +232,12 @@
 ```
 
 **Rate Limits**:
+
 - Inventory: 10 req/min
 - Supply: **6 req/min** (stricter!)
 
 **Cache**:
+
 - Both systems: 1 hour TTL
 
 ---
@@ -432,18 +441,18 @@ export function getTariffSystemLabel(system: TariffSystem, date?: string): strin
 
 ## Invariants & Edge Cases
 
-| Scenario | Expected Behavior |
-|----------|-------------------|
-| No delivery date selected | Use INVENTORY system, show "Текущие тарифы" |
-| Delivery date = today | Use INVENTORY system, show "Текущие тарифы" |
-| Delivery date = tomorrow | Use SUPPLY system, show "Тарифы на {date}" |
-| Delivery date > 14 days | Show warning "Дата за пределами 14-дневного окна", use INVENTORY |
-| SUPPLY data unavailable for date | Show "Поставка недоступна", disable calculation |
-| SUPPLY coefficient = -1 | Show "Недоступно", block date selection |
-| SUPPLY coefficient = 0 | Show "Бесплатная приёмка", use 0 for acceptance cost |
-| Rate limit hit on SUPPLY | Show cooldown, use cached data if available |
-| Warehouse changed | Reset delivery date, fetch new SUPPLY data |
-| Date changed | Fetch SUPPLY tariffs for new date, update all calculations |
+| Scenario                         | Expected Behavior                                                |
+| -------------------------------- | ---------------------------------------------------------------- |
+| No delivery date selected        | Use INVENTORY system, show "Текущие тарифы"                      |
+| Delivery date = today            | Use INVENTORY system, show "Текущие тарифы"                      |
+| Delivery date = tomorrow         | Use SUPPLY system, show "Тарифы на {date}"                       |
+| Delivery date > 14 days          | Show warning "Дата за пределами 14-дневного окна", use INVENTORY |
+| SUPPLY data unavailable for date | Show "Поставка недоступна", disable calculation                  |
+| SUPPLY coefficient = -1          | Show "Недоступно", block date selection                          |
+| SUPPLY coefficient = 0           | Show "Бесплатная приёмка", use 0 for acceptance cost             |
+| Rate limit hit on SUPPLY         | Show cooldown, use cached data if available                      |
+| Warehouse changed                | Reset delivery date, fetch new SUPPLY data                       |
+| Date changed                     | Fetch SUPPLY tariffs for new date, update all calculations       |
 
 ---
 
@@ -451,35 +460,35 @@ export function getTariffSystemLabel(system: TariffSystem, date?: string): strin
 
 ### Unit Tests
 
-| Test | Input | Expected |
-|------|-------|----------|
-| determineTariffSystem(null) | No date | 'inventory' |
-| determineTariffSystem(today) | Today's date | 'inventory' |
-| determineTariffSystem(tomorrow) | Tomorrow's date | 'supply' |
-| determineTariffSystem(day+7) | 7 days ahead | 'supply' |
-| determineTariffSystem(day+15) | 15 days ahead | 'inventory' (out of window) |
-| isDateInSupplyWindow(tomorrow) | Tomorrow | true |
-| isDateInSupplyWindow(day+14) | 14 days | true |
-| isDateInSupplyWindow(day+15) | 15 days | false |
+| Test                            | Input           | Expected                    |
+| ------------------------------- | --------------- | --------------------------- |
+| determineTariffSystem(null)     | No date         | 'inventory'                 |
+| determineTariffSystem(today)    | Today's date    | 'inventory'                 |
+| determineTariffSystem(tomorrow) | Tomorrow's date | 'supply'                    |
+| determineTariffSystem(day+7)    | 7 days ahead    | 'supply'                    |
+| determineTariffSystem(day+15)   | 15 days ahead   | 'inventory' (out of window) |
+| isDateInSupplyWindow(tomorrow)  | Tomorrow        | true                        |
+| isDateInSupplyWindow(day+14)    | 14 days         | true                        |
+| isDateInSupplyWindow(day+15)    | 15 days         | false                       |
 
 ### Integration Tests
 
-| Test | Scenario | Expected |
-|------|----------|----------|
-| Select warehouse only | No date | Uses INVENTORY tariffs |
-| Select warehouse + today | Date = today | Uses INVENTORY tariffs |
-| Select warehouse + tomorrow | Date = tomorrow | Fetches SUPPLY, uses SUPPLY tariffs |
-| Change date from today to tomorrow | Date changes | Switches from INVENTORY to SUPPLY |
-| Change warehouse | Warehouse changes | Resets date, refetches SUPPLY for new warehouse |
+| Test                               | Scenario          | Expected                                        |
+| ---------------------------------- | ----------------- | ----------------------------------------------- |
+| Select warehouse only              | No date           | Uses INVENTORY tariffs                          |
+| Select warehouse + today           | Date = today      | Uses INVENTORY tariffs                          |
+| Select warehouse + tomorrow        | Date = tomorrow   | Fetches SUPPLY, uses SUPPLY tariffs             |
+| Change date from today to tomorrow | Date changes      | Switches from INVENTORY to SUPPLY               |
+| Change warehouse                   | Warehouse changes | Resets date, refetches SUPPLY for new warehouse |
 
 ### E2E Tests
 
-| Test | Flow | Verification |
-|------|------|--------------|
-| Full flow - current | Select warehouse, no date, calculate | INVENTORY tariffs used in calculation |
-| Full flow - future | Select warehouse, future date, calculate | SUPPLY tariffs used in calculation |
-| Tariff indicator | Select future date | Badge shows "📅 Тарифы на {date}" |
-| Unavailable date | Select gray date | Error message, calculation blocked |
+| Test                | Flow                                     | Verification                          |
+| ------------------- | ---------------------------------------- | ------------------------------------- |
+| Full flow - current | Select warehouse, no date, calculate     | INVENTORY tariffs used in calculation |
+| Full flow - future  | Select warehouse, future date, calculate | SUPPLY tariffs used in calculation    |
+| Tariff indicator    | Select future date                       | Badge shows "📅 Тарифы на {date}"     |
+| Unavailable date    | Select gray date                         | Error message, calculation blocked    |
 
 ---
 

@@ -11,7 +11,7 @@ Cуществует несколько способов как удалить к
 
 В этой статье:
 
-- 
+-
 - <a href="#kak-udalit-klyuch-iz-kabineta-marketplejsa" rel="nofollow">Как удалить ключ из кабинета маркетплейса</a>
 - <a href="#kak-udalit-klyuch-iz-selsup" rel="nofollow">Как удалить ключ из Selsup</a>
 - <a href="#kak-udalit-organizatsiyu" rel="nofollow">Как удалить организацию</a>

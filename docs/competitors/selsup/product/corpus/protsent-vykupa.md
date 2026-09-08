@@ -11,7 +11,7 @@ chars: 4551
 
 В этой статье:
 
-- 
+-
 - <a href="#gde-posmotret-protsent-vykupa-v-selsup" rel="nofollow">Где посмотреть процент выкупа в SelSup?</a>
 - <a href="#kak-rasschityvaetsya-protsent-vykupa" rel="nofollow">Как рассчитывается процент выкупа?</a>
 - <a href="#wildberries-vb" rel="nofollow">Wildberries (ВБ)</a>

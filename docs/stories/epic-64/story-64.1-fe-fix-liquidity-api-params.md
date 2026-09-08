@@ -25,6 +25,7 @@ The `/analytics/liquidity` page returned HTTP 400 because the frontend sent `inc
 ## Acceptance Criteria
 
 ### AC1: Page loads without errors
+
 Given I navigate to /analytics/liquidity
 When the page loads
 Then the API returns 200 and data is displayed
@@ -34,19 +35,21 @@ Then the API returns 200 and data is displayed
 ## Technical Implementation
 
 ### Files Modified
-| File | Change |
-|------|--------|
-| `src/lib/api/liquidity.ts` | Removed `include_liquidation_scenarios` param from URL builder |
-| `src/types/liquidity.ts` | Removed `include_liquidation_scenarios` from `LiquidityQueryParams` |
-| `src/hooks-v1/useLiquidity.ts` | Removed param from JSDoc, `useIlliquidStock`, `useLiquidityByCategory` |
-| `src/app/(dashboard)/analytics/liquidity/page.tsx` | Removed param from query params object |
-| `src/hooks/__tests__/useLiquidity.test.ts` | Removed param from test fixtures |
+
+| File                                               | Change                                                                 |
+| -------------------------------------------------- | ---------------------------------------------------------------------- |
+| `src/lib/api/liquidity.ts`                         | Removed `include_liquidation_scenarios` param from URL builder         |
+| `src/types/liquidity.ts`                           | Removed `include_liquidation_scenarios` from `LiquidityQueryParams`    |
+| `src/hooks-v1/useLiquidity.ts`                     | Removed param from JSDoc, `useIlliquidStock`, `useLiquidityByCategory` |
+| `src/app/(dashboard)/analytics/liquidity/page.tsx` | Removed param from query params object                                 |
+| `src/hooks/__tests__/useLiquidity.test.ts`         | Removed param from test fixtures                                       |
 
 ---
 
 ## Definition of Done
+
 - [x] TypeScript compiles without errors
 - [x] ESLint passes
 - [x] /analytics/liquidity page loads successfully
 
-*Created: 2026-02-21*
+_Created: 2026-02-21_

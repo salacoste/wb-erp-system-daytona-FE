@@ -16,21 +16,25 @@
 ## Acceptance Criteria
 
 ### AC1: Widget Display
+
 - [ ] Show top 5 products by storage cost
 - [ ] Compact table format
 - [ ] Include rank number (1-5) with Lucide icons for top 3 (UX Decision Q9)
 - [ ] Show percent of total storage cost
 
 ### AC2: Revenue Ratio
+
 - [ ] Show storage-to-revenue ratio when available
 - [ ] Color coding with CSS classes (UX Decision Q10): >20% = red, 10-20% = yellow, <10% = green
 - [ ] Tooltip explaining the metric
 
 ### AC3: Interactions
+
 - [ ] Click row → navigate to product analytics
 - [ ] "Показать все" link → scroll to full table
 
 ### AC4: Visual Design
+
 - [ ] Card container with header
 - [ ] Lucide icons for top 3 ranks: Trophy (gold), Medal (silver/bronze)
 - [ ] Colored dot indicators for cost severity
@@ -38,32 +42,38 @@
 ## Tasks / Subtasks
 
 ### Phase 1: Component Setup
+
 - [ ] Create `src/app/(dashboard)/analytics/storage/components/TopConsumersWidget.tsx`
 - [ ] Define component props interface
 - [ ] Set up data fetching with `useStorageTopConsumers` hook
 
 ### Phase 2: Table Structure
+
 - [ ] Implement Card container with header
 - [ ] Implement table header row
 - [ ] Implement table body with 5 rows
 - [ ] Add rank column with icons
 
 ### Phase 3: Visual Elements
+
 - [ ] Implement RankIndicator component (Trophy/Medal/Number)
 - [ ] Implement CostSeverityDot component (CSS-based colors)
 - [ ] Implement ratio tooltip
 
 ### Phase 4: Interactions
+
 - [ ] Implement row click handler
 - [ ] Implement "Показать все" link/button
 - [ ] Add hover state styling
 
 ### Phase 5: Loading & Error States
+
 - [ ] Implement loading skeleton
 - [ ] Implement error state
 - [ ] Implement empty state
 
 ### Phase 6: Testing
+
 - [ ] Test component renders with mock data
 - [ ] Test color coding thresholds
 - [ ] Test click interactions
@@ -252,19 +262,19 @@ src/
 
 ### UX Decisions Applied
 
-| Question | Decision | Rationale |
-|----------|----------|-----------|
-| Q9: Medal emojis | Lucide icons + colors | Consistent with design system |
-| Q10: Cost colors | CSS classes | Accessible, themeable, consistent |
+| Question         | Decision              | Rationale                         |
+| ---------------- | --------------------- | --------------------------------- |
+| Q9: Medal emojis | Lucide icons + colors | Consistent with design system     |
+| Q10: Cost colors | CSS classes           | Accessible, themeable, consistent |
 
 ### Color Thresholds
 
-| Ratio | Severity | Color | Meaning |
-|-------|----------|-------|---------|
-| >20% | High | Red (`bg-red-500`) | Storage costs too high vs revenue |
-| 10-20% | Medium | Yellow (`bg-yellow-500`) | Consider optimization |
-| <10% | Low | Green (`bg-green-500`) | Healthy ratio |
-| null | Unknown | Gray (`bg-gray-300`) | No revenue data available |
+| Ratio  | Severity | Color                    | Meaning                           |
+| ------ | -------- | ------------------------ | --------------------------------- |
+| >20%   | High     | Red (`bg-red-500`)       | Storage costs too high vs revenue |
+| 10-20% | Medium   | Yellow (`bg-yellow-500`) | Consider optimization             |
+| <10%   | Low      | Green (`bg-green-500`)   | Healthy ratio                     |
+| null   | Unknown  | Gray (`bg-gray-300`)     | No revenue data available         |
 
 ### Accessibility
 
@@ -276,6 +286,7 @@ src/
 ## Testing
 
 ### Framework & Location
+
 - **Framework**: Vitest + React Testing Library
 - **Test Location**: `src/app/(dashboard)/analytics/storage/components/__tests__/TopConsumersWidget.test.tsx`
 
@@ -297,6 +308,7 @@ src/
 - [ ] Tooltip appears on hover over ratio
 
 ### Coverage Target
+
 - Component: >80%
 - Helper components: >90%
 
@@ -333,10 +345,10 @@ src/
 
 ## Change Log
 
-| Date | Author | Change |
-|------|--------|--------|
-| 2025-11-29 | PO (Sarah) | Initial draft |
-| 2025-11-29 | UX Expert (Sally) | Updated: Lucide icons instead of emoji, CSS color classes |
+| Date       | Author            | Change                                                      |
+| ---------- | ----------------- | ----------------------------------------------------------- |
+| 2025-11-29 | PO (Sarah)        | Initial draft                                               |
+| 2025-11-29 | UX Expert (Sally) | Updated: Lucide icons instead of emoji, CSS color classes   |
 | 2025-11-29 | UX Expert (Sally) | Added Tasks, Dev Notes, Testing sections with code examples |
 
 ---
@@ -366,11 +378,13 @@ Notes:
 ## QA Results
 
 ### Review Date: 2025-11-29
+
 ### Reviewed By: Quinn (Test Architect)
 
 **Gate: PASS** | **Score: 90/100** → `docs/qa/gates/24.4-fe-top-consumers.yml`
 
 **Strengths:**
+
 - Trophy (gold) for #1, Medal (silver/bronze) for #2-3, numbers for #4-5
 - Color-coded CostSeverityDot with thresholds (>20% red, 10-20% yellow, <10% green)
 - Helpful tooltips explaining cost severity

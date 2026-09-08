@@ -14,11 +14,11 @@ The main COGS-management page (`/cogs`, "Управление себестоим
 
 `include_cogs=true` crashes **only when `has_cogs` is absent**:
 
-| Request | Result |
-|---|---|
-| `GET /v1/products?limit=25&include_cogs=true` | **500** INTERNAL_SERVER_ERROR |
-| `GET /v1/products?limit=25&include_cogs=true&include_storage=true` | **500** (this is the exact request the COGS page sends) |
-| `GET /v1/products?has_cogs=true&limit=25&include_cogs=true` | **200** — 25 products, `current_margin_pct` populated ✓ |
+| Request                                                               | Result                                                                    |
+| --------------------------------------------------------------------- | ------------------------------------------------------------------------- |
+| `GET /v1/products?limit=25&include_cogs=true`                         | **500** INTERNAL_SERVER_ERROR                                             |
+| `GET /v1/products?limit=25&include_cogs=true&include_storage=true`    | **500** (this is the exact request the COGS page sends)                   |
+| `GET /v1/products?has_cogs=true&limit=25&include_cogs=true`           | **200** — 25 products, `current_margin_pct` populated ✓                   |
 | `GET /v1/products?limit=64&include_dimensions=true` (no include_cogs) | 200 — 64 products, but `current_margin_pct=null` for all (margin omitted) |
 
 So margin **works** when `has_cogs=true` is sent, but the "all products" view (no `has_cogs` filter) **500s**. Since #15 added `include_cogs` to this endpoint and was marked complete, this is a **regression** for the unfiltered case.
@@ -29,6 +29,7 @@ So margin **works** when `has_cogs=true` is sent, but the "all products" view (n
 GET /v1/products?limit=25&include_cogs=true&include_storage=true → 500  (fired twice, retry)
 rendered product rows = 0 ; 3 error alerts ; page body shows header but no product table
 ```
+
 The single-product detail endpoint `GET /v1/products/906010371` DOES return the margin (`current_margin_pct:-33.27, period:"2026-W22"`), confirming the data exists — only the **list + include_cogs (no has_cogs)** path is broken.
 
 ## Frontend status (FE is behaving per the #15 contract)

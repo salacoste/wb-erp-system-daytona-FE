@@ -16,6 +16,7 @@
 ## Background
 
 This story integrates all Epic 36 components into the existing advertising analytics page:
+
 - Add UI toggle for switching between "По артикулам" and "По склейкам"
 - Update table to render merged groups with badges
 - Preserve all existing Epic 33 functionality (filters, sorting, pagination)
@@ -28,6 +29,7 @@ This story integrates all Epic 36 components into the existing advertising analy
 ## Acceptance Criteria
 
 ### AC1: Toggle UI
+
 - [ ] Toggle buttons displayed above table (or in filters panel - PO decision)
 - [ ] Two buttons: "По артикулам" | "По склейкам"
 - [ ] Active button uses `variant="default"` (red)
@@ -35,12 +37,14 @@ This story integrates all Epic 36 components into the existing advertising analy
 - [ ] Default: "По артикулам" selected
 
 ### AC2: State Management
+
 - [ ] `groupBy` state variable: `'sku' | 'imtId'`
 - [ ] State updates when toggle clicked
 - [ ] API call triggered with correct `group_by` parameter
 - [ ] State persisted in URL params (`?group_by=imtId`)
 
 ### AC3: Table Rendering
+
 - [ ] Merged groups display with MergedProductBadge
 - [ ] Individual products display without badge
 - [ ] Table columns unchanged (spend, revenue, ROAS, ROI, etc.)
@@ -48,12 +52,14 @@ This story integrates all Epic 36 components into the existing advertising analy
 - [ ] Pagination works for both modes
 
 ### AC4: Backward Compatibility
+
 - [ ] Default behavior unchanged (SKU view)
 - [ ] All Epic 33 features work: filters, sorting, date range, campaigns
 - [ ] No visual regressions
 - [ ] No console errors
 
 ### AC5: Mobile Responsive
+
 - [ ] Toggle buttons stack vertically on mobile (< 768px)
 - [ ] Table scrolls horizontally on mobile
 - [ ] Badge tooltips work on tap (mobile)
@@ -61,12 +67,14 @@ This story integrates all Epic 36 components into the existing advertising analy
 ## Tasks / Subtasks
 
 ### Phase 1: Add State Management (30 min)
+
 - [ ] Open `src/app/(dashboard)/analytics/advertising/page.tsx`
 - [ ] Add `groupBy` state variable with `'sku'` default
 - [ ] Add URL param sync for `groupBy`
 - [ ] Update `useAdvertisingAnalytics` call with `group_by`
 
 ### Phase 2: Create Toggle Component (40 min)
+
 - [ ] Create `src/app/(dashboard)/analytics/advertising/components/GroupByToggle.tsx`
 - [ ] Implement two-button toggle UI
 - [ ] Add click handlers
@@ -74,12 +82,14 @@ This story integrates all Epic 36 components into the existing advertising analy
 - [ ] Add JSDoc comments
 
 ### Phase 3: Integrate Toggle into Page (20 min)
+
 - [ ] Import GroupByToggle into page.tsx
 - [ ] Place toggle above table (or in filters - PO decision)
 - [ ] Pass `groupBy` and `onGroupByChange` props
 - [ ] Verify layout
 
 ### Phase 4: Update Table Rendering (50 min)
+
 - [ ] Open `src/app/(dashboard)/analytics/advertising/components/PerformanceMetricsTable.tsx`
 - [ ] Update first column rendering logic
 - [ ] Add conditional for `type==='merged_group'`
@@ -87,6 +97,7 @@ This story integrates all Epic 36 components into the existing advertising analy
 - [ ] Handle `type==='individual'` and undefined cases
 
 ### Phase 5: Testing & Verification (60 min)
+
 - [ ] Test toggle switches between modes
 - [ ] Test API calls with both `group_by` values
 - [ ] Test table rendering for merged groups
@@ -201,6 +212,7 @@ export function GroupByToggle({
 **Line**: First column rendering (~line 80)
 
 **Before** (Epic 33):
+
 ```typescript
 <TableCell>
   <span className="font-medium">
@@ -210,6 +222,7 @@ export function GroupByToggle({
 ```
 
 **After** (Epic 36):
+
 ```typescript
 <TableCell>
   {/* Epic 36: Show merged group badge or product name */}
@@ -236,6 +249,7 @@ export function GroupByToggle({
 **Line**: Above table (~line 180)
 
 **Option A: Separate Row** (Recommended)
+
 ```typescript
 {/* Epic 36: Group By Toggle */}
 <div className="flex items-center justify-between mb-4">
@@ -253,6 +267,7 @@ export function GroupByToggle({
 ```
 
 **Option B: In Filters Panel**
+
 ```typescript
 <AdvertisingFilters
   dateRange={dateRange}
@@ -270,6 +285,7 @@ export function GroupByToggle({
 ## Testing Checklist
 
 ### Functional Tests
+
 - [ ] Toggle switches between "По артикулам" and "По склейкам"
 - [ ] API call includes correct `group_by` parameter
 - [ ] Table renders merged groups with badges
@@ -278,6 +294,7 @@ export function GroupByToggle({
 - [ ] All products listed in tooltip
 
 ### Epic 33 Regression Tests
+
 - [ ] Date range picker works
 - [ ] View by mode (SKU/Campaign/Brand/Category) works
 - [ ] Efficiency filter works
@@ -288,18 +305,21 @@ export function GroupByToggle({
 - [ ] Sync status indicator works
 
 ### URL State Tests
+
 - [ ] `?group_by=imtId` in URL loads merged groups view
 - [ ] `?group_by=sku` in URL loads SKU view
 - [ ] URL updates when toggle clicked
 - [ ] Page refresh preserves groupBy state
 
 ### Mobile Tests
+
 - [ ] Toggle buttons stack vertically (< 768px)
 - [ ] Table scrolls horizontally
 - [ ] Badge tooltips work on tap
 - [ ] No layout overflow
 
 ### Edge Cases
+
 - [ ] No merged groups (all imtId=null) displays normally
 - [ ] Single product with imtId displays without badge
 - [ ] Empty data state works for both modes
@@ -335,6 +355,7 @@ export function GroupByToggle({
 Where should the "По артикулам" / "По склейкам" toggle be placed?
 
 - **Option A**: Separate row above table (clearer separation)
+
   ```
   Группировка: [По артикулам] [По склейкам]
   ─────────────────────────────────────────
@@ -342,6 +363,7 @@ Where should the "По артикулам" / "По склейкам" toggle be p
   ```
 
 - **Option B**: Inside AdvertisingFilters panel (more compact)
+
   ```
   [Filters Panel]
     Период: [...] - [...]
@@ -359,6 +381,7 @@ Where should the "По артикулам" / "По склейкам" toggle be p
 
 **Q2: Default Mode**
 Should default be:
+
 - **Option A**: "По артикулам" (current behavior, less disruptive)
 - **Option B**: "По склейкам" (show merged groups by default)
 
@@ -368,6 +391,7 @@ Should default be:
 
 **Q3: Label Text**
 Button labels:
+
 - **Option A**: "По артикулам" / "По склейкам" (proposed)
 - **Option B**: "SKU" / "Группы" (shorter)
 - **Option C**: "Отдельно" / "Вместе" (conceptual)
@@ -378,6 +402,7 @@ Button labels:
 
 **Q4: URL Parameter Name**
 URL parameter:
+
 - **Option A**: `?group_by=imtId` (matches backend)
 - **Option B**: `?groupBy=imtId` (camelCase)
 - **Option C**: `?mode=merged` (different naming)
@@ -388,6 +413,7 @@ URL parameter:
 
 **Q5: Mobile Behavior**
 On mobile (< 768px):
+
 - **Option A**: Buttons stack vertically (full width each)
 - **Option B**: Buttons stay side-by-side (smaller text)
 - **Option C**: Dropdown select instead of buttons
@@ -399,6 +425,7 @@ On mobile (< 768px):
 ### Estimated Time
 
 **Total**: 200 minutes (3.3 hours)
+
 - Phase 1: 30 min (state)
 - Phase 2: 40 min (toggle component)
 - Phase 3: 20 min (integrate toggle)
@@ -407,12 +434,12 @@ On mobile (< 768px):
 
 ### Risk Assessment
 
-| Risk | Probability | Impact | Mitigation |
-|------|-------------|--------|------------|
-| Epic 33 regression | Medium | High | Comprehensive regression testing |
-| State management bugs | Low | Medium | URL params persist state |
-| Mobile layout issues | Low | Low | Responsive testing on 3 devices |
-| Performance degradation | Low | Low | React Query caching handles this |
+| Risk                    | Probability | Impact | Mitigation                       |
+| ----------------------- | ----------- | ------ | -------------------------------- |
+| Epic 33 regression      | Medium      | High   | Comprehensive regression testing |
+| State management bugs   | Low         | Medium | URL params persist state         |
+| Mobile layout issues    | Low         | Low    | Responsive testing on 3 devices  |
+| Performance degradation | Low         | Low    | React Query caching handles this |
 
 ---
 

@@ -104,7 +104,8 @@ ALWAYS cite source documents: `[Source: architecture/{filename}.md#{section}]`
   - Any deviations or conflicts noted between epic and architecture
   - Checklist Results
   - Next steps: For Complex stories, suggest the user carefully review the story draft and also optionally have the PO run the task `.bmad-core/tasks/validate-next-story`
-```
+
+````
 
 ## Task: create-doc
 Source: .bmad-core/tasks/create-doc.md
@@ -112,3 +113,4 @@ Source: .bmad-core/tasks/create-doc.md
 
 ```md
 <!-- Powered by BMAD™ Core -->
+````

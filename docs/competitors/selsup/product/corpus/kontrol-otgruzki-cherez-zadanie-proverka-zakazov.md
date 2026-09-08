@@ -11,7 +11,7 @@ chars: 2655
 
 В этой статье:
 
-- 
+-
 - <a href="#printsip-raboty" rel="nofollow">Принцип работы</a>
 - <a href="#klyuchevye-reshaemye-zadachi" rel="nofollow">Ключевые решаемые задачи</a>
 - <a href="#preimushhestva-dlya-sotrudnikov-i-kompanii" rel="nofollow">Преимущества для сотрудников и компании</a>

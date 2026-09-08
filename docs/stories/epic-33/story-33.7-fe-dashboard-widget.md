@@ -17,42 +17,50 @@
 ## Acceptance Criteria
 
 ### AC1: Widget Placement
+
 - [ ] Widget on main dashboard page
 - [ ] Positioned in analytics section
 - [ ] Consistent styling with other widgets
 
 ### AC2: Compact Metrics Display
+
 - [ ] Total Spend (₽)
 - [ ] Overall ROAS (x multiplier)
 - [ ] Active Campaigns count
 - [ ] Period label (e.g., "Последние 7 дней")
 
 ### AC3: Quick Actions
+
 - [ ] "Подробнее →" link to full analytics page
 - [ ] Period selector (7d / 14d / 30d)
 
 ### AC4: Visual Indicators
+
 - [ ] ROAS color-coded (green/yellow/red)
 - [ ] ~~Sparkline mini-chart~~ **DEFERRED** (PO decision: adds complexity, not critical)
 
 ### AC5: Loading & Error States
+
 - [ ] Skeleton loader
 - [ ] Error state with retry button
 
 ## Tasks / Subtasks
 
 ### Phase 1: Widget Component
+
 - [ ] Create `src/components/custom/AdvertisingDashboardWidget.tsx`
 - [ ] Implement compact metrics layout
 - [ ] Add period selector
 - [ ] Add link to full page
 
 ### Phase 2: Integration
+
 - [ ] Connect to `useAdvertisingAnalytics` hook
 - [ ] Implement period state
 - [ ] Handle loading/error states
 
 ### Phase 3: Dashboard Integration
+
 - [ ] Add widget to dashboard page
 - [ ] Ensure responsive layout
 
@@ -252,20 +260,20 @@ Add to dashboard page grid:
 
 ## PO Decisions (2025-12-22)
 
-| Question | Decision | Rationale |
-|----------|----------|-----------|
-| Include sparkline chart? | ❌ DEFER | Adds complexity, not critical for MVP |
-| Metrics to prioritize | Spend, ROAS, Campaigns | Most actionable at-a-glance |
-| Default period | **7d** | Quick overview, users can change |
-| Include in MVP? | ✅ **YES** | High value, 3 points, API ready |
+| Question                 | Decision               | Rationale                             |
+| ------------------------ | ---------------------- | ------------------------------------- |
+| Include sparkline chart? | ❌ DEFER               | Adds complexity, not critical for MVP |
+| Metrics to prioritize    | Spend, ROAS, Campaigns | Most actionable at-a-glance           |
+| Default period           | **7d**                 | Quick overview, users can change      |
+| Include in MVP?          | ✅ **YES**             | High value, 3 points, API ready       |
 
 ---
 
 ## Change Log
 
-| Date | Author | Change |
-|------|--------|--------|
-| 2025-12-22 | James (Dev Agent) | Initial draft |
+| Date       | Author            | Change                                                                |
+| ---------- | ----------------- | --------------------------------------------------------------------- |
+| 2025-12-22 | James (Dev Agent) | Initial draft                                                         |
 | 2025-12-22 | James (Dev Agent) | PO Review: Confirmed MVP, sparkline deferred, PO decisions documented |
 
 ---

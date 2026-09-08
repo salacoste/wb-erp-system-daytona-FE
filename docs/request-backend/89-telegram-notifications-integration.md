@@ -13,11 +13,13 @@
 Backend предоставляет полностью рабочую систему Telegram уведомлений (**Epic 34**) с API endpoints:
 
 ### Telegram-Specific Endpoints
+
 1. **`POST /v1/notifications/telegram/bind`** - Генерация кода привязки
 2. **`GET /v1/notifications/telegram/status`** - Проверка статуса привязки
 3. **`DELETE /v1/notifications/telegram/unbind`** - Отвязка аккаунта
 
 ### Notification Preferences Endpoints (General)
+
 4. **`GET /v1/notifications/preferences`** - Получение настроек уведомлений
 5. **`PUT /v1/notifications/preferences`** - Обновление настроек
 6. **`POST /v1/notifications/test`** - Тестовая отправка уведомления
@@ -29,9 +31,11 @@ Backend предоставляет полностью рабочую систе�
 ## ✅ Backend Status (2025-12-30 01:59 MSK)
 
 ### JWT Authentication: ✅ WORKING
+
 **Status**: Полностью рабочая аутентификация для всех protected endpoints.
 
 **Tested Endpoints**:
+
 ```bash
 ✅ POST /v1/auth/login => 200 OK
 ✅ GET /v1/cabinets => 200 OK (with JWT)
@@ -47,6 +51,7 @@ Backend предоставляет полностью рабочую систе�
 **Status**: **FULLY OPERATIONAL** - Бот успешно подключается и работает в polling mode.
 
 **Current Behavior**:
+
 ```log
 
 ---
@@ -73,6 +78,7 @@ Telegram bot initialized: @Kernel_crypto_bot
 ### Endpoint 1: Generate Binding Code
 
 **Request**:
+
 ```http
 POST /v1/notifications/telegram/bind
 Authorization: Bearer {jwt_token}
@@ -81,6 +87,7 @@ Content-Type: application/json
 ```
 
 **Response**: `200 OK`
+
 ```json
 {
   "bindingCode": "ABC123",
@@ -91,6 +98,7 @@ Content-Type: application/json
 ```
 
 **Error Cases**:
+
 - `401 UNAUTHORIZED` - Invalid/expired JWT or missing `Authorization` header
 - `400 BAD_REQUEST` - Missing `X-Cabinet-Id` header
 - `403 FORBIDDEN` - Cabinet not owned by user
@@ -101,6 +109,7 @@ Content-Type: application/json
 ### Endpoint 2: Check Binding Status
 
 **Request**:
+
 ```http
 GET /v1/notifications/telegram/status
 Authorization: Bearer {jwt_token}
@@ -108,6 +117,7 @@ X-Cabinet-Id: {cabinet_uuid}
 ```
 
 **Response**: `200 OK` (Bound)
+
 ```json
 {
   "bound": true,
@@ -127,6 +137,7 @@ X-Cabinet-Id: {cabinet_uuid}
 ```
 
 **Response**: `200 OK` (Not Bound)
+
 ```json
 {
   "bound": false
@@ -138,6 +149,7 @@ X-Cabinet-Id: {cabinet_uuid}
 ### Endpoint 3: Unbind Telegram
 
 **Request**:
+
 ```http
 DELETE /v1/notifications/telegram/unbind
 Authorization: Bearer {jwt_token}
@@ -145,6 +157,7 @@ X-Cabinet-Id: {cabinet_uuid}
 ```
 
 **Response**: `200 OK`
+
 ```json
 {
   "success": true,
@@ -153,6 +166,7 @@ X-Cabinet-Id: {cabinet_uuid}
 ```
 
 **Error Cases**:
+
 - `404 NOT_FOUND` - No Telegram binding exists for this cabinet
 
 ---
@@ -166,6 +180,7 @@ X-Cabinet-Id: {cabinet_uuid}
 **Location**: User Settings → Notifications → Telegram
 
 **Components**:
+
 ```tsx
 // Unbound State
 <TelegramBindingPanel>
@@ -218,6 +233,7 @@ X-Cabinet-Id: {cabinet_uuid}
 #### 2. Notification Preferences API
 
 **Endpoints** (Epic 34 - Story 34.5):
+
 ```http
 # Get preferences
 GET /v1/notifications/preferences
@@ -425,41 +441,50 @@ export const notificationsApi = {
 **Prerequisite**: Backend JWT auth must be fixed first! (See Problem 1)
 
 **Step 1: Check Initial Status**
+
 ```bash
 curl -X GET 'http://localhost:3000/v1/notifications/telegram/status' \
   -H 'Authorization: Bearer {jwt}' \
   -H 'X-Cabinet-Id: {uuid}'
 ```
+
 Expected: `{"bound": false}`
 
 **Step 2: Generate Binding Code**
+
 ```bash
 curl -X POST 'http://localhost:3000/v1/notifications/telegram/bind' \
   -H 'Authorization: Bearer {jwt}' \
   -H 'X-Cabinet-Id: {uuid}' \
   -H 'Content-Type: application/json'
 ```
+
 Expected: `{"bindingCode": "ABC123", "deepLink": "https://t.me/...", ...}`
 
 **Step 3: Bind via Telegram**
+
 1. Open `deepLink` in Telegram
 2. Send `/start ABC123` to bot
 3. Wait for confirmation message
 
 **Step 4: Verify Binding**
+
 ```bash
 curl -X GET 'http://localhost:3000/v1/notifications/telegram/status' \
   -H 'Authorization: Bearer {jwt}' \
   -H 'X-Cabinet-Id: {uuid}'
 ```
+
 Expected: `{"bound": true, "telegramId": 123456789, "username": "...", ...}`
 
 **Step 5: Unbind**
+
 ```bash
 curl -X DELETE 'http://localhost:3000/v1/notifications/telegram/unbind' \
   -H 'Authorization: Bearer {jwt}' \
   -H 'X-Cabinet-Id: {uuid}'
 ```
+
 Expected: `{"success": true, "message": "..."}`
 
 ---
@@ -471,6 +496,7 @@ Expected: `{"success": true, "message": "..."}`
 **Cabinet ID**: `f75836f7-c0bc-4b2c-823c-a1f3508cce8e`
 
 **Login**:
+
 ```bash
 curl -X POST http://localhost:3000/v1/auth/login \
   -H 'Content-Type: application/json' \
@@ -482,12 +508,14 @@ curl -X POST http://localhost:3000/v1/auth/login \
 ## 📋 Implementation Checklist
 
 ### Phase 1: Status Check (1-2h)
+
 - [ ] Create `useTelegramBinding` hook
 - [ ] Create `TelegramStatusBadge` component
 - [ ] Add status check on Settings page load
 - [ ] Display bound/unbound state
 
 ### Phase 2: Binding Flow (2-3h)
+
 - [ ] Create `TelegramBindingModal` component
 - [ ] Implement QR code generation (use `qrcode.react`)
 - [ ] Add deep link button
@@ -496,12 +524,14 @@ curl -X POST http://localhost:3000/v1/auth/login \
 - [ ] Handle success/error states
 
 ### Phase 3: Unbinding (1h)
+
 - [ ] Add unbind button to settings
 - [ ] Implement confirmation dialog
 - [ ] Handle unbind API call
 - [ ] Update UI state after unbind
 
 ### Phase 4: Preferences (Optional, 2-3h)
+
 - [ ] Create `useNotificationPreferences` hook
 - [ ] Create preferences form UI
 - [ ] Implement quiet hours picker
@@ -519,6 +549,7 @@ curl -X POST http://localhost:3000/v1/auth/login \
 **Frontend action**: Wait for backend confirmation that `/v1/cabinets` endpoint works before implementing Telegram features.
 
 **Test command**:
+
 ```bash
 # This should return 200 OK with cabinets list, not 401
 curl -X GET 'http://localhost:3000/v1/cabinets' \
@@ -532,6 +563,7 @@ curl -X GET 'http://localhost:3000/v1/cabinets' \
 **Problem**: Backend `.env` and frontend `.env.local` both contain `TELEGRAM_BOT_TOKEN`.
 
 **Analysis**:
+
 - ✅ Frontend doesn't run Telegram bot (no `telegraf` imports found)
 - ✅ Token in frontend is for display purposes only (deep links)
 - ✅ No code duplication or conflicts
@@ -563,6 +595,7 @@ useEffect(() => {
 ```
 
 **Stop polling when**:
+
 - Modal is closed
 - Binding code expires
 - Maximum 20 attempts reached (60 seconds)
@@ -572,6 +605,7 @@ useEffect(() => {
 ## 📚 Backend Documentation References
 
 **Epic 34 Complete Documentation**:
+
 - `docs/epics/epic-34-telegram-notifications.md` - Epic overview
 - `docs/stories/epic-34/story-34.2-telegram-bot-service.md` - Bot service implementation
 - `docs/stories/epic-34/story-34.3-binding-api.md` - Binding API endpoints
@@ -580,9 +614,11 @@ useEffect(() => {
 - `docs/stories/epic-34/story-34.6-bot-commands-interactive.md` - Bot commands
 
 **API Paths**:
+
 - `docs/API-PATHS-REFERENCE.md` - Complete API reference
 
 **Telegram Bot**:
+
 - Bot username: `@Kernel_crypto_bot`
 - Bot commands: `/start`, `/help`, `/status`, `/settings`
 
@@ -592,13 +628,13 @@ useEffect(() => {
 
 **Total Frontend Work**: 4-6 hours (assuming backend JWT auth is fixed)
 
-| Phase | Task | Time | Priority |
-|-------|------|------|----------|
-| 0 | **Wait for backend JWT fix** | **BLOCKER** | **CRITICAL** |
-| 1 | Status check & display | 1-2h | High |
-| 2 | Binding flow & modal | 2-3h | High |
-| 3 | Unbind functionality | 1h | High |
-| 4 | Preferences (optional) | 2-3h | Medium |
+| Phase | Task                         | Time        | Priority     |
+| ----- | ---------------------------- | ----------- | ------------ |
+| 0     | **Wait for backend JWT fix** | **BLOCKER** | **CRITICAL** |
+| 1     | Status check & display       | 1-2h        | High         |
+| 2     | Binding flow & modal         | 2-3h        | High         |
+| 3     | Unbind functionality         | 1h          | High         |
+| 4     | Preferences (optional)       | 2-3h        | Medium       |
 
 ---
 
@@ -633,17 +669,20 @@ useEffect(() => {
 ## 📞 Communication Protocol
 
 **When to Notify Backend**:
+
 - Any unexpected API errors (500, 502, 504)
 - JWT auth failures (401) persisting after login
 - Rate limiting issues (429)
 - Missing headers or validation errors
 
 **When to Notify Frontend**:
+
 - JWT auth fix is complete and tested
 - Any breaking changes to API contracts
 - New endpoints or features available
 
 **Slack Channels** (if applicable):
+
 - `#backend-issues` - Bug reports
 - `#frontend-backend-sync` - Integration discussions
 
@@ -652,6 +691,7 @@ useEffect(() => {
 ## ✅ Definition of Done
 
 **Backend**:
+
 - [x] API endpoints implemented (✅ Epic 34 Complete)
 - [ ] JWT authentication working (🚨 **BLOCKED**)
 - [ ] Telegram bot running and logging properly
@@ -659,6 +699,7 @@ useEffect(() => {
 - [ ] Documentation complete
 
 **Frontend**:
+
 - [ ] All UI components implemented
 - [ ] API client hooks created
 - [ ] TypeScript types defined

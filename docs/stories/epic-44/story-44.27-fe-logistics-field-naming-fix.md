@@ -19,27 +19,29 @@
 ## Background: User Feedback
 
 ### User Report
+
 > "В поле логистика, где можно ввести цифры, неправильно названо поле. У нас есть логистика, доставка к клиенту, а также возврат от клиента, потому что это две разные цены."
 
 ### Current State (INCORRECT)
 
-| Field | Current Label | Current Tooltip |
-|-------|---------------|-----------------|
-| `logistics_forward_rub` | "Логистика до склада" | Стоимость доставки до склада WB |
-| `logistics_reverse_rub` | "Логистика возврата" | Стоимость обратной логистики при возврате |
+| Field                   | Current Label         | Current Tooltip                           |
+| ----------------------- | --------------------- | ----------------------------------------- |
+| `logistics_forward_rub` | "Логистика до склада" | Стоимость доставки до склада WB           |
+| `logistics_reverse_rub` | "Логистика возврата"  | Стоимость обратной логистики при возврате |
 
 **Problem**: "Логистика до склада" suggests delivery FROM seller TO WB warehouse, which is incorrect.
 
 ### Required State (CORRECT)
 
-| Field | New Label | New Tooltip |
-|-------|-----------|-------------|
+| Field                   | New Label             | New Tooltip                                                                                           |
+| ----------------------- | --------------------- | ----------------------------------------------------------------------------------------------------- |
 | `logistics_forward_rub` | "Логистика к клиенту" | Стоимость доставки товара от склада WB до покупателя. Зависит от объема товара и коэффициента склада. |
-| `logistics_reverse_rub` | "Логистика возврата" | Стоимость возврата товара от покупателя на склад WB. Обычно равна логистике к клиенту. |
+| `logistics_reverse_rub` | "Логистика возврата"  | Стоимость возврата товара от покупателя на склад WB. Обычно равна логистике к клиенту.                |
 
 ### WB Business Context
 
 In Wildberries terminology:
+
 - **Forward logistics** (`boxDeliveryBase/boxDeliveryLiter`) - delivery **to customer** (from WB warehouse to buyer)
 - **Reverse logistics** - return **from customer** (from buyer back to WB warehouse)
 
@@ -50,22 +52,26 @@ This is NOT delivery "to WB warehouse" from seller - that's a different concept 
 ## Acceptance Criteria
 
 ### AC1: Update Forward Logistics Label
+
 - [ ] Change label from "Логистика до склада" to "Логистика к клиенту"
 - [ ] Update tooltip to explain WB → customer delivery
 - [ ] Tooltip should mention: volume dependency, warehouse coefficient
 
 ### AC2: Update Reverse Logistics Label (Minor Clarification)
+
 - [ ] Keep label "Логистика возврата" (already correct)
 - [ ] Enhance tooltip to clarify: customer → WB direction
 - [ ] Tooltip should mention: same rate as forward logistics
 
 ### AC3: Update All Related Components
+
 - [ ] `FixedCostsSection.tsx` - main input fields
 - [ ] `LogisticsSection.tsx` - if exists separately
 - [ ] `CostBreakdownChart.tsx` - chart labels if any
 - [ ] `PriceCalculatorResults.tsx` - results display if shows logistics breakdown
 
 ### AC4: Consistency Check
+
 - [ ] Verify all references to "логистика до склада" are updated
 - [ ] Verify tooltips are informative and consistent
 - [ ] No changes to API field names (keep `logistics_forward_rub`, `logistics_reverse_rub`)
@@ -76,13 +82,13 @@ This is NOT delivery "to WB warehouse" from seller - that's a different concept 
 
 ### Files to Update (grep results)
 
-| File | Line | Current Text | Action |
-|------|------|--------------|--------|
-| `FixedCostsSection.tsx` | 83-84 | Label + Tooltip | UPDATE |
-| `CostBreakdownTable.tsx` | 52 | "Логистика до склада" | UPDATE |
-| `LogisticsTariffDisplay.tsx` | 104 | Tooltip "до склада WB" | UPDATE |
-| `LogisticsTariffCalculator.tsx` | 111 | Tooltip "до склада WB" | UPDATE |
-| `__tests__/FixedCostsSection.test.tsx` | 77, 128, 149 | Test assertions | UPDATE |
+| File                                   | Line         | Current Text           | Action |
+| -------------------------------------- | ------------ | ---------------------- | ------ |
+| `FixedCostsSection.tsx`                | 83-84        | Label + Tooltip        | UPDATE |
+| `CostBreakdownTable.tsx`               | 52           | "Логистика до склада"  | UPDATE |
+| `LogisticsTariffDisplay.tsx`           | 104          | Tooltip "до склада WB" | UPDATE |
+| `LogisticsTariffCalculator.tsx`        | 111          | Tooltip "до склада WB" | UPDATE |
+| `__tests__/FixedCostsSection.test.tsx` | 77, 128, 149 | Test assertions        | UPDATE |
 
 ### Component Files Structure
 
@@ -119,6 +125,7 @@ src/components/custom/price-calculator/
 ### Exact Changes Required
 
 #### 1. FixedCostsSection.tsx (lines 83-84)
+
 ```typescript
 // BEFORE
 <Label htmlFor="logistics_forward_rub">Логистика до склада</Label>
@@ -130,6 +137,7 @@ src/components/custom/price-calculator/
 ```
 
 #### 2. CostBreakdownTable.tsx (line 52)
+
 ```typescript
 // BEFORE
 <TableCell>Логистика до склада</TableCell>
@@ -139,6 +147,7 @@ src/components/custom/price-calculator/
 ```
 
 #### 3. LogisticsTariffDisplay.tsx (line 104)
+
 ```typescript
 // BEFORE
 <FieldTooltip content="Стоимость доставки товара до склада WB. Рассчитывается автоматически..." />
@@ -148,6 +157,7 @@ src/components/custom/price-calculator/
 ```
 
 #### 4. LogisticsTariffCalculator.tsx (line 111)
+
 ```typescript
 // BEFORE
 <FieldTooltip content="Стоимость доставки товара до склада WB. Рассчитывается по формуле..." />
@@ -156,7 +166,8 @@ src/components/custom/price-calculator/
 <FieldTooltip content="Стоимость доставки товара от склада WB до покупателя. Рассчитывается по формуле..." />
 ```
 
-#### 5. Test File Updates (__tests__/FixedCostsSection.test.tsx)
+#### 5. Test File Updates (\_\_tests\_\_/FixedCostsSection.test.tsx)
+
 ```typescript
 // Lines 77, 128, 149 - Update test assertions
 // BEFORE
@@ -173,11 +184,13 @@ screen.getByLabelText('Логистика к клиенту')
 ## Scope
 
 ### In Scope
+
 - UI label text changes
 - Tooltip content updates
 - Consistency across all Price Calculator components
 
 ### Out of Scope
+
 - API field names (remain `logistics_forward_rub`, `logistics_reverse_rub`)
 - TypeScript type definitions
 - Backend changes
@@ -187,12 +200,12 @@ screen.getByLabelText('Логистика к клиенту')
 
 ## Invariants
 
-| Scenario | Expected Behavior |
-|----------|-------------------|
-| API requests | Field names unchanged (`logistics_forward_rub`) |
-| Form validation | No changes to validation rules |
-| Calculations | No changes to formulas |
-| Existing user data | No migration needed |
+| Scenario           | Expected Behavior                               |
+| ------------------ | ----------------------------------------------- |
+| API requests       | Field names unchanged (`logistics_forward_rub`) |
+| Form validation    | No changes to validation rules                  |
+| Calculations       | No changes to formulas                          |
+| Existing user data | No migration needed                             |
 
 ---
 
@@ -229,15 +242,15 @@ grep -r "Логистика до" src/components/custom/price-calculator/
 
 ## QA Checklist
 
-| Check | Status |
-|-------|--------|
-| Forward logistics label updated | [ ] |
-| Forward logistics tooltip updated | [ ] |
-| Reverse logistics tooltip enhanced | [ ] |
-| CostBreakdownChart labels checked | [ ] |
-| Results display labels checked | [ ] |
-| No API changes | [ ] |
-| Screen reader announces correct labels | [ ] |
+| Check                                  | Status |
+| -------------------------------------- | ------ |
+| Forward logistics label updated        | [ ]    |
+| Forward logistics tooltip updated      | [ ]    |
+| Reverse logistics tooltip enhanced     | [ ]    |
+| CostBreakdownChart labels checked      | [ ]    |
+| Results display labels checked         | [ ]    |
+| No API changes                         | [ ]    |
+| Screen reader announces correct labels | [ ]    |
 
 ---
 

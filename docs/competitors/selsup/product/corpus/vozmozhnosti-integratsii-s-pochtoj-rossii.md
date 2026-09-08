@@ -11,7 +11,7 @@ chars: 4029
 
 В этой статье:
 
-- 
+-
 - <a href="#preimushhestva-raboty-po-dbs" rel="nofollow">Преимущества работы по DBS</a>
 - <a href="#nastrojki-integratsii" rel="nofollow">Настройки интеграции</a>
 - <a href="#kak-sobirat-zakazy-dbs-i-otpravlyat-cherez-pochtu-rossii" rel="nofollow">Как собирать заказы DBS и отправлять через Почту России</a>

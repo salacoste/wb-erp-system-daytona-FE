@@ -15,7 +15,7 @@ chars: 2776
 
 В этой статье:
 
-- 
+-
 - <a href="#import-tovarov-iz-aliexpress" rel="nofollow">Импорт товаров из Aliexpress</a>
 - <a href="#vozmozhnye-oshibki-importa" rel="nofollow">Возможные ошибки импорта</a>
 

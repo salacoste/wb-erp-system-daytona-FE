@@ -147,21 +147,23 @@ interface CabinetSummaryTotals {
 
 ### Key Metrics
 
-| Метрика | Формула | Описание |
-|---------|---------|----------|
-| `total_expenses` | SUM(все расходы) | Общие операционные расходы |
-| `operating_profit` | gross_profit - total_expenses | Может быть отрицательной (убыток) |
-| `operating_margin_pct` | (operating_profit / revenue_net) × 100 | Операционная рентабельность |
-| `skus_with_expenses_only` | COUNT(WHERE has_revenue = false) | Товары на складе без продаж |
+| Метрика                   | Формула                                | Описание                          |
+| ------------------------- | -------------------------------------- | --------------------------------- |
+| `total_expenses`          | SUM(все расходы)                       | Общие операционные расходы        |
+| `operating_profit`        | gross_profit - total_expenses          | Может быть отрицательной (убыток) |
+| `operating_margin_pct`    | (operating_profit / revenue_net) × 100 | Операционная рентабельность       |
+| `skus_with_expenses_only` | COUNT(WHERE has_revenue = false)       | Товары на складе без продаж       |
 
 ### Dormant Inventory (Товары без продаж)
 
 Товары с `has_revenue = false`:
+
 - Есть расходы (логистика, хранение)
 - Нет продаж (revenue_net = 0)
 - Operating profit = отрицательный (чистый убыток)
 
 **Пример:**
+
 ```json
 {
   "nm_id": "255211393",

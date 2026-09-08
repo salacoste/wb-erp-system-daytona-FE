@@ -25,11 +25,13 @@ This story is a **placeholder** for future enhancements to the Merged Group Tabl
 **Enhancement Request**: Add collapse/expand functionality for large groups (>10 products)
 
 **User Story**:
+
 - **As a** user viewing groups with many products
 - **I want** to collapse large groups to reduce visual clutter
 - **So that** I can focus on key metrics without scrolling through long lists
 
 **Acceptance Criteria**:
+
 - [ ] Groups with >10 products collapsed by default
 - [ ] "Show all N products" button expands group
 - [ ] "Show less" button collapses group
@@ -38,6 +40,7 @@ This story is a **placeholder** for future enhancements to the Merged Group Tabl
 - [ ] Smooth animation on expand/collapse (200ms transition)
 
 **Design Notes**:
+
 - Collapsed state shows: Aggregate row + main product row only
 - Button placement: Below main product row, centered
 - Icon: ChevronDown (collapsed) / ChevronUp (expanded)
@@ -53,11 +56,13 @@ This story is a **placeholder** for future enhancements to the Merged Group Tabl
 **Enhancement Request**: Color-code ROAS values based on performance tiers
 
 **User Story**:
+
 - **As a** user analyzing advertising performance
 - **I want** ROAS values color-coded by performance tier
 - **So that** I can quickly identify high-performing and underperforming groups
 
 **Acceptance Criteria**:
+
 - [ ] Excellent (≥2.0): Green (#10B981, green-500)
 - [ ] Good (1.0-1.99): Yellow (#F59E0B, yellow-500)
 - [ ] Poor (<1.0): Red (#EF4444, red-500)
@@ -67,6 +72,7 @@ This story is a **placeholder** for future enhancements to the Merged Group Tabl
 - [ ] WCAG 2.1 AA contrast verified for all colors
 
 **Design Notes**:
+
 - Bold text for colored ROAS values (font-weight: 600)
 - Background color option: Subtle pill badge (bg-green-50, text-green-700)
 - PO to decide: Text color only vs. pill badge
@@ -82,11 +88,13 @@ This story is a **placeholder** for future enhancements to the Merged Group Tabl
 **Enhancement Request**: Make aggregate row clickable to collapse/expand group
 
 **User Story**:
+
 - **As a** user navigating large tables
 - **I want** to click aggregate rows to collapse/expand groups
 - **So that** I can quickly manage table density without hunting for buttons
 
 **Acceptance Criteria**:
+
 - [ ] Aggregate row cursor changes to pointer on hover
 - [ ] Hover effect: Background #E5E7EB (gray-200)
 - [ ] Click toggles group collapse/expand state
@@ -107,11 +115,13 @@ This story is a **placeholder** for future enhancements to the Merged Group Tabl
 **Enhancement Request**: Card-based layout for mobile devices
 
 **User Story**:
+
 - **As a** mobile user viewing склейки analytics
 - **I want** a card layout optimized for small screens
 - **So that** I can read metrics without horizontal scrolling
 
 **Acceptance Criteria**:
+
 - [ ] Mobile (<768px) switches to card layout (no table)
 - [ ] Each group = 1 card with:
   - Header: Group name + product count
@@ -122,6 +132,7 @@ This story is a **placeholder** for future enhancements to the Merged Group Tabl
 - [ ] Touch-friendly targets (min 44px height)
 
 **Design Notes**:
+
 - Card background: white, shadow-sm
 - Header background: gray-100 (matches aggregate row)
 - Spacing: p-4 padding, mb-4 margin between cards
@@ -137,11 +148,13 @@ This story is a **placeholder** for future enhancements to the Merged Group Tabl
 **Enhancement Request**: Dark mode variant classes
 
 **User Story**:
+
 - **As a** user working in low-light environments
 - **I want** dark mode support for the склейки table
 - **So that** I can reduce eye strain during late-night analysis
 
 **Acceptance Criteria**:
+
 - [ ] Detect system dark mode preference (`prefers-color-scheme: dark`)
 - [ ] Dark variants for all colors:
   - Rowspan cell: `dark:bg-gray-800`, `dark:border-gray-600`
@@ -165,11 +178,13 @@ This story is a **placeholder** for future enhancements to the Merged Group Tabl
 **Enhancement Request**: Percy or Chromatic integration for screenshot diffs
 
 **User Story**:
+
 - **As a** developer making style changes
 - **I want** automated visual regression detection
 - **So that** I can catch unintended UI changes before deployment
 
 **Acceptance Criteria**:
+
 - [ ] Percy or Chromatic account set up
 - [ ] Screenshot baseline captured for 5 scenarios:
   - Normal group (6 products)
@@ -191,11 +206,13 @@ This story is a **placeholder** for future enhancements to the Merged Group Tabl
 **Enhancement Request**: Detailed interaction analytics
 
 **User Story**:
+
 - **As a** product team
 - **I want** detailed analytics on user interaction patterns
 - **So that** we can optimize the склейки feature based on actual usage
 
 **Acceptance Criteria**:
+
 - [ ] Track additional events:
   - `advertising_group_expanded` (if Enhancement #1 implemented)
   - `advertising_sort_clicked` (column, direction)
@@ -220,11 +237,13 @@ This story is a **placeholder** for future enhancements to the Merged Group Tabl
 **Enhancement Request**: Export склейки data to Excel/CSV
 
 **User Story**:
+
 - **As a** finance analyst
 - **I want** to export склейки table data to Excel
 - **So that** I can perform custom analysis in spreadsheets
 
 **Acceptance Criteria**:
+
 - [ ] "Export to Excel" button (top right, near filter controls)
 - [ ] Exports visible rows only (respects current sorting/filtering)
 - [ ] File format: `.xlsx` (Excel) or `.csv` (user choice)
@@ -233,6 +252,7 @@ This story is a **placeholder** for future enhancements to the Merged Group Tabl
 - [ ] Filename: `skleitki-analytics-{cabinet}-{date}.xlsx`
 
 **Technical Notes**:
+
 - Use `xlsx` npm package for client-side generation
 - Max file size: 10MB (warn if larger)
 
@@ -243,18 +263,14 @@ This story is a **placeholder** for future enhancements to the Merged Group Tabl
 ## 🎯 Prioritization Criteria
 
 **High Priority** (implement first if user demand):
+
 1. **Enhancement #1** (Progressive Disclosure) - Addresses table density for large groups
 2. **Enhancement #2** (ROAS Color-Coding) - High user value, low effort
 3. **Enhancement #8** (Export to Excel) - Common analyst request
 
-**Medium Priority**:
-4. **Enhancement #3** (Aggregate Click) - Depends on #1
-5. **Enhancement #7** (Advanced Analytics) - Product team need
+**Medium Priority**: 4. **Enhancement #3** (Aggregate Click) - Depends on #1 5. **Enhancement #7** (Advanced Analytics) - Product team need
 
-**Low Priority** (nice-to-have):
-6. **Enhancement #4** (Mobile Card Layout) - Complex, mobile usage unknown
-7. **Enhancement #5** (Dark Mode) - Depends on project-wide strategy
-8. **Enhancement #6** (Visual Regression) - QA improvement, not user-facing
+**Low Priority** (nice-to-have): 6. **Enhancement #4** (Mobile Card Layout) - Complex, mobile usage unknown 7. **Enhancement #5** (Dark Mode) - Depends on project-wide strategy 8. **Enhancement #6** (Visual Regression) - QA improvement, not user-facing
 
 ---
 

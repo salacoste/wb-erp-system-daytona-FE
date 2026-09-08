@@ -15,7 +15,7 @@ chars: 5284
 
 В этой статье:
 
-- 
+-
 - <a href="#zachem-nuzhen-dannyj-otchet" rel="nofollow">Зачем нужен данный отчет</a>
 - <a href="#" rel="nofollow"></a>
 - <a href="#filtry-i-poisk" rel="nofollow">Фильтры и поиск</a>
@@ -68,29 +68,30 @@ chars: 5284
 
 Чтобы скачать файл с отчетом нажмите "Скачать в Excel".\
 В скачанном файле выберите по какому параметру просматривать остаток товаров:\
+
 - по ШК;\
 - по цветомодели;\
 - по артикулу;\
 - по бренду;\
 - по категории.\
-![](../../out/selsup.ru/_kage/selsup.ru/wp-content/webp-express/webp-images/uploads/2024/06/param.png.webp)\
-Здесь вы можете просматривать:\
-Закупочную цену + стоимость доставки по товару;\
-Динамику **остатков FBS+FBO** (на вашем складе и на складах маркетплейсов в сумме) в штуках и в рублях;\
-![](../../out/selsup.ru/_kage/selsup.ru/wp-content/webp-express/webp-images/uploads/2024/06/fbo-i-fbs-v-shtukah-e1719586674731.png.webp)\
-![](../../out/selsup.ru/_kage/selsup.ru/wp-content/webp-express/webp-images/uploads/2024/06/fbo-i-fbs-v-rub.png.webp)\
-Динамику **остатков только по складу FBS** в штуках и в рублях;\
-![](../../out/selsup.ru/_kage/selsup.ru/wp-content/webp-express/webp-images/uploads/2024/06/fbs-v-sht.png.webp)\
-![](../../out/selsup.ru/_kage/selsup.ru/wp-content/webp-express/webp-images/uploads/2024/06/fbs-v-rub.png.webp)\
-**Остатки FBO** полученные по API со складов маркетплейсов в штуках и рублях;\
-Wildberries:\
-![](../../out/selsup.ru/_kage/selsup.ru/wp-content/webp-express/webp-images/uploads/2024/06/wb-sht.png.webp)\
-![](../../out/selsup.ru/_kage/selsup.ru/wp-content/webp-express/webp-images/uploads/2024/06/wb-rub.png.webp)
+  ![](../../out/selsup.ru/_kage/selsup.ru/wp-content/webp-express/webp-images/uploads/2024/06/param.png.webp)\
+  Здесь вы можете просматривать:\
+  Закупочную цену + стоимость доставки по товару;\
+  Динамику **остатков FBS+FBO** (на вашем складе и на складах маркетплейсов в сумме) в штуках и в рублях;\
+  ![](../../out/selsup.ru/_kage/selsup.ru/wp-content/webp-express/webp-images/uploads/2024/06/fbo-i-fbs-v-shtukah-e1719586674731.png.webp)\
+  ![](../../out/selsup.ru/_kage/selsup.ru/wp-content/webp-express/webp-images/uploads/2024/06/fbo-i-fbs-v-rub.png.webp)\
+  Динамику **остатков только по складу FBS** в штуках и в рублях;\
+  ![](../../out/selsup.ru/_kage/selsup.ru/wp-content/webp-express/webp-images/uploads/2024/06/fbs-v-sht.png.webp)\
+  ![](../../out/selsup.ru/_kage/selsup.ru/wp-content/webp-express/webp-images/uploads/2024/06/fbs-v-rub.png.webp)\
+  **Остатки FBO** полученные по API со складов маркетплейсов в штуках и рублях;\
+  Wildberries:\
+  ![](../../out/selsup.ru/_kage/selsup.ru/wp-content/webp-express/webp-images/uploads/2024/06/wb-sht.png.webp)\
+  ![](../../out/selsup.ru/_kage/selsup.ru/wp-content/webp-express/webp-images/uploads/2024/06/wb-rub.png.webp)
 
 Ozon:![](../../out/selsup.ru/_kage/selsup.ru/wp-content/webp-express/webp-images/uploads/2024/06/ozon-sht.png.webp)\
 ![](../../out/selsup.ru/_kage/selsup.ru/wp-content/webp-express/webp-images/uploads/2024/06/ozon-rub.png.webp)
 
-------------------------------------------------------------------------
+---
 
 Подробнее про отчет [Текущий остаток](https://selsup.ru/application/productCurrent/) рассказали [здесь](../tekushhij-ostatok/index.html).\
 Про отчет [Остаток по складам](https://selsup.ru/application/stockReport/) можете прочитать [тут](../ostatok-po-skladam/index.html).

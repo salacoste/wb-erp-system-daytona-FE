@@ -29,15 +29,16 @@
 
 ### Текущее состояние (проверено 2026-01-06)
 
-| Компонент | Использует | Статус |
-|-----------|------------|--------|
+| Компонент                         | Использует                  | Статус      |
+| --------------------------------- | --------------------------- | ----------- |
 | `useManualMarginRecalculation.ts` | `recalculate_weekly_margin` | ✅ Актуален |
-| `src/types/api.ts` (Task.type) | `enrich_cogs` в union | ⚠️ Обновить |
-| Прямые вызовы `enrich_cogs` | Не найдены | ✅ |
+| `src/types/api.ts` (Task.type)    | `enrich_cogs` в union       | ⚠️ Обновить |
+| Прямые вызовы `enrich_cogs`       | Не найдены                  | ✅          |
 
 ### Backward Compatibility
 
 Backend поддерживает `enrich_cogs` с deprecation warning. Frontend изменения **не срочные**, но рекомендуются для:
+
 - Чистоты кода
 - Подготовки к полному удалению deprecated endpoint
 - Использования новых возможностей (sanity check)
@@ -46,12 +47,12 @@ Backend поддерживает `enrich_cogs` с deprecation warning. Frontend 
 
 ## Stories Overview
 
-| Story | Название | Points | Priority | Type | Status |
-|-------|----------|--------|----------|------|--------|
-| 42.1-FE | TypeScript Types Update | 1 | Required | Tech | ✅ Complete |
-| 42.2-FE | Add Sanity Check Hook | 2 | Optional | Feature | ✅ Complete |
-| 42.3-FE | Missing COGS Alert Component | 2 | Optional | Feature | ✅ Complete |
-| 42.4-FE | Documentation & Tests Update | 2 | Required | Tech | ✅ Complete |
+| Story   | Название                     | Points | Priority | Type    | Status      |
+| ------- | ---------------------------- | ------ | -------- | ------- | ----------- |
+| 42.1-FE | TypeScript Types Update      | 1      | Required | Tech    | ✅ Complete |
+| 42.2-FE | Add Sanity Check Hook        | 2      | Optional | Feature | ✅ Complete |
+| 42.3-FE | Missing COGS Alert Component | 2      | Optional | Feature | ✅ Complete |
+| 42.4-FE | Documentation & Tests Update | 2      | Required | Tech    | ✅ Complete |
 
 **Required**: 3 points
 **Optional**: 4 points
@@ -62,11 +63,13 @@ Backend поддерживает `enrich_cogs` с deprecation warning. Frontend 
 ## Dependencies
 
 ### Backend (Complete)
+
 - ✅ Story 42.1: `enrich_cogs` deprecated, returns `deprecated: true`
 - ✅ Story 42.2: `weekly_margin_aggregate` handler
 - ✅ Story 42.3: `weekly_sanity_check` handler
 
 ### Frontend Prerequisites
+
 - None (all changes are additive)
 
 ---
@@ -74,6 +77,7 @@ Backend поддерживает `enrich_cogs` с deprecation warning. Frontend 
 ## API Changes Summary
 
 ### Deprecated
+
 ```typescript
 // ❌ DEPRECATED (still works, logs warning)
 task_type: 'enrich_cogs'
@@ -106,10 +110,12 @@ payload: { week?, weeks?, dateFrom?, dateTo? }
 ## Files to Modify
 
 ### Required Changes
+
 1. `src/types/api.ts` - Update Task type union
 2. `src/types/tasks.ts` (NEW) - Task-specific types and responses
 
 ### Optional Changes
+
 3. `src/hooks/useSanityCheck.ts` (NEW) - Hook for data quality
 4. `src/components/custom/MissingCogsAlert.tsx` (NEW) - Alert component
 
@@ -128,11 +134,11 @@ payload: { week?, weeks?, dateFrom?, dateTo? }
 
 ## Risk Assessment
 
-| Risk | Likelihood | Impact | Mitigation |
-|------|------------|--------|------------|
-| Breaking change | Very Low | Low | Backend supports backward compat |
-| Type mismatches | Low | Low | E2E tests validate |
-| Scope creep | Medium | Low | Optional stories clearly marked |
+| Risk            | Likelihood | Impact | Mitigation                       |
+| --------------- | ---------- | ------ | -------------------------------- |
+| Breaking change | Very Low   | Low    | Backend supports backward compat |
+| Type mismatches | Low        | Low    | E2E tests validate               |
+| Scope creep     | Medium     | Low    | Optional stories clearly marked  |
 
 ---
 
@@ -151,4 +157,4 @@ payload: { week?, weeks?, dateFrom?, dateTo? }
 
 ---
 
-*Last Updated: 2026-01-29*
+_Last Updated: 2026-01-29_

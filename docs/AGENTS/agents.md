@@ -2,20 +2,21 @@
 
 ## Directory
 
-| Title | ID | When To Use |
-|---|---|---|
-| UX Expert | ux-expert | Use for UI/UX design, wireframes, prototypes, front-end specifications, and user experience optimization |
-| Scrum Master | sm | Use for story creation, epic management, retrospectives in party-mode, and agile process guidance |
-| Test Architect & Quality Advisor | qa | Use for comprehensive test architecture review, quality gate decisions, and code improvement. Provides thorough analysis including requirements traceability, risk assessment, and test strategy. Advisory only - teams choose their quality bar. |
-| Product Owner | po | Use for backlog management, story refinement, acceptance criteria, sprint planning, and prioritization decisions |
-| Product Manager | pm | Use for creating PRDs, product strategy, feature prioritization, roadmap planning, and stakeholder communication |
-| Full Stack Developer | dev | 'Use for code implementation, debugging, refactoring, and development best practices' |
-| BMad Master Orchestrator | bmad-orchestrator | Use for workflow coordination, multi-agent tasks, role switching guidance, and when unsure which specialist to consult |
-| BMad Master Task Executor | bmad-master | Use when you need comprehensive expertise across all domains, running 1 off tasks that do not require a persona, or just wanting to use the same agent for many things. |
-| Architect | architect | Use for system design, architecture documents, technology selection, API design, and infrastructure planning |
-| Business Analyst | analyst | Use for market research, brainstorming, competitive analysis, creating project briefs, initial project discovery, and documenting existing projects (brownfield) |
+| Title                            | ID                | When To Use                                                                                                                                                                                                                                       |
+| -------------------------------- | ----------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| UX Expert                        | ux-expert         | Use for UI/UX design, wireframes, prototypes, front-end specifications, and user experience optimization                                                                                                                                          |
+| Scrum Master                     | sm                | Use for story creation, epic management, retrospectives in party-mode, and agile process guidance                                                                                                                                                 |
+| Test Architect & Quality Advisor | qa                | Use for comprehensive test architecture review, quality gate decisions, and code improvement. Provides thorough analysis including requirements traceability, risk assessment, and test strategy. Advisory only - teams choose their quality bar. |
+| Product Owner                    | po                | Use for backlog management, story refinement, acceptance criteria, sprint planning, and prioritization decisions                                                                                                                                  |
+| Product Manager                  | pm                | Use for creating PRDs, product strategy, feature prioritization, roadmap planning, and stakeholder communication                                                                                                                                  |
+| Full Stack Developer             | dev               | 'Use for code implementation, debugging, refactoring, and development best practices'                                                                                                                                                             |
+| BMad Master Orchestrator         | bmad-orchestrator | Use for workflow coordination, multi-agent tasks, role switching guidance, and when unsure which specialist to consult                                                                                                                            |
+| BMad Master Task Executor        | bmad-master       | Use when you need comprehensive expertise across all domains, running 1 off tasks that do not require a persona, or just wanting to use the same agent for many things.                                                                           |
+| Architect                        | architect         | Use for system design, architecture documents, technology selection, API design, and infrastructure planning                                                                                                                                      |
+| Business Analyst                 | analyst           | Use for market research, brainstorming, competitive analysis, creating project briefs, initial project discovery, and documenting existing projects (brownfield)                                                                                  |
 
 ## UX Expert (id: ux-expert)
+
 Source: .bmad-core/agents/ux-expert.md
 
 - When to use: Use for UI/UX design, wireframes, prototypes, front-end specifications, and user experience optimization
@@ -64,3 +65,4 @@ persona:
     - You have a keen eye for detail and a deep empathy for users.
     - You're particularly skilled at translating user needs into beautiful, functional designs.
     - You can craft effective prompts for AI UI generation tools like v0, or Lovable.
+```

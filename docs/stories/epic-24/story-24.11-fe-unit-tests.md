@@ -4,7 +4,7 @@
 
 - **Epic**: 24 - Paid Storage Analytics (Frontend)
 - **Priority**: Medium
-- **Points**: 5 *(PO Note: Focus on critical paths first; edge cases as time permits)*
+- **Points**: 5 _(PO Note: Focus on critical paths first; edge cases as time permits)_
 - **Status**: ✅ Complete
 - **Deferred From**: Stories 24.1-24.8 (Phase 4/7/8: Testing)
 
@@ -23,6 +23,7 @@ During MVP implementation, unit tests were deferred to prioritize delivery. All 
 ## Acceptance Criteria
 
 ### AC1: Hooks Tests (Target: >80% coverage) ✅ Achieved: 97.18%
+
 - [x] `useStorageBySku` hook tests
 - [x] `useStorageTopConsumers` hook tests
 - [x] `useStorageTrends` hook tests
@@ -31,14 +32,16 @@ During MVP implementation, unit tests were deferred to prioritize delivery. All 
 - [x] Error handling scenarios
 
 ### AC2: Component Tests (Target: >70% coverage) ✅ Achieved: 99.38%
+
 - [x] `StorageBySkuTable` render and interaction tests
 - [x] `TopConsumersWidget` render and data display tests
 - [x] `StorageTrendsChart` render tests
-- [ ] `PaidStorageImportDialog` flow tests *(Deferred: requires dialog state mocking)*
+- [ ] `PaidStorageImportDialog` flow tests _(Deferred: requires dialog state mocking)_
 - [x] `StorageAlertBanner` threshold tests
 - [x] Loading and error states
 
 ### AC3: Helper Function Tests (Target: >90% coverage) ✅ Achieved: 92.85%
+
 - [x] `WarehouseBadges` overflow logic
 - [x] `ProductNameCell` truncation logic
 - [x] `CostSeverityDot` threshold colors
@@ -46,14 +49,16 @@ During MVP implementation, unit tests were deferred to prioritize delivery. All 
 - [x] Currency/volume formatters (`formatDate`, `formatIsoWeek`)
 
 ### AC4: Integration Tests
+
 - [x] Filter → Query flow (via hook parameter tests)
 - [x] Pagination flow (via hook cursor tests)
 - [x] Sort column changes (via hook sort_by tests)
-- [ ] Import dialog complete flow *(Deferred with PaidStorageImportDialog)*
+- [ ] Import dialog complete flow _(Deferred with PaidStorageImportDialog)_
 
 ## Test Strategy
 
 ### Framework & Tools
+
 - **Test Framework**: Vitest
 - **Component Testing**: React Testing Library
 - **Mocking**: MSW (Mock Service Worker) for API calls
@@ -81,6 +86,7 @@ src/
 ## Test Cases
 
 ### useStorageBySku Hook
+
 ```typescript
 describe('useStorageBySku', () => {
   it('fetches storage data for given week range')
@@ -94,6 +100,7 @@ describe('useStorageBySku', () => {
 ```
 
 ### StorageBySkuTable Component
+
 ```typescript
 describe('StorageBySkuTable', () => {
   it('renders all columns (Артикул, Название, Бренд, etc.)')
@@ -108,6 +115,7 @@ describe('StorageBySkuTable', () => {
 ```
 
 ### TopConsumersWidget Component
+
 ```typescript
 describe('TopConsumersWidget', () => {
   it('renders top 5 products')
@@ -122,6 +130,7 @@ describe('TopConsumersWidget', () => {
 ```
 
 ### StorageTrendsChart Component
+
 ```typescript
 describe('StorageTrendsChart', () => {
   it('renders chart with data points')
@@ -133,6 +142,7 @@ describe('StorageTrendsChart', () => {
 ```
 
 ### PaidStorageImportDialog Component
+
 ```typescript
 describe('PaidStorageImportDialog', () => {
   it('opens dialog on button click')
@@ -146,6 +156,7 @@ describe('PaidStorageImportDialog', () => {
 ```
 
 ### StorageAlertBanner Component
+
 ```typescript
 describe('StorageAlertBanner', () => {
   it('renders when highRatioCount > 0')
@@ -156,6 +167,7 @@ describe('StorageAlertBanner', () => {
 ```
 
 ### Helper Components
+
 ```typescript
 describe('WarehouseBadges', () => {
   it('shows all badges when 2 or fewer')
@@ -181,11 +193,13 @@ describe('CostSeverityDot', () => {
 ## Tasks / Subtasks
 
 ### Phase 1: Setup
+
 - [ ] Configure Vitest for component testing
 - [ ] Set up MSW handlers for storage API
 - [ ] Create test utilities and fixtures
 
 ### Phase 2: Hook Tests
+
 - [ ] Write tests for useStorageBySku
 - [ ] Write tests for useStorageTopConsumers
 - [ ] Write tests for useStorageTrends
@@ -193,6 +207,7 @@ describe('CostSeverityDot', () => {
 - [ ] Write tests for useImportStatus
 
 ### Phase 3: Component Tests
+
 - [ ] Write tests for StorageBySkuTable
 - [ ] Write tests for TopConsumersWidget
 - [ ] Write tests for StorageTrendsChart
@@ -200,12 +215,14 @@ describe('CostSeverityDot', () => {
 - [ ] Write tests for StorageAlertBanner
 
 ### Phase 4: Helper Tests
+
 - [ ] Write tests for WarehouseBadges
 - [ ] Write tests for ProductNameCell
 - [ ] Write tests for CostSeverityDot/RankIndicator
 - [ ] Write tests for formatters
 
 ### Phase 5: Coverage Report
+
 - [ ] Generate coverage report
 - [ ] Verify >80% hooks, >70% components
 - [ ] Document any intentional exclusions
@@ -236,12 +253,12 @@ describe('CostSeverityDot', () => {
 
 ## Change Log
 
-| Date | Author | Change |
-|------|--------|--------|
-| 2025-12-04 | Quinn (QA) | Initial draft from deferred items |
-| 2025-12-04 | Sarah (PO) | Added scope guidance (critical paths first), status → Ready for Dev |
-| 2025-12-04 | James (Dev) | Implementation complete: 156 tests, all coverage targets exceeded, status → Ready for QA Review |
-| 2026-01-03 | Quinn (QA) | QA Review: CONCERNS (78/100) - some tests failing, need investigation |
+| Date       | Author       | Change                                                                                                                                                                       |
+| ---------- | ------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 2025-12-04 | Quinn (QA)   | Initial draft from deferred items                                                                                                                                            |
+| 2025-12-04 | Sarah (PO)   | Added scope guidance (critical paths first), status → Ready for Dev                                                                                                          |
+| 2025-12-04 | James (Dev)  | Implementation complete: 156 tests, all coverage targets exceeded, status → Ready for QA Review                                                                              |
+| 2026-01-03 | Quinn (QA)   | QA Review: CONCERNS (78/100) - some tests failing, need investigation                                                                                                        |
 | 2026-01-03 | Claude (Dev) | Fixed failing tests: StorageBySkuTable (column name, search placeholder, sort order), TopConsumersWidget (vendor_code display). All 84 storage tests pass. Status → Complete |
 
 ---

@@ -197,28 +197,31 @@ const CHART_HEIGHT = 300       // Match chart container height
 
 ## Component Files to Modify
 
-| File | Change | Lines Est. |
-|------|--------|------------|
-| `src/components/custom/MetricCardEnhanced.tsx` | Add skeleton + animation | +40 |
-| `src/components/custom/TrendGraph.tsx` | Add empty state illustration | +30 |
-| `src/components/custom/ExpenseChart.tsx` | Add shimmer skeleton | +35 |
+| File                                           | Change                       | Lines Est. |
+| ---------------------------------------------- | ---------------------------- | ---------- |
+| `src/components/custom/MetricCardEnhanced.tsx` | Add skeleton + animation     | +40        |
+| `src/components/custom/TrendGraph.tsx`         | Add empty state illustration | +30        |
+| `src/components/custom/ExpenseChart.tsx`       | Add shimmer skeleton         | +35        |
 
 ---
 
 ## Visual Design
 
 ### Skeleton Loader Style
+
 - Background: `bg-muted` (gray-100)
 - Animation: `animate-pulse` (subtle pulse, not shimmer)
 - Border radius: Match content (rounded for cards, rounded-full for avatars)
 
 ### Empty State Style
+
 - Icon: Muted color (`text-muted-foreground`, 20% opacity)
 - Title: `text-lg font-medium`
 - Description: `text-sm text-muted-foreground`
 - Max width: `max-w-xs` for readable text
 
 ### Animation Timing
+
 - Fade duration: 200ms
 - Easing: `ease-out`
 - No jarring transitions
@@ -320,13 +323,13 @@ const shouldReduceMotion = typeof window !== 'undefined'
 
 ## Dependencies
 
-| Dependency | Type | Status |
-|------------|------|--------|
-| `shadcn/ui Skeleton` | Component | ✅ Available |
-| `framer-motion` (optional) | npm package | Optional |
-| `lucide-react` icons | npm package | ✅ Installed |
-| `MetricCardEnhanced` | Story 60.3 | 📋 Ready |
-| `useDashboardPeriod` | Story 60.1 | 📋 Ready |
+| Dependency                 | Type        | Status       |
+| -------------------------- | ----------- | ------------ |
+| `shadcn/ui Skeleton`       | Component   | ✅ Available |
+| `framer-motion` (optional) | npm package | Optional     |
+| `lucide-react` icons       | npm package | ✅ Installed |
+| `MetricCardEnhanced`       | Story 60.3  | 📋 Ready     |
+| `useDashboardPeriod`       | Story 60.1  | 📋 Ready     |
 
 ---
 

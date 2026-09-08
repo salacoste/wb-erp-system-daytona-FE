@@ -14,19 +14,25 @@
 **Вы DevOps и нужно быстро задеплоить?**
 
 ### 1️⃣ Быстрый старт (5 минут)
+
 → **[QUICK-DEPLOY.md](QUICK-DEPLOY.md)**
+
 - ⚡ 5 команд для деплоя
 - ⚡ Update в 1 строку
 - ⚡ Emergency commands
 
 ### 2️⃣ Production deployment (15 минут)
+
 → **[PRODUCTION-DEPLOYMENT-SUMMARY.md](PRODUCTION-DEPLOYMENT-SUMMARY.md)**
+
 - 📝 Step-by-step инструкция
 - 📝 Pre/Post checklists
 - 📝 Functional testing guide
 
 ### 3️⃣ Troubleshooting (при проблемах)
+
 → **[DEPLOYMENT-GUIDE.md](DEPLOYMENT-GUIDE.md)**
+
 - 📖 Детальный troubleshooting
 - 📖 7 типовых проблем с решениями
 - 📖 Rollback procedures
@@ -38,10 +44,12 @@
 ### Deployment Guides (4 docs)
 
 #### 1. QUICK-DEPLOY.md ⚡
+
 **Audience**: Опытные DevOps
 **Length**: 1 страница
 **Reading Time**: 2 минуты
 **Content**:
+
 - Deploy в 5 команд
 - Update в 1 строку
 - Emergency procedures
@@ -51,10 +59,12 @@
 ---
 
 #### 2. DEPLOYMENT-CHEATSHEET.md 📋
+
 **Audience**: DevOps, SRE
 **Length**: 2-3 страницы
 **Reading Time**: 5 минут
 **Content**:
+
 - Common PM2 commands
 - Quick troubleshooting
 - Monitoring commands
@@ -65,10 +75,12 @@
 ---
 
 #### 3. PRODUCTION-DEPLOYMENT-SUMMARY.md 📝
+
 **Audience**: Production team, QA
 **Length**: 11 страниц
 **Reading Time**: 15 минут
 **Content**:
+
 - Epic 34-FE feature overview
 - Step-by-step deployment
 - Pre/Post deployment checklists
@@ -80,10 +92,12 @@
 ---
 
 #### 4. DEPLOYMENT-GUIDE.md 📖
+
 **Audience**: DevOps, Developers
 **Length**: 30+ страниц
 **Reading Time**: 30-45 минут
 **Content**:
+
 - 3 deployment options (PM2/Docker/Standalone)
 - Detailed troubleshooting (7 issues)
 - Rollback procedures
@@ -99,10 +113,12 @@
 ### Configuration Guides (2 docs)
 
 #### 5. ENVIRONMENT-CONFIGURATION.md 🔧
+
 **Audience**: All roles
 **Length**: 8 страниц
 **Reading Time**: 10 минут
 **Content**:
+
 - Complete variable reference table
 - Frontend vs Backend separation
 - Security best practices
@@ -116,10 +132,12 @@
 ---
 
 #### 6. .env.example 📄
+
 **Audience**: Developers
 **Length**: 1 страница
 **Reading Time**: 3 минуты
 **Content**:
+
 - Template with all variables
 - Inline comments
 - Default values
@@ -132,10 +150,12 @@
 ### Epic 34-FE Documentation (3 docs)
 
 #### 7. DEV-HANDOFF-EPIC-34-FE.md 🚀
+
 **Audience**: Developers, QA
 **Length**: 30+ страниц
 **Reading Time**: 30 минут
 **Content**:
+
 - Complete feature overview
 - Technical architecture
 - API integration details
@@ -148,10 +168,12 @@
 ---
 
 #### 8. API-INTEGRATION-GUIDE-EPIC-34-FE.md 🔌
+
 **Audience**: Developers
 **Length**: 15 страниц
 **Reading Time**: 15 минут
 **Content**:
+
 - All 6 API endpoints
 - Request/response examples
 - Error handling patterns
@@ -162,10 +184,12 @@
 ---
 
 #### 9. CHANGELOG-EPIC-34-FE.md 📜
+
 **Audience**: All roles
 **Length**: 20 страниц
 **Reading Time**: 15 минут
 **Content**:
+
 - Complete implementation history
 - All 6 stories documented
 - Changes per story
@@ -178,10 +202,12 @@
 ### Verification & Quality (1 doc)
 
 #### 10. DOCUMENTATION-VERIFICATION-REPORT.md ✅
+
 **Audience**: QA, Technical Leads
 **Length**: 10 страниц
 **Reading Time**: 10 минут
 **Content**:
+
 - Documentation audit results
 - Issues found & fixed
 - Coverage metrics (100%)
@@ -196,17 +222,20 @@
 ### DevOps / SRE
 
 **Path 1: Quick Deploy** (10 минут)
+
 1. QUICK-DEPLOY.md → деплой
 2. DEPLOYMENT-CHEATSHEET.md → шпаргалка
 3. Done! ✅
 
 **Path 2: First Production Deploy** (30 минут)
+
 1. PRODUCTION-DEPLOYMENT-SUMMARY.md → step-by-step
 2. ENVIRONMENT-CONFIGURATION.md → env vars reference
 3. DEPLOYMENT-CHEATSHEET.md → commands
 4. Done! ✅
 
 **Path 3: Troubleshooting** (как потребуется)
+
 1. DEPLOYMENT-CHEATSHEET.md → quick fixes
 2. DEPLOYMENT-GUIDE.md → detailed troubleshooting
 3. DEV-HANDOFF-EPIC-34-FE.md → feature details (если Telegram issue)
@@ -216,12 +245,14 @@
 ### Developer / QA
 
 **Path 1: Integration Understanding** (45 минут)
+
 1. DEV-HANDOFF-EPIC-34-FE.md → feature overview
 2. API-INTEGRATION-GUIDE-EPIC-34-FE.md → API details
 3. .env.example → configuration
 4. Done! ✅
 
 **Path 2: Quality Verification** (20 минут)
+
 1. DOCUMENTATION-VERIFICATION-REPORT.md → качество документации
 2. PRODUCTION-DEPLOYMENT-SUMMARY.md → production checklist
 3. DEV-HANDOFF-EPIC-34-FE.md (Section: Testing) → test status
@@ -232,6 +263,7 @@
 ### Technical Lead / Architect
 
 **Path 1: Complete Review** (1-2 часа)
+
 1. DOCUMENTATION-VERIFICATION-REPORT.md → verification status
 2. DEV-HANDOFF-EPIC-34-FE.md → architecture & implementation
 3. DEPLOYMENT-GUIDE.md → deployment options & security
@@ -284,6 +316,7 @@ frontend/docs/
 ## 📞 Support
 
 **Questions about:**
+
 - **Deployment process** → DEPLOYMENT-GUIDE.md
 - **Environment variables** → ENVIRONMENT-CONFIGURATION.md
 - **Telegram integration** → DEV-HANDOFF-EPIC-34-FE.md

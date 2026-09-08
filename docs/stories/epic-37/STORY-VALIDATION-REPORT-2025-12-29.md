@@ -17,6 +17,7 @@
 **Overall Quality Score**: 9.6/10 ⭐⭐⭐⭐⭐
 
 **Key Findings**:
+
 - ✅ All 5 stories follow BMad template perfectly
 - ✅ 132 total acceptance criteria across 5 stories
 - ✅ 35 detailed tasks with AC references
@@ -40,12 +41,14 @@
 **Implementation Readiness**: 9/10
 
 **Metadata**:
+
 - Epic: Epic 37 - Merged Group Table Display (Склейки) ✅
 - Effort: 1-2 hours ✅
 - Priority: High (Requires Stories 37.2-37.5 completion) ✅
 - Status: Draft → Ready for development after PO approval ✅
 
 **BMad Template Sections**:
+
 - ✅ Status field present
 - ✅ Story format (As a... I want... so that...) - 1 instance
 - ✅ Acceptance Criteria - 15 criteria (numbered)
@@ -57,6 +60,7 @@
 - ✅ QA Results - Placeholder with checklist
 
 **Content Analysis**:
+
 - ✅ All ACs testable and measurable
 - ✅ 5 PO decisions documented (group size, sorting, standalone products, edge cases)
 - ✅ Epic 35/36 integration explicit
@@ -77,12 +81,14 @@
 **Implementation Readiness**: 9/10
 
 **Metadata**:
+
 - Epic: Epic 37 - Merged Group Table Display (Склейки) ✅
 - Effort: 3-4 hours ✅
 - Priority: High (Requires Story 37.1 completion) ✅
 - Status: Ready for development ✅
 
 **BMad Template Sections**:
+
 - ✅ Status field present
 - ✅ Story format - 1 instance
 - ✅ Acceptance Criteria - 29 criteria (most comprehensive)
@@ -94,6 +100,7 @@
 - ✅ QA Results - Placeholder with detailed checklist
 
 **Content Analysis**:
+
 - ✅ Component API interface defined
 - ✅ 4 PO decisions (single-product groups, missing main product, large groups >20)
 - ✅ Rowspan calculation logic provided
@@ -115,12 +122,14 @@
 **Implementation Readiness**: 9/10
 
 **Metadata**:
+
 - Epic: Epic 37 - Merged Group Table Display (Склейки) ✅
 - Effort: 2-3 hours ✅
 - Priority: High (Requires Story 37.2 completion) ✅
 - Status: Ready for development ✅
 
 **BMad Template Sections**:
+
 - ✅ Status field present
 - ✅ Story format - 1 instance
 - ✅ Acceptance Criteria - 21 criteria
@@ -132,6 +141,7 @@
 - ✅ QA Results - Placeholder
 
 **Content Analysis**:
+
 - ✅ 3 PO decisions (rounding, tooltips, color-coding deferred)
 - ✅ 6 Epic 35 formulas documented:
   - totalSales = SUM(products[].totalSales)
@@ -157,12 +167,14 @@
 **Implementation Readiness**: 10/10
 
 **Metadata**:
+
 - Epic: Epic 37 - Merged Group Table Display (Склейки) ✅
 - Effort: 2-3 hours ✅
 - Priority: Medium (Requires Stories 37.2-37.3 completion) ✅
 - Status: Ready for development ✅
 
 **BMad Template Sections**:
+
 - ✅ Status field present
 - ✅ Story format - 1 instance
 - ✅ Acceptance Criteria - 26 criteria (detailed visual specs)
@@ -174,6 +186,7 @@
 - ✅ QA Results - Placeholder
 
 **Content Analysis**:
+
 - ✅ 6 PO decisions (hover states, zebra striping, mobile, dark mode, sticky columns)
 - ✅ Complete design token system:
   - Colors: gray-50/100/200/900, blue-600
@@ -198,12 +211,14 @@
 **Implementation Readiness**: 9/10
 
 **Metadata**:
+
 - Epic: Epic 37 - Merged Group Table Display (Склейки) ✅
 - Effort: 1-2 hours ✅
 - Priority: Medium (Requires Stories 37.1-37.4 completion) ✅
 - Status: Ready for development ✅
 
 **BMad Template Sections**:
+
 - ✅ Status field present
 - ✅ Story format - 1 instance
 - ✅ Acceptance Criteria - 41 criteria (most comprehensive)
@@ -215,6 +230,7 @@
 - ✅ QA Results - Placeholder
 
 **Content Analysis**:
+
 - ✅ 6 PO decisions (user guide, performance test REQUIRED, UAT REQUIRED, analytics REQUIRED, Storybook/visual regression NOT required)
 - ✅ Testing pyramid strategy:
   - Unit tests: ≥90% coverage REQUIRED
@@ -242,6 +258,7 @@
 **Strategic Clarity**: 10/10
 
 **Metadata**:
+
 - Status: ✅ PO APPROVED - Ready for Development ✅
 - Priority: P1 - High Impact Feature ✅
 - Quality Score: 9.2/10 ⭐⭐⭐⭐ ✅
@@ -249,6 +266,7 @@
 - Target Completion: 2026-01-03 ✅
 
 **Epic Document Sections**:
+
 - ✅ Executive Summary (business problem, solution, value)
 - ✅ Goals & Success Metrics (adoption, satisfaction, performance, quality)
 - ✅ Architecture (3-tier rowspan table ASCII diagram)
@@ -268,6 +286,7 @@
 - ✅ Metrics Summary
 
 **Content Analysis**:
+
 - ✅ Clear business problem and solution
 - ✅ Measurable success metrics (≥70% adoption, ≥9/10 UAT, <200ms p95)
 - ✅ ASCII table mockup for visual clarity
@@ -289,13 +308,13 @@
 
 ### BMad Template Compliance
 
-| Story | Status | Story Format | ACs | Tasks | Dev Notes | Change Log | Dev Record | QA Results | Score |
-|-------|--------|--------------|-----|-------|-----------|------------|------------|------------|-------|
-| 37.1 | ✅ | ✅ | 15 ✅ | 6 ✅ | ✅ | ✅ | ✅ | ✅ | 10/10 |
-| 37.2 | ✅ | ✅ | 29 ✅ | 8 ✅ | ✅ | ✅ | ✅ | ✅ | 10/10 |
-| 37.3 | ✅ | ✅ | 21 ✅ | 6 ✅ | ✅ | ✅ | ✅ | ✅ | 10/10 |
-| 37.4 | ✅ | ✅ | 26 ✅ | 7 ✅ | ✅ | ✅ | ✅ | ✅ | 10/10 |
-| 37.5 | ✅ | ✅ | 41 ✅ | 8 ✅ | ✅ | ✅ | ✅ | ✅ | 10/10 |
+| Story | Status | Story Format | ACs   | Tasks | Dev Notes | Change Log | Dev Record | QA Results | Score |
+| ----- | ------ | ------------ | ----- | ----- | --------- | ---------- | ---------- | ---------- | ----- |
+| 37.1  | ✅     | ✅           | 15 ✅ | 6 ✅  | ✅        | ✅         | ✅         | ✅         | 10/10 |
+| 37.2  | ✅     | ✅           | 29 ✅ | 8 ✅  | ✅        | ✅         | ✅         | ✅         | 10/10 |
+| 37.3  | ✅     | ✅           | 21 ✅ | 6 ✅  | ✅        | ✅         | ✅         | ✅         | 10/10 |
+| 37.4  | ✅     | ✅           | 26 ✅ | 7 ✅  | ✅        | ✅         | ✅         | ✅         | 10/10 |
+| 37.5  | ✅     | ✅           | 41 ✅ | 8 ✅  | ✅        | ✅         | ✅         | ✅         | 10/10 |
 
 **BMad Compliance**: 10/10 ⭐⭐⭐⭐⭐ (Perfect)
 
@@ -303,15 +322,15 @@
 
 ### Content Quality Metrics
 
-| Metric | 37.1 | 37.2 | 37.3 | 37.4 | 37.5 | Total |
-|--------|------|------|------|------|------|-------|
-| **Acceptance Criteria** | 15 | 29 | 21 | 26 | 41 | **132** |
-| **Tasks** | 6 | 8 | 6 | 7 | 8 | **35** |
-| **PO Decisions** | 5 | 4 | 3 | 6 | 6 | **24** |
-| **Effort (hours)** | 1-2 | 3-4 | 2-3 | 2-3 | 1-2 | **9-14** |
-| **TypeScript Examples** | ✅ | ✅ | ✅ | ✅ | ✅ | **5** |
-| **Test Examples** | ✅ | ✅ | ✅ | ✅ | ✅ | **5** |
-| **Epic 35/36 Integration** | ✅ | ✅ | ✅ | ✅ | ✅ | **5** |
+| Metric                     | 37.1 | 37.2 | 37.3 | 37.4 | 37.5 | Total    |
+| -------------------------- | ---- | ---- | ---- | ---- | ---- | -------- |
+| **Acceptance Criteria**    | 15   | 29   | 21   | 26   | 41   | **132**  |
+| **Tasks**                  | 6    | 8    | 6    | 7    | 8    | **35**   |
+| **PO Decisions**           | 5    | 4    | 3    | 6    | 6    | **24**   |
+| **Effort (hours)**         | 1-2  | 3-4  | 2-3  | 2-3  | 1-2  | **9-14** |
+| **TypeScript Examples**    | ✅   | ✅   | ✅   | ✅   | ✅   | **5**    |
+| **Test Examples**          | ✅   | ✅   | ✅   | ✅   | ✅   | **5**    |
+| **Epic 35/36 Integration** | ✅   | ✅   | ✅   | ✅   | ✅   | **5**    |
 
 **Content Quality**: 9.5/10 ⭐⭐⭐⭐
 
@@ -320,18 +339,21 @@
 ### Anti-Hallucination Verification
 
 **Epic 35 Integration** (Total Sales & Organic Split):
+
 - ✅ Story 37.1: AC 5-6 verify Epic 35 fields
 - ✅ Story 37.3: All 6 Epic 35 formulas documented
 - ✅ Status: Epic 35 COMPLETE (verified in Story 35.7)
 - ✅ References: `docs/stories/epic-35/`
 
 **Epic 36 Integration** (Product Card Linking):
+
 - ✅ Story 37.1: AC 3-4 verify imtId field
 - ✅ Story 37.2: Component uses Epic 36 data structure
 - ✅ Status: Epic 36 COMPLETE (Request #87 verified)
 - ✅ References: `docs/epics/epic-36-product-card-linking.md`
 
 **Request #88 Backend Contract**:
+
 - ✅ Story 37.1: Dev Notes include full DTO structure
 - ✅ All stories reference `/v1/analytics/advertising?group_by=imtId`
 - ✅ File: `frontend/docs/request-backend/88-epic-37-individual-product-metrics.md`
@@ -342,16 +364,16 @@
 
 ### Implementation Readiness
 
-| Category | Status | Score | Evidence |
-|----------|--------|-------|----------|
-| **Dependencies** | ✅ Complete | 10/10 | Epic 35 & 36 COMPLETE |
-| **API Contract** | ✅ Defined | 10/10 | Request #88 documented |
-| **Design Specs** | ✅ Complete | 10/10 | Colors, typography, spacing defined |
-| **Acceptance Criteria** | ✅ Testable | 9/10 | 132 ACs, all measurable |
-| **Task Breakdown** | ✅ Actionable | 9/10 | 35 tasks with AC references |
-| **Code Examples** | ✅ Provided | 9/10 | TypeScript interfaces, validation scripts |
-| **Test Strategy** | ✅ Comprehensive | 10/10 | Unit/E2E/accessibility/performance/UAT |
-| **Edge Cases** | ✅ Documented | 9/10 | 24 PO decisions cover all scenarios |
+| Category                | Status           | Score | Evidence                                  |
+| ----------------------- | ---------------- | ----- | ----------------------------------------- |
+| **Dependencies**        | ✅ Complete      | 10/10 | Epic 35 & 36 COMPLETE                     |
+| **API Contract**        | ✅ Defined       | 10/10 | Request #88 documented                    |
+| **Design Specs**        | ✅ Complete      | 10/10 | Colors, typography, spacing defined       |
+| **Acceptance Criteria** | ✅ Testable      | 9/10  | 132 ACs, all measurable                   |
+| **Task Breakdown**      | ✅ Actionable    | 9/10  | 35 tasks with AC references               |
+| **Code Examples**       | ✅ Provided      | 9/10  | TypeScript interfaces, validation scripts |
+| **Test Strategy**       | ✅ Comprehensive | 10/10 | Unit/E2E/accessibility/performance/UAT    |
+| **Edge Cases**          | ✅ Documented    | 9/10  | 24 PO decisions cover all scenarios       |
 
 **Implementation Readiness**: 9.3/10 ⭐⭐⭐⭐
 
@@ -362,38 +384,20 @@
 ### All 24 PO Decisions Documented
 
 **Story 37.1** (5 decisions):
+
 1. ✅ Group size: Min 2, Max 50, NO pagination
 2. ✅ Sort within group: Main first, children by totalSales DESC
 3. ✅ Standalone products (imtId=null): Include as single rows
 4. ✅ Edge cases: Zero spend "—", negative revenue red, missing "—"
 5. ✅ Data tolerance: ±1₽ for aggregate calculations
 
-**Story 37.2** (4 decisions):
-6. ✅ Component API: Draft interface approved
-7. ✅ Single-product groups: NO rowspan cell
-8. ✅ Missing main product: Use highest totalSales fallback
-9. ✅ Large groups >20: Show all, monitor performance
+**Story 37.2** (4 decisions): 6. ✅ Component API: Draft interface approved 7. ✅ Single-product groups: NO rowspan cell 8. ✅ Missing main product: Use highest totalSales fallback 9. ✅ Large groups >20: Show all, monitor performance
 
-**Story 37.3** (3 decisions):
-10. ✅ Rounding: Math.round(), NO abbreviations
-11. ✅ Tooltips: Aggregate "Сумма всех товаров", ROAS "Доход с рекламы / Расход"
-12. ✅ Color-coding: Deferred to Story 37.6 (post-MVP)
+**Story 37.3** (3 decisions): 10. ✅ Rounding: Math.round(), NO abbreviations 11. ✅ Tooltips: Aggregate "Сумма всех товаров", ROAS "Доход с рекламы / Расход" 12. ✅ Color-coding: Deferred to Story 37.6 (post-MVP)
 
-**Story 37.4** (6 decisions):
-13. ✅ Hover states: Aggregate NO, Detail YES (bg-gray-50)
-14. ✅ Row states: No active/selected, NO zebra striping
-15. ✅ Mobile UX: Horizontal scroll + sticky columns
-16. ✅ Dark mode: NOT supported in MVP
-17. ✅ Responsive: Sticky Склейка + Артикул on scroll
-18. ✅ Typography: 14px normal, 15.2px aggregate, 16px headers
+**Story 37.4** (6 decisions): 13. ✅ Hover states: Aggregate NO, Detail YES (bg-gray-50) 14. ✅ Row states: No active/selected, NO zebra striping 15. ✅ Mobile UX: Horizontal scroll + sticky columns 16. ✅ Dark mode: NOT supported in MVP 17. ✅ Responsive: Sticky Склейка + Артикул on scroll 18. ✅ Typography: 14px normal, 15.2px aggregate, 16px headers
 
-**Story 37.5** (6 decisions):
-19. ✅ User guide: Template approved (Russian)
-20. ✅ Performance test: REQUIRED <200ms for 50 groups
-21. ✅ UAT: REQUIRED 3 users, ≥90% satisfaction
-22. ✅ Analytics: REQUIRED Mixpanel events
-23. ✅ Storybook: NOT required for MVP
-24. ✅ Visual regression: NOT required (manual QA sufficient)
+**Story 37.5** (6 decisions): 19. ✅ User guide: Template approved (Russian) 20. ✅ Performance test: REQUIRED <200ms for 50 groups 21. ✅ UAT: REQUIRED 3 users, ≥90% satisfaction 22. ✅ Analytics: REQUIRED Mixpanel events 23. ✅ Storybook: NOT required for MVP 24. ✅ Visual regression: NOT required (manual QA sufficient)
 
 **Traceability Score**: 10/10 ⭐⭐⭐⭐⭐ (All decisions referenced and justified)
 
@@ -432,6 +436,7 @@ frontend/docs/
 ## ✅ FINAL VALIDATION CHECKLIST
 
 ### Epic Level
+
 - [x] Epic document complete with visual mockup
 - [x] Architecture decisions finalized (2 epic-level decisions)
 - [x] Success metrics defined (adoption, satisfaction, performance, quality)
@@ -440,6 +445,7 @@ frontend/docs/
 - [x] Target completion date realistic (2026-01-03, 5 business days)
 
 ### Story Level (All 5 Stories)
+
 - [x] All stories follow BMad story-tmpl.yaml v2.0
 - [x] Status field present in all stories
 - [x] Story format ("As a... I want... so that...") in all stories
@@ -452,6 +458,7 @@ frontend/docs/
 - [x] QA Results placeholder with checklist present
 
 ### Quality Assurance
+
 - [x] PO decisions documented (24 total)
 - [x] Epic 35/36 integration verified (all references valid)
 - [x] Request #88 backend contract referenced
@@ -464,6 +471,7 @@ frontend/docs/
 - [x] Analytics tracking required (Mixpanel events)
 
 ### Documentation
+
 - [x] CHANGELOG-EPIC-37-FE.md created
 - [x] PO-VALIDATION-REPORT-EPIC-37.md exists
 - [x] CONVERSION-COMPLETE.md documents BMad conversion
@@ -476,13 +484,13 @@ frontend/docs/
 
 ### Score Breakdown
 
-| Category | Weight | Score | Weighted |
-|----------|--------|-------|----------|
-| **BMad Template Compliance** | 25% | 10.0/10 | 2.50 |
-| **Content Quality** | 25% | 9.5/10 | 2.38 |
-| **Anti-Hallucination** | 20% | 10.0/10 | 2.00 |
-| **Implementation Readiness** | 20% | 9.3/10 | 1.86 |
-| **Epic Document Quality** | 10% | 9.8/10 | 0.98 |
+| Category                     | Weight | Score   | Weighted |
+| ---------------------------- | ------ | ------- | -------- |
+| **BMad Template Compliance** | 25%    | 10.0/10 | 2.50     |
+| **Content Quality**          | 25%    | 9.5/10  | 2.38     |
+| **Anti-Hallucination**       | 20%    | 10.0/10 | 2.00     |
+| **Implementation Readiness** | 20%    | 9.3/10  | 1.86     |
+| **Epic Document Quality**    | 10%    | 9.8/10  | 0.98     |
 
 **Overall Quality Score**: **9.6/10** ⭐⭐⭐⭐⭐
 
@@ -495,6 +503,7 @@ frontend/docs/
 **Validation Status**: **ALL STORIES PASS**
 
 **Next Steps**:
+
 1. ✅ **Assign Developer**: Assign frontend developer to Epic 37
 2. ✅ **Kickoff Meeting**: Review stories with developer (30 min)
 3. ✅ **Phase 0 Complete**: Mock data infrastructure ready (epic-37-phase-0-completion-report.md)
@@ -502,6 +511,7 @@ frontend/docs/
 5. ✅ **Start Development**: Begin Story 37.1 (Backend API Validation)
 
 **Development Sequence**:
+
 - **Week 1**: Story 37.1 (1-2h) → Story 37.2 (3-4h)
 - **Week 1-2**: Story 37.3 (2-3h) → Story 37.4 (2-3h)
 - **Week 2**: Story 37.5 (1-2h) → UAT
@@ -518,6 +528,7 @@ frontend/docs/
 **Improvement**: +0.4 points (+4.3%)
 
 **What Improved**:
+
 - ✅ Outdated files removed (CRITICAL-PO-DECISION-REQUIRED.md, api-validation-report-37.1.md)
 - ✅ File structure cleaned and validated
 - ✅ All stories verified individually
@@ -525,6 +536,7 @@ frontend/docs/
 - ✅ Traceability of all 24 PO decisions confirmed
 
 **Consistent Strengths**:
+
 - ✅ BMad template compliance remains perfect (10/10)
 - ✅ Content quality remains excellent (9.5/10)
 - ✅ Anti-hallucination verification remains perfect (10/10)

@@ -6,6 +6,7 @@
 **Effort**: 5 SP
 **Created**: 2026-01-26
 **Depends On**:
+
 - Story 44.12 ✅ (Warehouse Selection)
 - Story 44.40 📋 (Two Tariff Systems Integration)
 - Story 44.41 📋 (Storage Tariff Fix)
@@ -16,11 +17,11 @@
 
 **CRITICAL GAP**: The Price Calculator does not support boxTypeId selection, yet Wildberries has **THREE distinct delivery types** with different tariff structures:
 
-| boxTypeId | Name | Storage Formula Difference |
-|-----------|------|---------------------------|
-| **2** | Boxes (Коробки) | Standard: `(baseLiterRub + (V-1) * additionalLiterRub) * coef` |
-| **5** | Pallets (Монопаллеты) | Fixed rate: `baseLiterRub * coef` (additionalLiterRub = 0) |
-| **6** | Supersafe (Суперсейф) | Standard formula |
+| boxTypeId | Name                  | Storage Formula Difference                                     |
+| --------- | --------------------- | -------------------------------------------------------------- |
+| **2**     | Boxes (Коробки)       | Standard: `(baseLiterRub + (V-1) * additionalLiterRub) * coef` |
+| **5**     | Pallets (Монопаллеты) | Fixed rate: `baseLiterRub * coef` (additionalLiterRub = 0)     |
+| **6**     | Supersafe (Суперсейф) | Standard formula                                               |
 
 ### Evidence from Backend Documentation
 
@@ -47,6 +48,7 @@
 **So that** storage and logistics costs are calculated with the correct tariffs for my delivery method.
 
 **Non-goals**:
+
 - Box type recommendations based on product size
 - Multi-box type comparison view
 - Historical box type tariff trends
@@ -142,6 +144,7 @@
 **Endpoint**: `GET /v1/tariffs/acceptance/coefficients/all`
 
 **Response includes boxTypeId**:
+
 ```json
 {
   "coefficients": [
@@ -385,15 +388,15 @@ export function calculateDailyStorageCost(
 
 ## Invariants & Edge Cases
 
-| Scenario | Expected Behavior |
-|----------|-------------------|
-| No warehouse selected | Box type selector disabled, shows "Сначала выберите склад" |
-| Warehouse supports only Boxes | Pallets/Supersafe disabled in dropdown |
-| Warehouse changed | Reset boxType to default (Boxes) if current not available |
-| Pallets selected | Storage formula uses fixed rate (no additionalLiterRub) |
-| Volume changed with Pallets | Logistics updates, storage stays same |
-| Date changed | Refetch tariffs for selected boxType + date |
-| API returns no box types | Show error, allow manual tariff entry |
+| Scenario                      | Expected Behavior                                          |
+| ----------------------------- | ---------------------------------------------------------- |
+| No warehouse selected         | Box type selector disabled, shows "Сначала выберите склад" |
+| Warehouse supports only Boxes | Pallets/Supersafe disabled in dropdown                     |
+| Warehouse changed             | Reset boxType to default (Boxes) if current not available  |
+| Pallets selected              | Storage formula uses fixed rate (no additionalLiterRub)    |
+| Volume changed with Pallets   | Logistics updates, storage stays same                      |
+| Date changed                  | Refetch tariffs for selected boxType + date                |
+| API returns no box types      | Show error, allow manual tariff entry                      |
 
 ---
 
@@ -401,31 +404,31 @@ export function calculateDailyStorageCost(
 
 ### Unit Tests
 
-| Test | Input | Expected |
-|------|-------|----------|
-| Storage - Boxes, 1L | vol=1, boxType=2, base=10, add=5, coef=1.5 | 15.00 |
-| Storage - Boxes, 3L | vol=3, boxType=2, base=10, add=5, coef=1.5 | 30.00 |
-| Storage - Pallets, 1L | vol=1, boxType=5, base=41.25, add=0, coef=1.65 | 68.06 |
-| Storage - Pallets, 3L | vol=3, boxType=5, base=41.25, add=0, coef=1.65 | 68.06 (same!) |
-| Storage - Pallets, 10L | vol=10, boxType=5, base=41.25, add=0, coef=1.65 | 68.06 (same!) |
-| Available types filter | API returns [2, 5] | Only Boxes & Pallets enabled |
+| Test                   | Input                                           | Expected                     |
+| ---------------------- | ----------------------------------------------- | ---------------------------- |
+| Storage - Boxes, 1L    | vol=1, boxType=2, base=10, add=5, coef=1.5      | 15.00                        |
+| Storage - Boxes, 3L    | vol=3, boxType=2, base=10, add=5, coef=1.5      | 30.00                        |
+| Storage - Pallets, 1L  | vol=1, boxType=5, base=41.25, add=0, coef=1.65  | 68.06                        |
+| Storage - Pallets, 3L  | vol=3, boxType=5, base=41.25, add=0, coef=1.65  | 68.06 (same!)                |
+| Storage - Pallets, 10L | vol=10, boxType=5, base=41.25, add=0, coef=1.65 | 68.06 (same!)                |
+| Available types filter | API returns [2, 5]                              | Only Boxes & Pallets enabled |
 
 ### Integration Tests
 
-| Test | Scenario | Expected |
-|------|----------|----------|
-| Select Pallets | Warehouse + Pallets boxType | Storage shows fixed rate |
-| Volume change with Pallets | Change volume 1L → 5L | Storage unchanged, logistics updates |
-| Warehouse change | Change warehouse with different availability | BoxType resets if unavailable |
-| Date change | Change date | Refetches tariffs for boxType |
+| Test                       | Scenario                                     | Expected                             |
+| -------------------------- | -------------------------------------------- | ------------------------------------ |
+| Select Pallets             | Warehouse + Pallets boxType                  | Storage shows fixed rate             |
+| Volume change with Pallets | Change volume 1L → 5L                        | Storage unchanged, logistics updates |
+| Warehouse change           | Change warehouse with different availability | BoxType resets if unavailable        |
+| Date change                | Change date                                  | Refetches tariffs for boxType        |
 
 ### E2E Tests
 
-| Test | Flow | Verification |
-|------|------|--------------|
-| Full flow - Boxes | Select warehouse, Boxes, calculate | Standard storage formula |
-| Full flow - Pallets | Select warehouse, Pallets, calculate | Fixed storage formula |
-| Unavailable type | Select warehouse without Supersafe | Supersafe disabled |
+| Test                | Flow                                 | Verification             |
+| ------------------- | ------------------------------------ | ------------------------ |
+| Full flow - Boxes   | Select warehouse, Boxes, calculate   | Standard storage formula |
+| Full flow - Pallets | Select warehouse, Pallets, calculate | Fixed storage formula    |
+| Unavailable type    | Select warehouse without Supersafe   | Supersafe disabled       |
 
 ---
 

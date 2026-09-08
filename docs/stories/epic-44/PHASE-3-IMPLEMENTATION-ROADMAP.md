@@ -53,10 +53,12 @@ Phase 3 расширяет Price Calculator интеграцией с реаль
 **Owner**: Backend Team
 **Status**: ⏳ Pending
 **Documents**:
+
 - Request: `docs/request-backend/98-warehouses-tariffs-coefficients-api.md`
 - Response Draft: `docs/request-backend/98-warehouses-tariffs-BACKEND-RESPONSE-DRAFT.md`
 
 **Action Items**:
+
 - [ ] Review proposed API contract
 - [ ] Answer open questions (see Section 8 in Response Draft)
 - [ ] Confirm endpoint structure: `GET /v1/tariffs/warehouses-with-tariffs`
@@ -68,6 +70,7 @@ Phase 3 расширяет Price Calculator интеграцией с реаль
 **File**: `src/tariffs/warehouses-tariffs.service.ts`
 
 **Responsibilities**:
+
 ```typescript
 @Injectable()
 export class WarehousesTariffsService {
@@ -89,11 +92,12 @@ export class WarehousesTariffsService {
 ```
 
 **Critical Transformations**:
-| From SDK | To API | Transform |
-|----------|--------|-----------|
-| `"46"` | `46.0` | `parseFloat()` |
-| `"125"` (coef) | `1.25` | `÷ 100` |
-| `cargoType: 1` | `"MGT"` | mapping |
+
+| From SDK       | To API  | Transform      |
+| -------------- | ------- | -------------- |
+| `"46"`         | `46.0`  | `parseFloat()` |
+| `"125"` (coef) | `1.25`  | `÷ 100`        |
+| `cargoType: 1` | `"MGT"` | mapping        |
 
 ### Task 3: Implement TariffsController
 
@@ -102,6 +106,7 @@ export class WarehousesTariffsService {
 **File**: `src/tariffs/tariffs.controller.ts`
 
 **Endpoint**:
+
 ```typescript
 @Controller('v1/tariffs')
 export class TariffsController {
@@ -121,13 +126,15 @@ export class TariffsController {
 **Estimate**: 2h
 
 **Strategy**:
-| Data | TTL | Key Pattern |
-|------|-----|-------------|
-| Offices | 24h | `tariffs:offices:{cabinetId}` |
-| BoxTariffs | 1h | `tariffs:box:{date}:{cabinetId}` |
-| Aggregated | 1h | `tariffs:warehouses:{date}:{cabinetId}` |
+
+| Data       | TTL | Key Pattern                             |
+| ---------- | --- | --------------------------------------- |
+| Offices    | 24h | `tariffs:offices:{cabinetId}`           |
+| BoxTariffs | 1h  | `tariffs:box:{date}:{cabinetId}`        |
+| Aggregated | 1h  | `tariffs:warehouses:{date}:{cabinetId}` |
 
 **Force Refresh**:
+
 - Query param `?refresh=true` bypasses cache
 - Used for manual refresh in UI
 
@@ -138,6 +145,7 @@ export class TariffsController {
 **File**: `test/tariffs/warehouses-tariffs.e2e-spec.ts`
 
 **Test Scenarios**:
+
 - [ ] Returns all warehouses with tariffs
 - [ ] Handles missing tariffs gracefully
 - [ ] Respects date parameter
@@ -151,6 +159,7 @@ export class TariffsController {
 **Estimate**: 1h
 
 **Deliverables**:
+
 - [ ] Update Swagger/OpenAPI
 - [ ] Update `API-PATHS-REFERENCE.md`
 - [ ] Create example requests in `test-api/*.http`
@@ -204,6 +213,7 @@ export function useWarehousesWithTariffs(date?: string);
 **File**: `src/components/custom/price-calculator/WarehouseSelector.tsx`
 
 **Requirements**:
+
 - [ ] Fetch warehouses on mount
 - [ ] Show loading state
 - [ ] Display warehouse name + federal district
@@ -212,6 +222,7 @@ export function useWarehousesWithTariffs(date?: string);
 - [ ] Keyboard accessible (WCAG 2.1 AA)
 
 **UI Mock**:
+
 ```
 ┌─────────────────────────────────────────┐
 │ Склад отгрузки                      ▼   │
@@ -227,10 +238,12 @@ export function useWarehousesWithTariffs(date?: string);
 
 **Estimate**: 3 Story Points (~3h)
 **Files**:
+
 - `src/components/custom/price-calculator/PriceCalculatorForm.tsx` (update)
 - `src/hooks/useWarehouseAutoFill.ts` (new)
 
 **Requirements**:
+
 - [ ] On warehouse selection, auto-fill:
   - `logistics_coefficient`
   - `storage_coefficient`
@@ -240,6 +253,7 @@ export function useWarehousesWithTariffs(date?: string);
 - [ ] Handle FBO/FBS toggle
 
 **UI Mock**:
+
 ```
 ┌─────────────────────────────────────────┐
 │ Коэффициент логистики                   │
@@ -254,22 +268,26 @@ export function useWarehousesWithTariffs(date?: string);
 
 **Estimate**: 2 Story Points (~2h)
 **Files**:
+
 - `src/components/custom/price-calculator/StorageCostSection.tsx` (new)
 - `src/lib/calculations/storage.ts` (new)
 
 **Requirements**:
+
 - [ ] Input: days in storage
 - [ ] Calculate daily storage cost from tariffs
 - [ ] Show breakdown (base + per-liter + coefficient)
 - [ ] Total storage cost in results
 
 **Formulas**:
+
 ```typescript
 const dailyStorage = (basePerDay + (volume - 1) * literPerDay) * coefficient;
 const totalStorage = dailyStorage * days;
 ```
 
 **UI Mock**:
+
 ```
 ┌─────────────────────────────────────────┐
 │ Хранение                                │
@@ -295,6 +313,7 @@ const totalStorage = dailyStorage * days;
 **Estimate**: 2h
 
 **Test Scenarios**:
+
 - [ ] E2E: Select warehouse → coefficients auto-fill
 - [ ] E2E: Calculate with real tariffs
 - [ ] E2E: Handle warehouse without tariffs
@@ -306,6 +325,7 @@ const totalStorage = dailyStorage * days;
 **Estimate**: 1h
 
 **Deliverables**:
+
 - [ ] Update user guide (`docs/user-guide/price-calculator.md`)
 - [ ] Update story files with completion notes
 - [ ] Update Epic 44 README progress
@@ -353,13 +373,13 @@ const totalStorage = dailyStorage * days;
 
 ## Risk Assessment
 
-| Risk | Probability | Impact | Mitigation |
-|------|-------------|--------|------------|
-| Backend delay | Medium | High | Frontend can mock API for development |
-| SDK type changes | Low | Medium | Types documented in reference doc |
-| Matching failures | Medium | Low | Fallback to manual input |
-| WB API rate limits | Low | Medium | Caching + conservative limits |
-| Coefficient interpretation | Medium | High | Clarify with Backend before impl |
+| Risk                       | Probability | Impact | Mitigation                            |
+| -------------------------- | ----------- | ------ | ------------------------------------- |
+| Backend delay              | Medium      | High   | Frontend can mock API for development |
+| SDK type changes           | Low         | Medium | Types documented in reference doc     |
+| Matching failures          | Medium      | Low    | Fallback to manual input              |
+| WB API rate limits         | Low         | Medium | Caching + conservative limits         |
+| Coefficient interpretation | Medium      | High   | Clarify with Backend before impl      |
 
 ---
 

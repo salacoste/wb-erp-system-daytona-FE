@@ -1,15 +1,16 @@
 # Backend Response: Request #25 - Historical Margin Discovery
 
 ## Статус
+
 ✅ **IMPLEMENTED** — Stories 23.8 and 23.9 deployed and tested
 
 ---
 
 ## Implementation Summary
 
-| Story | Status | Description |
-|-------|--------|-------------|
-| **Story 23.8** | ✅ Complete | `GET /v1/analytics/weekly/product-weeks` endpoint |
+| Story          | Status      | Description                                           |
+| -------------- | ----------- | ----------------------------------------------------- |
+| **Story 23.8** | ✅ Complete | `GET /v1/analytics/weekly/product-weeks` endpoint     |
 | **Story 23.9** | ✅ Complete | Historical margin fields in products list (Variant A) |
 
 ---
@@ -43,12 +44,12 @@
 
 ### Field Semantics
 
-| Field | Type | Description |
-|-------|------|-------------|
-| `last_sales_week` | `string \| null` | ISO week (e.g., "2025-W44"). Null if no sales in 12 weeks. |
+| Field                   | Type             | Description                                                  |
+| ----------------------- | ---------------- | ------------------------------------------------------------ |
+| `last_sales_week`       | `string \| null` | ISO week (e.g., "2025-W44"). Null if no sales in 12 weeks.   |
 | `last_sales_margin_pct` | `number \| null` | Margin % from that week. Null if no margin data or no sales. |
-| `last_sales_qty` | `number \| null` | Units sold in that week. Null if no sales. |
-| `weeks_since_last_sale` | `number \| null` | Difference between current week and last sales week. |
+| `last_sales_qty`        | `number \| null` | Units sold in that week. Null if no sales.                   |
+| `weeks_since_last_sale` | `number \| null` | Difference between current week and last sales week.         |
 
 ### Conditions
 
@@ -113,6 +114,7 @@ X-Cabinet-Id: {cabinet_id}
 ### Use Case
 
 Для страницы детальной истории продаж товара:
+
 - Click "[История продаж →]" в списке товаров
 - Показывает chart/table со всеми неделями продаж
 - Полная статистика: qty, revenue, profit, margin по неделям
@@ -258,13 +260,13 @@ curl -s "http://localhost:3000/v1/analytics/weekly/product-weeks?nm_id=173589742
 
 ## Timeline Update
 
-| Этап | Срок | Статус |
-|------|------|--------|
-| Backend review | 2025-01-27 | ✅ Done |
-| Backend implementation | 2025-01-27 | ✅ Done |
-| Unit tests | 2025-01-27 | ✅ Done (19 tests) |
-| Frontend integration | - | 🟡 Ready for you |
-| Testing | - | ⏳ |
+| Этап                   | Срок       | Статус             |
+| ---------------------- | ---------- | ------------------ |
+| Backend review         | 2025-01-27 | ✅ Done            |
+| Backend implementation | 2025-01-27 | ✅ Done            |
+| Unit tests             | 2025-01-27 | ✅ Done (19 tests) |
+| Frontend integration   | -          | 🟡 Ready for you   |
+| Testing                | -          | ⏳                 |
 
 ---
 
@@ -280,4 +282,5 @@ curl -s "http://localhost:3000/v1/analytics/weekly/product-weeks?nm_id=173589742
 > **Note to Frontend Team**: Both endpoints are deployed and ready for integration. The Swagger documentation includes all new fields with examples. Let us know if you need any adjustments!
 
 ## Backend Team Response
+
 **Status**: RESOLVED — this document IS the backend response. See the parent request file for the original frontend ask.

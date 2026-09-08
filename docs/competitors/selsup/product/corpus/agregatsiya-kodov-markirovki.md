@@ -11,7 +11,7 @@ chars: 9160
 
 В этой статье:
 
-- 
+-
 - <a href="#zadanie-nabory-i-komplekty-v-razdele-markirovka" rel="nofollow">Задание «Наборы и комплекты» в разделе «Маркировка»</a>
 - <a href="#agregatsiya-komplekta-posle-polucheniya-markirovki-v-zakaze" rel="nofollow">Агрегация комплекта после получения маркировки в заказе</a>
 - <a href="#zadanie-agregatsiya-v-razdele-markirovka" rel="nofollow">Задание «Агрегация» в разделе «Маркировка»</a>

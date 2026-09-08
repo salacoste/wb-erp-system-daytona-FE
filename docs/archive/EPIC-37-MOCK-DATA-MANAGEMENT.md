@@ -24,6 +24,7 @@ Epic 37 frontend разрабатывается **параллельно с back
 **Purpose**: Основной источник mock данных для разработки и тестирования
 
 **Contents**:
+
 - `mockMergedGroup1` - Нормальная группа (6 products, imtId=328632)
 - `mockMergedGroup2` - Минимальная группа (2 products, imtId=456789)
 - `mockStandaloneProduct` - Одиночный товар (imtId=null)
@@ -33,6 +34,7 @@ Epic 37 frontend разрабатывается **параллельно с back
 **Size**: ~645 lines
 
 **Usage Locations**:
+
 - MSW handlers (development/testing)
 - Component tests
 - Storybook stories (if added)
@@ -48,6 +50,7 @@ Epic 37 frontend разрабатывается **параллельно с back
 **Purpose**: Переключение между mock данными и real API
 
 **Mock-Related Code**:
+
 ```typescript
 export const epic37MergedGroups: Epic37FeatureConfig = {
   enabled: true,
@@ -57,6 +60,7 @@ export const epic37MergedGroups: Epic37FeatureConfig = {
 ```
 
 **Environment Variables**:
+
 ```bash
 # Development (NOW)
 NEXT_PUBLIC_EPIC_37_USE_REAL_API=false
@@ -66,6 +70,7 @@ NEXT_PUBLIC_EPIC_37_USE_REAL_API=true
 ```
 
 **🔧 UPDATE WHEN**: Backend Story 37.0 complete
+
 - Change default `useRealApi: false` → `useRealApi: true`
 - Remove mock data imports
 - Keep feature flag for emergency fallback
@@ -79,6 +84,7 @@ NEXT_PUBLIC_EPIC_37_USE_REAL_API=true
 **File**: `src/mocks/handlers/advertising.ts` (to be updated)
 
 **Mock-Related Code** (will be added):
+
 ```typescript
 import { mockMergedGroups } from '@/mocks/data/epic-37-merged-groups'
 
@@ -100,6 +106,7 @@ http.get(`${API_BASE_URL}/v1/analytics/advertising`, ({ request }) => {
 ```
 
 **🗑️ DELETE WHEN**: Backend Story 37.0 complete
+
 - Remove import of `epic-37-merged-groups`
 - Remove `if (groupBy === 'imtId')` mock handler block
 - Let request fall through to real API
@@ -111,6 +118,7 @@ http.get(`${API_BASE_URL}/v1/analytics/advertising`, ({ request }) => {
 **File**: `src/components/advertising/MergedGroupTable.tsx` (to be created)
 
 **Mock-Related Code**:
+
 ```typescript
 // ⚠️ DEVELOPMENT ONLY - Remove after backend integration
 import { mockMergedGroups } from '@/mocks/data/epic-37-merged-groups'
@@ -127,6 +135,7 @@ export function MergedGroupTable({ groups }: MergedGroupTableProps) {
 ```
 
 **🗑️ DELETE WHEN**: Backend integration validated
+
 - Remove `mockMergedGroups` import
 - Remove conditional `displayGroups` logic
 - Use `groups` prop directly
@@ -138,6 +147,7 @@ export function MergedGroupTable({ groups }: MergedGroupTableProps) {
 **File**: `src/app/(dashboard)/analytics/advertising/page.tsx` (to be updated)
 
 **Mock-Related Code**:
+
 ```typescript
 import { mockMergedGroups } from '@/mocks/data/epic-37-merged-groups'
 import { features } from '@/config/features'
@@ -159,6 +169,7 @@ async function fetchAdvertisingData(params: AdvertisingAnalyticsParams) {
 ```
 
 **🗑️ DELETE WHEN**: Backend Story 37.0 complete
+
 - Remove `mockMergedGroups` import
 - Remove conditional mock data logic
 - Use only real API calls
@@ -172,6 +183,7 @@ async function fetchAdvertisingData(params: AdvertisingAnalyticsParams) {
 **Trigger**: Backend team notifies "Story 37.0 COMPLETE"
 
 **Actions**:
+
 1. ✅ Backend confirms Request #88 implemented
 2. ✅ Backend provides test endpoint URL
 3. ✅ Backend shares sample response for validation
@@ -183,7 +195,9 @@ async function fetchAdvertisingData(params: AdvertisingAnalyticsParams) {
 **Duration**: 1-2 hours
 
 **Actions**:
+
 1. **Execute API Request**:
+
    ```bash
    curl -X GET "http://localhost:3000/v1/analytics/advertising?group_by=imtId&from=2025-12-01&to=2025-12-21" \
      -H "Authorization: Bearer $TOKEN" \
@@ -215,12 +229,14 @@ async function fetchAdvertisingData(params: AdvertisingAnalyticsParams) {
 **Actions**:
 
 1. **Update Environment Variables**:
+
    ```bash
    # .env.local
    NEXT_PUBLIC_EPIC_37_USE_REAL_API=true
    ```
 
 2. **Test Integration Locally**:
+
    ```bash
    npm run dev
    # Navigate to Advertising Analytics page
@@ -263,6 +279,7 @@ rm src/mocks/data/epic-37-merged-groups.ts
 **File**: `src/mocks/handlers/advertising.ts`
 
 **BEFORE**:
+
 ```typescript
 import { mockMergedGroups } from '@/mocks/data/epic-37-merged-groups'
 
@@ -270,6 +287,7 @@ import { mockMergedGroups } from '@/mocks/data/epic-37-merged-groups'
 ```
 
 **AFTER**:
+
 ```typescript
 // REMOVED: import { mockMergedGroups } from '@/mocks/data/epic-37-merged-groups'
 
@@ -285,6 +303,7 @@ import { mockMergedGroups } from '@/mocks/data/epic-37-merged-groups'
 **File**: `src/app/(dashboard)/analytics/advertising/page.tsx`
 
 **BEFORE**:
+
 ```typescript
 import { mockMergedGroups } from '@/mocks/data/epic-37-merged-groups'
 
@@ -294,6 +313,7 @@ if (!features.epic37MergedGroups.useRealApi && params.group_by === 'imtId') {
 ```
 
 **AFTER**:
+
 ```typescript
 // REMOVED: mock data import and conditional logic
 // Always use real API
@@ -310,6 +330,7 @@ return response.json()
 **File**: `src/components/advertising/MergedGroupTable.tsx`
 
 **BEFORE**:
+
 ```typescript
 import { mockMergedGroups } from '@/mocks/data/epic-37-merged-groups'
 
@@ -317,6 +338,7 @@ const displayGroups = features.epic37MergedGroups.useRealApi ? groups : mockMerg
 ```
 
 **AFTER**:
+
 ```typescript
 // REMOVED: mock data import and conditional logic
 // Always use props
@@ -332,6 +354,7 @@ const displayGroups = groups
 **File**: `src/config/features.ts`
 
 **BEFORE**:
+
 ```typescript
 export const epic37MergedGroups: Epic37FeatureConfig = {
   enabled: true,
@@ -341,6 +364,7 @@ export const epic37MergedGroups: Epic37FeatureConfig = {
 ```
 
 **AFTER**:
+
 ```typescript
 export const epic37MergedGroups: Epic37FeatureConfig = {
   enabled: true,
@@ -373,6 +397,7 @@ grep -r "MOCK DATA" src/
 **File**: `src/components/advertising/__tests__/MergedGroupTable.test.tsx`
 
 **BEFORE**:
+
 ```typescript
 import { mockMergedGroups } from '@/mocks/data/epic-37-merged-groups'
 
@@ -382,6 +407,7 @@ it('renders merged groups', () => {
 ```
 
 **AFTER**:
+
 ```typescript
 // Use inline test fixtures instead of mock data file
 const testGroups: AdvertisingGroup[] = [
@@ -411,12 +437,14 @@ it('renders merged groups', () => {
 **Actions**:
 
 1. **Run All Tests**:
+
    ```bash
    npm run test
    npm run test:e2e
    npm run lint
    npm run type-check
    ```
+
    **Verify**: All tests pass ✅
 
 2. **Manual QA Checklist**:
@@ -455,20 +483,24 @@ it('renders merged groups', () => {
 ## 📊 Cleanup Checklist (Summary)
 
 ### Files to DELETE
+
 - [ ] `src/mocks/data/epic-37-merged-groups.ts` (primary mock data file)
 
 ### Code Sections to REMOVE
+
 - [ ] `src/mocks/handlers/advertising.ts` - Mock handler for group_by=imtId
 - [ ] `src/app/(dashboard)/analytics/advertising/page.tsx` - Mock data import and conditional logic
 - [ ] `src/components/advertising/MergedGroupTable.tsx` - Mock data import and conditional logic
 - [ ] Test files using mock data imports (replace with inline fixtures)
 
 ### Settings to UPDATE
+
 - [ ] `src/config/features.ts` - Change default `useRealApi: false` → `true`
 - [ ] `.env.local` - Set `NEXT_PUBLIC_EPIC_37_USE_REAL_API=true`
 - [ ] `.env.production` - Set `NEXT_PUBLIC_EPIC_37_USE_REAL_API=true`
 
 ### Verification Steps
+
 - [ ] Search codebase: `grep -r "epic-37-merged-groups" src/` (expect: no results)
 - [ ] Search codebase: `grep -r "mockMergedGroup" src/` (expect: no results)
 - [ ] All tests pass with real API
@@ -494,6 +526,7 @@ it('renders merged groups', () => {
 ### ⚠️ Coordinate with Backend Team
 
 **Before cleanup**: Confirm with backend team:
+
 - Story 37.0 is **COMPLETE** and **DEPLOYED** to staging
 - API endpoint is accessible and stable
 - Response structure matches Request #88 specification
@@ -502,14 +535,14 @@ it('renders merged groups', () => {
 
 ## 📅 Timeline
 
-| Phase | Duration | Trigger | Output |
-|-------|----------|---------|--------|
-| **1. Backend Notification** | 0h | Backend team notification | Confirmation email/Slack |
-| **2. API Validation (Story 37.1)** | 1-2h | Phase 1 complete | Validation report (PASS/FAIL) |
-| **3. Enable Real API** | 0.5h | Story 37.1 PASS | `.env.local` updated |
-| **4. Code Cleanup** | 0.5h | Phase 3 complete | Mock files deleted |
-| **5. Verification** | 0.25h | Phase 4 complete | QA checklist ✅ |
-| **Total** | ~2.5h | Backend ready → Production | Epic 37 COMPLETE |
+| Phase                              | Duration | Trigger                    | Output                        |
+| ---------------------------------- | -------- | -------------------------- | ----------------------------- |
+| **1. Backend Notification**        | 0h       | Backend team notification  | Confirmation email/Slack      |
+| **2. API Validation (Story 37.1)** | 1-2h     | Phase 1 complete           | Validation report (PASS/FAIL) |
+| **3. Enable Real API**             | 0.5h     | Story 37.1 PASS            | `.env.local` updated          |
+| **4. Code Cleanup**                | 0.5h     | Phase 3 complete           | Mock files deleted            |
+| **5. Verification**                | 0.25h    | Phase 4 complete           | QA checklist ✅               |
+| **Total**                          | ~2.5h    | Backend ready → Production | Epic 37 COMPLETE              |
 
 ---
 

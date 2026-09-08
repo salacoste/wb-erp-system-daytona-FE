@@ -17,29 +17,29 @@ This document provides a comprehensive UX analysis of the current dashboard (`/d
 
 ### Critical Issues (P0)
 
-| # | Issue | Location | Impact |
-|---|-------|----------|--------|
-| 1 | **No period context** - Users cannot tell what time period the metrics represent | MetricCard components | Users confused about data relevance |
-| 2 | **Data duplication** - Same metrics shown twice (MetricCards + InitialDataSummary) | page.tsx lines 132-145 + InitialDataSummary | Wasted screen space, confusing |
-| 3 | **No period switching** - Cannot view previous week/month data | Entire dashboard | Limited historical analysis |
-| 4 | **Inconsistent period selectors** - AdvertisingWidget has its own selector (7d/14d/30d) | AdvertisingDashboardWidget | Fragmented UX, cognitive load |
+| #   | Issue                                                                                   | Location                                    | Impact                              |
+| --- | --------------------------------------------------------------------------------------- | ------------------------------------------- | ----------------------------------- |
+| 1   | **No period context** - Users cannot tell what time period the metrics represent        | MetricCard components                       | Users confused about data relevance |
+| 2   | **Data duplication** - Same metrics shown twice (MetricCards + InitialDataSummary)      | page.tsx lines 132-145 + InitialDataSummary | Wasted screen space, confusing      |
+| 3   | **No period switching** - Cannot view previous week/month data                          | Entire dashboard                            | Limited historical analysis         |
+| 4   | **Inconsistent period selectors** - AdvertisingWidget has its own selector (7d/14d/30d) | AdvertisingDashboardWidget                  | Fragmented UX, cognitive load       |
 
 ### Important Issues (P1)
 
-| # | Issue | Location | Impact |
-|---|-------|----------|--------|
-| 5 | **No comparison indicators** - No change vs previous period | MetricCard | Missing context for performance |
-| 6 | **Poor visual hierarchy** - All metrics same size/weight | MetricCards grid | Hard to identify key metrics |
-| 7 | **No refresh indicator** - No way to know data freshness | Dashboard header | Uncertain data currency |
-| 8 | **Empty trends state** - Shows alert when no trend data | TrendGraph | Cluttered empty state |
+| #   | Issue                                                       | Location         | Impact                          |
+| --- | ----------------------------------------------------------- | ---------------- | ------------------------------- |
+| 5   | **No comparison indicators** - No change vs previous period | MetricCard       | Missing context for performance |
+| 6   | **Poor visual hierarchy** - All metrics same size/weight    | MetricCards grid | Hard to identify key metrics    |
+| 7   | **No refresh indicator** - No way to know data freshness    | Dashboard header | Uncertain data currency         |
+| 8   | **Empty trends state** - Shows alert when no trend data     | TrendGraph       | Cluttered empty state           |
 
 ### Nice-to-Have Issues (P2)
 
-| # | Issue | Location | Impact |
-|---|-------|----------|--------|
-| 9 | **No tooltips** - Metric titles not explained | MetricCard | New users confused |
-| 10 | **No data last updated time** - When was data refreshed? | Dashboard | Trust issues |
-| 11 | **CTA always visible** - "Следующий шаг" shown even for mature users | InitialDataSummary | Noise for experienced users |
+| #   | Issue                                                                | Location           | Impact                      |
+| --- | -------------------------------------------------------------------- | ------------------ | --------------------------- |
+| 9   | **No tooltips** - Metric titles not explained                        | MetricCard         | New users confused          |
+| 10  | **No data last updated time** - When was data refreshed?             | Dashboard          | Trust issues                |
+| 11  | **CTA always visible** - "Следующий шаг" shown even for mature users | InitialDataSummary | Noise for experienced users |
 
 ---
 
@@ -47,30 +47,30 @@ This document provides a comprehensive UX analysis of the current dashboard (`/d
 
 ### P0 - Critical (Must Have)
 
-| ID | Improvement | Effort | Business Value |
-|----|-------------|--------|----------------|
-| IMP-1 | Add unified `DashboardPeriodSelector` component | 3 SP | Enables period switching |
-| IMP-2 | Add period context label to dashboard header | 1 SP | User orientation |
-| IMP-3 | Remove `InitialDataSummary` data duplication | 2 SP | Cleaner layout |
-| IMP-4 | Pass selected period to all dashboard components | 3 SP | Consistent data |
-| IMP-5 | Sync AdvertisingWidget with global period | 2 SP | Unified experience |
+| ID    | Improvement                                      | Effort | Business Value           |
+| ----- | ------------------------------------------------ | ------ | ------------------------ |
+| IMP-1 | Add unified `DashboardPeriodSelector` component  | 3 SP   | Enables period switching |
+| IMP-2 | Add period context label to dashboard header     | 1 SP   | User orientation         |
+| IMP-3 | Remove `InitialDataSummary` data duplication     | 2 SP   | Cleaner layout           |
+| IMP-4 | Pass selected period to all dashboard components | 3 SP   | Consistent data          |
+| IMP-5 | Sync AdvertisingWidget with global period        | 2 SP   | Unified experience       |
 
 ### P1 - Important
 
-| ID | Improvement | Effort | Business Value |
-|----|-------------|--------|----------------|
-| IMP-6 | Add comparison indicators (vs previous period) | 3 SP | Performance context |
-| IMP-7 | Redesign MetricCard with trend arrow | 2 SP | Better visual feedback |
-| IMP-8 | Add last refresh timestamp + manual refresh button | 1 SP | Data trust |
-| IMP-9 | Improve empty states with illustrations | 2 SP | Better onboarding |
+| ID    | Improvement                                        | Effort | Business Value         |
+| ----- | -------------------------------------------------- | ------ | ---------------------- |
+| IMP-6 | Add comparison indicators (vs previous period)     | 3 SP   | Performance context    |
+| IMP-7 | Redesign MetricCard with trend arrow               | 2 SP   | Better visual feedback |
+| IMP-8 | Add last refresh timestamp + manual refresh button | 1 SP   | Data trust             |
+| IMP-9 | Improve empty states with illustrations            | 2 SP   | Better onboarding      |
 
 ### P2 - Nice to Have
 
-| ID | Improvement | Effort | Business Value |
-|----|-------------|--------|----------------|
-| IMP-10 | Add metric tooltips with formula explanations | 1 SP | User education |
-| IMP-11 | Conditional CTA based on COGS coverage | 1 SP | Reduced noise |
-| IMP-12 | Add skeleton loading for period switch | 1 SP | Perceived performance |
+| ID     | Improvement                                   | Effort | Business Value        |
+| ------ | --------------------------------------------- | ------ | --------------------- |
+| IMP-10 | Add metric tooltips with formula explanations | 1 SP   | User education        |
+| IMP-11 | Conditional CTA based on COGS coverage        | 1 SP   | Reduced noise         |
+| IMP-12 | Add skeleton loading for period switch        | 1 SP   | Perceived performance |
 
 ---
 
@@ -280,6 +280,7 @@ export interface PeriodContextLabelProps {
 Create React context and hooks for managing dashboard period selection state.
 
 **Acceptance Criteria:**
+
 - [ ] Create `DashboardPeriodContext` with week/month state
 - [ ] Default to current week on load
 - [ ] Persist selected period in URL params (`?week=2026-W05`)
@@ -287,6 +288,7 @@ Create React context and hooks for managing dashboard period selection state.
 - [ ] Handle month-to-weeks conversion
 
 **Technical Notes:**
+
 - Use existing `useAvailableWeeks` hook
 - Store period type preference in localStorage
 - URL sync for shareable links
@@ -301,6 +303,7 @@ Create React context and hooks for managing dashboard period selection state.
 Build the `DashboardPeriodSelector` component with week/month toggle.
 
 **Acceptance Criteria:**
+
 - [ ] Period type toggle (Неделя/Месяц tabs)
 - [ ] Week dropdown using available weeks
 - [ ] Month dropdown (derived from weeks)
@@ -309,6 +312,7 @@ Build the `DashboardPeriodSelector` component with week/month toggle.
 - [ ] Responsive design (stacked on mobile)
 
 **Design Reference:**
+
 - Use existing `WeekSelector` pattern
 - shadcn/ui Tabs for period type toggle
 - Gray refresh icon, timestamp in muted text
@@ -323,6 +327,7 @@ Build the `DashboardPeriodSelector` component with week/month toggle.
 Enhance `MetricCard` to show change vs previous period.
 
 **Acceptance Criteria:**
+
 - [ ] Accept `previousValue` prop
 - [ ] Calculate and display percentage change
 - [ ] Green arrow up for positive change
@@ -332,6 +337,7 @@ Enhance `MetricCard` to show change vs previous period.
 - [ ] Add tooltip explaining metric
 
 **Design Specs:**
+
 - Arrow: 16x16px, positioned after value
 - Change badge: `text-xs`, green/red background
 - Tooltip: shadcn/ui Tooltip component
@@ -346,6 +352,7 @@ Enhance `MetricCard` to show change vs previous period.
 Pass selected period to all dashboard data-fetching components.
 
 **Acceptance Criteria:**
+
 - [ ] `useDashboardMetrics` accepts week parameter
 - [ ] `ExpenseChart` uses selected week
 - [ ] `TrendGraph` highlights selected week
@@ -353,6 +360,7 @@ Pass selected period to all dashboard data-fetching components.
 - [ ] Loading states during period switch
 
 **Technical Notes:**
+
 - Modify existing hooks to accept optional week param
 - Use query key with week for proper caching
 
@@ -366,6 +374,7 @@ Pass selected period to all dashboard data-fetching components.
 Refactor dashboard to eliminate duplicate metric display.
 
 **Acceptance Criteria:**
+
 - [ ] Remove financial metrics from `InitialDataSummary`
 - [ ] Keep product count in summary (move to main grid)
 - [ ] Convert CTA to conditional recommendation card
@@ -373,6 +382,7 @@ Refactor dashboard to eliminate duplicate metric display.
 - [ ] Keep success notification (dismissible)
 
 **Before/After:**
+
 - Before: Metrics shown twice
 - After: Metrics in main grid only, CTA conditional
 
@@ -386,6 +396,7 @@ Refactor dashboard to eliminate duplicate metric display.
 Remove local period selector from AdvertisingWidget, use global.
 
 **Acceptance Criteria:**
+
 - [ ] Remove local period state from widget
 - [ ] Accept period from dashboard context
 - [ ] Map week to date range for API call
@@ -393,6 +404,7 @@ Remove local period selector from AdvertisingWidget, use global.
 - [ ] Fallback gracefully if no period provided
 
 **Breaking Change:**
+
 - Widget loses independent period selector
 - Must be wrapped in DashboardPeriodProvider
 
@@ -406,6 +418,7 @@ Remove local period selector from AdvertisingWidget, use global.
 Show current period and last refresh time in header.
 
 **Acceptance Criteria:**
+
 - [ ] Display format: "Обзор за: Неделя 5, 2026 (27 янв — 02 фев)"
 - [ ] Month format: "Обзор за: Январь 2026"
 - [ ] Last refresh: "Обновлено: 5 мин назад"
@@ -450,11 +463,11 @@ Show current period and last refresh time in header.
 
 ### Backend Endpoints to Verify
 
-| Endpoint | Current | Required Change |
-|----------|---------|-----------------|
-| `/v1/analytics/weekly/finance-summary` | `?week=YYYY-Www` | No change needed |
-| `/v1/analytics/weekly/expenses` | Uses latest week | Add optional `?week=` param |
-| `/v1/analytics/weekly/margin-trends` | `?weeks=N` | Verify selected week highlighting |
+| Endpoint                               | Current          | Required Change                   |
+| -------------------------------------- | ---------------- | --------------------------------- |
+| `/v1/analytics/weekly/finance-summary` | `?week=YYYY-Www` | No change needed                  |
+| `/v1/analytics/weekly/expenses`        | Uses latest week | Add optional `?week=` param       |
+| `/v1/analytics/weekly/margin-trends`   | `?weeks=N`       | Verify selected week highlighting |
 
 ### New Frontend API Functions
 
@@ -475,22 +488,22 @@ export async function getAvailableMonths(): Promise<MonthOption[]>
 
 ## 8. Success Metrics
 
-| Metric | Current | Target | Measurement |
-|--------|---------|--------|-------------|
-| Time to understand period | Unknown | < 2 sec | User testing |
-| Clicks to switch period | N/A | 1 click | Analytics |
-| Screen utilization | ~60% duplicate | 100% unique | Code review |
-| User confusion reports | TBD | -50% | Support tickets |
+| Metric                    | Current        | Target      | Measurement     |
+| ------------------------- | -------------- | ----------- | --------------- |
+| Time to understand period | Unknown        | < 2 sec     | User testing    |
+| Clicks to switch period   | N/A            | 1 click     | Analytics       |
+| Screen utilization        | ~60% duplicate | 100% unique | Code review     |
+| User confusion reports    | TBD            | -50%        | Support tickets |
 
 ---
 
 ## 9. Risks & Mitigations
 
-| Risk | Probability | Impact | Mitigation |
-|------|-------------|--------|------------|
-| Backend API doesn't support week param | Low | High | Verify endpoints early |
-| Performance regression with more API calls | Medium | Medium | Add loading skeletons, cache aggressively |
-| User confusion during transition | Medium | Low | Add "What's new" tooltip on first visit |
+| Risk                                       | Probability | Impact | Mitigation                                |
+| ------------------------------------------ | ----------- | ------ | ----------------------------------------- |
+| Backend API doesn't support week param     | Low         | High   | Verify endpoints early                    |
+| Performance regression with more API calls | Medium      | Medium | Add loading skeletons, cache aggressively |
+| User confusion during transition           | Medium      | Low    | Add "What's new" tooltip on first visit   |
 
 ---
 
@@ -505,6 +518,7 @@ export async function getAvailableMonths(): Promise<MonthOption[]>
 ---
 
 **Document History:**
-| Version | Date | Changes | Author |
-|---------|------|---------|--------|
-| 1.0 | 2026-01-29 | Initial analysis | UX Analysis |
+
+| Version | Date       | Changes          | Author      |
+| ------- | ---------- | ---------------- | ----------- |
+| 1.0     | 2026-01-29 | Initial analysis | UX Analysis |

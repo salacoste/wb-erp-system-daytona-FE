@@ -12,13 +12,13 @@
 
 ## Общая статистика
 
-| Метрика | Значение |
-|---------|----------|
-| **Всего тестов** | 9 208 |
-| **Passing** | 4 734 (51.4%) |
-| **Failing** | 78 (0.8%) |
-| **Skipped** | 597 (6.5%) |
-| **Todo** | 3 799 (41.3%) |
+| Метрика                 | Значение         |
+| ----------------------- | ---------------- |
+| **Всего тестов**        | 9 208            |
+| **Passing**             | 4 734 (51.4%)    |
+| **Failing**             | 78 (0.8%)        |
+| **Skipped**             | 597 (6.5%)       |
+| **Todo**                | 3 799 (41.3%)    |
 | **Процент прохождения** | 98.3% (без todo) |
 
 **Файлы с ошибками:** 8 из 276 (2.9%)
@@ -46,8 +46,11 @@
 Компонент `DayPicker` из библиотеки `react-day-picker` рендерит несколько календарных сеток (текущий месяц + навигационные элементы), и тестовые селекторы не учитывают эту структуру.
 
 #### Сложность: **Medium**
+
 #### Время: **2-3 часа**
+
 #### Приоритет: **P1**
+
 #### Риск: **Средний**
 
 #### Решение
@@ -117,6 +120,7 @@ expect(screen.getByTestId('day-names')).toHaveTextContent(/Пн Вт Ср/)
 **Mock configuration error** - тесты не мокают `ordersQueryKeys` экспорт из `@/lib/api/orders`.
 
 **Error message:**
+
 ```
 No "ordersQueryKeys" export is defined on the "@/lib/api/orders" mock.
 Did you forget to return it from "vi.mock"?
@@ -127,8 +131,11 @@ Did you forget to return it from "vi.mock"?
 Тесты используют `vi.mock()` для мокания API модуля, но не экспортируют `ordersQueryKeys`, которые используются в компоненте `OrderDetailsModal`.
 
 #### Сложность: **Low**
+
 #### Время: **1 час**
+
 #### Приоритет: **P0** (блокирует Epic 40)
+
 #### Риск: **Низкий**
 
 #### Решение
@@ -179,8 +186,11 @@ npm test -- OrderDetailsModal.test.tsx
 Тесты используют те же API моки, что и `OrderDetailsModal`, и имеют ту же проблему.
 
 #### Сложность: **Low**
+
 #### Время: **30 мин**
+
 #### Приоритет: **P0** (блокирует Epic 40)
+
 #### Риск: **Низкий**
 
 #### Решение
@@ -214,6 +224,7 @@ npm test -- OrderHistoryTabs.test.tsx
 ### 4. Price Calculator Tests (7 failing)
 
 **Файлы:**
+
 - `src/components/custom/price-calculator/__tests__/CostBreakdownChart.test.tsx` (4 failing)
 - `src/components/custom/price-calculator/__tests__/PriceCalculatorResults.test.tsx` (1 failing)
 - `src/components/custom/price-calculator/__tests__/TwoLevelPricingDisplay.story-44.20.test.tsx` (2 failing)
@@ -233,8 +244,11 @@ npm test -- OrderHistoryTabs.test.tsx
 Компоненты `PriceCalculatorResults` и `TwoLevelPricingDisplay` были рефакторены в Story 44.20, и тесты не были обновлены.
 
 #### Сложность: **Medium**
+
 #### Время: **4-6 часов**
+
 #### Приоритет: **P2**
+
 #### Риск: **Средний**
 
 #### Решение
@@ -242,6 +256,7 @@ npm test -- OrderHistoryTabs.test.tsx
 **Шаг 1: Анализ текущей структуры компонентов (1 час)**
 
 Изучить текущую реализацию:
+
 - `PriceCalculatorResults` - какие компоненты рендерит
 - `TwoLevelPricingDisplay` - содержит ли MarginSection
 - `CostBreakdownChart` - где находится заголовок "Структура затрат"
@@ -333,13 +348,13 @@ it('should allow manual override of logistics coefficient', async () => {
 
 ## Резюме по категориям
 
-| Категория | Failing | Сложность | Время | Приоритет | Риск |
-|-----------|---------|-----------|-------|-----------|------|
-| **DateRangePickerExtended** | 14 | Medium | 2-3 ч | P1 | Средний |
-| **OrderDetailsModal** | 26 | Low | 1 ч | P0 | Низкий |
-| **OrderHistoryTabs** | 27 | Low | 0.5 ч | P0 | Низкий |
-| **Price Calculator** | 7 | Medium | 4-6 ч | P2 | Средний |
-| **ИТОГО** | **78** | - | **8-11 ч** | - | - |
+| Категория                   | Failing | Сложность | Время      | Приоритет | Риск    |
+| --------------------------- | ------- | --------- | ---------- | --------- | ------- |
+| **DateRangePickerExtended** | 14      | Medium    | 2-3 ч      | P1        | Средний |
+| **OrderDetailsModal**       | 26      | Low       | 1 ч        | P0        | Низкий  |
+| **OrderHistoryTabs**        | 27      | Low       | 0.5 ч      | P0        | Низкий  |
+| **Price Calculator**        | 7       | Medium    | 4-6 ч      | P2        | Средний |
+| **ИТОГО**                   | **78**  | -         | **8-11 ч** | -         | -       |
 
 ---
 
@@ -381,47 +396,53 @@ it('should allow manual override of logistics coefficient', async () => {
 
 ### Неделя 1
 
-| День | Задача | Время | Ответственный |
-|------|--------|-------|---------------|
-| Пн | OrderDetailsModal (P0) | 1 ч | Frontend Dev |
-| Пн | OrderHistoryTabs (P0) | 0.5 ч | Frontend Dev |
-| Вт-Чт | DateRangePickerExtended (P1) | 2-3 ч | Frontend Dev |
-| Пт | Code review + regression | 2 ч | QA Team |
+| День  | Задача                       | Время | Ответственный |
+| ----- | ---------------------------- | ----- | ------------- |
+| Пн    | OrderDetailsModal (P0)       | 1 ч   | Frontend Dev  |
+| Пн    | OrderHistoryTabs (P0)        | 0.5 ч | Frontend Dev  |
+| Вт-Чт | DateRangePickerExtended (P1) | 2-3 ч | Frontend Dev  |
+| Пт    | Code review + regression     | 2 ч   | QA Team       |
 
 ### Неделя 2
 
-| День | Задача | Время | Ответственный |
-|------|--------|-------|---------------|
-| Пн-Вт | Price Calculator анализ | 2 ч | Frontend Dev |
-| Ср-Чт | Price Calculator исправления | 4-6 ч | Frontend Dev |
-| Пт | Full regression + documentation | 4 ч | QA Team |
+| День  | Задача                          | Время | Ответственный |
+| ----- | ------------------------------- | ----- | ------------- |
+| Пн-Вт | Price Calculator анализ         | 2 ч   | Frontend Dev  |
+| Ср-Чт | Price Calculator исправления    | 4-6 ч | Frontend Dev  |
+| Пт    | Full regression + documentation | 4 ч   | QA Team       |
 
 ---
 
 ## Риски и митигация
 
 ### Риск 1: Проблемы с react-day-picker selectors
+
 **Вероятность:** Средняя
 **Влияние:** Высокое
 
 **Митигация:**
+
 - Использовать `data-testid` атрибуты вместо role/text селекторов
 - Координироваться с библиотекой `react-day-picker` для best practices
 
 ### Риск 2: Изменения в компонентах во время исправления
+
 **Вероятность:** Низкая
 **Влияние:** Среднее
 
 **Митигация:**
+
 - Создать feature branch для исправлений
 - Связаться с разработчиками компонентов
 - Использовать snapshot тесты для быстрой проверки
 
 ### Риск 3: Недостаточное покрытие edge cases
+
 **Вероятность:** Средняя
 **Влияние:** Среднее
 
 **Митигация:**
+
 - Добавить дополнительные тесты для edge cases
 - Использовать property-based testing (fast-check)
 - Проверить accessibility с axe-core

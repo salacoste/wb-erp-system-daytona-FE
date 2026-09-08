@@ -15,7 +15,7 @@ chars: 6069
 
 В этой статье:
 
-- 
+-
 - <a href="#import-tovarov-iz-chestnogo-znaka" rel="nofollow">Импорт товаров из Честного знака</a>
 - <a href="#izmenenie-gtin-v-interfejse" rel="nofollow">Изменение GTIN в интерфейсе</a>
 - <a href="#import-kodov-markirovki" rel="nofollow">Импорт кодов маркировки</a>

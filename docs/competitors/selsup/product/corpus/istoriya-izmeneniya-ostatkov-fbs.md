@@ -14,7 +14,7 @@ chars: 1982
 
 В этой статье:
 
-- 
+-
 - <a href="#istoriya-otpravki-ostatka" rel="nofollow">История отправки остатка</a>
 - <a href="#istoriya-izmenenij-ostatkov" rel="nofollow">История изменений остатков</a>
 

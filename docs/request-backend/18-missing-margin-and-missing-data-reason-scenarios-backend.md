@@ -21,11 +21,13 @@
 ### Q1: Is This Expected Behavior?
 
 **Q1.1**: ✅ **YES** - `current_margin_pct: null` and `missing_data_reason: null` can occur simultaneously for products with:
+
 - ✅ COGS assigned (`has_cogs: true`)
 - ✅ Sales data exists (`last_sale_date` and `total_sales_qty` present)
 - ✅ COGS `valid_from` date is before or during last completed week
 
 **Q1.2**: This state indicates:
+
 - **Margin calculation is in progress** (Epic 20 task queued but not yet processed)
 - **OR** margin calculation task failed silently (rare edge case)
 - **OR** COGS was assigned after the last completed week (Request #17 scenario)
@@ -43,6 +45,7 @@
 **When**: COGS assigned → automatic recalculation task enqueued → task not yet processed
 
 **Code Reference**: `src/products/products.service.ts:415-419`
+
 ```typescript
 } else {
   // COGS assigned but margin not calculated yet (e.g., task pending or failed)
@@ -62,6 +65,7 @@
 **When**: COGS `valid_from` is after the last completed week → automatic recalculation skipped
 
 **Code Reference**: `src/analytics/helpers/affected-weeks.helper.ts:81-84`
+
 ```typescript
 // Step 4: Early return if valid_from is after last completed week (no sales data yet)
 if (moscowStartDate > moscowEndDate) {
@@ -104,6 +108,7 @@ if (moscowStartDate > moscowEndDate) {
 **When**: Epic 17 analytics includes product in response (has sales in week), but `weekly_margin_fact` has no record for that week
 
 **Code Flow**:
+
 1. `WeeklyAnalyticsService.getWeeklyBySku()` returns product with `total_units > 0`
 2. `includeCogs: true` → queries `weekly_margin_fact` for margin data
 3. No record found → `margin_pct` remains `null` (default)
@@ -119,6 +124,7 @@ if (moscowStartDate > moscowEndDate) {
 ### Q3: Is This a Problem?
 
 **Q3.1**: ✅ **NO** - Backend intentionally returns `missing_data_reason: null` when:
+
 - COGS is assigned
 - Sales exist in the period
 - Margin calculation is pending/in-progress
@@ -126,11 +132,13 @@ if (moscowStartDate > moscowEndDate) {
 **This is the correct API contract** - `null` means "calculation in progress" (Epic 20 design).
 
 **Q3.2**: ✅ **YES** - There are legitimate cases where both can be null simultaneously:
+
 - Margin calculation task queued (Epic 20)
 - COGS assigned after last completed week (Request #17)
 - Transient state during automatic recalculation
 
 **Q3.3**: This is **NOT a bug** - it's intentional behavior. However, we acknowledge that:
+
 - Frontend needs clear guidance (provided in this document)
 - Edge cases (failed tasks, worker issues) need better handling (Epic 21)
 
@@ -143,11 +151,13 @@ if (moscowStartDate > moscowEndDate) {
 **✅ Recommended: Option A - "(расчёт маржи...)" (calculation in progress)**
 
 **Rationale**:
+
 - This is the most accurate representation of backend state
 - Backend intentionally sets `missing_reason = null` to signal "in progress"
 - Matches Epic 20 design intent
 
 **Implementation**:
+
 ```typescript
 if (current_margin_pct === null && missing_data_reason === null && has_cogs === true) {
   display = "(расчёт маржи...)";
@@ -168,6 +178,7 @@ if (current_margin_pct === null && missing_data_reason === null && has_cogs === 
 **Q4.3**: Currently, **NO** - there's no API endpoint to check if margin calculation task is running for a specific product.
 
 **Future Enhancement** (Epic 21): We plan to add:
+
 - `GET /v1/tasks?nm_id=<nmId>&task_type=recalculate_weekly_margin&status=active` - Check active tasks
 - Worker health endpoint: `GET /v1/health/worker` - Check if worker is processing queues
 
@@ -198,6 +209,7 @@ if (item.margin_pct === null || item.margin_pct === undefined) {
 ```
 
 **Key Points**:
+
 - `missingReason = undefined` is **intentional** when COGS exists and sales exist
 - This signals to frontend: "calculation in progress, show loading state"
 - `undefined` serializes to `null` in JSON response
@@ -207,12 +219,14 @@ if (item.margin_pct === null || item.margin_pct === undefined) {
 **File**: `src/analytics/weekly-analytics.service.ts:363-398`
 
 When `includeCogs: true`:
+
 1. Queries `weekly_margin_fact` for margin data
 2. Merges margin data into SKU items
 3. If no margin record found → `margin_pct` remains `null` (default)
 4. `missing_cogs_flag` remains `true` (default)
 
 **ProductsService** then:
+
 - Checks actual COGS existence (not just `missing_cogs_flag`)
 - Determines `missing_reason` based on actual state
 - Sets `missing_reason = undefined` when COGS exists but margin not calculated
@@ -225,19 +239,20 @@ When `includeCogs: true`:
 
 **When `current_margin_pct: null`:**
 
-| Condition | `missing_data_reason` | Meaning |
-|-----------|----------------------|---------|
-| No sales in period | `"NO_SALES_IN_PERIOD"` | No sales data for last completed week |
-| No COGS assigned | `"COGS_NOT_ASSIGNED"` | COGS not assigned for product |
-| COGS + Sales, margin pending | `null` | **Margin calculation in progress** |
-| No sales ever | `"NO_SALES_DATA"` | Product never had sales |
-| Analytics unavailable | `"ANALYTICS_UNAVAILABLE"` | Epic 17 analytics service error |
+| Condition                    | `missing_data_reason`     | Meaning                               |
+| ---------------------------- | ------------------------- | ------------------------------------- |
+| No sales in period           | `"NO_SALES_IN_PERIOD"`    | No sales data for last completed week |
+| No COGS assigned             | `"COGS_NOT_ASSIGNED"`     | COGS not assigned for product         |
+| COGS + Sales, margin pending | `null`                    | **Margin calculation in progress**    |
+| No sales ever                | `"NO_SALES_DATA"`         | Product never had sales               |
+| Analytics unavailable        | `"ANALYTICS_UNAVAILABLE"` | Epic 17 analytics service error       |
 
 **Key Point**: `missing_data_reason: null` when `current_margin_pct: null` **is valid** and means "calculation in progress" (Epic 20 design).
 
 ### Should Backend Always Set `missing_data_reason`?
 
 **Answer**: **NO** - Backend intentionally leaves `missing_data_reason = null` when:
+
 - COGS is assigned
 - Sales exist
 - Margin calculation is pending/in-progress
@@ -245,6 +260,7 @@ When `includeCogs: true`:
 **This is the correct API contract** - `null` signals "in progress" state to frontend.
 
 **If we always set `missing_data_reason`**, we would need a new value like `"CALCULATION_IN_PROGRESS"`, but this would:
+
 - Add unnecessary complexity
 - Require frontend to handle another enum value
 - Not provide additional value (frontend already knows to show "расчёт маржи...")
@@ -254,6 +270,7 @@ When `includeCogs: true`:
 ## Example: Product 235263406
 
 **Observed State**:
+
 ```json
 {
   "nm_id": "235263406",
@@ -267,6 +284,7 @@ When `includeCogs: true`:
 ```
 
 **Backend Analysis**:
+
 - ✅ COGS assigned: 111.00 RUB, valid from 2025-01-11
 - ✅ Sales exist: 178 sales from 2025-08-24 to 2025-11-14
 - ✅ Margin calculated for W34: 71.36%
@@ -274,7 +292,8 @@ When `includeCogs: true`:
 
 **Root Cause**: Margin calculation task for W46 not yet processed (or COGS assigned after W46 ended)
 
-**Expected Resolution**: 
+**Expected Resolution**:
+
 - If COGS `valid_from` (2025-01-11) is before W46 → automatic recalculation should trigger
 - If COGS `valid_from` is after W46 → manual recalculation required (Request #17)
 
@@ -289,7 +308,7 @@ When `includeCogs: true`:
 1. **✅ Use Option A**: Show "(расчёт маржи...)" when `missing_data_reason === null` and COGS exists
 2. **✅ Implement Polling**: Poll every 5-10 seconds for first 30 seconds, then every 30 seconds
 3. **✅ Add Manual Retry**: Show retry button if state persists > 5 minutes
-4. **✅ Handle Edge Cases**: 
+4. **✅ Handle Edge Cases**:
    - If COGS `valid_from` is after last completed week → show "(требуется пересчёт)" with manual trigger
    - If state persists > 10 minutes → show "(ошибка расчёта)" with manual retry
 
@@ -321,6 +340,7 @@ When `includeCogs: true`:
 **✅ No bug fix required** - current implementation matches Epic 20 design intent.
 
 **Future improvements** (Epic 21):
+
 - Better task status visibility
 - Automatic worker recovery
 - Enhanced error handling for failed tasks
@@ -330,5 +350,5 @@ When `includeCogs: true`:
 **Status**: ✅ **RESOLVED** - Backend response provided, frontend can proceed with implementation.
 
 ## Backend Team Response
-**Status**: RESOLVED — this document IS the backend response. See the parent request file for the original frontend ask.
 
+**Status**: RESOLVED — this document IS the backend response. See the parent request file for the original frontend ask.

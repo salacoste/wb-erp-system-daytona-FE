@@ -2,14 +2,14 @@
 
 ## Overview
 
-| Field | Value |
-|-------|-------|
-| **Story ID** | 44.35-FE |
-| **Epic** | Epic 44 - Price Calculator UI |
-| **Type** | Bugfix |
-| **Priority** | P0 - Critical |
-| **Story Points** | 3 SP |
-| **Status** | Ready for Dev |
+| Field            | Value                         |
+| ---------------- | ----------------------------- |
+| **Story ID**     | 44.35-FE                      |
+| **Epic**         | Epic 44 - Price Calculator UI |
+| **Type**         | Bugfix                        |
+| **Priority**     | P0 - Critical                 |
+| **Story Points** | 3 SP                          |
+| **Status**       | Ready for Dev                 |
 
 ## Description
 
@@ -18,22 +18,26 @@ The Price Calculator application crashes when users click the FBS toggle button.
 ## Bug Report
 
 ### Reproduction Steps
+
 1. Navigate to `/cogs/price-calculator`
 2. Wait for the page to fully load (form renders with FBO selected by default)
 3. Click the "FBS" radio button
 
 ### Expected Behavior
+
 - Fulfillment type switches to FBS
 - FBO-only fields (BoxTypeSelector, TurnoverDaysInput) hide smoothly
 - Form continues to work normally
 - No errors in console
 
 ### Actual Behavior
+
 - Application crashes immediately
 - White screen or partial render
 - React error in console about hooks
 
 ### Error Details
+
 ```
 Error: Rendered fewer hooks than expected. This may be caused by an accidental early return statement.
     at finishRenderingHooks
@@ -42,6 +46,7 @@ Error: Rendered fewer hooks than expected. This may be caused by an accidental e
 ```
 
 ### Severity Assessment
+
 - **User Impact**: CRITICAL - Users cannot switch between FBO and FBS modes
 - **Frequency**: 100% reproducible
 - **Workaround**: None - feature is completely broken
@@ -49,9 +54,11 @@ Error: Rendered fewer hooks than expected. This may be caused by an accidental e
 ## Technical Analysis
 
 ### Root Cause
+
 The `PriceCalculatorForm.tsx` component calls `useWatch` hooks conditionally inside JSX blocks. React hooks must be called unconditionally at the top level of a component, in the same order on every render.
 
 **Violation Pattern (lines 185-199):**
+
 ```tsx
 {fulfillmentType === 'FBO' && (
   <>
@@ -68,6 +75,7 @@ The `PriceCalculatorForm.tsx` component calls `useWatch` hooks conditionally ins
 ```
 
 **Additional Violations (lines 201-212):**
+
 ```tsx
 <WeightThresholdCheckbox
   checked={useWatch({ control, name: 'weight_exceeds_25kg' })}  // HOOK MIGHT BE CONDITIONALLY CALLED
@@ -80,6 +88,7 @@ The `PriceCalculatorForm.tsx` component calls `useWatch` hooks conditionally ins
 ```
 
 ### Why This Fails
+
 1. User loads page with FBO selected (default)
 2. React calls hooks: `useWatch('box_type')`, `useWatch('turnover_days')`, `useWatch('weight_exceeds_25kg')`, `useWatch('localization_index')`
 3. User clicks FBS
@@ -89,13 +98,15 @@ The `PriceCalculatorForm.tsx` component calls `useWatch` hooks conditionally ins
 
 ### Affected Files
 
-| File | Line(s) | Issue |
-|------|---------|-------|
+| File                                                             | Line(s)  | Issue                                          |
+| ---------------------------------------------------------------- | -------- | ---------------------------------------------- |
 | `src/components/custom/price-calculator/PriceCalculatorForm.tsx` | 188, 193 | `useWatch` called inside conditional JSX block |
-| `src/components/custom/price-calculator/PriceCalculatorForm.tsx` | 202, 208 | `useWatch` called inline in component props |
+| `src/components/custom/price-calculator/PriceCalculatorForm.tsx` | 202, 208 | `useWatch` called inline in component props    |
 
 ### React Rules of Hooks Reference
+
 From React documentation:
+
 > Don't call Hooks inside loops, conditions, or nested functions. Instead, always use Hooks at the top level of your React function, before any early returns.
 
 ## Solution Approach
@@ -166,7 +177,9 @@ function FBOFields({ control, disabled, setValue, storageRub }) {
 ```
 
 ### Recommended Solution
+
 **Option A** is recommended because:
+
 1. Simpler implementation - no new files
 2. Consistent with existing pattern in the file (lines 74-79)
 3. Better performance - single component re-render
@@ -214,6 +227,7 @@ function FBOFields({ control, disabled, setValue, storageRub }) {
 ### Manual Testing
 
 #### Test Case 1: Basic Toggle
+
 1. Navigate to `/cogs/price-calculator`
 2. Verify FBO is selected (default)
 3. Click "FBS" button
@@ -224,6 +238,7 @@ function FBOFields({ control, disabled, setValue, storageRub }) {
 8. **Verify**: BoxTypeSelector and TurnoverDaysInput are visible
 
 #### Test Case 2: Full Form Flow
+
 1. Select FBO
 2. Enter COGS: 1000
 3. Select warehouse
@@ -235,6 +250,7 @@ function FBOFields({ control, disabled, setValue, storageRub }) {
 9. **Verify**: No crash, calculation proceeds
 
 #### Test Case 3: Console Verification
+
 1. Open browser DevTools Console
 2. Toggle FBO/FBS multiple times
 3. **Verify**: No React errors about hooks
@@ -243,6 +259,7 @@ function FBOFields({ control, disabled, setValue, storageRub }) {
 ### Automated Testing
 
 - [ ] **Unit Test**: `PriceCalculatorForm.test.tsx`
+
   ```tsx
   it('should not crash when toggling from FBO to FBS', async () => {
     render(<PriceCalculatorForm onSubmit={mockSubmit} />)
@@ -305,10 +322,12 @@ function FBOFields({ control, disabled, setValue, storageRub }) {
 ## Technical Tasks
 
 ### Task 1: Move useWatch Hooks to Top Level
+
 **File:** `src/components/custom/price-calculator/PriceCalculatorForm.tsx`
 **Effort:** 1.5 SP
 
 1. Add new useWatch calls at component top level (around line 74):
+
    ```tsx
    const boxType = useWatch({ control, name: 'box_type' })
    const turnoverDays = useWatch({ control, name: 'turnover_days' })
@@ -323,6 +342,7 @@ function FBOFields({ control, disabled, setValue, storageRub }) {
    - Line 208: `useWatch({ control, name: 'localization_index' })` → `localizationIndex`
 
 ### Task 2: Add Unit Tests
+
 **File:** `src/components/custom/price-calculator/__tests__/PriceCalculatorForm.test.tsx`
 **Effort:** 1 SP
 
@@ -331,6 +351,7 @@ function FBOFields({ control, disabled, setValue, storageRub }) {
 3. Verify no React errors in test output
 
 ### Task 3: Update E2E Tests
+
 **File:** `e2e/price-calculator.spec.ts`
 **Effort:** 0.5 SP
 
@@ -339,11 +360,11 @@ function FBOFields({ control, disabled, setValue, storageRub }) {
 
 ## Files to Modify
 
-| File | Changes |
-|------|---------|
-| `src/components/custom/price-calculator/PriceCalculatorForm.tsx` | Move useWatch hooks to top level |
-| `src/components/custom/price-calculator/__tests__/PriceCalculatorForm.test.tsx` | Add toggle tests |
-| `e2e/price-calculator.spec.ts` | Add E2E toggle test |
+| File                                                                            | Changes                          |
+| ------------------------------------------------------------------------------- | -------------------------------- |
+| `src/components/custom/price-calculator/PriceCalculatorForm.tsx`                | Move useWatch hooks to top level |
+| `src/components/custom/price-calculator/__tests__/PriceCalculatorForm.test.tsx` | Add toggle tests                 |
+| `e2e/price-calculator.spec.ts`                                                  | Add E2E toggle test              |
 
 ## Definition of Done
 
@@ -364,13 +385,17 @@ function FBOFields({ control, disabled, setValue, storageRub }) {
 ## Notes
 
 ### Why This Wasn't Caught Earlier
+
 The bug was introduced in Story 44.32 when FBO-only fields were added. The conditional rendering pattern looked correct in isolation but violated React's Rules of Hooks.
 
 ### Prevention
+
 Consider adding ESLint rule `react-hooks/rules-of-hooks` if not already enabled. This catches hooks-in-conditionals at lint time.
 
 ### Alternative Patterns for Future
+
 If more complex conditional form sections are needed, consider:
+
 1. Wrapper components that encapsulate their own hooks
 2. Custom form context that provides all watched values
 3. Using `useFormContext` in child components

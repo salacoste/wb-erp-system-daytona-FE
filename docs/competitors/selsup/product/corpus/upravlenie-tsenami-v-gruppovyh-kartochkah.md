@@ -15,7 +15,7 @@ chars: 4222
 
 В этой статье:
 
-- 
+-
 - <a href="#gde-najti-upravlenie-gruppovymi-kartochkami" rel="nofollow">Где найти управление групповыми карточками</a>
 - <a href="#prosmotr-tsen-vnutri-gruppy" rel="nofollow">Просмотр цен внутри группы</a>
 - <a href="#avtomaticheskoe-opredelenie-minimalnoj-tseny" rel="nofollow">Автоматическое определение минимальной цены</a>

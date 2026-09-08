@@ -11,7 +11,7 @@ chars: 2670
 
 В этой статье:
 
-- 
+-
 - <a href="#chto-eto-takoe" rel="nofollow">Что это такое?</a>
 - <a href="#kak-eto-rabotaet" rel="nofollow">Как это работает?</a>
 - <a href="#preimushestva-metoda" rel="nofollow">Преимущества метода</a>

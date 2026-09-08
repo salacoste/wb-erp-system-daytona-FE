@@ -28,18 +28,19 @@ The backend currently formats it in **dot-locale**: `"+12.3%"` — a dot decimal
 
 The forecast table renders this column **inconsistently** with every sibling numeric column, which the FE formats in Russian locale (comma decimal + NBSP):
 
-| Column | Source | Rendered |
-|--------|--------|----------|
-| Прогноз продаж (`predictedSales`) | FE `formatDecimal` | `42,0` |
-| Наивный прогноз (`naiveBaseline`) | FE `formatDecimal` | `38,5` |
-| Уверенность (`confidence`) | FE `formatPercentageInt` | `85 %` |
-| **AI vs наивный (`aiVsNaive`)** | **backend string** | **`+12.3%`** ← dot decimal, no NBSP |
+| Column                            | Source                   | Rendered                            |
+| --------------------------------- | ------------------------ | ----------------------------------- |
+| Прогноз продаж (`predictedSales`) | FE `formatDecimal`       | `42,0`                              |
+| Наивный прогноз (`naiveBaseline`) | FE `formatDecimal`       | `38,5`                              |
+| Уверенность (`confidence`)        | FE `formatPercentageInt` | `85 %`                              |
+| **AI vs наивный (`aiVsNaive`)**   | **backend string**       | **`+12.3%`** ← dot decimal, no NBSP |
 
 So a Russian-locale user sees `"+12.3%"` next to `"42,0"`, `"85 %"`, etc. — a visible inconsistency the FE cannot correct without violating the Defensive Frontend Principle (re-parsing a backend display string is fragile and erases the backend's formatting contract).
 
 ## Requested fix
 
 Format `aiVsNaive` on the backend in **Russian locale**:
+
 - **Comma** decimal separator: `12.3` → `12,3`
 - **NBSP (U+00A0)** before the `%`: `"+12,3 %"`
 - **Keep the leading sign** (`+` / `-`).

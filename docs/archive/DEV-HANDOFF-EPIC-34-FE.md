@@ -12,18 +12,21 @@
 ## 🚨 IMPORTANT UPDATES (2025-12-30)
 
 ### Backend Readiness Confirmed
+
 - ✅ Epic 34 (Request #73) - **COMPLETE**
 - ✅ All 6 API endpoints implemented and tested
 - ✅ JWT authentication working correctly (401 issues resolved via PM2 restart)
 - ✅ Rate limiting configured (600 req/min, burst 1200)
 
 ### Telegram Bot Configuration ✅ READY
+
 - ✅ **CONFIGURED**: Telegram bot `@Kernel_crypto_bot` with new token
 - ✅ **CODE READY**: Bot username already configured via env variable (fallback: `Kernel_crypto_bot`)
 - ✅ **DEEP LINK**: Backend returns correct URL `https://t.me/Kernel_crypto_bot?start={code}`
 - ℹ️ **OPTIONAL**: Set `NEXT_PUBLIC_TELEGRAM_BOT_USERNAME=Kernel_crypto_bot` in `.env.local` (см. Section 1)
 
 ### Monitoring Implementation RECOMMENDED
+
 - 📊 **NEW**: Comprehensive monitoring best practices documented (см. Section 2)
 - 📊 **Priority**: CRITICAL metrics (binding errors, API errors)
 - 📊 **Estimated**: 2-3 hours implementation time
@@ -35,6 +38,7 @@
 ### What Was Built
 
 Telegram notifications feature для WB Repricer System с полным UI для:
+
 - Binding flow (код привязки, deep link, polling)
 - Notification preferences (4 типа уведомлений)
 - Quiet hours configuration
@@ -72,23 +76,27 @@ docs/
 ### State Management
 
 **React Query (TanStack Query v5)**:
+
 - Query keys factory: `telegramQueryKeys`
 - 3-second polling for binding status
 - Optimistic updates для preferences
 - Auto cache invalidation
 
 **Zustand**:
+
 - `authStore` для JWT token, cabinetId
 - Auto-persist с localStorage
 
 ### API Integration
 
 **Base Client**: `apiClient` (centralized pattern)
+
 - Auto JWT + Cabinet-Id headers
 - Standardized error handling (`ApiError` class)
 - Base URL: `process.env.NEXT_PUBLIC_API_URL`
 
 **Endpoints Used**:
+
 ```typescript
 POST   /v1/notifications/telegram/bind        // Generate binding code
 GET    /v1/notifications/telegram/status      // Check binding status
@@ -101,6 +109,7 @@ POST   /v1/notifications/test                 // Send test notification
 ### Component Patterns
 
 **Conditional Rendering** (based on `isBound`):
+
 ```typescript
 {!isBound && <EmptyStateHero />}              // CTA to connect
 {isBound && <TelegramBindingCard />}          // Connected status
@@ -108,6 +117,7 @@ POST   /v1/notifications/test                 // Send test notification
 ```
 
 **Optimistic Updates** (preferences):
+
 ```typescript
 onMutate: (newPrefs) => {
   queryClient.setQueryData(key, newPrefs)  // Immediate UI update
@@ -124,29 +134,32 @@ onError: (err, vars, context) => {
 ### Refactoring Completed ✅
 
 **API Client Migration**:
+
 - ❌ Before: Custom `fetch` with manual headers (192 lines)
 - ✅ After: Centralized `apiClient` (112 lines, -42%)
 - **Pattern**: Matches `advertising-analytics.ts`, `liquidity.ts`
 
 **Query Keys Factory**:
+
 - ❌ Before: Magic strings `['telegram-status']`
 - ✅ After: Factory `telegramQueryKeys.status()`
 - **Pattern**: Matches `advertisingQueryKeys`
 
 **Constants Extraction** (Latest):
+
 - ✅ `BINDING_CODE_TTL_SECONDS = 600` (was magic number)
 - ✅ `TELEGRAM_BOT_USERNAME = process.env.NEXT_PUBLIC_TELEGRAM_BOT_USERNAME`
 
 ### Code Metrics
 
-| Metric | Value | Status |
-|--------|-------|--------|
-| Bundle Size | 13.7 kB | ✅ Target <15KB |
-| First Load JS | 187 kB | ✅ Target <200KB |
-| Lines of Code | 222 lines | -23% from initial |
-| TypeScript Strict | ✅ Enabled | No `any` types |
-| ESLint | ✅ Clean | 0 warnings |
-| Test Coverage | 87% | ✅ Target >80% |
+| Metric            | Value      | Status            |
+| ----------------- | ---------- | ----------------- |
+| Bundle Size       | 13.7 kB    | ✅ Target <15KB   |
+| First Load JS     | 187 kB     | ✅ Target <200KB  |
+| Lines of Code     | 222 lines  | -23% from initial |
+| TypeScript Strict | ✅ Enabled | No `any` types    |
+| ESLint            | ✅ Clean   | 0 warnings        |
+| Test Coverage     | 87%        | ✅ Target >80%    |
 
 ---
 
@@ -171,6 +184,7 @@ NEXT_PUBLIC_TELEGRAM_BOT_USERNAME=Kernel_crypto_bot
 ## 🤖 Telegram Bot Configuration ✅ VERIFIED
 
 ### Current Status
+
 - ✅ **BOT NAME**: `@Kernel_crypto_bot` (confirmed 2025-12-30)
 - ✅ **CODE READY**: Already configured via `TELEGRAM_BOT_USERNAME` constant (TelegramBindingModal.tsx:38)
 - ✅ **BACKEND READY**: New token configured on backend
@@ -217,6 +231,7 @@ NEXT_PUBLIC_TELEGRAM_BOT_USERNAME=Kernel_crypto_bot  # без @
 **Endpoint**: `POST /v1/notifications/telegram/bind`
 
 **Expected Response**:
+
 ```json
 {
   "binding_code": "A1B2C3D4",
@@ -231,6 +246,7 @@ NEXT_PUBLIC_TELEGRAM_BOT_USERNAME=Kernel_crypto_bot  # без @
 #### 4. Documentation Updates
 
 **Files to Update**:
+
 ```
 docs/API-INTEGRATION-GUIDE-EPIC-34-FE.md:47  - Update deep_link example
 docs/CHANGELOG-EPIC-34-FE.md                  - Add bot rename note
@@ -265,6 +281,7 @@ frontend/README.md                            - Update bot mention
 ### Why Monitoring is Critical
 
 **Problem**: Без мониторинга вы слепы к production проблемам
+
 - ❌ Не знаете, почему users не завершают binding flow
 - ❌ Не видите API errors до user complaints
 - ❌ Не понимаете, какие features users используют
@@ -286,6 +303,7 @@ Dashboards / Grafana
 ```
 
 **Why this approach**:
+
 - ✅ Privacy: Data stays in your infrastructure
 - ✅ Simple: One POST endpoint + table
 - ✅ Flexible: Collect any metrics you want
@@ -302,6 +320,7 @@ Dashboards / Grafana
 #### API Endpoint
 
 **Endpoint**: `POST /v1/analytics/events`
+
 - **Authentication**: None required (anonymous tracking)
 - **Rate Limiting**: 60 requests/minute per IP (burst: 120)
 - **Batch Processing**: 1-50 events per request
@@ -309,6 +328,7 @@ Dashboards / Grafana
 - **Clock Skew Tolerance**: ±5 minutes for timestamp validation
 
 **Request Example**:
+
 ```bash
 curl -X POST http://localhost:3000/v1/analytics/events \
   -H "Content-Type: application/json" \
@@ -359,6 +379,7 @@ analytics_events_rate_limited_total             // Rate limit hits
 **Dashboard URL**: http://localhost:3002/d/telegram-notifications-analytics
 
 **Panels**:
+
 1. **Binding Funnel Success Rate** - Completion percentage stat
 2. **Events Timeline** - All categories timeseries
 3. **Error Rate (Last 1h)** - Gauge (0-10% range, critical if >5%)
@@ -372,13 +393,13 @@ analytics_events_rate_limited_total             // Rate limit hits
 
 #### Alert Rules (5 rules)
 
-| Alert | Severity | Threshold | Duration | Action |
-|-------|----------|-----------|----------|--------|
-| High Error Rate | Critical | >5% | 5 min | Page on-call engineer |
-| Low Binding Completion Rate | Warning | <90% | 10 min | Investigate binding flow |
-| Slow Binding Duration | Warning | >60s avg | 5 min | Check API latency |
-| No Data Received | Warning | >15 min | 5 min | Verify analytics service running |
-| High Batch Size | Info | >1000 events | 5 min | Review batching strategy |
+| Alert                       | Severity | Threshold    | Duration | Action                           |
+| --------------------------- | -------- | ------------ | -------- | -------------------------------- |
+| High Error Rate             | Critical | >5%          | 5 min    | Page on-call engineer            |
+| Low Binding Completion Rate | Warning  | <90%         | 10 min   | Investigate binding flow         |
+| Slow Binding Duration       | Warning  | >60s avg     | 5 min    | Check API latency                |
+| No Data Received            | Warning  | >15 min      | 5 min    | Verify analytics service running |
+| High Batch Size             | Info     | >1000 events | 5 min    | Review batching strategy         |
 
 #### Backend Documentation
 
@@ -395,6 +416,7 @@ analytics_events_rate_limited_total             // Rate limit hits
 #### CRITICAL (Phase 1 - Must Have)
 
 **Binding Flow**:
+
 ```typescript
 telegram_binding_started          // User clicked "Подключить Telegram"
 telegram_binding_completed        // User successfully bound (polling returned bound:true)
@@ -404,6 +426,7 @@ telegram_binding_cancelled        // User closed modal before completion
 ```
 
 **API Errors**:
+
 ```typescript
 telegram_api_error                // HTTP 4xx/5xx from backend
   { endpoint, status_code, error_message }
@@ -413,6 +436,7 @@ telegram_network_error            // Network failure (timeout, DNS, etc.)
 ```
 
 **User Actions**:
+
 ```typescript
 telegram_unbind_completed         // User disconnected Telegram
 ```
@@ -420,6 +444,7 @@ telegram_unbind_completed         // User disconnected Telegram
 #### HIGH (Phase 2 - Should Have)
 
 **Preferences**:
+
 ```typescript
 telegram_preferences_updated      // User saved preferences
   { event_types, language, daily_digest, quiet_hours }
@@ -429,6 +454,7 @@ telegram_test_notification_sent   // User clicked "Отправить тест"
 ```
 
 **Performance**:
+
 ```typescript
 telegram_binding_duration_seconds  // Time from start to completion
   { duration }
@@ -440,6 +466,7 @@ telegram_api_latency_ms           // API response time
 #### NICE TO HAVE (Phase 3 - Optional)
 
 **User Behavior**:
+
 ```typescript
 telegram_page_viewed              // User visited notifications settings
 telegram_help_clicked             // User clicked help link
@@ -462,6 +489,7 @@ telegram_quiet_hours_enabled      // User enabled quiet hours
 #### Files Created
 
 **Core Analytics** (`src/lib/analytics/`):
+
 1. **analytics.service.ts** (185 lines)
    - Batch events every 30s
    - Auto-flush on page unload (beforeunload + visibilitychange)
@@ -475,7 +503,7 @@ telegram_quiet_hours_enabled      // User enabled quiet hours
    - Error message truncation (500 chars max)
    - Priority categorization (CRITICAL, HIGH, NICE TO HAVE)
 
-3. **__tests__/analytics.test.ts** (227 lines)
+3. **\_\_tests\_\_/analytics.test.ts** (227 lines)
    - 100% test coverage (15/15 tests passing)
    - Unit tests for analytics service
    - Unit tests for TelegramMetrics helpers
@@ -485,6 +513,7 @@ telegram_quiet_hours_enabled      // User enabled quiet hours
 #### Integration Points (4 components)
 
 **1. API Client** (`src/lib/api-client.ts`):
+
 ```typescript
 // Line 88: Auto-track API errors
 TelegramMetrics.apiError(endpoint, response.status, errorMessage)
@@ -494,6 +523,7 @@ TelegramMetrics.networkError(endpoint)
 ```
 
 **2. Binding Modal** (`src/components/notifications/TelegramBindingModal.tsx`):
+
 ```typescript
 // Line 100: Track binding started
 TelegramMetrics.bindingStarted()
@@ -512,6 +542,7 @@ TelegramMetrics.bindingCancelled(elapsedSeconds)
 ```
 
 **3. Preferences Panel** (`src/components/notifications/NotificationPreferencesPanel.tsx`):
+
 ```typescript
 // Line 98: Track event type toggles
 TelegramMetrics.eventTypeToggled(eventType, newValue)
@@ -527,6 +558,7 @@ TelegramMetrics.preferencesUpdated(changes)
 ```
 
 **4. Page Component** (`src/app/(dashboard)/settings/notifications/page.tsx`):
+
 ```typescript
 // Line 38: Track page views
 TelegramMetrics.pageViewed()
@@ -537,24 +569,24 @@ TelegramMetrics.helpClicked()
 
 #### Event Types Coverage (16 events)
 
-| Category | Event Type | Helper Function | Status |
-|----------|-----------|-----------------|--------|
-| **binding** | `telegram_binding_started` | `bindingStarted()` | ✅ |
-| **binding** | `telegram_binding_completed` | `bindingCompleted(duration)` | ✅ |
-| **binding** | `telegram_binding_failed` | `bindingFailed(error)` | ✅ |
-| **binding** | `telegram_binding_expired` | `bindingExpired()` | ✅ |
-| **binding** | `telegram_binding_cancelled` | `bindingCancelled(elapsed)` | ✅ |
-| **binding** | `telegram_unbind_completed` | `unbindCompleted()` | ✅ |
-| **error** | `telegram_api_error` | `apiError(endpoint, status, error)` | ✅ |
-| **error** | `telegram_network_error` | `networkError(endpoint)` | ✅ |
-| **preferences** | `telegram_preferences_updated` | `preferencesUpdated(changes)` | ✅ |
-| **behavior** | `telegram_test_notification_sent` | `testNotificationSent(type)` | ✅ |
-| **behavior** | `telegram_page_viewed` | `pageViewed()` | ✅ |
-| **behavior** | `telegram_help_clicked` | `helpClicked()` | ✅ |
-| **behavior** | `telegram_event_type_toggled` | `eventTypeToggled(type, enabled)` | ✅ |
-| **behavior** | `telegram_language_changed` | `languageChanged(from, to)` | ✅ |
-| **behavior** | `telegram_daily_digest_enabled` | `dailyDigestEnabled()` | ✅ |
-| **behavior** | `telegram_quiet_hours_enabled` | `quietHoursEnabled()` | ✅ |
+| Category        | Event Type                        | Helper Function                     | Status |
+| --------------- | --------------------------------- | ----------------------------------- | ------ |
+| **binding**     | `telegram_binding_started`        | `bindingStarted()`                  | ✅     |
+| **binding**     | `telegram_binding_completed`      | `bindingCompleted(duration)`        | ✅     |
+| **binding**     | `telegram_binding_failed`         | `bindingFailed(error)`              | ✅     |
+| **binding**     | `telegram_binding_expired`        | `bindingExpired()`                  | ✅     |
+| **binding**     | `telegram_binding_cancelled`      | `bindingCancelled(elapsed)`         | ✅     |
+| **binding**     | `telegram_unbind_completed`       | `unbindCompleted()`                 | ✅     |
+| **error**       | `telegram_api_error`              | `apiError(endpoint, status, error)` | ✅     |
+| **error**       | `telegram_network_error`          | `networkError(endpoint)`            | ✅     |
+| **preferences** | `telegram_preferences_updated`    | `preferencesUpdated(changes)`       | ✅     |
+| **behavior**    | `telegram_test_notification_sent` | `testNotificationSent(type)`        | ✅     |
+| **behavior**    | `telegram_page_viewed`            | `pageViewed()`                      | ✅     |
+| **behavior**    | `telegram_help_clicked`           | `helpClicked()`                     | ✅     |
+| **behavior**    | `telegram_event_type_toggled`     | `eventTypeToggled(type, enabled)`   | ✅     |
+| **behavior**    | `telegram_language_changed`       | `languageChanged(from, to)`         | ✅     |
+| **behavior**    | `telegram_daily_digest_enabled`   | `dailyDigestEnabled()`              | ✅     |
+| **behavior**    | `telegram_quiet_hours_enabled`    | `quietHoursEnabled()`               | ✅     |
 
 #### Usage Example
 
@@ -584,6 +616,7 @@ TelegramMetrics.preferencesUpdated({
 #### Testing Status
 
 **Unit Tests**: ✅ 15/15 passing
+
 - ✅ Event tracking with timestamp auto-generation
 - ✅ Auto-flush at 50 events
 - ✅ Batch sending to backend API
@@ -598,6 +631,7 @@ TelegramMetrics.preferencesUpdated({
 - ✅ SSR safety (no errors in Node environment)
 
 **Integration**: ✅ Complete
+
 - ✅ All 4 components integrated
 - ✅ Auto cabinetId injection from Zustand store
 - ✅ Event batching working (30s intervals)
@@ -631,6 +665,7 @@ npm run dev
 #### Verify Grafana Dashboard
 
 **Panels to check**:
+
 1. **Events Timeline** - Should show `telegram_page_viewed` event
 2. **Events by Category** - Should show "behavior" slice
 3. **Top Events** - Should show `telegram_page_viewed` in table
@@ -639,11 +674,13 @@ npm run dev
 #### Troubleshooting
 
 **Problem**: No events in Grafana after 30s
+
 - **Check**: Browser DevTools → Network tab → Look for POST `/v1/analytics/events`
 - **Solution**: If 404, backend analytics endpoint not running
 - **Solution**: If 429, rate limited (wait 1 minute, refresh)
 
 **Problem**: Events not batching
+
 - **Check**: `analyticsService.getQueueSize()` in browser console
 - **Solution**: If queue size always 0, service not initialized
 - **Solution**: Verify `npm run dev` restarted after code changes
@@ -702,6 +739,7 @@ action: Notify #engineering channel
 ### Dashboard Examples (Grafana)
 
 **Panel 1: Binding Funnel** (CRITICAL)
+
 ```sql
 SELECT
   date_trunc('day', timestamp) as day,
@@ -722,6 +760,7 @@ ORDER BY day DESC;
 ```
 
 **Panel 2: Error Breakdown**
+
 ```sql
 SELECT
   properties->>'endpoint' as endpoint,
@@ -736,6 +775,7 @@ LIMIT 10;
 ```
 
 **Panel 3: Average Binding Duration**
+
 ```sql
 SELECT
   date_trunc('hour', timestamp) as hour,
@@ -751,12 +791,14 @@ ORDER BY hour DESC;
 ### Success Metrics (KPIs)
 
 **Week 1 Post-Launch**:
+
 - Binding completion rate: **>90%** ← Track with `telegram_binding_completed / telegram_binding_started`
 - API error rate: **<2%** ← Track with `telegram_api_error / total_api_calls`
 - Avg binding duration: **<60s** ← Track with `AVG(duration_seconds)`
 - User-reported bugs: **<5 critical** ← Manual tracking
 
 **Month 1 Post-Launch**:
+
 - Active Telegram users: **>50%** of total users ← Track with `COUNT(DISTINCT cabinet_id WHERE bound = true)`
 - Daily digest open rate: **>30%** ← Requires Telegram Bot analytics
 - Preferences update rate: **>20%** ← Track with `telegram_preferences_updated / active_users`
@@ -767,19 +809,23 @@ ORDER BY hour DESC;
 **Frontend Integration Complete** (2025-12-30):
 
 **Core Files**:
+
 - ✅ `src/lib/analytics/analytics.service.ts` - Batching service (30s intervals, auto-flush)
 - ✅ `src/lib/analytics/telegram-metrics.ts` - 15 metric helpers (binding, errors, preferences, behavior)
 
 **Component Integrations**:
+
 - ✅ `TelegramBindingModal.tsx` - 5 binding flow metrics (started, completed, failed, expired, cancelled)
 - ✅ `NotificationPreferencesPanel.tsx` - Preferences tracking (updates, event toggles, language changes)
 - ✅ `api-client.ts` - Automatic error tracking (API errors, network errors)
 - ✅ `notifications/page.tsx` - Page view & help click tracking
 
 **Test Coverage**:
+
 - ✅ `analytics.test.ts` - Vitest test suite for core service and all metric helpers
 
 **Features**:
+
 - ✅ SSR-safe implementation (typeof window checks)
 - ✅ Batch events every 30s to reduce API calls
 - ✅ Auto-flush on page unload & visibility change
@@ -796,11 +842,13 @@ ORDER BY hour DESC;
 ### ✅ Completed Tests
 
 **Unit Tests** (6 test cases):
+
 - `src/lib/api/__tests__/notifications.test.ts`
 - MSW mocking для API calls
 - Error handling coverage (429 rate limit)
 
 **UI Tests** (14 scenarios, 93% coverage):
+
 - Scenarios 1-8, 11, 13-14: ✅ PASSED
 - Real E2E test с Telegram Bot API
 - Mobile responsive (375px): ✅ PASSED
@@ -826,11 +874,13 @@ None
 ### Development Issues: 2 (Low Priority)
 
 **Issue #1**: Timer Expiry Not Tested
+
 - **Reason**: 10-minute wait impractical for automated testing
 - **Observed**: Countdown working (9:45 → 9:07)
 - **Recommendation**: Manual test or E2E with mocked timer
 
 **Issue #2**: Test Notification Not Verified
+
 - **Reason**: Time constraints during testing session
 - **API**: `POST /v1/notifications/test` exists and works (backend tested)
 - **Recommendation**: Manual verification in production
@@ -838,12 +888,14 @@ None
 ### Optional Enhancements (Nice-to-Have)
 
 **Enhancement #1**: Language Radio Group ARIA
+
 - **Current**: Visual proximity for label association
 - **Better**: `<fieldset>` + `<legend>` wrapper
 - **Effort**: 5 minutes
 - **Impact**: Improved screen reader UX
 
 **Enhancement #2**: Save/Cancel Button State
+
 - **Current**: Always visible
 - **Better**: Show only when preferences dirty
 - **Effort**: 15 minutes
@@ -856,11 +908,13 @@ None
 ### Backend Dependencies
 
 **API Endpoints** (all verified working):
+
 - Authentication: JWT via `X-Cabinet-Id` header
 - Rate Limiting: 600 req/min (burst 1200)
 - Response Format: Standard error structure
 
 **Expected Responses**:
+
 ```typescript
 // GET /v1/notifications/telegram/status
 {
@@ -893,11 +947,13 @@ None
 ### External Dependencies
 
 **Telegram Bot** (@Kernel_crypto_bot or custom):
+
 - Deep link format: `https://t.me/{bot}?start={code}`
 - Real-time binding via bot `/start` command
 - Tested with production bot: ✅ Working
 
 **React Query**:
+
 - Version: TanStack Query v5
 - Polling: `refetchInterval` with conditional stop
 - Optimistic updates: `onMutate` + `onError` rollback
@@ -940,6 +996,7 @@ curl https://your-domain.com/settings/notifications
 ### Post-Deployment Validation
 
 **Smoke Tests** (5 minutes):
+
 1. Navigate to `/settings/notifications`
 2. Click "Подключить Telegram"
 3. Verify code generation
@@ -950,6 +1007,7 @@ curl https://your-domain.com/settings/notifications
 8. Verify backend receives update
 
 **Monitoring** (first 24h):
+
 - API error rate (target <2%)
 - Page load time (target <2s)
 - Binding conversion rate (target >40%)
@@ -962,21 +1020,25 @@ curl https://your-domain.com/settings/notifications
 ### Common Issues
 
 **Issue**: Page stuck on "Загрузка..."
+
 - **Cause**: Zustand hydration delay or React suspense
 - **Fix**: Check browser console for errors, verify auth cookie exists
 - **Workaround**: Hard refresh (Cmd+Shift+R)
 
 **Issue**: Modal doesn't open
+
 - **Cause**: API call failed or loading state stuck
 - **Check**: Network tab for `/v1/notifications/telegram/bind` response
 - **Fix**: Verify backend `/v1/notifications/*` endpoints working
 
 **Issue**: Polling doesn't stop after binding
+
 - **Cause**: `isBound` state not updating from API
 - **Check**: React Query DevTools for stale queries
 - **Fix**: Clear React Query cache, refresh page
 
 **Issue**: Preferences don't save
+
 - **Cause**: Optimistic update reverted due to API error
 - **Check**: Network tab for 4xx/5xx response from `PUT /preferences`
 - **Fix**: Check JWT token valid, Cabinet-Id header present
@@ -984,11 +1046,13 @@ curl https://your-domain.com/settings/notifications
 ### Debug Tools Available
 
 **React Query DevTools**:
+
 - Button in bottom-right corner (dev mode only)
 - Shows all queries, mutations, cache state
 - Can manually invalidate queries
 
 **Browser Console**:
+
 ```javascript
 // Check Zustand state
 window.localStorage.getItem('auth-storage')
@@ -1011,21 +1075,25 @@ window.__REACT_QUERY_DEVTOOLS__
 ### Future Optimizations (Not Urgent)
 
 1. **Code Splitting**: Modal components lazy load
+
    ```typescript
    const TelegramBindingModal = dynamic(
      () => import('./TelegramBindingModal'),
      { loading: () => <Loader2 className="animate-spin" /> }
    )
    ```
+
    **Impact**: -3KB initial bundle
 
 2. **Polling Optimization**: Exponential backoff
+
    ```typescript
    refetchInterval: (query) => {
      const attempts = query.state.dataUpdateCount
      return attempts < 5 ? 3000 : attempts < 10 ? 5000 : 10000
    }
    ```
+
    **Impact**: -40% API calls after 5 attempts
 
 3. **Image Optimization**: Use Next.js `<Image>` for icons
@@ -1189,6 +1257,7 @@ useMutation({
 ### Phase 2: Binding Flow Enhancement (Estimated 4-6 hours)
 
 **Features**:
+
 1. QR code generation для mobile users
    - Library: `qrcode.react` или `react-qr-code`
    - Encoding: Deep link URL
@@ -1211,6 +1280,7 @@ useMutation({
 ### Phase 3: Advanced Notifications (Estimated 8-10 hours)
 
 **Features**:
+
 1. Custom notification schedules
    - Weekly schedule grid (Mon-Sun)
    - Per-day time ranges
@@ -1394,12 +1464,14 @@ git log --oneline --grep="epic-34" --grep="telegram" --grep="notification"
 ### Escalation Path
 
 **Critical Production Issues**:
+
 1. Check PM2 logs: `pm2 logs wb-repricer-frontend`
 2. Check backend health: `curl http://localhost:3000/v1/health`
 3. Check error tracking dashboard (when setup)
 4. Contact backend team if API issues
 
 **Non-Critical Issues**:
+
 1. Create GitHub issue with reproduction steps
 2. Add label: `epic-34-fe`, `bug`, or `enhancement`
 3. Assign to yourself or team lead

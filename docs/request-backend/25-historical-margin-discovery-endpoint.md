@@ -1,6 +1,7 @@
 # Request #25: Historical Margin Discovery Endpoint
 
 ## Статус
+
 ✅ **IMPLEMENTED** — Stories 23.8 and 23.9 deployed (2025-01-27)
 
 > **Backend Response**: See `25-historical-margin-discovery-endpoint-backend.md`
@@ -11,10 +12,10 @@
 
 ### Decision
 
-| Variant | Decision | Reason |
-|---------|----------|--------|
+| Variant       | Decision        | Reason                                                    |
+| ------------- | --------------- | --------------------------------------------------------- |
 | **Variant A** | ✅ **APPROVED** | Inline context, batch-optimized, minimal frontend changes |
-| **Variant B** | ❌ **COVERED** | Story 23.8 already implements detailed history endpoint |
+| **Variant B** | ❌ **COVERED**  | Story 23.8 already implements detailed history endpoint   |
 
 ### Implementation
 
@@ -62,6 +63,7 @@
 При `missing_data_reason: "NO_SALES_DATA"` за последнюю завершённую неделю (W47) пользователь видит "Нет продаж", хотя у товара могут быть продажи за предыдущие недели (W44) с рассчитанной маржой.
 
 **Текущий UX:**
+
 ```
 Товар: Термобелье (173589742)
 COGS: 11.00 ₽ (с 11.01.2025)
@@ -69,6 +71,7 @@ COGS: 11.00 ₽ (с 11.01.2025)
 ```
 
 **Желаемый UX:**
+
 ```
 Товар: Термобелье (173589742)
 COGS: 11.00 ₽ (с 11.01.2025)
@@ -104,11 +107,13 @@ COGS: 11.00 ₽ (с 11.01.2025)
 ```
 
 **Условия возврата новых полей:**
+
 - Только когда `include_cogs=true`
 - Только когда `missing_data_reason === "NO_SALES_DATA"`
 - Поиск в `weekly_margin_fact` за последние 12 недель
 
 **SQL Query (примерный):**
+
 ```sql
 SELECT week, margin_pct, qty
 FROM weekly_margin_fact
@@ -128,6 +133,7 @@ X-Cabinet-Id: {cabinet_id}
 ```
 
 **Response:**
+
 ```json
 {
   "nm_id": "173589742",
@@ -146,6 +152,7 @@ X-Cabinet-Id: {cabinet_id}
 ## Рекомендация Frontend
 
 **Предпочитаем Вариант A** потому что:
+
 1. Один запрос вместо двух (N+1 problem avoided)
 2. Данные уже в контексте списка товаров
 3. Минимальные изменения frontend кода
@@ -204,13 +211,13 @@ X-Cabinet-Id: {cabinet_id}
 
 ## Timeline
 
-| Этап | Срок | Статус |
-|------|------|--------|
-| Backend review | 2025-01-27 | ✅ Done |
-| Backend implementation | 2025-01-27 | ✅ Done |
-| Unit tests | 2025-01-27 | ✅ Done (19 tests) |
-| Frontend integration | - | 🟡 Ready |
-| Testing | - | ⏳ |
+| Этап                   | Срок       | Статус             |
+| ---------------------- | ---------- | ------------------ |
+| Backend review         | 2025-01-27 | ✅ Done            |
+| Backend implementation | 2025-01-27 | ✅ Done            |
+| Unit tests             | 2025-01-27 | ✅ Done (19 tests) |
+| Frontend integration   | -          | 🟡 Ready           |
+| Testing                | -          | ⏳                 |
 
 > **See**: `25-historical-margin-discovery-endpoint-backend.md` for implementation details
 

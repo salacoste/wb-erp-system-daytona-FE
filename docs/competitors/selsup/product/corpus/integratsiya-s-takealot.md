@@ -9,7 +9,7 @@ chars: 3097
 
 В этой статье:
 
-- 
+-
 - <a href="#vozmozhnosti-integratsii-s-takealot" rel="nofollow">Возможности интеграции с Takealot</a>
 - <a href="#chto-poka-ne-podderzhivaetsya" rel="nofollow">Что пока не поддерживается</a>
 - <a href="#peredacha-ostatkov-v-takealot" rel="nofollow">Передача остатков в Takealot</a>

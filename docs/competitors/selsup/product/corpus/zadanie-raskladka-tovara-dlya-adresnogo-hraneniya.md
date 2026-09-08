@@ -13,7 +13,7 @@ chars: 2420
 
 В этой статье:
 
-- 
+-
 - <a href="#formirovanie-spiska-tovarov-dlya-raskladki" rel="nofollow">Формирование списка товаров для раскладки</a>
 - <a href="#protsess-raboty-s-zadaniem" rel="nofollow">Процесс работы с заданием</a>
 - <a href="#osnovnye-sluchai-ispolzovaniya-zadaniya" rel="nofollow">Основные случаи использования задания</a>

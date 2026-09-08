@@ -38,6 +38,7 @@ MCP configuration is in `.mcp.json`:
 ### 2. Check Memory Status
 
 In Claude Code session:
+
 ```
 memory_status(session_id="all")
 ```
@@ -82,25 +83,25 @@ frontend/
 
 ### Core Tools
 
-| Tool | Purpose | Example |
-|------|---------|---------|
-| `memory_init` | Start new session | `memory_init(task="...", agent="dev")` |
-| `memory_store` | Save knowledge | `memory_store(content="...", kind="decision")` |
-| `memory_query` | Find knowledge | `memory_query(tag="epic:44")` |
-| `memory_recall` | Get compressed context | `memory_recall()` |
-| `memory_save` | Persist to file | `memory_save("epic-44-dev.json")` |
-| `memory_load` | Restore session | `memory_load("epic-44-dev.json")` |
-| `memory_status` | Check sessions | `memory_status("all")` |
-| `memory_handoff` | Create handoff | `memory_handoff("qa")` |
+| Tool             | Purpose                | Example                                        |
+| ---------------- | ---------------------- | ---------------------------------------------- |
+| `memory_init`    | Start new session      | `memory_init(task="...", agent="dev")`         |
+| `memory_store`   | Save knowledge         | `memory_store(content="...", kind="decision")` |
+| `memory_query`   | Find knowledge         | `memory_query(tag="epic:44")`                  |
+| `memory_recall`  | Get compressed context | `memory_recall()`                              |
+| `memory_save`    | Persist to file        | `memory_save("epic-44-dev.json")`              |
+| `memory_load`    | Restore session        | `memory_load("epic-44-dev.json")`              |
+| `memory_status`  | Check sessions         | `memory_status("all")`                         |
+| `memory_handoff` | Create handoff         | `memory_handoff("qa")`                         |
 
 ### Node Kinds
 
-| Kind | Purpose | Example |
-|------|---------|---------|
-| `evidence` | Facts, findings | "Found existing component in..." |
-| `decision` | Choices made | "Using TanStack Query for state" |
-| `insight` | Conclusions | "Pattern works better for mobile" |
-| `subtask` | Progress markers | "Completed: form validation" |
+| Kind       | Purpose          | Example                           |
+| ---------- | ---------------- | --------------------------------- |
+| `evidence` | Facts, findings  | "Found existing component in..."  |
+| `decision` | Choices made     | "Using TanStack Query for state"  |
+| `insight`  | Conclusions      | "Pattern works better for mobile" |
+| `subtask`  | Progress markers | "Completed: form validation"      |
 
 ---
 
@@ -111,6 +112,7 @@ frontend/
 ```
 
 **Examples for Frontend**:
+
 - `frontend_epic44_dev` - Epic 44 development
 - `frontend_story-37.5_qa` - Story testing
 - `frontend_ui-components_architect` - Architecture work
@@ -179,12 +181,14 @@ memory_save("frontend_epic44_dev.json")
 ### Required Tags
 
 Always include:
+
 - `project:frontend` - Project identifier
 - `agent:{name}` - Your agent role
 
 ### Context Tags
 
 Add when relevant:
+
 - `epic:{N}` - Epic number (e.g., `epic:44`)
 - `story:{N.M}` - Story ID (e.g., `story:37.5`)
 - `component:{name}` - Component being worked on
@@ -192,6 +196,7 @@ Add when relevant:
 ### Semantic Tags
 
 Based on content:
+
 - `decision` - Choice made
 - `blocker` - Blocking issue
 - `api` - Backend integration

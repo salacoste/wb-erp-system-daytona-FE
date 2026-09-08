@@ -8,12 +8,12 @@
 
 ## Change Log
 
-| Date | Version | Description | Author |
-|------|---------|-------------|--------|
-| 2025-01-20 | 1.0 | Initial frontend architecture document creation | Winston (Architect) |
-| 2025-12-05 | 1.1 | Added Epic 6-FE components: DateRangePicker, DeltaIndicator, ComparisonPeriodSelector, KPICard, useMarginAnalytics hook updates, analytics types | Claude (Opus 4.5) |
-| 2025-12-05 | 1.2 | Added Story 6.3-FE: ROI & Profit Metrics - useColumnVisibility hook, ColumnVisibilityToggle, analytics-utils, table column enhancements | Claude (Opus 4.5) |
-| 2025-12-05 | 1.3 | Added Story 6.5-FE: Export Analytics UI - useExportAnalytics hook, ExportDialog, ExportStatusDisplay components, export types | Claude (Opus 4.5) |
+| Date       | Version | Description                                                                                                                                      | Author              |
+| ---------- | ------- | ------------------------------------------------------------------------------------------------------------------------------------------------ | ------------------- |
+| 2025-01-20 | 1.0     | Initial frontend architecture document creation                                                                                                  | Winston (Architect) |
+| 2025-12-05 | 1.1     | Added Epic 6-FE components: DateRangePicker, DeltaIndicator, ComparisonPeriodSelector, KPICard, useMarginAnalytics hook updates, analytics types | Claude (Opus 4.5)   |
+| 2025-12-05 | 1.2     | Added Story 6.3-FE: ROI & Profit Metrics - useColumnVisibility hook, ColumnVisibilityToggle, analytics-utils, table column enhancements          | Claude (Opus 4.5)   |
+| 2025-12-05 | 1.3     | Added Story 6.5-FE: Export Analytics UI - useExportAnalytics hook, ExportDialog, ExportStatusDisplay components, export types                    | Claude (Opus 4.5)   |
 
 ---
 
@@ -22,17 +22,20 @@
 **Decision:** No existing frontend starter template. Starting fresh with Next.js.
 
 **Framework Selection:**
+
 - **Next.js 15.x** (App Router) - Required per PRD NFR17
 - **TypeScript** - Required per PRD
 - **shadcn/ui** - Component library foundation (specified in front-end-spec)
 - **Tailwind CSS** - Styling framework (via shadcn/ui)
 
 **Rationale:**
+
 - Next.js provides SSR, routing, and performance optimizations required by PRD
 - shadcn/ui offers accessible components with copy-paste architecture for full customization
 - No starter template needed; we'll initialize Next.js and configure per project requirements
 
 **Next Steps:**
+
 1. Initialize Next.js with TypeScript
 2. Install and configure Tailwind CSS
 3. Set up shadcn/ui
@@ -42,23 +45,23 @@
 
 ## Frontend Tech Stack
 
-| Category | Technology | Version | Purpose | Rationale |
-|----------|-----------|---------|---------|-----------|
-| Framework | Next.js | 15.x (latest stable) | Core React framework with SSR, routing, and performance optimization | Required per PRD NFR17. App Router provides modern React Server Components, built-in routing, and excellent TypeScript support. Enables SSR for better performance and SEO. |
-| UI Library | shadcn/ui | Latest | Component library foundation | Specified in front-end-spec. Copy-paste architecture allows full customization. Built on Radix UI for accessibility. Tailwind-based for easy styling customization. |
-| State Management | TanStack Query (React Query) | v5.x | Server state management and data fetching | Industry standard for API data fetching. Handles caching, background updates, and error states automatically. Reduces boilerplate compared to manual fetch logic. |
-| Styling | Tailwind CSS | 4.x (latest) | Utility-first CSS framework | Required by shadcn/ui. Enables rapid UI development. Customizable design tokens for red/white theme. Excellent performance with JIT compilation. |
-| Language | TypeScript | 5.x (latest) | Type-safe JavaScript | Required per PRD. Ensures code quality, better IDE support, and catches errors at compile time. ES+ syntax as specified. |
-| Routing | Next.js App Router | Built-in | File-based routing system | Built into Next.js 13+. No additional library needed. Supports layouts, loading states, and error boundaries. |
-| Form Handling | React Hook Form | Latest | Form state management and validation | Industry standard for React forms. Minimal re-renders, excellent TypeScript support. Integrates well with shadcn/ui Form components. |
-| Charts | Recharts | Latest | Data visualization (expense breakdown, trends, waterfall) | Composable React charting library built on D3. Declarative API, responsive containers, excellent TypeScript support. Used across dashboard, analytics, and shipment cost features. |
-| Data Tables | TanStack Table | v8.x | Advanced sortable/filterable/paginated tables | Headless table library with full TypeScript support. Integrates with shadcn/ui table primitives. Used for products, analytics, COGS, buyout, and shipment cost tables. |
-| HTTP Client | Fetch API (native) | Native | API communication | Built into modern browsers. No additional dependency. Can be wrapped in custom API client for authentication headers. |
-| Icons | Lucide React | Latest | Icon library | Recommended by shadcn/ui. Consistent icon set, tree-shakeable, TypeScript support. |
-| Testing | Vitest + React Testing Library | Latest | Unit and component testing | Modern testing stack. Vitest is faster than Jest. React Testing Library promotes testing user behavior. |
-| Build Tool | Next.js (Turbopack) | Built-in | Bundling and compilation | Next.js includes Turbopack (faster than Webpack). No additional configuration needed. |
-| Dev Tools | ESLint | Latest | Code linting | Required per PRD NFR14. Configured with max-lines-per-file: 200 rule. |
-| Animation | Framer Motion (optional) | Latest | Advanced animations | Optional for complex animations. CSS transitions sufficient for most use cases. Can be added later if needed. |
+| Category         | Technology                     | Version              | Purpose                                                              | Rationale                                                                                                                                                                          |
+| ---------------- | ------------------------------ | -------------------- | -------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Framework        | Next.js                        | 15.x (latest stable) | Core React framework with SSR, routing, and performance optimization | Required per PRD NFR17. App Router provides modern React Server Components, built-in routing, and excellent TypeScript support. Enables SSR for better performance and SEO.        |
+| UI Library       | shadcn/ui                      | Latest               | Component library foundation                                         | Specified in front-end-spec. Copy-paste architecture allows full customization. Built on Radix UI for accessibility. Tailwind-based for easy styling customization.                |
+| State Management | TanStack Query (React Query)   | v5.x                 | Server state management and data fetching                            | Industry standard for API data fetching. Handles caching, background updates, and error states automatically. Reduces boilerplate compared to manual fetch logic.                  |
+| Styling          | Tailwind CSS                   | 4.x (latest)         | Utility-first CSS framework                                          | Required by shadcn/ui. Enables rapid UI development. Customizable design tokens for red/white theme. Excellent performance with JIT compilation.                                   |
+| Language         | TypeScript                     | 5.x (latest)         | Type-safe JavaScript                                                 | Required per PRD. Ensures code quality, better IDE support, and catches errors at compile time. ES+ syntax as specified.                                                           |
+| Routing          | Next.js App Router             | Built-in             | File-based routing system                                            | Built into Next.js 13+. No additional library needed. Supports layouts, loading states, and error boundaries.                                                                      |
+| Form Handling    | React Hook Form                | Latest               | Form state management and validation                                 | Industry standard for React forms. Minimal re-renders, excellent TypeScript support. Integrates well with shadcn/ui Form components.                                               |
+| Charts           | Recharts                       | Latest               | Data visualization (expense breakdown, trends, waterfall)            | Composable React charting library built on D3. Declarative API, responsive containers, excellent TypeScript support. Used across dashboard, analytics, and shipment cost features. |
+| Data Tables      | TanStack Table                 | v8.x                 | Advanced sortable/filterable/paginated tables                        | Headless table library with full TypeScript support. Integrates with shadcn/ui table primitives. Used for products, analytics, COGS, buyout, and shipment cost tables.             |
+| HTTP Client      | Fetch API (native)             | Native               | API communication                                                    | Built into modern browsers. No additional dependency. Can be wrapped in custom API client for authentication headers.                                                              |
+| Icons            | Lucide React                   | Latest               | Icon library                                                         | Recommended by shadcn/ui. Consistent icon set, tree-shakeable, TypeScript support.                                                                                                 |
+| Testing          | Vitest + React Testing Library | Latest               | Unit and component testing                                           | Modern testing stack. Vitest is faster than Jest. React Testing Library promotes testing user behavior.                                                                            |
+| Build Tool       | Next.js (Turbopack)            | Built-in             | Bundling and compilation                                             | Next.js includes Turbopack (faster than Webpack). No additional configuration needed.                                                                                              |
+| Dev Tools        | ESLint                         | Latest               | Code linting                                                         | Required per PRD NFR14. Configured with max-lines-per-file: 200 rule.                                                                                                              |
+| Animation        | Framer Motion (optional)       | Latest               | Advanced animations                                                  | Optional for complex animations. CSS transitions sufficient for most use cases. Can be added later if needed.                                                                      |
 
 ---
 
@@ -200,7 +203,7 @@ frontend/
 
 **Standard Component Structure (TypeScript):**
 
-```typescript
+````typescript
 'use client' // Only if component needs interactivity (hooks, event handlers)
 
 import * as React from 'react'
@@ -212,29 +215,29 @@ interface ComponentNameProps {
   // Required props
   title: string
   value: number
-  
+
   // Optional props
   variant?: 'default' | 'large' | 'small'
   isLoading?: boolean
   className?: string
-  
+
   // Event handlers (if needed)
   onClick?: () => void
   onChange?: (value: string) => void
-  
+
   // Children (if needed)
   children?: React.ReactNode
 }
 
 /**
  * ComponentName - Brief description of component purpose
- * 
+ *
  * @example
  * ```tsx
- * <ComponentName 
- *   title="Total Revenue" 
- *   value={1234567} 
- *   variant="large" 
+ * <ComponentName
+ *   title="Total Revenue"
+ *   value={1234567}
+ *   variant="large"
  * />
  * ```
  */
@@ -250,18 +253,18 @@ export function ComponentName({
 }: ComponentNameProps) {
   // Hooks (if client component)
   // const [state, setState] = React.useState()
-  
+
   // Computed values
   const formattedValue = React.useMemo(() => {
     // Formatting logic
     return formatCurrency(value)
   }, [value])
-  
+
   // Early returns for loading/error states
   if (isLoading) {
     return <Skeleton className={cn('h-20 w-full', className)} />
   }
-  
+
   // Main render
   return (
     <div
@@ -284,46 +287,55 @@ export function ComponentName({
 }
 
 ComponentName.displayName = 'ComponentName'
-```
+````
 
 ### Naming Conventions
 
 **Components:**
+
 - PascalCase: `MetricCard.tsx`, `Sidebar.tsx`, `CogsAssignmentForm.tsx`
 - Descriptive names: `ProductListTable.tsx` not `Table.tsx`
 - Feature prefix for feature-specific: `DashboardMetricCard.tsx` vs `MetricCard.tsx`
 
 **Files:**
+
 - Match component name: `MetricCard.tsx` exports `MetricCard`
 - One component per file (enforced by 200-line limit)
 - Index files for re-exports: `index.ts` in feature folders
 
 **Props Interfaces:**
+
 - Pattern: `{ComponentName}Props`
 - Example: `MetricCardProps`, `SidebarProps`
 
 **Custom Hooks:**
+
 - Prefix with `use`: `useDashboard.ts`, `useCogs.ts`, `useAuth.ts`
 - File name matches hook name: `useDashboard.ts` exports `useDashboard`
 
 **Utilities:**
+
 - camelCase: `formatCurrency.ts`, `apiClient.ts`
 - Descriptive: `formatCurrency` not `format`
 
 **Types:**
+
 - PascalCase: `DashboardMetrics`, `Product`, `CogsAssignment`
 - Suffix with type if ambiguous: `ProductType`, `ApiResponse`
 - Group in `types/` directory by domain
 
 **Constants:**
+
 - UPPER_SNAKE_CASE: `API_BASE_URL`, `MAX_FILE_SIZE`
 - Group in `lib/constants.ts` or feature-specific files
 
 **Route Segments (App Router):**
+
 - kebab-case: `cogs-management/`, `wb-token/`, `margin-analysis/`
 - Descriptive: `single-assignment/` not `single/`
 
 **CSS Classes (Tailwind):**
+
 - Use Tailwind utilities: `bg-primary`, `text-white`, `rounded-lg`
 - Custom classes via `cn()`: `cn('base-class', condition && 'conditional-class')`
 - Semantic naming in custom CSS (if needed): `.metric-card-large`
@@ -387,7 +399,7 @@ interface AuthState {
   token: string | null
   cabinetId: string | null
   isAuthenticated: boolean
-  
+
   // Actions
   setUser: (user: User) => void
   setToken: (token: string) => void
@@ -404,14 +416,14 @@ export const useAuthStore = create<AuthState>()(
       token: null,
       cabinetId: null,
       isAuthenticated: false,
-      
+
       // Actions
       setUser: (user) => set({ user, isAuthenticated: true }),
-      
+
       setToken: (token) => set({ token }),
-      
+
       setCabinetId: (cabinetId) => set({ cabinetId }),
-      
+
       login: (user, token, cabinetId) =>
         set({
           user,
@@ -419,7 +431,7 @@ export const useAuthStore = create<AuthState>()(
           cabinetId,
           isAuthenticated: true,
         }),
-      
+
       logout: () =>
         set({
           user: null,
@@ -531,36 +543,36 @@ class ApiClient {
     options: RequestInit = {}
   ): Promise<T> {
     const { token, cabinetId } = useAuthStore.getState()
-    
+
     // Build headers
     const headers: HeadersInit = {
       'Content-Type': 'application/json',
       ...options.headers,
     }
-    
+
     // Add authentication header
     if (token) {
       headers['Authorization'] = `Bearer ${token}`
     }
-    
+
     // Add cabinet ID header (if available)
     if (cabinetId) {
       headers['X-Cabinet-Id'] = cabinetId
     }
-    
+
     // Build full URL
     const url = `${API_BASE_URL}${endpoint}`
-    
+
     try {
       const response = await fetch(url, {
         ...options,
         headers,
       })
-      
+
       // Handle non-JSON responses
       const contentType = response.headers.get('content-type')
       const isJson = contentType?.includes('application/json')
-      
+
       if (!response.ok) {
         const errorData = isJson ? await response.json() : await response.text()
         throw new ApiError(
@@ -569,20 +581,20 @@ class ApiClient {
           errorData
         )
       }
-      
+
       // Parse response
       if (isJson) {
         const data: ApiResponse<T> = await response.json()
         return data.data || (data as unknown as T)
       }
-      
+
       return (await response.text()) as unknown as T
     } catch (error) {
       // Handle network errors
       if (error instanceof ApiError) {
         throw error
       }
-      
+
       // Handle fetch errors (network, CORS, etc.)
       throw new ApiError(
         error instanceof Error ? error.message : 'Network error occurred',
@@ -591,7 +603,7 @@ class ApiClient {
       )
     }
   }
-  
+
   // GET request
   async get<T>(endpoint: string, options?: RequestInit): Promise<T> {
     return this.request<T>(endpoint, {
@@ -599,7 +611,7 @@ class ApiClient {
       method: 'GET',
     })
   }
-  
+
   // POST request
   async post<T>(endpoint: string, data?: unknown, options?: RequestInit): Promise<T> {
     return this.request<T>(endpoint, {
@@ -608,7 +620,7 @@ class ApiClient {
       body: data ? JSON.stringify(data) : undefined,
     })
   }
-  
+
   // PUT request
   async put<T>(endpoint: string, data?: unknown, options?: RequestInit): Promise<T> {
     return this.request<T>(endpoint, {
@@ -617,7 +629,7 @@ class ApiClient {
       body: data ? JSON.stringify(data) : undefined,
     })
   }
-  
+
   // PATCH request
   async patch<T>(endpoint: string, data?: unknown, options?: RequestInit): Promise<T> {
     return this.request<T>(endpoint, {
@@ -626,7 +638,7 @@ class ApiClient {
       body: data ? JSON.stringify(data) : undefined,
     })
   }
-  
+
   // DELETE request
   async delete<T>(endpoint: string, options?: RequestInit): Promise<T> {
     return this.request<T>(endpoint, {
@@ -643,7 +655,7 @@ export const apiClient = new ApiClient()
 export const dashboardApi = {
   getMetrics: () => apiClient.get<DashboardMetrics>('/dashboard/metrics'),
   getExpenses: () => apiClient.get<ExpenseBreakdown>('/dashboard/expenses'),
-  getTrends: (period?: string) => 
+  getTrends: (period?: string) =>
     apiClient.get<TrendData>(`/dashboard/trends${period ? `?period=${period}` : ''}`),
 }
 
@@ -687,7 +699,7 @@ export function handleApiError(error: unknown): string {
         return error.message || 'An error occurred.'
     }
   }
-  
+
   return 'An unexpected error occurred. Please try again.'
 }
 ```
@@ -735,14 +747,14 @@ export const ROUTES = {
   HOME: '/',
   LOGIN: '/login',
   REGISTER: '/register',
-  
+
   // Onboarding routes
   ONBOARDING: {
     CABINET: '/onboarding/cabinet',
     WB_TOKEN: '/onboarding/wb-token',
     PROCESSING: '/onboarding/processing',
   },
-  
+
   // Protected routes
   DASHBOARD: '/dashboard',
   COGS: {
@@ -779,7 +791,7 @@ export const isProtectedRoute = (pathname: string): boolean => {
     ROUTES.ANALYTICS.SUMMARY,
     ROUTES.SETTINGS,
   ]
-  
+
   return protectedPaths.some((path) => pathname.startsWith(path))
 }
 
@@ -793,7 +805,7 @@ export const isPublicRoute = (pathname: string): boolean => {
     ROUTES.ONBOARDING.WB_TOKEN,
     ROUTES.ONBOARDING.PROCESSING,
   ]
-  
+
   return publicPaths.includes(pathname)
 }
 ```
@@ -808,27 +820,27 @@ import { isProtectedRoute, isPublicRoute, ROUTES } from '@/lib/routes'
 
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl
-  
+
   // Get token from cookie or header
   const token = request.cookies.get('auth-token')?.value ||
                 request.headers.get('authorization')?.replace('Bearer ', '')
-  
+
   // Check if route is protected
   const protected = isProtectedRoute(pathname)
   const publicRoute = isPublicRoute(pathname)
-  
+
   // Redirect unauthenticated users from protected routes
   if (protected && !token) {
     const loginUrl = new URL(ROUTES.LOGIN, request.url)
     loginUrl.searchParams.set('redirect', pathname)
     return NextResponse.redirect(loginUrl)
   }
-  
+
   // Redirect authenticated users from auth pages to dashboard
   if (publicRoute && token && (pathname === ROUTES.LOGIN || pathname === ROUTES.REGISTER)) {
     return NextResponse.redirect(new URL(ROUTES.DASHBOARD, request.url))
   }
-  
+
   return NextResponse.next()
 }
 
@@ -856,11 +868,11 @@ export default async function DashboardLayout({
 }) {
   // Server-side auth check
   const { isAuthenticated, token } = useAuthStore.getState()
-  
+
   if (!isAuthenticated || !token) {
     redirect('/login')
   }
-  
+
   return (
     <div className="flex h-screen">
       <Sidebar />
@@ -1015,33 +1027,33 @@ export default config
     --primary-dark: 0 65% 50%;   /* #D32F2F */
     --primary-light: 0 100% 90%; /* #FFCDD2 */
     --primary-foreground: 0 0% 100%; /* White text */
-    
+
     /* Background colors */
     --background: 0 0% 100%;     /* White */
     --foreground: 0 0% 20%;      /* Dark gray text */
-    
+
     /* Card colors */
     --card: 0 0% 100%;           /* White */
     --card-foreground: 0 0% 20%;
-    
+
     /* Border and input */
     --border: 0 0% 93%;          /* #EEEEEE */
     --input: 0 0% 93%;
     --ring: 0 65% 55%;           /* Primary red for focus rings */
-    
+
     /* Semantic colors */
     --success: 142 76% 36%;      /* #4CAF50 */
     --error: 0 65% 55%;          /* #E53935 */
     --info: 217 91% 60%;        /* #2196F3 */
-    
+
     /* Border radius */
     --radius: 0.5rem;            /* 8px */
   }
-  
+
   * {
     @apply border-border;
   }
-  
+
   body {
     @apply bg-background text-foreground;
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
@@ -1083,7 +1095,7 @@ export default config
         /\
        /  \     E2E Tests (10%)
       /    \    Critical user workflows
-     /______\   
+     /______\
     /        \  Integration Tests (30%)
    /          \ API interactions, data flow
   /____________\
@@ -1093,12 +1105,12 @@ export default config
 
 **Testing Stack:**
 
-| Test Type | Tool | Purpose | Coverage Target |
-|-----------|------|---------|-----------------|
-| Unit Tests | Vitest + React Testing Library | Component logic, utilities, hooks | 60%+ |
-| Integration Tests | Vitest + MSW (Mock Service Worker) | API interactions, data flow | 30%+ |
-| E2E Tests | Playwright | Critical user workflows | 10%+ |
-| Visual Regression | Playwright + Percy (optional) | UI consistency | As needed |
+| Test Type         | Tool                               | Purpose                           | Coverage Target |
+| ----------------- | ---------------------------------- | --------------------------------- | --------------- |
+| Unit Tests        | Vitest + React Testing Library     | Component logic, utilities, hooks | 60%+            |
+| Integration Tests | Vitest + MSW (Mock Service Worker) | API interactions, data flow       | 30%+            |
+| E2E Tests         | Playwright                         | Critical user workflows           | 10%+            |
+| Visual Regression | Playwright + Percy (optional)      | UI consistency                    | As needed       |
 
 ### Unit Testing
 
@@ -1113,20 +1125,20 @@ import { MetricCard } from './MetricCard'
 describe('MetricCard', () => {
   it('renders title and value correctly', () => {
     render(<MetricCard title="Total Revenue" value={1234567} />)
-    
+
     expect(screen.getByText('Total Revenue')).toBeInTheDocument()
     expect(screen.getByText('1 234 567 ₽')).toBeInTheDocument()
   })
-  
+
   it('shows skeleton when loading', () => {
     render(<MetricCard title="Total Revenue" value={0} isLoading />)
-    
+
     expect(screen.getByTestId('metric-card-skeleton')).toBeInTheDocument()
   })
-  
+
   it('formats currency correctly for RUB', () => {
     render(<MetricCard title="Revenue" value={1234567.89} />)
-    
+
     const value = screen.getByText(/1 234 567/)
     expect(value).toBeInTheDocument()
   })
@@ -1156,7 +1168,7 @@ const createWrapper = () => {
       queries: { retry: false },
     },
   })
-  
+
   return ({ children }: { children: React.ReactNode }) => (
     <QueryClientProvider client={queryClient}>
       {children}
@@ -1176,13 +1188,13 @@ describe('useDashboard', () => {
         })
       })
     )
-    
+
     const { result } = renderHook(() => useDashboard(), {
       wrapper: createWrapper(),
     })
-    
+
     await waitFor(() => expect(result.current.isSuccess).toBe(true))
-    
+
     expect(result.current.data).toEqual({
       totalPayable: 1000000,
       revenue: 5000000,
@@ -1208,14 +1220,14 @@ test.describe('Dashboard', () => {
     await page.click('button[type="submit"]')
     await page.waitForURL('/dashboard')
   })
-  
+
   test('displays dashboard metrics', async ({ page }) => {
     await page.goto('/dashboard')
-    
+
     // Wait for metrics to load
     await expect(page.locator('text=Total Payable')).toBeVisible()
     await expect(page.locator('text=Revenue')).toBeVisible()
-    
+
     // Check currency formatting
     const metricValue = page.locator('[data-testid="metric-value"]').first()
     await expect(metricValue).toContainText('₽')
@@ -1301,15 +1313,15 @@ Object.entries(requiredEnvVars).forEach(([key, value]) => {
 export const env = {
   // API
   apiUrl: process.env.NEXT_PUBLIC_API_URL!,
-  
+
   // App
   appName: process.env.NEXT_PUBLIC_APP_NAME || 'WB Repricer System',
   appVersion: process.env.NEXT_PUBLIC_APP_VERSION || '1.0.0',
-  
+
   // Feature flags
   enableAnalytics: process.env.NEXT_PUBLIC_ENABLE_ANALYTICS === 'true',
   enableWebSocket: process.env.NEXT_PUBLIC_ENABLE_WEBSOCKET === 'true',
-  
+
   // Development
   isDevelopment: process.env.NODE_ENV === 'development',
   isProduction: process.env.NODE_ENV === 'production',
@@ -1328,13 +1340,13 @@ import type { NextConfig } from 'next'
 const nextConfig: NextConfig = {
   // React strict mode for development
   reactStrictMode: true,
-  
+
   // Image optimization
   images: {
     domains: [], // Add image domains if needed
     formats: ['image/avif', 'image/webp'],
   },
-  
+
   // Headers for security
   async headers() {
     return [
@@ -1357,7 +1369,7 @@ const nextConfig: NextConfig = {
       },
     ]
   },
-  
+
   // Output configuration
   output: 'standalone', // For Docker deployments
 }
@@ -1588,6 +1600,7 @@ import { DateRangePicker } from '@/components/custom/DateRangePicker'
 ```
 
 **Features:**
+
 - Quick presets: "Последние 4 недели", "Последние 12 недель"
 - Validation: prevents selecting future weeks, enforces max range
 - ISO week format: `YYYY-Www`
@@ -1616,6 +1629,7 @@ import { DeltaIndicator, DeltaBadge } from '@/components/custom/DeltaIndicator'
 ```
 
 **Props:**
+
 - `value`: number | null | undefined
 - `type`: 'percentage' | 'absolute'
 - `inverse`: boolean (for costs where negative is good)
@@ -1644,6 +1658,7 @@ import { ComparisonPeriodSelector } from '@/components/custom/ComparisonPeriodSe
 ```
 
 **Presets:**
+
 - `previous`: Previous period of same length
 - `same_last_year`: Same weeks from previous year
 - `custom`: Manual week range selection
@@ -1675,6 +1690,7 @@ const { data } = useMarginAnalyticsBySku({
 ```
 
 **Filter Parameters:**
+
 - `weekStart`, `weekEnd`: Current period range (ISO week)
 - `compareTo`: Single week comparison
 - `compareToStart`, `compareToEnd`: Range comparison
@@ -1694,6 +1710,7 @@ const { data } = useCabinetSummary({ weeks: 4 })
 ```
 
 **KPICard Component:**
+
 ```typescript
 import { KPICard } from '@/components/custom/KPICard'
 
@@ -1793,6 +1810,7 @@ import {
 **Table Enhancements:**
 
 All margin analytics tables (MarginBySkuTable, MarginByBrandTable, MarginByCategoryTable) now support:
+
 - Optional ROI column with color-coded values
 - Optional Profit per Unit column
 - Column visibility toggle via `columnVisibility` prop
@@ -1917,6 +1935,7 @@ const [showExportDialog, setShowExportDialog] = useState(false)
 ```
 
 **Export Workflow:**
+
 1. User clicks "Экспорт" button → ExportDialog opens
 2. User selects export type, date range, format, and COGS option
 3. User clicks "Экспортировать" → POST /v1/exports/analytics
@@ -1947,4 +1966,3 @@ All code examples follow the 200-line file limit, TypeScript strict mode, and WC
 
 **Document Status:** Complete  
 **Next Steps:** Review with team, begin implementation following this architecture
-

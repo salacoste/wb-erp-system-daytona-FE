@@ -13,7 +13,7 @@ chars: 4217
 
 В этой статье:
 
-- 
+-
 - <a href="#shemy-raboty-s-chestnym-znakom" rel="nofollow">Схемы работы с Честным знаком</a>
 - <a href="#podgotovka-raboty-s-chestnym-znakom" rel="nofollow">Подготовка работы с Честным знаком</a>
 - <a href="#integratsiya-s-selsup" rel="nofollow">Интеграция с SelSup</a>

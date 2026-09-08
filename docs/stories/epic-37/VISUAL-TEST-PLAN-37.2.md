@@ -23,11 +23,13 @@
 ### Scenario 1: Navigate to Advertising Analytics Page
 
 **Steps**:
+
 1. Open browser: http://localhost:3100
 2. Navigate to **Аналитика** → **Реклама** (left sidebar)
 3. URL should be: `/analytics/advertising`
 
 **Expected**:
+
 - ✅ Page loads without errors
 - ✅ Default view: "По товарам" (SKU mode, groupBy='sku')
 - ✅ Standard PerformanceMetricsTable visible
@@ -39,11 +41,13 @@
 ### Scenario 2: Switch to Merged Groups View
 
 **Steps**:
+
 1. Locate **"Группировка"** label (above table)
 2. Find GroupByToggle component (right side)
 3. Click toggle to switch to **"По склейкам"**
 
 **Expected**:
+
 - ✅ Toggle switches from "По товарам" to "По склейкам"
 - ✅ Table re-renders to MergedGroupTable component
 - ✅ 3 groups visible:
@@ -60,6 +64,7 @@
 **Test Group**: mockMergedGroup1 (ter-09 + 5 товаров)
 
 **Checks**:
+
 - [ ] Rowspan cell spans 7 rows total (1 aggregate + 6 products)
 - [ ] Vertical alignment: centered
 - [ ] Background: light gray (#FAFAFA / bg-gray-50)
@@ -78,6 +83,7 @@
 **Test Group**: mockMergedGroup1 (ГРУППА #328632)
 
 **Checks**:
+
 - [ ] First column: "ГРУППА #328632" (bold text)
 - [ ] Background: medium gray (#F3F4F6 / bg-gray-100)
 - [ ] Font weight: 600 (semibold)
@@ -100,6 +106,7 @@
 **Test Group**: mockMergedGroup1 (6 products)
 
 **Product 1 (Main - ter-09)**:
+
 - [ ] Crown icon (👑) visible before vendor code
 - [ ] Crown color: yellow-600 (#CA8A04)
 - [ ] Crown size: h-4 w-4
@@ -107,11 +114,13 @@
 - [ ] Metrics: totalSales 20 000 ₽, spend 11 337 ₽, ROAS 1.76
 
 **Product 2 (Child - ter-09-1)**:
+
 - [ ] NO crown icon
 - [ ] Vendor code: "ter-09-1"
 - [ ] Metrics: totalSales 8 500 ₽, spend 0 ₽, ROAS —
 
 **All Detail Rows**:
+
 - [ ] Font weight: 400 (normal)
 - [ ] Font size: 0.875rem (text-sm)
 - [ ] Background: white
@@ -129,6 +138,7 @@
 **Test Group**: mockMergedGroup2 (ter-14 + 1 товар)
 
 **Checks**:
+
 - [ ] NO rowspan cell (column completely skipped)
 - [ ] Table starts directly with "ГРУППА #456789"
 - [ ] Only 2 rows total (1 aggregate + 1 product)
@@ -145,6 +155,7 @@
 **Test Group**: mockStandaloneProduct
 
 **Checks**:
+
 - [ ] NO rowspan cell
 - [ ] Displays as single row (no aggregate)
 - [ ] Vendor code visible
@@ -161,6 +172,7 @@
 **Test**: Verify organic sales display
 
 **Checks**:
+
 - [ ] "Из рекламы" column shows: `10 234 ₽ (71.2%)`
 - [ ] Percentage = organicContribution from aggregateMetrics
 - [ ] "Органика" column shows: `25 336 ₽`
@@ -176,12 +188,14 @@
 **Test**: Click column headers to sort
 
 **Steps**:
+
 1. Click "Всего продаж" header
 2. Verify sort indicator appears (↑ or ↓)
 3. Click again to toggle direction
 4. Try other columns (Расход, ROAS)
 
 **Expected**:
+
 - ✅ Sort indicator toggles between ↑ (asc) and ↓ (desc)
 - ✅ Console log shows sort callback fired
 - ✅ onSort prop receives correct field name
@@ -197,11 +211,13 @@
 **Test**: Click on detail row (individual product)
 
 **Steps**:
+
 1. Click on any detail row (child product)
 2. Open browser console (F12)
 3. Check for console log
 
 **Expected**:
+
 - ✅ Console log: `[Epic 37] Product clicked: <nmId>`
 - ✅ Cursor changes to pointer on hover
 - ✅ No errors in console
@@ -215,17 +231,20 @@
 **Test**: Mobile/tablet/desktop views
 
 **Viewports to Test**:
+
 - [ ] Mobile (400px): Horizontal scroll active
 - [ ] Tablet (800px): Horizontal scroll active
 - [ ] Desktop (1400px): Full table visible, no scroll
 
 **Checks**:
+
 - [ ] Table maintains structure at all sizes
 - [ ] Rowspan cells span correctly on mobile
 - [ ] Scroll works smoothly
 - [ ] No layout breaks or text overflow
 
 **Screenshots**:
+
 - [ ] Mobile view
 - [ ] Tablet view
 - [ ] Desktop view
@@ -239,6 +258,7 @@
 ### Known Issues
 
 **Issue 1**: [TO BE FILLED DURING TESTING]
+
 - **Description**:
 - **Severity**: P0 / P1 / P2 / P3
 - **Steps to reproduce**:

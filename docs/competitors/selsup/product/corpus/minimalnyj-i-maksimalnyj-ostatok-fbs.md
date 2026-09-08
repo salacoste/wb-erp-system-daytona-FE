@@ -9,7 +9,7 @@ chars: 3252
 
 В этой статье:
 
-- 
+-
 - <a href="#dlya-chego" rel="nofollow">Для чего</a>
 - <a href="#gde-nastroit" rel="nofollow">Где настроить</a>
 

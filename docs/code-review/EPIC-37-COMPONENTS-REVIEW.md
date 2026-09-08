@@ -14,6 +14,7 @@
 Epic 37 components demonstrate **exceptional code quality** with strong TypeScript safety, comprehensive documentation, and thorough test coverage. The code follows React best practices and maintains consistency across all modules.
 
 **Key Strengths**:
+
 - ✅ Excellent TypeScript type safety (100% typed, no `any`)
 - ✅ Comprehensive documentation with examples and references
 - ✅ Pure function design for calculations and formatting
@@ -22,6 +23,7 @@ Epic 37 components demonstrate **exceptional code quality** with strong TypeScri
 - ✅ Clean separation of concerns (component/logic/presentation)
 
 **Minor Improvements**:
+
 - ⚠️ Missing useCallback for some handlers (MergedGroupTable)
 - ⚠️ No test files for React components yet
 - 🔵 Could extract sticky column logic into custom hook
@@ -36,20 +38,21 @@ Epic 37 components demonstrate **exceptional code quality** with strong TypeScri
 
 **Score**: **8.3/10** ✅ Excellent
 
-| Category | Score | Status |
-|----------|-------|--------|
-| **TypeScript Safety** | 10/10 | ✅ Perfect |
-| **Performance** | 7/10 | ⚠️ Can improve |
-| **Accessibility** | 9/10 | ✅ Excellent |
-| **Documentation** | 10/10 | ✅ Perfect |
-| **Test Coverage** | 6/10 | ⚠️ Component tests missing |
-| **Code Organization** | 9/10 | ✅ Excellent |
+| Category              | Score | Status                     |
+| --------------------- | ----- | -------------------------- |
+| **TypeScript Safety** | 10/10 | ✅ Perfect                 |
+| **Performance**       | 7/10  | ⚠️ Can improve             |
+| **Accessibility**     | 9/10  | ✅ Excellent               |
+| **Documentation**     | 10/10 | ✅ Perfect                 |
+| **Test Coverage**     | 6/10  | ⚠️ Component tests missing |
+| **Code Organization** | 9/10  | ✅ Excellent               |
 
 #### 1.1 TypeScript Safety: **10/10** ✅
 
 **Analysis**: Perfect type safety.
 
 **Strengths**:
+
 ```typescript
 // ✅ EXCELLENT: Well-defined interface with JSDoc
 export interface MergedGroupTableProps {
@@ -74,6 +77,7 @@ export type SortField = 'totalSales' | 'totalRevenue' | 'organicSales' | 'totalS
 ```
 
 **Evidence**:
+
 - No `any` types found ✅
 - All props properly typed with JSDoc ✅
 - Strict null checks handled (`??` operator) ✅
@@ -86,6 +90,7 @@ export type SortField = 'totalSales' | 'totalRevenue' | 'organicSales' | 'totalS
 **Issue 1.2.1: Missing useCallback for event handlers**
 
 **Current** (lines 97-98, 104-105, 109-110, 115-116, 122-123):
+
 ```typescript
 // TableHeader component
 <th
@@ -99,6 +104,7 @@ export type SortField = 'totalSales' | 'totalRevenue' | 'organicSales' | 'totalS
 **Impact**: 5 arrow functions re-created on every render of TableHeader.
 
 **Recommended**:
+
 ```typescript
 import { useCallback } from 'react';
 
@@ -133,6 +139,7 @@ function TableHeader({ sortConfig, onSort }: TableHeaderProps) {
 **Issue 1.2.2: Missing useMemo for calculated values**
 
 **Current** (lines 159-164):
+
 ```typescript
 // MergedGroupRows component
 const totalSales = group.aggregateMetrics?.totalSales ?? calculateTotalSales(group.products);
@@ -146,6 +153,7 @@ const roas = group.aggregateMetrics?.roas ?? calculateROAS(revenue, spend);
 **Impact**: Calculations run on every render if `aggregateMetrics` is undefined.
 
 **Recommended**:
+
 ```typescript
 import { useMemo } from 'react';
 
@@ -186,6 +194,7 @@ function MergedGroupRows({ group, onProductClick }: MergedGroupRowsProps) {
 **Estimated Impact**: ~15-20% faster rendering for groups with many products.
 
 **Strengths**:
+
 - ✅ Pure calculation functions (metrics-calculator.ts) are well-optimized
 - ✅ Minimal component re-renders (good component structure)
 
@@ -194,6 +203,7 @@ function MergedGroupRows({ group, onProductClick }: MergedGroupRowsProps) {
 **Analysis**: Excellent accessibility compliance.
 
 **Strengths**:
+
 ```typescript
 // ✅ EXCELLENT: Crown icon with aria-label (line 237)
 <Crown className="inline h-4 w-4 text-yellow-600 mr-1" aria-label="Главный товар" />
@@ -225,6 +235,7 @@ function MergedGroupRows({ group, onProductClick }: MergedGroupRowsProps) {
 **Minor Issue**: Missing table caption for screen readers.
 
 **Current** (line 297):
+
 ```typescript
 <table className="min-w-full border-collapse bg-white shadow-sm rounded-lg text-sm md:text-base">
   <TableHeader sortConfig={sortConfig} onSort={onSort} />
@@ -233,6 +244,7 @@ function MergedGroupRows({ group, onProductClick }: MergedGroupRowsProps) {
 ```
 
 **Recommended**:
+
 ```typescript
 <table className="min-w-full border-collapse bg-white shadow-sm rounded-lg text-sm md:text-base">
   <caption className="sr-only">
@@ -250,7 +262,8 @@ function MergedGroupRows({ group, onProductClick }: MergedGroupRowsProps) {
 **Analysis**: Exceptional documentation quality.
 
 **Strengths**:
-```typescript
+
+````typescript
 // ✅ EXCELLENT: File header with context and references
 /**
  * MergedGroupTable Component - Epic 37: Merged Group Table Display
@@ -291,9 +304,10 @@ function MergedGroupRows({ group, onProductClick }: MergedGroupRowsProps) {
 // Story 37.3 AC 20: ROAS column with tooltip (line 120)
 // Story 37.4 AC 1-5, 19-20, 25 (sticky on tablet/mobile) (line 167)
 // Story 37.4 AC 6-9, 21 (line 169)
-```
+````
 
 **Evidence**:
+
 - File headers reference Epic/Story docs ✅
 - JSDoc on all exported types/functions ✅
 - Usage examples provided ✅
@@ -306,6 +320,7 @@ function MergedGroupRows({ group, onProductClick }: MergedGroupRowsProps) {
 **Recommended Test File**: `src/app/(dashboard)/analytics/advertising/components/__tests__/MergedGroupTable.test.tsx`
 
 **Test Structure**:
+
 ```typescript
 import { render, screen, fireEvent } from '@testing-library/react';
 import { MergedGroupTable } from '../MergedGroupTable';
@@ -356,6 +371,7 @@ describe('MergedGroupTable', () => {
 **Analysis**: Excellent separation of concerns.
 
 **Strengths**:
+
 ```
 src/app/(dashboard)/analytics/advertising/
 ├── components/
@@ -370,6 +386,7 @@ src/app/(dashboard)/analytics/advertising/
 ```
 
 **Design Patterns**:
+
 - ✅ Pure functions for calculations (testable, composable)
 - ✅ Separation of presentation and logic
 - ✅ Component composition (TableHeader, MergedGroupRows)
@@ -378,6 +395,7 @@ src/app/(dashboard)/analytics/advertising/
 **Minor Suggestion**: Could extract sticky column logic into custom hook.
 
 **Recommended**:
+
 ```typescript
 // utils/useTableStickyColumns.ts
 export function useTableStickyColumns(hasSingleProduct: boolean) {
@@ -419,18 +437,19 @@ export function useTableStickyColumns(hasSingleProduct: boolean) {
 
 **Score**: **9.5/10** 🏆 Excellent
 
-| Category | Score | Status |
-|----------|-------|--------|
-| **TypeScript Safety** | 10/10 | ✅ Perfect |
-| **Performance** | 10/10 | ✅ Perfect |
-| **Accessibility** | 10/10 | ✅ Perfect |
-| **Documentation** | 9/10 | ✅ Excellent |
-| **Test Coverage** | 7/10 | ⚠️ Missing tests |
-| **Code Organization** | 10/10 | ✅ Perfect |
+| Category              | Score | Status           |
+| --------------------- | ----- | ---------------- |
+| **TypeScript Safety** | 10/10 | ✅ Perfect       |
+| **Performance**       | 10/10 | ✅ Perfect       |
+| **Accessibility**     | 10/10 | ✅ Perfect       |
+| **Documentation**     | 9/10  | ✅ Excellent     |
+| **Test Coverage**     | 7/10  | ⚠️ Missing tests |
+| **Code Organization** | 10/10 | ✅ Perfect       |
 
 #### 2.1 Analysis: Nearly Perfect Component
 
 **Strengths**:
+
 ```typescript
 // ✅ PERFECT: Clean interface with JSDoc
 interface GroupByToggleProps {
@@ -455,6 +474,7 @@ interface GroupByToggleProps {
 ```
 
 **Evidence**:
+
 - No `any` types ✅
 - Perfect accessibility (aria-pressed + aria-label) ✅
 - Clean component structure ✅
@@ -465,6 +485,7 @@ interface GroupByToggleProps {
 **Recommended Test File**: `components/__tests__/GroupByToggle.test.tsx`
 
 **Test Structure**:
+
 ```typescript
 describe('GroupByToggle', () => {
   it('renders both toggle buttons');
@@ -487,18 +508,19 @@ describe('GroupByToggle', () => {
 
 **Score**: **9.8/10** 🏆 Exceptional
 
-| Category | Score | Status |
-|----------|-------|--------|
-| **TypeScript Safety** | 10/10 | ✅ Perfect |
-| **Performance** | 10/10 | ✅ Perfect |
-| **Documentation** | 10/10 | ✅ Perfect |
-| **Test Coverage** | 10/10 | ✅ Test file exists |
-| **Code Organization** | 10/10 | ✅ Perfect |
-| **Edge Cases** | 9/10 | ✅ Excellent |
+| Category              | Score | Status              |
+| --------------------- | ----- | ------------------- |
+| **TypeScript Safety** | 10/10 | ✅ Perfect          |
+| **Performance**       | 10/10 | ✅ Perfect          |
+| **Documentation**     | 10/10 | ✅ Perfect          |
+| **Test Coverage**     | 10/10 | ✅ Test file exists |
+| **Code Organization** | 10/10 | ✅ Perfect          |
+| **Edge Cases**        | 9/10  | ✅ Excellent        |
 
 #### 3.1 Analysis: Exemplary Pure Functions
 
 **Strengths**:
+
 ```typescript
 // ✅ PERFECT: JSDoc with formula, examples, and edge cases
 /**
@@ -551,6 +573,7 @@ export function calculateOrganicContribution(organicSales: number, totalSales: n
 ```
 
 **Evidence**:
+
 - All edge cases documented and handled ✅
 - Pure functions (no side effects) ✅
 - 100% referential transparency ✅
@@ -567,18 +590,19 @@ export function calculateOrganicContribution(organicSales: number, totalSales: n
 
 **Score**: **9.7/10** 🏆 Exceptional
 
-| Category | Score | Status |
-|----------|-------|--------|
-| **TypeScript Safety** | 10/10 | ✅ Perfect |
-| **Performance** | 10/10 | ✅ Perfect |
-| **Documentation** | 10/10 | ✅ Perfect |
-| **Test Coverage** | 10/10 | ✅ Test file exists |
-| **Code Organization** | 10/10 | ✅ Perfect |
-| **Locale Compliance** | 9/10 | ✅ Excellent |
+| Category              | Score | Status              |
+| --------------------- | ----- | ------------------- |
+| **TypeScript Safety** | 10/10 | ✅ Perfect          |
+| **Performance**       | 10/10 | ✅ Perfect          |
+| **Documentation**     | 10/10 | ✅ Perfect          |
+| **Test Coverage**     | 10/10 | ✅ Test file exists |
+| **Code Organization** | 10/10 | ✅ Perfect          |
+| **Locale Compliance** | 9/10  | ✅ Excellent        |
 
 #### 4.1 Analysis: Production-Ready Formatters
 
 **Strengths**:
+
 ```typescript
 // ✅ PERFECT: Russian locale with examples
 /**
@@ -619,6 +643,7 @@ export function formatROAS(roas: number | null | undefined): string {
 ```
 
 **Evidence**:
+
 - Correct Russian locale (ru-RU) ✅
 - Proper ruble symbol (₽) ✅
 - Em dash (—) for null values ✅
@@ -628,6 +653,7 @@ export function formatROAS(roas: number | null | undefined): string {
 **Minor Suggestion**: Consider memoizing Intl.NumberFormat instance.
 
 **Current**:
+
 ```typescript
 export function formatCurrency(value: number): string {
   return new Intl.NumberFormat('ru-RU', {  // ❌ New instance every call
@@ -640,6 +666,7 @@ export function formatCurrency(value: number): string {
 ```
 
 **Recommended**:
+
 ```typescript
 // ✅ Create formatter once
 const currencyFormatter = new Intl.NumberFormat('ru-RU', {
@@ -661,14 +688,17 @@ export function formatCurrency(value: number): string {
 ## Recommendations Summary
 
 ### Critical Issues (Must Fix):
+
 **None** ❌ All components are production-ready ✅
 
 ### Important Improvements (Should Fix):
+
 1. ⚠️ **Add component tests** (MergedGroupTable.test.tsx, GroupByToggle.test.tsx) - **2-3h**
 2. ⚠️ **Add useCallback to MergedGroupTable handlers** (5 handlers) - **30 min**
 3. ⚠️ **Add useMemo for calculated metrics** (6 calculations) - **30 min**
 
 ### Nice-to-Have (Can Defer):
+
 4. 🔵 **Add table caption for screen readers** (MergedGroupTable) - **5 min**
 5. 🔵 **Extract sticky column logic into custom hook** (useTableStickyColumns) - **1h**
 6. 🔵 **Memoize Intl.NumberFormat instances** (formatters.ts) - **15 min**
@@ -677,12 +707,12 @@ export function formatCurrency(value: number): string {
 
 ## Test Coverage Status
 
-| File | Test File | Status |
-|------|-----------|--------|
-| MergedGroupTable.tsx | ❌ Missing | Need to create |
-| GroupByToggle.tsx | ❌ Missing | Need to create |
-| metrics-calculator.ts | ✅ Exists | `__tests__/metrics-calculator.test.ts` |
-| formatters.ts | ✅ Exists | `__tests__/formatters.test.ts` |
+| File                  | Test File  | Status                                 |
+| --------------------- | ---------- | -------------------------------------- |
+| MergedGroupTable.tsx  | ❌ Missing | Need to create                         |
+| GroupByToggle.tsx     | ❌ Missing | Need to create                         |
+| metrics-calculator.ts | ✅ Exists  | `__tests__/metrics-calculator.test.ts` |
+| formatters.ts         | ✅ Exists  | `__tests__/formatters.test.ts`         |
 
 **Overall Test Coverage**: **50%** (2/4 files)
 

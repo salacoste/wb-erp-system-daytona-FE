@@ -1,6 +1,7 @@
 # Timeline and Priority
 
 [If applicable, any time constraints or phasing]
+
 ```
 
 ## 5. Review and Refinement
@@ -36,3 +37,4 @@
 - Which team members should review results
 - How to validate findings
 - When to revisit or expand research
+```

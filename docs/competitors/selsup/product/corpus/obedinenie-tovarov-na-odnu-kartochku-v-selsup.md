@@ -15,7 +15,7 @@ chars: 6258
 
 В этой статье:
 
-- 
+-
 - <a href="#kak-obedinit-tovary" rel="nofollow">Как объединить товары</a>
 - <a href="#kak-obedinit-tovary-massovo" rel="nofollow">Как объединить товары массово</a>
 - <a href="#kak-razdelit-tovary-massovo" rel="nofollow">Как разделить товары массово</a>

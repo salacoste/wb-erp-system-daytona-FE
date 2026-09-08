@@ -1,11 +1,11 @@
 # Story 69.4-FE: Per-SKU Buyout Table
 
-| Field | Value |
-|-------|-------|
-| Epic | 69-FE Buyout Analytics |
-| Priority | P2 |
-| SP | 8 |
-| Status | ✅ Complete |
+| Field    | Value                  |
+| -------- | ---------------------- |
+| Epic     | 69-FE Buyout Analytics |
+| Priority | P2                     |
+| SP       | 8                      |
+| Status   | ✅ Complete            |
 
 ## Description
 
@@ -25,14 +25,16 @@
 
 ## Files
 
-| File | Action | Lines |
-|------|--------|-------|
+| File                                                              | Action  | Lines  |
+| ----------------------------------------------------------------- | ------- | ------ |
 | `src/app/(dashboard)/analytics/buyout/components/BuyoutTable.tsx` | Created | 281 ⚠️ |
 
 ## Known Issues
+
 - File exceeds 200-line ESLint limit — needs refactoring (extract sub-components)
 - `useProducts({ limit: 200 })` cap silently degrades for large catalogs
 - Sort order toggle doesn't reset pagination offset
 
 ## Dependencies
+
 - Blocked by: 69.1, 69.2

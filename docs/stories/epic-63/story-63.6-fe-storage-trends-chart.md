@@ -18,6 +18,7 @@
 ## Acceptance Criteria
 
 ### AC1: Chart Display
+
 - [ ] Line/Area chart showing storage cost trend over weeks
 - [ ] X-axis: ISO weeks (W01, W02, W03, etc.)
 - [ ] Y-axis: Storage cost in rubles (formatted: 5k, 10k, etc.)
@@ -25,6 +26,7 @@
 - [ ] Smooth line with purple gradient area fill (#7C4DFF)
 
 ### AC2: Summary Statistics
+
 - [ ] Show min, max, avg values above chart
 - [ ] Display trend percentage over period (e.g., +10.0%)
 - [ ] Color-coded trend indicator:
@@ -33,21 +35,25 @@
   - **Stable**: Gray
 
 ### AC3: Trend Indicator Badge
+
 - [ ] Prominent trend badge showing percentage change
 - [ ] Arrow icon indicating direction (up/down)
 - [ ] Semantic coloring (red for cost increase, green for decrease)
 
 ### AC4: Period Integration
+
 - [ ] Widget respects dashboard's selected period (weekStart/weekEnd)
 - [ ] Minimum 4 weeks of data for meaningful trend visualization
 - [ ] Adapts to period context provider
 
 ### AC5: Loading & Empty States
+
 - [ ] Loading skeleton matching chart dimensions
 - [ ] Empty state: "Нет данных за выбранный период"
 - [ ] Error state with retry button
 
 ### AC6: Null Data Handling
+
 - [ ] Show **gaps** in chart for weeks with no data (don't interpolate)
 - [ ] Visual indicator for null data points (dashed circle)
 - [ ] Tooltip explains: "Нет данных за эту неделю"
@@ -55,11 +61,13 @@
 ## Tasks / Subtasks
 
 ### Phase 1: Component Setup
+
 - [ ] Create `src/components/custom/dashboard/StorageTrendsWidget.tsx`
 - [ ] Define component props interface
 - [ ] Set up data fetching with `useStorageTrends` hook
 
 ### Phase 2: Chart Implementation
+
 - [ ] Configure Recharts AreaChart with purple theme
 - [ ] Set up X-axis with week formatter (W01, W02, etc.)
 - [ ] Set up Y-axis with currency formatter (5k, 10k)
@@ -67,33 +75,39 @@
 - [ ] Handle null data points (show gaps, don't interpolate)
 
 ### Phase 3: Summary Stats Bar
+
 - [ ] Create summary stats component above chart
 - [ ] Display min, max, avg values with labels
 - [ ] Format values with formatCurrency helper
 
 ### Phase 4: Trend Badge
+
 - [ ] Create TrendBadge component
 - [ ] Show percentage with sign (+/-)
 - [ ] Color code: red (increase), green (decrease)
 - [ ] Add Lucide icon (TrendingUp/TrendingDown)
 
 ### Phase 5: Custom Tooltip
+
 - [ ] Create custom tooltip component
 - [ ] Show week name (Неделя 05)
 - [ ] Show storage cost (5,500 ₽)
 - [ ] Handle null values: "Нет данных за эту неделю"
 
 ### Phase 6: Loading & Error States
+
 - [ ] Implement chart loading skeleton
 - [ ] Implement error state with retry
 - [ ] Implement empty state
 
 ### Phase 7: Integration
+
 - [ ] Integrate with dashboard period context
 - [ ] Add to dashboard expenses section layout
 - [ ] Test responsiveness
 
 ### Phase 8: Testing
+
 - [ ] Test chart renders with mock data
 - [ ] Test null data handling (gaps)
 - [ ] Test tooltip interactions
@@ -132,12 +146,12 @@ GET /v1/analytics/storage/trends
 
 **Request Parameters:**
 
-| Parameter | Required | Default | Description |
-|-----------|----------|---------|-------------|
-| `weekStart` | Yes | - | Start period (YYYY-Www) |
-| `weekEnd` | Yes | - | End period (YYYY-Www) |
-| `nm_id` | No | null | Filter by product (null = entire cabinet) |
-| `metrics` | No | all | Metrics: `storage_cost`, `volume` |
+| Parameter   | Required | Default | Description                               |
+| ----------- | -------- | ------- | ----------------------------------------- |
+| `weekStart` | Yes      | -       | Start period (YYYY-Www)                   |
+| `weekEnd`   | Yes      | -       | End period (YYYY-Www)                     |
+| `nm_id`     | No       | null    | Filter by product (null = entire cabinet) |
+| `metrics`   | No       | all     | Metrics: `storage_cost`, `volume`         |
 
 **Example Request:**
 
@@ -429,6 +443,7 @@ src/
 ### Null Data Behavior (UX Decision)
 
 Per UX decisions from Epic 24:
+
 - **Show gaps** in chart for weeks with no data (don't interpolate)
 - `connectNulls={false}` in Recharts Area component
 - Visual indicator (dashed circle) for null data points
@@ -437,8 +452,9 @@ Per UX decisions from Epic 24:
 ### Trend Interpretation (Storage Context)
 
 For storage costs, trend direction has semantic meaning:
+
 - **Increase (+%)** = Bad (costs going up) = Red
-- **Decrease (-%)**  = Good (costs going down) = Green
+- **Decrease (-%)** = Good (costs going down) = Green
 - **No change (0%)** = Neutral = Gray
 
 This is the opposite of revenue trends where increase is good.
@@ -486,6 +502,7 @@ This is the opposite of revenue trends where increase is good.
 ## Testing
 
 ### Framework & Location
+
 - **Framework**: Vitest + React Testing Library
 - **Test Location**: `src/components/custom/dashboard/__tests__/StorageTrendsWidget.test.tsx`
 
@@ -508,6 +525,7 @@ This is the opposite of revenue trends where increase is good.
 - [ ] Purple color scheme applied correctly
 
 ### Coverage Target
+
 - Component: >80%
 - Helper components: >90%
 
@@ -547,8 +565,8 @@ This is the opposite of revenue trends where increase is good.
 
 ## Change Log
 
-| Date | Author | Change |
-|------|--------|--------|
+| Date       | Author      | Change                                 |
+| ---------- | ----------- | -------------------------------------- |
 | 2026-01-31 | PM (Claude) | Initial draft based on backend API doc |
 
 ---
@@ -556,10 +574,12 @@ This is the opposite of revenue trends where increase is good.
 ## Implementation
 
 **Components**:
+
 - `src/components/custom/dashboard/StorageTrendsWidget.tsx` (main container)
 - `src/components/custom/dashboard/StorageTrendsChart.tsx` (Recharts chart)
 
 **Key Features**:
+
 - Line/Area chart with purple gradient (#7C4DFF) for storage costs
 - Summary statistics (min, max, avg) displayed above chart
 - Trend badge with percentage change (red for increase, green for decrease)

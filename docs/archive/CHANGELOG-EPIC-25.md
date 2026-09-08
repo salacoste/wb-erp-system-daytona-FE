@@ -13,6 +13,7 @@ Epic 25 addresses Dashboard Data Accuracy issues, ensuring financial data displa
 **Problem Statement**: Dashboard showed incorrect data not matching WB Dashboard metrics.
 
 **Root Cause Analysis**:
+
 1. Cabinet Summary Dashboard used `weekly_margin_fact.revenue_net_rub` instead of WB-compatible metrics
 2. Missing WB Commission (`total_commission_rub`) in expenses
 3. No COGS section and net profit calculation
@@ -29,6 +30,7 @@ Epic 25 addresses Dashboard Data Accuracy issues, ensuring financial data displa
 **Root Cause:** WB Excel provides POSITIVE values for both sales AND returns. The code was adding all `net_for_pay` values without considering `doc_type`, causing returns to INCREASE revenue instead of DECREASE it.
 
 **Fix Applied:**
+
 ```typescript
 // BEFORE (WRONG):
 existing.revenueNetRub = existing.revenueNetRub.plus(tx.netForPay);
@@ -45,12 +47,14 @@ if (tx.docType === 'sale') {
 ```
 
 **Evidence (W47 2025-11-17 to 2025-11-23)**:
+
 - Raw sale: 212,803.18₽ (positive)
 - Raw return: 2,750.67₽ (positive - should be subtracted!)
 - WRONG: 212,803.18 + 2,750.67 = 215,553.85₽
 - CORRECT: 212,803.18 - 2,750.67 = 210,052.51₽
 
 **Files Changed:**
+
 - `src/analytics/services/margin-calculation.service.ts` - Core fix
 - `src/analytics/services/__tests__/margin-calculation.service.spec.ts` - Updated tests
 - `scripts/recalculate-margin-facts.ts` - Recalculation script
@@ -64,11 +68,13 @@ if (tx.docType === 'sale') {
 **Changes Applied:**
 
 **Backend DTO Updates:**
+
 - `src/analytics/dto/weekly-payout-total.dto.ts` - Added `total_commission_rub_total` field
 - `src/analytics/dto/weekly-payout-summary.dto.ts` - Added `total_commission_rub` field
 - `src/analytics/weekly-analytics.service.ts` - Added mapping for commission fields
 
 **Frontend Updates:**
+
 - `src/hooks/useDashboard.ts` - Added `total_commission_rub_total?` and `total_commission_rub?` to FinanceSummary
 - `src/components/custom/FinancialSummaryTable.tsx` - Added "Комиссия WB" row as first expense
 
@@ -79,6 +85,7 @@ if (tx.docType === 'sale') {
 **Purpose:** Redesign Cabinet Summary Dashboard with CFO-approved P&L structure.
 
 **P&L Structure Implemented:**
+
 ```
 ┌─────────────────────────────────────────────────────────────────┐
 │                    P&L МАРКЕТПЛЕЙСА                              │
@@ -106,6 +113,7 @@ if (tx.docType === 'sale') {
 ```
 
 **Files Changed:**
+
 - `src/app/(dashboard)/analytics/dashboard/page.tsx` - Redesigned with P&L sections
 - `src/types/analytics.ts` - Extended CabinetSummaryTotals interface
 
@@ -116,6 +124,7 @@ if (tx.docType === 'sale') {
 **Purpose:** Verify ranking uses correct `net_for_pay` per SKU.
 
 **Analysis:** After Story 25.5 fix, `revenue_net_rub` in `weekly_margin_fact` is correctly calculated as:
+
 ```
 revenue_net_rub = SUM(net_for_pay for sales) - SUM(net_for_pay for returns)
 ```
@@ -123,6 +132,7 @@ revenue_net_rub = SUM(net_for_pay for sales) - SUM(net_for_pay for returns)
 **Result:** Existing ranking logic was confirmed correct - ranks by `net_for_pay` per SKU.
 
 **Files Changed:**
+
 - `src/analytics/weekly-analytics.service.ts` - Added clarifying comments
 
 ---
@@ -134,6 +144,7 @@ revenue_net_rub = SUM(net_for_pay for sales) - SUM(net_for_pay for returns)
 **Backend Request:** Request #44 - Extended finance-summary endpoint with COGS data from `weekly_margin_fact`.
 
 **New Fields Added:**
+
 ```typescript
 {
   cogs_total: number | null;           // SUM(cogs_rub) from weekly_margin_fact
@@ -147,6 +158,7 @@ revenue_net_rub = SUM(net_for_pay for sales) - SUM(net_for_pay for returns)
 **Frontend Implementation:**
 
 **Files Created/Modified:**
+
 - `src/hooks/useDashboard.ts` - Added 5 COGS fields to FinanceSummary interface
 - `src/components/custom/FinancialSummaryTable.tsx`:
   - New imports: Alert, AlertDescription, Package, AlertTriangle, Gem icons
@@ -158,6 +170,7 @@ revenue_net_rub = SUM(net_for_pay for sales) - SUM(net_for_pay for returns)
   - Comparison mode support with pp (percentage points) delta
 
 **UI Features:**
+
 - COGS coverage percentage display (e.g., "92.5%")
 - Products with COGS counter (e.g., "45 / 50 товаров")
 - Alert: "Внесите себестоимости для N товаров" when < 100%
@@ -172,6 +185,7 @@ revenue_net_rub = SUM(net_for_pay for sales) - SUM(net_for_pay for returns)
 **Endpoint:** `GET /v1/analytics/weekly/finance-summary?week=YYYY-Www`
 
 **New Fields in Response:**
+
 ```typescript
 {
   summary_total: {
@@ -230,19 +244,20 @@ docs/
 **Total Stories:** 5/5 (100%) ✅
 **Completion Date:** 2025-12-06
 
-| Story | Title | Status |
-|-------|-------|--------|
-| 25.1 | Fix Cabinet Summary Dashboard | ✅ COMPLETED |
-| 25.2 | Add COGS Section to Financial Summary | ✅ COMPLETED |
-| 25.3 | Add WB Commission to Expenses | ✅ COMPLETED |
-| 25.4 | Fix Top Products / Top Brands | ✅ COMPLETED |
-| 25.5 | Audit MarginCalculationService | ✅ COMPLETED |
+| Story | Title                                 | Status       |
+| ----- | ------------------------------------- | ------------ |
+| 25.1  | Fix Cabinet Summary Dashboard         | ✅ COMPLETED |
+| 25.2  | Add COGS Section to Financial Summary | ✅ COMPLETED |
+| 25.3  | Add WB Commission to Expenses         | ✅ COMPLETED |
+| 25.4  | Fix Top Products / Top Brands         | ✅ COMPLETED |
+| 25.5  | Audit MarginCalculationService        | ✅ COMPLETED |
 
 ---
 
 ## Post-Fix Actions
 
 ### Margin Recalculation Required
+
 After Story 25.5 fix, historical margin data needs recalculation:
 
 ```bash
@@ -256,24 +271,29 @@ This script recalculates all `weekly_margin_fact` records to apply the corrected
 ## Deployment Issue (2025-12-06)
 
 ### Problem
+
 After Epic 25 completion, "Комиссия WB" field showed "—" on `/analytics` page while other fields (Логистика, etc.) displayed correctly.
 
 ### Root Cause
+
 **Backend was not rebuilt after Story 25.3 changes.** The compiled `dist/` code was missing the `total_commission_rub_total` field in `mapTotalToDto()`.
 
 ### Solution
+
 ```bash
 npm run build    # Recompile TypeScript
 pm2 restart wb-repricer  # Apply changes
 ```
 
 ### Verification
+
 ```bash
 curl "/v1/analytics/weekly/finance-summary?week=2025-W48" | jq '.summary_total.total_commission_rub_total'
 # Returns: 70055.52 ✅
 ```
 
 ### Lesson Learned
+
 **Always run `npm run build` after backend code changes before restarting PM2.**
 
 ---

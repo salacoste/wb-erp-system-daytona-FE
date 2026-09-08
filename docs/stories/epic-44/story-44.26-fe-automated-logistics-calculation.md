@@ -4,12 +4,13 @@
 >
 > This story has been split into two sub-stories for independent delivery:
 >
-> | Sub-Story | Title | Effort | Status | Dependency |
-> |-----------|-------|--------|--------|------------|
-> | **[44.26a-FE](./story-44.26a-fe-product-search-date-picker.md)** | Product Search & Delivery Date Selection | 5 SP | 📋 Ready for Dev | None (can start) |
-> | **[44.26b-FE](./story-44.26b-fe-auto-fill-dimensions-category.md)** | Auto-fill Dimensions & Category | 5 SP | 📋 Ready for Dev | 44.26a (Backend #99 ✅ DONE) |
+> | Sub-Story                                                           | Title                                    | Effort | Status           | Dependency                   |
+> | ------------------------------------------------------------------- | ---------------------------------------- | ------ | ---------------- | ---------------------------- |
+> | **[44.26a-FE](./story-44.26a-fe-product-search-date-picker.md)**    | Product Search & Delivery Date Selection | 5 SP   | 📋 Ready for Dev | None (can start)             |
+> | **[44.26b-FE](./story-44.26b-fe-auto-fill-dimensions-category.md)** | Auto-fill Dimensions & Category          | 5 SP   | 📋 Ready for Dev | 44.26a (Backend #99 ✅ DONE) |
 >
 > **Reason for split**: PM Validation identified that:
+>
 > 1. Original story was 10-13 SP (not 8 SP as estimated)
 > 2. Backend dependency (Request #99) blocks auto-fill functionality
 > 3. Product search and date picker can be delivered independently
@@ -25,6 +26,7 @@
 **Priority**: P0 - CRITICAL (Next Major Feature)
 **Effort**: 10 SP (5 SP + 5 SP)
 **Depends On**:
+
 - Story 44.7 ✅ (Dimension Volume Calculation)
 - Story 44.8 ✅ (Logistics Tariff Calculation)
 - Story 44.12 ✅ (Warehouse Selection)
@@ -43,6 +45,7 @@
 ## Два режима работы
 
 ### Режим A: Выбор товара из каталога
+
 ```
 1. Выбираю товар (nmId) из каталога магазина
    → Система автоматически подтягивает:
@@ -54,6 +57,7 @@
 ```
 
 ### Режим B: Ручной ввод (для новых товаров)
+
 ```
 1. НЕ выбираю товар (поле пустое)
 2. Вручную выбираю категорию товара (для комиссии WB)
@@ -66,10 +70,10 @@
 
 ### Логика коэффициентов по типу фулфилмента
 
-| Тип | Логистика | Хранение |
-|-----|-----------|----------|
+| Тип     | Логистика             | Хранение                |
+| ------- | --------------------- | ----------------------- |
 | **FBO** | ✅ Коэффициент склада | ✅ Коэффициент хранения |
-| **FBS** | ✅ Коэффициент склада | ❌ Не применяется |
+| **FBS** | ✅ Коэффициент склада | ❌ Не применяется       |
 
 ---
 
@@ -78,6 +82,7 @@
 ### Текущее состояние (AS-IS)
 
 Price Calculator уже имеет:
+
 - ✅ Ручной ввод габаритов товара (Story 44.7)
 - ✅ Расчёт объёма из габаритов
 - ✅ Выбор склада с тарифами (Story 44.12)
@@ -86,6 +91,7 @@ Price Calculator уже имеет:
 - ✅ Выбор категории с комиссией (CategorySelector)
 
 **Проблема**:
+
 - Пользователь должен вручную вводить габариты даже для существующих товаров
 - Категорию нужно выбирать вручную, хотя она уже есть в карточке товара WB
 - Нет связи между товаром в каталоге и его параметрами в калькуляторе
@@ -93,24 +99,27 @@ Price Calculator уже имеет:
 ### Целевое состояние (TO-BE)
 
 **Режим A: Товар из каталога (автоматизация)**
-| Параметр | Источник |
-|----------|----------|
-| Габариты | Автоматически из карточки WB |
-| Категория + комиссия | Автоматически из карточки WB |
-| Склад | Выбор пользователя |
-| Дата сдачи | Выбор пользователя |
-| Коэффициенты | Автоматически по складу + дате |
+
+| Параметр             | Источник                       |
+| -------------------- | ------------------------------ |
+| Габариты             | Автоматически из карточки WB   |
+| Категория + комиссия | Автоматически из карточки WB   |
+| Склад                | Выбор пользователя             |
+| Дата сдачи           | Выбор пользователя             |
+| Коэффициенты         | Автоматически по складу + дате |
 
 **Режим B: Новый товар (ручной ввод)**
-| Параметр | Источник |
-|----------|----------|
-| Габариты | Ручной ввод в см |
-| Категория + комиссия | Ручной выбор из списка |
-| Склад | Выбор пользователя |
-| Дата сдачи | Выбор пользователя |
-| Коэффициенты | Автоматически по складу + дате |
+
+| Параметр             | Источник                       |
+| -------------------- | ------------------------------ |
+| Габариты             | Ручной ввод в см               |
+| Категория + комиссия | Ручной выбор из списка         |
+| Склад                | Выбор пользователя             |
+| Дата сдачи           | Выбор пользователя             |
+| Коэффициенты         | Автоматически по складу + дате |
 
 **Различие FBO vs FBS:**
+
 - **FBO**: Коэффициент логистики + коэффициент хранения
 - **FBS**: Только коэффициент логистики (хранение = 0)
 
@@ -119,6 +128,7 @@ Price Calculator уже имеет:
 ## Acceptance Criteria
 
 ### AC1: Product Selection with Auto-fill (Режим A)
+
 - [ ] Добавить поле выбора товара (nmId) в форму Price Calculator (опционально)
 - [ ] Реализовать searchable dropdown с поиском по SKU, артикулу и названию
 - [ ] При выборе товара автоматически заполнять:
@@ -135,11 +145,13 @@ Price Calculator уже имеет:
 - [ ] Кнопка "Очистить товар" → переход в Режим B (ручной ввод)
 
 ### AC1.1: Manual Entry Mode (Режим B)
+
 - [ ] Если товар НЕ выбран → CategorySelector доступен для выбора
 - [ ] Если товар НЕ выбран → габариты вводятся вручную в см
 - [ ] Система сама считает литраж из габаритов (уже реализовано Story 44.7)
 
 ### AC2: Delivery Date Selection for Coefficient Lookup
+
 - [ ] Добавить поле выбора даты сдачи товара (DatePicker)
 - [ ] Показывать только доступные даты (из API acceptance coefficients)
 - [ ] По умолчанию выбирать завтрашнюю дату (или первую доступную)
@@ -148,6 +160,7 @@ Price Calculator уже имеет:
 - [ ] Недоступные даты отмечать серым цветом (coefficient = -1)
 
 ### AC3: Coefficient Calendar Visualization
+
 - [ ] Отображать календарь на 14 дней с коэффициентами
 - [ ] Цветовая индикация:
   - Зелёный: coefficient ≤ 100 (×1.0) - базовый
@@ -159,6 +172,7 @@ Price Calculator уже имеет:
 - [ ] При клике на дату - выбирать эту дату для расчёта
 
 ### AC4: Automated Logistics Calculation Flow
+
 - [ ] Автоматический пересчёт логистики при изменении:
   - Выбранного товара (изменяются габариты)
   - Выбранного склада (изменяются тарифы)
@@ -177,6 +191,7 @@ Price Calculator уже имеет:
 - [ ] Показывать breakdown расчёта: объём, базовый тариф, доп. литры, коэффициент, итого
 
 ### AC5: Integration with Existing Form
+
 - [ ] Интегрировать ProductSelect в секцию "Товар" формы (перед габаритами)
 - [ ] Интегрировать DeliveryDatePicker в секцию "Склад и хранение"
 - [ ] Сохранить возможность работы без выбора товара (ручной ввод габаритов)
@@ -184,6 +199,7 @@ Price Calculator уже имеет:
 - [ ] Обеспечить совместимость с FBO/FBS режимами (коэффициенты могут отличаться)
 
 ### AC6: Error Handling & Loading States
+
 - [ ] Показывать skeleton при загрузке списка товаров
 - [ ] Показывать spinner при загрузке габаритов товара
 - [ ] Показывать ошибку если товар не имеет габаритов: "Габариты не указаны в карточке WB"
@@ -198,6 +214,7 @@ Price Calculator уже имеет:
 ### Существующие API (уже реализованы):
 
 #### 1. Product List with Dimensions
+
 ```http
 GET /v1/products?include_dimensions=true&limit=100
 Authorization: Bearer {token}
@@ -205,6 +222,7 @@ X-Cabinet-Id: {cabinet_id}
 ```
 
 **Требуется добавить в response:**
+
 ```json
 {
   "products": [
@@ -234,6 +252,7 @@ X-Cabinet-Id: {cabinet_id}
 **Примечание**: Данные категории нужны для автоматического выбора в CategorySelector, который определяет комиссию WB (kgvpMarketplace для FBS, paidStorageKgvp для FBO).
 
 #### 2. Acceptance Coefficients (Story 44.13 - готов)
+
 ```http
 GET /v1/tariffs/acceptance/coefficients?warehouseId=507
 Authorization: Bearer {token}
@@ -241,6 +260,7 @@ X-Cabinet-Id: {cabinet_id}
 ```
 
 **Response (уже есть):**
+
 ```json
 {
   "coefficients": [
@@ -259,6 +279,7 @@ X-Cabinet-Id: {cabinet_id}
 ```
 
 #### 3. Warehouses (Story 44.12 - готов)
+
 ```http
 GET /v1/tariffs/warehouses
 ```
@@ -368,6 +389,7 @@ interface FormData {
 ### Product Selection Section
 
 **Режим B: Ручной ввод (товар не выбран)**
+
 ```
 ┌─────────────────────────────────────────────────────────────┐
 │ Товар (опционально)                                      [?] │
@@ -398,6 +420,7 @@ interface FormData {
 ```
 
 **Dropdown при поиске товара:**
+
 ```
 ┌─────────────────────────────────────────────────────────────┐
 │ 🔍 плат                                                     │
@@ -413,6 +436,7 @@ interface FormData {
 ```
 
 **Режим A: Товар выбран (автозаполнение)**
+
 ```
 ┌─────────────────────────────────────────────────────────────┐
 │ Товар                                              [× Очистить] │
@@ -441,6 +465,7 @@ interface FormData {
 ```
 
 ### Delivery Date Section (inside Warehouse Section)
+
 ```
 ┌─────────────────────────────────────────────────────────────┐
 │ 🏪 Склад и хранение                                         │
@@ -468,6 +493,7 @@ interface FormData {
 ```
 
 ### Logistics Breakdown (Enhanced)
+
 ```
 ┌─────────────────────────────────────────────────────────────┐
 │ 🚚 Логистика прямая                           [Рассчитано]  │
@@ -623,26 +649,26 @@ const isCategoryLocked = categorySource === 'auto' && selectedProduct !== null
 
 ## Invariants & Edge Cases
 
-| Scenario | Expected Behavior |
-|----------|-------------------|
-| **Режим A: Товар выбран** | |
-| Product without dimensions | Show warning, switch to manual dimensions input |
-| Product without category | Show warning, enable CategorySelector for manual selection |
-| Product changed | Reset dimensions AND category to new product values |
-| "Очистить товар" clicked | Switch to Режим B, enable CategorySelector, clear dimensions |
-| Manual dimension edit | Change source to 'manual', show restore button |
-| **Режим B: Ручной ввод** | |
-| No product selected | CategorySelector active, dimensions manual |
-| **Общие сценарии** | |
-| All dates unavailable | Show error, allow warehouse change |
-| Warehouse changed | Reset date to first available, reload coefficients |
-| FBO selected | Show logistics + storage coefficients |
-| FBS selected | Show only logistics coefficient (storage = 0) |
-| Form reset | Clear product, date, reset dimensions, reset category |
-| API error loading products | Show error, allow retry, form remains usable |
-| API error loading coefficients | Use coefficient = 1.0, show warning |
-| Coefficient = -1 (unavailable) | Disable date selection, show as unavailable |
-| Very large product (KGT) | Show KGT warning from Story 44.7 |
+| Scenario                       | Expected Behavior                                            |
+| ------------------------------ | ------------------------------------------------------------ |
+| **Режим A: Товар выбран**      |                                                              |
+| Product without dimensions     | Show warning, switch to manual dimensions input              |
+| Product without category       | Show warning, enable CategorySelector for manual selection   |
+| Product changed                | Reset dimensions AND category to new product values          |
+| "Очистить товар" clicked       | Switch to Режим B, enable CategorySelector, clear dimensions |
+| Manual dimension edit          | Change source to 'manual', show restore button               |
+| **Режим B: Ручной ввод**       |                                                              |
+| No product selected            | CategorySelector active, dimensions manual                   |
+| **Общие сценарии**             |                                                              |
+| All dates unavailable          | Show error, allow warehouse change                           |
+| Warehouse changed              | Reset date to first available, reload coefficients           |
+| FBO selected                   | Show logistics + storage coefficients                        |
+| FBS selected                   | Show only logistics coefficient (storage = 0)                |
+| Form reset                     | Clear product, date, reset dimensions, reset category        |
+| API error loading products     | Show error, allow retry, form remains usable                 |
+| API error loading coefficients | Use coefficient = 1.0, show warning                          |
+| Coefficient = -1 (unavailable) | Disable date selection, show as unavailable                  |
+| Very large product (KGT)       | Show KGT warning from Story 44.7                             |
 
 ---
 
@@ -715,24 +741,27 @@ const isCategoryLocked = categorySource === 'auto' && selectedProduct !== null
 ## Dev Agent Record
 
 ### File List
-| File | Change Type | Lines (Est.) | Description |
-|------|-------------|--------------|-------------|
-| `src/components/custom/price-calculator/ProductSearchSelect.tsx` | CREATE | ~180 | Searchable product dropdown |
-| `src/components/custom/price-calculator/DeliveryDatePicker.tsx` | CREATE | ~120 | Date picker with coefficient |
-| `src/components/custom/price-calculator/CoefficientCalendar.tsx` | UPDATE | +50 | Add click-to-select |
-| `src/components/custom/price-calculator/AutoFillBadge.tsx` | UPDATE | +30 | Add restore functionality |
-| `src/components/custom/price-calculator/WarehouseSection.tsx` | UPDATE | +40 | Add date picker integration |
-| `src/components/custom/price-calculator/LogisticsSection.tsx` | UPDATE | +30 | Add product info to breakdown |
-| `src/components/custom/price-calculator/PriceCalculatorForm.tsx` | UPDATE | +60 | Add product select |
-| `src/hooks/useProductsWithDimensions.ts` | CREATE | ~40 | Products with dimensions hook |
-| `src/lib/api/products.ts` | UPDATE | +20 | Add include_dimensions param |
-| `src/types/product.ts` | UPDATE | +20 | Add dimensions type |
-| `src/types/price-calculator.ts` | UPDATE | +15 | Add delivery date types |
+
+| File                                                             | Change Type | Lines (Est.) | Description                   |
+| ---------------------------------------------------------------- | ----------- | ------------ | ----------------------------- |
+| `src/components/custom/price-calculator/ProductSearchSelect.tsx` | CREATE      | ~180         | Searchable product dropdown   |
+| `src/components/custom/price-calculator/DeliveryDatePicker.tsx`  | CREATE      | ~120         | Date picker with coefficient  |
+| `src/components/custom/price-calculator/CoefficientCalendar.tsx` | UPDATE      | +50          | Add click-to-select           |
+| `src/components/custom/price-calculator/AutoFillBadge.tsx`       | UPDATE      | +30          | Add restore functionality     |
+| `src/components/custom/price-calculator/WarehouseSection.tsx`    | UPDATE      | +40          | Add date picker integration   |
+| `src/components/custom/price-calculator/LogisticsSection.tsx`    | UPDATE      | +30          | Add product info to breakdown |
+| `src/components/custom/price-calculator/PriceCalculatorForm.tsx` | UPDATE      | +60          | Add product select            |
+| `src/hooks/useProductsWithDimensions.ts`                         | CREATE      | ~40          | Products with dimensions hook |
+| `src/lib/api/products.ts`                                        | UPDATE      | +20          | Add include_dimensions param  |
+| `src/types/product.ts`                                           | UPDATE      | +20          | Add dimensions type           |
+| `src/types/price-calculator.ts`                                  | UPDATE      | +15          | Add delivery date types       |
 
 ### Change Log
+
 _(To be filled during implementation)_
 
 ### Review Follow-ups
+
 _(To be filled after code review)_
 
 ---
@@ -740,27 +769,29 @@ _(To be filled after code review)_
 ## QA Checklist
 
 ### Functional Verification
-| Test Case | Expected Result | Status |
-|-----------|-----------------|--------|
-| Search product by SKU | Shows matching products | [ ] |
-| Select product | Auto-fills dimensions | [ ] |
-| Edit auto-filled dimension | Shows "Изменено" badge | [ ] |
-| Click "Восстановить" | Restores original values | [ ] |
-| Select delivery date | Updates coefficient | [ ] |
-| Click calendar date | Selects that date | [ ] |
-| Unavailable date | Cannot be selected | [ ] |
-| Change warehouse | Reloads coefficients, resets date | [ ] |
-| Calculate logistics | Uses all auto-filled values | [ ] |
-| Product without dimensions | Shows warning | [ ] |
-| Reset form | Clears product and date | [ ] |
+
+| Test Case                  | Expected Result                   | Status |
+| -------------------------- | --------------------------------- | ------ |
+| Search product by SKU      | Shows matching products           | [ ]    |
+| Select product             | Auto-fills dimensions             | [ ]    |
+| Edit auto-filled dimension | Shows "Изменено" badge            | [ ]    |
+| Click "Восстановить"       | Restores original values          | [ ]    |
+| Select delivery date       | Updates coefficient               | [ ]    |
+| Click calendar date        | Selects that date                 | [ ]    |
+| Unavailable date           | Cannot be selected                | [ ]    |
+| Change warehouse           | Reloads coefficients, resets date | [ ]    |
+| Calculate logistics        | Uses all auto-filled values       | [ ]    |
+| Product without dimensions | Shows warning                     | [ ]    |
+| Reset form                 | Clears product and date           | [ ]    |
 
 ### Accessibility Verification
-| Check | Status |
-|-------|--------|
-| Keyboard navigation | [ ] |
-| Screen reader announcements | [ ] |
-| Focus management | [ ] |
-| Color + icon indicators | [ ] |
+
+| Check                       | Status |
+| --------------------------- | ------ |
+| Keyboard navigation         | [ ]    |
+| Screen reader announcements | [ ]    |
+| Focus management            | [ ]    |
+| Color + icon indicators     | [ ]    |
 
 ---
 

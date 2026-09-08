@@ -13,7 +13,7 @@ chars: 3347
 
 В этой статье:
 
-- 
+-
 - <a href="#chto-takoe-istoriya-izmenenij-i-zachem-ona-nuzhna" rel="nofollow">Что такое «История изменений» и зачем она нужна?</a>
 - <a href="#kak-vklyuchit-istoriyu-izmenenij" rel="nofollow">Как включить историю изменений?</a>
 - <a href="#kak-polzovatsya-funktsiej" rel="nofollow">Как пользоваться функцией</a>

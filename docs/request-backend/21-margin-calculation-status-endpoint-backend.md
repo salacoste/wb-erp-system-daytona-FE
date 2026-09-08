@@ -23,6 +23,7 @@ Backend team has implemented a lightweight status endpoint specifically designed
 ### Problem Addressed (from Request #20)
 
 Frontend team identified two critical issues:
+
 1. **Polling hook not restarting** after COGS assignment
 2. **Infinite re-render loop** in `usePendingMarginProducts` hook
 3. **No efficient way** to check if margin calculation task is queued/processing
@@ -32,6 +33,7 @@ Frontend team identified two critical issues:
 **New Endpoint**: `GET /v1/products/:nmId/margin-status`
 
 This endpoint:
+
 - ✅ Checks BullMQ queue for pending/active margin calculation jobs
 - ✅ Verifies margin data existence in `weekly_margin_fact` table
 - ✅ Returns lightweight status response (< 100ms p95 target)
@@ -58,9 +60,9 @@ GET /v1/products/:nmId/margin-status
 
 ### Path Parameters
 
-| Parameter | Type | Required | Description |
-|-----------|------|----------|-------------|
-| `nmId` | string | Yes | Product article number (numeric string) |
+| Parameter | Type   | Required | Description                             |
+| --------- | ------ | -------- | --------------------------------------- |
+| `nmId`    | string | Yes      | Product article number (numeric string) |
 
 ### Response Format
 
@@ -79,13 +81,13 @@ GET /v1/products/:nmId/margin-status
 
 ### Status Values
 
-| Status | Description | When Returned |
-|--------|-------------|---------------|
-| `pending` | Task is queued but not started | Job found in BullMQ `waiting` state |
-| `in_progress` | Task is currently processing | Job found in BullMQ `active` state |
-| `completed` | Margin calculation finished | No job found, but margin data exists in `weekly_margin_fact` |
-| `not_found` | No task and no margin data | No job found and no margin data in database |
-| `failed` | Task failed (within last 24h) | Job found in BullMQ `failed` state |
+| Status        | Description                    | When Returned                                                |
+| ------------- | ------------------------------ | ------------------------------------------------------------ |
+| `pending`     | Task is queued but not started | Job found in BullMQ `waiting` state                          |
+| `in_progress` | Task is currently processing   | Job found in BullMQ `active` state                           |
+| `completed`   | Margin calculation finished    | No job found, but margin data exists in `weekly_margin_fact` |
+| `not_found`   | No task and no margin data     | No job found and no margin data in database                  |
+| `failed`      | Task failed (within last 24h)  | Job found in BullMQ `failed` state                           |
 
 ### Optional Fields
 
@@ -100,6 +102,7 @@ GET /v1/products/:nmId/margin-status
 ### Error Responses
 
 **400 Bad Request**:
+
 ```json
 {
   "error": {
@@ -110,6 +113,7 @@ GET /v1/products/:nmId/margin-status
 ```
 
 **403 Forbidden**:
+
 ```json
 {
   "error": {
@@ -120,6 +124,7 @@ GET /v1/products/:nmId/margin-status
 ```
 
 **404 Not Found**:
+
 ```json
 {
   "error": {
@@ -130,6 +135,7 @@ GET /v1/products/:nmId/margin-status
 ```
 
 **500 Internal Server Error**:
+
 ```json
 {
   "error": {
@@ -148,6 +154,7 @@ GET /v1/products/:nmId/margin-status
 **Scenario**: User assigns COGS, frontend wants to check if margin calculation is queued.
 
 **Request**:
+
 ```http
 GET /v1/products/12345/margin-status
 Authorization: Bearer <jwt-token>
@@ -155,6 +162,7 @@ X-Cabinet-Id: 123e4567-e89b-12d3-a456-426614174000
 ```
 
 **Response** (Task Queued):
+
 ```json
 {
   "status": "pending",
@@ -173,6 +181,7 @@ X-Cabinet-Id: 123e4567-e89b-12d3-a456-426614174000
 **Request**: Same as Example 1
 
 **Response** (Task Processing):
+
 ```json
 {
   "status": "in_progress",
@@ -192,6 +201,7 @@ X-Cabinet-Id: 123e4567-e89b-12d3-a456-426614174000
 **Request**: Same as Example 1
 
 **Response** (Completed):
+
 ```json
 {
   "status": "completed"
@@ -207,6 +217,7 @@ X-Cabinet-Id: 123e4567-e89b-12d3-a456-426614174000
 **Request**: Same as Example 1
 
 **Response** (Not Found):
+
 ```json
 {
   "status": "not_found"
@@ -222,6 +233,7 @@ X-Cabinet-Id: 123e4567-e89b-12d3-a456-426614174000
 **Request**: Same as Example 1
 
 **Response** (Failed):
+
 ```json
 {
   "status": "failed",
@@ -251,7 +263,7 @@ const startPolling = async (nmId: string) => {
       },
     });
     const status = await response.json();
-    
+
     if (status.status === 'completed') {
       // Stop polling, refresh product data
       clearInterval(pollInterval);
@@ -263,10 +275,10 @@ const startPolling = async (nmId: string) => {
     }
     // Continue polling for 'pending' or 'in_progress'
   };
-  
+
   // Poll every 2-3 seconds
   const pollInterval = setInterval(checkStatus, 2500);
-  
+
   // Initial check
   await checkStatus();
 };
@@ -288,32 +300,37 @@ const startPolling = async (nmId: string) => {
 
 Based on backend implementation and historical data:
 
-| Scenario | Estimated Time | Notes |
-|----------|----------------|-------|
-| Single product (1 week) | 5-10 seconds | Fast calculation |
-| Historical (7 weeks) | 20-30 seconds | Multiple weeks processed |
-| Bulk (500 products) | 45-60 seconds | Aggregated task processing |
+| Scenario                | Estimated Time | Notes                      |
+| ----------------------- | -------------- | -------------------------- |
+| Single product (1 week) | 5-10 seconds   | Fast calculation           |
+| Historical (7 weeks)    | 20-30 seconds  | Multiple weeks processed   |
+| Bulk (500 products)     | 45-60 seconds  | Aggregated task processing |
 
 **Note**: `estimated_completion` field in response provides backend-calculated estimate based on queue position and processing time.
 
 ### Error Handling
 
 **Network Errors**:
+
 - Retry with exponential backoff (1s, 2s, 4s)
 - Show "Connection error" message after 3 retries
 
 **400 Bad Request**:
+
 - Invalid `nmId` format - frontend validation should prevent this
 - Log error for debugging
 
 **403 Forbidden**:
+
 - Product doesn't belong to cabinet - should not happen if frontend validates cabinet access
 - Log error for debugging
 
 **404 Not Found**:
+
 - Product doesn't exist - stop polling, show "Product not found" message
 
 **500 Internal Server Error**:
+
 - Queue service unavailable - retry with exponential backoff
 - Show "Service temporarily unavailable" message
 
@@ -324,12 +341,14 @@ Based on backend implementation and historical data:
 ### Old Approach (Request #20 Problem)
 
 **Issue**: Frontend had to poll full product endpoint:
+
 ```typescript
 // ❌ Inefficient: Fetches full product data every poll
 GET /v1/products/:nmId?include_cogs=true
 ```
 
 **Problems**:
+
 - Fetches unnecessary data (product details, COGS info, etc.)
 - Slower response time
 - More server load
@@ -338,12 +357,14 @@ GET /v1/products/:nmId?include_cogs=true
 ### New Approach (Request #21 Solution)
 
 **Solution**: Lightweight status endpoint:
+
 ```typescript
 // ✅ Efficient: Only checks task status
 GET /v1/products/:nmId/margin-status
 ```
 
 **Benefits**:
+
 - ✅ Fast response (< 100ms p95 target)
 - ✅ Minimal data transfer
 - ✅ Clear status values (`pending`, `in_progress`, `completed`, `failed`)
@@ -357,18 +378,20 @@ GET /v1/products/:nmId/margin-status
 ### Step 1: Replace Polling Endpoint
 
 **Before**:
+
 ```typescript
 const response = await fetch(`/v1/products/${nmId}?include_cogs=true`);
 const product = await response.json();
-const isCalculating = product.current_margin_pct === null && 
+const isCalculating = product.current_margin_pct === null &&
                       product.missing_data_reason === null;
 ```
 
 **After**:
+
 ```typescript
 const response = await fetch(`/v1/products/${nmId}/margin-status`);
 const status = await response.json();
-const isCalculating = status.status === 'pending' || 
+const isCalculating = status.status === 'pending' ||
                       status.status === 'in_progress';
 ```
 
@@ -430,18 +453,22 @@ switch (status.status) {
 ### Backend Test Coverage
 
 ✅ **Unit Tests**: 14 tests
+
 - 8 tests for `QueueService.findJobsByProductId()`
 - 6 tests for `ProductsService.getMarginCalculationStatus()`
 
 ✅ **E2E Tests**: Full flow testing
+
 - File: `test/products/margin-status.e2e-spec.ts`
 - Tests: COGS assignment → status check → completion verification
 
 ✅ **Performance Tests**: Response time validation
+
 - File: `test/products/margin-status-performance.e2e-spec.ts`
 - Validates: p95 < 100ms requirement (AC13)
 
 ✅ **DTO Validation Tests**: Field constraints
+
 - File: `src/products/dto/margin-status-response.dto.spec.ts`
 
 ### QA Gate Status
@@ -494,6 +521,7 @@ switch (status.status) {
 ### Q: How accurate is `estimated_completion`?
 
 **A**: Estimated completion is calculated based on:
+
 - Number of weeks being processed
 - Queue position (if waiting)
 - Historical processing times
@@ -525,16 +553,20 @@ It's an approximation. Actual completion may vary by ±5-10 seconds depending on
 ## Current Status (2026-01-30)
 
 ### Implementation Status
+
 - ✅ Finance summary endpoint working
 - ✅ COGS data available (40 records in `cogs` table)
 - ✅ Margin calculation status endpoint implemented
 - ❌ Margin calculation aggregation: **NOT IMPLEMENTED**
 
 ### Why Returns Null
+
 The endpoint returns `null` for margin fields because `weekly_margin_fact` table is not being populated by the data aggregation pipeline.
 
 ### Expected Behavior
+
 When `weekly_margin_fact` has data:
+
 ```json
 {
   "cogs_total": 53626.0,
@@ -545,6 +577,7 @@ When `weekly_margin_fact` has data:
 ```
 
 ### Roadmap
+
 - **Epic 56**: Completed (2026-01-29) - Historical COGS import from WB API
   - Does NOT populate `weekly_margin_fact`
   - Only imports COGS data into `cogs` table
@@ -554,12 +587,14 @@ When `weekly_margin_fact` has data:
   - See **Request #113** for complete documentation
 
 ### FrontEnd Action Required
+
 Display empty state when:
+
 - `cogs_total === null`
 - `gross_profit === null`
 
 See `frontend/docs/request-backend/113-margin-calculation-empty-state-behavior.md` for implementation details.
 
 ## Backend Team Response
-**Status**: RESOLVED — this document IS the backend response. See the parent request file for the original frontend ask.
 
+**Status**: RESOLVED — this document IS the backend response. See the parent request file for the original frontend ask.

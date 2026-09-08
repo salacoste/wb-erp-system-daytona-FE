@@ -13,6 +13,7 @@
 Implement the Sales Metric Card component that displays the actual sales (vykypy/redemptions) metric on the main dashboard. This card shows `wb_sales_gross` from the finance summary API - the seller's actual revenue after WB commission, not the retail price.
 
 **CRITICAL DISTINCTION**:
+
 - `wb_sales_gross` = Seller's revenue after WB commission (use this!)
 - `sales_gross` = Retail price for buyer (NOT for WB Dashboard matching)
 
@@ -42,6 +43,7 @@ This metric represents actual completed sales (vykypy), as opposed to orders whi
 **Primary Endpoint**: `/v1/analytics/weekly/finance-summary?week={week}`
 
 **Response Fields Used**:
+
 ```typescript
 interface FinanceSummaryResponse {
   summary_rus: {
@@ -126,16 +128,18 @@ const { data, isLoading, error } = useQuery({
 ```
 
 ### Colors
-| Element | Color | Hex |
-|---------|-------|-----|
-| Icon | Green | `#22C55E` |
-| Main Value | Green | `#22C55E` |
+
+| Element        | Color | Hex       |
+| -------------- | ----- | --------- |
+| Icon           | Green | `#22C55E` |
+| Main Value     | Green | `#22C55E` |
 | Positive Trend | Green | `#22C55E` |
-| Negative Trend | Red | `#EF4444` |
-| Stable Trend | Gray | `#9CA3AF` |
-| Subtitle text | Gray | `#9CA3AF` |
+| Negative Trend | Red   | `#EF4444` |
+| Stable Trend   | Gray  | `#9CA3AF` |
+| Subtitle text  | Gray  | `#9CA3AF` |
 
 ### Dimensions
+
 - Card min-height: 120px
 - Icon size: 16x16px (h-4 w-4)
 - Main value: 32px font-size, bold
@@ -143,6 +147,7 @@ const { data, isLoading, error } = useQuery({
 - Padding: 16px (p-4)
 
 ### States
+
 1. **Loading**: Skeleton with card shape, pulsing animation
 2. **Error**: Red alert icon, "Error loading" message, retry button
 3. **Empty**: Dash character "---" for value, no comparison row
@@ -167,28 +172,28 @@ Formula: Seller Revenue = Retail Price - WB Commission
 
 ## Files to Create/Modify
 
-| File | Action | Description |
-|------|--------|-------------|
-| `src/components/custom/dashboard/SalesMetricCard.tsx` | Create | Main sales metric card component |
-| `src/components/custom/dashboard/index.ts` | Modify | Add SalesMetricCard export |
-| `src/components/custom/dashboard/__tests__/SalesMetricCard.test.tsx` | Create | Unit tests |
-| `src/types/analytics.ts` | Modify | Add/verify FinanceSummaryResponse types if needed |
+| File                                                                 | Action | Description                                       |
+| -------------------------------------------------------------------- | ------ | ------------------------------------------------- |
+| `src/components/custom/dashboard/SalesMetricCard.tsx`                | Create | Main sales metric card component                  |
+| `src/components/custom/dashboard/index.ts`                           | Modify | Add SalesMetricCard export                        |
+| `src/components/custom/dashboard/__tests__/SalesMetricCard.test.tsx` | Create | Unit tests                                        |
+| `src/types/analytics.ts`                                             | Modify | Add/verify FinanceSummaryResponse types if needed |
 
 ---
 
 ## Dependencies
 
-| Type | Dependency | Status |
-|------|------------|--------|
-| API | `/v1/analytics/weekly/finance-summary` | Available |
-| API | `/v1/analytics/weekly/comparison` | Available |
-| Component | `ComparisonBadge` | Exists |
-| Component | `TrendIndicator` | Exists |
-| Component | `MetricCardSkeleton` / `StandardMetricSkeleton` | Exists |
-| Component | `MetricCardError` | Exists |
-| Utility | `formatCurrency` from `@/lib/utils` | Exists |
-| Utility | `calculateComparison` from `@/lib/comparison-helpers` | Exists |
-| Hook | `useDashboardMetricsWithPeriod` | Exists |
+| Type      | Dependency                                            | Status    |
+| --------- | ----------------------------------------------------- | --------- |
+| API       | `/v1/analytics/weekly/finance-summary`                | Available |
+| API       | `/v1/analytics/weekly/comparison`                     | Available |
+| Component | `ComparisonBadge`                                     | Exists    |
+| Component | `TrendIndicator`                                      | Exists    |
+| Component | `MetricCardSkeleton` / `StandardMetricSkeleton`       | Exists    |
+| Component | `MetricCardError`                                     | Exists    |
+| Utility   | `formatCurrency` from `@/lib/utils`                   | Exists    |
+| Utility   | `calculateComparison` from `@/lib/comparison-helpers` | Exists    |
+| Hook      | `useDashboardMetricsWithPeriod`                       | Exists    |
 
 ---
 
@@ -272,6 +277,7 @@ const netSales = wb_sales_gross - wb_returns_gross;
 ### Comparison Badge Direction
 
 For revenue metrics, higher is better:
+
 ```typescript
 const comparison = calculateComparison(
   currentSales,
@@ -293,9 +299,9 @@ const comparison = calculateComparison(
 
 ## Change Log
 
-| Date | Author | Change |
-|------|--------|--------|
-| 2026-01-31 | PM | Initial story creation |
+| Date       | Author | Change                 |
+| ---------- | ------ | ---------------------- |
+| 2026-01-31 | PM     | Initial story creation |
 
 ---
 
@@ -304,6 +310,7 @@ const comparison = calculateComparison(
 **Component**: `src/components/custom/dashboard/SalesMetricCard.tsx`
 **Lines**: 157
 **Key Features**:
+
 - Displays `wb_sales_gross` (seller's actual revenue after WB commission)
 - Comparison badge showing delta with previous period
 - Net sales subtitle (after returns)

@@ -11,6 +11,7 @@
 Analyzed all backend changes documented in the request-backend directory. **Frontend is fully compatible with all backend changes.** Most changes were already implemented or are documentation-only.
 
 **Overall Status:**
+
 - ✅ **5 changes already implemented/resolved**
 - ℹ️ **1 change is documentation-only** (no frontend changes needed)
 - ⚠️ **0 changes require implementation**
@@ -27,17 +28,20 @@ Analyzed all backend changes documented in the request-backend directory. **Fron
 **Impact:** High (affects authentication flow)
 
 **Backend Change:**
+
 - When creating cabinet via `POST /v1/cabinets`, backend returns `newToken` field
 - New token contains updated `cabinet_ids` array including newly created cabinet
 - Frontend MUST update stored JWT with this new token
 
 **Frontend Implementation:**
+
 - ✅ `src/services/cabinets.service.ts:45` - Calls `refreshTokenInStore(response.newToken, user || undefined)`
 - ✅ `src/types/cabinet.ts:35` - Type definition includes `newToken: string` with critical warning comment
 - ✅ `src/lib/api.ts:109-114` - API function documented with critical warning about token refresh
 - ✅ `src/services/cabinets.service.test.ts:61` - Test verifies token refresh is called with new token
 
 **Code Evidence:**
+
 ```typescript
 // src/services/cabinets.service.ts:40-45
 const response = await createCabinet({ name: cabinetName }, token)
@@ -48,6 +52,7 @@ refreshTokenInStore(response.newToken, user || undefined)
 ```
 
 **Verification:**
+
 - ✅ Token refresh implemented correctly
 - ✅ Error handling present (throws if refresh fails)
 - ✅ Unit tests verify token refresh flow
@@ -64,16 +69,19 @@ refreshTokenInStore(response.newToken, user || undefined)
 **Impact:** None (informational)
 
 **Backend Change:**
+
 - Endpoint: `PUT /v1/cabinets/:id/keys/:keyName`
 - Updates WB API token with validation
 - Requires `X-Cabinet-Id` header
 
 **Frontend Impact:**
+
 - This endpoint is for updating WB tokens, not for dashboard functionality
 - Dashboard does not have UI for updating WB tokens (future feature)
 - No frontend changes needed
 
 **Code Evidence:**
+
 ```typescript
 // src/lib/api.ts:142-148 - Function exists but not used in dashboard
 export async function updateWbToken(
@@ -87,6 +95,7 @@ export async function updateWbToken(
 ```
 
 **Verification:**
+
 - ✅ API function exists and is tested
 - ✅ Not used in current dashboard (as expected)
 - ✅ Ready for future cabinet management UI
@@ -102,15 +111,18 @@ export async function updateWbToken(
 **Impact:** High (affects API connectivity)
 
 **Backend Change:**
+
 - Backend CORS configured to allow `http://localhost:3100`
 - Required for frontend development server
 
 **Frontend Status:**
+
 - Development server runs on port 3100
 - API calls work correctly
 - No CORS errors in console
 
 **Verification:**
+
 - ✅ Dashboard loads successfully on port 3100
 - ✅ API calls to backend work without CORS errors
 - ✅ Finance summary, expenses, trends all fetch correctly
@@ -126,17 +138,20 @@ export async function updateWbToken(
 **Impact:** Medium (affects API request format)
 
 **Backend Clarification:**
+
 - `report_type=total` parameter **NOT USED** by backend
 - Finance summary endpoint returns all three summaries regardless of query parameter
 - Frontend should use `summary_total` by default
 
 **Frontend Implementation:**
+
 - ✅ `src/hooks/useExpenses.ts:60` - No `report_type` parameter sent
 - ✅ `src/hooks/useDashboard.ts:88` - No `report_type` parameter sent
 - ✅ `src/hooks/useTrends.ts:58` - No `report_type` parameter sent
 - ✅ All hooks use `summary_total` by default
 
 **Code Evidence:**
+
 ```typescript
 // src/hooks/useExpenses.ts:60 (current implementation)
 const summaryResponse = await apiClient.get<{
@@ -151,10 +166,12 @@ const summary = summaryResponse.summary_total || summaryResponse.summary_rus
 ```
 
 **Document Status:**
+
 - Document 04:396 confirms: "✅ Убран параметр `report_type=total`"
 - Change was already implemented before this analysis
 
 **Verification:**
+
 - ✅ No `report_type` parameter in any finance-summary requests
 - ✅ All hooks use `summary_total` as primary, `summary_rus` as fallback
 - ✅ API response format matches expected structure
@@ -170,17 +187,20 @@ const summary = summaryResponse.summary_total || summaryResponse.summary_rus
 **Impact:** High (affects week selection)
 
 **Backend Change:**
+
 - Endpoint: `GET /v1/analytics/weekly/available-weeks`
 - Changed data source from `imports` table to `weekly_payout_total` table
 - Ensures weeks list only includes weeks with processed/aggregated data
 
 **Frontend Implementation:**
+
 - ✅ Story 2.7 already deployed
 - ✅ `src/hooks/useExpenses.ts:30-47` - Uses available-weeks endpoint with proper error handling
 - ✅ `src/hooks/useDashboard.ts:52-69` - Same implementation pattern
 - ✅ Empty array handling: Returns empty data gracefully (not an error)
 
 **Code Evidence:**
+
 ```typescript
 // src/hooks/useExpenses.ts:30-47
 const weeksResponse = await apiClient.get<Array<{ week: string; start_date: string }> | { data: Array<{ week: string; start_date: string }> }>(
@@ -201,6 +221,7 @@ if (!weeks || weeks.length === 0) {
 ```
 
 **Verification:**
+
 - ✅ Available-weeks endpoint integration working
 - ✅ Graceful handling of empty weeks array
 - ✅ Proper logging for debugging
@@ -217,18 +238,21 @@ if (!weeks || weeks.length === 0) {
 **Impact:** Critical (affects expense breakdown visualization)
 
 **Backend Change:**
+
 - Added `acquiring_fee_total` and `commission_sales_total` columns to database
 - Updated SQL aggregation to calculate both fields separately
 - Fixed commission calculation: `wb_commission_adj` now contains **only** `commission_other`
 - Migration: `20251122000000_add_acquiring_fee_and_commission_sales_totals`
 
 **Frontend Implementation:**
+
 - ✅ `src/hooks/useExpenses.ts:116-122` - Both fields integrated in expense extraction
 - ✅ `src/hooks/useDashboard.ts:11-40` - FinanceSummary interface includes both fields
 - ✅ All 9 expense categories supported
 - ✅ Comprehensive documentation updated
 
 **Code Evidence:**
+
 ```typescript
 // src/hooks/useExpenses.ts:116-122
 {
@@ -242,16 +266,19 @@ if (!weeks || weeks.length === 0) {
 ```
 
 **Important Change:**
+
 - **Before:** `wb_commission_adj = commission_other + commission_sales`
 - **After:** `wb_commission_adj = commission_other only`, `commission_sales` tracked separately
 
 **Documentation Updated:**
+
 - ✅ `docs/CHANGELOG-EXPENSE-CATEGORIES.md` - Complete implementation history
 - ✅ `docs/request-backend/06-missing-expense-fields-in-finance-summary.md:282` - Marked as RESOLVED
 - ✅ `README.md` - Financial data structure section
 - ✅ Inline comments in useExpenses.ts explaining category split
 
 **Verification:**
+
 - ✅ All 15 tests passing (9 useExpenses + 6 ExpenseChart)
 - ✅ Chart displays all 9 categories correctly
 - ✅ Total expense sum remains identical (before/after split)
@@ -263,32 +290,35 @@ if (!weeks || weeks.length === 0) {
 
 ## Summary Table
 
-| Document | Title | Status | Priority | Action Required |
-|----------|-------|--------|----------|-----------------|
-| 01 | JWT Token Refresh | ✅ Implemented | Critical | ✅ None |
-| 02 | Update WB Token | ℹ️ Documentation Only | Low | ✅ None |
-| 03 | CORS Fix | ✅ Resolved | Critical | ✅ None |
-| 04 | API Response Format | ✅ Adapted | Medium | ✅ None |
-| 05 | Available Weeks | ✅ Deployed | High | ✅ None |
-| 06 | Expense Fields | ✅ Resolved | Critical | ✅ None |
+| Document | Title               | Status                | Priority | Action Required |
+| -------- | ------------------- | --------------------- | -------- | --------------- |
+| 01       | JWT Token Refresh   | ✅ Implemented        | Critical | ✅ None         |
+| 02       | Update WB Token     | ℹ️ Documentation Only | Low      | ✅ None         |
+| 03       | CORS Fix            | ✅ Resolved           | Critical | ✅ None         |
+| 04       | API Response Format | ✅ Adapted            | Medium   | ✅ None         |
+| 05       | Available Weeks     | ✅ Deployed           | High     | ✅ None         |
+| 06       | Expense Fields      | ✅ Resolved           | Critical | ✅ None         |
 
 ---
 
 ## Testing Verification
 
 ### Automated Tests
+
 - ✅ All 15 expense tests passing (src/hooks/useExpenses.test.tsx)
 - ✅ All 6 expense chart tests passing (src/components/custom/ExpenseChart.test.tsx)
 - ✅ Cabinet creation tests verify token refresh (src/services/cabinets.service.test.ts)
 - ✅ API function tests verify newToken handling (src/lib/api.test.ts)
 
 ### Integration Tests
+
 - ✅ Dashboard loads finance summary successfully
 - ✅ Expense breakdown displays all 9 categories
 - ✅ Trends fetch multi-week data correctly
 - ✅ Cabinet creation flow works end-to-end
 
 ### Runtime Verification
+
 ```bash
 # Start development server
 npm run dev
@@ -308,12 +338,14 @@ npm run dev
 **Overall Risk Level:** ✅ **LOW**
 
 **Risks Identified:**
+
 - ✅ No breaking changes
 - ✅ No missing implementations
 - ✅ No compatibility issues
 - ✅ All critical paths verified
 
 **Mitigations Applied:**
+
 - ✅ Comprehensive test coverage
 - ✅ Graceful error handling
 - ✅ Backward compatibility maintained
@@ -344,15 +376,16 @@ npm run dev
 
 ## Change Log
 
-| Date | Version | Changes | Author |
-|------|---------|---------|--------|
-| 2025-11-22 | 1.0 | Initial compatibility analysis - All 6 backend changes verified | Dev Agent (Claude) |
+| Date       | Version | Changes                                                         | Author             |
+| ---------- | ------- | --------------------------------------------------------------- | ------------------ |
+| 2025-11-22 | 1.0     | Initial compatibility analysis - All 6 backend changes verified | Dev Agent (Claude) |
 
 ---
 
 ## References
 
 **Backend Request Documents:**
+
 - `docs/request-backend/01-jwt-token-refresh-on-cabinet-creation.md`
 - `docs/request-backend/02-update-wb-api-token-in-cabinet.md`
 - `docs/request-backend/03-fix-cors-for-frontend-port-3100.md`
@@ -361,6 +394,7 @@ npm run dev
 - `docs/request-backend/06-missing-expense-fields-in-finance-summary.md`
 
 **Frontend Implementation:**
+
 - `src/services/cabinets.service.ts` - Cabinet creation with token refresh
 - `src/hooks/useExpenses.ts` - All 9 expense categories
 - `src/hooks/useDashboard.ts` - Finance summary integration
@@ -368,12 +402,14 @@ npm run dev
 - `src/lib/api.ts` - API client functions
 
 **Documentation:**
+
 - `docs/CHANGELOG-EXPENSE-CATEGORIES.md` - Expense implementation history
 - `docs/stories/2.1.cabinet-creation-interface.md` - Story 2.1 completion
 - `docs/stories/2.7-available-weeks-endpoint-fix.md` - Story 2.7 deployment
 - `README.md` - Financial data structure
 
 **Testing:**
+
 - `src/hooks/useExpenses.test.tsx` - Expense hook tests
 - `src/services/cabinets.service.test.ts` - Cabinet service tests
 - `src/lib/api.test.ts` - API function tests

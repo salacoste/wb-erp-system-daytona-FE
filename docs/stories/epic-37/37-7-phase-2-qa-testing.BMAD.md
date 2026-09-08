@@ -30,40 +30,47 @@
 ## Acceptance Criteria
 
 ### E2E Test Execution (Critical - Story 37.5 AC 7-12)
+
 1. Execute E2E test suite: `e2e/merged-group-table-epic-37.spec.ts` (7 scenarios)
 2. All E2E tests pass with zero failures
 3. Fix any test environment issues (button selector timing, data setup)
 4. Document E2E test results with screenshots
 
 ### Performance Testing (Critical - Story 37.5 AC 8)
+
 5. Execute performance profiling: Render time <200ms for 50 groups with 6x CPU throttling
 6. Run Lighthouse audit: Performance ≥90/100, Accessibility 100/100
 7. Measure interaction performance: ≥60fps during sort, hover, toggle
 8. Document performance results with flamegraphs
 
 ### Accessibility Testing (Critical - Story 37.5 AC 13-16)
+
 9. Execute axe-core tests: Zero WCAG 2.1 AA violations
 10. Manual screen reader testing: VoiceOver (macOS), NVDA (Windows), TalkBack (mobile)
 11. Keyboard navigation validation: Tab, Enter, arrow keys work correctly
 12. Document accessibility results with screen reader notes
 
 ### User Acceptance Testing (Critical - Story 37.5 AC 22)
+
 13. Conduct UAT with 3 internal users (power, intermediate, novice)
 14. Average satisfaction score ≥4.5/5 (≥90% satisfaction)
 15. Total interpretation questions <5 across all users
 16. Document UAT results with user feedback
 
 ### Analytics Integration (Required - Story 37.5 AC 23)
+
 17. Implement Mixpanel event tracking: "Advertising Analytics - Toggle Mode", "Advertising Analytics - Sort Table", "Advertising Analytics - Row Click", "Page View - Advertising Analytics"
 18. Validate events appear in Mixpanel dashboard within 10 seconds
 19. Document Mixpanel setup with event properties
 
 ### Documentation Assets (Required - Story 37.5 AC 18-19)
+
 20. Capture 10 annotated screenshots (desktop, tablet, mobile, interactions)
 21. Save API response sample to documentation
 22. Create user guide section in README
 
 ### Production Readiness Validation
+
 23. **PO DECISION**: All above criteria must pass BEFORE production deployment
 24. **PO DECISION**: Empty state UX validated (user-friendly message when no склейки exist)
 25. **PO DECISION**: Cross-browser testing: Chrome, Firefox, Safari, Edge validated
@@ -73,6 +80,7 @@
 ## Tasks / Subtasks
 
 ### Task 1: Execute E2E Test Suite (AC: 1-4)
+
 **Estimated Time**: 1-2 hours
 
 - [ ] **Verify Prerequisites**
@@ -84,7 +92,7 @@
 
 - [ ] **Debug Test Environment Issues** (if any)
   - [ ] Run E2E tests: `cd frontend && npx playwright test e2e/merged-group-table-epic-37.spec.ts`
-    OR from project root: `npx playwright test frontend/e2e/merged-group-table-epic-37.spec.ts`
+        OR from project root: `npx playwright test frontend/e2e/merged-group-table-epic-37.spec.ts`
   - [ ] **Known Issue**: Button selector timing - try fixes:
     - [ ] Add explicit wait: `await page.waitForTimeout(2000)` after page load
     - [ ] Try alternative selector: `page.locator('button:has-text("По склейкам")')`
@@ -108,6 +116,7 @@
   - [ ] List any fixes applied to make tests pass
 
 ### Task 2: Performance Testing & Profiling (AC: 5-8)
+
 **Estimated Time**: 1-2 hours
 
 - [ ] **Verify Test Data for Performance Targets**
@@ -153,6 +162,7 @@
   - [ **If targets not met**]: List optimization recommendations
 
 ### Task 3: Accessibility Testing (AC: 9-12)
+
 **Estimated Time**: 2-3 hours
 
 - [ ] **Platform Requirements**
@@ -220,6 +230,7 @@
   - [ ] List any violations with remediation steps
 
 ### Task 4: User Acceptance Testing (AC: 13-16)
+
 **Estimated Time**: 2-3 hours
 
 - [ ] **Recruit 3 UAT Participants**
@@ -256,6 +267,7 @@
   - [ ] Include action items for UX improvements (if any)
 
 ### Task 5: Mixpanel Analytics Integration (AC: 17-19)
+
 **Estimated Time**: 1-2 hours
 
 - [ ] **Install Mixpanel SDK**
@@ -266,6 +278,7 @@
   - [ ] **Obtain Mixpanel Token**: Contact [TEAM LEAD] for project token OR create test project at https://mixpanel.com
   - [ ] Create: `frontend/src/lib/mixpanel.ts`
   - [ ] Add initialization code:
+
   ```typescript
   import mixpanel from 'mixpanel-browser'
 
@@ -334,6 +347,7 @@
   - [ ] Include privacy considerations (PII handling)
 
 ### Task 6: Capture Documentation Assets (AC: 20-22)
+
 **Estimated Time**: 1 hour
 
 - [ ] **Capture 10 Annotated Screenshots**
@@ -389,6 +403,7 @@
   - [ ] Use template from Epic 37 doc (lines 442-463)
 
 ### Task 7: Production Readiness Validation (AC: 23-25)
+
 **Estimated Time**: 1 hour
 
 - [ ] **Complete All QA Gate Checklists**
@@ -435,14 +450,14 @@
 
 This story was created based on adversarial review findings that identified Phase 2 QA gaps:
 
-| Gap | Severity | Impact |
-|-----|----------|--------|
-| Phase 2 QA not executed | HIGH | Unknown production quality |
-| UAT not conducted | MEDIUM | User experience unverified |
-| Performance profiling not done | MEDIUM | <200ms target unverified |
-| Screen reader testing not done | MEDIUM | A11y claims unverified |
-| Mixpanel integration incomplete | LOW | Analytics not tracking |
-| E2E tests not executed | HIGH | Tests written but never run |
+| Gap                             | Severity | Impact                      |
+| ------------------------------- | -------- | --------------------------- |
+| Phase 2 QA not executed         | HIGH     | Unknown production quality  |
+| UAT not conducted               | MEDIUM   | User experience unverified  |
+| Performance profiling not done  | MEDIUM   | <200ms target unverified    |
+| Screen reader testing not done  | MEDIUM   | A11y claims unverified      |
+| Mixpanel integration incomplete | LOW      | Analytics not tracking      |
+| E2E tests not executed          | HIGH     | Tests written but never run |
 
 **Readiness Score**: 74/100 (NEEDS ATTENTION)
 **Code Quality**: Excellent (98%) but QA completeness only 40%
@@ -452,6 +467,7 @@ This story was created based on adversarial review findings that identified Phas
 **Source**: `docs/stories/epic-37/QA-HANDOFF-PHASE-2.md`
 
 Detailed handoff document with step-by-step instructions for all Phase 2 tasks:
+
 - UAT script template (lines 71-94)
 - Performance testing steps (lines 132-218)
 - Screenshot requirements (lines 220-286)
@@ -461,10 +477,12 @@ Detailed handoff document with step-by-step instructions for all Phase 2 tasks:
 ### Test File Locations
 
 **E2E Tests**:
+
 - `e2e/merged-group-table-epic-37.spec.ts` (7 scenarios, 331 lines)
 - `e2e/accessibility-merged-groups-epic-37.spec.ts` (7 scenarios, 394 lines)
 
 **Unit Tests** (already passing):
+
 - `src/app/(dashboard)/analytics/advertising/components/__tests__/MergedGroupTable.test.tsx` (17 tests)
 - `src/app/(dashboard)/analytics/advertising/utils/__tests__/metrics-calculator.test.ts` (55 tests)
 - `src/app/(dashboard)/analytics/advertising/utils/__tests__/formatters.test.ts` (22 tests)
@@ -472,6 +490,7 @@ Detailed handoff document with step-by-step instructions for all Phase 2 tasks:
 ### Performance Budgets
 
 **Target Metrics** (from Epic 37 doc lines 388-397):
+
 - LCP (Largest Contentful Paint): <200ms on WiFi
 - FCP (First Contentful Paint): <100ms on WiFi
 - TTI (Time to Interactive): <500ms on WiFi
@@ -480,6 +499,7 @@ Detailed handoff document with step-by-step instructions for all Phase 2 tasks:
 - CPU usage: <30% average, <80% peak
 
 **Test Conditions**:
+
 - Chrome DevTools Performance tab
 - CPU throttling: 6x slowdown
 - Network throttling: Fast 3G (for network tests)
@@ -487,6 +507,7 @@ Detailed handoff document with step-by-step instructions for all Phase 2 tasks:
 ### Accessibility Requirements
 
 **WCAG 2.1 AA Compliance** (from Epic 37 doc lines 369-385):
+
 - Contrast ratios ≥4.5:1 (all text colors)
 - Keyboard navigation (Tab, Enter, arrow keys)
 - Screen reader support (VoiceOver, NVDA, TalkBack)
@@ -494,6 +515,7 @@ Detailed handoff document with step-by-step instructions for all Phase 2 tasks:
 - ARIA labels on interactive elements (crown icon: `aria-label="Главный товар"`)
 
 **Screen Reader Announcements**:
+
 - Rowspan cell: "Group 328632, main product ter-09, 6 products"
 - Crown icon: "Главный товар" (aria-label)
 - Aggregate row: "Group total, 35,570 rubles, ROAS 0.90"
@@ -502,12 +524,14 @@ Detailed handoff document with step-by-step instructions for all Phase 2 tasks:
 ### UAT Success Criteria
 
 **from Story 37.5 AC 22 and QA handoff**:
+
 - **Completion rate**: All 7 tasks completed by ≥2/3 users
 - **Satisfaction score**: Average rating ≥4.5/5 (≥90% satisfaction)
 - **Error rate**: ≤2 errors per user during tasks
 - **Interpretation questions**: <5 total questions across all users
 
 **UAT Script** (7 tasks):
+
 1. Navigate to Analytics → Advertising
 2. Switch to "По склейкам" view
 3. Find product group with highest ROAS
@@ -519,6 +543,7 @@ Detailed handoff document with step-by-step instructions for all Phase 2 tasks:
 ### Project Structure Notes
 
 **Epic 37 File Structure** (from Epic 37 doc lines 549-570):
+
 - Stories: `docs/stories/epic-37/story-37.*.BMAD.md`
 - Reports: `docs/stories/epic-37/*-REPORT.md`
 - Screenshots: `docs/stories/epic-37/SCREENSHOTS/*.png`
@@ -526,6 +551,7 @@ Detailed handoff document with step-by-step instructions for all Phase 2 tasks:
 - Component: `src/app/(dashboard)/analytics/advertising/components/MergedGroupTable.tsx`
 
 **Browser Compatibility** (from Epic 37 doc lines 466-472):
+
 - Chrome 90+ (primary)
 - Firefox 88+
 - Safari 14+ (macOS/iOS)
@@ -546,12 +572,13 @@ Detailed handoff document with step-by-step instructions for all Phase 2 tasks:
 
 ## Change Log
 
-| Date | Version | Description | Author |
-|------|---------|-------------|--------|
-| 2025-01-17 | 1.0 | Initial story creation based on adversarial review | Amelia (Dev Agent) |
-| 2025-01-17 | 1.1 | Fixed all 10 code review issues (2 HIGH, 6 MEDIUM, 2 LOW) | Amelia (Dev Agent) |
+| Date       | Version | Description                                               | Author             |
+| ---------- | ------- | --------------------------------------------------------- | ------------------ |
+| 2025-01-17 | 1.0     | Initial story creation based on adversarial review        | Amelia (Dev Agent) |
+| 2025-01-17 | 1.1     | Fixed all 10 code review issues (2 HIGH, 6 MEDIUM, 2 LOW) | Amelia (Dev Agent) |
 
 **Code Review Fixes Applied**:
+
 - **HIGH #1**: Updated line counts (331, 394) in Dev Notes
 - **HIGH #2**: Fixed UAT scale (≥4.5/5 instead of ≥9/10)
 - **MEDIUM #3**: Fixed Mixpanel event names in AC 17 to match Task 5
@@ -567,16 +594,20 @@ Detailed handoff document with step-by-step instructions for all Phase 2 tasks:
 
 ## Dev Agent Record
 
-*To be populated during implementation.*
+_To be populated during implementation._
 
 ### Agent Model Used
-*Model and version*
+
+_Model and version_
 
 ### Debug Log References
-*Debug logs*
+
+_Debug logs_
 
 ### Completion Notes List
-*Completion notes*
+
+_Completion notes_
 
 ### File List
-*Files modified*
+
+_Files modified_

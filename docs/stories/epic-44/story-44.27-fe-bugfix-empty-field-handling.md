@@ -8,20 +8,22 @@
 
 ## Status
 
-| Field | Value |
-|-------|-------|
-| Status | Ready for Dev |
+| Field    | Value               |
+| -------- | ------------------- |
+| Status   | Ready for Dev       |
 | Priority | High (Critical Bug) |
-| Estimate | 2 SP |
-| Sprint | Current |
-| Type | Bug Fix |
+| Estimate | 2 SP                |
+| Sprint   | Current             |
+| Type     | Bug Fix             |
 
 ## Problem Description
 
 ### Bug Report
+
 When a user clears a numeric input field in the Price Calculator form (e.g., COGS, logistics costs, dimensions) and clicks "Calculate", the system breaks. Empty fields should automatically default to zero.
 
 ### Current Behavior
+
 1. User enters value in numeric field (e.g., COGS = 500)
 2. User selects all text and deletes it (field becomes empty string "")
 3. Field shows empty/blank instead of 0
@@ -29,6 +31,7 @@ When a user clears a numeric input field in the Price Calculator form (e.g., COG
 5. **System crashes or produces NaN/undefined values**
 
 ### Expected Behavior
+
 1. User clears a numeric field
 2. Field automatically displays "0" (or 0 after blur)
 3. Form submission works correctly with 0 value
@@ -37,6 +40,7 @@ When a user clears a numeric input field in the Price Calculator form (e.g., COG
 ## Root Cause Analysis
 
 ### Problem Source
+
 The `valueAsNumber: true` option in `react-hook-form` register returns `NaN` when input value is an empty string.
 
 **Affected Components:**
@@ -71,6 +75,7 @@ The `valueAsNumber: true` option in `react-hook-form` register returns `NaN` whe
 ### Technical Details
 
 When using `register()` with `valueAsNumber: true`:
+
 ```typescript
 {...register(cogsField, {
   valueAsNumber: true,  // Returns NaN for empty string!
@@ -80,6 +85,7 @@ When using `register()` with `valueAsNumber: true`:
 ```
 
 The empty string "" becomes `NaN`, which:
+
 - Fails validation silently in some cases
 - Propagates to calculations
 - Causes `isFormEmpty()` to return false incorrectly
@@ -88,6 +94,7 @@ The empty string "" becomes `NaN`, which:
 ## Solution Approach
 
 ### Option A: Custom onChange Handler (Recommended)
+
 Add `setValueAs` transform to convert empty/NaN to 0:
 
 ```typescript
@@ -103,6 +110,7 @@ Add `setValueAs` transform to convert empty/NaN to 0:
 ```
 
 ### Option B: Create Utility Function
+
 Create a reusable helper for numeric field registration:
 
 ```typescript
@@ -126,6 +134,7 @@ export function numericFieldOptions(options?: RegisterOptions) {
 ```
 
 ### Option C: Input Wrapper Component
+
 Create a NumericInput component that handles empty values:
 
 ```typescript
@@ -153,6 +162,7 @@ export function NumericInput({
 ## Acceptance Criteria
 
 ### AC1: COGS Field Empty Handling
+
 - [ ] Clear COGS field by selecting all and deleting
 - [ ] Field shows "0" or empty placeholder
 - [ ] Click "Рассчитать"
@@ -160,6 +170,7 @@ export function NumericInput({
 - [ ] Warning may appear (COGS=0 is unusual but valid)
 
 ### AC2: Logistics Fields Empty Handling
+
 - [ ] Clear logistics_forward_rub field
 - [ ] Clear logistics_reverse_rub field
 - [ ] Clear storage_rub field (FBO mode)
@@ -167,18 +178,21 @@ export function NumericInput({
 - [ ] Calculation works correctly
 
 ### AC3: Dimension Fields Empty Handling
+
 - [ ] Clear length_cm, width_cm, height_cm fields
 - [ ] Each field defaults to 0 on clear
 - [ ] Volume recalculates to 0
 - [ ] No cargo type badge shown (as expected with 0 dimensions)
 
 ### AC4: Edge Cases
+
 - [ ] Clear all numeric fields simultaneously
 - [ ] Form submits with all zeros (shows appropriate warning/results)
 - [ ] Tab through cleared fields (blur triggers 0 default)
 - [ ] Keyboard: Backspace to clear field works correctly
 
 ### AC5: Regression Testing
+
 - [ ] MarginSlider still works (already handles empty)
 - [ ] DrrSlider still works (already handles empty)
 - [ ] SppInput still works (already handles empty)
@@ -188,6 +202,7 @@ export function NumericInput({
 ## Technical Tasks
 
 ### Task 1: Create Form Utility Function
+
 **File:** `src/lib/form-utils.ts` (new file)
 **Effort:** 0.5 SP
 
@@ -214,29 +229,35 @@ export function numericFieldOptions<T extends Record<string, unknown>>(
 ```
 
 ### Task 2: Update FixedCostsSection
+
 **File:** `src/components/custom/price-calculator/FixedCostsSection.tsx`
 **Effort:** 0.5 SP
 
 Update 4 fields to use `numericFieldOptions`:
+
 - `cogs_rub`
 - `logistics_forward_rub`
 - `logistics_reverse_rub`
 - `storage_rub`
 
 ### Task 3: Update DimensionInputSection
+
 **File:** `src/components/custom/price-calculator/DimensionInputSection.tsx`
 **Effort:** 0.5 SP
 
 Update 3 fields to use `numericFieldOptions`:
+
 - `length_cm`
 - `width_cm`
 - `height_cm`
 
 ### Task 4: Add Unit Tests
+
 **File:** `src/lib/__tests__/form-utils.test.ts`
 **Effort:** 0.5 SP
 
 Test cases:
+
 - Empty string returns 0
 - NaN input returns 0
 - Valid number returns number
@@ -246,12 +267,12 @@ Test cases:
 
 ## Files to Modify
 
-| File | Changes |
-|------|---------|
-| `src/lib/form-utils.ts` | New file - numericFieldOptions utility |
-| `src/components/custom/price-calculator/FixedCostsSection.tsx` | Import utility, update 4 register calls |
+| File                                                               | Changes                                 |
+| ------------------------------------------------------------------ | --------------------------------------- |
+| `src/lib/form-utils.ts`                                            | New file - numericFieldOptions utility  |
+| `src/components/custom/price-calculator/FixedCostsSection.tsx`     | Import utility, update 4 register calls |
 | `src/components/custom/price-calculator/DimensionInputSection.tsx` | Import utility, update 3 register calls |
-| `src/lib/__tests__/form-utils.test.ts` | New file - unit tests |
+| `src/lib/__tests__/form-utils.test.ts`                             | New file - unit tests                   |
 
 ## Definition of Done
 
@@ -273,13 +294,17 @@ Test cases:
 ## Notes
 
 ### Why Not Use `required` Validation?
+
 Some fields (like storage_rub, dimensions) are optional and can legitimately be 0. The `required` validation would block submission, but we want to allow empty-as-zero behavior.
 
 ### Why `setValueAs` Over `onBlur`?
+
 Using `setValueAs` ensures the value is transformed immediately when reading form state, not just on blur. This prevents any intermediate NaN state in calculations or useWatch hooks.
 
 ### Components Already Fixed
+
 The following components already handle empty values correctly and should NOT be modified:
+
 - `MarginSlider.tsx` - uses `parseFloat` with NaN check
 - `DrrSlider.tsx` - checks for empty string
 - `SppInput.tsx` - checks for empty string

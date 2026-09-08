@@ -19,6 +19,7 @@
 **Symptom**: dropdown displays "21 дней" which is grammatically wrong.
 
 **Russian declension rule** for день:
+
 - 1, 21, 31… → день (nominative singular)
 - 2-4, 22-24… → дня (genitive singular, paucal)
 - 5-20, 25-30… → дней (genitive plural)
@@ -32,6 +33,7 @@ Current `HORIZON_OPTIONS = [7, 14, 21, 28]` produces: "7 дней" ✓, "14 дн
 **Where**: predictions table column 4 header reads "Банд" — a phonetic transliteration of English "band".
 
 **Native Russian alternatives** (pick one per UX-spec voice):
+
 - "Полоса" (literal stripe/band)
 - "Диапазон" (range — better semantically since column shows confidence-interval bounds)
 - "Интервал" (interval)
@@ -45,6 +47,7 @@ Current `HORIZON_OPTIONS = [7, 14, 21, 28]` produces: "7 дней" ✓, "14 дн
 **Symptom**: switching the Уровень dropdown to "По бренду" or "По кабинету" leaves the page rendering the previously-fetched SKU table data. The hook fires with `nmId: undefined`, query-key changes, but no new selector input lets the user choose WHICH brand. Empirically the table doesn't update meaningfully — brand and cabinet levels are indistinguishable from the UI.
 
 **Hook params** (`ForecastPageContent.tsx:43-50`):
+
 ```typescript
 const parsedNmId = /^\d+$/.test(trimmed) ? Number.parseInt(trimmed, 10) : null
 const nmId = level === 'sku' && parsedNmId ? parsedNmId : undefined
@@ -54,6 +57,7 @@ const enabled = level !== 'sku' || (parsedNmId !== null && parsedNmId > 0)
 For brand/cabinet, `enabled === true` unconditionally → query fires with `{ level: 'brand', nmId: undefined }` regardless of user intent.
 
 **Fix options** (decide with PM/UX before implementing):
+
 - **(a) Brand selector**: render a dropdown of cabinet's brands when `level === 'brand'`. Backend contract may need a `brand` query param — confirm with `daytona-wildberries-typescript-sdk` / backend `/v1/ai/forecast` route handler.
 - **(b) Cabinet selector**: cabinet-level forecast is implicit from JWT `cabinetId` — render an informational note "Прогноз агрегирован по всему кабинету" so users understand there's no selector needed.
 - **(c) Drop brand level**: if backend doesn't support brand-level forecasts yet, remove "По бренду" from LEVEL_OPTIONS until Epic 109 (or whichever epic ships brand forecasts).
@@ -65,6 +69,7 @@ For brand/cabinet, `enabled === true` unconditionally → query fires with `{ le
 **Problem**: "Epic 109" is an internal BMAD identifier. End users (sellers) have no context for it.
 
 **Fix**: rewrite to actionable user-facing message:
+
 - "Нет данных прогноза. Модель ещё не обучена для этого товара/бренда."
 - Or "Прогноз пока недоступен. Попробуйте позже."
 
@@ -82,6 +87,7 @@ For brand/cabinet, `enabled === true` unconditionally → query fires with `{ le
 ## Status (2026-05-15)
 
 **ALL 8 ACs SHIPPED**:
+
 - Cosmetic items (1, 2, 5, 6) — shipped in initial polish pass
 - Phase 2 follow-up fixes (2-pass review findings) — shipped via commit `2d85698`:
   - Normalizer null-safety, cabinetId queryKey, formatDate, type-narrowing guard, removed dead `format` param, label rename, 14 new unit tests

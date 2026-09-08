@@ -12,7 +12,7 @@ chars: 2970
 
 В этой статье:
 
-- 
+-
 - <a href="#pochemu-avtoaktsii-ne-otobrazhayutsya-polnostyu-v-selsup" rel="nofollow">Почему автоакции не отображаются полностью в SelSup</a>
 - <a href="#chto-nuzhno-dlya-raschyota" rel="nofollow">Что нужно для расчёта</a>
 - <a href="#kak-rasschitat-pribyl-po-avtoaktsiyam" rel="nofollow">Как рассчитать прибыль по автоакциям</a>

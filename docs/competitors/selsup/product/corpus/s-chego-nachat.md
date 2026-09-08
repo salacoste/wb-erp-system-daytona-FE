@@ -11,7 +11,7 @@ chars: 1788
 
 В этой статье:
 
-- 
+-
 - <a href="#pomoshhniki-v-osvoenii-servisa" rel="nofollow">Помощники в освоении сервиса</a>
 - <a href="#nastrojka-raboty-po-fbo" rel="nofollow">Настройка работы по FBO</a>
 - <a href="#nastrojka-raboty-po-fbs" rel="nofollow">Настройка работы по FBS</a>

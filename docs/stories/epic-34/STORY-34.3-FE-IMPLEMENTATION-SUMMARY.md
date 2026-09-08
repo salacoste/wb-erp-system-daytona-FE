@@ -17,6 +17,7 @@ Implemented NotificationPreferencesPanel component with 4 event type cards, lang
 ## ✅ Acceptance Criteria Status
 
 ### AC1: Event Type Cards (Q6 - Border Highlight) ✅
+
 - ✅ 4 event type cards: task_completed, task_failed, task_stalled, daily_digest
 - ✅ Enabled state: 2px Telegram Blue border (#0088CC), checkmark icon
 - ✅ Disabled state: 1px Gray 300 border (#E0E0E0), empty checkbox icon
@@ -24,18 +25,21 @@ Implemented NotificationPreferencesPanel component with 4 event type cards, lang
 - ✅ Click anywhere on card to toggle switch
 
 ### AC2: Event Descriptions (Q7 - Always Visible) ✅
+
 - ✅ Description text visible under each event title
 - ✅ Max 2 lines with truncation (line-clamp-2)
 - ✅ Clear, specific explanations of when notifications sent
 - ✅ 14px regular font, Gray 600 color
 
 ### AC3: Language Switcher (Q8 - Radio Buttons) ✅
+
 - ✅ Two radio buttons: 🇷🇺 Русский | 🇬🇧 English
 - ✅ Horizontal layout (side-by-side)
 - ✅ Selected state: Telegram Blue border, light blue background (#E3F2FD)
 - ✅ Unselected state: Gray 300 border, white background
 
 ### AC4: Daily Digest Section (Q9 - Conditional Time Picker) ✅
+
 - ✅ Daily digest as standard event type card
 - ✅ Time picker appears ONLY when digest enabled
 - ✅ Slide-down animation (200ms) when showing/hiding
@@ -43,6 +47,7 @@ Implemented NotificationPreferencesPanel component with 4 event type cards, lang
 - ✅ Time picker uses native `<input type="time">` (mobile-friendly)
 
 ### AC5: Save Strategy (Q10 - Manual Save Button) ⭐ COMPLETE
+
 - ✅ "Сохранить настройки" button at bottom (Primary Red #E53935)
 - ✅ "Отменить" button (secondary, resets to last saved state)
 - ✅ Dirty state detection (JSON comparison)
@@ -51,6 +56,7 @@ Implemented NotificationPreferencesPanel component with 4 event type cards, lang
 - ✅ Button disabled when no changes made
 
 ### AC6: Accessibility (WCAG 2.1 AA) ✅
+
 - ✅ Keyboard navigation between all interactive elements
 - ✅ aria-labels on all toggles and buttons
 - ✅ Screen reader support (sr-only class for native radio buttons)
@@ -104,6 +110,7 @@ Implemented NotificationPreferencesPanel component with 4 event type cards, lang
 ## 🎨 Design Implementation
 
 ### Colors Used
+
 ```typescript
 // Telegram Blue (enabled states, switches)
 'telegram-blue': '#0088CC'
@@ -128,6 +135,7 @@ Implemented NotificationPreferencesPanel component with 4 event type cards, lang
 ```
 
 ### Animation
+
 ```css
 @keyframes slide-down {
   from: { opacity: 0; transform: translateY(-10px); }
@@ -141,6 +149,7 @@ Implemented NotificationPreferencesPanel component with 4 event type cards, lang
 ## 🧪 Testing Results
 
 ### Build Status: ✅ PASS
+
 ```
 ✓ Compiled successfully in 4.3s
 ✓ Linting and checking validity of types
@@ -148,11 +157,13 @@ Implemented NotificationPreferencesPanel component with 4 event type cards, lang
 ```
 
 ### Type Check: ✅ PASS
+
 ```
 No TypeScript errors
 ```
 
 ### Manual Testing Page
+
 - **URL**: `/test-preferences`
 - **Status**: ✅ Available for testing
 
@@ -161,12 +172,14 @@ No TypeScript errors
 ## 🔧 Technical Details
 
 ### Dependencies Used
+
 - **sonner**: Toast notifications (`toast.success`, `toast.error`)
 - **@tanstack/react-query**: Data fetching hook (`useNotificationPreferences`)
 - **shadcn/ui**: Card, Button, Switch, Alert components
 - **clsx + tailwind-merge**: `cn()` utility for conditional classes
 
 ### State Management
+
 ```typescript
 // Local state (form data)
 const [localPreferences, setLocalPreferences] = useState<NotificationPreferencesResponseDto | null>(null);
@@ -185,6 +198,7 @@ useEffect(() => {
 ```
 
 ### Navigation Prevention
+
 ```typescript
 useEffect(() => {
   const handleBeforeUnload = (e: BeforeUnloadEvent) => {

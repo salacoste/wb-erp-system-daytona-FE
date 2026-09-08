@@ -9,6 +9,7 @@
 ## Question
 
 При расчёте "Прибыль" на фронтенде используется формула:
+
 ```
 Прибыль = revenue_net − cogs − logistics_cost_rub − storage_cost_rub
 ```
@@ -16,17 +17,19 @@
 Однако значение `operating_profit_rub` из API отличается от нашего расчёта.
 
 **Пример (SKU 147205694, W49)**:
-| Метрика | Значение |
-|---------|----------|
-| revenue_net | 14,074.60 ₽ |
-| cogs | 4,488.00 ₽ |
-| logistics_cost_rub | 5,999.63 ₽ |
-| storage_cost_rub | 0 ₽ |
-| Наш расчёт (frontend) | 3,586.97 ₽ |
-| operating_profit_rub (API) | 2,193.90 ₽ |
-| **Разница** | ~1,393 ₽ |
+
+| Метрика                    | Значение    |
+| -------------------------- | ----------- |
+| revenue_net                | 14,074.60 ₽ |
+| cogs                       | 4,488.00 ₽  |
+| logistics_cost_rub         | 5,999.63 ₽  |
+| storage_cost_rub           | 0 ₽         |
+| Наш расчёт (frontend)      | 3,586.97 ₽  |
+| operating_profit_rub (API) | 2,193.90 ₽  |
+| **Разница**                | ~1,393 ₽    |
 
 **Вопросы**:
+
 1. Какая полная формула расчёта `operating_profit_rub`?
 2. Какие дополнительные расходы включены помимо COGS, логистики и хранения?
 3. Можно ли получить детализацию расходов per SKU?
@@ -56,18 +59,18 @@ operating_profit_rub = gross_profit_rub − total_expenses_rub
 
 ### 2. Все типы расходов per SKU
 
-| Поле API | Описание | Источник WB |
-|----------|----------|-------------|
-| `logistics_cost_rub` | Доставка + возврат + транспорт | logistics_delivery + logistics_return + transport_reimbursement |
-| `storage_cost_rub` | Хранение | storage |
-| `paid_acceptance_cost_rub` | Платная приёмка | paid_acceptance |
-| `penalties_rub` | Штрафы | penalties |
-| `acquiring_fee_rub` | Эквайринг | acquiring_fee |
-| `loyalty_fee_rub` | Программа лояльности (списание) | loyalty_fee + loyalty_points_withheld |
-| `loyalty_compensation_rub` | Компенсация лояльности (▼ расходы) | loyalty_compensation |
-| `commission_rub` | Комиссии WB | commission_sales + commission_other |
-| `other_adjustments_rub` | Прочие корректировки | corrections + other_adjustments |
-| **`total_expenses_rub`** | **Сумма всех расходов** | Расчётное поле |
+| Поле API                   | Описание                           | Источник WB                                                     |
+| -------------------------- | ---------------------------------- | --------------------------------------------------------------- |
+| `logistics_cost_rub`       | Доставка + возврат + транспорт     | logistics_delivery + logistics_return + transport_reimbursement |
+| `storage_cost_rub`         | Хранение                           | storage                                                         |
+| `paid_acceptance_cost_rub` | Платная приёмка                    | paid_acceptance                                                 |
+| `penalties_rub`            | Штрафы                             | penalties                                                       |
+| `acquiring_fee_rub`        | Эквайринг                          | acquiring_fee                                                   |
+| `loyalty_fee_rub`          | Программа лояльности (списание)    | loyalty_fee + loyalty_points_withheld                           |
+| `loyalty_compensation_rub` | Компенсация лояльности (▼ расходы) | loyalty_compensation                                            |
+| `commission_rub`           | Комиссии WB                        | commission_sales + commission_other                             |
+| `other_adjustments_rub`    | Прочие корректировки               | corrections + other_adjustments                                 |
+| **`total_expenses_rub`**   | **Сумма всех расходов**            | Расчётное поле                                                  |
 
 ### 3. Детализация для примера SKU 147205694
 
@@ -166,10 +169,12 @@ const expenseBreakdown = [
 **Issue**: `total_expenses_rub` in DB contained only logistics (old data before Epic 26).
 
 **Fix applied**: 2025-12-17
+
 - Updated 93 rows in `weekly_margin_fact` for W49
 - Recalculated `total_expenses_rub` and `operating_profit_rub` using full formula
 
 **Verification**:
+
 ```sql
 -- Before fix
 total_expenses_rub = 5,999.63  -- only logistics
@@ -190,12 +195,12 @@ total_expenses_rub = 7,392.70  -- full formula ✅
 
 ## Summary
 
-| Question | Answer |
-|----------|--------|
-| Полная формула? | `operating_profit = gross_profit - total_expenses` |
-| Какие расходы включены? | 9 типов: логистика, хранение, приёмка, штрафы, эквайринг, лояльность, комиссии, прочие |
-| Детализация per SKU доступна? | Да, все поля уже в API `/v1/analytics/weekly/by-sku` |
-| Рекомендация для frontend? | Использовать `operating_profit_rub` напрямую из API |
+| Question                      | Answer                                                                                 |
+| ----------------------------- | -------------------------------------------------------------------------------------- |
+| Полная формула?               | `operating_profit = gross_profit - total_expenses`                                     |
+| Какие расходы включены?       | 9 типов: логистика, хранение, приёмка, штрафы, эквайринг, лояльность, комиссии, прочие |
+| Детализация per SKU доступна? | Да, все поля уже в API `/v1/analytics/weekly/by-sku`                                   |
+| Рекомендация для frontend?    | Использовать `operating_profit_rub` напрямую из API                                    |
 
 ## Backend Team Response
 

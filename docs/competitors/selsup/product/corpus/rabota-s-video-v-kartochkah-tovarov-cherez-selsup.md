@@ -15,7 +15,7 @@ chars: 6833
 
 В этой статье:
 
-- 
+-
 - <a href="#kak-dobavit-video-v-kartochku-tovara" rel="nofollow">Как добавить видео в карточку товара?</a>
 - <a href="#gibkoe-upravlenie-na-kakie-marketplejsy-otpravlyat-video" rel="nofollow">Гибкое управление: на какие маркетплейсы отправлять видео</a>
 - <a href="#otpravka-neskolkih-video-na-ozon" rel="nofollow">Отправка нескольких видео на Ozon</a>

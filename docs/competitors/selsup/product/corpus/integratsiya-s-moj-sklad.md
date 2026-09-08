@@ -11,7 +11,7 @@ chars: 18447
 
 В этой статье:
 
-- 
+-
 - <a href="#1plj7nx" rel="nofollow">Возможности интеграции SelSup и МойСклад</a>
 - <a href="#poryadok-nastrojki-integratsii" rel="nofollow">Порядок настройки интеграции</a>
 - <a href="#podklyuchenie-integratsii-s-mojsklad" rel="nofollow">Подключение интеграции с МойСклад</a>

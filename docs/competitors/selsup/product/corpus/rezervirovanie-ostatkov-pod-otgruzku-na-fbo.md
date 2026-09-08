@@ -11,7 +11,7 @@ chars: 6505
 
 В этой статье:
 
-- 
+-
 - <a href="#rezervirovanie-ostatkov-pod-otgruzku-fbo" rel="nofollow">Резервирование остатков под отгрузку FBO</a>
 - <a href="#vozvrat-rezerva" rel="nofollow">Возврат резерва</a>
 - <a href="#kak-posmotret-rezervy-po-zakazu" rel="nofollow">Как посмотреть резервы по заказу</a>

@@ -13,7 +13,7 @@ chars: 2246
 
 В этой статье:
 
-- 
+-
 - <a href="#kak-peredat-kod-markirovki" rel="nofollow">Как передать код маркировки</a>
 - <a href="#proverka-prinyatiya-markirovki" rel="nofollow">Проверка принятия маркировки</a>
 

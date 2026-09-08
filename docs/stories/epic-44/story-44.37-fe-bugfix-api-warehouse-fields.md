@@ -2,15 +2,15 @@
 
 ## Overview
 
-| Field | Value |
-|-------|-------|
-| **Story ID** | 44.37-FE |
-| **Epic** | Epic 44 - Price Calculator UI |
-| **Type** | Bugfix |
-| **Priority** | P0 - Critical |
-| **Story Points** | 2 SP |
-| **Status** | Ready for Dev |
-| **Related Stories** | 44.27, 44.32, 44.36 |
+| Field               | Value                         |
+| ------------------- | ----------------------------- |
+| **Story ID**        | 44.37-FE                      |
+| **Epic**            | Epic 44 - Price Calculator UI |
+| **Type**            | Bugfix                        |
+| **Priority**        | P0 - Critical                 |
+| **Story Points**    | 2 SP                          |
+| **Status**          | Ready for Dev                 |
+| **Related Stories** | 44.27, 44.32, 44.36           |
 
 ## Description
 
@@ -19,6 +19,7 @@ The Price Calculator frontend sends 6 additional fields to the backend API that 
 When these fields are included in the API request, the backend returns a 400 Bad Request error, preventing users from calculating prices.
 
 **This story removes 6 fields from the API request:**
+
 - `warehouse_id` - Numeric warehouse identifier
 - `logistics_coefficient` - Warehouse logistics multiplier
 - `storage_coefficient` - Warehouse storage multiplier
@@ -75,22 +76,22 @@ The `toApiRequest()` function in `priceCalculatorUtils.ts` conditionally include
 
 ### Affected Files
 
-| File | Lines | Issue |
-|------|-------|-------|
-| `src/components/custom/price-calculator/priceCalculatorUtils.ts` | 64-75 | Warehouse fields sent to API |
-| `src/components/custom/price-calculator/priceCalculatorUtils.ts` | 85-92 | Weight/localization fields sent to API |
-| `src/types/price-calculator.ts` | 176-191 | Type definitions for unsupported fields |
+| File                                                             | Lines   | Issue                                   |
+| ---------------------------------------------------------------- | ------- | --------------------------------------- |
+| `src/components/custom/price-calculator/priceCalculatorUtils.ts` | 64-75   | Warehouse fields sent to API            |
+| `src/components/custom/price-calculator/priceCalculatorUtils.ts` | 85-92   | Weight/localization fields sent to API  |
+| `src/types/price-calculator.ts`                                  | 176-191 | Type definitions for unsupported fields |
 
 ### Fields to Remove from API Request
 
-| Field | Type | Origin Story | Condition in Code |
-|-------|------|--------------|-------------------|
-| `warehouse_id` | number | 44.27 | `!== null` |
-| `logistics_coefficient` | number | 44.27 | `!== 1.0` |
-| `storage_coefficient` | number | 44.27 | FBO && `!== 1.0` |
-| `delivery_date` | string | 44.27 | `!== null` |
-| `weight_exceeds_25kg` | boolean | 44.32 | `=== true` |
-| `localization_index` | number | 44.32 | `!== 1.0` |
+| Field                   | Type    | Origin Story | Condition in Code |
+| ----------------------- | ------- | ------------ | ----------------- |
+| `warehouse_id`          | number  | 44.27        | `!== null`        |
+| `logistics_coefficient` | number  | 44.27        | `!== 1.0`         |
+| `storage_coefficient`   | number  | 44.27        | FBO && `!== 1.0`  |
+| `delivery_date`         | string  | 44.27        | `!== null`        |
+| `weight_exceeds_25kg`   | boolean | 44.32        | `=== true`        |
+| `localization_index`    | number  | 44.32        | `!== 1.0`         |
 
 ## Solution Approach
 
@@ -212,14 +213,14 @@ Remove ALL 6 unsupported fields from the `toApiRequest()` function. The UI compo
 
 ### Field Origin Mapping
 
-| Field | Added In | UI Component | Keep UI? |
-|-------|----------|--------------|----------|
-| `warehouse_id` | Story 44.27 | `WarehouseSelect.tsx` | Yes |
-| `logistics_coefficient` | Story 44.27 | `LogisticsCoefficientsSection.tsx` | Yes |
-| `storage_coefficient` | Story 44.27 | `LogisticsCoefficientsSection.tsx` | Yes |
-| `delivery_date` | Story 44.27 | `DeliveryDatePicker.tsx` | Yes |
-| `weight_exceeds_25kg` | Story 44.32 | `WeightThresholdCheckbox.tsx` | Yes |
-| `localization_index` | Story 44.32 | `LocalizationIndexInput.tsx` | Yes |
+| Field                   | Added In    | UI Component                       | Keep UI? |
+| ----------------------- | ----------- | ---------------------------------- | -------- |
+| `warehouse_id`          | Story 44.27 | `WarehouseSelect.tsx`              | Yes      |
+| `logistics_coefficient` | Story 44.27 | `LogisticsCoefficientsSection.tsx` | Yes      |
+| `storage_coefficient`   | Story 44.27 | `LogisticsCoefficientsSection.tsx` | Yes      |
+| `delivery_date`         | Story 44.27 | `DeliveryDatePicker.tsx`           | Yes      |
+| `weight_exceeds_25kg`   | Story 44.32 | `WeightThresholdCheckbox.tsx`      | Yes      |
+| `localization_index`    | Story 44.32 | `LocalizationIndexInput.tsx`       | Yes      |
 
 ### Future Backend Support
 
@@ -233,11 +234,11 @@ When the backend implements support for these fields (Epic 43 extension or new E
 
 ### Relationship to Other Stories
 
-| Story | Fields Removed | Status |
-|-------|----------------|--------|
-| 44.36 | `box_type`, `turnover_days` | Ready for Dev |
-| 44.37 | `warehouse_id`, `logistics_coefficient`, `storage_coefficient`, `delivery_date`, `weight_exceeds_25kg`, `localization_index` | Ready for Dev |
-| **Total** | **8 fields** | Both must be implemented together |
+| Story     | Fields Removed                                                                                                               | Status                            |
+| --------- | ---------------------------------------------------------------------------------------------------------------------------- | --------------------------------- |
+| 44.36     | `box_type`, `turnover_days`                                                                                                  | Ready for Dev                     |
+| 44.37     | `warehouse_id`, `logistics_coefficient`, `storage_coefficient`, `delivery_date`, `weight_exceeds_25kg`, `localization_index` | Ready for Dev                     |
+| **Total** | **8 fields**                                                                                                                 | Both must be implemented together |
 
 ## Definition of Done
 

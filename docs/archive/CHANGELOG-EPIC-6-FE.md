@@ -19,16 +19,19 @@ Epic 6-FE implements Advanced Analytics UI features for the WB Repricer System f
 **Purpose:** Enable multi-week analytics with ISO week range selection.
 
 **Components Created:**
+
 - `DateRangePicker.tsx` - Week range selector with quick presets
 - `useAvailableWeeks.ts` - Hook for fetching available weeks
 
 **Features:**
+
 - Week range selection (weekStart/weekEnd)
 - Quick presets: "Последние 4 недели", "Последние 12 недель"
 - Validation: max 52 weeks, no future weeks
 - ISO week format (YYYY-Www)
 
 **Files Modified:**
+
 - `src/hooks/useMarginAnalytics.ts` - Added `weekStart`, `weekEnd` params
 - `src/app/(dashboard)/analytics/sku/page.tsx` - DateRangePicker integration
 - `src/app/(dashboard)/analytics/brand/page.tsx` - DateRangePicker integration
@@ -41,17 +44,20 @@ Epic 6-FE implements Advanced Analytics UI features for the WB Repricer System f
 **Purpose:** Enable period-over-period comparison with delta indicators.
 
 **Components Created:**
+
 - `DeltaIndicator.tsx` - Visual delta display (↑ green, ↓ red, — gray)
 - `DeltaBadge.tsx` - Compact delta badge for tables
 - `ComparisonPeriodSelector.tsx` - Period comparison toggle with presets
 
 **Features:**
+
 - Comparison presets: "Предыдущий период", "Тот же период прошлого года", "Custom"
 - Delta formatting: percentage and absolute (currency)
 - Inverse mode for costs (negative = good)
 - Size variants: sm, md, lg
 
 **Props for DeltaIndicator:**
+
 ```typescript
 interface DeltaIndicatorProps {
   value: number | null | undefined
@@ -64,11 +70,13 @@ interface DeltaIndicatorProps {
 ```
 
 **Files Modified:**
+
 - `src/hooks/useMarginAnalytics.ts` - Added `compareTo`, `compareToStart`, `compareToEnd`
 - `src/types/analytics.ts` - Added `ComparisonAnalyticsItem`, `PeriodDelta` types
 - All analytics pages - Integrated ComparisonPeriodSelector
 
 **Tests:**
+
 - `DeltaIndicator.test.tsx` - 21 tests
 - `ComparisonPeriodSelector.test.tsx` - 12 tests
 
@@ -79,12 +87,14 @@ interface DeltaIndicatorProps {
 **Purpose:** KPI dashboard with top performers and trend indicators.
 
 **Components Created:**
+
 - `KPICard.tsx` - KPI card with trend indicator (up/down/stable)
 - `TopProductsTable.tsx` - Top 10 products by revenue
 - `TopBrandsTable.tsx` - Top 5 brands by revenue
 - `useCabinetSummary.ts` - Hook for cabinet summary API
 
 **Features:**
+
 - KPIs: Revenue, Profit, Margin, ROI
 - Trend indicators with week-over-week growth
 - Top 10 products with contribution %
@@ -92,10 +102,12 @@ interface DeltaIndicatorProps {
 - Product coverage stats
 
 **Pages Created:**
+
 - `/analytics/dashboard/page.tsx` - Cabinet Summary page
 - `/analytics/dashboard/loading.tsx` - Loading skeleton
 
 **Types Added:**
+
 ```typescript
 interface CabinetSummaryResponse {
   summary: {
@@ -110,6 +122,7 @@ interface CabinetSummaryResponse {
 ```
 
 **Tests:**
+
 - `KPICard.test.tsx` - 8 tests
 - `TopProductsTable.test.tsx` - 5 tests
 - `TopBrandsTable.test.tsx` - 4 tests
@@ -121,15 +134,19 @@ interface CabinetSummaryResponse {
 **Purpose:** Add ROI and Profit per Unit columns to analytics tables with optional visibility toggles.
 
 **Components Created:**
+
 - `ColumnVisibilityToggle.tsx` - Dropdown menu for toggling optional columns
 
 **Hooks Created:**
+
 - `useColumnVisibility.ts` - Column visibility with localStorage persistence
 
 **Utilities Created:**
+
 - `analytics-utils.ts` - ROI/Profit formatting and color coding functions
 
 **Features:**
+
 - ROI calculation: `(profit / cogs) × 100%`
 - Profit per Unit calculation: `profit / qty`
 - Color-coded ROI values based on thresholds:
@@ -143,12 +160,14 @@ interface CabinetSummaryResponse {
 - Tooltips explaining calculation formulas
 
 **Files Modified:**
+
 - `src/types/cogs.ts` - Added `profit_per_unit`, `roi` fields to `MarginAnalyticsSku` and `MarginAnalyticsAggregated`
 - `src/components/custom/MarginBySkuTable.tsx` - Added ROI & Profit/Unit columns
 - `src/components/custom/MarginByBrandTable.tsx` - Added ROI & Profit/Unit columns
 - `src/components/custom/MarginByCategoryTable.tsx` - Added ROI & Profit/Unit columns
 
 **New Props for Table Components:**
+
 ```typescript
 interface MarginTableProps {
   columnVisibility?: {
@@ -160,6 +179,7 @@ interface MarginTableProps {
 ```
 
 **Analytics Utils Functions:**
+
 ```typescript
 getROIColor(roi: number | null): string       // Returns Tailwind color class
 formatROI(value: number | null): string        // Format as "50.5%"
@@ -192,6 +212,7 @@ GET /v1/analytics/cabinet-summary
 ```
 
 **Parameters:**
+
 - `weeks?: number` - Number of weeks (default: 4, max: 52)
 - `weekStart?: string` - Explicit range start
 - `weekEnd?: string` - Explicit range end
@@ -246,13 +267,16 @@ src/
 **Purpose:** Enable exporting analytics data to CSV or Excel format.
 
 **Components Created:**
+
 - `ExportDialog.tsx` - Export configuration dialog with type, date range, format selection
 - `ExportStatusDisplay.tsx` - Status display with progress, download button, retry
 
 **Hooks Created:**
+
 - `useExportAnalytics.ts` - Export mutation + status polling with timeout handling
 
 **Features:**
+
 - Export types: by-sku, by-brand, by-category, cabinet-summary
 - Format selection: CSV or Excel (.xlsx)
 - Date range selection using DateRangePicker
@@ -263,6 +287,7 @@ src/
 - Retry on failure
 
 **Types Added:**
+
 ```typescript
 type ExportType = 'by-sku' | 'by-brand' | 'by-category' | 'cabinet-summary'
 type ExportFormat = 'csv' | 'xlsx'
@@ -289,6 +314,7 @@ interface ExportStatus {
 ```
 
 **Files Modified:**
+
 - `src/app/(dashboard)/analytics/sku/page.tsx` - Added Export button
 - `src/app/(dashboard)/analytics/brand/page.tsx` - Added Export button
 - `src/app/(dashboard)/analytics/category/page.tsx` - Added Export button

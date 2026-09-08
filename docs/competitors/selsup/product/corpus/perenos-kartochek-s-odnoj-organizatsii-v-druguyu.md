@@ -13,7 +13,7 @@ chars: 10658
 
 В этой статье:
 
-- 
+-
 - <a href="#kak-massovo-perenesti-kartochki-tovarov-s-odnoj-organizatsii-na-druguy" rel="nofollow">Как массово перенести карточки товаров с одной организации на другую через интерфейс</a>
 - <a href="#kak-massovo-perenesti-kartochki-tovarov-s-odnoj-organizatsii-na-druguy-2" rel="nofollow">Как массово перенести карточки товаров с одной организации на другую через Excel</a>
 - <a href="#selsup-podhodit-ne-tolko-dlya-marketplejsov" rel="nofollow">SelSup подходит не только для маркетплейсов</a>
@@ -121,8 +121,8 @@ chars: 10658
 
 ![](../../out/selsup.ru/_kage/selsup.ru/wp-content/webp-express/webp-images/uploads/2021/12/id.png.webp)
 
-***А также удалите старую организацию, либо добавьте другую, на которую переносите карточки.\
-![](../../out/selsup.ru/_kage/selsup.ru/wp-content/webp-express/webp-images/uploads/2023/02/ydalit-organizaciyu.png.webp)***
+_**А также удалите старую организацию, либо добавьте другую, на которую переносите карточки.\
+![](../../out/selsup.ru/_kage/selsup.ru/wp-content/webp-express/webp-images/uploads/2023/02/ydalit-organizaciyu.png.webp)**_
 
 **Шаг 5.** Если в обеих организациях бренд не будет отличаться, то никаких изменений в столбце «**Бренд**» вносить не нужно. Если же бренд будет отличаться, то отредактируйте этот столбец, указав в нем новый бренд.
 

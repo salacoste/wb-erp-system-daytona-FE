@@ -35,18 +35,18 @@ git worktree list                  # зафиксируй ЧУЖИЕ worktrees (
 
 ## 2. Канонические документы (полные пути, порядок чтения)
 
-| # | Документ (путь от корня FE-репо) | Роль |
-|---|---|---|
-| 1 | `docs/HANDOFF-2026-08-26-LATE-epic-171-complete-172-recon-ready.md` | **ВХОД-ТОЧКА**: состояние (эпик 171 закрыт 9/9), NEXT 172.1 с готовой разведкой (`docs/recon-172-1-dashboard.md`), новые ловушки P9-P11. Заменяет `docs/HANDOFF-2026-08-26-epic-171-models-tree-and-full-debt-registry.md` (его §0 синхронизирован, §1-§5 исторические; полный реестр BE-долгов — там §3) |
-| 2 | `CLAUDE.md` | **ПРАВИЛА РЕПО** (критические правила разработки, baselines-таблица, двухпроходное ревью, анти-паттерны) |
-| 3 | `.omx/plans/shadcn-full-ui-migration-master.md` | Мастер-план миграции + standard-story-execution-protocol (наследуемый протокол каждой стори) |
-| 4 | `_bmad-output/planning-artifacts/epics-166-174-fe-shadcn-migration.md` | Канонические ID/требования/AC каждой стори ( authority по скоупу) |
-| 5 | `_bmad-output/implementation-artifacts/sprint-status.yaml` | Живые статусы стори (flip делаешь ты, §6.4) |
-| 6 | `_bmad-output/planning-artifacts/shadcn-migration-status-and-debt-registry.md` | Реестр долга + SHIPPED-строки (апдейтишь в closeout, §6.4) |
-| 7 | `.omx/plans/<СЛЕДУЮЩАЯ-СТОРИ>.md` | План конкретной стори — **authoritative** по branch/worktree/surfaces/валидации/cleanup |
-| 8 | `CLAUDE-PATTERNS.md` + `CLAUDE-ANTI-PATTERNS.md` | Паттерны (Boundary Normalizer, Defensive Frontend) и анти-паттерны №1-10 |
-| 9 | `_bmad-output/planning-artifacts/ux-design-specification.md` | UX-требования (состояния, таблицы, темы, a11y) |
-| 10 | `docs/EPICS-AND-STORIES-TRACKER.md` | Общий трекер эпик/стори/роутов |
+| #   | Документ (путь от корня FE-репо)                                               | Роль                                                                                                                                                                                                                                                                                                      |
+| --- | ------------------------------------------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 1   | `docs/HANDOFF-2026-08-26-LATE-epic-171-complete-172-recon-ready.md`            | **ВХОД-ТОЧКА**: состояние (эпик 171 закрыт 9/9), NEXT 172.1 с готовой разведкой (`docs/recon-172-1-dashboard.md`), новые ловушки P9-P11. Заменяет `docs/HANDOFF-2026-08-26-epic-171-models-tree-and-full-debt-registry.md` (его §0 синхронизирован, §1-§5 исторические; полный реестр BE-долгов — там §3) |
+| 2   | `CLAUDE.md`                                                                    | **ПРАВИЛА РЕПО** (критические правила разработки, baselines-таблица, двухпроходное ревью, анти-паттерны)                                                                                                                                                                                                  |
+| 3   | `.omx/plans/shadcn-full-ui-migration-master.md`                                | Мастер-план миграции + standard-story-execution-protocol (наследуемый протокол каждой стори)                                                                                                                                                                                                              |
+| 4   | `_bmad-output/planning-artifacts/epics-166-174-fe-shadcn-migration.md`         | Канонические ID/требования/AC каждой стори ( authority по скоупу)                                                                                                                                                                                                                                         |
+| 5   | `_bmad-output/implementation-artifacts/sprint-status.yaml`                     | Живые статусы стори (flip делаешь ты, §6.4)                                                                                                                                                                                                                                                               |
+| 6   | `_bmad-output/planning-artifacts/shadcn-migration-status-and-debt-registry.md` | Реестр долга + SHIPPED-строки (апдейтишь в closeout, §6.4)                                                                                                                                                                                                                                                |
+| 7   | `.omx/plans/<СЛЕДУЮЩАЯ-СТОРИ>.md`                                              | План конкретной стори — **authoritative** по branch/worktree/surfaces/валидации/cleanup                                                                                                                                                                                                                   |
+| 8   | `CLAUDE-PATTERNS.md` + `CLAUDE-ANTI-PATTERNS.md`                               | Паттерны (Boundary Normalizer, Defensive Frontend) и анти-паттерны №1-10                                                                                                                                                                                                                                  |
+| 9   | `_bmad-output/planning-artifacts/ux-design-specification.md`                   | UX-требования (состояния, таблицы, темы, a11y)                                                                                                                                                                                                                                                            |
+| 10  | `docs/EPICS-AND-STORIES-TRACKER.md`                                            | Общий трекер эпик/стори/роутов                                                                                                                                                                                                                                                                            |
 
 Приоритет при конфликте: **план стори (п.7) > мастер-план (п.3) > CLAUDE.md (п.2) > handoff (п.1)**; живой код + проходящие тесты — финальная инстанция поведения (behavior-lock, §4 шаг 2).
 
@@ -56,14 +56,15 @@ git worktree list                  # зафиксируй ЧУЖИЕ worktrees (
 
 **Эпик 171 закрыт 9/9** (вечер 26.08: 171.7-171.9 — PRs #266-#271). Текущая задача — **эпик 172 (Core Business Ops, 17 стори)**, начиная с крупнейшей стори миграции:
 
-| Порядок | Стори | Роут | План (полный путь) |
-|---|---|---|---|
-| 1 | **172.1-FE** Business Dashboard | `/dashboard` | `.omx/plans/172.1-migrate-the-business-dashboard.md` |
-| 2+ | 172.2-172.17 | automation (×3), COGS (×4), communications, finances-docs, monitor (×2), moysklad, orders (×3), products | `.omx/plans/172.{2..17}-*.md` |
+| Порядок | Стори                           | Роут                                                                                                     | План (полный путь)                                   |
+| ------- | ------------------------------- | -------------------------------------------------------------------------------------------------------- | ---------------------------------------------------- |
+| 1       | **172.1-FE** Business Dashboard | `/dashboard`                                                                                             | `.omx/plans/172.1-migrate-the-business-dashboard.md` |
+| 2+      | 172.2-172.17                    | automation (×3), COGS (×4), communications, finances-docs, monitor (×2), moysklad, orders (×3), products | `.omx/plans/172.{2..17}-*.md`                        |
 
 После 172 → 173 (13) → 174 (5, завершающий: ledger-parity, legacy-removal, a11y-verification, full-regression, docs-cleanup).
 
 **Спец-заметки к 172.1** (полная разведка — `docs/recon-172-1-dashboard.md`, НЕ пересчитывать):
+
 - **FULL-цикл**: 92 файла / 339 palette-сайтов + 31 файл / 78 hex; owned = `src/app/(dashboard)/dashboard/**` + `src/components/custom/dashboard/**` (~161 prod-файл).
 - Волновое делегирование (§10): 3 волны executor-сабагентов по канон-таблице из recon → каждая волна targeted vitest → гарды → валидация → ревью ≥3 проходов (дифф ~>1000 строк → Triggers §6.2).
 - Baseline targeted снимать ДО правок: `npm test -- --run 'src/app/(dashboard)/dashboard' 'src/components/custom/dashboard'`.
@@ -113,18 +114,18 @@ git worktree list                  # зафиксируй ЧУЖИЕ worktrees (
 
 ## 5. Стандарты качества — гейты и baselines (все должны проходить на каждый PR)
 
-| Гейт | Команда (из корня FE-репо) | Baseline |
-|---|---|---|
-| Vitest полный | `npm test -- --run` | **≥ 19 253 passing, 0 failed, 0 skipped** (floor растёт только точными +N новых тестов; падение — блокер) |
-| ESLint | `npm run lint` | 0 errors, **0 warnings** (zero-warning policy) |
-| TypeScript | `npm run type-check` | 0 ошибок; без `any` и `as`-кастов |
-| max-lines | `npm run check:max-lines` | source ≤ 200 строк (цель ~150), test ≤ 800 |
-| Doc-citations | `bash scripts/check-doc-citations.sh` | **exit code 0** (= битые цитаты ровно baseline 97 entries); смотрите exit code, НЕ счётчик; НЕ через npm-пайп |
-| locale-percent | `bash scripts/check-locale-percent.sh` | ratchet = **4**; снижение → same-commit снизить `scripts/.locale-percent-baseline.txt` |
-| lessons-length | `bash scripts/check-lessons-length.sh` | 0 нарушений (Lessons ≤120 симв, формат §6.4) |
-| eslint-rules / next-params | `bash scripts/check-eslint-rules.sh` · `bash scripts/check-next-async-params.sh` | OK (после правок конфигов/signatures) |
-| Build | `npm run build` (primary) / `npx next build --webpack` (worktree) | exit 0 |
-| E2E | спека роута через npm-обёртку на ветке | 0 failed; скипы — только осознанные, с reason |
+| Гейт                       | Команда (из корня FE-репо)                                                       | Baseline                                                                                                      |
+| -------------------------- | -------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------- |
+| Vitest полный              | `npm test -- --run`                                                              | **≥ 19 253 passing, 0 failed, 0 skipped** (floor растёт только точными +N новых тестов; падение — блокер)     |
+| ESLint                     | `npm run lint`                                                                   | 0 errors, **0 warnings** (zero-warning policy)                                                                |
+| TypeScript                 | `npm run type-check`                                                             | 0 ошибок; без `any` и `as`-кастов                                                                             |
+| max-lines                  | `npm run check:max-lines`                                                        | source ≤ 200 строк (цель ~150), test ≤ 800                                                                    |
+| Doc-citations              | `bash scripts/check-doc-citations.sh`                                            | **exit code 0** (= битые цитаты ровно baseline 97 entries); смотрите exit code, НЕ счётчик; НЕ через npm-пайп |
+| locale-percent             | `bash scripts/check-locale-percent.sh`                                           | ratchet = **4**; снижение → same-commit снизить `scripts/.locale-percent-baseline.txt`                        |
+| lessons-length             | `bash scripts/check-lessons-length.sh`                                           | 0 нарушений (Lessons ≤120 симв, формат §6.4)                                                                  |
+| eslint-rules / next-params | `bash scripts/check-eslint-rules.sh` · `bash scripts/check-next-async-params.sh` | OK (после правок конфигов/signatures)                                                                         |
+| Build                      | `npm run build` (primary) / `npx next build --webpack` (worktree)                | exit 0                                                                                                        |
+| E2E                        | спека роута через npm-обёртку на ветке                                           | 0 failed; скипы — только осознанные, с reason                                                                 |
 
 **Кодовые стандарты** (CLAUDE.md — выучить до правок): path-алиасы `@/...`; Server Components по умолчанию; shadcn-примитивы НЕ редактировать (только `npx shadcn@latest add`); Boundary Normalizer — сырые BE-шейпы не проходят дальше api-слоя; Defensive Frontend — аномалию индицируем, не «чиним» подменой; деньги/рейо `null`→`—`, не `?? 0` (AP#8, ESLint-enforced); opaque ID — `String(id)`, не `formatNumber` (AP#10); в моках ошибок — `mockRejectedValueOnce` и реальный `ApiError` (AP#3); `TODO` в коде запрещён (`PENDING BACKEND:` + файл в `docs/request-backend/` или `FUTURE:`); русская локаль — `formatPercentage`/`formatPercentageInt` (не `.toFixed(N)%`); max 200/800 строк.
 
@@ -133,16 +134,19 @@ git worktree list                  # зафиксируй ЧУЖИЕ worktrees (
 ## 6. Процессные нормы
 
 ### 6.1 Surfaces (из плана каждой стори — СВЯЩЕННЫ)
+
 - **Allowed Change Surface** — только файлы, перечисленные в плане; **Forbidden Shared Files** (`package.json`, `src/components/ui/**`, `src/hooks/**`, `src/lib/**`, `src/types/**`, `src/stores/**`, AppShell, `analytics/shared/**`, route-ledger, BMAD-артефакты, планы sibling-сторий) — НЕ трогать. Нужна правка forbidden → СТОП, задокументировать, эскалировать владельцу.
 - Перед правкой любого экспорта — `rg` потребителей по всему `src/`; ≥2 роута-потребителя = shared-файл.
 
 ### 6.2 Ревью (two-pass дисциплина, CLAUDE.md «Story 94.3-FE»)
+
 - **Behavior-changing source** → 2 обязательных adversarial-прохода в СВЕЖИХ контекстах (обычно 1-й структурные дефекты, 2-й нарративные/аттестационные), оба ДО flip `review→done` и ДО коммита.
 - **Микро-цикл** (дифф ~<50 строк продакшн-кода, нет изменений контрактов) → пропорционально **1 свежий проход** code-reviewer (прецеденты: 171.5, 171.6 = 1×opus APPROVE).
 - Triggers ≥3 проходов: novel-pattern стори; >12 находок суммарно; >5 находок в любом проходе; meta-claims.
 - Ревьюер ≠ автор; self-approve запрещён; находки — чинить или документировать disposition с evidence.
 
 ### 6.3 Git
+
 - Ветки: `cdx/epic-<E>-story-<N>-<slug>` (из плана стори); closeout: `cdx/story-<N>-closeout`; доки: `docs/...`.
 - **Re-verify `git branch --show-current` непосредственно ПЕРЕД каждым коммитом** (concurrent-сессии, §8.1). Коммитить сразу, не держать WIP.
 - Stage только явные файлы (никогда `-A`); коммиты conventional: `feat(analytics): migrate Story NNN.N route to shadcn` / `fix(...)` / `docs(story): close Story NNN.N ...`.
@@ -150,6 +154,7 @@ git worktree list                  # зафиксируй ЧУЖИЕ worktrees (
 - **После merge — обязательный cleanup**: remote+local ветка удалены, `git worktree remove` + `prune`, `git status` чист; доказательства (0/0/0) — в close-строку артефакта.
 
 ### 6.4 Closeout стори (отдельной веткой, прецедент-формат — `_bmad-output/implementation-artifacts/171-6-*.md`)
+
 1. Артефакт `_bmad-output/implementation-artifacts/<NNN-N-slug>.md`: Status: done; Story/AC/Tasks-чекбоксы; Dev Agent Record (модель, `### Post-Nth-pass-review fixes (ДАТА)`); File List (точный diff); **Change Log** — финальная close-строка со `**Lessons:** (1)… (2)… (3)…` ≤120 симв/шт; закрытые строки APPEND-ONLY.
 2. `_bmad-output/implementation-artifacts/sprint-status.yaml`: `<story>: backlog → done`.
 3. `_bmad-output/planning-artifacts/shadcn-migration-status-and-debt-registry.md`: SHIPPED-строка (PR, merge SHA, вердикт, owned-тесты N→M, полный пол, ревью, e2e) + `NEXT = ...`.
@@ -196,14 +201,14 @@ git worktree list                  # зафиксируй ЧУЖИЕ worktrees (
 
 ## 10. Среда
 
-| Параметр | Значение |
-|---|---|
-| Node / npm | 24.18.0 / 11.11.0 (pinned, `package.json`) |
-| FE dev/prod | `http://localhost:3100` (pm2 `wb-repricer-frontend-dev`) |
-| BE API | `http://localhost:3000` (`/v1/health`; Swagger `/api`) |
-| FE remote | `github.com:salacoste/wb-erp-system-daytona-FE.git` (свой git-репо, НЕ часть BE) |
-| Тест-креды | `test@test.com` / `<E2E_TEST_PASSWORD>` (§8.4) |
-| Worktrees | `/private/tmp/<путь-из-плана>`; node_modules — symlink из primary; `.env.e2e` — копировать (gitignored) |
+| Параметр            | Значение                                                                                                                                                                                                                    |
+| ------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Node / npm          | 24.18.0 / 11.11.0 (pinned, `package.json`)                                                                                                                                                                                  |
+| FE dev/prod         | `http://localhost:3100` (pm2 `wb-repricer-frontend-dev`)                                                                                                                                                                    |
+| BE API              | `http://localhost:3000` (`/v1/health`; Swagger `/api`)                                                                                                                                                                      |
+| FE remote           | `github.com:salacoste/wb-erp-system-daytona-FE.git` (свой git-репо, НЕ часть BE)                                                                                                                                            |
+| Тест-креды          | `test@test.com` / `<E2E_TEST_PASSWORD>` (§8.4)                                                                                                                                                                              |
+| Worktrees           | `/private/tmp/<путь-из-плана>`; node_modules — symlink из primary; `.env.e2e` — копировать (gitignored)                                                                                                                     |
 | Контекст-менеджмент | сессия падала от переполнения контекста на разведке — делегируй тяжёлые чтения сабагентам (explore/code-reviewer), держи свой контекст лёгким; результаты разведки СРАЗУ фиксируй в файл (план/артефакт), не держи в голове |
 
 ---

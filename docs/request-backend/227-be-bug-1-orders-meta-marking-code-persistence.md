@@ -12,12 +12,14 @@
 The O4 FE feature («Код маркировки» / Честный ЗНАК) writes a marking code to an order via `PATCH /v1/orders/:orderUuid/meta` with body `{ metaType: "IMEI" | "GTIN" | "SGTIN" | "UIN", value: string(1..200) }`.
 
 The **write contract** is verified green (2026-07-11 live re-val + 2026-07-13 BE code re-val):
+
 - accepts the UUID path param (not just the numeric WB orderId);
 - validates the `{metaType, value}` body (a fake UUID yields 404, contract OK — not the original 400/500);
 - proxies the write to the WB SDK and returns `{ updated: true }`;
 - returns a diagnosable 502 on WB error.
 
 **Persistence cannot be confirmed.** A PATCH → GET smoke-test cannot prove the marking code was actually saved, because:
+
 1. BE proxies the write to Wildberries — there is **no local source-of-truth** for the marking code;
 2. `GET /v1/orders/:id` does **not** return `metaType` / `value`, so the FE cannot read back what it wrote.
 
@@ -37,7 +39,7 @@ The marking code is treated as write-only (fire-and-forget to WB). There is no l
 1. **Preferred — persist locally as source-of-truth:** store `metaType` + `value` on the order record (DB) so the write is durable independent of WB, **and** return them in `GET /v1/orders/:id`. The FE can then read back and display the saved marking code.
 2. **Alternative — echo in GET:** if WB remains the source of truth, include `metaType` + `value` in the `GET /v1/orders/:id` response (proxied read-back from WB) so the FE can verify persistence after write.
 
-Either option unblocks confident FE ship of O4 with verified save state. A one-line reply suffices: *"real-order write-back persists — confirmed"* / *"still flaky, trace=…"* (see resolution template in #226).
+Either option unblocks confident FE ship of O4 with verified save state. A one-line reply suffices: _"real-order write-back persists — confirmed"_ / _"still flaky, trace=…"_ (see resolution template in #226).
 
 ## 5. Reproduction
 

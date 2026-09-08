@@ -32,6 +32,7 @@ if (moscowStartDate > moscowEndDate) {
 ```
 
 **What happens**:
+
 1. `validFrom = 2025-11-23` (COGS assigned date)
 2. `endDate = 2025-11-19` (end of last completed week W46)
 3. `2025-11-23 > 2025-11-19` → **returns empty array**
@@ -44,6 +45,7 @@ if (moscowStartDate > moscowEndDate) {
 **Design Decision** (Epic 20):
 
 The `calculateAffectedWeeks()` helper is designed to:
+
 - ✅ Recalculate weeks from `valid_from` to last completed week (inclusive)
 - ✅ Exclude incomplete weeks (Epic 19 logic)
 - ⚠️ **Skip recalculation if `valid_from` is after last completed week**
@@ -51,6 +53,7 @@ The `calculateAffectedWeeks()` helper is designed to:
 **Rationale**: If COGS is assigned with a future date, there's no sales data yet for that period, so no recalculation is needed.
 
 **BUT**: This logic doesn't account for **retroactive COGS assignment** where:
+
 - COGS `valid_from` date is AFTER last completed week
 - BUT there ARE sales in past weeks (W46) that need this COGS
 - AND temporal lookup WOULD find this COGS for week W46
@@ -64,7 +67,7 @@ The `calculateAffectedWeeks()` helper is designed to:
 private async lookupCogs(revenues: RevenueData[], start: Date, end: Date) {
   // Use midpoint of week for COGS lookup
   const midpoint = new Date((start.getTime() + end.getTime()) / 2);
-  
+
   for (const revenue of revenues) {
     // Find COGS valid at week midpoint
     const cogs = await this.cogsService.findCogsAtDate(revenue.nmId, midpoint);
@@ -74,6 +77,7 @@ private async lookupCogs(revenues: RevenueData[], start: Date, end: Date) {
 ```
 
 **What this means**:
+
 - ✅ If recalculation IS triggered, temporal lookup WILL find COGS assigned on 2025-11-23 for week W46 (because `valid_from <= midpoint of W46`)
 - ❌ But if recalculation is NOT triggered (empty array), `weekly_margin_fact` is never updated
 - ❌ API reads from `weekly_margin_fact` → shows `null` instead of calculated margin
@@ -132,6 +136,7 @@ X-Cabinet-Id: <cabinet_id>
 ```
 
 **Expected Result**:
+
 - Task processes in 5-30 seconds (single product)
 - `weekly_margin_fact` table updated with margin for week W46
 - API response shows `current_margin_pct` with calculated value
@@ -143,11 +148,13 @@ X-Cabinet-Id: <cabinet_id>
 ### Scenario 1: First COGS Assignment (No Historical COGS)
 
 **Timeline**:
+
 - Week W46 ends: November 19, 2025
 - User assigns COGS: November 23, 2025 (with `valid_from = 2025-11-23`)
 - Last completed week: W46 (ended November 19)
 
-**Result**: 
+**Result**:
+
 - `calculateAffectedWeeks(2025-11-23)` → returns `[]` (empty)
 - No automatic recalculation for W46
 - **Manual recalculation required**
@@ -155,12 +162,14 @@ X-Cabinet-Id: <cabinet_id>
 ### Scenario 2: COGS Update (Historical COGS Exists)
 
 **Timeline**:
+
 - Week W46 ends: November 19, 2025
 - Old COGS exists: `valid_from = 2025-10-01` (assigned before W46)
 - User updates COGS: November 23, 2025 (with `valid_from = 2025-11-23`)
 - Last completed week: W46 (ended November 19)
 
 **Result**:
+
 - Old COGS already triggered recalculation for W46 (when it was assigned)
 - New COGS `calculateAffectedWeeks(2025-11-23)` → returns `[]` (empty)
 - **BUT**: If old COGS was valid for W46, margin should already be calculated
@@ -189,6 +198,7 @@ Content-Type: application/json
 ```
 
 **Result**:
+
 - `calculateAffectedWeeks(2025-11-15)` → returns `["2025-W46"]` (includes W46)
 - Automatic recalculation triggered for W46
 - Margin appears automatically in 5-30 seconds
@@ -221,7 +231,7 @@ private async enqueueMarginRecalculation(
     );
     return; // ⚠️ No task enqueued
   }
-  
+
   // ... enqueue task if weeks.length > 0
 }
 ```
@@ -229,6 +239,7 @@ private async enqueueMarginRecalculation(
 **Helper Function**: `src/analytics/helpers/affected-weeks.helper.ts:calculateAffectedWeeks()`
 
 **Key Logic**:
+
 - Returns weeks from `valid_from` to last completed week (inclusive)
 - Uses Epic 19 `getLastCompletedWeek()` to exclude incomplete weeks
 - Returns empty array if `valid_from > last completed week end date`
@@ -238,6 +249,7 @@ private async enqueueMarginRecalculation(
 **Code Location**: `src/analytics/services/margin-calculation.service.ts`
 
 **Temporal COGS Lookup**:
+
 - Uses week midpoint for COGS lookup
 - Calls `cogsService.findCogsAtDate(nmId, midpoint)`
 - Finds COGS where `valid_from <= midpoint AND (valid_to IS NULL OR valid_to >= midpoint)`
@@ -269,6 +281,7 @@ private async enqueueMarginRecalculation(
 **Potential Improvement**: Modify `calculateAffectedWeeks()` to check for sales data in past weeks, even if `valid_from` is after last completed week.
 
 **Logic**:
+
 1. If `valid_from > last completed week end`:
    - Check if there are sales in past weeks (W46, W45, etc.)
    - If yes, include those weeks in recalculation (temporal lookup will find COGS)
@@ -281,6 +294,7 @@ private async enqueueMarginRecalculation(
 ## Related Documentation
 
 **Frontend Implementation:**
+
 - **Story 4.1**: `frontend/docs/stories/4.1.single-product-cogs-assignment.md` - COGS assignment form with warning alert
 - **Story 4.8**: `frontend/docs/stories/4.8.margin-recalculation-polling.md` - Polling and real-time updates
 - **Hook**: `frontend/src/hooks/useManualMarginRecalculation.ts` - Manual recalculation hook
@@ -288,6 +302,7 @@ private async enqueueMarginRecalculation(
 - **Helpers**: `frontend/src/lib/margin-helpers.ts` - `isCogsAfterLastCompletedWeek()`, `getLastCompletedWeek()`
 
 **Backend Documentation:**
+
 - **COGS Backdating Logic**: `frontend/docs/COGS-BACKDATING-BUSINESS-LOGIC.md`
 - **Epic 20 Overview**: `docs/stories/epic-20/EPIC-20-OVERVIEW.md`
 - **COGS History Guide**: `frontend/docs/request-backend/16-cogs-history-and-margin-data-structure.md`
@@ -301,6 +316,7 @@ private async enqueueMarginRecalculation(
 **Question**: Why doesn't margin show when COGS is assigned after last completed week?
 
 **Answer**:
+
 1. ✅ **Temporal lookup works** - system CAN find COGS for historical weeks
 2. ⚠️ **Automatic recalculation skipped** - `calculateAffectedWeeks()` returns empty array if `valid_from > last completed week`
 3. 📋 **Manual recalculation required** - use `POST /v1/tasks/enqueue` to trigger recalculation for specific weeks
@@ -321,4 +337,3 @@ private async enqueueMarginRecalculation(
 - **Resolution date**: 2025-11-26
 - **Summary**: Documented the expected behavior when COGS is assigned after a completed week. The `calculateAffectedWeeks()` function returns empty for future dates, so automatic recalculation is skipped. Two workarounds exist: (1) manual recalculation via `POST /v1/tasks/enqueue`, or (2) assign COGS with a historical date within the target week. Authentication via `validateCabinetAccess()` required (Story 23.10).
 - **Remaining frontend action**: Display guidance to users when assigning COGS with future dates -- suggest using historical dates to trigger automatic recalculation.
-

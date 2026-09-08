@@ -18,12 +18,14 @@
 ## Acceptance Criteria
 
 ### AC1: Profitability Status Column
+
 - [ ] New column shows profitability status badge
 - [ ] Badge uses color-coded indicator with icon
 - [ ] Status derived from `net_margin_pct` field
 - [ ] "Unknown" status for products without COGS
 
 ### AC2: Status Color Palette
+
 - [ ] **Excellent** (>25%): Green `#22C55E` - "Отлично"
 - [ ] **Good** (15-25%): Lime `#84CC16` - "Хорошо"
 - [ ] **Warning** (5-15%): Yellow `#EAB308` - "Внимание"
@@ -32,6 +34,7 @@
 - [ ] **Unknown** (no COGS): Gray `#9CA3AF` - "Нет данных"
 
 ### AC3: Filter by Profitability Status
+
 - [ ] Dropdown filter with all status options
 - [ ] Multi-select capability (filter by multiple statuses)
 - [ ] "All" option to clear filter
@@ -39,18 +42,21 @@
 - [ ] URL params updated for shareable filtered views
 
 ### AC4: Sortable Columns
+
 - [ ] All numeric columns sortable (click header)
 - [ ] Sort indicator shows direction (asc/desc arrow)
 - [ ] Default sort: revenue descending
 - [ ] Sortable columns: Revenue, COGS%, Margin%, Net Profit
 
 ### AC5: Status Summary Banner
+
 - [ ] Shows count by profitability status
 - [ ] Clickable status counts to filter table
 - [ ] Highlights products needing attention (loss/critical)
 - [ ] Updates when filters applied
 
 ### AC6: Accessibility (WCAG 2.1 AA)
+
 - [ ] Status badges have accessible labels (not color-only)
 - [ ] Table headers have `scope="col"`
 - [ ] Sort buttons have aria-labels
@@ -60,24 +66,28 @@
 ## Tasks / Subtasks
 
 ### Phase 1: Profitability Status Badge
+
 - [ ] Create `ProfitabilityBadge.tsx` component
 - [ ] Implement status derivation logic
 - [ ] Add tooltip with threshold explanation
 - [ ] Handle "unknown" state for missing COGS
 
 ### Phase 2: Table Enhancement
+
 - [ ] Add profitability status column to table
 - [ ] Implement sortable column headers
 - [ ] Add sort state management
 - [ ] Update API query params for server-side sort
 
 ### Phase 3: Filter Implementation
+
 - [ ] Create multi-select status filter dropdown
 - [ ] Implement client-side filtering
 - [ ] Sync filter state with URL params
 - [ ] Add "clear filters" action
 
 ### Phase 4: Summary Banner
+
 - [ ] Create `UnitEconomicsSummaryBanner.tsx`
 - [ ] Calculate status counts from data
 - [ ] Make counts clickable for quick filtering
@@ -95,13 +105,13 @@ X-Cabinet-Id: <CABINET_UUID>
 
 ### Query Parameters
 
-| Parameter | Type | Default | Description |
-|-----------|------|---------|-------------|
-| `week` | string | required | ISO week (YYYY-Www) |
-| `view_by` | enum | `sku` | `sku`, `brand`, `category`, `total` |
-| `sort_by` | enum | `revenue` | `revenue`, `net_margin_pct`, `cogs_pct`, `total_costs_pct` |
-| `sort_order` | enum | `desc` | `asc`, `desc` |
-| `limit` | number | 100 | Max results (1-500) |
+| Parameter    | Type   | Default   | Description                                                |
+| ------------ | ------ | --------- | ---------------------------------------------------------- |
+| `week`       | string | required  | ISO week (YYYY-Www)                                        |
+| `view_by`    | enum   | `sku`     | `sku`, `brand`, `category`, `total`                        |
+| `sort_by`    | enum   | `revenue` | `revenue`, `net_margin_pct`, `cogs_pct`, `total_costs_pct` |
+| `sort_order` | enum   | `desc`    | `asc`, `desc`                                              |
+| `limit`      | number | 100       | Max results (1-500)                                        |
 
 ### Response Item Structure
 
@@ -646,6 +656,7 @@ src/
 ### Color Accessibility
 
 All status colors meet WCAG AA contrast:
+
 - Green text on green-100: 4.6:1
 - Red text on red-100: 5.2:1
 - Icons supplement color (never color-only)
@@ -711,9 +722,9 @@ describe('ProfitabilityFilter', () => {
 
 ## Change Log
 
-| Date | Author | Change |
-|------|--------|--------|
-| 2026-01-31 | PM | Initial draft |
+| Date       | Author | Change        |
+| ---------- | ------ | ------------- |
+| 2026-01-31 | PM     | Initial draft |
 
 ---
 
@@ -729,12 +740,14 @@ describe('ProfitabilityFilter', () => {
 ## Implementation
 
 **Components**:
+
 - `src/components/custom/dashboard/UnitEconomicsTable.tsx` - Enhanced table
 - `src/components/custom/analytics/ProfitabilityBadge.tsx` - Status badge
 - `src/components/custom/analytics/ProfitabilityFilter.tsx` - Multi-select filter
 - `src/components/custom/analytics/UnitEconomicsSummaryBanner.tsx` - Status counts
 
 **Key Features**:
+
 - Profitability status column with 6 statuses (excellent, good, warning, critical, loss, unknown)
 - Color-coded badges with icons and tooltips
 - Multi-select filter dropdown with URL param sync

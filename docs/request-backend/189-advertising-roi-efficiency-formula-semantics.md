@@ -18,11 +18,11 @@ Backend `roi == (total_product_profit − ad_spend) / ad_spend` — it divides t
 
 **16 of 36 SKUs** have `roas > 5` yet `efficiency.status = 'loss'`. Examples:
 
-| nmId | ROAS (rev/spend) | backend ROI | efficiency.status | total profit | ad-spend |
-|---|---|---|---|---|---|
-| 887604577 | **39.1×** | −642.22 | `loss` → "Убыток" | −1,200,679 | 1,872 |
-| 412096139 | 10.48× | −82.66 | `loss` | −108,464 | 1,328 |
-| 906010371 | 6.87× | −144.38 | `loss` | −303,937 | 2,120 |
+| nmId      | ROAS (rev/spend) | backend ROI | efficiency.status | total profit | ad-spend |
+| --------- | ---------------- | ----------- | ----------------- | ------------ | -------- |
+| 887604577 | **39.1×**        | −642.22     | `loss` → "Убыток" | −1,200,679   | 1,872    |
+| 412096139 | 10.48×           | −82.66      | `loss`            | −108,464     | 1,328    |
+| 906010371 | 6.87×            | −144.38     | `loss`            | −303,937     | 2,120    |
 
 A seller seeing a **39× ROAS campaign flagged "Убыток"** will distrust the page or make the wrong call (pausing a highly-profitable ad). ROI also renders as e.g. `−14438%` / `+9501%` (FE faithfully applies ×100 to the backend ratio), which reads as nonsense.
 
@@ -33,6 +33,7 @@ The FE is **data-correct at the boundary**: it renders the backend `roi`/`effici
 ## Proposed Resolution (backend decision required)
 
 Clarify the intended semantics of `roi` and `efficiency.status` for the advertising endpoint:
+
 - **Option A (recommended):** make them **ad-attributed** — `ad_roi = (ad_attributed_revenue − ad_spend) / ad_spend`, and base `efficiency.status` on ad ROAS / ad ROI, so the badge reflects advertising effectiveness.
 - **Option B:** keep total-profit ROI but **rename** it (e.g. `product_roi`) and add a separate ad-attributed `ad_roi`, so the FE can label them distinctly and not present a total-profit metric under an "advertising efficiency" badge.
 

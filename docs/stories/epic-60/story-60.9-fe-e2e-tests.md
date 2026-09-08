@@ -495,18 +495,18 @@ export const mockAvailableWeeks = [
 
 ## Test Categories Summary
 
-| Category | Tests | Priority |
-|----------|-------|----------|
-| Week/Month Toggle | 2 | P0 |
-| Period Selection | 1 | P0 |
-| URL Sync | 2 | P0 |
-| URL Persistence | 2 | P0 |
-| Comparison Indicators | 3 | P1 |
-| Refresh Button | 1 | P1 |
-| Loading States | 1 | P1 |
-| Keyboard Navigation | 2 | P1 |
-| Accessibility | 3 | P1 |
-| Edge Cases | 2 | P2 |
+| Category              | Tests | Priority |
+| --------------------- | ----- | -------- |
+| Week/Month Toggle     | 2     | P0       |
+| Period Selection      | 1     | P0       |
+| URL Sync              | 2     | P0       |
+| URL Persistence       | 2     | P0       |
+| Comparison Indicators | 3     | P1       |
+| Refresh Button        | 1     | P1       |
+| Loading States        | 1     | P1       |
+| Keyboard Navigation   | 2     | P1       |
+| Accessibility         | 3     | P1       |
+| Edge Cases            | 2     | P2       |
 
 **Total**: 19 test cases
 
@@ -530,6 +530,7 @@ npm run test:e2e -- e2e/dashboard-period.spec.ts --project=chromium
 ### CI Pipeline
 
 Tests should run on:
+
 - Chrome (primary)
 - Firefox (secondary)
 - Mobile viewport (responsive check)
@@ -551,12 +552,12 @@ Tests should run on:
 
 ## Dependencies
 
-| Dependency | Type | Status |
-|------------|------|--------|
-| `@playwright/test` | npm package | ✅ Installed |
-| `@axe-core/playwright` | npm package | ✅ Installed |
-| Stories 60.1-60.8 | Frontend | 📋 Ready |
-| Test user setup | E2E infrastructure | ✅ Configured |
+| Dependency             | Type               | Status        |
+| ---------------------- | ------------------ | ------------- |
+| `@playwright/test`     | npm package        | ✅ Installed  |
+| `@axe-core/playwright` | npm package        | ✅ Installed  |
+| Stories 60.1-60.8      | Frontend           | 📋 Ready      |
+| Test user setup        | E2E infrastructure | ✅ Configured |
 
 ---
 

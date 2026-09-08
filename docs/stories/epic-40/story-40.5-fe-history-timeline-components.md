@@ -24,6 +24,7 @@ This story creates the timeline visualization components used by the Order Detai
 - **Unknown status handling**: Graceful fallback for undocumented WB status codes
 
 Three timeline views are provided:
+
 1. **OrderHistoryTimeline** - Merged view with both sources interleaved
 2. **WbHistoryTimeline** - WB native statuses only (40+ codes)
 3. **LocalHistoryTimeline** - Local tracking only (supplier_status + wb_status)
@@ -256,23 +257,23 @@ Three timeline views are provided:
 
 ### New Components
 
-| Component | File Path | Lines Est. | Purpose |
-|-----------|-----------|------------|---------|
-| `OrderHistoryTimeline` | `src/app/(dashboard)/orders/components/OrderHistoryTimeline.tsx` | ~150 | Full merged timeline view |
-| `WbHistoryTimeline` | `src/app/(dashboard)/orders/components/WbHistoryTimeline.tsx` | ~140 | WB-only timeline with categories |
-| `LocalHistoryTimeline` | `src/app/(dashboard)/orders/components/LocalHistoryTimeline.tsx` | ~120 | Local-only timeline view |
-| `HistoryEntryCard` | `src/app/(dashboard)/orders/components/HistoryEntryCard.tsx` | ~100 | Single timeline entry card |
-| `HistorySourceBadge` | `src/app/(dashboard)/orders/components/HistorySourceBadge.tsx` | ~40 | WB vs Local source badge |
-| `DurationDisplay` | `src/app/(dashboard)/orders/components/DurationDisplay.tsx` | ~60 | Human-readable duration formatting |
-| `TimelineSummary` | `src/app/(dashboard)/orders/components/TimelineSummary.tsx` | ~80 | Summary section for any timeline |
-| `TimelineEmptyState` | `src/app/(dashboard)/orders/components/TimelineEmptyState.tsx` | ~40 | Empty state component |
+| Component              | File Path                                                        | Lines Est. | Purpose                            |
+| ---------------------- | ---------------------------------------------------------------- | ---------- | ---------------------------------- |
+| `OrderHistoryTimeline` | `src/app/(dashboard)/orders/components/OrderHistoryTimeline.tsx` | ~150       | Full merged timeline view          |
+| `WbHistoryTimeline`    | `src/app/(dashboard)/orders/components/WbHistoryTimeline.tsx`    | ~140       | WB-only timeline with categories   |
+| `LocalHistoryTimeline` | `src/app/(dashboard)/orders/components/LocalHistoryTimeline.tsx` | ~120       | Local-only timeline view           |
+| `HistoryEntryCard`     | `src/app/(dashboard)/orders/components/HistoryEntryCard.tsx`     | ~100       | Single timeline entry card         |
+| `HistorySourceBadge`   | `src/app/(dashboard)/orders/components/HistorySourceBadge.tsx`   | ~40        | WB vs Local source badge           |
+| `DurationDisplay`      | `src/app/(dashboard)/orders/components/DurationDisplay.tsx`      | ~60        | Human-readable duration formatting |
+| `TimelineSummary`      | `src/app/(dashboard)/orders/components/TimelineSummary.tsx`      | ~80        | Summary section for any timeline   |
+| `TimelineEmptyState`   | `src/app/(dashboard)/orders/components/TimelineEmptyState.tsx`   | ~40        | Empty state component              |
 
 ### Supporting Utilities
 
-| Utility | File Path | Lines Est. | Purpose |
-|---------|-----------|------------|---------|
-| `formatDuration` | `src/lib/duration-utils.ts` | ~50 | Duration formatting logic |
-| `groupByCategory` | `src/lib/history-utils.ts` | ~30 | Group WB entries by category |
+| Utility           | File Path                   | Lines Est. | Purpose                      |
+| ----------------- | --------------------------- | ---------- | ---------------------------- |
+| `formatDuration`  | `src/lib/duration-utils.ts` | ~50        | Duration formatting logic    |
+| `groupByCategory` | `src/lib/history-utils.ts`  | ~30        | Group WB entries by category |
 
 ### Reused from Existing
 
@@ -327,20 +328,20 @@ function pluralizeDays(n: number): string {
 
 ### Examples
 
-| Input (minutes) | Output |
-|-----------------|--------|
-| `null` | "—" |
-| `0` | "< 1 мин" |
-| `1` | "1 мин" |
-| `30` | "30 мин" |
-| `60` | "1 ч" |
-| `90` | "1 ч 30 мин" |
-| `165` | "2 ч 45 мин" |
-| `1440` | "1 д" |
-| `1500` | "1 д 1 ч" |
-| `2880` | "2 д" |
-| `10080` | "7 дней" |
-| `20160` | "14 дней" |
+| Input (minutes) | Output       |
+| --------------- | ------------ |
+| `null`          | "—"          |
+| `0`             | "< 1 мин"    |
+| `1`             | "1 мин"      |
+| `30`            | "30 мин"     |
+| `60`            | "1 ч"        |
+| `90`            | "1 ч 30 мин" |
+| `165`           | "2 ч 45 мин" |
+| `1440`          | "1 д"        |
+| `1500`          | "1 д 1 ч"    |
+| `2880`          | "2 д"        |
+| `10080`         | "7 дней"     |
+| `20160`         | "14 дней"    |
 
 ---
 
@@ -350,16 +351,16 @@ function pluralizeDays(n: number): string {
 
 All codes defined in `src/lib/wb-status-mapping.ts`:
 
-| Category | Codes |
-|----------|-------|
-| creation | `created` |
-| seller_processing | `waiting`, `assembling`, `assembled`, `ready_for_supply` |
-| warehouse | `sorted`, `sorted_by_wh`, `accepted_by_wh` |
-| logistics | `on_way_to_storage`, `accepted_at_storage`, `sorted_by_wb`, `on_way_to_pvz`, `arrived_at_pvz`, `on_way_to_client` |
-| delivery | `received_by_client`, `sold`, `delivering` |
-| cancellation | `canceled`, `canceled_by_seller`, `canceled_by_wh`, `canceled_by_client`, `canceled_by_wb`, `cancel` |
-| return | `return_requested`, `return_at_pvz`, `return_in_transit`, `return_received`, `refunded` |
-| other | `defect`, `lost`, `damaged`, `expired` |
+| Category          | Codes                                                                                                             |
+| ----------------- | ----------------------------------------------------------------------------------------------------------------- |
+| creation          | `created`                                                                                                         |
+| seller_processing | `waiting`, `assembling`, `assembled`, `ready_for_supply`                                                          |
+| warehouse         | `sorted`, `sorted_by_wh`, `accepted_by_wh`                                                                        |
+| logistics         | `on_way_to_storage`, `accepted_at_storage`, `sorted_by_wb`, `on_way_to_pvz`, `arrived_at_pvz`, `on_way_to_client` |
+| delivery          | `received_by_client`, `sold`, `delivering`                                                                        |
+| cancellation      | `canceled`, `canceled_by_seller`, `canceled_by_wh`, `canceled_by_client`, `canceled_by_wb`, `cancel`              |
+| return            | `return_requested`, `return_at_pvz`, `return_in_transit`, `return_received`, `refunded`                           |
+| other             | `defect`, `lost`, `damaged`, `expired`                                                                            |
 
 ### Unknown Code Handling
 
@@ -377,6 +378,7 @@ export function getWbStatusConfig(statusCode: string): WbStatusConfig {
 ```
 
 **UI Behavior for Unknown Codes:**
+
 - Display raw code as label (e.g., "new_wb_status_2026")
 - Use gray color scheme (`text-gray-500`, `bg-gray-50`)
 - Category: "other" with HelpCircle icon
@@ -494,18 +496,19 @@ function calculateDuration(entries: FullHistoryEntry[], currentIndex: number): n
 
 ### Test Files
 
-| File | Test Cases |
-|------|------------|
+| File                            | Test Cases                                  |
+| ------------------------------- | ------------------------------------------- |
 | `OrderHistoryTimeline.test.tsx` | Merged view rendering, sorting, empty state |
-| `WbHistoryTimeline.test.tsx` | WB entries, categories, unknown codes |
-| `LocalHistoryTimeline.test.tsx` | Local entries, status transitions |
-| `HistoryEntryCard.test.tsx` | Entry card variants, styling |
-| `HistorySourceBadge.test.tsx` | Badge variants, accessibility |
-| `DurationDisplay.test.tsx` | Duration formatting, edge cases |
+| `WbHistoryTimeline.test.tsx`    | WB entries, categories, unknown codes       |
+| `LocalHistoryTimeline.test.tsx` | Local entries, status transitions           |
+| `HistoryEntryCard.test.tsx`     | Entry card variants, styling                |
+| `HistorySourceBadge.test.tsx`   | Badge variants, accessibility               |
+| `DurationDisplay.test.tsx`      | Duration formatting, edge cases             |
 
 ### Test Cases
 
 #### Duration Formatting
+
 - [ ] null returns em-dash
 - [ ] 0 returns "< 1 мин"
 - [ ] Minutes-only formatting (1-59 min)
@@ -515,6 +518,7 @@ function calculateDuration(entries: FullHistoryEntry[], currentIndex: number): n
 - [ ] Russian pluralization (день, дня, дней)
 
 #### Timeline Rendering
+
 - [ ] Entries sorted chronologically
 - [ ] Source badges render correctly
 - [ ] Duration displayed between entries
@@ -523,6 +527,7 @@ function calculateDuration(entries: FullHistoryEntry[], currentIndex: number): n
 - [ ] Loading skeleton shown when isLoading
 
 #### WB Status Codes
+
 - [ ] Known codes show translated labels
 - [ ] Unknown codes show raw code
 - [ ] Categories grouped correctly
@@ -530,6 +535,7 @@ function calculateDuration(entries: FullHistoryEntry[], currentIndex: number): n
 - [ ] Colors match config
 
 #### Accessibility
+
 - [ ] Timeline is semantic list
 - [ ] Timestamps have datetime attribute
 - [ ] Badges have aria-label
@@ -572,25 +578,25 @@ function calculateDuration(entries: FullHistoryEntry[], currentIndex: number): n
 
 ### Required (Blocking)
 
-| Dependency | Story | Status | Notes |
-|------------|-------|--------|-------|
-| Types & API Client | 40.1-FE | Required | TypeScript interfaces for history types |
-| React Query Hooks | 40.2-FE | Required | `useFullHistory`, `useWbHistory`, `useLocalHistory` |
-| WB Status Mapping | Existing | Complete | `src/lib/wb-status-mapping.ts` |
+| Dependency         | Story    | Status   | Notes                                               |
+| ------------------ | -------- | -------- | --------------------------------------------------- |
+| Types & API Client | 40.1-FE  | Required | TypeScript interfaces for history types             |
+| React Query Hooks  | 40.2-FE  | Required | `useFullHistory`, `useWbHistory`, `useLocalHistory` |
+| WB Status Mapping  | Existing | Complete | `src/lib/wb-status-mapping.ts`                      |
 
 ### Consumed By
 
-| Dependency | Story | Notes |
-|------------|-------|-------|
+| Dependency          | Story   | Notes                              |
+| ------------------- | ------- | ---------------------------------- |
 | Order Details Modal | 40.4-FE | Uses all three timeline components |
 
 ### Backend
 
-| Dependency | Story | Status |
-|------------|-------|--------|
-| `GET /v1/orders/:orderId/history` | 40.8 | Complete |
-| `GET /v1/orders/:orderId/wb-history` | 40.9 | Complete |
-| `GET /v1/orders/:orderId/full-history` | 40.9 | Complete |
+| Dependency                             | Story | Status   |
+| -------------------------------------- | ----- | -------- |
+| `GET /v1/orders/:orderId/history`      | 40.8  | Complete |
+| `GET /v1/orders/:orderId/wb-history`   | 40.9  | Complete |
+| `GET /v1/orders/:orderId/full-history` | 40.9  | Complete |
 
 ---
 
@@ -628,6 +634,7 @@ src/
 ### Design System Adherence
 
 Per Design Kit and CLAUDE.md:
+
 - **Icons**: Lucide icons only (Truck, Database, Package, CheckCircle, HelpCircle, etc.)
 - **Colors**: Use Tailwind classes from `wb-status-mapping.ts` config
 - **Typography**: 14px body text, 12px timestamps
@@ -654,9 +661,9 @@ Per Design Kit and CLAUDE.md:
 
 ## Change Log
 
-| Date | Version | Description | Author |
-|------|---------|-------------|--------|
-| 2026-01-29 | 1.0 | Initial story creation | Claude Code (PM Agent) |
+| Date       | Version | Description            | Author                 |
+| ---------- | ------- | ---------------------- | ---------------------- |
+| 2026-01-29 | 1.0     | Initial story creation | Claude Code (PM Agent) |
 
 ---
 

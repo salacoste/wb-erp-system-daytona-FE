@@ -26,7 +26,7 @@ chars: 7253
 
 В этой статье:
 
-- 
+-
 - <a href="#gde-vybrat-valyutu" rel="nofollow">Где выбрать валюту</a>
 - <a href="#na-chto-vliyaet-nastrojka" rel="nofollow">На что влияет настройка</a>
 - <a href="#na-chto-nastrojka-ne-vliyaet" rel="nofollow">На что настройка не влияет</a>

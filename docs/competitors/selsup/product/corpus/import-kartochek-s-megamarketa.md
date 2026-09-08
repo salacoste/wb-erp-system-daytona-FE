@@ -15,7 +15,7 @@ chars: 2759
 
 В этой статье:
 
-- 
+-
 - <a href="#import-tovarov-iz-megamarket" rel="nofollow">Импорт товаров из МегаМаркет</a>
 - <a href="#vozmozhnye-oshibki-importa" rel="nofollow">Возможные ошибки импорта</a>
 

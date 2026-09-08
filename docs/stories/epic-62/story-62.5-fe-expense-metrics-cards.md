@@ -24,6 +24,7 @@ All expense cards share similar structure but have unique icons and colors. They
 ## Acceptance Criteria
 
 ### General (All 3 cards)
+
 - [ ] All show comparison with previous period
 - [ ] All formatted as currency (Russian Ruble format)
 - [ ] Inverted comparison logic: decrease = positive (green), increase = negative (red)
@@ -33,18 +34,21 @@ All expense cards share similar structure but have unique icons and colors. They
 - [ ] Consistent styling across all expense cards
 
 ### Advertising Card (Рекламные затраты)
+
 - [ ] Display `total_spend` from advertising analytics (not just ROAS)
 - [ ] Use Megaphone icon (lucide-react)
 - [ ] Yellow/Orange color (#F59E0B) for value
 - [ ] Tooltip: "Общие расходы на рекламу в Wildberries за выбранный период"
 
 ### Logistics Card (Логистика)
+
 - [ ] Display `logistics_cost` from finance summary
 - [ ] Use Truck icon (lucide-react)
 - [ ] Red color (#EF4444) for value
 - [ ] Tooltip: "Расходы на доставку товаров покупателям и возвраты"
 
 ### Storage Card (Хранение)
+
 - [ ] Display `storage_cost` from finance summary
 - [ ] Use Warehouse icon (lucide-react)
 - [ ] Purple color (#7C4DFF) for value
@@ -98,37 +102,37 @@ All expense cards share similar structure but have unique icons and colors. They
 
 ### Colors
 
-| Card | Icon Color | Value Color | Hex | Tailwind |
-|------|------------|-------------|-----|----------|
-| Advertising | Yellow | Yellow | `#F59E0B` | `text-yellow-600` |
-| Logistics | Red | Red | `#EF4444` | `text-red-500` |
-| Storage | Purple | Purple | `#7C4DFF` | `text-purple-500` |
+| Card        | Icon Color | Value Color | Hex       | Tailwind          |
+| ----------- | ---------- | ----------- | --------- | ----------------- |
+| Advertising | Yellow     | Yellow      | `#F59E0B` | `text-yellow-600` |
+| Logistics   | Red        | Red         | `#EF4444` | `text-red-500`    |
+| Storage     | Purple     | Purple      | `#7C4DFF` | `text-purple-500` |
 
-| Element | Condition | Color | Tailwind |
-|---------|-----------|-------|----------|
+| Element    | Condition       | Color | Tailwind                      |
+| ---------- | --------------- | ----- | ----------------------------- |
 | Comparison | Decrease (good) | Green | `bg-green-100 text-green-700` |
-| Comparison | Increase (bad) | Red | `bg-red-100 text-red-700` |
-| Comparison | No change | Gray | `bg-gray-100 text-gray-600` |
-| Title | All | Muted | `text-muted-foreground` |
-| Subtitle | All | Gray | `text-gray-400` |
+| Comparison | Increase (bad)  | Red   | `bg-red-100 text-red-700`     |
+| Comparison | No change       | Gray  | `bg-gray-100 text-gray-600`   |
+| Title      | All             | Muted | `text-muted-foreground`       |
+| Subtitle   | All             | Gray  | `text-gray-400`               |
 
 ### Typography
 
-| Element | Size | Weight | Line Height |
-|---------|------|--------|-------------|
-| Title | 14px | 500 (medium) | 1.5 |
-| Main value | 32px | 700 (bold) | 1.2 |
-| Comparison badge | 12px | 500 (medium) | 1.5 |
-| Subtitle | 12px | 400 (regular) | 1.5 |
+| Element          | Size | Weight        | Line Height |
+| ---------------- | ---- | ------------- | ----------- |
+| Title            | 14px | 500 (medium)  | 1.5         |
+| Main value       | 32px | 700 (bold)    | 1.2         |
+| Comparison badge | 12px | 500 (medium)  | 1.5         |
+| Subtitle         | 12px | 400 (regular) | 1.5         |
 
 ### Spacing
 
-| Element | Value | Tailwind |
-|---------|-------|----------|
-| Card padding | 16px | `p-4` |
-| Between title and value | 8px | `mt-2` |
-| Between value and comparison | 8px | `mt-2` |
-| Between comparison and subtitle | 4px | `mt-1` |
+| Element                         | Value | Tailwind |
+| ------------------------------- | ----- | -------- |
+| Card padding                    | 16px  | `p-4`    |
+| Between title and value         | 8px   | `mt-2`   |
+| Between value and comparison    | 8px   | `mt-2`   |
+| Between comparison and subtitle | 4px   | `mt-1`   |
 
 ---
 
@@ -251,31 +255,31 @@ function calculateRevenuePercentage(
 
 ### Dependencies
 
-| Hook/Utility | Source | Purpose |
-|--------------|--------|---------|
-| `useAdvertisingAnalytics` | Existing (modified 61.8) | Advertising spend |
-| `useFinancialSummary` | Existing (modified 61.2) | Logistics, storage costs |
-| `useAnalyticsComparison` | Story 61.5-FE | Previous period data |
-| `formatCurrency` | `src/lib/formatters.ts` | Currency formatting |
-| `formatPercentage` | `src/lib/formatters.ts` | Percentage formatting |
-| `ComparisonBadge` | Existing (with invert support) | Comparison indicator |
-| `Tooltip` | shadcn/ui | Info tooltip |
-| `Megaphone` | lucide-react | Advertising icon |
-| `Truck` | lucide-react | Logistics icon |
-| `Warehouse` | lucide-react | Storage icon |
+| Hook/Utility              | Source                         | Purpose                  |
+| ------------------------- | ------------------------------ | ------------------------ |
+| `useAdvertisingAnalytics` | Existing (modified 61.8)       | Advertising spend        |
+| `useFinancialSummary`     | Existing (modified 61.2)       | Logistics, storage costs |
+| `useAnalyticsComparison`  | Story 61.5-FE                  | Previous period data     |
+| `formatCurrency`          | `src/lib/formatters.ts`        | Currency formatting      |
+| `formatPercentage`        | `src/lib/formatters.ts`        | Percentage formatting    |
+| `ComparisonBadge`         | Existing (with invert support) | Comparison indicator     |
+| `Tooltip`                 | shadcn/ui                      | Info tooltip             |
+| `Megaphone`               | lucide-react                   | Advertising icon         |
+| `Truck`                   | lucide-react                   | Logistics icon           |
+| `Warehouse`               | lucide-react                   | Storage icon             |
 
 ---
 
 ## Files to Create/Modify
 
-| File | Action | Description |
-|------|--------|-------------|
-| `src/components/custom/dashboard/ExpenseMetricCard.tsx` | CREATE | Base expense card component |
-| `src/components/custom/dashboard/AdvertisingMetricCard.tsx` | CREATE | Advertising expense card |
-| `src/components/custom/dashboard/LogisticsMetricCard.tsx` | CREATE | Logistics expense card |
-| `src/components/custom/dashboard/StorageMetricCard.tsx` | CREATE | Storage expense card |
-| `src/components/custom/dashboard/index.ts` | MODIFY | Add exports |
-| `src/components/custom/ComparisonBadge.tsx` | MODIFY | Add `invertDirection` prop if not present |
+| File                                                        | Action | Description                               |
+| ----------------------------------------------------------- | ------ | ----------------------------------------- |
+| `src/components/custom/dashboard/ExpenseMetricCard.tsx`     | CREATE | Base expense card component               |
+| `src/components/custom/dashboard/AdvertisingMetricCard.tsx` | CREATE | Advertising expense card                  |
+| `src/components/custom/dashboard/LogisticsMetricCard.tsx`   | CREATE | Logistics expense card                    |
+| `src/components/custom/dashboard/StorageMetricCard.tsx`     | CREATE | Storage expense card                      |
+| `src/components/custom/dashboard/index.ts`                  | MODIFY | Add exports                               |
+| `src/components/custom/ComparisonBadge.tsx`                 | MODIFY | Add `invertDirection` prop if not present |
 
 ---
 
@@ -545,11 +549,11 @@ export function StorageMetricCard({
 
 ## Tooltip Content (Russian)
 
-| Card | Tooltip |
-|------|---------|
+| Card              | Tooltip                                                     |
+| ----------------- | ----------------------------------------------------------- |
 | Рекламные затраты | Общие расходы на рекламу в Wildberries за выбранный период. |
-| Логистика | Расходы на доставку товаров покупателям и возвраты. |
-| Хранение | Расходы на хранение товаров на складах Wildberries. |
+| Логистика         | Расходы на доставку товаров покупателям и возвраты.         |
+| Хранение          | Расходы на хранение товаров на складах Wildberries.         |
 
 ---
 
@@ -616,6 +620,7 @@ interface ComparisonBadgeProps {
 ## Testing Checklist
 
 ### All Cards
+
 - [ ] Displays formatted currency value correctly
 - [ ] Shows correct icon and color
 - [ ] Comparison badge shows inverted logic (decrease = green)
@@ -627,16 +632,19 @@ interface ComparisonBadgeProps {
 - [ ] Keyboard accessible
 
 ### Advertising Card
+
 - [ ] Displays total_spend from advertising API
 - [ ] Yellow/orange color scheme
 - [ ] Megaphone icon displayed
 
 ### Logistics Card
+
 - [ ] Displays logistics_cost from finance summary
 - [ ] Red color scheme
 - [ ] Truck icon displayed
 
 ### Storage Card
+
 - [ ] Displays storage_cost from finance summary
 - [ ] Purple color scheme
 - [ ] Warehouse icon displayed
@@ -671,14 +679,14 @@ interface ComparisonBadgeProps {
 
 ## Edge Cases
 
-| Scenario | Behavior |
-|----------|----------|
-| Zero expense | Show "0 RUB", neutral comparison |
-| No previous data | Show value without comparison |
-| Expense decreased | Green comparison badge (good) |
-| Expense increased | Red comparison badge (bad) |
-| No revenue for % | Hide "% от выручки" subtitle |
-| API error | Show error state with retry |
+| Scenario          | Behavior                         |
+| ----------------- | -------------------------------- |
+| Zero expense      | Show "0 RUB", neutral comparison |
+| No previous data  | Show value without comparison    |
+| Expense decreased | Green comparison badge (good)    |
+| Expense increased | Red comparison badge (bad)       |
+| No revenue for %  | Hide "% от выручки" subtitle     |
+| API error         | Show error state with retry      |
 
 ---
 

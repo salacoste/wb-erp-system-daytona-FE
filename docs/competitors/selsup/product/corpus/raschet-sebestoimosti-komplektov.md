@@ -11,7 +11,7 @@ chars: 6341
 
 В этой статье:
 
-- 
+-
 - <a href="#esli-u-vas-vklyuchen-metod-net-fifo-uchet-po-srednej-sebestoimosti" rel="nofollow">Если у вас включен метод «Нет ФИФО» (учет по средней себестоимости)</a>
 - <a href="#esli-u-vas-vklyuchen-metod-fifo" rel="nofollow">Если у вас включен метод «ФИФО»</a>
 - <a href="#kak-sistema-vybiraet-istochnik-dlya-rascheta" rel="nofollow">Как система выбирает источник для расчета?</a>

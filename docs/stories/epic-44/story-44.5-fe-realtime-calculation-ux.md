@@ -15,6 +15,7 @@
 **So that** I can quickly explore different scenarios without clicking calculate repeatedly.
 
 **Non-goals**:
+
 - Core components (separate stories)
 - Backend API changes
 
@@ -23,18 +24,21 @@
 ## Acceptance Criteria
 
 ### AC1: Debounced Auto-calculation
+
 - [x] Trigger API call 500ms after any input change
 - [x] Cancel pending request if new value entered
 - [x] Show "Calculating..." indicator during API call
 - [x] Display "Updated" flash when result returns
 
 ### AC2: Loading States
+
 - [x] Spinner or skeleton on results during calculation
 - [x] Disable "Calculate" button during loading
 - [x] Show previous results with opacity reduced during loading
 - [x] Progressive loading: show price first, then breakdown
 
 ### AC3: Error Handling
+
 - [x] Display inline error message for validation errors (400)
 - [x] Show auth error with link to login for 401
 - [x] Show cabinet error with link to cabinet selection for 403
@@ -42,12 +46,14 @@
 - [x] Rate limit message with countdown for 429
 
 ### AC4: Backend Warnings Display
+
 - [x] Display warning banner if backend returns warnings array
 - [x] Warning type: yellow/amber color
 - [x] Warnings dismissible with X button
 - [x] Multiple warnings stacked if present
 
 ### AC5: Reset Functionality
+
 - [x] "Reset" button clears all inputs to defaults
 - [x] Clear results when reset clicked
 - [x] Confirm dialog if results exist and user tries to reset
@@ -151,6 +157,7 @@ useEffect(() => {
 ```
 
 ### Invariants & Edge Cases
+
 - **Invariant**: Only one active API request at a time (debounce timer cleanup)
 - **Edge case**: Rapid input changes - debounce prevents excessive calls
 - **Edge case**: User leaves page during calculation - useEffect cleanup clears timer
@@ -183,14 +190,16 @@ useEffect(() => {
 ## Dev Agent Record
 
 ### File List
-| File | Change Type | Lines | Description |
-|------|-------------|-------|-------------|
-| `src/components/custom/price-calculator/ErrorMessage.tsx` | CREATE | 137 | Error display with HTTP status mapping |
-| `src/components/custom/price-calculator/PriceCalculatorForm.tsx` | UPDATE | 520 | Debounce, reset dialog, Esc key, Loader2, Select for VAT |
-| `src/components/custom/price-calculator/CostBreakdownChart.tsx` | UPDATE | 183 | useMemo optimization, memo SegmentLabel |
-| `src/app/(dashboard)/cogs/price-calculator/page.tsx` | UPDATE | 55 | Pass hasResults, integrate ErrorMessage |
+
+| File                                                             | Change Type | Lines | Description                                              |
+| ---------------------------------------------------------------- | ----------- | ----- | -------------------------------------------------------- |
+| `src/components/custom/price-calculator/ErrorMessage.tsx`        | CREATE      | 137   | Error display with HTTP status mapping                   |
+| `src/components/custom/price-calculator/PriceCalculatorForm.tsx` | UPDATE      | 520   | Debounce, reset dialog, Esc key, Loader2, Select for VAT |
+| `src/components/custom/price-calculator/CostBreakdownChart.tsx`  | UPDATE      | 183   | useMemo optimization, memo SegmentLabel                  |
+| `src/app/(dashboard)/cogs/price-calculator/page.tsx`             | UPDATE      | 55    | Pass hasResults, integrate ErrorMessage                  |
 
 ### Change Log
+
 1. **2026-01-17**: Implemented debounced auto-calculation (500ms)
 2. **2026-01-17**: Added comprehensive error handling (400, 401, 403, 429, network)
 3. **2026-01-17**: Added reset confirmation dialog
@@ -201,6 +210,7 @@ useEffect(() => {
 8. **2026-01-17**: Optimized CostBreakdownChart with useMemo
 
 ### Review Follow-ups (AI-Code-Review 2026-01-17)
+
 - [x] [AI-Review][MEDIUM] Use TanStack Query mutation (no manual debouncing - `isPending` state)
 - [x] [AI-Review][LOW] Use shadcn/ui Alert for errors (pattern: existing forms)
 - [x] [AI-Review][LOW] Use `Loader2` from lucide-react for loading state (existing pattern)
@@ -209,6 +219,7 @@ useEffect(() => {
 - [x] [AI-Review][LOW] Add useMemo to CostBreakdownChart for performance
 
 ### Implementation Notes
+
 - **Debounce**: Uses `useEffect` + `setTimeout` (500ms) with cleanup on `formValues` change
 - **Auto-calculate**: Triggers on any form value change via `watch()` from react-hook-form
 - **Reset confirmation**: Only shows if `hasResults` prop is true (passed from page)
@@ -226,35 +237,39 @@ useEffect(() => {
 **Gate Decision**: ✅ READY FOR REVIEW
 
 ### AC Verification
-| AC | Requirement | Status | Evidence |
-|----|-------------|--------|----------|
-| AC1 | Debounced auto-calculation | ✅ | DEBOUNCE_MS=500, useEffect with formValues dependency |
-| AC2 | Loading states | ✅ | Loader2 spinner, button disabled during loading |
-| AC3 | Error handling | ✅ | ErrorMessage.tsx with HTTP status mapping |
-| AC4 | Backend warnings | ✅ | WarningsDisplay.tsx (from Story 44.3) |
-| AC5 | Reset functionality | ✅ | Dialog confirmation, Esc key shortcut |
+
+| AC  | Requirement                | Status | Evidence                                              |
+| --- | -------------------------- | ------ | ----------------------------------------------------- |
+| AC1 | Debounced auto-calculation | ✅     | DEBOUNCE_MS=500, useEffect with formValues dependency |
+| AC2 | Loading states             | ✅     | Loader2 spinner, button disabled during loading       |
+| AC3 | Error handling             | ✅     | ErrorMessage.tsx with HTTP status mapping             |
+| AC4 | Backend warnings           | ✅     | WarningsDisplay.tsx (from Story 44.3)                 |
+| AC5 | Reset functionality        | ✅     | Dialog confirmation, Esc key shortcut                 |
 
 ### Error Scenario Testing
-| Scenario | Expected Behavior | Status |
-|----------|------------------|--------|
-| Invalid input (negative) | Validation error | ✅ Client-side validation in form |
-| Not authenticated | Redirect to login | ✅ ErrorMessage with link to /login |
-| No cabinet selected | Error with cabinet link | ✅ ErrorMessage with link to /cabinets |
-| Rate limited | Warning with retry info | ✅ ErrorMessage for 429 status |
-| Network timeout | Retry option | ✅ ErrorMessage with retry button |
+
+| Scenario                 | Expected Behavior       | Status                                 |
+| ------------------------ | ----------------------- | -------------------------------------- |
+| Invalid input (negative) | Validation error        | ✅ Client-side validation in form      |
+| Not authenticated        | Redirect to login       | ✅ ErrorMessage with link to /login    |
+| No cabinet selected      | Error with cabinet link | ✅ ErrorMessage with link to /cabinets |
+| Rate limited             | Warning with retry info | ✅ ErrorMessage for 429 status         |
+| Network timeout          | Retry option            | ✅ ErrorMessage with retry button      |
 
 ### Accessibility Check
-| Check | Status | Evidence |
-|-------|--------|----------|
-| role="alert" on errors | ✅ | ErrorMessage.tsx:93 |
-| aria-live="polite" | ✅ | ErrorMessage.tsx:93 |
-| Keyboard navigation | ✅ | Esc key reset, Enter to calculate |
-| Focus management | ✅ | Dialog component handles focus |
+
+| Check                  | Status | Evidence                          |
+| ---------------------- | ------ | --------------------------------- |
+| role="alert" on errors | ✅     | ErrorMessage.tsx:93               |
+| aria-live="polite"     | ✅     | ErrorMessage.tsx:93               |
+| Keyboard navigation    | ✅     | Esc key reset, Enter to calculate |
+| Focus management       | ✅     | Dialog component handles focus    |
 
 ### File List (Updated)
-| File | Lines | Description |
-|------|-------|-------------|
-| `src/components/custom/price-calculator/ErrorMessage.tsx` | 137 | Error display with HTTP status mapping |
-| `src/components/custom/price-calculator/PriceCalculatorForm.tsx` | 520 | Debounce, reset dialog, Esc key, Loader2, Select |
-| `src/components/custom/price-calculator/CostBreakdownChart.tsx` | 183 | useMemo optimization, memo SegmentLabel |
-| `src/app/(dashboard)/cogs/price-calculator/page.tsx` | 55 | Pass hasResults, integrate ErrorMessage |
+
+| File                                                             | Lines | Description                                      |
+| ---------------------------------------------------------------- | ----- | ------------------------------------------------ |
+| `src/components/custom/price-calculator/ErrorMessage.tsx`        | 137   | Error display with HTTP status mapping           |
+| `src/components/custom/price-calculator/PriceCalculatorForm.tsx` | 520   | Debounce, reset dialog, Esc key, Loader2, Select |
+| `src/components/custom/price-calculator/CostBreakdownChart.tsx`  | 183   | useMemo optimization, memo SegmentLabel          |
+| `src/app/(dashboard)/cogs/price-calculator/page.tsx`             | 55    | Pass hasResults, integrate ErrorMessage          |

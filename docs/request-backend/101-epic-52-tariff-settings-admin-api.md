@@ -12,6 +12,7 @@
 Полная интеграция административного API для управления глобальными тарифами Wildberries. Реализованы 7 новых endpoints для управления тарифными настройками, аудит-трек и версионирование с эффективными датами.
 
 **Key Features**:
+
 - ✅ 7 новых admin endpoints
 - ✅ PUT/PATCH endpoints для управления тарифами
 - ✅ Per-field audit trail (21 поле)
@@ -26,6 +27,7 @@
 ### Проблема
 
 До этого момента глобальные тарифные настройки (`WbTariffSettings`) могли быть изменены только через прямой доступ к базе данных:
+
 - Нет API для управления тарифами
 - Нет audit trail для отслеживания изменений
 - Нет возможности запланировать будущие изменения тарифов
@@ -44,14 +46,14 @@
 
 ### Реализованные Endpoints
 
-| Endpoint | Method | Auth | Rate Limit | Описание |
-|----------|--------|------|------------|----------|
-| `/v1/tariffs/settings` | PUT | Admin only | 10 req/min | Полная замена настроек |
-| `/v1/tariffs/settings` | PATCH | Admin only | 10 req/min | Частичное обновление |
-| `/v1/tariffs/settings/audit` | GET | Admin only | None | Audit trail изменений |
-| `/v1/tariffs/settings/schedule` | POST | Admin only | 10 req/min | Создание будущей версии |
-| `/v1/tariffs/settings/history` | GET | Admin only | None | История версий |
-| `/v1/tariffs/settings/:id` | DELETE | Admin only | None | Удаление запланированной версии |
+| Endpoint                        | Method | Auth       | Rate Limit | Описание                        |
+| ------------------------------- | ------ | ---------- | ---------- | ------------------------------- |
+| `/v1/tariffs/settings`          | PUT    | Admin only | 10 req/min | Полная замена настроек          |
+| `/v1/tariffs/settings`          | PATCH  | Admin only | 10 req/min | Частичное обновление            |
+| `/v1/tariffs/settings/audit`    | GET    | Admin only | None       | Audit trail изменений           |
+| `/v1/tariffs/settings/schedule` | POST   | Admin only | 10 req/min | Создание будущей версии         |
+| `/v1/tariffs/settings/history`  | GET    | Admin only | None       | История версий                  |
+| `/v1/tariffs/settings/:id`      | DELETE | Admin only | None       | Удаление запланированной версии |
 
 **Примечание**: Существующий `GET /v1/tariffs/settings` endpoint **не изменился** - используется query-based version resolution.
 
@@ -108,6 +110,7 @@ Response (200 OK):
 ```
 
 **Валидация**:
+
 - Числовые поля: > 0 (acceptanceBoxRatePerLiter, logisticsLargeFirstLiterRate, etc.)
 - Проценты: 0-100 (defaultCommissionFboPct, defaultCommissionFbsPct)
 - Целые числа: >= 0 (storageFreeDays, fixationClothingDays, fixationOtherDays)
@@ -172,6 +175,7 @@ Response (200 OK):
 ```
 
 **Tracked Fields (21 total)**:
+
 - `acceptanceBoxRatePerLiter`, `acceptancePalletRate`
 - `logisticsVolumeTiers`, `logisticsLargeFirstLiterRate`, `logisticsLargeAdditionalLiterRate`
 - `returnLogisticsFboRate`, `returnLogisticsFbsRate`
@@ -211,6 +215,7 @@ Response (201 Created):
 ```
 
 **Validation Rules**:
+
 - `effective_from` должна быть future date (не сегодня или в прошлом)
 - Уникальная `effective_from` date (не может конфликтовать с существующей версией)
 - Максимум 10 scheduled versions
@@ -259,6 +264,7 @@ Response (200 OK):
 ```
 
 **Status Calculation**:
+
 - `scheduled`: `effective_from` > today
 - `active`: `effective_from` <= today <= `effective_until` (или `effective_until` = null)
 - `expired`: `effective_until` < today
@@ -273,6 +279,7 @@ Response (204 No Content)
 ```
 
 **Validation**:
+
 - Можно удалить только версии со `status = "scheduled"`
 - Нельзя удалить active или expired версии
 - Soft delete: устанавливает `isActive = false`
@@ -315,6 +322,7 @@ Response (200 OK):
 ```
 
 **Version Resolution** (query-based, no cron needed):
+
 - Находит версию с `effective_from <= current_date`
 - Учитывает `effective_until` если задана
 - Кэширует на 1 час (сокращено с 24h для version switching)
@@ -326,16 +334,19 @@ Response (200 OK):
 ### MINIMAL - Backend-Only Admin Feature
 
 **✅ No Breaking Changes**:
+
 - Существующий `GET /v1/tariffs/settings` endpoint **не изменился**
 - Все frontend функции работают как раньше
 - Query-based version resolution прозрачен для frontend
 
 **⚠️ Изменения в Cache TTL**:
+
 - Было: 24 часа
 - Стало: 1 час
 - Причина: Поддержка переключения между версиями тарифов
 
 **🔮 Future Considerations** (не в scope текущего epic):
+
 - Возможность построить Admin UI для управления тарифами
 - Audit trail viewer для compliance
 - Version comparison UI
@@ -410,14 +421,14 @@ Response (200 OK):
 
 ## Summary
 
-| Metric | Value |
-|--------|-------|
-| **Total Stories** | 8 |
-| **Story Points** | 25 |
-| **New Endpoints** | 7 |
-| **Audit Fields** | 21 |
-| **Rate Limit** | 10 req/min (mutations) |
-| **Cache TTL** | 1 hour (reduced from 24h) |
+| Metric              | Value                         |
+| ------------------- | ----------------------------- |
+| **Total Stories**   | 8                             |
+| **Story Points**    | 25                            |
+| **New Endpoints**   | 7                             |
+| **Audit Fields**    | 21                            |
+| **Rate Limit**      | 10 req/min (mutations)        |
+| **Cache TTL**       | 1 hour (reduced from 24h)     |
 | **Frontend Impact** | Minimal (no breaking changes) |
 
 ---

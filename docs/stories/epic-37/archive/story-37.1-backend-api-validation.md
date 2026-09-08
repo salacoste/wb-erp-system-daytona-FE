@@ -19,6 +19,7 @@
 ## 📋 Acceptance Criteria
 
 ### API Response Structure
+
 - [ ] `GET /v1/analytics/advertising?group_by=imtId` returns successful 200 response
 - [ ] Response includes both aggregate metrics and individual product metrics
 - [ ] Each group has `imtId` field matching products within that group
@@ -26,18 +27,21 @@
 - [ ] Child products correctly identified (spend = 0)
 
 ### Epic 35 Field Validation
+
 - [ ] Aggregate level includes: `totalSales`, `revenue`, `organicSales`, `organicContribution`
 - [ ] Individual product level includes: `totalSales`, `revenue`, `organicSales`, `organicContribution`
 - [ ] Percentage calculations correct: `organicContribution = (organicSales / totalSales) × 100`
 - [ ] ROAS calculation correct: `roas = revenue / spend` (handle spend=0 case)
 
 ### Data Integrity Checks
+
 - [ ] Aggregate `totalSales` equals SUM of individual `totalSales`
 - [ ] Aggregate `revenue` equals SUM of individual `revenue`
 - [ ] Aggregate `spend` equals SUM of individual `spend`
 - [ ] No missing or null values for required fields
 
 ### [PO TO FILL] Additional Requirements
+
 - [ ] [PO TO SPECIFY] Minimum/maximum group size expectations
 - [ ] [PO TO SPECIFY] Sorting order of products within group
 - [ ] [PO TO SPECIFY] Handling of standalone products (imtId = null)
@@ -48,11 +52,13 @@
 ## 🔍 Technical Details
 
 ### API Endpoint
+
 ```
 GET /v1/analytics/advertising?group_by=imtId&cabinet_id=1
 ```
 
 ### Expected Response Structure (Draft)
+
 ```typescript
 {
   "data": [
@@ -108,6 +114,7 @@ GET /v1/analytics/advertising?group_by=imtId&cabinet_id=1
 ### Validation Tests (Manual)
 
 **Test 1: Aggregate Summation**
+
 ```typescript
 const group = response.data[0];
 const individualTotal = group.products.reduce((sum, p) => sum + p.totalSales, 0);
@@ -115,6 +122,7 @@ expect(group.aggregateMetrics.totalSales).toBe(individualTotal);
 ```
 
 **Test 2: Main Product Identification**
+
 ```typescript
 const mainProducts = group.products.filter(p => p.isMainProduct);
 expect(mainProducts.length).toBe(1);
@@ -122,6 +130,7 @@ expect(mainProducts[0].spend).toBeGreaterThan(0);
 ```
 
 **Test 3: Epic 35 Calculation**
+
 ```typescript
 const product = group.products[0];
 const calculatedOrganic = product.totalSales - product.revenue;
@@ -133,22 +142,28 @@ expect(product.organicSales).toBe(calculatedOrganic);
 ## 📊 Test Scenarios
 
 ### Scenario 1: Normal Group (6 products)
+
 **Input**: `group_by=imtId`, group with 1 main + 5 child products
 **Expected**:
+
 - Aggregate metrics present and correct
 - All 6 products listed in `products[]` array
 - Main product has `isMainProduct: true`, `spend > 0`
 - Child products have `isMainProduct: false`, `spend = 0`
 
 ### Scenario 2: Single-Product Group
+
 **Input**: `group_by=imtId`, standalone product with `imtId = null`
 **Expected**:
+
 - [PO TO FILL] Should standalone products appear in response?
 - [PO TO FILL] If yes, what structure? (group of 1, or filtered out?)
 
 ### Scenario 3: Large Group (>10 products)
+
 **Input**: `group_by=imtId`, group with 15+ products
 **Expected**:
+
 - [PO TO FILL] Response includes all products, or paginated?
 - [PO TO FILL] Frontend component collapse/expand strategy
 
@@ -157,20 +172,26 @@ expect(product.organicSales).toBe(calculatedOrganic);
 ## 🐛 Edge Cases
 
 ### Edge Case 1: Zero Spend
+
 **Scenario**: All products in group have `spend = 0`
 **Expected Behavior**: [PO TO FILL]
+
 - ROAS calculation: Show "N/A" or hide column?
 - Main product identification: How to determine without spend signal?
 
 ### Edge Case 2: Negative Revenue
+
 **Scenario**: Returns exceed sales, `revenue < 0`
 **Expected Behavior**: [PO TO FILL]
+
 - Display negative values as-is, or flag with warning?
 - ROAS calculation: Handle negative numerator?
 
 ### Edge Case 3: Missing Epic 35 Fields
+
 **Scenario**: Backend returns `null` for `organicSales` due to data gap
 **Expected Behavior**: [PO TO FILL]
+
 - Show placeholder text ("Нет данных")?
 - Hide entire row?
 - Disable group view mode?

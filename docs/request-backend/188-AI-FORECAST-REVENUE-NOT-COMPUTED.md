@@ -38,6 +38,7 @@ price), or (b) emit `predictedRevenue: null` when it's not computed, so the FE c
 "not computed".
 
 ## Evidence
+
 - Live: `/v1/ai/forecast` predictions all have `predictedRevenue: 0`, `predictedUnits` > 0.
 - FE: `frontend/src/lib/api/ai/forecast.ts` normalizePrediction (0→null map); `ForecastTable.tsx:76`.
 

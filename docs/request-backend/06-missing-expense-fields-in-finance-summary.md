@@ -13,6 +13,7 @@
 Frontend получает от endpoint `/v1/analytics/weekly/finance-summary` неполный набор полей расходов в объекте `summary_total`. Отсутствуют поля для 2 из 9 категорий расходов, которые должны присутствовать согласно SDK → DB mapping.
 
 **Отсутствующие поля:**
+
 1. `acquiring_fee_total` (Эквайринг) - возвращается `undefined`
 2. `commission_sales_total` (Комиссия продаж) - возвращается `undefined`
 
@@ -75,6 +76,7 @@ Endpoint `/v1/analytics/weekly/finance-summary` должен возвращат�
 ```
 
 **Console Log Evidence**:
+
 ```
 [Expenses] DEBUG - All summary fields: {
   logistics_cost_total: 32470.1,
@@ -96,6 +98,7 @@ Endpoint `/v1/analytics/weekly/finance-summary` должен возвращат�
 ### Backend Side (for verification):
 
 1. **Query Database** for latest week in `weekly_payout_summary`:
+
    ```sql
    SELECT
      week,
@@ -142,19 +145,20 @@ Endpoint `/v1/analytics/weekly/finance-summary` должен возвращат�
 
 ### SDK → DB Mapping (from PRD/backend docs):
 
-| Category (Russian)              | SDK Field               | DB Field (summary_total) |
-|---------------------------------|-------------------------|--------------------------|
-| Логистика                       | logistics_cost          | logistics_cost_total     |
-| Хранение                        | storage_cost            | storage_cost_total       |
-| Платная приёмка                 | paid_acceptance_cost    | paid_acceptance_cost_total |
-| Штрафы                          | penalties               | penalties_total          |
-| Корректировка комиссии WB (прочие) | wb_commission_adj (commission_other only) | wb_commission_adj_total |
-| Комиссия лояльности             | loyalty_fee             | loyalty_fee_total        |
-| Удержание баллов лояльности     | loyalty_points_withheld | loyalty_points_withheld_total |
-| **Эквайринг**                   | **acquiring_fee**       | **acquiring_fee_total** ✅ |
-| **Комиссия продаж**             | **commission_sales**    | **commission_sales_total** ✅ |
+| Category (Russian)                 | SDK Field                                 | DB Field (summary_total)      |
+| ---------------------------------- | ----------------------------------------- | ----------------------------- |
+| Логистика                          | logistics_cost                            | logistics_cost_total          |
+| Хранение                           | storage_cost                              | storage_cost_total            |
+| Платная приёмка                    | paid_acceptance_cost                      | paid_acceptance_cost_total    |
+| Штрафы                             | penalties                                 | penalties_total               |
+| Корректировка комиссии WB (прочие) | wb_commission_adj (commission_other only) | wb_commission_adj_total       |
+| Комиссия лояльности                | loyalty_fee                               | loyalty_fee_total             |
+| Удержание баллов лояльности        | loyalty_points_withheld                   | loyalty_points_withheld_total |
+| **Эквайринг**                      | **acquiring_fee**                         | **acquiring_fee_total** ✅    |
+| **Комиссия продаж**                | **commission_sales**                      | **commission_sales_total** ✅ |
 
 **Source**:
+
 - Backend PRD: `CLAUDE.md` (SDK → DB mapping section)
 - Epic 10 Stories: Documentation confirms these fields should exist
 
@@ -165,16 +169,19 @@ Endpoint `/v1/analytics/weekly/finance-summary` должен возвращат�
 **Severity**: Medium
 
 **User Impact**:
+
 - Frontend expense breakdown chart incomplete (missing 2 of 9 categories)
 - Users cannot see full breakdown of their expenses
 - Analytics dashboard provides incomplete financial picture
 
 **Business Impact**:
+
 - Reduced transparency into expense structure
 - Potential user complaints about "missing data"
 - Incomplete financial reporting
 
 **Technical Impact**:
+
 - Frontend correctly implements all 9 categories
 - Frontend tests expect 9 categories (all passing)
 - Data contract mismatch between frontend and backend
@@ -186,12 +193,14 @@ Endpoint `/v1/analytics/weekly/finance-summary` должен возвращат�
 ### Option 1: Add Missing Fields to Response (Recommended)
 
 **Backend Changes:**
+
 1. Verify DB schema has `acquiring_fee_total` and `commission_sales_total` columns
 2. Update DTO/serializer to include these fields
 3. Ensure fields return `0` (not `null` or omitted) when no expenses in category
 4. Add tests for complete expense field set
 
 **Verification:**
+
 ```typescript
 // All fields should be present in response:
 response.summary_total.acquiring_fee_total !== undefined     // Should be true
@@ -201,6 +210,7 @@ response.summary_total.commission_sales_total !== undefined  // Should be true
 ### Option 2: Document Field Absence (If Intentional)
 
 If these fields are intentionally excluded (e.g., not implemented in MVP):
+
 1. Document in API specification which expense fields are available
 2. Update SDK → DB mapping documentation
 3. Frontend will adjust expectations accordingly
@@ -234,6 +244,7 @@ If these fields are intentionally excluded (e.g., not implemented in MVP):
 **Status**: ✅ **COMPLETED**
 
 **Implementation Summary**:
+
 - ✅ Added `acquiring_fee_total` and `commission_sales_total` columns to database schema
 - ✅ Updated SQL aggregation to separately calculate `acquiring_fee` and `commission_sales`
 - ✅ **Important**: `wb_commission_adj` now contains only `commission_other` (does NOT include `commission_sales`)
@@ -241,6 +252,7 @@ If these fields are intentionally excluded (e.g., not implemented in MVP):
 - ✅ All 9 expense categories are now tracked separately
 
 **Key Changes**:
+
 - **Commission Calculation Fix**: `wb_commission_adj` now correctly contains only `commission_other`. `commission_sales` is tracked separately as `commission_sales_total`
 - **Complete Expense Breakdown**: All 9 expense categories are now available in API response:
   1. `logistics_cost` / `logistics_cost_total`
@@ -254,10 +266,12 @@ If these fields are intentionally excluded (e.g., not implemented in MVP):
   9. `loyalty_points_withheld` / `loyalty_points_withheld_total`
 
 **Documentation**:
+
 - See `docs/backend-response-06-implementation-complete.md` for full implementation details
 - See `docs/backend-response-06-documentation-update.md` for all documentation changes
 
 **Migration**:
+
 - Migration file: `prisma/migrations/20251122000000_add_acquiring_fee_and_commission_sales_totals/migration.sql`
 - Historical data: Fields will return `0` until re-aggregation (optional, use `scripts/recalculate-direct.ts`)
 
@@ -274,12 +288,14 @@ If these fields are intentionally excluded (e.g., not implemented in MVP):
 ## Status Updates
 
 ### 2025-11-22 - Issue Reported
+
 - Identified missing fields via browser console debugging
 - Added comprehensive logging to capture API response
 - Documented complete field set expectations
 - Frontend implementation ready, waiting for backend fix
 
 ### 2025-01-22 - ✅ RESOLVED
+
 - Backend team implemented all requested changes
 - Added `acquiring_fee_total` and `commission_sales_total` to database schema and API response
 - Fixed commission calculation: `wb_commission_adj` now contains only `commission_other` (separate from `commission_sales`)
@@ -293,6 +309,7 @@ If these fields are intentionally excluded (e.g., not implemented in MVP):
 ## Margin Fields Returning Null - Current Behavior (2026-01-30)
 
 ### Observed Response
+
 ```json
 {
   "sale_gross_total": 305778.32,
@@ -303,25 +320,32 @@ If these fields are intentionally excluded (e.g., not implemented in MVP):
 ```
 
 ### Explanation
+
 The `cogs_total` and `gross_profit` fields return `null` when:
+
 1. The `weekly_margin_fact` table is empty (no aggregated margin data)
 2. COGS coverage is < 100% for the requested period
 
 This is **expected behavior** - the system does not calculate margins without complete COGS data.
 
 ### FrontEnd Handling
+
 Display appropriate empty state to users:
+
 - Show warning badge with coverage percentage
 - Provide call-to-action to assign COGS
 - See component: `CogsMissingState` or `MissingCogsAlert`
 
 ### Data Pipeline Status
+
 - ✅ `weekly_payout_summary` - Working (populated by Epic 2)
 - ✅ `cogs` table - Has 40 records (Epic 12, 16, 56)
 - ❌ `weekly_margin_fact` - **EMPTY** (data aggregation pipeline not implemented)
 
 ### Solution
+
 See **Request #113** for complete documentation:
+
 - Epic 56 (Historical Inventory Import) has been completed but does NOT populate `weekly_margin_fact`
 - This requires a separate data aggregation pipeline (future roadmap item)
 - FrontEnd should display empty state when `cogs_total === null`

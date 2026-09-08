@@ -3,7 +3,8 @@
 - Source Document: {{document name/type}}
 - Enhancement Type: {{single feature/bug fix/integration/etc}}
 - Existing System Impact: {{brief assessment}}
-```
+
+`````
 
 ### 3.2 Develop Acceptance Criteria
 
@@ -24,3 +25,4 @@ Critical: This is where you'll need to be interactive with the user if informati
 Create Dev Technical Guidance section with available information:
 
 ````markdown
+`````

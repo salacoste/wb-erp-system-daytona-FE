@@ -17,11 +17,13 @@
 ## Acceptance Criteria
 
 ### AC1: Efficiency Badge Component
+
 - [ ] Color-coded badge for each efficiency status
 - [ ] Badge shows translated status label
 - [ ] Badge has icon appropriate to status
 
 ### AC2: Status Colors
+
 - [ ] Excellent: Green (#22C55E)
 - [ ] Good: Light Green (#86EFAC)
 - [ ] Moderate: Yellow (#F59E0B)
@@ -30,11 +32,13 @@
 - [ ] Unknown: Gray (#9CA3AF)
 
 ### AC3: Tooltips
+
 - [ ] Tooltip explains the ROAS/ROI thresholds
 - [ ] Tooltip includes recommendation
 - [ ] Tooltip shows on hover (desktop) and long-press (mobile)
 
 ### AC4: Alert Banner
+
 - [ ] Show alert when there are items with "loss" status
 - [ ] Alert is dismissible
 - [ ] **Dismiss persists in sessionStorage for current session**
@@ -42,6 +46,7 @@
 - [ ] Alert links to filtered view (?status=loss)
 
 ### AC5: Accessibility
+
 - [ ] Badge icons supplement color (not color-only)
 - [ ] Tooltip accessible via keyboard focus
 - [ ] Alert banner has `role="alert"` for screen readers
@@ -50,18 +55,21 @@
 ## Tasks / Subtasks
 
 ### Phase 1: Badge Component
+
 - [ ] Create `components/EfficiencyBadge.tsx`
 - [ ] Define color mapping for each status
 - [ ] Add icon selection per status
 - [ ] Implement tooltip with recommendations
 
 ### Phase 2: Status Utilities
+
 - [ ] Create `lib/efficiency-utils.ts`
 - [ ] Add `getEfficiencyColor()` function
 - [ ] Add `getEfficiencyLabel()` function
 - [ ] Add `getEfficiencyRecommendation()` function
 
 ### Phase 3: Alert Banner
+
 - [ ] Create `components/EfficiencyAlertBanner.tsx`
 - [ ] Count items with "loss" status
 - [ ] Show dismissible alert
@@ -251,6 +259,7 @@ src/
 ### Color Accessibility
 
 All color combinations meet WCAG AA contrast requirements:
+
 - Green text on green-100 background
 - Red text on red-100 background
 - etc.
@@ -284,9 +293,9 @@ All color combinations meet WCAG AA contrast requirements:
 
 ## Change Log
 
-| Date | Author | Change |
-|------|--------|--------|
-| 2025-12-22 | James (Dev Agent) | Initial draft |
+| Date       | Author            | Change                                                                                      |
+| ---------- | ----------------- | ------------------------------------------------------------------------------------------- |
+| 2025-12-22 | James (Dev Agent) | Initial draft                                                                               |
 | 2025-12-22 | James (Dev Agent) | PO Review: Priority→High (BLOCKER #1), sessionStorage dismiss, alert reappearance, AC5 a11y |
 
 ---

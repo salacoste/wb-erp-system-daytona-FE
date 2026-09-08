@@ -27,16 +27,17 @@ Technical architecture for search analytics, unified product analytics, and mark
 
 ### 1.1 Implemented Marketing Analytics Pages
 
-| Page | Route | Epic | API Connected | Status |
-|------|-------|------|---------------|--------|
-| Funnel | `/analytics/funnel` | Epic 68 | `/v1/analytics/funnel` | Fully functional |
-| Buyout | `/analytics/buyout` | Epic 69 | `/v1/analytics/buyout/by-sku`, `/summary` | Fully functional |
-| Returns | `/analytics/returns` | Epic 70-FE (BE #151 labels as Epic 71; frontend canonicalized to 70-FE via Story 88.5) | `/v1/analytics/returns/reasons`, `/by-sku` | Fully functional |
-| Advertising | `/analytics/advertising` | Epic 33/35/36 | `/v1/analytics/advertising`, `/campaigns`, `/sync-status` | Fully functional |
+| Page        | Route                    | Epic                                                                                   | API Connected                                             | Status           |
+| ----------- | ------------------------ | -------------------------------------------------------------------------------------- | --------------------------------------------------------- | ---------------- |
+| Funnel      | `/analytics/funnel`      | Epic 68                                                                                | `/v1/analytics/funnel`                                    | Fully functional |
+| Buyout      | `/analytics/buyout`      | Epic 69                                                                                | `/v1/analytics/buyout/by-sku`, `/summary`                 | Fully functional |
+| Returns     | `/analytics/returns`     | Epic 70-FE (BE #151 labels as Epic 71; frontend canonicalized to 70-FE via Story 88.5) | `/v1/analytics/returns/reasons`, `/by-sku`                | Fully functional |
+| Advertising | `/analytics/advertising` | Epic 33/35/36                                                                          | `/v1/analytics/advertising`, `/campaigns`, `/sync-status` | Fully functional |
 
 ### 1.2 Existing Frontend Layer Inventory
 
 **Types** (all in `src/types/`):
+
 - `analytics-funnel.ts` -- FunnelProductItem, FunnelDayItem, FunnelSummary, FunnelParams, FunnelResponse
 - `analytics-buyout.ts` -- BySkuBuyoutItem, BuyoutSummaryResponse, BuyoutBySkuParams
 - `analytics-returns.ts` -- ReturnCategoryItem, ReturnReasonsResponse, BySkuReturnItem
@@ -46,6 +47,7 @@ Technical architecture for search analytics, unified product analytics, and mark
 - `cabinet.ts` -- JamTier, JamStatusResponse, SellerInfoResponse
 
 **API modules** (all in `src/lib/api/`):
+
 - `funnel-analytics.ts` -- getFunnelData, getFunnelSyncStatus, funnelQueryKeys
 - `buyout-analytics.ts` -- getBuyoutBySku, getBuyoutSummary, buyoutQueryKeys
 - `return-analytics.ts` -- getReturnReasons, getReturnsBySku, returnQueryKeys
@@ -53,6 +55,7 @@ Technical architecture for search analytics, unified product analytics, and mark
 - `cabinet.ts` -- getJamStatus, getSellerInfo
 
 **Hooks** (all in `src/hooks/`):
+
 - `use-funnel-analytics.ts` -- useFunnelData, useFunnelTimeSeries, useFunnelSyncStatus
 - `use-buyout-analytics.ts` -- useBuyoutBySku, useBuyoutSummary
 - `use-return-analytics.ts` -- useReturnReasons, useReturnsBySku
@@ -61,6 +64,7 @@ Technical architecture for search analytics, unified product analytics, and mark
 - `useSellerInfo.ts` -- useSellerInfo (returns name, sid, trademark)
 
 **Utility files** (in `src/lib/`):
+
 - `campaign-utils.ts` -- Campaign status helpers
 - `efficiency-utils.ts` -- ROAS/efficiency categorization
 - `efficiency-filter-config.ts` -- Filter configuration
@@ -68,6 +72,7 @@ Technical architecture for search analytics, unified product analytics, and mark
 ### 1.3 Jam Subscription Status
 
 The `useJamStatus` hook and `SidebarCabinetInfo` component are already wired:
+
 - `SidebarCabinetInfo.tsx` shows the Jam badge (none/standard/extended) in the sidebar
 - `JamTier` type and `JAM_TIER_LABELS` are defined in `src/types/cabinet.ts`
 - Settings page at `/settings/cabinet` shows full cabinet info
@@ -86,33 +91,33 @@ The routes file (`src/lib/routes.ts`) has `ANALYTICS.FUNNEL`, `ANALYTICS.BUYOUT`
 
 ### 2.1 Endpoints WITH Frontend Integration
 
-| Endpoint | Frontend Module | Hook |
-|----------|----------------|------|
-| `GET /v1/analytics/funnel` | `funnel-analytics.ts` | `useFunnelData` |
-| `GET /v1/analytics/funnel/sync-status` | `funnel-analytics.ts` | `useFunnelSyncStatus` |
-| `GET /v1/analytics/buyout/by-sku` | `buyout-analytics.ts` | `useBuyoutBySku` |
-| `GET /v1/analytics/buyout/summary` | `buyout-analytics.ts` | `useBuyoutSummary` |
-| `GET /v1/analytics/returns/reasons` | `return-analytics.ts` | `useReturnReasons` |
-| `GET /v1/analytics/returns/reasons/by-sku` | `return-analytics.ts` | `useReturnsBySku` |
-| `GET /v1/analytics/advertising` | `advertising-analytics.ts` | `useAdvertisingAnalytics` |
-| `GET /v1/analytics/advertising/campaigns` | `advertising-analytics.ts` | `useAdvertisingCampaigns` |
+| Endpoint                                    | Frontend Module            | Hook                       |
+| ------------------------------------------- | -------------------------- | -------------------------- |
+| `GET /v1/analytics/funnel`                  | `funnel-analytics.ts`      | `useFunnelData`            |
+| `GET /v1/analytics/funnel/sync-status`      | `funnel-analytics.ts`      | `useFunnelSyncStatus`      |
+| `GET /v1/analytics/buyout/by-sku`           | `buyout-analytics.ts`      | `useBuyoutBySku`           |
+| `GET /v1/analytics/buyout/summary`          | `buyout-analytics.ts`      | `useBuyoutSummary`         |
+| `GET /v1/analytics/returns/reasons`         | `return-analytics.ts`      | `useReturnReasons`         |
+| `GET /v1/analytics/returns/reasons/by-sku`  | `return-analytics.ts`      | `useReturnsBySku`          |
+| `GET /v1/analytics/advertising`             | `advertising-analytics.ts` | `useAdvertisingAnalytics`  |
+| `GET /v1/analytics/advertising/campaigns`   | `advertising-analytics.ts` | `useAdvertisingCampaigns`  |
 | `GET /v1/analytics/advertising/sync-status` | `advertising-analytics.ts` | `useAdvertisingSyncStatus` |
-| `GET /v1/cabinets/:id/jam-status` | `cabinet.ts` | `useJamStatus` |
-| `GET /v1/cabinets/:id/seller-info` | `cabinet.ts` | `useSellerInfo` |
+| `GET /v1/cabinets/:id/jam-status`           | `cabinet.ts`               | `useJamStatus`             |
+| `GET /v1/cabinets/:id/seller-info`          | `cabinet.ts`               | `useSellerInfo`            |
 
 ### 2.2 Endpoints WITHOUT Frontend Integration (Gaps)
 
-| Endpoint | Backend Status | Priority | Jam Gated? |
-|----------|---------------|----------|------------|
-| `GET /v1/analytics/search/by-product` | Task-139 COMPLETE | **P0** | Yes (extended tier) |
-| `GET /v1/analytics/search/by-query` | Task-139 COMPLETE | **P0** | Yes (extended tier) |
-| `GET /v1/analytics/search/orders` | Task-139 COMPLETE | **P0** | Yes (extended tier) |
-| `GET /v1/analytics/funnel/summary` | Fix #4 alias COMPLETE | P2 | No |
-| `GET /v1/analytics/funnel/by-sku` | Fix #4 alias COMPLETE | P2 | No |
-| `GET /v1/analytics/returns/summary` | Fix #3 alias COMPLETE | P2 | No |
-| `GET /v1/analytics/returns/by-sku` | Fix #3 alias COMPLETE | P2 | No |
-| `GET /v1/analytics/product/:nmId/unified` | **NOT registered** in module | P1 | Yes (requires funnel data) |
-| `GET /v1/analytics/product/:nmId/organic-share` | **NOT registered** in module | P1 | Yes (requires funnel data) |
+| Endpoint                                        | Backend Status               | Priority | Jam Gated?                 |
+| ----------------------------------------------- | ---------------------------- | -------- | -------------------------- |
+| `GET /v1/analytics/search/by-product`           | Task-139 COMPLETE            | **P0**   | Yes (extended tier)        |
+| `GET /v1/analytics/search/by-query`             | Task-139 COMPLETE            | **P0**   | Yes (extended tier)        |
+| `GET /v1/analytics/search/orders`               | Task-139 COMPLETE            | **P0**   | Yes (extended tier)        |
+| `GET /v1/analytics/funnel/summary`              | Fix #4 alias COMPLETE        | P2       | No                         |
+| `GET /v1/analytics/funnel/by-sku`               | Fix #4 alias COMPLETE        | P2       | No                         |
+| `GET /v1/analytics/returns/summary`             | Fix #3 alias COMPLETE        | P2       | No                         |
+| `GET /v1/analytics/returns/by-sku`              | Fix #3 alias COMPLETE        | P2       | No                         |
+| `GET /v1/analytics/product/:nmId/unified`       | **NOT registered** in module | P1       | Yes (requires funnel data) |
+| `GET /v1/analytics/product/:nmId/organic-share` | **NOT registered** in module | P1       | Yes (requires funnel data) |
 
 **Key finding**: The three search analytics endpoints (`/v1/analytics/search/*`) are fully implemented on the backend (Task-139 COMPLETE) but have **zero frontend integration**. No types, no API module, no hooks, no page, no route.
 
@@ -218,6 +223,7 @@ export interface SearchOrdersParams {
 File: `src/lib/api/search-analytics.ts`
 
 Three functions:
+
 - `getSearchByProduct(params: SearchByProductParams): Promise<SearchByProductResponse>`
 - `getSearchByQuery(params: SearchByQueryParams): Promise<SearchByQueryResponse>`
 - `getSearchOrders(params: SearchOrdersParams): Promise<SearchOrdersResponse>`
@@ -278,6 +284,7 @@ interface JamGateBannerProps {
 ```
 
 This component:
+
 - Uses `useJamStatus()` internally
 - Shows loading skeleton while checking
 - If tier sufficient: renders `children` (slot pattern)
@@ -314,6 +321,7 @@ function tierLevel(tier: JamTier): number {
 ### 4.4 Sidebar Gating
 
 In `Sidebar.tsx`, search analytics nav item should:
+
 - Always be visible (to create awareness)
 - Show a small lock icon or "Джем" badge when user lacks subscription
 - Link normally regardless -- the page itself handles the gate
@@ -348,12 +356,12 @@ src/app/(dashboard)/analytics/search/
 
 ### 5.2 Existing Files to Modify
 
-| File | Change |
-|------|--------|
-| `src/lib/routes.ts` | Add `SEARCH: '/analytics/search'` to `ANALYTICS` object; add to `isProtectedRoute` |
-| `src/components/custom/Sidebar.tsx` | Add search analytics nav item with `Search` lucide icon |
+| File                                     | Change                                                                                  |
+| ---------------------------------------- | --------------------------------------------------------------------------------------- |
+| `src/lib/routes.ts`                      | Add `SEARCH: '/analytics/search'` to `ANALYTICS` object; add to `isProtectedRoute`      |
+| `src/components/custom/Sidebar.tsx`      | Add search analytics nav item with `Search` lucide icon                                 |
 | `src/app/(dashboard)/analytics/page.tsx` | Add search analytics card to `analyticsNavigation.operational` or new `marketing` group |
-| `src/components/custom/Sidebar.test.tsx` | Add test for new nav item |
+| `src/components/custom/Sidebar.test.tsx` | Add test for new nav item                                                               |
 
 ### 5.3 Test Files to Create
 
@@ -467,16 +475,16 @@ SearchPage (server component)
 
 Each component is designed to stay under the project's 200-line ESLint limit:
 
-| Component | Est. Lines | Notes |
-|-----------|-----------|-------|
-| `SearchPageContent.tsx` | ~80 | Tab orchestrator + date state |
-| `SearchOrdersSummaryCards.tsx` | ~90 | 3 metric cards (pattern from FunnelSummaryCards) |
-| `SearchByQueryTab.tsx` | ~120 | Input + debounce + table |
-| `SearchByProductTab.tsx` | ~130 | Product selector + table |
-| `SearchOrdersTab.tsx` | ~100 | GroupBy toggle + summary + table/chart switch |
-| `SearchOrdersChart.tsx` | ~80 | Recharts line chart (same pattern as FunnelChart) |
-| `RequireJam.tsx` | ~50 | Gate wrapper |
-| `JamGateBanner.tsx` | ~70 | Upgrade prompt card |
+| Component                      | Est. Lines | Notes                                             |
+| ------------------------------ | ---------- | ------------------------------------------------- |
+| `SearchPageContent.tsx`        | ~80        | Tab orchestrator + date state                     |
+| `SearchOrdersSummaryCards.tsx` | ~90        | 3 metric cards (pattern from FunnelSummaryCards)  |
+| `SearchByQueryTab.tsx`         | ~120       | Input + debounce + table                          |
+| `SearchByProductTab.tsx`       | ~130       | Product selector + table                          |
+| `SearchOrdersTab.tsx`          | ~100       | GroupBy toggle + summary + table/chart switch     |
+| `SearchOrdersChart.tsx`        | ~80        | Recharts line chart (same pattern as FunnelChart) |
+| `RequireJam.tsx`               | ~50        | Gate wrapper                                      |
+| `JamGateBanner.tsx`            | ~70        | Upgrade prompt card                               |
 
 ---
 
@@ -538,22 +546,22 @@ Each component is designed to stay under the project's 200-line ESLint limit:
 
 ### 9.1 Hard Dependencies
 
-| Dependency | Status | Risk |
-|-----------|--------|------|
-| Backend search endpoints (Task-139) | COMPLETE | None |
-| `useJamStatus` hook | COMPLETE | None |
-| `useSellerInfo` hook | COMPLETE | None |
-| `apiClient` with auto auth headers | COMPLETE | None |
-| `DateRangePickerExtended` component | COMPLETE | None |
-| shadcn/ui Tabs component | Available | None |
+| Dependency                          | Status    | Risk |
+| ----------------------------------- | --------- | ---- |
+| Backend search endpoints (Task-139) | COMPLETE  | None |
+| `useJamStatus` hook                 | COMPLETE  | None |
+| `useSellerInfo` hook                | COMPLETE  | None |
+| `apiClient` with auto auth headers  | COMPLETE  | None |
+| `DateRangePickerExtended` component | COMPLETE  | None |
+| shadcn/ui Tabs component            | Available | None |
 
 ### 9.2 Future Dependencies (Phase 2+ of marketing analytics)
 
-| Feature | Backend Status | Notes |
-|---------|---------------|-------|
-| Unified Product Analytics (`/v1/analytics/product/:nmId/unified`) | Service exists, route NOT registered | Blocked on backend route wiring |
-| Organic Share Widget (`/v1/analytics/product/:nmId/organic-share`) | Service exists, route NOT registered | Blocked on backend route wiring |
-| Search data enrichment in funnel (`topSearchQueries`) | Mentioned in API docs | Would enhance existing funnel page |
+| Feature                                                            | Backend Status                       | Notes                              |
+| ------------------------------------------------------------------ | ------------------------------------ | ---------------------------------- |
+| Unified Product Analytics (`/v1/analytics/product/:nmId/unified`)  | Service exists, route NOT registered | Blocked on backend route wiring    |
+| Organic Share Widget (`/v1/analytics/product/:nmId/organic-share`) | Service exists, route NOT registered | Blocked on backend route wiring    |
+| Search data enrichment in funnel (`topSearchQueries`)              | Mentioned in API docs                | Would enhance existing funnel page |
 
 ### 9.3 Risks
 
@@ -648,18 +656,18 @@ Items shape: `{ "key": "2026-03-01", "totalOrders": 50, "totalRevenue": 250000.0
 
 When implementing, follow the exact patterns established in:
 
-| Pattern | Reference File |
-|---------|---------------|
-| API client structure | `src/lib/api/funnel-analytics.ts` |
-| Hook structure | `src/hooks/use-funnel-analytics.ts` |
-| Page orchestrator | `src/app/(dashboard)/analytics/funnel/components/FunnelPageContent.tsx` |
-| Summary cards | `src/app/(dashboard)/analytics/funnel/components/FunnelSummaryCards.tsx` |
-| Data table with sorting | `src/app/(dashboard)/analytics/funnel/components/FunnelTable.tsx` |
-| Time series chart | `src/app/(dashboard)/analytics/funnel/components/FunnelChart.tsx` |
+| Pattern                 | Reference File                                                                  |
+| ----------------------- | ------------------------------------------------------------------------------- |
+| API client structure    | `src/lib/api/funnel-analytics.ts`                                               |
+| Hook structure          | `src/hooks/use-funnel-analytics.ts`                                             |
+| Page orchestrator       | `src/app/(dashboard)/analytics/funnel/components/FunnelPageContent.tsx`         |
+| Summary cards           | `src/app/(dashboard)/analytics/funnel/components/FunnelSummaryCards.tsx`        |
+| Data table with sorting | `src/app/(dashboard)/analytics/funnel/components/FunnelTable.tsx`               |
+| Time series chart       | `src/app/(dashboard)/analytics/funnel/components/FunnelChart.tsx`               |
 | Date range picker usage | All marketing analytics pages use `DateRangePickerExtended` with 30-day default |
-| Sidebar nav item | `src/components/custom/Sidebar.tsx` (follow existing icon + label pattern) |
-| Route constant | `src/lib/routes.ts` ANALYTICS section |
-| Analytics hub card | `src/app/(dashboard)/analytics/page.tsx` NavigationCard pattern |
+| Sidebar nav item        | `src/components/custom/Sidebar.tsx` (follow existing icon + label pattern)      |
+| Route constant          | `src/lib/routes.ts` ANALYTICS section                                           |
+| Analytics hub card      | `src/app/(dashboard)/analytics/page.tsx` NavigationCard pattern                 |
 
 ---
 
@@ -673,13 +681,13 @@ Backend returns `'advanced'`, this doc and frontend types use `'extended'`. All 
 
 ### Type Corrections Required Before Implementation
 
-| File | Issue |
-|------|-------|
-| `src/types/cabinet.ts` | `JamTier`: rename `'extended'` to `'advanced'` |
-| `src/types/analytics-funnel.ts` | `FunnelProductItem`: add `ordersSumRub`, `buyoutSumRub`, `cancelSumRub` |
-| `src/types/analytics-funnel.ts` | `FunnelDayItem`: add `cartConversion`, `orderConversion`, `buyoutConversion`, `cancelRate` |
-| `src/types/analytics-buyout.ts` | `BySkuBuyoutItem`: add `trendPeriod` field |
-| `src/types/advertising-analytics.ts` | Add `include_daily` param, `profit_after_ads` sort |
+| File                                 | Issue                                                                                      |
+| ------------------------------------ | ------------------------------------------------------------------------------------------ |
+| `src/types/cabinet.ts`               | `JamTier`: rename `'extended'` to `'advanced'`                                             |
+| `src/types/analytics-funnel.ts`      | `FunnelProductItem`: add `ordersSumRub`, `buyoutSumRub`, `cancelSumRub`                    |
+| `src/types/analytics-funnel.ts`      | `FunnelDayItem`: add `cartConversion`, `orderConversion`, `buyoutConversion`, `cancelRate` |
+| `src/types/analytics-buyout.ts`      | `BySkuBuyoutItem`: add `trendPeriod` field                                                 |
+| `src/types/advertising-analytics.ts` | Add `include_daily` param, `profit_after_ads` sort                                         |
 
 ### Search Analytics: Plan vs Backend Validation
 

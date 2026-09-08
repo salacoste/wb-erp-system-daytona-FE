@@ -20,6 +20,7 @@
 ## Background
 
 Backend Story 42.3 added `weekly_sanity_check` task that validates:
+
 1. Row balance (gross - fees ≈ net_for_pay)
 2. Alternative formula reconstruction
 3. Storno control (≤5%)
@@ -32,6 +33,7 @@ This hook enables frontend to trigger validation and display results.
 ## Acceptance Criteria
 
 ### AC1: Hook Available
+
 ```gherkin
 Given the useSanityCheck hook is implemented
 When I import it in a component
@@ -40,6 +42,7 @@ And receive validation results
 ```
 
 ### AC2: Polling Support
+
 ```gherkin
 Given a sanity check task is enqueued
 When the task is processing
@@ -48,6 +51,7 @@ And return final results when done
 ```
 
 ### AC3: Error Handling
+
 ```gherkin
 Given a sanity check request
 When the request fails
@@ -330,6 +334,7 @@ describe('useSanityCheck', () => {
 ```
 
 ### Manual Testing
+
 1. Trigger sanity check via dev tools
 2. Verify polling behavior
 3. Check toast notifications
@@ -339,6 +344,7 @@ describe('useSanityCheck', () => {
 ## UI Integration (Future)
 
 This hook can be used in:
+
 - Dashboard data quality indicator
 - Settings page "Run Data Check" button
 - COGS management page for missing COGS alert
@@ -368,6 +374,7 @@ This hook can be used in:
 ## API Reference
 
 ### Validation Checks Performed by Backend
+
 1. **Row Balance** - gross - fees ≈ net_for_pay (±1% tolerance)
 2. **Alternative Reconstruction** - WB formula validation (±0.1%)
 3. **Storno Control** - storno ≤ 5% of original amounts
@@ -375,6 +382,7 @@ This hook can be used in:
 5. **Missing COGS** - products without COGS assignment
 
 ### Response Example
+
 ```json
 {
   "status": "completed",
@@ -400,5 +408,5 @@ This hook can be used in:
 
 ---
 
-*Created: 2026-01-06*
-*Validated: 2026-01-29* (API contract verified against Request #94)
+_Created: 2026-01-06_
+_Validated: 2026-01-29_ (API contract verified against Request #94)

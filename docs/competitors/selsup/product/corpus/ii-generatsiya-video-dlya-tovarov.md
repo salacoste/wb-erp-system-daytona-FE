@@ -13,7 +13,7 @@ chars: 1560
 
 В этой статье:
 
-- 
+-
 - <a href="#kak-sozdat-video" rel="nofollow">Как создать видео</a>
 - <a href="#sovety" rel="nofollow">Советы:</a>
 

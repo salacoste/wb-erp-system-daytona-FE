@@ -16,6 +16,7 @@ Several sortable table headers in the analytics dashboard implement sort via `<t
 ## Recommended fix
 
 Wrap sortable header content in a proper `<button onClick={handleSort} aria-label={`Сортировать по ${columnName}`}>` element. This:
+
 - Provides keyboard activation (Enter/Space) automatically
 - Provides accessible name for screen readers
 - Satisfies `jsx-a11y/control-has-associated-label` natively (no eslint-disable needed)

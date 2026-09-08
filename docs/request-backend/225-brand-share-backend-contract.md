@@ -20,6 +20,7 @@
 ```
 GET /v1/analytics/brand-share/brands
 ```
+
 `200` → `string[]` — brand names available for brand-share analysis in the cabinet
 (e.g. `["DURABOND", "Acme"]`). Start here; pick a brand for steps 2–3.
 
@@ -28,10 +29,13 @@ GET /v1/analytics/brand-share/brands
 ```
 GET /v1/analytics/brand-share/parent-subjects?brand=DURABOND&dateFrom=2026-06-27&dateTo=2026-07-04
 ```
+
 `200` →
+
 ```ts
 [{ parentId: number, parentName: string }]   // e.g. [{ parentId: 8555, parentName: "Отделочные материалы" }]
 ```
+
 `dateFrom` / `dateTo` are optional (`YYYY-MM-DD`); default = trailing 7 days. Pick a `parentId` for step 3.
 
 ### 3. Brand-share time series
@@ -39,7 +43,9 @@ GET /v1/analytics/brand-share/parent-subjects?brand=DURABOND&dateFrom=2026-06-27
 ```
 GET /v1/analytics/brand-share?brand=DURABOND&parentId=8555&dateFrom=2026-06-27&dateTo=2026-07-04
 ```
+
 `200` →
+
 ```ts
 {
   report: [
@@ -48,12 +54,13 @@ GET /v1/analytics/brand-share?brand=DURABOND&parentId=8555&dateFrom=2026-06-27&d
   ]
 }
 ```
-| Field | Meaning |
-|---|---|
-| `applyDate` | WB apply date (MSK ISO). One row per day in the window. |
-| `brandRating` | Brand rating/position for the day (WB score). |
+
+| Field          | Meaning                                                                                   |
+| -------------- | ----------------------------------------------------------------------------------------- |
+| `applyDate`    | WB apply date (MSK ISO). One row per day in the window.                                   |
+| `brandRating`  | Brand rating/position for the day (WB score).                                             |
 | `pricePercent` | Brand's share of the category by PRICE (%). `0` / `null` when WB has no data for the day. |
-| `qtyPercent` | Brand's share of the category by QUANTITY sold (%). |
+| `qtyPercent`   | Brand's share of the category by QUANTITY sold (%).                                       |
 
 **Errors:** `503 ServiceUnavailableException` with the WB status/message if the upstream call fails.
 

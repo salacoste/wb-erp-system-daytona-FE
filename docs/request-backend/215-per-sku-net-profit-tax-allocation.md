@@ -6,6 +6,7 @@
 **Component**: Backend API — Analytics (by-SKU) + Tax
 **Requester**: Frontend Team (competitor-parity program)
 **Related**:
+
 - Competitor parity spec: `docs/competitor-analysis/competitor-financial-report-parity.md` (FR-3, §3-F/K fields BA/AJ/AK/AL)
 - FE tax cascade: `src/lib/tax-display-helpers.ts` (`getNetProfit`)
 - FE by-SKU type: `src/types/cogs/products.ts` (`MarginAnalyticsSku`)
@@ -33,12 +34,12 @@
 
 ## Current state (what we have)
 
-| Concept | Granularity today | Source |
-|---|---|---|
-| Operating profit | **SKU** ✅ | `MarginAnalyticsSku.operating_profit` / `SkuFinancialItem.profit.operating` |
-| Tax (income) | **Cabinet only** | `FinanceSummary.tax.net_profit_after_tax` / `tax_amount` |
-| VAT | **Cabinet only** | `FinanceSummary.tax.vat_payable` / `vat_output` |
-| Net profit after tax | **Cabinet only** | `getNetProfit(tax, payoutTotal, operating)` — `src/lib/tax-display-helpers.ts` |
+| Concept              | Granularity today | Source                                                                         |
+| -------------------- | ----------------- | ------------------------------------------------------------------------------ |
+| Operating profit     | **SKU** ✅        | `MarginAnalyticsSku.operating_profit` / `SkuFinancialItem.profit.operating`    |
+| Tax (income)         | **Cabinet only**  | `FinanceSummary.tax.net_profit_after_tax` / `tax_amount`                       |
+| VAT                  | **Cabinet only**  | `FinanceSummary.tax.vat_payable` / `vat_output`                                |
+| Net profit after tax | **Cabinet only**  | `getNetProfit(tax, payoutTotal, operating)` — `src/lib/tax-display-helpers.ts` |
 
 The FE's net-profit cascade (`getNetProfit`) already handles the cabinet-level priority: `net_profit_after_all_tax` → `net_profit_after_tax` → operating → payout. FR-3 needs the **same fields per SKU**, which requires the backend to split the cabinet tax base across SKUs.
 
@@ -67,11 +68,11 @@ interface MarginAnalyticsSkuTaxFields {
 
 The cabinet tax is one number; it must be split across SKUs. Candidate bases (backend + PM to choose):
 
-| Method | Pro | Con |
-|---|---|---|
-| **Proportional to operating profit** | Tax tracks profit; loss SKUs get 0 tax (sensible) | Distorts if one SKU's profit dominates |
-| **Proportional to net revenue** | Stable, revenue is always ≥ 0 | Loss-making but high-revenue SKUs absorb tax they don't cause |
-| **Proportional to COGS / cost base** | Matches some real tax regimes | Weak link to actual profit |
+| Method                               | Pro                                               | Con                                                           |
+| ------------------------------------ | ------------------------------------------------- | ------------------------------------------------------------- |
+| **Proportional to operating profit** | Tax tracks profit; loss SKUs get 0 tax (sensible) | Distorts if one SKU's profit dominates                        |
+| **Proportional to net revenue**      | Stable, revenue is always ≥ 0                     | Loss-making but high-revenue SKUs absorb tax they don't cause |
+| **Proportional to COGS / cost base** | Matches some real tax regimes                     | Weak link to actual profit                                    |
 
 **FE recommendation**: **proportional to operating profit** (only profitable SKUs share the tax; `tax_allocated = cabinet_tax × (sku_operating_profit / Σ profitable_operating_profit)`, loss SKUs → 0). This keeps `net_profit_after_tax ≤ operating_profit` trivially and is the least misleading. **Product to confirm.** Whichever is chosen, the backend should expose the chosen `tax_allocated` (not ask the FE to recompute) so the allocation lives in one place.
 
@@ -80,6 +81,7 @@ The cabinet tax is one number; it must be split across SKUs. Candidate bases (ba
 ## Acceptance (FE side)
 
 When the backend ships per-SKU `net_profit_after_tax` (and `tax_allocated`):
+
 - FE adds a "Чистая прибыль" column to `SkuFinancialsTable` (and by-brand/category), reusing the existing `getNetProfit` rendering/coloring convention.
 - The finance-history page (`/analytics/finance-history`) net-profit row (already shipped, FR-1-adjacent) stays cabinet-level; once per-SKU lands, a follow-up can add a per-SKU net-profit drill-down.
 - Per-row net profit uses `getValueColorClass` (sign indicator, WCAG 1.4.1) — consistent with the operating-profit cell.

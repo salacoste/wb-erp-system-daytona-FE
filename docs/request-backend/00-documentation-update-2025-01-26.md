@@ -13,12 +13,14 @@ This document summarizes the documentation cleanup and updates performed to alig
 **Problem**: Old documentation used outdated enum values that don't match current implementation.
 
 **Old Values** (incorrect):
+
 - `"no_sales_last_week"`
 - `"no_sales_last_4_weeks"`
 - `"no_cogs"`
 - `"calculation_in_progress"`
 
 **New Values** (correct, matching implementation):
+
 - `"NO_SALES_IN_PERIOD"` - Product had no sales in last completed week (margin period)
 - `"COGS_NOT_ASSIGNED"` - Product has sales but no COGS assigned
 - `"NO_SALES_DATA"` - Product has never had any sales
@@ -26,6 +28,7 @@ This document summarizes the documentation cleanup and updates performed to alig
 - `null` - Margin calculated successfully OR COGS assigned but margin calculation in progress (Epic 20)
 
 **Files Updated**:
+
 - `src/products/dto/product-response.dto.ts` - Updated enum in DTO
 - `09-epic-18-cogs-management-api-backend.md` - Updated all examples and descriptions
 - `11-undefined-fields-in-cogs-assignment-response-backend.md` - Updated values
@@ -39,12 +42,14 @@ This document summarizes the documentation cleanup and updates performed to alig
 **Problem**: Multiple documents contained duplicate/conflicting information about margin data structure.
 
 **Solution**: Added references to Request #16 as the authoritative source for:
+
 - `missing_data_reason` values
 - Margin data structure
 - COGS history queries
 - Week uniqueness explanation
 
 **Files Updated**:
+
 - `README.md` - Added note about Request #16
 - `09-epic-18-cogs-management-api-backend.md` - Added header note
 - `11-undefined-fields-in-cogs-assignment-response.md` - Added header note
@@ -57,11 +62,13 @@ This document summarizes the documentation cleanup and updates performed to alig
 
 **Problem**: Old documentation mentioned "fallback: check last 4 weeks" for determining `missing_data_reason`, which was incorrect.
 
-**Correction**: 
+**Correction**:
+
 - Fallback logic exists for **finding analytics data** (tries last 4 weeks if current week has no data)
 - `missing_data_reason` is determined by **checking actual COGS existence** and **sales data**, not by fallback weeks
 
 **Files Updated**:
+
 - `09-epic-18-cogs-management-api-backend.md` - Updated "How it works" section to clarify fallback is for data availability, not for missing_data_reason
 
 ### 4. ✅ Clarified Epic 20 Behavior
@@ -69,10 +76,12 @@ This document summarizes the documentation cleanup and updates performed to alig
 **Problem**: Documentation mentioned `missing_data_reason: "calculation_in_progress"` which doesn't exist in implementation.
 
 **Correction**:
+
 - When COGS is assigned but margin not calculated yet → `missing_data_reason: null` (not a string)
 - Frontend should interpret `current_margin_pct: null` + `missing_data_reason: null` + `has_cogs: true` as "calculation in progress"
 
 **Files Updated**:
+
 - `14-automatic-margin-recalculation-on-cogs-update.md` - Removed `"calculation_in_progress"` example
 - `14-automatic-margin-recalculation-on-cogs-update-backend.md` - Clarified Epic 20 behavior
 
@@ -81,9 +90,11 @@ This document summarizes the documentation cleanup and updates performed to alig
 ## Files Modified
 
 ### Backend Code
+
 - ✅ `src/products/dto/product-response.dto.ts` - Updated enum values
 
 ### Documentation Files
+
 - ✅ `09-epic-18-cogs-management-api-backend.md`
 - ✅ `11-undefined-fields-in-cogs-assignment-response.md`
 - ✅ `11-undefined-fields-in-cogs-assignment-response-backend.md`
@@ -97,6 +108,7 @@ This document summarizes the documentation cleanup and updates performed to alig
 ## Verification
 
 All changes have been verified against:
+
 - ✅ Current backend implementation (`src/products/products.service.ts`)
 - ✅ Current DTO definitions (`src/products/dto/product-response.dto.ts`)
 - ✅ Request #16 documentation (authoritative source)
@@ -108,6 +120,7 @@ All changes have been verified against:
 **Primary Reference**: [Request #16: COGS History and Margin Data Structure Guide](./16-cogs-history-and-margin-data-structure.md)
 
 This document contains:
+
 - ✅ Complete list of valid `missing_data_reason` values
 - ✅ API endpoints for checking COGS history
 - ✅ Explanation of margin calculation and data structure
@@ -128,4 +141,3 @@ This document contains:
 - **Resolution date**: 2025-01-26
 - **Summary**: Documentation cleanup completed. Updated `missing_data_reason` enum values across 8 files to match actual backend implementation, added cross-references to Request #16 as authoritative source, clarified margin calculation logic and Epic 20 behavior. All changes verified against current backend code and DTOs.
 - **Remaining frontend action**: None. Frontend should use Request #16 as the primary reference for COGS/margin data structure.
-

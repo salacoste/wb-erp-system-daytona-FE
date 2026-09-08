@@ -61,6 +61,7 @@ The E2E mocks now encode this required contract.
 ## Requested fix (pick one — option A preferred)
 
 ### Option A — include `retryAfter` in the 503 JSON body (most robust)
+
 Add `retryAfter: N` (seconds) to the 503 error response body for the 3 acquiring endpoints. The
 response **body** is always readable cross-origin, so this needs no CORS change. **The frontend
 already parses body `retryAfter`** (`src/lib/api-client.ts:123-139`, added in Story 96.12-FE for
@@ -71,6 +72,7 @@ the FBS-export 429 path) — accepts both number and numeric-string. Example:
 ```
 
 ### Option B — expose the header via CORS
+
 Add `exposedHeaders: ['Retry-After']` to **both** `app.enableCors(...)` blocks in `src/main.ts`
 (dev + prod). Keeps the RFC-7231 `Retry-After` header as the source of truth; the frontend's
 existing header parse then works unchanged.
@@ -79,6 +81,7 @@ existing header parse then works unchanged.
 > and reuses the already-shipped body-fallback parse path.
 
 ## Affected endpoints
+
 - `GET /v1/analytics/acquiring/reports` (list)
 - `GET /v1/analytics/acquiring/reports/:id/detail` (report detail)
 - `GET /v1/analytics/acquiring/detail` (period detail)
@@ -87,6 +90,7 @@ existing header parse then works unchanged.
 same latent issue — e.g. 429 paths — but only the acquiring 503 banner is user-visible today.)
 
 ## Frontend status
+
 - No frontend code change needed — the parse logic is already correct for both header and body.
 - E2E mocks updated to encode the required contract (`e2e/acquiring.spec.ts`).
 - Banner gracefully degrades to `~60 сек` until the backend ships the fix; per the Defensive

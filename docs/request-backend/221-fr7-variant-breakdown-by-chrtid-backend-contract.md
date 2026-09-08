@@ -27,15 +27,15 @@ The variant dimension table (`product_variants`) is populated automatically by t
 
 Source table `product_variants` (Phase 0, populated by product-sync):
 
-| Column | Type | Meaning |
-|---|---|---|
-| `cabinetId` | UUID | Cabinet scope (strict isolation). |
-| `nmId` | BigInt | Parent product card (nomenclature). |
-| `chrtId` | Int | WB variant ID (= color × techSize combo). Unique per `(cabinetId, chrtId)`. |
-| `imtId` | BigInt? | Card linking ID. |
-| `techSize` | String? | Technical size (e.g. "42"). |
-| `colorName` | String? | Color (e.g. "Чёрный"). Card-level, applied to every variant of the card. |
-| `barcode` | String? | First non-empty barcode from WB `skus[]`. |
+| Column      | Type    | Meaning                                                                     |
+| ----------- | ------- | --------------------------------------------------------------------------- |
+| `cabinetId` | UUID    | Cabinet scope (strict isolation).                                           |
+| `nmId`      | BigInt  | Parent product card (nomenclature).                                         |
+| `chrtId`    | Int     | WB variant ID (= color × techSize combo). Unique per `(cabinetId, chrtId)`. |
+| `imtId`     | BigInt? | Card linking ID.                                                            |
+| `techSize`  | String? | Technical size (e.g. "42").                                                 |
+| `colorName` | String? | Color (e.g. "Чёрный"). Card-level, applied to every variant of the card.    |
+| `barcode`   | String? | First non-empty barcode from WB `skus[]`.                                   |
 
 A variant with **no** `product_variants` row is still returned by the endpoint with `metadata_pending=true` and `color_name`/`tech_size` null — never dropped (grouping is on `orders_fbs.chrt_id`, not on the metadata table).
 
@@ -44,24 +44,27 @@ A variant with **no** `product_variants` row is still returned by the endpoint w
 ## Response fields (each `data[]` item — `VariantAnalyticsDto`)
 
 ### Variant identity + FBS revenue/units
-| Field | Meaning | Notes |
-|---|---|---|
-| `chrt_id` | WB variant ID | number. Source: `orders_fbs.chrt_id`. |
-| `nm_id` | Parent nomenclature ID | number (BigInt-coerced). Drives the nm-level margin LEFT JOIN. |
-| `color_name` | Variant color | `string \| null`. Null when no metadata row. |
-| `tech_size` | Variant technical size | `string \| null`. Null when no metadata row. |
-| `metadata_pending` | No metadata row found | boolean. Row still returned (stale-name fallback). |
-| `revenue_net` | Net revenue for the variant in-week, ₽ | number. `SUM(orders_fbs.sale_price) GROUP BY chrt_id`. FBS-sourced. |
-| `total_units` | Units (orders) in-week | number. `COUNT(*)` per-order rows (qty=1 each). |
+
+| Field              | Meaning                                | Notes                                                               |
+| ------------------ | -------------------------------------- | ------------------------------------------------------------------- |
+| `chrt_id`          | WB variant ID                          | number. Source: `orders_fbs.chrt_id`.                               |
+| `nm_id`            | Parent nomenclature ID                 | number (BigInt-coerced). Drives the nm-level margin LEFT JOIN.      |
+| `color_name`       | Variant color                          | `string \| null`. Null when no metadata row.                        |
+| `tech_size`        | Variant technical size                 | `string \| null`. Null when no metadata row.                        |
+| `metadata_pending` | No metadata row found                  | boolean. Row still returned (stale-name fallback).                  |
+| `revenue_net`      | Net revenue for the variant in-week, ₽ | number. `SUM(orders_fbs.sale_price) GROUP BY chrt_id`. FBS-sourced. |
+| `total_units`      | Units (orders) in-week                 | number. `COUNT(*)` per-order rows (qty=1 each).                     |
 
 ### nm-level P&L fields (carried from the parent nm via `weekly_margin_fact`, `report_type='total'`)
+
 Identical to #219/#220 — `revenue_gross`, `profit`, `margin_pct`, `operating_profit`, `cogs`, `total_expenses`, `operating_margin_pct`, `has_revenue`. All `?: number \| null` — **null (never 0)** when no margin fact row exists for the nm in this week. Render `—` (anti-pattern #8).
 
 ### FR-7 Phase 2 — per-variant allocated profit/margin (APPROXIMATE / распределено)
-| Field | Meaning | Notes |
-|---|---|---|
+
+| Field                  | Meaning                                                                                        | Notes                                                                                                                                                                                                      |
+| ---------------------- | ---------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `profit_allocated_rub` | Variant profit allocated from the **nm-level** operating profit by the variant's revenue share | APPROXIMATE — `nm_operating_profit × (variant.revenue_net / Σ variant.revenue_net for the nm_id)`. Σ across variants ≈ nm `operating_profit`. Null when variant revenue ≤ 0 or nm has no operating profit. |
-| `margin_allocated_pct` | `profit_allocated_rub / variant revenue_net × 100` | APPROXIMATE. Null when variant revenue ≤ 0. |
+| `margin_allocated_pct` | `profit_allocated_rub / variant revenue_net × 100`                                             | APPROXIMATE. Null when variant revenue ≤ 0.                                                                                                                                                                |
 
 Allocation runs over the **FULL (unpaginated)** variant set BEFORE the cursor slice, so the per-nm revenue denominator is the whole cabinet (stable across pages). `nm_id=0` (cabinet-fee sentinel) and phantom nms are excluded from the denominator → their variants get null allocation.
 

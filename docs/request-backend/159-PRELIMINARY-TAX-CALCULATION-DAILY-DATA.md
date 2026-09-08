@@ -15,6 +15,7 @@
 Налоговые метрики (`TaxMetrics`) доступны **ТОЛЬКО** из endpoint `GET /v1/analytics/weekly/finance-summary?week=YYYY-Www` в поле `summary_total.tax`. Этот endpoint возвращает данные только для **завершённых** недель (присутствующих в `available-weeks`).
 
 **Результат**: Для текущей (незавершённой) недели пользователь **не видит налоговые данные** на дашборде, хотя:
+
 1. Налоговая система **настроена** в кабинете (`taxSystem`, `taxRate`, `vatPayer`, `vatRate`)
 2. Данные о заказах и рекламе **доступны в реальном времени**
 3. Пользователь ожидает видеть **предварительные** налоговые расчёты
@@ -22,6 +23,7 @@
 ### Бизнес-контекст
 
 Продавцы WB принимают оперативные решения на основе чистой прибыли после налогов. Без предварительного расчёта налогов за текущую неделю:
+
 - Невозможно оценить реальную маржинальность в реальном времени
 - Нельзя планировать налоговые платежи до закрытия недели
 - Дашборд показывает неполную картину (заказы/реклама есть, налоги — нет)
@@ -52,11 +54,11 @@
 }
 ```
 
-| taxSystem | Описание | taxRate |
-|-----------|----------|---------|
-| `null` | Не настроена | Игнорируется |
-| `"usn6"` | УСН 6% (по доходам) | Авто null |
-| `"usn15"` | УСН 15% (по прибыли) | Авто null |
+| taxSystem  | Описание                | taxRate            |
+| ---------- | ----------------------- | ------------------ |
+| `null`     | Не настроена            | Игнорируется       |
+| `"usn6"`   | УСН 6% (по доходам)     | Авто null          |
+| `"usn15"`  | УСН 15% (по прибыли)    | Авто null          |
 | `"manual"` | Пользовательская ставка | Обязателен (0-100) |
 
 НДС: `vatPayer: boolean`, `vatRate: 0 | 5 | 20 | 22 | null`
@@ -88,6 +90,7 @@ interface TaxMetrics {
 ### 2.3 Формулы расчёта (бекенд, Epic 72)
 
 **УСН 6% (по доходам)**:
+
 ```
 tax_base = sales_gross_total (выручка)
 tax_amount = tax_base × 6%
@@ -95,6 +98,7 @@ net_profit_after_tax = payout_total - tax_amount
 ```
 
 **УСН 15% (по прибыли)**:
+
 ```
 расходы = логистика + хранение + приёмка + штрафы + корректировки + COGS + реклама
 прибыль = выручка − расходы
@@ -105,12 +109,14 @@ is_minimum_rule = (минимальный_налог > стандартный_н
 ```
 
 **Manual (пользовательская ставка)**:
+
 ```
 tax_base = sales_gross_total (выручка)
 tax_amount = tax_base × (taxRate / 100)
 ```
 
 **НДС (Task-50)**:
+
 ```
 vat_output = sales_gross_total × vat_rate / (100 + vat_rate)
 revenue_excl_vat = sales_gross_total - vat_output
@@ -128,6 +134,7 @@ GET /v1/analytics/orders/trends?from=2026-02-24&to=2026-03-02&aggregation=day
 ```
 
 Возвращает **ежедневно**:
+
 ```json
 {
   "trends": [
@@ -156,6 +163,7 @@ GET /v1/analytics/advertising?from=2026-02-24&to=2026-03-02&include_daily=true
 ```
 
 Возвращает:
+
 ```json
 {
   "summary": {
@@ -175,6 +183,7 @@ GET /v1/analytics/orders/volume?from=2026-02-24&to=2026-03-02&include_cogs=true
 ```
 
 Возвращает `by_day_with_cogs`:
+
 ```json
 {
   "cogs_total": 180000.00,
@@ -191,6 +200,7 @@ GET /v1/fulfillment/summary?from=2026-02-24&to=2026-03-02
 ```
 
 Возвращает агрегат FBO+FBS:
+
 ```json
 {
   "total": {
@@ -218,12 +228,14 @@ GET /v1/fulfillment/summary?from=2026-02-24&to=2026-03-02
 **Endpoint**: `GET /v1/analytics/tax/preliminary`
 
 **Параметры**:
+
 ```
 from=2026-02-24    (начало периода)
 to=2026-03-02      (конец периода)
 ```
 
 **Логика**:
+
 1. Читает `taxSystem`, `taxRate`, `vatPayer`, `vatRate` из настроек кабинета
 2. Если `taxSystem === null` → возвращает `null` (налоги не настроены)
 3. Агрегирует доступные ежедневные данные за период
@@ -231,6 +243,7 @@ to=2026-03-02      (конец периода)
 5. Возвращает `TaxMetrics` с пометкой `preliminary: true`
 
 **Ответ**:
+
 ```json
 {
   "tax": {
@@ -265,6 +278,7 @@ to=2026-03-02      (конец периода)
 ### Вариант B: Расширить finance-summary для незавершённых недель
 
 Расширить `GET /v1/analytics/weekly/finance-summary?week=YYYY-Www` чтобы для незавершённых недель он:
+
 1. Не возвращал 404
 2. Возвращал `tax` объект на основе доступных daily данных
 3. Помечал `preliminary: true`
@@ -297,10 +311,12 @@ tax_amount = 2 700 000 × 6% = 162 000 ₽
 Самый сложный случай — нужна выручка И расходы.
 
 **Доступные расходы** (daily):
+
 - ✅ COGS: `orders/volume?include_cogs=true` → `cogs_total`
 - ✅ Реклама: `advertising?include_daily=true` → `summary.total_spend`
 
 **Недоступные расходы** (только из weekly report):
+
 - ❌ Логистика (`logistics_cost`)
 - ❌ Хранение (`storage_cost`)
 - ❌ Платная приёмка (`paid_acceptance_cost`)
@@ -372,6 +388,7 @@ vat_payable = vat_output - vat_input
 ```
 
 **Ожидаемый ответ**:
+
 ```json
 {
   "tax": {
@@ -404,6 +421,7 @@ vat_payable = vat_output - vat_input
 ```
 
 **Расчёт по шагам**:
+
 ```
 1. НДС:
    vat_output = 2 700 000 × 20 / 120 = 450 000
@@ -433,6 +451,7 @@ vat_payable = vat_output - vat_input
 ```
 
 **Ожидаемый ответ**:
+
 ```json
 {
   "tax": {
@@ -465,6 +484,7 @@ vat_payable = vat_output - vat_input
 ```
 
 **Расчёт**:
+
 ```
 расходы_известные = COGS(180 000) + реклама(85 000) = 265 000
 прибыль = 2 700 000 - 265 000 = 2 435 000
@@ -481,6 +501,7 @@ is_minimum_rule = false
 ### 7.1 Текущее состояние фронтенда
 
 После реализации «показа частичных данных для незавершённых недель»:
+
 - `isFinanceAvailable = false` для текущей недели
 - `summary = null` (принудительно)
 - `TaxWarningBanner` скрыт (`isFinanceAvailable && <TaxWarningBanner .../>`)
@@ -489,6 +510,7 @@ is_minimum_rule = false
 ### 7.2 После реализации этого запроса
 
 Фронтенд сможет:
+
 1. Вызывать `GET /v1/analytics/tax/preliminary?from=...&to=...` для незавершённых периодов
 2. Передавать `TaxMetrics` в существующие компоненты (`TaxCard`, `NetProfitCard`)
 3. Показывать бейдж «Предварительно» рядом с налоговыми метриками
@@ -497,13 +519,13 @@ is_minimum_rule = false
 
 ### 7.3 Файлы фронтенда (затронутые)
 
-| Файл | Изменение |
-|------|-----------|
-| `src/hooks/usePreliminaryTax.ts` | **NEW** — хук для предварительных налогов |
-| `src/lib/api/tax.ts` | **NEW** — API функция |
-| `src/types/finance-summary.ts` | Расширить TaxMetrics полями `preliminary`, `data_completeness` |
-| `src/components/custom/dashboard/TaxCard.tsx` | Показывать бейдж «Предварительно» |
-| `src/components/custom/dashboard/DashboardContent.tsx` | Убрать guard, подключить preliminary tax |
+| Файл                                                   | Изменение                                                      |
+| ------------------------------------------------------ | -------------------------------------------------------------- |
+| `src/hooks/usePreliminaryTax.ts`                       | **NEW** — хук для предварительных налогов                      |
+| `src/lib/api/tax.ts`                                   | **NEW** — API функция                                          |
+| `src/types/finance-summary.ts`                         | Расширить TaxMetrics полями `preliminary`, `data_completeness` |
+| `src/components/custom/dashboard/TaxCard.tsx`          | Показывать бейдж «Предварительно»                              |
+| `src/components/custom/dashboard/DashboardContent.tsx` | Убрать guard, подключить preliminary tax                       |
 
 ---
 
@@ -543,6 +565,6 @@ is_minimum_rule = false
 
 ## Change Log
 
-| Date | Author | Change |
-|------|--------|--------|
+| Date       | Author                 | Change                   |
+| ---------- | ---------------------- | ------------------------ |
 | 2026-03-01 | Frontend Team (Claude) | Initial document created |

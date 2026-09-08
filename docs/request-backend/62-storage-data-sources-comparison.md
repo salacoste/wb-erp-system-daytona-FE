@@ -11,9 +11,9 @@
 
 В системе есть **два источника данных** о стоимости хранения:
 
-| Источник | Таблица | Гранулярность | Назначение |
-|----------|---------|---------------|------------|
-| **Storage API** | `paid_storage_daily` | По SKU, по дню | Детальная аналитика по артикулам |
+| Источник           | Таблица                 | Гранулярность     | Назначение                         |
+| ------------------ | ----------------------- | ----------------- | ---------------------------------- |
+| **Storage API**    | `paid_storage_daily`    | По SKU, по дню    | Детальная аналитика по артикулам   |
 | **Weekly Reports** | `weekly_payout_summary` | По неделе (total) | Финансовая сводка для payout_total |
 
 **Ключевой вывод**: Оба источника показывают **одинаковые суммы** при корректном импорте (~100% match).
@@ -22,18 +22,19 @@
 
 ## Data Comparison Results (2025-12-16)
 
-| Неделя | Weekly Report (₽) | Storage API (₽) | Match % |
-|--------|-------------------|-----------------|---------|
-| W49 | 1,923.34 | 1,923.38 | **100.00%** ✅ |
-| W48 | 1,849.95 | 1,850.21 | **100.01%** ✅ |
-| W47 | 1,763.35 | 1,763.75 | **100.02%** ✅ |
-| W46 | 1,849.69 | 1,849.85 | **100.01%** ✅ |
+| Неделя | Weekly Report (₽) | Storage API (₽) | Match %        |
+| ------ | ----------------- | --------------- | -------------- |
+| W49    | 1,923.34          | 1,923.38        | **100.00%** ✅ |
+| W48    | 1,849.95          | 1,850.21        | **100.01%** ✅ |
+| W47    | 1,763.35          | 1,763.75        | **100.02%** ✅ |
+| W46    | 1,849.69          | 1,849.85        | **100.01%** ✅ |
 
 ---
 
 ## Source 1: Storage API (Detailed per-SKU)
 
 ### Когда использовать
+
 - Анализ затрат на хранение **по каждому товару**
 - Топ товаров по стоимости хранения
 - Тренды расходов по неделям для конкретного SKU
@@ -42,6 +43,7 @@
 ### API Endpoints
 
 #### 1. Хранение по SKU
+
 ```http
 GET /v1/analytics/storage/by-sku?weekStart=2025-W46&weekEnd=2025-W49
 Authorization: Bearer <token>
@@ -49,6 +51,7 @@ X-Cabinet-Id: <cabinet_uuid>
 ```
 
 **Response**:
+
 ```json
 {
   "period": {
@@ -78,11 +81,13 @@ X-Cabinet-Id: <cabinet_uuid>
 ```
 
 #### 2. Топ потребителей хранения
+
 ```http
 GET /v1/analytics/storage/top-consumers?weekStart=2025-W49&weekEnd=2025-W49&limit=10&include_revenue=true
 ```
 
 **Response**:
+
 ```json
 {
   "period": { "from": "2025-W49", "to": "2025-W49" },
@@ -102,11 +107,13 @@ GET /v1/analytics/storage/top-consumers?weekStart=2025-W49&weekEnd=2025-W49&limi
 ```
 
 #### 3. Тренды хранения
+
 ```http
 GET /v1/analytics/storage/trends?weekStart=2025-W46&weekEnd=2025-W49
 ```
 
 **Response**:
+
 ```json
 {
   "period": { "from": "2025-W46", "to": "2025-W49" },
@@ -128,11 +135,13 @@ GET /v1/analytics/storage/trends?weekStart=2025-W46&weekEnd=2025-W49
 ```
 
 #### 4. Хранение в списке товаров
+
 ```http
 GET /v1/products?include_storage=true&limit=25
 ```
 
 **Response** (поля storage):
+
 ```json
 {
   "products": [
@@ -152,6 +161,7 @@ GET /v1/products?include_storage=true&limit=25
 ## Source 2: Weekly Reports (Financial Summary)
 
 ### Когда использовать
+
 - Финансовая сводка за неделю
 - Расчёт `payout_total` (к перечислению)
 - Сверка с WB Dashboard
@@ -160,6 +170,7 @@ GET /v1/products?include_storage=true&limit=25
 ### API Endpoints
 
 #### 1. Недельная финансовая сводка
+
 ```http
 GET /v1/analytics/weekly?week=2025-W49
 Authorization: Bearer <token>
@@ -167,6 +178,7 @@ X-Cabinet-Id: <cabinet_uuid>
 ```
 
 **Response**:
+
 ```json
 {
   "week": "2025-W49",
@@ -184,11 +196,13 @@ X-Cabinet-Id: <cabinet_uuid>
 ```
 
 #### 2. Список доступных недель
+
 ```http
 GET /v1/analytics/weekly/available-weeks
 ```
 
 **Response**:
+
 ```json
 {
   "weeks": [
@@ -200,11 +214,13 @@ GET /v1/analytics/weekly/available-weeks
 ```
 
 #### 3. Тренд хранения из Weekly Reports
+
 ```http
 GET /v1/analytics/weekly/payout-total?weekStart=2025-W46&weekEnd=2025-W49
 ```
 
 **Response** (поле storage_cost в каждой неделе):
+
 ```json
 {
   "data": [
@@ -220,15 +236,15 @@ GET /v1/analytics/weekly/payout-total?weekStart=2025-W46&weekEnd=2025-W49
 
 ## Comparison: When to Use Which Source
 
-| Use Case | Recommended Source | Why |
-|----------|-------------------|-----|
-| **Общие расходы на хранение за неделю** | Weekly Reports | Быстрее, уже агрегировано |
-| **Расчёт payout_total** | Weekly Reports | Это официальный источник для финансов |
-| **Какой SKU дороже всего хранить?** | Storage API | Есть детализация по артикулам |
-| **Тренд хранения конкретного товара** | Storage API | Есть фильтр по nm_id |
-| **Сверка с WB Dashboard** | Weekly Reports | Данные идентичны WB |
-| **Оптимизация ассортимента** | Storage API | Нужна детализация |
-| **Колонка "Хранение" в таблице товаров** | Storage API (`include_storage=true`) | Per-SKU данные |
+| Use Case                                 | Recommended Source                   | Why                                   |
+| ---------------------------------------- | ------------------------------------ | ------------------------------------- |
+| **Общие расходы на хранение за неделю**  | Weekly Reports                       | Быстрее, уже агрегировано             |
+| **Расчёт payout_total**                  | Weekly Reports                       | Это официальный источник для финансов |
+| **Какой SKU дороже всего хранить?**      | Storage API                          | Есть детализация по артикулам         |
+| **Тренд хранения конкретного товара**    | Storage API                          | Есть фильтр по nm_id                  |
+| **Сверка с WB Dashboard**                | Weekly Reports                       | Данные идентичны WB                   |
+| **Оптимизация ассортимента**             | Storage API                          | Нужна детализация                     |
+| **Колонка "Хранение" в таблице товаров** | Storage API (`include_storage=true`) | Per-SKU данные                        |
 
 ---
 
@@ -528,11 +544,13 @@ function ProductsTable() {
 ## Data Availability
 
 ### Storage API (paid_storage_daily)
+
 - **Доступные недели**: W46-W50 (на 2025-12-16)
 - **Ограничение WB API**: Данные доступны только за ~2-3 последние недели
 - **Автоимпорт**: Каждый день в 06:00 MSK (smart import)
 
 ### Weekly Reports (weekly_payout_summary)
+
 - **Доступные недели**: W36-W49+ (полная история)
 - **Источник**: Excel-отчёты WB или WB SDK
 - **Автоимпорт**: По вторникам в 08:00 MSK
@@ -566,9 +584,9 @@ payout_total = to_pay_goods
 
 ## Change Log
 
-| Date | Author | Change |
-|------|--------|--------|
-| 2025-12-16 | Backend Team | Initial documentation |
+| Date       | Author       | Change                                        |
+| ---------- | ------------ | --------------------------------------------- |
+| 2025-12-16 | Backend Team | Initial documentation                         |
 | 2025-12-16 | Backend Team | Added W46-W49 comparison results (100% match) |
 
 ## Backend Team Response

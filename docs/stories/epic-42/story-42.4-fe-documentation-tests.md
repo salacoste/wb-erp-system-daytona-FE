@@ -26,6 +26,7 @@ After TypeScript types update (Story 42.1-FE), documentation and test files need
 ## Acceptance Criteria
 
 ### AC1: README Updated
+
 ```gherkin
 Given the README.md file
 When I review the Manual Margin Recalculation section
@@ -34,6 +35,7 @@ And not mention deprecated 'enrich_cogs'
 ```
 
 ### AC2: API Integration Guide Updated
+
 ```gherkin
 Given docs/api-integration-guide.md
 When I review task-related sections
@@ -42,6 +44,7 @@ And deprecated types marked accordingly
 ```
 
 ### AC3: Request #94 Cross-Referenced
+
 ```gherkin
 Given all task-related documentation
 When I search for task_type references
@@ -49,6 +52,7 @@ Then Request #94 should be linked as source of truth
 ```
 
 ### AC4: Tests Updated
+
 ```gherkin
 Given existing tests for margin recalculation
 When tests reference task types
@@ -63,6 +67,7 @@ And not use deprecated 'enrich_cogs'
 ### Validation Status (2026-01-29)
 
 **✅ Verified**: Current implementation already uses correct task type.
+
 - `useManualMarginRecalculation.ts` line 49: `task_type: 'recalculate_weekly_margin'` ✅
 - No tests reference `enrich_cogs` ✅
 - README examples already use correct task type ✅
@@ -93,6 +98,7 @@ And not use deprecated 'enrich_cogs'
 **Status**: No task section currently exists. Add after line 710 (after appendix).
 
 Add new section:
+
 ```markdown
 ---
 
@@ -152,6 +158,7 @@ Backend HTTP test file: `09-tasks.http`
 #### 4. `src/types/api.ts` - Mark Deprecated (Story 42.1-FE Dependency)
 
 **Status**: Story 42.1-FE will handle this. `enrich_cogs` on line 43 will be:
+
 - Kept for backwards compatibility
 - Marked with JSDoc `@deprecated` comment
 
@@ -160,6 +167,7 @@ Backend HTTP test file: `09-tasks.http`
 #### 5. Test Files - Verified
 
 **Status**: ✅ No test files reference `enrich_cogs` or task types.
+
 - Searched all 83 `*.test.ts` files
 - No changes needed
 
@@ -168,6 +176,7 @@ Backend HTTP test file: `09-tasks.http`
 ## Checklist
 
 ### Documentation Updates
+
 - [ ] README.md - Task Types Reference table added (~line 1310)
 - [ ] README.md - "Recent Updates" section updated with Epic 42-FE
 - [ ] api-integration-guide.md - Task Queue API section added (after line 710)
@@ -175,11 +184,13 @@ Backend HTTP test file: `09-tasks.http`
 - [ ] Request #94 cross-referenced in README
 
 ### Code Verification (Pre-validated ✅)
+
 - [x] `useManualMarginRecalculation.ts` uses correct task type ✅
 - [ ] Run `npm test` - all tests pass
 - [ ] Run `npm run type-check` - no type errors
 
 ### Cross-References
+
 - [x] Epic doc links to all stories ✅
 - [x] Stories link to Request #94 ✅
 - [ ] README links to Request #94
@@ -221,5 +232,5 @@ Backend HTTP test file: `09-tasks.http`
 
 ---
 
-*Created: 2026-01-06*
-*Validated: 2026-01-29*
+_Created: 2026-01-06_
+_Validated: 2026-01-29_

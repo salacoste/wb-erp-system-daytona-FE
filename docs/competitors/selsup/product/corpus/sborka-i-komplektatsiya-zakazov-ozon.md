@@ -15,7 +15,7 @@ chars: 14751
 
 В этой статье:
 
-- 
+-
 - <a href="#otpravit-novye-zakazy-na-sborku" rel="nofollow">Отправить новые заказы на сборку</a>
 - <a href="#proverit-chto-vse-etiketki-zagruzheny" rel="nofollow">Проверить, что все этикетки загружены</a>
 - <a href="#proverka-markirovki-po-gtin" rel="nofollow">Проверка маркировки по GTIN</a>

@@ -19,7 +19,7 @@ chars: 9057
 
 В этой статье:
 
-- 
+-
 - <a href="#trebovaniya-k-upakovke-dlya-otgruzki-v-pvz" rel="nofollow">Требования к упаковке для отгрузки в ПВЗ</a>
 - <a href="#chek-list-upakovki-tovarov-dlya-modeli-marketplejs-fbs" rel="nofollow">Чек-лист упаковки товаров для модели «Маркетплейс» (FBS)</a>
 - <a href="#otgruzka-postavok-po-modeli-marketplejs-v-pvz" rel="nofollow">Отгрузка поставок по модели «Маркетплейс» в ПВЗ</a>

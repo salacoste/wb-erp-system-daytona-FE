@@ -87,12 +87,14 @@ pm2 info wb-repricer-frontend
 ## 🐛 Quick Troubleshooting
 
 ### Port 3100 already in use
+
 ```bash
 lsof -i :3100
 kill -9 <PID>
 ```
 
 ### Build fails
+
 ```bash
 npm run type-check
 npm run lint
@@ -102,6 +104,7 @@ npm run build
 ```
 
 ### Clear cache & rebuild
+
 ```bash
 pm2 stop wb-repricer-frontend
 rm -rf .next
@@ -110,6 +113,7 @@ pm2 start wb-repricer-frontend
 ```
 
 ### Backend 401 errors
+
 ```bash
 # Restart backend PM2 process first
 # Then clear browser localStorage:
@@ -117,6 +121,7 @@ pm2 start wb-repricer-frontend
 ```
 
 ### High memory usage
+
 ```bash
 pm2 restart wb-repricer-frontend
 # Or add memory limit:
@@ -157,6 +162,7 @@ pm2 logs wb-repricer-frontend
 ## 📋 Quick Validation Checklist
 
 После деплоя проверьте:
+
 - [ ] `pm2 list` показывает "online" статус
 - [ ] `pm2 logs` без ошибок
 - [ ] Login работает (`http://localhost:3100/login`)

@@ -6,6 +6,7 @@
 **Status**: 📋 Ready for Dev
 **Created**: 2026-01-27
 **Depends On**:
+
 - Story 44.2 ✅ (Input Form Component)
 - Story 44.4 ✅ (Page Layout & Integration)
 - Story 44.27 ✅ (Warehouse Integration)
@@ -19,6 +20,7 @@
 **So that** I don't have to re-enter them every time I open the page.
 
 **Non-goals**:
+
 - Multiple presets (only one preset per user)
 - Server-side preset storage
 - Sharing presets between users
@@ -317,16 +319,16 @@ Button States:
 
 ## Invariants & Edge Cases
 
-| Scenario | Expected Behavior |
-|----------|-------------------|
-| No preset exists | Load default values, hide "Очистить пресет" button |
-| Preset exists | Load preset values, show indicator, show clear button |
-| Preset version mismatch | Discard preset, show warning, load defaults |
-| Corrupted JSON in localStorage | Remove corrupted data, load defaults |
-| localStorage unavailable | Fail silently, disable preset features |
-| Form invalid | Disable "Сохранить пресет" button |
-| Save while preset exists | Overwrite existing preset |
-| Browser private mode | localStorage may not persist, handle gracefully |
+| Scenario                       | Expected Behavior                                     |
+| ------------------------------ | ----------------------------------------------------- |
+| No preset exists               | Load default values, hide "Очистить пресет" button    |
+| Preset exists                  | Load preset values, show indicator, show clear button |
+| Preset version mismatch        | Discard preset, show warning, load defaults           |
+| Corrupted JSON in localStorage | Remove corrupted data, load defaults                  |
+| localStorage unavailable       | Fail silently, disable preset features                |
+| Form invalid                   | Disable "Сохранить пресет" button                     |
+| Save while preset exists       | Overwrite existing preset                             |
+| Browser private mode           | localStorage may not persist, handle gracefully       |
 
 ---
 
@@ -334,31 +336,31 @@ Button States:
 
 ### Unit Tests
 
-| Test | Input | Expected |
-|------|-------|----------|
-| loadPreset - no preset | localStorage empty | Returns null |
-| loadPreset - valid preset | Valid preset in storage | Returns preset data |
-| loadPreset - wrong version | Version 0 preset | Returns null, shows warning |
-| loadPreset - corrupted JSON | Invalid JSON | Returns null, clears storage |
-| savePreset - success | Valid form values | Saves to localStorage, toast shown |
-| clearPreset - success | Preset exists | Removes from localStorage, toast shown |
+| Test                        | Input                   | Expected                               |
+| --------------------------- | ----------------------- | -------------------------------------- |
+| loadPreset - no preset      | localStorage empty      | Returns null                           |
+| loadPreset - valid preset   | Valid preset in storage | Returns preset data                    |
+| loadPreset - wrong version  | Version 0 preset        | Returns null, shows warning            |
+| loadPreset - corrupted JSON | Invalid JSON            | Returns null, clears storage           |
+| savePreset - success        | Valid form values       | Saves to localStorage, toast shown     |
+| clearPreset - success       | Preset exists           | Removes from localStorage, toast shown |
 
 ### Integration Tests
 
-| Test | Scenario | Expected |
-|------|----------|----------|
-| Save and reload | Save preset, reload page | Form populated with saved values |
-| Clear and reload | Clear preset, reload page | Form has default values |
-| Indicator auto-hide | Load preset | Indicator shows, hides after 3s |
-| Button visibility | No preset | "Очистить пресет" hidden |
-| Button visibility | Preset exists | "Очистить пресет" visible |
+| Test                | Scenario                  | Expected                         |
+| ------------------- | ------------------------- | -------------------------------- |
+| Save and reload     | Save preset, reload page  | Form populated with saved values |
+| Clear and reload    | Clear preset, reload page | Form has default values          |
+| Indicator auto-hide | Load preset               | Indicator shows, hides after 3s  |
+| Button visibility   | No preset                 | "Очистить пресет" hidden         |
+| Button visibility   | Preset exists             | "Очистить пресет" visible        |
 
 ### E2E Tests
 
-| Test | Flow | Verification |
-|------|------|--------------|
-| Full save flow | Fill form, save, reload | Values persisted |
-| Full clear flow | Save, clear, reload | Default values |
+| Test                      | Flow                        | Verification     |
+| ------------------------- | --------------------------- | ---------------- |
+| Full save flow            | Fill form, save, reload     | Values persisted |
+| Full clear flow           | Save, clear, reload         | Default values   |
 | Cross-session persistence | Save, close browser, reopen | Values persisted |
 
 ---

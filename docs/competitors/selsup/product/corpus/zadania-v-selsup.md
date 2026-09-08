@@ -13,7 +13,7 @@ chars: 6585
 
 В этой статье:
 
-- 
+-
 - <a href="#chto-takoe-zadaniya-v-selsup" rel="nofollow">Что такое задания в SelSup</a>
 - <a href="#komplektatsiya-zakazov" rel="nofollow">Комплектация заказов</a>
 - <a href="#sborka-zakazov" rel="nofollow">Сборка заказов</a>

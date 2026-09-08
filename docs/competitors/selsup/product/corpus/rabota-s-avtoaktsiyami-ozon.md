@@ -9,7 +9,7 @@ chars: 4001
 
 В этой статье:
 
-- 
+-
 - <a href="#mehanika-funktsii-kak-eto-rabotaet" rel="nofollow">Механика функции. Как это работает?</a>
 - <a href="#kak-aktivirovat-dannuyu-funktsiyu" rel="nofollow">Как активировать данную функцию</a>
 - <a href="#kak-ne-vyvodit-opredelyonnye-tovary-iz-avtoaktsii" rel="nofollow">Как не выводить определённые товары из автоакции</a>
@@ -40,6 +40,7 @@ SelSup регулярно взаимодействует с платформой
 ## Как активировать данную функцию
 
 Чтобы активировать функцию **Защита от автоакций Ozon**:\
+
 1. Перейдите в [настройки SelSup](https://selsup.ru/application/settings/prices) (значок синей шестеренки в верхней панели управления), вкладка **Цены и Акции**, раздел **Акции.** Включите переключатель **Защита от автоакций Ozon** и нажмите **Сохранить. **
 
 ![](../../out/selsup.ru/_kage/selsup.ru/wp-content/webp-express/webp-images/uploads/2024/09/screenshot_142.png.webp)

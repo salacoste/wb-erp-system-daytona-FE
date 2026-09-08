@@ -10,47 +10,54 @@
 ## 1. Overview
 
 ### Purpose
+
 Enhanced Price Calculator that uses real WB tariff data (warehouses, commissions, logistics coefficients) to calculate optimal selling price based on target margin.
 
 ### Current State vs New Requirements
 
-| Aspect | Current (Epic 44 v1) | New (v2) |
-|--------|---------------------|----------|
-| Logistics | Manual input (₽) | Auto-calculated from dimensions + warehouse |
-| Commission | Manual override or default | Auto-fetched by category + fulfillment type |
-| Warehouse | Not used | Dropdown selection affects coefficients |
-| Fulfillment | Not considered | FBO/FBS selection affects all calculations |
-| Acceptance | Not included | Coefficient-based calculation (FBO only) |
-| Tax | VAT only (0/10/20%) | Tax rate + type (income vs profit) |
-| SPP | Not included | Post-calculation display |
+| Aspect      | Current (Epic 44 v1)       | New (v2)                                    |
+| ----------- | -------------------------- | ------------------------------------------- |
+| Logistics   | Manual input (₽)           | Auto-calculated from dimensions + warehouse |
+| Commission  | Manual override or default | Auto-fetched by category + fulfillment type |
+| Warehouse   | Not used                   | Dropdown selection affects coefficients     |
+| Fulfillment | Not considered             | FBO/FBS selection affects all calculations  |
+| Acceptance  | Not included               | Coefficient-based calculation (FBO only)    |
+| Tax         | VAT only (0/10/20%)        | Tax rate + type (income vs profit)          |
+| SPP         | Not included               | Post-calculation display                    |
 
 ---
 
 ## 2. User Flow
 
 ### Step 1: Тип исполнения (Fulfillment Type)
+
 **Field**: `fulfillment_type`
 **Type**: Radio buttons / SegmentedControl
 **Options**:
+
 - `FBO` - Fulfillment by WB (товар на складе WB)
 - `FBS` - Fulfillment by Seller (товар у продавца)
 
 **Business Impact**:
+
 - Commission rates differ (FBS usually +3-4% higher)
 - Storage only relevant for FBO
 - Acceptance costs only for FBO
 
 ### Step 2: Категория товара (Product Category)
+
 **Field**: `category_id`
 **Type**: Searchable Select (Combobox)
 **Source**: `GET /v1/tariffs/commissions`
 
 **UI Requirements**:
+
 - Search/filter (7346 categories!)
 - Show `parentName` → `subjectName`
 - Display commission preview on selection
 
 **API Response Structure**:
+
 ```typescript
 {
   parentID: number      // Use this as category_id
@@ -62,9 +69,11 @@ Enhanced Price Calculator that uses real WB tariff data (warehouses, commissions
 ```
 
 ### Step 3: Тип упаковки (Box Type) - FBO Only [NEW]
+
 **Field**: `box_type`
 **Type**: Radio buttons / SegmentedControl
 **Options**:
+
 - `box` - Короб (standard box delivery)
 - `pallet` - Монопаллета (pallet delivery)
 
@@ -72,17 +81,21 @@ Enhanced Price Calculator that uses real WB tariff data (warehouses, commissions
 **Condition**: Only shown when `fulfillment_type === 'FBO'`
 
 **Business Impact**:
+
 - Different tariff structures: boxes use per-liter rates, pallets use fixed rates
 - Affects acceptance cost calculation significantly
 - API parameter: `boxTypeId=2` (boxes) or `boxTypeId=5` (pallets)
 
 ### Step 4: Габариты товара (Product Dimensions)
+
 **Fields**:
+
 - `length_cm`: number (длина)
 - `width_cm`: number (ширина)
 - `height_cm`: number (высота)
 
 **Auto-calculated**:
+
 ```typescript
 volume_liters = (length_cm * width_cm * height_cm) / 1000
 ```
@@ -90,34 +103,40 @@ volume_liters = (length_cm * width_cm * height_cm) / 1000
 **Validation**: All > 0
 
 ### Step 4.5: Вес товара (Product Weight) [NEW]
+
 **Field**: `weight_exceeds_25kg`
 **Type**: Checkbox
 **Label**: "Вес превышает 25 кг"
 **Default**: `false`
 
 **Business Impact**:
+
 - Heavy items (>25kg) incur logistics surcharge (typically 1.5x multiplier)
 - Affects both forward and reverse logistics costs
 - Critical for furniture, appliances, sports equipment
 
 **Calculation Impact**:
+
 ```typescript
 const weight_multiplier = weight_exceeds_25kg ? 1.5 : 1.0
 ```
 
 ### Step 5: Себестоимость (Cost of Goods Sold)
+
 **Field**: `cogs_rub`
 **Type**: Number input with ₽ suffix
 **Validation**: > 0
 **Label**: Себестоимость (COGS)
 
 ### Step 6: Процент выкупа (Buyback Percentage)
+
 **Field**: `buyback_pct`
 **Type**: Slider + input (10-100%)
 **Default**: 98%
 **Label**: Процент выкупа
 
 **Business Logic**:
+
 ```typescript
 return_rate_pct = 100 - buyback_pct
 // Returned items still incur delivery costs
@@ -125,6 +144,7 @@ effective_logistics = forward_logistics + (return_logistics * return_rate_pct / 
 ```
 
 ### Step 7: Эквайринг (Acquiring Commission)
+
 **Field**: `acquiring_pct`
 **Type**: Number input
 **Default**: 2%
@@ -132,6 +152,7 @@ effective_logistics = forward_logistics + (return_logistics * return_rate_pct / 
 **Label**: Эквайринг %
 
 ### Step 8: Хранение (Storage Cost) - FBO Only
+
 **Field**: `storage_rub`
 **Type**: Number input with ₽ suffix
 **Default**: 0
@@ -141,6 +162,7 @@ effective_logistics = forward_logistics + (return_logistics * return_rate_pct / 
 **Note**: For FBS, items are shipped on demand - no storage fees.
 
 ### Step 8.5: Оборачиваемость (Turnover Days) - FBO Only [NEW]
+
 **Field**: `turnover_days`
 **Type**: Number input
 **Default**: `20`
@@ -149,11 +171,13 @@ effective_logistics = forward_logistics + (return_logistics * return_rate_pct / 
 **Label**: Оборачиваемость, дней
 
 **Business Impact**:
+
 - Converts daily storage rate to total storage cost per unit sold
 - Critical for slow-moving goods (cosmetics, seasonal items)
 - Default 20 days reflects typical WB inventory turnover
 
 **Calculation**:
+
 ```typescript
 // Auto-calculate total storage from daily rate
 const storage_total_rub = storage_rub * turnover_days
@@ -163,7 +187,9 @@ const storage_total_rub = storage_per_day * turnover_days
 ```
 
 ### Step 9: Тип приёмки (Acceptance Type) - FBO Only
+
 **Fields**:
+
 - `acceptance_type`: 'free' | 'paid'
 - `acceptance_coefficient`: number (if paid)
 
@@ -172,20 +198,23 @@ const storage_total_rub = storage_per_day * turnover_days
 **Label**: Тип приёмки
 
 **Options**:
+
 - `free` - Бесплатная приёмка (coefficient = 0)
 - `paid` - Платная приёмка (enter coefficient)
 
 **Coefficient Source**: `GET /v1/tariffs/acceptance/coefficients?warehouseId={id}`
 
 **Interpretation**:
-| Value | Meaning | UI |
-|-------|---------|-----|
-| -1 | Недоступно | Disabled, show warning |
-| 0 | Бесплатно | Badge "Бесплатно" |
-| 1 | Стандартная | Normal display |
-| >1 | Повышенная | Warning badge "×1.5" |
+
+| Value | Meaning     | UI                     |
+| ----- | ----------- | ---------------------- |
+| -1    | Недоступно  | Disabled, show warning |
+| 0     | Бесплатно   | Badge "Бесплатно"      |
+| 1     | Стандартная | Normal display         |
+| >1    | Повышенная  | Warning badge "×1.5"   |
 
 ### Step 10: Склад (Warehouse Selection)
+
 **Field**: `warehouse_id`
 **Type**: Searchable Select
 **Source**: `GET /v1/tariffs/warehouses`
@@ -194,6 +223,7 @@ const storage_total_rub = storage_per_day * turnover_days
 **Relevant for BOTH FBO and FBS** - affects logistics coefficient.
 
 **On Selection - Auto-fill**:
+
 ```typescript
 // From GET /v1/tariffs/acceptance/coefficients?warehouseId={id}
 logistics_coefficient = coefficients.delivery.coefficient
@@ -203,6 +233,7 @@ localization_index = coefficients.delivery.coefficient  // Auto-set (can overrid
 ```
 
 ### Step 10.5: Индекс локализации / КТР (Localization Index) [NEW]
+
 **Field**: `localization_index` (alias: `ktr_coefficient`)
 **Type**: Number input
 **Default**: `1.0` (auto-filled from warehouse coefficient)
@@ -210,22 +241,27 @@ localization_index = coefficients.delivery.coefficient  // Auto-set (can overrid
 **Label**: Индекс локализации (КТР)
 
 **Business Impact**:
+
 - Regional delivery cost multiplier based on distance from warehouse to buyer
 - Significantly affects remote regions (Siberia, Far East: 1.5-2.5x)
 - Auto-filled from warehouse selection, but can be manually overridden
 
 **Source Options**:
+
 1. **Auto-fill**: From `delivery.coefficient` in `/v1/tariffs/acceptance/coefficients`
 2. **Manual override**: For specific regional targeting or custom scenarios
 
 **Calculation Impact**:
+
 ```typescript
 // Applied to logistics costs
 const logistics_adjusted = base_logistics * localization_index
 ```
 
 ### Step 11: Налоги (Tax Configuration)
+
 **Fields**:
+
 - `tax_rate_pct`: number (0-50%)
 - `tax_type`: 'income' | 'profit'
 
@@ -233,36 +269,42 @@ const logistics_adjusted = base_logistics * localization_index
 **Label**: Ставка налога / Тип налога
 
 **Tax Types**:
+
 - `income` - Налог с выручки (% от общей суммы продаж)
 - `profit` - Налог с прибыли (% от прибыли после расходов)
 
 **Common Values**:
-| Regime | Rate | Type |
-|--------|------|------|
-| УСН Доходы | 6% | income |
-| УСН Доходы-Расходы | 15% | profit |
-| Самозанятый | 6% | income |
-| ИП на ОСН | 13% | profit |
-| ООО на ОСН | 20% | profit |
+
+| Regime             | Rate | Type   |
+| ------------------ | ---- | ------ |
+| УСН Доходы         | 6%   | income |
+| УСН Доходы-Расходы | 15%  | profit |
+| Самозанятый        | 6%   | income |
+| ИП на ОСН          | 13%  | profit |
+| ООО на ОСН         | 20%  | profit |
 
 ### Step 12: Целевая маржа (Target Margin)
+
 **Field**: `target_margin_pct`
 **Type**: Slider + input (0-50%)
 **Default**: 20%
 **Label**: Целевая маржа %
 
 ### Step 13: DRR (Доля рекламных расходов)
+
 **Field**: `drr_pct`
 **Type**: Number input (0-30%)
 **Default**: 5%
 **Label**: DRR (Доля рекламных расходов)
 
 **Business Logic**:
+
 - DRR = процент от розничной цены на рекламу
 - Это **переменный расход** (в отличие от фиксированных: COGS, логистика)
 - Влияет на финальную маржинальную прибыль
 
 **Calculation Impact**:
+
 ```typescript
 // DRR вычитается из маржи как % от цены
 advertising_cost = recommended_price * (drr_pct / 100)
@@ -271,16 +313,19 @@ net_margin = gross_margin - advertising_cost
 
 **UI Recommendation**:
 Показывать два уровня расчёта:
+
 1. **Минимальная цена** (только фиксированные расходы) — "пол" цены
 2. **Рекомендуемая цена** (с учётом DRR и целевой маржи) — финальная цена
 
 ### Step 14: СПП (SPP - Permanent Buyer Discount)
+
 **Field**: `spp_pct`
 **Type**: Number input (0-30%)
 **Default**: 0%
 **Label**: СПП (Скидка постоянного покупателя)
 
 **Business Logic**:
+
 - WB provides this discount at their expense
 - Applied AFTER price calculation to show customer-facing price
 - Does NOT affect seller's revenue
@@ -296,6 +341,7 @@ customer_price = recommended_price * (1 - spp_pct / 100)
 **Fields**:
 
 #### 15.1 Логистика до МП (Logistics to Marketplace)
+
 - **Field**: `logistics_to_mp_rub`
 - **Type**: Number input with ₽ suffix
 - **Default**: `0`
@@ -303,6 +349,7 @@ customer_price = recommended_price * (1 - spp_pct / 100)
 - **Note**: Seller's cost to deliver goods TO WB warehouse (not WB logistics)
 
 #### 15.2 Упаковка (Packaging Cost)
+
 - **Field**: `packaging_rub`
 - **Type**: Number input with ₽ suffix
 - **Default**: `0`
@@ -310,6 +357,7 @@ customer_price = recommended_price * (1 - spp_pct / 100)
 - **Note**: Cost of packaging materials per unit
 
 #### 15.3 Тарифные опции WB (WB Tariff Options)
+
 - **Field**: `wb_tariff_options_pct`
 - **Type**: Number input (0-20%)
 - **Default**: `0`
@@ -317,6 +365,7 @@ customer_price = recommended_price * (1 - spp_pct / 100)
 - **Note**: Additional WB services (premium placement, etc.)
 
 #### 15.4 Прочие расходы (Other Expenses)
+
 - **Field**: `other_expenses_rub`
 - **Type**: Number input with ₽ suffix
 - **Default**: `0`
@@ -335,6 +384,7 @@ customer_price = recommended_price * (1 - spp_pct / 100)
 **Note**: For ROI calculation, not required for price calculation.
 
 **Output Calculation**:
+
 ```typescript
 // Requires expected_units input for ROI calculation
 const roi_pct = (margin_rub * expected_units) / total_investment_rub * 100
@@ -346,51 +396,51 @@ const roi_pct = (margin_rub * expected_units) / total_investment_rub * 100
 
 ### Core Fields (Existing)
 
-| Field | Type | Required | Default | Validation | FBO | FBS |
-|-------|------|----------|---------|------------|-----|-----|
-| fulfillment_type | select | ✅ | FBO | enum | ✅ | ✅ |
-| category_id | combobox | ✅ | - | > 0 | ✅ | ✅ |
-| length_cm | number | ✅ | - | > 0 | ✅ | ✅ |
-| width_cm | number | ✅ | - | > 0 | ✅ | ✅ |
-| height_cm | number | ✅ | - | > 0 | ✅ | ✅ |
-| cogs_rub | number | ✅ | - | > 0 | ✅ | ✅ |
-| buyback_pct | slider | ✅ | 98 | 10-100 | ✅ | ✅ |
-| acquiring_pct | number | ❌ | 2 | 0-10 | ✅ | ✅ |
-| storage_rub | number | ❌ | 0 | ≥ 0 | ✅ | ❌ |
-| acceptance_type | radio | ❌ | free | enum | ✅ | ❌ |
-| acceptance_coefficient | number | ❌ | 1 | ≥ 0 | ✅ | ❌ |
-| warehouse_id | select | ✅ | - | > 0 | ✅ | ✅ |
-| tax_rate_pct | number | ❌ | 6 | 0-50 | ✅ | ✅ |
-| tax_type | select | ❌ | income | enum | ✅ | ✅ |
-| target_margin_pct | slider | ✅ | 20 | 0-50 | ✅ | ✅ |
-| drr_pct | number | ❌ | 5 | 0-30 | ✅ | ✅ |
-| spp_pct | number | ❌ | 0 | 0-30 | ✅ | ✅ |
+| Field                  | Type     | Required | Default | Validation | FBO | FBS |
+| ---------------------- | -------- | -------- | ------- | ---------- | --- | --- |
+| fulfillment_type       | select   | ✅       | FBO     | enum       | ✅  | ✅  |
+| category_id            | combobox | ✅       | -       | > 0        | ✅  | ✅  |
+| length_cm              | number   | ✅       | -       | > 0        | ✅  | ✅  |
+| width_cm               | number   | ✅       | -       | > 0        | ✅  | ✅  |
+| height_cm              | number   | ✅       | -       | > 0        | ✅  | ✅  |
+| cogs_rub               | number   | ✅       | -       | > 0        | ✅  | ✅  |
+| buyback_pct            | slider   | ✅       | 98      | 10-100     | ✅  | ✅  |
+| acquiring_pct          | number   | ❌       | 2       | 0-10       | ✅  | ✅  |
+| storage_rub            | number   | ❌       | 0       | ≥ 0        | ✅  | ❌  |
+| acceptance_type        | radio    | ❌       | free    | enum       | ✅  | ❌  |
+| acceptance_coefficient | number   | ❌       | 1       | ≥ 0        | ✅  | ❌  |
+| warehouse_id           | select   | ✅       | -       | > 0        | ✅  | ✅  |
+| tax_rate_pct           | number   | ❌       | 6       | 0-50       | ✅  | ✅  |
+| tax_type               | select   | ❌       | income  | enum       | ✅  | ✅  |
+| target_margin_pct      | slider   | ✅       | 20      | 0-50       | ✅  | ✅  |
+| drr_pct                | number   | ❌       | 5       | 0-30       | ✅  | ✅  |
+| spp_pct                | number   | ❌       | 0       | 0-30       | ✅  | ✅  |
 
 ### NEW Fields (from Competitor Analysis)
 
 #### HIGH PRIORITY - Phase 1
 
-| Field | Type | Required | Default | Validation | FBO | FBS | Priority |
-|-------|------|----------|---------|------------|-----|-----|----------|
-| box_type | radio | ❌ | box | enum(box,pallet) | ✅ | ❌ | HIGH |
-| weight_exceeds_25kg | checkbox | ❌ | false | boolean | ✅ | ✅ | HIGH |
-| localization_index | number | ❌ | 1.0 | 0.5-3.0 | ✅ | ✅ | HIGH |
-| turnover_days | number | ❌ | 20 | 1-365 | ✅ | ❌ | HIGH |
+| Field               | Type     | Required | Default | Validation       | FBO | FBS | Priority |
+| ------------------- | -------- | -------- | ------- | ---------------- | --- | --- | -------- |
+| box_type            | radio    | ❌       | box     | enum(box,pallet) | ✅  | ❌  | HIGH     |
+| weight_exceeds_25kg | checkbox | ❌       | false   | boolean          | ✅  | ✅  | HIGH     |
+| localization_index  | number   | ❌       | 1.0     | 0.5-3.0          | ✅  | ✅  | HIGH     |
+| turnover_days       | number   | ❌       | 20      | 1-365            | ✅  | ❌  | HIGH     |
 
 #### MEDIUM PRIORITY - Phase 2 (Collapsible Section)
 
-| Field | Type | Required | Default | Validation | FBO | FBS | Priority |
-|-------|------|----------|---------|------------|-----|-----|----------|
-| logistics_to_mp_rub | number | ❌ | 0 | ≥ 0 | ✅ | ✅ | MEDIUM |
-| packaging_rub | number | ❌ | 0 | ≥ 0 | ✅ | ✅ | MEDIUM |
-| wb_tariff_options_pct | number | ❌ | 0 | 0-20 | ✅ | ✅ | MEDIUM |
-| other_expenses_rub | number | ❌ | 0 | ≥ 0 | ✅ | ✅ | MEDIUM |
+| Field                 | Type   | Required | Default | Validation | FBO | FBS | Priority |
+| --------------------- | ------ | -------- | ------- | ---------- | --- | --- | -------- |
+| logistics_to_mp_rub   | number | ❌       | 0       | ≥ 0        | ✅  | ✅  | MEDIUM   |
+| packaging_rub         | number | ❌       | 0       | ≥ 0        | ✅  | ✅  | MEDIUM   |
+| wb_tariff_options_pct | number | ❌       | 0       | 0-20       | ✅  | ✅  | MEDIUM   |
+| other_expenses_rub    | number | ❌       | 0       | ≥ 0        | ✅  | ✅  | MEDIUM   |
 
 #### LOW PRIORITY - Phase 3 (Collapsible Section)
 
-| Field | Type | Required | Default | Validation | FBO | FBS | Priority |
-|-------|------|----------|---------|------------|-----|-----|----------|
-| total_investment_rub | number | ❌ | - | ≥ 0 | ✅ | ✅ | LOW |
+| Field                | Type   | Required | Default | Validation | FBO | FBS | Priority |
+| -------------------- | ------ | -------- | ------- | ---------- | --- | --- | -------- |
+| total_investment_rub | number | ❌       | -       | ≥ 0        | ✅  | ✅  | LOW      |
 
 ---
 
@@ -398,21 +448,22 @@ const roi_pct = (margin_rub * expected_units) / total_investment_rub * 100
 
 ### Required Endpoints (Complete Reference)
 
-| Endpoint | Method | Purpose | TTL | Rate Limit | Source |
-|----------|--------|---------|-----|------------|--------|
-| `/v1/tariffs/commissions` | GET | Category list + commissions (7346 categories) | 24h | 10/min | `test-api/18-tariffs.http` §1.1 |
-| `/v1/tariffs/commissions/category/{id}` | GET | Commission for specific category | 24h | 10/min | `test-api/18-tariffs.http` §1.2 |
-| `/v1/tariffs/commissions/product/{nmId}` | GET | Commission by product nmId | 24h | 10/min | `test-api/18-tariffs.http` §1.3 |
-| `/v1/tariffs/warehouses` | GET | Warehouse list (~50 items) | 24h | 10/min | `test-api/18-tariffs.http` §3.1 |
-| `/v1/tariffs/warehouses/box` | GET | Box tariffs (logistics/storage) | 1h | 10/min | `test-api/18-tariffs.http` §3.2 |
-| `/v1/tariffs/acceptance/coefficients` | GET | Acceptance + logistics coefs (14 days) | 1h | **6/min** | `test-api/18-tariffs.http` §4.1 |
-| `/v1/tariffs/acceptance/available` | GET | Available warehouses for date | 1h | **6/min** | `test-api/18-tariffs.http` §4.4 |
-| `/v1/tariffs/settings` | GET | Global tariff settings (fallback) | 24h | - (local DB) | `test-api/18-tariffs.http` §2.1 |
-| `/v1/tariffs/settings/logistics` | GET | Logistics rate by volume | 24h | - (local DB) | `test-api/18-tariffs.http` §2.3 |
-| `/v1/tariffs/settings/acceptance/box` | GET | Acceptance cost for box | 24h | - (local DB) | `test-api/18-tariffs.http` §2.5 |
-| `/v1/products/price-calculator` | POST | Calculate recommended price | - | 600/min | `test-api/15-price-calculator.http` |
+| Endpoint                                 | Method | Purpose                                       | TTL | Rate Limit   | Source                              |
+| ---------------------------------------- | ------ | --------------------------------------------- | --- | ------------ | ----------------------------------- |
+| `/v1/tariffs/commissions`                | GET    | Category list + commissions (7346 categories) | 24h | 10/min       | `test-api/18-tariffs.http` §1.1     |
+| `/v1/tariffs/commissions/category/{id}`  | GET    | Commission for specific category              | 24h | 10/min       | `test-api/18-tariffs.http` §1.2     |
+| `/v1/tariffs/commissions/product/{nmId}` | GET    | Commission by product nmId                    | 24h | 10/min       | `test-api/18-tariffs.http` §1.3     |
+| `/v1/tariffs/warehouses`                 | GET    | Warehouse list (~50 items)                    | 24h | 10/min       | `test-api/18-tariffs.http` §3.1     |
+| `/v1/tariffs/warehouses/box`             | GET    | Box tariffs (logistics/storage)               | 1h  | 10/min       | `test-api/18-tariffs.http` §3.2     |
+| `/v1/tariffs/acceptance/coefficients`    | GET    | Acceptance + logistics coefs (14 days)        | 1h  | **6/min**    | `test-api/18-tariffs.http` §4.1     |
+| `/v1/tariffs/acceptance/available`       | GET    | Available warehouses for date                 | 1h  | **6/min**    | `test-api/18-tariffs.http` §4.4     |
+| `/v1/tariffs/settings`                   | GET    | Global tariff settings (fallback)             | 24h | - (local DB) | `test-api/18-tariffs.http` §2.1     |
+| `/v1/tariffs/settings/logistics`         | GET    | Logistics rate by volume                      | 24h | - (local DB) | `test-api/18-tariffs.http` §2.3     |
+| `/v1/tariffs/settings/acceptance/box`    | GET    | Acceptance cost for box                       | 24h | - (local DB) | `test-api/18-tariffs.http` §2.5     |
+| `/v1/products/price-calculator`          | POST   | Calculate recommended price                   | -   | 600/min      | `test-api/15-price-calculator.http` |
 
 **⚠️ Rate Limits by Scope:**
+
 - `tariffs` scope: 10 req/min (commissions, warehouses, box tariffs)
 - `orders_fbw` scope: **6 req/min** (acceptance coefficients - stricter!)
 - Standard scope: 600 req/min (price-calculator)
@@ -436,22 +487,23 @@ const coefficients = await getAcceptanceCoefficients(warehouseId)
 
 ### Query Parameters Reference
 
-| Endpoint | Parameter | Type | Required | Example |
-|----------|-----------|------|----------|---------|
-| `/commissions/category/{id}` | `fulfillmentType` | enum | ❌ | `?fulfillmentType=FBO` |
-| `/warehouses/box` | `date` | string | ❌ | `?date=2026-01-20` |
-| `/acceptance/coefficients` | `warehouseId` | number | ❌ | `?warehouseId=507` |
-| `/acceptance/coefficients` | `warehouseIds` | string | ❌ | `?warehouseIds=507,117501` |
-| `/acceptance/available` | `date` | string | ✅ | `?date=2026-01-20` |
-| `/acceptance/available` | `boxTypeId` | number | ❌ | `?boxTypeId=2` (2=Короба, 5=Паллеты) |
-| `/settings/logistics` | `volumeLiters` | number | ✅ | `?volumeLiters=0.5` |
-| `/settings/logistics` | `fulfillmentType` | enum | ✅ | `?fulfillmentType=FBO` |
+| Endpoint                     | Parameter         | Type   | Required | Example                              |
+| ---------------------------- | ----------------- | ------ | -------- | ------------------------------------ |
+| `/commissions/category/{id}` | `fulfillmentType` | enum   | ❌       | `?fulfillmentType=FBO`               |
+| `/warehouses/box`            | `date`            | string | ❌       | `?date=2026-01-20`                   |
+| `/acceptance/coefficients`   | `warehouseId`     | number | ❌       | `?warehouseId=507`                   |
+| `/acceptance/coefficients`   | `warehouseIds`    | string | ❌       | `?warehouseIds=507,117501`           |
+| `/acceptance/available`      | `date`            | string | ✅       | `?date=2026-01-20`                   |
+| `/acceptance/available`      | `boxTypeId`       | number | ❌       | `?boxTypeId=2` (2=Короба, 5=Паллеты) |
+| `/settings/logistics`        | `volumeLiters`    | number | ✅       | `?volumeLiters=0.5`                  |
+| `/settings/logistics`        | `fulfillmentType` | enum   | ✅       | `?fulfillmentType=FBO`               |
 
 ---
 
 ## 5. Calculation Formulas
 
 ### Step 1: Get Commission %
+
 ```typescript
 const commissionField = fulfillmentType === 'FBO'
   ? 'paidStorageKgvp'
@@ -461,11 +513,13 @@ const commission_pct = category.commissions[commissionField]
 ```
 
 ### Step 2: Calculate Volume
+
 ```typescript
 const volume_liters = (length_cm * width_cm * height_cm) / 1000
 ```
 
 ### Step 3: Calculate Base Logistics Cost [UPDATED]
+
 ```typescript
 function calculateLogisticsCost(
   volumeLiters: number,
@@ -500,6 +554,7 @@ function calculateLogisticsCost(
 ```
 
 ### Step 4: Apply Warehouse & Weight Coefficients [UPDATED]
+
 ```typescript
 // [NEW] Weight multiplier for heavy items (>25kg)
 const weight_multiplier = weight_exceeds_25kg ? 1.5 : 1.0
@@ -516,12 +571,14 @@ const logistics_reverse_rub = logistics_forward_rub // Usually same
 ```
 
 ### Step 5: Calculate Effective Logistics (with returns)
+
 ```typescript
 const return_rate = (100 - buyback_pct) / 100
 const logistics_effective = logistics_forward_rub + (logistics_reverse_rub * return_rate)
 ```
 
 ### Step 5.5: Calculate Storage Cost [NEW - with Turnover Days]
+
 ```typescript
 // FBO only - calculate total storage based on turnover
 function calculateStorageCost(
@@ -552,6 +609,7 @@ const storage_total_rub = calculateStorageCost(
 ```
 
 ### Step 6: Calculate Acceptance Cost (FBO only) [UPDATED]
+
 ```typescript
 function calculateAcceptanceCost(
   volumeLiters: number,
@@ -579,6 +637,7 @@ function calculateAcceptanceCost(
 ### Step 7: Calculate Price (Two-Level Pricing) [UPDATED]
 
 **Концепция двухуровневого ценообразования:**
+
 1. **Минимальная цена** — покрывает только фиксированные расходы (пол цены)
 2. **Рекомендуемая цена** — включает переменные расходы (DRR) и целевую маржу
 
@@ -659,6 +718,7 @@ if (total_investment_rub && total_investment_rub > 0) {
 ```
 
 ### Step 8: Apply SPP for Customer Price
+
 ```typescript
 const customer_price = recommended_price * (1 - spp_pct / 100)
 ```
@@ -667,31 +727,33 @@ const customer_price = recommended_price * (1 - spp_pct / 100)
 
 ## 6. FBO vs FBS Differences
 
-| Feature | FBO | FBS |
-|---------|-----|-----|
-| Storage costs | ✅ User enters | ❌ N/A (0) |
-| Acceptance costs | ✅ Calculated | ❌ N/A (0) |
-| Acceptance coefficient | ✅ From API | ❌ N/A |
-| Commission field | `paidStorageKgvp` | `kgvpMarketplace` |
-| Commission rate | Lower (~25%) | Higher (~28%) |
-| Warehouse selection | Required | Required |
-| Logistics coefficient | From warehouse | From warehouse |
+| Feature                | FBO               | FBS               |
+| ---------------------- | ----------------- | ----------------- |
+| Storage costs          | ✅ User enters    | ❌ N/A (0)        |
+| Acceptance costs       | ✅ Calculated     | ❌ N/A (0)        |
+| Acceptance coefficient | ✅ From API       | ❌ N/A            |
+| Commission field       | `paidStorageKgvp` | `kgvpMarketplace` |
+| Commission rate        | Lower (~25%)      | Higher (~28%)     |
+| Warehouse selection    | Required          | Required          |
+| Logistics coefficient  | From warehouse    | From warehouse    |
 
 ---
 
 ## 7. Edge Cases
 
 ### Zero/Minimal Values
-| Scenario | Handling |
-|----------|----------|
-| buyback_pct = 100% | return_rate = 0, no return logistics |
-| buyback_pct = 10% | Warning: very high return rate |
-| storage_rub = 0 | Valid for FBO (free storage period) |
-| acceptance_coefficient = 0 | Free acceptance (promo) |
-| acceptance_coefficient = -1 | Warehouse unavailable, show error |
-| spp_pct = 0 | customer_price = recommended_price |
+
+| Scenario                    | Handling                             |
+| --------------------------- | ------------------------------------ |
+| buyback_pct = 100%          | return_rate = 0, no return logistics |
+| buyback_pct = 10%           | Warning: very high return rate       |
+| storage_rub = 0             | Valid for FBO (free storage period)  |
+| acceptance_coefficient = 0  | Free acceptance (promo)              |
+| acceptance_coefficient = -1 | Warehouse unavailable, show error    |
+| spp_pct = 0                 | customer_price = recommended_price   |
 
 ### Large Items
+
 ```typescript
 // Items > 1 liter use progressive formula
 if (volume_liters > 1) {
@@ -700,6 +762,7 @@ if (volume_liters > 1) {
 ```
 
 ### High Commission Categories
+
 ```typescript
 if (commission_pct > 25) {
   showWarning(`Высокая комиссия категории: ${commission_pct}%`)
@@ -707,6 +770,7 @@ if (commission_pct > 25) {
 ```
 
 ### Negative Margin Scenario
+
 ```typescript
 if (recommended_price < fixed_costs) {
   showError("При заданных параметрах невозможно достичь целевой маржи")
@@ -718,6 +782,7 @@ if (recommended_price < fixed_costs) {
 ## 8. Output Display
 
 ### Primary Results (Two-Level Pricing)
+
 ```
 ┌─────────────────────────────────────────────────────────┐
 │  МИНИМАЛЬНАЯ ЦЕНА:           3 214,00 ₽                │ <- "Пол" цены
@@ -734,6 +799,7 @@ if (recommended_price < fixed_costs) {
 ```
 
 ### Cost Breakdown Table [UPDATED]
+
 ```
 ФИКСИРОВАННЫЕ ЗАТРАТЫ              1 903,00 ₽
 ├─ Себестоимость (COGS)            1 500,00 ₽
@@ -773,6 +839,7 @@ ROI:                                   162,3 %
 ```
 
 ### Visual Chart
+
 Stacked bar chart showing proportion of each cost component.
 
 ---
@@ -780,6 +847,7 @@ Stacked bar chart showing proportion of each cost component.
 ## 9. Acceptance Criteria
 
 ### Functional (Core)
+
 - [ ] User can select FBO or FBS fulfillment type
 - [ ] Category search works with 7346+ items
 - [ ] Dimensions auto-calculate volume in liters
@@ -792,6 +860,7 @@ Stacked bar chart showing proportion of each cost component.
 - [ ] Results update on any input change (debounced)
 
 ### Functional (NEW - Phase 1 HIGH Priority)
+
 - [ ] Box type selection (Короб/Монопаллета) affects tariff calculation
 - [ ] Weight threshold checkbox (>25kg) applies logistics surcharge multiplier
 - [ ] Localization index field auto-fills from warehouse, allows manual override
@@ -799,6 +868,7 @@ Stacked bar chart showing proportion of each cost component.
 - [ ] All HIGH priority fields show tooltips explaining business impact
 
 ### Functional (NEW - Phase 2 MEDIUM Priority)
+
 - [ ] Additional expenses section is collapsible (default: collapsed)
 - [ ] Logistics to MP field adds to fixed costs
 - [ ] Packaging cost field adds to fixed costs
@@ -806,11 +876,13 @@ Stacked bar chart showing proportion of each cost component.
 - [ ] Other expenses field adds to fixed costs
 
 ### Functional (NEW - Phase 3 LOW Priority)
+
 - [ ] ROI analysis section is collapsible (default: collapsed)
 - [ ] Total investment field enables ROI calculation display
 - [ ] ROI % is calculated and displayed when investment provided
 
 ### UX
+
 - [ ] Loading states for API calls
 - [ ] Error messages in Russian
 - [ ] Tooltips explain each field
@@ -820,11 +892,13 @@ Stacked bar chart showing proportion of each cost component.
 - [ ] [NEW] Visual indicator for fields affecting calculation
 
 ### Performance
+
 - [ ] Category list loads < 2s (cached)
 - [ ] Calculation completes < 500ms
 - [ ] No unnecessary API calls (debounce 500ms)
 
 ### Accessibility
+
 - [ ] WCAG 2.1 AA compliance
 - [ ] All inputs have labels
 - [ ] Color contrast ≥ 4.5:1
@@ -833,16 +907,16 @@ Stacked bar chart showing proportion of each cost component.
 
 ## 10. Open Questions
 
-| # | Question | Status |
-|---|----------|--------|
-| 1 | Should we support DBS/EDBS fulfillment types? | TODO: Confirm scope |
-| 2 | Include advertising % in calculation? | ✅ RESOLVED: Yes, via DRR field |
-| 3 | Auto-detect category from existing products? | TODO: Phase 2? |
-| 4 | Save calculation presets? | TODO: Phase 2 |
-| 5 | Integration with product creation flow? | TODO: Phase 2 |
-| 6 | [NEW] Pallet tariff rates - confirm exact values | TODO: Verify with WB API |
-| 7 | [NEW] Heavy item (>25kg) multiplier - confirm 1.5x is accurate | TODO: Verify with WB API |
-| 8 | [NEW] ROI calculation - require expected_units input? | TODO: Design decision |
+| #   | Question                                                       | Status                          |
+| --- | -------------------------------------------------------------- | ------------------------------- |
+| 1   | Should we support DBS/EDBS fulfillment types?                  | TODO: Confirm scope             |
+| 2   | Include advertising % in calculation?                          | ✅ RESOLVED: Yes, via DRR field |
+| 3   | Auto-detect category from existing products?                   | TODO: Phase 2?                  |
+| 4   | Save calculation presets?                                      | TODO: Phase 2                   |
+| 5   | Integration with product creation flow?                        | TODO: Phase 2                   |
+| 6   | [NEW] Pallet tariff rates - confirm exact values               | TODO: Verify with WB API        |
+| 7   | [NEW] Heavy item (>25kg) multiplier - confirm 1.5x is accurate | TODO: Verify with WB API        |
+| 8   | [NEW] ROI calculation - require expected_units input?          | TODO: Design decision           |
 
 ---
 
@@ -973,18 +1047,18 @@ const BOX_TYPE_CONFIG: Record<BoxType, { label: string; apiId: number }> = {
 
 ### 12.1 Available Endpoints Table
 
-| Endpoint | Method | Purpose | Response Key Fields | Documentation |
-|----------|--------|---------|---------------------|---------------|
-| `/v1/tariffs/commissions` | GET | All category commissions (7346) | `commissions[]`, `meta.total`, `meta.cached` | `test-api/18-tariffs.http` §1.1 |
-| `/v1/tariffs/commissions/category/{id}` | GET | Commission by category | `categoryId`, `commission_pct`, `fulfillmentType` | `test-api/18-tariffs.http` §1.2 |
-| `/v1/tariffs/commissions/product/{nmId}` | GET | Commission by product | `commission_pct`, `source` | `test-api/18-tariffs.http` §1.3 |
-| `/v1/tariffs/warehouses` | GET | Warehouse list | `warehouses[]`, `meta.total` | `test-api/18-tariffs.http` §3.1 |
-| `/v1/tariffs/warehouses/box` | GET | Box tariffs per warehouse | `tariffs[]`, `meta.date` | `test-api/18-tariffs.http` §3.2 |
-| `/v1/tariffs/acceptance/coefficients` | GET | Acceptance coefficients (14 days) | `coefficients[]`, `meta.available`, `meta.unavailable` | `test-api/18-tariffs.http` §4.1 |
-| `/v1/tariffs/acceptance/available` | GET | Available warehouses for date | `warehouses[]`, `meta.totalAvailable` | `test-api/18-tariffs.http` §4.4 |
-| `/v1/tariffs/settings` | GET | Global tariff settings | `default_commission_*`, `logistics_volume_tiers[]` | `test-api/18-tariffs.http` §2.1 |
-| `/v1/tariffs/settings/logistics` | GET | Logistics rate by volume | `rate_rub`, `calculation_method`, `tier_applied` | `test-api/18-tariffs.http` §2.3 |
-| `/v1/products/price-calculator` | POST | Calculate recommended price | `result.recommended_price`, `cost_breakdown`, `warnings[]` | `test-api/15-price-calculator.http` |
+| Endpoint                                 | Method | Purpose                           | Response Key Fields                                        | Documentation                       |
+| ---------------------------------------- | ------ | --------------------------------- | ---------------------------------------------------------- | ----------------------------------- |
+| `/v1/tariffs/commissions`                | GET    | All category commissions (7346)   | `commissions[]`, `meta.total`, `meta.cached`               | `test-api/18-tariffs.http` §1.1     |
+| `/v1/tariffs/commissions/category/{id}`  | GET    | Commission by category            | `categoryId`, `commission_pct`, `fulfillmentType`          | `test-api/18-tariffs.http` §1.2     |
+| `/v1/tariffs/commissions/product/{nmId}` | GET    | Commission by product             | `commission_pct`, `source`                                 | `test-api/18-tariffs.http` §1.3     |
+| `/v1/tariffs/warehouses`                 | GET    | Warehouse list                    | `warehouses[]`, `meta.total`                               | `test-api/18-tariffs.http` §3.1     |
+| `/v1/tariffs/warehouses/box`             | GET    | Box tariffs per warehouse         | `tariffs[]`, `meta.date`                                   | `test-api/18-tariffs.http` §3.2     |
+| `/v1/tariffs/acceptance/coefficients`    | GET    | Acceptance coefficients (14 days) | `coefficients[]`, `meta.available`, `meta.unavailable`     | `test-api/18-tariffs.http` §4.1     |
+| `/v1/tariffs/acceptance/available`       | GET    | Available warehouses for date     | `warehouses[]`, `meta.totalAvailable`                      | `test-api/18-tariffs.http` §4.4     |
+| `/v1/tariffs/settings`                   | GET    | Global tariff settings            | `default_commission_*`, `logistics_volume_tiers[]`         | `test-api/18-tariffs.http` §2.1     |
+| `/v1/tariffs/settings/logistics`         | GET    | Logistics rate by volume          | `rate_rub`, `calculation_method`, `tier_applied`           | `test-api/18-tariffs.http` §2.3     |
+| `/v1/products/price-calculator`          | POST   | Calculate recommended price       | `result.recommended_price`, `cost_breakdown`, `warnings[]` | `test-api/15-price-calculator.http` |
 
 ---
 
@@ -1001,6 +1075,7 @@ X-Cabinet-Id: {{cabinetId}}
 ```
 
 **Response 200 OK:**
+
 ```json
 {
   "data": {
@@ -1041,6 +1116,7 @@ X-Cabinet-Id: {{cabinetId}}
 ```
 
 **Response 200 OK:**
+
 ```json
 {
   "data": {
@@ -1083,6 +1159,7 @@ X-Cabinet-Id: {{cabinetId}}
 ```
 
 **Response 200 OK:**
+
 ```json
 {
   "data": {
@@ -1121,12 +1198,12 @@ X-Cabinet-Id: {{cabinetId}}
 
 **Coefficient Interpretation:**
 
-| Value | Meaning | UI Display |
-|-------|---------|------------|
-| `-1` | Приёмка недоступна | Badge "Недоступно", disabled |
-| `0` | Приёмка бесплатная | Badge "Бесплатно" (green) |
-| `1` | Стандартная стоимость | Normal display |
-| `>1` | Повышенная стоимость | Warning badge "×1.5" |
+| Value | Meaning               | UI Display                   |
+| ----- | --------------------- | ---------------------------- |
+| `-1`  | Приёмка недоступна    | Badge "Недоступно", disabled |
+| `0`   | Приёмка бесплатная    | Badge "Бесплатно" (green)    |
+| `1`   | Стандартная стоимость | Normal display               |
+| `>1`  | Повышенная стоимость  | Warning badge "×1.5"         |
 
 ---
 
@@ -1141,6 +1218,7 @@ X-Cabinet-Id: {{cabinetId}}
 ```
 
 **Response 200 OK:**
+
 ```json
 {
   "data": {
@@ -1193,6 +1271,7 @@ Content-Type: application/json
 ```
 
 **Response 200 OK:**
+
 ```json
 {
   "meta": {
@@ -1235,17 +1314,17 @@ Content-Type: application/json
 
 ### 12.3 Data Mapping (UI Field → API Field → Endpoint)
 
-| UI Field (Russian) | Form Field | API Field | Endpoint | Notes |
-|--------------------|------------|-----------|----------|-------|
-| Тип исполнения | `fulfillment_type` | determines commission field | - | `FBO` → `paidStorageKgvp`, `FBS` → `kgvpMarketplace` |
-| Категория | `category_id` | `parentID` | `GET /commissions` | Use `parentID` for lookup |
-| Комиссия WB | `commission_pct` | `paidStorageKgvp` / `kgvpMarketplace` | `GET /commissions` | Field depends on `fulfillment_type` |
-| Склад | `warehouse_id` | `id` | `GET /warehouses` | Store `id` for coefficients lookup |
-| Логистика коэф. | `logistics_coefficient` | `delivery.coefficient` | `GET /acceptance/coefficients` | Auto-fill on warehouse selection |
-| Хранение коэф. | `storage_coefficient` | `storage.coefficient` | `GET /acceptance/coefficients` | FBO only |
-| Приёмка коэф. | `acceptance_coefficient` | `coefficient` | `GET /acceptance/coefficients` | FBO only, -1 means unavailable |
-| Объём (л) | auto-calculated | `volumeLiters` | `GET /settings/logistics` | `(L × W × H) / 1000` |
-| Базовая логистика | auto-calculated | `rate_rub` | `GET /settings/logistics` | Or use `logistics_volume_tiers` client-side |
+| UI Field (Russian) | Form Field               | API Field                             | Endpoint                       | Notes                                                |
+| ------------------ | ------------------------ | ------------------------------------- | ------------------------------ | ---------------------------------------------------- |
+| Тип исполнения     | `fulfillment_type`       | determines commission field           | -                              | `FBO` → `paidStorageKgvp`, `FBS` → `kgvpMarketplace` |
+| Категория          | `category_id`            | `parentID`                            | `GET /commissions`             | Use `parentID` for lookup                            |
+| Комиссия WB        | `commission_pct`         | `paidStorageKgvp` / `kgvpMarketplace` | `GET /commissions`             | Field depends on `fulfillment_type`                  |
+| Склад              | `warehouse_id`           | `id`                                  | `GET /warehouses`              | Store `id` for coefficients lookup                   |
+| Логистика коэф.    | `logistics_coefficient`  | `delivery.coefficient`                | `GET /acceptance/coefficients` | Auto-fill on warehouse selection                     |
+| Хранение коэф.     | `storage_coefficient`    | `storage.coefficient`                 | `GET /acceptance/coefficients` | FBO only                                             |
+| Приёмка коэф.      | `acceptance_coefficient` | `coefficient`                         | `GET /acceptance/coefficients` | FBO only, -1 means unavailable                       |
+| Объём (л)          | auto-calculated          | `volumeLiters`                        | `GET /settings/logistics`      | `(L × W × H) / 1000`                                 |
+| Базовая логистика  | auto-calculated          | `rate_rub`                            | `GET /settings/logistics`      | Or use `logistics_volume_tiers` client-side          |
 
 ### Commission Field Mapping by Fulfillment Type
 
@@ -1265,16 +1344,17 @@ const commissionPct = categoryData[COMMISSION_FIELD_MAP[fulfillmentType]];
 
 ### 12.4 Caching Strategy (Backend → Frontend)
 
-| Endpoint | Cache Key Pattern | TTL | Frontend Strategy |
-|----------|-------------------|-----|-------------------|
-| `GET /commissions` | `tariffs:commissions:{cabinetId}` | 24h | React Query `staleTime: 24h`, load once on mount |
-| `GET /commissions/category/{id}` | `tariffs:category:{cabinetId}:{parentId}` | 24h | Derived from full list |
-| `GET /warehouses` | `tariffs:offices:{cabinetId}` | 24h | React Query `staleTime: 24h`, load once on mount |
-| `GET /warehouses/box` | `tariffs:box:{cabinetId}:{date}` | 1h | Refresh on date change |
-| `GET /acceptance/coefficients` | `tariffs:acceptance:{cabinetId}:{warehouseId}` | 1h | Fetch on warehouse selection |
-| `GET /settings` | `wb:tariff-settings:global` | 24h | React Query `staleTime: 24h`, load once |
+| Endpoint                         | Cache Key Pattern                              | TTL | Frontend Strategy                                |
+| -------------------------------- | ---------------------------------------------- | --- | ------------------------------------------------ |
+| `GET /commissions`               | `tariffs:commissions:{cabinetId}`              | 24h | React Query `staleTime: 24h`, load once on mount |
+| `GET /commissions/category/{id}` | `tariffs:category:{cabinetId}:{parentId}`      | 24h | Derived from full list                           |
+| `GET /warehouses`                | `tariffs:offices:{cabinetId}`                  | 24h | React Query `staleTime: 24h`, load once on mount |
+| `GET /warehouses/box`            | `tariffs:box:{cabinetId}:{date}`               | 1h  | Refresh on date change                           |
+| `GET /acceptance/coefficients`   | `tariffs:acceptance:{cabinetId}:{warehouseId}` | 1h  | Fetch on warehouse selection                     |
+| `GET /settings`                  | `wb:tariff-settings:global`                    | 24h | React Query `staleTime: 24h`, load once          |
 
 **Frontend Caching Pattern:**
+
 ```typescript
 // Query keys for consistent caching
 export const tariffsQueryKeys = {
@@ -1301,13 +1381,14 @@ export function useCommissions() {
 
 ### 12.5 Rate Limits Reference
 
-| Scope | Limit | Window | Endpoints | Recovery Strategy |
-|-------|-------|--------|-----------|-------------------|
-| `tariffs` | 10 req/min | 60s | commissions, warehouses, box | Batch requests, cache aggressively |
-| `orders_fbw` | **6 req/min** | 60s | acceptance coefficients | Debounce 500ms, cache 1h |
-| Standard | 600 req/min | 60s (burst 1200) | price-calculator | No special handling needed |
+| Scope        | Limit         | Window           | Endpoints                    | Recovery Strategy                  |
+| ------------ | ------------- | ---------------- | ---------------------------- | ---------------------------------- |
+| `tariffs`    | 10 req/min    | 60s              | commissions, warehouses, box | Batch requests, cache aggressively |
+| `orders_fbw` | **6 req/min** | 60s              | acceptance coefficients      | Debounce 500ms, cache 1h           |
+| Standard     | 600 req/min   | 60s (burst 1200) | price-calculator             | No special handling needed         |
 
 **Error Response (429 Too Many Requests):**
+
 ```json
 {
   "statusCode": 429,
@@ -1318,6 +1399,7 @@ export function useCommissions() {
 ```
 
 **Frontend Handling:**
+
 ```typescript
 // Debounce warehouse selection to avoid rate limits
 const debouncedFetchCoefficients = useDebouncedCallback(
@@ -1336,13 +1418,13 @@ if (error.response?.status === 429) {
 
 ### 12.6 Error Responses
 
-| Status | Code | Cause | Frontend Handling |
-|--------|------|-------|-------------------|
-| 400 | `VALIDATION_ERROR` | Invalid input | Show field-specific errors |
-| 401 | `UNAUTHORIZED` | Invalid/expired token | Redirect to login |
-| 403 | `FORBIDDEN` | Cabinet access denied | Show access error |
-| 429 | `Too Many Requests` | Rate limit exceeded | Show retry timer |
-| 500 | `INTERNAL_ERROR` | Server error | Show generic error + retry |
+| Status | Code                | Cause                 | Frontend Handling          |
+| ------ | ------------------- | --------------------- | -------------------------- |
+| 400    | `VALIDATION_ERROR`  | Invalid input         | Show field-specific errors |
+| 401    | `UNAUTHORIZED`      | Invalid/expired token | Redirect to login          |
+| 403    | `FORBIDDEN`         | Cabinet access denied | Show access error          |
+| 429    | `Too Many Requests` | Rate limit exceeded   | Show retry timer           |
+| 500    | `INTERNAL_ERROR`    | Server error          | Show generic error + retry |
 
 ---
 
@@ -1376,20 +1458,22 @@ These fields directly affect tariff calculation accuracy and should be implement
 
 #### 14.2.1 Тип упаковки (Box Type)
 
-| Attribute | Value |
-|-----------|-------|
-| Field | `box_type` |
-| Type | Radio buttons / SegmentedControl |
-| Options | `Короб` (Box) \| `Монопаллета` (Pallet) |
-| Default | `Короб` |
-| Applicability | FBO only |
+| Attribute     | Value                                   |
+| ------------- | --------------------------------------- |
+| Field         | `box_type`                              |
+| Type          | Radio buttons / SegmentedControl        |
+| Options       | `Короб` (Box) \| `Монопаллета` (Pallet) |
+| Default       | `Короб`                                 |
+| Applicability | FBO only                                |
 
 **Business Impact**:
+
 - WB has completely different tariff structures for box vs pallet deliveries
 - Pallet deliveries have fixed acceptance rate (~500 ₽) vs per-liter box rate (~1.70 ₽/L)
 - Incorrect type selection can result in 5-15% calculation error
 
 **API Reference**: `GET /v1/tariffs/acceptance/available?boxTypeId={id}`
+
 - `boxTypeId=2` → Короба (Boxes)
 - `boxTypeId=5` → Монопаллеты (Pallets)
 
@@ -1397,20 +1481,22 @@ These fields directly affect tariff calculation accuracy and should be implement
 
 #### 14.2.2 Вес товара (Product Weight Threshold)
 
-| Attribute | Value |
-|-----------|-------|
-| Field | `weight_exceeds_25kg` |
-| Type | Checkbox |
-| Label | "Превышает 25 кг" |
-| Default | `false` |
-| Applicability | FBO & FBS |
+| Attribute     | Value                 |
+| ------------- | --------------------- |
+| Field         | `weight_exceeds_25kg` |
+| Type          | Checkbox              |
+| Label         | "Превышает 25 кг"     |
+| Default       | `false`               |
+| Applicability | FBO & FBS             |
 
 **Business Impact**:
+
 - Heavy items (>25kg) have surcharge multiplier on logistics (typically 1.5-2x)
 - Many sellers underestimate this impact on large/heavy goods
 - Critical for furniture, appliances, sports equipment categories
 
 **Calculation Impact**:
+
 ```typescript
 const weight_multiplier = weight_exceeds_25kg ? 1.5 : 1.0
 const logistics_adjusted = base_logistics * weight_multiplier
@@ -1420,20 +1506,22 @@ const logistics_adjusted = base_logistics * weight_multiplier
 
 #### 14.2.3 Индекс локализации / КТР (Localization Index)
 
-| Attribute | Value |
-|-----------|-------|
-| Field | `localization_index` (alias: `ktr_coefficient`) |
-| Type | Number input |
-| Default | `1.0` |
-| Range | 0.5 - 3.0 |
-| Applicability | FBO & FBS |
+| Attribute     | Value                                           |
+| ------------- | ----------------------------------------------- |
+| Field         | `localization_index` (alias: `ktr_coefficient`) |
+| Type          | Number input                                    |
+| Default       | `1.0`                                           |
+| Range         | 0.5 - 3.0                                       |
+| Applicability | FBO & FBS                                       |
 
 **Business Impact**:
+
 - Regional delivery cost multiplier based on distance from warehouse to buyer
 - Significantly affects remote regions (Siberia, Far East: 1.5-2.5x)
 - Auto-filled from warehouse selection when available
 
 **Source Options**:
+
 1. Auto-fill from `delivery.coefficient` in `/v1/tariffs/acceptance/coefficients`
 2. Manual override for specific regional targeting
 
@@ -1441,20 +1529,22 @@ const logistics_adjusted = base_logistics * weight_multiplier
 
 #### 14.2.4 Оборачиваемость, дней (Turnover Days)
 
-| Attribute | Value |
-|-----------|-------|
-| Field | `turnover_days` |
-| Type | Number input |
-| Default | `20` |
-| Range | 1-365 |
-| Applicability | FBO only |
+| Attribute     | Value           |
+| ------------- | --------------- |
+| Field         | `turnover_days` |
+| Type          | Number input    |
+| Default       | `20`            |
+| Range         | 1-365           |
+| Applicability | FBO only        |
 
 **Business Impact**:
+
 - Converts daily storage rate to total storage cost per unit sold
 - Critical for slow-moving goods (cosmetics, seasonal items)
 - Default 20 days reflects typical WB inventory turnover
 
 **Calculation Impact**:
+
 ```typescript
 // Current: User enters storage_rub directly
 // New: Auto-calculate from daily rate × turnover days
@@ -1470,14 +1560,15 @@ These fields improve accuracy for sellers with specific cost structures.
 
 #### 14.3.1 Логистика до МП (Logistics to Marketplace)
 
-| Attribute | Value |
-|-----------|-------|
-| Field | `logistics_to_mp_rub` |
-| Type | Number input with ₽ suffix |
-| Default | `0` |
-| Applicability | FBO & FBS |
+| Attribute     | Value                      |
+| ------------- | -------------------------- |
+| Field         | `logistics_to_mp_rub`      |
+| Type          | Number input with ₽ suffix |
+| Default       | `0`                        |
+| Applicability | FBO & FBS                  |
 
 **Business Impact**:
+
 - Seller's cost to deliver goods TO WB warehouse (not WB logistics)
 - Often forgotten in calculations leading to margin overestimation
 - Includes: courier to WB, consolidation costs, regional delivery to WB
@@ -1488,14 +1579,15 @@ These fields improve accuracy for sellers with specific cost structures.
 
 #### 14.3.2 Упаковка (Packaging Cost)
 
-| Attribute | Value |
-|-----------|-------|
-| Field | `packaging_rub` |
-| Type | Number input with ₽ suffix |
-| Default | `0` |
-| Applicability | FBO & FBS |
+| Attribute     | Value                      |
+| ------------- | -------------------------- |
+| Field         | `packaging_rub`            |
+| Type          | Number input with ₽ suffix |
+| Default       | `0`                        |
+| Applicability | FBO & FBS                  |
 
 **Business Impact**:
+
 - Cost of packaging materials per unit (boxes, bubble wrap, labels)
 - Often 2-5% of COGS for fragile/premium items
 - Should be added to fixed costs
@@ -1504,15 +1596,16 @@ These fields improve accuracy for sellers with specific cost structures.
 
 #### 14.3.3 Тарифные опции WB (WB Tariff Options)
 
-| Attribute | Value |
-|-----------|-------|
-| Field | `wb_tariff_options_pct` |
-| Type | Number input |
-| Default | `0` |
-| Range | 0-20% |
-| Applicability | FBO & FBS |
+| Attribute     | Value                   |
+| ------------- | ----------------------- |
+| Field         | `wb_tariff_options_pct` |
+| Type          | Number input            |
+| Default       | `0`                     |
+| Range         | 0-20%                   |
+| Applicability | FBO & FBS               |
 
 **Business Impact**:
+
 - Additional WB services as percentage of price
 - Includes: premium placement, priority logistics, promotional fees
 - Often overlooked by new sellers
@@ -1521,14 +1614,15 @@ These fields improve accuracy for sellers with specific cost structures.
 
 #### 14.3.4 Прочие расходы (Other Expenses)
 
-| Attribute | Value |
-|-----------|-------|
-| Field | `other_expenses_rub` |
-| Type | Number input with ₽ suffix |
-| Default | `0` |
-| Applicability | FBO & FBS |
+| Attribute     | Value                      |
+| ------------- | -------------------------- |
+| Field         | `other_expenses_rub`       |
+| Type          | Number input with ₽ suffix |
+| Default       | `0`                        |
+| Applicability | FBO & FBS                  |
 
 **Business Impact**:
+
 - Catch-all for miscellaneous per-unit expenses
 - Examples: certification, product photography, EAN codes, quality control
 - Helps achieve more accurate unit economics
@@ -1541,14 +1635,15 @@ These fields are for business planning and ROI analysis, not core price calculat
 
 #### 14.4.1 Инвестиции (Total Investment)
 
-| Attribute | Value |
-|-----------|-------|
-| Field | `total_investment_rub` |
-| Type | Number input with ₽ suffix |
-| Default | - (optional) |
-| Applicability | FBO & FBS |
+| Attribute     | Value                      |
+| ------------- | -------------------------- |
+| Field         | `total_investment_rub`     |
+| Type          | Number input with ₽ suffix |
+| Default       | - (optional)               |
+| Applicability | FBO & FBS                  |
 
 **Business Impact**:
+
 - For ROI calculation based on margin and expected sales volume
 - Not required for price calculation
 - Useful for business case validation
@@ -1559,19 +1654,20 @@ These fields are for business planning and ROI analysis, not core price calculat
 
 ### 14.5 Implementation Priority Matrix
 
-| Priority | Field | Effort | Impact | Phase |
-|----------|-------|--------|--------|-------|
-| HIGH | `box_type` | Low | High | Phase 1 |
-| HIGH | `weight_exceeds_25kg` | Low | Medium | Phase 1 |
-| HIGH | `localization_index` | Medium | High | Phase 1 |
-| HIGH | `turnover_days` | Low | High | Phase 1 |
-| MEDIUM | `logistics_to_mp_rub` | Low | Medium | Phase 2 |
-| MEDIUM | `packaging_rub` | Low | Medium | Phase 2 |
-| MEDIUM | `wb_tariff_options_pct` | Low | Low | Phase 2 |
-| MEDIUM | `other_expenses_rub` | Low | Low | Phase 2 |
-| LOW | `total_investment_rub` | Medium | Low | Phase 3 |
+| Priority | Field                   | Effort | Impact | Phase   |
+| -------- | ----------------------- | ------ | ------ | ------- |
+| HIGH     | `box_type`              | Low    | High   | Phase 1 |
+| HIGH     | `weight_exceeds_25kg`   | Low    | Medium | Phase 1 |
+| HIGH     | `localization_index`    | Medium | High   | Phase 1 |
+| HIGH     | `turnover_days`         | Low    | High   | Phase 1 |
+| MEDIUM   | `logistics_to_mp_rub`   | Low    | Medium | Phase 2 |
+| MEDIUM   | `packaging_rub`         | Low    | Medium | Phase 2 |
+| MEDIUM   | `wb_tariff_options_pct` | Low    | Low    | Phase 2 |
+| MEDIUM   | `other_expenses_rub`    | Low    | Low    | Phase 2 |
+| LOW      | `total_investment_rub`  | Medium | Low    | Phase 3 |
 
 **Estimated Total Effort**:
+
 - Phase 1 (HIGH): 3-4 story points
 - Phase 2 (MEDIUM): 2-3 story points
 - Phase 3 (LOW): 1-2 story points

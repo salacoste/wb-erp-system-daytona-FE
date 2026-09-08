@@ -18,6 +18,7 @@ Currently, advertising analytics data is aggregated per SKU/campaign. There is n
 ## Desired Behavior
 
 A new endpoint (or extended `fullstats` response) that provides:
+
 - Ad spend per search query/keyword within a campaign
 - Clicks, impressions, CTR per keyword
 - Date range filtering

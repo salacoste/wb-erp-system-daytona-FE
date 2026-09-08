@@ -31,17 +31,17 @@ Provide per-SKU (or time-series) marketing funnel visibility — views → cart 
 
 Epic 68 itself delivered the initial funnel page. Post-Epic-68 stories (72.x, 73.x, 87.x, 88.2) extended or fixed funnel functionality:
 
-| Story | Title | Date | Scope |
-|---|---|---|---|
-| (Epic 68 base) | Funnel page + table + summary | Q1 2026 | Initial delivery — route registration, API client, types, page scaffold. **No per-story artifact** — delivered pre-workflow; code is the source of truth |
-| 72.1-FE | Funnel/buyout type alignment | Q1 2026 | Backend contract alignment |
-| 73.1-FE | Funnel table column refactor + brandName | 2026-02+ | UX polish |
-| 73.2-FE | Funnel summary cards expansion | 2026-02+ | Added metric cards |
-| 73.3-FE | Funnel WoW period comparison | 2026-02+ | Week-over-week comparison |
-| 73.4-FE | Funnel product filter combobox | 2026-02+ | Multi-SKU filter UI |
-| 73.8-FE | Funnel / advertising chart overlay | 2026-02+ | `FunnelOverlayChart.tsx` + overlay tooltip |
-| 73.9-FE | Three-layer ad-cost discrepancy view | 2026-02+ | Adjacent; depends on funnel data |
-| 87.x / 88.2-FE | Null-type audit touches | 2026-04 | Nullability corrections for margin/profit fields |
+| Story          | Title                                    | Date     | Scope                                                                                                                                                    |
+| -------------- | ---------------------------------------- | -------- | -------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| (Epic 68 base) | Funnel page + table + summary            | Q1 2026  | Initial delivery — route registration, API client, types, page scaffold. **No per-story artifact** — delivered pre-workflow; code is the source of truth |
+| 72.1-FE        | Funnel/buyout type alignment             | Q1 2026  | Backend contract alignment                                                                                                                               |
+| 73.1-FE        | Funnel table column refactor + brandName | 2026-02+ | UX polish                                                                                                                                                |
+| 73.2-FE        | Funnel summary cards expansion           | 2026-02+ | Added metric cards                                                                                                                                       |
+| 73.3-FE        | Funnel WoW period comparison             | 2026-02+ | Week-over-week comparison                                                                                                                                |
+| 73.4-FE        | Funnel product filter combobox           | 2026-02+ | Multi-SKU filter UI                                                                                                                                      |
+| 73.8-FE        | Funnel / advertising chart overlay       | 2026-02+ | `FunnelOverlayChart.tsx` + overlay tooltip                                                                                                               |
+| 73.9-FE        | Three-layer ad-cost discrepancy view     | 2026-02+ | Adjacent; depends on funnel data                                                                                                                         |
+| 87.x / 88.2-FE | Null-type audit touches                  | 2026-04  | Nullability corrections for margin/profit fields                                                                                                         |
 
 Per-story ACs exist in retrospective form at `_bmad-output/implementation-artifacts/{72.1,73.1,73.2,73.3,73.4,73.8,73.9,88-2}-fe-*.md`.
 
@@ -50,9 +50,11 @@ Per-story ACs exist in retrospective form at `_bmad-output/implementation-artifa
 ## File List (canonical locations)
 
 **Route / page**:
+
 - `src/app/(dashboard)/analytics/funnel/page.tsx` — Suspense boundary + `FunnelPageContent` mount
 
 **Components** (`src/app/(dashboard)/analytics/funnel/components/`):
+
 - `FunnelPageContent.tsx` — orchestrator (filters, data fetch, state)
 - `FunnelTable.tsx` — main per-SKU table
 - `FunnelChart.tsx` — time-series chart for groupBy=day
@@ -66,11 +68,13 @@ Per-story ACs exist in retrospective form at `_bmad-output/implementation-artifa
 - `__tests__/` — unit coverage
 
 **State / data layer**:
+
 - `src/hooks/use-funnel-analytics.ts` — TanStack Query wrapper for `getFunnelData` + `getFunnelSyncStatus`
 - `src/lib/api/funnel-analytics.ts` — API client (2 functions, query-keys factory, `FUNNEL_CACHE` constant)
 - `src/types/analytics-funnel.ts` — `FunnelParams`, `FunnelResponse`, `FunnelSyncStatus`
 
 **Navigation / routing**:
+
 - `src/lib/routes.ts` — `/analytics/funnel` registration
 - `src/components/custom/sidebar-navigation.ts` — sidebar entry
 
@@ -80,10 +84,10 @@ Per-story ACs exist in retrospective form at `_bmad-output/implementation-artifa
 
 All endpoints documented in `docs/request-backend/151-EPICS-68-71-ANALYTICS-API.md`:
 
-| Method | Endpoint | Cache TTL | Purpose |
-|---|---|---|---|
-| GET | `/v1/analytics/funnel` | 5 min | Per-SKU or time-series funnel data |
-| GET | `/v1/analytics/funnel/sync-status` | — | Freshness indicator for the funnel view |
+| Method | Endpoint                           | Cache TTL | Purpose                                 |
+| ------ | ---------------------------------- | --------- | --------------------------------------- |
+| GET    | `/v1/analytics/funnel`             | 5 min     | Per-SKU or time-series funnel data      |
+| GET    | `/v1/analytics/funnel/sync-status` | —         | Freshness indicator for the funnel view |
 
 Runnable request examples: `test-api/29-funnel-analytics.http`.
 

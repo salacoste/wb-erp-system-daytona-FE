@@ -14,7 +14,7 @@ chars: 2403
 
 В этой статье:
 
-- 
+-
 - <a href="#urovni-parametrov-kartochki-tovara" rel="nofollow">Уровни параметров карточки товара</a>
 - <a href="#zachem-eto-nuzhno" rel="nofollow">Зачем это нужно</a>
 - <a href="#kak-rabotat-s-parametrami" rel="nofollow">Как работать с параметрами</a>

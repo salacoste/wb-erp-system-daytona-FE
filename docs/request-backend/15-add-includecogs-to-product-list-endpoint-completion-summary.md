@@ -11,6 +11,7 @@
 Successfully implemented `include_cogs=true` parameter for `GET /v1/products` endpoint to enrich product listings with margin data from Epic 17 analytics.
 
 **Performance Achieved**:
+
 - ✅ Target: <500ms for 25 products with `include_cogs=true`
 - ✅ Implementation: ~300ms (batch Epic 17 query instead of N sequential calls)
 - ✅ Improvement: **8x faster** than simple implementation (300ms vs 2500ms)
@@ -22,6 +23,7 @@ Successfully implemented `include_cogs=true` parameter for `GET /v1/products` en
 ### Completed Steps
 
 #### ✅ Step 1: Add include_cogs Parameter (QueryProductsDto)
+
 **File**: `src/products/dto/query-products.dto.ts` (lines 88-100)
 
 ```typescript
@@ -41,22 +43,27 @@ include_cogs?: boolean = false;
 ```
 
 #### ✅ Step 2: Implement getMarginDataForProducts() Batch Method
+
 **File**: `src/products/products.service.ts` (lines 283-370)
 
 **Key Implementation Details**:
+
 - Single Epic 17 analytics query: `getWeeklyBySku(cabinetId, lastWeek, { includeCogs: true, limit: 10000 })`
 - HashMap pattern: `Record<string, MarginData>` for O(1) product lookup
 - Graceful degradation: Returns null margins if Epic 17 unavailable
 - Handles missing data: `NO_SALES_IN_PERIOD`, `COGS_NOT_ASSIGNED`, `NO_SALES_DATA`, `ANALYTICS_UNAVAILABLE`
 
 **Dependencies Added**:
+
 - `WeeklyAnalyticsService` (Epic 17 analytics)
 - `IsoWeekService` (week calculation)
 
 #### ✅ Step 3: Update getProductsList() with Batching
+
 **File**: `src/products/products.service.ts` (lines 187-214)
 
 **Logic**:
+
 1. Fetch products page from WB API (existing logic)
 2. If `query.include_cogs === true`:
    - Extract nm_ids from page
@@ -65,19 +72,23 @@ include_cogs?: boolean = false;
 3. Return enriched page
 
 #### ✅ Step 4: Fix ProductResponseDto Type
+
 **File**: `src/products/dto/product-response.dto.ts` (line 69)
 
 **Fix**: `current_margin_sales_qty?: number | null` (was `number | undefined`)
 
 #### ✅ Step 5: Verify Module Dependencies
+
 **File**: `src/products/products.module.ts`
 
 **Status**: ✅ Already imported (AnalyticsModule, AggregationModule) - no changes needed
 
 #### ✅ Step 6: E2E Tests
+
 **File**: `test/products/products-include-cogs.e2e-spec.ts` (new file)
 
 **Test Coverage**:
+
 - ✅ AC1: `include_cogs=false` (default behavior)
 - ✅ AC2: `include_cogs=true` (margin enrichment)
 - ✅ AC3: Backward compatibility (no param)
@@ -88,9 +99,11 @@ include_cogs?: boolean = false;
 - ✅ Error handling (invalid values, auth, cabinet header)
 
 #### ✅ Step 7: Swagger Documentation
+
 **File**: `src/products/products.controller.ts` (lines 168-238)
 
 **Added Documentation**:
+
 - Request #15 description in `@ApiOperation`
 - Performance characteristics (150ms vs 300ms)
 - Margin data field descriptions
@@ -182,25 +195,25 @@ X-Cabinet-Id: <cabinet_id>
 
 ## Margin Data Fields
 
-| Field | Type | Description |
-|-------|------|-------------|
-| `current_margin_pct` | `number \| null` | Margin percentage from last week (Epic 17 analytics) |
-| `current_margin_period` | `string \| null` | ISO week used for calculation (e.g., "2025-W46") |
-| `current_margin_sales_qty` | `number \| null` | Sales quantity in margin calculation period |
-| `current_margin_revenue` | `number \| null` | Revenue in margin calculation period |
-| `missing_data_reason` | `string \| null` | Explanation when margin is null |
+| Field                      | Type             | Description                                          |
+| -------------------------- | ---------------- | ---------------------------------------------------- |
+| `current_margin_pct`       | `number \| null` | Margin percentage from last week (Epic 17 analytics) |
+| `current_margin_period`    | `string \| null` | ISO week used for calculation (e.g., "2025-W46")     |
+| `current_margin_sales_qty` | `number \| null` | Sales quantity in margin calculation period          |
+| `current_margin_revenue`   | `number \| null` | Revenue in margin calculation period                 |
+| `missing_data_reason`      | `string \| null` | Explanation when margin is null                      |
 
 ### Missing Data Reasons
 
 **⚠️ IMPORTANT**: For complete and up-to-date documentation on `missing_data_reason` values, see [Request #16](./16-cogs-history-and-margin-data-structure.md).
 
-| Reason | Description |
-|--------|-------------|
-| `NO_SALES_IN_PERIOD` | Product had no sales in last completed week (margin period) |
-| `COGS_NOT_ASSIGNED` | Product has sales but no COGS assigned |
-| `NO_SALES_DATA` | Product has never had any sales |
-| `ANALYTICS_UNAVAILABLE` | Epic 17 analytics service unavailable (graceful degradation) |
-| `null` | Margin calculated successfully OR COGS assigned but margin calculation in progress (Epic 20) |
+| Reason                  | Description                                                                                  |
+| ----------------------- | -------------------------------------------------------------------------------------------- |
+| `NO_SALES_IN_PERIOD`    | Product had no sales in last completed week (margin period)                                  |
+| `COGS_NOT_ASSIGNED`     | Product has sales but no COGS assigned                                                       |
+| `NO_SALES_DATA`         | Product has never had any sales                                                              |
+| `ANALYTICS_UNAVAILABLE` | Epic 17 analytics service unavailable (graceful degradation)                                 |
+| `null`                  | Margin calculated successfully OR COGS assigned but margin calculation in progress (Epic 20) |
 
 ---
 
@@ -208,15 +221,16 @@ X-Cabinet-Id: <cabinet_id>
 
 ### Benchmarks
 
-| Scenario | Response Time | Description |
-|----------|---------------|-------------|
-| `include_cogs=false` (default) | ~150ms | WB API call + pagination only |
-| `include_cogs=true` (batching) | ~300ms | WB API + single Epic 17 batch query |
-| **Simple implementation** (rejected) | ~2500ms | WB API + N sequential Epic 17 queries |
+| Scenario                             | Response Time | Description                           |
+| ------------------------------------ | ------------- | ------------------------------------- |
+| `include_cogs=false` (default)       | ~150ms        | WB API call + pagination only         |
+| `include_cogs=true` (batching)       | ~300ms        | WB API + single Epic 17 batch query   |
+| **Simple implementation** (rejected) | ~2500ms       | WB API + N sequential Epic 17 queries |
 
 ### Optimization Strategy
 
 **Batching Approach** (implemented):
+
 1. Fetch product page from WB API (~150ms)
 2. Extract nm_ids for all products on page
 3. **Single batch Epic 17 query** for all nm_ids (~150ms)
@@ -224,6 +238,7 @@ X-Cabinet-Id: <cabinet_id>
 5. **Total: ~300ms** for 25 products
 
 **Simple Approach** (rejected):
+
 1. Fetch product page from WB API (~150ms)
 2. For each product: sequential Epic 17 query (~100ms × 25 = 2500ms)
 3. **Total: ~2650ms** for 25 products
@@ -350,11 +365,11 @@ function displayMargin(product: ProductResponse) {
 
 ### Performance Impact
 
-| Client Behavior | Impact |
-|-----------------|--------|
-| Existing clients (no param) | **No impact** (~150ms unchanged) |
-| New clients (`include_cogs=false`) | **No impact** (~150ms) |
-| New clients (`include_cogs=true`) | **+150ms** (300ms total) |
+| Client Behavior                    | Impact                           |
+| ---------------------------------- | -------------------------------- |
+| Existing clients (no param)        | **No impact** (~150ms unchanged) |
+| New clients (`include_cogs=false`) | **No impact** (~150ms)           |
+| New clients (`include_cogs=true`)  | **+150ms** (300ms total)         |
 
 ---
 
@@ -397,6 +412,7 @@ function displayMargin(product: ProductResponse) {
 ## Questions?
 
 Contact backend team or reference:
+
 - Implementation Plan: `docs/request-backend/15-add-includecogs-to-product-list-endpoint-implementation-plan.md`
 - Epic 17 Documentation: `docs/stories/epic-17/`
 - E2E Tests: `test/products/products-include-cogs.e2e-spec.ts`
