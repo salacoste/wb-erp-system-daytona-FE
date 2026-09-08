@@ -1,6 +1,6 @@
 # Debt P3: prettier-md — нормализация docs/**/*.md (сессия-9, V19)
 
-> **Status**: review · **PR**: pending (второй коммит) · **Branch**: `debt/prettier-md-docs` @ `ac366ad9` (worktree /private/tmp/prettier-md-docs)
+> **Status**: done · **PR**: [#420](https://github.com/salacoste/wb-erp-system-daytona-FE/pull/420) · **Branch**: `debt/prettier-md-docs` @ `ac366ad9` (worktree /private/tmp/prettier-md-docs)
 > **Источник**: HANDOFF-2026-09-06-V18 §3.0 item 1 «prettier md (~1189)»; исполнен оркестратором сессии-9 (2026-09-08)
 > **Режим ревью**: single-pass owner-approved (CLAUDE.md doc-only exception) с обязательной fix-верификацией после REJECT
 
